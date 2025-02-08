@@ -1,5 +1,5 @@
 {
-  "name": "my-turborepo",
+  "name": "xi.tutor",
   "private": true,
   "scripts": {
     "build": "turbo build",
