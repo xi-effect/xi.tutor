@@ -2,18 +2,24 @@
   "name": "xi.tutor",
   "private": true,
   "scripts": {
-    "build": "turbo build",
-    "dev": "turbo dev",
-    "lint": "turbo lint",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "build": "turbo run build --no-daemon",
+    "dev": "turbo run dev --concurrency 30",
+    "lint": "turbo run lint",
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "format-check": "prettier --check \"**/*.{ts,tsx,md}\"",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
+    "husky": "^9.1.6",
     "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.11",
     "turbo": "^2.4.0",
     "typescript": "5.7.3"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "packageManager": "npm@10.2.4",
   "workspaces": [
