@@ -1,5 +1,9 @@
 {
   "name": "@repo/typescript-config",
+  "files": [
+    "./tsconfig.app.json",
+    "./tsconfig.node.json"
+  ],
   "version": "0.0.0",
   "private": true,
   "license": "MIT",
