@@ -1,84 +1,87 @@
-# Turborepo starter
+# xi.tutor
 
-This Turborepo starter is maintained by the Turborepo core team.
+> Это репозиторий основного приложения, который делает команда xi.team
+> Продукт направлен на цифровизацию работы репетиторов – [app.xieffect.ru](https://app.xieffect.ru/)
 
-## Using this example
+## Начало работы
 
-Run the following command:
+Выполните установку зависимостей, запустив команду в корне репозитория:
 
-```sh
-npx create-turbo@latest
+```bash
+npm i
 ```
 
-## What's inside?
+> Если зависимости не устанавливаются, возможно, потребуется использовать флаг --legacy-peer-deps.
 
-This Turborepo includes the following packages/apps:
+Запустите следующую команду в корне репозитория для начала локальной разработки:
 
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
+```bash
+npm run dev
 ```
 
-### Develop
+> Запустится xi.web на http://localhost:5173/, а также все пакеты перейдут в режим HMR.
 
-To develop all apps and packages, run the following command:
+## Вспомогательные команды
 
-```
-cd my-turborepo
-pnpm dev
-```
+Запуск eslint во всех пакетах и приложениях, выполнить из корня:
 
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-npx turbo login
+```bash
+npm run lint
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+Запуск prettier во всех пакетах и приложениях, выполнить из корня:
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-npx turbo link
+```bash
+npm run format
 ```
 
-## Useful Links
+Prettier без перезаписи, просто проверка на форматирование:
 
-Learn more about the power of Turborepo:
+```bash
+npm run format-check
+```
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+## Технологии
+
+Репозиторий:
+
+- Turborepo – инструмент для создания и управления монорепозиториями
+- Prettier – форматирование кода
+- Eslint – линтер с правилами написания кода
+- Husky - инструмент вызова прекоммит хуков в git, позволяет прогонять eslint и prettier перед созданием коммита в репозитории
+- CommilLint – линтер наименования коммитов
+
+Приложения (apps/xi.web):
+
+- TypeScript v5 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/typescript))
+- React v19 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/react))
+- Tailwind v3 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/tailwind))
+- Vite – сборка проекта
+- Zustand – управление состоянием в приложении
+- axios (?) – работа с RestAPI
+- SocketIO – взаимодействие с WebSockets
+- Tanstack/router – организация роутинга на основе файловой системе и управление навигацией
+- Tanstack/query – организация кеширования и управления данными, полученными с сервера
+
+Пакеты (packages/\*):
+
+- TypeScript v5 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/typescript))
+- React v19 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/react))
+- Tailwind v3 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/tailwind))
+- Zustand – управление состоянием в приложении
+- axios (?) – работа с RestAPI
+- SocketIO – взаимодействие с WebSockets
+- Tanstack/router – организация роутинга на основе файловой системе и управление навигацией
+- Tanstack/query – организация кеширования и управления данными, полученными с сервера
+
+## UIkit
+
+Мы используем собственную библиотеку компонент:
+
+- [Storebook](https://xi-storybook.vercel.app/)
+- [npm registry](https://www.npmjs.com/~xi.effect)
+- [тестовая среда](https://xi-playground.vercel.app/)
+
+Базовые элементы интерфейса мы выносим в эту библиотеку, созданную на основе дизайн-системы и макетов от команды Дизайна
+
+## Архитектура
