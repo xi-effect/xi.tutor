@@ -1,13 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router';
 
+import { SignInPage } from 'pages.signin';
+
 export const Route = createFileRoute('/signin/')({
   component: SignIn,
 });
 
 function SignIn() {
   return (
-    <div className="p-2">
-      <h3>Welcome Home!</h3>
-    </div>
+    <>
+      <SignInPage />
+    </>
   );
 }

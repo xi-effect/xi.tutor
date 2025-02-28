@@ -11,14 +11,15 @@
   },
   "dependencies": {
     "pages.signin": "*",
-    "@tailwindcss/vite": "^4.0.7",
+    "@tailwindcss/vite": "^4.0.9",
     "@tanstack/react-router": "^1.109.0",
     "@xipkg/button": "3.0.9",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tailwindcss": "^4.0.7"
+    "tailwindcss": "^4.0.9"
   },
   "devDependencies": {
+    "@xipkg/tailwind": "0.7.5",
     "@repo/typescript-config": "*",
     "@eslint/js": "^9.19.0",
     "@tanstack/router-devtools": "^1.109.2",
@@ -32,6 +33,6 @@
     "globals": "^15.14.0",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.22.0",
-    "vite": "^6.1.0"
+    "vite": "^6.2.0"
   }
 }

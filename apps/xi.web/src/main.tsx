@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { StrictMode } from 'react';
 import ReactDOM from 'react-dom/client';
 import { RouterProvider, createRouter } from '@tanstack/react-router';
 
-// Import the generated route tree
-// @ts-ignore
+import './index.css';
+
 import { routeTree } from './routeTree.gen';
 
 // Create a new router instance

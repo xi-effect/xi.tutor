@@ -1,2 +1,2 @@
 export { InvitationMessage } from './InvitationMessage';
-export { SignInForm } from './SignInForm';
+export { SignInPage } from './SignInPage';

@@ -32,7 +32,6 @@
   },
   "peerDependencies": {
     "react": "19",
-    "next": "15",
     "@hookform/resolvers": "3.9.1",
     "react-hook-form": "^7.0.0"
   },
