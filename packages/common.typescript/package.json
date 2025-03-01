@@ -1,5 +1,5 @@
 {
-  "name": "@repo/typescript-config",
+  "name": "common.typescript",
   "files": [
     "./tsconfig.app.json",
     "./tsconfig.node.json"

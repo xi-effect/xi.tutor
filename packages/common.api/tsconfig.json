@@ -1,7 +1,7 @@
 {
   "include": ["src/**/*"],
   "extends": [
-    "@repo/typescript-config/tsconfig.app.json",
+    "common.typescript/tsconfig.app.json",
   ],
   "exclude": ["dist", "build", "node_modules"]
 }

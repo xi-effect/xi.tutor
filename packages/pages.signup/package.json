@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
-    "@repo/typescript-config": "*",
+    "common.typescript": "*",
     "@types/node": "^20.3.1",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
