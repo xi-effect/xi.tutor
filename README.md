@@ -55,23 +55,23 @@ npm run format-check
 
 - TypeScript v5 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/typescript))
 - React v19 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/react))
-- Tailwind v3 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/tailwind))
+- Tailwind v4 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/tailwind))
 - Vite – сборка проекта
 - Zustand – управление состоянием в приложении
 - axios (?) – работа с RestAPI
 - SocketIO – взаимодействие с WebSockets
-- Tanstack/router – организация роутинга на основе файловой системе и управление навигацией
+- Tanstack/router – организация роутинга на основе файловой системы и управление навигацией
 - Tanstack/query – организация кеширования и управления данными, полученными с сервера
 
 Пакеты (packages/\*):
 
 - TypeScript v5 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/typescript))
 - React v19 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/react))
-- Tailwind v3 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/tailwind))
+- Tailwind v4 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/tailwind))
 - Zustand – управление состоянием в приложении
 - axios (?) – работа с RestAPI
 - SocketIO – взаимодействие с WebSockets
-- Tanstack/router – организация роутинга на основе файловой системе и управление навигацией
+- Tanstack/router – организация роутинга на основе файловой системы и управление навигацией
 - Tanstack/query – организация кеширования и управления данными, полученными с сервера
 
 ## UIkit
