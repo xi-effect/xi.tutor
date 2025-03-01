@@ -27,7 +27,7 @@
     "@xipkg/eslint": "3.2.0",
     "@xipkg/tailwind": "0.7.4",
     "@xipkg/typescript": "latest",
-    "eslint-config-custom": "*",
+    "common.eslint": "*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",

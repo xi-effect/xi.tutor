@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useTransition } from 'react';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,7 +15,6 @@ import {
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Link } from '@xipkg/link';
 import { Eyeoff, Eyeon } from '@xipkg/icons';
-import { useTheme } from 'next-themes';
 
 const FormSchema = z.object({
   email: z
@@ -50,8 +47,6 @@ export const SignIn = () => {
   const searchParams = useSearchParams();
   const communityName = searchParams.get('community');
 
-  const { setTheme } = useTheme();
-
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -80,10 +75,6 @@ export const SignIn = () => {
 
       if (answer.status !== 200) {
         return;
-      }
-
-      if (answer.theme !== null) {
-        setTheme(answer.theme);
       }
 
       if (searchParams.has('iid')) {

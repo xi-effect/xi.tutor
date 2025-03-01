@@ -2,6 +2,17 @@ import { createRootRoute, Outlet } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 
 export const Route = createRootRoute({
+  // beforeLoad: ({ location }) => {
+  //   const t = true;
+  //   if (t) {
+  //     throw redirect({
+  //       to: '/signin',
+  //       search: {
+  //         redirect: location.href,
+  //       },
+  //     })
+  //   }
+  // },
   component: () => (
     <>
       {/* <div className="flex gap-2 p-2">
