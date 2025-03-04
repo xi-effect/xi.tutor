@@ -10,6 +10,8 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "i18next": "24.2.2",
+    "react-i18next": "15.4.1",
     "@tanstack/react-router": "^1.109.0",
     "@xipkg/button": "3.0.9",
     "@xipkg/form": "^4.0.5",

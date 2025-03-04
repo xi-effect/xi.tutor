@@ -4,8 +4,10 @@ import { RouterProvider, createRouter } from '@tanstack/react-router';
 
 import './index.css';
 
+import './config/i18n';
+
 import { routeTree } from './routeTree.gen';
-import { AuthProvider, useAuth } from 'common.config';
+import { AuthProvider, useAuth, QueryProvider } from 'common.config';
 import { Toaster } from 'sonner';
 
 // Create a new router instance
@@ -36,10 +38,12 @@ if (!rootElement.innerHTML) {
   const root = ReactDOM.createRoot(rootElement);
   root.render(
     <StrictMode>
-      <AuthProvider>
-        <InnerApp />
-        <Toaster />
-      </AuthProvider>
+      <QueryProvider>
+        <AuthProvider>
+          <InnerApp />
+          <Toaster />
+        </AuthProvider>
+      </QueryProvider>
     </StrictMode>,
   );
 }

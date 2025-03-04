@@ -1,4 +1,3 @@
-// features/auth/ui/SignInForm.tsx
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -7,12 +6,14 @@ import { Input } from '@xipkg/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
 import { Eyeoff, Eyeon } from '@xipkg/icons';
 import { Link } from '@xipkg/link';
+import { useTranslation } from 'react-i18next';
 import { FormSchema, FormData } from '../model/formSchema';
 import { InvitationMessage } from './InvitationMessage';
 import { useSignIn } from '../hooks';
 
-export const SignInPage: React.FC = () => {
-  // Получаем параметры из URL через стандартный API
+export const SignInPage = () => {
+  const { t } = useTranslation('signin'); // Используем namespace "auth"
+
   const query = new URLSearchParams(window.location.search);
   const communityName = query.get('community');
 
@@ -42,7 +43,6 @@ export const SignInPage: React.FC = () => {
     return '/signup';
   };
 
-  // Функция редиректа, использующая стандартное изменение window.location
   const redirect = (url: string) => {
     window.location.href = url;
   };
@@ -56,18 +56,15 @@ export const SignInPage: React.FC = () => {
       <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex h-[600px] w-full max-w-[420px] p-8">
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-col gap-4">
-            <div className="flex justify-center">
-              {/* Здесь можно разместить логотип */}
-              Logo
-            </div>
-            <h1 className="flex justify-center text-2xl font-semibold">Вход в аккаунт</h1>
+            <div className="flex justify-center">Logo</div>
+            <h1 className="flex justify-center text-2xl font-semibold">{t('sign_in')}</h1>
             {communityName && <InvitationMessage communityName={communityName} />}
             <FormField
               control={control}
               name="email"
               render={({ field }) => (
                 <FormItem className="pt-4">
-                  <FormLabel>Электронная почта</FormLabel>
+                  <FormLabel>{t('email')}</FormLabel>
                   <FormControl>
                     <Input error={!!errors?.email} autoComplete="on" type="email" {...field} />
                   </FormControl>
@@ -80,7 +77,7 @@ export const SignInPage: React.FC = () => {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Пароль</FormLabel>
+                  <FormLabel>{t('password')}</FormLabel>
                   <FormControl>
                     <Input
                       error={!!errors?.password}
@@ -105,7 +102,7 @@ export const SignInPage: React.FC = () => {
               )}
             />
             <Link size="l" variant="always" href="/reset-password">
-              Восстановить пароль
+              {t('forgot_password')}
             </Link>
             <div className="flex h-full w-full items-end justify-between">
               <div className="flex h-[48px] items-center">
@@ -116,12 +113,12 @@ export const SignInPage: React.FC = () => {
                   variant="hover"
                   href={getSignupHref()}
                 >
-                  Зарегистрироваться
+                  {t('register')}
                 </Link>
               </div>
               {!isPending ? (
                 <Button variant="default" type="submit" className="w-24">
-                  Войти
+                  {t('sign_in_button')}
                 </Button>
               ) : (
                 <Button variant="default-spinner" className="w-24" disabled />

@@ -10,6 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "i18next": "24.2.2",
+    "react-i18next": "15.4.1",
+    "i18next-http-backend": "3.0.2",
+    "i18next-localstorage-backend": "4.2.0",
     "sonner": "2.0.1",
     "common.config": "*",
     "pages.signin": "*",
