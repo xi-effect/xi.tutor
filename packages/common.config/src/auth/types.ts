@@ -1,6 +1,6 @@
 export type AuthContextT = {
   isAuthenticated: boolean;
-  login: (username: string) => Promise<void>;
+  login: (credentials: { email: string; password: string }) => Promise<void>;
   logout: () => Promise<void>;
   user: string | null;
 };

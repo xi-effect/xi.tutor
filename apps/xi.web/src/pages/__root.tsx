@@ -1,7 +1,12 @@
-import { createRootRoute, Outlet } from '@tanstack/react-router';
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
+import { AuthContextT } from 'common.config';
 
-export const Route = createRootRoute({
+interface MyRouterContext {
+  auth: AuthContextT;
+}
+
+export const Route = createRootRouteWithContext<MyRouterContext>()({
   // beforeLoad: ({ location }) => {
   //   const t = true;
   //   if (t) {

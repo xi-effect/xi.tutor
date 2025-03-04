@@ -10,6 +10,8 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "sonner": "2.0.1",
+    "common.config": "*",
     "pages.signin": "*",
     "@tailwindcss/vite": "^4.0.9",
     "@tanstack/react-router": "^1.109.0",

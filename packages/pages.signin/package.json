@@ -10,6 +10,7 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "@tanstack/react-router": "^1.109.0",
     "@xipkg/button": "3.0.9",
     "@xipkg/form": "^4.0.5",
     "@xipkg/icons": "2.0.8",
@@ -37,7 +38,6 @@
   },
   "peerDependencies": {
     "react": "19",
-    "next": "15",
     "@hookform/resolvers": "3.9.1",
     "react-hook-form": "^7.0.0"
   },

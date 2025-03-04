@@ -1,17 +1,14 @@
 {
-  "name": "common.config",
+  "name": "common.services",
   "version": "0.0.0",
+  "main": "./index.tsx",
+  "types": "./index.tsx",
   "type": "module",
-  "exports": {
-    ".": "./index.ts"
-  },
   "license": "MIT",
   "scripts": {
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "@tanstack/react-router": "^1.109.0",
-    "@tanstack/react-query": "5.66.9",
     "axios": "1.8.1"
   },
   "devDependencies": {

@@ -2,10 +2,13 @@
 import { useState, useTransition } from 'react';
 import { postSignin, SignInResponse } from '../api';
 import { FormData } from '../model/formSchema';
+import { useSearch } from '@tanstack/react-router';
 
 export function useSignIn() {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
+
+  const search = useSearch({ strict: false });
 
   const onSignIn = async (data: FormData, redirect: (url: string) => void) => {
     startTransition(async () => {
@@ -25,7 +28,7 @@ export function useSignIn() {
       if (query.has('iid')) {
         redirect(`/invite/${query.get('iid')}`);
       } else {
-        redirect('/communities');
+        redirect(search.redirect || '/');
       }
     });
   };
