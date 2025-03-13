@@ -1,5 +1,5 @@
 {
-  "name": "common.api",
+  "name": "common.env",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -9,10 +9,7 @@
   "scripts": {
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
-  "dependencies": {
-    "axios": "1.8.1",
-    "common.env": "*"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@tanstack/react-query-devtools": "5.66.9",
     "@eslint/js": "^9.19.0",

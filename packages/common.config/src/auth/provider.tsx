@@ -1,42 +1,53 @@
 import * as React from 'react';
 import { AuthContext } from './context';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { getAxiosInstance } from 'common.config';
-
-export async function sleep(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
+import { userApiConfig, UserQueryKey } from 'common.api';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const queryClient = useQueryClient();
-  const { data: user } = useQuery({
-    queryKey: ['auth'],
+  const [isAuthenticated, setIsAuthenticated] = React.useState<boolean | null>(null);
+
+  const {
+    data: user,
+    isSuccess,
+    isError,
+  } = useQuery({
+    queryKey: [UserQueryKey.Home],
     queryFn: async () => {
       const axiosInst = await getAxiosInstance();
-      const res = await axiosInst.get('/api/auth/check');
-      return res.data; // Ожидаем, что сервер вернет пользователя или null
+      const res = await axiosInst.get(userApiConfig[UserQueryKey.Home].getUrl());
+      return res.data;
     },
-    staleTime: 1000 * 60 * 5, // 5 минут
     retry: false,
   });
 
-  const isAuthenticated = !!user;
+  React.useEffect(() => {
+    if (isSuccess && user) {
+      setIsAuthenticated(true);
+      // Здесь можно выполнить и другие действия, которые раньше были в onSuccess
+    }
+    if (isError) {
+      setIsAuthenticated(false);
+      // Здесь можно выполнить и другие действия, которые раньше были в onSuccess
+    }
+  }, [isSuccess, isError, user]);
 
-  const login = async (credentials: { email: string; password: string }) => {
-    const axiosInst = await getAxiosInstance();
-    const res = await axiosInst.post('/api/auth/login', credentials);
-    await queryClient.invalidateQueries({ queryKey: ['auth'] }); // Обновляем авторизацию
-    return res.data;
+  const login = () => {
+    setIsAuthenticated(true);
   };
 
-  const logout = async () => {
-    const axiosInst = await getAxiosInstance();
-    await axiosInst.post('/api/auth/logout');
-    await queryClient.invalidateQueries({ queryKey: ['auth'] });
+  const logout = () => {
+    setIsAuthenticated(false);
   };
+
+  console.log('AuthProvider', isAuthenticated);
+
+  if (isAuthenticated === null) {
+    return <div>Loading</div>;
+  }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -1,4 +1,4 @@
-import { env } from 'common.config';
+import { env } from 'common.env';
 import { HttpMethod } from './config';
 
 enum UserQueryKey {

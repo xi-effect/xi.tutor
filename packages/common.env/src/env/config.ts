@@ -21,6 +21,7 @@ const env = {
   VITE_SERVER_URL_AUTH: asString(import.meta.env.VITE_SERVER_URL_AUTH),
   VITE_SERVER_URL_LIVE: asString(import.meta.env.VITE_SERVER_URL_LIVE),
   VITE_DEVTOOLS_ENABLED: asBoolean(import.meta.env.VITE_REACT_QUERY_DEVTOOLS_ENABLED, false),
+  VITE_ENABLE_X_TESTING: asBoolean(import.meta.env.VITE_ENABLE_X_TESTING, false),
 };
 
 const checkEnv = (envKey: keyof typeof env): boolean => {

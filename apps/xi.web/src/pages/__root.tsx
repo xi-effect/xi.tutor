@@ -1,4 +1,4 @@
-import { createRootRouteWithContext, Outlet } from '@tanstack/react-router';
+import { createRootRouteWithContext, Outlet, redirect } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { AuthContextT } from 'common.config';
 
@@ -7,17 +7,18 @@ interface MyRouterContext {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
-  // beforeLoad: ({ location }) => {
-  //   const t = true;
-  //   if (t) {
-  //     throw redirect({
-  //       to: '/signin',
-  //       search: {
-  //         redirect: location.href,
-  //       },
-  //     })
-  //   }
-  // },
+  beforeLoad: ({ context, location }) => {
+    console.log('Route', context, location);
+
+    if (!context.auth.isAuthenticated && location.pathname !== '/signin') {
+      throw redirect({
+        to: '/signin',
+        search: {
+          redirect: location.href,
+        },
+      });
+    }
+  },
   component: () => (
     <>
       {/* <div className="flex gap-2 p-2">
@@ -35,6 +36,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
         </h1>
       </div>
       <hr /> */}
+
       <Outlet />
       <TanStackRouterDevtools />
     </>

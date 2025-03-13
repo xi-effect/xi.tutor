@@ -9,7 +9,7 @@ import { Link } from '@xipkg/link';
 import { useTranslation } from 'react-i18next';
 import { FormSchema, FormData } from '../model/formSchema';
 import { InvitationMessage } from './InvitationMessage';
-import { useSignIn } from '../hooks';
+import { useSigninForm } from '../hooks';
 
 export const SignInPage = () => {
   const { t } = useTranslation('signin'); // Используем namespace "auth"
@@ -17,7 +17,7 @@ export const SignInPage = () => {
   const query = new URLSearchParams(window.location.search);
   const communityName = query.get('community');
 
-  const { onSignIn, isPending, error } = useSignIn();
+  const { onSigninForm, isPending, error } = useSigninForm();
 
   const form = useForm<FormData>({
     resolver: zodResolver(FormSchema),
@@ -43,12 +43,8 @@ export const SignInPage = () => {
     return '/signup';
   };
 
-  const redirect = (url: string) => {
-    window.location.href = url;
-  };
-
   const onSubmit = (data: FormData) => {
-    onSignIn(data, redirect);
+    onSigninForm(data);
   };
 
   return (

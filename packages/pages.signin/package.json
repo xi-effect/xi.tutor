@@ -10,6 +10,7 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "common.services": "*",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1",
     "@tanstack/react-router": "^1.109.0",

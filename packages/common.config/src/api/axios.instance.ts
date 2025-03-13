@@ -1,7 +1,4 @@
 import axios, { AxiosInstance } from 'axios';
-import { redirect } from '@tanstack/react-router'; // Подключаем tanstack-router
-import { useAuth } from 'common.config'; // Хук аутентификации
-
 interface AxiosLoader {
   (instance: AxiosInstance): Promise<AxiosInstance>;
 }
@@ -18,17 +15,19 @@ const createAuthInterceptor = async (instance: AxiosInstance): Promise<AxiosInst
     (response) => response,
     async (error) => {
       if (error.response?.status === 401) {
+        console.log('createAuthInterceptor 401');
+
         // Получаем logout из useAuth и вызываем его
-        const { logout } = useAuth();
+        // const { logout } = useAuth();
 
-        logout();
+        // logout();
 
-        redirect({
-          to: '/signin',
-          search: {
-            redirect: location.href,
-          },
-        });
+        // redirect({
+        //   to: '/signin',
+        //   search: {
+        //     redirect: location.href,
+        //   },
+        // });
       }
 
       return Promise.reject(error);
@@ -44,6 +43,7 @@ const defaultLoaders: Required<AxiosLoaders> = {
 };
 
 const axiosInstance = axios.create({
+  withCredentials: true,
   headers: { 'Content-type': 'application/json; charset=UTF-8' },
 });
 
