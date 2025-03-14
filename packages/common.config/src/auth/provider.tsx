@@ -3,6 +3,7 @@ import { AuthContext } from './context';
 import { useQuery } from '@tanstack/react-query';
 import { getAxiosInstance } from 'common.config';
 import { userApiConfig, UserQueryKey } from 'common.api';
+import { LoadingScreen } from 'common.ui';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = React.useState<boolean | null>(null);
@@ -43,7 +44,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   console.log('AuthProvider', isAuthenticated);
 
   if (isAuthenticated === null) {
-    return <div>Loading</div>;
+    return <LoadingScreen />;
   }
 
   return (

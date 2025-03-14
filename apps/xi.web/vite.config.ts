@@ -12,6 +12,12 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       minify: mode === 'production',
       outDir: 'build',
       sourcemap: mode === 'debug',
+      terserOptions: {
+        compress: {
+          drop_console: true, // Удалит все console.*
+          drop_debugger: true, // Удалит debugger
+        },
+      },
     },
     optimizeDeps: {
       esbuildOptions: {
