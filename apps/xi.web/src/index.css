@@ -8,6 +8,8 @@
 
 @source "./src";
 @source "../../../node_modules";
+@source "../node_modules";
+
 @source "../../../packages";
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));

@@ -1,8 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useTransition } from 'react';
 import { FormData } from '../model/formSchema';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useSignin } from 'common.services';
 import { useAuth } from 'common.config';
+import { toast } from 'sonner';
 
 type SignInResponse = {
   status: number;
@@ -18,16 +20,16 @@ export const useSigninForm = () => {
   const { login } = useAuth();
 
   const navigate = useNavigate();
-  const search = useSearch({ strict: false });
+  const { redirect }: any = useSearch({ strict: false });
 
   const onSigninForm = async (data: FormData) => {
     const { email, password } = data;
 
     startTransition(async () => {
       const response: SignInResponse = await signin(email, password);
-      console.log('response', response);
 
       if (response.status !== 200) {
+        toast('Ошибка при авторизации');
         setError('Ошибка при авторизации');
         return;
       }
@@ -37,13 +39,11 @@ export const useSigninForm = () => {
         // Например, установить тему через глобальное состояние или контекст
       }
 
-      // Обработка редиректа. Если в URL присутствует параметр "iid", перенаправляем на /invite, иначе на /communities:
-      // const query = new URLSearchParams(window.location.search);
-      console.log('search', search);
       login();
 
+      // Специальный костыль, чтобы вызвать редирект после всех перерисовок
       setTimeout(() => {
-        navigate({ to: search.redirect || '/' });
+        navigate({ to: redirect || '/' });
       }, 10);
     });
   };

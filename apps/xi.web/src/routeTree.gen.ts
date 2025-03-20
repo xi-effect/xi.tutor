@@ -8,16 +8,28 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
+import { createFileRoute } from '@tanstack/react-router';
+
 // Import Routes
 
 import { Route as rootRoute } from './pages/__root';
 import { Route as AboutImport } from './pages/about';
-import { Route as IndexImport } from './pages/index';
-import { Route as SignupIndexImport } from './pages/signup/index';
-import { Route as SigninIndexImport } from './pages/signin/index';
-import { Route as CalendarIndexImport } from './pages/calendar/index';
+import { Route as appLayoutImport } from './pages/(app)/_layout';
+import { Route as authSignupIndexImport } from './pages/(auth)/signup/index';
+import { Route as authSigninIndexImport } from './pages/(auth)/signin/index';
+import { Route as appCalendarIndexImport } from './pages/(app)/calendar/index';
+import { Route as appLayoutIndexImport } from './pages/(app)/_layout/index';
+
+// Create Virtual Routes
+
+const appImport = createFileRoute('/(app)')();
 
 // Create/Update Routes
+
+const appRoute = appImport.update({
+  id: '/(app)',
+  getParentRoute: () => rootRoute,
+} as any);
 
 const AboutRoute = AboutImport.update({
   id: '/about',
@@ -25,41 +37,39 @@ const AboutRoute = AboutImport.update({
   getParentRoute: () => rootRoute,
 } as any);
 
-const IndexRoute = IndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRoute,
+const appLayoutRoute = appLayoutImport.update({
+  id: '/_layout',
+  getParentRoute: () => appRoute,
 } as any);
 
-const SignupIndexRoute = SignupIndexImport.update({
-  id: '/signup/',
+const authSignupIndexRoute = authSignupIndexImport.update({
+  id: '/(auth)/signup/',
   path: '/signup/',
   getParentRoute: () => rootRoute,
 } as any);
 
-const SigninIndexRoute = SigninIndexImport.update({
-  id: '/signin/',
+const authSigninIndexRoute = authSigninIndexImport.update({
+  id: '/(auth)/signin/',
   path: '/signin/',
   getParentRoute: () => rootRoute,
 } as any);
 
-const CalendarIndexRoute = CalendarIndexImport.update({
+const appCalendarIndexRoute = appCalendarIndexImport.update({
   id: '/calendar/',
   path: '/calendar/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => appRoute,
+} as any);
+
+const appLayoutIndexRoute = appLayoutIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => appLayoutRoute,
 } as any);
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      id: '/';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof IndexImport;
-      parentRoute: typeof rootRoute;
-    };
     '/about': {
       id: '/about';
       path: '/about';
@@ -67,25 +77,46 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutImport;
       parentRoute: typeof rootRoute;
     };
-    '/calendar/': {
-      id: '/calendar/';
+    '/(app)': {
+      id: '/(app)';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof appImport;
+      parentRoute: typeof rootRoute;
+    };
+    '/(app)/_layout': {
+      id: '/(app)/_layout';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof appLayoutImport;
+      parentRoute: typeof appRoute;
+    };
+    '/(app)/_layout/': {
+      id: '/(app)/_layout/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof appLayoutIndexImport;
+      parentRoute: typeof appLayoutImport;
+    };
+    '/(app)/calendar/': {
+      id: '/(app)/calendar/';
       path: '/calendar';
       fullPath: '/calendar';
-      preLoaderRoute: typeof CalendarIndexImport;
-      parentRoute: typeof rootRoute;
+      preLoaderRoute: typeof appCalendarIndexImport;
+      parentRoute: typeof appImport;
     };
-    '/signin/': {
-      id: '/signin/';
+    '/(auth)/signin/': {
+      id: '/(auth)/signin/';
       path: '/signin';
       fullPath: '/signin';
-      preLoaderRoute: typeof SigninIndexImport;
+      preLoaderRoute: typeof authSigninIndexImport;
       parentRoute: typeof rootRoute;
     };
-    '/signup/': {
-      id: '/signup/';
+    '/(auth)/signup/': {
+      id: '/(auth)/signup/';
       path: '/signup';
       fullPath: '/signup';
-      preLoaderRoute: typeof SignupIndexImport;
+      preLoaderRoute: typeof authSignupIndexImport;
       parentRoute: typeof rootRoute;
     };
   }
@@ -93,54 +124,84 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
+interface appLayoutRouteChildren {
+  appLayoutIndexRoute: typeof appLayoutIndexRoute;
+}
+
+const appLayoutRouteChildren: appLayoutRouteChildren = {
+  appLayoutIndexRoute: appLayoutIndexRoute,
+};
+
+const appLayoutRouteWithChildren = appLayoutRoute._addFileChildren(appLayoutRouteChildren);
+
+interface appRouteChildren {
+  appLayoutRoute: typeof appLayoutRouteWithChildren;
+  appCalendarIndexRoute: typeof appCalendarIndexRoute;
+}
+
+const appRouteChildren: appRouteChildren = {
+  appLayoutRoute: appLayoutRouteWithChildren,
+  appCalendarIndexRoute: appCalendarIndexRoute,
+};
+
+const appRouteWithChildren = appRoute._addFileChildren(appRouteChildren);
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute;
   '/about': typeof AboutRoute;
-  '/calendar': typeof CalendarIndexRoute;
-  '/signin': typeof SigninIndexRoute;
-  '/signup': typeof SignupIndexRoute;
+  '/': typeof appLayoutIndexRoute;
+  '/calendar': typeof appCalendarIndexRoute;
+  '/signin': typeof authSigninIndexRoute;
+  '/signup': typeof authSignupIndexRoute;
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute;
   '/about': typeof AboutRoute;
-  '/calendar': typeof CalendarIndexRoute;
-  '/signin': typeof SigninIndexRoute;
-  '/signup': typeof SignupIndexRoute;
+  '/': typeof appLayoutIndexRoute;
+  '/calendar': typeof appCalendarIndexRoute;
+  '/signin': typeof authSigninIndexRoute;
+  '/signup': typeof authSignupIndexRoute;
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute;
-  '/': typeof IndexRoute;
   '/about': typeof AboutRoute;
-  '/calendar/': typeof CalendarIndexRoute;
-  '/signin/': typeof SigninIndexRoute;
-  '/signup/': typeof SignupIndexRoute;
+  '/(app)': typeof appRouteWithChildren;
+  '/(app)/_layout': typeof appLayoutRouteWithChildren;
+  '/(app)/_layout/': typeof appLayoutIndexRoute;
+  '/(app)/calendar/': typeof appCalendarIndexRoute;
+  '/(auth)/signin/': typeof authSigninIndexRoute;
+  '/(auth)/signup/': typeof authSignupIndexRoute;
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
-  fullPaths: '/' | '/about' | '/calendar' | '/signin' | '/signup';
+  fullPaths: '/about' | '/' | '/calendar' | '/signin' | '/signup';
   fileRoutesByTo: FileRoutesByTo;
-  to: '/' | '/about' | '/calendar' | '/signin' | '/signup';
-  id: '__root__' | '/' | '/about' | '/calendar/' | '/signin/' | '/signup/';
+  to: '/about' | '/' | '/calendar' | '/signin' | '/signup';
+  id:
+    | '__root__'
+    | '/about'
+    | '/(app)'
+    | '/(app)/_layout'
+    | '/(app)/_layout/'
+    | '/(app)/calendar/'
+    | '/(auth)/signin/'
+    | '/(auth)/signup/';
   fileRoutesById: FileRoutesById;
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute;
   AboutRoute: typeof AboutRoute;
-  CalendarIndexRoute: typeof CalendarIndexRoute;
-  SigninIndexRoute: typeof SigninIndexRoute;
-  SignupIndexRoute: typeof SignupIndexRoute;
+  appRoute: typeof appRouteWithChildren;
+  authSigninIndexRoute: typeof authSigninIndexRoute;
+  authSignupIndexRoute: typeof authSignupIndexRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  CalendarIndexRoute: CalendarIndexRoute,
-  SigninIndexRoute: SigninIndexRoute,
-  SignupIndexRoute: SignupIndexRoute,
+  appRoute: appRouteWithChildren,
+  authSigninIndexRoute: authSigninIndexRoute,
+  authSignupIndexRoute: authSignupIndexRoute,
 };
 
 export const routeTree = rootRoute
@@ -153,27 +214,42 @@ export const routeTree = rootRoute
     "__root__": {
       "filePath": "__root.tsx",
       "children": [
-        "/",
         "/about",
-        "/calendar/",
-        "/signin/",
-        "/signup/"
+        "/(app)",
+        "/(auth)/signin/",
+        "/(auth)/signup/"
       ]
-    },
-    "/": {
-      "filePath": "index.tsx"
     },
     "/about": {
       "filePath": "about.tsx"
     },
-    "/calendar/": {
-      "filePath": "calendar/index.tsx"
+    "/(app)": {
+      "filePath": "(app)",
+      "children": [
+        "/(app)/_layout",
+        "/(app)/calendar/"
+      ]
     },
-    "/signin/": {
-      "filePath": "signin/index.tsx"
+    "/(app)/_layout": {
+      "filePath": "(app)/_layout.tsx",
+      "parent": "/(app)",
+      "children": [
+        "/(app)/_layout/"
+      ]
     },
-    "/signup/": {
-      "filePath": "signup/index.tsx"
+    "/(app)/_layout/": {
+      "filePath": "(app)/_layout/index.tsx",
+      "parent": "/(app)/_layout"
+    },
+    "/(app)/calendar/": {
+      "filePath": "(app)/calendar/index.tsx",
+      "parent": "/(app)"
+    },
+    "/(auth)/signin/": {
+      "filePath": "(auth)/signin/index.tsx"
+    },
+    "/(auth)/signup/": {
+      "filePath": "(auth)/signup/index.tsx"
     }
   }
 }

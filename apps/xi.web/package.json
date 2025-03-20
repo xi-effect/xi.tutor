@@ -20,7 +20,7 @@
     "@tailwindcss/vite": "^4.0.9",
     "@tanstack/react-router": "^1.109.0",
     "@tanstack/react-query": "5.66.11",
-    "@xipkg/button": "3.0.9",
+    "@xipkg/button": "3.1.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "tailwindcss": "^4.0.9"

@@ -6,7 +6,11 @@ import tailwindcss from '@tailwindcss/vite';
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv) => {
   return {
-    plugins: [TanStackRouterVite({ autoCodeSplitting: true }), react(), tailwindcss()],
+    plugins: [
+      TanStackRouterVite({ target: 'react', autoCodeSplitting: true }),
+      react(),
+      tailwindcss(),
+    ],
     build: {
       chunkSizeWarningLimit: 1000,
       minify: mode === 'production',

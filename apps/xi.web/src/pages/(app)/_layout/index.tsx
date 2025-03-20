@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/')({
+// @ts-ignore
+export const Route = createFileRoute('/(app)/_layout/')({
   beforeLoad: ({ context, location }) => {
     console.log('IndexRoute', context, location);
   },

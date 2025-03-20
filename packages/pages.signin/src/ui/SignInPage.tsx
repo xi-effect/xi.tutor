@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@xipkg/button';
@@ -8,14 +8,10 @@ import { Eyeoff, Eyeon } from '@xipkg/icons';
 import { Link } from '@xipkg/link';
 import { useTranslation } from 'react-i18next';
 import { FormSchema, FormData } from '../model/formSchema';
-import { InvitationMessage } from './InvitationMessage';
 import { useSigninForm } from '../hooks';
 
 export const SignInPage = () => {
-  const { t } = useTranslation('signin'); // Используем namespace "auth"
-
-  const query = new URLSearchParams(window.location.search);
-  const communityName = query.get('community');
+  const { t } = useTranslation('signin'); // Используем namespace "signin"
 
   const { onSigninForm, isPending, error } = useSigninForm();
 
@@ -36,13 +32,6 @@ export const SignInPage = () => {
   const [isPasswordShow, setIsPasswordShow] = useState(false);
   const changePasswordShow = () => setIsPasswordShow((prev) => !prev);
 
-  const getSignupHref = () => {
-    if (query.has('iid') && query.get('community')) {
-      return `/signup?iid=${query.get('iid')}&community=${query.get('community')}`;
-    }
-    return '/signup';
-  };
-
   const onSubmit = (data: FormData) => {
     onSigninForm(data);
   };
@@ -54,7 +43,6 @@ export const SignInPage = () => {
           <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-col gap-4">
             <div className="flex justify-center">Logo</div>
             <h1 className="flex justify-center text-2xl font-semibold">{t('sign_in')}</h1>
-            {communityName && <InvitationMessage communityName={communityName} />}
             <FormField
               control={control}
               name="email"
@@ -102,13 +90,7 @@ export const SignInPage = () => {
             </Link>
             <div className="flex h-full w-full items-end justify-between">
               <div className="flex h-[48px] items-center">
-                <Link
-                  id="to-signup-link"
-                  size="l"
-                  theme="brand"
-                  variant="hover"
-                  href={getSignupHref()}
-                >
+                <Link id="to-signup-link" size="l" theme="brand" variant="hover" href="/signup">
                   {t('register')}
                 </Link>
               </div>

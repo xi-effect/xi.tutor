@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
 
-export const Route = createFileRoute('/signup/')({
+// @ts-ignore
+export const Route = createFileRoute('/(auth)/signup/')({
   component: SignUp,
 });
 
