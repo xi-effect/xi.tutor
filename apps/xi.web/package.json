@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "common.eslint": "*",
-    "@xipkg/tailwind": "0.7.5",
+    "@xipkg/tailwind": "0.8.1",
     "common.typescript": "*",
     "@eslint/js": "^9.19.0",
     "@tanstack/router-devtools": "^1.109.2",
