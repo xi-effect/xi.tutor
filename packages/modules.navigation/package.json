@@ -1,5 +1,5 @@
 {
-  "name": "pages.signup",
+  "name": "modules.navigation",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -10,12 +10,18 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "sonner": "2.0.1",
+    "common.services": "*",
+    "i18next": "24.2.2",
+    "react-i18next": "15.4.1",
+    "@tanstack/react-router": "^1.109.0",
     "@xipkg/button": "3.1.2",
     "@xipkg/form": "^4.0.5",
     "@xipkg/icons": "2.2.0",
     "@xipkg/input": "2.0.7",
     "@xipkg/link": "2.0.5",
-    "@xipkg/utils": "1.6.3",
+    "@xipkg/utils": "1.7.0",
+    "@xipkg/sidebar": "0.0.1",
     "zod": "3.24.2"
   },
   "devDependencies": {
@@ -37,9 +43,8 @@
   },
   "peerDependencies": {
     "react": "19",
-    "next": "15",
-    "react-hook-form": "^7.0.0",
-    "@hookform/resolvers": "3.9.1"
+    "@hookform/resolvers": "3.9.1",
+    "react-hook-form": "^7.0.0"
   },
   "description": "form for signin",
   "author": "xi.effect"

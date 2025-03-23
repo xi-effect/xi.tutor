@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "common.eslint": "*",
+    "modules.navigation": "*",
     "@xipkg/tailwind": "0.8.1",
     "common.typescript": "*",
     "@eslint/js": "^9.19.0",

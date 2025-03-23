@@ -7,6 +7,28 @@ interface MyRouterContext {
 }
 
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+  head: () => ({
+    meta: [
+      // {
+      //   name: 'description',
+      //   content: 'My App is a web application',
+      // },
+      {
+        title: 'xi.effect',
+      },
+    ],
+    // links: [
+    //   {
+    //     rel: 'icon',
+    //     href: '/favicon.ico',
+    //   },
+    // ],
+    // scripts: [
+    //   {
+    //     src: 'https://www.google-analytics.com/analytics.js',
+    //   },
+    // ],
+  }),
   beforeLoad: ({ context, location }) => {
     console.log('Route', context, location);
 

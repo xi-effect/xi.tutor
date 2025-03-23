@@ -1,15 +1,36 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Outlet, createFileRoute } from '@tanstack/react-router';
+import { Navigation } from 'modules.navigation';
 
-// @ts-ignore
 export const Route = createFileRoute('/(app)/_layout')({
+  head: () => ({
+    meta: [
+      // {
+      //   name: 'description',
+      //   content: 'My App is a web application',
+      // },
+      {
+        title: 'xi.effect',
+      },
+    ],
+    // links: [
+    //   {
+    //     rel: 'icon',
+    //     href: '/favicon.ico',
+    //   },
+    // ],
+    // scripts: [
+    //   {
+    //     src: 'https://www.google-analytics.com/analytics.js',
+    //   },
+    // ],
+  }),
   component: LayoutComponent,
 });
 
 function LayoutComponent() {
   return (
     <div>
-      <h1>Layout</h1>
+      <Navigation />
       <Outlet />
     </div>
   );

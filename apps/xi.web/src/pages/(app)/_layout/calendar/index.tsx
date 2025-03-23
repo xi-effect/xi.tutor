@@ -2,7 +2,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 
 // @ts-ignore
-export const Route = createFileRoute('/(app)/calendar/')({
+export const Route = createFileRoute('/(app)/_layout/calendar/')({
   component: Calendar,
   beforeLoad: ({ context, location }) => {
     console.log('Calendar', context, location);
