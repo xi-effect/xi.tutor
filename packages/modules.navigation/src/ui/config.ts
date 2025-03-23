@@ -13,17 +13,17 @@ export const items = [
   },
   {
     title: 'Ученики',
-    url: '#',
+    url: '/classrooms',
     icon: Group,
   },
   {
     title: 'Материалы',
-    url: '#',
+    url: '/content',
     icon: Materials,
   },
   {
     title: 'Оплаты',
-    url: '#',
+    url: '/payments',
     icon: Payments,
   },
 ];
