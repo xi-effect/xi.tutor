@@ -2,27 +2,27 @@ import { Home, Calendar, Group, TelegramFilled, Payments, Materials, FAQ } from 
 
 export const items = [
   {
-    title: 'Главная',
+    titleKey: 'home',
     url: '/',
     icon: Home,
   },
   {
-    title: 'Календарь',
+    titleKey: 'calendar',
     url: '/calendar',
     icon: Calendar,
   },
   {
-    title: 'Ученики',
+    titleKey: 'students',
     url: '/classrooms',
     icon: Group,
   },
   {
-    title: 'Материалы',
-    url: '/content',
+    titleKey: 'materials',
+    url: '/materials',
     icon: Materials,
   },
   {
-    title: 'Оплаты',
+    titleKey: 'payments',
     url: '/payments',
     icon: Payments,
   },
@@ -30,12 +30,12 @@ export const items = [
 
 export const footerMenu = [
   {
-    title: 'Поддержка',
+    titleKey: 'support',
     url: '#',
     icon: TelegramFilled,
   },
   {
-    title: 'FAQ',
+    titleKey: 'faq',
     url: '#',
     icon: FAQ,
   },

@@ -1,8 +1,9 @@
 {
-  "sign_in": "Вход в аккаунт",
-  "email": "Электронная почта",
-  "password": "Пароль",
-  "forgot_password": "Восстановить пароль",
-  "register": "Зарегистрироваться",
-  "sign_in_button": "Войти"
+  "home": "Главная",
+  "calendar": "Календарь",
+  "students": "Ученики",
+  "materials": "Материалы",
+  "payments": "Оплаты",
+  "support": "Поддержка",
+  "faq": "FAQ"
 }

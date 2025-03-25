@@ -5,14 +5,17 @@ import LocalStorageBackend from 'i18next-localstorage-backend';
 
 // Импортируем переводы из всех пакетов
 import { signinEn, signinRu } from 'pages.signin';
+import { navigationEn, navigationRu } from 'modules.navigation';
 
 // Собираем переводы
 const resources = {
   en: {
     signin: signinEn,
+    navigation: navigationEn,
   },
   ru: {
     signin: signinRu,
+    navigation: navigationRu,
   },
 };
 

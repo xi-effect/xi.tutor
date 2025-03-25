@@ -13,8 +13,10 @@ import { useMediaQuery } from '@xipkg/utils';
 import { footerMenu, items } from './config';
 import { CustomTrigger } from './components';
 import { useLocation, useNavigate } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 
 export const Navigation = () => {
+  const { t } = useTranslation('navigation'); // Используем namespace "signin"
   const isMobile = useMediaQuery('(max-width: 960px)');
 
   const navigate = useNavigate();
@@ -39,11 +41,11 @@ export const Navigation = () => {
               <SidebarGroupContent>
                 <SidebarMenu>
                   {items.map((item) => (
-                    <SidebarMenuItem className="cursor-pointer" key={item.title}>
+                    <SidebarMenuItem className="cursor-pointer" key={item.titleKey}>
                       <SidebarMenuButton asChild isActive={getIsActiveItem(item.url)}>
                         <a onClick={() => navigate({ to: item.url })}>
                           <item.icon className="h-6 w-6" />
-                          <span className="text-base">{item.title}</span>
+                          <span className="text-base">{t(item.titleKey)}</span>
                         </a>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -55,11 +57,11 @@ export const Navigation = () => {
           <SidebarFooter>
             <SidebarMenu>
               {footerMenu.map((item) => (
-                <SidebarMenuItem key={item.title}>
+                <SidebarMenuItem key={item.titleKey}>
                   <SidebarMenuButton variant="ghost" asChild>
                     <a className="hover:underline" href={item.url}>
                       <item.icon />
-                      <span>{item.title}</span>
+                      <span>{t(item.titleKey)}</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

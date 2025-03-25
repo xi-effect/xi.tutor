@@ -19,7 +19,7 @@ import { Route as authSignupIndexImport } from './pages/(auth)/signup/index';
 import { Route as authSigninIndexImport } from './pages/(auth)/signin/index';
 import { Route as appLayoutIndexImport } from './pages/(app)/_layout/index';
 import { Route as appLayoutPaymentsIndexImport } from './pages/(app)/_layout/payments/index';
-import { Route as appLayoutContentIndexImport } from './pages/(app)/_layout/content/index';
+import { Route as appLayoutContentIndexImport } from './pages/(app)/_layout/materials/index';
 import { Route as appLayoutClassroomsIndexImport } from './pages/(app)/_layout/classrooms/index';
 import { Route as appLayoutCalendarIndexImport } from './pages/(app)/_layout/calendar/index';
 

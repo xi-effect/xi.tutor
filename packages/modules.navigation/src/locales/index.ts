@@ -1,4 +1,4 @@
-import signinEn from './en.json';
-import signinRu from './ru.json';
+import navigationEn from './en.json';
+import navigationRu from './ru.json';
 
-export { signinEn, signinRu };
+export { navigationEn, navigationRu };
