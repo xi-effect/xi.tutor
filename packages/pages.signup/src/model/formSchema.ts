@@ -1,35 +1,54 @@
 import * as z from 'zod';
+import { useTranslation } from 'react-i18next';
+import { useMemo } from 'react';
 
-export const FormSchema = z.object({
-  username: z
-    .string()
-    .min(1, {
-      message: 'Обязательное поле',
-    })
-    .min(4, {
-      message: 'Минимальная длина - 4 символов',
-    })
-    .max(30, {
-      message: 'Максимальная длина - 30 символов',
-    })
-    .regex(/^[a-z0-9_.]+$/, {
-      message:
-        'Используйте только латинский алфавит, в нижнем регистре, цифры или знаки: "_" или "."',
-    }),
-  email: z
-    .string({
-      required_error: 'Обязательное поле',
-    })
-    .email({
-      message: 'Некорректный формат данных',
-    }),
-  password: z
-    .string({
-      required_error: 'Обязательное поле',
-    })
-    .min(6, {
-      message: 'Минимальная длина пароля - 6 символов',
-    }),
-});
+export const useFormSchema = () => {
+  const { t } = useTranslation('signup');
+  const usernameMinLength = 4;
+  const usernameMaxLength = 30;
+  const passwordMinLength = 6;
 
-export type FormData = z.infer<typeof FormSchema>;
+  const formSchema = useMemo(() => {
+    return z.object({
+      username: z
+        .string()
+        .min(1, {
+          message: t('validation.required'),
+        })
+        .min(usernameMinLength, {
+          message: 
+            `${t('validation.minLength')}${t('validation.symbols', {count: usernameMinLength})}`,
+        })
+        .max(usernameMaxLength, {
+          message: 
+            `${t('validation.maxLength')}${t('validation.symbols', {count: usernameMaxLength})}`,
+        })
+        .regex(/^[a-z0-9_.]+$/, {
+          message: t('validation.no_symbols'),
+        }),
+      email: z
+        .string({
+          required_error: t('required'),
+        })
+        .email({
+          message: t('wrong_format'),
+        }),
+      password: z
+        .string({
+          required_error: t('required'),
+        })
+        .min(passwordMinLength, {
+          message: 
+            `${t('validation.minLength')}${t('validation.symbols', {count: passwordMinLength})}`,
+        }),
+    });
+  }, [t]);
+
+  return formSchema;
+};
+
+export type FormData = z.infer<z.ZodObject<{
+  username: z.ZodString;
+  email: z.ZodString;
+  password: z.ZodString;
+}>>;
