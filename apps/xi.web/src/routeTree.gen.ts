@@ -15,11 +15,15 @@ import { createFileRoute } from '@tanstack/react-router';
 import { Route as rootRoute } from './pages/__root';
 import { Route as AboutImport } from './pages/about';
 import { Route as appLayoutImport } from './pages/(app)/_layout';
+import { Route as WelcomeUserIndexImport } from './pages/welcome/user/index';
+import { Route as WelcomeSocialsIndexImport } from './pages/welcome/socials/index';
+import { Route as WelcomeRoleIndexImport } from './pages/welcome/role/index';
+import { Route as WelcomeAboutIndexImport } from './pages/welcome/about/index';
 import { Route as authSignupIndexImport } from './pages/(auth)/signup/index';
 import { Route as authSigninIndexImport } from './pages/(auth)/signin/index';
 import { Route as appLayoutIndexImport } from './pages/(app)/_layout/index';
 import { Route as appLayoutPaymentsIndexImport } from './pages/(app)/_layout/payments/index';
-import { Route as appLayoutContentIndexImport } from './pages/(app)/_layout/materials/index';
+import { Route as appLayoutMaterialsIndexImport } from './pages/(app)/_layout/materials/index';
 import { Route as appLayoutClassroomsIndexImport } from './pages/(app)/_layout/classrooms/index';
 import { Route as appLayoutCalendarIndexImport } from './pages/(app)/_layout/calendar/index';
 
@@ -43,6 +47,30 @@ const AboutRoute = AboutImport.update({
 const appLayoutRoute = appLayoutImport.update({
   id: '/_layout',
   getParentRoute: () => appRoute,
+} as any);
+
+const WelcomeUserIndexRoute = WelcomeUserIndexImport.update({
+  id: '/welcome/user/',
+  path: '/welcome/user/',
+  getParentRoute: () => rootRoute,
+} as any);
+
+const WelcomeSocialsIndexRoute = WelcomeSocialsIndexImport.update({
+  id: '/welcome/socials/',
+  path: '/welcome/socials/',
+  getParentRoute: () => rootRoute,
+} as any);
+
+const WelcomeRoleIndexRoute = WelcomeRoleIndexImport.update({
+  id: '/welcome/role/',
+  path: '/welcome/role/',
+  getParentRoute: () => rootRoute,
+} as any);
+
+const WelcomeAboutIndexRoute = WelcomeAboutIndexImport.update({
+  id: '/welcome/about/',
+  path: '/welcome/about/',
+  getParentRoute: () => rootRoute,
 } as any);
 
 const authSignupIndexRoute = authSignupIndexImport.update({
@@ -69,9 +97,9 @@ const appLayoutPaymentsIndexRoute = appLayoutPaymentsIndexImport.update({
   getParentRoute: () => appLayoutRoute,
 } as any);
 
-const appLayoutContentIndexRoute = appLayoutContentIndexImport.update({
-  id: '/content/',
-  path: '/content/',
+const appLayoutMaterialsIndexRoute = appLayoutMaterialsIndexImport.update({
+  id: '/materials/',
+  path: '/materials/',
   getParentRoute: () => appLayoutRoute,
 } as any);
 
@@ -133,6 +161,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authSignupIndexImport;
       parentRoute: typeof rootRoute;
     };
+    '/welcome/about/': {
+      id: '/welcome/about/';
+      path: '/welcome/about';
+      fullPath: '/welcome/about';
+      preLoaderRoute: typeof WelcomeAboutIndexImport;
+      parentRoute: typeof rootRoute;
+    };
+    '/welcome/role/': {
+      id: '/welcome/role/';
+      path: '/welcome/role';
+      fullPath: '/welcome/role';
+      preLoaderRoute: typeof WelcomeRoleIndexImport;
+      parentRoute: typeof rootRoute;
+    };
+    '/welcome/socials/': {
+      id: '/welcome/socials/';
+      path: '/welcome/socials';
+      fullPath: '/welcome/socials';
+      preLoaderRoute: typeof WelcomeSocialsIndexImport;
+      parentRoute: typeof rootRoute;
+    };
+    '/welcome/user/': {
+      id: '/welcome/user/';
+      path: '/welcome/user';
+      fullPath: '/welcome/user';
+      preLoaderRoute: typeof WelcomeUserIndexImport;
+      parentRoute: typeof rootRoute;
+    };
     '/(app)/_layout/calendar/': {
       id: '/(app)/_layout/calendar/';
       path: '/calendar';
@@ -147,11 +203,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutClassroomsIndexImport;
       parentRoute: typeof appLayoutImport;
     };
-    '/(app)/_layout/content/': {
-      id: '/(app)/_layout/content/';
-      path: '/content';
-      fullPath: '/content';
-      preLoaderRoute: typeof appLayoutContentIndexImport;
+    '/(app)/_layout/materials/': {
+      id: '/(app)/_layout/materials/';
+      path: '/materials';
+      fullPath: '/materials';
+      preLoaderRoute: typeof appLayoutMaterialsIndexImport;
       parentRoute: typeof appLayoutImport;
     };
     '/(app)/_layout/payments/': {
@@ -170,7 +226,7 @@ interface appLayoutRouteChildren {
   appLayoutIndexRoute: typeof appLayoutIndexRoute;
   appLayoutCalendarIndexRoute: typeof appLayoutCalendarIndexRoute;
   appLayoutClassroomsIndexRoute: typeof appLayoutClassroomsIndexRoute;
-  appLayoutContentIndexRoute: typeof appLayoutContentIndexRoute;
+  appLayoutMaterialsIndexRoute: typeof appLayoutMaterialsIndexRoute;
   appLayoutPaymentsIndexRoute: typeof appLayoutPaymentsIndexRoute;
 }
 
@@ -178,7 +234,7 @@ const appLayoutRouteChildren: appLayoutRouteChildren = {
   appLayoutIndexRoute: appLayoutIndexRoute,
   appLayoutCalendarIndexRoute: appLayoutCalendarIndexRoute,
   appLayoutClassroomsIndexRoute: appLayoutClassroomsIndexRoute,
-  appLayoutContentIndexRoute: appLayoutContentIndexRoute,
+  appLayoutMaterialsIndexRoute: appLayoutMaterialsIndexRoute,
   appLayoutPaymentsIndexRoute: appLayoutPaymentsIndexRoute,
 };
 
@@ -199,9 +255,13 @@ export interface FileRoutesByFullPath {
   '/': typeof appLayoutIndexRoute;
   '/signin': typeof authSigninIndexRoute;
   '/signup': typeof authSignupIndexRoute;
+  '/welcome/about': typeof WelcomeAboutIndexRoute;
+  '/welcome/role': typeof WelcomeRoleIndexRoute;
+  '/welcome/socials': typeof WelcomeSocialsIndexRoute;
+  '/welcome/user': typeof WelcomeUserIndexRoute;
   '/calendar': typeof appLayoutCalendarIndexRoute;
   '/classrooms': typeof appLayoutClassroomsIndexRoute;
-  '/content': typeof appLayoutContentIndexRoute;
+  '/materials': typeof appLayoutMaterialsIndexRoute;
   '/payments': typeof appLayoutPaymentsIndexRoute;
 }
 
@@ -210,9 +270,13 @@ export interface FileRoutesByTo {
   '/': typeof appLayoutIndexRoute;
   '/signin': typeof authSigninIndexRoute;
   '/signup': typeof authSignupIndexRoute;
+  '/welcome/about': typeof WelcomeAboutIndexRoute;
+  '/welcome/role': typeof WelcomeRoleIndexRoute;
+  '/welcome/socials': typeof WelcomeSocialsIndexRoute;
+  '/welcome/user': typeof WelcomeUserIndexRoute;
   '/calendar': typeof appLayoutCalendarIndexRoute;
   '/classrooms': typeof appLayoutClassroomsIndexRoute;
-  '/content': typeof appLayoutContentIndexRoute;
+  '/materials': typeof appLayoutMaterialsIndexRoute;
   '/payments': typeof appLayoutPaymentsIndexRoute;
 }
 
@@ -224,9 +288,13 @@ export interface FileRoutesById {
   '/(app)/_layout/': typeof appLayoutIndexRoute;
   '/(auth)/signin/': typeof authSigninIndexRoute;
   '/(auth)/signup/': typeof authSignupIndexRoute;
+  '/welcome/about/': typeof WelcomeAboutIndexRoute;
+  '/welcome/role/': typeof WelcomeRoleIndexRoute;
+  '/welcome/socials/': typeof WelcomeSocialsIndexRoute;
+  '/welcome/user/': typeof WelcomeUserIndexRoute;
   '/(app)/_layout/calendar/': typeof appLayoutCalendarIndexRoute;
   '/(app)/_layout/classrooms/': typeof appLayoutClassroomsIndexRoute;
-  '/(app)/_layout/content/': typeof appLayoutContentIndexRoute;
+  '/(app)/_layout/materials/': typeof appLayoutMaterialsIndexRoute;
   '/(app)/_layout/payments/': typeof appLayoutPaymentsIndexRoute;
 }
 
@@ -237,9 +305,13 @@ export interface FileRouteTypes {
     | '/'
     | '/signin'
     | '/signup'
+    | '/welcome/about'
+    | '/welcome/role'
+    | '/welcome/socials'
+    | '/welcome/user'
     | '/calendar'
     | '/classrooms'
-    | '/content'
+    | '/materials'
     | '/payments';
   fileRoutesByTo: FileRoutesByTo;
   to:
@@ -247,9 +319,13 @@ export interface FileRouteTypes {
     | '/'
     | '/signin'
     | '/signup'
+    | '/welcome/about'
+    | '/welcome/role'
+    | '/welcome/socials'
+    | '/welcome/user'
     | '/calendar'
     | '/classrooms'
-    | '/content'
+    | '/materials'
     | '/payments';
   id:
     | '__root__'
@@ -259,9 +335,13 @@ export interface FileRouteTypes {
     | '/(app)/_layout/'
     | '/(auth)/signin/'
     | '/(auth)/signup/'
+    | '/welcome/about/'
+    | '/welcome/role/'
+    | '/welcome/socials/'
+    | '/welcome/user/'
     | '/(app)/_layout/calendar/'
     | '/(app)/_layout/classrooms/'
-    | '/(app)/_layout/content/'
+    | '/(app)/_layout/materials/'
     | '/(app)/_layout/payments/';
   fileRoutesById: FileRoutesById;
 }
@@ -271,6 +351,10 @@ export interface RootRouteChildren {
   appRoute: typeof appRouteWithChildren;
   authSigninIndexRoute: typeof authSigninIndexRoute;
   authSignupIndexRoute: typeof authSignupIndexRoute;
+  WelcomeAboutIndexRoute: typeof WelcomeAboutIndexRoute;
+  WelcomeRoleIndexRoute: typeof WelcomeRoleIndexRoute;
+  WelcomeSocialsIndexRoute: typeof WelcomeSocialsIndexRoute;
+  WelcomeUserIndexRoute: typeof WelcomeUserIndexRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -278,6 +362,10 @@ const rootRouteChildren: RootRouteChildren = {
   appRoute: appRouteWithChildren,
   authSigninIndexRoute: authSigninIndexRoute,
   authSignupIndexRoute: authSignupIndexRoute,
+  WelcomeAboutIndexRoute: WelcomeAboutIndexRoute,
+  WelcomeRoleIndexRoute: WelcomeRoleIndexRoute,
+  WelcomeSocialsIndexRoute: WelcomeSocialsIndexRoute,
+  WelcomeUserIndexRoute: WelcomeUserIndexRoute,
 };
 
 export const routeTree = rootRoute
@@ -293,7 +381,11 @@ export const routeTree = rootRoute
         "/about",
         "/(app)",
         "/(auth)/signin/",
-        "/(auth)/signup/"
+        "/(auth)/signup/",
+        "/welcome/about/",
+        "/welcome/role/",
+        "/welcome/socials/",
+        "/welcome/user/"
       ]
     },
     "/about": {
@@ -312,7 +404,7 @@ export const routeTree = rootRoute
         "/(app)/_layout/",
         "/(app)/_layout/calendar/",
         "/(app)/_layout/classrooms/",
-        "/(app)/_layout/content/",
+        "/(app)/_layout/materials/",
         "/(app)/_layout/payments/"
       ]
     },
@@ -326,6 +418,18 @@ export const routeTree = rootRoute
     "/(auth)/signup/": {
       "filePath": "(auth)/signup/index.tsx"
     },
+    "/welcome/about/": {
+      "filePath": "welcome/about/index.tsx"
+    },
+    "/welcome/role/": {
+      "filePath": "welcome/role/index.tsx"
+    },
+    "/welcome/socials/": {
+      "filePath": "welcome/socials/index.tsx"
+    },
+    "/welcome/user/": {
+      "filePath": "welcome/user/index.tsx"
+    },
     "/(app)/_layout/calendar/": {
       "filePath": "(app)/_layout/calendar/index.tsx",
       "parent": "/(app)/_layout"
@@ -334,8 +438,8 @@ export const routeTree = rootRoute
       "filePath": "(app)/_layout/classrooms/index.tsx",
       "parent": "/(app)/_layout"
     },
-    "/(app)/_layout/content/": {
-      "filePath": "(app)/_layout/content/index.tsx",
+    "/(app)/_layout/materials/": {
+      "filePath": "(app)/_layout/materials/index.tsx",
       "parent": "/(app)/_layout"
     },
     "/(app)/_layout/payments/": {
