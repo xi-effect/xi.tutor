@@ -6,7 +6,7 @@ const Role = () => {
 };
 
 // @ts-ignore
-export const Route = createFileRoute('/welcome/role/')({
+export const Route = createFileRoute('/(app)/_layout/welcome/role/')({
   component: Role,
   beforeLoad: ({ context }) => {
     console.log('Role', context, location);

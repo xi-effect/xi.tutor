@@ -6,7 +6,7 @@ const Socials = () => {
 };
 
 // @ts-ignore
-export const Route = createFileRoute('/welcome/socials/')({
+export const Route = createFileRoute('/(app)/_layout/welcome/socials/')({
   component: Socials,
   beforeLoad: ({ context }) => {
     console.log('Socials', context, location);

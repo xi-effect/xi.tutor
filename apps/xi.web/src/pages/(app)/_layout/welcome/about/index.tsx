@@ -6,7 +6,7 @@ const About = () => {
 };
 
 // @ts-ignore
-export const Route = createFileRoute('/welcome/about/')({
+export const Route = createFileRoute('/(app)/_layout/welcome/about/')({
   component: About,
   beforeLoad: ({ context }) => {
     console.log('About', context, location);
