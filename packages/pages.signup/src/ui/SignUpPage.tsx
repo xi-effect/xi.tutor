@@ -1,8 +1,8 @@
-'use client';
-
-import React from 'react';
-import * as z from 'zod';
+import { useState } from 'react';
+import { useSearch } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Link } from '@xipkg/link';
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
 import {
@@ -14,88 +14,43 @@ import {
   FormMessage,
   useForm,
 } from '@xipkg/form';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Link } from '@xipkg/link';
 import { Eyeoff, Eyeon } from '@xipkg/icons';
 
-const FormSchema = z.object({
-  username: z
-    .string()
-    .min(1, {
-      message: 'Обязательное поле',
-    })
-    .min(4, {
-      message: 'Минимальная длина - 4 символов',
-    })
-    .max(30, {
-      message: 'Максимальная длина - 30 символов',
-    })
-    .regex(/^[a-z0-9_.]+$/, {
-      message:
-        'Используйте только латинский алфавит, в нижнем регистре, цифры или знаки: "_" или "."',
-    }),
-  email: z
-    .string({
-      required_error: 'Обязательное поле',
-    })
-    .email({
-      message: 'Некорректный формат данных',
-    }),
-  password: z
-    .string({
-      required_error: 'Обязательное поле',
-    })
-    .min(6, {
-      message: 'Минимальная длина пароля - 6 символов',
-    }),
-});
+import { useFormSchema, type FormData } from '../model';
+import { useSignupForm } from '../hooks';
 
-export const SignUp = () => {
-  const router = useRouter();
-  const searchParams = useSearchParams();
 
-  // const onSignUp = useMainSt((state) => state.onSignUp);
-  const form = useForm<z.infer<typeof FormSchema>>({
-    resolver: zodResolver(FormSchema),
+export const SignUpPage = () => {
+  const { t } = useTranslation('signup');
+  const searchParams = useSearch({ strict: false });
+
+  const formSchema = useFormSchema();
+  const { onSignupForm, isPending } = useSignupForm();
+
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
   });
 
   const {
     control,
     // setError,
     handleSubmit,
-    trigger,
     formState: { errors },
   } = form;
 
-  const [isButtonActive, setIsButtonActive] = React.useState(true);
-
-  // data: z.infer<typeof FormSchema>
-  const onSubmit = async () => {
-    trigger();
-    setIsButtonActive(false);
-    // const status = await onSignUp({ ...data, setError });
-
-    const status = 200;
-    if (status === 200 && searchParams.has('iid') && searchParams.get('community')) {
-      router.push(
-        `/welcome/user-info?iid=${searchParams.get('iid')}&community=${searchParams.get('community')}`,
-      );
-    } else if (status === 200) {
-      router.push('/welcome/user-info');
-    } else {
-      setIsButtonActive(true);
-    }
+  const onSubmit = (data: FormData) => {
+    onSignupForm(data);  
   };
 
-  const [isPasswordShow, setIsPasswordShow] = React.useState(false);
+  const [isPasswordShow, setIsPasswordShow] = useState(false);
 
   const changePasswordShow = () => {
     setIsPasswordShow((prev) => !prev);
   };
 
   const getSigninHref = () => {
-    if (searchParams.has('iid') && searchParams.get('community')) {
-      return `/signin?iid=${searchParams.get('iid')}&community=${searchParams.get('community')}`;
+    if (searchParams.iid && searchParams.community) {
+      return `/signin?iid=${searchParams.iid}&community=${searchParams.community}`;
     }
 
     return '/signin';
@@ -111,14 +66,14 @@ export const SignUp = () => {
           {/* <Logo height={22} width={180} logoVariant="navigation" logoSize="default" /> */}
           Logo
         </div>
-        <h1 className="self-center text-2xl font-semibold">Регистрация</h1>
+        <h1 className="self-center text-2xl font-semibold">{t('register')}</h1>
         <FormField
           control={control}
           name="username"
           defaultValue=""
           render={({ field }) => (
             <FormItem className="pt-4">
-              <FormLabel htmlFor="user name">Имя пользователя</FormLabel>
+              <FormLabel htmlFor="user name">{t('username')}</FormLabel>
               <FormControl>
                 <Input
                   error={!!errors?.username}
@@ -127,7 +82,7 @@ export const SignUp = () => {
                   id="user name"
                   {...field}
                 />
-              </FormControl>
+              </FormControl> 
               <FormMessage />
             </FormItem>
           )}
@@ -138,7 +93,7 @@ export const SignUp = () => {
           defaultValue=""
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="user email">Электронная почта</FormLabel>
+              <FormLabel htmlFor="user email">{t('email')}</FormLabel>
               <FormControl>
                 <Input
                   error={!!errors?.email}
@@ -158,7 +113,7 @@ export const SignUp = () => {
           defaultValue=""
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="user password">Пароль</FormLabel>
+              <FormLabel htmlFor="user password">{t('password')}</FormLabel>
               <FormControl>
                 <Input
                   error={!!errors?.password}
@@ -185,12 +140,12 @@ export const SignUp = () => {
         <div className="flex h-full w-full items-end justify-between">
           <div className="flex h-[48px] items-center">
             <Link size="l" theme="brand" variant="hover" href={getSigninHref()}>
-              Войти
+              {t('sign_in')}
             </Link>
           </div>
-          {isButtonActive ? (
+          {!isPending ? (
             <Button size="m" variant="default" type="submit" className="w-[214px]">
-              Зарегистрироваться
+              {t('sign_up')}
             </Button>
           ) : (
             <Button variant="default-spinner" className="w-[214px]" disabled />

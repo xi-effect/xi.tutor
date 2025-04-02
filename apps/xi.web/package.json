@@ -17,6 +17,7 @@
     "sonner": "2.0.1",
     "common.config": "*",
     "pages.signin": "*",
+    "pages.signup": "*",
     "@tailwindcss/vite": "^4.0.9",
     "@tanstack/react-router": "^1.109.0",
     "@tanstack/react-query": "5.66.11",
