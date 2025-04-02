@@ -22,16 +22,12 @@ export const useSignupForm = () => {
         onSuccess: () => {
           if (searchParams.iid && searchParams.community) {
             navigate({
-              // Временное решение. Когда появится страница welcome/user-info, изменить роут
-              to: "/",
-              // to: "/welcome/user-info",
+              to: "/welcome/user",
               search: { iid: searchParams.iid, community: searchParams.community },
             });
           } else {
             navigate({
-              // Временное решение. Когда появится страница welcome/user-info, изменить роут
-              to: "/",
-              // to: "/welcome/user-info",
+              to: "/welcome/user",
             });
           }
         },
