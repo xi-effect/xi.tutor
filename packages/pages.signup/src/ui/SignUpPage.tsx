@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Link } from '@xipkg/link';
@@ -17,16 +17,16 @@ import {
 import { Eyeoff, Eyeon } from '@xipkg/icons';
 
 import { useFormSchema, type FormData } from '../model';
+import { useSignupForm } from '../hooks';
 
 
 export const SignUpPage = () => {
   const { t } = useTranslation('signup');
-  const formSchema = useFormSchema();
-
-  const navigate = useNavigate();
   const searchParams = useSearch({ strict: false });
 
-  // const onSignUp = useMainSt((state) => state.onSignUp);
+  const formSchema = useFormSchema();
+  const { onSignupForm, isPending } = useSignupForm();
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
   });
@@ -35,32 +35,11 @@ export const SignUpPage = () => {
     control,
     // setError,
     handleSubmit,
-    trigger,
     formState: { errors },
   } = form;
 
-  const [isButtonActive, setIsButtonActive] = useState(true);
-
-  const onSubmit = async () => {
-    trigger();
-    setIsButtonActive(false);
-    // const status = await onSignUp({ ...data, setError });
-
-
-    const status = 200;
-
-    if (status === 200 && searchParams.iid && searchParams.community) {
-      navigate({
-        to: "/welcome/user-info",
-        search: { iid: searchParams.iid, community: searchParams.community },
-      });
-    } else if (status === 200) {
-      navigate({
-        to: "/welcome/user-info",
-      });
-    } else {
-      setIsButtonActive(true);
-    }
+  const onSubmit = (data: FormData) => {
+    onSignupForm(data);  
   };
 
   const [isPasswordShow, setIsPasswordShow] = useState(false);
@@ -97,7 +76,7 @@ export const SignUpPage = () => {
               <FormLabel htmlFor="user name">{t('username')}</FormLabel>
               <FormControl>
                 <Input
-                  error={!!errors && errors.username?.message}
+                  error={!!errors?.username}
                   autoComplete="off"
                   type="text"
                   id="user name"
@@ -164,7 +143,7 @@ export const SignUpPage = () => {
               {t('sign_in')}
             </Link>
           </div>
-          {isButtonActive ? (
+          {!isPending ? (
             <Button size="m" variant="default" type="submit" className="w-[214px]">
               {t('sign_up')}
             </Button>
