@@ -19,9 +19,13 @@ import { Route as authSignupIndexImport } from './pages/(auth)/signup/index';
 import { Route as authSigninIndexImport } from './pages/(auth)/signin/index';
 import { Route as appLayoutIndexImport } from './pages/(app)/_layout/index';
 import { Route as appLayoutPaymentsIndexImport } from './pages/(app)/_layout/payments/index';
-import { Route as appLayoutContentIndexImport } from './pages/(app)/_layout/materials/index';
+import { Route as appLayoutMaterialsIndexImport } from './pages/(app)/_layout/materials/index';
 import { Route as appLayoutClassroomsIndexImport } from './pages/(app)/_layout/classrooms/index';
 import { Route as appLayoutCalendarIndexImport } from './pages/(app)/_layout/calendar/index';
+import { Route as appLayoutWelcomeUserIndexImport } from './pages/(app)/_layout/welcome/user/index';
+import { Route as appLayoutWelcomeSocialsIndexImport } from './pages/(app)/_layout/welcome/socials/index';
+import { Route as appLayoutWelcomeRoleIndexImport } from './pages/(app)/_layout/welcome/role/index';
+import { Route as appLayoutWelcomeAboutIndexImport } from './pages/(app)/_layout/welcome/about/index';
 
 // Create Virtual Routes
 
@@ -69,9 +73,9 @@ const appLayoutPaymentsIndexRoute = appLayoutPaymentsIndexImport.update({
   getParentRoute: () => appLayoutRoute,
 } as any);
 
-const appLayoutContentIndexRoute = appLayoutContentIndexImport.update({
-  id: '/content/',
-  path: '/content/',
+const appLayoutMaterialsIndexRoute = appLayoutMaterialsIndexImport.update({
+  id: '/materials/',
+  path: '/materials/',
   getParentRoute: () => appLayoutRoute,
 } as any);
 
@@ -84,6 +88,30 @@ const appLayoutClassroomsIndexRoute = appLayoutClassroomsIndexImport.update({
 const appLayoutCalendarIndexRoute = appLayoutCalendarIndexImport.update({
   id: '/calendar/',
   path: '/calendar/',
+  getParentRoute: () => appLayoutRoute,
+} as any);
+
+const appLayoutWelcomeUserIndexRoute = appLayoutWelcomeUserIndexImport.update({
+  id: '/welcome/user/',
+  path: '/welcome/user/',
+  getParentRoute: () => appLayoutRoute,
+} as any);
+
+const appLayoutWelcomeSocialsIndexRoute = appLayoutWelcomeSocialsIndexImport.update({
+  id: '/welcome/socials/',
+  path: '/welcome/socials/',
+  getParentRoute: () => appLayoutRoute,
+} as any);
+
+const appLayoutWelcomeRoleIndexRoute = appLayoutWelcomeRoleIndexImport.update({
+  id: '/welcome/role/',
+  path: '/welcome/role/',
+  getParentRoute: () => appLayoutRoute,
+} as any);
+
+const appLayoutWelcomeAboutIndexRoute = appLayoutWelcomeAboutIndexImport.update({
+  id: '/welcome/about/',
+  path: '/welcome/about/',
   getParentRoute: () => appLayoutRoute,
 } as any);
 
@@ -147,11 +175,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutClassroomsIndexImport;
       parentRoute: typeof appLayoutImport;
     };
-    '/(app)/_layout/content/': {
-      id: '/(app)/_layout/content/';
-      path: '/content';
-      fullPath: '/content';
-      preLoaderRoute: typeof appLayoutContentIndexImport;
+    '/(app)/_layout/materials/': {
+      id: '/(app)/_layout/materials/';
+      path: '/materials';
+      fullPath: '/materials';
+      preLoaderRoute: typeof appLayoutMaterialsIndexImport;
       parentRoute: typeof appLayoutImport;
     };
     '/(app)/_layout/payments/': {
@@ -159,6 +187,34 @@ declare module '@tanstack/react-router' {
       path: '/payments';
       fullPath: '/payments';
       preLoaderRoute: typeof appLayoutPaymentsIndexImport;
+      parentRoute: typeof appLayoutImport;
+    };
+    '/(app)/_layout/welcome/about/': {
+      id: '/(app)/_layout/welcome/about/';
+      path: '/welcome/about';
+      fullPath: '/welcome/about';
+      preLoaderRoute: typeof appLayoutWelcomeAboutIndexImport;
+      parentRoute: typeof appLayoutImport;
+    };
+    '/(app)/_layout/welcome/role/': {
+      id: '/(app)/_layout/welcome/role/';
+      path: '/welcome/role';
+      fullPath: '/welcome/role';
+      preLoaderRoute: typeof appLayoutWelcomeRoleIndexImport;
+      parentRoute: typeof appLayoutImport;
+    };
+    '/(app)/_layout/welcome/socials/': {
+      id: '/(app)/_layout/welcome/socials/';
+      path: '/welcome/socials';
+      fullPath: '/welcome/socials';
+      preLoaderRoute: typeof appLayoutWelcomeSocialsIndexImport;
+      parentRoute: typeof appLayoutImport;
+    };
+    '/(app)/_layout/welcome/user/': {
+      id: '/(app)/_layout/welcome/user/';
+      path: '/welcome/user';
+      fullPath: '/welcome/user';
+      preLoaderRoute: typeof appLayoutWelcomeUserIndexImport;
       parentRoute: typeof appLayoutImport;
     };
   }
@@ -170,16 +226,24 @@ interface appLayoutRouteChildren {
   appLayoutIndexRoute: typeof appLayoutIndexRoute;
   appLayoutCalendarIndexRoute: typeof appLayoutCalendarIndexRoute;
   appLayoutClassroomsIndexRoute: typeof appLayoutClassroomsIndexRoute;
-  appLayoutContentIndexRoute: typeof appLayoutContentIndexRoute;
+  appLayoutMaterialsIndexRoute: typeof appLayoutMaterialsIndexRoute;
   appLayoutPaymentsIndexRoute: typeof appLayoutPaymentsIndexRoute;
+  appLayoutWelcomeAboutIndexRoute: typeof appLayoutWelcomeAboutIndexRoute;
+  appLayoutWelcomeRoleIndexRoute: typeof appLayoutWelcomeRoleIndexRoute;
+  appLayoutWelcomeSocialsIndexRoute: typeof appLayoutWelcomeSocialsIndexRoute;
+  appLayoutWelcomeUserIndexRoute: typeof appLayoutWelcomeUserIndexRoute;
 }
 
 const appLayoutRouteChildren: appLayoutRouteChildren = {
   appLayoutIndexRoute: appLayoutIndexRoute,
   appLayoutCalendarIndexRoute: appLayoutCalendarIndexRoute,
   appLayoutClassroomsIndexRoute: appLayoutClassroomsIndexRoute,
-  appLayoutContentIndexRoute: appLayoutContentIndexRoute,
+  appLayoutMaterialsIndexRoute: appLayoutMaterialsIndexRoute,
   appLayoutPaymentsIndexRoute: appLayoutPaymentsIndexRoute,
+  appLayoutWelcomeAboutIndexRoute: appLayoutWelcomeAboutIndexRoute,
+  appLayoutWelcomeRoleIndexRoute: appLayoutWelcomeRoleIndexRoute,
+  appLayoutWelcomeSocialsIndexRoute: appLayoutWelcomeSocialsIndexRoute,
+  appLayoutWelcomeUserIndexRoute: appLayoutWelcomeUserIndexRoute,
 };
 
 const appLayoutRouteWithChildren = appLayoutRoute._addFileChildren(appLayoutRouteChildren);
@@ -201,8 +265,12 @@ export interface FileRoutesByFullPath {
   '/signup': typeof authSignupIndexRoute;
   '/calendar': typeof appLayoutCalendarIndexRoute;
   '/classrooms': typeof appLayoutClassroomsIndexRoute;
-  '/content': typeof appLayoutContentIndexRoute;
+  '/materials': typeof appLayoutMaterialsIndexRoute;
   '/payments': typeof appLayoutPaymentsIndexRoute;
+  '/welcome/about': typeof appLayoutWelcomeAboutIndexRoute;
+  '/welcome/role': typeof appLayoutWelcomeRoleIndexRoute;
+  '/welcome/socials': typeof appLayoutWelcomeSocialsIndexRoute;
+  '/welcome/user': typeof appLayoutWelcomeUserIndexRoute;
 }
 
 export interface FileRoutesByTo {
@@ -212,8 +280,12 @@ export interface FileRoutesByTo {
   '/signup': typeof authSignupIndexRoute;
   '/calendar': typeof appLayoutCalendarIndexRoute;
   '/classrooms': typeof appLayoutClassroomsIndexRoute;
-  '/content': typeof appLayoutContentIndexRoute;
+  '/materials': typeof appLayoutMaterialsIndexRoute;
   '/payments': typeof appLayoutPaymentsIndexRoute;
+  '/welcome/about': typeof appLayoutWelcomeAboutIndexRoute;
+  '/welcome/role': typeof appLayoutWelcomeRoleIndexRoute;
+  '/welcome/socials': typeof appLayoutWelcomeSocialsIndexRoute;
+  '/welcome/user': typeof appLayoutWelcomeUserIndexRoute;
 }
 
 export interface FileRoutesById {
@@ -226,8 +298,12 @@ export interface FileRoutesById {
   '/(auth)/signup/': typeof authSignupIndexRoute;
   '/(app)/_layout/calendar/': typeof appLayoutCalendarIndexRoute;
   '/(app)/_layout/classrooms/': typeof appLayoutClassroomsIndexRoute;
-  '/(app)/_layout/content/': typeof appLayoutContentIndexRoute;
+  '/(app)/_layout/materials/': typeof appLayoutMaterialsIndexRoute;
   '/(app)/_layout/payments/': typeof appLayoutPaymentsIndexRoute;
+  '/(app)/_layout/welcome/about/': typeof appLayoutWelcomeAboutIndexRoute;
+  '/(app)/_layout/welcome/role/': typeof appLayoutWelcomeRoleIndexRoute;
+  '/(app)/_layout/welcome/socials/': typeof appLayoutWelcomeSocialsIndexRoute;
+  '/(app)/_layout/welcome/user/': typeof appLayoutWelcomeUserIndexRoute;
 }
 
 export interface FileRouteTypes {
@@ -239,8 +315,12 @@ export interface FileRouteTypes {
     | '/signup'
     | '/calendar'
     | '/classrooms'
-    | '/content'
-    | '/payments';
+    | '/materials'
+    | '/payments'
+    | '/welcome/about'
+    | '/welcome/role'
+    | '/welcome/socials'
+    | '/welcome/user';
   fileRoutesByTo: FileRoutesByTo;
   to:
     | '/about'
@@ -249,8 +329,12 @@ export interface FileRouteTypes {
     | '/signup'
     | '/calendar'
     | '/classrooms'
-    | '/content'
-    | '/payments';
+    | '/materials'
+    | '/payments'
+    | '/welcome/about'
+    | '/welcome/role'
+    | '/welcome/socials'
+    | '/welcome/user';
   id:
     | '__root__'
     | '/about'
@@ -261,8 +345,12 @@ export interface FileRouteTypes {
     | '/(auth)/signup/'
     | '/(app)/_layout/calendar/'
     | '/(app)/_layout/classrooms/'
-    | '/(app)/_layout/content/'
-    | '/(app)/_layout/payments/';
+    | '/(app)/_layout/materials/'
+    | '/(app)/_layout/payments/'
+    | '/(app)/_layout/welcome/about/'
+    | '/(app)/_layout/welcome/role/'
+    | '/(app)/_layout/welcome/socials/'
+    | '/(app)/_layout/welcome/user/';
   fileRoutesById: FileRoutesById;
 }
 
@@ -312,8 +400,12 @@ export const routeTree = rootRoute
         "/(app)/_layout/",
         "/(app)/_layout/calendar/",
         "/(app)/_layout/classrooms/",
-        "/(app)/_layout/content/",
-        "/(app)/_layout/payments/"
+        "/(app)/_layout/materials/",
+        "/(app)/_layout/payments/",
+        "/(app)/_layout/welcome/about/",
+        "/(app)/_layout/welcome/role/",
+        "/(app)/_layout/welcome/socials/",
+        "/(app)/_layout/welcome/user/"
       ]
     },
     "/(app)/_layout/": {
@@ -334,12 +426,28 @@ export const routeTree = rootRoute
       "filePath": "(app)/_layout/classrooms/index.tsx",
       "parent": "/(app)/_layout"
     },
-    "/(app)/_layout/content/": {
-      "filePath": "(app)/_layout/content/index.tsx",
+    "/(app)/_layout/materials/": {
+      "filePath": "(app)/_layout/materials/index.tsx",
       "parent": "/(app)/_layout"
     },
     "/(app)/_layout/payments/": {
       "filePath": "(app)/_layout/payments/index.tsx",
+      "parent": "/(app)/_layout"
+    },
+    "/(app)/_layout/welcome/about/": {
+      "filePath": "(app)/_layout/welcome/about/index.tsx",
+      "parent": "/(app)/_layout"
+    },
+    "/(app)/_layout/welcome/role/": {
+      "filePath": "(app)/_layout/welcome/role/index.tsx",
+      "parent": "/(app)/_layout"
+    },
+    "/(app)/_layout/welcome/socials/": {
+      "filePath": "(app)/_layout/welcome/socials/index.tsx",
+      "parent": "/(app)/_layout"
+    },
+    "/(app)/_layout/welcome/user/": {
+      "filePath": "(app)/_layout/welcome/user/index.tsx",
       "parent": "/(app)/_layout"
     }
   }

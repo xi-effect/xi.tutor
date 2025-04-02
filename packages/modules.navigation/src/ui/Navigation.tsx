@@ -16,7 +16,7 @@ import { useLocation, useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 
 export const Navigation = () => {
-  const { t } = useTranslation('navigation'); // Используем namespace "signin"
+  const { t } = useTranslation('navigation');
   const isMobile = useMediaQuery('(max-width: 960px)');
 
   const navigate = useNavigate();
@@ -32,7 +32,7 @@ export const Navigation = () => {
   };
 
   return (
-    <SidebarProvider className="h-dvh w-full flex-col md:w-[350px]">
+    <SidebarProvider className="h-dvh flex-col md:w-[350px]">
       <CustomTrigger />
       <div className="relative h-full">
         <Sidebar className="absolute w-full" collapsible={isMobile ? 'offcanvas' : 'icon'}>
