@@ -29,9 +29,10 @@ export const Route = createFileRoute('/(app)/_layout')({
 
 function LayoutComponent() {
   return (
-    <div>
-      <Navigation />
-      <Outlet />
+    <div className="relative flex min-h-svh flex-col">
+      <Navigation>
+        <Outlet />
+      </Navigation>
     </div>
   );
 }

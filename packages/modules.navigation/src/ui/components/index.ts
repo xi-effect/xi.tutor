@@ -1,1 +1,1 @@
-export { CustomTrigger } from './CustomTrigger';
+export { Header } from './Header';
