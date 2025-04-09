@@ -8,16 +8,18 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarFooter,
+  SidebarInset,
 } from '@xipkg/sidebar';
-import { useMediaQuery } from '@xipkg/utils';
+// import { useMediaQuery } from '@xipkg/utils';
 import { footerMenu, items } from './config';
-import { CustomTrigger } from './components';
+import { Header } from './components';
 import { useLocation, useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
+import { ScrollArea } from '@xipkg/scrollarea';
 
-export const Navigation = () => {
+export const Navigation = ({ children }: { children: React.ReactNode }) => {
   const { t } = useTranslation('navigation');
-  const isMobile = useMediaQuery('(max-width: 960px)');
+  // const isMobile = useMediaQuery('(max-width: 960px)');
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -32,10 +34,10 @@ export const Navigation = () => {
   };
 
   return (
-    <SidebarProvider className="h-dvh flex-col md:w-[350px]">
-      <CustomTrigger />
-      <div className="relative h-full">
-        <Sidebar className="absolute w-full" collapsible={isMobile ? 'offcanvas' : 'icon'}>
+    <>
+      <SidebarProvider>
+        <Header />
+        <Sidebar collapsible="icon" className="absolute w-full pt-[64px] md:w-[350px]">
           <SidebarContent>
             <SidebarGroup>
               <SidebarGroupContent>
@@ -69,7 +71,10 @@ export const Navigation = () => {
             </SidebarMenu>
           </SidebarFooter>
         </Sidebar>
-      </div>
-    </SidebarProvider>
+        <SidebarInset>
+          <ScrollArea className="mt-[64px] h-full w-full">{children}</ScrollArea>
+        </SidebarInset>
+      </SidebarProvider>
+    </>
   );
 };
