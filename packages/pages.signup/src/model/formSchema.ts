@@ -2,12 +2,13 @@ import * as z from 'zod';
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
 
+const usernameMinLength = 4;
+const usernameMaxLength = 30;
+const passwordMinLength = 6;
+
 export const useFormSchema = () => {
   const { t } = useTranslation('signup');
-  const usernameMinLength = 4;
-  const usernameMaxLength = 30;
-  const passwordMinLength = 6;
-
+  
   const formSchema = useMemo(() => {
     return z.object({
       username: z
