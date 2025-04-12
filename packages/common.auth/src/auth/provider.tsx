@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getAxiosInstance } from 'common.config';
 import { userApiConfig, UserQueryKey } from 'common.api';
 import { LoadingScreen } from 'common.ui';
@@ -9,7 +9,12 @@ import { AuthContext } from './context';
 import { SignupData } from 'common.types';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const queryClient = useQueryClient();
   const [isAuthenticated, setIsAuthenticated] = React.useState<boolean | null>(null);
+
+  if (!queryClient) {
+    throw new Error('No QueryClient set, use QueryClientProvider to set one');
+  }
 
   const {
     data: user,

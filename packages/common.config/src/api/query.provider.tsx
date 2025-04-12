@@ -6,7 +6,7 @@ import { queryClient } from './query.client';
 
 export const QueryProvider = ({ children }: PropsWithChildren): null | ReactElement => {
   return (
-    <QueryClientProvider {...{ client: queryClient }}>
+    <QueryClientProvider client={queryClient}>
       {children}
       {import.meta.env.VITE_DEVTOOLS_ENABLED && <ReactQueryDevtools />}
     </QueryClientProvider>

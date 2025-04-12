@@ -9,6 +9,7 @@ export const queryClient = new QueryClient({
       networkMode: 'offlineFirst',
       refetchOnWindowFocus: false,
       staleTime: 1000 * 60 * 30, // 30 minutes
+      retry: false,
     },
   },
 });

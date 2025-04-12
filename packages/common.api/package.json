@@ -14,7 +14,7 @@
     "common.env": "*"
   },
   "devDependencies": {
-    "@tanstack/react-query-devtools": "5.66.9",
+    "@tanstack/react-query-devtools": "5.73.3",
     "@eslint/js": "^9.19.0",
     "common.typescript": "*",
     "@types/node": "^20.3.1",
