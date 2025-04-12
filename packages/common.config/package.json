@@ -32,9 +32,7 @@
     "typescript-eslint": "^8.22.0"
   },
   "peerDependencies": {
-    "react": "19",
-    "@hookform/resolvers": "3.9.1",
-    "react-hook-form": "^7.0.0"
+    "react": "19"
   },
   "description": "form for signin",
   "author": "xi.effect"
