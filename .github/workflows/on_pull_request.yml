@@ -5,6 +5,7 @@ on:
   workflow_dispatch:
 
 env:
+  project_name: xi.tutor
   app_name: xi.web
   node_version: 20
   turbo_version: 2.4.0
@@ -117,3 +118,63 @@ jobs:
         with:
           name: ${{ env.app_name }}
           path: ./out/apps/${{ env.app_name }}/build
+
+  deploy_xi_web:
+    needs:
+      - namer
+      - build_xi_web
+    runs-on: ubuntu-latest
+    environment: xi-development
+
+    steps:
+      - name: Download built artifact
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: ${{ env.app_name }}
+          path: out
+
+      - name: Get full folder path for deployment
+        id: get_deployment_path
+        run: |-
+          deployment_path=${{ env.project_name }}/${{ env.app_name }}/${{ needs.namer.outputs.deployment_name }}
+          echo "deployment_path=${deployment_path}"
+          echo "deployment_path=${deployment_path}" >> $GITHUB_OUTPUT
+
+      - name: Create directory structure to copy
+        run: mkdir -p ${{ steps.get_deployment_path.outputs.deployment_path }}
+
+      - name: Create directories on remote
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: --verbose --human-readable --recursive --relative --dirs
+          path: ./${{ steps.get_deployment_path.outputs.deployment_path }}
+          remote_path: .
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_port: ${{ secrets.SSH_PORT }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          remote_key_pass: ${{ secrets.SSH_KEY_PASSWORD }}
+
+      - name: Push files to the primary source
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: --verbose --human-readable --compress --recursive --delete
+          path: ./out/*
+          remote_path: ${{ steps.get_deployment_path.outputs.deployment_path }}/primary
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_port: ${{ secrets.SSH_PORT }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          remote_key_pass: ${{ secrets.SSH_KEY_PASSWORD }}
+
+      - name: Push files to the secondary source
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: --verbose --human-readable --compress --recursive --delete
+          path: ./out/*
+          remote_path: ${{ steps.get_deployment_path.outputs.deployment_path }}/secondary
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_port: ${{ secrets.SSH_PORT }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          remote_key_pass: ${{ secrets.SSH_KEY_PASSWORD }}
