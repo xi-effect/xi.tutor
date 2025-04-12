@@ -49,13 +49,38 @@ jobs:
   lint:
     needs: analyze_files
     if: needs.analyze_files.outputs.lintable_files == 'true'
-    uses: xi-effect/xi.actions/.github/workflows/front-lint-and-format.yml@main
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      - name: Install pnpm (version from package.json)
+        uses: pnpm/action-setup@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4.3.0
+        with:
+          node-version: ${{ env.node_version }}
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+
+      - name: Install dependencies
+        id: install
+        run: pnpm install
+
+      - name: Run format checker
+        run: pnpm run format-check
+
+      - name: Run linter
+        if: success() || (failure() && (steps.install.conclusion == 'success'))
+        run: pnpm run lint
 
   build_xi_web:
     needs:
       - namer
       - analyze_files
-      # - lint  # TODO: uncomment when lint issues are fixed
+      - lint
     if: needs.analyze_files.outputs.xi_web_files == 'true'
     runs-on: ubuntu-latest
 
