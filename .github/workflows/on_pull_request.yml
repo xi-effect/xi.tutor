@@ -4,6 +4,13 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  app_name: xi.web
+  node_version: 20
+  yarn_version: 1.22.19
+  npm_version: 10.2.4
+  turbo_version: 2.4.0
+
 jobs:
   namer:
     runs-on: ubuntu-latest
@@ -45,3 +52,52 @@ jobs:
     needs: analyze_files
     if: needs.analyze_files.outputs.lintable_files == 'true'
     uses: xi-effect/xi.actions/.github/workflows/front-lint-and-format.yml@main
+
+  build_xi_web:
+    needs:
+      - namer
+      - analyze_files
+      # - lint  # TODO: uncomment when lint issues are fixed
+    if: needs.analyze_files.outputs.xi_web_files == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+
+      - name: Setup node
+        uses: actions/setup-node@v4.2.0
+        with:
+          node-version: ${{ env.node_version }}
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      - name: Downgrade yarn
+        run: npm install -g yarn@${{ env.yarn_version }}
+
+      - name: Install npm
+        run: npm install -g npm@${{ env.npm_version }}
+
+      - name: Install turbo
+        run: npm install -g turbo@${{ env.turbo_version }}
+
+      - name: Turbo prune
+        run: turbo prune --scope=${{ env.app_name }}
+
+      - name: Remove package-lock.json
+        working-directory: ./out
+        run: rm package-lock.json
+
+      - name: Install dependencies
+        working-directory: ./out
+        run: npm install
+
+      - name: Build application
+        working-directory: ./out
+        run: npm run build --filter==${{ env.app_name }}
+
+      - name: Upload build as an artifact
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: ${{ env.app_name }}
+          path: ./out/apps/${{ env.app_name }}/build
