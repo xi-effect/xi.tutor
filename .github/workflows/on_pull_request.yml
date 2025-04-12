@@ -7,8 +7,6 @@ on:
 env:
   project_name: xi.tutor
   app_name: xi.web
-  node_version: 20
-  turbo_version: 2.4.0
 
 jobs:
   namer:
@@ -59,10 +57,10 @@ jobs:
       - name: Install pnpm (version from package.json)
         uses: pnpm/action-setup@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Setup NodeJS
         uses: actions/setup-node@v4.3.0
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: package.json
           registry-url: https://registry.npmjs.org
           cache: pnpm
 
@@ -92,15 +90,15 @@ jobs:
       - name: Install pnpm (version from package.json)
         uses: pnpm/action-setup@v4
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Setup NodeJS
         uses: actions/setup-node@v4.3.0
         with:
-          node-version: ${{ env.node_version }}
+          node-version-file: package.json
           registry-url: https://registry.npmjs.org
           cache: pnpm
 
       - name: Install turbo
-        run: pnpm install -g turbo@${{ env.turbo_version }}
+        run: pnpm install -g turbo
 
       - name: Turbo prune
         run: turbo prune --scope=${{ env.app_name }}
