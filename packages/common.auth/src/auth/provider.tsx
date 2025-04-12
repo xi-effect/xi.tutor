@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { getAxiosInstance, type SignupData} from 'common.config';
+import { getAxiosInstance } from 'common.config';
 import { userApiConfig, UserQueryKey } from 'common.api';
 import { LoadingScreen } from 'common.ui';
 import { useSignup } from 'common.services';
 
 import { AuthContext } from './context';
+import { SignupData } from 'common.types';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = React.useState<boolean | null>(null);
@@ -14,7 +15,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     data: user,
     isSuccess,
     isError,
-    refetch
+    refetch,
   } = useQuery({
     queryKey: [UserQueryKey.Home],
     queryFn: async () => {
@@ -44,24 +45,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsAuthenticated(false);
   };
 
-  const { signup: signupService } = useSignup();  
+  const { signup: signupService } = useSignup();
 
-  const singupMutation = useMutation(
-    {
-      mutationFn: async (userData: SignupData) => {
-        return await signupService(userData);
-      },
+  const singupMutation = useMutation({
+    mutationFn: async (userData: SignupData) => {
+      return await signupService(userData);
+    },
 
-      onSuccess: async () => {
-        setIsAuthenticated(true);
-        await refetch();
-      },
+    onSuccess: async () => {
+      setIsAuthenticated(true);
+      await refetch();
+    },
 
-      onError: (error) => {
-        throw error;
-      },
-    }
-  );
+    onError: (error) => {
+      throw error;
+    },
+  });
 
   const signup = singupMutation;
 
@@ -70,7 +69,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   if (isAuthenticated === null) {
     return <LoadingScreen />;
   }
- 
+
   return (
     <AuthContext.Provider value={{ isAuthenticated, login, logout, signup }}>
       {children}

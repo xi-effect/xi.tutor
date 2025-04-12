@@ -12,6 +12,9 @@
   "dependencies": {
     "sonner": "2.0.1",
     "common.services": "*",
+    "common.env": "*",
+    "common.config": "*",
+    "common.auth": "*",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1",
     "@tanstack/react-router": "^1.109.0",
@@ -42,8 +45,8 @@
   },
   "peerDependencies": {
     "react": "19",
-    "@hookform/resolvers": "3.9.1",
-    "react-hook-form": "^7.0.0"
+    "react-hook-form": "^7.55.0",
+    "@hookform/resolvers": "5.0.1"
   },
   "description": "form for signin",
   "author": "xi.effect"

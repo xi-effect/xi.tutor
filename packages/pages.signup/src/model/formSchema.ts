@@ -8,7 +8,7 @@ const passwordMinLength = 6;
 
 export const useFormSchema = () => {
   const { t } = useTranslation('signup');
-  
+
   const formSchema = useMemo(() => {
     return z.object({
       username: z
@@ -17,12 +17,10 @@ export const useFormSchema = () => {
           message: t('validation.required'),
         })
         .min(usernameMinLength, {
-          message: 
-            `${t('validation.minLength')}${t('validation.symbols', {count: usernameMinLength})}`,
+          message: `${t('validation.minLength')}${t('validation.symbols', { count: usernameMinLength })}`,
         })
         .max(usernameMaxLength, {
-          message: 
-            `${t('validation.maxLength')}${t('validation.symbols', {count: usernameMaxLength})}`,
+          message: `${t('validation.maxLength')}${t('validation.symbols', { count: usernameMaxLength })}`,
         })
         .regex(/^[a-z0-9_.]+$/, {
           message: t('validation.no_symbols'),
@@ -39,8 +37,7 @@ export const useFormSchema = () => {
           required_error: t('required'),
         })
         .min(passwordMinLength, {
-          message: 
-            `${t('validation.minLength')}${t('validation.symbols', {count: passwordMinLength})}`,
+          message: `${t('validation.minLength')}${t('validation.symbols', { count: passwordMinLength })}`,
         }),
     });
   }, [t]);
@@ -48,8 +45,10 @@ export const useFormSchema = () => {
   return formSchema;
 };
 
-export type FormData = z.infer<z.ZodObject<{
-  username: z.ZodString;
-  email: z.ZodString;
-  password: z.ZodString;
-}>>;
+export type FormData = z.infer<
+  z.ZodObject<{
+    username: z.ZodString;
+    email: z.ZodString;
+    password: z.ZodString;
+  }>
+>;

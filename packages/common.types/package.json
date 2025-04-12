@@ -1,5 +1,5 @@
 {
-  "name": "common.services",
+  "name": "common.types",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -9,12 +9,7 @@
   "scripts": {
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
-  "dependencies": {
-    "axios": "1.8.1",
-    "common.api": "*",
-    "common.env": "*",
-    "common.types": "*"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@tanstack/react-query-devtools": "5.66.9",
     "@eslint/js": "^9.19.0",

@@ -10,8 +10,6 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "common.api": "*",
-    "common.ui": "*",
     "@tanstack/react-router": "^1.109.0",
     "@tanstack/react-query": "5.66.9",
     "axios": "1.8.1"

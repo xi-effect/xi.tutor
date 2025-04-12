@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
 import { authApiConfig, AuthQueryKey } from 'common.api';
 import { env } from 'common.env';
-import { getAxiosInstance, type SignupData } from 'common.config';
+import { getAxiosInstance } from 'common.config';
+import { SignupData } from 'common.types';
 
 export const useSignup = () => {
   const signup = useCallback(async (userData: SignupData) => {

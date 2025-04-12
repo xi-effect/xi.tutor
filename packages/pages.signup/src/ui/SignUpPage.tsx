@@ -19,7 +19,6 @@ import { Eyeoff, Eyeon } from '@xipkg/icons';
 import { useFormSchema, type FormData } from '../model';
 import { useSignupForm } from '../hooks';
 
-
 export const SignUpPage = () => {
   const { t } = useTranslation('signup');
   const searchParams = useSearch({ strict: false });
@@ -39,7 +38,7 @@ export const SignUpPage = () => {
   } = form;
 
   const onSubmit = (data: FormData) => {
-    onSignupForm(data);  
+    onSignupForm(data);
   };
 
   const [isPasswordShow, setIsPasswordShow] = useState(false);
@@ -82,7 +81,7 @@ export const SignUpPage = () => {
                   id="user name"
                   {...field}
                 />
-              </FormControl> 
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}

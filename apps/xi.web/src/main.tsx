@@ -7,9 +7,9 @@ import './index.css';
 import './config/i18n';
 
 import { routeTree } from './routeTree.gen';
-import { AuthProvider, useAuth, QueryProvider } from 'common.config';
+import { QueryProvider } from 'common.config';
 import { Toaster } from 'sonner';
-
+import { AuthProvider, useAuth } from 'common.auth';
 // Create a new router instance
 const router = createRouter({
   routeTree,

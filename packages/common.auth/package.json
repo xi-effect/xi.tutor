@@ -1,5 +1,5 @@
 {
-  "name": "common.services",
+  "name": "common.auth",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -10,10 +10,14 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "axios": "1.8.1",
     "common.api": "*",
     "common.env": "*",
-    "common.types": "*"
+    "common.config": "*",
+    "common.services": "*",
+    "common.ui": "*",
+    "common.types": "*",
+    "@tanstack/react-query": "5.66.9",
+    "axios": "1.8.1"
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "5.66.9",
@@ -37,6 +41,6 @@
     "@hookform/resolvers": "3.9.1",
     "react-hook-form": "^7.0.0"
   },
-  "description": "Authentication services and hooks",
+  "description": "Authentication context and provider",
   "author": "xi.effect"
-}
+} 

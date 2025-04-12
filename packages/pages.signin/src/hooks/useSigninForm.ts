@@ -3,7 +3,7 @@ import { useState, useTransition } from 'react';
 import { FormData } from '../model/formSchema';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useSignin } from 'common.services';
-import { useAuth } from 'common.config';
+import { useAuth } from 'common.auth';
 import { toast } from 'sonner';
 
 type SignInResponse = {
