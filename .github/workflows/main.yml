@@ -1,0 +1,90 @@
+name: Main Pipeline
+
+on:
+  workflow_call:
+    inputs:
+      deployment_name:
+        type: string
+        required: true
+      github_environment_name:
+        type: string
+        required: true
+    secrets:
+      SSH_HOST:
+        required: false
+      SSH_PORT:
+        required: false
+      SSH_USER:
+        required: false
+      SSH_PRIVATE_KEY:
+        required: false
+      SSH_KEY_PASSWORD:
+        required: false
+
+jobs:
+  analyze_files:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      - name: Filter paths
+        uses: dorny/paths-filter@v2
+        id: path_filter
+        with:
+          filters: .github/files.yml
+
+    outputs:
+      xi_web_files: ${{ steps.path_filter.outputs.xi_web_files }}
+      lintable_files: ${{ steps.path_filter.outputs.lintable_files }}
+
+  lint:
+    needs: analyze_files
+    if: needs.analyze_files.outputs.lintable_files == 'true'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      - name: Install pnpm (version from package.json)
+        uses: pnpm/action-setup@v4
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4.3.0
+        with:
+          node-version-file: package.json
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+
+      - name: Install dependencies
+        id: install
+        run: pnpm install
+
+      - name: Run format checker
+        run: pnpm run format-check
+
+      - name: Run linter
+        if: success() || (failure() && (steps.install.conclusion == 'success'))
+        run: pnpm run lint
+
+  build_xi_web:
+    needs:
+      - analyze_files
+      - lint
+    if: needs.analyze_files.outputs.xi_web_files == 'true'
+    uses: ./.github/workflows/common_build.yml
+    with:
+      app_name: xi.web
+
+  deploy_xi_web:
+    needs:
+      - build_xi_web
+    uses: ./.github/workflows/common_push.yml
+    with:
+      project_name: xi.tutor
+      app_name: xi.web
+      deployment_name: ${{ inputs.deployment_name }}
+      github_environment_name: ${{ inputs.github_environment_name }}
+    secrets: inherit

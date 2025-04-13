@@ -17,15 +17,15 @@ on:
         required: true
     secrets:
       SSH_HOST:
-        required: true
+        required: false
       SSH_PORT:
-        required: true
+        required: false
       SSH_USER:
-        required: true
+        required: false
       SSH_PRIVATE_KEY:
-        required: true
+        required: false
       SSH_KEY_PASSWORD:
-        required: true
+        required: false
 
 env:
   deployment_path: ${{ inputs.project_name }}/${{ inputs.app_name }}/${{ inputs.deployment_name }}

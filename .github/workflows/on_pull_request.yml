@@ -1,8 +1,7 @@
-name: Development
+name: On Pull Request (Development)
 
 on:
   pull_request:
-  workflow_dispatch:
 
 jobs:
   namer:
@@ -24,71 +23,11 @@ jobs:
       branch_name: ${{ steps.get_names.outputs.branch_name }}
       deployment_name: ${{ steps.get_names.outputs.deployment_name }}
 
-  analyze_files:
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.2.2
-
-      - name: Filter paths
-        uses: dorny/paths-filter@v2
-        id: path_filter
-        with:
-          filters: .github/files.yml
-
-    outputs:
-      xi_web_files: ${{ steps.path_filter.outputs.xi_web_files }}
-      lintable_files: ${{ steps.path_filter.outputs.lintable_files }}
-
-  lint:
-    needs: analyze_files
-    if: needs.analyze_files.outputs.lintable_files == 'true'
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.2.2
-
-      - name: Install pnpm (version from package.json)
-        uses: pnpm/action-setup@v4
-
-      - name: Setup NodeJS
-        uses: actions/setup-node@v4.3.0
-        with:
-          node-version-file: package.json
-          registry-url: https://registry.npmjs.org
-          cache: pnpm
-
-      - name: Install dependencies
-        id: install
-        run: pnpm install
-
-      - name: Run format checker
-        run: pnpm run format-check
-
-      - name: Run linter
-        if: success() || (failure() && (steps.install.conclusion == 'success'))
-        run: pnpm run lint
-
-  build_xi_web:
+  main:
     needs:
       - namer
-      - analyze_files
-      - lint
-    if: needs.analyze_files.outputs.xi_web_files == 'true'
-    uses: ./.github/workflows/common_build.yml
+    uses: ./.github/workflows/main.yml
     with:
-      app_name: xi.web
-
-  deploy_xi_web:
-    needs:
-      - namer
-      - build_xi_web
-    uses: ./.github/workflows/common_push.yml
-    with:
-      project_name: xi.tutor
-      app_name: xi.web
       deployment_name: ${{ needs.namer.outputs.deployment_name }}
       github_environment_name: xi-development
     secrets: inherit
