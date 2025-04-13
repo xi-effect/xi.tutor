@@ -3,6 +3,9 @@ name: Main Pipeline
 on:
   workflow_call:
     inputs:
+      base_deployment_path:
+        type: string
+        required: false
       deployment_name:
         type: string
         required: true
@@ -85,6 +88,7 @@ jobs:
     with:
       project_name: xi.tutor
       app_name: xi.web
+      base_deployment_path: ${{ inputs.base_deployment_path }}
       deployment_name: ${{ inputs.deployment_name }}
       github_environment_name: ${{ inputs.github_environment_name }}
     secrets: inherit

@@ -28,6 +28,7 @@ jobs:
       - namer
     uses: ./.github/workflows/main.yml
     with:
+      base_deployment_path: .
       deployment_name: ${{ needs.namer.outputs.deployment_name }}
       github_environment_name: xi-development
     secrets: inherit

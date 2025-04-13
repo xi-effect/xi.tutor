@@ -9,6 +9,9 @@ on:
       app_name:
         type: string
         required: true
+      base_deployment_path:
+        type: string
+        required: false
       deployment_name:
         type: string
         required: true
@@ -49,8 +52,8 @@ jobs:
         uses: burnett01/rsync-deployments@7.0.2
         with:
           switches: --verbose --human-readable --recursive --relative --dirs
-          path: ./ ${{ env.deployment_path }}
-          remote_path: .
+          path: ./${{ env.deployment_path }}
+          remote_path: ${{ inputs.base_deployment_path }}
           remote_host: ${{ secrets.SSH_HOST }}
           remote_port: ${{ secrets.SSH_PORT }}
           remote_user: ${{ secrets.SSH_USER }}
@@ -62,7 +65,7 @@ jobs:
         with:
           switches: --verbose --human-readable --compress --recursive --delete
           path: ./out/*
-          remote_path:  ${{ env.deployment_path }}/primary
+          remote_path: ${{ inputs.base_deployment_path }}/${{ env.deployment_path }}/primary
           remote_host: ${{ secrets.SSH_HOST }}
           remote_port: ${{ secrets.SSH_PORT }}
           remote_user: ${{ secrets.SSH_USER }}
@@ -74,7 +77,7 @@ jobs:
         with:
           switches: --verbose --human-readable --compress --recursive --delete
           path: ./out/*
-          remote_path:  ${{ env.deployment_path }}/secondary
+          remote_path: ${{ inputs.base_deployment_path }}/${{ env.deployment_path }}/secondary
           remote_host: ${{ secrets.SSH_HOST }}
           remote_port: ${{ secrets.SSH_PORT }}
           remote_user: ${{ secrets.SSH_USER }}
