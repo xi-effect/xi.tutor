@@ -18,6 +18,10 @@ on:
       github_environment_name:
         type: string
         required: true
+      report_mode:
+        type: string
+        required: true
+        description: pull-request-comment | production-discord-webhook
     secrets:
       SSH_HOST:
         required: false
@@ -28,6 +32,8 @@ on:
       SSH_PRIVATE_KEY:
         required: false
       SSH_KEY_PASSWORD:
+        required: false
+      DISCORD_WEBHOOK:
         required: false
 
 env:
@@ -83,3 +89,41 @@ jobs:
           remote_user: ${{ secrets.SSH_USER }}
           remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
           remote_key_pass: ${{ secrets.SSH_KEY_PASSWORD }}
+
+      - name: Comment about deployment success
+        if: inputs.report_mode == 'pull-request-comment'
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          comment-tag: deployment_status
+          message: |
+            :white_check_mark: Branch has been successfully deployed!
+
+            [Visit Preview](https://app.xieffect.ru/deployments/${{ needs.namer.outputs.deployment_name }}/enable)
+
+      - name: Comment about deployment failure
+        if: inputs.report_mode == 'pull-request-comment' && failure()
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          comment-tag: deployment_status
+          message: |
+            :x: Branch deployment failed!
+            
+            Visit [logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for more info
+
+      - name: Report deployment success to discord
+        if: inputs.report_mode == 'production-discord-webhook'
+        uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          content: |-
+            :flag_bg: Service xi.tutor successfully deployed to production
+            Commit: `${{ github.sha }}`
+
+      - name: Report deployment failure to discord
+        if: inputs.report_mode == 'production-discord-webhook' && failure()
+        uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          content: |-
+            :x: [Service xi.tutor failed to deploy to production](<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}>)
+            Commit: `${{ github.sha }}`

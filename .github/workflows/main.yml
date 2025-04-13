@@ -12,6 +12,10 @@ on:
       github_environment_name:
         type: string
         required: true
+      report_mode:
+        type: string
+        required: true
+        description: pull-request-comment | production-discord-webhook
     secrets:
       SSH_HOST:
         required: false
@@ -91,4 +95,5 @@ jobs:
       base_deployment_path: ${{ inputs.base_deployment_path }}
       deployment_name: ${{ inputs.deployment_name }}
       github_environment_name: ${{ inputs.github_environment_name }}
+      report_mode: ${{ inputs.report_mode }}
     secrets: inherit
