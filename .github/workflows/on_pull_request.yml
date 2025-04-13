@@ -31,3 +31,31 @@ jobs:
       deployment_name: ${{ needs.namer.outputs.deployment_name }}
       github_environment_name: xi-development
     secrets: inherit
+
+  comment:
+    needs:
+      - namer
+      - main
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Comment about deployment success
+        if: needs.main.result == 'success'
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          comment-tag: deployment_status
+          message: |
+            :white_check_mark: Branch has been successfully deployed!
+
+            [Visit Preview](https://app.xieffect.ru/deployments/${{ needs.namer.outputs.deployment_name }}/enable)
+
+      - name: Comment about deployment failure
+        if: needs.main.result == 'failure'
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          comment-tag: deployment_status
+          message: |
+            :x: Branch deployment failed!
+            
+            Visit [logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for more info
