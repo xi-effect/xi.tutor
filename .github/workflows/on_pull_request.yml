@@ -1,0 +1,35 @@
+name: On Pull Request (Development)
+
+on:
+  pull_request:
+
+jobs:
+  namer:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get branch & deployment name
+        id: get_names
+        run: |-
+          branch_name=${{ github.event.pull_request.head.ref }}
+          echo "branch_name=${branch_name}"
+          echo "branch_name=${branch_name}" >> $GITHUB_OUTPUT
+
+          deployment_name="${branch_name////-}"
+          echo "deployment_name=${deployment_name}"
+          echo "deployment_name=${deployment_name}" >> $GITHUB_OUTPUT
+
+    outputs:
+      branch_name: ${{ steps.get_names.outputs.branch_name }}
+      deployment_name: ${{ steps.get_names.outputs.deployment_name }}
+
+  main:
+    needs:
+      - namer
+    uses: ./.github/workflows/main.yml
+    with:
+      base_deployment_path: .
+      deployment_name: ${{ needs.namer.outputs.deployment_name }}
+      github_environment_name: xi-development
+      report_mode: pull-request-comment
+    secrets: inherit
