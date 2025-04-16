@@ -1,0 +1,1 @@
+export { CalendarModule, type CalendarEvent } from './Calendar';
