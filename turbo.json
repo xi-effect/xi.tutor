@@ -15,7 +15,9 @@
     },
     "dev": {
       "cache": false,
-      "persistent": true
+      "persistent": true,
+      "dependsOn": ["^build"],
+      "env": ["PORT", "NODE_ENV"]
     }
   }
 }

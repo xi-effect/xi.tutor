@@ -5,5 +5,7 @@
   "materials": "Материалы",
   "payments": "Оплаты",
   "support": "Поддержка",
-  "faq": "FAQ"
+  "faq": "FAQ",
+  "profile": "Личный кабинет",
+  "logout": "Выйти"
 }

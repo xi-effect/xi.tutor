@@ -26,10 +26,16 @@ export const Navigation = ({ children }: { children: React.ReactNode }) => {
 
   const { isOpen, toggle } = useMenuStore();
 
-  console.log('isOpen', isOpen);
-
   return (
-    <SidebarProvider open={isOpen} onOpenChange={toggle}>
+    <SidebarProvider
+      style={
+        {
+          '--sidebar-width': '300px',
+        } as React.CSSProperties
+      }
+      open={isOpen}
+      onOpenChange={toggle}
+    >
       <Header toggle={toggle} swiperRef={swiperRef} />
       <NavigationLayout swiperRef={swiperRef}>{children}</NavigationLayout>
     </SidebarProvider>
