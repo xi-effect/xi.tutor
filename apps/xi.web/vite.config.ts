@@ -39,6 +39,10 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         usePolling: false, // Использовать опрос файловой системы для более надежного отслеживания изменений
         // interval: 0, // Интервал проверки изменений в миллисекундах
       },
+      hmr: {
+        /** держим сокет живым дольше 10 с */
+        timeout: 30_000, // 🡅 можно 60 000, если часто бываете «в простое»
+      },
       fs: {
         allow: [
           searchForWorkspaceRoot(process.cwd()), // весь workspace  [oai_citation_attribution:0‡GitHub](https://github.com/vitejs/vite/blob/main/docs/config/server-options.md?utm_source=chatgpt.com)
@@ -53,6 +57,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       },
       // убедитесь, что symlink‑ы раскрываются ‑ это настройка по‑умолчанию
       preserveSymlinks: false,
+      dedupe: ['react', 'react-dom'],
     },
   };
 });
