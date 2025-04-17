@@ -1,0 +1,46 @@
+name: Common Build Steps
+
+on:
+  workflow_call:
+    inputs:
+      app_name:
+        type: string
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4.2.2
+
+      - name: Install pnpm (version from package.json)
+        uses: pnpm/action-setup@v4
+
+      - name: Setup NodeJS
+        uses: actions/setup-node@v4.3.0
+        with:
+          node-version-file: package.json
+          registry-url: https://registry.npmjs.org
+          cache: pnpm
+
+      - name: Install turbo
+        run: pnpm install -g turbo
+
+      - name: Turbo prune
+        run: turbo prune --scope=${{ inputs.app_name }}
+
+      - name: Install dependencies
+        working-directory: ./out
+        run: pnpm install
+
+      - name: Build application
+        working-directory: ./out
+        run: npm run build --filter==${{ inputs.app_name }}
+
+      - name: Upload build as an artifact
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: ${{ inputs.app_name }}
+          path: ./out/apps/${{ inputs.app_name }}/build

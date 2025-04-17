@@ -1,0 +1,129 @@
+name: Common Push Steps
+
+on:
+  workflow_call:
+    inputs:
+      project_name:
+        type: string
+        required: true
+      app_name:
+        type: string
+        required: true
+      base_deployment_path:
+        type: string
+        required: false
+      deployment_name:
+        type: string
+        required: true
+      github_environment_name:
+        type: string
+        required: true
+      report_mode:
+        type: string
+        required: true
+        description: pull-request-comment | production-discord-webhook
+    secrets:
+      SSH_HOST:
+        required: false
+      SSH_PORT:
+        required: false
+      SSH_USER:
+        required: false
+      SSH_PRIVATE_KEY:
+        required: false
+      SSH_KEY_PASSWORD:
+        required: false
+      DISCORD_WEBHOOK:
+        required: false
+
+env:
+  deployment_path: ${{ inputs.project_name }}/${{ inputs.app_name }}/${{ inputs.deployment_name }}
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.github_environment_name }}
+
+    steps:
+      - name: Download built artifact
+        uses: actions/download-artifact@v4.1.8
+        with:
+          name: ${{ inputs.app_name }}
+          path: out
+
+      - name: Create directory structure to copy
+        run: mkdir -p ${{ env.deployment_path }}
+
+      - name: Create directories on remote
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: --verbose --human-readable --recursive --relative --dirs
+          path: ./${{ env.deployment_path }}
+          remote_path: ${{ inputs.base_deployment_path }}
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_port: ${{ secrets.SSH_PORT }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          remote_key_pass: ${{ secrets.SSH_KEY_PASSWORD }}
+
+      - name: Push files to the primary source
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: --verbose --human-readable --compress --recursive --delete
+          path: ./out/*
+          remote_path: ${{ inputs.base_deployment_path }}/${{ env.deployment_path }}/primary
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_port: ${{ secrets.SSH_PORT }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          remote_key_pass: ${{ secrets.SSH_KEY_PASSWORD }}
+
+      - name: Push files to the secondary source
+        uses: burnett01/rsync-deployments@7.0.2
+        with:
+          switches: --verbose --human-readable --compress --recursive --delete
+          path: ./out/*
+          remote_path: ${{ inputs.base_deployment_path }}/${{ env.deployment_path }}/secondary
+          remote_host: ${{ secrets.SSH_HOST }}
+          remote_port: ${{ secrets.SSH_PORT }}
+          remote_user: ${{ secrets.SSH_USER }}
+          remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
+          remote_key_pass: ${{ secrets.SSH_KEY_PASSWORD }}
+
+      - name: Comment about deployment success
+        if: inputs.report_mode == 'pull-request-comment'
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          comment-tag: deployment_status
+          message: |
+            :white_check_mark: Branch has been successfully deployed!
+
+            [Visit Preview](https://app.xieffect.ru/deployments/${{ needs.namer.outputs.deployment_name }}/enable)
+
+      - name: Comment about deployment failure
+        if: inputs.report_mode == 'pull-request-comment' && failure()
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          comment-tag: deployment_status
+          message: |
+            :x: Branch deployment failed!
+            
+            Visit [logs](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}) for more info
+
+      - name: Report deployment success to discord
+        if: inputs.report_mode == 'production-discord-webhook'
+        uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          content: |-
+            :flag_bg: Service xi.tutor successfully deployed to production
+            Commit: `${{ github.sha }}`
+
+      - name: Report deployment failure to discord
+        if: inputs.report_mode == 'production-discord-webhook' && failure()
+        uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          content: |-
+            :x: [Service xi.tutor failed to deploy to production](<https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}>)
+            Commit: `${{ github.sha }}`
