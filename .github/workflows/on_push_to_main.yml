@@ -1,0 +1,16 @@
+name: On Push To Main (Production)
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  main:
+    uses: ./.github/workflows/main.yml
+    with:
+      base_deployment_path: ~/xieffect-core/static
+      deployment_name: main
+      github_environment_name: xi-production
+      report_mode: production-discord-webhook
+    secrets: inherit
