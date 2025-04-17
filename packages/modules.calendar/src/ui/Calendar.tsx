@@ -7,6 +7,7 @@ import { Button } from '@xipkg/button';
 import { MOCK_EVENTS, MONTHS, type CalendarMode } from './config';
 import { MonthCalendar } from './components/MonthCalendar/MonthCalendar';
 import { Sidebar } from './components/Sidebar/Sidebar';
+import { YearCalendar } from './components/YearCalendar/YearCalendar';
 
 
 export const CalendarModule = () => {
@@ -23,13 +24,13 @@ export const CalendarModule = () => {
             <span className='font-bold'>{month} </span>
             <span>{today.getFullYear()}</span>
           </p>
-          <Button onClick={() => setMode('week')}>Сменить представление</Button>
+          <Button onClick={() => setMode('year')}>Сменить представление</Button>
 
         </div>
         {mode === 'month' && <MonthCalendar date={today} events={MOCK_EVENTS} />}
-        {mode === 'week' && <div>week</div>}
+        {mode === 'year' && <YearCalendar year={today.getFullYear()} />}
       </div>
-      <Sidebar />
+      {mode !== 'year' && <Sidebar />}
     </div>
 
   );
