@@ -9,7 +9,10 @@ export default defineConfig(({ mode }: ConfigEnv) => {
   return {
     plugins: [
       TanStackRouterVite({ target: 'react', autoCodeSplitting: true }),
-      react(),
+      react({
+        // Быстрый режим разработки с меньшими проверками в dev mode
+        fastRefresh: true,
+      }),
       tailwindcss(),
     ],
     build: {
@@ -42,6 +45,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       hmr: {
         /** держим сокет живым дольше 10 с */
         timeout: 30_000, // 🡅 можно 60 000, если часто бываете «в простое»
+        overlay: false, // Отключаем оверлей ошибок для увеличения производительности
       },
       fs: {
         allow: [
@@ -58,6 +62,10 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       // убедитесь, что symlink‑ы раскрываются ‑ это настройка по‑умолчанию
       preserveSymlinks: false,
       dedupe: ['react', 'react-dom'],
+    },
+    css: {
+      // Оптимизация CSS
+      devSourcemap: false,
     },
   };
 });
