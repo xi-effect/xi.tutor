@@ -12,5 +12,55 @@ jobs:
       base_deployment_path: ~/xieffect-core/static
       deployment_name: main
       github_environment_name: xi-production
-      report_mode: production-discord-webhook
     secrets: inherit
+
+  report_deployment:
+    needs:
+      - main
+    if: always()
+    runs-on: ubuntu-latest
+    environment: xi-production
+
+    steps:
+      - name: Generate discord message
+        id: generate_discord_message
+        shell: python
+        run: |-
+          result_to_status_emoji: dict[str, str] = {
+            "success": ":white_check_mark:",
+            "failure": ":x:",
+          }
+
+          # emoji, name, link_text, link_url
+          message_rows: list[tuple[str, str, str, str]] = []
+          for build_status, deployment_status, app_name, app_domain in (
+            ("${{ needs.main.outputs.xi_web_build_status }}", "${{ needs.main.outputs.xi_web_deployment_status }}", "xi.web", "app.xieffect.ru"),
+          ):
+            full_status = deployment_status if build_status == "success" else build_status
+            status_emoji = result_to_status_emoji.get(full_status)
+            if status_emoji is None:
+              continue
+
+            message_rows.append(
+              (
+                status_emoji,
+                app_name,
+                "open" if full_status == "success" else "logs",
+                f"https://{app_domain}/deployments/all/disable",
+              )
+            )
+
+          message = "\n".join(
+            f"- {emoji} {name} ([{link_text}]({link_url}))" 
+            for emoji, name, link_text, link_url in message_rows
+          )
+
+          import os
+          with open(os.getenv("GITHUB_OUTPUT"), "a") as f:
+            f.write(f"message<<EOF\nDeployed xi.tutor to production:\n{message}\nEOF")
+
+      - name: Report deployment to discord
+        uses: tsickert/discord-webhook@v5.3.0
+        with:
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+          content: ${{ steps.generate_discord_message.outputs.message }}

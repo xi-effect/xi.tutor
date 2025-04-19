@@ -12,10 +12,6 @@ on:
       github_environment_name:
         type: string
         required: true
-      report_mode:
-        type: string
-        required: true
-        description: pull-request-comment | production-discord-webhook
     secrets:
       SSH_HOST:
         required: false
@@ -27,6 +23,11 @@ on:
         required: false
       SSH_KEY_PASSWORD:
         required: false
+    outputs:
+      xi_web_build_status:
+        value: ${{ jobs.build_xi_web.result }}
+      xi_web_deployment_status:
+        value: ${{ jobs.deploy_xi_web.result }}
 
 jobs:
   analyze_files:
@@ -95,5 +96,4 @@ jobs:
       base_deployment_path: ${{ inputs.base_deployment_path }}
       deployment_name: ${{ inputs.deployment_name }}
       github_environment_name: ${{ inputs.github_environment_name }}
-      report_mode: ${{ inputs.report_mode }}
     secrets: inherit
