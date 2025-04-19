@@ -37,7 +37,7 @@ jobs:
 
       - name: Build application
         working-directory: ./out
-        run: npm run build --filter==${{ inputs.app_name }}
+        run: pnpm run build --filter=${{ inputs.app_name }}
 
       - name: Upload build as an artifact
         uses: actions/upload-artifact@v4.6.0
