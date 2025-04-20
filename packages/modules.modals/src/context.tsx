@@ -1,63 +1,60 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { createContext, useContext, useEffect } from 'react';
+import { useSearch } from '@tanstack/react-router';
 import { ModalsContextType, ModalsProviderProps, ModalName } from './types';
+import { registerModal as registerModalToStore, getModalProps, getModalComponent } from './store';
 import {
-  closeModal,
-  getModalProps,
-  isModalOpen,
-  openModal,
-  registerModal,
-  useModalsStore,
-} from './store';
-import { getModalFromUrl, updateUrlWithModal } from './utils';
+  navigateToModal as navigateToModalUtil,
+  closeModal as closeModalUtil,
+  getModalFromSearch,
+} from './utils';
 
 const ModalsContext = createContext<ModalsContextType | undefined>(undefined);
 
-export const ModalsProvider: React.FC<ModalsProviderProps> = ({ children, initialModals = {} }) => {
+export const ModalsProvider: React.FC<ModalsProviderProps> = ({
+  children,
+  initialModals = {},
+  router,
+}) => {
+  // @ts-ignore
+  const search = useSearch() as Record<string, string>;
+  const activeModal = getModalFromSearch(search);
+
   // Регистрация начальных модальных окон
   useEffect(() => {
     Object.entries(initialModals).forEach(([name, component]) => {
-      registerModal(name as ModalName, component);
+      registerModalToStore(name as ModalName, component);
     });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [initialModals]);
 
-  // Синхронизация с URL при инициализации
-  useEffect(() => {
-    const modalFromUrl = getModalFromUrl();
-    if (modalFromUrl && useModalsStore.getState().modals[modalFromUrl]) {
-      openModal(modalFromUrl);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const navigateToModal = (name: ModalName, props?: Record<string, any>) => {
+    navigateToModalUtil(router, name, props);
+  };
 
-  // Синхронизация URL при изменении активной модалки
-  useEffect(() => {
-    const unsubscribe = useModalsStore.subscribe(
-      (state) => state.activeModal,
-      (activeModal) => {
-        updateUrlWithModal(activeModal);
-      },
-    );
+  const closeModal = () => {
+    closeModalUtil(router);
+  };
 
-    return () => unsubscribe();
-  }, []);
+  const registerModal = (name: ModalName, component: React.ComponentType<any>) => {
+    registerModalToStore(name, component);
+  };
 
   const contextValue: ModalsContextType = {
-    openModal,
+    navigateToModal,
     closeModal,
     registerModal,
-    isModalOpen,
     getModalProps,
   };
 
-  const activeModal = useModalsStore((state) => state.activeModal);
-  const modals = useModalsStore((state) => state.modals);
-
   // Рендер активной модалки
   const renderActiveModal = () => {
-    if (!activeModal || !modals[activeModal]) return null;
+    if (!activeModal) return null;
 
-    const { component: ModalComponent, props } = modals[activeModal];
+    const ModalComponent = getModalComponent(activeModal);
+    if (!ModalComponent) return null;
+
+    const props = getModalProps(activeModal);
     return <ModalComponent {...props} />;
   };
 

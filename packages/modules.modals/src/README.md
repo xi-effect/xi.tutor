@@ -1,88 +1,138 @@
-# Модуль модальных окон
+# Модуль модальных окон с TanStack Router
 
-Этот модуль предоставляет централизованное управление модальными окнами в приложении с сохранением состояния в URL.
+Модуль предоставляет удобный способ управления модальными окнами в приложениях, использующих TanStack Router.
 
 ## Особенности
 
-- Отслеживание состояния модальных окон в URL через параметры
-- Централизованное управление модальными окнами через React Context
-- Возможность открытия и закрытия модальных окон из любой части приложения
-- Поддержка регистрации модальных окон как при инициализации, так и во время работы приложения
+- Интеграция с TanStack Router
+- Синхронизация состояния модальных окон с URL (через search params)
+- Возможность открытия и закрытия модальных окон через URL
+- Типизированный API
 
-## Установка и использование
+## Установка
 
-### 1. Инициализация провайдера
+```bash
+# Если используется npm
+npm install modules.modals
 
-В корне вашего приложения оберните его в `ModalsProvider`:
+# Если используется yarn
+yarn add modules.modals
+
+# Если используется pnpm
+pnpm add modules.modals
+```
+
+## Использование
+
+### Настройка роутера
+
+```tsx
+import { createRouter, createRouteConfig } from '@tanstack/react-router';
+import { ModalRouteParams, MODAL_PARAM_NAME } from 'modules.modals';
+
+// Создание корневого маршрута
+const rootRoute = createRouteConfig();
+
+// Создание основного маршрута с поддержкой модальных окон через search параметры
+const homeRoute = rootRoute.createRoute({
+  path: '/',
+  validateSearch: (search: Record<string, string>): ModalRouteParams => ({
+    modal: search[MODAL_PARAM_NAME],
+  }),
+  component: () => <HomePage />,
+});
+
+// Добавьте другие маршруты по необходимости
+
+// Создание роутера
+const routeConfig = rootRoute.addChildren([homeRoute]);
+const router = createRouter({ routeConfig });
+
+export default router;
+```
+
+### Настройка провайдера
 
 ```tsx
 import { ModalsProvider } from 'modules.modals';
-import { YourCustomModal } from './components/YourCustomModal';
+import { RouterProvider } from '@tanstack/react-router';
+import router from './router';
+import { ExampleModal } from './modals/ExampleModal';
 
-const App = () => {
-  // Предварительная регистрация модальных окон
+function App() {
   const initialModals = {
-    'custom-modal': YourCustomModal,
+    example: ExampleModal,
+    // Добавьте другие модальные окна по необходимости
   };
 
   return (
-    <ModalsProvider initialModals={initialModals}>
-      <YourApp />
-    </ModalsProvider>
+    <RouterProvider router={router}>
+      <ModalsProvider initialModals={initialModals} router={router}>
+        <div className="app">{/* Ваш основной контент */}</div>
+      </ModalsProvider>
+    </RouterProvider>
   );
-};
+}
 
 export default App;
 ```
 
-### 2. Создание собственного модального окна
+### Использование хука useModals
+
+```tsx
+import { useModals } from 'modules.modals';
+
+function MyComponent() {
+  const { navigateToModal, closeModal } = useModals();
+
+  const handleOpenModal = () => {
+    navigateToModal('example', { message: 'Привет из модального окна!' });
+  };
+
+  return (
+    <div>
+      <button onClick={handleOpenModal}>Открыть модальное окно</button>
+      {/* Другие компоненты */}
+    </div>
+  );
+}
+```
+
+### Создание собственного модального окна
 
 ```tsx
 import { BaseModal } from 'modules.modals';
 
 interface CustomModalProps {
   title?: string;
-  // Ваши собственные пропсы
+  message?: string;
+  onConfirm?: () => void;
 }
 
 export const CustomModal: React.FC<CustomModalProps> = ({
-  title = 'Название по умолчанию',
-  // Другие пропсы
+  title = 'Заголовок',
+  message = 'Содержание модального окна',
+  onConfirm,
 }) => {
   return (
     <BaseModal title={title}>
-      {/* Содержимое модального окна */}
-      <p>Ваше содержимое</p>
+      <div style={{ marginBottom: '20px' }}>{message}</div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
+        <button
+          style={{
+            padding: '8px 16px',
+            borderRadius: '4px',
+            background: 'blue',
+            color: 'white',
+            border: 'none',
+            cursor: 'pointer',
+          }}
+          onClick={onConfirm}
+        >
+          Подтвердить
+        </button>
+      </div>
     </BaseModal>
-  );
-};
-```
-
-### 3. Использование хука `useModals` для управления модальными окнами
-
-```tsx
-import { useModals } from 'modules.modals';
-
-const YourComponent = () => {
-  const { openModal, closeModal, isModalOpen, registerModal } = useModals();
-
-  // Регистрация модального окна (если не было зарегистрировано ранее)
-  useEffect(() => {
-    registerModal('dynamic-modal', DynamicModal);
-  }, [registerModal]);
-
-  const handleOpenModal = () => {
-    // Открытие модального окна с передачей пропсов
-    openModal('custom-modal', { title: 'Особый заголовок' });
-  };
-
-  return (
-    <div>
-      <button onClick={handleOpenModal}>Открыть модальное окно</button>
-
-      {/* Пример проверки состояния */}
-      {isModalOpen('custom-modal') && <p>Модальное окно открыто</p>}
-    </div>
   );
 };
 ```
@@ -91,31 +141,40 @@ const YourComponent = () => {
 
 ### ModalsProvider
 
-Компонент-провайдер для управления модальными окнами.
+Провайдер, необходимый для использования модальных окон.
 
-**Пропсы:**
+#### Props
 
-- `children`: React-узлы
-- `initialModals`: Объект с начальными модальными окнами в формате `{ [ключ: string]: React.ComponentType }`
+- `children`: React ноды, которые будут обёрнуты провайдером
+- `initialModals`: Объект с начальными модальными окнами, где ключ - имя модального окна, а значение - компонент
+- `router`: Экземпляр роутера TanStack Router
 
 ### useModals
 
-React-хук, предоставляющий методы для управления модальными окнами.
+Хук для управления модальными окнами.
 
-**Возвращает объект со следующими методами:**
+#### Возвращаемые значения
 
-- `openModal(name: string, props?: object)`: Открывает модальное окно с указанным именем и опциональными пропсами
-- `closeModal()`: Закрывает текущее открытое модальное окно
-- `registerModal(name: string, component: React.ComponentType)`: Регистрирует новое модальное окно
-- `isModalOpen(name: string)`: Проверяет, открыто ли указанное модальное окно
-- `getModalProps(name: string)`: Возвращает текущие пропсы для указанного модального окна
+- `navigateToModal(name, props)`: Функция для открытия модального окна
+- `closeModal()`: Функция для закрытия модального окна
+- `registerModal(name, component)`: Функция для регистрации модального окна
+- `getModalProps(name)`: Функция для получения пропсов модального окна
 
 ### BaseModal
 
-Базовый компонент модального окна для наследования.
+Базовый компонент модального окна.
 
-**Пропсы:**
+#### Props
 
 - `title`: Заголовок модального окна
 - `children`: Содержимое модального окна
-- `onClose`: Обработчик закрытия модального окна (опционально)
+- `onClose`: Коллбэк, вызываемый при закрытии модального окна
+
+### ExampleModal
+
+Пример модального окна.
+
+#### Props
+
+- `message`: Сообщение, отображаемое в модальном окне
+- `onConfirm`: Коллбэк, вызываемый при подтверждении
