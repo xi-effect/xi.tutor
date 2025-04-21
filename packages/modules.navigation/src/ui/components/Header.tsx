@@ -12,6 +12,8 @@ import {
 } from '@xipkg/dropdown';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
+import { UserSettings } from 'modules.settings';
+import { useState } from 'react';
 
 export const Header = ({
   swiperRef,
@@ -24,6 +26,8 @@ export const Header = ({
   const isMobile = useMediaQuery('(max-width: 960px)');
   const { toggleSidebar } = useSidebar();
   const { t } = useTranslation('navigation');
+
+  const [open, setOpen] = useState(false);
 
   const handleToggle = () => {
     toggle();
@@ -47,11 +51,12 @@ export const Header = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="bottom" align="end">
-            <DropdownMenuItem>{t('profile')}</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setOpen(true)}>{t('profile')}</DropdownMenuItem>
             <DropdownMenuItem>{t('logout')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+      <UserSettings open={open} setOpen={setOpen} />
     </div>
   );
 };

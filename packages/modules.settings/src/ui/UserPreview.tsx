@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ChangeEvent, useRef } from 'react';
 import { Camera, Edit, Trash } from '@xipkg/icons';
 // import { AvatarEditor } from 'pkg.avatar.editor';
@@ -11,6 +12,7 @@ import {
 import { toast } from 'sonner';
 // import { useMainSt } from 'pkg.stores';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
+import { AvatarEditor } from 'modules.avatar.editor';
 
 const readFile = (file: File) =>
   new Promise((resolve) => {
@@ -26,8 +28,8 @@ type UserPreviewPropsT = {
 export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
   // const user = useMainSt((state) => state.user);
 
-  // const [isAvatarOpen, setIsAvatarOpen] = React.useState(false);
-  // const [file, setFile] = React.useState<any>();
+  const [isAvatarOpen, setIsAvatarOpen] = React.useState(false);
+  const [file, setFile] = React.useState<any>();
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -65,26 +67,26 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
 
     console.log(imageDataUrl);
 
-    // setFile(imageDataUrl);
-    // setIsAvatarOpen(true);
+    setFile(imageDataUrl);
+    setIsAvatarOpen(true);
   };
 
   const date = React.useRef<'' | Date>('');
 
-  // const setDate = (value: Date) => {
-  //   date.current = value;
-  // };
+  const setDate = (value: Date) => {
+    date.current = value;
+  };
 
   return (
     <div
       className={`border-gray-80 flex h-[120px] w-full items-center rounded-2xl border p-6 ${className}`}
     >
-      {/* <AvatarEditor
+      <AvatarEditor
         file={file}
         open={isAvatarOpen}
         onOpenChange={setIsAvatarOpen}
         setDate={setDate}
-      /> */}
+      />
       <input className="hidden" ref={inputRef} onChange={handleInput} type="file" />
       <DropdownMenu>
         <DropdownMenuTrigger className="cursor-pointer" asChild>

@@ -1,1 +1,1 @@
-export * from './src';
+export { AvatarEditor } from './src';

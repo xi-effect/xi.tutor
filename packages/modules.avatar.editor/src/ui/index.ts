@@ -1,1 +1,1 @@
-export * from './AvatarEditor';
+export { AvatarEditor } from './AvatarEditor';

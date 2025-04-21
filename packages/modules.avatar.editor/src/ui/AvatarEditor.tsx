@@ -24,7 +24,7 @@ type AvatarEditorT = {
   communityId?: number | undefined;
 };
 
-export const AvatarEditorComponent = ({
+export const AvatarEditor = ({
   withLoadingToServer = true,
   file,
   open,
