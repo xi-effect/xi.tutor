@@ -1,5 +1,5 @@
 {
-  "name": "modules.settings",
+  "name": "modules.profile",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -11,6 +11,9 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "common.api": "*",
+    "common.config": "*",
+    "common.services": "*",
     "sonner": "2.0.3",
     "dayjs": "1.11.13",
     "@xipkg/badge": "2.0.12",

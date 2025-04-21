@@ -12,7 +12,7 @@ import {
 } from '@xipkg/dropdown';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
-import { UserSettings } from 'modules.settings';
+import { UserSettings } from 'modules.profile';
 import { useState } from 'react';
 
 export const Header = ({

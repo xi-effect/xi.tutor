@@ -3,7 +3,6 @@ import { Button } from '@xipkg/button';
 // import { post } from 'pkg.utils';
 import { toast } from 'sonner';
 // import { useMainSt } from 'pkg.stores';
-import { useRouter } from 'next/navigation';
 import EmailIcon from './EmailIcon';
 
 const formatTimeDifference = (allowedResendDate: Date, currentDate: Date): string => {
@@ -16,7 +15,7 @@ const formatTimeDifference = (allowedResendDate: Date, currentDate: Date): strin
 };
 
 export const ConfirmEmail = () => {
-  const router = useRouter();
+  // const router = useRouter();
 
   const allowedResendDate = useMemo(() => new Date(), []);
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -57,7 +56,7 @@ export const ConfirmEmail = () => {
       toast('Письмо было отправленно, повторите попытку позже');
     } else {
       toast('Пожалуйста, войдите в аккаунт');
-      router.push('/signin');
+      // router.push('/signin');
     }
 
     setIsButtonActive(true);

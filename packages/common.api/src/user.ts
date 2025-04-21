@@ -15,7 +15,7 @@ const userApiConfig = {
   },
   [UserQueryKey.Profile]: {
     getUrl: () => `${env.VITE_SERVER_URL_AUTH}/api/users/current/profile/`,
-    method: HttpMethod.POST,
+    method: HttpMethod.PATCH,
   },
   [UserQueryKey.Email]: {
     getUrl: () => `${env.VITE_SERVER_URL_AUTH}/api/users/current/email/`,

@@ -13,6 +13,7 @@ import { toast } from 'sonner';
 // import { useMainSt } from 'pkg.stores';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { AvatarEditor } from 'modules.avatar.editor';
+import { useCurrentUser } from 'common.services';
 
 const readFile = (file: File) =>
   new Promise((resolve) => {
@@ -26,7 +27,7 @@ type UserPreviewPropsT = {
 };
 
 export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
-  // const user = useMainSt((state) => state.user);
+  const { data: user } = useCurrentUser();
 
   const [isAvatarOpen, setIsAvatarOpen] = React.useState(false);
   const [file, setFile] = React.useState<any>();
@@ -115,8 +116,8 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
         </DropdownMenuContent>
       </DropdownMenu>
       <div className="ml-4 flex flex-col justify-center gap-0.5">
-        {/* <span className="text-2xl leading-[32px] font-semibold">{user.displayName}</span> */}
-        {/* <span className="text-gray-80 text-[16px] leading-[22px]">{user.username}</span> */}
+        <span className="text-2xl leading-[32px] font-semibold">{user?.display_name}</span>
+        <span className="text-gray-80 text-[16px] leading-[22px]">{user?.username}</span>
       </div>
     </div>
   );

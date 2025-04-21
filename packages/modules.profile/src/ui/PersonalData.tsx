@@ -19,6 +19,7 @@ import { Input } from '@xipkg/input';
 // import { useMainSt } from 'pkg.stores';
 import { toast } from 'sonner';
 import { UserPreview } from './UserPreview';
+import { useCurrentUser, useUpdateProfile } from 'common.services';
 
 const FormSchema = z.object({
   username: z.string({ required_error: 'Обязательное поле' }),
@@ -26,8 +27,8 @@ const FormSchema = z.object({
 });
 
 export const PersonalData = () => {
-  // const user = useMainSt((state) => state.user);
-  // const updateUser = useMainSt((state) => state.updateUser);
+  const { data: user } = useCurrentUser();
+  const { updateProfile } = useUpdateProfile();
   // const { theme } = useTheme();
 
   const isMobile = useMediaQuery('(max-width: 719px)');
@@ -35,8 +36,8 @@ export const PersonalData = () => {
     // @ts-ignore
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      displayName: '',
-      username: '',
+      displayName: user?.display_name,
+      username: user?.username,
     },
   });
 
@@ -51,25 +52,20 @@ export const PersonalData = () => {
     trigger();
     console.log(formData);
 
-    const status = 200;
+    try {
+      const response = await updateProfile.mutateAsync({
+        username: formData.username,
+        display_name: formData.displayName,
+      });
 
-    // const { status } = await patch({
-    //   service: 'auth',
-    //   path: '/api/users/current/profile/',
-    //   body: { username: formData.username, display_name: formData.displayName, theme },
-    //   config: {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //   },
-    // });
-
-    if (status === 200) {
-      toast('Данные успешно обновлены');
-      // updateUser({ username: formData.username });
-      // updateUser({ displayName: formData.displayName });
-    } else {
-      toast('Произошла ошибка');
+      if (response.status === 200) {
+        toast('Данные успешно обновлены');
+      } else {
+        toast('Произошла ошибка');
+      }
+    } catch (error) {
+      console.error('Ошибка при обновлении профиля:', error);
+      toast('Произошла ошибка при обновлении данных');
     }
   };
 

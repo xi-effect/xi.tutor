@@ -1,2 +1,2 @@
 export { useSignin, useSignup } from './src/auth';
-export { useCurrentUser } from './src/user';
+export { useCurrentUser, useUpdateProfile } from './src/user';
