@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm } from '@xipkg/form';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -63,7 +64,7 @@ export const useChangeEmail = () => {
         setStage({ type: 'success', email: data.email });
         toast('Вы успешно изменили почту!');
       }
-    } catch (error) {
+    } catch (error: any) {
       // Обработка ошибок от API
       if (error.response?.data?.errors) {
         const errors = error.response.data.errors;
