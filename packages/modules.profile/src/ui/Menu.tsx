@@ -1,14 +1,15 @@
 import { Account, Exit, Home, Key, Palette } from '@xipkg/icons';
-// import { useMediaQuery } from '@xipkg/utils';
-import React, { Dispatch, SetStateAction } from 'react';
-
-// import { createQueryString, deleteQuery } from 'pkg.router.url';
-// import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-// import { useMainSt } from 'pkg.stores';
+import { Dispatch, SetStateAction } from 'react';
+import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 
 type ItemT = {
   name: string;
   query: string;
+};
+
+type SearchParams = {
+  profile?: string;
+  [key: string]: string | undefined;
 };
 
 const options: ItemT[] = [
@@ -40,32 +41,38 @@ type ItemPropsT = {
 };
 
 const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
-  // const router = useRouter();
-  // const pathname = usePathname();
-  // const searchParams = useSearchParams();
-  // const isMobile = useMediaQuery('(max-width: 719px)');
-  // const category = searchParams.get('category');
-  // const isActive = category === item.query && !isMobile;
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const search = useSearch({ strict: false });
+  const profile = search.profile;
+  const isActive = profile === item.query;
 
-  const category = 'home';
-  const isActive = category === item.query;
+  // Рендерим соответствующую иконку в зависимости от индекса элемента
+  const renderIcon = () => {
+    const iconClasses = `transition-colors ease-in ${
+      item.query === profile ? 'fill-brand-80' : 'group-hover:fill-brand-80'
+    }`;
 
-  const getIconClassName = (q: string) =>
-    `transition-colors ease-in ${q === category ? 'fill-brand-80' : 'group-hover:fill-brand-80'}`;
-
-  const iconsDict: React.ReactNode[] = [
-    <Home className={getIconClassName('home')} />,
-    <Account className={getIconClassName('personalInfo')} />,
-    <Palette className={getIconClassName('personalisation')} />,
-    <Key className={getIconClassName('security')} />,
-    // <SoundTwo className={getIconClassName(4)} />,
-  ];
+    switch (index) {
+      case 0:
+        return <Home className={iconClasses} key="home-icon" />;
+      case 1:
+        return <Account className={iconClasses} key="account-icon" />;
+      case 2:
+        return <Palette className={iconClasses} key="palette-icon" />;
+      case 3:
+        return <Key className={iconClasses} key="key-icon" />;
+      default:
+        return null;
+    }
+  };
 
   const handleClick = () => {
     onMenuItemChange(index, item.query);
-    // router.push(
-    //   `${pathname}?${createQueryString(searchParams, 'category', item.query ? String(item.query) : '')}`,
-    // );
+    navigate({
+      to: pathname,
+      search: (prev: SearchParams) => ({ ...prev, profile: item.query }),
+    });
   };
 
   return (
@@ -79,7 +86,7 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
       } group flex h-[40px] w-full flex-row items-center rounded-lg p-2 transition-colors ease-in hover:cursor-pointer`}
       key={index.toString()}
     >
-      {iconsDict[index]}
+      {renderIcon()}
       <span className="pl-2 text-[14px] font-normal">{item.name}</span>
     </button>
   );
@@ -92,9 +99,8 @@ type MenuPropsT = {
 };
 
 export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuPropsT) => {
-  // const searchParams = useSearchParams();
-  // const pathname = usePathname();
-  // const router = useRouter();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
 
   // const onSignOut = useMainSt((state) => state.onSignOut);
 
@@ -105,10 +111,16 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
   };
 
   const handleExit = async () => {
-    // const updatedParams = deleteQuery(deleteQuery(searchParams, 'profileIsOpen'), 'category');
-    // router.replace(`${pathname}?${updatedParams}`);
+    navigate({
+      to: pathname,
+      search: (prev: SearchParams) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { profile, ...rest } = prev;
+        return rest;
+      },
+    });
     // const isLogout = await onSignOut();
-    // if (isLogout === 200) router.push('/signin');
+    // if (isLogout === 200) navigate({ to: '/signin' });
   };
 
   return (

@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useMediaQuery } from '@xipkg/utils';
-// import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-// import { deleteQuery } from 'pkg.router.url';
+import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { Modal, ModalContent, ModalTitle } from '@xipkg/modal';
 import { Header } from './Header';
 import { Menu } from './Menu';
 import { Content } from './Content';
+
+type SearchParams = {
+  profile?: string;
+  [key: string]: string | undefined;
+};
 
 export const UserSettings = ({
   open,
@@ -17,21 +21,76 @@ export const UserSettings = ({
   const isMobile = useMediaQuery('(max-width: 719px)');
   const [activeContent, setActiveContent] = React.useState<number>(0);
   const [showContent, setShowContent] = React.useState(false);
-  // const searchParams = useSearchParams();
-  // const pathname = usePathname();
-  // const router = useRouter();
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const search = useSearch({ strict: false }) as SearchParams;
+  const { profile } = search;
 
-  // const category = searchParams.get('category');
+  // Управляем состоянием модалки через URL
+  useEffect(() => {
+    // Если в URL есть profile, модалка должна быть открыта
+    if (profile && !open) {
+      setOpen(true);
+    }
+
+    // Если в URL нет profile, модалка должна быть закрыта
+    if (!profile && open) {
+      setOpen(false);
+    }
+
+    // Устанавливаем активный пункт меню в соответствии с параметром profile
+    if (profile) {
+      const profileIndex = options.findIndex((item) => item.query === profile);
+      if (profileIndex !== -1) {
+        setActiveContent(profileIndex);
+        setActiveQuery(profile);
+      }
+    }
+  }, [profile, open, setOpen]);
+
   const handleClose = () => {
     setShowContent(false);
-    // const updatedParams = deleteQuery(deleteQuery(searchParams, 'profileIsOpen'), 'category');
-    // router.push(`${pathname}?${updatedParams}`);
+    // Просто удаляем параметр из URL, а модалка закроется автоматически через useEffect
+    navigate({
+      to: pathname,
+      search: (prev: SearchParams) => {
+        // Удаляем параметр profile из URL
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { profile, ...rest } = prev;
+        return rest;
+      },
+    });
+  };
+
+  // Обработчик для управления открытием/закрытием модалки
+  const handleOpenChange = (openState: boolean) => {
+    if (!openState) {
+      // Если модалку нужно закрыть, удаляем параметр из URL
+      navigate({
+        to: pathname,
+        search: (prev: SearchParams) => {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { profile, ...rest } = prev;
+          return rest;
+        },
+      });
+    }
+    // Мы не устанавливаем setOpen(openState) напрямую,
+    // так как это будет сделано через useEffect при изменении URL
   };
 
   const [activeQuery, setActiveQuery] = React.useState<string>('home');
 
+  // Список опций меню для поиска индекса по query
+  const options = [
+    { query: 'home' },
+    { query: 'personalInfo' },
+    { query: 'personalisation' },
+    { query: 'security' },
+  ];
+
   return (
-    <Modal open={open} onOpenChange={setOpen}>
+    <Modal open={open} onOpenChange={handleOpenChange}>
       <ModalContent
         onCloseAutoFocus={(event) => {
           event.preventDefault();

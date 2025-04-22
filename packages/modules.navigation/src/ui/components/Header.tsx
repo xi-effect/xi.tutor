@@ -13,7 +13,13 @@ import {
 import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
 import { UserSettings } from 'modules.profile';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
+
+type SearchParams = {
+  profile?: string;
+  [key: string]: string | undefined;
+};
 
 export const Header = ({
   swiperRef,
@@ -26,8 +32,20 @@ export const Header = ({
   const isMobile = useMediaQuery('(max-width: 960px)');
   const { toggleSidebar } = useSidebar();
   const { t } = useTranslation('navigation');
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const search = useSearch({ strict: false }) as SearchParams;
 
+  // Состояние модалки определяется URL параметром profile
   const [open, setOpen] = useState(false);
+
+  // Синхронизируем состояние модалки с URL
+  useEffect(() => {
+    const hasProfileParam = !!search.profile;
+    if (hasProfileParam !== open) {
+      setOpen(hasProfileParam);
+    }
+  }, [search.profile, open]);
 
   const handleToggle = () => {
     toggle();
@@ -37,6 +55,14 @@ export const Header = ({
     } else {
       toggleSidebar();
     }
+  };
+
+  const handleOpenProfile = () => {
+    // Только обновляем URL, а модалка откроется автоматически через useEffect
+    navigate({
+      to: pathname,
+      search: (prev: SearchParams) => ({ ...prev, profile: 'home' }),
+    });
   };
 
   return (
@@ -51,7 +77,7 @@ export const Header = ({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent side="bottom" align="end">
-            <DropdownMenuItem onClick={() => setOpen(true)}>{t('profile')}</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleOpenProfile}>{t('profile')}</DropdownMenuItem>
             <DropdownMenuItem>{t('logout')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
