@@ -46,18 +46,25 @@ jobs:
                 status_emoji,
                 app_name,
                 "open" if full_status == "success" else "logs",
-                f"https://{app_domain}/deployments/all/disable",
+                f"https://{app_domain}/deployments/all/disable"
+                if full_status == "success"
+                else "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
               )
             )
 
           message = "\n".join(
-            f"- {emoji} {name} ([{link_text}]({link_url}))" 
+            f"- {emoji} {name} ([{link_text}](<{link_url}>))" 
             for emoji, name, link_text, link_url in message_rows
           )
 
+          if message == "":
+            message = ":warning: Push to main in xi.tutor didn't trigger any deployments :warning:"
+          else:
+            message = f"Deployed xi.tutor to production:\n{message}"
+
           import os
           with open(os.getenv("GITHUB_OUTPUT"), "a") as f:
-            f.write(f"message<<EOF\nDeployed xi.tutor to production:\n{message}\nEOF")
+            f.write(f"message<<EOF\n{message}\nEOF")
 
       - name: Report deployment to discord
         uses: tsickert/discord-webhook@v5.3.0
