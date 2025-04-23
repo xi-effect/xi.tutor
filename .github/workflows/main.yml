@@ -45,11 +45,9 @@ jobs:
 
     outputs:
       xi_web_files: ${{ steps.path_filter.outputs.xi_web_files }}
-      lintable_files: ${{ steps.path_filter.outputs.lintable_files }}
 
   lint:
     needs: analyze_files
-    if: needs.analyze_files.outputs.lintable_files == 'true'
     runs-on: ubuntu-latest
 
     steps:

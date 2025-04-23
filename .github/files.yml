@@ -24,9 +24,3 @@ app_common_files: &app_common_files  # тригерят оба билда (и д
 xi_web_files:  # запускает билд и депой для xi.web
   - *app_common_files
   - 'apps/xi.web/**'
-
-lintable_files:  # запускает прогон линтера
-  - *config_files
-  - '**.[jt]s'
-  - '**.[jt]sx'
-  - '**.md'
