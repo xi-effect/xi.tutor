@@ -46,12 +46,14 @@ jobs:
                 status_emoji,
                 app_name,
                 "open" if full_status == "success" else "logs",
-                f"https://{app_domain}/deployments/all/disable",
+                f"https://{app_domain}/deployments/all/disable"
+                if full_status == "success"
+                else "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}",
               )
             )
 
           message = "\n".join(
-            f"- {emoji} {name} ([{link_text}]({link_url}))" 
+            f"- {emoji} {name} ([{link_text}](<{link_url}>))" 
             for emoji, name, link_text, link_url in message_rows
           )
 
