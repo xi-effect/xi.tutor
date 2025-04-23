@@ -7,11 +7,6 @@ type ItemT = {
   query: string;
 };
 
-type SearchParams = {
-  profile?: string;
-  [key: string]: string | undefined;
-};
-
 const options: ItemT[] = [
   {
     name: 'Главная',
@@ -44,13 +39,18 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const search = useSearch({ strict: false });
-  const profile = search.profile;
-  const isActive = profile === item.query;
+
+  // Извлекаем информацию о профиле из параметра iid
+  const profileParam = search.iid || '';
+  const isProfileOpen = profileParam.startsWith('profile:');
+  const profileType = isProfileOpen ? profileParam.split(':')[1] : '';
+
+  const isActive = profileType === item.query;
 
   // Рендерим соответствующую иконку в зависимости от индекса элемента
   const renderIcon = () => {
     const iconClasses = `transition-colors ease-in ${
-      item.query === profile ? 'fill-brand-80' : 'group-hover:fill-brand-80'
+      item.query === profileType ? 'fill-brand-80' : 'group-hover:fill-brand-80'
     }`;
 
     switch (index) {
@@ -71,7 +71,7 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
     onMenuItemChange(index, item.query);
     navigate({
       to: pathname,
-      search: (prev: SearchParams) => ({ ...prev, profile: item.query }),
+      search: { iid: `profile:${item.query}` },
     });
   };
 
@@ -113,11 +113,7 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
   const handleExit = async () => {
     navigate({
       to: pathname,
-      search: (prev: SearchParams) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { profile, ...rest } = prev;
-        return rest;
-      },
+      search: {},
     });
     // const isLogout = await onSignOut();
     // if (isLogout === 200) navigate({ to: '/signin' });

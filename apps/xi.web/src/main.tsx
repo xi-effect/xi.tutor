@@ -26,6 +26,13 @@ declare module '@tanstack/react-router' {
   interface Register {
     router: typeof router;
   }
+
+  // Расширяем параметры поиска для всех маршрутов
+  interface SearchParams {
+    redirect?: string;
+    iid?: string;
+    community?: string;
+  }
 }
 
 const InnerApp = () => {

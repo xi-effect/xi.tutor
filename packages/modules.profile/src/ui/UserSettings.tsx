@@ -6,11 +6,6 @@ import { Header } from './Header';
 import { Menu } from './Menu';
 import { Content } from './Content';
 
-type SearchParams = {
-  profile?: string;
-  [key: string]: string | undefined;
-};
-
 export const UserSettings = ({
   open,
   setOpen,
@@ -23,42 +18,41 @@ export const UserSettings = ({
   const [showContent, setShowContent] = React.useState(false);
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const search = useSearch({ strict: false }) as SearchParams;
-  const { profile } = search;
+  const search = useSearch({ strict: false });
+
+  // Извлекаем информацию о профиле из параметра iid
+  const profileParam = search.iid || '';
+  const isProfileOpen = profileParam.startsWith('profile:');
+  const profileType = isProfileOpen ? profileParam.split(':')[1] : '';
 
   // Управляем состоянием модалки через URL
   useEffect(() => {
     // Если в URL есть profile, модалка должна быть открыта
-    if (profile && !open) {
+    if (isProfileOpen && !open) {
       setOpen(true);
     }
 
     // Если в URL нет profile, модалка должна быть закрыта
-    if (!profile && open) {
+    if (!isProfileOpen && open) {
       setOpen(false);
     }
 
     // Устанавливаем активный пункт меню в соответствии с параметром profile
-    if (profile) {
-      const profileIndex = options.findIndex((item) => item.query === profile);
+    if (isProfileOpen && profileType) {
+      const profileIndex = options.findIndex((item) => item.query === profileType);
       if (profileIndex !== -1) {
         setActiveContent(profileIndex);
-        setActiveQuery(profile);
+        setActiveQuery(profileType);
       }
     }
-  }, [profile, open, setOpen]);
+  }, [profileParam, open, setOpen, isProfileOpen, profileType]);
 
   const handleClose = () => {
     setShowContent(false);
     // Просто удаляем параметр из URL, а модалка закроется автоматически через useEffect
     navigate({
       to: pathname,
-      search: (prev: SearchParams) => {
-        // Удаляем параметр profile из URL
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { profile, ...rest } = prev;
-        return rest;
-      },
+      search: {},
     });
   };
 
@@ -68,11 +62,7 @@ export const UserSettings = ({
       // Если модалку нужно закрыть, удаляем параметр из URL
       navigate({
         to: pathname,
-        search: (prev: SearchParams) => {
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { profile, ...rest } = prev;
-          return rest;
-        },
+        search: {},
       });
     }
     // Мы не устанавливаем setOpen(openState) напрямую,

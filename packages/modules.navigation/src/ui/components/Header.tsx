@@ -16,11 +16,6 @@ import { UserSettings } from 'modules.profile';
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 
-type SearchParams = {
-  profile?: string;
-  [key: string]: string | undefined;
-};
-
 export const Header = ({
   swiperRef,
   toggle,
@@ -34,18 +29,20 @@ export const Header = ({
   const { t } = useTranslation('navigation');
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const search = useSearch({ strict: false }) as SearchParams;
+  const search = useSearch({ strict: false });
 
-  // Состояние модалки определяется URL параметром profile
+  // Состояние модалки определяется URL параметром iid (используем его вместо profile)
   const [open, setOpen] = useState(false);
 
   // Синхронизируем состояние модалки с URL
   useEffect(() => {
-    const hasProfileParam = !!search.profile;
+    // Используем iid параметр для определения, открыта ли модалка и какая вкладка активна
+    const profileParam = search.iid;
+    const hasProfileParam = !!profileParam;
     if (hasProfileParam !== open) {
       setOpen(hasProfileParam);
     }
-  }, [search.profile, open]);
+  }, [search.iid, open]);
 
   const handleToggle = () => {
     toggle();
@@ -58,10 +55,10 @@ export const Header = ({
   };
 
   const handleOpenProfile = () => {
-    // Только обновляем URL, а модалка откроется автоматически через useEffect
+    // Используем параметр iid для хранения значения "profile:home"
     navigate({
       to: pathname,
-      search: (prev: SearchParams) => ({ ...prev, profile: 'home' }),
+      search: { iid: 'profile:home' },
     });
   };
 
