@@ -1,0 +1,26 @@
+{
+  "name": "common.sockets",
+  "version": "0.0.1",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.7.3",
+    "react": "^19.0.0",
+    "common.config": "*",
+    "common.env": "*"
+  },
+  "devDependencies": {
+    "common.eslint": "*",
+    "common.typescript": "*",
+    "@types/react": "^19.0.8",
+    "typescript": "~5.7.2",
+    "eslint": "^9.19.0"
+  }
+} 
