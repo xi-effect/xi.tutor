@@ -100,7 +100,7 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
               size="xl"
               className='bg-gray-5 rounded-[36px]" flex h-[64px] w-[64px] place-items-center justify-center'
             >
-              <Camera size="l" className="fill-gray-60" />
+              <Camera className="fill-gray-60" />
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>

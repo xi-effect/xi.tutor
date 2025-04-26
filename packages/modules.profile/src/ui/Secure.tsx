@@ -11,6 +11,7 @@ import { ChangeEmail } from './ChangeEmail';
 
 export const Secure = () => {
   const { data: user } = useCurrentUser();
+
   const isMobile = useMediaQuery('(max-width: 719px)');
 
   const [isChangePasswordModalOpen, setIsChangePasswordModalOpen] = useState(false);
@@ -34,7 +35,7 @@ export const Secure = () => {
               type="button"
               className="hover:bg-gray-5 flex h-[66px] flex-row items-center gap-4 rounded-xl bg-transparent p-3"
             >
-              <Key size="l" className="fill-brand-80" />
+              <Key className="fill-brand-80" />
               <div className="items-star flex flex-col">
                 <span className="w-fit font-semibold">Пароль</span>
                 <span className="text-xs font-normal">{`Обновлён ${getRelativeTime(user?.last_password_change)}`}</span>
@@ -47,7 +48,7 @@ export const Secure = () => {
               type="button"
               className="hover:bg-gray-5 flex h-[66px] flex-row items-center gap-4 rounded-xl bg-transparent p-3"
             >
-              <Mail size="l" className="fill-brand-80" />
+              <Mail className="fill-brand-80" />
               <div className="items-star flex flex-col">
                 <span className="w-fit font-semibold">Почта</span>
                 <span className="text-xs font-normal">{user?.email}</span>
