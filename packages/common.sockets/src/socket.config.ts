@@ -8,7 +8,7 @@ export const SOCKET_ENDPOINT = env.VITE_SERVER_URL_BACKEND;
 export const SOCKET_OPTIONS = {
   reconnectionAttempts: 100,
   reconnectionDelay: 2000,
-  autoConnect: false,
+  // autoConnect: false,
   transports: ['websocket'],
   withCredentials: true,
 };
