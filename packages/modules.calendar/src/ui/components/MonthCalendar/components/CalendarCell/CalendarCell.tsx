@@ -1,8 +1,8 @@
 import { format, isSameDay, getDay, isSameMonth, getDate } from 'date-fns';
+import { cn } from "@xipkg/utils";
 
 import type { FC } from "react";
 import type { CalendarEvent } from "../../../../config";
-import { cn } from "@xipkg/utils";
 
 interface CalendarCellProps {
   calendarEvents: CalendarEvent[]
@@ -52,7 +52,11 @@ export const CalendarCell:FC<CalendarCellProps> = ({
               event.type === "cancelled" && "border-red-80 text-red-80"
             )}
           >
-            {event.time && <span className="mr-1 text-xs">{event.time}</span>}
+            {event.start && 
+              <span className="mr-1 text-xs">
+                {`${event.start.getHours()}:${event.start.getMinutes()}`}
+              </span>
+            }
               <span className="font-medium">{event.title}</span>
           </div>
         ))}

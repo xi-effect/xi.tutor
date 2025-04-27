@@ -18,7 +18,7 @@ export const MonthCalendar: FC<CalendarProps> = ({ date, events }) => {
   const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
 
   const getEventsForDay = (day: Date) =>
-    events.filter((event) => isSameDay(day, new Date(event.date)));
+    events.filter((event) => isSameDay(day, new Date(event.end)));
 
   const weeks: Date[][] = [];
   for (let i = 0; i < days.length; i += 7) {

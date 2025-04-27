@@ -4,10 +4,11 @@
 // import { cn } from '@xipkg/utils';
 import { useState } from 'react';
 import { Button } from '@xipkg/button';
-import { MOCK_EVENTS, MONTHS, type CalendarMode } from './config';
+import { MOCK_EVENTS, MONTHS, type CalendarMode, type WeekOrDayMode } from './config';
 import { MonthCalendar } from './components/MonthCalendar/MonthCalendar';
 import { Sidebar } from './components/Sidebar/Sidebar';
 import { YearCalendar } from './components/YearCalendar/YearCalendar';
+import { WeekCalendar } from './components/WeekCalendar/WeekCalendar';
 
 
 export const CalendarModule = () => {
@@ -15,6 +16,10 @@ export const CalendarModule = () => {
   const [ mode, setMode ] = useState<CalendarMode>('month');
   const today = new Date(Date.now());
   const month = MONTHS[today.getMonth()];
+
+  function isWeekOrDayMode(mode: CalendarMode): mode is WeekOrDayMode {
+    return ['week', 'day'].includes(mode);
+  }
   
   return (
     <div className='flex items-center'>
@@ -24,11 +29,12 @@ export const CalendarModule = () => {
             <span className='font-bold'>{month} </span>
             <span>{today.getFullYear()}</span>
           </p>
-          <Button onClick={() => setMode('year')}>Сменить представление</Button>
+          <Button onClick={() => setMode('week')}>Сменить представление</Button>
 
         </div>
         {mode === 'month' && <MonthCalendar date={today} events={MOCK_EVENTS} />}
         {mode === 'year' && <YearCalendar year={today.getFullYear()} />}
+        {isWeekOrDayMode(mode) && <WeekCalendar events={MOCK_EVENTS} date={today} view={mode} />}
       </div>
       {mode !== 'year' && <Sidebar />}
     </div>
