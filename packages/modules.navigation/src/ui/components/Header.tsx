@@ -15,6 +15,7 @@ import { Button } from '@xipkg/button';
 import { UserSettings } from 'modules.profile';
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
+import { useAuth } from 'common.auth';
 
 export const Header = ({
   swiperRef,
@@ -29,6 +30,7 @@ export const Header = ({
   const { t } = useTranslation('navigation');
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const { logout } = useAuth();
   const search = useSearch({ strict: false });
 
   // Состояние модалки определяется URL параметром iid (используем его вместо profile)
@@ -62,6 +64,11 @@ export const Header = ({
     });
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate({ to: '/signin' });
+  };
+
   return (
     <div className="fixed top-0 right-0 left-0 z-20 flex h-[64px] w-full items-center gap-4 px-4 py-3">
       <SidebarTrigger onClick={handleToggle} />
@@ -75,7 +82,7 @@ export const Header = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent side="bottom" align="end">
             <DropdownMenuItem onClick={handleOpenProfile}>{t('profile')}</DropdownMenuItem>
-            <DropdownMenuItem>{t('logout')}</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>{t('logout')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

@@ -15,6 +15,7 @@
     "sonner": "2.0.1",
     "common.services": "*",
     "common.ui": "*",
+    "common.auth": "*",
     "modules.profile": "*",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1",
