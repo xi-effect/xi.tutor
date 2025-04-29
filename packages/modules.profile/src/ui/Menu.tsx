@@ -1,0 +1,137 @@
+import { Account, Exit, Home, Key, Palette } from '@xipkg/icons';
+import { Dispatch, SetStateAction } from 'react';
+import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
+
+type ItemT = {
+  name: string;
+  query: string;
+};
+
+const options: ItemT[] = [
+  {
+    name: 'Главная',
+    query: 'home',
+  },
+  {
+    name: 'Личные данные',
+    query: 'personalInfo',
+  },
+  {
+    name: 'Персонализация',
+    query: 'personalisation',
+  },
+  {
+    name: 'Безопасность',
+    query: 'security',
+  },
+  // {
+  //   name: 'Звук и видео',
+  // },
+];
+
+type ItemPropsT = {
+  index: number;
+  item: ItemT;
+  onMenuItemChange: (index: number, query: string) => void;
+};
+
+const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const search = useSearch({ strict: false });
+
+  // Извлекаем информацию о профиле из параметра iid
+  const profileParam = search.iid || '';
+  const isProfileOpen = profileParam.startsWith('profile:');
+  const profileType = isProfileOpen ? profileParam.split(':')[1] : '';
+
+  const isActive = profileType === item.query;
+
+  // Рендерим соответствующую иконку в зависимости от индекса элемента
+  const renderIcon = () => {
+    const iconClasses = `transition-colors ease-in ${
+      item.query === profileType ? 'fill-brand-80' : 'group-hover:fill-brand-80'
+    }`;
+
+    switch (index) {
+      case 0:
+        return <Home className={iconClasses} key="home-icon" />;
+      case 1:
+        return <Account className={iconClasses} key="account-icon" />;
+      case 2:
+        return <Palette className={iconClasses} key="palette-icon" />;
+      case 3:
+        return <Key className={iconClasses} key="key-icon" />;
+      default:
+        return null;
+    }
+  };
+
+  const handleClick = () => {
+    onMenuItemChange(index, item.query);
+    navigate({
+      to: pathname,
+      search: { iid: `profile:${item.query}` },
+    });
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={() => handleClick()}
+      className={`${
+        isActive
+          ? 'bg-brand-0 text-brand-80'
+          : 'text-gray-90 hover:bg-brand-0 hover:text-brand-80 bg-transparent'
+      } group flex h-[40px] w-full flex-row items-center rounded-lg p-2 transition-colors ease-in hover:cursor-pointer`}
+      key={index.toString()}
+    >
+      {renderIcon()}
+      <span className="pl-2 text-[14px] font-normal">{item.name}</span>
+    </button>
+  );
+};
+
+type MenuPropsT = {
+  setActiveContent: Dispatch<SetStateAction<number>>;
+  setShowContent: Dispatch<SetStateAction<boolean>>;
+  setActiveQuery: Dispatch<SetStateAction<string>>;
+};
+
+export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuPropsT) => {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  // const onSignOut = useMainSt((state) => state.onSignOut);
+
+  const handleMenuItem = (index: number, query: string) => {
+    setActiveQuery(query);
+    setActiveContent(index);
+    setShowContent(true);
+  };
+
+  const handleExit = async () => {
+    navigate({
+      to: pathname,
+      search: {},
+    });
+    // const isLogout = await onSignOut();
+    // if (isLogout === 200) navigate({ to: '/signin' });
+  };
+
+  return (
+    <div className="flex w-full flex-col gap-1 sm:w-[220px]">
+      {options.map((item, index) => (
+        <Item item={item} index={index} key={index} onMenuItemChange={handleMenuItem} />
+      ))}
+      <button
+        type="button"
+        onClick={() => handleExit()}
+        className="text-gray-60 hover:bg-red-0 group mt-10 flex h-[40px] w-full flex-row items-center rounded-lg bg-transparent p-2 transition-colors ease-in hover:cursor-pointer hover:text-red-100"
+      >
+        <Exit className="transition-colors ease-in group-hover:fill-red-100" />
+        <span className="pl-2 text-[14px] font-normal">Выйти</span>
+      </button>
+    </div>
+  );
+};

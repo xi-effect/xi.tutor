@@ -12,21 +12,13 @@ config_files: &config_files  # изменения тут обязательно 
   - '.github/workflows/*'
   - 'package.json'
   - 'package-lock.json'
-  - '**/package.json'
-  - '**/package-lock.json'
-
-app_common_files: &app_common_files  # тригерят оба билда (и депой в main-ветке)
-  - *config_files
-  - 'packages/**'
   - 'turbo.json'
   - '.npmrc'
+
+app_common_files: &app_common_files  # тригерят все билда (и депой в main-ветке)
+  - *config_files
+  - 'packages/**'
 
 xi_web_files:  # запускает билд и депой для xi.web
   - *app_common_files
   - 'apps/xi.web/**'
-
-lintable_files:  # запускает прогон линтера
-  - *config_files
-  - '**.[jt]s'
-  - '**.[jt]sx'
-  - '**.md'

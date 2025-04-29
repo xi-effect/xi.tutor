@@ -385,13 +385,13 @@ export const SignInPage = () => {
 
 ### Основные переменные окружения
 
-| Переменная                | Назначение                                                       | Значение по умолчанию         |
-| ------------------------- | ---------------------------------------------------------------- | ----------------------------- |
-| `VITE_SERVER_URL_BACKEND` | URL API бэкенда                                                  | https://api.xieffect.ru       |
-| `VITE_SERVER_URL_AUTH`    | URL сервиса аутентификации                                       | https://auth.xieffect.ru      |
-| `VITE_SERVER_URL_LIVE`    | URL сервиса для онлайн-взаимодействия                            | https://live-test.xieffect.ru |
-| `VITE_DEVTOOLS_ENABLED`   | Включение инструментов разработчика                              | false                         |
-| `VITE_ENABLE_X_TESTING`   | Нужен для корректной работы авторизации при локальной разработке | false                         |
+| Переменная                | Назначение                                                       | Значение по умолчанию       |
+| ------------------------- | ---------------------------------------------------------------- | --------------------------- |
+| `VITE_SERVER_URL_BACKEND` | URL API бэкенда                                                  | https://api.xieffect.ru     |
+| `VITE_SERVER_URL_AUTH`    | URL сервиса аутентификации                                       | https://auth.xieffect.ru    |
+| `VITE_SERVER_URL_LIVEKIT` | URL сервиса для ВКС                                              | https://livekit.xieffect.ru |
+| `VITE_DEVTOOLS_ENABLED`   | Включение инструментов разработчика                              | false                       |
+| `VITE_ENABLE_X_TESTING`   | Нужен для корректной работы авторизации при локальной разработке | false                       |
 
 ### Конфигурация окружений
 

@@ -5,5 +5,7 @@
     "materials": "Materials",
     "payments": "Payments",
     "support": "Support",
-    "faq": "FAQ"
+    "faq": "FAQ",
+    "profile": "Profile",
+    "logout": "Logout"
 }
