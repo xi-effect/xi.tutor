@@ -33,7 +33,9 @@ export const MonthCalendar: FC<CalendarProps> = ({ date, events }) => {
           const weekNumber = getWeek(week[0], { weekStartsOn: 1 });
           return (
             <div key={weekNumber} className="flex items-center">
-              <div className="h-44 text-xs text-center py-2.5 w-7 border-t border-b border-gray-10">
+              <div 
+                className="hidden md:block h-44 text-xs text-center py-2.5 w-7 border-t border-b border-gray-10"
+              >
                 {weekNumber}
               </div>
               <div className="grow grid grid-cols-7">
@@ -41,7 +43,12 @@ export const MonthCalendar: FC<CalendarProps> = ({ date, events }) => {
                 const dayEvents = getEventsForDay(day);
 
                 return (
-                  <CalendarCell calendarEvents={dayEvents} day={day} currentDate={date}/>
+                  <CalendarCell 
+                    key={day.toISOString()} 
+                    calendarEvents={dayEvents} 
+                    day={day} 
+                    currentDate={date}
+                  />
                 );
               })}
               </div>

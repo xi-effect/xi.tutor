@@ -1,9 +1,8 @@
 import { format, startOfWeek, addDays, isSameDay } from "date-fns";
-import { ScrollArea } from '@xipkg/scrollarea';
 import { cn } from "@xipkg/utils";
 
 import type { FC } from "react";
-import type { CalendarEvent, WeekOrDayMode } from "../../config";
+import { WEEK_DAYS, type CalendarEvent, type WeekOrDayMode } from "../../config";
 
 
 const hours = Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, "0")}:00`);
@@ -20,21 +19,23 @@ export const WeekCalendar: FC<WeekCalendarProps> = ({ events, date, view = "week
     ? Array.from({ length: 7 }, (_, i) => addDays(startOfWeek(date, { weekStartsOn: 1 }), i))
     : [date];
 
-  console.log(hours);
-
   return (
-    <div className="overflow-hidden">
-        <div className="grid grid-cols-[repeat(7,_1fr)] w-full pl-[80px] bg-muted sticky top-0 z-10">
-          {days.map((day) => (
+    <div>
+        <div className={cn(
+          "grid grid-cols-[repeat(7,_1fr)] w-full pl-[80px]",
+          view === "day" && "grid-cols-[1fr]"
+        )}>
+          {days.map((day, index) => (
             <div key={day.toISOString()} className="p-2 text-xs text-center">
-              {format(day, "EEE d")}
+              {`${WEEK_DAYS[index]} ${format(day, "d")}`}
             </div>
           ))}
         </div>
 
-
-      <ScrollArea className="h-full">
-        <div className="grid grid-cols-[80px_repeat(7,_1fr)] w-full">
+        <div className={cn(
+          "grid grid-cols-[80px_repeat(7,_1fr)] w-full",
+          view === "day" && "grid-cols-[80px_1fr]"
+        )}>
           <div className="flex flex-col text-xs text-right pr-2">
             <div className="w-20 h-10 py-3 pr-2 border-y border-gray-10">Весь день</div>
             {hours.map((hour, index) => (
@@ -95,7 +96,6 @@ export const WeekCalendar: FC<WeekCalendarProps> = ({ events, date, view = "week
             );
           })}
         </div>
-      </ScrollArea>
     </div>
   );
 };

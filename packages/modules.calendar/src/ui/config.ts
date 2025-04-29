@@ -13,9 +13,31 @@ export interface CalendarProps {
 
 export type CalendarMode = 'day' | 'week' | 'month' | 'year';
 export type WeekOrDayMode = Extract<CalendarMode, 'week'|'day'>;
+type ModeVariant = {
+  label: string
+  value: CalendarMode
+}
 
 export const WEEK_DAYS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 export const MONTHS = ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'];
+export const MODE_VARIANTS: ModeVariant[] = [
+  {
+    label: 'День',
+    value: 'day'
+  },
+  {
+    label: 'Неделя',
+    value: 'week'
+  },
+  {
+    label: 'Месяц',
+    value: 'month'
+  },
+  {
+    label: 'Год',
+    value: 'year'
+  }
+];
 
 export const MOCK_EVENTS: CalendarEvent[] = [
   { 
