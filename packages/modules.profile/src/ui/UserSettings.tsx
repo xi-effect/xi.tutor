@@ -6,14 +6,6 @@ import { Header } from './Header';
 import { Menu } from './Menu';
 import { Content } from './Content';
 
-// Список опций меню для поиска индекса по query
-const options = [
-  { query: 'home' },
-  { query: 'personalInfo' },
-  { query: 'personalisation' },
-  { query: 'security' },
-];
-
 export const UserSettings = ({
   open,
   setOpen,
@@ -44,6 +36,15 @@ export const UserSettings = ({
     if (!isProfileOpen && open) {
       setOpen(false);
     }
+
+    // Список опций меню для поиска индекса по query
+    const options = [
+      { query: 'home' },
+      { query: 'personalInfo' },
+      { query: 'personalisation' },
+      { query: 'security' },
+      { query: 'notifications' },
+    ];
 
     // Устанавливаем активный пункт меню в соответствии с параметром profile
     if (isProfileOpen && profileType) {
@@ -78,6 +79,15 @@ export const UserSettings = ({
   };
 
   const [activeQuery, setActiveQuery] = React.useState<string>('home');
+
+  // Список опций меню для поиска индекса по query
+  const options = [
+    { query: 'home' },
+    { query: 'personalInfo' },
+    { query: 'personalisation' },
+    { query: 'security' },
+    { query: 'notifications' },
+  ];
 
   return (
     <Modal open={open} onOpenChange={handleOpenChange}>
