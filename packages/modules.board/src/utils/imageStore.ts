@@ -18,8 +18,8 @@ export type MediaResponseT = {
 //   resolve?(asset: TLAsset, ctx: TLAssetContextT): Promise<string | null> | string | null;
 // };
 
-const WORKER_URL = `${process.env.NEXT_PUBLIC_SERVER_URL_BACKEND}/api/protected/storage-service/files/`;
-const UPLOAD_URL = '/api/protected/storage-service/files/attachments/';
+// const WORKER_URL = `${process.env.NEXT_PUBLIC_SERVER_URL_BACKEND}/api/protected/storage-service/files/`;
+// const UPLOAD_URL = '/api/protected/storage-service/files/attachments/';
 
 // export const myAssetStore: TLAssetStoreT = {
 //   async upload(asset: TLAsset | null, file: File) {

@@ -1,7 +1,7 @@
-import { Minimize, Maximize } from '@xipkg/icons';
+// import { Minimize, Maximize } from '@xipkg/icons';
 // import { useFullScreen } from 'pkg.utils.client';
 import { Button } from '@xipkg/button';
-import { useParams } from 'next/navigation';
+// import { useParams } from 'next/navigation';
 // import { useMainSt } from 'pkg.stores';
 import { SettingsDropdown } from './SettingsDropdown';
 

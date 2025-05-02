@@ -9,7 +9,7 @@ import { useWhiteboardCollaborative } from '../../hooks/useWhiteboardCollaborati
 
 export const Canvas = () => {
   const { stageRef } = useStage();
-  const { selectedTool, removeElement, selectedElementId, selectElement } = useBoardStore();
+  const { selectedTool } = useBoardStore();
   const { handleOnWheel, handleMouseUp, handleMouseDown, handleMouseMove, handleDragEnd } =
     useCanvasHandlers();
 
