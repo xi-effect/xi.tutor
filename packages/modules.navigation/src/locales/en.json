@@ -1,11 +1,12 @@
 {
-    "home": "Home",
-    "calendar": "Calendar",
-    "students": "Students",
-    "materials": "Materials",
-    "payments": "Payments",
-    "support": "Support",
-    "faq": "FAQ",
-    "profile": "Profile",
-    "logout": "Logout"
+  "home": "Home",
+  "calendar": "Calendar",
+  "students": "Students",
+  "materials": "Materials",
+  "payments": "Payments",
+  "support": "Support",
+  "board": "Board",
+  "faq": "FAQ",
+  "profile": "Profile",
+  "logout": "Logout"
 }

@@ -1,4 +1,13 @@
-import { Home, Calendar, Group, TelegramFilled, Payments, Materials, FAQ } from '@xipkg/icons';
+import {
+  Home,
+  Calendar,
+  Group,
+  TelegramFilled,
+  Payments,
+  Materials,
+  FAQ,
+  WhiteBoard,
+} from '@xipkg/icons';
 
 export const items = [
   {
@@ -25,6 +34,11 @@ export const items = [
     titleKey: 'payments',
     url: '/payments',
     icon: Payments,
+  },
+  {
+    titleKey: 'board',
+    url: '/board',
+    icon: WhiteBoard,
   },
 ];
 
