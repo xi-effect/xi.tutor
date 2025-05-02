@@ -4,7 +4,7 @@ import { useUIStore } from '../store';
 export const useIsStageScaling = () => {
   const [isScaling, setIsScaling] = useState(false);
   const { scale } = useUIStore();
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
