@@ -20,6 +20,7 @@
     "pages.signin": "*",
     "pages.signup": "*",
     "pages.classrooms": "*",
+    "modules.board": "*",
     "common.sockets": "*",
     "@tailwindcss/vite": "^4.0.9",
     "@tanstack/react-router": "^1.109.0",
