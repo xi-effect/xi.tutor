@@ -3,6 +3,7 @@ export { useInterfaceStore } from './store/interfaceStore';
 
 export { useDecorateCode } from './hooks/useDecorateCode';
 export { useCodeLanguage } from './hooks/useCodeLanguage';
+export { useCollaborativeEditing } from './hooks/useCollaborativeEditing';
 
 export { withNodeId } from './plugins/withNodeId';
 export { withNormalize } from './plugins/withNormalize';

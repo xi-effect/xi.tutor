@@ -2,8 +2,8 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { createEditor, Transforms, Editor as SlateEditor, Descendant } from 'slate';
-import { Slate, withReact, Editable, ReactEditor, RenderElementProps } from 'slate-react';
+import { Transforms, Editor as SlateEditor, Descendant, Element } from 'slate';
+import { Slate, Editable, ReactEditor, RenderElementProps } from 'slate-react';
 
 import {
   DndContext,
@@ -16,15 +16,10 @@ import {
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
-import { HocuspocusProvider } from '@hocuspocus/provider';
-import * as Y from 'yjs';
-import { withCursors, withYHistory, withYjs, YjsEditor } from '@slate-yjs/core';
 import { type MediaElement } from '@xipkg/slatetypes';
 
 // Импорты из локальных модулей
 import { isImageUrl } from '../utils/isUrl';
-import { withNodeId } from '../plugins/withNodeId';
-import { withNormalize } from '../plugins/withNormalize';
 import { RenderElement } from '../ui/elements/RenderElement';
 import { createNode } from '../utils/createNode';
 import { SortableElement } from '../ui/components/SortableElement';
@@ -32,75 +27,44 @@ import { InlineToolbar } from '../ui/components/InlineToolbar';
 import { Leaf } from '../ui/components/Leaf';
 import { useDecorateCode } from '../hooks/useDecorateCode';
 import { codeEditorInsertText } from '../utils/codeEditorInsertText';
-import { randomCursorData } from '../utils/randomCursorData';
 import DragOverlayContent from '../ui/components/DragOverlayContent';
+import { useCollaborativeEditing } from '../hooks/useCollaborativeEditing';
+
+// Расширенный тип для элементов с id
+interface CustomElement extends Element {
+  id: string;
+  type?: string;
+}
 
 type EditorPropsT = {
   initialValue?: Descendant[];
   onChange?: (value: Descendant[]) => void;
   readOnly?: boolean;
+  documentName?: string;
+  serverUrl?: string;
 };
 
-export const Editor = ({ initialValue, onChange, readOnly = false }: EditorPropsT) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [connected, setConnected] = useState(false);
-
-  const provider = useMemo(
-    () =>
-      new HocuspocusProvider({
-        url: 'wss://hocus.xieffect.ru',
-        name: 'test/slate-yjs-demo',
-        onConnect: () => setConnected(true),
-        onDisconnect: () => setConnected(false),
-        connect: false,
-        broadcast: false,
-        forceSyncInterval: 20000,
-        onAuthenticated: () => {},
-        onAuthenticationFailed: (data) => {
-          console.log('onAuthenticationFailed', data);
-          if (data.reason === 'permission-denied') {
-            console.error('hocuspocus: permission-denied');
-          }
-        },
-      }),
-    [],
-  );
-
-  const editor = useMemo(() => {
-    const sharedType = provider.document.get('content', Y.XmlText) as Y.XmlText;
-
-    const e = withNormalize(
-      withNodeId(
-        withReact(
-          withCursors(
-            withYHistory(withYjs(createEditor(), sharedType, { autoConnect: false })),
-            // @ts-expect-error TODO: разобраться с типизацией
-            provider.awareness,
-            {
-              data: randomCursorData(),
-            },
-          ),
-        ),
-      ),
-    );
-
-    return e;
-  }, [provider.awareness, provider.document]);
-
-  React.useEffect(() => {
-    provider.connect();
-    return () => provider.disconnect();
-  }, [provider]);
-  React.useEffect(() => {
-    YjsEditor.connect(editor as unknown as YjsEditor);
-    return () => YjsEditor.disconnect(editor as unknown as YjsEditor);
-  }, [editor]);
+export const Editor = ({
+  initialValue,
+  onChange,
+  readOnly = false,
+  documentName,
+  serverUrl,
+}: EditorPropsT) => {
+  // Используем новый хук вместо создания провайдера и редактора вручную
+  const { editor, isReadOnly } = useCollaborativeEditing({
+    documentName,
+    serverUrl,
+  });
 
   const decorateCode = useDecorateCode();
 
   const [draggingElementId, setDraggingElementId] = useState<string>('');
 
-  const activeElement = editor.children.find((x) => x.id === draggingElementId);
+  // Приведение типов для обеспечения совместимости с CustomElement
+  const activeElement = editor.children.find(
+    (x) => (x as CustomElement).id === draggingElementId,
+  ) as CustomElement | undefined;
 
   const clearSelection = () => {
     ReactEditor.blur(editor);
@@ -121,7 +85,11 @@ export const Editor = ({ initialValue, onChange, readOnly = false }: EditorProps
     [editor],
   );
 
-  const items = useMemo(() => editor.children.map((element) => element.id), [editor.children]);
+  // Приведение типов для получения id из элементов
+  const items = useMemo(
+    () => editor.children.map((element) => (element as CustomElement).id),
+    [editor.children],
+  );
 
   const pointSensor = useSensor(PointerSensor, {
     activationConstraint: {
@@ -150,7 +118,7 @@ export const Editor = ({ initialValue, onChange, readOnly = false }: EditorProps
             if (selection) {
               const [parentNode] = SlateEditor.parent(editor, selection);
 
-              if (parentNode && parentNode?.type === 'code') {
+              if (parentNode && (parentNode as CustomElement)?.type === 'code') {
                 Transforms.insertText(editor, text);
               }
             }
@@ -165,13 +133,13 @@ export const Editor = ({ initialValue, onChange, readOnly = false }: EditorProps
 
   const handleOnDragEnd = (event: DragEndEvent) => {
     const overId = event.over?.id;
-    const edChildren = editor.children;
+    const edChildren = editor.children as CustomElement[];
     const overIndex = edChildren.findIndex((x) => x.id === overId);
 
     if (overId !== draggingElementId && overIndex !== -1) {
       Transforms.moveNodes(editor, {
         at: [],
-        match: (node) => node.id === draggingElementId,
+        match: (node) => (node as CustomElement).id === draggingElementId,
         to: [overIndex],
       });
     }
@@ -208,7 +176,10 @@ export const Editor = ({ initialValue, onChange, readOnly = false }: EditorProps
     }
   };
 
-  if (provider.authorizedScope === 'readonly' || readOnly) {
+  // Проверяем режим только для чтения из пропса или из провайдера
+  const isEditorReadOnly = readOnly || isReadOnly;
+
+  if (isEditorReadOnly) {
     return (
       <Slate editor={editor} initialValue={initialValue ?? []}>
         <Editable
