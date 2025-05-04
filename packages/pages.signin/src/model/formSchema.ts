@@ -1,12 +1,37 @@
 import * as z from 'zod';
+import { useTranslation } from 'react-i18next';
+import { useMemo } from 'react';
 
-export const FormSchema = z.object({
-  email: z
-    .string({ required_error: 'Обязательное поле' })
-    .email({ message: 'Некорректный формат данных' }),
-  password: z
-    .string({ required_error: 'Обязательное поле' })
-    .min(1, { message: 'Обязательное поле' }),
-});
+const passwordMinLength = 1;
 
-export type FormData = z.infer<typeof FormSchema>;
+export const useFormSchema = () => {
+  const { t } = useTranslation('signin');
+
+  const formSchema = useMemo(() => {
+    return z.object({
+      email: z
+        .string({
+          required_error: t('validation.required'),
+        })
+        .email({
+          message: t('validation.wrong_format'),
+        }),
+      password: z
+        .string({
+          required_error: t('validation.required'),
+        })
+        .min(passwordMinLength, {
+          message: t('validation.required'),
+        }),
+    });
+  }, [t]);
+
+  return formSchema;
+};
+
+export type FormData = z.infer<
+  z.ZodObject<{
+    email: z.ZodString;
+    password: z.ZodString;
+  }>
+>;

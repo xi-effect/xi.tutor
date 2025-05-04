@@ -13,10 +13,8 @@ import {
 } from '@xipkg/form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-// import { useTheme } from 'next-themes';
 
 import { Input } from '@xipkg/input';
-// import { useMainSt } from 'pkg.stores';
 import { toast } from 'sonner';
 import { UserPreview } from './UserPreview';
 import { useCurrentUser, useUpdateProfile } from 'common.services';
@@ -29,11 +27,9 @@ const FormSchema = z.object({
 export const PersonalData = () => {
   const { data: user } = useCurrentUser();
   const { updateProfile } = useUpdateProfile();
-  // const { theme } = useTheme();
 
   const isMobile = useMediaQuery('(max-width: 719px)');
   const form = useForm<z.infer<typeof FormSchema>>({
-    // @ts-ignore
     resolver: zodResolver(FormSchema),
     defaultValues: {
       displayName: user?.display_name,
