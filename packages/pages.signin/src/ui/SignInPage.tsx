@@ -1,26 +1,30 @@
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  useForm,
+} from '@xipkg/form';
 import { Eyeoff, Eyeon } from '@xipkg/icons';
 import { Link } from '@xipkg/link';
 import { useTranslation } from 'react-i18next';
-import { FormSchema, FormData } from '../model/formSchema';
+import { FormData, useFormSchema } from '../model';
 import { useSigninForm } from '../hooks';
 
 export const SignInPage = () => {
   const { t } = useTranslation('signin'); // Используем namespace "signin"
 
+  const formSchema = useFormSchema();
   const { onSigninForm, isPending, error } = useSigninForm();
 
   const form = useForm<FormData>({
-    resolver: zodResolver(FormSchema),
-    defaultValues: {
-      email: '',
-      password: '',
-    },
+    resolver: zodResolver(formSchema),
   });
 
   const {
