@@ -45,33 +45,35 @@ type EditorPropsT = {
   serverUrl?: string;
 };
 
-export const Editor = ({
-  initialValue,
-  onChange,
-  readOnly = false,
-  documentName,
-  serverUrl,
-}: EditorPropsT) => {
-  // Используем новый хук вместо создания провайдера и редактора вручную
-  const { editor, isReadOnly } = useCollaborativeEditing({
-    documentName,
-    serverUrl,
-  });
-
+// Новый компонент-обёртка, который будет использовать хуки внутри контекста Slate
+const EditorContent = ({
+  editor,
+  isEditorReadOnly,
+  handleOnKeyDown,
+  items,
+  sensors,
+  clearSelection,
+  handleOnDragEnd,
+  draggingElementId,
+  setDraggingElementId,
+  activeElement,
+}: {
+  editor: ReactEditor;
+  isEditorReadOnly: boolean;
+  handleOnKeyDown?: (event: React.KeyboardEvent<HTMLDivElement>) => void;
+  items: string[];
+  sensors: ReturnType<typeof useSensors>;
+  clearSelection: () => void;
+  handleOnDragEnd: (event: DragEndEvent) => void;
+  draggingElementId: string;
+  setDraggingElementId: (id: string) => void;
+  activeElement?: CustomElement;
+}) => {
+  // Теперь эти хуки используются внутри контекста Slate
   const decorateCode = useDecorateCode();
 
-  const [draggingElementId, setDraggingElementId] = useState<string>('');
-
-  // Приведение типов для обеспечения совместимости с CustomElement
-  const activeElement = editor.children.find(
-    (x) => (x as CustomElement).id === draggingElementId,
-  ) as CustomElement | undefined;
-
-  const clearSelection = () => {
-    ReactEditor.blur(editor);
-    Transforms.deselect(editor);
-    window.getSelection()?.empty();
-  };
+  // Используем draggingElementId для определения состояния перетаскивания
+  const isDragging = useMemo(() => Boolean(draggingElementId), [draggingElementId]);
 
   const renderElement = useCallback(
     (props: RenderElementProps) => {
@@ -85,6 +87,83 @@ export const Editor = ({
     },
     [editor],
   );
+
+  if (isEditorReadOnly) {
+    return (
+      <Editable
+        readOnly
+        className="flex flex-col gap-2 p-2 text-gray-100 focus-visible:outline-none focus-visible:[&_*]:outline-none"
+        renderElement={renderElement}
+        // @ts-ignore
+        decorate={decorateCode}
+        renderLeaf={(props) => <Leaf {...props} />}
+      />
+    );
+  }
+
+  return (
+    <DndContext
+      onDragStart={(event) => {
+        if (event.active) {
+          clearSelection();
+          setDraggingElementId(`${event.active.id}`);
+        }
+      }}
+      onDragEnd={handleOnDragEnd}
+      onDragCancel={() => {
+        setDraggingElementId('');
+      }}
+      modifiers={[restrictToVerticalAxis]}
+      sensors={sensors}
+    >
+      <SortableContext items={items} strategy={verticalListSortingStrategy}>
+        <InlineToolbar />
+        <Editable
+          onKeyDown={handleOnKeyDown}
+          className={`flex flex-col gap-2 p-2 text-gray-100 focus-visible:outline-none focus-visible:[&_*]:outline-none ${
+            isDragging ? 'cursor-grabbing' : ''
+          }`}
+          renderElement={renderElement}
+          renderLeaf={(props) => <Leaf {...props} />}
+          // @ts-ignore
+          decorate={decorateCode}
+        />
+      </SortableContext>
+      {createPortal(
+        <DragOverlay>
+          {activeElement && <DragOverlayContent element={activeElement} />}
+        </DragOverlay>,
+        document.body,
+      )}
+    </DndContext>
+  );
+};
+
+export const Editor = ({
+  initialValue,
+  onChange,
+  readOnly = false,
+  documentName,
+  serverUrl,
+}: EditorPropsT) => {
+  // Используем новый хук вместо создания провайдера и редактора вручную
+  const { editor, isReadOnly } = useCollaborativeEditing({
+    documentName,
+    serverUrl,
+  });
+
+  const [draggingElementId, setDraggingElementId] = useState<string>('');
+
+  // Приведение типов для обеспечения совместимости с CustomElement
+  const activeElement = editor.children.find(
+    (x) => (x as CustomElement).id === draggingElementId,
+  ) as CustomElement | undefined;
+
+  const clearSelection = () => {
+    ReactEditor.blur(editor);
+    Transforms.deselect(editor);
+    window.getSelection()?.empty();
+  };
 
   // Приведение типов для получения id из элементов
   const items = useMemo(
@@ -184,55 +263,20 @@ export const Editor = ({
   // Проверяем режим только для чтения из пропса или из провайдера
   const isEditorReadOnly = readOnly || isReadOnly;
 
-  if (isEditorReadOnly) {
-    return (
-      <Slate editor={editor} initialValue={initialValue ?? []}>
-        <Editable
-          readOnly
-          className="flex flex-col gap-2 p-2 text-gray-100 focus-visible:outline-none focus-visible:[&_*]:outline-none"
-          renderElement={renderElement}
-          // @ts-ignore
-          decorate={decorateCode}
-          renderLeaf={(props) => <Leaf {...props} />}
-        />
-      </Slate>
-    );
-  }
-
   return (
     <Slate editor={editor} initialValue={initialValue ?? []} onChange={handleChange}>
-      <DndContext
-        onDragStart={(event) => {
-          if (event.active) {
-            clearSelection();
-            setDraggingElementId(`${event.active.id}`);
-          }
-        }}
-        onDragEnd={handleOnDragEnd}
-        onDragCancel={() => {
-          setDraggingElementId('');
-        }}
-        modifiers={[restrictToVerticalAxis]}
+      <EditorContent
+        editor={editor}
+        isEditorReadOnly={isEditorReadOnly}
+        handleOnKeyDown={handleOnKeyDown}
+        items={items}
         sensors={sensors}
-      >
-        <SortableContext items={items} strategy={verticalListSortingStrategy}>
-          <InlineToolbar />
-          <Editable
-            onKeyDown={handleOnKeyDown}
-            className="flex flex-col gap-2 p-2 text-gray-100 focus-visible:outline-none focus-visible:[&_*]:outline-none"
-            renderElement={renderElement}
-            renderLeaf={(props) => <Leaf {...props} />}
-            // @ts-ignore
-            decorate={decorateCode}
-          />
-        </SortableContext>
-        {createPortal(
-          <DragOverlay>
-            {activeElement && <DragOverlayContent element={activeElement} />}
-          </DragOverlay>,
-          document.body,
-        )}
-      </DndContext>
+        clearSelection={clearSelection}
+        handleOnDragEnd={handleOnDragEnd}
+        draggingElementId={draggingElementId}
+        setDraggingElementId={setDraggingElementId}
+        activeElement={activeElement}
+      />
     </Slate>
   );
 };

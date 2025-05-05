@@ -31,7 +31,7 @@ function EditorPage() {
   return (
     <div className="container mx-auto p-4">
       <h1 className="mb-4 text-2xl font-bold">Тестовый редактор</h1>
-      <div className="rounded-md border border-gray-300">
+      <div className="h-[500px]">
         <Editor initialValue={value} onChange={handleChange} />
       </div>
     </div>
