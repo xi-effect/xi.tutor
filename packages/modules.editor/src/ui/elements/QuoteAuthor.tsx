@@ -1,5 +1,4 @@
-import React from 'react';
-import { CustomText } from '@xipkg/slatetypes';
+import { CustomText } from '../../types';
 import { type CustomRenderElementProps } from './RenderElement';
 
 type QuoteAuthorPropsT = CustomRenderElementProps;

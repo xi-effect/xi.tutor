@@ -1,5 +1,5 @@
-import React from 'react';
-import { CustomText } from '@xipkg/slatetypes';
+import { env } from 'common.env';
+import { CustomText } from '../../types';
 import { type CustomRenderElementProps } from './RenderElement';
 
 type ImageBlockPropsT = CustomRenderElementProps;
@@ -14,7 +14,7 @@ export const ImageBlock = ({ element, children, attributes }: ImageBlockPropsT) 
     <figure>
       <img
         alt={(element.children[0] as CustomText).text || 'Подпись изображения'}
-        src={`${process.env.NEXT_PUBLIC_SERVER_URL_BACKEND}/api/protected/storage-service/files/${element.url}/`}
+        src={`${env.VITE_SERVER_URL_BACKEND}/api/protected/storage-service/files/${element.url}/`}
         className="border-gray-10 mx-auto h-auto max-h-[70dvh] w-auto rounded-lg border"
         width={400}
         height={225}

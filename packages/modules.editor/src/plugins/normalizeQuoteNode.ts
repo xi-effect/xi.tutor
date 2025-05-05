@@ -1,3 +1,4 @@
+import { nanoid } from 'nanoid';
 import { Editor, Transforms, Path, Element } from 'slate';
 
 export const normalizeQuoteNode = (editor: Editor, node: Element, path: Path) => {
@@ -8,7 +9,7 @@ export const normalizeQuoteNode = (editor: Editor, node: Element, path: Path) =>
       if (node.children.length === 0 || node.children[0].type !== 'quoteText') {
         Transforms.insertNodes(
           editor,
-          { type: 'quoteText', children: [{ text: '' }] },
+          { id: nanoid(), type: 'quoteText', children: [{ text: '' }] },
           { at: [...path, 0] },
         );
       }
@@ -16,7 +17,7 @@ export const normalizeQuoteNode = (editor: Editor, node: Element, path: Path) =>
       if (node.children.length <= 1) {
         Transforms.insertNodes(
           editor,
-          { type: 'quoteAuthor', children: [{ text: '' }] },
+          { id: nanoid(), type: 'quoteAuthor', children: [{ text: '' }] },
           { at: [...path, node.children.length] },
         );
       }

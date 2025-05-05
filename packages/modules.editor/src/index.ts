@@ -21,3 +21,6 @@ export { SortableElement } from './ui/components/SortableElement';
 export { InlineToolbar } from './ui/components/InlineToolbar';
 export { Typography } from './ui/elements/Typography';
 export { RenderElement } from './ui/elements/RenderElement';
+
+// Экспортируем типы
+export * from './types';

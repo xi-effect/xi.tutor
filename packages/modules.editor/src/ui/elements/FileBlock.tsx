@@ -1,4 +1,3 @@
-import React from 'react';
 import { File as FileComponent } from '@xipkg/file';
 import { type CustomRenderElementProps } from './RenderElement';
 

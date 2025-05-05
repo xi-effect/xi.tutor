@@ -62,6 +62,9 @@ importers:
       i18next-localstorage-backend:
         specifier: 4.2.0
         version: 4.2.0
+      modules.editor:
+        specifier: '*'
+        version: link:../../packages/modules.editor
       pages.classrooms:
         specifier: '*'
         version: link:../../packages/pages.classrooms
@@ -880,6 +883,9 @@ importers:
       '@xipkg/slatetypes':
         specifier: 0.0.3
         version: 0.0.3(react-dom@19.1.0)(react@19.1.0)
+      common.env:
+        specifier: '*'
+        version: link:../common.env
       nanoid:
         specifier: 5.1.5
         version: 5.1.5

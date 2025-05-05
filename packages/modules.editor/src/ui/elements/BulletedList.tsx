@@ -1,4 +1,3 @@
-import React from 'react';
 import { colorMap, ColorMapKeys } from '../../const/elementColors';
 import { type CustomRenderElementProps } from './RenderElement';
 

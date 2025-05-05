@@ -21,7 +21,10 @@ export const CellControls: React.FC<CellControlsProps> = ({ listeners, nodeId, n
   const handleDelete = () => {
     Transforms.removeNodes(editor, {
       at: [],
-      match: (n) => n.id === nodeId,
+      match: (n) => {
+        const node = n as { id?: string };
+        return node.id === nodeId;
+      },
     });
   };
 

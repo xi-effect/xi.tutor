@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import React from 'react';
 import { IBM_Plex_Mono as ibmPlexMono } from 'next/font/google';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
-import { CustomText } from '@xipkg/slatetypes';
+import { CustomText } from '../../types';
 import { type CustomRenderElementProps } from './RenderElement';
 import { defaultLanguage, languages } from '../../const/codeEditorLanguages';
 import { useCodeLanguage } from '../../hooks/useCodeLanguage';

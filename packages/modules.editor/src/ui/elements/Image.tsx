@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Popover, PopoverTrigger, PopoverContent } from '@xipkg/popover';
 // import { ReactEditor, useSlate } from 'slate-react';
 // import { Transforms } from 'slate';

@@ -1,4 +1,11 @@
-import { CustomElement, UploadedFile } from '@xipkg/slatetypes';
+import {
+  CustomElement,
+  UploadedFile,
+  ImageBlockElement,
+  VideoBlockElement,
+  FileBlockElement,
+  ParagraphElement,
+} from '../types';
 import { nanoid } from 'nanoid';
 
 type FileType = 'image' | 'video' | 'file';
@@ -15,7 +22,7 @@ export const createDefaultNode = (type: FileType, file: UploadedFile): CustomEle
         url: file.id,
         fileName: file.name,
         children: [{ text: '' }],
-      };
+      } as ImageBlockElement;
     case 'video':
       return {
         type: 'videoBlock',
@@ -23,7 +30,7 @@ export const createDefaultNode = (type: FileType, file: UploadedFile): CustomEle
         url: file.url,
         fileName: file.name,
         children: [{ text: '' }],
-      };
+      } as VideoBlockElement;
     case 'file':
       return {
         type: 'fileBlock',
@@ -32,12 +39,12 @@ export const createDefaultNode = (type: FileType, file: UploadedFile): CustomEle
         fileName: file.name,
         size: file.size || 0,
         children: [{ text: '' }],
-      };
+      } as FileBlockElement;
     default:
       return {
         type: 'paragraph',
         id: nanoid(6),
         children: [{ text: '' }],
-      };
+      } as ParagraphElement;
   }
 };

@@ -17,7 +17,7 @@ export const codeEditorInsertText = (
   if (selection) {
     const [parentNode] = Editor.parent(editor, selection);
 
-    if (parentNode && parentNode?.type === 'code') {
+    if (parentNode && 'type' in parentNode && parentNode.type === 'code') {
       Transforms.insertText(editor, text);
     }
   }

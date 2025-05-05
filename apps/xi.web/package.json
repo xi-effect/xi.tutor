@@ -21,6 +21,7 @@
     "pages.signup": "*",
     "pages.classrooms": "*",
     "common.sockets": "*",
+    "modules.editor": "*",
     "@tailwindcss/vite": "^4.0.9",
     "@tanstack/react-router": "^1.109.0",
     "@tanstack/react-query": "5.73.3",

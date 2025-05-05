@@ -1,4 +1,3 @@
-import React from 'react';
 import { type CustomRenderElementProps } from './RenderElement';
 
 type LinkPropsT = CustomRenderElementProps;

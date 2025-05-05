@@ -12,7 +12,7 @@ export const InlineToolbar: React.FC = () => {
   const [position, setPosition] = useState({ top: -9999, left: -9999 });
 
   // Проверка активных форматов текста
-  const isMarkActive = (format: string) => {
+  const isMarkActive = (format: 'bold' | 'italic' | 'underline' | 'code' | 'strikethrough') => {
     const marks = Editor.marks(editor);
     return marks ? marks[format] === true : false;
   };
@@ -23,7 +23,7 @@ export const InlineToolbar: React.FC = () => {
   };
 
   // Применение форматирования к тексту
-  const toggleMark = (format: string) => {
+  const toggleMark = (format: 'bold' | 'italic' | 'underline' | 'code' | 'strikethrough') => {
     const isActive = isMarkActive(format);
 
     if (isActive) {

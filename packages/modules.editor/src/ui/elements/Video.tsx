@@ -1,27 +1,29 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Popover, PopoverTrigger, PopoverContent } from '@xipkg/popover';
 
-import { ReactEditor, useSlate } from 'slate-react';
-import { Transforms } from 'slate';
-import { AddFilePopover } from 'pkg.popover.add-file';
+// import { ReactEditor, useSlate } from 'slate-react';
+// import { Transforms } from 'slate';
+// import { AddFilePopover } from 'pkg.popover.add-file';
 import { Video as IconVideo } from '@xipkg/icons';
-import { CustomEditor } from '@xipkg/slatetypes';
+// import { CustomEditor } from '../../types';
 import { type CustomRenderElementProps } from './RenderElement';
-import { createDefaultNode } from '../../utils/createDefaultNode';
+// import { createDefaultNode } from '../../utils/createDefaultNode';
 
 type VideoPropsT = CustomRenderElementProps;
 
 export const Video = ({ element, children, attributes }: VideoPropsT) => {
   const [open, setOpen] = useState(false);
 
-  const [fileAttached, setFileAttached] = useState(false);
-  const editor = useSlate();
+  console.log(element);
 
-  const handleFileAttached = () => {
-    setFileAttached(true);
-    const path = ReactEditor.findPath(editor, element);
-    Transforms.removeNodes(editor, { at: path });
-  };
+  const [fileAttached] = useState(false);
+  // const editor = useSlate();
+
+  // const handleFileAttached = () => {
+  //   setFileAttached(true);
+  //   const path = ReactEditor.findPath(editor, element);
+  //   Transforms.removeNodes(editor, { at: path });
+  // };
 
   return (
     <>
@@ -44,14 +46,15 @@ export const Video = ({ element, children, attributes }: VideoPropsT) => {
             </div>
           </PopoverTrigger>
           <PopoverContent className="border-gray-10 w-fit rounded-3xl border p-4">
-            <AddFilePopover
+            {/* <AddFilePopover
               createDefaultNode={createDefaultNode}
               setOpen={setOpen}
               handleFileAttached={handleFileAttached}
               type="video"
               editor={editor as CustomEditor}
               acceptedExtensions="video/*"
-            />
+            /> */}
+            1
           </PopoverContent>
         </Popover>
       )}

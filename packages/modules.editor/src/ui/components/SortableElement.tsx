@@ -1,10 +1,11 @@
-import React from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { RenderElementProps } from 'slate-react';
 
 import { useInterfaceStore } from '../../store/interfaceStore';
 import { CellControls } from './CellControls';
+import { JSX } from 'react';
 
 interface SortableElementProps extends RenderElementProps {
   renderElement: (props: RenderElementProps) => JSX.Element;
@@ -60,7 +61,11 @@ export const SortableElement = ({
       className="group relative"
     >
       {isActive && (
-        <CellControls listeners={listeners} nodeId={element.id} nodeType={element.type} />
+        <CellControls
+          listeners={listeners as Record<string, any>}
+          nodeId={element.id}
+          nodeType={element.type}
+        />
       )}
       {renderElement({ attributes, children, element })}
     </div>

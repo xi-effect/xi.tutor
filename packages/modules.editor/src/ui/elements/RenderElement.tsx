@@ -1,4 +1,8 @@
 import { RenderElementProps } from 'slate-react';
+import { ReactNode } from 'react';
+
+// Импорт типов
+import { CustomElement, CustomText } from '../../types';
 
 // Импорт всех элементов
 import { Typography } from './Typography';
@@ -19,8 +23,6 @@ import { File } from './File';
 import { FileBlock } from './FileBlock';
 import { Tip } from './Tip';
 import { Icon } from './Icon';
-import { CustomElement, CustomText } from '@xipkg/slatetypes';
-import { ReactNode } from 'react';
 
 export type CustomRenderElementProps = RenderElementProps & {
   element: {
@@ -39,140 +41,65 @@ export type CustomRenderElementProps = RenderElementProps & {
  * Основной компонент для рендеринга всех типов элементов редактора
  */
 export const RenderElement = ({ attributes, children, element }: RenderElementProps) => {
-  const style = { position: 'relative' };
+  // Теперь, благодаря типам в slate.ts, мы можем использовать style напрямую из элемента
+  // Например, чтобы применить позиционирование или другие CSS свойства
 
   switch (element.type) {
     case 'paragraph':
-      return (
-        <Typography {...attributes} style={style}>
-          {children}
-        </Typography>
-      );
+      return <Typography attributes={attributes} element={element} children={children} />;
 
     case 'image':
-      return (
-        <Image {...attributes} element={element} style={style}>
-          {children}
-        </Image>
-      );
+      return <Image attributes={attributes} element={element} children={children} />;
 
     case 'imageBlock':
-      return (
-        <ImageBlock {...attributes} element={element} style={style}>
-          {children}
-        </ImageBlock>
-      );
+      return <ImageBlock attributes={attributes} element={element} children={children} />;
 
     case 'video':
-      return (
-        <Video {...attributes} element={element} style={style}>
-          {children}
-        </Video>
-      );
+      return <Video attributes={attributes} element={element} children={children} />;
 
     case 'videoBlock':
-      return (
-        <VideoBlock {...attributes} element={element} style={style}>
-          {children}
-        </VideoBlock>
-      );
+      return <VideoBlock element={element} />;
 
     case 'quote':
-      return (
-        <Quote {...attributes} element={element} style={style}>
-          {children}
-        </Quote>
-      );
+      return <Quote attributes={attributes} element={element} children={children} />;
 
     case 'quoteText':
-      return (
-        <QuoteText {...attributes} style={style}>
-          {children}
-        </QuoteText>
-      );
+      return <QuoteText attributes={attributes} element={element} children={children} />;
 
     case 'quoteAuthor':
-      return (
-        <QuoteAuthor {...attributes} style={style}>
-          {children}
-        </QuoteAuthor>
-      );
+      return <QuoteAuthor attributes={attributes} element={element} children={children} />;
 
     case 'bulleted-list':
-      return (
-        <BulletedList {...attributes} style={style}>
-          {children}
-        </BulletedList>
-      );
+      return <BulletedList attributes={attributes} element={element} children={children} />;
 
     case 'numbered-list':
-      return (
-        <NumberedList {...attributes} style={style}>
-          {children}
-        </NumberedList>
-      );
+      return <NumberedList attributes={attributes} element={element} children={children} />;
 
     case 'list-item':
-      return (
-        <ListItem {...attributes} style={style}>
-          {children}
-        </ListItem>
-      );
+      return <ListItem attributes={attributes} children={children} />;
 
     case 'link':
-      return (
-        <Link {...attributes} element={element} style={style}>
-          {children}
-        </Link>
-      );
+      return <Link attributes={attributes} element={element} children={children} />;
 
     case 'divider':
-      return (
-        <Divider {...attributes} style={style}>
-          {children}
-        </Divider>
-      );
+      return <Divider attributes={attributes} children={children} />;
 
     case 'code':
-      return (
-        <Code {...attributes} element={element} style={style}>
-          {children}
-        </Code>
-      );
+      return <Code attributes={attributes} element={element} children={children} />;
 
     case 'file':
-      return (
-        <File {...attributes} element={element} style={style}>
-          {children}
-        </File>
-      );
+      return <File attributes={attributes} element={element} children={children} />;
 
     case 'fileBlock':
-      return (
-        <FileBlock {...attributes} element={element} style={style}>
-          {children}
-        </FileBlock>
-      );
+      return <FileBlock element={element} />;
 
     case 'tip':
-      return (
-        <Tip {...attributes} element={element} style={style}>
-          {children}
-        </Tip>
-      );
+      return <Tip attributes={attributes} element={element} children={children} />;
 
     case 'icon':
-      return (
-        <Icon {...attributes} element={element} style={style}>
-          {children}
-        </Icon>
-      );
+      return <Icon attributes={attributes} element={element} children={children} />;
 
     default:
-      return (
-        <Typography {...attributes} style={style}>
-          {children}
-        </Typography>
-      );
+      return <Typography attributes={attributes} element={element} children={children} />;
   }
 };

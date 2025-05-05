@@ -8,7 +8,6 @@ import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-jsx';
 import 'prismjs/components/prism-tsx';
 import 'prismjs/components/prism-css';
-import 'prismjs/components/prism-html';
 import 'prismjs/components/prism-sql';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-java';
@@ -46,7 +45,7 @@ export const useDecorateCode = () => {
         }
 
         const tokens = Prism.tokenize(node.children[0].text, Prism.languages[language]);
-        const normalizedTokens = normalizeTokens(tokens);
+        const normalizedTokens = normalizeTokens(tokens as any);
 
         for (const token of normalizedTokens) {
           ranges.push({

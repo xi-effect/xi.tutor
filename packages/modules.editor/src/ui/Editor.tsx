@@ -2,7 +2,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { Transforms, Editor as SlateEditor, Descendant, Element } from 'slate';
+import { Transforms, Editor as SlateEditor, Descendant } from 'slate';
 import { Slate, Editable, ReactEditor, RenderElementProps } from 'slate-react';
 
 import {
@@ -16,7 +16,8 @@ import {
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 
-import { type MediaElement } from '@xipkg/slatetypes';
+// Заменяем импорт из @xipkg/slatetypes на локальные типы
+import { CustomElement } from '../types';
 
 // Импорты из локальных модулей
 import { isImageUrl } from '../utils/isUrl';
@@ -30,11 +31,11 @@ import { codeEditorInsertText } from '../utils/codeEditorInsertText';
 import DragOverlayContent from '../ui/components/DragOverlayContent';
 import { useCollaborativeEditing } from '../hooks/useCollaborativeEditing';
 
-// Расширенный тип для элементов с id
-interface CustomElement extends Element {
-  id: string;
-  type?: string;
-}
+// Удаляем дублирующее определение CustomElement, так как оно уже есть в типах
+// interface CustomElement extends Element {
+//   id: string;
+//   type?: string;
+// }
 
 type EditorPropsT = {
   initialValue?: Descendant[];
@@ -156,7 +157,11 @@ export const Editor = ({
         .readText()
         .then((text) => {
           if (isImageUrl(text)) {
-            const node = createNode({ type: 'imageBlock', url: text } as MediaElement);
+            const node = createNode({
+              type: 'imageBlock',
+              url: text,
+            });
+
             Transforms.insertNodes(editor, node, {
               at: [editor.children.length],
             });

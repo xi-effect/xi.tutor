@@ -2,13 +2,15 @@
 import { useState, useEffect, useMemo } from 'react';
 import { HocuspocusProvider } from '@hocuspocus/provider';
 import * as Y from 'yjs';
-import { createEditor, BaseEditor } from 'slate';
-import { withReact, ReactEditor } from 'slate-react';
+import { createEditor } from 'slate';
+import { withReact } from 'slate-react';
+import { withHistory } from 'slate-history';
 import { withCursors, withYHistory, withYjs, YjsEditor } from '@slate-yjs/core';
 
 import { withNodeId } from '../plugins/withNodeId';
 import { withNormalize } from '../plugins/withNormalize';
 import { randomCursorData } from '../utils/randomCursorData';
+import { CustomEditor } from '../types';
 
 type UseCollaborativeEditingProps = {
   documentName?: string;
@@ -16,11 +18,8 @@ type UseCollaborativeEditingProps = {
   customData?: Record<string, any>;
 };
 
-// Расширенный тип редактора
-type ExtendedEditor = BaseEditor & ReactEditor & YjsEditor;
-
 type UseCollaborativeEditingReturn = {
-  editor: ExtendedEditor;
+  editor: CustomEditor;
   provider: HocuspocusProvider;
   connected: boolean;
   isReadOnly: boolean;
@@ -65,16 +64,18 @@ export const useCollaborativeEditing = ({
     const e = withNormalize(
       withNodeId(
         withReact(
-          withCursors(
-            withYHistory(withYjs(createEditor(), sharedType, { autoConnect: false })),
-            provider.awareness!,
-            {
-              data: customData || randomCursorData(),
-            },
+          withHistory(
+            withCursors(
+              withYHistory(withYjs(createEditor(), sharedType, { autoConnect: false })),
+              provider.awareness!,
+              {
+                data: customData || randomCursorData(),
+              },
+            ),
           ),
         ),
       ),
-    ) as ExtendedEditor;
+    ) as CustomEditor;
 
     return e;
   }, [provider.awareness, provider.document, customData]);

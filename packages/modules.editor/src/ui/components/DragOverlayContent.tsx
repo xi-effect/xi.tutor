@@ -22,7 +22,11 @@ const DragOverlayContent: React.FC<DragOverlayContentProps> = ({ element }) => {
       return text;
     }
 
-    return node.text || '';
+    if ('text' in node) {
+      return node.text || '';
+    }
+
+    return '';
   };
 
   const text = getTextFromNode(element).trim();
