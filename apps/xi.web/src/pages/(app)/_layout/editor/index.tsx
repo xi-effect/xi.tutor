@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
-import { Editor as EditorComponent } from 'modules.editor';
+import { Editor } from 'modules.editor';
 import type { Descendant } from 'slate';
 
 // @ts-ignore
-export const Editor = createFileRoute('/(app)/_layout/editor/')({
+export const Route = createFileRoute('/(app)/_layout/editor/')({
   component: EditorPage,
   beforeLoad: ({ context, location }) => {
-    console.log('Calendar', context, location);
+    console.log('Editor', context, location);
   },
 });
 
@@ -32,7 +32,7 @@ function EditorPage() {
     <div className="container mx-auto p-4">
       <h1 className="mb-4 text-2xl font-bold">Тестовый редактор</h1>
       <div className="rounded-md border border-gray-300">
-        <EditorComponent initialValue={value} onChange={handleChange} />
+        <Editor initialValue={value} onChange={handleChange} />
       </div>
     </div>
   );

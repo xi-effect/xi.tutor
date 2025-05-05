@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { IBM_Plex_Mono as ibmPlexMono } from 'next/font/google';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
 import { CustomText } from '../../types';
 import { type CustomRenderElementProps } from './RenderElement';
@@ -7,14 +6,6 @@ import { defaultLanguage, languages } from '../../const/codeEditorLanguages';
 import { useCodeLanguage } from '../../hooks/useCodeLanguage';
 
 type CodePropsT = CustomRenderElementProps;
-
-const codeFont = ibmPlexMono({
-  weight: ['400', '500', '600'],
-  style: ['normal'],
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-ibm-plex-mono',
-});
 
 export const Code = ({ element, children, attributes }: CodePropsT) => {
   const { setLanguage } = useCodeLanguage();
@@ -52,7 +43,8 @@ export const Code = ({ element, children, attributes }: CodePropsT) => {
           ))}
         </SelectContent>
       </Select>
-      <div className={`${codeFont.className}`}>
+      {/* className={`${codeFont.className}`} */}
+      <div>
         {isEmpty && (
           <span className="text-gray-30 pointer-events-none absolute font-medium">
             Введите фрагмент кода
