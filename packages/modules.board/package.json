@@ -19,7 +19,7 @@
     "konva": "^9.3.18",
     "react-konva": "^19.0.2",
     "y-utility": "0.1.4",
-    "yjs": "13.6.21",
+    "yjs": "13.6.26",
     "zustand": "5.0.3"
   },
   "devDependencies": {

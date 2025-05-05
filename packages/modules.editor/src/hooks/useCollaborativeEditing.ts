@@ -59,7 +59,7 @@ export const useCollaborativeEditing = ({
 
   // Создаем редактор с поддержкой коллаборативного редактирования
   const editor = useMemo(() => {
-    const sharedType = provider.document.get('content', Y.XmlText) as unknown as Y.XmlText;
+    const sharedType = provider.document.get('content', Y.XmlText) as Y.XmlText;
 
     const e = withNormalize(
       withNodeId(

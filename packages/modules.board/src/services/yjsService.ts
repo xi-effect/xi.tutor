@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as Y from 'yjs';
 import { YKeyValue } from 'y-utility/y-keyvalue';
 import { HocuspocusProvider } from '@hocuspocus/provider';
@@ -32,7 +33,7 @@ export const getOrCreateInstance = (roomId: string, hostUrl: string): YJSInstanc
       url: hostUrl,
       name: roomId,
       token: roomId,
-      document: yDoc,
+      document: yDoc as any,
     });
 
     instances[instanceKey] = { yDoc, yArr, yStore, provider, refCount: 0 };

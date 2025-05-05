@@ -843,7 +843,7 @@ importers:
     dependencies:
       '@hocuspocus/provider':
         specifier: 2.15.0
-        version: 2.15.0(y-protocols@1.0.6)(yjs@13.6.21)
+        version: 2.15.0(y-protocols@1.0.6)(yjs@13.6.26)
       '@xipkg/button':
         specifier: ^3.1.8
         version: 3.1.8(@types/react@19.1.2)(react@19.1.0)
@@ -870,10 +870,10 @@ importers:
         version: 19.0.3(@types/react@19.1.2)(konva@9.3.20)(react-dom@19.1.0)(react@19.1.0)
       y-utility:
         specifier: 0.1.4
-        version: 0.1.4(yjs@13.6.21)
+        version: 0.1.4(yjs@13.6.26)
       yjs:
-        specifier: 13.6.21
-        version: 13.6.21
+        specifier: 13.6.26
+        version: 13.6.26
       zustand:
         specifier: 5.0.3
         version: 5.0.3(@types/react@19.1.2)(react@19.1.0)
@@ -2380,23 +2380,6 @@ packages:
     resolution: {integrity: sha512-wU1wxXNnQQMXyeL3mdSDYiQsm/r/QyJVjjQhF7sUBrLnjdsN7bA1cvfcSvJBr1ymrMSeYRmUL3UlQmEHEOaP7w==}
     dependencies:
       lib0: 0.2.105
-    dev: false
-
-  /@hocuspocus/provider@2.15.0(y-protocols@1.0.6)(yjs@13.6.21):
-    resolution: {integrity: sha512-Zd1YYVIg1PYfxqMbwWlb89+R/pOGg+UQZWBr7u3g2RDOttdM8F9zzyUzm9XcI7CAGZAUvuqB/oiSsMyGxDsuNg==}
-    peerDependencies:
-      y-protocols: ^1.0.6
-      yjs: ^13.6.8
-    dependencies:
-      '@hocuspocus/common': 2.15.2
-      '@lifeomic/attempt': 3.1.0
-      lib0: 0.2.105
-      ws: 8.18.2
-      y-protocols: 1.0.6(yjs@13.6.21)
-      yjs: 13.6.21
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
     dev: false
 
   /@hocuspocus/provider@2.15.0(y-protocols@1.0.6)(yjs@13.6.26):
@@ -9342,16 +9325,6 @@ packages:
     engines: {node: '>=0.4.0'}
     dev: false
 
-  /y-protocols@1.0.6(yjs@13.6.21):
-    resolution: {integrity: sha512-vHRF2L6iT3rwj1jub/K5tYcTT/mEYDUppgNPXwp8fmLpui9f7Yeq3OEtTLVF012j39QnV+KEQpNqoN7CWU7Y9Q==}
-    engines: {node: '>=16.0.0', npm: '>=8.0.0'}
-    peerDependencies:
-      yjs: ^13.0.0
-    dependencies:
-      lib0: 0.2.105
-      yjs: 13.6.21
-    dev: false
-
   /y-protocols@1.0.6(yjs@13.6.26):
     resolution: {integrity: sha512-vHRF2L6iT3rwj1jub/K5tYcTT/mEYDUppgNPXwp8fmLpui9f7Yeq3OEtTLVF012j39QnV+KEQpNqoN7CWU7Y9Q==}
     engines: {node: '>=16.0.0', npm: '>=8.0.0'}
@@ -9362,14 +9335,14 @@ packages:
       yjs: 13.6.26
     dev: false
 
-  /y-utility@0.1.4(yjs@13.6.21):
+  /y-utility@0.1.4(yjs@13.6.26):
     resolution: {integrity: sha512-i8HSo2DGRB13PSm9B0hbljPBramKWK2Gi9R+ZCPrstyIx0VJAdcaurGdYTmcu2SBJI9HWcSCW0siSF2SyRa4lg==}
     engines: {node: '>=16'}
     peerDependencies:
       yjs: ^13.5.29
     dependencies:
       lib0: 0.2.105
-      yjs: 13.6.21
+      yjs: 13.6.26
     dev: false
 
   /y18n@5.0.8:
@@ -9398,13 +9371,6 @@ packages:
       y18n: 5.0.8
       yargs-parser: 21.1.1
     dev: true
-
-  /yjs@13.6.21:
-    resolution: {integrity: sha512-/fzzyeCAfr3Qwx1D71zvumm64x+Q5MEFel6EhWlA1IBFxWPb7tei4J2a8CJyjpYHfVrRij5q3RJTK9W2Iqjouw==}
-    engines: {node: '>=16.0.0', npm: '>=8.0.0'}
-    dependencies:
-      lib0: 0.2.105
-    dev: false
 
   /yjs@13.6.26:
     resolution: {integrity: sha512-wiARO3wixu7mtoRP5f7LqpUtsURP9SmNgXUt3RlnZg4qDuF7dUjthwIvwxIDmK55dPw4Wl4QdW5A3ag0atwu7g==}
