@@ -1,8 +1,5 @@
 
-// import { startOfMonth, endOfMonth, eachDayOfInterval, format, isSameDay } from 'date-fns';
-
-// import { cn } from '@xipkg/utils';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { 
   Select, 
   SelectTrigger, 
@@ -13,44 +10,56 @@ import {
 } from '@xipkg/select';
 import { Button } from '@xipkg/button';
 import { ChevronBottom, ChevronUp } from '@xipkg/icons';
-import { MOCK_EVENTS, MODE_VARIANTS, MONTHS, type CalendarMode, type WeekOrDayMode } from './config';
+import { MODE_VARIANTS, MONTHS, type CalendarMode, type WeekOrDayMode } from './config';
 import { MonthCalendar } from './components/MonthCalendar/MonthCalendar';
 import { Sidebar } from './components/Sidebar/Sidebar';
 import { YearCalendar } from './components/YearCalendar/YearCalendar';
 import { WeekCalendar } from './components/WeekCalendar/WeekCalendar';
+import { useCalendar } from '../hooks/useCalendar';
+
+const MODES = ['day', 'week', 'month', 'year']; 
+
+function isCalendarMode(mode: string): mode is CalendarMode {
+  return MODES.includes(mode);
+};
 
 
 export const CalendarModule = () => {
-
   const [ mode, setMode ] = useState<CalendarMode>('month');
-  const today = new Date(Date.now());
-  const month = MONTHS[today.getMonth()];
+  
+  const { days, currentDate } = useCalendar();
 
   function isWeekOrDayMode(mode: CalendarMode): mode is WeekOrDayMode {
     return ['week', 'day'].includes(mode);
   }
 
-  const handleChangeMode = (value: CalendarMode) => {
-    setMode(value);
-  };
+  const handleChangeMode = useCallback((newMode: string) => {
+    if(isCalendarMode(newMode)) {
+      setMode(newMode);
+    } else {
+      console.error('Unexpected mode value');
+    }
+  }, []);
   
   return (
     <div className='flex items-center'>
       <div className='px-[16px] md:pl-[16px] md:pr-0 grow'>
         <div className='flex items-center justify-between pb-4'>
           <p>
-            <span className='font-bold'>{month} </span>
-            <span>{today.getFullYear()}</span>
+            <span className='font-bold'>{MONTHS[currentDate.getMonth()]} </span>
+            <span>{currentDate.getFullYear()}</span>
           </p>
           <div className='flex items-center gap-4'>
-            <Select value={mode} onValueChange={(value) => handleChangeMode(value as CalendarMode)}>
+            <Select value={mode} onValueChange={(value) => handleChangeMode(value)}>
               <SelectTrigger size='s' className='w-32'>
                 <SelectValue placeholder="Сменить представление" />
               </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 {MODE_VARIANTS.map((variant) => (
-                  <SelectItem value={variant.value}>{variant.label}</SelectItem>
+                  <SelectItem value={variant.value} key={variant.value}>
+                    {variant.label}
+                  </SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
@@ -72,13 +81,12 @@ export const CalendarModule = () => {
             </div>
 
           </div>
-          
-
         </div>
-        {mode === 'month' && <MonthCalendar date={today} events={MOCK_EVENTS} />}
-        {mode === 'year' && <YearCalendar year={today.getFullYear()} />}
-        {isWeekOrDayMode(mode) && <WeekCalendar events={MOCK_EVENTS} date={today} view={mode} />}
+        {mode === 'month' && <MonthCalendar days={days[mode]} />}
+        {mode === 'year' && <YearCalendar days={days[mode]} />}
+        {isWeekOrDayMode(mode) && <WeekCalendar days={days[mode]} view={mode} />}
       </div>
+
       {mode !== 'year' && <Sidebar />}
     </div>
 

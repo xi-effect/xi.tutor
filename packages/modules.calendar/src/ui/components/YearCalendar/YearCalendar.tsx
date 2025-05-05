@@ -1,25 +1,18 @@
 import { format } from "date-fns";
-import { MONTHS, WEEK_DAYS } from "../../config";
-
-import type { FC } from "react";
-import useYearlyCalendar from "../../../hooks/useYearlyCalendar";
 import { cn } from "@xipkg/utils";
 
+import { MONTHS, WEEK_DAYS } from "../../config";
+import { isCurrentMonth, isWeekend } from "../../../utils";
 
-type YearCalendarProps = {
-  year: number;
-};
+import type { FC } from "react";
+import type { CalendarProps } from "../../config";
 
 
-export const YearCalendar: FC<YearCalendarProps> = ({ year }) => {
-  const { yearCalendar, isCurrentMonth, isWeekend } = useYearlyCalendar(year);
+export const YearCalendar: FC<CalendarProps<'year'>> = ({ days }) => {
 
-  console.log('yearCalendar', yearCalendar);
-  
-  
   return (
     <div className="grid grid-cols-4 gap-6">
-      {yearCalendar.map((month, monthIndex) => (
+      {days.map((month, monthIndex) => (
         <div key={MONTHS[monthIndex]} className="p-4">
           <div className="font-semibold text-sm mb-2">{MONTHS[monthIndex]}</div>
           <div className="grid grid-cols-7 text-xs text-muted-foreground text-center mb-1">
@@ -28,7 +21,7 @@ export const YearCalendar: FC<YearCalendarProps> = ({ year }) => {
             ))}
           </div>
           <div className="grid grid-cols-7 gap-1 text-xs">
-            {month.days.map((day) => {
+            {month.map((day) => {
               const isOutOfMonth = !isCurrentMonth(day, monthIndex);
               const weekend = isWeekend(day);
               return (
@@ -51,33 +44,3 @@ export const YearCalendar: FC<YearCalendarProps> = ({ year }) => {
     </div>
   );
 };
-
-// function MonthGrid({
-//   year,
-//   month,
-// }: {
-//   year: number;
-//   month: number;
-// }) {
-//   const daysInMonth = getDaysInMonth(new Date(year, month));
-//   const startDay = (getDay(new Date(year, month, 1)) + 6) % 7;
-
-//   const cells = Array.from({ length: startDay + daysInMonth }, (_, i) => {
-//     const day = i >= startDay ? i - startDay + 1 : null;
-
-//     return (
-//       <div
-//         key={i}
-//         className="w-6 h-6 text-center text-xs rounded-full mx-auto flex items-center justify-center"
-//       >
-//         {day || ""}
-//       </div>
-//     );
-//   });
-
-//   return (
-//     <div className="grid grid-cols-7 gap-1 text-xs">
-//       {cells}
-//     </div>
-//   );
-// }

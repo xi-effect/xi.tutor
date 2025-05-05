@@ -1,23 +1,21 @@
-import { format, startOfWeek, addDays, isSameDay } from "date-fns";
+import { format } from "date-fns";
 import { cn } from "@xipkg/utils";
 
+import { useEvents } from "../../../hooks";
+import { CalendarEvent } from "../CalendarEvent/CalendarEvent";
+
 import type { FC } from "react";
-import { WEEK_DAYS, type CalendarEvent, type WeekOrDayMode } from "../../config";
+import { CalendarProps, WEEK_DAYS, type WeekOrDayMode } from "../../config";
 
 
 const hours = Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, "0")}:00`);
 
-interface WeekCalendarProps {
-  events: CalendarEvent[];
-  date: Date;
-  view?: WeekOrDayMode
+interface WeekCalendarProps extends CalendarProps<WeekOrDayMode> {
+  view: WeekOrDayMode
 };
 
-
-export const WeekCalendar: FC<WeekCalendarProps> = ({ events, date, view = "week" }) => {
-  const days = view === "week"
-    ? Array.from({ length: 7 }, (_, i) => addDays(startOfWeek(date, { weekStartsOn: 1 }), i))
-    : [date];
+export const WeekCalendar: FC<WeekCalendarProps> = ({ days, view }) => {
+  const { getDayEvents } = useEvents();
 
   return (
     <div>
@@ -45,50 +43,20 @@ export const WeekCalendar: FC<WeekCalendarProps> = ({ events, date, view = "week
             ))}
           </div>
 
-          {days.map((day) => {
-            const dayEvents = events.filter((event) => {
-              return isSameDay(new Date(event.start || event.end), day);
-            });
-
+          {days.map((day) => {          
             return (
               <div key={day.toISOString()} className="flex flex-col border-l border-gray-10">
                 <div className="h-10 p-1 border-y border-gray-10">
-                  {dayEvents
+                  {getDayEvents(day)
                   .filter((event) => !event.start)
-                  .map((event) => (
-                    <div
-                      key={event.id}
-                      className={cn(
-                      "text-sm px-1 py-0.5 rounded border-l-4",
-                      event.type === "vacation" && "border-green-80",
-                      event.type === "task" && "border-brand-80",
-                      event.type === "cancelled" && "border-red-80"
-                      )}
-                    >
-                      <span className="font-medium">{event.title}</span>
-                    </div>
-                  ))
+                  .map((event) => <CalendarEvent calendarEvent={event} key={event.id} />)
                   }
                 </div>
                 {hours.map((hour, index) => (
                   <div key={hour} className="h-20 p-1 border-b border-gray-10">
-                    {dayEvents
+                    {getDayEvents(day)
                     .filter((event) => event.start?.getHours() === index)
-                    .map((event) => {
-                        return (
-                          <div
-                            key={event.id}
-                            className={cn(
-                              "text-sm px-1 py-0.5 rounded border-l-4",
-                              event.type === "vacation" && "border-green-80",
-                              event.type === "task" && "border-brand-80",
-                              event.type === "cancelled" && "border-red-80"
-                            )}
-                          >
-                            <span className="font-medium">{event.title}</span>
-                          </div>
-                        );
-                      })
+                    .map((event) => <CalendarEvent calendarEvent={event} key={event.id} />)
                     }
                   </div>
                 ))}

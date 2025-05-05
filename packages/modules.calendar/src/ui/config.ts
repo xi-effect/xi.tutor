@@ -1,4 +1,4 @@
-export interface CalendarEvent {
+export interface ICalendarEvent {
   id: string
   title: string
   start?: Date
@@ -6,12 +6,16 @@ export interface CalendarEvent {
   type?: 'task' | 'vacation' | 'cancelled'
 }
 
-export interface CalendarProps {
-  events: CalendarEvent[]
-  date: Date
-}
-
 export type CalendarMode = 'day' | 'week' | 'month' | 'year';
+
+export type CalendarDays<T extends CalendarMode> = 
+  T extends 'year' ? Date[][] : Date[];
+
+export interface CalendarProps<T extends CalendarMode> {
+  days: CalendarDays<T>
+}
+  
+
 export type WeekOrDayMode = Extract<CalendarMode, 'week'|'day'>;
 type ModeVariant = {
   label: string
@@ -39,32 +43,3 @@ export const MODE_VARIANTS: ModeVariant[] = [
   }
 ];
 
-export const MOCK_EVENTS: CalendarEvent[] = [
-  { 
-    id: '1', 
-    title: 'Event title', 
-    start: new Date('2025-04-21T17:40:00'), 
-    end: new Date('2025-04-21T18:40:00'),  
-    type: 'task' 
-  },
-  { 
-    id: '2', 
-    title: 'Event title', 
-    start: new Date('2025-04-21T11:00:00'), 
-    end: new Date('2025-04-21T13:00:00'), 
-    type: 'vacation' 
-  },
-  { 
-    id: '3', 
-    title: 'Event title', 
-    start: new Date('2025-04-24T17:40:00'), 
-    end: new Date('2025-04-24T18:10:00'), 
-    type: 'cancelled' 
-  },
-  { 
-    id: '4', 
-    title: 'Event title', 
-    end: new Date('2025-04-26'), 
-    type: 'vacation' 
-  },
-];
