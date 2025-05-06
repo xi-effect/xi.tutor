@@ -1,3 +1,3 @@
-export { CalendarModule, type CalendarEvent } from './src/ui';
+export { CalendarModule } from './src/ui';
 export { calendarEn, calendarRu } from './src/locales';
  

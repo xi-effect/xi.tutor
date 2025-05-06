@@ -10,3 +10,10 @@ export const isWeekend = (day: Date) => {
   const weekday = day.getDay();
   return weekday === 0 || weekday === 6;
 }; 
+
+export const timeToString = (time: Date) => {
+  const hoursToString = time.getHours() < 10 ? `0${time.getHours()}` : time.getHours();
+  const minutesToString = time.getMinutes() < 10 ? `0${time.getMinutes()}` : time.getMinutes();
+
+  return `${hoursToString}:${minutesToString}`;
+};

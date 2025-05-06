@@ -1,7 +1,7 @@
 import { useCallback, useState, useMemo } from "react";
 import { startOfDay } from 'date-fns';
 
-import type { ICalendarEvent } from "../ui/config";
+import type { ICalendarEvent } from "../ui/types";
 
 const MOCK_EVENTS: ICalendarEvent[] = [
   { 

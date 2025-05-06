@@ -1,11 +1,12 @@
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
 import { cn } from "@xipkg/utils";
 
 import { useEvents } from "../../../hooks";
 import { CalendarEvent } from "../CalendarEvent/CalendarEvent";
 
 import type { FC } from "react";
-import { CalendarProps, WEEK_DAYS, type WeekOrDayMode } from "../../config";
+import { CalendarProps, type WeekOrDayMode } from "../../types";
 
 
 const hours = Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, "0")}:00`);
@@ -16,26 +17,31 @@ interface WeekCalendarProps extends CalendarProps<WeekOrDayMode> {
 
 export const WeekCalendar: FC<WeekCalendarProps> = ({ days, view }) => {
   const { getDayEvents } = useEvents();
+  const { t } = useTranslation('calendar');
+
+  const WEEK_DAYS = t('week_days').split(',');
 
   return (
     <div>
-        <div className={cn(
+      <div 
+        className={cn(
           "grid grid-cols-[repeat(7,_1fr)] w-full pl-[80px]",
           view === "day" && "grid-cols-[1fr]"
-        )}>
-          {days.map((day, index) => (
-            <div key={day.toISOString()} className="p-2 text-xs text-center">
-              {`${WEEK_DAYS[index]} ${format(day, "d")}`}
-            </div>
-          ))}
-        </div>
+        )}
+      >
+        {days.map((day, index) => (
+          <div key={day.toISOString()} className="p-2 text-xs text-center">
+            {`${WEEK_DAYS[index]} ${format(day, "d")}`}
+          </div>
+        ))}
+      </div>
 
-        <div className={cn(
-          "grid grid-cols-[80px_repeat(7,_1fr)] w-full",
-          view === "day" && "grid-cols-[80px_1fr]"
-        )}>
-          <div className="flex flex-col text-xs text-right pr-2">
-            <div className="w-20 h-10 py-3 pr-2 border-y border-gray-10">Весь день</div>
+      <div className={cn(
+        "grid grid-cols-[80px_repeat(7,_1fr)] w-full",
+        view === "day" && "grid-cols-[80px_1fr]"
+      )}>
+        <div className="flex flex-col text-xs text-right pr-2">
+          <div className="w-20 h-10 py-3 pr-2 border-y border-gray-10">Весь день</div>
             {hours.map((hour, index) => (
               <div key={hour} className="w-20 h-20 pr-2">
                 <span className="block relative top-[-6px]">{index !== 0 && hour}</span>

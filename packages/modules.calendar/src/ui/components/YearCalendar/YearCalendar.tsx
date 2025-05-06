@@ -1,14 +1,19 @@
 import { format } from "date-fns";
+import { useTranslation } from "react-i18next";
+
 import { cn } from "@xipkg/utils";
 
-import { MONTHS, WEEK_DAYS } from "../../config";
 import { isCurrentMonth, isWeekend } from "../../../utils";
 
 import type { FC } from "react";
-import type { CalendarProps } from "../../config";
+import type { CalendarProps } from "../../types";
 
 
 export const YearCalendar: FC<CalendarProps<'year'>> = ({ days }) => {
+  const { t } = useTranslation('calendar');
+
+  const MONTHS = t('months').split(',');
+  const WEEK_DAYS = t('week_days').split(',');
 
   return (
     <div className="grid grid-cols-4 gap-6">

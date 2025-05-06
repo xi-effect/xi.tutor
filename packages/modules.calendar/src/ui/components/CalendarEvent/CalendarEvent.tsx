@@ -1,15 +1,15 @@
 import { cn } from "@xipkg/utils";
 
+import { timeToString } from "../../../utils";
+
 import type { FC } from "react";
-import type { ICalendarEvent } from "../../config";
+import type { ICalendarEvent } from "../../types";
 
 interface CalendarEventProps {
   calendarEvent: ICalendarEvent
 }
 
-export const CalendarEvent:FC<CalendarEventProps> = ({
-  calendarEvent, 
-}) => {
+export const CalendarEvent:FC<CalendarEventProps> = ({ calendarEvent }) => {
 
   return (
     <div
@@ -23,7 +23,7 @@ export const CalendarEvent:FC<CalendarEventProps> = ({
     >
       {calendarEvent.start && 
         <span className="mr-1 text-xs">
-          {`${calendarEvent.start.getHours()}:${calendarEvent.start.getMinutes()}`}
+          {timeToString(calendarEvent.start)}
         </span>
       }
       <span className="font-medium">{calendarEvent.title}</span>

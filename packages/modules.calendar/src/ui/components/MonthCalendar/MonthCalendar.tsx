@@ -1,9 +1,9 @@
 
 import { format } from 'date-fns';
+import { useTranslation } from 'react-i18next';
 
 import { cn } from '@xipkg/utils';
 
-import { WEEK_DAYS } from '../../config';
 import { useEvents, useCalendar } from '../../../hooks';
 import { 
   getWeeksNumbers,
@@ -14,12 +14,15 @@ import {
 import { CalendarEvent } from '../CalendarEvent/CalendarEvent';
 
 import type { FC } from 'react';
-import type { CalendarProps } from '../../config';
+import type { CalendarProps } from '../../types';
 
 
 export const MonthCalendar: FC<CalendarProps<'month'>> = ({ days }) => {
   const { getDayEvents } = useEvents();
   const { currentDate } = useCalendar();
+  const { t } = useTranslation('calendar');
+
+  const WEEK_DAYS = t('week_days').split(',');
 
   return (
     <div className="text-sm flex">

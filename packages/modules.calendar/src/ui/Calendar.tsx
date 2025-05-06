@@ -10,28 +10,41 @@ import {
 } from '@xipkg/select';
 import { Button } from '@xipkg/button';
 import { ChevronBottom, ChevronUp } from '@xipkg/icons';
-import { MODE_VARIANTS, MONTHS, type CalendarMode, type WeekOrDayMode } from './config';
+import { isCalendarMode, isWeekOrDayMode, ModeVariant, type CalendarMode } from './types';
 import { MonthCalendar } from './components/MonthCalendar/MonthCalendar';
 import { Sidebar } from './components/Sidebar/Sidebar';
 import { YearCalendar } from './components/YearCalendar/YearCalendar';
 import { WeekCalendar } from './components/WeekCalendar/WeekCalendar';
 import { useCalendar } from '../hooks/useCalendar';
+import { useTranslation } from 'react-i18next';
 
-const MODES = ['day', 'week', 'month', 'year']; 
 
-function isCalendarMode(mode: string): mode is CalendarMode {
-  return MODES.includes(mode);
-};
+const MODE_VARIANTS: ModeVariant[] = [
+  {
+    label: 'День',
+    value: 'day'
+  },
+  {
+    label: 'Неделя',
+    value: 'week'
+  },
+  {
+    label: 'Месяц',
+    value: 'month'
+  },
+  {
+    label: 'Год',
+    value: 'year'
+  }
+];
 
 
 export const CalendarModule = () => {
   const [ mode, setMode ] = useState<CalendarMode>('month');
-  
   const { days, currentDate } = useCalendar();
+  const { t } = useTranslation('calendar');
 
-  function isWeekOrDayMode(mode: CalendarMode): mode is WeekOrDayMode {
-    return ['week', 'day'].includes(mode);
-  }
+  const MONTHS = t('months').split(',');
 
   const handleChangeMode = useCallback((newMode: string) => {
     if(isCalendarMode(newMode)) {
@@ -52,7 +65,7 @@ export const CalendarModule = () => {
           <div className='flex items-center gap-4'>
             <Select value={mode} onValueChange={(value) => handleChangeMode(value)}>
               <SelectTrigger size='s' className='w-32'>
-                <SelectValue placeholder="Сменить представление" />
+                <SelectValue placeholder={t('change_view')} />
               </SelectTrigger>
             <SelectContent>
               <SelectGroup>
@@ -68,7 +81,7 @@ export const CalendarModule = () => {
             <div 
               className='hidden xs:block px-4 py-1 border border-gray-30 rounded-md text-sm font-medium'
             >
-              Сегодня
+              {t('today')}
             </div>
 
             <div>

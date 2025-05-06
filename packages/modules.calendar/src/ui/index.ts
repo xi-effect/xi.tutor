@@ -1,1 +1,1 @@
-export { CalendarModule, type CalendarEvent } from './Calendar';
+export { CalendarModule } from './Calendar';
