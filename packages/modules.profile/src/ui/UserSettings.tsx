@@ -80,15 +80,6 @@ export const UserSettings = ({
 
   const [activeQuery, setActiveQuery] = React.useState<string>('home');
 
-  // Список опций меню для поиска индекса по query
-  const options = [
-    { query: 'home' },
-    { query: 'personalInfo' },
-    { query: 'personalisation' },
-    { query: 'security' },
-    { query: 'notifications' },
-  ];
-
   return (
     <Modal open={open} onOpenChange={handleOpenChange}>
       <ModalContent
