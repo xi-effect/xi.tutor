@@ -1,4 +1,4 @@
-import { 
+import {
   startOfYear,
   endOfYear,
   eachMonthOfInterval,
@@ -7,7 +7,7 @@ import {
   startOfWeek,
   endOfWeek,
   eachDayOfInterval,
-  getWeek
+  getWeek,
 } from 'date-fns';
 
 export const getMonthDays = (currentDate: Date): Date[] => {
@@ -25,12 +25,12 @@ export const getMonthDays = (currentDate: Date): Date[] => {
 export const getYearDays = (currentDate: Date) => {
   const yearStart = startOfYear(new Date(currentDate.getFullYear(), 0, 1));
   const yearEnd = endOfYear(yearStart);
-  
+
   const months = eachMonthOfInterval({ start: yearStart, end: yearEnd });
 
-  return months.map((monthDate) => {  
+  return months.map((monthDate) => {
     const days = getMonthDays(monthDate);
-    
+
     return days;
   });
 };
@@ -46,7 +46,7 @@ export const getWeeksNumbers = (days: Date[]) => {
   const weeks: Date[][] = [];
   for (let i = 0; i < days.length; i += 7) {
     weeks.push(days.slice(i, i + 7));
-  };
+  }
 
   return weeks.map((week) => getWeek(week[0]));
-};  
+};

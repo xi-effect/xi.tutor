@@ -11,9 +11,7 @@ export const Route = createFileRoute('/(app)/_layout/calendar/')({
   },
 });
 
-
 function CalendarPage() {
-
   return (
     <>
       <CalendarModule />
