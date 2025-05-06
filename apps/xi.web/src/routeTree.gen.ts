@@ -20,6 +20,7 @@ import { Route as authSigninIndexImport } from './pages/(auth)/signin/index';
 import { Route as appLayoutIndexImport } from './pages/(app)/_layout/index';
 import { Route as appLayoutPaymentsIndexImport } from './pages/(app)/_layout/payments/index';
 import { Route as appLayoutMaterialsIndexImport } from './pages/(app)/_layout/materials/index';
+import { Route as appLayoutEditorIndexImport } from './pages/(app)/_layout/editor/index';
 import { Route as appLayoutClassroomsIndexImport } from './pages/(app)/_layout/classrooms/index';
 import { Route as appLayoutCallIndexImport } from './pages/(app)/_layout/call/index';
 import { Route as appLayoutCalendarIndexImport } from './pages/(app)/_layout/calendar/index';
@@ -79,6 +80,12 @@ const appLayoutPaymentsIndexRoute = appLayoutPaymentsIndexImport.update({
 const appLayoutMaterialsIndexRoute = appLayoutMaterialsIndexImport.update({
   id: '/materials/',
   path: '/materials/',
+  getParentRoute: () => appLayoutRoute,
+} as any);
+
+const appLayoutEditorIndexRoute = appLayoutEditorIndexImport.update({
+  id: '/editor/',
+  path: '/editor/',
   getParentRoute: () => appLayoutRoute,
 } as any);
 
@@ -217,6 +224,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutClassroomsIndexImport;
       parentRoute: typeof appLayoutImport;
     };
+    '/(app)/_layout/editor/': {
+      id: '/(app)/_layout/editor/';
+      path: '/editor';
+      fullPath: '/editor';
+      preLoaderRoute: typeof appLayoutEditorIndexImport;
+      parentRoute: typeof appLayoutImport;
+    };
     '/(app)/_layout/materials/': {
       id: '/(app)/_layout/materials/';
       path: '/materials';
@@ -271,6 +285,7 @@ interface appLayoutRouteChildren {
   appLayoutCalendarIndexRoute: typeof appLayoutCalendarIndexRoute;
   appLayoutCallIndexRoute: typeof appLayoutCallIndexRoute;
   appLayoutClassroomsIndexRoute: typeof appLayoutClassroomsIndexRoute;
+  appLayoutEditorIndexRoute: typeof appLayoutEditorIndexRoute;
   appLayoutMaterialsIndexRoute: typeof appLayoutMaterialsIndexRoute;
   appLayoutPaymentsIndexRoute: typeof appLayoutPaymentsIndexRoute;
   appLayoutWelcomeAboutIndexRoute: typeof appLayoutWelcomeAboutIndexRoute;
@@ -286,6 +301,7 @@ const appLayoutRouteChildren: appLayoutRouteChildren = {
   appLayoutCalendarIndexRoute: appLayoutCalendarIndexRoute,
   appLayoutCallIndexRoute: appLayoutCallIndexRoute,
   appLayoutClassroomsIndexRoute: appLayoutClassroomsIndexRoute,
+  appLayoutEditorIndexRoute: appLayoutEditorIndexRoute,
   appLayoutMaterialsIndexRoute: appLayoutMaterialsIndexRoute,
   appLayoutPaymentsIndexRoute: appLayoutPaymentsIndexRoute,
   appLayoutWelcomeAboutIndexRoute: appLayoutWelcomeAboutIndexRoute,
@@ -316,6 +332,7 @@ export interface FileRoutesByFullPath {
   '/calendar': typeof appLayoutCalendarIndexRoute;
   '/call': typeof appLayoutCallIndexRoute;
   '/classrooms': typeof appLayoutClassroomsIndexRoute;
+  '/editor': typeof appLayoutEditorIndexRoute;
   '/materials': typeof appLayoutMaterialsIndexRoute;
   '/payments': typeof appLayoutPaymentsIndexRoute;
   '/welcome/about': typeof appLayoutWelcomeAboutIndexRoute;
@@ -334,6 +351,7 @@ export interface FileRoutesByTo {
   '/calendar': typeof appLayoutCalendarIndexRoute;
   '/call': typeof appLayoutCallIndexRoute;
   '/classrooms': typeof appLayoutClassroomsIndexRoute;
+  '/editor': typeof appLayoutEditorIndexRoute;
   '/materials': typeof appLayoutMaterialsIndexRoute;
   '/payments': typeof appLayoutPaymentsIndexRoute;
   '/welcome/about': typeof appLayoutWelcomeAboutIndexRoute;
@@ -355,6 +373,7 @@ export interface FileRoutesById {
   '/(app)/_layout/calendar/': typeof appLayoutCalendarIndexRoute;
   '/(app)/_layout/call/': typeof appLayoutCallIndexRoute;
   '/(app)/_layout/classrooms/': typeof appLayoutClassroomsIndexRoute;
+  '/(app)/_layout/editor/': typeof appLayoutEditorIndexRoute;
   '/(app)/_layout/materials/': typeof appLayoutMaterialsIndexRoute;
   '/(app)/_layout/payments/': typeof appLayoutPaymentsIndexRoute;
   '/(app)/_layout/welcome/about/': typeof appLayoutWelcomeAboutIndexRoute;
@@ -375,6 +394,7 @@ export interface FileRouteTypes {
     | '/calendar'
     | '/call'
     | '/classrooms'
+    | '/editor'
     | '/materials'
     | '/payments'
     | '/welcome/about'
@@ -392,6 +412,7 @@ export interface FileRouteTypes {
     | '/calendar'
     | '/call'
     | '/classrooms'
+    | '/editor'
     | '/materials'
     | '/payments'
     | '/welcome/about'
@@ -411,6 +432,7 @@ export interface FileRouteTypes {
     | '/(app)/_layout/calendar/'
     | '/(app)/_layout/call/'
     | '/(app)/_layout/classrooms/'
+    | '/(app)/_layout/editor/'
     | '/(app)/_layout/materials/'
     | '/(app)/_layout/payments/'
     | '/(app)/_layout/welcome/about/'
@@ -469,6 +491,7 @@ export const routeTree = rootRoute
         "/(app)/_layout/calendar/",
         "/(app)/_layout/call/",
         "/(app)/_layout/classrooms/",
+        "/(app)/_layout/editor/",
         "/(app)/_layout/materials/",
         "/(app)/_layout/payments/",
         "/(app)/_layout/welcome/about/",
@@ -505,6 +528,10 @@ export const routeTree = rootRoute
     },
     "/(app)/_layout/classrooms/": {
       "filePath": "(app)/_layout/classrooms/index.tsx",
+      "parent": "/(app)/_layout"
+    },
+    "/(app)/_layout/editor/": {
+      "filePath": "(app)/_layout/editor/index.tsx",
       "parent": "/(app)/_layout"
     },
     "/(app)/_layout/materials/": {

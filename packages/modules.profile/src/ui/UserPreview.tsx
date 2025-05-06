@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ChangeEvent, useRef } from 'react';
 import { Camera, Edit, Trash } from '@xipkg/icons';
-// import { AvatarEditor } from 'pkg.avatar.editor';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +9,6 @@ import {
 } from '@xipkg/dropdown';
 // import { del } from 'pkg.utils/fetch';
 import { toast } from 'sonner';
-// import { useMainSt } from 'pkg.stores';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { AvatarEditor } from 'modules.avatar.editor';
 import { useCurrentUser } from 'common.services';
