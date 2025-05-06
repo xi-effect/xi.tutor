@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 
-import { ChevronRight, TelegramFilled, Trash, MailRounded } from '@xipkg/icons';
+import { ChevronRight, TelegramFilled, Trash, MailRounded, WhatsAppFilled } from '@xipkg/icons';
 import { useMediaQuery } from '@xipkg/utils';
 import { useCurrentUser } from 'common.services';
 
@@ -78,7 +78,7 @@ export const Notifications = () => {
             onClick={handleOpenToggleWhatsapp}
             className="hover:bg-gray-5 flex h-[66px] flex-row items-center gap-4 rounded-xl bg-transparent p-3"
           >
-            <TelegramFilled className="fill-brand-80" />
+            <WhatsAppFilled className="fill-brand-80" />
 
             <div className="items-star flex flex-col">
               <span className="w-fit font-semibold">Whatsapp</span>
