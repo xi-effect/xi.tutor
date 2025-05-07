@@ -20,7 +20,7 @@
     "react-i18next": "15.4.1",
     "@tanstack/react-router": "^1.109.0",
     "@xipkg/button": "3.1.8",
-    "@xipkg/icons": "2.0.12",
+    "@xipkg/icons": "2.0.13",
     "@xipkg/utils": "1.7.0",
     "@xipkg/slider": "2.0.12",
     "zod": "3.24.2",
