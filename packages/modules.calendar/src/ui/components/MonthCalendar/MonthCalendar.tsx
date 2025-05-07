@@ -4,7 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@xipkg/utils';
 
 import { useEvents, useCalendar } from '../../../hooks';
-import { getWeeksNumbers, isCurrentDay, isCurrentMonth, isWeekend } from '../../../utils';
+import {
+  getWeeksNumbers,
+  isCurrentDay,
+  isCurrentMonth,
+  isWeekend,
+  isPastDay,
+} from '../../../utils';
 import { CalendarEvent } from '../CalendarEvent/CalendarEvent';
 
 import type { FC } from 'react';
@@ -42,11 +48,11 @@ export const MonthCalendar: FC<CalendarProps<'month'>> = ({ days }) => {
             <span
               className={cn(
                 'px-2 py-1.5 text-right text-sm',
-                isCurrentDay(day, currentDate) &&
-                  'bg-brand-80 text-brand-0 w-fit self-end rounded-sm',
                 !isCurrentMonth(day, currentDate.getMonth()) && 'text-gray-30',
                 isWeekend(day) && 'text-red-80',
                 isWeekend(day) && !isCurrentMonth(day, currentDate.getMonth()) && 'text-red-60',
+                isCurrentDay(day, currentDate) &&
+                  'bg-brand-80 text-brand-0 w-fit self-end rounded-sm',
               )}
             >
               {day.getDate() === 1
@@ -54,9 +60,13 @@ export const MonthCalendar: FC<CalendarProps<'month'>> = ({ days }) => {
                 : format(day, 'd')}
             </span>
 
-            <div className="flex-1 space-y-0.5 overflow-y-auto">
+            <div className="flex-1 space-y-0.5 overflow-x-hidden">
               {getDayEvents(day).map((event) => (
-                <CalendarEvent calendarEvent={event} key={event.id} />
+                <CalendarEvent
+                  calendarEvent={event}
+                  isPast={isPastDay(day, currentDate)}
+                  key={event.id}
+                />
               ))}
             </div>
           </div>

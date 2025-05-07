@@ -7,23 +7,32 @@ import type { ICalendarEvent } from '../../types';
 
 interface CalendarEventProps {
   calendarEvent: ICalendarEvent;
+  isPast?: boolean;
 }
 
-export const CalendarEvent: FC<CalendarEventProps> = ({ calendarEvent }) => {
+export const CalendarEvent: FC<CalendarEventProps> = ({ calendarEvent, isPast }) => {
   return (
-    <div
-      key={calendarEvent.id}
-      className={cn(
-        'rounded border-l-4 px-1 py-0.5 text-sm',
-        calendarEvent.type === 'vacation' && 'border-green-80',
-        calendarEvent.type === 'task' && 'border-brand-80',
-        calendarEvent.type === 'cancelled' && 'border-red-80',
-      )}
-    >
-      {calendarEvent.start && (
-        <span className="mr-1 text-xs">{timeToString(calendarEvent.start)}</span>
-      )}
-      <span className="font-medium">{calendarEvent.title}</span>
+    <div key={calendarEvent.id} className={cn('flex cursor-pointer gap-1', isPast && 'opacity-60')}>
+      <div
+        className={cn(
+          'xs:block hidden w-2 rounded-[8px]',
+          calendarEvent.type === 'vacation' && 'bg-green-80',
+          calendarEvent.type === 'task' && 'bg-brand-80',
+          calendarEvent.type === 'cancelled' && 'bg-red-80',
+        )}
+      />
+      <div
+        className={cn(
+          calendarEvent.type === 'task' && 'hover:text-brand-80',
+          calendarEvent.type === 'vacation' && 'hover:text-green-80',
+          calendarEvent.type === 'cancelled' && 'hover:text-red-80',
+        )}
+      >
+        {calendarEvent.start && (
+          <span className="mr-1 text-xs">{timeToString(calendarEvent.start)}</span>
+        )}
+        <span className="font-medium">{calendarEvent.title}</span>
+      </div>
     </div>
   );
 };
