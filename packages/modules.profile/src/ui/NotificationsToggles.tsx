@@ -6,8 +6,14 @@ type NotificationsTogglesPropsT = {
   type: TypesMessagersT;
 };
 
+const typeMap: Record<string, string> = {
+  telegram: 'Telegram',
+  whatsapp: 'Whatsapp',
+  email: 'Email',
+};
+
 export const NotificationsToggles = ({ type }: NotificationsTogglesPropsT) => {
-  const nameType = type === 'telegram' ? 'Telegram' : type === 'whatsapp' ? 'Whatsapp' : 'Email';
+  const nameType = typeMap[type] || 'Email';
 
   return (
     <>

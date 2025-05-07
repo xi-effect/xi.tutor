@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useState } from 'react';
 
 import { ChevronRight, TelegramFilled, Trash, MailRounded, WhatsAppFilled } from '@xipkg/icons';
 import { useMediaQuery } from '@xipkg/utils';
@@ -11,24 +11,8 @@ export const Notifications = () => {
 
   const isMobile = useMediaQuery('(max-width: 719px)');
 
-  const [isToggleOpenTelegram, setIsToggleOpenTelegram] = useState(false);
-  const [isToggleOpenWhatsapp, setIsToggleOpenWhatsapp] = useState(false);
-
-  const handleOpenToggleTelegram = useCallback(() => {
-    setIsToggleOpenTelegram(true);
-  }, []);
-
-  const handleOpenToggleWhatsapp = useCallback(() => {
-    setIsToggleOpenWhatsapp(true);
-  }, []);
-
-  const handleCloseToggleTelegram = useCallback(() => {
-    setIsToggleOpenTelegram(false); // TODO: delete Telegram
-  }, []);
-
-  const handleCloseToggleWhatsapp = useCallback(() => {
-    setIsToggleOpenWhatsapp(false); // TODO: delete Whatsapp
-  }, []);
+  const [isTelegram, setTelegram] = useState(false);
+  const [isWhatsapp, setWhatsapp] = useState(false);
 
   const nickname = '@nickname'; // TODO: get nickname from user
 
@@ -40,7 +24,7 @@ export const Notifications = () => {
         <div className="border-gray-30 flex w-full flex-col gap-2 rounded-2xl border p-1">
           <button
             type="button"
-            onClick={handleOpenToggleTelegram}
+            onClick={() => setTelegram(!isTelegram)}
             className="hover:bg-gray-5 flex h-[66px] flex-row items-center gap-4 rounded-xl bg-transparent p-3"
           >
             <TelegramFilled className="fill-brand-80" />
@@ -48,16 +32,16 @@ export const Notifications = () => {
             <div className="items-star flex flex-col">
               <span className="w-fit font-semibold">Telegram</span>
               <span className="text-gray-80 font-inter text-xs font-normal">
-                {isToggleOpenTelegram ? nickname : user?.telegram_id || 'Не подключен'}
+                {isTelegram ? nickname : user?.telegram_id || 'Не подключен'}
               </span>
             </div>
 
-            {isToggleOpenTelegram ? (
+            {isTelegram ? (
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleCloseToggleTelegram();
+                  setTelegram(false);
                 }}
                 className="ml-auto bg-transparent"
               >
@@ -69,13 +53,13 @@ export const Notifications = () => {
             )}
           </button>
 
-          {isToggleOpenTelegram && <NotificationsToggles type="telegram" />}
+          {isTelegram && <NotificationsToggles type="telegram" />}
         </div>
 
         <div className="border-gray-30 flex w-full flex-col gap-2 rounded-2xl border p-1">
           <button
             type="button"
-            onClick={handleOpenToggleWhatsapp}
+            onClick={() => setWhatsapp(!isWhatsapp)}
             className="hover:bg-gray-5 flex h-[66px] flex-row items-center gap-4 rounded-xl bg-transparent p-3"
           >
             <WhatsAppFilled className="fill-brand-80" />
@@ -83,16 +67,16 @@ export const Notifications = () => {
             <div className="items-star flex flex-col">
               <span className="w-fit font-semibold">Whatsapp</span>
               <span className="text-gray-80 font-inter text-xs font-normal">
-                {isToggleOpenWhatsapp ? nickname : user?.whatsapp_id || 'Не подключен'}
+                {isWhatsapp ? nickname : user?.whatsapp_id || 'Не подключен'}
               </span>
             </div>
 
-            {isToggleOpenWhatsapp ? (
+            {isWhatsapp ? (
               <button
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handleCloseToggleWhatsapp();
+                  setWhatsapp(false);
                 }}
                 className="ml-auto bg-transparent"
               >
@@ -104,7 +88,7 @@ export const Notifications = () => {
             )}
           </button>
 
-          {isToggleOpenWhatsapp && <NotificationsToggles type="whatsapp" />}
+          {isWhatsapp && <NotificationsToggles type="whatsapp" />}
         </div>
 
         <div className="border-gray-30 flex w-full flex-col gap-2 rounded-2xl border p-1">
