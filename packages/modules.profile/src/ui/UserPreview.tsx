@@ -57,12 +57,19 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
   const handleInput = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
 
-    if (event.target.files[0].size > 5 * 1024 * 1024) {
+    const file = event.target.files[0];
+
+    if (!file.type.startsWith('image/')) {
+      toast('Пожалуйста, загрузите изображение');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
       toast('Файл слишком большой');
       return;
     }
 
-    const imageDataUrl = await readFile(event.target.files[0]);
+    const imageDataUrl = await readFile(file);
 
     console.log(imageDataUrl);
 
@@ -86,7 +93,13 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
         onOpenChange={setIsAvatarOpen}
         setDate={setDate}
       />
-      <input className="hidden" ref={inputRef} onChange={handleInput} type="file" />
+      <input
+        className="hidden"
+        ref={inputRef}
+        onChange={handleInput}
+        type="file"
+        accept="image/*"
+      />
       <DropdownMenu>
         <DropdownMenuTrigger className="cursor-pointer" asChild>
           <Avatar size="xl">
