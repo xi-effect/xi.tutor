@@ -1,15 +1,10 @@
-import { Account, Exit, Home, Key, Palette } from '@xipkg/icons';
+import { Account, Exit, Home, Key, Palette, Notification } from '@xipkg/icons';
 import { Dispatch, SetStateAction } from 'react';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 
 type ItemT = {
   name: string;
   query: string;
-};
-
-type SearchParams = {
-  profile?: string;
-  [key: string]: string | undefined;
 };
 
 const options: ItemT[] = [
@@ -29,9 +24,10 @@ const options: ItemT[] = [
     name: 'Безопасность',
     query: 'security',
   },
-  // {
-  //   name: 'Звук и видео',
-  // },
+  {
+    name: 'Уведомления',
+    query: 'notifications',
+  },
 ];
 
 type ItemPropsT = {
@@ -44,13 +40,18 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const search = useSearch({ strict: false });
-  const profile = search.profile;
-  const isActive = profile === item.query;
+
+  // Извлекаем информацию о профиле из параметра iid
+  const profileParam = search.iid || '';
+  const isProfileOpen = profileParam.startsWith('profile:');
+  const profileType = isProfileOpen ? profileParam.split(':')[1] : '';
+
+  const isActive = profileType === item.query;
 
   // Рендерим соответствующую иконку в зависимости от индекса элемента
   const renderIcon = () => {
     const iconClasses = `transition-colors ease-in ${
-      item.query === profile ? 'fill-brand-80' : 'group-hover:fill-brand-80'
+      item.query === profileType ? 'fill-brand-80' : 'group-hover:fill-brand-80'
     }`;
 
     switch (index) {
@@ -62,6 +63,8 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
         return <Palette className={iconClasses} key="palette-icon" />;
       case 3:
         return <Key className={iconClasses} key="key-icon" />;
+      case 4:
+        return <Notification className={iconClasses} key="notification-icon" />;
       default:
         return null;
     }
@@ -71,7 +74,7 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
     onMenuItemChange(index, item.query);
     navigate({
       to: pathname,
-      search: (prev: SearchParams) => ({ ...prev, profile: item.query }),
+      search: { iid: `profile:${item.query}` },
     });
   };
 
@@ -113,11 +116,7 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
   const handleExit = async () => {
     navigate({
       to: pathname,
-      search: (prev: SearchParams) => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { profile, ...rest } = prev;
-        return rest;
-      },
+      search: {},
     });
     // const isLogout = await onSignOut();
     // if (isLogout === 200) navigate({ to: '/signin' });

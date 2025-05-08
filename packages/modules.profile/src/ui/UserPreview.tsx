@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ChangeEvent, useRef } from 'react';
 import { Camera, Edit, Trash } from '@xipkg/icons';
-// import { AvatarEditor } from 'pkg.avatar.editor';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,7 +9,6 @@ import {
 } from '@xipkg/dropdown';
 // import { del } from 'pkg.utils/fetch';
 import { toast } from 'sonner';
-// import { useMainSt } from 'pkg.stores';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { AvatarEditor } from 'modules.avatar.editor';
 import { useCurrentUser } from 'common.services';
@@ -59,12 +57,19 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
   const handleInput = async (event: ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
 
-    if (event.target.files[0].size > 5 * 1024 * 1024) {
+    const file = event.target.files[0];
+
+    if (!file.type.startsWith('image/')) {
+      toast('Пожалуйста, загрузите изображение');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
       toast('Файл слишком большой');
       return;
     }
 
-    const imageDataUrl = await readFile(event.target.files[0]);
+    const imageDataUrl = await readFile(file);
 
     console.log(imageDataUrl);
 
@@ -88,7 +93,13 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
         onOpenChange={setIsAvatarOpen}
         setDate={setDate}
       />
-      <input className="hidden" ref={inputRef} onChange={handleInput} type="file" />
+      <input
+        className="hidden"
+        ref={inputRef}
+        onChange={handleInput}
+        type="file"
+        accept="image/*"
+      />
       <DropdownMenu>
         <DropdownMenuTrigger className="cursor-pointer" asChild>
           <Avatar size="xl">
@@ -100,7 +111,7 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
               size="xl"
               className='bg-gray-5 rounded-[36px]" flex h-[64px] w-[64px] place-items-center justify-center'
             >
-              <Camera size="l" className="fill-gray-60" />
+              <Camera className="fill-gray-60" />
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>

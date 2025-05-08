@@ -15,11 +15,7 @@ import { Button } from '@xipkg/button';
 import { UserSettings } from 'modules.profile';
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
-
-type SearchParams = {
-  profile?: string;
-  [key: string]: string | undefined;
-};
+import { useAuth } from 'common.auth';
 
 export const Header = ({
   swiperRef,
@@ -34,18 +30,21 @@ export const Header = ({
   const { t } = useTranslation('navigation');
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const search = useSearch({ strict: false }) as SearchParams;
+  const { logout } = useAuth();
+  const search = useSearch({ strict: false });
 
-  // Состояние модалки определяется URL параметром profile
+  // Состояние модалки определяется URL параметром iid (используем его вместо profile)
   const [open, setOpen] = useState(false);
 
   // Синхронизируем состояние модалки с URL
   useEffect(() => {
-    const hasProfileParam = !!search.profile;
+    // Используем iid параметр для определения, открыта ли модалка и какая вкладка активна
+    const profileParam = search.iid;
+    const hasProfileParam = !!profileParam;
     if (hasProfileParam !== open) {
       setOpen(hasProfileParam);
     }
-  }, [search.profile, open]);
+  }, [search.iid, open]);
 
   const handleToggle = () => {
     toggle();
@@ -58,11 +57,16 @@ export const Header = ({
   };
 
   const handleOpenProfile = () => {
-    // Только обновляем URL, а модалка откроется автоматически через useEffect
+    // Используем параметр iid для хранения значения "profile:home"
     navigate({
       to: pathname,
-      search: (prev: SearchParams) => ({ ...prev, profile: 'home' }),
+      search: { iid: 'profile:home' },
     });
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate({ to: '/signin' });
   };
 
   return (
@@ -78,7 +82,7 @@ export const Header = ({
           </DropdownMenuTrigger>
           <DropdownMenuContent side="bottom" align="end">
             <DropdownMenuItem onClick={handleOpenProfile}>{t('profile')}</DropdownMenuItem>
-            <DropdownMenuItem>{t('logout')}</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>{t('logout')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

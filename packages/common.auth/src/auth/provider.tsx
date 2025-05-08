@@ -3,8 +3,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getAxiosInstance } from 'common.config';
 import { userApiConfig, UserQueryKey } from 'common.api';
 import { LoadingScreen } from 'common.ui';
-import { useSignup } from 'common.services';
-
+import { useSignup, useSignout } from 'common.services';
 import { AuthContext } from './context';
 import { SignupData } from 'common.types';
 
@@ -46,8 +45,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsAuthenticated(true);
   };
 
+  const { signout: signoutService } = useSignout();
+
+  const logoutMutation = useMutation({
+    mutationFn: async () => {
+      return await signoutService.mutateAsync();
+    },
+
+    onSuccess: () => {
+      setIsAuthenticated(false);
+    },
+
+    onError: (error) => {
+      console.error('Ошибка при выходе из системы:', error);
+      throw error;
+    },
+  });
+
   const logout = () => {
-    setIsAuthenticated(false);
+    logoutMutation.mutate();
   };
 
   const { signup: signupService } = useSignup();

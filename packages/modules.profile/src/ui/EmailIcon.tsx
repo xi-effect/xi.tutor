@@ -1,6 +1,12 @@
 const EmailIcon = () => (
   <div className="mr-4 hidden items-end sm:flex md:mr-9">
-    <svg className="h-[78px] w-[128px] md:h-[130px] md:w-[214px]" fill="none" viewBox="0 0 214 130">
+    <svg
+      width="214"
+      height="130"
+      viewBox="0 0 214 130"
+      fill="none"
+      className="h-[78px] w-[128px] md:h-[130px] md:w-[214px]"
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"
