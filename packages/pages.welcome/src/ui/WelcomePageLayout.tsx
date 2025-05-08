@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { WelcomeSteps } from './WelcomeSteps';
 import ProtectedProvider from '../providers';
+import { Logo } from 'common.ui';
 
 export type WelcomePageLayoutPropsT = {
   step: 1 | 2 | 3;
@@ -17,8 +18,7 @@ export const WelcomePageLayout = ({ step, title, subtitle, children }: WelcomePa
           <div className="flex h-full w-full content-center justify-center p-8">
             <div className="xs:p-8 flex h-full w-full max-w-[600px] flex-col">
               <div className="h-22">
-                {/* <Logo height={24} width={202} logoVariant="navigation" logoSize="default" /> */}
-                Лого
+                <Logo />
               </div>
               <WelcomeSteps step={step} />
               <div id="title" className="mt-8 text-2xl leading-[32px] font-semibold text-gray-100">

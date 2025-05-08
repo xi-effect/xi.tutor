@@ -11,7 +11,7 @@ import {
   useForm,
 } from '@xipkg/form';
 import { Input } from '@xipkg/input';
-import { TelegramFilled } from '@xipkg/icons';
+import { TelegramFilled, WhatsAppFilled } from '@xipkg/icons';
 import { useRouter, useCanGoBack, useNavigate } from '@tanstack/react-router';
 import { InputWrapper } from './InputWrapper';
 import { type FormData } from '../model';
@@ -22,7 +22,6 @@ export const WelcomeSocialsPage = () => {
   const form = useForm<FormData>();
 
   const { control, watch } = form;
-  console.log(t('subtitle.points'));
 
   // Временные хэндлеры (на период, пока не подключен бэкенд)
   const router = useRouter();
@@ -85,7 +84,7 @@ export const WelcomeSocialsPage = () => {
             />
           </InputWrapper>
           <InputWrapper tab={2}>
-            <TelegramFilled className="fill-brand-100 h-8 w-8" />
+            <WhatsAppFilled className="fill-brand-100 h-8 w-8" />
             <FormField
               control={control}
               name="whatsapp"
