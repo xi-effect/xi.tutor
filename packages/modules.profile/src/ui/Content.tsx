@@ -3,6 +3,7 @@ import { Main } from './Main';
 import { Customization } from './Customization';
 import { Secure } from './Secure';
 import { PersonalData } from './PersonalData';
+import { Notifications } from './Notifications';
 
 type ComponentMapT = {
   [key: string]: ReactElement;
@@ -13,6 +14,7 @@ const componentMap: ComponentMapT = {
   personalInfo: <PersonalData />,
   personalisation: <Customization />,
   security: <Secure />,
+  notifications: <Notifications />,
 };
 
 type ContentPropsT = {
