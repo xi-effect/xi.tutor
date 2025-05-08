@@ -68,6 +68,9 @@ importers:
       pages.signup:
         specifier: '*'
         version: link:../../packages/pages.signup
+      pages.welcome:
+        specifier: '*'
+        version: link:../../packages/pages.welcome
       react:
         specifier: ^19.0.0
         version: 19.1.0
@@ -1197,6 +1200,106 @@ importers:
       common.types:
         specifier: '*'
         version: link:../common.types
+      react:
+        specifier: '19'
+        version: 19.1.0
+      react-hook-form:
+        specifier: ^7.55.0
+        version: 7.55.0(react@19.1.0)
+      zod:
+        specifier: 3.24.2
+        version: 3.24.2
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.19.0
+        version: 9.24.0
+      '@types/node':
+        specifier: ^20.3.1
+        version: 20.17.30
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.1.1
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.1.2(@types/react@19.1.1)
+      '@xipkg/eslint':
+        specifier: 3.2.0
+        version: 3.2.0(eslint-plugin-jsx-a11y@6.10.2)(eslint@9.24.0)(turbo@2.5.0)(typescript@5.7.3)
+      '@xipkg/tailwind':
+        specifier: 0.8.1
+        version: 0.8.1
+      '@xipkg/typescript':
+        specifier: latest
+        version: 0.2.0
+      common.eslint:
+        specifier: '*'
+        version: link:../common.eslint
+      common.typescript:
+        specifier: '*'
+        version: link:../common.typescript
+      eslint:
+        specifier: ^9.19.0
+        version: 9.24.0
+      eslint-plugin-react-hooks:
+        specifier: ^5.0.0
+        version: 5.2.0(eslint@9.24.0)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.18
+        version: 0.4.19(eslint@9.24.0)
+      globals:
+        specifier: ^15.14.0
+        version: 15.15.0
+      typescript:
+        specifier: ~5.7.2
+        version: 5.7.3
+      typescript-eslint:
+        specifier: ^8.22.0
+        version: 8.29.1(eslint@9.24.0)(typescript@5.7.3)
+
+  packages/pages.welcome:
+    dependencies:
+      '@hookform/resolvers':
+        specifier: 5.0.1
+        version: 5.0.1(react-hook-form@7.55.0)
+      '@xipkg/avatar':
+        specifier: ^3.0.9
+        version: 3.0.9(@types/react-dom@19.1.2)(@types/react@19.1.1)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/button':
+        specifier: 3.1.2
+        version: 3.1.2(@types/react@19.1.1)(react@19.1.0)
+      '@xipkg/fileuploader':
+        specifier: ^2.0.12
+        version: 2.0.12(react@19.1.0)
+      '@xipkg/form':
+        specifier: ^4.2.0
+        version: 4.2.0(@types/react-dom@19.1.2)(@types/react@19.1.1)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/icons':
+        specifier: 2.0.13
+        version: 2.0.13(react@19.1.0)
+      '@xipkg/input':
+        specifier: 2.0.7
+        version: 2.0.7(react@19.1.0)
+      '@xipkg/link':
+        specifier: 2.0.5
+        version: 2.0.5(next@15.3.0)(react@19.1.0)
+      '@xipkg/utils':
+        specifier: 1.6.3
+        version: 1.6.3(react@19.1.0)
+      common.auth:
+        specifier: '*'
+        version: link:../common.auth
+      common.config:
+        specifier: '*'
+        version: link:../common.config
+      common.env:
+        specifier: '*'
+        version: link:../common.env
+      common.types:
+        specifier: '*'
+        version: link:../common.types
+      modules.avatar.editor:
+        specifier: ^0.0.0
+        version: link:../modules.avatar.editor
       react:
         specifier: '19'
         version: 19.1.0
@@ -4384,7 +4487,7 @@ packages:
       eslint-config-airbnb: 19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2)(eslint-plugin-react-hooks@5.1.0)(eslint-plugin-react@7.37.2)(eslint@9.24.0)
       eslint-config-next: 15.1.2(eslint@9.24.0)(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.24.0)
-      eslint-config-turbo: 2.5.0(eslint@9.24.0)(turbo@2.5.0)
+      eslint-config-turbo: 2.5.3(eslint@9.24.0)(turbo@2.5.0)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.29.1)(eslint-import-resolver-typescript@3.10.0)(eslint@9.24.0)
       eslint-plugin-react: 7.37.2(eslint@9.24.0)
       eslint-plugin-react-hooks: 5.1.0(eslint@9.24.0)
@@ -4398,6 +4501,17 @@ packages:
       - turbo
       - typescript
     dev: true
+
+  /@xipkg/fileuploader@2.0.12(react@19.1.0):
+    resolution: {integrity: sha512-0tUoA5hKcZ9bLtVgONMBaupNDjwCxgxDcdKJGiP5L87LI0ZGe7urbI/tpmS7g+iyFM/CQRLdVvVgbHQfnfr7Uw==}
+    peerDependencies:
+      react: ^19
+    dependencies:
+      '@xipkg/icons': 2.2.0(react@19.1.0)
+      '@xipkg/utils': 1.7.0(react@19.1.0)
+      class-variance-authority: 0.7.1
+      react: 19.1.0
+    dev: false
 
   /@xipkg/form@4.2.0(@types/react-dom@19.1.2)(@types/react@19.1.1)(react-dom@19.1.0)(react@19.1.0):
     resolution: {integrity: sha512-ZTTqNBN75MbNnSZj/OXNHTJE+ss8xT5z2rH7fuTWWsBg0PMzWIez+ri5qN8Qcw1nMUFjBXdUFPwAihysyuCc0g==}
@@ -4420,6 +4534,17 @@ packages:
 
   /@xipkg/icons@2.0.12(react@19.1.0):
     resolution: {integrity: sha512-wdl1q9ApTy+iRLGyh0HcZK22U2Sh8ufzdvSxEIpTjetd+Zcxp2jpOrMUNx670ec+2rvZi0sw8CZKjSZuTHNqQA==}
+    peerDependencies:
+      react: ^19
+    dependencies:
+      '@xipkg/utils': 1.7.0(react@19.1.0)
+      class-variance-authority: 0.7.1
+      lucide-react: 0.485.0(react@19.1.0)
+      react: 19.1.0
+    dev: false
+
+  /@xipkg/icons@2.0.13(react@19.1.0):
+    resolution: {integrity: sha512-S4FPf8fW25cV4Ja6rGxgLow+na1w7Dnla7pZ7ry2qhBmGmqUuj7Fy71Zy26dRZG3sECBAEVcMrfogxXgaGTA+Q==}
     peerDependencies:
       react: ^19
     dependencies:
@@ -4539,7 +4664,7 @@ packages:
       react: ^19
     dependencies:
       '@radix-ui/react-dialog': 1.1.6(@types/react-dom@19.1.2)(@types/react@19.1.1)(react-dom@19.1.0)(react@19.1.0)
-      '@xipkg/icons': 2.0.12(react@19.1.0)
+      '@xipkg/icons': 2.0.13(react@19.1.0)
       '@xipkg/utils': 1.7.0(react@19.1.0)
       react: 19.1.0
     transitivePeerDependencies:
@@ -5525,14 +5650,14 @@ packages:
       eslint: 9.24.0
     dev: true
 
-  /eslint-config-turbo@2.5.0(eslint@9.24.0)(turbo@2.5.0):
-    resolution: {integrity: sha512-QJvZBEWDWQx1JyQCr0uwf4aQYhDSAGoHBdx+cPtpPzNEjZw16Ig8BglXxHZBh3I8/fI1U53cLgXwvb28BUZhPA==}
+  /eslint-config-turbo@2.5.3(eslint@9.24.0)(turbo@2.5.0):
+    resolution: {integrity: sha512-KuW20TUDfLooS38gSquL6Gi+ZjaMlno0N3hBe8c+F8+nRYUhbF2fNhuyzl9ScNHx6aJT2eVhLBfGELg7N5+sog==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
     dependencies:
       eslint: 9.24.0
-      eslint-plugin-turbo: 2.5.0(eslint@9.24.0)(turbo@2.5.0)
+      eslint-plugin-turbo: 2.5.3(eslint@9.24.0)(turbo@2.5.0)
       turbo: 2.5.0
     dev: true
 
@@ -5750,6 +5875,17 @@ packages:
 
   /eslint-plugin-turbo@2.5.0(eslint@9.24.0)(turbo@2.5.0):
     resolution: {integrity: sha512-qQk54MrUZv0gnpxV23sccTc+FL3UJ8q7vG7HmXuS2RP8gdjWDwI1CCJTJD8EdRIDjsMxF0xi0AKcMY0CwIlXVg==}
+    peerDependencies:
+      eslint: '>6.6.0'
+      turbo: '>2.0.0'
+    dependencies:
+      dotenv: 16.0.3
+      eslint: 9.24.0
+      turbo: 2.5.0
+    dev: true
+
+  /eslint-plugin-turbo@2.5.3(eslint@9.24.0)(turbo@2.5.0):
+    resolution: {integrity: sha512-DlXZd+LgpDlxH/6IsiAXLhy82x0jeJDm0XBEqP6Le08uy0HBQkjCUt7SmXNp8esAtX9RYe6oDClbNbmI1jtK5g==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
