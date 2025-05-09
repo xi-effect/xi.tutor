@@ -1,6 +1,5 @@
 import React from 'react';
-import useSWR from 'swr';
-import { get } from 'pkg.utils';
+import { useUserById } from 'common.services';
 
 type ParticipantNamePropsT = {
   id: string | undefined;
@@ -8,28 +7,8 @@ type ParticipantNamePropsT = {
   children?: React.ReactNode;
 };
 
-type UserT = {
-  display_name: string;
-};
-
-const fetcher = async (url: string) => {
-  const { data } = await get<UserT>({
-    service: 'auth',
-    path: url,
-    config: {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    },
-  });
-
-  return data;
-};
-
 export const ParticipantName = ({ id, username, children }: ParticipantNamePropsT) => {
-  const { data, isLoading } = useSWR<UserT>(`/api/users/by-id/${id}/profile/`, () =>
-    fetcher(`/api/users/by-id/${id}/profile/`),
-  );
+  const { data, isLoading } = useUserById(id ?? '', !id);
 
   if (isLoading || !id) {
     return <span className="bg-gray-10 h-[12px] w-full min-w-[64px] animate-pulse rounded-[4px]" />;

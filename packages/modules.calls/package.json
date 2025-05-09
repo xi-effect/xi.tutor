@@ -11,6 +11,8 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "common.services": "*",
+    "common.sockets": "*",
     "@livekit/components-react": "2.9.3",
     "@livekit/components-core": "0.12.4",
     "@livekit/components-styles": "1.1.5",
