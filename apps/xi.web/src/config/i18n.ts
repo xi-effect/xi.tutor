@@ -19,6 +19,7 @@ import {
   welcomeSocialsEn,
   welcomeSocialsRu,
 } from 'pages.welcome';
+import { calendarEn, calendarRu } from 'modules.calendar';
 
 // Собираем переводы
 const resources = {
@@ -31,6 +32,7 @@ const resources = {
     welcomeAbout: welcomeAboutEn,
     welcomeSocials: welcomeSocialsEn,
     welcome: welcomeEn,
+    calendar: calendarEn,
   },
   ru: {
     signin: signinRu,
@@ -41,6 +43,7 @@ const resources = {
     welcomeAbout: welcomeAboutRu,
     welcomeSocials: welcomeSocialsRu,
     welcome: welcomeRu,
+    calendar: calendarRu,
   },
 };
 
