@@ -1,5 +1,4 @@
 import { userApiConfig, UserQueryKey } from 'common.api';
-// import { env } from 'common.env';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -24,7 +23,6 @@ export const useUpdateProfile = () => {
           data: profileData,
           headers: {
             'Content-Type': 'application/json',
-            // 'X-Testing': env.VITE_ENABLE_X_TESTING ? env.VITE_ENABLE_X_TESTING : 'false',
           },
         });
 
