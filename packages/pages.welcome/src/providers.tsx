@@ -5,7 +5,7 @@ type ProtectedProviderPropsT = {
 };
 
 export const ProtectedProvider = ({ children }: ProtectedProviderPropsT) => {
-  // тут будет логика провайдера для welcom страниц после подключения бэкенда
+  // тут будет логика провайдера для welcome страниц после подключения бэкенда
   return children;
 };
 
