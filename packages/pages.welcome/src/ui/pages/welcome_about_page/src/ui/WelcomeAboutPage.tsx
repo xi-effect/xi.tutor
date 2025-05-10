@@ -1,4 +1,4 @@
-import { useRouter, useCanGoBack, useNavigate } from '@tanstack/react-router';
+import { useRouter, useCanGoBack } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { WelcomeButtons } from '../../../../WelcomeButtons';
 import { WelcomePageLayout } from '../../../../WelcomePageLayout';
@@ -32,12 +32,7 @@ export const WelcomeAboutPage = () => {
   // Временные хэндлеры (на период, пока не подключен бэкенд)
   const router = useRouter();
   const canGoBack = useCanGoBack();
-  const navigate = useNavigate();
   const backButtonHandler = () => canGoBack && router.history.back();
-  const continueButtonHandler = () =>
-    navigate({
-      to: '/welcome/socials',
-    });
 
   return (
     <WelcomePageLayout title={t('title')} step={3}>
@@ -65,7 +60,6 @@ export const WelcomeAboutPage = () => {
           />
           <WelcomeButtons
             continueType={inputValue?.length ? 'continue' : 'next'}
-            continueButtonHandler={continueButtonHandler}
             backButtonHandler={backButtonHandler}
           />
         </form>

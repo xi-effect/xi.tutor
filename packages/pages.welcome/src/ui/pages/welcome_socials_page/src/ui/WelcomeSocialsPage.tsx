@@ -1,10 +1,11 @@
-import { useRouter, useCanGoBack, useNavigate } from '@tanstack/react-router';
+import { useRouter, useCanGoBack } from '@tanstack/react-router';
 import { WelcomePageLayout } from '../../../../WelcomePageLayout';
 import { WelcomeButtons } from '../../../../WelcomeButtons';
 import { useTranslation } from 'react-i18next';
 import { InputWrapper } from './InputWrapper';
 import { Input } from '@xipkg/input';
 import { TelegramFilled, WhatsAppFilled } from '@xipkg/icons';
+import { useWelcomeSocialsForm } from '../hooks';
 import { type FormData } from '../model';
 import {
   Form,
@@ -21,17 +22,17 @@ export const WelcomeSocialsPage = () => {
 
   const form = useForm<FormData>();
 
-  const { control, watch } = form;
+  const { control, watch, handleSubmit } = form;
 
   // Временные хэндлеры (на период, пока не подключен бэкенд)
   const router = useRouter();
   const canGoBack = useCanGoBack();
-  const navigate = useNavigate();
   const backButtonHandler = () => canGoBack && router.history.back();
-  const continueButtonHandler = () =>
-    navigate({
-      to: '/',
-    });
+
+  const { onWelcomeSocialsForm } = useWelcomeSocialsForm();
+  const onSubmit = () => {
+    onWelcomeSocialsForm();
+  };
 
   const [telegram] = watch(['telegram']);
   const [whatsapp] = watch(['whatsapp']);
@@ -59,7 +60,7 @@ export const WelcomeSocialsPage = () => {
       }
     >
       <Form {...form}>
-        <form className="mt-6 flex h-full w-full flex-col gap-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-6 flex h-full w-full flex-col gap-2">
           <InputWrapper tab={1}>
             <TelegramFilled className="fill-brand-100 h-8 w-8" />
             <FormField
@@ -106,11 +107,7 @@ export const WelcomeSocialsPage = () => {
               )}
             />
           </InputWrapper>
-          <WelcomeButtons
-            customText="Начать работу"
-            backButtonHandler={backButtonHandler}
-            continueButtonHandler={continueButtonHandler}
-          />
+          <WelcomeButtons customText="Начать работу" backButtonHandler={backButtonHandler} />
         </form>
       </Form>
     </WelcomePageLayout>
