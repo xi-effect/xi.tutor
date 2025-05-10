@@ -1829,9 +1829,6 @@ importers:
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.1.0)
-      '@xipkg/link':
-        specifier: 2.0.5
-        version: 2.0.5(next@15.3.2)(react@19.1.0)
       '@xipkg/utils':
         specifier: 1.6.3
         version: 1.6.3(react@19.1.0)
