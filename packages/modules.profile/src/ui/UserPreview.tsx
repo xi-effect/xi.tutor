@@ -10,7 +10,7 @@ import {
 // import { del } from 'pkg.utils/fetch';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import { AvatarEditor } from 'modules.avatar.editor';
+import { AvatarEditor } from 'features.avatar.editor';
 import { useCurrentUser } from 'common.services';
 
 const readFile = (file: File) =>

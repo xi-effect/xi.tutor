@@ -24,7 +24,7 @@
     "common.config": "*",
     "common.services": "*",
     "dayjs": "1.11.13",
-    "modules.avatar.editor": "*",
+    "features.avatar.editor": "*",
     "sonner": "2.0.3"
   },
   "devDependencies": {
