@@ -1,6 +1,10 @@
+import { useRouter, useCanGoBack, useNavigate } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 import { WelcomeButtons } from '../../../../WelcomeButtons';
 import { WelcomePageLayout } from '../../../../WelcomePageLayout';
-import { useTranslation } from 'react-i18next';
+import { useWelcomeAboutForm } from '../hooks/useWelcomeAboutForm';
+import { FormData } from '../model';
+import { Input } from '@xipkg/input';
 import {
   Form,
   FormControl,
@@ -10,10 +14,6 @@ import {
   FormMessage,
   useForm,
 } from '@xipkg/form';
-import { Input } from '@xipkg/input';
-import { useWelcomeAboutForm } from '../hooks/useWelcomeAboutForm';
-import { useRouter, useCanGoBack, useNavigate } from '@tanstack/react-router';
-import { FormData } from '../model';
 
 export const WelcomeAboutPage = () => {
   const { t } = useTranslation('welcomeAbout');

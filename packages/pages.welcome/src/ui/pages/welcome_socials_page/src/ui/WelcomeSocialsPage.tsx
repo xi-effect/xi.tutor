@@ -1,6 +1,11 @@
+import { useRouter, useCanGoBack, useNavigate } from '@tanstack/react-router';
 import { WelcomePageLayout } from '../../../../WelcomePageLayout';
 import { WelcomeButtons } from '../../../../WelcomeButtons';
 import { useTranslation } from 'react-i18next';
+import { InputWrapper } from './InputWrapper';
+import { Input } from '@xipkg/input';
+import { TelegramFilled, WhatsAppFilled } from '@xipkg/icons';
+import { type FormData } from '../model';
 import {
   Form,
   FormControl,
@@ -10,11 +15,6 @@ import {
   FormMessage,
   useForm,
 } from '@xipkg/form';
-import { Input } from '@xipkg/input';
-import { TelegramFilled, WhatsAppFilled } from '@xipkg/icons';
-import { useRouter, useCanGoBack, useNavigate } from '@tanstack/react-router';
-import { InputWrapper } from './InputWrapper';
-import { type FormData } from '../model';
 
 export const WelcomeSocialsPage = () => {
   const { t } = useTranslation('welcomeSocials');
