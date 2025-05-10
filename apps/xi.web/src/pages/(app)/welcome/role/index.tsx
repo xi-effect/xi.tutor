@@ -1,15 +1,13 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
 import { WelcomeRolePage } from 'pages.welcome';
 
-// @ts-ignore
+export const Role = () => {
+  return <WelcomeRolePage />;
+};
+
 export const Route = createFileRoute('/(app)/welcome/role/')({
-  component: WelcomeRolePage,
+  component: Role,
   beforeLoad: ({ context }) => {
     console.log('Role', context, location);
   },
 });
-
-export const WelcomeRole = () => {
-  return <WelcomeRolePage />;
-};
