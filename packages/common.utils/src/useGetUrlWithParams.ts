@@ -1,9 +1,15 @@
-import { useSearchParams } from 'next/navigation';
+import { useMemo } from 'react';
 
 // Сохраняем уникальные параметры при редиректе
 export const useGetUrlWithParams = () => {
-  const searchParams = useSearchParams();
-  const params = new URLSearchParams(Object.fromEntries(searchParams)).toString();
-  const getUrlWithParams = (url: string) => (params ? `${url}?${params}` : url);
+  const params = useMemo(() => {
+    return new URLSearchParams(window.location.search);
+  }, []);
+
+  const queryString = useMemo(() => {
+    return params.toString();
+  }, [params]);
+
+  const getUrlWithParams = (url: string) => (queryString ? `${url}?${params}` : url);
   return getUrlWithParams;
 };
