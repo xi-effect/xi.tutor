@@ -7,6 +7,7 @@ import LocalStorageBackend from 'i18next-localstorage-backend';
 import { signinEn, signinRu } from 'pages.signin';
 import { signupEn, signupRu } from 'pages.signup';
 import { navigationEn, navigationRu } from 'modules.navigation';
+import { calendarEn, calendarRu } from 'modules.calendar';
 
 // Собираем переводы
 const resources = {
@@ -14,11 +15,13 @@ const resources = {
     signin: signinEn,
     signup: signupEn,
     navigation: navigationEn,
+    calendar: calendarEn,
   },
   ru: {
     signin: signinRu,
     signup: signupRu,
     navigation: navigationRu,
+    calendar: calendarRu,
   },
 };
 

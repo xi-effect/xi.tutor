@@ -6,6 +6,7 @@ enum UserQueryKey {
   Profile = 'Profile',
   Email = 'Email',
   Password = 'Password',
+  UserById = 'UserById',
 }
 
 const userApiConfig = {
@@ -24,6 +25,10 @@ const userApiConfig = {
   [UserQueryKey.Password]: {
     getUrl: () => `${env.VITE_SERVER_URL_AUTH}/api/users/current/password/`,
     method: HttpMethod.PUT,
+  },
+  [UserQueryKey.UserById]: {
+    getUrl: (id: string) => `${env.VITE_SERVER_URL_AUTH}/api/users/by-id/${id}/profile/`,
+    method: HttpMethod.GET,
   },
 };
 

@@ -1,5 +1,5 @@
 {
-  "name": "modules.avatar.editor",
+  "name": "modules.calendar",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -7,22 +7,19 @@
   },
   "license": "MIT",
   "scripts": {
-    "lint": "eslint \"**/*.{ts,tsx}\"",
-    "dev": "tsc --watch"
+    "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "react-easy-crop": "5.4.1",
-    "react-image-file-resizer": "0.4.8",
     "sonner": "2.0.1",
-    "common.services": "*",
-    "common.ui": "*",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1",
     "@tanstack/react-router": "^1.109.0",
     "@xipkg/button": "3.1.8",
-    "@xipkg/icons": "2.0.12",
+    "@xipkg/icons": "2.0.13",
     "@xipkg/utils": "1.7.0",
-    "@xipkg/slider": "2.0.12",
+    "@xipkg/scrollarea": "2.0.12",
+    "@xipkg/calendar": "2.0.11",
+    "@xipkg/select": "2.2.5",
     "zod": "3.24.2",
     "zustand": "^5.0.3"
   },
@@ -46,6 +43,6 @@
   "peerDependencies": {
     "react": "19"
   },
-  "description": "form for signin",
+  "description": "component for planning meetings",
   "author": "xi.effect"
 }

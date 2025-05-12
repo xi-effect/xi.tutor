@@ -12,6 +12,7 @@ const options = [
   { query: 'personalInfo' },
   { query: 'personalisation' },
   { query: 'security' },
+  { query: 'notifications' },
 ];
 
 export const UserSettings = ({
