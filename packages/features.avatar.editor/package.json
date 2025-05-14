@@ -1,5 +1,5 @@
 {
-  "name": "modules.avatar.editor",
+  "name": "features.avatar.editor",
   "version": "0.0.0",
   "type": "module",
   "exports": {

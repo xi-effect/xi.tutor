@@ -12,7 +12,7 @@ export const Call = () => {
   const isStarted = useCallStore((state) => state.isStarted);
 
   // TODO: This is a temporary solution to get the communityId and channelId from the URL.
-  const { communityId, channelId } = useParams({
+  const { communityId = '1', channelId = '1' } = useParams({
     from: '/communities/$communityId/channels/$channelId',
   });
   const { token } = useLivekitToken(communityId, channelId);

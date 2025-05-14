@@ -1,7 +1,7 @@
 import React from 'react';
 import { FileUploader } from '@xipkg/fileuploader';
 import { toast } from 'sonner';
-import { AvatarEditor } from 'modules.avatar.editor';
+import { AvatarEditor } from 'features.avatar.editor';
 import { AvatarPreview } from './AvatarPreview';
 import { readFile } from '../lib';
 

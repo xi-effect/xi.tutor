@@ -12,10 +12,13 @@ import {
 } from '@xipkg/dropdown';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
-import { UserSettings } from 'modules.profile';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy } from 'react';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useAuth } from 'common.auth';
+
+const UserSettings = lazy(() =>
+  import('modules.profile').then((module) => ({ default: module.UserSettings })),
+);
 
 export const Header = ({
   swiperRef,
@@ -70,7 +73,7 @@ export const Header = ({
   };
 
   return (
-    <div className="fixed top-0 right-0 left-0 z-20 flex h-[64px] w-full items-center gap-4 px-4 py-3">
+    <div className="bg-gray-0 fixed top-0 right-0 left-0 z-20 flex h-[64px] w-full items-center gap-4 px-4 py-3">
       <SidebarTrigger onClick={handleToggle} />
       <Logo />
       <div className="ml-auto">

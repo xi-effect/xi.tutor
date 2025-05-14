@@ -11,6 +11,8 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "common.services": "*",
+    "common.sockets": "*",
     "@livekit/components-react": "2.9.3",
     "@livekit/components-core": "0.12.4",
     "@livekit/components-styles": "1.1.5",
@@ -18,7 +20,7 @@
     "livekit-client": "2.11.4",
     "@xipkg/badge": "2.0.12",
     "@xipkg/button": "3.1.8",
-    "@xipkg/icons": "2.0.12",
+    "@xipkg/icons": "2.0.13",
     "@xipkg/dropdown": "3.0.12",
     "@xipkg/userprofile": "4.0.12",
     "@xipkg/aspect-ratio": "^2.0.11",

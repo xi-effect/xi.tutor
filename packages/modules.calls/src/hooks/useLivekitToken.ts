@@ -1,46 +1,38 @@
-import useSWRSubscription from 'swr/subscription';
-import { useMainSt } from 'pkg.stores';
+import { useState, useCallback } from 'react';
+import { useSocketEvent, useSocketEmit } from 'common.sockets';
 
-const subscribeToToken = (
-  key: [string, string],
-  { next }: { next: (error?: Error | null, data?: string | null) => void },
-) => {
-  const { socket } = useMainSt.getState();
-
-  if (!socket) {
-    next(new Error('Socket is not available'));
-    return () => {};
-  }
-
-  // Логика подписки на обновления токена
-  const handleToken = (status: number, data: string) => {
-    if (status === 200) {
-      next(null, data);
-    } else {
-      const error = new Error(`Server Error, ${status}`);
-      error.cause = status;
-      next(error, null);
-    }
-  };
-
-  // Запрос на получение токена
-  socket.emit(
-    'generate-livekit-token',
-    {
-      community_id: key[0],
-      channel_id: key[1],
-    },
-    handleToken,
-  );
-
-  // Очистка при анмаунте
-  return () => {
-    socket.off('generate-livekit-token', handleToken);
-  };
+type TokenResponse = {
+  status: number;
+  data: string;
 };
 
 export const useLivekitToken = (communityId: string, channelId: string) => {
-  const { data: token, error } = useSWRSubscription([communityId, channelId], subscribeToToken);
+  const [token, setToken] = useState<string | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
-  return { token, error };
+  const emitGenerateToken = useSocketEmit<{ community_id: string; channel_id: string }>(
+    'generate-livekit-token',
+  );
+
+  const handleToken = useCallback((response: TokenResponse) => {
+    if (response.status === 200) {
+      setToken(response.data);
+      setError(null);
+    } else {
+      const newError = new Error(`Server Error, ${response.status}`);
+      setError(newError);
+      setToken(null);
+    }
+  }, []);
+
+  useSocketEvent<TokenResponse>('generate-livekit-token', handleToken);
+
+  const generateToken = useCallback(() => {
+    emitGenerateToken({
+      community_id: communityId,
+      channel_id: channelId,
+    });
+  }, [communityId, channelId, emitGenerateToken]);
+
+  return { token, error, generateToken };
 };
