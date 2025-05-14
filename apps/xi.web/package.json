@@ -20,6 +20,7 @@
     "pages.signin": "*",
     "pages.signup": "*",
     "pages.classrooms": "*",
+    "pages.materials": "*",
     "modules.board": "*",
     "common.sockets": "*",
     "modules.editor": "*",
