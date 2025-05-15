@@ -1,5 +1,5 @@
 import { Stage } from 'react-konva';
-// import { useKeyPress } from 'pkg.utils.client';
+import { useKeyPress } from 'common.utils';
 import { BackgroundLayer, SelectedElementToolbar, Navbar, ZoomMenu } from '.';
 import { CanvasLayer } from './CanvasLayer';
 import { useBoardStore } from '../../store';
@@ -9,7 +9,7 @@ import { useWhiteboardCollaborative } from '../../hooks/useWhiteboardCollaborati
 
 export const Canvas = () => {
   const { stageRef } = useStage();
-  const { selectedTool } = useBoardStore();
+  const { selectedTool, removeElement, selectElement, selectedElementId } = useBoardStore();
   const { handleOnWheel, handleMouseUp, handleMouseDown, handleMouseMove, handleDragEnd } =
     useCanvasHandlers();
 
@@ -22,12 +22,12 @@ export const Canvas = () => {
   const boardWidth = window.innerWidth;
   const boardHeight = window.innerHeight;
 
-  // useKeyPress('Backspace', () => {
-  //   if (selectedElementId) {
-  //     removeElement(selectedElementId);
-  //     selectElement(null);
-  //   }
-  // });
+  useKeyPress('Backspace', () => {
+    if (selectedElementId) {
+      removeElement(selectedElementId);
+      selectElement(null);
+    }
+  });
 
   return (
     <div className="flex h-full w-full flex-col" style={{ cursor }} {...mouseHandlers}>
