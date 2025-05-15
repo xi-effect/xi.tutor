@@ -1,0 +1,1 @@
+export { MaterialsPage } from './MaterialsPage';

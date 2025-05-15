@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
+import { MaterialsPage } from 'pages.materials';
 
 const Materials = () => {
-  return <>Materials</>;
+  return <MaterialsPage />;
 };
 
 // @ts-ignore
