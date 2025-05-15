@@ -1,4 +1,5 @@
-export { ProtectedProvider } from './src/providers';
+export { ProtectedProvider } from './src/provider';
+export { WelcomeContext } from './src/context';
 export {
   WelcomeUserPage,
   WelcomeAboutPage,

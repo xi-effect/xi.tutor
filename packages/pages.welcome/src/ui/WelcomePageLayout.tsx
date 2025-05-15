@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { WelcomeSteps } from './WelcomeSteps';
-import ProtectedProvider from '../providers';
+import ProtectedProvider from '../provider';
 import { Logo } from 'common.ui';
 
 export type WelcomePageLayoutPropsT = {

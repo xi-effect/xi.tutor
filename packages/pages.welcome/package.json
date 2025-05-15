@@ -22,6 +22,7 @@
     "common.config": "*",
     "common.env": "*",
     "common.types": "*",
+    "common.services": "*",
     "features.avatar.editor": "^0.0.0",
     "react-hook-form": "^7.56.3",
     "zod": "3.24.2"
@@ -37,6 +38,8 @@
     "common.eslint": "*",
     "common.typescript": "*",
     "common.ui": "*",
+    "common.sockets": "*",
+    "common.utils": "*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",

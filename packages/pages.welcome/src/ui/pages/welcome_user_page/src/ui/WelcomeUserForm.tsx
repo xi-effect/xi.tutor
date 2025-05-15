@@ -14,6 +14,7 @@ import { useFormSchema } from '../model';
 import { type FormData } from '../model/FormData';
 import { useTranslation } from 'react-i18next';
 import { useWelcomeUserForm } from '../hooks/useWelcomeUserForm';
+import { useWelcomeContext } from '../../../../../hooks/useWelcomeContext';
 
 export const WelcomeUserForm = () => {
   const { t } = useTranslation('welcomeUser');
@@ -37,6 +38,8 @@ export const WelcomeUserForm = () => {
   };
 
   const [displayName] = watch(['displayName']);
+
+  const { email } = useWelcomeContext();
 
   return (
     <Form {...form}>
@@ -63,7 +66,7 @@ export const WelcomeUserForm = () => {
         />
         <FormLabel className="mt-6">{t('email')}</FormLabel>
         <div className="bg-gray-10 mt-2 flex h-12 w-full flex-row items-start rounded-lg p-3 leading-[22px] text-gray-50">
-          test@test.test
+          {email}
         </div>
         <div className="mt-auto flex flex-row gap-6 pt-4">
           {!isPending ? (

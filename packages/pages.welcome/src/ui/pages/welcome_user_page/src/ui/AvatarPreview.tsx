@@ -1,5 +1,5 @@
 import { RefObject } from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
+import { Avatar, AvatarFallback } from '@xipkg/avatar';
 
 export type AvatarPreviewPropsT = {
   date: RefObject<'' | Date>;
@@ -8,7 +8,7 @@ export type AvatarPreviewPropsT = {
 
 export const AvatarPreview = ({ date, userId }: AvatarPreviewPropsT) => (
   <Avatar size="xl">
-    <AvatarImage
+    <img
       src={`https://auth.xieffect.ru/api/users/${userId}/avatar.webp?=${date.current instanceof Date ? date.current.getTime() : ''}`}
       alt="user avatar"
     />
