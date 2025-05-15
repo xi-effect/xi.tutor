@@ -21,6 +21,7 @@
     "pages.signup": "*",
     "pages.welcome": "*",
     "pages.classrooms": "*",
+    "pages.materials": "*",
     "modules.board": "*",
     "common.sockets": "*",
     "modules.editor": "*",
