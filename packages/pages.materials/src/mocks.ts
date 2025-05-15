@@ -1,9 +1,10 @@
 import { MaterialPropsT } from './types';
 
-export const mockMaterials: MaterialPropsT[] = [
+export const materialsMock: MaterialPropsT[] = [
   {
     idMaterial: '1',
-    nameMaterial: 'Название 1',
+    nameMaterial:
+      'Интерактивная доска по подготовке к ЕГЭ по математике профильного уровня 2024 года',
     updatedAt: '2024-01-01',
     idUser: 1,
     nameUser: 'Анна Смирнова',
@@ -11,7 +12,8 @@ export const mockMaterials: MaterialPropsT[] = [
   },
   {
     idMaterial: '2',
-    nameMaterial: 'Название 2',
+    nameMaterial:
+      'Подробный конспект по теме "Физика. Электродинамика и основы квантовой механики"',
     updatedAt: '2024-01-01',
     idUser: 2,
     nameUser: 'Максим Иванов',
@@ -19,7 +21,7 @@ export const mockMaterials: MaterialPropsT[] = [
   },
   {
     idMaterial: '3',
-    nameMaterial: 'Название 3',
+    nameMaterial: 'Презентация по мировой художественной культуре: от античности до современности',
     updatedAt: '2024-01-01',
     idUser: 3,
     nameUser: 'Елизавета Петрова',
@@ -27,7 +29,7 @@ export const mockMaterials: MaterialPropsT[] = [
   },
   {
     idMaterial: '4',
-    nameMaterial: 'Название 4',
+    nameMaterial: 'Методические материалы и рабочие листы по литературе для 10 класса',
     updatedAt: '2024-01-01',
     idUser: 4,
     nameUser: 'Дмитрий Кузнецов',
@@ -35,7 +37,7 @@ export const mockMaterials: MaterialPropsT[] = [
   },
   {
     idMaterial: '5',
-    nameMaterial: 'Название 5',
+    nameMaterial: 'Сравнительный анализ политических систем: демократия, автократия и тоталитаризм',
     updatedAt: '2024-01-01',
     idUser: 5,
     nameUser: 'Андрей Соколов',
@@ -43,7 +45,8 @@ export const mockMaterials: MaterialPropsT[] = [
   },
   {
     idMaterial: '6',
-    nameMaterial: 'Название 6',
+    nameMaterial:
+      'Лабораторные работы по биологии: генетика и клеточные процессы в организме человека',
     updatedAt: '2024-01-01',
     idUser: 6,
     nameUser: 'Кирилл Лебедев',
@@ -51,7 +54,7 @@ export const mockMaterials: MaterialPropsT[] = [
   },
   {
     idMaterial: '7',
-    nameMaterial: 'Название 7',
+    nameMaterial: 'Проект по обществознанию: "Роль гражданского общества в современной России"',
     updatedAt: '2024-01-01',
     idUser: 7,
     nameUser: 'Наталья Орлова',
@@ -59,7 +62,7 @@ export const mockMaterials: MaterialPropsT[] = [
   },
   {
     idMaterial: '8',
-    nameMaterial: 'Название 8',
+    nameMaterial: 'Английский язык: подготовка к международным экзаменам TOEFL, IELTS, CAE',
     updatedAt: '2024-01-01',
     idUser: 8,
     nameUser: 'English Group',
@@ -67,10 +70,90 @@ export const mockMaterials: MaterialPropsT[] = [
   },
   {
     idMaterial: '9',
-    nameMaterial: 'Название 9',
+    nameMaterial: 'История Древнего мира: от первых цивилизаций до падения Римской империи',
     updatedAt: '2024-01-01',
     idUser: 9,
     nameUser: 'Удаленный пользователь',
+    roleUser: 'teacher',
+  },
+  {
+    idMaterial: '10',
+    nameMaterial: 'География 7 класс',
+    updatedAt: '2024-01-02',
+    idUser: 10,
+    nameUser: 'Ольга Васильева',
+    roleUser: 'teacher',
+  },
+  {
+    idMaterial: '11',
+    nameMaterial: 'История России',
+    updatedAt: '2024-01-02',
+    idUser: 11,
+    nameUser: 'Иван Смирнов',
+    roleUser: 'student',
+  },
+  {
+    idMaterial: '12',
+    nameMaterial: 'Физика 8 класс',
+    updatedAt: '2024-01-02',
+    idUser: 12,
+    nameUser: 'Мария Алексеева',
+    roleUser: 'student',
+  },
+  {
+    idMaterial: '13',
+    nameMaterial: 'Химия: основы',
+    updatedAt: '2024-01-02',
+    idUser: 13,
+    nameUser: 'Никита Попов',
+    roleUser: 'teacher',
+  },
+  {
+    idMaterial: '14',
+    nameMaterial: 'Алгебра',
+    updatedAt: '2024-01-02',
+    idUser: 14,
+    nameUser: 'Алена Кузьмина',
+    roleUser: 'student',
+  },
+  {
+    idMaterial: '15',
+    nameMaterial: 'Грамматика',
+    updatedAt: '2024-01-02',
+    idUser: 15,
+    nameUser: 'Павел Морозов',
+    roleUser: 'teacher',
+  },
+  {
+    idMaterial: '16',
+    nameMaterial: 'Французский язык',
+    updatedAt: '2024-01-02',
+    idUser: 16,
+    nameUser: 'Светлана Егорова',
+    roleUser: 'student',
+  },
+  {
+    idMaterial: '17',
+    nameMaterial: 'Литература',
+    updatedAt: '2024-01-02',
+    idUser: 17,
+    nameUser: 'Даниил Сафонов',
+    roleUser: 'teacher',
+  },
+  {
+    idMaterial: '18',
+    nameMaterial: 'Математика',
+    updatedAt: '2024-01-02',
+    idUser: 18,
+    nameUser: 'Полина Романова',
+    roleUser: 'student',
+  },
+  {
+    idMaterial: '19',
+    nameMaterial: 'Информатика',
+    updatedAt: '2024-01-02',
+    idUser: 19,
+    nameUser: 'Алексей Гаврилов',
     roleUser: 'teacher',
   },
 ];

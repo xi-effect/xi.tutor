@@ -14,7 +14,7 @@ import { MaterialPropsT } from '../types';
 
 export const Card: React.FC<MaterialPropsT> = ({ nameMaterial, idUser, nameUser, updatedAt }) => {
   return (
-    <div className="hover:bg-gray-5 border-gray-30 flex cursor-pointer justify-between rounded-2xl border bg-white p-4">
+    <div className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex cursor-pointer justify-between rounded-2xl border p-4">
       <div className="flex flex-col gap-1">
         <UserProfile
           text={nameUser}
@@ -24,7 +24,9 @@ export const Card: React.FC<MaterialPropsT> = ({ nameMaterial, idUser, nameUser,
         />
 
         <div className="flex flex-col gap-4">
-          <div className="text-l-base font-medium text-gray-100">{nameMaterial}</div>
+          <div className="text-l-base line-clamp-2 w-full font-medium text-gray-100">
+            {nameMaterial}
+          </div>
           <div className="text-s-base text-gray-60 font-normal">Обновлено: {updatedAt}</div>
         </div>
       </div>
@@ -39,7 +41,7 @@ export const Card: React.FC<MaterialPropsT> = ({ nameMaterial, idUser, nameUser,
           <DropdownMenuContent
             side="bottom"
             align="end"
-            className="border-gray-10 border bg-white p-1"
+            className="border-gray-10 bg-gray-0 border p-1"
           >
             <DropdownMenuItem>Копировать</DropdownMenuItem>
             <DropdownMenuItem>Удалить</DropdownMenuItem>
