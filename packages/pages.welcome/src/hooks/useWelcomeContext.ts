@@ -4,7 +4,7 @@ import { WelcomeContext } from '../context';
 export const useWelcomeContext = () => {
   const context = React.useContext(WelcomeContext);
   if (!context) {
-    throw new Error('useAuth must be used within an WelcomeProvider');
+    throw new Error('useWelcomeContext must be used within WelcomeProvider');
   }
   return context;
 };
