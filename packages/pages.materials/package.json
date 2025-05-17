@@ -1,5 +1,5 @@
 {
-  "name": "modules.board",
+  "name": "pages.materials",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -7,21 +7,14 @@
   },
   "license": "MIT",
   "scripts": {
+    "dev": "tsc --watch",
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "@hocuspocus/provider": "2.15.0",
-    "@xipkg/button": "^3.1.8",
+    "@xipkg/button": "3.1.8",
     "@xipkg/dropdown": "3.0.12",
-    "@xipkg/icons": "^2.0.13",
-    "@xipkg/slider": "2.0.12",
-    "@xipkg/tooltip": "^2.0.11",
-    "konva": "^9.3.18",
-    "common.utils": "*",
-    "react-konva": "^19.0.2",
-    "y-utility": "0.1.4",
-    "yjs": "13.6.26",
-    "zustand": "5.0.3"
+    "@xipkg/tabs": "^2.0.11",
+    "@xipkg/userprofile": "4.0.12"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -29,20 +22,20 @@
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
     "@xipkg/eslint": "3.2.0",
-    "@xipkg/tailwind": "0.5.0",
+    "@xipkg/tailwind": "0.8.1",
     "@xipkg/typescript": "latest",
-    "common.typescript": "*",
     "common.eslint": "*",
+    "common.typescript": "*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
     "globals": "^15.14.0",
-    "typescript": "^5.4.2",
+    "typescript": "~5.7.2",
     "typescript-eslint": "^8.22.0"
   },
   "peerDependencies": {
     "react": "19"
   },
-  "description": "awesome board",
+  "description": "materials page",
   "author": "xi.effect"
 }
