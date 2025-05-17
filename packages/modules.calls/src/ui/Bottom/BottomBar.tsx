@@ -82,14 +82,14 @@ export const BottomBar = ({ variation, controls, saveUserChoices = true }: Contr
               microTrack={microphoneTrack?.track as LocalAudioTrack}
               microEnabled={isMicrophoneEnabled}
               microTrackToggle={{
-                showIcon: false,
+                showIcon: true,
                 source: Track.Source.Microphone,
                 onChange: microphoneOnChange,
               }}
               videoTrack={cameraTrack?.track as unknown as LocalVideoTrack}
               videoEnabled={isCameraEnabled}
               videoTrackToggle={{
-                showIcon: false,
+                showIcon: true,
                 source: Track.Source.Camera,
                 onChange: cameraOnChange,
               }}

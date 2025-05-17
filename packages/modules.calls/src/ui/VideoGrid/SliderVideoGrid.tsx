@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
 import { getTrackReferenceId } from '@livekit/components-core';
 import { TrackLoopProps, TrackRefContext } from '@livekit/components-react';
 import { OrientationLayoutT } from './VideoGridLayout';
 import { Carousel } from './Carousel';
+import { Children, isValidElement, cloneElement, useState } from 'react';
 
 export type TrackLoopT = {
   maxVisibleTiles: number;
@@ -14,9 +14,9 @@ const cloneSingleChild = (
   props?: Record<string, any>,
   key?: any,
 ) =>
-  React.Children.map(children, (child) => {
-    if (React.isValidElement(child) && React.Children.only(children)) {
-      return React.cloneElement(child, { ...props, key });
+  Children.map(children, (child) => {
+    if (isValidElement(child) && Children.only(children)) {
+      return cloneElement(child, { ...props, key });
     }
     return child;
   });
@@ -27,7 +27,7 @@ export const SliderVideoGrid = ({
   orientation,
   ...props
 }: TrackLoopProps & TrackLoopT & OrientationLayoutT) => {
-  const [currentIndex, setCurrentIndex] = React.useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const visibleTracks = tracks.slice(currentIndex, currentIndex + maxVisibleTiles);
 
   const handleCheckDisabled = (type: 'prev' | 'next') => {

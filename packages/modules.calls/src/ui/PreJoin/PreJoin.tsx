@@ -1,8 +1,7 @@
+import * as React from 'react';
 import { Header, UserTile, MediaDevices } from './components';
 
 export const PreJoin = () => {
-  console.log('PreJoin');
-
   return (
     <div className="max-xs:p-4 p-8">
       <Header />

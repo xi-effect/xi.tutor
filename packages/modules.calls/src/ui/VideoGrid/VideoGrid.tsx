@@ -12,18 +12,13 @@ import {
   usePinnedTracks,
   useTracks,
 } from '@livekit/components-react';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { ParticipantTile } from '../Participant';
 import { CarouselContainer, GridLayout, FocusLayoutContainer } from './VideoGridLayout';
 
 export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  // const [widgetState, setWidgetState] = React.useState<WidgetState>({
-  //   showChat: false,
-  //   unreadMessages: 0,
-  // });
+  const navigate = useNavigate();
+  const search = useSearch({ strict: false });
 
   const lastAutoFocusedScreenShareTrack = React.useRef<TrackReferenceOrPlaceholder | null>(null);
 
@@ -34,11 +29,6 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
     ],
     { updateOnlyOn: [RoomEvent.ActiveSpeakersChanged], onlySubscribed: false },
   );
-
-  // const widgetUpdate = (state: WidgetState) => {
-  //   log.debug('updating widget state', state);
-  //   setWidgetState(state);
-  // };
 
   const layoutContext = useCreateLayoutContext();
 
@@ -56,7 +46,6 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
     ) {
       log.debug('Auto set screen share focus:', { newScreenShareTrack: screenShareTracks[0] });
       layoutContext.pin.dispatch?.({ msg: 'set_pin', trackReference: screenShareTracks[0] });
-      // eslint-disable-next-line prefer-destructuring
       lastAutoFocusedScreenShareTrack.current = screenShareTracks[0];
     } else if (
       lastAutoFocusedScreenShareTrack.current &&
@@ -89,22 +78,20 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
   ]);
 
   React.useEffect(() => {
-    const carouselType = searchParams.get('carouselType');
+    const carouselType = search.carouselType;
     if (carouselType === 'horizontal' || carouselType === 'vertical') {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set('carouselType', carouselType);
       layoutContext.pin.dispatch?.({
         msg: 'set_pin',
         trackReference: lastAutoFocusedScreenShareTrack.current ? screenShareTracks[0] : tracks[0],
       });
-      router.push(`${pathname}?${params.toString()}`);
+      navigate({ search: { ...search, carouselType } });
     } else if (!carouselType) {
-      const params = new URLSearchParams(searchParams.toString());
-      params.delete('carouselType');
       layoutContext.pin.dispatch?.({ msg: 'clear_pin' });
-      router.push(`${pathname}?${params.toString()}`);
+      // eslint-disable-next-line
+      const { carouselType: _, ...restSearch } = search;
+      navigate({ search: restSearch });
     }
-  }, [router, pathname, searchParams]);
+  }, [search, navigate]);
 
   return (
     <div className="lk-video-conference" {...props}>

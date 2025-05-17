@@ -43,6 +43,8 @@ export const useCallStore = create<useCallStoreT>()(
         isMicroPermission: state.isMicroPermission,
         audioEnabled: state.audioEnabled,
         videoEnabled: state.videoEnabled,
+        audioDeviceId: state.audioDeviceId,
+        videoDeviceId: state.videoDeviceId,
       }), // Сохраняем только нужные ключи
     },
   ),
