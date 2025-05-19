@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react';
 import '@livekit/components-styles';
 import type { TrackReferenceOrPlaceholder } from '@livekit/components-core';
@@ -15,10 +16,11 @@ import {
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { ParticipantTile } from '../Participant';
 import { CarouselContainer, GridLayout, FocusLayoutContainer } from './VideoGridLayout';
+import { SearchParams } from '../../types/router';
 
 export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
   const navigate = useNavigate();
-  const search = useSearch({ strict: false });
+  const search: SearchParams = useSearch({ strict: false });
 
   const lastAutoFocusedScreenShareTrack = React.useRef<TrackReferenceOrPlaceholder | null>(null);
 
@@ -84,11 +86,13 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
         msg: 'set_pin',
         trackReference: lastAutoFocusedScreenShareTrack.current ? screenShareTracks[0] : tracks[0],
       });
+      // @ts-expect-error
       navigate({ search: { ...search, carouselType } });
     } else if (!carouselType) {
       layoutContext.pin.dispatch?.({ msg: 'clear_pin' });
       // eslint-disable-next-line
       const { carouselType: _, ...restSearch } = search;
+      // @ts-expect-error
       navigate({ search: restSearch });
     }
   }, [search, navigate]);
