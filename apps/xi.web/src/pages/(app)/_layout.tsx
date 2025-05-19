@@ -29,7 +29,7 @@ export const Route = createFileRoute('/(app)/_layout')({
 
 function LayoutComponent() {
   return (
-    <div className="relative flex min-h-svh flex-col">
+    <div className="relative flex min-h-svh flex-col overflow-hidden">
       <Navigation>
         <Outlet />
       </Navigation>
