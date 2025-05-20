@@ -18,10 +18,10 @@ export const WelcomeButtons = ({
 
   return (
     <menu className="mt-auto flex flex-row gap-6 pt-4">
-      <Button onClick={backButtonHandler} variant="ghost" className="w-[98px]">
+      <Button onClick={backButtonHandler} variant="ghost" className="w-[98px]" type="button">
         {t('buttons.back_button')}
       </Button>
-      <Button onClick={continueButtonHandler} className="w-full">
+      <Button onClick={continueButtonHandler} className="w-full" type="submit">
         {customText ||
           (continueType === 'next' ? t('buttons.next_button') : t('buttons.continue_button'))}
       </Button>

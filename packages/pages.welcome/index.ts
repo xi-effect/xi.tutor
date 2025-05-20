@@ -1,10 +1,9 @@
-export { ProtectedProvider } from './src/provider';
-export { WelcomeContext } from './src/context';
+export { ProtectedProvider } from './src/providers';
+export { WelcomeContext } from './src/model';
+export { WelcomeUserPage, WelcomeAboutPage, WelcomeRolePage, WelcomeSocialsPage } from './src/ui';
 export {
-  WelcomeUserPage,
-  WelcomeAboutPage,
-  WelcomeRolePage,
-  WelcomeSocialsPage,
+  welcomeEn,
+  welcomeRu,
   welcomeUserRu,
   welcomeUserEn,
   welcomeRoleRu,
@@ -13,5 +12,4 @@ export {
   welcomeAboutRu,
   welcomeSocialsEn,
   welcomeSocialsRu,
-} from './src/ui';
-export { welcomeEn, welcomeRu } from './src/locales';
+} from './src/locales';

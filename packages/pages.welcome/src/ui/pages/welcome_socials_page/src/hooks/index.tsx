@@ -1,1 +1,0 @@
-export { useWelcomeSocialsForm } from './useWelcomeAboutForm';

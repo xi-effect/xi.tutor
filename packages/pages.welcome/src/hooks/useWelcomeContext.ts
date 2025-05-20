@@ -1,5 +1,5 @@
 import React from 'react';
-import { WelcomeContext } from '../context';
+import { WelcomeContext } from '../model/WelcomeContext';
 
 export const useWelcomeContext = () => {
   const context = React.useContext(WelcomeContext);
