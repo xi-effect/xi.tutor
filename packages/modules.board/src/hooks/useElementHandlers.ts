@@ -19,6 +19,7 @@ export const useElementHandlers = () => {
   const { transformerRef, layerRef } = useStage();
 
   const throttleUpdate = useRef<number | null>(null);
+  const prevBox = useRef<{ x: number; y: number } | null>(null);
 
   const toolbarElement = useMemo<ToolbarElement>(
     () => ({
@@ -62,6 +63,13 @@ export const useElementHandlers = () => {
     throttleUpdate.current = requestAnimationFrame(() => {
       if (transformerRef.current && selectedElementId) {
         const box = transformerRef.current.getClientRect();
+
+        if (prevBox.current?.x === box.x && prevBox.current?.y === box.y) {
+          return;
+        }
+
+        prevBox.current = box;
+
         updateToolbarPosition(box.x, box.y);
       }
     });

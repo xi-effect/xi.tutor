@@ -8,7 +8,13 @@ export const useUndoRedo = (yTarget: Y.AbstractType<any>) => {
     const undoManager = new Y.UndoManager(yTarget, {
       trackedOrigins: new Set(['local']),
     });
+
     useUndoRedoStore.getState().setManager(undoManager);
+
+    undoManager.on('stack-item-added', () => {
+      console.log('🟢 Item added to undo stack', undoManager.undoStack);
+    });
+
     return () => {
       undoManager.destroy();
     };

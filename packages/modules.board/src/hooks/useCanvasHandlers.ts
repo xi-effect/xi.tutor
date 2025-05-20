@@ -1,6 +1,7 @@
+import { useUndoRedoStore } from './../features/undoRedo/model/undoRedoStore';
 import { useRef } from 'react';
 import Konva from 'konva';
-import { useDebouncedFunction } from '@xipkg/utils';
+// import { useDebouncedFunction } from '@xipkg/utils';
 import { useBoardStore, useUIStore } from '../store';
 import { useStage } from '../providers';
 import { useZoom } from './useWheelZoom';
@@ -10,6 +11,10 @@ export const useCanvasHandlers = () => {
   const { stageRef, layerRef, getRelativePointerPosition } = useStage();
   const { addElement, selectedTool, selectElement, updateElement, removeElement } = useBoardStore();
   const { setStagePosition } = useUIStore();
+
+  const undoManager = useUndoRedoStore.getState().undoManager;
+
+  console.log(undoManager);
 
   const currentLineId = useRef<string>('');
   const currentElementRef = useRef<BoardElement | null>(null);
@@ -21,7 +26,7 @@ export const useCanvasHandlers = () => {
 
   const { handleWheel } = useZoom(stageRef);
 
-  const debouncedElementUpdate = useDebouncedFunction(updateElement, 300);
+  // const debouncedElementUpdate = useDebouncedFunction(updateElement, 300);
 
   const handleOnWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
     setStagePosition(e.currentTarget.position());
@@ -95,7 +100,7 @@ export const useCanvasHandlers = () => {
       line.points(newPoints);
       layer.batchDraw();
 
-      debouncedElementUpdate(currentLineId.current, { points: newPoints });
+      currentElementRef.current.points = newPoints;
     }
     if (isErasing.current && eraserTrailRef.current) {
       const stage = e.target.getStage();
@@ -135,6 +140,18 @@ export const useCanvasHandlers = () => {
   const handleMouseUp = () => {
     isDrawing.current = false;
     isErasing.current = false;
+
+    undoManager?.stopCapturing();
+
+    const yDoc = undoManager?.scope?.[0]?.doc ?? null;
+
+    const line = currentElementRef.current;
+    if (line) {
+      yDoc.transact(() => {
+        updateElement(line.id, { points: line.points });
+      }, 'local');
+    }
+
     const layer = layerRef.current;
     if (layer) {
       toEraseRef.current.forEach((id) => {
