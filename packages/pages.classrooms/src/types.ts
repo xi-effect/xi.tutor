@@ -1,7 +1,10 @@
-export type Student = {
+export type StudentT = {
   id: string;
   name: string;
   avatar?: string;
-  status: 'study' | 'pause' | 'completed' | 'group';
+  status: StatusEducation | 'group';
   groupSize?: number;
+  deleted?: boolean;
 };
+
+export type StatusEducation = 'study' | 'pause' | 'completed';

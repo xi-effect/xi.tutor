@@ -1623,6 +1623,9 @@ importers:
       '@xipkg/icons':
         specifier: 2.0.13
         version: 2.0.13(react@19.1.0)
+      '@xipkg/select':
+        specifier: ^2.2.5
+        version: 2.2.5(@types/react-dom@19.1.5)(@types/react@19.1.4)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/userprofile':
         specifier: 4.0.12
         version: 4.0.12(@types/react-dom@19.1.5)(@types/react@19.1.4)(react-dom@19.1.0)(react@19.1.0)
