@@ -4,7 +4,7 @@ import { YKeyValue } from 'y-utility/y-keyvalue';
 import { HocuspocusProvider } from '@hocuspocus/provider';
 
 /** Испольование инстанса YJS позволяет избежать
- * многократного сздания соект соединения при монтировании компонента
+ * многократного создания соект соединения при монтировании компонента
  */
 
 type YJSInstanceT = {

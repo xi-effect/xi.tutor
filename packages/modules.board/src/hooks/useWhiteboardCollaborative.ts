@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react';
 import { useYjs } from './useYjs';
 import { useBoardStore } from '../store';
 import { BoardElement } from '../types';
+import { useUndoRedo } from '../features';
 
 export const useWhiteboardCollaborative = ({
   roomId = 'roomid',
@@ -16,6 +17,8 @@ export const useWhiteboardCollaborative = ({
 
   const { addElement, updateElement, removeElement, boardElements } = useBoardStore();
   const { yDoc, provider, yStore, yArr, getYJSKeys } = useYjs(roomId, hostUrl);
+
+  useUndoRedo(yArr);
 
   // Синхронизирует один элемент из YJS в локальный стор
   const synchronizeElementFromYjs = (elementId: string) => {
@@ -67,7 +70,7 @@ export const useWhiteboardCollaborative = ({
                 yStore.set(key, JSON.stringify(element));
               }
             });
-          });
+          }, 'local');
         } catch (error) {
           console.error('Error updating YJS:', error);
         } finally {
