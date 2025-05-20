@@ -1,11 +1,11 @@
 import { Button } from '@xipkg/button';
 import { Plus } from '@xipkg/icons';
-
-import { mockStudents } from '../mocks';
+import { Link } from '@xipkg/link';
 
 import { Header } from './Header';
-import { CabinetFilters } from './CabinetFilters';
+import { Filters } from './Filters';
 import { StudentGrid } from './StudentGrid';
+import { mockStudents } from '../mocks';
 
 export const ClassroomsPage = () => {
   return (
@@ -13,7 +13,17 @@ export const ClassroomsPage = () => {
       <div className="flex flex-col gap-6 max-md:gap-4">
         <Header />
 
-        <CabinetFilters />
+        <div className="flex flex-row items-center justify-between">
+          <Filters />
+
+          <Link
+            href="/classrooms/students"
+            className="text-m-base text-gray-80"
+            variant="hover"
+          >
+            Список учеников
+          </Link>
+        </div>
 
         <StudentGrid students={mockStudents} />
       </div>

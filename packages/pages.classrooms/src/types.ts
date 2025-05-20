@@ -2,9 +2,13 @@ export type StudentT = {
   id: string;
   name: string;
   avatar?: string;
-  status: StatusEducation | 'group';
+  status: StatusEducationT;
   groupSize?: number;
   deleted?: boolean;
 };
 
-export type StatusEducation = 'study' | 'pause' | 'completed';
+export type StatusEducationT = 'study' | 'pause' | 'completed';
+
+export type TypeEducationT = 'individual' | 'group';
+
+export type SubjectT = 'all' | 'math' | 'computer_science' | 'foreign_languages' | 'other';
