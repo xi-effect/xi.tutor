@@ -23,16 +23,18 @@ export const Call = ({
   const { token = null } = useLivekitToken(firstId, secondId);
 
   return (
-    <CallProvider firstId={firstId} secondId={secondId}>
-      <div>
-        {isStarted ? (
-          <div id="videoConferenceContainer" className="bg-gray-5">
-            <ActiveRoom room={room} token={token || ''} />
-          </div>
-        ) : (
-          <PreJoin />
-        )}
-      </div>
-    </CallProvider>
+    <div className="h-[calc(100vh-64px)]">
+      <CallProvider firstId={firstId} secondId={secondId}>
+        <div className="flex h-full w-full flex-col">
+          {isStarted ? (
+            <div id="videoConferenceContainer" className="bg-gray-5 h-full">
+              <ActiveRoom room={room} token={token || ''} />
+            </div>
+          ) : (
+            <PreJoin />
+          )}
+        </div>
+      </CallProvider>
+    </div>
   );
 };

@@ -33,7 +33,7 @@ export const MediaDeviceMenu = ({
 }: MediaDeviceMenuProps) => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [updateRequired, setUpdateRequired] = React.useState<boolean>(true);
-  const [needPermissions, setNeedPermissions] = React.useState(requestPermissions);
+  const [, setNeedPermissions] = React.useState(requestPermissions);
   const button = React.useRef<HTMLButtonElement>(null);
   const tooltip = React.useRef<HTMLDivElement>(null);
 

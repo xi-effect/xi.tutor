@@ -18,6 +18,7 @@ import { useSearch } from '@tanstack/react-router';
 import { useSize } from '../../hooks';
 import { ParticipantTile } from '../Participant';
 import { SliderVideoGrid } from './SliderVideoGrid';
+import { SearchParams } from '../../types/router';
 
 export type PaginationControlPropsT = Pick<
   ReturnType<typeof usePagination>,
@@ -220,7 +221,7 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
 };
 
 export const CarouselContainer = ({ focusTrack, tracks, carouselTracks }: any) => {
-  const search = useSearch({ strict: false });
+  const search: SearchParams = useSearch({ strict: false });
   const [orientation, setCarouselType] = useState<string | any>('horizontal');
 
   useEffect(() => {
