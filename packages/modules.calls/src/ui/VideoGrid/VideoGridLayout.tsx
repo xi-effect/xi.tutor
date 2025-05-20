@@ -14,10 +14,11 @@ import {
   useSwipe,
 } from '@livekit/components-react';
 import { ChevronLeft, ChevronRight } from '@xipkg/icons';
-import { useSearchParams } from 'next/navigation';
+import { useSearch } from '@tanstack/react-router';
 import { useSize } from '../../hooks';
 import { ParticipantTile } from '../Participant';
 import { SliderVideoGrid } from './SliderVideoGrid';
+import { SearchParams } from '../../types/router';
 
 export type PaginationControlPropsT = Pick<
   ReturnType<typeof usePagination>,
@@ -220,12 +221,13 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
 };
 
 export const CarouselContainer = ({ focusTrack, tracks, carouselTracks }: any) => {
-  const searchParams = useSearchParams();
+  const search: SearchParams = useSearch({ strict: false });
   const [orientation, setCarouselType] = useState<string | any>('horizontal');
 
   useEffect(() => {
-    setCarouselType(searchParams.get('carouselType') || 'horizontal');
-  }, [searchParams]);
+    setCarouselType(search.carouselType || 'horizontal');
+  }, [search]);
+
   return (
     <div
       className={`flex h-full ${orientation === 'horizontal' ? 'flex-col' : ''} items-start justify-between gap-4`}

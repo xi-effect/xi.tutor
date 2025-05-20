@@ -1,3 +1,3 @@
-export { UserTile } from './UserTile';
-export { MediaDevices } from './MediaDevices';
-export { Header } from './Header';
+export { Header } from './Header/Header';
+export { UserTile } from './UserTile/UserTile';
+export { MediaDevices } from './MediaDevices/MediaDevices';

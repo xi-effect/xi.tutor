@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
 import { z } from 'zod';
+import { Call } from 'modules.calls';
 
 const paramsSchema = z.object({
   callId: z.string(),
@@ -18,5 +19,5 @@ export const Route = createFileRoute('/(app)/_layout/call/$callId')({
 function CallPage() {
   // @ts-ignore
   const { callId } = Route.useParams();
-  return <div>Звонок {callId}</div>;
+  return <Call firstId={callId} secondId="2" />;
 }
