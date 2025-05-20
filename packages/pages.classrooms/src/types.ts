@@ -1,5 +1,5 @@
-export type StudentT = {
-  id: string;
+export type ClassroomPropsT = {
+  id: number;
   name: string;
   avatar?: string;
   status: StatusEducationT;
@@ -7,7 +7,7 @@ export type StudentT = {
   deleted?: boolean;
 };
 
-export type StatusEducationT = 'study' | 'pause' | 'completed';
+export type StatusEducationT = 'study' | 'pause' | 'completed' | 'group';
 
 export type TypeEducationT = 'individual' | 'group';
 
