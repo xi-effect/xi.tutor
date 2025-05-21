@@ -10,7 +10,7 @@ import {
 
 import { StatusEducationT, TypeEducationT, SubjectT } from '../types';
 
-export const Filters = () => {
+export const Filters = ({ className }: { className?: string }) => {
   const [status, setStatus] = useState<StatusEducationT | 'all'>('all');
   const [type, setType] = useState<TypeEducationT | 'all'>('all');
   const [subject, setSubject] = useState<SubjectT | 'all'>('all');
@@ -22,7 +22,7 @@ export const Filters = () => {
     'border-none !border-transparent focus:ring-0 focus:outline-none shadow-none';
 
   return (
-    <div className="flex flex-row items-center gap-5">
+    <div className={`flex flex-row items-center gap-5 ${className || ''}`}>
       <div className="flex flex-row items-center gap-2">
         <span className="text-gray-60 text-m-base">Статус:</span>
 

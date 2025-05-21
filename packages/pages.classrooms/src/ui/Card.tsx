@@ -21,7 +21,7 @@ export const Card: React.FC<ClassroomPropsT> = ({ id, name, status, deleted, gro
     <div className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex cursor-pointer justify-between rounded-2xl border p-4">
       <div className="flex max-w-[350px] flex-col gap-4">
         {deleted ? (
-          <div className="flex h-[48px] w-[350px] items-center gap-2">
+          <div className="flex items-center gap-2">
             <Trash className="bg-gray-10 fill-gray-30 h-12 w-12 rounded-3xl p-3" />
             <div className="text-m-base text-gray-60 font-medium">{name}</div>
           </div>
