@@ -15,12 +15,10 @@ export const classroomsMock: ClassroomPropsT[] = [
     id: 3,
     name: 'Елизавета Петрова',
     status: 'study',
-    group: true,
   },
   {
     id: 4,
     name: 'Дмитрий Кузнецов',
-    group: true,
     status: 'study',
   },
   {
@@ -42,7 +40,6 @@ export const classroomsMock: ClassroomPropsT[] = [
     id: 8,
     name: 'English Group',
     status: 'study',
-    group: true,
     groupSize: 4,
   },
   {
@@ -62,7 +59,6 @@ export const classroomsMock: ClassroomPropsT[] = [
     id: 11,
     name: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.',
     status: 'study',
-    group: true,
     groupSize: 4,
   },
   {

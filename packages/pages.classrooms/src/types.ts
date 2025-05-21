@@ -7,7 +7,7 @@ export type ClassroomPropsT = {
   deleted?: boolean;
 };
 
-export type StatusEducationT = 'study' | 'pause' | 'completed' | 'group';
+export type StatusEducationT = 'study' | 'pause' | 'completed';
 
 export type TypeEducationT = 'individual' | 'group';
 
