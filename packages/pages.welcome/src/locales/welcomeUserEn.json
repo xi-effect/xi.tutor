@@ -1,0 +1,13 @@
+{
+  "title": "Let's get to know each other",
+  "name": "What is your name?",
+  "email": "Email",
+  "continue_button": "Continue",
+  "validation": {
+    "required": "This field is required",
+    "minLength": "Min length is ",
+    "maxLength": "Max length is ",
+    "symbols_one": "{{count}} symbol",
+    "symbols_other": "{{count}} symbols"
+  }
+}

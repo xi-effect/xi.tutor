@@ -1,0 +1,15 @@
+{
+  "title": "Давайте познакомимся",
+  "name": "Как вас зовут?",
+  "email": "Электронная почта",
+  "continue_button": "Продолжить",
+  "validation": {
+    "required": "Обязательное поле",
+    "minLength": "Минимальная длина - ",
+    "maxLength": "Максимальная длина - ",
+    "symbols_one": "{{count}} символ",
+    "symbols_few": "{{count}} символа",
+    "symbols_many": "{{count}} символов",
+    "symbols_other": "{{count}} символов"
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "name": "pages.welcome",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint \"**/*.{ts,tsx}\""
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.0.1",
+    "@xipkg/avatar": "^3.0.9",
+    "@xipkg/button": "3.1.2",
+    "@xipkg/fileuploader": "^2.0.12",
+    "@xipkg/form": "^4.2.0",
+    "@xipkg/icons": "2.0.13",
+    "@xipkg/input": "2.0.7",
+    "@xipkg/utils": "1.6.3",
+    "common.auth": "*",
+    "common.config": "*",
+    "common.env": "*",
+    "common.types": "*",
+    "common.services": "*",
+    "features.avatar.editor": "^0.0.0",
+    "react-hook-form": "^7.56.3",
+    "zod": "3.24.2"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "@types/node": "^20.3.1",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@xipkg/eslint": "3.2.0",
+    "@xipkg/tailwind": "0.8.1",
+    "@xipkg/typescript": "latest",
+    "common.eslint": "*",
+    "common.typescript": "*",
+    "common.ui": "*",
+    "common.sockets": "*",
+    "common.utils": "*",
+    "eslint": "^9.19.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.18",
+    "globals": "^15.14.0",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.22.0"
+  },
+  "peerDependencies": {
+    "react": "19"
+  },
+  "description": "welcome pages",
+  "author": "xi.effect"
+}
