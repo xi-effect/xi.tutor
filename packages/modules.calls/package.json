@@ -20,7 +20,7 @@
     "livekit-client": "2.11.4",
     "@xipkg/badge": "2.0.12",
     "@xipkg/button": "3.1.8",
-    "@xipkg/icons": "2.0.13",
+    "@xipkg/icons": "2.0.14",
     "@xipkg/dropdown": "3.0.12",
     "@xipkg/userprofile": "4.0.12",
     "@xipkg/aspect-ratio": "^2.0.11",

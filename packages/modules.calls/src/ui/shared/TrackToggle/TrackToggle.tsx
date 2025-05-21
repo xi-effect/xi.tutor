@@ -23,7 +23,7 @@ export const TrackToggle = ({
 }: ExtendedTrackToggleProps) => {
   const { enabled, toggle } = useTrackToggle({ source, onChange });
 
-  console.log('TrackToggle debug:', { source, enabled, showIcon });
+  // console.log('TrackToggle debug:', { source, enabled, showIcon });
 
   const icon = useMemo(() => {
     switch (source) {

@@ -12,7 +12,7 @@ export const CallProvider = ({ firstId, secondId, children }: CallPropsT) => {
 
   console.log('token', token);
 
-  if (token) {
+  if (!token) {
     return (
       <div className="bg-gray-0 flex h-full w-full items-center justify-center">
         <div

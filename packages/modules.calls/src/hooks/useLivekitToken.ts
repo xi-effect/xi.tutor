@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useSocketEvent, useSocketEmit } from 'common.sockets';
+import { isDevMode, devToken } from '../utils/config';
 
 type TokenResponse = {
   status: number;
@@ -34,5 +35,5 @@ export const useLivekitToken = (communityId: string, channelId: string) => {
     });
   }, [communityId, channelId, emitGenerateToken]);
 
-  return { token, error, generateToken };
+  return { token: isDevMode ? devToken : token, error, generateToken };
 };
