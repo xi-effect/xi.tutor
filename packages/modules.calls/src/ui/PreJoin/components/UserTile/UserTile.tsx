@@ -7,11 +7,12 @@ import { Controls } from './Controls';
 import { useCurrentUser } from 'common.services';
 
 export const UserTile = () => {
+  console.log('UserTile');
   const { data: user } = useCurrentUser();
   const { userId } = user;
 
-  const audioDeviceId = useCallStore((state) => state.audioDeviceId);
-  const audioEnabled = useCallStore((state) => state.audioEnabled);
+  // const audioDeviceId = useCallStore((state) => state.audioDeviceId);
+  // const audioEnabled = useCallStore((state) => state.audioEnabled);
   const videoDeviceId = useCallStore((state) => state.videoDeviceId);
   const videoEnabled = useCallStore((state) => state.videoEnabled);
 
@@ -21,17 +22,25 @@ export const UserTile = () => {
     console.error('Error accessing media devices');
   }, []);
 
-  const tracks = usePreviewTracks(
+  // const audioTracks = usePreviewTracks(
+  //   {
+  //     audio: audioEnabled ? { deviceId: audioDeviceId } : false,
+  //     video: false,
+  //   },
+  //   onError,
+  // );
+
+  const videoTracks = usePreviewTracks(
     {
-      audio: audioEnabled ? { deviceId: audioDeviceId } : false,
+      audio: false,
       video: videoEnabled ? { deviceId: videoDeviceId } : false,
     },
     onError,
   );
 
   const videoTrack = useMemo(
-    () => tracks?.filter((track) => track.kind === Track.Kind.Video)[0] as LocalVideoTrack,
-    [tracks],
+    () => videoTracks?.filter((track) => track.kind === Track.Kind.Video)[0] as LocalVideoTrack,
+    [videoTracks],
   );
 
   const facingMode = useMemo(() => {

@@ -12,7 +12,7 @@ export const Route = createFileRoute('/(app)/_layout/')({
 function Index() {
   return (
     <div className="h-full p-2">
-      <h3>Welcome Home!</h3>
+      <h3>Welcome!</h3>
     </div>
   );
 }
