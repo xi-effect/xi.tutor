@@ -83,6 +83,9 @@ importers:
       pages.signup:
         specifier: '*'
         version: link:../../packages/pages.signup
+      pages.welcome:
+        specifier: '*'
+        version: link:../../packages/pages.welcome
       react:
         specifier: ^19.0.0
         version: 19.1.0
@@ -912,8 +915,8 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.1.5)(@types/react@19.1.4)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: ^2.0.13
-        version: 2.0.13(react@19.1.0)
+        specifier: ^2.0.14
+        version: 2.0.14(react@19.1.0)
       '@xipkg/slider':
         specifier: 2.0.12
         version: 2.0.12(@types/react-dom@19.1.5)(@types/react@19.1.4)(react-dom@19.1.0)(react@19.1.0)
@@ -1530,8 +1533,8 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.1.5)(@types/react@19.1.4)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: ^2.0.13
-        version: 2.0.13(react@19.1.0)
+        specifier: ^2.0.14
+        version: 2.0.14(react@19.1.0)
       '@xipkg/modal':
         specifier: 4.1.0
         version: 4.1.0(@types/react-dom@19.1.5)(@types/react@19.1.4)(react-dom@19.1.0)(react@19.1.0)
@@ -1629,6 +1632,12 @@ importers:
       '@xipkg/icons':
         specifier: 2.0.14
         version: 2.0.14(react@19.1.0)
+      '@xipkg/link':
+        specifier: ^2.0.12
+        version: 2.0.12(react@19.1.0)
+      '@xipkg/select':
+        specifier: ^2.2.5
+        version: 2.2.5(@types/react-dom@19.1.5)(@types/react@19.1.4)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/userprofile':
         specifier: 4.0.12
         version: 4.0.12(@types/react-dom@19.1.5)(@types/react@19.1.4)(react-dom@19.1.0)(react@19.1.0)
@@ -1921,6 +1930,115 @@ importers:
       common.typescript:
         specifier: '*'
         version: link:../common.typescript
+      eslint:
+        specifier: ^9.19.0
+        version: 9.27.0
+      eslint-plugin-react-hooks:
+        specifier: ^5.0.0
+        version: 5.2.0(eslint@9.27.0)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.18
+        version: 0.4.20(eslint@9.27.0)
+      globals:
+        specifier: ^15.14.0
+        version: 15.15.0
+      typescript:
+        specifier: ~5.7.2
+        version: 5.7.3
+      typescript-eslint:
+        specifier: ^8.22.0
+        version: 8.32.1(eslint@9.27.0)(typescript@5.7.3)
+
+  packages/pages.welcome:
+    dependencies:
+      '@hookform/resolvers':
+        specifier: ^5.0.1
+        version: 5.0.1(react-hook-form@7.56.3)
+      '@xipkg/avatar':
+        specifier: ^3.0.9
+        version: 3.0.9(@types/react-dom@19.1.5)(@types/react@19.1.4)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/button':
+        specifier: 3.1.2
+        version: 3.1.2(@types/react@19.1.4)(react@19.1.0)
+      '@xipkg/fileuploader':
+        specifier: ^2.0.12
+        version: 2.0.12(react@19.1.0)
+      '@xipkg/form':
+        specifier: ^4.2.0
+        version: 4.2.0(@types/react-dom@19.1.5)(@types/react@19.1.4)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/icons':
+        specifier: 2.0.14
+        version: 2.0.14(react@19.1.0)
+      '@xipkg/input':
+        specifier: 2.0.7
+        version: 2.0.7(react@19.1.0)
+      '@xipkg/utils':
+        specifier: 1.6.3
+        version: 1.6.3(react@19.1.0)
+      common.auth:
+        specifier: '*'
+        version: link:../common.auth
+      common.config:
+        specifier: '*'
+        version: link:../common.config
+      common.env:
+        specifier: '*'
+        version: link:../common.env
+      common.services:
+        specifier: '*'
+        version: link:../common.services
+      common.types:
+        specifier: '*'
+        version: link:../common.types
+      features.avatar.editor:
+        specifier: ^0.0.0
+        version: link:../features.avatar.editor
+      react:
+        specifier: '19'
+        version: 19.1.0
+      react-hook-form:
+        specifier: ^7.56.3
+        version: 7.56.3(react@19.1.0)
+      zod:
+        specifier: 3.24.2
+        version: 3.24.2
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.19.0
+        version: 9.27.0
+      '@types/node':
+        specifier: ^20.3.1
+        version: 20.17.47
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.1.4
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.1.5(@types/react@19.1.4)
+      '@xipkg/eslint':
+        specifier: 3.2.0
+        version: 3.2.0(eslint-plugin-jsx-a11y@6.10.2)(eslint@9.27.0)(turbo@2.5.3)(typescript@5.7.3)
+      '@xipkg/tailwind':
+        specifier: 0.8.1
+        version: 0.8.1
+      '@xipkg/typescript':
+        specifier: latest
+        version: 0.2.0
+      common.eslint:
+        specifier: '*'
+        version: link:../common.eslint
+      common.sockets:
+        specifier: '*'
+        version: link:../common.sockets
+      common.typescript:
+        specifier: '*'
+        version: link:../common.typescript
+      common.ui:
+        specifier: '*'
+        version: link:../common.ui
+      common.utils:
+        specifier: '*'
+        version: link:../common.utils
       eslint:
         specifier: ^9.19.0
         version: 9.27.0
@@ -5341,6 +5459,17 @@ packages:
       react: 19.1.0
     dev: false
 
+  /@xipkg/fileuploader@2.0.12(react@19.1.0):
+    resolution: {integrity: sha512-0tUoA5hKcZ9bLtVgONMBaupNDjwCxgxDcdKJGiP5L87LI0ZGe7urbI/tpmS7g+iyFM/CQRLdVvVgbHQfnfr7Uw==}
+    peerDependencies:
+      react: ^19
+    dependencies:
+      '@xipkg/icons': 2.2.0(react@19.1.0)
+      '@xipkg/utils': 1.8.0(react@19.1.0)
+      class-variance-authority: 0.7.1
+      react: 19.1.0
+    dev: false
+
   /@xipkg/form@4.2.0(@types/react-dom@19.1.5)(@types/react@19.1.4)(react-dom@19.1.0)(react@19.1.0):
     resolution: {integrity: sha512-ZTTqNBN75MbNnSZj/OXNHTJE+ss8xT5z2rH7fuTWWsBg0PMzWIez+ri5qN8Qcw1nMUFjBXdUFPwAihysyuCc0g==}
     peerDependencies:
@@ -5358,17 +5487,6 @@ packages:
       - '@types/react'
       - '@types/react-dom'
       - react-dom
-    dev: false
-
-  /@xipkg/icons@2.0.13(react@19.1.0):
-    resolution: {integrity: sha512-S4FPf8fW25cV4Ja6rGxgLow+na1w7Dnla7pZ7ry2qhBmGmqUuj7Fy71Zy26dRZG3sECBAEVcMrfogxXgaGTA+Q==}
-    peerDependencies:
-      react: ^19
-    dependencies:
-      '@xipkg/utils': 1.7.0(react@19.1.0)
-      class-variance-authority: 0.7.1
-      lucide-react: 0.485.0(react@19.1.0)
-      react: 19.1.0
     dev: false
 
   /@xipkg/icons@2.0.14(react@19.1.0):

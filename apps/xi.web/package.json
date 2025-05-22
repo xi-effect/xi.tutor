@@ -19,6 +19,7 @@
     "common.config": "*",
     "pages.signin": "*",
     "pages.signup": "*",
+    "pages.welcome": "*",
     "pages.classrooms": "*",
     "pages.materials": "*",
     "modules.board": "*",

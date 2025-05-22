@@ -34,3 +34,17 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+/.idea/.gitignore
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/dbnavigator.xml
+/.idea/git_toolbox_blame.xml
+/.idea/laravel-idea.xml
+/.idea/modules.xml
+/.idea/php.xml
+/.idea/php-inspections-ea-ultimate.xml
+/.idea/prettier.xml
+/.idea/codeStyles/Project.xml
+/.idea/inspectionProfiles/Project_Default.xml
+/.idea/vcs.xml
+/.idea/xi.tutor.iml
+.idea/workspace.xml
