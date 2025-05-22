@@ -2,18 +2,20 @@ import { Badge } from '@xipkg/badge';
 
 import { StatusEducationT, ClassroomPropsT } from '../types';
 
-export const statusBadge = (
-  status: StatusEducationT,
-  groupSize?: ClassroomPropsT['groupSize'],
-  deleted?: ClassroomPropsT['deleted'],
-) => {
-  const statusMap: Record<string, string> = {
-    study: 'Учится',
-    group: 'Учатся',
-    pause: 'На паузе',
-    completed: 'Обучение завершено',
-  };
+type StatusBadgePropsT = {
+  status: StatusEducationT;
+  groupSize?: ClassroomPropsT['groupSize'];
+  deleted?: ClassroomPropsT['deleted'];
+};
 
+const statusMap: Record<string, string> = {
+  study: 'Учится',
+  group: 'Учатся',
+  pause: 'На паузе',
+  completed: 'Обучение завершено',
+};
+
+export const StatusBadge = ({ status, groupSize, deleted }: StatusBadgePropsT) => {
   if (deleted) {
     return (
       <Badge size="m" className="text-gray-80 bg-gray-5 rounded-lg border-none px-2 py-1">
@@ -33,6 +35,7 @@ export const statusBadge = (
           {groupSize ? statusMap['group'] : statusMap[status]}
         </Badge>
       );
+
     case 'pause':
       return (
         <Badge
@@ -43,12 +46,14 @@ export const statusBadge = (
           {statusMap[status]}
         </Badge>
       );
+
     case 'completed':
       return (
         <Badge size="m" className="text-gray-80 bg-gray-5 rounded-lg border-none px-2 py-1">
           {statusMap[status]}
         </Badge>
       );
+
     default:
       return null;
   }

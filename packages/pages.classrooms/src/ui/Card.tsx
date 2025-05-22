@@ -1,10 +1,9 @@
 import React from 'react';
 
 import { Button } from '@xipkg/button';
-import { MoreVert } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
-import { Trash } from '@xipkg/icons';
 import { Badge } from '@xipkg/badge';
+import { MoreVert, Trash } from '@xipkg/icons';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 
-import { statusBadge } from './StatusBadge';
+import { StatusBadge } from './StatusBadge';
 
 import { ClassroomPropsT } from '../types';
 
@@ -35,7 +34,7 @@ export const Card: React.FC<ClassroomPropsT> = ({ id, name, status, deleted, gro
         )}
 
         <div className="mt-auto flex items-center gap-2">
-          {statusBadge(status, groupSize, deleted)}
+          <StatusBadge status={status} groupSize={groupSize} deleted={deleted} />
 
           <Badge size="m" className="text-gray-80 bg-gray-5 rounded-lg border-none px-2 py-1">
             Предмет
@@ -50,6 +49,7 @@ export const Card: React.FC<ClassroomPropsT> = ({ id, name, status, deleted, gro
               <MoreVert className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
+
           <DropdownMenuContent
             side="bottom"
             align="end"
