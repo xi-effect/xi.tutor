@@ -31,6 +31,6 @@
   "peerDependencies": {
     "react": "19"
   },
-  "description": "form for signin",
+  "description": "features.table",
   "author": "xi.effect"
 }
