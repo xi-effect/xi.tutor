@@ -6,8 +6,21 @@
 
 @import '@xipkg/tailwind/index.css';
 
-@source "./src";
-@source "../node_modules";
-@source "../../../node_modules";
+@source "../src";
+@source "../node_modules/@xipkg";
+@source "../node_modules/modules.navigation";
+@source "../node_modules/modules.calls";
+@source "../node_modules/modules.profile";
+@source "../node_modules/modules.board";
+@source "../node_modules/modules.calendar";
+@source "../node_modules/modules.editor";
+@source "../node_modules/common.ui";
+@source "../node_modules/pages.classrooms";
+@source "../node_modules/pages.signin";
+@source "../node_modules/pages.signup";
+@source "../node_modules/pages.welcome";
+@source "../node_modules/pages.materials";
+
+@source "../../../node_modules/@xipkg";
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
