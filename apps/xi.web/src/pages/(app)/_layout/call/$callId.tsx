@@ -11,8 +11,8 @@ const paramsSchema = z.object({
 export const Route = createFileRoute('/(app)/_layout/call/$callId')({
   component: CallPage,
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
-  beforeLoad: ({ context, location }) => {
-    console.log('Call', context, location);
+  beforeLoad: () => {
+    // console.log('Call', context, location);
   },
 });
 

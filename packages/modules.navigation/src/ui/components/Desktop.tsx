@@ -9,7 +9,7 @@ export const Desktop = ({ children }: { children: React.ReactNode }) => {
       <Sidebar collapsible="icon" className="absolute w-full pt-[64px] md:w-[300px]">
         <SideBarItems />
       </Sidebar>
-      <SidebarInset>
+      <SidebarInset className="h-screen overflow-hidden">
         <ScrollArea className="mt-[64px] h-full w-full">{children}</ScrollArea>
       </SidebarInset>
     </>

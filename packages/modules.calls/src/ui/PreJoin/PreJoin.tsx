@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Header, UserTile, MediaDevices } from './components';
 
 export const PreJoin = () => {

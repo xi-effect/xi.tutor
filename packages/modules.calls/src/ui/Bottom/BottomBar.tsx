@@ -1,47 +1,32 @@
 import {
   ControlBarProps,
-  useDisconnectButton,
   useLocalParticipant,
-  useLocalParticipantPermissions,
+  // useLocalParticipantPermissions,
   usePersistentUserChoices,
 } from '@livekit/components-react';
-import { Endcall } from '@xipkg/icons';
 import { LocalAudioTrack, LocalVideoTrack, Track } from 'livekit-client';
 import { supportsScreenSharing } from '@livekit/components-core';
 import { TrackToggle } from '../shared/TrackToggle/TrackToggle';
 import { DevicesBar } from '../shared/DevicesBar/DevicesBar';
 import { useCallback, useMemo, useState } from 'react';
-
-const DisconnectButton = () => {
-  const { buttonProps } = useDisconnectButton({});
-
-  return (
-    <button
-      type="button"
-      {...buttonProps}
-      className="bg-red-80 hover:bg-red-60 ml-2 flex h-12 w-12 flex-row items-center justify-center rounded-[24px]"
-    >
-      <Endcall className="fill-gray-100" />
-    </button>
-  );
-};
-
+import { DisconnectButton } from './DisconnectButton';
 export const BottomBar = ({ variation, controls, saveUserChoices = true }: ControlBarProps) => {
-  const visibleControls = { leave: true, ...controls };
+  const visibleControls = { leave: true, screenShare: true, ...controls };
 
-  const localPermissions = useLocalParticipantPermissions();
+  // const localPermissions = useLocalParticipantPermissions();
 
-  if (!localPermissions) {
-    visibleControls.camera = false;
-    visibleControls.chat = false;
-    visibleControls.microphone = false;
-    visibleControls.screenShare = false;
-  } else {
-    visibleControls.camera ??= localPermissions.canPublish;
-    visibleControls.microphone ??= localPermissions.canPublish;
-    visibleControls.screenShare ??= localPermissions.canPublish;
-    visibleControls.chat ??= localPermissions.canPublishData && controls?.chat;
-  }
+  // if (!localPermissions) {
+  //   visibleControls.camera = false;
+  //   visibleControls.chat = false;
+  //   visibleControls.microphone = false;
+  //   visibleControls.screenShare = false;
+  // } else {
+  //   visibleControls.camera ??= localPermissions.canPublish;
+  //   visibleControls.microphone ??= localPermissions.canPublish;
+  //   visibleControls.screenShare ??= localPermissions.canPublish;
+  //   visibleControls.chat ??= localPermissions.canPublishData && controls?.chat;
+  // }
+
   useMemo(() => variation === 'minimal' || variation === 'verbose', [variation]);
 
   const showText = useMemo(() => variation === 'textOnly' || variation === 'verbose', [variation]);
@@ -50,6 +35,9 @@ export const BottomBar = ({ variation, controls, saveUserChoices = true }: Contr
   });
 
   const browserSupportsScreenSharing = supportsScreenSharing();
+
+  console.log('browserSupportsScreenSharing', browserSupportsScreenSharing, visibleControls);
+
   const [isScreenShareEnabled, setIsScreenShareEnabled] = useState(false);
 
   const microphoneOnChange = useCallback(
@@ -76,8 +64,9 @@ export const BottomBar = ({ variation, controls, saveUserChoices = true }: Contr
   return (
     <div className="w-full">
       <div className="flex w-full flex-row justify-between p-4">
+        <div />
         <div className="flex flex-row gap-4">
-          <div className="bg-gray-0 flex w-[96px] items-center justify-center gap-1 rounded-[24px]">
+          <div className="bg-gray-0 border-gray-10 flex h-[48px] w-[92px] items-center justify-center gap-1 rounded-[16px] border">
             <DevicesBar
               microTrack={microphoneTrack?.track as LocalAudioTrack}
               microEnabled={isMicrophoneEnabled}
@@ -95,10 +84,9 @@ export const BottomBar = ({ variation, controls, saveUserChoices = true }: Contr
               }}
             />
           </div>
-          <div>
+          <div className="bg-gray-0 border-gray-10 flex h-[48px] items-center justify-center gap-1 rounded-[16px] border p-1">
             {visibleControls.screenShare && browserSupportsScreenSharing && (
               <TrackToggle
-                className="bg-transparent p-0"
                 source={Track.Source.ScreenShare}
                 captureOptions={{ audio: true, selfBrowserSurface: 'include' }}
                 onChange={onScreenShareChange}
@@ -108,13 +96,6 @@ export const BottomBar = ({ variation, controls, saveUserChoices = true }: Contr
             )}
           </div>
         </div>
-        <div />
-        {/* <div className="bg-gray-0 flex h-12
-        w-[144px] flex-row items-center justify-center gap-2 rounded-[24px] p-1">
-          <ActionButton icon={<Group className="fill-gray-100" />} withBorder={false} />
-          <ActionButton icon={<Chat className="fill-gray-100" />} withBorder={false} />
-          <ActionButton icon={<Hand className="fill-gray-100" />} withBorder={false} />
-        </div> */}
         <DisconnectButton />
       </div>
     </div>

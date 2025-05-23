@@ -1,0 +1,9 @@
+{
+  "title": "Select a role",
+  "subtitle": "You can change the role at any time.",
+  "role": {
+    "tutor": "Tutor",
+    "student": "Student",
+    "parent": "Parent"
+  }
+}

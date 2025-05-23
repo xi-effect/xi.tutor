@@ -1,6 +1,6 @@
 import { LiveKitRoom } from '@livekit/components-react';
 import { Room } from 'livekit-client';
-import { UpBar } from '../Up/UpBar';
+// import { UpBar } from '../Up/UpBar';
 import { BottomBar } from '../Bottom/BottomBar';
 import { VideoGrid } from '../VideoGrid/VideoGrid';
 import { serverUrl, serverUrlDev, isDevMode, devToken } from '../../utils/config';
@@ -37,9 +37,9 @@ export const ActiveRoom = ({ token, room }: ActiveRoomPropsT) => {
       audio={audioEnabled || false}
       video={videoEnabled || false}
     >
-      <div className="flex min-h-screen flex-col justify-stretch">
-        <UpBar />
-        <div className="flex min-h-[calc(100vh-152px)] items-center justify-center px-4">
+      <div className="flex h-full flex-col justify-stretch">
+        {/* <UpBar /> */}
+        <div className="flex h-full items-center justify-center px-4">
           <div className="h-full w-full text-center text-gray-100">
             <VideoGrid />
           </div>

@@ -1,6 +1,6 @@
 import { usePreviewTracks } from '@livekit/components-react';
 import { LocalAudioTrack, LocalVideoTrack, Track } from 'livekit-client';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 
 import { DevicesBar } from '../../../shared/DevicesBar';
 import { useCallStore } from '../../../../store/callStore';
@@ -14,7 +14,7 @@ export const Controls = () => {
 
   const updateStore = useCallStore((state) => state.updateStore);
 
-  const onError = () => {};
+  const onError = useCallback(() => {}, []);
 
   const tracks = usePreviewTracks(
     {
@@ -23,6 +23,8 @@ export const Controls = () => {
     },
     onError,
   );
+
+  console.log('tracks', tracks);
 
   const videoTrack = useMemo(
     () => tracks?.filter((track) => track.kind === Track.Kind.Video)[0] as LocalVideoTrack,
@@ -34,13 +36,23 @@ export const Controls = () => {
     [tracks],
   );
 
-  const handleAudioChange = (enabled: boolean) => {
-    updateStore('audioEnabled', enabled);
-  };
+  console.log('audioTrack', audioTrack);
 
-  const handleVideoChange = (enabled: boolean) => {
-    updateStore('videoEnabled', enabled);
-  };
+  const handleAudioChange = useCallback(
+    (enabled: boolean) => {
+      updateStore('audioEnabled', enabled);
+    },
+    [updateStore],
+  );
+
+  const handleVideoChange = useCallback(
+    (enabled: boolean) => {
+      updateStore('videoEnabled', enabled);
+    },
+    [updateStore],
+  );
+
+  console.log('Controls');
 
   return (
     <div className="bg-gray-0 border-gray-10 flex h-[48px] w-[92px] items-center justify-center gap-1 rounded-[16px] border">
