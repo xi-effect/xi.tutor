@@ -44,6 +44,9 @@ importers:
       '@xipkg/button':
         specifier: 3.1.2
         version: 3.1.2(@types/react@19.1.4)(react@19.1.0)
+      '@xipkg/tabs':
+        specifier: 2.0.11
+        version: 2.0.11(@types/react-dom@19.1.5)(@types/react@19.1.4)(react-dom@19.1.0)(react@19.1.0)
       common.auth:
         specifier: '*'
         version: link:../../packages/common.auth
@@ -102,6 +105,9 @@ importers:
         specifier: ^4.0.9
         version: 4.1.7
     devDependencies:
+      '@babel/plugin-transform-react-jsx':
+        specifier: ^7.27.1
+        version: 7.27.1(@babel/core@7.27.1)
       '@eslint/js':
         specifier: ^9.19.0
         version: 9.27.0
@@ -2115,6 +2121,13 @@ packages:
       jsesc: 3.1.0
     dev: true
 
+  /@babel/helper-annotate-as-pure@7.27.1:
+    resolution: {integrity: sha512-WnuuDILl9oOBbKnb4L+DyODx7iC47XfzmNCpTttFsSp6hTG7XZxu60+4IO+2/hPfcGOoKbFiwoI/+zwARbNQow==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      '@babel/types': 7.27.1
+    dev: true
+
   /@babel/helper-compilation-targets@7.27.2:
     resolution: {integrity: sha512-2+1thGUUWWjLTYTHZWK1n8Yga0ijBz1XAhUXcKy81rd5g6yh7hGqMp45v7cadSbEHc9G3OTv45SyneRN3ps4DQ==}
     engines: {node: '>=6.9.0'}
@@ -2224,6 +2237,22 @@ packages:
     dependencies:
       '@babel/core': 7.27.1
       '@babel/helper-plugin-utils': 7.27.1
+    dev: true
+
+  /@babel/plugin-transform-react-jsx@7.27.1(@babel/core@7.27.1):
+    resolution: {integrity: sha512-2KH4LWGSrJIkVf5tSiBFYuXDAoWRq2MMwgivCf+93dd0GQi8RXLjKA/0EvRnVV5G0hrHczsquXuD01L8s6dmBw==}
+    engines: {node: '>=6.9.0'}
+    peerDependencies:
+      '@babel/core': ^7.0.0-0
+    dependencies:
+      '@babel/core': 7.27.1
+      '@babel/helper-annotate-as-pure': 7.27.1
+      '@babel/helper-module-imports': 7.27.1
+      '@babel/helper-plugin-utils': 7.27.1
+      '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.27.1)
+      '@babel/types': 7.27.1
+    transitivePeerDependencies:
+      - supports-color
     dev: true
 
   /@babel/runtime@7.27.1:

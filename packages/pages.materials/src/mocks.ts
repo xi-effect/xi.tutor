@@ -3,8 +3,7 @@ import { MaterialPropsT } from './types';
 export const materialsMock: MaterialPropsT[] = [
   {
     idMaterial: '1',
-    nameMaterial:
-      'Интерактивная доска по подготовке к ЕГЭ по математике профильного уровня 2024 года',
+    nameMaterial: 'Интерактивная доска подготовке по математике профильного уровня 2024 года',
     updatedAt: '2024-01-01',
     idUser: 1,
     nameUser: 'Анна Смирнова',
