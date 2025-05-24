@@ -85,8 +85,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signup = singupMutation;
 
-  console.log('AuthProvider', isAuthenticated);
-
   if (isAuthenticated === null) {
     return <LoadingScreen />;
   }

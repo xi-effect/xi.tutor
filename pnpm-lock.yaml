@@ -1082,17 +1082,17 @@ importers:
   packages/modules.calls:
     dependencies:
       '@livekit/components-core':
-        specifier: 0.12.4
-        version: 0.12.4(livekit-client@2.11.4)(tslib@2.8.1)
+        specifier: 0.12.7
+        version: 0.12.7(livekit-client@2.13.3)(tslib@2.8.1)
       '@livekit/components-react':
-        specifier: 2.9.3
-        version: 2.9.3(@livekit/krisp-noise-filter@0.2.16)(livekit-client@2.11.4)(react-dom@19.1.0)(react@19.1.0)(tslib@2.8.1)
+        specifier: 2.9.9
+        version: 2.9.9(@livekit/krisp-noise-filter@0.3.0)(livekit-client@2.13.3)(react-dom@19.1.0)(react@19.1.0)(tslib@2.8.1)
       '@livekit/components-styles':
-        specifier: 1.1.5
-        version: 1.1.5
+        specifier: 1.1.6
+        version: 1.1.6
       '@livekit/krisp-noise-filter':
-        specifier: ^0.2.16
-        version: 0.2.16(livekit-client@2.11.4)
+        specifier: ^0.3.0
+        version: 0.3.0(livekit-client@2.13.3)
       '@react-hook/latest':
         specifier: 1.0.3
         version: 1.0.3(react@19.1.0)
@@ -1133,8 +1133,8 @@ importers:
         specifier: 12.12.1
         version: 12.12.1(react-dom@19.1.0)(react@19.1.0)
       livekit-client:
-        specifier: 2.11.4
-        version: 2.11.4
+        specifier: 2.13.3
+        version: 2.13.3(@types/dom-mediacapture-record@1.0.22)
       react:
         specifier: '19'
         version: 19.1.0
@@ -3122,26 +3122,26 @@ packages:
     resolution: {integrity: sha512-QZqem4QuAnAyzfz+Gj5/+SLxqwCAw2qmt7732ZXodr6VDWGeYLG6w1i/vYLa55JQM9wRuBKLmXmiZ2P0LtE5rw==}
     dev: false
 
-  /@livekit/components-core@0.12.4(livekit-client@2.11.4)(tslib@2.8.1):
-    resolution: {integrity: sha512-a/GkK8XFULPhXoSKxuXEU62gwTAYJ83DP5/vlRzwESEY+rsoiw2NvvPZtDCU17yyd/5QBIF9VdDjB9ZZF0dOfQ==}
+  /@livekit/components-core@0.12.7(livekit-client@2.13.3)(tslib@2.8.1):
+    resolution: {integrity: sha512-oxP2qlFy2Dqnu2u0ESQgcKF+5LfAMpOZ87FTMXyZ+RFogM3AkU0PWR31+j3tkAMPC9fCrgh4V1lZG3h6LjGTiw==}
     engines: {node: '>=18'}
     peerDependencies:
-      livekit-client: ^2.11.1
+      livekit-client: ^2.13.1
       tslib: ^2.6.2
     dependencies:
       '@floating-ui/dom': 1.6.13
-      livekit-client: 2.11.4
+      livekit-client: 2.13.3(@types/dom-mediacapture-record@1.0.22)
       loglevel: 1.9.1
       rxjs: 7.8.2
       tslib: 2.8.1
     dev: false
 
-  /@livekit/components-react@2.9.3(@livekit/krisp-noise-filter@0.2.16)(livekit-client@2.11.4)(react-dom@19.1.0)(react@19.1.0)(tslib@2.8.1):
-    resolution: {integrity: sha512-gE1sEE57BkBz3+TQHrOXVDVwVMwV5wtIYokdrfd7vshh22/PtWWj3vON9wzYLFRKx98L6QyAzyh7W9EWu3Lj9Q==}
+  /@livekit/components-react@2.9.9(@livekit/krisp-noise-filter@0.3.0)(livekit-client@2.13.3)(react-dom@19.1.0)(react@19.1.0)(tslib@2.8.1):
+    resolution: {integrity: sha512-ZxiHSCNVxNG8XZdJkpJ7+ga/Wl6WRDkZocJGd+eh8F1JRjjqrBL9IesOPzOK0INX9lAaVCe9VqL41B+B5PVdrg==}
     engines: {node: '>=18'}
     peerDependencies:
       '@livekit/krisp-noise-filter': ^0.2.12
-      livekit-client: ^2.11.1
+      livekit-client: ^2.13.1
       react: '>=18'
       react-dom: '>=18'
       tslib: ^2.6.2
@@ -3149,35 +3149,36 @@ packages:
       '@livekit/krisp-noise-filter':
         optional: true
     dependencies:
-      '@livekit/components-core': 0.12.4(livekit-client@2.11.4)(tslib@2.8.1)
-      '@livekit/krisp-noise-filter': 0.2.16(livekit-client@2.11.4)
+      '@livekit/components-core': 0.12.7(livekit-client@2.13.3)(tslib@2.8.1)
+      '@livekit/krisp-noise-filter': 0.3.0(livekit-client@2.13.3)
       clsx: 2.1.1
-      livekit-client: 2.11.4
+      livekit-client: 2.13.3(@types/dom-mediacapture-record@1.0.22)
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
       tslib: 2.8.1
       usehooks-ts: 3.1.1(react@19.1.0)
     dev: false
 
-  /@livekit/components-styles@1.1.5:
-    resolution: {integrity: sha512-SocIPcwm18S28zVruvJcmiHfbUIwGTfxGbUOIp1Db78EON/iJ2v7B2g/xD5sr+c7jXoV1DNUPl2qQiFW2S9dbw==}
+  /@livekit/components-styles@1.1.6:
+    resolution: {integrity: sha512-V6zfuREC2ksW8z6T6WSbEvdLB5ICVikGz1GtLr59UcxHDyAsKDbuDHAyl3bF3xBqPKYmY3GWF3Qk39rnScyOtA==}
     engines: {node: '>=18'}
     dev: false
 
-  /@livekit/krisp-noise-filter@0.2.16(livekit-client@2.11.4):
-    resolution: {integrity: sha512-W7fyNkECDbWLXwBW5CDKQvuW4mxhkKBp9UAvTkTsn6dq1w7ZLTIEdUErrfZiNVuHmbXd22wI1ycjOYvaeNKMvw==}
+  /@livekit/krisp-noise-filter@0.3.0(livekit-client@2.13.3):
+    resolution: {integrity: sha512-yJkq7H3Lpfh0D7zpsuwWWgPYwZ8sknd6DxgP8QegrW8Oq44XyAWU5mPd9oW2mBxOTNDVhppKRE38D4rZqEtcOQ==}
     peerDependencies:
       livekit-client: ^2.0.8
     dependencies:
-      livekit-client: 2.11.4
+      '@livekit/mutex': 1.1.1
+      livekit-client: 2.13.3(@types/dom-mediacapture-record@1.0.22)
     dev: false
 
   /@livekit/mutex@1.1.1:
     resolution: {integrity: sha512-EsshAucklmpuUAfkABPxJNhzj9v2sG7JuzFDL4ML1oJQSV14sqrpTYnsaOudMAw9yOaW53NU3QQTlUQoRs4czw==}
     dev: false
 
-  /@livekit/protocol@1.36.1:
-    resolution: {integrity: sha512-nN3QnITAQ5yXk7UKfotH7CRWIlEozNWeKVyFJ0/+dtSzvWP/ib+10l1DDnRYi3A1yICJOGAKFgJ5d6kmi1HCUA==}
+  /@livekit/protocol@1.38.0:
+    resolution: {integrity: sha512-XX6ulvsE1XCN18LVf3ydHN7Ri1Z1M1P5dQdjnm5nVDsSqUL12Vbo/4RKcRlCEXAg2qB62mKjcaVLXVwkfXggkg==}
     dependencies:
       '@bufbuild/protobuf': 1.10.1
     dev: false
@@ -5001,6 +5002,10 @@ packages:
     dependencies:
       '@types/node': 20.17.50
     dev: true
+
+  /@types/dom-mediacapture-record@1.0.22:
+    resolution: {integrity: sha512-mUMZLK3NvwRLcAAT9qmcK+9p7tpU2FHdDsntR3YI4+GY88XrgG4XiE7u1Q2LAN2/FZOz/tdMDC3GQCR4T8nFuw==}
+    dev: false
 
   /@types/estree@1.0.7:
     resolution: {integrity: sha512-w28IoSUCJpidD/TGviZwwMJckNESJZXFu7NBZ5YJ4mEUnNraUn9Pm8HSZm/jDF1pDWYKspWE7oVphigUPRakIQ==}
@@ -7965,11 +7970,14 @@ packages:
     resolution: {integrity: sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==}
     dev: true
 
-  /livekit-client@2.11.4:
-    resolution: {integrity: sha512-V82NdyhHo3iBxxQmPTk95Fe2+VZMABWZL56t9oZmMgycoF8li8gs/KG7yyDsKki50EeKLgwOmlwqx/Xf0pc0+Q==}
+  /livekit-client@2.13.3(@types/dom-mediacapture-record@1.0.22):
+    resolution: {integrity: sha512-5lX9bqN2ZKjt1RqJqO1Vz9uplrnCLIpbG3Y8h7z0ui2adk5oahohV0m1F2ZEaIJTfQgXhX1iVbSYrVNwTzwRDQ==}
+    peerDependencies:
+      '@types/dom-mediacapture-record': ^1
     dependencies:
       '@livekit/mutex': 1.1.1
-      '@livekit/protocol': 1.36.1
+      '@livekit/protocol': 1.38.0
+      '@types/dom-mediacapture-record': 1.0.22
       events: 3.3.0
       loglevel: 1.9.2
       sdp-transform: 2.15.0

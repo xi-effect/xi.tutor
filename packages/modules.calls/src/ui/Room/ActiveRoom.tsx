@@ -26,6 +26,9 @@ export const ActiveRoom = ({ token, room }: ActiveRoomPropsT) => {
     updateStore('connect', false);
   };
 
+  console.log('room', room);
+  console.log('connect', connect);
+
   return (
     <LiveKitRoom
       room={room}
