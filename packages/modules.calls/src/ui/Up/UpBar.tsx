@@ -14,6 +14,7 @@ import { useFullScreen } from 'common.utils';
 import { Settings } from './Settings';
 import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
+import { TooltipContent, Tooltip, TooltipTrigger } from '@xipkg/tooltip';
 
 export const UpBar = () => {
   const [carouselType, setCarouselType] = React.useState<string>('grid');
@@ -55,13 +56,21 @@ export const UpBar = () => {
 
   return (
     <div className={cn('flex w-full flex-row items-end px-4 pb-4', isFullScreen && 'pt-2')}>
-      <Button
-        type="button"
-        variant="ghost"
-        className="flex size-[40px] items-center justify-center rounded-[12px] p-0"
-      >
-        <ArrowLeft className="fill-gray-100" />
-      </Button>
+      <Tooltip delayDuration={1000}>
+        <TooltipTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            className="flex size-[40px] items-center justify-center rounded-[12px] p-0"
+          >
+            <ArrowLeft className="fill-gray-100" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" align="start">
+          Вернуться в кабинет
+        </TooltipContent>
+      </Tooltip>
+
       <span className="ml-4 self-center text-2xl font-semibold text-gray-100">
         Название занятия
       </span>
@@ -76,18 +85,25 @@ export const UpBar = () => {
         {getViewIcon()}
         <span className="text-gray-100">Вид</span>
       </Button>
-      <Button
-        onClick={toggleFullScreen}
-        type="button"
-        variant="ghost"
-        className="ml-2 hidden h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0 md:flex"
-      >
-        {isFullScreen ? (
-          <Minimize className="fill-gray-100" />
-        ) : (
-          <Maximize className="fill-gray-100" />
-        )}
-      </Button>
+      <Tooltip delayDuration={1000}>
+        <TooltipTrigger asChild>
+          <Button
+            onClick={toggleFullScreen}
+            type="button"
+            variant="ghost"
+            className="ml-2 hidden h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0 md:flex"
+          >
+            {isFullScreen ? (
+              <Minimize className="fill-gray-100" />
+            ) : (
+              <Maximize className="fill-gray-100" />
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" align="end">
+          {isFullScreen ? 'Свернуть' : 'Развернуть на весь экран'}
+        </TooltipContent>
+      </Tooltip>
       {/* <button
         type="button"
       className="bg-gray-0 ml-2 flex h-10 w-10 flex-row items-center justify-center rounded-[20px]"

@@ -29,6 +29,7 @@
     "@xipkg/breadcrumbs": "2.0.13",
     "@xipkg/utils": "1.8.0",
     "@xipkg/sheet": "2.0.12",
+    "@xipkg/tooltip": "2.1.0",
     "@react-hook/latest": "1.0.3",
     "framer-motion": "12.12.1"
   },

@@ -60,7 +60,7 @@ export const FocusLayout = ({
 
   return (
     <div
-      className={`${orientation === 'vertical' ? 'h-[calc(100vh-14rem)] w-[calc(100%-277px)]' : 'm-auto h-[calc(100vh-22rem)] w-fit min-w-[calc(100vh-20%)]'} flex flex-col`}
+      className={`${orientation === 'vertical' ? 'w-[calc(100%-277px)]' : 'm-auto w-fit min-w-[calc(100vh-20%)]'} flex flex-col`}
     >
       <ParticipantTile
         isFocusToggleDisable
@@ -200,7 +200,7 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
   });
 
   return (
-    <div className="m-auto h-[calc(100vh-13rem)] w-full">
+    <div className="m-auto h-full w-full">
       <div
         ref={gridEl}
         style={{ gap: '1rem', maxWidth: '100%', height: '100%', margin: '0 auto' }}

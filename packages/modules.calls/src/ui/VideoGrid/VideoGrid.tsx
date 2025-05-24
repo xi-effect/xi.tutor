@@ -105,7 +105,7 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
         <LayoutContextProvider value={layoutContext}>
           <div className="lk-video-conference-inner">
             {!focusTrack ? (
-              <div className="min-h-sreen">
+              <div className="min-h-sreen h-full">
                 <GridLayout tracks={tracks}>
                   <ParticipantTile
                     isFocusToggleDisable

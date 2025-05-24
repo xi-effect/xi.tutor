@@ -921,8 +921,8 @@ importers:
         specifier: 2.0.12
         version: 2.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/tooltip':
-        specifier: ^2.0.11
-        version: 2.0.11(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
+        specifier: ^2.1.0
+        version: 2.1.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       common.utils:
         specifier: '*'
         version: link:../common.utils
@@ -1120,6 +1120,9 @@ importers:
       '@xipkg/sheet':
         specifier: 2.0.12
         version: 2.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/tooltip':
+        specifier: 2.1.0
+        version: 2.1.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/userprofile':
         specifier: 4.0.12
         version: 4.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
@@ -5676,7 +5679,7 @@ packages:
       '@xipkg/button': 3.1.8(@types/react@19.1.5)(react@19.1.0)
       '@xipkg/icons': 2.2.0(react@19.1.0)
       '@xipkg/sheet': 1.0.6(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
-      '@xipkg/tooltip': 2.0.11(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/tooltip': 2.1.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
       class-variance-authority: 0.7.1
       react: 19.1.0
@@ -5753,8 +5756,8 @@ packages:
       - react-dom
     dev: false
 
-  /@xipkg/tooltip@2.0.11(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0):
-    resolution: {integrity: sha512-KAUYoDM4C4vdB4UJtoU7n/MoSfWljEVyxQBvikGThj9CtdENsFo3LozV5KW+OP+pKyfnQqAY28CjxTPW+XSOdA==}
+  /@xipkg/tooltip@2.1.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0):
+    resolution: {integrity: sha512-BJf8frre4htuS9wXJXt+lvluTAml30b14liy3npfgYSvwTNn2Y4bgqaswUtUo64OXQ8qVWUxXoe2D58wUEKyXQ==}
     peerDependencies:
       react: ^19
     dependencies:
