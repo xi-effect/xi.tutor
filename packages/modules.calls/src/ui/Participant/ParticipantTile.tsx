@@ -138,7 +138,7 @@ export const ParticipantTile = ({
     >
       <TrackRefContextIfNeeded trackRef={trackReference}>
         <ParticipantContextIfNeeded participant={trackReference.participant}>
-          <div className="bg-gray-10 h-full rounded-lg">
+          <div className="bg-gray-10 h-full rounded-[16px]">
             {children ?? (
               <div className="h-full">
                 {isTrackReference(trackReference) &&
@@ -146,7 +146,7 @@ export const ParticipantTile = ({
                   trackReference.source === Track.Source.Camera ||
                   trackReference.source === Track.Source.ScreenShare) ? (
                   <VideoTrack
-                    className="rounded-lg"
+                    className="rounded-[16px]"
                     style={{
                       ...(trackReference.source === Track.Source.Camera && {
                         transform: 'rotateY(180deg)',
@@ -186,7 +186,7 @@ export const ParticipantTile = ({
                 <div className="lk-participant-metadata p-1">
                   <div>
                     {trackReference.source === Track.Source.Camera ? (
-                      <div className="bg-gray-0 flex h-[24px] w-full gap-[6px] rounded-[4px] px-[6px] py-[4px]">
+                      <div className="bg-gray-0 flex h-[24px] w-full gap-[6px] rounded-[8px] px-[6px] py-[4px]">
                         {isEncrypted && <LockLockedIcon />}
                         <TrackMutedIndicator
                           trackRef={{

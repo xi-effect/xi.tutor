@@ -9,8 +9,8 @@ export const DisconnectButton = () => {
 
   const handleDisconnect = () => {
     buttonProps.onClick?.();
-    updateStore('isStarted', true);
-    updateStore('connect', true);
+    updateStore('isStarted', false);
+    updateStore('connect', false);
   };
 
   return (

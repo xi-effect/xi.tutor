@@ -1117,6 +1117,9 @@ importers:
       '@xipkg/select':
         specifier: 2.2.5
         version: 2.2.5(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/sheet':
+        specifier: 2.0.12
+        version: 2.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/userprofile':
         specifier: 4.0.12
         version: 4.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
@@ -1129,6 +1132,9 @@ importers:
       common.sockets:
         specifier: '*'
         version: link:../common.sockets
+      common.utils:
+        specifier: '*'
+        version: link:../common.utils
       framer-motion:
         specifier: 12.12.1
         version: 12.12.1(react-dom@19.1.0)(react@19.1.0)
@@ -5639,6 +5645,22 @@ packages:
       '@radix-ui/react-dialog': 1.1.6(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons': 2.0.14(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
+      react: 19.1.0
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
+      - react-dom
+    dev: false
+
+  /@xipkg/sheet@2.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0):
+    resolution: {integrity: sha512-gzEf6RDXtZTV6UJL7ckpjPvCY78I7bsmfGeN0NcELZeHjLM0pAWq4C665HDjnsvAi7RNQ3OtFoEKLSdQU7fb9g==}
+    peerDependencies:
+      react: ^19
+    dependencies:
+      '@radix-ui/react-dialog': 1.1.6(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/icons': 2.2.0(react@19.1.0)
+      '@xipkg/utils': 1.8.0(react@19.1.0)
+      class-variance-authority: 0.7.1
       react: 19.1.0
     transitivePeerDependencies:
       - '@types/react'

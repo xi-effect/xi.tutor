@@ -37,7 +37,7 @@ export type OrientationLayoutT = {
 export const EmptyItemContainerOfUser = ({ ...restProps }) => (
   <div
     {...restProps}
-    className="bg-gray-10 flex h-full w-full items-center justify-center rounded-lg text-center"
+    className="bg-gray-10 flex w-full items-center justify-center rounded-[16px] text-center"
   >
     <p className="font-sans text-[20px] text-gray-100">Здесь пока никого нет</p>
   </div>
@@ -112,7 +112,7 @@ export const CarouselLayout = ({
   return (
     <div
       ref={asideEl}
-      className={`${carouselOrientation === 'horizontal' ? 'm-auto w-full' : 'mx-5 h-[calc(100vh-13rem)] max-w-[277px]'}`}
+      className={`${carouselOrientation === 'horizontal' ? 'm-auto w-full' : 'mx-5 max-w-[277px]'}`}
     >
       {isOneItem && (
         <div className="h-[144px] w-[250px]">

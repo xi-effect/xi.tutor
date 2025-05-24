@@ -13,6 +13,7 @@
   "dependencies": {
     "common.services": "*",
     "common.sockets": "*",
+    "common.utils": "*",
     "@livekit/components-react": "2.9.9",
     "@livekit/components-core": "0.12.7",
     "@livekit/components-styles": "1.1.6",
@@ -27,6 +28,7 @@
     "@xipkg/select": "2.2.5",
     "@xipkg/breadcrumbs": "2.0.13",
     "@xipkg/utils": "1.8.0",
+    "@xipkg/sheet": "2.0.12",
     "@react-hook/latest": "1.0.3",
     "framer-motion": "12.12.1"
   },
