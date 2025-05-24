@@ -87,7 +87,7 @@ export const UserTile = () => {
     if (videoTrack && videoEnabled) return null;
 
     return (
-      <div className="bg-gray-10 flex items-center justify-center rounded-[16px]">
+      <div className="bg-gray-40 flex items-center justify-center rounded-[16px]">
         <Avatar size="xxl">
           <AvatarImage
             src={`https://auth.xieffect.ru/api/users/${userId}/avatar.webp`}
@@ -100,7 +100,7 @@ export const UserTile = () => {
   }, [videoTrack, videoEnabled, userId]);
 
   return (
-    <div className="bg-gray-10 relative flex aspect-video h-full w-full items-center justify-center overflow-hidden rounded-[16px]">
+    <div className="bg-gray-40 relative flex aspect-video h-full w-full items-center justify-center overflow-hidden rounded-[16px]">
       <div className="relative">
         {renderVideo}
         {renderAvatar}

@@ -37,9 +37,9 @@ export type OrientationLayoutT = {
 export const EmptyItemContainerOfUser = ({ ...restProps }) => (
   <div
     {...restProps}
-    className="bg-gray-10 flex w-full items-center justify-center rounded-[16px] text-center"
+    className="bg-gray-40 flex w-full items-center justify-center rounded-[16px] text-center"
   >
-    <p className="font-sans text-[20px] text-gray-100">Здесь пока никого нет</p>
+    <p className="text-gray-0 font-sans text-3xl">Здесь пока никого нет</p>
   </div>
 );
 

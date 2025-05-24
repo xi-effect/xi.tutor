@@ -138,7 +138,7 @@ export const ParticipantTile = ({
     >
       <TrackRefContextIfNeeded trackRef={trackReference}>
         <ParticipantContextIfNeeded participant={trackReference.participant}>
-          <div className="bg-gray-10 h-full rounded-[16px]">
+          <div className="bg-gray-40 h-full rounded-[16px]">
             {children ?? (
               <div className="h-full">
                 {isTrackReference(trackReference) &&
@@ -152,8 +152,8 @@ export const ParticipantTile = ({
                         transform: 'rotateY(180deg)',
                       }),
                       boxSizing: 'border-box',
-                      background: 'var(--xi-bg-gray-10)',
-                      backgroundColor: 'var(--xi-bg-gray-10)',
+                      background: 'var(--xi-bg-gray-40)',
+                      backgroundColor: 'var(--xi-bg-gray-40)',
                     }}
                     trackRef={trackReference}
                     onSubscriptionStatusChanged={handleSubscribe}
@@ -171,7 +171,7 @@ export const ParticipantTile = ({
                   style={{
                     borderRadius: '8px',
                     height: '100%',
-                    backgroundColor: 'var(--xi-bg-gray-10)',
+                    backgroundColor: 'var(--xi-bg-gray-40)',
                   }}
                   className="lk-participant-placeholder flex h-full w-full justify-center"
                 >
