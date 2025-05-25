@@ -12,10 +12,16 @@ interface CalendarEventProps {
 
 export const CalendarEvent: FC<CalendarEventProps> = ({ calendarEvent, isPast }) => {
   return (
-    <div key={calendarEvent.id} className={cn('flex cursor-pointer gap-1', isPast && 'opacity-60')}>
+    <div
+      key={calendarEvent.id}
+      className={cn(
+        'group hover:bg-gray-5 flex cursor-pointer gap-1 rounded-sm',
+        isPast && 'opacity-60',
+      )}
+    >
       <div
         className={cn(
-          'xs:block hidden w-2 rounded-[8px]',
+          'xs:block hidden w-1 min-w-1 rounded-[2px]',
           calendarEvent.type === 'vacation' && 'bg-green-80',
           calendarEvent.type === 'task' && 'bg-brand-80',
           calendarEvent.type === 'cancelled' && 'bg-red-80',
@@ -23,9 +29,9 @@ export const CalendarEvent: FC<CalendarEventProps> = ({ calendarEvent, isPast })
       />
       <div
         className={cn(
-          calendarEvent.type === 'task' && 'hover:text-brand-80',
-          calendarEvent.type === 'vacation' && 'hover:text-green-80',
-          calendarEvent.type === 'cancelled' && 'hover:text-red-80',
+          calendarEvent.type === 'task' && 'group-hover:text-brand-80',
+          calendarEvent.type === 'vacation' && 'group-hover:text-green-80',
+          calendarEvent.type === 'cancelled' && 'group-hover:text-red-80',
         )}
       >
         {calendarEvent.start && (

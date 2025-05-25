@@ -49,12 +49,12 @@ export const CalendarModule = () => {
   }, []);
 
   return (
-    <div className="flex items-center">
+    <div className="flex h-[calc(100vh-64px)] items-start">
       <div className="grow px-[16px] md:pr-0 md:pl-[16px]">
         <div className="flex items-center justify-between pb-4">
           <p>
-            <span className="font-bold">{MONTHS[currentDate.getMonth()]} </span>
-            <span>{currentDate.getFullYear()}</span>
+            <span className="text-xl-base font-bold">{MONTHS[currentDate.getMonth()]} </span>
+            <span className="text-xl-base text-gray-60">{currentDate.getFullYear()}</span>
           </p>
           <div className="flex items-center gap-4">
             <Select value={mode} onValueChange={(value) => handleChangeMode(value)}>
@@ -73,7 +73,8 @@ export const CalendarModule = () => {
             </Select>
 
             <Button
-              variant="ghost"
+              variant="secondary"
+              size="s"
               className="xs:block hidden rounded-md border px-4 py-1 text-sm font-medium"
             >
               {t('today')}
