@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
 import { Suspense, lazy } from 'react';
+import { LoadingScreen } from 'common.ui';
 
 const CalendarModule = lazy(() =>
   import('modules.calendar').then((module) => ({ default: module.CalendarModule })),
@@ -16,11 +17,7 @@ export const Route = createFileRoute('/(app)/_layout/calendar/')({
 
 function CalendarPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex h-screen items-center justify-center">Загрузка календаря...</div>
-      }
-    >
+    <Suspense fallback={<LoadingScreen />}>
       <CalendarModule />
     </Suspense>
   );

@@ -10,11 +10,8 @@ import {
 import { Button } from '@xipkg/button';
 import { ChevronBottom, ChevronUp } from '@xipkg/icons';
 import { isCalendarMode, isWeekOrDayMode, ModeVariant, type CalendarMode } from './types';
-import { MonthCalendar } from './components/MonthCalendar/MonthCalendar';
-import { Sidebar } from './components/Sidebar/Sidebar';
-import { YearCalendar } from './components/YearCalendar/YearCalendar';
-import { WeekCalendar } from './components/WeekCalendar/WeekCalendar';
-import { useCalendar } from '../hooks/useCalendar';
+import { MonthCalendar, Sidebar, YearCalendar, WeekCalendar } from './components';
+import { useCalendar } from '../hooks';
 import { useTranslation } from 'react-i18next';
 
 const MODE_VARIANTS: ModeVariant[] = [
@@ -75,9 +72,12 @@ export const CalendarModule = () => {
               </SelectContent>
             </Select>
 
-            <div className="xs:block border-gray-30 hidden rounded-md border px-4 py-1 text-sm font-medium">
+            <Button
+              variant="ghost"
+              className="xs:block hidden rounded-md border px-4 py-1 text-sm font-medium"
+            >
               {t('today')}
-            </div>
+            </Button>
 
             <div>
               <Button variant="ghost" size="s" className="px-2">

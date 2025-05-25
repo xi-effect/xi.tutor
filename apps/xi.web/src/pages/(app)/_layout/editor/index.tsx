@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
+import { LoadingScreen } from 'common.ui';
 import { useState, Suspense, lazy } from 'react';
 import type { Descendant } from 'slate';
 
@@ -33,11 +34,7 @@ function EditorPage() {
     <div className="container mx-auto p-4">
       <h1 className="mb-4 text-2xl font-bold">Тестовый редактор</h1>
       <div className="h-[500px]">
-        <Suspense
-          fallback={
-            <div className="flex h-full items-center justify-center">Загрузка редактора...</div>
-          }
-        >
+        <Suspense fallback={<LoadingScreen />}>
           <Editor initialValue={value} onChange={handleChange} />
         </Suspense>
       </div>

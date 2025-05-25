@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
+import { LoadingScreen } from 'common.ui';
 import { Suspense, lazy } from 'react';
 
 const Board = lazy(() => import('modules.board').then((module) => ({ default: module.Board })));
@@ -14,7 +15,7 @@ export const Route = createFileRoute('/(app)/_layout/board/')({
 
 function BoardPage() {
   return (
-    <Suspense fallback={<div>Загрузка...</div>}>
+    <Suspense fallback={<LoadingScreen />}>
       <Board />
     </Suspense>
   );
