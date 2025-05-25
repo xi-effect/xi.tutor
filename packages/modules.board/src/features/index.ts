@@ -1,1 +1,1 @@
-export { useUndoRedo, NavbarAction } from './undoRedo';
+export { useUndoRedo, NavbarAction, useTrackedTransaction, useUndoRedoShortcuts } from './undoRedo';

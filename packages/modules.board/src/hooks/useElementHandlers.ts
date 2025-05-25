@@ -3,6 +3,7 @@ import Konva from 'konva';
 import { useBoardStore } from '../store';
 import { BoardElement, ToolbarElement } from '../types';
 import { useStage } from '../providers';
+import { useTrackedTransaction } from '../features';
 
 export const useElementHandlers = () => {
   const {
@@ -20,16 +21,16 @@ export const useElementHandlers = () => {
 
   const throttleUpdate = useRef<number | null>(null);
   const prevBox = useRef<{ x: number; y: number } | null>(null);
+  const { executeTrackedTransaction } = useTrackedTransaction();
 
-  const toolbarElement = useMemo<ToolbarElement>(
+  const toolbarElement = useCallback(
     () => ({
       id: 'toolbar',
       type: 'toolbar',
       x: 0,
       y: 0,
-      elementId: selectedElementId,
     }),
-    [selectedElementId],
+    [],
   );
 
   const updateToolbarPosition = useCallback(
@@ -111,20 +112,25 @@ export const useElementHandlers = () => {
       updateToolbarPosition(box.x, box.y);
       setIsElementTransforming(false);
 
-      updateElement(element.id, {
-        x: e.target.x(),
-        y: e.target.y(),
-        width: e.target.width(),
-        height: e.target.height(),
-      });
+      executeTrackedTransaction(
+        () =>
+          updateElement(element.id, {
+            x: e.target.x(),
+            y: e.target.y(),
+            width: e.target.width(),
+            height: e.target.height(),
+          }),
+        'move',
+      );
     },
     [
       transformerRef,
       selectedElementId,
+      boardElements,
       updateToolbarPosition,
       setIsElementTransforming,
+      executeTrackedTransaction,
       updateElement,
-      boardElements,
     ],
   );
 
@@ -139,12 +145,16 @@ export const useElementHandlers = () => {
     const scaleX = selectedNode.scaleX();
     const scaleY = selectedNode.scaleY();
 
-    updateElement(selectedElementId, {
-      x,
-      y,
-      scaleX,
-      scaleY,
-    });
+    executeTrackedTransaction(
+      () =>
+        updateElement(selectedElementId, {
+          x,
+          y,
+          scaleX,
+          scaleY,
+        }),
+      'transform',
+    );
 
     const box = transformerRef.current.getClientRect();
     updateToolbarPosition(box.x, box.y);
@@ -153,6 +163,7 @@ export const useElementHandlers = () => {
     transformerRef,
     selectedElementId,
     layerRef,
+    executeTrackedTransaction,
     updateToolbarPosition,
     setIsElementTransforming,
     updateElement,

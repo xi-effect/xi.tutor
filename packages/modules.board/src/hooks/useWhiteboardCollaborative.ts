@@ -3,6 +3,7 @@ import { useYjs } from './useYjs';
 import { useBoardStore } from '../store';
 import { BoardElement } from '../types';
 import { useUndoRedo } from '../features';
+import { shouldSkipSync } from '../utils';
 
 export const useWhiteboardCollaborative = ({
   roomId = 'roomid',
@@ -46,7 +47,7 @@ export const useWhiteboardCollaborative = ({
     // Синхронизация изменений из стора в YJS
     unsubs.push(
       useBoardStore.subscribe((state) => {
-        if (isUpdatingRef.current) return;
+        if (isUpdatingRef.current || shouldSkipSync()) return;
 
         const { boardElements } = state;
 

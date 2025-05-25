@@ -63,5 +63,4 @@ export interface ZoomConfig {
 
 export interface ToolbarElement extends BoardElement {
   type: 'toolbar';
-  elementId: string | null;
 }

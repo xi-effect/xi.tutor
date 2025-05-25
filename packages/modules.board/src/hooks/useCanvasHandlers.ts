@@ -1,4 +1,3 @@
-import { useUndoRedoStore } from './../features/undoRedo/model/undoRedoStore';
 import { useRef } from 'react';
 import Konva from 'konva';
 // import { useDebouncedFunction } from '@xipkg/utils';
@@ -6,15 +5,15 @@ import { useBoardStore, useUIStore } from '../store';
 import { useStage } from '../providers';
 import { useZoom } from './useWheelZoom';
 import { BoardElement } from '../types';
+import { useTrackedTransaction } from '../features';
+import { runWithoutSync } from '../utils';
 
 export const useCanvasHandlers = () => {
   const { stageRef, layerRef, getRelativePointerPosition } = useStage();
   const { addElement, selectedTool, selectElement, updateElement, removeElement } = useBoardStore();
   const { setStagePosition } = useUIStore();
 
-  const undoManager = useUndoRedoStore.getState().undoManager;
-
-  console.log(undoManager);
+  const { executeTrackedTransaction } = useTrackedTransaction();
 
   const currentLineId = useRef<string>('');
   const currentElementRef = useRef<BoardElement | null>(null);
@@ -26,39 +25,43 @@ export const useCanvasHandlers = () => {
 
   const { handleWheel } = useZoom(stageRef);
 
-  // const debouncedElementUpdate = useDebouncedFunction(updateElement, 300);
-
   const handleOnWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
     setStagePosition(e.currentTarget.position());
     handleWheel(e);
   };
 
   const handleMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const pos = getRelativePointerPosition();
+    if (!pos) return;
+
     if (selectedTool === 'pen') {
       isDrawing.current = true;
-      const pos = getRelativePointerPosition();
-      if (!pos) return;
 
       const newLineId = `line-${Date.now()}`;
       currentLineId.current = newLineId;
 
-      const newLine = {
+      const newLine: BoardElement = {
         type: 'line',
         id: newLineId,
         points: [pos.x, pos.y],
         stroke: 'black',
-      } as BoardElement;
+        x: 0,
+        y: 0,
+        scaleX: 1,
+        scaleY: 1,
+      };
 
-      addElement(newLine);
+      runWithoutSync(() => addElement(newLine));
+
       currentElementRef.current = newLine;
       return;
     }
 
     if (selectedTool === 'eraser') {
       isErasing.current = true;
-      const pos = getRelativePointerPosition();
-      if (!pos) return;
-
       prevPointerRef.current = pos;
 
       const trail = new Konva.Line({
@@ -76,38 +79,32 @@ export const useCanvasHandlers = () => {
       layerRef.current?.batchDraw();
     }
 
-    const clickedOnEmpty = e.target === e.target.getStage();
+    const clickedOnEmpty = e.target === stage;
     if (clickedOnEmpty || selectedTool !== 'select') {
       selectElement(null);
     }
   };
 
   const handleMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    const stage = stageRef.current;
+    if (!stage) return;
+
+    const pos = getRelativePointerPosition();
+    if (!pos) return;
+
     if (isDrawing.current && currentElementRef.current) {
-      const stage = e.target.getStage();
-      const pos = stage?.getRelativePointerPosition();
-      if (!pos) return;
-
       const layer = layerRef.current;
-
-      if (!layer) return;
-
-      const line = layer.findOne(`#${currentLineId.current}`) as Konva.Line | null;
-
+      const line = layer?.findOne(`#${currentLineId.current}`) as Konva.Line | null;
       if (!line) return;
 
       const newPoints = [...line.points(), pos.x, pos.y];
       line.points(newPoints);
-      layer.batchDraw();
+      layer?.batchDraw();
 
       currentElementRef.current.points = newPoints;
     }
-    if (isErasing.current && eraserTrailRef.current) {
-      const stage = e.target.getStage();
-      const pos = stage?.getRelativePointerPosition();
-      if (!pos || !prevPointerRef.current) return;
 
-      const target = e.target;
+    if (isErasing.current && eraserTrailRef.current && prevPointerRef.current) {
       const { x: prevX, y: prevY } = prevPointerRef.current;
       eraserTrailRef.current.opacity(0.5);
       eraserTrailRef.current.points([prevX, prevY, pos.x, pos.y]);
@@ -115,15 +112,14 @@ export const useCanvasHandlers = () => {
 
       prevPointerRef.current = pos;
 
+      const target = e.target;
       if (target !== stage && target instanceof Konva.Shape) {
         const elementId = target.id();
-
         if (!toEraseRef.current.has(elementId)) {
           toEraseRef.current.add(elementId);
 
           const originalStroke = target.stroke();
           const originalFill = target.fill();
-
           target.setAttr('originalStroke', originalStroke);
           target.setAttr('originalFill', originalFill);
 
@@ -141,21 +137,18 @@ export const useCanvasHandlers = () => {
     isDrawing.current = false;
     isErasing.current = false;
 
-    undoManager?.stopCapturing();
-
-    const yDoc = undoManager?.scope?.[0]?.doc ?? null;
-
-    const line = currentElementRef.current;
-    if (line) {
-      yDoc.transact(() => {
-        updateElement(line.id, { points: line.points });
-      }, 'local');
+    if (selectedTool === 'pen') {
+      const line = currentElementRef.current;
+      if (line) {
+        executeTrackedTransaction(() => updateElement(line.id, { points: line.points }));
+      }
     }
 
-    const layer = layerRef.current;
-    if (layer) {
+    if (selectedTool === 'eraser') {
+      const layer = layerRef.current;
+
       toEraseRef.current.forEach((id) => {
-        const shape = layer.findOne(`#${id}`) as Konva.Shape | null;
+        const shape = layer?.findOne(`#${id}`) as Konva.Shape | null;
         if (shape) {
           const originalStroke = shape.getAttr('originalStroke');
           const originalFill = shape.getAttr('originalFill');
@@ -163,23 +156,21 @@ export const useCanvasHandlers = () => {
           if (originalStroke) shape.stroke(originalStroke);
           if (originalFill) shape.fill(originalFill);
           shape.opacity(1);
-          if (selectedTool === 'eraser') {
-            removeElement(id);
-          }
+
+          executeTrackedTransaction(() => removeElement(id));
+
           shape.setAttr('originalStroke', null);
+          shape.setAttr('originalFill', null);
         }
       });
 
       toEraseRef.current.clear();
-      layer.batchDraw();
-    }
-    if (eraserTrailRef.current) {
+
       eraserTrailRef.current?.destroy();
       eraserTrailRef.current = null;
-
       prevPointerRef.current = null;
 
-      layerRef.current?.batchDraw();
+      layer?.batchDraw();
     }
   };
 

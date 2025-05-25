@@ -8,6 +8,7 @@ export const NavbarAction = () => {
     <div className="pointer-events-auto flex items-center justify-center gap-1">
       <button
         aria-label="Undo"
+        disabled={!canUndo}
         type="button"
         className="bg-gray-0 hover:bg-brand-0 flex size-6 items-center justify-center rounded-[8px] lg:size-8"
         onClick={() => undo()}
@@ -16,6 +17,7 @@ export const NavbarAction = () => {
       </button>
       <button
         aria-label="Redo"
+        disabled={!canRedo}
         type="button"
         className="bg-gray-0 hover:bg-brand-0 flex size-6 items-center justify-center rounded-[8px] lg:size-8"
         onClick={() => redo()}
