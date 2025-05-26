@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
-import { Table } from '../../../../../../../packages/features.table/index';
+import { DataTable } from '../../../../../../../packages/features.table/index';
 
 const DraftTable = () => {
-  return <Table />;
+  return <DataTable />;
 };
 
 // @ts-ignore

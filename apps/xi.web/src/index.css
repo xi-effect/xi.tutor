@@ -1,8 +1,8 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 
 @layer theme, base, components, utilities;
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/utilities.css" layer(utilities);
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
 
 @import '@xipkg/tailwind/index.css';
 
@@ -20,6 +20,7 @@
 @source "../node_modules/pages.signup";
 @source "../node_modules/pages.welcome";
 @source "../node_modules/pages.materials";
+@source "../node_modules/features.table";
 
 @source "../../../node_modules/@xipkg";
 
