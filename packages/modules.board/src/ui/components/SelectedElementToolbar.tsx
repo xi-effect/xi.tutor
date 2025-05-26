@@ -21,13 +21,12 @@ export const SelectedElementToolbar = () => {
 
   const { executeTrackedTransaction } = useTrackedTransaction();
 
-  console.log(selectedElementId);
-
   useEffect(() => {
-    if (!selectedElementId) {
-      removeElement('toolbar');
+    const selectedExists = boardElements.some((el) => el.id === selectedElementId);
+    if (!selectedExists && selectedElementId) {
+      selectElement(null);
     }
-  }, [removeElement, selectedElementId]);
+  }, [boardElements, selectedElementId, selectElement]);
 
   const position = useMemo(() => {
     if (selectToolbarPosition && (selectToolbarPosition.x !== 0 || selectToolbarPosition.y !== 0)) {

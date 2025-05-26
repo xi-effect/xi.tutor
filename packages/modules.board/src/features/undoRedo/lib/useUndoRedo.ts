@@ -7,13 +7,13 @@ export const useUndoRedo = (yTarget: Y.AbstractType<any>) => {
   useEffect(() => {
     const undoManager = new Y.UndoManager(yTarget, {
       trackedOrigins: new Set(['user', 'move', 'transform']),
-      captureTimeout: 100,
+      captureTimeout: 500,
     });
 
     useUndoRedoStore.getState().setManager(undoManager);
 
     undoManager.on('stack-item-added', () => {
-      console.log('[undoManager] stack item added', undoManager.lastChange);
+      console.log('t', yTarget);
     });
 
     return () => {

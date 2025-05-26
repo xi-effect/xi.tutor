@@ -23,7 +23,7 @@ export const useElementHandlers = () => {
   const prevBox = useRef<{ x: number; y: number } | null>(null);
   const { executeTrackedTransaction } = useTrackedTransaction();
 
-  const toolbarElement = useCallback(
+  const toolbarElement = useMemo<ToolbarElement>(
     () => ({
       id: 'toolbar',
       type: 'toolbar',
@@ -101,13 +101,6 @@ export const useElementHandlers = () => {
     (e: Konva.KonvaEventObject<DragEvent>, element: BoardElement) => {
       if (!transformerRef.current || !selectedElementId) return;
 
-      // проверяем появился ли в сторе элемент
-      const currentElement = boardElements.find((el) => el.id === element.id);
-      if (currentElement && JSON.stringify(currentElement) !== JSON.stringify(element)) {
-        updateElement(element.id, currentElement);
-        return;
-      }
-
       const box = transformerRef.current.getClientRect();
       updateToolbarPosition(box.x, box.y);
       setIsElementTransforming(false);
@@ -126,7 +119,6 @@ export const useElementHandlers = () => {
     [
       transformerRef,
       selectedElementId,
-      boardElements,
       updateToolbarPosition,
       setIsElementTransforming,
       executeTrackedTransaction,
