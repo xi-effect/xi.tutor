@@ -12,6 +12,11 @@ export const MediaDevices = () => {
 
   const updateStore = useCallStore((state) => state.updateStore);
 
+  const handleJoin = () => {
+    updateStore('isStarted', true);
+    updateStore('connect', true);
+  };
+
   return (
     <div className="border-gray-30 flex flex-col justify-between rounded-[16px] border p-5">
       <div>
@@ -41,7 +46,7 @@ export const MediaDevices = () => {
           </div>
         </div>
       </div>
-      <Button onClick={() => updateStore('isStarted', true)} className="w-full">
+      <Button onClick={() => handleJoin()} className="w-full">
         Присоединиться
       </Button>
     </div>

@@ -10,11 +10,8 @@ import {
 import { Button } from '@xipkg/button';
 import { ChevronBottom, ChevronUp } from '@xipkg/icons';
 import { isCalendarMode, isWeekOrDayMode, ModeVariant, type CalendarMode } from './types';
-import { MonthCalendar } from './components/MonthCalendar/MonthCalendar';
-import { Sidebar } from './components/Sidebar/Sidebar';
-import { YearCalendar } from './components/YearCalendar/YearCalendar';
-import { WeekCalendar } from './components/WeekCalendar/WeekCalendar';
-import { useCalendar } from '../hooks/useCalendar';
+import { MonthCalendar, Sidebar, YearCalendar, WeekCalendar } from './components';
+import { useCalendar } from '../hooks';
 import { useTranslation } from 'react-i18next';
 
 const MODE_VARIANTS: ModeVariant[] = [
@@ -52,12 +49,12 @@ export const CalendarModule = () => {
   }, []);
 
   return (
-    <div className="flex items-center">
+    <div className="flex h-[calc(100vh-64px)] items-start">
       <div className="grow px-[16px] md:pr-0 md:pl-[16px]">
         <div className="flex items-center justify-between pb-4">
           <p>
-            <span className="font-bold">{MONTHS[currentDate.getMonth()]} </span>
-            <span>{currentDate.getFullYear()}</span>
+            <span className="text-xl-base font-bold">{MONTHS[currentDate.getMonth()]} </span>
+            <span className="text-xl-base text-gray-60">{currentDate.getFullYear()}</span>
           </p>
           <div className="flex items-center gap-4">
             <Select value={mode} onValueChange={(value) => handleChangeMode(value)}>
@@ -75,9 +72,13 @@ export const CalendarModule = () => {
               </SelectContent>
             </Select>
 
-            <div className="xs:block border-gray-30 hidden rounded-md border px-4 py-1 text-sm font-medium">
+            <Button
+              variant="secondary"
+              size="s"
+              className="xs:block hidden rounded-md border px-4 py-1 text-sm font-medium"
+            >
               {t('today')}
-            </div>
+            </Button>
 
             <div>
               <Button variant="ghost" size="s" className="px-2">

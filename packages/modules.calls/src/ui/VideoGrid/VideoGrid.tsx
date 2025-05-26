@@ -97,13 +97,15 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
     }
   }, [search, navigate]);
 
+  console.log('tracks', tracks);
+
   return (
     <div className="lk-video-conference" {...props}>
       {isWeb() && (
         <LayoutContextProvider value={layoutContext}>
           <div className="lk-video-conference-inner">
             {!focusTrack ? (
-              <div className="min-h-sreen">
+              <div className="min-h-sreen h-full">
                 <GridLayout tracks={tracks}>
                   <ParticipantTile
                     isFocusToggleDisable

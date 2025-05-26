@@ -13,8 +13,7 @@ import {
 } from '@xipkg/icons';
 import { useMemo } from 'react';
 import { cn } from '@xipkg/utils';
-
-interface ExtendedTrackToggleProps extends TrackToggleProps<Track.Source> {
+interface ExtendedTrackToggleProps extends TrackToggleProps<any> {
   microTrack?: LocalAudioTrack;
   showIcon?: boolean;
 }

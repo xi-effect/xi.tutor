@@ -27,7 +27,7 @@ export const Call = ({
       <CallProvider firstId={firstId} secondId={secondId}>
         <div className="flex h-full w-full flex-col">
           {isStarted ? (
-            <div id="videoConferenceContainer" className="bg-gray-5 h-full">
+            <div id="videoConferenceContainer" className="bg-gray-0 h-full">
               <ActiveRoom room={room} token={token || ''} />
             </div>
           ) : (

@@ -10,6 +10,7 @@ import { TrackToggle } from '../shared/TrackToggle/TrackToggle';
 import { DevicesBar } from '../shared/DevicesBar/DevicesBar';
 import { useCallback, useMemo, useState } from 'react';
 import { DisconnectButton } from './DisconnectButton';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 export const BottomBar = ({ variation, controls, saveUserChoices = true }: ControlBarProps) => {
   const visibleControls = { leave: true, screenShare: true, ...controls };
 
@@ -35,8 +36,6 @@ export const BottomBar = ({ variation, controls, saveUserChoices = true }: Contr
   });
 
   const browserSupportsScreenSharing = supportsScreenSharing();
-
-  console.log('browserSupportsScreenSharing', browserSupportsScreenSharing, visibleControls);
 
   const [isScreenShareEnabled, setIsScreenShareEnabled] = useState(false);
 
@@ -86,13 +85,20 @@ export const BottomBar = ({ variation, controls, saveUserChoices = true }: Contr
           </div>
           <div className="bg-gray-0 border-gray-10 flex h-[48px] items-center justify-center gap-1 rounded-[16px] border p-1">
             {visibleControls.screenShare && browserSupportsScreenSharing && (
-              <TrackToggle
-                source={Track.Source.ScreenShare}
-                captureOptions={{ audio: true, selfBrowserSurface: 'include' }}
-                onChange={onScreenShareChange}
-              >
-                {showText && (isScreenShareEnabled ? 'Stop screen share' : 'Share screen')}
-              </TrackToggle>
+              <Tooltip delayDuration={1000}>
+                <TooltipTrigger asChild>
+                  <TrackToggle
+                    source={Track.Source.ScreenShare}
+                    captureOptions={{ audio: true, selfBrowserSurface: 'include' }}
+                    onChange={onScreenShareChange}
+                  >
+                    {showText && (isScreenShareEnabled ? 'Stop screen share' : 'Share screen')}
+                  </TrackToggle>
+                </TooltipTrigger>
+                <TooltipContent side="top" align="center">
+                  Поделиться экраном
+                </TooltipContent>
+              </Tooltip>
             )}
           </div>
         </div>

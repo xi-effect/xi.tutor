@@ -1,10 +1,10 @@
 import { LiveKitRoom } from '@livekit/components-react';
 import { Room } from 'livekit-client';
-// import { UpBar } from '../Up/UpBar';
-import { BottomBar } from '../Bottom/BottomBar';
-import { VideoGrid } from '../VideoGrid/VideoGrid';
+import { BottomBar } from '../Bottom';
+import { VideoGrid } from '../VideoGrid';
 import { serverUrl, serverUrlDev, isDevMode, devToken } from '../../utils/config';
 import { useCallStore } from '../../store/callStore';
+import { UpBar } from '../Up';
 
 type ActiveRoomPropsT = {
   token: string;
@@ -26,6 +26,9 @@ export const ActiveRoom = ({ token, room }: ActiveRoomPropsT) => {
     updateStore('connect', false);
   };
 
+  console.log('room', room);
+  console.log('connect', connect);
+
   return (
     <LiveKitRoom
       room={room}
@@ -38,7 +41,7 @@ export const ActiveRoom = ({ token, room }: ActiveRoomPropsT) => {
       video={videoEnabled || false}
     >
       <div className="flex h-full flex-col justify-stretch">
-        {/* <UpBar /> */}
+        <UpBar />
         <div className="flex h-full items-center justify-center px-4">
           <div className="h-full w-full text-center text-gray-100">
             <VideoGrid />
