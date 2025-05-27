@@ -1,6 +1,5 @@
 import { useRef } from 'react';
 import Konva from 'konva';
-// import { useDebouncedFunction } from '@xipkg/utils';
 import { useBoardStore, useUIStore } from '../store';
 import { useStage } from '../providers';
 import { useZoom } from './useWheelZoom';
@@ -40,6 +39,8 @@ export const useCanvasHandlers = () => {
     if (selectedTool === 'pen') {
       isDrawing.current = true;
 
+      //при одновременном рисовании несколькими пользователями, id линии может совпасть
+      //можно использовать clientId + Date.now() для уникальности
       const newLineId = `line-${Date.now()}`;
       currentLineId.current = newLineId;
 

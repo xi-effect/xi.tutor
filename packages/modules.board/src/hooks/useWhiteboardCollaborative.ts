@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useYjs } from './useYjs';
 import { useBoardStore } from '../store';
 import { BoardElement } from '../types';
@@ -13,38 +13,39 @@ export const useWhiteboardCollaborative = ({
   hostUrl?: string;
 }) => {
   const [isConnected, setIsConnected] = useState(false);
-  const isUpdatingRef = useRef<boolean>(false);
-  let hasConnectedBefore = false;
+  const isUpdatingRef = useRef(false);
+  const hasConnectedBefore = useRef(false); // исправлено
 
   const { addElement, updateElement, removeElement, boardElements } = useBoardStore();
   const { yDoc, provider, yStore, yArr, getYJSKeys } = useYjs(roomId, hostUrl);
 
   useUndoRedo(yArr);
 
-  // Синхронизирует один элемент из YJS в локальный стор
-  const synchronizeElementFromYjs = (elementId: string) => {
-    // получаем элемент из yjs стора
-    const json = yStore.get(elementId);
-    if (!json) return;
+  const synchronizeElementFromYjs = useCallback(
+    (elementId: string) => {
+      const json = yStore.get(elementId);
+      if (!json) return;
 
-    try {
-      const element = JSON.parse(json) as BoardElement;
-      const existingElement = boardElements.find((el) => el.id === elementId);
-      // проверяем есть ли элемент в локальном сторе, если не добавляем, если есть то обновляем
-      if (!existingElement) {
-        addElement(element);
-      } else if (JSON.stringify(existingElement) !== JSON.stringify(element)) {
-        updateElement(elementId, element);
+      try {
+        const element = JSON.parse(json) as BoardElement;
+        const existingElement = boardElements.find((el) => el.id === elementId);
+
+        if (!existingElement) {
+          addElement(element);
+        } else if (JSON.stringify(existingElement) !== JSON.stringify(element)) {
+          updateElement(elementId, element);
+        }
+      } catch (error) {
+        console.error(`Error parsing JSON for key ${elementId} during sync:`, error);
       }
-    } catch (error) {
-      console.error(`Error parsing JSON for key ${elementId} during sync:`, error);
-    }
-  };
+    },
+    [addElement, updateElement, yStore, boardElements],
+  );
 
   useEffect(() => {
     const unsubs: (() => void)[] = [];
 
-    // Синхронизация изменений из стора в YJS
+    // Подписка на локальный стор — пушим изменения в Yjs
     unsubs.push(
       useBoardStore.subscribe((state) => {
         if (isUpdatingRef.current || shouldSkipSync()) return;
@@ -57,18 +58,21 @@ export const useWhiteboardCollaborative = ({
           const storeKeysSet = new Set(boardElements.map((el) => el.id));
 
           yDoc.transact(() => {
+            // Удаляем из Yjs элементы, которых нет в локальном сторе
             yjsKeys.forEach((key) => {
               if (!storeKeysSet.has(key)) {
                 yStore.delete(key);
               }
             });
 
+            // Добавляем или обновляем в Yjs только изменённые элементы
             boardElements.forEach((element) => {
               const key = element.id;
               const existingJson = yStore.get(key);
+              const newJson = JSON.stringify(element);
 
-              if (!existingJson || JSON.stringify(element) !== existingJson) {
-                yStore.set(key, JSON.stringify(element));
+              if (!existingJson || existingJson !== newJson) {
+                yStore.set(key, newJson);
               }
             });
           }, 'local');
@@ -80,7 +84,7 @@ export const useWhiteboardCollaborative = ({
       }),
     );
 
-    // Обрабатывает изменения, поступающие из YJS
+    // Обработка изменений из Yjs — синхронизация в локальный стор
     const handleChange = (
       changes: Map<
         string,
@@ -108,35 +112,37 @@ export const useWhiteboardCollaborative = ({
       }
     };
 
-    // Выполняет полную синхронизацию данных при подключении
+    // Полная синхронизация из Yjs при первом подключении
     const handleSync = () => {
+      console.log('Synchronizing data from YJS...');
+
       const keys = getYJSKeys();
       const yjsKeys = new Set(keys);
-      // Удаляем элементы, которых нет в YJS
+
+      // Удаляем элементы из локального стора, которых нет в Yjs
       boardElements.forEach((element) => {
         if (!yjsKeys.has(element.id)) {
           removeElement(element.id);
         }
       });
-      // Обрабатываем каждый ключ из YJS
+
+      // Синхронизируем элементы из Yjs в локальный стор
       keys.forEach((key) => {
         synchronizeElementFromYjs(key);
       });
     };
 
-    // Обрабатывает изменения статуса соединения
+    // Обработка статуса подключения
     const handleStatusChange = ({ status }: { status: 'disconnected' | 'connected' }) => {
       setIsConnected(status === 'connected');
 
-      if (status === 'disconnected') {
-        return;
-      }
+      if (status === 'disconnected') return;
 
       provider.off('synced', handleSync);
 
       if (status === 'connected') {
-        if (hasConnectedBefore) return;
-        hasConnectedBefore = true;
+        if (hasConnectedBefore.current) return;
+        hasConnectedBefore.current = true;
         provider.on('synced', handleSync);
         unsubs.push(() => provider.off('synced', handleSync));
       }
@@ -145,7 +151,6 @@ export const useWhiteboardCollaborative = ({
     provider.on('status', handleStatusChange);
     unsubs.push(() => provider.off('status', handleStatusChange));
 
-    // Подписываемся на изменения YJS
     yStore.on('change', handleChange);
     unsubs.push(() => yStore.off('change', handleChange));
 
@@ -163,6 +168,8 @@ export const useWhiteboardCollaborative = ({
     updateElement,
     removeElement,
     boardElements,
+    getYJSKeys,
+    synchronizeElementFromYjs,
   ]);
 
   return {

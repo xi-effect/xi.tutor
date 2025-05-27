@@ -17,18 +17,18 @@ export const useUndoRedoStore = create<UndoRedoStoreT>((set, get) => ({
   canRedo: false,
 
   setManager: (mgr) => {
-    mgr.on('stack-item-added', updateState);
-    mgr.on('stack-item-popped', updateState);
-
-    function updateState() {
+    mgr.on('stack-item-added', () => {
       set({
         canUndo: mgr.undoStack.length > 0,
         canRedo: mgr.redoStack.length > 0,
       });
-    }
-
-    updateState();
-
+    });
+    mgr.on('stack-item-popped', () => {
+      set({
+        canUndo: mgr.undoStack.length > 0,
+        canRedo: mgr.redoStack.length > 0,
+      });
+    });
     set({ undoManager: mgr });
   },
 
