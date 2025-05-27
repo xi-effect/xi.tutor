@@ -110,8 +110,6 @@ export const useElementHandlers = () => {
           updateElement(element.id, {
             x: e.target.x(),
             y: e.target.y(),
-            width: e.target.width(),
-            height: e.target.height(),
           }),
         'move',
       );

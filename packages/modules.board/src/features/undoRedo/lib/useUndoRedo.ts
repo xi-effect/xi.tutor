@@ -12,10 +12,6 @@ export const useUndoRedo = (yTarget: Y.AbstractType<any>) => {
 
     useUndoRedoStore.getState().setManager(undoManager);
 
-    undoManager.on('stack-item-added', () => {
-      console.log('t', yTarget);
-    });
-
     return () => {
       undoManager.destroy();
     };
