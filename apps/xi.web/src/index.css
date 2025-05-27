@@ -9,6 +9,7 @@
 @source "../src";
 @source "../node_modules/@xipkg";
 @source "../node_modules/modules.navigation";
+@source "../node_modules/modules.profile";
 @source "../node_modules/modules.calls";
 @source "../node_modules/modules.profile";
 @source "../node_modules/modules.board";
