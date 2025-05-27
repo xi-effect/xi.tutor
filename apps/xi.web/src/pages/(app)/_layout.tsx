@@ -1,5 +1,6 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router';
 import { Navigation } from 'modules.navigation';
+import { CompactView } from 'modules.calls';
 
 export const Route = createFileRoute('/(app)/_layout')({
   head: () => ({
@@ -31,7 +32,9 @@ function LayoutComponent() {
   return (
     <div className="relative flex min-h-svh flex-col overflow-hidden">
       <Navigation>
-        <Outlet />
+        <CompactView>
+          <Outlet />
+        </CompactView>
       </Navigation>
     </div>
   );

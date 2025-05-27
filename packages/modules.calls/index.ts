@@ -1,1 +1,1 @@
-export { Call } from './src';
+export { Call, CompactView } from './src';
