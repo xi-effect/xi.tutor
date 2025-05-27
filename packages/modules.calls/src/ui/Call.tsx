@@ -2,6 +2,8 @@ import { Room } from 'livekit-client';
 import { ActiveRoom } from './Room/ActiveRoom';
 import { PreJoin } from './PreJoin';
 import { CallProvider } from '../providers/CallProvider';
+import { LiveKitProvider } from '../providers/LiveKitProvider';
+import { RoomProvider } from '../providers/RoomProvider';
 import { useLivekitToken } from '../hooks/useLivekitToken';
 import { useCallStore } from '../store/callStore';
 import { useInitUserDevices } from '../hooks';
@@ -25,15 +27,19 @@ export const Call = ({
   return (
     <div className="h-[calc(100vh-64px)]">
       <CallProvider firstId={firstId} secondId={secondId}>
-        <div className="flex h-full w-full flex-col">
-          {isStarted ? (
-            <div id="videoConferenceContainer" className="bg-gray-0 h-full">
-              <ActiveRoom room={room} token={token || ''} />
+        <RoomProvider room={room}>
+          <LiveKitProvider room={room} token={token || ''}>
+            <div className="flex h-full w-full flex-col">
+              {isStarted ? (
+                <div id="videoConferenceContainer" className="bg-gray-0 h-full">
+                  <ActiveRoom />
+                </div>
+              ) : (
+                <PreJoin />
+              )}
             </div>
-          ) : (
-            <PreJoin />
-          )}
-        </div>
+          </LiveKitProvider>
+        </RoomProvider>
       </CallProvider>
     </div>
   );

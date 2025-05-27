@@ -10,8 +10,17 @@ import {
 } from '@dnd-kit/core';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { CompactCall } from './CompactCall';
+import { LiveKitProvider } from '../../providers/LiveKitProvider';
+import { useLivekitToken } from '../../hooks/useLivekitToken';
+import { useRoom } from '../../providers/RoomProvider';
 
 type Corner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+
+type CompactViewProps = {
+  children: React.ReactNode;
+  firstId?: string;
+  secondId?: string;
+};
 
 const DroppableCorner: FC<{ id: Corner; className?: string }> = ({ id, className }) => {
   const { setNodeRef } = useDroppable({
@@ -21,9 +30,11 @@ const DroppableCorner: FC<{ id: Corner; className?: string }> = ({ id, className
   return <div ref={setNodeRef} className={`absolute h-1/2 w-1/2 ${className}`} />;
 };
 
-export const CompactView: FC<{ children: React.ReactNode }> = ({ children }) => {
+export const CompactView: FC<CompactViewProps> = ({ children, firstId = '1', secondId = '1' }) => {
   const [activeCorner, setActiveCorner] = useState<Corner>('top-left');
   const [isDragging, setIsDragging] = useState(false);
+  const { room } = useRoom();
+  const { token = null } = useLivekitToken(firstId, secondId);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -55,41 +66,43 @@ export const CompactView: FC<{ children: React.ReactNode }> = ({ children }) => 
   };
 
   return (
-    <DndContext
-      sensors={sensors}
-      onDragEnd={handleDragEnd}
-      onDragStart={() => setIsDragging(true)}
-      modifiers={[restrictToWindowEdges]}
-    >
-      <div className="relative flex h-[calc(100vh-64px)] flex-col gap-2 bg-transparent">
-        <DroppableCorner id="top-left" className="top-0 left-0" />
-        <DroppableCorner id="top-right" className="top-0 right-0" />
-        <DroppableCorner id="bottom-left" className="bottom-0 left-0" />
-        <DroppableCorner id="bottom-right" className="right-0 bottom-0" />
+    <LiveKitProvider room={room} token={token || ''}>
+      <DndContext
+        sensors={sensors}
+        onDragEnd={handleDragEnd}
+        onDragStart={() => setIsDragging(true)}
+        modifiers={[restrictToWindowEdges]}
+      >
+        <div className="relative flex h-[calc(100vh-64px)] flex-col gap-2 bg-transparent">
+          <DroppableCorner id="top-left" className="top-0 left-0" />
+          <DroppableCorner id="top-right" className="top-0 right-0" />
+          <DroppableCorner id="bottom-left" className="bottom-0 left-0" />
+          <DroppableCorner id="bottom-right" className="right-0 bottom-0" />
 
-        <div
-          className={`absolute z-100 ${getCornerPosition(activeCorner)} transition-all duration-500 ease-out`}
-        >
-          <CompactCall>
-            <div className="p-2">
-              <h3 className="mb-2 font-medium">Детали звонка</h3>
-              <p>Здесь может быть информация о звонке</p>
-            </div>
-          </CompactCall>
-        </div>
-
-        <DragOverlay>
-          {isDragging ? (
+          <div
+            className={`absolute z-100 ${getCornerPosition(activeCorner)} transition-all duration-500 ease-out`}
+          >
             <CompactCall>
               <div className="p-2">
                 <h3 className="mb-2 font-medium">Детали звонка</h3>
                 <p>Здесь может быть информация о звонке</p>
               </div>
             </CompactCall>
-          ) : null}
-        </DragOverlay>
-        {children}
-      </div>
-    </DndContext>
+          </div>
+
+          <DragOverlay>
+            {isDragging ? (
+              <CompactCall>
+                <div className="p-2">
+                  <h3 className="mb-2 font-medium">Детали звонка</h3>
+                  <p>Здесь может быть информация о звонке</p>
+                </div>
+              </CompactCall>
+            ) : null}
+          </DragOverlay>
+          {children}
+        </div>
+      </DndContext>
+    </LiveKitProvider>
   );
 };
