@@ -43,6 +43,8 @@ export const UserTile = () => {
     [videoTracks],
   );
 
+  console.log('videoTrack', videoTrack);
+
   const facingMode = useMemo(() => {
     if (videoTrack) {
       const { facingMode } = facingModeFromLocalTrack(videoTrack);

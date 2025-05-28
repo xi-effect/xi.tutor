@@ -36,7 +36,11 @@ export const Controls = () => {
     [tracks],
   );
 
-  console.log('audioTrack', audioTrack);
+  // console.log('audioTrack', audioTrack);
+
+  console.log('videoDeviceId', videoDeviceId);
+  console.log('videoEnabled', videoEnabled);
+  console.log('videoTrack', videoTrack);
 
   const handleAudioChange = useCallback(
     (enabled: boolean) => {
@@ -47,6 +51,7 @@ export const Controls = () => {
 
   const handleVideoChange = useCallback(
     (enabled: boolean) => {
+      console.log('handleVideoChange', enabled);
       updateStore('videoEnabled', enabled);
     },
     [updateStore],

@@ -10,9 +10,7 @@ import {
 } from '@dnd-kit/core';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { CompactCall } from './CompactCall';
-import { LiveKitProvider } from '../../providers/LiveKitProvider';
-import { useLivekitToken } from '../../hooks/useLivekitToken';
-import { useRoom } from '../../providers/RoomProvider';
+import { useCallStore } from '../../store/callStore';
 
 type Corner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
@@ -22,19 +20,17 @@ type CompactViewProps = {
   secondId?: string;
 };
 
-const DroppableCorner: FC<{ id: Corner; className?: string }> = ({ id, className }) => {
+const DroppableCorner = ({ id, className }: { id: string; className: string }) => {
   const { setNodeRef } = useDroppable({
     id,
   });
 
-  return <div ref={setNodeRef} className={`absolute h-1/2 w-1/2 ${className}`} />;
+  return <div ref={setNodeRef} className={`absolute size-32 ${className}`} />;
 };
 
-export const CompactView: FC<CompactViewProps> = ({ children, firstId = '1', secondId = '1' }) => {
+export const Compact: FC<CompactViewProps> = ({ children }) => {
   const [activeCorner, setActiveCorner] = useState<Corner>('top-left');
   const [isDragging, setIsDragging] = useState(false);
-  const { room } = useRoom();
-  const { token = null } = useLivekitToken(firstId, secondId);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -66,43 +62,39 @@ export const CompactView: FC<CompactViewProps> = ({ children, firstId = '1', sec
   };
 
   return (
-    <LiveKitProvider room={room} token={token || ''}>
-      <DndContext
-        sensors={sensors}
-        onDragEnd={handleDragEnd}
-        onDragStart={() => setIsDragging(true)}
-        modifiers={[restrictToWindowEdges]}
-      >
-        <div className="relative flex h-[calc(100vh-64px)] flex-col gap-2 bg-transparent">
-          <DroppableCorner id="top-left" className="top-0 left-0" />
-          <DroppableCorner id="top-right" className="top-0 right-0" />
-          <DroppableCorner id="bottom-left" className="bottom-0 left-0" />
-          <DroppableCorner id="bottom-right" className="right-0 bottom-0" />
+    <DndContext
+      sensors={sensors}
+      onDragEnd={handleDragEnd}
+      onDragStart={() => setIsDragging(true)}
+      modifiers={[restrictToWindowEdges]}
+    >
+      <div className="relative flex h-[calc(100vh-64px)] flex-col gap-2 bg-transparent">
+        <DroppableCorner id="top-left" className="top-0 left-0" />
+        <DroppableCorner id="top-right" className="top-0 right-0" />
+        <DroppableCorner id="bottom-left" className="bottom-0 left-0" />
+        <DroppableCorner id="bottom-right" className="right-0 bottom-0" />
 
-          <div
-            className={`absolute z-100 ${getCornerPosition(activeCorner)} transition-all duration-500 ease-out`}
-          >
-            <CompactCall>
-              <div className="p-2">
-                <h3 className="mb-2 font-medium">Детали звонка</h3>
-                <p>Здесь может быть информация о звонке</p>
-              </div>
-            </CompactCall>
-          </div>
-
-          <DragOverlay>
-            {isDragging ? (
-              <CompactCall>
-                <div className="p-2">
-                  <h3 className="mb-2 font-medium">Детали звонка</h3>
-                  <p>Здесь может быть информация о звонке</p>
-                </div>
-              </CompactCall>
-            ) : null}
-          </DragOverlay>
-          {children}
+        <div
+          className={`absolute z-100 ${getCornerPosition(activeCorner)} transition-all duration-500 ease-out`}
+        >
+          <CompactCall />
         </div>
-      </DndContext>
-    </LiveKitProvider>
+
+        <DragOverlay>{isDragging ? <CompactCall /> : null}</DragOverlay>
+        {children}
+      </div>
+    </DndContext>
+  );
+};
+
+export const CompactView = ({ children, firstId = '1', secondId = '1' }: CompactViewProps) => {
+  const { mode } = useCallStore();
+
+  if (mode === 'full') return <>{children}</>;
+
+  return (
+    <Compact firstId={firstId} secondId={secondId}>
+      {children}
+    </Compact>
   );
 };

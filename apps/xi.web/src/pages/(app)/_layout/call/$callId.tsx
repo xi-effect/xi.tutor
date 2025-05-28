@@ -18,6 +18,6 @@ export const Route = createFileRoute('/(app)/_layout/call/$callId')({
 
 function CallPage() {
   // @ts-ignore
-  const { callId } = Route.useParams();
-  return <Call firstId={callId} secondId="2" />;
+  // const { callId } = Route.useParams();
+  return <Call firstId="1" secondId="2" />;
 }

@@ -17,9 +17,9 @@ export const useRoom = () => {
 
 type RoomProviderProps = {
   children: ReactNode;
-  room: Room;
 };
 
-export const RoomProvider = ({ children, room }: RoomProviderProps) => {
+export const RoomProvider = ({ children }: RoomProviderProps) => {
+  const room = new Room();
   return <RoomContext.Provider value={{ room }}>{children}</RoomContext.Provider>;
 };
