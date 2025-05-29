@@ -4,9 +4,9 @@ import { Plus } from '@xipkg/icons';
 import { Header } from './Header';
 import { TabsComponent } from './TabsComponent';
 
-export const MaterialsPage = () => {
+export const ClassroomPage = () => {
   return (
-    <div className="flex flex-col justify-between gap-6 px-4">
+    <div className="flex flex-col justify-between gap-6 pr-4 max-md:pl-4">
       <div className="flex flex-col gap-6 max-md:gap-4">
         <Header />
         <TabsComponent />

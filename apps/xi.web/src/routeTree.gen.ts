@@ -29,6 +29,7 @@ import { Route as appLayoutEditorIndexImport } from './pages/(app)/_layout/edito
 import { Route as appLayoutClassroomsIndexImport } from './pages/(app)/_layout/classrooms/index';
 import { Route as appLayoutCallIndexImport } from './pages/(app)/_layout/call/index';
 import { Route as appLayoutCalendarIndexImport } from './pages/(app)/_layout/calendar/index';
+import { Route as appLayoutClassroomsClassroomIdImport } from './pages/(app)/_layout/classrooms/$classroomId';
 import { Route as appLayoutCallCallIdImport } from './pages/(app)/_layout/call/$callId';
 import { Route as appLayoutBoardBoardIdImport } from './pages/(app)/_layout/board/$boardId';
 
@@ -144,6 +145,12 @@ const appLayoutCalendarIndexRoute = appLayoutCalendarIndexImport.update({
   getParentRoute: () => appLayoutRoute,
 } as any);
 
+const appLayoutClassroomsClassroomIdRoute = appLayoutClassroomsClassroomIdImport.update({
+  id: '/classrooms/$classroomId',
+  path: '/classrooms/$classroomId',
+  getParentRoute: () => appLayoutRoute,
+} as any);
+
 const appLayoutCallCallIdRoute = appLayoutCallCallIdImport.update({
   id: '/call/$callId',
   path: '/call/$callId',
@@ -230,6 +237,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutCallCallIdImport;
       parentRoute: typeof appLayoutImport;
     };
+    '/(app)/_layout/classrooms/$classroomId': {
+      id: '/(app)/_layout/classrooms/$classroomId';
+      path: '/classrooms/$classroomId';
+      fullPath: '/classrooms/$classroomId';
+      preLoaderRoute: typeof appLayoutClassroomsClassroomIdImport;
+      parentRoute: typeof appLayoutImport;
+    };
     '/(app)/_layout/calendar/': {
       id: '/(app)/_layout/calendar/';
       path: '/calendar';
@@ -309,6 +323,7 @@ interface appLayoutRouteChildren {
   appLayoutIndexRoute: typeof appLayoutIndexRoute;
   appLayoutBoardBoardIdRoute: typeof appLayoutBoardBoardIdRoute;
   appLayoutCallCallIdRoute: typeof appLayoutCallCallIdRoute;
+  appLayoutClassroomsClassroomIdRoute: typeof appLayoutClassroomsClassroomIdRoute;
   appLayoutCalendarIndexRoute: typeof appLayoutCalendarIndexRoute;
   appLayoutCallIndexRoute: typeof appLayoutCallIndexRoute;
   appLayoutClassroomsIndexRoute: typeof appLayoutClassroomsIndexRoute;
@@ -321,6 +336,7 @@ const appLayoutRouteChildren: appLayoutRouteChildren = {
   appLayoutIndexRoute: appLayoutIndexRoute,
   appLayoutBoardBoardIdRoute: appLayoutBoardBoardIdRoute,
   appLayoutCallCallIdRoute: appLayoutCallCallIdRoute,
+  appLayoutClassroomsClassroomIdRoute: appLayoutClassroomsClassroomIdRoute,
   appLayoutCalendarIndexRoute: appLayoutCalendarIndexRoute,
   appLayoutCallIndexRoute: appLayoutCallIndexRoute,
   appLayoutClassroomsIndexRoute: appLayoutClassroomsIndexRoute,
@@ -369,6 +385,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof authSignupIndexRoute;
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute;
   '/call/$callId': typeof appLayoutCallCallIdRoute;
+  '/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdRoute;
   '/calendar': typeof appLayoutCalendarIndexRoute;
   '/call': typeof appLayoutCallIndexRoute;
   '/classrooms': typeof appLayoutClassroomsIndexRoute;
@@ -389,6 +406,7 @@ export interface FileRoutesByTo {
   '/signup': typeof authSignupIndexRoute;
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute;
   '/call/$callId': typeof appLayoutCallCallIdRoute;
+  '/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdRoute;
   '/calendar': typeof appLayoutCalendarIndexRoute;
   '/call': typeof appLayoutCallIndexRoute;
   '/classrooms': typeof appLayoutClassroomsIndexRoute;
@@ -413,6 +431,7 @@ export interface FileRoutesById {
   '/(auth)/signup/': typeof authSignupIndexRoute;
   '/(app)/_layout/board/$boardId': typeof appLayoutBoardBoardIdRoute;
   '/(app)/_layout/call/$callId': typeof appLayoutCallCallIdRoute;
+  '/(app)/_layout/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdRoute;
   '/(app)/_layout/calendar/': typeof appLayoutCalendarIndexRoute;
   '/(app)/_layout/call/': typeof appLayoutCallIndexRoute;
   '/(app)/_layout/classrooms/': typeof appLayoutClassroomsIndexRoute;
@@ -435,6 +454,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/board/$boardId'
     | '/call/$callId'
+    | '/classrooms/$classroomId'
     | '/calendar'
     | '/call'
     | '/classrooms'
@@ -454,6 +474,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/board/$boardId'
     | '/call/$callId'
+    | '/classrooms/$classroomId'
     | '/calendar'
     | '/call'
     | '/classrooms'
@@ -476,6 +497,7 @@ export interface FileRouteTypes {
     | '/(auth)/signup/'
     | '/(app)/_layout/board/$boardId'
     | '/(app)/_layout/call/$callId'
+    | '/(app)/_layout/classrooms/$classroomId'
     | '/(app)/_layout/calendar/'
     | '/(app)/_layout/call/'
     | '/(app)/_layout/classrooms/'
@@ -536,6 +558,7 @@ export const routeTree = rootRoute
         "/(app)/_layout/",
         "/(app)/_layout/board/$boardId",
         "/(app)/_layout/call/$callId",
+        "/(app)/_layout/classrooms/$classroomId",
         "/(app)/_layout/calendar/",
         "/(app)/_layout/call/",
         "/(app)/_layout/classrooms/",
@@ -575,6 +598,10 @@ export const routeTree = rootRoute
     },
     "/(app)/_layout/call/$callId": {
       "filePath": "(app)/_layout/call/$callId.tsx",
+      "parent": "/(app)/_layout"
+    },
+    "/(app)/_layout/classrooms/$classroomId": {
+      "filePath": "(app)/_layout/classrooms/$classroomId.tsx",
       "parent": "/(app)/_layout"
     },
     "/(app)/_layout/calendar/": {

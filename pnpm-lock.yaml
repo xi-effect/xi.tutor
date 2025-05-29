@@ -74,6 +74,9 @@ importers:
       modules.editor:
         specifier: '*'
         version: link:../../packages/modules.editor
+      pages.classroom:
+        specifier: '*'
+        version: link:../../packages/pages.classroom
       pages.classrooms:
         specifier: '*'
         version: link:../../packages/pages.classrooms
@@ -1009,8 +1012,8 @@ importers:
         specifier: 2.3.0
         version: 2.3.0(react@19.1.0)
       '@xipkg/scrollarea':
-        specifier: 2.0.12
-        version: 2.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
+        specifier: 2.1.0
+        version: 2.1.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/select':
         specifier: 2.2.5
         version: 2.2.5(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
@@ -1360,8 +1363,8 @@ importers:
         specifier: 2.0.12
         version: 2.0.12(react@19.1.0)
       '@xipkg/scrollarea':
-        specifier: 2.0.12
-        version: 2.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
+        specifier: 2.1.0
+        version: 2.1.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/userprofile':
         specifier: 4.0.12
         version: 4.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
@@ -1457,8 +1460,8 @@ importers:
         specifier: 2.0.12
         version: 2.0.12(react@19.1.0)
       '@xipkg/scrollarea':
-        specifier: 2.0.12
-        version: 2.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
+        specifier: 2.1.0
+        version: 2.1.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/sidebar':
         specifier: 0.2.0
         version: 0.2.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
@@ -1598,6 +1601,82 @@ importers:
       sonner:
         specifier: 2.0.3
         version: 2.0.3(react-dom@19.1.0)(react@19.1.0)
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.19.0
+        version: 9.27.0
+      '@types/node':
+        specifier: ^20.3.1
+        version: 20.17.50
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.1.5
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.1.5(@types/react@19.1.5)
+      '@xipkg/eslint':
+        specifier: 3.2.0
+        version: 3.2.0(eslint-plugin-jsx-a11y@6.10.2)(eslint@9.27.0)(turbo@2.5.3)(typescript@5.7.3)
+      '@xipkg/tailwind':
+        specifier: 0.8.1
+        version: 0.8.1
+      '@xipkg/typescript':
+        specifier: latest
+        version: 0.2.0
+      common.eslint:
+        specifier: '*'
+        version: link:../common.eslint
+      common.typescript:
+        specifier: '*'
+        version: link:../common.typescript
+      eslint:
+        specifier: ^9.19.0
+        version: 9.27.0
+      eslint-plugin-react-hooks:
+        specifier: ^5.0.0
+        version: 5.2.0(eslint@9.27.0)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.18
+        version: 0.4.20(eslint@9.27.0)
+      globals:
+        specifier: ^15.14.0
+        version: 15.15.0
+      typescript:
+        specifier: ~5.7.2
+        version: 5.7.3
+      typescript-eslint:
+        specifier: ^8.22.0
+        version: 8.32.1(eslint@9.27.0)(typescript@5.7.3)
+
+  packages/pages.classroom:
+    dependencies:
+      '@xipkg/badge':
+        specifier: 2.0.12
+        version: 2.0.12(react@19.1.0)
+      '@xipkg/button':
+        specifier: 3.1.8
+        version: 3.1.8(@types/react@19.1.5)(react@19.1.0)
+      '@xipkg/dropdown':
+        specifier: 3.0.12
+        version: 3.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/icons':
+        specifier: 2.3.0
+        version: 2.3.0(react@19.1.0)
+      '@xipkg/link':
+        specifier: ^2.0.12
+        version: 2.0.12(react@19.1.0)
+      '@xipkg/scrollarea':
+        specifier: 2.1.0
+        version: 2.1.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/select':
+        specifier: ^2.2.5
+        version: 2.2.5(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/userprofile':
+        specifier: 4.0.12
+        version: 4.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
+      react:
+        specifier: '19'
+        version: 19.1.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0
@@ -5652,8 +5731,8 @@ packages:
       - react-dom
     dev: false
 
-  /@xipkg/scrollarea@2.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0):
-    resolution: {integrity: sha512-n07AnE9+wMovIfc/Un+CkVJf3MgxXNz01T9nM/EjFDWMxHogRv0+qrm+34dAosuHy4RsS0VwfxHXuXT3iyPM5A==}
+  /@xipkg/scrollarea@2.1.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0):
+    resolution: {integrity: sha512-IhV6KwrzAzE81oL6DHVpxr8eZUxGhSZzzosI9qBTwjVaSJhng+UrTAkaHrqQKJMRoV/f59Y7T8dMsWB8BJsrpw==}
     peerDependencies:
       react: ^19
     dependencies:

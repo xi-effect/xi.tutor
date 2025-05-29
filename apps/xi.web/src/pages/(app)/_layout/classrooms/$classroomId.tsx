@@ -3,14 +3,16 @@ import { createFileRoute } from '@tanstack/react-router';
 import { lazy } from 'react';
 import { z } from 'zod';
 
-const CallModule = lazy(() => import('modules.calls').then((module) => ({ default: module.Call })));
+const ClassroomPage = lazy(() =>
+  import('pages.classroom').then((module) => ({ default: module.ClassroomPage })),
+);
 
 const paramsSchema = z.object({
-  callId: z.string(),
+  classroomId: z.string(),
 });
 
 // @ts-ignore
-export const Route = createFileRoute('/(app)/_layout/call/$callId')({
+export const Route = createFileRoute('/(app)/_layout/classrooms/$classroomId')({
   component: CallPage,
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
   beforeLoad: () => {
@@ -21,5 +23,9 @@ export const Route = createFileRoute('/(app)/_layout/call/$callId')({
 function CallPage() {
   // @ts-ignore
   // const { callId } = Route.useParams();
-  return <CallModule firstId="1" secondId="2" />;
+  return (
+    <>
+      <ClassroomPage />
+    </>
+  );
 }
