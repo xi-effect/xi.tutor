@@ -116,7 +116,7 @@ importers:
         version: 5.73.3(@tanstack/react-query@5.73.3)(react@19.1.0)
       '@tanstack/react-router-devtools':
         specifier: ^1.117.1
-        version: 1.120.7(@tanstack/react-router@1.120.7)(@tanstack/router-core@1.120.7)(csstype@3.1.3)(react-dom@19.1.0)(react@19.1.0)(tiny-invariant@1.3.3)
+        version: 1.120.7(@tanstack/react-router@1.120.7)(@tanstack/router-core@1.120.10)(csstype@3.1.3)(react-dom@19.1.0)(react@19.1.0)(tiny-invariant@1.3.3)
       '@tanstack/router-plugin':
         specifier: ^1.109.2
         version: 1.120.7(@tanstack/react-router@1.120.7)(vite@6.3.5)
@@ -717,8 +717,8 @@ importers:
         specifier: 3.1.8
         version: 3.1.8(@types/react@19.1.5)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.0.14
-        version: 2.0.14(react@19.1.0)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.1.0)
       '@xipkg/slider':
         specifier: 2.0.12
         version: 2.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
@@ -1006,8 +1006,8 @@ importers:
         specifier: 2.1.0
         version: 2.1.0(@types/react@19.1.5)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.0.14
-        version: 2.0.14(react@19.1.0)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.1.0)
       '@xipkg/scrollarea':
         specifier: 2.0.12
         version: 2.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
@@ -1127,8 +1127,11 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.0.14
-        version: 2.0.14(react@19.1.0)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.1.0)
+      '@xipkg/modal':
+        specifier: 4.1.0
+        version: 4.1.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/select':
         specifier: 2.2.5
         version: 2.2.5(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
@@ -1242,8 +1245,8 @@ importers:
         specifier: ^2.0.12
         version: 2.0.12(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.0.14
-        version: 2.0.14(react@19.1.0)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.1.0)
       '@xipkg/input':
         specifier: 2.2.9
         version: 2.2.9(react@19.1.0)
@@ -1351,8 +1354,8 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.0.14
-        version: 2.0.14(react@19.1.0)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.1.0)
       '@xipkg/link':
         specifier: 2.0.12
         version: 2.0.12(react@19.1.0)
@@ -1448,8 +1451,8 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.0.14
-        version: 2.0.14(react@19.1.0)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.1.0)
       '@xipkg/link':
         specifier: 2.0.12
         version: 2.0.12(react@19.1.0)
@@ -1654,8 +1657,8 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.0.14
-        version: 2.0.14(react@19.1.0)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.1.0)
       '@xipkg/link':
         specifier: ^2.0.12
         version: 2.0.12(react@19.1.0)
@@ -1794,8 +1797,8 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.0.14
-        version: 2.0.14(react@19.1.0)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.1.0)
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.1.0)
@@ -1894,8 +1897,8 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.0.14
-        version: 2.0.14(react@19.1.0)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.1.0)
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.1.0)
@@ -1991,8 +1994,8 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.0.14
-        version: 2.0.14(react@19.1.0)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.1.0)
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.1.0)
@@ -4832,7 +4835,7 @@ packages:
       '@tanstack/query-core': 5.73.3
       react: 19.1.0
 
-  /@tanstack/react-router-devtools@1.120.7(@tanstack/react-router@1.120.7)(@tanstack/router-core@1.120.7)(csstype@3.1.3)(react-dom@19.1.0)(react@19.1.0)(tiny-invariant@1.3.3):
+  /@tanstack/react-router-devtools@1.120.7(@tanstack/react-router@1.120.7)(@tanstack/router-core@1.120.10)(csstype@3.1.3)(react-dom@19.1.0)(react@19.1.0)(tiny-invariant@1.3.3):
     resolution: {integrity: sha512-0CsgRHYZhFHvHxexBBMAWi88+QFZzQLYVnezO6BrIcL5Y8FmMK2Ww+hSdVbOzUAZZHFPR/LkUduCoUBsYEMQMA==}
     engines: {node: '>=12'}
     peerDependencies:
@@ -4841,7 +4844,7 @@ packages:
       react-dom: '>=18.0.0 || >=19.0.0'
     dependencies:
       '@tanstack/react-router': 1.120.7(react-dom@19.1.0)(react@19.1.0)
-      '@tanstack/router-devtools-core': 1.120.7(@tanstack/router-core@1.120.7)(csstype@3.1.3)(solid-js@1.9.7)(tiny-invariant@1.3.3)
+      '@tanstack/router-devtools-core': 1.120.7(@tanstack/router-core@1.120.10)(csstype@3.1.3)(solid-js@1.9.7)(tiny-invariant@1.3.3)
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
       solid-js: 1.9.7
@@ -4902,7 +4905,6 @@ packages:
       '@tanstack/history': 1.115.0
       '@tanstack/store': 0.7.0
       tiny-invariant: 1.3.3
-    dev: false
 
   /@tanstack/router-core@1.120.7:
     resolution: {integrity: sha512-CAoRZtDJv5XIn4dBNsg/JqCfG1/ioMJjPR+G71ZhwUgPOBt7gmAGEAwdXD0gwdcBoOupL4//6/NPArNdMJj7yg==}
@@ -4912,7 +4914,7 @@ packages:
       '@tanstack/store': 0.7.0
       tiny-invariant: 1.3.3
 
-  /@tanstack/router-devtools-core@1.120.7(@tanstack/router-core@1.120.7)(csstype@3.1.3)(solid-js@1.9.7)(tiny-invariant@1.3.3):
+  /@tanstack/router-devtools-core@1.120.7(@tanstack/router-core@1.120.10)(csstype@3.1.3)(solid-js@1.9.7)(tiny-invariant@1.3.3):
     resolution: {integrity: sha512-ijBs21+DdLx5llm+wHJgZ/qBF1m4QLq+b2C0/aA54NGvjSdenWPg+TYnjyUK/34LoDYUw+poIal1aSynaVribw==}
     engines: {node: '>=12'}
     peerDependencies:
@@ -4924,7 +4926,7 @@ packages:
       csstype:
         optional: true
     dependencies:
-      '@tanstack/router-core': 1.120.7
+      '@tanstack/router-core': 1.120.10
       clsx: 2.1.1
       csstype: 3.1.3
       goober: 2.1.16(csstype@3.1.3)
@@ -5412,7 +5414,7 @@ packages:
       react: ^19
     dependencies:
       '@radix-ui/react-slot': 1.2.3(@types/react@19.1.5)(react@19.1.0)
-      '@xipkg/icons': 2.2.0(react@19.1.0)
+      '@xipkg/icons': 2.3.0(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
       class-variance-authority: 0.7.1
       react: 19.1.0
@@ -5453,7 +5455,7 @@ packages:
     dependencies:
       '@radix-ui/react-slot': 1.2.3(@types/react@19.1.5)(react@19.1.0)
       '@xipkg/button': 3.1.8(@types/react@19.1.5)(react@19.1.0)
-      '@xipkg/icons': 2.0.14(react@19.1.0)
+      '@xipkg/icons': 2.3.0(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
       class-variance-authority: 0.7.1
       react: 19.1.0
@@ -5505,7 +5507,7 @@ packages:
     peerDependencies:
       react: ^19
     dependencies:
-      '@xipkg/icons': 2.2.0(react@19.1.0)
+      '@xipkg/icons': 2.3.0(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
       react: 19.1.0
     dev: false
@@ -5515,7 +5517,7 @@ packages:
     peerDependencies:
       react: ^19
     dependencies:
-      '@xipkg/icons': 2.2.0(react@19.1.0)
+      '@xipkg/icons': 2.3.0(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
       class-variance-authority: 0.7.1
       react: 19.1.0
@@ -5551,13 +5553,14 @@ packages:
       react: 19.1.0
     dev: false
 
-  /@xipkg/icons@2.2.0(react@19.1.0):
-    resolution: {integrity: sha512-JRGr/h78EzDxFp3mrh/tfomWpA5EUnue1p+P5mtJj9So3jjV/0WFbl7Oucx2RECwj+LpiWBpR5cfcIgW4/mFfg==}
+  /@xipkg/icons@2.3.0(react@19.1.0):
+    resolution: {integrity: sha512-Szw2PpMM7BLeE9oFZM88C4mo48cCX/XaBD89omhMbsHGGwN7bvPBabJ7cCvUO3jGTBWpMDocwwlO0u8JYx3Dng==}
     peerDependencies:
       react: ^19
     dependencies:
-      '@xipkg/utils': 1.6.3(react@19.1.0)
+      '@xipkg/utils': 1.8.0(react@19.1.0)
       class-variance-authority: 0.7.1
+      lucide-react: 0.485.0(react@19.1.0)
       react: 19.1.0
     dev: false
 
@@ -5624,7 +5627,7 @@ packages:
       react: ^19
     dependencies:
       '@radix-ui/react-dialog': 1.1.6(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
-      '@xipkg/icons': 2.0.14(react@19.1.0)
+      '@xipkg/icons': 2.3.0(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
       lucide-react: 0.475.0(react@19.1.0)
       react: 19.1.0
@@ -5670,7 +5673,7 @@ packages:
       react: ^19
     dependencies:
       '@radix-ui/react-select': 2.2.5(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
-      '@xipkg/icons': 2.2.0(react@19.1.0)
+      '@xipkg/icons': 2.3.0(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
       class-variance-authority: 0.7.1
       react: 19.1.0
@@ -5686,7 +5689,7 @@ packages:
       react: ^19
     dependencies:
       '@radix-ui/react-dialog': 1.1.6(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
-      '@xipkg/icons': 2.0.14(react@19.1.0)
+      '@xipkg/icons': 2.3.0(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
       react: 19.1.0
     transitivePeerDependencies:
@@ -5701,7 +5704,7 @@ packages:
       react: ^19
     dependencies:
       '@radix-ui/react-dialog': 1.1.6(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
-      '@xipkg/icons': 2.2.0(react@19.1.0)
+      '@xipkg/icons': 2.3.0(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
       class-variance-authority: 0.7.1
       react: 19.1.0
@@ -5717,7 +5720,7 @@ packages:
       react: ^19
     dependencies:
       '@xipkg/button': 3.1.8(@types/react@19.1.5)(react@19.1.0)
-      '@xipkg/icons': 2.2.0(react@19.1.0)
+      '@xipkg/icons': 2.3.0(react@19.1.0)
       '@xipkg/sheet': 1.0.6(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/tooltip': 2.1.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
