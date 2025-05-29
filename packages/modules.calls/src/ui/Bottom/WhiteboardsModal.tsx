@@ -10,6 +10,8 @@ import { Input } from '@xipkg/input';
 import { Button } from '@xipkg/button';
 import { useState } from 'react';
 import { Close, Search } from '@xipkg/icons';
+import { useNavigate } from '@tanstack/react-router';
+import { useCallStore } from '../../store';
 
 type Whiteboard = {
   id: string;
@@ -23,7 +25,10 @@ type WhiteboardsModalProps = {
 };
 
 export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) => {
+  const navigate = useNavigate();
+  const updateStore = useCallStore((state) => state.updateStore);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedBoardId, setSelectedBoardId] = useState<string | null>(null);
   const [whiteboards] = useState<Whiteboard[]>([
     {
       id: '1',
@@ -40,6 +45,18 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
   const filteredWhiteboards = whiteboards.filter((board) =>
     board.title.toLowerCase().includes(searchQuery.toLowerCase()),
   );
+
+  const handleBoardSelect = (boardId: string) => {
+    setSelectedBoardId(boardId);
+  };
+
+  const handleConfirm = () => {
+    if (selectedBoardId) {
+      updateStore('mode', 'compact');
+      navigate({ to: '/board/$boardId', params: { boardId: selectedBoardId } });
+      onOpenChange(false);
+    }
+  };
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
@@ -62,7 +79,10 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
             {filteredWhiteboards.map((board) => (
               <div
                 key={board.id}
-                className="hover:bg-gray-5 flex cursor-pointer flex-col gap-2 rounded-2xl border p-4"
+                className={`hover:bg-gray-5 flex cursor-pointer flex-col gap-2 rounded-2xl border p-4 ${
+                  selectedBoardId === board.id ? 'border-brand-100 bg-brand-0' : ''
+                }`}
+                onClick={() => handleBoardSelect(board.id)}
               >
                 <h3 className="text-m-base text-gray-100">{board.title}</h3>
                 <p className="text-xs-base text-gray-60">
@@ -79,7 +99,7 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
         </div>
 
         <ModalFooter className="border-gray-20 flex gap-2 border-t">
-          <Button size="m" onClick={() => onOpenChange(false)}>
+          <Button size="m" onClick={handleConfirm} disabled={!selectedBoardId}>
             Выбрать
           </Button>
           <Button size="m" variant="secondary" onClick={() => onOpenChange(false)}>

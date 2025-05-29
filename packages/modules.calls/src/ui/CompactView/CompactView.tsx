@@ -7,10 +7,12 @@ import {
   PointerSensor,
   useDroppable,
   DragOverlay,
+  useDndMonitor,
 } from '@dnd-kit/core';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { CompactCall } from './CompactCall';
 import { useCallStore } from '../../store/callStore';
+import { useRouter } from '@tanstack/react-router';
 
 type Corner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
@@ -24,13 +26,53 @@ const DroppableCorner = ({ id, className }: { id: string; className: string }) =
   const { setNodeRef } = useDroppable({
     id,
   });
+  const [isDragging, setIsDragging] = useState(false);
 
-  return <div ref={setNodeRef} className={`absolute size-32 ${className}`} />;
+  useDndMonitor({
+    onDragStart: () => {
+      setIsDragging(true);
+    },
+    onDragEnd: () => {
+      setIsDragging(false);
+    },
+  });
+
+  return (
+    <div
+      ref={setNodeRef}
+      className={`absolute z-100 size-1/3 ${className} transition-all duration-200 ${
+        isDragging ? 'bg-brand-0/20 ring-brand-20 rounded-lg ring-2' : ''
+      }`}
+    />
+  );
+};
+
+const DroppableAreas: FC = () => {
+  const [isDragging, setIsDragging] = useState(false);
+
+  useDndMonitor({
+    onDragStart: () => {
+      setIsDragging(true);
+    },
+    onDragEnd: () => {
+      setIsDragging(false);
+    },
+  });
+
+  return (
+    <>
+      <DroppableCorner id="top-left" className="top-4 left-4" />
+      <DroppableCorner id="top-right" className="top-4 right-4" />
+      <DroppableCorner id="bottom-left" className="bottom-4 left-4" />
+      <DroppableCorner id="bottom-right" className="right-4 bottom-18" />
+      <DragOverlay>{isDragging ? <CompactCall /> : null}</DragOverlay>
+    </>
+  );
 };
 
 export const Compact: FC<CompactViewProps> = ({ children }) => {
   const [activeCorner, setActiveCorner] = useState<Corner>('top-left');
-  const [isDragging, setIsDragging] = useState(false);
+  const router = useRouter();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -45,34 +87,28 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
     if (over) {
       setActiveCorner(over.id as Corner);
     }
-    setIsDragging(false);
   };
 
   const getCornerPosition = (corner: Corner) => {
+    const isBoardPage = router.state.location.pathname.includes('/board');
+    const bottomOffset = isBoardPage && corner === 'bottom-right' ? 'bottom-[72px]' : 'bottom-4';
+
     switch (corner) {
       case 'top-left':
         return 'top-4 left-4';
       case 'top-right':
         return 'top-4 right-4';
       case 'bottom-left':
-        return 'bottom-4 left-4';
+        return `${bottomOffset} left-4`;
       case 'bottom-right':
-        return 'bottom-4 right-4';
+        return `${bottomOffset} right-4`;
     }
   };
 
   return (
-    <DndContext
-      sensors={sensors}
-      onDragEnd={handleDragEnd}
-      onDragStart={() => setIsDragging(true)}
-      modifiers={[restrictToWindowEdges]}
-    >
+    <DndContext sensors={sensors} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
       <div className="relative flex h-[calc(100vh-64px)] flex-col gap-2 bg-transparent">
-        <DroppableCorner id="top-left" className="top-0 left-0" />
-        <DroppableCorner id="top-right" className="top-0 right-0" />
-        <DroppableCorner id="bottom-left" className="bottom-0 left-0" />
-        <DroppableCorner id="bottom-right" className="right-0 bottom-0" />
+        <DroppableAreas />
 
         <div
           className={`absolute z-100 ${getCornerPosition(activeCorner)} transition-all duration-500 ease-out`}
@@ -80,7 +116,6 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
           <CompactCall />
         </div>
 
-        <DragOverlay>{isDragging ? <CompactCall /> : null}</DragOverlay>
         {children}
       </div>
     </DndContext>
