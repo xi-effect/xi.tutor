@@ -1,5 +1,3 @@
-'use client';
-
 import React, { useEffect, useMemo } from 'react';
 import { Layer, Shape } from 'react-konva';
 import { useUIStore } from '../../store';
