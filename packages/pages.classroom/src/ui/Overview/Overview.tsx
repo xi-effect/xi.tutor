@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Badge } from '@xipkg/badge';
 import { Button } from '@xipkg/button';
 import { ArrowRight } from '@xipkg/icons';
@@ -11,6 +12,7 @@ export const Overview = () => {
   const handleTabChange = (tab: string) => {
     navigate({
       to: pathname,
+      // @ts-ignore
       search: { tab },
     });
   };

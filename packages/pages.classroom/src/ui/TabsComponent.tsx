@@ -1,12 +1,14 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Tabs } from '@xipkg/tabs';
 import { useSearch, useNavigate, useLocation } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
 import { Button } from '@xipkg/button';
 import { Overview } from './Overview';
+import { SearchParams } from '../types/router';
 
 export const TabsComponent = () => {
-  const search = useSearch({ strict: false });
+  const search: SearchParams = useSearch({ strict: false });
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const currentTab = search.tab || 'overview';
@@ -17,6 +19,7 @@ export const TabsComponent = () => {
     if (!search.tab) {
       navigate({
         to: pathname,
+        // @ts-ignore
         search: { tab: 'overview' },
       });
     }
@@ -25,6 +28,7 @@ export const TabsComponent = () => {
   const handleTabChange = (value: string) => {
     navigate({
       to: pathname,
+      // @ts-ignore
       search: { tab: value },
     });
   };
