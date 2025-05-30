@@ -1012,8 +1012,8 @@ importers:
         specifier: 2.3.0
         version: 2.3.0(react@19.1.0)
       '@xipkg/scrollarea':
-        specifier: 2.1.0
-        version: 2.1.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/select':
         specifier: 2.2.5
         version: 2.2.5(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
@@ -1363,8 +1363,8 @@ importers:
         specifier: 2.0.12
         version: 2.0.12(react@19.1.0)
       '@xipkg/scrollarea':
-        specifier: 2.1.0
-        version: 2.1.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/userprofile':
         specifier: 4.0.12
         version: 4.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
@@ -1460,8 +1460,8 @@ importers:
         specifier: 2.0.12
         version: 2.0.12(react@19.1.0)
       '@xipkg/scrollarea':
-        specifier: 2.1.0
-        version: 2.1.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/sidebar':
         specifier: 0.2.0
         version: 0.2.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
@@ -1666,8 +1666,8 @@ importers:
         specifier: ^2.0.12
         version: 2.0.12(react@19.1.0)
       '@xipkg/scrollarea':
-        specifier: 2.1.0
-        version: 2.1.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/select':
         specifier: ^2.2.5
         version: 2.2.5(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
@@ -1811,6 +1811,9 @@ importers:
       '@xipkg/dropdown':
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/scrollarea':
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/tabs':
         specifier: ^2.1.0
         version: 2.1.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0)
@@ -5773,8 +5776,8 @@ packages:
       - react-dom
     dev: false
 
-  /@xipkg/scrollarea@2.1.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0):
-    resolution: {integrity: sha512-IhV6KwrzAzE81oL6DHVpxr8eZUxGhSZzzosI9qBTwjVaSJhng+UrTAkaHrqQKJMRoV/f59Y7T8dMsWB8BJsrpw==}
+  /@xipkg/scrollarea@2.2.0(@types/react-dom@19.1.5)(@types/react@19.1.5)(react-dom@19.1.0)(react@19.1.0):
+    resolution: {integrity: sha512-cK9ayhFXsLr8+bVwxEN+uGf14teuRj3jcFAQ16fqefJMAa/BUNlFnQ4lozofO2KRj3oYr/8YSWzuqsprvZzmSQ==}
     peerDependencies:
       react: ^19
     dependencies:

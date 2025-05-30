@@ -10,6 +10,7 @@ export const CardsGrid = () => {
   /* ===== 1. Responsive-состояние ===== */
   const ITEM_WIDTH = 280; // ширина карточки + gap
   const GAP = 16; // gap между карточками
+  const MAX_COLUMNS = 4; // максимальное количество колонок
   const [colCount, setColCount] = useState(1);
   const [rowHeight, setRowHeight] = useState(188);
 
@@ -31,7 +32,11 @@ export const CardsGrid = () => {
     if (!el) return;
     const ro = new ResizeObserver(([entry]) => {
       const { width } = entry.contentRect;
-      const cols = Math.max(1, Math.floor((width + GAP) / (ITEM_WIDTH + GAP)));
+      // Ограничиваем количество колонок от 1 до MAX_COLUMNS
+      const cols = Math.min(
+        MAX_COLUMNS,
+        Math.max(1, Math.floor((width + GAP) / (ITEM_WIDTH + GAP))),
+      );
       setColCount(cols);
     });
     ro.observe(el);
@@ -90,6 +95,7 @@ export const CardsGrid = () => {
                 display: 'grid',
                 gap: GAP,
                 padding: GAP,
+                paddingLeft: 0,
                 boxSizing: 'border-box',
                 gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))`,
               }}
