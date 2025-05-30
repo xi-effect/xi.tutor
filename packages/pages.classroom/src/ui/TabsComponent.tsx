@@ -1,11 +1,36 @@
 import { Tabs } from '@xipkg/tabs';
+import { useSearch, useNavigate, useLocation } from '@tanstack/react-router';
+import { useEffect } from 'react';
 
 import { Button } from '@xipkg/button';
 import { Overview } from './Overview';
 
 export const TabsComponent = () => {
+  const search = useSearch({ strict: false });
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const currentTab = search.tab || 'overview';
+
+  // Обработка начального состояния таба при загрузке страницы
+  useEffect(() => {
+    // Если в URL нет параметра tab, устанавливаем значение по умолчанию
+    if (!search.tab) {
+      navigate({
+        to: pathname,
+        search: { tab: 'overview' },
+      });
+    }
+  }, [search.tab, navigate, pathname]);
+
+  const handleTabChange = (value: string) => {
+    navigate({
+      to: pathname,
+      search: { tab: value },
+    });
+  };
+
   return (
-    <Tabs.Root defaultValue="overview">
+    <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
       <div className="flex flex-row items-center pl-4">
         <Tabs.List className="flex flex-row gap-4">
           <Tabs.Trigger value="overview" className="text-m-base font-medium text-gray-100">

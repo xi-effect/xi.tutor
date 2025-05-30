@@ -2,8 +2,19 @@ import { Badge } from '@xipkg/badge';
 import { Button } from '@xipkg/button';
 import { ArrowRight } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
+import { useNavigate, useLocation } from '@tanstack/react-router';
 
 export const Overview = () => {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+
+  const handleTabChange = (tab: string) => {
+    navigate({
+      to: pathname,
+      search: { tab },
+    });
+  };
+
   return (
     <div className="flex flex-col">
       <div className="flex flex-col gap-4 p-4">
@@ -12,6 +23,7 @@ export const Overview = () => {
           <Button
             variant="ghost"
             className="flex size-8 items-center justify-center rounded-[4px] p-0"
+            onClick={() => handleTabChange('lessons')}
           >
             <ArrowRight className="fill-gray-60 size-6" />
           </Button>
@@ -55,6 +67,7 @@ export const Overview = () => {
           <Button
             variant="ghost"
             className="flex size-8 items-center justify-center rounded-[4px] p-0"
+            onClick={() => handleTabChange('materials')}
           >
             <ArrowRight className="fill-gray-60 size-6" />
           </Button>
@@ -88,6 +101,7 @@ export const Overview = () => {
           <Button
             variant="ghost"
             className="flex size-8 items-center justify-center rounded-[4px] p-0"
+            onClick={() => handleTabChange('payments')}
           >
             <ArrowRight className="fill-gray-60 size-6" />
           </Button>
