@@ -27,7 +27,7 @@ export const Card: React.FC<MaterialPropsT> = ({
       onClick={() => {
         navigate({ to: `/board/${idMaterial}` });
       }}
-      className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex cursor-pointer justify-between rounded-2xl border p-4"
+      className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex h-[172px] cursor-pointer justify-between rounded-2xl border p-4"
     >
       <div className="flex flex-col gap-1">
         <UserProfile
@@ -37,7 +37,7 @@ export const Card: React.FC<MaterialPropsT> = ({
           className="text-xs-base font-medium text-gray-100"
         />
 
-        <div className="flex flex-col gap-4">
+        <div className="flex h-full flex-col justify-between">
           <div className="text-l-base line-clamp-2 w-full font-medium text-gray-100">
             {nameMaterial}
           </div>
