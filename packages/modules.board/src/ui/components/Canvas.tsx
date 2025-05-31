@@ -6,6 +6,7 @@ import { useBoardStore } from '../../store';
 import { useStage } from '../../providers';
 import { useCanvasHandlers, useCursor, useZoom } from '../../hooks';
 import { useWhiteboardCollaborative } from '../../hooks/useWhiteboardCollaborative';
+import { useUndoRedoShortcuts } from '../../features';
 
 export const Canvas = () => {
   const { stageRef } = useStage();
@@ -28,6 +29,8 @@ export const Canvas = () => {
       selectElement(null);
     }
   });
+
+  useUndoRedoShortcuts();
 
   return (
     <div className="flex h-full w-full flex-col" style={{ cursor }} {...mouseHandlers}>
