@@ -859,6 +859,9 @@ importers:
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.1.0)(react@19.1.0)
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.13
       react:
         specifier: '19'
         version: 19.1.0
@@ -7316,7 +7319,7 @@ packages:
       react-dom:
         optional: true
     dependencies:
-      motion-dom: 12.12.1
+      motion-dom: 12.14.0
       motion-utils: 12.12.1
       react: 19.1.0
       react-dom: 19.1.0(react@19.1.0)
@@ -8264,8 +8267,8 @@ packages:
     hasBin: true
     dev: false
 
-  /motion-dom@12.12.1:
-    resolution: {integrity: sha512-GXq/uUbZBEiFFE+K1Z/sxdPdadMdfJ/jmBALDfIuHGi0NmtealLOfH9FqT+6aNPgVx8ilq0DtYmyQlo6Uj9LKQ==}
+  /motion-dom@12.14.0:
+    resolution: {integrity: sha512-t5v1QNXrOsLmIzTdmB9OlZ1cA8zkHlpPhn85123/B+8Xe6tiENWKELAZm0yvAoFjcbFmq4u80uUXortZTTvDbg==}
     dependencies:
       motion-utils: 12.12.1
     dev: false
