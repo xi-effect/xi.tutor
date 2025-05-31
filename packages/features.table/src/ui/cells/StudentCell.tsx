@@ -1,17 +1,12 @@
+import { UserProfile } from '@xipkg/userprofile';
+
 type StudentPropsT = {
-  name: string;
-  description: string;
+  id: number;
+  name?: string;
+  description?: string;
   avatarUrl?: string;
 };
 
-export const StudentCell = ({ name, description, avatarUrl }: StudentPropsT) => {
-  return (
-    <div className="flex items-center gap-2">
-      {avatarUrl && <img src={avatarUrl} alt={name} />}
-      <div>
-        <div>{name}</div>
-        <div>{description}</div>
-      </div>
-    </div>
-  );
+export const StudentCell = ({ id, name, description, avatarUrl }: StudentPropsT) => {
+  return <UserProfile size="m" userId={id} text={name} label={description} src={avatarUrl ?? ''} />;
 };

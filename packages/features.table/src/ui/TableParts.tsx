@@ -1,9 +1,7 @@
 import { clsx } from 'clsx';
 
 export const Table = ({ className, ...props }: React.HTMLAttributes<HTMLTableElement>) => (
-  <div className="w-full px-2 py-2">
-    <table className={clsx('w-full border-collapse', className)} {...props} />
-  </div>
+  <table className={clsx('w-full border-collapse', className)} {...props} />
 );
 
 export const TableHeader = ({
@@ -20,8 +18,14 @@ export const TableBody = ({
   <tbody className={clsx(className)} {...props} />
 );
 
-export const TableRow = ({ ...props }: React.HTMLAttributes<HTMLTableRowElement>) => (
-  <tr {...props} />
+export const TableRow = ({ className, ...props }: React.HTMLAttributes<HTMLTableRowElement>) => (
+  <tr
+    className={clsx(
+      'hover:border-gray-30 rounded-xl border border-transparent transition-colors duration-200',
+      className,
+    )}
+    {...props}
+  />
 );
 
 export const TableHead = ({
@@ -35,11 +39,5 @@ export const TableCell = ({
   className,
   ...props
 }: React.TdHTMLAttributes<HTMLTableCellElement>) => (
-  <td
-    className={clsx(
-      'hover:border-gray-30 rounded-xl border border-transparent bg-red-500 px-3 py-2 text-left transition-colors duration-200',
-      className,
-    )}
-    {...props}
-  />
+  <td className={clsx('px-3 py-2 text-left', className)} {...props} />
 );

@@ -1,10 +1,7 @@
-import { formatDate } from '../../utils/formatDate';
+import { formatDate } from '../../utils/formatDate.tsx';
 
 type DatePropsT = {
   date: string;
 };
 
-export const DateCell = ({ date }: DatePropsT) => {
-  const formattedDate = formatDate(date);
-  return <span>{formattedDate}</span>;
-};
+export const DateCell = ({ date }: DatePropsT) => formatDate(date);

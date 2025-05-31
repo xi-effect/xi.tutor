@@ -1,5 +1,5 @@
 export type StudentT = {
-  id: string;
+  id: number;
   name: string;
   description: string;
   avatarUrl?: string;
@@ -27,7 +27,7 @@ export const mapPaymentType: Record<PaymentTypeT, string> = {
 
 export type PaymentT = {
   id: string;
-  idStudent: string;
+  idStudent: number;
   idSubject: string;
   datePayment: string;
   amountPayment: number;

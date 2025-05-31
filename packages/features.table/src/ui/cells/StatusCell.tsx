@@ -1,17 +1,21 @@
+import clsx from 'clsx';
 import { mapPaymentStatus, PaymentStatusT } from '../../types';
 
-// const getColor = (status: PaymentStatusT) => {
-//   switch (status) {
-//     case 'paid':
-//       return 'text-green-600';
-//     case 'processing':
-//       return 'text-blue-600';
-//     case 'unpaid':
-//       return 'text-orange-600';
-//     default:
-//       return '';
-//   }
-// };
+const getColor = (status: PaymentStatusT) => {
+  switch (status) {
+    case 'paid':
+      return 'text-green-100';
+
+    case 'processing':
+      return 'text-brand-100';
+
+    case 'unpaid':
+      return 'text-red-100';
+
+    default:
+      return '';
+  }
+};
 
 export const StatusCell = ({ status }: { status: PaymentStatusT }) => {
   const statusText = mapPaymentStatus[status];
@@ -20,5 +24,5 @@ export const StatusCell = ({ status }: { status: PaymentStatusT }) => {
     throw new Error('Paiment Status not found');
   }
 
-  return <span>{statusText}</span>;
+  return <p className={clsx('font-normal', 'text-m-base', getColor(status))}>{statusText}</p>;
 };

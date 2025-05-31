@@ -7,5 +7,5 @@ export const TypePaymentCell = ({ typePayment }: { typePayment: PaymentT['typePa
     throw new Error('Payment type not found');
   }
 
-  return <span>{paymentType}</span>;
+  return <p className="text-gray-80 text-m-base font-normal">{paymentType}</p>;
 };

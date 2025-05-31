@@ -9,6 +9,7 @@ import {
   AmountPaymentCell,
   TypePaymentCell,
   StatusCell,
+  ConfirmPayment,
 } from './cells';
 
 export function createPaymentColumns(
@@ -26,8 +27,15 @@ export function createPaymentColumns(
       header: 'Студент',
       cell: ({ row }) => {
         const student = students.find((user) => user.id === row.original.idStudent);
+
+        if (!student) {
+          console.error(`Студент с id ${row.original.idStudent} не найден`);
+          return null;
+        }
+
         return (
           <StudentCell
+            id={student?.id}
             name={student?.name ?? ''}
             description={student?.description ?? ''}
             avatarUrl={student?.avatarUrl}
@@ -57,6 +65,11 @@ export function createPaymentColumns(
       accessorKey: 'status',
       header: 'Статус',
       cell: ({ row }) => <StatusCell status={row.original.statusPayment} />,
+    },
+    {
+      accessorKey: 'confirmPayment',
+      header: '',
+      cell: ({ row }) => <ConfirmPayment status={row.original.statusPayment} />,
     },
   ];
 }
