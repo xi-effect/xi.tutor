@@ -9,7 +9,6 @@ import {
   AmountPaymentCell,
   TypePaymentCell,
   StatusCell,
-  ConfirmPayment,
 } from './cells';
 
 export function createPaymentColumns(
@@ -65,11 +64,6 @@ export function createPaymentColumns(
       accessorKey: 'status',
       header: 'Статус',
       cell: ({ row }) => <StatusCell status={row.original.statusPayment} />,
-    },
-    {
-      accessorKey: 'confirmPayment',
-      header: '',
-      cell: ({ row }) => <ConfirmPayment status={row.original.statusPayment} />,
     },
   ];
 }

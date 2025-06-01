@@ -4,4 +4,3 @@ export { StudentCell } from './StudentCell';
 export { SubjectCell } from './SubjectCell';
 export { TypePaymentCell } from './TypePaymentCell';
 export { StatusCell } from './StatusCell';
-export { ConfirmPayment } from './ConfirmPayment';

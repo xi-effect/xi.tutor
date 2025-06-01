@@ -1,4 +1,7 @@
 import clsx from 'clsx';
+import { Button } from '@xipkg/button';
+import { Edit, Trash } from '@xipkg/icons';
+
 import { mapPaymentStatus, PaymentStatusT } from '../../types';
 
 const getColor = (status: PaymentStatusT) => {
@@ -24,5 +27,27 @@ export const StatusCell = ({ status }: { status: PaymentStatusT }) => {
     throw new Error('Paiment Status not found');
   }
 
-  return <p className={clsx('font-normal', 'text-m-base', getColor(status))}>{statusText}</p>;
+  return (
+    <div className="flex flex-row items-center justify-between gap-8">
+      <div className={clsx('font-normal', 'text-m-base', getColor(status))}>{statusText}</div>
+
+      {status === 'processing' && (
+        <div className="flex flex-row items-center justify-between gap-8">
+          <Button variant="ghost" size="s" className="bg-brand-0 rounded-lg px-1 py-4">
+            <span className="text-s-base text-brand-100 font-medium">Подтвердить</span>
+          </Button>
+
+          <div className="flex flex-row items-center justify-between gap-2">
+            <Button variant="ghost" size="s">
+              <Edit className="fill-gray-100" />
+            </Button>
+
+            <Button variant="ghost" size="s">
+              <Trash className="fill-gray-100" />
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
