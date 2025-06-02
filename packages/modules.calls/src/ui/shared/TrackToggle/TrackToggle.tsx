@@ -13,6 +13,7 @@ import {
 } from '@xipkg/icons';
 import { useMemo } from 'react';
 import { cn } from '@xipkg/utils';
+
 interface ExtendedTrackToggleProps extends TrackToggleProps<any> {
   microTrack?: LocalAudioTrack;
   showIcon?: boolean;
@@ -63,7 +64,20 @@ export const TrackToggle = ({
   }, [source, enabled]);
 
   const handleClick = () => {
+    console.log('handleClick', source);
     toggle();
+
+    // if (source === Track.Source.ScreenShare) {
+    //   console.log('room.localParticipant', room.localParticipant);
+
+    //   room.localParticipant.setScreenShareEnabled(
+    //     !room.localParticipant.isScreenShareEnabled,
+    //     { audio: true, selfBrowserSurface: 'include' },
+    //     {
+    //       name: 'screen-share',
+    //     },
+    //   );
+    // }
   };
 
   if (source === Track.Source.Microphone) {

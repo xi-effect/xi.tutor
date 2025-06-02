@@ -19,7 +19,7 @@ export const TabsComponent = () => {
         </Tabs.Trigger>
       </Tabs.List>
 
-      <div className="pt-6">
+      <div className="pt-0">
         <Tabs.Content value="boards">
           <CardsGrid />
         </Tabs.Content>

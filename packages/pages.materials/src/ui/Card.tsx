@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from '@tanstack/react-router';
 
 import { Button } from '@xipkg/button';
 import { MoreVert } from '@xipkg/icons';
@@ -12,9 +13,22 @@ import {
 
 import { MaterialPropsT } from '../types';
 
-export const Card: React.FC<MaterialPropsT> = ({ nameMaterial, idUser, nameUser, updatedAt }) => {
+export const Card: React.FC<MaterialPropsT> = ({
+  idMaterial,
+  nameMaterial,
+  idUser,
+  nameUser,
+  updatedAt,
+}) => {
+  const navigate = useNavigate();
+
   return (
-    <div className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex cursor-pointer justify-between rounded-2xl border p-4">
+    <div
+      onClick={() => {
+        navigate({ to: `/board/${idMaterial}` });
+      }}
+      className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex h-[172px] cursor-pointer justify-between rounded-2xl border p-4"
+    >
       <div className="flex flex-col gap-1">
         <UserProfile
           text={nameUser}
@@ -23,7 +37,7 @@ export const Card: React.FC<MaterialPropsT> = ({ nameMaterial, idUser, nameUser,
           className="text-xs-base font-medium text-gray-100"
         />
 
-        <div className="flex flex-col gap-4">
+        <div className="flex h-full flex-col justify-between">
           <div className="text-l-base line-clamp-2 w-full font-medium text-gray-100">
             {nameMaterial}
           </div>

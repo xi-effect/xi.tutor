@@ -1,8 +1,6 @@
-import { Room } from 'livekit-client';
 import { ActiveRoom } from './Room/ActiveRoom';
 import { PreJoin } from './PreJoin';
 import { CallProvider } from '../providers/CallProvider';
-import { useLivekitToken } from '../hooks/useLivekitToken';
 import { useCallStore } from '../store/callStore';
 import { useInitUserDevices } from '../hooks';
 
@@ -13,14 +11,9 @@ export const Call = ({
   firstId?: string;
   secondId?: string;
 }) => {
-  const room = new Room();
-
   const isStarted = useCallStore((state) => state.isStarted);
 
   useInitUserDevices();
-
-  // TODO: This is a temporary solution to get the communityId and channelId from the URL.
-  const { token = null } = useLivekitToken(firstId, secondId);
 
   return (
     <div className="h-[calc(100vh-64px)]">
@@ -28,7 +21,7 @@ export const Call = ({
         <div className="flex h-full w-full flex-col">
           {isStarted ? (
             <div id="videoConferenceContainer" className="bg-gray-0 h-full">
-              <ActiveRoom room={room} token={token || ''} />
+              <ActiveRoom />
             </div>
           ) : (
             <PreJoin />

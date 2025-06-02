@@ -14,10 +14,18 @@ import {
 import { StatusBadge } from './StatusBadge';
 
 import { ClassroomPropsT } from '../types';
+import { useNavigate } from '@tanstack/react-router';
 
 export const Card: React.FC<ClassroomPropsT> = ({ id, name, status, deleted, groupSize }) => {
+  const navigate = useNavigate();
+
   return (
-    <div className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex cursor-pointer justify-between rounded-2xl border p-4">
+    <div
+      onClick={() => {
+        navigate({ to: `/classrooms/${id}` });
+      }}
+      className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex cursor-pointer justify-between rounded-2xl border p-4"
+    >
       <div className="flex max-w-[350px] flex-col gap-4">
         {deleted ? (
           <div className="flex items-center gap-2">
