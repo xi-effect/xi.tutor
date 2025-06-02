@@ -8,14 +8,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@xipkg/select';
-import { useTheme } from 'common.theme';
+import { useTheme, type ThemeT } from 'common.theme';
 
-type ThemeT = 'light' | 'dark' | 'system';
 
 export const Customization = () => {
   const isMobile = useMediaQuery('(max-width: 719px)');
 
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, themes } = useTheme();
 
   console.log('theme', theme);
 
@@ -33,13 +32,15 @@ export const Customization = () => {
           </div>
           <Select value={theme} onValueChange={(value: ThemeT) => setTheme(value)}>
             <SelectTrigger className="ml-0 w-[250px] sm:ml-auto">
-              <SelectValue placeholder="Select a fruit" />
+              <SelectValue placeholder="Select theme" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
-                <SelectItem value="light">Светлая</SelectItem>
-                <SelectItem value="dark">Тёмная</SelectItem>
-                <SelectItem value="system">Системная</SelectItem>
+                {themes.map((theme) => (
+                  <SelectItem key={theme.value} value={theme.value}>
+                    {theme.label}
+                  </SelectItem>
+                ))}
               </SelectGroup>
             </SelectContent>
           </Select>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { useUpdateProfile, useCurrentUser } from 'common.services';
 
@@ -21,7 +21,21 @@ export const ThemeProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const [theme, setThemeState] = useState<ThemeT>(user?.theme || DEFAULT_THEME);
 
-  console.log(user);
+  const applyTheme = (newTheme: ThemeT) => {
+    const root = document.documentElement;
+    
+    ALL_THEMES.forEach(t => {
+      root.classList.remove(t.value);
+    });
+    
+    root.classList.add(newTheme);
+    
+    root.setAttribute('data-theme', newTheme);
+  };
+
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme]);
 
   const setTheme = async (newTheme: ThemeT) => {
     setThemeState(newTheme);
