@@ -6,7 +6,7 @@ export type StudentT = {
 };
 
 export type SubjectT = {
-  id: string;
+  id: number;
   name: string;
 };
 
@@ -26,9 +26,9 @@ export const mapPaymentType: Record<PaymentTypeT, string> = {
 };
 
 export type PaymentT = {
-  id: string;
+  id: number;
   idStudent: number;
-  idSubject: string;
+  idSubject: number;
   datePayment: string;
   amountPayment: number;
   typePayment: PaymentTypeT;

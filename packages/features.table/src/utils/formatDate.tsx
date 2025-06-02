@@ -13,8 +13,6 @@ export const formatDate = (dateStr: string) => {
   const classnameFirstLine = 'text-gray-100 font-normal text-s-base';
   const classnameSecondLine = 'text-gray-60 font-normal text-xs-base';
 
-  //const formattedDate = <p className={classnameFirstLine}>{date.format('D MMMM HH:mm')}</p>;
-
   const formattedTime = <p className={classnameSecondLine}>{date.format('HH:mm')}</p>;
 
   if (date.isToday()) {
