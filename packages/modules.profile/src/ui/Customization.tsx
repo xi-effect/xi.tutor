@@ -16,18 +16,16 @@ export const Customization = () => {
 
   const { theme, setTheme, themes } = useTheme();
 
-  console.log('theme', theme);
-
   return (
     <>
       {!isMobile && <span className="text-3xl font-semibold">Персонализация</span>}
-      <div className="border-gray-80 flex w-full flex-col rounded-2xl border p-1 sm:mt-4">
+      <div className="border-gray-80 flex w-full flex-col mt-4 rounded-2xl border p-1 sm:mt-0">
         <div className="flex w-full flex-col p-3">
           <span className="text-xl font-semibold">Внешний вид</span>
         </div>
-        <div className="mt-2 flex w-full flex-col items-start justify-center gap-4 p-3 sm:flex-row sm:items-center">
+        <div className="mt-2 flex w-full flex-col items-start gap-4 p-3 sm:items-center">
           <div className="flex flex-row gap-4">
-            <Palette className="fill-brand-80" />
+            <Palette className="fill-brand-80" /> 
             <span className="text-base leading-[24px] font-semibold">Тема оформления</span>
           </div>
           <Select value={theme} onValueChange={(value: ThemeT) => setTheme(value)}>
