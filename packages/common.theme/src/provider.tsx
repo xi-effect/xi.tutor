@@ -1,12 +1,11 @@
-import { useState, useEffect } from "react";
-import { toast } from "sonner";
+import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
 import { useUpdateProfile, useCurrentUser } from 'common.services';
 
-import { ThemeContext } from "./context";
+import { ThemeContext } from './context';
 
-import type { FC, PropsWithChildren } from "react";
-import type { ThemeT, ThemeItemT } from "./types";
-
+import type { FC, PropsWithChildren } from 'react';
+import type { ThemeT, ThemeItemT } from './types';
 
 const DEFAULT_THEME: ThemeT = 'light';
 const ALL_THEMES: ThemeItemT[] = [
@@ -23,13 +22,13 @@ export const ThemeProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const applyTheme = (newTheme: ThemeT) => {
     const root = document.documentElement;
-    
-    ALL_THEMES.forEach(t => {
+
+    ALL_THEMES.forEach((t) => {
       root.classList.remove(t.value);
     });
-    
+
     root.classList.add(newTheme);
-    
+
     root.setAttribute('data-theme', newTheme);
   };
 
@@ -52,7 +51,7 @@ export const ThemeProvider: FC<PropsWithChildren> = ({ children }) => {
       toast('Ошибка при обновлении темы');
     }
   };
-  
+
   const value = {
     theme,
     setTheme,
