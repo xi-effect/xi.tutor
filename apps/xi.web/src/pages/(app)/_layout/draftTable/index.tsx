@@ -1,14 +1,15 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useEffect, useState, useMemo } from 'react';
-import { DataTable } from '../../../../../../../packages/features.table/index';
+
+import { useMedia } from 'common.utils';
 import {
+  DataTable,
   payments,
   students,
   subjects,
-} from '../../../../../../../packages/features.table/src/mocks';
-import { PaymentT } from '../../../../../../../packages/features.table/src/types';
-import { createPaymentColumns } from '../../../../../../../packages/features.table/src/ui/defaultColumns';
-import { useIsMobile } from '../../../../../../../packages/features.table/src/utils/useIsMobile';
+  PaymentT,
+  createPaymentColumns,
+} from 'features.table';
 
 async function getData(): Promise<PaymentT[]> {
   return payments;
@@ -16,7 +17,7 @@ async function getData(): Promise<PaymentT[]> {
 
 const DraftTable = () => {
   const [data, setData] = useState<PaymentT[]>([]);
-  const isMobile = useIsMobile(700);
+  const isMobile = useMedia('(max-width: 700px)');
 
   useEffect(() => {
     getData().then(setData);

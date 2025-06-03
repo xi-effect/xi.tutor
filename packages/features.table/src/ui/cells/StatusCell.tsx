@@ -4,20 +4,10 @@ import { Edit, Trash, Check } from '@xipkg/icons';
 
 import { mapPaymentStatus, PaymentStatusT } from '../../types';
 
-const getColor = (status: PaymentStatusT) => {
-  switch (status) {
-    case 'paid':
-      return 'text-green-100';
-
-    case 'processing':
-      return 'text-brand-100';
-
-    case 'unpaid':
-      return 'text-red-100';
-
-    default:
-      return '';
-  }
+const statusColorMap: Record<PaymentStatusT, string> = {
+  paid: 'text-green-100',
+  processing: 'text-brand-100',
+  unpaid: 'text-red-100',
 };
 
 export const StatusCell = ({ status }: { status: PaymentStatusT }) => {
@@ -29,7 +19,7 @@ export const StatusCell = ({ status }: { status: PaymentStatusT }) => {
 
   return (
     <div className="flex flex-row items-center justify-between gap-8">
-      <div className={clsx('font-normal', 'text-m-base', getColor(status))}>{statusText}</div>
+      <div className={clsx('font-normal', 'text-m-base', statusColorMap[status])}>{statusText}</div>
 
       {status === 'processing' && (
         <div className="flex flex-row items-center justify-between gap-1">

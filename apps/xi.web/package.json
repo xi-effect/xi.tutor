@@ -12,6 +12,7 @@
   "dependencies": {
     "common.auth": "*",
     "common.ui": "*",
+    "common.utils": "*",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1",
     "i18next-http-backend": "3.0.2",
@@ -28,6 +29,7 @@
     "common.sockets": "*",
     "modules.editor": "*",
     "modules.calls": "*",
+    "features.table": "*",
     "@tailwindcss/vite": "^4.0.9",
     "@tanstack/react-router": "^1.109.0",
     "@tanstack/react-query": "5.73.3",

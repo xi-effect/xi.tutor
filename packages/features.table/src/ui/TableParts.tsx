@@ -2,13 +2,7 @@ import { clsx } from 'clsx';
 import React from 'react';
 
 export const Table = ({ className, ...props }: React.HTMLAttributes<HTMLTableElement>) => (
-  <table
-    className={clsx(
-      'w-full border-separate border-spacing-y-2 sm:border-spacing-y-3 md:border-spacing-y-4 lg:border-spacing-y-6',
-      className,
-    )}
-    {...props}
-  />
+  <table className={clsx('w-full border-separate border-spacing-y-2', className)} {...props} />
 );
 
 export const TableHeader = ({

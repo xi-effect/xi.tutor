@@ -1,13 +1,27 @@
+import { ColumnDef } from '@tanstack/react-table';
+
 export type StudentT = {
   id: number;
   name: string;
-  description: string;
+  description?: string | '';
   avatarUrl?: string;
 };
 
 export type SubjectT = {
   id: number;
   name: string;
+};
+
+export interface TableMetaI {
+  students: StudentT[];
+  subjects: SubjectT[];
+}
+
+export type DataTableProps<TData> = {
+  data: TData[];
+  columns: ColumnDef<TData>[];
+  students?: StudentT[];
+  subjects?: SubjectT[];
 };
 
 export type PaymentStatusT = 'paid' | 'processing' | 'unpaid';
@@ -34,3 +48,14 @@ export type PaymentT = {
   typePayment: PaymentTypeT;
   statusPayment: PaymentStatusT;
 };
+
+export const FILTER_KEYS = [
+  'datePayment',
+  'amountPayment',
+  'idStudent',
+  'idSubject',
+  'statusPayment',
+  'typePayment',
+] as const;
+
+export type FilterColumnId = (typeof FILTER_KEYS)[number];
