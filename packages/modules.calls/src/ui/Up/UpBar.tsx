@@ -65,7 +65,7 @@ export const UpBar = () => {
         <TooltipTrigger asChild>
           <Button
             onClick={() => {
-              router.navigate({ to: '/board' });
+              router.navigate({ to: '/board/$boardId', params: { boardId: '1' } });
               updateStore('mode', 'compact');
             }}
             type="button"
