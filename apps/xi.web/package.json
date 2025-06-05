@@ -12,6 +12,7 @@
   "dependencies": {
     "common.auth": "*",
     "common.ui": "*",
+    "common.theme": "*",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1",
     "i18next-http-backend": "3.0.2",
