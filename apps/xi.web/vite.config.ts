@@ -9,10 +9,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
   return {
     plugins: [
       TanStackRouterVite({ target: 'react', autoCodeSplitting: true }),
-      react({
-        // Быстрый режим разработки с меньшими проверками в dev mode
-        fastRefresh: true,
-      }),
+      react(),
       tailwindcss(),
     ],
     build: {
@@ -24,6 +21,18 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         compress: {
           drop_console: true, // Удалит все console.*
           drop_debugger: true, // Удалит debugger
+        },
+      },
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom'],
+            'ui-vendor': ['@xipkg/button', '@xipkg/tooltip', '@xipkg/icons', '@xipkg/utils'],
+            board: ['modules.board'],
+            editor: ['modules.editor'],
+            calendar: ['modules.calendar'],
+            calls: ['modules.calls'],
+          },
         },
       },
     },
