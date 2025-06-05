@@ -17,7 +17,9 @@ import { Route as AboutImport } from './pages/about';
 import { Route as appLayoutImport } from './pages/(app)/_layout';
 import { Route as authSignupIndexImport } from './pages/(auth)/signup/index';
 import { Route as authSigninIndexImport } from './pages/(auth)/signin/index';
+import { Route as authResetPasswordIndexImport } from './pages/(auth)/reset-password/index';
 import { Route as appLayoutIndexImport } from './pages/(app)/_layout/index';
+import { Route as authResetPasswordResetTokenImport } from './pages/(auth)/reset-password/$resetToken';
 import { Route as appWelcomeLayoutImport } from './pages/(app)/welcome/_layout';
 import { Route as appWelcomeUserIndexImport } from './pages/(app)/welcome/user/index';
 import { Route as appWelcomeSocialsIndexImport } from './pages/(app)/welcome/socials/index';
@@ -74,10 +76,22 @@ const authSigninIndexRoute = authSigninIndexImport.update({
   getParentRoute: () => rootRoute,
 } as any);
 
+const authResetPasswordIndexRoute = authResetPasswordIndexImport.update({
+  id: '/(auth)/reset-password/',
+  path: '/reset-password/',
+  getParentRoute: () => rootRoute,
+} as any);
+
 const appLayoutIndexRoute = appLayoutIndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => appLayoutRoute,
+} as any);
+
+const authResetPasswordResetTokenRoute = authResetPasswordResetTokenImport.update({
+  id: '/(auth)/reset-password/$resetToken',
+  path: '/reset-password/$resetToken',
+  getParentRoute: () => rootRoute,
 } as any);
 
 const appWelcomeLayoutRoute = appWelcomeLayoutImport.update({
@@ -202,12 +216,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appWelcomeLayoutImport;
       parentRoute: typeof appWelcomeRoute;
     };
+    '/(auth)/reset-password/$resetToken': {
+      id: '/(auth)/reset-password/$resetToken';
+      path: '/reset-password/$resetToken';
+      fullPath: '/reset-password/$resetToken';
+      preLoaderRoute: typeof authResetPasswordResetTokenImport;
+      parentRoute: typeof rootRoute;
+    };
     '/(app)/_layout/': {
       id: '/(app)/_layout/';
       path: '/';
       fullPath: '/';
       preLoaderRoute: typeof appLayoutIndexImport;
       parentRoute: typeof appLayoutImport;
+    };
+    '/(auth)/reset-password/': {
+      id: '/(auth)/reset-password/';
+      path: '/reset-password';
+      fullPath: '/reset-password';
+      preLoaderRoute: typeof authResetPasswordIndexImport;
+      parentRoute: typeof rootRoute;
     };
     '/(auth)/signin/': {
       id: '/(auth)/signin/';
@@ -381,6 +409,8 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute;
   '/': typeof appLayoutIndexRoute;
   '/welcome': typeof appWelcomeLayoutRoute;
+  '/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute;
+  '/reset-password': typeof authResetPasswordIndexRoute;
   '/signin': typeof authSigninIndexRoute;
   '/signup': typeof authSignupIndexRoute;
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute;
@@ -401,7 +431,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/about': typeof AboutRoute;
   '/welcome': typeof appWelcomeLayoutRoute;
+  '/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute;
   '/': typeof appLayoutIndexRoute;
+  '/reset-password': typeof authResetPasswordIndexRoute;
   '/signin': typeof authSigninIndexRoute;
   '/signup': typeof authSignupIndexRoute;
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute;
@@ -426,7 +458,9 @@ export interface FileRoutesById {
   '/(app)/_layout': typeof appLayoutRouteWithChildren;
   '/(app)/welcome': typeof appWelcomeRouteWithChildren;
   '/(app)/welcome/_layout': typeof appWelcomeLayoutRoute;
+  '/(auth)/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute;
   '/(app)/_layout/': typeof appLayoutIndexRoute;
+  '/(auth)/reset-password/': typeof authResetPasswordIndexRoute;
   '/(auth)/signin/': typeof authSigninIndexRoute;
   '/(auth)/signup/': typeof authSignupIndexRoute;
   '/(app)/_layout/board/$boardId': typeof appLayoutBoardBoardIdRoute;
@@ -450,6 +484,8 @@ export interface FileRouteTypes {
     | '/about'
     | '/'
     | '/welcome'
+    | '/reset-password/$resetToken'
+    | '/reset-password'
     | '/signin'
     | '/signup'
     | '/board/$boardId'
@@ -469,7 +505,9 @@ export interface FileRouteTypes {
   to:
     | '/about'
     | '/welcome'
+    | '/reset-password/$resetToken'
     | '/'
+    | '/reset-password'
     | '/signin'
     | '/signup'
     | '/board/$boardId'
@@ -492,7 +530,9 @@ export interface FileRouteTypes {
     | '/(app)/_layout'
     | '/(app)/welcome'
     | '/(app)/welcome/_layout'
+    | '/(auth)/reset-password/$resetToken'
     | '/(app)/_layout/'
+    | '/(auth)/reset-password/'
     | '/(auth)/signin/'
     | '/(auth)/signup/'
     | '/(app)/_layout/board/$boardId'
@@ -514,6 +554,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute;
   appRoute: typeof appRouteWithChildren;
+  authResetPasswordResetTokenRoute: typeof authResetPasswordResetTokenRoute;
+  authResetPasswordIndexRoute: typeof authResetPasswordIndexRoute;
   authSigninIndexRoute: typeof authSigninIndexRoute;
   authSignupIndexRoute: typeof authSignupIndexRoute;
 }
@@ -521,6 +563,8 @@ export interface RootRouteChildren {
 const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   appRoute: appRouteWithChildren,
+  authResetPasswordResetTokenRoute: authResetPasswordResetTokenRoute,
+  authResetPasswordIndexRoute: authResetPasswordIndexRoute,
   authSigninIndexRoute: authSigninIndexRoute,
   authSignupIndexRoute: authSignupIndexRoute,
 };
@@ -537,6 +581,8 @@ export const routeTree = rootRoute
       "children": [
         "/about",
         "/(app)",
+        "/(auth)/reset-password/$resetToken",
+        "/(auth)/reset-password/",
         "/(auth)/signin/",
         "/(auth)/signup/"
       ]
@@ -582,9 +628,15 @@ export const routeTree = rootRoute
       "filePath": "(app)/welcome/_layout.tsx",
       "parent": "/(app)/welcome"
     },
+    "/(auth)/reset-password/$resetToken": {
+      "filePath": "(auth)/reset-password/$resetToken.tsx"
+    },
     "/(app)/_layout/": {
       "filePath": "(app)/_layout/index.tsx",
       "parent": "/(app)/_layout"
+    },
+    "/(auth)/reset-password/": {
+      "filePath": "(auth)/reset-password/index.tsx"
     },
     "/(auth)/signin/": {
       "filePath": "(auth)/signin/index.tsx"
