@@ -135,9 +135,6 @@ importers:
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
         version: 0.4.20(eslint@9.26.0)
-      features.charts:
-        specifier: workspace:^
-        version: link:../../packages/features.charts
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -743,6 +740,9 @@ importers:
 
   packages/features.charts:
     dependencies:
+      '@xipkg/utils':
+        specifier: ^1.8.0
+        version: 1.8.0(react@19.1.0)
       react:
         specifier: '19'
         version: 19.1.0
@@ -5163,7 +5163,7 @@ packages:
       eslint-config-airbnb: 19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2)(eslint-plugin-react-hooks@5.1.0)(eslint-plugin-react@7.37.2)(eslint@9.26.0)
       eslint-config-next: 15.1.2(eslint@9.26.0)(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.26.0)
-      eslint-config-turbo: 2.5.3(eslint@9.26.0)(turbo@2.5.3)
+      eslint-config-turbo: 2.5.4(eslint@9.26.0)(turbo@2.5.3)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.32.0)(eslint-import-resolver-typescript@3.10.1)(eslint@9.26.0)
       eslint-plugin-react: 7.37.2(eslint@9.26.0)
       eslint-plugin-react-hooks: 5.1.0(eslint@9.26.0)
@@ -5483,6 +5483,16 @@ packages:
       clsx: 2.1.1
       react: 19.1.0
       tailwind-merge: 1.14.0
+    dev: false
+
+  /@xipkg/utils@1.8.0(react@19.1.0):
+    resolution: {integrity: sha512-u8GGZ1E5Wj2VTz/AbvoIXtw273fSEud4s10hRCXCdg2t6gHfjOzjbLoLfZmsJq4mgzfYorv7hWDYW9m4C1O8JA==}
+    peerDependencies:
+      react: ^19
+    dependencies:
+      clsx: 2.1.1
+      react: 19.1.0
+      tailwind-merge: 3.3.0
     dev: false
 
   /JSONStream@1.3.5:
@@ -6585,14 +6595,14 @@ packages:
       eslint: 9.26.0
     dev: true
 
-  /eslint-config-turbo@2.5.3(eslint@9.26.0)(turbo@2.5.3):
-    resolution: {integrity: sha512-KuW20TUDfLooS38gSquL6Gi+ZjaMlno0N3hBe8c+F8+nRYUhbF2fNhuyzl9ScNHx6aJT2eVhLBfGELg7N5+sog==}
+  /eslint-config-turbo@2.5.4(eslint@9.26.0)(turbo@2.5.3):
+    resolution: {integrity: sha512-OpjpDLXIaus0N/Y+pMj17K430xjpd6WTo0xPUESqYZ9BkMngv2n0ZdjktgJTbJVnDmK7gHrXgJAljtdIMcYBIg==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
     dependencies:
       eslint: 9.26.0
-      eslint-plugin-turbo: 2.5.3(eslint@9.26.0)(turbo@2.5.3)
+      eslint-plugin-turbo: 2.5.4(eslint@9.26.0)(turbo@2.5.3)
       turbo: 2.5.3
     dev: true
 
@@ -6810,6 +6820,17 @@ packages:
 
   /eslint-plugin-turbo@2.5.3(eslint@9.26.0)(turbo@2.5.3):
     resolution: {integrity: sha512-DlXZd+LgpDlxH/6IsiAXLhy82x0jeJDm0XBEqP6Le08uy0HBQkjCUt7SmXNp8esAtX9RYe6oDClbNbmI1jtK5g==}
+    peerDependencies:
+      eslint: '>6.6.0'
+      turbo: '>2.0.0'
+    dependencies:
+      dotenv: 16.0.3
+      eslint: 9.26.0
+      turbo: 2.5.3
+    dev: true
+
+  /eslint-plugin-turbo@2.5.4(eslint@9.26.0)(turbo@2.5.3):
+    resolution: {integrity: sha512-IZsW61DFj5mLMMaCJxhh1VE4HvNhfdnHnAaXajgne+LUzdyHk2NvYT0ECSa/1SssArcqgTvV74MrLL68hWLLFw==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'

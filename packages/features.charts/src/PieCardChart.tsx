@@ -2,6 +2,8 @@
 
 import { LabelList, Pie, PieChart } from 'recharts';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from './Chart';
+import { cn } from '@xipkg/utils';
+import type { PieChart as PieChartType, LabelList as LabelListType } from 'recharts';
 
 const chartData = [
   { language: 'english', visitors: 50, fill: 'var(--xi-brand-80)' },
@@ -26,7 +28,27 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export const PieCardChart = () => {
+interface PieCardChartT {
+  pieChartProps?: Partial<Omit<React.ComponentProps<typeof PieChartType>, 'children'>> & {
+    className?: string;
+  };
+  pieProps?: {
+    className?: string;
+  };
+  chartContainerProps?: {
+    className?: string;
+  };
+  labelListProps?: Partial<Omit<React.ComponentProps<typeof LabelListType>, 'children'>> & {
+    className?: string;
+  };
+}
+
+export const PieCardChart = ({
+  pieChartProps,
+  pieProps,
+  chartContainerProps,
+  labelListProps,
+}: PieCardChartT) => {
   console.log('PieCardChart');
 
   return (
@@ -36,22 +58,31 @@ export const PieCardChart = () => {
       </div>
       <div className="flex-1 p-6 pt-0 pb-0">
         <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
-          <PieChart>
-            <ChartTooltip cursor={false} content={<ChartTooltipContent hideLabel />} />
+          <PieChart {...pieChartProps} className={cn(pieChartProps?.className)}>
+            <ChartTooltip
+              {...chartContainerProps}
+              cursor={false}
+              content={
+                <ChartTooltipContent hideLabel className={cn(chartContainerProps?.className)} />
+              }
+            />
             <Pie
               data={chartData}
               dataKey="visitors"
               nameKey="language"
               innerRadius={60}
               outerRadius={100}
+              {...pieProps}
+              className={cn(pieProps?.className)}
             >
               <LabelList
                 dataKey="visitors"
-                className="fill-gray-0 text-gray-60"
+                className={(cn(labelListProps?.className), 'fill-gray-0 text-gray-60')}
                 stroke="none"
                 fontSize={12}
                 position="inside"
                 formatter={(value: number) => `${value}%`}
+                {...labelListProps}
               />
             </Pie>
           </PieChart>

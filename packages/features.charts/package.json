@@ -11,6 +11,7 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
+    "@xipkg/utils": "^1.8.0",
     "recharts": "^2.15.3",
     "tailwind-merge": "^3.3.0"
   },
