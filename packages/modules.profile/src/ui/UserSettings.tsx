@@ -99,7 +99,7 @@ export const UserSettings = ({
               setShowContent={setShowContent}
               handleClose={handleClose}
             />
-            <div className="mt-4 flex h-full flex-row">
+            <div className="mt-4 flex h-full flex-row gap-8">
               {isMobile ? (
                 <div className="flex-1">
                   {showContent ? (
