@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   Grid,
   // Settings,
@@ -16,15 +16,14 @@ import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
 import { TooltipContent, Tooltip, TooltipTrigger } from '@xipkg/tooltip';
 import { useCallStore } from '../../store/callStore';
-import { WhiteboardsModal } from '../Bottom/WhiteboardsModal';
+import { useRouter } from '@tanstack/react-router';
 
 export const UpBar = () => {
   const [carouselType, setCarouselType] = React.useState<string>('grid');
   const { isFullScreen, toggleFullScreen } = useFullScreen('videoConferenceContainer');
 
   const updateStore = useCallStore((state) => state.updateStore);
-
-  const [isWhiteboardModalOpen, setIsWhiteboardModalOpen] = useState(false);
+  const router = useRouter();
 
   const toggleLayout = () => {
     setCarouselType((prev) => {
@@ -34,6 +33,14 @@ export const UpBar = () => {
       return 'horizontal';
     });
   };
+
+  // useEffect(() => {
+  //   if (carouselType === 'horizontal' || carouselType === 'vertical') {
+  //     router.push(`${pathname}?carouselType=${carouselType}`);
+  //   } else if (carouselType === 'grid') {
+  //     router.push(pathname);
+  //   }
+  // }, [carouselType]);
 
   const getViewIcon = () => {
     if (carouselType === 'horizontal') {
@@ -45,12 +52,20 @@ export const UpBar = () => {
     return <Grid className="fill-gray-100" />;
   };
 
+  // if (!currentCall || currentCall.length === 0) return null;
+
+  // const currentCallsCategory =
+  //   typeof currentCall[0].categoryId === 'number'
+  //     ? categories?.filter((item) => currentCall[0].categoryId === item.id)
+  //     : null;
+
   return (
     <div className={cn('flex w-full flex-row items-end px-4 pb-4', isFullScreen && 'pt-2')}>
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button
             onClick={() => {
+              router.navigate({ to: '/board' });
               updateStore('mode', 'compact');
             }}
             type="button"
@@ -71,19 +86,10 @@ export const UpBar = () => {
       <span className="text-gray-70 ml-2 pb-1">Имя ученика</span>
 
       <Button
-        onClick={() => setIsWhiteboardModalOpen(true)}
-        type="button"
-        variant="ghost"
-        className="ml-auto flex h-10 w-[95px] flex-row items-center justify-center gap-2 rounded-[12px]"
-      >
-        <span className="text-gray-100">Доска</span>
-      </Button>
-
-      <Button
         onClick={toggleLayout}
         type="button"
         variant="ghost"
-        className="ml-2 flex h-10 w-[95px] flex-row items-center justify-center gap-2 rounded-[12px]"
+        className="ml-auto flex h-10 w-[95px] flex-row items-center justify-center gap-2 rounded-[12px]"
       >
         {getViewIcon()}
         <span className="text-gray-100">Вид</span>
@@ -122,7 +128,6 @@ export const UpBar = () => {
           <SettingsIcon className="fill-gray-100" />
         </Button>
       </Settings>
-      <WhiteboardsModal open={isWhiteboardModalOpen} onOpenChange={setIsWhiteboardModalOpen} />
     </div>
   );
 };
