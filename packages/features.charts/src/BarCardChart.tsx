@@ -1,5 +1,3 @@
-'use client';
-
 import { ChevronUp } from '@xipkg/icons';
 import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
 
@@ -18,11 +16,9 @@ type ChartBarT = {
 };
 
 export const BarCardChart = ({ chartData, chartConfig, fillBar, dataKey }: ChartBarT) => {
-  console.log('ChartBar');
-
   return (
     <div className="h-[300px] w-[1000px]">
-      <div className="bg-card text-card-foreground rounded-lg border shadow-sm">
+      <div className="rounded-lg border shadow-sm">
         <div className="flex justify-between space-y-1.5 p-6">
           <div className="text-primary-100 text-xl font-semibold tracking-tight">Доход</div>
           <div className="text-muted-foreground flex items-center text-xs">

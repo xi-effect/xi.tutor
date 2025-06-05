@@ -1,5 +1,3 @@
-'use client';
-
 import { BarCardChart } from '../src/BarCardChart';
 import { PieCardChart } from '../src/PieCardChart';
 import { type ChartConfig } from '../src/Chart';
@@ -28,8 +26,6 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export const PaymentControl = () => {
-  console.log('PaymentControl');
-
   return (
     <div className="flex">
       <BarCardChart

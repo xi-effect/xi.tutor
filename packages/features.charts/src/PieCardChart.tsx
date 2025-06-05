@@ -1,5 +1,3 @@
-'use client';
-
 import { LabelList, Pie, PieChart } from 'recharts';
 import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from './Chart';
 import { cn } from '@xipkg/utils';
@@ -49,8 +47,6 @@ export const PieCardChart = ({
   chartContainerProps,
   labelListProps,
 }: PieCardChartT) => {
-  console.log('PieCardChart');
-
   return (
     <div className="bg-card text-card-foreground flex flex-col rounded-lg border shadow-sm">
       <div className="flex space-y-1 p-4">
