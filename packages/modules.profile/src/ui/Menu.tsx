@@ -1,4 +1,4 @@
-import { Account, Exit, Home, Key, Palette, Notification } from '@xipkg/icons';
+import { Account, Exit, Key, Palette, Notification } from '@xipkg/icons';
 import { Dispatch, SetStateAction } from 'react';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 
@@ -8,10 +8,6 @@ type ItemT = {
 };
 
 const options: ItemT[] = [
-  {
-    name: 'Главная',
-    query: 'home',
-  },
   {
     name: 'Личные данные',
     query: 'personalInfo',
@@ -56,14 +52,12 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
 
     switch (index) {
       case 0:
-        return <Home className={iconClasses} key="home-icon" />;
-      case 1:
         return <Account className={iconClasses} key="account-icon" />;
-      case 2:
+      case 1:
         return <Palette className={iconClasses} key="palette-icon" />;
-      case 3:
+      case 2:
         return <Key className={iconClasses} key="key-icon" />;
-      case 4:
+      case 3:
         return <Notification className={iconClasses} key="notification-icon" />;
       default:
         return null;

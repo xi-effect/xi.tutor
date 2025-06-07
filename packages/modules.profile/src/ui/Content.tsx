@@ -1,5 +1,4 @@
 import { ReactElement } from 'react';
-import { Main } from './Main';
 import { Customization } from './Customization';
 import { Secure } from './Secure';
 import { PersonalData } from './PersonalData';
@@ -10,7 +9,6 @@ type ComponentMapT = {
 };
 
 const componentMap: ComponentMapT = {
-  home: <Main />,
   personalInfo: <PersonalData />,
   personalisation: <Customization />,
   security: <Secure />,
@@ -22,6 +20,6 @@ type ContentPropsT = {
 };
 
 export const Content = ({ activeQuery }: ContentPropsT) => {
-  const activeItem = componentMap[activeQuery] || <Main />;
+  const activeItem = componentMap[activeQuery] || <PersonalData />;
   return <div className="w-full">{activeItem}</div>;
 };
