@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
+import { PaymentsPage } from 'pages.payments';
 
 const Payments = () => {
-  return <>Payments</>;
+  return <PaymentsPage />;
 };
 
 // @ts-ignore

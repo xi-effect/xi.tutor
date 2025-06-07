@@ -26,6 +26,7 @@
     "pages.classrooms": "*",
     "pages.classroom": "*",
     "pages.materials": "*",
+    "pages.payments": "*",
     "modules.board": "*",
     "common.sockets": "*",
     "modules.editor": "*",
