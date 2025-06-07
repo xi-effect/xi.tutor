@@ -36,7 +36,7 @@ export const DataTable = <TData,>({
   });
 
   return (
-    <Table>
+    <Table className="p-2">
       <TableHeader>
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id}>
@@ -59,7 +59,7 @@ export const DataTable = <TData,>({
 
       <TableBody>
         {table.getFilteredRowModel().rows.map((row) => (
-          <TableRow key={row.id}>
+          <TableRow className="hover:shadow-[0_0_0_1px_var(--xi-gray-30)]" key={row.id}>
             {row.getVisibleCells().map((cell) => (
               <TableCell key={cell.id}>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}

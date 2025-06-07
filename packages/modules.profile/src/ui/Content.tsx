@@ -23,5 +23,5 @@ type ContentPropsT = {
 
 export const Content = ({ activeQuery }: ContentPropsT) => {
   const activeItem = componentMap[activeQuery] || <Main />;
-  return <div className="w-full sm:ml-8">{activeItem}</div>;
+  return <div className="w-full">{activeItem}</div>;
 };

@@ -123,7 +123,7 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
   };
 
   return (
-    <div className="flex w-[220px] flex-col gap-1 sm:w-full">
+    <div className="flex w-full flex-col gap-1 sm:w-[220px]">
       {options.map((item, index) => (
         <Item item={item} index={index} key={index} onMenuItemChange={handleMenuItem} />
       ))}
