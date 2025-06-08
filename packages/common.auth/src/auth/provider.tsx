@@ -54,6 +54,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     onSuccess: () => {
       setIsAuthenticated(false);
+      queryClient.clear();
     },
 
     onError: (error) => {

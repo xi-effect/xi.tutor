@@ -22,10 +22,9 @@ export const Notifications = () => {
 
       <div className="flex flex-col gap-4">
         <div className="border-gray-30 flex w-full flex-col gap-2 rounded-2xl border p-1">
-          <button
-            type="button"
+          <div
             onClick={() => setTelegram(!isTelegram)}
-            className="hover:bg-gray-5 flex h-[66px] flex-row items-center gap-4 rounded-xl bg-transparent p-3"
+            className="hover:bg-gray-5 flex h-[66px] cursor-pointer flex-row items-center gap-4 rounded-xl bg-transparent p-3"
           >
             <TelegramFilled className="fill-brand-80" />
 
@@ -51,16 +50,15 @@ export const Notifications = () => {
             ) : (
               <ChevronRight className="fill-gray-80 ml-auto" />
             )}
-          </button>
+          </div>
 
           {isTelegram && <NotificationsToggles type="telegram" />}
         </div>
 
-        <div className="border-gray-30 flex w-full flex-col gap-2 rounded-2xl border p-1">
-          <button
-            type="button"
+        <div className="border-gray-30 flex w-full cursor-pointer flex-col gap-2 rounded-2xl border p-1">
+          <div
             onClick={() => setWhatsapp(!isWhatsapp)}
-            className="hover:bg-gray-5 flex h-[66px] flex-row items-center gap-4 rounded-xl bg-transparent p-3"
+            className="hover:bg-gray-5 flex h-[66px] cursor-pointer flex-row items-center gap-4 rounded-xl bg-transparent p-3"
           >
             <WhatsAppFilled className="fill-brand-80" />
 
@@ -86,13 +84,13 @@ export const Notifications = () => {
             ) : (
               <ChevronRight className="fill-gray-80 ml-auto" />
             )}
-          </button>
+          </div>
 
           {isWhatsapp && <NotificationsToggles type="whatsapp" />}
         </div>
 
         <div className="border-gray-30 flex w-full flex-col gap-2 rounded-2xl border p-1">
-          <div className="hover:bg-gray-5 flex h-[66px] flex-row items-center gap-4 rounded-xl bg-transparent p-3">
+          <div className="hover:bg-gray-5 flex h-[66px] cursor-pointer flex-row items-center gap-4 rounded-xl bg-transparent p-3">
             <MailRounded className="fill-brand-80" />
 
             <div className="items-star flex flex-col">

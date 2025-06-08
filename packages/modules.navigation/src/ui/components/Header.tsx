@@ -63,12 +63,13 @@ export const Header = ({
     // Используем параметр iid для хранения значения "profile:home"
     navigate({
       to: pathname,
-      search: { iid: 'profile:home' },
+      search: { iid: 'profile:personalInfo' },
     });
   };
 
   const handleLogout = () => {
     logout();
+    // TODO: переделать, сделать редирект только по 200
     navigate({ to: '/signin' });
   };
 
