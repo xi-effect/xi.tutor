@@ -20,6 +20,8 @@
     "@xipkg/icons": "2.3.0",
     "@xipkg/utils": "1.6.3",
     "@xipkg/scrollarea": "2.2.0",
+    "@xipkg/userprofile": "4.0.12",
+    "@xipkg/tooltip": "2.1.0",
     "@xipkg/badge": "2.0.12",
     "zod": "3.24.2",
     "react-hook-form": "^7.55.0",

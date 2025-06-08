@@ -1,1 +1,0 @@
-export { Cabinets } from './Cabinets';

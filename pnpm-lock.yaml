@@ -1917,6 +1917,12 @@ importers:
       '@xipkg/scrollarea':
         specifier: 2.2.0
         version: 2.2.0(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/tooltip':
+        specifier: 2.1.0
+        version: 2.1.0(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/userprofile':
+        specifier: 4.0.12
+        version: 4.0.12(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/utils':
         specifier: 1.6.3
         version: 1.6.3(react@19.1.0)

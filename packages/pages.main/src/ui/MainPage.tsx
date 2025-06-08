@@ -1,4 +1,4 @@
-import { Lessons, Cabinets, Materials, Payments } from './components';
+import { Lessons, Materials, Payments, Classrooms } from './components';
 
 export const MainPage = () => {
   console.log('MainPage');
@@ -6,7 +6,7 @@ export const MainPage = () => {
   return (
     <div className="flex flex-col">
       <Lessons />
-      <Cabinets />
+      <Classrooms />
       <Materials />
       <Payments />
     </div>
