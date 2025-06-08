@@ -11,7 +11,7 @@ const DEFAULT_THEME: ThemeT = 'light';
 const ALL_THEMES: ThemeItemT[] = [
   { label: 'Светлая', value: 'light' },
   { label: 'Тёмная', value: 'dark' },
-  { label: 'Системная', value: 'system' },
+  { label: 'Как в системе', value: 'system' },
 ];
 
 export const ThemeProvider: FC<PropsWithChildren> = ({ children }) => {
