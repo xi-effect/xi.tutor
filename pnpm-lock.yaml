@@ -2129,6 +2129,9 @@ importers:
       common.services:
         specifier: '*'
         version: link:../common.services
+      common.ui:
+        specifier: '*'
+        version: link:../common.ui
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)
@@ -2229,6 +2232,9 @@ importers:
       common.types:
         specifier: '*'
         version: link:../common.types
+      common.ui:
+        specifier: '*'
+        version: link:../common.ui
       react:
         specifier: '19'
         version: 19.1.0

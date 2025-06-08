@@ -18,6 +18,7 @@ import { Eyeoff, Eyeon } from '@xipkg/icons';
 
 import { useFormSchema, type FormData } from '../model';
 import { useSignupForm } from '../hooks';
+import { Logo } from 'common.ui';
 
 export const SignUpPage = () => {
   const { t } = useTranslation('signup');
@@ -62,8 +63,7 @@ export const SignUpPage = () => {
         className="flex h-full w-full flex-col justify-items-start space-y-4"
       >
         <div className="self-center">
-          {/* <Logo height={22} width={180} logoVariant="navigation" logoSize="default" /> */}
-          Logo
+          <Logo height={22} width={180} />
         </div>
         <h1 className="self-center text-2xl font-semibold">{t('register')}</h1>
         <FormField

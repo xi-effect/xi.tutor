@@ -15,6 +15,7 @@
     "common.env": "*",
     "common.types": "*",
     "common.auth": "*",
+    "common.ui": "*",
     "@xipkg/button": "3.1.2",
     "@xipkg/form": "^4.2.0",
     "@xipkg/icons": "2.3.0",

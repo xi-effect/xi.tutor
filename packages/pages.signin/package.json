@@ -16,6 +16,7 @@
     "common.env": "*",
     "common.config": "*",
     "common.auth": "*",
+    "common.ui": "*",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1",
     "@tanstack/react-router": "^1.109.0",

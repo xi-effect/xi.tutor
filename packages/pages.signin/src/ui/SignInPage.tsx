@@ -16,6 +16,7 @@ import { Link } from '@xipkg/link';
 import { useTranslation } from 'react-i18next';
 import { FormData, useFormSchema } from '../model';
 import { useSigninForm } from '../hooks';
+import { Logo } from 'common.ui';
 
 export const SignInPage = () => {
   const { t } = useTranslation('signin'); // Используем namespace "signin"
@@ -45,7 +46,9 @@ export const SignInPage = () => {
       <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex h-[600px] w-full max-w-[420px] p-8">
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-col gap-4">
-            <div className="flex justify-center">Logo</div>
+            <div className="self-center">
+              <Logo height={22} width={180} />
+            </div>
             <h1 className="flex justify-center text-2xl font-semibold">{t('sign_in')}</h1>
             <FormField
               control={control}
