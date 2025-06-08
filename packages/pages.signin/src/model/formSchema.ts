@@ -2,7 +2,7 @@ import * as z from 'zod';
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
 
-const passwordMinLength = 1;
+const passwordMinLength = 6;
 
 export const useFormSchema = () => {
   const { t } = useTranslation('signin');
@@ -21,7 +21,7 @@ export const useFormSchema = () => {
           required_error: t('validation.required'),
         })
         .min(passwordMinLength, {
-          message: t('validation.required'),
+          message: t('validation.minLength'),
         }),
     });
   }, [t]);

@@ -4,5 +4,14 @@
   "password": "Password",
   "forgot_password": "Forgot Password",
   "register": "Register",
-  "sign_in_button": "Sign In"
+  "sign_in_button": "Sign In",
+  "validation": {
+    "required": "This field is required",
+    "minLength": "Min length is ",
+    "maxLength": "Max length is ",
+    "wrong_format": "Incorrect data format",
+    "no_symbols": "Use only Latin alphabet, lowercase, numbers or symbols: '_' or '.'",
+    "symbols_one": "{{count}} symbol",
+    "symbols_other": "{{count}} symbols"
+  }
 }
