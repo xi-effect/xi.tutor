@@ -26,6 +26,7 @@
 @source "../../../packages/features.avatar.editor/src";
 @source "../../../packages/features.table/src";
 @source "../../../packages/pages.payments/src";
+@source "../../../packages/pages.main/src";
 
 @source "../../../node_modules/@xipkg";
 

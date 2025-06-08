@@ -1,0 +1,52 @@
+{
+  "name": "pages.main",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "common.config": "*",
+    "common.env": "*",
+    "common.types": "*",
+    "common.auth": "*",
+    "common.ui": "*",
+    "@xipkg/button": "3.1.2",
+    "@xipkg/icons": "2.3.0",
+    "@xipkg/utils": "1.6.3",
+    "@xipkg/scrollarea": "2.2.0",
+    "@xipkg/badge": "2.0.12",
+    "zod": "3.24.2",
+    "react-hook-form": "^7.55.0",
+    "@hookform/resolvers": "5.0.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "common.typescript": "*",
+    "@types/node": "^20.3.1",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@xipkg/eslint": "3.2.0",
+    "@xipkg/tailwind": "0.8.1",
+    "@xipkg/typescript": "latest",
+    "common.eslint": "*",
+    "eslint": "^9.19.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.18",
+    "globals": "^15.14.0",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.22.0"
+  },
+  "peerDependencies": {
+    "react": "19",
+    "react-hook-form": "^7.55.0",
+    "@hookform/resolvers": "5.0.1"
+  },
+  "description": "form for signin",
+  "author": "xi.effect"
+}

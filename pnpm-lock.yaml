@@ -89,6 +89,9 @@ importers:
       pages.classrooms:
         specifier: '*'
         version: link:../../packages/pages.classrooms
+      pages.main:
+        specifier: '*'
+        version: link:../../packages/pages.main
       pages.materials:
         specifier: '*'
         version: link:../../packages/pages.materials
@@ -1850,6 +1853,97 @@ importers:
       react:
         specifier: '19'
         version: 19.1.0
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.19.0
+        version: 9.28.0
+      '@types/node':
+        specifier: ^20.3.1
+        version: 20.19.0
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.1.6
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.1.6(@types/react@19.1.6)
+      '@xipkg/eslint':
+        specifier: 3.2.0
+        version: 3.2.0(eslint-plugin-jsx-a11y@6.10.2)(eslint@9.28.0)(turbo@2.5.4)(typescript@5.7.3)
+      '@xipkg/tailwind':
+        specifier: 0.8.1
+        version: 0.8.1
+      '@xipkg/typescript':
+        specifier: latest
+        version: 0.2.0
+      common.eslint:
+        specifier: '*'
+        version: link:../common.eslint
+      common.typescript:
+        specifier: '*'
+        version: link:../common.typescript
+      eslint:
+        specifier: ^9.19.0
+        version: 9.28.0
+      eslint-plugin-react-hooks:
+        specifier: ^5.0.0
+        version: 5.2.0(eslint@9.28.0)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.18
+        version: 0.4.20(eslint@9.28.0)
+      globals:
+        specifier: ^15.14.0
+        version: 15.15.0
+      typescript:
+        specifier: ~5.7.2
+        version: 5.7.3
+      typescript-eslint:
+        specifier: ^8.22.0
+        version: 8.33.1(eslint@9.28.0)(typescript@5.7.3)
+
+  packages/pages.main:
+    dependencies:
+      '@hookform/resolvers':
+        specifier: 5.0.1
+        version: 5.0.1(react-hook-form@7.57.0)
+      '@xipkg/badge':
+        specifier: 2.0.12
+        version: 2.0.12(react@19.1.0)
+      '@xipkg/button':
+        specifier: 3.1.2
+        version: 3.1.2(@types/react@19.1.6)(react@19.1.0)
+      '@xipkg/icons':
+        specifier: 2.3.0
+        version: 2.3.0(react@19.1.0)
+      '@xipkg/scrollarea':
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/utils':
+        specifier: 1.6.3
+        version: 1.6.3(react@19.1.0)
+      common.auth:
+        specifier: '*'
+        version: link:../common.auth
+      common.config:
+        specifier: '*'
+        version: link:../common.config
+      common.env:
+        specifier: '*'
+        version: link:../common.env
+      common.types:
+        specifier: '*'
+        version: link:../common.types
+      common.ui:
+        specifier: '*'
+        version: link:../common.ui
+      react:
+        specifier: '19'
+        version: 19.1.0
+      react-hook-form:
+        specifier: ^7.55.0
+        version: 7.57.0(react@19.1.0)
+      zod:
+        specifier: 3.24.2
+        version: 3.24.2
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0
