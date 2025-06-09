@@ -1,18 +1,17 @@
-import { Link } from '@xipkg/link';
+import { Button } from '@xipkg/button';
+import { ModalStudentsList } from './ModalStudentsList';
 
 type LinkListStudentsT = {
   src: string;
   className?: string;
 };
 
-export const LinkListStudents = ({ src, className }: LinkListStudentsT) => {
+export const LinkListStudents = ({ className }: LinkListStudentsT) => {
   return (
-    <Link
-      href={src}
-      variant="hover"
-      className={`text-m-base text-gray-80 font-normal ${className || ''}`}
-    >
-      Список учеников
-    </Link>
+    <ModalStudentsList>
+      <Button variant="ghost" className={`text-m-base text-gray-80 font-normal ${className || ''}`}>
+        Список учеников
+      </Button>
+    </ModalStudentsList>
   );
 };
