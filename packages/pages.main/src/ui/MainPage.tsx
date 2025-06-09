@@ -7,8 +7,8 @@ export const MainPage = () => {
     <div className="flex flex-col">
       <Lessons />
       <Classrooms />
-      <Materials />
       <Payments />
+      <Materials />
     </div>
   );
 };
