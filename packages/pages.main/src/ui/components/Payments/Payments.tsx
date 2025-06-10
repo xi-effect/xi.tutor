@@ -29,6 +29,14 @@ export const Payments = () => {
           </TooltipTrigger>
           <TooltipContent>К оплатам</TooltipContent>
         </Tooltip>
+        <div className="ml-auto flex flex-row items-center gap-2 max-sm:hidden">
+          <Button
+            size="s"
+            className="text-s-base text-gray-0 rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
+          >
+            Создать счет на оплату
+          </Button>
+        </div>
       </div>
       <div className="flex flex-row">
         <ScrollArea

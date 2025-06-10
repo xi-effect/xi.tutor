@@ -167,7 +167,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -234,7 +234,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -310,7 +310,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -371,7 +371,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -423,7 +423,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -456,7 +456,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       eslint-plugin-turbo:
         specifier: ^2.4.4
         version: 2.5.4(eslint@9.28.0)(turbo@2.5.4)
@@ -526,7 +526,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -609,7 +609,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -661,7 +661,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -718,7 +718,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -770,7 +770,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -864,7 +864,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -916,7 +916,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -995,7 +995,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -1083,7 +1083,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -1171,7 +1171,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -1301,7 +1301,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -1431,7 +1431,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -1528,7 +1528,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -1637,7 +1637,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -1740,7 +1740,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -1819,7 +1819,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -1844,15 +1844,30 @@ importers:
       '@xipkg/icons':
         specifier: 2.3.0
         version: 2.3.0(react@19.1.0)
+      '@xipkg/input':
+        specifier: 2.2.9
+        version: 2.2.9(react@19.1.0)
       '@xipkg/link':
         specifier: ^2.0.12
         version: 2.0.12(react@19.1.0)
+      '@xipkg/modal':
+        specifier: 4.1.0
+        version: 4.1.0(@types/react-dom@19.1.6)(@types/react@19.1.7)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/scrollarea':
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.1.6)(@types/react@19.1.7)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/select':
         specifier: ^2.2.5
         version: 2.2.5(@types/react-dom@19.1.6)(@types/react@19.1.7)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/tooltip':
+        specifier: 2.1.0
+        version: 2.1.0(@types/react-dom@19.1.6)(@types/react@19.1.7)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/userprofile':
         specifier: 4.0.12
         version: 4.0.12(@types/react-dom@19.1.6)(@types/react@19.1.7)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/utils':
+        specifier: 1.8.0
+        version: 1.8.0(react@19.1.0)
       react:
         specifier: '19'
         version: 19.1.0
@@ -1892,7 +1907,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -1989,7 +2004,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -2059,7 +2074,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -2183,7 +2198,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -2398,7 +2413,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -2492,7 +2507,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -2601,7 +2616,7 @@ importers:
         version: 5.2.0(eslint@9.28.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
+        version: 0.4.18(eslint@9.28.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -7664,14 +7679,6 @@ packages:
 
   /eslint-plugin-react-refresh@0.4.18(eslint@9.28.0):
     resolution: {integrity: sha512-IRGEoFn3OKalm3hjfolEWGqoF/jPqeEYFp+C8B0WMzwGwBMvlRDQd06kghDhF0C61uJ6WfSDhEZE/sAQjduKgw==}
-    peerDependencies:
-      eslint: '>=8.40'
-    dependencies:
-      eslint: 9.28.0
-    dev: true
-
-  /eslint-plugin-react-refresh@0.4.20(eslint@9.28.0):
-    resolution: {integrity: sha512-XpbHQ2q5gUF8BGOX4dHe+71qoirYMhApEPZ7sfhF/dNnOF1UXnCMGZf79SFTBO7Bz5YEIT4TMieSlJBWhP9WBA==}
     peerDependencies:
       eslint: '>=8.40'
     dependencies:
