@@ -18,8 +18,7 @@
     "passwordChanged": "Ваш пароль успешно изменен",
     "error": "Произошла ошибка. Пожалуйста, попробуйте снова.",
     "errorResetPassword": "Произошла ошибка. Пожалуйста, попробуйте снова.",
-    "passwordsDoNotMatch": "Пароли не совпадают",
-    "passwordTooShort": "Пароль должен быть не менее 6 символов"
+    "passwordsDoNotMatch": "Пароли не совпадают"
   },
   "validation": {
     "required": "Обязательное поле",

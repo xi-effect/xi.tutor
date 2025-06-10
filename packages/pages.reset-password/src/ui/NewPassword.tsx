@@ -21,7 +21,7 @@ export const NewPassword = ({ token }: { token: string }) => {
   const [isPasswordShowSecond, setIsPasswordShowSecond] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleFormSubmit = async (data: FormDataPassword) => {
+  const handleSubmit = async (data: FormDataPassword) => {
     try {
       setIsLoading(true);
       await onSubmit(data);
@@ -35,7 +35,7 @@ export const NewPassword = ({ token }: { token: string }) => {
   return (
     <Form<FormDataPassword> {...form}>
       <form
-        onSubmit={form.handleSubmit(handleFormSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="flex h-full w-full flex-col space-y-4"
       >
         <div className="self-center">

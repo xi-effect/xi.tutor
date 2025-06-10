@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useTranslation } from 'react-i18next';
