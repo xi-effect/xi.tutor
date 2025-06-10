@@ -6,6 +6,7 @@ import LocalStorageBackend from 'i18next-localstorage-backend';
 // Импортируем переводы из всех пакетов
 import { signinEn, signinRu } from 'pages.signin';
 import { signupEn, signupRu } from 'pages.signup';
+import { resetPasswordEn, resetPasswordRu } from 'pages.reset-password';
 import { navigationEn, navigationRu } from 'modules.navigation';
 import {
   welcomeEn,
@@ -26,6 +27,7 @@ const resources = {
   en: {
     signin: signinEn,
     signup: signupEn,
+    resetPassword: resetPasswordEn,
     navigation: navigationEn,
     welcomeUser: welcomeUserEn,
     welcomeRole: welcomeRoleEn,
@@ -37,6 +39,7 @@ const resources = {
   ru: {
     signin: signinRu,
     signup: signupRu,
+    resetPassword: resetPasswordRu,
     navigation: navigationRu,
     welcomeUser: welcomeUserRu,
     welcomeRole: welcomeRoleRu,
