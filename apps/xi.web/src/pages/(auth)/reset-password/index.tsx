@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
+import { ResetPasswordPage } from 'pages.reset-password';
 
 // @ts-ignore
 export const Route = createFileRoute('/(auth)/reset-password/')({
@@ -10,5 +11,9 @@ export const Route = createFileRoute('/(auth)/reset-password/')({
 });
 
 function ResetPassword() {
-  return <>1</>;
+  return (
+    <>
+      <ResetPasswordPage />
+    </>
+  );
 }

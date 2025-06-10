@@ -1,0 +1,32 @@
+{
+  "title": "Password recovery",
+  "emailSent": "Email sent",
+  "emailLabel": "Email",
+  "sentTo": "Link to reset password has been sent to",
+  "sign_in_button": "Sign In",
+  "send": "Send",
+  "resend": "Resend",
+  "emailNotFound": "Unable to find account",
+  "invalidEmail": "Please enter a valid email address",
+  "enterTrueEmail": "Enter the address associated with your account",
+  "requestSent": "Password reset link has been sent to your email",
+  "save": "Save",
+  "resetPassword": {
+    "title": "Reset Password",
+    "password": "New Password",
+    "confirmPassword": "Confirm Password",
+    "passwordChanged": "Your password has been changed successfully",
+    "error": "An error occurred. Please try again.",
+    "errorResetPassword": "An error occurred. Please try again.",
+    "passwordsDoNotMatch": "Passwords do not match"
+  },
+  "validation": {
+    "required": "This field is required",
+    "minLength": "Min length is ",
+    "maxLength": "Max length is ",
+    "wrong_format": "Incorrect data format",
+    "no_symbols": "Use only Latin alphabet, lowercase, numbers or symbols: '_' or '.'",
+    "symbols_one": "{{count}} symbol",
+    "symbols_other": "{{count}} symbols"
+  }
+}
