@@ -11,6 +11,7 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
+    "features.materials.add": "*",
     "common.config": "*",
     "common.env": "*",
     "common.types": "*",

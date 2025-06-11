@@ -924,6 +924,79 @@ importers:
         specifier: ^8.22.0
         version: 8.33.1(eslint@9.28.0)(typescript@5.7.3)
 
+  packages/features.materials.add:
+    dependencies:
+      '@xipkg/button':
+        specifier: ^3.1.8
+        version: 3.1.8(@types/react@19.1.6)(react@19.1.0)
+      '@xipkg/checkbox':
+        specifier: ^4.0.14
+        version: 4.0.14(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/dropdown':
+        specifier: ^3.0.12
+        version: 3.0.12(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/icons':
+        specifier: ^2.3.0
+        version: 2.3.0(react@19.1.0)
+      '@xipkg/input':
+        specifier: ^2.2.9
+        version: 2.2.9(react@19.1.0)
+      '@xipkg/userprofile':
+        specifier: ^4.0.12
+        version: 4.0.12(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/utils':
+        specifier: ^1.8.0
+        version: 1.8.0(react@19.1.0)
+      react:
+        specifier: '19'
+        version: 19.1.0
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.19.0
+        version: 9.28.0
+      '@types/node':
+        specifier: ^20.3.1
+        version: 20.19.0
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.1.6
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.1.6(@types/react@19.1.6)
+      '@xipkg/eslint':
+        specifier: 3.2.0
+        version: 3.2.0(eslint-plugin-jsx-a11y@6.10.2)(eslint@9.28.0)(turbo@2.5.4)(typescript@5.7.3)
+      '@xipkg/tailwind':
+        specifier: 0.8.1
+        version: 0.8.1
+      '@xipkg/typescript':
+        specifier: latest
+        version: 0.2.0
+      common.eslint:
+        specifier: '*'
+        version: link:../common.eslint
+      common.typescript:
+        specifier: '*'
+        version: link:../common.typescript
+      eslint:
+        specifier: ^9.19.0
+        version: 9.28.0
+      eslint-plugin-react-hooks:
+        specifier: ^5.0.0
+        version: 5.2.0(eslint@9.28.0)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.18
+        version: 0.4.20(eslint@9.28.0)
+      globals:
+        specifier: ^15.14.0
+        version: 15.15.0
+      typescript:
+        specifier: ~5.7.2
+        version: 5.7.3
+      typescript-eslint:
+        specifier: ^8.22.0
+        version: 8.33.1(eslint@9.28.0)(typescript@5.7.3)
+
   packages/features.table:
     dependencies:
       '@tanstack/react-table':
@@ -1759,9 +1832,15 @@ importers:
       '@xipkg/dropdown':
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/form':
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
         specifier: 2.3.0
         version: 2.3.0(react@19.1.0)
+      '@xipkg/input':
+        specifier: 2.2.9
+        version: 2.2.9(react@19.1.0)
       '@xipkg/link':
         specifier: ^2.0.12
         version: 2.0.12(react@19.1.0)
@@ -1777,9 +1856,24 @@ importers:
       '@xipkg/userprofile':
         specifier: 4.0.12
         version: 4.0.12(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
+      features.materials.add:
+        specifier: '*'
+        version: link:../features.materials.add
+      modules.editor:
+        specifier: '*'
+        version: link:../modules.editor
       react:
         specifier: '19'
         version: 19.1.0
+      react-hook-form:
+        specifier: ^7
+        version: 7.57.0(react@19.1.0)
+      slate:
+        specifier: ^0.114.0
+        version: 0.114.0
+      slate-react:
+        specifier: ^0.114.0
+        version: 0.114.2(react-dom@19.1.0)(react@19.1.0)(slate-dom@0.114.0)(slate@0.114.0)
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0
@@ -1956,6 +2050,9 @@ importers:
       common.ui:
         specifier: '*'
         version: link:../common.ui
+      features.materials.add:
+        specifier: '*'
+        version: link:../features.materials.add
       react:
         specifier: '19'
         version: 19.1.0
@@ -2032,6 +2129,9 @@ importers:
       '@xipkg/userprofile':
         specifier: 4.0.12
         version: 4.0.12(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
+      features.materials.add:
+        specifier: '*'
+        version: link:../features.materials.add
       react:
         specifier: '19'
         version: 19.1.0

@@ -3,6 +3,7 @@ import { ArrowRight } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { useNavigate } from '@tanstack/react-router';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { MaterialsAdd } from 'features.materials.add';
 
 export const Materials = () => {
   const navigate = useNavigate();
@@ -29,28 +30,7 @@ export const Materials = () => {
           </TooltipTrigger>
           <TooltipContent>К материалам</TooltipContent>
         </Tooltip>
-        <div className="ml-auto flex flex-row items-center gap-2 max-sm:hidden">
-          <Button
-            variant="secondary"
-            size="s"
-            className="text-s-base border-gray-60 rounded-lg border px-4 py-2 font-medium text-gray-100 max-[550px]:hidden"
-          >
-            Загрузить файл
-          </Button>
-          <Button
-            variant="secondary"
-            size="s"
-            className="text-s-base border-gray-60 rounded-lg border px-4 py-2 font-medium text-gray-100 max-[550px]:hidden"
-          >
-            Создать заметку
-          </Button>
-          <Button
-            size="s"
-            className="text-s-base text-gray-0 rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
-          >
-            Создать доску
-          </Button>
-        </div>
+        <MaterialsAdd />
       </div>
       <div className="flex flex-row">
         <ScrollArea

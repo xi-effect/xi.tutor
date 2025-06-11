@@ -1,0 +1,12 @@
+{
+  "extends": ["common.typescript/tsconfig.app.json"],
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "features.table": ["packages/features.table/src"],
+      "features.table/*": ["packages/features.table/src/*"]
+    }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["dist", "build", "node_modules"]
+}
