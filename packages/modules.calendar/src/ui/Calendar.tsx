@@ -51,7 +51,7 @@ export const CalendarModule = () => {
   return (
     <div className="flex h-[calc(100vh-64px)] items-start">
       <div className="grow px-[16px] md:pr-0 md:pl-[16px]">
-        <div className="flex items-center justify-between pb-4">
+        <div className="flex items-center justify-between pt-1 pb-4">
           <p>
             <span className="text-xl-base font-bold">{MONTHS[currentDate.getMonth()]} </span>
             <span className="text-xl-base text-gray-60">{currentDate.getFullYear()}</span>

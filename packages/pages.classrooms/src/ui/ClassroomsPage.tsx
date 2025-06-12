@@ -10,7 +10,7 @@ export const ClassroomsPage = () => {
   return (
     <div className="flex flex-col justify-between gap-6 pr-0 pl-4">
       <div className="flex flex-col gap-6 max-md:gap-4">
-        <div className="flex flex-row items-center">
+        <div className="flex flex-row items-center pt-1">
           <h1 className="text-2xl font-semibold text-gray-100">Кабинеты</h1>
 
           <ButtonsHeader />

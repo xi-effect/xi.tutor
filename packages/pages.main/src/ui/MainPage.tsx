@@ -5,7 +5,7 @@ export const MainPage = () => {
   console.log('MainPage');
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col pt-1">
       <ScrollArea type="always" className="h-[calc(100vh-64px)] w-full">
         <Lessons />
         <Classrooms />

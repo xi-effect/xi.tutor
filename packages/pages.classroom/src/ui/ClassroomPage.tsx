@@ -7,7 +7,7 @@ import { TabsComponent } from './TabsComponent';
 export const ClassroomPage = () => {
   return (
     <div className="flex flex-col justify-between gap-6 pr-4 max-md:pl-4">
-      <div className="flex flex-col gap-6 max-md:gap-4">
+      <div className="flex flex-col gap-6 pt-1 max-md:gap-4">
         <Header />
         <TabsComponent />
       </div>
