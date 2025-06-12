@@ -16,6 +16,7 @@
     "@xipkg/dropdown": "3.0.12",
     "@xipkg/tabs": "^2.1.0",
     "@xipkg/userprofile": "4.0.12",
+    "@xipkg/file": "2.0.12",
     "@tanstack/react-virtual": "3.13.9",
     "@xipkg/scrollarea": "2.2.0"
   },
