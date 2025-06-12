@@ -4,12 +4,20 @@ import { useBoardStore, useUIStore } from '../store';
 import { useStage } from '../providers';
 import { useZoom } from './useWheelZoom';
 import { BoardElement } from '../types';
-import { useTrackedTransaction } from '../features';
+import { startNewTextEditing, useTrackedTransaction } from '../features';
 import { runWithoutSync } from '../utils';
 
 export const useCanvasHandlers = () => {
   const { stageRef, layerRef, getRelativePointerPosition } = useStage();
-  const { addElement, selectedTool, selectElement, updateElement, removeElement } = useBoardStore();
+  const {
+    addElement,
+    selectedTool,
+    selectElement,
+    updateElement,
+    removeElement,
+    setSelectedTool,
+    setEditingElementId,
+  } = useBoardStore();
   const { setStagePosition } = useUIStore();
 
   const { executeTrackedTransaction } = useTrackedTransaction();
@@ -138,6 +146,9 @@ export const useCanvasHandlers = () => {
     isDrawing.current = false;
     isErasing.current = false;
 
+    const pos = getRelativePointerPosition();
+    if (!pos) return;
+
     if (selectedTool === 'pen') {
       const line = currentElementRef.current;
       if (line) {
@@ -172,6 +183,16 @@ export const useCanvasHandlers = () => {
       prevPointerRef.current = null;
 
       layer?.batchDraw();
+    }
+
+    if (selectedTool === 'text') {
+      startNewTextEditing({
+        pos,
+        addElement,
+        setEditingElementId,
+        setSelectedTool,
+      });
+      return;
     }
   };
 
