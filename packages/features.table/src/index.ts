@@ -5,3 +5,4 @@ export * from './mocks';
 export * from './types';
 export * from './ui/defaultColumns';
 export * from './filters';
+export { statusColorMap } from './ui/cells/StatusCell';

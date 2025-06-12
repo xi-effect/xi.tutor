@@ -793,8 +793,8 @@ importers:
         specifier: 2.0.12
         version: 2.0.12(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/utils':
-        specifier: 1.7.0
-        version: 1.7.0(react@19.1.0)
+        specifier: 1.8.0
+        version: 1.8.0(react@19.1.0)
       common.services:
         specifier: '*'
         version: link:../common.services
@@ -1185,8 +1185,8 @@ importers:
         specifier: 2.2.5
         version: 2.2.5(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/utils':
-        specifier: 1.7.0
-        version: 1.7.0(react@19.1.0)
+        specifier: 1.8.0
+        version: 1.8.0(react@19.1.0)
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)
@@ -1536,8 +1536,8 @@ importers:
         specifier: 4.0.12
         version: 4.0.12(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/utils':
-        specifier: 1.7.0
-        version: 1.7.0(react@19.1.0)
+        specifier: 1.8.0
+        version: 1.8.0(react@19.1.0)
       common.services:
         specifier: '*'
         version: link:../common.services
@@ -1636,8 +1636,8 @@ importers:
         specifier: 4.0.12
         version: 4.0.12(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/utils':
-        specifier: 1.7.0
-        version: 1.7.0(react@19.1.0)
+        specifier: 1.8.0
+        version: 1.8.0(react@19.1.0)
       common.auth:
         specifier: '*'
         version: link:../common.auth
@@ -1745,8 +1745,8 @@ importers:
         specifier: 4.0.12
         version: 4.0.12(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/utils':
-        specifier: 1.7.0
-        version: 1.7.0(react@19.1.0)
+        specifier: 1.8.0
+        version: 1.8.0(react@19.1.0)
       common.api:
         specifier: '*'
         version: link:../common.api
@@ -2033,8 +2033,8 @@ importers:
         specifier: 4.0.12
         version: 4.0.12(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/utils':
-        specifier: 1.6.3
-        version: 1.6.3(react@19.1.0)
+        specifier: 1.8.0
+        version: 1.8.0(react@19.1.0)
       common.auth:
         specifier: '*'
         version: link:../common.auth
@@ -2221,8 +2221,8 @@ importers:
         specifier: 4.0.12
         version: 4.0.12(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/utils':
-        specifier: 1.6.3
-        version: 1.6.3(react@19.1.0)
+        specifier: 1.8.0
+        version: 1.8.0(react@19.1.0)
       common.auth:
         specifier: '*'
         version: link:../common.auth
@@ -2330,8 +2330,8 @@ importers:
         specifier: 2.0.5
         version: 2.0.5(next@15.3.3)(react@19.1.0)
       '@xipkg/utils':
-        specifier: 1.6.3
-        version: 1.6.3(react@19.1.0)
+        specifier: 1.8.0
+        version: 1.8.0(react@19.1.0)
       common.auth:
         specifier: '*'
         version: link:../common.auth
@@ -2433,8 +2433,8 @@ importers:
         specifier: 2.0.5
         version: 2.0.5(next@15.3.3)(react@19.1.0)
       '@xipkg/utils':
-        specifier: 1.6.3
-        version: 1.6.3(react@19.1.0)
+        specifier: 1.8.0
+        version: 1.8.0(react@19.1.0)
       common.auth:
         specifier: '*'
         version: link:../common.auth
@@ -2530,8 +2530,8 @@ importers:
         specifier: 2.0.7
         version: 2.0.7(react@19.1.0)
       '@xipkg/utils':
-        specifier: 1.6.3
-        version: 1.6.3(react@19.1.0)
+        specifier: 1.8.0
+        version: 1.8.0(react@19.1.0)
       common.auth:
         specifier: '*'
         version: link:../common.auth
@@ -6531,16 +6531,6 @@ packages:
 
   /@xipkg/utils@1.6.3(react@19.1.0):
     resolution: {integrity: sha512-LTV7Ge0ejdvaTfJF8uY253LU+itPJIzf1zxAm7m98ZNnaLdsx537wpd4wtlrPN/9SQQ4Zeg0GWaTWOkcM0cagA==}
-    peerDependencies:
-      react: ^19
-    dependencies:
-      clsx: 2.1.1
-      react: 19.1.0
-      tailwind-merge: 1.14.0
-    dev: false
-
-  /@xipkg/utils@1.7.0(react@19.1.0):
-    resolution: {integrity: sha512-f985one4bcGhItwdpQpUU3qL9FrCIMlP5bRVXM6XRn8xndRfxiVvpB4Krohg7UhnZ5+9Ku0hEyoYG8mZmhxskg==}
     peerDependencies:
       react: ^19
     dependencies:

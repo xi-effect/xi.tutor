@@ -20,9 +20,6 @@ export const Mobile = ({
     toggle();
   };
 
-  console.log(isOpen);
-  console.log(Number(isOpen));
-
   return (
     <div className="flex w-full overflow-hidden pt-[64px]">
       <Swiper

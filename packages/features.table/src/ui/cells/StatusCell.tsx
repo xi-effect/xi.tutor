@@ -4,7 +4,7 @@ import { Check } from '@xipkg/icons';
 
 import { mapPaymentStatus, PaymentStatusT } from '../../types';
 
-const statusColorMap: Record<PaymentStatusT, string> = {
+export const statusColorMap: Record<PaymentStatusT, string> = {
   paid: 'text-green-100',
   processing: 'text-brand-100',
   unpaid: 'text-red-100',

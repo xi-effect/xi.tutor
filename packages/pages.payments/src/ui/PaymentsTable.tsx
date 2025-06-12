@@ -18,6 +18,8 @@ import {
   ColumnDef,
 } from '@tanstack/react-table';
 import { ScrollArea } from '@xipkg/scrollarea';
+import { useMediaQuery } from '@xipkg/utils';
+import { CardsList } from './Mobile';
 
 export type PaymentsTableProps<TData> = {
   data: TData[];
@@ -32,6 +34,8 @@ export const PaymentsTable = <TData,>({
   students = [],
   subjects = [],
 }: PaymentsTableProps<TData>) => {
+  const isMobile = useMediaQuery('(max-width: 719px)');
+
   const table = useReactTable({
     data,
     columns,
@@ -43,6 +47,10 @@ export const PaymentsTable = <TData,>({
       subjects,
     },
   });
+
+  if (isMobile) {
+    return <CardsList />;
+  }
 
   return (
     <ScrollArea

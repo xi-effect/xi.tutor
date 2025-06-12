@@ -1,3 +1,4 @@
+import { ScrollArea } from '@xipkg/scrollarea';
 import { Lessons, Materials, Payments, Classrooms } from './components';
 
 export const MainPage = () => {
@@ -5,10 +6,12 @@ export const MainPage = () => {
 
   return (
     <div className="flex flex-col">
-      <Lessons />
-      <Classrooms />
-      <Payments />
-      <Materials />
+      <ScrollArea type="always" className="h-[calc(100vh-64px)] w-full">
+        <Lessons />
+        <Classrooms />
+        <Payments />
+        <Materials />
+      </ScrollArea>
     </div>
   );
 };
