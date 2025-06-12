@@ -33,7 +33,7 @@ export const TabsComponent = () => {
         </Tabs.Trigger>
       </Tabs.List>
 
-      <div className="pt-0">
+      <div className="h-full pt-0">
         <Tabs.Content value="boards">
           <PaymentsTable
             data={data}

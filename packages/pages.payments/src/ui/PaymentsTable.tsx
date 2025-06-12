@@ -17,6 +17,7 @@ import {
   flexRender,
   ColumnDef,
 } from '@tanstack/react-table';
+import { ScrollArea } from '@xipkg/scrollarea';
 
 export type PaymentsTableProps<TData> = {
   data: TData[];
@@ -44,10 +45,14 @@ export const PaymentsTable = <TData,>({
   });
 
   return (
-    <div className="overflow-x-auto">
-      <div className="relative">
-        <Table className="w-full table-fixed px-2">
-          <TableHeader className="bg-gray-0 sticky top-0 z-10">
+    <ScrollArea
+      scrollBarProps={{ orientation: 'horizontal' }}
+      type="always"
+      className="h-[calc(100vh-164px)] w-full overflow-x-auto overflow-y-hidden"
+    >
+      <div className="min-w-[1200px]">
+        <Table className="table-fixed px-2">
+          <TableHeader className="sticky top-0 z-10 bg-transparent">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
@@ -68,9 +73,9 @@ export const PaymentsTable = <TData,>({
           </TableHeader>
         </Table>
 
-        <div className="max-h-[calc(100vh-200px)] overflow-y-auto">
-          <Table className="w-full table-fixed px-2">
-            <TableBody>
+        <div className="h-[calc(100vh-242px)] w-full overflow-y-auto">
+          <Table className="table-fixed px-2">
+            <TableBody className="">
               {table.getFilteredRowModel().rows.map((row) => (
                 <TableRow className="group hover:shadow-[0_0_0_1px_var(--xi-gray-30)]" key={row.id}>
                   {row.getVisibleCells().map((cell) => (
@@ -84,6 +89,6 @@ export const PaymentsTable = <TData,>({
           </Table>
         </div>
       </div>
-    </div>
+    </ScrollArea>
   );
 };

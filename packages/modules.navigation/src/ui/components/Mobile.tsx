@@ -3,7 +3,6 @@ import { Sidebar, SidebarInset } from '@xipkg/sidebar';
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react';
 import { useMenuStore } from '../../store';
 import { SideBarItems } from './SideBarItems';
-import { ScrollArea } from '@xipkg/scrollarea';
 
 // @ts-expect-error
 import 'swiper/css';
@@ -41,7 +40,7 @@ export const Mobile = ({
         </SwiperSlide>
         <SwiperSlide>
           <SidebarInset className="overflow-none h-[calc(100dvh-64px)] w-full">
-            <ScrollArea className="h-full w-full">{children}</ScrollArea>
+            {children}
           </SidebarInset>
         </SwiperSlide>
       </Swiper>

@@ -19,7 +19,7 @@ type ColumnArgsT = {
 export const createPaymentColumns = ({
   students,
   subjects,
-  isMobile,
+  // isMobile,
 }: ColumnArgsT): ColumnDef<PaymentT>[] => {
   const columns: (ColumnDef<PaymentT> | false)[] = [
     {
@@ -47,7 +47,7 @@ export const createPaymentColumns = ({
       filterFn: (row, columnId, value) => value.includes(row.getValue(columnId)),
       enableColumnFilter: true,
     },
-    !isMobile && {
+    {
       accessorKey: 'idSubject',
       header: 'Предмет',
       cell: ({ row }) => {
@@ -70,7 +70,7 @@ export const createPaymentColumns = ({
       },
       enableColumnFilter: true,
     },
-    !isMobile && {
+    {
       accessorKey: 'typePayment',
       header: 'Тип оплаты',
       cell: ({ row }) => <TypePaymentCell typePayment={row.original.typePayment} />,
