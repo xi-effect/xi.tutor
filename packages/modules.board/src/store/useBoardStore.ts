@@ -16,6 +16,10 @@ interface BoardState {
   setIsElementTransforming: (value: boolean) => void;
   selectToolbarPosition: { x: number; y: number };
   setSelectToolbarPosition: (position: { x: number; y: number }) => void;
+  isEditingText?: boolean;
+  setIsEditingText: (value: boolean) => void;
+  editingElementId: string | null;
+  setEditingElementId: (id: string | null) => void;
 }
 
 export const useBoardStore = create<BoardState>()(
@@ -48,6 +52,12 @@ export const useBoardStore = create<BoardState>()(
       setSelectToolbarPosition: (position: { x: number; y: number }) => {
         set(() => ({ selectToolbarPosition: position }));
       },
+      isEditingText: false,
+      setIsEditingText: (value) => {
+        set(() => ({ isEditingText: value }));
+      },
+      editingElementId: null,
+      setEditingElementId: (id: string | null) => set(() => ({ editingElementId: id })),
     }),
     { name: 'board-storage' },
   ),

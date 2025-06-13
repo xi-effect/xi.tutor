@@ -8,7 +8,6 @@ import { useTrackedTransaction } from '../../features';
 
 export const SelectedElementToolbar = () => {
   const {
-    selectedTool,
     selectedElementId,
     removeElement,
     selectElement,
@@ -50,7 +49,7 @@ export const SelectedElementToolbar = () => {
     [selectedElementId, executeTrackedTransaction, selectElement, removeElement],
   );
 
-  if (!selectedElementId || selectedTool !== 'select' || isElementTransforming) {
+  if (!selectedElementId || isElementTransforming) {
     return null;
   }
 

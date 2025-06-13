@@ -4,9 +4,10 @@ import { LineShape } from './Shapes';
 import { useStage } from '../../providers';
 import { useBoardStore } from '../../store';
 import { useElementHandlers, useIsStageScaling } from '../../hooks';
+import { EditableText } from '../../features';
 
 export const CanvasLayer = memo(() => {
-  const { boardElements, selectedElementId, selectedTool, updateElement } = useBoardStore();
+  const { boardElements, selectedElementId, updateElement } = useBoardStore();
 
   const { layerRef, transformerRef } = useStage();
   const { handleTransformEnd, handleDragStart, onChangeTransformerPosition } = useElementHandlers();
@@ -36,10 +37,15 @@ export const CanvasLayer = memo(() => {
 
   return (
     <Layer ref={layerRef}>
-      {boardElements.map((element) =>
-        element.type === 'line' ? <LineShape key={element.id} element={element} /> : null,
-      )}
-      {selectedElementId && selectedTool === 'select' && (
+      {boardElements.map((element) => {
+        if (element.type === 'line') {
+          return <LineShape key={element.id} element={element} />;
+        }
+        if (element.type === 'text') {
+          return <EditableText key={element.id} element={element} />;
+        }
+      })}
+      {selectedElementId && (
         <Transformer
           ref={transformerRef}
           rotateEnabled={false}

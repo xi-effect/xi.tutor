@@ -25,7 +25,7 @@ export const LineShape = memo(({ element }: { element: BoardElement }) => {
       scaleY={element.scaleY ?? 1}
       lineJoin="round"
       lineCap="round"
-      onClick={(e) => handleSelect(e, element.id)}
+      onClick={() => handleSelect(element.id)}
       draggable={selectedElementId === element.id}
       onDragEnd={(e) => handleDragEnd(e, element)}
     />

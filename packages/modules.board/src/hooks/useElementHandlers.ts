@@ -77,8 +77,7 @@ export const useElementHandlers = () => {
   }, [selectedElementId, updateToolbarPosition, transformerRef]);
 
   const handleSelect = useCallback(
-    (e: Konva.KonvaEventObject<MouseEvent>, id: string) => {
-      e.cancelBubble = true;
+    (id: string) => {
       selectElement(null);
       if (selectedTool === 'select') {
         selectElement(id);
