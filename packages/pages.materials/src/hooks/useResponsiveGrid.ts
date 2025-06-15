@@ -4,9 +4,12 @@ const ITEM_WIDTH = 280;
 const GAP = 16;
 const MAX_COLUMNS = 4;
 
-export const useResponsiveGrid = (parentRef: RefObject<HTMLDivElement | null>) => {
+export const useResponsiveGrid = (
+  parentRef: RefObject<HTMLDivElement | null>,
+  isFiles: boolean = false,
+) => {
   const [colCount, setColCount] = useState(1);
-  const [rowHeight, setRowHeight] = useState(188);
+  const [rowHeight, setRowHeight] = useState(isFiles ? 112 : 188);
 
   // Измеряем высоту карточки
   useEffect(() => {

@@ -3,6 +3,7 @@ import { ArrowRight } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { useNavigate } from '@tanstack/react-router';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { MaterialsAdd } from 'features.materials.add';
 
 export const Materials = () => {
   const navigate = useNavigate();
@@ -29,10 +30,11 @@ export const Materials = () => {
           </TooltipTrigger>
           <TooltipContent>К материалам</TooltipContent>
         </Tooltip>
+        <MaterialsAdd />
       </div>
       <div className="flex flex-row">
         <ScrollArea
-          className="h-[110px] w-[calc(100vw-104px)] overflow-x-auto overflow-y-hidden"
+          className="h-[110px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
           scrollBarProps={{ orientation: 'horizontal' }}
         >
           <div className="flex flex-row gap-8">

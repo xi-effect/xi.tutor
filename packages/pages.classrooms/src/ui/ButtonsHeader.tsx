@@ -2,7 +2,7 @@ import { Button } from '@xipkg/button';
 
 export const ButtonsHeader = () => {
   return (
-    <div className="ml-auto flex flex-row items-center gap-2 max-sm:hidden">
+    <div className="ml-auto flex flex-row items-center gap-2 pr-4 max-sm:hidden">
       <Button
         variant="secondary"
         size="s"

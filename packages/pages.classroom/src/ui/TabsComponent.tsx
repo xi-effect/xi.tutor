@@ -6,6 +6,8 @@ import { useEffect } from 'react';
 import { Button } from '@xipkg/button';
 import { Overview } from './Overview';
 import { SearchParams } from '../types/router';
+import { Information } from './Information';
+import { MaterialsAdd } from 'features.materials.add';
 
 export const TabsComponent = () => {
   const search: SearchParams = useSearch({ strict: false });
@@ -35,7 +37,7 @@ export const TabsComponent = () => {
 
   return (
     <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
-      <div className="flex flex-row items-center pl-4">
+      <div className="flex h-[56px] flex-row items-center overflow-x-auto pl-4">
         <Tabs.List className="flex flex-row gap-4">
           <Tabs.Trigger value="overview" className="text-m-base font-medium text-gray-100">
             Сводка
@@ -57,11 +59,14 @@ export const TabsComponent = () => {
             Информация
           </Tabs.Trigger>
         </Tabs.List>
-        <Button size="s" className="ml-auto rounded-[8px]">
-          Назначить занятие
-        </Button>
+        {(currentTab === 'overview' || currentTab === 'lessons') && (
+          <Button size="s" className="ml-auto rounded-[8px]">
+            Назначить занятие
+          </Button>
+        )}
+        {currentTab === 'materials' && <MaterialsAdd />}
       </div>
-      <div className="pt-6">
+      <div className="pt-0">
         <Tabs.Content value="overview">
           <Overview />
         </Tabs.Content>
@@ -72,7 +77,9 @@ export const TabsComponent = () => {
 
         <Tabs.Content value="payments">Оплаты</Tabs.Content>
 
-        <Tabs.Content value="info">Информация</Tabs.Content>
+        <Tabs.Content value="info">
+          <Information />
+        </Tabs.Content>
       </div>
     </Tabs.Root>
   );

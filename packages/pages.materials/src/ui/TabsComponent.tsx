@@ -1,6 +1,8 @@
 import { Tabs } from '@xipkg/tabs';
 
-import { CardsGrid } from './CardsGrid';
+import { Materials } from './Materials';
+import { Notes } from './Notes';
+import { Files } from './Files';
 
 export const TabsComponent = () => {
   return (
@@ -21,12 +23,16 @@ export const TabsComponent = () => {
 
       <div className="pt-0">
         <Tabs.Content value="boards">
-          <CardsGrid />
+          <Materials />
         </Tabs.Content>
 
-        <Tabs.Content value="notes">Заметки</Tabs.Content>
+        <Tabs.Content value="notes">
+          <Notes />
+        </Tabs.Content>
 
-        <Tabs.Content value="files">Файлы</Tabs.Content>
+        <Tabs.Content value="files">
+          <Files />
+        </Tabs.Content>
       </div>
     </Tabs.Root>
   );

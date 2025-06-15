@@ -29,10 +29,18 @@ export const Payments = () => {
           </TooltipTrigger>
           <TooltipContent>К оплатам</TooltipContent>
         </Tooltip>
+        <div className="ml-auto flex flex-row items-center gap-2 max-sm:hidden">
+          <Button
+            size="s"
+            className="text-s-base text-gray-0 rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
+          >
+            Создать счет на оплату
+          </Button>
+        </div>
       </div>
       <div className="flex flex-row">
         <ScrollArea
-          className="h-[110px] w-[calc(100vw-104px)] overflow-x-auto overflow-y-hidden"
+          className="h-[110px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
           scrollBarProps={{ orientation: 'horizontal' }}
         >
           <div className="flex flex-row gap-8">
