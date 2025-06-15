@@ -7,7 +7,7 @@ export const Classroom = () => {
   return (
     <button
       onClick={() => {
-        navigate({ to: '/classrooms/$id', params: { id: '1' } });
+        navigate({ to: '/classrooms/$classroomId', params: { classroomId: '1' } });
       }}
       type="button"
       className="hover:bg-gray-5 border-gray-60 flex min-h-[108px] w-[122px] flex-col items-center justify-start gap-1 rounded-2xl border bg-transparent p-4"
