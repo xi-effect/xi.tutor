@@ -1,7 +1,6 @@
 import { BarCardChart } from '../src/BarCardChart';
 import { PieCardChart } from '../src/PieCardChart';
 import { type ChartConfig } from '../src/Chart';
-import React from 'react';
 
 const chartData = [
   { month: 'Апрель', value: 20 },
