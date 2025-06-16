@@ -16,11 +16,16 @@ type DevicesBarPropsT = {
   videoTrackToggle?: TrackToggleType;
 };
 
-export const DevicesBar = ({ microTrackToggle, videoTrackToggle }: DevicesBarPropsT) => {
+export const DevicesBar = ({
+  microTrack,
+  microTrackToggle,
+  videoTrackToggle,
+}: DevicesBarPropsT) => {
   return (
     <>
       {microTrackToggle && (
         <TrackToggle
+          microTrack={microTrack}
           source={microTrackToggle.source}
           onChange={microTrackToggle.onChange}
           showIcon={microTrackToggle.showIcon}

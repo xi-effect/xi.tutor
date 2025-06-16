@@ -8,7 +8,6 @@ import { Content } from './Content';
 
 // Список опций меню для поиска индекса по query
 const options = [
-  { query: 'home' },
   { query: 'personalInfo' },
   { query: 'personalisation' },
   { query: 'security' },
@@ -78,7 +77,7 @@ export const UserSettings = ({
     // так как это будет сделано через useEffect при изменении URL
   };
 
-  const [activeQuery, setActiveQuery] = React.useState<string>('home');
+  const [activeQuery, setActiveQuery] = React.useState<string>('personalInfo');
 
   return (
     <Modal open={open} onOpenChange={handleOpenChange}>
@@ -99,7 +98,7 @@ export const UserSettings = ({
               setShowContent={setShowContent}
               handleClose={handleClose}
             />
-            <div className="mt-4 flex h-full flex-row">
+            <div className="mt-4 flex h-full flex-row gap-8">
               {isMobile ? (
                 <div className="flex-1">
                   {showContent ? (

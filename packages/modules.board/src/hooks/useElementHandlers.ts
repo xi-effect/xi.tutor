@@ -3,6 +3,7 @@ import Konva from 'konva';
 import { useBoardStore } from '../store';
 import { BoardElement, ToolbarElement } from '../types';
 import { useStage } from '../providers';
+import { useTrackedTransaction } from '../features';
 
 export const useElementHandlers = () => {
   const {
@@ -19,6 +20,8 @@ export const useElementHandlers = () => {
   const { transformerRef, layerRef } = useStage();
 
   const throttleUpdate = useRef<number | null>(null);
+  const prevBox = useRef<{ x: number; y: number } | null>(null);
+  const { executeTrackedTransaction } = useTrackedTransaction();
 
   const toolbarElement = useMemo<ToolbarElement>(
     () => ({
@@ -26,9 +29,8 @@ export const useElementHandlers = () => {
       type: 'toolbar',
       x: 0,
       y: 0,
-      elementId: selectedElementId,
     }),
-    [selectedElementId],
+    [],
   );
 
   const updateToolbarPosition = useCallback(
@@ -62,14 +64,20 @@ export const useElementHandlers = () => {
     throttleUpdate.current = requestAnimationFrame(() => {
       if (transformerRef.current && selectedElementId) {
         const box = transformerRef.current.getClientRect();
+
+        if (prevBox.current?.x === box.x && prevBox.current?.y === box.y) {
+          return;
+        }
+
+        prevBox.current = box;
+
         updateToolbarPosition(box.x, box.y);
       }
     });
   }, [selectedElementId, updateToolbarPosition, transformerRef]);
 
   const handleSelect = useCallback(
-    (e: Konva.KonvaEventObject<MouseEvent>, id: string) => {
-      e.cancelBubble = true;
+    (id: string) => {
       selectElement(null);
       if (selectedTool === 'select') {
         selectElement(id);
@@ -92,31 +100,26 @@ export const useElementHandlers = () => {
     (e: Konva.KonvaEventObject<DragEvent>, element: BoardElement) => {
       if (!transformerRef.current || !selectedElementId) return;
 
-      // проверяем появился ли в сторе элемент
-      const currentElement = boardElements.find((el) => el.id === element.id);
-      if (currentElement && JSON.stringify(currentElement) !== JSON.stringify(element)) {
-        updateElement(element.id, currentElement);
-        return;
-      }
-
       const box = transformerRef.current.getClientRect();
       updateToolbarPosition(box.x, box.y);
       setIsElementTransforming(false);
 
-      updateElement(element.id, {
-        x: e.target.x(),
-        y: e.target.y(),
-        width: e.target.width(),
-        height: e.target.height(),
-      });
+      executeTrackedTransaction(
+        () =>
+          updateElement(element.id, {
+            x: e.target.x(),
+            y: e.target.y(),
+          }),
+        'move',
+      );
     },
     [
       transformerRef,
       selectedElementId,
       updateToolbarPosition,
       setIsElementTransforming,
+      executeTrackedTransaction,
       updateElement,
-      boardElements,
     ],
   );
 
@@ -131,12 +134,16 @@ export const useElementHandlers = () => {
     const scaleX = selectedNode.scaleX();
     const scaleY = selectedNode.scaleY();
 
-    updateElement(selectedElementId, {
-      x,
-      y,
-      scaleX,
-      scaleY,
-    });
+    executeTrackedTransaction(
+      () =>
+        updateElement(selectedElementId, {
+          x,
+          y,
+          scaleX,
+          scaleY,
+        }),
+      'transform',
+    );
 
     const box = transformerRef.current.getClientRect();
     updateToolbarPosition(box.x, box.y);
@@ -145,6 +152,7 @@ export const useElementHandlers = () => {
     transformerRef,
     selectedElementId,
     layerRef,
+    executeTrackedTransaction,
     updateToolbarPosition,
     setIsElementTransforming,
     updateElement,

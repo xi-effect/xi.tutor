@@ -19,6 +19,8 @@ type useCallStoreT = {
   // началась ли ВКС для пользователя
   isStarted: boolean | undefined;
 
+  mode: 'compact' | 'full';
+
   updateStore: (type: keyof useCallStoreT, value: any) => void;
 };
 
@@ -34,6 +36,7 @@ export const useCallStore = create<useCallStoreT>()(
       videoDeviceId: undefined,
       connect: undefined,
       isStarted: undefined,
+      mode: 'full',
       updateStore: (type: keyof useCallStoreT, value: any) => set({ [type]: value }),
     }),
     {
@@ -43,6 +46,8 @@ export const useCallStore = create<useCallStoreT>()(
         isMicroPermission: state.isMicroPermission,
         audioEnabled: state.audioEnabled,
         videoEnabled: state.videoEnabled,
+        audioDeviceId: state.audioDeviceId,
+        videoDeviceId: state.videoDeviceId,
       }), // Сохраняем только нужные ключи
     },
   ),

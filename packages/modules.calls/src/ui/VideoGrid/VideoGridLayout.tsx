@@ -14,10 +14,11 @@ import {
   useSwipe,
 } from '@livekit/components-react';
 import { ChevronLeft, ChevronRight } from '@xipkg/icons';
-import { useSearchParams } from 'next/navigation';
+import { useSearch } from '@tanstack/react-router';
 import { useSize } from '../../hooks';
 import { ParticipantTile } from '../Participant';
 import { SliderVideoGrid } from './SliderVideoGrid';
+import { SearchParams } from '../../types/router';
 
 export type PaginationControlPropsT = Pick<
   ReturnType<typeof usePagination>,
@@ -36,9 +37,9 @@ export type OrientationLayoutT = {
 export const EmptyItemContainerOfUser = ({ ...restProps }) => (
   <div
     {...restProps}
-    className="bg-gray-10 flex h-full w-full items-center justify-center rounded-lg text-center"
+    className="bg-gray-40 flex w-full items-center justify-center rounded-[16px] text-center"
   >
-    <p className="font-sans text-[20px] text-gray-100">Здесь пока никого нет</p>
+    <p className="text-gray-0 font-sans text-3xl">Здесь пока никого нет</p>
   </div>
 );
 
@@ -59,7 +60,7 @@ export const FocusLayout = ({
 
   return (
     <div
-      className={`${orientation === 'vertical' ? 'h-[calc(100vh-14rem)] w-[calc(100%-277px)]' : 'm-auto h-[calc(100vh-22rem)] w-fit min-w-[calc(100vh-20%)]'} flex flex-col`}
+      className={`${orientation === 'vertical' ? 'w-[calc(100%-277px)]' : 'm-auto w-fit min-w-[calc(100vh-20%)]'} flex flex-col`}
     >
       <ParticipantTile
         isFocusToggleDisable
@@ -111,7 +112,7 @@ export const CarouselLayout = ({
   return (
     <div
       ref={asideEl}
-      className={`${carouselOrientation === 'horizontal' ? 'm-auto w-full' : 'mx-5 h-[calc(100vh-13rem)] max-w-[277px]'}`}
+      className={`${carouselOrientation === 'horizontal' ? 'm-auto w-full' : 'mx-5 max-w-[277px]'}`}
     >
       {isOneItem && (
         <div className="h-[144px] w-[250px]">
@@ -199,7 +200,7 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
   });
 
   return (
-    <div className="m-auto h-[calc(100vh-13rem)] w-full">
+    <div className="m-auto h-full w-full">
       <div
         ref={gridEl}
         style={{ gap: '1rem', maxWidth: '100%', height: '100%', margin: '0 auto' }}
@@ -220,12 +221,13 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
 };
 
 export const CarouselContainer = ({ focusTrack, tracks, carouselTracks }: any) => {
-  const searchParams = useSearchParams();
+  const search: SearchParams = useSearch({ strict: false });
   const [orientation, setCarouselType] = useState<string | any>('horizontal');
 
   useEffect(() => {
-    setCarouselType(searchParams.get('carouselType') || 'horizontal');
-  }, [searchParams]);
+    setCarouselType(search.carouselType || 'horizontal');
+  }, [search]);
+
   return (
     <div
       className={`flex h-full ${orientation === 'horizontal' ? 'flex-col' : ''} items-start justify-between gap-4`}

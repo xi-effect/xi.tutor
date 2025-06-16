@@ -1,5 +1,6 @@
 import { RouterProvider } from '@tanstack/react-router';
 import { AuthProvider, useAuth } from 'common.auth';
+import { ThemeProvider } from 'common.theme';
 import { router } from '../router';
 import { AuthSocketBridge } from './AuthSocketBridge';
 import { Toaster } from 'sonner';
@@ -14,8 +15,10 @@ export const RouterWithAuth = () => {
   return (
     <AuthProvider>
       <AuthSocketBridge>
-        <RouterWithAuthContext />
-        <Toaster />
+        <ThemeProvider>
+          <RouterWithAuthContext />
+          <Toaster />
+        </ThemeProvider>
       </AuthSocketBridge>
     </AuthProvider>
   );

@@ -10,10 +10,19 @@
     "lint": "eslint \"**/*.{ts,tsx}\"",
     "dev": "tsc --watch"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@tanstack/react-table": "^8.21.3",
+    "@xipkg/button": "^3.1.8",
+    "@xipkg/checkbox": "^4.0.14",
+    "@xipkg/dropdown": "^3.0.12",
+    "@xipkg/icons": "^2.3.0",
+    "@xipkg/input": "^2.2.9",
+    "@xipkg/userprofile": "^4.0.12",
+    "@xipkg/utils": "^1.8.0",
+    "dayjs": "^1.11.13"
+  },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
-    "common.typescript": "*",
     "@types/node": "^20.3.1",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
@@ -21,6 +30,7 @@
     "@xipkg/tailwind": "0.8.1",
     "@xipkg/typescript": "latest",
     "common.eslint": "*",
+    "common.typescript": "*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
@@ -31,6 +41,6 @@
   "peerDependencies": {
     "react": "19"
   },
-  "description": "form for signin",
+  "description": "features.table",
   "author": "xi.effect"
 }

@@ -4,10 +4,10 @@ import { Trash, Copy, MoreVert } from '@xipkg/icons';
 import { useBoardStore } from '../../store';
 import { useIsStageScaling } from '../../hooks';
 import { ToolbarElement } from '../../types';
+import { useTrackedTransaction } from '../../features';
 
 export const SelectedElementToolbar = () => {
   const {
-    selectedTool,
     selectedElementId,
     removeElement,
     selectElement,
@@ -18,11 +18,14 @@ export const SelectedElementToolbar = () => {
 
   const { isScaling } = useIsStageScaling();
 
+  const { executeTrackedTransaction } = useTrackedTransaction();
+
   useEffect(() => {
-    if (!selectedElementId) {
-      removeElement('toolbar');
+    const selectedExists = boardElements.some((el) => el.id === selectedElementId);
+    if (!selectedExists && selectedElementId) {
+      selectElement(null);
     }
-  }, [removeElement, selectedElementId]);
+  }, [boardElements, selectedElementId, selectElement]);
 
   const position = useMemo(() => {
     if (selectToolbarPosition && (selectToolbarPosition.x !== 0 || selectToolbarPosition.y !== 0)) {
@@ -39,20 +42,20 @@ export const SelectedElementToolbar = () => {
   const handleDelete = useMemo(
     () => () => {
       if (selectedElementId) {
-        removeElement(selectedElementId);
+        executeTrackedTransaction(() => removeElement(selectedElementId));
         selectElement(null);
       }
     },
-    [selectedElementId, removeElement, selectElement],
+    [selectedElementId, executeTrackedTransaction, selectElement, removeElement],
   );
 
-  if (!selectedElementId || selectedTool !== 'select' || isElementTransforming) {
+  if (!selectedElementId || isElementTransforming) {
     return null;
   }
 
   return (
     <div
-      className="border-gray-10 bg-gray-0 absolute z-50 z-400 flex gap-2 rounded-xl border p-1"
+      className="border-gray-10 bg-gray-0 absolute z-50 flex gap-2 rounded-xl border p-1"
       style={{
         left: position.x,
         top: position.y,

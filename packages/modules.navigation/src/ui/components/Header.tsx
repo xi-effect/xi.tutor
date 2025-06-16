@@ -63,19 +63,22 @@ export const Header = ({
     // Используем параметр iid для хранения значения "profile:home"
     navigate({
       to: pathname,
-      search: { iid: 'profile:home' },
+      search: { iid: 'profile:personalInfo' },
     });
   };
 
   const handleLogout = () => {
     logout();
+    // TODO: переделать, сделать редирект только по 200
     navigate({ to: '/signin' });
   };
 
   return (
     <div className="bg-gray-0 fixed top-0 right-0 left-0 z-20 flex h-[64px] w-full items-center gap-4 px-4 py-3">
       <SidebarTrigger onClick={handleToggle} />
-      <Logo />
+      <div className="flex flex-row items-center gap-4 pl-4">
+        <Logo />
+      </div>
       <div className="ml-auto">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

@@ -1,0 +1,1 @@
+export { WelcomeAboutPage } from './WelcomeAboutPage';

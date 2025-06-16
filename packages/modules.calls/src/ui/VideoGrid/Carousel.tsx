@@ -1,5 +1,4 @@
 import { ArrowUp } from '@xipkg/icons';
-import React from 'react';
 import { OrientationLayoutT } from './VideoGridLayout';
 
 type CarouselPropsT = {

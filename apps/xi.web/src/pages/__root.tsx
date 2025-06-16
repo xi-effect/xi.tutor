@@ -32,7 +32,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
   beforeLoad: ({ context, location }) => {
     console.log('Route', context, location);
 
-    if (!context.auth.isAuthenticated && !['/signin', '/signup'].includes(location.pathname)) {
+    if (
+      !context.auth.isAuthenticated &&
+      !location.pathname.includes('/signin') &&
+      !location.pathname.includes('/signup') &&
+      !location.pathname.includes('/reset-password')
+    ) {
       throw redirect({
         to: '/signin',
         search: {

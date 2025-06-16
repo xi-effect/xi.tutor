@@ -1,6 +1,7 @@
-import { Account, Exit, Home, Key, Palette, Notification } from '@xipkg/icons';
+import { Account, Exit, Key, Palette, Notification } from '@xipkg/icons';
 import { Dispatch, SetStateAction } from 'react';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
+import { useAuth } from 'common.auth';
 
 type ItemT = {
   name: string;
@@ -8,10 +9,6 @@ type ItemT = {
 };
 
 const options: ItemT[] = [
-  {
-    name: 'Главная',
-    query: 'home',
-  },
   {
     name: 'Личные данные',
     query: 'personalInfo',
@@ -56,14 +53,12 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
 
     switch (index) {
       case 0:
-        return <Home className={iconClasses} key="home-icon" />;
-      case 1:
         return <Account className={iconClasses} key="account-icon" />;
-      case 2:
+      case 1:
         return <Palette className={iconClasses} key="palette-icon" />;
-      case 3:
+      case 2:
         return <Key className={iconClasses} key="key-icon" />;
-      case 4:
+      case 3:
         return <Notification className={iconClasses} key="notification-icon" />;
       default:
         return null;
@@ -102,10 +97,8 @@ type MenuPropsT = {
 };
 
 export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuPropsT) => {
+  const { logout } = useAuth();
   const navigate = useNavigate();
-  const { pathname } = useLocation();
-
-  // const onSignOut = useMainSt((state) => state.onSignOut);
 
   const handleMenuItem = (index: number, query: string) => {
     setActiveQuery(query);
@@ -114,12 +107,9 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
   };
 
   const handleExit = async () => {
-    navigate({
-      to: pathname,
-      search: {},
-    });
-    // const isLogout = await onSignOut();
-    // if (isLogout === 200) navigate({ to: '/signin' });
+    logout();
+    // TODO: переделать, сделать редирект только по 200
+    navigate({ to: '/signin' });
   };
 
   return (

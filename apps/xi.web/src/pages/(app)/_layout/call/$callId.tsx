@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
+import { lazy } from 'react';
 import { z } from 'zod';
+
+const CallModule = lazy(() => import('modules.calls').then((module) => ({ default: module.Call })));
 
 const paramsSchema = z.object({
   callId: z.string(),
@@ -10,13 +13,13 @@ const paramsSchema = z.object({
 export const Route = createFileRoute('/(app)/_layout/call/$callId')({
   component: CallPage,
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
-  beforeLoad: ({ context, location }) => {
-    console.log('Call', context, location);
+  beforeLoad: () => {
+    // console.log('Call', context, location);
   },
 });
 
 function CallPage() {
   // @ts-ignore
-  const { callId } = Route.useParams();
-  return <div>Звонок {callId}</div>;
+  // const { callId } = Route.useParams();
+  return <CallModule firstId="1" secondId="2" />;
 }

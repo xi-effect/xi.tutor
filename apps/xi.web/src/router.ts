@@ -22,5 +22,7 @@ declare module '@tanstack/react-router' {
     redirect?: string;
     iid?: string;
     community?: string;
+    carouselType?: 'horizontal' | 'vertical';
+    tab?: string;
   }
 }

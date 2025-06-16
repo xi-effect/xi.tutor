@@ -1,13 +1,60 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
 
 @layer theme, base, components, utilities;
-@import "tailwindcss/theme.css" layer(theme);
-@import "tailwindcss/utilities.css" layer(utilities);
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
 
 @import '@xipkg/tailwind/index.css';
 
-@source "./src";
-@source "../node_modules";
-@source "../../../node_modules";
+@source "../src";
+@source "../node_modules/@xipkg";
+
+@source "../../../packages/modules.profile/src";
+@source "../../../packages/modules.navigation/src";
+@source "../../../packages/modules.board/src";
+@source "../../../packages/modules.calls/src";
+@source "../../../packages/modules.calendar/src";
+@source "../../../packages/modules.editor/src";
+@source "../../../packages/common.ui/src";
+@source "../../../packages/pages.classrooms/src";
+@source "../../../packages/pages.classroom/src";
+@source "../../../packages/pages.signin/src";
+@source "../../../packages/pages.signup/src";
+@source "../../../packages/pages.welcome/src";
+@source "../../../packages/pages.materials/src";
+@source "../../../packages/features.table/src";
+@source "../../../packages/features.avatar.editor/src";
+@source "../../../packages/features.table/src";
+@source "../../../packages/pages.payments/src";
+@source "../../../packages/pages.main/src";
+
+@source "../../../node_modules/@xipkg";
+
+/* Стили для скроллбара */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  background: transparent;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+  border: none;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+}
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));

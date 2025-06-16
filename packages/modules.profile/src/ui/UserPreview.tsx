@@ -118,7 +118,7 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
         <DropdownMenuContent className="w-[220px]">
           <DropdownMenuItem onClick={handleMenuEditClick}>
             <Edit className="mr-2 h-5 w-5" />
-            <span className="text-[14px]">Обновить фотографию</span>
+            <span className="text-[14px]">Изменить миниатюру</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleDeleteAvatar}>
             <Trash className="mr-2 h-5 w-5" />

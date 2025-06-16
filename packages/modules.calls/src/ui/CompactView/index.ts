@@ -1,0 +1,1 @@
+export { CompactView } from './CompactView';
