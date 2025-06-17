@@ -11,7 +11,7 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 
-import { MaterialPropsT } from '../types';
+import { MaterialPropsT } from '../../types';
 
 export const Card: React.FC<MaterialPropsT> = ({
   idMaterial,

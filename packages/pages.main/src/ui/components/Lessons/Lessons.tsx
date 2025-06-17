@@ -33,7 +33,7 @@ export const Lessons = () => {
       </div>
       <div className="flex flex-row">
         <ScrollArea
-          className="h-[196px] w-[calc(100vw-104px)] overflow-x-auto overflow-y-hidden"
+          className="h-[196px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
           scrollBarProps={{ orientation: 'horizontal' }}
         >
           <div className="flex flex-row gap-8">

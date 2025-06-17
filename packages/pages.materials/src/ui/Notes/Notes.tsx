@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef } from 'react';
 import { Card } from './Card';
-import { useResponsiveGrid, useInfiniteScroll, useVirtualGrid } from '../hooks';
+import { useResponsiveGrid, useInfiniteScroll, useVirtualGrid } from '../../hooks';
 
-export const CardsGrid = () => {
+export const Notes = () => {
   const parentRef = useRef<HTMLDivElement>(null);
 
   const { colCount, rowHeight, GAP } = useResponsiveGrid(parentRef);

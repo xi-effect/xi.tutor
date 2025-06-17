@@ -2,7 +2,7 @@ import { Button } from '@xipkg/button';
 
 export const Header = () => {
   return (
-    <div className="flex flex-row items-center pr-4">
+    <div className="flex flex-row items-center pt-1 pr-4">
       <h1 className="text-2xl font-semibold text-gray-100">Контроль оплат</h1>
 
       <div className="ml-auto flex flex-row items-center gap-2">

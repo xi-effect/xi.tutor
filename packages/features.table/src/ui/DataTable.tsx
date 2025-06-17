@@ -41,7 +41,7 @@ export const DataTable = <TData,>({
         {table.getHeaderGroups().map((headerGroup) => (
           <TableRow key={headerGroup.id}>
             {headerGroup.headers.map((header) => (
-              <TableHead key={header.id}>
+              <TableHead key={header.id} style={{ width: header.getSize() }}>
                 <div className="flex h-8 items-center gap-1 justify-self-start">
                   <div className="text-gray-60 text-m-base font-medium">
                     {flexRender(header.column.columnDef.header, header.getContext())}
@@ -61,7 +61,7 @@ export const DataTable = <TData,>({
         {table.getFilteredRowModel().rows.map((row) => (
           <TableRow className="hover:shadow-[0_0_0_1px_var(--xi-gray-30)]" key={row.id}>
             {row.getVisibleCells().map((cell) => (
-              <TableCell key={cell.id}>
+              <TableCell key={cell.id} style={{ width: cell.column.getSize() }}>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </TableCell>
             ))}
