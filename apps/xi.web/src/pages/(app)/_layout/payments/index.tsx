@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
-import { PaymentsPage } from 'pages.payments';
-
-const Payments = () => {
-  return <PaymentsPage />;
-};
+import { PaymentControl as Payments } from 'features.charts';
 
 // @ts-ignore
 export const Route = createFileRoute('/(app)/_layout/payments/')({
-  component: Payments,
+  component: PaymentsPage,
   beforeLoad: ({ context, location }) => {
     console.log('Payments', context, location);
   },
 });
+
+function PaymentsPage() {
+  return <Payments />;
+}
