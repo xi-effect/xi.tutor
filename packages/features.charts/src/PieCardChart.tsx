@@ -3,30 +3,15 @@ import { ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from '
 import { cn } from '@xipkg/utils';
 import type { PieChart as PieChartType, LabelList as LabelListType } from 'recharts';
 
-const chartData = [
-  { language: 'english', visitors: 50, fill: 'var(--xi-brand-80)' },
-  { language: 'spanish', visitors: 15, fill: 'var(--xi-brand-60)' },
-  { language: 'italian', visitors: 35, fill: 'var(--xi-brand-40)' },
-];
-const chartConfig = {
-  visitors: {
-    label: 'Visitors',
-  },
-  english: {
-    label: 'Английский язык',
-    color: 'var(--xi-brand-80)',
-  },
-  spanish: {
-    label: 'Испанский язык',
-    color: 'var(--xi-brand-60)',
-  },
-  italian: {
-    label: 'Итальянский язык',
-    color: 'var(--xi-brand-40)',
-  },
-} satisfies ChartConfig;
+type ChartDataItemT = {
+  language: string;
+  visitors: number;
+  fill: string;
+};
 
-interface PieCardChartT {
+type PieCardChartT = {
+  chartData: ChartDataItemT[];
+  chartConfig: ChartConfig;
   pieChartProps?: Partial<Omit<React.ComponentProps<typeof PieChartType>, 'children'>> & {
     className?: string;
   };
@@ -36,31 +21,39 @@ interface PieCardChartT {
   chartContainerProps?: {
     className?: string;
   };
+  chartTooltip?: {
+    className?: string;
+  };
   labelListProps?: Partial<Omit<React.ComponentProps<typeof LabelListType>, 'children'>> & {
     className?: string;
   };
-}
+};
 
 export const PieCardChart = ({
+  chartData,
+  chartConfig,
   pieChartProps,
   pieProps,
   chartContainerProps,
+  chartTooltip,
   labelListProps,
 }: PieCardChartT) => {
   return (
-    <div className="bg-card text-card-foreground flex flex-col rounded-lg border shadow-sm">
+    <div className="flex flex-col rounded-lg">
       <div className="flex space-y-1 p-4">
         <div className="text-primary-100 text-xl font-semibold tracking-tight">Предметы</div>
       </div>
-      <div className="flex-1 p-6 pt-0 pb-0">
-        <ChartContainer config={chartConfig} className="mx-auto aspect-square max-h-[250px]">
+      <div className="flex-1 p-4 pt-0 pb-0">
+        <ChartContainer
+          config={chartConfig}
+          {...chartContainerProps}
+          className={cn(chartContainerProps?.className, 'mx-auto aspect-square max-h-[200px]')}
+        >
           <PieChart {...pieChartProps} className={cn(pieChartProps?.className)}>
             <ChartTooltip
-              {...chartContainerProps}
+              {...chartTooltip}
               cursor={false}
-              content={
-                <ChartTooltipContent hideLabel className={cn(chartContainerProps?.className)} />
-              }
+              content={<ChartTooltipContent hideLabel className={cn(chartTooltip?.className)} />}
             />
             <Pie
               data={chartData}
@@ -84,7 +77,7 @@ export const PieCardChart = ({
           </PieChart>
         </ChartContainer>
       </div>
-      <div className="flex flex-col items-center gap-2 p-6 pt-0">
+      <div className="flex flex-col items-center gap-2 p-4">
         <div className="flex items-center gap-4 text-xs">
           {Object.entries(chartConfig)
             .filter(([key]) => key !== 'visitors')
