@@ -1,23 +1,24 @@
-import { useState } from 'react';
+import { useTransition, useState } from 'react';
+import { useForm } from '@xipkg/form';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from '@xipkg/form';
+import { AxiosError } from 'axios';
 
-import { mockPasswordService } from '../mockPasswordService';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRequestPasswordReset } from 'common.services';
+
 import { useFormSchemaEmail, FormDataEmail } from '../model/formSchemaEmail';
+import { typeResponseRequest } from '../types';
 
 export const usePasswordReset = () => {
   const { t } = useTranslation('resetPassword');
 
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [isSubmitSuccessful, setIsSubmitSuccessful] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   const [submittedEmail, setSubmittedEmail] = useState<string | null>(null);
+  const [isSubmitSuccessful, setIsSubmitSuccessful] = useState(false);
 
-  const [isErrorEmail, setIsErrorEmail] = useState<string | null>(null);
-
+  const { requestPasswordReset } = useRequestPasswordReset();
   const formSchema = useFormSchemaEmail();
 
   const form = useForm<FormDataEmail>({
@@ -27,49 +28,67 @@ export const usePasswordReset = () => {
     },
   });
 
+  const { setError, reset } = form;
+
   const onSubmit = async (data: FormDataEmail) => {
     try {
-      setIsLoading(true);
-      const response = await mockPasswordService.requestPasswordReset(data);
-      console.log(response);
+      const response = await requestPasswordReset(data.email);
 
-      setSubmittedEmail(data.email);
+      startTransition(() => {
+        switch (response.status) {
+          case typeResponseRequest.SuccessfulResponse:
+            setSubmittedEmail(data.email);
+            reset();
+            toast.success(t('requestSent'));
+            setIsSubmitSuccessful(true);
+            break;
 
-      form.reset();
+          case typeResponseRequest.ValidationError:
+            setError('email', {
+              type: 'manual',
+              message: t('invalidEmail'),
+            });
+            setIsSubmitSuccessful(false);
+            break;
 
-      setIsErrorEmail(null);
-
-      toast.success(t('requestSent'));
-
-      setIsSubmitSuccessful(true);
+          default:
+            setError('email', {
+              type: 'manual',
+              message: t('error'),
+            });
+            setIsSubmitSuccessful(false);
+            break;
+        }
+      });
     } catch (error) {
-      setIsSubmitSuccessful(false);
-
-      console.error('Reset password error:', error);
-
-      if (error instanceof Error) {
-        if (error.message === 'Email not found') {
-          setIsErrorEmail(t('emailNotFound'));
-        } else if (error.message === 'Invalid email format') {
-          setIsErrorEmail(t('invalidEmail'));
+      startTransition(() => {
+        if (
+          error instanceof AxiosError &&
+          error.response?.status === typeResponseRequest.UserNotFound
+        ) {
+          setError('email', {
+            type: 'manual',
+            message: t('emailNotFound'),
+          });
+        } else if (error instanceof Error && error.message === 'Email not found') {
+          setError('email', {
+            type: 'manual',
+            message: t('emailNotFound'),
+          });
         } else {
+          console.error('Reset password error:', error);
           toast.error(t('error'));
         }
-      } else {
-        toast.error(t('error'));
-      }
-    } finally {
-      setIsLoading(false);
+        setIsSubmitSuccessful(false);
+      });
     }
   };
 
   return {
     form,
     onSubmit,
-    isLoading,
+    isLoading: isPending,
     isSubmitSuccessful,
-    isErrorEmail,
-    setIsErrorEmail,
     submittedEmail,
   };
 };

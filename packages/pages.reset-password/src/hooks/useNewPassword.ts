@@ -1,17 +1,19 @@
 import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import { useNavigate } from '@tanstack/react-router';
+import { AxiosError } from 'axios';
 
-import { mockPasswordService } from '../mockPasswordService';
 import { useFormSchemaPassword, FormDataPassword } from '../model/formSchemaPassword';
+import { useResetPassword } from 'common.services';
 
 export function useNewPassword(resetToken: string) {
   const { t } = useTranslation('resetPassword');
 
   const navigate = useNavigate();
+
+  const { resetPassword } = useResetPassword();
 
   const formSchemaPassword = useFormSchemaPassword();
 
@@ -25,19 +27,40 @@ export function useNewPassword(resetToken: string) {
 
   const onSubmit = async (data: FormDataPassword) => {
     try {
-      await mockPasswordService.resetPassword({
-        token: resetToken,
+      await resetPassword.mutateAsync({
         password: data.password,
-        confirmPassword: data.confirmPassword,
+        resetToken,
       });
 
-      toast.success(t('resetPassword.passwordChanged'));
-
+      toast.success(t('passwordChanged'));
       navigate({ to: '/signin' });
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Reset password error:', error);
-      toast.error(t('resetPassword.error'));
-      throw error;
+
+      if (error instanceof AxiosError) {
+        if (error.response?.status === 401) {
+          form.setError('password', {
+            type: 'manual',
+            message: t('resetPassword.tokenExpired'),
+          });
+          toast.error(t('resetPassword.tokenExpired'));
+          return;
+        }
+      }
+
+      if (error instanceof Error && error.message === 'Token expired') {
+        form.setError('password', {
+          type: 'manual',
+          message: t('resetPassword.tokenExpired'),
+        });
+      } else if (error instanceof Error && error.message === 'Invalid password format') {
+        form.setError('password', {
+          type: 'manual',
+          message: t('resetPassword.invalidPassword'),
+        });
+      } else {
+        toast.error(t('resetPassword.error'));
+      }
     }
   };
 

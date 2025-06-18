@@ -4,15 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
 import { Link } from '@xipkg/link';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  FormDescription,
-} from '@xipkg/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
 
 import { Logo } from 'common.ui';
 
@@ -21,26 +13,13 @@ import { FormDataEmail } from '../model/formSchemaEmail';
 
 export const ResetPassword = () => {
   const navigate = useNavigate();
-
   const { t } = useTranslation('resetPassword');
 
-  const {
-    form,
-    onSubmit,
-    isSubmitSuccessful,
-    isLoading,
-    isErrorEmail,
-    setIsErrorEmail,
-    submittedEmail,
-  } = usePasswordReset();
-
-  const handleSubmit = async (data: FormDataEmail) => {
-    await onSubmit(data);
-  };
+  const { form, onSubmit, isSubmitSuccessful, submittedEmail } = usePasswordReset();
 
   return (
     <Form<FormDataEmail> {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="flex w-full flex-col gap-4">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-col gap-4">
         <div className="self-center">
           <Logo height={22} width={180} />
         </div>
@@ -60,32 +39,19 @@ export const ResetPassword = () => {
             render={({ field }) => (
               <FormItem className="flex flex-col gap-1 pt-4">
                 <FormLabel className="text-sm font-normal">{t('emailLabel')}</FormLabel>
-
-                {isErrorEmail && (
-                  <FormDescription className="text-gray-60 text-sm font-normal">
-                    {t('enterTrueEmail')}
-                  </FormDescription>
-                )}
-
                 <FormControl>
                   <Input
-                    error={!!form.formState.errors?.email}
-                    autoComplete="on"
+                    error={!!form.formState.errors.email}
+                    autoComplete="email"
                     type="email"
                     {...field}
                     onChange={(e) => {
                       form.clearErrors('email');
-                      setIsErrorEmail?.(null);
                       field.onChange(e.target.value);
                     }}
                   />
                 </FormControl>
-
-                {isErrorEmail && (
-                  <FormMessage className="text-red-80 text-sm font-normal">
-                    {isErrorEmail}
-                  </FormMessage>
-                )}
+                <FormMessage className="text-red-80 text-sm font-normal" />
               </FormItem>
             )}
           />
@@ -99,7 +65,7 @@ export const ResetPassword = () => {
                 size="l"
                 theme="brand"
                 variant="hover"
-                onClick={() => form.handleSubmit(handleSubmit)()}
+                onClick={() => form.handleSubmit(onSubmit)()}
               >
                 {t('resend')}
               </Link>
@@ -118,7 +84,11 @@ export const ResetPassword = () => {
               {t('sign_in_button')}
             </Button>
           ) : (
-            <Button type="submit" loading={isLoading} className="bg-brand-80 rounded-xl px-6 py-3">
+            <Button
+              type="submit"
+              loading={form.formState.isSubmitting}
+              className="bg-brand-80 rounded-xl px-6 py-3"
+            >
               {t('send')}
             </Button>
           )}

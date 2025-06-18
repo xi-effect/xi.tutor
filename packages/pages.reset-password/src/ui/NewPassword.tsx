@@ -14,28 +14,15 @@ import { FormDataPassword } from '../model/formSchemaPassword';
 
 export const NewPassword = ({ token }: { token: string }) => {
   const { t } = useTranslation('resetPassword');
-
   const { form, onSubmit } = useNewPassword(token);
 
   const [isPasswordShowFirst, setIsPasswordShowFirst] = useState(false);
   const [isPasswordShowSecond, setIsPasswordShowSecond] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleSubmit = async (data: FormDataPassword) => {
-    try {
-      setIsLoading(true);
-      await onSubmit(data);
-    } catch (error) {
-      console.error('New password submission error:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   return (
     <Form<FormDataPassword> {...form}>
       <form
-        onSubmit={form.handleSubmit(handleSubmit)}
+        onSubmit={form.handleSubmit(onSubmit)}
         className="flex h-full w-full flex-col space-y-4"
       >
         <div className="self-center">
@@ -121,7 +108,7 @@ export const NewPassword = ({ token }: { token: string }) => {
           <Button
             variant="default"
             type="submit"
-            disabled={isLoading}
+            loading={form.formState.isSubmitting}
             className="bg-brand-80 rounded-xl px-6 py-3"
           >
             {t('save')}

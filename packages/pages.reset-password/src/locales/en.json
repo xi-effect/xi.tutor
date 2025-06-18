@@ -11,6 +11,7 @@
   "enterTrueEmail": "Enter the address associated with your account",
   "requestSent": "Password reset link has been sent to your email",
   "save": "Save",
+  "error": "An error occurred. Please try again.",
   "resetPassword": {
     "title": "Reset Password",
     "password": "New Password",
@@ -18,7 +19,8 @@
     "passwordChanged": "Your password has been changed successfully",
     "error": "An error occurred. Please try again.",
     "errorResetPassword": "An error occurred. Please try again.",
-    "passwordsDoNotMatch": "Passwords do not match"
+    "passwordsDoNotMatch": "Passwords do not match",
+    "tokenExpired": "Token expired"
   },
   "validation": {
     "required": "This field is required",

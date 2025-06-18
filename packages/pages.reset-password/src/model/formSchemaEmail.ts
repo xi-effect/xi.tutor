@@ -17,9 +17,17 @@ export const useFormSchemaEmail = () => {
         .string({
           required_error: t('validation.required'),
         })
-        .email({
-          message: t('validation.wrong_format'),
-        }),
+        .min(1, { message: t('validation.required') })
+        .email({ message: t('validation.wrong_format') })
+        .refine(
+          (email) => {
+            const domainPart = email.split('@')[1];
+            return domainPart?.length >= 3 && domainPart.includes('.');
+          },
+          {
+            message: t('validation.wrong_format'),
+          },
+        ),
     });
   }, [t]);
 

@@ -1870,7 +1870,7 @@ importers:
         version: 19.1.0
       react-hook-form:
         specifier: ^7
-        version: 7.58.0(react@19.1.0)
+        version: 7.58.1(react@19.1.0)
       slate:
         specifier: ^0.114.0
         version: 0.114.0
@@ -2016,7 +2016,7 @@ importers:
     dependencies:
       '@hookform/resolvers':
         specifier: 5.0.1
-        version: 5.0.1(react-hook-form@7.58.0)
+        version: 5.0.1(react-hook-form@7.58.1)
       '@xipkg/badge':
         specifier: 2.0.12
         version: 2.0.12(react@19.1.0)
@@ -2061,7 +2061,7 @@ importers:
         version: 19.1.0
       react-hook-form:
         specifier: ^7.55.0
-        version: 7.58.0(react@19.1.0)
+        version: 7.58.1(react@19.1.0)
       zod:
         specifier: 3.24.2
         version: 3.24.2
@@ -2192,7 +2192,7 @@ importers:
     dependencies:
       '@hookform/resolvers':
         specifier: ^5.0.1
-        version: 5.0.1(react-hook-form@7.58.0)
+        version: 5.0.1(react-hook-form@7.58.1)
       '@tanstack/react-virtual':
         specifier: 3.13.9
         version: 3.13.9(react-dom@19.1.0)(react@19.1.0)
@@ -2252,7 +2252,7 @@ importers:
         version: 19.1.0
       react-hook-form:
         specifier: ^7.56.3
-        version: 7.58.0(react@19.1.0)
+        version: 7.58.1(react@19.1.0)
       zod:
         specifier: 3.24.2
         version: 3.24.2
@@ -2316,7 +2316,7 @@ importers:
     dependencies:
       '@hookform/resolvers':
         specifier: 5.0.1
-        version: 5.0.1(react-hook-form@7.58.0)
+        version: 5.0.1(react-hook-form@7.58.1)
       '@tanstack/react-router':
         specifier: ^1.109.0
         version: 1.120.11(react-dom@19.1.0)(react@19.1.0)
@@ -2364,7 +2364,7 @@ importers:
         version: 19.1.0
       react-hook-form:
         specifier: ^7.55.0
-        version: 7.58.0(react@19.1.0)
+        version: 7.58.1(react@19.1.0)
       react-i18next:
         specifier: 15.4.1
         version: 15.4.1(i18next@24.2.2)(react-dom@19.1.0)(react@19.1.0)
@@ -2425,7 +2425,7 @@ importers:
     dependencies:
       '@hookform/resolvers':
         specifier: 5.0.1
-        version: 5.0.1(react-hook-form@7.58.0)
+        version: 5.0.1(react-hook-form@7.58.1)
       '@tanstack/react-router':
         specifier: ^1.109.0
         version: 1.120.11(react-dom@19.1.0)(react@19.1.0)
@@ -2470,7 +2470,7 @@ importers:
         version: 19.1.0
       react-hook-form:
         specifier: ^7.55.0
-        version: 7.58.0(react@19.1.0)
+        version: 7.58.1(react@19.1.0)
       react-i18next:
         specifier: 15.4.1
         version: 15.4.1(i18next@24.2.2)(react-dom@19.1.0)(react@19.1.0)
@@ -2531,7 +2531,7 @@ importers:
     dependencies:
       '@hookform/resolvers':
         specifier: 5.0.1
-        version: 5.0.1(react-hook-form@7.58.0)
+        version: 5.0.1(react-hook-form@7.58.1)
       '@xipkg/button':
         specifier: 3.1.2
         version: 3.1.2(@types/react@19.1.8)(react@19.1.0)
@@ -2570,7 +2570,7 @@ importers:
         version: 19.1.0
       react-hook-form:
         specifier: ^7.55.0
-        version: 7.58.0(react@19.1.0)
+        version: 7.58.1(react@19.1.0)
       zod:
         specifier: 3.24.2
         version: 3.24.2
@@ -2625,7 +2625,7 @@ importers:
     dependencies:
       '@hookform/resolvers':
         specifier: ^5.0.1
-        version: 5.0.1(react-hook-form@7.58.0)
+        version: 5.0.1(react-hook-form@7.58.1)
       '@xipkg/avatar':
         specifier: ^3.0.9
         version: 3.0.9(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
@@ -2670,7 +2670,7 @@ importers:
         version: 19.1.0
       react-hook-form:
         specifier: ^7.56.3
-        version: 7.58.0(react@19.1.0)
+        version: 7.58.1(react@19.1.0)
       zod:
         specifier: 3.24.2
         version: 3.24.2
@@ -3661,13 +3661,13 @@ packages:
       react-hook-form: 7.55.0(react@19.1.0)
     dev: false
 
-  /@hookform/resolvers@5.0.1(react-hook-form@7.58.0):
+  /@hookform/resolvers@5.0.1(react-hook-form@7.58.1):
     resolution: {integrity: sha512-u/+Jp83luQNx9AdyW2fIPGY6Y7NG68eN2ZW8FOJYL+M0i4s49+refdJdOp/A9n9HFQtQs3HIDHQvX3ZET2o7YA==}
     peerDependencies:
       react-hook-form: ^7.55.0
     dependencies:
       '@standard-schema/utils': 0.3.0
-      react-hook-form: 7.58.0(react@19.1.0)
+      react-hook-form: 7.58.1(react@19.1.0)
     dev: false
 
   /@humanfs/core@0.19.1:
@@ -7068,7 +7068,7 @@ packages:
     hasBin: true
     dependencies:
       caniuse-lite: 1.0.30001723
-      electron-to-chromium: 1.5.168
+      electron-to-chromium: 1.5.169
       node-releases: 2.0.19
       update-browserslist-db: 1.1.3(browserslist@4.25.0)
     dev: true
@@ -7458,8 +7458,8 @@ packages:
       es-errors: 1.3.0
       gopd: 1.2.0
 
-  /electron-to-chromium@1.5.168:
-    resolution: {integrity: sha512-RUNQmFLNIWVW6+z32EJQ5+qx8ci6RGvdtDC0Ls+F89wz6I2AthpXF0w0DIrn2jpLX0/PU9ZCo+Qp7bg/EckJmA==}
+  /electron-to-chromium@1.5.169:
+    resolution: {integrity: sha512-q7SQx6mkLy0GTJK9K9OiWeaBMV4XQtBSdf6MJUzDB/H/5tFXfIiX38Lci1Kl6SsgiEhz1SQI1ejEOU5asWEhwQ==}
     dev: true
 
   /emoji-regex@8.0.0:
@@ -9617,8 +9617,8 @@ packages:
       react: 19.1.0
     dev: false
 
-  /react-hook-form@7.58.0(react@19.1.0):
-    resolution: {integrity: sha512-zGijmEed35oNfOfy7ub99jfjkiLhHwA3dl5AgyKdWC6QQzhnc7tkWewSa+T+A2EpLrc6wo5DUoZctS9kufWJjA==}
+  /react-hook-form@7.58.1(react@19.1.0):
+    resolution: {integrity: sha512-Lml/KZYEEFfPhUVgE0RdCVpnC4yhW+PndRhbiTtdvSlQTL8IfVR+iQkBjLIvmmc6+GGoVeM11z37ktKFPAb0FA==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
