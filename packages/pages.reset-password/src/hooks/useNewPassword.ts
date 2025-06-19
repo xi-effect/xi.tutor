@@ -6,14 +6,14 @@ import { useNavigate } from '@tanstack/react-router';
 import { AxiosError } from 'axios';
 
 import { useFormSchemaPassword, FormDataPassword } from '../model/formSchemaPassword';
-import { useResetPassword } from 'common.services';
+import { useResetPasswordConfirm } from 'common.services';
 
 export function useNewPassword(resetToken: string) {
   const { t } = useTranslation('resetPassword');
 
   const navigate = useNavigate();
 
-  const { resetPassword } = useResetPassword();
+  const { resetPasswordConfirm } = useResetPasswordConfirm();
 
   const formSchemaPassword = useFormSchemaPassword();
 
@@ -27,12 +27,13 @@ export function useNewPassword(resetToken: string) {
 
   const onSubmit = async (data: FormDataPassword) => {
     try {
-      await resetPassword.mutateAsync({
-        password: data.password,
-        resetToken,
+      await resetPasswordConfirm.mutateAsync({
+        token: resetToken,
+        new_password: data.password,
       });
 
-      toast.success(t('passwordChanged'));
+      toast.success(t('resetPassword.passwordChanged'));
+
       navigate({ to: '/signin' });
     } catch (error: unknown) {
       console.error('Reset password error:', error);

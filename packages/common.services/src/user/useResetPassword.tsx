@@ -3,11 +3,11 @@ import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 export type ResetPasswordData = {
-  password: string;
-  resetToken: string;
+  token: string;
+  new_password: string;
 };
 
-export const useResetPassword = () => {
+export const useResetPasswordConfirm = () => {
   const queryClient = useQueryClient();
 
   const resetPasswordMutation = useMutation({
@@ -15,8 +15,8 @@ export const useResetPassword = () => {
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
-          method: userApiConfig[UserQueryKey.Password].method,
-          url: userApiConfig[UserQueryKey.Password].getUrl(),
+          method: userApiConfig[UserQueryKey.PasswordResetConfirm].method,
+          url: userApiConfig[UserQueryKey.PasswordResetConfirm].getUrl(),
           data: resetPasswordData,
           headers: {
             'Content-Type': 'application/json',
@@ -34,5 +34,5 @@ export const useResetPassword = () => {
     },
   });
 
-  return { resetPassword: resetPasswordMutation };
+  return { resetPasswordConfirm: resetPasswordMutation };
 };

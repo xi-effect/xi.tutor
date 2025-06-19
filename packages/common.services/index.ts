@@ -5,6 +5,6 @@ export {
   useUpdateProfile,
   useUserById,
   type ProfileData,
-  useResetPassword,
+  useResetPasswordConfirm,
   type ResetPasswordData,
 } from './src/user';
