@@ -11,9 +11,5 @@ export const Route = createFileRoute('/(auth)/reset-password/')({
 });
 
 function ResetPassword() {
-  return (
-    <>
-      <ResetPasswordPage />
-    </>
-  );
+  return <ResetPasswordPage />;
 }

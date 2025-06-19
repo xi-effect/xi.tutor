@@ -6,10 +6,11 @@ import { NewPasswordPage } from 'pages.reset-password';
 export const Route = createFileRoute('/(auth)/reset-password/$resetToken')({
   component: function NewPasswordRouteComponent() {
     const { resetToken } = Route.useParams();
+
     return <NewPasswordPage resetToken={resetToken} />;
   },
 
-  beforeLoad: ({ context }) => {
+  beforeLoad: ({ context, location }) => {
     console.log('NewPasswordRoute', context, location);
   },
 });
