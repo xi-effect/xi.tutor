@@ -1,10 +1,16 @@
-import { useParams } from '@tanstack/react-router';
+import { Navigate, useParams } from '@tanstack/react-router';
 
 import { NewPassword } from './NewPassword';
 
 export const NewPasswordPage = () => {
   const { resetToken } = useParams({ strict: false });
-  const decodedToken = decodeURIComponent(resetToken);
+
+  const decodedToken = resetToken ? decodeURIComponent(resetToken) : null;
+
+  if (!decodedToken) {
+    Navigate({ to: '/reset-password' });
+    return null;
+  }
 
   return (
     <div className="xs:h-screen flex h-[100dvh] w-screen flex-col flex-wrap content-center justify-center p-1">
