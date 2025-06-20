@@ -5,6 +5,7 @@ enum AuthQueryKey {
   Signin = 'Signin',
   Signup = 'Signup',
   Signout = 'Signout',
+  RequestPasswordReset = 'RequestPasswordReset',
 }
 
 const authApiConfig = {
@@ -19,6 +20,10 @@ const authApiConfig = {
   [AuthQueryKey.Signout]: {
     getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/sessions/current/`,
     method: HttpMethod.DELETE,
+  },
+  [AuthQueryKey.RequestPasswordReset]: {
+    getUrl: () => `${env.VITE_SERVER_URL_AUTH}/api/password-reset/requests/`,
+    method: HttpMethod.POST,
   },
 };
 

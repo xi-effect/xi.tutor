@@ -6,6 +6,7 @@ enum UserQueryKey {
   Profile = 'Profile',
   Email = 'Email',
   Password = 'Password',
+  PasswordResetConfirm = 'PasswordResetConfirm',
   UserById = 'UserById',
 }
 
@@ -25,6 +26,10 @@ const userApiConfig = {
   [UserQueryKey.Password]: {
     getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/users/current/password/`,
     method: HttpMethod.PUT,
+  },
+  [UserQueryKey.PasswordResetConfirm]: {
+    getUrl: () => `${env.VITE_SERVER_URL_AUTH}/api/password-reset/confirmations/`,
+    method: HttpMethod.POST,
   },
   [UserQueryKey.UserById]: {
     getUrl: (id: string) => `${env.VITE_SERVER_URL_BACKEND}/api/users/by-id/${id}/profile/`,
