@@ -18,7 +18,6 @@ const env = {
   DEV: import.meta.env.MODE === 'development',
 
   VITE_SERVER_URL_BACKEND: asString(import.meta.env.VITE_SERVER_URL_BACKEND),
-  VITE_SERVER_URL_AUTH: asString(import.meta.env.VITE_SERVER_URL_AUTH),
   VITE_SERVER_URL_LIVEKIT: asString(import.meta.env.VITE_SERVER_URL_LIVEKIT),
   VITE_SERVER_URL_HOCUS: asString(import.meta.env.VITE_SERVER_URL_HOCUS),
   VITE_DEVTOOLS_ENABLED: asBoolean(import.meta.env.VITE_REACT_QUERY_DEVTOOLS_ENABLED, false),

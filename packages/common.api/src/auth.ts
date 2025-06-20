@@ -22,7 +22,7 @@ const authApiConfig = {
     method: HttpMethod.DELETE,
   },
   [AuthQueryKey.RequestPasswordReset]: {
-    getUrl: () => `${env.VITE_SERVER_URL_AUTH}/api/password-reset/requests/`,
+    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/public/user-service/password-reset/requests/`,
     method: HttpMethod.POST,
   },
 };
