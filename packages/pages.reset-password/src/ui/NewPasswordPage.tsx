@@ -1,10 +1,9 @@
+import { useParams } from '@tanstack/react-router';
+
 import { NewPassword } from './NewPassword';
 
-interface NewPasswordPageProps {
-  resetToken: string;
-}
-
-export const NewPasswordPage: React.FC<NewPasswordPageProps> = ({ resetToken }) => {
+export const NewPasswordPage = () => {
+  const { resetToken } = useParams({ strict: false });
   const decodedToken = decodeURIComponent(resetToken);
 
   return (
