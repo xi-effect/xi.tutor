@@ -11,23 +11,23 @@ enum UserQueryKey {
 
 const userApiConfig = {
   [UserQueryKey.Home]: {
-    getUrl: () => `${env.VITE_SERVER_URL_AUTH}/api/users/current/home/`,
+    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/users/current/home/`,
     method: HttpMethod.GET,
   },
   [UserQueryKey.Profile]: {
-    getUrl: () => `${env.VITE_SERVER_URL_AUTH}/api/users/current/profile/`,
+    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/users/current/profile/`,
     method: HttpMethod.PATCH,
   },
   [UserQueryKey.Email]: {
-    getUrl: () => `${env.VITE_SERVER_URL_AUTH}/api/users/current/email/`,
+    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/users/current/email/`,
     method: HttpMethod.PUT,
   },
   [UserQueryKey.Password]: {
-    getUrl: () => `${env.VITE_SERVER_URL_AUTH}/api/users/current/password/`,
+    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/users/current/password/`,
     method: HttpMethod.PUT,
   },
   [UserQueryKey.UserById]: {
-    getUrl: (id: string) => `${env.VITE_SERVER_URL_AUTH}/api/users/by-id/${id}/profile/`,
+    getUrl: (id: string) => `${env.VITE_SERVER_URL_BACKEND}/api/users/by-id/${id}/profile/`,
     method: HttpMethod.GET,
   },
 };

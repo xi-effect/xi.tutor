@@ -9,16 +9,16 @@ enum AuthQueryKey {
 
 const authApiConfig = {
   [AuthQueryKey.Signin]: {
-    getUrl: () => `${env.VITE_SERVER_URL_AUTH}/api/signin/`,
+    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/public/user-service/signin/`,
     method: HttpMethod.POST,
   },
   [AuthQueryKey.Signup]: {
-    getUrl: () => `${env.VITE_SERVER_URL_AUTH}/api/signup/`,
+    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/public/user-service/signup/`,
     method: HttpMethod.POST,
   },
   [AuthQueryKey.Signout]: {
-    getUrl: () => `${env.VITE_SERVER_URL_AUTH}/api/signout/`,
-    method: HttpMethod.POST,
+    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/sessions/current/`,
+    method: HttpMethod.DELETE,
   },
 };
 
