@@ -1,10 +1,16 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useTransition } from 'react';
-import { FormData } from '../model/formSchema';
+import { useTransition } from 'react';
+import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
+import { AxiosError } from 'axios';
 import { useNavigate, useSearch } from '@tanstack/react-router';
+
 import { useSignin } from 'common.services';
 import { useAuth } from 'common.auth';
-import { toast } from 'sonner';
+
+import { FormData } from '../model/formSchema';
+import { UseFormSetError } from 'react-hook-form';
+
+type ErrorDetail = 'User not found' | 'Wrong password' | string;
 
 type SignInResponse = {
   status: number;
@@ -12,41 +18,66 @@ type SignInResponse = {
 };
 
 export const useSigninForm = () => {
+  const { t } = useTranslation('signin');
+
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
-
   const { signin } = useSignin();
-
   const { login } = useAuth();
-
   const navigate = useNavigate();
-  const { redirect }: any = useSearch({ strict: false });
 
-  const onSigninForm = async (data: FormData) => {
+  const search = useSearch({ strict: false }) as { redirect?: string };
+
+  const onSigninForm = async (data: FormData, setError: UseFormSetError<FormData>) => {
     const { email, password } = data;
 
     startTransition(async () => {
-      const response: SignInResponse = await signin(email, password);
+      try {
+        const response: SignInResponse = await signin(email, password);
 
-      if (response.status !== 200) {
-        toast('Ошибка при авторизации');
-        setError('Ошибка при авторизации');
-        return;
+        // Успешный вход
+        if (response.theme) {
+          // Здесь можно обработать тему
+        }
+
+        login();
+
+        setTimeout(() => {
+          navigate({ to: search.redirect || '/' });
+        }, 10);
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          const status = error.response?.status;
+          const detail: ErrorDetail = error.response?.data?.detail;
+
+          if (status === 401) {
+            if (detail === 'User not found') {
+              const message = t('errors.not_found_account');
+              setError('email', { message });
+              toast(message);
+              return;
+            }
+
+            if (detail === 'Wrong password') {
+              const message = t('errors.not_found_password');
+              setError('password', { message });
+              toast(message);
+              return;
+            }
+
+            toast(t('errors.error_signin'));
+            return;
+          }
+
+          if (status === 422) {
+            toast(t('errors.validation_error'));
+            return;
+          }
+        }
+
+        toast(t('errors.error_signin'));
       }
-
-      // При наличии настроек темы можно вызвать соответствующую логику:
-      if (response.theme) {
-        // Например, установить тему через глобальное состояние или контекст
-      }
-
-      login();
-
-      // Специальный костыль, чтобы вызвать редирект после всех перерисовок
-      setTimeout(() => {
-        navigate({ to: redirect || '/' });
-      }, 10);
     });
   };
 
-  return { onSigninForm, isPending, error };
+  return { onSigninForm, isPending };
 };
