@@ -17,7 +17,10 @@ export const InvitesPage = () => {
   const { inviteId } = useParams({ strict: false });
 
   useEffect(() => {
-    getData(inviteId).then((mockInvite) => setInvite(mockInvite));
+    const id = Number(inviteId);
+    if (!id) return;
+
+    getData(id).then((mockInvite) => setInvite(mockInvite));
   }, [inviteId]);
 
   return (
