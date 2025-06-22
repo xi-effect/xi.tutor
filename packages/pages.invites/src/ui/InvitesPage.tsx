@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 const mockStatus: 'success' | 'error' = 'success';
 
 async function getData(id: number) {
-  return mockInvites[id];
+  return mockInvites.find((invite) => invite.id === id);
 }
 
 export const InvitesPage = () => {
