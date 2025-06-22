@@ -5,10 +5,16 @@
   "forgot_password": "Forgot Password",
   "register": "Register",
   "sign_in_button": "Sign In",
+  "errors": {
+    "not_found_account": "Account not found",
+    "not_found_password": "Wrong password",
+    "error_signin": "Error signing in",
+    "validation_error": "Validation error"
+  },
   "validation": {
     "required": "This field is required",
-    "minLength": "Min length is ",
-    "maxLength": "Max length is ",
+    "minLength": "Min length is {{length}}",
+    "maxLength": "Max length is {{length}}",
     "wrong_format": "Incorrect data format",
     "no_symbols": "Use only Latin alphabet, lowercase, numbers or symbols: '_' or '.'",
     "symbols_one": "{{count}} symbol",

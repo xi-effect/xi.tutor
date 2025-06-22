@@ -22,6 +22,7 @@
     "common.config": "*",
     "pages.signin": "*",
     "pages.signup": "*",
+    "pages.reset-password": "*",
     "pages.welcome": "*",
     "pages.classrooms": "*",
     "pages.classroom": "*",

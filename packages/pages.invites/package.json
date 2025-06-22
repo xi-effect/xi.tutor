@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@xipkg/utils": "1.8.0",
-    "@xipkg/avatar": "3.9.0",
+    "@xipkg/avatar": "3.0.9",
     "@xipkg/button": "3.1.8",
     "common.ui": "*",
     "@tanstack/react-router": "^1.109.0"

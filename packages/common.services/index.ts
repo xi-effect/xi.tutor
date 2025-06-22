@@ -1,2 +1,10 @@
-export { useSignin, useSignup, useSignout } from './src/auth';
-export { useCurrentUser, useUpdateProfile, useUserById } from './src/user';
+export { useSignin, useSignup, useSignout, useRequestPasswordReset } from './src/auth';
+
+export {
+  useCurrentUser,
+  useUpdateProfile,
+  useUserById,
+  type ProfileData,
+  useResetPasswordConfirm,
+  type ResetPasswordData,
+} from './src/user';
