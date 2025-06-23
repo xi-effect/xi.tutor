@@ -1,13 +1,14 @@
 import { Logo } from 'common.ui';
-import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import { Button } from '@xipkg/button';
-import { useNavigate, useParams } from '@tanstack/react-router';
-import { mockInvites, MockInviteT } from '../mocks';
+import { useParams } from '@tanstack/react-router';
+import { mockInvites } from '../mocks';
 import { useEffect, useState } from 'react';
+import { MockInviteT } from '../types';
+import { Invite } from './Invite';
+import { ErrorInvite } from './ErrorInvite';
 
 const mockStatus: 'success' | 'error' = 'success';
 
-async function getData(id: number) {
+async function getData(id: string) {
   return mockInvites.find((invite) => invite.id === id);
 }
 
@@ -17,10 +18,9 @@ export const InvitesPage = () => {
   const { inviteId } = useParams({ strict: false });
 
   useEffect(() => {
-    const id = Number(inviteId);
-    if (!id) return;
+    if (!inviteId) return;
 
-    getData(id).then((mockInvite) => setInvite(mockInvite));
+    getData(inviteId).then((mockInvite) => setInvite(mockInvite));
   }, [inviteId]);
 
   return (
@@ -30,43 +30,5 @@ export const InvitesPage = () => {
       </div>
       {status === 'success' && invite ? <Invite invite={invite} /> : <ErrorInvite />}
     </section>
-  );
-};
-
-const Invite = ({ invite }: { invite: MockInviteT }) => {
-  const navigate = useNavigate();
-
-  return (
-    <div className="flex w-full flex-col gap-8 p-2 sm:w-[500px]">
-      <div className="text-center">
-        <h3 className="text-xl-base mb-2 font-semibold">Вы получили приглашение</h3>
-        <span>{invite.type === 'group' ? 'Группа' : 'Репетитор'}</span>
-      </div>
-      <div className="flex flex-col items-center gap-2">
-        <Avatar size="xl">
-          <AvatarImage src={invite.avatarUrl || ''} alt="user avatar" />
-          <AvatarFallback />
-        </Avatar>
-        <div className="flex flex-col items-center">
-          <p>{invite.name}</p>
-          <span className="text-s-base">{invite.info}</span>
-        </div>
-      </div>
-      <div className="flex flex-col justify-center gap-2">
-        <Button className="w-full rounded-xl">Принять</Button>
-        <Button onClick={() => navigate({ to: '/' })} className="w-full rounded-xl" variant="ghost">
-          Отказаться
-        </Button>
-      </div>
-    </div>
-  );
-};
-
-const ErrorInvite = () => {
-  return (
-    <div className="flex w-full flex-col gap-4 p-8 text-center sm:w-[400px]">
-      <h4 className="text-xl-base font-semibold">Приглашение недействительно :(</h4>
-      <span>Обратитесь к репетитору за новым приглашением</span>
-    </div>
   );
 };
