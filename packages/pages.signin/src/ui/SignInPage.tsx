@@ -14,15 +14,17 @@ import {
 import { Eyeoff, Eyeon } from '@xipkg/icons';
 import { Link } from '@xipkg/link';
 import { useTranslation } from 'react-i18next';
-import { FormData, useFormSchema } from '../model';
-import { useSigninForm } from '../hooks';
+
 import { Logo } from 'common.ui';
 
+import { FormData, useFormSchema } from '../model';
+import { useSigninForm } from '../hooks';
+
 export const SignInPage = () => {
-  const { t } = useTranslation('signin'); // Используем namespace "signin"
+  const { t } = useTranslation('signin');
 
   const formSchema = useFormSchema();
-  const { onSigninForm, isPending, error } = useSigninForm();
+  const { onSigninForm, isPending } = useSigninForm();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -38,7 +40,7 @@ export const SignInPage = () => {
   const changePasswordShow = () => setIsPasswordShow((prev) => !prev);
 
   const onSubmit = (data: FormData) => {
-    onSigninForm(data);
+    onSigninForm(data, form.setError);
   };
 
   return (
@@ -50,6 +52,7 @@ export const SignInPage = () => {
               <Logo height={22} width={180} />
             </div>
             <h1 className="flex justify-center text-2xl font-semibold">{t('sign_in')}</h1>
+
             <FormField
               control={control}
               name="email"
@@ -63,6 +66,7 @@ export const SignInPage = () => {
                 </FormItem>
               )}
             />
+
             <FormField
               control={control}
               name="password"
@@ -92,24 +96,27 @@ export const SignInPage = () => {
                 </FormItem>
               )}
             />
+
             <Link size="l" variant="always" href="/reset-password">
               {t('forgot_password')}
             </Link>
+
             <div className="flex h-full w-full items-end justify-between">
               <div className="flex h-[48px] items-center">
                 <Link id="to-signup-link" size="l" theme="brand" variant="hover" href="/signup">
                   {t('register')}
                 </Link>
               </div>
-              {!isPending ? (
-                <Button variant="default" type="submit" className="w-24">
-                  {t('sign_in_button')}
-                </Button>
-              ) : (
-                <Button variant="default-spinner" className="w-24" disabled />
-              )}
+
+              <Button
+                variant={isPending ? 'default-spinner' : 'default'}
+                type="submit"
+                className="w-24"
+                disabled={isPending}
+              >
+                {t('sign_in_button')}
+              </Button>
             </div>
-            {error && <div className="text-red-500">{error}</div>}
           </form>
         </Form>
       </div>

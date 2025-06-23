@@ -6,28 +6,37 @@ enum UserQueryKey {
   Profile = 'Profile',
   Email = 'Email',
   Password = 'Password',
+  PasswordResetConfirm = 'PasswordResetConfirm',
   UserById = 'UserById',
 }
 
 const userApiConfig = {
   [UserQueryKey.Home]: {
-    getUrl: () => `${env.VITE_SERVER_URL_AUTH}/api/users/current/home/`,
+    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/home/`,
     method: HttpMethod.GET,
   },
   [UserQueryKey.Profile]: {
-    getUrl: () => `${env.VITE_SERVER_URL_AUTH}/api/users/current/profile/`,
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/profile/`,
     method: HttpMethod.PATCH,
   },
   [UserQueryKey.Email]: {
-    getUrl: () => `${env.VITE_SERVER_URL_AUTH}/api/users/current/email/`,
+    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/email/`,
     method: HttpMethod.PUT,
   },
   [UserQueryKey.Password]: {
-    getUrl: () => `${env.VITE_SERVER_URL_AUTH}/api/users/current/password/`,
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/password/`,
     method: HttpMethod.PUT,
   },
+  [UserQueryKey.PasswordResetConfirm]: {
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/public/user-service/password-reset/confirmations/`,
+    method: HttpMethod.POST,
+  },
   [UserQueryKey.UserById]: {
-    getUrl: (id: string) => `${env.VITE_SERVER_URL_AUTH}/api/users/by-id/${id}/profile/`,
+    getUrl: (id: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/by-id/${id}/profile/`,
     method: HttpMethod.GET,
   },
 };
