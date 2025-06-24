@@ -10,416 +10,150 @@
 
 import { createFileRoute } from '@tanstack/react-router';
 
-// Import Routes
+import { Route as rootRouteImport } from './pages/__root';
+import { Route as AboutRouteImport } from './pages/about';
+import { Route as appLayoutRouteImport } from './pages/(app)/_layout';
+import { Route as authSignupIndexRouteImport } from './pages/(auth)/signup/index';
+import { Route as authSigninIndexRouteImport } from './pages/(auth)/signin/index';
+import { Route as authResetPasswordIndexRouteImport } from './pages/(auth)/reset-password/index';
+import { Route as appLayoutIndexRouteImport } from './pages/(app)/_layout/index';
+import { Route as authResetPasswordResetTokenRouteImport } from './pages/(auth)/reset-password/$resetToken';
+import { Route as appWelcomeLayoutRouteImport } from './pages/(app)/welcome/_layout';
+import { Route as appWelcomeUserIndexRouteImport } from './pages/(app)/welcome/user/index';
+import { Route as appWelcomeSocialsIndexRouteImport } from './pages/(app)/welcome/socials/index';
+import { Route as appWelcomeRoleIndexRouteImport } from './pages/(app)/welcome/role/index';
+import { Route as appWelcomeAboutIndexRouteImport } from './pages/(app)/welcome/about/index';
+import { Route as appLayoutPaymentsIndexRouteImport } from './pages/(app)/_layout/payments/index';
+import { Route as appLayoutMaterialsIndexRouteImport } from './pages/(app)/_layout/materials/index';
+import { Route as appLayoutEditorIndexRouteImport } from './pages/(app)/_layout/editor/index';
+import { Route as appLayoutDraftTableIndexRouteImport } from './pages/(app)/_layout/draftTable/index';
+import { Route as appLayoutClassroomsIndexRouteImport } from './pages/(app)/_layout/classrooms/index';
+import { Route as appLayoutCallIndexRouteImport } from './pages/(app)/_layout/call/index';
+import { Route as appLayoutCalendarIndexRouteImport } from './pages/(app)/_layout/calendar/index';
+import { Route as appLayoutClassroomsClassroomIdRouteImport } from './pages/(app)/_layout/classrooms/$classroomId';
+import { Route as appLayoutCallCallIdRouteImport } from './pages/(app)/_layout/call/$callId';
+import { Route as appLayoutBoardBoardIdRouteImport } from './pages/(app)/_layout/board/$boardId';
 
-import { Route as rootRoute } from './pages/__root';
-import { Route as AboutImport } from './pages/about';
-import { Route as appLayoutImport } from './pages/(app)/_layout';
-import { Route as authSignupIndexImport } from './pages/(auth)/signup/index';
-import { Route as authSigninIndexImport } from './pages/(auth)/signin/index';
-import { Route as authResetPasswordIndexImport } from './pages/(auth)/reset-password/index';
-import { Route as appLayoutIndexImport } from './pages/(app)/_layout/index';
-import { Route as authResetPasswordResetTokenImport } from './pages/(auth)/reset-password/$resetToken';
-import { Route as appWelcomeLayoutImport } from './pages/(app)/welcome/_layout';
-import { Route as appWelcomeUserIndexImport } from './pages/(app)/welcome/user/index';
-import { Route as appWelcomeSocialsIndexImport } from './pages/(app)/welcome/socials/index';
-import { Route as appWelcomeRoleIndexImport } from './pages/(app)/welcome/role/index';
-import { Route as appWelcomeAboutIndexImport } from './pages/(app)/welcome/about/index';
-import { Route as appLayoutPaymentsIndexImport } from './pages/(app)/_layout/payments/index';
-import { Route as appLayoutMaterialsIndexImport } from './pages/(app)/_layout/materials/index';
-import { Route as appLayoutEditorIndexImport } from './pages/(app)/_layout/editor/index';
-import { Route as appLayoutDraftTableIndexImport } from './pages/(app)/_layout/draftTable/index';
-import { Route as appLayoutClassroomsIndexImport } from './pages/(app)/_layout/classrooms/index';
-import { Route as appLayoutCallIndexImport } from './pages/(app)/_layout/call/index';
-import { Route as appLayoutCalendarIndexImport } from './pages/(app)/_layout/calendar/index';
-import { Route as appLayoutClassroomsClassroomIdImport } from './pages/(app)/_layout/classrooms/$classroomId';
-import { Route as appLayoutCallCallIdImport } from './pages/(app)/_layout/call/$callId';
-import { Route as appLayoutBoardBoardIdImport } from './pages/(app)/_layout/board/$boardId';
+const appRouteImport = createFileRoute('/(app)')();
+const appWelcomeRouteImport = createFileRoute('/(app)/welcome')();
 
-// Create Virtual Routes
-
-const appImport = createFileRoute('/(app)')();
-const appWelcomeImport = createFileRoute('/(app)/welcome')();
-
-// Create/Update Routes
-
-const appRoute = appImport.update({
+const appRoute = appRouteImport.update({
   id: '/(app)',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any);
-
-const AboutRoute = AboutImport.update({
+const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any);
-
-const appWelcomeRoute = appWelcomeImport.update({
+const appWelcomeRoute = appWelcomeRouteImport.update({
   id: '/welcome',
   path: '/welcome',
   getParentRoute: () => appRoute,
 } as any);
-
-const appLayoutRoute = appLayoutImport.update({
+const appLayoutRoute = appLayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => appRoute,
 } as any);
-
-const authSignupIndexRoute = authSignupIndexImport.update({
+const authSignupIndexRoute = authSignupIndexRouteImport.update({
   id: '/(auth)/signup/',
   path: '/signup/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any);
-
-const authSigninIndexRoute = authSigninIndexImport.update({
+const authSigninIndexRoute = authSigninIndexRouteImport.update({
   id: '/(auth)/signin/',
   path: '/signin/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any);
-
-const authResetPasswordIndexRoute = authResetPasswordIndexImport.update({
+const authResetPasswordIndexRoute = authResetPasswordIndexRouteImport.update({
   id: '/(auth)/reset-password/',
   path: '/reset-password/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any);
-
-const appLayoutIndexRoute = appLayoutIndexImport.update({
+const appLayoutIndexRoute = appLayoutIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => appLayoutRoute,
 } as any);
-
-const authResetPasswordResetTokenRoute = authResetPasswordResetTokenImport.update({
+const authResetPasswordResetTokenRoute = authResetPasswordResetTokenRouteImport.update({
   id: '/(auth)/reset-password/$resetToken',
   path: '/reset-password/$resetToken',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any);
-
-const appWelcomeLayoutRoute = appWelcomeLayoutImport.update({
+const appWelcomeLayoutRoute = appWelcomeLayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => appWelcomeRoute,
 } as any);
-
-const appWelcomeUserIndexRoute = appWelcomeUserIndexImport.update({
+const appWelcomeUserIndexRoute = appWelcomeUserIndexRouteImport.update({
   id: '/user/',
   path: '/user/',
   getParentRoute: () => appWelcomeRoute,
 } as any);
-
-const appWelcomeSocialsIndexRoute = appWelcomeSocialsIndexImport.update({
+const appWelcomeSocialsIndexRoute = appWelcomeSocialsIndexRouteImport.update({
   id: '/socials/',
   path: '/socials/',
   getParentRoute: () => appWelcomeRoute,
 } as any);
-
-const appWelcomeRoleIndexRoute = appWelcomeRoleIndexImport.update({
+const appWelcomeRoleIndexRoute = appWelcomeRoleIndexRouteImport.update({
   id: '/role/',
   path: '/role/',
   getParentRoute: () => appWelcomeRoute,
 } as any);
-
-const appWelcomeAboutIndexRoute = appWelcomeAboutIndexImport.update({
+const appWelcomeAboutIndexRoute = appWelcomeAboutIndexRouteImport.update({
   id: '/about/',
   path: '/about/',
   getParentRoute: () => appWelcomeRoute,
 } as any);
-
-const appLayoutPaymentsIndexRoute = appLayoutPaymentsIndexImport.update({
+const appLayoutPaymentsIndexRoute = appLayoutPaymentsIndexRouteImport.update({
   id: '/payments/',
   path: '/payments/',
   getParentRoute: () => appLayoutRoute,
 } as any);
-
-const appLayoutMaterialsIndexRoute = appLayoutMaterialsIndexImport.update({
+const appLayoutMaterialsIndexRoute = appLayoutMaterialsIndexRouteImport.update({
   id: '/materials/',
   path: '/materials/',
   getParentRoute: () => appLayoutRoute,
 } as any);
-
-const appLayoutEditorIndexRoute = appLayoutEditorIndexImport.update({
+const appLayoutEditorIndexRoute = appLayoutEditorIndexRouteImport.update({
   id: '/editor/',
   path: '/editor/',
   getParentRoute: () => appLayoutRoute,
 } as any);
-
-const appLayoutDraftTableIndexRoute = appLayoutDraftTableIndexImport.update({
+const appLayoutDraftTableIndexRoute = appLayoutDraftTableIndexRouteImport.update({
   id: '/draftTable/',
   path: '/draftTable/',
   getParentRoute: () => appLayoutRoute,
 } as any);
-
-const appLayoutClassroomsIndexRoute = appLayoutClassroomsIndexImport.update({
+const appLayoutClassroomsIndexRoute = appLayoutClassroomsIndexRouteImport.update({
   id: '/classrooms/',
   path: '/classrooms/',
   getParentRoute: () => appLayoutRoute,
 } as any);
-
-const appLayoutCallIndexRoute = appLayoutCallIndexImport.update({
+const appLayoutCallIndexRoute = appLayoutCallIndexRouteImport.update({
   id: '/call/',
   path: '/call/',
   getParentRoute: () => appLayoutRoute,
 } as any);
-
-const appLayoutCalendarIndexRoute = appLayoutCalendarIndexImport.update({
+const appLayoutCalendarIndexRoute = appLayoutCalendarIndexRouteImport.update({
   id: '/calendar/',
   path: '/calendar/',
   getParentRoute: () => appLayoutRoute,
 } as any);
-
-const appLayoutClassroomsClassroomIdRoute = appLayoutClassroomsClassroomIdImport.update({
+const appLayoutClassroomsClassroomIdRoute = appLayoutClassroomsClassroomIdRouteImport.update({
   id: '/classrooms/$classroomId',
   path: '/classrooms/$classroomId',
   getParentRoute: () => appLayoutRoute,
 } as any);
-
-const appLayoutCallCallIdRoute = appLayoutCallCallIdImport.update({
+const appLayoutCallCallIdRoute = appLayoutCallCallIdRouteImport.update({
   id: '/call/$callId',
   path: '/call/$callId',
   getParentRoute: () => appLayoutRoute,
 } as any);
-
-const appLayoutBoardBoardIdRoute = appLayoutBoardBoardIdImport.update({
+const appLayoutBoardBoardIdRoute = appLayoutBoardBoardIdRouteImport.update({
   id: '/board/$boardId',
   path: '/board/$boardId',
   getParentRoute: () => appLayoutRoute,
 } as any);
-
-// Populate the FileRoutesByPath interface
-
-declare module '@tanstack/react-router' {
-  interface FileRoutesByPath {
-    '/about': {
-      id: '/about';
-      path: '/about';
-      fullPath: '/about';
-      preLoaderRoute: typeof AboutImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/(app)': {
-      id: '/(app)';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof appImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/(app)/_layout': {
-      id: '/(app)/_layout';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof appLayoutImport;
-      parentRoute: typeof appRoute;
-    };
-    '/(app)/welcome': {
-      id: '/(app)/welcome';
-      path: '/welcome';
-      fullPath: '/welcome';
-      preLoaderRoute: typeof appWelcomeImport;
-      parentRoute: typeof appImport;
-    };
-    '/(app)/welcome/_layout': {
-      id: '/(app)/welcome/_layout';
-      path: '/welcome';
-      fullPath: '/welcome';
-      preLoaderRoute: typeof appWelcomeLayoutImport;
-      parentRoute: typeof appWelcomeRoute;
-    };
-    '/(auth)/reset-password/$resetToken': {
-      id: '/(auth)/reset-password/$resetToken';
-      path: '/reset-password/$resetToken';
-      fullPath: '/reset-password/$resetToken';
-      preLoaderRoute: typeof authResetPasswordResetTokenImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/(app)/_layout/': {
-      id: '/(app)/_layout/';
-      path: '/';
-      fullPath: '/';
-      preLoaderRoute: typeof appLayoutIndexImport;
-      parentRoute: typeof appLayoutImport;
-    };
-    '/(auth)/reset-password/': {
-      id: '/(auth)/reset-password/';
-      path: '/reset-password';
-      fullPath: '/reset-password';
-      preLoaderRoute: typeof authResetPasswordIndexImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/(auth)/signin/': {
-      id: '/(auth)/signin/';
-      path: '/signin';
-      fullPath: '/signin';
-      preLoaderRoute: typeof authSigninIndexImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/(auth)/signup/': {
-      id: '/(auth)/signup/';
-      path: '/signup';
-      fullPath: '/signup';
-      preLoaderRoute: typeof authSignupIndexImport;
-      parentRoute: typeof rootRoute;
-    };
-    '/(app)/_layout/board/$boardId': {
-      id: '/(app)/_layout/board/$boardId';
-      path: '/board/$boardId';
-      fullPath: '/board/$boardId';
-      preLoaderRoute: typeof appLayoutBoardBoardIdImport;
-      parentRoute: typeof appLayoutImport;
-    };
-    '/(app)/_layout/call/$callId': {
-      id: '/(app)/_layout/call/$callId';
-      path: '/call/$callId';
-      fullPath: '/call/$callId';
-      preLoaderRoute: typeof appLayoutCallCallIdImport;
-      parentRoute: typeof appLayoutImport;
-    };
-    '/(app)/_layout/classrooms/$classroomId': {
-      id: '/(app)/_layout/classrooms/$classroomId';
-      path: '/classrooms/$classroomId';
-      fullPath: '/classrooms/$classroomId';
-      preLoaderRoute: typeof appLayoutClassroomsClassroomIdImport;
-      parentRoute: typeof appLayoutImport;
-    };
-    '/(app)/_layout/calendar/': {
-      id: '/(app)/_layout/calendar/';
-      path: '/calendar';
-      fullPath: '/calendar';
-      preLoaderRoute: typeof appLayoutCalendarIndexImport;
-      parentRoute: typeof appLayoutImport;
-    };
-    '/(app)/_layout/call/': {
-      id: '/(app)/_layout/call/';
-      path: '/call';
-      fullPath: '/call';
-      preLoaderRoute: typeof appLayoutCallIndexImport;
-      parentRoute: typeof appLayoutImport;
-    };
-    '/(app)/_layout/classrooms/': {
-      id: '/(app)/_layout/classrooms/';
-      path: '/classrooms';
-      fullPath: '/classrooms';
-      preLoaderRoute: typeof appLayoutClassroomsIndexImport;
-      parentRoute: typeof appLayoutImport;
-    };
-    '/(app)/_layout/draftTable/': {
-      id: '/(app)/_layout/draftTable/';
-      path: '/draftTable';
-      fullPath: '/draftTable';
-      preLoaderRoute: typeof appLayoutDraftTableIndexImport;
-      parentRoute: typeof appLayoutImport;
-    };
-    '/(app)/_layout/editor/': {
-      id: '/(app)/_layout/editor/';
-      path: '/editor';
-      fullPath: '/editor';
-      preLoaderRoute: typeof appLayoutEditorIndexImport;
-      parentRoute: typeof appLayoutImport;
-    };
-    '/(app)/_layout/materials/': {
-      id: '/(app)/_layout/materials/';
-      path: '/materials';
-      fullPath: '/materials';
-      preLoaderRoute: typeof appLayoutMaterialsIndexImport;
-      parentRoute: typeof appLayoutImport;
-    };
-    '/(app)/_layout/payments/': {
-      id: '/(app)/_layout/payments/';
-      path: '/payments';
-      fullPath: '/payments';
-      preLoaderRoute: typeof appLayoutPaymentsIndexImport;
-      parentRoute: typeof appLayoutImport;
-    };
-    '/(app)/welcome/about/': {
-      id: '/(app)/welcome/about/';
-      path: '/about';
-      fullPath: '/welcome/about';
-      preLoaderRoute: typeof appWelcomeAboutIndexImport;
-      parentRoute: typeof appWelcomeImport;
-    };
-    '/(app)/welcome/role/': {
-      id: '/(app)/welcome/role/';
-      path: '/role';
-      fullPath: '/welcome/role';
-      preLoaderRoute: typeof appWelcomeRoleIndexImport;
-      parentRoute: typeof appWelcomeImport;
-    };
-    '/(app)/welcome/socials/': {
-      id: '/(app)/welcome/socials/';
-      path: '/socials';
-      fullPath: '/welcome/socials';
-      preLoaderRoute: typeof appWelcomeSocialsIndexImport;
-      parentRoute: typeof appWelcomeImport;
-    };
-    '/(app)/welcome/user/': {
-      id: '/(app)/welcome/user/';
-      path: '/user';
-      fullPath: '/welcome/user';
-      preLoaderRoute: typeof appWelcomeUserIndexImport;
-      parentRoute: typeof appWelcomeImport;
-    };
-  }
-}
-
-// Create and export the route tree
-
-interface appLayoutRouteChildren {
-  appLayoutIndexRoute: typeof appLayoutIndexRoute;
-  appLayoutBoardBoardIdRoute: typeof appLayoutBoardBoardIdRoute;
-  appLayoutCallCallIdRoute: typeof appLayoutCallCallIdRoute;
-  appLayoutClassroomsClassroomIdRoute: typeof appLayoutClassroomsClassroomIdRoute;
-  appLayoutCalendarIndexRoute: typeof appLayoutCalendarIndexRoute;
-  appLayoutCallIndexRoute: typeof appLayoutCallIndexRoute;
-  appLayoutClassroomsIndexRoute: typeof appLayoutClassroomsIndexRoute;
-  appLayoutDraftTableIndexRoute: typeof appLayoutDraftTableIndexRoute;
-  appLayoutEditorIndexRoute: typeof appLayoutEditorIndexRoute;
-  appLayoutMaterialsIndexRoute: typeof appLayoutMaterialsIndexRoute;
-  appLayoutPaymentsIndexRoute: typeof appLayoutPaymentsIndexRoute;
-}
-
-const appLayoutRouteChildren: appLayoutRouteChildren = {
-  appLayoutIndexRoute: appLayoutIndexRoute,
-  appLayoutBoardBoardIdRoute: appLayoutBoardBoardIdRoute,
-  appLayoutCallCallIdRoute: appLayoutCallCallIdRoute,
-  appLayoutClassroomsClassroomIdRoute: appLayoutClassroomsClassroomIdRoute,
-  appLayoutCalendarIndexRoute: appLayoutCalendarIndexRoute,
-  appLayoutCallIndexRoute: appLayoutCallIndexRoute,
-  appLayoutClassroomsIndexRoute: appLayoutClassroomsIndexRoute,
-  appLayoutDraftTableIndexRoute: appLayoutDraftTableIndexRoute,
-  appLayoutEditorIndexRoute: appLayoutEditorIndexRoute,
-  appLayoutMaterialsIndexRoute: appLayoutMaterialsIndexRoute,
-  appLayoutPaymentsIndexRoute: appLayoutPaymentsIndexRoute,
-};
-
-const appLayoutRouteWithChildren = appLayoutRoute._addFileChildren(appLayoutRouteChildren);
-
-interface appWelcomeRouteChildren {
-  appWelcomeLayoutRoute: typeof appWelcomeLayoutRoute;
-  appWelcomeAboutIndexRoute: typeof appWelcomeAboutIndexRoute;
-  appWelcomeRoleIndexRoute: typeof appWelcomeRoleIndexRoute;
-  appWelcomeSocialsIndexRoute: typeof appWelcomeSocialsIndexRoute;
-  appWelcomeUserIndexRoute: typeof appWelcomeUserIndexRoute;
-}
-
-const appWelcomeRouteChildren: appWelcomeRouteChildren = {
-  appWelcomeLayoutRoute: appWelcomeLayoutRoute,
-  appWelcomeAboutIndexRoute: appWelcomeAboutIndexRoute,
-  appWelcomeRoleIndexRoute: appWelcomeRoleIndexRoute,
-  appWelcomeSocialsIndexRoute: appWelcomeSocialsIndexRoute,
-  appWelcomeUserIndexRoute: appWelcomeUserIndexRoute,
-};
-
-const appWelcomeRouteWithChildren = appWelcomeRoute._addFileChildren(appWelcomeRouteChildren);
-
-interface appRouteChildren {
-  appLayoutRoute: typeof appLayoutRouteWithChildren;
-  appWelcomeRoute: typeof appWelcomeRouteWithChildren;
-}
-
-const appRouteChildren: appRouteChildren = {
-  appLayoutRoute: appLayoutRouteWithChildren,
-  appWelcomeRoute: appWelcomeRouteWithChildren,
-};
-
-const appRouteWithChildren = appRoute._addFileChildren(appRouteChildren);
 
 export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute;
@@ -444,7 +178,6 @@ export interface FileRoutesByFullPath {
   '/welcome/socials': typeof appWelcomeSocialsIndexRoute;
   '/welcome/user': typeof appWelcomeUserIndexRoute;
 }
-
 export interface FileRoutesByTo {
   '/about': typeof AboutRoute;
   '/welcome': typeof appWelcomeLayoutRoute;
@@ -468,9 +201,8 @@ export interface FileRoutesByTo {
   '/welcome/socials': typeof appWelcomeSocialsIndexRoute;
   '/welcome/user': typeof appWelcomeUserIndexRoute;
 }
-
 export interface FileRoutesById {
-  __root__: typeof rootRoute;
+  __root__: typeof rootRouteImport;
   '/about': typeof AboutRoute;
   '/(app)': typeof appRouteWithChildren;
   '/(app)/_layout': typeof appLayoutRouteWithChildren;
@@ -496,7 +228,6 @@ export interface FileRoutesById {
   '/(app)/welcome/socials/': typeof appWelcomeSocialsIndexRoute;
   '/(app)/welcome/user/': typeof appWelcomeUserIndexRoute;
 }
-
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
@@ -572,7 +303,6 @@ export interface FileRouteTypes {
     | '/(app)/welcome/user/';
   fileRoutesById: FileRoutesById;
 }
-
 export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute;
   appRoute: typeof appRouteWithChildren;
@@ -582,6 +312,239 @@ export interface RootRouteChildren {
   authSignupIndexRoute: typeof authSignupIndexRoute;
 }
 
+declare module '@tanstack/react-router' {
+  interface FileRoutesByPath {
+    '/(app)': {
+      id: '/(app)';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof appRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/about': {
+      id: '/about';
+      path: '/about';
+      fullPath: '/about';
+      preLoaderRoute: typeof AboutRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/(app)/welcome': {
+      id: '/(app)/welcome';
+      path: '/welcome';
+      fullPath: '/welcome';
+      preLoaderRoute: typeof appWelcomeRouteImport;
+      parentRoute: typeof appRoute;
+    };
+    '/(app)/_layout': {
+      id: '/(app)/_layout';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof appLayoutRouteImport;
+      parentRoute: typeof appRoute;
+    };
+    '/(auth)/signup/': {
+      id: '/(auth)/signup/';
+      path: '/signup';
+      fullPath: '/signup';
+      preLoaderRoute: typeof authSignupIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/(auth)/signin/': {
+      id: '/(auth)/signin/';
+      path: '/signin';
+      fullPath: '/signin';
+      preLoaderRoute: typeof authSigninIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/(auth)/reset-password/': {
+      id: '/(auth)/reset-password/';
+      path: '/reset-password';
+      fullPath: '/reset-password';
+      preLoaderRoute: typeof authResetPasswordIndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/(app)/_layout/': {
+      id: '/(app)/_layout/';
+      path: '/';
+      fullPath: '/';
+      preLoaderRoute: typeof appLayoutIndexRouteImport;
+      parentRoute: typeof appLayoutRoute;
+    };
+    '/(auth)/reset-password/$resetToken': {
+      id: '/(auth)/reset-password/$resetToken';
+      path: '/reset-password/$resetToken';
+      fullPath: '/reset-password/$resetToken';
+      preLoaderRoute: typeof authResetPasswordResetTokenRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    '/(app)/welcome/_layout': {
+      id: '/(app)/welcome/_layout';
+      path: '/welcome';
+      fullPath: '/welcome';
+      preLoaderRoute: typeof appWelcomeLayoutRouteImport;
+      parentRoute: typeof appWelcomeRoute;
+    };
+    '/(app)/welcome/user/': {
+      id: '/(app)/welcome/user/';
+      path: '/user';
+      fullPath: '/welcome/user';
+      preLoaderRoute: typeof appWelcomeUserIndexRouteImport;
+      parentRoute: typeof appWelcomeRoute;
+    };
+    '/(app)/welcome/socials/': {
+      id: '/(app)/welcome/socials/';
+      path: '/socials';
+      fullPath: '/welcome/socials';
+      preLoaderRoute: typeof appWelcomeSocialsIndexRouteImport;
+      parentRoute: typeof appWelcomeRoute;
+    };
+    '/(app)/welcome/role/': {
+      id: '/(app)/welcome/role/';
+      path: '/role';
+      fullPath: '/welcome/role';
+      preLoaderRoute: typeof appWelcomeRoleIndexRouteImport;
+      parentRoute: typeof appWelcomeRoute;
+    };
+    '/(app)/welcome/about/': {
+      id: '/(app)/welcome/about/';
+      path: '/about';
+      fullPath: '/welcome/about';
+      preLoaderRoute: typeof appWelcomeAboutIndexRouteImport;
+      parentRoute: typeof appWelcomeRoute;
+    };
+    '/(app)/_layout/payments/': {
+      id: '/(app)/_layout/payments/';
+      path: '/payments';
+      fullPath: '/payments';
+      preLoaderRoute: typeof appLayoutPaymentsIndexRouteImport;
+      parentRoute: typeof appLayoutRoute;
+    };
+    '/(app)/_layout/materials/': {
+      id: '/(app)/_layout/materials/';
+      path: '/materials';
+      fullPath: '/materials';
+      preLoaderRoute: typeof appLayoutMaterialsIndexRouteImport;
+      parentRoute: typeof appLayoutRoute;
+    };
+    '/(app)/_layout/editor/': {
+      id: '/(app)/_layout/editor/';
+      path: '/editor';
+      fullPath: '/editor';
+      preLoaderRoute: typeof appLayoutEditorIndexRouteImport;
+      parentRoute: typeof appLayoutRoute;
+    };
+    '/(app)/_layout/draftTable/': {
+      id: '/(app)/_layout/draftTable/';
+      path: '/draftTable';
+      fullPath: '/draftTable';
+      preLoaderRoute: typeof appLayoutDraftTableIndexRouteImport;
+      parentRoute: typeof appLayoutRoute;
+    };
+    '/(app)/_layout/classrooms/': {
+      id: '/(app)/_layout/classrooms/';
+      path: '/classrooms';
+      fullPath: '/classrooms';
+      preLoaderRoute: typeof appLayoutClassroomsIndexRouteImport;
+      parentRoute: typeof appLayoutRoute;
+    };
+    '/(app)/_layout/call/': {
+      id: '/(app)/_layout/call/';
+      path: '/call';
+      fullPath: '/call';
+      preLoaderRoute: typeof appLayoutCallIndexRouteImport;
+      parentRoute: typeof appLayoutRoute;
+    };
+    '/(app)/_layout/calendar/': {
+      id: '/(app)/_layout/calendar/';
+      path: '/calendar';
+      fullPath: '/calendar';
+      preLoaderRoute: typeof appLayoutCalendarIndexRouteImport;
+      parentRoute: typeof appLayoutRoute;
+    };
+    '/(app)/_layout/classrooms/$classroomId': {
+      id: '/(app)/_layout/classrooms/$classroomId';
+      path: '/classrooms/$classroomId';
+      fullPath: '/classrooms/$classroomId';
+      preLoaderRoute: typeof appLayoutClassroomsClassroomIdRouteImport;
+      parentRoute: typeof appLayoutRoute;
+    };
+    '/(app)/_layout/call/$callId': {
+      id: '/(app)/_layout/call/$callId';
+      path: '/call/$callId';
+      fullPath: '/call/$callId';
+      preLoaderRoute: typeof appLayoutCallCallIdRouteImport;
+      parentRoute: typeof appLayoutRoute;
+    };
+    '/(app)/_layout/board/$boardId': {
+      id: '/(app)/_layout/board/$boardId';
+      path: '/board/$boardId';
+      fullPath: '/board/$boardId';
+      preLoaderRoute: typeof appLayoutBoardBoardIdRouteImport;
+      parentRoute: typeof appLayoutRoute;
+    };
+  }
+}
+
+interface appLayoutRouteChildren {
+  appLayoutIndexRoute: typeof appLayoutIndexRoute;
+  appLayoutBoardBoardIdRoute: typeof appLayoutBoardBoardIdRoute;
+  appLayoutCallCallIdRoute: typeof appLayoutCallCallIdRoute;
+  appLayoutClassroomsClassroomIdRoute: typeof appLayoutClassroomsClassroomIdRoute;
+  appLayoutCalendarIndexRoute: typeof appLayoutCalendarIndexRoute;
+  appLayoutCallIndexRoute: typeof appLayoutCallIndexRoute;
+  appLayoutClassroomsIndexRoute: typeof appLayoutClassroomsIndexRoute;
+  appLayoutDraftTableIndexRoute: typeof appLayoutDraftTableIndexRoute;
+  appLayoutEditorIndexRoute: typeof appLayoutEditorIndexRoute;
+  appLayoutMaterialsIndexRoute: typeof appLayoutMaterialsIndexRoute;
+  appLayoutPaymentsIndexRoute: typeof appLayoutPaymentsIndexRoute;
+}
+
+const appLayoutRouteChildren: appLayoutRouteChildren = {
+  appLayoutIndexRoute: appLayoutIndexRoute,
+  appLayoutBoardBoardIdRoute: appLayoutBoardBoardIdRoute,
+  appLayoutCallCallIdRoute: appLayoutCallCallIdRoute,
+  appLayoutClassroomsClassroomIdRoute: appLayoutClassroomsClassroomIdRoute,
+  appLayoutCalendarIndexRoute: appLayoutCalendarIndexRoute,
+  appLayoutCallIndexRoute: appLayoutCallIndexRoute,
+  appLayoutClassroomsIndexRoute: appLayoutClassroomsIndexRoute,
+  appLayoutDraftTableIndexRoute: appLayoutDraftTableIndexRoute,
+  appLayoutEditorIndexRoute: appLayoutEditorIndexRoute,
+  appLayoutMaterialsIndexRoute: appLayoutMaterialsIndexRoute,
+  appLayoutPaymentsIndexRoute: appLayoutPaymentsIndexRoute,
+};
+
+const appLayoutRouteWithChildren = appLayoutRoute._addFileChildren(appLayoutRouteChildren);
+
+interface appWelcomeRouteChildren {
+  appWelcomeLayoutRoute: typeof appWelcomeLayoutRoute;
+  appWelcomeAboutIndexRoute: typeof appWelcomeAboutIndexRoute;
+  appWelcomeRoleIndexRoute: typeof appWelcomeRoleIndexRoute;
+  appWelcomeSocialsIndexRoute: typeof appWelcomeSocialsIndexRoute;
+  appWelcomeUserIndexRoute: typeof appWelcomeUserIndexRoute;
+}
+
+const appWelcomeRouteChildren: appWelcomeRouteChildren = {
+  appWelcomeLayoutRoute: appWelcomeLayoutRoute,
+  appWelcomeAboutIndexRoute: appWelcomeAboutIndexRoute,
+  appWelcomeRoleIndexRoute: appWelcomeRoleIndexRoute,
+  appWelcomeSocialsIndexRoute: appWelcomeSocialsIndexRoute,
+  appWelcomeUserIndexRoute: appWelcomeUserIndexRoute,
+};
+
+const appWelcomeRouteWithChildren = appWelcomeRoute._addFileChildren(appWelcomeRouteChildren);
+
+interface appRouteChildren {
+  appLayoutRoute: typeof appLayoutRouteWithChildren;
+  appWelcomeRoute: typeof appWelcomeRouteWithChildren;
+}
+
+const appRouteChildren: appRouteChildren = {
+  appLayoutRoute: appLayoutRouteWithChildren,
+  appWelcomeRoute: appWelcomeRouteWithChildren,
+};
+
+const appRouteWithChildren = appRoute._addFileChildren(appRouteChildren);
+
 const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   appRoute: appRouteWithChildren,
@@ -590,139 +553,6 @@ const rootRouteChildren: RootRouteChildren = {
   authSigninIndexRoute: authSigninIndexRoute,
   authSignupIndexRoute: authSignupIndexRoute,
 };
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>();
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/about",
-        "/(app)",
-        "/(auth)/reset-password/$resetToken",
-        "/(auth)/reset-password/",
-        "/(auth)/signin/",
-        "/(auth)/signup/"
-      ]
-    },
-    "/about": {
-      "filePath": "about.tsx"
-    },
-    "/(app)": {
-      "filePath": "(app)",
-      "children": [
-        "/(app)/_layout",
-        "/(app)/welcome"
-      ]
-    },
-    "/(app)/_layout": {
-      "filePath": "(app)/_layout.tsx",
-      "parent": "/(app)",
-      "children": [
-        "/(app)/_layout/",
-        "/(app)/_layout/board/$boardId",
-        "/(app)/_layout/call/$callId",
-        "/(app)/_layout/classrooms/$classroomId",
-        "/(app)/_layout/calendar/",
-        "/(app)/_layout/call/",
-        "/(app)/_layout/classrooms/",
-        "/(app)/_layout/draftTable/",
-        "/(app)/_layout/editor/",
-        "/(app)/_layout/materials/",
-        "/(app)/_layout/payments/"
-      ]
-    },
-    "/(app)/welcome": {
-      "filePath": "(app)/welcome",
-      "parent": "/(app)",
-      "children": [
-        "/(app)/welcome/_layout",
-        "/(app)/welcome/about/",
-        "/(app)/welcome/role/",
-        "/(app)/welcome/socials/",
-        "/(app)/welcome/user/"
-      ]
-    },
-    "/(app)/welcome/_layout": {
-      "filePath": "(app)/welcome/_layout.tsx",
-      "parent": "/(app)/welcome"
-    },
-    "/(auth)/reset-password/$resetToken": {
-      "filePath": "(auth)/reset-password/$resetToken.tsx"
-    },
-    "/(app)/_layout/": {
-      "filePath": "(app)/_layout/index.tsx",
-      "parent": "/(app)/_layout"
-    },
-    "/(auth)/reset-password/": {
-      "filePath": "(auth)/reset-password/index.tsx"
-    },
-    "/(auth)/signin/": {
-      "filePath": "(auth)/signin/index.tsx"
-    },
-    "/(auth)/signup/": {
-      "filePath": "(auth)/signup/index.tsx"
-    },
-    "/(app)/_layout/board/$boardId": {
-      "filePath": "(app)/_layout/board/$boardId.tsx",
-      "parent": "/(app)/_layout"
-    },
-    "/(app)/_layout/call/$callId": {
-      "filePath": "(app)/_layout/call/$callId.tsx",
-      "parent": "/(app)/_layout"
-    },
-    "/(app)/_layout/classrooms/$classroomId": {
-      "filePath": "(app)/_layout/classrooms/$classroomId.tsx",
-      "parent": "/(app)/_layout"
-    },
-    "/(app)/_layout/calendar/": {
-      "filePath": "(app)/_layout/calendar/index.tsx",
-      "parent": "/(app)/_layout"
-    },
-    "/(app)/_layout/call/": {
-      "filePath": "(app)/_layout/call/index.tsx",
-      "parent": "/(app)/_layout"
-    },
-    "/(app)/_layout/classrooms/": {
-      "filePath": "(app)/_layout/classrooms/index.tsx",
-      "parent": "/(app)/_layout"
-    },
-    "/(app)/_layout/draftTable/": {
-      "filePath": "(app)/_layout/draftTable/index.tsx",
-      "parent": "/(app)/_layout"
-    },
-    "/(app)/_layout/editor/": {
-      "filePath": "(app)/_layout/editor/index.tsx",
-      "parent": "/(app)/_layout"
-    },
-    "/(app)/_layout/materials/": {
-      "filePath": "(app)/_layout/materials/index.tsx",
-      "parent": "/(app)/_layout"
-    },
-    "/(app)/_layout/payments/": {
-      "filePath": "(app)/_layout/payments/index.tsx",
-      "parent": "/(app)/_layout"
-    },
-    "/(app)/welcome/about/": {
-      "filePath": "(app)/welcome/about/index.tsx",
-      "parent": "/(app)/welcome"
-    },
-    "/(app)/welcome/role/": {
-      "filePath": "(app)/welcome/role/index.tsx",
-      "parent": "/(app)/welcome"
-    },
-    "/(app)/welcome/socials/": {
-      "filePath": "(app)/welcome/socials/index.tsx",
-      "parent": "/(app)/welcome"
-    },
-    "/(app)/welcome/user/": {
-      "filePath": "(app)/welcome/user/index.tsx",
-      "parent": "/(app)/welcome"
-    }
-  }
-}
-ROUTE_MANIFEST_END */
