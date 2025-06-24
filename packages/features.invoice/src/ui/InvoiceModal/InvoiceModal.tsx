@@ -108,7 +108,6 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
         </ModalHeader>
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="p-6">
-            <div className="p-6">
               <div className="pb-6">
                 <p className="text-gray-100">Вы создаёте и отправляете счёт.</p>
                 <p className="text-gray-100">
@@ -122,13 +121,13 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                 defaultValue=""
                 render={({ field }) => (
                   <FormItem className="pb-6">
-                    <FormLabel className="mb-2">Ученик или группа</FormLabel>
+                    <FormLabel>Ученик или группа</FormLabel>
                     <FormControl>
                       <Select
                         value={field.value}
                         onValueChange={(value) => handleChangeStudent(value)}
                       >
-                        <SelectTrigger className="w-full">
+                        <SelectTrigger className="w-full mt-2">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
@@ -151,13 +150,14 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                 defaultValue={selectedStudent?.subjects.map((subj) => subj.name) || []}
                 render={({ field }) => (
                   <FormItem className="pb-6">
-                    <FormLabel className="mb-2">Предметы</FormLabel>
+                    <FormLabel>Предметы</FormLabel>
                     <FormControl>
                       <InputWithHelper
                         activeSubjects={field.value}
                         onRemoveItem={handleRemoveSubj}
                         onSelectItem={handleAddSubject}
                         suggestions={selectedStudent?.subjects || []}
+                        className='mt-2'
                       />
                     </FormControl>
                     <FormMessage />
@@ -208,10 +208,9 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                     </div>
                   )}
                 </div>
-              </div>
             </div>
 
-            <ModalFooter className="border-gray-20 flex gap-2 border-t">
+            <ModalFooter className="border-gray-20 flex gap-2 border-t px-0">
               <Button type="submit" size="m">
                 Создать
               </Button>

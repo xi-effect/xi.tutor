@@ -927,6 +927,76 @@ importers:
         specifier: ^8.22.0
         version: 8.34.1(eslint@9.29.0)(typescript@5.7.3)
 
+  packages/features.invoice:
+    dependencies:
+      '@tanstack/react-router':
+        specifier: 1.120.11
+        version: 1.120.11(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/modal':
+        specifier: 4.1.0
+        version: 4.1.0(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/select':
+        specifier: 2.2.5
+        version: 2.2.5(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/utils':
+        specifier: 1.8.0
+        version: 1.8.0(react@19.1.0)
+      common.services:
+        specifier: '*'
+        version: link:../common.services
+      common.utils:
+        specifier: '*'
+        version: link:../common.utils
+      react:
+        specifier: '19'
+        version: 19.1.0
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.19.0
+        version: 9.29.0
+      '@types/node':
+        specifier: ^20.3.1
+        version: 20.19.1
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.1.8
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.1.6(@types/react@19.1.8)
+      '@xipkg/eslint':
+        specifier: 3.2.0
+        version: 3.2.0(eslint-plugin-jsx-a11y@6.10.2)(eslint@9.29.0)(turbo@2.5.4)(typescript@5.7.3)
+      '@xipkg/tailwind':
+        specifier: 0.8.1
+        version: 0.8.1
+      '@xipkg/typescript':
+        specifier: latest
+        version: 0.2.0
+      common.eslint:
+        specifier: '*'
+        version: link:../common.eslint
+      common.typescript:
+        specifier: '*'
+        version: link:../common.typescript
+      eslint:
+        specifier: ^9.19.0
+        version: 9.29.0
+      eslint-plugin-react-hooks:
+        specifier: ^5.0.0
+        version: 5.2.0(eslint@9.29.0)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.18
+        version: 0.4.18(eslint@9.29.0)
+      globals:
+        specifier: ^15.14.0
+        version: 15.15.0
+      typescript:
+        specifier: ~5.7.2
+        version: 5.7.3
+      typescript-eslint:
+        specifier: ^8.22.0
+        version: 8.34.1(eslint@9.29.0)(typescript@5.7.3)
+
   packages/features.materials.add:
     dependencies:
       '@xipkg/button':
@@ -999,76 +1069,6 @@ importers:
       typescript-eslint:
         specifier: ^8.22.0
         version: 8.34.1(eslint@9.29.0)(typescript@5.7.3)
-
-  packages/features.invoice:
-    dependencies:
-      '@tanstack/react-router':
-        specifier: 1.120.11
-        version: 1.120.11(react-dom@19.1.0)(react@19.1.0)
-      '@xipkg/modal':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
-      '@xipkg/select':
-        specifier: 2.2.5
-        version: 2.2.5(@types/react-dom@19.1.6)(@types/react@19.1.6)(react-dom@19.1.0)(react@19.1.0)
-      '@xipkg/utils':
-        specifier: 1.8.0
-        version: 1.8.0(react@19.1.0)
-      common.services:
-        specifier: '*'
-        version: link:../common.services
-      common.utils:
-        specifier: '*'
-        version: link:../common.utils
-      react:
-        specifier: '19'
-        version: 19.1.0
-    devDependencies:
-      '@eslint/js':
-        specifier: ^9.19.0
-        version: 9.28.0
-      '@types/node':
-        specifier: ^20.3.1
-        version: 20.19.0
-      '@types/react':
-        specifier: ^19.0.2
-        version: 19.1.6
-      '@types/react-dom':
-        specifier: ^19.0.2
-        version: 19.1.6(@types/react@19.1.6)
-      '@xipkg/eslint':
-        specifier: 3.2.0
-        version: 3.2.0(eslint-plugin-jsx-a11y@6.10.2)(eslint@9.28.0)(turbo@2.5.4)(typescript@5.7.3)
-      '@xipkg/tailwind':
-        specifier: 0.8.1
-        version: 0.8.1
-      '@xipkg/typescript':
-        specifier: latest
-        version: 0.2.0
-      common.eslint:
-        specifier: '*'
-        version: link:../common.eslint
-      common.typescript:
-        specifier: '*'
-        version: link:../common.typescript
-      eslint:
-        specifier: ^9.19.0
-        version: 9.28.0
-      eslint-plugin-react-hooks:
-        specifier: ^5.0.0
-        version: 5.2.0(eslint@9.28.0)
-      eslint-plugin-react-refresh:
-        specifier: ^0.4.18
-        version: 0.4.20(eslint@9.28.0)
-      globals:
-        specifier: ^15.14.0
-        version: 15.15.0
-      typescript:
-        specifier: ~5.7.2
-        version: 5.7.3
-      typescript-eslint:
-        specifier: ^8.22.0
-        version: 8.33.1(eslint@9.28.0)(typescript@5.7.3)
 
   packages/features.table:
     dependencies:

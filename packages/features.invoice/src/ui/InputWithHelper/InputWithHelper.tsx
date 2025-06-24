@@ -8,6 +8,7 @@ import type { FC } from 'react';
 import type { SubjectT } from '../../types/InvoiceTypes';
 
 interface InputWithHelperProps {
+  className?: string;
   activeSubjects: string[];
   suggestions: SubjectT[];
   onRemoveItem: (id: string) => void;
@@ -19,6 +20,7 @@ export const InputWithHelper: FC<InputWithHelperProps> = ({
   suggestions,
   onRemoveItem,
   onSelectItem,
+  className
 }) => {
   const [inputValue, setInputValue] = useState('');
 
@@ -33,9 +35,14 @@ export const InputWithHelper: FC<InputWithHelperProps> = ({
     });
   }, [inputValue, activeSubjects, suggestions]);
 
+  const handleSelectItem = (itemName: string) => {
+    onSelectItem(itemName);
+    setInputValue('');
+  }
+
   return (
     <>
-      <div className="w-full rounded-lg border border-gray-300 bg-white px-3">
+      <div className={`w-full rounded-lg border border-gray-300 bg-white px-3 ${className}`}>
         <div className="flex w-full flex-wrap items-center gap-2">
           {activeSubjects.map((subject) => (
             <div
@@ -67,7 +74,7 @@ export const InputWithHelper: FC<InputWithHelperProps> = ({
             {filteredSuggestions.map((suggestion) => (
               <li
                 key={suggestion.id}
-                onClick={() => onSelectItem(suggestion.id)}
+                onClick={() => handleSelectItem(suggestion.name)}
                 className={`cursor-pointer px-4 py-2 text-gray-900 hover:bg-gray-50`}
               >
                 {suggestion.name}
