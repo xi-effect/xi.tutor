@@ -22,7 +22,8 @@
     "@xipkg/modal": "4.1.0",
     "@xipkg/link": "^2.0.12",
     "@xipkg/select": "^2.2.5",
-    "@xipkg/userprofile": "4.0.12"
+    "@xipkg/userprofile": "4.0.12",
+    "features.table": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

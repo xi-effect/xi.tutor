@@ -7,6 +7,12 @@ export type ClassroomPropsT = {
   deleted?: boolean;
 };
 
+export type InvitationDataT = {
+  id: number;
+  link: string;
+  timesUsed: number;
+};
+
 export type StatusEducationT = 'study' | 'pause' | 'completed';
 
 export type TypeEducationT = 'individual' | 'group';
