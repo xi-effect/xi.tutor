@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
 import {
   Modal,
   ModalContent,
@@ -7,13 +8,22 @@ import {
   ModalFooter,
   ModalCloseButton,
 } from '@xipkg/modal';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  useForm,
+} from '@xipkg/form';
 import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@xipkg/select';
 import { Input } from '@xipkg/input';
 import { Button } from '@xipkg/button';
-import { Close, CrossCircle } from '@xipkg/icons';
-
+import { Close } from '@xipkg/icons';
+import { InputWithHelper } from '../InputWithHelper/InputWithHelper';
 import { students } from '../../mocks';
-import type { StudentT, SubjectT } from '../../types/InvoiceTypes';
+import { formSchema, type FormData } from '../../model';
 
 type InvoiceModalProps = {
   open: boolean;
@@ -21,153 +31,196 @@ type InvoiceModalProps = {
 };
 
 export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
-  const [activeStudent, setActiveStudent] = useState<StudentT | null>(null);
-  const [activeSubjects, setActiveSubjects] = useState<SubjectT[]>([]);
-  const [inputValue, setInputValue] = useState('');
+  // const [activeStudent, setActiveStudent] = useState<StudentT | null>(null);
+  // const [activeSubjects, setActiveSubjects] = useState<SubjectT[]>([]);
 
-  const suggestions = useMemo(() => {
-    if (!inputValue || !activeStudent) return [];
-    return activeStudent.subjects.filter((subject) => {
-      const subjectName = subject.name.toLowerCase();
-      return (
-        subjectName.includes(inputValue.toLowerCase()) &&
-        !activeSubjects.some((subj) => subj.id === subject.id)
-      );
-    });
-  }, [inputValue, activeStudent, activeSubjects]);
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    mode: 'onChange',
+  });
+
+  const {
+    control,
+    handleSubmit,
+    watch,
+    setValue,
+    // formState: { errors, isValid }
+  } = form;
+
+  const selectedStudentId = watch('studentId');
+  const selectedSubjNames = watch('subjects');
+  const selectedStudent = useMemo(() => {
+    return students.find((s) => s.id === selectedStudentId);
+  }, [selectedStudentId]);
+  const selectedSubjects = useMemo(() => {
+    return selectedStudent?.subjects.filter((subj) => selectedSubjNames.includes(subj.name));
+  }, [selectedStudent, selectedSubjNames]);
 
   const handleChangeStudent = (id: string) => {
-    const student = students.find((student) => student.id === id);
-    setActiveStudent(student || null);
-    setActiveSubjects(student?.subjects || []);
+    setValue('studentId', id);
+    // setValue('subjects', id);
   };
 
-  const handleChangeSubject = (id: string) => {
-    setActiveSubjects((prev) => {
-      if (!activeStudent) return prev;
-      const subject = activeStudent.subjects.find((subject) => subject.id === id);
-      if (subject) {
-        return [...prev, subject];
-      }
-      return prev;
-    });
-    setInputValue('');
+  const handleAddSubject = (subjectName: string) => {
+    if (!selectedSubjNames.includes(subjectName)) {
+      setValue('subjects', [...selectedSubjNames, subjectName], {
+        shouldValidate: true,
+      });
+    }
   };
 
-  const handleRemoveItem = (itemId: string) => {
-    setActiveSubjects(activeSubjects.filter((subj) => subj.id !== itemId));
+  // const handleAddSubject = (id: string) => {
+  //   setActiveSubjects((prev) => {
+  //     if (!activeStudent) return prev;
+  //     const subject = activeStudent.subjects.find((subject) => subject.id === id);
+  //     if (subject) {
+  //       return [...prev, subject];
+  //     }
+  //     return prev;
+  //   });
+  // };
+
+  const handleRemoveSubj = (subjName: string) => {
+    setValue(
+      'subjects',
+      selectedSubjNames.filter((subj) => subj !== subjName),
+    );
   };
 
   const handleCancel = () => {
-    setActiveStudent(null);
-    setActiveSubjects([]);
+    setValue('studentId', '');
+    setValue('subjects', []);
     onOpenChange(false);
+  };
+
+  const onSubmit = (data: FormData) => {
+    console.log('invoice form data: ', data);
   };
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
-      <ModalContent className="md:w-[800px]">
+      <ModalContent className="max-w-[800px] md:w-[800px]">
         <ModalCloseButton>
           <Close className="fill-gray-80 sm:fill-gray-0" />
         </ModalCloseButton>
-        <ModalHeader>
+        <ModalHeader className="border-gray-20 border-b">
           <ModalTitle>Создание счета на оплату</ModalTitle>
         </ModalHeader>
-        <div className="p-6">
-          <div className="pb-6">
-            <p className="text-gray-100">Вы создаёте и отправляете счёт.</p>
-            <p className="text-gray-100">
-              Ученик оплачивает счёт напрямую вам — переводом или наличными.
-            </p>
-          </div>
-
-          <div className="pb-6">
-            <p className="mb-2">Ученик или группа</p>
-            <Select value={activeStudent?.id} onValueChange={(value) => handleChangeStudent(value)}>
-              <SelectTrigger className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {students.map((student) => (
-                  <SelectItem key={student.id} value={student.id}>
-                    {student.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="relative pb-6">
-            <p className="mb-2">Предметы</p>
-            <div className="w-full rounded-lg border border-gray-300 bg-white px-3">
-              <div className="flex flex-wrap items-center gap-2">
-                {activeSubjects.map((subject) => (
-                  <div
-                    key={subject.id}
-                    className="bg-gray-5 inline-flex items-center gap-2 rounded-md px-2 py-1 text-sm text-gray-100"
-                  >
-                    <span>{subject.name}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleRemoveItem(subject.id)}
-                      className="p-0 hover:bg-transparent"
-                    >
-                      <CrossCircle className="h-3 w-3" />
-                    </Button>
-                  </div>
-                ))}
-                <Input
-                  value={inputValue}
-                  placeholder={activeSubjects.length > 0 ? '' : 'Введите предметы через запятую'}
-                  onChange={(e) => setInputValue(e.target.value)}
-                  className="w-full border-none p-0 outline-none"
-                />
+        <Form {...form}>
+          <form onSubmit={handleSubmit(onSubmit)} className="p-6">
+            <div className="p-6">
+              <div className="pb-6">
+                <p className="text-gray-100">Вы создаёте и отправляете счёт.</p>
+                <p className="text-gray-100">
+                  Ученик оплачивает счёт напрямую вам — переводом или наличными.
+                </p>
               </div>
-            </div>
-            {suggestions.length > 0 && (
-              <div className="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-lg border border-gray-300 bg-white shadow-lg">
-                <ul className="py-1">
-                  {suggestions.map((suggestion) => (
-                    <li
-                      key={suggestion.id}
-                      onClick={() => handleChangeSubject(suggestion.id)}
-                      className={`cursor-pointer px-4 py-2 text-gray-900 hover:bg-gray-50`}
-                    >
-                      {suggestion.name}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
 
-          <div className="pb-6">
-            <div className="grid grid-cols-[2fr_1fr_1fr_1fr] gap-4">
-              <span>Занятия</span>
-              <span>Стоимость</span>
-              <span>Количество</span>
-              <span>Сумма</span>
-            </div>
-            <div className="grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr] gap-4">
+              <FormField
+                control={control}
+                name="studentId"
+                defaultValue=""
+                render={({ field }) => (
+                  <FormItem className="pb-6">
+                    <FormLabel className="mb-2">Ученик или группа</FormLabel>
+                    <FormControl>
+                      <Select
+                        value={field.value}
+                        onValueChange={(value) => handleChangeStudent(value)}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {students.map((student) => (
+                            <SelectItem key={student.id} value={student.id}>
+                              {student.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={control}
+                name="subjects"
+                defaultValue={selectedStudent?.subjects.map((subj) => subj.name) || []}
+                render={({ field }) => (
+                  <FormItem className="pb-6">
+                    <FormLabel className="mb-2">Предметы</FormLabel>
+                    <FormControl>
+                      <InputWithHelper
+                        activeSubjects={field.value}
+                        onRemoveItem={handleRemoveSubj}
+                        onSelectItem={handleAddSubject}
+                        suggestions={selectedStudent?.subjects || []}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <div>
-                <p>Занятие на 40 минут</p>
-                <p>Неоплаченных: 1</p>
+                <div className="text-gray-60 grid grid-cols-[2fr_1fr_1fr_1fr] items-center gap-4 text-sm">
+                  <span>Занятия</span>
+                  <span>Стоимость</span>
+                  <span>Количество</span>
+                  <span>Сумма</span>
+                </div>
+                <div className="my-4">
+                  {selectedStudent ? (
+                    selectedSubjects?.map((subject) => (
+                      <div
+                        key={subject.id}
+                        className="mb-4 grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr] items-center"
+                      >
+                        <div>
+                          <p>{subject.variant}</p>
+                          <p className="text-gray-60 text-sm">Неоплаченных: 1</p>
+                        </div>
+                        <Input
+                          type="number"
+                          value={subject.price}
+                          placeholder="Стоимость"
+                          variant="s"
+                          after={<span>₽</span>}
+                        />
+                        <span className="mx-2">x</span>
+                        <Input type="number" value={1} placeholder="Раз" variant="s" />
+                        <span className="mx-2">=</span>
+                        <Input
+                          type="number"
+                          placeholder="Сумма"
+                          variant="s"
+                          after={<span>₽</span>}
+                          readOnly
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-gray-30 flex w-full justify-center py-4">
+                      Выберите студента
+                    </div>
+                  )}
+                </div>
               </div>
-              <Input type="number" placeholder="Стоимость" after={<span>₽</span>} />
-              <span>x</span>
-              <Input type="number" placeholder="Раз" />
-              <span>=</span>
-              <Input type="number" placeholder="Сумма" after={<span>₽</span>} readOnly />
             </div>
-          </div>
-        </div>
 
-        <ModalFooter className="border-gray-20 flex gap-2 border-t">
-          <Button size="m">Создать</Button>
-          <Button size="m" variant="secondary" onClick={handleCancel}>
-            Отменить
-          </Button>
-        </ModalFooter>
+            <ModalFooter className="border-gray-20 flex gap-2 border-t">
+              <Button type="submit" size="m">
+                Создать
+              </Button>
+              <Button size="m" variant="secondary" onClick={handleCancel}>
+                Отменить
+              </Button>
+            </ModalFooter>
+          </form>
+        </Form>
       </ModalContent>
     </Modal>
   );
