@@ -29,6 +29,7 @@
     "pages.materials": "*",
     "pages.payments": "*",
     "pages.main": "*",
+    "pages.invites": "*",
     "modules.board": "*",
     "common.sockets": "*",
     "modules.editor": "*",
