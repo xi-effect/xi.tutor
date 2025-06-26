@@ -63,7 +63,7 @@ importers:
         specifier: '*'
         version: link:../../packages/common.utils
       features.charts:
-        specifier: workspace:^
+        specifier: '*'
         version: link:../../packages/features.charts
       features.table:
         specifier: '*'
@@ -889,9 +889,6 @@ importers:
       recharts:
         specifier: ^2.15.3
         version: 2.15.3(react-dom@19.1.0)(react@19.1.0)
-      tailwind-merge:
-        specifier: ^3.3.0
-        version: 3.3.0
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0

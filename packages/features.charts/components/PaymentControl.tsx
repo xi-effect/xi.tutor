@@ -59,7 +59,11 @@ export const PaymentControl = () => {
         />
       </div>
       <div className="h-[308px] w-[462px]">
-        <PieCardChart chartData={chartDataPieCardChart} chartConfig={chartConfigPieCardChart} />
+        <PieCardChart
+          chartData={chartDataPieCardChart}
+          chartConfig={chartConfigPieCardChart}
+          pieCardTitle="Предметы"
+        />
       </div>
     </div>
   );

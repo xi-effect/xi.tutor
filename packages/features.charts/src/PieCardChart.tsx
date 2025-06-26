@@ -27,6 +27,7 @@ type PieCardChartT = {
   labelListProps?: Partial<Omit<React.ComponentProps<typeof LabelListType>, 'children'>> & {
     className?: string;
   };
+  pieCardTitle: string;
 };
 
 export const PieCardChart = ({
@@ -37,11 +38,12 @@ export const PieCardChart = ({
   chartContainerProps,
   chartTooltip,
   labelListProps,
+  pieCardTitle,
 }: PieCardChartT) => {
   return (
     <div className="flex flex-col rounded-lg">
       <div className="flex space-y-1 p-4">
-        <div className="text-primary-100 text-xl font-semibold tracking-tight">Предметы</div>
+        <div className="text-primary-100 text-xl font-semibold tracking-tight">{pieCardTitle}</div>
       </div>
       <div className="flex-1 p-4 pt-0 pb-0">
         <ChartContainer
