@@ -19,6 +19,7 @@ import { Route as authResetPasswordIndexRouteImport } from './pages/(auth)/reset
 import { Route as appLayoutIndexRouteImport } from './pages/(app)/_layout/index';
 import { Route as authResetPasswordResetTokenRouteImport } from './pages/(auth)/reset-password/$resetToken';
 import { Route as appWelcomeLayoutRouteImport } from './pages/(app)/welcome/_layout';
+import { Route as appInviteInviteIdRouteImport } from './pages/(app)/invite/$inviteId';
 import { Route as appWelcomeUserIndexRouteImport } from './pages/(app)/welcome/user/index';
 import { Route as appWelcomeSocialsIndexRouteImport } from './pages/(app)/welcome/socials/index';
 import { Route as appWelcomeRoleIndexRouteImport } from './pages/(app)/welcome/role/index';
@@ -83,6 +84,11 @@ const authResetPasswordResetTokenRoute = authResetPasswordResetTokenRouteImport.
 const appWelcomeLayoutRoute = appWelcomeLayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => appWelcomeRoute,
+} as any);
+const appInviteInviteIdRoute = appInviteInviteIdRouteImport.update({
+  id: '/invite/$inviteId',
+  path: '/invite/$inviteId',
+  getParentRoute: () => appRoute,
 } as any);
 const appWelcomeUserIndexRoute = appWelcomeUserIndexRouteImport.update({
   id: '/user/',
@@ -158,6 +164,7 @@ const appLayoutBoardBoardIdRoute = appLayoutBoardBoardIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute;
   '/': typeof appLayoutIndexRoute;
+  '/invite/$inviteId': typeof appInviteInviteIdRoute;
   '/welcome': typeof appWelcomeLayoutRoute;
   '/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute;
   '/reset-password': typeof authResetPasswordIndexRoute;
@@ -180,6 +187,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/about': typeof AboutRoute;
+  '/invite/$inviteId': typeof appInviteInviteIdRoute;
   '/welcome': typeof appWelcomeLayoutRoute;
   '/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute;
   '/': typeof appLayoutIndexRoute;
@@ -206,6 +214,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute;
   '/(app)': typeof appRouteWithChildren;
   '/(app)/_layout': typeof appLayoutRouteWithChildren;
+  '/(app)/invite/$inviteId': typeof appInviteInviteIdRoute;
   '/(app)/welcome': typeof appWelcomeRouteWithChildren;
   '/(app)/welcome/_layout': typeof appWelcomeLayoutRoute;
   '/(auth)/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute;
@@ -233,6 +242,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/about'
     | '/'
+    | '/invite/$inviteId'
     | '/welcome'
     | '/reset-password/$resetToken'
     | '/reset-password'
@@ -255,6 +265,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo;
   to:
     | '/about'
+    | '/invite/$inviteId'
     | '/welcome'
     | '/reset-password/$resetToken'
     | '/'
@@ -280,6 +291,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/(app)'
     | '/(app)/_layout'
+    | '/(app)/invite/$inviteId'
     | '/(app)/welcome'
     | '/(app)/welcome/_layout'
     | '/(auth)/reset-password/$resetToken'
@@ -383,6 +395,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/welcome';
       preLoaderRoute: typeof appWelcomeLayoutRouteImport;
       parentRoute: typeof appWelcomeRoute;
+    };
+    '/(app)/invite/$inviteId': {
+      id: '/(app)/invite/$inviteId';
+      path: '/invite/$inviteId';
+      fullPath: '/invite/$inviteId';
+      preLoaderRoute: typeof appInviteInviteIdRouteImport;
+      parentRoute: typeof appRoute;
     };
     '/(app)/welcome/user/': {
       id: '/(app)/welcome/user/';
@@ -535,11 +554,13 @@ const appWelcomeRouteWithChildren = appWelcomeRoute._addFileChildren(appWelcomeR
 
 interface appRouteChildren {
   appLayoutRoute: typeof appLayoutRouteWithChildren;
+  appInviteInviteIdRoute: typeof appInviteInviteIdRoute;
   appWelcomeRoute: typeof appWelcomeRouteWithChildren;
 }
 
 const appRouteChildren: appRouteChildren = {
   appLayoutRoute: appLayoutRouteWithChildren,
+  appInviteInviteIdRoute: appInviteInviteIdRoute,
   appWelcomeRoute: appWelcomeRouteWithChildren,
 };
 
