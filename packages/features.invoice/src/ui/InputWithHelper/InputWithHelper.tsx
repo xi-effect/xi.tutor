@@ -5,55 +5,53 @@ import { Button } from '@xipkg/button';
 import { CrossCircle } from '@xipkg/icons';
 
 import type { FC } from 'react';
-import type { SubjectT } from '../../types/InvoiceTypes';
 
 interface InputWithHelperProps {
   className?: string;
-  activeSubjects: string[];
-  suggestions: SubjectT[];
-  onRemoveItem: (id: string) => void;
-  onSelectItem: (id: string) => void;
+  values: string[];
+  suggestions: string[];
+  onRemoveItem: (item: string) => void;
+  onSelectItem: (item: string) => void;
 }
 
 export const InputWithHelper: FC<InputWithHelperProps> = ({
-  activeSubjects,
+  values,
   suggestions,
   onRemoveItem,
   onSelectItem,
-  className
+  className,
 }) => {
   const [inputValue, setInputValue] = useState('');
 
   const filteredSuggestions = useMemo(() => {
     if (!inputValue) return [];
     return suggestions.filter((suggestion) => {
-      const suggestionName = suggestion.name.toLowerCase();
       return (
-        suggestionName.includes(inputValue.toLowerCase()) &&
-        !activeSubjects.some((subj) => subj === suggestion.name)
+        suggestion.toLowerCase().includes(inputValue.toLowerCase()) &&
+        !values.some((val) => val === suggestion)
       );
     });
-  }, [inputValue, activeSubjects, suggestions]);
+  }, [inputValue, values, suggestions]);
 
-  const handleSelectItem = (itemName: string) => {
-    onSelectItem(itemName);
+  const handleSelectItem = (item: string) => {
+    onSelectItem(item);
     setInputValue('');
-  }
+  };
 
   return (
     <>
       <div className={`w-full rounded-lg border border-gray-300 bg-white px-3 ${className}`}>
         <div className="flex w-full flex-wrap items-center gap-2">
-          {activeSubjects.map((subject) => (
+          {values.map((value) => (
             <div
-              key={subject}
+              key={value}
               className="bg-gray-5 inline-flex items-center gap-2 rounded-md px-2 py-1 text-sm text-gray-100"
             >
-              <span>{subject}</span>
+              <span>{value}</span>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => onRemoveItem(subject)}
+                onClick={() => onRemoveItem(value)}
                 className="p-0 hover:bg-transparent"
               >
                 <CrossCircle className="h-3 w-3" />
@@ -62,7 +60,7 @@ export const InputWithHelper: FC<InputWithHelperProps> = ({
           ))}
           <Input
             value={inputValue}
-            placeholder={activeSubjects.length > 0 ? '' : 'Введите предметы через запятую'}
+            placeholder={values.length > 0 ? '' : 'Введите предметы через запятую'}
             onChange={(e) => setInputValue(e.target.value)}
             className="w-full border-none p-0 outline-none"
           />
@@ -73,11 +71,11 @@ export const InputWithHelper: FC<InputWithHelperProps> = ({
           <ul className="py-1">
             {filteredSuggestions.map((suggestion) => (
               <li
-                key={suggestion.id}
-                onClick={() => handleSelectItem(suggestion.name)}
+                key={suggestion}
+                onClick={() => handleSelectItem(suggestion)}
                 className={`cursor-pointer px-4 py-2 text-gray-900 hover:bg-gray-50`}
               >
-                {suggestion.name}
+                {suggestion}
               </li>
             ))}
           </ul>

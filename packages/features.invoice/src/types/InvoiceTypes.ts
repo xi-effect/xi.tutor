@@ -8,5 +8,6 @@ export type SubjectT = {
   id: string;
   name: string;
   variant: string;
-  price: number;
+  pricePerLesson: number;
+  unpaidLessonsAmount?: number;
 };
