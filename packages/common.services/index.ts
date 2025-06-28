@@ -8,3 +8,5 @@ export {
   useResetPasswordConfirm,
   type ResetPasswordData,
 } from './src/user';
+
+export { handleError, showSuccess, type ErrorType } from './src/utils/errorHandler';
