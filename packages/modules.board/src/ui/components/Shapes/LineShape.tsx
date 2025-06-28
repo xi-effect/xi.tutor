@@ -4,7 +4,7 @@ import { useBoardStore, useUIStore } from '../../../store';
 import { BoardElement } from '../../../types';
 import { useElementHandlers } from '../../../hooks';
 
-const LineShapeComponent = memo(({ element }: { element: BoardElement }) => {
+export const LineShape = memo(({ element }: { element: BoardElement }) => {
   const { selectedElementId } = useBoardStore();
   const { handleSelect, handleDragEnd } = useElementHandlers();
   const { scale } = useUIStore();
@@ -32,6 +32,4 @@ const LineShapeComponent = memo(({ element }: { element: BoardElement }) => {
   );
 });
 
-LineShapeComponent.displayName = 'LineShape';
-
-export const LineShape = LineShapeComponent;
+LineShape.displayName = 'LineShape';
