@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*", "../common.utils/src/useGenerateNameWithDate.ts"],
+  "include": ["src/**/*"],
   "extends": ["common.typescript/tsconfig.app.json"],
   "exclude": ["dist", "build", "node_modules"]
 }
