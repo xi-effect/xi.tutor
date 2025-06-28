@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import { StyleMenu } from './StyleMenu';
-import { PopupItemT } from '../../utils/navBarElements';
+import { PopupItemT } from '../../../utils/navBarElements';
 
 type StylePopupContentT = {
   menuPopupContent: PopupItemT[];

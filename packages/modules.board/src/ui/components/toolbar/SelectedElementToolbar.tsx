@@ -1,10 +1,10 @@
 import { useEffect, useMemo } from 'react';
 import { Button } from '@xipkg/button';
 import { Trash, Copy, MoreVert } from '@xipkg/icons';
-import { useBoardStore } from '../../store';
-import { useIsStageScaling } from '../../hooks';
-import { ToolbarElement } from '../../types';
-import { useTrackedTransaction } from '../../features';
+import { useBoardStore } from '../../../store';
+import { useIsStageScaling } from '../../../hooks';
+import { ToolbarElement } from '../../../types';
+import { useTrackedTransaction } from '../../../features';
 
 export const SelectedElementToolbar = () => {
   const {
