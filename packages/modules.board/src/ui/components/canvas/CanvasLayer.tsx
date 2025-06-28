@@ -1,6 +1,6 @@
 import { memo, useEffect, useMemo } from 'react';
 import { Layer, Transformer } from 'react-konva';
-import { LineShape } from '../shapes/LineShape';
+import { LineShape } from '../shapes';
 import { useStage } from '../../../providers';
 import { useBoardStore } from '../../../store';
 import { useElementHandlers, useIsStageScaling } from '../../../hooks';
