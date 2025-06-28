@@ -1,1 +1,1 @@
-export { default as LineShape } from './LineShape';
+export { LineShape } from './LineShape';
