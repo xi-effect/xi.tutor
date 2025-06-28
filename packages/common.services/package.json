@@ -15,7 +15,8 @@
     "common.api": "*",
     "common.env": "*",
     "common.types": "*",
-    "common.config": "*"
+    "common.config": "*",
+    "common.utils": "*"
   },
   "devDependencies": {
     "@tanstack/react-query-devtools": "5.73.3",

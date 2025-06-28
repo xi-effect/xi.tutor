@@ -8,3 +8,5 @@ export {
   useResetPasswordConfirm,
   type ResetPasswordData,
 } from './src/user';
+
+export { useAddMaterials, type MaterialsDataT } from './src/materials';
