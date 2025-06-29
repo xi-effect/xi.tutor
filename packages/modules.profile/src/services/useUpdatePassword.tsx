@@ -52,7 +52,7 @@ export const useUpdatePassword = () => {
       // Возвращаем предыдущее значение для отката в случае ошибки
       return { previousUser };
     },
-    onError: (err, passwordData, context) => {
+    onError: (err, _passwordData, context) => {
       // В случае ошибки откатываем изменения
       if (context?.previousUser) {
         queryClient.setQueryData([UserQueryKey.Home], context.previousUser);

@@ -45,7 +45,7 @@ export const useUpdateProfile = () => {
       // Возвращаем предыдущее значение для отката в случае ошибки
       return { previousUser };
     },
-    onError: (err, profileData, context) => {
+    onError: (err, _profileData, context) => {
       // В случае ошибки откатываем изменения
       if (context?.previousUser) {
         queryClient.setQueryData([UserQueryKey.Home], context.previousUser);

@@ -52,7 +52,7 @@ export const useUpdateEmail = () => {
       // Возвращаем предыдущее значение для отката в случае ошибки
       return { previousUser };
     },
-    onError: (err, emailData, context) => {
+    onError: (err, _emailData, context) => {
       // В случае ошибки откатываем изменения
       if (context?.previousUser) {
         queryClient.setQueryData([UserQueryKey.Home], context.previousUser);
