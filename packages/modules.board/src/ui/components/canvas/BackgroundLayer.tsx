@@ -48,12 +48,31 @@ const BackgroundLayerComponent = () => {
     // Адаптивный шаг сетки на основе масштаба
     const stepMultiplier = 2 ** Math.round(Math.log2(1 / scale));
     let gridStep = baseGridStep * stepMultiplier;
-    let dotSize = Math.max(baseDotSize * stepMultiplier, minDotSize);
+
+    // Улучшенная логика размера точек для лучшей видимости при малых масштабах
+    let dotSize = baseDotSize;
+
+    if (scale < 1) {
+      // При масштабе меньше 100% увеличиваем размер точек для лучшей видимости
+      const scaleInverse = 1 / scale;
+      dotSize = Math.max(baseDotSize * scaleInverse * 0.9, minDotSize);
+
+      // Дополнительное увеличение для очень маленьких масштабов
+      if (scale < 0.5) {
+        dotSize *= 1.2;
+      }
+      if (scale < 0.25) {
+        dotSize *= 1.4;
+      }
+    } else {
+      // При масштабе больше 100% используем стандартную логику
+      dotSize = Math.max(baseDotSize * stepMultiplier, minDotSize);
+    }
 
     // Дополнительная оптимизация для очень маленьких масштабов
     if (scale < 0.01) {
       gridStep /= 2;
-      dotSize /= 2;
+      dotSize = Math.max(dotSize / 2, minDotSize);
     }
 
     // Увеличиваем буфер для более плавного скролла
@@ -72,7 +91,19 @@ const BackgroundLayerComponent = () => {
         sceneFunc={(context) => {
           // Устанавливаем стиль
           context.fillStyle = gridConfig.dotFill;
-          context.globalAlpha = Math.min(1, Math.max(0.2, scale * 0.8)); // Более мягкая прозрачность
+
+          // Улучшенная логика прозрачности для лучшей видимости при малых масштабах
+          let alpha = 0.8; // Базовая прозрачность
+
+          if (scale < 1) {
+            // При малых масштабах увеличиваем прозрачность для лучшей видимости
+            alpha = Math.min(1, 0.8 + (1 - scale) * 0.4);
+          } else {
+            // При больших масштабах используем стандартную логику
+            alpha = Math.min(1, Math.max(0.2, scale * 0.8));
+          }
+
+          context.globalAlpha = alpha;
 
           // Оптимизированное рисование точек с группировкой
           context.save();
@@ -92,7 +123,7 @@ const BackgroundLayerComponent = () => {
                 context.restore();
                 context.save();
                 context.fillStyle = gridConfig.dotFill;
-                context.globalAlpha = Math.min(1, Math.max(0.2, scale * 0.8));
+                context.globalAlpha = alpha;
               }
             }
           }
