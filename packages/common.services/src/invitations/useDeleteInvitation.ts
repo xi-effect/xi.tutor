@@ -1,4 +1,4 @@
-import { invitationsApiConfig, invitationsQueryKey } from 'common.api';
+import { invitationsApiConfig, InvitationsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -10,8 +10,8 @@ export const useDeleteInvitation = () => {
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
-          method: invitationsApiConfig[invitationsQueryKey.DeleteInvitation].method,
-          url: invitationsApiConfig[invitationsQueryKey.DeleteInvitation].getUrl(invitation_id),
+          method: invitationsApiConfig[InvitationsQueryKey.DeleteInvitation].method,
+          url: invitationsApiConfig[InvitationsQueryKey.DeleteInvitation].getUrl(invitation_id),
           data: {
             invitation_id,
           },
@@ -26,7 +26,7 @@ export const useDeleteInvitation = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [invitationsQueryKey.AllInvitations] });
+      queryClient.invalidateQueries({ queryKey: [InvitationsQueryKey.AllInvitations] });
     },
   });
 

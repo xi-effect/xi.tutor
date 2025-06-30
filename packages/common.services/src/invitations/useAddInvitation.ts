@@ -1,4 +1,4 @@
-import { invitationsApiConfig, invitationsQueryKey } from 'common.api';
+import { invitationsApiConfig, InvitationsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -10,8 +10,8 @@ export const useAddInvitation = () => {
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
-          method: invitationsApiConfig[invitationsQueryKey.AddInvitation].method,
-          url: invitationsApiConfig[invitationsQueryKey.AddInvitation].getUrl(),
+          method: invitationsApiConfig[InvitationsQueryKey.AddInvitation].method,
+          url: invitationsApiConfig[InvitationsQueryKey.AddInvitation].getUrl(),
           headers: {
             'Content-Type': 'application/json',
           },
@@ -23,7 +23,7 @@ export const useAddInvitation = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [invitationsQueryKey.AllInvitations] });
+      queryClient.invalidateQueries({ queryKey: [InvitationsQueryKey.AllInvitations] });
     },
   });
 
