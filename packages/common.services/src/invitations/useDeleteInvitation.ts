@@ -21,7 +21,7 @@ export const useDeleteInvitation = () => {
         });
         return response;
       } catch (err) {
-        console.error('Ошибка при обновлении пароля:', err);
+        console.error('Ошибка:', err);
         throw err;
       }
     },
