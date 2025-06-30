@@ -73,10 +73,10 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
                     <TableCell className="flex max-w-[50%] flex-1 items-center gap-2 overflow-hidden">
                       <span>{invitation.code}</span>
                       <div
-                        className="bg-gray-5 flex h-5 w-5 cursor-pointer items-center justify-center rounded-sm"
+                        className="bg-gray-5 flex h-5 w-5 cursor-pointer items-center justify-center rounded-sm p-1"
                         onClick={handleCopyLink(invitation.code)}
                       >
-                        <Copy className="h-3 w-3" />
+                        <Copy />
                       </div>
                     </TableCell>
                     <TableCell className="flex max-w-[50%] flex-1">
@@ -103,7 +103,11 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
         </ModalBody>
 
         <ModalFooter>
-          <Button onClick={handleAddInvitation} variant={isAdding ? 'ghost-spinner' : 'default'} className="gap-2">
+          <Button
+            onClick={handleAddInvitation}
+            variant={isAdding ? 'ghost-spinner' : 'default'}
+            className="gap-2"
+          >
             Создать новое приглашение
           </Button>
         </ModalFooter>
