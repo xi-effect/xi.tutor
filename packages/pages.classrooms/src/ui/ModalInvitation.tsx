@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import {
   Modal,
   ModalTitle,
@@ -41,6 +41,12 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
       onSettled: () => setDeletingId(null),
     });
   };
+
+  useLayoutEffect(() => {
+    if (data?.length === 0) {
+      handleAddInvitation();
+    }
+  }, [data?.length]);
 
   return (
     <Modal>
@@ -103,13 +109,17 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
         </ModalBody>
 
         <ModalFooter>
-          <Button
-            onClick={handleAddInvitation}
-            variant={isAdding ? 'ghost-spinner' : 'default'}
-            className="gap-2"
-          >
-            Создать новое приглашение
-          </Button>
+          {data?.length > 9 ? (
+            <Button variant="ghost">Максимум 10 приглашений</Button>
+          ) : (
+            <Button
+              onClick={handleAddInvitation}
+              variant={isAdding ? 'ghost-spinner' : 'default'}
+              className="gap-2"
+            >
+              Создать новое приглашение
+            </Button>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>
