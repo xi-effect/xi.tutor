@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { colorOptions } from '../../utils/customConfig';
+import { colorOptions } from '../../../utils/customConfig';
 
 type ColorOptionT = (typeof colorOptions)[number]['name'];
 

@@ -1,6 +1,6 @@
 export const gridConfig = {
   baseGridStep: 40,
-  baseDotSize: 2,
+  baseDotSize: 2.5,
   minDotSize: 1,
-  dotFill: '#e8e8e8',
+  dotFill: '#E7E7E9',
 };

@@ -1,20 +1,13 @@
 import { ConfigEnv, defineConfig, searchForWorkspaceRoot } from 'vite';
 import react from '@vitejs/plugin-react';
-import { TanStackRouterVite } from '@tanstack/router-plugin/vite';
+import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
 // import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv) => {
   return {
-    plugins: [
-      TanStackRouterVite({ target: 'react', autoCodeSplitting: true }),
-      react({
-        // Быстрый режим разработки с меньшими проверками в dev mode
-        fastRefresh: true,
-      }),
-      tailwindcss(),
-    ],
+    plugins: [tanstackRouter({ target: 'react', autoCodeSplitting: true }), react(), tailwindcss()],
     build: {
       chunkSizeWarningLimit: 1000,
       minify: mode === 'production',

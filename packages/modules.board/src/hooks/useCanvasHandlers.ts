@@ -6,6 +6,7 @@ import { useZoom } from './useWheelZoom';
 import { BoardElement } from '../types';
 import { startNewTextEditing, useTrackedTransaction } from '../features';
 import { runWithoutSync } from '../utils';
+import { usePerformanceTracking } from './usePerformanceTracking';
 
 export const useCanvasHandlers = () => {
   const { stageRef, layerRef, getRelativePointerPosition } = useStage();
@@ -19,6 +20,7 @@ export const useCanvasHandlers = () => {
     setEditingElementId,
   } = useBoardStore();
   const { setStagePosition } = useUIStore();
+  const { trackMouseEvent } = usePerformanceTracking();
 
   const { executeTrackedTransaction } = useTrackedTransaction();
 
@@ -33,11 +35,14 @@ export const useCanvasHandlers = () => {
   const { handleWheel } = useZoom(stageRef);
 
   const handleOnWheel = (e: Konva.KonvaEventObject<WheelEvent>) => {
+    trackMouseEvent();
     setStagePosition(e.currentTarget.position());
     handleWheel(e);
   };
 
   const handleMouseDown = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    trackMouseEvent();
+
     const stage = stageRef.current;
     if (!stage) return;
 
@@ -95,6 +100,8 @@ export const useCanvasHandlers = () => {
   };
 
   const handleMouseMove = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    trackMouseEvent();
+
     const stage = stageRef.current;
     if (!stage) return;
 
@@ -143,6 +150,8 @@ export const useCanvasHandlers = () => {
   };
 
   const handleMouseUp = () => {
+    trackMouseEvent();
+
     isDrawing.current = false;
     isErasing.current = false;
 
@@ -197,6 +206,7 @@ export const useCanvasHandlers = () => {
   };
 
   const handleDragEnd = (e: Konva.KonvaEventObject<DragEvent>) => {
+    trackMouseEvent();
     setStagePosition(e.currentTarget.position());
   };
 
