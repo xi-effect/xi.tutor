@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   Modal,
   ModalTitle,
@@ -20,6 +21,10 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
   const { addInvitationConfirm } = useAddInvitation();
   const { deleteInvitationConfirm } = useDeleteInvitation();
 
+  const isDeleting = deleteInvitationConfirm.isPending;
+
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+
   const handleCopyLink = (link: InvitationDataT['code']) => () => {
     navigator.clipboard.writeText(link);
     toast('Ссылка скопирована');
@@ -30,7 +35,10 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
   };
 
   const handleDeleteInvitation = (id: number) => () => {
-    deleteInvitationConfirm.mutate(id);
+    setDeletingId(id);
+    deleteInvitationConfirm.mutate(id, {
+      onSettled: () => setDeletingId(null),
+    });
   };
 
   return (
@@ -44,14 +52,16 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
 
         <ModalBody className="px-4 py-2">
           <Table>
+            <caption className="p-2 text-left">
+              Скопируйте ссылку-приглашение и отправьте ученику
+            </caption>
             <TableHeader>
-              <TableRow className="p-2">Скопируйте ссылку-приглашение и отправьте ученику</TableRow>
+              <TableRow className="flex justify-between">
+                <TableHead className="text-gray-80 flex-1 text-sm">Ссылка</TableHead>
+                <TableHead className="text-gray-80 flex-1 text-sm">Использований</TableHead>
+                <TableHead className="w-8" />
+              </TableRow>
             </TableHeader>
-            <TableRow className="flex justify-between">
-              <TableHead className="text-gray-80 flex-1 text-sm">Ссылка</TableHead>
-              <TableHead className="text-gray-80 flex-1 text-sm">Использований</TableHead>
-              <TableHead className="w-8" />
-            </TableRow>
             <TableBody>
               {data &&
                 data.map((invitation: InvitationDataT) => (
@@ -75,7 +85,15 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
                       className="flex h-8 w-8 cursor-pointer items-center justify-center p-0"
                       onClick={handleDeleteInvitation(invitation.id)}
                     >
-                      <Trash size="sm" className="fill-gray-60 hidden group-hover:flex" />
+                      {isDeleting && deletingId === invitation.id ? (
+                        <div
+                          className="text-gray-20 inline-block size-4 animate-spin rounded-full border-[2px] border-current border-t-transparent"
+                          role="status"
+                          aria-label="loading"
+                        />
+                      ) : (
+                        <Trash size="sm" className="fill-gray-60 hidden group-hover:flex" />
+                      )}
                     </TableCell>
                   </TableRow>
                 ))}
