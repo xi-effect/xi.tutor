@@ -14,6 +14,7 @@ export type ToolType =
 export type ElementType =
   | 'line'
   | 'rectangle'
+  | 'rect'
   | 'circle'
   | 'text'
   | 'sticker'
@@ -29,8 +30,8 @@ export interface BoardElement {
   strokeWidth?: number;
   opacity?: number;
   // Свойства для прямоугольника и круга
-  x?: number;
-  y?: number;
+  x: number;
+  y: number;
   width?: number;
   height?: number;
   radius?: number;

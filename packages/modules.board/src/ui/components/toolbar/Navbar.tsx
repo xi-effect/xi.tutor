@@ -1,9 +1,9 @@
 import React from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
-import { useBoardStore } from '../../store';
-import { ToolType } from '../../types';
-import { navBarElements, NavbarElementT } from '../../utils/navBarElements';
-import { NavbarAction } from '../../features';
+import { useBoardStore } from '../../../store';
+import { ToolType } from '../../../types';
+import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
+import { NavbarAction } from '../../../features';
 // import { StickerPopupContent } from './StickerPopupContent';
 // import { StylePopupContent } from './StylePopupContent';
 
