@@ -1962,6 +1962,9 @@ importers:
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.1.0)
+      common.services:
+        specifier: '*'
+        version: link:../common.services
       features.table:
         specifier: '*'
         version: link:../features.table
@@ -1990,6 +1993,12 @@ importers:
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
+      common.api:
+        specifier: '*'
+        version: link:../common.api
+      common.config:
+        specifier: '*'
+        version: link:../common.config
       common.eslint:
         specifier: '*'
         version: link:../common.eslint
@@ -2059,6 +2068,9 @@ importers:
       features.materials.add:
         specifier: '*'
         version: link:../features.materials.add
+      pages.classrooms:
+        specifier: '*'
+        version: link:../pages.classrooms
       react:
         specifier: '19'
         version: 19.1.0

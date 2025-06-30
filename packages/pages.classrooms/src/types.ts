@@ -9,8 +9,9 @@ export type ClassroomPropsT = {
 
 export type InvitationDataT = {
   id: number;
-  link: string;
-  timesUsed: number;
+  created_at: string;
+  code: string;
+  usage_count: number;
 };
 
 export type StatusEducationT = 'study' | 'pause' | 'completed';

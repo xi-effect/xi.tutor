@@ -75,11 +75,12 @@ const appLayoutIndexRoute = appLayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => appLayoutRoute,
 } as any);
-const authResetPasswordResetTokenRoute = authResetPasswordResetTokenRouteImport.update({
-  id: '/(auth)/reset-password/$resetToken',
-  path: '/reset-password/$resetToken',
-  getParentRoute: () => rootRouteImport,
-} as any);
+const authResetPasswordResetTokenRoute =
+  authResetPasswordResetTokenRouteImport.update({
+    id: '/(auth)/reset-password/$resetToken',
+    path: '/reset-password/$resetToken',
+    getParentRoute: () => rootRouteImport,
+  } as any);
 const appWelcomeLayoutRoute = appWelcomeLayoutRouteImport.update({
   id: '/_layout',
   getParentRoute: () => appWelcomeRoute,
@@ -119,16 +120,18 @@ const appLayoutEditorIndexRoute = appLayoutEditorIndexRouteImport.update({
   path: '/editor/',
   getParentRoute: () => appLayoutRoute,
 } as any);
-const appLayoutDraftTableIndexRoute = appLayoutDraftTableIndexRouteImport.update({
-  id: '/draftTable/',
-  path: '/draftTable/',
-  getParentRoute: () => appLayoutRoute,
-} as any);
-const appLayoutClassroomsIndexRoute = appLayoutClassroomsIndexRouteImport.update({
-  id: '/classrooms/',
-  path: '/classrooms/',
-  getParentRoute: () => appLayoutRoute,
-} as any);
+const appLayoutDraftTableIndexRoute =
+  appLayoutDraftTableIndexRouteImport.update({
+    id: '/draftTable/',
+    path: '/draftTable/',
+    getParentRoute: () => appLayoutRoute,
+  } as any);
+const appLayoutClassroomsIndexRoute =
+  appLayoutClassroomsIndexRouteImport.update({
+    id: '/classrooms/',
+    path: '/classrooms/',
+    getParentRoute: () => appLayoutRoute,
+  } as any);
 const appLayoutCallIndexRoute = appLayoutCallIndexRouteImport.update({
   id: '/call/',
   path: '/call/',
@@ -139,11 +142,12 @@ const appLayoutCalendarIndexRoute = appLayoutCalendarIndexRouteImport.update({
   path: '/calendar/',
   getParentRoute: () => appLayoutRoute,
 } as any);
-const appLayoutClassroomsClassroomIdRoute = appLayoutClassroomsClassroomIdRouteImport.update({
-  id: '/classrooms/$classroomId',
-  path: '/classrooms/$classroomId',
-  getParentRoute: () => appLayoutRoute,
-} as any);
+const appLayoutClassroomsClassroomIdRoute =
+  appLayoutClassroomsClassroomIdRouteImport.update({
+    id: '/classrooms/$classroomId',
+    path: '/classrooms/$classroomId',
+    getParentRoute: () => appLayoutRoute,
+  } as any);
 const appLayoutCallCallIdRoute = appLayoutCallCallIdRouteImport.update({
   id: '/call/$callId',
   path: '/call/$callId',
@@ -513,7 +517,9 @@ const appLayoutRouteChildren: appLayoutRouteChildren = {
   appLayoutPaymentsIndexRoute: appLayoutPaymentsIndexRoute,
 };
 
-const appLayoutRouteWithChildren = appLayoutRoute._addFileChildren(appLayoutRouteChildren);
+const appLayoutRouteWithChildren = appLayoutRoute._addFileChildren(
+  appLayoutRouteChildren,
+);
 
 interface appWelcomeRouteChildren {
   appWelcomeLayoutRoute: typeof appWelcomeLayoutRoute;
@@ -531,7 +537,9 @@ const appWelcomeRouteChildren: appWelcomeRouteChildren = {
   appWelcomeUserIndexRoute: appWelcomeUserIndexRoute,
 };
 
-const appWelcomeRouteWithChildren = appWelcomeRoute._addFileChildren(appWelcomeRouteChildren);
+const appWelcomeRouteWithChildren = appWelcomeRoute._addFileChildren(
+  appWelcomeRouteChildren,
+);
 
 interface appRouteChildren {
   appLayoutRoute: typeof appLayoutRouteWithChildren;

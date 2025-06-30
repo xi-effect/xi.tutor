@@ -8,3 +8,5 @@ export {
   useResetPasswordConfirm,
   type ResetPasswordData,
 } from './src/user';
+
+export { useInvitationsList, useAddInvitation, useDeleteInvitation } from './src/invitations';

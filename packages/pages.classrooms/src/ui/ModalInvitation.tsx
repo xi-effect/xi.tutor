@@ -11,14 +11,26 @@ import {
 import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from 'features.table';
 import { Button } from '@xipkg/button';
 import { Trash, Copy } from '@xipkg/icons';
-import { invitationsMock } from '../mocks';
 import { InvitationDataT } from '../types';
 import { toast } from 'sonner';
+import { useInvitationsList, useAddInvitation, useDeleteInvitation } from 'common.services';
 
 export const ModalInvitation = ({ children }: { children: React.ReactNode }) => {
-  const handleCopyLink = (link: InvitationDataT['link']) => () => {
+  const { data } = useInvitationsList();
+  const { addInvitationConfirm } = useAddInvitation();
+  const { deleteInvitationConfirm } = useDeleteInvitation();
+
+  const handleCopyLink = (link: InvitationDataT['code']) => () => {
     navigator.clipboard.writeText(link);
     toast('Ссылка скопирована');
+  };
+
+  const handleAddInvitation = () => {
+    addInvitationConfirm.mutate();
+  };
+
+  const handleDeleteInvitation = (id: number) => () => {
+    deleteInvitationConfirm.mutate(id);
   };
 
   return (
@@ -33,7 +45,7 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
         <ModalBody className="px-4 py-2">
           <Table>
             <TableHeader>
-              <h3 className="p-2">Скопируйте ссылку-приглашение и отправьте ученику</h3>
+              <TableRow className="p-2">Скопируйте ссылку-приглашение и отправьте ученику</TableRow>
             </TableHeader>
             <TableRow className="flex justify-between">
               <TableHead className="text-gray-80 flex-1 text-sm">Ссылка</TableHead>
@@ -41,32 +53,38 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
               <TableHead className="w-8" />
             </TableRow>
             <TableBody>
-              {invitationsMock.map((invitation) => (
-                <TableRow
-                  key={invitation.id}
-                  className="hover:bg-gray-5 group flex max-h-[38px] flex-row items-center rounded-lg"
-                >
-                  <TableCell className="flex max-w-[50%] flex-1 items-center gap-2 overflow-hidden">
-                    <span>{invitation.link}</span>
-                    <div
-                      className="bg-gray-5 flex h-5 w-5 cursor-pointer items-center justify-center rounded-sm"
-                      onClick={handleCopyLink(invitation.link)}
+              {data &&
+                data.map((invitation: InvitationDataT) => (
+                  <TableRow
+                    key={invitation.id}
+                    className="hover:bg-gray-5 group flex max-h-[38px] flex-row items-center rounded-lg"
+                  >
+                    <TableCell className="flex max-w-[50%] flex-1 items-center gap-2 overflow-hidden">
+                      <span>{invitation.code}</span>
+                      <div
+                        className="bg-gray-5 flex h-5 w-5 cursor-pointer items-center justify-center rounded-sm"
+                        onClick={handleCopyLink(invitation.code)}
+                      >
+                        <Copy className="h-3 w-3" />
+                      </div>
+                    </TableCell>
+                    <TableCell className="flex max-w-[50%] flex-1">
+                      {invitation.usage_count}
+                    </TableCell>
+                    <TableCell
+                      className="flex h-8 w-8 cursor-pointer items-center justify-center p-0"
+                      onClick={handleDeleteInvitation(invitation.id)}
                     >
-                      <Copy className="h-3 w-3" />
-                    </div>
-                  </TableCell>
-                  <TableCell className="flex max-w-[50%] flex-1">{invitation.timesUsed}</TableCell>
-                  <TableCell className="flex h-8 w-8 cursor-pointer items-center justify-center p-0">
-                    <Trash size="sm" className="fill-gray-60 hidden group-hover:flex" />
-                  </TableCell>
-                </TableRow>
-              ))}
+                      <Trash size="sm" className="fill-gray-60 hidden group-hover:flex" />
+                    </TableCell>
+                  </TableRow>
+                ))}
             </TableBody>
           </Table>
         </ModalBody>
 
         <ModalFooter>
-          <Button>Создать новое приглашение</Button>
+          <Button onClick={handleAddInvitation}>Создать новое приглашение</Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

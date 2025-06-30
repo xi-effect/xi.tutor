@@ -1,4 +1,4 @@
-import { ClassroomPropsT, InvitationDataT } from './types';
+import { ClassroomPropsT } from './types';
 
 export const classroomsMock: ClassroomPropsT[] = [
   {
@@ -131,67 +131,4 @@ export const classroomsMock: ClassroomPropsT[] = [
     name: 'Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, quos.',
     status: 'pause',
   },
-];
-
-export const invitationsMock: InvitationDataT[] = [
-  {
-    id: 1,
-    link: 'wwwwwwwwww',
-    timesUsed: 0,
-  },
-  {
-    id: 2,
-    link: 'pppppppppp',
-    timesUsed: 2,
-  },
-  // {
-  //   id: 3,
-  //   link: 'wwwwwwwwww',
-  //   timesUsed: 12
-  // },
-  // {
-  //   id: 1,
-  //   link: 'wwwwwwwwww',
-  //   timesUsed: 4
-  // },
-  // {
-  //   id: 5,
-  //   link: 'wwwwwwwwww',
-  //   timesUsed: 2
-  // },
-  // {
-  //   id: 6,
-  //   link: 'wwwwwwwwww',
-  //   timesUsed: 12
-  // },
-  // {
-  //   id: 7,
-  //   link: 'wwwwwwwwww',
-  //   timesUsed: 0
-  // },
-  // {
-  //   id: 8,
-  //   link: 'wwwwwwwwww',
-  //   timesUsed: 2
-  // },
-  // {
-  //   id: 9,
-  //   link: 'kkkkkkkkkk',
-  //   timesUsed: 12
-  // },
-  // {
-  //   id: 10,
-  //   link: 'wwwwwwwwww',
-  //   timesUsed: 0
-  // },
-  // {
-  //   id: 11,
-  //   link: 'yyyyyyyyyy',
-  //   timesUsed: 2
-  // },
-  // {
-  //   id: 12,
-  //   link: 'wwwwwwwwww',
-  //   timesUsed: 12
-  // },
 ];
