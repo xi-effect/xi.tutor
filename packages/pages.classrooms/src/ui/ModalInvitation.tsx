@@ -21,6 +21,7 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
   const { addInvitationConfirm } = useAddInvitation();
   const { deleteInvitationConfirm } = useDeleteInvitation();
 
+  const isAdding = addInvitationConfirm.isPending;
   const isDeleting = deleteInvitationConfirm.isPending;
 
   const [deletingId, setDeletingId] = useState<number | null>(null);
@@ -102,7 +103,9 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
         </ModalBody>
 
         <ModalFooter>
-          <Button onClick={handleAddInvitation}>Создать новое приглашение</Button>
+          <Button onClick={handleAddInvitation} variant={isAdding ? 'ghost-spinner' : 'default'} className="gap-2">
+            Создать новое приглашение
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
