@@ -7,6 +7,7 @@ import { handleError, showSuccess } from 'common.services';
 export type MaterialsDataT = {
   kind: 'note' | 'board';
   name?: string;
+  id?: string;
 };
 
 export const useAddMaterials = () => {
@@ -34,15 +35,36 @@ export const useAddMaterials = () => {
         throw err;
       }
     },
+    onMutate: async (materialsData) => {
+      await queryClient.cancelQueries({ queryKey: [MaterialsQueryKey.AddMaterials] });
+
+      const previousMaterials = queryClient.getQueryData([MaterialsQueryKey.AddMaterials]);
+
+      const newMaterial = {
+        ...materialsData,
+        name: materialsData.name || generateNameWithDate(materialsData.kind),
+      };
+
+      queryClient.setQueryData([MaterialsQueryKey.AddMaterials], (old: MaterialsDataT[] = []) => {
+        return [...old, newMaterial];
+      });
+
+      return { previousMaterials };
+    },
+    onError: (err, _materialsData, context) => {
+      if (context?.previousMaterials) {
+        queryClient.setQueryData([MaterialsQueryKey.AddMaterials], context.previousMaterials);
+      }
+      handleError(err, 'materials');
+    },
     onSuccess: (response) => {
       if (response?.data) {
-        queryClient.invalidateQueries({ queryKey: [MaterialsQueryKey.AddMaterials] });
+        queryClient.setQueryData([MaterialsQueryKey.AddMaterials], (old: MaterialsDataT[] = []) => {
+          return [...old.filter((item) => item.name !== response.data.name), response.data];
+        });
       }
 
       showSuccess('materials', `${response.data.name} создан`);
-    },
-    onError: (err) => {
-      handleError(err, 'materials');
     },
   });
 
