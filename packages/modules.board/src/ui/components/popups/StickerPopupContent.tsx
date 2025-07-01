@@ -1,4 +1,4 @@
-import { PopupItemT } from '../../utils/navBarElements';
+import { PopupItemT } from '../../../utils/navBarElements';
 
 type StickerPopupContentT = {
   menuPopupContent: PopupItemT[];

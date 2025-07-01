@@ -25,6 +25,7 @@
     "common.services": "*",
     "common.theme": "*",
     "common.auth": "*",
+    "common.types": "*",
     "dayjs": "1.11.13",
     "features.avatar.editor": "*",
     "sonner": "2.0.3"

@@ -53,9 +53,6 @@
     "react-hook-form": "^7.55.0",
     "@hookform/resolvers": "5.0.1"
   },
-  "resolutions": {
-    "react-hook-form": "^7.55.0"
-  },
   "description": "form for reset password",
   "author": "xi.effect"
 }

@@ -1,4 +1,6 @@
-export { BackgroundLayer } from './BackgroundLayer';
-export { SelectedElementToolbar } from './SelectedElementToolbar';
-export { Navbar } from './Navbar';
-export { ZoomMenu } from './ZoomMenu';
+export * from './canvas';
+export * from './shapes';
+export * from './toolbar';
+export * from './header';
+export * from './popups';
+export * from './performance';

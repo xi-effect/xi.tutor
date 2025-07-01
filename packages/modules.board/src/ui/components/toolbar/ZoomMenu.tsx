@@ -1,6 +1,6 @@
 import { Plus, Minus } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
-import { useUIStore } from '../../store';
+import { useUIStore } from '../../../store';
 
 type ZoomMenuPropsT = {
   zoomIn: () => void;
