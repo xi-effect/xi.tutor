@@ -4,17 +4,40 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { generateNameWithDate } from 'common.utils';
 import { handleError, showSuccess } from 'common.services';
 
+interface MaterialsResponseT {
+  data: MaterialsDataT & {
+    id: string;
+    createdAt: string;
+  };
+}
+
+interface MutationContext {
+  previousMaterials: MaterialsDataT[] | undefined;
+}
+
 export type MaterialsDataT = {
   kind: 'note' | 'board';
   name?: string;
-  id?: string;
+};
+
+const validateKind = (kind: string): kind is MaterialsDataT['kind'] => {
+  return kind === 'note' || kind === 'board';
 };
 
 export const useAddMaterials = () => {
   const queryClient = useQueryClient();
 
-  const addMaterialsMutation = useMutation({
+  const addMaterialsMutation = useMutation<
+    MaterialsResponseT,
+    Error,
+    MaterialsDataT,
+    MutationContext
+  >({
     mutationFn: async (materialsData: MaterialsDataT) => {
+      if (!validateKind(materialsData.kind)) {
+        throw new Error('Invalid material kind');
+      }
+
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
@@ -36,33 +59,43 @@ export const useAddMaterials = () => {
       }
     },
     onMutate: async (materialsData) => {
-      await queryClient.cancelQueries({ queryKey: [MaterialsQueryKey.AddMaterials] });
+      await queryClient.cancelQueries({
+        queryKey: [MaterialsQueryKey.Materials, materialsData.kind],
+      });
 
-      const previousMaterials = queryClient.getQueryData([MaterialsQueryKey.AddMaterials]);
+      const previousMaterials = queryClient.getQueryData<MaterialsDataT[]>([
+        MaterialsQueryKey.Materials,
+        materialsData.kind,
+      ]);
 
       const newMaterial = {
         ...materialsData,
         name: materialsData.name || generateNameWithDate(materialsData.kind),
       };
 
-      queryClient.setQueryData([MaterialsQueryKey.AddMaterials], (old: MaterialsDataT[] = []) => {
-        return [...old, newMaterial];
-      });
+      queryClient.setQueryData<MaterialsDataT[]>(
+        [MaterialsQueryKey.Materials, materialsData.kind],
+        (old = []) => [...old, newMaterial],
+      );
 
       return { previousMaterials };
     },
-    onError: (err, _materialsData, context) => {
+    onError: (err, materialsData, context) => {
       if (context?.previousMaterials) {
-        queryClient.setQueryData([MaterialsQueryKey.AddMaterials], context.previousMaterials);
+        queryClient.setQueryData(
+          [MaterialsQueryKey.Materials, materialsData.kind],
+          context.previousMaterials,
+        );
       }
       handleError(err, 'materials');
     },
-    onSuccess: (response) => {
-      if (response?.data) {
-        queryClient.setQueryData([MaterialsQueryKey.AddMaterials], (old: MaterialsDataT[] = []) => {
+    onSuccess: (response, materialsData) => {
+      queryClient.setQueryData<MaterialsDataT[]>(
+        [MaterialsQueryKey.Materials, materialsData.kind],
+        (old = []) => {
           return [...old.filter((item) => item.name !== response.data.name), response.data];
-        });
-      }
+        },
+      );
 
       showSuccess('materials', `${response.data.name} создан`);
     },
