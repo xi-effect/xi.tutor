@@ -16,8 +16,8 @@ export const useAddMaterials = () => {
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
-          method: materialsApiConfig[MaterialsQueryKey.Materials].method,
-          url: materialsApiConfig[MaterialsQueryKey.Materials].getUrl(),
+          method: materialsApiConfig[MaterialsQueryKey.AddMaterials].method,
+          url: materialsApiConfig[MaterialsQueryKey.AddMaterials].getUrl(),
           data: {
             ...materialsData,
             name: materialsData.name || generateNameWithDate(materialsData.kind),
@@ -34,7 +34,7 @@ export const useAddMaterials = () => {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [MaterialsQueryKey.Materials] });
+      queryClient.invalidateQueries({ queryKey: [MaterialsQueryKey.AddMaterials] });
     },
   });
 
