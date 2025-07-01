@@ -9,26 +9,34 @@ type InvoiceSummaryProps = {
 
 export const InvoiceSummary = ({ control, totalPrice }: InvoiceSummaryProps) => {
   return (
-    <FormField
-      control={control}
-      name="invoicePrice"
-      defaultValue={0}
-      render={({ field }) => (
-        <FormItem>
-          <FormControl>
-            <Input
-              {...field}
-              type="number"
-              placeholder="Стоимость"
-              variant="s"
-              after={<span>₽</span>}
-              value={totalPrice}
-              readOnly
-            />
-          </FormControl>
-          <FormMessage />
-        </FormItem>
-      )}
-    />
+    <div className="grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr] items-center gap-4">
+      <div />
+      <span className="text-right">Итого:</span>
+      <div />
+      <span>1</span>
+      <div />
+      <FormField
+        control={control}
+        name="invoicePrice"
+        defaultValue={0}
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <Input
+                {...field}
+                type="number"
+                placeholder="Стоимость"
+                variant="s"
+                after={<span>₽</span>}
+                value={totalPrice}
+                readOnly
+                className="border-none p-0 text-right outline-none"
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
   );
 };

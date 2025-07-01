@@ -10,7 +10,8 @@ import { Form } from '@xipkg/form';
 import { Button } from '@xipkg/button';
 import { Close } from '@xipkg/icons';
 import { useInvoiceForm } from './hooks';
-import { StudentSelector, SubjectSelector, SubjectRow, InvoiceSummary } from './components';
+import { StudentSelector, SubjectSelector, SubjectRow } from './components';
+import type { FormData } from '../../model';
 
 type InvoiceModalProps = {
   open: boolean;
@@ -30,17 +31,24 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
     handleAddSubject,
     handleRemoveSubject,
     handleSubjectChange,
-    handleCancel,
+    handleClearForm,
     onSubmit,
   } = useInvoiceForm();
 
-  const handleCancelWithClose = () => {
-    handleCancel();
+  const totalLessons = selectedSubjects.reduce((acc, subj) => acc + subj.unpaidLessonsAmount, 0);
+
+  const handleCloseModal = () => {
+    handleClearForm();
     onOpenChange(false);
   };
 
+  const onFormSubmit = (data: FormData) => {
+    onSubmit(data);
+    handleCloseModal();
+  };
+
   return (
-    <Modal open={open} onOpenChange={onOpenChange}>
+    <Modal open={open} onOpenChange={handleCloseModal}>
       <ModalContent className="max-w-[800px] md:w-[800px]">
         <ModalCloseButton>
           <Close className="fill-gray-80 sm:fill-gray-0" />
@@ -49,7 +57,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
           <ModalTitle>Создание счета на оплату</ModalTitle>
         </ModalHeader>
         <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)} className="p-6">
+          <form onSubmit={handleSubmit(onFormSubmit)} className="p-6">
             <div className="pb-6">
               <p className="text-gray-100">Вы создаёте и отправляете счёт.</p>
               <p className="text-gray-100">
@@ -68,10 +76,12 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
             />
 
             <div>
-              <div className="text-gray-60 grid grid-cols-[2fr_1fr_1fr_1fr] items-center gap-4 text-sm">
+              <div className="text-gray-60 grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr] items-center gap-4 text-sm">
                 <span>Занятия</span>
                 <span>Стоимость</span>
+                <div />
                 <span>Количество</span>
+                <div />
                 <span>Сумма</span>
               </div>
               <div className="my-4">
@@ -90,16 +100,22 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                     Выберите студента
                   </div>
                 )}
+                <div className="grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr] items-center gap-4">
+                  <div />
+                  <span className="text-right">Итого:</span>
+                  <div />
+                  <span>{totalLessons}</span>
+                  <div />
+                  <span className="text-right">{totalInvoicePrice} ₽</span>
+                </div>
               </div>
             </div>
-
-            <InvoiceSummary control={control} totalPrice={totalInvoicePrice} />
 
             <ModalFooter className="border-gray-20 flex gap-2 border-t px-0">
               <Button type="submit" size="m">
                 Создать
               </Button>
-              <Button size="m" variant="secondary" onClick={handleCancelWithClose}>
+              <Button size="m" variant="secondary" onClick={handleCloseModal}>
                 Отменить
               </Button>
             </ModalFooter>

@@ -83,13 +83,14 @@ export const useInvoiceForm = () => {
     [selectedSubjects, setValue],
   );
 
-  const handleCancel = () => {
+  const handleClearForm = () => {
     setValue('studentId', '');
     setValue('subjects', []);
     setValue('invoicePrice', 0);
   };
 
   const onSubmit = (data: FormData) => {
+    data.invoicePrice = totalInvoicePrice;
     console.log('invoice form data: ', data);
   };
 
@@ -105,7 +106,7 @@ export const useInvoiceForm = () => {
     handleAddSubject,
     handleRemoveSubject,
     handleSubjectChange,
-    handleCancel,
+    handleClearForm,
     onSubmit,
   };
 };

@@ -71,7 +71,7 @@ export const SubjectRow = ({ control, index, subject, onSubjectChange }: Subject
               <Input
                 {...formField}
                 type="number"
-                placeholder="Раз"
+                placeholder="Количество"
                 variant="s"
                 value={subject.unpaidLessonsAmount || 0}
                 onChange={(e) => {
