@@ -4,6 +4,7 @@ import { useBoardStore } from '../store';
 import { BoardElement } from '../types';
 import { useUndoRedo } from '../features';
 import { shouldSkipSync } from '../utils';
+import { usePerformanceTracking } from './usePerformanceTracking';
 
 export const useWhiteboardCollaborative = ({
   roomId = 'roomid',
@@ -18,6 +19,7 @@ export const useWhiteboardCollaborative = ({
 
   const { addElement, updateElement, removeElement, boardElements } = useBoardStore();
   const { yDoc, provider, yStore, yArr, getYJSKeys } = useYjs(roomId, hostUrl);
+  const { trackSyncOperation } = usePerformanceTracking();
 
   useUndoRedo(yArr);
 
@@ -52,35 +54,37 @@ export const useWhiteboardCollaborative = ({
 
         const { boardElements } = state;
 
-        try {
-          isUpdatingRef.current = true;
-          const yjsKeys = getYJSKeys();
-          const storeKeysSet = new Set(boardElements.map((el) => el.id));
+        trackSyncOperation('local_to_yjs', async () => {
+          try {
+            isUpdatingRef.current = true;
+            const yjsKeys = getYJSKeys();
+            const storeKeysSet = new Set(boardElements.map((el) => el.id));
 
-          yDoc.transact(() => {
-            // Удаляем из Yjs элементы, которых нет в локальном сторе
-            yjsKeys.forEach((key) => {
-              if (!storeKeysSet.has(key)) {
-                yStore.delete(key);
-              }
-            });
+            yDoc.transact(() => {
+              // Удаляем из Yjs элементы, которых нет в локальном сторе
+              yjsKeys.forEach((key) => {
+                if (!storeKeysSet.has(key)) {
+                  yStore.delete(key);
+                }
+              });
 
-            // Добавляем или обновляем в Yjs только изменённые элементы
-            boardElements.forEach((element) => {
-              const key = element.id;
-              const existingJson = yStore.get(key);
-              const newJson = JSON.stringify(element);
+              // Добавляем или обновляем в Yjs только изменённые элементы
+              boardElements.forEach((element) => {
+                const key = element.id;
+                const existingJson = yStore.get(key);
+                const newJson = JSON.stringify(element);
 
-              if (!existingJson || existingJson !== newJson) {
-                yStore.set(key, newJson);
-              }
-            });
-          }, 'local');
-        } catch (error) {
-          console.error('Error updating YJS:', error);
-        } finally {
-          isUpdatingRef.current = false;
-        }
+                if (!existingJson || existingJson !== newJson) {
+                  yStore.set(key, newJson);
+                }
+              });
+            }, 'local');
+          } catch (error) {
+            console.error('Error updating YJS:', error);
+          } finally {
+            isUpdatingRef.current = false;
+          }
+        });
       }),
     );
 
@@ -95,40 +99,44 @@ export const useWhiteboardCollaborative = ({
     ) => {
       if (isUpdatingRef.current) return;
 
-      try {
-        isUpdatingRef.current = true;
+      trackSyncOperation('yjs_to_local', async () => {
+        try {
+          isUpdatingRef.current = true;
 
-        changes.forEach((change, id) => {
-          if (change.action === 'update' || change.action === 'add') {
-            synchronizeElementFromYjs(id);
-          } else if (change.action === 'delete') {
-            removeElement(id);
-          }
-        });
-      } catch (error) {
-        console.error('Error updating store:', error);
-      } finally {
-        isUpdatingRef.current = false;
-      }
+          changes.forEach((change, id) => {
+            if (change.action === 'update' || change.action === 'add') {
+              synchronizeElementFromYjs(id);
+            } else if (change.action === 'delete') {
+              removeElement(id);
+            }
+          });
+        } catch (error) {
+          console.error('Error updating store:', error);
+        } finally {
+          isUpdatingRef.current = false;
+        }
+      });
     };
 
     // Полная синхронизация из Yjs при первом подключении
     const handleSync = () => {
       console.log('Synchronizing data from YJS...');
 
-      const keys = getYJSKeys();
-      const yjsKeys = new Set(keys);
+      trackSyncOperation('full_sync', async () => {
+        const keys = getYJSKeys();
+        const yjsKeys = new Set(keys);
 
-      // Удаляем элементы из локального стора, которых нет в Yjs
-      boardElements.forEach((element) => {
-        if (!yjsKeys.has(element.id)) {
-          removeElement(element.id);
-        }
-      });
+        // Удаляем элементы из локального стора, которых нет в Yjs
+        boardElements.forEach((element) => {
+          if (!yjsKeys.has(element.id)) {
+            removeElement(element.id);
+          }
+        });
 
-      // Синхронизируем элементы из Yjs в локальный стор
-      keys.forEach((key) => {
-        synchronizeElementFromYjs(key);
+        // Синхронизируем элементы из Yjs в локальный стор
+        keys.forEach((key) => {
+          synchronizeElementFromYjs(key);
+        });
       });
     };
 
@@ -170,6 +178,7 @@ export const useWhiteboardCollaborative = ({
     boardElements,
     getYJSKeys,
     synchronizeElementFromYjs,
+    trackSyncOperation,
   ]);
 
   return {

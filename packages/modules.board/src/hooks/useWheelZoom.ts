@@ -1,5 +1,5 @@
 import Konva from 'konva';
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { calculateZoom, defaultZoomConfig } from '../utils';
 import { useUIStore } from '../store';
 import { roundScale, zoomLevels } from '../utils/zoomConfig';
@@ -9,19 +9,20 @@ import { useElementHandlers } from './useElementHandlers';
  * Хук для обработки масштабирования (зума) при помощи колесика мыши/тачпада.
  */
 export const useZoom = (stageRef: React.RefObject<Konva.Stage | null>) => {
-  const { setScale, setStagePosition } = useUIStore();
+  const { setScale, setStagePosition, scale } = useUIStore();
   const { onChangeTransformerPosition } = useElementHandlers();
+  const lastUpdateRef = useRef(0);
 
   const handleWheel = useCallback(
     (e: Konva.KonvaEventObject<WheelEvent>) => {
       e.evt.preventDefault();
 
-      const { baseScaleStep, minScale, maxScale } = defaultZoomConfig;
+      const { maxScale } = defaultZoomConfig;
 
       const stage = stageRef.current;
       if (!stage) return;
 
-      const oldScale = stage.scaleX();
+      const oldScale = scale;
       const pointer = stage.getPointerPosition();
       if (!pointer) return;
 
@@ -30,30 +31,34 @@ export const useZoom = (stageRef: React.RefObject<Konva.Stage | null>) => {
         y: (pointer.y - stage.y()) / oldScale,
       };
 
-      const delta = e.evt.deltaY;
+      const direction = e.evt.deltaY > 0 ? -1 : 1;
+      const scaleBy = 1.02;
+      const newScale = direction > 0 ? oldScale * scaleBy : oldScale / scaleBy;
 
-      const adjustedFactor = Math.max(0.1, oldScale * 2);
+      // Throttling для плавности (16ms = 60fps)
+      const now = Date.now();
+      if (now - lastUpdateRef.current < 16) {
+        return;
+      }
+      lastUpdateRef.current = now;
 
-      const scaleStep = baseScaleStep * adjustedFactor;
+      let adjustedScale = Math.max(0.1, newScale);
+      adjustedScale = Math.min(adjustedScale, maxScale);
+      adjustedScale = roundScale(adjustedScale);
 
-      let newScale = delta > 0 ? oldScale - scaleStep : oldScale + scaleStep;
-
-      newScale = Math.max(minScale, Math.min(newScale, maxScale));
-
-      newScale = roundScale(newScale);
-      setScale(newScale);
+      setScale(adjustedScale);
 
       // Обновляем масштаб и позицию Stage, чтобы точка под курсором оставалась на месте
-      stage.scale({ x: newScale, y: newScale });
+      stage.scale({ x: adjustedScale, y: adjustedScale });
       const newPos = {
-        x: pointer.x - mousePointTo.x * newScale,
-        y: pointer.y - mousePointTo.y * newScale,
+        x: pointer.x - mousePointTo.x * adjustedScale,
+        y: pointer.y - mousePointTo.y * adjustedScale,
       };
 
       stage.position(newPos);
       stage.batchDraw();
     },
-    [stageRef, setScale],
+    [scale, setScale, stageRef],
   );
 
   const handleZoom = useCallback(
@@ -63,7 +68,7 @@ export const useZoom = (stageRef: React.RefObject<Konva.Stage | null>) => {
 
       const { animationDuration, minScale, maxScale } = defaultZoomConfig;
 
-      const oldScale = stage.scaleX();
+      const oldScale = scale;
 
       const uniqueZoomLevels = [...new Set([...zoomLevels, oldScale])].sort((a, b) => a - b);
       const currentIndex = uniqueZoomLevels.indexOf(oldScale);

@@ -15,7 +15,6 @@ import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Input } from '@xipkg/input';
-import { toast } from 'sonner';
 import { UserPreview } from './UserPreview';
 import { useCurrentUser, useUpdateProfile } from 'common.services';
 
@@ -32,8 +31,8 @@ export const PersonalData = () => {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      displayName: user?.display_name,
-      username: user?.username,
+      displayName: user?.display_name || '',
+      username: user?.username || '',
     },
   });
 
@@ -46,22 +45,14 @@ export const PersonalData = () => {
 
   const onSubmit = async (formData: z.infer<typeof FormSchema>) => {
     trigger();
-    console.log(formData);
 
     try {
-      const response = await updateProfile.mutateAsync({
+      await updateProfile.mutateAsync({
         username: formData.username,
         display_name: formData.displayName,
       });
-
-      if (response.status === 200) {
-        toast('Данные успешно обновлены');
-      } else {
-        toast('Произошла ошибка');
-      }
     } catch (error) {
       console.error('Ошибка при обновлении профиля:', error);
-      toast('Произошла ошибка при обновлении данных');
     }
   };
 

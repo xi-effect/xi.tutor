@@ -3,3 +3,4 @@ export { gridConfig } from './gridConfig';
 export { getCursorType } from './getCursorType';
 export { zoomLevels, roundScale, defaultZoomConfig } from './zoomConfig';
 export { runWithoutSync, shouldSkipSync } from './runWithoutSync';
+export { performanceProfiler, usePerformanceProfiler } from './performance';
