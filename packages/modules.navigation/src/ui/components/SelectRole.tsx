@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 
-import { useCurrentUser } from 'common.services';
+import { useCurrentUser, useUpdateRole, type RoleT } from 'common.services';
 
 import {
   Select,
@@ -11,16 +11,28 @@ import {
   SelectValue,
 } from '@xipkg/select';
 
-type roleT = 'tutor' | 'student' | null;
-
 export const SelectRole = () => {
   const { t } = useTranslation('navigation');
+
   const { data: user } = useCurrentUser();
 
-  console.log(user);
+  const { updateRole } = useUpdateRole();
+
+  console.log(user?.default_layout);
+
+  const handleChange = (value: RoleT) => {
+    updateRole(value);
+  };
 
   return (
-    <Select>
+    <Select
+      value={
+        user?.default_layout !== null && user?.default_layout !== undefined
+          ? user?.default_layout
+          : ''
+      }
+      onValueChange={handleChange}
+    >
       <SelectTrigger
         className="text-gray-80 w-full border-none p-0 text-sm hover:border-none hover:bg-transparent focus:border-none"
         size="s"

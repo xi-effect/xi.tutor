@@ -2,7 +2,7 @@ import { toast } from 'sonner';
 import { AxiosError } from 'axios';
 
 // Типы ошибок для разных операций
-export type ErrorType = 'profile' | 'email' | 'password' | 'resetPassword';
+export type ErrorType = 'profile' | 'email' | 'password' | 'resetPassword' | 'role';
 
 // Маппинг ошибок для разных операций
 const errorMessages: Record<ErrorType, Record<string, string>> = {
@@ -28,6 +28,9 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
     'Password too weak': 'Пароль слишком слабый',
     'Invalid password format': 'Неверный формат пароля',
   },
+  role: {
+    'Invalid role value': 'Неверное значение роли',
+  },
 };
 
 // Общие сообщения об ошибках по статусам
@@ -46,6 +49,7 @@ const successMessages: Record<ErrorType, string> = {
   email: 'Email успешно обновлен. Проверьте почту для подтверждения.',
   password: 'Пароль успешно обновлен',
   resetPassword: 'Пароль успешно сброшен',
+  role: 'Роль пользователя успешно обновлена',
 };
 
 /**
