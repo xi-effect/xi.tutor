@@ -17,6 +17,7 @@
     "common.types": "*",
     "common.auth": "*",
     "common.ui": "*",
+    "common.services": "*",
     "@xipkg/button": "3.1.2",
     "@xipkg/icons": "2.3.0",
     "@xipkg/utils": "1.8.0",
