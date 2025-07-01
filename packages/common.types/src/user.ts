@@ -9,6 +9,7 @@ export type UserData = {
   username: string;
   display_name: string | null;
   theme: string;
+  default_layout: 'tutor' | 'student' | null;
 };
 
 // Тип для данных профиля, которые можно обновить
@@ -16,5 +17,6 @@ export type ProfileData = {
   username?: string;
   display_name?: string;
   theme?: string;
+  default_layout?: 'tutor' | 'student' | null;
   // Другие поля профиля, которые могут быть обновлены
 };
