@@ -1,12 +1,16 @@
+import { useState } from 'react';
+import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@xipkg/button';
 import { ArrowRight } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
-import { Payment } from './Payment';
-import { useNavigate } from '@tanstack/react-router';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { InvoiceModal } from 'features.invoice';
+import { Payment } from './Payment';
+
 
 export const Payments = () => {
   const navigate = useNavigate();
+  const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
 
   const handleMore = () => {
     navigate({
@@ -33,6 +37,7 @@ export const Payments = () => {
           <Button
             size="s"
             className="text-s-base text-gray-0 rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
+            onClick={() => setIsInvoiceModalOpen(true)}
           >
             Создать счет на оплату
           </Button>
@@ -50,6 +55,8 @@ export const Payments = () => {
           </div>
         </ScrollArea>
       </div>
+
+      <InvoiceModal open={isInvoiceModalOpen} onOpenChange={setIsInvoiceModalOpen} />
     </div>
   );
 };

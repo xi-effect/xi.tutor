@@ -24,7 +24,6 @@ export const PaymentsPage = () => {
         <Button
           size="small"
           className="fixed right-4 bottom-10 z-50 flex h-12 w-12 items-center justify-center rounded-xl"
-          onClick={onOpenInvoiceModal}
         >
           <Plus className="fill-brand-0" />
         </Button>

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "features.materials.add": "*",
+    "features.invoice": "*",
     "common.config": "*",
     "common.env": "*",
     "common.types": "*",

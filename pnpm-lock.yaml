@@ -2202,6 +2202,9 @@ importers:
       common.ui:
         specifier: '*'
         version: link:../common.ui
+      features.invoice:
+        specifier: '*'
+        version: link:../features.invoice
       features.materials.add:
         specifier: '*'
         version: link:../features.materials.add
