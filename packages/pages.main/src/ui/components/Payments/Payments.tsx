@@ -7,7 +7,6 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { InvoiceModal } from 'features.invoice';
 import { Payment } from './Payment';
 
-
 export const Payments = () => {
   const navigate = useNavigate();
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
