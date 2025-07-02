@@ -19,7 +19,7 @@ export const Lessons = () => {
       <div className="flex flex-row items-center justify-start gap-2">
         <h2 className="text-xl-base font-medium text-gray-100">Ближайшие занятия</h2>
         <Tooltip delayDuration={1000}>
-          <TooltipTrigger>
+          <TooltipTrigger asChild>
             <Button
               variant="ghost"
               className="flex size-8 items-center justify-center rounded-[4px] p-0"

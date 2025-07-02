@@ -1,4 +1,5 @@
 export { useCurrentUser } from './useCurrentUser';
 export { useUserById } from './useUserById';
-export { useUpdateProfile, type ProfileData } from './useUpdateProfile';
+export { useUpdateProfile } from './useUpdateProfile';
 export { useResetPasswordConfirm, type ResetPasswordData } from './useResetPassword';
+export type { ProfileData } from 'common.types';
