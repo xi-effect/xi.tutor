@@ -1,13 +1,13 @@
 import { Button } from '@xipkg/button';
 
-export const File = () => {
-  const handleUpload = () => {
-    console.log('upload');
-  };
+interface FileProps {
+  onUpload: () => void;
+}
 
+export const File = ({ onUpload }: FileProps) => {
   return (
     <Button
-      onClick={() => handleUpload()}
+      onClick={onUpload}
       size="s"
       variant="ghost"
       className="text-s-base rounded-lg px-4 py-2 font-medium text-gray-100 max-sm:hidden"
