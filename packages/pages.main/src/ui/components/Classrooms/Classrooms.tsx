@@ -4,6 +4,7 @@ import { ScrollArea } from '@xipkg/scrollarea';
 import { Classroom } from './Classroom';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useNavigate } from '@tanstack/react-router';
+import { ModalInvitation } from 'pages.classrooms';
 
 export const Classrooms = () => {
   const navigate = useNavigate();
@@ -39,12 +40,14 @@ export const Classrooms = () => {
             Создать группу
           </Button>
 
-          <Button
-            size="s"
-            className="text-s-base text-gray-0 rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
-          >
-            Пригласить
-          </Button>
+          <ModalInvitation>
+            <Button
+              size="s"
+              className="text-s-base text-gray-0 rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
+            >
+              Пригласить
+            </Button>
+          </ModalInvitation>
         </div>
       </div>
       <div className="flex flex-row">

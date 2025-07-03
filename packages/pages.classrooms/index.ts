@@ -1,1 +1,1 @@
-export { ClassroomsPage } from './src/ui';
+export { ClassroomsPage, ModalInvitation } from './src/ui';
