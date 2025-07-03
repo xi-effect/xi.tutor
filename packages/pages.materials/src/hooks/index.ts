@@ -1,3 +1,3 @@
 export * from './useResponsiveGrid';
-export * from './useInfiniteScroll';
+export * from './useInfiniteQuery';
 export * from './useVirtualGrid';

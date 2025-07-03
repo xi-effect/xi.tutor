@@ -9,7 +9,7 @@ export const useResponsiveGrid = (
   isFiles: boolean = false,
 ) => {
   const [colCount, setColCount] = useState(1);
-  const [rowHeight, setRowHeight] = useState(isFiles ? 112 : 188);
+  const [rowHeight, setRowHeight] = useState(isFiles ? 112 : 114);
 
   // Измеряем высоту карточки
   useEffect(() => {

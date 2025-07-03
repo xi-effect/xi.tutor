@@ -1,13 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef } from 'react';
 import { Card } from './Card';
-import { useResponsiveGrid, useInfiniteScroll, useVirtualGrid } from '../../hooks';
+import { useResponsiveGrid, useInfiniteQuery, useVirtualGrid } from '../../hooks';
 
 export const Materials = () => {
   const parentRef = useRef<HTMLDivElement>(null);
 
   const { colCount, rowHeight, GAP } = useResponsiveGrid(parentRef);
-  const items = useInfiniteScroll(parentRef);
+  const items = useInfiniteQuery(parentRef, 'board');
   const rowVirtualizer = useVirtualGrid(parentRef, items, colCount, rowHeight);
 
   return (
@@ -40,8 +39,8 @@ export const Materials = () => {
                 gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))`,
               }}
             >
-              {rowItems.map((material: any) => (
-                <div key={material.idMaterial} className="card-item">
+              {rowItems.map((material) => (
+                <div key={material.id} className="card-item">
                   <Card {...material} />
                 </div>
               ))}
