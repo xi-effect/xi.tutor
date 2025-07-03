@@ -62,9 +62,6 @@ importers:
       common.utils:
         specifier: '*'
         version: link:../../packages/common.utils
-      features.charts:
-        specifier: '*'
-        version: link:../../packages/features.charts
       features.table:
         specifier: '*'
         version: link:../../packages/features.table
@@ -2320,6 +2317,9 @@ importers:
       common.types:
         specifier: '*'
         version: link:../common.types
+      features.charts:
+        specifier: '*'
+        version: link:../features.charts
       features.table:
         specifier: '*'
         version: link:../features.table

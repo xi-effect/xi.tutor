@@ -20,7 +20,6 @@
     "common.theme": "*",
     "common.ui": "*",
     "common.utils": "*",
-    "features.charts": "*",
     "features.table": "*",
     "i18next": "24.2.2",
     "i18next-http-backend": "3.0.2",
