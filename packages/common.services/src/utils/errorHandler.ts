@@ -2,7 +2,7 @@ import { toast } from 'sonner';
 import { AxiosError } from 'axios';
 
 // Типы ошибок для разных операций
-export type ErrorType = 'profile' | 'email' | 'password' | 'resetPassword';
+export type ErrorType = 'profile' | 'email' | 'password' | 'resetPassword' | 'materials';
 
 // Маппинг ошибок для разных операций
 const errorMessages: Record<ErrorType, Record<string, string>> = {
@@ -28,6 +28,10 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
     'Password too weak': 'Пароль слишком слабый',
     'Invalid password format': 'Неверный формат пароля',
   },
+  materials: {
+    'Invalid material type': 'Неверный тип',
+    'Name is required': 'Название обязательно',
+  },
 };
 
 // Общие сообщения об ошибках по статусам
@@ -46,6 +50,7 @@ const successMessages: Record<ErrorType, string> = {
   email: 'Email успешно обновлен. Проверьте почту для подтверждения.',
   password: 'Пароль успешно обновлен',
   resetPassword: 'Пароль успешно сброшен',
+  materials: 'Материал успешно создан',
 };
 
 /**
@@ -78,8 +83,12 @@ export const handleError = (error: unknown, type: ErrorType): void => {
 /**
  * Показывает успешное уведомление
  */
-export const showSuccess = (type: ErrorType): void => {
-  toast.success(successMessages[type]);
+export const showSuccess = (type: ErrorType, message?: string): void => {
+  if (message) {
+    toast.success(message);
+  } else {
+    toast.success(successMessages[type]);
+  }
 };
 
 /**
@@ -95,6 +104,8 @@ const getOperationName = (type: ErrorType): string => {
       return 'обновлении пароля';
     case 'resetPassword':
       return 'сбросе пароля';
+    case 'materials':
+      return 'создании материала';
     default:
       return 'выполнении операции';
   }
