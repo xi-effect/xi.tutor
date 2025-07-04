@@ -1,16 +1,29 @@
 import { File, Note, Board } from './components';
-import { useCurrentUser } from 'common.services';
+import { useAddMaterials, type MaterialsDataT, useCurrentUser } from 'common.services';
 
 export const MaterialsAdd = () => {
-  const { data: user } = useCurrentUser();
+  const { addMaterials } = useAddMaterials();
 
+  const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+
+  const handleCreate = async (kind: MaterialsDataT['kind']) => {
+    await addMaterials.mutateAsync({ kind });
+  };
 
   return (
     <div className="ml-auto flex flex-row items-center gap-2">
-      {isTutor && <File />}
-      <Note />
-      <Board />
+      {isTutor && (
+        <File
+          onUpload={() => {
+            console.log('file');
+          }}
+        />
+      )}
+
+      <Note onCreate={() => handleCreate('note')} />
+
+      <Board onCreate={() => handleCreate('board')} />
     </div>
   );
 };

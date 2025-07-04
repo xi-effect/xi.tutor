@@ -12,13 +12,7 @@
   },
   "dependencies": {
     "@xipkg/button": "^3.1.8",
-    "@xipkg/checkbox": "^4.0.14",
-    "@xipkg/dropdown": "^3.0.12",
-    "@xipkg/icons": "^2.3.0",
-    "@xipkg/input": "^2.2.9",
-    "@xipkg/userprofile": "^4.0.12",
-    "@xipkg/utils": "^1.8.0",
-    "common.services": "*"
+    "@xipkg/utils": "^1.8.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -30,6 +24,7 @@
     "@xipkg/typescript": "latest",
     "common.eslint": "*",
     "common.typescript": "*",
+    "common.services": "*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
@@ -40,6 +35,6 @@
   "peerDependencies": {
     "react": "19"
   },
-  "description": "features.table",
+  "description": "features.materials.add",
   "author": "xi.effect"
 }
