@@ -1,2 +1,2 @@
 export type { SignupData } from './auth';
-export type { UserData, ProfileData } from './user';
+export type { UserData, ProfileData, RoleT } from './user';

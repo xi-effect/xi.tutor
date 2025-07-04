@@ -1,20 +1,25 @@
-import { SidebarTrigger, useSidebar } from '@xipkg/sidebar';
-import { Logo } from 'common.ui';
-import { useMenuStore } from '../../store';
+import { useState, useEffect, lazy } from 'react';
+import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { SwiperRef } from 'swiper/react';
+import { useTranslation } from 'react-i18next';
+
+import { SidebarTrigger, useSidebar } from '@xipkg/sidebar';
 import { useMediaQuery } from '@xipkg/utils';
 import { UserProfile } from '@xipkg/userprofile';
+import { Button } from '@xipkg/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { useTranslation } from 'react-i18next';
-import { Button } from '@xipkg/button';
-import { useState, useEffect, lazy } from 'react';
-import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
+
+import { Logo } from 'common.ui';
 import { useAuth } from 'common.auth';
+
+import { useMenuStore } from '../../store';
+
+import { SelectRole } from './SelectRole';
 
 const UserSettings = lazy(() =>
   import('modules.profile').then((module) => ({ default: module.UserSettings })),
@@ -43,6 +48,7 @@ export const Header = ({
   useEffect(() => {
     // Используем iid параметр для определения, открыта ли модалка и какая вкладка активна
     const profileParam = search.iid;
+
     const hasProfileParam = !!profileParam;
     if (hasProfileParam !== open) {
       setOpen(hasProfileParam);
@@ -86,12 +92,23 @@ export const Header = ({
               <UserProfile userId={null} size="m" withOutText />
             </Button>
           </DropdownMenuTrigger>
+
           <DropdownMenuContent side="bottom" align="end">
-            <DropdownMenuItem onClick={handleOpenProfile}>{t('profile')}</DropdownMenuItem>
-            <DropdownMenuItem onClick={handleLogout}>{t('logout')}</DropdownMenuItem>
+            <DropdownMenuItem>
+              <SelectRole />
+            </DropdownMenuItem>
+
+            <DropdownMenuItem onClick={handleOpenProfile} className="text-gray-80 text-sm">
+              {t('profile')}
+            </DropdownMenuItem>
+
+            <DropdownMenuItem onClick={handleLogout} className="text-gray-80 text-sm">
+              {t('logout')}
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
+
       <UserSettings open={open} setOpen={setOpen} />
     </div>
   );

@@ -8,5 +8,8 @@
   "board": "Board",
   "faq": "FAQ",
   "profile": "Profile",
-  "logout": "Logout"
+  "logout": "Logout",
+  "role": "Role",
+  "tutor": "Tutor",
+  "student": "Student"
 }

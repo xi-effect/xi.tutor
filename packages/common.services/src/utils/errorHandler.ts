@@ -2,7 +2,7 @@ import { toast } from 'sonner';
 import { AxiosError } from 'axios';
 
 // Типы ошибок для разных операций
-export type ErrorType = 'profile' | 'email' | 'password' | 'resetPassword' | 'materials';
+export type ErrorType = 'profile' | 'email' | 'password' | 'resetPassword' | 'materials' | 'role';
 
 // Маппинг ошибок для разных операций
 const errorMessages: Record<ErrorType, Record<string, string>> = {
@@ -32,6 +32,9 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
     'Invalid material type': 'Неверный тип',
     'Name is required': 'Название обязательно',
   },
+  role: {
+    'Invalid role value': 'Неверное значение роли',
+  },
 };
 
 // Общие сообщения об ошибках по статусам
@@ -51,6 +54,7 @@ const successMessages: Record<ErrorType, string> = {
   password: 'Пароль успешно обновлен',
   resetPassword: 'Пароль успешно сброшен',
   materials: 'Материал успешно создан',
+  role: 'Роль пользователя успешно обновлена',
 };
 
 /**
@@ -106,6 +110,8 @@ const getOperationName = (type: ErrorType): string => {
       return 'сбросе пароля';
     case 'materials':
       return 'создании материала';
+    case 'role':
+      return 'назначении роли';
     default:
       return 'выполнении операции';
   }
