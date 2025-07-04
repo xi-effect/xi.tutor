@@ -23,6 +23,7 @@
     "@xipkg/utils": "1.8.0",
     "common.auth": "*",
     "common.services": "*",
+    "common.types": "*",
     "common.ui": "*",
     "i18next": "24.2.2",
     "modules.profile": "*",

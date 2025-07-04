@@ -7,8 +7,6 @@ export {
   type ProfileData,
   useResetPasswordConfirm,
   type ResetPasswordData,
-  useUpdateRole,
-  type RoleT,
 } from './src/user';
 
 export { useAddMaterials, type MaterialsDataT } from './src/materials';

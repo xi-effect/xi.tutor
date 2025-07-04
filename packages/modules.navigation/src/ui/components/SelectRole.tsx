@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 
-import { useCurrentUser, useUpdateRole, type RoleT } from 'common.services';
+import { type RoleT } from 'common.types';
+
+import { useCurrentUser, useUpdateProfile } from 'common.services';
 
 import {
   Select,
@@ -16,12 +18,12 @@ export const SelectRole = () => {
 
   const { data: user } = useCurrentUser();
 
-  const { updateRole } = useUpdateRole();
+  const { updateProfile } = useUpdateProfile();
 
   console.log(user?.default_layout);
 
   const handleChange = (value: RoleT) => {
-    updateRole(value);
+    updateProfile.mutate({ default_layout: value });
   };
 
   return (

@@ -1,3 +1,5 @@
+export type RoleT = 'tutor' | 'student';
+
 // Тип для данных пользователя
 export type UserData = {
   id: number;
@@ -9,7 +11,7 @@ export type UserData = {
   username: string;
   display_name: string | null;
   theme: string;
-  default_layout: 'tutor' | 'student' | null;
+  default_layout: RoleT;
 };
 
 // Тип для данных профиля, которые можно обновить
@@ -17,6 +19,6 @@ export type ProfileData = {
   username?: string;
   display_name?: string;
   theme?: string;
-  default_layout?: 'tutor' | 'student' | null;
+  default_layout?: RoleT;
   // Другие поля профиля, которые могут быть обновлены
 };

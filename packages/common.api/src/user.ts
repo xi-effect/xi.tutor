@@ -8,7 +8,6 @@ enum UserQueryKey {
   Password = 'Password',
   PasswordResetConfirm = 'PasswordResetConfirm',
   UserById = 'UserById',
-  ChangeRole = 'ChangeRole',
 }
 
 const userApiConfig = {
@@ -39,12 +38,6 @@ const userApiConfig = {
     getUrl: (id: string) =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/by-id/${id}/profile/`,
     method: HttpMethod.GET,
-  },
-
-  //TODO: check URL
-  [UserQueryKey.ChangeRole]: {
-    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/role/`,
-    method: HttpMethod.PATCH,
   },
 };
 
