@@ -4,8 +4,13 @@ import { ScrollArea } from '@xipkg/scrollarea';
 import { Payment } from './Payment';
 import { useNavigate } from '@tanstack/react-router';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { useCurrentUser } from 'common.services';
 
 export const Payments = () => {
+  const { data: user } = useCurrentUser();
+
+  const isTutor = user?.default_layout === 'tutor';
+
   const navigate = useNavigate();
 
   const handleMore = () => {
@@ -13,6 +18,7 @@ export const Payments = () => {
       to: '/payments',
     });
   };
+
   return (
     <div className="flex flex-col gap-4 p-4">
       <div className="flex flex-row items-center justify-start gap-2">
@@ -29,14 +35,17 @@ export const Payments = () => {
           </TooltipTrigger>
           <TooltipContent>К оплатам</TooltipContent>
         </Tooltip>
-        <div className="ml-auto flex flex-row items-center gap-2 max-sm:hidden">
-          <Button
-            size="s"
-            className="text-s-base text-gray-0 rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
-          >
-            Создать счет на оплату
-          </Button>
-        </div>
+
+        {isTutor && (
+          <div className="ml-auto flex flex-row items-center gap-2 max-sm:hidden">
+            <Button
+              size="s"
+              className="text-s-base text-gray-0 rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
+            >
+              Создать счет на оплату
+            </Button>
+          </div>
+        )}
       </div>
       <div className="flex flex-row">
         <ScrollArea
