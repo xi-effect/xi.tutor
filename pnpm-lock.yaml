@@ -2214,6 +2214,9 @@ importers:
       common.services:
         specifier: '*'
         version: link:../common.services
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.13
       features.materials.add:
         specifier: '*'
         version: link:../features.materials.add

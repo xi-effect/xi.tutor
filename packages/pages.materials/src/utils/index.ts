@@ -1,1 +1,1 @@
-export { formatDate } from './formatDate';
+export { formatToShortDate } from './formatDate';

@@ -11,7 +11,7 @@ import {
 } from '@xipkg/dropdown';
 
 import { MaterialPropsT } from '../../types';
-import { formatDate } from '../../utils';
+import { formatToShortDate } from '../../utils';
 
 export const Card: React.FC<MaterialPropsT> = ({ id, updated_at, name }) => {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export const Card: React.FC<MaterialPropsT> = ({ id, updated_at, name }) => {
             <p className="truncate">{name}</p>
           </div>
           <div className="text-s-base text-gray-60 font-normal">
-            Обновлено: {formatDate(updated_at)}
+            Обновлено: {formatToShortDate(updated_at)}
           </div>
         </div>
       </div>

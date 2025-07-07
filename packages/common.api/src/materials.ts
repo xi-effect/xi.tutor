@@ -1,5 +1,6 @@
 import { env } from 'common.env';
 import { HttpMethod } from './config';
+import { MaterialsKindT } from './types';
 
 enum MaterialsQueryKey {
   Materials = 'Materials',
@@ -8,7 +9,18 @@ enum MaterialsQueryKey {
 
 const materialsApiConfig = {
   [MaterialsQueryKey.Materials]: {
-    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/materials/`,
+    getUrl: (limit: number, kind: MaterialsKindT, lastOpenedBefore?: string) => {
+      const params = new URLSearchParams({
+        limit: limit.toString(),
+        kind,
+      });
+
+      if (lastOpenedBefore) {
+        params.append('last_opened_before', lastOpenedBefore);
+      }
+
+      return `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/materials/?${params.toString()}`;
+    },
     method: HttpMethod.GET,
   },
 

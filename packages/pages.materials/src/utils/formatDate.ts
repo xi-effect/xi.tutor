@@ -1,13 +1,6 @@
-export const formatDate = (isoDateString: string | undefined): string => {
-  if (!isoDateString) return '';
+import dayjs from 'dayjs';
+import 'dayjs/locale/ru';
 
-  const date = new Date(isoDateString);
-  if (isNaN(date.getTime())) return '';
-
-  const formatted = new Intl.DateTimeFormat('ru-RU', {
-    day: 'numeric',
-    month: 'long',
-  }).format(date);
-
-  return formatted;
+export const formatToShortDate = (isoDate: string): string => {
+  return dayjs(isoDate).locale('ru').format('D MMMM');
 };
