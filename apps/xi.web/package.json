@@ -27,6 +27,8 @@
     "modules.board": "*",
     "modules.calls": "*",
     "modules.editor": "*",
+    "modules.calendar": "*",
+    "modules.navigation": "*",
     "pages.classroom": "*",
     "pages.classrooms": "*",
     "pages.main": "*",
@@ -59,8 +61,6 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
     "globals": "^15.14.0",
-    "modules.calendar": "*",
-    "modules.navigation": "*",
     "typescript": "~5.7.2",
     "typescript-eslint": "^8.22.0",
     "vite": "^6.2.0"

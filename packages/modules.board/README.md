@@ -9,10 +9,13 @@
 - 🎨 **Адаптивное качество** - автоматическая настройка качества рендеринга
 - 📊 **Мониторинг производительности** - встроенные инструменты анализа
 - 🔧 **Гибкая настройка** - множество опций оптимизации
+- 🆕 **Tldraw интеграция** - новая версия на базе Tldraw с сохраненным интерфейсом
 
 ## Быстрый старт
 
 ### Простое использование (рекомендуется)
+
+#### Старая версия (Konva)
 
 ```typescript
 import { Board } from '@modules.board';
@@ -21,6 +24,20 @@ function App() {
   return (
     <div className="h-screen w-screen">
       <Board />
+    </div>
+  );
+}
+```
+
+#### Новая версия (Tldraw) - РЕКОМЕНДУЕТСЯ
+
+```typescript
+import { TldrawBoard } from '@modules.board';
+
+function App() {
+  return (
+    <div className="h-screen w-screen">
+      <TldrawBoard />
     </div>
   );
 }
@@ -57,17 +74,172 @@ function App() {
 }
 ```
 
+## Миграция на Tldraw
+
+Модуль доски был переписан для использования Tldraw в качестве графического движка, при этом сохранен весь пользовательский интерфейс.
+
+### Что изменилось:
+
+- ✅ **Сохранен интерфейс**: Navbar, ZoomMenu, SelectedElementToolbar, Header
+- ✅ **Сохранено состояние**: useBoardStore адаптирован под Tldraw
+- ✅ **Сохранены типы**: ToolType, ElementType расширены для Tldraw
+- ✅ **Сохранены утилиты**: navBarElements, конфигурации
+- 🔄 **Заменен движок**: Konva → Tldraw
+- 🔄 **Заменены слои**: BackgroundLayer/CanvasLayer → Tldraw layers
+- 🔄 **Заменены элементы**: кастомные фигуры → Tldraw shapes
+
+### Новые возможности:
+
+- 🎨 **Лучшая производительность** - Tldraw оптимизирован для больших досок
+- 🔄 **Встроенная коллаборация** - поддержка совместной работы
+- 📱 **Адаптивность** - лучше работает на мобильных устройствах
+- 🎯 **Стандартизация** - использование популярного движка
+
 ## Основные компоненты
+
+### TldrawBoard (РЕКОМЕНДУЕТСЯ)
+
+Главный компонент доски на базе Tldraw с автоматической настройкой провайдеров.
+
+```typescript
+import { TldrawBoard } from '@modules.board';
+
+<TldrawBoard />
+```
 
 ### Board
 
-Главный компонент доски с автоматической настройкой провайдеров (рекомендуется).
+Главный компонент доски с автоматической настройкой провайдеров (старая версия на Konva).
 
 ```typescript
 import { Board } from '@modules.board';
 
 <Board />
 ```
+
+## Хуки и утилиты
+
+### useTldrawIntegration
+
+Полная интеграция с Tldraw, включая управление элементами, зумом, историей и экспортом.
+
+```typescript
+import { useTldrawIntegration } from '@modules.board';
+
+const {
+  editor,
+  selectedTool,
+  selectedElementId,
+  zoom,
+  createShape,
+  updateShape,
+  deleteShape,
+  zoomIn,
+  zoomOut,
+  resetZoom,
+  zoomToFit,
+  undo,
+  redo,
+  exportToImage,
+} = useTldrawIntegration();
+```
+
+### useTldrawTools
+
+Синхронизация инструментов между нашим store и Tldraw.
+
+```typescript
+import { useTldrawTools } from '@modules.board';
+
+const { syncTldrawTools, getCurrentTool, editor } = useTldrawTools();
+```
+
+### useTldrawStore
+
+Store для управления состоянием Tldraw доски.
+
+```typescript
+import { useTldrawStore } from '@modules.board';
+
+const {
+  selectedTool,
+  setSelectedTool,
+  selectedElementId,
+  selectElement,
+  zoom,
+  setZoom,
+  pan,
+  setPan,
+} = useTldrawStore();
+```
+
+## Примеры использования
+
+### Простой пример
+
+```typescript
+import { TldrawBoard } from '@modules.board';
+
+function App() {
+  return (
+    <div className="h-screen w-screen">
+      <TldrawBoard />
+    </div>
+  );
+}
+```
+
+### Расширенный пример с кастомными элементами
+
+```typescript
+import { TldrawBoard } from '@modules.board';
+import { useTldrawIntegration } from '@modules.board';
+
+function AdvancedApp() {
+  const { createShape, exportToImage } = useTldrawIntegration();
+
+  const handleCreateRectangle = () => {
+    createShape('geo', {
+      x: 100,
+      y: 100,
+      props: {
+        w: 200,
+        h: 100,
+        fill: 'blue',
+      },
+    });
+  };
+
+  return (
+    <div className="h-screen w-screen flex flex-col">
+      <div className="bg-gray-100 p-4">
+        <button onClick={handleCreateRectangle}>Создать прямоугольник</button>
+        <button onClick={exportToImage}>Экспорт</button>
+      </div>
+      <div className="flex-1">
+        <TldrawBoard />
+      </div>
+    </div>
+  );
+}
+```
+
+### Кастомные фигуры
+
+```typescript
+import { createCustomShapeUtils } from '@modules.board';
+
+// Создание кастомной фигуры
+const customShapes = createCustomShapeUtils();
+```
+
+## Горячие клавиши
+
+- `Ctrl+Z` - Отменить
+- `Ctrl+Shift+Z` - Повторить
+- `Ctrl+E` - Экспорт в PNG
+- `F12` - Показать/скрыть монитор производительности
+- `Backspace` - Удалить выбранный элемент
 
 ### CanvasWithProvider
 

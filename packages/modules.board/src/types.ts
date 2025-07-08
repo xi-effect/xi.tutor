@@ -19,7 +19,10 @@ export type ElementType =
   | 'text'
   | 'sticker'
   | 'image'
-  | 'toolbar';
+  | 'toolbar'
+  | 'note'
+  | 'draw'
+  | 'geo';
 
 export interface BoardElement {
   id: string;

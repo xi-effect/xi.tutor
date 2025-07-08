@@ -1,17 +1,12 @@
 import React from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
-import { useBoardStore } from '../../../store';
+import { useTldrawStore } from '../../../store';
 import { ToolType } from '../../../types';
 import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
 import { NavbarAction } from '../../../features';
-// import { StickerPopupContent } from './StickerPopupContent';
-// import { StylePopupContent } from './StylePopupContent';
-
 export const Navbar = () => {
   const [isTooltipOpen] = React.useState(false);
-  const { setSelectedTool, selectedTool, selectElement } = useBoardStore();
-
-  // const resetStyles = () => {};
+  const { setSelectedTool, selectedTool, selectElement } = useTldrawStore();
 
   const handleSelectTool = (toolName: ToolType) => {
     selectElement(null);
