@@ -24,6 +24,7 @@
     "common.services": "*",
     "features.table": "*",
     "features.charts": "*",
+    "features.invoice": "*",
     "react-hook-form": "^7.56.3",
     "zod": "3.24.2",
     "@xipkg/button": "3.1.8",

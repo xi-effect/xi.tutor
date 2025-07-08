@@ -30,6 +30,7 @@
 @source "../../../packages/pages.main/src";
 @source "../../../packages/pages.invites/src";
 @source "../../../packages/pages.reset-password/src";
+@source "../../../packages/features.invoice/src";
 
 @source "../../../node_modules/@xipkg";
 
