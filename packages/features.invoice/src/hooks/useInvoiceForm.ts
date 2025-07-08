@@ -1,9 +1,9 @@
 import { useForm, useFieldArray } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useCallback } from 'react';
-import { formSchema, type FormData } from '../../../model';
-import { students } from '../../../mocks';
-import type { SubjectT } from '../../../types/InvoiceTypes';
+import { formSchema, type FormData } from '../model';
+import { students } from '../mocks';
+import type { SubjectT } from '../types/InvoiceTypes';
 
 export const useInvoiceForm = () => {
   const form = useForm<FormData>({

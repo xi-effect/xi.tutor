@@ -9,7 +9,7 @@ import {
 import { Form } from '@xipkg/form';
 import { Button } from '@xipkg/button';
 import { Close } from '@xipkg/icons';
-import { useInvoiceForm } from './hooks';
+import { useInvoiceForm } from '../../hooks';
 import { StudentSelector, SubjectSelector, SubjectRow } from './components';
 import type { FormData } from '../../model';
 
