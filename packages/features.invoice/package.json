@@ -1,5 +1,5 @@
 {
-  "name": "pages.main",
+  "name": "features.invoice",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -7,28 +7,16 @@
   },
   "license": "MIT",
   "scripts": {
-    "lint": "eslint \"**/*.{ts,tsx}\"",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "features.materials.add": "*",
-    "features.invoice": "*",
-    "common.config": "*",
-    "common.env": "*",
-    "common.types": "*",
-    "common.auth": "*",
-    "common.ui": "*",
+    "@tanstack/react-router": "1.120.11",
     "common.services": "*",
-    "@xipkg/button": "3.1.2",
-    "@xipkg/icons": "2.3.0",
-    "@xipkg/utils": "1.8.0",
-    "@xipkg/scrollarea": "2.2.0",
-    "@xipkg/userprofile": "4.0.12",
-    "@xipkg/tooltip": "2.1.0",
-    "@xipkg/badge": "2.0.12",
-    "zod": "3.24.2",
-    "react-hook-form": "^7.55.0",
-    "@hookform/resolvers": "5.0.1"
+    "common.utils": "*",
+    "@xipkg/modal": "4.1.0",
+    "@xipkg/select": "2.2.5",
+    "@xipkg/utils": "1.8.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -48,10 +36,8 @@
     "typescript-eslint": "^8.22.0"
   },
   "peerDependencies": {
-    "react": "19",
-    "react-hook-form": "^7.55.0",
-    "@hookform/resolvers": "5.0.1"
+    "react": "19"
   },
-  "description": "form for signin",
+  "description": "invoice feature",
   "author": "xi.effect"
 }
