@@ -1,16 +1,53 @@
 import React from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
-import { useTldrawStore } from '../../../store';
-import { ToolType } from '../../../types';
+import { track, useEditor } from '@tldraw/tldraw';
 import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
-import { NavbarAction } from '../../../features';
-export const Navbar = () => {
-  const [isTooltipOpen] = React.useState(false);
-  const { setSelectedTool, selectedTool, selectElement } = useTldrawStore();
+// import { NavbarAction } from '../../../features';
 
-  const handleSelectTool = (toolName: ToolType) => {
-    selectElement(null);
-    setSelectedTool(toolName);
+export const Navbar = track(() => {
+  const [isTooltipOpen] = React.useState(false);
+  const editor = useEditor();
+
+  const handleSelectTool = (toolName: string) => {
+    // Очищаем выделение перед сменой инструмента
+    editor.selectNone();
+
+    // Маппинг инструментов Kanva на Tldraw
+    const toolMapping: Record<string, string> = {
+      select: 'select',
+      hand: 'hand',
+      pen: 'draw',
+      text: 'text',
+      rectangle: 'rectangle',
+      arrow: 'arrow',
+      eraser: 'eraser',
+      sticker: 'note', // Используем note как аналог стикера
+      asset: 'image', // Используем image для загрузки изображений
+    };
+
+    const tldrawTool = toolMapping[toolName];
+    if (tldrawTool) {
+      editor.setCurrentTool(tldrawTool);
+    }
+  };
+
+  const getCurrentTool = () => {
+    const currentToolId = editor.getCurrentToolId();
+
+    // Обратный маппинг для определения активного инструмента
+    const reverseMapping: Record<string, string> = {
+      select: 'select',
+      hand: 'hand',
+      draw: 'pen',
+      text: 'text',
+      rectangle: 'rectangle',
+      arrow: 'arrow',
+      eraser: 'eraser',
+      note: 'sticker',
+      image: 'asset',
+    };
+
+    return reverseMapping[currentToolId] || 'select';
   };
 
   return (
@@ -18,12 +55,12 @@ export const Navbar = () => {
       <div className="absolute right-0 bottom-4 left-0 z-30 flex w-full items-center justify-center">
         <div className="relative z-30 flex gap-7">
           <div className="border-gray-10 bg-gray-0 absolute -left-[115px] z-30 flex rounded-xl border p-1">
-            <NavbarAction />
+            {/* <NavbarAction /> */}
           </div>
           <div className="border-gray-10 bg-gray-0 mx-auto flex gap-10 rounded-xl border">
             <div className="flex gap-2 p-1">
               {navBarElements.map((item: NavbarElementT) => {
-                const isActive = item.action === selectedTool;
+                const isActive = item.action === getCurrentTool();
                 return (
                   <TooltipProvider key={item.action}>
                     <Tooltip open={item?.hasAToolTip && isTooltipOpen}>
@@ -34,7 +71,7 @@ export const Navbar = () => {
                             className={`pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${isActive ? 'bg-brand-0' : 'bg-gray-0'}`}
                             data-isactive={isActive}
                             onClick={() => {
-                              handleSelectTool(item.action as ToolType);
+                              handleSelectTool(item.action);
                             }}
                           >
                             {item.icon ? item.icon : item.title}
@@ -44,7 +81,7 @@ export const Navbar = () => {
                           {/* {editor.getCurrentToolId() === 'sticker' && (
                             <StickerPopupContent menuPopupContent={item?.menuPopupContent || []} />
                           )} */}
-                          {/* {selectedTool === 'pen' && (
+                          {/* {getCurrentTool() === 'pen' && (
                             <StylePopupContent menuPopupContent={item?.menuPopupContent || []} />
                           )} */}
                           {item.title}
@@ -60,4 +97,4 @@ export const Navbar = () => {
       </div>
     </div>
   );
-};
+});

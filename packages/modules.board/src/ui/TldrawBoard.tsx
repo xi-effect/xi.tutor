@@ -1,11 +1,7 @@
 import { TldrawCanvas } from './components/canvas';
-import { usePerformanceTracking } from '../hooks';
 import { useEffect } from 'react';
 
 export const TldrawBoard = () => {
-  const { trackComponentRender } = usePerformanceTracking();
-  trackComponentRender('TldrawBoard', () => {});
-
   useEffect(() => {
     const removeWatermark = () => {
       document.querySelectorAll('.tl-watermark_SEE-LICENSE').forEach((el) => el.remove());

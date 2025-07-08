@@ -3,19 +3,19 @@ import '@tldraw/tldraw/tldraw.css';
 import { useKeyPress } from 'common.utils';
 import { SelectedElementToolbar, Navbar } from '../toolbar';
 import { useTldrawStore } from '../../../store';
-import { useCursor } from '../../../hooks';
-import { useWhiteboardCollaborative } from '../../../hooks/useWhiteboardCollaborative';
-import { useUndoRedoShortcuts } from '../../../features';
+// import { useCursor } from '../../../hooks';
+// import { useWhiteboardCollaborative } from '../../../hooks/useWhiteboardCollaborative';
+// import { useUndoRedoShortcuts } from '../../../features';
 import { useState } from 'react';
 import { TldrawZoomPanel } from './TldrawZoomPanel';
 
 export const TldrawCanvas = () => {
   const [showPerformanceMonitor, setShowPerformanceMonitor] = useState(false);
-  const { selectedTool, selectElement, selectedElementId } = useTldrawStore();
+  const { selectedElementId, selectElement } = useTldrawStore();
 
-  const { cursor, mouseHandlers } = useCursor(selectedTool);
+  // const { cursor, mouseHandlers } = useCursor('select'); // Используем select как дефолтный курсор
 
-  useWhiteboardCollaborative({ roomId: 'test/slate-yjs-demo' });
+  // useWhiteboardCollaborative({ roomId: 'test/slate-yjs-demo' });
 
   useKeyPress('Backspace', () => {
     if (selectedElementId) {
@@ -28,16 +28,15 @@ export const TldrawCanvas = () => {
     setShowPerformanceMonitor(!showPerformanceMonitor);
   });
 
-  useUndoRedoShortcuts();
+  // useUndoRedoShortcuts();
 
   return (
-    <div className="flex h-full w-full flex-col" style={{ cursor }} {...mouseHandlers}>
+    <div className="flex h-full w-full flex-col">
       <div className="relative flex-1 overflow-hidden">
-        <Navbar />
-        <SelectedElementToolbar />
-
         <div className="absolute inset-0">
-          <Tldraw>
+          <Tldraw hideUi>
+            <Navbar />
+            <SelectedElementToolbar />
             <TldrawZoomPanel />
           </Tldraw>
         </div>
