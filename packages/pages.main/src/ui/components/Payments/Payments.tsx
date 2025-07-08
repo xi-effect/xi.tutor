@@ -4,10 +4,15 @@ import { Button } from '@xipkg/button';
 import { ArrowRight } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { useCurrentUser } from 'common.services';
 import { InvoiceModal } from 'features.invoice';
 import { Payment } from './Payment';
 
 export const Payments = () => {
+  const { data: user } = useCurrentUser();
+
+  const isTutor = user?.default_layout === 'tutor';
+
   const navigate = useNavigate();
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
 
@@ -16,6 +21,7 @@ export const Payments = () => {
       to: '/payments',
     });
   };
+
   return (
     <div className="flex flex-col gap-4 p-4">
       <div className="flex flex-row items-center justify-start gap-2">
@@ -32,15 +38,18 @@ export const Payments = () => {
           </TooltipTrigger>
           <TooltipContent>К оплатам</TooltipContent>
         </Tooltip>
-        <div className="ml-auto flex flex-row items-center gap-2 max-sm:hidden">
-          <Button
-            size="s"
-            className="text-s-base text-gray-0 rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
-            onClick={() => setIsInvoiceModalOpen(true)}
+
+        {isTutor && (
+          <div className="ml-auto flex flex-row items-center gap-2 max-sm:hidden">
+            <Button
+              size="s"
+              className="text-s-base text-gray-0 rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
+              onClick={() => setIsInvoiceModalOpen(true)}
           >
-            Создать счет на оплату
-          </Button>
-        </div>
+              Создать счет на оплату
+            </Button>
+          </div>
+        )}
       </div>
       <div className="flex flex-row">
         <ScrollArea
