@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { PaymentsTable } from './PaymentsTable';
 import { useMedia } from 'common.utils';
 import { students, subjects, PaymentT, createPaymentColumns, payments } from 'features.table';
+import { PaymentControl as PaymentsCharts } from 'features.charts';
 
 async function getData(): Promise<PaymentT[]> {
   return payments;
@@ -28,7 +29,7 @@ export const TabsComponent = () => {
           Журнал оплат
         </Tabs.Trigger>
 
-        <Tabs.Trigger value="notes" className="text-m-base font-medium text-gray-100">
+        <Tabs.Trigger value="charts" className="text-m-base font-medium text-gray-100">
           Аналитика
         </Tabs.Trigger>
       </Tabs.List>
@@ -43,7 +44,9 @@ export const TabsComponent = () => {
           />
         </Tabs.Content>
 
-        <Tabs.Content value="notes">Заметки</Tabs.Content>
+        <Tabs.Content value="charts">
+          <PaymentsCharts />
+        </Tabs.Content>
       </div>
     </Tabs.Root>
   );
