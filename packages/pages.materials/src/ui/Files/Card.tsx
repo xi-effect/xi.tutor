@@ -13,12 +13,12 @@ import {
 
 import { MaterialPropsT } from '../../types';
 
-export const Card: React.FC<MaterialPropsT> = ({ nameMaterial }) => {
+export const Card: React.FC<MaterialPropsT> = ({ name }) => {
   return (
     <div className="hover:bg-gray-5 border-gray-30 bg-gray-0 relative flex h-[96px] cursor-pointer justify-between rounded-2xl border p-0">
       <File
         className="m-0 flex h-full w-[calc(100%-36px)] border-none bg-transparent p-0 hover:bg-transparent"
-        name={nameMaterial}
+        name={name}
         size={100}
         url="https://www.google.com"
       />

@@ -1,1 +1,1 @@
-export { Board } from './src/ui';
+export { TldrawBoard } from './src/ui';

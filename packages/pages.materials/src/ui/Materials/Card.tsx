@@ -3,7 +3,6 @@ import { useNavigate } from '@tanstack/react-router';
 
 import { Button } from '@xipkg/button';
 import { MoreVert } from '@xipkg/icons';
-import { UserProfile } from '@xipkg/userprofile';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,36 +11,26 @@ import {
 } from '@xipkg/dropdown';
 
 import { MaterialPropsT } from '../../types';
+import { formatToShortDate } from '../../utils';
 
-export const Card: React.FC<MaterialPropsT> = ({
-  idMaterial,
-  nameMaterial,
-  idUser,
-  nameUser,
-  updatedAt,
-}) => {
+export const Card: React.FC<MaterialPropsT> = ({ id, updated_at, name }) => {
   const navigate = useNavigate();
 
   return (
     <div
       onClick={() => {
-        navigate({ to: `/board/${idMaterial}` });
+        navigate({ to: `/board/${id}` });
       }}
-      className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex h-[172px] cursor-pointer justify-between rounded-2xl border p-4"
+      className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex cursor-pointer justify-between rounded-2xl border p-4"
     >
-      <div className="flex flex-col gap-1">
-        <UserProfile
-          text={nameUser}
-          userId={idUser}
-          size="s"
-          className="text-xs-base font-medium text-gray-100"
-        />
-
+      <div className="flex flex-col gap-1 overflow-hidden">
         <div className="flex h-full flex-col justify-between">
           <div className="text-l-base line-clamp-2 w-full font-medium text-gray-100">
-            {nameMaterial}
+            <p className="truncate">{name}</p>
           </div>
-          <div className="text-s-base text-gray-60 font-normal">Обновлено: {updatedAt}</div>
+          <div className="text-s-base text-gray-60 font-normal">
+            Обновлено: {formatToShortDate(updated_at)}
+          </div>
         </div>
       </div>
 

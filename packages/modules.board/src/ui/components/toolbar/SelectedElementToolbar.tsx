@@ -1,55 +1,39 @@
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { Button } from '@xipkg/button';
 import { Trash, Copy, MoreVert } from '@xipkg/icons';
-import { useBoardStore } from '../../../store';
-import { useIsStageScaling } from '../../../hooks';
-import { ToolbarElement } from '../../../types';
-import { useTrackedTransaction } from '../../../features';
+import { track, useEditor } from '@tldraw/tldraw';
 
-export const SelectedElementToolbar = () => {
-  const {
-    selectedElementId,
-    removeElement,
-    selectElement,
-    boardElements,
-    isElementTransforming,
-    selectToolbarPosition,
-  } = useBoardStore();
+export const SelectedElementToolbar = track(() => {
+  const editor = useEditor();
 
-  const { isScaling } = useIsStageScaling();
-
-  const { executeTrackedTransaction } = useTrackedTransaction();
-
-  useEffect(() => {
-    const selectedExists = boardElements.some((el) => el.id === selectedElementId);
-    if (!selectedExists && selectedElementId) {
-      selectElement(null);
-    }
-  }, [boardElements, selectedElementId, selectElement]);
-
-  const position = useMemo(() => {
-    if (selectToolbarPosition && (selectToolbarPosition.x !== 0 || selectToolbarPosition.y !== 0)) {
-      return selectToolbarPosition;
-    }
-
-    const toolbarElement = boardElements.find(
-      (el) => el.id === 'toolbar' && el.type === 'toolbar',
-    ) as ToolbarElement;
-
-    return toolbarElement ? { x: toolbarElement.x || 0, y: toolbarElement.y || 0 } : { x: 0, y: 0 };
-  }, [selectToolbarPosition, boardElements]);
+  const selectedShapeIds = editor.getSelectedShapeIds();
 
   const handleDelete = useMemo(
     () => () => {
-      if (selectedElementId) {
-        executeTrackedTransaction(() => removeElement(selectedElementId));
-        selectElement(null);
+      if (selectedShapeIds.length > 0) {
+        editor.deleteShapes(selectedShapeIds);
       }
     },
-    [selectedElementId, executeTrackedTransaction, selectElement, removeElement],
+    [selectedShapeIds, editor],
   );
 
-  if (!selectedElementId || isElementTransforming) {
+  // Получаем позицию для отображения тулбара
+  const position = useMemo(() => {
+    if (selectedShapeIds.length === 0) return { x: 0, y: 0 };
+
+    const bounds = editor.getSelectionPageBounds();
+    if (!bounds) return { x: 0, y: 0 };
+
+    const centerX = bounds.x + bounds.width / 2;
+    const centerY = bounds.y;
+
+    return {
+      x: centerX,
+      y: centerY,
+    };
+  }, [selectedShapeIds, editor]);
+
+  if (selectedShapeIds.length === 0) {
     return null;
   }
 
@@ -59,9 +43,7 @@ export const SelectedElementToolbar = () => {
       style={{
         left: position.x,
         top: position.y,
-        transform: 'translate(0, -100%)',
-        opacity: isScaling ? 0 : 1,
-        visibility: isScaling ? 'hidden' : 'visible',
+        transform: 'translate(-50%, -100%)',
       }}
     >
       <Button variant="ghost" size="s" className="p-1" onClick={handleDelete}>
@@ -75,4 +57,4 @@ export const SelectedElementToolbar = () => {
       </Button>
     </div>
   );
-};
+});

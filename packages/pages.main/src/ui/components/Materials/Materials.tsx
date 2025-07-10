@@ -30,6 +30,7 @@ export const Materials = () => {
           </TooltipTrigger>
           <TooltipContent>К материалам</TooltipContent>
         </Tooltip>
+
         <MaterialsAdd />
       </div>
       <div className="flex flex-row">
