@@ -7,7 +7,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-// import { del } from 'pkg.utils/fetch';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { AvatarEditor } from 'features.avatar.editor';
@@ -37,20 +36,19 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
   };
 
   const handleDeleteAvatar = async () => {
-    // const { status } = await del({
-    //   service: 'auth',
-    //   path: '/api/users/current/avatar/',
-    //   config: {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //   },
-    // });
+    const response = await fetch(
+      `$https://api.xieffect.ru/api/protected/user-service/users/current/avatar/`,
+      {
+        method: 'DELETE',
+        cache: 'no-cache',
+      },
+    );
 
-    const status = 204;
-
-    if (status === 204) {
+    if (response.status === 204) {
       toast('Аватарка удалена. Скоро она исчезнет с сайта');
+    } else {
+      console.error(`Ошибка HTTP: ${response.status}`);
+      toast(`Ошибка HTTP: ${response.status}`);
     }
   };
 
@@ -70,8 +68,6 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
     }
 
     const imageDataUrl = await readFile(file);
-
-    console.log(imageDataUrl);
 
     setFile(imageDataUrl);
     setIsAvatarOpen(true);

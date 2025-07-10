@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { toast } from 'sonner';
 import Resizer from 'react-image-file-resizer';
 import { getCroppedImg } from '../utils';
@@ -35,7 +34,7 @@ export const useImageProcessing = ({
       );
     });
 
-  const processCroppedImage = async (file: any, croppedAreaPixels: CropArea | null) => {
+  const processCroppedImage = async (file: File, croppedAreaPixels: CropArea | null) => {
     try {
       if (!croppedAreaPixels) return null;
 
@@ -56,20 +55,20 @@ export const useImageProcessing = ({
         : '/api/users/current/avatar/';
       const currentService = communityId ? 'backend' : 'auth';
 
-      // const { status } = await put({
-      //   service: currentService,
-      //   path: pathAddress,
-      //   body: form,
-      //   config: {
-      //     headers: {},
-      //   },
-      // });
+      const formData = new FormData();
+      formData.append('avatar', resizedImage, 'avatar.webp');
+
+      const response = await fetch(
+        `https://api.xieffect.ru/api/protected/user-service/users/current/avatar/`,
+        {
+          method: 'PUT',
+          body: formData,
+        },
+      );
 
       console.log('pathAddress', pathAddress, currentService);
 
-      const status = 204;
-
-      if (status === 204) {
+      if (response.status === 204) {
         toast('Аватарка успешно загружена. В ближайшее время она отобразится на сайте');
         onOpenChange(false);
         if (setDate) setDate(new Date());
