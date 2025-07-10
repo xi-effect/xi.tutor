@@ -12,17 +12,15 @@ import {
 import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from 'features.table';
 import { Button } from '@xipkg/button';
 import { Trash, Copy } from '@xipkg/icons';
-import { InvitationDataT } from '../types';
 import { toast } from 'sonner';
 import { useInvitationsList, useAddInvitation, useDeleteInvitation } from 'common.services';
+import { InvitationDataT } from 'common.types';
 
 export const ModalInvitation = ({ children }: { children: React.ReactNode }) => {
   const { data } = useInvitationsList();
-  const { addInvitationConfirm } = useAddInvitation();
-  const { deleteInvitationConfirm } = useDeleteInvitation();
 
-  const isAdding = addInvitationConfirm.isPending;
-  const isDeleting = deleteInvitationConfirm.isPending;
+  const { isPending: isAdding, mutate: addInvitationMutate } = useAddInvitation();
+  const { isPending: isDeleting, mutate: deleteInvitationMutate } = useDeleteInvitation();
 
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
@@ -32,12 +30,12 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
   };
 
   const handleAddInvitation = () => {
-    addInvitationConfirm.mutate();
+    addInvitationMutate();
   };
 
   const handleDeleteInvitation = (id: number) => () => {
     setDeletingId(id);
-    deleteInvitationConfirm.mutate(id, {
+    deleteInvitationMutate(id, {
       onSettled: () => setDeletingId(null),
     });
   };
@@ -94,7 +92,7 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
                     >
                       {isDeleting && deletingId === invitation.id ? (
                         <div
-                          className="text-brand-80 inline-block size-4 animate-spin rounded-full border-[2px] border-current border-t-transparent"
+                          className="text-brand-80 border-brand-80 inline-block size-4 animate-spin rounded-full border-[2px] border-t-transparent"
                           role="status"
                           aria-label="loading"
                         />

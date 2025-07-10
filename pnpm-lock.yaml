@@ -2090,6 +2090,9 @@ importers:
       common.eslint:
         specifier: '*'
         version: link:../common.eslint
+      common.types:
+        specifier: '*'
+        version: link:../common.types
       common.typescript:
         specifier: '*'
         version: link:../common.typescript

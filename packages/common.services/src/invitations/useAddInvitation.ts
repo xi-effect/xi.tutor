@@ -1,6 +1,8 @@
 import { invitationsApiConfig, InvitationsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
+import { InvitationDataT } from 'common.types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { handleError } from 'common.services';
 
 export const useAddInvitation = () => {
   const queryClient = useQueryClient();
@@ -22,10 +24,31 @@ export const useAddInvitation = () => {
         throw err;
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [InvitationsQueryKey.AllInvitations] });
+    onError: (err) => {
+      const previousInvitations = queryClient.getQueryData<InvitationDataT[]>([
+        InvitationsQueryKey.AllInvitations,
+      ]);
+      if (previousInvitations) {
+        queryClient.setQueryData<InvitationDataT[]>(
+          [InvitationsQueryKey.AllInvitations],
+          previousInvitations,
+        );
+      }
+
+      handleError(err, 'addInvitation');
+    },
+    onSuccess: (response) => {
+      if (response?.data) {
+        queryClient.setQueryData<InvitationDataT[]>(
+          [InvitationsQueryKey.AllInvitations],
+          (old: InvitationDataT[] | undefined) => {
+            if (!old) return old;
+            return [...old, response.data];
+          },
+        );
+      }
     },
   });
 
-  return { addInvitationConfirm: addInvitationMutation };
+  return { ...addInvitationMutation };
 };
