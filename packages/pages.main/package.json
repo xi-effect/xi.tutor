@@ -18,6 +18,7 @@
     "common.types": "*",
     "common.auth": "*",
     "common.ui": "*",
+    "pages.classrooms": "*",
     "common.services": "*",
     "@xipkg/button": "3.1.2",
     "@xipkg/icons": "2.3.0",
