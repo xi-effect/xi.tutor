@@ -92,7 +92,7 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
                     >
                       {isDeleting && deletingId === invitation.id ? (
                         <div
-                          className="text-brand-80 border-brand-80 inline-block size-4 animate-spin rounded-full border-[2px] border-t-transparent"
+                          className="text-brand-80 inline-block size-4 animate-spin rounded-full border-[2px] border-current border-t-transparent"
                           role="status"
                           aria-label="loading"
                         />
