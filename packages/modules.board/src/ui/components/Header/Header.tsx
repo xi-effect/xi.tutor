@@ -24,12 +24,12 @@ export const Header = () => {
   return (
     <div className="bg-gray-0 text-xl-base absolute z-30 w-full px-4 py-4">
       <div className="flex items-center justify-between">
-        <div className="flex gap-2">
-          {/* <h1 className="text-xl-base">{currentBoard[0].name}</h1>
+        {/* <div className="flex gap-2">
+          <h1 className="text-xl-base">{currentBoard[0].name}</h1>
           {currentBoardsCategory && (
             <p className="text-gray-60 text-m-base pt-2">{currentBoardsCategory[0].name}</p>
-          )} */}
-        </div>
+          )}
+        </div> */}
         <div className="flex items-center gap-1">
           <Button
             variant="ghost"

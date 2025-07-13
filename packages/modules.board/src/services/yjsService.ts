@@ -39,7 +39,6 @@ export const getOrCreateInstance = (roomId: string, hostUrl: string): YJSInstanc
     instances[instanceKey] = { yDoc, yArr, yStore, provider, refCount: 0 };
   }
 
-  // eslint-disable-next-line no-plusplus
   instances[instanceKey].refCount++;
   return instances[instanceKey];
 };
@@ -51,7 +50,6 @@ export const releaseInstance = (roomId: string, hostUrl: string = 'wss://hocus.x
   const instanceKey = `${roomId}@${hostUrl}`;
 
   if (instances[instanceKey]) {
-    // eslint-disable-next-line no-plusplus
     instances[instanceKey].refCount--;
 
     if (instances[instanceKey].refCount <= 0) {

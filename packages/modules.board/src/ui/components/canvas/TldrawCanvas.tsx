@@ -1,4 +1,4 @@
-import { Tldraw } from '@tldraw/tldraw';
+import { Tldraw, TldrawProps } from '@tldraw/tldraw';
 import '@tldraw/tldraw/tldraw.css';
 import { useKeyPress } from 'common.utils';
 import { SelectedElementToolbar, Navbar } from '../toolbar';
@@ -8,8 +8,9 @@ import { useTldrawStore } from '../../../store';
 // import { useUndoRedoShortcuts } from '../../../features';
 import { useState } from 'react';
 import { TldrawZoomPanel } from './TldrawZoomPanel';
+import { JSX } from 'react/jsx-runtime';
 
-export const TldrawCanvas = () => {
+export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
   const [showPerformanceMonitor, setShowPerformanceMonitor] = useState(false);
   const { selectedElementId, selectElement } = useTldrawStore();
 
@@ -34,7 +35,7 @@ export const TldrawCanvas = () => {
     <div className="flex h-full w-full flex-col">
       <div className="relative flex-1 overflow-hidden">
         <div className="absolute inset-0">
-          <Tldraw hideUi>
+          <Tldraw hideUi {...props}>
             <Navbar />
             <SelectedElementToolbar />
             <TldrawZoomPanel />
