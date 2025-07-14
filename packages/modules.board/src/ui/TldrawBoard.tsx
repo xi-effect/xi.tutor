@@ -1,5 +1,5 @@
-import { TldrawCanvas } from './components/canvas';
 import { useEffect } from 'react';
+import { TldrawCanvas } from './components';
 
 export const TldrawBoard = () => {
   useEffect(() => {
