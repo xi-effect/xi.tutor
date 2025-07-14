@@ -2,7 +2,15 @@ import { toast } from 'sonner';
 import { AxiosError } from 'axios';
 
 // Типы ошибок для разных операций
-export type ErrorType = 'profile' | 'email' | 'password' | 'resetPassword' | 'materials' | 'role';
+export type ErrorType =
+  | 'profile'
+  | 'email'
+  | 'password'
+  | 'resetPassword'
+  | 'materials'
+  | 'role'
+  | 'addInvitation'
+  | 'deleteInvitation';
 
 // Маппинг ошибок для разных операций
 const errorMessages: Record<ErrorType, Record<string, string>> = {
@@ -35,6 +43,14 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
   role: {
     'Invalid role value': 'Неверное значение роли',
   },
+  addInvitation: {
+    'Invitation quantity exceeded': 'Превышено количество приглашений',
+  },
+  deleteInvitation: {
+    'Validation Error': 'Ошибка валидации',
+    'Invitation not found': 'Приглашение не найдено',
+    'Invitation access denied': 'Доступ к приглашению запрещён',
+  },
 };
 
 // Общие сообщения об ошибках по статусам
@@ -55,6 +71,8 @@ const successMessages: Record<ErrorType, string> = {
   resetPassword: 'Пароль успешно сброшен',
   materials: 'Материал успешно создан',
   role: 'Роль пользователя успешно обновлена',
+  addInvitation: 'Новое приглашение добавлено',
+  deleteInvitation: 'Приглашение удалено',
 };
 
 /**
