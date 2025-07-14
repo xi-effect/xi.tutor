@@ -27,7 +27,7 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
   const { data: user } = useCurrentUser();
 
   const [isAvatarOpen, setIsAvatarOpen] = React.useState(false);
-  const [file, setFile] = React.useState<any>();
+  const [file, setFile] = React.useState<File | unknown>();
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 

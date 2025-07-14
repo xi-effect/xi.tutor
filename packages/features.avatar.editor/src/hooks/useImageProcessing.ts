@@ -55,8 +55,10 @@ export const useImageProcessing = ({
         : '/api/users/current/avatar/';
       const currentService = communityId ? 'backend' : 'auth';
 
+      console.log('pathAddress', pathAddress, currentService);
+
       const formData = new FormData();
-      formData.append('avatar', resizedImage, 'avatar.webp');
+      formData.append('avatar', resizedImage);
 
       const response = await fetch(
         `https://api.xieffect.ru/api/protected/user-service/users/current/avatar/`,
@@ -65,8 +67,6 @@ export const useImageProcessing = ({
           body: formData,
         },
       );
-
-      console.log('pathAddress', pathAddress, currentService);
 
       if (response.status === 204) {
         toast('Аватарка успешно загружена. В ближайшее время она отобразится на сайте');
