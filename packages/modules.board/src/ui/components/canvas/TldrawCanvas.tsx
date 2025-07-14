@@ -6,13 +6,10 @@ import { useTldrawStore } from '../../../store';
 import { TldrawZoomPanel } from './TldrawZoomPanel';
 import { JSX } from 'react/jsx-runtime';
 import { useYjsStore } from '../../../hooks/useYjsStore';
+import { LoadingScreen } from 'common.ui';
 
 export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
   const { selectedElementId, selectElement } = useTldrawStore();
-
-  // const { cursor, mouseHandlers } = useCursor('select'); // Используем select как дефолтный курсор
-
-  // useWhiteboardCollaborative({ roomId: 'test/slate-yjs-demo' });
 
   useKeyPress('Backspace', () => {
     if (selectedElementId) {
@@ -32,17 +29,17 @@ export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
         <div className="absolute inset-0">
           <Tldraw
             onMount={(editor) => {
-              console.log('[TldrawCanvas] Tldraw mounted');
-              console.log('[TldrawCanvas] Editor store:', editor.store);
-              console.log('[TldrawCanvas] Props store:', props.store);
-              console.log('[TldrawCanvas] Stores are same:', editor.store === props.store);
+              // console.log('[TldrawCanvas] Tldraw mounted');
+              // console.log('[TldrawCanvas] Editor store:', editor.store);
+              // console.log('[TldrawCanvas] Props store:', props.store);
+              // console.log('[TldrawCanvas] Stores are same:', editor.store === props.store);
 
-              editor.store.listen(
-                (update) => {
-                  console.log('update', update);
-                },
-                { scope: 'document', source: 'user' },
-              );
+              // editor.store.listen(
+              //   (update) => {
+              //     console.log('update', update);
+              //   },
+              //   { scope: 'document', source: 'user' },
+              // );
 
               editor.updateInstanceState({ isGridMode: true });
             }}
