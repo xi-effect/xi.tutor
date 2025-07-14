@@ -33,7 +33,7 @@ export function useYjsStore({
   version: number;
   shapeUtils: TLAnyShapeUtilConstructor[];
 }>) {
-  const [connected, setConnected] = useState(false);
+  const [_connected, setConnected] = useState(false);
 
   const [store] = useState(() => {
     const store = createTLStore({
