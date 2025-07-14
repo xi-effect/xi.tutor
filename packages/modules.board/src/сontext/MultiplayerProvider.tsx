@@ -2,7 +2,6 @@
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { createTLStore, type TLStore } from 'tldraw';
 import { useHocuspocusRoom } from '../hooks/useHocuspocusRoom';
-import { useTldrawDiffSync } from '../hooks/useTldrawDiffSync';
 import { useTldrawPresence } from '../hooks/useTldrawPresence';
 import type { Editor } from 'tldraw';
 import * as Y from 'yjs';

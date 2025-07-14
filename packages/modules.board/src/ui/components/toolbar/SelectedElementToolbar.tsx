@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { Button } from '@xipkg/button';
 import { Trash, Copy, MoreVert } from '@xipkg/icons';
-import { track, useEditor } from '@tldraw/tldraw';
+import { track, useEditor } from 'tldraw';
 
 export const SelectedElementToolbar = track(() => {
   const editor = useEditor();
