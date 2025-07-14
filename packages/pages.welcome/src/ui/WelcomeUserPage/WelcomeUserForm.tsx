@@ -18,8 +18,13 @@ export const WelcomeUserForm = () => {
   const { t } = useTranslation('welcomeUser');
   const formSchema = useWelcomeUserFormSchema();
 
+  const { email, display_name } = useWelcomeContext();
+
   const form = useForm<WelcomeUserFormData>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      displayName: display_name || '',
+    },
   });
 
   const {
@@ -31,13 +36,11 @@ export const WelcomeUserForm = () => {
 
   const { onWelcomeUserForm, isPending } = useWelcomeUserForm();
 
-  const onSubmit = () => {
-    onWelcomeUserForm();
+  const onSubmit = ({ displayName }: WelcomeUserFormData) => {
+    onWelcomeUserForm(displayName);
   };
 
   const [displayName] = watch(['displayName']);
-
-  const { email } = useWelcomeContext();
 
   return (
     <Form {...form}>
