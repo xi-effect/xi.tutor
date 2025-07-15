@@ -23,7 +23,6 @@ import { Route as appInviteInviteIdRouteImport } from './pages/(app)/invite/$inv
 import { Route as appWelcomeUserIndexRouteImport } from './pages/(app)/welcome/user/index'
 import { Route as appWelcomeSocialsIndexRouteImport } from './pages/(app)/welcome/socials/index'
 import { Route as appWelcomeRoleIndexRouteImport } from './pages/(app)/welcome/role/index'
-import { Route as appWelcomeAboutIndexRouteImport } from './pages/(app)/welcome/about/index'
 import { Route as appLayoutPaymentsIndexRouteImport } from './pages/(app)/_layout/payments/index'
 import { Route as appLayoutMaterialsIndexRouteImport } from './pages/(app)/_layout/materials/index'
 import { Route as appLayoutEditorIndexRouteImport } from './pages/(app)/_layout/editor/index'
@@ -106,11 +105,6 @@ const appWelcomeRoleIndexRoute = appWelcomeRoleIndexRouteImport.update({
   path: '/role/',
   getParentRoute: () => appWelcomeRoute,
 } as any)
-const appWelcomeAboutIndexRoute = appWelcomeAboutIndexRouteImport.update({
-  id: '/about/',
-  path: '/about/',
-  getParentRoute: () => appWelcomeRoute,
-} as any)
 const appLayoutPaymentsIndexRoute = appLayoutPaymentsIndexRouteImport.update({
   id: '/payments/',
   path: '/payments/',
@@ -184,7 +178,6 @@ export interface FileRoutesByFullPath {
   '/editor': typeof appLayoutEditorIndexRoute
   '/materials': typeof appLayoutMaterialsIndexRoute
   '/payments': typeof appLayoutPaymentsIndexRoute
-  '/welcome/about': typeof appWelcomeAboutIndexRoute
   '/welcome/role': typeof appWelcomeRoleIndexRoute
   '/welcome/socials': typeof appWelcomeSocialsIndexRoute
   '/welcome/user': typeof appWelcomeUserIndexRoute
@@ -208,7 +201,6 @@ export interface FileRoutesByTo {
   '/editor': typeof appLayoutEditorIndexRoute
   '/materials': typeof appLayoutMaterialsIndexRoute
   '/payments': typeof appLayoutPaymentsIndexRoute
-  '/welcome/about': typeof appWelcomeAboutIndexRoute
   '/welcome/role': typeof appWelcomeRoleIndexRoute
   '/welcome/socials': typeof appWelcomeSocialsIndexRoute
   '/welcome/user': typeof appWelcomeUserIndexRoute
@@ -236,7 +228,6 @@ export interface FileRoutesById {
   '/(app)/_layout/editor/': typeof appLayoutEditorIndexRoute
   '/(app)/_layout/materials/': typeof appLayoutMaterialsIndexRoute
   '/(app)/_layout/payments/': typeof appLayoutPaymentsIndexRoute
-  '/(app)/welcome/about/': typeof appWelcomeAboutIndexRoute
   '/(app)/welcome/role/': typeof appWelcomeRoleIndexRoute
   '/(app)/welcome/socials/': typeof appWelcomeSocialsIndexRoute
   '/(app)/welcome/user/': typeof appWelcomeUserIndexRoute
@@ -262,7 +253,6 @@ export interface FileRouteTypes {
     | '/editor'
     | '/materials'
     | '/payments'
-    | '/welcome/about'
     | '/welcome/role'
     | '/welcome/socials'
     | '/welcome/user'
@@ -286,7 +276,6 @@ export interface FileRouteTypes {
     | '/editor'
     | '/materials'
     | '/payments'
-    | '/welcome/about'
     | '/welcome/role'
     | '/welcome/socials'
     | '/welcome/user'
@@ -313,7 +302,6 @@ export interface FileRouteTypes {
     | '/(app)/_layout/editor/'
     | '/(app)/_layout/materials/'
     | '/(app)/_layout/payments/'
-    | '/(app)/welcome/about/'
     | '/(app)/welcome/role/'
     | '/(app)/welcome/socials/'
     | '/(app)/welcome/user/'
@@ -428,13 +416,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appWelcomeRoleIndexRouteImport
       parentRoute: typeof appWelcomeRoute
     }
-    '/(app)/welcome/about/': {
-      id: '/(app)/welcome/about/'
-      path: '/about'
-      fullPath: '/welcome/about'
-      preLoaderRoute: typeof appWelcomeAboutIndexRouteImport
-      parentRoute: typeof appWelcomeRoute
-    }
     '/(app)/_layout/payments/': {
       id: '/(app)/_layout/payments/'
       path: '/payments'
@@ -542,7 +523,6 @@ const appLayoutRouteWithChildren = appLayoutRoute._addFileChildren(
 
 interface appWelcomeRouteChildren {
   appWelcomeLayoutRoute: typeof appWelcomeLayoutRoute
-  appWelcomeAboutIndexRoute: typeof appWelcomeAboutIndexRoute
   appWelcomeRoleIndexRoute: typeof appWelcomeRoleIndexRoute
   appWelcomeSocialsIndexRoute: typeof appWelcomeSocialsIndexRoute
   appWelcomeUserIndexRoute: typeof appWelcomeUserIndexRoute
@@ -550,7 +530,6 @@ interface appWelcomeRouteChildren {
 
 const appWelcomeRouteChildren: appWelcomeRouteChildren = {
   appWelcomeLayoutRoute: appWelcomeLayoutRoute,
-  appWelcomeAboutIndexRoute: appWelcomeAboutIndexRoute,
   appWelcomeRoleIndexRoute: appWelcomeRoleIndexRoute,
   appWelcomeSocialsIndexRoute: appWelcomeSocialsIndexRoute,
   appWelcomeUserIndexRoute: appWelcomeUserIndexRoute,

@@ -1,55 +1,28 @@
-import { useState, useTransition } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-// import { AxiosError } from 'axios';
-// import { toast } from 'sonner';
+
+import { useOnboardingTransition, useUpdateProfile } from 'common.services';
 
 export const useWelcomeUserForm = () => {
-  const [isPending] = useTransition();
-  const [error] = useState<string | null>(null);
   const navigate = useNavigate();
+  const { transitionStage } = useOnboardingTransition('default-layout', 'forwards');
+  const { updateProfile } = useUpdateProfile();
 
-  // const errorMap: Record<string, string> = {
-  // 'Username already in use': 'Такое имя пользователя уже занято',
-  // 'Authorization is missing': 'Требуется авториация',
-  // 'Session is invalid': 'Сессия недействительна',
-  // 'Validation Error': 'Ошибка валидации'
-  // };
+  const isLoading = updateProfile.isPending || transitionStage.isPending;
 
-  const onWelcomeUserForm = () => {
-    navigate({
-      to: '/welcome/role',
-    });
-    // const { mutate } = updateProfile;
+  const onWelcomeUserForm = async (displayName: string) => {
+    try {
+      await updateProfile.mutateAsync({ display_name: displayName });
+    } catch {
+      return;
+    }
 
-    // startTransition(() => {
-    //   mutate(data, {
-    //     onSuccess: () => {
-    //       navigate({
-    //         to: '/welcome/role',
-    //       });
-    //     },
-
-    //     onError: (error: AxiosError | Error) => {
-    //       let customError = '';
-
-    //       if (error instanceof AxiosError) {
-    //         const errorDetail: string = error.response?.data?.detail;
-    //         customError = errorMap[errorDetail] || 'Неизвестная ошибка Axios';
-
-    //         if (!errorMap[errorDetail]) {
-    //           console.error('Неизвестная ошибка Axios:', error);
-    //         }
-    //       } else {
-    //         console.error('Неизвестная ошибка:', error);
-    //         customError = 'Неизвестная ошибка';
-    //       }
-
-    //       toast(customError);
-    //       setError(customError);
-    //     },
-    //   });
-    // });
+    try {
+      await transitionStage.mutateAsync();
+      navigate({ to: '/welcome/role' });
+    } catch {
+      return;
+    }
   };
 
-  return { onWelcomeUserForm, isPending, error };
+  return { onWelcomeUserForm, isLoading };
 };

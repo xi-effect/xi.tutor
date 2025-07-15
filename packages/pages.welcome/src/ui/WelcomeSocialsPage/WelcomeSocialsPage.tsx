@@ -1,4 +1,3 @@
-import { useRouter, useCanGoBack } from '@tanstack/react-router';
 import { WelcomePageLayout, WelcomeButtons } from '../../ui';
 import { useTranslation } from 'react-i18next';
 import { InputWrapper } from './InputWrapper';
@@ -23,14 +22,9 @@ export const WelcomeSocialsPage = () => {
 
   const { control, watch, handleSubmit } = form;
 
-  // Временные хэндлеры (на период, пока не подключен бэкенд)
-  const router = useRouter();
-  const canGoBack = useCanGoBack();
-  const backButtonHandler = () => canGoBack && router.history.back();
-
-  const { onWelcomeSocialsForm } = useWelcomeSocialsForm();
+  const { onBackwards, onForwards, isLoading } = useWelcomeSocialsForm();
   const onSubmit = () => {
-    onWelcomeSocialsForm();
+    onForwards();
   };
 
   const [telegram] = watch(['telegram']);
@@ -106,7 +100,11 @@ export const WelcomeSocialsPage = () => {
               )}
             />
           </InputWrapper>
-          <WelcomeButtons customText="Начать работу" backButtonHandler={backButtonHandler} />
+          <WelcomeButtons
+            customText="Начать работу"
+            backButtonHandler={onBackwards}
+            isLoading={isLoading}
+          />
         </form>
       </Form>
     </WelcomePageLayout>

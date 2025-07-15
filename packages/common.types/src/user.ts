@@ -20,5 +20,6 @@ export type ProfileData = {
   display_name?: string;
   theme?: string;
   default_layout?: RoleT;
+  onboarding_stage?: string;
   // Другие поля профиля, которые могут быть обновлены
 };

@@ -1,17 +1,34 @@
-import { useState, useTransition } from 'react';
 import { useNavigate } from '@tanstack/react-router';
+import { useOnboardingTransition } from 'common.services';
 
-// Временно, пока не реализована интеграция с бэкендом
 export const useWelcomeSocialsForm = () => {
-  const [isPending] = useTransition();
-  const [error] = useState<string | null>(null);
   const navigate = useNavigate();
 
-  const onWelcomeSocialsForm = () => {
-    navigate({
-      to: '/',
-    });
+  const { transitionStage } = useOnboardingTransition('training', 'forwards');
+  const { transitionStage: backToRole } = useOnboardingTransition('default-layout', 'backwards');
+
+  const isLoading = transitionStage.isPending || backToRole.isPending;
+
+  const onForwards = async () => {
+    try {
+      await transitionStage.mutateAsync();
+      navigate({
+        to: '/',
+      });
+    } catch {
+      return;
+    }
   };
 
-  return { onWelcomeSocialsForm, isPending, error };
+  const onBackwards = async () => {
+    try {
+      await backToRole.mutateAsync();
+      navigate({
+        to: '/welcome/role',
+      });
+    } catch {
+      return;
+    }
+  };
+  return { onForwards, onBackwards, isLoading };
 };

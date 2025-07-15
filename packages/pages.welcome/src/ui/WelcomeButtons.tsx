@@ -6,6 +6,7 @@ export type WelcomeButtonsPropsT = {
   continueButtonHandler?: () => void;
   continueType?: 'next' | 'continue';
   customText?: string;
+  isLoading?: boolean;
 };
 
 export const WelcomeButtons = ({
@@ -13,15 +14,22 @@ export const WelcomeButtons = ({
   continueButtonHandler,
   continueType,
   customText,
+  isLoading,
 }: WelcomeButtonsPropsT) => {
   const { t } = useTranslation('welcome');
 
   return (
     <menu className="mt-auto flex flex-row gap-6 pt-4">
-      <Button onClick={backButtonHandler} variant="ghost" className="w-[98px]" type="button">
+      <Button
+        onClick={backButtonHandler}
+        variant="ghost"
+        className="w-[98px]"
+        type="button"
+        disabled={isLoading}
+      >
         {t('buttons.back_button')}
       </Button>
-      <Button onClick={continueButtonHandler} className="w-full" type="submit">
+      <Button onClick={continueButtonHandler} className="w-full" type="submit" disabled={isLoading}>
         {customText ||
           (continueType === 'next' ? t('buttons.next_button') : t('buttons.continue_button'))}
       </Button>

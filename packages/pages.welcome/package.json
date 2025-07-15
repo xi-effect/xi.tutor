@@ -22,6 +22,7 @@
     "common.config": "*",
     "common.env": "*",
     "common.types": "*",
+    "common.api": "*",
     "common.services": "*",
     "features.avatar.editor": "^0.0.0",
     "react-hook-form": "^7.56.3",

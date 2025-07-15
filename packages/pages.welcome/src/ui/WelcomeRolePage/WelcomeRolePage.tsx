@@ -2,36 +2,35 @@ import { useRef, useState, useLayoutEffect, useMemo, type RefObject } from 'reac
 import { WelcomeRoleButton } from './WecomeRoleButton';
 import { useTranslation } from 'react-i18next';
 import { WelcomePageLayout, WelcomeButtons } from '../../ui';
-import { useRouter, useCanGoBack, useNavigate } from '@tanstack/react-router';
+
+import { useWelcomeRoleForm } from '../../hooks';
+import { RoleButtonT } from '../../types/WelcomeRoleButtonT';
 
 export const WelcomeRolePage = () => {
   const { t } = useTranslation('welcomeRole');
   const firstButton = useRef<HTMLButtonElement>(null);
   const secondButton = useRef<HTMLButtonElement>(null);
-  const thirdButton = useRef<HTMLButtonElement>(null);
+
+  const { onBackwards, onForwards, isLoading } = useWelcomeRoleForm();
 
   const getHeight = (elem: RefObject<HTMLButtonElement | null>) =>
     elem.current ? Number(elem.current.clientHeight) : 0;
 
-  const buttons = useMemo(
+  const buttons: RoleButtonT[] = useMemo(
     () => [
       {
         ref: firstButton,
         tab: 0,
         top: 0,
         text: 'Репетитор',
+        value: 'tutor',
       },
       {
         ref: secondButton,
         tab: 1,
         top: getHeight(firstButton),
         text: 'Ученик',
-      },
-      {
-        ref: thirdButton,
-        tab: 2,
-        top: (getHeight(firstButton) + getHeight(secondButton)) | 0,
-        text: 'Родитель',
+        value: 'student',
       },
     ],
     [],
@@ -45,18 +44,7 @@ export const WelcomeRolePage = () => {
 
   useLayoutEffect(() => {
     buttons[1].top = getHeight(firstButton);
-    buttons[2].top = (getHeight(firstButton) + getHeight(secondButton)) | 0;
   }, [buttons]);
-
-  // Временные хэндлеры (на период, пока не подключен бэкенд)
-  const router = useRouter();
-  const canGoBack = useCanGoBack();
-  const navigate = useNavigate();
-  const backButtonHandler = () => canGoBack && router.history.back();
-  const continueButtonHandler = () =>
-    navigate({
-      to: '/welcome/about',
-    });
 
   return (
     <WelcomePageLayout step={2} title={t('title')} subtitle={t('subtitle')}>
@@ -78,8 +66,9 @@ export const WelcomeRolePage = () => {
         </ul>
       </div>
       <WelcomeButtons
-        continueButtonHandler={continueButtonHandler}
-        backButtonHandler={backButtonHandler}
+        continueButtonHandler={() => onForwards(activeButton.value)}
+        backButtonHandler={onBackwards}
+        isLoading={isLoading}
       />
     </WelcomePageLayout>
   );

@@ -1,5 +1,11 @@
 export type WelcomeContextT = {
   id: number | null;
   email: string | null;
-  onboarding_stage: 'community-choice' | 'community-create' | 'community-invite' | 'completed';
+  display_name: string | null;
+  onboarding_stage:
+    | 'user-information'
+    | 'default-layout'
+    | 'notifications'
+    | 'training'
+    | 'completed';
 };
