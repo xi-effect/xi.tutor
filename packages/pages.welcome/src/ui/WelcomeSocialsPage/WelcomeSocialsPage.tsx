@@ -22,7 +22,7 @@ export const WelcomeSocialsPage = () => {
 
   const { control, watch, handleSubmit } = form;
 
-  const { onBackwards, onForwards } = useWelcomeSocialsForm();
+  const { onBackwards, onForwards, isLoading } = useWelcomeSocialsForm();
   const onSubmit = () => {
     onForwards();
   };
@@ -100,7 +100,11 @@ export const WelcomeSocialsPage = () => {
               )}
             />
           </InputWrapper>
-          <WelcomeButtons customText="Начать работу" backButtonHandler={onBackwards} />
+          <WelcomeButtons
+            customText="Начать работу"
+            backButtonHandler={onBackwards}
+            isLoading={isLoading}
+          />
         </form>
       </Form>
     </WelcomePageLayout>

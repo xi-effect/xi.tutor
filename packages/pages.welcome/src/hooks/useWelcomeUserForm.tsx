@@ -1,32 +1,28 @@
-import { startTransition, useState, useTransition } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 
-import { useOnboardingTransition, useUpdateProfile, handleError } from 'common.services';
+import { useOnboardingTransition, useUpdateProfile } from 'common.services';
 
 export const useWelcomeUserForm = () => {
-  const [isPending] = useTransition();
-  const [error] = useState<string | null>(null);
   const navigate = useNavigate();
   const { transitionStage } = useOnboardingTransition('default-layout', 'forwards');
   const { updateProfile } = useUpdateProfile();
 
-  const onWelcomeUserForm = (displayName: string) => {
-    startTransition(async () => {
-      try {
-        await updateProfile.mutateAsync({ display_name: displayName });
-      } catch (error) {
-        handleError(error, 'profile');
-        return;
-      }
+  const isLoading = updateProfile.isPending || transitionStage.isPending;
 
-      try {
-        await transitionStage.mutateAsync();
-        navigate({ to: '/welcome/role' });
-      } catch (error) {
-        handleError(error, 'onboarding');
-      }
-    });
+  const onWelcomeUserForm = async (displayName: string) => {
+    try {
+      await updateProfile.mutateAsync({ display_name: displayName });
+    } catch {
+      return;
+    }
+
+    try {
+      await transitionStage.mutateAsync();
+      navigate({ to: '/welcome/role' });
+    } catch {
+      return;
+    }
   };
 
-  return { onWelcomeUserForm, isPending, error };
+  return { onWelcomeUserForm, isLoading };
 };

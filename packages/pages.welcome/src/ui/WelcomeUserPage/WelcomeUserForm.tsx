@@ -34,7 +34,7 @@ export const WelcomeUserForm = () => {
     formState: { errors },
   } = form;
 
-  const { onWelcomeUserForm, isPending } = useWelcomeUserForm();
+  const { onWelcomeUserForm, isLoading } = useWelcomeUserForm();
 
   const onSubmit = ({ displayName }: WelcomeUserFormData) => {
     onWelcomeUserForm(displayName);
@@ -70,13 +70,9 @@ export const WelcomeUserForm = () => {
           {email}
         </div>
         <div className="mt-auto flex flex-row gap-6 pt-4">
-          {!isPending ? (
-            <Button type="submit" className="w-full" disabled={!displayName?.length}>
-              {t('continue_button')}
-            </Button>
-          ) : (
-            <Button variant="default-spinner" className="w-full" disabled />
-          )}
+          <Button type="submit" className="w-full" disabled={!displayName?.length || isLoading}>
+            {t('continue_button')}
+          </Button>
         </div>
       </form>
     </Form>

@@ -6,6 +6,7 @@ import {
   UserQueryKey,
 } from 'common.api';
 import { getAxiosInstance } from 'common.config';
+import { handleError } from '../utils';
 
 export const useOnboardingTransition = (
   stage: OnboardingStageT,
@@ -30,6 +31,10 @@ export const useOnboardingTransition = (
         throw err;
       }
     },
+    onError: (error) => {
+      handleError(error, 'onboarding');
+    },
+
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: [UserQueryKey.Home] });
     },

@@ -11,7 +11,7 @@ export const WelcomeRolePage = () => {
   const firstButton = useRef<HTMLButtonElement>(null);
   const secondButton = useRef<HTMLButtonElement>(null);
 
-  const { onBackwards, onForwards } = useWelcomeRoleForm();
+  const { onBackwards, onForwards, isLoading } = useWelcomeRoleForm();
 
   const getHeight = (elem: RefObject<HTMLButtonElement | null>) =>
     elem.current ? Number(elem.current.clientHeight) : 0;
@@ -68,6 +68,7 @@ export const WelcomeRolePage = () => {
       <WelcomeButtons
         continueButtonHandler={() => onForwards(activeButton.value)}
         backButtonHandler={onBackwards}
+        isLoading={isLoading}
       />
     </WelcomePageLayout>
   );

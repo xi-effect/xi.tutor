@@ -1,53 +1,52 @@
-import { startTransition, useTransition } from 'react';
-
 import { useNavigate } from '@tanstack/react-router';
-import { handleError, useOnboardingTransition, useUpdateProfile } from 'common.services';
+import { useOnboardingTransition, useUpdateProfile } from 'common.services';
 import { RoleT } from 'common.types';
 
 export const useWelcomeRoleForm = () => {
   const navigate = useNavigate();
-  const [isPending] = useTransition();
 
-  const { transitionStage } = useOnboardingTransition('user-information', 'backwards');
-  const { transitionStage: notificationsStage } = useOnboardingTransition(
+  const { updateProfile } = useUpdateProfile();
+
+  const { transitionStage: transitionStageBack } = useOnboardingTransition(
+    'user-information',
+    'backwards',
+  );
+
+  const { transitionStage: transitionStageForward } = useOnboardingTransition(
     'notifications',
     'forwards',
   );
-  const { updateProfile } = useUpdateProfile();
 
-  const onForwards = (role: RoleT) => {
-    startTransition(async () => {
-      try {
-        await updateProfile.mutateAsync({
-          default_layout: role,
-        });
-      } catch (error) {
-        handleError(error, 'profile');
-        return;
-      }
+  const onForwards = async (role: RoleT) => {
+    try {
+      await updateProfile.mutateAsync({ default_layout: role });
+    } catch {
+      return;
+    }
 
-      try {
-        await notificationsStage.mutateAsync();
-        navigate({
-          to: '/welcome/socials',
-        });
-      } catch (error) {
-        handleError(error, 'onboarding');
-      }
-    });
+    try {
+      await transitionStageForward.mutateAsync();
+      navigate({ to: '/welcome/socials' });
+    } catch {
+      return;
+    }
   };
 
-  const onBackwards = () => {
-    startTransition(async () => {
-      try {
-        await transitionStage.mutateAsync();
-        navigate({
-          to: '/welcome/user',
-        });
-      } catch (error) {
-        handleError(error, 'onboarding');
-      }
-    });
+  const onBackwards = async () => {
+    try {
+      await transitionStageBack.mutateAsync();
+      navigate({ to: '/welcome/user' });
+    } catch {
+      return;
+    }
   };
-  return { onForwards, onBackwards, isPending };
+
+  const isLoading =
+    updateProfile.isPending || transitionStageForward.isPending || transitionStageBack.isPending;
+
+  return {
+    onForwards,
+    onBackwards,
+    isLoading,
+  };
 };
