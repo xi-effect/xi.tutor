@@ -23,7 +23,7 @@
     "@tanstack/react-router": "^1.109.0",
     "@xipkg/button": "3.1.2",
     "@xipkg/form": "^4.2.0",
-    "@xipkg/icons": "2.3.0",
+    "@xipkg/icons": "2.4.0",
     "@xipkg/input": "2.0.7",
     "@xipkg/link": "2.0.5",
     "@xipkg/utils": "1.6.3",
