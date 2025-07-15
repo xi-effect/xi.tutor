@@ -807,6 +807,12 @@ importers:
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.1.0)
+      common.config:
+        specifier: workspace:*
+        version: link:../common.config
+      common.env:
+        specifier: workspace:*
+        version: link:../common.env
       common.services:
         specifier: '*'
         version: link:../common.services
@@ -1844,6 +1850,9 @@ importers:
       common.config:
         specifier: '*'
         version: link:../common.config
+      common.env:
+        specifier: '*'
+        version: link:../common.env
       common.services:
         specifier: '*'
         version: link:../common.services

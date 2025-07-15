@@ -11,6 +11,8 @@ import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { AvatarEditor } from 'features.avatar.editor';
 import { useCurrentUser } from 'common.services';
+import { env } from 'common.env';
+import { getAxiosInstance } from 'common.config';
 
 const readFile = (file: File) =>
   new Promise((resolve) => {
@@ -36,19 +38,16 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
   };
 
   const handleDeleteAvatar = async () => {
-    const response = await fetch(
-      `$https://api.xieffect.ru/api/protected/user-service/users/current/avatar/`,
-      {
-        method: 'DELETE',
-        cache: 'no-cache',
-      },
-    );
+    const axiosInstance = await getAxiosInstance();
+    const response = await axiosInstance({
+      method: 'DELETE',
+      url: `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/avatar/`,
+    });
 
     if (response.status === 204) {
       toast('Аватарка удалена. Скоро она исчезнет с сайта');
     } else {
-      console.error(`Ошибка HTTP: ${response.status}`);
-      toast(`Ошибка HTTP: ${response.status}`);
+      toast('Ошибка при удалении аватарки');
     }
   };
 
