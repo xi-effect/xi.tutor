@@ -15,7 +15,7 @@
     "@xipkg/button": "3.1.2",
     "@xipkg/fileuploader": "^2.0.12",
     "@xipkg/form": "^4.2.0",
-    "@xipkg/icons": "2.3.0",
+    "@xipkg/icons": "2.4.0",
     "@xipkg/input": "2.0.7",
     "@xipkg/utils": "1.8.0",
     "common.auth": "*",

@@ -799,8 +799,8 @@ importers:
         specifier: 3.1.8
         version: 3.1.8(@types/react@19.1.8)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.3.0
-        version: 2.3.0(react@19.1.0)
+        specifier: 2.4.0
+        version: 2.4.0(react@19.1.0)
       '@xipkg/slider':
         specifier: 2.0.12
         version: 2.0.12(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
@@ -1167,8 +1167,8 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: ^2.0.14
-        version: 2.3.0(react@19.1.0)
+        specifier: ^2.4.0
+        version: 2.4.0(react@19.1.0)
       '@xipkg/slider':
         specifier: 2.0.12
         version: 2.0.12(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
@@ -1178,6 +1178,9 @@ importers:
       common.env:
         specifier: '*'
         version: link:../common.env
+      common.services:
+        specifier: '*'
+        version: link:../common.services
       common.ui:
         specifier: '*'
         version: link:../common.ui
@@ -1258,8 +1261,8 @@ importers:
         specifier: 2.1.0
         version: 2.1.0(@types/react@19.1.8)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.3.0
-        version: 2.3.0(react@19.1.0)
+        specifier: 2.4.0
+        version: 2.4.0(react@19.1.0)
       '@xipkg/scrollarea':
         specifier: 2.2.0
         version: 2.2.0(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
@@ -1379,8 +1382,8 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.3.0
-        version: 2.3.0(react@19.1.0)
+        specifier: 2.4.0
+        version: 2.4.0(react@19.1.0)
       '@xipkg/modal':
         specifier: 4.1.0
         version: 4.1.0(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
@@ -1497,8 +1500,8 @@ importers:
         specifier: ^2.0.12
         version: 2.0.12(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.3.0
-        version: 2.3.0(react@19.1.0)
+        specifier: 2.4.0
+        version: 2.4.0(react@19.1.0)
       '@xipkg/input':
         specifier: 2.2.9
         version: 2.2.9(react@19.1.0)
@@ -1606,8 +1609,8 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.3.0
-        version: 2.3.0(react@19.1.0)
+        specifier: 2.4.0
+        version: 2.4.0(react@19.1.0)
       '@xipkg/link':
         specifier: 2.0.12
         version: 2.0.12(react@19.1.0)
@@ -1703,8 +1706,8 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.3.0
-        version: 2.3.0(react@19.1.0)
+        specifier: 2.4.0
+        version: 2.4.0(react@19.1.0)
       '@xipkg/link':
         specifier: 2.0.12
         version: 2.0.12(react@19.1.0)
@@ -1927,8 +1930,8 @@ importers:
         specifier: 4.2.0
         version: 4.2.0(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.3.0
-        version: 2.3.0(react@19.1.0)
+        specifier: 2.4.0
+        version: 2.4.0(react@19.1.0)
       '@xipkg/input':
         specifier: 2.2.9
         version: 2.2.9(react@19.1.0)
@@ -2024,8 +2027,8 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.3.0
-        version: 2.3.0(react@19.1.0)
+        specifier: 2.4.0
+        version: 2.4.0(react@19.1.0)
       '@xipkg/input':
         specifier: 2.2.9
         version: 2.2.9(react@19.1.0)
@@ -2194,8 +2197,8 @@ importers:
         specifier: 3.1.2
         version: 3.1.2(@types/react@19.1.8)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.3.0
-        version: 2.3.0(react@19.1.0)
+        specifier: 2.4.0
+        version: 2.4.0(react@19.1.0)
       '@xipkg/scrollarea':
         specifier: 2.2.0
         version: 2.2.0(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
@@ -2400,8 +2403,8 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.3.0
-        version: 2.3.0(react@19.1.0)
+        specifier: 2.4.0
+        version: 2.4.0(react@19.1.0)
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.1.0)
@@ -2521,8 +2524,8 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.3.0
-        version: 2.3.0(react@19.1.0)
+        specifier: 2.4.0
+        version: 2.4.0(react@19.1.0)
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.1.0)
@@ -2630,8 +2633,8 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.3.0
-        version: 2.3.0(react@19.1.0)
+        specifier: 2.4.0
+        version: 2.4.0(react@19.1.0)
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.1.0)
@@ -2733,8 +2736,8 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.3.0
-        version: 2.3.0(react@19.1.0)
+        specifier: 2.4.0
+        version: 2.4.0(react@19.1.0)
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.1.0)
@@ -2833,8 +2836,8 @@ importers:
         specifier: ^4.2.0
         version: 4.2.0(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
-        specifier: 2.3.0
-        version: 2.3.0(react@19.1.0)
+        specifier: 2.4.0
+        version: 2.4.0(react@19.1.0)
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.1.0)
@@ -7532,7 +7535,7 @@ packages:
       react: ^19
     dependencies:
       '@radix-ui/react-slot': 1.2.3(@types/react@19.1.8)(react@19.1.0)
-      '@xipkg/icons': 2.3.0(react@19.1.0)
+      '@xipkg/icons': 2.4.0(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
       class-variance-authority: 0.7.1
       react: 19.1.0
@@ -7573,7 +7576,7 @@ packages:
     dependencies:
       '@radix-ui/react-slot': 1.2.3(@types/react@19.1.8)(react@19.1.0)
       '@xipkg/button': 3.1.8(@types/react@19.1.8)(react@19.1.0)
-      '@xipkg/icons': 2.3.0(react@19.1.0)
+      '@xipkg/icons': 2.4.0(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
       class-variance-authority: 0.7.1
       react: 19.1.0
@@ -7641,7 +7644,7 @@ packages:
     peerDependencies:
       react: ^19
     dependencies:
-      '@xipkg/icons': 2.3.0(react@19.1.0)
+      '@xipkg/icons': 2.4.0(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
       react: 19.1.0
     dev: false
@@ -7651,7 +7654,7 @@ packages:
     peerDependencies:
       react: ^19
     dependencies:
-      '@xipkg/icons': 2.3.0(react@19.1.0)
+      '@xipkg/icons': 2.4.0(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
       class-variance-authority: 0.7.1
       react: 19.1.0
@@ -7678,6 +7681,17 @@ packages:
 
   /@xipkg/icons@2.3.0(react@19.1.0):
     resolution: {integrity: sha512-Szw2PpMM7BLeE9oFZM88C4mo48cCX/XaBD89omhMbsHGGwN7bvPBabJ7cCvUO3jGTBWpMDocwwlO0u8JYx3Dng==}
+    peerDependencies:
+      react: ^19
+    dependencies:
+      '@xipkg/utils': 1.8.0(react@19.1.0)
+      class-variance-authority: 0.7.1
+      lucide-react: 0.485.0(react@19.1.0)
+      react: 19.1.0
+    dev: false
+
+  /@xipkg/icons@2.4.0(react@19.1.0):
+    resolution: {integrity: sha512-S6O8CpdN99+saMPbGObbBJuHpntVYcrexyHCVFscarOr92Jr7uZM123Ku+QMZufyJOTXLkz8qk0PoZ+C6guHHA==}
     peerDependencies:
       react: ^19
     dependencies:
@@ -7750,7 +7764,7 @@ packages:
       react: ^19
     dependencies:
       '@radix-ui/react-dialog': 1.1.6(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
-      '@xipkg/icons': 2.3.0(react@19.1.0)
+      '@xipkg/icons': 2.4.0(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
       lucide-react: 0.475.0(react@19.1.0)
       react: 19.1.0
@@ -7796,7 +7810,7 @@ packages:
       react: ^19
     dependencies:
       '@radix-ui/react-select': 2.2.5(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
-      '@xipkg/icons': 2.3.0(react@19.1.0)
+      '@xipkg/icons': 2.4.0(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
       class-variance-authority: 0.7.1
       react: 19.1.0
@@ -7812,7 +7826,7 @@ packages:
       react: ^19
     dependencies:
       '@radix-ui/react-dialog': 1.1.6(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
-      '@xipkg/icons': 2.3.0(react@19.1.0)
+      '@xipkg/icons': 2.4.0(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
       react: 19.1.0
     transitivePeerDependencies:
@@ -7827,7 +7841,7 @@ packages:
       react: ^19
     dependencies:
       '@radix-ui/react-dialog': 1.1.14(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
-      '@xipkg/icons': 2.3.0(react@19.1.0)
+      '@xipkg/icons': 2.4.0(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)
       class-variance-authority: 0.7.1
       react: 19.1.0
@@ -7843,7 +7857,7 @@ packages:
       react: ^19
     dependencies:
       '@xipkg/button': 3.1.8(@types/react@19.1.8)(react@19.1.0)
-      '@xipkg/icons': 2.3.0(react@19.1.0)
+      '@xipkg/icons': 2.4.0(react@19.1.0)
       '@xipkg/sheet': 1.0.6(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/tooltip': 2.1.0(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/utils': 1.8.0(react@19.1.0)

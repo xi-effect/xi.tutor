@@ -6,6 +6,7 @@ import { useTldrawStore } from '../../../store';
 import { TldrawZoomPanel } from './TldrawZoomPanel';
 import { JSX } from 'react/jsx-runtime';
 import { useYjsStore } from '../../../hooks/useYjsStore';
+import { CollaboratorCursor } from './CollaboratorCursor';
 import { LoadingScreen } from 'common.ui';
 
 export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
@@ -29,22 +30,13 @@ export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
         <div className="absolute inset-0">
           <Tldraw
             onMount={(editor) => {
-              // console.log('[TldrawCanvas] Tldraw mounted');
-              // console.log('[TldrawCanvas] Editor store:', editor.store);
-              // console.log('[TldrawCanvas] Props store:', props.store);
-              // console.log('[TldrawCanvas] Stores are same:', editor.store === props.store);
-
-              // editor.store.listen(
-              //   (update) => {
-              //     console.log('update', update);
-              //   },
-              //   { scope: 'document', source: 'user' },
-              // );
-
               editor.updateInstanceState({ isGridMode: true });
             }}
             store={store}
             hideUi
+            components={{
+              CollaboratorCursor: CollaboratorCursor,
+            }}
             {...props}
           >
             <Navbar />

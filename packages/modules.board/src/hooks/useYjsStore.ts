@@ -22,6 +22,14 @@ import { YKeyValue } from 'y-utility/y-keyvalue';
 import { HocuspocusProvider } from '@hocuspocus/provider';
 import * as Y from 'yjs';
 import { toast } from 'sonner';
+import { useCurrentUser } from 'common.services';
+
+// Функция для генерации цвета на основе ID пользователя
+function generateUserColor(userId: string): string {
+  const hash = Array.from(userId).reduce((h, c) => c.charCodeAt(0) + ((h << 5) - h), 0);
+  const hue = Math.abs(hash) % 360;
+  return `hsl(${hue}, 70%, 60%)`;
+}
 
 export function useYjsStore({
   roomId = 'test/slate-yjs-demo',
@@ -34,6 +42,7 @@ export function useYjsStore({
   shapeUtils: TLAnyShapeUtilConstructor[];
 }>) {
   const [_connected, setConnected] = useState(false);
+  const { data: currentUser } = useCurrentUser();
 
   const [store] = useState(() => {
     const store = createTLStore({
@@ -158,7 +167,16 @@ export function useYjsStore({
       if (!room.awareness) return;
 
       const yClientId = room.awareness.clientID.toString();
-      setUserPreferences({ id: yClientId });
+
+      // Используем display_name из текущего пользователя или fallback
+      const userName =
+        currentUser?.display_name || currentUser?.username || defaultUserPreferences.name;
+      const userColor = generateUserColor(currentUser?.id?.toString() || yClientId);
+      setUserPreferences({
+        id: yClientId,
+        name: userName,
+        color: userColor,
+      });
 
       const userPreferences = computed<{
         id: string;
@@ -168,8 +186,8 @@ export function useYjsStore({
         const user = getUserPreferences();
         return {
           id: user.id,
-          color: user.color ?? defaultUserPreferences.color,
-          name: user.name ?? defaultUserPreferences.name,
+          color: user.color ?? userColor,
+          name: user.name ?? userName,
         };
       });
 
@@ -345,7 +363,7 @@ export function useYjsStore({
       unsubs.forEach((fn) => fn());
       unsubs.length = 0;
     };
-  }, [room, yDoc, store, yStore, meta]);
+  }, [room, yDoc, store, yStore, meta, currentUser]);
 
   return storeWithStatus;
 }
