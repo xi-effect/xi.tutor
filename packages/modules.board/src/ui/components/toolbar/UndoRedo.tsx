@@ -1,10 +1,16 @@
 import { Undo, Redo } from '@xipkg/icons';
-import { useUndoRedo } from '../../../hooks/useUndoRedo';
-// import { useUndoRedo } from '../../../features';
 
-export const UndoRedo = () => {
-  const { undo, redo, canUndo, canRedo } = useUndoRedo();
-
+export const UndoRedo = ({
+  undo,
+  redo,
+  canUndo,
+  canRedo,
+}: {
+  undo: () => void;
+  redo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+}) => {
   return (
     <div className="pointer-events-auto flex items-center justify-center gap-1">
       <button

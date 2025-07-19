@@ -9,6 +9,7 @@ export const CollaboratorCursor: React.FC<TLCursorProps> = ({ point, color, name
     <div
       style={{
         position: 'absolute',
+        marginLeft: 12,
         left: point.x,
         top: point.y,
         pointerEvents: 'none',

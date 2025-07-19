@@ -17,7 +17,7 @@ export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
       selectElement(null);
     }
   });
-  const { store, status } = useYjsStore({
+  const { store, status, undo, redo, canUndo, canRedo } = useYjsStore({
     hostUrl: 'wss://hocus.xieffect.ru',
     roomId: 'test/demo-room',
   });
@@ -39,7 +39,12 @@ export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
             }}
             {...props}
           >
-            <Navbar />
+            <Navbar
+              undo={undo ?? (() => {})}
+              redo={redo ?? (() => {})}
+              canUndo={canUndo ?? false}
+              canRedo={canRedo ?? false}
+            />
             <SelectedElementToolbar />
             <TldrawZoomPanel />
           </Tldraw>
