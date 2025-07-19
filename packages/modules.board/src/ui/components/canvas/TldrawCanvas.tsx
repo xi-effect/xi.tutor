@@ -1,7 +1,7 @@
 import { Tldraw, TldrawProps } from 'tldraw';
 import 'tldraw/tldraw.css';
 import { useKeyPress } from 'common.utils';
-import { SelectedElementToolbar, Navbar } from '../toolbar';
+import { Navbar, SelectionMenu } from '../toolbar';
 import { useTldrawStore } from '../../../store';
 import { TldrawZoomPanel } from './TldrawZoomPanel';
 import { JSX } from 'react/jsx-runtime';
@@ -36,6 +36,7 @@ export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
             hideUi
             components={{
               CollaboratorCursor: CollaboratorCursor,
+              InFrontOfTheCanvas: SelectionMenu,
             }}
             {...props}
           >
@@ -45,7 +46,6 @@ export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
               canUndo={canUndo ?? false}
               canRedo={canRedo ?? false}
             />
-            <SelectedElementToolbar />
             <TldrawZoomPanel />
           </Tldraw>
         </div>
