@@ -2296,6 +2296,9 @@ importers:
 
   packages/pages.materials:
     dependencies:
+      '@tanstack/react-query':
+        specifier: 5.73.3
+        version: 5.73.3(react@19.1.0)
       '@tanstack/react-virtual':
         specifier: 3.13.9
         version: 3.13.9(react-dom@19.1.0)(react@19.1.0)
@@ -2320,6 +2323,9 @@ importers:
       common.api:
         specifier: '*'
         version: link:../common.api
+      common.config:
+        specifier: '*'
+        version: link:../common.config
       common.services:
         specifier: '*'
         version: link:../common.services
@@ -7624,7 +7630,7 @@ packages:
       eslint-config-airbnb: 19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2)(eslint-plugin-react-hooks@5.1.0)(eslint-plugin-react@7.37.2)(eslint@9.31.0)
       eslint-config-next: 15.1.2(eslint@9.31.0)(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.31.0)
-      eslint-config-turbo: 2.5.4(eslint@9.31.0)(turbo@2.5.4)
+      eslint-config-turbo: 2.5.5(eslint@9.31.0)(turbo@2.5.4)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.36.0)(eslint-import-resolver-typescript@3.10.1)(eslint@9.31.0)
       eslint-plugin-react: 7.37.2(eslint@9.31.0)
       eslint-plugin-react-hooks: 5.1.0(eslint@9.31.0)
@@ -9044,14 +9050,14 @@ packages:
       eslint: 9.31.0
     dev: true
 
-  /eslint-config-turbo@2.5.4(eslint@9.31.0)(turbo@2.5.4):
-    resolution: {integrity: sha512-OpjpDLXIaus0N/Y+pMj17K430xjpd6WTo0xPUESqYZ9BkMngv2n0ZdjktgJTbJVnDmK7gHrXgJAljtdIMcYBIg==}
+  /eslint-config-turbo@2.5.5(eslint@9.31.0)(turbo@2.5.4):
+    resolution: {integrity: sha512-23lKrCr66HQR62aa94n2dBGUUFz0GzM6N1KwmcREZHxomZ5Ik2rDm00wAz95lOEkhzSt6IaxW00Uz0az/Fcq5Q==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
     dependencies:
       eslint: 9.31.0
-      eslint-plugin-turbo: 2.5.4(eslint@9.31.0)(turbo@2.5.4)
+      eslint-plugin-turbo: 2.5.5(eslint@9.31.0)(turbo@2.5.4)
       turbo: 2.5.4
     dev: true
 
@@ -9269,6 +9275,17 @@ packages:
 
   /eslint-plugin-turbo@2.5.4(eslint@9.31.0)(turbo@2.5.4):
     resolution: {integrity: sha512-IZsW61DFj5mLMMaCJxhh1VE4HvNhfdnHnAaXajgne+LUzdyHk2NvYT0ECSa/1SssArcqgTvV74MrLL68hWLLFw==}
+    peerDependencies:
+      eslint: '>6.6.0'
+      turbo: '>2.0.0'
+    dependencies:
+      dotenv: 16.0.3
+      eslint: 9.31.0
+      turbo: 2.5.4
+    dev: true
+
+  /eslint-plugin-turbo@2.5.5(eslint@9.31.0)(turbo@2.5.4):
+    resolution: {integrity: sha512-IlN65X6W7rgK88u5xl1xC+7FIGKA7eyaca0yxZQ9CBNV6keAaqtjZQLw8ZfXdv7T+MzTLYkYOeOHAv8yCRUx4Q==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
