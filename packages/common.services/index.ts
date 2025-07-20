@@ -10,6 +10,6 @@ export {
 } from './src/user';
 
 export { useInvitationsList, useAddInvitation, useDeleteInvitation } from './src/invitations';
-export { useFetchMaterials } from './src/materials';
+export { useFetchMaterials, useDeleteMaterials } from './src/materials';
 export { useAddMaterials, type MaterialsDataT } from './src/materials';
 export { handleError, showSuccess, type ErrorType } from './src/utils/errorHandler';

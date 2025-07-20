@@ -5,6 +5,7 @@ import { MaterialsKindT } from './types';
 enum MaterialsQueryKey {
   Materials = 'Materials',
   AddMaterials = 'AddMaterials',
+  DeleteMaterials = 'DeleteMaterials',
 }
 
 const materialsApiConfig = {
@@ -27,6 +28,12 @@ const materialsApiConfig = {
   [MaterialsQueryKey.AddMaterials]: {
     getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/materials/`,
     method: HttpMethod.POST,
+  },
+
+  [MaterialsQueryKey.DeleteMaterials]: {
+    getUrl: (id: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/materials/${id}/`,
+    method: HttpMethod.DELETE,
   },
 };
 
