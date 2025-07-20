@@ -51,9 +51,6 @@ export const useImageProcessing = ({
         return onBase64Return(resizedImageBase, form);
       }
 
-      const formData = new FormData();
-      formData.append('avatar', resizedImage);
-
       console.log(
         `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/avatar/`,
       );
@@ -62,7 +59,7 @@ export const useImageProcessing = ({
       const response = await axiosInstance({
         method: 'PUT',
         url: `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/avatar/`,
-        data: formData,
+        data: form,
         headers: {
           'Content-Type': 'multipart/form-data',
         },
