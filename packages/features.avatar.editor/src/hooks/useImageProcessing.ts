@@ -51,10 +51,6 @@ export const useImageProcessing = ({
         return onBase64Return(resizedImageBase, form);
       }
 
-      console.log(
-        `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/avatar/`,
-      );
-
       const axiosInstance = await getAxiosInstance();
       const response = await axiosInstance({
         method: 'PUT',
