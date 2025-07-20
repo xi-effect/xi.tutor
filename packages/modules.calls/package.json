@@ -11,7 +11,7 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "@tanstack/react-router": "1.120.11",
+    "@tanstack/react-router": "1.128.8",
     "common.services": "*",
     "common.sockets": "*",
     "common.utils": "*",

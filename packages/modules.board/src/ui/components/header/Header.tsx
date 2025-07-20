@@ -1,44 +1,58 @@
 // import { Minimize, Maximize } from '@xipkg/icons';
 // import { useFullScreen } from 'pkg.utils.client';
 import { Button } from '@xipkg/button';
-// import { useParams } from 'next/navigation';
-// import { useMainSt } from 'pkg.stores';
+
 import { SettingsDropdown } from './SettingsDropdown';
+import { useFullScreen } from 'common.utils';
+import { useNavigate, useParams } from '@tanstack/react-router';
+import { useGetMaterial } from 'common.services';
+import { ArrowLeft, Maximize, Minimize } from '@xipkg/icons';
+import { Skeleton } from 'common.ui';
+import { cn } from '@xipkg/utils';
 
 export const Header = () => {
-  // const { isFullScreen, toggleFullScreen } = useFullScreen('whiteboard-container');
+  const { isFullScreen, toggleFullScreen } = useFullScreen('whiteboard-container');
+  const navigate = useNavigate();
 
-  // const params = useParams<{ 'community-id': string; 'channel-id': string }>();
+  const params = useParams({ strict: false });
+  const { data, isLoading } = useGetMaterial(params.boardId);
 
-  // const channels = useMainSt((state) => state.channels);
-  // const categories = useMainSt((state) => state.categories);
-  // const currentBoard = channels?.filter((item) => Number(params['channel-id']) === item.id);
-
-  // if (!currentBoard || currentBoard.length === 0) return null;
-
-  // const currentBoardsCategory =
-  //   typeof currentBoard[0].categoryId === 'number'
-  //     ? categories?.filter((item) => currentBoard[0].categoryId === item.id)
-  //     : null;
+  const handleBack = () => {
+    if (isFullScreen) toggleFullScreen();
+    navigate({ to: '/materials' });
+  };
 
   return (
-    <div className="bg-gray-0 text-xl-base absolute z-30 w-full px-4 py-4">
+    <div
+      className={cn(
+        'bg-gray-0 text-xl-base absolute z-50 w-full px-4 pb-4',
+        isFullScreen && 'pt-4',
+      )}
+    >
       <div className="flex items-center justify-between">
-        {/* <div className="flex gap-2">
-          <h1 className="text-xl-base">{currentBoard[0].name}</h1>
-          {currentBoardsCategory && (
-            <p className="text-gray-60 text-m-base pt-2">{currentBoardsCategory[0].name}</p>
+        <div className="flex items-center justify-center gap-2">
+          <Button
+            variant="ghost"
+            onClick={handleBack}
+            type="button"
+            className="h-[40px] w-[40px] p-2"
+          >
+            <ArrowLeft size="s" />
+          </Button>
+          {isLoading ? (
+            <Skeleton variant="text" className="h-6 w-24" />
+          ) : (
+            <h1 className="text-xl-base">{data.name}</h1>
           )}
-        </div> */}
+        </div>
         <div className="flex items-center gap-1">
           <Button
             variant="ghost"
-            // onClick={toggleFullScreen}
-            size="s"
+            onClick={toggleFullScreen}
             type="button"
-            className="h-auto p-2"
+            className="h-[40px] w-[40px] p-2"
           >
-            {/* {isFullScreen ? <Minimize size="s" /> : <Maximize size="s" />} */}
+            {isFullScreen ? <Minimize size="s" /> : <Maximize size="s" />}
           </Button>
           <SettingsDropdown />
         </div>

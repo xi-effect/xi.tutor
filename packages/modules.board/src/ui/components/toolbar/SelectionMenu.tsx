@@ -38,7 +38,7 @@ export const SelectionMenu = track(function SelectionMenu() {
 
   return (
     <div
-      className="border-gray-10 bg-gray-0 absolute z-50 flex gap-2 rounded-xl border p-1 shadow-md"
+      className="border-gray-10 bg-gray-0 absolute z-30 flex gap-2 rounded-xl border p-1 shadow-md"
       style={{
         left: centerX,
         top: topY,

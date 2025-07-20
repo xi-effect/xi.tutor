@@ -5,12 +5,20 @@ import { Navbar, SelectionMenu } from '../toolbar';
 import { useTldrawStore } from '../../../store';
 import { TldrawZoomPanel } from './TldrawZoomPanel';
 import { JSX } from 'react/jsx-runtime';
-import { useYjsStore } from '../../../hooks/useYjsStore';
 import { CollaboratorCursor } from './CollaboratorCursor';
 import { LoadingScreen } from 'common.ui';
+import { useRemoveMark, useYjsStore } from '../../../hooks';
+import { Header } from '../header';
+import { useParams } from '@tanstack/react-router';
+import { useGetMaterial } from 'common.services';
 
 export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
+  useRemoveMark();
+
   const { selectedElementId, selectElement } = useTldrawStore();
+
+  const params = useParams({ strict: false });
+  const { data } = useGetMaterial(params.boardId);
 
   useKeyPress('Backspace', () => {
     if (selectedElementId) {
@@ -19,13 +27,13 @@ export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
   });
   const { store, status, undo, redo, canUndo, canRedo } = useYjsStore({
     hostUrl: 'wss://hocus.xieffect.ru',
-    roomId: 'test/demo-room',
+    roomId: data.ydoc_id,
   });
 
   if (status === 'loading') return <LoadingScreen />;
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <div id="whiteboard-container" className="flex h-full w-full flex-col">
       <div className="relative flex-1 overflow-hidden">
         <div className="absolute inset-0">
           <Tldraw
@@ -40,6 +48,7 @@ export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
             }}
             {...props}
           >
+            <Header />
             <Navbar
               undo={undo ?? (() => {})}
               redo={redo ?? (() => {})}
