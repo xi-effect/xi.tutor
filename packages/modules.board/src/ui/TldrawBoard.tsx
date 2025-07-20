@@ -4,8 +4,8 @@ import { useParams } from '@tanstack/react-router';
 import { LoadingScreen } from 'common.ui';
 
 export const TldrawBoard = () => {
-  const params = useParams({ strict: false });
-  const { data, isLoading } = useGetMaterial(params.boardId);
+  const { boardId = 'empty' } = useParams({ strict: false });
+  const { data, isLoading } = useGetMaterial(boardId);
 
   console.log('data', data);
 

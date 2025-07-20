@@ -14,8 +14,8 @@ export const Header = () => {
   const { isFullScreen, toggleFullScreen } = useFullScreen('whiteboard-container');
   const navigate = useNavigate();
 
-  const params = useParams({ strict: false });
-  const { data, isLoading } = useGetMaterial(params.boardId);
+  const { boardId = 'empty' } = useParams({ strict: false });
+  const { data, isLoading } = useGetMaterial(boardId);
 
   const handleBack = () => {
     if (isFullScreen) toggleFullScreen();

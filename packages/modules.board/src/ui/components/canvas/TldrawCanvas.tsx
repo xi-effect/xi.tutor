@@ -17,8 +17,8 @@ export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
 
   const { selectedElementId, selectElement } = useTldrawStore();
 
-  const params = useParams({ strict: false });
-  const { data } = useGetMaterial(params.boardId);
+  const { boardId = 'empty' } = useParams({ strict: false });
+  const { data } = useGetMaterial(boardId);
 
   useKeyPress('Backspace', () => {
     if (selectedElementId) {
