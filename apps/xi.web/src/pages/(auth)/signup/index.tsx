@@ -8,6 +8,13 @@ const searchSchema = z.object({
 });
 
 export const Route = createFileRoute('/(auth)/signup/')({
+  head: () => ({
+    meta: [
+      {
+        title: 'sovlium | Регистрация',
+      },
+    ],
+  }),
   component: SignUp,
   validateSearch: (search) => searchSchema.parse(search),
 });

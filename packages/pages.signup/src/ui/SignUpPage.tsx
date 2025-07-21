@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Link } from '@xipkg/link';
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
 import {
@@ -18,7 +17,7 @@ import { Eyeoff, Eyeon } from '@xipkg/icons';
 
 import { useFormSchema, type FormData } from '../model';
 import { useSignupForm } from '../hooks';
-import { Logo } from 'common.ui';
+import { LinkTanstack, Logo } from 'common.ui';
 
 export const SignUpPage = () => {
   const { t } = useTranslation('signup');
@@ -138,9 +137,9 @@ export const SignUpPage = () => {
         />
         <div className="flex h-full w-full items-end justify-between">
           <div className="flex h-[48px] items-center">
-            <Link size="l" theme="brand" variant="hover" href={getSigninHref()}>
+            <LinkTanstack size="l" theme="brand" variant="hover" to={getSigninHref()}>
               {t('sign_in')}
-            </Link>
+            </LinkTanstack>
           </div>
           {!isPending ? (
             <Button size="m" variant="default" type="submit" className="w-[214px]">

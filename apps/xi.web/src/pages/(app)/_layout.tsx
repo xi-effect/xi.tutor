@@ -8,13 +8,13 @@ import { useEffect } from 'react';
 export const Route = createFileRoute('/(app)/_layout')({
   head: () => ({
     meta: [
+      {
+        // title: 'sovlium',
+      },
       // {
       //   name: 'description',
       //   content: 'My App is a web application',
       // },
-      {
-        title: 'xi.effect',
-      },
     ],
     // links: [
     //   {
@@ -32,7 +32,6 @@ export const Route = createFileRoute('/(app)/_layout')({
 });
 
 function LayoutComponent() {
-  // const { callId } = useParams({ from: '/(app)/_layout/call/$callId' });
   const router = useRouter();
   const updateStore = useCallStore((state) => state.updateStore);
   const { token = null } = useLivekitToken('1', '2');
