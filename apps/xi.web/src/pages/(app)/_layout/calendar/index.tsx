@@ -9,6 +9,13 @@ const CalendarModule = lazy(() =>
 
 // @ts-ignore
 export const Route = createFileRoute('/(app)/_layout/calendar/')({
+  head: () => ({
+    meta: [
+      {
+        title: 'sovlium | Календарь',
+      },
+    ],
+  }),
   component: CalendarPage,
   beforeLoad: ({ context, location }) => {
     console.log('Calendar', context, location);

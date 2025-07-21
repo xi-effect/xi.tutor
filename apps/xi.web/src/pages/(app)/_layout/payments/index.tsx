@@ -8,6 +8,13 @@ const Payments = () => {
 
 // @ts-ignore
 export const Route = createFileRoute('/(app)/_layout/payments/')({
+  head: () => ({
+    meta: [
+      {
+        title: 'sovlium | Контроль оплат',
+      },
+    ],
+  }),
   component: Payments,
   beforeLoad: ({ context, location }) => {
     console.log('Payments', context, location);
