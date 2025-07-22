@@ -42,12 +42,10 @@ export const Header = ({
   const { logout } = useAuth();
   const search = useSearch({ strict: false });
 
-  // Состояние модалки определяется URL параметром iid (используем его вместо profile)
   const [open, setOpen] = useState(false);
 
   // Синхронизируем состояние модалки с URL
   useEffect(() => {
-    // Используем iid параметр для определения, открыта ли модалка и какая вкладка активна
     const profileParam = search.profile;
 
     const hasProfileParam = !!profileParam;

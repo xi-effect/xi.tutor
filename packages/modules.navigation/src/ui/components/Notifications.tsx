@@ -108,7 +108,7 @@ export const Notifications = () => {
   const location = useLocation();
 
   const handleToSettings = () => {
-    navigate({ to: location.pathname, search: { iid: 'profile', tab: 'notifications' } });
+    navigate({ to: location.pathname, search: { profile: 'notifications' } });
   };
 
   return (
