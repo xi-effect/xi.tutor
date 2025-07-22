@@ -3,15 +3,13 @@ import { Badge } from '@xipkg/badge';
 import { Button } from '@xipkg/button';
 import { ArrowRight } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
-import { useNavigate, useLocation } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 
 export const Overview = () => {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
 
   const handleTabChange = (tab: string) => {
     navigate({
-      to: pathname,
       // @ts-ignore
       search: { tab },
     });
