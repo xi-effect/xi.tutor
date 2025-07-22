@@ -20,6 +20,7 @@ import { useAuth } from 'common.auth';
 import { useMenuStore } from '../../store';
 
 import { SelectRole } from './SelectRole';
+import { Notifications } from './Notifications';
 
 const UserSettings = lazy(() =>
   import('modules.profile').then((module) => ({ default: module.UserSettings })),
@@ -85,7 +86,8 @@ export const Header = ({
       <div className="flex flex-row items-center gap-4 pl-4">
         <Logo />
       </div>
-      <div className="ml-auto">
+      <div className="ml-auto flex flex-row items-center gap-4">
+        <Notifications />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon">
