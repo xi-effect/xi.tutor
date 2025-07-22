@@ -48,13 +48,13 @@ export const Header = ({
   // Синхронизируем состояние модалки с URL
   useEffect(() => {
     // Используем iid параметр для определения, открыта ли модалка и какая вкладка активна
-    const profileParam = search.iid;
+    const profileParam = search.profile;
 
     const hasProfileParam = !!profileParam;
     if (hasProfileParam !== open) {
       setOpen(hasProfileParam);
     }
-  }, [search.iid, open]);
+  }, [search.profile, open]);
 
   const handleToggle = () => {
     toggle();
@@ -67,11 +67,11 @@ export const Header = ({
   };
 
   const handleOpenProfile = () => {
-    // Используем параметр iid для хранения значения "profile:home"
     navigate({
       to: pathname,
-      search: { iid: 'profile:personalInfo' },
+      search: { profile: 'personalInfo' },
     });
+    setOpen(true);
   };
 
   const handleLogout = () => {

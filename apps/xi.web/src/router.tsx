@@ -30,8 +30,7 @@ declare module '@tanstack/react-router' {
   // Расширяем параметры поиска для всех маршрутов
   interface SearchParams {
     redirect?: string;
-    iid?: string;
-    community?: string;
+    profile?: string;
     carouselType?: 'horizontal' | 'vertical';
     tab?: string;
   }

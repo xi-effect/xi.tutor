@@ -3,8 +3,7 @@ import { SignUpPage } from 'pages.signup';
 import { z } from 'zod';
 
 const searchSchema = z.object({
-  iid: z.string().optional(),
-  community: z.string().optional(),
+  profile: z.string().optional(),
 });
 
 export const Route = createFileRoute('/(auth)/signup/')({

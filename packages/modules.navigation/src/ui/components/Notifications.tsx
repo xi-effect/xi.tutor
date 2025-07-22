@@ -10,7 +10,7 @@ import {
 import { ScrollArea } from '@xipkg/scrollarea';
 import { UserProfile } from '@xipkg/userprofile';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
-import { useNavigate } from '@tanstack/react-router';
+import { useLocation, useNavigate } from '@tanstack/react-router';
 
 const rtf = new Intl.RelativeTimeFormat('ru', { numeric: 'auto' });
 
@@ -105,9 +105,10 @@ const notifications = [
 
 export const Notifications = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleToSettings = () => {
-    navigate({ to: '/?iid=profile%3Anotifications' });
+    navigate({ to: location.pathname, search: { iid: 'profile', tab: 'notifications' } });
   };
 
   return (
