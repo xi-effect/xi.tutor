@@ -10,19 +10,22 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "@tanstack/react-router": "^1.128.8",
     "@hocuspocus/provider": "2.15.0",
-    "@tldraw/tldraw": "^3.14.0",
+    "tldraw": "^3.6.1",
+    "@tlsync-yjs/core": "0.2.1",
     "@xipkg/button": "^3.1.8",
     "@xipkg/dropdown": "3.0.12",
-    "@xipkg/icons": "^2.0.14",
+    "@xipkg/icons": "^2.4.0",
     "@xipkg/slider": "2.0.12",
     "@xipkg/tooltip": "^2.1.0",
+    "@xipkg/utils": "^1.8.0",
     "common.env": "*",
     "common.utils": "*",
-    "konva": "^9.3.18",
-    "react-konva": "^19.0.2",
+    "common.ui": "*",
+    "common.services": "*",
+    "yjs": "^13.6.26",
     "y-utility": "0.1.4",
-    "yjs": "13.6.26",
     "zustand": "5.0.3"
   },
   "devDependencies": {

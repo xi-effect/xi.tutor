@@ -1,6 +1,5 @@
 export interface SearchParams {
   redirect?: string;
-  iid?: string;
-  community?: string;
+  profile?: string;
   carouselType?: 'horizontal' | 'vertical';
 }

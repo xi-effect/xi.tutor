@@ -11,7 +11,7 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "@tanstack/react-router": "^1.109.0",
+    "@tanstack/react-router": "^1.128.8",
     "@tanstack/react-query": "5.73.3",
     "axios": "1.8.1"
   },

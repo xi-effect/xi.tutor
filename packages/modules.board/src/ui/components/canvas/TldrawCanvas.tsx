@@ -1,42 +1,60 @@
-import { Tldraw } from '@tldraw/tldraw';
-import '@tldraw/tldraw/tldraw.css';
+import { Tldraw, TldrawProps } from 'tldraw';
+import 'tldraw/tldraw.css';
 import { useKeyPress } from 'common.utils';
-import { SelectedElementToolbar, Navbar } from '../toolbar';
+import { Navbar, SelectionMenu } from '../toolbar';
 import { useTldrawStore } from '../../../store';
-// import { useCursor } from '../../../hooks';
-// import { useWhiteboardCollaborative } from '../../../hooks/useWhiteboardCollaborative';
-// import { useUndoRedoShortcuts } from '../../../features';
-import { useState } from 'react';
 import { TldrawZoomPanel } from './TldrawZoomPanel';
+import { JSX } from 'react/jsx-runtime';
+import { CollaboratorCursor } from './CollaboratorCursor';
+import { LoadingScreen } from 'common.ui';
+import { useRemoveMark, useYjsStore } from '../../../hooks';
+import { Header } from '../header';
+import { useParams } from '@tanstack/react-router';
+import { useGetMaterial } from 'common.services';
 
-export const TldrawCanvas = () => {
-  const [showPerformanceMonitor, setShowPerformanceMonitor] = useState(false);
+export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
+  useRemoveMark();
+
   const { selectedElementId, selectElement } = useTldrawStore();
 
-  // const { cursor, mouseHandlers } = useCursor('select'); // Используем select как дефолтный курсор
-
-  // useWhiteboardCollaborative({ roomId: 'test/slate-yjs-demo' });
+  const { boardId = 'empty' } = useParams({ strict: false });
+  const { data } = useGetMaterial(boardId);
 
   useKeyPress('Backspace', () => {
     if (selectedElementId) {
       selectElement(null);
     }
   });
-
-  // Горячие клавиши
-  useKeyPress('F12', () => {
-    setShowPerformanceMonitor(!showPerformanceMonitor);
+  const { store, status, undo, redo, canUndo, canRedo } = useYjsStore({
+    hostUrl: 'wss://hocus.xieffect.ru',
+    roomId: data.ydoc_id,
   });
 
-  // useUndoRedoShortcuts();
+  if (status === 'loading') return <LoadingScreen />;
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <div id="whiteboard-container" className="flex h-full w-full flex-col">
       <div className="relative flex-1 overflow-hidden">
         <div className="absolute inset-0">
-          <Tldraw hideUi>
-            <Navbar />
-            <SelectedElementToolbar />
+          <Tldraw
+            onMount={(editor) => {
+              editor.updateInstanceState({ isGridMode: true });
+            }}
+            store={store}
+            hideUi
+            components={{
+              CollaboratorCursor: CollaboratorCursor,
+              InFrontOfTheCanvas: SelectionMenu,
+            }}
+            {...props}
+          >
+            <Header />
+            <Navbar
+              undo={undo ?? (() => {})}
+              redo={redo ?? (() => {})}
+              canUndo={canUndo ?? false}
+              canRedo={canRedo ?? false}
+            />
             <TldrawZoomPanel />
           </Tldraw>
         </div>

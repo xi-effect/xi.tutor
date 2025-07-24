@@ -8,6 +8,13 @@ const Main = () => {
 
 // @ts-ignore
 export const Route = createFileRoute('/(app)/_layout/')({
+  head: () => ({
+    meta: [
+      {
+        title: 'sovlium | Главная',
+      },
+    ],
+  }),
   beforeLoad: ({ context, location }) => {
     console.log('IndexRoute', context, location);
   },

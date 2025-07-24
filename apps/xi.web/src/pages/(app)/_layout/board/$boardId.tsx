@@ -15,6 +15,13 @@ const paramsSchema = z.object({
 
 // @ts-ignore
 export const Route = createFileRoute('/(app)/_layout/board/$boardId')({
+  head: () => ({
+    meta: [
+      {
+        title: 'sovlium | Доска',
+      },
+    ],
+  }),
   component: BoardPage,
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
   beforeLoad: ({ context, location }) => {

@@ -24,6 +24,16 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
       else return false;
     }
 
+    if (pathname.includes('board')) {
+      if (url === '/materials') return true;
+      else return false;
+    }
+
+    if (pathname.includes('call')) {
+      if (url === 'classrooms') return true;
+      else return false;
+    }
+
     return pathname.includes(url);
   };
 

@@ -6,7 +6,7 @@ export const Notes = () => {
   const parentRef = useRef<HTMLDivElement>(null);
 
   const { colCount, rowHeight, GAP } = useResponsiveGrid(parentRef);
-  const items = useInfiniteQuery(parentRef, 'note');
+  const { items } = useInfiniteQuery(parentRef, 'note');
   const rowVirtualizer = useVirtualGrid(parentRef, items, colCount, rowHeight);
 
   return (
