@@ -802,7 +802,7 @@ importers:
   packages/features.avatar.editor:
     dependencies:
       '@tanstack/react-router':
-        specifier: ^1.128.8
+        specifier: ^1.109.0
         version: 1.128.8(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/button':
         specifier: 3.1.8
@@ -6587,7 +6587,7 @@ packages:
     resolution: {integrity: sha512-bPrUKJIo7cIBSF6FwKfZyYAl+FjoMU/HswWaYXr+rEdOw1EA86M3euuK33rfHNlVcxHTmZJk8AQ5p7ZYP6DogQ==}
     engines: {node: '>=12'}
     dependencies:
-      '@tanstack/router-core': 1.127.3
+      '@tanstack/router-core': 1.128.8
       '@tanstack/router-utils': 1.121.21
       '@tanstack/virtual-file-routes': 1.121.21
       prettier: 3.6.2
