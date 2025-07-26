@@ -3,7 +3,7 @@ export interface ICalendarEvent {
   title: string;
   start?: Date;
   end: Date;
-  type?: 'task' | 'vacation' | 'cancelled';
+  type?: 'lesson' | 'rest' | 'cancelled';
 }
 
 export type CalendarMode = 'day' | 'week' | 'month' | 'year';
