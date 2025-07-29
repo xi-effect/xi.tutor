@@ -11,6 +11,7 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "@tanstack/react-query": "5.73.3",
     "@tanstack/react-virtual": "3.13.9",
     "@xipkg/button": "3.1.8",
     "@xipkg/dropdown": "3.0.12",
@@ -19,6 +20,7 @@
     "@xipkg/tabs": "^2.1.0",
     "@xipkg/userprofile": "4.0.12",
     "common.api": "*",
+    "common.config": "*",
     "common.services": "*",
     "dayjs": "^1.11.13",
     "features.materials.add": "*"

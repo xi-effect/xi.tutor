@@ -39,9 +39,7 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
   const search = useSearch({ strict: false });
 
   // Извлекаем информацию о профиле из параметра iid
-  const profileParam = search.iid || '';
-  const isProfileOpen = profileParam.startsWith('profile:');
-  const profileType = isProfileOpen ? profileParam.split(':')[1] : '';
+  const profileType = search.profile || '';
 
   const isActive = profileType === item.query;
 
@@ -69,7 +67,7 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
     onMenuItemChange(index, item.query);
     navigate({
       to: pathname,
-      search: { iid: `profile:${item.query}` },
+      search: { profile: item.query },
     });
   };
 

@@ -4,6 +4,13 @@ import { NewPasswordPage } from 'pages.reset-password';
 
 // @ts-ignore
 export const Route = createFileRoute('/(auth)/reset-password/$resetToken')({
+  head: () => ({
+    meta: [
+      {
+        title: 'sovlium | Новый пароль',
+      },
+    ],
+  }),
   component: NewPassword,
 
   beforeLoad: ({ context, location }) => {

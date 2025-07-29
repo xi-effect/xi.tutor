@@ -4,7 +4,7 @@ export const Route = createFileRoute('/(app)/welcome/_layout')({
   head: () => ({
     meta: [
       {
-        title: 'xi.effect',
+        title: 'sovlium | Добро пожаловать',
       },
     ],
   }),

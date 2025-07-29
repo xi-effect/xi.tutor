@@ -1,42 +1,57 @@
-import { useEffect, useState, RefObject } from 'react';
-import { useFetchMaterials } from 'common.services';
+import { useInfiniteQuery as useTanStackInfiniteQuery } from '@tanstack/react-query';
+import { RefObject } from 'react';
 import { MaterialPropsT } from '../types';
 import { MaterialsKindT } from 'common.api';
+import { getAxiosInstance } from 'common.config';
+import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
+import React from 'react';
 
 export const useInfiniteQuery = (
   parentRef: RefObject<HTMLDivElement | null>,
   kind: MaterialsKindT,
 ) => {
-  const [items, setItems] = useState<MaterialPropsT[]>([]);
-  const [lastOpenedBefore, setLastOpenedBefore] = useState<string | undefined>(undefined);
-  const [fetchMore, setFetchMore] = useState(true);
-  const [isFirstLoad, setIsFirstLoad] = useState(true);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
+    useTanStackInfiniteQuery({
+      queryKey: [MaterialsQueryKey.Materials, kind],
+      queryFn: async ({ pageParam }) => {
+        const axiosInst = await getAxiosInstance();
+        const url = materialsApiConfig[MaterialsQueryKey.Materials].getUrl(40, kind, pageParam);
 
-  const { data, isLoading } = useFetchMaterials(30, kind, lastOpenedBefore);
+        const response = await axiosInst({
+          method: materialsApiConfig[MaterialsQueryKey.Materials].method,
+          url,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
-  useEffect(() => {
-    if (!data || !fetchMore || isLoading) return;
+        return response.data;
+      },
+      initialPageParam: undefined as string | undefined,
+      getNextPageParam: (lastPage) => {
+        if (!lastPage || lastPage.length === 0) {
+          return undefined;
+        }
 
-    if (data.length === 0) {
-      setFetchMore(false);
-      return;
-    }
+        const nextParam = lastPage[lastPage.length - 1].last_opened_at;
+        return nextParam;
+      },
+      staleTime: 5 * 60 * 1000, // 5 минут
+      gcTime: 10 * 60 * 1000, // 10 минут
+    });
 
-    setItems((prev) => (isFirstLoad ? data : [...prev, ...data]));
-
-    setLastOpenedBefore(data[data.length - 1].last_opened_at);
-    setFetchMore(false);
-    setIsFirstLoad(false);
-  }, [data, fetchMore, isFirstLoad, isLoading]);
-
-  useEffect(() => {
+  // Обработчик скролла для автоматической загрузки следующей страницы
+  React.useEffect(() => {
     const handleScroll = () => {
-      if (!parentRef.current || isLoading || fetchMore) return;
+      if (!parentRef.current || isFetchingNextPage || !hasNextPage) {
+        return;
+      }
 
       const { scrollTop, scrollHeight, clientHeight } = parentRef.current;
+      const distanceToBottom = scrollHeight - scrollTop - clientHeight;
 
-      if (scrollHeight - scrollTop - clientHeight < 100) {
-        setFetchMore(true);
+      if (distanceToBottom < 100) {
+        fetchNextPage();
       }
     };
 
@@ -45,7 +60,24 @@ export const useInfiniteQuery = (
 
     el.addEventListener('scroll', handleScroll);
     return () => el.removeEventListener('scroll', handleScroll);
-  }, [parentRef, isLoading, fetchMore]);
+  }, [parentRef, fetchNextPage, isFetchingNextPage, hasNextPage]);
 
-  return items;
+  // Объединяем все страницы в один массив
+  const items: MaterialPropsT[] = React.useMemo(() => {
+    if (!data?.pages) {
+      return [];
+    }
+
+    const flattened = data.pages.flat();
+    return flattened;
+  }, [data?.pages]);
+
+  return {
+    items,
+    isLoading,
+    isError,
+    error,
+    isFetchingNextPage,
+    hasNextPage,
+  };
 };

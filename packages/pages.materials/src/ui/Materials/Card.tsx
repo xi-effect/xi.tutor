@@ -12,9 +12,20 @@ import {
 
 import { MaterialPropsT } from '../../types';
 import { formatToShortDate } from '../../utils';
+import { useDeleteMaterials } from 'common.services';
 
-export const Card: React.FC<MaterialPropsT> = ({ id, updated_at, name }) => {
+export const Card: React.FC<MaterialPropsT> = ({ id, updated_at, name, kind }) => {
   const navigate = useNavigate();
+  const { deleteMaterials } = useDeleteMaterials();
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Предотвращаем переход на страницу материала
+    deleteMaterials.mutate({
+      id: id.toString(),
+      kind: kind as 'note' | 'board',
+      name,
+    });
+  };
 
   return (
     <div
@@ -47,7 +58,7 @@ export const Card: React.FC<MaterialPropsT> = ({ id, updated_at, name }) => {
             className="border-gray-10 bg-gray-0 border p-1"
           >
             <DropdownMenuItem>Копировать</DropdownMenuItem>
-            <DropdownMenuItem>Удалить</DropdownMenuItem>
+            <DropdownMenuItem onClick={handleDelete}>Удалить</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

@@ -8,6 +8,13 @@ const Materials = () => {
 
 // @ts-ignore
 export const Route = createFileRoute('/(app)/_layout/materials/')({
+  head: () => ({
+    meta: [
+      {
+        title: 'sovlium | Материалы',
+      },
+    ],
+  }),
   component: Materials,
   beforeLoad: ({ context, location }) => {
     console.log('Materials', context, location);

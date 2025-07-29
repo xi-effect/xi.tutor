@@ -12,10 +12,9 @@ import {
   useForm,
 } from '@xipkg/form';
 import { Eyeoff, Eyeon } from '@xipkg/icons';
-import { Link } from '@xipkg/link';
 import { useTranslation } from 'react-i18next';
 
-import { Logo } from 'common.ui';
+import { LinkTanstack, Logo } from 'common.ui';
 
 import { FormData, useFormSchema } from '../model';
 import { useSigninForm } from '../hooks';
@@ -97,15 +96,21 @@ export const SignInPage = () => {
               )}
             />
 
-            <Link size="l" variant="always" href="/reset-password">
+            <LinkTanstack size="l" variant="always" to="/reset-password">
               {t('forgot_password')}
-            </Link>
+            </LinkTanstack>
 
             <div className="flex h-full w-full items-end justify-between">
               <div className="flex h-[48px] items-center">
-                <Link id="to-signup-link" size="l" theme="brand" variant="hover" href="/signup">
+                <LinkTanstack
+                  id="to-signup-link"
+                  size="l"
+                  theme="brand"
+                  variant="hover"
+                  to="/signup"
+                >
                   {t('register')}
-                </Link>
+                </LinkTanstack>
               </div>
 
               <Button

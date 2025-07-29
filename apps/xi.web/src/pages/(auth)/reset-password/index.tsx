@@ -4,6 +4,13 @@ import { ResetPasswordPage } from 'pages.reset-password';
 
 // @ts-ignore
 export const Route = createFileRoute('/(auth)/reset-password/')({
+  head: () => ({
+    meta: [
+      {
+        title: 'sovlium | Сброс пароля',
+      },
+    ],
+  }),
   component: ResetPassword,
   beforeLoad: ({ context }) => {
     console.log('ResetPasswordRoute', context, location);

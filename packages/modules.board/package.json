@@ -10,6 +10,7 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "@tanstack/react-router": "^1.128.8",
     "@hocuspocus/provider": "2.15.0",
     "tldraw": "^3.6.1",
     "@tlsync-yjs/core": "0.2.1",
@@ -18,6 +19,7 @@
     "@xipkg/icons": "^2.4.0",
     "@xipkg/slider": "2.0.12",
     "@xipkg/tooltip": "^2.1.0",
+    "@xipkg/utils": "^1.8.0",
     "common.env": "*",
     "common.utils": "*",
     "common.ui": "*",
