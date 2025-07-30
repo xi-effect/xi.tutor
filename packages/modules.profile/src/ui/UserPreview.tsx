@@ -7,11 +7,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-// import { del } from 'pkg.utils/fetch';
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { AvatarEditor } from 'features.avatar.editor';
 import { useCurrentUser } from 'common.services';
+import { env } from 'common.env';
+import { getAxiosInstance } from 'common.config';
 
 const readFile = (file: File) =>
   new Promise((resolve) => {
@@ -28,7 +29,7 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
   const { data: user } = useCurrentUser();
 
   const [isAvatarOpen, setIsAvatarOpen] = React.useState(false);
-  const [file, setFile] = React.useState<any>();
+  const [file, setFile] = React.useState<File | unknown>();
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -37,20 +38,16 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
   };
 
   const handleDeleteAvatar = async () => {
-    // const { status } = await del({
-    //   service: 'auth',
-    //   path: '/api/users/current/avatar/',
-    //   config: {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //   },
-    // });
+    const axiosInstance = await getAxiosInstance();
+    const response = await axiosInstance({
+      method: 'DELETE',
+      url: `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/avatar/`,
+    });
 
-    const status = 204;
-
-    if (status === 204) {
+    if (response.status === 204) {
       toast('Аватарка удалена. Скоро она исчезнет с сайта');
+    } else {
+      toast('Ошибка при удалении аватарки');
     }
   };
 
@@ -70,8 +67,6 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
     }
 
     const imageDataUrl = await readFile(file);
-
-    console.log(imageDataUrl);
 
     setFile(imageDataUrl);
     setIsAvatarOpen(true);
@@ -104,7 +99,7 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
         <DropdownMenuTrigger className="cursor-pointer" asChild>
           <Avatar size="xl">
             <AvatarImage
-              src={`https://auth.xieffect.ru/api/users//avatar.webp?=${date.current instanceof Date ? date.current.getTime() : ''}`} // ${user.id}
+              src={`https://api.xieffect.ru/files/users/${user?.id}/avatar.webp`}
               alt="user avatar"
             />
             <AvatarFallback
