@@ -1,4 +1,21 @@
-export const students = [
+// Типы в данном файле не относятся к календарю, поэтому оставляю их здесь.
+// В дальнейшем, думаю, хорошо было бы их вынести в общие типы по проекту
+
+export type StudentT = {
+  id: string;
+  name: string;
+  subject: SubjectT;
+};
+
+type SubjectT = {
+  id: string;
+  name: string;
+  variant: string;
+  pricePerLesson: number;
+  unpaidLessonsAmount?: number;
+};
+
+export const students: StudentT[] = [
   {
     id: crypto.randomUUID(),
     name: 'Анна Смирнова (Групповое • Practice english)',

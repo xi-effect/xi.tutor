@@ -1,6 +1,6 @@
 import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMemo } from 'react';
+import { useMemo, useEffect } from 'react';
 import { eventFormSchema, type EventFormData } from '../model';
 import { students } from '../mocks';
 import type { ICalendarEvent } from '../ui/types';
@@ -44,6 +44,15 @@ export const useEventForm = (calendarEvent?: ICalendarEvent) => {
   const selectedStudentId = watch('studentId');
   const selectedStartTime = watch('startTime');
   const selectedEndTime = watch('endTime');
+  const isAllDay = watch('isAllDay');
+
+  // Автоматическое изменение времени при включении режима "весь день"
+  useEffect(() => {
+    if (isAllDay) {
+      setValue('startTime', '00:00');
+      setValue('endTime', '23:59');
+    }
+  }, [isAllDay, setValue]);
 
   const selectedStudent = useMemo(
     () => students.find((student) => student.id === selectedStudentId),
@@ -63,7 +72,6 @@ export const useEventForm = (calendarEvent?: ICalendarEvent) => {
     setValue('type', newType);
 
     if (newType === 'rest') {
-      // Очищаем поля, специфичные для занятий
       setValue('studentId', '');
       setValue('subjectName', '');
       setValue('lessonType', 'individual');
@@ -73,13 +81,6 @@ export const useEventForm = (calendarEvent?: ICalendarEvent) => {
 
   const onSubmit = (data: EventFormData) => {
     console.log('event form data: ', data);
-
-    // При отправке формы для отдыха убираем поля занятий
-    if (data.type === 'rest') {
-      console.log('rest event data: ', data);
-    } else {
-      console.log('lesson event data: ', data);
-    }
   };
 
   return {
@@ -90,6 +91,7 @@ export const useEventForm = (calendarEvent?: ICalendarEvent) => {
     selectedType,
     selectedStudent,
     duration,
+    isAllDay,
     handleTypeChange,
     onSubmit,
   };

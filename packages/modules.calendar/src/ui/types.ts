@@ -4,6 +4,14 @@ export interface ICalendarEvent {
   start?: Date;
   end: Date;
   type?: 'lesson' | 'rest' | 'cancelled';
+  lessonInfo?: ILessonInfo;
+}
+
+export interface ILessonInfo {
+  studentName: string;
+  subject: string;
+  lessonType: 'group' | 'individual';
+  description?: string;
 }
 
 export type CalendarMode = 'day' | 'week' | 'month' | 'year';

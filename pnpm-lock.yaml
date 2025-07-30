@@ -1270,8 +1270,8 @@ importers:
         specifier: 2.2.5
         version: 2.2.5(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/switcher':
-        specifier: 3.0.12
-        version: 3.0.12(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
+        specifier: 3.0.13
+        version: 3.0.13(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.1.0)
@@ -7917,8 +7917,8 @@ packages:
       - react-dom
     dev: false
 
-  /@xipkg/switcher@3.0.12(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0):
-    resolution: {integrity: sha512-ku885q/CT+GU+6q3b5DnZiHLqstSQEwgfS0IYZyEVOQkDbV21iGqIQFOZteW1HJQSJ4Yy+Cy16pLZdNjhrvuQQ==}
+  /@xipkg/switcher@3.0.13(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0):
+    resolution: {integrity: sha512-H3yyIJ8/3tcLZ0Z7hfNeuO+qBqG2PZPDS330x7hjok4uk2HfajjYtdiSGdYn6QKCKj4ZB2XzTwXMBvxoLc9s/A==}
     peerDependencies:
       react: ^19
     dependencies:
