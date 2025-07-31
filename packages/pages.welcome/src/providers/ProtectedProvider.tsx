@@ -1,9 +1,11 @@
 import React, { useEffect } from 'react';
-import { useRouterState, redirect } from '@tanstack/react-router';
+import { useRouterState, useRouter } from '@tanstack/react-router';
 import { useAuth } from 'common.auth';
 import { WelcomeContext } from '../model/WelcomeContext';
 import { useCurrentUser } from 'common.services';
 import { LoadingScreen } from 'common.ui';
+import { onboardingStageToPath } from '../utils';
+import { OnboardingStageT } from '../../../common.api/src/types';
 
 type ProtectedProviderPropsT = {
   children: React.ReactNode;
@@ -11,27 +13,32 @@ type ProtectedProviderPropsT = {
 
 export const ProtectedProvider = ({ children }: ProtectedProviderPropsT) => {
   const { data: user } = useCurrentUser();
-  const { id, email, onboarding_stage } = user;
+  const { id, email, display_name, onboarding_stage } = user;
   const { isAuthenticated } = useAuth();
   const pathname = useRouterState({
     select: (state) => state.location.pathname,
   });
 
+  const router = useRouter();
+
   useEffect(() => {
-    if (
-      onboarding_stage &&
-      onboarding_stage !== null &&
-      onboarding_stage !== 'completed' &&
-      !pathname.includes('/welcome/')
-    ) {
-      redirect({ to: '/welcome/user' });
+    if (!user || isAuthenticated === null) return;
+
+    if (onboarding_stage === 'completed') return;
+
+    const expectedPath = onboardingStageToPath[onboarding_stage as OnboardingStageT];
+
+    if (!expectedPath) return;
+
+    if (pathname !== expectedPath) {
+      router.navigate({ to: expectedPath });
     }
-  }, [isAuthenticated, onboarding_stage, pathname]);
+  }, [user, pathname, isAuthenticated, router, onboarding_stage]);
 
   if (isAuthenticated === null) return <LoadingScreen />;
 
   return (
-    <WelcomeContext.Provider value={{ id, email, onboarding_stage }}>
+    <WelcomeContext.Provider value={{ id, email, display_name, onboarding_stage }}>
       {children}
     </WelcomeContext.Provider>
   );
