@@ -1,17 +1,27 @@
 import * as z from 'zod';
 
-// Базовая схема для всех типов событий
+// Валидация времени
+const timeValidation = z.string().refine((time) => {
+  const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+  return timeRegex.test(time);
+}, 'Неверный формат времени');
+
+const timeToMinutes = (time: string) => {
+  const [hours, minutes] = time.split(':').map(Number);
+  return hours * 60 + minutes;
+};
+
+// Базовые поля для всех типов событий
 const baseEventSchema = z.object({
   title: z.string().min(1, 'Введите название события'),
   type: z.enum(['lesson', 'rest'], {
     required_error: 'Выберите тип события',
   }),
-  startTime: z.string().min(1, 'Введите время начала'),
-  endTime: z.string().min(1, 'Введите время окончания'),
+  startTime: timeValidation,
+  endTime: timeValidation,
   isAllDay: z.boolean().default(false),
 });
 
-// Схема для занятий с дополнительными полями
 const lessonEventSchema = baseEventSchema.extend({
   type: z.literal('lesson'),
   studentId: z.string().min(1, 'Выберите студента'),
@@ -22,13 +32,26 @@ const lessonEventSchema = baseEventSchema.extend({
   description: z.string().optional(),
 });
 
-// Схема для отдыха (только базовые поля)
 const restEventSchema = baseEventSchema.extend({
   type: z.literal('rest'),
 });
 
-// Объединенная схема с условной валидацией
-export const eventFormSchema = z.discriminatedUnion('type', [lessonEventSchema, restEventSchema]);
+export const eventFormSchema = z
+  .discriminatedUnion('type', [lessonEventSchema, restEventSchema])
+  .refine(
+    (data) => {
+      if (data.startTime && data.endTime) {
+        const startMinutes = timeToMinutes(data.startTime);
+        const endMinutes = timeToMinutes(data.endTime);
+        return startMinutes <= endMinutes;
+      }
+      return true;
+    },
+    {
+      message: 'Время начала не может быть позже времени окончания',
+      path: ['startTime'],
+    },
+  );
 
 export type EventFormData = z.infer<typeof eventFormSchema>;
 export type LessonEventData = z.infer<typeof lessonEventSchema>;

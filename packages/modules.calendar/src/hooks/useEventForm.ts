@@ -41,7 +41,6 @@ export const useEventForm = (calendarEvent?: ICalendarEvent) => {
   } = form;
 
   const selectedType = watch('type');
-  const selectedStudentId = watch('studentId');
   const selectedStartTime = watch('startTime');
   const selectedEndTime = watch('endTime');
   const isAllDay = watch('isAllDay');
@@ -53,11 +52,6 @@ export const useEventForm = (calendarEvent?: ICalendarEvent) => {
       setValue('endTime', '23:59');
     }
   }, [isAllDay, setValue]);
-
-  const selectedStudent = useMemo(
-    () => students.find((student) => student.id === selectedStudentId),
-    [selectedStudentId],
-  );
 
   const duration = useMemo(() => {
     if (!selectedStartTime || !selectedEndTime) return { hours: 0, minutes: 0 };
@@ -79,6 +73,14 @@ export const useEventForm = (calendarEvent?: ICalendarEvent) => {
     }
   };
 
+  const handleStudentChange = (newId: string) => {
+    setValue('studentId', newId);
+
+    const selectedStudent = students.find((student) => student.id === newId);
+
+    setValue('subjectName', selectedStudent?.subject.name || '');
+  };
+
   const onSubmit = (data: EventFormData) => {
     console.log('event form data: ', data);
   };
@@ -89,10 +91,10 @@ export const useEventForm = (calendarEvent?: ICalendarEvent) => {
     handleSubmit,
     errors,
     selectedType,
-    selectedStudent,
     duration,
     isAllDay,
     handleTypeChange,
+    handleStudentChange,
     onSubmit,
   };
 };

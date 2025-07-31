@@ -10,17 +10,17 @@ import {
 import { Input } from '@xipkg/input';
 import { Account, Updates, Payments, Hint } from '@xipkg/icons';
 
-import { students, type StudentT } from '../../../../../mocks';
+import { students } from '../../../../../mocks';
 
 import type { FC } from 'react';
 
 interface LessonBlockProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: any;
-  selectedStudent?: StudentT;
+  handleStudentChange: (newId: string) => void;
 }
 
-export const LessonBlock: FC<LessonBlockProps> = ({ control, selectedStudent }) => {
+export const LessonBlock: FC<LessonBlockProps> = ({ control, handleStudentChange }) => {
   return (
     <div className="border-gray-10 w-full border-t border-b py-2">
       <h3 className="mb-2 text-sm">Кабинет</h3>
@@ -31,7 +31,7 @@ export const LessonBlock: FC<LessonBlockProps> = ({ control, selectedStudent }) 
         render={({ field }) => (
           <FormItem>
             <FormControl>
-              <Select value={field.value} onValueChange={field.onChange}>
+              <Select value={field.value} onValueChange={(value) => handleStudentChange(value)}>
                 <SelectTrigger
                   before={<Account className="h-4 w-4" />}
                   size="s"
@@ -64,7 +64,6 @@ export const LessonBlock: FC<LessonBlockProps> = ({ control, selectedStudent }) 
               <Input
                 {...field}
                 value={field.value}
-                defaultValue={selectedStudent?.subject.name}
                 placeholder="Предмет"
                 className="mb-2 w-full border-none outline-none"
                 before={<Updates className="h-4 w-4" />}

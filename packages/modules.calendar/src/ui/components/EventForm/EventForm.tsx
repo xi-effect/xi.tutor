@@ -20,13 +20,13 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@xipkg/form';
-import { ArrowRight, Clock, MenuDots, Redo } from '@xipkg/icons';
+import { Badge } from '@xipkg/badge';
+import { ArrowRight, Clock, MenuDots, Redo, Payments } from '@xipkg/icons';
 import { LessonBlock } from './components/LessonBlock/LessonBlock';
 import { useEventForm } from '../../../hooks';
 
 import { type FC } from 'react';
 import type { ICalendarEvent } from '../../types';
-
 
 interface EventFormProps {
   calendarEvent?: ICalendarEvent;
@@ -38,10 +38,10 @@ export const EventForm: FC<EventFormProps> = ({ calendarEvent }) => {
     control,
     handleSubmit,
     selectedType,
-    selectedStudent,
     duration,
     isAllDay,
     handleTypeChange,
+    handleStudentChange,
     onSubmit,
   } = useEventForm(calendarEvent);
 
@@ -109,13 +109,26 @@ export const EventForm: FC<EventFormProps> = ({ calendarEvent }) => {
         />
 
         {selectedType === 'lesson' && (
-          <LessonBlock control={control} selectedStudent={selectedStudent} />
+          <div className="my-2 flex items-center gap-4 pl-3">
+            <Badge variant="success">
+              <Payments className="mr-2 h-4 w-4" />
+              <span>Оплачено</span>
+            </Badge>
+            <Badge variant="destructive">
+              <Clock className="mr-2 h-4 w-4" />
+              <span>Не проведено</span>
+            </Badge>
+          </div>
+        )}
+
+        {selectedType === 'lesson' && (
+          <LessonBlock control={control} handleStudentChange={handleStudentChange} />
         )}
 
         <div className="border-gray-10 border-t border-b py-2">
           <h3 className="mb-2 text-sm">Время</h3>
 
-          <div className="mb-4 flex items-center gap-2">
+          <div className="mb-4 flex gap-2">
             <FormField
               control={control}
               name="startTime"
@@ -137,7 +150,7 @@ export const EventForm: FC<EventFormProps> = ({ calendarEvent }) => {
               )}
             />
 
-            <div className="flex items-center gap-2">
+            <div className="flex gap-2">
               <FormField
                 control={control}
                 name="endTime"
@@ -158,7 +171,7 @@ export const EventForm: FC<EventFormProps> = ({ calendarEvent }) => {
                   </FormItem>
                 )}
               />
-              <span className="shrink-0 text-sm">
+              <span className="block shrink-0 pt-1.5 text-sm">
                 {duration.hours}ч {duration.minutes}м
               </span>
             </div>
