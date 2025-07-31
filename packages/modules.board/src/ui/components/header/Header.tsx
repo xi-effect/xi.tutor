@@ -3,6 +3,7 @@
 import { Button } from '@xipkg/button';
 
 import { SettingsDropdown } from './SettingsDropdown';
+import { EditableTitle } from './EditableTitle';
 import { useFullScreen } from 'common.utils';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { useGetMaterial } from 'common.services';
@@ -42,7 +43,7 @@ export const Header = () => {
           {isLoading ? (
             <Skeleton variant="text" className="h-6 w-24" />
           ) : (
-            <h1 className="text-xl-base">{data.name}</h1>
+            <EditableTitle title={data.name} materialId={boardId} />
           )}
         </div>
         <div className="flex items-center gap-1">

@@ -16,7 +16,9 @@
     "@tlsync-yjs/core": "0.2.1",
     "@xipkg/button": "^3.1.8",
     "@xipkg/dropdown": "3.0.12",
+    "@xipkg/form": "^4.2.0",
     "@xipkg/icons": "^2.4.0",
+    "@xipkg/input": "2.0.7",
     "@xipkg/slider": "2.0.12",
     "@xipkg/tooltip": "^2.1.0",
     "@xipkg/utils": "^1.8.0",
@@ -26,7 +28,10 @@
     "common.services": "*",
     "yjs": "^13.6.26",
     "y-utility": "0.1.4",
-    "zustand": "5.0.3"
+    "zustand": "5.0.3",
+    "react-hook-form": "^7.55.0",
+    "@hookform/resolvers": "5.0.1",
+    "zod": "3.24.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -46,7 +51,9 @@
     "typescript-eslint": "^8.22.0"
   },
   "peerDependencies": {
-    "react": "19"
+    "react": "19",
+    "react-hook-form": "^7.55.0",
+    "@hookform/resolvers": "5.0.1"
   },
   "description": "awesome board",
   "author": "xi.effect"
