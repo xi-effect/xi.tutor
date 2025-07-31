@@ -28,8 +28,6 @@ export const UserSettings = ({
   const { pathname } = useLocation();
   const search = useSearch({ strict: false });
 
-  // Извлекаем информацию о профиле из параметра iid
-  // const isProfileOpen = search.profile ? true : false;
   const profileType = search.profile || '';
 
   const [activeQuery, setActiveQuery] = React.useState<string>(profileType);
