@@ -113,14 +113,13 @@ export const SignInPage = () => {
                 </LinkTanstack>
               </div>
 
-              <Button
-                variant={isPending ? 'default-spinner' : 'default'}
-                type="submit"
-                className="w-24"
-                disabled={isPending}
-              >
-                {t('sign_in_button')}
-              </Button>
+              {isPending ? (
+                <Button variant="default-spinner" type="submit" className="w-24" disabled />
+              ) : (
+                <Button variant="default" type="submit" className="w-24" disabled={isPending}>
+                  {t('sign_in_button')}
+                </Button>
+              )}
             </div>
           </form>
         </Form>
