@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { colorOptions } from '../../../utils/customConfig';
+import { useTldrawStyles } from '../../../hooks/useTldrawStyles';
 
 type ColorOptionT = (typeof colorOptions)[number]['name'];
 
@@ -25,9 +26,11 @@ const ColorCircle = ({ colorClass, isSelected, handleClick }: ColorCircleT) => (
 
 export const ColorGrid = () => {
   const [selectedColor, setSelectedColor] = useState<ColorOptionT>('black');
+  const { setColor } = useTldrawStyles();
 
   const handleColorClick = (colorName: ColorOptionT) => {
     setSelectedColor(colorName);
+    setColor(colorName);
   };
 
   return (

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Slider } from '@xipkg/slider';
 import { ColorGrid } from './ColorSet';
+import { useTldrawStyles } from '../../../hooks/useTldrawStyles';
 
 const sizes = ['s', 'm', 'l', 'xl'] as const;
 
@@ -8,13 +9,18 @@ export const StyleMenu = () => {
   const [currentSize, setCurrentSize] = useState<string>('m');
   const [currentOpacity, setCurrentOpacity] = useState<number>(100);
 
+  const { setThickness, setOpacity } = useTldrawStyles();
+
   const handleSize = (value: number[]) => {
     const size = sizes[value[0] - 1];
     setCurrentSize(size);
+    setThickness(size);
   };
 
   const handleOpacity = (value: number[]) => {
-    setCurrentOpacity(value[0]);
+    const opacity = value[0];
+    setCurrentOpacity(opacity);
+    setOpacity(opacity);
   };
 
   return (
