@@ -1169,6 +1169,9 @@ importers:
       '@hocuspocus/provider':
         specifier: 2.15.0
         version: 2.15.0(y-protocols@1.0.6)(yjs@13.6.27)
+      '@hookform/resolvers':
+        specifier: 5.0.1
+        version: 5.0.1(react-hook-form@7.60.0)
       '@tanstack/react-router':
         specifier: ^1.128.8
         version: 1.128.8(react-dom@19.1.0)(react@19.1.0)
@@ -1181,9 +1184,15 @@ importers:
       '@xipkg/dropdown':
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
+      '@xipkg/form':
+        specifier: ^4.2.0
+        version: 4.2.0(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
       '@xipkg/icons':
         specifier: ^2.4.0
         version: 2.4.0(react@19.1.0)
+      '@xipkg/input':
+        specifier: 2.0.7
+        version: 2.0.7(react@19.1.0)
       '@xipkg/slider':
         specifier: 2.0.12
         version: 2.0.12(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
@@ -1208,6 +1217,9 @@ importers:
       react:
         specifier: '19'
         version: 19.1.0
+      react-hook-form:
+        specifier: ^7.55.0
+        version: 7.60.0(react@19.1.0)
       tldraw:
         specifier: ^3.6.1
         version: 3.14.2(@types/react-dom@19.1.6)(@types/react@19.1.8)(react-dom@19.1.0)(react@19.1.0)
@@ -1217,6 +1229,9 @@ importers:
       yjs:
         specifier: ^13.6.26
         version: 13.6.27
+      zod:
+        specifier: 3.24.2
+        version: 3.24.2
       zustand:
         specifier: 5.0.3
         version: 5.0.3(@types/react@19.1.8)(react@19.1.0)
