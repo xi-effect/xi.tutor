@@ -1,4 +1,4 @@
-import { MoreVert, File } from '@xipkg/icons';
+import { MoreVert, File, Trash } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import {
   DropdownMenu,
@@ -57,6 +57,27 @@ export const SettingsDropdown = () => {
     }
   };
 
+  const clearBoard = () => {
+    if (!editor) return;
+
+    try {
+      // Получаем все ID фигур на текущей странице
+      const shapeIds = editor.getCurrentPageShapeIds();
+
+      if (shapeIds.size === 0) {
+        toast.info('Доска уже пуста');
+        return;
+      }
+
+      // Удаляем все фигуры
+      editor.deleteShapes([...shapeIds]);
+      toast.success('Доска очищена!');
+    } catch (error) {
+      console.error('Ошибка при очистке доски:', error);
+      toast.error('Ошибка при очистке доски');
+    }
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -69,6 +90,10 @@ export const SettingsDropdown = () => {
           <DropdownMenuItem className="flex gap-2 p-1" onClick={saveCanvas}>
             <File />
             <span>Скачать</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem className="flex gap-2 p-1" onClick={clearBoard}>
+            <Trash />
+            <span>Очистить доску</span>
           </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
