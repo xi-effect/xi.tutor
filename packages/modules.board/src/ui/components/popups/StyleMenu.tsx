@@ -18,10 +18,10 @@ export const StyleMenu = () => {
   };
 
   return (
-    <div className="border-gray-10 bg-gray-0 w-full">
-      <div className="p-6">
-        <div className="flex flex-col justify-center gap-6">
-          <div className="flex items-center justify-between gap-4">
+    <div className="flex w-full flex-col items-center justify-center gap-2 md:flex-row">
+      <div className="w-[276px] p-2">
+        <div className="flex w-full flex-col justify-center gap-6">
+          <div className="flex w-full items-center justify-between gap-4">
             <div className="w-full">
               <Slider
                 onValueChange={(value) => handleSize(value)}
@@ -32,11 +32,11 @@ export const StyleMenu = () => {
                 minStepsBetweenThumbs={1}
               />
             </div>
-            <div className="w-4">
+            <div className="w-8">
               <p>{currentSize.toUpperCase()}</p>
             </div>
           </div>
-          <div className="flex items-center justify-between gap-4">
+          <div className="flex w-full items-center justify-between gap-4">
             <div className="w-full">
               <Slider
                 onValueChange={(value) => handleOpacity(value)}
@@ -46,14 +46,13 @@ export const StyleMenu = () => {
                 step={1}
               />
             </div>
-            <div className="w-4">
+            <div className="w-8">
               <p>{currentOpacity}</p>
             </div>
           </div>
         </div>
       </div>
-      <div className="border-gray-10 border-t" />
-      <div className="p-4">
+      <div className="w-[276px] p-2">
         <ColorGrid />
       </div>
     </div>

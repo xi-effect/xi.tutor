@@ -21,6 +21,7 @@
     "@xipkg/input": "2.0.7",
     "@xipkg/slider": "2.0.12",
     "@xipkg/tooltip": "^2.1.0",
+    "@xipkg/popover": "^2.0.12",
     "@xipkg/utils": "^1.8.0",
     "common.env": "*",
     "common.services": "*",

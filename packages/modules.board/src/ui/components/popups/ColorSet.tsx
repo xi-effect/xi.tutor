@@ -31,7 +31,7 @@ export const ColorGrid = () => {
   };
 
   return (
-    <div className="m-auto grid grid-cols-5 gap-2">
+    <div className="grid grid-cols-5 gap-2">
       {colorOptions.map(({ name, class: colorClass }) => (
         <ColorCircle
           key={name}
