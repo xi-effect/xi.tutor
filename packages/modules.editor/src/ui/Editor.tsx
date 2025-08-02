@@ -1,22 +1,10 @@
 import { useEditor, EditorContent } from '@tiptap/react';
-import { FloatingMenu, BubbleMenu } from '@tiptap/react/menus';
-import DragHandle from '@tiptap/extension-drag-handle-react';
-import StarterKit from '@tiptap/starter-kit';
-import { Move } from '@xipkg/icons';
-
-const extensions = [StarterKit];
-
-const content = `
-      <p>
-        Первый текст
-      </p>
-      <p>
-        Второй текст
-      </p>
-      <p>
-        Третий текст
-      </p>
-`;
+import { FloatingMenu } from '@tiptap/react/menus';
+import content from '../const/content';
+import { useEditorActive } from '../hooks/UseEditorActive';
+import { BubbleMenuWrapper } from './components/BubbleMenuWrapper/BubbleMenuWrapper';
+import { extensions } from '../config/editorConfig';
+import { DragHandleWrapper } from './components/DragHandleWrapper';
 
 export const Editor = () => {
   const editor = useEditor({
@@ -24,16 +12,16 @@ export const Editor = () => {
     content,
   });
 
+  const activeStates = useEditorActive(editor);
+
+  if (!editor) return null;
+
   return (
     <>
-      <DragHandle editor={editor}>
-        <div className="cursor-grab active:cursor-grabbing">
-          <Move size="sm" className="cursor-pointer" />
-        </div>
-      </DragHandle>
+      <DragHandleWrapper editor={editor} />
       <EditorContent editor={editor} />
       <FloatingMenu editor={editor}>This is the floating menu</FloatingMenu>
-      <BubbleMenu editor={editor}>This is the bubble menu</BubbleMenu>
+      <BubbleMenuWrapper editor={editor} activeStates={activeStates} />
     </>
   );
 };
