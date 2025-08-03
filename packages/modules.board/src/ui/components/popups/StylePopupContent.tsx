@@ -1,5 +1,8 @@
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { StyleMenu } from './StyleMenu';
+import { useTldrawStyles } from '../../../hooks/useTldrawStyles';
+import { useTldrawStore } from '../../../store/useTldrawStore';
+import { useEffect } from 'react';
 
 type StylePopupContentT = {
   children: React.ReactNode;
@@ -8,6 +11,25 @@ type StylePopupContentT = {
 };
 
 export const StylePopupContent = ({ children, open, onOpenChange }: StylePopupContentT) => {
+  const { setColor, setThickness, setOpacity, resetToDefaults } = useTldrawStyles();
+  const { pencilColor, pencilThickness, pencilOpacity } = useTldrawStore();
+
+  // При открытии попапа применяем сохраненные настройки
+  useEffect(() => {
+    if (open) {
+      setColor(pencilColor);
+      setThickness(pencilThickness);
+      setOpacity(pencilOpacity);
+    }
+  }, [open, pencilColor, pencilThickness, pencilOpacity, setColor, setThickness, setOpacity]);
+
+  // При закрытии попапа сбрасываем к дефолтным настройкам
+  useEffect(() => {
+    if (!open) {
+      resetToDefaults();
+    }
+  }, [open, resetToDefaults]);
+
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
       <div className="pointer-events-auto flex gap-2">

@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { colorOptions } from '../../../utils/customConfig';
 import { useTldrawStyles } from '../../../hooks/useTldrawStyles';
+import { useTldrawStore } from '../../../store/useTldrawStore';
 
 type ColorOptionT = (typeof colorOptions)[number]['name'];
 
@@ -24,13 +25,28 @@ const ColorCircle = ({ colorClass, isSelected, handleClick }: ColorCircleT) => (
   </div>
 );
 
-export const ColorGrid = () => {
+type ColorGridProps = {
+  onColorChange?: () => void;
+  currentColor?: string;
+};
+
+export const ColorGrid = ({ onColorChange, currentColor }: ColorGridProps) => {
   const [selectedColor, setSelectedColor] = useState<ColorOptionT>('black');
   const { setColor } = useTldrawStyles();
+  const { setPencilColor } = useTldrawStore();
+
+  // Синхронизируем внутреннее состояние с внешним
+  useEffect(() => {
+    if (currentColor && colorOptions.some((option) => option.name === currentColor)) {
+      setSelectedColor(currentColor as ColorOptionT);
+    }
+  }, [currentColor]);
 
   const handleColorClick = (colorName: ColorOptionT) => {
     setSelectedColor(colorName);
     setColor(colorName);
+    setPencilColor(colorName);
+    onColorChange?.();
   };
 
   return (
