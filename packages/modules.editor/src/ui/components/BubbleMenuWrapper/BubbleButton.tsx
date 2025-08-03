@@ -16,7 +16,7 @@ export const BubbleButton = ({ isActive, onClick, ariaLabel, children }: BubbleB
     'text-gray-100 hover:text-gray-100',
     'dark:text-gray-100 dark:hover:text-gray-100',
     isActive
-      ? 'bg-brand-40 text-gray-0 hover:bg-brand-60 dark:bg-brand-20 dark:text-gray-100 dark:hover:bg-brand-40'
+      ? 'bg-brand-40 text-gray-0 [&_svg]:stroke-gray-200 hover:bg-brand-60 dark:bg-brand-20 dark:text-gray-100 dark:[&_svg]:stroke-gray-100 dark:hover:bg-brand-40'
       : 'hover:bg-brand-20 dark:hover:bg-primary',
   );
 
