@@ -3,8 +3,22 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg
 import { track, useEditor } from 'tldraw';
 import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
 import { UndoRedo } from './UndoRedo';
-import { StylePopupContent } from '../popups/StylePopupContent';
-// import { NavbarAction } from '../../../features';
+import { PenPopup } from '../popups/Pen';
+import { useTldrawStore } from '../../../store';
+import { useTldrawStyles } from '../../../hooks';
+
+// Маппинг инструментов Kanva на Tldraw
+const toolMapping: Record<string, string> = {
+  select: 'select',
+  hand: 'hand',
+  pen: 'draw',
+  text: 'text',
+  rectangle: 'rectangle',
+  arrow: 'arrow',
+  eraser: 'eraser',
+  sticker: 'note', // Используем note как аналог стикера
+  asset: 'image', // Используем image для загрузки изображений
+};
 
 export const Navbar = track(
   ({
@@ -18,8 +32,11 @@ export const Navbar = track(
     canUndo: boolean;
     canRedo: boolean;
   }) => {
+    const { pencilColor, pencilThickness, pencilOpacity } = useTldrawStore();
+    const { resetToDefaults, setColor, setThickness, setOpacity } = useTldrawStyles();
+
     const [isTooltipOpen] = React.useState(false);
-    const [isStylePopupOpen, setIsStylePopupOpen] = React.useState(false);
+    const [penPopupOpen, setPenPopupOpen] = React.useState(false);
     const editor = useEditor();
 
     const handleSelectTool = (toolName: string) => {
@@ -27,20 +44,11 @@ export const Navbar = track(
       editor.selectNone();
 
       // Закрываем Popover стилей при переключении на любой инструмент
-      setIsStylePopupOpen(false);
-
-      // Маппинг инструментов Kanva на Tldraw
-      const toolMapping: Record<string, string> = {
-        select: 'select',
-        hand: 'hand',
-        pen: 'draw',
-        text: 'text',
-        rectangle: 'rectangle',
-        arrow: 'arrow',
-        eraser: 'eraser',
-        sticker: 'note', // Используем note как аналог стикера
-        asset: 'image', // Используем image для загрузки изображений
-      };
+      if (toolName !== 'pen') {
+        console.log('resetToDefaults');
+        resetToDefaults();
+        setPenPopupOpen(false);
+      }
 
       const tldrawTool = toolMapping[toolName];
       if (tldrawTool) {
@@ -68,24 +76,24 @@ export const Navbar = track(
     };
 
     const currentTool = getCurrentTool();
-    const isPenActive = currentTool === 'pen';
-
-    // Автоматически открываем Popover когда выбран инструмент "pen"
-    React.useEffect(() => {
-      if (isPenActive) {
-        setIsStylePopupOpen(true);
-      }
-    }, [isPenActive]);
 
     // Обработчик для закрытия Popover только при переключении инструмента
-    const handleStylePopupOpenChange = (open: boolean) => {
-      // Разрешаем закрытие только если переключаемся на другой инструмент
-      if (!open && isPenActive) {
-        // Если пытаемся закрыть Popover, но инструмент "pen" все еще активен,
-        // то не закрываем его (пользователь кликнул вне Popover)
-        return;
+    const handlePenPopupOpenChange = (open: boolean) => {
+      console.log('open', open);
+
+      if (open) {
+        setColor(pencilColor);
+        setThickness(pencilThickness);
+        setOpacity(pencilOpacity);
       }
-      setIsStylePopupOpen(open);
+
+      // Сбрасываем настройки при закрытии Popover
+      if (!open) {
+        console.log('resetToDefaults');
+        resetToDefaults();
+      }
+
+      setPenPopupOpen(open);
     };
 
     return (
@@ -103,10 +111,10 @@ export const Navbar = track(
                   // Для инструмента "pen" используем StylePopupContent
                   if (item.action === 'pen') {
                     return (
-                      <StylePopupContent
+                      <PenPopup
                         key={item.action}
-                        open={isStylePopupOpen}
-                        onOpenChange={handleStylePopupOpenChange}
+                        open={penPopupOpen}
+                        onOpenChange={handlePenPopupOpenChange}
                       >
                         <button
                           type="button"
@@ -118,7 +126,7 @@ export const Navbar = track(
                         >
                           {item.icon ? item.icon : item.title}
                         </button>
-                      </StylePopupContent>
+                      </PenPopup>
                     );
                   }
 

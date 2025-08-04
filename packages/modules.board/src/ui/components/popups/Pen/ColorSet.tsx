@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
-import { colorOptions } from '../../../utils/customConfig';
-import { useTldrawStyles } from '../../../hooks/useTldrawStyles';
-import { useTldrawStore } from '../../../store/useTldrawStore';
+import { colorOptions } from '../../../../utils/customConfig';
+import { useTldrawStyles } from '../../../../hooks/useTldrawStyles';
+import { useTldrawStore } from '../../../../store/useTldrawStore';
 
 type ColorOptionT = (typeof colorOptions)[number]['name'];
 
@@ -26,28 +25,20 @@ const ColorCircle = ({ colorClass, isSelected, handleClick }: ColorCircleT) => (
 );
 
 type ColorGridProps = {
-  onColorChange?: () => void;
   currentColor?: string;
 };
 
-export const ColorGrid = ({ onColorChange, currentColor }: ColorGridProps) => {
-  const [selectedColor, setSelectedColor] = useState<ColorOptionT>('black');
+export const ColorGrid = ({ currentColor }: ColorGridProps) => {
+  const { pencilColor, setPencilColor } = useTldrawStore();
   const { setColor } = useTldrawStyles();
-  const { setPencilColor } = useTldrawStore();
-
-  // Синхронизируем внутреннее состояние с внешним
-  useEffect(() => {
-    if (currentColor && colorOptions.some((option) => option.name === currentColor)) {
-      setSelectedColor(currentColor as ColorOptionT);
-    }
-  }, [currentColor]);
 
   const handleColorClick = (colorName: ColorOptionT) => {
-    setSelectedColor(colorName);
     setColor(colorName);
     setPencilColor(colorName);
-    onColorChange?.();
   };
+
+  // Используем цвет из стора, если не передан внешний
+  const selectedColor = currentColor || pencilColor;
 
   return (
     <div className="grid grid-cols-5 gap-2">

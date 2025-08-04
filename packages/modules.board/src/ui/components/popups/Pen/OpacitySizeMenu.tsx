@@ -1,16 +1,17 @@
 import { Slider } from '@xipkg/slider';
 import { ColorGrid } from './ColorSet';
-import { useTldrawStyles } from '../../../hooks/useTldrawStyles';
-import { useTldrawStore } from '../../../store/useTldrawStore';
+import { useTldrawStore } from '../../../../store/useTldrawStore';
+import { useTldrawStyles } from '../../../../hooks/useTldrawStyles';
 
 const sizes = ['s', 'm', 'l', 'xl'] as const;
 
-export const StyleMenu = () => {
-  const { setThickness, setOpacity, currentColor, currentThickness, currentOpacity } =
-    useTldrawStyles();
+export const OpacitySizeMenu = () => {
+  // Получаем значения и функции из стора
+  const { pencilColor, pencilThickness, pencilOpacity, setPencilThickness, setPencilOpacity } =
+    useTldrawStore();
 
-  // Получаем значения из стора для сохранения изменений
-  const { setPencilThickness, setPencilOpacity } = useTldrawStore();
+  // Получаем функции для обновления стилей в редакторе
+  const { setThickness, setOpacity } = useTldrawStyles();
 
   const handleSize = (value: number[]) => {
     const size = sizes[value[0] - 1];
@@ -22,10 +23,6 @@ export const StyleMenu = () => {
     const opacity = value[0];
     setOpacity(opacity);
     setPencilOpacity(opacity);
-  };
-
-  const handleColorChange = () => {
-    // Цвет обновляется автоматически через ColorGrid
   };
 
   // Получаем индекс текущего размера для слайдера
@@ -41,7 +38,7 @@ export const StyleMenu = () => {
             <div className="w-full">
               <Slider
                 onValueChange={(value) => handleSize(value)}
-                value={[getSizeIndex(currentThickness)]}
+                value={[getSizeIndex(pencilThickness)]}
                 min={1}
                 max={4}
                 step={1}
@@ -49,27 +46,27 @@ export const StyleMenu = () => {
               />
             </div>
             <div className="w-8">
-              <p>{currentThickness.toUpperCase()}</p>
+              <p>{pencilThickness.toUpperCase()}</p>
             </div>
           </div>
           <div className="flex w-full items-center justify-between gap-4">
             <div className="w-full">
               <Slider
                 onValueChange={(value) => handleOpacity(value)}
-                value={[currentOpacity]}
+                value={[pencilOpacity]}
                 min={10}
                 max={100}
                 step={1}
               />
             </div>
             <div className="w-8">
-              <p>{currentOpacity}</p>
+              <p>{pencilOpacity}</p>
             </div>
           </div>
         </div>
       </div>
       <div className="w-[276px] p-2">
-        <ColorGrid onColorChange={handleColorChange} currentColor={currentColor} />
+        <ColorGrid currentColor={pencilColor} />
       </div>
     </div>
   );
