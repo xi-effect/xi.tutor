@@ -3,7 +3,7 @@ import { Plus, Filter } from '@xipkg/icons';
 
 import { ButtonsHeader } from './ButtonsHeader';
 import { LinkListStudents } from './LinkListStudents';
-import { Filters } from './Filters';
+// import { Filters } from './Filters';
 import { CardsGrid } from './CardsGrid';
 
 export const ClassroomsPage = () => {
@@ -27,7 +27,8 @@ export const ClassroomsPage = () => {
         </div>
 
         <div className="flex flex-row items-center justify-between">
-          <Filters className="max-[570px]:hidden" />
+          {/* <Filters className="max-[570px]:hidden" /> */}
+          <div />
 
           <div className="max-sm:hidden">
             <LinkListStudents src="#" />
