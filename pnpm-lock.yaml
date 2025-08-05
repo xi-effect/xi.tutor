@@ -2101,6 +2101,9 @@ importers:
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.1.1)
+      common.env:
+        specifier: '*'
+        version: link:../common.env
       common.services:
         specifier: '*'
         version: link:../common.services
