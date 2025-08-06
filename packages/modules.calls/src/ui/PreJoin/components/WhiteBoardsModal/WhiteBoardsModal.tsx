@@ -15,7 +15,7 @@ import {
   ModalTrigger,
 } from '@xipkg/modal';
 
-const mockWhiteboardList = [
+const mockWhiteBoardList = [
   {
     name: 'Доска 1',
   },
@@ -54,8 +54,8 @@ const mockWhiteboardList = [
   },
 ];
 
-export const WhiteboardModal = () => {
-  const [filteredBoards, setFilteredBoards] = useState(mockWhiteboardList);
+export const WhiteBoardsModal = () => {
+  const [filteredBoards, setFilteredBoards] = useState(mockWhiteBoardList);
   const [searchTerm, setSearchTerm] = useState('');
   const [isOpen, setIsOpen] = useState(false);
 
@@ -64,19 +64,19 @@ export const WhiteboardModal = () => {
   useEffect(() => {
     if (debouncedSearchTerm) {
       setFilteredBoards(
-        mockWhiteboardList.filter((board) =>
+        mockWhiteBoardList.filter((board) =>
           board.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()),
         ),
       );
     } else {
-      setFilteredBoards(mockWhiteboardList);
+      setFilteredBoards(mockWhiteBoardList);
     }
   }, [debouncedSearchTerm]);
 
   const handleCancel = () => {
     setIsOpen(false);
     setSearchTerm('');
-    setFilteredBoards(mockWhiteboardList);
+    setFilteredBoards(mockWhiteBoardList);
   };
 
   return (
