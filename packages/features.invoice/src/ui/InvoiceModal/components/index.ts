@@ -1,4 +1,4 @@
 export { StudentSelector } from './StudentSelector';
-export { SubjectSelector } from './SubjectSelector';
+export { CommentField } from './CommentField';
 export { SubjectRow } from './SubjectRow';
 export { InvoiceSummary } from './InvoiceSummary';

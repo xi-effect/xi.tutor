@@ -10,7 +10,7 @@ import { Form } from '@xipkg/form';
 import { Button } from '@xipkg/button';
 import { Close } from '@xipkg/icons';
 import { useInvoiceForm } from '../../hooks';
-import { StudentSelector, SubjectSelector, SubjectRow } from './components';
+import { CommentField, StudentSelector, SubjectRow } from './components';
 import type { FormData } from '../../model';
 
 type InvoiceModalProps = {
@@ -23,19 +23,14 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
     form,
     control,
     handleSubmit,
-    selectedSubjects,
-    selectedData,
     fields,
     totalInvoicePrice,
-    handleChangeStudent,
-    handleAddSubject,
-    handleRemoveSubject,
-    handleSubjectChange,
     handleClearForm,
     onSubmit,
+    selectedItems,
   } = useInvoiceForm();
 
-  const totalLessons = selectedSubjects.reduce((acc, subj) => acc + subj.unpaidLessonsAmount, 0);
+  const totalLessons = selectedItems.reduce((acc, item) => acc + item.quantity, 0);
 
   const handleCloseModal = () => {
     handleClearForm();
@@ -65,15 +60,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
               </p>
             </div>
 
-            <StudentSelector control={control} onStudentChange={handleChangeStudent} />
-
-            <SubjectSelector
-              control={control}
-              values={selectedSubjects.map((subj) => subj.name)}
-              suggestions={selectedData.subjects.map((subj) => subj.name)}
-              onRemoveItem={handleRemoveSubject}
-              onSelectItem={handleAddSubject}
-            />
+            <StudentSelector control={control} />
 
             <div>
               <div className="text-gray-60 grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr] items-center gap-4 text-sm">
@@ -85,21 +72,9 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                 <span>Сумма</span>
               </div>
               <div className="my-4">
-                {selectedData.student ? (
-                  fields.map((field, index) => (
-                    <SubjectRow
-                      key={field.id}
-                      control={control}
-                      index={index}
-                      subject={selectedSubjects[index]}
-                      onSubjectChange={handleSubjectChange}
-                    />
-                  ))
-                ) : (
-                  <div className="text-gray-30 flex w-full justify-center py-4">
-                    Выберите студента
-                  </div>
-                )}
+                {fields.map((field, index) => (
+                  <SubjectRow key={field.id} control={control} index={index} />
+                ))}
                 <div className="grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr] items-center gap-4">
                   <div />
                   <span className="text-right">Итого:</span>
@@ -110,8 +85,8 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                 </div>
               </div>
             </div>
-
-            <ModalFooter className="border-gray-20 flex gap-2 border-t px-0">
+            <CommentField control={control} />
+            <ModalFooter className="border-gray-20 flex gap-2 border-t px-0 pt-6 pb-0">
               <Button type="submit" size="m">
                 Создать
               </Button>

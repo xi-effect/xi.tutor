@@ -26,12 +26,29 @@ export const SubjectRow = ({ control, index, subject, onSubjectChange }: Subject
 
   return (
     <div className="mb-4 grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr] items-center">
-      <div>
-        <p>{subject.variant}</p>
-        <p className="text-gray-60 text-sm">
-          {`Неоплаченных: ${subject.unpaidLessonsAmount || 0}`}
-        </p>
-      </div>
+      <FormField
+        control={control}
+        name={`subjects.${index}.pricePerLesson`}
+        defaultValue={0}
+        render={({ field: formField }) => (
+          <FormItem>
+            <FormControl>
+              <Input
+                {...formField}
+                placeholder="Стоимость"
+                variant="s"
+                value={subject.pricePerLesson}
+                onChange={(e) => {
+                  const value = +e.target.value || 0;
+                  formField.onChange(value);
+                  debouncedPriceChange(value);
+                }}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
 
       <FormField
         control={control}
@@ -59,7 +76,7 @@ export const SubjectRow = ({ control, index, subject, onSubjectChange }: Subject
         )}
       />
 
-      <span className="mx-2">x</span>
+      <span className="text-gray-60 mx-2">x</span>
 
       <FormField
         control={control}
@@ -86,7 +103,7 @@ export const SubjectRow = ({ control, index, subject, onSubjectChange }: Subject
         )}
       />
 
-      <span className="mx-2">=</span>
+      <span className="text-gray-60 mx-2">=</span>
 
       <FormField
         control={control}

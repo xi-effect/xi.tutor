@@ -8,7 +8,7 @@ type StudentSelectorProps = {
   onStudentChange: (id: string) => void;
 };
 
-export const StudentSelector = ({ control, onStudentChange }: StudentSelectorProps) => {
+export const StudentSelector = ({ control }: StudentSelectorProps) => {
   return (
     <FormField
       control={control}
@@ -18,11 +18,11 @@ export const StudentSelector = ({ control, onStudentChange }: StudentSelectorPro
         <FormItem className="pb-6">
           <FormLabel>Ученик или группа</FormLabel>
           <FormControl>
-            <Select value={field.value} onValueChange={(value) => onStudentChange(value)}>
+            <Select value={field.value} onValueChange={(value) => field.onChange(value)}>
               <SelectTrigger className="mt-2 w-full">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="w-full">
                 {students.map((student) => (
                   <SelectItem key={student.id} value={student.id}>
                     {student.name}
