@@ -959,6 +959,18 @@ importers:
       '@tanstack/react-router':
         specifier: 1.120.11
         version: 1.120.11(react-dom@19.1.1)(react@19.1.1)
+      '@xipkg/button':
+        specifier: 3.1.8
+        version: 3.1.8(@types/react@19.1.9)(react@19.1.1)
+      '@xipkg/form':
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+      '@xipkg/icons':
+        specifier: 2.4.0
+        version: 2.4.0(react@19.1.1)
+      '@xipkg/input':
+        specifier: 2.2.9
+        version: 2.2.9(react@19.1.1)
       '@xipkg/modal':
         specifier: 4.1.0
         version: 4.1.0(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)

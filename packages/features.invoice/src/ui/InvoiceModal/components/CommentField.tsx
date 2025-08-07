@@ -13,12 +13,13 @@ export const CommentField = ({ control }: CommentFieldProps) => {
       name="comment"
       defaultValue=""
       render={({ field: formField }) => (
-        <FormItem className="pb-6">
+        <FormItem>
           <FormLabel className="text-gray-100">
-            Комментарий <span className="text-gray-60">не обязательно</span>
+            Комментарий для ученика{' '}
+            <span className="text-gray-60 text-xs-base">не обязательно</span>
           </FormLabel>
-          <FormControl>
-            <Input {...formField} />
+          <FormControl className="my-2">
+            <Input placeholder="например, оплата занятий за сентябрь" {...formField} />
           </FormControl>
           <FormMessage />
         </FormItem>

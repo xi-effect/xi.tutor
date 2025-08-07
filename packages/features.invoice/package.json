@@ -16,7 +16,11 @@
     "common.utils": "*",
     "@xipkg/modal": "4.1.0",
     "@xipkg/select": "2.2.5",
-    "@xipkg/utils": "1.8.0"
+    "@xipkg/utils": "1.8.0",
+    "@xipkg/form": "4.2.0",
+    "@xipkg/button": "3.1.8",
+    "@xipkg/input": "2.2.9",
+    "@xipkg/icons": "2.4.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
