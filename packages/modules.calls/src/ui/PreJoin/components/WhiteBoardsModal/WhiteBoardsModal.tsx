@@ -3,7 +3,7 @@ import { Search, WhiteBoard } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { useDebounce } from '@xipkg/utils';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
   Modal,
   ModalBody,
@@ -62,8 +62,12 @@ export const WhiteBoardsModal = () => {
 
   const searchName = useDebounce(searchInput, 300);
 
-  const filteredBoards = mockWhiteBoardList.filter((board) =>
-    searchName ? board.name.toLowerCase().includes(searchName.toLowerCase()) : true,
+  const filteredBoards = useMemo(
+    () =>
+      mockWhiteBoardList.filter((board) =>
+        searchName ? board.name.toLowerCase().includes(searchName.toLowerCase()) : true,
+      ),
+    [searchName],
   );
 
   const handleCancel = () => {
