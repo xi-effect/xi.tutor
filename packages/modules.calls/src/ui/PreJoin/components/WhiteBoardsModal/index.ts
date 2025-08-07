@@ -1,0 +1,1 @@
+export { WhiteBoardsModal } from './WhiteBoardsModal';
