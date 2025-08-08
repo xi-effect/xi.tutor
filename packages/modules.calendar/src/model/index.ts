@@ -1,6 +1,6 @@
 export {
   eventFormSchema,
   type EventFormData,
-  type LessonEventData,
-  type RestEventData,
+  type LessonFields,
+  type TimeFields,
 } from './formSchema';

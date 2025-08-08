@@ -9,7 +9,7 @@ export const Sidebar = () => {
   const [isEventFormOpen, setIsEventFormOpen] = useState(false);
 
   return (
-    <div className="border-gray-10 hidden h-full min-h-full w-[320px] flex-col justify-between py-1 md:flex">
+    <div className="border-gray-10 hidden h-full min-h-full w-[320px] flex-col justify-between gap-3 overflow-y-auto py-1 md:flex">
       {isEventFormOpen ? (
         <EventForm />
       ) : (

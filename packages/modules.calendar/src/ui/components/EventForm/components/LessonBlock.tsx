@@ -10,17 +10,23 @@ import {
 import { Input } from '@xipkg/input';
 import { Account, Updates, Payments, Hint } from '@xipkg/icons';
 
-import { students } from '../../../../../mocks';
-
-import type { FC } from 'react';
+import { students } from '../../../../mocks';
+import { useLessonFields } from '../../../../hooks/useEventForm';
+import type { useForm } from '@xipkg/form';
+import type { EventFormData } from '../../../../model';
 
 interface LessonBlockProps {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  control: any;
-  handleStudentChange: (newId: string) => void;
+  form: ReturnType<typeof useForm<EventFormData>>;
 }
 
-export const LessonBlock: FC<LessonBlockProps> = ({ control, handleStudentChange }) => {
+export const LessonBlock: React.FC<LessonBlockProps> = ({ form }) => {
+  const { control, handleStudentChange } = useLessonFields(form);
+
+  const onChangeStudent = (newId: string) => {
+    const selectedStudent = students.find((student) => student.id === newId);
+    if (selectedStudent) handleStudentChange(selectedStudent);
+  };
+
   return (
     <div className="border-gray-10 w-full border-t border-b py-2">
       <h3 className="mb-2 text-sm">Кабинет</h3>
@@ -31,7 +37,7 @@ export const LessonBlock: FC<LessonBlockProps> = ({ control, handleStudentChange
         render={({ field }) => (
           <FormItem>
             <FormControl>
-              <Select value={field.value} onValueChange={(value) => handleStudentChange(value)}>
+              <Select value={field.value} onValueChange={onChangeStudent}>
                 <SelectTrigger
                   before={<Account className="h-4 w-4" />}
                   size="s"

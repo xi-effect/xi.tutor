@@ -12,17 +12,28 @@ const timeToMinutes = (time: string) => {
 };
 
 // Базовые поля для всех типов событий
-const baseEventSchema = z.object({
+const baseFields = z.object({
   title: z.string().min(1, 'Введите название события'),
   type: z.enum(['lesson', 'rest'], {
     required_error: 'Выберите тип события',
   }),
+});
+
+const timeFields = z.object({
   startTime: timeValidation,
   endTime: timeValidation,
   isAllDay: z.boolean().default(false),
+  startDate: z
+    .string()
+    .min(1, 'Укажите дату')
+    .regex(/^\d{2}\.\d{2}\.\d{4}$/, 'Формат даты: дд.мм.гггг'),
+  endDate: z
+    .string()
+    .regex(/^\d{2}\.\d{2}\.\d{4}$/, 'Формат даты: дд.мм.гггг')
+    .optional(),
 });
 
-const lessonEventSchema = baseEventSchema.extend({
+const lessonFields = z.object({
   type: z.literal('lesson'),
   studentId: z.string().min(1, 'Выберите студента'),
   subjectName: z.string().min(1, 'Введите название предмета'),
@@ -30,10 +41,21 @@ const lessonEventSchema = baseEventSchema.extend({
     required_error: 'Выберите тип занятия',
   }),
   description: z.string().optional(),
+  paymentStatus: z.enum(['paid', 'unpaid']),
+  lessonStatus: z.enum(['done', 'not_done']),
 });
 
-const restEventSchema = baseEventSchema.extend({
+const restEventSchema = z.object({
+  ...baseFields.shape,
+  ...timeFields.shape,
   type: z.literal('rest'),
+});
+
+const lessonEventSchema = z.object({
+  ...baseFields.shape,
+  ...lessonFields.shape,
+  ...timeFields.shape,
+  type: z.literal('lesson'),
 });
 
 export const eventFormSchema = z
@@ -54,5 +76,5 @@ export const eventFormSchema = z
   );
 
 export type EventFormData = z.infer<typeof eventFormSchema>;
-export type LessonEventData = z.infer<typeof lessonEventSchema>;
-export type RestEventData = z.infer<typeof restEventSchema>;
+export type LessonFields = z.infer<typeof lessonFields>;
+export type TimeFields = z.infer<typeof timeFields>;

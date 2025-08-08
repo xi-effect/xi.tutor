@@ -2,10 +2,65 @@ import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useEffect } from 'react';
 import { eventFormSchema, type EventFormData } from '../model';
-import { students } from '../mocks';
+import type { StudentT } from '../mocks';
 import type { ICalendarEvent } from '../ui/types';
 
+export const useLessonFields = (form: ReturnType<typeof useForm<EventFormData>>) => {
+  const { control, setValue } = form;
+
+  const handleStudentChange = (student: StudentT) => {
+    setValue('studentId', student.id);
+    setValue('subjectName', student.subject.name || '');
+  };
+
+  return {
+    control,
+    handleStudentChange,
+  };
+};
+
+export const useDateFields = (form: ReturnType<typeof useForm<EventFormData>>) => {
+  const { control, watch, setValue } = form;
+  const startTime = watch('startTime');
+  const endTime = watch('endTime');
+  const isAllDay = watch('isAllDay');
+
+  const duration = useMemo(() => {
+    if (!startTime || !endTime) return { hours: 0, minutes: 0 };
+    const [startHours, startMinutes] = startTime.split(':').map(Number);
+    const [endHours, endMinutes] = endTime.split(':').map(Number);
+    const duration = endHours * 60 + endMinutes - (startHours * 60 + startMinutes);
+    return { hours: Math.floor(duration / 60), minutes: duration % 60 };
+  }, [startTime, endTime]);
+
+  useEffect(() => {
+    if (isAllDay) {
+      setValue('startTime', '00:00');
+      setValue('endTime', '23:59');
+    }
+  }, [isAllDay, setValue]);
+
+  return {
+    control,
+    isAllDay,
+    duration,
+    startTime,
+    endTime,
+  };
+};
+
 export const useEventForm = (calendarEvent?: ICalendarEvent) => {
+  const formatDate = (date: Date) => {
+    const dd = String(date.getDate()).padStart(2, '0');
+    const mm = String(date.getMonth() + 1).padStart(2, '0');
+    const yyyy = String(date.getFullYear());
+    return `${dd}.${mm}.${yyyy}`;
+  };
+
+  const startDateDefault = calendarEvent?.start
+    ? formatDate(calendarEvent.start)
+    : formatDate(new Date());
+  const endDateDefault = calendarEvent?.end ? formatDate(calendarEvent.end) : startDateDefault;
   const form = useForm<EventFormData>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: {
@@ -14,10 +69,6 @@ export const useEventForm = (calendarEvent?: ICalendarEvent) => {
         calendarEvent?.type === 'lesson' || calendarEvent?.type === 'rest'
           ? calendarEvent.type
           : 'rest',
-      studentId: '',
-      subjectName: '',
-      lessonType: 'individual',
-      description: '',
       startTime:
         calendarEvent?.start?.toLocaleTimeString('ru-RU', {
           hour: '2-digit',
@@ -29,6 +80,14 @@ export const useEventForm = (calendarEvent?: ICalendarEvent) => {
           minute: '2-digit',
         }) || '',
       isAllDay: false,
+      startDate: startDateDefault,
+      endDate: endDateDefault,
+      studentId: '',
+      subjectName: '',
+      lessonType: 'individual',
+      description: '',
+      paymentStatus: 'paid',
+      lessonStatus: 'not_done',
     },
   });
 
@@ -41,44 +100,15 @@ export const useEventForm = (calendarEvent?: ICalendarEvent) => {
   } = form;
 
   const selectedType = watch('type');
-  const selectedStartTime = watch('startTime');
-  const selectedEndTime = watch('endTime');
-  const isAllDay = watch('isAllDay');
 
-  // Автоматическое изменение времени при включении режима "весь день"
-  useEffect(() => {
-    if (isAllDay) {
-      setValue('startTime', '00:00');
-      setValue('endTime', '23:59');
-    }
-  }, [isAllDay, setValue]);
-
-  const duration = useMemo(() => {
-    if (!selectedStartTime || !selectedEndTime) return { hours: 0, minutes: 0 };
-    const [startHours, startMinutes] = selectedStartTime.split(':').map(Number);
-    const [endHours, endMinutes] = selectedEndTime.split(':').map(Number);
-    const duration = endHours * 60 + endMinutes - (startHours * 60 + startMinutes);
-    return { hours: Math.floor(duration / 60), minutes: duration % 60 };
-  }, [selectedStartTime, selectedEndTime]);
-
-  // Очистка полей при смене типа события
   const handleTypeChange = (newType: 'lesson' | 'rest') => {
     setValue('type', newType);
-
     if (newType === 'rest') {
       setValue('studentId', '');
       setValue('subjectName', '');
       setValue('lessonType', 'individual');
       setValue('description', '');
     }
-  };
-
-  const handleStudentChange = (newId: string) => {
-    setValue('studentId', newId);
-
-    const selectedStudent = students.find((student) => student.id === newId);
-
-    setValue('subjectName', selectedStudent?.subject.name || '');
   };
 
   const onSubmit = (data: EventFormData) => {
@@ -91,10 +121,7 @@ export const useEventForm = (calendarEvent?: ICalendarEvent) => {
     handleSubmit,
     errors,
     selectedType,
-    duration,
-    isAllDay,
     handleTypeChange,
-    handleStudentChange,
     onSubmit,
   };
 };
