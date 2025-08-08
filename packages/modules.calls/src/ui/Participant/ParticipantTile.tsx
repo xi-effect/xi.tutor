@@ -177,7 +177,7 @@ export const ParticipantTile = ({
                 >
                   <Avatar size="xxl">
                     <AvatarImage
-                      src={`https://auth.xieffect.ru/api/users/${identity}/avatar.webp`}
+                      src={`https://api.xieffect.ru/files/users/${identity}/avatar.webp`}
                       alt="user avatar"
                     />
                     <AvatarFallback size="xxl" loading />

@@ -1844,6 +1844,9 @@ importers:
 
   packages/modules.profile:
     dependencies:
+      '@xipkg/avatar':
+        specifier: 3.0.10
+        version: 3.0.10(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/badge':
         specifier: 2.0.12
         version: 2.0.12(react@19.1.1)
@@ -2154,8 +2157,8 @@ importers:
         specifier: ^1.128.8
         version: 1.128.8(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/avatar':
-        specifier: 3.0.9
-        version: 3.0.9(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+        specifier: 3.0.10
+        version: 3.0.10(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/button':
         specifier: 3.1.8
         version: 3.1.8(@types/react@19.1.9)(react@19.1.1)
@@ -2424,8 +2427,8 @@ importers:
         specifier: 3.13.9
         version: 3.13.9(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/avatar':
-        specifier: ^3.0.9
-        version: 3.0.9(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+        specifier: 3.0.10
+        version: 3.0.10(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/button':
         specifier: 3.1.8
         version: 3.1.8(@types/react@19.1.9)(react@19.1.1)
@@ -2860,8 +2863,8 @@ importers:
         specifier: ^5.0.1
         version: 5.0.1(react-hook-form@7.61.1)
       '@xipkg/avatar':
-        specifier: ^3.0.9
-        version: 3.0.9(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+        specifier: 3.0.10
+        version: 3.0.10(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/button':
         specifier: 3.1.2
         version: 3.1.2(@types/react@19.1.9)(react@19.1.1)
@@ -7931,8 +7934,8 @@ packages:
       - react-dom
     dev: false
 
-  /@xipkg/avatar@3.0.9(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1):
-    resolution: {integrity: sha512-umQYd2Rz1NQYcInO8Tbm3JXnnVUWg0AdRQBQ9LYU4F2YBPk5sbXnXyLVf8DIWio81cBBX3kOi3gdDnPS2FGqhw==}
+  /@xipkg/avatar@3.0.10(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1):
+    resolution: {integrity: sha512-MM2MGfKJzupXa3CXT3kNe/yCHTEXpxJWsng09t03mdtPXNdjWcDnn8bCEghoBEOKp8DVV7BvRsGhsVrZhrvtDg==}
     peerDependencies:
       react: ^19
     dependencies:
@@ -8361,7 +8364,7 @@ packages:
     peerDependencies:
       react: ^19
     dependencies:
-      '@xipkg/avatar': 3.0.9(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+      '@xipkg/avatar': 3.0.10(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/utils': 1.8.0(react@19.1.1)
       class-variance-authority: 0.7.1
       react: 19.1.1

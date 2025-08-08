@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { ChangeEvent, useRef } from 'react';
 import { Camera, Edit, Trash } from '@xipkg/icons';
 import {
@@ -104,7 +103,7 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
             />
             <AvatarFallback
               size="xl"
-              className='bg-gray-5 rounded-[36px]" flex h-[64px] w-[64px] place-items-center justify-center'
+              className="bg-gray-5 flex h-[64px] w-[64px] place-items-center justify-center rounded-[36px]"
             >
               <Camera className="fill-gray-60" />
             </AvatarFallback>
