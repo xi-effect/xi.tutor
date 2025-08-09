@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { colorOptions } from '../../../utils/customConfig';
+import { colorOptions } from '../../../../utils/customConfig';
+import { useTldrawStyles } from '../../../../hooks/useTldrawStyles';
+import { useTldrawStore } from '../../../../store/useTldrawStore';
 
 type ColorOptionT = (typeof colorOptions)[number]['name'];
 
@@ -23,15 +24,24 @@ const ColorCircle = ({ colorClass, isSelected, handleClick }: ColorCircleT) => (
   </div>
 );
 
-export const ColorGrid = () => {
-  const [selectedColor, setSelectedColor] = useState<ColorOptionT>('black');
+type ColorGridProps = {
+  currentColor?: string;
+};
+
+export const ColorGrid = ({ currentColor }: ColorGridProps) => {
+  const { pencilColor, setPencilColor } = useTldrawStore();
+  const { setColor } = useTldrawStyles();
 
   const handleColorClick = (colorName: ColorOptionT) => {
-    setSelectedColor(colorName);
+    setColor(colorName);
+    setPencilColor(colorName);
   };
 
+  // Используем цвет из стора, если не передан внешний
+  const selectedColor = currentColor || pencilColor;
+
   return (
-    <div className="m-auto grid grid-cols-5 gap-2">
+    <div className="grid grid-cols-5 gap-2">
       {colorOptions.map(({ name, class: colorClass }) => (
         <ColorCircle
           key={name}

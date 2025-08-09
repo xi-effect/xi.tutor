@@ -24,7 +24,8 @@
     "@xipkg/select": "^2.2.5",
     "@xipkg/userprofile": "4.0.12",
     "features.table": "*",
-    "common.services": "*"
+    "common.services": "*",
+    "common.env": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

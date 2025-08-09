@@ -1,41 +1,56 @@
-import { FormControl, FormField, FormItem, FormMessage } from '@xipkg/form';
+import { Button } from '@xipkg/button';
+import { FormControl, FormField, FormItem, useFieldArray, useFormContext } from '@xipkg/form';
+import { Close } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
-import { useDebouncedFunction } from '@xipkg/utils';
-import type { SubjectT } from '../../../types/InvoiceTypes';
 
 type SubjectRowProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: any;
   index: number;
-  subject: SubjectT;
-  onSubjectChange: (index: number, field: keyof SubjectT, value: number) => void;
 };
 
-export const SubjectRow = ({ control, index, subject, onSubjectChange }: SubjectRowProps) => {
-  const totalPrice = subject.pricePerLesson * (subject.unpaidLessonsAmount || 0);
+export const SubjectRow = ({ control, index }: SubjectRowProps) => {
+  console.log('SubjectRow');
 
-  const debouncedPriceChange = useDebouncedFunction(
-    (...args: unknown[]) => onSubjectChange(index, 'pricePerLesson', args[0] as number),
-    500,
-  );
+  const { watch } = useFormContext();
+  const items = watch('items');
 
-  const debouncedAmountChange = useDebouncedFunction(
-    (...args: unknown[]) => onSubjectChange(index, 'unpaidLessonsAmount', args[0] as number),
-    500,
-  );
+  console.log('items', items);
+
+  const item = items[index];
+
+  const totalPrice = item.price * (item.quantity || 0);
+
+  const { remove } = useFieldArray({
+    control,
+    name: 'items',
+  });
 
   return (
-    <div className="mb-4 grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr] items-center">
-      <div>
-        <p>{subject.variant}</p>
-        <p className="text-gray-60 text-sm">
-          {`Неоплаченных: ${subject.unpaidLessonsAmount || 0}`}
-        </p>
-      </div>
+    <div className="mb-4 grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2">
+      <FormField
+        control={control}
+        name={`items.${index}.name`}
+        defaultValue={0}
+        render={({ field: formField }) => (
+          <FormItem>
+            <FormControl>
+              <Input
+                {...formField}
+                placeholder="Название"
+                variant="s"
+                onChange={(e) => {
+                  formField.onChange(e.target.value);
+                }}
+              />
+            </FormControl>
+          </FormItem>
+        )}
+      />
 
       <FormField
         control={control}
-        name={`subjects.${index}.pricePerLesson`}
+        name={`items.${index}.price`}
         defaultValue={0}
         render={({ field: formField }) => (
           <FormItem>
@@ -44,26 +59,24 @@ export const SubjectRow = ({ control, index, subject, onSubjectChange }: Subject
                 {...formField}
                 type="number"
                 placeholder="Стоимость"
+                min={0}
                 variant="s"
-                after={<span>₽</span>}
-                value={subject.pricePerLesson}
+                after={<span className="text-gray-60">₽</span>}
                 onChange={(e) => {
                   const value = +e.target.value || 0;
                   formField.onChange(value);
-                  debouncedPriceChange(value);
                 }}
               />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
 
-      <span className="mx-2">x</span>
+      <span className="text-gray-60">x</span>
 
       <FormField
         control={control}
-        name={`subjects.${index}.unpaidLessonsAmount`}
+        name={`items.${index}.quantity`}
         defaultValue={0}
         render={({ field: formField }) => (
           <FormItem>
@@ -72,43 +85,43 @@ export const SubjectRow = ({ control, index, subject, onSubjectChange }: Subject
                 {...formField}
                 type="number"
                 placeholder="Количество"
+                min={1}
                 variant="s"
-                value={subject.unpaidLessonsAmount || 0}
                 onChange={(e) => {
                   const value = +e.target.value || 0;
                   formField.onChange(value);
-                  debouncedAmountChange(value);
                 }}
               />
             </FormControl>
-            <FormMessage />
           </FormItem>
         )}
       />
 
-      <span className="mx-2">=</span>
+      <span className="text-gray-60">=</span>
 
-      <FormField
-        control={control}
-        name={`subjects.${index}.totalPrice`}
-        defaultValue={0}
-        render={({ field: formField }) => (
-          <FormItem>
-            <FormControl>
-              <Input
-                {...formField}
-                type="number"
-                value={totalPrice}
-                placeholder="Сумма"
-                variant="s"
-                after={<span>₽</span>}
-                readOnly
-              />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
-        )}
-      />
+      <FormItem>
+        <FormControl>
+          <Input
+            type="number"
+            value={totalPrice}
+            placeholder="Сумма"
+            variant="s"
+            after={<span className="text-gray-60">₽</span>}
+            readOnly
+          />
+        </FormControl>
+      </FormItem>
+      {items.length > 1 ? (
+        <Button
+          className="ml-2 h-[24px] w-[24px] p-0"
+          variant="ghost"
+          onClick={() => remove(index)}
+        >
+          <Close size="s" className="fill-gray-40" />
+        </Button>
+      ) : (
+        <div className="ml-2 h-[24px] w-[24px]" />
+      )}
     </div>
   );
 };

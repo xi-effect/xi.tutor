@@ -4,13 +4,13 @@ import { ModalInvitation } from './ModalInvitation';
 export const ButtonsHeader = () => {
   return (
     <div className="ml-auto flex flex-row items-center gap-2 pr-4 max-sm:hidden">
-      <Button
+      {/* <Button
         variant="secondary"
         size="s"
         className="text-s-base border-gray-60 rounded-lg border px-4 py-2 font-medium text-gray-100 max-[550px]:hidden"
       >
         Создать группу
-      </Button>
+      </Button> */}
 
       <ModalInvitation>
         <Button

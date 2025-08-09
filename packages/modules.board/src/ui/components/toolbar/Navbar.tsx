@@ -3,7 +3,22 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg
 import { track, useEditor } from 'tldraw';
 import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
 import { UndoRedo } from './UndoRedo';
-// import { NavbarAction } from '../../../features';
+import { PenPopup } from '../popups/Pen';
+import { useTldrawStore } from '../../../store';
+import { useTldrawStyles } from '../../../hooks';
+
+// Маппинг инструментов Kanva на Tldraw
+const toolMapping: Record<string, string> = {
+  select: 'select',
+  hand: 'hand',
+  pen: 'draw',
+  text: 'text',
+  rectangle: 'rectangle',
+  arrow: 'arrow',
+  eraser: 'eraser',
+  sticker: 'note', // Используем note как аналог стикера
+  asset: 'image', // Используем image для загрузки изображений
+};
 
 export const Navbar = track(
   ({
@@ -17,25 +32,23 @@ export const Navbar = track(
     canUndo: boolean;
     canRedo: boolean;
   }) => {
+    const { pencilColor, pencilThickness, pencilOpacity } = useTldrawStore();
+    const { resetToDefaults, setColor, setThickness, setOpacity } = useTldrawStyles();
+
     const [isTooltipOpen] = React.useState(false);
+    const [penPopupOpen, setPenPopupOpen] = React.useState(false);
     const editor = useEditor();
 
     const handleSelectTool = (toolName: string) => {
       // Очищаем выделение перед сменой инструмента
       editor.selectNone();
 
-      // Маппинг инструментов Kanva на Tldraw
-      const toolMapping: Record<string, string> = {
-        select: 'select',
-        hand: 'hand',
-        pen: 'draw',
-        text: 'text',
-        rectangle: 'rectangle',
-        arrow: 'arrow',
-        eraser: 'eraser',
-        sticker: 'note', // Используем note как аналог стикера
-        asset: 'image', // Используем image для загрузки изображений
-      };
+      // Закрываем Popover стилей при переключении на любой инструмент
+      if (toolName !== 'pen') {
+        console.log('resetToDefaults');
+        resetToDefaults();
+        setPenPopupOpen(false);
+      }
 
       const tldrawTool = toolMapping[toolName];
       if (tldrawTool) {
@@ -62,6 +75,27 @@ export const Navbar = track(
       return reverseMapping[currentToolId] || 'select';
     };
 
+    const currentTool = getCurrentTool();
+
+    // Обработчик для закрытия Popover только при переключении инструмента
+    const handlePenPopupOpenChange = (open: boolean) => {
+      console.log('open', open);
+
+      if (open) {
+        setColor(pencilColor);
+        setThickness(pencilThickness);
+        setOpacity(pencilOpacity);
+      }
+
+      // Сбрасываем настройки при закрытии Popover
+      if (!open) {
+        console.log('resetToDefaults');
+        resetToDefaults();
+      }
+
+      setPenPopupOpen(open);
+    };
+
     return (
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute right-0 bottom-4 left-0 z-30 flex w-full items-center justify-center">
@@ -72,7 +106,31 @@ export const Navbar = track(
             <div className="border-gray-10 bg-gray-0 mx-auto flex gap-10 rounded-xl border">
               <div className="flex gap-2 p-1">
                 {navBarElements.map((item: NavbarElementT) => {
-                  const isActive = item.action === getCurrentTool();
+                  const isActive = item.action === currentTool;
+
+                  // Для инструмента "pen" используем StylePopupContent
+                  if (item.action === 'pen') {
+                    return (
+                      <PenPopup
+                        key={item.action}
+                        open={penPopupOpen}
+                        onOpenChange={handlePenPopupOpenChange}
+                      >
+                        <button
+                          type="button"
+                          className={`pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${isActive ? 'bg-brand-0' : 'bg-gray-0'}`}
+                          data-isactive={isActive}
+                          onClick={() => {
+                            handleSelectTool(item.action);
+                          }}
+                        >
+                          {item.icon ? item.icon : item.title}
+                        </button>
+                      </PenPopup>
+                    );
+                  }
+
+                  // Для остальных инструментов показываем обычную кнопку с тултипом
                   return (
                     <TooltipProvider key={item.action}>
                       <Tooltip open={item?.hasAToolTip && isTooltipOpen}>

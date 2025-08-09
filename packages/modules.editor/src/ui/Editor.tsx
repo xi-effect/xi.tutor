@@ -1,10 +1,10 @@
 import { useEditor, EditorContent } from '@tiptap/react';
-import { FloatingMenu, BubbleMenu } from '@tiptap/react/menus';
-import StarterKit from '@tiptap/starter-kit';
-
-const extensions = [StarterKit];
-
-const content = 'Начните писать тут...';
+import { FloatingMenu } from '@tiptap/react/menus';
+import content from '../const/content';
+import { useEditorActive } from '../hooks/UseEditorActive';
+import { BubbleMenuWrapper } from './components/BubbleMenuWrapper/BubbleMenuWrapper';
+import { extensions } from '../config/editorConfig';
+import { DragHandleWrapper } from './components/DragHandleWrapper';
 
 export const Editor = () => {
   const editor = useEditor({
@@ -12,11 +12,16 @@ export const Editor = () => {
     content,
   });
 
+  const activeStates = useEditorActive(editor);
+
+  if (!editor) return null;
+
   return (
     <>
+      <DragHandleWrapper editor={editor} />
       <EditorContent editor={editor} />
       <FloatingMenu editor={editor}>This is the floating menu</FloatingMenu>
-      <BubbleMenu editor={editor}>This is the bubble menu</BubbleMenu>
+      <BubbleMenuWrapper editor={editor} activeStates={activeStates} />
     </>
   );
 };

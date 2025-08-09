@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState, useCallback } from 'react';
 import {
   Modal,
   ModalTitle,
@@ -15,6 +15,7 @@ import { Trash, Copy } from '@xipkg/icons';
 import { toast } from 'sonner';
 import { useInvitationsList, useAddInvitation, useDeleteInvitation } from 'common.services';
 import { InvitationDataT } from 'common.types';
+import { env } from 'common.env';
 
 export const ModalInvitation = ({ children }: { children: React.ReactNode }) => {
   const { data } = useInvitationsList();
@@ -25,13 +26,14 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
   const handleCopyLink = (link: InvitationDataT['code']) => () => {
-    navigator.clipboard.writeText(link);
-    toast('Ссылка скопирована');
+    navigator.clipboard.writeText(`${env.VITE_APP_DOMAIN}/invite/${link}`);
+    toast.success('Ссылка скопирована');
+    toast.info('Отправьте ссылку ученику');
   };
 
-  const handleAddInvitation = () => {
+  const handleAddInvitation = useCallback(() => {
     addInvitationMutate();
-  };
+  }, [addInvitationMutate]);
 
   const handleDeleteInvitation = (id: number) => () => {
     setDeletingId(id);
@@ -44,7 +46,7 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
     if (data?.length === 0) {
       handleAddInvitation();
     }
-  }, [data?.length]);
+  }, [data?.length, handleAddInvitation]);
 
   return (
     <Modal>
