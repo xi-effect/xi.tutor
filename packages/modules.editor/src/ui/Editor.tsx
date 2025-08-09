@@ -1,27 +1,26 @@
 import { useEditor, EditorContent } from '@tiptap/react';
-import { FloatingMenu } from '@tiptap/react/menus';
 import content from '../const/content';
-import { useEditorActive } from '../hooks/UseEditorActive';
-import { BubbleMenuWrapper } from './components/BubbleMenuWrapper/BubbleMenuWrapper';
 import { extensions } from '../config/editorConfig';
-import { DragHandleWrapper } from './components/DragHandleWrapper';
+import { editorProps } from '../config/editorProps';
+import { EditorToolkit } from './components/EditorToolkit';
 
 export const Editor = () => {
   const editor = useEditor({
     extensions,
     content,
+    editorProps,
   });
-
-  const activeStates = useEditorActive(editor);
 
   if (!editor) return null;
 
   return (
-    <>
-      <DragHandleWrapper editor={editor} />
-      <EditorContent editor={editor} />
-      <FloatingMenu editor={editor}>This is the floating menu</FloatingMenu>
-      <BubbleMenuWrapper editor={editor} activeStates={activeStates} />
-    </>
+    <div className="flex w-full justify-center py-8">
+      <div className="w-full max-w-5xl overflow-hidden rounded-lg bg-white">
+        <div className="relative px-16 py-8">
+          <EditorContent editor={editor} />
+          <EditorToolkit editor={editor} />
+        </div>
+      </div>
+    </div>
   );
 };
