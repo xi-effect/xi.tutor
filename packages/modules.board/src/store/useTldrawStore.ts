@@ -15,6 +15,13 @@ interface TldrawState {
   setIsEditingText: (value: boolean) => void;
   editingElementId: string | null;
   setEditingElementId: (id: string | null) => void;
+  // Настройки карандаша
+  pencilColor: string;
+  setPencilColor: (color: string) => void;
+  pencilThickness: 's' | 'm' | 'l' | 'xl';
+  setPencilThickness: (thickness: 's' | 'm' | 'l' | 'xl') => void;
+  pencilOpacity: number;
+  setPencilOpacity: (opacity: number) => void;
 }
 
 export const useTldrawStore = create<TldrawState>()(
@@ -38,6 +45,14 @@ export const useTldrawStore = create<TldrawState>()(
       },
       editingElementId: null,
       setEditingElementId: (id: string | null) => set(() => ({ editingElementId: id })),
+      // Настройки карандаша
+      pencilColor: 'black',
+      setPencilColor: (color: string) => set(() => ({ pencilColor: color })),
+      pencilThickness: 'm',
+      setPencilThickness: (thickness: 's' | 'm' | 'l' | 'xl') =>
+        set(() => ({ pencilThickness: thickness })),
+      pencilOpacity: 100,
+      setPencilOpacity: (opacity: number) => set(() => ({ pencilOpacity: opacity })),
     }),
     { name: 'tldraw-storage' },
   ),

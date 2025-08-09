@@ -10,7 +10,8 @@ export type ErrorType =
   | 'materials'
   | 'role'
   | 'addInvitation'
-  | 'deleteInvitation';
+  | 'deleteInvitation'
+  | 'onboarding';
 
 // Маппинг ошибок для разных операций
 const errorMessages: Record<ErrorType, Record<string, string>> = {
@@ -51,6 +52,9 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
     'Invitation not found': 'Приглашение не найдено',
     'Invitation access denied': 'Доступ к приглашению запрещён',
   },
+  onboarding: {
+    'Invalid transition': 'Неверный режим перехода',
+  },
 };
 
 // Общие сообщения об ошибках по статусам
@@ -73,6 +77,7 @@ const successMessages: Record<ErrorType, string> = {
   role: 'Роль пользователя успешно обновлена',
   addInvitation: 'Новое приглашение добавлено',
   deleteInvitation: 'Приглашение удалено',
+  onboarding: 'Онбординг успешно завершен',
 };
 
 /**
@@ -130,6 +135,8 @@ const getOperationName = (type: ErrorType): string => {
       return 'создании материала';
     case 'role':
       return 'назначении роли';
+    case 'onboarding':
+      return 'переходе на этап онбординга';
     default:
       return 'выполнении операции';
   }
