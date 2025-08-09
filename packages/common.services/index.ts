@@ -20,5 +20,5 @@ export {
 } from './src/materials';
 export { useFetchClassrooms, useGetClassroom } from './src/classrooms';
 export { handleError, showSuccess, type ErrorType } from './src/utils/errorHandler';
-
+export { useTemplatesList, useAddTemplate, useDeleteTemplate } from './src/payments';
 export { useOnboardingTransition } from './src/onboarding/useOnboardingTransition';

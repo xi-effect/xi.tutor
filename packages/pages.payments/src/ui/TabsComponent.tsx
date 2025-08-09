@@ -4,6 +4,7 @@ import { PaymentsTable } from './PaymentsTable';
 import { useMedia } from 'common.utils';
 import { students, subjects, PaymentT, createPaymentColumns, payments } from 'features.table';
 import { PaymentControl as PaymentsCharts } from 'features.charts';
+import { TemplatesGrid } from './TemplatesGrid';
 
 async function getData(): Promise<PaymentT[]> {
   return payments;
@@ -24,13 +25,17 @@ export const TabsComponent = () => {
 
   return (
     <Tabs.Root defaultValue="boards">
-      <Tabs.List className="flex w-70 flex-row gap-4">
+      <Tabs.List className="flex w-80 flex-row gap-4">
         <Tabs.Trigger value="boards" className="text-m-base font-medium text-gray-100">
           Журнал оплат
         </Tabs.Trigger>
 
         <Tabs.Trigger value="charts" className="text-m-base font-medium text-gray-100">
           Аналитика
+        </Tabs.Trigger>
+
+        <Tabs.Trigger value="templates" className="text-m-base font-medium text-gray-100">
+          Типы оплат
         </Tabs.Trigger>
       </Tabs.List>
 
@@ -46,6 +51,10 @@ export const TabsComponent = () => {
 
         <Tabs.Content value="charts">
           <PaymentsCharts />
+        </Tabs.Content>
+
+        <Tabs.Content value="templates">
+          <TemplatesGrid />
         </Tabs.Content>
       </div>
     </Tabs.Root>
