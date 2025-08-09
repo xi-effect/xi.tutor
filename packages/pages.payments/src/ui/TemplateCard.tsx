@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@xipkg/button';
 import { MoreVert } from '@xipkg/icons';
-import { TemplatePropsT } from '../types';
+import { TemplateT } from 'common.types';
 // import { useEditTemplate } from 'common.services';
 import {
   DropdownMenu,
@@ -16,7 +16,7 @@ export const TemplateCard = ({
   price,
   id,
   handleDeleteTemplate,
-}: TemplatePropsT & {
+}: TemplateT & {
   handleDeleteTemplate: (id: number) => () => void;
 }) => {
   const [menuOpen, setMenuOpen] = useState(false);

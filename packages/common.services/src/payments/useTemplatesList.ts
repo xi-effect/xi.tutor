@@ -1,4 +1,4 @@
-import { paymentTemplatesApiConfig, PaymentTemplatesQueryKey }from 'common.api';
+import { paymentTemplatesApiConfig, PaymentTemplatesQueryKey } from 'common.api';
 import { useFetching } from 'common.config';
 
 export const useTemplatesList = () => {

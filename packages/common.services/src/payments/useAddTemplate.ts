@@ -2,12 +2,12 @@ import { paymentTemplatesApiConfig, PaymentTemplatesQueryKey } from 'common.api'
 import { getAxiosInstance } from 'common.config';
 import { PaymentTemplateDataT } from 'common.types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { handleError } from 'common.services';
+// import { handleError } from 'common.services';
 
 export const useAddTemplate = () => {
   const queryClient = useQueryClient();
 
-  const addInvitationMutation = useMutation({
+  const addTemplateMutation = useMutation({
     mutationFn: async (templateData: PaymentTemplateDataT) => {
       try {
         const axiosInst = await getAxiosInstance();
@@ -47,17 +47,19 @@ export const useAddTemplate = () => {
     //     return { previousTemplates };
     // },
     onError: (err) => {
-      const previousInvitations = queryClient.getQueryData<PaymentTemplateDataT[]>([
+      const previousTemplates = queryClient.getQueryData<PaymentTemplateDataT[]>([
         PaymentTemplatesQueryKey.AllTemplates,
       ]);
-      if (previousInvitations) {
+      if (previousTemplates) {
         queryClient.setQueryData<PaymentTemplateDataT[]>(
           [PaymentTemplatesQueryKey.AllTemplates],
-          previousInvitations,
+          previousTemplates,
         );
       }
 
-      handleError(err, 'addInvitation');
+      // ОБРАБОТАТЬ ОШИБКИ
+      // handleError(err, 'addInvitation');
+      console.log(err);
     },
     onSuccess: (response) => {
       if (response?.data) {
@@ -72,5 +74,5 @@ export const useAddTemplate = () => {
     },
   });
 
-  return { ...addInvitationMutation };
+  return { ...addTemplateMutation };
 };
