@@ -11,6 +11,7 @@ import { DisconnectButton } from './DisconnectButton';
 import { ScreenShareButton } from './ScreenShareButton';
 import { WhiteBoardButton } from './WhiteBoardButton';
 import { ChatButton } from './ChatButton';
+import { RaiseHandButton } from './RaiseHandButton';
 
 export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
   const { saveAudioInputEnabled, saveVideoInputEnabled } = usePersistentUserChoices({
@@ -59,6 +60,7 @@ export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
             <ScreenShareButton />
             <WhiteBoardButton />
             <ChatButton />
+            <RaiseHandButton />
           </div>
         </div>
         <DisconnectButton />

@@ -8,5 +8,7 @@ export {
   useLiveKitDataChannelListener,
   useModeSync,
   useChat,
+  useRaisedHands,
+  useHandFocus,
 } from './hooks';
 export { useCallStore } from './store';

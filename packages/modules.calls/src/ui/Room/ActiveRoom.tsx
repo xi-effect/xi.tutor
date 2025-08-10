@@ -2,8 +2,12 @@ import { BottomBar } from '../Bottom';
 import { VideoGrid } from '../VideoGrid';
 import { UpBar } from '../Up';
 import { Chat } from '../Chat/Chat';
+import { useHandFocus } from '../../hooks/useHandFocus';
 
 export const ActiveRoom = () => {
+  // Автоматический фокус на участниках с поднятыми руками
+  useHandFocus();
+
   return (
     <div className="flex h-full flex-col justify-stretch">
       <UpBar />

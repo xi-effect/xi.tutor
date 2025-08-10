@@ -7,6 +7,7 @@ import { LocalAudioTrack, LocalVideoTrack, Track } from 'livekit-client';
 import { ScreenShareButton } from '../Bottom/ScreenShareButton';
 import { DisconnectButton } from '../Bottom/DisconnectButton';
 import { ChatButton } from '../Bottom/ChatButton';
+import { RaiseHandButton } from '../Bottom/RaiseHandButton';
 
 export const CompactCall = ({ saveUserChoices = true }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -66,6 +67,7 @@ export const CompactCall = ({ saveUserChoices = true }) => {
       <div className="flex items-center justify-center gap-1">
         <ScreenShareButton />
         <ChatButton />
+        <RaiseHandButton />
         <DisconnectButton />
       </div>
     </div>

@@ -11,6 +11,12 @@ type ChatMessage = {
   timestamp: number;
 };
 
+type RaisedHand = {
+  participantId: string;
+  participantName: string;
+  timestamp: number;
+};
+
 type useCallStoreT = {
   // разрешение от браузера на использование камеры
   isCameraPermission: boolean | null;
@@ -34,9 +40,16 @@ type useCallStoreT = {
   chatMessages: ChatMessage[];
   unreadMessagesCount: number;
 
+  // Поднятые руки
+  raisedHands: RaisedHand[];
+  isHandRaised: boolean;
+
   updateStore: (type: keyof useCallStoreT, value: any) => void;
   addChatMessage: (message: ChatMessage) => void;
   clearUnreadMessages: () => void;
+  addRaisedHand: (hand: RaisedHand) => void;
+  removeRaisedHand: (participantId: string) => void;
+  toggleHandRaised: () => void;
 };
 
 export const useCallStore = create<useCallStoreT>()(
@@ -58,6 +71,10 @@ export const useCallStore = create<useCallStoreT>()(
       chatMessages: [],
       unreadMessagesCount: 0,
 
+      // Поднятые руки
+      raisedHands: [],
+      isHandRaised: false,
+
       updateStore: (type: keyof useCallStoreT, value: any) => set({ [type]: value }),
 
       addChatMessage: (message: ChatMessage) => {
@@ -69,6 +86,15 @@ export const useCallStore = create<useCallStoreT>()(
       },
 
       clearUnreadMessages: () => set({ unreadMessagesCount: 0 }),
+
+      // Поднятые руки
+      addRaisedHand: (hand: RaisedHand) =>
+        set((state) => ({ raisedHands: [...state.raisedHands, hand] })),
+      removeRaisedHand: (participantId: string) =>
+        set((state) => ({
+          raisedHands: state.raisedHands.filter((hand) => hand.participantId !== participantId),
+        })),
+      toggleHandRaised: () => set((state) => ({ isHandRaised: !state.isHandRaised })),
     }),
     {
       name: 'call-store', // Название ключа в localStorage
