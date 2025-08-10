@@ -33,7 +33,7 @@ function CustomBoard() {
   const { data: currentUser } = useCurrentUser();
   const { store, status } = useYjsStore({
     roomId: 'my-room',
-    hostUrl: 'wss://hocus.xieffect.ru',
+    hostUrl: 'wss://hocus.sovlium.ru',
   });
 
   // useYjsStore автоматически использует:
@@ -71,7 +71,7 @@ import { CollaboratorCursor } from 'modules.board';
 ```tsx
 const { store, status } = useYjsStore({
   roomId: 'unique-room-id', // ID комнаты для совместного редактирования
-  hostUrl: 'wss://hocus.xieffect.ru', // URL Hocuspocus сервера
+  hostUrl: 'wss://hocus.sovlium.ru', // URL Hocuspocus сервера
   shapeUtils: [], // Дополнительные утилиты для фигур
 });
 ```
