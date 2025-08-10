@@ -2022,9 +2022,15 @@ importers:
       features.materials.add:
         specifier: '*'
         version: link:../features.materials.add
+      features.table:
+        specifier: '*'
+        version: link:../features.table
       modules.editor:
         specifier: '*'
         version: link:../modules.editor
+      pages.payments:
+        specifier: '*'
+        version: link:../pages.payments
       react:
         specifier: '19'
         version: 19.1.1

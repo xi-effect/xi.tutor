@@ -18,7 +18,7 @@ export const TabsComponent = () => {
   }, []);
 
   const defaultColumns = useMemo(
-    () => createPaymentColumns({ students, subjects, isMobile }),
+    () => createPaymentColumns({ withStudentColumn: true, students, subjects, isMobile }),
     [isMobile],
   );
 

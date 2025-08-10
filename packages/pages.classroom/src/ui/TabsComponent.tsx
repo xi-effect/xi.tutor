@@ -7,6 +7,7 @@ import { Overview } from './Overview';
 import { SearchParams } from '../types/router';
 import { Information } from './Information';
 import { MaterialsAdd } from 'features.materials.add';
+import { Payments } from './Payments';
 
 export const TabsComponent = () => {
   const search: SearchParams = useSearch({ strict: false });
@@ -60,7 +61,9 @@ export const TabsComponent = () => {
 
         <Tabs.Content value="materials">Материалы</Tabs.Content>
 
-        <Tabs.Content value="payments">Оплаты</Tabs.Content>
+        <Tabs.Content value="payments">
+          <Payments />
+        </Tabs.Content>
 
         <Tabs.Content value="info">
           <Information />

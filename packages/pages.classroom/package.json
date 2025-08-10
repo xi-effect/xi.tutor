@@ -23,7 +23,9 @@
     "@xipkg/tabs": "2.1.0",
     "@xipkg/input": "2.2.9",
     "@xipkg/form": "4.2.0",
-    "modules.editor": "*"
+    "modules.editor": "*",
+    "pages.payments": "*",
+    "features.table": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
