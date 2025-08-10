@@ -6,6 +6,7 @@ import { useLocalParticipant, usePersistentUserChoices } from '@livekit/componen
 import { LocalAudioTrack, LocalVideoTrack, Track } from 'livekit-client';
 import { ScreenShareButton } from '../Bottom/ScreenShareButton';
 import { DisconnectButton } from '../Bottom/DisconnectButton';
+import { ChatButton } from '../Bottom/ChatButton';
 
 export const CompactCall = ({ saveUserChoices = true }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -40,33 +41,31 @@ export const CompactCall = ({ saveUserChoices = true }) => {
     <div
       ref={setNodeRef}
       style={style}
-      {...listeners}
       {...attributes}
-      className="relative flex w-[320px] flex-col gap-2 bg-transparent"
+      {...listeners}
+      className="bg-gray-0 border-gray-20 flex h-[120px] w-[200px] flex-col rounded-2xl border p-3 shadow-lg"
     >
-      <div className="bg-gray-40 flex h-[180px] w-[320px] items-center justify-between rounded-[16px]"></div>
-      <div className="flex items-center justify-between">
-        <div className="bg-gray-0 border-gray-10 flex h-[48px] w-[92px] items-center justify-center gap-1 rounded-[16px] border">
-          <DevicesBar
-            microTrack={microphoneTrack?.track as LocalAudioTrack}
-            microEnabled={isMicrophoneEnabled}
-            microTrackToggle={{
-              showIcon: true,
-              source: Track.Source.Microphone,
-              onChange: microphoneOnChange,
-            }}
-            videoTrack={cameraTrack?.track as unknown as LocalVideoTrack}
-            videoEnabled={isCameraEnabled}
-            videoTrackToggle={{
-              showIcon: true,
-              source: Track.Source.Camera,
-              onChange: cameraOnChange,
-            }}
-          />
-        </div>
-        <div className="bg-gray-0 border-gray-10 flex h-[48px] items-center justify-center gap-1 rounded-[16px] border p-1">
-          <ScreenShareButton />
-        </div>
+      <div className="flex flex-1 items-center justify-center">
+        <DevicesBar
+          microTrack={microphoneTrack?.track as LocalAudioTrack}
+          microEnabled={isMicrophoneEnabled}
+          microTrackToggle={{
+            showIcon: true,
+            source: Track.Source.Microphone,
+            onChange: microphoneOnChange,
+          }}
+          videoTrack={cameraTrack?.track as unknown as LocalVideoTrack}
+          videoEnabled={isCameraEnabled}
+          videoTrackToggle={{
+            showIcon: true,
+            source: Track.Source.Camera,
+            onChange: cameraOnChange,
+          }}
+        />
+      </div>
+      <div className="flex items-center justify-center gap-1">
+        <ScreenShareButton />
+        <ChatButton />
         <DisconnectButton />
       </div>
     </div>

@@ -3,6 +3,14 @@ import { LiveKitRoomProps } from '@livekit/components-react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+type ChatMessage = {
+  id: string;
+  text: string;
+  senderId: string;
+  senderName: string;
+  timestamp: number;
+};
+
 type useCallStoreT = {
   // разрешение от браузера на использование камеры
   isCameraPermission: boolean | null;
@@ -21,12 +29,19 @@ type useCallStoreT = {
 
   mode: 'compact' | 'full';
 
+  // Чат
+  isChatOpen: boolean;
+  chatMessages: ChatMessage[];
+  unreadMessagesCount: number;
+
   updateStore: (type: keyof useCallStoreT, value: any) => void;
+  addChatMessage: (message: ChatMessage) => void;
+  clearUnreadMessages: () => void;
 };
 
 export const useCallStore = create<useCallStoreT>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       isCameraPermission: null,
       isMicroPermission: null,
       audioEnabled: false,
@@ -37,7 +52,23 @@ export const useCallStore = create<useCallStoreT>()(
       connect: undefined,
       isStarted: undefined,
       mode: 'full',
+
+      // Чат
+      isChatOpen: false,
+      chatMessages: [],
+      unreadMessagesCount: 0,
+
       updateStore: (type: keyof useCallStoreT, value: any) => set({ [type]: value }),
+
+      addChatMessage: (message: ChatMessage) => {
+        const { isChatOpen, unreadMessagesCount } = get();
+        set((state) => ({
+          chatMessages: [...state.chatMessages, message],
+          unreadMessagesCount: isChatOpen ? unreadMessagesCount : unreadMessagesCount + 1,
+        }));
+      },
+
+      clearUnreadMessages: () => set({ unreadMessagesCount: 0 }),
     }),
     {
       name: 'call-store', // Название ключа в localStorage

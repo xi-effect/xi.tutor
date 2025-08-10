@@ -13,6 +13,7 @@ import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { CompactCall } from './CompactCall';
 import { useCallStore } from '../../store/callStore';
 import { useRouter } from '@tanstack/react-router';
+import { Chat } from '../Chat/Chat';
 
 type Corner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
 
@@ -73,6 +74,7 @@ const DroppableAreas: FC = () => {
 export const Compact: FC<CompactViewProps> = ({ children }) => {
   const [activeCorner, setActiveCorner] = useState<Corner>('top-left');
   const router = useRouter();
+  const { isChatOpen } = useCallStore();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -117,6 +119,15 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
         </div>
 
         {children}
+
+        {/* Чат в режиме compact */}
+        {isChatOpen && (
+          <div className="absolute top-4 right-4 z-50">
+            <div className="bg-gray-0 border-gray-20 flex h-96 w-80 flex-col rounded-2xl border shadow-lg">
+              <Chat />
+            </div>
+          </div>
+        )}
       </div>
     </DndContext>
   );

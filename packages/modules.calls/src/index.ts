@@ -7,5 +7,6 @@ export {
   useLiveKitDataChannel,
   useLiveKitDataChannelListener,
   useModeSync,
+  useChat,
 } from './hooks';
 export { useCallStore } from './store';
