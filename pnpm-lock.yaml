@@ -2028,6 +2028,9 @@ importers:
       modules.editor:
         specifier: '*'
         version: link:../modules.editor
+      pages.materials:
+        specifier: '*'
+        version: link:../pages.materials
       pages.payments:
         specifier: '*'
         version: link:../pages.payments

@@ -25,6 +25,7 @@
     "@xipkg/form": "4.2.0",
     "modules.editor": "*",
     "pages.payments": "*",
+    "pages.materials": "*",
     "features.table": "*"
   },
   "devDependencies": {
