@@ -10,5 +10,6 @@ export {
   useChat,
   useRaisedHands,
   useHandFocus,
+  useWhiteboards,
 } from './hooks';
 export { useCallStore } from './store';

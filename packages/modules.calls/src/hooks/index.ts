@@ -6,3 +6,4 @@ export { useModeSync } from './useModeSync';
 export { useChat } from './useChat';
 export { useRaisedHands } from './useRaisedHands';
 export { useHandFocus } from './useHandFocus';
+export { useWhiteboards } from './useWhiteboards';
