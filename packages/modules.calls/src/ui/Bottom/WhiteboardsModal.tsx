@@ -12,6 +12,7 @@ import { useState } from 'react';
 import { Close, Search } from '@xipkg/icons';
 import { useNavigate } from '@tanstack/react-router';
 import { useCallStore } from '../../store';
+import { useModeSync } from '../../hooks';
 
 type Whiteboard = {
   id: string;
@@ -27,6 +28,7 @@ type WhiteboardsModalProps = {
 export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) => {
   const navigate = useNavigate();
   const updateStore = useCallStore((state) => state.updateStore);
+  const { syncModeToOthers } = useModeSync();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBoardId, setSelectedBoardId] = useState<string | null>(null);
   const [whiteboards] = useState<Whiteboard[]>([
@@ -52,8 +54,20 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
 
   const handleConfirm = () => {
     if (selectedBoardId) {
+      console.log('🎯 WhiteboardsModal: handleConfirm called with boardId:', selectedBoardId);
+
+      // Обновляем локальный режим
       updateStore('mode', 'compact');
+      console.log('✅ Local mode updated to compact');
+
+      // Отправляем сообщение всем участникам ВКС о переключении в compact режим
+      syncModeToOthers('compact', selectedBoardId);
+      console.log('📤 Mode sync message sent to all participants');
+
+      // Переходим на доску
       navigate({ to: '/board/$boardId', params: { boardId: selectedBoardId } });
+      console.log('🧭 Navigation to board initiated');
+
       onOpenChange(false);
     }
   };
@@ -101,6 +115,16 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
         <ModalFooter className="border-gray-20 flex gap-2 border-t">
           <Button size="m" onClick={handleConfirm} disabled={!selectedBoardId}>
             Выбрать
+          </Button>
+          <Button
+            size="m"
+            variant="secondary"
+            onClick={() => {
+              console.log('🧪 Testing data channel...');
+              syncModeToOthers('compact', 'test-board-123');
+            }}
+          >
+            Тест Data Channel
           </Button>
           <Button size="m" variant="secondary" onClick={() => onOpenChange(false)}>
             Отменить
