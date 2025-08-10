@@ -26,7 +26,8 @@
     "modules.editor": "*",
     "pages.payments": "*",
     "pages.materials": "*",
-    "features.table": "*"
+    "features.table": "*",
+    "modules.calendar": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

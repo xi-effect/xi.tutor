@@ -9,6 +9,7 @@ import { Information } from './Information';
 import { MaterialsAdd } from 'features.materials.add';
 import { Payments } from './Payments';
 import { Materials } from './Materials';
+import { Calendar } from './Calendar';
 
 export const TabsComponent = () => {
   const search: SearchParams = useSearch({ strict: false });
@@ -58,7 +59,9 @@ export const TabsComponent = () => {
           <Overview />
         </Tabs.Content>
 
-        <Tabs.Content value="lessons">Занятия</Tabs.Content>
+        <Tabs.Content value="lessons">
+          <Calendar />
+        </Tabs.Content>
 
         <Tabs.Content value="materials">
           <Materials />

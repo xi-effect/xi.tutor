@@ -2025,6 +2025,9 @@ importers:
       features.table:
         specifier: '*'
         version: link:../features.table
+      modules.calendar:
+        specifier: '*'
+        version: link:../modules.calendar
       modules.editor:
         specifier: '*'
         version: link:../modules.editor
