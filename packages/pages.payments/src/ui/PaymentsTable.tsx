@@ -7,7 +7,7 @@ import {
   TableBody,
   StudentT,
   SubjectT,
-  DropdownFilters,
+  // DropdownFilters,
 } from 'features.table';
 import {
   useReactTable,
@@ -26,6 +26,7 @@ export type PaymentsTableProps<TData> = {
   columns: ColumnDef<TData>[];
   students?: StudentT[];
   subjects?: SubjectT[];
+  filterByClass?: boolean | string;
 };
 
 export const PaymentsTable = <TData,>({
@@ -69,10 +70,6 @@ export const PaymentsTable = <TData,>({
                       <div className="text-gray-60 text-m-base font-medium">
                         {flexRender(header.column.columnDef.header, header.getContext())}
                       </div>
-
-                      {header.column.getCanFilter() && (
-                        <DropdownFilters column={header.column} table={table} />
-                      )}
                     </div>
                   </TableHead>
                 ))}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Tldraw, TldrawProps } from 'tldraw';
 import 'tldraw/tldraw.css';
 import { useKeyPress } from 'common.utils';
@@ -11,6 +12,7 @@ import { useRemoveMark, useYjsStore } from '../../../hooks';
 import { Header } from '../header';
 import { useParams } from '@tanstack/react-router';
 import { useGetMaterial } from 'common.services';
+import { myAssetStore } from '../../../features';
 
 export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
   useRemoveMark();
@@ -26,7 +28,7 @@ export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
     }
   });
   const { store, status, undo, redo, canUndo, canRedo } = useYjsStore({
-    hostUrl: 'wss://hocus.xieffect.ru',
+    hostUrl: 'wss://hocus.sovlium.ru',
     roomId: data.ydoc_id,
   });
 
@@ -37,6 +39,8 @@ export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
       <div className="relative flex-1 overflow-hidden">
         <div className="absolute inset-0">
           <Tldraw
+            // @ts-ignore
+            assets={myAssetStore}
             onMount={(editor) => {
               editor.updateInstanceState({ isGridMode: true });
             }}

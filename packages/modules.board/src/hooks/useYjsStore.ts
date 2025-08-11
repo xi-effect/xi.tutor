@@ -52,7 +52,7 @@ type ExtendedStoreStatus = {
 
 export function useYjsStore({
   roomId = 'test/demo-room',
-  hostUrl = 'wss://hocus.xieffect.ru',
+  hostUrl = 'wss://hocus.sovlium.ru',
   shapeUtils = [],
 }: UseYjsStoreArgs): ExtendedStoreStatus {
   const { data: currentUser } = useCurrentUser();

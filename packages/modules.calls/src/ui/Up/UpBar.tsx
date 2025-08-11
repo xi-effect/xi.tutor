@@ -16,14 +16,14 @@ import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
 import { TooltipContent, Tooltip, TooltipTrigger } from '@xipkg/tooltip';
 import { useCallStore } from '../../store/callStore';
-import { useRouter } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 
 export const UpBar = () => {
   const [carouselType, setCarouselType] = React.useState<string>('grid');
   const { isFullScreen, toggleFullScreen } = useFullScreen('videoConferenceContainer');
 
   const updateStore = useCallStore((state) => state.updateStore);
-  const router = useRouter();
+  const navigate = useNavigate();
 
   const toggleLayout = () => {
     setCarouselType((prev) => {
@@ -65,7 +65,7 @@ export const UpBar = () => {
         <TooltipTrigger asChild>
           <Button
             onClick={() => {
-              router.navigate({ to: '/board/$boardId', params: { boardId: '1' } });
+              navigate({ to: '/classrooms/$classroomId', params: { classroomId: '1' } });
               updateStore('mode', 'compact');
             }}
             type="button"

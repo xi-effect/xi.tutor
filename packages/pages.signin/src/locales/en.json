@@ -5,6 +5,7 @@
   "forgot_password": "Forgot Password",
   "register": "Register",
   "sign_in_button": "Sign In",
+  "invite_message": "You have been invited by a tutor. To continue, please sign in or register",
   "errors": {
     "not_found_account": "Account not found",
     "not_found_password": "Wrong password",

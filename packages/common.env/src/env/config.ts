@@ -20,6 +20,7 @@ const env = {
   VITE_SERVER_URL_BACKEND: asString(import.meta.env.VITE_SERVER_URL_BACKEND),
   VITE_SERVER_URL_LIVEKIT: asString(import.meta.env.VITE_SERVER_URL_LIVEKIT),
   VITE_SERVER_URL_HOCUS: asString(import.meta.env.VITE_SERVER_URL_HOCUS),
+  VITE_APP_DOMAIN: asString(import.meta.env.VITE_APP_DOMAIN, 'https://app.sovlium.ru'),
   VITE_DEVTOOLS_ENABLED: asBoolean(import.meta.env.VITE_REACT_QUERY_DEVTOOLS_ENABLED, false),
   VITE_ENABLE_X_TESTING: asBoolean(import.meta.env.VITE_ENABLE_X_TESTING, false),
   VITE_ENABLE_PERFORMANCE_PROFILING: asBoolean(
