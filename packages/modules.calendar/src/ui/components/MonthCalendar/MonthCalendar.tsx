@@ -23,7 +23,7 @@ import type { CalendarProps } from '../../types';
  * ─ На мобиле по-прежнему 7 столбцов без номеров недель.
  */
 export const MonthCalendar: FC<CalendarProps<'month'>> = ({ days }) => {
-  const { getDayEvents } = useEvents();
+  const { getEventsForDate } = useEvents();
   const { currentDate } = useCalendar();
   const { t } = useTranslation('calendar');
 
@@ -88,7 +88,7 @@ export const MonthCalendar: FC<CalendarProps<'month'>> = ({ days }) => {
                   </span>
 
                   <div className="mt-6 flex h-[calc(100%-1.5rem)] flex-col space-y-0.5 overflow-hidden">
-                    {getDayEvents(day).map((event) => (
+                    {getEventsForDate(day).map((event) => (
                       <CalendarEvent
                         key={event.id}
                         calendarEvent={event}

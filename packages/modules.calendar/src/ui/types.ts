@@ -1,7 +1,7 @@
 export interface ICalendarEvent {
   id: string;
   title: string;
-  start?: Date;
+  start: Date;
   end: Date;
   type?: 'lesson' | 'rest' | 'cancelled';
   lessonInfo?: ILessonInfo;

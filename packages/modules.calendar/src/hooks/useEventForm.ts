@@ -1,9 +1,10 @@
 import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useCallback } from 'react';
 import { eventFormSchema, type EventFormData } from '../model';
 import type { StudentT } from '../mocks';
 import type { ICalendarEvent } from '../ui/types';
+import { useEvents } from './useEvents';
 
 export const useLessonFields = (form: ReturnType<typeof useForm<EventFormData>>) => {
   const { control, setValue } = form;
@@ -50,6 +51,7 @@ export const useDateFields = (form: ReturnType<typeof useForm<EventFormData>>) =
 };
 
 export const useEventForm = (calendarEvent?: ICalendarEvent) => {
+  const { addEvent } = useEvents();
   const formatDate = (date: Date) => {
     const dd = String(date.getDate()).padStart(2, '0');
     const mm = String(date.getMonth() + 1).padStart(2, '0');
@@ -111,9 +113,20 @@ export const useEventForm = (calendarEvent?: ICalendarEvent) => {
     }
   };
 
-  const onSubmit = (data: EventFormData) => {
-    console.log('event form data: ', data);
-  };
+  const onSubmit = useCallback(
+    (data: EventFormData) => {
+      console.log('event form data: ', data);
+      const event: ICalendarEvent = {
+        id: crypto.randomUUID(),
+        title: data.title,
+        start: new Date(data.startDate + ' ' + data.startTime),
+        end: new Date(data.endDate || data.startDate + ' ' + data.endTime),
+        type: data.type,
+      };
+      addEvent(event);
+    },
+    [addEvent],
+  );
 
   return {
     form,

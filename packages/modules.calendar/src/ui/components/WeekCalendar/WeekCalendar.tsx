@@ -22,7 +22,7 @@ interface WeekCalendarProps extends CalendarProps<WeekOrDayMode> {
  * ─ sticky-хедер с названиями дней и дат, основная сетка прокручивается по вертикали.
  */
 export const WeekCalendar: FC<WeekCalendarProps> = ({ days, view }) => {
-  const { getDayEvents } = useEvents();
+  const { getEventsForDate } = useEvents();
   const { t } = useTranslation('calendar');
 
   const WEEK_DAYS = t('week_days').split(',');
@@ -70,7 +70,7 @@ export const WeekCalendar: FC<WeekCalendarProps> = ({ days, view }) => {
             <div key={day.toISOString()} className="border-gray-10 border-l">
               {/* Секция "Весь день" */}
               <div className="border-gray-10 h-10 border-b p-1">
-                {getDayEvents(day)
+                {getEventsForDate(day)
                   .filter((e) => !e.start)
                   .map((event) => (
                     <CalendarEvent key={event.id} calendarEvent={event} />
@@ -80,8 +80,8 @@ export const WeekCalendar: FC<WeekCalendarProps> = ({ days, view }) => {
               {/* Слоты часов */}
               {hours.map((hour, i) => (
                 <div key={hour} className="border-gray-10 h-20 border-b p-1">
-                  {getDayEvents(day)
-                    .filter((e) => e.start?.getHours() === i)
+                  {getEventsForDate(day)
+                    .filter((e) => e.start.getHours() === i)
                     .map((event) => (
                       <CalendarEvent key={event.id} calendarEvent={event} />
                     ))}
