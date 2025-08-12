@@ -12,12 +12,14 @@ import {
 } from '@xipkg/dropdown';
 
 import { StatusBadge } from './StatusBadge';
+import { useDeleteClassroom } from 'common.services';
 
 import { ClassroomPropsT } from '../types';
 import { useNavigate } from '@tanstack/react-router';
 
 export const Card: React.FC<ClassroomPropsT> = ({ id, name, status, deleted, groupSize }) => {
   const navigate = useNavigate();
+  const { deleteClassroom, isDeleting } = useDeleteClassroom();
 
   const handleClick = () => {
     navigate({
@@ -25,6 +27,11 @@ export const Card: React.FC<ClassroomPropsT> = ({ id, name, status, deleted, gro
       params: { classroomId: id.toString() },
       search: { tab: 'overview' },
     });
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Предотвращаем переход на страницу класса
+    deleteClassroom(id.toString());
   };
 
   return (
@@ -69,8 +76,13 @@ export const Card: React.FC<ClassroomPropsT> = ({ id, name, status, deleted, gro
             align="end"
             className="border-gray-10 bg-gray-0 border p-1"
           >
-            <DropdownMenuItem>Копировать</DropdownMenuItem>
-            <DropdownMenuItem>Удалить</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleDelete}
+              disabled={isDeleting}
+              className={isDeleting ? 'cursor-not-allowed opacity-50' : ''}
+            >
+              {isDeleting ? 'Удаление...' : 'Удалить'}
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

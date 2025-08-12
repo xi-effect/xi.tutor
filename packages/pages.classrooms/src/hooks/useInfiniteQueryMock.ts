@@ -20,7 +20,7 @@ export const useInfiniteQueryMock = (parentRef: RefObject<HTMLDivElement | null>
         return pageData;
       },
       initialPageParam: 0,
-      getNextPageParam: (lastPage, allPages) => {
+      getNextPageParam: (_, allPages) => {
         const totalPages = Math.ceil(classroomsMock.length / 12);
         const nextPage = allPages.length;
 
