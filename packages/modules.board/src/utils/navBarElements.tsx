@@ -16,13 +16,12 @@ export type PopupItemT = {
 };
 
 export const navBarElements: NavbarElementT[] = [
-  { action: 'select', title: 'Select', icon: <Cursor size="l" /> },
-  { action: 'hand', title: 'Hand', icon: <Hand size="m" /> },
+  { action: 'select', title: 'Выбор', icon: <Cursor size="l" /> },
+  { action: 'hand', title: 'Рука', icon: <Hand /> },
   {
     action: 'pen',
-    title: 'Pen',
+    title: 'Перо',
     icon: <Pen size="l" />,
-    hasAToolTip: true,
     menuPopupContent: [
       {
         icon: <Pen className="fill-unset" size="l" />,
@@ -33,9 +32,8 @@ export const navBarElements: NavbarElementT[] = [
   },
   {
     action: 'sticker',
-    title: 'Sticker',
+    title: 'Стикер',
     icon: <Sticker />,
-    hasAToolTip: true,
     menuPopupContent: [
       {
         icon: <Sticker className="fill-gray-60" />,
@@ -84,9 +82,9 @@ export const navBarElements: NavbarElementT[] = [
       },
     ],
   },
-  { action: 'text', title: 'Text', icon: <TText /> },
-  { action: 'rectangle', title: 'Shapes', icon: <Figures size="l" /> },
-  { action: 'arrow', title: 'Arrow', icon: <Arrow size="l" /> },
-  { action: 'asset', title: 'Image', icon: <Image /> },
-  { action: 'eraser', title: 'Eraser', icon: <Eraser /> },
+  { action: 'text', title: 'Текст', icon: <TText /> },
+  { action: 'rectangle', title: 'Фигуры', icon: <Figures size="l" /> },
+  { action: 'arrow', title: 'Стрелка', icon: <Arrow size="l" /> },
+  { action: 'asset', title: 'Изображение', icon: <Image /> },
+  { action: 'eraser', title: 'Ластик', icon: <Eraser /> },
 ];

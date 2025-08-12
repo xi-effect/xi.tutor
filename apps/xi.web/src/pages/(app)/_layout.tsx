@@ -1,20 +1,25 @@
 import { Outlet, createFileRoute, useRouter } from '@tanstack/react-router';
 import { Navigation } from 'modules.navigation';
-import { CompactView, LiveKitProvider, useLivekitToken } from 'modules.calls';
-import { RoomProvider } from 'modules.calls';
-import { useCallStore } from 'modules.calls';
+import {
+  CompactView,
+  LiveKitProvider,
+  useLivekitToken,
+  RoomProvider,
+  useCallStore,
+  ModeSyncProvider,
+} from 'modules.calls';
 import { useEffect } from 'react';
 
 export const Route = createFileRoute('/(app)/_layout')({
   head: () => ({
     meta: [
+      {
+        // title: 'sovlium',
+      },
       // {
       //   name: 'description',
       //   content: 'My App is a web application',
       // },
-      {
-        title: 'xi.effect',
-      },
     ],
     // links: [
     //   {
@@ -32,7 +37,6 @@ export const Route = createFileRoute('/(app)/_layout')({
 });
 
 function LayoutComponent() {
-  // const { callId } = useParams({ from: '/(app)/_layout/call/$callId' });
   const router = useRouter();
   const updateStore = useCallStore((state) => state.updateStore);
   const { token = null } = useLivekitToken('1', '2');
@@ -49,9 +53,11 @@ function LayoutComponent() {
       <Navigation>
         <RoomProvider>
           <LiveKitProvider token={token || ''}>
-            <CompactView firstId="1" secondId="2">
-              <Outlet />
-            </CompactView>
+            <ModeSyncProvider>
+              <CompactView firstId="1" secondId="2">
+                <Outlet />
+              </CompactView>
+            </ModeSyncProvider>
           </LiveKitProvider>
         </RoomProvider>
       </Navigation>

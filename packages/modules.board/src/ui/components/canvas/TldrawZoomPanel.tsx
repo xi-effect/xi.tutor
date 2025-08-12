@@ -1,4 +1,4 @@
-import { track, useEditor } from '@tldraw/tldraw';
+import { track, useEditor } from 'tldraw';
 import { Plus, Minus } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 

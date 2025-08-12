@@ -12,7 +12,7 @@ interface MaterialsResponseT {
 }
 
 interface MutationContext {
-  previousMaterials: MaterialsDataT[] | undefined;
+  previousQueries: [readonly unknown[], unknown][];
 }
 
 export type MaterialsDataT = {
@@ -59,43 +59,27 @@ export const useAddMaterials = () => {
       }
     },
     onMutate: async (materialsData) => {
+      console.log('onMutate', materialsData);
+
+      // Отменяем все queries, которые начинаются с [Materials, kind]
       await queryClient.cancelQueries({
         queryKey: [MaterialsQueryKey.Materials, materialsData.kind],
       });
 
-      const previousMaterials = queryClient.getQueryData<MaterialsDataT[]>([
-        MaterialsQueryKey.Materials,
-        materialsData.kind,
-      ]);
-
-      const newMaterial = {
-        ...materialsData,
-        name: materialsData.name || generateNameWithDate(materialsData.kind),
-      };
-
-      queryClient.setQueryData<MaterialsDataT[]>(
-        [MaterialsQueryKey.Materials, materialsData.kind],
-        (old = []) => [...old, newMaterial],
-      );
-
-      return { previousMaterials };
+      return { previousQueries: [] };
     },
-    onError: (err, materialsData, context) => {
-      if (context?.previousMaterials) {
-        queryClient.setQueryData(
-          [MaterialsQueryKey.Materials, materialsData.kind],
-          context.previousMaterials,
-        );
-      }
+    onError: (err) => {
       handleError(err, 'materials');
     },
     onSuccess: (response, materialsData) => {
-      queryClient.setQueryData<MaterialsDataT[]>(
-        [MaterialsQueryKey.Materials, materialsData.kind],
-        (old = []) => {
-          return [...old.filter((item) => item.name !== response.data.name), response.data];
-        },
-      );
+      console.log('onSuccess', response, materialsData);
+
+      // Инвалидируем все queries для данного kind, чтобы они перезапросились
+      const result = queryClient.invalidateQueries({
+        queryKey: [MaterialsQueryKey.Materials, materialsData.kind],
+      });
+
+      console.log('Invalidation result:', result);
 
       showSuccess('materials', `${response.data.name} создан`);
     },

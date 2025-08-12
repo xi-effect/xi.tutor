@@ -14,7 +14,7 @@
     "features.materials.add": "*",
     "@xipkg/badge": "2.0.12",
     "@xipkg/button": "3.1.8",
-    "@xipkg/icons": "2.3.0",
+    "@xipkg/icons": "2.4.0",
     "@xipkg/dropdown": "3.0.12",
     "@xipkg/link": "^2.0.12",
     "@xipkg/select": "^2.2.5",
@@ -24,8 +24,10 @@
     "@xipkg/input": "2.2.9",
     "@xipkg/form": "4.2.0",
     "modules.editor": "*",
-    "slate": "^0.114.0",
-    "slate-react": "^0.114.0"
+    "pages.payments": "*",
+    "pages.materials": "*",
+    "features.table": "*",
+    "modules.calendar": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

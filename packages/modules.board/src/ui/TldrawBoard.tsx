@@ -1,22 +1,15 @@
-import { TldrawCanvas } from './components/canvas';
-import { useEffect } from 'react';
+import { TldrawCanvas } from './components';
+import { useGetMaterial } from 'common.services';
+import { useParams } from '@tanstack/react-router';
+import { LoadingScreen } from 'common.ui';
 
 export const TldrawBoard = () => {
-  useEffect(() => {
-    const removeWatermark = () => {
-      document.querySelectorAll('.tl-watermark_SEE-LICENSE').forEach((el) => el.remove());
-    };
+  const { boardId = 'empty' } = useParams({ strict: false });
+  const { data, isLoading } = useGetMaterial(boardId);
 
-    // Удалить сразу после загрузки
-    removeWatermark();
+  console.log('data', data);
 
-    // И повторять, если tldraw вдруг пересоздаст watermark
-    const observer = new MutationObserver(removeWatermark);
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    // Очистка
-    return () => observer.disconnect();
-  }, []);
+  if (isLoading) return <LoadingScreen />;
 
   return <TldrawCanvas />;
 };

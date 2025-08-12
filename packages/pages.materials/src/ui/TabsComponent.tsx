@@ -2,7 +2,7 @@ import { Tabs } from '@xipkg/tabs';
 
 import { Materials } from './Materials';
 import { Notes } from './Notes';
-import { Files } from './Files';
+// import { Files } from './Files';
 
 export const TabsComponent = () => {
   return (
@@ -16,9 +16,9 @@ export const TabsComponent = () => {
           Заметки
         </Tabs.Trigger>
 
-        <Tabs.Trigger value="files" className="text-m-base font-medium text-gray-100">
+        {/* <Tabs.Trigger value="files" className="text-m-base font-medium text-gray-100">
           Файлы
-        </Tabs.Trigger>
+        </Tabs.Trigger> */}
       </Tabs.List>
 
       <div className="pt-0">
@@ -30,9 +30,9 @@ export const TabsComponent = () => {
           <Notes />
         </Tabs.Content>
 
-        <Tabs.Content value="files">
+        {/* <Tabs.Content value="files">
           <Files />
-        </Tabs.Content>
+        </Tabs.Content> */}
       </div>
     </Tabs.Root>
   );

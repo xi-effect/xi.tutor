@@ -9,7 +9,7 @@ export type AvatarPreviewPropsT = {
 export const AvatarPreview = ({ date, userId }: AvatarPreviewPropsT) => (
   <Avatar size="xl">
     <img
-      src={`https://auth.xieffect.ru/api/users/${userId}/avatar.webp?=${date.current instanceof Date ? date.current.getTime() : ''}`}
+      src={`https://auth.sovlium.ru/api/users/${userId}/avatar.webp?=${date.current instanceof Date ? date.current.getTime() : ''}`}
       alt="user avatar"
     />
     <AvatarFallback size="xl" />

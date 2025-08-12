@@ -11,6 +11,13 @@ const paramsSchema = z.object({
 
 // @ts-ignore
 export const Route = createFileRoute('/(app)/_layout/call/$callId')({
+  head: () => ({
+    meta: [
+      {
+        title: 'sovlium | Звонок',
+      },
+    ],
+  }),
   component: CallPage,
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
   beforeLoad: () => {

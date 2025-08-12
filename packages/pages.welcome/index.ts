@@ -1,6 +1,6 @@
 export { ProtectedProvider } from './src/providers';
 export { WelcomeContext } from './src/model';
-export { WelcomeUserPage, WelcomeAboutPage, WelcomeRolePage, WelcomeSocialsPage } from './src/ui';
+export { WelcomeUserPage, WelcomeRolePage, WelcomeSocialsPage } from './src/ui';
 export {
   welcomeEn,
   welcomeRu,

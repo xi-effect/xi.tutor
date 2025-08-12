@@ -1,11 +1,9 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useForm } from '@xipkg/form';
 import { Editor } from 'modules.editor';
 import { Input } from '@xipkg/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@xipkg/form';
 import { useDebounce } from '@xipkg/utils';
-import type { Descendant } from 'slate';
 import { useEffect } from 'react';
 
 interface FormData {
@@ -13,14 +11,6 @@ interface FormData {
   subject: string;
   phone: string;
 }
-
-const initialValue: Descendant[] = [
-  {
-    id: '1',
-    type: 'paragraph',
-    children: [{ text: 'Начните писать здесь...' }],
-  },
-];
 
 export const Information = () => {
   const form = useForm<FormData>();
@@ -39,7 +29,7 @@ export const Information = () => {
   return (
     <div className="flex flex-col gap-4 md:flex-row">
       <div className="order-2 flex h-full w-full flex-1 justify-center md:order-1">
-        <Editor initialValue={initialValue} />
+        <Editor />
       </div>
 
       <div className="order-1 w-full md:order-2 md:w-[300px]">

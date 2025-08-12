@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { useMediaQuery } from '@xipkg/utils';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { Modal, ModalContent, ModalTitle } from '@xipkg/modal';
@@ -7,12 +7,12 @@ import { Menu } from './Menu';
 import { Content } from './Content';
 
 // Список опций меню для поиска индекса по query
-const options = [
-  { query: 'personalInfo' },
-  { query: 'personalisation' },
-  { query: 'security' },
-  { query: 'notifications' },
-];
+// const options = [
+//   { query: 'personalInfo' },
+//   { query: 'personalisation' },
+//   { query: 'security' },
+//   { query: 'notifications' },
+// ];
 
 export const UserSettings = ({
   open,
@@ -28,56 +28,46 @@ export const UserSettings = ({
   const { pathname } = useLocation();
   const search = useSearch({ strict: false });
 
-  // Извлекаем информацию о профиле из параметра iid
-  const profileParam = search.iid || '';
-  const isProfileOpen = profileParam.startsWith('profile:');
-  const profileType = isProfileOpen ? profileParam.split(':')[1] : '';
+  const profileType = search.profile || '';
 
-  // Управляем состоянием модалки через URL
-  useEffect(() => {
-    // Если в URL есть profile, модалка должна быть открыта
-    if (isProfileOpen && !open) {
-      setOpen(true);
-    }
+  const [activeQuery, setActiveQuery] = React.useState<string>(profileType);
 
-    // Если в URL нет profile, модалка должна быть закрыта
-    if (!isProfileOpen && open) {
-      setOpen(false);
-    }
-
-    // Устанавливаем активный пункт меню в соответствии с параметром profile
-    if (isProfileOpen && profileType) {
-      const profileIndex = options.findIndex((item) => item.query === profileType);
-      if (profileIndex !== -1) {
-        setActiveContent(profileIndex);
-        setActiveQuery(profileType);
-      }
-    }
-  }, [profileParam, open, setOpen, isProfileOpen, profileType]);
-
-  const handleClose = () => {
+  const handleClose = useCallback(() => {
     setShowContent(false);
     // Просто удаляем параметр из URL, а модалка закроется автоматически через useEffect
     navigate({
       to: pathname,
       search: {},
     });
-  };
+  }, [navigate, pathname]);
 
   // Обработчик для управления открытием/закрытием модалки
-  const handleOpenChange = (openState: boolean) => {
-    if (!openState) {
-      // Если модалку нужно закрыть, удаляем параметр из URL
-      navigate({
-        to: pathname,
-        search: {},
-      });
-    }
-    // Мы не устанавливаем setOpen(openState) напрямую,
-    // так как это будет сделано через useEffect при изменении URL
-  };
+  const handleOpenChange = useCallback(
+    (openState: boolean) => {
+      if (!openState) {
+        // Если модалку нужно закрыть, удаляем параметр из URL
+        navigate({
+          to: pathname,
+          search: {},
+        });
+      }
 
-  const [activeQuery, setActiveQuery] = React.useState<string>('personalInfo');
+      setOpen(openState);
+    },
+    [navigate, pathname],
+  );
+
+  const memoizedSetActiveQuery = useCallback((query: React.SetStateAction<string>) => {
+    setActiveQuery(query);
+  }, []);
+
+  const memoizedSetActiveContent = useCallback((content: React.SetStateAction<number>) => {
+    setActiveContent(content);
+  }, []);
+
+  const memoizedSetShowContent = useCallback((show: React.SetStateAction<boolean>) => {
+    setShowContent(show);
+  }, []);
 
   return (
     <Modal open={open} onOpenChange={handleOpenChange}>
@@ -95,7 +85,7 @@ export const UserSettings = ({
             <Header
               activeItem={activeContent}
               showContent={showContent}
-              setShowContent={setShowContent}
+              setShowContent={memoizedSetShowContent}
               handleClose={handleClose}
             />
             <div className="mt-4 flex h-full flex-row gap-8">
@@ -105,18 +95,18 @@ export const UserSettings = ({
                     <Content activeQuery={activeQuery} />
                   ) : (
                     <Menu
-                      setActiveQuery={setActiveQuery}
-                      setActiveContent={setActiveContent}
-                      setShowContent={setShowContent}
+                      setActiveQuery={memoizedSetActiveQuery}
+                      setActiveContent={memoizedSetActiveContent}
+                      setShowContent={memoizedSetShowContent}
                     />
                   )}
                 </div>
               ) : (
                 <>
                   <Menu
-                    setActiveQuery={setActiveQuery}
-                    setActiveContent={setActiveContent}
-                    setShowContent={setShowContent}
+                    setActiveQuery={memoizedSetActiveQuery}
+                    setActiveContent={memoizedSetActiveContent}
+                    setShowContent={memoizedSetShowContent}
                   />
                   <Content activeQuery={activeQuery} />
                 </>

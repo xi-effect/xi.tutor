@@ -2,12 +2,23 @@ import { ConfigEnv, defineConfig, searchForWorkspaceRoot } from 'vite';
 import react from '@vitejs/plugin-react';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
-// import path from 'path';
+import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv) => {
   return {
-    plugins: [tanstackRouter({ target: 'react', autoCodeSplitting: true }), react(), tailwindcss()],
+    plugins: [
+      tanstackRouter({ target: 'react', autoCodeSplitting: true }),
+      react(),
+      tailwindcss(),
+      VitePWA({
+        registerType: 'autoUpdate',
+        injectRegister: 'auto',
+        workbox: {
+          globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+        },
+      }),
+    ],
     build: {
       chunkSizeWarningLimit: 1000,
       minify: mode === 'production',

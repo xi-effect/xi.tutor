@@ -6,7 +6,7 @@ import { Input } from '@xipkg/input';
 import { Link } from '@xipkg/link';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
 
-import { Logo } from 'common.ui';
+import { LinkTanstack, Logo } from 'common.ui';
 
 import { usePasswordReset } from '../hooks';
 import { FormDataEmail } from '../model/formSchemaEmail';
@@ -70,9 +70,9 @@ export const ResetPassword = () => {
                 {t('resend')}
               </Link>
             ) : (
-              <Link size="l" theme="brand" variant="hover" href="/signin">
+              <LinkTanstack size="l" theme="brand" variant="hover" to="/signin">
                 {t('sign_in_button')}
-              </Link>
+              </LinkTanstack>
             )}
           </div>
 

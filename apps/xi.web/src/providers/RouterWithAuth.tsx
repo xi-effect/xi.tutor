@@ -17,7 +17,7 @@ export const RouterWithAuth = () => {
       <AuthSocketBridge>
         <ThemeProvider>
           <RouterWithAuthContext />
-          <Toaster />
+          <Toaster visibleToasts={3} expand />
         </ThemeProvider>
       </AuthSocketBridge>
     </AuthProvider>

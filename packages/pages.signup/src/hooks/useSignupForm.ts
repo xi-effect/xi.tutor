@@ -1,5 +1,5 @@
 import { useState, useTransition } from 'react';
-import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
 import { useAuth } from 'common.auth';
@@ -19,7 +19,6 @@ export const useSignupForm = () => {
   const { mutate } = signup;
 
   const navigate = useNavigate();
-  const searchParams = useSearch({ strict: false });
 
   const onSignupForm = (data: FormData) => {
     startTransition(() => {
@@ -27,11 +26,6 @@ export const useSignupForm = () => {
         onSuccess: () => {
           navigate({
             to: '/welcome/user',
-            search: searchParams.iid &&
-              searchParams.community && {
-                iid: searchParams.iid,
-                community: searchParams.community,
-              },
           });
         },
 

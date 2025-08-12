@@ -11,10 +11,11 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "@tanstack/react-router": "1.120.11",
+    "@tanstack/react-router": "1.128.8",
     "common.services": "*",
     "common.sockets": "*",
     "common.utils": "*",
+    "common.api": "*",
     "@dnd-kit/core": "6.3.1",
     "@dnd-kit/modifiers": "9.0.0",
     "@dnd-kit/utilities": "3.2.2",
@@ -26,7 +27,7 @@
     "@xipkg/modal": "4.1.0",
     "@xipkg/badge": "2.0.12",
     "@xipkg/button": "3.1.8",
-    "@xipkg/icons": "2.3.0",
+    "@xipkg/icons": "2.4.0",
     "@xipkg/dropdown": "3.0.12",
     "@xipkg/userprofile": "4.0.12",
     "@xipkg/aspect-ratio": "^2.0.11",
@@ -35,6 +36,7 @@
     "@xipkg/utils": "1.8.0",
     "@xipkg/sheet": "2.0.12",
     "@xipkg/tooltip": "2.1.0",
+    "@xipkg/scrollarea": "2.2.0",
     "@react-hook/latest": "1.0.3",
     "framer-motion": "12.12.1"
   },

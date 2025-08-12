@@ -1,35 +1,23 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Tabs } from '@xipkg/tabs';
-import { useSearch, useNavigate, useLocation } from '@tanstack/react-router';
-import { useEffect } from 'react';
+import { useSearch, useNavigate } from '@tanstack/react-router';
 
 import { Button } from '@xipkg/button';
 import { Overview } from './Overview';
 import { SearchParams } from '../types/router';
 import { Information } from './Information';
 import { MaterialsAdd } from 'features.materials.add';
+import { Payments } from './Payments';
+import { Materials } from './Materials';
+import { Calendar } from './Calendar';
 
 export const TabsComponent = () => {
   const search: SearchParams = useSearch({ strict: false });
   const navigate = useNavigate();
-  const { pathname } = useLocation();
   const currentTab = search.tab || 'overview';
-
-  // Обработка начального состояния таба при загрузке страницы
-  useEffect(() => {
-    // Если в URL нет параметра tab, устанавливаем значение по умолчанию
-    if (!search.tab) {
-      navigate({
-        to: pathname,
-        // @ts-ignore
-        search: { tab: 'overview' },
-      });
-    }
-  }, [search.tab, navigate, pathname]);
 
   const handleTabChange = (value: string) => {
     navigate({
-      to: pathname,
       // @ts-ignore
       search: { tab: value },
     });
@@ -71,11 +59,17 @@ export const TabsComponent = () => {
           <Overview />
         </Tabs.Content>
 
-        <Tabs.Content value="lessons">Занятия</Tabs.Content>
+        <Tabs.Content value="lessons">
+          <Calendar />
+        </Tabs.Content>
 
-        <Tabs.Content value="materials">Материалы</Tabs.Content>
+        <Tabs.Content value="materials">
+          <Materials />
+        </Tabs.Content>
 
-        <Tabs.Content value="payments">Оплаты</Tabs.Content>
+        <Tabs.Content value="payments">
+          <Payments />
+        </Tabs.Content>
 
         <Tabs.Content value="info">
           <Information />

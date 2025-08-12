@@ -20,6 +20,7 @@ import { useAuth } from 'common.auth';
 import { useMenuStore } from '../../store';
 
 import { SelectRole } from './SelectRole';
+import { Notifications } from './Notifications';
 
 const UserSettings = lazy(() =>
   import('modules.profile').then((module) => ({ default: module.UserSettings })),
@@ -41,19 +42,17 @@ export const Header = ({
   const { logout } = useAuth();
   const search = useSearch({ strict: false });
 
-  // Состояние модалки определяется URL параметром iid (используем его вместо profile)
   const [open, setOpen] = useState(false);
 
   // Синхронизируем состояние модалки с URL
   useEffect(() => {
-    // Используем iid параметр для определения, открыта ли модалка и какая вкладка активна
-    const profileParam = search.iid;
+    const profileParam = search.profile;
 
     const hasProfileParam = !!profileParam;
     if (hasProfileParam !== open) {
       setOpen(hasProfileParam);
     }
-  }, [search.iid, open]);
+  }, [search.profile, open]);
 
   const handleToggle = () => {
     toggle();
@@ -66,11 +65,11 @@ export const Header = ({
   };
 
   const handleOpenProfile = () => {
-    // Используем параметр iid для хранения значения "profile:home"
     navigate({
       to: pathname,
-      search: { iid: 'profile:personalInfo' },
+      search: { profile: 'personalInfo' },
     });
+    setOpen(true);
   };
 
   const handleLogout = () => {
@@ -85,7 +84,8 @@ export const Header = ({
       <div className="flex flex-row items-center gap-4 pl-4">
         <Logo />
       </div>
-      <div className="ml-auto">
+      <div className="ml-auto flex flex-row items-center gap-4">
+        <Notifications />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon">

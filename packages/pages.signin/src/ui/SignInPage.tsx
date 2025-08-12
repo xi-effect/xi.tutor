@@ -12,10 +12,10 @@ import {
   useForm,
 } from '@xipkg/form';
 import { Eyeoff, Eyeon } from '@xipkg/icons';
-import { Link } from '@xipkg/link';
 import { useTranslation } from 'react-i18next';
+import { useSearch } from '@tanstack/react-router';
 
-import { Logo } from 'common.ui';
+import { LinkTanstack, Logo } from 'common.ui';
 
 import { FormData, useFormSchema } from '../model';
 import { useSigninForm } from '../hooks';
@@ -25,6 +25,9 @@ export const SignInPage = () => {
 
   const formSchema = useFormSchema();
   const { onSigninForm, isPending } = useSigninForm();
+
+  const search = useSearch({ strict: false }) as { redirect?: string };
+  const isInviteRedirect = search.redirect?.includes('/invite');
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -45,13 +48,19 @@ export const SignInPage = () => {
 
   return (
     <div className="xs:h-screen flex h-[100dvh] w-screen flex-col flex-wrap content-center justify-center p-1">
-      <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex h-[600px] w-full max-w-[420px] p-8">
+      <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex h-fit min-h-[600px] w-full max-w-[420px] p-8">
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-col gap-4">
             <div className="self-center">
               <Logo height={22} width={180} />
             </div>
             <h1 className="flex justify-center text-2xl font-semibold">{t('sign_in')}</h1>
+
+            {isInviteRedirect && (
+              <div className="text-brand-100 bg-brand-0 rounded-2xl p-4 text-center text-sm whitespace-pre-line">
+                {t('invite_message')}
+              </div>
+            )}
 
             <FormField
               control={control}
@@ -97,25 +106,30 @@ export const SignInPage = () => {
               )}
             />
 
-            <Link size="l" variant="always" href="/reset-password">
+            <LinkTanstack size="l" variant="always" to="/reset-password">
               {t('forgot_password')}
-            </Link>
+            </LinkTanstack>
 
             <div className="flex h-full w-full items-end justify-between">
               <div className="flex h-[48px] items-center">
-                <Link id="to-signup-link" size="l" theme="brand" variant="hover" href="/signup">
+                <LinkTanstack
+                  id="to-signup-link"
+                  size="l"
+                  theme="brand"
+                  variant="hover"
+                  to="/signup"
+                >
                   {t('register')}
-                </Link>
+                </LinkTanstack>
               </div>
 
-              <Button
-                variant={isPending ? 'default-spinner' : 'default'}
-                type="submit"
-                className="w-24"
-                disabled={isPending}
-              >
-                {t('sign_in_button')}
-              </Button>
+              {isPending ? (
+                <Button variant="default-spinner" type="submit" className="w-24" disabled />
+              ) : (
+                <Button variant="default" type="submit" className="w-24" disabled={isPending}>
+                  {t('sign_in_button')}
+                </Button>
+              )}
             </div>
           </form>
         </Form>

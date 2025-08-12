@@ -12,7 +12,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.0.9",
     "@tanstack/react-query": "5.73.3",
-    "@tanstack/react-router": "^1.109.0",
+    "@tanstack/react-router": "^1.128.8",
     "@xipkg/button": "3.1.2",
     "common.auth": "*",
     "common.config": "*",
@@ -46,6 +46,7 @@
     "tailwindcss": "^4.0.9"
   },
   "devDependencies": {
+    "vite-plugin-pwa": "1.0.2",
     "@eslint/js": "^9.19.0",
     "@tanstack/eslint-plugin-query": "5.66.1",
     "@tanstack/react-query-devtools": "5.73.3",

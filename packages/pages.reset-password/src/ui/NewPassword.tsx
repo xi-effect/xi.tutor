@@ -1,13 +1,12 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Logo } from 'common.ui';
+import { LinkTanstack, Logo } from 'common.ui';
 
 import { Button } from '@xipkg/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
 import { Eyeoff, Eyeon } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
-import { Link } from '@xipkg/link';
 
 import { useNewPassword } from '../hooks/useNewPassword';
 import { FormDataPassword } from '../model/formSchemaPassword';
@@ -93,16 +92,16 @@ export const NewPassword = ({ token }: { token: string }) => {
 
         <div className="flex h-full w-full items-end justify-between">
           <div className="flex h-14 items-center">
-            <Link
+            <LinkTanstack
               id="to-signup-link"
               data-umami-event="to-signup-link"
               size="l"
               theme="brand"
               variant="hover"
-              href="/signin"
+              to="/signin"
             >
               {t('sign_in_button')}
-            </Link>
+            </LinkTanstack>
           </div>
 
           <Button

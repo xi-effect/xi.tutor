@@ -13,7 +13,7 @@
   "dependencies": {
     "@xipkg/badge": "2.0.12",
     "@xipkg/button": "3.1.8",
-    "@xipkg/icons": "2.3.0",
+    "@xipkg/icons": "2.4.0",
     "@xipkg/input": "2.2.9",
     "@xipkg/dropdown": "3.0.12",
     "@xipkg/scrollarea": "2.2.0",
@@ -22,7 +22,10 @@
     "@xipkg/modal": "4.1.0",
     "@xipkg/link": "^2.0.12",
     "@xipkg/select": "^2.2.5",
-    "@xipkg/userprofile": "4.0.12"
+    "@xipkg/userprofile": "4.0.12",
+    "features.table": "*",
+    "common.services": "*",
+    "common.env": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -34,6 +37,9 @@
     "@xipkg/typescript": "latest",
     "common.eslint": "*",
     "common.typescript": "*",
+    "common.api": "*",
+    "common.config": "*",
+    "common.types": "*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
