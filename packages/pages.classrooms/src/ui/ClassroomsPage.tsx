@@ -3,7 +3,6 @@ import { Plus, Filter } from '@xipkg/icons';
 
 import { ButtonsHeader } from './ButtonsHeader';
 import { LinkListStudents } from './LinkListStudents';
-// import { Filters } from './Filters';
 import { CardsGridSimple } from './CardsGridSimple';
 
 export const ClassroomsPage = () => {
@@ -12,26 +11,16 @@ export const ClassroomsPage = () => {
       <div className="flex flex-col gap-6 max-md:gap-4">
         <div className="flex flex-row items-center pt-1">
           <h1 className="text-2xl font-semibold text-gray-100">Кабинеты</h1>
-
-          <ButtonsHeader />
-
-          <div className="ml-auto flex items-center max-[570px]:hidden sm:hidden">
+          <div className="ml-auto flex items-center">
             <LinkListStudents src="#" />
           </div>
+
+          <ButtonsHeader />
 
           <div className="ml-auto flex items-center min-[570px]:hidden">
             <Button variant="ghost" size="s">
               <Filter className="fill-gray-100" />
             </Button>
-          </div>
-        </div>
-
-        <div className="flex flex-row items-center justify-between">
-          {/* <Filters className="max-[570px]:hidden" /> */}
-          <div />
-
-          <div className="max-sm:hidden">
-            <LinkListStudents src="#" />
           </div>
         </div>
 
