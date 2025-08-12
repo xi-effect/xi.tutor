@@ -2098,6 +2098,9 @@ importers:
 
   packages/pages.classrooms:
     dependencies:
+      '@tanstack/react-virtual':
+        specifier: 3.13.9
+        version: 3.13.9(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/badge':
         specifier: 2.0.12
         version: 2.0.12(react@19.1.1)
@@ -2140,6 +2143,9 @@ importers:
       common.services:
         specifier: '*'
         version: link:../common.services
+      common.ui:
+        specifier: '*'
+        version: link:../common.ui
       features.table:
         specifier: '*'
         version: link:../features.table

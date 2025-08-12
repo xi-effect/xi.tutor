@@ -4,7 +4,7 @@ import { Plus, Filter } from '@xipkg/icons';
 import { ButtonsHeader } from './ButtonsHeader';
 import { LinkListStudents } from './LinkListStudents';
 // import { Filters } from './Filters';
-import { CardsGrid } from './CardsGrid';
+import { CardsGridSimple } from './CardsGridSimple';
 
 export const ClassroomsPage = () => {
   return (
@@ -35,7 +35,7 @@ export const ClassroomsPage = () => {
           </div>
         </div>
 
-        <CardsGrid />
+        <CardsGridSimple />
       </div>
 
       <div className="flex flex-row items-center justify-end sm:hidden">
