@@ -15,12 +15,14 @@ type ColumnArgsT = {
   subjects: SubjectT[];
   withStudentColumn?: boolean;
   isMobile?: boolean;
+  onApprovePayment?: (payment: PaymentT) => void;
 };
 
 export const createPaymentColumns = ({
   students,
   subjects,
   withStudentColumn = true,
+  onApprovePayment,
   // isMobile,
 }: ColumnArgsT): ColumnDef<PaymentT>[] => {
   const baseColumns: (ColumnDef<PaymentT> | false)[] = [
@@ -91,7 +93,12 @@ export const createPaymentColumns = ({
     {
       accessorKey: 'statusPayment',
       header: 'Статус',
-      cell: ({ row }) => <StatusCell status={row.original.statusPayment} />,
+      cell: ({ row }) => (
+        <StatusCell
+          status={row.original.statusPayment}
+          onApprovePayment={() => onApprovePayment?.(row.original)}
+        />
+      ),
       size: 220,
       filterFn: (row, columnId, value) => value.includes(row.getValue(columnId)),
       enableColumnFilter: true,

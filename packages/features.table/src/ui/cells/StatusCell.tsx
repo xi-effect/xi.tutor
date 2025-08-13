@@ -10,7 +10,12 @@ export const statusColorMap: Record<PaymentStatusT, string> = {
   unpaid: 'text-red-100',
 };
 
-export const StatusCell = ({ status }: { status: PaymentStatusT }) => {
+type StatusCellPropsT = {
+  status: PaymentStatusT;
+  onApprovePayment: () => void;
+};
+
+export const StatusCell = ({ status, onApprovePayment }: StatusCellPropsT) => {
   const statusText = mapPaymentStatus[status];
 
   if (!statusText) {
@@ -23,7 +28,12 @@ export const StatusCell = ({ status }: { status: PaymentStatusT }) => {
 
       {status === 'processing' && (
         <div className="flex flex-row items-center justify-between gap-4">
-          <Button variant="ghost" size="s" className="bg-brand-0 hover:bg-brand-0/80 rounded-lg">
+          <Button
+            variant="ghost"
+            size="s"
+            className="bg-brand-0 hover:bg-brand-0/80 rounded-lg"
+            onClick={onApprovePayment}
+          >
             <span className="text-s-base text-brand-100 hidden font-medium min-md:block">
               Подтвердить
             </span>
