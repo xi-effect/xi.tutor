@@ -23,8 +23,8 @@
     "@xipkg/icons": "2.4.0",
     "@xipkg/utils": "1.8.0",
     "@xipkg/slider": "2.0.12",
-    "common.config": "workspace:*",
-    "common.env": "workspace:*",
+    "common.config": "*",
+    "common.env": "*",
     "zod": "3.24.2",
     "zustand": "^5.0.3"
   },

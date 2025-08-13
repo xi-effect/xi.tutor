@@ -820,10 +820,10 @@ importers:
         specifier: 1.8.0
         version: 1.8.0(react@19.1.1)
       common.config:
-        specifier: workspace:*
+        specifier: '*'
         version: link:../common.config
       common.env:
-        specifier: workspace:*
+        specifier: '*'
         version: link:../common.env
       common.services:
         specifier: '*'
