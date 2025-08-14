@@ -1,21 +1,17 @@
 import { Tabs } from '@xipkg/tabs';
-import { useEffect, useMemo, useState } from 'react';
-import { PaymentsTable } from './PaymentsTable';
+import { useMemo, useRef } from 'react';
+import { VirtualizedPaymentsTable } from './VirtualizedPaymentsTable';
 import { useMedia } from 'common.utils';
-import { students, subjects, PaymentT, createPaymentColumns, payments } from 'features.table';
+import { students, subjects, createPaymentColumns } from 'features.table';
 import { PaymentControl as PaymentsCharts } from 'features.charts';
-
-async function getData(): Promise<PaymentT[]> {
-  return payments;
-}
+import { useInfiniteQuery } from '../hooks';
 
 export const TabsComponent = () => {
-  const [data, setData] = useState<PaymentT[]>([]);
   const isMobile = useMedia('(max-width: 700px)');
+  const parentRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    getData().then(setData);
-  }, []);
+  const { items, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useInfiniteQuery(parentRef);
 
   const defaultColumns = useMemo(
     () => createPaymentColumns({ withStudentColumn: true, students, subjects, isMobile }),
@@ -36,11 +32,15 @@ export const TabsComponent = () => {
 
       <div className="h-full pt-0">
         <Tabs.Content value="boards">
-          <PaymentsTable
-            data={data}
+          <VirtualizedPaymentsTable
+            data={items}
             columns={defaultColumns}
             students={students}
             subjects={subjects}
+            isLoading={isLoading}
+            isFetchingNextPage={isFetchingNextPage}
+            hasNextPage={hasNextPage}
+            onLoadMore={fetchNextPage}
           />
         </Tabs.Content>
 

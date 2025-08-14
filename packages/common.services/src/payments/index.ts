@@ -1,0 +1,1 @@
+export { useFetchPayments } from './useFetchPayments';
