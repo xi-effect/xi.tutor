@@ -1,37 +1,37 @@
 import { WelcomePageLayout, WelcomeButtons } from '../../ui';
 import { useTranslation } from 'react-i18next';
 import { InputWrapper } from './InputWrapper';
-import { Input } from '@xipkg/input';
-import { TelegramFilled, WhatsAppFilled } from '@xipkg/icons';
+import { TelegramFilled, WhatsAppFilled, Check } from '@xipkg/icons';
 import { useWelcomeSocialsForm } from '../../hooks';
-import { type WelcomeSocialsFormData } from '../../model';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  useForm,
-} from '@xipkg/form';
+import { Button } from '@xipkg/button';
+import { useState } from 'react';
+import { useCreateTgConnection, useGetNotificationsStatus } from 'common.services';
 
 export const WelcomeSocialsPage = () => {
   const { t } = useTranslation('welcomeSocials');
+  const [tgLink, setTgLink] = useState<string | null>(null);
 
-  const form = useForm<WelcomeSocialsFormData>();
-
-  const { control, watch, handleSubmit } = form;
+  const { data } = useGetNotificationsStatus();
 
   const { onBackwards, onForwards, isLoading } = useWelcomeSocialsForm();
-  const onSubmit = () => {
-    onForwards();
+  const { mutate, isPending } = useCreateTgConnection();
+
+  const handleCreateTgConnection = () => {
+    if (data.telegram) {
+      return;
+    }
+    mutate(undefined, {
+      onSuccess: (data: string) => {
+        if (data) {
+          setTgLink(data);
+        }
+      },
+    });
   };
 
-  const [telegram] = watch(['telegram']);
-  const [whatsapp] = watch(['whatsapp']);
-
-  const getStyles = (elem: string) =>
-    `${elem?.length ? 'block' : 'hidden group-hover:block group-focus:block'} w-full`;
+  const handleNextStep = () => {
+    onForwards();
+  };
 
   return (
     <WelcomePageLayout
@@ -52,61 +52,51 @@ export const WelcomeSocialsPage = () => {
         </>
       }
     >
-      <Form {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-6 flex h-full w-full flex-col gap-2">
-          <InputWrapper tab={1}>
-            <TelegramFilled className="fill-brand-100 h-8 w-8" />
-            <FormField
-              control={control}
-              name="telegram"
-              defaultValue=""
-              render={({ field }) => (
-                <FormItem className="group w-full">
-                  <FormLabel className="m-0 block w-full font-semibold">Telegram</FormLabel>
-                  <FormControl className={getStyles(telegram)}>
-                    <Input
-                      autoComplete="off"
-                      type="text"
-                      placeholder="@nickname"
-                      {...field}
-                      className="h-auto border-none p-0"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </InputWrapper>
-          <InputWrapper tab={2}>
-            <WhatsAppFilled className="fill-brand-100 h-8 w-8" />
-            <FormField
-              control={control}
-              name="whatsapp"
-              defaultValue=""
-              render={({ field }) => (
-                <FormItem className="group w-full">
-                  <FormLabel className="m-0 block w-full font-semibold">Whatsapp</FormLabel>
-                  <FormControl className={getStyles(whatsapp)}>
-                    <Input
-                      autoComplete="off"
-                      type="text"
-                      placeholder="@nickname"
-                      {...field}
-                      className="h-auto border-none p-0"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </InputWrapper>
-          <WelcomeButtons
-            customText="Начать работу"
-            backButtonHandler={onBackwards}
-            isLoading={isLoading}
-          />
-        </form>
-      </Form>
+      <div className="mt-6 flex flex-col gap-2">
+        <InputWrapper tab={1}>
+          <TelegramFilled className="fill-brand-100 h-8 w-8" />
+          <span className="font-semibold">Telegram</span>
+          {data?.telegram ? (
+            <div className="ml-auto p-1 sm:p-3">
+              <Check className="fill-brand-100" />
+            </div>
+          ) : isPending ? (
+            <div className="text-gray-60 ml-auto py-1 sm:py-3">Формируем ссылку…</div>
+          ) : tgLink ? (
+            <Button
+              variant="ghost"
+              className="text-s-base text-brand-100 ml-auto h-8 px-4 py-1.5 sm:h-12"
+              onClick={() => window.open(tgLink, '_blank')}
+            >
+              Перейти в бот
+            </Button>
+          ) : (
+            <Button
+              variant="ghost"
+              className="text-s-base text-brand-100 ml-auto h-8 px-4 py-1.5 sm:h-12"
+              onClick={handleCreateTgConnection}
+            >
+              Подключить
+            </Button>
+          )}
+        </InputWrapper>
+        <InputWrapper tab={2}>
+          <WhatsAppFilled className="fill-brand-100 h-8 w-8" />
+          <span className="font-semibold">Вконтакте</span>
+          <Button
+            variant="ghost"
+            className="text-s-base text-brand-100 ml-auto h-8 px-4 py-1.5 sm:h-12"
+          >
+            Подключить
+          </Button>
+        </InputWrapper>
+      </div>
+      <WelcomeButtons
+        customText="Начать работу"
+        backButtonHandler={onBackwards}
+        continueButtonHandler={handleNextStep}
+        isLoading={isLoading}
+      />
     </WelcomePageLayout>
   );
 };

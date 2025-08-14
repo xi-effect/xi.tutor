@@ -11,3 +11,5 @@ export type {
   ClassroomStatusT,
   ClassroomT,
 } from './src/types';
+export { notificationsApiConfig, NotificationsQueryKey } from './src/notifications';
+export { telegramConnectionApiConfig, TelegramConnectionQueryKey } from './src/telegramConnection';

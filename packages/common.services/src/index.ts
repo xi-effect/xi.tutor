@@ -4,3 +4,4 @@ export * from './invitations';
 export * from './materials';
 export * from './utils';
 export * from './onboarding';
+export * from './notifications';

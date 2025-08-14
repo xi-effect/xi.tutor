@@ -2931,6 +2931,9 @@ importers:
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.1.1)
+      '@xipkg/modal':
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.1.1)
@@ -9176,6 +9179,22 @@ packages:
 
   /@xipkg/modal@4.1.0(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1):
     resolution: {integrity: sha512-YVuwzTqFaTgouBd7EldpUYPpd3W3hE78LISDjFv9+f9w0rqRpMFhVKQpHpo8WdVb1ahwKDiH14ZssxzkNzKBUA==}
+    peerDependencies:
+      react: ^19
+    dependencies:
+      '@radix-ui/react-dialog': 1.1.6(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+      '@xipkg/icons': 2.4.0(react@19.1.1)
+      '@xipkg/utils': 1.8.0(react@19.1.1)
+      lucide-react: 0.475.0(react@19.1.1)
+      react: 19.1.1
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
+      - react-dom
+    dev: false
+
+  /@xipkg/modal@4.2.0(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1):
+    resolution: {integrity: sha512-5uax+K526AJCkLP51+8XfFIefWVhPK0tG73Ji6gaYxrVt6zAiplReMgYkzXBwxXMMgBClYSw4+4juWB1UiGQ4g==}
     peerDependencies:
       react: ^19
     dependencies:

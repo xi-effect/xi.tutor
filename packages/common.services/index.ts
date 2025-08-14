@@ -22,3 +22,10 @@ export { useFetchClassrooms, useGetClassroom } from './src/classrooms';
 export { handleError, showSuccess, type ErrorType } from './src/utils/errorHandler';
 
 export { useOnboardingTransition } from './src/onboarding/useOnboardingTransition';
+
+export { useGetNotificationsStatus } from './src/notifications/useGetNotificationsStatus';
+export {
+  useCreateTgConnection,
+  useDeleteTgConnection,
+  useChangeContactsVisibility,
+} from './src/notifications';
