@@ -1,8 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { toast } from 'sonner';
 import Resizer from 'react-image-file-resizer';
 import { getCroppedImg } from '../utils';
 import { CropArea } from './useCrop';
+import { env } from 'common.env';
+import { getAxiosInstance } from 'common.config';
 
 type ImageProcessingProps = {
   withLoadingToServer?: boolean;
@@ -17,7 +18,6 @@ export const useImageProcessing = ({
   onOpenChange,
   setDate,
   onBase64Return,
-  communityId,
 }: ImageProcessingProps) => {
   const resizeFile = (file: File, type: 'blob' | 'base64') =>
     new Promise((resolve) => {
@@ -35,7 +35,7 @@ export const useImageProcessing = ({
       );
     });
 
-  const processCroppedImage = async (file: any, croppedAreaPixels: CropArea | null) => {
+  const processCroppedImage = async (file: File, croppedAreaPixels: CropArea | null) => {
     try {
       if (!croppedAreaPixels) return null;
 
@@ -51,25 +51,17 @@ export const useImageProcessing = ({
         return onBase64Return(resizedImageBase, form);
       }
 
-      const pathAddress = communityId
-        ? `/api/protected/community-service/communities/${communityId}/avatar/`
-        : '/api/users/current/avatar/';
-      const currentService = communityId ? 'backend' : 'auth';
+      const axiosInstance = await getAxiosInstance();
+      const response = await axiosInstance({
+        method: 'PUT',
+        url: `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/avatar/`,
+        data: form,
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
-      // const { status } = await put({
-      //   service: currentService,
-      //   path: pathAddress,
-      //   body: form,
-      //   config: {
-      //     headers: {},
-      //   },
-      // });
-
-      console.log('pathAddress', pathAddress, currentService);
-
-      const status = 204;
-
-      if (status === 204) {
+      if (response.status === 204) {
         toast('Аватарка успешно загружена. В ближайшее время она отобразится на сайте');
         onOpenChange(false);
         if (setDate) setDate(new Date());

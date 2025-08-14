@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.0.1",
-    "@xipkg/avatar": "^3.0.9",
+    "@xipkg/avatar": "3.0.10",
     "@xipkg/fileuploader": "^2.0.12",
     "@xipkg/form": "^4.2.0",
     "@xipkg/icons": "2.4.0",
