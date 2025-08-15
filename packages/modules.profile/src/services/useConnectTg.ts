@@ -1,25 +1,35 @@
-import { useCreateTgConnection, useGetNotificationsStatus } from 'common.services';
+import {
+  useCreateTgConnection,
+  useDeleteTgConnection,
+  useGetNotificationsStatus,
+} from 'common.services';
 
 export const useConnectTg = () => {
-  const { mutate, isPending } = useCreateTgConnection();
+  const { mutate: createConnection, isPending } = useCreateTgConnection();
+  const { mutate: deleteConnection } = useDeleteTgConnection();
   const { data } = useGetNotificationsStatus();
 
+  const status = data?.telegram?.connection?.status;
+
   const handleConnectTg = () => {
-    if (data.telegram) {
-      return;
+    if (status === 'active') return;
+
+    const connect = () => {
+      createConnection(undefined, {
+        onSuccess: (link: string) => {
+          if (link) window.open(link, '_blank');
+        },
+      });
+    };
+
+    if (status === 'blocked' || status === 'replaced') {
+      deleteConnection(undefined, {
+        onSuccess: connect,
+      });
+    } else {
+      connect();
     }
-
-    mutate(undefined, {
-      onSuccess: (data: string) => {
-        if (data) {
-          window.open(data, '_blank');
-        }
-      },
-    });
   };
 
-  return {
-    handleConnectTg,
-    isPending,
-  };
+  return { handleConnectTg, isPending };
 };
