@@ -11,17 +11,17 @@ import {
 } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
 import { Radio, RadioItem } from '@xipkg/radio';
-import { Avatar, AvatarImage, AvatarFallback } from '@xipkg/avatar';
 import { Form, FormField, FormItem, FormMessage } from '@xipkg/form';
 import { usePaymentApproveForm } from '../hooks';
 import { PaymentFormData } from '../model';
 import { PaymentT } from '../types';
 import { formatDate } from '../utils';
+import { UserProfile } from '@xipkg/userprofile';
 
 type PaymentApproveModalPropsT = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  paymentDetails?: PaymentT | null;
+  paymentDetails: PaymentT;
 };
 
 export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
@@ -36,10 +36,7 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
     onOpenChange(false);
   };
 
-  if (!paymentDetails) return null;
-
   const onFormSubmit = (data: PaymentFormData) => {
-    console.log('Подтверждено. Данные из формы:', data);
     onSubmit({
       ...data,
       ...paymentDetails,
@@ -60,25 +57,18 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
         </ModalHeader>
         <Form {...form}>
           <form onSubmit={handleSubmit(onFormSubmit)}>
-            <ModalBody>
+            <ModalBody className="flex flex-col gap-6">
               <div className="grid grid-cols-4 gap-6 sm:grid-cols-3">
                 <div className="col-span-1 flex flex-col">
                   {formatDate(paymentDetails.datePayment)}
                 </div>
-                <div className="col-span-2 flex space-x-2 sm:col-span-1">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src="https://github.com/shadcn.png" alt="User avatar" />
-                    <AvatarFallback>CN</AvatarFallback>
-                  </Avatar>
-                  <div className="flex flex-col">
-                    <span className="text-s-base font-medium text-gray-100">
-                      Анна Смирнова {paymentDetails.idStudent}
-                    </span>
-                    <span className="text-gray-60 text-xxs-base">
-                      Индивидуальное {paymentDetails.idSubject}
-                    </span>
-                  </div>
-                </div>
+                <UserProfile
+                  userId={paymentDetails.idStudent}
+                  text="Анна Смирнова"
+                  label="Индивидуальное"
+                  src="https://github.com/shadcn.png"
+                  className="col-span-2 sm:col-span-1"
+                />
                 <div className="col-span-1 text-right">
                   <p className="text-brand-100 font-medium">
                     {paymentDetails.amountPayment}
@@ -86,7 +76,7 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                   </p>
                 </div>
               </div>
-              <div className="mt-6 flex flex-col gap-2">
+              <div className="flex flex-col gap-2">
                 <span className="text-m-base">Тип оплаты</span>
                 <FormField
                   control={form.control}

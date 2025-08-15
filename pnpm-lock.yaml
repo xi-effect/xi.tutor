@@ -1132,10 +1132,10 @@ importers:
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0
-        version: 9.33.0
+        version: 9.32.0
       '@types/node':
         specifier: ^20.3.1
-        version: 20.19.10
+        version: 20.19.9
       '@types/react':
         specifier: ^19.0.2
         version: 19.1.9
@@ -1144,7 +1144,7 @@ importers:
         version: 19.1.7(@types/react@19.1.9)
       '@xipkg/eslint':
         specifier: 3.2.0
-        version: 3.2.0(eslint-plugin-jsx-a11y@6.10.2)(eslint@9.33.0)(turbo@2.5.5)(typescript@5.7.3)
+        version: 3.2.0(eslint-plugin-jsx-a11y@6.10.2)(eslint@9.32.0)(turbo@2.5.5)(typescript@5.7.3)
       '@xipkg/tailwind':
         specifier: 0.8.1
         version: 0.8.1
@@ -1159,13 +1159,13 @@ importers:
         version: link:../common.typescript
       eslint:
         specifier: ^9.19.0
-        version: 9.33.0
+        version: 9.32.0
       eslint-plugin-react-hooks:
         specifier: ^5.0.0
-        version: 5.2.0(eslint@9.33.0)
+        version: 5.2.0(eslint@9.32.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.18
-        version: 0.4.18(eslint@9.33.0)
+        version: 0.4.18(eslint@9.32.0)
       globals:
         specifier: ^15.14.0
         version: 15.15.0
@@ -1174,7 +1174,7 @@ importers:
         version: 5.7.3
       typescript-eslint:
         specifier: ^8.22.0
-        version: 8.39.0(eslint@9.33.0)(typescript@5.7.3)
+        version: 8.38.0(eslint@9.32.0)(typescript@5.7.3)
 
   packages/features.table:
     dependencies:
@@ -9265,7 +9265,7 @@ packages:
       eslint-config-airbnb: 19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2)(eslint-plugin-react-hooks@5.1.0)(eslint-plugin-react@7.37.2)(eslint@9.32.0)
       eslint-config-next: 15.1.2(eslint@9.32.0)(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.32.0)
-      eslint-config-turbo: 2.5.5(eslint@9.32.0)(turbo@2.5.5)
+      eslint-config-turbo: 2.5.6(eslint@9.32.0)(turbo@2.5.5)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.38.0)(eslint-import-resolver-typescript@3.10.1)(eslint@9.32.0)
       eslint-plugin-react: 7.37.2(eslint@9.32.0)
       eslint-plugin-react-hooks: 5.1.0(eslint@9.32.0)
@@ -10756,14 +10756,14 @@ packages:
       eslint: 9.32.0
     dev: true
 
-  /eslint-config-turbo@2.5.5(eslint@9.32.0)(turbo@2.5.5):
-    resolution: {integrity: sha512-23lKrCr66HQR62aa94n2dBGUUFz0GzM6N1KwmcREZHxomZ5Ik2rDm00wAz95lOEkhzSt6IaxW00Uz0az/Fcq5Q==}
+  /eslint-config-turbo@2.5.6(eslint@9.32.0)(turbo@2.5.5):
+    resolution: {integrity: sha512-1EV/UqdKE75st9q6y0MCxz7qp2v7RyGvbQsMLSuCz+VH8ScnSfmhd8FcAbqx3BshCy5IluujzMB6T5iCgL3/sA==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
     dependencies:
       eslint: 9.32.0
-      eslint-plugin-turbo: 2.5.5(eslint@9.32.0)(turbo@2.5.5)
+      eslint-plugin-turbo: 2.5.6(eslint@9.32.0)(turbo@2.5.5)
       turbo: 2.5.5
     dev: true
 
@@ -10981,6 +10981,17 @@ packages:
 
   /eslint-plugin-turbo@2.5.5(eslint@9.32.0)(turbo@2.5.5):
     resolution: {integrity: sha512-IlN65X6W7rgK88u5xl1xC+7FIGKA7eyaca0yxZQ9CBNV6keAaqtjZQLw8ZfXdv7T+MzTLYkYOeOHAv8yCRUx4Q==}
+    peerDependencies:
+      eslint: '>6.6.0'
+      turbo: '>2.0.0'
+    dependencies:
+      dotenv: 16.0.3
+      eslint: 9.32.0
+      turbo: 2.5.5
+    dev: true
+
+  /eslint-plugin-turbo@2.5.6(eslint@9.32.0)(turbo@2.5.5):
+    resolution: {integrity: sha512-KUDE23aP2JV8zbfZ4TeM1HpAXzMM/AYG/bJam7P4AalUxas8Pd/lS/6R3p4uX91qJcH1LwL4h0ED48nDe8KorQ==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'

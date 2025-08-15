@@ -16,7 +16,6 @@ export const usePaymentApproveForm = () => {
   };
 
   const onSubmit = (data: PaymentT) => {
-    console.log('Информация о платеже:', data);
     return Promise.resolve(data);
   };
 

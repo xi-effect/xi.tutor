@@ -9,16 +9,17 @@ import { TabsComponent } from './TabsComponent';
 
 export const PaymentsPage = () => {
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
-  const [isPaymentApproveModalOpen, setIsPaymentApproveModalOpen] = useState(false);
-  const [selectedPayment, setSelectedPayment] = useState<PaymentT | null>(null);
+  const [paymentApproveModalState, setPaymentApproveModalState] = useState<{
+    isOpen: boolean;
+    payment: PaymentT | null;
+  }>({ isOpen: false, payment: null });
 
   const onOpenInvoiceModal = () => {
     setIsInvoiceModalOpen(true);
   };
 
   const onOpenPaymentApproveModal = (payment: PaymentT) => {
-    setSelectedPayment(payment);
-    setIsPaymentApproveModalOpen(true);
+    setPaymentApproveModalState({ isOpen: true, payment });
   };
 
   return (
@@ -36,11 +37,13 @@ export const PaymentsPage = () => {
           <Plus className="fill-brand-0" />
         </Button>
       </div>
-      {isPaymentApproveModalOpen && (
+      {paymentApproveModalState.isOpen && paymentApproveModalState.payment && (
         <PaymentApproveModal
-          open={isPaymentApproveModalOpen}
-          onOpenChange={setIsPaymentApproveModalOpen}
-          paymentDetails={selectedPayment}
+          open={paymentApproveModalState.isOpen}
+          onOpenChange={(open) =>
+            setPaymentApproveModalState({ ...paymentApproveModalState, isOpen: open })
+          }
+          paymentDetails={paymentApproveModalState.payment}
         />
       )}
       {isInvoiceModalOpen && (
