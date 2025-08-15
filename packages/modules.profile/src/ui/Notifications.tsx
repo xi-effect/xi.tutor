@@ -1,21 +1,16 @@
-import { ChevronRight, TelegramFilled, Trash, MailRounded } from '@xipkg/icons';
+import { TelegramFilled, MailRounded } from '@xipkg/icons';
 import { useMediaQuery } from '@xipkg/utils';
 
 import { NotificationsToggles } from './NotificationsToggles';
-import { Button } from '@xipkg/button';
-import { useNotificationsData } from '../hooks';
+import { useNotificationsStatus } from '../hooks';
+import { useCurrentUser } from 'common.services';
 
 export const Notifications = () => {
   const isMobile = useMediaQuery('(max-width: 719px)');
+  const { data: user } = useCurrentUser();
 
-  const {
-    handleConnectTg,
-    handleDisconnectTg,
-    tgConnectionStatus,
-    isTgConnectionActive,
-    isTgConnectionBlocked,
-    user,
-  } = useNotificationsData();
+  const { handleConnectTg, tgConnectionStatus, isTgConnectionActive, tgActionButton } =
+    useNotificationsStatus();
 
   return (
     <>
@@ -38,37 +33,12 @@ export const Notifications = () => {
                   .filter(({ condition }) => condition)
                   .map(({ text, color }) => (
                     <span key={text} className={`${color} text-xs-base sm:text-s-base`}>
-                      {text}
+                      {text || user?.username}
                     </span>
                   ))}
               </div>
-
-              {isTgConnectionActive ? (
-                <Button
-                  variant="ghost"
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDisconnectTg();
-                  }}
-                  className="ml-auto bg-transparent"
-                >
-                  <Trash className="fill-gray-80 pointer" />
-                  <span className="sr-only">Удалить</span>
-                </Button>
-              ) : isTgConnectionBlocked ? (
-                <div className="md:ml-auto">
-                  <Button
-                    variant="ghost"
-                    className="text-brand-100 h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
-                  >
-                    Разблокировать
-                  </Button>
-                </div>
-              ) : (
-                <ChevronRight className="fill-gray-80 ml-auto" />
-              )}
             </div>
+            {tgActionButton()}
           </div>
 
           {isTgConnectionActive && <NotificationsToggles type="telegram" />}
