@@ -6,3 +6,4 @@ export * from './payments';
 export * from './utils';
 export * from './onboarding';
 export * from './classrooms';
+export * from './notifications';

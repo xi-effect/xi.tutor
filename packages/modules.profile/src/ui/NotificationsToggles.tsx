@@ -1,9 +1,10 @@
 import { Toggle } from '@xipkg/toggle';
+import { useChangeContactsVisibility, useGetNotificationsStatus } from 'common.services';
 
-type TypesMessagersT = 'telegram' | 'whatsapp' | 'email';
+type TypesMessengersT = 'telegram' | 'whatsapp' | 'email';
 
 type NotificationsTogglesPropsT = {
-  type: TypesMessagersT;
+  type: TypesMessengersT;
 };
 
 const typeMap: Record<string, string> = {
@@ -14,6 +15,9 @@ const typeMap: Record<string, string> = {
 
 export const NotificationsToggles = ({ type }: NotificationsTogglesPropsT) => {
   const nameType = typeMap[type] || 'Email';
+
+  const { data } = useGetNotificationsStatus();
+  const { mutate, isPending } = useChangeContactsVisibility();
 
   return (
     <>
@@ -30,7 +34,12 @@ export const NotificationsToggles = ({ type }: NotificationsTogglesPropsT) => {
               </span>
             </div>
 
-            <Toggle size="l" />
+            <Toggle
+              checked={data?.telegram.contact.is_public}
+              size="l"
+              onCheckedChange={(checked) => mutate(checked)}
+              disabled={isPending}
+            />
           </div>
         )}
 
