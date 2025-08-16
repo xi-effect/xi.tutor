@@ -3,6 +3,20 @@ import { LiveKitRoomProps } from '@livekit/components-react';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
+type ChatMessage = {
+  id: string;
+  text: string;
+  senderId: string;
+  senderName: string;
+  timestamp: number;
+};
+
+type RaisedHand = {
+  participantId: string;
+  participantName: string;
+  timestamp: number;
+};
+
 type useCallStoreT = {
   // разрешение от браузера на использование камеры
   isCameraPermission: boolean | null;
@@ -21,12 +35,26 @@ type useCallStoreT = {
 
   mode: 'compact' | 'full';
 
+  // Чат
+  isChatOpen: boolean;
+  chatMessages: ChatMessage[];
+  unreadMessagesCount: number;
+
+  // Поднятые руки
+  raisedHands: RaisedHand[];
+  isHandRaised: boolean;
+
   updateStore: (type: keyof useCallStoreT, value: any) => void;
+  addChatMessage: (message: ChatMessage) => void;
+  clearUnreadMessages: () => void;
+  addRaisedHand: (hand: RaisedHand) => void;
+  removeRaisedHand: (participantId: string) => void;
+  toggleHandRaised: () => void;
 };
 
 export const useCallStore = create<useCallStoreT>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       isCameraPermission: null,
       isMicroPermission: null,
       audioEnabled: false,
@@ -37,7 +65,36 @@ export const useCallStore = create<useCallStoreT>()(
       connect: undefined,
       isStarted: undefined,
       mode: 'full',
+
+      // Чат
+      isChatOpen: false,
+      chatMessages: [],
+      unreadMessagesCount: 0,
+
+      // Поднятые руки
+      raisedHands: [],
+      isHandRaised: false,
+
       updateStore: (type: keyof useCallStoreT, value: any) => set({ [type]: value }),
+
+      addChatMessage: (message: ChatMessage) => {
+        const { isChatOpen, unreadMessagesCount } = get();
+        set((state) => ({
+          chatMessages: [...state.chatMessages, message],
+          unreadMessagesCount: isChatOpen ? unreadMessagesCount : unreadMessagesCount + 1,
+        }));
+      },
+
+      clearUnreadMessages: () => set({ unreadMessagesCount: 0 }),
+
+      // Поднятые руки
+      addRaisedHand: (hand: RaisedHand) =>
+        set((state) => ({ raisedHands: [...state.raisedHands, hand] })),
+      removeRaisedHand: (participantId: string) =>
+        set((state) => ({
+          raisedHands: state.raisedHands.filter((hand) => hand.participantId !== participantId),
+        })),
+      toggleHandRaised: () => set((state) => ({ isHandRaised: !state.isHandRaised })),
     }),
     {
       name: 'call-store', // Название ключа в localStorage

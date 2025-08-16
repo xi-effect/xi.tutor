@@ -7,14 +7,14 @@ import { students } from '../mocks';
 export const useInvoiceForm = () => {
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
-    mode: 'onChange',
+    mode: 'onSubmit',
     defaultValues: {
       studentId: '',
       items: [
         {
           name: '',
           price: 0,
-          quantity: 0,
+          quantity: 1,
         },
       ],
       comment: '',
@@ -24,7 +24,7 @@ export const useInvoiceForm = () => {
   const { control, watch, setValue, handleSubmit } = form;
 
   const selectedStudentId = watch('studentId');
-  const selectedItems = watch('items');
+  const items = watch('items');
 
   const { fields } = useFieldArray({
     control,
@@ -35,13 +35,6 @@ export const useInvoiceForm = () => {
     const student = students.find((s) => s.id === selectedStudentId);
     return { student, subjects: student?.subjects || [] };
   }, [selectedStudentId]);
-
-  // Вычисляем общую стоимость счёта
-  const totalInvoicePrice = useMemo(() => {
-    return selectedItems.reduce((total, item) => {
-      return total + item.price * (item.quantity || 0);
-    }, 0);
-  }, [selectedItems]);
 
   const handleClearForm = () => {
     setValue('studentId', '');
@@ -61,11 +54,10 @@ export const useInvoiceForm = () => {
   return {
     form,
     control,
-    selectedItems,
+    items,
     handleSubmit,
     selectedData,
     fields,
-    totalInvoicePrice,
     handleClearForm,
     onSubmit,
   };

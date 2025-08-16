@@ -13,15 +13,19 @@ import {
 type ColumnArgsT = {
   students: StudentT[];
   subjects: SubjectT[];
+  withStudentColumn?: boolean;
   isMobile?: boolean;
+  onApprovePayment?: (payment: PaymentT) => void;
 };
 
 export const createPaymentColumns = ({
   students,
   subjects,
+  withStudentColumn = true,
+  onApprovePayment,
   // isMobile,
 }: ColumnArgsT): ColumnDef<PaymentT>[] => {
-  const columns: (ColumnDef<PaymentT> | false)[] = [
+  const baseColumns: (ColumnDef<PaymentT> | false)[] = [
     {
       accessorKey: 'datePayment',
       header: 'Дата',
@@ -36,17 +40,25 @@ export const createPaymentColumns = ({
       },
       enableColumnFilter: true,
     },
-    {
-      accessorKey: 'idStudent',
-      header: 'Студент',
-      cell: ({ row }) => {
-        const student = students.find((s) => s.id === row.original.idStudent);
-        return student ? <StudentCell {...student} /> : null;
-      },
-      size: 160,
-      filterFn: (row, columnId, value) => value.includes(row.getValue(columnId)),
-      enableColumnFilter: true,
-    },
+  ];
+
+  const studentColumn: ColumnDef<PaymentT> | false = withStudentColumn
+    ? {
+        accessorKey: 'idStudent',
+        header: 'Студент',
+        cell: ({ row }) => {
+          const student = students.find((s) => s.id === row.original.idStudent);
+          return student ? <StudentCell {...student} /> : null;
+        },
+        size: 160,
+        filterFn: (row, columnId, value) => value.includes(row.getValue(columnId)),
+        enableColumnFilter: true,
+      }
+    : false;
+
+  const columns: (ColumnDef<PaymentT> | false)[] = [
+    ...baseColumns,
+    studentColumn,
     {
       accessorKey: 'idSubject',
       header: 'Предмет',
@@ -81,7 +93,12 @@ export const createPaymentColumns = ({
     {
       accessorKey: 'statusPayment',
       header: 'Статус',
-      cell: ({ row }) => <StatusCell status={row.original.statusPayment} />,
+      cell: ({ row }) => (
+        <StatusCell
+          status={row.original.statusPayment}
+          onApprovePayment={() => onApprovePayment?.(row.original)}
+        />
+      ),
       size: 220,
       filterFn: (row, columnId, value) => value.includes(row.getValue(columnId)),
       enableColumnFilter: true,

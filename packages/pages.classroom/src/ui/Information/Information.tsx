@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useForm } from '@xipkg/form';
 import { Editor } from 'modules.editor';
 import { Input } from '@xipkg/input';

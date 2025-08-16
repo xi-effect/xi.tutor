@@ -6,8 +6,8 @@ export const formSchema = z.object({
     .array(
       z.object({
         name: z.string().min(1, 'Название предмета обязательно'),
-        price: z.number(),
-        quantity: z.number(),
+        price: z.number().min(0, 'Цена не может быть отрицательной'),
+        quantity: z.number().min(1, 'Количество не может быть меньше 1'),
       }),
     )
     .min(1, 'Добавьте хотя бы один предмет'),

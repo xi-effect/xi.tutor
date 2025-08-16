@@ -33,7 +33,7 @@ export const WelcomeUserAvatar = () => {
 
   return (
     <div className="mt-8 flex h-16 flex-row">
-      <AvatarPreview userId={id} date={date} />
+      <AvatarPreview userId={id} />
       <div className="ml-4 flex flex-col gap-2">
         <p className="text-gray-90 w-full leading-[22px] font-medium">
           Аватар&nbsp;

@@ -1,11 +1,10 @@
-import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
+import { FormControl, FormField, FormItem, FormLabel } from '@xipkg/form';
 import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@xipkg/select';
 import { students } from '../../../mocks';
 
 type StudentSelectorProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: any;
-  onStudentChange: (id: string) => void;
 };
 
 export const StudentSelector = ({ control }: StudentSelectorProps) => {
@@ -15,7 +14,7 @@ export const StudentSelector = ({ control }: StudentSelectorProps) => {
       name="studentId"
       defaultValue=""
       render={({ field }) => (
-        <FormItem className="pb-6">
+        <FormItem>
           <FormLabel>Ученик или группа</FormLabel>
           <FormControl>
             <Select value={field.value} onValueChange={(value) => field.onChange(value)}>
@@ -31,7 +30,6 @@ export const StudentSelector = ({ control }: StudentSelectorProps) => {
               </SelectContent>
             </Select>
           </FormControl>
-          <FormMessage />
         </FormItem>
       )}
     />

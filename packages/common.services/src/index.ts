@@ -2,5 +2,8 @@ export * from './auth';
 export * from './user';
 export * from './invitations';
 export * from './materials';
+export * from './payments';
 export * from './utils';
 export * from './onboarding';
+export * from './classrooms';
+export * from './notifications';

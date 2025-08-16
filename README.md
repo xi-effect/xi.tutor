@@ -1,7 +1,7 @@
 # xi.tutor
 
 > Это репозиторий основного приложения, который делает команда xi.team
-> Продукт направлен на цифровизацию работы репетиторов – [app.xieffect.ru](https://app.xieffect.ru/)
+> Продукт направлен на цифровизацию работы репетиторов – [app.sovlium.ru](https://app.sovlium.ru/)
 
 ## Начало работы
 
@@ -65,9 +65,9 @@ pnpm run format-check
 
 Приложения (apps/xi.web):
 
-- TypeScript v5 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/typescript))
-- React v19 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/react))
-- Tailwind v4 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/tailwind))
+- TypeScript v5 ([рекомендации по использованию](https://docs.sovlium.ru/docs/frontend/tech/typescript))
+- React v19 ([рекомендации по использованию](https://docs.sovlium.ru/docs/frontend/tech/react))
+- Tailwind v4 ([рекомендации по использованию](https://docs.sovlium.ru/docs/frontend/tech/tailwind))
 - Vite – сборка проекта
 - Zustand – управление состоянием в приложении
 - axios (?) – работа с RestAPI
@@ -77,9 +77,9 @@ pnpm run format-check
 
 Пакеты (packages/\*):
 
-- TypeScript v5 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/typescript))
-- React v19 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/react))
-- Tailwind v4 ([рекомендации по использованию](https://docs.xieffect.ru/docs/frontend/tech/tailwind))
+- TypeScript v5 ([рекомендации по использованию](https://docs.sovlium.ru/docs/frontend/tech/typescript))
+- React v19 ([рекомендации по использованию](https://docs.sovlium.ru/docs/frontend/tech/react))
+- Tailwind v4 ([рекомендации по использованию](https://docs.sovlium.ru/docs/frontend/tech/tailwind))
 - Zustand – управление состоянием в приложении
 - axios (?) – работа с RestAPI
 - SocketIO – взаимодействие с WebSockets
@@ -394,12 +394,12 @@ export const SignInPage = () => {
 
 ### Основные переменные окружения
 
-| Переменная                | Назначение                                                       | Значение по умолчанию       |
-| ------------------------- | ---------------------------------------------------------------- | --------------------------- |
-| `VITE_SERVER_URL_BACKEND` | URL API бэкенда                                                  | https://api.xieffect.ru     |
-| `VITE_SERVER_URL_LIVEKIT` | URL сервиса для ВКС                                              | https://livekit.xieffect.ru |
-| `VITE_DEVTOOLS_ENABLED`   | Включение инструментов разработчика                              | false                       |
-| `VITE_ENABLE_X_TESTING`   | Нужен для корректной работы авторизации при локальной разработке | false                       |
+| Переменная                | Назначение                                                       | Значение по умолчанию      |
+| ------------------------- | ---------------------------------------------------------------- | -------------------------- |
+| `VITE_SERVER_URL_BACKEND` | URL API бэкенда                                                  | https://api.sovlium.ru     |
+| `VITE_SERVER_URL_LIVEKIT` | URL сервиса для ВКС                                              | https://livekit.sovlium.ru |
+| `VITE_DEVTOOLS_ENABLED`   | Включение инструментов разработчика                              | false                      |
+| `VITE_ENABLE_X_TESTING`   | Нужен для корректной работы авторизации при локальной разработке | false                      |
 
 ### Конфигурация окружений
 

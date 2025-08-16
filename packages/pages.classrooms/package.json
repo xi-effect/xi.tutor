@@ -23,9 +23,11 @@
     "@xipkg/link": "^2.0.12",
     "@xipkg/select": "^2.2.5",
     "@xipkg/userprofile": "4.0.12",
+    "@tanstack/react-virtual": "3.13.9",
     "features.table": "*",
     "common.services": "*",
-    "common.env": "*"
+    "common.env": "*",
+    "common.ui": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

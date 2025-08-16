@@ -92,7 +92,7 @@ export const UserTile = () => {
       <div className="bg-gray-40 flex items-center justify-center rounded-[16px]">
         <Avatar size="xxl">
           <AvatarImage
-            src={`https://auth.xieffect.ru/api/users/${userId}/avatar.webp`}
+            src={`https://api.xieffect.ru/files/users/${userId}/avatar.webp`}
             alt="user avatar"
           />
           <AvatarFallback size="xxl" loading />

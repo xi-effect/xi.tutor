@@ -26,6 +26,7 @@ import { MicrophoneOff, RedLine } from '@xipkg/icons';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { FocusToggle } from '../shared/FocusToggle';
 import { ParticipantName } from './ParticipantName';
+import { RaisedHandIndicator } from './RaisedHandIndicator';
 
 type TrackRefContextIfNeededPropsT = {
   trackRef?: TrackReferenceOrPlaceholder;
@@ -177,7 +178,7 @@ export const ParticipantTile = ({
                 >
                   <Avatar size="xxl">
                     <AvatarImage
-                      src={`https://auth.xieffect.ru/api/users/${identity}/avatar.webp`}
+                      src={`https://api.xieffect.ru/files/users/${identity}/avatar.webp`}
                       alt="user avatar"
                     />
                     <AvatarFallback size="xxl" loading />
@@ -212,6 +213,10 @@ export const ParticipantTile = ({
               </div>
             )}
           </div>
+
+          {/* Индикатор поднятой руки */}
+          <RaisedHandIndicator participantId={identity || 'unknown'} />
+
           {isFocusToggleDisable ? null : (
             <FocusToggle
               style={{ background: 'transparent', padding: '5px' }}

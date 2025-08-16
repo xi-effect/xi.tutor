@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useState, RefObject } from 'react';
-import { materialsMock } from '../mocks';
+import { paymentsMock } from '../mocks';
 
 export const useInfiniteScroll = (parentRef: RefObject<HTMLDivElement | null>) => {
-  const [items, setItems] = useState(materialsMock);
+  const [items, setItems] = useState(paymentsMock);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -11,7 +11,7 @@ export const useInfiniteScroll = (parentRef: RefObject<HTMLDivElement | null>) =
 
       const { scrollTop, scrollHeight, clientHeight } = parentRef.current;
       if (scrollHeight - scrollTop - clientHeight < 100) {
-        setItems((prev: any) => [...prev, ...materialsMock]);
+        setItems((prev: any) => [...prev, ...paymentsMock]);
       }
     };
 

@@ -1,8 +1,13 @@
 import { Outlet, createFileRoute, useRouter } from '@tanstack/react-router';
 import { Navigation } from 'modules.navigation';
-import { CompactView, LiveKitProvider, useLivekitToken } from 'modules.calls';
-import { RoomProvider } from 'modules.calls';
-import { useCallStore } from 'modules.calls';
+import {
+  CompactView,
+  LiveKitProvider,
+  useLivekitToken,
+  RoomProvider,
+  useCallStore,
+  ModeSyncProvider,
+} from 'modules.calls';
 import { useEffect } from 'react';
 
 export const Route = createFileRoute('/(app)/_layout')({
@@ -48,9 +53,11 @@ function LayoutComponent() {
       <Navigation>
         <RoomProvider>
           <LiveKitProvider token={token || ''}>
-            <CompactView firstId="1" secondId="2">
-              <Outlet />
-            </CompactView>
+            <ModeSyncProvider>
+              <CompactView firstId="1" secondId="2">
+                <Outlet />
+              </CompactView>
+            </ModeSyncProvider>
           </LiveKitProvider>
         </RoomProvider>
       </Navigation>

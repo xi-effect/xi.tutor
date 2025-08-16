@@ -1,4 +1,4 @@
-import { Home, Calendar, Group, TelegramFilled, Payments, Materials, FAQ } from '@xipkg/icons';
+import { Home, Calendar, Group, TelegramFilled, Payments, Materials } from '@xipkg/icons';
 
 export const items = [
   {
@@ -31,12 +31,12 @@ export const items = [
 export const footerMenu = [
   {
     titleKey: 'support',
-    url: '#',
+    url: 'https://t.me/sovlium_support_bot',
     icon: TelegramFilled,
   },
-  {
-    titleKey: 'faq',
-    url: '#',
-    icon: FAQ,
-  },
+  // {
+  //   titleKey: 'faq',
+  //   url: '#',
+  //   icon: FAQ,
+  // },
 ];
