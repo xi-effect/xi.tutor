@@ -2,11 +2,15 @@ import { Tabs } from '@xipkg/tabs';
 import { useMemo, useRef } from 'react';
 import { VirtualizedPaymentsTable } from './VirtualizedPaymentsTable';
 import { useMedia } from 'common.utils';
-import { students, subjects, createPaymentColumns } from 'features.table';
+import { students, subjects, createPaymentColumns, PaymentT } from 'features.table';
 import { PaymentControl as PaymentsCharts } from 'features.charts';
 import { useInfiniteQuery } from '../hooks';
 
-export const TabsComponent = () => {
+type TabsComponentPropsT = {
+  onApprovePayment: (payment: PaymentT) => void;
+};
+
+export const TabsComponent = ({ onApprovePayment }: TabsComponentPropsT) => {
   const isMobile = useMedia('(max-width: 700px)');
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -14,8 +18,15 @@ export const TabsComponent = () => {
     useInfiniteQuery(parentRef);
 
   const defaultColumns = useMemo(
-    () => createPaymentColumns({ withStudentColumn: true, students, subjects, isMobile }),
-    [isMobile],
+    () =>
+      createPaymentColumns({
+        withStudentColumn: true,
+        students,
+        subjects,
+        isMobile,
+        onApprovePayment,
+      }),
+    [isMobile, onApprovePayment],
   );
 
   return (
@@ -41,6 +52,7 @@ export const TabsComponent = () => {
             isFetchingNextPage={isFetchingNextPage}
             hasNextPage={hasNextPage}
             onLoadMore={fetchNextPage}
+            onApprovePayment={onApprovePayment}
           />
         </Tabs.Content>
 

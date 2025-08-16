@@ -33,6 +33,7 @@ export type VirtualizedPaymentsTableProps = {
   isFetchingNextPage?: boolean;
   hasNextPage?: boolean;
   onLoadMore?: () => void;
+  onApprovePayment: (payment: PaymentT) => void;
 };
 
 export const VirtualizedPaymentsTable = ({
@@ -44,6 +45,7 @@ export const VirtualizedPaymentsTable = ({
   isFetchingNextPage = false,
   hasNextPage = false,
   onLoadMore,
+  onApprovePayment,
 }: VirtualizedPaymentsTableProps) => {
   const isMobile = useMediaQuery('(max-width: 719px)');
   const parentRef = useRef<HTMLDivElement>(null);
@@ -92,7 +94,7 @@ export const VirtualizedPaymentsTable = ({
   }, [isFetchingNextPage, hasNextPage, onLoadMore]);
 
   if (isMobile) {
-    return <CardsList />;
+    return <CardsList onApprovePayment={onApprovePayment} />;
   }
 
   return (

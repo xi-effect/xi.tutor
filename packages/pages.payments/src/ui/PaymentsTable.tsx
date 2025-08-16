@@ -7,6 +7,7 @@ import {
   TableBody,
   StudentT,
   SubjectT,
+  PaymentT,
   // DropdownFilters,
 } from 'features.table';
 import {
@@ -27,6 +28,7 @@ export type PaymentsTableProps<TData> = {
   students?: StudentT[];
   subjects?: SubjectT[];
   filterByClass?: boolean | string;
+  onApprovePayment?: (payment: PaymentT) => void;
 };
 
 export const PaymentsTable = <TData,>({
@@ -34,6 +36,7 @@ export const PaymentsTable = <TData,>({
   columns,
   students = [],
   subjects = [],
+  onApprovePayment,
 }: PaymentsTableProps<TData>) => {
   const isMobile = useMediaQuery('(max-width: 719px)');
 
@@ -50,7 +53,7 @@ export const PaymentsTable = <TData,>({
   });
 
   if (isMobile) {
-    return <CardsList />;
+    return <CardsList onApprovePayment={onApprovePayment} />;
   }
 
   return (

@@ -1,0 +1,1 @@
+export { PaymentApproveModal } from './src';
