@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Sidebar, SidebarInset } from '@xipkg/sidebar';
 import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react';
-import { useMenuStore } from '../../store';
+import { useMenuStore } from '../store';
 import { SideBarItems } from './SideBarItems';
 
 // @ts-expect-error

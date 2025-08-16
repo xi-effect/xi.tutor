@@ -1,5 +1,7 @@
 import { useMediaQuery } from '@xipkg/utils';
-import { Desktop, Header, Mobile } from './components';
+import { Desktop } from './Desktop';
+import { Header } from './Header';
+import { Mobile } from './Mobile';
 import { SidebarProvider } from '@xipkg/sidebar';
 import { useMenuStore } from '../store';
 import { useRef } from 'react';
