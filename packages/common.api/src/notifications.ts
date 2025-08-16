@@ -2,8 +2,8 @@ import { env } from 'common.env';
 import { HttpMethod } from './config';
 
 enum NotificationsQueryKey {
-  NotificationsSettings = 'notificationsSettings',
-  ContactsVisibility = 'contactsVisibility',
+  NotificationsSettings = 'NotificationsSettings',
+  ContactsVisibility = 'ContactsVisibility',
 }
 
 const notificationsApiConfig = {

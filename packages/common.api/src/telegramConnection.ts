@@ -2,8 +2,8 @@ import { env } from 'common.env';
 import { HttpMethod } from './config';
 
 enum TelegramConnectionQueryKey {
-  CreateConnection = 'createTgConnection',
-  RemoveConnection = 'removeTgConnection',
+  CreateConnection = 'CreateTgConnection',
+  RemoveConnection = 'RemoveTgConnection',
 }
 
 const telegramConnectionApiConfig = {
