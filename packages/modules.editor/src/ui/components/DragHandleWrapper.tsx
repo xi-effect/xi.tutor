@@ -17,7 +17,10 @@ export const DragHandleWrapper = ({
         className="cursor-grab active:cursor-grabbing"
         draggable
         onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
+        onDragEnd={(e) => {
+          e.preventDefault();
+          onDragEnd();
+        }}
       >
         <Move size="sm" className="cursor-pointer" />
       </div>
