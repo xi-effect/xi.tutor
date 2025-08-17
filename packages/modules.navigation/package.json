@@ -19,7 +19,7 @@
     "@xipkg/scrollarea": "2.2.0",
     "@xipkg/select": "^2.2.5",
     "@xipkg/sidebar": "0.2.0",
-    "@xipkg/userprofile": "4.0.12",
+    "@xipkg/userprofile": "4.0.14",
     "@xipkg/utils": "1.8.0",
     "common.auth": "*",
     "common.services": "*",

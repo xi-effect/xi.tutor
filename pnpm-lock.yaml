@@ -1536,8 +1536,8 @@ importers:
         specifier: 2.1.0
         version: 2.1.0(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/userprofile':
-        specifier: 4.0.12
-        version: 4.0.12(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+        specifier: 4.0.14
+        version: 4.0.14(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.1.1)
@@ -1778,8 +1778,8 @@ importers:
         specifier: 2.2.0
         version: 2.2.0(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/userprofile':
-        specifier: 4.0.12
-        version: 4.0.12(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+        specifier: 4.0.14
+        version: 4.0.14(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.1.1)
@@ -1881,8 +1881,8 @@ importers:
         specifier: 0.2.0
         version: 0.2.0(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/userprofile':
-        specifier: 4.0.12
-        version: 4.0.12(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+        specifier: 4.0.14
+        version: 4.0.14(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.1.1)
@@ -1999,8 +1999,8 @@ importers:
         specifier: ^2.0.13
         version: 2.0.13(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/userprofile':
-        specifier: 4.0.12
-        version: 4.0.12(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+        specifier: 4.0.14
+        version: 4.0.14(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.1.1)
@@ -2117,8 +2117,8 @@ importers:
         specifier: 2.1.0
         version: 2.1.0(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/userprofile':
-        specifier: 4.0.12
-        version: 4.0.12(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+        specifier: 4.0.14
+        version: 4.0.14(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       features.materials.add:
         specifier: '*'
         version: link:../features.materials.add
@@ -2226,8 +2226,8 @@ importers:
         specifier: 2.1.0
         version: 2.1.0(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/userprofile':
-        specifier: 4.0.12
-        version: 4.0.12(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+        specifier: 4.0.14
+        version: 4.0.14(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.1.1)
@@ -2390,8 +2390,8 @@ importers:
         specifier: 2.1.0
         version: 2.1.0(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/userprofile':
-        specifier: 4.0.12
-        version: 4.0.12(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+        specifier: 4.0.14
+        version: 4.0.14(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.1.1)
@@ -2502,8 +2502,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/userprofile':
-        specifier: 4.0.12
-        version: 4.0.12(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+        specifier: 4.0.14
+        version: 4.0.14(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       common.api:
         specifier: '*'
         version: link:../common.api
@@ -2605,8 +2605,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/userprofile':
-        specifier: 4.0.12
-        version: 4.0.12(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+        specifier: 4.0.14
+        version: 4.0.14(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.1.1)
@@ -9615,6 +9615,21 @@ packages:
 
   /@xipkg/userprofile@4.0.12(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1):
     resolution: {integrity: sha512-8S30BcLHbMWyEX28v/m3etjMbPoamtfkQxH41vFLuiI8WVDNYAejKsyYjBfF2oF8NTuNRFbhL/i29+9ITutKEw==}
+    peerDependencies:
+      react: ^19
+    dependencies:
+      '@xipkg/avatar': 3.0.10(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+      '@xipkg/utils': 1.8.0(react@19.1.1)
+      class-variance-authority: 0.7.1
+      react: 19.1.1
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
+      - react-dom
+    dev: false
+
+  /@xipkg/userprofile@4.0.14(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1):
+    resolution: {integrity: sha512-vFcIFgYp+99xFP5hGSz3r2+pya8OVq6aph5+37oOYcVBTxshuHmKP7dRM4S6TWhq9BtbvbKUV7ZjbIOIZWnmiA==}
     peerDependencies:
       react: ^19
     dependencies:

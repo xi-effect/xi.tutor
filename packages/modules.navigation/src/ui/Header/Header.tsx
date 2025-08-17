@@ -21,6 +21,7 @@ import { useMenuStore } from '../../store';
 
 import { SelectRole } from './SelectRole';
 import { Notifications } from './Notifications';
+import { useCurrentUser } from 'common.services';
 // import { TestNotificationButton } from './TestNotificationButton';
 // import { NotificationDebug } from './NotificationDebug';
 // import { SimpleTest } from './SimpleTest';
@@ -36,6 +37,8 @@ export const Header = ({
   swiperRef: React.RefObject<SwiperRef | null>;
   toggle: () => void;
 }) => {
+  const { data: user } = useCurrentUser();
+
   const { isOpen } = useMenuStore();
   const isMobile = useMediaQuery('(max-width: 960px)');
   const { toggleSidebar } = useSidebar();
@@ -92,7 +95,7 @@ export const Header = ({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon">
-              <UserProfile userId={null} size="m" withOutText />
+              <UserProfile userId={user?.id || 0} size="m" withOutText />
             </Button>
           </DropdownMenuTrigger>
 

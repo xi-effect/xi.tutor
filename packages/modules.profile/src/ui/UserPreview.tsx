@@ -98,7 +98,7 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
         <DropdownMenuTrigger className="cursor-pointer" asChild>
           <Avatar size="xl">
             <AvatarImage
-              src={`https://api.xieffect.ru/files/users/${user?.id}/avatar.webp`}
+              src={`https://api.sovlium.ru/files/users/${user?.id}/avatar.webp`}
               alt="user avatar"
             />
             <AvatarFallback
