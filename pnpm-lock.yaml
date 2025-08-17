@@ -50,6 +50,9 @@ importers:
       common.config:
         specifier: '*'
         version: link:../../packages/common.config
+      common.services:
+        specifier: '*'
+        version: link:../../packages/common.services
       common.sockets:
         specifier: '*'
         version: link:../../packages/common.sockets
@@ -490,6 +493,9 @@ importers:
       common.env:
         specifier: '*'
         version: link:../common.env
+      common.sockets:
+        specifier: '*'
+        version: link:../common.sockets
       common.types:
         specifier: '*'
         version: link:../common.types
@@ -1886,6 +1892,9 @@ importers:
       common.services:
         specifier: '*'
         version: link:../common.services
+      common.sockets:
+        specifier: '*'
+        version: link:../common.sockets
       common.types:
         specifier: '*'
         version: link:../common.types

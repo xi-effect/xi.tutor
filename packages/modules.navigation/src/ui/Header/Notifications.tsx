@@ -1,4 +1,4 @@
-import { Notification, Settings } from '@xipkg/icons';
+import { Notification, Settings, Trash } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import {
   DropdownMenu,
@@ -11,6 +11,9 @@ import { ScrollArea } from '@xipkg/scrollarea';
 import { UserProfile } from '@xipkg/userprofile';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import { useLocation, useNavigate } from '@tanstack/react-router';
+import { useNotificationsContext } from 'common.services';
+import type { NotificationT } from 'common.types';
+import { NotificationBadge } from './NotificationBadge';
 
 const rtf = new Intl.RelativeTimeFormat('ru', { numeric: 'auto' });
 
@@ -58,54 +61,68 @@ const getRelativeTime = (dateString: string): string => {
   }
 };
 
-const notifications = [
-  {
-    id: 1,
-    title: 'Новое сообщение в чате',
-    description: 'Анна Петрова отправила вам сообщение',
-    date: new Date(Date.now() - 5 * 60 * 1000).toISOString(), // 5 минут назад
-  },
-  {
-    id: 2,
-    title: 'Напоминание о занятии',
-    description: 'Через 30 минут начинается урок математики',
-    date: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 часа назад
-  },
-  {
-    id: 3,
-    title: 'Новый материал доступен',
-    description: 'Загружен новый учебный материал по физике',
-    date: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(), // 6 часов назад
-  },
-  {
-    id: 4,
-    title: 'Оплата прошла успешно оплата прошла успешно',
-    description: 'Ваш платеж на сумму 5000 ₽ обработан',
-    date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // 1 день назад
-  },
-  {
-    id: 5,
-    title: 'Приглашение в группу',
-    description: 'Вас пригласили в группу "Продвинутая математика"',
-    date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(), // 3 дня назад
-  },
-  {
-    id: 6,
-    title: 'Обновление системы',
-    description: 'Система была обновлена до версии 2.1.0',
-    date: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString(), // 1 неделя назад
-  },
-  {
-    id: 7,
-    title: 'День рождения ученика',
-    description: 'Сегодня день рождения у Марии Ивановой',
-    date: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // через 30 минут
-  },
-];
+// Компонент для отображения одного уведомления
+const NotificationItem = ({
+  notification,
+  onMarkAsRead,
+  onDelete,
+}: {
+  notification: NotificationT;
+  onMarkAsRead: (id: string) => void;
+  onDelete: (id: string) => void;
+}) => {
+  const handleClick = () => {
+    if (!notification.isRead) {
+      onMarkAsRead(notification.id);
+    }
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDelete(notification.id);
+  };
+
+  return (
+    <DropdownMenuItem
+      className={`flex h-full items-start gap-2 rounded-[16px] p-3 ${
+        !notification.isRead ? 'bg-blue-5' : ''
+      }`}
+      onClick={handleClick}
+    >
+      <UserProfile userId={Number(notification.id)} withOutText />
+      <div className="flex flex-1 flex-col gap-1">
+        <span className="text-m-base font-medium text-gray-100">{notification.title}</span>
+        <span className="text-gray-80 text-s-base font-normal">{notification.description}</span>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger className="w-fit" asChild>
+              <span className="text-gray-80 text-xs-base font-normal">
+                {getRelativeTime(notification.date)}
+              </span>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>{formatFullDate(notification.date)}</p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="h-6 w-6 p-0 opacity-0 transition-opacity group-hover:opacity-100"
+        onClick={handleDelete}
+      >
+        <Trash className="h-3 w-3" />
+      </Button>
+    </DropdownMenuItem>
+  );
+};
 
 export const Notifications = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } =
+    useNotificationsContext();
 
   const handleToSettings = () => {
     navigate({ to: location.pathname, search: { profile: 'notifications' } });
@@ -114,8 +131,9 @@ export const Notifications = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-[32px] w-[32px] p-1">
+        <Button variant="ghost" className="relative h-[32px] w-[32px] p-1">
           <Notification className="fill-gray-80" size="s" />
+          <NotificationBadge count={unreadCount} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -124,44 +142,34 @@ export const Notifications = () => {
       >
         <DropdownMenuLabel className="text-m-base flex h-[48px] items-center p-3 font-semibold text-gray-100">
           Уведомления
-          <Button
-            onClick={handleToSettings}
-            variant="ghost"
-            className="ml-auto h-[32px] w-[32px] p-1"
-          >
-            <Settings className="fill-gray-80" size="s" />
-          </Button>
+          <div className="ml-auto flex items-center gap-1">
+            {unreadCount > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 px-2 text-xs"
+                onClick={markAllAsRead}
+              >
+                Прочитать все
+              </Button>
+            )}
+            <Button onClick={handleToSettings} variant="ghost" className="h-[32px] w-[32px] p-1">
+              <Settings className="fill-gray-80" size="s" />
+            </Button>
+          </div>
         </DropdownMenuLabel>
         <ScrollArea className="h-[300px] pr-3">
           {notifications.length > 0 ? (
-            notifications.map((notification) => (
-              <DropdownMenuItem
-                key={notification.id}
-                className="flex h-full items-start gap-2 rounded-[16px] p-3"
-              >
-                <UserProfile userId={notification.id} withOutText />
-                <div className="flex flex-col gap-1">
-                  <span className="text-m-base font-medium text-gray-100">
-                    {notification.title}
-                  </span>
-                  <span className="text-gray-80 text-s-base font-normal">
-                    {notification.description}
-                  </span>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger className="w-fit" asChild>
-                        <span className="text-gray-80 text-xs-base font-normal">
-                          {getRelativeTime(notification.date)}
-                        </span>
-                      </TooltipTrigger>
-                      <TooltipContent side="bottom">
-                        <p>{formatFullDate(notification.date)}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                </div>
-              </DropdownMenuItem>
-            ))
+            <div className="group">
+              {notifications.map((notification: NotificationT) => (
+                <NotificationItem
+                  key={notification.id}
+                  notification={notification}
+                  onMarkAsRead={markAsRead}
+                  onDelete={deleteNotification}
+                />
+              ))}
+            </div>
           ) : (
             <div className="flex h-[300px] flex-col items-center justify-center">
               <span className="text-gray-80 text-m-base font-normal">Уведомлений нет</span>
