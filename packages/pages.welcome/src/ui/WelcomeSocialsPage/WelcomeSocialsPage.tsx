@@ -1,7 +1,7 @@
 import { WelcomePageLayout, WelcomeButtons } from '../../ui';
 import { useTranslation } from 'react-i18next';
 import { SocialItem } from './SocialItem';
-import { TelegramFilled, WhatsAppFilled } from '@xipkg/icons';
+import { TelegramFilled } from '@xipkg/icons';
 import { useServiceButton, useWelcomeSocialsForm } from '../../hooks';
 import { useState } from 'react';
 import { useCreateTgConnection, useGetNotificationsStatus } from 'common.services';
@@ -34,10 +34,10 @@ export const WelcomeSocialsPage = () => {
     isConnected: !!data?.telegram,
   });
 
-  const vkButton = useServiceButton({
-    service: 'ВКонтакте',
-    isConnected: false,
-  });
+  // const vkButton = useServiceButton({
+  //   service: 'ВКонтакте',
+  //   isConnected: false,
+  // });
 
   return (
     <WelcomePageLayout
@@ -63,11 +63,6 @@ export const WelcomeSocialsPage = () => {
           <TelegramFilled className="fill-brand-100 h-8 w-8" />
           <span className="font-semibold">Telegram</span>
           {tgButton}
-        </SocialItem>
-        <SocialItem>
-          <WhatsAppFilled className="fill-brand-100 h-8 w-8" />
-          <span className="font-semibold">Вконтакте</span>
-          {vkButton}
         </SocialItem>
       </div>
       <WelcomeButtons
