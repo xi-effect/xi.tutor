@@ -706,6 +706,9 @@ importers:
       common.env:
         specifier: '*'
         version: link:../common.env
+      common.utils:
+        specifier: '*'
+        version: link:../common.utils
       react:
         specifier: '19'
         version: 19.1.1

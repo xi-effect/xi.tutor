@@ -7,3 +7,4 @@ export * from './utils';
 export * from './onboarding';
 export * from './classrooms';
 export * from './notifications';
+export * from './network';
