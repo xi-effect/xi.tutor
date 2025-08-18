@@ -6,6 +6,7 @@ import { UndoRedo } from './UndoRedo';
 import { PenPopup } from '../popups/Pen';
 import { useTldrawStore } from '../../../store';
 import { useTldrawStyles } from '../../../hooks';
+import { StickerPopup } from '../popups/Sticker/StickerPopup';
 
 // Маппинг инструментов Kanva на Tldraw
 const toolMapping: Record<string, string> = {
@@ -37,6 +38,7 @@ export const Navbar = track(
 
     const [isTooltipOpen] = React.useState(false);
     const [penPopupOpen, setPenPopupOpen] = React.useState(false);
+    const [stickerPopupOpen, setStickerPopupOpen] = React.useState(false);
     const editor = useEditor();
 
     const handleSelectTool = (toolName: string) => {
@@ -127,6 +129,28 @@ export const Navbar = track(
                           {item.icon ? item.icon : item.title}
                         </button>
                       </PenPopup>
+                    );
+                  }
+
+                  if (item.action === 'sticker') {
+                    return (
+                      <StickerPopup
+                        key={item.action}
+                        open={stickerPopupOpen}
+                        onOpenChange={() => setStickerPopupOpen(!stickerPopupOpen)}
+                        popupItems={item.menuPopupContent}
+                      >
+                        <button
+                          type="button"
+                          className={`pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${isActive ? 'bg-brand-0' : 'bg-gray-0'}`}
+                          data-isactive={isActive}
+                          onClick={() => {
+                            handleSelectTool(item.action);
+                          }}
+                        >
+                          {item.icon ? item.icon : item.title}
+                        </button>
+                      </StickerPopup>
                     );
                   }
 
