@@ -1,16 +1,6 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import { toast } from 'sonner';
 
-// Глобальная переменная для хранения функции повтора
-let retryFunction:
-  | ((fn: () => Promise<unknown>, maxRetries?: number, description?: string) => Promise<unknown>)
-  | null = null;
-
-// Функция для установки функции повтора
-export const setRetryFunction = (retryFn: typeof retryFunction) => {
-  retryFunction = retryFn;
-};
-
 interface AxiosLoader {
   (instance: AxiosInstance): Promise<AxiosInstance>;
 }
@@ -25,6 +15,17 @@ const createNetworkErrorInterceptor = async (instance: AxiosInstance): Promise<A
   instance.interceptors.response.use(
     (response) => response,
     async (error: AxiosError) => {
+      // Проверяем, является ли ошибка связанной с авторизацией
+      const isAuthError =
+        error.response?.status === 401 ||
+        error.response?.status === 403 ||
+        error.config?.url?.includes('/user-service/users/current/home/');
+
+      // Если это ошибка авторизации, не показываем сетевые уведомления
+      if (isAuthError) {
+        return Promise.reject(error);
+      }
+
       // Проверяем различные типы сетевых ошибок
       if (error.code === 'ERR_NETWORK') {
         // Ошибка сети - нет интернет-соединения
@@ -64,34 +65,6 @@ const createNetworkErrorInterceptor = async (instance: AxiosInstance): Promise<A
           duration: 5000,
           description: 'Проверьте интернет-соединение и попробуйте снова.',
         });
-      }
-
-      // Если есть функция повтора и это сетевая ошибка, добавляем в очередь
-      if (
-        retryFunction &&
-        ['ERR_NETWORK', 'ECONNABORTED', 'ERR_BAD_RESPONSE'].includes(error.code || '')
-      ) {
-        // Создаем функцию для повтора запроса
-        const retryRequest = () => {
-          const config = error.config;
-          if (config) {
-            return axios.request(config);
-          }
-          return Promise.reject(error);
-        };
-
-        try {
-          await retryFunction(
-            retryRequest,
-            3,
-            'Автоматический повтор запроса при восстановлении соединения',
-          );
-          // Если запрос был добавлен в очередь, не показываем ошибку
-          return Promise.reject(new Error('Запрос добавлен в очередь повторов'));
-        } catch (retryError) {
-          // Если не удалось добавить в очередь, показываем обычную ошибку
-          console.warn('Не удалось добавить запрос в очередь повторов:', retryError);
-        }
       }
 
       return Promise.reject(error);

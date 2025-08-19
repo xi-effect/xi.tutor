@@ -12,9 +12,13 @@ const NetworkContext = createContext<NetworkStatus | null>(null);
 
 interface NetworkProviderProps {
   children: ReactNode;
+  shouldShowNotification?: () => boolean;
 }
 
-export const NetworkProvider: React.FC<NetworkProviderProps> = ({ children }) => {
+export const NetworkProvider: React.FC<NetworkProviderProps> = ({
+  children,
+  shouldShowNotification = () => true,
+}) => {
   const [isOnline, setIsOnline] = useState<boolean>(navigator.onLine);
   const [isReconnecting, setIsReconnecting] = useState<boolean>(false);
   const [lastOnlineTime, setLastOnlineTime] = useState<Date | null>(null);
@@ -28,8 +32,8 @@ export const NetworkProvider: React.FC<NetworkProviderProps> = ({ children }) =>
       setIsReconnecting(false);
       setLastOnlineTime(new Date());
 
-      // Показываем уведомление только если прошло больше 2 секунд с последнего
-      if (now - lastToastTime > 2000) {
+      // Показываем уведомление только если разрешено и прошло больше 2 секунд с последнего
+      if (shouldShowNotification() && now - lastToastTime > 2000) {
         setLastToastTime(now);
         toast.success('Интернет-соединение восстановлено', {
           duration: 3000,
@@ -43,8 +47,8 @@ export const NetworkProvider: React.FC<NetworkProviderProps> = ({ children }) =>
       setIsOnline(false);
       setLastOfflineTime(new Date());
 
-      // Показываем уведомление только если прошло больше 2 секунд с последнего
-      if (now - lastToastTime > 2000) {
+      // Показываем уведомление только если разрешено и прошло больше 2 секунд с последнего
+      if (shouldShowNotification() && now - lastToastTime > 2000) {
         setLastToastTime(now);
         toast.error('Интернет-соединение потеряно', {
           duration: 0,
@@ -60,43 +64,7 @@ export const NetworkProvider: React.FC<NetworkProviderProps> = ({ children }) =>
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [lastToastTime]);
-
-  // Дополнительная проверка состояния сети через ping
-  useEffect(() => {
-    let pingInterval: number;
-
-    if (isOnline) {
-      pingInterval = setInterval(async () => {
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-          await fetch('https://www.google.com/favicon.ico', {
-            method: 'HEAD',
-            signal: controller.signal,
-            cache: 'no-cache',
-          });
-
-          clearTimeout(timeoutId);
-          if (isReconnecting) {
-            setIsReconnecting(false);
-          }
-        } catch {
-          if (navigator.onLine) {
-            setIsReconnecting(true);
-            console.warn('Сеть недоступна, несмотря на navigator.onLine = true');
-          }
-        }
-      }, 30000);
-    }
-
-    return () => {
-      if (pingInterval) {
-        clearInterval(pingInterval);
-      }
-    };
-  }, [isOnline, isReconnecting]);
+  }, [lastToastTime, shouldShowNotification]);
 
   const value: NetworkStatus = {
     isOnline,

@@ -1,6 +1,14 @@
 # Система обработки сетевых ошибок
 
-Эта система предоставляет автоматическую обработку сетевых ошибок и потери интернет-соединения с возможностью повтора запросов при восстановлении соединения.
+Эта система предоставляет базовую обработку сетевых ошибок и потери интернет-соединения. Система интеллектуально подавляет уведомления при определенных условиях (выход из приложения, ошибки авторизации).
+
+## Основные возможности
+
+- ✅ Интеллектуальное подавление уведомлений при выходе из приложения
+- ✅ Подавление сетевых уведомлений при ошибках авторизации (401, 403)
+- ✅ Базовое логирование сетевых ошибок
+- ✅ Настраиваемые уведомления
+- ✅ Отслеживание состояния сети через браузерные события
 
 ## Компоненты
 
@@ -12,27 +20,13 @@
 import { NetworkProvider } from 'common.services';
 
 export const App = () => {
-  return <NetworkProvider>{/* Ваше приложение */}</NetworkProvider>;
+  return <NetworkProvider suppressNotifications={false}>{/* Ваше приложение */}</NetworkProvider>;
 };
 ```
 
-### NetworkIndicator
+**Параметры:**
 
-Визуальный индикатор состояния сети, который показывает:
-
-- ✅ Подключено (зеленый)
-- ⚠️ Проверка соединения (желтый)
-- ❌ Нет соединения (красный)
-
-```tsx
-import { NetworkIndicator } from 'common.ui';
-
-// Показывать только иконку
-<NetworkIndicator />
-
-// Показывать иконку и текст
-<NetworkIndicator showText />
-```
+- `suppressNotifications` (boolean) - глобально отключить все сетевые уведомления
 
 ### useNetworkStatus
 
@@ -53,131 +47,197 @@ const MyComponent = () => {
 };
 ```
 
-### useNetworkRetry
+### useNetworkControl
 
-Хук для ручного добавления запросов в очередь повторов:
+Хук для контроля сетевых уведомлений:
 
 ```tsx
-import { useNetworkRetry } from 'common.services';
+import { useNetworkControl } from 'common.services';
 
 const MyComponent = () => {
-  const { retryOnReconnect } = useNetworkRetry();
+  const {
+    suppressNetworkNotifications,
+    enableNetworkNotifications,
+    setAuthErrorDetected,
+    setAppExiting,
+    shouldShowNotification,
+  } = useNetworkControl({
+    suppressNotifications: false,
+    suppressOnAuthErrors: true,
+    suppressOnAppExit: true,
+  });
 
-  const handleSubmit = async () => {
+  // Временно отключить уведомления
+  const handleSensitiveOperation = () => {
+    suppressNetworkNotifications();
+    // выполнить операцию
+    setTimeout(enableNetworkNotifications, 5000);
+  };
+};
+```
+
+### useNetworkAuthIntegration
+
+Хук для интеграции с системой авторизации:
+
+```tsx
+import { useNetworkAuthIntegration } from 'common.services';
+
+const AuthComponent = () => {
+  const { handleAuthError } = useNetworkAuthIntegration();
+
+  const handleLogin = async () => {
     try {
-      await retryOnReconnect(
-        async () => {
-          // Ваш запрос
-          return await api.post('/data', formData);
-        },
-        3, // Максимальное количество попыток
-        'Сохранение данных', // Описание для пользователя
-      );
+      await loginApi();
     } catch (error) {
-      console.error('Ошибка:', error);
+      handleAuthError(error); // Автоматически подавит сетевые уведомления
     }
   };
 };
 ```
 
-### useNetworkRetryWithToast
+## Автоматическое подавление уведомлений
 
-Улучшенная версия хука с уведомлениями:
+Система автоматически подавляет сетевые уведомления в следующих случаях:
 
-```tsx
-import { useNetworkRetryWithToast } from 'common.services';
+1. **Выход из приложения** - при закрытии вкладки, переключении на другую вкладку или закрытии браузера
+2. **Ошибки авторизации** - при получении ошибок 401, 403 или специфичных ошибок авторизации
+3. **Глобальное отключение** - через параметр `suppressNotifications` в NetworkProvider
 
-const MyComponent = () => {
-  const { retryWithNotification } = useNetworkRetryWithToast();
+## Интеграция с axios
 
-  const handleSubmit = async () => {
-    try {
-      await retryWithNotification(
-        async () => {
-          return await api.post('/data', formData);
-        },
-        3,
-        'Сохранение данных',
-      );
-    } catch (error) {
-      // Обработка ошибок
-    }
-  };
-};
-```
+Система автоматически интегрируется с axios через интерцепторы. Сетевые ошибки показываются как toast уведомления, а ошибки авторизации не вызывают сетевых уведомлений.
 
-## Автоматическая обработка
+## Отслеживание состояния сети
 
-Система автоматически:
-
-1. Отслеживает состояние интернет-соединения
-2. Показывает уведомления при потере/восстановлении соединения
-3. Добавляет неудачные запросы в очередь повторов
-4. Автоматически повторяет запросы при восстановлении соединения
-5. Показывает прогресс обработки очереди
-
-## Настройка
-
-### Таймауты по умолчанию
-
-- Проверка соединения: каждые 30 секунд
-- Таймаут ping: 5 секунд
-- Задержка перед обработкой очереди: 1 секунда
-
-### Максимальные попытки
-
-По умолчанию: 3 попытки для каждого запроса
+Система использует нативные браузерные события `online` и `offline` для отслеживания состояния сети. Это обеспечивает надежное определение потери и восстановления соединения без дополнительных запросов.
 
 ## Примеры использования
 
-### В компоненте формы
+### Базовое использование
 
 ```tsx
-const FormComponent = () => {
-  const { retryWithNotification } = useNetworkRetryWithToast();
+import { NetworkProvider } from 'common.services';
 
-  const handleSubmit = async (data: FormData) => {
+function App() {
+  return (
+    <NetworkProvider>
+      <YourApp />
+    </NetworkProvider>
+  );
+}
+```
+
+### С отключенными уведомлениями
+
+```tsx
+import { NetworkProvider } from 'common.services';
+
+function App() {
+  return (
+    <NetworkProvider suppressNotifications={true}>
+      <YourApp />
+    </NetworkProvider>
+  );
+}
+```
+
+### Интеграция с авторизацией
+
+```tsx
+import { useNetworkAuthIntegration } from 'common.services';
+
+function LoginForm() {
+  const { handleAuthError } = useNetworkAuthIntegration();
+
+  const onSubmit = async (data) => {
     try {
-      await retryWithNotification(() => api.submitForm(data), 3, 'Отправка формы');
-      toast.success('Форма отправлена');
+      await login(data);
     } catch (error) {
-      if (error.message === 'Запрос добавлен в очередь повторов') {
-        // Запрос будет повторен автоматически
-        return;
-      }
-      toast.error('Ошибка отправки формы');
+      handleAuthError(error);
+      // Обработка ошибки авторизации без сетевых уведомлений
     }
   };
-};
+}
 ```
 
-### В хуке для API
+## Интеграция с существующими системами
+
+### Автоматическая интеграция
+
+Система уже интегрирована с:
+
+- `AuthProvider` - автоматически подавляет уведомления при ошибках авторизации
+- `useSignin` и `useSignout` - обрабатывают ошибки авторизации
+- Axios интерцепторы - фильтруют ошибки авторизации
+
+### Ручная интеграция
+
+Для кастомных компонентов авторизации:
 
 ```tsx
-export const useSubmitData = () => {
-  const { retryOnReconnect } = useNetworkRetry();
+import { useNetworkAuthIntegration } from 'common.services';
 
-  return useMutation({
-    mutationFn: async (data: Data) => {
-      return retryOnReconnect(() => api.post('/data', data), 3, 'Сохранение данных');
-    },
-  });
-};
+function CustomAuthForm() {
+  const { handleAuthError } = useNetworkAuthIntegration();
+
+  const handleSubmit = async (formData) => {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        handleAuthError({ response: { status: response.status, data: error } });
+        return;
+      }
+
+      // Успешная авторизация
+    } catch (error) {
+      handleAuthError(error);
+    }
+  };
+}
 ```
 
-## Мониторинг
+## Настройка поведения
 
-Система логирует все важные события в консоль:
+### Отключение индикатора
 
-- Добавление запросов в очередь
-- Обработка очереди при восстановлении соединения
-- Успешные/неудачные повторы
-- Ошибки сети
+Индикатор сети больше не отображается по умолчанию. Если нужно показать статус сети, используйте `useNetworkStatus`:
 
-## Совместимость
+```tsx
+import { useNetworkStatus } from 'common.utils';
 
-Система работает с:
+function NetworkStatus() {
+  const { isOnline, isReconnecting } = useNetworkStatus();
 
-- Axios (автоматически через интерцепторы)
-- Fetch API (через ручные хуки)
-- Любыми другими HTTP-клиентами (через ручные хуки)
+  if (isOnline && !isReconnecting) return null;
+
+  return (
+    <div className="network-status">
+      {!isOnline && <span>Нет соединения</span>}
+      {isReconnecting && <span>Проверка соединения...</span>}
+    </div>
+  );
+}
+```
+
+### Кастомные условия подавления
+
+```tsx
+import { useNetworkControl } from 'common.services';
+
+function CustomComponent() {
+  const { setAuthErrorDetected, setAppExiting } = useNetworkControl();
+
+  // Подавить уведомления при определенных условиях
+  const handleSensitiveOperation = () => {
+    setAuthErrorDetected(true);
+    // выполнить операцию
+    setTimeout(() => setAuthErrorDetected(false), 3000);
+  };
+}
+```

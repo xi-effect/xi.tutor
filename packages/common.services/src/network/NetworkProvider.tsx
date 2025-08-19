@@ -1,51 +1,69 @@
 import React, { useEffect } from 'react';
-import { useRetryQueue } from 'common.utils';
-import { NetworkProvider as NetworkContextProvider, useNetworkStatus } from 'common.utils';
-import { toast } from 'sonner';
-import { setRetryFunction } from 'common.config';
-import { useNetworkRetry } from './useNetworkRetry';
+import { NetworkProvider as NetworkContextProvider } from 'common.utils';
+import { useNetworkControl } from './useNetworkControl';
 
 interface NetworkProviderProps {
   children: React.ReactNode;
+  suppressNotifications?: boolean;
 }
 
-const NetworkProviderContent: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isOnline, lastOnlineTime } = useNetworkStatus();
-  const { processQueue, getQueueLength } = useRetryQueue();
-  const { retryOnReconnect } = useNetworkRetry();
+const NetworkProviderContent: React.FC<{
+  children: React.ReactNode;
+  suppressNotifications?: boolean;
+}> = ({ children, suppressNotifications = false }) => {
+  const { setAppExiting } = useNetworkControl({
+    suppressNotifications,
+    suppressOnAuthErrors: true,
+    suppressOnAppExit: true,
+  });
 
-  // Устанавливаем функцию повтора для axios
+  // Обрабатываем события выхода из приложения
   useEffect(() => {
-    setRetryFunction(retryOnReconnect);
-  }, [retryOnReconnect]);
+    const handleBeforeUnload = () => {
+      setAppExiting(true);
+    };
 
-  // Обрабатываем очередь повторов при восстановлении соединения
-  useEffect(() => {
-    if (isOnline && lastOnlineTime) {
-      const queueLength = getQueueLength();
-      if (queueLength > 0) {
-        console.log(`Восстановлено соединение, обрабатываем ${queueLength} отложенных запросов`);
+    const handlePageHide = () => {
+      setAppExiting(true);
+    };
 
-        // Показываем уведомление о начале обработки очереди
-        toast.info(`Обрабатываем ${queueLength} отложенных запросов`, {
-          duration: 3000,
-        });
-
-        // Обрабатываем очередь с небольшой задержкой
-        setTimeout(() => {
-          processQueue();
-        }, 1000);
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') {
+        setAppExiting(true);
+      } else {
+        setAppExiting(false);
       }
-    }
-  }, [isOnline, lastOnlineTime, processQueue, getQueueLength]);
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('pagehide', handlePageHide);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('pagehide', handlePageHide);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [setAppExiting]);
 
   return <>{children}</>;
 };
 
-export const NetworkProvider: React.FC<NetworkProviderProps> = ({ children }) => {
+export const NetworkProvider: React.FC<NetworkProviderProps> = ({
+  children,
+  suppressNotifications = false,
+}) => {
+  const { shouldShowNotification } = useNetworkControl({
+    suppressNotifications,
+    suppressOnAuthErrors: true,
+    suppressOnAppExit: true,
+  });
+
   return (
-    <NetworkContextProvider>
-      <NetworkProviderContent>{children}</NetworkProviderContent>
+    <NetworkContextProvider shouldShowNotification={shouldShowNotification}>
+      <NetworkProviderContent suppressNotifications={suppressNotifications}>
+        {children}
+      </NetworkProviderContent>
     </NetworkContextProvider>
   );
 };
