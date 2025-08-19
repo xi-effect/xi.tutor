@@ -1,10 +1,13 @@
-import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useEffect, useCallback } from 'react';
+import { useForm } from '@xipkg/form';
 import { eventFormSchema, type EventFormData } from '../model';
+import { parseDateTime } from '../utils/calendarUtils';
+import { useCloseForm, useDefaultValues } from '../store/formEventStore';
+import { useAddEvent } from '../store/eventsStore';
+
 import type { StudentT } from '../mocks';
 import type { ICalendarEvent } from '../ui/types';
-import { useEvents } from './useEvents';
 
 export const useLessonFields = (form: ReturnType<typeof useForm<EventFormData>>) => {
   const { control, setValue } = form;
@@ -50,47 +53,14 @@ export const useDateFields = (form: ReturnType<typeof useForm<EventFormData>>) =
   };
 };
 
-export const useEventForm = (calendarEvent?: ICalendarEvent) => {
-  const { addEvent } = useEvents();
-  const formatDate = (date: Date) => {
-    const dd = String(date.getDate()).padStart(2, '0');
-    const mm = String(date.getMonth() + 1).padStart(2, '0');
-    const yyyy = String(date.getFullYear());
-    return `${dd}.${mm}.${yyyy}`;
-  };
+export const useEventForm = () => {
+  const addEvent = useAddEvent();
+  const handleCloseForm = useCloseForm();
+  const defaultFormValues = useDefaultValues();
 
-  const startDateDefault = calendarEvent?.start
-    ? formatDate(calendarEvent.start)
-    : formatDate(new Date());
-  const endDateDefault = calendarEvent?.end ? formatDate(calendarEvent.end) : startDateDefault;
   const form = useForm<EventFormData>({
     resolver: zodResolver(eventFormSchema),
-    defaultValues: {
-      title: calendarEvent?.title || '',
-      type:
-        calendarEvent?.type === 'lesson' || calendarEvent?.type === 'rest'
-          ? calendarEvent.type
-          : 'rest',
-      startTime:
-        calendarEvent?.start?.toLocaleTimeString('ru-RU', {
-          hour: '2-digit',
-          minute: '2-digit',
-        }) || '',
-      endTime:
-        calendarEvent?.end?.toLocaleTimeString('ru-RU', {
-          hour: '2-digit',
-          minute: '2-digit',
-        }) || '',
-      isAllDay: false,
-      startDate: startDateDefault,
-      endDate: endDateDefault,
-      studentId: '',
-      subjectName: '',
-      lessonType: 'individual',
-      description: '',
-      paymentStatus: 'paid',
-      lessonStatus: 'not_done',
-    },
+    defaultValues: defaultFormValues,
   });
 
   const {
@@ -116,25 +86,31 @@ export const useEventForm = (calendarEvent?: ICalendarEvent) => {
   const onSubmit = useCallback(
     (data: EventFormData) => {
       console.log('event form data: ', data);
+
+      const start = parseDateTime(data.startDate, data.startTime);
+      const endDateStr = data.endDate && data.endDate.trim() ? data.endDate : data.startDate;
+      const end = parseDateTime(endDateStr, data.endTime);
       const event: ICalendarEvent = {
         id: crypto.randomUUID(),
         title: data.title,
-        start: new Date(data.startDate + ' ' + data.startTime),
-        end: new Date(data.endDate || data.startDate + ' ' + data.endTime),
+        start,
+        end,
         type: data.type,
+        isAllDayEvent: data.isAllDay,
       };
       addEvent(event);
+      handleCloseForm();
     },
-    [addEvent],
+    [addEvent, handleCloseForm],
   );
 
   return {
     form,
     control,
-    handleSubmit,
     errors,
     selectedType,
     handleTypeChange,
     onSubmit,
+    handleSubmit,
   };
 };

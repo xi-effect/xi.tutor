@@ -1,4 +1,3 @@
-// import { cn } from '@xipkg/utils';
 import {
   Select,
   SelectTrigger,
@@ -10,22 +9,24 @@ import {
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@xipkg/form';
-import { LessonBlock } from './components/LessonBlock';
 import { useEventForm } from '../../../hooks';
+import { useCloseForm } from '../../../store/formEventStore';
+import { LessonBlock } from './components/LessonBlock';
 import { StatusBlock } from './components/StatusBlock';
-
-import { type FC } from 'react';
-import type { ICalendarEvent } from '../../types';
 import { DateBlock } from './components/DateBlock';
 import { EventMenu } from './components/EventMenu';
+
+import type { FC } from 'react';
+import type { ICalendarEvent } from '../../types';
 
 interface EventFormProps {
   calendarEvent?: ICalendarEvent;
 }
 
-export const EventForm: FC<EventFormProps> = ({ calendarEvent }) => {
-  const { form, control, handleSubmit, selectedType, handleTypeChange, onSubmit } =
-    useEventForm(calendarEvent);
+export const EventForm: FC<EventFormProps> = () => {
+  const { form, control, handleSubmit, selectedType, handleTypeChange, onSubmit } = useEventForm();
+
+  const handleCloseForm = useCloseForm();
 
   return (
     <Form {...form}>
@@ -85,7 +86,13 @@ export const EventForm: FC<EventFormProps> = ({ calendarEvent }) => {
           <DateBlock form={form} />
 
           <div className="flex w-full justify-between gap-4 pt-2">
-            <Button size="s" variant="secondary" className="w-full" type="button">
+            <Button
+              size="s"
+              variant="secondary"
+              className="w-full"
+              type="button"
+              onClick={handleCloseForm}
+            >
               Отмена
             </Button>
             <Button size="s" type="submit" className="w-full">

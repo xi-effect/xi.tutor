@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { cn } from '@xipkg/utils';
 import { ScrollArea } from '@xipkg/scrollarea';
 
-import { useEvents, useCalendar } from '../../../hooks';
+import { useCalendar } from '../../../hooks';
 import {
   getWeeksNumbers,
   isCurrentDay,
@@ -13,6 +13,7 @@ import {
   isWeekend,
   isPastDay,
 } from '../../../utils';
+import { getDateKey, useEventsByDate } from '../../../store/eventsStore';
 import { CalendarEvent } from '../CalendarEvent/CalendarEvent';
 
 import type { CalendarProps } from '../../types';
@@ -23,12 +24,12 @@ import type { CalendarProps } from '../../types';
  * ─ На мобиле по-прежнему 7 столбцов без номеров недель.
  */
 export const MonthCalendar: FC<CalendarProps<'month'>> = ({ days }) => {
-  const { getEventsForDate } = useEvents();
   const { currentDate } = useCalendar();
   const { t } = useTranslation('calendar');
 
   const WEEK_DAYS = t('week_days').split(',');
   const weekNumbers = getWeeksNumbers(days);
+  const groupedEvents = useEventsByDate();
 
   return (
     <div className="h-[calc(100vh-112px)] w-full overflow-hidden">
@@ -54,6 +55,7 @@ export const MonthCalendar: FC<CalendarProps<'month'>> = ({ days }) => {
               const isRowStart = idx % 7 === 0;
               const weekIdx = Math.floor(idx / 7);
               const cells: React.ReactNode[] = [];
+              const dayKey = getDateKey(day);
 
               if (isRowStart) {
                 cells.push(
@@ -88,10 +90,10 @@ export const MonthCalendar: FC<CalendarProps<'month'>> = ({ days }) => {
                   </span>
 
                   <div className="mt-6 flex h-[calc(100%-1.5rem)] flex-col space-y-0.5 overflow-hidden">
-                    {getEventsForDate(day).map((event) => (
+                    {groupedEvents[dayKey]?.map((event) => (
                       <CalendarEvent
                         key={event.id}
-                        calendarEvent={event}
+                        event={event}
                         isPast={isPastDay(day, currentDate)}
                       />
                     ))}

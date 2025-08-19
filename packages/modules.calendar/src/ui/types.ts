@@ -3,7 +3,9 @@ export interface ICalendarEvent {
   title: string;
   start: Date;
   end: Date;
-  type?: 'lesson' | 'rest' | 'cancelled';
+  type?: 'lesson' | 'rest';
+  isCancelled?: boolean;
+  isAllDayEvent?: boolean;
   lessonInfo?: ILessonInfo;
 }
 

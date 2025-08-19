@@ -2,10 +2,9 @@ import { FC } from 'react';
 import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import { cn } from '@xipkg/utils';
-
-import { useEvents } from '../../../hooks';
-import { CalendarEvent } from '../CalendarEvent/CalendarEvent';
 import { ScrollArea } from '@xipkg/scrollarea';
+import { CalendarEvent } from '../CalendarEvent/CalendarEvent';
+import { getDateKey, useEventsByDate } from '../../../store/eventsStore';
 
 import type { CalendarProps, WeekOrDayMode } from '../../types';
 
@@ -22,8 +21,8 @@ interface WeekCalendarProps extends CalendarProps<WeekOrDayMode> {
  * ─ sticky-хедер с названиями дней и дат, основная сетка прокручивается по вертикали.
  */
 export const WeekCalendar: FC<WeekCalendarProps> = ({ days, view }) => {
-  const { getEventsForDate } = useEvents();
   const { t } = useTranslation('calendar');
+  const groupedEvents = useEventsByDate();
 
   const WEEK_DAYS = t('week_days').split(',');
 
@@ -66,29 +65,36 @@ export const WeekCalendar: FC<WeekCalendarProps> = ({ days, view }) => {
           </div>
 
           {/* Колонки дней */}
-          {days.map((day) => (
-            <div key={day.toISOString()} className="border-gray-10 border-l">
-              {/* Секция "Весь день" */}
-              <div className="border-gray-10 h-10 border-b p-1">
-                {getEventsForDate(day)
-                  .filter((e) => !e.start)
-                  .map((event) => (
-                    <CalendarEvent key={event.id} calendarEvent={event} />
-                  ))}
-              </div>
-
-              {/* Слоты часов */}
-              {hours.map((hour, i) => (
-                <div key={hour} className="border-gray-10 h-20 border-b p-1">
-                  {getEventsForDate(day)
-                    .filter((e) => e.start.getHours() === i)
-                    .map((event) => (
-                      <CalendarEvent key={event.id} calendarEvent={event} />
-                    ))}
+          {days.map((day) => {
+            const dayKey = getDateKey(day);
+            return (
+              <div key={day.toISOString()} className="border-gray-10 border-l">
+                {/* Секция "Весь день" */}
+                <div className="border-gray-10 h-10 border-b p-1">
+                  {groupedEvents[dayKey]?.map(
+                    (event) =>
+                      event.isAllDayEvent && <CalendarEvent key={event.id} event={event} />,
+                  )}
                 </div>
-              ))}
-            </div>
-          ))}
+
+                {/* Слоты часов */}
+                {hours.map((hour) => (
+                  <div key={hour} className="border-gray-10 h-20 border-b p-1">
+                    {groupedEvents[dayKey]?.map((event) => {
+                      const hourAsNumber = +hour.split(':')[0];
+
+                      return (
+                        !event.isAllDayEvent &&
+                        event.start.getHours() === hourAsNumber && (
+                          <CalendarEvent key={event.id} event={event} />
+                        )
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            );
+          })}
         </div>
       </ScrollArea>
     </div>
