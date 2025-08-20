@@ -6,8 +6,8 @@ import { UndoRedo } from './UndoRedo';
 import { PenPopup } from '../popups/Pen';
 import { useTldrawStore } from '../../../store';
 import { useTldrawStyles } from '../../../hooks';
-import { StickerPopup } from '../popups/Sticker/StickerPopup';
 import { NavbarButton } from '../shared';
+import { StickerPopup } from '../popups';
 
 // Маппинг инструментов Kanva на Tldraw
 const toolMapping: Record<string, string> = {
