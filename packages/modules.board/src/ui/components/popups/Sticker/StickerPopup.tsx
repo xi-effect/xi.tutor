@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { PopupItemT } from '../../../../utils/navBarElements';
-import { useTldrawStyles } from '../../../../hooks';
+import { ColorSet } from './ColorSet';
 
 type StylePopupContentT = {
   children: React.ReactNode;
@@ -17,8 +17,6 @@ export const StickerPopup = ({ children, open, onOpenChange, popupItems }: Style
     }
   };
 
-  const { setColor } = useTldrawStyles();
-
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
       <div className="pointer-events-auto flex gap-2">
@@ -32,13 +30,7 @@ export const StickerPopup = ({ children, open, onOpenChange, popupItems }: Style
           onEscapeKeyDown={handleEvent}
           className="border-gray-10 bg-gray-0 flex w-full gap-2 rounded-xl border p-1 shadow-none"
         >
-          {popupItems?.map((item) => (
-            <div key={item.color} className="flex p-1">
-              <button type="button" className="text-left" onClick={() => setColor(item.color)}>
-                {item.icon}
-              </button>
-            </div>
-          ))}
+          <ColorSet popupItems={popupItems} />
         </PopoverContent>
       </div>
     </Popover>

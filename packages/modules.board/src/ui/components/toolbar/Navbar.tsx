@@ -34,7 +34,7 @@ export const Navbar = track(
     canUndo: boolean;
     canRedo: boolean;
   }) => {
-    const { pencilColor, pencilThickness, pencilOpacity } = useTldrawStore();
+    const { pencilColor, pencilThickness, pencilOpacity, stickerColor } = useTldrawStore();
     const { resetToDefaults, setColor, setThickness, setOpacity } = useTldrawStyles();
 
     const [isTooltipOpen] = React.useState(false);
@@ -89,11 +89,20 @@ export const Navbar = track(
 
       // Сбрасываем настройки при закрытии Popover
       if (!open) {
-        console.log('resetToDefaults');
         resetToDefaults();
       }
 
       setPenPopupOpen(open);
+    };
+
+    const handleStickerPopupOpenChange = (open: boolean) => {
+      if (open) {
+        setColor(stickerColor);
+      }
+      if (!open) {
+        resetToDefaults();
+      }
+      setStickerPopupOpen(open);
     };
 
     return (
@@ -131,7 +140,7 @@ export const Navbar = track(
                       <StickerPopup
                         key={item.action}
                         open={stickerPopupOpen}
-                        onOpenChange={() => setStickerPopupOpen(!stickerPopupOpen)}
+                        onOpenChange={handleStickerPopupOpenChange}
                         popupItems={item.menuPopupContent}
                       >
                         <NavbarButton
