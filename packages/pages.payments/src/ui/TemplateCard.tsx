@@ -27,17 +27,15 @@ export const TemplateCard = ({
     setModalOpen(true);
   };
 
-  // const { mutate: editTemplateMutation } = useEditTemplate();
-  // const handleSubmitTemplate = () => {
-
-  // };
-
   return (
     <div className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex cursor-pointer justify-between rounded-2xl border p-4">
       <div className="flex max-w-[350px] flex-col gap-4">
-        <div>{name}</div>
+        <div className="text-l-base">{name}</div>
 
-        <div className="mt-auto flex items-center gap-2">{price}</div>
+        <div className="mt-auto flex flex-row items-center gap-1">
+          <span className="text-l-base font-semibold">{price}</span>
+          <span className="text-s-base text-gray-60 pt-1">₽</span>
+        </div>
       </div>
 
       <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
@@ -59,7 +57,14 @@ export const TemplateCard = ({
         </DropdownMenu>
       </div>
 
-      <ModalTemplate isOpen={modalOpen} type="edit" onClose={() => setModalOpen(false)} />
+      <ModalTemplate
+        isOpen={modalOpen}
+        type="edit"
+        name={name}
+        price={price}
+        id={id}
+        onClose={() => setModalOpen(false)}
+      />
     </div>
   );
 };

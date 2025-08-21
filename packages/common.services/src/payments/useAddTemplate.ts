@@ -2,7 +2,7 @@ import { paymentTemplatesApiConfig, PaymentTemplatesQueryKey } from 'common.api'
 import { getAxiosInstance } from 'common.config';
 import { PaymentTemplateDataT } from 'common.types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-// import { handleError } from 'common.services';
+import { handleError } from 'common.services';
 
 export const useAddTemplate = () => {
   const queryClient = useQueryClient();
@@ -28,24 +28,6 @@ export const useAddTemplate = () => {
         throw err;
       }
     },
-    // onMutate: async (templateData: TemplateDataT) => {
-    //     console.log('onMutate', templateData);
-    //     await queryClient.cancelQueries({ queryKey: [PaymentTemplatesQueryKey.AllTemplates] });
-
-    //     const previousTemplates = queryClient.getQueryData<PaymentTemplateDataT[]>([
-    //     PaymentTemplatesQueryKey.AllTemplates,
-    //     ]);
-
-    //     queryClient.setQueryData<PaymentTemplateDataT[]>(
-    //     [PaymentTemplatesQueryKey.AllTemplates],
-    //     (old: PaymentTemplateDataT[] | undefined) => {
-    //         if (!old) return old;
-    //         return [...old, invitation];
-    //     },
-    //     );
-
-    //     return { previousTemplates };
-    // },
     onError: (err) => {
       const previousTemplates = queryClient.getQueryData<PaymentTemplateDataT[]>([
         PaymentTemplatesQueryKey.AllTemplates,
@@ -56,10 +38,7 @@ export const useAddTemplate = () => {
           previousTemplates,
         );
       }
-
-      // ОБРАБОТАТЬ ОШИБКИ
-      // handleError(err, 'addInvitation');
-      console.log(err);
+      handleError(err, 'addInvoiceTemplate');
     },
     onSuccess: (response) => {
       if (response?.data) {

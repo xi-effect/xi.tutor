@@ -1,3 +1,4 @@
+import { useEffect, useMemo } from 'react';
 import {
   Modal,
   ModalTitle,
@@ -22,13 +23,10 @@ import {
   useForm,
 } from '@xipkg/form';
 import { Input } from '@xipkg/input';
-import { useAddTemplate } from 'common.services';
+import { useAddTemplate, useUpdateTemplate } from 'common.services';
 
-export const ModalTemplate = ({ isOpen, type, onClose }: ModalTemplatePropsT) => {
-  const initialValues = {
-    name: '',
-    price: '',
-  };
+export const ModalTemplate = ({ isOpen, type, onClose, name, price, id }: ModalTemplatePropsT) => {
+  const initialValues = useMemo(() => ({ name: name || '', price: price || '' }), [name, price]);
 
   const form = useForm<z.input<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -39,9 +37,17 @@ export const ModalTemplate = ({ isOpen, type, onClose }: ModalTemplatePropsT) =>
     control,
     handleSubmit,
     formState: { errors },
+    reset,
   } = form;
 
+  useEffect(() => {
+    if (isOpen) {
+      reset(initialValues);
+    }
+  }, [initialValues, reset, isOpen]);
+
   const { isPending: isAdding, mutate: addTemplateMutation } = useAddTemplate();
+  const { isPending: isUpdating, mutate: updateTemplateMutation } = useUpdateTemplate();
 
   const handleAddTemplate = (formData: FormData) => {
     addTemplateMutation(formData, {
@@ -52,17 +58,45 @@ export const ModalTemplate = ({ isOpen, type, onClose }: ModalTemplatePropsT) =>
     });
   };
 
+  const handleUpdateTemplate = (formData: FormData) => {
+    if (!id) return;
+
+    updateTemplateMutation(
+      { template_id: id, templateData: formData },
+      {
+        onSuccess: () => {
+          form.reset(initialValues);
+          onClose();
+        },
+      },
+    );
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      form.reset(initialValues);
+      onClose();
+    }
+  };
+
+  const onSubmit = (data: FormData) =>
+    type === 'edit' ? handleUpdateTemplate(data) : handleAddTemplate(data);
+
   return (
-    <Modal open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <ModalContent className="max-w-[600px]">
+    <Modal open={isOpen} onOpenChange={handleOpenChange}>
+      <ModalContent className="max-w-[600px]" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton />
           <ModalTitle>{type === 'edit' ? 'Редактирование' : 'Создание'} шаблона оплаты</ModalTitle>
         </ModalHeader>
 
         <Form {...form}>
-          {/* @ts-expect-error ИСПРАВИТЬ ПОТОМ */}
-          <form onSubmit={handleSubmit(handleAddTemplate)}>
+          <form
+            onSubmit={
+              // @ts-expect-error zod preprocess возвращает unknown
+              handleSubmit(onSubmit)
+            }
+          >
             <ModalBody className="px-4 py-2">
               <FormField
                 control={control}
@@ -93,14 +127,20 @@ export const ModalTemplate = ({ isOpen, type, onClose }: ModalTemplatePropsT) =>
                     <FormItem className="pt-4">
                       <FormLabel htmlFor="price">Стоимость</FormLabel>
                       <FormControl>
-                        <Input
-                          {...field}
-                          value={value}
-                          error={!!errors?.price}
-                          autoComplete="off"
-                          type="text"
-                          id="price"
-                        />
+                        <div className="relative">
+                          <Input
+                            {...field}
+                            value={value}
+                            error={!!errors?.price}
+                            autoComplete="off"
+                            type="text"
+                            id="price"
+                            className="pr-2"
+                          />
+                          <span className="text-gray-60 absolute top-1/2 right-3 -translate-y-1/2">
+                            ₽
+                          </span>
+                        </div>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -111,7 +151,7 @@ export const ModalTemplate = ({ isOpen, type, onClose }: ModalTemplatePropsT) =>
 
             <ModalFooter className="flex flex-row items-center gap-2">
               <Button
-                variant={isAdding ? 'ghost-spinner' : 'default'}
+                variant={isAdding || isUpdating ? 'ghost-spinner' : 'default'}
                 className="gap-2"
                 type="submit"
               >

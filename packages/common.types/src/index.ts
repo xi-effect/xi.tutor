@@ -7,6 +7,6 @@ export type {
   NotificationsStateT,
 } from './notifications';
 export type { MaterialT, UpdateMaterialDataT } from './materials';
-export type { TemplateT, PaymentTemplateDataT } from './payments';
+export type { TemplateT, PaymentTemplateDataT, UpdateTemplateDataT } from './payments';
 export type { InvitationDataT } from './invitations';
 export type { SignupData } from './auth';
