@@ -96,8 +96,16 @@ export const useEventForm = () => {
         start,
         end,
         type: data.type,
-        isAllDayEvent: data.isAllDay,
+        isAllDay: data.isAllDay,
       };
+      if (data.type === 'lesson') {
+        event.lessonInfo = {
+          studentName: data.studentId,
+          subject: data.subjectName,
+          lessonType: data.lessonType,
+          description: data.description,
+        };
+      }
       addEvent(event);
       handleCloseForm();
     },

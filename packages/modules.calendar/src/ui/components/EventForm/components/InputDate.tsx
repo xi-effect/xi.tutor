@@ -41,7 +41,7 @@ export const InputDate: FC<InputDateProps> = ({ value, onChange, name }) => {
       onChange={(e) => onChange(e.target.value)}
       placeholder="Введите дату"
       variant="s"
-      className="border-none outline-none"
+      className="border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
       autoComplete="off"
       before={<Calendar className="h-4 w-4" />}
     />

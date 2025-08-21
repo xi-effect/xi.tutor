@@ -36,7 +36,7 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
                   placeholder="00:00"
                   before={<Clock className="h-4 w-4" />}
                   variant="s"
-                  className="border-none outline-none"
+                  className="border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
                   disabled={isAllDay}
                 />
               </FormControl>
@@ -58,7 +58,7 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
                     placeholder="00:00"
                     before={<ArrowRight className="h-4 w-4" />}
                     variant="s"
-                    className="border-none outline-none"
+                    className="border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
                     disabled={isAllDay}
                   />
                 </FormControl>
@@ -125,7 +125,7 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
         )}
       />
 
-      <div className="mt-2 flex items-center gap-2 px-2 py-1">
+      <div className="mt-2 flex cursor-pointer items-center gap-2 px-2 py-1">
         <Redo className="h-4 w-4" />
         <span className="text-gray-30 text-sm">Повторять</span>
       </div>

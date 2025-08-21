@@ -155,7 +155,7 @@ export const MOCK_EVENTS: ICalendarEvent[] = [
     start: new Date('2025-08-13'),
     end: new Date('2025-08-13'),
     type: 'rest',
-    isAllDayEvent: true,
+    isAllDay: true,
   },
   {
     id: '18',
@@ -163,7 +163,7 @@ export const MOCK_EVENTS: ICalendarEvent[] = [
     start: new Date('2025-08-06'),
     end: new Date('2025-08-06'),
     type: 'rest',
-    isAllDayEvent: true,
+    isAllDay: true,
   },
   {
     id: '19',
@@ -171,7 +171,7 @@ export const MOCK_EVENTS: ICalendarEvent[] = [
     start: new Date('2025-08-15'),
     end: new Date('2025-08-15'),
     type: 'rest',
-    isAllDayEvent: true,
+    isAllDay: true,
   },
   {
     id: '20',
@@ -179,6 +179,6 @@ export const MOCK_EVENTS: ICalendarEvent[] = [
     start: new Date('2025-08-16'),
     end: new Date('2025-08-16'),
     type: 'rest',
-    isAllDayEvent: true,
+    isAllDay: true,
   },
 ];

@@ -5,7 +5,7 @@ export interface ICalendarEvent {
   end: Date;
   type?: 'lesson' | 'rest';
   isCancelled?: boolean;
-  isAllDayEvent?: boolean;
+  isAllDay?: boolean;
   lessonInfo?: ILessonInfo;
 }
 

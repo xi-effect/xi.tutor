@@ -69,7 +69,7 @@ export const EventForm: FC<EventFormProps> = () => {
               <FormControl>
                 <Input
                   {...field}
-                  className="border-none outline-none"
+                  className="border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
                   placeholder="Введите название"
                 />
               </FormControl>

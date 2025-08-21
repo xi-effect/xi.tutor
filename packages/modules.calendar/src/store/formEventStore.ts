@@ -5,6 +5,7 @@ import { ICalendarEvent } from '../ui/types';
 interface FormEventStore {
   isOpen: boolean;
   defaultFormValues: EventFormData;
+  activeEventId: string;
   openForm: (calendarEvent?: ICalendarEvent) => void;
   closeForm: () => void;
 }
@@ -29,6 +30,7 @@ const INITIAL_VALUES: EventFormData = {
 const useFormEventStore = create<FormEventStore>((set) => ({
   isOpen: false,
   defaultFormValues: INITIAL_VALUES,
+  activeEventId: '',
 
   openForm: (calendarEvent) => {
     if (!calendarEvent) {
@@ -50,7 +52,7 @@ const useFormEventStore = create<FormEventStore>((set) => ({
         hour: '2-digit',
         minute: '2-digit',
       }),
-      isAllDay: false,
+      isAllDay: calendarEvent.isAllDay || false,
       startDate: startDateDefault,
       endDate: endDateDefault,
       studentId: '',
@@ -61,7 +63,11 @@ const useFormEventStore = create<FormEventStore>((set) => ({
       lessonStatus: 'not_done',
     };
 
-    set({ isOpen: true, defaultFormValues: defaultValues });
+    set({
+      isOpen: true,
+      defaultFormValues: defaultValues,
+      activeEventId: calendarEvent.id,
+    });
   },
 
   closeForm: () => {
@@ -71,6 +77,10 @@ const useFormEventStore = create<FormEventStore>((set) => ({
 
 export const useIsOpen = () => {
   return useFormEventStore((state) => state.isOpen);
+};
+
+export const useActiveEventId = () => {
+  return useFormEventStore((state) => state.activeEventId);
 };
 
 export const useDefaultValues = () => {

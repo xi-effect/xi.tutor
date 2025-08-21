@@ -37,7 +37,7 @@ export const CalendarEvent: FC<CalendarEventProps> = memo(({ event, isPast }) =>
           event.isCancelled && 'group-hover:text-red-80',
         )}
       >
-        <span className="mr-1 text-xs">{!event.isAllDayEvent && timeToString(event.start)}</span>
+        <span className="mr-1 text-xs">{!event.isAllDay && timeToString(event.start)}</span>
         <span className="font-medium">{event.title}</span>
       </div>
     </div>
