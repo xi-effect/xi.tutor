@@ -57,7 +57,7 @@ jobs:
             (":---:", ":---:", ":---:"),
           ]
           for build_status, deployment_status, app_name, app_domain in (
-            ("${{ needs.main.outputs.xi_web_build_status }}", "${{ needs.main.outputs.xi_web_deployment_status }}", "xi.web", "app.xieffect.ru"),
+            ("${{ needs.main.outputs.xi_web_build_status }}", "${{ needs.main.outputs.xi_web_deployment_status }}", "xi.web", "app.sovlium.ru"),
           ):
             full_status = deployment_status if build_status == "success" else build_status
             message_rows.append(

@@ -45,15 +45,15 @@ const mockClassrooms: ClassroomT[] = [
   },
 ];
 
-export const useGetClassroom = (id: string, disabled?: boolean) => {
+export const useGetClassroom = (classroomId: string, disabled?: boolean) => {
   const { data, isError, isLoading, ...rest } = useQuery({
-    queryKey: [ClassroomsQueryKey.GetClassroom, id],
+    queryKey: [ClassroomsQueryKey.GetClassroom, classroomId],
     queryFn: async () => {
       // Имитация задержки сети
       await new Promise((resolve) => setTimeout(resolve, 800));
-      return mockClassrooms.find((classroom) => classroom.id === id) || null;
+      return mockClassrooms.find((classroom) => classroom.id === classroomId) || null;
     },
-    enabled: !disabled && !!id,
+    enabled: !disabled && !!classroomId,
   });
 
   return {

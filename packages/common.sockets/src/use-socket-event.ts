@@ -14,15 +14,22 @@ export function useSocketEvent<T = any>(
   handler: (data: T) => void,
   deps: React.DependencyList = [],
 ): void {
-  const { socket } = useSocket();
+  const { socket, isConnected } = useSocket();
 
   useEffect(() => {
-    if (!socket) return;
+    console.log(`🎧 Подписка на событие ${event}:`, { isConnected, socketId: socket?.id });
+
+    if (!socket) {
+      console.log(`⚠️ Не удалось подписаться на ${event}: сокет не доступен`);
+      return;
+    }
 
     socket.on(event, handler);
+    console.log(`✅ Подписка на событие ${event} установлена`);
 
     return () => {
       socket.off(event, handler);
+      console.log(`🔌 Отписка от события ${event}`);
     };
   }, [socket, event, ...deps]);
 }
@@ -34,13 +41,23 @@ export function useSocketEvent<T = any>(
  * @returns Функция для отправки данных
  */
 export function useSocketEmit<T = any>(event: string): (data?: T) => void {
-  const { socket } = useSocket();
+  const { socket, isConnected } = useSocket();
 
   return (data?: T) => {
-    if (socket) {
+    console.log(`📡 Попытка отправить событие ${event}:`, {
+      data,
+      isConnected,
+      socketId: socket?.id,
+    });
+
+    if (socket && isConnected) {
       socket.emit(event, data);
+      console.log(`✅ Событие ${event} отправлено успешно`);
     } else {
-      console.warn(`Cannot emit event ${event}: socket is not connected`);
+      console.warn(`❌ Не удалось отправить событие ${event}: сокет не подключен`, {
+        hasSocket: !!socket,
+        isConnected,
+      });
     }
   };
 }

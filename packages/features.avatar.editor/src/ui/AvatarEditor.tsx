@@ -88,15 +88,16 @@ export const AvatarEditor = ({
               minZoom={MIN_ZOOM}
             />
           </div>
-          <div className="flex h-[60px] w-full items-center justify-center px-6 pt-4 pb-6">
-            <button
+          <div className="flex h-[60px] w-full items-center justify-center gap-2 px-6 pt-4 pb-6">
+            <Button
               aria-label="Минус"
               type="button"
-              className="mx-4 bg-transparent p-1"
+              variant="ghost"
+              className="m-0 h-8 w-8 bg-transparent p-1"
               onClick={decreaseZoom}
             >
-              <Minus size="m" />
-            </button>
+              <Minus />
+            </Button>
             <Slider
               className="max-w-[250px] flex-1"
               value={[zoom]}
@@ -106,14 +107,15 @@ export const AvatarEditor = ({
               defaultValue={[zoom]}
               onValueChange={(v: number[]) => onZoomChange(v[0])}
             />
-            <button
+            <Button
               aria-label="Плюс"
               type="button"
-              className="mx-4 bg-transparent p-1"
+              variant="ghost"
+              className="m-0 h-8 w-8 bg-transparent p-1"
               onClick={increaseZoom}
             >
-              <Plus size="m" />
-            </button>
+              <Plus />
+            </Button>
           </div>
           <ModalFooter className="flex flex-col gap-4 sm:flex-row sm:items-start">
             <Button onClick={() => showCroppedImage()} className="w-full sm:w-[126px]">

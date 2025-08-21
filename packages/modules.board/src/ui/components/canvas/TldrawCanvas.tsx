@@ -28,7 +28,7 @@ export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
     }
   });
   const { store, status, undo, redo, canUndo, canRedo } = useYjsStore({
-    hostUrl: 'wss://hocus.xieffect.ru',
+    hostUrl: 'wss://hocus.sovlium.ru',
     roomId: data.ydoc_id,
   });
 

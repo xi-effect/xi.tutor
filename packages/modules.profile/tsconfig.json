@@ -1,7 +1,9 @@
 {
-  "include": ["src/**/*"],
-  "extends": [
-    "common.typescript/tsconfig.app.json",
+  "include": [
+    "src/**/*",
+    "../common.services/src/notifications/useDeleteTgConnection.ts",
+    "../common.services/src/notifications/useCreateTgConnection.ts"
   ],
+  "extends": ["common.typescript/tsconfig.app.json"],
   "exclude": ["dist", "build", "node_modules"]
 }

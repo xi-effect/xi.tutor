@@ -46,18 +46,26 @@ const mockClassrooms: ClassroomT[] = [
 ];
 
 export const useFetchClassrooms = (
-  limit: number,
-  lastOpenedBefore?: string,
+  searchParams?: {
+    limit?: number;
+    lastOpenedBefore?: string;
+  },
   disabled?: boolean,
 ) => {
   const { data, isError, isLoading, ...rest } = useQuery({
-    queryKey: lastOpenedBefore
-      ? [ClassroomsQueryKey.Classrooms, lastOpenedBefore]
-      : [ClassroomsQueryKey.Classrooms],
+    queryKey: [ClassroomsQueryKey.SearchClassrooms, searchParams],
     queryFn: async () => {
       // Имитация задержки сети
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      return mockClassrooms.slice(0, limit);
+
+      // Фильтрация по параметрам поиска
+      let filteredClassrooms = [...mockClassrooms];
+
+      if (searchParams?.limit) {
+        filteredClassrooms = filteredClassrooms.slice(0, searchParams.limit);
+      }
+
+      return filteredClassrooms;
     },
     enabled: !disabled,
   });

@@ -2,50 +2,56 @@ import { env } from 'common.env';
 import { HttpMethod } from './config';
 
 enum ClassroomsQueryKey {
-  Classrooms = 'Classrooms',
+  SearchClassrooms = 'SearchClassrooms',
+  CreateGroupClassroom = 'CreateGroupClassroom',
   GetClassroom = 'GetClassroom',
-  AddClassroom = 'AddClassroom',
-  UpdateClassroom = 'UpdateClassroom',
   DeleteClassroom = 'DeleteClassroom',
+  UpdateIndividualClassroom = 'UpdateIndividualClassroom',
+  UpdateGroupClassroom = 'UpdateGroupClassroom',
+  UpdateClassroomStatus = 'UpdateClassroomStatus',
 }
 
 const classroomsApiConfig = {
-  [ClassroomsQueryKey.Classrooms]: {
-    getUrl: (limit: number, lastOpenedBefore?: string) => {
-      const params = new URLSearchParams({
-        limit: limit.toString(),
-      });
-
-      if (lastOpenedBefore) {
-        params.append('last_opened_before', lastOpenedBefore);
-      }
-
-      return `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/classrooms/?${params.toString()}`;
-    },
-    method: HttpMethod.GET,
-  },
-
-  [ClassroomsQueryKey.GetClassroom]: {
-    getUrl: (id: string) =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/classrooms/${id}/`,
-    method: HttpMethod.GET,
-  },
-
-  [ClassroomsQueryKey.AddClassroom]: {
-    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/classrooms/`,
+  [ClassroomsQueryKey.SearchClassrooms]: {
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/roles/tutor/classrooms/searches/`,
     method: HttpMethod.POST,
   },
 
-  [ClassroomsQueryKey.UpdateClassroom]: {
-    getUrl: (id: string) =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/classrooms/${id}/`,
-    method: HttpMethod.PATCH,
+  [ClassroomsQueryKey.CreateGroupClassroom]: {
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/roles/tutor/group-classrooms/`,
+    method: HttpMethod.POST,
+  },
+
+  [ClassroomsQueryKey.GetClassroom]: {
+    getUrl: (classroomId: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/roles/tutor/classrooms/${classroomId}/`,
+    method: HttpMethod.GET,
   },
 
   [ClassroomsQueryKey.DeleteClassroom]: {
-    getUrl: (id: string) =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/classrooms/${id}/`,
+    getUrl: (classroomId: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/roles/tutor/classrooms/${classroomId}/`,
     method: HttpMethod.DELETE,
+  },
+
+  [ClassroomsQueryKey.UpdateIndividualClassroom]: {
+    getUrl: (classroomId: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/roles/tutor/individual-classrooms/${classroomId}/`,
+    method: HttpMethod.PATCH,
+  },
+
+  [ClassroomsQueryKey.UpdateGroupClassroom]: {
+    getUrl: (classroomId: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/roles/tutor/group-classrooms/${classroomId}/`,
+    method: HttpMethod.PATCH,
+  },
+
+  [ClassroomsQueryKey.UpdateClassroomStatus]: {
+    getUrl: (classroomId: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/roles/tutor/classrooms/${classroomId}/status/`,
+    method: HttpMethod.PUT,
   },
 };
 

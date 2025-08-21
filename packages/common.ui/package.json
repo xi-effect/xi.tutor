@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "common.env": "*",
+    "common.utils": "*",
     "@tanstack/react-router": "1.128.8",
     "@xipkg/link": "2.0.12",
     "@xipkg/button": "3.1.8"

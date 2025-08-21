@@ -8,15 +8,20 @@ import {
 } from '@xipkg/modal';
 import { Input } from '@xipkg/input';
 import { Button } from '@xipkg/button';
+import { ScrollArea } from '@xipkg/scrollarea';
 import { useState } from 'react';
 import { Close, Search } from '@xipkg/icons';
 import { useNavigate } from '@tanstack/react-router';
 import { useCallStore } from '../../store';
+import { useModeSync, useWhiteboards } from '../../hooks';
 
 type Whiteboard = {
-  id: string;
-  title: string;
-  lastModified: Date;
+  id: number;
+  name: string;
+  kind: string;
+  created_at: string;
+  updated_at: string;
+  last_opened_at: string;
 };
 
 type WhiteboardsModalProps = {
@@ -27,33 +32,35 @@ type WhiteboardsModalProps = {
 export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) => {
   const navigate = useNavigate();
   const updateStore = useCallStore((state) => state.updateStore);
+  const { syncModeToOthers } = useModeSync();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedBoardId, setSelectedBoardId] = useState<string | null>(null);
-  const [whiteboards] = useState<Whiteboard[]>([
-    {
-      id: '1',
-      title: 'Доска 1',
-      lastModified: new Date('2024-03-20'),
-    },
-    {
-      id: '2',
-      title: 'Доска 2',
-      lastModified: new Date('2024-03-19'),
-    },
-  ]);
+  const [selectedBoardId, setSelectedBoardId] = useState<number | null>(null);
+  const { whiteboards, isLoading, isError } = useWhiteboards(20);
 
-  const filteredWhiteboards = whiteboards.filter((board) =>
-    board.title.toLowerCase().includes(searchQuery.toLowerCase()),
+  const filteredWhiteboards = whiteboards.filter((board: Whiteboard) =>
+    board.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
-  const handleBoardSelect = (boardId: string) => {
+  const handleBoardSelect = (boardId: number) => {
     setSelectedBoardId(boardId);
   };
 
   const handleConfirm = () => {
     if (selectedBoardId) {
+      console.log('🎯 WhiteboardsModal: handleConfirm called with boardId:', selectedBoardId);
+
+      // Обновляем локальный режим
       updateStore('mode', 'compact');
-      navigate({ to: '/board/$boardId', params: { boardId: selectedBoardId } });
+      console.log('✅ Local mode updated to compact');
+
+      // Отправляем сообщение всем участникам ВКС о переключении в compact режим
+      syncModeToOthers('compact', selectedBoardId.toString());
+      console.log('📤 Mode sync message sent to all participants');
+
+      // Переходим на доску
+      navigate({ to: '/board/$boardId', params: { boardId: selectedBoardId.toString() } });
+      console.log('🧭 Navigation to board initiated');
+
       onOpenChange(false);
     }
   };
@@ -74,33 +81,55 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
           />
         </ModalHeader>
 
-        <div className="px-6 py-4">
-          <div className="space-y-4">
-            {filteredWhiteboards.map((board) => (
-              <div
-                key={board.id}
-                className={`hover:bg-gray-5 flex cursor-pointer flex-col gap-2 rounded-2xl border p-4 ${
-                  selectedBoardId === board.id ? 'border-brand-100 bg-brand-0' : ''
-                }`}
-                onClick={() => handleBoardSelect(board.id)}
-              >
-                <h3 className="text-m-base text-gray-100">{board.title}</h3>
-                <p className="text-xs-base text-gray-60">
-                  Изменено: {board.lastModified.toLocaleDateString()}
-                </p>
-              </div>
-            ))}
-            <div className="bg-brand-0 group flex h-[80px] cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl p-4">
-              <h3 className="text-s-base text-brand-100 group-hover:text-brand-80">
-                Создать новую
-              </h3>
+        <div className="py-4 pr-2 pl-6">
+          {isLoading ? (
+            <div className="flex items-center justify-center py-8">
+              <p className="text-gray-60">Загрузка досок...</p>
             </div>
-          </div>
+          ) : isError ? (
+            <div className="flex items-center justify-center py-8">
+              <p className="text-red-500">Ошибка загрузки досок</p>
+            </div>
+          ) : (
+            <ScrollArea className="h-full max-h-[400px] w-full">
+              <div className="space-y-4 pr-4">
+                {filteredWhiteboards.map((board: Whiteboard) => (
+                  <div
+                    key={board.id}
+                    className={`hover:bg-gray-5 flex cursor-pointer flex-col gap-2 rounded-2xl border p-4 ${
+                      selectedBoardId === board.id ? 'border-brand-100 bg-brand-0' : ''
+                    }`}
+                    onClick={() => handleBoardSelect(board.id)}
+                  >
+                    <h3 className="text-m-base text-gray-100">{board.name}</h3>
+                    <p className="text-xs-base text-gray-60">
+                      Изменено: {new Date(board.updated_at).toLocaleDateString()}
+                    </p>
+                  </div>
+                ))}
+                <div className="bg-brand-0 group flex h-[80px] cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl p-4">
+                  <h3 className="text-s-base text-brand-100 group-hover:text-brand-80">
+                    Создать новую
+                  </h3>
+                </div>
+              </div>
+            </ScrollArea>
+          )}
         </div>
 
         <ModalFooter className="border-gray-20 flex gap-2 border-t">
           <Button size="m" onClick={handleConfirm} disabled={!selectedBoardId}>
             Выбрать
+          </Button>
+          <Button
+            size="m"
+            variant="secondary"
+            onClick={() => {
+              console.log('🧪 Testing data channel...');
+              syncModeToOthers('compact', 'test-board-123');
+            }}
+          >
+            Тест Data Channel
           </Button>
           <Button size="m" variant="secondary" onClick={() => onOpenChange(false)}>
             Отменить

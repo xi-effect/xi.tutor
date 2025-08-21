@@ -2,9 +2,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authApiConfig, AuthQueryKey } from 'common.api';
 import { env } from 'common.env';
 import { getAxiosInstance } from 'common.config';
+import { useNetworkAuthIntegration } from '../network/useNetworkAuthIntegration';
 
 export const useSignout = () => {
   const queryClient = useQueryClient();
+  const { handleAuthError } = useNetworkAuthIntegration();
 
   const signoutMutation = useMutation({
     mutationFn: async () => {
@@ -22,6 +24,7 @@ export const useSignout = () => {
         return response;
       } catch (err) {
         console.error('Ошибка при выполнении запроса:', err);
+        handleAuthError(err);
         throw err;
       }
     },
