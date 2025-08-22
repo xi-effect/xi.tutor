@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -7,9 +8,14 @@ import {
 } from '@xipkg/dropdown';
 import { MenuDots } from '@xipkg/icons';
 import { useActiveEventId, useCloseForm } from '../../../../store/formEventStore';
-import { useAddEvent, useDeleteEvent, useEventById } from '../../../../store/eventsStore';
+import { 
+  useAddEvent, 
+  useDeleteEvent, 
+  useEventById 
+} from '../../../../store/eventsStore';
 
 export const EventMenu = () => {
+  const { t } = useTranslation('calendar');
   const activeEventId = useActiveEventId();
   const getEventById = useEventById();
   const addEvent = useAddEvent();
@@ -35,12 +41,14 @@ export const EventMenu = () => {
         <MenuDots className="rotate-90" />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        <DropdownMenuItem>Вырезать</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleCopyEvent}>Копировать</DropdownMenuItem>
-        <DropdownMenuItem>Дублировать</DropdownMenuItem>
+        <DropdownMenuItem>{t('event_menu.cut')}</DropdownMenuItem>
+        <DropdownMenuItem onClick={handleCopyEvent}>
+          {t('event_menu.copy')}
+        </DropdownMenuItem>
+        <DropdownMenuItem>{t('event_menu.duble')}</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-red-80" onClick={handleRemoveEvent}>
-          Удалить
+          {t('event_menu.remove')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { FormControl, FormField, FormItem, FormMessage } from '@xipkg/form';
 import {
   Select,
@@ -20,6 +21,7 @@ interface LessonBlockProps {
 }
 
 export const LessonBlock: React.FC<LessonBlockProps> = ({ form }) => {
+  const { t } = useTranslation('calendar');
   const { control, handleStudentChange } = useLessonFields(form);
 
   const onChangeStudent = (newId: string) => {
@@ -29,7 +31,7 @@ export const LessonBlock: React.FC<LessonBlockProps> = ({ form }) => {
 
   return (
     <div className="border-gray-10 w-full border-t border-b py-2">
-      <h3 className="mb-2 text-sm">Кабинет</h3>
+      <h3 className="mb-2 text-sm">{t('event_form.class')}</h3>
 
       <FormField
         control={control}
@@ -43,7 +45,7 @@ export const LessonBlock: React.FC<LessonBlockProps> = ({ form }) => {
                   size="s"
                   className="mb-2 w-full border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
                 >
-                  <SelectValue placeholder="Студент или группа" />
+                  <SelectValue placeholder={t('event_form.student')} />
                 </SelectTrigger>
                 <SelectContent className="w-full max-w-[300px]">
                   <SelectGroup>
@@ -70,7 +72,7 @@ export const LessonBlock: React.FC<LessonBlockProps> = ({ form }) => {
               <Input
                 {...field}
                 value={field.value}
-                placeholder="Предмет"
+                placeholder={t('event_form.subject')}
                 className="mb-2 w-full border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
                 before={<Updates className="h-4 w-4" />}
                 variant="s"
@@ -97,8 +99,12 @@ export const LessonBlock: React.FC<LessonBlockProps> = ({ form }) => {
                 </SelectTrigger>
                 <SelectContent className="w-full max-w-[300px]">
                   <SelectGroup>
-                    <SelectItem value="group">Групповое</SelectItem>
-                    <SelectItem value="individual">Индивидуальное</SelectItem>
+                    <SelectItem value="group">
+                      {t('event_form.lesson_group')}
+                    </SelectItem>
+                    <SelectItem value="individual">
+                      {t('event_form.lesson_individual')}
+                    </SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>
@@ -116,7 +122,7 @@ export const LessonBlock: React.FC<LessonBlockProps> = ({ form }) => {
             <FormControl>
               <Input
                 {...field}
-                placeholder="Описание"
+                placeholder={t('event_form.description')}
                 className="w-full border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
                 before={<Hint className="h-4 w-4" />}
                 variant="s"

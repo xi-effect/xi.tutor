@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { FormControl, FormField, FormItem, FormMessage } from '@xipkg/form';
 import type { FC } from 'react';
 import { useDateFields } from '../../../../hooks/useEventForm';
@@ -9,11 +10,13 @@ import { useMaskInput } from '@xipkg/inputmask';
 import { ArrowRight, Clock, Redo } from '@xipkg/icons';
 import { InputDate } from './InputDate';
 
+
 interface DateBlockProps {
   form: ReturnType<typeof useForm<EventFormData>>;
 }
 
 export const DateBlock: FC<DateBlockProps> = ({ form }) => {
+  const { t } = useTranslation('calendar');
   const { control, isAllDay, duration } = useDateFields(form);
 
   const maskRefStartTime = useMaskInput('time');
@@ -21,7 +24,7 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
 
   return (
     <>
-      <h3 className="mb-2 text-sm">Время</h3>
+      <h3 className="mb-2 text-sm">{t('event_form.time')}</h3>
 
       <div className="mb-2 flex gap-2">
         <FormField
@@ -67,7 +70,7 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
             )}
           />
           <span className="block shrink-0 pt-1.5 text-sm">
-            {duration.hours}ч {duration.minutes}м
+            {duration.hours}{t('event_form.h')} {duration.minutes}{t('event_form.m')}
           </span>
         </div>
       </div>
@@ -117,7 +120,7 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
                 />
               </FormControl>
               <label htmlFor="all-day-mode" className="text-sm font-medium">
-                Весь день
+                {t('event_form.all_day')}
               </label>
             </div>
             <FormMessage />
@@ -127,7 +130,7 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
 
       <div className="mt-2 flex cursor-pointer items-center gap-2 px-2 py-1">
         <Redo className="h-4 w-4" />
-        <span className="text-gray-30 text-sm">Повторять</span>
+        <span className="text-gray-30 text-sm">{t('event_form.repeat')}</span>
       </div>
     </>
   );

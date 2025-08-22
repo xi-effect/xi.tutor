@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import {
   Select,
   SelectTrigger,
@@ -24,7 +25,16 @@ interface EventFormProps {
 }
 
 export const EventForm: FC<EventFormProps> = () => {
-  const { form, control, handleSubmit, selectedType, handleTypeChange, onSubmit } = useEventForm();
+  const { t } = useTranslation('calendar');
+  
+  const { 
+    form, 
+    control, 
+    handleSubmit, 
+    selectedType, 
+    handleTypeChange, 
+    onSubmit 
+  } = useEventForm();
 
   const handleCloseForm = useCloseForm();
 
@@ -47,8 +57,12 @@ export const EventForm: FC<EventFormProps> = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectItem value="lesson">Занятие</SelectItem>
-                        <SelectItem value="rest">Отдых</SelectItem>
+                        <SelectItem value="lesson">
+                          {t('event_form.lesson')}
+                        </SelectItem>
+                        <SelectItem value="rest">
+                          {t('event_form.rest')}
+                        </SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>
@@ -70,7 +84,7 @@ export const EventForm: FC<EventFormProps> = () => {
                 <Input
                   {...field}
                   className="border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
-                  placeholder="Введите название"
+                  placeholder={t('event_form.enter_title')}
                 />
               </FormControl>
               <FormMessage />
@@ -93,10 +107,10 @@ export const EventForm: FC<EventFormProps> = () => {
               type="button"
               onClick={handleCloseForm}
             >
-              Отмена
+              {t('event_form.cancel')}
             </Button>
             <Button size="s" type="submit" className="w-full">
-              Сохранить
+              {t('event_form.save')}
             </Button>
           </div>
         </div>
