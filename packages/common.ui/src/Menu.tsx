@@ -1,38 +1,22 @@
-import { Close, Objects } from '@xipkg/icons';
+import { Close } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
-import { driver } from 'driver.js';
+import { driver, type DriveStep } from 'driver.js';
 import 'driver.js/dist/driver.css';
+import '../utils/driver.css';
 import { createRoot } from 'react-dom/client';
 
 type MenuT = {
-  disabled: boolean;
-  steps: [];
+  disabled?: boolean;
+  steps?: DriveStep[];
 };
 
-export const Menu = ({ disabled, steps }: MenuT) => {
+export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
   const driverAction = () => {
     const driverObj = driver({
       popoverClass: 'my-custom-popover-class',
       showProgress: true,
       steps: steps,
 
-      // Пример использования steps, если нужно добавить шаги
-      // steps: [
-      //   {
-      //     element: '',
-      //     popover: {
-      //       title: 'Welcome to the Menu',
-      //       description: 'This is a brief introduction to the menu features
-      //     },
-      //   },
-      //   {
-      //     element: '',
-      //     popover: {
-      //       title: 'Welcome to the Menu',
-      //       description: 'This is a brief introduction to the menu features.
-      //     },
-      //   },
-      // ],
       onPopoverRender: (popover) => {
         const defaultCloseButton = popover.closeButton;
         const customCloseButton = document.createElement('button');
@@ -40,7 +24,7 @@ export const Menu = ({ disabled, steps }: MenuT) => {
 
         // Создаем корень для рендеринга компонента
         const root = createRoot(customCloseButton);
-        root.render(<Close size="s" className="fill-gray-60" />);
+        root.render(<Close size="s" className="fill-gray-60 h-4 w-4" />);
 
         defaultCloseButton.replaceWith(customCloseButton);
         customCloseButton.addEventListener('click', () => {
@@ -56,15 +40,50 @@ export const Menu = ({ disabled, steps }: MenuT) => {
   };
 
   return (
-    <Button
-      variant="ghost"
-      type="button"
-      disabled={disabled}
-      onClick={() => driverAction()}
-      className="hover:bg-gray-5 mt-1 flex h-[48px] w-full flex-row items-center justify-start rounded-lg p-2 pl-4 hover:cursor-pointer"
-    >
-      <Objects size="s" className="h-4 w-4 group-hover:fill-gray-100" />
-      <span className="pl-2 text-[14px] font-normal">Пройти обучение</span>
-    </Button>
+    <>
+      <div className="bg-gray-0 border-gray-10 fixed bottom-0 mb-6 flex flex-col gap-6 rounded-2xl border p-4 sm:w-[400px]">
+        <Button
+          variant="ghost"
+          className="hover:bg-gray-0 bg-gray-0 absolute top-0 right-0 hover:cursor-pointer"
+        >
+          <Close className="fill-gray-60 h-4 w-4" />
+        </Button>
+        <div>
+          <div className="h-8">
+            <span className="text-xl font-semibold text-gray-100">
+              Добро пожаловать в xi.effect! 😊
+            </span>
+          </div>
+          <div className="h-10">
+            <span className="text-gray-80 text-[14px] font-normal">
+              Хотите узнать о возможностях платформы?<br></br>
+              Вы сможете вернуться к обучению в любой момент.
+            </span>
+          </div>
+        </div>
+        <div className="flex flex-row-reverse gap-4">
+          <Button
+            variant="brand"
+            type="button"
+            disabled={disabled}
+            onClick={() => driverAction()}
+            size="s"
+            className="bg-brand-80 text-gray-0 mt-1 flex h-[32px] w-[153px] flex-row items-center justify-start rounded-lg p-2 hover:cursor-pointer"
+          >
+            <span className="pl-2 text-[14px] font-medium">Пройти обучение</span>
+          </Button>
+          <Button
+            variant="ghost"
+            type="button"
+            disabled={undefined}
+            onClick={() => null}
+            size="s"
+            className="hover:bg-gray-5 border-gray-30 mt-1 flex h-[32px] w-[153px] flex-row items-center justify-start rounded-lg border p-2 hover:cursor-pointer"
+          >
+            <span className="pl-2 text-[14px] font-medium">Вернуться позже</span>
+          </Button>
+        </div>
+      </div>
+    </>
   );
 };
