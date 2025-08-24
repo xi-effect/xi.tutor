@@ -25,7 +25,7 @@ const INITIAL_VALUES: EventFormData = {
   isAllDay: false,
   startDate: formatDate(new Date()),
   endDate: formatDate(new Date()),
-  shouldRepeat: 'dont_repeat'
+  shouldRepeat: 'dont_repeat',
 };
 
 const useFormEventStore = create<FormEventStore>((set) => ({

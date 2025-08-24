@@ -72,8 +72,7 @@ export const WeekCalendar: FC<WeekCalendarProps> = ({ days, view }) => {
                 {/* Секция "Весь день" */}
                 <div className="border-gray-10 h-10 border-b p-1">
                   {groupedEvents[dayKey]?.map(
-                    (event) =>
-                      event.isAllDay && <CalendarEvent key={event.id} event={event} />,
+                    (event) => event.isAllDay && <CalendarEvent key={event.id} event={event} />,
                   )}
                 </div>
 
