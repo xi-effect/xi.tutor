@@ -12,9 +12,15 @@ type CardPropsT = {
   id: number;
   datePayment: string;
   statusPayment: PaymentStatusT;
+  onApprovePayment?: () => void;
 };
 
-export const Card = ({ amountPayment, datePayment, statusPayment }: CardPropsT) => {
+export const Card = ({
+  amountPayment,
+  datePayment,
+  statusPayment,
+  onApprovePayment,
+}: CardPropsT) => {
   const statusText = mapPaymentStatus[statusPayment];
 
   return (
@@ -39,6 +45,7 @@ export const Card = ({ amountPayment, datePayment, statusPayment }: CardPropsT) 
           variant="ghost"
           size="s"
           className="text-brand-100 bg-brand-0 hover:bg-brand-20/40 mt-2 rounded-lg"
+          onClick={onApprovePayment}
         >
           Подтвердить
         </Button>

@@ -3,13 +3,14 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { getAxiosInstance } from 'common.config';
 import { userApiConfig, UserQueryKey } from 'common.api';
 import { LoadingScreen } from 'common.ui';
-import { useSignup, useSignout } from 'common.services';
+import { useSignup, useSignout, useNetworkAuthIntegration } from 'common.services';
 import { AuthContext } from './context';
 import { SignupData } from 'common.types';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
   const [isAuthenticated, setIsAuthenticated] = React.useState<boolean | null>(null);
+  const { handleAuthError } = useNetworkAuthIntegration();
 
   if (!queryClient) {
     throw new Error('No QueryClient set, use QueryClientProvider to set one');
@@ -59,6 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     onError: (error) => {
       console.error('Ошибка при выходе из системы:', error);
+      handleAuthError(error);
       throw error;
     },
   });
@@ -80,6 +82,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     },
 
     onError: (error) => {
+      handleAuthError(error);
       throw error;
     },
   });

@@ -57,14 +57,6 @@ export interface Point {
   y: number;
 }
 
-export interface ZoomConfig {
-  minScale: number;
-  maxScale: number;
-  scaleBy: number;
-  animationDuration: number;
-  baseScaleStep: number;
-}
-
 export interface ToolbarElement extends BoardElement {
   type: 'toolbar';
 }

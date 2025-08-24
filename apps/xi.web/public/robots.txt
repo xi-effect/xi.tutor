@@ -1,0 +1,5 @@
+User-agent: *
+Disallow: /
+
+# Запрещаем индексацию всего сайта
+# Каноникал: https://sovlium.com

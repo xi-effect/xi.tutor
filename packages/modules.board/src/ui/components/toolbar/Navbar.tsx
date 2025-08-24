@@ -6,6 +6,8 @@ import { UndoRedo } from './UndoRedo';
 import { PenPopup } from '../popups/Pen';
 import { useTldrawStore } from '../../../store';
 import { useTldrawStyles } from '../../../hooks';
+import { NavbarButton } from '../shared';
+import { StickerPopup } from '../popups';
 
 // Маппинг инструментов Kanva на Tldraw
 const toolMapping: Record<string, string> = {
@@ -32,11 +34,12 @@ export const Navbar = track(
     canUndo: boolean;
     canRedo: boolean;
   }) => {
-    const { pencilColor, pencilThickness, pencilOpacity } = useTldrawStore();
+    const { pencilColor, pencilThickness, pencilOpacity, stickerColor } = useTldrawStore();
     const { resetToDefaults, setColor, setThickness, setOpacity } = useTldrawStyles();
 
     const [isTooltipOpen] = React.useState(false);
     const [penPopupOpen, setPenPopupOpen] = React.useState(false);
+    const [stickerPopupOpen, setStickerPopupOpen] = React.useState(false);
     const editor = useEditor();
 
     const handleSelectTool = (toolName: string) => {
@@ -45,7 +48,6 @@ export const Navbar = track(
 
       // Закрываем Popover стилей при переключении на любой инструмент
       if (toolName !== 'pen') {
-        console.log('resetToDefaults');
         resetToDefaults();
         setPenPopupOpen(false);
       }
@@ -79,8 +81,6 @@ export const Navbar = track(
 
     // Обработчик для закрытия Popover только при переключении инструмента
     const handlePenPopupOpenChange = (open: boolean) => {
-      console.log('open', open);
-
       if (open) {
         setColor(pencilColor);
         setThickness(pencilThickness);
@@ -89,11 +89,20 @@ export const Navbar = track(
 
       // Сбрасываем настройки при закрытии Popover
       if (!open) {
-        console.log('resetToDefaults');
         resetToDefaults();
       }
 
       setPenPopupOpen(open);
+    };
+
+    const handleStickerPopupOpenChange = (open: boolean) => {
+      if (open) {
+        setColor(stickerColor);
+      }
+      if (!open) {
+        resetToDefaults();
+      }
+      setStickerPopupOpen(open);
     };
 
     return (
@@ -116,17 +125,31 @@ export const Navbar = track(
                         open={penPopupOpen}
                         onOpenChange={handlePenPopupOpenChange}
                       >
-                        <button
-                          type="button"
-                          className={`pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${isActive ? 'bg-brand-0' : 'bg-gray-0'}`}
-                          data-isactive={isActive}
-                          onClick={() => {
-                            handleSelectTool(item.action);
-                          }}
-                        >
-                          {item.icon ? item.icon : item.title}
-                        </button>
+                        <NavbarButton
+                          icon={item.icon}
+                          title={item.title}
+                          isActive={isActive}
+                          onClick={() => handleSelectTool(item.action)}
+                        />
                       </PenPopup>
+                    );
+                  }
+
+                  if (item.action === 'sticker') {
+                    return (
+                      <StickerPopup
+                        key={item.action}
+                        open={stickerPopupOpen}
+                        onOpenChange={handleStickerPopupOpenChange}
+                        popupItems={item.menuPopupContent}
+                      >
+                        <NavbarButton
+                          icon={item.icon}
+                          title={item.title}
+                          isActive={isActive}
+                          onClick={() => handleSelectTool(item.action)}
+                        />
+                      </StickerPopup>
                     );
                   }
 

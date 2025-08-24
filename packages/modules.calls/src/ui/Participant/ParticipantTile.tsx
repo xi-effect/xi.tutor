@@ -178,7 +178,7 @@ export const ParticipantTile = ({
                 >
                   <Avatar size="xxl">
                     <AvatarImage
-                      src={`https://auth.sovlium.ru/api/users/${identity}/avatar.webp`}
+                      src={`https://api.sovlium.ru/files/users/${identity}/avatar.webp`}
                       alt="user avatar"
                     />
                     <AvatarFallback size="xxl" loading />
