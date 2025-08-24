@@ -1,6 +1,7 @@
 import { BarCardChart } from '../src/BarCardChart';
 import { PieCardChart } from '../src/PieCardChart';
 import { type ChartConfig } from '../src/Chart';
+import React from 'react';
 
 const chartDataBarCardChart = [
   { month: 'Апрель', value: 20 },
@@ -29,6 +30,7 @@ const chartDataPieCardChart = [
   { language: 'spanish', visitors: 15, fill: 'var(--xi-brand-60)' },
   { language: 'italian', visitors: 35, fill: 'var(--xi-brand-40)' },
 ];
+
 const chartConfigPieCardChart = {
   visitors: {
     label: 'Visitors',
