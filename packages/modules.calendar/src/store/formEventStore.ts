@@ -25,6 +25,7 @@ const INITIAL_VALUES: EventFormData = {
   isAllDay: false,
   startDate: formatDate(new Date()),
   endDate: formatDate(new Date()),
+  shouldRepeat: 'dont_repeat'
 };
 
 const useFormEventStore = create<FormEventStore>((set) => ({
@@ -53,6 +54,7 @@ const useFormEventStore = create<FormEventStore>((set) => ({
         minute: '2-digit',
       }),
       isAllDay: calendarEvent.isAllDay || false,
+      shouldRepeat: 'dont_repeat',
       startDate: startDateDefault,
       endDate: endDateDefault,
       studentId: '',

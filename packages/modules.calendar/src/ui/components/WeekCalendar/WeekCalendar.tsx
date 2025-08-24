@@ -73,7 +73,7 @@ export const WeekCalendar: FC<WeekCalendarProps> = ({ days, view }) => {
                 <div className="border-gray-10 h-10 border-b p-1">
                   {groupedEvents[dayKey]?.map(
                     (event) =>
-                      event.isAllDayEvent && <CalendarEvent key={event.id} event={event} />,
+                      event.isAllDay && <CalendarEvent key={event.id} event={event} />,
                   )}
                 </div>
 
@@ -84,7 +84,7 @@ export const WeekCalendar: FC<WeekCalendarProps> = ({ days, view }) => {
                       const hourAsNumber = +hour.split(':')[0];
 
                       return (
-                        !event.isAllDayEvent &&
+                        !event.isAllDay &&
                         event.start.getHours() === hourAsNumber && (
                           <CalendarEvent key={event.id} event={event} />
                         )
