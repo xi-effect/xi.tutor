@@ -17,6 +17,8 @@ import { StatusBlock } from './components/StatusBlock';
 import { DateBlock } from './components/DateBlock';
 import { EventMenu } from './components/EventMenu';
 
+import './EventForm.css';
+
 import type { FC } from 'react';
 import type { ICalendarEvent } from '../../types';
 
@@ -26,15 +28,8 @@ interface EventFormProps {
 
 export const EventForm: FC<EventFormProps> = () => {
   const { t } = useTranslation('calendar');
-  
-  const { 
-    form, 
-    control, 
-    handleSubmit, 
-    selectedType, 
-    handleTypeChange, 
-    onSubmit 
-  } = useEventForm();
+
+  const { form, control, handleSubmit, selectedType, handleTypeChange, onSubmit } = useEventForm();
 
   const handleCloseForm = useCloseForm();
 
@@ -57,12 +52,8 @@ export const EventForm: FC<EventFormProps> = () => {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        <SelectItem value="lesson">
-                          {t('event_form.lesson')}
-                        </SelectItem>
-                        <SelectItem value="rest">
-                          {t('event_form.rest')}
-                        </SelectItem>
+                        <SelectItem value="lesson">{t('event_form.lesson')}</SelectItem>
+                        <SelectItem value="rest">{t('event_form.rest')}</SelectItem>
                       </SelectGroup>
                     </SelectContent>
                   </Select>

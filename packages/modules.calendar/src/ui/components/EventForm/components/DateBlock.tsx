@@ -1,15 +1,15 @@
 import { useTranslation } from 'react-i18next';
-import { FormControl, FormField, FormItem, FormMessage } from '@xipkg/form';
-import type { FC } from 'react';
-import { useDateFields } from '../../../../hooks/useEventForm';
-import type { useForm } from '@xipkg/form';
-import type { EventFormData } from '../../../../model';
+import { FormControl, FormField, FormItem, FormMessage, useForm } from '@xipkg/form';
 import { Switch } from '@xipkg/switcher';
 import { Input } from '@xipkg/input';
 import { useMaskInput } from '@xipkg/inputmask';
-import { ArrowRight, Clock, Redo } from '@xipkg/icons';
+import { ArrowRight, Clock } from '@xipkg/icons';
+import { useDateFields } from '../../../../hooks/useEventForm';
 import { InputDate } from './InputDate';
+import { RepeatBlock } from './RepeatBlock';
 
+import type { FC } from 'react';
+import type { EventFormData } from '../../../../model';
 
 interface DateBlockProps {
   form: ReturnType<typeof useForm<EventFormData>>;
@@ -70,7 +70,9 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
             )}
           />
           <span className="block shrink-0 pt-1.5 text-sm">
-            {duration.hours}{t('event_form.h')} {duration.minutes}{t('event_form.m')}
+            {duration.hours}
+            {t('event_form.h')} {duration.minutes}
+            {t('event_form.min')}
           </span>
         </div>
       </div>
@@ -128,10 +130,17 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
         )}
       />
 
-      <div className="mt-2 flex cursor-pointer items-center gap-2 px-2 py-1">
-        <Redo className="h-4 w-4" />
-        <span className="text-gray-30 text-sm">{t('event_form.repeat')}</span>
-      </div>
+      <FormField
+        control={control}
+        name="shouldRepeat"
+        render={({ field }) => (
+          <FormItem>
+            <FormControl>
+              <RepeatBlock field={field} />
+            </FormControl>
+          </FormItem>
+        )}
+      />
     </>
   );
 };

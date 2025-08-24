@@ -28,8 +28,8 @@ export const StatusBlock: FC<StatusBlockProps> = ({ form }) => {
                   icon: <Payments className="h-4 w-4" />,
                 }}
                 options={{
-                  positive: { value: 'paid', label: {t('event_form.statuses.paid')}},
-                  negative: { value: 'unpaid', label: {t('event_form.statuses.not_paid')} },
+                  positive: { value: 'paid', label: `${t('event_form.statuses.paid')}` },
+                  negative: { value: 'unpaid', label: `${t('event_form.statuses.not_paid')}` },
                 }}
               />
             </FormControl>
@@ -49,8 +49,11 @@ export const StatusBlock: FC<StatusBlockProps> = ({ form }) => {
                   icon: <Clock className="h-4 w-4" />,
                 }}
                 options={{
-                  positive: { value: 'done', label: {t('event_form.statuses.complete')} },
-                  negative: { value: 'not_done', label: {t('event_form.statuses.not_complete')} },
+                  positive: { value: 'done', label: `${t('event_form.statuses.complete')}` },
+                  negative: {
+                    value: 'not_done',
+                    label: `${t('event_form.statuses.not_complete')}`,
+                  },
                 }}
               />
             </FormControl>

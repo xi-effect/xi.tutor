@@ -1402,12 +1402,18 @@ importers:
       '@xipkg/icons':
         specifier: 2.4.0
         version: 2.4.0(react@19.1.1)
+      '@xipkg/inputmask':
+        specifier: 2.0.12
+        version: 2.0.12(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/scrollarea':
         specifier: 2.2.0
         version: 2.2.0(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/select':
         specifier: 2.2.5
         version: 2.2.5(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+      '@xipkg/switcher':
+        specifier: 3.0.13
+        version: 3.0.13(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.1.1)
@@ -5237,6 +5243,30 @@ packages:
     resolution: {integrity: sha512-XX6ulvsE1XCN18LVf3ydHN7Ri1Z1M1P5dQdjnm5nVDsSqUL12Vbo/4RKcRlCEXAg2qB62mKjcaVLXVwkfXggkg==}
     dependencies:
       '@bufbuild/protobuf': 1.10.1
+    dev: false
+
+  /@maskito/core@3.5.0:
+    resolution: {integrity: sha512-zgmBjXeXc7BSBaw8jQw25dnwkFmKDvdj5rHzhEIxYhgGtnpli236F0YWPIOYzIwADjbefwDq1o7qpJfMsdDO4Q==}
+    dev: false
+
+  /@maskito/kit@3.10.3(@maskito/core@3.5.0):
+    resolution: {integrity: sha512-4IAL5WPlz4zi6vCMp8KbSAVh67WT+o0PzQ56dU4E7crN1jzBm1cN7MIbGawefOIXwAiqCb8zOSyTv/qqSL0xGQ==}
+    peerDependencies:
+      '@maskito/core': ^3.10.3
+    dependencies:
+      '@maskito/core': 3.5.0
+    dev: false
+
+  /@maskito/react@3.10.3(@maskito/core@3.5.0)(react-dom@19.1.1)(react@19.1.1):
+    resolution: {integrity: sha512-H8UDtfunReHeybozzp0O0zboVI044anQ4h9bwctI88QB0fVlhJBPTR3R4Xky1BT8D5+bICNEF2SlsaZq9UKEbg==}
+    peerDependencies:
+      '@maskito/core': ^3.10.3
+      react: '>=16.8'
+      react-dom: '>=16.8'
+    dependencies:
+      '@maskito/core': 3.5.0
+      react: 19.1.1
+      react-dom: 19.1.1(react@19.1.1)
     dev: false
 
   /@napi-rs/wasm-runtime@0.2.12:
@@ -9366,6 +9396,20 @@ packages:
       react: 19.1.1
     dev: false
 
+  /@xipkg/inputmask@2.0.12(react-dom@19.1.1)(react@19.1.1):
+    resolution: {integrity: sha512-Prlexytt+H8cDRszYesywGb1KCm5TzXlEbSlMZCpnmEHtojFykF3RqJQtRf0r5ha4kyT27K8GKLxREWNWcZvLw==}
+    peerDependencies:
+      react: ^19
+    dependencies:
+      '@maskito/core': 3.5.0
+      '@maskito/kit': 3.10.3(@maskito/core@3.5.0)
+      '@maskito/react': 3.10.3(@maskito/core@3.5.0)(react-dom@19.1.1)(react@19.1.1)
+      '@xipkg/utils': 1.8.0(react@19.1.1)
+      react: 19.1.1
+    transitivePeerDependencies:
+      - react-dom
+    dev: false
+
   /@xipkg/label@2.0.12(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1):
     resolution: {integrity: sha512-OEPSfNHGPz31Kyyc0MMCz/gu3ZrHDQhicaL9bjjXWmS7vbhI+4KMNtrTUH92xiqh9I2qOkdqCiW9K/xLnhJabw==}
     peerDependencies:
@@ -9553,6 +9597,20 @@ packages:
       '@radix-ui/react-slider': 1.3.5(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/utils': 1.8.0(react@19.1.1)
       class-variance-authority: 0.7.1
+      react: 19.1.1
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
+      - react-dom
+    dev: false
+
+  /@xipkg/switcher@3.0.13(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1):
+    resolution: {integrity: sha512-H3yyIJ8/3tcLZ0Z7hfNeuO+qBqG2PZPDS330x7hjok4uk2HfajjYtdiSGdYn6QKCKj4ZB2XzTwXMBvxoLc9s/A==}
+    peerDependencies:
+      react: ^19
+    dependencies:
+      '@radix-ui/react-switch': 1.2.5(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+      '@xipkg/utils': 1.8.0(react@19.1.1)
       react: 19.1.1
     transitivePeerDependencies:
       - '@types/react'

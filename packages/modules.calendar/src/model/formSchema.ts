@@ -31,6 +31,16 @@ const timeFields = z.object({
     .string()
     .regex(/^\d{2}\.\d{2}\.\d{4}$/, 'Формат даты: дд.мм.гггг')
     .optional(),
+  shouldRepeat: z
+    .enum([
+      'dont_repeat',
+      'every_day',
+      'every_work_day',
+      'every_week',
+      'every_2_weeks',
+      'every_month',
+    ])
+    .default('dont_repeat'),
 });
 
 const lessonFields = z.object({

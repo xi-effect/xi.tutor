@@ -8,7 +8,6 @@ import {
 } from '@xipkg/select';
 
 import type { FC } from 'react';
-import './BadgeSelect.css';
 
 interface Option {
   value: string;

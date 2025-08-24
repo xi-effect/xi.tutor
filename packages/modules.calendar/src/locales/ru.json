@@ -34,5 +34,13 @@
     "copy": "Копировать",
     "duble": "Дублировать",
     "remove": "Удалить"
+  },
+  "repeat_settings": {
+    "dont_repeat": "Не повторять",
+    "every_day": "Каждый день",
+    "every_work_day": "Каждый рабочий день",
+    "every_week": "Каждую неделю",
+    "every_2_weeks": "Каждые две недели",
+    "every_month": "Каждый месяц"
   }
 }

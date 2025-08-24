@@ -99,12 +99,8 @@ export const LessonBlock: React.FC<LessonBlockProps> = ({ form }) => {
                 </SelectTrigger>
                 <SelectContent className="w-full max-w-[300px]">
                   <SelectGroup>
-                    <SelectItem value="group">
-                      {t('event_form.lesson_group')}
-                    </SelectItem>
-                    <SelectItem value="individual">
-                      {t('event_form.lesson_individual')}
-                    </SelectItem>
+                    <SelectItem value="group">{t('event_form.lesson_group')}</SelectItem>
+                    <SelectItem value="individual">{t('event_form.lesson_individual')}</SelectItem>
                   </SelectGroup>
                 </SelectContent>
               </Select>

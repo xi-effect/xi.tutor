@@ -8,11 +8,7 @@ import {
 } from '@xipkg/dropdown';
 import { MenuDots } from '@xipkg/icons';
 import { useActiveEventId, useCloseForm } from '../../../../store/formEventStore';
-import { 
-  useAddEvent, 
-  useDeleteEvent, 
-  useEventById 
-} from '../../../../store/eventsStore';
+import { useAddEvent, useDeleteEvent, useEventById } from '../../../../store/eventsStore';
 
 export const EventMenu = () => {
   const { t } = useTranslation('calendar');
@@ -42,9 +38,7 @@ export const EventMenu = () => {
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem>{t('event_menu.cut')}</DropdownMenuItem>
-        <DropdownMenuItem onClick={handleCopyEvent}>
-          {t('event_menu.copy')}
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleCopyEvent}>{t('event_menu.copy')}</DropdownMenuItem>
         <DropdownMenuItem>{t('event_menu.duble')}</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="text-red-80" onClick={handleRemoveEvent}>
