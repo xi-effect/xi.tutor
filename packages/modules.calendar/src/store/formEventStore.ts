@@ -24,7 +24,6 @@ const INITIAL_VALUES: EventFormData = {
   endTime: '',
   isAllDay: false,
   startDate: formatDate(new Date()),
-  endDate: formatDate(new Date()),
   shouldRepeat: 'dont_repeat',
 };
 

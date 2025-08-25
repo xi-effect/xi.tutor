@@ -19,7 +19,8 @@ const getEventDateKeys = (event: ICalendarEvent): string[] => {
   const endDay = startOfDay(end);
 
   while (current <= endDay) {
-    keys.push(getDateKey(current));
+    const dateKey = getDateKey(current);
+    keys.push(dateKey);
     current = addDays(current, 1);
   }
 

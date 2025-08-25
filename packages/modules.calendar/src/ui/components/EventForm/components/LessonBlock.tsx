@@ -41,7 +41,7 @@ export const LessonBlock: React.FC<LessonBlockProps> = ({ form }) => {
             <FormControl>
               <Select value={field.value} onValueChange={onChangeStudent}>
                 <SelectTrigger
-                  before={<Account className="h-4 w-4" />}
+                  before={<Account className="fill-gray-80 h-4 w-4" />}
                   size="s"
                   className="mb-2 w-full border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
                 >
@@ -74,7 +74,7 @@ export const LessonBlock: React.FC<LessonBlockProps> = ({ form }) => {
                 value={field.value}
                 placeholder={t('event_form.subject')}
                 className="mb-2 w-full border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
-                before={<Updates className="h-4 w-4" />}
+                before={<Updates className="fill-gray-80 h-4 w-4" />}
                 variant="s"
               />
             </FormControl>
@@ -91,7 +91,7 @@ export const LessonBlock: React.FC<LessonBlockProps> = ({ form }) => {
             <FormControl>
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger
-                  before={<Payments className="h-4 w-4" />}
+                  before={<Payments className="fill-gray-80 h-4 w-4" />}
                   size="s"
                   className="mb-2 w-full border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
                 >
@@ -120,7 +120,7 @@ export const LessonBlock: React.FC<LessonBlockProps> = ({ form }) => {
                 {...field}
                 placeholder={t('event_form.description')}
                 className="w-full border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
-                before={<Hint className="h-4 w-4" />}
+                before={<Hint className="fill-gray-80 h-4 w-4" />}
                 variant="s"
               />
             </FormControl>

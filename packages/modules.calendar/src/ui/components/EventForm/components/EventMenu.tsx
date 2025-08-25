@@ -34,7 +34,7 @@ export const EventMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="bg-gray-0 flex h-8 w-8 items-center justify-center text-sm">
-        <MenuDots className="rotate-90" />
+        <MenuDots className="fill-gray-80 rotate-90" />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem>{t('event_menu.cut')}</DropdownMenuItem>

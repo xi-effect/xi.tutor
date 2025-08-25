@@ -37,7 +37,7 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
                   {...field}
                   ref={maskRefStartTime}
                   placeholder="00:00"
-                  before={<Clock className="h-4 w-4" />}
+                  before={<Clock className="fill-gray-80 h-4 w-4" />}
                   variant="s"
                   className="border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
                   disabled={isAllDay}
@@ -59,7 +59,7 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
                     {...field}
                     ref={maskRefEndTime}
                     placeholder="00:00"
-                    before={<ArrowRight className="h-4 w-4" />}
+                    before={<ArrowRight className="fill-gray-80 h-4 w-4" />}
                     variant="s"
                     className="border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
                     disabled={isAllDay}
@@ -69,7 +69,7 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
               </FormItem>
             )}
           />
-          <span className="block shrink-0 pt-1.5 text-sm">
+          <span className="text-gray-80 block shrink-0 pt-1.5 text-sm">
             {duration.hours}
             {t('event_form.h')} {duration.minutes}
             {t('event_form.min')}
@@ -121,7 +121,7 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
                   size="s"
                 />
               </FormControl>
-              <label htmlFor="all-day-mode" className="text-sm font-medium">
+              <label htmlFor="all-day-mode" className="text-gray-80 text-sm font-medium">
                 {t('event_form.all_day')}
               </label>
             </div>

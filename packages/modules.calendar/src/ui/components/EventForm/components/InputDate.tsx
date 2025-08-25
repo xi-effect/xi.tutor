@@ -43,7 +43,7 @@ export const InputDate: FC<InputDateProps> = ({ value, onChange, name }) => {
       variant="s"
       className="border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
       autoComplete="off"
-      before={<Calendar className="h-4 w-4" />}
+      before={<Calendar className="fill-gray-80 h-4 w-4" />}
     />
   );
 };

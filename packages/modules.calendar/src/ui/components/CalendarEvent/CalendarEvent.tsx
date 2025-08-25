@@ -17,7 +17,7 @@ export const CalendarEvent: FC<CalendarEventProps> = memo(({ event, isPast }) =>
   return (
     <div
       className={cn(
-        'group hover:bg-gray-5 flex cursor-pointer gap-1 rounded-sm',
+        'group hover:bg-gray-5 text-gray-80 flex max-w-min cursor-pointer gap-1 rounded-sm',
         isPast && 'opacity-60',
       )}
       onClick={() => handleOpenForm(event)}

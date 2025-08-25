@@ -80,15 +80,22 @@ export const useEventForm = () => {
       setValue('subjectName', '');
       setValue('lessonType', 'individual');
       setValue('description', '');
+    } else {
+      setValue('paymentStatus', 'paid');
+      setValue('lessonStatus', 'not_done');
     }
   };
 
   const onSubmit = useCallback(
     (data: EventFormData) => {
-      console.log('event form data: ', data);
+      if (Object.keys(errors).length > 0) {
+        console.error('Zod Validation Errors:', errors);
+        return;
+      }
 
       const start = parseDateTime(data.startDate, data.startTime);
       const endDateStr = data.endDate && data.endDate.trim() ? data.endDate : data.startDate;
+      console.log('endDateStr', endDateStr);
       const end = parseDateTime(endDateStr, data.endTime);
       const event: ICalendarEvent = {
         id: crypto.randomUUID(),
@@ -109,7 +116,7 @@ export const useEventForm = () => {
       addEvent(event);
       handleCloseForm();
     },
-    [addEvent, handleCloseForm],
+    [addEvent, handleCloseForm, errors],
   );
 
   return {

@@ -47,7 +47,7 @@ export const EventForm: FC<EventFormProps> = () => {
                     value={field.value}
                     onValueChange={(value) => handleTypeChange(value as 'lesson' | 'rest')}
                   >
-                    <SelectTrigger className="border-none" size="s">
+                    <SelectTrigger className="text-gray-80 border-none" size="s">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

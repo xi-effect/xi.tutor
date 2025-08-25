@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { FormField, FormItem, FormControl, FormMessage } from '@xipkg/form';
 import { Clock, Payments } from '@xipkg/icons';
 import { useForm } from '@xipkg/form';
-import { BadgeSelect } from './BadgeSelect/BadgeSelect';
+import { BadgeSelect } from './BadgeSelect';
 
 import type { FC } from 'react';
 import type { EventFormData } from '../../../../model';
