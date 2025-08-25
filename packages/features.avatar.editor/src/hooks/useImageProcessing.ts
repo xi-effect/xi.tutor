@@ -62,7 +62,7 @@ export const useImageProcessing = ({
       });
 
       if (response.status === 204) {
-        toast('Аватарка успешно загружена. В ближайшее время она отобразится на сайте');
+        toast('Аватарка успешно загружена');
         onOpenChange(false);
         if (setDate) setDate(new Date());
       }

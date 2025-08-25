@@ -7,7 +7,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@xipkg/sidebar';
-import { footerMenu, items } from '../config';
+import { footerMenu, items } from './config';
 import { useLocation, useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { SwiperRef } from 'swiper/react';

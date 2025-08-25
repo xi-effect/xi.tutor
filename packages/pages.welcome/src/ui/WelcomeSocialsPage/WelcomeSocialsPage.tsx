@@ -1,37 +1,43 @@
 import { WelcomePageLayout, WelcomeButtons } from '../../ui';
 import { useTranslation } from 'react-i18next';
-import { InputWrapper } from './InputWrapper';
-import { Input } from '@xipkg/input';
-import { TelegramFilled, WhatsAppFilled } from '@xipkg/icons';
-import { useWelcomeSocialsForm } from '../../hooks';
-import { type WelcomeSocialsFormData } from '../../model';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-  useForm,
-} from '@xipkg/form';
+import { SocialItem } from './SocialItem';
+import { TelegramFilled } from '@xipkg/icons';
+import { useServiceButton, useWelcomeSocialsForm } from '../../hooks';
+import { useState } from 'react';
+import { useCreateTgConnection, useGetNotificationsStatus } from 'common.services';
 
 export const WelcomeSocialsPage = () => {
   const { t } = useTranslation('welcomeSocials');
 
-  const form = useForm<WelcomeSocialsFormData>();
-
-  const { control, watch, handleSubmit } = form;
-
   const { onBackwards, onForwards, isLoading } = useWelcomeSocialsForm();
-  const onSubmit = () => {
-    onForwards();
+
+  const [tgLink, setTgLink] = useState<string | null>(null);
+
+  const { data } = useGetNotificationsStatus();
+  const { mutate, isPending } = useCreateTgConnection();
+
+  const handleCreateTgConnection = () => {
+    if (data?.telegram) return;
+
+    mutate(undefined, {
+      onSuccess: (link: string) => {
+        if (link) setTgLink(link);
+      },
+    });
   };
 
-  const [telegram] = watch(['telegram']);
-  const [whatsapp] = watch(['whatsapp']);
+  const tgButton = useServiceButton({
+    service: 'telegram',
+    createConnection: handleCreateTgConnection,
+    link: tgLink,
+    isPending,
+    isConnected: !!data?.telegram,
+  });
 
-  const getStyles = (elem: string) =>
-    `${elem?.length ? 'block' : 'hidden group-hover:block group-focus:block'} w-full`;
+  // const vkButton = useServiceButton({
+  //   service: 'ВКонтакте',
+  //   isConnected: false,
+  // });
 
   return (
     <WelcomePageLayout
@@ -52,61 +58,19 @@ export const WelcomeSocialsPage = () => {
         </>
       }
     >
-      <Form {...form}>
-        <form onSubmit={handleSubmit(onSubmit)} className="mt-6 flex h-full w-full flex-col gap-2">
-          <InputWrapper tab={1}>
-            <TelegramFilled className="fill-brand-100 h-8 w-8" />
-            <FormField
-              control={control}
-              name="telegram"
-              defaultValue=""
-              render={({ field }) => (
-                <FormItem className="group w-full">
-                  <FormLabel className="m-0 block w-full font-semibold">Telegram</FormLabel>
-                  <FormControl className={getStyles(telegram)}>
-                    <Input
-                      autoComplete="off"
-                      type="text"
-                      placeholder="@nickname"
-                      {...field}
-                      className="h-auto border-none p-0"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </InputWrapper>
-          <InputWrapper tab={2}>
-            <WhatsAppFilled className="fill-brand-100 h-8 w-8" />
-            <FormField
-              control={control}
-              name="whatsapp"
-              defaultValue=""
-              render={({ field }) => (
-                <FormItem className="group w-full">
-                  <FormLabel className="m-0 block w-full font-semibold">Whatsapp</FormLabel>
-                  <FormControl className={getStyles(whatsapp)}>
-                    <Input
-                      autoComplete="off"
-                      type="text"
-                      placeholder="@nickname"
-                      {...field}
-                      className="h-auto border-none p-0"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          </InputWrapper>
-          <WelcomeButtons
-            customText="Начать работу"
-            backButtonHandler={onBackwards}
-            isLoading={isLoading}
-          />
-        </form>
-      </Form>
+      <div className="mt-6 flex flex-col gap-2">
+        <SocialItem>
+          <TelegramFilled className="fill-brand-100 h-8 w-8" />
+          <span className="font-semibold">Telegram</span>
+          {tgButton}
+        </SocialItem>
+      </div>
+      <WelcomeButtons
+        customText="Начать работу"
+        backButtonHandler={onBackwards}
+        continueButtonHandler={onForwards}
+        isLoading={isLoading}
+      />
     </WelcomePageLayout>
   );
 };

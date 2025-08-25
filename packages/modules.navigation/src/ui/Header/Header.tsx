@@ -21,6 +21,10 @@ import { useMenuStore } from '../../store';
 
 import { SelectRole } from './SelectRole';
 import { Notifications } from './Notifications';
+import { useCurrentUser } from 'common.services';
+// import { TestNotificationButton } from './TestNotificationButton';
+// import { NotificationDebug } from './NotificationDebug';
+// import { SimpleTest } from './SimpleTest';
 
 const UserSettings = lazy(() =>
   import('modules.profile').then((module) => ({ default: module.UserSettings })),
@@ -33,6 +37,8 @@ export const Header = ({
   swiperRef: React.RefObject<SwiperRef | null>;
   toggle: () => void;
 }) => {
+  const { data: user } = useCurrentUser();
+
   const { isOpen } = useMenuStore();
   const isMobile = useMediaQuery('(max-width: 960px)');
   const { toggleSidebar } = useSidebar();
@@ -89,7 +95,7 @@ export const Header = ({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon">
-              <UserProfile id="userprofile" userId={null} size="m" withOutText />
+              <UserProfile id="userprofile" userId={user?.id || 0} size="m" withOutText />
             </Button>
           </DropdownMenuTrigger>
 
@@ -110,6 +116,9 @@ export const Header = ({
       </div>
 
       <UserSettings open={open} setOpen={setOpen} />
+      {/* <TestNotificationButton />
+      <NotificationDebug />
+      <SimpleTest /> */}
     </div>
   );
 };

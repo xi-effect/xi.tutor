@@ -4,3 +4,4 @@ export { Skeleton } from './src/Skeleton';
 export { LinkTanstack } from './src/LinkTanstack';
 export { ErrorPage } from './src/ErrorPage';
 export { Menu } from './src/Menu';
+export { NetworkIndicator } from './src/NetworkIndicator';

@@ -23,6 +23,7 @@
     "common.types": "*",
     "common.services": "*",
     "features.table": "*",
+    "features.payment.approve": "*",
     "features.charts": "*",
     "features.invoice": "*",
     "react-hook-form": "^7.56.3",
@@ -30,7 +31,7 @@
     "@xipkg/button": "3.1.8",
     "@xipkg/dropdown": "3.0.12",
     "@xipkg/tabs": "^2.1.0",
-    "@xipkg/userprofile": "4.0.12",
+    "@xipkg/userprofile": "4.0.14",
     "@tanstack/react-virtual": "3.13.9",
     "@xipkg/scrollarea": "2.2.0"
   },

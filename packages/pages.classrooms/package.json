@@ -22,7 +22,7 @@
     "@xipkg/modal": "4.1.0",
     "@xipkg/link": "^2.0.12",
     "@xipkg/select": "^2.2.5",
-    "@xipkg/userprofile": "4.0.12",
+    "@xipkg/userprofile": "4.0.14",
     "@tanstack/react-virtual": "3.13.9",
     "features.table": "*",
     "common.services": "*",
