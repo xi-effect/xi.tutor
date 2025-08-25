@@ -1,4 +1,4 @@
-import { isBefore, isSameDay, startOfDay } from 'date-fns';
+import { isBefore, isSameDay, startOfDay, parse } from 'date-fns';
 
 export const isCurrentMonth = (date: Date, monthIndex: number) => {
   return date.getMonth() === monthIndex;
@@ -21,3 +21,6 @@ export const timeToString = (time: Date) => {
 
   return `${hoursToString}:${minutesToString}`;
 };
+
+export const parseDateTime = (dateStr: string, timeStr: string) =>
+  parse(`${dateStr} ${timeStr}`, 'dd.MM.yyyy HH:mm', new Date());

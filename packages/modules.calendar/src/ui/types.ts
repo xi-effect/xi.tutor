@@ -1,9 +1,19 @@
 export interface ICalendarEvent {
   id: string;
   title: string;
-  start?: Date;
+  start: Date;
   end: Date;
-  type?: 'task' | 'vacation' | 'cancelled';
+  type?: 'lesson' | 'rest';
+  isCancelled?: boolean;
+  isAllDay?: boolean;
+  lessonInfo?: ILessonInfo;
+}
+
+export interface ILessonInfo {
+  studentName: string;
+  subject: string;
+  lessonType: 'group' | 'individual';
+  description?: string;
 }
 
 export type CalendarMode = 'day' | 'week' | 'month' | 'year';

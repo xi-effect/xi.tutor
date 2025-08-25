@@ -1,0 +1,111 @@
+import { useTranslation } from 'react-i18next';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+} from '@xipkg/select';
+import { Button } from '@xipkg/button';
+import { Input } from '@xipkg/input';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@xipkg/form';
+import { useEventForm } from '../../../hooks';
+import { useCloseForm } from '../../../store/formEventStore';
+import { LessonBlock } from './components/LessonBlock';
+import { StatusBlock } from './components/StatusBlock';
+import { DateBlock } from './components/DateBlock';
+import { EventMenu } from './components/EventMenu';
+
+import './EventForm.css';
+
+import type { FC } from 'react';
+import type { ICalendarEvent } from '../../types';
+
+interface EventFormProps {
+  calendarEvent?: ICalendarEvent;
+}
+
+export const EventForm: FC<EventFormProps> = () => {
+  const { t } = useTranslation('calendar');
+
+  const { form, control, handleSubmit, selectedType, handleTypeChange, onSubmit } = useEventForm();
+
+  const handleCloseForm = useCloseForm();
+
+  return (
+    <Form {...form}>
+      <form onSubmit={handleSubmit(onSubmit)} className="border-gray-10 w-full border-l px-2">
+        <div className="mb-2 flex w-full items-center justify-between gap-2">
+          <FormField
+            control={control}
+            name="type"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <Select
+                    value={field.value}
+                    onValueChange={(value) => handleTypeChange(value as 'lesson' | 'rest')}
+                  >
+                    <SelectTrigger className="text-gray-80 border-none" size="s">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        <SelectItem value="lesson">{t('event_form.lesson')}</SelectItem>
+                        <SelectItem value="rest">{t('event_form.rest')}</SelectItem>
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <EventMenu />
+        </div>
+
+        <FormField
+          control={control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormControl>
+                <Input
+                  {...field}
+                  className="border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
+                  placeholder={t('event_form.enter_title')}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {selectedType === 'lesson' && <StatusBlock form={form} />}
+
+        {selectedType === 'lesson' && <LessonBlock form={form} />}
+
+        <div className="border-gray-10 border-t border-b py-2">
+          <DateBlock form={form} />
+
+          <div className="flex w-full justify-between gap-4 pt-2">
+            <Button
+              size="s"
+              variant="secondary"
+              className="w-full"
+              type="button"
+              onClick={handleCloseForm}
+            >
+              {t('event_form.cancel')}
+            </Button>
+            <Button size="s" type="submit" className="w-full">
+              {t('event_form.save')}
+            </Button>
+          </div>
+        </div>
+      </form>
+    </Form>
+  );
+};

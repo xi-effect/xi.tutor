@@ -4,5 +4,35 @@
   "week_days": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
   "months": "January,February,March,April,May,June,July,August,September,October,November,December",
   "add_event": "Create an event",
-  "pick_time": "Or set aside time on your calendar"
+  "pick_time": "Or set aside time on your calendar",
+  "event_form": {
+    "lesson": "Lesson",
+    "rest": "Rest",
+    "cancel": "Cancel",
+    "save": "Save",
+    "enter_title": "Enter title",
+    "time": "Time",
+    "all_day": "All day",
+    "repeat": "Repeat",
+    "h": "h",
+    "min": "min",
+    "class": "Class",
+    "student": "Student or group",
+    "subject": "Subject",
+    "lesson_group": "Group lesson",
+    "lesson_individual": "Individual lesson",
+    "description": "Description",
+    "statuses": {
+      "paid": "Paid",
+      "not_paid": "Not paid",
+      "complete": "Complete",
+      "not_complete": "Not complete"
+    }
+  },
+  "event_menu": {
+    "cut": "Cut",
+    "copy": "Copy",
+    "duble": "Duble",
+    "remove": "Remove"
+  } 
 }
