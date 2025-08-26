@@ -7,7 +7,7 @@ import { useCloseForm, useDefaultValues } from '../store/formEventStore';
 import { useAddEvent } from '../store/eventsStore';
 
 import type { StudentT } from '../mocks';
-import type { ICalendarEvent } from '../ui/types';
+import type { EventType, ICalendarEvent } from '../ui/types';
 
 export const useLessonFields = (form: ReturnType<typeof useForm<EventFormData>>) => {
   const { control, setValue } = form;
@@ -73,7 +73,7 @@ export const useEventForm = () => {
 
   const selectedType = watch('type');
 
-  const handleTypeChange = (newType: 'lesson' | 'rest') => {
+  const handleTypeChange = (newType: EventType) => {
     setValue('type', newType);
     if (newType === 'rest') {
       setValue('studentId', '');
@@ -95,8 +95,8 @@ export const useEventForm = () => {
 
       const start = parseDateTime(data.startDate, data.startTime);
       const endDateStr = data.endDate && data.endDate.trim() ? data.endDate : data.startDate;
-      console.log('endDateStr', endDateStr);
       const end = parseDateTime(endDateStr, data.endTime);
+
       const event: ICalendarEvent = {
         id: crypto.randomUUID(),
         title: data.title,

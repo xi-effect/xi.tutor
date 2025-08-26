@@ -24,3 +24,12 @@ export const timeToString = (time: Date) => {
 
 export const parseDateTime = (dateStr: string, timeStr: string) =>
   parse(`${dateStr} ${timeStr}`, 'dd.MM.yyyy HH:mm', new Date());
+
+export const dateToString = (date: string) => {
+  const [d, m, y] = date.split('.');
+  const dateObj = new Date(+y, +m - 1, +d);
+  const weekDayName = dateObj.toLocaleDateString('ru-RU', { weekday: 'short' });
+  const monthName = dateObj.toLocaleDateString('ru-RU', { month: 'long' });
+
+  return `${weekDayName} ${d} ${monthName}`;
+};

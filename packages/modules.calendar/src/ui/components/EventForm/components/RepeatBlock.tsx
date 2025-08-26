@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ControllerRenderProps } from 'react-hook-form';
+
 import {
   Select,
   SelectTrigger,
@@ -10,25 +10,21 @@ import {
   SelectSeparator,
 } from '@xipkg/select';
 import { Redo } from '@xipkg/icons';
+import { useConstants } from '../../../../hooks';
 
-export const RepeatBlock = ({
-  field,
-}: {
-  field: ControllerRenderProps<Record<string, string>, 'shouldRepeat'>;
-}) => {
+import type { FC } from 'react';
+
+interface RepeatBlockProps {
+  value: string;
+  onChange: (value: string) => void;
+}
+
+export const RepeatBlock: FC<RepeatBlockProps> = ({ value, onChange }) => {
   const { t } = useTranslation('calendar');
-
-  const repeatVariants = [
-    { value: 'dont_repeat', label: `${t('repeat_settings.dont_repeat')}` },
-    { value: 'every_day', label: `${t('repeat_settings.every_day')}` },
-    { value: 'every_work_day', label: `${t('repeat_settings.every_work_day')}` },
-    { value: 'every_week', label: `${t('repeat_settings.every_week')}` },
-    { value: 'every_2_weeks', label: `${t('repeat_settings.every_2_weeks')}` },
-    { value: 'every_month', label: `${t('repeat_settings.every_month')}` },
-  ];
+  const { repeatVariants } = useConstants();
 
   return (
-    <Select value={field.value} onValueChange={field.onChange}>
+    <Select value={value} onValueChange={onChange}>
       <SelectTrigger
         className="no-arrow text-gray-80 w-fit border-none"
         size="s"

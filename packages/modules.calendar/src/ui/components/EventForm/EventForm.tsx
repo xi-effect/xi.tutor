@@ -19,14 +19,9 @@ import { EventMenu } from './components/EventMenu';
 
 import './EventForm.css';
 
-import type { FC } from 'react';
-import type { ICalendarEvent } from '../../types';
+import type { EventType } from '../../types';
 
-interface EventFormProps {
-  calendarEvent?: ICalendarEvent;
-}
-
-export const EventForm: FC<EventFormProps> = () => {
+export const EventForm = () => {
   const { t } = useTranslation('calendar');
 
   const { form, control, handleSubmit, selectedType, handleTypeChange, onSubmit } = useEventForm();
@@ -45,7 +40,7 @@ export const EventForm: FC<EventFormProps> = () => {
                 <FormControl>
                   <Select
                     value={field.value}
-                    onValueChange={(value) => handleTypeChange(value as 'lesson' | 'rest')}
+                    onValueChange={(value: EventType) => handleTypeChange(value)}
                   >
                     <SelectTrigger className="text-gray-80 border-none" size="s">
                       <SelectValue />

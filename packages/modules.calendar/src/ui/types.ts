@@ -3,7 +3,7 @@ export interface ICalendarEvent {
   title: string;
   start: Date;
   end: Date;
-  type?: 'lesson' | 'rest';
+  type?: EventType;
   isCancelled?: boolean;
   isAllDay?: boolean;
   lessonInfo?: ILessonInfo;
@@ -12,9 +12,12 @@ export interface ICalendarEvent {
 export interface ILessonInfo {
   studentName: string;
   subject: string;
-  lessonType: 'group' | 'individual';
+  lessonType: LessonType;
   description?: string;
 }
+
+export type EventType = 'lesson' | 'rest';
+export type LessonType = 'group' | 'individual';
 
 export type CalendarMode = 'day' | 'week' | 'month' | 'year';
 export type WeekOrDayMode = Extract<CalendarMode, 'week' | 'day'>;

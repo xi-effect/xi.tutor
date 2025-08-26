@@ -136,7 +136,7 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
         render={({ field }) => (
           <FormItem>
             <FormControl>
-              <RepeatBlock field={field} />
+              <RepeatBlock value={field.value} onChange={field.onChange} />
             </FormControl>
           </FormItem>
         )}

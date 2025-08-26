@@ -13,6 +13,8 @@ import { Account, Updates, Payments, Hint } from '@xipkg/icons';
 
 import { students } from '../../../../mocks';
 import { useLessonFields } from '../../../../hooks/useEventForm';
+
+import type { FC } from 'react';
 import type { useForm } from '@xipkg/form';
 import type { EventFormData } from '../../../../model';
 
@@ -20,7 +22,7 @@ interface LessonBlockProps {
   form: ReturnType<typeof useForm<EventFormData>>;
 }
 
-export const LessonBlock: React.FC<LessonBlockProps> = ({ form }) => {
+export const LessonBlock: FC<LessonBlockProps> = ({ form }) => {
   const { t } = useTranslation('calendar');
   const { control, handleStudentChange } = useLessonFields(form);
 

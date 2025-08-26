@@ -1,9 +1,9 @@
+import { memo } from 'react';
 import { cn } from '@xipkg/utils';
 
 import { timeToString } from '../../../utils';
 import { useOpenForm } from '../../../store/formEventStore';
 
-import { memo, type FC } from 'react';
 import type { ICalendarEvent } from '../../types';
 
 interface CalendarEventProps {
@@ -11,7 +11,7 @@ interface CalendarEventProps {
   isPast?: boolean;
 }
 
-export const CalendarEvent: FC<CalendarEventProps> = memo(({ event, isPast }) => {
+export const CalendarEvent = memo<CalendarEventProps>(({ event, isPast }) => {
   const handleOpenForm = useOpenForm();
 
   return (
