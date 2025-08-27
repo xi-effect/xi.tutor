@@ -1,16 +1,20 @@
 import { useRef } from 'react';
 import { Card } from './Card';
 import { useResponsiveGrid, useInfiniteQuery, useVirtualGrid } from '../../hooks';
+import { NotFoundItems } from '../NotFoundItems';
 
 export const Notes = () => {
   const parentRef = useRef<HTMLDivElement>(null);
 
   const { colCount, rowHeight, GAP } = useResponsiveGrid(parentRef);
-  const { items } = useInfiniteQuery(parentRef, 'note');
+  const { items, isError, isLoading } = useInfiniteQuery(parentRef, 'note');
   const rowVirtualizer = useVirtualGrid(parentRef, items, colCount, rowHeight);
+
+  const notFoundItems = !items.length && !isLoading && !isError;
 
   return (
     <div ref={parentRef} className="h-[calc(100vh-158px)] overflow-auto">
+      {notFoundItems && <NotFoundItems text="Здесь пока нет заметок" />}
       <div
         style={{
           height: `${rowVirtualizer.getTotalSize()}px`,
