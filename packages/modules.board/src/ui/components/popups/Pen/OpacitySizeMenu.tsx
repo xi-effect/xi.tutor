@@ -31,42 +31,44 @@ export const OpacitySizeMenu = () => {
   };
 
   return (
-    <div className="flex w-full flex-col items-center justify-center gap-2 md:flex-row">
-      <div className="w-[276px] p-2">
-        <div className="flex w-full flex-col justify-center gap-6">
-          <div className="flex w-full items-center justify-between gap-4">
-            <div className="w-full">
-              <Slider
-                onValueChange={(value) => handleSize(value)}
-                value={[getSizeIndex(pencilThickness)]}
-                min={1}
-                max={4}
-                step={1}
-                minStepsBetweenThumbs={1}
-              />
+    <div className="border-gray-10 bg-gray-0 flex h-full w-full rounded-xl border shadow-none md:w-[562px]">
+      <div className="flex w-full flex-col items-center justify-center gap-2 md:flex-row">
+        <div className="w-[276px] p-2">
+          <div className="flex w-full flex-col justify-center gap-6">
+            <div className="flex w-full items-center justify-between gap-4">
+              <div className="w-full">
+                <Slider
+                  onValueChange={(value) => handleSize(value)}
+                  value={[getSizeIndex(pencilThickness)]}
+                  min={1}
+                  max={4}
+                  step={1}
+                  minStepsBetweenThumbs={1}
+                />
+              </div>
+              <div className="w-8">
+                <p>{pencilThickness.toUpperCase()}</p>
+              </div>
             </div>
-            <div className="w-8">
-              <p>{pencilThickness.toUpperCase()}</p>
-            </div>
-          </div>
-          <div className="flex w-full items-center justify-between gap-4">
-            <div className="w-full">
-              <Slider
-                onValueChange={(value) => handleOpacity(value)}
-                value={[pencilOpacity]}
-                min={10}
-                max={100}
-                step={1}
-              />
-            </div>
-            <div className="w-8">
-              <p>{pencilOpacity}</p>
+            <div className="flex w-full items-center justify-between gap-4">
+              <div className="w-full">
+                <Slider
+                  onValueChange={(value) => handleOpacity(value)}
+                  value={[pencilOpacity]}
+                  min={10}
+                  max={100}
+                  step={1}
+                />
+              </div>
+              <div className="w-8">
+                <p>{pencilOpacity}</p>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div className="w-[276px] p-2">
-        <ColorGrid currentColor={pencilColor} />
+        <div className="w-[276px] p-2">
+          <ColorGrid currentColor={pencilColor} />
+        </div>
       </div>
     </div>
   );
