@@ -41,7 +41,7 @@ const ClearBoardAction = ({ onClick }: ActionPropsT) => {
 };
 
 export const SettingsDropdown = () => {
-  const { isReadonly, saveCanvas, clearBoard, toggleBoardLock } = useDropdownActions();
+  const { isReadonly, saveCanvas, clearBoard, toggleReadonly } = useDropdownActions();
 
   return (
     <DropdownMenu>
@@ -56,7 +56,7 @@ export const SettingsDropdown = () => {
 
           <ClearBoardAction onClick={clearBoard} />
 
-          <BlockBoardAction onClick={toggleBoardLock} isReadonly={isReadonly} />
+          <BlockBoardAction onClick={toggleReadonly} isReadonly={isReadonly} />
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>

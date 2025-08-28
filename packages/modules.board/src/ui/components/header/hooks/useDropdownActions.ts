@@ -1,28 +1,20 @@
 // useBoardActions.ts
 import { useParams } from '@tanstack/react-router';
 import { useGetMaterial } from 'common.services';
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
 import { useEditor } from 'tldraw';
+import { useYjsContext } from '../../../../providers/YjsProvider';
 
 export const useDropdownActions = () => {
   const editor = useEditor();
   const { boardId = 'empty' } = useParams({ strict: false });
   const { data } = useGetMaterial(boardId);
-  const [isReadonly, setIsReadonly] = useState(editor?.getIsReadonly() ?? false);
+  const { isReadonly, toggleReadonly } = useYjsContext();
 
-  const toggleBoardLock = () => {
-    if (!editor) return;
-
-    try {
-      editor.updateInstanceState({ isReadonly: !isReadonly });
-      setIsReadonly((prev) => !prev);
-      toast.success(isReadonly ? 'Доска разблокирована!' : 'Доска заблокирована!');
-    } catch (error) {
-      console.error('Ошибка при блокировке / разблокировке доски:', error);
-      toast.error('Ошибка при блокировке / разблокировке доски');
-    }
-  };
+  useEffect(() => {
+    editor.updateInstanceState({ isReadonly });
+  }, [editor, isReadonly]);
 
   const saveCanvas = async () => {
     if (!editor) return;
@@ -85,5 +77,5 @@ export const useDropdownActions = () => {
     }
   };
 
-  return { toggleBoardLock, saveCanvas, clearBoard, isReadonly };
+  return { toggleReadonly, saveCanvas, clearBoard, isReadonly };
 };
