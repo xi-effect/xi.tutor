@@ -23,6 +23,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
               method: 'GET',
             },
           ],
+          navigateFallbackDenylist: [/^\/deployments\/.*/],
         },
       }),
     ],
