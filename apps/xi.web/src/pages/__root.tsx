@@ -57,14 +57,6 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     // ],
   }),
   beforeLoad: ({ context, location }) => {
-    console.log('Route', context, location);
-
-    if (location.pathname.includes('/deployments/$deploymentId/enable')) {
-      throw redirect({
-        to: '/',
-      });
-    }
-
     if (
       !context.auth.isAuthenticated &&
       !location.pathname.includes('/signin') &&
