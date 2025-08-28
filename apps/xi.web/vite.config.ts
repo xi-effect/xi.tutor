@@ -16,6 +16,13 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         injectRegister: 'auto',
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+          runtimeCaching: [
+            {
+              handler: 'NetworkOnly',
+              urlPattern: /\/deployments\/.*/,
+              method: 'GET',
+            },
+          ],
         },
       }),
     ],
