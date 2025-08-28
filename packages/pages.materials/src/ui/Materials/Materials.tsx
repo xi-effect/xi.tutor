@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { Card } from './Card';
 import { useResponsiveGrid, useInfiniteQuery, useVirtualGrid } from '../../hooks';
 import { NotFoundItems } from '../NotFoundItems';
+import { GridList } from '../GridList';
 
 export const Materials = () => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -17,43 +18,17 @@ export const Materials = () => {
       {notFoundItems ? (
         <NotFoundItems text="Здесь пока нет досок" />
       ) : (
-        <div
-          style={{
-            height: `${rowVirtualizer.getTotalSize()}px`,
-            width: '100%',
-            position: 'relative',
-          }}
-        >
-          {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-            const start = virtualRow.index * colCount;
-            const rowItems = items.slice(start, start + colCount);
-
-            return (
-              <div
-                key={virtualRow.index}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  transform: `translateY(${virtualRow.start}px)`,
-                  display: 'grid',
-                  gap: GAP,
-                  padding: GAP,
-                  paddingLeft: 0,
-                  boxSizing: 'border-box',
-                  gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))`,
-                }}
-              >
-                {rowItems.map((material) => (
-                  <div key={material.id} className="card-item">
-                    <Card {...material} />
-                  </div>
-                ))}
-              </div>
-            );
-          })}
-        </div>
+        <GridList
+          rowVirtualizer={rowVirtualizer}
+          colCount={colCount}
+          gap={GAP}
+          items={items}
+          renderItem={(material) => (
+            <div key={material.id} className="card-item">
+              <Card {...material} />
+            </div>
+          )}
+        />
       )}
     </div>
   );
