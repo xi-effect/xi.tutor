@@ -6,6 +6,7 @@ export const MainPage = () => {
 
   return (
     <div className="flex flex-col pt-1">
+      Test
       <ScrollArea type="always" className="h-[calc(100vh-64px)] w-full">
         <Lessons />
         <Classrooms />
