@@ -17,7 +17,7 @@ export const Files = () => {
   return (
     <div ref={parentRef} className="h-[calc(100vh-158px)] overflow-auto">
       {notFoundItems ? (
-        <NotFoundItems text="Здесь пока нет досок" />
+        <NotFoundItems text="Здесь пока нет файлов" />
       ) : (
         <GridList
           rowVirtualizer={rowVirtualizer}
