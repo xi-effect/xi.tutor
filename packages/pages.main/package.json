@@ -21,7 +21,7 @@
     "pages.classrooms": "*",
     "common.services": "*",
     "@xipkg/button": "3.1.2",
-    "@xipkg/icons": "2.5.0",
+    "@xipkg/icons": "^2.5.2",
     "@xipkg/utils": "1.8.0",
     "@xipkg/scrollarea": "2.2.0",
     "@xipkg/userprofile": "4.0.14",
