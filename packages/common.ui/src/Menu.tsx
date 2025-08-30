@@ -41,22 +41,24 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
 
   return (
     <>
-      <div className="bg-gray-0 border-gray-10 fixed bottom-0 mb-6 flex flex-col gap-6 rounded-2xl border p-4 sm:w-[400px]">
+      <div className="bg-gray-0 border-gray-10 fixed bottom-0 mb-6 flex flex-col gap-6 rounded-2xl border-2 p-4 sm:w-[400px]">
         <Button
           variant="ghost"
-          className="hover:bg-gray-0 bg-gray-0 absolute top-0 right-0 hover:cursor-pointer"
+          size={'s'}
+          className="hover:bg-gray-0 bg-gray-0 absolute top-1 right-1 hover:cursor-pointer"
         >
           <Close className="fill-gray-60 h-4 w-4" />
         </Button>
         <div>
           <div className="h-8">
             <span className="text-xl font-semibold text-gray-100">
-              Добро пожаловать в xi.effect! 😊
+              Добро пожаловать в Sovlium! 😊
             </span>
           </div>
           <div className="h-10">
-            <span className="text-gray-80 text-[14px] font-normal">
-              Хотите узнать о возможностях платформы?<br></br>
+            <span className="text-gray-80 text-sm font-normal antialiased">
+              Хотите узнать о возможностях платформы?
+              <br />
               Вы сможете вернуться к обучению в любой момент.
             </span>
           </div>

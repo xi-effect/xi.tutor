@@ -24,7 +24,7 @@
 
 .my-custom-popover-class .driver-popover-prev-btn {
   border-radius: 6px;
-  padding: 5px 16px;
+  padding: 4px 16px;
   background-color: var(--xi-gray-0);
   border-color: var(--xi-gray-30);
   color: var(--xi-gray-100);
