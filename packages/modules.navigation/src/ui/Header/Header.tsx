@@ -95,7 +95,7 @@ export const Header = ({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" size="icon">
-              <UserProfile userId={user?.id || 0} size="m" withOutText />
+              <UserProfile id="userprofile" userId={user?.id || 0} size="m" withOutText />
             </Button>
           </DropdownMenuTrigger>
 
