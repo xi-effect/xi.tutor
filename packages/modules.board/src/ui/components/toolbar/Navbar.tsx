@@ -3,11 +3,11 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg
 import { track, useEditor } from 'tldraw';
 import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
 import { UndoRedo } from './UndoRedo';
-import { PenPopup } from '../popups/Pen';
 import { useTldrawStore } from '../../../store';
 import { useTldrawStyles } from '../../../hooks';
 import { NavbarButton } from '../shared';
-import { StickerPopup } from '../popups';
+import { PenPopup, StickerPopup } from '../popups';
+import { ShapesPopup } from '../popups/Shapes';
 
 // Маппинг инструментов Kanva на Tldraw
 const toolMapping: Record<string, string> = {
@@ -15,7 +15,7 @@ const toolMapping: Record<string, string> = {
   hand: 'hand',
   pen: 'draw',
   text: 'text',
-  rectangle: 'rectangle',
+  geo: 'geo',
   arrow: 'arrow',
   eraser: 'eraser',
   sticker: 'note', // Используем note как аналог стикера
@@ -36,38 +36,36 @@ export const Navbar = track(
   }) => {
     const { pencilColor, pencilThickness, pencilOpacity, stickerColor } = useTldrawStore();
     const { resetToDefaults, setColor, setThickness, setOpacity } = useTldrawStyles();
-
-    const [isTooltipOpen] = React.useState(false);
-    const [penPopupOpen, setPenPopupOpen] = React.useState(false);
-    const [stickerPopupOpen, setStickerPopupOpen] = React.useState(false);
+    const [activePopup, setActivePopup] = React.useState<string | null>(null);
     const editor = useEditor();
 
-    const handleSelectTool = (toolName: string) => {
-      // Очищаем выделение перед сменой инструмента
-      editor.selectNone();
+    const isPopupOpen = (popup: string) => activePopup === popup;
+    const handlePopupToggle = (popup: string, open: boolean) => {
+      setActivePopup(open ? popup : null);
 
-      // Закрываем Popover стилей при переключении на любой инструмент
-      if (toolName !== 'pen') {
+      if (!open) {
         resetToDefaults();
-        setPenPopupOpen(false);
       }
+    };
 
-      const tldrawTool = toolMapping[toolName];
-      if (tldrawTool) {
-        editor.setCurrentTool(tldrawTool);
+    const handleSelectTool = (toolName: string) => {
+      editor.selectNone();
+      setActivePopup(null);
+
+      const mappedTool = toolMapping[toolName];
+      if (mappedTool) {
+        editor.setCurrentTool(mappedTool);
       }
     };
 
     const getCurrentTool = () => {
       const currentToolId = editor.getCurrentToolId();
-
-      // Обратный маппинг для определения активного инструмента
       const reverseMapping: Record<string, string> = {
         select: 'select',
         hand: 'hand',
         draw: 'pen',
         text: 'text',
-        rectangle: 'rectangle',
+        geo: 'geo',
         arrow: 'arrow',
         eraser: 'eraser',
         note: 'sticker',
@@ -78,32 +76,6 @@ export const Navbar = track(
     };
 
     const currentTool = getCurrentTool();
-
-    // Обработчик для закрытия Popover только при переключении инструмента
-    const handlePenPopupOpenChange = (open: boolean) => {
-      if (open) {
-        setColor(pencilColor);
-        setThickness(pencilThickness);
-        setOpacity(pencilOpacity);
-      }
-
-      // Сбрасываем настройки при закрытии Popover
-      if (!open) {
-        resetToDefaults();
-      }
-
-      setPenPopupOpen(open);
-    };
-
-    const handleStickerPopupOpenChange = (open: boolean) => {
-      if (open) {
-        setColor(stickerColor);
-      }
-      if (!open) {
-        resetToDefaults();
-      }
-      setStickerPopupOpen(open);
-    };
 
     return (
       <div className="pointer-events-none absolute inset-0">
@@ -117,13 +89,19 @@ export const Navbar = track(
                 {navBarElements.map((item: NavbarElementT) => {
                   const isActive = item.action === currentTool;
 
-                  // Для инструмента "pen" используем StylePopupContent
                   if (item.action === 'pen') {
                     return (
                       <PenPopup
                         key={item.action}
-                        open={penPopupOpen}
-                        onOpenChange={handlePenPopupOpenChange}
+                        open={isPopupOpen('pen')}
+                        onOpenChange={(open) => {
+                          if (open) {
+                            setColor(pencilColor);
+                            setThickness(pencilThickness);
+                            setOpacity(pencilOpacity);
+                          }
+                          handlePopupToggle('pen', open);
+                        }}
                       >
                         <NavbarButton
                           icon={item.icon}
@@ -135,12 +113,34 @@ export const Navbar = track(
                     );
                   }
 
+                  if (item.action === 'geo') {
+                    return (
+                      <ShapesPopup
+                        key={item.action}
+                        open={isPopupOpen('shapes')}
+                        onOpenChange={(open) => handlePopupToggle('shapes', open)}
+                      >
+                        <NavbarButton
+                          icon={item.icon}
+                          title={item.title}
+                          isActive={isActive}
+                          onClick={() => handleSelectTool(item.action)}
+                        />
+                      </ShapesPopup>
+                    );
+                  }
+
                   if (item.action === 'sticker') {
                     return (
                       <StickerPopup
                         key={item.action}
-                        open={stickerPopupOpen}
-                        onOpenChange={handleStickerPopupOpenChange}
+                        open={isPopupOpen('sticker')}
+                        onOpenChange={(open) => {
+                          if (open) {
+                            setColor(stickerColor);
+                          }
+                          handlePopupToggle('sticker', open);
+                        }}
                         popupItems={item.menuPopupContent}
                       >
                         <NavbarButton
@@ -153,19 +153,16 @@ export const Navbar = track(
                     );
                   }
 
-                  // Для остальных инструментов показываем обычную кнопку с тултипом
                   return (
                     <TooltipProvider key={item.action}>
-                      <Tooltip open={item?.hasAToolTip && isTooltipOpen}>
+                      <Tooltip>
                         <div className="pointer-events-auto">
                           <TooltipTrigger className="rounded-lg" asChild>
                             <button
                               type="button"
                               className={`pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${isActive ? 'bg-brand-0' : 'bg-gray-0'}`}
                               data-isactive={isActive}
-                              onClick={() => {
-                                handleSelectTool(item.action);
-                              }}
+                              onClick={() => handleSelectTool(item.action)}
                             >
                               {item.icon ? item.icon : item.title}
                             </button>
