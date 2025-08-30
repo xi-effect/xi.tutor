@@ -59,10 +59,10 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
     <Modal open={open} onOpenChange={handleCloseModal}>
       <ModalContent className="max-w-[800px] md:w-[800px]">
         <ModalCloseButton>
-          <Close className="fill-gray-80 sm:fill-gray-0" />
+          <Close className="fill-gray-80 sm:fill-gray-0 dark:fill-gray-100" />
         </ModalCloseButton>
         <ModalHeader className="border-gray-20 border-b">
-          <ModalTitle>Создание счета на оплату</ModalTitle>
+          <ModalTitle className="dark:text-gray-100">Создание счета на оплату</ModalTitle>
           <ModalDescription className="sr-only">Создание счета на оплату</ModalDescription>
         </ModalHeader>
         <Form {...form}>
@@ -108,11 +108,11 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                       Добавить строку
                     </Button>
                   </div>
-                  <span className="text-right">Итого:</span>
+                  <span className="text-right dark:text-gray-100">Итого:</span>
                   <div className="w-[12px]" />
-                  <span className="text-right">{totalLessons}</span>
+                  <span className="text-right dark:text-gray-100">{totalLessons}</span>
                   <div className="w-[12px]" />
-                  <span className="text-right">{totalInvoicePrice} ₽</span>
+                  <span className="text-right dark:text-gray-100">{totalInvoicePrice} ₽</span>
                   <div className="ml-2 h-[24px] w-[24px]" />
                 </div>
               </div>

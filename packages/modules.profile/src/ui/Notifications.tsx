@@ -14,7 +14,7 @@ export const Notifications = () => {
 
   return (
     <>
-      {!isMobile && <h1 className="mb-4 text-3xl font-semibold">Уведомления</h1>}
+      {!isMobile && <h1 className="mb-4 text-3xl font-semibold dark:text-gray-100">Уведомления</h1>}
 
       <div className="flex flex-col gap-4">
         <div className="border-gray-30 flex w-full flex-col gap-2 rounded-2xl border p-1">
@@ -28,7 +28,7 @@ export const Notifications = () => {
 
             <div className="flex w-full flex-col items-center gap-1 sm:flex-row">
               <div className="items-star flex flex-col gap-1">
-                <span className="w-fit font-semibold">Telegram</span>
+                <span className="w-fit font-semibold dark:text-gray-100">Telegram</span>
                 {tgConnectionStatus
                   .filter(({ condition }) => condition)
                   .map(({ text, color }) => (
@@ -48,8 +48,8 @@ export const Notifications = () => {
             <MailRounded className="fill-brand-80" />
 
             <div className="items-star flex flex-col">
-              <span className="w-fit font-semibold">Электронная почта</span>
-              <span className="text-gray-80 font-inter text-xs font-normal">
+              <span className="w-fit font-semibold dark:text-gray-100">Электронная почта</span>
+              <span className="text-gray-80 dark:text-gray-80 font-inter text-xs font-normal">
                 {user?.email || 'example@example.com'}
               </span>
             </div>

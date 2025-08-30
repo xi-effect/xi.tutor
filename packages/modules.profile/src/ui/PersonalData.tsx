@@ -58,7 +58,9 @@ export const PersonalData = () => {
 
   return (
     <>
-      {!isMobile && <span className="text-3xl font-semibold">Личные данные</span>}
+      {!isMobile && (
+        <span className="text-3xl font-semibold dark:text-gray-100">Личные данные</span>
+      )}
       <UserPreview className="mt-4" />
       <Form {...form}>
         <form

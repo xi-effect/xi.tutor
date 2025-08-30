@@ -40,13 +40,13 @@ export const Information = () => {
               name="status"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel className="text-m-base">Статус занятий</FormLabel>
+                  <FormLabel className="text-m-base dark:text-gray-100">Статус занятий</FormLabel>
                   <FormControl>
                     <Select onValueChange={field.onChange}>
-                      <SelectTrigger className="h-[32px] w-full">
+                      <SelectTrigger className="dark:text-gray-80 h-[32px] w-full">
                         <SelectValue className="w-full" placeholder="Статус занятий" />
                       </SelectTrigger>
-                      <SelectContent className="w-full">
+                      <SelectContent className="dark:text-gray-80 w-full">
                         <SelectItem value="active">Активные</SelectItem>
                         <SelectItem value="completed">Завершённые</SelectItem>
                         <SelectItem value="planned">Запланированные</SelectItem>

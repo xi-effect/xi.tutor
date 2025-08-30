@@ -23,7 +23,7 @@ export const StudentSelector = ({ control }: StudentSelectorProps) => {
               </SelectTrigger>
               <SelectContent className="w-full">
                 {students.map((student) => (
-                  <SelectItem key={student.id} value={student.id}>
+                  <SelectItem key={student.id} value={student.id} className="dark:text-gray-100">
                     {student.name}
                   </SelectItem>
                 ))}

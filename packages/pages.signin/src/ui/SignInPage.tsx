@@ -47,14 +47,16 @@ export const SignInPage = () => {
   };
 
   return (
-    <div className="xs:h-screen flex h-[100dvh] w-screen flex-col flex-wrap content-center justify-center p-1">
-      <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex h-fit min-h-[600px] w-full max-w-[420px] p-8">
+    <div className="xs:h-screen dark:bg-gray-0 flex h-[100dvh] w-screen flex-col flex-wrap content-center justify-center p-1">
+      <div className="xs:border xs:border-gray-10 xs:rounded-2xl dark:bg-gray-5 flex h-fit min-h-[600px] w-full max-w-[420px] p-8">
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-col gap-4">
             <div className="self-center">
               <Logo height={22} width={180} />
             </div>
-            <h1 className="flex justify-center text-2xl font-semibold">{t('sign_in')}</h1>
+            <h1 className="flex justify-center text-2xl font-semibold dark:text-gray-100">
+              {t('sign_in')}
+            </h1>
 
             {isInviteRedirect && (
               <div className="text-brand-100 bg-brand-0 rounded-2xl p-4 text-center text-sm whitespace-pre-line">
@@ -69,7 +71,13 @@ export const SignInPage = () => {
                 <FormItem className="pt-4">
                   <FormLabel>{t('email')}</FormLabel>
                   <FormControl>
-                    <Input error={!!errors?.email} autoComplete="on" type="email" {...field} />
+                    <Input
+                      error={!!errors?.email}
+                      autoComplete="on"
+                      type="email"
+                      {...field}
+                      className=""
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -98,6 +106,7 @@ export const SignInPage = () => {
                       afterProps={{
                         onClick: changePasswordShow,
                       }}
+                      className=""
                       {...field}
                     />
                   </FormControl>
