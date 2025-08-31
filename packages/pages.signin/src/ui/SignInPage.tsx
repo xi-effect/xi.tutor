@@ -71,13 +71,7 @@ export const SignInPage = () => {
                 <FormItem className="pt-4">
                   <FormLabel>{t('email')}</FormLabel>
                   <FormControl>
-                    <Input
-                      error={!!errors?.email}
-                      autoComplete="on"
-                      type="email"
-                      {...field}
-                      className=""
-                    />
+                    <Input error={!!errors?.email} autoComplete="on" type="email" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -106,7 +100,6 @@ export const SignInPage = () => {
                       afterProps={{
                         onClick: changePasswordShow,
                       }}
-                      className=""
                       {...field}
                     />
                   </FormControl>
