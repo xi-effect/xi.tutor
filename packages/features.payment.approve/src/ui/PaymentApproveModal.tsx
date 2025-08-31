@@ -77,7 +77,7 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                 </div>
               </div>
               <div className="flex flex-col gap-2">
-                <span className="text-m-base">Тип оплаты</span>
+                <span className="text-m-base dark:text-gray-100">Тип оплаты</span>
                 <FormField
                   control={form.control}
                   name="typePayment"
@@ -93,7 +93,7 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                           <RadioItem
                             value="cash"
                             id="cash"
-                            className="data-[state=checked]:border-brand-100 data-[state=checked]:bg-brand-100 text-gray-0 border-gray-30 h-6 w-6 [&_span_svg]:h-3 [&_span_svg]:w-3"
+                            className="data-[state=checked]:border-brand-100 data-[state=checked]:bg-brand-100 text-gray-0 border-gray-30 dark:bg-gray-10 h-6 w-6 [&_span_svg]:h-3 [&_span_svg]:w-3"
                           />
                           <label htmlFor="cash" className="text-gray-100">
                             Наличные
@@ -103,7 +103,7 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                           <RadioItem
                             value="transfer"
                             id="transfer"
-                            className="data-[state=checked]:bg-brand-100 data-[state=checked]:border-brand-100 text-gray-0 border-gray-30 h-6 w-6 [&>span>svg]:h-3 [&>span>svg]:w-3"
+                            className="data-[state=checked]:bg-brand-100 data-[state=checked]:border-brand-100 text-gray-0 dark:bg-gray-10 border-gray-30 h-6 w-6 [&>span>svg]:h-3 [&>span>svg]:w-3"
                           />
                           <label htmlFor="transfer" className="text-gray-100">
                             Перевод

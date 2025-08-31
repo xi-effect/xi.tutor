@@ -43,7 +43,9 @@ export const PieCardChart = ({
   return (
     <div className="flex flex-col rounded-lg">
       <div className="flex space-y-1 p-4">
-        <div className="text-primary-100 text-xl font-semibold tracking-tight">{pieCardTitle}</div>
+        <div className="text-primary-100 text-xl font-semibold tracking-tight dark:text-gray-100">
+          {pieCardTitle}
+        </div>
       </div>
       <div className="flex-1 p-4 pt-0 pb-0">
         <ChartContainer
@@ -91,7 +93,7 @@ export const PieCardChart = ({
                     style={{ backgroundColor: 'color' in config ? config.color : undefined }}
                   />
                 </div>
-                <span>{config.label}</span>
+                <span className="dark:text-gray-100">{config.label}</span>
               </div>
             ))}
         </div>

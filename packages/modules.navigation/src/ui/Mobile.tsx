@@ -29,7 +29,7 @@ export const Mobile = ({
         onSlideChange={onSlideChange}
       >
         <SwiperSlide>
-          <div className="h-[calc(100dvh-64px)] p-4">
+          <div className="dark:bg-gray-0 h-[calc(100dvh-64px)] p-4">
             <Sidebar collapsible="none" variant="inset" className="w-full">
               <SideBarItems swiperRef={swiperRef} />
             </Sidebar>
