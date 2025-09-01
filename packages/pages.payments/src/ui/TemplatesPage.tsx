@@ -2,7 +2,7 @@ import { Button } from '@xipkg/button';
 import { Plus } from '@xipkg/icons';
 import { TemplatesGrid } from './TemplatesGrid';
 
-export const ClassroomsPage = () => {
+export const TemplatesPage = () => {
   return (
     <div className="flex flex-col justify-between gap-6 pr-0 pl-4">
       <div className="flex flex-col gap-6 max-md:gap-4">

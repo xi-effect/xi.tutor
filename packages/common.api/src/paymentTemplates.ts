@@ -12,27 +12,27 @@ enum PaymentTemplatesQueryKey {
 const paymentTemplatesApiConfig = {
   [PaymentTemplatesQueryKey.AllTemplates]: {
     getUrl: () =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/invoice-item-templates/`,
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/invoice-item-templates/`,
     method: HttpMethod.GET,
   },
   [PaymentTemplatesQueryKey.AddTemplate]: {
     getUrl: () =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/invoice-item-templates/`,
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/invoice-item-templates/`,
     method: HttpMethod.POST,
   },
   [PaymentTemplatesQueryKey.DeleteTemplate]: {
-    getUrl: (invoice_item_template_id: number) =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/invoice-item-templates/${invoice_item_template_id}/`,
+    getUrl: (invoiceItemTemplateId: number) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/invoice-item-templates/${invoiceItemTemplateId}/`,
     method: HttpMethod.DELETE,
   },
   [PaymentTemplatesQueryKey.GetTemplate]: {
-    getUrl: () =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/invoice-item-templates/{invoice_item_template_id}/`,
+    getUrl: (invoiceItemTemplateId: number) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/invoice-item-templates/${invoiceItemTemplateId}/`,
     method: HttpMethod.GET,
   },
   [PaymentTemplatesQueryKey.UpdateTemplate]: {
-    getUrl: (invoice_item_template_id: number) =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/invoice-item-templates/${invoice_item_template_id}/`,
+    getUrl: (invoiceItemTemplateId: number) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/invoice-item-templates/${invoiceItemTemplateId}/`,
     method: HttpMethod.PATCH,
   },
 };

@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Button } from '@xipkg/button';
 import { MoreVert } from '@xipkg/icons';
 import { TemplateT } from 'common.types';
-// import { useEditTemplate } from 'common.services';
 import {
   DropdownMenu,
   DropdownMenuContent,
