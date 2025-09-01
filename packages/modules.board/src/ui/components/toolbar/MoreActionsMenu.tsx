@@ -6,10 +6,13 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { MenuDots } from '@xipkg/icons';
-import { useState } from 'react';
+import { useEditor } from 'tldraw';
 
 export const MoreActionsMenu = () => {
-  const [isBlocked, setIsBlocked] = useState(false); // просто для наглядности добавлено
+  const editor = useEditor();
+  const selectedShapes = editor.getSelectedShapes();
+  const isLocked = selectedShapes.every((shape) => shape.isLocked);
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -23,8 +26,14 @@ export const MoreActionsMenu = () => {
         sideOffset={8}
         className="border-gray-10 bg-gray-0 fle w-[180px] flex-col gap-2 rounded-xl border p-1"
       >
-        <DropdownMenuItem onClick={() => setIsBlocked(!isBlocked)} className="rounded-lg px-3">
-          {isBlocked ? 'Разблокировать' : 'Заблокировать'}
+        <DropdownMenuItem
+          onClick={() => {
+            const selectedIds = editor.getSelectedShapeIds();
+            editor.toggleLock(selectedIds);
+          }}
+          className="rounded-lg px-3"
+        >
+          {isLocked ? 'Разблокировать' : 'Заблокировать'}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
