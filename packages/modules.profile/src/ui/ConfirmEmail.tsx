@@ -63,7 +63,7 @@ export const ConfirmEmail = () => {
   };
 
   return (
-    <div className="bg-red-0 flex w-full flex-row justify-between rounded-2xl text-red-100">
+    <div className="bg-red-0 dark:bg-red-40 flex w-full flex-row justify-between rounded-2xl text-red-100">
       <div className="flex flex-col p-4 md:max-w-lg">
         <span className="mb-1 text-sm font-semibold">Почта не подтверждена</span>
         <span className="mb-4 text-xs font-normal">

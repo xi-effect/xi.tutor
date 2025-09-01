@@ -18,8 +18,8 @@ export const YearCalendar: FC<CalendarProps<'year'>> = ({ days }) => {
     <div className="grid grid-cols-4 gap-6">
       {days.map((month, monthIndex) => (
         <div key={MONTHS[monthIndex]} className="p-4">
-          <div className="mb-2 text-sm font-semibold">{MONTHS[monthIndex]}</div>
-          <div className="text-muted-foreground mb-1 grid grid-cols-7 text-center text-xs">
+          <div className="mb-2 text-sm font-semibold dark:text-gray-100">{MONTHS[monthIndex]}</div>
+          <div className="text-muted-foreground dark:text-gray-80 mb-1 grid grid-cols-7 text-center text-xs">
             {WEEK_DAYS.map((day) => (
               <div key={day}>{day}</div>
             ))}
@@ -32,10 +32,10 @@ export const YearCalendar: FC<CalendarProps<'year'>> = ({ days }) => {
                 <div
                   key={day.toISOString()}
                   className={cn(
-                    'mx-auto flex h-6 w-6 items-center justify-center rounded-full text-center text-xs',
-                    isOutOfMonth && 'text-gray-30',
-                    weekend && 'text-red-80',
-                    weekend && isOutOfMonth && 'text-red-60',
+                    'mx-auto flex h-6 w-6 items-center justify-center rounded-full text-center text-xs dark:text-gray-100',
+                    isOutOfMonth && 'text-gray-30 dark:text-gray-30',
+                    weekend && 'text-red-80 dark:text-red-100',
+                    weekend && isOutOfMonth && 'text-red-60 dark:text-red-80',
                   )}
                 >
                   {`${format(day, 'd')}`}

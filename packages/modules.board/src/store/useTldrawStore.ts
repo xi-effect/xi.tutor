@@ -15,6 +15,8 @@ interface TldrawState {
   setIsEditingText: (value: boolean) => void;
   editingElementId: string | null;
   setEditingElementId: (id: string | null) => void;
+  stickerColor: string;
+  setStickerColor: (color: string) => void;
   // Настройки карандаша
   pencilColor: string;
   setPencilColor: (color: string) => void;
@@ -53,6 +55,8 @@ export const useTldrawStore = create<TldrawState>()(
         set(() => ({ pencilThickness: thickness })),
       pencilOpacity: 100,
       setPencilOpacity: (opacity: number) => set(() => ({ pencilOpacity: opacity })),
+      stickerColor: 'grey',
+      setStickerColor: (color: string) => set(() => ({ stickerColor: color })),
     }),
     { name: 'tldraw-storage' },
   ),

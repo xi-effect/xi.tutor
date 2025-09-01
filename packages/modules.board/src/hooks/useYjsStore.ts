@@ -1,29 +1,29 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { useEffect, useMemo, useState, useRef } from 'react';
-import * as Y from 'yjs';
-import { YKeyValue } from 'y-utility/y-keyvalue';
+import { HocuspocusProvider } from '@hocuspocus/provider';
+import { useCurrentUser } from 'common.services';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import {
-  InstancePresenceRecordType,
-  TLAnyShapeUtilConstructor,
-  TLInstancePresence,
-  TLRecord,
-  TLStore,
-  TLStoreWithStatus,
   computed,
   createPresenceStateDerivation,
   createTLStore,
   defaultShapeUtils,
   defaultUserPreferences,
   getUserPreferences,
-  setUserPreferences,
+  InstancePresenceRecordType,
   react,
   SerializedSchema,
+  setUserPreferences,
+  TLAnyShapeUtilConstructor,
+  TLInstancePresence,
+  TLRecord,
+  TLStore,
+  TLStoreWithStatus,
 } from 'tldraw';
-import { HocuspocusProvider } from '@hocuspocus/provider';
-import { toast } from 'sonner';
-import { useCurrentUser } from 'common.services';
+import { YKeyValue } from 'y-utility/y-keyvalue';
+import * as Y from 'yjs';
 
 /* ---------- Цвет по ID ---------- */
 function generateUserColor(userId: string): string {
@@ -39,15 +39,17 @@ type UseYjsStoreArgs = Partial<{
   shapeUtils: TLAnyShapeUtilConstructor[];
 }>;
 
-type ExtendedStoreStatus = {
+export type ExtendedStoreStatus = {
   store?: TLStore;
   status: TLStoreWithStatus['status'];
   error?: Error;
   connectionStatus?: 'online' | 'offline';
-  undo?: () => void;
-  redo?: () => void;
-  canUndo?: boolean;
-  canRedo?: boolean;
+  undo: () => void;
+  redo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
+  isReadonly: boolean;
+  toggleReadonly: () => void;
 };
 
 export function useYjsStore({
@@ -67,8 +69,11 @@ export function useYjsStore({
   /* ---------- Undo/Redo refs & flags ---------- */
   const undoManagerRef = useRef<Y.UndoManager | null>(null);
   const suppressSyncRef = useRef(false); // защита от эха
-  const [canUndo, setCanUndo] = useState(false);
-  const [canRedo, setCanRedo] = useState(false);
+  const [canUndo, setCanUndo] = useState<boolean>(false);
+  const [canRedo, setCanRedo] = useState<boolean>(false);
+
+  /* ---------- Readonly state ---------- */
+  const [isReadonly, setIsReadonly] = useState<boolean>(false);
 
   /* ---------- Статус ---------- */
   const [storeWithStatus, setStoreWithStatus] = useState<TLStoreWithStatus>({
@@ -76,11 +81,12 @@ export function useYjsStore({
   });
 
   /* ---------- Yjs структуры + провайдер ---------- */
-  const { yDoc, yStore, meta, room } = useMemo(() => {
+  const { yDoc, yStore, meta, room, readonlyMap } = useMemo(() => {
     const yDoc = new Y.Doc({ gc: true });
     const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${roomId}`);
     const yStore = new YKeyValue(yArr);
     const meta = yDoc.getMap<SerializedSchema>('meta');
+    const readonlyMap = yDoc.getMap<boolean>('readonly');
 
     const room = new HocuspocusProvider({
       url: hostUrl,
@@ -97,7 +103,7 @@ export function useYjsStore({
       },
     });
 
-    return { yDoc, yStore, meta, room };
+    return { yDoc, yStore, meta, room, readonlyMap };
   }, [hostUrl, roomId]);
 
   /* ---------- Главный эффект ---------- */
@@ -161,6 +167,15 @@ export function useYjsStore({
 
       yStore.on('change', handleChange);
       unsubs.push(() => yStore.off('change', handleChange));
+
+      /* ========== READONLY ========== */
+      const getReadonlyValue = () => readonlyMap.get('isReadonly') ?? false;
+      const handleReadonlyChange = () => setIsReadonly(getReadonlyValue());
+
+      readonlyMap.observe(handleReadonlyChange);
+      unsubs.push(() => readonlyMap.unobserve(handleReadonlyChange));
+
+      setIsReadonly(getReadonlyValue());
 
       /* ========== AWARENESS ========== */
       if (!room.awareness) return;
@@ -325,7 +340,7 @@ export function useYjsStore({
     return () => {
       unsubs.forEach((fn) => fn());
     };
-  }, [room, yDoc, store, yStore, meta, currentUser]);
+  }, [room, yDoc, store, yStore, meta, readonlyMap, currentUser]);
 
   /* ---------- Public Undo/Redo API ---------- */
   function undo() {
@@ -354,6 +369,19 @@ export function useYjsStore({
     setCanRedo(um.canRedo());
   }
 
+  /* ---------- Public Readonly API ---------- */
+  function toggleReadonly() {
+    const newReadonly = !isReadonly;
+
+    setIsReadonly(newReadonly);
+
+    yDoc.transact(() => {
+      readonlyMap.set('isReadonly', newReadonly);
+    }, 'readonly-toggle');
+
+    toast.success(newReadonly ? 'Доска заблокирована!' : 'Доска разблокирована!');
+  }
+
   return {
     ...storeWithStatus,
     connectionStatus: (storeWithStatus as any).connectionStatus,
@@ -361,5 +389,7 @@ export function useYjsStore({
     redo,
     canUndo,
     canRedo,
+    toggleReadonly,
+    isReadonly,
   };
 }

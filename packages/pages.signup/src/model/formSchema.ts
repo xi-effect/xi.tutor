@@ -27,14 +27,14 @@ export const useFormSchema = () => {
         }),
       email: z
         .string({
-          required_error: t('required'),
+          required_error: t('validation.required'),
         })
         .email({
-          message: t('wrong_format'),
+          message: t('validation.wrong_format'),
         }),
       password: z
         .string({
-          required_error: t('required'),
+          required_error: t('validation.required'),
         })
         .min(passwordMinLength, {
           message: `${t('validation.minLength')}${t('validation.symbols', { count: passwordMinLength })}`,

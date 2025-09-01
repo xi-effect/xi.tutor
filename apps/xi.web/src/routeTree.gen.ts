@@ -11,12 +11,12 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './pages/__root'
-import { Route as AboutRouteImport } from './pages/about'
 import { Route as appLayoutRouteImport } from './pages/(app)/_layout'
 import { Route as authSignupIndexRouteImport } from './pages/(auth)/signup/index'
 import { Route as authSigninIndexRouteImport } from './pages/(auth)/signin/index'
 import { Route as authResetPasswordIndexRouteImport } from './pages/(auth)/reset-password/index'
 import { Route as appLayoutIndexRouteImport } from './pages/(app)/_layout/index'
+import { Route as DeploymentsDeploymentIdEnableRouteImport } from './pages/deployments/$deploymentId.enable'
 import { Route as authResetPasswordResetTokenRouteImport } from './pages/(auth)/reset-password/$resetToken'
 import { Route as appWelcomeLayoutRouteImport } from './pages/(app)/welcome/_layout'
 import { Route as appInviteInviteIdRouteImport } from './pages/(app)/invite/$inviteId'
@@ -39,11 +39,6 @@ const appWelcomeRouteImport = createFileRoute('/(app)/welcome')()
 
 const appRoute = appRouteImport.update({
   id: '/(app)',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AboutRoute = AboutRouteImport.update({
-  id: '/about',
-  path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
 const appWelcomeRoute = appWelcomeRouteImport.update({
@@ -75,6 +70,12 @@ const appLayoutIndexRoute = appLayoutIndexRouteImport.update({
   path: '/',
   getParentRoute: () => appLayoutRoute,
 } as any)
+const DeploymentsDeploymentIdEnableRoute =
+  DeploymentsDeploymentIdEnableRouteImport.update({
+    id: '/deployments/$deploymentId/enable',
+    path: '/deployments/$deploymentId/enable',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const authResetPasswordResetTokenRoute =
   authResetPasswordResetTokenRouteImport.update({
     id: '/(auth)/reset-password/$resetToken',
@@ -160,11 +161,11 @@ const appLayoutBoardBoardIdRoute = appLayoutBoardBoardIdRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/about': typeof AboutRoute
   '/': typeof appLayoutIndexRoute
   '/invite/$inviteId': typeof appInviteInviteIdRoute
   '/welcome': typeof appWelcomeLayoutRoute
   '/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute
+  '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
   '/reset-password': typeof authResetPasswordIndexRoute
   '/signin': typeof authSigninIndexRoute
   '/signup': typeof authSignupIndexRoute
@@ -183,10 +184,10 @@ export interface FileRoutesByFullPath {
   '/welcome/user': typeof appWelcomeUserIndexRoute
 }
 export interface FileRoutesByTo {
-  '/about': typeof AboutRoute
   '/invite/$inviteId': typeof appInviteInviteIdRoute
   '/welcome': typeof appWelcomeLayoutRoute
   '/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute
+  '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
   '/': typeof appLayoutIndexRoute
   '/reset-password': typeof authResetPasswordIndexRoute
   '/signin': typeof authSigninIndexRoute
@@ -207,13 +208,13 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/about': typeof AboutRoute
   '/(app)': typeof appRouteWithChildren
   '/(app)/_layout': typeof appLayoutRouteWithChildren
   '/(app)/invite/$inviteId': typeof appInviteInviteIdRoute
   '/(app)/welcome': typeof appWelcomeRouteWithChildren
   '/(app)/welcome/_layout': typeof appWelcomeLayoutRoute
   '/(auth)/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute
+  '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
   '/(app)/_layout/': typeof appLayoutIndexRoute
   '/(auth)/reset-password/': typeof authResetPasswordIndexRoute
   '/(auth)/signin/': typeof authSigninIndexRoute
@@ -235,11 +236,11 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/about'
     | '/'
     | '/invite/$inviteId'
     | '/welcome'
     | '/reset-password/$resetToken'
+    | '/deployments/$deploymentId/enable'
     | '/reset-password'
     | '/signin'
     | '/signup'
@@ -258,10 +259,10 @@ export interface FileRouteTypes {
     | '/welcome/user'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/about'
     | '/invite/$inviteId'
     | '/welcome'
     | '/reset-password/$resetToken'
+    | '/deployments/$deploymentId/enable'
     | '/'
     | '/reset-password'
     | '/signin'
@@ -281,13 +282,13 @@ export interface FileRouteTypes {
     | '/welcome/user'
   id:
     | '__root__'
-    | '/about'
     | '/(app)'
     | '/(app)/_layout'
     | '/(app)/invite/$inviteId'
     | '/(app)/welcome'
     | '/(app)/welcome/_layout'
     | '/(auth)/reset-password/$resetToken'
+    | '/deployments/$deploymentId/enable'
     | '/(app)/_layout/'
     | '/(auth)/reset-password/'
     | '/(auth)/signin/'
@@ -308,9 +309,9 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  AboutRoute: typeof AboutRoute
   appRoute: typeof appRouteWithChildren
   authResetPasswordResetTokenRoute: typeof authResetPasswordResetTokenRoute
+  DeploymentsDeploymentIdEnableRoute: typeof DeploymentsDeploymentIdEnableRoute
   authResetPasswordIndexRoute: typeof authResetPasswordIndexRoute
   authSigninIndexRoute: typeof authSigninIndexRoute
   authSignupIndexRoute: typeof authSignupIndexRoute
@@ -323,13 +324,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof appRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(app)/welcome': {
@@ -373,6 +367,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof appLayoutIndexRouteImport
       parentRoute: typeof appLayoutRoute
+    }
+    '/deployments/$deploymentId/enable': {
+      id: '/deployments/$deploymentId/enable'
+      path: '/deployments/$deploymentId/enable'
+      fullPath: '/deployments/$deploymentId/enable'
+      preLoaderRoute: typeof DeploymentsDeploymentIdEnableRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/(auth)/reset-password/$resetToken': {
       id: '/(auth)/reset-password/$resetToken'
@@ -554,9 +555,9 @@ const appRouteChildren: appRouteChildren = {
 const appRouteWithChildren = appRoute._addFileChildren(appRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
-  AboutRoute: AboutRoute,
   appRoute: appRouteWithChildren,
   authResetPasswordResetTokenRoute: authResetPasswordResetTokenRoute,
+  DeploymentsDeploymentIdEnableRoute: DeploymentsDeploymentIdEnableRoute,
   authResetPasswordIndexRoute: authResetPasswordIndexRoute,
   authSigninIndexRoute: authSigninIndexRoute,
   authSignupIndexRoute: authSignupIndexRoute,
