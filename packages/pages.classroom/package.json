@@ -22,7 +22,7 @@
     "@xipkg/scrollarea": "2.2.0",
     "@xipkg/tabs": "2.1.0",
     "@xipkg/input": "2.2.9",
-    "@xipkg/form": "4.2.0",
+    "@xipkg/form": "4.2.1",
     "modules.editor": "*",
     "pages.payments": "*",
     "pages.materials": "*",

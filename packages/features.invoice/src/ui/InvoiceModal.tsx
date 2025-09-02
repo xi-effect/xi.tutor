@@ -7,7 +7,7 @@ import {
   ModalCloseButton,
   ModalDescription,
 } from '@xipkg/modal';
-import { Form, useFieldArray } from '@xipkg/form';
+import { Form } from '@xipkg/form';
 import { Button } from '@xipkg/button';
 import { Close } from '@xipkg/icons';
 import { useInvoiceForm } from '../hooks';
@@ -15,6 +15,7 @@ import type { FormData } from '../model';
 import { SubjectRow } from './SubjectRow';
 import { CommentField } from './CommentField';
 import { StudentSelector } from './StudentSelector';
+import { TemplateSelector } from './TemplateSelector';
 
 type InvoiceModalProps = {
   open: boolean;
@@ -30,6 +31,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
     handleClearForm,
     onSubmit,
     items,
+    append,
   } = useInvoiceForm();
 
   const totalLessons = items.reduce((acc, item) => acc + item.quantity, 0);
@@ -43,11 +45,6 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
     onSubmit(data);
     handleCloseModal();
   };
-
-  const { append } = useFieldArray({
-    control,
-    name: 'items',
-  });
 
   // Вычисляем общую стоимость счёта
   const totalInvoicePrice = items.reduce((total, item) => {
@@ -95,21 +92,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                 Добавить занятие
               </Button>
 
-              <Button
-                className="bg-brand-0 hover:bg-brand-0 text-brand-100 hover:text-brand-80 h-[32px]"
-                variant="ghost"
-                size="s"
-                type="button"
-                onClick={() => {
-                  append({
-                    name: '',
-                    price: 0,
-                    quantity: 1,
-                  });
-                }}
-              >
-                Добавить занятие из шаблона
-              </Button>
+              <TemplateSelector control={control} />
             </div>
 
             {items.length > 0 && (

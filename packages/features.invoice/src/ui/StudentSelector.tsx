@@ -20,7 +20,7 @@ export const StudentSelector = ({ control }: StudentSelectorProps) => {
           <FormLabel>Ученик или группа</FormLabel>
           <FormControl>
             <Select value={field.value} onValueChange={(value) => field.onChange(value)}>
-              <SelectTrigger className="mt-2 w-full">
+              <SelectTrigger className="mt-1 mb-0 w-full">
                 <SelectValue
                   placeholder={isLoading ? 'Загрузка...' : 'Выберите ученика или группу'}
                 />
