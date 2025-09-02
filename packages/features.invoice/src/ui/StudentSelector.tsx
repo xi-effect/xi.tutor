@@ -1,6 +1,6 @@
 import { FormControl, FormField, FormItem, FormLabel } from '@xipkg/form';
 import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@xipkg/select';
-import { students } from '../../../mocks';
+import { useFetchClassrooms } from 'common.services';
 
 type StudentSelectorProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -8,6 +8,8 @@ type StudentSelectorProps = {
 };
 
 export const StudentSelector = ({ control }: StudentSelectorProps) => {
+  const { data: classrooms, isLoading } = useFetchClassrooms();
+
   return (
     <FormField
       control={control}
@@ -19,12 +21,18 @@ export const StudentSelector = ({ control }: StudentSelectorProps) => {
           <FormControl>
             <Select value={field.value} onValueChange={(value) => field.onChange(value)}>
               <SelectTrigger className="mt-2 w-full">
-                <SelectValue />
+                <SelectValue
+                  placeholder={isLoading ? 'Загрузка...' : 'Выберите ученика или группу'}
+                />
               </SelectTrigger>
               <SelectContent className="w-full">
-                {students.map((student) => (
-                  <SelectItem key={student.id} value={student.id} className="dark:text-gray-100">
-                    {student.name}
+                {classrooms?.map((classroom) => (
+                  <SelectItem
+                    key={classroom.id}
+                    value={classroom.id.toString()}
+                    className="dark:text-gray-100"
+                  >
+                    {classroom.name}
                   </SelectItem>
                 ))}
               </SelectContent>

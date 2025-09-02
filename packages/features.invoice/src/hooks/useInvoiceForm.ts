@@ -10,13 +10,7 @@ export const useInvoiceForm = () => {
     mode: 'onSubmit',
     defaultValues: {
       studentId: '',
-      items: [
-        {
-          name: '',
-          price: 0,
-          quantity: 1,
-        },
-      ],
+      items: [],
       comment: '',
     },
   });

@@ -4,44 +4,45 @@ import { useQuery } from '@tanstack/react-query';
 // Моковые данные для кабинетов
 const mockClassrooms: ClassroomT[] = [
   {
-    id: '1',
-    name: 'Математика - 10 класс',
-    status: 'studying',
+    id: 1,
+    name: 'Анна Смирнова',
+    status: 'study',
   },
   {
-    id: '2',
-    name: 'Физика - 11 класс',
-    status: 'paused',
+    id: 2,
+    name: 'Максим Иванов',
+    status: 'study',
   },
   {
-    id: '3',
-    name: 'Химия - 9 класс',
+    id: 3,
+    name: 'Елизавета Петрова',
+    status: 'study',
+  },
+  {
+    id: 4,
+    name: 'Дмитрий Кузнецов',
+    status: 'study',
+  },
+  {
+    id: 5,
+    name: 'Андрей Соколов',
+    status: 'study',
+  },
+  {
+    id: 6,
+    name: 'Кирилл Лебедев',
+    status: 'pause',
+  },
+  {
+    id: 7,
+    name: 'Наталья Орлова',
     status: 'completed',
   },
   {
-    id: '4',
-    name: 'Биология - 10 класс',
-    status: 'studying',
-  },
-  {
-    id: '5',
-    name: 'История - 11 класс',
-    status: 'studying',
-  },
-  {
-    id: '6',
-    name: 'Литература - 9 класс',
-    status: 'paused',
-  },
-  {
-    id: '7',
-    name: 'География - 10 класс',
-    status: 'completed',
-  },
-  {
-    id: '8',
-    name: 'Английский язык - 11 класс',
-    status: 'studying',
+    id: 8,
+    name: 'English Group',
+    status: 'study',
+    groupSize: 4,
   },
 ];
 

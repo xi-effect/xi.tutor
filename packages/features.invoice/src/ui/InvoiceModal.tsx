@@ -10,9 +10,11 @@ import {
 import { Form, useFieldArray } from '@xipkg/form';
 import { Button } from '@xipkg/button';
 import { Close } from '@xipkg/icons';
-import { useInvoiceForm } from '../../hooks';
-import { CommentField, StudentSelector, SubjectRow } from './components';
-import type { FormData } from '../../model';
+import { useInvoiceForm } from '../hooks';
+import type { FormData } from '../model';
+import { SubjectRow } from './SubjectRow';
+import { CommentField } from './CommentField';
+import { StudentSelector } from './StudentSelector';
 
 type InvoiceModalProps = {
   open: boolean;
@@ -76,47 +78,67 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
 
             <StudentSelector control={control} />
 
-            <div>
-              <div className="text-gray-60 grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2 text-sm">
-                <span>Занятия</span>
-                <span>Стоимость</span>
-                <div className="w-[12px]" />
-                <span>Количество</span>
-                <div className="w-[12px]" />
-                <span>Сумма</span>
-                <div className="ml-2 h-[24px] w-[24px]" />
-              </div>
-              <div className="my-2">
-                {items.map((_, index) => (
-                  <SubjectRow key={index} control={control} index={index} />
-                ))}
-                <div className="grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2">
-                  <div>
-                    <Button
-                      className="bg-brand-0 hover:bg-brand-0 text-brand-100 hover:text-brand-80 h-[32px]"
-                      variant="ghost"
-                      size="s"
-                      type="button"
-                      onClick={() => {
-                        append({
-                          name: '',
-                          price: 0,
-                          quantity: 1,
-                        });
-                      }}
-                    >
-                      Добавить строку
-                    </Button>
-                  </div>
-                  <span className="text-right dark:text-gray-100">Итого:</span>
+            <div className="flex flex-row gap-2">
+              <Button
+                className="bg-brand-0 hover:bg-brand-0 text-brand-100 hover:text-brand-80 h-[32px]"
+                variant="ghost"
+                size="s"
+                type="button"
+                onClick={() => {
+                  append({
+                    name: '',
+                    price: 0,
+                    quantity: 1,
+                  });
+                }}
+              >
+                Добавить занятие
+              </Button>
+
+              <Button
+                className="bg-brand-0 hover:bg-brand-0 text-brand-100 hover:text-brand-80 h-[32px]"
+                variant="ghost"
+                size="s"
+                type="button"
+                onClick={() => {
+                  append({
+                    name: '',
+                    price: 0,
+                    quantity: 1,
+                  });
+                }}
+              >
+                Добавить занятие из шаблона
+              </Button>
+            </div>
+
+            {items.length > 0 && (
+              <div>
+                <div className="text-gray-60 grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2 text-sm">
+                  <span>Занятия</span>
+                  <span>Стоимость</span>
                   <div className="w-[12px]" />
-                  <span className="text-right dark:text-gray-100">{totalLessons}</span>
+                  <span>Количество</span>
                   <div className="w-[12px]" />
-                  <span className="text-right dark:text-gray-100">{totalInvoicePrice} ₽</span>
+                  <span>Сумма</span>
                   <div className="ml-2 h-[24px] w-[24px]" />
                 </div>
+                <div className="my-2">
+                  {items.map((_, index) => (
+                    <SubjectRow key={index} control={control} index={index} />
+                  ))}
+                  <div className="grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2">
+                    <div />
+                    <span className="text-right dark:text-gray-100">Итого:</span>
+                    <div className="w-[12px]" />
+                    <span className="text-right dark:text-gray-100">{totalLessons}</span>
+                    <div className="w-[12px]" />
+                    <span className="text-right dark:text-gray-100">{totalInvoicePrice} ₽</span>
+                    <div className="ml-2 h-[24px] w-[24px]" />
+                  </div>
+                </div>
               </div>
-            </div>
+            )}
             <CommentField control={control} />
             <ModalFooter className="border-gray-20 flex gap-2 border-t px-0 pt-6 pb-0">
               <Button className="w-[114px] rounded-2xl" type="submit" size="m">

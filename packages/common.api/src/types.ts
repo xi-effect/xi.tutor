@@ -9,10 +9,12 @@ export type OnboardingStageT =
 
 export type OnboardingTransitionModeT = 'forwards' | 'backwards';
 
-export type ClassroomStatusT = 'studying' | 'paused' | 'completed';
+export type ClassroomStatusT = 'study' | 'pause' | 'completed';
 
 export interface ClassroomT {
-  id: string;
+  id: number;
   name: string;
   status: ClassroomStatusT;
+  groupSize?: number;
+  deleted?: boolean;
 }
