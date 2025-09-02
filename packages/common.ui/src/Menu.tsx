@@ -49,14 +49,14 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
         >
           <Close className="fill-gray-60 h-4 w-4" />
         </Button>
-        <div>
+        <div className="flex flex-col gap-2">
           <div className="h-8">
             <span className="text-xl font-semibold text-gray-100">
               Добро пожаловать в Sovlium! 😊
             </span>
           </div>
           <div className="h-10">
-            <span className="text-gray-80 text-sm font-normal antialiased">
+            <span className="text-gray-80 text-sm font-normal tracking-tight">
               Хотите узнать о возможностях платформы?
               <br />
               Вы сможете вернуться к обучению в любой момент.
