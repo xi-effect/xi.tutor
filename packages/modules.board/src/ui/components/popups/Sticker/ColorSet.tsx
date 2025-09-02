@@ -11,8 +11,9 @@ export const ColorSet = ({ popupItems }: { popupItems?: PopupItemT[] }) => {
     setColor(colorName);
     setStickerColor(colorName);
   };
+
   return (
-    <>
+    <div className="border-gray-10 bg-gray-0 flex gap-2 rounded-xl border p-1">
       {popupItems?.map((item) => {
         const isActive = item.color === stickerColor;
         return (
@@ -30,6 +31,6 @@ export const ColorSet = ({ popupItems }: { popupItems?: PopupItemT[] }) => {
           </div>
         );
       })}
-    </>
+    </div>
   );
 };

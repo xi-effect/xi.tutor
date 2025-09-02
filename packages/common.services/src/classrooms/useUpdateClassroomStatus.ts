@@ -9,7 +9,7 @@ export const useUpdateClassroomStatus = () => {
       classroomId,
       status,
     }: {
-      classroomId: string;
+      classroomId: number;
       status: ClassroomStatusT;
     }): Promise<ClassroomT> => {
       // Имитация задержки сети

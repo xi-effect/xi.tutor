@@ -28,7 +28,7 @@ export const NewPassword = ({ token }: { token: string }) => {
           <Logo height={22} width={180} />
         </div>
 
-        <h1 className="self-center text-2xl font-semibold">{t('title')}</h1>
+        <h1 className="self-center text-2xl font-semibold dark:text-gray-100">{t('title')}</h1>
 
         <FormField
           control={form.control}

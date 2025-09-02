@@ -83,7 +83,7 @@ export const navBarElements: NavbarElementT[] = [
     ],
   },
   { action: 'text', title: 'Текст', icon: <TText /> },
-  { action: 'rectangle', title: 'Фигуры', icon: <Figures size="l" /> },
+  { action: 'geo', title: 'Фигуры', icon: <Figures size="l" /> },
   { action: 'arrow', title: 'Стрелка', icon: <Arrow size="l" /> },
   { action: 'asset', title: 'Изображение', icon: <Image /> },
   { action: 'eraser', title: 'Ластик', icon: <Eraser /> },

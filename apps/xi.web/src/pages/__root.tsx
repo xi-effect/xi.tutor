@@ -57,8 +57,6 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
     // ],
   }),
   beforeLoad: ({ context, location }) => {
-    console.log('Route', context, location);
-
     if (
       !context.auth.isAuthenticated &&
       !location.pathname.includes('/signin') &&

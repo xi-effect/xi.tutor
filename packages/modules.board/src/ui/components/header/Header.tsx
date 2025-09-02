@@ -2,14 +2,14 @@
 // import { useFullScreen } from 'pkg.utils.client';
 import { Button } from '@xipkg/button';
 
-import { SettingsDropdown } from './SettingsDropdown';
-import { EditableTitle } from './EditableTitle';
-import { useFullScreen } from 'common.utils';
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { useGetMaterial } from 'common.services';
 import { ArrowLeft, Maximize, Minimize } from '@xipkg/icons';
-import { Skeleton } from 'common.ui';
 import { cn } from '@xipkg/utils';
+import { useGetMaterial } from 'common.services';
+import { Skeleton } from 'common.ui';
+import { useFullScreen } from 'common.utils';
+import { EditableTitle } from './EditableTitle';
+import { SettingsDropdown } from './SettingsDropdown';
 
 export const Header = () => {
   const { isFullScreen, toggleFullScreen } = useFullScreen('whiteboard-container');

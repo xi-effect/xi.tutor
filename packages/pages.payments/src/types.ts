@@ -1,3 +1,12 @@
+export type ModalTemplatePropsT = {
+  isOpen: boolean;
+  onClose: () => void;
+  type?: 'add' | 'edit';
+  name?: string;
+  price?: number;
+  id?: number;
+};
+
 export type PaymentPropsT = {
   id: number;
   idStudent: number;

@@ -54,12 +54,12 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
       <ModalContent className="max-w-[600px]">
         <ModalHeader>
           <ModalCloseButton />
-          <ModalTitle>Индивидуальные приглашения</ModalTitle>
+          <ModalTitle className="dark:text-gray-100">Индивидуальные приглашения</ModalTitle>
         </ModalHeader>
 
         <ModalBody className="px-4 py-2">
           <Table>
-            <caption className="p-2 text-left">
+            <caption className="p-2 text-left dark:text-gray-100">
               Скопируйте ссылку-приглашение и отправьте ученику
             </caption>
             <TableHeader>
@@ -77,15 +77,15 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
                     className="hover:bg-gray-5 group flex max-h-[38px] flex-row items-center rounded-lg"
                   >
                     <TableCell className="flex max-w-[50%] flex-1 items-center gap-2 overflow-hidden">
-                      <span>{invitation.code}</span>
+                      <span className="dark:text-gray-80">{invitation.code}</span>
                       <div
                         className="bg-gray-5 flex h-5 w-5 cursor-pointer items-center justify-center rounded-sm p-1"
                         onClick={handleCopyLink(invitation.code)}
                       >
-                        <Copy />
+                        <Copy className="dark:fill-gray-80" />
                       </div>
                     </TableCell>
-                    <TableCell className="flex max-w-[50%] flex-1">
+                    <TableCell className="dark:text-gray-80 flex max-w-[50%] flex-1">
                       {invitation.usage_count}
                     </TableCell>
                     <TableCell

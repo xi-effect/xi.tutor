@@ -1,1 +1,1 @@
-export { InvoiceModal } from './ui/InvoiceModal/InvoiceModal';
+export { InvoiceModal } from './ui/InvoiceModal';

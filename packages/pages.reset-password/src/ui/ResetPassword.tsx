@@ -24,7 +24,7 @@ export const ResetPassword = () => {
           <Logo height={22} width={180} />
         </div>
 
-        <h1 className="flex justify-center text-2xl font-semibold">
+        <h1 className="flex justify-center text-2xl font-semibold dark:text-gray-100">
           {isSubmitSuccessful ? t('emailSent') : t('title')}
         </h1>
 

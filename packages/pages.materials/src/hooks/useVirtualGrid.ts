@@ -1,10 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { RefObject } from 'react';
 
 export const useVirtualGrid = (
   parentRef: RefObject<HTMLDivElement | null>,
-  items: any[],
+  items: unknown[],
   colCount: number,
   rowHeight: number,
 ) => {

@@ -10,13 +10,7 @@ export const useInvoiceForm = () => {
     mode: 'onSubmit',
     defaultValues: {
       studentId: '',
-      items: [
-        {
-          name: '',
-          price: 0,
-          quantity: 1,
-        },
-      ],
+      items: [],
       comment: '',
     },
   });
@@ -26,7 +20,7 @@ export const useInvoiceForm = () => {
   const selectedStudentId = watch('studentId');
   const items = watch('items');
 
-  const { fields } = useFieldArray({
+  const { fields, append } = useFieldArray({
     control,
     name: 'items',
   });
@@ -58,6 +52,7 @@ export const useInvoiceForm = () => {
     handleSubmit,
     selectedData,
     fields,
+    append,
     handleClearForm,
     onSubmit,
   };

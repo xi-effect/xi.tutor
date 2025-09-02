@@ -38,7 +38,7 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
         {!isDelete && (
           <ModalHeader>
             <ModalCloseButton />
-            <ModalTitle>Список учеников</ModalTitle>
+            <ModalTitle className="dark:text-gray-100">Список учеников</ModalTitle>
           </ModalHeader>
         )}
         <ModalBody className={cn('flex flex-col gap-4 px-2 pt-2', isDelete && 'w-full gap-1 p-8')}>

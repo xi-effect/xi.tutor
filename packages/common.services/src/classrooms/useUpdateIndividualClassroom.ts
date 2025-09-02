@@ -16,7 +16,7 @@ export const useUpdateIndividualClassroom = () => {
       classroomId,
       data,
     }: {
-      classroomId: string;
+      classroomId: number;
       data: UpdateIndividualClassroomData;
     }): Promise<ClassroomT> => {
       // Имитация задержки сети

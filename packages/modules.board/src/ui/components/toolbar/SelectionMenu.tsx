@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { track, useEditor } from 'tldraw';
 import { Button } from '@xipkg/button';
 import { Trash, Copy } from '@xipkg/icons';
+import { MoreActionsMenu } from './MoreActionsMenu';
 
 export const SelectionMenu = track(function SelectionMenu() {
   const editor = useEditor();
@@ -49,15 +50,22 @@ export const SelectionMenu = track(function SelectionMenu() {
       <Button
         variant="ghost"
         size="s"
-        className="p-1"
+        className="hover:bg-brand-0 p-1"
         onClick={handleDuplicate}
         title="Дублировать (Ctrl+D)"
       >
         <Copy />
       </Button>
-      <Button variant="ghost" size="s" className="p-1" onClick={handleDelete} title="Удалить (Del)">
+      <Button
+        variant="ghost"
+        size="s"
+        className="hover:bg-brand-0 p-1"
+        onClick={handleDelete}
+        title="Удалить (Del)"
+      >
         <Trash />
       </Button>
+      <MoreActionsMenu />
     </div>
   );
 });

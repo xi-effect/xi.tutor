@@ -16,9 +16,9 @@ export const useCreateGroupClassroom = () => {
 
       // Создаем моковый новый класс
       const newClassroom: ClassroomT = {
-        id: Date.now().toString(),
+        id: Date.now(),
         name: data.name,
-        status: 'studying',
+        status: 'study',
       };
 
       return newClassroom;
