@@ -11,29 +11,28 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "features.materials.add": "*",
-    "features.invoice": "*",
+    "@hookform/resolvers": "5.0.1",
+    "@xipkg/badge": "2.0.12",
+    "@xipkg/button": "3.1.2",
+    "@xipkg/icons": "2.5.2",
+    "@xipkg/scrollarea": "2.2.0",
+    "@xipkg/tooltip": "2.1.0",
+    "@xipkg/userprofile": "4.0.14",
+    "@xipkg/utils": "1.8.0",
+    "common.auth": "*",
     "common.config": "*",
     "common.env": "*",
-    "common.types": "*",
-    "common.auth": "*",
-    "common.ui": "*",
-    "pages.classrooms": "*",
     "common.services": "*",
-    "@xipkg/button": "3.1.2",
-    "@xipkg/icons": "^2.5.2",
-    "@xipkg/utils": "1.8.0",
-    "@xipkg/scrollarea": "2.2.0",
-    "@xipkg/userprofile": "4.0.14",
-    "@xipkg/tooltip": "2.1.0",
-    "@xipkg/badge": "2.0.12",
-    "zod": "3.24.2",
+    "common.types": "*",
+    "common.ui": "*",
+    "features.invoice": "*",
+    "features.materials.add": "*",
+    "pages.classrooms": "*",
     "react-hook-form": "^7.55.0",
-    "@hookform/resolvers": "5.0.1"
+    "zod": "3.24.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
-    "common.typescript": "*",
     "@types/node": "^20.3.1",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
@@ -41,6 +40,7 @@
     "@xipkg/tailwind": "0.8.1",
     "@xipkg/typescript": "latest",
     "common.eslint": "*",
+    "common.typescript": "*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
@@ -49,9 +49,9 @@
     "typescript-eslint": "^8.22.0"
   },
   "peerDependencies": {
+    "@hookform/resolvers": "5.0.1",
     "react": "19",
-    "react-hook-form": "^7.55.0",
-    "@hookform/resolvers": "5.0.1"
+    "react-hook-form": "^7.55.0"
   },
   "description": "form for signin",
   "author": "xi.effect"
