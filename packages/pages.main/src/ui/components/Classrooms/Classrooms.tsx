@@ -4,7 +4,7 @@ import { ScrollArea } from '@xipkg/scrollarea';
 import { Classroom } from './Classroom';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useNavigate } from '@tanstack/react-router';
-import { ModalInvitation } from 'pages.classrooms';
+import { ModalInvitation } from 'features.invites';
 import { useCurrentUser } from 'common.services';
 
 export const Classrooms = () => {

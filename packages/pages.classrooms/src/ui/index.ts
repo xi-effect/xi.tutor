@@ -1,5 +1,5 @@
 export { ClassroomsPage } from './ClassroomsPage';
-export { ModalInvitation } from './ModalInvitation';
+// ModalInvitation moved to features.invites
 export { CardsGridSimple } from './CardsGridSimple';
 export { CardSkeleton } from './CardSkeleton';
 export { CardsGridSkeleton } from './CardsGridSkeleton';

@@ -25,6 +25,7 @@
     "common.services": "*",
     "common.types": "*",
     "common.ui": "*",
+    "features.invites": "*",
     "features.invoice": "*",
     "features.materials.add": "*",
     "pages.classrooms": "*",
