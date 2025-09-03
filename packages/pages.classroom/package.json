@@ -13,7 +13,7 @@
   "dependencies": {
     "features.materials.add": "*",
     "@xipkg/badge": "2.0.12",
-    "@xipkg/button": "3.1.8",
+    "@xipkg/button": "3.2.0",
     "@xipkg/icons": "^2.5.2",
     "@xipkg/dropdown": "3.0.12",
     "@xipkg/link": "^2.0.12",

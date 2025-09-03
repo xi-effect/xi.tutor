@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@tanstack/react-router": "^1.109.0",
-    "@xipkg/button": "3.1.8",
+    "@xipkg/button": "3.2.0",
     "react-easy-crop": "5.4.1",
     "react-image-file-resizer": "0.4.8",
     "sonner": "2.0.1",

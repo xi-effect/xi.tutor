@@ -17,10 +17,7 @@ export const Lesson = () => {
         <span className="text-s-base text-gray-80 font-medium">Сегодня, 12:00–12:40</span>
         <span className="text-xs-base text-gray-60 font-medium">40 минут</span>
       </div>
-      <Button
-        variant="secondary"
-        className="bg-brand-0 text-brand-100 hover:text-brand-80 hover:bg-brand-10 mt-auto h-8 self-end rounded-lg border-none"
-      >
+      <Button variant="secondary" className="mt-auto h-8 self-end rounded-lg border-none">
         Начать занятие
       </Button>
     </div>
