@@ -998,6 +998,9 @@ importers:
       common.types:
         specifier: '*'
         version: link:../common.types
+      features.table:
+        specifier: '*'
+        version: link:../features.table
       react:
         specifier: '19'
         version: 19.1.1

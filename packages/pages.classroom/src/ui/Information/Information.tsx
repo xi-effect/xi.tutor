@@ -48,8 +48,9 @@ export const Information = () => {
                       </SelectTrigger>
                       <SelectContent className="dark:text-gray-80 w-full">
                         <SelectItem value="active">Активные</SelectItem>
-                        <SelectItem value="completed">Завершённые</SelectItem>
-                        <SelectItem value="planned">Запланированные</SelectItem>
+                        <SelectItem value="paused">На паузе</SelectItem>
+                        <SelectItem value="locked">Заблокированные</SelectItem>
+                        <SelectItem value="finished">Завершённые</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>

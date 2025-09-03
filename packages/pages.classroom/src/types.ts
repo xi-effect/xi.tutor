@@ -3,11 +3,13 @@ export type ClassroomPropsT = {
   name: string;
   avatar?: string;
   status: StatusEducationT;
-  groupSize?: number;
-  deleted?: boolean;
+  kind: TypeEducationT;
+  description?: string;
+  created_at?: string;
+  student_id?: number;
 };
 
-export type StatusEducationT = 'study' | 'pause' | 'completed';
+export type StatusEducationT = 'active' | 'paused' | 'locked' | 'finished';
 
 export type TypeEducationT = 'individual' | 'group';
 

@@ -20,6 +20,10 @@ export const useUpdateClassroomStatus = () => {
         id: classroomId,
         name: 'Класс с обновленным статусом',
         status,
+        created_at: new Date().toISOString(),
+        description: 'Описание обновленного класса',
+        kind: 'individual',
+        student_id: 1,
       };
 
       return updatedClassroom;

@@ -17,7 +17,13 @@ import { useDeleteClassroom } from 'common.services';
 import { ClassroomPropsT } from '../types';
 import { useNavigate } from '@tanstack/react-router';
 
-export const Card: React.FC<ClassroomPropsT> = ({ id, name, status, deleted, groupSize }) => {
+export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
+  id,
+  name,
+  status,
+  kind,
+  deleted = false,
+}) => {
   const navigate = useNavigate();
   const { deleteClassroom, isDeleting } = useDeleteClassroom();
 
@@ -55,10 +61,10 @@ export const Card: React.FC<ClassroomPropsT> = ({ id, name, status, deleted, gro
         )}
 
         <div className="mt-auto flex items-center gap-2">
-          <StatusBadge status={status} groupSize={groupSize} deleted={deleted} />
+          <StatusBadge status={status} kind={kind} deleted={deleted} />
 
           <Badge size="m" className="text-gray-80 bg-gray-5 rounded-lg border-none px-2 py-1">
-            Предмет
+            {kind === 'individual' ? 'Индивидуальный' : 'Групповой'}
           </Badge>
         </div>
       </div>

@@ -1,9 +1,9 @@
-import { ClassroomsQueryKey, ClassroomT } from 'common.api';
+import { ClassroomsQueryKey, ClassroomT, GroupClassroomT } from 'common.api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface CreateGroupClassroomData {
   name: string;
-  // Добавьте другие необходимые поля для создания группового класса
+  description?: string;
 }
 
 export const useCreateGroupClassroom = () => {
@@ -14,11 +14,14 @@ export const useCreateGroupClassroom = () => {
       // Имитация задержки сети
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
-      // Создаем моковый новый класс
-      const newClassroom: ClassroomT = {
+      // Создаем моковый новый групповой класс
+      const newClassroom: GroupClassroomT = {
         id: Date.now(),
         name: data.name,
-        status: 'study',
+        status: 'active',
+        created_at: new Date().toISOString(),
+        description: data.description || null,
+        kind: 'group',
       };
 
       return newClassroom;

@@ -9,12 +9,23 @@ export type OnboardingStageT =
 
 export type OnboardingTransitionModeT = 'forwards' | 'backwards';
 
-export type ClassroomStatusT = 'study' | 'pause' | 'completed';
+export type ClassroomStatusT = 'active' | 'paused' | 'locked' | 'finished';
 
-export interface ClassroomT {
+export interface BaseClassroomT {
   id: number;
-  name: string;
   status: ClassroomStatusT;
-  groupSize?: number;
-  deleted?: boolean;
+  created_at: string;
+  description: string | null;
+  name: string;
 }
+
+export interface IndividualClassroomT extends BaseClassroomT {
+  kind: 'individual';
+  student_id: number;
+}
+
+export interface GroupClassroomT extends BaseClassroomT {
+  kind: 'group';
+}
+
+export type ClassroomT = IndividualClassroomT | GroupClassroomT;
