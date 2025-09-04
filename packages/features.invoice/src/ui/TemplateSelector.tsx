@@ -25,7 +25,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
   const handleTemplateSelect = (template: any) => {
     append({
       name: template.name,
-      price: template.price,
+      price: Number(template.price),
       quantity: 1,
     });
   };
@@ -61,12 +61,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          className="bg-brand-0 hover:bg-brand-0 text-brand-100 hover:text-brand-80 h-[32px]"
-          variant="ghost"
-          size="s"
-          type="button"
-        >
+        <Button className="h-[32px]" variant="secondary" size="s" type="button">
           Добавить занятие из шаблона
         </Button>
       </DropdownMenuTrigger>

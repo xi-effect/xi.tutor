@@ -48,11 +48,8 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
 
   // Вычисляем общую стоимость счёта
   const totalInvoicePrice = items.reduce((total, item) => {
-    console.log('item', total, item);
     return total + item.price * (item.quantity || 0);
   }, 0);
-
-  console.log('totalInvoicePrice', totalInvoicePrice);
 
   return (
     <Modal open={open} onOpenChange={handleCloseModal}>
@@ -77,8 +74,8 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
 
             <div className="flex flex-row gap-2">
               <Button
-                className="bg-brand-0 hover:bg-brand-0 text-brand-100 hover:text-brand-80 h-[32px]"
-                variant="ghost"
+                className="h-[32px]"
+                variant="secondary"
                 size="s"
                 type="button"
                 onClick={() => {

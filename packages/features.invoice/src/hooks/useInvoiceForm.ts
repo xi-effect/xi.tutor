@@ -1,10 +1,11 @@
 import { useForm, useFieldArray } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useMemo } from 'react';
 import { formSchema, type FormData } from '../model';
-import { students } from '../mocks';
+import { useFetchClassrooms } from 'common.services';
 
 export const useInvoiceForm = () => {
+  const { data: classrooms } = useFetchClassrooms();
+
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     mode: 'onSubmit',
@@ -15,20 +16,16 @@ export const useInvoiceForm = () => {
     },
   });
 
-  const { control, watch, setValue, handleSubmit } = form;
+  const { control, watch, setValue, handleSubmit, formState } = form;
 
-  const selectedStudentId = watch('studentId');
+  console.log('errors', formState.errors);
+
   const items = watch('items');
 
   const { fields, append } = useFieldArray({
     control,
     name: 'items',
   });
-
-  const selectedData = useMemo(() => {
-    const student = students.find((s) => s.id === selectedStudentId);
-    return { student, subjects: student?.subjects || [] };
-  }, [selectedStudentId]);
 
   const handleClearForm = () => {
     setValue('studentId', '');
@@ -42,7 +39,20 @@ export const useInvoiceForm = () => {
   };
 
   const onSubmit = (data: FormData) => {
+    const student = classrooms?.find((c) => c.id === Number(data.studentId));
+
+    console.log('student', student);
+
     console.log('invoice form data: ', data);
+
+    // Формируем payload для отправки
+    const student_ids = student?.kind === 'individual' ? [student.student_id] : [];
+
+    console.log('payload:', {
+      invoice: { comment: data.comment },
+      items: [...data.items],
+      student_ids,
+    });
   };
 
   return {
@@ -50,7 +60,6 @@ export const useInvoiceForm = () => {
     control,
     items,
     handleSubmit,
-    selectedData,
     fields,
     append,
     handleClearForm,

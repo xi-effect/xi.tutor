@@ -10,12 +10,8 @@ type SubjectRowProps = {
 };
 
 export const SubjectRow = ({ control, index }: SubjectRowProps) => {
-  console.log('SubjectRow');
-
   const { watch } = useFormContext();
   const items = watch('items');
-
-  console.log('items', items);
 
   const item = items[index];
 
