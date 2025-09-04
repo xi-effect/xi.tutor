@@ -6,6 +6,8 @@ interface FormEventStore {
   isOpen: boolean;
   defaultFormValues: EventFormData;
   activeEventId: string;
+  paid: boolean;
+  complete: boolean;
   openForm: (calendarEvent?: ICalendarEvent) => void;
   closeForm: () => void;
 }
@@ -31,6 +33,8 @@ const useFormEventStore = create<FormEventStore>((set) => ({
   isOpen: false,
   defaultFormValues: INITIAL_VALUES,
   activeEventId: '',
+  paid: true,
+  complete: false,
 
   openForm: (calendarEvent) => {
     if (!calendarEvent) {
@@ -60,14 +64,14 @@ const useFormEventStore = create<FormEventStore>((set) => ({
       subjectName: calendarEvent.lessonInfo?.subject || '',
       lessonType: calendarEvent.lessonInfo?.lessonType || 'individual',
       description: calendarEvent.lessonInfo?.description || '',
-      paymentStatus: 'paid',
-      lessonStatus: 'not_done',
     };
 
     set({
       isOpen: true,
       defaultFormValues: defaultValues,
       activeEventId: calendarEvent.id,
+      paid: calendarEvent.lessonInfo?.paid,
+      complete: calendarEvent.lessonInfo?.complete,
     });
   },
 
@@ -82,6 +86,12 @@ export const useIsOpen = () => {
 
 export const useActiveEventId = () => {
   return useFormEventStore((state) => state.activeEventId);
+};
+
+export const useLessonStatuses = () => {
+  const paid = useFormEventStore((state) => state.paid);
+  const complete = useFormEventStore((state) => state.complete);
+  return { paid, complete };
 };
 
 export const useDefaultValues = () => {

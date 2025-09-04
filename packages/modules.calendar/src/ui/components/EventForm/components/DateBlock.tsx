@@ -98,7 +98,7 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
             render={({ field }) => (
               <FormItem className="mb-2">
                 <FormControl>
-                  <InputDate {...{ ...field, value: field.value || '' }} />
+                  <InputDate {...field} value={field.value || ''} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

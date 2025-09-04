@@ -27,6 +27,9 @@ export const parseDateTime = (dateStr: string, timeStr: string) =>
 
 export const dateToString = (date: string) => {
   const [d, m, y] = date.split('.');
+
+  if (!d || !m || !y) return;
+
   const dateObj = new Date(+y, +m - 1, +d);
   const weekDayName = dateObj.toLocaleDateString('ru-RU', { weekday: 'short' });
   const monthName = dateObj.toLocaleDateString('ru-RU', { month: 'long' });

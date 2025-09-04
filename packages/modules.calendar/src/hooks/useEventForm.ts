@@ -80,9 +80,6 @@ export const useEventForm = () => {
       setValue('subjectName', '');
       setValue('lessonType', 'individual');
       setValue('description', '');
-    } else {
-      setValue('paymentStatus', 'paid');
-      setValue('lessonStatus', 'not_done');
     }
   };
 

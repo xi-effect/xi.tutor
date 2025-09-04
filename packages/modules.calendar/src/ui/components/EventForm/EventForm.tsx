@@ -8,14 +8,12 @@ import {
   SelectItem,
 } from '@xipkg/select';
 import { Button } from '@xipkg/button';
+import { Badge } from '@xipkg/badge';
 import { Input } from '@xipkg/input';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@xipkg/form';
 import { useEventForm } from '../../../hooks';
-import { useCloseForm } from '../../../store/formEventStore';
-import { LessonBlock } from './components/LessonBlock';
-import { StatusBlock } from './components/StatusBlock';
-import { DateBlock } from './components/DateBlock';
-import { EventMenu } from './components/EventMenu';
+import { useCloseForm, useLessonStatuses } from '../../../store/formEventStore';
+import { LessonBlock, DateBlock, EventMenu } from './components';
 
 import './EventForm.css';
 
@@ -24,7 +22,9 @@ import type { EventType } from '../../types';
 export const EventForm = () => {
   const { t } = useTranslation('calendar');
 
-  const { form, control, handleSubmit, selectedType, handleTypeChange, onSubmit } = useEventForm();
+  const { form, control, selectedType, handleSubmit, handleTypeChange, onSubmit } = useEventForm();
+
+  const { paid, complete } = useLessonStatuses();
 
   const handleCloseForm = useCloseForm();
 
@@ -78,7 +78,16 @@ export const EventForm = () => {
           )}
         />
 
-        {selectedType === 'lesson' && <StatusBlock form={form} />}
+        {selectedType === 'lesson' && (
+          <div className="my-2 flex items-center gap-4 pl-3">
+            <Badge variant={paid ? 'success' : 'destructive'}>
+              {paid ? t('event_form.statuses.paid') : t('event_form.statuses.not_paid')}
+            </Badge>
+            <Badge variant={complete ? 'success' : 'destructive'}>
+              {complete ? t('event_form.statuses.complete') : t('event_form.statuses.not_complete')}
+            </Badge>
+          </div>
+        )}
 
         {selectedType === 'lesson' && <LessonBlock form={form} />}
 

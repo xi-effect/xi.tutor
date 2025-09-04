@@ -14,6 +14,8 @@ export interface ILessonInfo {
   subject: string;
   lessonType: LessonType;
   description?: string;
+  paid?: boolean;
+  complete?: boolean;
 }
 
 export type EventType = 'lesson' | 'rest';

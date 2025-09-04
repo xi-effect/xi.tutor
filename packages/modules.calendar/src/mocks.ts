@@ -126,6 +126,13 @@ export const MOCK_EVENTS: ICalendarEvent[] = [
     start: new Date('2025-08-07T12:00:00'),
     end: new Date('2025-08-07T13:00:00'),
     type: 'lesson',
+    lessonInfo: {
+      studentName: 'Александр',
+      subject: 'физика',
+      lessonType: 'group',
+      paid: true,
+      complete: true,
+    },
   },
   {
     id: '14',
@@ -141,6 +148,13 @@ export const MOCK_EVENTS: ICalendarEvent[] = [
     start: new Date('2025-08-11T09:00:00'),
     end: new Date('2025-08-11T11:00:00'),
     type: 'lesson',
+    lessonInfo: {
+      studentName: 'Виктория',
+      subject: 'испанский язык',
+      lessonType: 'group',
+      paid: false,
+      complete: false,
+    },
   },
   {
     id: '16',
@@ -148,6 +162,13 @@ export const MOCK_EVENTS: ICalendarEvent[] = [
     start: new Date('2025-08-12T15:00:00'),
     end: new Date('2025-08-12T17:00:00'),
     type: 'lesson',
+    lessonInfo: {
+      studentName: 'Василий',
+      subject: 'алгебра',
+      lessonType: 'individual',
+      paid: true,
+      complete: false,
+    },
   },
   {
     id: '17',

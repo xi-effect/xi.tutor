@@ -51,8 +51,6 @@ const lessonFields = z.object({
     required_error: 'Выберите тип занятия',
   }),
   description: z.string().optional(),
-  paymentStatus: z.enum(['paid', 'unpaid']),
-  lessonStatus: z.enum(['done', 'not_done']),
 });
 
 const restEventSchema = z.object({
