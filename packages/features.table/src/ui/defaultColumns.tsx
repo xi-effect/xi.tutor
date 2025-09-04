@@ -45,7 +45,7 @@ export const createPaymentColumns = ({
   const studentColumn: ColumnDef<PaymentT> | false = withStudentColumn
     ? {
         accessorKey: 'idStudent',
-        header: 'Студент',
+        header: 'Ученик',
         cell: ({ row }) => {
           const student = students.find((s) => s.id === row.original.idStudent);
           return student ? <StudentCell {...student} /> : null;

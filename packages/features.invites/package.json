@@ -1,0 +1,46 @@
+{
+  "name": "features.invites",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@xipkg/button": "^3.1.8",
+    "@xipkg/icons": "^2.5.2",
+    "@xipkg/modal": "^4.2.0",
+    "@xipkg/utils": "^1.8.0",
+    "common.services": "*",
+    "features.table": "*",
+    "common.types": "*",
+    "common.env": "*",
+    "sonner": "^1.4.3"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "@types/node": "^20.3.1",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@xipkg/eslint": "3.2.0",
+    "@xipkg/tailwind": "0.8.1",
+    "@xipkg/typescript": "latest",
+    "common.eslint": "*",
+    "common.typescript": "*",
+    "eslint": "^9.19.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.18",
+    "globals": "^15.14.0",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.22.0"
+  },
+  "peerDependencies": {
+    "react": "19"
+  },
+  "description": "features.invites",
+  "author": "xi.effect"
+}

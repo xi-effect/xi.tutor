@@ -11,3 +11,15 @@ export type SubjectT = {
   pricePerLesson: number;
   unpaidLessonsAmount?: number;
 };
+
+export interface CreateInvoicePayload {
+  invoice: {
+    comment: string;
+  };
+  items: Array<{
+    name: string;
+    price: number;
+    quantity: number;
+  }>;
+  student_ids: number[];
+}

@@ -50,7 +50,7 @@ export const Card: React.FC<MaterialPropsT> = ({ id, updated_at, name, kind }) =
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="h-6 w-6" variant="ghost" size="icon">
-              <MoreVert className="h-4 w-4" />
+              <MoreVert className="h-4 w-4 dark:fill-gray-100" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent

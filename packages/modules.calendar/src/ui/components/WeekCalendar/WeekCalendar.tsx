@@ -37,7 +37,7 @@ export const WeekCalendar: FC<WeekCalendarProps> = ({ days, view }) => {
       {/* Хедер */}
       <div
         className={cn(
-          'border-gray-10 sticky top-0 z-10 grid border-b bg-white text-xs',
+          'border-gray-10 dark:bg-gray-0 sticky top-0 z-10 grid border-b bg-white text-xs dark:text-gray-100',
           colTemplate,
         )}
       >
@@ -56,10 +56,14 @@ export const WeekCalendar: FC<WeekCalendarProps> = ({ days, view }) => {
           {/* Колонка времени */}
           <div className="flex flex-col text-right text-xs">
             {/* Весь день */}
-            <div className="border-gray-10 h-10 w-20 border-b py-3 pr-2">Весь день</div>
+            <div className="border-gray-10 h-10 w-20 border-b py-3 pr-2 dark:text-gray-100">
+              Весь день
+            </div>
             {hours.map((hour, i) => (
               <div key={hour} className="h-20 w-20 pr-2">
-                <span className="relative -top-1.5 block">{i !== 0 && hour}</span>
+                <span className="relative -top-1.5 block dark:text-gray-100">
+                  {i !== 0 && hour}
+                </span>
               </div>
             ))}
           </div>

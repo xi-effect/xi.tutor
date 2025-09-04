@@ -38,9 +38,10 @@ export const Filters = ({ className }: { className?: string }) => {
           <SelectContent>
             <SelectGroup>
               <SelectItem value="all">Любой</SelectItem>
-              <SelectItem value="study">Учится</SelectItem>
-              <SelectItem value="pause">На паузе</SelectItem>
-              <SelectItem value="completed">Завершено</SelectItem>
+              <SelectItem value="active">Активен</SelectItem>
+              <SelectItem value="paused">На паузе</SelectItem>
+              <SelectItem value="locked">Заблокирован</SelectItem>
+              <SelectItem value="finished">Завершен</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>

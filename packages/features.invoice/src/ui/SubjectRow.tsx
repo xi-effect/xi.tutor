@@ -10,12 +10,8 @@ type SubjectRowProps = {
 };
 
 export const SubjectRow = ({ control, index }: SubjectRowProps) => {
-  console.log('SubjectRow');
-
   const { watch } = useFormContext();
   const items = watch('items');
-
-  console.log('items', items);
 
   const item = items[index];
 
@@ -111,17 +107,9 @@ export const SubjectRow = ({ control, index }: SubjectRowProps) => {
           />
         </FormControl>
       </FormItem>
-      {items.length > 1 ? (
-        <Button
-          className="ml-2 h-[24px] w-[24px] p-0"
-          variant="ghost"
-          onClick={() => remove(index)}
-        >
-          <Close size="s" className="fill-gray-40" />
-        </Button>
-      ) : (
-        <div className="ml-2 h-[24px] w-[24px]" />
-      )}
+      <Button className="ml-2 h-[24px] w-[24px] p-0" variant="ghost" onClick={() => remove(index)}>
+        <Close size="s" className="fill-gray-40" />
+      </Button>
     </div>
   );
 };

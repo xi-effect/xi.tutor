@@ -11,7 +11,10 @@ export type ErrorType =
   | 'role'
   | 'addInvitation'
   | 'deleteInvitation'
-  | 'onboarding';
+  | 'onboarding'
+  | 'addInvoiceTemplate'
+  | 'deleteInvoiceTemplate'
+  | 'updateInvoiceTemplate';
 
 // Маппинг ошибок для разных операций
 const errorMessages: Record<ErrorType, Record<string, string>> = {
@@ -55,6 +58,19 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
   onboarding: {
     'Invalid transition': 'Неверный режим перехода',
   },
+  addInvoiceTemplate: {
+    'Validation Error': 'Ошибка валидации',
+    'Quantity exceeded': 'Превышено допустимое количество',
+  },
+  deleteInvoiceTemplate: {
+    'Validation Error': 'Ошибка валидации',
+    'Invoice item template not found': 'Шаблон не найден',
+  },
+  updateInvoiceTemplate: {
+    'Validation Error': 'Ошибка валидации',
+    'Invoice item template access denied': 'Доступ к шаблону запрещен',
+    'Invoice item template not found': 'Шаблон не найден',
+  },
 };
 
 // Общие сообщения об ошибках по статусам
@@ -78,6 +94,9 @@ const successMessages: Record<ErrorType, string> = {
   addInvitation: 'Новое приглашение добавлено',
   deleteInvitation: 'Приглашение удалено',
   onboarding: 'Онбординг успешно завершен',
+  addInvoiceTemplate: 'Новый шаблон на оплату добавлен',
+  deleteInvoiceTemplate: 'Шаблон удален',
+  updateInvoiceTemplate: 'Шаблон обновлен',
 };
 
 /**

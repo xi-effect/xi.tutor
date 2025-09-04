@@ -38,7 +38,9 @@ export const MonthCalendar: FC<CalendarProps<'month'>> = ({ days }) => {
           {/* Хедер дней недели */}
           <div className="bg-gray-0 sticky top-0 z-10 grid grid-cols-7 md:[grid-template-columns:theme(width.7)_repeat(7,minmax(0,1fr))]">
             {/* Пустая ячейка / метка недели */}
-            <div className="hidden h-10 w-7 items-center justify-center font-medium md:flex">Н</div>
+            <div className="dark:text-gray-80 hidden h-10 w-7 items-center justify-center font-medium md:flex">
+              Н
+            </div>
             {WEEK_DAYS.map((day) => (
               <div
                 key={day}
@@ -61,7 +63,7 @@ export const MonthCalendar: FC<CalendarProps<'month'>> = ({ days }) => {
                 cells.push(
                   <div
                     key={`week-${weekNumbers[weekIdx]}`}
-                    className="border-gray-10 hidden h-32 items-start justify-center border-t border-r pt-1 text-xs md:flex md:h-44"
+                    className="border-gray-10 dark:text-gray-80 hidden h-32 items-start justify-center border-t border-r pt-1 text-xs md:flex md:h-44"
                   >
                     {weekNumbers[weekIdx]}
                   </div>,
@@ -75,13 +77,15 @@ export const MonthCalendar: FC<CalendarProps<'month'>> = ({ days }) => {
                 >
                   <span
                     className={cn(
-                      'absolute top-1 right-1 flex min-h-8 min-w-8 items-center justify-center rounded-sm px-1 text-sm',
-                      !isCurrentMonth(day, currentDate.getMonth()) && 'text-gray-30',
-                      isWeekend(day) && 'text-red-80',
+                      'absolute top-1 right-1 flex min-h-8 min-w-8 items-center justify-center rounded-sm px-1 text-sm dark:text-gray-100',
+                      !isCurrentMonth(day, currentDate.getMonth()) &&
+                        'text-gray-30 dark:text-gray-40',
+                      isWeekend(day) && 'text-red-80 dark:text-red-100',
                       isWeekend(day) &&
                         !isCurrentMonth(day, currentDate.getMonth()) &&
-                        'text-red-60',
-                      isCurrentDay(day, currentDate) && 'bg-brand-80 text-brand-0',
+                        'text-red-60 dark:text-red-80',
+                      isCurrentDay(day, currentDate) &&
+                        'bg-brand-80 text-brand-0 dark:text-brand-0',
                     )}
                   >
                     {day.getDate() === 1

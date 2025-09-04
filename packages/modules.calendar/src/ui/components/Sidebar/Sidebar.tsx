@@ -18,12 +18,12 @@ export const Sidebar = () => {
           <Button className="mb-4 h-[40px] w-full rounded-xl" onClick={() => handleOpenForm()}>
             {t('add_event')}
           </Button>
-          <p className="text-center">{t('pick_time')}</p>
+          <p className="text-center dark:text-gray-100">{t('pick_time')}</p>
         </div>
       )}
 
       <div className="flex flex-col items-center justify-start gap-2">
-        <Calendar mode="single" />
+        <Calendar mode="single" className="dark:text-gray-100" />
       </div>
     </div>
   );

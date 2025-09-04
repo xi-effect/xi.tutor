@@ -45,26 +45,28 @@ export const NotificationsToggles = ({ type }: NotificationsTogglesPropsT) => {
 
         <div className="flex flex-row items-center justify-between p-3">
           <div className="flex flex-col gap-1">
-            <span className="font-inter text-m-base font-medium">Начало занятия</span>
+            <span className="font-inter text-m-base font-medium dark:text-gray-100">
+              Начало занятия
+            </span>
 
-            <span className="text-gray-80 font-inter text-s-base font-normal">
+            <span className="text-gray-80 dark:text-gray-80 font-inter text-s-base font-normal">
               Позволяет участникам просматривать все категории
             </span>
           </div>
 
-          <Toggle size="l" />
+          <Toggle size="l" className="dark:[&>span]:bg-gray-100" />
         </div>
 
         <div className="flex flex-row items-center justify-between p-3">
           <div className="flex flex-col gap-1">
-            <span className="font-inter text-m-base font-medium">Оплата</span>
+            <span className="font-inter text-m-base font-medium dark:text-gray-100">Оплата</span>
 
             <span className="text-gray-80 font-inter text-s-base font-normal">
               Позволяет участникам редактировать права ролей, которые ниже их самой роли
             </span>
           </div>
 
-          <Toggle size="l" />
+          <Toggle size="l" className="dark:[&>span]:bg-gray-100" />
         </div>
       </div>
     </>

@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@xipkg/badge": "2.0.12",
-    "@xipkg/button": "3.1.8",
-    "@xipkg/icons": "2.4.0",
+    "@xipkg/button": "3.2.0",
+    "@xipkg/icons": "^2.5.2",
     "@xipkg/input": "2.2.9",
     "@xipkg/dropdown": "3.0.12",
     "@xipkg/scrollarea": "2.2.0",
@@ -25,6 +25,7 @@
     "@xipkg/userprofile": "4.0.14",
     "@tanstack/react-virtual": "3.13.9",
     "features.table": "*",
+    "features.invites": "*",
     "common.services": "*",
     "common.env": "*",
     "common.ui": "*"

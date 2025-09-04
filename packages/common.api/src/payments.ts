@@ -26,7 +26,8 @@ const paymentsApiConfig = {
   },
 
   [PaymentsQueryKey.AddPayment]: {
-    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/payments/`,
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/invoices/`,
     method: HttpMethod.POST,
   },
 

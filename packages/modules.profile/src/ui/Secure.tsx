@@ -19,13 +19,15 @@ export const Secure = () => {
 
   return (
     <>
-      {!isMobile && <h1 className="mb-4 text-3xl font-semibold">Безопасность</h1>}
+      {!isMobile && (
+        <h1 className="mb-4 text-3xl font-semibold dark:text-gray-100">Безопасность</h1>
+      )}
       <div className="flex flex-col gap-6 sm:gap-8">
         {!user?.email_confirmed && <ConfirmEmail />}
         <div className="border-gray-80 flex w-full flex-col rounded-2xl border p-1">
           <div className="flex w-full flex-col p-3">
-            <span className="text-xl font-semibold">Данные аккаунта</span>
-            <span className="text-sm font-normal">Видны только вам</span>
+            <span className="text-xl font-semibold dark:text-gray-100">Данные аккаунта</span>
+            <span className="dark:text-gray-80 text-sm font-normal">Видны только вам</span>
           </div>
           <ChangePassword
             open={isChangePasswordModalOpen}
@@ -37,8 +39,8 @@ export const Secure = () => {
             >
               <Key className="fill-brand-80" />
               <div className="items-star flex flex-col">
-                <span className="w-fit font-semibold">Пароль</span>
-                <span className="text-xs font-normal">{`Обновлён ${getRelativeTime(user?.last_password_change)}`}</span>
+                <span className="w-fit font-semibold dark:text-gray-100">Пароль</span>
+                <span className="dark:text-gray-80 text-xs font-normal">{`Обновлён ${getRelativeTime(user?.last_password_change)}`}</span>
               </div>
               <ChevronRight className="fill-gray-80 ml-auto" />
             </button>
@@ -50,8 +52,8 @@ export const Secure = () => {
             >
               <Mail className="fill-brand-80" />
               <div className="items-star flex flex-col">
-                <span className="w-fit font-semibold">Почта</span>
-                <span className="text-xs font-normal">{user?.email}</span>
+                <span className="w-fit font-semibold dark:text-gray-100">Почта</span>
+                <span className="dark:text-gray-80 text-xs font-normal">{user?.email}</span>
               </div>
               <ChevronRight className="fill-gray-80 ml-auto" />
             </button>

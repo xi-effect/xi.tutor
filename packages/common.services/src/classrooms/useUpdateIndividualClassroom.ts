@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { ClassroomsQueryKey, ClassroomT } from 'common.api';
+import { ClassroomsQueryKey, ClassroomT, IndividualClassroomT } from 'common.api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface UpdateIndividualClassroomData {
   name?: string;
   status?: string;
-  // Добавьте другие необходимые поля для обновления индивидуального класса
+  description?: string;
 }
 
 export const useUpdateIndividualClassroom = () => {
@@ -16,17 +16,21 @@ export const useUpdateIndividualClassroom = () => {
       classroomId,
       data,
     }: {
-      classroomId: string;
+      classroomId: number;
       data: UpdateIndividualClassroomData;
     }): Promise<ClassroomT> => {
       // Имитация задержки сети
       await new Promise((resolve) => setTimeout(resolve, 800));
 
       // Имитация обновления класса
-      const updatedClassroom: ClassroomT = {
+      const updatedClassroom: IndividualClassroomT = {
         id: classroomId,
         name: data.name || 'Обновленный класс',
-        status: (data.status as any) || 'studying',
+        status: (data.status as any) || 'active',
+        created_at: new Date().toISOString(),
+        description: data.description || 'Описание обновленного класса',
+        kind: 'individual',
+        student_id: 1,
       };
 
       return updatedClassroom;

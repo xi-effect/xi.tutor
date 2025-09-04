@@ -1,5 +1,5 @@
 import { Button } from '@xipkg/button';
-import { ModalInvitation } from './ModalInvitation';
+import { ModalInvitation } from 'features.invites';
 
 export const ButtonsHeader = () => {
   return (

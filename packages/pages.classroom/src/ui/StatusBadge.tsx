@@ -1,21 +1,21 @@
 import { Badge } from '@xipkg/badge';
 
-import { StatusEducationT, ClassroomPropsT } from '../types';
+import { StatusEducationT, TypeEducationT } from '../types';
 
 type StatusBadgePropsT = {
   status: StatusEducationT;
-  groupSize?: ClassroomPropsT['groupSize'];
-  deleted?: ClassroomPropsT['deleted'];
+  kind: TypeEducationT;
+  deleted?: boolean;
 };
 
 const statusMap: Record<string, string> = {
-  study: 'Учится',
-  group: 'Учатся',
-  pause: 'На паузе',
-  completed: 'Обучение завершено',
+  active: 'Активен',
+  paused: 'На паузе',
+  locked: 'Заблокирован',
+  finished: 'Завершен',
 };
 
-export const StatusBadge = ({ status, groupSize, deleted }: StatusBadgePropsT) => {
+export const StatusBadge = ({ status, deleted }: StatusBadgePropsT) => {
   if (deleted) {
     return (
       <Badge size="m" className="text-gray-80 bg-gray-5 rounded-lg border-none px-2 py-1">
@@ -25,18 +25,18 @@ export const StatusBadge = ({ status, groupSize, deleted }: StatusBadgePropsT) =
   }
 
   switch (status) {
-    case 'study':
+    case 'active':
       return (
         <Badge
           variant="success"
           size="m"
           className="text-green-80 bg-green-0 rounded-lg border-none px-2 py-1"
         >
-          {groupSize ? statusMap['group'] : statusMap[status]}
+          {statusMap[status]}
         </Badge>
       );
 
-    case 'pause':
+    case 'paused':
       return (
         <Badge
           variant="destructive"
@@ -47,7 +47,18 @@ export const StatusBadge = ({ status, groupSize, deleted }: StatusBadgePropsT) =
         </Badge>
       );
 
-    case 'completed':
+    case 'locked':
+      return (
+        <Badge
+          variant="destructive"
+          size="m"
+          className="text-red-80 bg-red-0 rounded-lg border-none px-2 py-1"
+        >
+          {statusMap[status]}
+        </Badge>
+      );
+
+    case 'finished':
       return (
         <Badge size="m" className="text-gray-80 bg-gray-5 rounded-lg border-none px-2 py-1">
           {statusMap[status]}

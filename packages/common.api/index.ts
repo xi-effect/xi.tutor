@@ -1,6 +1,7 @@
 export { authApiConfig, AuthQueryKey } from './src/auth';
 export { userApiConfig, UserQueryKey } from './src/user';
 export { invitationsApiConfig, InvitationsQueryKey } from './src/invitations';
+export { paymentTemplatesApiConfig, PaymentTemplatesQueryKey } from './src/paymentTemplates';
 export { materialsApiConfig, MaterialsQueryKey } from './src/materials';
 export { paymentsApiConfig, PaymentsQueryKey } from './src/payments';
 export { classroomsApiConfig, ClassroomsQueryKey } from './src/classrooms';
@@ -11,6 +12,8 @@ export type {
   OnboardingTransitionModeT,
   ClassroomStatusT,
   ClassroomT,
+  IndividualClassroomT,
+  GroupClassroomT,
 } from './src/types';
 export { notificationsApiConfig, NotificationsQueryKey } from './src/notifications';
 export { telegramConnectionApiConfig, TelegramConnectionQueryKey } from './src/telegramConnection';
