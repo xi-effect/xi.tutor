@@ -4,7 +4,12 @@ export { invitationsApiConfig, InvitationsQueryKey } from './src/invitations';
 export { paymentTemplatesApiConfig, PaymentTemplatesQueryKey } from './src/paymentTemplates';
 export { materialsApiConfig, MaterialsQueryKey } from './src/materials';
 export { paymentsApiConfig, PaymentsQueryKey } from './src/payments';
-export { classroomsApiConfig, ClassroomsQueryKey } from './src/classrooms';
+export {
+  classroomsApiConfig,
+  ClassroomsQueryKey,
+  studentsApiConfig,
+  StudentsQueryKey,
+} from './src/tutor';
 export { onboardingApiConfig } from './src/onboarding';
 export type {
   MaterialsKindT,

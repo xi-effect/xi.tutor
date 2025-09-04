@@ -9,4 +9,5 @@ export type {
 export type { MaterialT, UpdateMaterialDataT } from './materials';
 export type { TemplateT, PaymentTemplateDataT, UpdateTemplateDataT } from './payments';
 export type { InvitationDataT } from './invitations';
+export type { TutorStudentSchemaMarshal, UserProfileSchema, TutorshipSchema } from './students';
 export type { SignupData } from './auth';

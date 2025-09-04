@@ -1,7 +1,8 @@
 import { env } from 'common.env';
-import { HttpMethod } from './config';
+import { HttpMethod } from '../config';
 
 enum ClassroomsQueryKey {
+  GetClassrooms = 'GetClassrooms',
   SearchClassrooms = 'SearchClassrooms',
   CreateGroupClassroom = 'CreateGroupClassroom',
   GetClassroom = 'GetClassroom',
@@ -12,6 +13,12 @@ enum ClassroomsQueryKey {
 }
 
 const classroomsApiConfig = {
+  [ClassroomsQueryKey.GetClassrooms]: {
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/roles/tutor/classrooms/`,
+    method: HttpMethod.GET,
+  },
+
   [ClassroomsQueryKey.SearchClassrooms]: {
     getUrl: () =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/roles/tutor/classrooms/searches/`,

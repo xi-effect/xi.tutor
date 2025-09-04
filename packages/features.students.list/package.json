@@ -1,5 +1,5 @@
 {
-  "name": "pages.classrooms",
+  "name": "features.students.list",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -7,29 +7,23 @@
   },
   "license": "MIT",
   "scripts": {
-    "dev": "tsc --watch",
-    "lint": "eslint \"**/*.{ts,tsx}\""
+    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "dev": "tsc --watch"
   },
   "dependencies": {
-    "@xipkg/badge": "2.0.12",
-    "@xipkg/button": "3.2.0",
+    "@xipkg/button": "^3.1.8",
     "@xipkg/icons": "^2.5.2",
-    "@xipkg/input": "2.2.9",
-    "@xipkg/dropdown": "3.0.12",
-    "@xipkg/scrollarea": "2.2.0",
-    "@xipkg/tooltip": "2.1.0",
-    "@xipkg/utils": "1.8.0",
-    "@xipkg/modal": "4.1.0",
-    "@xipkg/link": "^2.0.12",
-    "@xipkg/select": "^2.2.5",
-    "@xipkg/userprofile": "4.0.14",
-    "@tanstack/react-virtual": "3.13.9",
-    "features.table": "*",
-    "features.invites": "*",
-    "features.students.list": "*",
+    "@xipkg/input": "^2.2.9",
+    "@xipkg/modal": "^4.2.0",
+    "@xipkg/scrollarea": "^2.2.0",
+    "@xipkg/tooltip": "^2.1.0",
+    "@xipkg/userprofile": "^4.0.14",
+    "@xipkg/utils": "^1.8.0",
+    "common.api": "*",
+    "common.config": "*",
+    "common.types": "*",
     "common.services": "*",
-    "common.env": "*",
-    "common.ui": "*"
+    "@tanstack/react-query": "^5.73.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -41,9 +35,6 @@
     "@xipkg/typescript": "latest",
     "common.eslint": "*",
     "common.typescript": "*",
-    "common.api": "*",
-    "common.config": "*",
-    "common.types": "*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
@@ -54,6 +45,6 @@
   "peerDependencies": {
     "react": "19"
   },
-  "description": "classrooms page",
+  "description": "features.students.list",
   "author": "xi.effect"
 }
