@@ -1056,6 +1056,9 @@ importers:
 
   packages/features.invoice:
     dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.73.3
+        version: 5.73.3(react@19.1.1)
       '@tanstack/react-router':
         specifier: 1.120.11
         version: 1.120.11(react-dom@19.1.1)(react@19.1.1)
@@ -1080,15 +1083,30 @@ importers:
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.1.1)
+      common.api:
+        specifier: '*'
+        version: link:../common.api
+      common.config:
+        specifier: '*'
+        version: link:../common.config
+      common.env:
+        specifier: '*'
+        version: link:../common.env
       common.services:
         specifier: '*'
         version: link:../common.services
+      common.types:
+        specifier: '*'
+        version: link:../common.types
       common.utils:
         specifier: '*'
         version: link:../common.utils
       react:
         specifier: '19'
         version: 19.1.1
+      sonner:
+        specifier: ^1.4.0
+        version: 1.7.4(react-dom@19.1.1)(react@19.1.1)
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0

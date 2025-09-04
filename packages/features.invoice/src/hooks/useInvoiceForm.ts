@@ -2,9 +2,11 @@ import { useForm, useFieldArray } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { formSchema, type FormData } from '../model';
 import { useFetchClassrooms } from 'common.services';
+import { useCreateInvoice } from './useCreateInvoice';
 
 export const useInvoiceForm = () => {
   const { data: classrooms } = useFetchClassrooms();
+  const createInvoiceMutation = useCreateInvoice();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -48,11 +50,13 @@ export const useInvoiceForm = () => {
     // Формируем payload для отправки
     const student_ids = student?.kind === 'individual' ? [student.student_id] : [];
 
-    console.log('payload:', {
-      invoice: { comment: data.comment },
+    const payload = {
+      invoice: { comment: data.comment || '' },
       items: [...data.items],
       student_ids,
-    });
+    };
+
+    createInvoiceMutation.mutate(payload);
   };
 
   return {
@@ -64,5 +68,6 @@ export const useInvoiceForm = () => {
     append,
     handleClearForm,
     onSubmit,
+    isCreating: createInvoiceMutation.isPending,
   };
 };
