@@ -8,6 +8,10 @@ enum UserQueryKey {
   Password = 'Password',
   PasswordResetConfirm = 'PasswordResetConfirm',
   UserById = 'UserById',
+  UserByUsername = 'UserByUsername',
+  EmailConfirmationRequest = 'EmailConfirmationRequest',
+  UpdateAvatar = 'UpdateAvatar',
+  DeleteAvatar = 'DeleteAvatar',
 }
 
 const userApiConfig = {
@@ -38,6 +42,24 @@ const userApiConfig = {
     getUrl: (id: string) =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/by-id/${id}/profile/`,
     method: HttpMethod.GET,
+  },
+  [UserQueryKey.UserByUsername]: {
+    getUrl: (username: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/by-username/${username}/profile/`,
+    method: HttpMethod.GET,
+  },
+  [UserQueryKey.EmailConfirmationRequest]: {
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/email-confirmation-requests/`,
+    method: HttpMethod.POST,
+  },
+  [UserQueryKey.UpdateAvatar]: {
+    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/avatar/`,
+    method: HttpMethod.PUT,
+  },
+  [UserQueryKey.DeleteAvatar]: {
+    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/avatar/`,
+    method: HttpMethod.DELETE,
   },
 };
 

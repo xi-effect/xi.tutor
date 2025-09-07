@@ -100,7 +100,7 @@ export const useFetchClassrooms = (
   disabled?: boolean,
 ) => {
   const { data, isError, isLoading, ...rest } = useQuery({
-    queryKey: [ClassroomsQueryKey.SearchClassrooms, searchParams],
+    queryKey: [ClassroomsQueryKey.GetClassrooms, searchParams],
     queryFn: async () => {
       // Имитация задержки сети
       await new Promise((resolve) => setTimeout(resolve, 1000));

@@ -8,13 +8,13 @@ import React from 'react';
 export const useInfiniteQuery = (parentRef: RefObject<HTMLDivElement | null>) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
     useTanStackInfiniteQuery({
-      queryKey: [ClassroomsQueryKey.SearchClassrooms],
+      queryKey: [ClassroomsQueryKey.GetClassrooms],
       queryFn: async ({ pageParam }) => {
         const axiosInst = await getAxiosInstance();
-        const url = classroomsApiConfig[ClassroomsQueryKey.SearchClassrooms].getUrl();
+        const url = classroomsApiConfig[ClassroomsQueryKey.GetClassrooms].getUrl();
 
         const response = await axiosInst({
-          method: classroomsApiConfig[ClassroomsQueryKey.SearchClassrooms].method,
+          method: classroomsApiConfig[ClassroomsQueryKey.GetClassrooms].method,
           url,
           data: {
             limit: 20,
