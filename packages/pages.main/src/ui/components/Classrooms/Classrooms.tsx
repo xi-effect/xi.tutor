@@ -61,7 +61,7 @@ export const Classrooms = () => {
 
       <div className="flex flex-row">
         <ScrollArea
-          className="h-[122px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
+          className="h-[122px] w-full overflow-x-auto overflow-y-hidden"
           scrollBarProps={{ orientation: 'horizontal' }}
         >
           <div className="flex flex-row gap-8">
