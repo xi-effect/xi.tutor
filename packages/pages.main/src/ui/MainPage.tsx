@@ -3,6 +3,8 @@ import { Lessons, Materials, Payments, Classrooms } from './components';
 import { Menu } from 'common.ui';
 import { Sidebar } from './components/Sidebar';
 import { Button } from '@xipkg/button';
+import { Plus } from '@xipkg/icons';
+import { useCurrentUser } from 'common.services';
 
 const steps = [
   {
@@ -23,14 +25,24 @@ const steps = [
 
 export const MainPage = () => {
   console.log('MainPage');
+  const { data: user } = useCurrentUser();
 
+  const isTutor = user.default_layout === 'tutor';
   return (
-    <div className="flex h-full flex-col gap-4 overflow-auto pt-1 lg:flex-row">
-      <div className="flex justify-end">
-        <Button size="s" className="text-s-base text-brand-0 absolute right-4 rounded-lg px-4">
-          Назначить занятие
-        </Button>
-      </div>
+    <div className="flex h-full flex-col overflow-auto pt-1 lg:flex-row lg:gap-4">
+      {isTutor && (
+        <div className="absolute right-4 flex justify-end">
+          <Button size="s" className="text-s-base text-brand-0 hidden rounded-lg px-4 sm:flex">
+            Назначить занятие
+          </Button>
+          <Button
+            size="s"
+            className="text-s-base text-brand-0 z-50 flex w-8 rounded-lg p-0 sm:hidden"
+          >
+            <Plus className="fill-brand-0" />
+          </Button>
+        </div>
+      )}
       <ScrollArea
         id="lessons"
         type="always"
