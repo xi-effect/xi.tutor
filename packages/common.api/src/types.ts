@@ -11,6 +11,38 @@ export type OnboardingTransitionModeT = 'forwards' | 'backwards';
 
 export type ClassroomStatusT = 'active' | 'paused' | 'locked' | 'finished';
 
+// Базовые типы для пользователей
+export interface UserProfileSchema {
+  id: number;
+  first_name: string;
+  last_name: string;
+  email: string;
+  avatar?: string;
+}
+
+export interface StudentPreviewSchema {
+  id: number;
+  first_name: string;
+  last_name: string;
+  avatar?: string;
+}
+
+// Типы для связок (tutorship)
+export interface TutorshipSchema {
+  id: number;
+  student: UserProfileSchema;
+  status: string;
+  created_at: string;
+}
+
+// Типы для предметов
+export interface SubjectSchema {
+  id: number;
+  name: string;
+  description?: string;
+}
+
+// Старые типы для совместимости (используются в списках)
 export interface BaseClassroomT {
   id: number;
   status: ClassroomStatusT;
@@ -29,3 +61,33 @@ export interface GroupClassroomT extends BaseClassroomT {
 }
 
 export type ClassroomT = IndividualClassroomT | GroupClassroomT;
+
+// Новые типы для детального получения кабинета
+export interface IndividualClassroomTutorResponseSchema {
+  id: number;
+  kind: 'individual';
+  status: ClassroomStatusT;
+  created_at: string;
+  updated_at: string;
+  student: UserProfileSchema;
+  tutorship: TutorshipSchema;
+  subject: SubjectSchema;
+}
+
+export interface GroupClassroomTutorResponseSchema {
+  id: number;
+  kind: 'group';
+  status: ClassroomStatusT;
+  created_at: string;
+  updated_at: string;
+  title: string;
+  description: string | null;
+  students: StudentPreviewSchema[];
+  subject: SubjectSchema;
+  tutorships: TutorshipSchema[];
+  invite_code: string;
+}
+
+export type ClassroomTutorResponseSchema =
+  | IndividualClassroomTutorResponseSchema
+  | GroupClassroomTutorResponseSchema;

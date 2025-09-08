@@ -2,8 +2,19 @@ import { useInfiniteQuery as useTanStackInfiniteQuery } from '@tanstack/react-qu
 import { RefObject } from 'react';
 import { ClassroomPropsT } from '../types';
 import { getAxiosInstance } from 'common.config';
-import { classroomsApiConfig, ClassroomsQueryKey } from 'common.api';
+import { classroomsApiConfig, ClassroomsQueryKey, ClassroomT } from 'common.api';
 import React from 'react';
+
+// Адаптер для преобразования ClassroomT в ClassroomPropsT
+const adaptClassroom = (classroom: ClassroomT): ClassroomPropsT => ({
+  id: classroom.id,
+  name: classroom.name,
+  status: classroom.status,
+  kind: classroom.kind,
+  description: classroom.description || undefined,
+  created_at: classroom.created_at,
+  student_id: 'student_id' in classroom ? classroom.student_id : undefined,
+});
 
 export const useInfiniteQuery = (parentRef: RefObject<HTMLDivElement | null>) => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
@@ -16,7 +27,7 @@ export const useInfiniteQuery = (parentRef: RefObject<HTMLDivElement | null>) =>
         const response = await axiosInst({
           method: classroomsApiConfig[ClassroomsQueryKey.GetClassrooms].method,
           url,
-          data: {
+          params: {
             limit: 20,
             last_opened_before: pageParam,
           },
@@ -25,7 +36,7 @@ export const useInfiniteQuery = (parentRef: RefObject<HTMLDivElement | null>) =>
           },
         });
 
-        return response.data;
+        return response.data as ClassroomT[];
       },
       initialPageParam: undefined as string | undefined,
       getNextPageParam: (lastPage) => {
@@ -33,9 +44,8 @@ export const useInfiniteQuery = (parentRef: RefObject<HTMLDivElement | null>) =>
           return undefined;
         }
 
-        // Предполагаем, что API возвращает поле для пагинации
-        // Адаптируйте под реальную структуру ответа API
-        const nextParam = lastPage[lastPage.length - 1].last_opened_at;
+        // Используем created_at для пагинации
+        const nextParam = lastPage[lastPage.length - 1].created_at;
         return nextParam;
       },
       staleTime: 5 * 60 * 1000, // 5 минут
@@ -64,14 +74,14 @@ export const useInfiniteQuery = (parentRef: RefObject<HTMLDivElement | null>) =>
     return () => el.removeEventListener('scroll', handleScroll);
   }, [parentRef, fetchNextPage, isFetchingNextPage, hasNextPage]);
 
-  // Объединяем все страницы в один массив
+  // Объединяем все страницы в один массив и адаптируем типы
   const items: ClassroomPropsT[] = React.useMemo(() => {
     if (!data?.pages) {
       return [];
     }
 
     const flattened = data.pages.flat();
-    return flattened;
+    return flattened.map(adaptClassroom);
   }, [data?.pages]);
 
   return {

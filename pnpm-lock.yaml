@@ -2319,6 +2319,12 @@ importers:
       '@xipkg/userprofile':
         specifier: 4.0.14
         version: 4.0.14(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+      common.api:
+        specifier: '*'
+        version: link:../common.api
+      common.services:
+        specifier: '*'
+        version: link:../common.services
       features.materials.add:
         specifier: '*'
         version: link:../features.materials.add

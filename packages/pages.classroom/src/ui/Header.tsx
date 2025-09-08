@@ -1,31 +1,80 @@
 import { Badge } from '@xipkg/badge';
 import { Telegram, WhatsAppFilled } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
+import { ClassroomTutorResponseSchema } from 'common.api';
 
-export const Header = () => {
+interface HeaderProps {
+  classroom: ClassroomTutorResponseSchema;
+}
+
+export const Header = ({ classroom }: HeaderProps) => {
   const handleTelegramClick = () => {
+    // TODO: Получить реальный telegram username из данных пользователя
     window.open('https://t.me/nickname', '_blank');
   };
 
   const handleWhatsAppClick = () => {
+    // TODO: Получить реальный whatsapp username из данных пользователя
     window.open('https://wa.me/nickname', '_blank');
+  };
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'Учится';
+      case 'paused':
+        return 'Приостановлено';
+      case 'locked':
+        return 'Заблокировано';
+      case 'finished':
+        return 'Завершено';
+      default:
+        return 'Неизвестно';
+    }
+  };
+
+  const getStatusVariant = (status: string) => {
+    switch (status) {
+      case 'active':
+        return 'success' as const;
+      case 'paused':
+        return 'warning' as const;
+      case 'locked':
+        return 'destructive' as const;
+      case 'finished':
+        return 'secondary' as const;
+      default:
+        return 'secondary' as const;
+    }
+  };
+
+  const getDisplayName = () => {
+    if (classroom.kind === 'individual') {
+      return `${classroom.student.first_name} ${classroom.student.last_name}`;
+    } else {
+      return classroom.title;
+    }
+  };
+
+  const getSubjectName = () => {
+    return classroom.subject.name;
   };
 
   return (
     <div className="flex flex-row items-center pl-4">
       <div className="flex flex-col items-start gap-1">
         <UserProfile
-          text={'Иванов Иван'}
-          userId={1}
+          text={getDisplayName()}
+          userId={classroom.kind === 'individual' ? classroom.student.id : classroom.id}
           size="l"
           classNameText="text-m-base font-medium text-gray-100 w-full line-clamp-1"
         />
-        <div className="text-m-base text-gray-60 font-medium">Английский язык</div>
+        <div className="text-m-base text-gray-60 font-medium">{getSubjectName()}</div>
       </div>
 
       <div className="ml-auto flex flex-row items-center gap-2">
-        <Badge variant="success" size="m">
-          Учится
+        <Badge variant={getStatusVariant(classroom.status)} size="m">
+          {getStatusText(classroom.status)}
         </Badge>
 
         <Badge
