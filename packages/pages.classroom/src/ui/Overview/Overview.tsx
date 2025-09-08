@@ -3,9 +3,12 @@ import { Badge } from '@xipkg/badge';
 import { Button } from '@xipkg/button';
 import { ArrowRight } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
+import { useGetClassroom } from 'common.services';
 
 export const Overview = () => {
+  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
+  const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
   const navigate = useNavigate();
 
   const handleTabChange = (tab: string) => {
@@ -14,6 +17,26 @@ export const Overview = () => {
       search: { tab },
     });
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col">
+        <div className="flex flex-col gap-4 p-4">
+          <div className="h-6 w-32 animate-pulse rounded bg-gray-200" />
+          <div className="h-32 w-full animate-pulse rounded bg-gray-200" />
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !classroom) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 p-8">
+        <h2 className="text-xl font-medium text-gray-900">Ошибка загрузки данных</h2>
+        <p className="text-gray-600">Не удалось загрузить информацию о кабинете</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col">

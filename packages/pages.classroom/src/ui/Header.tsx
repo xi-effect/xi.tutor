@@ -1,21 +1,39 @@
 import { Badge } from '@xipkg/badge';
-import { Telegram, WhatsAppFilled } from '@xipkg/icons';
+import { Telegram } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
-import { ClassroomTutorResponseSchema } from 'common.api';
+import { useParams } from '@tanstack/react-router';
+import { useGetClassroom } from 'common.services';
 
-interface HeaderProps {
-  classroom: ClassroomTutorResponseSchema;
-}
+export const Header = () => {
+  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
+  const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
 
-export const Header = ({ classroom }: HeaderProps) => {
+  if (isLoading) {
+    return (
+      <div className="flex flex-row items-center pl-4">
+        <div className="flex flex-col items-start gap-1">
+          <div className="h-6 w-32 animate-pulse rounded bg-gray-200" />
+          <div className="h-4 w-24 animate-pulse rounded bg-gray-200" />
+        </div>
+        <div className="ml-auto flex flex-row items-center gap-2">
+          <div className="h-6 w-16 animate-pulse rounded bg-gray-200" />
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !classroom) {
+    return (
+      <div className="flex flex-row items-center pl-4">
+        <div className="flex flex-col items-start gap-1">
+          <div className="text-m-base font-medium text-gray-100">Кабинет не найден</div>
+        </div>
+      </div>
+    );
+  }
   const handleTelegramClick = () => {
     // TODO: Получить реальный telegram username из данных пользователя
     window.open('https://t.me/nickname', '_blank');
-  };
-
-  const handleWhatsAppClick = () => {
-    // TODO: Получить реальный whatsapp username из данных пользователя
-    window.open('https://wa.me/nickname', '_blank');
   };
 
   const getStatusText = (status: string) => {
@@ -84,10 +102,6 @@ export const Header = ({ classroom }: HeaderProps) => {
           size="m"
         >
           <Telegram className="fill-brand-80 mr-2 size-4" />
-          {`@nickname`}
-        </Badge>
-        <Badge className="cursor-pointer" onClick={handleWhatsAppClick} variant="success">
-          <WhatsAppFilled className="fill-green-80 mr-2 size-4" />
           {`@nickname`}
         </Badge>
       </div>

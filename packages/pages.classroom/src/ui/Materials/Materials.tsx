@@ -1,7 +1,7 @@
 import { Button } from '@xipkg/button';
 import { MoreVert } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -10,9 +10,32 @@ import {
 } from '@xipkg/dropdown';
 import { formatToShortDate } from 'pages.materials';
 import { boardsMock, notesMock } from '../../mocks';
+import { useGetClassroom } from 'common.services';
 
 export const Materials = () => {
+  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
+  const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
   const navigate = useNavigate();
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col">
+        <div className="flex flex-col gap-4 p-4">
+          <div className="h-6 w-32 animate-pulse rounded bg-gray-200" />
+          <div className="h-24 w-full animate-pulse rounded bg-gray-200" />
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !classroom) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 p-8">
+        <h2 className="text-xl font-medium text-gray-900">Ошибка загрузки данных</h2>
+        <p className="text-gray-600">Не удалось загрузить материалы кабинета</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col">
