@@ -6,7 +6,7 @@ import { useAcceptInvite } from '../services';
 
 export const Invite = ({ invite }: { invite: InviteT }) => {
   const navigate = useNavigate();
-  const { inviteId } = useParams({ strict: false });
+  const { inviteId } = useParams({ strict: false }) as { inviteId: string };
   const { mutate } = useAcceptInvite();
 
   const isInviteAccepted =

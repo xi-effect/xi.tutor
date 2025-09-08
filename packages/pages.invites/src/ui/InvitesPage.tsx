@@ -5,7 +5,7 @@ import { ErrorInvite } from './ErrorInvite';
 import { useInvitePreview } from '../services';
 
 export const InvitesPage = () => {
-  const { inviteId } = useParams({ strict: false });
+  const { inviteId } = useParams({ strict: false }) as { inviteId: string };
   const { data, error, isLoading } = useInvitePreview(inviteId);
 
   if (isLoading) {
