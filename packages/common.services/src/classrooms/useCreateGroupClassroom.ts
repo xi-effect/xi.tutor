@@ -29,7 +29,7 @@ export const useCreateGroupClassroom = () => {
     onSuccess: () => {
       // Инвалидируем кеш списка классов
       queryClient.invalidateQueries({
-        queryKey: [ClassroomsQueryKey.SearchClassrooms],
+        queryKey: [ClassroomsQueryKey.GetClassrooms],
       });
     },
   });

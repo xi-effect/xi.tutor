@@ -4,6 +4,7 @@ import { HttpMethod } from './config';
 enum NotificationsQueryKey {
   NotificationsSettings = 'NotificationsSettings',
   ContactsVisibility = 'ContactsVisibility',
+  GetContacts = 'GetContacts',
 }
 
 const notificationsApiConfig = {
@@ -16,6 +17,11 @@ const notificationsApiConfig = {
     getUrl: () =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/notification-service/users/current/contacts/personal-telegram/visibility/`,
     method: HttpMethod.PUT,
+  },
+  [NotificationsQueryKey.GetContacts]: {
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/notification-service/users/current/contacts/`,
+    method: HttpMethod.GET,
   },
 };
 

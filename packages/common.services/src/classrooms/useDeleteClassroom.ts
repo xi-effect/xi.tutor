@@ -15,7 +15,7 @@ export const useDeleteClassroom = () => {
     onSuccess: () => {
       // Инвалидируем кеш списка классов и конкретного класса
       queryClient.invalidateQueries({
-        queryKey: [ClassroomsQueryKey.SearchClassrooms],
+        queryKey: [ClassroomsQueryKey.GetClassrooms],
       });
       queryClient.invalidateQueries({
         queryKey: [ClassroomsQueryKey.GetClassroom],

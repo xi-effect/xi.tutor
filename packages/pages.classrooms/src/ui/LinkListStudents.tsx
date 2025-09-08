@@ -1,5 +1,5 @@
 import { Button } from '@xipkg/button';
-import { ModalStudentsList } from './ModalStudentsList';
+import { ModalStudentsList } from 'features.students.list';
 
 type LinkListStudentsT = {
   src: string;

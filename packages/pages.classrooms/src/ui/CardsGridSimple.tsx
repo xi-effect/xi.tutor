@@ -1,14 +1,14 @@
 import { useRef } from 'react';
-import { useInfiniteQueryMock } from '../hooks/useInfiniteQueryMock';
+import { useInfiniteQuery } from '../hooks/useInfiniteQuery';
 import { Card } from './Card';
 import { CardsGridSkeletonAdvanced } from './CardsGridSkeletonAdvanced';
 
 export const CardsGridSimple = () => {
   const parentRef = useRef<HTMLDivElement>(null);
 
-  // Используем бесконечный запрос
+  // Используем бесконечный запрос с реальным API
   const { items, isLoading, isError, isFetchingNextPage, hasNextPage } =
-    useInfiniteQueryMock(parentRef);
+    useInfiniteQuery(parentRef);
 
   if (isLoading) {
     return <CardsGridSkeletonAdvanced count={12} />;
