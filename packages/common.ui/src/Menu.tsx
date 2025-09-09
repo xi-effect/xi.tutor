@@ -44,7 +44,7 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
     return null;
   }
 
-  // Если onboarding_stage не "training" или меню скрыто в сессии, не показываем
+  // // Если onboarding_stage не "training" или меню скрыто в сессии, не показываем
   if (user.onboarding_stage !== 'training' || isHidden || isTransitioning) {
     return null;
   }
@@ -115,7 +115,7 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
 
   return (
     <>
-      <div className="bg-gray-0 border-gray-10 fixed bottom-0 left-1/2 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col gap-6 rounded-2xl border-2 p-4 sm:w-[400px]">
+      <div className="bg-gray-0 border-gray-10 fixed bottom-0 left-1/2 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
         <Button
           variant="ghost"
           size="s"
