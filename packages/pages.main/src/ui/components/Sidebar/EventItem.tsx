@@ -1,19 +1,19 @@
 import { EventItemPropsT } from './types';
 
-export const EventItem = ({ name, description, time, color = 'brand' }: EventItemPropsT) => {
-  const colorClasses = {
-    brand: {
-      border: 'bg-brand-80',
-      hoverText: 'group-hover:text-brand-80',
-      hoverBg: 'hover:bg-brand-0',
-    },
-    green: {
-      border: 'bg-green-80',
-      hoverText: 'group-hover:text-green-80',
-      hoverBg: 'hover:bg-green-0',
-    },
-  };
+const colorClasses = {
+  brand: {
+    border: 'bg-brand-80',
+    hoverText: 'group-hover:text-brand-80',
+    hoverBg: 'hover:bg-brand-0',
+  },
+  green: {
+    border: 'bg-green-80',
+    hoverText: 'group-hover:text-green-80',
+    hoverBg: 'hover:bg-green-0',
+  },
+};
 
+export const EventItem = ({ name, description, time, color = 'brand' }: EventItemPropsT) => {
   const currentColor = colorClasses[color];
 
   return (

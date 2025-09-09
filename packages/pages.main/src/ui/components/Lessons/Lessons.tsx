@@ -4,6 +4,7 @@ import { ScrollArea } from '@xipkg/scrollarea';
 import { Lesson } from './Lesson';
 import { useNavigate } from '@tanstack/react-router';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { AssignLessonButton } from '../AssignLessonButton';
 
 export const Lessons = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ export const Lessons = () => {
           </TooltipTrigger>
           <TooltipContent>К календарю</TooltipContent>
         </Tooltip>
+        <AssignLessonButton className="lg:hidden" />
       </div>
       <div className="flex flex-row">
         <ScrollArea
