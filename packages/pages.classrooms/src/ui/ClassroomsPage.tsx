@@ -4,18 +4,20 @@ import { Plus, Filter } from '@xipkg/icons';
 import { ButtonsHeader } from './ButtonsHeader';
 import { LinkListStudents } from './LinkListStudents';
 import { CardsGridSimple } from './CardsGridSimple';
+import { useCurrentUser } from 'common.services';
 
 export const ClassroomsPage = () => {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
   return (
     <div className="flex flex-col justify-between gap-6 pr-0 pl-4">
       <div className="flex flex-col gap-6 max-md:gap-4">
         <div className="flex flex-row items-center pt-1">
           <h1 className="text-2xl font-semibold text-gray-100">Кабинеты</h1>
-          <div className="ml-auto flex items-center">
-            <LinkListStudents src="#" />
-          </div>
+          <div className="ml-auto flex items-center">{isTutor && <LinkListStudents src="#" />}</div>
 
-          <ButtonsHeader />
+          {isTutor && <ButtonsHeader />}
 
           <div className="ml-auto flex items-center min-[570px]:hidden">
             <Button variant="ghost" size="s">
@@ -28,12 +30,14 @@ export const ClassroomsPage = () => {
       </div>
 
       <div className="flex flex-row items-center justify-end sm:hidden">
-        <Button
-          size="s"
-          className="fixed right-4 bottom-4 z-50 flex h-12 w-12 items-center justify-center rounded-xl"
-        >
-          <Plus className="fill-brand-0" />
-        </Button>
+        {isTutor && (
+          <Button
+            size="s"
+            className="fixed right-4 bottom-4 z-50 flex h-12 w-12 items-center justify-center rounded-xl"
+          >
+            <Plus className="fill-brand-0" />
+          </Button>
+        )}
       </div>
     </div>
   );
