@@ -25,14 +25,20 @@ export const timeToString = (time: Date) => {
 export const parseDateTime = (dateStr: string, timeStr: string) =>
   parse(`${dateStr} ${timeStr}`, 'dd.MM.yyyy HH:mm', new Date());
 
-export const dateToString = (date: string) => {
-  const [d, m, y] = date.split('.');
+export const getFullDateString = (date: Date) => {
+  const weekDayName = date.toLocaleDateString('ru-RU', { weekday: 'short' });
+  const monthName = date.toLocaleDateString('ru-RU', { month: 'long' });
 
-  if (!d || !m || !y) return;
+  return `${weekDayName} ${date.getDate()} ${monthName}`;
+};
 
-  const dateObj = new Date(+y, +m - 1, +d);
-  const weekDayName = dateObj.toLocaleDateString('ru-RU', { weekday: 'short' });
-  const monthName = dateObj.toLocaleDateString('ru-RU', { month: 'long' });
+export const convertStringToDate = (dateString: string): Date => {
+  return parse(dateString, 'dd.MM.yyyy', new Date());
+};
 
-  return `${weekDayName} ${d} ${monthName}`;
+export const formatDate = (date: Date) => {
+  const dd = String(date.getDate()).padStart(2, '0');
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const yyyy = String(date.getFullYear());
+  return `${dd}.${mm}.${yyyy}`;
 };

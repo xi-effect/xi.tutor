@@ -17,7 +17,7 @@ interface DateBlockProps {
 
 export const DateBlock: FC<DateBlockProps> = ({ form }) => {
   const { t } = useTranslation('calendar');
-  const { control, isAllDay, duration } = useDateFields(form);
+  const { control, isAllDay, duration, handleDateChange } = useDateFields(form);
 
   const maskRefStartTime = useMaskInput('time');
   const maskRefEndTime = useMaskInput('time');
@@ -84,7 +84,7 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
           render={({ field }) => (
             <FormItem className="mb-2">
               <FormControl>
-                <InputDate {...field} />
+                <InputDate {...field} onChange={handleDateChange} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -98,7 +98,7 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
             render={({ field }) => (
               <FormItem className="mb-2">
                 <FormControl>
-                  <InputDate {...field} value={field.value || ''} />
+                  <InputDate {...field} onChange={handleDateChange} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

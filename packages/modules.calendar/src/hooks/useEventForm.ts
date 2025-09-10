@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useEffect, useCallback } from 'react';
 import { useForm } from '@xipkg/form';
 import { eventFormSchema, type EventFormData } from '../model';
-import { parseDateTime } from '../utils/calendarUtils';
+import { formatDate, parseDateTime } from '../utils/calendarUtils';
 import { useCloseForm, useDefaultValues } from '../store/formEventStore';
 import { useAddEvent } from '../store/eventsStore';
 
@@ -25,6 +25,7 @@ export const useLessonFields = (form: ReturnType<typeof useForm<EventFormData>>)
 
 export const useDateFields = (form: ReturnType<typeof useForm<EventFormData>>) => {
   const { control, watch, setValue } = form;
+  const startDate = watch('startDate');
   const startTime = watch('startTime');
   const endTime = watch('endTime');
   const isAllDay = watch('isAllDay');
@@ -37,12 +38,17 @@ export const useDateFields = (form: ReturnType<typeof useForm<EventFormData>>) =
     return { hours: Math.floor(duration / 60), minutes: duration % 60 };
   }, [startTime, endTime]);
 
+  const handleDateChange = (date: Date, key: 'startDate' | 'endDate') => {
+    setValue(key, formatDate(date));
+  };
+
   useEffect(() => {
     if (isAllDay) {
       setValue('startTime', '00:00');
       setValue('endTime', '23:59');
+      setValue('endDate', startDate);
     }
-  }, [isAllDay, setValue]);
+  }, [isAllDay, setValue, startDate]);
 
   return {
     control,
@@ -50,6 +56,7 @@ export const useDateFields = (form: ReturnType<typeof useForm<EventFormData>>) =
     duration,
     startTime,
     endTime,
+    handleDateChange,
   };
 };
 
@@ -93,6 +100,8 @@ export const useEventForm = () => {
       const start = parseDateTime(data.startDate, data.startTime);
       const endDateStr = data.endDate && data.endDate.trim() ? data.endDate : data.startDate;
       const end = parseDateTime(endDateStr, data.endTime);
+
+      console.log(data);
 
       const event: ICalendarEvent = {
         id: crypto.randomUUID(),

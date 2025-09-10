@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { EventFormData } from '../model';
 import { ICalendarEvent } from '../ui/types';
+import { formatDate } from '../utils/calendarUtils';
 
 interface FormEventStore {
   isOpen: boolean;
@@ -12,13 +13,6 @@ interface FormEventStore {
   closeForm: () => void;
 }
 
-const formatDate = (date: Date) => {
-  const dd = String(date.getDate()).padStart(2, '0');
-  const mm = String(date.getMonth() + 1).padStart(2, '0');
-  const yyyy = String(date.getFullYear());
-  return `${dd}.${mm}.${yyyy}`;
-};
-
 const INITIAL_VALUES: EventFormData = {
   title: '',
   type: 'rest',
@@ -26,6 +20,7 @@ const INITIAL_VALUES: EventFormData = {
   endTime: '',
   isAllDay: false,
   startDate: formatDate(new Date()),
+  endDate: formatDate(new Date()),
   shouldRepeat: 'dont_repeat',
 };
 

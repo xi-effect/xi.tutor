@@ -1,22 +1,38 @@
-import { memo } from 'react';
+import { memo, useCallback, useEffect, useState } from 'react';
 
 import { DatePicker } from '@xipkg/datepicker';
 import { Calendar } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
-import { dateToString } from '../../../../utils/calendarUtils';
+import { convertStringToDate, getFullDateString } from '../../../../utils/calendarUtils';
 
 interface InputDateProps {
-  value: string;
-  onChange: (val: string) => void;
-  name?: string;
+  value?: string;
+  onChange: (val: Date, key: 'startDate' | 'endDate') => void;
+  name: 'startDate' | 'endDate';
 }
 
-export const InputDate = memo<InputDateProps>(({ value, name }) => {
+export const InputDate = memo<InputDateProps>(({ value, name, onChange }) => {
+  const [date, setDate] = useState<Date>(convertStringToDate(value || ''));
+
+  const handleSelectDate = useCallback(
+    (newDate: Date) => {
+      setDate(newDate);
+      onChange(newDate, name);
+    },
+    [onChange, name],
+  );
+
+  useEffect(() => {
+    setDate(convertStringToDate(value || ''));
+  }, [value]);
+
   return (
-    <DatePicker>
+    <DatePicker
+      calendarProps={{ mode: 'single', selected: date, onSelect: handleSelectDate, required: true }}
+    >
       <Input
         name={name}
-        value={dateToString(value)}
+        value={getFullDateString(date)}
         placeholder="Введите дату"
         variant="s"
         className="cursor-pointer border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
