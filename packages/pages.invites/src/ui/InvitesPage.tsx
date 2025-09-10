@@ -22,7 +22,7 @@ export const InvitesPage = () => {
   }
 
   return (
-    <section className="relative flex h-screen flex-col items-center justify-center">
+    <section className="flex h-screen flex-col items-center justify-center">
       <div className="absolute top-24">
         <Logo />
       </div>

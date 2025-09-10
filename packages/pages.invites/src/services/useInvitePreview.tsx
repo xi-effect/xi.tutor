@@ -1,26 +1,24 @@
-import { useQuery } from '@tanstack/react-query';
-import { mockInviteData } from '../mocks';
-import { InviteT } from '../types';
+import { studentApiConfig, StudentQueryKey } from 'common.api';
+import { useFetching } from 'common.config';
 
 export const useInvitePreview = (code: string) => {
-  return useQuery<InviteT, Error>({
-    queryKey: ['preview', code],
-    queryFn: async () => {
-      await new Promise((resolve) => setTimeout(resolve, 500));
+  const { method, getUrl } = studentApiConfig[StudentQueryKey.InvitationPreview];
 
-      const invite = mockInviteData[code];
-
-      if (!invite) {
-        throw new Error('Приглашение не найдено');
-      }
-
-      if (code === '1') {
-        throw new Error('Target is the source');
-      }
-
-      return invite;
+  const { data, isError, isLoading, ...rest } = useFetching({
+    apiConfig: {
+      method,
+      getUrl: () => getUrl(code),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     },
-    enabled: !!code,
-    retry: false,
+    queryKey: [StudentQueryKey.InvitationPreview, code],
   });
+
+  return {
+    data,
+    isError,
+    isLoading,
+    ...rest,
+  };
 };

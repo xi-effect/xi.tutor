@@ -1,44 +1,38 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { ClassroomResponseT } from '../types';
-import { mockInviteData } from '../mocks';
 import { useNavigate } from '@tanstack/react-router';
+import { ClassroomsQueryKey, studentApiConfig, StudentQueryKey } from 'common.api';
+import { getAxiosInstance } from 'common.config';
+import { handleError } from 'common.services';
 
 export const useAcceptInvite = () => {
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
 
   return useMutation<ClassroomResponseT, Error, string>({
     mutationFn: async (code: string) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      const invite = mockInviteData[code];
-
-      if (invite.kind === 'individual') {
-        return {
-          kind: 'individual',
-          id: 2,
-          status: 'active',
-          created_at: new Date().toISOString(),
-          description: null,
-          tutor_id: invite.tutor.user_id,
-          name: invite.tutor.username,
-        };
-      } else {
-        return {
-          kind: 'group',
-          id: 2,
-          status: 'active',
-          created_at: new Date().toISOString(),
-          description: null,
-          tutor_id: invite.tutor.user_id,
-          name: invite.classroom.name,
-        };
+      try {
+        const axiosInst = await getAxiosInstance();
+        const response = await axiosInst({
+          method: studentApiConfig[StudentQueryKey.UseInvitation].method,
+          url: studentApiConfig[StudentQueryKey.UseInvitation].getUrl(code),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        return response.data as ClassroomResponseT;
+      } catch (err) {
+        console.error('Ошибка:', err);
+        throw err;
       }
     },
     onSuccess: (classroomData) => {
+      queryClient.invalidateQueries({ queryKey: [ClassroomsQueryKey.GetClassrooms] });
       navigate({ to: `/classrooms/${classroomData.id}` });
     },
     onError: (error) => {
       console.error('Ошибка:', error.message);
+      handleError(error, 'acceptInvite');
     },
   });
 };

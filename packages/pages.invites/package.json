@@ -11,10 +11,15 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "@tanstack/react-query": "5.73.3",
+    "axios": "1.8.1",
     "@xipkg/utils": "1.8.0",
     "@xipkg/avatar": "3.0.10",
     "@xipkg/button": "3.2.0",
     "common.ui": "*",
+    "common.api": "*",
+    "common.config": "*",
+    "common.services": "*",
     "@tanstack/react-router": "^1.128.8"
   },
   "devDependencies": {

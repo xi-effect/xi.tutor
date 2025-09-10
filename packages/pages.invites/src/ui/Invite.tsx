@@ -31,6 +31,8 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
     }
   };
 
+  console.log('invite', invite);
+
   return (
     <div className="flex w-full flex-col gap-8 p-2 sm:w-[500px]">
       <div className="text-center">
@@ -39,7 +41,10 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
       </div>
       <div className="flex flex-col items-center gap-2">
         <Avatar size="xl">
-          <AvatarImage src="" alt="user avatar" />
+          <AvatarImage
+            src={`https://api.sovlium.ru/files/users/${invite.tutor.user_id}/avatar.webp`}
+            alt="user avatar"
+          />
           <AvatarFallback />
         </Avatar>
         <div className="flex flex-col items-center">
