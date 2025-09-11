@@ -5,6 +5,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@xipkg/form';
 import { useDebounce } from '@xipkg/utils';
 import { useEffect } from 'react';
+import { useParams } from '@tanstack/react-router';
+import { useGetClassroom } from 'common.services';
 
 interface FormData {
   status: string;
@@ -13,6 +15,8 @@ interface FormData {
 }
 
 export const Information = () => {
+  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
+  const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
   const form = useForm<FormData>();
   const formValues = form.watch();
 
@@ -25,6 +29,32 @@ export const Information = () => {
   useEffect(() => {
     form.handleSubmit(onSubmit)();
   }, [debouncedValues, form]);
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-col gap-4 md:flex-row">
+        <div className="order-2 flex h-full w-full flex-1 justify-center md:order-1">
+          <div className="h-64 w-full animate-pulse rounded bg-gray-200" />
+        </div>
+        <div className="order-1 w-full md:order-2 md:w-[300px]">
+          <div className="flex flex-col gap-6">
+            <div className="h-8 w-full animate-pulse rounded bg-gray-200" />
+            <div className="h-8 w-full animate-pulse rounded bg-gray-200" />
+            <div className="h-8 w-full animate-pulse rounded bg-gray-200" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isError || !classroom) {
+    return (
+      <div className="flex flex-col items-center justify-center gap-4 p-8">
+        <h2 className="text-xl font-medium text-gray-900">Ошибка загрузки данных</h2>
+        <p className="text-gray-600">Не удалось загрузить информацию о кабинете</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4 md:flex-row">

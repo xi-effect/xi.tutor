@@ -14,7 +14,9 @@ export type ErrorType =
   | 'onboarding'
   | 'addInvoiceTemplate'
   | 'deleteInvoiceTemplate'
-  | 'updateInvoiceTemplate';
+  | 'updateInvoiceTemplate'
+  | 'deleteStudent'
+  | 'acceptInvite';
 
 // Маппинг ошибок для разных операций
 const errorMessages: Record<ErrorType, Record<string, string>> = {
@@ -71,6 +73,15 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
     'Invoice item template access denied': 'Доступ к шаблону запрещен',
     'Invoice item template not found': 'Шаблон не найден',
   },
+  deleteStudent: {
+    'Validation Error': 'Ошибка валидации',
+    'Student not found': 'Ученик не найден',
+  },
+  acceptInvite: {
+    'Validation Error': 'Ошибка валидации',
+    'Invitation not found': 'Приглашение не найдено',
+    'Invitation access denied': 'Доступ к приглашению запрещен',
+  },
 };
 
 // Общие сообщения об ошибках по статусам
@@ -97,6 +108,8 @@ const successMessages: Record<ErrorType, string> = {
   addInvoiceTemplate: 'Новый шаблон на оплату добавлен',
   deleteInvoiceTemplate: 'Шаблон удален',
   updateInvoiceTemplate: 'Шаблон обновлен',
+  deleteStudent: 'Ученик удален',
+  acceptInvite: 'Приглашение принято',
 };
 
 /**
@@ -156,6 +169,8 @@ const getOperationName = (type: ErrorType): string => {
       return 'назначении роли';
     case 'onboarding':
       return 'переходе на этап онбординга';
+    case 'deleteStudent':
+      return 'удалении ученика';
     default:
       return 'выполнении операции';
   }

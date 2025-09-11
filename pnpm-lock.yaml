@@ -709,6 +709,9 @@ importers:
       common.env:
         specifier: '*'
         version: link:../common.env
+      common.services:
+        specifier: '*'
+        version: link:../common.services
       common.utils:
         specifier: '*'
         version: link:../common.utils
@@ -1288,6 +1291,97 @@ importers:
         specifier: ^8.22.0
         version: 8.43.0(eslint@9.35.0)(typescript@5.7.3)
 
+  packages/features.students.list:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.73.3
+        version: 5.73.3(react@19.1.1)
+      '@xipkg/button':
+        specifier: ^3.1.8
+        version: 3.2.0(@types/react@19.1.9)(react@19.1.1)
+      '@xipkg/icons':
+        specifier: ^2.5.2
+        version: 2.5.2(react@19.1.1)
+      '@xipkg/input':
+        specifier: ^2.2.9
+        version: 2.2.9(react@19.1.1)
+      '@xipkg/modal':
+        specifier: ^4.2.0
+        version: 4.2.0(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+      '@xipkg/scrollarea':
+        specifier: ^2.2.0
+        version: 2.2.0(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+      '@xipkg/tooltip':
+        specifier: ^2.1.0
+        version: 2.1.0(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+      '@xipkg/userprofile':
+        specifier: ^4.0.14
+        version: 4.0.14(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+      '@xipkg/utils':
+        specifier: ^1.8.0
+        version: 1.8.0(react@19.1.1)
+      common.api:
+        specifier: '*'
+        version: link:../common.api
+      common.config:
+        specifier: '*'
+        version: link:../common.config
+      common.services:
+        specifier: '*'
+        version: link:../common.services
+      common.types:
+        specifier: '*'
+        version: link:../common.types
+      react:
+        specifier: '19'
+        version: 19.1.1
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.19.0
+        version: 9.32.0
+      '@types/node':
+        specifier: ^20.3.1
+        version: 20.19.9
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.1.9
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.1.7(@types/react@19.1.9)
+      '@xipkg/eslint':
+        specifier: 3.2.0
+        version: 3.2.0(eslint-plugin-jsx-a11y@6.10.2)(eslint@9.32.0)(turbo@2.5.5)(typescript@5.7.3)
+      '@xipkg/tailwind':
+        specifier: 0.8.1
+        version: 0.8.1
+      '@xipkg/typescript':
+        specifier: latest
+        version: 0.2.0
+      common.eslint:
+        specifier: '*'
+        version: link:../common.eslint
+      common.typescript:
+        specifier: '*'
+        version: link:../common.typescript
+      eslint:
+        specifier: ^9.19.0
+        version: 9.32.0
+      eslint-plugin-react-hooks:
+        specifier: ^5.0.0
+        version: 5.2.0(eslint@9.32.0)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.18
+        version: 0.4.18(eslint@9.32.0)
+      globals:
+        specifier: ^15.14.0
+        version: 15.15.0
+      typescript:
+        specifier: ~5.7.2
+        version: 5.7.3
+      typescript-eslint:
+        specifier: ^8.22.0
+        version: 8.38.0(eslint@9.32.0)(typescript@5.7.3)
+
   packages/features.table:
     dependencies:
       '@tanstack/react-table':
@@ -1600,17 +1694,17 @@ importers:
         specifier: 3.2.2
         version: 3.2.2(react@19.1.1)
       '@livekit/components-core':
-        specifier: 0.12.7
-        version: 0.12.7(livekit-client@2.13.3)(tslib@2.8.1)
+        specifier: 0.12.9
+        version: 0.12.9(livekit-client@2.15.6)(tslib@2.8.1)
       '@livekit/components-react':
-        specifier: 2.9.9
-        version: 2.9.9(@livekit/krisp-noise-filter@0.3.4)(livekit-client@2.13.3)(react-dom@19.1.1)(react@19.1.1)(tslib@2.8.1)
+        specifier: 2.9.14
+        version: 2.9.14(@livekit/krisp-noise-filter@0.3.4)(livekit-client@2.15.6)(react-dom@19.1.1)(react@19.1.1)(tslib@2.8.1)
       '@livekit/components-styles':
         specifier: 1.1.6
         version: 1.1.6
       '@livekit/krisp-noise-filter':
-        specifier: ^0.3.0
-        version: 0.3.4(livekit-client@2.13.3)
+        specifier: ^0.3.4
+        version: 0.3.4(livekit-client@2.15.6)
       '@react-hook/latest':
         specifier: 1.0.3
         version: 1.0.3(react@19.1.1)
@@ -1672,8 +1766,8 @@ importers:
         specifier: 12.12.1
         version: 12.12.1(react-dom@19.1.1)(react@19.1.1)
       livekit-client:
-        specifier: 2.13.3
-        version: 2.13.3(@types/dom-mediacapture-record@1.0.22)
+        specifier: 2.15.6
+        version: 2.15.6(@types/dom-mediacapture-record@1.0.22)
       react:
         specifier: '19'
         version: 19.1.1
@@ -2233,7 +2327,13 @@ importers:
         version: 2.1.0(@types/react-dom@19.1.9)(@types/react@19.1.12)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/userprofile':
         specifier: 4.0.14
-        version: 4.0.14(@types/react-dom@19.1.9)(@types/react@19.1.12)(react-dom@19.1.1)(react@19.1.1)
+        version: 4.0.14(@types/react-dom@19.1.7)(@types/react@19.1.9)(react-dom@19.1.1)(react@19.1.1)
+      common.api:
+        specifier: '*'
+        version: link:../common.api
+      common.services:
+        specifier: '*'
+        version: link:../common.services
       features.materials.add:
         specifier: '*'
         version: link:../features.materials.add
@@ -2358,6 +2458,9 @@ importers:
       features.invites:
         specifier: '*'
         version: link:../features.invites
+      features.students.list:
+        specifier: '*'
+        version: link:../features.students.list
       features.table:
         specifier: '*'
         version: link:../features.table
@@ -2422,6 +2525,9 @@ importers:
 
   packages/pages.invites:
     dependencies:
+      '@tanstack/react-query':
+        specifier: 5.73.3
+        version: 5.73.3(react@19.1.1)
       '@tanstack/react-router':
         specifier: ^1.128.8
         version: 1.128.8(react-dom@19.1.1)(react@19.1.1)
@@ -2434,6 +2540,18 @@ importers:
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.1.1)
+      axios:
+        specifier: 1.8.1
+        version: 1.8.1
+      common.api:
+        specifier: '*'
+        version: link:../common.api
+      common.config:
+        specifier: '*'
+        version: link:../common.config
+      common.services:
+        specifier: '*'
+        version: link:../common.services
       common.ui:
         specifier: '*'
         version: link:../common.ui
@@ -5083,26 +5201,26 @@ packages:
     resolution: {integrity: sha512-QZqem4QuAnAyzfz+Gj5/+SLxqwCAw2qmt7732ZXodr6VDWGeYLG6w1i/vYLa55JQM9wRuBKLmXmiZ2P0LtE5rw==}
     dev: false
 
-  /@livekit/components-core@0.12.7(livekit-client@2.13.3)(tslib@2.8.1):
-    resolution: {integrity: sha512-oxP2qlFy2Dqnu2u0ESQgcKF+5LfAMpOZ87FTMXyZ+RFogM3AkU0PWR31+j3tkAMPC9fCrgh4V1lZG3h6LjGTiw==}
+  /@livekit/components-core@0.12.9(livekit-client@2.15.6)(tslib@2.8.1):
+    resolution: {integrity: sha512-bwrZsHf6GaHIO+lLyA6Yps1STTX9YIeL3ixwt+Ufi88OgkNYdp41Ug8oeVDlf7tzdxa+r3Xkfaj/qvIG84Yo6A==}
     engines: {node: '>=18'}
     peerDependencies:
-      livekit-client: ^2.13.1
+      livekit-client: ^2.13.3
       tslib: ^2.6.2
     dependencies:
       '@floating-ui/dom': 1.6.13
-      livekit-client: 2.13.3(@types/dom-mediacapture-record@1.0.22)
+      livekit-client: 2.15.6(@types/dom-mediacapture-record@1.0.22)
       loglevel: 1.9.1
       rxjs: 7.8.2
       tslib: 2.8.1
     dev: false
 
-  /@livekit/components-react@2.9.9(@livekit/krisp-noise-filter@0.3.4)(livekit-client@2.13.3)(react-dom@19.1.1)(react@19.1.1)(tslib@2.8.1):
-    resolution: {integrity: sha512-ZxiHSCNVxNG8XZdJkpJ7+ga/Wl6WRDkZocJGd+eh8F1JRjjqrBL9IesOPzOK0INX9lAaVCe9VqL41B+B5PVdrg==}
+  /@livekit/components-react@2.9.14(@livekit/krisp-noise-filter@0.3.4)(livekit-client@2.15.6)(react-dom@19.1.1)(react@19.1.1)(tslib@2.8.1):
+    resolution: {integrity: sha512-fQ3t4PdcM+AORo62FWmJcfqWe7ODwVaU4nsqxse+fp6L5a+0K2uMD7yQ2jrutXIaUQigU/opzTUxPcpdk9+0ow==}
     engines: {node: '>=18'}
     peerDependencies:
-      '@livekit/krisp-noise-filter': ^0.2.12
-      livekit-client: ^2.13.1
+      '@livekit/krisp-noise-filter': ^0.2.12 || ^0.3.0
+      livekit-client: ^2.13.3
       react: '>=18'
       react-dom: '>=18'
       tslib: ^2.6.2
@@ -5110,10 +5228,10 @@ packages:
       '@livekit/krisp-noise-filter':
         optional: true
     dependencies:
-      '@livekit/components-core': 0.12.7(livekit-client@2.13.3)(tslib@2.8.1)
-      '@livekit/krisp-noise-filter': 0.3.4(livekit-client@2.13.3)
+      '@livekit/components-core': 0.12.9(livekit-client@2.15.6)(tslib@2.8.1)
+      '@livekit/krisp-noise-filter': 0.3.4(livekit-client@2.15.6)
       clsx: 2.1.1
-      livekit-client: 2.13.3(@types/dom-mediacapture-record@1.0.22)
+      livekit-client: 2.15.6(@types/dom-mediacapture-record@1.0.22)
       react: 19.1.1
       react-dom: 19.1.1(react@19.1.1)
       tslib: 2.8.1
@@ -5125,21 +5243,21 @@ packages:
     engines: {node: '>=18'}
     dev: false
 
-  /@livekit/krisp-noise-filter@0.3.4(livekit-client@2.13.3):
+  /@livekit/krisp-noise-filter@0.3.4(livekit-client@2.15.6):
     resolution: {integrity: sha512-gvC0OevzIPBAr8f2S4P/BdUxVJYp7rvDoORHAmU6yppK6NKn+GNbkMosz0NpsI+Te18etBBOjaKmhoD7/PoXVA==}
     peerDependencies:
       livekit-client: ^2.0.8
     dependencies:
       '@livekit/mutex': 1.1.1
-      livekit-client: 2.13.3(@types/dom-mediacapture-record@1.0.22)
+      livekit-client: 2.15.6(@types/dom-mediacapture-record@1.0.22)
     dev: false
 
   /@livekit/mutex@1.1.1:
     resolution: {integrity: sha512-EsshAucklmpuUAfkABPxJNhzj9v2sG7JuzFDL4ML1oJQSV14sqrpTYnsaOudMAw9yOaW53NU3QQTlUQoRs4czw==}
     dev: false
 
-  /@livekit/protocol@1.38.0:
-    resolution: {integrity: sha512-XX6ulvsE1XCN18LVf3ydHN7Ri1Z1M1P5dQdjnm5nVDsSqUL12Vbo/4RKcRlCEXAg2qB62mKjcaVLXVwkfXggkg==}
+  /@livekit/protocol@1.39.3:
+    resolution: {integrity: sha512-hfOnbwPCeZBEvMRdRhU2sr46mjGXavQcrb3BFRfG+Gm0Z7WUSeFdy5WLstXJzEepz17Iwp/lkGwJ4ZgOOYfPuA==}
     dependencies:
       '@bufbuild/protobuf': 1.10.1
     dev: false
@@ -12153,13 +12271,13 @@ packages:
     resolution: {integrity: sha512-NT1CJtq3hHIreOianA8aSXn6Cw0JzYOuDQbOrSPe7gqFnCpKP++MQe3ODgO3oh2GJFORkAAdqredOa60z63GbA==}
     dev: false
 
-  /livekit-client@2.13.3(@types/dom-mediacapture-record@1.0.22):
-    resolution: {integrity: sha512-5lX9bqN2ZKjt1RqJqO1Vz9uplrnCLIpbG3Y8h7z0ui2adk5oahohV0m1F2ZEaIJTfQgXhX1iVbSYrVNwTzwRDQ==}
+  /livekit-client@2.15.6(@types/dom-mediacapture-record@1.0.22):
+    resolution: {integrity: sha512-bLdNXklpMfWofw9pCF2XGyYA3OUddXXG4KY+gTN7dh+YvG7TX+YaP/Kt9ugdZ3KziQLqK2HG1ict4s7uD0JAiQ==}
     peerDependencies:
       '@types/dom-mediacapture-record': ^1
     dependencies:
       '@livekit/mutex': 1.1.1
-      '@livekit/protocol': 1.38.0
+      '@livekit/protocol': 1.39.3
       '@types/dom-mediacapture-record': 1.0.22
       events: 3.3.0
       loglevel: 1.9.2

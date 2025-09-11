@@ -11,6 +11,8 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "common.api": "*",
+    "common.services": "*",
     "features.materials.add": "*",
     "@xipkg/badge": "2.0.12",
     "@xipkg/button": "3.2.0",

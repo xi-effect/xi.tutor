@@ -48,6 +48,8 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
     }
   }, [data?.length, handleAddInvitation]);
 
+  console.log('isDeleting', isDeleting);
+
   return (
     <Modal>
       <ModalTrigger asChild>{children}</ModalTrigger>
@@ -94,12 +96,12 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
                     >
                       {isDeleting && deletingId === invitation.id ? (
                         <div
-                          className="text-brand-80 inline-block size-4 animate-spin rounded-full border-[2px] border-current border-t-transparent"
+                          className="text-brand-80 size-4 animate-spin rounded-full border-[2px] border-current border-t-transparent"
                           role="status"
                           aria-label="loading"
                         />
                       ) : (
-                        <Trash size="sm" className="fill-gray-60 hidden group-hover:flex" />
+                        <Trash size="sm" className="fill-gray-60 group-hover:flex" />
                       )}
                     </TableCell>
                   </TableRow>

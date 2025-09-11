@@ -22,31 +22,32 @@ const materialsApiConfig = {
         params.append('last_opened_before', lastOpenedBefore);
       }
 
-      return `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/materials/?${params.toString()}`;
+      return `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/materials/?${params.toString()}`;
     },
     method: HttpMethod.GET,
   },
 
   [MaterialsQueryKey.AddMaterials]: {
-    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/materials/`,
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/materials/`,
     method: HttpMethod.POST,
   },
 
   [MaterialsQueryKey.DeleteMaterials]: {
     getUrl: (id: string) =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/materials/${id}/`,
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/materials/${id}/`,
     method: HttpMethod.DELETE,
   },
 
   [MaterialsQueryKey.GetMaterial]: {
     getUrl: (id: string) =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/materials/${id}/`,
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/materials/${id}/`,
     method: HttpMethod.GET,
   },
 
   [MaterialsQueryKey.UpdateMaterial]: {
     getUrl: (id: string) =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/materials/${id}/`,
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/materials/${id}/`,
     method: HttpMethod.PATCH,
   },
 };

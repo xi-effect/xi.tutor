@@ -22,6 +22,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
   name,
   status,
   kind,
+  student_id,
   deleted = false,
 }) => {
   const navigate = useNavigate();
@@ -54,7 +55,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
         ) : (
           <UserProfile
             text={name}
-            userId={id}
+            userId={student_id || null}
             size="l"
             classNameText="text-m-base font-medium text-gray-100 w-full line-clamp-1"
           />
