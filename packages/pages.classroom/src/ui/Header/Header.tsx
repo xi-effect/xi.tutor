@@ -1,12 +1,44 @@
 import { Badge } from '@xipkg/badge';
 import { Telegram } from '@xipkg/icons';
-import { UserProfile } from '@xipkg/userprofile';
 import { useParams } from '@tanstack/react-router';
 import { useGetClassroom } from 'common.services';
+import { IndividualUser } from './IndividualUser';
+
+const getStatusText = (status: string) => {
+  switch (status) {
+    case 'active':
+      return 'Учится';
+    case 'paused':
+      return 'Приостановлено';
+    case 'locked':
+      return 'Заблокировано';
+    case 'finished':
+      return 'Завершено';
+    default:
+      return 'Неизвестно';
+  }
+};
+
+const getStatusVariant = (status: string) => {
+  switch (status) {
+    case 'active':
+      return 'success' as const;
+    case 'paused':
+      return 'warning' as const;
+    case 'locked':
+      return 'destructive' as const;
+    case 'finished':
+      return 'secondary' as const;
+    default:
+      return 'secondary' as const;
+  }
+};
 
 export const Header = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
   const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
+
+  console.log('classroom', classroom);
 
   if (isLoading) {
     return (
@@ -44,36 +76,6 @@ export const Header = () => {
     window.open('https://t.me/nickname', '_blank');
   };
 
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'Учится';
-      case 'paused':
-        return 'Приостановлено';
-      case 'locked':
-        return 'Заблокировано';
-      case 'finished':
-        return 'Завершено';
-      default:
-        return 'Неизвестно';
-    }
-  };
-
-  const getStatusVariant = (status: string) => {
-    switch (status) {
-      case 'active':
-        return 'success' as const;
-      case 'paused':
-        return 'warning' as const;
-      case 'locked':
-        return 'destructive' as const;
-      case 'finished':
-        return 'secondary' as const;
-      default:
-        return 'secondary' as const;
-    }
-  };
-
   const getDisplayName = () => {
     if (classroom.kind === 'individual') {
       return `${classroom.student.first_name} ${classroom.student.last_name}`;
@@ -82,20 +84,15 @@ export const Header = () => {
     }
   };
 
-  const getSubjectName = () => {
-    return classroom.subject.name;
-  };
-
   return (
     <div className="flex flex-row items-center pl-4">
       <div className="flex flex-col items-start gap-1">
-        <UserProfile
-          text={getDisplayName()}
-          userId={classroom.kind === 'individual' ? classroom.student.id : classroom.id}
-          size="l"
-          classNameText="text-m-base font-medium text-gray-100 w-full line-clamp-1"
-        />
-        <div className="text-m-base text-gray-60 font-medium">{getSubjectName()}</div>
+        {classroom.kind === 'individual' ? (
+          <IndividualUser studentId={classroom.student_id} />
+        ) : (
+          <div className="text-m-base text-gray-60 font-medium">{getDisplayName()}</div>
+        )}
+        {/* <div className="text-m-base text-gray-60 font-medium">{getSubjectName()}</div> */}
       </div>
 
       <div className="ml-auto flex flex-row items-center gap-2">

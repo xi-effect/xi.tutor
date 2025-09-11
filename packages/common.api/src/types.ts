@@ -72,6 +72,7 @@ export interface IndividualClassroomTutorResponseSchema {
   student: UserProfileSchema;
   tutorship: TutorshipSchema;
   subject: SubjectSchema;
+  student_id: number;
 }
 
 export interface GroupClassroomTutorResponseSchema {
