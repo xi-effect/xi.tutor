@@ -1,10 +1,25 @@
 export interface ICalendarEvent {
   id: string;
   title: string;
-  start?: Date;
+  start: Date;
   end: Date;
-  type?: 'task' | 'vacation' | 'cancelled';
+  type?: EventType;
+  isCancelled?: boolean;
+  isAllDay?: boolean;
+  lessonInfo?: ILessonInfo;
 }
+
+export interface ILessonInfo {
+  studentName: string;
+  subject: string;
+  lessonType: LessonType;
+  description?: string;
+  paid?: boolean;
+  complete?: boolean;
+}
+
+export type EventType = 'lesson' | 'rest';
+export type LessonType = 'group' | 'individual';
 
 export type CalendarMode = 'day' | 'week' | 'month' | 'year';
 export type WeekOrDayMode = Extract<CalendarMode, 'week' | 'day'>;
