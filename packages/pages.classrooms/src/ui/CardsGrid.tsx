@@ -28,6 +28,14 @@ export const CardsGrid = () => {
     );
   }
 
+  if (items.length === 0) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <p className="text-gray-500">Здесь пока нет кабинетов</p>
+      </div>
+    );
+  }
+
   return (
     <div
       ref={parentRef}

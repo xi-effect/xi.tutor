@@ -6,6 +6,7 @@ enum AuthQueryKey {
   Signup = 'Signup',
   Signout = 'Signout',
   RequestPasswordReset = 'RequestPasswordReset',
+  EmailConfirmation = 'EmailConfirmation',
 }
 
 const authApiConfig = {
@@ -23,6 +24,11 @@ const authApiConfig = {
   },
   [AuthQueryKey.RequestPasswordReset]: {
     getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/public/user-service/password-reset/requests/`,
+    method: HttpMethod.POST,
+  },
+  [AuthQueryKey.EmailConfirmation]: {
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/public/user-service/email-confirmation/confirmations/`,
     method: HttpMethod.POST,
   },
 };

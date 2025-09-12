@@ -10,6 +10,8 @@ export {
   studentsApiConfig,
   StudentsQueryKey,
 } from './src/tutor';
+export { studentApiConfig, StudentQueryKey } from './src/student';
+export { filesApiConfig, FilesQueryKey } from './src/files';
 export { onboardingApiConfig } from './src/onboarding';
 export type {
   MaterialsKindT,
@@ -19,6 +21,13 @@ export type {
   ClassroomT,
   IndividualClassroomT,
   GroupClassroomT,
+  UserProfileSchema,
+  StudentPreviewSchema,
+  TutorshipSchema,
+  SubjectSchema,
+  IndividualClassroomTutorResponseSchema,
+  GroupClassroomTutorResponseSchema,
+  ClassroomTutorResponseSchema,
 } from './src/types';
 export { notificationsApiConfig, NotificationsQueryKey } from './src/notifications';
 export { telegramConnectionApiConfig, TelegramConnectionQueryKey } from './src/telegramConnection';

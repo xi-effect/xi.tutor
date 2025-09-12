@@ -20,6 +20,9 @@
     "@xipkg/scrollarea": "2.2.0",
     "@xipkg/calendar": "2.1.0",
     "@xipkg/select": "2.2.5",
+    "@xipkg/switcher": "3.0.13",
+    "@xipkg/inputmask": "2.0.12",
+    "@xipkg/datepicker": "2.2.0",
     "zod": "3.24.2",
     "zustand": "^5.0.3"
   },
