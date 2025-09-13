@@ -1,9 +1,7 @@
 import { Button } from '@xipkg/button';
 import { Plus, Filter } from '@xipkg/icons';
 
-import { ButtonsHeader } from './ButtonsHeader';
-import { LinkListStudents } from './LinkListStudents';
-import { CardsGridSimple } from './CardsGridSimple';
+import { ButtonsHeader, LinkListStudents, CardsGridSimple } from './components';
 import { useCurrentUser } from 'common.services';
 
 export const ClassroomsPage = () => {

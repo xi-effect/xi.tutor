@@ -1,6 +1,6 @@
 import { useRef } from 'react';
-import { useInfiniteQuery, useResponsiveGrid, useVirtualGrid } from '../hooks';
-import { Card } from './Card';
+import { useInfiniteQuery, useResponsiveGrid, useVirtualGrid } from '../../../hooks';
+import { Card } from '../cards';
 import { CardsGridSkeleton } from './CardsGridSkeleton';
 
 export const CardsGrid = () => {

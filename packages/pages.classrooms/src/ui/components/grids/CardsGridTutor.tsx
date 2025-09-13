@@ -1,17 +1,16 @@
-/* eslint-disable no-irregular-whitespace */
 import { useRef } from 'react';
-import { useInfiniteQuery } from '../hooks/useInfiniteQuery';
-import { Card } from './Card';
+import { useInfiniteQuery } from '../../../hooks';
+import { Card } from '../cards';
 import { CardsGridSkeletonAdvanced } from './CardsGridSkeletonAdvanced';
 
-export const CardsGridSimple = () => {
+export const CardsGridTutor = () => {
   const parentRef = useRef<HTMLDivElement>(null);
 
-  // Используем бесконечный запрос с реальным API
+  // Используем бесконечный запрос с реальным API для репетитора
   const { items, isLoading, isError, isFetchingNextPage, hasNextPage } =
     useInfiniteQuery(parentRef);
 
-  console.log('items', items);
+  console.log('tutor items', items);
 
   if (isLoading) {
     return <CardsGridSkeletonAdvanced count={12} />;
@@ -29,7 +28,7 @@ export const CardsGridSimple = () => {
     return (
       <div className="flex h-full min-h-[90dvh] flex-col items-center justify-center gap-2">
         <p className="text-xl-base text-center font-semibold text-gray-100">
-          Здесь будут ваши ученики и группы
+          Здесь будут ваши ученики и группы
         </p>
         <p className="text-m-base text-gray-80 text-center">Пригласите кого-нибудь</p>
       </div>

@@ -1,6 +1,6 @@
 import { Badge } from '@xipkg/badge';
 
-import { StatusEducationT, TypeEducationT } from '../types';
+import { StatusEducationT, TypeEducationT } from '../../../types';
 
 type StatusBadgePropsT = {
   status: StatusEducationT;

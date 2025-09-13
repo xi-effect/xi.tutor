@@ -8,7 +8,7 @@ import {
   SelectValue,
 } from '@xipkg/select';
 
-import { StatusEducationT, TypeEducationT, SubjectT } from '../types';
+import { StatusEducationT, TypeEducationT, SubjectT } from '../../../types';
 
 export const Filters = ({ className }: { className?: string }) => {
   const [status, setStatus] = useState<StatusEducationT | 'all'>('all');

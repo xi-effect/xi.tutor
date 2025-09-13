@@ -1,5 +1,5 @@
 import React from 'react';
-import { CardSkeletonAdvanced } from './CardSkeletonAdvanced';
+import { CardSkeletonAdvanced } from '../skeletons';
 
 interface CardsGridSkeletonAdvancedProps {
   count?: number;

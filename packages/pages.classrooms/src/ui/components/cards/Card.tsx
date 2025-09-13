@@ -14,7 +14,7 @@ import {
 import { StatusBadge } from './StatusBadge';
 import { useDeleteClassroom } from 'common.services';
 
-import { ClassroomPropsT } from '../types';
+import { ClassroomPropsT } from '../../../types';
 import { useNavigate } from '@tanstack/react-router';
 
 export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
