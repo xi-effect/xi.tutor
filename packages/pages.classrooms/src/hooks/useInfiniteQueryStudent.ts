@@ -13,7 +13,7 @@ const adaptClassroom = (classroom: ClassroomT): ClassroomPropsT => ({
   kind: classroom.kind,
   description: classroom.description || undefined,
   created_at: classroom.created_at,
-  student_id: 'student_id' in classroom ? classroom.student_id : undefined,
+  student_id: 'student_id' in classroom ? classroom.student_id : classroom.tutor_id,
 });
 
 export const useInfiniteQueryStudent = (parentRef: RefObject<HTMLDivElement | null>) => {

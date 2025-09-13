@@ -12,7 +12,7 @@ import {
 } from '@xipkg/dropdown';
 
 import { StatusBadge } from './StatusBadge';
-import { useDeleteClassroom } from 'common.services';
+import { useCurrentUser, useDeleteClassroom } from 'common.services';
 
 import { ClassroomPropsT } from '../../../types';
 import { useNavigate } from '@tanstack/react-router';
@@ -40,6 +40,10 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
     e.stopPropagation(); // Предотвращаем переход на страницу класса
     deleteClassroom(id.toString());
   };
+
+  const { data: user } = useCurrentUser();
+
+  const isTutor = user?.default_layout === 'tutor';
 
   return (
     <div
@@ -70,29 +74,31 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
         </div>
       </div>
 
-      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className="h-6 w-6" variant="ghost" size="icon">
-              <MoreVert className="h-4 w-4 dark:fill-gray-100" />
-            </Button>
-          </DropdownMenuTrigger>
+      {isTutor && (
+        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="h-6 w-6" variant="ghost" size="icon">
+                <MoreVert className="h-4 w-4 dark:fill-gray-100" />
+              </Button>
+            </DropdownMenuTrigger>
 
-          <DropdownMenuContent
-            side="bottom"
-            align="end"
-            className="border-gray-10 bg-gray-0 border p-1"
-          >
-            <DropdownMenuItem
-              onClick={handleDelete}
-              disabled={isDeleting}
-              className={isDeleting ? 'cursor-not-allowed opacity-50' : ''}
+            <DropdownMenuContent
+              side="bottom"
+              align="end"
+              className="border-gray-10 bg-gray-0 border p-1"
             >
-              {isDeleting ? 'Удаление...' : 'Удалить'}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
+              <DropdownMenuItem
+                onClick={handleDelete}
+                disabled={isDeleting}
+                className={isDeleting ? 'cursor-not-allowed opacity-50' : ''}
+              >
+                {isDeleting ? 'Удаление...' : 'Удалить'}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      )}
     </div>
   );
 };

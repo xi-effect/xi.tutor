@@ -34,9 +34,9 @@ export function useYjsStore({ documentName }: UseYjsStoreArgs): UseCollaborative
     console.log('Создаем Hocuspocus provider для документа:', documentName);
     return new HocuspocusProvider({
       url: 'wss://hocus.sovlium.ru',
-      name: 'test/demo-room', // documentName,
+      name: documentName, // documentName,
       document: ydoc,
-      token: 'test/demo-room', // documentName,
+      token: documentName, // documentName,
       connect: false,
       forceSyncInterval: 20000, // Принудительная синхронизация каждые 20 секунд
       onAuthenticationFailed: (data) => {
