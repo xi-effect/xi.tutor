@@ -30,6 +30,7 @@ export const useUpdateGroupClassroom = () => {
         created_at: new Date().toISOString(),
         description: data.description || 'Описание обновленного группового класса',
         kind: 'group',
+        tutor_id: 0,
       };
 
       return updatedClassroom;

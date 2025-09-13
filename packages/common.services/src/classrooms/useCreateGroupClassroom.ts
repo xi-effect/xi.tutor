@@ -22,6 +22,7 @@ export const useCreateGroupClassroom = () => {
         created_at: new Date().toISOString(),
         description: data.description || null,
         kind: 'group',
+        tutor_id: 0,
       };
 
       return newClassroom;
