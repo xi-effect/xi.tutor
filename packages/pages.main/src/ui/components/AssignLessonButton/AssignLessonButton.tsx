@@ -6,7 +6,8 @@ import { cn } from '@xipkg/utils';
 export const AssignLessonButton = ({ className }: { className?: string }) => {
   const { data: user } = useCurrentUser();
 
-  const isTutor = user.default_layout === 'tutor';
+  const isTutor = user?.default_layout === 'tutor';
+
   return (
     <>
       {isTutor && (
