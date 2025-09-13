@@ -1,26 +1,25 @@
-import { useEditor, EditorContent } from '@tiptap/react';
-import content from '../const/content';
-import { extensions } from '../config/editorConfig';
-import { editorProps } from '../config/editorProps';
-import { EditorToolkit } from './components/EditorToolkit';
+import { YjsProvider } from '../providers/YjsProvider';
+import { TiptapEditor } from './components/TiptapEditor';
+import { useParams } from '@tanstack/react-router';
+import { useGetMaterial } from 'common.services';
+import { LoadingScreen } from 'common.ui';
 
 export const Editor = () => {
-  const editor = useEditor({
-    extensions,
-    content,
-    editorProps,
-  });
+  const { editorId = 'empty' } = useParams({ strict: false });
+  const { data, isLoading, error } = useGetMaterial(editorId);
 
-  if (!editor) return null;
+  if (isLoading) return <LoadingScreen />;
+
+  if (error)
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-lg text-red-500">Ошибка загрузки: {error.message}</div>
+      </div>
+    );
 
   return (
-    <div className="flex w-full justify-center py-8">
-      <div className="w-full max-w-5xl overflow-hidden rounded-lg bg-white">
-        <div className="relative px-16 py-8">
-          <EditorContent editor={editor} />
-          <EditorToolkit editor={editor} />
-        </div>
-      </div>
-    </div>
+    <YjsProvider data={data}>
+      <TiptapEditor />
+    </YjsProvider>
   );
 };

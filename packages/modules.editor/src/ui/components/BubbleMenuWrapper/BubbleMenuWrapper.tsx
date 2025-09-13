@@ -13,6 +13,7 @@ interface BubbleMenuProps {
     underline: boolean;
     link: boolean;
   };
+  isReadOnly?: boolean;
 }
 
 export const BubbleMenuWrapper = ({ editor, activeStates }: BubbleMenuProps) => (

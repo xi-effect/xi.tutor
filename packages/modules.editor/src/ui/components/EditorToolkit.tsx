@@ -1,20 +1,23 @@
-import { FloatingMenu } from '@tiptap/react/menus';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { useEditorActive } from '../../hooks/useEditorActive';
 import { BubbleMenuWrapper } from './BubbleMenuWrapper/BubbleMenuWrapper';
 import { DragHandleWrapper } from './DragHandleWrapper';
+import { FloatingMenuWrapper } from './FloatingMenuWrapper';
 import { Editor } from '@tiptap/core';
-import { useEditorActive } from '../../hooks/UseEditorActive';
 
-export const EditorToolkit = ({ editor }: { editor: Editor }) => {
+type EditorToolkitProps = {
+  editor: Editor;
+  isReadOnly: boolean;
+};
+
+export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly }) => {
   const [isDragging, setIsDragging] = useState(false);
   const activeStates = useEditorActive(editor);
 
   const handleDragEnd = () => {
-    if (editor) {
-      const { from } = editor.state.selection;
-      editor.commands.setTextSelection(from);
-      setIsDragging(false);
-    }
+    const from = editor.state.selection.from;
+    editor.commands.setTextSelection(from);
+    setIsDragging(false);
   };
 
   return (
@@ -23,9 +26,13 @@ export const EditorToolkit = ({ editor }: { editor: Editor }) => {
         editor={editor}
         onDragStart={() => setIsDragging(true)}
         onDragEnd={handleDragEnd}
+        isReadOnly={isReadOnly}
       />
-      <FloatingMenu editor={editor}>This is the floating menu</FloatingMenu>
-      {!isDragging && <BubbleMenuWrapper editor={editor} activeStates={activeStates} />}
+      <FloatingMenuWrapper editor={editor} />
+
+      {!isDragging && (
+        <BubbleMenuWrapper editor={editor} activeStates={activeStates} isReadOnly={isReadOnly} />
+      )}
     </>
   );
 };
