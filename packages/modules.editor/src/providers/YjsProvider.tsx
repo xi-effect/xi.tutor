@@ -1,32 +1,18 @@
-import { useParams } from '@tanstack/react-router';
-import { useGetMaterial } from 'common.services';
-import { createContext, ReactNode, useContext } from 'react';
-import { UseCollaborativeTiptapReturn, useYjsStore } from '../hooks/useYjsStore';
-
-type YjsContextType = UseCollaborativeTiptapReturn | null;
-
-const YjsContext = createContext<YjsContextType>(null);
+import { ReactNode } from 'react';
+import { useYjsStore } from '../hooks/useYjsStore';
+import { YjsContext } from '../context/YjsContext';
+import { MaterialT } from 'common.types';
 
 type YjsProviderProps = {
   children: ReactNode;
+  data: MaterialT;
 };
 
-export const useYjsContext = () => {
-  const context = useContext(YjsContext);
-  if (!context) {
-    throw new Error('useYjsContext must be used within YjsProvider');
-  }
-  return context;
-};
-
-export const YjsProvider = ({ children }: YjsProviderProps) => {
-  const { editorId = 'empty' } = useParams({ strict: false });
-  const { data } = useGetMaterial(editorId);
-
+export const YjsProvider = ({ children, data }: YjsProviderProps) => {
   const documentName = data?.ydoc_id;
 
   const yjsStore = useYjsStore({
-    documentName,
+    documentName: documentName, // Используем editorId как fallback
   });
 
   return <YjsContext.Provider value={yjsStore}>{children}</YjsContext.Provider>;
