@@ -1,49 +1,121 @@
-import { ClassroomsQueryKey, ClassroomT, ClassroomStatusT } from 'common.api';
+import { ClassroomsQueryKey, ClassroomT, ClassroomStatusT, classroomsApiConfig } from 'common.api';
+import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { handleError, showSuccess } from 'common.services';
+
+interface UpdateClassroomStatusParams {
+  classroomId: number;
+  status: ClassroomStatusT;
+}
+
+interface MutationContext {
+  previousClassroom?: ClassroomT;
+  previousClassrooms?: ClassroomT[];
+}
 
 export const useUpdateClassroomStatus = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, error, ...rest } = useMutation({
-    mutationFn: async ({
-      classroomId,
-      status,
-    }: {
-      classroomId: number;
-      status: ClassroomStatusT;
-    }): Promise<ClassroomT> => {
-      // Имитация задержки сети
-      await new Promise((resolve) => setTimeout(resolve, 600));
+  const updateClassroomStatusMutation = useMutation<
+    ClassroomT,
+    Error,
+    UpdateClassroomStatusParams,
+    MutationContext
+  >({
+    mutationFn: async ({ classroomId, status }: UpdateClassroomStatusParams) => {
+      try {
+        const axiosInst = await getAxiosInstance();
+        const response = await axiosInst({
+          method: classroomsApiConfig[ClassroomsQueryKey.UpdateClassroomStatus].method,
+          url: classroomsApiConfig[ClassroomsQueryKey.UpdateClassroomStatus].getUrl(
+            classroomId.toString(),
+          ),
+          data: { status },
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
-      // Имитация обновления статуса класса
-      const updatedClassroom: ClassroomT = {
-        id: classroomId,
-        name: 'Класс с обновленным статусом',
-        status,
-        created_at: new Date().toISOString(),
-        description: 'Описание обновленного класса',
-        kind: 'individual',
-        student_id: 1,
-      };
-
-      return updatedClassroom;
+        return response.data;
+      } catch (err) {
+        console.error('Ошибка при обновлении статуса класса:', err);
+        throw err;
+      }
     },
-    onSuccess: (_, { classroomId }) => {
-      // Инвалидируем кеш списка классов и конкретного класса
-      queryClient.invalidateQueries({
-        queryKey: [ClassroomsQueryKey.GetClassrooms],
+    onMutate: async ({ classroomId, status }) => {
+      // Отменяем исходящие запросы, чтобы они не перезаписали наш оптимистичный апдейт
+      await queryClient.cancelQueries({ queryKey: [ClassroomsQueryKey.GetClassrooms] });
+      await queryClient.cancelQueries({ queryKey: [ClassroomsQueryKey.GetClassroom, classroomId] });
+
+      // Сохраняем предыдущие значения для отката
+      const previousClassroom = queryClient.getQueryData<ClassroomT>([
+        ClassroomsQueryKey.GetClassroom,
+        classroomId,
+      ]);
+      const previousClassrooms = queryClient.getQueryData<ClassroomT[]>([
+        ClassroomsQueryKey.GetClassrooms,
+      ]);
+
+      // Оптимистично обновляем данные класса в списке
+      queryClient.setQueryData<ClassroomT[]>([ClassroomsQueryKey.GetClassrooms], (old) => {
+        if (!old) return old;
+        return old.map((classroom) =>
+          classroom.id === classroomId ? { ...classroom, status } : classroom,
+        );
       });
-      queryClient.invalidateQueries({
-        queryKey: [ClassroomsQueryKey.GetClassroom, classroomId],
-      });
+
+      // Оптимистично обновляем данные конкретного класса
+      queryClient.setQueryData<ClassroomT>(
+        [ClassroomsQueryKey.GetClassroom, classroomId],
+        (old) => {
+          if (!old) return old;
+          return { ...old, status };
+        },
+      );
+
+      // Возвращаем предыдущие значения для отката в случае ошибки
+      return { previousClassroom, previousClassrooms };
+    },
+    onError: (err, { classroomId }, context) => {
+      // В случае ошибки откатываем изменения
+      if (context?.previousClassroom) {
+        queryClient.setQueryData(
+          [ClassroomsQueryKey.GetClassroom, classroomId],
+          context.previousClassroom,
+        );
+      }
+      if (context?.previousClassrooms) {
+        queryClient.setQueryData([ClassroomsQueryKey.GetClassrooms], context.previousClassrooms);
+      }
+
+      // Показываем toast с ошибкой
+      handleError(err, 'classroom');
+    },
+    onSuccess: (updatedClassroom, { classroomId }) => {
+      // Если сервер вернул обновленные данные, обновляем кеш
+      if (updatedClassroom) {
+        queryClient.setQueryData<ClassroomT>(
+          [ClassroomsQueryKey.GetClassroom, classroomId],
+          updatedClassroom,
+        );
+
+        // Обновляем класс в списке
+        queryClient.setQueryData<ClassroomT[]>([ClassroomsQueryKey.GetClassrooms], (old) => {
+          if (!old) return old;
+          return old.map((classroom) =>
+            classroom.id === classroomId ? updatedClassroom : classroom,
+          );
+        });
+      }
+
+      // Показываем успешное уведомление
+      showSuccess('classroom', `Статус класса обновлен`);
     },
   });
 
   return {
-    updateClassroomStatus: mutate,
-    isUpdating: isPending,
-    isError,
-    error,
-    ...rest,
+    updateClassroomStatus: updateClassroomStatusMutation.mutate,
+    isUpdating: updateClassroomStatusMutation.isPending,
+    ...updateClassroomStatusMutation,
   };
 };

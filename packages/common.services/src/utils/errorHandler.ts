@@ -16,7 +16,8 @@ export type ErrorType =
   | 'deleteInvoiceTemplate'
   | 'updateInvoiceTemplate'
   | 'deleteStudent'
-  | 'acceptInvite';
+  | 'acceptInvite'
+  | 'classroom';
 
 // Маппинг ошибок для разных операций
 const errorMessages: Record<ErrorType, Record<string, string>> = {
@@ -82,6 +83,12 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
     'Invitation not found': 'Приглашение не найдено',
     'Invitation access denied': 'Доступ к приглашению запрещен',
   },
+  classroom: {
+    'Validation Error': 'Ошибка валидации',
+    'Classroom not found': 'Класс не найден',
+    'Classroom access denied': 'Доступ к классу запрещен',
+    'Invalid status': 'Неверный статус класса',
+  },
 };
 
 // Общие сообщения об ошибках по статусам
@@ -110,6 +117,7 @@ const successMessages: Record<ErrorType, string> = {
   updateInvoiceTemplate: 'Шаблон обновлен',
   deleteStudent: 'Ученик удален',
   acceptInvite: 'Приглашение принято',
+  classroom: 'Статус класса обновлен',
 };
 
 /**

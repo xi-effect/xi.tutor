@@ -1,1 +1,1 @@
-export { Information } from './Information';
+export { InformationLayout } from './InformationLayout';

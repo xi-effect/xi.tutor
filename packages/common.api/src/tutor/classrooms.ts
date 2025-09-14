@@ -50,7 +50,7 @@ const classroomsApiConfig = {
 
   [ClassroomsQueryKey.UpdateClassroomStatus]: {
     getUrl: (classroomId: string) =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/tutor-service/roles/tutor/classrooms/${classroomId}/status/`,
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/classrooms/${classroomId}/status/`,
     method: HttpMethod.PUT,
   },
 };

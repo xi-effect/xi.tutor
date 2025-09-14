@@ -3,11 +3,11 @@ export const getStatusText = (status: string) => {
     case 'active':
       return 'Учится';
     case 'paused':
-      return 'Приостановлено';
+      return 'На паузе';
     case 'locked':
       return 'Заблокировано';
     case 'finished':
-      return 'Завершено';
+      return 'Обучение завершено';
     default:
       return 'Неизвестно';
   }

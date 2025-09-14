@@ -5,7 +5,7 @@ import { useSearch, useNavigate } from '@tanstack/react-router';
 import { Button } from '@xipkg/button';
 import { Overview } from './Overview';
 import { SearchParams } from '../types/router';
-import { Information } from './Information';
+import { InformationLayout } from './Information';
 import { MaterialsAdd } from 'features.materials.add';
 import { Payments } from './Payments';
 import { Materials } from './Materials';
@@ -72,7 +72,7 @@ export const TabsComponent = () => {
         </Tabs.Content>
 
         <Tabs.Content value="info">
-          <Information />
+          <InformationLayout />
         </Tabs.Content>
       </div>
     </Tabs.Root>
