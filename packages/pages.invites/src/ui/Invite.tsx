@@ -31,8 +31,6 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
     }
   };
 
-  console.log('invite', invite);
-
   return (
     <div className="flex w-full flex-col gap-8 p-2 sm:w-[500px]">
       <div className="text-center">

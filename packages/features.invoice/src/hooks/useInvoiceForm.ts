@@ -43,10 +43,6 @@ export const useInvoiceForm = () => {
   const onSubmit = (data: FormData) => {
     const student = classrooms?.find((c) => c.id === Number(data.studentId));
 
-    console.log('student', student);
-
-    console.log('invoice form data: ', data);
-
     // Формируем payload для отправки
     const student_ids = student?.kind === 'individual' ? [student.student_id] : [];
 

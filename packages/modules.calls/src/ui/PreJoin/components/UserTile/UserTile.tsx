@@ -7,7 +7,6 @@ import { Controls } from './Controls';
 import { useCurrentUser } from 'common.services';
 
 export const UserTile = () => {
-  console.log('UserTile');
   const { data: user } = useCurrentUser();
   const { userId } = user;
 

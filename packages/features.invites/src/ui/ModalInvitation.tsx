@@ -48,8 +48,6 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
     }
   }, [data?.length, handleAddInvitation]);
 
-  console.log('isDeleting', isDeleting);
-
   return (
     <Modal>
       <ModalTrigger asChild>{children}</ModalTrigger>

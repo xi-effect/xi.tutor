@@ -20,7 +20,7 @@ export const Card: React.FC<MaterialPropsT> = ({ id, updated_at, name, kind }) =
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation(); // Предотвращаем переход на страницу заметки
-    console.log('Удаление заметки:', { id, kind, name });
+
     deleteMaterials.mutate({
       id: id.toString(),
       kind: kind as 'note' | 'board',

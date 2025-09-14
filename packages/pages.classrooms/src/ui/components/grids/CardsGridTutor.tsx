@@ -10,8 +10,6 @@ export const CardsGridTutor = () => {
   const { items, isLoading, isError, isFetchingNextPage, hasNextPage } =
     useInfiniteQuery(parentRef);
 
-  console.log('tutor items', items);
-
   if (isLoading) {
     return <CardsGridSkeletonAdvanced count={12} />;
   }

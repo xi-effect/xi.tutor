@@ -6,7 +6,6 @@ export const TestNotificationButton = () => {
   const { sendTestNotification } = useNotificationsContext();
 
   const handleClick = () => {
-    console.log('🔘 Нажата тестовая кнопка уведомлений');
     sendTestNotification();
   };
 

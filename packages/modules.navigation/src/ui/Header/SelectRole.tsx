@@ -20,8 +20,6 @@ export const SelectRole = () => {
 
   const { updateProfile } = useUpdateProfile();
 
-  console.log(user?.default_layout);
-
   const handleChange = (value: RoleT) => {
     updateProfile.mutate({ default_layout: value });
   };
