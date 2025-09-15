@@ -3,6 +3,15 @@ import { useForm } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { Button } from '@xipkg/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
+import {
+  Modal,
+  ModalTitle,
+  ModalHeader,
+  ModalContent,
+  ModalBody,
+  ModalFooter,
+  ModalCloseButton,
+} from '@xipkg/modal';
 import { useUpdateIndividualClassroom } from 'common.services';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -43,72 +52,78 @@ export const EditDescriptionModal = ({
     }
   }, [isOpen, description, reset]);
 
-  const onSubmit = async (data: DescriptionFormData) => {
-    try {
-      await updateIndividualClassroom({
+  const onSubmit = (data: DescriptionFormData) => {
+    updateIndividualClassroom(
+      {
         classroomId,
         data: { description: data.description },
-      });
+      },
+      {
+        onSuccess: () => {
+          onClose();
+        },
+        onError: (error) => {
+          console.error('Ошибка при обновлении описания:', error);
+        },
+      },
+    );
+  };
+
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      reset({ description: description || '' });
       onClose();
-    } catch (error) {
-      console.error('Ошибка при обновлении описания:', error);
     }
   };
 
-  const handleClose = () => {
-    reset({ description: description || '' });
-    onClose();
-  };
-
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
-      onClick={handleClose}
-    >
-      <div
-        className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-lg font-semibold">Редактировать описание</h2>
-          <button onClick={handleClose} className="text-gray-400 hover:text-gray-600">
-            ×
-          </button>
-        </div>
+    <Modal open={isOpen} onOpenChange={handleOpenChange}>
+      <ModalContent className="max-w-md" aria-describedby={undefined}>
+        <ModalHeader>
+          <ModalCloseButton />
+          <ModalTitle>Редактировать описание</ModalTitle>
+        </ModalHeader>
 
         <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Описание кабинета</FormLabel>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      placeholder="Введите описание кабинета..."
-                      disabled={isUpdating}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <ModalBody className="px-4 py-2">
+              <FormField
+                control={control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel htmlFor="description">Описание кабинета</FormLabel>
+                    <FormControl>
+                      <Input
+                        {...field}
+                        className="mt-1"
+                        id="description"
+                        placeholder="Введите описание кабинета..."
+                        disabled={isUpdating}
+                        autoComplete="off"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </ModalBody>
 
-            <div className="flex justify-end gap-2">
-              <Button type="button" variant="outline" onClick={handleClose} disabled={isUpdating}>
-                Отмена
-              </Button>
-              <Button type="submit" disabled={isUpdating}>
+            <ModalFooter className="flex flex-row items-center gap-2">
+              <Button
+                variant={isUpdating ? 'ghost-spinner' : 'default'}
+                type="submit"
+                disabled={isUpdating}
+              >
                 {isUpdating ? 'Сохранение...' : 'Сохранить'}
               </Button>
-            </div>
+              <Button variant="secondary" onClick={onClose} type="button" disabled={isUpdating}>
+                Отмена
+              </Button>
+            </ModalFooter>
           </form>
         </Form>
-      </div>
-    </div>
+      </ModalContent>
+    </Modal>
   );
 };
