@@ -70,6 +70,7 @@ export interface IndividualClassroomTutorResponseSchema {
   status: ClassroomStatusT;
   created_at: string;
   updated_at: string;
+  description: string | null;
   student: UserProfileSchema;
   tutorship: TutorshipSchema;
   subject: SubjectSchema;

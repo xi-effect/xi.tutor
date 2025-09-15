@@ -1,56 +1,127 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { ClassroomsQueryKey, ClassroomT, IndividualClassroomT } from 'common.api';
+import { ClassroomsQueryKey, ClassroomT, ClassroomStatusT, classroomsApiConfig } from 'common.api';
+import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { handleError, showSuccess } from 'common.services';
 
 interface UpdateIndividualClassroomData {
   name?: string;
-  status?: string;
+  status?: ClassroomStatusT;
   description?: string;
+}
+
+interface UpdateIndividualClassroomParams {
+  classroomId: number;
+  data: UpdateIndividualClassroomData;
+}
+
+interface MutationContext {
+  previousClassroom?: ClassroomT;
+  previousClassrooms?: ClassroomT[];
 }
 
 export const useUpdateIndividualClassroom = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, error, ...rest } = useMutation({
-    mutationFn: async ({
-      classroomId,
-      data,
-    }: {
-      classroomId: number;
-      data: UpdateIndividualClassroomData;
-    }): Promise<ClassroomT> => {
-      // Имитация задержки сети
-      await new Promise((resolve) => setTimeout(resolve, 800));
+  const updateIndividualClassroomMutation = useMutation<
+    ClassroomT,
+    Error,
+    UpdateIndividualClassroomParams,
+    MutationContext
+  >({
+    mutationFn: async ({ classroomId, data }: UpdateIndividualClassroomParams) => {
+      try {
+        const axiosInst = await getAxiosInstance();
+        const response = await axiosInst({
+          method: classroomsApiConfig[ClassroomsQueryKey.UpdateIndividualClassroom].method,
+          url: classroomsApiConfig[ClassroomsQueryKey.UpdateIndividualClassroom].getUrl(
+            classroomId.toString(),
+          ),
+          data,
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
 
-      // Имитация обновления класса
-      const updatedClassroom: IndividualClassroomT = {
-        id: classroomId,
-        name: data.name || 'Обновленный класс',
-        status: (data.status as any) || 'active',
-        created_at: new Date().toISOString(),
-        description: data.description || 'Описание обновленного класса',
-        kind: 'individual',
-        student_id: 1,
-      };
-
-      return updatedClassroom;
+        return response.data;
+      } catch (err) {
+        console.error('Ошибка при обновлении индивидуального класса:', err);
+        throw err;
+      }
     },
-    onSuccess: (_, { classroomId }) => {
-      // Инвалидируем кеш списка классов и конкретного класса
-      queryClient.invalidateQueries({
-        queryKey: [ClassroomsQueryKey.GetClassrooms],
+    onMutate: async ({ classroomId, data }) => {
+      // Отменяем исходящие запросы, чтобы они не перезаписали наш оптимистичный апдейт
+      await queryClient.cancelQueries({ queryKey: [ClassroomsQueryKey.GetClassrooms] });
+      await queryClient.cancelQueries({ queryKey: [ClassroomsQueryKey.GetClassroom, classroomId] });
+
+      // Сохраняем предыдущие значения для отката
+      const previousClassroom = queryClient.getQueryData<ClassroomT>([
+        ClassroomsQueryKey.GetClassroom,
+        classroomId,
+      ]);
+      const previousClassrooms = queryClient.getQueryData<ClassroomT[]>([
+        ClassroomsQueryKey.GetClassrooms,
+      ]);
+
+      // Оптимистично обновляем данные класса в списке
+      queryClient.setQueryData<ClassroomT[]>([ClassroomsQueryKey.GetClassrooms], (old) => {
+        if (!old) return old;
+        return old.map((classroom) =>
+          classroom.id === classroomId ? { ...classroom, ...data } : classroom,
+        );
       });
-      queryClient.invalidateQueries({
-        queryKey: [ClassroomsQueryKey.GetClassroom, classroomId],
-      });
+
+      // Оптимистично обновляем данные конкретного класса
+      queryClient.setQueryData<ClassroomT>(
+        [ClassroomsQueryKey.GetClassroom, classroomId],
+        (old) => {
+          if (!old) return old;
+          return { ...old, ...data };
+        },
+      );
+
+      // Возвращаем предыдущие значения для отката в случае ошибки
+      return { previousClassroom, previousClassrooms };
+    },
+    onError: (err, { classroomId }, context) => {
+      // В случае ошибки откатываем изменения
+      if (context?.previousClassroom) {
+        queryClient.setQueryData(
+          [ClassroomsQueryKey.GetClassroom, classroomId],
+          context.previousClassroom,
+        );
+      }
+      if (context?.previousClassrooms) {
+        queryClient.setQueryData([ClassroomsQueryKey.GetClassrooms], context.previousClassrooms);
+      }
+
+      // Показываем toast с ошибкой
+      handleError(err, 'classroom');
+    },
+    onSuccess: (updatedClassroom, { classroomId }) => {
+      // Если сервер вернул обновленные данные, обновляем кеш
+      if (updatedClassroom) {
+        queryClient.setQueryData<ClassroomT>(
+          [ClassroomsQueryKey.GetClassroom, classroomId],
+          updatedClassroom,
+        );
+
+        // Обновляем класс в списке
+        queryClient.setQueryData<ClassroomT[]>([ClassroomsQueryKey.GetClassrooms], (old) => {
+          if (!old) return old;
+          return old.map((classroom) =>
+            classroom.id === classroomId ? updatedClassroom : classroom,
+          );
+        });
+      }
+
+      // Показываем успешное уведомление
+      showSuccess('classroom', `Индивидуальный класс обновлен`);
     },
   });
 
   return {
-    updateIndividualClassroom: mutate,
-    isUpdating: isPending,
-    isError,
-    error,
-    ...rest,
+    updateIndividualClassroom: updateIndividualClassroomMutation.mutate,
+    isUpdating: updateIndividualClassroomMutation.isPending,
+    ...updateIndividualClassroomMutation,
   };
 };

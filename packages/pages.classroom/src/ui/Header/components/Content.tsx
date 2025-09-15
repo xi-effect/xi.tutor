@@ -1,8 +1,9 @@
 import { Badge } from '@xipkg/badge';
 import { Telegram } from '@xipkg/icons';
 import { ClassroomTutorResponseSchema } from 'common.api';
-import { getStatusText, getStatusVariant, handleTelegramClick } from '../../utils/header';
+import { getStatusText, getStatusVariant, handleTelegramClick } from '../../../utils/header';
 import { IndividualUser } from './IndividualUser';
+import { EditableDescription } from './EditableDescription';
 
 interface ContentProps {
   classroom: ClassroomTutorResponseSchema;
@@ -25,7 +26,7 @@ export const Content = ({ classroom }: ContentProps) => {
         ) : (
           <div className="text-m-base text-gray-60 font-medium">{getDisplayName()}</div>
         )}
-        {/* <div className="text-m-base text-gray-60 font-medium">{getSubjectName()}</div> */}
+        <EditableDescription description={classroom.description} classroomId={classroom.id} />
       </div>
 
       <div className="ml-auto flex flex-row items-center gap-2">

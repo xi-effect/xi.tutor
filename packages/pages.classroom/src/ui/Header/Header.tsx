@@ -1,6 +1,5 @@
 import { useCurrentUser } from 'common.services';
-import { HeaderTutor } from './HeaderTutor';
-import { HeaderStudent } from './HeaderStudent';
+import { HeaderTutor, HeaderStudent } from './components';
 
 export const Header = () => {
   const { data: user } = useCurrentUser();
