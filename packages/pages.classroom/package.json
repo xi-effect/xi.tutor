@@ -25,6 +25,7 @@
     "@xipkg/tabs": "2.1.0",
     "@xipkg/input": "2.2.9",
     "@xipkg/form": "4.2.1",
+    "@xipkg/command": "1.0.0",
     "modules.editor": "*",
     "pages.payments": "*",
     "pages.materials": "*",

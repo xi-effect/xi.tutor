@@ -7,8 +7,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@xipkg/form';
 import { useEffect, useRef, useCallback } from 'react';
 import { ClassroomT, ClassroomStatusT } from 'common.api';
 import { useUpdateClassroomStatus } from 'common.services';
+import { Autocomplete } from './Autocomplete';
 interface FormData {
   status: ClassroomStatusT;
+  subject: string;
 }
 
 export const Information = ({ classroom }: { classroom: ClassroomT }) => {
@@ -20,12 +22,14 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
     mode: 'onChange',
     defaultValues: {
       status: classroom?.status || 'active',
+      subject: '',
     },
   });
 
   // Сохраняем исходные значения для сравнения
   const initialValues = useRef<FormData>({
     status: classroom?.status || 'active',
+    subject: '',
   });
 
   const onSubmit = useCallback(
@@ -61,7 +65,7 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
   // Обновляем исходные значения когда данные загружаются
   useEffect(() => {
     if (classroom?.status) {
-      initialValues.current = { status: classroom.status };
+      initialValues.current = { status: classroom.status, subject: '' };
       form.setValue('status', classroom.status);
     }
   }, [classroom?.status, form]);
@@ -111,18 +115,18 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
               )}
             />
 
-            {/* <FormField
+            <FormField
               control={form.control}
               name="subject"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel>Предмет</FormLabel>
                   <FormControl>
-                    <Input variant="s" {...field} />
+                    <Autocomplete field={field} />
                   </FormControl>
                 </FormItem>
               )}
-            /> */}
+            />
           </form>
         </Form>
       </div>
