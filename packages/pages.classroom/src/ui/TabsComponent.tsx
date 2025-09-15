@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Tabs } from '@xipkg/tabs';
 import { useSearch, useNavigate } from '@tanstack/react-router';
+import { useEffect, useRef } from 'react';
 
 import { Button } from '@xipkg/button';
 import { Overview } from './Overview';
@@ -10,6 +11,7 @@ import { MaterialsAdd } from 'features.materials.add';
 import { Payments } from './Payments';
 import { Materials } from './Materials';
 import { Calendar } from './Calendar';
+import { useCurrentUser } from 'common.services';
 
 export const TabsComponent = () => {
   const search: SearchParams = useSearch({ strict: false });
@@ -22,6 +24,27 @@ export const TabsComponent = () => {
       search: { tab: value },
     });
   };
+
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+  const prevIsTutorRef = useRef(isTutor);
+
+  // Отслеживаем изменения роли пользователя
+  useEffect(() => {
+    const prevIsTutor = prevIsTutorRef.current;
+    const currentIsTutor = isTutor;
+
+    // Если роль изменилась с tutor на student и мы находимся на вкладке info
+    if (prevIsTutor && !currentIsTutor && currentTab === 'info') {
+      navigate({
+        // @ts-ignore
+        search: { tab: 'overview' },
+      });
+    }
+
+    // Обновляем предыдущее значение
+    prevIsTutorRef.current = currentIsTutor;
+  }, [isTutor, currentTab, navigate]);
 
   return (
     <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
@@ -43,9 +66,11 @@ export const TabsComponent = () => {
             Оплаты
           </Tabs.Trigger>
 
-          <Tabs.Trigger value="info" className="text-m-base font-medium text-gray-100">
-            Информация
-          </Tabs.Trigger>
+          {isTutor && (
+            <Tabs.Trigger value="info" className="text-m-base font-medium text-gray-100">
+              Информация
+            </Tabs.Trigger>
+          )}
         </Tabs.List>
         {(currentTab === 'overview' || currentTab === 'lessons') && (
           <Button size="s" className="ml-auto rounded-[8px]">
@@ -71,9 +96,11 @@ export const TabsComponent = () => {
           <Payments />
         </Tabs.Content>
 
-        <Tabs.Content value="info">
-          <InformationLayout />
-        </Tabs.Content>
+        {isTutor && (
+          <Tabs.Content value="info">
+            <InformationLayout />
+          </Tabs.Content>
+        )}
       </div>
     </Tabs.Root>
   );
