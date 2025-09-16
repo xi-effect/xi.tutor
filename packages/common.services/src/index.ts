@@ -8,3 +8,4 @@ export * from './onboarding';
 export * from './classrooms';
 export * from './notifications';
 export * from './network';
+export * from './calls';

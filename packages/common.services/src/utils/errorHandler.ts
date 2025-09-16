@@ -17,7 +17,8 @@ export type ErrorType =
   | 'updateInvoiceTemplate'
   | 'deleteStudent'
   | 'acceptInvite'
-  | 'classroom';
+  | 'classroom'
+  | 'calls';
 
 // Маппинг ошибок для разных операций
 const errorMessages: Record<ErrorType, Record<string, string>> = {
@@ -89,6 +90,11 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
     'Classroom access denied': 'Доступ к классу запрещен',
     'Invalid status': 'Неверный статус класса',
   },
+  calls: {
+    'Validation Error': 'Ошибка валидации',
+    'Access token not found': 'Access token не найден',
+    'Access token access denied': 'Доступ к access token запрещен',
+  },
 };
 
 // Общие сообщения об ошибках по статусам
@@ -118,6 +124,7 @@ const successMessages: Record<ErrorType, string> = {
   deleteStudent: 'Ученик удален',
   acceptInvite: 'Приглашение принято',
   classroom: 'Статус класса обновлен',
+  calls: 'Access token создан',
 };
 
 /**
