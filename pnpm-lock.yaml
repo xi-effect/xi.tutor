@@ -1838,6 +1838,9 @@ importers:
       '@hocuspocus/provider':
         specifier: 2.15.0
         version: 2.15.0(y-protocols@1.0.6)(yjs@13.6.27)
+      '@tanstack/react-router':
+        specifier: ^1.128.8
+        version: 1.128.8(react-dom@19.1.1)(react@19.1.1)
       '@tiptap/core':
         specifier: ^3.4.2
         version: 3.4.3(@tiptap/pm@3.4.3)
@@ -1853,15 +1856,18 @@ importers:
       '@tiptap/extension-drag-handle-react':
         specifier: ^3.4.2
         version: 3.4.3(@tiptap/extension-drag-handle@3.4.3)(@tiptap/pm@3.4.3)(@tiptap/react@3.4.3)(react-dom@19.1.1)(react@19.1.1)
-      '@tiptap/extension-link':
+      '@tiptap/extension-list':
         specifier: ^3.4.2
         version: 3.4.3(@tiptap/core@3.4.3)(@tiptap/pm@3.4.3)
-      '@tiptap/extension-node-range':
+      '@tiptap/extension-text-align':
         specifier: ^3.4.2
-        version: 3.4.3(@tiptap/core@3.4.3)(@tiptap/pm@3.4.3)
+        version: 3.4.3(@tiptap/core@3.4.3)
       '@tiptap/extension-underline':
         specifier: ^3.4.2
         version: 3.4.3(@tiptap/core@3.4.3)
+      '@tiptap/extension-unique-id':
+        specifier: ^3.4.2
+        version: 3.4.3(@tiptap/core@3.4.3)(@tiptap/pm@3.4.3)
       '@tiptap/pm':
         specifier: ^3.4.2
         version: 3.4.3
@@ -8495,6 +8501,14 @@ packages:
       '@tiptap/core': 3.4.3(@tiptap/pm@3.4.3)
     dev: false
 
+  /@tiptap/extension-text-align@3.4.3(@tiptap/core@3.4.3):
+    resolution: {integrity: sha512-04jrgY6B7w59Q2bnG9+AhRZPGauWjtvnfzpHhgezf26fnT7Vw2+FH66tn1DpgndhgbakHXlFbkEDxKiTfmLxHw==}
+    peerDependencies:
+      '@tiptap/core': ^3.4.3
+    dependencies:
+      '@tiptap/core': 3.4.3(@tiptap/pm@3.4.3)
+    dev: false
+
   /@tiptap/extension-text-style@2.26.1(@tiptap/core@2.26.1):
     resolution: {integrity: sha512-t9Nc/UkrbCfnSHEUi1gvUQ2ZPzvfdYFT5TExoV2DTiUCkhG6+mecT5bTVFGW3QkPmbToL+nFhGn4ZRMDD0SP3Q==}
     peerDependencies:
@@ -8525,6 +8539,17 @@ packages:
       '@tiptap/core': ^3.4.3
     dependencies:
       '@tiptap/core': 3.4.3(@tiptap/pm@3.4.3)
+    dev: false
+
+  /@tiptap/extension-unique-id@3.4.3(@tiptap/core@3.4.3)(@tiptap/pm@3.4.3):
+    resolution: {integrity: sha512-ZELhqxJZkzAWzotYtdk6pvYq4uruvp91pG7b/eLPzaj3PwOKuKUXVenhtnl8001WsgGvTvr6V5+g3wVjtYQZ/w==}
+    peerDependencies:
+      '@tiptap/core': ^3.4.3
+      '@tiptap/pm': ^3.4.3
+    dependencies:
+      '@tiptap/core': 3.4.3(@tiptap/pm@3.4.3)
+      '@tiptap/pm': 3.4.3
+      uuid: 10.0.0
     dev: false
 
   /@tiptap/extensions@3.4.3(@tiptap/core@3.4.3)(@tiptap/pm@3.4.3):
@@ -14444,6 +14469,11 @@ packages:
     dependencies:
       lodash.debounce: 4.0.8
       react: 19.1.1
+    dev: false
+
+  /uuid@10.0.0:
+    resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
+    hasBin: true
     dev: false
 
   /victory-vendor@36.9.2:

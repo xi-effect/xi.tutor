@@ -28,7 +28,7 @@ export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly
         onDragEnd={handleDragEnd}
         isReadOnly={isReadOnly}
       />
-      <FloatingMenuWrapper editor={editor} />
+      <FloatingMenuWrapper editor={editor} isReadOnly={isReadOnly} />
 
       {!isDragging && (
         <BubbleMenuWrapper editor={editor} activeStates={activeStates} isReadOnly={isReadOnly} />

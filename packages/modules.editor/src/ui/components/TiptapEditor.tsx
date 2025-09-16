@@ -1,6 +1,7 @@
 import { EditorContent } from '@tiptap/react';
 import { EditorToolkit } from './EditorToolkit';
 import { useYjsContext } from '../../hooks/useYjsContext';
+import '../editor.css';
 
 export const TiptapEditor = () => {
   const { editor, isReadOnly } = useYjsContext();
@@ -19,9 +20,12 @@ export const TiptapEditor = () => {
 
   return (
     <div className="flex w-full justify-center py-8">
-      <div className="w-full max-w-5xl overflow-hidden rounded-lg bg-white">
-        <div className="relative px-16 py-12">
-          <EditorContent editor={editor} />
+      <div className="w-full max-w-4xl overflow-hidden pl-16">
+        <div className="relative">
+          <EditorContent
+            editor={editor}
+            className="prose prose-gray max-w-none focus:outline-none"
+          />
           <EditorToolkit editor={editor} isReadOnly={isReadOnly} />
         </div>
       </div>
