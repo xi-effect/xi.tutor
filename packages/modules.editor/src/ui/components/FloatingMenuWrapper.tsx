@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react';
 import { FloatingMenu } from '@tiptap/react/menus';
 import { Editor } from '@tiptap/core';
@@ -23,6 +24,7 @@ export const FloatingMenuWrapper: React.FC<FloatingMenuToolkitProps> = ({ editor
         // Показываем меню только если строка пустая и курсор в начале
         return !currentLineHasContent && $from.parentOffset === 0;
       }}
+      // @ts-ignore
       tippyOptions={{
         duration: 100,
         placement: 'left-start',

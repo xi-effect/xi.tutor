@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { BubbleMenu } from '@tiptap/react/menus';
 import { Editor } from '@tiptap/core';
 import { Italic, Bold, Stroke, Underline as UnderlineIcon } from '@xipkg/icons';
@@ -27,6 +28,7 @@ export const BubbleMenuWrapper = ({ editor, activeStates, isReadOnly }: BubbleMe
         const { selection } = editor.state;
         return selection.content().size > 0 && !selection.empty;
       }}
+      // @ts-ignore
       tippyOptions={{
         duration: 100,
         placement: 'top',
@@ -37,7 +39,6 @@ export const BubbleMenuWrapper = ({ editor, activeStates, isReadOnly }: BubbleMe
         isActive={activeStates.bold}
         onClick={() => editor.chain().focus().toggleBold().run()}
         ariaLabel="Жирный"
-        title="Жирный (Ctrl+B)"
       >
         <Bold size="sm" />
       </BubbleButton>
@@ -46,7 +47,6 @@ export const BubbleMenuWrapper = ({ editor, activeStates, isReadOnly }: BubbleMe
         isActive={activeStates.italic}
         onClick={() => editor.chain().focus().toggleItalic().run()}
         ariaLabel="Курсив"
-        title="Курсив (Ctrl+I)"
       >
         <Italic size="sm" />
       </BubbleButton>
@@ -55,7 +55,6 @@ export const BubbleMenuWrapper = ({ editor, activeStates, isReadOnly }: BubbleMe
         isActive={activeStates.strike}
         onClick={() => editor.chain().focus().toggleStrike().run()}
         ariaLabel="Зачеркивание"
-        title="Зачеркивание"
       >
         <Stroke size="sm" />
       </BubbleButton>
@@ -64,7 +63,6 @@ export const BubbleMenuWrapper = ({ editor, activeStates, isReadOnly }: BubbleMe
         isActive={activeStates.underline}
         onClick={() => editor.chain().focus().toggleUnderline().run()}
         ariaLabel="Подчеркивание"
-        title="Подчеркивание (Ctrl+U)"
       >
         <UnderlineIcon size="sm" />
       </BubbleButton>

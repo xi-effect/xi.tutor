@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Editor } from '@tiptap/core';
 import { Move, MoreVert, Trash, Copy, Text, H1, H2, H3 } from '@xipkg/icons';
 import DragHandle from '@tiptap/extension-drag-handle-react';
