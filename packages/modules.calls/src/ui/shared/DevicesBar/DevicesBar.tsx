@@ -19,6 +19,7 @@ type DevicesBarPropsT = {
 export const DevicesBar = ({
   microTrack,
   microTrackToggle,
+  videoTrack,
   videoTrackToggle,
 }: DevicesBarPropsT) => {
   return (
@@ -33,6 +34,7 @@ export const DevicesBar = ({
       )}
       {videoTrackToggle && (
         <TrackToggle
+          videoTrack={videoTrack}
           source={videoTrackToggle.source}
           onChange={videoTrackToggle.onChange}
           showIcon={videoTrackToggle.showIcon}

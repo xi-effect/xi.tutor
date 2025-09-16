@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { TrackToggleProps, useTrackToggle, useTrackVolume } from '@livekit/components-react';
-import { Track, LocalAudioTrack } from 'livekit-client';
+import { TrackToggleProps, useTrackVolume } from '@livekit/components-react';
+import { Track, LocalAudioTrack, LocalVideoTrack } from 'livekit-client';
 import { motion } from 'framer-motion';
 import {
   MicrophoneOff,
@@ -16,17 +16,35 @@ import { cn } from '@xipkg/utils';
 
 interface ExtendedTrackToggleProps extends TrackToggleProps<any> {
   microTrack?: LocalAudioTrack;
+  videoTrack?: LocalVideoTrack;
   showIcon?: boolean;
 }
 
 export const TrackToggle = ({
   microTrack,
+  videoTrack,
   source,
   showIcon = true,
   onChange,
   ...props
 }: ExtendedTrackToggleProps) => {
-  const { enabled, toggle } = useTrackToggle({ source, onChange });
+  // Для PreJoin используем состояние из store, а не состояние трека
+  const enabled =
+    source === Track.Source.Microphone
+      ? microTrack
+        ? !microTrack.isMuted
+        : false
+      : videoTrack
+        ? !videoTrack.isMuted
+        : false;
+
+  const toggle = () => {
+    console.log('handleClick', source);
+
+    // Просто вызываем onChange, который обновит store
+    // Store обновление приведет к изменению состояния трека через useEffect в UserTile
+    onChange?.(!enabled, true);
+  };
 
   const trackVol = useTrackVolume(microTrack);
 

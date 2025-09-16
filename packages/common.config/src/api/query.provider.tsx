@@ -8,7 +8,8 @@ export const QueryProvider = ({ children }: PropsWithChildren): null | ReactElem
   return (
     <QueryClientProvider client={queryClient}>
       {children}
-      {import.meta.env.VITE_DEVTOOLS_ENABLED && <ReactQueryDevtools />}
+      {(import.meta.env.VITE_REACT_QUERY_DEVTOOLS_ENABLED === 'true' ||
+        import.meta.env.VITE_REACT_QUERY_DEVTOOLS_ENABLED === true) && <ReactQueryDevtools />}
     </QueryClientProvider>
   );
 };
