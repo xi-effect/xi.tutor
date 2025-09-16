@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Badge } from '@xipkg/badge';
 import { Telegram, Conference } from '@xipkg/icons';
 import { ClassroomTutorResponseSchema } from 'common.api';
@@ -26,7 +27,9 @@ export const Content = ({ classroom }: ContentProps) => {
     console.log('handleCallClick');
 
     navigate({
+      // @ts-ignore
       to: '/call/$classroomId',
+      // @ts-ignore
       params: { classroomId: classroom.id },
     });
   };
