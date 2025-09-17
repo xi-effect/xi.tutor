@@ -7,3 +7,7 @@ export { useChat } from './useChat';
 export { useRaisedHands } from './useRaisedHands';
 export { useHandFocus } from './useHandFocus';
 export { useWhiteboards } from './useWhiteboards';
+export { usePersistentUserChoices } from './usePersistentUserChoices';
+export { useResolveInitiallyDefaultDeviceId } from './useResolveInitiallyDefaultDeviceId';
+export { useCannotUseDevice } from './useCannotUseDevice';
+export { useWatchPermissions } from './useWatchPermissions';

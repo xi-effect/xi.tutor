@@ -2,7 +2,7 @@ import { LocalAudioTrack, LocalVideoTrack, Track } from 'livekit-client';
 import { useCallback, useMemo } from 'react';
 
 import { DevicesBar } from '../../../shared/DevicesBar';
-import { useCallStore } from '../../../../store/callStore';
+import { usePersistentUserChoices } from '../../../../hooks/usePersistentUserChoices';
 
 type ControlsProps = {
   audioTrack?: LocalAudioTrack;
@@ -10,25 +10,38 @@ type ControlsProps = {
 };
 
 export const Controls = ({ audioTrack, videoTrack }: ControlsProps) => {
-  const audioEnabled = useCallStore((state) => state.audioEnabled);
-  const videoEnabled = useCallStore((state) => state.videoEnabled);
-
-  const updateStore = useCallStore((state) => state.updateStore);
+  const {
+    userChoices: { audioEnabled, videoEnabled },
+    saveAudioInputEnabled,
+    saveVideoInputEnabled,
+  } = usePersistentUserChoices();
 
   const handleAudioChange = useCallback(
-    (enabled: boolean) => {
-      console.log('handleAudioChange - updating store to:', enabled);
-      updateStore('audioEnabled', enabled);
+    async (enabled: boolean) => {
+      saveAudioInputEnabled(enabled);
+      if (audioTrack) {
+        if (enabled) {
+          await audioTrack.unmute();
+        } else {
+          await audioTrack.mute();
+        }
+      }
     },
-    [updateStore],
+    [audioTrack, saveAudioInputEnabled],
   );
 
   const handleVideoChange = useCallback(
-    (enabled: boolean) => {
-      console.log('handleVideoChange - updating store to:', enabled);
-      updateStore('videoEnabled', enabled);
+    async (enabled: boolean) => {
+      saveVideoInputEnabled(enabled);
+      if (videoTrack) {
+        if (enabled) {
+          await videoTrack.unmute();
+        } else {
+          await videoTrack.mute();
+        }
+      }
     },
-    [updateStore],
+    [videoTrack, saveVideoInputEnabled],
   );
 
   const microTrackToggle = useMemo(

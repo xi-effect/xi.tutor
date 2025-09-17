@@ -1,10 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React from 'react';
-import { RoomEvent } from 'livekit-client';
 import { computeMenuPosition, wasClickOutside } from '@livekit/components-core';
 import { Select, SelectContent, SelectGroup, SelectTrigger, SelectValue } from '@xipkg/select';
 import { Conference, Microphone, SoundTwo } from '@xipkg/icons';
-import { useMaybeRoomContext, useMediaDeviceSelect } from '@livekit/components-react';
+import { useMediaDeviceSelect } from '@livekit/components-react';
 import { MediaDeviceKind, MediaDeviceSelect } from './MediaDeviceSelect';
 
 const placeholders = {
@@ -37,6 +35,16 @@ export const MediaDeviceMenu = ({
   const button = React.useRef<HTMLButtonElement>(null);
   const tooltip = React.useRef<HTMLDivElement>(null);
 
+  const handleError = React.useCallback((e: Error) => {
+    console.error('Media device error:', e);
+  }, []);
+  const { devices, setActiveMediaDevice } = useMediaDeviceSelect({
+    kind,
+    room: undefined, // Для PreJoin не нужна комната
+    requestPermissions,
+    onError: handleError,
+  });
+
   React.useLayoutEffect(() => {
     if (isOpen) {
       setNeedPermissions(true);
@@ -55,7 +63,7 @@ export const MediaDeviceMenu = ({
       computeMenuPosition(button.current, tooltip.current, handlePositionChange);
     }
     setUpdateRequired(false);
-  }, [button, tooltip, updateRequired]);
+  }, [button, tooltip, updateRequired, devices]);
 
   const handleClickOutside = React.useCallback(
     (event: MouseEvent) => {
@@ -88,21 +96,6 @@ export const MediaDeviceMenu = ({
     }
     return placeholders.default;
   };
-  const room = useMaybeRoomContext();
-  const handleError = React.useCallback(
-    (e: Error) => {
-      if (room) {
-        room.emit(RoomEvent.MediaDevicesError, e);
-      }
-    },
-    [room],
-  );
-  const { devices, setActiveMediaDevice } = useMediaDeviceSelect({
-    kind,
-    room,
-    requestPermissions,
-    onError: handleError,
-  });
   async function handleActiveChange(deviceId: string, kind: MediaDeviceKind) {
     setIsOpen(false);
     onActiveDeviceChange?.(kind, deviceId);

@@ -1,21 +1,59 @@
 import { Button } from '@xipkg/button';
 import { MediaDeviceMenu } from './MediaDeviceMenu';
-import { useCallStore } from '../../../../store/callStore';
+import { usePersistentUserChoices } from '../../../../hooks/usePersistentUserChoices';
+import { useMemo } from 'react';
+import { LocalAudioTrack, LocalVideoTrack } from 'livekit-client';
 
-export const MediaDevices = () => {
-  const audioDeviceId = useCallStore((state) => state.audioDeviceId);
-  const audioOutputDeviceId = useCallStore((state) => state.audioOutputDeviceId);
-  const audioEnabled = useCallStore((state) => state.audioEnabled);
+interface MediaDevicesProps {
+  audioTrack?: LocalAudioTrack;
+  videoTrack?: LocalVideoTrack;
+}
 
-  const videoDeviceId = useCallStore((state) => state.videoDeviceId);
-  const videoEnabled = useCallStore((state) => state.videoEnabled);
-
-  const updateStore = useCallStore((state) => state.updateStore);
+export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
+  const {
+    userChoices: { audioDeviceId, audioOutputDeviceId, videoDeviceId },
+    saveAudioInputDeviceId,
+    saveAudioOutputDeviceId,
+    saveVideoInputDeviceId,
+  } = usePersistentUserChoices();
 
   const handleJoin = () => {
-    updateStore('isStarted', true);
-    updateStore('connect', true);
+    // Здесь будет логика присоединения к комнате
+    console.log('Joining room with devices:', {
+      audioDeviceId,
+      audioOutputDeviceId,
+      videoDeviceId,
+    });
   };
+
+  // Обработчики переключения устройств с обработкой ошибок
+  const handleAudioDeviceChange = useMemo(
+    () => async (_kind: MediaDeviceKind, deviceId: string) => {
+      try {
+        saveAudioInputDeviceId(deviceId);
+        if (audioTrack) {
+          await audioTrack.setDeviceId({ exact: deviceId });
+        }
+      } catch (err) {
+        console.error('Failed to switch microphone device', err);
+      }
+    },
+    [audioTrack, saveAudioInputDeviceId],
+  );
+
+  const handleVideoDeviceChange = useMemo(
+    () => async (_kind: MediaDeviceKind, deviceId: string) => {
+      try {
+        saveVideoInputDeviceId(deviceId);
+        if (videoTrack) {
+          await videoTrack.setDeviceId({ exact: deviceId });
+        }
+      } catch (err) {
+        console.error('Failed to switch camera device', err);
+      }
+    },
+    [videoTrack, saveVideoInputDeviceId],
+  );
 
   return (
     <div className="border-gray-30 flex flex-col justify-between rounded-[16px] border p-5">
@@ -23,25 +61,23 @@ export const MediaDevices = () => {
         <div className="mb-8">
           <h2 className="mb-1 font-sans">Камера</h2>
           <MediaDeviceMenu
-            disabled={!videoEnabled}
-            initialSelection={(videoDeviceId as string) || undefined}
+            initialSelection={videoDeviceId}
             kind="videoinput"
-            onActiveDeviceChange={(_, id) => updateStore('videoDeviceId', id)}
+            onActiveDeviceChange={handleVideoDeviceChange}
           />
         </div>
         <div className="my-4">
           <h2 className="mb-1 font-sans">Звук</h2>
           <div className="flex flex-col gap-2">
             <MediaDeviceMenu
-              disabled={!audioEnabled}
-              initialSelection={(audioDeviceId as string) || undefined}
+              initialSelection={audioDeviceId}
               kind="audioinput"
-              onActiveDeviceChange={(_, id) => updateStore('audioDeviceId', id)}
+              onActiveDeviceChange={handleAudioDeviceChange}
             />
             <MediaDeviceMenu
-              initialSelection={(audioOutputDeviceId as string) || undefined}
+              initialSelection={audioOutputDeviceId}
               kind="audiooutput"
-              onActiveDeviceChange={(_, id) => updateStore('audioOutputDeviceId', id)}
+              onActiveDeviceChange={(_, id) => saveAudioOutputDeviceId(id)}
             />
           </div>
         </div>

@@ -1,10 +1,12 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import { useMemo, useRef, useEffect, useCallback } from 'react';
-import { facingModeFromLocalTrack, Track, LocalVideoTrack, LocalAudioTrack } from 'livekit-client';
-import { usePreviewTracks } from '@livekit/components-react';
-import { useCallStore } from '../../../../store/callStore';
+import { useMemo, useRef, useEffect, useState } from 'react';
+import { facingModeFromLocalTrack, LocalVideoTrack, LocalAudioTrack } from 'livekit-client';
 import { Controls } from './Controls';
 import { useCurrentUser } from 'common.services';
+import { usePersistentUserChoices } from '../../../../hooks/usePersistentUserChoices';
+import { useCannotUseDevice } from '../../../../hooks/useCannotUseDevice';
+import { openPermissionsDialog } from '../../../../store/permissions';
+import { Button } from '@xipkg/button';
 
 const UserTileUI = ({
   audioTrack,
@@ -13,30 +15,62 @@ const UserTileUI = ({
   facingMode,
   videoEl,
   userId,
+  isCameraDeniedOrPrompted,
+  isMicrophoneDeniedOrPrompted,
+  isVideoInitiated,
 }: {
   audioTrack?: LocalAudioTrack;
-  videoTrack: LocalVideoTrack;
+  videoTrack?: LocalVideoTrack;
   videoEnabled: boolean;
   facingMode: string;
   videoEl: React.RefObject<HTMLVideoElement | null>;
   userId: string;
+  isCameraDeniedOrPrompted: boolean;
+  isMicrophoneDeniedOrPrompted: boolean;
+  isVideoInitiated: boolean;
 }) => {
-  console.log('videoTrack', videoTrack);
-  console.log('videoEnabled', videoEnabled);
-  console.log('facingMode', facingMode);
-  console.log('videoEl', videoEl);
-  console.log('userId', userId);
+  const hintMessage = useMemo(() => {
+    if (isCameraDeniedOrPrompted) {
+      return isMicrophoneDeniedOrPrompted
+        ? 'Камера и микрофон не разрешены'
+        : 'Камера не разрешена';
+    }
+    if (!videoEnabled) {
+      return 'Камера отключена';
+    }
+    if (!isVideoInitiated) {
+      return 'Запуск камеры...';
+    }
+    if (videoTrack && videoEnabled) {
+      return '';
+    }
+    return 'Камера недоступна';
+  }, [
+    videoTrack,
+    videoEnabled,
+    isCameraDeniedOrPrompted,
+    isMicrophoneDeniedOrPrompted,
+    isVideoInitiated,
+  ]);
+
+  const permissionsButtonLabel = useMemo(() => {
+    if (!isMicrophoneDeniedOrPrompted && !isCameraDeniedOrPrompted) {
+      return null;
+    }
+    if (isCameraDeniedOrPrompted && isMicrophoneDeniedOrPrompted) {
+      return 'Разрешить камеру и микрофон';
+    }
+    if (isCameraDeniedOrPrompted && !isMicrophoneDeniedOrPrompted) {
+      return 'Разрешить камеру';
+    }
+    return null;
+  }, [isMicrophoneDeniedOrPrompted, isCameraDeniedOrPrompted]);
 
   const renderVideo = useMemo(() => {
-    console.log('renderVideo - videoTrack:', videoTrack);
-    console.log('renderVideo - videoTrack.isMuted:', videoTrack?.isMuted);
-
-    if (!videoTrack || videoTrack.isMuted) {
-      console.log('renderVideo - returning null');
+    if (!videoTrack || videoTrack.isMuted || isCameraDeniedOrPrompted) {
       return null;
     }
 
-    console.log('renderVideo - rendering video');
     return (
       <div className="aspect-video h-full w-full [transform:rotateY(180deg)]">
         <video
@@ -45,13 +79,20 @@ const UserTileUI = ({
           className="h-full w-full object-cover"
           playsInline
           muted
+          style={{
+            display: !videoEnabled || isCameraDeniedOrPrompted ? 'none' : undefined,
+            opacity: isVideoInitiated ? 1 : 0,
+            transition: 'opacity 0.3s ease-in-out',
+          }}
+          disablePictureInPicture
+          disableRemotePlayback
         />
       </div>
     );
-  }, [videoTrack, facingMode, videoEl]);
+  }, [videoTrack, facingMode, videoEl, videoEnabled, isCameraDeniedOrPrompted, isVideoInitiated]);
 
   const renderAvatar = useMemo(() => {
-    if (videoTrack && !videoTrack.isMuted) return null;
+    if (videoTrack && !videoTrack.isMuted && !isCameraDeniedOrPrompted) return null;
 
     return (
       <div className="bg-gray-40 flex items-center justify-center rounded-[16px]">
@@ -64,14 +105,27 @@ const UserTileUI = ({
         </Avatar>
       </div>
     );
-  }, [videoTrack, videoEnabled, userId]);
+  }, [videoTrack, userId, isCameraDeniedOrPrompted]);
 
   return (
     <div className="bg-gray-40 relative flex aspect-video h-full w-full items-center justify-center overflow-hidden rounded-[16px]">
-      <div className="relative">
+      <div className="relative h-full w-full">
         {renderVideo}
         {renderAvatar}
+
+        {/* Сообщения о состоянии камеры */}
+        {hintMessage && (
+          <div className="bg-opacity-60 absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black p-6 text-center">
+            <p className="text-lg font-normal text-white">{hintMessage}</p>
+            {isCameraDeniedOrPrompted && permissionsButtonLabel && (
+              <Button size="sm" variant="secondary" onClick={openPermissionsDialog}>
+                {permissionsButtonLabel}
+              </Button>
+            )}
+          </div>
+        )}
       </div>
+
       <div className="absolute bottom-5 left-5">
         <Controls audioTrack={audioTrack} videoTrack={videoTrack} />
       </div>
@@ -79,52 +133,44 @@ const UserTileUI = ({
   );
 };
 
-export const UserTile = () => {
+interface UserTileProps {
+  audioTrack?: LocalAudioTrack;
+  videoTrack?: LocalVideoTrack;
+}
+
+export const UserTile = ({ audioTrack, videoTrack }: UserTileProps) => {
   const { data: user } = useCurrentUser();
   const { userId } = user;
 
-  const audioDeviceId = useCallStore((state) => state.audioDeviceId);
-  const audioEnabled = useCallStore((state) => state.audioEnabled);
-  const videoDeviceId = useCallStore((state) => state.videoDeviceId);
-  const videoEnabled = useCallStore((state) => state.videoEnabled);
-
-  console.log('videoDeviceId', videoDeviceId);
-  console.log('videoEnabled', videoEnabled);
+  const {
+    userChoices: { videoEnabled },
+  } = usePersistentUserChoices();
 
   const videoEl = useRef<HTMLVideoElement>(null);
+  const [isVideoInitiated, setIsVideoInitiated] = useState(false);
 
-  const onError = useCallback(() => {
-    console.error('Error accessing media devices');
-  }, []);
+  // Проверяем состояние разрешений
+  const isCameraDeniedOrPrompted = useCannotUseDevice('videoinput');
+  const isMicrophoneDeniedOrPrompted = useCannotUseDevice('audioinput');
 
-  const audioTracks = usePreviewTracks(
-    {
-      audio: { deviceId: audioDeviceId },
-      video: false,
-    },
-    onError,
-  );
-
-  const videoTracks = usePreviewTracks(
-    {
-      audio: false,
-      video: { deviceId: videoDeviceId },
-    },
-    onError,
-  );
-
-  const audioTrack = useMemo(
-    () => audioTracks?.filter((track) => track.kind === Track.Kind.Audio)[0] as LocalAudioTrack,
-    [audioTracks],
-  );
-
-  const videoTrack = useMemo(
-    () => videoTracks?.filter((track) => track.kind === Track.Kind.Video)[0] as LocalVideoTrack,
-    [videoTracks],
-  );
-
-  console.log('audioTrack', audioTrack);
-  console.log('videoTrack', videoTrack);
+  // Отладочная информация
+  useEffect(() => {
+    console.log('UserTile debug:', {
+      videoTrack: videoTrack
+        ? { enabled: !videoTrack.isMuted, deviceId: videoTrack.getDeviceId() }
+        : null,
+      videoEnabled,
+      isVideoInitiated,
+      isCameraDeniedOrPrompted,
+      isMicrophoneDeniedOrPrompted,
+    });
+  }, [
+    videoTrack,
+    videoEnabled,
+    isVideoInitiated,
+    isCameraDeniedOrPrompted,
+    isMicrophoneDeniedOrPrompted,
+  ]);
 
   const facingMode = useMemo(() => {
     if (videoTrack) {
@@ -134,48 +180,41 @@ export const UserTile = () => {
     return 'undefined';
   }, [videoTrack]);
 
-  // Управляем состоянием треков в зависимости от store
-  useEffect(() => {
-    if (audioTrack) {
-      console.log('Audio track state sync - audioEnabled:', audioEnabled);
-      if (audioEnabled) {
-        audioTrack.unmute();
-      } else {
-        audioTrack.mute();
-      }
-    }
-  }, [audioTrack, audioEnabled]);
-
-  useEffect(() => {
-    if (videoTrack) {
-      console.log('Video track state sync - videoEnabled:', videoEnabled);
-      if (videoEnabled) {
-        videoTrack.unmute();
-      } else {
-        videoTrack.mute();
-      }
-    }
-  }, [videoTrack, videoEnabled]);
-
+  // Прикрепляем видео трек к элементу с улучшенной обработкой
   useEffect(() => {
     const currentVideoEl = videoEl.current;
     const currentVideoTrack = videoTrack;
 
-    console.log('useEffect attach - currentVideoEl:', currentVideoEl);
-    console.log('useEffect attach - currentVideoTrack:', currentVideoTrack);
+    const handleVideoLoaded = () => {
+      if (currentVideoEl) {
+        setIsVideoInitiated(true);
+        currentVideoEl.style.opacity = '1';
+      }
+    };
 
-    if (currentVideoEl && currentVideoTrack) {
-      console.log('Attaching video track to element');
+    const handleVideoError = () => {
+      console.error('Video track error');
+      setIsVideoInitiated(false);
+    };
+
+    if (currentVideoEl && currentVideoTrack && videoEnabled) {
       currentVideoTrack.attach(currentVideoEl);
+      currentVideoEl.addEventListener('loadedmetadata', handleVideoLoaded);
+      currentVideoEl.addEventListener('error', handleVideoError);
     }
 
     return () => {
       if (currentVideoTrack) {
-        console.log('Detaching video track');
         currentVideoTrack.detach();
       }
+      if (currentVideoEl) {
+        currentVideoEl.removeEventListener('loadedmetadata', handleVideoLoaded);
+        currentVideoEl.removeEventListener('error', handleVideoError);
+        currentVideoEl.style.opacity = '0';
+      }
+      setIsVideoInitiated(false);
     };
-  }, [videoTrack]);
+  }, [videoTrack, videoEnabled]);
 
   return (
     <UserTileUI
@@ -184,7 +223,10 @@ export const UserTile = () => {
       videoEnabled={videoEnabled}
       facingMode={facingMode}
       videoEl={videoEl}
-      userId={userId}
+      userId={userId || 'unknown'}
+      isCameraDeniedOrPrompted={isCameraDeniedOrPrompted}
+      isMicrophoneDeniedOrPrompted={isMicrophoneDeniedOrPrompted}
+      isVideoInitiated={isVideoInitiated}
     />
   );
 };

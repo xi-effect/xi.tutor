@@ -28,22 +28,25 @@ export const TrackToggle = ({
   onChange,
   ...props
 }: ExtendedTrackToggleProps) => {
-  // Для PreJoin используем состояние из store, а не состояние трека
-  const enabled =
-    source === Track.Source.Microphone
-      ? microTrack
-        ? !microTrack.isMuted
-        : false
-      : videoTrack
-        ? !videoTrack.isMuted
-        : false;
+  // Для PreJoin используем собственную логику, так как useTrackToggle работает с треками в комнате
+  const track = source === Track.Source.Microphone ? microTrack : videoTrack;
+  const enabled = track ? !track.isMuted : false;
 
   const toggle = () => {
     console.log('handleClick', source);
-
-    // Просто вызываем onChange, который обновит store
-    // Store обновление приведет к изменению состояния трека через useEffect в UserTile
-    onChange?.(!enabled, true);
+    console.log('track:', track);
+    if (track) {
+      if (track.isMuted) {
+        console.log('unmuting track');
+        track.unmute();
+      } else {
+        console.log('muting track');
+        track.mute();
+      }
+      onChange?.(!track.isMuted, true);
+    } else {
+      console.log('track is null/undefined');
+    }
   };
 
   const trackVol = useTrackVolume(microTrack);
@@ -84,18 +87,6 @@ export const TrackToggle = ({
   const handleClick = () => {
     console.log('handleClick', source);
     toggle();
-
-    // if (source === Track.Source.ScreenShare) {
-    //   console.log('room.localParticipant', room.localParticipant);
-
-    //   room.localParticipant.setScreenShareEnabled(
-    //     !room.localParticipant.isScreenShareEnabled,
-    //     { audio: true, selfBrowserSurface: 'include' },
-    //     {
-    //       name: 'screen-share',
-    //     },
-    //   );
-    // }
   };
 
   if (source === Track.Source.Microphone) {
@@ -107,14 +98,8 @@ export const TrackToggle = ({
         style={{
           background: enabled
             ? `linear-gradient(to top, var(--xi-green-20) 0%, transparent ${volume}%)`
-            : '',
+            : 'var(--xi-gray-0)',
         }}
-        animate={{
-          background: enabled
-            ? `linear-gradient(to top, var(--xi-green-20) 0%, transparent ${volume}%)`
-            : '',
-        }}
-        transition={{ duration: 0.5 }}
         {...(props as unknown as any)}
       >
         {showIcon && icon}
