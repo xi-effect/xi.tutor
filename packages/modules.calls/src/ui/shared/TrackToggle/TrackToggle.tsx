@@ -17,12 +17,16 @@ import { cn } from '@xipkg/utils';
 interface ExtendedTrackToggleProps extends TrackToggleProps<any> {
   microTrack?: LocalAudioTrack;
   videoTrack?: LocalVideoTrack;
+  microEnabled?: boolean;
+  videoEnabled?: boolean;
   showIcon?: boolean;
 }
 
 export const TrackToggle = ({
   microTrack,
   videoTrack,
+  microEnabled,
+  videoEnabled,
   source,
   showIcon = true,
   onChange,
@@ -30,20 +34,27 @@ export const TrackToggle = ({
 }: ExtendedTrackToggleProps) => {
   // Для PreJoin используем собственную логику, так как useTrackToggle работает с треками в комнате
   const track = source === Track.Source.Microphone ? microTrack : videoTrack;
-  const enabled = track ? !track.isMuted : false;
+  const enabled = source === Track.Source.Microphone ? microEnabled : videoEnabled;
 
   const toggle = () => {
     console.log('handleClick', source);
     console.log('track:', track);
     if (track) {
-      if (track.isMuted) {
+      const wasMuted = track.isMuted;
+      const newEnabled = wasMuted; // Если был замучен, то включаем (true), если не был замучен, то выключаем (false)
+
+      console.log('TrackToggle: changing state', { wasMuted, newEnabled });
+
+      if (wasMuted) {
         console.log('unmuting track');
         track.unmute();
       } else {
         console.log('muting track');
         track.mute();
       }
-      onChange?.(!track.isMuted, true);
+
+      // Передаем новое состояние enabled (true = включен, false = выключен)
+      onChange?.(newEnabled, true);
     } else {
       console.log('track is null/undefined');
     }

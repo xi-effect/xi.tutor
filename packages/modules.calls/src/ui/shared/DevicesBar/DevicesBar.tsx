@@ -18,15 +18,27 @@ type DevicesBarPropsT = {
 
 export const DevicesBar = ({
   microTrack,
+  microEnabled,
   microTrackToggle,
   videoTrack,
+  videoEnabled,
   videoTrackToggle,
 }: DevicesBarPropsT) => {
+  console.log('DevicesBar props:', {
+    microTrack: !!microTrack,
+    microEnabled,
+    microTrackToggle: !!microTrackToggle,
+    videoTrack: !!videoTrack,
+    videoEnabled,
+    videoTrackToggle: !!videoTrackToggle,
+  });
+
   return (
     <>
       {microTrackToggle && (
         <TrackToggle
           microTrack={microTrack}
+          microEnabled={microEnabled}
           source={microTrackToggle.source}
           onChange={microTrackToggle.onChange}
           showIcon={microTrackToggle.showIcon}
@@ -35,6 +47,7 @@ export const DevicesBar = ({
       {videoTrackToggle && (
         <TrackToggle
           videoTrack={videoTrack}
+          videoEnabled={videoEnabled}
           source={videoTrackToggle.source}
           onChange={videoTrackToggle.onChange}
           showIcon={videoTrackToggle.showIcon}

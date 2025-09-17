@@ -67,7 +67,18 @@ const UserTileUI = ({
   }, [isMicrophoneDeniedOrPrompted, isCameraDeniedOrPrompted]);
 
   const renderVideo = useMemo(() => {
-    if (!videoTrack || videoTrack.isMuted || isCameraDeniedOrPrompted) {
+    console.log('UserTile: renderVideo check', {
+      hasTrack: !!videoTrack,
+      isMuted: videoTrack?.isMuted,
+      isCameraDeniedOrPrompted,
+      videoEnabled,
+      isVideoInitiated,
+    });
+
+    // Рендерим видео элемент всегда, если есть трек и камера не заблокирована
+    // Скрываем его через стили, если нужно
+    if (!videoTrack || isCameraDeniedOrPrompted) {
+      console.log('UserTile: not rendering video - no track or camera denied');
       return null;
     }
 
@@ -81,7 +92,7 @@ const UserTileUI = ({
           muted
           style={{
             display: !videoEnabled || isCameraDeniedOrPrompted ? 'none' : undefined,
-            opacity: isVideoInitiated ? 1 : 0,
+            opacity: videoTrack?.isMuted || !isVideoInitiated ? 0 : 1,
             transition: 'opacity 0.3s ease-in-out',
           }}
           disablePictureInPicture
@@ -157,7 +168,11 @@ export const UserTile = ({ audioTrack, videoTrack }: UserTileProps) => {
   useEffect(() => {
     console.log('UserTile debug:', {
       videoTrack: videoTrack
-        ? { enabled: !videoTrack.isMuted, deviceId: videoTrack.getDeviceId() }
+        ? {
+            enabled: !videoTrack.isMuted,
+            deviceId: videoTrack.getDeviceId(),
+            muted: videoTrack.isMuted,
+          }
         : null,
       videoEnabled,
       isVideoInitiated,
@@ -180,15 +195,59 @@ export const UserTile = ({ audioTrack, videoTrack }: UserTileProps) => {
     return 'undefined';
   }, [videoTrack]);
 
+  // Сбрасываем isVideoInitiated только при изменении videoEnabled на false
+  useEffect(() => {
+    if (!videoEnabled) {
+      console.log('UserTile: video disabled, setting isVideoInitiated to false');
+      setIsVideoInitiated(false);
+    }
+    // Не устанавливаем true здесь, так как это делается в обработчиках событий трека
+  }, [videoEnabled]);
+
+  // Отслеживаем изменение состояния muted трека
+  useEffect(() => {
+    if (videoTrack) {
+      const handleTrackMuted = () => {
+        console.log('UserTile: track muted, setting isVideoInitiated to false');
+        setIsVideoInitiated(false);
+      };
+
+      const handleTrackUnmuted = () => {
+        // Устанавливаем true только если videoEnabled тоже true
+        if (videoEnabled) {
+          console.log(
+            'UserTile: track unmuted and video enabled, setting isVideoInitiated to true',
+          );
+          setIsVideoInitiated(true);
+          // Трек уже прикреплен к элементу, просто обновляем opacity через стили
+        } else {
+          console.log('UserTile: track unmuted but video disabled, keeping isVideoInitiated false');
+        }
+      };
+
+      videoTrack.on('muted', handleTrackMuted);
+      videoTrack.on('unmuted', handleTrackUnmuted);
+
+      return () => {
+        videoTrack.off('muted', handleTrackMuted);
+        videoTrack.off('unmuted', handleTrackUnmuted);
+      };
+    }
+  }, [videoTrack, videoEnabled]);
+
   // Прикрепляем видео трек к элементу с улучшенной обработкой
   useEffect(() => {
     const currentVideoEl = videoEl.current;
     const currentVideoTrack = videoTrack;
 
     const handleVideoLoaded = () => {
-      if (currentVideoEl) {
+      if (currentVideoEl && videoEnabled) {
+        console.log('UserTile: video loaded and enabled, setting isVideoInitiated to true');
         setIsVideoInitiated(true);
         currentVideoEl.style.opacity = '1';
+      } else if (currentVideoEl) {
+        console.log('UserTile: video loaded but disabled, keeping isVideoInitiated false');
+        currentVideoEl.style.opacity = '0';
       }
     };
 
@@ -198,9 +257,21 @@ export const UserTile = ({ audioTrack, videoTrack }: UserTileProps) => {
     };
 
     if (currentVideoEl && currentVideoTrack && videoEnabled) {
+      console.log('UserTile: attaching video track', {
+        videoEnabled,
+        isMuted: currentVideoTrack.isMuted,
+        hasElement: !!currentVideoEl,
+      });
       currentVideoTrack.attach(currentVideoEl);
       currentVideoEl.addEventListener('loadedmetadata', handleVideoLoaded);
       currentVideoEl.addEventListener('error', handleVideoError);
+    } else {
+      console.log('UserTile: not attaching video track', {
+        hasElement: !!currentVideoEl,
+        hasTrack: !!currentVideoTrack,
+        videoEnabled,
+        isMuted: currentVideoTrack?.isMuted,
+      });
     }
 
     return () => {
@@ -212,7 +283,7 @@ export const UserTile = ({ audioTrack, videoTrack }: UserTileProps) => {
         currentVideoEl.removeEventListener('error', handleVideoError);
         currentVideoEl.style.opacity = '0';
       }
-      setIsVideoInitiated(false);
+      // Не сбрасываем isVideoInitiated здесь, так как это может происходить при переподключении
     };
   }, [videoTrack, videoEnabled]);
 
