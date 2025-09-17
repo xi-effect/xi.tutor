@@ -154,11 +154,12 @@ export const UserTile = ({ audioTrack, videoTrack }: UserTileProps) => {
   const { userId } = user;
 
   const {
-    userChoices: { videoEnabled },
+    userChoices: { videoEnabled, audioEnabled },
   } = usePersistentUserChoices();
 
   const videoEl = useRef<HTMLVideoElement>(null);
   const [isVideoInitiated, setIsVideoInitiated] = useState(false);
+  const [isAudioInitiated, setIsAudioInitiated] = useState(false);
 
   // Проверяем состояние разрешений
   const isCameraDeniedOrPrompted = useCannotUseDevice('videoinput');
@@ -167,6 +168,15 @@ export const UserTile = ({ audioTrack, videoTrack }: UserTileProps) => {
   // Отладочная информация
   useEffect(() => {
     console.log('UserTile debug:', {
+      audioTrack: audioTrack
+        ? {
+            enabled: !audioTrack.isMuted,
+            deviceId: audioTrack.getDeviceId(),
+            muted: audioTrack.isMuted,
+          }
+        : null,
+      audioEnabled,
+      isAudioInitiated,
       videoTrack: videoTrack
         ? {
             enabled: !videoTrack.isMuted,
@@ -180,6 +190,9 @@ export const UserTile = ({ audioTrack, videoTrack }: UserTileProps) => {
       isMicrophoneDeniedOrPrompted,
     });
   }, [
+    audioTrack,
+    audioEnabled,
+    isAudioInitiated,
     videoTrack,
     videoEnabled,
     isVideoInitiated,
@@ -203,6 +216,15 @@ export const UserTile = ({ audioTrack, videoTrack }: UserTileProps) => {
     }
     // Не устанавливаем true здесь, так как это делается в обработчиках событий трека
   }, [videoEnabled]);
+
+  // Сбрасываем isAudioInitiated только при изменении audioEnabled на false
+  useEffect(() => {
+    if (!audioEnabled) {
+      console.log('UserTile: audio disabled, setting isAudioInitiated to false');
+      setIsAudioInitiated(false);
+    }
+    // Не устанавливаем true здесь, так как это делается в обработчиках событий трека
+  }, [audioEnabled]);
 
   // Отслеживаем изменение состояния muted трека
   useEffect(() => {
@@ -234,6 +256,38 @@ export const UserTile = ({ audioTrack, videoTrack }: UserTileProps) => {
       };
     }
   }, [videoTrack, videoEnabled]);
+
+  // Отслеживаем изменение состояния muted аудио трека
+  useEffect(() => {
+    if (audioTrack) {
+      const handleAudioTrackMuted = () => {
+        console.log('UserTile: audio track muted, setting isAudioInitiated to false');
+        setIsAudioInitiated(false);
+      };
+
+      const handleAudioTrackUnmuted = () => {
+        // Устанавливаем true только если audioEnabled тоже true
+        if (audioEnabled) {
+          console.log(
+            'UserTile: audio track unmuted and audio enabled, setting isAudioInitiated to true',
+          );
+          setIsAudioInitiated(true);
+        } else {
+          console.log(
+            'UserTile: audio track unmuted but audio disabled, keeping isAudioInitiated false',
+          );
+        }
+      };
+
+      audioTrack.on('muted', handleAudioTrackMuted);
+      audioTrack.on('unmuted', handleAudioTrackUnmuted);
+
+      return () => {
+        audioTrack.off('muted', handleAudioTrackMuted);
+        audioTrack.off('unmuted', handleAudioTrackUnmuted);
+      };
+    }
+  }, [audioTrack, audioEnabled]);
 
   // Прикрепляем видео трек к элементу с улучшенной обработкой
   useEffect(() => {

@@ -15,6 +15,8 @@ export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
     saveAudioInputDeviceId,
     saveAudioOutputDeviceId,
     saveVideoInputDeviceId,
+    saveAudioInputEnabled,
+    saveVideoInputEnabled,
   } = usePersistentUserChoices();
 
   const handleJoin = () => {
@@ -33,12 +35,20 @@ export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
         saveAudioInputDeviceId(deviceId);
         if (audioTrack) {
           await audioTrack.setDeviceId({ exact: deviceId });
+          // Синхронизируем состояние после смены устройства
+          const isActuallyEnabled = !audioTrack.isMuted;
+          console.log('MediaDevices: audio device changed, syncing state', {
+            deviceId,
+            trackMuted: audioTrack.isMuted,
+            shouldBeEnabled: isActuallyEnabled,
+          });
+          saveAudioInputEnabled(isActuallyEnabled);
         }
       } catch (err) {
         console.error('Failed to switch microphone device', err);
       }
     },
-    [audioTrack, saveAudioInputDeviceId],
+    [audioTrack, saveAudioInputDeviceId, saveAudioInputEnabled],
   );
 
   const handleVideoDeviceChange = useMemo(
@@ -47,12 +57,20 @@ export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
         saveVideoInputDeviceId(deviceId);
         if (videoTrack) {
           await videoTrack.setDeviceId({ exact: deviceId });
+          // Синхронизируем состояние после смены устройства
+          const isActuallyEnabled = !videoTrack.isMuted;
+          console.log('MediaDevices: video device changed, syncing state', {
+            deviceId,
+            trackMuted: videoTrack.isMuted,
+            shouldBeEnabled: isActuallyEnabled,
+          });
+          saveVideoInputEnabled(isActuallyEnabled);
         }
       } catch (err) {
         console.error('Failed to switch camera device', err);
       }
     },
-    [videoTrack, saveVideoInputDeviceId],
+    [videoTrack, saveVideoInputDeviceId, saveVideoInputEnabled],
   );
 
   return (

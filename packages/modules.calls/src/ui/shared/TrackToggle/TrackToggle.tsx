@@ -56,7 +56,13 @@ export const TrackToggle = ({
       // Передаем новое состояние enabled (true = включен, false = выключен)
       onChange?.(newEnabled, true);
     } else {
-      console.log('track is null/undefined');
+      // Если трек не существует, переключаем состояние enabled
+      const newEnabled = !enabled;
+      console.log('TrackToggle: no track, toggling enabled state', {
+        currentEnabled: enabled,
+        newEnabled,
+      });
+      onChange?.(newEnabled, true);
     }
   };
 
