@@ -23,8 +23,8 @@ export const useWatchPermissions = () => {
         }
 
         const [cameraPermission, microphonePermission] = await Promise.all([
-          navigator.permissions.query({ name: 'camera' }),
-          navigator.permissions.query({ name: 'microphone' }),
+          navigator.permissions.query({ name: 'camera' as PermissionName }),
+          navigator.permissions.query({ name: 'microphone' as PermissionName }),
         ]);
 
         if (isCancelled) return;
@@ -35,8 +35,8 @@ export const useWatchPermissions = () => {
               if (isCancelled) return;
 
               const [cameraPermission, microphonePermission] = await Promise.all([
-                navigator.permissions.query({ name: 'camera' }),
-                navigator.permissions.query({ name: 'microphone' }),
+                navigator.permissions.query({ name: 'camera' as PermissionName }),
+                navigator.permissions.query({ name: 'microphone' as PermissionName }),
               ]);
 
               if (isCancelled) return;

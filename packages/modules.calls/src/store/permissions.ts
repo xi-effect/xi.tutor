@@ -23,7 +23,7 @@ type State = BaseState & DerivedState;
 
 export const usePermissionsStore = create<State>()(
   persist(
-    (set, get) => ({
+    (_, get) => ({
       cameraPermission: undefined,
       microphonePermission: undefined,
       isLoading: true,
