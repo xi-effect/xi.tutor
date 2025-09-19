@@ -28,11 +28,11 @@ export const TemplateCard = ({
 
   return (
     <div className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex cursor-pointer justify-between rounded-2xl border p-4">
-      <div className="flex max-w-[350px] flex-col gap-4">
-        <div className="text-l-base">{name}</div>
+      <div className="flex flex-1 flex-col gap-4 overflow-hidden">
+        <div className="text-l-base flex-1 truncate">{name}</div>
 
         <div className="mt-auto flex flex-row items-center gap-1">
-          <span className="text-l-base font-semibold">{price}</span>
+          <span className="text-l-base truncate font-semibold">{price}</span>
           <span className="text-s-base text-gray-60 pt-1">₽</span>
         </div>
       </div>
