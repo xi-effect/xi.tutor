@@ -31,6 +31,7 @@ export const useUpdateGroupClassroom = () => {
         description: data.description || 'Описание обновленного группового класса',
         kind: 'group',
         tutor_id: 0,
+        subject_id: null,
       };
 
       return updatedClassroom;

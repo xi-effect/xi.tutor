@@ -23,6 +23,7 @@ export const useCreateGroupClassroom = () => {
         description: data.description || null,
         kind: 'group',
         tutor_id: 0,
+        subject_id: null,
       };
 
       return newClassroom;
