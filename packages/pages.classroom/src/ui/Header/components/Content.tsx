@@ -7,6 +7,7 @@ import { IndividualUser } from './IndividualUser';
 import { EditableDescription } from './EditableDescription';
 import { Button } from '@xipkg/button';
 import { useNavigate } from '@tanstack/react-router';
+import { SubjectBadge } from './SubjectBadge';
 
 interface ContentProps {
   classroom: ClassroomTutorResponseSchema;
@@ -47,6 +48,7 @@ export const Content = ({ classroom }: ContentProps) => {
 
       <div className="ml-auto flex flex-col items-end gap-2">
         <div className="flex flex-row items-center gap-2">
+          {classroom.subject_id && <SubjectBadge subject_id={classroom.subject_id} />}
           <Badge variant={getStatusVariant(classroom.status)} size="m">
             {getStatusText(classroom.status)}
           </Badge>

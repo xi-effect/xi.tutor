@@ -7,6 +7,7 @@ export type ClassroomPropsT = {
   description?: string;
   created_at?: string;
   student_id?: number;
+  subject_id: number | null;
 };
 
 export type StatusEducationT = 'active' | 'paused' | 'locked' | 'finished';

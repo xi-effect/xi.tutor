@@ -32,3 +32,4 @@ export type {
 export { notificationsApiConfig, NotificationsQueryKey } from './src/notifications';
 export { telegramConnectionApiConfig, TelegramConnectionQueryKey } from './src/telegramConnection';
 export { callsApiConfig, CallsQueryKey } from './src/calls';
+export { subjectsApiConfig, SubjectsQueryKey } from './src/subjects';

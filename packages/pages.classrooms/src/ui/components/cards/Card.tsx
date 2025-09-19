@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Button } from '@xipkg/button';
 import { UserProfile } from '@xipkg/userprofile';
-import { Badge } from '@xipkg/badge';
+// import { Badge } from '@xipkg/badge';
 import { MoreVert, Trash } from '@xipkg/icons';
 import {
   DropdownMenu,
@@ -16,6 +16,7 @@ import { useCurrentUser, useDeleteClassroom } from 'common.services';
 
 import { ClassroomPropsT } from '../../../types';
 import { useNavigate } from '@tanstack/react-router';
+import { SubjectBadge } from './SubjectBadge';
 
 export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
   id,
@@ -23,6 +24,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
   status,
   kind,
   student_id,
+  subject_id,
   deleted = false,
 }) => {
   const navigate = useNavigate();
@@ -68,9 +70,11 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
         <div className="mt-auto flex items-center gap-2">
           <StatusBadge status={status} kind={kind} deleted={deleted} />
 
-          <Badge size="m" className="text-gray-80 bg-gray-5 rounded-lg border-none px-2 py-1">
+          {/* <Badge size="m" className="text-gray-80 bg-gray-5 rounded-lg border-none px-2 py-1">
             {kind === 'individual' ? 'Индивидуальный' : 'Групповой'}
-          </Badge>
+          </Badge> */}
+
+          {subject_id && <SubjectBadge subject_id={subject_id} />}
         </div>
       </div>
 

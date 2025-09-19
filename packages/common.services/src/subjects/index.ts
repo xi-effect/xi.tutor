@@ -1,0 +1,1 @@
+export { useSubjectsById } from './useSubjectsById';

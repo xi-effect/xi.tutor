@@ -33,6 +33,8 @@ export const CardsGridTutor = () => {
     );
   }
 
+  console.log('items', items);
+
   return (
     <div ref={parentRef} className="h-[calc(100vh-204px)] w-full overflow-auto pr-4">
       <div className="max-xs:gap-4 grid grid-cols-1 gap-8 min-[550px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">

@@ -49,6 +49,7 @@ export interface BaseClassroomT {
   created_at: string;
   description: string | null;
   name: string;
+  subject_id: number | null;
 }
 
 export interface IndividualClassroomT extends BaseClassroomT {
@@ -76,6 +77,7 @@ export interface IndividualClassroomTutorResponseSchema {
   subject: SubjectSchema;
   student_id?: number;
   tutor_id?: number;
+  subject_id: number | null;
 }
 
 export interface GroupClassroomTutorResponseSchema {
@@ -90,6 +92,7 @@ export interface GroupClassroomTutorResponseSchema {
   subject: SubjectSchema;
   tutorships: TutorshipSchema[];
   invite_code: string;
+  subject_id: number | null;
 }
 
 export type ClassroomTutorResponseSchema =

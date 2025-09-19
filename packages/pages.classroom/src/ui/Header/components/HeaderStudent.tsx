@@ -8,6 +8,8 @@ export const HeaderStudent = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
   const { data: classroom, isLoading, isError } = useGetClassroomStudent(Number(classroomId));
 
+  console.log('classroom', classroom);
+
   if (isLoading) {
     return <Skeleton />;
   }
