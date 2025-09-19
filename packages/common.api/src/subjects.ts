@@ -13,8 +13,8 @@ const subjectsApiConfig = {
     method: HttpMethod.GET,
   },
   [SubjectsQueryKey.SubjectsAutocomplete]: {
-    getUrl: () =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/autocomplete-service/subjects/autocomplete-suggestions/`,
+    getUrl: (search: string, limit: number) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/autocomplete-service/subjects/autocomplete-suggestions/?search=${search}&limit=${limit}`,
     method: HttpMethod.GET,
   },
 };

@@ -5,14 +5,10 @@ export const useAutocompleteSubjects = (search: string, limit: number = 10, disa
   const { data, isError, isLoading, ...rest } = useFetching({
     apiConfig: {
       method: subjectsApiConfig[SubjectsQueryKey.SubjectsAutocomplete].method,
-      getUrl: () => subjectsApiConfig[SubjectsQueryKey.SubjectsAutocomplete].getUrl(),
+      getUrl: () => subjectsApiConfig[SubjectsQueryKey.SubjectsAutocomplete].getUrl(search, limit),
       headers: {
         'Content-Type': 'application/json',
       },
-    },
-    data: {
-      search,
-      limit,
     },
     disabled,
     queryKey: [SubjectsQueryKey.SubjectsAutocomplete, search, limit],
