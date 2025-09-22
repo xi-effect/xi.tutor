@@ -13,18 +13,19 @@ import {
   CommandList,
 } from '@xipkg/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
-import { useAutocompleteSubjects } from 'common.services';
+import { useAutocompleteSubjects, useSubjectsById } from 'common.services';
 import { SubjectSchema } from 'common.api';
 
 type AutocompleteProps = {
-  field: ControllerRenderProps<{ subject: string }, 'subject'>;
+  field: ControllerRenderProps<{ subject: number | null }, 'subject'>;
+  disabled?: boolean;
 };
 
-export const Autocomplete = ({ field }: AutocompleteProps) => {
+export const Autocomplete = ({ field, disabled }: AutocompleteProps) => {
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState('');
 
-  // Получаем данные предметов через API
+  // Получаем данные предметов через API для автокомплита
   const {
     data: subjects,
     isLoading,
@@ -33,6 +34,12 @@ export const Autocomplete = ({ field }: AutocompleteProps) => {
     search,
     10,
     !open, // Отключаем запрос когда попап закрыт
+  );
+
+  // Получаем данные конкретного предмета по ID для отображения в кнопке
+  const { data: selectedSubject, isLoading: isLoadingSelected } = useSubjectsById(
+    field.value || 0,
+    !field.value, // Отключаем запрос если нет выбранного предмета
   );
 
   return (
@@ -45,8 +52,9 @@ export const Autocomplete = ({ field }: AutocompleteProps) => {
           className="border-gray-30 h-[32px] w-full justify-between border-2 pl-3 hover:border-gray-50 hover:bg-transparent"
         >
           {field.value
-            ? subjects?.find((subject: SubjectSchema) => subject.id.toString() === field.value)
-                ?.name
+            ? isLoadingSelected
+              ? 'Загрузка...'
+              : selectedSubject?.name || 'Предмет не найден'
             : 'Выберите предмет...'}
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0" />
         </Button>
@@ -68,14 +76,15 @@ export const Autocomplete = ({ field }: AutocompleteProps) => {
                     key={subject.id}
                     value={subject.name}
                     onSelect={() => {
-                      field.onChange(subject.id.toString());
+                      if (disabled) return;
+                      field.onChange(subject.id);
                       setOpen(false);
                     }}
                   >
                     <CheckIcon
                       className={cn(
                         'mr-2 h-4 w-4',
-                        field.value === subject.id.toString() ? 'opacity-100' : 'opacity-0',
+                        field.value === subject.id ? 'opacity-100' : 'opacity-0',
                       )}
                     />
                     {subject.name}

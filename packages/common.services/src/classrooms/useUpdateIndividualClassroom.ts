@@ -7,6 +7,7 @@ interface UpdateIndividualClassroomData {
   name?: string;
   status?: ClassroomStatusT;
   description?: string;
+  subject_id?: number | null;
 }
 
 interface UpdateIndividualClassroomParams {

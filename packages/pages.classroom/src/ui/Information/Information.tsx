@@ -6,34 +6,36 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@xipkg/form';
 
 import { useEffect, useRef, useCallback } from 'react';
 import { ClassroomT, ClassroomStatusT } from 'common.api';
-import { useUpdateClassroomStatus } from 'common.services';
+import { useUpdateClassroomStatus, useUpdateIndividualClassroom } from 'common.services';
 import { Autocomplete } from './Autocomplete';
 interface FormData {
   status: ClassroomStatusT;
-  subject: string;
+  subject: number | null;
 }
 
 export const Information = ({ classroom }: { classroom: ClassroomT }) => {
   console.log('classroom', classroom);
 
   const { updateClassroomStatus, isUpdating } = useUpdateClassroomStatus();
+  const { updateIndividualClassroom, isUpdating: isUpdatingIndividualClassroom } =
+    useUpdateIndividualClassroom();
 
   const form = useForm<FormData>({
     mode: 'onChange',
     defaultValues: {
       status: classroom?.status || 'active',
-      subject: '',
+      subject: classroom?.subject_id || null,
     },
   });
 
   // Сохраняем исходные значения для сравнения
   const initialValues = useRef<FormData>({
     status: classroom?.status || 'active',
-    subject: '',
+    subject: classroom?.subject_id || null,
   });
 
   const onSubmit = useCallback(
-    (data: FormData) => {
+    async (data: FormData) => {
       console.log('Form submitted with data:', data);
 
       if (!classroom?.id) {
@@ -41,34 +43,87 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
         return;
       }
 
-      // Вызываем мутацию для обновления статуса класса
-      updateClassroomStatus(
-        {
-          classroomId: classroom.id,
-          status: data.status,
-        },
-        {
-          onSuccess: () => {
-            // Обновляем исходные значения после успешного submit
-            initialValues.current = { ...data };
-            console.log('Classroom status updated successfully');
-          },
-          onError: (error) => {
-            console.error('Failed to update classroom status:', error);
-          },
-        },
-      );
+      try {
+        // Проверяем, что изменилось
+        const statusChanged = data.status !== initialValues.current.status;
+        const subjectChanged = data.subject !== initialValues.current.subject;
+
+        if (!statusChanged && !subjectChanged) {
+          console.log('No changes detected');
+          return;
+        }
+
+        // Выполняем обновления параллельно, если нужно обновить оба поля
+        const promises = [];
+
+        if (statusChanged) {
+          promises.push(
+            new Promise((resolve, reject) => {
+              updateClassroomStatus(
+                {
+                  classroomId: classroom.id,
+                  status: data.status,
+                },
+                {
+                  onSuccess: () => {
+                    console.log('Classroom status updated successfully');
+                    resolve(true);
+                  },
+                  onError: (error) => {
+                    console.error('Failed to update classroom status:', error);
+                    reject(error);
+                  },
+                },
+              );
+            }),
+          );
+        }
+
+        if (subjectChanged) {
+          promises.push(
+            new Promise((resolve, reject) => {
+              updateIndividualClassroom(
+                {
+                  classroomId: classroom.id,
+                  data: { subject_id: data.subject },
+                },
+                {
+                  onSuccess: () => {
+                    console.log('Classroom subject updated successfully');
+                    resolve(true);
+                  },
+                  onError: (error) => {
+                    console.error('Failed to update classroom subject:', error);
+                    reject(error);
+                  },
+                },
+              );
+            }),
+          );
+        }
+
+        // Ждем завершения всех обновлений
+        await Promise.all(promises);
+
+        // Обновляем исходные значения только после успешного завершения всех операций
+        initialValues.current = { ...data };
+        console.log('All updates completed successfully');
+      } catch (error) {
+        console.error('Failed to update classroom:', error);
+        // Здесь можно добавить уведомление пользователю об ошибке
+      }
     },
-    [classroom?.id, updateClassroomStatus],
+    [classroom?.id, updateClassroomStatus, updateIndividualClassroom],
   );
 
   // Обновляем исходные значения когда данные загружаются
   useEffect(() => {
     if (classroom?.status) {
-      initialValues.current = { status: classroom.status, subject: '' };
+      initialValues.current = { status: classroom.status, subject: classroom?.subject_id || null };
       form.setValue('status', classroom.status);
+      form.setValue('subject', classroom?.subject_id || null);
     }
-  }, [classroom?.status, form]);
+  }, [classroom?.status, classroom?.subject_id, form]);
 
   // Автоматический submit при изменении любого поля
   useEffect(() => {
@@ -122,7 +177,7 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
                 <FormItem className="flex flex-col">
                   <FormLabel>Предмет</FormLabel>
                   <FormControl>
-                    <Autocomplete field={field} />
+                    <Autocomplete field={field} disabled={isUpdatingIndividualClassroom} />
                   </FormControl>
                 </FormItem>
               )}
