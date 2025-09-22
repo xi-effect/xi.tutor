@@ -8,6 +8,24 @@ import { useCurrentUser } from 'common.services';
 import { InvoiceModal } from 'features.invoice';
 import { Payment } from './Payment';
 
+const paymentsMock = [
+  {
+    id: 1,
+    name: 'Past simple — 1',
+    updated_at: '9 февраля',
+  },
+  {
+    id: 2,
+    name: 'Past simple — 2',
+    updated_at: '9 февраля',
+  },
+  {
+    id: 3,
+    name: 'Past simple — 3',
+    updated_at: '9 февраля',
+  },
+];
+
 export const Payments = () => {
   const { data: user } = useCurrentUser();
 
@@ -53,16 +71,23 @@ export const Payments = () => {
         )}
       </div>
       <div className="flex flex-row">
-        <ScrollArea
-          className="h-[110px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
-          scrollBarProps={{ orientation: 'horizontal' }}
-        >
+        {paymentsMock && paymentsMock.length > 0 && (
+          <ScrollArea
+            className="h-[110px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
+            scrollBarProps={{ orientation: 'horizontal' }}
+          >
+            <div className="flex flex-row gap-8">
+              {paymentsMock.map((_, index) => (
+                <Payment key={index} />
+              ))}
+            </div>
+          </ScrollArea>
+        )}
+        {paymentsMock && paymentsMock.length === 0 && (
           <div className="flex flex-row gap-8">
-            {[...new Array(10)].map((_, index) => (
-              <Payment key={index} />
-            ))}
+            <p className="text-m-base text-gray-60">Здесь пока пусто</p>
           </div>
-        </ScrollArea>
+        )}
       </div>
 
       <InvoiceModal open={isInvoiceModalOpen} onOpenChange={setIsInvoiceModalOpen} />

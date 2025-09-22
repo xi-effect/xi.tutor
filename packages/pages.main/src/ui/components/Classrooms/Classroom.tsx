@@ -1,27 +1,95 @@
-import { UserProfile } from '@xipkg/userprofile';
 import { useNavigate } from '@tanstack/react-router';
+import { ClassroomT } from 'common.api';
+import { Button } from '@xipkg/button';
+import { Arrow, Conference } from '@xipkg/icons';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
+import { useUserById } from 'common.services';
+import { SubjectBadge } from './SubjectBadge';
 
-export const Classroom = () => {
-  const navigate = useNavigate();
+type UserAvatarPropsT = {
+  classroom: ClassroomT;
+  isLoading: boolean;
+  student_id: string;
+};
+
+const UserAvatar = ({ isLoading, student_id, classroom }: UserAvatarPropsT) => {
+  const { data } = useUserById(student_id);
+
+  console.log('classroom', classroom);
+  console.log('student_id', student_id);
+  console.log('data', data);
 
   return (
-    <button
-      onClick={() => {
-        navigate({
-          to: '/classrooms/$classroomId',
-          params: { classroomId: '1' },
-          search: { tab: 'overview' },
-        });
-      }}
-      type="button"
-      className="hover:bg-gray-5 border-gray-60 flex min-h-[108px] w-[122px] flex-col items-center justify-start gap-1 rounded-2xl border bg-transparent p-4"
-    >
-      <UserProfile userId={1} withOutText />
-      <div className="flex h-full w-full flex-row items-center justify-center gap-2">
-        <h3 className="text-s-base line-clamp-2 w-full text-center font-medium text-gray-100">
-          Анна Смирнова
-        </h3>
+    <Avatar size={avatarSize}>
+      <AvatarImage
+        src={`https://api.sovlium.ru/files/users/${classroom.kind === 'individual' ? classroom.student_id : classroom.tutor_id}/avatar.webp`}
+        alt="user avatar"
+      />
+      {isLoading || !data ? (
+        <AvatarFallback size={avatarSize} loading />
+      ) : (
+        <AvatarFallback size={avatarSize}>{data?.display_name[0].toUpperCase()}</AvatarFallback>
+      )}
+    </Avatar>
+  );
+};
+
+const avatarSize = 'l';
+
+type ClassroomProps = {
+  isLoading: boolean;
+  classroom: ClassroomT;
+};
+
+export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
+  console.log('classroom', classroom);
+  const navigate = useNavigate();
+
+  const handleClick = () => {
+    navigate({
+      to: '/classrooms/$classroomId',
+      params: { classroomId: classroom.id.toString() },
+      search: { tab: 'overview' },
+    });
+  };
+
+  return (
+    <div className="border-gray-30 relative flex min-h-[170px] w-[320px] flex-col items-start justify-start gap-1 rounded-2xl border bg-transparent p-6">
+      <Tooltip delayDuration={1000}>
+        <TooltipTrigger asChild>
+          <Button
+            onClick={handleClick}
+            className="group bg-brand-0 absolute top-6 right-6 h-6 w-6 p-0"
+            variant="icon"
+          >
+            <Arrow className="fill-brand-80 group-hover:fill-brand-100 h-4 w-4" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Перейти в кабинет</TooltipContent>
+      </Tooltip>
+
+      {classroom.subject_id && <SubjectBadge subject_id={classroom.subject_id} />}
+
+      <div className="flex flex-row gap-2">
+        <UserAvatar
+          classroom={classroom}
+          isLoading={isLoading}
+          student_id={(classroom.kind === 'individual'
+            ? classroom.student_id
+            : classroom.tutor_id
+          ).toString()}
+        />
+        <div className="flex h-full w-full flex-row items-center justify-center gap-2">
+          <h3 className="text-s-base line-clamp-2 w-full text-center font-medium text-gray-100">
+            {classroom.name}
+          </h3>
+        </div>
       </div>
-    </button>
+
+      <Button size="s" variant="secondary" className="group mt-auto w-full">
+        Начать занятие <Conference className="group-hover:fill-gray-0 fill-brand-100 ml-2" />
+      </Button>
+    </div>
   );
 };

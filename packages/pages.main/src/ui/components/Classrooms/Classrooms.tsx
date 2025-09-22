@@ -1,15 +1,42 @@
+/* eslint-disable no-irregular-whitespace */
 import { Button } from '@xipkg/button';
-import { ArrowRight } from '@xipkg/icons';
+import { ArrowRight, InfoCircle } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { Classroom } from './Classroom';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useNavigate } from '@tanstack/react-router';
 import { ModalInvitation } from 'features.invites';
-import { useCurrentUser } from 'common.services';
+import { useCurrentUser, useFetchClassrooms } from 'common.services';
+import { Alert, AlertIcon, AlertContainer, AlertDescription, AlertTitle } from '@xipkg/alert';
+
+const NoteForUsers = () => {
+  return (
+    <Alert variant="brand">
+      <AlertIcon>
+        <InfoCircle className="fill-brand-100" />
+      </AlertIcon>
+      <AlertContainer className="h-full">
+        <AlertTitle>Начать занятие</AlertTitle>
+        <AlertDescription>
+          Придумать текст(описание сценария на кнопку “Начать занятие”)
+        </AlertDescription>
+        <Button
+          size="s"
+          className="border-brand-100 text-brand-100 hover:bg-brand-100 hover:text-brand-0 mt-auto w-full border bg-transparent"
+          variant="ghost"
+        >
+          Скрыть
+        </Button>
+      </AlertContainer>
+    </Alert>
+  );
+};
 
 export const Classrooms = () => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+
+  const { data: classrooms, isLoading } = useFetchClassrooms();
 
   const navigate = useNavigate();
 
@@ -59,17 +86,27 @@ export const Classrooms = () => {
         )}
       </div>
 
-      <div className="flex flex-row">
-        <ScrollArea
-          className="h-[122px] w-full overflow-x-auto overflow-y-hidden"
-          scrollBarProps={{ orientation: 'horizontal' }}
-        >
+      <div className="flex flex-row gap-8">
+        <NoteForUsers />
+        {classrooms && classrooms?.length > 0 && (
+          <ScrollArea
+            className="h-[172px] w-full overflow-x-auto overflow-y-hidden"
+            scrollBarProps={{ orientation: 'horizontal' }}
+          >
+            <div className="flex flex-row gap-8">
+              {classrooms?.map((classroom) => (
+                <Classroom key={classroom.id} classroom={classroom} isLoading={isLoading} />
+              ))}
+            </div>
+          </ScrollArea>
+        )}
+        {classrooms && classrooms.length === 0 && (
           <div className="flex flex-row gap-8">
-            {[...new Array(10)].map((_, index) => (
-              <Classroom key={index} />
-            ))}
+            <p className="text-m-base text-gray-60">
+              Пригласите учеников — индивидуально или в группу
+            </p>
           </div>
-        </ScrollArea>
+        )}
       </div>
     </div>
   );

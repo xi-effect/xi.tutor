@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Badge } from '@xipkg/badge';
+// import { Badge } from '@xipkg/badge';
 import { Button } from '@xipkg/button';
 import { ArrowRight } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
@@ -22,7 +22,7 @@ export const Overview = () => {
     return (
       <div className="flex flex-col">
         {/* Занятия секция */}
-        <div className="flex flex-col gap-4 p-4">
+        {/* <div className="flex flex-col gap-4 p-4">
           <div className="flex flex-row items-center justify-start gap-2">
             <div className="h-6 w-20 animate-pulse rounded bg-gray-200" />
             <div className="h-8 w-8 animate-pulse rounded bg-gray-200" />
@@ -47,7 +47,7 @@ export const Overview = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Материалы секция */}
         <div className="flex flex-col gap-4 p-4">
@@ -112,7 +112,7 @@ export const Overview = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex flex-col gap-4 p-4">
+      {/* <div className="flex flex-col gap-4 p-4">
         <div className="flex flex-row items-center justify-start gap-2">
           <h2 className="text-xl-base font-medium text-gray-100">Занятия</h2>
           <Button
@@ -155,7 +155,7 @@ export const Overview = () => {
             </div>
           </ScrollArea>
         </div>
-      </div>
+      </div> */}
       <div className="flex flex-col gap-4 p-4">
         <div className="flex flex-row items-center justify-start gap-2">
           <h2 className="text-xl-base font-medium text-gray-100">Материалы</h2>

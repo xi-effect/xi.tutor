@@ -10,7 +10,7 @@ import { InformationLayout } from './Information';
 import { MaterialsAdd } from 'features.materials.add';
 import { Payments } from './Payments';
 import { Materials } from './Materials';
-import { Calendar } from './Calendar';
+// import { Calendar } from './Calendar';
 import { useCurrentUser } from 'common.services';
 
 export const TabsComponent = () => {
@@ -54,9 +54,9 @@ export const TabsComponent = () => {
             Сводка
           </Tabs.Trigger>
 
-          <Tabs.Trigger value="lessons" className="text-m-base font-medium text-gray-100">
+          {/* <Tabs.Trigger value="lessons" className="text-m-base font-medium text-gray-100">
             Занятия
-          </Tabs.Trigger>
+          </Tabs.Trigger> */}
 
           <Tabs.Trigger value="materials" className="text-m-base font-medium text-gray-100">
             Материалы
@@ -84,9 +84,9 @@ export const TabsComponent = () => {
           <Overview />
         </Tabs.Content>
 
-        <Tabs.Content value="lessons">
+        {/* <Tabs.Content value="lessons">
           <Calendar />
-        </Tabs.Content>
+        </Tabs.Content> */}
 
         <Tabs.Content value="materials">
           <Materials />

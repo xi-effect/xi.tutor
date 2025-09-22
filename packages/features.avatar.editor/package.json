@@ -20,7 +20,7 @@
     "common.ui": "*",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1",
-    "@xipkg/icons": "^2.5.2",
+    "@xipkg/icons": "^2.5.4",
     "@xipkg/utils": "1.8.0",
     "@xipkg/slider": "2.0.12",
     "common.config": "*",
