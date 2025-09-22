@@ -6,17 +6,17 @@ export interface Participant {
   display_name: string;
 }
 
-export const useGetParticipants = (classroom_id: string, disabled?: boolean) => {
+export const useGetParticipantsByStudent = (classroom_id: string, disabled?: boolean) => {
   const { data, isError, isLoading, ...rest } = useFetching({
     apiConfig: {
-      method: callsApiConfig[CallsQueryKey.GetParticipants].method,
-      getUrl: () => callsApiConfig[CallsQueryKey.GetParticipants].getUrl(classroom_id),
+      method: callsApiConfig[CallsQueryKey.GetParticipantsStudent].method,
+      getUrl: () => callsApiConfig[CallsQueryKey.GetParticipantsStudent].getUrl(classroom_id),
       headers: {
         'Content-Type': 'application/json',
       },
     },
     disabled: disabled || !classroom_id,
-    queryKey: [CallsQueryKey.GetParticipants, classroom_id],
+    queryKey: [CallsQueryKey.GetParticipantsStudent, classroom_id],
   });
 
   return {

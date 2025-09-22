@@ -3,28 +3,24 @@ import { getAxiosInstance } from 'common.config';
 import { useMutation } from '@tanstack/react-query';
 import { handleError } from 'common.services';
 
-export interface CreateAccessTokenData {
+export interface ReactivateCallData {
   classroom_id: string;
 }
 
-export interface AccessTokenResponse {
-  url: string;
-}
-
-export const useCreateAccessToken = () => {
-  const createAccessTokenMutation = useMutation({
-    mutationFn: async (data: CreateAccessTokenData) => {
+export const useReactivateCall = () => {
+  const reactivateCallMutation = useMutation({
+    mutationFn: async (data: ReactivateCallData) => {
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
-          method: callsApiConfig[CallsQueryKey.CreateAccessToken].method,
-          url: callsApiConfig[CallsQueryKey.CreateAccessToken].getUrl(data.classroom_id),
+          method: callsApiConfig[CallsQueryKey.ReactivateCall].method,
+          url: callsApiConfig[CallsQueryKey.ReactivateCall].getUrl(data.classroom_id),
           headers: {
             'Content-Type': 'application/json',
           },
         });
 
-        return response.data as AccessTokenResponse;
+        return response.data;
       } catch (err) {
         console.error('Ошибка при создании access token:', err);
         throw err;
@@ -41,5 +37,5 @@ export const useCreateAccessToken = () => {
     },
   });
 
-  return { createAccessToken: createAccessTokenMutation };
+  return { reactivateCall: reactivateCallMutation };
 };
