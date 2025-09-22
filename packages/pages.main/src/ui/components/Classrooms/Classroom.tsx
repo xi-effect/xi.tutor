@@ -55,12 +55,12 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   };
 
   return (
-    <div className="border-gray-30 relative flex min-h-[170px] w-[320px] flex-col items-start justify-start gap-1 rounded-2xl border bg-transparent p-6">
+    <div className="border-gray-30 relative flex min-h-[170px] w-[320px] flex-col items-start justify-start gap-1 rounded-2xl border bg-transparent p-4">
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button
             onClick={handleClick}
-            className="group bg-brand-0 absolute top-6 right-6 h-6 w-6 p-0"
+            className="group bg-brand-0 absolute top-5 right-5 h-6 w-6 p-0"
             variant="icon"
           >
             <Arrow className="fill-brand-80 group-hover:fill-brand-100 h-4 w-4" />

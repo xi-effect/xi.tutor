@@ -8,8 +8,9 @@ import { useNavigate } from '@tanstack/react-router';
 import { ModalInvitation } from 'features.invites';
 import { useCurrentUser, useFetchClassrooms } from 'common.services';
 import { Alert, AlertIcon, AlertContainer, AlertDescription, AlertTitle } from '@xipkg/alert';
+import { useNoteVisibility } from '../../../hooks';
 
-const NoteForUsers = () => {
+const NoteForUsers = ({ onHide }: { onHide: () => void }) => {
   return (
     <Alert variant="brand">
       <AlertIcon>
@@ -18,12 +19,13 @@ const NoteForUsers = () => {
       <AlertContainer className="h-full">
         <AlertTitle>Начать занятие</AlertTitle>
         <AlertDescription>
-          Придумать текст(описание сценария на кнопку “Начать занятие”)
+          Придумать текст(описание сценария на кнопку "Начать занятие")
         </AlertDescription>
         <Button
           size="s"
           className="border-brand-100 text-brand-100 hover:bg-brand-100 hover:text-brand-0 mt-auto w-full border bg-transparent"
           variant="ghost"
+          onClick={onHide}
         >
           Скрыть
         </Button>
@@ -37,6 +39,7 @@ export const Classrooms = () => {
   const isTutor = user?.default_layout === 'tutor';
 
   const { data: classrooms, isLoading } = useFetchClassrooms();
+  const { isHidden, hideNote } = useNoteVisibility();
 
   const navigate = useNavigate();
 
@@ -87,7 +90,7 @@ export const Classrooms = () => {
       </div>
 
       <div className="flex flex-row gap-8">
-        <NoteForUsers />
+        {!isHidden && <NoteForUsers onHide={hideNote} />}
         {classrooms && classrooms?.length > 0 && (
           <ScrollArea
             className="h-[172px] w-full overflow-x-auto overflow-y-hidden"
