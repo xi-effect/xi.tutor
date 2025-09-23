@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { BubbleMenu } from '@tiptap/react/menus';
 import { Editor } from '@tiptap/core';
 import { Italic, Bold, Stroke, Underline as UnderlineIcon } from '@xipkg/icons';
@@ -23,16 +22,13 @@ export const BubbleMenuWrapper = ({ editor, activeStates, isReadOnly }: BubbleMe
   return (
     <BubbleMenu
       editor={editor}
-      className="flex gap-1 rounded-lg border border-gray-200 bg-white p-1 shadow-lg"
+      className="border-gray-10 bg-gray-0 flex gap-1 rounded-lg border p-2 shadow-lg"
       shouldShow={({ editor }) => {
         const { selection } = editor.state;
         return selection.content().size > 0 && !selection.empty;
       }}
-      // @ts-ignore
-      tippyOptions={{
-        duration: 100,
+      options={{
         placement: 'top',
-        interactive: true,
       }}
     >
       <BubbleButton
@@ -40,7 +36,7 @@ export const BubbleMenuWrapper = ({ editor, activeStates, isReadOnly }: BubbleMe
         onClick={() => editor.chain().focus().toggleBold().run()}
         ariaLabel="Жирный"
       >
-        <Bold size="sm" />
+        <Bold />
       </BubbleButton>
 
       <BubbleButton
@@ -48,15 +44,7 @@ export const BubbleMenuWrapper = ({ editor, activeStates, isReadOnly }: BubbleMe
         onClick={() => editor.chain().focus().toggleItalic().run()}
         ariaLabel="Курсив"
       >
-        <Italic size="sm" />
-      </BubbleButton>
-
-      <BubbleButton
-        isActive={activeStates.strike}
-        onClick={() => editor.chain().focus().toggleStrike().run()}
-        ariaLabel="Зачеркивание"
-      >
-        <Stroke size="sm" />
+        <Italic />
       </BubbleButton>
 
       <BubbleButton
@@ -64,7 +52,15 @@ export const BubbleMenuWrapper = ({ editor, activeStates, isReadOnly }: BubbleMe
         onClick={() => editor.chain().focus().toggleUnderline().run()}
         ariaLabel="Подчеркивание"
       >
-        <UnderlineIcon size="sm" />
+        <UnderlineIcon />
+      </BubbleButton>
+
+      <BubbleButton
+        isActive={activeStates.strike}
+        onClick={() => editor.chain().focus().toggleStrike().run()}
+        ariaLabel="Зачеркивание"
+      >
+        <Stroke />
       </BubbleButton>
 
       <LinkButton editor={editor} isActive={activeStates.link} />

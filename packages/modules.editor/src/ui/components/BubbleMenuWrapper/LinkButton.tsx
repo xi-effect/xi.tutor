@@ -35,7 +35,7 @@ export const LinkButton = ({ editor, isActive }: LinkButtonProps) => {
 
   return (
     <BubbleButton isActive={isActive} onClick={handleClick} ariaLabel="Ссылка">
-      <LinkIcon size="sm" />
+      <LinkIcon />
     </BubbleButton>
   );
 };
