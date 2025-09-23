@@ -35,6 +35,9 @@ type useCallStoreT = {
 
   mode: 'compact' | 'full';
 
+  // токен для конференции
+  token: string | undefined;
+
   // Чат
   isChatOpen: boolean;
   chatMessages: ChatMessage[];
@@ -65,6 +68,9 @@ export const useCallStore = create<useCallStoreT>()(
       connect: undefined,
       isStarted: undefined,
       mode: 'full',
+
+      // токен для конференции
+      token: undefined,
 
       // Чат
       isChatOpen: false,

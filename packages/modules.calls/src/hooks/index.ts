@@ -11,3 +11,4 @@ export { usePersistentUserChoices } from './usePersistentUserChoices';
 export { useResolveInitiallyDefaultDeviceId } from './useResolveInitiallyDefaultDeviceId';
 export { useCannotUseDevice } from './useCannotUseDevice';
 export { useWatchPermissions } from './useWatchPermissions';
+export { useStartCall, type StartCallData } from './useStartCall';

@@ -6,15 +6,15 @@ import { getStatusText, getStatusVariant, handleTelegramClick } from '../../../u
 import { IndividualUser } from './IndividualUser';
 // import { EditableDescription } from './EditableDescription';
 import { Button } from '@xipkg/button';
-import { useNavigate } from '@tanstack/react-router';
 import { SubjectBadge } from './SubjectBadge';
+import { useStartCall } from 'modules.calls';
 
 interface ContentProps {
   classroom: ClassroomTutorResponseSchema;
 }
 
 export const Content = ({ classroom }: ContentProps) => {
-  const navigate = useNavigate();
+  const { startCall, isLoading } = useStartCall();
 
   const getDisplayName = () => {
     if (classroom.kind === 'individual') {
@@ -24,15 +24,14 @@ export const Content = ({ classroom }: ContentProps) => {
     }
   };
 
-  const handleCallClick = () => {
-    console.log('handleCallClick');
-
-    navigate({
-      // @ts-ignore
-      to: '/call/$classroomId',
-      // @ts-ignore
-      params: { classroomId: classroom.id },
-    });
+  const handleCallClick = async () => {
+    try {
+      // Запускаем процесс создания токена, сохранения в store и навигации
+      await startCall({ classroom_id: classroom.id.toString() });
+    } catch (error) {
+      console.error('Ошибка при запуске звонка:', error);
+      // Здесь можно добавить показ уведомления об ошибке
+    }
   };
 
   return (
@@ -63,9 +62,9 @@ export const Content = ({ classroom }: ContentProps) => {
 
       <div className="ml-auto flex flex-col items-end gap-2">
         <div className="flex flex-row items-end gap-2">
-          <Button onClick={handleCallClick} size="s">
+          <Button onClick={handleCallClick} size="s" disabled={isLoading}>
             <Conference className="fill-gray-0 mr-2 size-4" />
-            {`Начать Звонок`}
+            {isLoading ? 'Подключение...' : 'Начать Звонок'}
           </Button>
         </div>
       </div>

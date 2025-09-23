@@ -25,7 +25,6 @@ import { Route as appWelcomeSocialsIndexRouteImport } from './pages/(app)/welcom
 import { Route as appWelcomeRoleIndexRouteImport } from './pages/(app)/welcome/role/index'
 import { Route as appLayoutPaymentsIndexRouteImport } from './pages/(app)/_layout/payments/index'
 import { Route as appLayoutMaterialsIndexRouteImport } from './pages/(app)/_layout/materials/index'
-import { Route as appLayoutDraftTableIndexRouteImport } from './pages/(app)/_layout/draftTable/index'
 import { Route as appLayoutClassroomsIndexRouteImport } from './pages/(app)/_layout/classrooms/index'
 import { Route as appLayoutCallIndexRouteImport } from './pages/(app)/_layout/call/index'
 import { Route as appLayoutCalendarIndexRouteImport } from './pages/(app)/_layout/calendar/index'
@@ -116,12 +115,6 @@ const appLayoutMaterialsIndexRoute = appLayoutMaterialsIndexRouteImport.update({
   path: '/materials/',
   getParentRoute: () => appLayoutRoute,
 } as any)
-const appLayoutDraftTableIndexRoute =
-  appLayoutDraftTableIndexRouteImport.update({
-    id: '/draftTable/',
-    path: '/draftTable/',
-    getParentRoute: () => appLayoutRoute,
-  } as any)
 const appLayoutClassroomsIndexRoute =
   appLayoutClassroomsIndexRouteImport.update({
     id: '/classrooms/',
@@ -176,7 +169,6 @@ export interface FileRoutesByFullPath {
   '/calendar': typeof appLayoutCalendarIndexRoute
   '/call': typeof appLayoutCallIndexRoute
   '/classrooms': typeof appLayoutClassroomsIndexRoute
-  '/draftTable': typeof appLayoutDraftTableIndexRoute
   '/materials': typeof appLayoutMaterialsIndexRoute
   '/payments': typeof appLayoutPaymentsIndexRoute
   '/welcome/role': typeof appWelcomeRoleIndexRoute
@@ -199,7 +191,6 @@ export interface FileRoutesByTo {
   '/calendar': typeof appLayoutCalendarIndexRoute
   '/call': typeof appLayoutCallIndexRoute
   '/classrooms': typeof appLayoutClassroomsIndexRoute
-  '/draftTable': typeof appLayoutDraftTableIndexRoute
   '/materials': typeof appLayoutMaterialsIndexRoute
   '/payments': typeof appLayoutPaymentsIndexRoute
   '/welcome/role': typeof appWelcomeRoleIndexRoute
@@ -226,7 +217,6 @@ export interface FileRoutesById {
   '/(app)/_layout/calendar/': typeof appLayoutCalendarIndexRoute
   '/(app)/_layout/call/': typeof appLayoutCallIndexRoute
   '/(app)/_layout/classrooms/': typeof appLayoutClassroomsIndexRoute
-  '/(app)/_layout/draftTable/': typeof appLayoutDraftTableIndexRoute
   '/(app)/_layout/materials/': typeof appLayoutMaterialsIndexRoute
   '/(app)/_layout/payments/': typeof appLayoutPaymentsIndexRoute
   '/(app)/welcome/role/': typeof appWelcomeRoleIndexRoute
@@ -251,7 +241,6 @@ export interface FileRouteTypes {
     | '/calendar'
     | '/call'
     | '/classrooms'
-    | '/draftTable'
     | '/materials'
     | '/payments'
     | '/welcome/role'
@@ -274,7 +263,6 @@ export interface FileRouteTypes {
     | '/calendar'
     | '/call'
     | '/classrooms'
-    | '/draftTable'
     | '/materials'
     | '/payments'
     | '/welcome/role'
@@ -300,7 +288,6 @@ export interface FileRouteTypes {
     | '/(app)/_layout/calendar/'
     | '/(app)/_layout/call/'
     | '/(app)/_layout/classrooms/'
-    | '/(app)/_layout/draftTable/'
     | '/(app)/_layout/materials/'
     | '/(app)/_layout/payments/'
     | '/(app)/welcome/role/'
@@ -431,13 +418,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutMaterialsIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
-    '/(app)/_layout/draftTable/': {
-      id: '/(app)/_layout/draftTable/'
-      path: '/draftTable'
-      fullPath: '/draftTable'
-      preLoaderRoute: typeof appLayoutDraftTableIndexRouteImport
-      parentRoute: typeof appLayoutRoute
-    }
     '/(app)/_layout/classrooms/': {
       id: '/(app)/_layout/classrooms/'
       path: '/classrooms'
@@ -499,7 +479,6 @@ interface appLayoutRouteChildren {
   appLayoutCalendarIndexRoute: typeof appLayoutCalendarIndexRoute
   appLayoutCallIndexRoute: typeof appLayoutCallIndexRoute
   appLayoutClassroomsIndexRoute: typeof appLayoutClassroomsIndexRoute
-  appLayoutDraftTableIndexRoute: typeof appLayoutDraftTableIndexRoute
   appLayoutMaterialsIndexRoute: typeof appLayoutMaterialsIndexRoute
   appLayoutPaymentsIndexRoute: typeof appLayoutPaymentsIndexRoute
 }
@@ -513,7 +492,6 @@ const appLayoutRouteChildren: appLayoutRouteChildren = {
   appLayoutCalendarIndexRoute: appLayoutCalendarIndexRoute,
   appLayoutCallIndexRoute: appLayoutCallIndexRoute,
   appLayoutClassroomsIndexRoute: appLayoutClassroomsIndexRoute,
-  appLayoutDraftTableIndexRoute: appLayoutDraftTableIndexRoute,
   appLayoutMaterialsIndexRoute: appLayoutMaterialsIndexRoute,
   appLayoutPaymentsIndexRoute: appLayoutPaymentsIndexRoute,
 }

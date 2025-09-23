@@ -1,7 +1,8 @@
 import { callsApiConfig, CallsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation } from '@tanstack/react-query';
-import { handleError } from 'common.services';
+import { AxiosError } from 'axios';
+import { toast } from 'sonner';
 
 export interface CreateAccessTokenData {
   classroom_id: string;
@@ -30,15 +31,17 @@ export const useCreateTokenByStudent = () => {
         throw err;
       }
     },
-    onError: (err) => {
+    onError: (err: AxiosError) => {
       // Показываем toast с ошибкой
-      handleError(err, 'calls');
+      console.error('Ошибка при создании access token:', err);
+
+      if (err.status === 409) {
+        toast.error('Дождитесь, пока преподаватель начнет звонок', {
+          duration: 5000,
+        });
+      }
     },
-    onSuccess: () => {
-      // Показываем успешное уведомление
-      console.log('Access token создан успешно');
-      // showSuccess('calls');
-    },
+    onSuccess: () => {},
   });
 
   return { createTokenByStudent: createTokenByStudentMutation };

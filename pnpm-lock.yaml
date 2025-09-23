@@ -2373,6 +2373,9 @@ importers:
       modules.calendar:
         specifier: '*'
         version: link:../modules.calendar
+      modules.calls:
+        specifier: '*'
+        version: link:../modules.calls
       modules.editor:
         specifier: '*'
         version: link:../modules.editor
@@ -9494,7 +9497,7 @@ packages:
       eslint-config-airbnb: 19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2)(eslint-plugin-react-hooks@5.1.0)(eslint-plugin-react@7.37.2)(eslint@9.36.0)
       eslint-config-next: 15.1.2(eslint@9.36.0)(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.36.0)
-      eslint-config-turbo: 2.5.6(eslint@9.36.0)(turbo@2.5.6)
+      eslint-config-turbo: 2.5.7(eslint@9.36.0)(turbo@2.5.6)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.44.0)(eslint-import-resolver-typescript@3.10.1)(eslint@9.36.0)
       eslint-plugin-react: 7.37.2(eslint@9.36.0)
       eslint-plugin-react-hooks: 5.1.0(eslint@9.36.0)
@@ -11023,14 +11026,14 @@ packages:
       eslint: 9.36.0
     dev: true
 
-  /eslint-config-turbo@2.5.6(eslint@9.36.0)(turbo@2.5.6):
-    resolution: {integrity: sha512-1EV/UqdKE75st9q6y0MCxz7qp2v7RyGvbQsMLSuCz+VH8ScnSfmhd8FcAbqx3BshCy5IluujzMB6T5iCgL3/sA==}
+  /eslint-config-turbo@2.5.7(eslint@9.36.0)(turbo@2.5.6):
+    resolution: {integrity: sha512-6p1qq5I/gO8tkPhZmhO5Ug5VJPV6JX/BPaYanToYm8DwALHW3eC3HHsToeQ6Rq1xaXPFZJNAD27nZVLcr8FQkg==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
     dependencies:
       eslint: 9.36.0
-      eslint-plugin-turbo: 2.5.6(eslint@9.36.0)(turbo@2.5.6)
+      eslint-plugin-turbo: 2.5.7(eslint@9.36.0)(turbo@2.5.6)
       turbo: 2.5.6
     dev: true
 
@@ -11248,6 +11251,17 @@ packages:
 
   /eslint-plugin-turbo@2.5.6(eslint@9.36.0)(turbo@2.5.6):
     resolution: {integrity: sha512-KUDE23aP2JV8zbfZ4TeM1HpAXzMM/AYG/bJam7P4AalUxas8Pd/lS/6R3p4uX91qJcH1LwL4h0ED48nDe8KorQ==}
+    peerDependencies:
+      eslint: '>6.6.0'
+      turbo: '>2.0.0'
+    dependencies:
+      dotenv: 16.0.3
+      eslint: 9.36.0
+      turbo: 2.5.6
+    dev: true
+
+  /eslint-plugin-turbo@2.5.7(eslint@9.36.0)(turbo@2.5.6):
+    resolution: {integrity: sha512-FXTyV3Lmk5xzut5lpXr6YwYwrvoI7nDveOmSzvePZMgJfZ/zMh5rVTN1xSpL5sWe9LkI7ZYPazj/aUrLZfbZIA==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'

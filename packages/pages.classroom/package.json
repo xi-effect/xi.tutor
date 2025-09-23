@@ -31,7 +31,8 @@
     "pages.payments": "*",
     "pages.materials": "*",
     "features.table": "*",
-    "modules.calendar": "*"
+    "modules.calendar": "*",
+    "modules.calls": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
