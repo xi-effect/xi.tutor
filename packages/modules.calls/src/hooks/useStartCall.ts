@@ -36,8 +36,8 @@ export const useStartCall = () => {
         updateStore('token', tokenResponse);
 
         navigate({
-          to: '/call/$classroomId',
-          params: { classroomId: data.classroom_id },
+          to: '/call/$callId',
+          params: { callId: data.classroom_id },
         });
       }
 
