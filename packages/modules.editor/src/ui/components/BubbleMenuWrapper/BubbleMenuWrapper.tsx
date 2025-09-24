@@ -1,22 +1,17 @@
 import { BubbleMenu } from '@tiptap/react/menus';
 import { Editor } from '@tiptap/core';
-import { Italic, Bold, Stroke, Underline as UnderlineIcon } from '@xipkg/icons';
+import { Italic, Bold, Stroke, Underline as UnderlineIcon, Link as LinkIcon } from '@xipkg/icons';
 import { BubbleButton } from './BubbleButton';
-import { LinkButton } from './LinkButton';
+import { useEditorActive } from '../../../hooks';
 
 interface BubbleMenuProps {
   editor: Editor;
-  activeStates: {
-    bold: boolean;
-    italic: boolean;
-    strike: boolean;
-    underline: boolean;
-    link: boolean;
-  };
   isReadOnly?: boolean;
 }
 
-export const BubbleMenuWrapper = ({ editor, activeStates, isReadOnly }: BubbleMenuProps) => {
+export const BubbleMenuWrapper = ({ editor, isReadOnly }: BubbleMenuProps) => {
+  const activeStates = useEditorActive(editor);
+
   if (isReadOnly) return null;
 
   return (
@@ -31,39 +26,25 @@ export const BubbleMenuWrapper = ({ editor, activeStates, isReadOnly }: BubbleMe
         placement: 'top',
       }}
     >
-      <BubbleButton
-        isActive={activeStates.bold}
-        onClick={() => editor.chain().focus().toggleBold().run()}
-        ariaLabel="Жирный"
-      >
+      <BubbleButton ariaLabel="Жирный" type="bold" isActive={activeStates.bold}>
         <Bold />
       </BubbleButton>
 
-      <BubbleButton
-        isActive={activeStates.italic}
-        onClick={() => editor.chain().focus().toggleItalic().run()}
-        ariaLabel="Курсив"
-      >
+      <BubbleButton ariaLabel="Курсив" type="italic" isActive={activeStates.italic}>
         <Italic />
       </BubbleButton>
 
-      <BubbleButton
-        isActive={activeStates.underline}
-        onClick={() => editor.chain().focus().toggleUnderline().run()}
-        ariaLabel="Подчеркивание"
-      >
+      <BubbleButton ariaLabel="Подчеркивание" type="underline" isActive={activeStates.underline}>
         <UnderlineIcon />
       </BubbleButton>
 
-      <BubbleButton
-        isActive={activeStates.strike}
-        onClick={() => editor.chain().focus().toggleStrike().run()}
-        ariaLabel="Зачеркивание"
-      >
+      <BubbleButton ariaLabel="Зачеркивание" type="strike" isActive={activeStates.strike}>
         <Stroke />
       </BubbleButton>
 
-      <LinkButton editor={editor} isActive={activeStates.link} />
+      <BubbleButton ariaLabel="Ссылка" type="link" isActive={activeStates.link}>
+        <LinkIcon />
+      </BubbleButton>
     </BubbleMenu>
   );
 };
