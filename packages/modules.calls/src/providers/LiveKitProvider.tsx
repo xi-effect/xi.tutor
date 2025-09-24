@@ -2,28 +2,59 @@ import { LiveKitRoom } from '@livekit/components-react';
 import { serverUrl, serverUrlDev, isDevMode, devToken } from '../utils/config';
 import { useCallStore } from '../store/callStore';
 import { useRoom } from './RoomProvider';
+import { useParams, useLocation, useNavigate } from '@tanstack/react-router';
+import { useEffect } from 'react';
 
 type LiveKitProviderProps = {
-  token: string;
   children: React.ReactNode;
 };
 
-export const LiveKitProvider = ({ token, children }: LiveKitProviderProps) => {
+export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
   const { room } = useRoom();
-  const audioEnabled = useCallStore((state) => state.audioEnabled);
-  const videoEnabled = useCallStore((state) => state.videoEnabled);
-  const connect = useCallStore((state) => state.connect);
-  const updateStore = useCallStore((state) => state.updateStore);
+  const { audioEnabled, videoEnabled, connect, token, updateStore } = useCallStore();
 
   const handleConnect = () => {
     updateStore('connect', true);
+    console.log('Connected to LiveKit room');
   };
 
   const handleDisconnect = () => {
     updateStore('connect', false);
+    updateStore('isStarted', false);
+    console.log('Disconnected from LiveKit room');
   };
 
-  console.log('connect', connect);
+  const location = useLocation();
+  const { callId, classroomId } = useParams({ strict: false });
+  const navigate = useNavigate();
+
+  console.log('token', token);
+  console.log('location', location);
+  console.log('callId', callId);
+  console.log('classroomId', classroomId);
+
+  useEffect(() => {
+    if (!token && callId && location.pathname.includes('/call/')) {
+      navigate({ to: '/classrooms/$classroomId', params: { classroomId: callId } });
+    }
+  }, [location]);
+
+  if (!token) {
+    return <>{children}</>;
+  }
+
+  // Если нет токена, не рендерим LiveKitRoom
+  if (!token) {
+    console.warn('No token available for LiveKit connection');
+    return <>{children}</>;
+  }
+
+  // console.log('LiveKitProvider state:', {
+  //   connect,
+  //   audioEnabled,
+  //   videoEnabled,
+  //   hasToken: !!token,
+  // });
 
   return (
     <LiveKitRoom

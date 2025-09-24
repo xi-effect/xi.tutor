@@ -97,8 +97,6 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
     }
   }, [search, navigate]);
 
-  console.log('tracks', tracks);
-
   return (
     <div className="lk-video-conference" {...props}>
       {isWeb() && (
