@@ -11,7 +11,7 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "sonner": "2.0.1",
+    "sonner": "^2.0.7",
     "common.services": "*",
     "common.env": "*",
     "common.config": "*",
