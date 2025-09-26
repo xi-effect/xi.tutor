@@ -33,3 +33,4 @@ export { notificationsApiConfig, NotificationsQueryKey } from './src/notificatio
 export { telegramConnectionApiConfig, TelegramConnectionQueryKey } from './src/telegramConnection';
 export { callsApiConfig, CallsQueryKey } from './src/calls';
 export { subjectsApiConfig, SubjectsQueryKey } from './src/subjects';
+export { enrollmentsApiConfig, EnrollmentsQueryKey } from './src/enrollments';
