@@ -9,9 +9,9 @@ import {
   ModalCloseButton,
 } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
-import { ModalTemplatePropsT } from '../types';
+import { ModalTemplatePropsT } from '../../types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { formSchema, FormData } from '../model';
+import { formSchema, FormData } from '../../model';
 import * as z from 'zod';
 import {
   Form,

@@ -4,7 +4,7 @@ import { VirtualizedPaymentsTable } from './VirtualizedPaymentsTable';
 import { useMedia } from 'common.utils';
 import { students, subjects, createPaymentColumns, PaymentT } from 'features.table';
 import { PaymentControl as PaymentsCharts } from 'features.charts';
-import { TemplatesGrid } from './TemplatesGrid';
+import { TemplatesGrid } from './Templates';
 import { useInfiniteQuery } from '../hooks';
 
 type TabsComponentPropsT = {
