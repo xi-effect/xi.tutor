@@ -6,13 +6,14 @@ export const formSchema = z.object({
     .string()
     .nonempty('Введите предметы через запятую')
     .max(100, 'Текст не должен превышать 100 символов')
-    .transform((value) =>
-      value
-        .split(',')
-        .map((s) => s.trim())
-        .filter((s) => s.length > 0),
-    )
-    .refine((subjects) => (subjects as string[]).length > 0, 'Нужно указать хотя бы один предмет'),
+    .refine(
+      (value) =>
+        value
+          .split(',')
+          .map((s) => s.trim())
+          .filter(Boolean).length > 0,
+      { message: 'Нужно указать хотя бы один предмет' },
+    ),
 });
 
 export type FormData = z.infer<typeof formSchema>;
