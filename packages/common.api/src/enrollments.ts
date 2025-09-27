@@ -10,7 +10,7 @@ enum EnrollmentsQueryKey {
 const enrollmentsApiConfig = {
   [EnrollmentsQueryKey.GetAllStudents]: {
     getUrl: (classroomId: string) =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/group-classrooms/${classroomId}/students`,
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/group-classrooms/${classroomId}/students/`,
     method: HttpMethod.GET,
   },
   [EnrollmentsQueryKey.AddStudentToClassroom]: {

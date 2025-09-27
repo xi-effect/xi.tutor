@@ -78,7 +78,7 @@ export const TabsComponent = () => {
             Назначить занятие
           </Button>
         )} */}
-        {currentTab === 'overview' && (
+        {currentTab === 'overview' && isTutor && (
           <ModalStudentsGroup>
             <Button size="s" variant="ghost" className="ml-auto rounded-[8px]">
               Добавить ученика
