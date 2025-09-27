@@ -1,23 +1,25 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Tabs } from '@xipkg/tabs';
-import { useSearch, useNavigate } from '@tanstack/react-router';
+import { useSearch, useNavigate, useParams } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
 
 import { Button } from '@xipkg/button';
-import { Overview } from './Overview';
-import { SearchParams } from '../types/router';
-import { InformationLayout } from './Information';
+import { Overview } from '../Overview';
+import { SearchParams } from '../../types/router';
+import { InformationLayout } from '../Information';
 import { MaterialsAdd } from 'features.materials.add';
-import { Payments } from './Payments';
-import { Materials } from './Materials';
-// import { Calendar } from './Calendar';
-import { useCurrentUser } from 'common.services';
+import { Payments } from '../Payments';
+import { Materials } from '../Materials';
+import { useCurrentUser, useGetClassroom } from 'common.services';
 import { ModalStudentsGroup } from 'features.group.manage';
 
-export const TabsComponent = () => {
+export const TabsTutor = () => {
   const search: SearchParams = useSearch({ strict: false });
   const navigate = useNavigate();
   const currentTab = search.tab || 'overview';
+
+  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
+  const { data: classroom } = useGetClassroom(Number(classroomId));
 
   const handleTabChange = (value: string) => {
     navigate({
@@ -55,10 +57,6 @@ export const TabsComponent = () => {
             Сводка
           </Tabs.Trigger>
 
-          {/* <Tabs.Trigger value="lessons" className="text-m-base font-medium text-gray-100">
-            Занятия
-          </Tabs.Trigger> */}
-
           <Tabs.Trigger value="materials" className="text-m-base font-medium text-gray-100">
             Материалы
           </Tabs.Trigger>
@@ -67,18 +65,11 @@ export const TabsComponent = () => {
             Оплаты
           </Tabs.Trigger>
 
-          {isTutor && (
-            <Tabs.Trigger value="info" className="text-m-base font-medium text-gray-100">
-              Информация
-            </Tabs.Trigger>
-          )}
+          <Tabs.Trigger value="info" className="text-m-base font-medium text-gray-100">
+            Информация
+          </Tabs.Trigger>
         </Tabs.List>
-        {/* {(currentTab === 'overview' || currentTab === 'lessons') && (
-          <Button size="s" className="ml-auto rounded-[8px]">
-            Назначить занятие
-          </Button>
-        )} */}
-        {currentTab === 'overview' && isTutor && (
+        {currentTab === 'overview' && classroom?.kind === 'group' && (
           <ModalStudentsGroup>
             <Button size="s" variant="ghost" className="ml-auto rounded-[8px]">
               Добавить ученика
@@ -92,10 +83,6 @@ export const TabsComponent = () => {
           <Overview />
         </Tabs.Content>
 
-        {/* <Tabs.Content value="lessons">
-          <Calendar />
-        </Tabs.Content> */}
-
         <Tabs.Content value="materials">
           <Materials />
         </Tabs.Content>
@@ -104,11 +91,9 @@ export const TabsComponent = () => {
           <Payments />
         </Tabs.Content>
 
-        {isTutor && (
-          <Tabs.Content value="info">
-            <InformationLayout />
-          </Tabs.Content>
-        )}
+        <Tabs.Content value="info">
+          <InformationLayout />
+        </Tabs.Content>
       </div>
     </Tabs.Root>
   );

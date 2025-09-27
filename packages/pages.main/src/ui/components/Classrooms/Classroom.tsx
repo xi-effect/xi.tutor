@@ -82,6 +82,11 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
             student_id={classroom.student_id?.toString()}
           />
         )}
+        {classroom.kind === 'group' && (
+          <div className="bg-brand-80 text-gray-0 flex h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-[24px]">
+            {classroom.name?.[0].toUpperCase() ?? ''}
+          </div>
+        )}
         <div className="flex h-full w-full flex-row items-center justify-center gap-2">
           <h3 className="text-s-base line-clamp-2 w-full text-center font-medium text-gray-100">
             {classroom.name}

@@ -2,14 +2,14 @@ import { Button } from '@xipkg/button';
 import { Plus } from '@xipkg/icons';
 
 import { Header } from './Header';
-import { TabsComponent } from './TabsComponent';
+import { Tabs } from './Tabs';
 
 export const ClassroomPage = () => {
   return (
     <div className="flex flex-col justify-between gap-6 pr-4 max-md:pl-4">
       <div className="flex flex-col gap-6 pt-1 max-md:gap-4">
         <Header />
-        <TabsComponent />
+        <Tabs />
       </div>
 
       <div className="xs:hidden flex flex-row items-center justify-end">

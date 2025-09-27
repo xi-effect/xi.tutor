@@ -23,7 +23,7 @@ export const Content = ({ classroom }: ContentProps) => {
     if (classroom.kind === 'individual') {
       return `${classroom.student.first_name} ${classroom.student.last_name}`;
     } else {
-      return classroom.title;
+      return classroom.name;
     }
   };
 
@@ -59,7 +59,12 @@ export const Content = ({ classroom }: ContentProps) => {
         {classroom.kind === 'individual' ? (
           <IndividualUser userId={classroom.student_id ?? classroom.tutor_id ?? 0} />
         ) : (
-          <div className="text-m-base text-gray-60 font-medium">{getDisplayName()}</div>
+          <div className="flex flex-row items-center gap-2">
+            <div className="bg-brand-80 text-gray-0 flex h-12 w-12 items-center justify-center rounded-[24px]">
+              {getDisplayName()?.[0].toUpperCase() ?? ''}
+            </div>
+            <div className="text-xl-base font-semibold text-gray-100">{getDisplayName()}</div>
+          </div>
         )}
         <div className="flex flex-row items-center gap-2">
           {classroom.subject_id && <SubjectBadge subject_id={classroom.subject_id} />}
