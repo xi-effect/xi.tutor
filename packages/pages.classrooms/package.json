@@ -26,6 +26,7 @@
     "@tanstack/react-virtual": "3.13.9",
     "features.table": "*",
     "features.invites": "*",
+    "features.classrooms.add": "*",
     "features.students.list": "*",
     "common.services": "*",
     "common.env": "*",

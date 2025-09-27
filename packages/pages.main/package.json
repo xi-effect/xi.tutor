@@ -31,6 +31,7 @@
     "features.invites": "*",
     "features.invoice": "*",
     "features.materials.add": "*",
+    "features.classrooms.add": "*",
     "pages.classrooms": "*",
     "react-hook-form": "^7.55.0",
     "zod": "3.24.2"
