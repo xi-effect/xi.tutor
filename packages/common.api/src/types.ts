@@ -78,6 +78,7 @@ export interface IndividualClassroomTutorResponseSchema {
   student_id?: number;
   tutor_id?: number;
   subject_id: number | null;
+  name?: string;
 }
 
 export interface GroupClassroomTutorResponseSchema {
@@ -93,6 +94,7 @@ export interface GroupClassroomTutorResponseSchema {
   tutorships: TutorshipSchema[];
   invite_code: string;
   subject_id: number | null;
+  name?: string;
 }
 
 export type ClassroomTutorResponseSchema =

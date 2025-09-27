@@ -14,8 +14,6 @@ interface FormData {
 }
 
 export const Information = ({ classroom }: { classroom: ClassroomT }) => {
-  console.log('classroom', classroom);
-
   const { updateClassroomStatus, isUpdating } = useUpdateClassroomStatus();
   const { updateIndividualClassroom, isUpdating: isUpdatingIndividualClassroom } =
     useUpdateIndividualClassroom();
@@ -36,8 +34,6 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
 
   const onSubmit = useCallback(
     async (data: FormData) => {
-      console.log('Form submitted with data:', data);
-
       if (!classroom?.id) {
         console.error('Classroom ID is required');
         return;
@@ -49,7 +45,6 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
         const subjectChanged = data.subject !== initialValues.current.subject;
 
         if (!statusChanged && !subjectChanged) {
-          console.log('No changes detected');
           return;
         }
 
@@ -66,11 +61,9 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
                 },
                 {
                   onSuccess: () => {
-                    console.log('Classroom status updated successfully');
                     resolve(true);
                   },
                   onError: (error) => {
-                    console.error('Failed to update classroom status:', error);
                     reject(error);
                   },
                 },
@@ -89,11 +82,9 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
                 },
                 {
                   onSuccess: () => {
-                    console.log('Classroom subject updated successfully');
                     resolve(true);
                   },
                   onError: (error) => {
-                    console.error('Failed to update classroom subject:', error);
                     reject(error);
                   },
                 },
@@ -107,7 +98,6 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
 
         // Обновляем исходные значения только после успешного завершения всех операций
         initialValues.current = { ...data };
-        console.log('All updates completed successfully');
       } catch (error) {
         console.error('Failed to update classroom:', error);
         // Здесь можно добавить уведомление пользователю об ошибке

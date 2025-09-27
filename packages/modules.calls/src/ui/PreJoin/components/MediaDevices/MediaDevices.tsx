@@ -3,6 +3,9 @@ import { MediaDeviceMenu } from './MediaDeviceMenu';
 import { usePersistentUserChoices } from '../../../../hooks/usePersistentUserChoices';
 import { useMemo } from 'react';
 import { LocalAudioTrack, LocalVideoTrack } from 'livekit-client';
+import { useCallStore } from '../../../../store/callStore';
+import { serverUrl, serverUrlDev, isDevMode } from '../../../../utils/config';
+import { useRoom } from '../../../../providers/RoomProvider';
 
 interface MediaDevicesProps {
   audioTrack?: LocalAudioTrack;
@@ -19,13 +22,85 @@ export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
     saveVideoInputEnabled,
   } = usePersistentUserChoices();
 
-  const handleJoin = () => {
-    // Здесь будет логика присоединения к комнате
-    console.log('Joining room with devices:', {
-      audioDeviceId,
-      audioOutputDeviceId,
-      videoDeviceId,
-    });
+  const { updateStore, token, isConnecting } = useCallStore();
+  const { room } = useRoom();
+
+  const handleJoin = async () => {
+    if (!token) {
+      console.error('No token available for joining the call');
+      return;
+    }
+
+    // Проверяем, не подключены ли уже
+    if (room.state === 'connected') {
+      console.log('Already connected to room, just updating store...');
+      // Если уже подключены, просто обновляем store
+      updateStore('connect', true);
+      updateStore('isStarted', true);
+      updateStore('isConnecting', false);
+      return;
+    }
+
+    if (isConnecting) {
+      console.log('Already connecting to room...');
+      return;
+    }
+
+    // Устанавливаем флаг подключения
+    updateStore('isConnecting', true);
+
+    try {
+      // Сохраняем текущие настройки устройств в store
+      updateStore('audioDeviceId', audioDeviceId);
+      updateStore('audioOutputDeviceId', audioOutputDeviceId);
+      updateStore('videoDeviceId', videoDeviceId);
+
+      // Сохраняем состояние аудио и видео
+      updateStore('audioEnabled', audioTrack ? !audioTrack.isMuted : false);
+      updateStore('videoEnabled', videoTrack ? !videoTrack.isMuted : false);
+
+      console.log('Attempting to connect to room...');
+
+      // Подключаемся к комнате через LiveKit
+      await room.connect(isDevMode ? serverUrlDev : serverUrl, token);
+
+      // Публикуем треки если они есть
+      if (audioTrack && !audioTrack.isMuted) {
+        await room.localParticipant.publishTrack(audioTrack);
+      }
+      if (videoTrack && !videoTrack.isMuted) {
+        await room.localParticipant.publishTrack(videoTrack);
+      }
+
+      // Устанавливаем соединение
+      updateStore('connect', true);
+      updateStore('isStarted', true);
+      updateStore('isConnecting', false);
+
+      console.log('Successfully joined room with devices:', {
+        audioDeviceId,
+        audioOutputDeviceId,
+        videoDeviceId,
+        audioEnabled: audioTrack ? !audioTrack.isMuted : false,
+        videoEnabled: videoTrack ? !videoTrack.isMuted : false,
+      });
+    } catch (error) {
+      console.error('Failed to join room:', error);
+
+      // Сбрасываем состояние при ошибке
+      updateStore('connect', false);
+      updateStore('isStarted', false);
+      updateStore('isConnecting', false);
+
+      // Если это ошибка отключения клиента, не показываем пользователю
+      if (error instanceof Error && error.message.includes('Client initiated disconnect')) {
+        console.log('Connection was cancelled by client - this is normal during navigation');
+        return;
+      }
+
+      // Для других ошибок можно показать уведомление пользователю
+      console.warn('Connection failed, please try again');
+    }
   };
 
   // Обработчики переключения устройств с обработкой ошибок
@@ -37,11 +112,11 @@ export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
           await audioTrack.setDeviceId({ exact: deviceId });
           // Синхронизируем состояние после смены устройства
           const isActuallyEnabled = !audioTrack.isMuted;
-          console.log('MediaDevices: audio device changed, syncing state', {
-            deviceId,
-            trackMuted: audioTrack.isMuted,
-            shouldBeEnabled: isActuallyEnabled,
-          });
+          // console.log('MediaDevices: audio device changed, syncing state', {
+          //   deviceId,
+          //   trackMuted: audioTrack.isMuted,
+          //   shouldBeEnabled: isActuallyEnabled,
+          // });
           saveAudioInputEnabled(isActuallyEnabled);
         }
       } catch (err) {
@@ -59,11 +134,11 @@ export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
           await videoTrack.setDeviceId({ exact: deviceId });
           // Синхронизируем состояние после смены устройства
           const isActuallyEnabled = !videoTrack.isMuted;
-          console.log('MediaDevices: video device changed, syncing state', {
-            deviceId,
-            trackMuted: videoTrack.isMuted,
-            shouldBeEnabled: isActuallyEnabled,
-          });
+          // console.log('MediaDevices: video device changed, syncing state', {
+          //   deviceId,
+          //   trackMuted: videoTrack.isMuted,
+          //   shouldBeEnabled: isActuallyEnabled,
+          // });
           saveVideoInputEnabled(isActuallyEnabled);
         }
       } catch (err) {
@@ -100,8 +175,8 @@ export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
           </div>
         </div>
       </div>
-      <Button onClick={() => handleJoin()} className="w-full">
-        Присоединиться
+      <Button onClick={() => handleJoin()} className="w-full" disabled={isConnecting}>
+        {isConnecting ? 'Подключение...' : 'Присоединиться'}
       </Button>
     </div>
   );

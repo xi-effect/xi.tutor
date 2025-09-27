@@ -24,14 +24,14 @@ export const DevicesBar = ({
   videoEnabled,
   videoTrackToggle,
 }: DevicesBarPropsT) => {
-  console.log('DevicesBar props:', {
-    microTrack: !!microTrack,
-    microEnabled,
-    microTrackToggle: !!microTrackToggle,
-    videoTrack: !!videoTrack,
-    videoEnabled,
-    videoTrackToggle: !!videoTrackToggle,
-  });
+  // console.log('DevicesBar props:', {
+  //   microTrack: !!microTrack,
+  //   microEnabled,
+  //   microTrackToggle: !!microTrackToggle,
+  //   videoTrack: !!videoTrack,
+  //   videoEnabled,
+  //   videoTrackToggle: !!videoTrackToggle,
+  // });
 
   return (
     <>

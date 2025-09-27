@@ -32,7 +32,8 @@
     "pages.materials": "*",
     "features.table": "*",
     "modules.calendar": "*",
-    "modules.calls": "*"
+    "modules.calls": "*",
+    "features.group.manage": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

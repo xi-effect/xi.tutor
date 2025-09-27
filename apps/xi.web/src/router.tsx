@@ -33,5 +33,6 @@ declare module '@tanstack/react-router' {
     profile?: string;
     carouselType?: 'horizontal' | 'vertical';
     tab?: string;
+    goto?: string;
   }
 }

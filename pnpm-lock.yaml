@@ -132,8 +132,8 @@ importers:
         specifier: 15.4.1
         version: 15.4.1(i18next@24.2.2)(react-dom@19.1.1)(react@19.1.1)
       sonner:
-        specifier: 2.0.1
-        version: 2.0.1(react-dom@19.1.1)(react@19.1.1)
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.1.1)(react@19.1.1)
       tailwindcss:
         specifier: ^4.0.9
         version: 4.1.13
@@ -506,8 +506,8 @@ importers:
         specifier: '19'
         version: 19.1.1
       sonner:
-        specifier: ^1.4.0
-        version: 1.7.4(react-dom@19.1.1)(react@19.1.1)
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.1.1)(react@19.1.1)
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0
@@ -865,8 +865,8 @@ importers:
         specifier: 0.4.8
         version: 0.4.8
       sonner:
-        specifier: 2.0.1
-        version: 2.0.1(react-dom@19.1.1)(react@19.1.1)
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.1.1)(react@19.1.1)
       zod:
         specifier: 3.24.2
         version: 3.24.2
@@ -986,12 +986,47 @@ importers:
       '@xipkg/form':
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.1.9)(@types/react@19.1.13)(react-dom@19.1.1)(react@19.1.1)
+  packages/features.group.manage:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.73.3
+        version: 5.73.3(react@19.1.1)
+      '@xipkg/button':
+        specifier: ^3.1.8
+        version: 3.2.0(@types/react@19.1.13)(react@19.1.1)
+      '@xipkg/icons':
+        specifier: ^2.5.4
+        version: 2.5.4(react@19.1.1)
       '@xipkg/input':
         specifier: ^2.2.9
         version: 2.2.9(react@19.1.1)
       '@xipkg/modal':
         specifier: ^4.2.0
         version: 4.2.0(@types/react-dom@19.1.9)(@types/react@19.1.13)(react-dom@19.1.1)(react@19.1.1)
+      '@xipkg/scrollarea':
+        specifier: ^2.2.0
+        version: 2.2.0(@types/react-dom@19.1.9)(@types/react@19.1.13)(react-dom@19.1.1)(react@19.1.1)
+      '@xipkg/tooltip':
+        specifier: ^2.1.0
+        version: 2.1.0(@types/react-dom@19.1.9)(@types/react@19.1.13)(react-dom@19.1.1)(react@19.1.1)
+      '@xipkg/userprofile':
+        specifier: ^4.0.14
+        version: 4.0.14(@types/react-dom@19.1.9)(@types/react@19.1.13)(react-dom@19.1.1)(react@19.1.1)
+      '@xipkg/utils':
+        specifier: ^1.8.0
+        version: 1.8.0(react@19.1.1)
+      common.api:
+        specifier: '*'
+        version: link:../common.api
+      common.config:
+        specifier: '*'
+        version: link:../common.config
+      common.services:
+        specifier: '*'
+        version: link:../common.services
+      common.types:
+        specifier: '*'
+        version: link:../common.types
       react:
         specifier: '19'
         version: 19.1.1
@@ -1072,8 +1107,8 @@ importers:
         specifier: '19'
         version: 19.1.1
       sonner:
-        specifier: ^1.4.3
-        version: 1.7.4(react-dom@19.1.1)(react@19.1.1)
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.1.1)(react@19.1.1)
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0
@@ -1172,8 +1207,8 @@ importers:
         specifier: '19'
         version: 19.1.1
       sonner:
-        specifier: ^1.4.0
-        version: 1.7.4(react-dom@19.1.1)(react@19.1.1)
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.1.1)(react@19.1.1)
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0
@@ -1691,8 +1726,8 @@ importers:
         specifier: 15.4.1
         version: 15.4.1(i18next@24.2.2)(react-dom@19.1.1)(react@19.1.1)
       sonner:
-        specifier: 2.0.1
-        version: 2.0.1(react-dom@19.1.1)(react@19.1.1)
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.1.1)(react@19.1.1)
       zod:
         specifier: 3.24.2
         version: 3.24.2
@@ -1817,6 +1852,9 @@ importers:
       common.api:
         specifier: '*'
         version: link:../common.api
+      common.env:
+        specifier: '*'
+        version: link:../common.env
       common.services:
         specifier: '*'
         version: link:../common.services
@@ -1835,6 +1873,9 @@ importers:
       react:
         specifier: '19'
         version: 19.1.1
+      sonner:
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.1.1)(react@19.1.1)
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0
@@ -2096,8 +2137,8 @@ importers:
         specifier: 15.4.1
         version: 15.4.1(i18next@24.2.2)(react-dom@19.1.1)(react@19.1.1)
       sonner:
-        specifier: 2.0.1
-        version: 2.0.1(react-dom@19.1.1)(react@19.1.1)
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.1.1)(react@19.1.1)
       zod:
         specifier: 3.24.2
         version: 3.24.2
@@ -2211,8 +2252,8 @@ importers:
         specifier: 15.4.1
         version: 15.4.1(i18next@24.2.2)(react-dom@19.1.1)(react@19.1.1)
       sonner:
-        specifier: 2.0.1
-        version: 2.0.1(react-dom@19.1.1)(react@19.1.1)
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.1.1)(react@19.1.1)
       swiper:
         specifier: ^11.2.6
         version: 11.2.10
@@ -2332,8 +2373,8 @@ importers:
         specifier: '19'
         version: 19.1.1
       sonner:
-        specifier: 2.0.3
-        version: 2.0.3(react-dom@19.1.1)(react@19.1.1)
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.1.1)(react@19.1.1)
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0
@@ -2428,6 +2469,9 @@ importers:
       common.services:
         specifier: '*'
         version: link:../common.services
+      features.group.manage:
+        specifier: '*'
+        version: link:../features.group.manage
       features.materials.add:
         specifier: '*'
         version: link:../features.materials.add
@@ -3110,8 +3154,8 @@ importers:
         specifier: 15.4.1
         version: 15.4.1(i18next@24.2.2)(react-dom@19.1.1)(react@19.1.1)
       sonner:
-        specifier: 2.0.1
-        version: 2.0.1(react-dom@19.1.1)(react@19.1.1)
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.1.1)(react@19.1.1)
       zod:
         specifier: 3.24.2
         version: 3.24.2
@@ -3216,8 +3260,8 @@ importers:
         specifier: 15.4.1
         version: 15.4.1(i18next@24.2.2)(react-dom@19.1.1)(react@19.1.1)
       sonner:
-        specifier: 2.0.1
-        version: 2.0.1(react-dom@19.1.1)(react@19.1.1)
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.1.1)(react@19.1.1)
       zod:
         specifier: 3.24.2
         version: 3.24.2
@@ -13870,36 +13914,6 @@ packages:
       seroval: 1.3.2
       seroval-plugins: 1.3.3(seroval@1.3.2)
     dev: true
-
-  /sonner@1.7.4(react-dom@19.1.1)(react@19.1.1):
-    resolution: {integrity: sha512-DIS8z4PfJRbIyfVFDVnK9rO3eYDtse4Omcm6bt0oEr5/jtLgysmjuBl1frJ9E/EQZrFmKx2A8m/s5s9CRXIzhw==}
-    peerDependencies:
-      react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
-      react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
-    dependencies:
-      react: 19.1.1
-      react-dom: 19.1.1(react@19.1.1)
-    dev: false
-
-  /sonner@2.0.1(react-dom@19.1.1)(react@19.1.1):
-    resolution: {integrity: sha512-FRBphaehZ5tLdLcQ8g2WOIRE+Y7BCfWi5Zyd8bCvBjiW8TxxAyoWZIxS661Yz6TGPqFQ4VLzOF89WEYhfynSFQ==}
-    peerDependencies:
-      react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
-      react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
-    dependencies:
-      react: 19.1.1
-      react-dom: 19.1.1(react@19.1.1)
-    dev: false
-
-  /sonner@2.0.3(react-dom@19.1.1)(react@19.1.1):
-    resolution: {integrity: sha512-njQ4Hht92m0sMqqHVDL32V2Oun9W1+PHO9NDv9FHfJjT3JT22IG4Jpo3FPQy+mouRKCXFWO+r67v6MrHX2zeIA==}
-    peerDependencies:
-      react: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
-      react-dom: ^18.0.0 || ^19.0.0 || ^19.0.0-rc
-    dependencies:
-      react: 19.1.1
-      react-dom: 19.1.1(react@19.1.1)
-    dev: false
 
   /sonner@2.0.7(react-dom@19.1.1)(react@19.1.1):
     resolution: {integrity: sha512-W6ZN4p58k8aDKA4XPcx2hpIQXBRAgyiWVkYhT7CvK6D3iAu7xjvVyhQHg2/iaKJZ1XVJ4r7XuwGL+WGEK37i9w==}

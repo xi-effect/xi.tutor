@@ -1,7 +1,6 @@
 export { Call, CompactView } from './ui';
-export { RoomProvider, LiveKitProvider, CallProvider, ModeSyncProvider } from './providers';
+export { RoomProvider, LiveKitProvider, ModeSyncProvider } from './providers';
 export {
-  useLivekitToken,
   useSize,
   useInitUserDevices,
   useLiveKitDataChannel,

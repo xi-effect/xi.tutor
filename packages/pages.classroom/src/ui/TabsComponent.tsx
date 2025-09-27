@@ -12,6 +12,7 @@ import { Payments } from './Payments';
 import { Materials } from './Materials';
 // import { Calendar } from './Calendar';
 import { useCurrentUser } from 'common.services';
+import { ModalStudentsGroup } from 'features.group.manage';
 
 export const TabsComponent = () => {
   const search: SearchParams = useSearch({ strict: false });
@@ -72,10 +73,17 @@ export const TabsComponent = () => {
             </Tabs.Trigger>
           )}
         </Tabs.List>
-        {(currentTab === 'overview' || currentTab === 'lessons') && (
+        {/* {(currentTab === 'overview' || currentTab === 'lessons') && (
           <Button size="s" className="ml-auto rounded-[8px]">
             Назначить занятие
           </Button>
+        )} */}
+        {currentTab === 'overview' && (
+          <ModalStudentsGroup>
+            <Button size="s" variant="ghost" className="ml-auto rounded-[8px]">
+              Добавить ученика
+            </Button>
+          </ModalStudentsGroup>
         )}
         {currentTab === 'materials' && <MaterialsAdd />}
       </div>

@@ -78,7 +78,7 @@ const UserTileUI = ({
     // Рендерим видео элемент всегда, если есть трек и камера не заблокирована
     // Скрываем его через стили, если нужно
     if (!videoTrack || isCameraDeniedOrPrompted) {
-      console.log('UserTile: not rendering video - no track or camera denied');
+      // console.log('UserTile: not rendering video - no track or camera denied');
       return null;
     }
 

@@ -10,8 +10,6 @@ type ParticipantNamePropsT = {
 export const ParticipantName = ({ id, username, children }: ParticipantNamePropsT) => {
   const { data, isLoading } = useUserById(id ?? '', !id);
 
-  console.log('ParticipantName', data);
-
   if (isLoading || !id) {
     return <span className="bg-gray-10 h-[16px] w-full min-w-[64px] animate-pulse rounded-[4px]" />;
   }

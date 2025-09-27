@@ -15,7 +15,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { UserProfile } from '@xipkg/userprofile';
 import { cn } from '@xipkg/utils';
 import { useState } from 'react';
-import { useStudentsList, useDeleteStudent } from '../services';
+import { useDeleteStudent } from '../services';
+import { useStudentsList } from 'common.services';
 import { TutorStudentSchemaMarshal } from 'common.types';
 
 export const ModalStudentsList = ({ children }: { children: React.ReactNode }) => {

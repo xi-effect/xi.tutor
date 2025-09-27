@@ -102,7 +102,7 @@ export const TrackToggle = ({
   }, [source, enabled]);
 
   const handleClick = () => {
-    console.log('handleClick', source);
+    // console.log('handleClick', source);
     toggle();
   };
 

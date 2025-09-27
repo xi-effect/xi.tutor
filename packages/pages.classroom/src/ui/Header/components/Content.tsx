@@ -35,7 +35,7 @@ export const Content = ({ classroom }: ContentProps) => {
   };
 
   return (
-    <div className="flex flex-row items-center pl-4">
+    <div className="flex flex-row items-start pl-4">
       <div className="flex flex-col items-start gap-4">
         {classroom.kind === 'individual' ? (
           <IndividualUser userId={classroom.student_id ?? classroom.tutor_id ?? 0} />

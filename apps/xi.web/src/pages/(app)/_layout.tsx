@@ -3,7 +3,6 @@ import { Navigation } from 'modules.navigation';
 import {
   CompactView,
   LiveKitProvider,
-  useLivekitToken,
   RoomProvider,
   useCallStore,
   ModeSyncProvider,
@@ -39,7 +38,6 @@ export const Route = createFileRoute('/(app)/_layout')({
 function LayoutComponent() {
   const router = useRouter();
   const updateStore = useCallStore((state) => state.updateStore);
-  const { token = null } = useLivekitToken('1', '2');
 
   useEffect(() => {
     const pathname = router.state.location.pathname;
@@ -52,7 +50,7 @@ function LayoutComponent() {
     <div className="relative flex min-h-svh flex-col overflow-hidden">
       <Navigation>
         <RoomProvider>
-          <LiveKitProvider token={token || ''}>
+          <LiveKitProvider>
             <ModeSyncProvider>
               <CompactView firstId="1" secondId="2">
                 <Outlet />

@@ -16,10 +16,6 @@ type UserAvatarPropsT = {
 const UserAvatar = ({ isLoading, student_id, classroom }: UserAvatarPropsT) => {
   const { data } = useUserById(student_id);
 
-  console.log('classroom', classroom);
-  console.log('student_id', student_id);
-  console.log('data', data);
-
   return (
     <Avatar size={avatarSize}>
       <AvatarImage
@@ -43,7 +39,6 @@ type ClassroomProps = {
 };
 
 export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
-  console.log('classroom', classroom);
   const navigate = useNavigate();
 
   const handleClick = () => {
