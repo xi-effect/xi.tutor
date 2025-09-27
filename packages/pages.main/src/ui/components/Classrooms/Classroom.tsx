@@ -41,12 +41,20 @@ type ClassroomProps = {
 export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   const navigate = useNavigate();
 
+  console.log('classroom', classroom);
+
   const handleClick = () => {
     navigate({
       to: '/classrooms/$classroomId',
       params: { classroomId: classroom.id.toString() },
       search: { tab: 'overview' },
     });
+  };
+
+  const handleStartLesson = () => {
+    // Переходим на страницу кабинета с параметром goto=call
+    const url = `/classrooms/${classroom.id}?goto=call`;
+    window.location.href = url;
   };
 
   return (
@@ -67,14 +75,13 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
       {classroom.subject_id && <SubjectBadge subject_id={classroom.subject_id} />}
 
       <div className="flex flex-row gap-2">
-        <UserAvatar
-          classroom={classroom}
-          isLoading={isLoading}
-          student_id={(classroom.kind === 'individual'
-            ? classroom.student_id
-            : classroom.tutor_id
-          ).toString()}
-        />
+        {classroom.kind === 'individual' && (
+          <UserAvatar
+            classroom={classroom}
+            isLoading={isLoading}
+            student_id={classroom.student_id?.toString()}
+          />
+        )}
         <div className="flex h-full w-full flex-row items-center justify-center gap-2">
           <h3 className="text-s-base line-clamp-2 w-full text-center font-medium text-gray-100">
             {classroom.name}
@@ -82,7 +89,12 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         </div>
       </div>
 
-      <Button size="s" variant="secondary" className="group mt-auto w-full">
+      <Button
+        size="s"
+        variant="secondary"
+        className="group mt-auto w-full"
+        onClick={handleStartLesson}
+      >
         Начать занятие <Conference className="group-hover:fill-gray-0 fill-brand-100 ml-2" />
       </Button>
     </div>

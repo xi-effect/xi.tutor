@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Badge } from '@xipkg/badge';
 import { Telegram, Conference } from '@xipkg/icons';
 import { ClassroomTutorResponseSchema } from 'common.api';
@@ -8,6 +8,8 @@ import { IndividualUser } from './IndividualUser';
 import { Button } from '@xipkg/button';
 import { SubjectBadge } from './SubjectBadge';
 import { useStartCall } from 'modules.calls';
+import { useEffect, useCallback } from 'react';
+import { useSearch } from '@tanstack/react-router';
 
 interface ContentProps {
   classroom: ClassroomTutorResponseSchema;
@@ -15,6 +17,7 @@ interface ContentProps {
 
 export const Content = ({ classroom }: ContentProps) => {
   const { startCall, isLoading } = useStartCall();
+  const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId' });
 
   const getDisplayName = () => {
     if (classroom.kind === 'individual') {
@@ -24,7 +27,7 @@ export const Content = ({ classroom }: ContentProps) => {
     }
   };
 
-  const handleCallClick = async () => {
+  const handleCallClick = useCallback(async () => {
     try {
       // Запускаем процесс создания токена, сохранения в store и навигации
       await startCall({ classroom_id: classroom.id.toString() });
@@ -32,7 +35,23 @@ export const Content = ({ classroom }: ContentProps) => {
       console.error('Ошибка при запуске звонка:', error);
       // Здесь можно добавить показ уведомления об ошибке
     }
-  };
+  }, [startCall, classroom.id]);
+
+  // Перехват параметра goto=call
+  useEffect(() => {
+    const searchParams = search as any;
+    if (searchParams.goto && searchParams.goto === 'call') {
+      // Очищаем URL параметр
+      const url = new URL(window.location.href);
+      url.searchParams.delete('goto');
+      window.history.replaceState({}, '', url.toString());
+
+      // Запускаем звонок
+      setTimeout(() => {
+        handleCallClick();
+      }, 100);
+    }
+  }, [search, handleCallClick]);
 
   return (
     <div className="flex flex-row items-start pl-4">
