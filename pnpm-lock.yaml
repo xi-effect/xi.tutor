@@ -978,6 +978,70 @@ importers:
         specifier: ^8.22.0
         version: 8.44.0(eslint@9.36.0)(typescript@5.7.3)
 
+  packages/features.classrooms.add:
+    dependencies:
+      '@xipkg/button':
+        specifier: ^3.2.0
+        version: 3.2.0(@types/react@19.1.13)(react@19.1.1)
+      '@xipkg/form':
+        specifier: 4.2.1
+        version: 4.2.1(@types/react-dom@19.1.9)(@types/react@19.1.13)(react-dom@19.1.1)(react@19.1.1)
+      '@xipkg/input':
+        specifier: ^2.2.9
+        version: 2.2.9(react@19.1.1)
+      '@xipkg/modal':
+        specifier: ^4.2.0
+        version: 4.2.0(@types/react-dom@19.1.9)(@types/react@19.1.13)(react-dom@19.1.1)(react@19.1.1)
+      react:
+        specifier: '19'
+        version: 19.1.1
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.19.0
+        version: 9.36.0
+      '@types/node':
+        specifier: ^20.3.1
+        version: 20.19.17
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.1.13
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.1.9(@types/react@19.1.13)
+      '@xipkg/eslint':
+        specifier: 3.2.0
+        version: 3.2.0(eslint-plugin-jsx-a11y@6.10.2)(eslint@9.36.0)(turbo@2.5.6)(typescript@5.7.3)
+      '@xipkg/tailwind':
+        specifier: 0.8.1
+        version: 0.8.1
+      '@xipkg/typescript':
+        specifier: latest
+        version: 0.2.0
+      common.eslint:
+        specifier: '*'
+        version: link:../common.eslint
+      common.typescript:
+        specifier: '*'
+        version: link:../common.typescript
+      eslint:
+        specifier: ^9.19.0
+        version: 9.36.0
+      eslint-plugin-react-hooks:
+        specifier: ^5.0.0
+        version: 5.2.0(eslint@9.36.0)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.18
+        version: 0.4.18(eslint@9.36.0)
+      globals:
+        specifier: ^15.14.0
+        version: 15.15.0
+      typescript:
+        specifier: ~5.7.2
+        version: 5.7.3
+      typescript-eslint:
+        specifier: ^8.22.0
+        version: 8.44.0(eslint@9.36.0)(typescript@5.7.3)
+
   packages/features.invites:
     dependencies:
       '@xipkg/button':
@@ -2488,6 +2552,9 @@ importers:
       common.ui:
         specifier: '*'
         version: link:../common.ui
+      features.classrooms.add:
+        specifier: '*'
+        version: link:../features.classrooms.add
       features.invites:
         specifier: '*'
         version: link:../features.invites
@@ -2691,6 +2758,9 @@ importers:
       common.ui:
         specifier: '*'
         version: link:../common.ui
+      features.classrooms.add:
+        specifier: '*'
+        version: link:../features.classrooms.add
       features.invites:
         specifier: '*'
         version: link:../features.invites
@@ -9497,7 +9567,7 @@ packages:
       eslint-config-airbnb: 19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2)(eslint-plugin-react-hooks@5.1.0)(eslint-plugin-react@7.37.2)(eslint@9.36.0)
       eslint-config-next: 15.1.2(eslint@9.36.0)(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.36.0)
-      eslint-config-turbo: 2.5.7(eslint@9.36.0)(turbo@2.5.6)
+      eslint-config-turbo: 2.5.8(eslint@9.36.0)(turbo@2.5.6)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.44.0)(eslint-import-resolver-typescript@3.10.1)(eslint@9.36.0)
       eslint-plugin-react: 7.37.2(eslint@9.36.0)
       eslint-plugin-react-hooks: 5.1.0(eslint@9.36.0)
@@ -9602,7 +9672,7 @@ packages:
     peerDependencies:
       react: ^19
     dependencies:
-      '@radix-ui/react-label': 2.1.2(@types/react-dom@19.1.9)(@types/react@19.1.13)(react-dom@19.1.1)(react@19.1.1)
+      '@radix-ui/react-label': 2.1.7(@types/react-dom@19.1.9)(@types/react@19.1.13)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/utils': 1.8.0(react@19.1.1)
       class-variance-authority: 0.7.1
       react: 19.1.1
@@ -11026,14 +11096,14 @@ packages:
       eslint: 9.36.0
     dev: true
 
-  /eslint-config-turbo@2.5.7(eslint@9.36.0)(turbo@2.5.6):
-    resolution: {integrity: sha512-6p1qq5I/gO8tkPhZmhO5Ug5VJPV6JX/BPaYanToYm8DwALHW3eC3HHsToeQ6Rq1xaXPFZJNAD27nZVLcr8FQkg==}
+  /eslint-config-turbo@2.5.8(eslint@9.36.0)(turbo@2.5.6):
+    resolution: {integrity: sha512-wzxmN7dJNFGDwOvR/4j8U2iaIH/ruYez8qg/sCKrezJ3+ljbFMvJLmgKKt/1mDuyU9wj5aZqO6VijP3QH169FA==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
     dependencies:
       eslint: 9.36.0
-      eslint-plugin-turbo: 2.5.7(eslint@9.36.0)(turbo@2.5.6)
+      eslint-plugin-turbo: 2.5.8(eslint@9.36.0)(turbo@2.5.6)
       turbo: 2.5.6
     dev: true
 
@@ -11260,8 +11330,8 @@ packages:
       turbo: 2.5.6
     dev: true
 
-  /eslint-plugin-turbo@2.5.7(eslint@9.36.0)(turbo@2.5.6):
-    resolution: {integrity: sha512-FXTyV3Lmk5xzut5lpXr6YwYwrvoI7nDveOmSzvePZMgJfZ/zMh5rVTN1xSpL5sWe9LkI7ZYPazj/aUrLZfbZIA==}
+  /eslint-plugin-turbo@2.5.8(eslint@9.36.0)(turbo@2.5.6):
+    resolution: {integrity: sha512-bVjx4vTH0oTKIyQ7EGFAXnuhZMrKIfu17qlex/dps7eScPnGQLJ3r1/nFq80l8xA+8oYjsSirSQ2tXOKbz3kEw==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
