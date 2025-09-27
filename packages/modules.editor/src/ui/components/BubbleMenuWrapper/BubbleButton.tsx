@@ -1,28 +1,28 @@
 import { cn } from '@xipkg/utils';
-import { buttonVariants } from '@xipkg/button';
+import { Button } from '@xipkg/button';
 import { ReactNode } from 'react';
+import { useTextFormat, useYjsContext } from '../../../hooks';
+import { TextFormatTypeT } from '../../../types';
 
 interface BubbleButtonProps {
-  isActive: boolean;
-  onClick: () => void;
+  type: TextFormatTypeT;
   ariaLabel: string;
   children: ReactNode;
+  isActive: boolean;
 }
 
-export const BubbleButton = ({ isActive, onClick, ariaLabel, children }: BubbleButtonProps) => {
-  const buttonClass = cn(
-    buttonVariants({ variant: 'ghost' }),
-    'h-9 w-9 p-0 flex items-center justify-center',
-    'text-gray-100 hover:text-gray-100',
-    'dark:text-gray-100 dark:hover:text-gray-100',
-    isActive
-      ? 'bg-brand-40 text-gray-0 [&_svg]:stroke-gray-200 hover:bg-brand-60 dark:bg-brand-20 dark:text-gray-100 dark:[&_svg]:stroke-gray-100 dark:hover:bg-brand-40'
-      : 'hover:bg-brand-20 dark:hover:bg-primary',
-  );
+export const BubbleButton = ({ ariaLabel, type, isActive, children }: BubbleButtonProps) => {
+  const { editor } = useYjsContext();
+  const { toggleFormat } = useTextFormat(editor, type);
 
   return (
-    <button onClick={onClick} className={buttonClass} aria-label={ariaLabel}>
+    <Button
+      onClick={toggleFormat}
+      variant="ghost"
+      className={cn(`${isActive && 'bg-brand-0 [&_svg]:fill-brand-100'} h-6 w-6 rounded-[2px] p-1`)}
+      aria-label={ariaLabel}
+    >
       {children}
-    </button>
+    </Button>
   );
 };
