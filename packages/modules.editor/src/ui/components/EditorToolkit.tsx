@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useEditorActive } from '../../hooks/useEditorActive';
 import { BubbleMenuWrapper } from './BubbleMenuWrapper/BubbleMenuWrapper';
 import { DragHandleWrapper } from './DragHandleWrapper';
 import { FloatingMenuWrapper } from './FloatingMenuWrapper';
@@ -12,7 +11,6 @@ type EditorToolkitProps = {
 
 export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const activeStates = useEditorActive(editor);
 
   const handleDragEnd = () => {
     const from = editor.state.selection.from;
@@ -30,9 +28,7 @@ export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly
       />
       <FloatingMenuWrapper editor={editor} isReadOnly={isReadOnly} />
 
-      {!isDragging && (
-        <BubbleMenuWrapper editor={editor} activeStates={activeStates} isReadOnly={isReadOnly} />
-      )}
+      {!isDragging && <BubbleMenuWrapper editor={editor} isReadOnly={isReadOnly} />}
     </>
   );
 };
