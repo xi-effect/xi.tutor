@@ -36,7 +36,7 @@
     "@xipkg/file": "^2.0.12",
     "@xipkg/icons": "^2.5.4",
     "@xipkg/input": "2.2.9",
-    "@xipkg/popover": "^2.0.12",
+    "@xipkg/popover": "^2.1.0",
     "@xipkg/select": "^2.2.5",
     "common.env": "*",
     "common.services": "*",

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Modal,
   ModalTitle,
@@ -21,14 +21,16 @@ import {
 } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { Button } from '@xipkg/button';
+import { Autocomplete } from './Autocomplete';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { formSchema } from '../model';
 
-const initialValues = { name: '', subject: '' };
+const initialValues = { name: '', subject: 0 };
 
 export const ModalAddGroup = ({ children }: { children: React.ReactNode }) => {
   const [isOpen, setModalOpen] = useState(false);
+  const modalContentRef = useRef<HTMLDivElement | null>(null);
 
   type FormValues = z.infer<typeof formSchema>;
   const form = useForm<FormValues>({
@@ -59,10 +61,23 @@ export const ModalAddGroup = ({ children }: { children: React.ReactNode }) => {
     closeModal();
   };
 
+  // Закрываем Popover при клике на кнопки
+  const handleButtonClick = () => {
+    // Закрываем все открытые Popover
+    const popoverElements = document.querySelectorAll('[data-radix-popper-content-wrapper]');
+    popoverElements.forEach((element) => {
+      element.remove();
+    });
+  };
+
   return (
     <Modal open={isOpen} onOpenChange={handleOpenChange}>
       <ModalTrigger asChild>{children}</ModalTrigger>
-      <ModalContent className="max-w-[600px]">
+      <ModalContent
+        ref={modalContentRef}
+        className="relative max-w-[600px]"
+        onCloseAutoFocus={(e) => e.preventDefault()}
+      >
         <ModalHeader>
           <ModalCloseButton onClick={closeModal} />
           <ModalTitle className="m-0 pr-10 leading-8 dark:text-gray-100">
@@ -106,14 +121,7 @@ export const ModalAddGroup = ({ children }: { children: React.ReactNode }) => {
                       Предмет
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        error={!!errors?.subject}
-                        autoComplete="off"
-                        type="text"
-                        id={field.name}
-                        placeholder="Введите предметы через запятую"
-                      />
+                      <Autocomplete field={field} containerRef={modalContentRef} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -122,10 +130,17 @@ export const ModalAddGroup = ({ children }: { children: React.ReactNode }) => {
             </ModalBody>
 
             <ModalFooter className="flex flex-col gap-2 sm:flex-row sm:gap-4">
-              <Button className="gap-2" type="submit">
+              <Button className="gap-2" type="submit" onClick={handleButtonClick}>
                 Создать
               </Button>
-              <Button variant="border" type="button" onClick={closeModal}>
+              <Button
+                variant="border"
+                type="button"
+                onClick={() => {
+                  handleButtonClick();
+                  closeModal();
+                }}
+              >
                 Отменить
               </Button>
             </ModalFooter>
