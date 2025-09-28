@@ -19,11 +19,13 @@
     "@xipkg/popover": "^2.1.0",
     "@xipkg/utils": "^1.8.0",
     "common.api": "*",
+    "common.config": "*",
     "common.services": "*",
     "lucide-react": "^0.263.1",
     "react-hook-form": "^7.45.4",
     "zod": "^3.22.4",
-    "@hookform/resolvers": "^3.3.2"
+    "@hookform/resolvers": "^3.3.2",
+    "@tanstack/react-query": "^5.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

@@ -18,7 +18,8 @@ export type ErrorType =
   | 'deleteStudent'
   | 'acceptInvite'
   | 'classroom'
-  | 'calls';
+  | 'calls'
+  | 'createGroup';
 
 // Маппинг ошибок для разных операций
 const errorMessages: Record<ErrorType, Record<string, string>> = {
@@ -95,6 +96,11 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
     'Access token not found': 'Access token не найден',
     'Access token access denied': 'Доступ к access token запрещен',
   },
+  createGroup: {
+    'Validation Error': 'Ошибка валидации',
+    'Group name already exists': 'Группа с таким названием уже существует',
+    'Subject not found': 'Предмет не найден',
+  },
 };
 
 // Общие сообщения об ошибках по статусам
@@ -125,6 +131,7 @@ const successMessages: Record<ErrorType, string> = {
   acceptInvite: 'Приглашение принято',
   classroom: 'Статус класса обновлен',
   calls: 'Access token создан',
+  createGroup: 'Группа успешно создана',
 };
 
 /**
@@ -186,6 +193,8 @@ const getOperationName = (type: ErrorType): string => {
       return 'переходе на этап онбординга';
     case 'deleteStudent':
       return 'удалении ученика';
+    case 'createGroup':
+      return 'создании группы';
     default:
       return 'выполнении операции';
   }

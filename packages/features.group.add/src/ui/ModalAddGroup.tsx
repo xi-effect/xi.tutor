@@ -25,12 +25,14 @@ import { Autocomplete } from './Autocomplete';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { formSchema } from '../model';
+import { useCreateGroup } from '../services';
 
 const initialValues = { name: '', subject: 0 };
 
 export const ModalAddGroup = ({ children }: { children: React.ReactNode }) => {
   const [isOpen, setModalOpen] = useState(false);
   const modalContentRef = useRef<HTMLDivElement | null>(null);
+  const { mutate: createGroup, isPending } = useCreateGroup();
 
   type FormValues = z.infer<typeof formSchema>;
   const form = useForm<FormValues>({
@@ -56,9 +58,20 @@ export const ModalAddGroup = ({ children }: { children: React.ReactNode }) => {
   };
 
   const onSubmit = (data: FormValues) => {
-    //временно пока нет интеграции с бэкендом
-    console.log('form data: ', data);
-    closeModal();
+    createGroup(
+      {
+        subject_id: data.subject,
+        name: data.name,
+      },
+      {
+        onSuccess: () => {
+          closeModal();
+        },
+        onError: (error) => {
+          console.error('Ошибка при создании группы:', error);
+        },
+      },
+    );
   };
 
   // Закрываем Popover при клике на кнопки
@@ -130,8 +143,13 @@ export const ModalAddGroup = ({ children }: { children: React.ReactNode }) => {
             </ModalBody>
 
             <ModalFooter className="flex flex-col gap-2 sm:flex-row sm:gap-4">
-              <Button className="gap-2" type="submit" onClick={handleButtonClick}>
-                Создать
+              <Button
+                className="gap-2"
+                type="submit"
+                onClick={handleButtonClick}
+                disabled={isPending}
+              >
+                {isPending ? 'Создание...' : 'Создать'}
               </Button>
               <Button
                 variant="border"
