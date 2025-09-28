@@ -40,7 +40,8 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation(); // Предотвращаем переход на страницу класса
-    deleteClassroom(id.toString());
+    console.log('handleDelete', id);
+    deleteClassroom({ classroomId: id });
   };
 
   const { data: user } = useCurrentUser();

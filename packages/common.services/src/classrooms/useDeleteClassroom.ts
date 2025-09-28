@@ -1,33 +1,51 @@
-import { ClassroomsQueryKey } from 'common.api';
+import { ClassroomsQueryKey, classroomsApiConfig } from 'common.api';
+import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { handleError, showSuccess } from 'common.services';
+
+interface DeleteClassroomParams {
+  classroomId: number;
+}
 
 export const useDeleteClassroom = () => {
   const queryClient = useQueryClient();
 
-  const { mutate, isPending, isError, error, ...rest } = useMutation({
-    mutationFn: async (classroomId: string): Promise<void> => {
-      // Имитация задержки сети
-      await new Promise((resolve) => setTimeout(resolve, 800));
+  const deleteClassroomMutation = useMutation<void, Error, DeleteClassroomParams>({
+    mutationFn: async ({ classroomId }: DeleteClassroomParams) => {
+      try {
+        const axiosInst = await getAxiosInstance();
 
-      // Имитация удаления класса
-      console.log(`Удаление класса с ID: ${classroomId}`);
+        const response = await axiosInst({
+          method: classroomsApiConfig[ClassroomsQueryKey.DeleteClassroom].method,
+          url: classroomsApiConfig[ClassroomsQueryKey.DeleteClassroom].getUrl(
+            classroomId.toString(),
+          ),
+        });
+
+        console.log('response', response);
+
+        return response.data;
+      } catch (err) {
+        console.error('Ошибка при удалении класса:', err);
+        throw err;
+      }
+    },
+    onError: (err) => {
+      // Показываем toast с ошибкой
+      handleError(err, 'classroom');
     },
     onSuccess: () => {
-      // Инвалидируем кеш списка классов и конкретного класса
-      queryClient.invalidateQueries({
-        queryKey: [ClassroomsQueryKey.GetClassrooms],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [ClassroomsQueryKey.GetClassroom],
-      });
+      // Инвалидируем кеш для обновления данных
+      queryClient.invalidateQueries({ queryKey: [ClassroomsQueryKey.GetClassrooms] });
+
+      // Показываем успешное уведомление
+      showSuccess('classroom', 'Класс успешно удален');
     },
   });
 
   return {
-    deleteClassroom: mutate,
-    isDeleting: isPending,
-    isError,
-    error,
-    ...rest,
+    deleteClassroom: deleteClassroomMutation.mutate,
+    isDeleting: deleteClassroomMutation.isPending,
+    ...deleteClassroomMutation,
   };
 };
