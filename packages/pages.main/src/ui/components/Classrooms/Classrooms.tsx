@@ -7,7 +7,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useNavigate } from '@tanstack/react-router';
 import { ModalInvitation } from 'features.invites';
 import { useCurrentUser, useFetchClassrooms } from 'common.services';
-import { ModalAddClassroom } from 'features.classrooms.add';
+import { ModalAddGroup } from 'features.group.add';
 import { Alert, AlertIcon, AlertContainer, AlertDescription, AlertTitle } from '@xipkg/alert';
 import { useNoteVisibility } from '../../../hooks';
 
@@ -69,7 +69,7 @@ export const Classrooms = () => {
 
         {isTutor && (
           <div className="ml-auto flex flex-row items-center gap-2 max-sm:hidden">
-            <ModalAddClassroom>
+            <ModalAddGroup>
               <Button
                 variant="ghost"
                 size="s"
@@ -77,7 +77,7 @@ export const Classrooms = () => {
               >
                 Создать группу
               </Button>
-            </ModalAddClassroom>
+            </ModalAddGroup>
 
             <ModalInvitation>
               <Button

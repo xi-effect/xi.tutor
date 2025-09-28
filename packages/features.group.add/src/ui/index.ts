@@ -1,0 +1,1 @@
+export { ModalAddGroup } from './ModalAddGroup';

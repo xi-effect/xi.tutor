@@ -978,7 +978,7 @@ importers:
         specifier: ^8.22.0
         version: 8.44.0(eslint@9.36.0)(typescript@5.7.3)
 
-  packages/features.classrooms.add:
+  packages/features.group.add:
     dependencies:
       '@xipkg/button':
         specifier: ^3.2.0
@@ -2655,9 +2655,9 @@ importers:
       common.ui:
         specifier: '*'
         version: link:../common.ui
-      features.classrooms.add:
+      features.group.add:
         specifier: '*'
-        version: link:../features.classrooms.add
+        version: link:../features.group.add
       features.invites:
         specifier: '*'
         version: link:../features.invites
@@ -2861,9 +2861,9 @@ importers:
       common.ui:
         specifier: '*'
         version: link:../common.ui
-      features.classrooms.add:
+      features.group.add:
         specifier: '*'
-        version: link:../features.classrooms.add
+        version: link:../features.group.add
       features.invites:
         specifier: '*'
         version: link:../features.invites

@@ -1,19 +1,19 @@
 import { Button } from '@xipkg/button';
 import { ModalInvitation } from 'features.invites';
-import { ModalAddClassroom } from 'features.classrooms.add';
+import { ModalAddGroup } from 'features.group.add';
 
 export const ButtonsHeader = () => {
   return (
     <div className="ml-2 flex flex-row items-center gap-2 pr-4 max-sm:hidden">
-      <ModalAddClassroom>
+      <ModalAddGroup>
         <Button
-          variant="border"
+          variant="secondary"
           size="s"
-          className="text-s-base rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
+          className="rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
         >
           Создать группу
         </Button>
-      </ModalAddClassroom>
+      </ModalAddGroup>
       <ModalInvitation>
         <Button
           size="s"

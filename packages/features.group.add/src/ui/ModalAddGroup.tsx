@@ -27,7 +27,7 @@ import { formSchema } from '../model';
 
 const initialValues = { name: '', subject: '' };
 
-export const ModalAddClassroom = ({ children }: { children: React.ReactNode }) => {
+export const ModalAddGroup = ({ children }: { children: React.ReactNode }) => {
   const [isOpen, setModalOpen] = useState(false);
 
   type FormValues = z.infer<typeof formSchema>;

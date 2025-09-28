@@ -1,1 +1,0 @@
-export { ModalAddClassroom } from './ModalAddClassroom';
