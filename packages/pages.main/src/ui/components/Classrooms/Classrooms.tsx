@@ -11,16 +11,18 @@ import { ModalAddGroup } from 'features.group.add';
 import { Alert, AlertIcon, AlertContainer, AlertDescription, AlertTitle } from '@xipkg/alert';
 import { useNoteVisibility } from '../../../hooks';
 
-const NoteForUsers = ({ onHide }: { onHide: () => void }) => {
+const NoteForUsers = ({ onHide, isTutor }: { onHide: () => void; isTutor: boolean }) => {
   return (
-    <Alert variant="brand">
+    <Alert className="h-[170px] max-w-[320px] min-w-[320px]" variant="brand">
       <AlertIcon>
         <InfoCircle className="fill-brand-100" />
       </AlertIcon>
       <AlertContainer className="h-full">
-        <AlertTitle>Начать занятие</AlertTitle>
+        <AlertTitle> {isTutor ? 'Как начать занятие' : 'Подсказка'} </AlertTitle>
         <AlertDescription>
-          Придумать текст(описание сценария на кнопку "Начать занятие")
+          {isTutor
+            ? 'Нажмите «Начать занятие», чтобы перейти в видеозвонок. Ученик получит уведомление'
+            : 'Когда репетитор начнёт занятие, кнопка «Присоединиться» станет активной'}
         </AlertDescription>
         <Button
           size="s"
@@ -51,7 +53,7 @@ export const Classrooms = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-4 px-4 pt-4 pb-1">
       <div className="flex flex-row items-center justify-start gap-2">
         <h2 className="text-xl-base font-medium text-gray-100">Кабинеты</h2>
         <Tooltip delayDuration={1000}>
@@ -93,10 +95,12 @@ export const Classrooms = () => {
       </div>
 
       <div className="flex flex-row gap-8">
-        {!isHidden && <NoteForUsers onHide={hideNote} />}
+        {!isHidden && classrooms && classrooms?.length > 0 && (
+          <NoteForUsers onHide={hideNote} isTutor={isTutor} />
+        )}
         {classrooms && classrooms?.length > 0 && (
           <ScrollArea
-            className="h-[172px] w-full overflow-x-auto overflow-y-hidden"
+            className="h-[180px] w-full overflow-x-auto overflow-y-hidden"
             scrollBarProps={{ orientation: 'horizontal' }}
           >
             <div className="flex flex-row gap-8">
@@ -107,9 +111,11 @@ export const Classrooms = () => {
           </ScrollArea>
         )}
         {classrooms && classrooms.length === 0 && (
-          <div className="flex flex-row gap-8">
-            <p className="text-m-base text-gray-60">
-              Пригласите учеников — индивидуально или в группу
+          <div className="flex h-[180px] w-full flex-row items-center justify-center gap-8">
+            <p className="text-m-base lg:text-xl-base text-gray-60 text-center">
+              {isTutor
+                ? 'Пригласите учеников — индивидуально или в группу'
+                : 'Перейдите по ссылке-приглашению, чтобы начать заниматься с репетитором'}
             </p>
           </div>
         )}

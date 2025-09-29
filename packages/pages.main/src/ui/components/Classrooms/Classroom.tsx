@@ -4,7 +4,7 @@ import { Button } from '@xipkg/button';
 import { Arrow, Conference } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import { useUserById } from 'common.services';
+import { useCurrentUser, useUserById } from 'common.services';
 import { SubjectBadge } from './SubjectBadge';
 
 type UserAvatarPropsT = {
@@ -41,7 +41,8 @@ type ClassroomProps = {
 export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   const navigate = useNavigate();
 
-  console.log('classroom', classroom);
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
 
   const handleClick = () => {
     navigate({
@@ -58,7 +59,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   };
 
   return (
-    <div className="border-gray-30 relative flex min-h-[170px] w-[320px] flex-col items-start justify-start gap-1 rounded-2xl border bg-transparent p-4">
+    <div className="border-gray-30 relative flex min-h-[170px] max-w-[420px] min-w-[320px] flex-col items-start justify-start gap-1 rounded-2xl border bg-transparent p-4">
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button
@@ -72,7 +73,11 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         <TooltipContent>Перейти в кабинет</TooltipContent>
       </Tooltip>
 
-      {classroom.subject_id && <SubjectBadge subject_id={classroom.subject_id} />}
+      {classroom.subject_id ? (
+        <SubjectBadge subject_id={classroom.subject_id} />
+      ) : (
+        <div className="h-[28px] w-[28px]" />
+      )}
 
       <div className="flex flex-row gap-2">
         {classroom.kind === 'individual' && (
@@ -87,11 +92,16 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
             {classroom.name?.[0].toUpperCase() ?? ''}
           </div>
         )}
-        <div className="flex h-full w-full flex-row items-center justify-center gap-2">
-          <h3 className="text-s-base line-clamp-2 w-full text-center font-medium text-gray-100">
-            {classroom.name}
-          </h3>
-        </div>
+        <Tooltip delayDuration={2000}>
+          <TooltipTrigger asChild>
+            <div className="flex h-full w-full flex-row items-center justify-center gap-2">
+              <h3 className="text-s-base line-clamp-2 w-full text-left font-medium text-gray-100">
+                {classroom.name}
+              </h3>
+            </div>
+          </TooltipTrigger>
+          <TooltipContent>{classroom.name}</TooltipContent>
+        </Tooltip>
       </div>
 
       <Button
@@ -100,7 +110,8 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         className="group mt-auto w-full"
         onClick={handleStartLesson}
       >
-        Начать занятие <Conference className="group-hover:fill-gray-0 fill-brand-100 ml-2" />
+        {isTutor ? 'Начать занятие' : 'Присоединиться'}{' '}
+        <Conference className="group-hover:fill-gray-0 fill-brand-100 ml-2" />
       </Button>
     </div>
   );
