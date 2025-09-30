@@ -37,9 +37,11 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
   const [selectedBoardId, setSelectedBoardId] = useState<number | null>(null);
   const { whiteboards, isLoading, isError } = useWhiteboards(20);
 
-  const filteredWhiteboards = whiteboards.filter((board: Whiteboard) =>
-    board.name.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  const filteredWhiteboards =
+    whiteboards &&
+    whiteboards.filter((board: Whiteboard) =>
+      board.name.toLowerCase().includes(searchQuery.toLowerCase()),
+    );
 
   const handleBoardSelect = (boardId: number) => {
     setSelectedBoardId(boardId);

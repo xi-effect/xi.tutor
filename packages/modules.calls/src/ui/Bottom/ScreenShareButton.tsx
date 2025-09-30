@@ -12,12 +12,14 @@ export const ScreenShareButton = () => {
     <>
       {visibleControls.screenShare && browserSupportsScreenSharing && (
         <Tooltip delayDuration={1000}>
-          <TooltipTrigger className="bg-transparent">
-            <TrackToggle
-              source={Track.Source.ScreenShare}
-              captureOptions={{ audio: true, selfBrowserSurface: 'include' }}
-              onChange={() => {}}
-            />
+          <TooltipTrigger className="bg-transparent" asChild>
+            <div>
+              <TrackToggle
+                source={Track.Source.ScreenShare}
+                captureOptions={{ audio: true, selfBrowserSurface: 'include' }}
+                onChange={() => {}}
+              />
+            </div>
           </TooltipTrigger>
           <TooltipContent side="top" align="center">
             Поделиться экраном

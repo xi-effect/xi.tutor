@@ -130,7 +130,7 @@ export const TrackToggle = ({
       type="button"
       onClick={handleClick}
       className={cn(
-        'bg-gray-0 hover:bg-gray-10 flex h-10 w-10 items-center justify-center rounded-[12px] transition-colors',
+        'bg-gray-0 hover:bg-gray-5 flex h-10 w-10 items-center justify-center rounded-[12px] transition-colors',
         enabled && 'bg-green-0 hover:bg-green-20',
       )}
       {...props}
