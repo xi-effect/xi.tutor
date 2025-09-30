@@ -17,24 +17,42 @@ import { cn } from '@xipkg/utils';
 interface ExtendedTrackToggleProps extends TrackToggleProps<any> {
   microTrack?: LocalAudioTrack;
   videoTrack?: LocalVideoTrack;
+  screenShareTrack?: LocalVideoTrack;
   microEnabled?: boolean;
   videoEnabled?: boolean;
+  screenShareEnabled?: boolean;
   showIcon?: boolean;
 }
 
 export const TrackToggle = ({
   microTrack,
   videoTrack,
+  screenShareTrack,
   microEnabled,
   videoEnabled,
+  screenShareEnabled,
   source,
   showIcon = true,
   onChange,
   ...props
 }: ExtendedTrackToggleProps) => {
   // Для PreJoin используем собственную логику, так как useTrackToggle работает с треками в комнате
-  const track = source === Track.Source.Microphone ? microTrack : videoTrack;
-  const enabled = source === Track.Source.Microphone ? microEnabled : videoEnabled;
+  const track =
+    source === Track.Source.Microphone
+      ? microTrack
+      : source === Track.Source.Camera
+        ? videoTrack
+        : source === Track.Source.ScreenShare
+          ? screenShareTrack
+          : undefined;
+  const enabled =
+    source === Track.Source.Microphone
+      ? microEnabled
+      : source === Track.Source.Camera
+        ? videoEnabled
+        : source === Track.Source.ScreenShare
+          ? screenShareEnabled
+          : false;
 
   const toggle = () => {
     console.log('handleClick', source);
@@ -92,7 +110,7 @@ export const TrackToggle = ({
         );
       case Track.Source.ScreenShare:
         return enabled ? (
-          <Screenshare className="fill-gray-100" />
+          <Screenshare className="fill-green-100" />
         ) : (
           <Screenshare className="fill-gray-100" />
         );
