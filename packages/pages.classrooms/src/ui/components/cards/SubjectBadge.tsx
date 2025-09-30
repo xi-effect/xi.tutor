@@ -10,7 +10,10 @@ export const SubjectBadge = ({ subject_id }: SubjectBadgePropsT) => {
   const { data: subject } = useSubjectsById(subject_id);
 
   return (
-    <Badge size="m" className="text-gray-80 bg-gray-5 rounded-lg border-none px-2 py-1">
+    <Badge
+      size="m"
+      className="text-gray-80 bg-gray-5 line-clamp-1 flex-1 rounded-lg border-none px-2 py-1"
+    >
       {subject?.name}
     </Badge>
   );

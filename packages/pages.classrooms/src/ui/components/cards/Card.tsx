@@ -76,9 +76,9 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
   return (
     <div
       onClick={handleClick}
-      className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex cursor-pointer justify-between rounded-2xl border p-4"
+      className="hover:bg-gray-5 border-gray-30 bg-gray-0 relative flex cursor-pointer justify-between rounded-2xl border p-4"
     >
-      <div className="flex max-w-[350px] flex-col gap-4">
+      <div className="flex flex-col gap-4">
         <div className="flex flex-row gap-2">
           {kind === 'individual' && (
             <UserAvatar kind={kind} student_id={student_id?.toString() ?? ''} />
@@ -112,7 +112,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
       </div>
 
       {isTutor && (
-        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
+        <div className="absolute top-4 right-4 flex h-6 w-6 items-center justify-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button className="h-6 w-6" variant="ghost" size="icon">

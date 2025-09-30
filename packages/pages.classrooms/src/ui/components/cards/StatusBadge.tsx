@@ -9,10 +9,10 @@ type StatusBadgePropsT = {
 };
 
 const statusMap: Record<string, string> = {
-  active: 'Активен',
+  active: 'Учится',
   paused: 'На паузе',
-  locked: 'Заблокирован',
-  finished: 'Завершен',
+  locked: 'Заблокировано',
+  finished: 'Обучение завершено',
 };
 
 export const StatusBadge = ({ status, deleted }: StatusBadgePropsT) => {
