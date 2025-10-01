@@ -8,6 +8,7 @@ import { useTldrawStyles } from '../../../hooks';
 import { NavbarButton } from '../shared';
 import { PenPopup, StickerPopup } from '../popups';
 import { ShapesPopup } from '../popups/Shapes';
+import { insertImage } from '../../../features/pickAndInsertImage';
 
 // Маппинг инструментов Kanva на Tldraw
 const toolMapping: Record<string, string> = {
@@ -19,7 +20,7 @@ const toolMapping: Record<string, string> = {
   arrow: 'arrow',
   eraser: 'eraser',
   sticker: 'note', // Используем note как аналог стикера
-  asset: 'image', // Используем image для загрузки изображений
+  // asset: 'image', // Убираем image, так как его нет в Tldraw
 };
 
 export const Navbar = track(
@@ -52,6 +53,28 @@ export const Navbar = track(
       editor.selectNone();
       setActivePopup(null);
 
+      // Специальная обработка для загрузки изображений
+      if (toolName === 'asset') {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.multiple = false;
+
+        input.onchange = async (e) => {
+          const file = (e.target as HTMLInputElement).files?.[0];
+          if (file) {
+            try {
+              await insertImage(editor, file);
+            } catch (error) {
+              console.error('Ошибка при загрузке изображения:', error);
+            }
+          }
+        };
+
+        input.click();
+        return;
+      }
+
       const mappedTool = toolMapping[toolName];
       if (mappedTool) {
         editor.setCurrentTool(mappedTool);
@@ -69,7 +92,7 @@ export const Navbar = track(
         arrow: 'arrow',
         eraser: 'eraser',
         note: 'sticker',
-        image: 'asset',
+        // image: 'asset', // Убираем, так как image не существует в Tldraw
       };
 
       return reverseMapping[currentToolId] || 'select';
@@ -150,6 +173,30 @@ export const Navbar = track(
                           onClick={() => handleSelectTool(item.action)}
                         />
                       </StickerPopup>
+                    );
+                  }
+
+                  if (item.action === 'asset') {
+                    return (
+                      <TooltipProvider key={item.action}>
+                        <Tooltip>
+                          <div className="pointer-events-auto">
+                            <TooltipTrigger className="rounded-lg" asChild>
+                              <button
+                                type="button"
+                                className={`pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${isActive ? 'bg-brand-0' : 'bg-gray-0'}`}
+                                data-isactive={isActive}
+                                onClick={() => handleSelectTool(item.action)}
+                              >
+                                {item.icon ? item.icon : item.title}
+                              </button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              <p>{item.title}</p>
+                            </TooltipContent>
+                          </div>
+                        </Tooltip>
+                      </TooltipProvider>
                     );
                   }
 

@@ -1717,6 +1717,9 @@ importers:
       tldraw:
         specifier: ^3.15.1
         version: 3.15.4(@types/react-dom@19.1.9)(@types/react@19.1.15)(react-dom@19.1.1)(react@19.1.1)
+      webpfy:
+        specifier: 1.0.9
+        version: 1.0.9
       y-utility:
         specifier: 0.1.4
         version: 0.1.4(yjs@13.6.27)
@@ -14878,6 +14881,10 @@ packages:
   /webpack-virtual-modules@0.6.2:
     resolution: {integrity: sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ==}
     dev: true
+
+  /webpfy@1.0.9:
+    resolution: {integrity: sha512-5k6+y+v/hK4+svBenkqSXS3jruw6Kl+/3PQ6LdENJ7ZCH8xa4TAyjYxemmxjh96Kzoo4LuUKwfuZSyS/tky8NA==}
+    dev: false
 
   /webrtc-adapter@9.0.3:
     resolution: {integrity: sha512-5fALBcroIl31OeXAdd1YUntxiZl1eHlZZWzNg3U4Fn+J9/cGL3eT80YlrsWGvj2ojuz1rZr2OXkgCzIxAZ7vRQ==}

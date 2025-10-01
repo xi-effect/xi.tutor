@@ -22,34 +22,64 @@ export type TLAssetStoreT = {
   resolve?(asset: TLAsset, ctx: TLAssetContextT): Promise<string | null> | string | null;
 };
 
+const UPLOAD_URL = '/api/protected/storage-service/access-groups/public/file-kinds/image/files/';
 const WORKER_URL = `${env.VITE_SERVER_URL_BACKEND}/api/protected/storage-service/files/`;
-const UPLOAD_URL = '/api/protected/storage-service/files/attachments/';
 
 export const myAssetStore: TLAssetStoreT = {
-  async upload(asset: TLAsset | null, file: File) {
-    console.log('upload', asset, file);
+  async upload(_asset: TLAsset | null, file: File) {
+    // console.log('Загружаем файл:', {
+    //   name: file.name,
+    //   type: file.type,
+    //   size: file.size,
+    //   lastModified: file.lastModified
+    // });
+
     const formData = new FormData();
-    formData.append('attachment', file);
+    formData.append('upload', file);
+
+    // console.log('FormData содержимое:');
+    // for (const [key, value] of formData.entries()) {
+    //   console.log(`${key}:`, value);
+    // }
 
     try {
       const axiosInst = await getAxiosInstance();
+      const fullUrl = `${env.VITE_SERVER_URL_BACKEND}${UPLOAD_URL}`;
+      // console.log('Отправляем запрос на:', fullUrl);
+
       const response = await axiosInst({
         method: 'POST',
-        url: `${env.VITE_SERVER_URL_BACKEND}${UPLOAD_URL}`,
+        url: fullUrl,
         data: formData,
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
 
+      // console.log('Ответ сервера:', {
+      //   status: response.status,
+      //   data: response.data
+      // });
+
       if (response.status !== 201) {
         throw new Error(`File upload failed: ${response.status}`);
       }
 
       const url = `${WORKER_URL}${response.data.id}/`;
+      // console.log('Файл успешно загружен, URL:', url);
       return url;
-    } catch (error) {
-      console.error('Upload error:', error);
+    } catch (error: unknown) {
+      console.error('Ошибка загрузки файла:', error);
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as {
+          response: { status: number; statusText: string; data: unknown };
+        };
+        console.error('Детали ошибки:', {
+          status: axiosError.response.status,
+          statusText: axiosError.response.statusText,
+          data: axiosError.response.data,
+        });
+      }
       throw error;
     }
   },
