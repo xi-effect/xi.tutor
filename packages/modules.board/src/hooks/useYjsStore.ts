@@ -88,6 +88,8 @@ export function useYjsStore({
     const meta = yDoc.getMap<SerializedSchema>('meta');
     const readonlyMap = yDoc.getMap<boolean>('readonly');
 
+    console.log('roomId', roomId);
+
     const room = new HocuspocusProvider({
       url: hostUrl,
       name: roomId,
@@ -96,6 +98,7 @@ export function useYjsStore({
       connect: false,
       forceSyncInterval: 20000,
       onAuthenticationFailed: (data) => {
+        console.log('onAuthenticationFailed', data);
         if (data.reason === 'permission-denied') {
           toast('Ошибка доступа к серверу совместного редактирования');
           console.error('hocuspocus: permission-denied');
