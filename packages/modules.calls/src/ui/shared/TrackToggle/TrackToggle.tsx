@@ -130,10 +130,18 @@ export const TrackToggle = ({
         type="button"
         onClick={handleClick}
         className="bg-gray-0 hover:bg-gray-10 flex h-10 w-10 items-center justify-center rounded-[12px] transition-colors"
+        animate={{
+          background: enabled
+            ? `linear-gradient(to top, var(--xi-green-20) 0%, transparent ${volume}%)`
+            : 'var(--xi-gray-0)',
+        }}
         style={{
           background: enabled
             ? `linear-gradient(to top, var(--xi-green-20) 0%, transparent ${volume}%)`
             : 'var(--xi-gray-0)',
+        }}
+        transition={{
+          duration: 1,
         }}
         {...(props as unknown as any)}
       >
