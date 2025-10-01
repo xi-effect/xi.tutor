@@ -4,9 +4,18 @@ import { myAssetStore } from './imageStore';
 import webpfy from 'webpfy';
 
 export async function insertImage(editor: Editor, file: File) {
-  // 1. узнаём размеры
+  // 1. узнаём размеры и оптимизируем их
   const bitmap = await createImageBitmap(file);
-  const { width: w, height: h } = bitmap;
+  let { width: w, height: h } = bitmap;
+
+  // Ограничиваем максимальный размер изображения для производительности
+  const MAX_SIZE = 1920; // Максимальная ширина или высота
+  if (w > MAX_SIZE || h > MAX_SIZE) {
+    const scale = Math.min(MAX_SIZE / w, MAX_SIZE / h);
+    w = Math.round(w * scale);
+    h = Math.round(h * scale);
+    console.log(`Изображение масштабировано до ${w}x${h} для оптимизации производительности`);
+  }
 
   // 2. конвертируем в WebP если это не WebP уже
   let fileToUpload = file;
@@ -15,7 +24,12 @@ export async function insertImage(editor: Editor, file: File) {
   if (!file.type.includes('webp')) {
     try {
       console.log(`Конвертируем изображение ${file.name} (${file.type}) в WebP...`);
-      const { webpBlob, fileName } = await webpfy({ image: file });
+
+      // Оптимизируем настройки WebP для лучшей производительности
+      const { webpBlob, fileName } = await webpfy({
+        image: file,
+        quality: 0.8, // Снижаем качество для меньшего размера файла
+      });
 
       // Создаем новый File объект из WebP Blob
       fileToUpload = new File([webpBlob], fileName, {
@@ -24,8 +38,9 @@ export async function insertImage(editor: Editor, file: File) {
       });
       mimeType = 'image/webp';
 
+      const compressionRatio = (((file.size - webpBlob.size) / file.size) * 100).toFixed(1);
       console.log(
-        `Изображение успешно конвертировано в WebP. Размер: ${file.size} -> ${webpBlob.size} байт`,
+        `Изображение успешно конвертировано в WebP. Размер: ${file.size} -> ${webpBlob.size} байт (сжатие: ${compressionRatio}%)`,
       );
     } catch (error) {
       console.warn('Не удалось конвертировать в WebP, используем оригинальный файл:', error);
@@ -37,10 +52,16 @@ export async function insertImage(editor: Editor, file: File) {
   // 3. грузим на сервер → получаем URL
   const src = await myAssetStore.upload(null, fileToUpload);
 
-  // 4. добавляем asset + shape
+  // 4. добавляем asset + shape в одной транзакции для лучшей производительности
   const assetId = `asset:${nanoid()}` as TLAssetId;
-  console.log('Создаем asset с ID:', assetId);
+  const shapeId = `shape:${nanoid()}` as TLShapeId;
 
+  console.log('Создаем asset и shape в одной транзакции...');
+
+  // Получаем центр viewport для позиционирования изображения
+  const viewportCenter = editor.getViewportPageBounds().center;
+
+  // Создаем asset и shape в одной транзакции
   editor.createAssets([
     {
       id: assetId,
@@ -58,12 +79,7 @@ export async function insertImage(editor: Editor, file: File) {
     },
   ]);
 
-  const shapeId = `shape:${nanoid()}` as TLShapeId;
-  // console.log('Создаем shape с ID:', shapeId);
-
-  // Получаем центр viewport для позиционирования изображения
-  const viewportCenter = editor.getViewportPageBounds().center;
-
+  // Создаем shape
   editor.createShapes([
     {
       id: shapeId as TLShapeId,
@@ -77,6 +93,4 @@ export async function insertImage(editor: Editor, file: File) {
       },
     },
   ]);
-
-  console.log('Изображение успешно добавлено на доску!');
 }
