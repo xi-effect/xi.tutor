@@ -12,8 +12,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@xipkg/select';
+import { useNavigate } from '@tanstack/react-router';
 
 export const SelectRole = () => {
+  const navigate = useNavigate();
   const { t } = useTranslation('navigation');
 
   const { data: user } = useCurrentUser();
@@ -21,7 +23,14 @@ export const SelectRole = () => {
   const { updateProfile } = useUpdateProfile();
 
   const handleChange = (value: RoleT) => {
-    updateProfile.mutate({ default_layout: value });
+    updateProfile.mutate(
+      { default_layout: value },
+      {
+        onSuccess: () => {
+          navigate({ to: '/' });
+        },
+      },
+    );
   };
 
   return (
