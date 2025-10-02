@@ -17,24 +17,42 @@ import { cn } from '@xipkg/utils';
 interface ExtendedTrackToggleProps extends TrackToggleProps<any> {
   microTrack?: LocalAudioTrack;
   videoTrack?: LocalVideoTrack;
+  screenShareTrack?: LocalVideoTrack;
   microEnabled?: boolean;
   videoEnabled?: boolean;
+  screenShareEnabled?: boolean;
   showIcon?: boolean;
 }
 
 export const TrackToggle = ({
   microTrack,
   videoTrack,
+  screenShareTrack,
   microEnabled,
   videoEnabled,
+  screenShareEnabled,
   source,
   showIcon = true,
   onChange,
   ...props
 }: ExtendedTrackToggleProps) => {
   // Для PreJoin используем собственную логику, так как useTrackToggle работает с треками в комнате
-  const track = source === Track.Source.Microphone ? microTrack : videoTrack;
-  const enabled = source === Track.Source.Microphone ? microEnabled : videoEnabled;
+  const track =
+    source === Track.Source.Microphone
+      ? microTrack
+      : source === Track.Source.Camera
+        ? videoTrack
+        : source === Track.Source.ScreenShare
+          ? screenShareTrack
+          : undefined;
+  const enabled =
+    source === Track.Source.Microphone
+      ? microEnabled
+      : source === Track.Source.Camera
+        ? videoEnabled
+        : source === Track.Source.ScreenShare
+          ? screenShareEnabled
+          : false;
 
   const toggle = () => {
     console.log('handleClick', source);
@@ -92,7 +110,7 @@ export const TrackToggle = ({
         );
       case Track.Source.ScreenShare:
         return enabled ? (
-          <Screenshare className="fill-gray-100" />
+          <Screenshare className="fill-green-100" />
         ) : (
           <Screenshare className="fill-gray-100" />
         );
@@ -112,10 +130,18 @@ export const TrackToggle = ({
         type="button"
         onClick={handleClick}
         className="bg-gray-0 hover:bg-gray-10 flex h-10 w-10 items-center justify-center rounded-[12px] transition-colors"
+        animate={{
+          background: enabled
+            ? `linear-gradient(to top, var(--xi-green-20) 0%, transparent ${volume}%)`
+            : 'var(--xi-gray-0)',
+        }}
         style={{
           background: enabled
             ? `linear-gradient(to top, var(--xi-green-20) 0%, transparent ${volume}%)`
             : 'var(--xi-gray-0)',
+        }}
+        transition={{
+          duration: 1,
         }}
         {...(props as unknown as any)}
       >
@@ -130,7 +156,7 @@ export const TrackToggle = ({
       type="button"
       onClick={handleClick}
       className={cn(
-        'bg-gray-0 hover:bg-gray-10 flex h-10 w-10 items-center justify-center rounded-[12px] transition-colors',
+        'bg-gray-0 hover:bg-gray-5 flex h-10 w-10 items-center justify-center rounded-[12px] transition-colors',
         enabled && 'bg-green-0 hover:bg-green-20',
       )}
       {...props}

@@ -35,7 +35,12 @@ export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
             // @ts-ignore
             assets={myAssetStore}
             onMount={(editor) => {
-              editor.updateInstanceState({ isGridMode: true });
+              editor.updateInstanceState({
+                isGridMode: true,
+                // Оптимизации производительности
+                isDebugMode: false,
+                isPenMode: false,
+              });
             }}
             store={store}
             hideUi

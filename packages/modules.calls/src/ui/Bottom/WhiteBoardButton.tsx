@@ -1,8 +1,8 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
-import { cn } from '@xipkg/utils';
 import { WhiteBoard } from '@xipkg/icons';
 import { useState } from 'react';
 import { WhiteboardsModal } from './WhiteboardsModal';
+import { Button } from '@xipkg/button';
 
 export const WhiteBoardButton = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -14,16 +14,15 @@ export const WhiteBoardButton = () => {
   return (
     <>
       <Tooltip delayDuration={1000}>
-        <TooltipTrigger className="bg-transparent">
-          <button
-            type="button"
+        <TooltipTrigger className="bg-transparent" asChild>
+          <Button
+            size="icon"
+            variant="ghost"
             onClick={handleClick}
-            className={cn(
-              'bg-gray-0 hover:bg-gray-10 flex h-10 w-10 items-center justify-center rounded-[12px] transition-colors',
-            )}
+            className={'hover:bg-gray-5 relative m-0 h-10 w-10 rounded-lg p-0 text-gray-100'}
           >
             <WhiteBoard />
-          </button>
+          </Button>
         </TooltipTrigger>
         <TooltipContent side="top" align="center">
           Выбрать доску для совместной работы

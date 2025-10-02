@@ -17,7 +17,7 @@ import { Button } from '@xipkg/button';
 import { TooltipContent, Tooltip, TooltipTrigger } from '@xipkg/tooltip';
 import { useCallStore } from '../../store/callStore';
 import { useNavigate, useParams } from '@tanstack/react-router';
-import { useGetClassroom } from 'common.services';
+import { useCurrentUser, useGetClassroom } from 'common.services';
 import { toast } from 'sonner';
 import { env } from 'common.env';
 
@@ -71,6 +71,9 @@ export const UpBar = () => {
     toast.success('Ссылка скопирована. Отравьте её ученикам');
   };
 
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
   return (
     <div className={cn('flex w-full flex-row items-end px-4 pb-4', isFullScreen && 'pt-2')}>
       <Tooltip delayDuration={1000}>
@@ -106,21 +109,24 @@ export const UpBar = () => {
         {getViewIcon()}
         <span className="text-gray-100">Вид</span>
       </Button> */}
-      <Tooltip delayDuration={1000}>
-        <TooltipTrigger asChild>
-          <Button
-            onClick={onCopyLink}
-            type="button"
-            variant="ghost"
-            className="ml-auto hidden h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0 md:flex"
-          >
-            <LinkIcon className="fill-gray-100" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom" align="end">
-          Скопировать ссылку-приглашение
-        </TooltipContent>
-      </Tooltip>
+      <div className="ml-auto flex flex-row gap-2" />
+      {isTutor && (
+        <Tooltip delayDuration={1000}>
+          <TooltipTrigger asChild>
+            <Button
+              onClick={onCopyLink}
+              type="button"
+              variant="ghost"
+              className="ml-2 hidden h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0 md:flex"
+            >
+              <LinkIcon className="fill-gray-100" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" align="end">
+            Скопировать ссылку-приглашение
+          </TooltipContent>
+        </Tooltip>
+      )}
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button

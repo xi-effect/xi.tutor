@@ -4,6 +4,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { generateNameWithDate } from 'common.utils';
 import { handleError, showSuccess } from 'common.services';
 
+enum MaterialsKind {
+  note = 'заметка',
+  board = 'доска',
+}
+
 interface MaterialsResponseT {
   data: MaterialsDataT & {
     id: string;
@@ -45,7 +50,7 @@ export const useAddMaterials = () => {
           url: materialsApiConfig[MaterialsQueryKey.AddMaterials].getUrl(),
           data: {
             ...materialsData,
-            name: materialsData.name || generateNameWithDate(materialsData.kind),
+            name: materialsData.name || generateNameWithDate(MaterialsKind[materialsData.kind]),
           },
           headers: {
             'Content-Type': 'application/json',
