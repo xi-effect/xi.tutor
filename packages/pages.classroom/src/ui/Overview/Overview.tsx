@@ -182,6 +182,7 @@ export const Overview = () => {
           </ScrollArea>
         </div>
       </div>
+
       <div className="flex flex-col gap-4 p-4">
         <div className="flex flex-row items-center justify-start gap-2">
           <h2 className="text-xl-base font-medium text-gray-100">Оплаты</h2>
@@ -202,7 +203,7 @@ export const Overview = () => {
               {[...new Array(10)].map((_, index) => (
                 <div
                   key={index}
-                  className="border-gray-60 flex min-h-[96px] min-w-[350px] flex-col items-start justify-start gap-2 rounded-2xl border p-4"
+                  className="border-gray-30 bg-gray-0 flex min-h-[96px] min-w-[350px] flex-col items-start justify-start gap-4 rounded-2xl border p-4"
                 >
                   <span className="text-s-base text-gray-80 font-medium">11 мая, 12:32</span>
                   <div className="flex flex-row items-baseline gap-0.5">
