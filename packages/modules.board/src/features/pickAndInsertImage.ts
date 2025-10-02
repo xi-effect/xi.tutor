@@ -28,7 +28,7 @@ export async function insertImage(editor: Editor, file: File) {
       // Оптимизируем настройки WebP для лучшей производительности
       const { webpBlob, fileName } = await webpfy({
         image: file,
-        quality: 0.8, // Снижаем качество для меньшего размера файла
+        quality: 0.9, // Снижаем качество для меньшего размера файла
       });
 
       // Создаем новый File объект из WebP Blob

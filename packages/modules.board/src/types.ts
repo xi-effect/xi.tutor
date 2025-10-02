@@ -9,7 +9,8 @@ export type ToolType =
   | 'select'
   | 'hand'
   | 'arrow'
-  | 'asset';
+  | 'asset'
+  | 'geo';
 
 export type ElementType =
   | 'line'

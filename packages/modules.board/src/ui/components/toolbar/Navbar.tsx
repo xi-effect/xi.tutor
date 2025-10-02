@@ -4,7 +4,7 @@ import { track, useEditor } from 'tldraw';
 import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
 import { UndoRedo } from './UndoRedo';
 import { useTldrawStore } from '../../../store';
-import { useTldrawStyles } from '../../../hooks';
+import { useTldrawStyles, useHotkeys } from '../../../hooks';
 import { NavbarButton } from '../shared';
 import { PenPopup, StickerPopup } from '../popups';
 import { ShapesPopup } from '../popups/Shapes';
@@ -39,6 +39,9 @@ export const Navbar = track(
     const { resetToDefaults, setColor, setThickness, setOpacity } = useTldrawStyles();
     const [activePopup, setActivePopup] = React.useState<string | null>(null);
     const editor = useEditor();
+
+    // Добавляем горячие клавиши
+    useHotkeys();
 
     const isPopupOpen = (popup: string) => activePopup === popup;
     const handlePopupToggle = (popup: string, open: boolean) => {

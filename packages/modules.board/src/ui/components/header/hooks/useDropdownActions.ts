@@ -77,5 +77,24 @@ export const useDropdownActions = () => {
     }
   };
 
+  // Обработка событий от горячих клавиш
+  useEffect(() => {
+    const handleSaveCanvas = () => {
+      saveCanvas();
+    };
+
+    const handleToggleReadonly = () => {
+      toggleReadonly();
+    };
+
+    window.addEventListener('saveCanvas', handleSaveCanvas);
+    window.addEventListener('toggleReadonly', handleToggleReadonly);
+
+    return () => {
+      window.removeEventListener('saveCanvas', handleSaveCanvas);
+      window.removeEventListener('toggleReadonly', handleToggleReadonly);
+    };
+  }, [saveCanvas, toggleReadonly]);
+
   return { toggleReadonly, saveCanvas, clearBoard, isReadonly };
 };

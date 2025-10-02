@@ -8,8 +8,10 @@ import { cn } from '@xipkg/utils';
 import { useGetMaterial } from 'common.services';
 import { Skeleton } from 'common.ui';
 import { useFullScreen } from 'common.utils';
+import { useEffect } from 'react';
 import { EditableTitle } from './EditableTitle';
 import { SettingsDropdown } from './SettingsDropdown';
+import { HotkeysHelp } from '../shared/HotkeysHelp';
 
 export const Header = () => {
   const { isFullScreen, toggleFullScreen } = useFullScreen('whiteboard-container');
@@ -22,6 +24,18 @@ export const Header = () => {
     if (isFullScreen) toggleFullScreen();
     navigate({ to: '/materials' });
   };
+
+  // Обработка событий от горячих клавиш
+  useEffect(() => {
+    const handleToggleFullscreen = () => {
+      toggleFullScreen();
+    };
+
+    window.addEventListener('toggleFullscreen', handleToggleFullscreen);
+    return () => {
+      window.removeEventListener('toggleFullscreen', handleToggleFullscreen);
+    };
+  }, [toggleFullScreen]);
 
   return (
     <div
@@ -47,6 +61,7 @@ export const Header = () => {
           )}
         </div>
         <div className="flex items-center gap-1">
+          <HotkeysHelp />
           <Button
             variant="ghost"
             onClick={toggleFullScreen}
