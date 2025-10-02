@@ -6,6 +6,8 @@ import { ScrollArea } from '@xipkg/scrollarea';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { useGetClassroom } from 'common.services';
 
+import { CardMaterials, materialsMock, type CardMaterialsProps } from '../CardMaterials';
+
 export const Overview = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
   const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
@@ -169,22 +171,12 @@ export const Overview = () => {
         </div>
         <div className="flex flex-row">
           <ScrollArea
-            className="h-[110px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
+            className="min-h-[110px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
             scrollBarProps={{ orientation: 'horizontal' }}
           >
-            <div className="flex flex-row gap-8">
-              {[...new Array(10)].map((_, index) => (
-                <div
-                  key={index}
-                  className="border-gray-60 flex min-h-[96px] min-w-[350px] flex-col items-start justify-start gap-2 rounded-2xl border p-4"
-                >
-                  <h3 className="text-l-base font-medium text-gray-100">Past simple — 1</h3>
-                  <div className="flex flex-row items-center justify-start gap-2">
-                    <span className="text-s-base text-gray-80 font-medium">
-                      Изменено: 9 февраля
-                    </span>
-                  </div>
-                </div>
+            <div className="flex flex-row gap-8 pb-4">
+              {materialsMock.map((material) => (
+                <CardMaterials key={material.id} value={material as CardMaterialsProps['value']} />
               ))}
             </div>
           </ScrollArea>
