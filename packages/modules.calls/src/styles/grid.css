@@ -158,12 +158,10 @@
 }
 
 .lk-participant-tile {
-  transition: transform 0.2s ease, opacity 0.2s ease;
+  transition: opacity 0.2s ease;
 }
 
-.lk-participant-tile:hover {
-  transform: scale(1.02);
-}
+/* Убираем анимацию приближения - она отвлекает от видео */
 
 /* Фокус и доступность */
 .lk-participant-tile:focus-visible {
@@ -183,6 +181,13 @@
 /* Карусель */
 .lk-carousel {
   --lk-max-visible-tiles: 1;
+  overflow: hidden;
+}
+
+/* Focus Layout Container - для демонстрации экрана */
+.lk-focus-layout-wrapper {
+  height: var(--available-height);
+  max-height: var(--available-height);
   overflow: hidden;
 }
 

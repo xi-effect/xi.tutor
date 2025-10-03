@@ -27,7 +27,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { FocusToggle } from '../shared/FocusToggle';
 import { ParticipantName } from './ParticipantName';
 import { RaisedHandIndicator } from './RaisedHandIndicator';
-import { getAvatarUrl } from '../../config/avatar';
 
 type TrackRefContextIfNeededPropsT = {
   trackRef?: TrackReferenceOrPlaceholder;
@@ -105,6 +104,33 @@ export const ParticipantTile = ({
 
   const { identity, name } = useParticipantInfo({ participant: trackReference.participant });
 
+  // Принудительное обновление при изменении трека
+  const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
+
+  // Отслеживаем изменения состояния трека
+  React.useEffect(() => {
+    if (trackReference.publication) {
+      const handleTrackChanged = () => {
+        forceUpdate();
+      };
+
+      // Слушаем изменения трека
+      trackReference.publication.track?.on('muted', handleTrackChanged);
+      trackReference.publication.track?.on('unmuted', handleTrackChanged);
+
+      // Слушаем изменения публикации
+      trackReference.publication.on('subscribed', handleTrackChanged);
+      trackReference.publication.on('unsubscribed', handleTrackChanged);
+
+      return () => {
+        trackReference.publication.track?.off('muted', handleTrackChanged);
+        trackReference.publication.track?.off('unmuted', handleTrackChanged);
+        trackReference.publication.off('subscribed', handleTrackChanged);
+        trackReference.publication.off('unsubscribed', handleTrackChanged);
+      };
+    }
+  }, [trackReference.publication]);
+
   const { elementProps } = useParticipantTile<HTMLDivElement>({
     htmlProps,
     disableSpeakingIndicator,
@@ -141,33 +167,8 @@ export const ParticipantTile = ({
         <ParticipantContextIfNeeded participant={trackReference.participant}>
           <div className="bg-gray-40 h-full rounded-[16px]">
             {children ?? (
-              <div className="h-full">
-                {isTrackReference(trackReference) &&
-                (trackReference.publication?.kind === 'video' ||
-                  trackReference.source === Track.Source.Camera ||
-                  trackReference.source === Track.Source.ScreenShare) ? (
-                  <VideoTrack
-                    className="rounded-[16px]"
-                    style={{
-                      ...(trackReference.source === Track.Source.Camera && {
-                        transform: 'rotateY(180deg)',
-                      }),
-                      boxSizing: 'border-box',
-                      background: 'var(--xi-bg-gray-40)',
-                      backgroundColor: 'var(--xi-bg-gray-40)',
-                    }}
-                    trackRef={trackReference}
-                    onSubscriptionStatusChanged={handleSubscribe}
-                    manageSubscription={autoManageSubscription}
-                  />
-                ) : (
-                  isTrackReference(trackReference) && (
-                    <AudioTrack
-                      trackRef={trackReference}
-                      onSubscriptionStatusChanged={handleSubscribe}
-                    />
-                  )
-                )}
+              <div className="relative h-full">
+                {/* Аватар всегда рендерится как фон */}
                 <div
                   style={{
                     borderRadius: '8px',
@@ -177,10 +178,50 @@ export const ParticipantTile = ({
                   className="lk-participant-placeholder flex h-full w-full justify-center"
                 >
                   <Avatar size="xxl">
-                    <AvatarImage src={getAvatarUrl(identity || '')} alt="user avatar" />
+                    <AvatarImage
+                      src={`https://api.sovlium.ru/files/users/${identity}/avatar.webp`}
+                      alt="user avatar"
+                    />
                     <AvatarFallback size="xxl" loading />
                   </Avatar>
                 </div>
+
+                {/* Видео накладывается поверх аватара когда доступно */}
+                {isTrackReference(trackReference) &&
+                  (trackReference.publication?.kind === 'video' ||
+                    trackReference.source === Track.Source.Camera ||
+                    trackReference.source === Track.Source.ScreenShare) &&
+                  trackReference.publication?.isSubscribed &&
+                  trackReference.publication?.isEnabled &&
+                  !trackReference.publication?.track?.isMuted && (
+                    <div className="absolute inset-0">
+                      <VideoTrack
+                        className="h-full w-full rounded-[16px]"
+                        style={{
+                          ...(trackReference.source === Track.Source.Camera && {
+                            transform: 'rotateY(180deg)',
+                          }),
+                          boxSizing: 'border-box',
+                          background: 'var(--xi-bg-gray-40)',
+                          backgroundColor: 'var(--xi-bg-gray-40)',
+                        }}
+                        trackRef={trackReference}
+                        onSubscriptionStatusChanged={handleSubscribe}
+                        manageSubscription={autoManageSubscription}
+                      />
+                    </div>
+                  )}
+
+                {/* Аудио трек для случаев без видео */}
+                {isTrackReference(trackReference) &&
+                  (!trackReference.publication?.isSubscribed ||
+                    trackReference.publication?.kind !== 'video' ||
+                    trackReference.publication?.track?.isMuted) && (
+                    <AudioTrack
+                      trackRef={trackReference}
+                      onSubscriptionStatusChanged={handleSubscribe}
+                    />
+                  )}
                 <div className="lk-participant-metadata p-1">
                   <div>
                     {trackReference.source === Track.Source.Camera ? (

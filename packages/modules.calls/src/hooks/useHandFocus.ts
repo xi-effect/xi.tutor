@@ -1,21 +1,23 @@
 import { useEffect } from 'react';
-import { RemoteParticipant } from 'livekit-client';
+import { Track } from 'livekit-client';
 import { useCallStore } from '../store/callStore';
 import { useRoom } from '../providers/RoomProvider';
+import { useMaybeLayoutContext } from '@livekit/components-react';
 
 export const useHandFocus = () => {
   const { raisedHands } = useCallStore();
   const { room } = useRoom();
+  const layoutContext = useMaybeLayoutContext();
 
   useEffect(() => {
-    if (!room || raisedHands.length === 0) return;
+    if (!room || raisedHands.length === 0 || !layoutContext?.pin.dispatch) return;
 
     // Находим участника с самой ранней поднятой рукой
     const earliestHand = raisedHands.reduce((earliest, current) =>
       current.timestamp < earliest.timestamp ? current : earliest,
     );
 
-    // Ищем участника в комнате - используем правильный API LiveKit 2.x
+    // Ищем участника в комнате
     const participant = room.getParticipantByIdentity(earliestHand.participantId);
 
     if (participant) {
@@ -23,15 +25,25 @@ export const useHandFocus = () => {
         '🎯 Auto-focusing on participant with raised hand:',
         earliestHand.participantName,
       );
-      console.log('📺 Participant found:', participant.identity);
+
+      // Находим трек камеры участника для фокуса
+      const cameraTrack = Array.from(participant.videoTrackPublications.values()).find(
+        (track) => track.source === 'camera',
+      );
+
+      if (cameraTrack) {
+        // Устанавливаем фокус на участника с поднятой рукой
+        layoutContext.pin.dispatch({
+          msg: 'set_pin',
+          trackReference: {
+            participant,
+            source: Track.Source.Camera,
+            publication: cameraTrack,
+          },
+        });
+      }
     } else {
       console.log('⚠️ Participant not found:', earliestHand.participantId);
-      // Получаем список всех участников для отладки
-      const allParticipants = Array.from(room.remoteParticipants.values());
-      console.log(
-        '📋 Available participants:',
-        allParticipants.map((p: RemoteParticipant) => p.identity),
-      );
     }
-  }, [raisedHands, room]);
+  }, [raisedHands, room, layoutContext]);
 };

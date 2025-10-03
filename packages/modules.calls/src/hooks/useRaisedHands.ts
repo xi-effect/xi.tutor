@@ -19,14 +19,18 @@ export const useRaisedHands = () => {
 
   const handleHandMessage = useCallback(
     (message: { type: string; payload: unknown }) => {
-      if (message.type === RAISE_HAND_MESSAGE_TYPE) {
-        const payload = message.payload as HandMessagePayload;
-        console.log('✋ Received raise hand message:', payload);
-        addRaisedHand(payload);
-      } else if (message.type === LOWER_HAND_MESSAGE_TYPE) {
-        const payload = message.payload as HandMessagePayload;
-        console.log('🤚 Received lower hand message:', payload);
-        removeRaisedHand(payload.participantId);
+      try {
+        if (message.type === RAISE_HAND_MESSAGE_TYPE) {
+          const payload = message.payload as HandMessagePayload;
+          console.log('✋ Received raise hand message:', payload);
+          addRaisedHand(payload);
+        } else if (message.type === LOWER_HAND_MESSAGE_TYPE) {
+          const payload = message.payload as HandMessagePayload;
+          console.log('🤚 Received lower hand message:', payload);
+          removeRaisedHand(payload.participantId);
+        }
+      } catch (error) {
+        console.error('❌ Error handling hand message:', error);
       }
     },
     [addRaisedHand, removeRaisedHand],

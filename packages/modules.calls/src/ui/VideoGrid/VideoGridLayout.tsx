@@ -5,7 +5,6 @@ import {
   TrackLoop,
   useVisualStableUpdate,
   FocusLayoutProps,
-  FocusLayoutContainerProps,
   GridLayoutProps,
   useGridLayout,
   usePagination,
@@ -130,10 +129,6 @@ export const PaginationIndicator = ({ totalPageCount, currentPage }: PaginationI
 
   return <div className="lk-pagination-indicator">{bubbles}</div>;
 };
-
-export const FocusLayoutContainer = ({ children }: FocusLayoutContainerProps) => (
-  <div>{children}</div>
-);
 
 export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
   const isOneItem = useEmptyItemContainerOfUser(tracks.length);

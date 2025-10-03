@@ -1,2 +1,2 @@
 export { VideoGrid } from './VideoGrid';
-export { CarouselContainer, GridLayout, FocusLayoutContainer } from './VideoGridLayout';
+export { CarouselContainer, GridLayout } from './VideoGridLayout';

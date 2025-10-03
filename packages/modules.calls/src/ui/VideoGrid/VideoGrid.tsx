@@ -15,7 +15,7 @@ import {
 } from '@livekit/components-react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { ParticipantTile } from '../Participant';
-import { CarouselContainer, GridLayout, FocusLayoutContainer } from './VideoGridLayout';
+import { CarouselContainer, GridLayout } from './VideoGridLayout';
 import { SearchParams } from '../../types/router';
 import '../../styles/grid.css';
 
@@ -116,13 +116,13 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
                 </GridLayout>
               </div>
             ) : (
-              <FocusLayoutContainer>
+              <div className="lk-focus-layout-wrapper">
                 <CarouselContainer
                   focusTrack={focusTrack}
                   tracks={tracks}
                   carouselTracks={carouselTracks}
                 />
-              </FocusLayoutContainer>
+              </div>
             )}
           </div>
         </LayoutContextProvider>
