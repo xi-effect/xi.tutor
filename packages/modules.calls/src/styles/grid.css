@@ -1,0 +1,199 @@
+/**
+ * Стили для сетки пользователей в ВКС
+ */
+
+:root {
+  /* Высоты панелей */
+  --header-height: 64px; /* Header из modules.navigation */
+  --upbar-height: 80px; /* UpBar из modules.calls (flex items-end + pb-4) */
+  --bottom-bar-height: 69px; /* BottomBar из modules.calls (h-[48px] + p-4) */
+  
+  /* Доступная высота для сетки */
+  --available-height: calc(100vh - var(--header-height) - var(--upbar-height) - var(--bottom-bar-height));
+}
+
+.lk-grid-layout {
+  --lk-grid-gap: 1rem;
+  --lk-tile-height: 204px;
+  --lk-tile-width: 294px;
+  --lk-col-count: 1;
+  --lk-row-count: 1;
+  
+  display: grid;
+  gap: var(--lk-grid-gap);
+  grid-template-columns: repeat(var(--lk-col-count), 1fr);
+  grid-template-rows: repeat(var(--lk-row-count), 1fr);
+  width: 100%;
+  height: var(--available-height);
+  max-height: var(--available-height);
+  overflow: hidden;
+}
+
+.lk-grid-layout[data-lk-pagination="true"] {
+  position: relative;
+}
+
+.lk-pagination-indicator {
+  position: absolute;
+  bottom: 1rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 0.5rem;
+  z-index: 10;
+}
+
+.lk-pagination-indicator span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  transition: background-color 0.2s ease;
+}
+
+.lk-pagination-indicator span[data-lk-active] {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+.lk-pagination-control {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 10;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.lk-pagination-control[data-lk-user-interaction="true"] {
+  opacity: 1;
+}
+
+.lk-pagination-control button {
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.lk-pagination-control button:hover:not(:disabled) {
+  background: rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
+}
+
+.lk-pagination-control button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 640px) {
+  :root {
+    --header-height: 56px;
+    --upbar-height: 70px;
+    --bottom-bar-height: 60px;
+  }
+  
+  .lk-grid-layout {
+    --lk-grid-gap: 0.5rem;
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(auto-fit, minmax(150px, 1fr));
+  }
+  
+  .lk-pagination-control {
+    display: none; /* Скрываем кнопки на мобильных, используем свайпы */
+  }
+}
+
+/* Адаптивность для планшетов */
+@media (min-width: 641px) and (max-width: 1024px) {
+  :root {
+    --upbar-height: 75px;
+  }
+  
+  .lk-grid-layout {
+    --lk-grid-gap: 0.75rem;
+  }
+}
+
+/* Адаптивность для десктопов */
+@media (min-width: 1025px) {
+  .lk-grid-layout {
+    --lk-grid-gap: 1rem;
+  }
+}
+
+/* Полноэкранный режим - скрываем UpBar */
+.lk-video-conference[data-fullscreen="true"] {
+  --upbar-height: 0px;
+}
+
+/* Дополнительная проверка для минимальной высоты */
+.lk-grid-layout {
+  min-height: 200px; /* Минимальная высота для корректного отображения */
+}
+
+/* Улучшения для производительности */
+.lk-grid-layout * {
+  will-change: transform;
+}
+
+.lk-participant-tile {
+  contain: layout style paint;
+  transform: translateZ(0); /* Активируем аппаратное ускорение */
+}
+
+/* Анимации */
+.lk-grid-layout {
+  transition: grid-template-columns 0.3s ease, grid-template-rows 0.3s ease;
+}
+
+.lk-participant-tile {
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.lk-participant-tile:hover {
+  transform: scale(1.02);
+}
+
+/* Фокус и доступность */
+.lk-participant-tile:focus-visible {
+  outline: 2px solid var(--brand-100);
+  outline-offset: 2px;
+}
+
+/* Индикаторы состояния */
+.lk-participant-tile[data-lk-speaking="true"] {
+  box-shadow: 0 0 0 2px var(--brand-100);
+}
+
+.lk-participant-tile[data-lk-muted="true"] {
+  opacity: 0.8;
+}
+
+/* Карусель */
+.lk-carousel {
+  --lk-max-visible-tiles: 1;
+  overflow: hidden;
+}
+
+.lk-carousel[data-lk-orientation="horizontal"] {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
+.lk-carousel[data-lk-orientation="vertical"] {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

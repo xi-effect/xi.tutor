@@ -17,6 +17,7 @@ import { useNavigate, useSearch } from '@tanstack/react-router';
 import { ParticipantTile } from '../Participant';
 import { CarouselContainer, GridLayout, FocusLayoutContainer } from './VideoGridLayout';
 import { SearchParams } from '../../types/router';
+import '../../styles/grid.css';
 
 export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
   const navigate = useNavigate();
@@ -29,7 +30,10 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
       { source: Track.Source.Camera, withPlaceholder: true },
       { source: Track.Source.ScreenShare, withPlaceholder: false },
     ],
-    { updateOnlyOn: [RoomEvent.ActiveSpeakersChanged], onlySubscribed: false },
+    {
+      updateOnlyOn: [RoomEvent.ActiveSpeakersChanged],
+      onlySubscribed: true, // Оптимизация: подписываемся только на активные треки
+    },
   );
 
   const layoutContext = useCreateLayoutContext();
@@ -103,7 +107,7 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
         <LayoutContextProvider value={layoutContext}>
           <div className="lk-video-conference-inner">
             {!focusTrack ? (
-              <div className="min-h-sreen h-full">
+              <div className="h-full">
                 <GridLayout tracks={tracks}>
                   <ParticipantTile
                     isFocusToggleDisable
@@ -112,9 +116,8 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
                 </GridLayout>
               </div>
             ) : (
-              <FocusLayoutContainer className="min-h-screen">
+              <FocusLayoutContainer>
                 <CarouselContainer
-                  orientation="vertical"
                   focusTrack={focusTrack}
                   tracks={tracks}
                   carouselTracks={carouselTracks}

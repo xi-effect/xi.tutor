@@ -27,6 +27,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { FocusToggle } from '../shared/FocusToggle';
 import { ParticipantName } from './ParticipantName';
 import { RaisedHandIndicator } from './RaisedHandIndicator';
+import { getAvatarUrl } from '../../config/avatar';
 
 type TrackRefContextIfNeededPropsT = {
   trackRef?: TrackReferenceOrPlaceholder;
@@ -76,7 +77,7 @@ type ParticipantTilePropsT = ParticipantTileProps &
   FocusToggleDisablePropsT & {
     participant?: Participant;
     source?: Track.Source;
-    publication?: any;
+    publication?: unknown;
   };
 
 export const ParticipantTile = ({
@@ -97,7 +98,7 @@ export const ParticipantTile = ({
     () => ({
       participant: trackRef?.participant ?? maybeTrackRef?.participant ?? p,
       source: trackRef?.source ?? maybeTrackRef?.source ?? source,
-      publication: trackRef?.publication ?? maybeTrackRef?.publication ?? publication,
+      publication: trackRef?.publication ?? maybeTrackRef?.publication ?? (publication as any),
     }),
     [maybeTrackRef, p, publication, source, trackRef],
   );
@@ -120,8 +121,7 @@ export const ParticipantTile = ({
       if (
         trackReference.source &&
         !subscribed &&
-        layoutContext &&
-        layoutContext.pin.dispatch &&
+        layoutContext?.pin.dispatch &&
         isTrackReferencePinned(trackReference, layoutContext.pin.state)
       ) {
         layoutContext.pin.dispatch({ msg: 'clear_pin' });
@@ -177,10 +177,7 @@ export const ParticipantTile = ({
                   className="lk-participant-placeholder flex h-full w-full justify-center"
                 >
                   <Avatar size="xxl">
-                    <AvatarImage
-                      src={`https://api.sovlium.ru/files/users/${identity}/avatar.webp`}
-                      alt="user avatar"
-                    />
+                    <AvatarImage src={getAvatarUrl(identity || '')} alt="user avatar" />
                     <AvatarFallback size="xxl" loading />
                   </Avatar>
                 </div>

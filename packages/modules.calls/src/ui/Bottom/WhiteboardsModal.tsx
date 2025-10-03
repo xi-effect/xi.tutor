@@ -39,6 +39,7 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
 
   const filteredWhiteboards =
     whiteboards &&
+    Array.isArray(whiteboards) &&
     whiteboards.filter((board: Whiteboard) =>
       board.name.toLowerCase().includes(searchQuery.toLowerCase()),
     );

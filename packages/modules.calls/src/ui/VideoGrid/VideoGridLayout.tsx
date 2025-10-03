@@ -1,8 +1,6 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React, { useEffect, useState } from 'react';
 import '@livekit/components-styles';
-import { TrackReferenceOrPlaceholder, createInteractingObservable } from '@livekit/components-core';
+import { TrackReferenceOrPlaceholder } from '@livekit/components-core';
 import {
   TrackLoop,
   useVisualStableUpdate,
@@ -13,19 +11,13 @@ import {
   usePagination,
   useSwipe,
 } from '@livekit/components-react';
-import { ChevronLeft, ChevronRight } from '@xipkg/icons';
 import { useSearch } from '@tanstack/react-router';
 import { useSize } from '../../hooks';
 import { ParticipantTile } from '../Participant';
 import { SliderVideoGrid } from './SliderVideoGrid';
 import { SearchParams } from '../../types/router';
+import { GRID_CONFIG } from '../../config/grid';
 
-export type PaginationControlPropsT = Pick<
-  ReturnType<typeof usePagination>,
-  'totalPageCount' | 'nextPage' | 'prevPage' | 'currentPage'
-> & {
-  pagesContainer?: React.RefObject<HTMLElement>;
-};
 export interface PaginationIndicatorProps {
   totalPageCount: number;
   currentPage: number;
@@ -75,8 +67,7 @@ export const FocusLayout = ({
   );
 };
 
-const TILE_HEIGHT = 204;
-const TILE_WIDTH = 294;
+const { TILE } = GRID_CONFIG;
 
 export type CarouselLayoutProps = React.HTMLAttributes<HTMLMediaElement> & {
   tracks: TrackReferenceOrPlaceholder[];
@@ -91,13 +82,12 @@ export const CarouselLayout = ({
   ...props
 }: CarouselLayoutProps & { userTracks: TrackReferenceOrPlaceholder[] }) => {
   const asideEl = React.useRef<HTMLDivElement>(null);
-  // @ts-expect-error TODO: разобраться с типизацией
-  const { width, height } = useSize(asideEl);
+  const { width, height } = useSize(asideEl as React.RefObject<HTMLDivElement>);
   const carouselOrientation = orientation || (height >= width ? 'vertical' : 'horizontal');
   const tilesThatFit =
     carouselOrientation === 'vertical'
-      ? Math.floor(+height / TILE_HEIGHT)
-      : Math.floor(+width / TILE_WIDTH);
+      ? Math.floor(+height / TILE.HEIGHT)
+      : Math.floor(+width / TILE.WIDTH);
 
   const maxVisibleTiles = Math.floor(tilesThatFit);
   const sortedTiles = useVisualStableUpdate(tracks, maxVisibleTiles);
@@ -130,46 +120,6 @@ export const CarouselLayout = ({
   );
 };
 
-export const PaginationControl = ({
-  nextPage,
-  prevPage,
-  pagesContainer,
-}: PaginationControlPropsT) => {
-  const connectedElement = pagesContainer;
-
-  const [interactive, setInteractive] = React.useState(false);
-  React.useEffect(() => {
-    let subscription:
-      | ReturnType<ReturnType<typeof createInteractingObservable>['subscribe']>
-      | undefined;
-    if (connectedElement) {
-      subscription = createInteractingObservable(connectedElement.current, 2000).subscribe(
-        setInteractive,
-      );
-    }
-    return () => {
-      if (subscription) {
-        subscription.unsubscribe();
-      }
-    };
-  }, [connectedElement]);
-
-  return (
-    <div className="flex items-center justify-center gap-2" data-lk-user-interaction={interactive}>
-      <button className="bg-transparent" type="button" onClick={prevPage}>
-        <ChevronLeft className="fill-gray-0" />
-      </button>
-      <button className="bg-transparent" type="button" onClick={nextPage}>
-        <ChevronRight className="fill-gray-0" />
-      </button>
-    </div>
-  );
-};
-
-export const PaginationPage = ({ totalPageCount, currentPage }: PaginationControlPropsT) => (
-  <span className="text-gray-0 flex items-center justify-center">{`${currentPage} of ${totalPageCount}`}</span>
-);
-
 export const PaginationIndicator = ({ totalPageCount, currentPage }: PaginationIndicatorProps) => {
   const bubbles = new Array(totalPageCount).fill('').map((_, index) => {
     if (index + 1 === currentPage) {
@@ -189,21 +139,30 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
   const isOneItem = useEmptyItemContainerOfUser(tracks.length);
   const gridEl = React.createRef<HTMLDivElement>();
 
-  // @ts-expect-error TODO: разобраться с типизацией
-  const { layout } = useGridLayout(gridEl, tracks.length + (isOneItem ? 1 : 0));
+  const { layout } = useGridLayout(
+    gridEl as React.RefObject<HTMLDivElement>,
+    tracks.length + (isOneItem ? 1 : 0),
+  );
   const pagination = usePagination(layout.maxTiles + (isOneItem ? 1 : 0), tracks);
 
-  // @ts-expect-error TODO: разобраться с типизацией
-  useSwipe(gridEl, {
+  useSwipe(gridEl as React.RefObject<HTMLElement>, {
     onLeftSwipe: pagination.nextPage,
     onRightSwipe: pagination.prevPage,
   });
 
+  // Установка CSS переменных для динамической сетки
+  React.useEffect(() => {
+    if (gridEl.current && layout) {
+      gridEl.current.style.setProperty('--lk-col-count', layout.columns.toString());
+      gridEl.current.style.setProperty('--lk-row-count', layout.rows.toString());
+    }
+  }, [layout, gridEl]);
+
   return (
-    <div className="m-auto h-full w-full">
+    <div className="m-auto w-full" style={{ height: 'var(--available-height)' }}>
       <div
         ref={gridEl}
-        style={{ gap: '1rem', maxWidth: '100%', height: '100%', margin: '0 auto' }}
+        style={{ gap: '1rem', maxWidth: '100%', margin: '0 auto' }}
         data-lk-pagination={pagination.totalPageCount + (isOneItem ? 1 : 0) > 1}
         className="lk-grid-layout"
       >
@@ -220,13 +179,23 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
   );
 };
 
-export const CarouselContainer = ({ focusTrack, tracks, carouselTracks }: any) => {
+type CarouselContainerProps = {
+  focusTrack: TrackReferenceOrPlaceholder | undefined;
+  tracks: TrackReferenceOrPlaceholder[];
+  carouselTracks: TrackReferenceOrPlaceholder[];
+};
+
+export const CarouselContainer = ({
+  focusTrack,
+  tracks,
+  carouselTracks,
+}: CarouselContainerProps) => {
   const search: SearchParams = useSearch({ strict: false });
-  const [orientation, setCarouselType] = useState<string | any>('horizontal');
+  const [orientation, setCarouselType] = useState<'horizontal' | 'vertical'>('horizontal');
 
   useEffect(() => {
     setCarouselType(search.carouselType || 'horizontal');
-  }, [search]);
+  }, [search.carouselType]);
 
   return (
     <div
