@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   // Grid,
   // Settings,
@@ -73,6 +74,15 @@ export const UpBar = () => {
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isFullScreen) {
+      root.style.setProperty('--header-height', '0px');
+    } else {
+      root.style.setProperty('--header-height', '64px');
+    }
+  }, [isFullScreen]);
 
   return (
     <div className={cn('flex w-full flex-row items-end px-4 pb-4', isFullScreen && 'pt-2')}>

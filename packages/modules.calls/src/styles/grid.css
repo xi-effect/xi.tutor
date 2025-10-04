@@ -5,8 +5,8 @@
 :root {
   /* Высоты панелей */
   --header-height: 64px; /* Header из modules.navigation */
-  --upbar-height: 80px; /* UpBar из modules.calls (flex items-end + pb-4) */
-  --bottom-bar-height: 69px; /* BottomBar из modules.calls (h-[48px] + p-4) */
+  --upbar-height: 60px; /* UpBar из modules.calls (flex items-end + pb-4) */
+  --bottom-bar-height: 80px; /* BottomBar из modules.calls (h-[48px] + p-4) */
   
   /* Доступная высота для сетки */
   --available-height: calc(100vh - var(--header-height) - var(--upbar-height) - var(--bottom-bar-height));
