@@ -21,6 +21,7 @@
     "@xipkg/sidebar": "0.2.0",
     "@xipkg/userprofile": "4.0.14",
     "@xipkg/utils": "1.8.0",
+    "@xipkg/drawer": "0.1.0",
     "common.auth": "*",
     "common.services": "*",
     "common.types": "*",
