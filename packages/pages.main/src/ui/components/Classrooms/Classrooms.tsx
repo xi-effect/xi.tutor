@@ -95,15 +95,12 @@ export const Classrooms = () => {
       </div>
 
       <div className="flex flex-row gap-8">
-        {!isHidden && classrooms && classrooms?.length > 0 && (
-          <NoteForUsers onHide={hideNote} isTutor={isTutor} />
-        )}
         {classrooms && classrooms?.length > 0 && (
-          <ScrollArea
-            className="h-[180px] w-full overflow-x-auto overflow-y-hidden"
-            scrollBarProps={{ orientation: 'horizontal' }}
-          >
+          <ScrollArea className="h-[180px] w-full" scrollBarProps={{ orientation: 'horizontal' }}>
             <div className="flex flex-row gap-8">
+              {!isHidden && classrooms && classrooms?.length > 0 && (
+                <NoteForUsers onHide={hideNote} isTutor={isTutor} />
+              )}
               {classrooms?.map((classroom) => (
                 <Classroom key={classroom.id} classroom={classroom} isLoading={isLoading} />
               ))}
