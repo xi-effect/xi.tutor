@@ -1,4 +1,5 @@
 import { Badge } from '@xipkg/badge';
+import { cn } from '@xipkg/utils';
 
 import { StatusEducationT, TypeEducationT } from '../types';
 
@@ -16,9 +17,11 @@ const statusMap: Record<string, string> = {
 };
 
 export const StatusBadge = ({ status, deleted }: StatusBadgePropsT) => {
+  const styles = 'rounded-lg border-none px-2 py-1 font-medium text-s-base';
+
   if (deleted) {
     return (
-      <Badge size="m" className="text-gray-80 bg-gray-5 rounded-lg border-none px-2 py-1">
+      <Badge size="m" className={cn(styles, 'text-gray-80 bg-gray-5')}>
         {statusMap[status]}
       </Badge>
     );
@@ -27,40 +30,28 @@ export const StatusBadge = ({ status, deleted }: StatusBadgePropsT) => {
   switch (status) {
     case 'active':
       return (
-        <Badge
-          variant="success"
-          size="m"
-          className="text-green-80 bg-green-0 rounded-lg border-none px-2 py-1"
-        >
+        <Badge variant="success" size="m" className={cn(styles, 'text-green-80 bg-green-0')}>
           {statusMap[status]}
         </Badge>
       );
 
     case 'paused':
       return (
-        <Badge
-          variant="destructive"
-          size="m"
-          className="text-orange-80 bg-orange-0 rounded-lg border-none px-2 py-1"
-        >
+        <Badge variant="destructive" size="m" className={cn(styles, 'text-orange-80 bg-orange-0')}>
           {statusMap[status]}
         </Badge>
       );
 
     case 'locked':
       return (
-        <Badge
-          variant="destructive"
-          size="m"
-          className="text-red-80 bg-red-0 rounded-lg border-none px-2 py-1"
-        >
+        <Badge variant="destructive" size="m" className={cn(styles, 'text-red-80 bg-red-0')}>
           {statusMap[status]}
         </Badge>
       );
 
     case 'finished':
       return (
-        <Badge size="m" className="text-gray-80 bg-gray-5 rounded-lg border-none px-2 py-1">
+        <Badge size="m" className={cn(styles, 'text-gray-80 bg-gray-5')}>
           {statusMap[status]}
         </Badge>
       );
