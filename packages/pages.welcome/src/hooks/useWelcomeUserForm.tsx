@@ -1,9 +1,10 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 
 import { useOnboardingTransition, useUpdateProfile } from 'common.services';
 
 export const useWelcomeUserForm = () => {
   const navigate = useNavigate();
+  const search = useSearch({ strict: false });
   const { transitionStage } = useOnboardingTransition('default-layout', 'forwards');
   const { updateProfile } = useUpdateProfile();
 
@@ -18,7 +19,8 @@ export const useWelcomeUserForm = () => {
 
     try {
       await transitionStage.mutateAsync();
-      navigate({ to: '/welcome/role' });
+      console.log('redirect to role', search);
+      navigate({ to: '/welcome/role', search: { ...search } });
     } catch {
       return;
     }

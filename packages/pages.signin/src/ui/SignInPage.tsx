@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useSearch } from '@tanstack/react-router';
 
 import { LinkTanstack, Logo } from 'common.ui';
+import { useGetUrlWithParams } from '../../../common.utils/src/useGetUrlWithParams';
 
 import { FormData, useFormSchema } from '../model';
 import { useSigninForm } from '../hooks';
@@ -25,6 +26,7 @@ export const SignInPage = () => {
 
   const formSchema = useFormSchema();
   const { onSigninForm, isPending } = useSigninForm();
+  const getUrlWithParams = useGetUrlWithParams();
 
   const search = useSearch({ strict: false }) as { redirect?: string };
   const isInviteRedirect = search.redirect?.includes('/invite');
@@ -119,7 +121,7 @@ export const SignInPage = () => {
                   size="l"
                   theme="brand"
                   variant="hover"
-                  to="/signup"
+                  to={getUrlWithParams('/signup')}
                 >
                   {t('register')}
                 </LinkTanstack>
