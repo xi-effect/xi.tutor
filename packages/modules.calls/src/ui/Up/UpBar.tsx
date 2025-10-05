@@ -90,7 +90,7 @@ export const UpBar = () => {
         <TooltipTrigger asChild>
           <Button
             onClick={() => {
-              navigate({ to: '/classrooms/$classroomId', params: { classroomId: '1' } });
+              navigate({ to: '/classrooms/$classroomId', params: { classroomId: callId } });
               updateStore('mode', 'compact');
             }}
             type="button"
