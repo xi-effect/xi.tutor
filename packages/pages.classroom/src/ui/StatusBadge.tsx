@@ -9,54 +9,28 @@ type StatusBadgePropsT = {
   deleted?: boolean;
 };
 
-const statusMap: Record<string, string> = {
+const statusMap: Record<StatusEducationT, string> = {
   active: 'Учится',
   paused: 'На паузе',
   locked: 'Заблокировано',
   finished: 'Обучение завершено',
 };
 
+const styles = 'rounded-lg border-none px-2 py-1 font-medium text-s-base';
+
+const mapStyles: Record<StatusEducationT, string> = {
+  active: 'text-green-80 bg-green-0',
+  paused: 'text-orange-80 bg-orange-0',
+  locked: 'text-red-80 bg-red-0',
+  finished: 'text-gray-80 bg-gray-5',
+};
+
 export const StatusBadge = ({ status, deleted }: StatusBadgePropsT) => {
-  const styles = 'rounded-lg border-none px-2 py-1 font-medium text-s-base';
+  const baseClasses = deleted ? 'text-gray-80 bg-gray-5' : mapStyles[status];
 
-  if (deleted) {
-    return (
-      <Badge size="m" className={cn(styles, 'text-gray-80 bg-gray-5')}>
-        {statusMap[status]}
-      </Badge>
-    );
-  }
-
-  switch (status) {
-    case 'active':
-      return (
-        <Badge variant="success" size="m" className={cn(styles, 'text-green-80 bg-green-0')}>
-          {statusMap[status]}
-        </Badge>
-      );
-
-    case 'paused':
-      return (
-        <Badge variant="destructive" size="m" className={cn(styles, 'text-orange-80 bg-orange-0')}>
-          {statusMap[status]}
-        </Badge>
-      );
-
-    case 'locked':
-      return (
-        <Badge variant="destructive" size="m" className={cn(styles, 'text-red-80 bg-red-0')}>
-          {statusMap[status]}
-        </Badge>
-      );
-
-    case 'finished':
-      return (
-        <Badge size="m" className={cn(styles, 'text-gray-80 bg-gray-5')}>
-          {statusMap[status]}
-        </Badge>
-      );
-
-    default:
-      return null;
-  }
+  return (
+    <Badge size="m" className={cn(styles, baseClasses)}>
+      {statusMap[status]}
+    </Badge>
+  );
 };
