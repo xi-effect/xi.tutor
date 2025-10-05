@@ -29,8 +29,7 @@ export const useWelcomeRoleForm = () => {
       await transitionStageForward.mutateAsync();
       navigate({
         to: '/welcome/socials',
-        // @ts-expect-error - TanStack Router search params typing issue
-        search: (prev) => ({ ...prev, ...search }),
+        search: { ...search },
       });
     } catch {
       return;
