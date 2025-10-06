@@ -34,10 +34,7 @@ export const Lessons = () => {
         <AssignLessonButton className="lg:hidden" />
       </div>
       <div className="flex flex-row">
-        <ScrollArea
-          className="h-[196px] w-full overflow-x-auto overflow-y-hidden"
-          scrollBarProps={{ orientation: 'horizontal' }}
-        >
+        <ScrollArea className="h-[196px] w-full" scrollBarProps={{ orientation: 'horizontal' }}>
           <div className="flex flex-row gap-8">
             {[...new Array(10)].map((_, index) => (
               <Lesson key={index} />

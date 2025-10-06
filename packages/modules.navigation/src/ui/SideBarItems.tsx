@@ -30,7 +30,7 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
     }
 
     if (pathname.includes('call')) {
-      if (url === 'classrooms') return true;
+      if (url === '/classrooms') return true;
       else return false;
     }
 

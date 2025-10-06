@@ -10,7 +10,7 @@ export const useWhiteboards = (limit: number = 20) => {
   );
 
   return {
-    whiteboards: data || [],
+    whiteboards: data?.results || [],
     isError,
     isLoading,
     ...rest,

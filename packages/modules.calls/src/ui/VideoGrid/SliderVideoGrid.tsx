@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { getTrackReferenceId } from '@livekit/components-core';
 import { TrackLoopProps, TrackRefContext } from '@livekit/components-react';
 import { OrientationLayoutT } from './VideoGridLayout';
 import { Carousel } from './Carousel';
 import { Children, isValidElement, cloneElement, useState } from 'react';
+import type { TrackReferenceOrPlaceholder } from '@livekit/components-core';
 
 export type TrackLoopT = {
   maxVisibleTiles: number;
@@ -11,8 +11,8 @@ export type TrackLoopT = {
 
 const cloneSingleChild = (
   children: React.ReactNode | React.ReactNode[],
-  props?: Record<string, any>,
-  key?: any,
+  props?: Record<string, unknown>,
+  key?: React.Key,
 ) =>
   Children.map(children, (child) => {
     if (isValidElement(child) && Children.only(children)) {
@@ -30,15 +30,11 @@ export const SliderVideoGrid = ({
   const [currentIndex, setCurrentIndex] = useState(0);
   const visibleTracks = tracks.slice(currentIndex, currentIndex + maxVisibleTiles);
 
+  const isPrevDisabled = currentIndex - maxVisibleTiles < 0;
+  const isNextDisabled = currentIndex + maxVisibleTiles >= tracks.length;
+
   const handleCheckDisabled = (type: 'prev' | 'next') => {
-    switch (type) {
-      case 'prev':
-        return currentIndex - maxVisibleTiles < 0;
-      case 'next':
-        return currentIndex + maxVisibleTiles >= tracks.length;
-      default:
-        return false;
-    }
+    return type === 'prev' ? isPrevDisabled : isNextDisabled;
   };
 
   const handleNext = () => {
@@ -61,7 +57,7 @@ export const SliderVideoGrid = ({
         handleCheckDisabled={handleCheckDisabled}
         orientation={orientation}
       >
-        {visibleTracks.map((trackReference: any, index: number) => (
+        {visibleTracks.map((trackReference: TrackReferenceOrPlaceholder, index: number) => (
           <TrackRefContext.Provider
             value={trackReference}
             key={getTrackReferenceId(trackReference)}
