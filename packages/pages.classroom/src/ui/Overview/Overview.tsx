@@ -176,7 +176,10 @@ export const Overview = () => {
           >
             <div className="flex flex-row gap-8 pb-4">
               {materialsMock.map((material) => (
-                <CardMaterials key={material.id} value={material as CardMaterialsProps['value']} />
+                <CardMaterials
+                  key={material.id}
+                  accessTypes={material as CardMaterialsProps['accessTypes']}
+                />
               ))}
             </div>
           </ScrollArea>

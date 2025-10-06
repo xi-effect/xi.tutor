@@ -63,7 +63,7 @@ export const CardMaterials = ({ accessTypes }: CardMaterialsProps) => {
       <div className="flex flex-col items-start justify-start gap-4">
         <div className="flex flex-row items-center justify-start gap-2">
           {Icon && <Icon className={iconClassName} aria-label={typeMaterial} />}
-          <div className="text-l-base font-medium text-gray-100">{name || ''}</div>
+          <div className="text-l-base font-medium text-gray-100">{name}</div>
         </div>
 
         <div className="flex flex-row items-center justify-start gap-2">
