@@ -1,8 +1,8 @@
-import { classroomsApiConfig, ClassroomsQueryKey, ClassroomT } from 'common.api';
+import { ClassroomT, studentApiConfig, StudentQueryKey } from 'common.api';
 import { useQuery } from '@tanstack/react-query';
 import { getAxiosInstance } from 'common.config';
 
-export const useFetchClassrooms = (
+export const useFetchClassroomsByStudent = (
   searchParams?: {
     limit?: number;
     lastOpenedBefore?: string;
@@ -10,13 +10,13 @@ export const useFetchClassrooms = (
   disabled?: boolean,
 ) => {
   const { data, isError, isLoading, ...rest } = useQuery({
-    queryKey: [ClassroomsQueryKey.GetClassrooms, searchParams],
+    queryKey: [StudentQueryKey.Classrooms, searchParams],
     queryFn: async () => {
       const axiosInst = await getAxiosInstance();
 
       const response = await axiosInst({
-        method: classroomsApiConfig[ClassroomsQueryKey.GetClassrooms].method,
-        url: classroomsApiConfig[ClassroomsQueryKey.GetClassrooms].getUrl(),
+        method: studentApiConfig[StudentQueryKey.Classrooms].method,
+        url: studentApiConfig[StudentQueryKey.Classrooms].getUrl(),
         params: {
           limit: searchParams?.limit || 20,
           last_opened_before: searchParams?.lastOpenedBefore,

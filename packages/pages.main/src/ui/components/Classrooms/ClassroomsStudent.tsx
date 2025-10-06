@@ -4,12 +4,12 @@ import { ScrollArea } from '@xipkg/scrollarea';
 import { Classroom } from './Classroom';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useNavigate } from '@tanstack/react-router';
-import { useFetchClassrooms } from 'common.services';
+import { useFetchClassroomsByStudent } from 'common.services';
 import { useNoteVisibility } from '../../../hooks';
 import { NoteForStudent } from './NoteForStudent';
 
 export const ClassroomsStudent = () => {
-  const { data: classrooms, isLoading } = useFetchClassrooms();
+  const { data: classrooms, isLoading } = useFetchClassroomsByStudent();
   const { isHidden, hideNote } = useNoteVisibility(false);
 
   const navigate = useNavigate();
