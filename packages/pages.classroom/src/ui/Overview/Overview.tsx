@@ -1,6 +1,6 @@
 // import { Badge } from '@xipkg/badge';
 import { useParams } from '@tanstack/react-router';
-import { useGetClassroom, useGroupStudentsList } from 'common.services';
+import { useGetClassroom } from 'common.services';
 import { OverviewSkeleton } from './OverviewSkeleton';
 import { SectionContainer } from './SectionContainer';
 import { MaterialsList } from './MaterialsLIst';
@@ -10,15 +10,9 @@ import { StudentsList } from './StudentsList';
 export const Overview = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
   const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
-  const {
-    data: groupStudents,
-    isLoading: isLoadingGroupStudents,
-    isError: isErrorGroupStudents,
-    refetch,
-  } = useGroupStudentsList(classroomId);
 
-  if (isLoading && isLoadingGroupStudents) {
-    return <OverviewSkeleton numberOfSections={3} />;
+  if (isLoading) {
+    return <OverviewSkeleton numberOfSections={2} />;
   }
 
   if (isError || !classroom) {
@@ -84,12 +78,7 @@ export const Overview = () => {
       </SectionContainer>
       {classroom.kind === 'group' && (
         <SectionContainer title="Ученики" tabLink="">
-          <StudentsList
-            students={groupStudents}
-            classroomId={classroomId}
-            isError={isErrorGroupStudents}
-            onRetry={refetch}
-          />
+          <StudentsList classroomId={classroomId} />
         </SectionContainer>
       )}
     </div>
