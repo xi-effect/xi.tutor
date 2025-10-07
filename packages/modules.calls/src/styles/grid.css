@@ -14,19 +14,39 @@
 
 .lk-grid-layout {
   --lk-grid-gap: 1rem;
-  --lk-tile-height: 204px;
-  --lk-tile-width: 294px;
+  --lk-tile-height: 200px;
+  --lk-tile-width: 200px;
+  --lk-tile-size: 200px;
+  --lk-aspect-ratio: 1;
   --lk-col-count: 1;
   --lk-row-count: 1;
+  --lk-device-type: desktop;
   
   display: grid;
   gap: var(--lk-grid-gap);
   grid-template-columns: repeat(var(--lk-col-count), 1fr);
-  grid-template-rows: repeat(var(--lk-row-count), 1fr);
+  grid-auto-rows: minmax(0, 1fr); /* Исправление LiveKit для гибких строк */
   width: 100%;
   height: var(--available-height);
   max-height: var(--available-height);
   overflow: hidden;
+}
+
+/* Адаптивная сетка с соотношением сторон 1:1 */
+.lk-grid-layout.adaptive-grid {
+  transition: grid-template-columns 0.3s ease, grid-template-rows 0.3s ease;
+}
+
+/* Плитки участников с квадратным соотношением сторон */
+.lk-grid-layout .lk-participant-tile {
+  aspect-ratio: var(--lk-aspect-ratio);
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  contain: layout style paint;
+  transform: translateZ(0); /* Аппаратное ускорение */
+  transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
 .lk-grid-layout[data-lk-pagination="true"] {
@@ -72,7 +92,7 @@
 }
 
 .lk-pagination-control button {
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--xi-bg-gray-0);
   border: none;
   border-radius: 50%;
   width: 40px;
@@ -80,7 +100,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: var(--xi-text-gray-100);
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -105,8 +125,11 @@
   
   .lk-grid-layout {
     --lk-grid-gap: 0.5rem;
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(auto-fit, minmax(150px, 1fr));
+    --lk-tile-size: 150px;
+  }
+  
+  .lk-grid-layout[data-lk-device-type="mobile"] {
+    --lk-grid-gap: 8px;
   }
   
   .lk-pagination-control {
@@ -122,6 +145,11 @@
   
   .lk-grid-layout {
     --lk-grid-gap: 0.75rem;
+    --lk-tile-size: 180px;
+  }
+  
+  .lk-grid-layout[data-lk-device-type="tablet"] {
+    --lk-grid-gap: 12px;
   }
 }
 
@@ -129,6 +157,11 @@
 @media (min-width: 1025px) {
   .lk-grid-layout {
     --lk-grid-gap: 1rem;
+    --lk-tile-size: 200px;
+  }
+  
+  .lk-grid-layout[data-lk-device-type="desktop"] {
+    --lk-grid-gap: 16px;
   }
 }
 
@@ -150,6 +183,29 @@
 .lk-participant-tile {
   contain: layout style paint;
   transform: translateZ(0); /* Активируем аппаратное ускорение */
+}
+
+/* Дополнительные стили для адаптивной сетки */
+.lk-grid-layout.adaptive-grid .lk-participant-tile {
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--xi-bg-gray-0);
+}
+
+/* Индикаторы состояния для адаптивной сетки */
+.lk-grid-layout.adaptive-grid .lk-participant-tile[data-lk-speaking="true"] {
+  transition: box-shadow 0.2s ease;
+  box-shadow: 0 0 0 2px var(--xi-green-60);
+}
+
+.lk-grid-layout.adaptive-grid .lk-participant-tile[data-lk-muted="true"] {
+  opacity: 0.8;
+}
+
+/* Фокус и доступность для адаптивной сетки */
+.lk-grid-layout.adaptive-grid .lk-participant-tile:focus-visible {
+  outline: 2px solid var(--xi-green-60);
+  outline-offset: 2px;
 }
 
 /* Анимации */

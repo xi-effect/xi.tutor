@@ -11,11 +11,11 @@ import {
   useSwipe,
 } from '@livekit/components-react';
 import { useSearch } from '@tanstack/react-router';
-import { useSize } from '../../hooks';
+import { useSize, useAdaptiveGrid } from '../../hooks';
 import { ParticipantTile } from '../Participant';
 import { SliderVideoGrid } from './SliderVideoGrid';
 import { SearchParams } from '../../types/router';
-import { GRID_CONFIG } from '../../config/grid';
+import { GRID_CONFIG, getGridLayoutsForScreen } from '../../config/grid';
 
 export interface PaginationIndicatorProps {
   totalPageCount: number;
@@ -134,36 +134,70 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
   const isOneItem = useEmptyItemContainerOfUser(tracks.length);
   const gridEl = React.createRef<HTMLDivElement>();
 
-  const { layout } = useGridLayout(
+  // Используем адаптивную сетку с кастомными конфигурациями
+  const { isMobile, isTablet, isDesktop, tileSize } = useAdaptiveGrid(
+    gridEl as React.RefObject<HTMLDivElement>,
+    tracks.length,
+  );
+
+  // Получаем кастомные конфигурации для текущего размера экрана
+  const customGridLayouts = getGridLayoutsForScreen(
+    typeof window !== 'undefined' ? window.innerWidth : 1024,
+  );
+
+  const { layout: livekitLayout } = useGridLayout(
     gridEl as React.RefObject<HTMLDivElement>,
     tracks.length + (isOneItem ? 1 : 0),
+    {
+      gridLayouts: customGridLayouts,
+    },
   );
-  const pagination = usePagination(layout.maxTiles + (isOneItem ? 1 : 0), tracks);
+
+  const pagination = usePagination(livekitLayout.maxTiles + (isOneItem ? 1 : 0), tracks);
 
   useSwipe(gridEl as React.RefObject<HTMLElement>, {
     onLeftSwipe: pagination.nextPage,
     onRightSwipe: pagination.prevPage,
   });
 
-  // Установка CSS переменных для динамической сетки
+  // Установка CSS переменных для динамической сетки с адаптивностью
   React.useEffect(() => {
-    if (gridEl.current && layout) {
-      gridEl.current.style.setProperty('--lk-col-count', layout.columns.toString());
-      gridEl.current.style.setProperty('--lk-row-count', layout.rows.toString());
+    if (gridEl.current && livekitLayout) {
+      gridEl.current.style.setProperty('--lk-col-count', livekitLayout.columns.toString());
+      gridEl.current.style.setProperty('--lk-row-count', livekitLayout.rows.toString());
+
+      // Устанавливаем кастомные переменные для адаптивности
+      gridEl.current.style.setProperty('--lk-tile-size', `${tileSize.width}px`);
+      gridEl.current.style.setProperty('--lk-aspect-ratio', '1');
+
+      // Переменные для разных устройств
+      gridEl.current.style.setProperty(
+        '--lk-device-type',
+        isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop',
+      );
     }
-  }, [layout, gridEl]);
+  }, [livekitLayout, gridEl, tileSize, isMobile, isTablet, isDesktop]);
 
   return (
     <div className="m-auto w-full" style={{ height: 'var(--available-height)' }}>
       <div
         ref={gridEl}
-        style={{ gap: '1rem', maxWidth: '100%', margin: '0 auto' }}
+        style={
+          {
+            gap: '1rem',
+            maxWidth: '100%',
+            margin: '0 auto',
+            '--lk-tile-width': `${tileSize.width}px`,
+            '--lk-tile-height': `${tileSize.height}px`,
+          } as React.CSSProperties
+        }
         data-lk-pagination={pagination.totalPageCount + (isOneItem ? 1 : 0) > 1}
-        className="lk-grid-layout"
+        data-lk-device-type={isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop'}
+        className="lk-grid-layout adaptive-grid"
       >
         <TrackLoop tracks={pagination.tracks}>{props.children}</TrackLoop>
         {isOneItem && <EmptyItemContainerOfUser />}
-        {tracks.length > layout.maxTiles && (
+        {tracks.length > livekitLayout.maxTiles && (
           <PaginationIndicator
             totalPageCount={pagination.totalPageCount}
             currentPage={pagination.currentPage}
