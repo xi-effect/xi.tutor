@@ -4,7 +4,7 @@ import { usePersistentUserChoices } from '../../../../hooks/usePersistentUserCho
 import { useMemo } from 'react';
 import { LocalAudioTrack, LocalVideoTrack } from 'livekit-client';
 import { useCallStore } from '../../../../store/callStore';
-import { serverUrl, serverUrlDev, isDevMode } from '../../../../utils/config';
+import { serverUrl, serverUrlDev, isDevMode, devToken } from '../../../../utils/config';
 import { useRoom } from '../../../../providers/RoomProvider';
 
 interface MediaDevicesProps {
@@ -62,15 +62,7 @@ export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
       console.log('Attempting to connect to room...');
 
       // Подключаемся к комнате через LiveKit
-      await room.connect(isDevMode ? serverUrlDev : serverUrl, token);
-
-      // Публикуем треки если они есть
-      if (audioTrack && !audioTrack.isMuted) {
-        await room.localParticipant.publishTrack(audioTrack);
-      }
-      if (videoTrack && !videoTrack.isMuted) {
-        await room.localParticipant.publishTrack(videoTrack);
-      }
+      await room.connect(isDevMode ? serverUrlDev : serverUrl, isDevMode ? devToken : token);
 
       // Устанавливаем соединение
       updateStore('connect', true);
