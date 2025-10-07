@@ -63,6 +63,9 @@ export const useAddStudentFromGroup = ({ classroom_id }: { classroom_id: string 
           response.data,
         );
       }
+      queryClient.invalidateQueries({
+        queryKey: [EnrollmentsQueryKey.GetAllStudents],
+      });
     },
   });
 

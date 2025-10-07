@@ -63,6 +63,9 @@ export const useDeleteStudentFromGroup = ({ classroom_id }: { classroom_id: stri
           response.data,
         );
       }
+      queryClient.invalidateQueries({
+        queryKey: [EnrollmentsQueryKey.GetAllStudents],
+      });
     },
   });
 
