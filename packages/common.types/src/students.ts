@@ -13,3 +13,9 @@ export type TutorStudentSchemaMarshal = {
   tutorship: TutorshipSchema;
   user: UserProfileSchema;
 };
+
+export type GroupStudentsListSchema = {
+  user_id: number;
+  username: string;
+  display_name: string | null;
+};
