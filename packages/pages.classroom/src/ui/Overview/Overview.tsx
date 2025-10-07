@@ -3,9 +3,11 @@ import { useParams } from '@tanstack/react-router';
 import { useGetClassroom } from 'common.services';
 import { OverviewSkeleton } from './OverviewSkeleton';
 import { SectionContainer } from './SectionContainer';
-import { MaterialsList } from './MaterialsLIst';
+import { MaterialsList } from './MaterialsList';
 import { PaymentsList } from './PaymentsList';
 import { StudentsList } from './StudentsList';
+
+import { CardMaterialsProps, materialsMock } from '../CardMaterials';
 
 export const Overview = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
@@ -71,7 +73,7 @@ export const Overview = () => {
         </div>
       </div> */}
       <SectionContainer title="Материалы" tabLink="materials">
-        <MaterialsList />
+        <MaterialsList materials={materialsMock as CardMaterialsProps['accessTypes'][]} />
       </SectionContainer>
       <SectionContainer title="Оплаты" tabLink="payments">
         <PaymentsList />

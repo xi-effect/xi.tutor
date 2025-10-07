@@ -13,7 +13,7 @@ export const SectionContainer = ({ title, tabLink, children }: SectionContainerP
     <SectionHeader title={title} tabLink={tabLink} />
     <div className="flex flex-row">
       <ScrollArea
-        className="h-[110px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
+        className="min-h-[110px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
         scrollBarProps={{ orientation: 'horizontal' }}
       >
         {children}
