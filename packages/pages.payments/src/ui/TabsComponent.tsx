@@ -7,7 +7,7 @@ import { TemplatesGrid } from './Templates';
 import { useInfiniteQuery } from '../hooks';
 import { useCurrentUser } from 'common.services';
 import { useSearch, useNavigate } from '@tanstack/react-router';
-import { ChartsPage } from './Charts';
+// import { ChartsPage } from './Charts';
 
 type TabsComponentPropsT = {
   onApprovePayment: (payment: PaymentT) => void;
@@ -70,9 +70,9 @@ export const TabsComponent = ({ onApprovePayment }: TabsComponentPropsT) => {
           Журнал оплат
         </Tabs.Trigger>
 
-        <Tabs.Trigger value="charts" className="text-m-base font-medium text-gray-100">
+        {/* <Tabs.Trigger value="charts" className="text-m-base font-medium text-gray-100">
           Аналитика
-        </Tabs.Trigger>
+        </Tabs.Trigger> */}
 
         {/* Скрываем последнюю вкладку для студентов */}
         {isTutor && (
@@ -97,9 +97,9 @@ export const TabsComponent = ({ onApprovePayment }: TabsComponentPropsT) => {
           />
         </Tabs.Content>
 
-        <Tabs.Content value="charts">
+        {/* <Tabs.Content value="charts">
           <ChartsPage />
-        </Tabs.Content>
+        </Tabs.Content> */}
 
         {/* Скрываем контент последней вкладки для студентов */}
         {isTutor && (
