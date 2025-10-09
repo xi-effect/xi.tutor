@@ -5,22 +5,15 @@ import { useTranslation } from 'react-i18next';
 
 import { SidebarTrigger, useSidebar } from '@xipkg/sidebar';
 import { useMediaQuery } from '@xipkg/utils';
-import { UserProfile } from '@xipkg/userprofile';
-import { Button } from '@xipkg/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@xipkg/dropdown';
 
 import { Logo } from 'common.ui';
 import { useAuth } from 'common.auth';
 
 import { useMenuStore } from '../../store';
 
-import { SelectRole } from './SelectRole';
 import { Notifications } from './Notifications';
+import { MobileUserMenu } from './MobileUserMenu';
+import { DesktopUserMenu } from './DesktopUserMenu';
 import { useCurrentUser } from 'common.services';
 // import { TestNotificationButton } from './TestNotificationButton';
 // import { NotificationDebug } from './NotificationDebug';
@@ -92,27 +85,23 @@ export const Header = ({
       </div>
       <div className="ml-auto flex flex-row items-center gap-4">
         <Notifications />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon">
-              <UserProfile id="userprofile" userId={user?.id || 0} size="m" withOutText />
-            </Button>
-          </DropdownMenuTrigger>
-
-          <DropdownMenuContent side="bottom" align="end">
-            <DropdownMenuItem>
-              <SelectRole />
-            </DropdownMenuItem>
-
-            <DropdownMenuItem onClick={handleOpenProfile} className="text-gray-80 text-sm">
-              {t('profile')}
-            </DropdownMenuItem>
-
-            <DropdownMenuItem onClick={handleLogout} className="text-gray-80 text-sm">
-              {t('logout')}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {isMobile ? (
+          <MobileUserMenu
+            userId={user?.id || 0}
+            onOpenProfile={handleOpenProfile}
+            onLogout={handleLogout}
+            profileText={t('profile')}
+            logoutText={t('logout')}
+          />
+        ) : (
+          <DesktopUserMenu
+            userId={user?.id || 0}
+            onOpenProfile={handleOpenProfile}
+            onLogout={handleLogout}
+            profileText={t('profile')}
+            logoutText={t('logout')}
+          />
+        )}
       </div>
 
       <UserSettings open={open} setOpen={setOpen} />

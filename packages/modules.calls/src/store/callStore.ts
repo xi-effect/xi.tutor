@@ -32,6 +32,8 @@ type useCallStoreT = {
   connect: LiveKitRoomProps['connect'];
   // началась ли ВКС для пользователя
   isStarted: boolean | undefined;
+  // состояние подключения
+  isConnecting: boolean;
 
   mode: 'compact' | 'full';
 
@@ -67,6 +69,7 @@ export const useCallStore = create<useCallStoreT>()(
       videoDeviceId: undefined,
       connect: undefined,
       isStarted: undefined,
+      isConnecting: false,
       mode: 'full',
 
       // токен для конференции

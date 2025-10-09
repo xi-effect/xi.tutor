@@ -9,6 +9,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     description: 'Подготовка к ЕГЭ по математике',
     created_at: '2025-01-15T10:00:00Z',
     student_id: 42,
+    subject_id: 1,
   },
   {
     id: 2,
@@ -18,6 +19,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     description: 'Подготовка к ОГЭ по русскому языку',
     created_at: '2025-01-16T11:30:00Z',
     student_id: 38,
+    subject_id: 1,
   },
   {
     id: 3,
@@ -27,6 +29,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     description: 'Изучение английского языка с нуля',
     created_at: '2025-01-17T09:15:00Z',
     student_id: 45,
+    subject_id: 1,
   },
   {
     id: 4,
@@ -36,6 +39,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     description: 'Подготовка к ЕГЭ по физике',
     created_at: '2025-01-18T14:20:00Z',
     student_id: 51,
+    subject_id: 1,
   },
   {
     id: 5,
@@ -45,6 +49,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     description: 'Подготовка к ЕГЭ по химии',
     created_at: '2025-01-19T16:45:00Z',
     student_id: 47,
+    subject_id: 1,
   },
   {
     id: 6,
@@ -54,6 +59,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     description: 'Подготовка к ЕГЭ по биологии',
     created_at: '2025-01-20T13:00:00Z',
     student_id: 53,
+    subject_id: 1,
   },
   {
     id: 7,
@@ -63,6 +69,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     description: 'Подготовка к ЕГЭ по истории',
     created_at: '2025-01-21T15:30:00Z',
     student_id: 49,
+    subject_id: 1,
   },
   {
     id: 8,
@@ -71,6 +78,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     kind: 'group',
     description: 'Курс по английскому языку для группы',
     created_at: '2025-01-22T12:00:00Z',
+    subject_id: 1,
   },
   {
     id: 9,
@@ -79,6 +87,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     kind: 'group',
     description: 'Курс по математике для группы',
     created_at: '2025-01-23T10:30:00Z',
+    subject_id: 1,
   },
   {
     id: 10,
@@ -87,6 +96,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     kind: 'group',
     description: 'Курс по физике для группы',
     created_at: '2025-01-24T11:45:00Z',
+    subject_id: 1,
   },
   {
     id: 11,
@@ -95,6 +105,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     kind: 'group',
     description: 'Курс по химии для группы',
     created_at: '2025-01-25T14:15:00Z',
+    subject_id: 1,
   },
   {
     id: 12,
@@ -103,6 +114,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     kind: 'group',
     description: 'Курс по биологии для группы',
     created_at: '2025-01-26T16:30:00Z',
+    subject_id: 1,
   },
   {
     id: 111,
@@ -112,6 +124,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     description: 'Подготовка к ЕГЭ по математике',
     created_at: '2025-01-15T10:00:00Z',
     student_id: 42,
+    subject_id: 1,
   },
   {
     id: 112,
@@ -121,6 +134,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     description: 'Подготовка к ОГЭ по русскому языку',
     created_at: '2025-01-16T11:30:00Z',
     student_id: 38,
+    subject_id: 1,
   },
   {
     id: 113,
@@ -130,6 +144,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     description: 'Изучение английского языка с нуля',
     created_at: '2025-01-17T09:15:00Z',
     student_id: 45,
+    subject_id: 1,
   },
   {
     id: 114,
@@ -139,6 +154,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     description: 'Подготовка к ЕГЭ по физике',
     created_at: '2025-01-18T14:20:00Z',
     student_id: 51,
+    subject_id: 1,
   },
   {
     id: 115,
@@ -148,6 +164,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     description: 'Подготовка к ЕГЭ по химии',
     created_at: '2025-01-19T16:45:00Z',
     student_id: 47,
+    subject_id: 1,
   },
   {
     id: 116,
@@ -157,6 +174,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     description: 'Подготовка к ЕГЭ по биологии',
     created_at: '2025-01-20T13:00:00Z',
     student_id: 53,
+    subject_id: 1,
   },
   {
     id: 117,
@@ -166,6 +184,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     description: 'Подготовка к ЕГЭ по истории',
     created_at: '2025-01-21T15:30:00Z',
     student_id: 49,
+    subject_id: 1,
   },
   {
     id: 118,
@@ -174,6 +193,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     kind: 'group',
     description: 'Курс по английскому языку для группы',
     created_at: '2025-01-22T12:00:00Z',
+    subject_id: 1,
   },
   {
     id: 119,
@@ -182,6 +202,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     kind: 'group',
     description: 'Курс по математике для группы',
     created_at: '2025-01-23T10:30:00Z',
+    subject_id: 1,
   },
   {
     id: 120,
@@ -190,6 +211,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     kind: 'group',
     description: 'Курс по физике для группы',
     created_at: '2025-01-24T11:45:00Z',
+    subject_id: 1,
   },
   {
     id: 121,
@@ -198,6 +220,7 @@ export const classroomsMock: ClassroomPropsT[] = [
     kind: 'group',
     description: 'Курс по химии для группы',
     created_at: '2025-01-25T14:15:00Z',
+    subject_id: 1,
   },
   {
     id: 1112,
@@ -206,5 +229,6 @@ export const classroomsMock: ClassroomPropsT[] = [
     kind: 'group',
     description: 'Курс по биологии для группы',
     created_at: '2025-01-26T16:30:00Z',
+    subject_id: 1,
   },
 ];

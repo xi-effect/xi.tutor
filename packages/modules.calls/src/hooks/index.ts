@@ -1,4 +1,3 @@
-export { useLivekitToken } from './useLivekitToken';
 export { useSize } from './useSize';
 export { useInitUserDevices } from './useInitUserDevices';
 export { useLiveKitDataChannel, useLiveKitDataChannelListener } from './useLiveKitDataChannel';
@@ -12,3 +11,4 @@ export { useResolveInitiallyDefaultDeviceId } from './useResolveInitiallyDefault
 export { useCannotUseDevice } from './useCannotUseDevice';
 export { useWatchPermissions } from './useWatchPermissions';
 export { useStartCall, type StartCallData } from './useStartCall';
+export { useResponsiveGrid, useAdaptiveGrid } from './useResponsiveGrid';

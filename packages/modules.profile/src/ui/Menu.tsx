@@ -13,10 +13,10 @@ const options: ItemT[] = [
     name: 'Личные данные',
     query: 'personalInfo',
   },
-  {
-    name: 'Персонализация',
-    query: 'personalisation',
-  },
+  // {
+  //   name: 'Персонализация',
+  //   query: 'personalisation',
+  // },
   {
     name: 'Безопасность',
     query: 'security',

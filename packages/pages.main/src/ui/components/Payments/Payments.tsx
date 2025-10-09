@@ -73,7 +73,7 @@ export const Payments = () => {
       <div className="flex flex-row">
         {paymentsMock && paymentsMock.length > 0 && (
           <ScrollArea
-            className="h-[110px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
+            className="h-[110px] w-full sm:w-[calc(100vw-104px)]"
             scrollBarProps={{ orientation: 'horizontal' }}
           >
             <div className="flex flex-row gap-8">

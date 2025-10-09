@@ -11,6 +11,7 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "@xipkg/avatar": "3.0.10",
     "@xipkg/badge": "2.0.12",
     "@xipkg/button": "3.2.0",
     "@xipkg/icons": "^2.5.4",
@@ -26,6 +27,7 @@
     "@tanstack/react-virtual": "3.13.9",
     "features.table": "*",
     "features.invites": "*",
+    "features.group.add": "*",
     "features.students.list": "*",
     "common.services": "*",
     "common.env": "*",

@@ -9,8 +9,8 @@ export const useInitUserDevices = () => {
   const videoDevices = useMediaDevices({ kind: 'videoinput' });
   const audioDevices = useMediaDevices({ kind: 'audioinput' });
 
-  console.log('videoDevices', videoDevices);
-  console.log('audioDevices', audioDevices);
+  // console.log('videoDevices', videoDevices);
+  // console.log('audioDevices', audioDevices);
 
   const updateStore = useCallStore((state) => state.updateStore);
 

@@ -21,6 +21,7 @@
     "@xipkg/sidebar": "0.2.0",
     "@xipkg/userprofile": "4.0.14",
     "@xipkg/utils": "1.8.0",
+    "@xipkg/drawer": "0.1.0",
     "common.auth": "*",
     "common.services": "*",
     "common.types": "*",
@@ -29,7 +30,7 @@
     "i18next": "24.2.2",
     "modules.profile": "*",
     "react-i18next": "15.4.1",
-    "sonner": "2.0.1",
+    "sonner": "^2.0.7",
     "swiper": "^11.2.6",
     "zod": "3.24.2",
     "zustand": "^5.0.3"

@@ -17,12 +17,12 @@ export const ModeSyncProvider = ({ children }: ModeSyncProviderProps) => {
 
   useEffect(() => {
     if (room && connect) {
-      console.log('🔗 ModeSyncProvider: Room is connected and ready for data channel');
+      // console.log('🔗 ModeSyncProvider: Room is connected and ready for data channel');
     } else {
-      console.log('⏳ ModeSyncProvider: Waiting for room connection...', {
-        hasRoom: !!room,
-        connect,
-      });
+      // console.log('⏳ ModeSyncProvider: Waiting for room connection...', {
+      //   hasRoom: !!room,
+      //   connect,
+      // });
     }
   }, [room, connect]);
 

@@ -5,11 +5,16 @@ export const IndividualUser = ({ userId }: { userId: number }) => {
   const { data: user } = useUserById(userId.toString());
 
   return (
-    <UserProfile
-      text={user?.display_name ?? user?.username}
-      userId={userId}
-      size="l"
-      classNameText="text-m-base font-medium text-gray-100 w-full line-clamp-1"
-    />
+    <div className="flex flex-row items-center gap-2">
+      <UserProfile
+        text={user?.display_name ?? user?.username}
+        userId={userId}
+        size="l"
+        withOutText
+      />
+      <div className="text-xl-base font-semibold text-gray-100">
+        {user?.display_name ?? user?.username}
+      </div>
+    </div>
   );
 };

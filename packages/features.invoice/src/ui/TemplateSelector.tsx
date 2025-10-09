@@ -73,7 +73,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
             className="hover:bg-gray-5 flex cursor-pointer flex-row gap-1 rounded-lg"
           >
             <div className="max-w-[300px] truncate font-medium text-gray-100">{template.name}</div>
-            <div className="text-gray-60 ml-auto text-sm">{template.price} ₽</div>
+            <div className="text-gray-60 ml-auto text-sm text-nowrap">{template.price} ₽</div>
           </DropdownMenuItem>
         ))}
       </DropdownMenuContent>

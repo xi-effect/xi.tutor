@@ -15,7 +15,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { UserProfile } from '@xipkg/userprofile';
 import { cn } from '@xipkg/utils';
 import { useState } from 'react';
-import { useStudentsList, useDeleteStudent } from '../services';
+import { useDeleteStudent } from '../services';
+import { useStudentsList } from 'common.services';
 import { TutorStudentSchemaMarshal } from 'common.types';
 
 export const ModalStudentsList = ({ children }: { children: React.ReactNode }) => {
@@ -104,7 +105,7 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
                           <TooltipTrigger asChild>
                             <Button
                               onClick={() => handleDeleteMode(student.tutorship.student_id)}
-                              className="bg-gray-5 hover:bg-gray-0 ml-auto hidden size-8 rounded-lg p-0 group-hover:flex"
+                              className="bg-gray-5 hover:bg-gray-0 ml-auto size-8 rounded-lg p-0"
                               variant="ghost"
                               size="s"
                             >

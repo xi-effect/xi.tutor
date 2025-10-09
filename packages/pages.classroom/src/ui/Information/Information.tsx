@@ -6,7 +6,11 @@ import { Form, FormControl, FormField, FormItem, FormLabel } from '@xipkg/form';
 
 import { useEffect, useRef, useCallback } from 'react';
 import { ClassroomT, ClassroomStatusT } from 'common.api';
-import { useUpdateClassroomStatus, useUpdateIndividualClassroom } from 'common.services';
+import {
+  useUpdateClassroomStatus,
+  useUpdateGroupClassroom,
+  useUpdateIndividualClassroom,
+} from 'common.services';
 import { Autocomplete } from './Autocomplete';
 interface FormData {
   status: ClassroomStatusT;
@@ -16,6 +20,7 @@ interface FormData {
 export const Information = ({ classroom }: { classroom: ClassroomT }) => {
   console.log('classroom', classroom);
 
+  const { updateGroupClassroom, isUpdating: isUpdatingGroupClassroom } = useUpdateGroupClassroom();
   const { updateClassroomStatus, isUpdating } = useUpdateClassroomStatus();
   const { updateIndividualClassroom, isUpdating: isUpdatingIndividualClassroom } =
     useUpdateIndividualClassroom();
@@ -36,8 +41,6 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
 
   const onSubmit = useCallback(
     async (data: FormData) => {
-      console.log('Form submitted with data:', data);
-
       if (!classroom?.id) {
         console.error('Classroom ID is required');
         return;
@@ -49,7 +52,6 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
         const subjectChanged = data.subject !== initialValues.current.subject;
 
         if (!statusChanged && !subjectChanged) {
-          console.log('No changes detected');
           return;
         }
 
@@ -66,11 +68,9 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
                 },
                 {
                   onSuccess: () => {
-                    console.log('Classroom status updated successfully');
                     resolve(true);
                   },
                   onError: (error) => {
-                    console.error('Failed to update classroom status:', error);
                     reject(error);
                   },
                 },
@@ -79,7 +79,28 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
           );
         }
 
-        if (subjectChanged) {
+        if (subjectChanged && classroom.kind === 'group') {
+          promises.push(
+            new Promise((resolve, reject) => {
+              updateGroupClassroom(
+                {
+                  classroomId: classroom.id,
+                  data: { subject_id: data.subject },
+                },
+                {
+                  onSuccess: () => {
+                    resolve(true);
+                  },
+                  onError: (error) => {
+                    reject(error);
+                  },
+                },
+              );
+            }),
+          );
+        }
+
+        if (subjectChanged && classroom.kind === 'individual') {
           promises.push(
             new Promise((resolve, reject) => {
               updateIndividualClassroom(
@@ -89,11 +110,9 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
                 },
                 {
                   onSuccess: () => {
-                    console.log('Classroom subject updated successfully');
                     resolve(true);
                   },
                   onError: (error) => {
-                    console.error('Failed to update classroom subject:', error);
                     reject(error);
                   },
                 },
@@ -107,7 +126,6 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
 
         // Обновляем исходные значения только после успешного завершения всех операций
         initialValues.current = { ...data };
-        console.log('All updates completed successfully');
       } catch (error) {
         console.error('Failed to update classroom:', error);
         // Здесь можно добавить уведомление пользователю об ошибке
@@ -177,7 +195,10 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
                 <FormItem className="flex flex-col">
                   <FormLabel>Предмет</FormLabel>
                   <FormControl>
-                    <Autocomplete field={field} disabled={isUpdatingIndividualClassroom} />
+                    <Autocomplete
+                      field={field}
+                      disabled={isUpdatingIndividualClassroom || isUpdatingGroupClassroom}
+                    />
                   </FormControl>
                 </FormItem>
               )}

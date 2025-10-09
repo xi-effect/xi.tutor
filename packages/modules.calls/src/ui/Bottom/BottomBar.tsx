@@ -10,8 +10,8 @@ import { useCallback } from 'react';
 import { DisconnectButton } from './DisconnectButton';
 import { ScreenShareButton } from './ScreenShareButton';
 import { WhiteBoardButton } from './WhiteBoardButton';
-import { ChatButton } from './ChatButton';
-import { RaiseHandButton } from './RaiseHandButton';
+// import { ChatButton } from './ChatButton';
+// import { RaiseHandButton } from './RaiseHandButton';
 
 export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
   const { saveAudioInputEnabled, saveVideoInputEnabled } = usePersistentUserChoices({
@@ -59,8 +59,8 @@ export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
           <div className="bg-gray-0 border-gray-10 flex h-[48px] items-center justify-center gap-1 rounded-[16px] border p-1">
             <ScreenShareButton />
             <WhiteBoardButton />
-            <ChatButton />
-            <RaiseHandButton />
+            {/* <ChatButton /> */}
+            {/* <RaiseHandButton /> */}
           </div>
         </div>
         <DisconnectButton />
