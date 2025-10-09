@@ -51,14 +51,14 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
         <ModalHeader className="max-w-85 sm:max-w-150">
           <ModalCloseButton />
           <ModalTitle className="m-0 pr-10 text-gray-100 sm:pr-0">
-            Подтверждение оплаты по счету
+            Подтверждение оплаты по счёту
           </ModalTitle>
           <ModalDescription />
         </ModalHeader>
         <Form {...form}>
           <form onSubmit={handleSubmit(onFormSubmit)}>
             <ModalBody className="flex flex-col gap-6">
-              <div className="grid grid-cols-4 gap-6 sm:grid-cols-3">
+              <div className="grid grid-cols-4 gap-6 sm:grid-cols-2">
                 <div className="col-span-1 flex flex-col">
                   {formatDate(paymentDetails.datePayment)}
                 </div>
@@ -69,12 +69,9 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                   src="https://github.com/shadcn.png"
                   className="col-span-2 sm:col-span-1"
                 />
-                <div className="col-span-1 text-right">
-                  <p className="text-brand-100 font-medium">
-                    {paymentDetails.amountPayment}
-                    <span className="text-brand-40 text-xs-base">₽</span>
-                  </p>
-                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <p>Текст комментария</p>
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-m-base dark:text-gray-100">Тип оплаты</span>
@@ -114,6 +111,43 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                     </FormItem>
                   )}
                 />
+              </div>
+              <div className="flex-col-4 grid gap-2 font-normal">
+                <div className="text-gray-60 col-span-1 flex flex-row gap-4 text-sm">
+                  <p className="w-[250px]">Занятия</p>
+                  <p className="w-[84px]">Стоимость</p>
+                  <p className="w-[84px]">Количество</p>
+                  <p className="w-[84px]">Сумма</p>
+                </div>
+                <div className="text-gray-80 flex gap-4 text-base">
+                  <p className="w-[250px]">Занятие на 60 минут</p>
+                  <div className="flex gap-2">
+                    <p className="w-[78px]">
+                      {paymentDetails.amountPayment}
+                      <span className="text-brand-40 text-xs-base">₽</span>
+                    </p>
+                    <p className="text-gray-60 w-[10px]">x</p>
+                    <p className="w-[78px]">1</p>
+                    <p className="text-gray-60 w-[10px]">=</p>
+                    <p className="w-[78px]">
+                      {paymentDetails.amountPayment}
+                      <span className="text-brand-40 text-xs-base">₽</span>
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-4 text-sm">
+                  <p className="w-[250px] font-bold text-gray-100">Итого</p>
+                  <div className="flex gap-2">
+                    <p className="w-[78px]"></p>
+                    <p className="text-gray-60 w-[10px]"></p>
+                    <p className="w-[78px]"></p>
+                    <p className="text-gray-60 w-[10px]"></p>
+                    <p className="w-[78px]">
+                      {paymentDetails.amountPayment}
+                      <span className="text-brand-40 text-xs-base">₽</span>
+                    </p>
+                  </div>
+                </div>
               </div>
             </ModalBody>
             <ModalFooter className="flex max-w-85 gap-4 sm:max-w-150">
