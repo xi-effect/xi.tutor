@@ -30,6 +30,7 @@
   height: var(--available-height);
   max-height: var(--available-height);
   overflow: hidden;
+  padding: 0;
 }
 
 /* Адаптивная сетка с соотношением сторон 1:1 */
