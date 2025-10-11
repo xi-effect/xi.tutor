@@ -18,7 +18,7 @@ export function HorizontalFocusLayout({
   className = '',
 }: HorizontalFocusLayoutProps) {
   return (
-    <div className={`flex h-full w-full flex-col gap-2 ${className}`}>
+    <div className={`flex h-full w-full flex-col gap-2 p-1 ${className}`}>
       {/* Горизонтальная карусель вверху */}
       <div className="h-auto min-h-36 w-full">
         <PagedCarousel

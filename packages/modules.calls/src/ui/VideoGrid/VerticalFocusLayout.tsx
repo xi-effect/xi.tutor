@@ -14,7 +14,7 @@ interface VerticalFocusLayoutProps {
  */
 export function VerticalFocusLayout({ focus, thumbs, className = '' }: VerticalFocusLayoutProps) {
   return (
-    <div className={`flex h-full w-full flex-row gap-2 ${className}`}>
+    <div className={`flex h-full w-full flex-row gap-2 p-1 ${className}`}>
       {/* Сцена - занимает основное пространство */}
       <div className="min-w-0 flex-1">
         <FocusStage label="Focus">{focus}</FocusStage>
