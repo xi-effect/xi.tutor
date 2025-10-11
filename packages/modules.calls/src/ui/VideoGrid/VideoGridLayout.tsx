@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import '@livekit/components-styles';
 import { TrackReferenceOrPlaceholder } from '@livekit/components-core';
 import {
@@ -14,6 +14,8 @@ import { useSearch } from '@tanstack/react-router';
 import { useSize, useAdaptiveGrid } from '../../hooks';
 import { ParticipantTile } from '../Participant';
 import { SliderVideoGrid } from './SliderVideoGrid';
+import { HorizontalFocusLayout } from './HorizontalFocusLayout';
+import { VerticalFocusLayout } from './VerticalFocusLayout';
 import { SearchParams } from '../../types/router';
 import { GRID_CONFIG, getGridLayoutsForScreen } from '../../config/grid';
 
@@ -210,41 +212,49 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
 
 type CarouselContainerProps = {
   focusTrack: TrackReferenceOrPlaceholder | undefined;
-  tracks: TrackReferenceOrPlaceholder[];
   carouselTracks: TrackReferenceOrPlaceholder[];
 };
 
-export const CarouselContainer = ({
-  focusTrack,
-  tracks,
-  carouselTracks,
-}: CarouselContainerProps) => {
+export const CarouselContainer = ({ focusTrack, carouselTracks }: CarouselContainerProps) => {
   const search: SearchParams = useSearch({ strict: false });
-  const [orientation, setCarouselType] = useState<'horizontal' | 'vertical'>('horizontal');
 
-  useEffect(() => {
-    setCarouselType(search.carouselType || 'horizontal');
-  }, [search.carouselType]);
+  // Получаем ориентацию из URL параметров
+  const carouselType = search.carouselType || 'horizontal';
+  const orientation = carouselType === 'vertical' ? 'vertical' : 'horizontal';
 
-  return (
-    <div
-      className={`flex h-full ${orientation === 'horizontal' ? 'flex-col' : ''} items-start justify-between gap-4`}
-    >
-      {orientation === 'vertical' ? (
-        <>
-          {focusTrack && <FocusLayout orientation={orientation} trackRef={focusTrack} />}
-          <CarouselLayout orientation={orientation} userTracks={tracks} tracks={carouselTracks}>
-            <ParticipantTile style={{ flex: 'unset' }} className="h-[144px] w-[250px]" />
-          </CarouselLayout>
-        </>
-      ) : (
-        <>
-          <CarouselLayout orientation={orientation} userTracks={tracks} tracks={carouselTracks}>
-            <ParticipantTile style={{ flex: 'unset' }} className="h-[144px] w-[250px]" />
-          </CarouselLayout>
-          {focusTrack && <FocusLayout orientation={orientation} trackRef={focusTrack} />}
-        </>
-      )}
-    </div>
-  );
+  // Создаем фокусный элемент
+  const focusElement = useMemo(() => {
+    if (!focusTrack) return null;
+
+    return (
+      <ParticipantTile
+        isFocusToggleDisable
+        style={{
+          width: '100%',
+          height: '100%',
+        }}
+        className="h-full w-full [&_video]:object-contain lg:[&_video]:object-cover"
+        {...focusTrack}
+      />
+    );
+  }, [focusTrack]);
+
+  // Создаем превью элементы для карусели
+  const thumbElements = useMemo(() => {
+    return carouselTracks.map((track) => (
+      <ParticipantTile
+        key={`${track.participant.identity}-${track.source}`}
+        style={{ flex: 'unset' }}
+        className="h-full w-full [&_video]:object-cover"
+        {...track}
+      />
+    ));
+  }, [carouselTracks]);
+
+  // Выбираем правильный layout в зависимости от ориентации
+  if (orientation === 'vertical') {
+    return <VerticalFocusLayout focus={focusElement} thumbs={thumbElements} />;
+  }
+
+  return <HorizontalFocusLayout focus={focusElement} thumbs={thumbElements} />;
 };
