@@ -32,7 +32,7 @@ const NavigationButton = ({ onClick, disabled, orientation, direction }: Navigat
       onClick={onClick}
       className="disabled:fill-gray-80 z-10 bg-transparent fill-gray-100 p-0 text-center hover:opacity-100 disabled:cursor-not-allowed"
     >
-      <div className="bg-gray-0 flex items-center justify-center rounded-full p-2">
+      <div className="bg-gray-0/80 flex items-center justify-center rounded-full p-2">
         <ArrowUp className={`${getRotation()} fill-inherit`} />
       </div>
       <span className="sr-only">

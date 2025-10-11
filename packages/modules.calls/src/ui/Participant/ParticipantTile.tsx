@@ -225,7 +225,7 @@ export const ParticipantTile = ({
                 <div className="lk-participant-metadata p-1">
                   <div>
                     {trackReference.source === Track.Source.Camera ? (
-                      <div className="bg-gray-0 flex h-[24px] w-full gap-[6px] rounded-[8px] px-[6px] py-[4px]">
+                      <div className="bg-gray-0/80 flex h-[24px] w-full gap-[6px] rounded-[8px] px-[6px] py-[4px]">
                         {isEncrypted && <LockLockedIcon />}
                         <TrackMutedIndicator
                           trackRef={{
