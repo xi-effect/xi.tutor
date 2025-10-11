@@ -395,3 +395,7 @@
     opacity: 0.8;
   }
 } 
+
+.lk-participant-media-video[data-lk-orientation=landscape] {
+  object-fit: contain !important;
+}
