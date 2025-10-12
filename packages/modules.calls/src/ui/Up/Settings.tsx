@@ -170,7 +170,7 @@ export const Settings = ({ children }: SettingsPropsT) => {
       <SheetTrigger className="ml-2" asChild>
         {children}
       </SheetTrigger>
-      <SheetContent className="bg-gray-0 z-12200 w-[400px] rounded-tl-2xl rounded-bl-2xl border-none p-4 shadow-2xl">
+      <SheetContent className="bg-gray-0 w-[400px] rounded-tl-2xl rounded-bl-2xl border-none p-4 shadow-2xl">
         <SheetHeader className="mb-6 flex h-10 flex-row items-center justify-between space-y-0">
           <SheetTitle className="text-gray-100">Настройки</SheetTitle>
           <SheetClose className="hover:bg-gray-5 mt-0 rounded-md bg-transparent p-1">
