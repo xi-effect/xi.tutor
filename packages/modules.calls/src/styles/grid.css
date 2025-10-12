@@ -194,13 +194,76 @@
 }
 
 /* Индикаторы состояния для адаптивной сетки */
-.lk-grid-layout.adaptive-grid .lk-participant-tile[data-lk-speaking="true"] {
+.lk-grid-layout.adaptive-grid .lk-participant-tile[data-lk-speaking="true"]:not([data-lk-source="screen_share"]) {
   transition: box-shadow 0.2s ease;
   box-shadow: 0 0 0 2px var(--xi-green-60);
 }
 
-.lk-grid-layout.adaptive-grid .lk-participant-tile[data-lk-muted="true"] {
+.lk-grid-layout.adaptive-grid .lk-participant-tile[data-lk-muted="true"]:not([data-lk-source="screen_share"]) {
   opacity: 0.8;
+}
+
+/* Общие стили для всех типов сетки - индикаторы состояния (исключая screen_share) */
+.lk-participant-tile[data-lk-speaking="true"]:not([data-lk-source="screen_share"]) {
+  transition: box-shadow 0.2s ease !important;
+  box-shadow: 0 0 0 2px var(--xi-green-60) !important;
+}
+
+.lk-participant-tile[data-lk-muted="true"]:not([data-lk-source="screen_share"]) {
+  opacity: 0.8 !important;
+}
+
+.lk-participant-tile:focus-visible:not([data-lk-source="screen_share"]) {
+  outline: 2px solid var(--xi-green-60) !important;
+  outline-offset: 2px !important;
+}
+
+/* Стили для фокусных лейаутов (исключая screen_share) */
+.horizontal-focus-layout .lk-participant-tile[data-lk-speaking="true"]:not([data-lk-source="screen_share"]) {
+  transition: box-shadow 0.2s ease !important;
+  box-shadow: 0 0 0 2px var(--xi-green-60) !important;
+}
+
+.horizontal-focus-layout .lk-participant-tile[data-lk-muted="true"]:not([data-lk-source="screen_share"]) {
+  opacity: 0.8 !important;
+}
+
+.vertical-focus-layout .lk-participant-tile[data-lk-speaking="true"]:not([data-lk-source="screen_share"]) {
+  transition: box-shadow 0.2s ease !important;
+  box-shadow: 0 0 0 2px var(--xi-green-60) !important;
+}
+
+.vertical-focus-layout .lk-participant-tile[data-lk-muted="true"]:not([data-lk-source="screen_share"]) {
+  opacity: 0.8 !important;
+}
+
+/* Стили для участников в карусели (исключая screen_share) */
+.horizontal-focus-layout .carousel .lk-participant-tile[data-lk-speaking="true"]:not([data-lk-source="screen_share"]) {
+  transition: box-shadow 0.2s ease !important;
+  box-shadow: 0 0 0 2px var(--xi-green-60) !important;
+}
+
+.horizontal-focus-layout .carousel .lk-participant-tile[data-lk-muted="true"]:not([data-lk-source="screen_share"]) {
+  opacity: 0.8 !important;
+}
+
+.vertical-focus-layout .carousel .lk-participant-tile[data-lk-speaking="true"]:not([data-lk-source="screen_share"]) {
+  transition: box-shadow 0.2s ease !important;
+  box-shadow: 0 0 0 2px var(--xi-green-60) !important;
+}
+
+.vertical-focus-layout .carousel .lk-participant-tile[data-lk-muted="true"]:not([data-lk-source="screen_share"]) {
+  opacity: 0.8 !important;
+}
+
+/* Универсальные стили для всех элементов с атрибутами LiveKit (исключая screen_share) */
+[data-lk-speaking="true"]:not([data-lk-source="screen_share"]) {
+  transition: box-shadow 0.2s ease !important;
+  box-shadow: 0 0 0 2px var(--xi-green-60) !important;
+}
+
+[data-lk-muted="true"]:not([data-lk-source="screen_share"]) {
+  opacity: 0.8 !important;
 }
 
 /* Фокус и доступность для адаптивной сетки */

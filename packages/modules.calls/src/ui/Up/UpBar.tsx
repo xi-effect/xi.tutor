@@ -4,6 +4,7 @@ import {
   Speaker,
   SpeakerHorizontal,
   Link as LinkIcon,
+  Settings as SettingsIcon,
   Maximize,
   Minimize,
   ArrowLeft,
@@ -19,6 +20,7 @@ import { toast } from 'sonner';
 import { env } from 'common.env';
 import { useTracks } from '@livekit/components-react';
 import { Track } from 'livekit-client';
+import { Settings } from './Settings';
 
 export const UpBar = () => {
   const { callId } = useParams({ strict: false });
@@ -187,7 +189,7 @@ export const UpBar = () => {
       >
         <External className="fill-gray-100" />
       </button> */}
-      {/* <Settings>
+      <Settings>
         <Button
           type="button"
           variant="ghost"
@@ -195,7 +197,7 @@ export const UpBar = () => {
         >
           <SettingsIcon className="fill-gray-100" />
         </Button>
-      </Settings> */}
+      </Settings>
     </div>
   );
 };
