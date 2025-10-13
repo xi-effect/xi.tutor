@@ -16,6 +16,7 @@ import { ParticipantTile } from '../Participant';
 import { SliderVideoGrid } from './SliderVideoGrid';
 import { HorizontalFocusLayout } from './HorizontalFocusLayout';
 import { VerticalFocusLayout } from './VerticalFocusLayout';
+import { GridPaginationControls } from './GridPaginationControls';
 import { SearchParams } from '../../types/router';
 import { GRID_CONFIG, getGridLayoutsForScreen } from '../../config/grid';
 
@@ -199,10 +200,16 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
       >
         <TrackLoop tracks={pagination.tracks}>{props.children}</TrackLoop>
         {isOneItem && <EmptyItemContainerOfUser />}
+
+        {/* Новые элементы управления пагинацией для grid режима */}
         {tracks.length > livekitLayout.maxTiles && (
-          <PaginationIndicator
-            totalPageCount={pagination.totalPageCount}
+          <GridPaginationControls
+            canPrev={pagination.currentPage > 1}
+            canNext={pagination.currentPage < pagination.totalPageCount}
+            onPrev={pagination.prevPage}
+            onNext={pagination.nextPage}
             currentPage={pagination.currentPage}
+            totalPages={pagination.totalPageCount}
           />
         )}
       </div>
