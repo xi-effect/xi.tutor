@@ -6,9 +6,8 @@ import { handleError, showSuccess } from 'common.services';
 
 // Определяем тип для данных обновления пароля
 export type PasswordData = {
-  old_password: string;
+  password: string;
   new_password: string;
-  confirm_password: string;
 };
 
 export const useUpdatePassword = () => {

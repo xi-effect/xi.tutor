@@ -50,9 +50,8 @@ export const useChangePassword = () => {
 
     try {
       await updatePassword.mutateAsync({
-        old_password: currentPassword,
+        password: currentPassword,
         new_password: newPassword,
-        confirm_password: newPassword,
       });
 
       toast('Пароль успешно изменен');
