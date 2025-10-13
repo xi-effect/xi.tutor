@@ -1,13 +1,26 @@
 import { Outlet, createFileRoute, useRouter } from '@tanstack/react-router';
-import { Navigation } from 'modules.navigation';
-import {
-  CompactView,
-  LiveKitProvider,
-  RoomProvider,
-  useCallStore,
-  ModeSyncProvider,
-} from 'modules.calls';
-import { useEffect } from 'react';
+import { LoadingScreen } from 'common.ui';
+import { Suspense, lazy, useEffect } from 'react';
+
+// Динамические импорты для крупных модулей
+const Navigation = lazy(() =>
+  import('modules.navigation').then((module) => ({ default: module.Navigation })),
+);
+const CallComponents = lazy(() =>
+  import('modules.calls').then((module) => ({
+    default: () => (
+      <module.LiveKitProvider>
+        <module.RoomProvider>
+          <module.ModeSyncProvider>
+            <module.CompactView firstId="1" secondId="2">
+              <Outlet />
+            </module.CompactView>
+          </module.ModeSyncProvider>
+        </module.RoomProvider>
+      </module.LiveKitProvider>
+    ),
+  })),
+);
 
 export const Route = createFileRoute('/(app)/_layout')({
   head: () => ({
@@ -37,28 +50,26 @@ export const Route = createFileRoute('/(app)/_layout')({
 
 function LayoutComponent() {
   const router = useRouter();
-  const updateStore = useCallStore((state) => state.updateStore);
 
   useEffect(() => {
     const pathname = router.state.location.pathname;
     if (pathname.includes('/call')) {
-      updateStore('mode', 'full');
+      // Обновляем store через динамический импорт
+      import('modules.calls').then((module) => {
+        module.useCallStore.getState().updateStore('mode', 'full');
+      });
     }
-  }, [router.state.location.pathname, updateStore]);
+  }, [router.state.location.pathname]);
 
   return (
     <div className="relative flex min-h-svh flex-col overflow-hidden">
-      <Navigation>
-        <RoomProvider>
-          <LiveKitProvider>
-            <ModeSyncProvider>
-              <CompactView firstId="1" secondId="2">
-                <Outlet />
-              </CompactView>
-            </ModeSyncProvider>
-          </LiveKitProvider>
-        </RoomProvider>
-      </Navigation>
+      <Suspense fallback={<LoadingScreen />}>
+        <Navigation>
+          <Suspense fallback={<LoadingScreen />}>
+            <CallComponents />
+          </Suspense>
+        </Navigation>
+      </Suspense>
     </div>
   );
 }
