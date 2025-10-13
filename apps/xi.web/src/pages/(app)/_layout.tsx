@@ -9,15 +9,15 @@ const Navigation = lazy(() =>
 const CallComponents = lazy(() =>
   import('modules.calls').then((module) => ({
     default: () => (
-      <module.LiveKitProvider>
-        <module.RoomProvider>
+      <module.RoomProvider>
+        <module.LiveKitProvider>
           <module.ModeSyncProvider>
             <module.CompactView firstId="1" secondId="2">
               <Outlet />
             </module.CompactView>
           </module.ModeSyncProvider>
-        </module.RoomProvider>
-      </module.LiveKitProvider>
+        </module.LiveKitProvider>
+      </module.RoomProvider>
     ),
   })),
 );

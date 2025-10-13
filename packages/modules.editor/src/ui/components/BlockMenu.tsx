@@ -5,9 +5,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Copy, H1, H2, H3, Text, Trash } from '@xipkg/icons';
+import { Copy, H1, H2, H3, Text, Trash, Image } from '@xipkg/icons';
 import { ReactNode, useState } from 'react';
 import { useBlockMenuActions, useYjsContext } from '../../hooks';
+import { useInterfaceStore } from '../../store/interfaceStore';
 
 type BlockMenuPropsT = {
   children: (props: { open: boolean }) => ReactNode;
@@ -16,6 +17,7 @@ type BlockMenuPropsT = {
 export const BlockMenu = ({ children }: BlockMenuPropsT) => {
   const [open, setOpen] = useState(false);
   const { editor } = useYjsContext();
+  const { openModal } = useInterfaceStore();
 
   const { changeType, duplicate, remove } = useBlockMenuActions(editor);
   return (
@@ -57,6 +59,14 @@ export const BlockMenu = ({ children }: BlockMenuPropsT) => {
         >
           <H3 size="sm" />
           <span className="text-sm">Заголовок 3</span>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem
+          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+          onSelect={() => openModal('uploadImage')}
+        >
+          <Image size="sm" />
+          <span className="text-sm">Изображение</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
