@@ -58,7 +58,10 @@ export const useChangePassword = () => {
       setStage('success');
     } catch (error: any) {
       if (error?.response?.data?.detail === 'Wrong password') {
-        toast('Неверный пароль');
+        form.setError('currentPassword', {
+          type: 'manual',
+          message: 'Неверный пароль',
+        });
       } else {
         toast('Произошла ошибка');
       }
