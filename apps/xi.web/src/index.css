@@ -69,4 +69,4 @@ html {
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 
-@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+/* @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *)); */
