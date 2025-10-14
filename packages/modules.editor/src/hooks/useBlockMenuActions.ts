@@ -4,18 +4,41 @@ import { NodeSelection, TextSelection } from '@tiptap/pm/state';
 
 export const useBlockMenuActions = (editor: Editor | null) => {
   const duplicate = () => {
-    if (!editor) return;
+    if (!editor || !editor.isEditable) return false;
 
-    const { state } = editor.view;
-    const { selection } = state;
-    const { $from } = selection;
+    try {
+      const { state } = editor;
+      const { selection } = state;
+      const chain = editor.chain().focus();
 
-    const node = $from.parent;
-    const nodeType = node.type;
+      if (selection instanceof NodeSelection) {
+        const selectedNode = selection.node;
+        const insertPos = selection.to;
 
-    const newNode = nodeType.create(node.attrs, node.content);
+        chain.insertContentAt(insertPos, selectedNode.toJSON()).run();
+        return true;
+      }
 
-    editor.chain().focus().insertContentAt($from.after(), newNode).run();
+      const $anchor = selection.$anchor;
+
+      for (let depth = 1; depth <= $anchor.depth; depth++) {
+        const node = $anchor.node(depth);
+
+        if (node.type.name === 'doc' || !node.type.spec.group) {
+          continue;
+        }
+
+        const nodeStart = $anchor.start(depth);
+        const insertPos = Math.min(nodeStart + node.nodeSize, state.doc.content.size);
+
+        chain.insertContentAt(insertPos, node.toJSON()).run();
+        return true;
+      }
+
+      return false;
+    } catch {
+      return false;
+    }
   };
 
   const deleteNodeAtPosition = (editor: Editor, pos: number, nodeSize: number): boolean => {
