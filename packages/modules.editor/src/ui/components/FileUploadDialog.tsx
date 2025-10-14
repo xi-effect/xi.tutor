@@ -5,16 +5,32 @@ import { useInterfaceStore } from '../../store/interfaceStore';
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
 import { optimizeImage } from '../../utils/optimizeImage';
+import { useUploadPublicFile } from 'common.services';
+import { useBlockMenuActions, useYjsContext } from '../../hooks';
 
 export const ImageUploadModal = () => {
   const { closeModal, activeModal } = useInterfaceStore();
   const [mode, setMode] = useState<'upload' | 'link'>('upload');
 
+  const { editor } = useYjsContext();
+
+  const { mutateAsync: uploadImage } = useUploadPublicFile();
+
+  const { insertImage } = useBlockMenuActions(editor);
+
   const handleInput = async (files: File[]) => {
     if (!files) return;
     const file = files[0];
-    const processed = await optimizeImage(file);
-    console.log(processed);
+    const optimizedImage = await optimizeImage(file);
+    try {
+      const uploadedUrl = await uploadImage(optimizedImage);
+
+      insertImage(uploadedUrl);
+
+      closeModal();
+    } catch (err) {
+      console.error('Ошибка при загрузке изображения:', err);
+    }
   };
 
   const handleAddLink = () => {

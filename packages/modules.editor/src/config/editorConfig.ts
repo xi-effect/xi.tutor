@@ -4,6 +4,7 @@ import CollaborationCaret from '@tiptap/extension-collaboration-caret';
 import { HocuspocusProvider } from '@hocuspocus/provider';
 import { Placeholder } from '@tiptap/extensions';
 import { Underline } from '@tiptap/extension-underline';
+import { Image } from '@tiptap/extension-image';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { TaskList, TaskItem } from '@tiptap/extension-list';
 import { UniqueID } from '@tiptap/extension-unique-id';
@@ -31,6 +32,7 @@ export const getExtensions = (
         color: '#3b82f6',
       },
     }),
+    Image.configure({ inline: false }),
     Underline,
     TextAlign.configure({
       types: ['heading', 'paragraph'],
