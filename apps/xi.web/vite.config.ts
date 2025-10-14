@@ -34,6 +34,20 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       sourcemap: mode === 'debug',
       rollupOptions: {
         output: {
+          // Убеждаемся, что чанки загружаются в правильном порядке
+          chunkFileNames: (chunkInfo) => {
+            const facadeModuleId = chunkInfo.facadeModuleId;
+            if (facadeModuleId) {
+              // Критические чанки загружаются первыми
+              if (facadeModuleId.includes('react') || facadeModuleId.includes('react-dom')) {
+                return 'assets/[name]-[hash].js';
+              }
+              if (facadeModuleId.includes('sonner')) {
+                return 'assets/[name]-[hash].js';
+              }
+            }
+            return 'assets/[name]-[hash].js';
+          },
           manualChunks: (id) => {
             // Выделяем node_modules в отдельные чанки
             if (id.includes('node_modules')) {
@@ -79,6 +93,10 @@ export default defineConfig(({ mode }: ConfigEnv) => {
               if (id.includes('@dnd-kit') || id.includes('prismjs') || id.includes('pica')) {
                 return 'vendor-utils';
               }
+              // Sonner и другие UI утилиты
+              if (id.includes('sonner')) {
+                return 'vendor-sonner';
+              }
               // Остальные node_modules
               return 'vendor-misc';
             }
@@ -116,7 +134,8 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       esbuildOptions: {
         target: 'es2020',
       },
-      // include: ['pages.classrooms'], // Здесь можно указать пакеты, которые должны быть предварительно связаны
+      // Включаем критические зависимости для предварительной обработки
+      include: ['react', 'react-dom', 'sonner', 'i18next', 'react-i18next'],
     },
     server: {
       watch: {
@@ -142,7 +161,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       },
       // убедитесь, что symlink‑ы раскрываются ‑ это настройка по‑умолчанию
       preserveSymlinks: false,
-      dedupe: ['react', 'react-dom'],
+      dedupe: ['react', 'react-dom', 'sonner'],
     },
     css: {
       // Оптимизация CSS
