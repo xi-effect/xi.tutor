@@ -35,26 +35,27 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       rollupOptions: {
         output: {
           // Убеждаемся, что чанки загружаются в правильном порядке
-          chunkFileNames: (chunkInfo) => {
-            const facadeModuleId = chunkInfo.facadeModuleId;
-            if (facadeModuleId) {
-              // Критические чанки загружаются первыми
-              if (facadeModuleId.includes('react') || facadeModuleId.includes('react-dom')) {
-                return 'assets/[name]-[hash].js';
-              }
-              if (facadeModuleId.includes('sonner')) {
-                return 'assets/[name]-[hash].js';
-              }
-            }
-            return 'assets/[name]-[hash].js';
-          },
+          // chunkFileNames: (chunkInfo) => {
+          //   const facadeModuleId = chunkInfo.facadeModuleId;
+          //   if (facadeModuleId) {
+          //     // React чанк должен загружаться первым
+          //     if (facadeModuleId.includes('react') || facadeModuleId.includes('react-dom')) {
+          //       return 'assets/00-[name]-[hash].js';
+          //     }
+          //     // Sonner загружается вторым
+          //     if (facadeModuleId.includes('sonner')) {
+          //       return 'assets/01-[name]-[hash].js';
+          //     }
+          //   }
+          //   return 'assets/[name]-[hash].js';
+          // },
           manualChunks: (id) => {
             // Выделяем node_modules в отдельные чанки
             if (id.includes('node_modules')) {
-              // React и связанные библиотеки
-              if (id.includes('react') || id.includes('react-dom')) {
-                return 'vendor-react';
-              }
+              // React и React-DOM должны быть в одном чанке
+              // if (id.includes('react') || id.includes('react-dom') || id.includes('react/jsx-runtime')) {
+              //   return 'vendor-react';
+              // }
               // Router и query
               if (id.includes('@tanstack')) {
                 return 'vendor-router';
@@ -135,7 +136,9 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         target: 'es2020',
       },
       // Включаем критические зависимости для предварительной обработки
-      include: ['react', 'react-dom', 'sonner', 'i18next', 'react-i18next'],
+      include: ['react', 'react-dom', 'react/jsx-runtime', 'sonner', 'i18next', 'react-i18next'],
+      // Принудительно предварительно обрабатываем React
+      force: true,
     },
     server: {
       watch: {
@@ -161,7 +164,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       },
       // убедитесь, что symlink‑ы раскрываются ‑ это настройка по‑умолчанию
       preserveSymlinks: false,
-      dedupe: ['react', 'react-dom', 'sonner'],
+      dedupe: ['react', 'react-dom', 'react/jsx-runtime', 'sonner'],
     },
     css: {
       // Оптимизация CSS
