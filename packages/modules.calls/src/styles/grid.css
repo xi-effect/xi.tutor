@@ -73,47 +73,28 @@
 }
 
 .lk-pagination-indicator span[data-lk-active] {
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 1);
 }
 
-.lk-pagination-control {
+/* Стили для элементов управления пагинацией в grid режиме */
+.lk-grid-pagination-controls {
   position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  inset: 0;
+  pointer-events: none;
   z-index: 10;
-  opacity: 0;
-  transition: opacity 0.2s ease;
 }
 
-.lk-pagination-control[data-lk-user-interaction="true"] {
-  opacity: 1;
-}
-
-.lk-pagination-control button {
-  background: var(--xi-bg-gray-0);
-  border: none;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--xi-text-gray-100);
-  cursor: pointer;
+.lk-grid-pagination-controls button {
+  pointer-events: auto;
   transition: all 0.2s ease;
 }
 
-.lk-pagination-control button:hover:not(:disabled) {
-  background: rgba(0, 0, 0, 0.7);
-  transform: scale(1.1);
+.lk-grid-pagination-controls button:hover:not(:disabled) {
+  transform: scale(1.05);
 }
 
-.lk-pagination-control button:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
+.lk-grid-pagination-controls button:active:not(:disabled) {
+  transform: scale(0.95);
 }
 
 /* Адаптивность для мобильных устройств */
@@ -131,10 +112,6 @@
   
   .lk-grid-layout[data-lk-device-type="mobile"] {
     --lk-grid-gap: 8px;
-  }
-  
-  .lk-pagination-control {
-    display: none; /* Скрываем кнопки на мобильных, используем свайпы */
   }
 }
 
@@ -203,69 +180,6 @@
   opacity: 0.8;
 }
 
-/* Общие стили для всех типов сетки - индикаторы состояния (исключая screen_share) */
-.lk-participant-tile[data-lk-speaking="true"]:not([data-lk-source="screen_share"]) {
-  transition: box-shadow 0.2s ease !important;
-  box-shadow: 0 0 0 2px var(--xi-green-60) !important;
-}
-
-.lk-participant-tile[data-lk-muted="true"]:not([data-lk-source="screen_share"]) {
-  opacity: 0.8 !important;
-}
-
-.lk-participant-tile:focus-visible:not([data-lk-source="screen_share"]) {
-  outline: 2px solid var(--xi-green-60) !important;
-  outline-offset: 2px !important;
-}
-
-/* Стили для фокусных лейаутов (исключая screen_share) */
-.horizontal-focus-layout .lk-participant-tile[data-lk-speaking="true"]:not([data-lk-source="screen_share"]) {
-  transition: box-shadow 0.2s ease !important;
-  box-shadow: 0 0 0 2px var(--xi-green-60) !important;
-}
-
-.horizontal-focus-layout .lk-participant-tile[data-lk-muted="true"]:not([data-lk-source="screen_share"]) {
-  opacity: 0.8 !important;
-}
-
-.vertical-focus-layout .lk-participant-tile[data-lk-speaking="true"]:not([data-lk-source="screen_share"]) {
-  transition: box-shadow 0.2s ease !important;
-  box-shadow: 0 0 0 2px var(--xi-green-60) !important;
-}
-
-.vertical-focus-layout .lk-participant-tile[data-lk-muted="true"]:not([data-lk-source="screen_share"]) {
-  opacity: 0.8 !important;
-}
-
-/* Стили для участников в карусели (исключая screen_share) */
-.horizontal-focus-layout .carousel .lk-participant-tile[data-lk-speaking="true"]:not([data-lk-source="screen_share"]) {
-  transition: box-shadow 0.2s ease !important;
-  box-shadow: 0 0 0 2px var(--xi-green-60) !important;
-}
-
-.horizontal-focus-layout .carousel .lk-participant-tile[data-lk-muted="true"]:not([data-lk-source="screen_share"]) {
-  opacity: 0.8 !important;
-}
-
-.vertical-focus-layout .carousel .lk-participant-tile[data-lk-speaking="true"]:not([data-lk-source="screen_share"]) {
-  transition: box-shadow 0.2s ease !important;
-  box-shadow: 0 0 0 2px var(--xi-green-60) !important;
-}
-
-.vertical-focus-layout .carousel .lk-participant-tile[data-lk-muted="true"]:not([data-lk-source="screen_share"]) {
-  opacity: 0.8 !important;
-}
-
-/* Универсальные стили для всех элементов с атрибутами LiveKit (исключая screen_share) */
-[data-lk-speaking="true"]:not([data-lk-source="screen_share"]) {
-  transition: box-shadow 0.2s ease !important;
-  box-shadow: 0 0 0 2px var(--xi-green-60) !important;
-}
-
-[data-lk-muted="true"]:not([data-lk-source="screen_share"]) {
-  opacity: 0.8 !important;
-}
-
 /* Фокус и доступность для адаптивной сетки */
 .lk-grid-layout.adaptive-grid .lk-participant-tile:focus-visible {
   outline: 2px solid var(--xi-green-60);
@@ -281,46 +195,11 @@
   transition: opacity 0.2s ease;
 }
 
-/* Убираем анимацию приближения - она отвлекает от видео */
-
-/* Фокус и доступность */
-.lk-participant-tile:focus-visible {
-  outline: 2px solid var(--brand-100);
-  outline-offset: 2px;
-}
-
-/* Индикаторы состояния */
-.lk-participant-tile[data-lk-speaking="true"] {
-  box-shadow: 0 0 0 2px var(--brand-100);
-}
-
-.lk-participant-tile[data-lk-muted="true"] {
-  opacity: 0.8;
-}
-
-/* Карусель */
-.lk-carousel {
-  --lk-max-visible-tiles: 1;
-  overflow: hidden;
-}
-
 /* Focus Layout Container - для демонстрации экрана */
 .lk-focus-layout-wrapper {
   height: var(--available-height);
   max-height: var(--available-height);
   overflow: hidden;
-}
-
-.lk-carousel[data-lk-orientation="horizontal"] {
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-}
-
-.lk-carousel[data-lk-orientation="vertical"] {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
 }
 
 /* Стили для новых компонентов FocusLayout */
@@ -424,17 +303,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
-  & svg {
-    width: 16px;
-    height: 16px;
-  }
 }
 
-.lk-connection-quality[data-lk-quality="excellent"] {
-  & svg {
-    fill: var(--xi-green-80);
-  }
+.lk-connection-quality svg {
+  width: 16px;
+  height: 16px;
+}
+
+.lk-connection-quality[data-lk-quality="excellent"] svg {
+  fill: var(--xi-green-80);
 }
 
 .lk-participant-tile .lk-focus-toggle-button {
@@ -449,15 +326,13 @@
   justify-content: center;
 }
 
-.lk-participant-tile:hover {
-  .lk-focus-toggle-button {
-    opacity: 0.8;
-  }
+.lk-participant-tile:hover .lk-focus-toggle-button {
+  opacity: 0.8;
+}
 
-  .lk-connection-quality {
-    opacity: 0.8;
-  }
-} 
+.lk-participant-tile:hover .lk-connection-quality {
+  opacity: 0.8;
+}
 
 .lk-participant-media-video[data-lk-orientation=landscape] {
   object-fit: contain !important;

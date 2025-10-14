@@ -6,3 +6,4 @@ export { FocusLayoutShell } from './FocusLayoutShell';
 export { HorizontalFocusLayout } from './HorizontalFocusLayout';
 export { VerticalFocusLayout } from './VerticalFocusLayout';
 export { PaginationControls } from './PaginationControls';
+export { GridPaginationControls } from './GridPaginationControls';

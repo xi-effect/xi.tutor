@@ -21,7 +21,7 @@ export const ClassroomsStudent = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 px-4 pt-4 pb-1">
+    <div className="flex flex-col gap-4 px-4 pt-1 pb-1">
       <div className="flex flex-row items-center justify-start gap-2">
         <h2 className="text-xl-base font-medium text-gray-100">Кабинеты</h2>
         <Tooltip delayDuration={1000}>

@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Badge } from '@xipkg/badge';
-import { TelegramFilled, Conference } from '@xipkg/icons';
+// import { Badge } from '@xipkg/badge';
+import { Conference } from '@xipkg/icons';
 import { ClassroomTutorResponseSchema } from 'common.api';
-import { handleTelegramClick } from '../../../utils/header';
+// import { handleTelegramClick } from '../../../utils/header';
 import { IndividualUser } from './IndividualUser';
 // import { EditableDescription } from './EditableDescription';
 import { Button } from '@xipkg/button';
@@ -72,7 +72,7 @@ export const Content = ({ classroom }: ContentProps) => {
 
           <StatusBadge status={classroom.status} kind={classroom.kind} />
 
-          <Badge
+          {/* <Badge
             className="bg-brand-0 text-s-base text-brand-80 flex cursor-pointer flex-row items-center gap-2 font-medium"
             onClick={handleTelegramClick}
             variant="secondary"
@@ -80,7 +80,7 @@ export const Content = ({ classroom }: ContentProps) => {
           >
             <TelegramFilled className="fill-brand-80 size-4" />
             {`@nickname`}
-          </Badge>
+          </Badge> */}
         </div>
       </div>
 

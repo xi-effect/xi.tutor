@@ -49,14 +49,14 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
       item.query === profileType ? 'fill-brand-80 dark:fill-brand-80' : 'group-hover:fill-brand-80'
     }`;
 
-    switch (index) {
-      case 0:
+    switch (item.query) {
+      case 'personalInfo':
         return <Account className={iconClasses} key="account-icon" />;
-      case 1:
+      case 'personalisation':
         return <Palette className={iconClasses} key="palette-icon" />;
-      case 2:
+      case 'security':
         return <Key className={iconClasses} key="key-icon" />;
-      case 3:
+      case 'notifications':
         return <Notification className={iconClasses} key="notification-icon" />;
       default:
         return null;
