@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useEffect, useState } from 'react';
 import {
   Grid,
@@ -79,19 +80,18 @@ export const UpBar = () => {
       return;
     }
 
-    const newSearch = { ...search };
-
-    if (carouselType === 'horizontal' || carouselType === 'vertical') {
-      newSearch.carouselType = carouselType;
-    } else if (carouselType === 'grid') {
-      delete newSearch.carouselType;
-    }
-
     // Обновляем URL только если параметры действительно изменились
-    if (JSON.stringify(newSearch) !== JSON.stringify(search)) {
+    const currentCarouselType = search.carouselType;
+    const newCarouselType = carouselType === 'grid' ? undefined : carouselType;
+
+    if (currentCarouselType !== newCarouselType) {
       navigate({
-        search: newSearch,
-        replace: true, // Используем replace вместо push для избежания истории навигации
+        search: {
+          ...search,
+          // @ts-ignore
+          carouselType: newCarouselType,
+        },
+        replace: true,
       });
     }
   }, [carouselType, search, navigate]);
