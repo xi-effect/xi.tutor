@@ -41,8 +41,9 @@ export const Content = ({ classroom }: ContentProps) => {
   // Перехват параметра goto=call
   useEffect(() => {
     const searchParams = search as any;
+
     if (searchParams.goto && searchParams.goto === 'call') {
-      // Очищаем URL параметр
+      // Очищаем только goto параметр
       const url = new URL(window.location.href);
       url.searchParams.delete('goto');
       window.history.replaceState({}, '', url.toString());

@@ -4,4 +4,5 @@ export interface SearchParams {
   profile?: string;
   carouselType?: 'horizontal' | 'vertical';
   tab?: string;
+  call?: string;
 }

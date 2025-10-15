@@ -10,5 +10,6 @@ export {
   useRaisedHands,
   useHandFocus,
   useWhiteboards,
+  useSpeakingParticipant,
 } from './hooks';
 export { useCallStore } from './store';

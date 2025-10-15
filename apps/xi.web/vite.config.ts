@@ -32,75 +32,6 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       minify: mode === 'production',
       outDir: 'build',
       sourcemap: mode === 'debug',
-      rollupOptions: {
-        output: {
-          manualChunks: (id) => {
-            // Выделяем node_modules в отдельные чанки
-            if (id.includes('node_modules')) {
-              // React и связанные библиотеки
-              if (id.includes('react') || id.includes('react-dom')) {
-                return 'vendor-react';
-              }
-              // Router и query
-              if (id.includes('@tanstack')) {
-                return 'vendor-router';
-              }
-              // UI библиотеки
-              if (id.includes('@xipkg')) {
-                return 'vendor-ui';
-              }
-              // Board библиотеки (самые тяжелые) - разделяем дальше
-              if (id.includes('tldraw')) {
-                return 'vendor-tldraw';
-              }
-              if (id.includes('@hocuspocus') || id.includes('yjs') || id.includes('y-utility')) {
-                return 'vendor-collaboration';
-              }
-              if (id.includes('zustand')) {
-                return 'vendor-state';
-              }
-              // Дополнительные тяжелые библиотеки
-              if (id.includes('pica') || id.includes('webpfy')) {
-                return 'vendor-image-processing';
-              }
-              // Calls библиотеки
-              if (id.includes('livekit') || id.includes('framer-motion')) {
-                return 'vendor-calls';
-              }
-              // Editor библиотеки
-              if (id.includes('@tiptap') || id.includes('prosemirror')) {
-                return 'vendor-editor';
-              }
-              // i18n библиотеки
-              if (id.includes('i18next')) {
-                return 'vendor-i18n';
-              }
-              // Utils библиотеки
-              if (id.includes('@dnd-kit') || id.includes('prismjs') || id.includes('pica')) {
-                return 'vendor-utils';
-              }
-              // Остальные node_modules
-              return 'vendor-misc';
-            }
-
-            // Выделяем модули приложения
-            if (id.includes('modules.board')) return 'modules-board';
-            if (id.includes('modules.calls')) return 'modules-calls';
-            if (id.includes('modules.editor')) return 'modules-editor';
-            if (id.includes('modules.navigation')) return 'modules-navigation';
-            if (id.includes('pages.main')) return 'pages-main';
-            if (id.includes('pages.classroom')) return 'pages-classroom';
-            if (id.includes('pages.classrooms')) return 'pages-classrooms';
-            if (id.includes('pages.welcome')) return 'pages-welcome';
-            if (id.includes('pages.materials')) return 'pages-materials';
-            if (id.includes('pages.payments')) return 'pages-payments';
-
-            // Common пакеты
-            if (id.includes('common.')) return 'common';
-            if (id.includes('features.')) return 'features';
-          },
-        },
-      },
       terserOptions: {
         compress: {
           drop_console: true, // Удалит все console.*
@@ -116,7 +47,10 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       esbuildOptions: {
         target: 'es2020',
       },
-      // include: ['pages.classrooms'], // Здесь можно указать пакеты, которые должны быть предварительно связаны
+      // Включаем критические зависимости для предварительной обработки
+      include: ['react', 'react-dom', 'react/jsx-runtime', 'sonner', 'i18next', 'react-i18next'],
+      // Принудительно предварительно обрабатываем React
+      force: true,
     },
     server: {
       watch: {
@@ -142,7 +76,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       },
       // убедитесь, что symlink‑ы раскрываются ‑ это настройка по‑умолчанию
       preserveSymlinks: false,
-      dedupe: ['react', 'react-dom'],
+      dedupe: ['react', 'react-dom', 'react/jsx-runtime', 'sonner'],
     },
     css: {
       // Оптимизация CSS
