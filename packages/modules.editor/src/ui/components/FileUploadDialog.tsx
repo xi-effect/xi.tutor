@@ -11,6 +11,7 @@ import { useBlockMenuActions, useYjsContext } from '../../hooks';
 export const ImageUploadModal = () => {
   const { closeModal, activeModal } = useInterfaceStore();
   const [mode, setMode] = useState<'upload' | 'link'>('upload');
+  const [imageLink, setImageLink] = useState('');
 
   const { editor } = useYjsContext();
 
@@ -34,12 +35,18 @@ export const ImageUploadModal = () => {
   };
 
   const handleAddLink = () => {
-    console.log('Добавлена ссылка');
+    if (!imageLink.trim()) return;
+    insertImage(imageLink.trim());
+    closeModal();
   };
 
   return (
     <Modal open={activeModal === 'uploadImage'} onOpenChange={closeModal}>
-      <ModalContent className="max-w-md rounded-3xl p-4">
+      <ModalContent
+        aria-labelledby="modal-title"
+        aria-describedby="modal-description"
+        className="max-w-md rounded-3xl p-4"
+      >
         <ModalTitle className="flex gap-1">
           <Button
             variant={mode === 'upload' ? 'default' : 'ghost'}
@@ -75,6 +82,8 @@ export const ImageUploadModal = () => {
                   placeholder="Вставьте ссылку на изображение"
                   className="border"
                   name="fileLink"
+                  value={imageLink}
+                  onChange={(e) => setImageLink(e.target.value)}
                 />
               </div>
               <Button size="s" onClick={handleAddLink}>

@@ -105,7 +105,7 @@ export const useBlockMenuActions = (editor: Editor | null) => {
   const insertImage = (src: string, alt?: string) => {
     if (!editor) return;
 
-    editor.chain().focus().setImage({ src, alt }).run();
+    editor.chain().focus().setImage({ src, alt, width: 400 }).run();
   };
 
   return {
