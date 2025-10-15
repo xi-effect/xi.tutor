@@ -14,7 +14,7 @@ import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
 import { TooltipContent, Tooltip, TooltipTrigger } from '@xipkg/tooltip';
 import { useCallStore } from '../../store/callStore';
-import { useNavigate, useParams } from '@tanstack/react-router';
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useCurrentUser, useGetClassroom } from 'common.services';
 import { toast } from 'sonner';
 import { env } from 'common.env';
@@ -25,7 +25,8 @@ import { Settings } from './Settings';
 export const UpBar = () => {
   const { callId } = useParams({ strict: false });
   const { data: classroom } = useGetClassroom(Number(callId));
-  const [carouselType, setCarouselType] = useState<string>('grid');
+  const search = useSearch({ strict: false });
+  const [carouselType, setCarouselType] = useState<string>(search.carouselType || 'grid');
   const { isFullScreen, toggleFullScreen } = useFullScreen('videoConferenceContainer');
 
   // Получаем треки для проверки условий
@@ -62,16 +63,38 @@ export const UpBar = () => {
     });
   };
 
+  // Синхронизируем carouselType с URL параметрами
   useEffect(() => {
-    // Обновляем URL при изменении типа карусели
-    const currentUrl = new URL(window.location.href);
-    if (carouselType === 'horizontal' || carouselType === 'vertical') {
-      currentUrl.searchParams.set('carouselType', carouselType);
-    } else if (carouselType === 'grid') {
-      currentUrl.searchParams.delete('carouselType');
+    if (search.carouselType && search.carouselType !== carouselType) {
+      setCarouselType(search.carouselType);
     }
-    window.history.replaceState({}, '', currentUrl.toString());
-  }, [carouselType]);
+  }, [search.carouselType, carouselType]);
+
+  useEffect(() => {
+    // Обновляем URL при изменении типа карусели через TanStack Router
+    // НО только если мы находимся на странице call, а не classroom
+    const isOnCallPage = window.location.pathname.includes('/call/');
+
+    if (!isOnCallPage) {
+      return;
+    }
+
+    const newSearch = { ...search };
+
+    if (carouselType === 'horizontal' || carouselType === 'vertical') {
+      newSearch.carouselType = carouselType;
+    } else if (carouselType === 'grid') {
+      delete newSearch.carouselType;
+    }
+
+    // Обновляем URL только если параметры действительно изменились
+    if (JSON.stringify(newSearch) !== JSON.stringify(search)) {
+      navigate({
+        search: newSearch,
+        replace: true, // Используем replace вместо push для избежания истории навигации
+      });
+    }
+  }, [carouselType, search, navigate]);
 
   const getViewIcon = () => {
     if (carouselType === 'horizontal') {
@@ -108,7 +131,11 @@ export const UpBar = () => {
         <TooltipTrigger asChild>
           <Button
             onClick={() => {
-              navigate({ to: '/classrooms/$classroomId', params: { classroomId: callId ?? '' } });
+              navigate({
+                to: '/classrooms/$classroomId',
+                params: { classroomId: callId ?? '' },
+                search: { tab: 'overview', call: callId },
+              });
               updateStore('mode', 'compact');
             }}
             type="button"

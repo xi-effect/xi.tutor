@@ -12,6 +12,11 @@ import { ScreenShareButton } from '../Bottom/ScreenShareButton';
 import { DisconnectButton } from '../Bottom/DisconnectButton';
 import { useSpeakingParticipant } from '../../hooks/useSpeakingParticipant';
 import { isTrackReference } from '@livekit/components-core';
+import { Maximize } from '@xipkg/icons';
+import { Button } from '@xipkg/button';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useCallStore } from '../../store/callStore';
 
 export const CompactCall = ({ saveUserChoices = true }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -44,6 +49,17 @@ export const CompactCall = ({ saveUserChoices = true }) => {
 
   // Получаем говорящего участника
   const speakingParticipant = useSpeakingParticipant();
+
+  const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId' }) as { call?: string };
+  const { call } = search;
+
+  const navigate = useNavigate();
+  const updateStore = useCallStore((state) => state.updateStore);
+
+  const handleMaximize = () => {
+    navigate({ to: '/call/$callId', params: { callId: call ?? '' } });
+    updateStore('mode', 'full');
+  };
 
   return (
     <div
@@ -93,7 +109,20 @@ export const CompactCall = ({ saveUserChoices = true }) => {
           {/* <RaiseHandButton /> */}
         </div>
         <div className="bg-gray-0 border-gray-20 ml-1 flex items-center justify-center rounded-2xl border p-1 shadow-lg">
-          <DisconnectButton className="h-[32px] w-[32px]" />
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={handleMaximize}
+                className="hover:bg-gray-5 relative m-0 h-8 w-8 rounded-xl p-0 text-gray-100"
+              >
+                <Maximize className="fill-gray-100" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Вернуться в конференцию</TooltipContent>
+          </Tooltip>
+          <DisconnectButton className="h-[32px] w-[32px] rounded-xl" />
         </div>
       </div>
     </div>
