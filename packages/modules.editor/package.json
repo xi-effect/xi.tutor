@@ -40,6 +40,7 @@
     "@xipkg/popover": "^2.1.0",
     "@xipkg/select": "^2.2.5",
     "@xipkg/tabs": "^2.1.0",
+    "@xipkg/utils": "^1.8.0",
     "common.env": "*",
     "common.services": "*",
     "common.ui": "*",
