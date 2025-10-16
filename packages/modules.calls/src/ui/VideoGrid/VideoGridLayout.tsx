@@ -10,14 +10,13 @@ import {
   usePagination,
   useSwipe,
 } from '@livekit/components-react';
-import { useSearch } from '@tanstack/react-router';
 import { useSize, useAdaptiveGrid } from '../../hooks';
 import { ParticipantTile } from '../Participant';
 import { SliderVideoGrid } from './SliderVideoGrid';
 import { HorizontalFocusLayout } from './HorizontalFocusLayout';
 import { VerticalFocusLayout } from './VerticalFocusLayout';
 import { GridPaginationControls } from './GridPaginationControls';
-import { SearchParams } from '../../types/router';
+import { useCallStore } from '../../store/callStore';
 import { GRID_CONFIG, getGridLayoutsForScreen } from '../../config/grid';
 
 export interface PaginationIndicatorProps {
@@ -223,10 +222,8 @@ type CarouselContainerProps = {
 };
 
 export const CarouselContainer = ({ focusTrack, carouselTracks }: CarouselContainerProps) => {
-  const search: SearchParams = useSearch({ strict: false });
-
-  // Получаем ориентацию из URL параметров
-  const carouselType = search.carouselType || 'horizontal';
+  // Получаем ориентацию из store
+  const carouselType = useCallStore((state) => state.carouselType);
   const orientation = carouselType === 'vertical' ? 'vertical' : 'horizontal';
 
   // Создаем фокусный элемент
