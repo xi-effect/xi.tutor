@@ -1602,6 +1602,15 @@ importers:
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.1.1)
+      common.api:
+        specifier: '*'
+        version: link:../common.api
+      common.config:
+        specifier: '*'
+        version: link:../common.config
+      common.services:
+        specifier: '*'
+        version: link:../common.services
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
