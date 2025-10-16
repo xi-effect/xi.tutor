@@ -2,11 +2,8 @@ import { useCallback } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { DevicesBar } from '../shared';
-import {
-  useLocalParticipant,
-  usePersistentUserChoices,
-  VideoTrack,
-} from '@livekit/components-react';
+import { useLocalParticipant, usePersistentUserChoices } from '@livekit/components-react';
+import { VideoTrack } from '../shared';
 import { LocalAudioTrack, LocalVideoTrack, Track } from 'livekit-client';
 import { ScreenShareButton } from '../Bottom/ScreenShareButton';
 import { DisconnectButton } from '../Bottom/DisconnectButton';
