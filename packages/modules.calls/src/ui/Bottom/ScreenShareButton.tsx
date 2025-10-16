@@ -4,7 +4,7 @@ import { useTrackToggle } from '@livekit/components-react';
 import { TrackToggle } from '../shared/TrackToggle/TrackToggle';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 
-export const ScreenShareButton = () => {
+export const ScreenShareButton = ({ className }: { className?: string }) => {
   const visibleControls = { leave: true, screenShare: true };
   const browserSupportsScreenSharing = supportsScreenSharing();
 
@@ -26,6 +26,7 @@ export const ScreenShareButton = () => {
           <TooltipTrigger className="bg-transparent" asChild>
             <div>
               <TrackToggle
+                className={className}
                 source={Track.Source.ScreenShare}
                 screenShareTrack={track?.track as LocalVideoTrack}
                 screenShareEnabled={enabled}

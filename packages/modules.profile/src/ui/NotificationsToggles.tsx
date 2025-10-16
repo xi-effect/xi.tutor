@@ -43,7 +43,7 @@ export const NotificationsToggles = ({ type }: NotificationsTogglesPropsT) => {
           </div>
         )}
 
-        <div className="flex flex-row items-center justify-between p-3">
+        {/* <div className="flex flex-row items-center justify-between p-3">
           <div className="flex flex-col gap-1">
             <span className="font-inter text-m-base font-medium dark:text-gray-100">
               Начало занятия
@@ -55,9 +55,9 @@ export const NotificationsToggles = ({ type }: NotificationsTogglesPropsT) => {
           </div>
 
           <Toggle size="l" className="dark:[&>span]:bg-gray-100" />
-        </div>
+        </div> */}
 
-        <div className="flex flex-row items-center justify-between p-3">
+        {/* <div className="flex flex-row items-center justify-between p-3">
           <div className="flex flex-col gap-1">
             <span className="font-inter text-m-base font-medium dark:text-gray-100">Оплата</span>
 
@@ -67,7 +67,7 @@ export const NotificationsToggles = ({ type }: NotificationsTogglesPropsT) => {
           </div>
 
           <Toggle size="l" className="dark:[&>span]:bg-gray-100" />
-        </div>
+        </div> */}
       </div>
     </>
   );

@@ -2304,6 +2304,9 @@ importers:
       '@xipkg/button':
         specifier: 3.2.0
         version: 3.2.0(@types/react@19.1.17)(react@19.1.1)
+      '@xipkg/drawer':
+        specifier: 0.1.0
+        version: 0.1.0(@types/react-dom@19.1.11)(@types/react@19.1.17)(react-dom@19.1.1)(react@19.1.1)
       '@xipkg/dropdown':
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.1.11)(@types/react@19.1.17)(react-dom@19.1.1)(react@19.1.1)
@@ -2573,6 +2576,9 @@ importers:
       common.services:
         specifier: '*'
         version: link:../common.services
+      common.types:
+        specifier: '*'
+        version: link:../common.types
       features.group.manage:
         specifier: '*'
         version: link:../features.group.manage
@@ -9740,6 +9746,20 @@ packages:
       - react-dom
     dev: false
 
+  /@xipkg/drawer@0.1.0(@types/react-dom@19.1.11)(@types/react@19.1.17)(react-dom@19.1.1)(react@19.1.1):
+    resolution: {integrity: sha512-Wi1PPe7FRLqlyRVBfLEHwZu0rZoa6UoagBiW45B3PbctO37ha1WFF67CgKkn5qe3m3Mxc0KEg/59WVcGHIr+VQ==}
+    peerDependencies:
+      react: ^19
+    dependencies:
+      '@xipkg/utils': 1.8.0(react@19.1.1)
+      react: 19.1.1
+      vaul: 1.1.2(@types/react-dom@19.1.11)(@types/react@19.1.17)(react-dom@19.1.1)(react@19.1.1)
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
+      - react-dom
+    dev: false
+
   /@xipkg/dropdown@3.0.12(@types/react-dom@19.1.11)(@types/react@19.1.17)(react-dom@19.1.1)(react@19.1.1):
     resolution: {integrity: sha512-HboZ94Tq78zzicRxihR5G+ZC69RxYlRHByA3Hh9gV7p3QcssAXRXBJUPVOY/95nSPEHPzpQ3WOJDNDoUUgbDSw==}
     peerDependencies:
@@ -14759,6 +14779,20 @@ packages:
   /uuid@10.0.0:
     resolution: {integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==}
     hasBin: true
+    dev: false
+
+  /vaul@1.1.2(@types/react-dom@19.1.11)(@types/react@19.1.17)(react-dom@19.1.1)(react@19.1.1):
+    resolution: {integrity: sha512-ZFkClGpWyI2WUQjdLJ/BaGuV6AVQiJ3uELGk3OYtP+B6yCO7Cmn9vPFXVJkRaGkOJu3m8bQMgtyzNHixULceQA==}
+    peerDependencies:
+      react: ^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc
+      react-dom: ^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc
+    dependencies:
+      '@radix-ui/react-dialog': 1.1.15(@types/react-dom@19.1.11)(@types/react@19.1.17)(react-dom@19.1.1)(react@19.1.1)
+      react: 19.1.1
+      react-dom: 19.1.1(react@19.1.1)
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
     dev: false
 
   /victory-vendor@36.9.2:

@@ -14,6 +14,7 @@ type DevicesBarPropsT = {
   videoTrack?: LocalVideoTrack;
   videoEnabled?: boolean;
   videoTrackToggle?: TrackToggleType;
+  className?: string;
 };
 
 export const DevicesBar = ({
@@ -23,6 +24,7 @@ export const DevicesBar = ({
   videoTrack,
   videoEnabled,
   videoTrackToggle,
+  className,
 }: DevicesBarPropsT) => {
   // console.log('DevicesBar props:', {
   //   microTrack: !!microTrack,
@@ -37,6 +39,7 @@ export const DevicesBar = ({
     <>
       {microTrackToggle && (
         <TrackToggle
+          className={className}
           microTrack={microTrack}
           microEnabled={microEnabled}
           source={microTrackToggle.source}
@@ -46,6 +49,7 @@ export const DevicesBar = ({
       )}
       {videoTrackToggle && (
         <TrackToggle
+          className={className}
           videoTrack={videoTrack}
           videoEnabled={videoEnabled}
           source={videoTrackToggle.source}

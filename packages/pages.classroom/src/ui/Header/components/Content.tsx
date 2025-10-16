@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Badge } from '@xipkg/badge';
-import { Telegram, Conference } from '@xipkg/icons';
+// import { Badge } from '@xipkg/badge';
+import { Conference } from '@xipkg/icons';
 import { ClassroomTutorResponseSchema } from 'common.api';
-import { getStatusText, getStatusVariant, handleTelegramClick } from '../../../utils/header';
+// import { handleTelegramClick } from '../../../utils/header';
 import { IndividualUser } from './IndividualUser';
 // import { EditableDescription } from './EditableDescription';
 import { Button } from '@xipkg/button';
@@ -10,6 +10,7 @@ import { SubjectBadge } from './SubjectBadge';
 import { useStartCall } from 'modules.calls';
 import { useEffect, useCallback } from 'react';
 import { useSearch } from '@tanstack/react-router';
+import { StatusBadge } from '../../StatusBadge';
 
 interface ContentProps {
   classroom: ClassroomTutorResponseSchema;
@@ -40,8 +41,9 @@ export const Content = ({ classroom }: ContentProps) => {
   // Перехват параметра goto=call
   useEffect(() => {
     const searchParams = search as any;
+
     if (searchParams.goto && searchParams.goto === 'call') {
-      // Очищаем URL параметр
+      // Очищаем только goto параметр
       const url = new URL(window.location.href);
       url.searchParams.delete('goto');
       window.history.replaceState({}, '', url.toString());
@@ -68,19 +70,18 @@ export const Content = ({ classroom }: ContentProps) => {
         )}
         <div className="flex flex-row items-center gap-2">
           {classroom.subject_id && <SubjectBadge subject_id={classroom.subject_id} />}
-          <Badge variant={getStatusVariant(classroom.status)} size="m">
-            {getStatusText(classroom.status)}
-          </Badge>
 
-          <Badge
-            className="cursor-pointer"
+          <StatusBadge status={classroom.status} kind={classroom.kind} />
+
+          {/* <Badge
+            className="bg-brand-0 text-s-base text-brand-80 flex cursor-pointer flex-row items-center gap-2 font-medium"
             onClick={handleTelegramClick}
             variant="secondary"
             size="m"
           >
-            <Telegram className="fill-brand-80 mr-2 size-4" />
+            <TelegramFilled className="fill-brand-80 size-4" />
             {`@nickname`}
-          </Badge>
+          </Badge> */}
         </div>
       </div>
 

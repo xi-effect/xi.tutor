@@ -40,8 +40,6 @@ export const ModalStudentsGroup = ({ children }: ModalStudentsGroupProps) => {
     isError: isErrorGroupStudents,
   } = useGroupStudentsList(classroomId);
 
-  console.log('groupStudents', groupStudents);
-
   const [selectedStudents, setSelectedStudents] = useState<Set<number>>(new Set());
   const [isSaving, setIsSaving] = useState(false);
 

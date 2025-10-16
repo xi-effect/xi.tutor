@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import '@livekit/components-styles';
 import { TrackReferenceOrPlaceholder } from '@livekit/components-core';
 import {
@@ -11,11 +11,14 @@ import {
   useSwipe,
 } from '@livekit/components-react';
 import { useSearch } from '@tanstack/react-router';
-import { useSize } from '../../hooks';
+import { useSize, useAdaptiveGrid } from '../../hooks';
 import { ParticipantTile } from '../Participant';
 import { SliderVideoGrid } from './SliderVideoGrid';
+import { HorizontalFocusLayout } from './HorizontalFocusLayout';
+import { VerticalFocusLayout } from './VerticalFocusLayout';
+import { GridPaginationControls } from './GridPaginationControls';
 import { SearchParams } from '../../types/router';
-import { GRID_CONFIG } from '../../config/grid';
+import { GRID_CONFIG, getGridLayoutsForScreen } from '../../config/grid';
 
 export interface PaginationIndicatorProps {
   totalPageCount: number;
@@ -134,39 +137,79 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
   const isOneItem = useEmptyItemContainerOfUser(tracks.length);
   const gridEl = React.createRef<HTMLDivElement>();
 
-  const { layout } = useGridLayout(
+  // Используем адаптивную сетку с кастомными конфигурациями
+  const { isMobile, isTablet, isDesktop, tileSize } = useAdaptiveGrid(
+    gridEl as React.RefObject<HTMLDivElement>,
+    tracks.length,
+  );
+
+  // Получаем кастомные конфигурации для текущего размера экрана
+  const customGridLayouts = getGridLayoutsForScreen(
+    typeof window !== 'undefined' ? window.innerWidth : 1024,
+  );
+
+  const { layout: livekitLayout } = useGridLayout(
     gridEl as React.RefObject<HTMLDivElement>,
     tracks.length + (isOneItem ? 1 : 0),
+    {
+      gridLayouts: customGridLayouts,
+    },
   );
-  const pagination = usePagination(layout.maxTiles + (isOneItem ? 1 : 0), tracks);
+
+  const pagination = usePagination(livekitLayout.maxTiles + (isOneItem ? 1 : 0), tracks);
 
   useSwipe(gridEl as React.RefObject<HTMLElement>, {
     onLeftSwipe: pagination.nextPage,
     onRightSwipe: pagination.prevPage,
   });
 
-  // Установка CSS переменных для динамической сетки
+  // Установка CSS переменных для динамической сетки с адаптивностью
   React.useEffect(() => {
-    if (gridEl.current && layout) {
-      gridEl.current.style.setProperty('--lk-col-count', layout.columns.toString());
-      gridEl.current.style.setProperty('--lk-row-count', layout.rows.toString());
+    if (gridEl.current && livekitLayout) {
+      gridEl.current.style.setProperty('--lk-col-count', livekitLayout.columns.toString());
+      gridEl.current.style.setProperty('--lk-row-count', livekitLayout.rows.toString());
+
+      // Устанавливаем кастомные переменные для адаптивности
+      gridEl.current.style.setProperty('--lk-tile-size', `${tileSize.width}px`);
+      gridEl.current.style.setProperty('--lk-aspect-ratio', '1');
+
+      // Переменные для разных устройств
+      gridEl.current.style.setProperty(
+        '--lk-device-type',
+        isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop',
+      );
     }
-  }, [layout, gridEl]);
+  }, [livekitLayout, gridEl, tileSize, isMobile, isTablet, isDesktop]);
 
   return (
     <div className="m-auto w-full" style={{ height: 'var(--available-height)' }}>
       <div
         ref={gridEl}
-        style={{ gap: '1rem', maxWidth: '100%', margin: '0 auto' }}
+        style={
+          {
+            gap: '1rem',
+            maxWidth: '100%',
+            margin: '0 auto',
+            '--lk-tile-width': `${tileSize.width}px`,
+            '--lk-tile-height': `${tileSize.height}px`,
+          } as React.CSSProperties
+        }
         data-lk-pagination={pagination.totalPageCount + (isOneItem ? 1 : 0) > 1}
-        className="lk-grid-layout"
+        data-lk-device-type={isMobile ? 'mobile' : isTablet ? 'tablet' : 'desktop'}
+        className="lk-grid-layout adaptive-grid"
       >
         <TrackLoop tracks={pagination.tracks}>{props.children}</TrackLoop>
         {isOneItem && <EmptyItemContainerOfUser />}
-        {tracks.length > layout.maxTiles && (
-          <PaginationIndicator
-            totalPageCount={pagination.totalPageCount}
+
+        {/* Новые элементы управления пагинацией для grid режима */}
+        {tracks.length > livekitLayout.maxTiles && (
+          <GridPaginationControls
+            canPrev={pagination.currentPage > 1}
+            canNext={pagination.currentPage < pagination.totalPageCount}
+            onPrev={pagination.prevPage}
+            onNext={pagination.nextPage}
             currentPage={pagination.currentPage}
+            totalPages={pagination.totalPageCount}
           />
         )}
       </div>
@@ -176,41 +219,49 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
 
 type CarouselContainerProps = {
   focusTrack: TrackReferenceOrPlaceholder | undefined;
-  tracks: TrackReferenceOrPlaceholder[];
   carouselTracks: TrackReferenceOrPlaceholder[];
 };
 
-export const CarouselContainer = ({
-  focusTrack,
-  tracks,
-  carouselTracks,
-}: CarouselContainerProps) => {
+export const CarouselContainer = ({ focusTrack, carouselTracks }: CarouselContainerProps) => {
   const search: SearchParams = useSearch({ strict: false });
-  const [orientation, setCarouselType] = useState<'horizontal' | 'vertical'>('horizontal');
 
-  useEffect(() => {
-    setCarouselType(search.carouselType || 'horizontal');
-  }, [search.carouselType]);
+  // Получаем ориентацию из URL параметров
+  const carouselType = search.carouselType || 'horizontal';
+  const orientation = carouselType === 'vertical' ? 'vertical' : 'horizontal';
 
-  return (
-    <div
-      className={`flex h-full ${orientation === 'horizontal' ? 'flex-col' : ''} items-start justify-between gap-4`}
-    >
-      {orientation === 'vertical' ? (
-        <>
-          {focusTrack && <FocusLayout orientation={orientation} trackRef={focusTrack} />}
-          <CarouselLayout orientation={orientation} userTracks={tracks} tracks={carouselTracks}>
-            <ParticipantTile style={{ flex: 'unset' }} className="h-[144px] w-[250px]" />
-          </CarouselLayout>
-        </>
-      ) : (
-        <>
-          <CarouselLayout orientation={orientation} userTracks={tracks} tracks={carouselTracks}>
-            <ParticipantTile style={{ flex: 'unset' }} className="h-[144px] w-[250px]" />
-          </CarouselLayout>
-          {focusTrack && <FocusLayout orientation={orientation} trackRef={focusTrack} />}
-        </>
-      )}
-    </div>
-  );
+  // Создаем фокусный элемент
+  const focusElement = useMemo(() => {
+    if (!focusTrack) return null;
+
+    return (
+      <ParticipantTile
+        isFocusToggleDisable
+        style={{
+          width: '100%',
+          height: '100%',
+        }}
+        className="h-full w-full [&_video]:object-contain lg:[&_video]:object-cover"
+        {...focusTrack}
+      />
+    );
+  }, [focusTrack]);
+
+  // Создаем превью элементы для карусели
+  const thumbElements = useMemo(() => {
+    return carouselTracks.map((track) => (
+      <ParticipantTile
+        key={`${track.participant.identity}-${track.source}`}
+        style={{ flex: 'unset' }}
+        className="h-full w-full [&_video]:object-cover"
+        {...track}
+      />
+    ));
+  }, [carouselTracks]);
+
+  // Выбираем правильный layout в зависимости от ориентации
+  if (orientation === 'vertical') {
+    return <VerticalFocusLayout focus={focusElement} thumbs={thumbElements} />;
+  }
+
+  return <HorizontalFocusLayout focus={focusElement} thumbs={thumbElements} />;
 };

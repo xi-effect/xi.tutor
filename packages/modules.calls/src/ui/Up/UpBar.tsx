@@ -1,68 +1,110 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { useEffect, useState } from 'react';
 import {
-  // Grid,
-  // Settings,
-  // External,
-  // Speaker,
-  // SpeakerHorizontal,
+  Grid,
+  Speaker,
+  SpeakerHorizontal,
   Link as LinkIcon,
+  Settings as SettingsIcon,
   Maximize,
   Minimize,
-  // Settings as SettingsIcon,
   ArrowLeft,
 } from '@xipkg/icons';
 import { useFullScreen } from 'common.utils';
-// import { Settings } from './Settings';
 import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
 import { TooltipContent, Tooltip, TooltipTrigger } from '@xipkg/tooltip';
 import { useCallStore } from '../../store/callStore';
-import { useNavigate, useParams } from '@tanstack/react-router';
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useCurrentUser, useGetClassroom } from 'common.services';
 import { toast } from 'sonner';
 import { env } from 'common.env';
+import { useTracks } from '@livekit/components-react';
+import { Track } from 'livekit-client';
+import { Settings } from './Settings';
 
 export const UpBar = () => {
   const { callId } = useParams({ strict: false });
   const { data: classroom } = useGetClassroom(Number(callId));
-  // const [carouselType, setCarouselType] = React.useState<string>('grid');
+  const search = useSearch({ strict: false });
+  const [carouselType, setCarouselType] = useState<string>(search.carouselType || 'grid');
   const { isFullScreen, toggleFullScreen } = useFullScreen('videoConferenceContainer');
+
+  // Получаем треки для проверки условий
+  const tracks = useTracks(
+    [
+      { source: Track.Source.Camera, withPlaceholder: true },
+      { source: Track.Source.ScreenShare, withPlaceholder: false },
+    ],
+    { onlySubscribed: true },
+  );
+
+  // Проверяем условия для FocusLayout
+  const hasScreenShare = tracks.some(
+    (track) =>
+      track.publication?.source === Track.Source.ScreenShare && track.publication?.isSubscribed,
+  );
+  const participantCount = tracks.filter(
+    (track) => track.publication?.source === Track.Source.Camera,
+  ).length;
+  const canUseFocusLayout = hasScreenShare || participantCount > 2;
 
   const updateStore = useCallStore((state) => state.updateStore);
   const navigate = useNavigate();
 
-  // const toggleLayout = () => {
-  //   setCarouselType((prev) => {
-  //     if (prev === 'horizontal') return 'vertical';
-  //     if (prev === 'vertical') return 'grid';
-  //     if (prev === 'grid') return 'horizontal';
-  //     return 'horizontal';
-  //   });
-  // };
+  const toggleLayout = () => {
+    setCarouselType((prev) => {
+      if (prev === 'horizontal') return 'vertical';
+      if (prev === 'vertical') return 'grid';
+      if (prev === 'grid') {
+        // Если условия не соблюдены, остаемся на grid
+        return canUseFocusLayout ? 'horizontal' : 'grid';
+      }
+      return 'horizontal';
+    });
+  };
 
-  // useEffect(() => {
-  //   if (carouselType === 'horizontal' || carouselType === 'vertical') {
-  //     router.push(`${pathname}?carouselType=${carouselType}`);
-  //   } else if (carouselType === 'grid') {
-  //     router.push(pathname);
-  //   }
-  // }, [carouselType]);
+  // Синхронизируем carouselType с URL параметрами
+  useEffect(() => {
+    if (search.carouselType && search.carouselType !== carouselType) {
+      setCarouselType(search.carouselType);
+    }
+  }, [search.carouselType, carouselType]);
 
-  // const getViewIcon = () => {
-  //   if (carouselType === 'horizontal') {
-  //     return <Speaker className="fill-gray-100" />;
-  //   }
-  //   if (carouselType === 'vertical') {
-  //     return <SpeakerHorizontal className="fill-gray-100" />;
-  //   }
-  //   return <Grid className="fill-gray-100" />;
-  // };
+  useEffect(() => {
+    // Обновляем URL при изменении типа карусели через TanStack Router
+    // НО только если мы находимся на странице call, а не classroom
+    const isOnCallPage = window.location.pathname.includes('/call/');
 
-  // if (!currentCall || currentCall.length === 0) return null;
+    if (!isOnCallPage) {
+      return;
+    }
 
-  // const currentCallsCategory =
-  //   typeof currentCall[0].categoryId === 'number'
-  //     ? categories?.filter((item) => currentCall[0].categoryId === item.id)
-  //     : null;
+    // Обновляем URL только если параметры действительно изменились
+    const currentCarouselType = search.carouselType;
+    const newCarouselType = carouselType === 'grid' ? undefined : carouselType;
+
+    if (currentCarouselType !== newCarouselType) {
+      navigate({
+        search: {
+          ...search,
+          // @ts-ignore
+          carouselType: newCarouselType,
+        },
+        replace: true,
+      });
+    }
+  }, [carouselType, search, navigate]);
+
+  const getViewIcon = () => {
+    if (carouselType === 'horizontal') {
+      return <Speaker className="fill-gray-100" />;
+    }
+    if (carouselType === 'vertical') {
+      return <SpeakerHorizontal className="fill-gray-100" />;
+    }
+    return <Grid className="fill-gray-100" />;
+  };
 
   const onCopyLink = () => {
     navigator.clipboard.writeText(
@@ -74,13 +116,26 @@ export const UpBar = () => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isFullScreen) {
+      root.style.setProperty('--header-height', '0px');
+    } else {
+      root.style.setProperty('--header-height', '64px');
+    }
+  }, [isFullScreen]);
+
   return (
     <div className={cn('flex w-full flex-row items-end px-4 pb-4', isFullScreen && 'pt-2')}>
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button
             onClick={() => {
-              navigate({ to: '/classrooms/$classroomId', params: { classroomId: '1' } });
+              navigate({
+                to: '/classrooms/$classroomId',
+                params: { classroomId: callId ?? '' },
+                search: { tab: 'overview', call: callId },
+              });
               updateStore('mode', 'compact');
             }}
             type="button"
@@ -99,17 +154,26 @@ export const UpBar = () => {
         {classroom?.name}
       </span>
       {/* <span className="text-gray-70 ml-2 pb-1">Имя ученика</span> */}
-
-      {/* <Button
-        onClick={toggleLayout}
-        type="button"
-        variant="ghost"
-        className="ml-auto flex h-10 w-[95px] flex-row items-center justify-center gap-2 rounded-[12px]"
-      >
-        {getViewIcon()}
-        <span className="text-gray-100">Вид</span>
-      </Button> */}
       <div className="ml-auto flex flex-row gap-2" />
+      <Tooltip delayDuration={1000}>
+        <TooltipTrigger asChild>
+          <Button
+            onClick={toggleLayout}
+            type="button"
+            variant="ghost"
+            disabled={!canUseFocusLayout && carouselType === 'grid'}
+            className="ml-auto flex h-10 w-[95px] flex-row items-center justify-center gap-2 rounded-[12px] disabled:opacity-50"
+          >
+            {getViewIcon()}
+            <span className="text-gray-100">Вид</span>
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" align="end">
+          {!canUseFocusLayout && carouselType === 'grid'
+            ? 'Нужно больше 2 участников или демонстрация экрана для переключения вида'
+            : 'Переключить вид сетки'}
+        </TooltipContent>
+      </Tooltip>
       {isTutor && (
         <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
@@ -152,7 +216,7 @@ export const UpBar = () => {
       >
         <External className="fill-gray-100" />
       </button> */}
-      {/* <Settings>
+      <Settings>
         <Button
           type="button"
           variant="ghost"
@@ -160,7 +224,7 @@ export const UpBar = () => {
         >
           <SettingsIcon className="fill-gray-100" />
         </Button>
-      </Settings> */}
+      </Settings>
     </div>
   );
 };

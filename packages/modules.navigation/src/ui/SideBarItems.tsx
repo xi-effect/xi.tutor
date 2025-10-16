@@ -30,7 +30,7 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
     }
 
     if (pathname.includes('call')) {
-      if (url === 'classrooms') return true;
+      if (url === '/classrooms') return true;
       else return false;
     }
 
@@ -70,7 +70,7 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
           {footerMenu.map((item) => (
             <SidebarMenuItem key={item.titleKey}>
               <SidebarMenuButton variant="ghost" asChild>
-                <a className="hover:underline" href={item.url}>
+                <a className="hover:underline" href={item.url} target="_blank">
                   <item.icon />
                   <span>{t(item.titleKey)}</span>
                 </a>

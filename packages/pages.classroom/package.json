@@ -28,6 +28,7 @@
     "@xipkg/tooltip": "2.1.0",
     "@xipkg/command": "1.0.0",
     "modules.editor": "*",
+    "common.types": "*",
     "pages.payments": "*",
     "pages.materials": "*",
     "features.table": "*",

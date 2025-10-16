@@ -1,7 +1,6 @@
-import { ClassroomsQueryKey, ClassroomT } from 'common.api';
+import { classroomsApiConfig, ClassroomsQueryKey, ClassroomT } from 'common.api';
 import { useQuery } from '@tanstack/react-query';
 import { getAxiosInstance } from 'common.config';
-import { env } from 'common.env';
 
 export const useFetchClassrooms = (
   searchParams?: {
@@ -14,11 +13,10 @@ export const useFetchClassrooms = (
     queryKey: [ClassroomsQueryKey.GetClassrooms, searchParams],
     queryFn: async () => {
       const axiosInst = await getAxiosInstance();
-      const url = `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/classrooms/`;
 
       const response = await axiosInst({
-        method: 'GET',
-        url,
+        method: classroomsApiConfig[ClassroomsQueryKey.GetClassrooms].method,
+        url: classroomsApiConfig[ClassroomsQueryKey.GetClassrooms].getUrl(),
         params: {
           limit: searchParams?.limit || 20,
           last_opened_before: searchParams?.lastOpenedBefore,

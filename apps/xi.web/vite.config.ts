@@ -47,7 +47,10 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       esbuildOptions: {
         target: 'es2020',
       },
-      // include: ['pages.classrooms'], // Здесь можно указать пакеты, которые должны быть предварительно связаны
+      // Включаем критические зависимости для предварительной обработки
+      include: ['react', 'react-dom', 'react/jsx-runtime', 'sonner', 'i18next', 'react-i18next'],
+      // Принудительно предварительно обрабатываем React
+      force: true,
     },
     server: {
       watch: {
@@ -73,7 +76,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       },
       // убедитесь, что symlink‑ы раскрываются ‑ это настройка по‑умолчанию
       preserveSymlinks: false,
-      dedupe: ['react', 'react-dom'],
+      dedupe: ['react', 'react-dom', 'react/jsx-runtime', 'sonner'],
     },
     css: {
       // Оптимизация CSS

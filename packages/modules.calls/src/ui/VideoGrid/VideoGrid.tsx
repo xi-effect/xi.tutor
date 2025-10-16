@@ -25,6 +25,9 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
 
   const lastAutoFocusedScreenShareTrack = React.useRef<TrackReferenceOrPlaceholder | null>(null);
 
+  // Получаем тип карусели из URL параметров
+  const carouselType = search.carouselType || 'grid';
+
   const tracks = useTracks(
     [
       { source: Track.Source.Camera, withPlaceholder: true },
@@ -44,6 +47,18 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
 
   const focusTrack = usePinnedTracks(layoutContext)?.[0];
   const carouselTracks = tracks.filter((track) => !isEqualTrackRef(track, focusTrack));
+
+  // Проверяем условия для FocusLayout
+  const hasScreenShare = screenShareTracks.some((track) => track.publication.isSubscribed);
+  const participantCount = tracks.filter(
+    (track) => track.publication?.source === Track.Source.Camera,
+  ).length;
+
+  // Определяем, можно ли использовать FocusLayout
+  const canUseFocusLayout = hasScreenShare || participantCount > 2;
+
+  // Если условия не соблюдены, принудительно переключаемся на grid
+  const effectiveCarouselType = canUseFocusLayout ? carouselType : 'grid';
 
   React.useEffect(() => {
     if (
@@ -101,12 +116,20 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
     }
   }, [search, navigate]);
 
+  // Автоматическое переключение на grid при нарушении условий
+  React.useEffect(() => {
+    if (!canUseFocusLayout && (carouselType === 'horizontal' || carouselType === 'vertical')) {
+      // @ts-expect-error
+      navigate({ search: { ...search, carouselType: undefined } });
+    }
+  }, [canUseFocusLayout, carouselType, search, navigate]);
+
   return (
     <div className="lk-video-conference" {...props}>
       {isWeb() && (
         <LayoutContextProvider value={layoutContext}>
           <div className="lk-video-conference-inner">
-            {!focusTrack ? (
+            {effectiveCarouselType === 'grid' ? (
               <div className="h-full">
                 <GridLayout tracks={tracks}>
                   <ParticipantTile
@@ -117,11 +140,7 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
               </div>
             ) : (
               <div className="lk-focus-layout-wrapper">
-                <CarouselContainer
-                  focusTrack={focusTrack}
-                  tracks={tracks}
-                  carouselTracks={carouselTracks}
-                />
+                <CarouselContainer focusTrack={focusTrack} carouselTracks={carouselTracks} />
               </div>
             )}
           </div>

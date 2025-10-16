@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useRouterState, useRouter } from '@tanstack/react-router';
+import { useRouterState, useRouter, useSearch } from '@tanstack/react-router';
 import { useAuth } from 'common.auth';
 import { WelcomeContext } from '../model/WelcomeContext';
 import { useCurrentUser } from 'common.services';
@@ -19,21 +19,45 @@ export const ProtectedProvider = ({ children }: ProtectedProviderPropsT) => {
     select: (state) => state.location.pathname,
   });
 
+  const search = useSearch({ strict: false });
+
   const router = useRouter();
 
   useEffect(() => {
     if (!user || isAuthenticated === null) return;
 
+    // Проверяем, находимся ли мы в welcome-процессе
+    const isInWelcomeProcess = pathname.startsWith('/welcome');
+
+    // Если onboarding завершен или в стадии training, и мы на welcome-странице - редиректим на главную
+    if (
+      (onboarding_stage === 'completed' || onboarding_stage === 'training') &&
+      isInWelcomeProcess
+    ) {
+      router.navigate({ to: '/', search: { ...search } });
+      return;
+    }
+
     if (onboarding_stage === 'completed') return;
+
+    // Если мы уже в welcome-процессе, не делаем редиректы
+    if (isInWelcomeProcess) return;
+
+    // Проверяем, есть ли invite параметр в search
+    const hasInvite = search && typeof search === 'object' && 'invite' in search && search.invite;
+
+    // Если есть invite и мы на invite-странице, не редиректим
+    if (hasInvite && pathname.startsWith('/invite/')) return;
 
     const expectedPath = onboardingStageToPath[onboarding_stage as OnboardingStageT];
 
     if (!expectedPath) return;
 
+    // Редиректим только если мы вне welcome и не на правильном пути
     if (pathname !== expectedPath) {
-      router.navigate({ to: expectedPath });
+      router.navigate({ to: expectedPath, search: { ...search } });
     }
-  }, [user, pathname, isAuthenticated, router, onboarding_stage]);
+  }, [user, pathname, isAuthenticated, router, onboarding_stage, search]);
 
   if (isAuthenticated === null) return <LoadingScreen />;
 
