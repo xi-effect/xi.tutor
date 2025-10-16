@@ -1432,6 +1432,9 @@ importers:
       common.utils:
         specifier: '*'
         version: link:../common.utils
+      features.table:
+        specifier: '*'
+        version: link:../features.table
       react:
         specifier: '19'
         version: 19.1.1
@@ -2576,6 +2579,9 @@ importers:
       features.materials.add:
         specifier: '*'
         version: link:../features.materials.add
+      features.payment.approve:
+        specifier: '*'
+        version: link:../features.payment.approve
       features.table:
         specifier: '*'
         version: link:../features.table

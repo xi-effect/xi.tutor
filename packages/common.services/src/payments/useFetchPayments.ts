@@ -1,11 +1,15 @@
-import { paymentsApiConfig, PaymentsQueryKey } from 'common.api';
+import { paymentsApiConfig, PaymentsQueryKey, type UserRoleT } from 'common.api';
 import { useFetching } from 'common.config';
 
-export const useFetchPayments = (limit: number, lastOpenedBefore?: string, disabled?: boolean) => {
+export const useFetchPayments = (
+  role: UserRoleT,
+  lastOpenedBefore?: string,
+  disabled?: boolean,
+) => {
   const { data, isError, isLoading, ...rest } = useFetching({
     apiConfig: {
       method: paymentsApiConfig[PaymentsQueryKey.Payments].method,
-      getUrl: () => paymentsApiConfig[PaymentsQueryKey.Payments].getUrl(limit, lastOpenedBefore),
+      getUrl: () => paymentsApiConfig[PaymentsQueryKey.Payments].getUrl(role),
       headers: {
         'Content-Type': 'application/json',
       },

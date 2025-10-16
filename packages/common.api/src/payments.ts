@@ -1,5 +1,6 @@
 import { env } from 'common.env';
 import { HttpMethod } from './config';
+import { type UserRoleT } from './types';
 
 enum PaymentsQueryKey {
   Payments = 'Payments',
@@ -12,18 +13,10 @@ enum PaymentsQueryKey {
 
 const paymentsApiConfig = {
   [PaymentsQueryKey.Payments]: {
-    getUrl: (limit: number, lastOpenedBefore?: string) => {
-      const params = new URLSearchParams({
-        limit: limit.toString(),
-      });
-
-      if (lastOpenedBefore) {
-        params.append('last_opened_before', lastOpenedBefore);
-      }
-
-      return `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/recipient-invoices/?${params.toString()}`;
+    getUrl: (role: UserRoleT) => {
+      return `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/${role}/recipient-invoices/searches/`;
     },
-    method: HttpMethod.GET,
+    method: HttpMethod.POST,
   },
 
   [PaymentsQueryKey.SearchPayments]: {

@@ -17,22 +17,13 @@ declare module '@tanstack/react-table' {
   }
 }
 
-export const DataTable = <TData,>({
-  data,
-  columns,
-  students = [],
-  subjects = [],
-}: DataTableProps<TData>) => {
+export const DataTable = <TData,>({ data, columns }: DataTableProps<TData>) => {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    meta: {
-      students,
-      subjects,
-    },
   });
 
   return (

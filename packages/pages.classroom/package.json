@@ -31,6 +31,7 @@
     "pages.payments": "*",
     "pages.materials": "*",
     "features.table": "*",
+    "features.payment.approve": "*",
     "modules.calendar": "*",
     "modules.calls": "*",
     "features.group.manage": "*"
