@@ -22,6 +22,7 @@ interface ExtendedTrackToggleProps extends TrackToggleProps<any> {
   videoEnabled?: boolean;
   screenShareEnabled?: boolean;
   showIcon?: boolean;
+  className?: string;
 }
 
 export const TrackToggle = ({
@@ -34,6 +35,7 @@ export const TrackToggle = ({
   source,
   showIcon = true,
   onChange,
+  className,
   ...props
 }: ExtendedTrackToggleProps) => {
   // Для PreJoin используем собственную логику, так как useTrackToggle работает с треками в комнате
@@ -129,16 +131,17 @@ export const TrackToggle = ({
       <motion.button
         type="button"
         onClick={handleClick}
-        className="bg-gray-0 hover:bg-gray-10 flex h-10 w-10 items-center justify-center rounded-[12px] transition-colors"
+        className={cn(
+          'bg-gray-0 hover:bg-gray-5 flex h-10 w-10 items-center justify-center rounded-[12px] transition-colors',
+          className,
+        )}
         animate={{
-          background: enabled
-            ? `linear-gradient(to top, var(--xi-green-20) 0%, transparent ${volume}%)`
-            : 'var(--xi-gray-0)',
+          background:
+            enabled && `linear-gradient(to top, var(--xi-green-20) 0%, transparent ${volume}%)`,
         }}
         style={{
-          background: enabled
-            ? `linear-gradient(to top, var(--xi-green-20) 0%, transparent ${volume}%)`
-            : 'var(--xi-gray-0)',
+          background:
+            enabled && `linear-gradient(to top, var(--xi-green-20) 0%, transparent ${volume}%)`,
         }}
         transition={{
           duration: 1,
@@ -158,6 +161,7 @@ export const TrackToggle = ({
       className={cn(
         'bg-gray-0 hover:bg-gray-5 flex h-10 w-10 items-center justify-center rounded-[12px] transition-colors',
         enabled && 'bg-green-0 hover:bg-green-20',
+        className,
       )}
       {...props}
     >

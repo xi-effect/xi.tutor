@@ -17,7 +17,11 @@ export const Header = () => {
         <TooltipTrigger asChild>
           <Button
             onClick={() => {
-              navigate({ to: '/classrooms/$classroomId', params: { classroomId: callId } });
+              navigate({
+                to: '/classrooms/$classroomId',
+                params: { classroomId: callId },
+                search: { call: callId },
+              });
             }}
             type="button"
             variant="ghost"

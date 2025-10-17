@@ -48,10 +48,15 @@ function LayoutComponent() {
 
   useEffect(() => {
     const pathname = router.state.location.pathname;
+    const search = router.state.location.search;
+
     if (pathname.includes('/call')) {
       updateStore('mode', 'full');
+    } else if (pathname.includes('/classrooms') && search.call) {
+      // Если мы на странице classroom и есть параметр call, переключаемся в compact режим
+      updateStore('mode', 'compact');
     }
-  }, [router.state.location.pathname, updateStore]);
+  }, [router.state.location.pathname, router.state.location.search, updateStore]);
 
   return (
     <div className="relative flex min-h-svh flex-col overflow-hidden">

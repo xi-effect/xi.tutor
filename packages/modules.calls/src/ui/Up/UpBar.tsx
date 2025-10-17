@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import {
   Grid,
   Speaker,
@@ -25,7 +25,7 @@ import { Settings } from './Settings';
 export const UpBar = () => {
   const { callId } = useParams({ strict: false });
   const { data: classroom } = useGetClassroom(Number(callId));
-  const [carouselType, setCarouselType] = useState<string>('grid');
+  const carouselType = useCallStore((state) => state.carouselType);
   const { isFullScreen, toggleFullScreen } = useFullScreen('videoConferenceContainer');
 
   // Получаем треки для проверки условий
@@ -51,27 +51,20 @@ export const UpBar = () => {
   const navigate = useNavigate();
 
   const toggleLayout = () => {
-    setCarouselType((prev) => {
-      if (prev === 'horizontal') return 'vertical';
-      if (prev === 'vertical') return 'grid';
-      if (prev === 'grid') {
-        // Если условия не соблюдены, остаемся на grid
-        return canUseFocusLayout ? 'horizontal' : 'grid';
-      }
-      return 'horizontal';
-    });
-  };
+    const currentType = carouselType;
+    let nextType: 'grid' | 'horizontal' | 'vertical';
 
-  useEffect(() => {
-    // Обновляем URL при изменении типа карусели
-    const currentUrl = new URL(window.location.href);
-    if (carouselType === 'horizontal' || carouselType === 'vertical') {
-      currentUrl.searchParams.set('carouselType', carouselType);
-    } else if (carouselType === 'grid') {
-      currentUrl.searchParams.delete('carouselType');
+    if (currentType === 'horizontal') nextType = 'vertical';
+    else if (currentType === 'vertical') nextType = 'grid';
+    else if (currentType === 'grid') {
+      // Если условия не соблюдены, остаемся на grid
+      nextType = canUseFocusLayout ? 'horizontal' : 'grid';
+    } else {
+      nextType = 'grid';
     }
-    window.history.replaceState({}, '', currentUrl.toString());
-  }, [carouselType]);
+
+    updateStore('carouselType', nextType);
+  };
 
   const getViewIcon = () => {
     if (carouselType === 'horizontal') {
@@ -80,6 +73,7 @@ export const UpBar = () => {
     if (carouselType === 'vertical') {
       return <SpeakerHorizontal className="fill-gray-100" />;
     }
+
     return <Grid className="fill-gray-100" />;
   };
 
@@ -108,7 +102,11 @@ export const UpBar = () => {
         <TooltipTrigger asChild>
           <Button
             onClick={() => {
-              navigate({ to: '/classrooms/$classroomId', params: { classroomId: callId ?? '' } });
+              navigate({
+                to: '/classrooms/$classroomId',
+                params: { classroomId: callId ?? '' },
+                search: { tab: 'overview', call: callId },
+              });
               updateStore('mode', 'compact');
             }}
             type="button"

@@ -25,19 +25,18 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
   };
 
   const location = useLocation();
-  const { callId, classroomId } = useParams({ strict: false });
+  const { callId } = useParams({ strict: false });
   const navigate = useNavigate();
-
-  console.log('token', token);
-  console.log('location', location);
-  console.log('callId', callId);
-  console.log('classroomId', classroomId);
 
   useEffect(() => {
     if (!token && callId && location.pathname.includes('/call/')) {
-      navigate({ to: '/classrooms/$classroomId', params: { classroomId: callId } });
+      navigate({
+        to: '/classrooms/$classroomId',
+        params: { classroomId: callId },
+        search: { call: callId },
+      });
     }
-  }, [location]);
+  }, [location, token, callId, navigate]);
 
   if (!token) {
     return <>{children}</>;

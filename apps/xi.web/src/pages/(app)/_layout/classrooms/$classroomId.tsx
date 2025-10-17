@@ -13,6 +13,7 @@ const paramsSchema = z.object({
 
 const searchSchema = z.object({
   tab: z.string().optional(),
+  call: z.string().optional(),
 });
 
 // @ts-ignore
