@@ -11,6 +11,8 @@ export type OnboardingTransitionModeT = 'forwards' | 'backwards';
 
 export type ClassroomStatusT = 'active' | 'paused' | 'locked' | 'finished';
 
+export type UserRoleT = 'tutor' | 'student';
+
 // Базовые типы для пользователей
 export interface UserProfileSchema {
   id: number;

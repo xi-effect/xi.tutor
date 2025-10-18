@@ -1,14 +1,8 @@
 import clsx from 'clsx';
 import { Button } from '@xipkg/button';
 import { Check } from '@xipkg/icons';
-
+import { statusColorMap } from '../../utils';
 import { mapPaymentStatus, PaymentStatusT } from '../../types';
-
-export const statusColorMap: Record<PaymentStatusT, string> = {
-  paid: 'text-green-100',
-  processing: 'text-brand-100',
-  unpaid: 'text-red-100',
-};
 
 type StatusCellPropsT = {
   status: PaymentStatusT;
@@ -26,7 +20,7 @@ export const StatusCell = ({ status, onApprovePayment }: StatusCellPropsT) => {
     <div className="flex flex-row items-center justify-between gap-8">
       <div className={clsx('font-normal', 'text-m-base', statusColorMap[status])}>{statusText}</div>
 
-      {status === 'processing' && (
+      {status !== 'complete' && (
         <div className="flex flex-row items-center justify-between gap-4">
           <Button
             variant="ghost"

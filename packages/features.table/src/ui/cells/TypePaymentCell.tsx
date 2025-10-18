@@ -1,11 +1,11 @@
-import { mapPaymentType, PaymentT } from '../../types';
+import { PaymentDataT, RoleT, mapPaymentType } from '../../types';
 
-export const TypePaymentCell = ({ typePayment }: { typePayment: PaymentT['typePayment'] }) => {
-  const paymentType = mapPaymentType[typePayment];
+type PaymentPropsT = {
+  paymentType: PaymentDataT<RoleT>['payment_type'];
+};
 
-  if (!paymentType) {
-    throw new Error('Payment type not found');
-  }
+export const TypePaymentCell = ({ paymentType }: PaymentPropsT) => {
+  const processedType = mapPaymentType[paymentType];
 
-  return <p className="text-gray-80 text-m-base font-normal">{paymentType}</p>;
+  return <p className="text-gray-80 text-m-base font-normal">{processedType || ''}</p>;
 };

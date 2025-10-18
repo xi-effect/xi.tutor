@@ -1,28 +1,45 @@
-import { useEffect, useMemo, useState } from 'react';
-import { students, subjects, PaymentT, createPaymentColumns, payments } from 'features.table';
-import { PaymentsTable } from 'pages.payments';
+import { useMemo, useRef, useState, useCallback } from 'react';
+import { useInfiniteQuery, createPaymentColumns, RolePaymentT } from 'features.table';
+import { VirtualizedPaymentsTable } from 'pages.payments';
 import { useMediaQuery } from '@xipkg/utils';
 import { useParams } from '@tanstack/react-router';
-import { useGetClassroom } from 'common.services';
-
-async function getData(): Promise<PaymentT[]> {
-  return payments;
-}
+import { useGetClassroom, useCurrentUser } from 'common.services';
+import { PaymentApproveModal } from 'features.payment.approve';
 
 export const Payments = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
-  const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
+  const { data: classroom } = useGetClassroom(Number(classroomId));
   const isMobile = useMediaQuery('(max-width: 719px)');
 
-  const [data, setData] = useState<PaymentT[]>([]);
+  const [paymentApproveModalState, setPaymentApproveModalState] = useState<{
+    isOpen: boolean;
+    payment: RolePaymentT | null;
+  }>({ isOpen: false, payment: null });
 
-  useEffect(() => {
-    getData().then(setData);
+  const onOpenPaymentApproveModal = useCallback((payment: RolePaymentT) => {
+    setPaymentApproveModalState({ isOpen: true, payment });
   }, []);
 
+  const parentRef = useRef<HTMLDivElement>(null);
+
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+  const currentUserRole = isTutor ? 'tutor' : 'student';
+
+  const { items, isLoading, isFetchingNextPage, isError } = useInfiniteQuery(
+    parentRef,
+    currentUserRole,
+  );
+
   const defaultColumns = useMemo(
-    () => createPaymentColumns({ withStudentColumn: false, students, subjects, isMobile }),
-    [isMobile],
+    () =>
+      createPaymentColumns({
+        withStudentColumn: false,
+        onApprovePayment: onOpenPaymentApproveModal,
+        usersRole: isTutor ? 'student' : 'tutor',
+        isMobile,
+      }),
+    [isMobile, isTutor, onOpenPaymentApproveModal],
   );
 
   if (isLoading) {
@@ -44,7 +61,26 @@ export const Payments = () => {
 
   return (
     <div className="flex flex-col">
-      <PaymentsTable data={data} columns={defaultColumns} students={students} subjects={subjects} />
+      <VirtualizedPaymentsTable
+        data={items}
+        columns={defaultColumns}
+        isLoading={isLoading}
+        isFetchingNextPage={isFetchingNextPage}
+        onApprovePayment={onOpenPaymentApproveModal}
+        parentRef={parentRef}
+        isError={isError}
+        currentUserRole={currentUserRole}
+      />
+
+      {paymentApproveModalState.isOpen && paymentApproveModalState.payment && (
+        <PaymentApproveModal
+          open={paymentApproveModalState.isOpen}
+          onOpenChange={(open) =>
+            setPaymentApproveModalState({ ...paymentApproveModalState, isOpen: open })
+          }
+          paymentDetails={paymentApproveModalState.payment}
+        />
+      )}
     </div>
   );
 };

@@ -17,7 +17,8 @@
     "@xipkg/modal": "^4.2.0",
     "@xipkg/form": "4.2.1",
     "@xipkg/button": "^3.1.8",
-    "@xipkg/radio": "^2.0.6"
+    "@xipkg/radio": "^2.0.6",
+    "features.table": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

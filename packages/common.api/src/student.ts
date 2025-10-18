@@ -37,7 +37,7 @@ const studentApiConfig = {
     method: HttpMethod.GET,
   },
   [StudentQueryKey.GetTutor]: {
-    getUrl: (tutorId: string) =>
+    getUrl: (tutorId: number) =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/student/tutors/${tutorId}/`,
     method: HttpMethod.GET,
   },

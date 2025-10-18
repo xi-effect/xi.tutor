@@ -1,1 +1,1 @@
-export { PaymentsPage, PaymentsTable } from './src/ui';
+export * from './src/ui';

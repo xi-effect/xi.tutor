@@ -13,15 +13,14 @@ import { Button } from '@xipkg/button';
 import { Radio, RadioItem } from '@xipkg/radio';
 import { Form, FormField, FormItem, FormMessage } from '@xipkg/form';
 import { usePaymentApproveForm } from '../hooks';
-import { PaymentFormData } from '../model';
-import { PaymentT } from '../types';
+import { RolePaymentT } from 'features.table';
 import { formatDate } from '../utils';
 import { UserProfile } from '@xipkg/userprofile';
 
 type PaymentApproveModalPropsT = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  paymentDetails: PaymentT;
+  paymentDetails: RolePaymentT;
 };
 
 export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
@@ -36,11 +35,9 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
     onOpenChange(false);
   };
 
-  const onFormSubmit = (data: PaymentFormData) => {
+  const onFormSubmit = () => {
     onSubmit({
-      ...data,
-      ...paymentDetails,
-      statusPayment: 'paid',
+      typePayment: 'cash',
     });
     handleCloseModal();
   };
@@ -60,10 +57,10 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
             <ModalBody className="flex flex-col gap-6">
               <div className="grid grid-cols-4 gap-6 sm:grid-cols-3">
                 <div className="col-span-1 flex flex-col">
-                  {formatDate(paymentDetails.datePayment)}
+                  {formatDate(paymentDetails.created_at)}
                 </div>
                 <UserProfile
-                  userId={paymentDetails.idStudent}
+                  userId={1}
                   text="Анна Смирнова"
                   label="Индивидуальное"
                   src="https://github.com/shadcn.png"
@@ -71,7 +68,7 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                 />
                 <div className="col-span-1 text-right">
                   <p className="text-brand-100 font-medium">
-                    {paymentDetails.amountPayment}
+                    {paymentDetails.total}
                     <span className="text-brand-40 text-xs-base">₽</span>
                   </p>
                 </div>

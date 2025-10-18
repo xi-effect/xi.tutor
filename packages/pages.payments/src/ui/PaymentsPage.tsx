@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { Button } from '@xipkg/button';
 import { Plus } from '@xipkg/icons';
 import { InvoiceModal } from 'features.invoice';
 import { PaymentApproveModal } from 'features.payment.approve';
-import { PaymentT } from 'features.table';
+import { RolePaymentT } from 'features.table';
 import { Header } from './Header';
 import { TabsComponent } from './TabsComponent';
 
@@ -11,16 +11,16 @@ export const PaymentsPage = () => {
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [paymentApproveModalState, setPaymentApproveModalState] = useState<{
     isOpen: boolean;
-    payment: PaymentT | null;
+    payment: RolePaymentT | null;
   }>({ isOpen: false, payment: null });
 
   const onOpenInvoiceModal = () => {
     setIsInvoiceModalOpen(true);
   };
 
-  const onOpenPaymentApproveModal = (payment: PaymentT) => {
+  const onOpenPaymentApproveModal = useCallback((payment: RolePaymentT) => {
     setPaymentApproveModalState({ isOpen: true, payment });
-  };
+  }, []);
 
   return (
     <div className="flex flex-col justify-between gap-6 pl-4">

@@ -28,6 +28,7 @@ export type {
   IndividualClassroomTutorResponseSchema,
   GroupClassroomTutorResponseSchema,
   ClassroomTutorResponseSchema,
+  UserRoleT,
 } from './src/types';
 export { notificationsApiConfig, NotificationsQueryKey } from './src/notifications';
 export { telegramConnectionApiConfig, TelegramConnectionQueryKey } from './src/telegramConnection';

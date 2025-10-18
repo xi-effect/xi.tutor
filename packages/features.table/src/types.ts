@@ -5,6 +5,7 @@ export type StudentT = {
   name: string;
   description?: string | '';
   avatarUrl?: string;
+  status: PaymentStatusT;
 };
 
 export type SubjectT = {
@@ -24,20 +25,17 @@ export type DataTableProps<TData> = {
   subjects?: SubjectT[];
 };
 
-export type PaymentStatusT = 'paid' | 'processing' | 'unpaid';
+export type PaymentStatusT = 'wf_sender_confirmation' | 'wf_receiver_confirmation' | 'complete';
 
 export const mapPaymentStatus: Record<PaymentStatusT, string> = {
-  paid: 'оплачен',
-  processing: 'ожидает подтверждения',
-  unpaid: 'ждет оплаты',
+  complete: 'оплачен',
+  wf_receiver_confirmation: 'ожидает подтверждения',
+  wf_sender_confirmation: 'ждет оплаты',
 };
 
-export type PaymentTypeT = 'cash' | 'card';
+export type RoleT = 'tutor' | 'student';
 
-export const mapPaymentType: Record<PaymentTypeT, string> = {
-  cash: 'наличные',
-  card: 'перевод',
-};
+export type PaymentTypeT = 'cash' | 'transfer';
 
 export type PaymentT = {
   id: number;
@@ -45,17 +43,47 @@ export type PaymentT = {
   idSubject: number;
   datePayment: string;
   amountPayment: number;
-  typePayment: PaymentTypeT;
-  statusPayment: PaymentStatusT;
+  typePayment: 'card' | 'cash';
+  statusPayment: 'paid' | 'unpaid' | 'processing';
 };
 
-export const FILTER_KEYS = [
-  'datePayment',
-  'amountPayment',
-  'idStudent',
-  'idSubject',
-  'statusPayment',
-  'typePayment',
-] as const;
+export const mapPaymentType: Record<PaymentTypeT, string> = {
+  cash: 'наличные',
+  transfer: 'перевод',
+};
+
+type RoleIdField<Role extends RoleT> = Role extends 'tutor'
+  ? { student_id: number }
+  : Role extends 'student'
+    ? { tutor_id: number }
+    : never;
+
+export type PaymentDataT<Role extends RoleT> = {
+  id: number;
+  created_at: string;
+  total: string;
+  payment_type: PaymentTypeT;
+  status: PaymentStatusT;
+} & RoleIdField<Role>;
+
+export type StudentPaymentT = PaymentDataT<'tutor'>;
+
+export type TutorPaymentT = PaymentDataT<'student'>;
+
+export type RolePaymentT = StudentPaymentT | TutorPaymentT;
+
+export const FILTER_KEYS = ['created_at', 'total', 'status', 'payment_type'] as const;
 
 export type FilterColumnId = (typeof FILTER_KEYS)[number];
+
+export type UserT = {
+  tutorship: {
+    student_id: number;
+    created_at: string;
+    active_classroom_count: number;
+  };
+  user: {
+    username: string;
+    display_name: string;
+  };
+};
