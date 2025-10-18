@@ -19,7 +19,8 @@ export type ErrorType =
   | 'acceptInvite'
   | 'classroom'
   | 'calls'
-  | 'createGroup';
+  | 'createGroup'
+  | 'files';
 
 // Маппинг ошибок для разных операций
 const errorMessages: Record<ErrorType, Record<string, string>> = {
@@ -101,6 +102,9 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
     'Group name already exists': 'Группа с таким названием уже существует',
     'Subject not found': 'Предмет не найден',
   },
+  files: {
+    'Invalid file format': 'Недопустимый тип файла',
+  },
 };
 
 // Общие сообщения об ошибках по статусам
@@ -132,6 +136,7 @@ const successMessages: Record<ErrorType, string> = {
   classroom: 'Статус класса обновлен',
   calls: 'Access token создан',
   createGroup: 'Группа успешно создана',
+  files: 'Файл успешно загружен',
 };
 
 /**
@@ -195,6 +200,8 @@ const getOperationName = (type: ErrorType): string => {
       return 'удалении ученика';
     case 'createGroup':
       return 'создании группы';
+    case 'files':
+      return 'загрузке файла';
     default:
       return 'выполнении операции';
   }

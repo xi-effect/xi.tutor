@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { BubbleMenuWrapper } from './BubbleMenuWrapper/BubbleMenuWrapper';
 import { DragHandleWrapper } from './DragHandleWrapper';
 import { Editor } from '@tiptap/core';
+import { ImageUploadModal } from './FileUploadDialog';
 
 type EditorToolkitProps = {
   editor: Editor;
@@ -27,6 +28,7 @@ export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly
       />
 
       {!isDragging && <BubbleMenuWrapper editor={editor} isReadOnly={isReadOnly} />}
+      <ImageUploadModal />
     </>
   );
 };

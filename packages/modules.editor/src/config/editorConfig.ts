@@ -8,6 +8,7 @@ import { TextAlign } from '@tiptap/extension-text-align';
 import { TaskList, TaskItem } from '@tiptap/extension-list';
 import { UniqueID } from '@tiptap/extension-unique-id';
 import * as Y from 'yjs';
+import { CustomImage } from '../extensions';
 
 export const getExtensions = (
   provider: HocuspocusProvider | undefined,
@@ -31,6 +32,7 @@ export const getExtensions = (
         color: '#3b82f6',
       },
     }),
+    CustomImage.configure({ inline: false }),
     Underline,
     TextAlign.configure({
       types: ['heading', 'paragraph'],
