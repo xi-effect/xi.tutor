@@ -124,27 +124,27 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                   <div className="flex gap-2">
                     <p className="w-[78px]">
                       {paymentDetails.amountPayment}
-                      <span className="text-brand-40 text-xs-base">₽</span>
+                      <span className="text-gray-60 text-xs-base">₽</span>
                     </p>
                     <p className="text-gray-60 w-[10px]">x</p>
                     <p className="w-[78px]">1</p>
                     <p className="text-gray-60 w-[10px]">=</p>
                     <p className="w-[78px]">
                       {paymentDetails.amountPayment}
-                      <span className="text-brand-40 text-xs-base">₽</span>
+                      <span className="text-gray-60 text-xs-base">₽</span>
                     </p>
                   </div>
                 </div>
                 <div className="flex gap-4 text-sm">
-                  <p className="w-[250px] font-bold text-gray-100">Итого</p>
+                  <p className="w-[250px] font-bold text-gray-100">Итого:</p>
                   <div className="flex gap-2">
                     <p className="w-[78px]"></p>
-                    <p className="text-gray-60 w-[10px]"></p>
-                    <p className="w-[78px]"></p>
-                    <p className="text-gray-60 w-[10px]"></p>
+                    <p className="w-[10px]"></p>
+                    <p className="text-gray-80 w-[78px]">1</p>
+                    <p className="w-[10px]"></p>
                     <p className="w-[78px]">
                       {paymentDetails.amountPayment}
-                      <span className="text-brand-40 text-xs-base">₽</span>
+                      <span className="text-gray-60 text-xs-base">₽</span>
                     </p>
                   </div>
                 </div>
