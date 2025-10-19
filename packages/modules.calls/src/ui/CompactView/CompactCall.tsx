@@ -105,7 +105,7 @@ export const CompactCall = ({ saveUserChoices = true }) => {
         )}
       </div>
       <div className="flex h-[40px] flex-row">
-        <div className="bg-gray-0 border-gray-20 flex items-center justify-center rounded-2xl border p-1 shadow-lg">
+        <div className="bg-gray-0 border-gray-20 flex items-center justify-center gap-1 rounded-2xl border p-1 shadow-lg">
           <DevicesBar
             className="h-[32px] w-[32px]"
             microTrack={microphoneTrack?.track as LocalAudioTrack}
