@@ -21,6 +21,7 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
   const handleDisconnect = () => {
     updateStore('connect', false);
     updateStore('isStarted', false);
+    updateStore('mode', 'full');
     console.log('Disconnected from LiveKit room');
   };
 
@@ -38,11 +39,6 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
     }
   }, [location, token, callId, navigate]);
 
-  if (!token) {
-    return <>{children}</>;
-  }
-
-  // Если нет токена, не рендерим LiveKitRoom
   if (!token) {
     console.warn('No token available for LiveKit connection');
     return <>{children}</>;

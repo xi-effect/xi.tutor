@@ -133,14 +133,10 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
   );
 };
 
-export const CompactView = ({ children, firstId = '1', secondId = '1' }: CompactViewProps) => {
+export const CompactView = ({ children }: CompactViewProps) => {
   const { mode } = useCallStore();
 
   if (mode === 'full') return <>{children}</>;
 
-  return (
-    <Compact firstId={firstId} secondId={secondId}>
-      {children}
-    </Compact>
-  );
+  return <Compact>{children}</Compact>;
 };
