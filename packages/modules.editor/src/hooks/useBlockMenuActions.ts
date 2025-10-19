@@ -106,7 +106,20 @@ export const useBlockMenuActions = (editor: Editor | null) => {
   const insertImage = (src: string, alt?: string) => {
     if (!editor) return;
 
-    editor.chain().focus().setImage({ src, alt, width: 400 }).run();
+    const { state } = editor;
+    const { selection } = state;
+
+    if (selection instanceof NodeSelection) {
+      const posAfter = selection.to;
+      editor
+        .chain()
+        .focus()
+        .insertContentAt(posAfter, { type: 'image', attrs: { src, alt } })
+        .run();
+      return;
+    }
+
+    editor.chain().focus().insertContent({ type: 'image', attrs: { src, alt } }).run();
   };
 
   const downloadImage = (src: string) => {

@@ -178,11 +178,6 @@
   border-radius: 0.25rem;
 }
 
-/* Анимации */
-.ProseMirror * {
-  transition: all 0.2s ease;
-}
-
 /* Стили для мобильных устройств */
 @media (max-width: 768px) {
   .ProseMirror {
