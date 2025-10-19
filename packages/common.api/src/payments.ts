@@ -1,9 +1,9 @@
 import { env } from 'common.env';
 import { HttpMethod } from './config';
-import { type UserRoleT } from './types';
 
 enum PaymentsQueryKey {
-  Payments = 'Payments',
+  StudentPayments = 'StudentPayments',
+  TutorPayments = 'TutorPayments',
   SearchPayments = 'SearchPayments',
   AddPayment = 'AddPayment',
   DeletePayment = 'DeletePayment',
@@ -12,9 +12,16 @@ enum PaymentsQueryKey {
 }
 
 const paymentsApiConfig = {
-  [PaymentsQueryKey.Payments]: {
-    getUrl: (role: UserRoleT) => {
-      return `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/${role}/recipient-invoices/searches/`;
+  [PaymentsQueryKey.StudentPayments]: {
+    getUrl: () => {
+      return `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/student/recipient-invoices/searches/`;
+    },
+    method: HttpMethod.POST,
+  },
+
+  [PaymentsQueryKey.TutorPayments]: {
+    getUrl: () => {
+      return `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/recipient-invoices/searches/`;
     },
     method: HttpMethod.POST,
   },

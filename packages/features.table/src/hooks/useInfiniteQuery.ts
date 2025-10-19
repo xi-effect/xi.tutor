@@ -1,20 +1,22 @@
+import React, { RefObject } from 'react';
 import { useInfiniteQuery as useTanStackInfiniteQuery } from '@tanstack/react-query';
-import { RefObject } from 'react';
 import { RolePaymentT } from 'features.table';
 import { getAxiosInstance } from 'common.config';
-import { paymentsApiConfig, PaymentsQueryKey, UserRoleT } from 'common.api';
-import React from 'react';
+import { paymentsApiConfig, UserRoleT } from 'common.api';
+import { getRolePaymentsQueryKey } from 'common.services';
 
 export const useInfiniteQuery = (parentRef: RefObject<HTMLDivElement | null>, role: UserRoleT) => {
+  const queryKey = getRolePaymentsQueryKey(role);
+
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
     useTanStackInfiniteQuery<RolePaymentT[], unknown>({
-      queryKey: [PaymentsQueryKey.Payments, role],
+      queryKey: [queryKey, role],
       queryFn: async ({ pageParam }) => {
         const axiosInst = await getAxiosInstance();
-        const url = paymentsApiConfig[PaymentsQueryKey.Payments].getUrl(role);
+        const url = paymentsApiConfig[queryKey].getUrl();
 
         const response = await axiosInst({
-          method: paymentsApiConfig[PaymentsQueryKey.Payments].method,
+          method: paymentsApiConfig[queryKey].method,
           url,
           headers: {
             'Content-Type': 'application/json',
