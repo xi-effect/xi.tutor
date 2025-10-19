@@ -57,7 +57,8 @@ export const CompactCall = ({ saveUserChoices = true }) => {
     goToPrev,
   } = navigation;
 
-  const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId' }) as { call?: string };
+  // Безопасно получаем параметры call из URL
+  const search = useSearch({ strict: false }) as { call?: string };
   const { call } = search;
 
   const navigate = useNavigate();

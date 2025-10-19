@@ -2,7 +2,7 @@
 // import { useFullScreen } from 'pkg.utils.client';
 import { Button } from '@xipkg/button';
 
-import { useNavigate, useParams } from '@tanstack/react-router';
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { ArrowLeft, Maximize, Minimize } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { useGetMaterial } from 'common.services';
@@ -16,13 +16,24 @@ import { HotkeysHelp } from '../shared/HotkeysHelp';
 export const Header = () => {
   const { isFullScreen, toggleFullScreen } = useFullScreen('whiteboard-container');
   const navigate = useNavigate();
+  const search = useSearch({ strict: false });
 
   const { boardId = 'empty' } = useParams({ strict: false });
   const { data, isLoading } = useGetMaterial(boardId);
 
   const handleBack = () => {
     if (isFullScreen) toggleFullScreen();
-    navigate({ to: '/materials' });
+
+    // Сохраняем параметр call при возврате к материалам
+    const filteredSearch = search.call ? { call: search.call } : {};
+
+    navigate({
+      to: '/materials',
+      search: (prev: Record<string, unknown>) => ({
+        ...prev,
+        ...filteredSearch,
+      }),
+    });
   };
 
   // Обработка событий от горячих клавиш

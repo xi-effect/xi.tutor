@@ -3,7 +3,7 @@ import { ArrowRight } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { EventItem } from './EventItem';
 import { EventItemPropsT } from './types';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 
 const events: EventItemPropsT[] = [
   { name: 'Имя ученика', description: 'Description', time: '17:40', color: 'brand' },
@@ -24,10 +24,18 @@ const events: EventItemPropsT[] = [
 
 export const Sidebar = () => {
   const navigate = useNavigate();
+  const search = useSearch({ strict: false });
 
   const handleMore = () => {
+    // Сохраняем параметр call при переходе на главную
+    const filteredSearch = search.call ? { call: search.call } : {};
+
     navigate({
       to: '/',
+      search: (prev: Record<string, unknown>) => ({
+        ...prev,
+        ...filteredSearch,
+      }),
     });
   };
 

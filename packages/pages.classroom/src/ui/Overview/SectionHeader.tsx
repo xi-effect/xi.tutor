@@ -1,6 +1,6 @@
 import { Button } from '@xipkg/button';
 import { ArrowRight } from '@xipkg/icons';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 
 type SectionHeaderProps = {
   title: string;
@@ -9,11 +9,18 @@ type SectionHeaderProps = {
 
 export const SectionHeader = ({ title, tabLink: tabLink }: SectionHeaderProps) => {
   const navigate = useNavigate();
+  const search = useSearch({ strict: false });
 
   const handleTabChange = (tab: string) => {
+    // Сохраняем параметр call при переходе на таб
+    const filteredSearch = search.call ? { call: search.call } : {};
+
     navigate({
       from: '/classrooms/$classroomId',
-      search: { tab },
+      search: {
+        tab,
+        ...filteredSearch,
+      },
     });
   };
 
