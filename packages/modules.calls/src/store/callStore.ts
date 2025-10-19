@@ -36,6 +36,7 @@ type useCallStoreT = {
   isConnecting: boolean;
 
   mode: 'compact' | 'full';
+  carouselType: 'grid' | 'horizontal' | 'vertical';
 
   // токен для конференции
   token: string | undefined;
@@ -71,6 +72,7 @@ export const useCallStore = create<useCallStoreT>()(
       isStarted: undefined,
       isConnecting: false,
       mode: 'full',
+      carouselType: 'grid',
 
       // токен для конференции
       token: undefined,
@@ -114,6 +116,7 @@ export const useCallStore = create<useCallStoreT>()(
         videoEnabled: state.videoEnabled,
         audioDeviceId: state.audioDeviceId,
         videoDeviceId: state.videoDeviceId,
+        carouselType: state.carouselType,
       }), // Сохраняем только нужные ключи
     },
   ),

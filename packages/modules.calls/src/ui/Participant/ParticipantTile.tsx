@@ -12,7 +12,6 @@ import {
   ScreenShareIcon,
   TrackMutedIndicatorProps,
   TrackRefContext,
-  VideoTrack,
   useEnsureParticipant,
   useFeatureContext,
   useIsEncrypted,
@@ -23,6 +22,7 @@ import {
   useParticipantInfo,
 } from '@livekit/components-react';
 import { MicrophoneOff, RedLine } from '@xipkg/icons';
+import { VideoTrack } from '../shared';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { FocusToggle } from '../shared/FocusToggle';
 import { ParticipantName } from './ParticipantName';

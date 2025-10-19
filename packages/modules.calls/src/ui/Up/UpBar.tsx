@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import {
   Grid,
   Speaker,
@@ -15,7 +14,7 @@ import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
 import { TooltipContent, Tooltip, TooltipTrigger } from '@xipkg/tooltip';
 import { useCallStore } from '../../store/callStore';
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { useCurrentUser, useGetClassroom } from 'common.services';
 import { toast } from 'sonner';
 import { env } from 'common.env';
@@ -26,8 +25,7 @@ import { Settings } from './Settings';
 export const UpBar = () => {
   const { callId } = useParams({ strict: false });
   const { data: classroom } = useGetClassroom(Number(callId));
-  const search = useSearch({ strict: false });
-  const [carouselType, setCarouselType] = useState<string>(search.carouselType || 'grid');
+  const carouselType = useCallStore((state) => state.carouselType);
   const { isFullScreen, toggleFullScreen } = useFullScreen('videoConferenceContainer');
 
   // Получаем треки для проверки условий
@@ -53,48 +51,20 @@ export const UpBar = () => {
   const navigate = useNavigate();
 
   const toggleLayout = () => {
-    setCarouselType((prev) => {
-      if (prev === 'horizontal') return 'vertical';
-      if (prev === 'vertical') return 'grid';
-      if (prev === 'grid') {
-        // Если условия не соблюдены, остаемся на grid
-        return canUseFocusLayout ? 'horizontal' : 'grid';
-      }
-      return 'horizontal';
-    });
+    const currentType = carouselType;
+    let nextType: 'grid' | 'horizontal' | 'vertical';
+
+    if (currentType === 'horizontal') nextType = 'vertical';
+    else if (currentType === 'vertical') nextType = 'grid';
+    else if (currentType === 'grid') {
+      // Если условия не соблюдены, остаемся на grid
+      nextType = canUseFocusLayout ? 'horizontal' : 'grid';
+    } else {
+      nextType = 'grid';
+    }
+
+    updateStore('carouselType', nextType);
   };
-
-  // Синхронизируем carouselType с URL параметрами
-  useEffect(() => {
-    if (search.carouselType && search.carouselType !== carouselType) {
-      setCarouselType(search.carouselType);
-    }
-  }, [search.carouselType, carouselType]);
-
-  useEffect(() => {
-    // Обновляем URL при изменении типа карусели через TanStack Router
-    // НО только если мы находимся на странице call, а не classroom
-    const isOnCallPage = window.location.pathname.includes('/call/');
-
-    if (!isOnCallPage) {
-      return;
-    }
-
-    // Обновляем URL только если параметры действительно изменились
-    const currentCarouselType = search.carouselType;
-    const newCarouselType = carouselType === 'grid' ? undefined : carouselType;
-
-    if (currentCarouselType !== newCarouselType) {
-      navigate({
-        search: {
-          ...search,
-          // @ts-ignore
-          carouselType: newCarouselType,
-        },
-        replace: true,
-      });
-    }
-  }, [carouselType, search, navigate]);
 
   const getViewIcon = () => {
     if (carouselType === 'horizontal') {
@@ -103,6 +73,7 @@ export const UpBar = () => {
     if (carouselType === 'vertical') {
       return <SpeakerHorizontal className="fill-gray-100" />;
     }
+
     return <Grid className="fill-gray-100" />;
   };
 
