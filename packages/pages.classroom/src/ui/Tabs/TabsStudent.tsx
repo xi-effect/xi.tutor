@@ -19,6 +19,7 @@ export const TabsStudent = () => {
     navigate({
       // @ts-ignore
       search: {
+        // @ts-ignore
         tab: value,
         ...filteredSearch,
       },

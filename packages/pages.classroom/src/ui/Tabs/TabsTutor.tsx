@@ -27,6 +27,7 @@ export const TabsTutor = () => {
     navigate({
       // @ts-ignore
       search: {
+        // @ts-ignore
         tab: value,
         ...filteredSearch,
       },
