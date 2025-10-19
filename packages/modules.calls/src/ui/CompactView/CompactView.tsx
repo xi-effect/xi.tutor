@@ -12,15 +12,12 @@ import {
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { CompactCall } from './CompactCall';
 import { useCallStore } from '../../store/callStore';
+import type { Corner } from '../../store/callStore';
 import { useRouter } from '@tanstack/react-router';
 import { Chat } from '../Chat/Chat';
 
-type Corner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
-
 type CompactViewProps = {
   children: React.ReactNode;
-  firstId?: string;
-  secondId?: string;
 };
 
 const DroppableCorner = ({ id, className }: { id: string; className: string }) => {
@@ -72,9 +69,8 @@ const DroppableAreas: FC = () => {
 };
 
 export const Compact: FC<CompactViewProps> = ({ children }) => {
-  const [activeCorner, setActiveCorner] = useState<Corner>('top-left');
   const router = useRouter();
-  const { isChatOpen } = useCallStore();
+  const { isChatOpen, activeCorner, updateStore } = useCallStore();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -87,7 +83,7 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { over } = event;
     if (over) {
-      setActiveCorner(over.id as Corner);
+      updateStore('activeCorner', over.id as Corner);
     }
   };
 

@@ -2,7 +2,7 @@ import { LiveKitRoom } from '@livekit/components-react';
 import { serverUrl, serverUrlDev, isDevMode, devToken } from '../utils/config';
 import { useCallStore } from '../store/callStore';
 import { useRoom } from './RoomProvider';
-import { useParams, useLocation, useNavigate } from '@tanstack/react-router';
+import { useParams, useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
 type LiveKitProviderProps = {
@@ -22,12 +22,25 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
     updateStore('connect', false);
     updateStore('isStarted', false);
     updateStore('mode', 'full');
+
+    // Удаляем параметр call из URL при отключении
+    if (search.call) {
+      const searchWithoutCall = { ...search };
+      delete searchWithoutCall.call;
+      navigate({
+        to: location.pathname,
+        search: searchWithoutCall,
+        replace: true,
+      });
+    }
+
     console.log('Disconnected from LiveKit room');
   };
 
   const location = useLocation();
   const { callId } = useParams({ strict: false });
   const navigate = useNavigate();
+  const search = useSearch({ strict: false }) as { call?: string };
 
   useEffect(() => {
     if (!token && callId && location.pathname.includes('/call/')) {

@@ -17,6 +17,8 @@ type RaisedHand = {
   timestamp: number;
 };
 
+export type Corner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+
 type useCallStoreT = {
   // разрешение от браузера на использование камеры
   isCameraPermission: boolean | null;
@@ -37,6 +39,7 @@ type useCallStoreT = {
 
   mode: 'compact' | 'full';
   carouselType: 'grid' | 'horizontal' | 'vertical';
+  activeCorner: Corner;
 
   // токен для конференции
   token: string | undefined;
@@ -73,6 +76,7 @@ export const useCallStore = create<useCallStoreT>()(
       isConnecting: false,
       mode: 'full',
       carouselType: 'grid',
+      activeCorner: 'top-left',
 
       // токен для конференции
       token: undefined,
@@ -117,6 +121,7 @@ export const useCallStore = create<useCallStoreT>()(
         audioDeviceId: state.audioDeviceId,
         videoDeviceId: state.videoDeviceId,
         carouselType: state.carouselType,
+        activeCorner: state.activeCorner,
       }), // Сохраняем только нужные ключи
     },
   ),
