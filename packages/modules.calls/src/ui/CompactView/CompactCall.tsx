@@ -3,17 +3,18 @@ import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { DevicesBar } from '../shared';
 import { useLocalParticipant, usePersistentUserChoices } from '@livekit/components-react';
-import { VideoTrack } from '../shared';
 import { LocalAudioTrack, LocalVideoTrack, Track } from 'livekit-client';
 import { ScreenShareButton } from '../Bottom/ScreenShareButton';
 import { DisconnectButton } from '../Bottom/DisconnectButton';
-import { useSpeakingParticipant } from '../../hooks/useSpeakingParticipant';
+import { useCompactNavigation } from '../../hooks/useCompactNavigation';
 import { isTrackReference } from '@livekit/components-core';
 import { Maximize } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useCallStore } from '../../store/callStore';
+import { CompactNavigationControls } from './CompactNavigationControls';
+import { ParticipantTile } from '../Participant';
 
 export const CompactCall = ({ saveUserChoices = true }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -44,10 +45,20 @@ export const CompactCall = ({ saveUserChoices = true }) => {
   const { isMicrophoneEnabled, isCameraEnabled, microphoneTrack, cameraTrack } =
     useLocalParticipant();
 
-  // Получаем говорящего участника
-  const speakingParticipant = useSpeakingParticipant();
+  // Навигация по участникам (только если есть комната)
+  const navigation = useCompactNavigation();
+  const {
+    currentParticipant,
+    currentIndex,
+    totalParticipants,
+    canGoNext,
+    canGoPrev,
+    goToNext,
+    goToPrev,
+  } = navigation;
 
-  const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId' }) as { call?: string };
+  // Безопасно получаем параметры call из URL
+  const search = useSearch({ strict: false }) as { call?: string };
   const { call } = search;
 
   const navigate = useNavigate();
@@ -66,20 +77,33 @@ export const CompactCall = ({ saveUserChoices = true }) => {
       {...listeners}
       className="flex w-[320px] flex-col"
     >
-      {/* Видео говорящего участника */}
-      {speakingParticipant && isTrackReference(speakingParticipant) && (
-        <div className="bg-gray-0 border-gray-20 mb-2 flex max-h-[180px] max-w-[320px] items-center justify-center overflow-hidden rounded-2xl border-1 shadow-lg">
-          <VideoTrack
-            trackRef={speakingParticipant}
-            className="h-full w-full object-cover"
-            style={{
-              transform: 'rotateY(180deg)',
-              background: 'var(--xi-bg-gray-40)',
-              backgroundColor: 'var(--xi-bg-gray-40)',
-            }}
+      {/* Видео текущего участника */}
+      <div className="bg-gray-0 border-gray-20 relative mb-2 flex h-[180px] w-[320px] items-center justify-center overflow-hidden rounded-2xl border-1 shadow-lg">
+        {currentParticipant && isTrackReference(currentParticipant) ? (
+          <ParticipantTile
+            trackRef={currentParticipant}
+            participant={currentParticipant.participant}
+            className="h-full w-full"
+            isFocusToggleDisable={true}
           />
-        </div>
-      )}
+        ) : (
+          <div className="bg-gray-40 flex h-full w-full items-center justify-center text-gray-100">
+            <span className="text-sm">Нет участников</span>
+          </div>
+        )}
+
+        {/* Элементы управления навигацией - только если есть участники */}
+        {totalParticipants > 0 && (
+          <CompactNavigationControls
+            canPrev={canGoPrev}
+            canNext={canGoNext}
+            onPrev={goToPrev}
+            onNext={goToNext}
+            currentIndex={currentIndex}
+            totalParticipants={totalParticipants}
+          />
+        )}
+      </div>
       <div className="flex h-[40px] flex-row">
         <div className="bg-gray-0 border-gray-20 flex items-center justify-center rounded-2xl border p-1 shadow-lg">
           <DevicesBar

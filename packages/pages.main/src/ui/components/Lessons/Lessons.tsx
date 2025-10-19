@@ -2,16 +2,24 @@ import { Button } from '@xipkg/button';
 import { ArrowRight } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { Lesson } from './Lesson';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { AssignLessonButton } from '../AssignLessonButton';
 
 export const Lessons = () => {
   const navigate = useNavigate();
+  const search = useSearch({ strict: false });
 
   const handleMore = () => {
+    // Сохраняем параметр call при переходе к календарю
+    const filteredSearch = search.call ? { call: search.call } : {};
+
     navigate({
       to: '/calendar',
+      search: (prev: Record<string, unknown>) => ({
+        ...prev,
+        ...filteredSearch,
+      }),
     });
   };
 

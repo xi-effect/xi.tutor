@@ -109,7 +109,7 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
 
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
-      <div className="relative flex h-[calc(100vh-64px)] flex-col gap-2 bg-transparent">
+      <div className="relative flex h-[calc(100vh-64px)] flex-col bg-transparent">
         <DroppableAreas />
 
         <div
@@ -133,14 +133,10 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
   );
 };
 
-export const CompactView = ({ children, firstId = '1', secondId = '1' }: CompactViewProps) => {
+export const CompactView = ({ children }: CompactViewProps) => {
   const { mode } = useCallStore();
 
   if (mode === 'full') return <>{children}</>;
 
-  return (
-    <Compact firstId={firstId} secondId={secondId}>
-      {children}
-    </Compact>
-  );
+  return <Compact>{children}</Compact>;
 };

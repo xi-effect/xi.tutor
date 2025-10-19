@@ -13,7 +13,7 @@ import { StatusBadge } from './StatusBadge';
 import { useCurrentUser, useDeleteClassroom, useUserById } from 'common.services';
 
 import { ClassroomPropsT } from '../../../types';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { SubjectBadge } from './SubjectBadge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
@@ -53,13 +53,20 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
   deleted = false,
 }) => {
   const navigate = useNavigate();
+  const search = useSearch({ strict: false });
   const { deleteClassroom, isDeleting } = useDeleteClassroom();
 
   const handleClick = () => {
+    // Сохраняем параметр call при переходе в кабинет
+    const filteredSearch = search.call ? { call: search.call } : {};
+
     navigate({
       to: '/classrooms/$classroomId',
       params: { classroomId: id.toString() },
-      search: { tab: 'overview' },
+      search: {
+        tab: 'overview',
+        ...filteredSearch,
+      },
     });
   };
 

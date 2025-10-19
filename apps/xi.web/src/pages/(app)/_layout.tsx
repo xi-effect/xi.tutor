@@ -65,7 +65,7 @@ function LayoutComponent() {
           <RoomProvider>
             <LiveKitProvider>
               <ModeSyncProvider>
-                <CompactView firstId="1" secondId="2">
+                <CompactView>
                   <Outlet />
                 </CompactView>
               </ModeSyncProvider>
