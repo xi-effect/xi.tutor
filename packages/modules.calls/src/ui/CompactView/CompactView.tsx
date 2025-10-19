@@ -109,7 +109,7 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
 
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
-      <div className="relative flex h-[calc(100vh-64px)] flex-col gap-2 bg-transparent">
+      <div className="relative flex h-[calc(100vh-64px)] flex-col bg-transparent">
         <DroppableAreas />
 
         <div
