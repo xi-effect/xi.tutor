@@ -12,7 +12,7 @@ import {
 import { Button } from '@xipkg/button';
 import { Radio, RadioItem } from '@xipkg/radio';
 import { Form, FormField, FormItem, FormMessage } from '@xipkg/form';
-import { usePaymentApproveForm } from '../hooks';
+import { usePaymentApproveForm, useGetPayment } from '../hooks';
 import { PaymentFormData } from '../model';
 import { PaymentT } from '../types';
 import { formatDate } from '../utils';
@@ -45,6 +45,8 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
     handleCloseModal();
   };
 
+  const { data } = useGetPayment(paymentDetails.id);
+
   return (
     <Modal open={open} onOpenChange={handleCloseModal}>
       <ModalContent className="max-w-150 min-w-85">
@@ -63,7 +65,7 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                   {formatDate(paymentDetails.datePayment)}
                 </div>
                 <UserProfile
-                  userId={paymentDetails.idStudent}
+                  userId={data?.student_id ?? null}
                   text="Анна Смирнова"
                   label="Индивидуальное"
                   src="https://github.com/shadcn.png"
@@ -71,7 +73,7 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <p>Текст комментария</p>
+                <p>{data ? data?.invoice.comment : ''}</p>
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-m-base dark:text-gray-100">Тип оплаты</span>
@@ -119,31 +121,38 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                   <p className="w-[84px]">Количество</p>
                   <p className="w-[84px]">Сумма</p>
                 </div>
-                <div className="text-gray-80 flex gap-4 text-base">
-                  <p className="w-[250px]">Занятие на 60 минут</p>
-                  <div className="flex gap-2">
-                    <p className="w-[78px]">
-                      {paymentDetails.amountPayment}
-                      <span className="text-gray-60 text-xs-base">₽</span>
-                    </p>
-                    <p className="text-gray-60 w-[10px]">x</p>
-                    <p className="w-[78px]">1</p>
-                    <p className="text-gray-60 w-[10px]">=</p>
-                    <p className="w-[78px]">
-                      {paymentDetails.amountPayment}
-                      <span className="text-gray-60 text-xs-base">₽</span>
-                    </p>
-                  </div>
-                </div>
+                {data ? (
+                  <>
+                    {data.invoice_items.map((item, index) => (
+                      <div key={index} className="text-gray-80 flex gap-4 text-base">
+                        <p className="w-[250px]">{item.name}</p>
+                        <div className="flex gap-2">
+                          <p className="w-[78px]">
+                            {item.price}
+                            <span className="text-gray-60 text-xs-base">₽</span>
+                          </p>
+                          <p className="text-gray-60 w-[10px]">x</p>
+                          <p className="w-[78px]">{item.quantity}</p>
+                          <p className="text-gray-60 w-[10px]">=</p>
+                          <p className="w-[78px]">
+                            {Number(item.price) * Number(item.quantity)}
+                            <span className="text-gray-60 text-xs-base">₽</span>
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </>
+                ) : null}
+
                 <div className="flex gap-4 text-sm">
                   <p className="w-[250px] font-bold text-gray-100">Итого:</p>
                   <div className="flex gap-2">
                     <p className="w-[78px]"></p>
                     <p className="w-[10px]"></p>
-                    <p className="text-gray-80 w-[78px]">1</p>
+                    <p className="w-[78px]"></p>
                     <p className="w-[10px]"></p>
                     <p className="w-[78px]">
-                      {paymentDetails.amountPayment}
+                      {data?.recipient_invoice.total}
                       <span className="text-gray-60 text-xs-base">₽</span>
                     </p>
                   </div>
