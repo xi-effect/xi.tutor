@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React from 'react';
 import '@livekit/components-styles';
 import type { TrackReferenceOrPlaceholder } from '@livekit/components-core';
@@ -13,20 +12,16 @@ import {
   usePinnedTracks,
   useTracks,
 } from '@livekit/components-react';
-import { useNavigate, useSearch } from '@tanstack/react-router';
 import { ParticipantTile } from '../Participant';
 import { CarouselContainer, GridLayout } from './VideoGridLayout';
-import { SearchParams } from '../../types/router';
+import { useCallStore } from '../../store/callStore';
 import '../../styles/grid.css';
 
 export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
-  const navigate = useNavigate();
-  const search: SearchParams = useSearch({ strict: false });
-
   const lastAutoFocusedScreenShareTrack = React.useRef<TrackReferenceOrPlaceholder | null>(null);
 
-  // Получаем тип карусели из URL параметров
-  const carouselType = search.carouselType || 'grid';
+  // Получаем тип карусели из store
+  const carouselType = useCallStore((state) => state.carouselType);
 
   const tracks = useTracks(
     [
@@ -90,39 +85,15 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
         layoutContext.pin.dispatch?.({ msg: 'set_pin', trackReference: updatedFocusTrack });
       }
     }
-  }, [
-    screenShareTracks
-      .map((ref) => `${ref.publication.trackSid}_${ref.publication.isSubscribed}`)
-      .join(),
-    focusTrack?.publication?.trackSid,
-    tracks,
-  ]);
-
-  React.useEffect(() => {
-    const carouselType = search.carouselType;
-    if (carouselType === 'horizontal' || carouselType === 'vertical') {
-      layoutContext.pin.dispatch?.({
-        msg: 'set_pin',
-        trackReference: lastAutoFocusedScreenShareTrack.current ? screenShareTracks[0] : tracks[0],
-      });
-      // @ts-expect-error
-      navigate({ search: { ...search, carouselType } });
-    } else if (!carouselType) {
-      layoutContext.pin.dispatch?.({ msg: 'clear_pin' });
-      // eslint-disable-next-line
-      const { carouselType: _, ...restSearch } = search;
-      // @ts-expect-error
-      navigate({ search: restSearch });
-    }
-  }, [search, navigate]);
+  }, [screenShareTracks, focusTrack, layoutContext.pin, tracks]);
 
   // Автоматическое переключение на grid при нарушении условий
   React.useEffect(() => {
     if (!canUseFocusLayout && (carouselType === 'horizontal' || carouselType === 'vertical')) {
-      // @ts-expect-error
-      navigate({ search: { ...search, carouselType: undefined } });
+      // Переключаемся на grid в store
+      useCallStore.getState().updateStore('carouselType', 'grid');
     }
-  }, [canUseFocusLayout, carouselType, search, navigate]);
+  }, [canUseFocusLayout, carouselType]);
 
   return (
     <div className="lk-video-conference" {...props}>
