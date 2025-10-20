@@ -18,11 +18,14 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
   const { duplicate, remove, downloadImage, moveDown, moveUp } = useBlockMenuActions(editor);
 
   return (
-    <NodeViewWrapper className="group relative w-full transition-shadow">
+    <NodeViewWrapper className="group relative flex justify-center">
       <img
         src={src}
         alt={node.attrs.alt || ''}
-        className="h-auto w-full rounded-lg object-contain"
+        className={cn(
+          'max-h-[600px] rounded-lg object-contain',
+          selected && 'outline-brand-80 outline-2 outline-offset-1',
+        )}
       />
 
       <div

@@ -173,9 +173,8 @@
 
 /* Стили для выделения текста */
 .ProseMirror .ProseMirror-selectednode {
-  outline: 2px solid #3b82f6;
-  outline-offset: 2px;
-  border-radius: 0.25rem;
+  display: flex;
+  justify-content: center;
 }
 
 /* Стили для мобильных устройств */
