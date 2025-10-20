@@ -9,6 +9,7 @@ import {
   ModalBody,
   ModalTrigger,
   ModalCloseButton,
+  ModalFooter,
 } from '@xipkg/modal';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { UserProfile } from '@xipkg/userprofile';
@@ -154,29 +155,29 @@ export const ModalStudentsGroup = ({ children }: ModalStudentsGroupProps) => {
                 ))}
             </div>
           </ScrollArea>
-          <div className="flex justify-end gap-2 pt-2">
-            <Button
-              variant="outline"
-              onClick={() => {
-                // Сброс к исходному состоянию
-                if (groupStudents && Array.isArray(groupStudents)) {
-                  const groupStudentIds = new Set(
-                    groupStudents.map((student) => student.tutorship.student_id),
-                  );
-                  setSelectedStudents(groupStudentIds);
-                }
-              }}
-            >
-              Отмена
-            </Button>
-            <Button
-              onClick={handleSave}
-              disabled={isSaving || addStudentMutation.isPending || deleteStudentMutation.isPending}
-            >
-              {isSaving ? 'Сохранение...' : 'Сохранить'}
-            </Button>
-          </div>
         </ModalBody>
+        <ModalFooter className="flex gap-2">
+          <Button
+            onClick={handleSave}
+            disabled={isSaving || addStudentMutation.isPending || deleteStudentMutation.isPending}
+          >
+            {isSaving ? 'Сохранение...' : 'Сохранить'}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => {
+              // Сброс к исходному состоянию
+              if (groupStudents && Array.isArray(groupStudents)) {
+                const groupStudentIds = new Set(
+                  groupStudents.map((student) => student.tutorship.student_id),
+                );
+                setSelectedStudents(groupStudentIds);
+              }
+            }}
+          >
+            Отмена
+          </Button>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );

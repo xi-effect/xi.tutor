@@ -96,6 +96,7 @@ export interface GroupClassroomTutorResponseSchema {
   subject_id: number | null;
   name?: string;
   tutor_id?: number;
+  enrollments_count?: number;
 }
 
 export type ClassroomTutorResponseSchema =
