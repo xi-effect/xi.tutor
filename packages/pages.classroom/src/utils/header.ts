@@ -28,7 +28,6 @@ export const getStatusVariant = (status: string) => {
   }
 };
 
-export const handleTelegramClick = () => {
-  // TODO: Получить реальный telegram username из данных пользователя
-  window.open('https://t.me/nickname', '_blank');
+export const handleTelegramClick = ({ link }: { link: string }) => {
+  window.open(link, '_blank');
 };
