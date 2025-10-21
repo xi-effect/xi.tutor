@@ -35,7 +35,8 @@
     "features.payment.approve": "*",
     "modules.calendar": "*",
     "modules.calls": "*",
-    "features.group.manage": "*"
+    "features.group.manage": "*",
+    "features.group.invite": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

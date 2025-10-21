@@ -16,3 +16,4 @@ export type {
   GroupStudentsListSchema,
 } from './students';
 export type { SignupData } from './auth';
+export type { ContactT, ContactsT } from './contacts';

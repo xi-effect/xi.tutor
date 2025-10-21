@@ -11,6 +11,7 @@ export type IndividualInvitation = {
 };
 
 export type GroupInfoT = {
+  id?: number;
   name: string;
 };
 

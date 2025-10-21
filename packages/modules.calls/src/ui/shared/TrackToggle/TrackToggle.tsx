@@ -138,12 +138,17 @@ export const TrackToggle = ({
         animate={{
           background: enabled
             ? `linear-gradient(to top, var(--xi-green-20) 0%, transparent ${volume}%)`
-            : 'transparent',
+            : undefined,
         }}
         style={{
           background: enabled
             ? `linear-gradient(to top, var(--xi-green-20) 0%, transparent ${volume}%)`
-            : 'transparent',
+            : undefined,
+          hover: {
+            background: enabled
+              ? `linear-gradient(to top, var(--xi-green-20) 0%, transparent ${volume}%)`
+              : 'var(--xi-gray-5)',
+          },
         }}
         transition={{
           duration: 1,

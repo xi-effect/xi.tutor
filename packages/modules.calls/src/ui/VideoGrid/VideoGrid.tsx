@@ -95,6 +95,36 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
     }
   }, [canUseFocusLayout, carouselType]);
 
+  // Автоматическое удаление треков демонстрации экрана при их завершении
+  React.useEffect(() => {
+    const handleTrackUnpublished = (publication: {
+      source: Track.Source;
+      isSubscribed: boolean;
+    }) => {
+      if (publication.source === Track.Source.ScreenShare && !publication.isSubscribed) {
+        // Если трек демонстрации экрана больше не активен, очищаем закрепление
+        if (focusTrack && focusTrack.source === Track.Source.ScreenShare) {
+          layoutContext.pin.dispatch?.({ msg: 'clear_pin' });
+        }
+      }
+    };
+
+    // Слушаем события отмены публикации треков
+    tracks.forEach((track) => {
+      if (track.publication && track.publication.source === Track.Source.ScreenShare) {
+        track.publication.on('unsubscribed', () => handleTrackUnpublished(track.publication));
+      }
+    });
+
+    return () => {
+      tracks.forEach((track) => {
+        if (track.publication && track.publication.source === Track.Source.ScreenShare) {
+          track.publication.off('unsubscribed', () => handleTrackUnpublished(track.publication));
+        }
+      });
+    };
+  }, [tracks, focusTrack, layoutContext.pin]);
+
   return (
     <div className="lk-video-conference" {...props}>
       {isWeb() && (

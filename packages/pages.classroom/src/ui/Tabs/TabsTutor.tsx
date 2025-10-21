@@ -11,6 +11,7 @@ import { Payments } from '../Payments';
 import { Materials } from '../Materials';
 import { useGetClassroom } from 'common.services';
 import { ModalStudentsGroup } from 'features.group.manage';
+import { ModalGroupInvite } from 'features.group.invite';
 
 export const TabsTutor = () => {
   const search: SearchParams = useSearch({ strict: false });
@@ -60,6 +61,13 @@ export const TabsTutor = () => {
               Добавить ученика
             </Button>
           </ModalStudentsGroup>
+        )}
+        {currentTab === 'overview' && classroom?.kind === 'group' && (
+          <ModalGroupInvite>
+            <Button size="s" variant="ghost" className="ml-1 rounded-[8px]">
+              Пригласить в группу
+            </Button>
+          </ModalGroupInvite>
         )}
         {currentTab === 'materials' && <MaterialsAdd />}
       </div>
