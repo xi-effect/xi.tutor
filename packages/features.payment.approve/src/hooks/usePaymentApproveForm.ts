@@ -1,7 +1,6 @@
 import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { paymentFormSchema, PaymentFormData } from '../model';
-import { PaymentT } from '../types';
 
 export const usePaymentApproveForm = () => {
   const form = useForm<PaymentFormData>({
@@ -15,8 +14,8 @@ export const usePaymentApproveForm = () => {
     form.reset();
   };
 
-  const onSubmit = (data: PaymentT) => {
-    return Promise.resolve(data);
+  const onSubmit = (typePayment: PaymentFormData) => {
+    return Promise.resolve(typePayment);
   };
 
   return {

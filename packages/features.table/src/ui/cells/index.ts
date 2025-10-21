@@ -1,6 +1,6 @@
 export { AmountPaymentCell } from './AmountPaymentCell';
 export { DateCell } from './DateCell';
-export { StudentCell } from './StudentCell';
+export { UserCell } from './UserCell';
 export { SubjectCell } from './SubjectCell';
 export { TypePaymentCell } from './TypePaymentCell';
 export { StatusCell } from './StatusCell';

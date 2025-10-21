@@ -1529,6 +1529,9 @@ importers:
       common.utils:
         specifier: '*'
         version: link:../common.utils
+      features.table:
+        specifier: '*'
+        version: link:../features.table
       react:
         specifier: '19'
         version: 19.2.0
@@ -1696,6 +1699,15 @@ importers:
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.0)
+      common.api:
+        specifier: '*'
+        version: link:../common.api
+      common.config:
+        specifier: '*'
+        version: link:../common.config
+      common.services:
+        specifier: '*'
+        version: link:../common.services
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -2694,6 +2706,9 @@ importers:
       features.materials.add:
         specifier: '*'
         version: link:../features.materials.add
+      features.payment.approve:
+        specifier: '*'
+        version: link:../features.payment.approve
       features.table:
         specifier: '*'
         version: link:../features.table

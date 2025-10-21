@@ -12,5 +12,6 @@ export * from './calls';
 export * from './subjects';
 export * from './students';
 export * from './enrollments';
+export * from './tutors';
 export * from './files';
 export * from './contacts';

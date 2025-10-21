@@ -2,7 +2,8 @@ import { env } from 'common.env';
 import { HttpMethod } from './config';
 
 enum PaymentsQueryKey {
-  Payments = 'Payments',
+  StudentPayments = 'StudentPayments',
+  TutorPayments = 'TutorPayments',
   SearchPayments = 'SearchPayments',
   AddPayment = 'AddPayment',
   DeletePayment = 'DeletePayment',
@@ -11,19 +12,18 @@ enum PaymentsQueryKey {
 }
 
 const paymentsApiConfig = {
-  [PaymentsQueryKey.Payments]: {
-    getUrl: (limit: number, lastOpenedBefore?: string) => {
-      const params = new URLSearchParams({
-        limit: limit.toString(),
-      });
-
-      if (lastOpenedBefore) {
-        params.append('last_opened_before', lastOpenedBefore);
-      }
-
-      return `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/recipient-invoices/?${params.toString()}`;
+  [PaymentsQueryKey.StudentPayments]: {
+    getUrl: () => {
+      return `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/student/recipient-invoices/searches/`;
     },
-    method: HttpMethod.GET,
+    method: HttpMethod.POST,
+  },
+
+  [PaymentsQueryKey.TutorPayments]: {
+    getUrl: () => {
+      return `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/recipient-invoices/searches/`;
+    },
+    method: HttpMethod.POST,
   },
 
   [PaymentsQueryKey.SearchPayments]: {

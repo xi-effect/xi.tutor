@@ -5,9 +5,8 @@ import {
   TableHead,
   TableCell,
   TableBody,
-  StudentT,
-  SubjectT,
-  PaymentT,
+  RolePaymentT,
+  RoleT,
 } from 'features.table';
 import {
   useReactTable,
@@ -20,35 +19,36 @@ import {
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { useMediaQuery } from '@xipkg/utils';
-import { useRef, useEffect } from 'react';
+import { RefObject } from 'react';
 import { CardsList } from './Mobile';
+import { NotFoundItems } from './NotFoundItems';
+import { useResponsiveGrid, useVirtualGrid } from '../hooks';
+import { Loader } from './Loader';
+import { type TabsComponentPropsT } from '../types';
 
-export type VirtualizedPaymentsTableProps = {
-  data: PaymentT[];
-  columns: ColumnDef<PaymentT>[];
-  students?: StudentT[];
-  subjects?: SubjectT[];
+export type VirtualizedPaymentsTableProps<T> = {
+  parentRef: RefObject<HTMLDivElement | null>;
+  data: T[];
+  columns: ColumnDef<RolePaymentT>[];
   filterByClass?: boolean | string;
   isLoading?: boolean;
   isFetchingNextPage?: boolean;
-  hasNextPage?: boolean;
-  onLoadMore?: () => void;
-  onApprovePayment: (payment: PaymentT) => void;
+  onApprovePayment: TabsComponentPropsT['onApprovePayment'];
+  isError: boolean;
+  currentUserRole: RoleT;
 };
 
 export const VirtualizedPaymentsTable = ({
+  parentRef,
   data,
   columns,
-  students = [],
-  subjects = [],
   isLoading = false,
   isFetchingNextPage = false,
-  hasNextPage = false,
-  onLoadMore,
   onApprovePayment,
-}: VirtualizedPaymentsTableProps) => {
+  isError,
+  currentUserRole,
+}: VirtualizedPaymentsTableProps<RolePaymentT>) => {
   const isMobile = useMediaQuery('(max-width: 719px)');
-  const parentRef = useRef<HTMLDivElement>(null);
 
   const table = useReactTable({
     data,
@@ -56,10 +56,6 @@ export const VirtualizedPaymentsTable = ({
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    meta: {
-      students,
-      subjects,
-    },
   });
 
   const { rows } = table.getFilteredRowModel();
@@ -71,30 +67,29 @@ export const VirtualizedPaymentsTable = ({
     overscan: 5,
   });
 
-  // Обработчик скролла для загрузки следующей страницы
-  useEffect(() => {
-    const handleScroll = () => {
-      if (!parentRef.current || isFetchingNextPage || !hasNextPage || !onLoadMore) {
-        return;
-      }
+  const { colCount, rowHeight, GAP } = useResponsiveGrid(parentRef);
+  const gridRowVirtualizer = useVirtualGrid(parentRef, data, colCount, rowHeight);
 
-      const { scrollTop, scrollHeight, clientHeight } = parentRef.current;
-      const distanceToBottom = scrollHeight - scrollTop - clientHeight;
+  const notFoundItems = !data.length && !isLoading && !isError && !isFetchingNextPage;
 
-      if (distanceToBottom < 100) {
-        onLoadMore();
-      }
-    };
-
-    const el = parentRef.current;
-    if (!el) return;
-
-    el.addEventListener('scroll', handleScroll);
-    return () => el.removeEventListener('scroll', handleScroll);
-  }, [isFetchingNextPage, hasNextPage, onLoadMore]);
+  if (notFoundItems) {
+    return <NotFoundItems text="Здесь пока нет оплат" />;
+  }
 
   if (isMobile) {
-    return <CardsList onApprovePayment={onApprovePayment} />;
+    return (
+      <CardsList
+        data={data}
+        onApprovePayment={onApprovePayment}
+        rowVirtualizer={gridRowVirtualizer}
+        parentRef={parentRef}
+        colCount={colCount}
+        gap={GAP}
+        isLoading={isLoading}
+        isFetchingNextPage={isFetchingNextPage}
+        currentUserRole={currentUserRole}
+      />
+    );
   }
 
   return (
@@ -161,11 +156,7 @@ export const VirtualizedPaymentsTable = ({
           </div>
 
           {/* Индикатор загрузки */}
-          {(isLoading || isFetchingNextPage) && (
-            <div className="flex justify-center py-4">
-              <div className="text-gray-60">Загрузка...</div>
-            </div>
-          )}
+          <Loader isLoading={isLoading} isFetchingNextPage={isFetchingNextPage} />
         </div>
       </div>
     </ScrollArea>
