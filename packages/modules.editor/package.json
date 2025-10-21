@@ -27,6 +27,7 @@
     "@tiptap/extension-text-align": "^3.4.2",
     "@tiptap/extension-list": "^3.4.2",
     "@tiptap/extension-unique-id": "^3.4.2",
+    "@tiptap/extension-image": "^3.4.2",
     "@tiptap/pm": "^3.4.2",
     "@tiptap/react": "^3.4.2",
     "@tiptap/starter-kit": "^3.4.2",
@@ -38,6 +39,8 @@
     "@xipkg/input": "2.2.9",
     "@xipkg/popover": "^2.1.0",
     "@xipkg/select": "^2.2.5",
+    "@xipkg/tabs": "^2.1.0",
+    "@xipkg/utils": "^1.8.0",
     "common.env": "*",
     "common.services": "*",
     "common.ui": "*",
@@ -49,7 +52,8 @@
     "y-prosemirror": "^1.3.7",
     "y-protocols": "^1.0.6",
     "yjs": "^13.6.27",
-    "zustand": "^5.0.4"
+    "zustand": "^5.0.4",
+    "webpfy": "1.0.9"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
