@@ -13,7 +13,7 @@ const DEFAULT_VALUES: FormData = {
   shouldRepeat: 'dont_repeat',
 };
 
-export const useInvoiceForm = () => {
+export const useAddingForm = () => {
   const { data: classrooms } = useFetchClassrooms();
 
   const form = useForm<FormData>({

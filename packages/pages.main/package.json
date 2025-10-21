@@ -30,6 +30,7 @@
     "common.ui": "*",
     "features.invites": "*",
     "features.invoice": "*",
+    "features.lesson.add": "*",
     "features.materials.add": "*",
     "features.group.add": "*",
     "pages.classrooms": "*",

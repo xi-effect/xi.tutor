@@ -17,13 +17,11 @@ export const StudentSelector = ({ control }: StudentSelectorProps) => {
       defaultValue=""
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Ученик или группа</FormLabel>
+          <FormLabel className="mb-2 block">Ученик или группа</FormLabel>
           <FormControl>
             <Select value={field.value} onValueChange={(value) => field.onChange(value)}>
-              <SelectTrigger className="mt-1 mb-0 w-full">
-                <SelectValue
-                  placeholder={isLoading ? 'Загрузка...' : 'Выберите'}
-                />
+              <SelectTrigger className="mt-1 mb-0 w-full" size="s">
+                <SelectValue placeholder={isLoading ? 'Загрузка...' : 'Выберите'} />
               </SelectTrigger>
               <SelectContent className="w-full">
                 {classrooms?.map((classroom) => (
