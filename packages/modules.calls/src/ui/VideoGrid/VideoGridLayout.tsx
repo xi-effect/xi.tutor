@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import '@livekit/components-styles';
-import { TrackReferenceOrPlaceholder } from '@livekit/components-core';
+import { TrackReferenceOrPlaceholder, isEqualTrackRef } from '@livekit/components-core';
+import { Track } from 'livekit-client';
 import {
   TrackLoop,
   useVisualStableUpdate,
@@ -228,7 +229,19 @@ export const CarouselContainer = ({ focusTrack, carouselTracks }: CarouselContai
 
   // Создаем фокусный элемент
   const focusElement = useMemo(() => {
-    if (!focusTrack) return null;
+    // Если нет закрепленного трека, используем первый доступный трек участника
+    const trackToFocus =
+      focusTrack ||
+      carouselTracks.find((track) => track.publication?.source === Track.Source.Camera);
+
+    if (!trackToFocus) {
+      // Если нет треков для фокуса, показываем заглушку
+      return (
+        <div className="bg-gray-40 flex h-full w-full items-center justify-center rounded-2xl">
+          <span className="text-lg text-gray-100">Нет участников для отображения</span>
+        </div>
+      );
+    }
 
     return (
       <ParticipantTile
@@ -238,14 +251,22 @@ export const CarouselContainer = ({ focusTrack, carouselTracks }: CarouselContai
           height: '100%',
         }}
         className="h-full w-full [&_video]:object-contain lg:[&_video]:object-cover"
-        {...focusTrack}
+        {...trackToFocus}
       />
     );
-  }, [focusTrack]);
+  }, [focusTrack, carouselTracks]);
 
   // Создаем превью элементы для карусели
   const thumbElements = useMemo(() => {
-    return carouselTracks.map((track) => (
+    // Исключаем трек, который используется как фокусный
+    const trackToFocus =
+      focusTrack ||
+      carouselTracks.find((track) => track.publication?.source === Track.Source.Camera);
+    const filteredCarouselTracks = trackToFocus
+      ? carouselTracks.filter((track) => !isEqualTrackRef(track, trackToFocus))
+      : carouselTracks;
+
+    return filteredCarouselTracks.map((track) => (
       <ParticipantTile
         key={`${track.participant.identity}-${track.source}`}
         style={{ flex: 'unset' }}
@@ -253,7 +274,7 @@ export const CarouselContainer = ({ focusTrack, carouselTracks }: CarouselContai
         {...track}
       />
     ));
-  }, [carouselTracks]);
+  }, [carouselTracks, focusTrack]);
 
   // Выбираем правильный layout в зависимости от ориентации
   if (orientation === 'vertical') {

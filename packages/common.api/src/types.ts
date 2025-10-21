@@ -95,6 +95,8 @@ export interface GroupClassroomTutorResponseSchema {
   invite_code: string;
   subject_id: number | null;
   name?: string;
+  tutor_id?: number;
+  enrollments_count?: number;
 }
 
 export type ClassroomTutorResponseSchema =

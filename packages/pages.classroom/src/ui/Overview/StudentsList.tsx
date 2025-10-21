@@ -13,6 +13,7 @@ import { GroupStudentsListSchema } from 'common.types';
 import { useGroupStudentsList } from 'common.services';
 import { OverviewSkeleton } from './OverviewSkeleton';
 import { toast } from 'sonner';
+import { ContactsBadge } from '../Header/components/ContactsBadge';
 
 type StudentsListPropsT = {
   classroomId: string;
@@ -53,22 +54,25 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
   };
 
   return (
-    <div className="flex flex-row gap-8">
+    <div className="flex flex-row gap-8 pb-4">
       {students.map(({ user_id, display_name }: GroupStudentsListSchema) => (
         <div
-          className="border-gray-60 flex min-h-20 min-w-[350px] items-center justify-between rounded-2xl border p-4"
+          className="border-gray-60 relative flex min-h-30 min-w-[350px] items-center justify-between rounded-2xl border p-4"
           key={user_id}
         >
-          <div className="flex items-center gap-2">
-            <UserProfile
-              userId={user_id}
-              withOutText
-              src={`https://api.sovlium.ru/files/users/${user_id}/avatar.webp`}
-              size="l"
-            />
-            <h3 className="text-m-base font-medium text-gray-100">{display_name}</h3>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <UserProfile
+                userId={user_id}
+                withOutText
+                src={`https://api.sovlium.ru/files/users/${user_id}/avatar.webp`}
+                size="l"
+              />
+              <h3 className="text-m-base font-medium text-gray-100">{display_name}</h3>
+            </div>
+            <ContactsBadge userId={user_id} />
           </div>
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-100">
+          <div className="absolute top-4 right-4 flex h-8 w-8 rounded-full bg-gray-100">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button className="h-8 w-8" variant="ghost" size="icon">

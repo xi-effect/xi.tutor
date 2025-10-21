@@ -1,6 +1,6 @@
 // import { Badge } from '@xipkg/badge';
 import { useParams } from '@tanstack/react-router';
-import { useGetClassroom } from 'common.services';
+import { useGetClassroom, useCurrentUser } from 'common.services';
 import { OverviewSkeleton } from './OverviewSkeleton';
 import { SectionContainer } from './SectionContainer';
 import { MaterialsList } from './MaterialsList';
@@ -10,6 +10,9 @@ import { StudentsList } from './StudentsList';
 import { CardMaterialsProps, materialsMock } from '../CardMaterials';
 
 export const Overview = () => {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
   const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
 
@@ -78,7 +81,7 @@ export const Overview = () => {
       <SectionContainer title="Оплаты" tabLink="payments">
         <PaymentsList />
       </SectionContainer>
-      {classroom.kind === 'group' && (
+      {classroom.kind === 'group' && isTutor && (
         <SectionContainer title="Ученики" tabLink="">
           <StudentsList classroomId={classroomId} />
         </SectionContainer>

@@ -63,7 +63,9 @@ export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
             {/* <RaiseHandButton /> */}
           </div>
         </div>
-        <DisconnectButton />
+        <div className="bg-gray-0 border-gray-10 flex h-[48px] w-[48px] items-center justify-center gap-1 rounded-[16px] border p-1">
+          <DisconnectButton />
+        </div>
       </div>
     </div>
   );

@@ -117,7 +117,7 @@ export const UpBar = () => {
           </Button>
         </TooltipTrigger>
         <TooltipContent side="bottom" align="start">
-          Вернуться в кабинет
+          Вернуться в кабинет. Звонок не прервется.
         </TooltipContent>
       </Tooltip>
 

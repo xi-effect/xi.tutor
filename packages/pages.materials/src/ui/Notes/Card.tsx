@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 
 import { Button } from '@xipkg/button';
 import { MoreVert } from '@xipkg/icons';
@@ -16,6 +16,7 @@ import { useDeleteMaterials } from 'common.services';
 
 export const Card: React.FC<MaterialPropsT> = ({ id, updated_at, name, kind }) => {
   const navigate = useNavigate();
+  const search = useSearch({ strict: false });
   const { deleteMaterials } = useDeleteMaterials();
 
   const handleDelete = (e: React.MouseEvent) => {
@@ -31,7 +32,16 @@ export const Card: React.FC<MaterialPropsT> = ({ id, updated_at, name, kind }) =
   return (
     <div
       onClick={() => {
-        navigate({ to: `/editor/${id}` });
+        // Сохраняем только параметр call при переходе
+        const filteredSearch = search.call ? { call: search.call } : {};
+
+        navigate({
+          to: `/editor/${id}`,
+          search: (prev: Record<string, unknown>) => ({
+            ...prev,
+            ...filteredSearch,
+          }),
+        });
       }}
       className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex cursor-pointer justify-between rounded-2xl border p-4"
     >

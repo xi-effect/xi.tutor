@@ -1,0 +1,1 @@
+export { ModalGroupInvite } from './ModalGroupInvite';
