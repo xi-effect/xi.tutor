@@ -65,7 +65,7 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                   {formatDate(paymentDetails.datePayment)}
                 </div>
                 <UserProfile
-                  userId={data?.student_id ?? null}
+                  userId={data?.student_id ?? 0}
                   text="Анна Смирнова"
                   label="Индивидуальное"
                   src="https://github.com/shadcn.png"
