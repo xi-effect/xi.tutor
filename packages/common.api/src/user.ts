@@ -20,8 +20,7 @@ const userApiConfig = {
     method: HttpMethod.GET,
   },
   [UserQueryKey.Profile]: {
-    getUrl: () =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/profile/`,
+    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/`,
     method: HttpMethod.PATCH,
   },
   [UserQueryKey.Email]: {
@@ -41,11 +40,6 @@ const userApiConfig = {
   [UserQueryKey.UserById]: {
     getUrl: (id: string) =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/by-id/${id}/profile/`,
-    method: HttpMethod.GET,
-  },
-  [UserQueryKey.UserByUsername]: {
-    getUrl: (username: string) =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/by-username/${username}/profile/`,
     method: HttpMethod.GET,
   },
   [UserQueryKey.EmailConfirmationRequest]: {
