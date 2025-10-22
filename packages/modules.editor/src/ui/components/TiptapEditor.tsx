@@ -19,8 +19,8 @@ export const TiptapEditor = () => {
   }
 
   return (
-    <div className="flex w-full justify-center py-8">
-      <div className="w-full max-w-4xl overflow-hidden pl-16">
+    <div className="flex w-full justify-center overflow-auto py-8">
+      <div className="w-full max-w-4xl pl-16">
         <div className="relative">
           <EditorContent
             editor={editor}

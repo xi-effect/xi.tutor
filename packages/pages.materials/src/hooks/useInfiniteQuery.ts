@@ -29,12 +29,19 @@ export const useInfiniteQuery = (
       },
       initialPageParam: undefined as string | undefined,
       getNextPageParam: (lastPage) => {
-        if (!lastPage || lastPage.length === 0) {
+        // Проверяем, если lastPage это объект с массивом данных
+        const data = Array.isArray(lastPage) ? lastPage : lastPage?.data || lastPage?.results;
+
+        if (!data || !Array.isArray(data) || data.length === 0) {
           return undefined;
         }
 
-        const nextParam = lastPage[lastPage.length - 1].last_opened_at;
-        return nextParam;
+        const lastItem = data[data.length - 1];
+        if (!lastItem || !lastItem.last_opened_at) {
+          return undefined;
+        }
+
+        return lastItem.last_opened_at;
       },
       staleTime: 5 * 60 * 1000, // 5 минут
       gcTime: 10 * 60 * 1000, // 10 минут
@@ -68,7 +75,15 @@ export const useInfiniteQuery = (
       return [];
     }
 
-    const flattened = data.pages.flat();
+    const flattened = data.pages.flatMap((page) => {
+      // Если страница это массив, возвращаем как есть
+      if (Array.isArray(page)) {
+        return page;
+      }
+      // Если страница это объект с массивом данных, извлекаем массив
+      return page?.data || page?.results || [];
+    });
+
     return flattened;
   }, [data?.pages]);
 

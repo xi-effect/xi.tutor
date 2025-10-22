@@ -3,6 +3,7 @@ import { HttpMethod } from './config';
 
 enum FilesQueryKey {
   UploadImage = 'UploadImage',
+  UploadPublicImage = 'UploadPublicImage',
   UploadAttachment = 'UploadAttachment',
   GetFile = 'GetFile',
   DeleteFile = 'DeleteFile',
@@ -10,12 +11,9 @@ enum FilesQueryKey {
 }
 
 const filesApiConfig = {
-  [FilesQueryKey.UploadImage]: {
-    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/storage-service/files/images/`,
-    method: HttpMethod.POST,
-  },
-  [FilesQueryKey.UploadAttachment]: {
-    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/storage-service/files/attachments/`,
+  [FilesQueryKey.UploadPublicImage]: {
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/storage-service/access-groups/public/file-kinds/image/files/`,
     method: HttpMethod.POST,
   },
   [FilesQueryKey.GetFile]: {

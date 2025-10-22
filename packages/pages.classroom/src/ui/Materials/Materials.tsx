@@ -1,5 +1,5 @@
 import { ScrollArea } from '@xipkg/scrollarea';
-import { useNavigate, useParams } from '@tanstack/react-router';
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { boardsMock, notesMock } from '../../mocks';
 import { useGetClassroom } from 'common.services';
 
@@ -9,6 +9,7 @@ export const Materials = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
   const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
   const navigate = useNavigate();
+  const search = useSearch({ strict: false });
 
   if (isLoading) {
     return (
@@ -100,7 +101,16 @@ export const Materials = () => {
                   key={board.id}
                   value={board}
                   onClick={() => {
-                    navigate({ to: `/board/${board.id}` });
+                    // Сохраняем только параметр call при переходе
+                    const filteredSearch = search.call ? { call: search.call } : {};
+
+                    navigate({
+                      to: `/board/${board.id}`,
+                      search: (prev: Record<string, unknown>) => ({
+                        ...prev,
+                        ...filteredSearch,
+                      }),
+                    });
                   }}
                 />
               ))}
@@ -124,7 +134,16 @@ export const Materials = () => {
                   key={note.id}
                   value={note}
                   onClick={() => {
-                    navigate({ to: `/editor/${note.id}` });
+                    // Сохраняем только параметр call при переходе
+                    const filteredSearch = search.call ? { call: search.call } : {};
+
+                    navigate({
+                      to: `/editor/${note.id}`,
+                      search: (prev: Record<string, unknown>) => ({
+                        ...prev,
+                        ...filteredSearch,
+                      }),
+                    });
                   }}
                 />
               ))}

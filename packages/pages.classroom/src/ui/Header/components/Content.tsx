@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Badge } from '@xipkg/badge';
-import { TelegramFilled, Conference } from '@xipkg/icons';
+// import { Badge } from '@xipkg/badge';
+import { Conference } from '@xipkg/icons';
 import { ClassroomTutorResponseSchema } from 'common.api';
-import { handleTelegramClick } from '../../../utils/header';
+// import { handleTelegramClick } from '../../../utils/header';
 import { IndividualUser } from './IndividualUser';
 // import { EditableDescription } from './EditableDescription';
 import { Button } from '@xipkg/button';
@@ -11,12 +11,17 @@ import { useStartCall } from 'modules.calls';
 import { useEffect, useCallback } from 'react';
 import { useSearch } from '@tanstack/react-router';
 import { StatusBadge } from '../../StatusBadge';
+import { ContactsBadge } from './ContactsBadge';
+import { useCurrentUser } from 'common.services';
 
 interface ContentProps {
   classroom: ClassroomTutorResponseSchema;
 }
 
 export const Content = ({ classroom }: ContentProps) => {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
   const { startCall, isLoading } = useStartCall();
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId' });
 
@@ -41,8 +46,9 @@ export const Content = ({ classroom }: ContentProps) => {
   // Перехват параметра goto=call
   useEffect(() => {
     const searchParams = search as any;
+
     if (searchParams.goto && searchParams.goto === 'call') {
-      // Очищаем URL параметр
+      // Очищаем только goto параметр
       const url = new URL(window.location.href);
       url.searchParams.delete('goto');
       window.history.replaceState({}, '', url.toString());
@@ -72,15 +78,12 @@ export const Content = ({ classroom }: ContentProps) => {
 
           <StatusBadge status={classroom.status} kind={classroom.kind} />
 
-          <Badge
-            className="bg-brand-0 text-s-base text-brand-80 flex cursor-pointer flex-row items-center gap-2 font-medium"
-            onClick={handleTelegramClick}
-            variant="secondary"
-            size="m"
-          >
-            <TelegramFilled className="fill-brand-80 size-4" />
-            {`@nickname`}
-          </Badge>
+          {classroom.kind === 'individual' && (
+            <ContactsBadge userId={classroom.student_id ?? classroom.tutor_id ?? 0} />
+          )}
+          {classroom.kind === 'group' && !isTutor && (
+            <ContactsBadge userId={classroom.tutor_id ?? 0} />
+          )}
         </div>
       </div>
 

@@ -12,16 +12,15 @@ import {
 import { Button } from '@xipkg/button';
 import { Radio, RadioItem } from '@xipkg/radio';
 import { Form, FormField, FormItem, FormMessage } from '@xipkg/form';
-import { usePaymentApproveForm, useGetPayment } from '../hooks';
-import { PaymentFormData } from '../model';
-import { PaymentT } from '../types';
+import { usePaymentApproveForm,useGetPayment } from '../hooks';
+import { RolePaymentT } from 'features.table';
 import { formatDate } from '../utils';
 import { UserProfile } from '@xipkg/userprofile';
 
 type PaymentApproveModalPropsT = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  paymentDetails: PaymentT;
+  paymentDetails: RolePaymentT;
 };
 
 export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
@@ -36,11 +35,9 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
     onOpenChange(false);
   };
 
-  const onFormSubmit = (data: PaymentFormData) => {
+  const onFormSubmit = () => {
     onSubmit({
-      ...data,
-      ...paymentDetails,
-      statusPayment: 'paid',
+      typePayment: 'cash',
     });
     handleCloseModal();
   };
@@ -62,10 +59,10 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
             <ModalBody className="flex flex-col gap-6">
               <div className="grid grid-cols-4 gap-6 sm:grid-cols-2">
                 <div className="col-span-1 flex flex-col">
-                  {formatDate(paymentDetails.datePayment)}
+                  {formatDate(paymentDetails.created_at)}
                 </div>
                 <UserProfile
-                  userId={data?.student_id ?? 0}
+                  userId={paymentDetails.id ?? 0}
                   text="Анна Смирнова"
                   label="Индивидуальное"
                   src="https://github.com/shadcn.png"

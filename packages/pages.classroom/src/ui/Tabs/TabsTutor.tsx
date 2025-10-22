@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Tabs } from '@xipkg/tabs';
 import { useSearch, useNavigate, useParams } from '@tanstack/react-router';
-import { useEffect, useRef } from 'react';
 
 import { Button } from '@xipkg/button';
 import { Overview } from '../Overview';
@@ -10,8 +9,9 @@ import { InformationLayout } from '../Information';
 import { MaterialsAdd } from 'features.materials.add';
 import { Payments } from '../Payments';
 import { Materials } from '../Materials';
-import { useCurrentUser, useGetClassroom } from 'common.services';
+import { useGetClassroom } from 'common.services';
 import { ModalStudentsGroup } from 'features.group.manage';
+import { ModalGroupInvite } from 'features.group.invite';
 
 export const TabsTutor = () => {
   const search: SearchParams = useSearch({ strict: false });
@@ -22,32 +22,18 @@ export const TabsTutor = () => {
   const { data: classroom } = useGetClassroom(Number(classroomId));
 
   const handleTabChange = (value: string) => {
+    // Сохраняем параметр call при смене табов
+    const filteredSearch = search.call ? { call: search.call } : {};
+
     navigate({
       // @ts-ignore
-      search: { tab: value },
+      search: {
+        // @ts-ignore
+        tab: value,
+        ...filteredSearch,
+      },
     });
   };
-
-  const { data: user } = useCurrentUser();
-  const isTutor = user?.default_layout === 'tutor';
-  const prevIsTutorRef = useRef(isTutor);
-
-  // Отслеживаем изменения роли пользователя
-  useEffect(() => {
-    const prevIsTutor = prevIsTutorRef.current;
-    const currentIsTutor = isTutor;
-
-    // Если роль изменилась с tutor на student и мы находимся на вкладке info
-    if (prevIsTutor && !currentIsTutor && currentTab === 'info') {
-      navigate({
-        // @ts-ignore
-        search: { tab: 'overview' },
-      });
-    }
-
-    // Обновляем предыдущее значение
-    prevIsTutorRef.current = currentIsTutor;
-  }, [isTutor, currentTab, navigate]);
 
   return (
     <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
@@ -75,6 +61,13 @@ export const TabsTutor = () => {
               Добавить ученика
             </Button>
           </ModalStudentsGroup>
+        )}
+        {currentTab === 'overview' && classroom?.kind === 'group' && (
+          <ModalGroupInvite>
+            <Button size="s" variant="ghost" className="ml-1 rounded-[8px]">
+              Пригласить в группу
+            </Button>
+          </ModalGroupInvite>
         )}
         {currentTab === 'materials' && <MaterialsAdd />}
       </div>

@@ -12,7 +12,6 @@ import {
   ScreenShareIcon,
   TrackMutedIndicatorProps,
   TrackRefContext,
-  VideoTrack,
   useEnsureParticipant,
   useFeatureContext,
   useIsEncrypted,
@@ -23,6 +22,7 @@ import {
   useParticipantInfo,
 } from '@livekit/components-react';
 import { MicrophoneOff, RedLine } from '@xipkg/icons';
+import { VideoTrack } from '../shared';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { FocusToggle } from '../shared/FocusToggle';
 import { ParticipantName } from './ParticipantName';
@@ -225,7 +225,7 @@ export const ParticipantTile = ({
                 <div className="lk-participant-metadata p-1">
                   <div>
                     {trackReference.source === Track.Source.Camera ? (
-                      <div className="bg-gray-0 flex h-[24px] w-full gap-[6px] rounded-[8px] px-[6px] py-[4px]">
+                      <div className="bg-gray-0/80 flex h-[24px] w-full gap-[6px] rounded-[8px] px-[6px] py-[4px]">
                         {isEncrypted && <LockLockedIcon />}
                         <TrackMutedIndicator
                           trackRef={{

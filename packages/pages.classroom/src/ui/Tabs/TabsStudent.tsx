@@ -13,9 +13,16 @@ export const TabsStudent = () => {
   const currentTab = search.tab || 'overview';
 
   const handleTabChange = (value: string) => {
+    // Сохраняем параметр call при смене табов
+    const filteredSearch = search.call ? { call: search.call } : {};
+
     navigate({
       // @ts-ignore
-      search: { tab: value },
+      search: {
+        // @ts-ignore
+        tab: value,
+        ...filteredSearch,
+      },
     });
   };
 

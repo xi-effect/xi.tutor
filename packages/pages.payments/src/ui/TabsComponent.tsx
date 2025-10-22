@@ -1,19 +1,15 @@
 import { Tabs } from '@xipkg/tabs';
-import { useMemo, useRef, useEffect } from 'react';
+import React, { useMemo, useRef, useEffect } from 'react';
 import { VirtualizedPaymentsTable } from './VirtualizedPaymentsTable';
 import { useMedia } from 'common.utils';
-import { students, subjects, createPaymentColumns, PaymentT } from 'features.table';
+import { createPaymentColumns, useInfiniteQuery } from 'features.table';
 import { TemplatesGrid } from './Templates';
-import { useInfiniteQuery } from '../hooks';
 import { useCurrentUser } from 'common.services';
 import { useSearch, useNavigate } from '@tanstack/react-router';
-import { ChartsPage } from './Charts';
+import { type TabsComponentPropsT } from '../types';
+// import { ChartsPage } from './Charts';
 
-type TabsComponentPropsT = {
-  onApprovePayment: (payment: PaymentT) => void;
-};
-
-export const TabsComponent = ({ onApprovePayment }: TabsComponentPropsT) => {
+export const TabsComponent = React.memo(({ onApprovePayment }: TabsComponentPropsT) => {
   const isMobile = useMedia('(max-width: 700px)');
   const parentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -22,21 +18,22 @@ export const TabsComponent = ({ onApprovePayment }: TabsComponentPropsT) => {
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const currentUserRole = isTutor ? 'tutor' : 'student';
   const prevIsTutorRef = useRef(isTutor);
 
-  const { items, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
-    useInfiniteQuery(parentRef);
+  const { items, isLoading, isFetchingNextPage, isError } = useInfiniteQuery(
+    parentRef,
+    currentUserRole,
+  );
 
   const defaultColumns = useMemo(
     () =>
       createPaymentColumns({
-        withStudentColumn: true,
-        students,
-        subjects,
+        usersRole: isTutor ? 'student' : 'tutor',
         isMobile,
         onApprovePayment,
       }),
-    [isMobile, onApprovePayment],
+    [isMobile, onApprovePayment, isTutor],
   );
 
   // Отслеживаем изменения роли пользователя
@@ -70,9 +67,9 @@ export const TabsComponent = ({ onApprovePayment }: TabsComponentPropsT) => {
           Журнал оплат
         </Tabs.Trigger>
 
-        <Tabs.Trigger value="charts" className="text-m-base font-medium text-gray-100">
+        {/* <Tabs.Trigger value="charts" className="text-m-base font-medium text-gray-100">
           Аналитика
-        </Tabs.Trigger>
+        </Tabs.Trigger> */}
 
         {/* Скрываем последнюю вкладку для студентов */}
         {isTutor && (
@@ -87,19 +84,18 @@ export const TabsComponent = ({ onApprovePayment }: TabsComponentPropsT) => {
           <VirtualizedPaymentsTable
             data={items}
             columns={defaultColumns}
-            students={students}
-            subjects={subjects}
             isLoading={isLoading}
             isFetchingNextPage={isFetchingNextPage}
-            hasNextPage={hasNextPage}
-            onLoadMore={fetchNextPage}
             onApprovePayment={onApprovePayment}
+            parentRef={parentRef}
+            isError={isError}
+            currentUserRole={currentUserRole}
           />
         </Tabs.Content>
 
-        <Tabs.Content value="charts">
+        {/* <Tabs.Content value="charts">
           <ChartsPage />
-        </Tabs.Content>
+        </Tabs.Content> */}
 
         {/* Скрываем контент последней вкладки для студентов */}
         {isTutor && (
@@ -110,4 +106,4 @@ export const TabsComponent = ({ onApprovePayment }: TabsComponentPropsT) => {
       </div>
     </Tabs.Root>
   );
-};
+});

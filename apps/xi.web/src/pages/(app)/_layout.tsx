@@ -1,5 +1,8 @@
 import { Outlet, createFileRoute, useRouter } from '@tanstack/react-router';
-import { Navigation } from 'modules.navigation';
+import { LoadingScreen } from 'common.ui';
+import { Suspense, lazy, useEffect } from 'react';
+
+// Импортируем провайдеры синхронно, так как они нужны везде
 import {
   CompactView,
   LiveKitProvider,
@@ -7,7 +10,11 @@ import {
   useCallStore,
   ModeSyncProvider,
 } from 'modules.calls';
-import { useEffect } from 'react';
+
+// Динамические импорты для крупных модулей
+const Navigation = lazy(() =>
+  import('modules.navigation').then((module) => ({ default: module.Navigation })),
+);
 
 export const Route = createFileRoute('/(app)/_layout')({
   head: () => ({
@@ -41,24 +48,31 @@ function LayoutComponent() {
 
   useEffect(() => {
     const pathname = router.state.location.pathname;
+    const search = router.state.location.search;
+
     if (pathname.includes('/call')) {
       updateStore('mode', 'full');
+    } else if (pathname.includes('/classrooms') && search.call) {
+      // Если мы на странице classroom и есть параметр call, переключаемся в compact режим
+      updateStore('mode', 'compact');
     }
-  }, [router.state.location.pathname, updateStore]);
+  }, [router.state.location.pathname, router.state.location.search, updateStore]);
 
   return (
     <div className="relative flex min-h-svh flex-col overflow-hidden">
-      <Navigation>
-        <RoomProvider>
-          <LiveKitProvider>
-            <ModeSyncProvider>
-              <CompactView firstId="1" secondId="2">
-                <Outlet />
-              </CompactView>
-            </ModeSyncProvider>
-          </LiveKitProvider>
-        </RoomProvider>
-      </Navigation>
+      <Suspense fallback={<LoadingScreen />}>
+        <Navigation>
+          <RoomProvider>
+            <LiveKitProvider>
+              <ModeSyncProvider>
+                <CompactView>
+                  <Outlet />
+                </CompactView>
+              </ModeSyncProvider>
+            </LiveKitProvider>
+          </RoomProvider>
+        </Navigation>
+      </Suspense>
     </div>
   );
 }

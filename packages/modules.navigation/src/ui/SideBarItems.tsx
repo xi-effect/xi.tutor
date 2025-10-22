@@ -8,7 +8,7 @@ import {
   SidebarMenuItem,
 } from '@xipkg/sidebar';
 import { footerMenu, items } from './config';
-import { useLocation, useNavigate } from '@tanstack/react-router';
+import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { SwiperRef } from 'swiper/react';
 
@@ -17,6 +17,7 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const search = useSearch({ strict: false });
 
   const getIsActiveItem = (url: string) => {
     if (url === '/') {
@@ -38,7 +39,16 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
   };
 
   const handleClick = (url: string) => {
-    navigate({ to: url });
+    // Сохраняем только параметр call при переходе
+    const filteredSearch = search.call ? { call: search.call } : {};
+
+    navigate({
+      to: url,
+      search: (prev: Record<string, unknown>) => ({
+        ...prev,
+        ...filteredSearch,
+      }),
+    });
 
     if (swiperRef && swiperRef.current) {
       swiperRef.current?.swiper.slideTo(1);
@@ -70,7 +80,7 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
           {footerMenu.map((item) => (
             <SidebarMenuItem key={item.titleKey}>
               <SidebarMenuButton variant="ghost" asChild>
-                <a className="hover:underline" href={item.url}>
+                <a className="hover:underline" href={item.url} target="_blank">
                   <item.icon />
                   <span>{t(item.titleKey)}</span>
                 </a>

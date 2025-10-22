@@ -11,6 +11,8 @@ export type OnboardingTransitionModeT = 'forwards' | 'backwards';
 
 export type ClassroomStatusT = 'active' | 'paused' | 'locked' | 'finished';
 
+export type UserRoleT = 'tutor' | 'student';
+
 // Базовые типы для пользователей
 export interface UserProfileSchema {
   id: number;
@@ -95,6 +97,8 @@ export interface GroupClassroomTutorResponseSchema {
   invite_code: string;
   subject_id: number | null;
   name?: string;
+  tutor_id?: number;
+  enrollments_count?: number;
 }
 
 export type ClassroomTutorResponseSchema =

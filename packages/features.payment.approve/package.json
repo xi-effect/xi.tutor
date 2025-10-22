@@ -19,7 +19,8 @@
     "common.api": "workspace:*",
     "common.config": "workspace:*",
     "common.services": "*",
-    "common.utils": "*"
+    "common.utils": "*",
+    "features.table": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

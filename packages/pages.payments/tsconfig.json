@@ -1,5 +1,9 @@
 {
-  "include": ["src/**/*"],
+  "include": [
+    "src/**/*",
+    "src/ui/VirtualizedPaymentsTable.tsx",
+    "../features.table/src/hooks/useUserByRole.ts"
+  ],
   "extends": ["common.typescript/tsconfig.app.json"],
   "exclude": ["dist", "build", "node_modules"]
 }

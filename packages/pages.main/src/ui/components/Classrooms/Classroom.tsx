@@ -1,4 +1,4 @@
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { ClassroomT } from 'common.api';
 import { Button } from '@xipkg/button';
 import { Arrow, Conference } from '@xipkg/icons';
@@ -40,15 +40,22 @@ type ClassroomProps = {
 
 export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   const navigate = useNavigate();
+  const search = useSearch({ strict: false });
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
   const handleClick = () => {
+    // Сохраняем параметр call при переходе в кабинет
+    const filteredSearch = search.call ? { call: search.call } : {};
+
     navigate({
       to: '/classrooms/$classroomId',
       params: { classroomId: classroom.id.toString() },
-      search: { tab: 'overview' },
+      search: {
+        tab: 'overview',
+        ...filteredSearch,
+      },
     });
   };
 

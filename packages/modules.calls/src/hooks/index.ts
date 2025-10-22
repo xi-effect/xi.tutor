@@ -11,4 +11,6 @@ export { useResolveInitiallyDefaultDeviceId } from './useResolveInitiallyDefault
 export { useCannotUseDevice } from './useCannotUseDevice';
 export { useWatchPermissions } from './useWatchPermissions';
 export { useStartCall, type StartCallData } from './useStartCall';
-export { useResponsiveGrid } from './useResponsiveGrid';
+export { useResponsiveGrid, useAdaptiveGrid } from './useResponsiveGrid';
+export { useSpeakingParticipant } from './useSpeakingParticipant';
+export { useVideoSecurity } from './useVideoSecurity';

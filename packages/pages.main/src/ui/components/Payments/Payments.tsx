@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Button } from '@xipkg/button';
 import { ArrowRight } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
@@ -32,11 +32,19 @@ export const Payments = () => {
   const isTutor = user?.default_layout === 'tutor';
 
   const navigate = useNavigate();
+  const search = useSearch({ strict: false });
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
 
   const handleMore = () => {
+    // Сохраняем параметр call при переходе к оплатам
+    const filteredSearch = search.call ? { call: search.call } : {};
+
     navigate({
       to: '/payments',
+      search: (prev: Record<string, unknown>) => ({
+        ...prev,
+        ...filteredSearch,
+      }),
     });
   };
 

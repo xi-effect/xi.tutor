@@ -5,6 +5,8 @@ enum InvitationsQueryKey {
   AllInvitations = 'AllInvitations',
   AddInvitation = 'AddInvitation',
   AddGroupInvitation = 'AddGroupInvitation',
+  ResetGroupInvitation = 'ResetGroupInvitation',
+  DeleteGroupInvitation = 'DeleteGroupInvitation',
   DeleteInvitation = 'DeleteInvitation',
 }
 
@@ -23,6 +25,16 @@ const invitationsApiConfig = {
     getUrl: (classroomId: string) =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/group-classrooms/${classroomId}/invitation/`,
     method: HttpMethod.POST,
+  },
+  [InvitationsQueryKey.ResetGroupInvitation]: {
+    getUrl: (classroomId: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/group-classrooms/${classroomId}/invitation/`,
+    method: HttpMethod.PUT,
+  },
+  [InvitationsQueryKey.DeleteGroupInvitation]: {
+    getUrl: (classroomId: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/group-classrooms/${classroomId}/invitation/`,
+    method: HttpMethod.DELETE,
   },
   [InvitationsQueryKey.DeleteInvitation]: {
     getUrl: (invitation_id: number) =>

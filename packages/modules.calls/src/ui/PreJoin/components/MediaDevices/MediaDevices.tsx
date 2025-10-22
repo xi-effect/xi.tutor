@@ -4,7 +4,6 @@ import { usePersistentUserChoices } from '../../../../hooks/usePersistentUserCho
 import { useMemo } from 'react';
 import { LocalAudioTrack, LocalVideoTrack } from 'livekit-client';
 import { useCallStore } from '../../../../store/callStore';
-import { serverUrl, serverUrlDev, isDevMode } from '../../../../utils/config';
 import { useRoom } from '../../../../providers/RoomProvider';
 
 interface MediaDevicesProps {
@@ -59,20 +58,10 @@ export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
       updateStore('audioEnabled', audioTrack ? !audioTrack.isMuted : false);
       updateStore('videoEnabled', videoTrack ? !videoTrack.isMuted : false);
 
-      console.log('Attempting to connect to room...');
+      console.log('Preparing to join room...');
 
-      // Подключаемся к комнате через LiveKit
-      await room.connect(isDevMode ? serverUrlDev : serverUrl, token);
-
-      // Публикуем треки если они есть
-      if (audioTrack && !audioTrack.isMuted) {
-        await room.localParticipant.publishTrack(audioTrack);
-      }
-      if (videoTrack && !videoTrack.isMuted) {
-        await room.localParticipant.publishTrack(videoTrack);
-      }
-
-      // Устанавливаем соединение
+      // LiveKitRoom автоматически управляет подключением
+      // Нам нужно только установить флаг подключения
       updateStore('connect', true);
       updateStore('isStarted', true);
       updateStore('isConnecting', false);

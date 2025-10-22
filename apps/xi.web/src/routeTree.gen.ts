@@ -33,21 +33,16 @@ import { Route as appLayoutClassroomsClassroomIdRouteImport } from './pages/(app
 import { Route as appLayoutCallCallIdRouteImport } from './pages/(app)/_layout/call/$callId'
 import { Route as appLayoutBoardBoardIdRouteImport } from './pages/(app)/_layout/board/$boardId'
 
-const appRouteImport = createFileRoute('/(app)')()
 const appWelcomeRouteImport = createFileRoute('/(app)/welcome')()
 
-const appRoute = appRouteImport.update({
-  id: '/(app)',
+const appWelcomeRoute = appWelcomeRouteImport.update({
+  id: '/(app)/welcome',
+  path: '/welcome',
   getParentRoute: () => rootRouteImport,
 } as any)
-const appWelcomeRoute = appWelcomeRouteImport.update({
-  id: '/welcome',
-  path: '/welcome',
-  getParentRoute: () => appRoute,
-} as any)
 const appLayoutRoute = appLayoutRouteImport.update({
-  id: '/_layout',
-  getParentRoute: () => appRoute,
+  id: '/(app)/_layout',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const authSignupIndexRoute = authSignupIndexRouteImport.update({
   id: '/(auth)/signup/',
@@ -86,9 +81,9 @@ const appWelcomeLayoutRoute = appWelcomeLayoutRouteImport.update({
   getParentRoute: () => appWelcomeRoute,
 } as any)
 const appInviteInviteIdRoute = appInviteInviteIdRouteImport.update({
-  id: '/invite/$inviteId',
+  id: '/(app)/invite/$inviteId',
   path: '/invite/$inviteId',
-  getParentRoute: () => appRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
 const appWelcomeUserIndexRoute = appWelcomeUserIndexRouteImport.update({
   id: '/user/',
@@ -154,11 +149,11 @@ const appLayoutBoardBoardIdRoute = appLayoutBoardBoardIdRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
-  '/': typeof appLayoutIndexRoute
   '/invite/$inviteId': typeof appInviteInviteIdRoute
   '/welcome': typeof appWelcomeLayoutRoute
   '/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute
   '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
+  '/': typeof appLayoutIndexRoute
   '/reset-password': typeof authResetPasswordIndexRoute
   '/signin': typeof authSigninIndexRoute
   '/signup': typeof authSignupIndexRoute
@@ -199,7 +194,6 @@ export interface FileRoutesByTo {
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
-  '/(app)': typeof appRouteWithChildren
   '/(app)/_layout': typeof appLayoutRouteWithChildren
   '/(app)/invite/$inviteId': typeof appInviteInviteIdRoute
   '/(app)/welcome': typeof appWelcomeRouteWithChildren
@@ -226,11 +220,11 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/'
     | '/invite/$inviteId'
     | '/welcome'
     | '/reset-password/$resetToken'
     | '/deployments/$deploymentId/enable'
+    | '/'
     | '/reset-password'
     | '/signin'
     | '/signup'
@@ -270,7 +264,6 @@ export interface FileRouteTypes {
     | '/welcome/user'
   id:
     | '__root__'
-    | '/(app)'
     | '/(app)/_layout'
     | '/(app)/invite/$inviteId'
     | '/(app)/welcome'
@@ -296,7 +289,9 @@ export interface FileRouteTypes {
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
-  appRoute: typeof appRouteWithChildren
+  appLayoutRoute: typeof appLayoutRouteWithChildren
+  appInviteInviteIdRoute: typeof appInviteInviteIdRoute
+  appWelcomeRoute: typeof appWelcomeRouteWithChildren
   authResetPasswordResetTokenRoute: typeof authResetPasswordResetTokenRoute
   DeploymentsDeploymentIdEnableRoute: typeof DeploymentsDeploymentIdEnableRoute
   authResetPasswordIndexRoute: typeof authResetPasswordIndexRoute
@@ -306,26 +301,19 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/(app)': {
-      id: '/(app)'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof appRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/(app)/welcome': {
       id: '/(app)/welcome'
       path: '/welcome'
       fullPath: '/welcome'
       preLoaderRoute: typeof appWelcomeRouteImport
-      parentRoute: typeof appRoute
+      parentRoute: typeof rootRouteImport
     }
     '/(app)/_layout': {
       id: '/(app)/_layout'
-      path: '/'
-      fullPath: '/'
+      path: ''
+      fullPath: ''
       preLoaderRoute: typeof appLayoutRouteImport
-      parentRoute: typeof appRoute
+      parentRoute: typeof rootRouteImport
     }
     '/(auth)/signup/': {
       id: '/(auth)/signup/'
@@ -381,7 +369,7 @@ declare module '@tanstack/react-router' {
       path: '/invite/$inviteId'
       fullPath: '/invite/$inviteId'
       preLoaderRoute: typeof appInviteInviteIdRouteImport
-      parentRoute: typeof appRoute
+      parentRoute: typeof rootRouteImport
     }
     '/(app)/welcome/user/': {
       id: '/(app)/welcome/user/'
@@ -518,22 +506,10 @@ const appWelcomeRouteWithChildren = appWelcomeRoute._addFileChildren(
   appWelcomeRouteChildren,
 )
 
-interface appRouteChildren {
-  appLayoutRoute: typeof appLayoutRouteWithChildren
-  appInviteInviteIdRoute: typeof appInviteInviteIdRoute
-  appWelcomeRoute: typeof appWelcomeRouteWithChildren
-}
-
-const appRouteChildren: appRouteChildren = {
+const rootRouteChildren: RootRouteChildren = {
   appLayoutRoute: appLayoutRouteWithChildren,
   appInviteInviteIdRoute: appInviteInviteIdRoute,
   appWelcomeRoute: appWelcomeRouteWithChildren,
-}
-
-const appRouteWithChildren = appRoute._addFileChildren(appRouteChildren)
-
-const rootRouteChildren: RootRouteChildren = {
-  appRoute: appRouteWithChildren,
   authResetPasswordResetTokenRoute: authResetPasswordResetTokenRoute,
   DeploymentsDeploymentIdEnableRoute: DeploymentsDeploymentIdEnableRoute,
   authResetPasswordIndexRoute: authResetPasswordIndexRoute,
