@@ -12,7 +12,7 @@ import {
 import { Button } from '@xipkg/button';
 import { Radio, RadioItem } from '@xipkg/radio';
 import { Form, FormField, FormItem, FormMessage } from '@xipkg/form';
-import { usePaymentApproveForm,useGetPayment } from '../hooks';
+import { usePaymentApproveForm, useGetPayment } from '../hooks';
 import { RolePaymentT } from 'features.table';
 import { formatDate } from '../utils';
 import { UserProfile } from '@xipkg/userprofile';
