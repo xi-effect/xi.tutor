@@ -2,28 +2,33 @@
 import { LoadingScreen } from 'common.ui';
 import { useKeyPress } from 'common.utils';
 import { JSX } from 'react/jsx-runtime';
-import { Tldraw, TldrawProps } from 'tldraw';
-import 'tldraw/tldraw.css';
+import { Editor, Tldraw, TldrawProps } from 'tldraw';
 import { myAssetStore } from '../../../features';
-import { useRemoveMark } from '../../../hooks';
+import { useLockedShapeSelection, useRemoveMark } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useTldrawStore } from '../../../store';
 import { Header } from '../header';
 import { Navbar, SelectionMenu } from '../toolbar';
 import { CollaboratorCursor } from './CollaboratorCursor';
 import { TldrawZoomPanel } from './TldrawZoomPanel';
+import { useState } from 'react';
+import 'tldraw/tldraw.css';
+import './customstyles.css';
 
 export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
-  useRemoveMark();
+  const [editor, setEditor] = useState<Editor | null>(null);
 
   const { selectedElementId, selectElement } = useTldrawStore();
+  const { store, status, undo, redo, canUndo, canRedo } = useYjsContext();
+
+  useRemoveMark();
+  useLockedShapeSelection(editor);
 
   useKeyPress('Backspace', () => {
     if (selectedElementId) {
       selectElement(null);
     }
   });
-  const { store, status, undo, redo, canUndo, canRedo } = useYjsContext();
 
   if (status === 'loading') return <LoadingScreen />;
 
@@ -35,9 +40,9 @@ export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
             // @ts-ignore
             assets={myAssetStore}
             onMount={(editor) => {
+              setEditor(editor);
               editor.updateInstanceState({
                 isGridMode: true,
-                // Оптимизации производительности
                 isDebugMode: false,
                 isPenMode: false,
               });

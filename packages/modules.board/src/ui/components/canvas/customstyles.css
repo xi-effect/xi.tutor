@@ -1,0 +1,29 @@
+/* Стили для заблокированных элементов в Tldraw */
+
+[data-has-locked-selection='true'] .tl-selection__fg rect {
+  stroke: #b4b5bc;
+}
+
+[data-has-locked-selection='true'] .tl-selection__fg__outline {
+  stroke: #b4b5bc;
+}
+
+[data-has-locked-selection='true'] svg.tl-selection__fg * {
+  stroke: #b4b5bc;
+}
+
+[data-has-locked-selection='true'] .tl-resize-handle {
+  display: none;
+}
+
+[data-has-locked-selection='true'] .tl-handle {
+  display: none;
+}
+
+[data-has-locked-selection='true'] .tl-handle__bg {
+  display: none;
+}
+
+[data-has-locked-selection='true'] .tl-handle__fg {
+  display: none;
+}
