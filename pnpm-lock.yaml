@@ -391,6 +391,55 @@ importers:
         specifier: ^8.22.0
         version: 8.46.1(eslint@9.38.0)(typescript@5.7.3)
 
+  packages/common.entities:
+    dependencies:
+      react:
+        specifier: '19'
+        version: 19.2.0
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.19.0
+        version: 9.38.0
+      '@types/node':
+        specifier: ^20.3.1
+        version: 20.19.22
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.2.2
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.2.2(@types/react@19.2.2)
+      '@xipkg/eslint':
+        specifier: 3.2.0
+        version: 3.2.0(eslint-plugin-jsx-a11y@6.10.2)(eslint@9.38.0)(turbo@2.5.8)(typescript@5.7.3)
+      '@xipkg/typescript':
+        specifier: latest
+        version: 0.2.0
+      common.eslint:
+        specifier: '*'
+        version: link:../common.eslint
+      common.typescript:
+        specifier: '*'
+        version: link:../common.typescript
+      eslint:
+        specifier: ^9.19.0
+        version: 9.38.0
+      eslint-plugin-react-hooks:
+        specifier: ^5.0.0
+        version: 5.2.0(eslint@9.38.0)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.18
+        version: 0.4.18(eslint@9.38.0)
+      globals:
+        specifier: ^15.14.0
+        version: 15.15.0
+      typescript:
+        specifier: ~5.7.2
+        version: 5.7.3
+      typescript-eslint:
+        specifier: ^8.22.0
+        version: 8.46.1(eslint@9.38.0)(typescript@5.7.3)
+
   packages/common.env:
     dependencies:
       react:
@@ -2691,6 +2740,9 @@ importers:
       common.api:
         specifier: '*'
         version: link:../common.api
+      common.entities:
+        specifier: '*'
+        version: link:../common.entities
       common.services:
         specifier: '*'
         version: link:../common.services
@@ -2824,6 +2876,9 @@ importers:
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.0)
+      common.entities:
+        specifier: '*'
+        version: link:../common.entities
       common.env:
         specifier: '*'
         version: link:../common.env
