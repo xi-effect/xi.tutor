@@ -2,7 +2,6 @@ export type { UserData, ProfileData, RoleT } from './user';
 export type {
   NotificationsSettingsT,
   NotificationT,
-  NotificationType,
   NotificationSocketEvents,
   NotificationsStateT,
 } from './notifications';

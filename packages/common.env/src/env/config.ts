@@ -18,6 +18,10 @@ const env = {
   DEV: import.meta.env.MODE === 'development',
 
   VITE_SERVER_URL_BACKEND: asString(import.meta.env.VITE_SERVER_URL_BACKEND),
+  VITE_SERVER_URL_SOCKETIO: asString(
+    import.meta.env.VITE_SERVER_URL_SOCKETIO,
+    import.meta.env.VITE_SERVER_URL_BACKEND,
+  ),
   VITE_SERVER_URL_LIVEKIT: asString(import.meta.env.VITE_SERVER_URL_LIVEKIT),
   VITE_SERVER_URL_HOCUS: asString(import.meta.env.VITE_SERVER_URL_HOCUS),
   VITE_APP_DOMAIN: asString(import.meta.env.VITE_APP_DOMAIN, 'https://app.sovlium.ru'),
