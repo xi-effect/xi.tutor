@@ -3560,6 +3560,9 @@ importers:
       '@xipkg/button':
         specifier: 3.2.0
         version: 3.2.0(@types/react@19.2.2)(react@19.2.0)
+      '@xipkg/checkbox':
+        specifier: ^4.0.14
+        version: 4.0.14(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/form':
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
