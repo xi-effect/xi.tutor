@@ -1,6 +1,7 @@
 import { useEditor } from 'tldraw';
 import { useEffect } from 'react';
 import { useTldrawStore } from '../store';
+import { isEditableTarget } from '../utils';
 
 export const useHotkeys = () => {
   const editor = useEditor();
@@ -11,9 +12,7 @@ export const useHotkeys = () => {
 
     const handleKeyDown = (event: KeyboardEvent) => {
       // Предотвращаем срабатывание в полях ввода
-      if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
-        return;
-      }
+      if (isEditableTarget(event.target)) return;
 
       const { key, ctrlKey, shiftKey, altKey } = event;
 
