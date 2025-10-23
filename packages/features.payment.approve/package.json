@@ -16,8 +16,8 @@
     "@xipkg/form": "4.2.1",
     "@xipkg/modal": "^4.2.0",
     "@xipkg/radio": "^2.0.6",
-    "common.api": "workspace:*",
-    "common.config": "workspace:*",
+    "common.api": "*",
+    "common.config": "*",
     "common.services": "*",
     "common.utils": "*",
     "features.table": "*"
