@@ -2,18 +2,13 @@ import { Badge } from '@xipkg/badge';
 import { cn } from '@xipkg/utils';
 
 import { StatusEducationT, TypeEducationT } from '../types';
+import { educationUtils } from 'common.entities';
+import { useCurrentUser } from 'common.services';
 
 type StatusBadgePropsT = {
   status: StatusEducationT;
   kind: TypeEducationT;
   deleted?: boolean;
-};
-
-const statusMap: Record<StatusEducationT, string> = {
-  active: 'Учится',
-  paused: 'На паузе',
-  locked: 'Заблокировано',
-  finished: 'Обучение завершено',
 };
 
 const styles = 'rounded-lg border-none px-2 py-1 font-medium text-s-base';
@@ -26,11 +21,15 @@ const mapStyles: Record<StatusEducationT, string> = {
 };
 
 export const StatusBadge = ({ status, deleted }: StatusBadgePropsT) => {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
   const baseClasses = deleted ? 'text-gray-80 bg-gray-5' : mapStyles[status];
+  const statusText = educationUtils.getStatusTextByRole(status, isTutor);
 
   return (
     <Badge size="m" className={cn(styles, baseClasses)}>
-      {statusMap[status]}
+      {statusText}
     </Badge>
   );
 };

@@ -14,52 +14,15 @@ import { useLocation, useNavigate } from '@tanstack/react-router';
 import { useNotificationsContext } from 'common.services';
 import type { NotificationT } from 'common.types';
 import { NotificationBadge } from './NotificationBadge';
+import {
+  generateNotificationTitle,
+  generateNotificationDescription,
+  formatNotificationDate,
+  formatFullNotificationDate,
+  formatNotificationCount,
+} from 'common.services';
 
-const rtf = new Intl.RelativeTimeFormat('ru', { numeric: 'auto' });
-
-// Функция для форматирования полной даты
-const formatFullDate = (dateString: string): string => {
-  const date = new Date(dateString);
-  return date.toLocaleString('ru-RU', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-};
-
-// Функция для расчета относительного времени
-const getRelativeTime = (dateString: string): string => {
-  const date = new Date(dateString);
-  const now = new Date();
-  const diffInMs = date.getTime() - now.getTime();
-  const diffInMinutes = Math.round(diffInMs / (1000 * 60));
-  const diffInHours = Math.round(diffInMs / (1000 * 60 * 60));
-  const diffInDays = Math.round(diffInMs / (1000 * 60 * 60 * 24));
-
-  // Если дата в будущем
-  if (diffInMs > 0) {
-    if (diffInMinutes < 60) {
-      return rtf.format(diffInMinutes, 'minute');
-    } else if (diffInHours < 24) {
-      return rtf.format(diffInHours, 'hour');
-    } else {
-      return rtf.format(diffInDays, 'day');
-    }
-  }
-
-  // Если дата в прошлом
-  if (Math.abs(diffInMinutes) < 60) {
-    return `${Math.abs(diffInMinutes)} мин. назад`;
-  } else if (Math.abs(diffInHours) < 24) {
-    return `${Math.abs(diffInHours)} ч. назад`;
-  } else if (Math.abs(diffInDays) < 7) {
-    return `${Math.abs(diffInDays)} дн. назад`;
-  } else {
-    return rtf.format(diffInDays, 'day');
-  }
-};
+// Удаляем старые функции форматирования, используем новые из utils
 
 // Компонент для отображения одного уведомления
 const NotificationItem = ({
@@ -68,11 +31,11 @@ const NotificationItem = ({
   onDelete,
 }: {
   notification: NotificationT;
-  onMarkAsRead: (id: string) => void;
-  onDelete: (id: string) => void;
+  onMarkAsRead: (id: string) => Promise<void>;
+  onDelete: (id: string) => Promise<void>;
 }) => {
   const handleClick = () => {
-    if (!notification.isRead) {
+    if (!notification.is_read) {
       onMarkAsRead(notification.id);
     }
   };
@@ -82,26 +45,29 @@ const NotificationItem = ({
     onDelete(notification.id);
   };
 
+  const title = generateNotificationTitle(notification);
+  const description = generateNotificationDescription(notification);
+  const relativeTime = formatNotificationDate(notification.created_at);
+  const fullTime = formatFullNotificationDate(notification.created_at);
+
   return (
     <DropdownMenuItem
       className={`flex h-full items-start gap-2 rounded-[16px] p-3 ${
-        !notification.isRead ? 'bg-blue-5' : ''
+        !notification.is_read ? 'bg-blue-5' : ''
       }`}
       onClick={handleClick}
     >
-      <UserProfile userId={Number(notification.id)} withOutText />
+      <UserProfile userId={notification.actor_user_id || 0} withOutText />
       <div className="flex flex-1 flex-col gap-1">
-        <span className="text-m-base font-medium text-gray-100">{notification.title}</span>
-        <span className="text-gray-80 text-s-base font-normal">{notification.description}</span>
+        <span className="text-m-base font-medium text-gray-100">{title}</span>
+        <span className="text-gray-80 text-s-base font-normal">{description}</span>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger className="w-fit" asChild>
-              <span className="text-gray-80 text-xs-base font-normal">
-                {getRelativeTime(notification.date)}
-              </span>
+              <span className="text-gray-80 text-xs-base font-normal">{relativeTime}</span>
             </TooltipTrigger>
             <TooltipContent side="bottom">
-              <p>{formatFullDate(notification.date)}</p>
+              <p>{fullTime}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>
@@ -121,11 +87,26 @@ const NotificationItem = ({
 export const Notifications = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } =
-    useNotificationsContext();
+  const {
+    notifications,
+    unreadCount,
+    markAsRead,
+    markAllAsRead,
+    deleteNotification,
+    isLoading,
+    hasMore,
+    loadMore,
+  } = useNotificationsContext();
 
   const handleToSettings = () => {
     navigate({ to: location.pathname, search: { profile: 'notifications' } });
+  };
+
+  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
+    if (scrollHeight - scrollTop === clientHeight && hasMore && !isLoading) {
+      loadMore();
+    }
   };
 
   return (
@@ -133,7 +114,7 @@ export const Notifications = () => {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-[32px] w-[32px] p-1">
           <Notification className="fill-gray-80" size="s" />
-          <NotificationBadge count={unreadCount} />
+          <NotificationBadge count={formatNotificationCount(unreadCount)} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -158,7 +139,7 @@ export const Notifications = () => {
             </Button>
           </div>
         </DropdownMenuLabel>
-        <ScrollArea className="h-[300px] pr-3">
+        <ScrollArea className="h-[300px] pr-3" onScroll={handleScroll}>
           {notifications.length > 0 ? (
             <div className="group">
               {notifications.map((notification: NotificationT) => (
@@ -169,6 +150,11 @@ export const Notifications = () => {
                   onDelete={deleteNotification}
                 />
               ))}
+              {isLoading && (
+                <div className="flex justify-center p-4">
+                  <span className="text-gray-80 text-s-base">Загрузка...</span>
+                </div>
+              )}
             </div>
           ) : (
             <div className="flex h-[300px] flex-col items-center justify-center">

@@ -1,6 +1,8 @@
 import { Badge } from '@xipkg/badge';
 
 import { StatusEducationT, TypeEducationT } from '../../../types';
+import { educationUtils } from 'common.entities';
+import { useCurrentUser } from 'common.services';
 
 type StatusBadgePropsT = {
   status: StatusEducationT;
@@ -8,18 +10,15 @@ type StatusBadgePropsT = {
   deleted?: boolean;
 };
 
-const statusMap: Record<string, string> = {
-  active: 'Учится',
-  paused: 'На паузе',
-  locked: 'Заблокировано',
-  finished: 'Обучение завершено',
-};
-
 export const StatusBadge = ({ status, deleted }: StatusBadgePropsT) => {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+  const statusText = educationUtils.getStatusTextByRole(status, isTutor);
+
   if (deleted) {
     return (
       <Badge size="m" className="text-gray-80 bg-gray-5 rounded-lg border-none px-2 py-1">
-        {statusMap[status]}
+        {statusText}
       </Badge>
     );
   }
@@ -32,7 +31,7 @@ export const StatusBadge = ({ status, deleted }: StatusBadgePropsT) => {
           size="m"
           className="text-green-80 bg-green-0 rounded-lg border-none px-2 py-1"
         >
-          {statusMap[status]}
+          {statusText}
         </Badge>
       );
 
@@ -43,7 +42,7 @@ export const StatusBadge = ({ status, deleted }: StatusBadgePropsT) => {
           size="m"
           className="text-orange-80 bg-orange-0 rounded-lg border-none px-2 py-1"
         >
-          {statusMap[status]}
+          {statusText}
         </Badge>
       );
 
@@ -54,14 +53,14 @@ export const StatusBadge = ({ status, deleted }: StatusBadgePropsT) => {
           size="m"
           className="text-red-80 bg-red-0 rounded-lg border-none px-2 py-1"
         >
-          {statusMap[status]}
+          {statusText}
         </Badge>
       );
 
     case 'finished':
       return (
         <Badge size="m" className="text-gray-80 bg-gray-5 rounded-lg border-none px-2 py-1">
-          {statusMap[status]}
+          {statusText}
         </Badge>
       );
 

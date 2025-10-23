@@ -4,3 +4,4 @@ export { useDeleteTgConnection } from './useDeleteTgConnection';
 export { useChangeContactsVisibility } from './useChangeContactsVisibility';
 export { useNotifications } from './useNotifications';
 export { NotificationsProvider, useNotificationsContext } from './NotificationsProvider';
+export * from './notificationUtils';

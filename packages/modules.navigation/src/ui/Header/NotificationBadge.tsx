@@ -1,12 +1,12 @@
 import { cn } from '@xipkg/utils';
 
 interface NotificationBadgeProps {
-  count: number;
+  count: number | string;
   className?: string;
 }
 
 export const NotificationBadge = ({ count, className }: NotificationBadgeProps) => {
-  if (count === 0) return null;
+  if (count === 0 || count === '0') return null;
 
   return (
     <div
@@ -15,7 +15,7 @@ export const NotificationBadge = ({ count, className }: NotificationBadgeProps) 
         className,
       )}
     >
-      {count > 99 ? '99+' : count}
+      {count}
     </div>
   );
 };
