@@ -78,7 +78,7 @@ export const CompactCall = ({ saveUserChoices = true }) => {
       className="flex w-[320px] flex-col"
     >
       {/* Видео текущего участника */}
-      <div className="bg-gray-0 border-gray-20 relative mb-2 flex h-[180px] w-[320px] items-center justify-center overflow-hidden rounded-2xl border-1 shadow-lg">
+      <div className="bg-gray-0 border-gray-20 group relative mb-2 flex h-[180px] w-[320px] items-center justify-center overflow-hidden rounded-2xl border-1 shadow-lg">
         {currentParticipant && isTrackReference(currentParticipant) ? (
           <ParticipantTile
             trackRef={currentParticipant}
