@@ -31,7 +31,8 @@
     "features.students.list": "*",
     "common.services": "*",
     "common.env": "*",
-    "common.ui": "*"
+    "common.ui": "*",
+    "common.entities": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

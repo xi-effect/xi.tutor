@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
+import { Checkbox } from '@xipkg/checkbox';
+import { Link } from '@xipkg/link';
 import {
   Form,
   FormControl,
@@ -124,6 +126,32 @@ export const SignUpPage = () => {
                   }}
                   {...field}
                 />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={control}
+          name="consent"
+          defaultValue={false}
+          render={({ field }) => (
+            <FormItem className="pt-1">
+              <FormControl>
+                <Checkbox
+                  checked={!!field.value}
+                  onCheckedChange={(checked) => field.onChange(checked === true)}
+                  size="s"
+                >
+                  Нажимая Создать аккаунт, вы принимаете условия <br />
+                  <Link size="s" href="https://sovlium.ru/legal/terms">
+                    пользовательского соглашения
+                  </Link>{' '}
+                  и{' '}
+                  <Link size="s" href="https://sovlium.ru/legal/privacy">
+                    политики конфиденциальности
+                  </Link>
+                </Checkbox>
               </FormControl>
               <FormMessage />
             </FormItem>

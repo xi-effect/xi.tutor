@@ -39,6 +39,10 @@ export const useFormSchema = () => {
         .min(passwordMinLength, {
           message: `${t('validation.minLength')}${t('validation.symbols', { count: passwordMinLength })}`,
         }),
+      consent: z.boolean().refine((value) => value === true, {
+        message:
+          'Необходимо принять условия пользовательского соглашения и политики конфиденциальности',
+      }),
     });
   }, [t]);
 
@@ -50,5 +54,6 @@ export type FormData = z.infer<
     username: z.ZodString;
     email: z.ZodString;
     password: z.ZodString;
+    consent: z.ZodLiteral<boolean>;
   }>
 >;
