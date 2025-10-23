@@ -26,7 +26,9 @@
     "@xipkg/form": "4.2.1",
     "@xipkg/button": "3.2.0",
     "@xipkg/input": "2.2.9",
-    "@xipkg/icons": "^2.5.4"
+    "@xipkg/icons": "^2.5.4",
+    "@xipkg/datepicker": "2.2.0",
+    "@xipkg/inputmask": "2.0.12"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

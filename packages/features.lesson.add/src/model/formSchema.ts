@@ -15,7 +15,7 @@ export const formSchema = z
   .object({
     title: z.string(),
     description: z.string().optional(),
-    studentId: z.string().min(1, 'Выберите'),
+    studentId: z.string().min(1, 'Выберите студента'),
     startTime: timeValidation,
     endTime: timeValidation,
     startDate: z
