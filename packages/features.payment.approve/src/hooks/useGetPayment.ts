@@ -1,31 +1,18 @@
-import { useQuery } from '@tanstack/react-query';
-import { getAxiosInstance } from 'common.config';
 import { paymentsApiConfig, PaymentsQueryKey } from 'common.api';
-import { PaymentDataT } from '../types';
+import { useFetching } from 'common.config';
 
-export const useGetPayment = (recipientInvoiceId?: number) => {
-  const getPaymentQuery = useQuery<PaymentDataT | null>({
-    queryKey: ['get-payment', recipientInvoiceId],
-    queryFn: async (): Promise<PaymentDataT | null> => {
-      if (!recipientInvoiceId) return null;
-
-      try {
-        const axiosInst = await getAxiosInstance();
-        const response = await axiosInst({
-          method: paymentsApiConfig[PaymentsQueryKey.GetPayment].method,
-          url: paymentsApiConfig[PaymentsQueryKey.GetPayment].getUrl(String(recipientInvoiceId)),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-
-        return response.data as PaymentDataT;
-      } catch (err) {
-        console.error('Ошибка при получении счёта:', err);
-        throw err;
-      }
+export const useGetPayment = (recipientInvoiceId: number, disabled?: boolean) => {
+  const getPaymentQuery = useFetching({
+    apiConfig: {
+      method: paymentsApiConfig[PaymentsQueryKey.GetPayment].method,
+      getUrl: () =>
+        paymentsApiConfig[PaymentsQueryKey.GetPayment].getUrl(String(recipientInvoiceId)),
+      headers: {
+        'Content-Type': 'application/json',
+      },
     },
-    enabled: !!recipientInvoiceId,
+    disabled: disabled || !recipientInvoiceId,
+    queryKey: [PaymentsQueryKey.GetPayment, recipientInvoiceId],
   });
 
   return { ...getPaymentQuery };

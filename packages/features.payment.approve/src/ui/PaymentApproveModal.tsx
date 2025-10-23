@@ -16,6 +16,7 @@ import { usePaymentApproveForm, useGetPayment } from '../hooks';
 import { RolePaymentT } from 'features.table';
 import { formatDate } from '../utils';
 import { UserProfile } from '@xipkg/userprofile';
+import { InvoiceItemT } from '../types';
 
 type PaymentApproveModalPropsT = {
   open: boolean;
@@ -70,7 +71,7 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                 />
               </div>
               <div className="flex flex-col gap-2">
-                <p>{data ? data?.invoice.comment : ''}</p>
+                <p>{data ? data.invoice.comment : ''}</p>
               </div>
               <div className="flex flex-col gap-2">
                 <span className="text-m-base dark:text-gray-100">Тип оплаты</span>
@@ -120,7 +121,7 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                 </div>
                 {data ? (
                   <>
-                    {data.invoice_items.map((item, index) => (
+                    {data.invoice_items.map((item: InvoiceItemT, index: number) => (
                       <div key={index} className="text-gray-80 flex gap-4 text-base">
                         <p className="w-[250px]">{item.name}</p>
                         <div className="flex gap-2">
@@ -132,7 +133,7 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                           <p className="w-[78px]">{item.quantity}</p>
                           <p className="text-gray-60 w-[10px]">=</p>
                           <p className="w-[78px]">
-                            {Number(item.price) * Number(item.quantity)}
+                            {parseFloat(item.price) * item.quantity}
                             <span className="text-gray-60 text-xs-base">₽</span>
                           </p>
                         </div>
