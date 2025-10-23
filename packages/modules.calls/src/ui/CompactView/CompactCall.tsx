@@ -4,7 +4,6 @@ import { CSS } from '@dnd-kit/utilities';
 import { DevicesBar } from '../shared';
 import { useLocalParticipant, usePersistentUserChoices } from '@livekit/components-react';
 import { LocalAudioTrack, LocalVideoTrack, Track } from 'livekit-client';
-import { ScreenShareButton } from '../Bottom/ScreenShareButton';
 import { DisconnectButton } from '../Bottom/DisconnectButton';
 import { useCompactNavigation } from '../../hooks/useCompactNavigation';
 import { isTrackReference } from '@livekit/components-core';
@@ -15,6 +14,7 @@ import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useCallStore } from '../../store/callStore';
 import { CompactNavigationControls } from './CompactNavigationControls';
 import { ParticipantTile } from '../Participant';
+import { ScreenShareButton } from '../Bottom/ScreenShareButton';
 
 export const CompactCall = ({ saveUserChoices = true }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -126,8 +126,8 @@ export const CompactCall = ({ saveUserChoices = true }) => {
         </div>
         <div className="bg-gray-0 border-gray-20 ml-auto flex items-center justify-center rounded-2xl border p-1 shadow-lg">
           <ScreenShareButton className="h-[32px] w-[32px]" />
-          {/* <ChatButton /> */}
-          {/* <RaiseHandButton /> */}
+          {/* <ChatButton />
+          <RaiseHandButton /> */}
         </div>
         <div className="bg-gray-0 border-gray-20 ml-1 flex items-center justify-center rounded-2xl border p-1 shadow-lg">
           <Tooltip>

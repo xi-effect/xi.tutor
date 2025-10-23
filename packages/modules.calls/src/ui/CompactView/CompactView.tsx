@@ -10,6 +10,7 @@ import {
   useDndMonitor,
 } from '@dnd-kit/core';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
+import { RoomAudioRenderer } from '@livekit/components-react';
 import { CompactCall } from './CompactCall';
 import { useCallStore } from '../../store/callStore';
 import type { Corner } from '../../store/callStore';
@@ -124,6 +125,9 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
             </div>
           </div>
         )}
+
+        {/* Обработка аудио как в основном режиме ВКС */}
+        <RoomAudioRenderer />
       </div>
     </DndContext>
   );
