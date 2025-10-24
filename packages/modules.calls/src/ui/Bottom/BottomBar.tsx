@@ -3,6 +3,7 @@ import {
   useLocalParticipant,
   // useLocalParticipantPermissions,
   usePersistentUserChoices,
+  useTrackToggle,
 } from '@livekit/components-react';
 import { LocalAudioTrack, LocalVideoTrack, Track } from 'livekit-client';
 import { DevicesBar } from '../shared/DevicesBar/DevicesBar';
@@ -18,20 +19,41 @@ export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
     preventSave: !saveUserChoices,
   });
 
-  const microphoneOnChange = useCallback(
-    (enabled: boolean, isUserInitiated: boolean) =>
-      isUserInitiated ? saveAudioInputEnabled(enabled) : null,
-    [saveAudioInputEnabled],
-  );
-
-  const cameraOnChange = useCallback(
-    (enabled: boolean, isUserInitiated: boolean) =>
-      isUserInitiated ? saveVideoInputEnabled(enabled) : null,
-    [saveVideoInputEnabled],
-  );
-
   const { isMicrophoneEnabled, isCameraEnabled, microphoneTrack, cameraTrack } =
     useLocalParticipant();
+
+  // Получаем device ID из user choices (пока не используем, но оставляем для будущего)
+  // const {
+  //   userChoices: { audioDeviceId, videoDeviceId },
+  // } = usePersistentUserChoices();
+
+  // Используем useTrackToggle для правильного управления треками (как в Settings)
+  const microphoneToggle = useTrackToggle({
+    source: Track.Source.Microphone,
+    onChange: (enabled: boolean, isUserInitiated: boolean) => {
+      if (isUserInitiated) {
+        saveAudioInputEnabled(enabled);
+      }
+    },
+  });
+
+  const cameraToggle = useTrackToggle({
+    source: Track.Source.Camera,
+    onChange: (enabled: boolean, isUserInitiated: boolean) => {
+      if (isUserInitiated) {
+        saveVideoInputEnabled(enabled);
+      }
+    },
+  });
+
+  // Обработчики включения/выключения (как в Settings)
+  const handleMicrophoneToggle = useCallback(async () => {
+    microphoneToggle.toggle();
+  }, [microphoneToggle]);
+
+  const handleCameraToggle = useCallback(async () => {
+    cameraToggle.toggle();
+  }, [cameraToggle]);
 
   return (
     <div className="w-full">
@@ -45,14 +67,14 @@ export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
               microTrackToggle={{
                 showIcon: true,
                 source: Track.Source.Microphone,
-                onChange: microphoneOnChange,
+                onChange: handleMicrophoneToggle,
               }}
               videoTrack={cameraTrack?.track as unknown as LocalVideoTrack}
               videoEnabled={isCameraEnabled}
               videoTrackToggle={{
                 showIcon: true,
                 source: Track.Source.Camera,
-                onChange: cameraOnChange,
+                onChange: handleCameraToggle,
               }}
             />
           </div>
