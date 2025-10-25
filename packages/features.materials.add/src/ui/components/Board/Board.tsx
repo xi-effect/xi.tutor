@@ -10,6 +10,7 @@ import {
   DropdownMenuItem,
 } from '@xipkg/dropdown';
 import { ChevronSmallBottom, ChevronSmallTop } from '@xipkg/icons';
+
 interface BoardProps {
   onCreate: () => void;
 }
@@ -19,13 +20,13 @@ export const Board = ({ onCreate }: BoardProps) => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
+      <DropdownMenuTrigger className="rounded-lg max-[550px]:hidden">
         <Button
           size="s"
           variant="secondary"
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
-          className="flex flex-row items-center gap-[6px] rounded-lg border border-gray-50 px-4 py-1 max-[550px]:hidden"
+          className="flex flex-row items-center gap-[6px] rounded-lg border border-gray-50 px-4 py-1"
         >
           <span className="text-s-base font-medium">Создать доску</span>
           {isOpen ? (
