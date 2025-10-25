@@ -13,7 +13,7 @@ export const useCompactNavigation = () => {
       { source: Track.Source.ScreenShare, withPlaceholder: false },
     ],
     {
-      onlySubscribed: true, // Только активные треки
+      onlySubscribed: false, // Получаем все треки, включая неподписанные для корректного подсчета участников
     },
   );
 
