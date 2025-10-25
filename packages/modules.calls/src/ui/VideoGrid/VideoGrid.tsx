@@ -31,7 +31,7 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
     ],
     {
       updateOnlyOn: [RoomEvent.ActiveSpeakersChanged],
-      onlySubscribed: true, // Оптимизация: подписываемся только на активные треки
+      onlySubscribed: false, // Получаем все треки, включая неподписанные для корректного подсчета участников
     },
   );
 
