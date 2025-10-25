@@ -36,7 +36,8 @@
     "modules.calendar": "*",
     "modules.calls": "*",
     "features.group.manage": "*",
-    "features.group.invite": "*"
+    "features.group.invite": "*",
+    "common.entities": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

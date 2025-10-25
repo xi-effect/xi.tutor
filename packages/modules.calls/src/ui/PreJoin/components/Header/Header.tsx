@@ -12,7 +12,7 @@ export const Header = () => {
   const { data: classroom } = useGetClassroom(Number(callId));
 
   return (
-    <div className="mb-8 flex flex-row items-center gap-2">
+    <div className="mb-4 flex flex-row items-center gap-2">
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button

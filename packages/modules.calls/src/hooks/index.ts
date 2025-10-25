@@ -14,3 +14,4 @@ export { useStartCall, type StartCallData } from './useStartCall';
 export { useResponsiveGrid, useAdaptiveGrid } from './useResponsiveGrid';
 export { useSpeakingParticipant } from './useSpeakingParticipant';
 export { useVideoSecurity } from './useVideoSecurity';
+export { useScreenShareCleanup } from './useScreenShareCleanup';

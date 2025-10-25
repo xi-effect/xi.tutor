@@ -23,6 +23,17 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
     updateStore('isStarted', false);
     updateStore('mode', 'full');
 
+    // Очищаем все состояния интерфейса при отключении
+    const { clearAllRaisedHands, updateStore: updateCallStore } = useCallStore.getState();
+
+    // Очищаем поднятые руки
+    clearAllRaisedHands();
+
+    // Очищаем чат
+    updateCallStore('isChatOpen', false);
+    updateCallStore('chatMessages', []);
+    updateCallStore('unreadMessagesCount', 0);
+
     // Удаляем параметр call из URL при отключении
     if (search.call) {
       const searchWithoutCall = { ...search };
@@ -34,7 +45,7 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
       });
     }
 
-    console.log('Disconnected from LiveKit room');
+    console.log('Disconnected from LiveKit room - all interface states cleared');
   };
 
   const location = useLocation();
@@ -52,8 +63,9 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
     }
   }, [location, token, callId, navigate]);
 
-  if (!token) {
+  if (!token || !room) {
     console.warn('No token available for LiveKit connection');
+
     return <>{children}</>;
   }
 

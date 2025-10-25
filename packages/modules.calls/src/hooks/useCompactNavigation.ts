@@ -1,21 +1,24 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Track } from 'livekit-client';
 import { useTracks } from '@livekit/components-react';
-import { isTrackReference } from '@livekit/components-core';
-import type { TrackReference } from '@livekit/components-core';
+import { useScreenShareCleanup } from './useScreenShareCleanup';
 
 export const useCompactNavigation = () => {
   const [currentParticipantIndex, setCurrentParticipantIndex] = useState(0);
 
-  // Получаем треки (может вернуть пустой массив если нет контекста)
-  const cameraTracks = useTracks([{ source: Track.Source.Camera, withPlaceholder: false }], {
-    onlySubscribed: true,
-  });
+  // Получаем треки через useTracks (как в VideoGrid) для автоматического обновления
+  const participants = useTracks(
+    [
+      { source: Track.Source.Camera, withPlaceholder: true },
+      { source: Track.Source.ScreenShare, withPlaceholder: false },
+    ],
+    {
+      onlySubscribed: false, // Получаем все треки, включая неподписанные для корректного подсчета участников
+    },
+  );
 
-  // Фильтруем только реальные треки (не placeholder)
-  const participants = useMemo(() => {
-    return cameraTracks.filter(isTrackReference) as TrackReference[];
-  }, [cameraTracks]);
+  // Автоматическое удаление треков демонстрации экрана при их завершении
+  useScreenShareCleanup(participants);
 
   const currentParticipant = participants[currentParticipantIndex] || null;
   const totalParticipants = participants.length;
@@ -47,6 +50,9 @@ export const useCompactNavigation = () => {
       setCurrentParticipantIndex(Math.max(0, totalParticipants - 1));
     }
   }, [totalParticipants, currentParticipantIndex]);
+
+  // useTracks автоматически обновляется при изменениях треков,
+  // поэтому дополнительные обработчики событий не нужны
 
   return {
     currentParticipant,

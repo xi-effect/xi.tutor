@@ -129,7 +129,13 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
             variant="secondary"
             onClick={() => {
               console.log('🧪 Testing data channel...');
-              syncModeToOthers('compact', 'test-board-123');
+              try {
+                // Безопасный тест с валидными данными
+                syncModeToOthers('compact', 'test-board-123');
+                console.log('✅ Test message sent successfully');
+              } catch (error) {
+                console.error('❌ Test failed:', error);
+              }
             }}
           >
             Тест Data Channel
