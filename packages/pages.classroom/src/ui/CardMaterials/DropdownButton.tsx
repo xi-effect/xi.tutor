@@ -24,7 +24,7 @@ export const DropdownButton = ({ accessType }: { accessType: TypeWorkT }) => {
   const [selected, setSelected] = useState<TypeWorkT | null>(accessType ?? null);
 
   const handleChange = (key: TypeWorkT) => {
-    setSelected((prev) => (prev === key ? null : key));
+    setSelected(key);
   };
 
   return (
@@ -46,14 +46,14 @@ export const DropdownButton = ({ accessType }: { accessType: TypeWorkT }) => {
 
             <DropdownMenuSubContent
               sideOffset={12}
-              className="border-gray-10 bg-gray-0 text-xs-base mt-2 w-[182px] rounded-lg border p-2 font-normal"
+              className="border-gray-10 bg-gray-0 text-xs-base mt-2 rounded-lg border p-2 font-normal"
             >
               {options.map(({ value, label }) => (
                 <DropdownMenuCheckboxItem
                   key={value}
                   checked={selected === value}
                   onCheckedChange={() => handleChange(value)}
-                  className="hover:bg-brand-0 hover:text-brand-100 w-full px-2 py-[6px] hover:rounded-lg"
+                  className="hover:bg-brand-0 hover:text-brand-100 reverse flex w-full items-center justify-between gap-2 px-2 py-[6px] hover:rounded-lg"
                 >
                   {label}
                 </DropdownMenuCheckboxItem>
