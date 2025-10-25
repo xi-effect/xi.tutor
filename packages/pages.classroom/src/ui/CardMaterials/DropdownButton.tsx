@@ -13,6 +13,7 @@ import {
 import { Button } from '@xipkg/button';
 import { TypeWorkT } from './CardMaterials';
 import { MoreVert } from '@xipkg/icons';
+//import { cn } from '@xipkg/utils';
 
 const options: { value: TypeWorkT; label: string }[] = [
   { value: 'only_tutor', label: 'только репетитор' },
@@ -53,9 +54,9 @@ export const DropdownButton = ({ accessType }: { accessType: TypeWorkT }) => {
                   key={value}
                   checked={selected === value}
                   onCheckedChange={() => handleChange(value)}
-                  className="hover:bg-brand-0 hover:text-brand-100 reverse flex w-full items-center justify-between gap-2 px-2 py-[6px] hover:rounded-lg"
+                  className="hover:bg-brand-0 hover:text-brand-100 relative flex w-full flex-row-reverse items-center justify-start gap-2 px-2 py-[6px] hover:rounded-lg [&>span.absolute]:static [&>span.absolute]:left-auto [&>span.absolute]:ml-2 [&>span>svg]:relative [&>span>svg]:top-[1px]"
                 >
-                  {label}
+                  <div className="w-full text-left">{label}</div>
                 </DropdownMenuCheckboxItem>
               ))}
             </DropdownMenuSubContent>
