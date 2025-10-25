@@ -59,11 +59,19 @@ export const useChat = () => {
     (message: { type: string; payload: unknown }) => {
       if (message.type === CHAT_MESSAGE_TYPE) {
         const payload = message.payload as ChatMessagePayload;
+
+        // Проверяем, что это не наше собственное сообщение
+        const currentParticipantInfo = getCurrentParticipantInfo();
+        if (payload.senderId === currentParticipantInfo.senderId) {
+          console.log('💬 Ignoring own message:', payload);
+          return;
+        }
+
         console.log('💬 Received chat message:', payload);
         addChatMessage(payload);
       }
     },
-    [addChatMessage],
+    [addChatMessage, getCurrentParticipantInfo],
   );
 
   // Слушаем сообщения чата
@@ -83,9 +91,14 @@ export const useChat = () => {
       };
 
       console.log('📤 Sending chat message:', message);
+
+      // Добавляем сообщение в локальный store отправителя
+      addChatMessage(message);
+
+      // Отправляем через DataChannel
       sendMessage(CHAT_MESSAGE_TYPE, message);
     },
-    [sendMessage, getCurrentParticipantInfo],
+    [sendMessage, getCurrentParticipantInfo, addChatMessage],
   );
 
   const toggleChat = useCallback(() => {

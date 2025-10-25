@@ -19,6 +19,7 @@ import { useCallStore } from '../../store/callStore';
 import { CompactNavigationControls } from './CompactNavigationControls';
 import { ParticipantTile } from '../Participant';
 import { ScreenShareButton } from '../Bottom/ScreenShareButton';
+import { RaiseHandButton } from '../Bottom/RaiseHandButton';
 
 export const CompactCall = ({ saveUserChoices = true }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -146,8 +147,8 @@ export const CompactCall = ({ saveUserChoices = true }) => {
         </div>
         <div className="bg-gray-0 border-gray-20 ml-auto flex items-center justify-center rounded-2xl border p-1 shadow-lg">
           <ScreenShareButton className="h-[32px] w-[32px]" />
-          {/* <ChatButton />
-          <RaiseHandButton /> */}
+          {/* <ChatButton /> */}
+          <RaiseHandButton className="h-[32px] w-[32px]" />
         </div>
         <div className="bg-gray-0 border-gray-20 ml-1 flex items-center justify-center rounded-2xl border p-1 shadow-lg">
           <Tooltip>

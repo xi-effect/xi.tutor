@@ -95,7 +95,14 @@ export const useCallStore = create<useCallStoreT>()(
       updateStore: (type: keyof useCallStoreT, value: any) => set({ [type]: value }),
 
       addChatMessage: (message: ChatMessage) => {
-        const { isChatOpen, unreadMessagesCount } = get();
+        const { isChatOpen, unreadMessagesCount, chatMessages } = get();
+
+        // Проверяем, нет ли уже сообщения с таким ID (дедупликация)
+        const messageExists = chatMessages.some((msg) => msg.id === message.id);
+        if (messageExists) {
+          return;
+        }
+
         set((state) => ({
           chatMessages: [...state.chatMessages, message],
           unreadMessagesCount: isChatOpen ? unreadMessagesCount : unreadMessagesCount + 1,
