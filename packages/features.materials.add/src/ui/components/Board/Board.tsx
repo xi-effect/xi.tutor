@@ -1,6 +1,14 @@
 import { useState } from 'react';
 
 import { Button } from '@xipkg/button';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuItem,
+} from '@xipkg/dropdown';
 import { ChevronSmallBottom, ChevronSmallTop } from '@xipkg/icons';
 interface BoardProps {
   onCreate: () => void;
@@ -10,19 +18,31 @@ export const Board = ({ onCreate }: BoardProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <Button
-      size="s"
-      variant="secondary"
-      onMouseEnter={() => setIsOpen(true)}
-      onMouseLeave={() => setIsOpen(false)}
-      className="flex flex-row items-center gap-[6px] rounded-lg border border-gray-50 px-4 py-1 max-[550px]:hidden"
-    >
-      <span className="text-s-base font-medium">Создать доску</span>
-      {isOpen ? (
-        <ChevronSmallTop className="fill-gray-0" />
-      ) : (
-        <ChevronSmallBottom className="fill-gray-100" />
-      )}
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger>
+        <Button
+          size="s"
+          variant="secondary"
+          onMouseEnter={() => setIsOpen(true)}
+          onMouseLeave={() => setIsOpen(false)}
+          className="flex flex-row items-center gap-[6px] rounded-lg border border-gray-50 px-4 py-1 max-[550px]:hidden"
+        >
+          <span className="text-s-base font-medium">Создать доску</span>
+          {isOpen ? (
+            <ChevronSmallTop className="fill-gray-0" />
+          ) : (
+            <ChevronSmallBottom className="fill-gray-100" />
+          )}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="border-gray-10 text-s-base w-[160px] border p-1 font-normal">
+        <DropdownMenuLabel className="text-brand-100 bg-brand-0 rounded-lg px-2 py-[6px]">
+          Совместная работа
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={onCreate}>Только репетитор</DropdownMenuItem>
+        <DropdownMenuItem onClick={onCreate}>Черновики</DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
