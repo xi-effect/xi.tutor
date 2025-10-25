@@ -47,8 +47,9 @@ export const useCreateInvoice = () => {
     onSuccess: (response) => {
       if (response?.data) {
         // Инвалидируем кеш для обновления списка счетов
-        queryClient.invalidateQueries({ queryKey: ['invoices'] });
+        queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.TutorPayments, 'tutor'] });
       }
+
       showSuccess('addInvoiceTemplate', 'Счёт успешно создан');
     },
   });

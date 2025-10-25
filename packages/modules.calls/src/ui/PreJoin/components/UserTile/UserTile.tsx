@@ -84,7 +84,7 @@ const UserTileUI = ({
     }
 
     return (
-      <div className="aspect-video h-full w-full [transform:rotateY(180deg)]">
+      <div className="aspect-video h-full w-full transform-[rotateY(180deg)]">
         <SecureVideo
           ref={videoEl}
           data-lk-facing-mode={facingMode}

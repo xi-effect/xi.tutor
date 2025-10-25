@@ -10,11 +10,12 @@ export type UserCellT = {
 export const UserCell = ({ userId, userRole }: UserCellT) => {
   const userHook = useUserByRole(userRole);
   const username = userHook(userId).data?.username;
+  const displayName = userHook(userId).data?.display_name;
   return (
     <UserProfile
       size="m"
       userId={userId}
-      text={username || `Имя не найдено`}
+      text={displayName || username || `Имя не найдено`}
       src={`https://api.sovlium.ru/files/users/${userId}/avatar.webp`}
     />
   );
