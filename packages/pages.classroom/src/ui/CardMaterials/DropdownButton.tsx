@@ -13,7 +13,7 @@ import {
 import { Button } from '@xipkg/button';
 import { TypeWorkT } from './CardMaterials';
 import { MoreVert } from '@xipkg/icons';
-//import { cn } from '@xipkg/utils';
+import { cn } from '@xipkg/utils';
 
 const options: { value: TypeWorkT; label: string }[] = [
   { value: 'only_tutor', label: 'только репетитор' },
@@ -27,6 +27,9 @@ export const DropdownButton = ({ accessType }: { accessType: TypeWorkT }) => {
   const handleChange = (key: TypeWorkT) => {
     setSelected(key);
   };
+
+  const checkboxItemClassName =
+    'hover:bg-brand-0 hover:text-brand-100 relative flex w-full flex-row-reverse items-center justify-start gap-2 px-2 py-[6px] hover:rounded-lg [&>span.absolute]:static [&>span.absolute]:left-auto [&>span.absolute]:ml-2 [&>span>svg]:relative [&>span>svg]:top-[1px]';
 
   return (
     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
@@ -54,7 +57,10 @@ export const DropdownButton = ({ accessType }: { accessType: TypeWorkT }) => {
                   key={value}
                   checked={selected === value}
                   onCheckedChange={() => handleChange(value)}
-                  className="hover:bg-brand-0 hover:text-brand-100 relative flex w-full flex-row-reverse items-center justify-start gap-2 px-2 py-[6px] hover:rounded-lg [&>span.absolute]:static [&>span.absolute]:left-auto [&>span.absolute]:ml-2 [&>span>svg]:relative [&>span>svg]:top-[1px]"
+                  className={cn(
+                    checkboxItemClassName,
+                    selected === value ? 'bg-brand-0 text-brand-100 rounded-lg' : 'text-gray-80',
+                  )}
                 >
                   <div className="w-full text-left">{label}</div>
                 </DropdownMenuCheckboxItem>
