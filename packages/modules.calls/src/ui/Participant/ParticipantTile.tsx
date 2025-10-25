@@ -243,6 +243,8 @@ export const ParticipantTile = ({
                         <ParticipantName participant={trackReference.participant}>
                           Демонстрация&nbsp;
                         </ParticipantName>
+                        {/* Индикатор поднятой руки в метаданных */}
+                        <RaisedHandIndicator participantId={identity || 'unknown'} compact />
                       </div>
                     )}
                   </div>
@@ -252,8 +254,10 @@ export const ParticipantTile = ({
             )}
           </div>
 
-          {/* Индикатор поднятой руки */}
-          <RaisedHandIndicator participantId={identity || 'unknown'} />
+          {/* Индикатор поднятой руки в верхнем правом углу */}
+          <div className="absolute top-2 left-2 z-10">
+            <RaisedHandIndicator participantId={identity || 'unknown'} />
+          </div>
 
           {isFocusToggleDisable ? null : (
             <FocusToggle

@@ -23,6 +23,10 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
     updateStore('isStarted', false);
     updateStore('mode', 'full');
 
+    // Очищаем все поднятые руки при отключении
+    const { clearAllRaisedHands } = useCallStore.getState();
+    clearAllRaisedHands();
+
     // Удаляем параметр call из URL при отключении
     if (search.call) {
       const searchWithoutCall = { ...search };
