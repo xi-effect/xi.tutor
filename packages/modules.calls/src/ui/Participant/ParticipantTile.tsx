@@ -238,13 +238,12 @@ export const ParticipantTile = ({
                         <ParticipantName participant={trackReference.participant} />
                       </div>
                     ) : (
-                      <div className="bg-gray-0 flex items-center gap-[6px] rounded-[4px] px-[8px] py-[4px]">
+                      <div className="bg-gray-0/80 flex h-[24px] items-center gap-[6px] rounded-[8px] px-[6px] py-[4px]">
                         <ScreenShareIcon style={{ marginRight: '0.25rem' }} />
                         <ParticipantName participant={trackReference.participant}>
                           Демонстрация&nbsp;
                         </ParticipantName>
                         {/* Индикатор поднятой руки в метаданных */}
-                        <RaisedHandIndicator participantId={identity || 'unknown'} compact />
                       </div>
                     )}
                   </div>
@@ -254,10 +253,12 @@ export const ParticipantTile = ({
             )}
           </div>
 
-          {/* Индикатор поднятой руки в верхнем правом углу */}
-          <div className="absolute top-2 left-2 z-10">
-            <RaisedHandIndicator participantId={identity || 'unknown'} />
-          </div>
+          {/* Индикатор поднятой руки в верхнем правом углу - скрываем для ScreenShare */}
+          {trackReference.source !== Track.Source.ScreenShare && (
+            <div className="absolute top-2 left-2 z-10">
+              <RaisedHandIndicator participantId={identity || 'unknown'} />
+            </div>
+          )}
 
           {isFocusToggleDisable ? null : (
             <FocusToggle
