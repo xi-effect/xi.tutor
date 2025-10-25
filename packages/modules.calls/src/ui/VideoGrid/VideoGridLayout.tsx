@@ -37,11 +37,29 @@ export const EmptyItemContainerOfUser = ({ ...restProps }) => (
   </div>
 );
 
-const useEmptyItemContainerOfUser = (tracksLength: number) => {
-  const [isOneItem, setIsOneItem] = useState(tracksLength === 1);
+const useEmptyItemContainerOfUser = (
+  tracksLength: number,
+  tracks: TrackReferenceOrPlaceholder[],
+) => {
+  const [isOneItem, setIsOneItem] = useState(false);
+
   useEffect(() => {
-    setIsOneItem(tracksLength === 1);
-  }, [tracksLength]);
+    // Подсчитываем уникальных участников (не треков)
+    const uniqueParticipants = new Set(
+      tracks
+        .filter((track) => track.participant && track.participant.identity)
+        .map((track) => track.participant.identity),
+    );
+
+    // Показываем placeholder если только один участник
+    // Дополнительная проверка: если tracks пустой, но tracksLength > 0,
+    // это может означать, что участники еще не загрузились
+    const shouldShowPlaceholder =
+      uniqueParticipants.size === 1 || (tracks.length === 0 && tracksLength > 0);
+
+    setIsOneItem(shouldShowPlaceholder);
+  }, [tracksLength, tracks]);
+
   return isOneItem;
 };
 
@@ -93,7 +111,7 @@ export const CarouselLayout = ({
 
   const maxVisibleTiles = Math.floor(tilesThatFit);
   const sortedTiles = useVisualStableUpdate(tracks, maxVisibleTiles);
-  const isOneItem = useEmptyItemContainerOfUser(userTracks.length);
+  const isOneItem = useEmptyItemContainerOfUser(userTracks.length, userTracks);
   React.useLayoutEffect(() => {
     if (asideEl.current) {
       asideEl.current.dataset.lkOrientation = carouselOrientation;
@@ -134,7 +152,7 @@ export const PaginationIndicator = ({ totalPageCount, currentPage }: PaginationI
 };
 
 export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
-  const isOneItem = useEmptyItemContainerOfUser(tracks.length);
+  const isOneItem = useEmptyItemContainerOfUser(tracks.length, tracks);
   const gridEl = React.createRef<HTMLDivElement>();
 
   // Используем адаптивную сетку с кастомными конфигурациями
