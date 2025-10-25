@@ -63,8 +63,9 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
     }
   }, [location, token, callId, navigate]);
 
-  if (!token) {
+  if (!token || !room) {
     console.warn('No token available for LiveKit connection');
+
     return <>{children}</>;
   }
 
