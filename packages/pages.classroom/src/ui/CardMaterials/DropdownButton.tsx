@@ -21,8 +21,8 @@ const options: { value: TypeWorkT; label: string }[] = [
   { value: 'collaboration', label: 'совместная работа' },
 ];
 
-export const DropdownButton = ({ accessType }: { accessType: TypeWorkT }) => {
-  const [selected, setSelected] = useState<TypeWorkT | null>(accessType ?? null);
+export const DropdownButton = ({ accessType }: { accessType: TypeWorkT | '' }) => {
+  const [selected, setSelected] = useState<TypeWorkT | ''>(accessType);
 
   const handleChange = (key: TypeWorkT) => {
     setSelected(key);

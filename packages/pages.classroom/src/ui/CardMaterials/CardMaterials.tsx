@@ -63,7 +63,7 @@ export const CardMaterials = ({ accessTypes }: CardMaterialsProps) => {
           </Badge>
         )}
 
-        <DropdownButton accessType={typeWork} />
+        <DropdownButton accessType={(typeWork as TypeWorkT) ?? ''} />
       </div>
 
       <div className="flex flex-col items-start justify-start gap-4">
