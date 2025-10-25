@@ -1754,6 +1754,9 @@ importers:
       '@xipkg/input':
         specifier: ^2.2.9
         version: 2.2.9(react@19.2.0)
+      '@xipkg/tooltip':
+        specifier: ^2.1.0
+        version: 2.1.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/userprofile':
         specifier: ^4.0.12
         version: 4.0.14(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
@@ -2749,6 +2752,9 @@ importers:
       '@xipkg/userprofile':
         specifier: 4.0.14
         version: 4.0.14(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+      '@xipkg/utils':
+        specifier: ^1.8.0
+        version: 1.8.0(react@19.2.0)
       common.api:
         specifier: '*'
         version: link:../common.api
