@@ -26,13 +26,13 @@ export const Note = ({ onCreate }: NoteProps) => {
           variant="secondary"
           onMouseEnter={() => setIsOpen(true)}
           onMouseLeave={() => setIsOpen(false)}
-          className="flex flex-row items-center gap-[6px] rounded-lg border border-gray-50 px-4 py-1"
+          className="flex h-[32px] w-[159px] flex-row items-center gap-[6px] rounded-lg border border-gray-50 px-1"
         >
           <span className="text-s-base font-medium">Создать заметку</span>
           {isOpen ? (
-            <ChevronSmallTop className="fill-gray-0" />
+            <ChevronSmallTop className="fill-gray-0 h-[16px] w-[16px]" />
           ) : (
-            <ChevronSmallBottom className="fill-gray-100" />
+            <ChevronSmallBottom className="h-[16px] w-[16px] fill-gray-100" />
           )}
         </Button>
       </DropdownMenuTrigger>
