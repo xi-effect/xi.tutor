@@ -102,7 +102,7 @@ export const ParticipantTile = ({
     [maybeTrackRef, p, publication, source, trackRef],
   );
 
-  const { identity, name } = useParticipantInfo({ participant: trackReference.participant });
+  const { identity } = useParticipantInfo({ participant: trackReference.participant });
 
   // Принудительное обновление при изменении трека
   const [, forceUpdate] = React.useReducer((x) => x + 1, 0);
@@ -235,12 +235,12 @@ export const ParticipantTile = ({
                           show="muted"
                           style={{ marginRight: '0.45rem', background: 'transparent' }}
                         />
-                        <ParticipantName id={identity} username={name} />
+                        <ParticipantName participant={trackReference.participant} />
                       </div>
                     ) : (
                       <div className="bg-gray-0 flex items-center gap-[6px] rounded-[4px] px-[8px] py-[4px]">
                         <ScreenShareIcon style={{ marginRight: '0.25rem' }} />
-                        <ParticipantName id={identity} username={name}>
+                        <ParticipantName participant={trackReference.participant}>
                           Демонстрация&nbsp;
                         </ParticipantName>
                       </div>
