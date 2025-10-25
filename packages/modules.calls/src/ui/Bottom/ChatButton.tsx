@@ -18,7 +18,7 @@ export const ChatButton = () => {
     >
       <Chat />
       {unreadMessagesCount > 0 && (
-        <div className="text-red-0 absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-100 text-xs font-medium">
+        <div className="text-red-0 bg-brand-100 absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-medium">
           {unreadMessagesCount > 99 ? '99+' : unreadMessagesCount}
         </div>
       )}

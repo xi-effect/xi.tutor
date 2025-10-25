@@ -109,7 +109,8 @@ export const createPaymentColumns = ({
     {
       accessorKey: 'actions',
       header: '',
-      cell: () => (usersRole === 'student' ? <ActionsCell /> : null),
+      cell: ({ row }) =>
+        usersRole === 'student' ? <ActionsCell invoiceId={row.original.id} /> : null,
       size: usersRole === 'student' ? 96 : 0,
       filterFn: (row, columnId, value) => value.includes(row.getValue(columnId)),
       enableColumnFilter: false,

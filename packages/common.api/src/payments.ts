@@ -6,7 +6,7 @@ enum PaymentsQueryKey {
   TutorPayments = 'TutorPayments',
   SearchPayments = 'SearchPayments',
   AddPayment = 'AddPayment',
-  DeletePayment = 'DeletePayment',
+  DeleteRecipientInvoice = 'DeleteRecipientInvoice',
   GetPayment = 'GetPayment',
   UpdatePayment = 'UpdatePayment',
 }
@@ -38,7 +38,7 @@ const paymentsApiConfig = {
     method: HttpMethod.POST,
   },
 
-  [PaymentsQueryKey.DeletePayment]: {
+  [PaymentsQueryKey.DeleteRecipientInvoice]: {
     getUrl: (id: string) =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/recipient-invoices/${id}/`,
     method: HttpMethod.DELETE,

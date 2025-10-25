@@ -10,7 +10,6 @@ import {
 import { LocalAudioTrack, LocalVideoTrack, Track } from 'livekit-client';
 import { DisconnectButton } from '../Bottom/DisconnectButton';
 import { useCompactNavigation } from '../../hooks/useCompactNavigation';
-import { isTrackReference } from '@livekit/components-core';
 import { Maximize } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
@@ -19,6 +18,7 @@ import { useCallStore } from '../../store/callStore';
 import { CompactNavigationControls } from './CompactNavigationControls';
 import { ParticipantTile } from '../Participant';
 import { ScreenShareButton } from '../Bottom/ScreenShareButton';
+import { RaiseHandButton } from '../Bottom/RaiseHandButton';
 
 export const CompactCall = ({ saveUserChoices = true }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -98,8 +98,8 @@ export const CompactCall = ({ saveUserChoices = true }) => {
       className="flex w-[320px] flex-col"
     >
       {/* Видео текущего участника */}
-      <div className="bg-gray-0 border-gray-20 group relative mb-2 flex h-[180px] w-[320px] items-center justify-center overflow-hidden rounded-2xl border-1 shadow-lg">
-        {currentParticipant && isTrackReference(currentParticipant) ? (
+      <div className="bg-gray-0 border-gray-20 group relative mb-2 flex h-[180px] w-[320px] items-center justify-center overflow-hidden rounded-2xl border shadow-lg">
+        {currentParticipant ? (
           <ParticipantTile
             trackRef={currentParticipant}
             participant={currentParticipant.participant}
@@ -146,8 +146,8 @@ export const CompactCall = ({ saveUserChoices = true }) => {
         </div>
         <div className="bg-gray-0 border-gray-20 ml-auto flex items-center justify-center rounded-2xl border p-1 shadow-lg">
           <ScreenShareButton className="h-[32px] w-[32px]" />
-          {/* <ChatButton />
-          <RaiseHandButton /> */}
+          {/* <ChatButton /> */}
+          <RaiseHandButton className="h-[32px] w-[32px]" />
         </div>
         <div className="bg-gray-0 border-gray-20 ml-1 flex items-center justify-center rounded-2xl border p-1 shadow-lg">
           <Tooltip>
