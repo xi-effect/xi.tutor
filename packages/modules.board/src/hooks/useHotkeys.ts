@@ -149,15 +149,34 @@ export const useHotkeys = () => {
       }
 
       // Группировка / разгруппировка
-      if (code === 'KeyG' && modKey && !shiftKey && !altKey) {
+      if (code === 'KeyG' && modKey && !altKey) {
         event.preventDefault();
+        if (editor.menus.hasAnyOpenMenus()) return;
+
         const selectedShapes = editor.getSelectedShapes();
+        if (selectedShapes.length === 0) return;
+
+        const ids = selectedShapes.map((s) => s.id as TLShapeId);
+
+        if (shiftKey) {
+          const hasGroup = selectedShapes.some((shape) => shape.type === 'group');
+          if (hasGroup) {
+            event.preventDefault();
+            try {
+              editor.ungroupShapes(ids);
+            } catch (err) {
+              console.warn('Could not ungroup shapes:', err);
+            }
+          }
+          return;
+        }
+
         if (selectedShapes.length > 1) {
-          const first = editor.getShape(selectedShapes[0].id);
-          if (first?.type === 'group') {
-            editor.ungroupShapes(selectedShapes);
-          } else {
-            editor.groupShapes(selectedShapes);
+          event.preventDefault();
+          try {
+            editor.groupShapes(ids);
+          } catch (err) {
+            console.warn('Could not group shapes:', err);
           }
         }
         return;
