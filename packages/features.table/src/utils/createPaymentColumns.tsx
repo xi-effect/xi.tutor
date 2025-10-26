@@ -15,11 +15,13 @@ type ColumnArgsT<Role extends RoleT = RoleT> = {
   isMobile?: boolean;
   onApprovePayment?: (payment: RolePaymentT<Role>) => void;
   withStudentColumn?: boolean;
+  isTutor?: boolean;
 };
 
 export const createPaymentColumns = <Role extends RoleT>({
   usersRole,
   onApprovePayment,
+  isTutor,
 }: ColumnArgsT<Role>): ColumnDef<RolePaymentT<Role>>[] => {
   const baseColumns: (ColumnDef<RolePaymentT<Role>> | false)[] = [
     {
@@ -98,6 +100,8 @@ export const createPaymentColumns = <Role extends RoleT>({
       header: 'Статус',
       cell: ({ row }) => (
         <StatusCell
+          isTutor={isTutor}
+          id={row.original.id}
           status={row.original.status}
           onApprovePayment={() => onApprovePayment?.(row.original)}
         />

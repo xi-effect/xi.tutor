@@ -39,6 +39,7 @@ export const Payments = () => {
         onApprovePayment: onOpenPaymentApproveModal,
         usersRole: isTutor ? 'student' : 'tutor',
         isMobile,
+        isTutor,
       }),
     [isMobile, isTutor, onOpenPaymentApproveModal],
   );

@@ -2,6 +2,7 @@ import { paymentsApiConfig, PaymentsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError } from 'common.services';
+import { toast } from 'sonner';
 
 export const usePaymentReceiverConfirmation = () => {
   const queryClient = useQueryClient();
@@ -30,6 +31,8 @@ export const usePaymentReceiverConfirmation = () => {
       if (response?.status === 204) {
         queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.TutorPayments, 'tutor'] });
       }
+
+      toast.success('Оплата счета подтверждена');
     },
   });
 

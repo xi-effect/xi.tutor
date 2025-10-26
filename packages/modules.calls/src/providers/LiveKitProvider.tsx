@@ -13,6 +13,8 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
   const { room } = useRoom();
   const { audioEnabled, videoEnabled, connect, token, updateStore } = useCallStore();
 
+  const { isStarted } = useCallStore();
+
   const handleConnect = () => {
     updateStore('connect', true);
     console.log('Connected to LiveKit room');
@@ -64,17 +66,10 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
   }, [location, token, callId, navigate]);
 
   if (!token || !room) {
-    console.warn('No token available for LiveKit connection');
+    if (isStarted) console.warn('No token available for LiveKit connection');
 
     return <>{children}</>;
   }
-
-  // console.log('LiveKitProvider state:', {
-  //   connect,
-  //   audioEnabled,
-  //   videoEnabled,
-  //   hasToken: !!token,
-  // });
 
   return (
     <LiveKitRoom

@@ -33,6 +33,7 @@ export const TabsComponent = React.memo(({ onApprovePayment }: TabsComponentProp
         usersRole: isTutor ? 'student' : 'tutor',
         isMobile,
         onApprovePayment,
+        isTutor,
       }),
     [isMobile, onApprovePayment, isTutor],
   );
