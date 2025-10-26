@@ -3309,6 +3309,9 @@ importers:
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.0)
+      common.api:
+        specifier: '*'
+        version: link:../common.api
       common.auth:
         specifier: '*'
         version: link:../common.auth

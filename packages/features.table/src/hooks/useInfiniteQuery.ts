@@ -9,7 +9,7 @@ export const useInfiniteQuery = (parentRef: RefObject<HTMLDivElement | null>, ro
   const queryKey = getRolePaymentsQueryKey(role);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
-    useTanStackInfiniteQuery<RolePaymentT[], unknown>({
+    useTanStackInfiniteQuery<RolePaymentT<UserRoleT>[], unknown>({
       queryKey: [queryKey, role],
       queryFn: async ({ pageParam }) => {
         const axiosInst = await getAxiosInstance();
@@ -63,7 +63,7 @@ export const useInfiniteQuery = (parentRef: RefObject<HTMLDivElement | null>, ro
   }, [parentRef, fetchNextPage, isFetchingNextPage, hasNextPage]);
 
   // Объединяем все страницы в один массив
-  const items: RolePaymentT[] = React.useMemo(() => {
+  const items: RolePaymentT<UserRoleT>[] = React.useMemo(() => {
     if (!data?.pages) {
       return [];
     }

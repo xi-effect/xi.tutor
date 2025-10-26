@@ -1,5 +1,5 @@
 {
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "../common.services/src/payments/useGetRecipientInvoiceByTutor.ts"],
   "extends": ["common.typescript/tsconfig.app.json"],
   "exclude": ["dist", "build", "node_modules"]
 }
