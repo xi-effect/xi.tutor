@@ -170,17 +170,17 @@ export function useTldrawClipboard(editor: Editor | null) {
       const isModKey = event.metaKey || event.ctrlKey;
       if (!isModKey) return;
 
-      const key = event.key.toLowerCase();
+      const key = event.code;
 
-      if (key === 'c') {
+      if (key === 'KeyC') {
         event.preventDefault();
         await doCopy();
         if (!editor.getIsFocused()) editor.focus();
-      } else if (key === 'v') {
+      } else if (key === 'KeyV') {
         event.preventDefault();
         if (!editor.getIsFocused()) editor.focus();
         await doPaste();
-      } else if (key === 'x') {
+      } else if (key === 'KeyX') {
         event.preventDefault();
         if (!editor.getIsFocused()) editor.focus();
         await doCut();

@@ -1,4 +1,4 @@
-import { useEditor } from 'tldraw';
+import { TLShapeId, useEditor } from 'tldraw';
 import { useEffect } from 'react';
 import { useTldrawStore } from '../store';
 import { isEditableTarget } from '../utils';
@@ -13,69 +13,69 @@ export const useHotkeys = () => {
     if (!editor) return;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Предотвращаем срабатывание в полях ввода
       if (isEditableTarget(event.target)) return;
 
-      const { key, ctrlKey, shiftKey, metaKey, altKey } = event;
-
+      const { code, ctrlKey, shiftKey, metaKey, altKey } = event;
       const modKey = ctrlKey || metaKey;
 
-      if (key === 'z' && modKey && !shiftKey && !altKey) {
+      // Undo
+      if (code === 'KeyZ' && modKey && !shiftKey && !altKey) {
         event.preventDefault();
         undo();
         return;
       }
 
-      if ((key === 'z' && modKey && shiftKey) || (key === 'y' && modKey && !shiftKey)) {
+      // Redo
+      if ((code === 'KeyZ' && modKey && shiftKey) || (code === 'KeyY' && modKey && !shiftKey)) {
         event.preventDefault();
         redo();
         return;
       }
 
       // Основные инструменты
-      if (key === 'v' && !modKey && !shiftKey && !altKey) {
+      if (code === 'KeyV' && !modKey && !shiftKey && !altKey) {
         event.preventDefault();
         editor.setCurrentTool('select');
         setSelectedTool('select');
         return;
       }
 
-      if (key === 'h' && !modKey && !shiftKey && !altKey) {
+      if (code === 'KeyH' && !modKey && !shiftKey && !altKey) {
         event.preventDefault();
         editor.setCurrentTool('hand');
         setSelectedTool('hand');
         return;
       }
 
-      if (key === 'p' && !modKey && !shiftKey && !altKey) {
+      if (code === 'KeyP' && !modKey && !shiftKey && !altKey) {
         event.preventDefault();
         editor.setCurrentTool('draw');
         setSelectedTool('pen');
         return;
       }
 
-      if (key === 't' && !modKey && !shiftKey && !altKey) {
+      if (code === 'KeyT' && !modKey && !shiftKey && !altKey) {
         event.preventDefault();
         editor.setCurrentTool('text');
         setSelectedTool('text');
         return;
       }
 
-      if (key === 'g' && !modKey && !shiftKey && !altKey) {
+      if (code === 'KeyG' && !modKey && !shiftKey && !altKey) {
         event.preventDefault();
         editor.setCurrentTool('geo');
         setSelectedTool('geo');
         return;
       }
 
-      if (key === 'a' && !modKey && !shiftKey && !altKey) {
+      if (code === 'KeyA' && !modKey && !shiftKey && !altKey) {
         event.preventDefault();
         editor.setCurrentTool('arrow');
         setSelectedTool('arrow');
         return;
       }
 
-      if (key === 'e' && !modKey && !shiftKey && !altKey) {
+      if (code === 'KeyE' && !modKey && !shiftKey && !altKey) {
         event.preventDefault();
         editor.setCurrentTool('eraser');
         setSelectedTool('eraser');
@@ -83,14 +83,13 @@ export const useHotkeys = () => {
       }
 
       // Удаление
-      if (key === 'Delete' || key === 'Backspace') {
+      if (code === 'Delete' || code === 'Backspace') {
         const selectedShapes = editor.getSelectedShapes();
         if (selectedShapes.length > 0) {
           editor.deleteShapes(selectedShapes);
         } else if (selectedElementId) {
           try {
-            // @ts-expect-error - selectedElementId может быть несовместим с новым API
-            editor.deleteShapes([selectedElementId]);
+            editor.deleteShapes([selectedElementId as TLShapeId]);
           } catch (error) {
             console.warn('Could not delete shape:', error);
           }
@@ -99,48 +98,48 @@ export const useHotkeys = () => {
         return;
       }
 
-      // Выбор всех элементов
-      if (key === 'a' && modKey && !shiftKey && !altKey) {
+      // Выбор всех
+      if (code === 'KeyA' && modKey && !shiftKey && !altKey) {
         event.preventDefault();
-        if (editor.getIsMenuOpen()) return;
+        if (editor.menus.hasAnyOpenMenus()) return;
         editor.selectAll();
         return;
       }
 
       // Отмена выбора
-      if (key === 'Escape') {
+      if (code === 'Escape') {
         editor.selectNone();
         selectElement(null);
         return;
       }
 
       // Масштабирование
-      if (key === '=' && modKey && !shiftKey && !altKey) {
+      if (code === 'Equal' && modKey && !shiftKey && !altKey) {
         event.preventDefault();
         editor.zoomIn();
         return;
       }
 
-      if (key === '-' && modKey && !shiftKey && !altKey) {
+      if (code === 'Minus' && modKey && !shiftKey && !altKey) {
         event.preventDefault();
         editor.zoomOut();
         return;
       }
 
-      if (key === '0' && modKey && !shiftKey && !altKey) {
+      if (code === 'Digit0' && modKey && !shiftKey && !altKey) {
         event.preventDefault();
         editor.resetZoom();
         return;
       }
 
-      if (key === '1' && modKey && !shiftKey && !altKey) {
+      if (code === 'Digit1' && modKey && !shiftKey && !altKey) {
         event.preventDefault();
         editor.zoomToFit();
         return;
       }
 
-      // Дублирование элементов
-      if (key === 'd' && modKey && !shiftKey && !altKey) {
+      // Дублирование
+      if (code === 'KeyD' && modKey && !shiftKey && !altKey) {
         event.preventDefault();
         const selectedShapes = editor.getSelectedShapes();
         if (selectedShapes.length > 0) {
@@ -149,11 +148,13 @@ export const useHotkeys = () => {
         return;
       }
 
-      // Группировка/разгруппировка
-      if (key === 'g' && modKey && !shiftKey && !altKey) {
+      // Группировка / разгруппировка
+      if (code === 'KeyG' && modKey && !shiftKey && !altKey) {
+        event.preventDefault();
         const selectedShapes = editor.getSelectedShapes();
         if (selectedShapes.length > 1) {
-          if (editor.getShape(selectedShapes[0].id)?.type === 'group') {
+          const first = editor.getShape(selectedShapes[0].id);
+          if (first?.type === 'group') {
             editor.ungroupShapes(selectedShapes);
           } else {
             editor.groupShapes(selectedShapes);
@@ -163,7 +164,7 @@ export const useHotkeys = () => {
       }
 
       // Справка по горячим клавишам
-      if (key === 'F1') {
+      if (code === 'F1') {
         event.preventDefault();
         const customEvent = new CustomEvent('openHotkeysHelp');
         window.dispatchEvent(customEvent);
