@@ -35,7 +35,7 @@ export const DropdownButton = ({ accessType }: { accessType: TypeWorkT | '' }) =
     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className="h-8 w-8" variant="ghost" size="icon">
+          <Button className="h-8 min-h-8 w-8 min-w-8" variant="ghost" size="icon">
             <MoreVert className="h-4 w-4 dark:fill-gray-100" />
           </Button>
         </DropdownMenuTrigger>
