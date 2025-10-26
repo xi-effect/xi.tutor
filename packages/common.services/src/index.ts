@@ -15,3 +15,4 @@ export * from './enrollments';
 export * from './tutors';
 export * from './files';
 export * from './contacts';
+export * from './paymentsTemplates';

@@ -12,16 +12,17 @@ import {
 import { Button } from '@xipkg/button';
 import { Radio, RadioItem } from '@xipkg/radio';
 import { Form, FormField, FormItem, FormMessage } from '@xipkg/form';
-import { usePaymentApproveForm, useGetPayment } from '../hooks';
+import { usePaymentApproveForm, useGetPayment, useUserByPaymentDetails } from '../hooks';
 import { RolePaymentT } from 'features.table';
 import { formatDate } from '../utils';
 import { UserProfile } from '@xipkg/userprofile';
 import { InvoiceItemT } from '../types';
+import { PaymentFormData } from '../model';
 
 type PaymentApproveModalPropsT = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  paymentDetails: RolePaymentT;
+  paymentDetails: RolePaymentT<'tutor'> | RolePaymentT<'student'>;
 };
 
 export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
@@ -36,14 +37,18 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
     onOpenChange(false);
   };
 
-  const onFormSubmit = () => {
-    onSubmit({
-      typePayment: 'cash',
-    });
+  const onFormSubmit = (data: PaymentFormData) => {
+    onSubmit(data);
     handleCloseModal();
   };
 
   const { data } = useGetPayment(paymentDetails.id);
+  const { data: userData, role } = useUserByPaymentDetails(paymentDetails);
+
+  const userId =
+    role === 'tutor'
+      ? (paymentDetails as RolePaymentT<'tutor'>).tutor_id
+      : (paymentDetails as RolePaymentT<'student'>).student_id;
 
   return (
     <Modal open={open} onOpenChange={handleCloseModal}>
@@ -63,10 +68,10 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                   {formatDate(paymentDetails.created_at)}
                 </div>
                 <UserProfile
-                  userId={paymentDetails.id ?? 0}
-                  text="Анна Смирнова"
-                  label="Индивидуальное"
-                  src="https://github.com/shadcn.png"
+                  userId={userData?.id ?? 0}
+                  text={userData?.display_name ?? userData?.username ?? 'Загрузка...'}
+                  label={role === 'tutor' ? 'Преподаватель' : 'Студент'}
+                  src={`https://api.sovlium.ru/files/users/${userId}/avatar.webp`}
                   className="col-span-2 sm:col-span-1"
                 />
               </div>
