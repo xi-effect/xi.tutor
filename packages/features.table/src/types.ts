@@ -70,7 +70,9 @@ export type StudentPaymentT = PaymentDataT<'tutor'>;
 
 export type TutorPaymentT = PaymentDataT<'student'>;
 
-export type RolePaymentT = StudentPaymentT | TutorPaymentT;
+export type RolePaymentT<Role extends RoleT> = Role extends 'tutor'
+  ? TutorPaymentT
+  : StudentPaymentT;
 
 export const FILTER_KEYS = ['created_at', 'total', 'status', 'payment_type'] as const;
 

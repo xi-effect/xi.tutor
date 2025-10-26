@@ -9,6 +9,9 @@ enum PaymentsQueryKey {
   DeleteRecipientInvoice = 'DeleteRecipientInvoice',
   GetPayment = 'GetPayment',
   UpdatePayment = 'UpdatePayment',
+  PaymentUnilateralConfirmation = 'PaymentUnilateralConfirmation',
+  PaymentReceiverConfirmation = 'PaymentReceiverConfirmation',
+  PaymentSenderConfirmation = 'PaymentSenderConfirmation',
 }
 
 const paymentsApiConfig = {
@@ -49,11 +52,25 @@ const paymentsApiConfig = {
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/recipient-invoices/${id}/`,
     method: HttpMethod.GET,
   },
-
   [PaymentsQueryKey.UpdatePayment]: {
     getUrl: (id: string) =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/recipient-invoices/${id}/`,
     method: HttpMethod.PATCH,
+  },
+  [PaymentsQueryKey.PaymentUnilateralConfirmation]: {
+    getUrl: (recipient_invoice_id: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/${recipient_invoice_id}/payment-confirmations/unilateral/`,
+    method: HttpMethod.POST,
+  },
+  [PaymentsQueryKey.PaymentReceiverConfirmation]: {
+    getUrl: (recipient_invoice_id: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/${recipient_invoice_id}/payment-confirmations/receiver/`,
+    method: HttpMethod.POST,
+  },
+  [PaymentsQueryKey.PaymentSenderConfirmation]: {
+    getUrl: (recipient_invoice_id: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/student/${recipient_invoice_id}/payment-confirmations/sender/`,
+    method: HttpMethod.POST,
   },
 };
 
