@@ -1,25 +1,29 @@
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { ClassroomT } from 'common.api';
+import { ClassroomT, IndividualClassroomT } from 'common.api';
 import { Button } from '@xipkg/button';
 import { Arrow, Conference } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import { useCurrentUser, useUserById } from 'common.services';
+import { useCurrentUser, useStudentById, useTutorById } from 'common.services';
 import { SubjectBadge } from './SubjectBadge';
 
 type UserAvatarPropsT = {
-  classroom: ClassroomT;
+  classroom: IndividualClassroomT;
   isLoading: boolean;
-  student_id: string;
 };
 
-const UserAvatar = ({ isLoading, student_id, classroom }: UserAvatarPropsT) => {
-  const { data } = useUserById(student_id);
+const UserAvatar = ({ isLoading, classroom }: UserAvatarPropsT) => {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const getUser = isTutor ? useStudentById : useTutorById;
+
+  const { data } = getUser(classroom.tutor_id ?? classroom.student_id ?? 0);
 
   return (
     <Avatar size={avatarSize}>
       <AvatarImage
-        src={`https://api.sovlium.ru/files/users/${classroom.kind === 'individual' ? classroom.student_id : classroom.tutor_id}/avatar.webp`}
+        src={`https://api.sovlium.ru/files/users/${classroom.tutor_id ?? classroom.student_id ?? 0}/avatar.webp`}
         alt="user avatar"
       />
       {isLoading || !data ? (
@@ -65,6 +69,8 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
     window.location.href = url;
   };
 
+  console.log('classroom', classroom);
+
   return (
     <div className="border-gray-30 relative flex min-h-[170px] max-w-[420px] min-w-[320px] flex-col items-start justify-start gap-1 rounded-2xl border bg-transparent p-4">
       <Tooltip delayDuration={1000}>
@@ -88,11 +94,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
 
       <div className="flex flex-row gap-2">
         {classroom.kind === 'individual' && (
-          <UserAvatar
-            classroom={classroom}
-            isLoading={isLoading}
-            student_id={classroom.student_id?.toString()}
-          />
+          <UserAvatar classroom={classroom} isLoading={isLoading} />
         )}
         {classroom.kind === 'group' && (
           <div className="bg-brand-80 text-gray-0 flex h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-[24px]">

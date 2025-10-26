@@ -56,7 +56,8 @@ export interface BaseClassroomT {
 
 export interface IndividualClassroomT extends BaseClassroomT {
   kind: 'individual';
-  student_id: number;
+  student_id?: number;
+  tutor_id?: number;
 }
 
 export interface GroupClassroomT extends BaseClassroomT {

@@ -1,3 +1,4 @@
+import { UserRoleT } from 'common.api';
 import { RolePaymentT } from 'features.table';
 
 export type ModalTemplatePropsT = {
@@ -21,5 +22,5 @@ export type PaymentPropsT = {
 };
 
 export type TabsComponentPropsT = {
-  onApprovePayment: (payment: RolePaymentT) => void;
+  onApprovePayment: (payment: RolePaymentT<UserRoleT>) => void;
 };

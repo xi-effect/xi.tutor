@@ -25,11 +25,12 @@ import { NotFoundItems } from './NotFoundItems';
 import { useResponsiveGrid, useVirtualGrid } from '../hooks';
 import { Loader } from './Loader';
 import { type TabsComponentPropsT } from '../types';
+import { UserRoleT } from '../../../common.api/src/types';
 
 export type VirtualizedPaymentsTableProps<T> = {
   parentRef: RefObject<HTMLDivElement | null>;
   data: T[];
-  columns: ColumnDef<RolePaymentT>[];
+  columns: ColumnDef<RolePaymentT<UserRoleT>>[];
   filterByClass?: boolean | string;
   isLoading?: boolean;
   isFetchingNextPage?: boolean;
@@ -47,7 +48,7 @@ export const VirtualizedPaymentsTable = ({
   onApprovePayment,
   isError,
   currentUserRole,
-}: VirtualizedPaymentsTableProps<RolePaymentT>) => {
+}: VirtualizedPaymentsTableProps<RolePaymentT<UserRoleT>>) => {
   const isMobile = useMediaQuery('(max-width: 719px)');
 
   const table = useReactTable({
