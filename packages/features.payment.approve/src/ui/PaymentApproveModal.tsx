@@ -12,25 +12,36 @@ import {
 import { Button } from '@xipkg/button';
 import { Radio, RadioItem } from '@xipkg/radio';
 import { Form, FormField, FormItem, FormMessage } from '@xipkg/form';
-import { usePaymentApproveForm, useGetPayment, useUserByPaymentDetails } from '../hooks';
+import { usePaymentApproveForm, useUserByPaymentDetails } from '../hooks';
 import { RolePaymentT } from 'features.table';
 import { formatDate } from '../utils';
 import { UserProfile } from '@xipkg/userprofile';
 import { InvoiceItemT } from '../types';
 import { PaymentFormData } from '../model';
+import { useCurrentUser, useGetRecipientInvoiceByStudent } from 'common.services';
+import { useGetRecipientInvoiceByTutor } from '../../../common.services/src/payments/useGetRecipientInvoiceByTutor';
 
 type PaymentApproveModalPropsT = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   paymentDetails: RolePaymentT<'tutor'> | RolePaymentT<'student'>;
+  recipientInvoiceId: number;
 };
 
 export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
   open,
   onOpenChange,
   paymentDetails,
+  recipientInvoiceId,
 }) => {
-  const { form, handleSubmit, handleClearForm, onSubmit } = usePaymentApproveForm();
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const { data: userData } = useUserByPaymentDetails(paymentDetails);
+  const { form, handleSubmit, handleClearForm, onSubmit, isLoading } = usePaymentApproveForm(
+    recipientInvoiceId,
+    isTutor,
+  );
 
   const handleCloseModal = () => {
     handleClearForm();
@@ -42,13 +53,14 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
     handleCloseModal();
   };
 
-  const { data } = useGetPayment(paymentDetails.id);
-  const { data: userData, role } = useUserByPaymentDetails(paymentDetails);
+  const getRecipientInvoice = isTutor
+    ? useGetRecipientInvoiceByTutor
+    : useGetRecipientInvoiceByStudent;
+  const { data } = getRecipientInvoice(recipientInvoiceId);
 
-  const userId =
-    role === 'tutor'
-      ? (paymentDetails as RolePaymentT<'tutor'>).tutor_id
-      : (paymentDetails as RolePaymentT<'student'>).student_id;
+  const userId = isTutor
+    ? (paymentDetails as RolePaymentT<'student'>).student_id
+    : (paymentDetails as RolePaymentT<'tutor'>).tutor_id;
 
   return (
     <Modal open={open} onOpenChange={handleCloseModal}>
@@ -70,7 +82,7 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                 <UserProfile
                   userId={userData?.id ?? 0}
                   text={userData?.display_name ?? userData?.username ?? 'Загрузка...'}
-                  label={role === 'tutor' ? 'Преподаватель' : 'Студент'}
+                  label={isTutor ? 'Ученик' : 'Репетитор'}
                   src={`https://api.sovlium.ru/files/users/${userId}/avatar.webp`}
                   className="col-span-2 sm:col-span-1"
                 />
@@ -93,22 +105,22 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                       >
                         <div className="flex items-center gap-2">
                           <RadioItem
-                            value="cash"
-                            id="cash"
-                            className="data-[state=checked]:border-brand-100 data-[state=checked]:bg-brand-100 text-gray-0 border-gray-30 dark:bg-gray-10 h-6 w-6 [&_span_svg]:h-3 [&_span_svg]:w-3"
-                          />
-                          <label htmlFor="cash" className="text-gray-100">
-                            Наличные
-                          </label>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <RadioItem
                             value="transfer"
                             id="transfer"
                             className="data-[state=checked]:bg-brand-100 data-[state=checked]:border-brand-100 text-gray-0 dark:bg-gray-10 border-gray-30 h-6 w-6 [&>span>svg]:h-3 [&>span>svg]:w-3"
                           />
                           <label htmlFor="transfer" className="text-gray-100">
                             Перевод
+                          </label>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <RadioItem
+                            value="cash"
+                            id="cash"
+                            className="data-[state=checked]:border-brand-100 data-[state=checked]:bg-brand-100 text-gray-0 border-gray-30 dark:bg-gray-10 h-6 w-6 [&_span_svg]:h-3 [&_span_svg]:w-3"
+                          />
+                          <label htmlFor="cash" className="text-gray-100">
+                            Наличные
                           </label>
                         </div>
                       </Radio>
@@ -163,10 +175,15 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
               </div>
             </ModalBody>
             <ModalFooter className="flex max-w-85 gap-4 sm:max-w-150">
-              <Button variant="default" className="w-38.5" type="submit">
-                Подтвердить
+              <Button variant="default" className="w-38.5" type="submit" disabled={isLoading}>
+                {isLoading ? 'Подтверждение...' : 'Подтвердить'}
               </Button>
-              <Button variant="secondary" className="w-31.75" onClick={handleCloseModal}>
+              <Button
+                variant="secondary"
+                className="w-31.75"
+                onClick={handleCloseModal}
+                disabled={isLoading}
+              >
                 Отменить
               </Button>
             </ModalFooter>

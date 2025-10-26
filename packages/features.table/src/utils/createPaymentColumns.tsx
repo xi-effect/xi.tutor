@@ -10,18 +10,18 @@ import {
   ActionsCell,
 } from '../ui/cells';
 
-type ColumnArgsT = {
+type ColumnArgsT<Role extends RoleT = RoleT> = {
   usersRole: RoleT;
   isMobile?: boolean;
-  onApprovePayment?: (payment: RolePaymentT) => void;
+  onApprovePayment?: (payment: RolePaymentT<Role>) => void;
   withStudentColumn?: boolean;
 };
 
-export const createPaymentColumns = ({
+export const createPaymentColumns = <Role extends RoleT>({
   usersRole,
   onApprovePayment,
-}: ColumnArgsT): ColumnDef<RolePaymentT>[] => {
-  const baseColumns: (ColumnDef<RolePaymentT> | false)[] = [
+}: ColumnArgsT<Role>): ColumnDef<RolePaymentT<Role>>[] => {
+  const baseColumns: (ColumnDef<RolePaymentT<Role>> | false)[] = [
     {
       accessorKey: 'created_at',
       header: 'Дата',
@@ -38,7 +38,7 @@ export const createPaymentColumns = ({
     },
   ];
 
-  const RoleColumn: ColumnDef<RolePaymentT> | false = {
+  const RoleColumn: ColumnDef<RolePaymentT<Role>> | false = {
     accessorKey: usersRole === 'student' ? 'student_id' : 'tutor_id',
     header: usersRole === 'student' ? 'Ученик' : 'Репетитор',
     cell: ({ row }) => {
@@ -59,7 +59,7 @@ export const createPaymentColumns = ({
     enableColumnFilter: true,
   };
 
-  const columns: (ColumnDef<RolePaymentT> | false)[] = [
+  const columns: (ColumnDef<RolePaymentT<Role>> | false)[] = [
     ...baseColumns,
     RoleColumn,
     // {
@@ -117,5 +117,5 @@ export const createPaymentColumns = ({
     },
   ];
 
-  return columns.filter((col): col is ColumnDef<RolePaymentT> => Boolean(col));
+  return columns.filter((col): col is ColumnDef<RolePaymentT<Role>> => Boolean(col));
 };

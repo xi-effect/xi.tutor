@@ -5,6 +5,7 @@ import { useMediaQuery } from '@xipkg/utils';
 import { useParams } from '@tanstack/react-router';
 import { useGetClassroom, useCurrentUser } from 'common.services';
 import { PaymentApproveModal } from 'features.payment.approve';
+import { UserRoleT } from 'common.api';
 
 export const Payments = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
@@ -13,10 +14,10 @@ export const Payments = () => {
 
   const [paymentApproveModalState, setPaymentApproveModalState] = useState<{
     isOpen: boolean;
-    payment: RolePaymentT | null;
+    payment: RolePaymentT<UserRoleT> | null;
   }>({ isOpen: false, payment: null });
 
-  const onOpenPaymentApproveModal = useCallback((payment: RolePaymentT) => {
+  const onOpenPaymentApproveModal = useCallback((payment: RolePaymentT<UserRoleT>) => {
     setPaymentApproveModalState({ isOpen: true, payment });
   }, []);
 
@@ -79,6 +80,7 @@ export const Payments = () => {
             setPaymentApproveModalState({ ...paymentApproveModalState, isOpen: open })
           }
           paymentDetails={paymentApproveModalState.payment}
+          recipientInvoiceId={paymentApproveModalState.payment.id}
         />
       )}
     </div>
