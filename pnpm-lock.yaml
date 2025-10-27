@@ -1499,6 +1499,12 @@ importers:
       '@xipkg/button':
         specifier: ^3.1.8
         version: 3.2.0(@types/react@19.2.2)(react@19.2.0)
+      '@xipkg/dropdown':
+        specifier: ^3.0.12
+        version: 3.0.12(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+      '@xipkg/icons':
+        specifier: ^2.5.4
+        version: 2.5.4(react@19.2.0)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.0)
@@ -2746,6 +2752,9 @@ importers:
       '@xipkg/userprofile':
         specifier: 4.0.14
         version: 4.0.14(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+      '@xipkg/utils':
+        specifier: ^1.8.0
+        version: 1.8.0(react@19.2.0)
       common.api:
         specifier: '*'
         version: link:../common.api
