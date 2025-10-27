@@ -1,3 +1,4 @@
+import { Button } from '@xipkg/button';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -7,10 +8,19 @@ import {
 import { ChevronSmallBottom } from '@xipkg/icons';
 
 interface NoteProps {
+  onlyDrafts?: boolean;
   onCreate: () => void;
 }
 
-export const Note = ({ onCreate }: NoteProps) => {
+export const Note = ({ onlyDrafts = false, onCreate }: NoteProps) => {
+  if (onlyDrafts) {
+    return (
+      <Button onClick={onCreate} size="s" variant="secondary" className="max-sm:hidden">
+        Создать заметку
+      </Button>
+    );
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="group bg-gray-0 text-s-base hover:text-gray-0 hover:bg-brand-80 data-[state=open]:text-gray-0 data-[state=open]:bg-brand-80 border-gray-30 flex h-8 w-[160px] flex-row items-center justify-between gap-2 rounded-lg border px-2 font-medium text-gray-100 transition-colors duration-200 hover:border-gray-50 max-[550px]:hidden">

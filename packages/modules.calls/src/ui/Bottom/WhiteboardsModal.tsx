@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Modal,
   ModalContent,
@@ -13,7 +14,7 @@ import { useState } from 'react';
 import { Close, Search } from '@xipkg/icons';
 import { useNavigate } from '@tanstack/react-router';
 import { useCallStore } from '../../store';
-import { useModeSync, useWhiteboards } from '../../hooks';
+import { useModeSync } from '../../hooks';
 
 type Whiteboard = {
   id: number;
@@ -35,14 +36,11 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
   const { syncModeToOthers } = useModeSync();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBoardId, setSelectedBoardId] = useState<number | null>(null);
-  const { whiteboards, isLoading, isError } = useWhiteboards(20);
 
-  const filteredWhiteboards =
-    whiteboards &&
-    Array.isArray(whiteboards) &&
-    whiteboards.filter((board: Whiteboard) =>
-      board.name.toLowerCase().includes(searchQuery.toLowerCase()),
-    );
+  const isLoading = false;
+  const isError = false;
+
+  const filteredWhiteboards: any[] = [];
 
   const handleBoardSelect = (boardId: number) => {
     setSelectedBoardId(boardId);

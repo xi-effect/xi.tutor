@@ -1,3 +1,4 @@
+import { Button } from '@xipkg/button';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -8,9 +9,18 @@ import { ChevronSmallBottom } from '@xipkg/icons';
 
 interface BoardProps {
   onCreate: () => void;
+  onlyDrafts?: boolean;
 }
 
-export const Board = ({ onCreate }: BoardProps) => {
+export const Board = ({ onlyDrafts = false, onCreate }: BoardProps) => {
+  if (onlyDrafts) {
+    return (
+      <Button onClick={onCreate} size="s" variant="secondary" className="max-sm:hidden">
+        Создать доску
+      </Button>
+    );
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="bg-gray-0 group text-s-base hover:text-gray-0 hover:bg-brand-80 data-[state=open]:text-gray-0 data-[state=open]:bg-brand-80 border-gray-30 flex h-8 w-[160px] flex-row items-center justify-between gap-[6px] rounded-lg border px-4 font-medium text-gray-100 transition-colors duration-200 hover:border-gray-50 max-[550px]:hidden">
