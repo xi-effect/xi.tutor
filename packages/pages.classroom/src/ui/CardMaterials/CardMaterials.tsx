@@ -3,6 +3,8 @@ import { formatToShortDate } from 'pages.materials';
 import { cn } from '@xipkg/utils';
 import { LongAnswer, WhiteBoard } from '@xipkg/icons';
 
+import { DropdownButton } from './DropdownButton';
+
 export type TypeWorkT = 'collaboration' | 'only_tutor' | 'draft';
 export type TypeMaterialT = 'text' | 'board';
 
@@ -51,14 +53,18 @@ export const CardMaterials = ({ accessTypes }: CardMaterialsProps) => {
       role="group"
       className="border-gray-30 bg-gray-0 flex min-h-[96px] min-w-[350px] flex-col items-start justify-start gap-2 rounded-2xl border p-4"
     >
-      {typeWork && accessMap[typeWork] && (
-        <Badge
-          variant="default"
-          className={cn('text-s-base px-2 py-1 font-medium', mapStyles[typeWork])}
-        >
-          {accessMap[typeWork]}
-        </Badge>
-      )}
+      <div className="flex w-full flex-row items-center justify-between">
+        {typeWork && accessMap[typeWork] && (
+          <Badge
+            variant="default"
+            className={cn('text-s-base px-2 py-1 font-medium', mapStyles[typeWork])}
+          >
+            {accessMap[typeWork]}
+          </Badge>
+        )}
+
+        <DropdownButton accessType={(typeWork as TypeWorkT) ?? ''} />
+      </div>
 
       <div className="flex flex-col items-start justify-start gap-4">
         <div className="flex flex-row items-center justify-start gap-2">
