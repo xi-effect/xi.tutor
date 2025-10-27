@@ -4,7 +4,7 @@ import { useKeyPress } from 'common.utils';
 import { JSX } from 'react/jsx-runtime';
 import { Editor, Tldraw, TldrawProps } from 'tldraw';
 import { myAssetStore } from '../../../features';
-import { useLockedShapeSelection, useRemoveMark } from '../../../hooks';
+import { useLockedShapeSelection, useRemoveMark, useTldrawClipboard } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useTldrawStore } from '../../../store';
 import { Header } from '../header';
@@ -23,6 +23,7 @@ export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
 
   useRemoveMark();
   useLockedShapeSelection(editor);
+  useTldrawClipboard(editor);
 
   useKeyPress('Backspace', () => {
     if (selectedElementId) {
