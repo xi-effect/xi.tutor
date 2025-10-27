@@ -101,7 +101,7 @@ export const VirtualizedPaymentsTable = ({
     >
       <div className="min-w-[1200px]">
         <Table className="table-fixed px-2">
-          <TableHeader className="sticky top-0 z-10 bg-transparent">
+          <TableHeader className="sticky top-0 bg-transparent">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
