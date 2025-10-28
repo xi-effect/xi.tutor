@@ -4,3 +4,5 @@ export { useGetClassroomMaterial } from './useGetClassroomMaterial';
 export { useGetClassroomMaterials } from './useGetClassroomMaterials';
 export { useGetClassroomMaterialsList } from './useGetClassroomMaterialsList';
 export { useUpdateClassroomMaterial } from './useUpdateClassroomMaterial';
+export { useGetClassroomMaterialStudent } from './useGetClassroomMaterialStudent';
+export { useGetClassroomMaterialsListStudent } from './useGetClassroomMaterialsListStudent';

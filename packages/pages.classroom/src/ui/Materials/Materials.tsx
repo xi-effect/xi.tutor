@@ -1,6 +1,11 @@
 import { ScrollArea } from '@xipkg/scrollarea';
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
-import { useGetClassroom, useGetClassroomMaterialsList } from 'common.services';
+import {
+  useCurrentUser,
+  useGetClassroom,
+  useGetClassroomMaterialsList,
+  useGetClassroomMaterialsListStudent,
+} from 'common.services';
 
 import { CardMaterials } from '../CardMaterials/CardMaterials';
 
@@ -8,12 +13,17 @@ export const Materials = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
   const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
 
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const getList = isTutor ? useGetClassroomMaterialsList : useGetClassroomMaterialsListStudent;
+
   // Получаем материалы кабинета
   const {
     data: boardsData,
     isLoading: isBoardsLoading,
     isError: isBoardsError,
-  } = useGetClassroomMaterialsList({
+  } = getList({
     classroomId: classroomId || '',
     content_type: 'board',
     disabled: !classroomId,
@@ -23,7 +33,7 @@ export const Materials = () => {
     data: notesData,
     isLoading: isNotesLoading,
     isError: isNotesError,
-  } = useGetClassroomMaterialsList({
+  } = getList({
     classroomId: classroomId || '',
     content_type: 'note',
     disabled: !classroomId,

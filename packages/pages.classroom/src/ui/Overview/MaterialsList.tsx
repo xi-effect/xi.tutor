@@ -1,17 +1,26 @@
 import { useParams } from '@tanstack/react-router';
-import { useGetClassroomMaterialsList } from 'common.services';
+import {
+  useCurrentUser,
+  useGetClassroomMaterialsList,
+  useGetClassroomMaterialsListStudent,
+} from 'common.services';
 import { CardMaterials } from '../CardMaterials';
 import { ClassroomMaterialsT } from 'common.types';
 
 export const MaterialsList = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
 
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const getList = isTutor ? useGetClassroomMaterialsList : useGetClassroomMaterialsListStudent;
+
   // Получаем все материалы кабинета (и доски, и заметки)
   const {
     data: materials,
     isLoading,
     isError,
-  } = useGetClassroomMaterialsList({
+  } = getList({
     classroomId: classroomId || '',
     content_type: null, // null означает все типы материалов
     disabled: !classroomId,
