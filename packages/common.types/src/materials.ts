@@ -16,4 +16,5 @@ export type ClassroomMaterialsT = MaterialT & {
 export type UpdateMaterialDataT = {
   name?: string;
   kind?: string;
+  student_access_mode?: AccessModeT;
 };

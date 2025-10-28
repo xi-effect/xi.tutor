@@ -5,7 +5,11 @@ import { LongAnswer, WhiteBoard } from '@xipkg/icons';
 
 import { DropdownButton } from './DropdownButton';
 import { AccessModeT, ClassroomMaterialsT } from 'common.types';
-import { useDeleteClassroomMaterials } from 'common.services';
+import {
+  useCurrentUser,
+  useDeleteClassroomMaterials,
+  useUpdateClassroomMaterial,
+} from 'common.services';
 import { useParams } from '@tanstack/react-router';
 
 export type CardMaterialsProps = {
@@ -34,11 +38,17 @@ const mapIcon: Record<'note' | 'board', React.ReactNode> = {
 };
 
 export const CardMaterials = ({ material, showIcon = true, onClick }: CardMaterialsProps) => {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
   const { classroomId } = useParams({ strict: false });
   const { id, name, content_kind, updated_at, student_access_mode } = material;
 
   // Хук для удаления материалов
   const { deleteClassroomMaterials } = useDeleteClassroomMaterials();
+
+  // Хук для обновления материалов
+  const { updateClassroomMaterial } = useUpdateClassroomMaterial();
 
   // Обработчик удаления материала
   const handleDeleteMaterial = () => {
@@ -48,6 +58,19 @@ export const CardMaterials = ({ material, showIcon = true, onClick }: CardMateri
         id: id.toString(),
         content_kind: content_kind as 'note' | 'board',
         name: name,
+      });
+    }
+  };
+
+  // Обработчик обновления режима доступа
+  const handleUpdateAccessMode = (newAccessMode: AccessModeT) => {
+    if (classroomId && newAccessMode !== student_access_mode) {
+      updateClassroomMaterial.mutate({
+        classroomId: classroomId || '',
+        id: id.toString(),
+        data: {
+          student_access_mode: newAccessMode,
+        },
       });
     }
   };
@@ -72,10 +95,13 @@ export const CardMaterials = ({ material, showIcon = true, onClick }: CardMateri
           </Badge>
         )}
 
-        <DropdownButton
-          studentAccessMode={student_access_mode ?? ''}
-          onDelete={handleDeleteMaterial}
-        />
+        {isTutor && (
+          <DropdownButton
+            studentAccessMode={student_access_mode ?? ''}
+            onDelete={handleDeleteMaterial}
+            onUpdateAccessMode={handleUpdateAccessMode}
+          />
+        )}
       </div>
 
       <div className="flex flex-col items-start justify-start gap-4">
