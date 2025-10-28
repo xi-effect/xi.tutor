@@ -2,6 +2,7 @@ export * from './auth';
 export * from './user';
 export * from './invitations';
 export * from './materials';
+export * from './classroom-materials';
 export * from './payments';
 export * from './utils';
 export * from './onboarding';
