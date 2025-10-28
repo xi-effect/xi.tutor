@@ -11,16 +11,19 @@ export const PaymentsPage = () => {
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [paymentApproveModalState, setPaymentApproveModalState] = useState<{
     isOpen: boolean;
-    payment: RolePaymentT | null;
+    payment: RolePaymentT<'tutor'> | RolePaymentT<'student'> | null;
   }>({ isOpen: false, payment: null });
 
   const onOpenInvoiceModal = () => {
     setIsInvoiceModalOpen(true);
   };
 
-  const onOpenPaymentApproveModal = useCallback((payment: RolePaymentT) => {
-    setPaymentApproveModalState({ isOpen: true, payment });
-  }, []);
+  const onOpenPaymentApproveModal = useCallback(
+    (payment: RolePaymentT<'tutor'> | RolePaymentT<'student'>) => {
+      setPaymentApproveModalState({ isOpen: true, payment });
+    },
+    [],
+  );
 
   return (
     <div className="flex flex-col justify-between gap-6 pl-4">
@@ -44,6 +47,7 @@ export const PaymentsPage = () => {
             setPaymentApproveModalState({ ...paymentApproveModalState, isOpen: open })
           }
           paymentDetails={paymentApproveModalState.payment}
+          recipientInvoiceId={paymentApproveModalState.payment.id}
         />
       )}
       {isInvoiceModalOpen && (

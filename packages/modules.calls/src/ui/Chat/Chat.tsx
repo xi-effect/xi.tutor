@@ -31,7 +31,7 @@ export const Chat = () => {
   if (!isChatOpen) return null;
 
   return (
-    <div className="bg-gray-0 border-gray-20 flex h-full w-120 flex-col rounded-2xl border p-4">
+    <div className="bg-gray-0 border-gray-20 flex h-full w-100 max-w-100 flex-col rounded-2xl border p-4">
       {/* Заголовок */}
       <div className="border-gray-20 flex items-center justify-between">
         <h3 className="text-m-base font-medium text-gray-100">Чат</h3>
@@ -56,7 +56,7 @@ export const Chat = () => {
                   className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[80%] rounded-lg px-3 py-2 ${
+                    className={`max-w-[80%] rounded-lg px-3 py-2 select-text ${
                       isOwnMessage ? 'bg-brand-100 text-brand-0' : 'bg-gray-10 text-gray-100'
                     }`}
                   >
@@ -65,9 +65,11 @@ export const Chat = () => {
                         {message.senderName}
                       </div>
                     )}
-                    <div className="text-sm">{message.text}</div>
+                    <div className="cursor-text text-sm wrap-break-word select-text">
+                      {message.text}
+                    </div>
                     <div
-                      className={`mt-1 text-xs ${isOwnMessage ? 'text-brand-20' : 'text-gray-60'}`}
+                      className={`text-xs-base mt-1 text-end ${isOwnMessage ? 'text-brand-20' : 'text-gray-60'}`}
                     >
                       {new Date(message.timestamp).toLocaleTimeString('ru-RU', {
                         hour: '2-digit',

@@ -5,7 +5,7 @@ export const Header = () => {
     <div className="flex flex-row items-center pr-4">
       <h1 className="text-2xl font-semibold text-gray-100">Материалы</h1>
 
-      <MaterialsAdd />
+      <MaterialsAdd onlyDrafts />
     </div>
   );
 };

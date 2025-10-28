@@ -11,9 +11,10 @@ import {
 import { UserProfile } from '@xipkg/userprofile';
 import { cn } from '@xipkg/utils';
 import { type TabsComponentPropsT } from '../../types';
+import { UserRoleT } from '../../../../common.api/src/types';
 
 export type CardPropsT = {
-  payment: RolePaymentT;
+  payment: RolePaymentT<UserRoleT>;
   userId: number;
   currentUserRole: RoleT;
   onApprovePayment: TabsComponentPropsT['onApprovePayment'];

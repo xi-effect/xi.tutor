@@ -23,6 +23,12 @@ const env = {
     import.meta.env.VITE_SERVER_URL_BACKEND,
   ),
   VITE_SERVER_URL_LIVEKIT: asString(import.meta.env.VITE_SERVER_URL_LIVEKIT),
+  VITE_SERVER_URL_LIVEKIT_DEV: asString(
+    import.meta.env.VITE_SERVER_URL_LIVEKIT_DEV,
+    'ws://127.0.0.1:7880',
+  ),
+  VITE_LIVEKIT_DEV_TOKEN: asString(import.meta.env.VITE_LIVEKIT_DEV_TOKEN),
+  VITE_LIVEKIT_DEV_MODE: asBoolean(import.meta.env.VITE_LIVEKIT_DEV_MODE, false),
   VITE_SERVER_URL_HOCUS: asString(import.meta.env.VITE_SERVER_URL_HOCUS),
   VITE_APP_DOMAIN: asString(import.meta.env.VITE_APP_DOMAIN, 'https://app.sovlium.ru'),
   VITE_DEVTOOLS_ENABLED: asBoolean(import.meta.env.VITE_REACT_QUERY_DEVTOOLS_ENABLED, false),

@@ -8,9 +8,9 @@ export type MaterialPropsTT = {
 };
 
 export type MaterialPropsT = {
+  content_kind: 'note' | 'board';
   created_at: string;
   id: number;
-  kind: string;
   last_opened_at: string;
   name: string;
   updated_at: string;

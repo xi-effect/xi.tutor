@@ -44,7 +44,8 @@ export const useInvoiceForm = () => {
     const student = classrooms?.find((c) => c.id === Number(data.studentId));
 
     // Формируем payload для отправки
-    const student_ids = student?.kind === 'individual' ? [student.student_id] : [];
+    const student_ids =
+      student?.kind === 'individual' && student.student_id ? [student.student_id] : [];
 
     const payload = {
       invoice: { comment: data.comment || '' },

@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import {
   DndContext,
   DragEndEvent,
@@ -10,11 +10,13 @@ import {
   useDndMonitor,
 } from '@dnd-kit/core';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
+import { RoomAudioRenderer } from '@livekit/components-react';
 import { CompactCall } from './CompactCall';
 import { useCallStore } from '../../store/callStore';
 import type { Corner } from '../../store/callStore';
-import { useRouter } from '@tanstack/react-router';
+import { useNavigate, useRouter, useSearch } from '@tanstack/react-router';
 import { Chat } from '../Chat/Chat';
+import { useRoom } from '../../providers/RoomProvider';
 
 type CompactViewProps = {
   children: React.ReactNode;
@@ -124,6 +126,9 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
             </div>
           </div>
         )}
+
+        {/* Обработка аудио как в основном режиме ВКС */}
+        <RoomAudioRenderer />
       </div>
     </DndContext>
   );
@@ -131,6 +136,41 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
 
 export const CompactView = ({ children }: CompactViewProps) => {
   const { mode } = useCallStore();
+  const { room } = useRoom();
+  const { token } = useCallStore();
+
+  const search = useSearch({ strict: false }) as { call?: string };
+  const navigate = useNavigate();
+
+  // Очищаем URL параметр call, если комната не инициализирована
+  useEffect(() => {
+    if ((!room || !token) && search.call) {
+      const searchWithoutCall = { ...search };
+      delete searchWithoutCall.call;
+      navigate({
+        to: location.pathname,
+        search: searchWithoutCall,
+        replace: true,
+      });
+
+      // Очищаем все состояния интерфейса при отключении
+      const { clearAllRaisedHands, updateStore: updateCallStore } = useCallStore.getState();
+
+      // Очищаем поднятые руки
+      clearAllRaisedHands();
+
+      // Очищаем чат
+      updateCallStore('isChatOpen', false);
+      updateCallStore('chatMessages', []);
+      updateCallStore('unreadMessagesCount', 0);
+
+      updateCallStore('mode', 'full');
+    }
+  }, [room, token, search.call, search, navigate]);
+
+  if (!room || !token) {
+    return <>{children}</>;
+  }
 
   if (mode === 'full') return <>{children}</>;
 

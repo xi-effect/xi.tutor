@@ -13,6 +13,8 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
   const { room } = useRoom();
   const { audioEnabled, videoEnabled, connect, token, updateStore } = useCallStore();
 
+  const { isStarted } = useCallStore();
+
   const handleConnect = () => {
     updateStore('connect', true);
     console.log('Connected to LiveKit room');
@@ -22,6 +24,17 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
     updateStore('connect', false);
     updateStore('isStarted', false);
     updateStore('mode', 'full');
+
+    // Очищаем все состояния интерфейса при отключении
+    const { clearAllRaisedHands, updateStore: updateCallStore } = useCallStore.getState();
+
+    // Очищаем поднятые руки
+    clearAllRaisedHands();
+
+    // Очищаем чат
+    updateCallStore('isChatOpen', false);
+    updateCallStore('chatMessages', []);
+    updateCallStore('unreadMessagesCount', 0);
 
     // Удаляем параметр call из URL при отключении
     if (search.call) {
@@ -34,7 +47,7 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
       });
     }
 
-    console.log('Disconnected from LiveKit room');
+    console.log('Disconnected from LiveKit room - all interface states cleared');
   };
 
   const location = useLocation();
@@ -52,17 +65,11 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
     }
   }, [location, token, callId, navigate]);
 
-  if (!token) {
-    console.warn('No token available for LiveKit connection');
+  if (!token || !room) {
+    if (isStarted) console.warn('No token available for LiveKit connection');
+
     return <>{children}</>;
   }
-
-  // console.log('LiveKitProvider state:', {
-  //   connect,
-  //   audioEnabled,
-  //   videoEnabled,
-  //   hasToken: !!token,
-  // });
 
   return (
     <LiveKitRoom

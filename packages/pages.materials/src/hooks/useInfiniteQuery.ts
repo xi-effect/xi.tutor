@@ -13,9 +13,11 @@ export const useInfiniteQuery = (
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
     useTanStackInfiniteQuery({
       queryKey: [MaterialsQueryKey.Materials, kind],
+      // pageParam - это значение, которое возвращает getNextPageParam из предыдущей страницы
+      // При первой загрузке pageParam = undefined (initialPageParam)
       queryFn: async ({ pageParam }) => {
         const axiosInst = await getAxiosInstance();
-        const url = materialsApiConfig[MaterialsQueryKey.Materials].getUrl(40, kind, pageParam);
+        const url = materialsApiConfig[MaterialsQueryKey.Materials].getUrl();
 
         const response = await axiosInst({
           method: materialsApiConfig[MaterialsQueryKey.Materials].method,
@@ -23,25 +25,41 @@ export const useInfiniteQuery = (
           headers: {
             'Content-Type': 'application/json',
           },
+          data: {
+            limit: 40,
+            cursor: pageParam
+              ? {
+                  created_at: pageParam,
+                }
+              : null,
+            filters: {
+              content_type: kind,
+            },
+          },
         });
 
         return response.data;
       },
+      // Начальное значение для первой страницы
       initialPageParam: undefined as string | undefined,
+      // Эта функция определяет параметр для следующей страницы
+      // Возвращаемое значение станет pageParam для следующего запроса
       getNextPageParam: (lastPage) => {
         // Проверяем, если lastPage это объект с массивом данных
         const data = Array.isArray(lastPage) ? lastPage : lastPage?.data || lastPage?.results;
 
         if (!data || !Array.isArray(data) || data.length === 0) {
-          return undefined;
+          return undefined; // Больше страниц нет
         }
 
         const lastItem = data[data.length - 1];
-        if (!lastItem || !lastItem.last_opened_at) {
-          return undefined;
+        // Используем created_at для консистентности с запросом
+        if (!lastItem || !lastItem.created_at) {
+          return undefined; // Больше страниц нет
         }
 
-        return lastItem.last_opened_at;
+        // Возвращаем created_at последнего элемента - это будет pageParam для следующего запроса
+        return lastItem.created_at;
       },
       staleTime: 5 * 60 * 1000, // 5 минут
       gcTime: 10 * 60 * 1000, // 10 минут

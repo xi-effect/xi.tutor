@@ -44,8 +44,7 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
 
     navigate({
       to: url,
-      search: (prev: Record<string, unknown>) => ({
-        ...prev,
+      search: () => ({
         ...filteredSearch,
       }),
     });

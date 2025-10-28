@@ -21,11 +21,11 @@ interface MutationContext {
 }
 
 export type MaterialsDataT = {
-  kind: 'note' | 'board';
+  content_kind: 'note' | 'board';
   name?: string;
 };
 
-const validateKind = (kind: string): kind is MaterialsDataT['kind'] => {
+const validateKind = (kind: string): kind is MaterialsDataT['content_kind'] => {
   return kind === 'note' || kind === 'board';
 };
 
@@ -39,7 +39,7 @@ export const useAddMaterials = () => {
     MutationContext
   >({
     mutationFn: async (materialsData: MaterialsDataT) => {
-      if (!validateKind(materialsData.kind)) {
+      if (!validateKind(materialsData.content_kind)) {
         throw new Error('Invalid material kind');
       }
 
@@ -50,7 +50,8 @@ export const useAddMaterials = () => {
           url: materialsApiConfig[MaterialsQueryKey.AddMaterials].getUrl(),
           data: {
             ...materialsData,
-            name: materialsData.name || generateNameWithDate(MaterialsKind[materialsData.kind]),
+            name:
+              materialsData.name || generateNameWithDate(MaterialsKind[materialsData.content_kind]),
           },
           headers: {
             'Content-Type': 'application/json',
@@ -64,11 +65,9 @@ export const useAddMaterials = () => {
       }
     },
     onMutate: async (materialsData) => {
-      console.log('onMutate', materialsData);
-
       // Отменяем все queries, которые начинаются с [Materials, kind]
       await queryClient.cancelQueries({
-        queryKey: [MaterialsQueryKey.Materials, materialsData.kind],
+        queryKey: [MaterialsQueryKey.Materials, materialsData.content_kind],
       });
 
       return { previousQueries: [] };
@@ -76,15 +75,12 @@ export const useAddMaterials = () => {
     onError: (err) => {
       handleError(err, 'materials');
     },
-    onSuccess: (response, materialsData) => {
-      console.log('onSuccess', response, materialsData);
-
-      // Инвалидируем все queries для данного kind, чтобы они перезапросились
-      const result = queryClient.invalidateQueries({
-        queryKey: [MaterialsQueryKey.Materials, materialsData.kind],
-      });
-
-      console.log('Invalidation result:', result);
+    onSuccess: (response) => {
+      if (response.data) {
+        queryClient.invalidateQueries({
+          queryKey: [MaterialsQueryKey.Materials, response.data.content_kind],
+        });
+      }
 
       showSuccess('materials', `${response.data.name} создан`);
     },

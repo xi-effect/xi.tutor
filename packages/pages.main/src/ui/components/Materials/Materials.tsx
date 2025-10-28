@@ -57,7 +57,7 @@ export const Materials = () => {
           <TooltipContent>К материалам</TooltipContent>
         </Tooltip>
 
-        <MaterialsAdd />
+        <MaterialsAdd onlyDrafts />
       </div>
       <div className="flex flex-row">
         {materialsMock && materialsMock.length > 0 && (

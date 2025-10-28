@@ -10,8 +10,6 @@ import { useEditor } from 'tldraw';
 
 export const MoreActionsMenu = () => {
   const editor = useEditor();
-  const selectedShapes = editor.getSelectedShapes();
-  const isLocked = selectedShapes.every((shape) => shape.isLocked);
 
   return (
     <DropdownMenu>
@@ -33,7 +31,7 @@ export const MoreActionsMenu = () => {
           }}
           className="rounded-lg px-3"
         >
-          {isLocked ? 'Разблокировать' : 'Заблокировать'}
+          Заблокировать
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

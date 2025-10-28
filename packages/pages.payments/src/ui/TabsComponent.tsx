@@ -3,6 +3,7 @@ import React, { useMemo, useRef, useEffect } from 'react';
 import { VirtualizedPaymentsTable } from './VirtualizedPaymentsTable';
 import { useMedia } from 'common.utils';
 import { createPaymentColumns, useInfiniteQuery } from 'features.table';
+import { UserRoleT } from '../../../common.api/src/types';
 import { TemplatesGrid } from './Templates';
 import { useCurrentUser } from 'common.services';
 import { useSearch, useNavigate } from '@tanstack/react-router';
@@ -28,10 +29,11 @@ export const TabsComponent = React.memo(({ onApprovePayment }: TabsComponentProp
 
   const defaultColumns = useMemo(
     () =>
-      createPaymentColumns({
+      createPaymentColumns<UserRoleT>({
         usersRole: isTutor ? 'student' : 'tutor',
         isMobile,
         onApprovePayment,
+        isTutor,
       }),
     [isMobile, onApprovePayment, isTutor],
   );

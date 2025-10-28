@@ -14,7 +14,7 @@ import { MaterialPropsT } from '../../types';
 import { formatToShortDate } from '../../utils';
 import { useDeleteMaterials } from 'common.services';
 
-export const Card: React.FC<MaterialPropsT> = ({ id, updated_at, name, kind }) => {
+export const Card: React.FC<MaterialPropsT> = ({ id, updated_at, name, content_kind }) => {
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
   const { deleteMaterials } = useDeleteMaterials();
@@ -24,7 +24,7 @@ export const Card: React.FC<MaterialPropsT> = ({ id, updated_at, name, kind }) =
 
     deleteMaterials.mutate({
       id: id.toString(),
-      kind: kind as 'note' | 'board',
+      content_kind: content_kind as 'note' | 'board',
       name,
     });
   };

@@ -23,6 +23,7 @@
     "common.env": "*",
     "common.types": "*",
     "common.services": "*",
+    "common.api": "*",
     "features.table": "*",
     "features.payment.approve": "*",
     "features.charts": "*",
