@@ -11,6 +11,7 @@ export type {
   UpdateMaterialDataT,
   ClassroomMaterialsT,
   AccessModeT,
+  StorageItemT,
 } from './src/materials';
 export type { InvitationDataT } from './src/invitations';
 export type { GroupStudentsListSchema } from './src/students';

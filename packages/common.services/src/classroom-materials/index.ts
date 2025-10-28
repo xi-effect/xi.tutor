@@ -6,3 +6,5 @@ export { useGetClassroomMaterialsList } from './useGetClassroomMaterialsList';
 export { useUpdateClassroomMaterial } from './useUpdateClassroomMaterial';
 export { useGetClassroomMaterialStudent } from './useGetClassroomMaterialStudent';
 export { useGetClassroomMaterialsListStudent } from './useGetClassroomMaterialsListStudent';
+export { useGetClassroomStorageItem } from './useGetClassroomStorageItem';
+export { useGetClassroomStorageItemStudent } from './useGetClassroomStorageItemStudent';

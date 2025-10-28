@@ -18,3 +18,10 @@ export type UpdateMaterialDataT = {
   kind?: string;
   student_access_mode?: AccessModeT;
 };
+
+export type StorageItemT = {
+  access_group_id: string;
+  storage_token: string;
+  kind: string;
+  file_id: string;
+};

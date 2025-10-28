@@ -9,6 +9,8 @@ enum ClassroomMaterialsQueryKey {
   UpdateClassroomMaterial = 'UpdateClassroomMaterial',
   ClassroomMaterialsStudent = 'ClassroomMaterialsStudent',
   GetClassroomMaterialStudent = 'GetClassroomMaterialStudent',
+  ClassroomStorageItem = 'ClassroomStorageItem',
+  ClassroomStorageItemStudent = 'ClassroomStorageItemStudent',
 }
 
 const classroomMaterialsApiConfig = {
@@ -51,6 +53,16 @@ const classroomMaterialsApiConfig = {
   [ClassroomMaterialsQueryKey.GetClassroomMaterialStudent]: {
     getUrl: (classroomId: string, id: string) =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/material-service/roles/student/classrooms/${classroomId}/materials/${id}/`,
+    method: HttpMethod.GET,
+  },
+  [ClassroomMaterialsQueryKey.ClassroomStorageItem]: {
+    getUrl: (classroomId: string, id: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/material-service/roles/tutor/classrooms/${classroomId}/materials/${id}/storage-item/`,
+    method: HttpMethod.GET,
+  },
+  [ClassroomMaterialsQueryKey.ClassroomStorageItemStudent]: {
+    getUrl: (classroomId: string, id: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/material-service/roles/tutor/classrooms/${classroomId}/materials/${id}/storage-item/`,
     method: HttpMethod.GET,
   },
 };
