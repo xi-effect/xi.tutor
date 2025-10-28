@@ -1,13 +1,14 @@
 import { useParams } from '@tanstack/react-router';
-import { useGetClassroomMaterialsList, useDeleteClassroomMaterials } from 'common.services';
-import { CardMaterials, type AccessTypesT } from '../CardMaterials';
+import { useGetClassroomMaterialsList } from 'common.services';
+import { CardMaterials } from '../CardMaterials';
+import { ClassroomMaterialsT } from 'common.types';
 
 export const MaterialsList = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
 
   // Получаем все материалы кабинета (и доски, и заметки)
   const {
-    data: materialsData,
+    data: materials,
     isLoading,
     isError,
   } = useGetClassroomMaterialsList({
@@ -16,24 +17,7 @@ export const MaterialsList = () => {
     disabled: !classroomId,
   });
 
-  // Хук для удаления материалов
-  const { deleteClassroomMaterials } = useDeleteClassroomMaterials();
-
-  // Обработчик удаления материала
-  const handleDeleteMaterial = (
-    materialId: string,
-    materialName: string,
-    contentKind: 'note' | 'board',
-  ) => {
-    if (classroomId) {
-      deleteClassroomMaterials.mutate({
-        classroomId,
-        id: materialId,
-        content_kind: contentKind,
-        name: materialName,
-      });
-    }
-  };
+  console.log('materials', materials);
 
   if (isLoading) {
     return (
@@ -69,7 +53,7 @@ export const MaterialsList = () => {
   }
 
   // Если нет данных или пустой массив
-  if (!materialsData?.data || materialsData.data.length === 0) {
+  if (!materials || materials.length === 0) {
     return (
       <div className="flex h-[96px] w-full items-center justify-center">
         <p className="text-gray-50">Нет материалов</p>
@@ -77,20 +61,10 @@ export const MaterialsList = () => {
     );
   }
 
-  // Преобразуем данные API в формат, ожидаемый CardMaterials
-  const materials: AccessTypesT[] = materialsData.data.map((material) => ({
-    id: Number(material.id),
-    name: material.name,
-    date: material.createdAt,
-    typeWork: 'collaboration' as const, // По умолчанию, можно будет расширить в будущем
-    typeMaterial: material.content_kind === 'board' ? 'board' : 'text',
-    onDelete: () => handleDeleteMaterial(material.id, material.name, material.content_kind),
-  }));
-
   return (
     <div className="flex flex-row gap-8 pb-4">
-      {materials.map((material) => (
-        <CardMaterials key={material.id} accessTypes={material} />
+      {materials.map((material: ClassroomMaterialsT) => (
+        <CardMaterials key={material.id} material={material} />
       ))}
     </div>
   );

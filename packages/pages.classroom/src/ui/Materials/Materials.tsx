@@ -1,12 +1,8 @@
 import { ScrollArea } from '@xipkg/scrollarea';
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
-import {
-  useGetClassroom,
-  useGetClassroomMaterialsList,
-  useDeleteClassroomMaterials,
-} from 'common.services';
+import { useGetClassroom, useGetClassroomMaterialsList } from 'common.services';
 
-import { Card } from './Card';
+import { CardMaterials } from '../CardMaterials/CardMaterials';
 
 export const Materials = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
@@ -33,35 +29,8 @@ export const Materials = () => {
     disabled: !classroomId,
   });
 
-  // Хук для удаления материалов
-  const { deleteClassroomMaterials } = useDeleteClassroomMaterials();
-
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
-
-  // Обработчик удаления доски
-  const handleDeleteBoard = (boardId: string, boardName: string) => {
-    if (classroomId) {
-      deleteClassroomMaterials.mutate({
-        classroomId,
-        id: boardId,
-        content_kind: 'board',
-        name: boardName,
-      });
-    }
-  };
-
-  // Обработчик удаления заметки
-  const handleDeleteNote = (noteId: string, noteName: string) => {
-    if (classroomId) {
-      deleteClassroomMaterials.mutate({
-        classroomId,
-        id: noteId,
-        content_kind: 'note',
-        name: noteName,
-      });
-    }
-  };
 
   if (isLoading || isBoardsLoading || isNotesLoading) {
     return (
@@ -144,22 +113,16 @@ export const Materials = () => {
         </div>
         <div className="flex flex-row">
           <ScrollArea
-            className="max-h-[110px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
+            className="max-h-[150px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
             scrollBarProps={{ orientation: 'horizontal' }}
           >
             <div className="flex flex-row gap-8 pb-4">
-              {boardsData?.data?.length ? (
-                boardsData.data.map((board) => (
-                  <Card
+              {boardsData?.length ? (
+                boardsData.map((board) => (
+                  <CardMaterials
                     key={board.id}
-                    value={{
-                      id: Number(board.id),
-                      name: board.name,
-                      updated_at: board.createdAt,
-                      created_at: board.createdAt,
-                      kind: board.content_kind,
-                      last_opened_at: board.createdAt,
-                    }}
+                    material={board}
+                    showIcon={false}
                     onClick={() => {
                       // Сохраняем только параметр call при переходе
                       const filteredSearch = search.call ? { call: search.call } : {};
@@ -172,11 +135,10 @@ export const Materials = () => {
                         }),
                       });
                     }}
-                    onDelete={() => handleDeleteBoard(board.id, board.name)}
                   />
                 ))
               ) : (
-                <div className="flex h-[96px] w-full items-center justify-center">
+                <div className="flex h-[150px] w-full items-center justify-center">
                   <p className="text-gray-50">Нет учебных досок</p>
                 </div>
               )}
@@ -191,22 +153,16 @@ export const Materials = () => {
         </div>
         <div className="flex flex-row">
           <ScrollArea
-            className="h-[110px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
+            className="h-[150px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
             scrollBarProps={{ orientation: 'horizontal' }}
           >
             <div className="flex flex-row gap-8">
-              {notesData?.data?.length ? (
-                notesData.data.map((note) => (
-                  <Card
+              {notesData?.length ? (
+                notesData.map((note) => (
+                  <CardMaterials
                     key={note.id}
-                    value={{
-                      id: Number(note.id),
-                      name: note.name,
-                      updated_at: note.createdAt,
-                      created_at: note.createdAt,
-                      kind: note.content_kind,
-                      last_opened_at: note.createdAt,
-                    }}
+                    material={note}
+                    showIcon={false}
                     onClick={() => {
                       // Сохраняем только параметр call при переходе
                       const filteredSearch = search.call ? { call: search.call } : {};
@@ -219,11 +175,10 @@ export const Materials = () => {
                         }),
                       });
                     }}
-                    onDelete={() => handleDeleteNote(note.id, note.name)}
                   />
                 ))
               ) : (
-                <div className="flex h-[96px] w-full items-center justify-center">
+                <div className="flex h-[150px] w-full items-center justify-center">
                   <p className="text-gray-50">Нет заметок</p>
                 </div>
               )}

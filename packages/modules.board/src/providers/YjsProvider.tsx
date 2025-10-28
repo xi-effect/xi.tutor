@@ -23,8 +23,10 @@ export const YjsProvider = ({ children }: YjsProviderProps) => {
   const { boardId = 'empty' } = useParams({ strict: false });
   const { data } = useGetMaterial(boardId);
 
+  console.log('data', data);
+
   const yjsStore = useYjsStore({
-    roomId: data?.ydoc_id,
+    roomId: '',
   });
 
   return <YjsContext.Provider value={yjsStore}>{children}</YjsContext.Provider>;

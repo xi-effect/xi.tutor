@@ -11,26 +11,26 @@ import {
   DropdownMenuCheckboxItem,
 } from '@xipkg/dropdown';
 import { Button } from '@xipkg/button';
-import { TypeWorkT } from './CardMaterials';
 import { MoreVert } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
+import { AccessModeT } from 'common.types';
 
-const options: { value: TypeWorkT; label: string }[] = [
-  { value: 'only_tutor', label: 'только репетитор' },
-  { value: 'draft', label: 'черновик' },
-  { value: 'collaboration', label: 'совместная работа' },
+const options: { value: AccessModeT; label: string }[] = [
+  { value: 'read_only', label: 'только репетитор' },
+  { value: 'no_access', label: 'черновик' },
+  { value: 'read_write', label: 'совместная работа' },
 ];
 
 export const DropdownButton = ({
-  accessType,
+  studentAccessMode,
   onDelete,
 }: {
-  accessType: TypeWorkT | '';
+  studentAccessMode: AccessModeT | '';
   onDelete?: () => void;
 }) => {
-  const [selected, setSelected] = useState<TypeWorkT | ''>(accessType);
+  const [selected, setSelected] = useState<AccessModeT | ''>(studentAccessMode);
 
-  const handleChange = (key: TypeWorkT) => {
+  const handleChange = (key: AccessModeT) => {
     setSelected(key);
   };
 
@@ -41,7 +41,12 @@ export const DropdownButton = ({
     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className="h-8 min-h-8 w-8 min-w-8" variant="ghost" size="icon">
+          <Button
+            onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
+            className="h-8 min-h-8 w-8 min-w-8"
+            variant="ghost"
+            size="icon"
+          >
             <MoreVert className="h-4 w-4 dark:fill-gray-100" />
           </Button>
         </DropdownMenuTrigger>
@@ -80,7 +85,11 @@ export const DropdownButton = ({
 
           <DropdownMenuItem
             className="hover:bg-brand-0 hover:text-brand-100 w-full px-2 py-[6px] hover:rounded-lg"
-            onClick={onDelete}
+            onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onDelete?.();
+            }}
           >
             удалить
           </DropdownMenuItem>

@@ -5,7 +5,7 @@ export type {
   NotificationSocketEvents,
   NotificationsStateT,
 } from './notifications';
-export type { MaterialT, UpdateMaterialDataT } from './materials';
+export type { MaterialT, UpdateMaterialDataT, ClassroomMaterialsT, AccessModeT } from './materials';
 export type { TemplateT, PaymentTemplateDataT, UpdateTemplateDataT } from './payments';
 export type { InvitationDataT } from './invitations';
 export type {

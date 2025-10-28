@@ -48,7 +48,15 @@ export const Card = ({ value, onClick, onDelete }: CardProps) => {
             className="border-gray-10 bg-gray-0 border p-1"
           >
             <DropdownMenuItem>Копировать</DropdownMenuItem>
-            <DropdownMenuItem onClick={onDelete}>Удалить</DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onDelete?.();
+              }}
+            >
+              Удалить
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

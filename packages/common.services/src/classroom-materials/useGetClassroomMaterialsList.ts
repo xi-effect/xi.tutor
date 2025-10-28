@@ -1,25 +1,11 @@
 import { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from 'common.api';
 import { useFetching } from 'common.config';
+import { ClassroomMaterialsT } from 'common.types';
 
 interface ClassroomMaterialsListParams {
   classroomId: string;
   content_type?: string | null;
   disabled?: boolean;
-}
-
-interface ClassroomMaterialsResponse {
-  data: Array<{
-    id: string;
-    content_kind: 'note' | 'board';
-    name: string;
-    createdAt: string;
-  }>;
-  pagination: {
-    has_more: boolean;
-    next_cursor?: {
-      created_at: string;
-    };
-  };
 }
 
 /**
@@ -58,7 +44,7 @@ export const useGetClassroomMaterialsList = ({
   });
 
   return {
-    data: data as ClassroomMaterialsResponse,
+    data: data as ClassroomMaterialsT[],
     isError,
     isLoading,
     ...rest,

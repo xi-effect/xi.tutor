@@ -23,6 +23,7 @@ interface MutationContext {
 export type ClassroomMaterialsDataT = {
   content_kind: 'note' | 'board';
   name?: string;
+  student_access_mode?: 'no_access' | 'read_only' | 'read_write';
 };
 
 const validateKind = (kind: string): kind is ClassroomMaterialsDataT['content_kind'] => {
@@ -56,6 +57,7 @@ export const useAddClassroomMaterials = () => {
             name:
               materialsData.name ||
               generateNameWithDate(ClassroomMaterialsKind[materialsData.content_kind]),
+            student_access_mode: materialsData.student_access_mode || 'no_access',
           },
           headers: {
             'Content-Type': 'application/json',
@@ -69,13 +71,9 @@ export const useAddClassroomMaterials = () => {
       }
     },
     onMutate: async (materialsData) => {
-      // Отменяем все queries, которые начинаются с [ClassroomMaterials, classroomId, kind]
+      // Отменяем все queries для материалов кабинета
       await queryClient.cancelQueries({
-        queryKey: [
-          ClassroomMaterialsQueryKey.ClassroomMaterials,
-          materialsData.classroomId,
-          materialsData.content_kind,
-        ],
+        queryKey: [ClassroomMaterialsQueryKey.ClassroomMaterials, materialsData.classroomId],
       });
 
       return { previousQueries: [] };
@@ -85,12 +83,9 @@ export const useAddClassroomMaterials = () => {
     },
     onSuccess: (response, materialsData) => {
       if (response.data) {
+        // Инвалидируем все queries для материалов кабинета
         queryClient.invalidateQueries({
-          queryKey: [
-            ClassroomMaterialsQueryKey.ClassroomMaterials,
-            materialsData.classroomId,
-            response.data.content_kind,
-          ],
+          queryKey: [ClassroomMaterialsQueryKey.ClassroomMaterials, materialsData.classroomId],
         });
       }
 

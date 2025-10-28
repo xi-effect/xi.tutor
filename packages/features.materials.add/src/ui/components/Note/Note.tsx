@@ -6,17 +6,54 @@ import {
   DropdownMenuItem,
 } from '@xipkg/dropdown';
 import { ChevronSmallBottom } from '@xipkg/icons';
+import { useAddMaterials, useAddClassroomMaterials } from 'common.services';
+import { useParams } from '@tanstack/react-router';
 
 interface NoteProps {
   onlyDrafts?: boolean;
-  onCreate: () => void;
+  onCreate?: () => void;
+  classroomId?: string;
 }
 
-export const Note = ({ onlyDrafts = false, onCreate }: NoteProps) => {
+type StudentAccessMode = 'no_access' | 'read_only' | 'read_write';
+
+export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) => {
+  const { classroomId: paramsClassroomId } = useParams({ strict: false });
+  const { addMaterials } = useAddMaterials();
+  const { addClassroomMaterials } = useAddClassroomMaterials();
+
+  const currentClassroomId = classroomId || paramsClassroomId;
+
+  const handleCreateNoteDraft = () => {
+    if (onCreate) {
+      onCreate();
+    } else {
+      addMaterials.mutate({
+        content_kind: 'note',
+      });
+    }
+  };
+
+  const handleCreateNoteWithAccess = (studentAccessMode: StudentAccessMode) => {
+    if (currentClassroomId) {
+      addClassroomMaterials.mutate({
+        classroomId: currentClassroomId,
+        content_kind: 'note',
+        student_access_mode: studentAccessMode,
+      });
+    }
+  };
+
   if (onlyDrafts) {
     return (
-      <Button onClick={onCreate} size="s" variant="secondary" className="max-sm:hidden">
-        Создать заметку
+      <Button
+        onClick={handleCreateNoteDraft}
+        size="s"
+        variant="secondary"
+        className="max-sm:hidden"
+        disabled={addMaterials.isPending}
+      >
+        {addMaterials.isPending ? 'Создание...' : 'Создать заметку'}
       </Button>
     );
   }
@@ -31,20 +68,23 @@ export const Note = ({ onlyDrafts = false, onCreate }: NoteProps) => {
 
       <DropdownMenuContent className="border-gray-10 text-s-base w-[160px] border p-1 font-normal">
         <DropdownMenuItem
-          onClick={onCreate}
+          onClick={() => handleCreateNoteWithAccess('read_write')}
           className="hover:bg-brand-0 hover:text-brand-100 py-6 hover:rounded-lg"
+          disabled={addClassroomMaterials.isPending}
         >
           Совместная работа
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={onCreate}
+          onClick={() => handleCreateNoteWithAccess('read_only')}
           className="hover:bg-brand-0 hover:text-brand-100 hover:rounded-lg"
+          disabled={addClassroomMaterials.isPending}
         >
           Только репетитор
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={onCreate}
+          onClick={() => handleCreateNoteWithAccess('no_access')}
           className="hover:bg-brand-0 hover:text-brand-100 hover:rounded-lg"
+          disabled={addClassroomMaterials.isPending}
         >
           Черновики
         </DropdownMenuItem>
