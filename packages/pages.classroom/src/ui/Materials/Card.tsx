@@ -12,9 +12,10 @@ import { BoardT, NoteT } from '../../mocks';
 type CardProps = {
   value: BoardT | NoteT;
   onClick: () => void;
+  onDelete?: () => void;
 };
 
-export const Card = ({ value, onClick }: CardProps) => {
+export const Card = ({ value, onClick, onDelete }: CardProps) => {
   const { name, updated_at } = value;
 
   return (
@@ -47,7 +48,7 @@ export const Card = ({ value, onClick }: CardProps) => {
             className="border-gray-10 bg-gray-0 border p-1"
           >
             <DropdownMenuItem>Копировать</DropdownMenuItem>
-            <DropdownMenuItem>Удалить</DropdownMenuItem>
+            <DropdownMenuItem onClick={onDelete}>Удалить</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

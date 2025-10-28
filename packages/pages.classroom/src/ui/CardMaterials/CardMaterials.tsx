@@ -14,6 +14,7 @@ export type AccessTypesT = {
   date: string;
   typeWork?: TypeWorkT;
   typeMaterial?: TypeMaterialT;
+  onDelete?: () => void;
 };
 
 export type CardMaterialsProps = {
@@ -44,7 +45,7 @@ export const CardMaterials = ({ accessTypes }: CardMaterialsProps) => {
     return null;
   }
 
-  const { name, date, typeWork = '', typeMaterial = '' } = accessTypes;
+  const { name, date, typeWork = '', typeMaterial = '', onDelete } = accessTypes;
 
   const Icon = typeMaterial ? mapIcon[typeMaterial] : undefined;
 
@@ -63,7 +64,7 @@ export const CardMaterials = ({ accessTypes }: CardMaterialsProps) => {
           </Badge>
         )}
 
-        <DropdownButton accessType={(typeWork as TypeWorkT) ?? ''} />
+        <DropdownButton accessType={(typeWork as TypeWorkT) ?? ''} onDelete={onDelete} />
       </div>
 
       <div className="flex flex-col items-start justify-start gap-4">

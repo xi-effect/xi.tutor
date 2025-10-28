@@ -21,7 +21,13 @@ const options: { value: TypeWorkT; label: string }[] = [
   { value: 'collaboration', label: 'совместная работа' },
 ];
 
-export const DropdownButton = ({ accessType }: { accessType: TypeWorkT | '' }) => {
+export const DropdownButton = ({
+  accessType,
+  onDelete,
+}: {
+  accessType: TypeWorkT | '';
+  onDelete?: () => void;
+}) => {
   const [selected, setSelected] = useState<TypeWorkT | ''>(accessType);
 
   const handleChange = (key: TypeWorkT) => {
@@ -72,7 +78,10 @@ export const DropdownButton = ({ accessType }: { accessType: TypeWorkT | '' }) =
             редактировать
           </DropdownMenuItem>
 
-          <DropdownMenuItem className="hover:bg-brand-0 hover:text-brand-100 w-full px-2 py-[6px] hover:rounded-lg">
+          <DropdownMenuItem
+            className="hover:bg-brand-0 hover:text-brand-100 w-full px-2 py-[6px] hover:rounded-lg"
+            onClick={onDelete}
+          >
             удалить
           </DropdownMenuItem>
         </DropdownMenuContent>
