@@ -16,7 +16,11 @@ import { Close, Search } from '@xipkg/icons';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { useCallStore } from '../../store';
 import { useModeSync } from '../../hooks';
-import { useCurrentUser, useGetClassroomMaterialsList } from 'common.services';
+import {
+  useCurrentUser,
+  useGetClassroomMaterialsList,
+  useAddClassroomMaterials,
+} from 'common.services';
 
 // Типы материалов определены в common.types -> ClassroomMaterialsT
 
@@ -35,6 +39,9 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBoardId, setSelectedBoardId] = useState<number | null>(null);
   const [isCollaborativeMode, setIsCollaborativeMode] = useState(true);
+
+  // Хук для создания новой доски
+  const { addClassroomMaterials } = useAddClassroomMaterials();
 
   // Загружаем список досок кабинета (classroomId == callId)
   const {
@@ -59,6 +66,39 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
     setSelectedBoardId(boardId);
   };
 
+  const handleCreateNewBoard = async () => {
+    if (!callId) return;
+
+    try {
+      console.log('🎯 Creating new board...');
+
+      const result = await addClassroomMaterials.mutateAsync({
+        classroomId: callId,
+        content_kind: 'board',
+        student_access_mode: 'read_write', // Режим совместного редактирования
+      });
+
+      if (result?.data?.id) {
+        const newBoardId = parseInt(result.data.id);
+        console.log('✅ New board created with ID:', newBoardId);
+
+        // Выбираем новую доску
+        setSelectedBoardId(newBoardId);
+
+        // Если включен режим совместной работы, отправляем сообщение всем участникам
+        if (isCollaborativeMode) {
+          syncModeToOthers('compact', newBoardId.toString(), callId);
+          console.log('📤 Mode sync message sent to all participants for new board');
+        }
+
+        // НЕ переходим на новую доску автоматически - пользователь может выбрать её вручную
+        console.log('✅ New board created and selected, ready for manual navigation');
+      }
+    } catch (error) {
+      console.error('❌ Error creating new board:', error);
+    }
+  };
+
   const handleConfirm = () => {
     if (selectedBoardId) {
       console.log('🎯 WhiteboardsModal: handleConfirm called with boardId:', selectedBoardId);
@@ -67,12 +107,18 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
       updateStore('mode', 'compact');
       console.log('✅ Local mode updated to compact');
 
-      // Отправляем сообщение всем участникам ВКС о переключении в compact режим
-      syncModeToOthers('compact', selectedBoardId.toString());
-      console.log('📤 Mode sync message sent to all participants');
+      // Если включен режим совместной работы, отправляем сообщение всем участникам
+      if (isCollaborativeMode) {
+        syncModeToOthers('compact', selectedBoardId.toString(), callId);
+        console.log('📤 Mode sync message sent to all participants for collaborative mode');
+      }
 
       // Переходим на доску
-      navigate({ to: '/board/$boardId', params: { boardId: selectedBoardId.toString() } });
+      navigate({
+        to: '/board/$boardId',
+        params: { boardId: selectedBoardId.toString() },
+        search: { classroom: callId, call: callId },
+      });
       console.log('🧭 Navigation to board initiated');
 
       onOpenChange(false);
@@ -140,9 +186,12 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
                     </p>
                   </div>
                 ))}
-                <div className="bg-brand-0 group flex h-[80px] cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl p-4">
+                <div
+                  className="bg-brand-0 group flex h-[80px] cursor-pointer flex-col items-center justify-center gap-2 rounded-2xl p-4"
+                  onClick={handleCreateNewBoard}
+                >
                   <h3 className="text-s-base text-brand-100 group-hover:text-brand-80">
-                    Создать новую
+                    {addClassroomMaterials.isPending ? 'Создание...' : 'Создать новую'}
                   </h3>
                 </div>
               </div>

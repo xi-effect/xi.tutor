@@ -11,6 +11,7 @@ import { useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useEditor } from 'tldraw';
 import { useYjsContext } from '../../../../providers/YjsProvider';
+import { useSearch } from '@tanstack/react-router';
 
 export const useDropdownActions = () => {
   const editor = useEditor();
