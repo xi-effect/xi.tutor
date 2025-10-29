@@ -7,13 +7,52 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@xipkg/sidebar';
-import { footerMenu, items } from './config';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { SwiperRef } from 'swiper/react';
+import { Group, Home, Materials, Payments, TelegramFilled } from '@xipkg/icons';
+import { useCurrentUser } from 'common.services';
 
 export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<SwiperRef | null> }) => {
   const { t } = useTranslation('navigation');
+
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const topMenu = [
+    {
+      titleKey: 'home',
+      url: '/',
+      icon: Home,
+    },
+    {
+      titleKey: 'classrooms',
+      url: '/classrooms',
+      icon: Group,
+    },
+    ...(isTutor
+      ? [
+          {
+            titleKey: 'materials',
+            url: '/materials',
+            icon: Materials,
+          },
+        ]
+      : []),
+    {
+      titleKey: 'payments',
+      url: '/payments',
+      icon: Payments,
+    },
+  ];
+
+  const footerMenu = [
+    {
+      titleKey: 'support',
+      url: 'https://t.me/sovlium_support_bot',
+      icon: TelegramFilled,
+    },
+  ];
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -60,7 +99,7 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
+              {topMenu.map((item) => (
                 <SidebarMenuItem className="cursor-pointer" key={item.titleKey}>
                   <SidebarMenuButton asChild isActive={getIsActiveItem(item.url)}>
                     <a onClick={() => handleClick(item.url)}>

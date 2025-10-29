@@ -22,6 +22,7 @@
     "common.api": "*",
     "common.config": "*",
     "common.services": "*",
+    "common.ui": "*",
     "dayjs": "^1.11.13",
     "features.materials.add": "*"
   },

@@ -3,8 +3,24 @@ import { Plus } from '@xipkg/icons';
 
 import { Header } from './Header';
 import { TabsComponent } from './TabsComponent';
+import { useCurrentUser } from 'common.services';
+import { ErrorPage } from 'common.ui';
 
 export const MaterialsPage = () => {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  if (!isTutor) {
+    return (
+      <ErrorPage
+        withLogo={false}
+        title="Ошибка"
+        errorCode={403}
+        text="Вы не имеете доступа к этой странице"
+      />
+    );
+  }
+
   return (
     <div className="flex flex-col justify-between gap-6 pl-4">
       <div className="flex flex-col gap-6 pt-1 max-md:gap-4">
