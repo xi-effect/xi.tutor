@@ -23,5 +23,6 @@ export type StorageItemT = {
   access_group_id: string;
   storage_token: string;
   kind: string;
-  file_id: string;
+  file_id?: string;
+  ydoc_id?: string;
 };

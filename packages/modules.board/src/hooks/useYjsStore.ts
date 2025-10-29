@@ -34,7 +34,8 @@ function generateUserColor(userId: string): string {
 
 type UseYjsStoreArgs = Partial<{
   hostUrl: string;
-  roomId: string;
+  ydocId: string;
+  storageToken: string;
   version: number;
   shapeUtils: TLAnyShapeUtilConstructor[];
 }>;
@@ -53,7 +54,8 @@ export type ExtendedStoreStatus = {
 };
 
 export function useYjsStore({
-  roomId = 'test/demo-room',
+  ydocId = 'test/demo-room',
+  storageToken = 'test/demo-room',
   hostUrl = 'wss://hocus.sovlium.ru',
   shapeUtils = [],
 }: UseYjsStoreArgs): ExtendedStoreStatus {
@@ -83,18 +85,19 @@ export function useYjsStore({
   /* ---------- Yjs структуры + провайдер ---------- */
   const { yDoc, yStore, meta, room, readonlyMap } = useMemo(() => {
     const yDoc = new Y.Doc({ gc: true });
-    const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${roomId}`);
+    const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${ydocId}`);
     const yStore = new YKeyValue(yArr);
     const meta = yDoc.getMap<SerializedSchema>('meta');
     const readonlyMap = yDoc.getMap<boolean>('readonly');
 
-    console.log('roomId', roomId);
+    console.log('ydocId', ydocId);
+    console.log('storageToken', storageToken);
 
     const room = new HocuspocusProvider({
       url: hostUrl,
-      name: roomId,
+      name: ydocId,
       document: yDoc,
-      token: roomId,
+      token: storageToken,
       connect: false,
       forceSyncInterval: 20000,
       onAuthenticationFailed: (data) => {
@@ -107,7 +110,7 @@ export function useYjsStore({
     });
 
     return { yDoc, yStore, meta, room, readonlyMap };
-  }, [hostUrl, roomId]);
+  }, [hostUrl, ydocId, storageToken]);
 
   /* ---------- Главный эффект ---------- */
   useEffect(() => {

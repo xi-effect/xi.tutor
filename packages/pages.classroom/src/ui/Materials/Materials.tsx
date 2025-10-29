@@ -139,9 +139,9 @@ export const Materials = () => {
 
                       navigate({
                         to: `/board/${board.id}`,
-                        search: (prev: Record<string, unknown>) => ({
-                          ...prev,
+                        search: () => ({
                           ...filteredSearch,
+                          classroom: classroomId,
                         }),
                       });
                     }}
@@ -179,9 +179,9 @@ export const Materials = () => {
 
                       navigate({
                         to: `/editor/${note.id}`,
-                        search: (prev: Record<string, unknown>) => ({
-                          ...prev,
+                        search: () => ({
                           ...filteredSearch,
+                          classroom: classroomId,
                         }),
                       });
                     }}

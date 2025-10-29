@@ -2,7 +2,7 @@ import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
 import { StorageItemT } from 'common.types';
 import { useFetching } from 'common.config';
 
-export const useGetStorageItem = (id: string, disabled?: boolean) => {
+export const useGetStorageItem = ({ id, disabled }: { id: string; disabled?: boolean }) => {
   const { data, isError, isLoading, ...rest } = useFetching({
     apiConfig: {
       method: materialsApiConfig[MaterialsQueryKey.StorageItem].method,

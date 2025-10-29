@@ -1875,6 +1875,9 @@ importers:
       common.services:
         specifier: '*'
         version: link:../common.services
+      common.types:
+        specifier: '*'
+        version: link:../common.types
       common.ui:
         specifier: '*'
         version: link:../common.ui

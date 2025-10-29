@@ -1,4 +1,4 @@
-import { useParams } from '@tanstack/react-router';
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import {
   useCurrentUser,
   useGetClassroomMaterialsList,
@@ -9,6 +9,9 @@ import { ClassroomMaterialsT } from 'common.types';
 
 export const MaterialsList = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
+
+  const navigate = useNavigate();
+  const search = useSearch({ strict: false });
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -73,7 +76,22 @@ export const MaterialsList = () => {
   return (
     <div className="flex flex-row gap-8 pb-4">
       {materials.map((material: ClassroomMaterialsT) => (
-        <CardMaterials key={material.id} material={material} />
+        <CardMaterials
+          key={material.id}
+          material={material}
+          onClick={() => {
+            // Сохраняем только параметр call при переходе
+            const filteredSearch = search.call ? { call: search.call } : {};
+
+            navigate({
+              to: `/${material.content_kind === 'board' ? 'board' : 'editor'}/${material.id}`,
+              search: () => ({
+                ...filteredSearch,
+                classroom: classroomId,
+              }),
+            });
+          }}
+        />
       ))}
     </div>
   );

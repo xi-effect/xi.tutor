@@ -8,7 +8,8 @@ import { toast } from 'sonner';
 import { HocuspocusProvider } from '@hocuspocus/provider';
 
 type UseYjsStoreArgs = {
-  documentName: string;
+  ydocId: string;
+  storageToken: string;
 };
 
 export type UseCollaborativeTiptapReturn = {
@@ -20,23 +21,26 @@ export type UseCollaborativeTiptapReturn = {
   isReadOnly: boolean;
 };
 
-export function useYjsStore({ documentName }: UseYjsStoreArgs): UseCollaborativeTiptapReturn {
+export function useYjsStore({
+  ydocId,
+  storageToken,
+}: UseYjsStoreArgs): UseCollaborativeTiptapReturn {
   const ydoc = useMemo(() => {
-    console.log('Создаем новый Y.Doc для документа:', documentName);
+    console.log('Создаем новый Y.Doc для документа:', ydocId);
     return new Y.Doc();
-  }, [documentName]);
+  }, [ydocId]);
 
   const provider = useMemo(() => {
-    if (!documentName) {
+    if (!ydocId) {
       console.log('Document name не предоставлен, работаем в автономном режиме');
       return undefined;
     }
-    console.log('Создаем Hocuspocus provider для документа:', documentName);
+    console.log('Создаем Hocuspocus provider для документа:', ydocId);
     return new HocuspocusProvider({
       url: 'wss://hocus.sovlium.ru',
-      name: documentName, // documentName,
+      name: ydocId, // documentName,
       document: ydoc,
-      token: documentName, // documentName,
+      token: storageToken, // documentName,
       connect: false,
       forceSyncInterval: 20000, // Принудительная синхронизация каждые 20 секунд
       onAuthenticationFailed: (data) => {
@@ -46,7 +50,7 @@ export function useYjsStore({ documentName }: UseYjsStoreArgs): UseCollaborative
         }
       },
     });
-  }, [documentName, ydoc]);
+  }, [ydocId, storageToken, ydoc]);
 
   const userData = useMemo(() => ({ name: 'Igor', color: '#ff00ff' }), []);
 
@@ -56,22 +60,22 @@ export function useYjsStore({ documentName }: UseYjsStoreArgs): UseCollaborative
 
       // Добавляем обработчики событий для отладки
       provider.on('connect', () => {
-        console.log('Hocuspocus provider подключен к серверу:', documentName);
+        console.log('Hocuspocus provider подключен к серверу:', ydocId);
       });
 
       provider.on('disconnect', () => {
-        console.log('Hocuspocus provider отключен от сервера:', documentName);
+        console.log('Hocuspocus provider отключен от сервера:', ydocId);
       });
 
       provider.on('status', (event: { status: string }) => {
-        console.log('Hocuspocus provider статус:', documentName, event);
+        console.log('Hocuspocus provider статус:', ydocId, event);
       });
 
       // Подключаемся вручную, как в modules.board
       provider.connect();
-      console.log('Hocuspocus provider подключен для документа:', documentName);
+      console.log('Hocuspocus provider подключен для документа:', ydocId);
     }
-  }, [provider, userData, documentName]);
+  }, [provider, userData, ydocId]);
 
   const editor = useEditor(
     {
@@ -89,7 +93,7 @@ export function useYjsStore({ documentName }: UseYjsStoreArgs): UseCollaborative
       hasProvider: !!provider,
       hasYdoc: !!ydoc,
       providerConnected: provider?.isConnected,
-      documentName,
+      ydocId,
       ydocState: ydoc ? 'ready' : 'not ready',
       providerState: provider ? 'created' : 'not created',
     });
@@ -112,7 +116,7 @@ export function useYjsStore({ documentName }: UseYjsStoreArgs): UseCollaborative
         ydoc.off('update', updateHandler);
       };
     }
-  }, [editor, provider, ydoc, documentName]);
+  }, [editor, provider, ydoc, ydocId]);
 
   useEffect(() => {
     if (!provider || !editor) return;
@@ -145,10 +149,10 @@ export function useYjsStore({ documentName }: UseYjsStoreArgs): UseCollaborative
     return () => {
       if (provider) {
         provider.disconnect();
-        console.log('Hocuspocus provider отключен для документа:', documentName);
+        console.log('Hocuspocus provider отключен для документа:', ydocId);
       }
     };
-  }, [provider, documentName]);
+  }, [provider, ydocId]);
 
   const undo = useCallback(() => editor?.commands.undo(), [editor]);
   const redo = useCallback(() => editor?.commands.redo(), [editor]);
