@@ -142,13 +142,24 @@ export const SignUpPage = () => {
                   checked={!!field.value}
                   onCheckedChange={(checked) => field.onChange(checked === true)}
                   size="s"
+                  className="xs:text-xxs-base text-gray-60 gap-1.5 text-[8px]"
                 >
                   Нажимая Создать аккаунт, вы принимаете условия <br />
-                  <Link size="s" href="https://sovlium.ru/legal/terms">
+                  <Link
+                    size="s"
+                    href="https://sovlium.ru/legal/terms"
+                    target="_blank"
+                    className="xs:text-xxs-base text-gray-60 text-[8px]"
+                  >
                     пользовательского соглашения
                   </Link>{' '}
                   и{' '}
-                  <Link size="s" href="https://sovlium.ru/legal/privacy">
+                  <Link
+                    size="s"
+                    href="https://sovlium.ru/legal/privacy"
+                    target="_blank"
+                    className="xs:text-xxs-base text-gray-60 text-[8px]"
+                  >
                     политики конфиденциальности
                   </Link>
                 </Checkbox>

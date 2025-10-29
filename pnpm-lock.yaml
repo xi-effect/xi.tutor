@@ -3637,8 +3637,8 @@ importers:
         specifier: 3.2.0
         version: 3.2.0(@types/react@19.2.2)(react@19.2.0)
       '@xipkg/checkbox':
-        specifier: ^4.0.14
-        version: 4.0.14(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+        specifier: ^5.0.0
+        version: 5.0.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/form':
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
@@ -9894,6 +9894,22 @@ packages:
 
   /@xipkg/checkbox@4.0.14(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0):
     resolution: {integrity: sha512-4etlz/Z3UmOS60cvD1iLN2fegtQB1hJQVMh9vCoyaj+X++vIcZ6gRHE9OMSlcMbsOygqnE2w1xaempwZYrRyXw==}
+    peerDependencies:
+      react: ^19
+    dependencies:
+      '@radix-ui/react-checkbox': 1.3.3(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+      '@xipkg/utils': 1.8.0(react@19.2.0)
+      class-variance-authority: 0.7.1
+      lucide-react: 0.485.0(react@19.2.0)
+      react: 19.2.0
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
+      - react-dom
+    dev: false
+
+  /@xipkg/checkbox@5.0.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0):
+    resolution: {integrity: sha512-rsg5Rw9K3jwwHhAjDKWbLQnHYCaZ7pUpvVlJ+kc6FmgAweKhe1Sgj8nn7Egaokuf6C9xTA8MzNcRLVIE6d57Mw==}
     peerDependencies:
       react: ^19
     dependencies:
