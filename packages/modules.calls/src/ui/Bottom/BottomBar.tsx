@@ -14,6 +14,7 @@ import { WhiteBoardButton } from './WhiteBoardButton';
 // import { ChatButton } from './ChatButton';
 import { RaiseHandButton } from './RaiseHandButton';
 import { ChatButton } from './ChatButton';
+import { useCurrentUser } from 'common.services';
 
 export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
   const { saveAudioInputEnabled, saveVideoInputEnabled } = usePersistentUserChoices({
@@ -56,6 +57,9 @@ export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
     cameraToggle.toggle();
   }, [cameraToggle]);
 
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
   return (
     <div className="w-full">
       <div className="flex w-full flex-row justify-between p-4">
@@ -81,7 +85,7 @@ export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
           </div>
           <div className="bg-gray-0 border-gray-10 flex h-[48px] items-center justify-center gap-1 rounded-[16px] border p-1">
             <ScreenShareButton />
-            <WhiteBoardButton />
+            {isTutor && <WhiteBoardButton />}
             <ChatButton />
             <RaiseHandButton />
           </div>

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { LoadingScreen } from 'common.ui';
 import { YjsProvider } from '../providers/YjsProvider';
 import { TldrawCanvas } from './components';
 import { useParams, useSearch } from '@tanstack/react-router';
@@ -29,13 +30,15 @@ export const TldrawBoard = () => {
     return useGetStorageItem;
   })();
 
-  const { data: storageItem } = getStorageItem({
+  const { data: storageItem, isLoading } = getStorageItem({
     classroomId: classroom || '',
     id: boardId,
     disabled: !boardId,
   });
 
-  console.log('storageItem', storageItem);
+  if (isLoading) return <LoadingScreen />;
+
+  if (!storageItem.ydoc_id || !storageItem.storage_token) return <div>Material not found</div>;
 
   return (
     <YjsProvider storageItem={storageItem}>

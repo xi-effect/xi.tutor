@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Modal,
   ModalContent,
@@ -10,20 +9,16 @@ import {
 import { Input } from '@xipkg/input';
 import { Button } from '@xipkg/button';
 import { ScrollArea } from '@xipkg/scrollarea';
+import { Badge } from '@xipkg/badge';
+import { Checkbox } from '@xipkg/checkbox';
 import { useState } from 'react';
 import { Close, Search } from '@xipkg/icons';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useParams } from '@tanstack/react-router';
 import { useCallStore } from '../../store';
 import { useModeSync } from '../../hooks';
+import { useCurrentUser, useGetClassroomMaterialsList } from 'common.services';
 
-type Whiteboard = {
-  id: number;
-  name: string;
-  kind: string;
-  created_at: string;
-  updated_at: string;
-  last_opened_at: string;
-};
+// Типы материалов определены в common.types -> ClassroomMaterialsT
 
 type WhiteboardsModalProps = {
   open: boolean;
@@ -32,15 +27,33 @@ type WhiteboardsModalProps = {
 
 export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) => {
   const navigate = useNavigate();
+  const { callId } = useParams({ strict: false });
   const updateStore = useCallStore((state) => state.updateStore);
   const { syncModeToOthers } = useModeSync();
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedBoardId, setSelectedBoardId] = useState<number | null>(null);
+  const [isCollaborativeMode, setIsCollaborativeMode] = useState(true);
 
-  const isLoading = false;
-  const isError = false;
+  // Загружаем список досок кабинета (classroomId == callId)
+  const {
+    data: boards,
+    isLoading,
+    isError,
+  } = useGetClassroomMaterialsList({
+    classroomId: callId || '',
+    content_type: 'board',
+    disabled: !callId || !isTutor,
+  });
 
-  const filteredWhiteboards: any[] = [];
+  const filteredWhiteboards = (boards || [])
+    // только доски с доступом совместная работа (read_write)
+    .filter((b) => b.content_kind === 'board' && b.student_access_mode === 'read_write')
+    // фильтр по поисковой строке
+    .filter((b) =>
+      searchQuery.trim() ? b.name.toLowerCase().includes(searchQuery.trim().toLowerCase()) : true,
+    );
 
   const handleBoardSelect = (boardId: number) => {
     setSelectedBoardId(boardId);
@@ -94,7 +107,7 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
           ) : (
             <ScrollArea className="h-full max-h-[400px] w-full">
               <div className="space-y-4 pr-4">
-                {filteredWhiteboards.map((board: Whiteboard) => (
+                {filteredWhiteboards.map((board) => (
                   <div
                     key={board.id}
                     className={`hover:bg-gray-5 flex cursor-pointer flex-col gap-2 rounded-2xl border p-4 ${
@@ -102,6 +115,25 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
                     }`}
                     onClick={() => handleBoardSelect(board.id)}
                   >
+                    {/* Бейдж статуса доступа, как в CardMaterials */}
+                    {board.student_access_mode && (
+                      <Badge
+                        variant="default"
+                        className={
+                          board.student_access_mode === 'read_write'
+                            ? 'text-s-base bg-gray-10 text-gray-60 px-2 py-1 font-medium'
+                            : board.student_access_mode === 'read_only'
+                              ? 'text-s-base bg-cyan-20 px-2 py-1 font-medium text-cyan-100'
+                              : 'text-s-base bg-violet-20 px-2 py-1 font-medium text-violet-100'
+                        }
+                      >
+                        {board.student_access_mode === 'read_write'
+                          ? 'совместная работа'
+                          : board.student_access_mode === 'read_only'
+                            ? 'только репетитор'
+                            : 'черновик'}
+                      </Badge>
+                    )}
                     <h3 className="text-m-base text-gray-100">{board.name}</h3>
                     <p className="text-xs-base text-gray-60">
                       Изменено: {new Date(board.updated_at).toLocaleDateString()}
@@ -118,29 +150,30 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
           )}
         </div>
 
-        <ModalFooter className="border-gray-20 flex gap-2 border-t">
-          <Button size="m" onClick={handleConfirm} disabled={!selectedBoardId}>
-            Выбрать
-          </Button>
-          <Button
-            size="m"
-            variant="secondary"
-            onClick={() => {
-              console.log('🧪 Testing data channel...');
-              try {
-                // Безопасный тест с валидными данными
-                syncModeToOthers('compact', 'test-board-123');
-                console.log('✅ Test message sent successfully');
-              } catch (error) {
-                console.error('❌ Test failed:', error);
-              }
-            }}
-          >
-            Тест Data Channel
-          </Button>
-          <Button size="m" variant="secondary" onClick={() => onOpenChange(false)}>
-            Отменить
-          </Button>
+        <ModalFooter className="border-gray-20 flex flex-col gap-4 border-t">
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="collaborative-mode"
+              checked={isCollaborativeMode}
+              onCheckedChange={(checked) => setIsCollaborativeMode(checked === true)}
+            />
+            <label
+              htmlFor="collaborative-mode"
+              className="text-s-base cursor-pointer text-gray-100"
+            >
+              Открыть доску в режиме совместной работы
+              <br />
+              для всех участников звонка
+            </label>
+          </div>
+          <div className="flex gap-2">
+            <Button size="m" onClick={handleConfirm} disabled={!selectedBoardId}>
+              Выбрать
+            </Button>
+            <Button size="m" variant="secondary" onClick={() => onOpenChange(false)}>
+              Отменить
+            </Button>
+          </div>
         </ModalFooter>
       </ModalContent>
     </Modal>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // import { Minimize, Maximize } from '@xipkg/icons';
 // import { useFullScreen } from 'pkg.utils.client';
 import { Button } from '@xipkg/button';
@@ -5,7 +6,12 @@ import { Button } from '@xipkg/button';
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { ArrowLeft, Maximize, Minimize } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
-import { useGetMaterial } from 'common.services';
+import {
+  useCurrentUser,
+  useGetClassroomMaterial,
+  useGetClassroomMaterialStudent,
+  useGetMaterial,
+} from 'common.services';
 import { Skeleton } from 'common.ui';
 import { useFullScreen } from 'common.utils';
 import { useEffect } from 'react';
@@ -19,7 +25,29 @@ export const Header = () => {
   const search = useSearch({ strict: false });
 
   const { boardId = 'empty' } = useParams({ strict: false });
-  const { data, isLoading } = useGetMaterial(boardId);
+
+  // @ts-ignore
+  const { classroom } = useSearch({ strict: false });
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const getMaterial = (() => {
+    if (classroom) {
+      if (isTutor) {
+        return useGetClassroomMaterial;
+      } else {
+        return useGetClassroomMaterialStudent;
+      }
+    }
+
+    return useGetMaterial;
+  })();
+
+  const { data: material, isLoading } = getMaterial({
+    classroomId: classroom || '',
+    id: boardId,
+    disabled: !boardId,
+  });
 
   const handleBack = () => {
     if (isFullScreen) toggleFullScreen();
@@ -68,7 +96,7 @@ export const Header = () => {
           {isLoading ? (
             <Skeleton variant="text" className="h-6 w-24" />
           ) : (
-            <EditableTitle title={data.name} materialId={boardId} />
+            <EditableTitle title={material.name} materialId={boardId} />
           )}
         </div>
         <div className="flex items-center gap-1">

@@ -2,11 +2,15 @@ import { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from 'common.
 import { MaterialT } from 'common.types';
 import { useFetching } from 'common.config';
 
-export const useGetClassroomMaterialStudent = (
-  classroomId: string,
-  id: string,
-  disabled?: boolean,
-) => {
+export const useGetClassroomMaterialStudent = ({
+  classroomId,
+  id,
+  disabled,
+}: {
+  classroomId: string;
+  id: string;
+  disabled?: boolean;
+}) => {
   const { data, isError, isLoading, ...rest } = useFetching({
     apiConfig: {
       method:

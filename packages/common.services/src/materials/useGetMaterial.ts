@@ -2,7 +2,7 @@ import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
 import { MaterialT } from 'common.types';
 import { useFetching } from 'common.config';
 
-export const useGetMaterial = (id: string, disabled?: boolean) => {
+export const useGetMaterial = ({ id, disabled }: { id: string; disabled?: boolean }) => {
   const { data, isError, isLoading, ...rest } = useFetching({
     apiConfig: {
       method: materialsApiConfig[MaterialsQueryKey.GetMaterial].method,

@@ -44,6 +44,7 @@ export function useYjsStore({
       connect: false,
       forceSyncInterval: 20000, // Принудительная синхронизация каждые 20 секунд
       onAuthenticationFailed: (data) => {
+        console.log('onAuthenticationFailed', data);
         if (data.reason === 'permission-denied') {
           toast('Ошибка доступа к серверу совместного редактирования');
           console.error('hocuspocus: permission-denied');
