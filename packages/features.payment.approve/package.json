@@ -14,7 +14,7 @@
     "@tanstack/react-router": "1.120.11",
     "@xipkg/button": "^3.1.8",
     "@xipkg/form": "4.2.1",
-    "@xipkg/modal": "^4.2.0",
+    "@xipkg/modal": "^4.3.0",
     "@xipkg/radio": "^2.0.6",
     "common.api": "*",
     "common.config": "*",
