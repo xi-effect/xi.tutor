@@ -31,10 +31,12 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
       }
     }
 
-    if (invite.kind === 'individual' && invite.existing_classroom_id) {
-      navigate({ to: `/classrooms/${invite.existing_classroom_id}` }); // Переход по старому приглашению в индивидуальный кабинет
-    } else {
-      mutate(inviteId); // первое принятие приглашения
+    if (invite.kind === 'individual') {
+      if (invite.existing_classroom_id) {
+        navigate({ to: `/classrooms/${invite.existing_classroom_id}` }); // Переход по старому приглашению в индивидуальный кабинет
+      } else {
+        mutate(inviteId); // первое принятие приглашения
+      }
     }
   };
 
