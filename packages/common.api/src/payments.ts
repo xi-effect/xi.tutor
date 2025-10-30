@@ -5,7 +5,7 @@ enum PaymentsQueryKey {
   StudentPayments = 'StudentPayments',
   TutorPayments = 'TutorPayments',
   SearchPayments = 'SearchPayments',
-  AddPayment = 'AddPayment',
+  AddInvoice = 'AddInvoice',
   DeleteRecipientInvoice = 'DeleteRecipientInvoice',
   GetRecipientInvoiceByTutor = 'GetRecipientInvoiceByTutor',
   GetRecipientInvoiceByStudent = 'GetRecipientInvoiceByStudent',
@@ -36,9 +36,9 @@ const paymentsApiConfig = {
     method: HttpMethod.POST,
   },
 
-  [PaymentsQueryKey.AddPayment]: {
-    getUrl: () =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/invoices/`,
+  [PaymentsQueryKey.AddInvoice]: {
+    getUrl: (classroomId: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/classrooms/${classroomId}/invoices/`,
     method: HttpMethod.POST,
   },
 

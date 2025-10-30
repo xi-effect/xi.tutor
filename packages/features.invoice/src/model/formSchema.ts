@@ -1,7 +1,7 @@
 import * as z from 'zod';
 
 export const formSchema = z.object({
-  studentId: z.string().min(1, 'Выберите студента'),
+  classroomId: z.string().nonempty('Выберите кабинет'),
   items: z
     .array(
       z.object({

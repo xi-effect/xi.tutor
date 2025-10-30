@@ -1,18 +1,16 @@
 import { useForm, useFieldArray } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { formSchema, type FormData } from '../model';
-import { useFetchClassrooms } from 'common.services';
 import { useCreateInvoice } from './useCreateInvoice';
 
 export const useInvoiceForm = () => {
-  const { data: classrooms } = useFetchClassrooms();
   const createInvoiceMutation = useCreateInvoice();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     mode: 'onSubmit',
     defaultValues: {
-      studentId: '',
+      classroomId: '',
       items: [],
       comment: '',
     },
@@ -20,7 +18,7 @@ export const useInvoiceForm = () => {
 
   const { control, watch, setValue, handleSubmit, formState } = form;
 
-  console.log('errors', formState.errors);
+  console.log('formState', formState.errors);
 
   const items = watch('items');
 
@@ -30,7 +28,8 @@ export const useInvoiceForm = () => {
   });
 
   const handleClearForm = () => {
-    setValue('studentId', '');
+    setValue('classroomId', '');
+    setValue('comment', '');
     setValue('items', [
       {
         name: '',
@@ -41,19 +40,13 @@ export const useInvoiceForm = () => {
   };
 
   const onSubmit = (data: FormData) => {
-    const student = classrooms?.find((c) => c.id === Number(data.studentId));
-
-    // Формируем payload для отправки
-    const student_ids =
-      student?.kind === 'individual' && student.student_id ? [student.student_id] : [];
-
     const payload = {
       invoice: { comment: data.comment || '' },
       items: [...data.items],
-      student_ids,
+      student_ids: null,
     };
 
-    createInvoiceMutation.mutate(payload);
+    createInvoiceMutation.mutate({ classroomId: data.classroomId, payload });
   };
 
   return {
