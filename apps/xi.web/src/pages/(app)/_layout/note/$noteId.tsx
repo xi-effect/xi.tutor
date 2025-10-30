@@ -4,13 +4,13 @@ import { LoadingScreen } from 'common.ui';
 import { Suspense, lazy } from 'react';
 import { z } from 'zod';
 
-const Editor = lazy(() => import('modules.editor').then((m) => ({ default: m.Editor })));
+const Notes = lazy(() => import('pages.notes').then((m) => ({ default: m.Note })));
 
 const paramsSchema = z.object({
   editorId: z.string(),
 });
 
-export const Route = createFileRoute('/(app)/_layout/editor/$editorId')({
+export const Route = createFileRoute('/(app)/_layout/note/$editorId')({
   head: () => ({
     meta: [{ title: 'sovlium | Редактор' }],
   }),
@@ -24,7 +24,7 @@ export const Route = createFileRoute('/(app)/_layout/editor/$editorId')({
 function EditorPage() {
   return (
     <Suspense fallback={<LoadingScreen />}>
-      <Editor />
+      <Notes />
     </Suspense>
   );
 }

@@ -28,7 +28,7 @@ import { Route as appLayoutMaterialsIndexRouteImport } from './pages/(app)/_layo
 import { Route as appLayoutClassroomsIndexRouteImport } from './pages/(app)/_layout/classrooms/index'
 import { Route as appLayoutCallIndexRouteImport } from './pages/(app)/_layout/call/index'
 import { Route as appLayoutCalendarIndexRouteImport } from './pages/(app)/_layout/calendar/index'
-import { Route as appLayoutEditorEditorIdRouteImport } from './pages/(app)/_layout/editor/$editorId'
+import { Route as appLayoutEditorEditorIdRouteImport } from './pages/(app)/_layout/note/$noteId'
 import { Route as appLayoutClassroomsClassroomIdRouteImport } from './pages/(app)/_layout/classrooms/$classroomId'
 import { Route as appLayoutCallCallIdRouteImport } from './pages/(app)/_layout/call/$callId'
 import { Route as appLayoutBoardBoardIdRouteImport } from './pages/(app)/_layout/board/$boardId'
@@ -127,8 +127,8 @@ const appLayoutCalendarIndexRoute = appLayoutCalendarIndexRouteImport.update({
   getParentRoute: () => appLayoutRoute,
 } as any)
 const appLayoutEditorEditorIdRoute = appLayoutEditorEditorIdRouteImport.update({
-  id: '/editor/$editorId',
-  path: '/editor/$editorId',
+  id: '/note/$noteId',
+  path: '/note/$noteId',
   getParentRoute: () => appLayoutRoute,
 } as any)
 const appLayoutClassroomsClassroomIdRoute =
@@ -160,7 +160,7 @@ export interface FileRoutesByFullPath {
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
   '/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdRoute
-  '/editor/$editorId': typeof appLayoutEditorEditorIdRoute
+  '/note/$editorId': typeof appLayoutEditorEditorIdRoute
   '/calendar': typeof appLayoutCalendarIndexRoute
   '/call': typeof appLayoutCallIndexRoute
   '/classrooms': typeof appLayoutClassroomsIndexRoute
@@ -182,7 +182,7 @@ export interface FileRoutesByTo {
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
   '/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdRoute
-  '/editor/$editorId': typeof appLayoutEditorEditorIdRoute
+  '/note/$editorId': typeof appLayoutEditorEditorIdRoute
   '/calendar': typeof appLayoutCalendarIndexRoute
   '/call': typeof appLayoutCallIndexRoute
   '/classrooms': typeof appLayoutClassroomsIndexRoute
@@ -207,7 +207,7 @@ export interface FileRoutesById {
   '/(app)/_layout/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/(app)/_layout/call/$callId': typeof appLayoutCallCallIdRoute
   '/(app)/_layout/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdRoute
-  '/(app)/_layout/editor/$editorId': typeof appLayoutEditorEditorIdRoute
+  '/(app)/_layout/note/$noteId': typeof appLayoutEditorEditorIdRoute
   '/(app)/_layout/calendar/': typeof appLayoutCalendarIndexRoute
   '/(app)/_layout/call/': typeof appLayoutCallIndexRoute
   '/(app)/_layout/classrooms/': typeof appLayoutClassroomsIndexRoute
@@ -231,7 +231,7 @@ export interface FileRouteTypes {
     | '/board/$boardId'
     | '/call/$callId'
     | '/classrooms/$classroomId'
-    | '/editor/$editorId'
+    | '/note/$noteId'
     | '/calendar'
     | '/call'
     | '/classrooms'
@@ -253,7 +253,7 @@ export interface FileRouteTypes {
     | '/board/$boardId'
     | '/call/$callId'
     | '/classrooms/$classroomId'
-    | '/editor/$editorId'
+    | '/note/$noteId'
     | '/calendar'
     | '/call'
     | '/classrooms'
@@ -277,7 +277,7 @@ export interface FileRouteTypes {
     | '/(app)/_layout/board/$boardId'
     | '/(app)/_layout/call/$callId'
     | '/(app)/_layout/classrooms/$classroomId'
-    | '/(app)/_layout/editor/$editorId'
+    | '/(app)/_layout/note/$noteId'
     | '/(app)/_layout/calendar/'
     | '/(app)/_layout/call/'
     | '/(app)/_layout/classrooms/'
@@ -427,10 +427,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutCalendarIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
-    '/(app)/_layout/editor/$editorId': {
-      id: '/(app)/_layout/editor/$editorId'
-      path: '/editor/$editorId'
-      fullPath: '/editor/$editorId'
+    '/(app)/_layout/note/$editorId': {
+      id: '/(app)/_layout/note/$editorId'
+      path: '/note/$editorId'
+      fullPath: '/note/$editorId'
       preLoaderRoute: typeof appLayoutEditorEditorIdRouteImport
       parentRoute: typeof appLayoutRoute
     }
