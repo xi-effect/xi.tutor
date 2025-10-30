@@ -8,8 +8,9 @@ import {
   ModalTrigger,
 } from '@xipkg/modal';
 import { InfoCircle } from '@xipkg/icons';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { isMac } from '../../../utils';
+import { useFullScreen } from 'common.utils';
 
 interface HotkeyItem {
   keys: string[];
@@ -65,6 +66,11 @@ const groupByCategory = (items: HotkeyItem[]) => {
 export const HotkeysHelp = () => {
   // const [open, setOpen] = useState(false);
   const groupedHotkeys = groupByCategory(hotkeyCategories);
+  const { isFullScreen } = useFullScreen('whiteboard-container');
+
+  const portalContainer = useMemo(() => {
+    return isFullScreen ? document.getElementById('whiteboard-container') : undefined;
+  }, [isFullScreen]);
 
   // Обработка события от горячей клавиши F1
   useEffect(() => {
@@ -81,11 +87,11 @@ export const HotkeysHelp = () => {
   return (
     <Modal>
       <ModalTrigger asChild>
-        <Button variant="ghost" className="h-[40px] w-[40px] p-2">
+        <Button variant="ghost" className="h-10 w-10 p-2">
           <InfoCircle size="s" />
         </Button>
       </ModalTrigger>
-      <ModalContent className="max-h-[80vh] max-w-4xl">
+      <ModalContent className="max-h-[80vh] max-w-4xl" portalProps={{ container: portalContainer }}>
         <ModalHeader>
           <ModalCloseButton />
           <ModalTitle>Горячие клавиши</ModalTitle>

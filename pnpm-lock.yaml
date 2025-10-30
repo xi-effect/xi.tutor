@@ -1048,8 +1048,8 @@ importers:
         specifier: ^2.2.9
         version: 2.2.9(react@19.2.0)
       '@xipkg/modal':
-        specifier: ^4.2.0
-        version: 4.2.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+        specifier: ^4.3.0
+        version: 4.3.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/popover':
         specifier: ^2.1.0
         version: 2.1.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
@@ -1142,8 +1142,8 @@ importers:
         specifier: ^2.2.9
         version: 2.2.9(react@19.2.0)
       '@xipkg/modal':
-        specifier: ^4.2.0
-        version: 4.2.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+        specifier: ^4.3.0
+        version: 4.3.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/scrollarea':
         specifier: ^2.2.0
         version: 2.2.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
@@ -1239,8 +1239,8 @@ importers:
         specifier: ^2.2.9
         version: 2.2.9(react@19.2.0)
       '@xipkg/modal':
-        specifier: ^4.2.0
-        version: 4.2.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+        specifier: ^4.3.0
+        version: 4.3.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/scrollarea':
         specifier: ^2.2.0
         version: 2.2.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
@@ -1324,8 +1324,8 @@ importers:
         specifier: ^2.5.4
         version: 2.5.4(react@19.2.0)
       '@xipkg/modal':
-        specifier: ^4.2.0
-        version: 4.2.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+        specifier: ^4.3.0
+        version: 4.3.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.0)
@@ -1415,8 +1415,8 @@ importers:
         specifier: 2.2.9
         version: 2.2.9(react@19.2.0)
       '@xipkg/modal':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+        specifier: ^4.3.0
+        version: 4.3.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/select':
         specifier: 2.2.5
         version: 2.2.5(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
@@ -1573,8 +1573,8 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/modal':
-        specifier: ^4.2.0
-        version: 4.2.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+        specifier: ^4.3.0
+        version: 4.3.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/radio':
         specifier: ^2.0.6
         version: 2.0.6(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
@@ -1658,8 +1658,8 @@ importers:
         specifier: ^2.2.9
         version: 2.2.9(react@19.2.0)
       '@xipkg/modal':
-        specifier: ^4.2.0
-        version: 4.2.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+        specifier: ^4.3.0
+        version: 4.3.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/scrollarea':
         specifier: ^2.2.0
         version: 2.2.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
@@ -2106,8 +2106,8 @@ importers:
         specifier: ^2.5.4
         version: 2.5.4(react@19.2.0)
       '@xipkg/modal':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+        specifier: ^4.3.0
+        version: 4.3.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/scrollarea':
         specifier: 2.2.0
         version: 2.2.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
@@ -2620,8 +2620,8 @@ importers:
         specifier: ^2.0.14
         version: 2.5.4(react@19.2.0)
       '@xipkg/modal':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+        specifier: ^4.3.0
+        version: 4.3.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/select':
         specifier: 2.2.5
         version: 2.2.5(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
@@ -2880,8 +2880,8 @@ importers:
         specifier: ^2.0.12
         version: 2.0.12(react@19.2.0)
       '@xipkg/modal':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+        specifier: ^4.3.0
+        version: 4.3.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/scrollarea':
         specifier: 2.2.0
         version: 2.2.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
@@ -3752,8 +3752,8 @@ importers:
         specifier: 2.0.7
         version: 2.0.7(react@19.2.0)
       '@xipkg/modal':
-        specifier: 4.2.0
-        version: 4.2.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+        specifier: ^4.3.0
+        version: 4.3.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.0)
@@ -9917,7 +9917,7 @@ packages:
       react: ^19
     dependencies:
       '@xipkg/icons': 2.5.4(react@19.2.0)
-      '@xipkg/modal': 4.2.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+      '@xipkg/modal': 4.3.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/utils': 1.8.0(react@19.2.0)
       cmdk: 1.1.1(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       react: 19.2.0
@@ -10110,24 +10110,8 @@ packages:
       react: 19.2.0
     dev: false
 
-  /@xipkg/modal@4.1.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0):
-    resolution: {integrity: sha512-YVuwzTqFaTgouBd7EldpUYPpd3W3hE78LISDjFv9+f9w0rqRpMFhVKQpHpo8WdVb1ahwKDiH14ZssxzkNzKBUA==}
-    peerDependencies:
-      react: ^19
-    dependencies:
-      '@radix-ui/react-dialog': 1.1.6(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
-      '@xipkg/icons': 2.5.4(react@19.2.0)
-      '@xipkg/utils': 1.8.0(react@19.2.0)
-      lucide-react: 0.475.0(react@19.2.0)
-      react: 19.2.0
-    transitivePeerDependencies:
-      - '@types/react'
-      - '@types/react-dom'
-      - react-dom
-    dev: false
-
-  /@xipkg/modal@4.2.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0):
-    resolution: {integrity: sha512-5uax+K526AJCkLP51+8XfFIefWVhPK0tG73Ji6gaYxrVt6zAiplReMgYkzXBwxXMMgBClYSw4+4juWB1UiGQ4g==}
+  /@xipkg/modal@4.3.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0):
+    resolution: {integrity: sha512-aOTP7B8g1t7PAiHePdCpAEojRMGH9EXn/cm0VsSm5BZfzhkwIeyi4hLbKDu6pFlyFbPExff9bI3g1B7AWXe7nA==}
     peerDependencies:
       react: ^19
     dependencies:
