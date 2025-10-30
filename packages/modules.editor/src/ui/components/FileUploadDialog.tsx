@@ -5,7 +5,7 @@ import { useInterfaceStore } from '../../store/interfaceStore';
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
 import { optimizeImage } from '../../utils/optimizeImage';
-import { useUploadPublicFile } from 'common.services';
+import { useUploadImage } from 'common.services';
 import { useBlockMenuActions, useYjsContext } from '../../hooks';
 
 export const ImageUploadModal = () => {
@@ -15,7 +15,7 @@ export const ImageUploadModal = () => {
 
   const { editor } = useYjsContext();
 
-  const { mutateAsync: uploadImage } = useUploadPublicFile();
+  const { mutateAsync: uploadImage } = useUploadImage();
 
   const { insertImage } = useBlockMenuActions(editor);
 
@@ -24,7 +24,7 @@ export const ImageUploadModal = () => {
     const file = files[0];
     const optimizedImage = await optimizeImage(file);
     try {
-      const uploadedUrl = await uploadImage(optimizedImage);
+      const uploadedUrl = await uploadImage({ file: optimizedImage });
 
       insertImage(uploadedUrl);
 

@@ -42,7 +42,7 @@ export const TldrawBoard = () => {
 
   return (
     <YjsProvider storageItem={storageItem}>
-      <TldrawCanvas />
+      <TldrawCanvas token={storageItem.storage_token} />
     </YjsProvider>
   );
 };

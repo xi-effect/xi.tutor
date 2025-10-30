@@ -29,11 +29,13 @@ export const Navbar = track(
     redo,
     canUndo,
     canRedo,
+    token,
   }: {
     undo: () => void;
     redo: () => void;
     canUndo: boolean;
     canRedo: boolean;
+    token: string;
   }) => {
     const { pencilColor, pencilThickness, pencilOpacity, stickerColor } = useTldrawStore();
     const { resetToDefaults, setColor, setThickness, setOpacity } = useTldrawStyles();
@@ -67,7 +69,7 @@ export const Navbar = track(
           const file = (e.target as HTMLInputElement).files?.[0];
           if (file) {
             try {
-              await insertImage(editor, file);
+              await insertImage(editor, file, token);
             } catch (error) {
               console.error('Ошибка при загрузке изображения:', error);
             }

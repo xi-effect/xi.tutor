@@ -3,7 +3,6 @@ import { LoadingScreen } from 'common.ui';
 import { useKeyPress } from 'common.utils';
 import { JSX } from 'react/jsx-runtime';
 import { Editor, Tldraw, TldrawProps } from 'tldraw';
-import { myAssetStore } from '../../../features';
 import { useLockedShapeSelection, useRemoveMark, useTldrawClipboard } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useTldrawStore } from '../../../store';
@@ -15,7 +14,10 @@ import { useState } from 'react';
 import 'tldraw/tldraw.css';
 import './customstyles.css';
 
-export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
+export const TldrawCanvas = ({
+  token,
+  ...props
+}: JSX.IntrinsicAttributes & TldrawProps & { token: string }) => {
   const [editor, setEditor] = useState<Editor | null>(null);
 
   const { selectedElementId, selectElement } = useTldrawStore();
@@ -38,8 +40,6 @@ export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
       <div className="relative flex-1 overflow-hidden">
         <div className="absolute inset-0">
           <Tldraw
-            // @ts-ignore
-            assets={myAssetStore}
             onMount={(editor) => {
               setEditor(editor);
               editor.updateInstanceState({
@@ -57,7 +57,7 @@ export const TldrawCanvas = (props: JSX.IntrinsicAttributes & TldrawProps) => {
             {...props}
           >
             <Header />
-            <Navbar undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
+            <Navbar undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} token={token} />
             <TldrawZoomPanel />
           </Tldraw>
         </div>

@@ -1,1 +1,2 @@
-export { useUploadPublicFile } from './useUploadPublicFile';
+export { useUploadImage, uploadImageRequest } from './useUploadImage';
+export { useUploadFile, uploadFileRequest } from './useUploadFile';
