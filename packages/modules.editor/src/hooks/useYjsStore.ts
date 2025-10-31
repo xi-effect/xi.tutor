@@ -19,6 +19,7 @@ export type UseCollaborativeTiptapReturn = {
   canUndo: boolean;
   canRedo: boolean;
   isReadOnly: boolean;
+  storageToken: string;
 };
 
 export function useYjsStore({
@@ -163,5 +164,5 @@ export function useYjsStore({
 
   const isReadOnly = editor ? !editor.isEditable : false;
 
-  return { editor: editor ?? null, undo, redo, canUndo, canRedo, isReadOnly };
+  return { editor: editor ?? null, undo, redo, canUndo, canRedo, isReadOnly, storageToken };
 }
