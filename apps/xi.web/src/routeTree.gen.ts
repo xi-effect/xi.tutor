@@ -20,6 +20,7 @@ import { Route as DeploymentsDeploymentIdEnableRouteImport } from './pages/deplo
 import { Route as authResetPasswordResetTokenRouteImport } from './pages/(auth)/reset-password/$resetToken'
 import { Route as appWelcomeLayoutRouteImport } from './pages/(app)/welcome/_layout'
 import { Route as appInviteInviteIdRouteImport } from './pages/(app)/invite/$inviteId'
+import { Route as appEmailEmailIdRouteImport } from './pages/(app)/email/$emailId'
 import { Route as appWelcomeUserIndexRouteImport } from './pages/(app)/welcome/user/index'
 import { Route as appWelcomeSocialsIndexRouteImport } from './pages/(app)/welcome/socials/index'
 import { Route as appWelcomeRoleIndexRouteImport } from './pages/(app)/welcome/role/index'
@@ -83,6 +84,11 @@ const appWelcomeLayoutRoute = appWelcomeLayoutRouteImport.update({
 const appInviteInviteIdRoute = appInviteInviteIdRouteImport.update({
   id: '/(app)/invite/$inviteId',
   path: '/invite/$inviteId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const appEmailEmailIdRoute = appEmailEmailIdRouteImport.update({
+  id: '/(app)/email/$emailId',
+  path: '/email/$emailId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const appWelcomeUserIndexRoute = appWelcomeUserIndexRouteImport.update({
@@ -149,6 +155,7 @@ const appLayoutBoardBoardIdRoute = appLayoutBoardBoardIdRouteImport.update({
 } as any)
 
 export interface FileRoutesByFullPath {
+  '/email/$emailId': typeof appEmailEmailIdRoute
   '/invite/$inviteId': typeof appInviteInviteIdRoute
   '/welcome': typeof appWelcomeLayoutRoute
   '/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute
@@ -171,6 +178,7 @@ export interface FileRoutesByFullPath {
   '/welcome/user': typeof appWelcomeUserIndexRoute
 }
 export interface FileRoutesByTo {
+  '/email/$emailId': typeof appEmailEmailIdRoute
   '/invite/$inviteId': typeof appInviteInviteIdRoute
   '/welcome': typeof appWelcomeLayoutRoute
   '/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute
@@ -195,6 +203,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)/_layout': typeof appLayoutRouteWithChildren
+  '/(app)/email/$emailId': typeof appEmailEmailIdRoute
   '/(app)/invite/$inviteId': typeof appInviteInviteIdRoute
   '/(app)/welcome': typeof appWelcomeRouteWithChildren
   '/(app)/welcome/_layout': typeof appWelcomeLayoutRoute
@@ -220,6 +229,7 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/email/$emailId'
     | '/invite/$inviteId'
     | '/welcome'
     | '/reset-password/$resetToken'
@@ -242,6 +252,7 @@ export interface FileRouteTypes {
     | '/welcome/user'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/email/$emailId'
     | '/invite/$inviteId'
     | '/welcome'
     | '/reset-password/$resetToken'
@@ -265,6 +276,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/(app)/_layout'
+    | '/(app)/email/$emailId'
     | '/(app)/invite/$inviteId'
     | '/(app)/welcome'
     | '/(app)/welcome/_layout'
@@ -290,6 +302,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   appLayoutRoute: typeof appLayoutRouteWithChildren
+  appEmailEmailIdRoute: typeof appEmailEmailIdRoute
   appInviteInviteIdRoute: typeof appInviteInviteIdRoute
   appWelcomeRoute: typeof appWelcomeRouteWithChildren
   authResetPasswordResetTokenRoute: typeof authResetPasswordResetTokenRoute
@@ -369,6 +382,13 @@ declare module '@tanstack/react-router' {
       path: '/invite/$inviteId'
       fullPath: '/invite/$inviteId'
       preLoaderRoute: typeof appInviteInviteIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(app)/email/$emailId': {
+      id: '/(app)/email/$emailId'
+      path: '/email/$emailId'
+      fullPath: '/email/$emailId'
+      preLoaderRoute: typeof appEmailEmailIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(app)/welcome/user/': {
@@ -508,6 +528,7 @@ const appWelcomeRouteWithChildren = appWelcomeRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   appLayoutRoute: appLayoutRouteWithChildren,
+  appEmailEmailIdRoute: appEmailEmailIdRoute,
   appInviteInviteIdRoute: appInviteInviteIdRoute,
   appWelcomeRoute: appWelcomeRouteWithChildren,
   authResetPasswordResetTokenRoute: authResetPasswordResetTokenRoute,
