@@ -3,7 +3,7 @@ import { EmailPageConfirm } from './EmailPageConfirm';
 import { EmailPageSuccess } from './EmailPageSuccess';
 
 export const EmailPage = () => {
-  const [status, setStatus] = useState<'confirm' | 'success'>('success');
+  const [status, setStatus] = useState<'confirm' | 'success'>('confirm');
 
   return (
     <>
