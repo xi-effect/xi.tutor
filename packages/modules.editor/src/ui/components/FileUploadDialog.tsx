@@ -15,22 +15,19 @@ import {
 } from 'common.services';
 import { useBlockMenuActions, useYjsContext } from '../../hooks';
 import { useParams } from '@tanstack/react-router';
-import { useSearch } from '@tanstack/react-router';
 
 export const ImageUploadModal = () => {
   const { closeModal, activeModal } = useInterfaceStore();
   const [mode, setMode] = useState<'upload' | 'link'>('upload');
   const [imageLink, setImageLink] = useState('');
 
-  const { noteId = 'empty' } = useParams({ strict: false });
+  const { classroomId, noteId, editorId, materialId } = useParams({ strict: false });
 
-  // @ts-ignore
-  const { classroom } = useSearch({ strict: false });
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
   const getStorageItem = (() => {
-    if (classroom) {
+    if (classroomId) {
       if (isTutor) {
         return useGetClassroomStorageItem;
       } else {
@@ -41,10 +38,14 @@ export const ImageUploadModal = () => {
     return useGetStorageItem;
   })();
 
+  const materialIdValue = noteId ?? editorId ?? materialId;
+  if (!materialIdValue) {
+    throw new Error('noteId or editorId or materialId must be provided');
+  }
+
   const { data: storageItem } = getStorageItem({
-    classroomId: classroom || '',
-    id: noteId,
-    disabled: !noteId,
+    classroomId: classroomId || '',
+    id: materialIdValue,
   });
 
   const { editor } = useYjsContext();

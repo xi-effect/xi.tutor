@@ -7,7 +7,7 @@ import { useUpdateClassroomMaterial, useUpdateMaterial } from 'common.services';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { cn } from '@xipkg/utils';
-import { useSearch } from '@tanstack/react-router';
+import { useParams } from '@tanstack/react-router';
 
 const titleSchema = z.object({
   name: z.string().min(1, 'Название не может быть пустым').max(100, 'Название слишком длинное'),
@@ -23,9 +23,7 @@ interface EditableTitleProps {
 
 export const EditableTitle = ({ title, materialId, className }: EditableTitleProps) => {
   const [isEditing, setIsEditing] = useState(false);
-
-  // @ts-ignore
-  const { classroom } = useSearch({ strict: false });
+  const { classroomId } = useParams({ strict: false });
 
   const { updateMaterial } = useUpdateMaterial();
   const { updateClassroomMaterial } = useUpdateClassroomMaterial();
@@ -46,9 +44,9 @@ export const EditableTitle = ({ title, materialId, className }: EditableTitlePro
 
   const onSubmit = async (data: TitleFormData) => {
     try {
-      if (classroom) {
+      if (classroomId) {
         await updateClassroomMaterial.mutateAsync({
-          classroomId: classroom,
+          classroomId: classroomId,
           id: materialId,
           data: { name: data.name },
         });

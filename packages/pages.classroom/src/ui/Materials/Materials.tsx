@@ -10,7 +10,7 @@ import {
 import { CardMaterials } from '../CardMaterials/CardMaterials';
 
 export const Materials = () => {
-  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
+  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
 
   const { data: user } = useCurrentUser();
@@ -138,11 +138,12 @@ export const Materials = () => {
                       const filteredSearch = search.call ? { call: search.call } : {};
 
                       navigate({
-                        to: `/board/${board.id}`,
-                        search: () => ({
-                          ...filteredSearch,
-                          classroom: classroomId,
-                        }),
+                        to: '/classrooms/$classroomId/boards/$boardId',
+                        params: {
+                          classroomId: classroomId,
+                          boardId: board.id.toString(),
+                        },
+                        search: filteredSearch,
                       });
                     }}
                   />
@@ -178,11 +179,12 @@ export const Materials = () => {
                       const filteredSearch = search.call ? { call: search.call } : {};
 
                       navigate({
-                        to: `/note/${note.id}`,
-                        search: () => ({
-                          ...filteredSearch,
-                          classroom: classroomId,
-                        }),
+                        to: '/classrooms/$classroomId/notes/$noteId',
+                        params: {
+                          classroomId: classroomId,
+                          noteId: note.id.toString(),
+                        },
+                        search: filteredSearch,
                       });
                     }}
                   />

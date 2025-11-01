@@ -23,7 +23,7 @@ export const Content = ({ classroom }: ContentProps) => {
   const isTutor = user?.default_layout === 'tutor';
 
   const { startCall, isLoading } = useStartCall();
-  const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId' });
+  const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
 
   const getDisplayName = () => {
     if (classroom.kind === 'individual') {

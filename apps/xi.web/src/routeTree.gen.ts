@@ -33,6 +33,11 @@ import { Route as appLayoutNoteNoteIdRouteImport } from './pages/(app)/_layout/n
 import { Route as appLayoutClassroomsClassroomIdRouteImport } from './pages/(app)/_layout/classrooms/$classroomId'
 import { Route as appLayoutCallCallIdRouteImport } from './pages/(app)/_layout/call/$callId'
 import { Route as appLayoutBoardBoardIdRouteImport } from './pages/(app)/_layout/board/$boardId'
+import { Route as appLayoutClassroomsClassroomIdIndexRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/index'
+import { Route as appLayoutMaterialsMaterialIdNoteIndexRouteImport } from './pages/(app)/_layout/materials/$materialId/note/index'
+import { Route as appLayoutMaterialsMaterialIdBoardIndexRouteImport } from './pages/(app)/_layout/materials/$materialId/board/index'
+import { Route as appLayoutClassroomsClassroomIdNotesNoteIdRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/notes/$noteId'
+import { Route as appLayoutClassroomsClassroomIdBoardsBoardIdRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/boards/$boardId'
 
 const appWelcomeRouteImport = createFileRoute('/(app)/welcome')()
 
@@ -153,6 +158,36 @@ const appLayoutBoardBoardIdRoute = appLayoutBoardBoardIdRouteImport.update({
   path: '/board/$boardId',
   getParentRoute: () => appLayoutRoute,
 } as any)
+const appLayoutClassroomsClassroomIdIndexRoute =
+  appLayoutClassroomsClassroomIdIndexRouteImport.update({
+    id: '/classrooms/$classroomId/',
+    path: '/classrooms/$classroomId/',
+    getParentRoute: () => appLayoutRoute,
+  } as any)
+const appLayoutMaterialsMaterialIdNoteIndexRoute =
+  appLayoutMaterialsMaterialIdNoteIndexRouteImport.update({
+    id: '/materials/$materialId/note/',
+    path: '/materials/$materialId/note/',
+    getParentRoute: () => appLayoutRoute,
+  } as any)
+const appLayoutMaterialsMaterialIdBoardIndexRoute =
+  appLayoutMaterialsMaterialIdBoardIndexRouteImport.update({
+    id: '/materials/$materialId/board/',
+    path: '/materials/$materialId/board/',
+    getParentRoute: () => appLayoutRoute,
+  } as any)
+const appLayoutClassroomsClassroomIdNotesNoteIdRoute =
+  appLayoutClassroomsClassroomIdNotesNoteIdRouteImport.update({
+    id: '/classrooms/$classroomId/notes/$noteId',
+    path: '/classrooms/$classroomId/notes/$noteId',
+    getParentRoute: () => appLayoutRoute,
+  } as any)
+const appLayoutClassroomsClassroomIdBoardsBoardIdRoute =
+  appLayoutClassroomsClassroomIdBoardsBoardIdRouteImport.update({
+    id: '/classrooms/$classroomId/boards/$boardId',
+    path: '/classrooms/$classroomId/boards/$boardId',
+    getParentRoute: () => appLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/email/$emailId': typeof appEmailEmailIdRoute
@@ -176,6 +211,11 @@ export interface FileRoutesByFullPath {
   '/welcome/role': typeof appWelcomeRoleIndexRoute
   '/welcome/socials': typeof appWelcomeSocialsIndexRoute
   '/welcome/user': typeof appWelcomeUserIndexRoute
+  '/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdIndexRoute
+  '/classrooms/$classroomId/boards/$boardId': typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
+  '/classrooms/$classroomId/notes/$noteId': typeof appLayoutClassroomsClassroomIdNotesNoteIdRoute
+  '/materials/$materialId/board': typeof appLayoutMaterialsMaterialIdBoardIndexRoute
+  '/materials/$materialId/note': typeof appLayoutMaterialsMaterialIdNoteIndexRoute
 }
 export interface FileRoutesByTo {
   '/email/$emailId': typeof appEmailEmailIdRoute
@@ -199,6 +239,11 @@ export interface FileRoutesByTo {
   '/welcome/role': typeof appWelcomeRoleIndexRoute
   '/welcome/socials': typeof appWelcomeSocialsIndexRoute
   '/welcome/user': typeof appWelcomeUserIndexRoute
+  '/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdIndexRoute
+  '/classrooms/$classroomId/boards/$boardId': typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
+  '/classrooms/$classroomId/notes/$noteId': typeof appLayoutClassroomsClassroomIdNotesNoteIdRoute
+  '/materials/$materialId/board': typeof appLayoutMaterialsMaterialIdBoardIndexRoute
+  '/materials/$materialId/note': typeof appLayoutMaterialsMaterialIdNoteIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -225,6 +270,11 @@ export interface FileRoutesById {
   '/(app)/welcome/role/': typeof appWelcomeRoleIndexRoute
   '/(app)/welcome/socials/': typeof appWelcomeSocialsIndexRoute
   '/(app)/welcome/user/': typeof appWelcomeUserIndexRoute
+  '/(app)/_layout/classrooms/$classroomId/': typeof appLayoutClassroomsClassroomIdIndexRoute
+  '/(app)/_layout/classrooms/$classroomId/boards/$boardId': typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
+  '/(app)/_layout/classrooms/$classroomId/notes/$noteId': typeof appLayoutClassroomsClassroomIdNotesNoteIdRoute
+  '/(app)/_layout/materials/$materialId/board/': typeof appLayoutMaterialsMaterialIdBoardIndexRoute
+  '/(app)/_layout/materials/$materialId/note/': typeof appLayoutMaterialsMaterialIdNoteIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -250,6 +300,11 @@ export interface FileRouteTypes {
     | '/welcome/role'
     | '/welcome/socials'
     | '/welcome/user'
+    | '/classrooms/$classroomId'
+    | '/classrooms/$classroomId/boards/$boardId'
+    | '/classrooms/$classroomId/notes/$noteId'
+    | '/materials/$materialId/board'
+    | '/materials/$materialId/note'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/email/$emailId'
@@ -273,6 +328,11 @@ export interface FileRouteTypes {
     | '/welcome/role'
     | '/welcome/socials'
     | '/welcome/user'
+    | '/classrooms/$classroomId'
+    | '/classrooms/$classroomId/boards/$boardId'
+    | '/classrooms/$classroomId/notes/$noteId'
+    | '/materials/$materialId/board'
+    | '/materials/$materialId/note'
   id:
     | '__root__'
     | '/(app)/_layout'
@@ -298,6 +358,11 @@ export interface FileRouteTypes {
     | '/(app)/welcome/role/'
     | '/(app)/welcome/socials/'
     | '/(app)/welcome/user/'
+    | '/(app)/_layout/classrooms/$classroomId/'
+    | '/(app)/_layout/classrooms/$classroomId/boards/$boardId'
+    | '/(app)/_layout/classrooms/$classroomId/notes/$noteId'
+    | '/(app)/_layout/materials/$materialId/board/'
+    | '/(app)/_layout/materials/$materialId/note/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -475,6 +540,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutBoardBoardIdRouteImport
       parentRoute: typeof appLayoutRoute
     }
+    '/(app)/_layout/classrooms/$classroomId/': {
+      id: '/(app)/_layout/classrooms/$classroomId/'
+      path: '/classrooms/$classroomId'
+      fullPath: '/classrooms/$classroomId'
+      preLoaderRoute: typeof appLayoutClassroomsClassroomIdIndexRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
+    '/(app)/_layout/materials/$materialId/note/': {
+      id: '/(app)/_layout/materials/$materialId/note/'
+      path: '/materials/$materialId/note'
+      fullPath: '/materials/$materialId/note'
+      preLoaderRoute: typeof appLayoutMaterialsMaterialIdNoteIndexRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
+    '/(app)/_layout/materials/$materialId/board/': {
+      id: '/(app)/_layout/materials/$materialId/board/'
+      path: '/materials/$materialId/board'
+      fullPath: '/materials/$materialId/board'
+      preLoaderRoute: typeof appLayoutMaterialsMaterialIdBoardIndexRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
+    '/(app)/_layout/classrooms/$classroomId/notes/$noteId': {
+      id: '/(app)/_layout/classrooms/$classroomId/notes/$noteId'
+      path: '/classrooms/$classroomId/notes/$noteId'
+      fullPath: '/classrooms/$classroomId/notes/$noteId'
+      preLoaderRoute: typeof appLayoutClassroomsClassroomIdNotesNoteIdRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
+    '/(app)/_layout/classrooms/$classroomId/boards/$boardId': {
+      id: '/(app)/_layout/classrooms/$classroomId/boards/$boardId'
+      path: '/classrooms/$classroomId/boards/$boardId'
+      fullPath: '/classrooms/$classroomId/boards/$boardId'
+      preLoaderRoute: typeof appLayoutClassroomsClassroomIdBoardsBoardIdRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
   }
 }
 
@@ -489,6 +589,11 @@ interface appLayoutRouteChildren {
   appLayoutClassroomsIndexRoute: typeof appLayoutClassroomsIndexRoute
   appLayoutMaterialsIndexRoute: typeof appLayoutMaterialsIndexRoute
   appLayoutPaymentsIndexRoute: typeof appLayoutPaymentsIndexRoute
+  appLayoutClassroomsClassroomIdIndexRoute: typeof appLayoutClassroomsClassroomIdIndexRoute
+  appLayoutClassroomsClassroomIdBoardsBoardIdRoute: typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
+  appLayoutClassroomsClassroomIdNotesNoteIdRoute: typeof appLayoutClassroomsClassroomIdNotesNoteIdRoute
+  appLayoutMaterialsMaterialIdBoardIndexRoute: typeof appLayoutMaterialsMaterialIdBoardIndexRoute
+  appLayoutMaterialsMaterialIdNoteIndexRoute: typeof appLayoutMaterialsMaterialIdNoteIndexRoute
 }
 
 const appLayoutRouteChildren: appLayoutRouteChildren = {
@@ -502,6 +607,16 @@ const appLayoutRouteChildren: appLayoutRouteChildren = {
   appLayoutClassroomsIndexRoute: appLayoutClassroomsIndexRoute,
   appLayoutMaterialsIndexRoute: appLayoutMaterialsIndexRoute,
   appLayoutPaymentsIndexRoute: appLayoutPaymentsIndexRoute,
+  appLayoutClassroomsClassroomIdIndexRoute:
+    appLayoutClassroomsClassroomIdIndexRoute,
+  appLayoutClassroomsClassroomIdBoardsBoardIdRoute:
+    appLayoutClassroomsClassroomIdBoardsBoardIdRoute,
+  appLayoutClassroomsClassroomIdNotesNoteIdRoute:
+    appLayoutClassroomsClassroomIdNotesNoteIdRoute,
+  appLayoutMaterialsMaterialIdBoardIndexRoute:
+    appLayoutMaterialsMaterialIdBoardIndexRoute,
+  appLayoutMaterialsMaterialIdNoteIndexRoute:
+    appLayoutMaterialsMaterialIdNoteIndexRoute,
 }
 
 const appLayoutRouteWithChildren = appLayoutRoute._addFileChildren(

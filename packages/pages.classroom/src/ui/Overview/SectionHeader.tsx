@@ -16,8 +16,8 @@ export const SectionHeader = ({ title, tabLink: tabLink }: SectionHeaderProps) =
     const filteredSearch = search.call ? { call: search.call } : {};
 
     navigate({
-      from: '/classrooms/$classroomId',
       search: {
+        // @ts-expect-error - TanStack Router search type inference issue
         tab,
         ...filteredSearch,
       },

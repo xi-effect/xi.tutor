@@ -17,7 +17,7 @@ const searchSchema = z.object({
 });
 
 // @ts-ignore
-export const Route = createFileRoute('/(app)/_layout/classrooms/$classroomId')({
+export const Route = createFileRoute('/(app)/_layout/classrooms/$classroomId/')({
   component: ClassroomPageComponent,
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
   validateSearch: (search: Record<string, unknown>) => searchSchema.parse(search),

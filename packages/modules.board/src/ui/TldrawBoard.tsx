@@ -2,7 +2,7 @@
 import { LoadingScreen } from 'common.ui';
 import { YjsProvider } from '../providers/YjsProvider';
 import { TldrawCanvas } from './components';
-import { useParams, useSearch } from '@tanstack/react-router';
+import { useParams } from '@tanstack/react-router';
 import {
   useCurrentUser,
   useGetClassroomStorageItem,
@@ -11,15 +11,13 @@ import {
 } from 'common.services';
 
 export const TldrawBoard = () => {
-  const { boardId = 'empty' } = useParams({ strict: false });
+  const { classroomId, boardId, materialId } = useParams({ strict: false });
 
-  // @ts-ignore
-  const { classroom } = useSearch({ strict: false });
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
   const getStorageItem = (() => {
-    if (classroom) {
+    if (classroomId) {
       if (isTutor) {
         return useGetClassroomStorageItem;
       } else {
@@ -30,10 +28,14 @@ export const TldrawBoard = () => {
     return useGetStorageItem;
   })();
 
+  const materialIdValue = boardId ?? materialId;
+  if (!materialIdValue) {
+    throw new Error('boardId or materialId must be provided');
+  }
+
   const { data: storageItem, isLoading } = getStorageItem({
-    classroomId: classroom || '',
-    id: boardId,
-    disabled: !boardId,
+    classroomId: classroomId || '',
+    id: materialIdValue,
   });
 
   if (isLoading) return <LoadingScreen />;

@@ -5,7 +5,7 @@ import { Error } from './Error';
 import { Skeleton } from './Skeleton';
 
 export const HeaderStudent = () => {
-  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
+  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom, isLoading, isError } = useGetClassroomStudent(Number(classroomId));
 
   if (isLoading) {
