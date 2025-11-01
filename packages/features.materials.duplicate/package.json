@@ -1,5 +1,5 @@
 {
-  "name": "pages.materials",
+  "name": "features.materials.duplicate",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -7,25 +7,14 @@
   },
   "license": "MIT",
   "scripts": {
-    "dev": "tsc --watch",
-    "lint": "eslint \"**/*.{ts,tsx}\""
+    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "dev": "tsc --watch"
   },
   "dependencies": {
-    "@tanstack/react-query": "5.73.3",
-    "@tanstack/react-virtual": "3.13.9",
-    "@xipkg/button": "3.2.0",
-    "@xipkg/dropdown": "3.0.12",
-    "@xipkg/file": "2.0.12",
-    "@xipkg/scrollarea": "2.2.0",
-    "@xipkg/tabs": "^2.1.0",
-    "@xipkg/userprofile": "4.0.14",
-    "common.api": "*",
-    "common.config": "*",
-    "common.services": "*",
-    "common.ui": "*",
-    "dayjs": "^1.11.13",
-    "features.materials.add": "*",
-    "features.materials.duplicate": "*"
+    "@xipkg/button": "^3.1.8",
+    "@xipkg/dropdown": "^3.0.12",
+    "@xipkg/icons": "^2.5.4",
+    "@xipkg/utils": "^1.8.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -36,6 +25,7 @@
     "@xipkg/tailwind": "0.8.1",
     "@xipkg/typescript": "latest",
     "common.eslint": "*",
+    "common.services": "*",
     "common.typescript": "*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
@@ -47,6 +37,6 @@
   "peerDependencies": {
     "react": "19"
   },
-  "description": "materials page",
+  "description": "features.materials.add",
   "author": "xi.effect"
 }
