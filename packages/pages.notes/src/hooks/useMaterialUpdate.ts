@@ -1,17 +1,17 @@
-import { useSearch } from '@tanstack/react-router';
+import { useParams } from '@tanstack/react-router';
 import { useUpdateClassroomMaterial, useUpdateMaterial } from 'common.services';
 
 export const useMaterialUpdate = () => {
-  const { classroom } = useSearch({ strict: false });
+  const { classroomId } = useParams({ strict: false });
   const { updateClassroomMaterial } = useUpdateClassroomMaterial();
   const { updateMaterial } = useUpdateMaterial();
 
   const isPending = updateClassroomMaterial.isPending || updateMaterial.isPending;
 
   const update = async (materialId: string, data: { name: string }) => {
-    if (classroom) {
+    if (classroomId) {
       await updateClassroomMaterial.mutateAsync({
-        classroomId: classroom,
+        classroomId: classroomId,
         id: materialId,
         data: { name: data.name },
       });

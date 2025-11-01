@@ -74,7 +74,7 @@ export const EditableTitle = ({ title, materialId, className }: EditableTitlePro
                     onBlur={handleBlur}
                     onKeyDown={handleKeyDown}
                     className={cn(
-                      'text-h3 w-full border-none bg-transparent p-0 text-[40px] shadow-none',
+                      'text-l-base sm:text-h6 xl:text-h3 w-full border-none bg-transparent p-0 text-[40px] shadow-none',
                       className,
                     )}
                     autoFocus
@@ -95,7 +95,10 @@ export const EditableTitle = ({ title, materialId, className }: EditableTitlePro
 
   return (
     <h3
-      className={cn('text-h3 cursor-pointer font-semibold select-none', className)}
+      className={cn(
+        'text-l-base sm:text-h6 xl:text-h3 cursor-pointer font-semibold select-none',
+        className,
+      )}
       onDoubleClick={handleDoubleClick}
     >
       {title}

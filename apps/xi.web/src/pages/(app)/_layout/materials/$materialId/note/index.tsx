@@ -5,7 +5,7 @@ import { Suspense, lazy } from 'react';
 import { z } from 'zod';
 
 // Используем новую версию доски на базе Tldraw с дополнительной оптимизацией
-const Editor = lazy(() => import('modules.editor').then((module) => ({ default: module.Editor })));
+const Notes = lazy(() => import('pages.notes').then((module) => ({ default: module.Note })));
 
 const paramsSchema = z.object({
   materialId: z.string(),
@@ -37,7 +37,7 @@ export const Route = createFileRoute('/(app)/_layout/materials/$materialId/note/
 function MaterialsNotesPage() {
   return (
     <Suspense fallback={<LoadingScreen />}>
-      <Editor />
+      <Notes />
     </Suspense>
   );
 }

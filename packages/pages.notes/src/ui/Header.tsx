@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
-import { useParams, useSearch } from '@tanstack/react-router';
+import { useParams } from '@tanstack/react-router';
 import {
   useCurrentUser,
   useGetClassroomMaterial,
@@ -11,15 +11,13 @@ import { Skeleton } from 'common.ui';
 import { EditableTitle } from './EditableTitle';
 
 export const Header = () => {
-  const { noteId = 'empty' } = useParams({ strict: false });
+  const { classroomId, noteId, editorId, materialId } = useParams({ strict: false });
 
-  // @ts-ignore
-  const { classroom } = useSearch({ strict: false });
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
   const getMaterial = (() => {
-    if (classroom) {
+    if (classroomId) {
       if (isTutor) {
         return useGetClassroomMaterial;
       } else {
@@ -30,10 +28,16 @@ export const Header = () => {
     return useGetMaterial;
   })();
 
+  const materialIdValue = noteId ?? editorId ?? materialId;
+
+  if (!materialIdValue) {
+    throw new Error('noteId or editorId or materialId must be provided');
+  }
+
   const { data: material, isLoading } = getMaterial({
-    classroomId: classroom || '',
-    id: noteId,
-    disabled: !noteId,
+    classroomId: classroomId || '',
+    id: materialIdValue,
+    disabled: !materialIdValue,
   });
 
   return (
@@ -43,7 +47,7 @@ export const Header = () => {
           {isLoading ? (
             <Skeleton variant="text" height="48px" className="w-full" />
           ) : (
-            <EditableTitle title={material.name} materialId={noteId} />
+            <EditableTitle title={material.name} materialId={materialIdValue} />
           )}
         </div>
       </div>

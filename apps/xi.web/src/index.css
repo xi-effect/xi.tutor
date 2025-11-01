@@ -34,6 +34,7 @@
 @source "../../../packages/features.invoice/src";
 @source "../../../packages/features.materials.duplicate/src";
 @source "../../../packages/pages.email/src";
+@source "../../../packages/pages.notes/src";
 
 @source "../../../node_modules/@xipkg";
 
