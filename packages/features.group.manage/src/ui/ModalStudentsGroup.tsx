@@ -28,7 +28,7 @@ type ModalStudentsGroupProps = {
 };
 
 export const ModalStudentsGroup = ({ children }: ModalStudentsGroupProps) => {
-  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
+  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
 
   const {
     data: allStudents,

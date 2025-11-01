@@ -8,7 +8,7 @@ import { CardMaterials } from '../CardMaterials';
 import { ClassroomMaterialsT } from 'common.types';
 
 export const MaterialsList = () => {
-  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
+  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
 
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
@@ -83,13 +83,25 @@ export const MaterialsList = () => {
             // Сохраняем только параметр call при переходе
             const filteredSearch = search.call ? { call: search.call } : {};
 
-            navigate({
-              to: `/${material.content_kind === 'board' ? 'board' : 'editor'}/${material.id}`,
-              search: () => ({
-                ...filteredSearch,
-                classroom: classroomId,
-              }),
-            });
+            if (material.content_kind === 'board') {
+              navigate({
+                to: '/classrooms/$classroomId/boards/$boardId',
+                params: {
+                  classroomId: classroomId,
+                  boardId: material.id.toString(),
+                },
+                search: filteredSearch,
+              });
+            } else {
+              navigate({
+                to: '/classrooms/$classroomId/notes/$noteId',
+                params: {
+                  classroomId: classroomId,
+                  noteId: material.id.toString(),
+                },
+                search: filteredSearch,
+              });
+            }
           }}
         />
       ))}

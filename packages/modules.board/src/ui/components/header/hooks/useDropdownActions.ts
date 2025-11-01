@@ -11,19 +11,16 @@ import { useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useEditor } from 'tldraw';
 import { useYjsContext } from '../../../../providers/YjsProvider';
-import { useSearch } from '@tanstack/react-router';
 
 export const useDropdownActions = () => {
   const editor = useEditor();
-  const { boardId = 'empty' } = useParams({ strict: false });
+  const { classroomId, boardId, materialId } = useParams({ strict: false });
 
-  // @ts-ignore
-  const { classroom } = useSearch({ strict: false });
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
   const getMaterial = (() => {
-    if (classroom) {
+    if (classroomId) {
       if (isTutor) {
         return useGetClassroomMaterial;
       } else {
@@ -34,10 +31,14 @@ export const useDropdownActions = () => {
     return useGetMaterial;
   })();
 
+  const materialIdValue = boardId ?? materialId;
+  if (!materialIdValue) {
+    throw new Error('boardId or materialId must be provided');
+  }
+
   const { data } = getMaterial({
-    classroomId: classroom || '',
-    id: boardId,
-    disabled: !boardId,
+    classroomId: classroomId || '',
+    id: materialIdValue,
   });
   const { isReadonly, toggleReadonly } = useYjsContext();
 

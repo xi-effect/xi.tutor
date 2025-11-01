@@ -45,7 +45,7 @@ export const Card: React.FC<MaterialPropsT> = ({ id, updated_at, name, content_k
         const filteredSearch = search.call ? { call: search.call } : {};
 
         navigate({
-          to: `/board/${id}`,
+          to: `/materials/${id}/board`,
           search: (prev: Record<string, unknown>) => ({
             ...prev,
             ...filteredSearch,

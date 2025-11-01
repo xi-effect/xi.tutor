@@ -131,7 +131,13 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
         // Здесь можно добавить уведомление пользователю об ошибке
       }
     },
-    [classroom?.id, updateClassroomStatus, updateIndividualClassroom],
+    [
+      classroom?.id,
+      classroom?.kind,
+      updateClassroomStatus,
+      updateIndividualClassroom,
+      updateGroupClassroom,
+    ],
   );
 
   // Обновляем исходные значения когда данные загружаются

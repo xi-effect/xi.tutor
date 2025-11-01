@@ -18,7 +18,7 @@ export const TabsTutor = () => {
   const navigate = useNavigate();
   const currentTab = search.tab || 'overview';
 
-  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
+  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom } = useGetClassroom(Number(classroomId));
 
   const handleTabChange = (value: string) => {

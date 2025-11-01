@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { YjsProvider } from '../providers/YjsProvider';
 import { TiptapEditor } from './components/TiptapEditor';
-import { useParams, useSearch } from '@tanstack/react-router';
+import { useParams } from '@tanstack/react-router';
 import {
   useCurrentUser,
   useGetClassroomStorageItem,
@@ -11,15 +11,13 @@ import {
 import { LoadingScreen } from 'common.ui';
 
 export const Editor = () => {
-  const { editorId = 'empty' } = useParams({ strict: false });
+  const { classroomId, noteId, editorId, materialId } = useParams({ strict: false });
 
-  // @ts-ignore
-  const { classroom } = useSearch({ strict: false });
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
   const getStorageItem = (() => {
-    if (classroom) {
+    if (classroomId) {
       if (isTutor) {
         return useGetClassroomStorageItem;
       } else {
@@ -30,14 +28,18 @@ export const Editor = () => {
     return useGetStorageItem;
   })();
 
+  const materialIdValue = noteId ?? editorId ?? materialId;
+  if (!materialIdValue) {
+    throw new Error('noteId or editorId or materialId must be provided');
+  }
+
   const {
     data: storageItem,
     isLoading: isStorageItemLoading,
     error: storageItemError,
   } = getStorageItem({
-    classroomId: classroom,
-    id: editorId,
-    disabled: !editorId,
+    classroomId: classroomId || '',
+    id: materialIdValue,
   });
 
   if (isStorageItemLoading) return <LoadingScreen />;

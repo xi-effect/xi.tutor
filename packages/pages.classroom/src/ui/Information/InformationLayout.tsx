@@ -4,7 +4,7 @@ import { Information } from './Information';
 import { ClassroomT } from 'common.api';
 
 export const InformationLayout = () => {
-  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
+  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
 
   if (isLoading) {

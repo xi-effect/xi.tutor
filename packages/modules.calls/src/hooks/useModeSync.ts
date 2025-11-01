@@ -49,11 +49,17 @@ export const useModeSync = () => {
           // Если есть boardId, переходим на доску
           if (payload.boardId && typeof payload.boardId === 'string') {
             console.log('🎯 Navigating to board:', payload.boardId);
-            navigate({
-              to: '/board/$boardId',
-              params: { boardId: payload.boardId },
-              search: { classroom: payload.classroom },
-            });
+            if (payload.classroom) {
+              navigate({
+                to: '/classrooms/$classroomId/boards/$boardId',
+                params: { classroomId: payload.classroom, boardId: payload.boardId },
+              });
+            } else {
+              navigate({
+                to: '/board/$boardId',
+                params: { boardId: payload.boardId },
+              });
+            }
           }
         }
       } catch (error) {

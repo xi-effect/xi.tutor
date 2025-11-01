@@ -114,11 +114,18 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
       }
 
       // Переходим на доску
-      navigate({
-        to: '/board/$boardId',
-        params: { boardId: selectedBoardId.toString() },
-        search: { classroom: callId, call: callId },
-      });
+      if (callId) {
+        navigate({
+          to: '/classrooms/$classroomId/boards/$boardId',
+          params: { classroomId: callId, boardId: selectedBoardId.toString() },
+          search: { call: callId },
+        });
+      } else {
+        navigate({
+          to: '/board/$boardId',
+          params: { boardId: selectedBoardId.toString() },
+        });
+      }
       console.log('🧭 Navigation to board initiated');
 
       onOpenChange(false);

@@ -32,7 +32,7 @@ type ModalGroupInviteProps = {
 };
 
 export const ModalGroupInvite = ({ children }: ModalGroupInviteProps) => {
-  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
+  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data, isLoading } = useGroupInvite({ classroomId: classroomId });
   const { data: classroom } = useGetClassroom(Number(classroomId));
   const { mutate: resetInvite, isPending: isResettingInvite } = useResetGroupInvite({

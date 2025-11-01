@@ -3,7 +3,7 @@
 // import { useFullScreen } from 'pkg.utils.client';
 import { Button } from '@xipkg/button';
 
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
+import { useParams, useRouter } from '@tanstack/react-router';
 import { ArrowLeft, Maximize, Minimize } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import {
@@ -21,18 +21,13 @@ import { HotkeysHelp } from '../shared/HotkeysHelp';
 
 export const Header = () => {
   const { isFullScreen, toggleFullScreen } = useFullScreen('whiteboard-container');
-  const navigate = useNavigate();
-  const search = useSearch({ strict: false });
+  const { classroomId, boardId, materialId } = useParams({ strict: false });
 
-  const { boardId = 'empty' } = useParams({ strict: false });
-
-  // @ts-ignore
-  const { classroom } = useSearch({ strict: false });
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
   const getMaterial = (() => {
-    if (classroom) {
+    if (classroomId) {
       if (isTutor) {
         return useGetClassroomMaterial;
       } else {
@@ -43,25 +38,22 @@ export const Header = () => {
     return useGetMaterial;
   })();
 
+  const materialIdValue = boardId ?? materialId;
+  if (!materialIdValue) {
+    throw new Error('boardId or materialId must be provided');
+  }
+
   const { data: material, isLoading } = getMaterial({
-    classroomId: classroom || '',
-    id: boardId,
-    disabled: !boardId,
+    classroomId: classroomId || '',
+    id: materialIdValue,
   });
+
+  const router = useRouter();
 
   const handleBack = () => {
     if (isFullScreen) toggleFullScreen();
 
-    // Сохраняем параметр call при возврате к материалам
-    const filteredSearch = search.call ? { call: search.call } : {};
-
-    navigate({
-      to: '/materials',
-      search: (prev: Record<string, unknown>) => ({
-        ...prev,
-        ...filteredSearch,
-      }),
-    });
+    router.history.back();
   };
 
   // Обработка событий от горячих клавиш
@@ -96,7 +88,7 @@ export const Header = () => {
           {isLoading ? (
             <Skeleton variant="text" className="h-6 w-24" />
           ) : (
-            <EditableTitle title={material.name} materialId={boardId} />
+            <EditableTitle title={material.name} materialId={materialIdValue} />
           )}
         </div>
         <div className="flex items-center gap-1">
