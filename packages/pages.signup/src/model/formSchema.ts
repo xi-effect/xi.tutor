@@ -40,8 +40,7 @@ export const useFormSchema = () => {
           message: `${t('validation.minLength')}${t('validation.symbols', { count: passwordMinLength })}`,
         }),
       consent: z.boolean().refine((value) => value === true, {
-        message:
-          'Необходимо принять условия пользовательского соглашения и политики конфиденциальности',
+        message: '',
       }),
     });
   }, [t]);
