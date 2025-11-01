@@ -1,1 +1,1 @@
-export { Note } from './src';
+export { Note } from './src/ui';

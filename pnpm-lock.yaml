@@ -3488,45 +3488,24 @@ importers:
 
   packages/pages.notes:
     dependencies:
-      '@tanstack/react-query':
-        specifier: 5.73.3
-        version: 5.73.3(react@19.2.0)
-      '@tanstack/react-virtual':
-        specifier: 3.13.9
-        version: 3.13.9(react-dom@19.2.0)(react@19.2.0)
-      '@xipkg/button':
-        specifier: 3.2.0
-        version: 3.2.0(@types/react@19.2.2)(react@19.2.0)
-      '@xipkg/dropdown':
-        specifier: 3.0.12
-        version: 3.0.12(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
-      '@xipkg/file':
-        specifier: 2.0.12
-        version: 2.0.12(react@19.2.0)
-      '@xipkg/scrollarea':
-        specifier: 2.2.0
-        version: 2.2.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
-      '@xipkg/tabs':
-        specifier: ^2.1.0
-        version: 2.1.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
-      '@xipkg/userprofile':
-        specifier: 4.0.14
-        version: 4.0.14(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
-      common.api:
-        specifier: '*'
-        version: link:../common.api
-      common.config:
-        specifier: '*'
-        version: link:../common.config
+      '@tanstack/react-router':
+        specifier: ^1.128.8
+        version: 1.128.8(react-dom@19.2.0)(react@19.2.0)
+      '@xipkg/form':
+        specifier: 4.2.1
+        version: 4.2.1(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+      '@xipkg/input':
+        specifier: 2.0.7
+        version: 2.0.7(react@19.2.0)
+      '@xipkg/utils':
+        specifier: ^1.8.0
+        version: 1.8.0(react@19.2.0)
       common.services:
         specifier: '*'
         version: link:../common.services
-      dayjs:
-        specifier: ^1.11.13
-        version: 1.11.13
-      features.materials.add:
+      common.ui:
         specifier: '*'
-        version: link:../features.materials.add
+        version: link:../common.ui
       modules.editor:
         specifier: '*'
         version: link:../modules.editor

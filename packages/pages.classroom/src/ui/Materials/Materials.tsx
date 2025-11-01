@@ -178,7 +178,7 @@ export const Materials = () => {
                       const filteredSearch = search.call ? { call: search.call } : {};
 
                       navigate({
-                        to: `/editor/${note.id}`,
+                        to: `/note/${note.id}`,
                         search: () => ({
                           ...filteredSearch,
                           classroom: classroomId,

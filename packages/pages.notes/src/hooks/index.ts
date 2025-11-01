@@ -1,0 +1,1 @@
+export { useMaterialUpdate } from './useMaterialUpdate';

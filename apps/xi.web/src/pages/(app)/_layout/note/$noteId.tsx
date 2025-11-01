@@ -7,10 +7,10 @@ import { z } from 'zod';
 const Notes = lazy(() => import('pages.notes').then((m) => ({ default: m.Note })));
 
 const paramsSchema = z.object({
-  editorId: z.string(),
+  noteId: z.string(),
 });
 
-export const Route = createFileRoute('/(app)/_layout/note/$editorId')({
+export const Route = createFileRoute('/(app)/_layout/note/$noteId')({
   head: () => ({
     meta: [{ title: 'sovlium | Редактор' }],
   }),

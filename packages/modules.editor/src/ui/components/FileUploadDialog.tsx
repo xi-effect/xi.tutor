@@ -22,7 +22,7 @@ export const ImageUploadModal = () => {
   const [mode, setMode] = useState<'upload' | 'link'>('upload');
   const [imageLink, setImageLink] = useState('');
 
-  const { editorId = 'empty' } = useParams({ strict: false });
+  const { noteId = 'empty' } = useParams({ strict: false });
 
   // @ts-ignore
   const { classroom } = useSearch({ strict: false });
@@ -43,8 +43,8 @@ export const ImageUploadModal = () => {
 
   const { data: storageItem } = getStorageItem({
     classroomId: classroom || '',
-    id: editorId,
-    disabled: !editorId,
+    id: noteId,
+    disabled: !noteId,
   });
 
   const { editor } = useYjsContext();

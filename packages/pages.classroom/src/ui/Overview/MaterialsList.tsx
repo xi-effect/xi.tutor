@@ -84,7 +84,7 @@ export const MaterialsList = () => {
             const filteredSearch = search.call ? { call: search.call } : {};
 
             navigate({
-              to: `/${material.content_kind === 'board' ? 'board' : 'editor'}/${material.id}`,
+              to: `/${material.content_kind === 'board' ? 'board' : 'note'}/${material.id}`,
               search: () => ({
                 ...filteredSearch,
                 classroom: classroomId,

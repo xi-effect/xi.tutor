@@ -11,7 +11,7 @@ import {
 import { LoadingScreen } from 'common.ui';
 
 export const Editor = () => {
-  const { editorId = 'empty' } = useParams({ strict: false });
+  const { noteId = 'empty' } = useParams({ strict: false });
 
   // @ts-ignore
   const { classroom } = useSearch({ strict: false });
@@ -36,8 +36,8 @@ export const Editor = () => {
     error: storageItemError,
   } = getStorageItem({
     classroomId: classroom,
-    id: editorId,
-    disabled: !editorId,
+    id: noteId,
+    disabled: !noteId,
   });
 
   if (isStorageItemLoading) return <LoadingScreen />;
