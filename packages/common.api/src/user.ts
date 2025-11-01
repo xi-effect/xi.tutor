@@ -37,11 +37,6 @@ const userApiConfig = {
       `${env.VITE_SERVER_URL_BACKEND}/api/public/user-service/password-reset/confirmations/`,
     method: HttpMethod.POST,
   },
-  [UserQueryKey.UserById]: {
-    getUrl: (id: string) =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/by-id/${id}/profile/`,
-    method: HttpMethod.GET,
-  },
   [UserQueryKey.EmailConfirmationRequest]: {
     getUrl: () =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/email-confirmation-requests/`,

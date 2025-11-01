@@ -40,7 +40,7 @@
     "pages.reset-password": "*",
     "pages.welcome": "*",
     "pages.invites": "*",
-    "pages.notes": "*",
+    "pages.email": "*",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "15.4.1",

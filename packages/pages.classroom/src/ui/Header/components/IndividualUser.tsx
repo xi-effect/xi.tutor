@@ -1,8 +1,11 @@
 import { UserProfile } from '@xipkg/userprofile';
-import { useUserById } from 'common.services';
+import { useCurrentUser, useStudentById, useTutorById } from 'common.services';
 
 export const IndividualUser = ({ userId }: { userId: number }) => {
-  const { data: user } = useUserById(userId.toString());
+  const { data: currentUser } = useCurrentUser();
+  const isTutor = currentUser?.default_layout === 'tutor';
+  const getUser = isTutor ? useStudentById : useTutorById;
+  const { data: user } = getUser(userId);
 
   return (
     <div className="flex flex-row items-center gap-2">

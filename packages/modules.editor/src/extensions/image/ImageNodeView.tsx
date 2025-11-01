@@ -11,16 +11,84 @@ import { Button } from '@xipkg/button';
 import { ArrowBottom, ArrowUp, Copy, Download, MoreVert, Trash } from '@xipkg/icons';
 import { useBlockMenuActions, useYjsContext } from '../../hooks';
 import { cn } from '@xipkg/utils';
+import { useState, useEffect } from 'react';
+import { getAxiosInstance } from 'common.config';
+
+// Кеш blob URL для уже загруженных изображений (по исходному src)
+const blobUrlCache = new Map<string, string>();
 
 export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
   const src = node.attrs.src;
-  const { editor } = useYjsContext();
+  const { editor, storageToken } = useYjsContext();
   const { duplicate, remove, downloadImage, moveDown, moveUp } = useBlockMenuActions(editor);
+  const [imageSrc, setImageSrc] = useState<string>(src);
+
+  useEffect(() => {
+    const loadImageWithToken = async () => {
+      // Если нет src или токена — используем исходный src
+      if (!src || !storageToken) {
+        setImageSrc(src);
+        return;
+      }
+
+      // Пропускаем data: и blob: URL — они уже пригодны к отображению
+      if (src.startsWith('data:') || src.startsWith('blob:')) {
+        setImageSrc(src);
+        return;
+      }
+
+      // Проверяем кеш
+      const cached = blobUrlCache.get(src);
+      if (cached) {
+        setImageSrc(cached);
+        return;
+      }
+
+      try {
+        // Загружаем изображение с заголовком токена через axios
+        const axiosInst = await getAxiosInstance();
+        const response = await axiosInst.get(src, {
+          responseType: 'blob',
+          headers: {
+            'x-storage-token': storageToken,
+          },
+        });
+
+        if (response.status !== 200) {
+          setImageSrc(src);
+          return;
+        }
+
+        // Создаем blob URL из загруженного изображения
+        const blob = response.data;
+        const blobUrl = URL.createObjectURL(blob);
+
+        // Сохраняем в кеш
+        blobUrlCache.set(src, blobUrl);
+
+        setImageSrc(blobUrl);
+      } catch (error) {
+        console.error('[ImageNodeView] Ошибка при загрузке изображения:', error);
+        // На любой ошибке используем исходный src
+        setImageSrc(src);
+      }
+    };
+
+    loadImageWithToken();
+  }, [src, storageToken]);
+
+  // Очистка blob URL при размонтировании компонента (если это последний компонент с этим src)
+  useEffect(() => {
+    return () => {
+      // Не очищаем blob URL сразу, так как он может использоваться другими компонентами
+      // Кеш управляется глобально, очистка будет выполнена при необходимости
+    };
+  }, []);
 
   return (
     <NodeViewWrapper className="group relative flex justify-center">
       <img
-        src={src}
+        src={imageSrc}
         alt={node.attrs.alt || ''}
         className={cn(
           'max-h-[600px] rounded-lg object-contain',

@@ -17,3 +17,4 @@ export * from './tutors';
 export * from './files';
 export * from './contacts';
 export * from './paymentsTemplates';
+export { filesApiConfig, FilesQueryKey } from 'common.api';

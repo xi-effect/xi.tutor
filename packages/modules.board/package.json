@@ -24,6 +24,7 @@
     "@xipkg/tooltip": "^2.1.0",
     "@xipkg/utils": "^1.8.0",
     "common.config": "*",
+    "common.api": "*",
     "common.env": "*",
     "common.services": "*",
     "common.ui": "*",

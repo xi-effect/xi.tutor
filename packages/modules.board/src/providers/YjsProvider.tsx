@@ -23,6 +23,7 @@ export const YjsProvider = ({ children, storageItem }: YjsProviderProps) => {
   const yjsStore = useYjsStore({
     storageToken: storageItem?.storage_token || '',
     ydocId: storageItem?.ydoc_id || '',
+    token: storageItem?.storage_token || '', // Передаем токен для asset store
   });
 
   return <YjsContext.Provider value={yjsStore}>{children}</YjsContext.Provider>;

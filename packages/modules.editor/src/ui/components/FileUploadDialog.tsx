@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useState } from 'react';
 import { Modal, ModalContent, ModalTitle } from '@xipkg/modal';
 import { FileUploader } from '@xipkg/fileuploader';
@@ -5,17 +6,50 @@ import { useInterfaceStore } from '../../store/interfaceStore';
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
 import { optimizeImage } from '../../utils/optimizeImage';
-import { useUploadPublicFile } from 'common.services';
+import {
+  useCurrentUser,
+  useGetClassroomStorageItem,
+  useGetClassroomStorageItemStudent,
+  useGetStorageItem,
+  useUploadImage,
+} from 'common.services';
 import { useBlockMenuActions, useYjsContext } from '../../hooks';
+import { useParams } from '@tanstack/react-router';
+import { useSearch } from '@tanstack/react-router';
 
 export const ImageUploadModal = () => {
   const { closeModal, activeModal } = useInterfaceStore();
   const [mode, setMode] = useState<'upload' | 'link'>('upload');
   const [imageLink, setImageLink] = useState('');
 
+  const { editorId = 'empty' } = useParams({ strict: false });
+
+  // @ts-ignore
+  const { classroom } = useSearch({ strict: false });
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const getStorageItem = (() => {
+    if (classroom) {
+      if (isTutor) {
+        return useGetClassroomStorageItem;
+      } else {
+        return useGetClassroomStorageItemStudent;
+      }
+    }
+
+    return useGetStorageItem;
+  })();
+
+  const { data: storageItem } = getStorageItem({
+    classroomId: classroom || '',
+    id: editorId,
+    disabled: !editorId,
+  });
+
   const { editor } = useYjsContext();
 
-  const { mutateAsync: uploadImage } = useUploadPublicFile();
+  const { mutateAsync: uploadImage } = useUploadImage();
 
   const { insertImage } = useBlockMenuActions(editor);
 
@@ -24,7 +58,10 @@ export const ImageUploadModal = () => {
     const file = files[0];
     const optimizedImage = await optimizeImage(file);
     try {
-      const uploadedUrl = await uploadImage(optimizedImage);
+      const uploadedUrl = await uploadImage({
+        file: optimizedImage,
+        token: storageItem.storage_token,
+      });
 
       insertImage(uploadedUrl);
 
