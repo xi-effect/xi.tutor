@@ -9,13 +9,13 @@ enum ClassroomNotesQueryKey {
 const classroomNotesApiConfig = {
   [ClassroomNotesQueryKey.GetNoteStorageItem]: {
     getUrl: (classroomId: string) => {
-      return `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/classrooms/${classroomId}/notes/storage-item/`;
+      return `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/classrooms/${classroomId}/note/storage-item/`;
     },
     method: HttpMethod.GET,
   },
   [ClassroomNotesQueryKey.AddNoteStorageItem]: {
     getUrl: (classroomId: string) =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/classrooms/${classroomId}/notes/storage-item/`,
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/classroom-service/roles/tutor/classrooms/${classroomId}/note/storage-item/`,
     method: HttpMethod.POST,
   },
 };

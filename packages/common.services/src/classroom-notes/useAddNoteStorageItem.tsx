@@ -23,16 +23,16 @@ export const useAddNoteStorageItem = () => {
   const addNoteStorageItemMutation = useMutation<
     NoteStorageItemResponseT,
     Error,
-    NoteStorageItemDataT & { classroomId: string },
+    { classroomId: string },
     MutationContext
   >({
-    mutationFn: async (noteData: { classroomId: string }) => {
+    mutationFn: async (variables) => {
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
           method: classroomNotesApiConfig[ClassroomNotesQueryKey.AddNoteStorageItem].method,
           url: classroomNotesApiConfig[ClassroomNotesQueryKey.AddNoteStorageItem].getUrl(
-            noteData.classroomId,
+            variables.classroomId,
           ),
           headers: {
             'Content-Type': 'application/json',
@@ -56,7 +56,11 @@ export const useAddNoteStorageItem = () => {
     onError: (err) => {
       handleError(err, 'materials');
     },
-    onSuccess: () => {},
+    onSuccess: (_response, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: [ClassroomNotesQueryKey.GetNoteStorageItem, variables.classroomId],
+      });
+    },
   });
 
   return { addNoteStorageItem: addNoteStorageItemMutation };

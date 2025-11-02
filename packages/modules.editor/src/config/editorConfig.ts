@@ -53,7 +53,7 @@ export const getExtensions = (
       ],
     }),
     Placeholder.configure({
-      placeholder: 'Начни писать здесь…',
+      placeholder: 'Начните писать здесь…',
       emptyEditorClass: 'is-editor-empty',
       showOnlyWhenEditable: true,
     }),

@@ -1,24 +1,29 @@
 import { useForm } from '@xipkg/form';
-import { Editor } from 'modules.editor';
-// import { Input } from '@xipkg/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@xipkg/form';
 
 import { useEffect, useRef, useCallback } from 'react';
 import { ClassroomT, ClassroomStatusT } from 'common.api';
 import {
+  useGetNoteStorageItem,
   useUpdateClassroomStatus,
   useUpdateGroupClassroom,
   useUpdateIndividualClassroom,
 } from 'common.services';
 import { Autocomplete } from './Autocomplete';
+import { useParams } from '@tanstack/react-router';
+import { InformationNote } from './InformationNote';
 interface FormData {
   status: ClassroomStatusT;
   subject: number | null;
 }
 
 export const Information = ({ classroom }: { classroom: ClassroomT }) => {
-  console.log('classroom', classroom);
+  const { classroomId = '' } = useParams({ strict: false });
+
+  const { data: note } = useGetNoteStorageItem({
+    classroomId: classroomId,
+  });
 
   const { updateGroupClassroom, isUpdating: isUpdatingGroupClassroom } = useUpdateGroupClassroom();
   const { updateClassroomStatus, isUpdating } = useUpdateClassroomStatus();
@@ -162,7 +167,7 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
   return (
     <div className="flex flex-col gap-4 md:flex-row">
       <div className="order-2 flex h-full w-full flex-1 justify-center md:order-1">
-        <Editor />
+        <InformationNote classroom={classroom} note={note} />
       </div>
 
       <div className="order-1 w-full md:order-2 md:w-[300px]">

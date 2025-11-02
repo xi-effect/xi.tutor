@@ -30,7 +30,7 @@ const MaterialsPageContent = () => {
   return (
     <>
       <div className="flex flex-col justify-between gap-6 pl-4">
-        <div className="flex flex-col gap-6 pt-1 max-md:gap-4">
+        <div className="flex flex-col pt-1">
           <Header />
           <TabsComponent />
         </div>

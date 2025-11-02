@@ -1,5 +1,5 @@
 import { classroomNotesApiConfig, ClassroomNotesQueryKey } from 'common.api';
-import { MaterialT } from 'common.types';
+import { StorageItemT } from 'common.types';
 import { useFetching } from 'common.config';
 
 export const useGetNoteStorageItem = ({
@@ -7,7 +7,6 @@ export const useGetNoteStorageItem = ({
   disabled,
 }: {
   classroomId: string;
-  id: string;
   disabled?: boolean;
 }) => {
   const { data, isError, isLoading, ...rest } = useFetching({
@@ -19,12 +18,12 @@ export const useGetNoteStorageItem = ({
         'Content-Type': 'application/json',
       },
     },
-    disabled: disabled || !classroomId,
+    disabled: disabled,
     queryKey: [ClassroomNotesQueryKey.GetNoteStorageItem, classroomId],
   });
 
   return {
-    data: data as MaterialT,
+    data: data as StorageItemT,
     isError,
     isLoading,
     ...rest,

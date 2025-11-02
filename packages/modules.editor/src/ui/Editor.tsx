@@ -8,9 +8,10 @@ import {
   useGetClassroomStorageItemStudent,
   useGetStorageItem,
 } from 'common.services';
+import { StorageItemT } from 'common.types';
 import { LoadingScreen } from 'common.ui';
 
-export const Editor = () => {
+const EditorWithoutData = () => {
   const { classroomId, noteId, editorId, materialId } = useParams({ strict: false });
 
   const { data: user } = useCurrentUser();
@@ -56,4 +57,20 @@ export const Editor = () => {
       <TiptapEditor />
     </YjsProvider>
   );
+};
+
+const EditorWithData = ({ storageItem }: { storageItem: StorageItemT }) => {
+  return (
+    <YjsProvider data={storageItem}>
+      <TiptapEditor />
+    </YjsProvider>
+  );
+};
+
+export const Editor = ({ storageItem }: { storageItem?: StorageItemT }) => {
+  if (storageItem) {
+    return <EditorWithData storageItem={storageItem} />;
+  }
+
+  return <EditorWithoutData />;
 };

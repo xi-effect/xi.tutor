@@ -4,12 +4,14 @@ import { useEditor, Editor } from '@tiptap/react';
 import { getExtensions } from '../config/editorConfig';
 import { editorProps } from '../config/editorProps';
 import { toast } from 'sonner';
+import { StorageItemT } from 'common.types';
 
 import { HocuspocusProvider } from '@hocuspocus/provider';
 
 type UseYjsStoreArgs = {
   ydocId: string;
   storageToken: string;
+  storageItem: StorageItemT;
 };
 
 export type UseCollaborativeTiptapReturn = {
@@ -20,11 +22,13 @@ export type UseCollaborativeTiptapReturn = {
   canRedo: boolean;
   isReadOnly: boolean;
   storageToken: string;
+  storageItem: StorageItemT;
 };
 
 export function useYjsStore({
   ydocId,
   storageToken,
+  storageItem,
 }: UseYjsStoreArgs): UseCollaborativeTiptapReturn {
   const ydoc = useMemo(() => {
     console.log('Создаем новый Y.Doc для документа:', ydocId);
@@ -164,5 +168,14 @@ export function useYjsStore({
 
   const isReadOnly = editor ? !editor.isEditable : false;
 
-  return { editor: editor ?? null, undo, redo, canUndo, canRedo, isReadOnly, storageToken };
+  return {
+    editor: editor ?? null,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+    isReadOnly,
+    storageToken,
+    storageItem,
+  };
 }

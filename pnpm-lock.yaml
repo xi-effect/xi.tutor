@@ -2861,6 +2861,9 @@ importers:
       common.types:
         specifier: '*'
         version: link:../common.types
+      common.ui:
+        specifier: '*'
+        version: link:../common.ui
       features.group.invite:
         specifier: '*'
         version: link:../features.group.invite
