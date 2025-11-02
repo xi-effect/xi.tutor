@@ -52,8 +52,12 @@ export const Editor = () => {
     );
 
   return (
-    <YjsProvider data={storageItem}>
-      <TiptapEditor />
-    </YjsProvider>
+    <div className="flex w-full justify-center overflow-auto py-8">
+      <div className="w-full max-w-4xl pl-16">
+        <YjsProvider data={storageItem}>
+          <TiptapEditor />
+        </YjsProvider>
+      </div>
+    </div>
   );
 };

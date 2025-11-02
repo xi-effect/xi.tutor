@@ -74,7 +74,7 @@ export const EditableTitle = ({ title, materialId, className }: EditableTitlePro
                     onBlur={handleBlur}
                     onKeyDown={handleKeyDown}
                     className={cn(
-                      'text-l-base sm:text-h6 xl:text-h3 w-full border-none bg-transparent p-0 text-[40px] shadow-none',
+                      'text-l-base sm:text-h6 xl:text-h3 h-7 w-full border-none bg-transparent p-0 shadow-none sm:h-9 xl:h-12',
                       className,
                     )}
                     autoFocus
