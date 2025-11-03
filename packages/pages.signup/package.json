@@ -18,6 +18,7 @@
     "common.ui": "*",
     "@xipkg/button": "3.2.0",
     "@xipkg/form": "4.2.1",
+    "@xipkg/checkbox": "^5.0.0",
     "@xipkg/icons": "^2.5.4",
     "@xipkg/input": "2.0.7",
     "@xipkg/link": "2.0.12",
