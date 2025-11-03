@@ -40,12 +40,10 @@ export const useDeleteMaterials = () => {
         throw err;
       }
     },
-    onMutate: async (params) => {
-      console.log('onMutate delete', params);
-
-      // Отменяем все queries, которые начинаются с [Materials, kind]
+    onMutate: async () => {
+      // Отменяем все queries, которые начинаются с [Materials]
       await queryClient.cancelQueries({
-        queryKey: [MaterialsQueryKey.Materials, params.content_kind],
+        queryKey: [MaterialsQueryKey.Materials],
       });
 
       return { previousQueries: [] };
@@ -54,9 +52,9 @@ export const useDeleteMaterials = () => {
       handleError(err, 'materials');
     },
     onSuccess: (_, params) => {
-      // Инвалидируем все queries для данного kind, чтобы они перезапросились
+      // Инвалидируем все запросы материалов, включая список с 'all'
       queryClient.invalidateQueries({
-        queryKey: [MaterialsQueryKey.Materials, params.content_kind],
+        queryKey: [MaterialsQueryKey.Materials],
       });
 
       showSuccess('materials', `${params.name || 'Материал'} удален`);

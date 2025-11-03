@@ -3336,6 +3336,9 @@ importers:
       features.materials.add:
         specifier: '*'
         version: link:../features.materials.add
+      features.materials.duplicate:
+        specifier: '*'
+        version: link:../features.materials.duplicate
       pages.classrooms:
         specifier: '*'
         version: link:../pages.classrooms
