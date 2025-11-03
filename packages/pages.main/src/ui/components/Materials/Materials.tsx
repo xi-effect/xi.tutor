@@ -65,7 +65,7 @@ const MaterialsContent = () => {
             </ScrollArea>
           )}
           {materials && materials.length === 0 && (
-            <div className="flex flex-row gap-8">
+            <div className="flex h-[180px] w-full flex-row items-center justify-center gap-8">
               <p className="text-m-base text-gray-60">Здесь пока пусто</p>
             </div>
           )}
