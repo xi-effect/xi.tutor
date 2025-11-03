@@ -13,9 +13,9 @@ export const Route = createFileRoute('/(auth)/signin/')({
     ],
   }),
   component: SignIn,
-  beforeLoad: ({ context }) => {
-    console.log('SignInRoute', context, location);
-  },
+  // beforeLoad: ({ context }) => {
+  //   console.log('SignInRoute', context, location);
+  // },
 });
 
 function SignIn() {

@@ -35,8 +35,8 @@ export const Route = createFileRoute('/(app)/_layout/board/$boardId')({
   }),
   component: BoardPage,
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
-  beforeLoad: ({ context, location }) => {
-    console.log('TldrawBoard', context, location);
+  beforeLoad: () => {
+    // console.log('TldrawBoard', context, location);
     // Предзагружаем модуль доски
     preloadBoard();
   },

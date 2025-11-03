@@ -16,7 +16,7 @@ export const Route = createFileRoute('/(app)/_layout/payments/')({
     ],
   }),
   component: Payments,
-  beforeLoad: ({ context, location }) => {
-    console.log('Payments', context, location);
-  },
+  // beforeLoad: ({ context, location }) => {
+  //   console.log('Payments', context, location);
+  // },
 });

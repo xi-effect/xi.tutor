@@ -29,8 +29,6 @@ export const MaterialsList = () => {
     disabled: !classroomId,
   });
 
-  console.log('materials', materials);
-
   if (isLoading) {
     return (
       <div className="flex flex-row gap-8 pb-4">

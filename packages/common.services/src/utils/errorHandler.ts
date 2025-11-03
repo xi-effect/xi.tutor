@@ -20,7 +20,8 @@ export type ErrorType =
   | 'classroom'
   | 'calls'
   | 'createGroup'
-  | 'files';
+  | 'files'
+  | 'notifications';
 
 // Маппинг ошибок для разных операций
 const errorMessages: Record<ErrorType, Record<string, string>> = {
@@ -105,6 +106,11 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
   files: {
     'Invalid file format': 'Недопустимый тип файла',
   },
+  notifications: {
+    'Validation Error': 'Ошибка валидации',
+    'Notification not found': 'Уведомление не найдено',
+    'Notification access denied': 'Доступ к уведомлению запрещен',
+  },
 };
 
 // Общие сообщения об ошибках по статусам
@@ -137,6 +143,7 @@ const successMessages: Record<ErrorType, string> = {
   calls: 'Access token создан',
   createGroup: 'Группа успешно создана',
   files: 'Файл успешно загружен',
+  notifications: 'Уведомление успешно отмечено как прочитанное',
 };
 
 /**
@@ -202,6 +209,8 @@ const getOperationName = (type: ErrorType): string => {
       return 'создании группы';
     case 'files':
       return 'загрузке файла';
+    case 'notifications':
+      return 'обработке уведомления';
     default:
       return 'выполнении операции';
   }

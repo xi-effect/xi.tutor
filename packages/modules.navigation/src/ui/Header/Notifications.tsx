@@ -7,13 +7,16 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { ScrollArea } from '@xipkg/scrollarea';
+// import { ScrollArea } from '@xipkg/scrollarea'; // Убрали ScrollArea, используем обычный div с overflow
 import { UserProfile } from '@xipkg/userprofile';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import { useLocation, useNavigate } from '@tanstack/react-router';
+import { useRef, useEffect } from 'react';
 import { useNotificationsContext } from 'common.services';
 import type { NotificationT } from 'common.types';
 import { NotificationBadge } from './NotificationBadge';
+// import { VirtualList } from './VirtualList';
+// import { useVirtualList } from '../../hooks/useVirtualList';
 import {
   generateNotificationTitle,
   generateNotificationDescription,
@@ -87,27 +90,123 @@ const NotificationItem = ({
 export const Notifications = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
   const {
     notifications,
     unreadCount,
     markAsRead,
-    markAllAsRead,
+    // markAllAsRead,
     deleteNotification,
     isLoading,
     hasMore,
     loadMore,
+    isFetchingNextPage,
   } = useNotificationsContext();
+
+  // Виртуализация списка уведомлений (временно отключено для проверки)
+  // const virtualizer = useVirtualList(scrollAreaRef, notifications);
 
   const handleToSettings = () => {
     navigate({ to: location.pathname, search: { profile: 'notifications' } });
   };
 
-  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
-    const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
-    if (scrollHeight - scrollTop === clientHeight && hasMore && !isLoading) {
-      loadMore();
+  // Обработчик скролла для автоматической загрузки следующей страницы (по аналогии с useInfiniteQuery из materials)
+  useEffect(() => {
+    const handleScroll = () => {
+      const el = scrollAreaRef.current;
+      if (!el) {
+        return;
+      }
+
+      const { scrollTop, scrollHeight, clientHeight } = el;
+      const distanceToBottom = scrollHeight - scrollTop - clientHeight;
+
+      console.log('📜 Скролл:', {
+        scrollTop,
+        scrollHeight,
+        clientHeight,
+        distanceToBottom,
+        hasMore,
+        isFetchingNextPage,
+      });
+
+      if (isFetchingNextPage || !hasMore) {
+        return;
+      }
+
+      // Загружаем следующую страницу, когда до конца осталось меньше 100px
+      if (distanceToBottom < 100) {
+        console.log('✅ Загружаем следующую страницу уведомлений');
+        loadMore();
+      }
+    };
+
+    let currentElement: HTMLDivElement | null = null;
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+    let observer: MutationObserver | null = null;
+
+    // Функция для подключения обработчика скролла
+    const attachScrollListener = () => {
+      const el = scrollAreaRef.current;
+      if (!el) {
+        return false;
+      }
+
+      currentElement = el;
+      console.log('✅ Привязан обработчик скролла');
+      el.addEventListener('scroll', handleScroll);
+
+      // Также проверяем сразу, может быть уже нужно загрузить
+      handleScroll();
+
+      return true;
+    };
+
+    // Пробуем подключить сразу
+    if (!attachScrollListener()) {
+      // Если элемент еще не существует (рендерится через портал), ждем появления
+      // Используем небольшую задержку и повторные попытки
+      let attempts = 0;
+      const maxAttempts = 10;
+      intervalId = setInterval(() => {
+        attempts++;
+        if (attachScrollListener() || attempts >= maxAttempts) {
+          if (intervalId) {
+            clearInterval(intervalId);
+            intervalId = null;
+          }
+        }
+      }, 100);
+
+      // Также используем MutationObserver для отслеживания появления элемента
+      observer = new MutationObserver(() => {
+        if (attachScrollListener()) {
+          if (observer) {
+            observer.disconnect();
+            observer = null;
+          }
+        }
+      });
+
+      // Наблюдаем за document.body, так как DropdownMenuContent рендерится через портал
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+      });
     }
-  };
+
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+      if (observer) {
+        observer.disconnect();
+      }
+      if (currentElement) {
+        currentElement.removeEventListener('scroll', handleScroll);
+      }
+    };
+  }, [hasMore, isFetchingNextPage, loadMore]);
 
   return (
     <DropdownMenu>
@@ -124,7 +223,7 @@ export const Notifications = () => {
         <DropdownMenuLabel className="text-m-base flex h-[48px] items-center p-3 font-semibold text-gray-100">
           Уведомления
           <div className="ml-auto flex items-center gap-1">
-            {unreadCount > 0 && (
+            {/* {unreadCount > 0 && (
               <Button
                 variant="ghost"
                 size="sm"
@@ -133,35 +232,38 @@ export const Notifications = () => {
               >
                 Прочитать все
               </Button>
-            )}
+            )} */}
             <Button onClick={handleToSettings} variant="ghost" className="h-[32px] w-[32px] p-1">
               <Settings className="fill-gray-80" size="s" />
             </Button>
           </div>
         </DropdownMenuLabel>
-        <ScrollArea className="h-[300px] pr-3" onScroll={handleScroll}>
+        <div ref={scrollAreaRef} className="h-[300px] overflow-y-auto pr-3">
           {notifications.length > 0 ? (
-            <div className="group">
-              {notifications.map((notification: NotificationT) => (
-                <NotificationItem
-                  key={notification.id}
-                  notification={notification}
-                  onMarkAsRead={markAsRead}
-                  onDelete={deleteNotification}
-                />
-              ))}
-              {isLoading && (
+            <>
+              <div className="group">
+                {notifications.map((notification: NotificationT) => (
+                  <div key={notification.id}>
+                    <NotificationItem
+                      notification={notification}
+                      onMarkAsRead={markAsRead}
+                      onDelete={deleteNotification}
+                    />
+                  </div>
+                ))}
+              </div>
+              {(isLoading || isFetchingNextPage) && (
                 <div className="flex justify-center p-4">
                   <span className="text-gray-80 text-s-base">Загрузка...</span>
                 </div>
               )}
-            </div>
+            </>
           ) : (
             <div className="flex h-[300px] flex-col items-center justify-center">
               <span className="text-gray-80 text-m-base font-normal">Уведомлений нет</span>
             </div>
           )}
-        </ScrollArea>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );

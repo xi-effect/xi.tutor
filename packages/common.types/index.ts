@@ -5,6 +5,9 @@ export type {
   NotificationT,
   NotificationSocketEvents,
   NotificationsStateT,
+  RecipientNotificationResponse,
+  NotificationsSearchResponse,
+  NotificationSearchRequest,
 } from './src/notifications';
 export type {
   MaterialT,

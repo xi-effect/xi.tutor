@@ -30,9 +30,9 @@ export const Route = createFileRoute('/(app)/_layout/classrooms/$classroomId/not
   component: ClassroomsNotesPage,
   // @ts-ignore
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
-  beforeLoad: ({ context, location }) => {
-    console.log('Editor', context, location);
-  },
+  // beforeLoad: ({ context, location }) => {
+  //   console.log('Editor', context, location);
+  // },
 });
 
 function ClassroomsNotesPage() {

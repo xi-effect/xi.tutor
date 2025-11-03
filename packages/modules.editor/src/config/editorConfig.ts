@@ -67,12 +67,6 @@ export const getExtensions = (
     return base;
   }
 
-  console.log('Инициализируем коллаборативные расширения TipTap', {
-    hasProvider: !!provider,
-    hasYdoc: !!ydoc,
-    providerConnected: provider?.isConnected,
-  });
-
   try {
     return [
       ...base,

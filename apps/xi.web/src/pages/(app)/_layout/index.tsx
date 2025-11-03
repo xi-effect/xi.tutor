@@ -23,8 +23,8 @@ export const Route = createFileRoute('/(app)/_layout/')({
       },
     ],
   }),
-  beforeLoad: ({ context, location }) => {
-    console.log('IndexRoute', context, location);
-  },
+  // beforeLoad: ({ context, location }) => {
+  //   console.log('IndexRoute', context, location);
+  // },
   component: Main,
 });

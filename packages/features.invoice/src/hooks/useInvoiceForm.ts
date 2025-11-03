@@ -16,9 +16,7 @@ export const useInvoiceForm = () => {
     },
   });
 
-  const { control, watch, setValue, handleSubmit, formState } = form;
-
-  console.log('formState', formState.errors);
+  const { control, watch, setValue, handleSubmit } = form;
 
   const items = watch('items');
 

@@ -15,9 +15,9 @@ export const Route = createFileRoute('/(app)/email/$emailId')({
   }),
   component: EditorPage,
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
-  beforeLoad: ({ context, location }) => {
-    console.log('Email', context, location);
-  },
+  // beforeLoad: ({ context, location }) => {
+  //   console.log('Email', context, location);
+  // },
 });
 
 function EditorPage() {

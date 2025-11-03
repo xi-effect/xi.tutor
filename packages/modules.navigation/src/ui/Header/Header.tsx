@@ -15,9 +15,6 @@ import { Notifications } from './Notifications';
 import { MobileUserMenu } from './MobileUserMenu';
 import { DesktopUserMenu } from './DesktopUserMenu';
 import { useCurrentUser } from 'common.services';
-// import { TestNotificationButton } from './TestNotificationButton';
-// import { NotificationDebug } from './NotificationDebug';
-// import { SimpleTest } from './SimpleTest';
 
 const UserSettings = lazy(() =>
   import('modules.profile').then((module) => ({ default: module.UserSettings })),
@@ -105,9 +102,6 @@ export const Header = ({
       </div>
 
       <UserSettings open={open} setOpen={setOpen} />
-      {/* <TestNotificationButton />
-      <NotificationDebug />
-      <SimpleTest /> */}
     </div>
   );
 };
