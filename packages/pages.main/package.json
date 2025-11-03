@@ -33,6 +33,7 @@
     "features.materials.add": "*",
     "features.group.add": "*",
     "pages.classrooms": "*",
+    "pages.materials": "*",
     "react-hook-form": "^7.55.0",
     "zod": "3.24.2"
   },

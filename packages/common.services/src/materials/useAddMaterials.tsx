@@ -64,10 +64,10 @@ export const useAddMaterials = () => {
         throw err;
       }
     },
-    onMutate: async (materialsData) => {
-      // Отменяем все queries, которые начинаются с [Materials, kind]
+    onMutate: async () => {
+      // Отменяем все queries, которые начинаются с [Materials]
       await queryClient.cancelQueries({
-        queryKey: [MaterialsQueryKey.Materials, materialsData.content_kind],
+        queryKey: [MaterialsQueryKey.Materials],
       });
 
       return { previousQueries: [] };
@@ -77,8 +77,9 @@ export const useAddMaterials = () => {
     },
     onSuccess: (response) => {
       if (response.data) {
+        // Инвалидируем все запросы материалов, включая список с 'all'
         queryClient.invalidateQueries({
-          queryKey: [MaterialsQueryKey.Materials, response.data.content_kind],
+          queryKey: [MaterialsQueryKey.Materials],
         });
       }
 

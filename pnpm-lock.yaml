@@ -3339,6 +3339,9 @@ importers:
       pages.classrooms:
         specifier: '*'
         version: link:../pages.classrooms
+      pages.materials:
+        specifier: '*'
+        version: link:../pages.materials
       react:
         specifier: '19'
         version: 19.2.0
