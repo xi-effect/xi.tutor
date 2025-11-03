@@ -59,12 +59,13 @@ export const useNotifications = () => {
     (data: NotificationT | RecipientNotificationResponse) => {
       const notification = transformNotification(data);
 
-      // Добавляем новое уведомление в список socket-уведомлений
+      // Добавляем новое уведомление в начало списка socket-уведомлений (чтобы оно появилось вверху)
       setSocketNotifications((prev) => {
         // Проверяем, нет ли уже такого уведомления (по id)
         if (prev.some((n) => n.id === notification.id)) {
           return prev;
         }
+        // Добавляем новое уведомление в начало массива, чтобы оно отображалось вверху
         return [notification, ...prev];
       });
 
@@ -170,21 +171,10 @@ export const useNotifications = () => {
 
   // Загрузить больше уведомлений (пагинация)
   const loadMore = useCallback(() => {
-    console.log('🔄 loadMore вызван', {
-      isFetchingNextPage,
-      hasNextPage,
-      apiNotificationsCount: apiNotifications.length,
-    });
     if (!isFetchingNextPage && hasNextPage) {
-      console.log('✅ Вызываем fetchNextPage');
       fetchNextPage();
-    } else {
-      console.log('❌ Не вызываем fetchNextPage:', {
-        isFetchingNextPage,
-        hasNextPage,
-      });
     }
-  }, [isFetchingNextPage, hasNextPage, fetchNextPage, apiNotifications.length]);
+  }, [isFetchingNextPage, hasNextPage, fetchNextPage]);
 
   const state: NotificationsStateT = {
     notifications: allNotifications,
