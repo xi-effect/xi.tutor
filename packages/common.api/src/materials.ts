@@ -8,6 +8,7 @@ enum MaterialsQueryKey {
   GetMaterial = 'GetMaterial',
   UpdateMaterial = 'UpdateMaterial',
   StorageItem = 'StorageItem',
+  MaterialDuplicates = 'MaterialDuplicates',
 }
 
 const materialsApiConfig = {
@@ -44,6 +45,11 @@ const materialsApiConfig = {
     getUrl: (id: string) =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/material-service/roles/tutor/materials/${id}/storage-item/`,
     method: HttpMethod.GET,
+  },
+  [MaterialsQueryKey.MaterialDuplicates]: {
+    getUrl: (classroomId: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/material-service/roles/tutor/classrooms/${classroomId}/material-duplicates/`,
+    method: HttpMethod.POST,
   },
 };
 

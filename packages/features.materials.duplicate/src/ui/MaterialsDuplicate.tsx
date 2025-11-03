@@ -10,10 +10,17 @@ import {
 import { Button } from '@xipkg/button';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { Close } from '@xipkg/icons';
-import { useFetchClassrooms, useStudentById, useGetMaterial } from 'common.services';
+import {
+  useFetchClassrooms,
+  useStudentById,
+  useGetMaterial,
+  useDuplicateMaterial,
+} from 'common.services';
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
+
+type AccessModeT = 'no_access' | 'read_only' | 'read_write';
 
 type ClassroomT = {
   id: number;
@@ -77,11 +84,14 @@ const ClassroomCard = ({ classroom, isSelected, onSelect }: ClassroomCardProps) 
 
 export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: MaterialsDuplicateProps) => {
   const [selectedClassroomId, setSelectedClassroomId] = useState<number | null>(null);
+  const [studentAccessMode, setStudentAccessMode] = useState<AccessModeT>('read_write');
 
   const { data: material, isLoading: isMaterialLoading } = useGetMaterial({
     id: materialId.toString(),
     disabled: !open || !materialId,
   });
+
+  const { duplicateMaterial } = useDuplicateMaterial();
 
   const handleClassroomSelect = (classroomId: number) => {
     setSelectedClassroomId(classroomId);
@@ -113,16 +123,35 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
   };
 
   const handleConfirm = () => {
-    if (selectedClassroomId) {
-      console.log(
-        '🎯 MaterialsDuplicate: handleConfirm called with classroomId:',
-        selectedClassroomId,
+    if (selectedClassroomId && material) {
+      duplicateMaterial.mutate(
+        {
+          classroomId: selectedClassroomId.toString(),
+          name: material.name,
+          student_access_mode: studentAccessMode,
+          source_id: materialId,
+        },
+        {
+          onSuccess: () => {
+            onOpenChange(false);
+            setSelectedClassroomId(null);
+            setStudentAccessMode('read_write');
+          },
+        },
       );
     }
   };
 
+  const handleClose = (newOpen: boolean) => {
+    if (!newOpen) {
+      setSelectedClassroomId(null);
+      setStudentAccessMode('read_write');
+    }
+    onOpenChange(newOpen);
+  };
+
   return (
-    <Modal open={open} onOpenChange={onOpenChange}>
+    <Modal open={open} onOpenChange={handleClose}>
       <ModalContent className="max-w-2xl">
         <ModalCloseButton>
           <Close className="fill-gray-80 sm:fill-gray-0" />
@@ -161,7 +190,10 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
         <ModalFooter className="border-gray-20 flex flex-col gap-4 border-t">
           <div className="w-full">
             <p className="text-s-base text-gray-60 mb-1">Тип доступа к материалу в кабинете</p>
-            <Select defaultValue="read_write">
+            <Select
+              value={studentAccessMode}
+              onValueChange={(value) => setStudentAccessMode(value as AccessModeT)}
+            >
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Выберите тип доступа к материалу в кабинете" />
               </SelectTrigger>
@@ -173,10 +205,14 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
             </Select>
           </div>
           <div className="flex gap-2">
-            <Button size="m" onClick={handleConfirm} disabled={!selectedClassroomId}>
-              Дублировать
+            <Button
+              size="m"
+              onClick={handleConfirm}
+              disabled={!selectedClassroomId || duplicateMaterial.isPending}
+            >
+              {duplicateMaterial.isPending ? 'Дублирование...' : 'Дублировать'}
             </Button>
-            <Button size="m" variant="secondary" onClick={() => onOpenChange(false)}>
+            <Button size="m" variant="secondary" onClick={() => handleClose(false)}>
               Отменить
             </Button>
           </div>
