@@ -43,6 +43,64 @@ type ClassroomCardProps = {
   onSelect: () => void;
 };
 
+type ClassroomsListProps = {
+  isLoading: boolean;
+  isError: boolean;
+  classrooms: ClassroomT[] | undefined;
+  selectedClassroomId: number | null;
+  onClassroomSelect: (classroomId: number) => void;
+};
+
+const ClassroomsList = ({
+  isLoading,
+  isError,
+  classrooms,
+  selectedClassroomId,
+  onClassroomSelect,
+}: ClassroomsListProps) => {
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <p className="text-gray-60">Загрузка кабинетов...</p>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <p className="text-red-500">Ошибка загрузки кабинетов</p>
+      </div>
+    );
+  }
+
+  if (!classrooms || classrooms.length === 0) {
+    return (
+      <div className="flex h-[300px] w-full flex-col items-center justify-center gap-2">
+        <p className="text-m-base text-gray-60 w-full text-center">Здесь пока пусто</p>
+        <p className="text-m-base text-gray-60 w-full text-center">
+          Создайте кабинеты, пригласив учеников на платформу
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <ScrollArea className="h-full max-h-[400px] w-full">
+      <div className="grid grid-cols-1 gap-4 pr-4 sm:grid-cols-2">
+        {classrooms.map((classroom) => (
+          <ClassroomCard
+            key={classroom.id}
+            classroom={classroom}
+            isSelected={selectedClassroomId === classroom.id}
+            onSelect={() => onClassroomSelect(classroom.id)}
+          />
+        ))}
+      </div>
+    </ScrollArea>
+  );
+};
+
 const ClassroomCard = ({ classroom, isSelected, onSelect }: ClassroomCardProps) => {
   const isIndividual = classroom.kind === 'individual';
   const studentId = isIndividual && 'student_id' in classroom ? classroom.student_id : null;
@@ -153,6 +211,8 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
     onOpenChange(newOpen);
   };
 
+  console.log('classrooms', classrooms);
+
   return (
     <Modal open={open} onOpenChange={handleClose}>
       <ModalContent className="max-w-2xl">
@@ -166,29 +226,14 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
           </ModalDescription>
         </ModalHeader>
 
-        <div className="py-4 pr-2 pl-6">
-          {isLoading ? (
-            <div className="flex items-center justify-center py-8">
-              <p className="text-gray-60">Загрузка кабинетов...</p>
-            </div>
-          ) : isError ? (
-            <div className="flex items-center justify-center py-8">
-              <p className="text-red-500">Ошибка загрузки кабинетов</p>
-            </div>
-          ) : (
-            <ScrollArea className="h-full max-h-[400px] w-full">
-              <div className="grid grid-cols-1 gap-4 pr-4 sm:grid-cols-2">
-                {classrooms?.map((classroom) => (
-                  <ClassroomCard
-                    key={classroom.id}
-                    classroom={classroom}
-                    isSelected={selectedClassroomId === classroom.id}
-                    onSelect={() => handleClassroomSelect(classroom.id)}
-                  />
-                ))}
-              </div>
-            </ScrollArea>
-          )}
+        <div className="min-h-[300px] py-4 pr-2 pl-6">
+          <ClassroomsList
+            isLoading={isLoading}
+            isError={isError}
+            classrooms={classrooms}
+            selectedClassroomId={selectedClassroomId}
+            onClassroomSelect={handleClassroomSelect}
+          />
         </div>
         <ModalFooter className="border-gray-20 flex flex-col gap-4 border-t">
           <div className="w-full">

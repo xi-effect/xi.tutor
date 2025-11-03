@@ -3,7 +3,6 @@ import { ChevronRight, Key, Mail } from '@xipkg/icons';
 import { useMediaQuery } from '@xipkg/utils';
 import { useCurrentUser } from 'common.services';
 
-import { ConfirmEmail } from './ConfirmEmail';
 import { getRelativeTime } from '../utils/getRelativeTime';
 import { useState } from 'react';
 import { ChangePassword } from './ChangePassword';
@@ -23,7 +22,7 @@ export const Secure = () => {
         <h1 className="mb-4 text-3xl font-semibold dark:text-gray-100">Безопасность</h1>
       )}
       <div className="flex flex-col gap-6 sm:gap-8">
-        {!user?.email_confirmed && <ConfirmEmail />}
+        {/* {!user?.email_confirmed && <ConfirmEmail />} */}
         <div className="border-gray-80 flex w-full flex-col rounded-2xl border p-1">
           <div className="flex w-full flex-col p-3">
             <span className="text-xl font-semibold dark:text-gray-100">Данные аккаунта</span>

@@ -33,6 +33,7 @@
     "features.materials.add": "*",
     "features.group.add": "*",
     "features.materials.duplicate": "*",
+    "features.table": "*",
     "pages.classrooms": "*",
     "pages.materials": "*",
     "react-hook-form": "^7.55.0",

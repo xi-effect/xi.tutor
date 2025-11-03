@@ -1854,6 +1854,9 @@ importers:
       common.services:
         specifier: '*'
         version: link:../common.services
+      common.types:
+        specifier: '*'
+        version: link:../common.types
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -3339,6 +3342,9 @@ importers:
       features.materials.duplicate:
         specifier: '*'
         version: link:../features.materials.duplicate
+      features.table:
+        specifier: '*'
+        version: link:../features.table
       pages.classrooms:
         specifier: '*'
         version: link:../pages.classrooms

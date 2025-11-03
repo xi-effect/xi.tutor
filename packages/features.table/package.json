@@ -23,7 +23,8 @@
     "dayjs": "^1.11.13",
     "common.config": "*",
     "common.api": "*",
-    "common.services": "*"
+    "common.services": "*",
+    "common.types": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

@@ -10,6 +10,14 @@ type ClassroomSelectorProps = {
 export const ClassroomSelector = ({ control }: ClassroomSelectorProps) => {
   const { data: classrooms, isLoading } = useFetchClassrooms();
 
+  const isDisabled = !classrooms || classrooms.length === 0;
+
+  const getPlaceholder = () => {
+    if (isLoading) return 'Загрузка...';
+    if (isDisabled) return 'Кабинеты не найдены';
+    return 'Выберите кабинет';
+  };
+
   return (
     <FormField
       control={control}
@@ -19,9 +27,13 @@ export const ClassroomSelector = ({ control }: ClassroomSelectorProps) => {
         <FormItem>
           <FormLabel>Кабинет</FormLabel>
           <FormControl>
-            <Select value={field.value} onValueChange={(value) => field.onChange(value)}>
+            <Select
+              disabled={isLoading || isDisabled}
+              value={field.value}
+              onValueChange={(value) => field.onChange(value)}
+            >
               <SelectTrigger className="mt-1 mb-0 w-full">
-                <SelectValue placeholder={isLoading ? 'Загрузка...' : 'Выберите кабинет'} />
+                <SelectValue placeholder={getPlaceholder()} />
               </SelectTrigger>
               <SelectContent className="w-full">
                 {classrooms?.map((classroom) => (

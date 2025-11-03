@@ -1,4 +1,24 @@
 import { ColumnDef } from '@tanstack/react-table';
+import type {
+  RoleT,
+  PaymentStatusT,
+  PaymentTypeT,
+  PaymentDataT,
+  StudentPaymentT,
+  TutorPaymentT,
+  RolePaymentT,
+} from 'common.types';
+
+// Реэкспортируем типы из common.types для обратной совместимости
+export type {
+  RoleT,
+  PaymentStatusT,
+  PaymentTypeT,
+  PaymentDataT,
+  StudentPaymentT,
+  TutorPaymentT,
+  RolePaymentT,
+};
 
 export type StudentT = {
   id: number;
@@ -25,17 +45,11 @@ export type DataTableProps<TData> = {
   subjects?: SubjectT[];
 };
 
-export type PaymentStatusT = 'wf_sender_confirmation' | 'wf_receiver_confirmation' | 'complete';
-
 export const mapPaymentStatus: Record<PaymentStatusT, string> = {
   complete: 'оплачен',
   wf_receiver_confirmation: 'ожидает подтверждения',
   wf_sender_confirmation: 'ждет оплаты',
 };
-
-export type RoleT = 'tutor' | 'student';
-
-export type PaymentTypeT = 'cash' | 'transfer';
 
 export type PaymentT = {
   id: number;
@@ -51,28 +65,6 @@ export const mapPaymentType: Record<PaymentTypeT, string> = {
   cash: 'наличные',
   transfer: 'перевод',
 };
-
-type RoleIdField<Role extends RoleT> = Role extends 'tutor'
-  ? { student_id: number }
-  : Role extends 'student'
-    ? { tutor_id: number }
-    : never;
-
-export type PaymentDataT<Role extends RoleT> = {
-  id: number;
-  created_at: string;
-  total: string;
-  payment_type: PaymentTypeT;
-  status: PaymentStatusT;
-} & RoleIdField<Role>;
-
-export type StudentPaymentT = PaymentDataT<'tutor'>;
-
-export type TutorPaymentT = PaymentDataT<'student'>;
-
-export type RolePaymentT<Role extends RoleT> = Role extends 'tutor'
-  ? TutorPaymentT
-  : StudentPaymentT;
 
 export const FILTER_KEYS = ['created_at', 'total', 'status', 'payment_type'] as const;
 

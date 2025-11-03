@@ -5,3 +5,5 @@ export { usePaymentReceiverConfirmation } from './usePaymentReceiverConfirmation
 export { usePaymentSenderConfirmation } from './usePaymentSenderConfirmation';
 export { useGetRecipientInvoiceByTutor } from './useGetRecipientInvoiceByTutor';
 export { useGetRecipientInvoiceByStudent } from './useGetRecipientInvoiceByStudent';
+export { useGetStudentPaymentsList } from './useGetStudentPaymentsList';
+export { useGetTutorPaymentsList } from './useGetTutorPaymentsList';
