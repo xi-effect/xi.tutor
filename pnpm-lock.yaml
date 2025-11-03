@@ -10345,8 +10345,8 @@ packages:
       react: 19.2.0
     dev: false
 
-  /@xipkg/modal@4.3.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0):
-    resolution: {integrity: sha512-aOTP7B8g1t7PAiHePdCpAEojRMGH9EXn/cm0VsSm5BZfzhkwIeyi4hLbKDu6pFlyFbPExff9bI3g1B7AWXe7nA==}
+  /@xipkg/modal@4.2.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0):
+    resolution: {integrity: sha512-5uax+K526AJCkLP51+8XfFIefWVhPK0tG73Ji6gaYxrVt6zAiplReMgYkzXBwxXMMgBClYSw4+4juWB1UiGQ4g==}
     peerDependencies:
       react: ^19
     dependencies:

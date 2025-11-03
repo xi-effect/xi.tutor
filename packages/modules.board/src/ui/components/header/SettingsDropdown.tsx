@@ -47,7 +47,7 @@ export const SettingsDropdown = () => {
   const { isFullScreen } = useFullScreen('whiteboard-container');
 
   const portalContainer = useMemo(() => {
-    return isFullScreen ? document.getElementById('whiteboard-container') || undefined : undefined;
+    return isFullScreen ? document.getElementById('whiteboard-container') : undefined;
   }, [isFullScreen]);
 
   return (
