@@ -15,7 +15,7 @@
     "@xipkg/command": "^1.0.0",
     "@xipkg/form": "4.2.1",
     "@xipkg/input": "^2.2.9",
-    "@xipkg/modal": "^4.2.0",
+    "@xipkg/modal": "^4.3.0",
     "@xipkg/popover": "^2.1.0",
     "@xipkg/utils": "^1.8.0",
     "common.api": "*",
