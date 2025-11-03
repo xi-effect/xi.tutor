@@ -154,7 +154,7 @@ export const SignUpPage = () => {
                       size="s"
                       className="xs:text-xxs-base text-gray-60 gap-1.5 text-[8px]"
                       checkboxStyles={
-                        isConsentInvalid && 'border border-red-80 hover:border-red-80'
+                        isConsentInvalid ? 'border border-red-80 hover:border-red-80' : ''
                       }
                     >
                       Нажимая Создать аккаунт, вы принимаете условия <br />
