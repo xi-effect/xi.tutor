@@ -7,11 +7,16 @@ import { generateNotificationTitle, generateNotificationDescription } from './no
 import { useSearchNotifications } from './useSearchNotifications';
 import { useGetUnreadCount } from './useGetUnreadCount';
 import { useMarkNotificationAsRead } from './useMarkNotificationAsRead';
+import { useCurrentUser } from '../user';
 
 export const useNotifications = () => {
   const [socketNotifications, setSocketNotifications] = useState<NotificationT[]>([]);
 
-  // API хуки
+  // Проверяем, авторизован ли пользователь
+  const { data: currentUser, isError: isUserError } = useCurrentUser();
+  const isAuthenticated = !!currentUser && !isUserError;
+
+  // API хуки - отключаем запросы, если пользователь не авторизован
   const {
     notifications: apiNotifications,
     isLoading: isLoadingNotifications,
@@ -22,14 +27,14 @@ export const useNotifications = () => {
     refetch: refetchNotifications,
   } = useSearchNotifications({
     limit: 12,
-    enabled: true,
+    enabled: isAuthenticated,
   });
 
   const {
     data: unreadCount,
     isLoading: isLoadingCount,
     refetch: refetchCount,
-  } = useGetUnreadCount({});
+  } = useGetUnreadCount({ enabled: isAuthenticated });
 
   const { markAsRead: markAsReadMutation } = useMarkNotificationAsRead();
 
@@ -84,20 +89,37 @@ export const useNotifications = () => {
     [refetchCount, transformNotification],
   );
 
+  // Обработчик для Socket.IO с проверкой авторизации
+  const handleSocketNotification = useCallback(
+    (data: NotificationT | RecipientNotificationResponse) => {
+      // Не обрабатываем события, если пользователь не авторизован
+      if (!isAuthenticated) {
+        return;
+      }
+      handleNewNotification(data);
+    },
+    [isAuthenticated, handleNewNotification],
+  );
+
   // Подписываемся на события SocketIO (новый формат события)
   // /=tmexio-SUB=/new-notification/ - это техническая особенность бэка, имя события просто "new-notification"
   // WebSocket может возвращать как обёрнутый формат (RecipientNotificationResponse), так и прямой (NotificationT)
+  // Обработчик проверяет авторизацию перед обработкой события
   useSocketEvent<NotificationT | RecipientNotificationResponse>(
     'new-notification',
-    handleNewNotification,
+    handleSocketNotification,
+    [isAuthenticated],
   );
 
-  // Загружаем уведомления при инициализации
+  // Загружаем уведомления при инициализации (только если пользователь авторизован)
   useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
     // Первая загрузка происходит автоматически через useSearchNotifications
     // Обновляем счетчик при монтировании
     refetchCount();
-  }, [refetchCount]);
+  }, [refetchCount, isAuthenticated]);
 
   // Объединяем уведомления из API и Socket.IO
   // Socket-уведомления идут первыми, затем API-уведомления (убираем дубликаты)
