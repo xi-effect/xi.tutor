@@ -48,17 +48,24 @@ export const Header = () => {
   };
 
   return (
-    <div className="bg-gray-0 text-xl-base z-50 w-full">
+    <div className="bg-gray-0 text-xl-base sticky top-0 z-50 w-full px-4 pb-4">
       <div className="flex items-center justify-between">
-        <div className="flex w-full items-center justify-start gap-2 px-16">
-          <Button variant="ghost" onClick={handleBack} type="button" className="h-10 w-10 p-2">
+        <div className="relative flex w-full items-center justify-center gap-2">
+          <Button
+            variant="ghost"
+            onClick={handleBack}
+            type="button"
+            className="absolute top-0 left-0 h-10 w-10 p-2"
+          >
             <ArrowLeft size="s" />
           </Button>
-          {isLoading ? (
-            <Skeleton variant="text" className="h-6 w-full" />
-          ) : (
-            <EditableTitle title={material.name} materialId={materialIdValue} />
-          )}
+          <div className="w-full max-w-4xl pl-16 lg:pl-20">
+            {isLoading ? (
+              <Skeleton variant="text" className="h-6 w-full" />
+            ) : (
+              <EditableTitle title={material.name} materialId={materialIdValue} />
+            )}
+          </div>
         </div>
       </div>
     </div>

@@ -96,7 +96,7 @@ export const EditableTitle = ({ title, materialId, className }: EditableTitlePro
   return (
     <h3
       className={cn(
-        'text-l-base sm:text-h6 xl:text-h3 cursor-pointer font-semibold select-none',
+        'text-l-base sm:text-h6 xl:text-h3 cursor-pointer font-semibold break-all select-none',
         className,
       )}
       onDoubleClick={handleDoubleClick}
