@@ -17,7 +17,6 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
 
   const handleConnect = () => {
     updateStore('connect', true);
-    console.log('Connected to LiveKit room');
   };
 
   const handleDisconnect = () => {

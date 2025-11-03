@@ -52,9 +52,6 @@ const AuthExample = () => {
         });
         return;
       }
-
-      // Успешная авторизация
-      console.log('Успешный вход');
     } catch (error) {
       handleAuthError(error);
     }

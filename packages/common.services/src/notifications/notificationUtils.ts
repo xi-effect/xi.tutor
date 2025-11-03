@@ -4,6 +4,10 @@ import type { NotificationT } from 'common.types';
  * Генерирует заголовок уведомления на основе kind и payload
  */
 export const generateNotificationTitle = (notification: NotificationT): string => {
+  if (!notification?.payload) {
+    return 'Уведомление';
+  }
+
   const { kind } = notification.payload;
 
   switch (kind) {
@@ -29,6 +33,8 @@ export const generateNotificationTitle = (notification: NotificationT): string =
       return 'Обновление системы';
     case 'birthday':
       return 'День рождения';
+    case 'custom_v1':
+      return notification.payload.text || 'Новое уведомление';
     case 'general':
     default:
       return 'Уведомление';
@@ -39,31 +45,37 @@ export const generateNotificationTitle = (notification: NotificationT): string =
  * Генерирует описание уведомления на основе kind и payload
  */
 export const generateNotificationDescription = (notification: NotificationT): string => {
+  if (!notification?.payload) {
+    return 'Новое уведомление';
+  }
+
   const { kind, ...payload } = notification.payload;
 
   switch (kind) {
     case 'classroom_material_created':
-      return `Добавлен новый материал в класс ${payload.classroom_id}`;
+      return `Добавлен новый материал в класс ${payload.classroom_id || ''}`;
     case 'classroom_lesson_scheduled':
-      return `Занятие запланировано на ${payload.scheduled_at}`;
+      return `Занятие запланировано на ${payload.scheduled_at || ''}`;
     case 'classroom_lesson_started':
-      return `Занятие началось в классе ${payload.classroom_id}`;
+      return `Занятие началось в классе ${payload.classroom_id || ''}`;
     case 'classroom_lesson_ended':
-      return `Занятие завершено в классе ${payload.classroom_id}`;
+      return `Занятие завершено в классе ${payload.classroom_id || ''}`;
     case 'payment_success':
-      return `Оплата на сумму ${payload.amount} ₽ прошла успешно`;
+      return `Оплата на сумму ${payload.amount || 0} ₽ прошла успешно`;
     case 'payment_failed':
-      return `Ошибка при оплате ${payload.amount} ₽`;
+      return `Ошибка при оплате ${payload.amount || 0} ₽`;
     case 'group_invitation':
-      return `Вас пригласили в группу "${payload.group_name}"`;
+      return `Вас пригласили в группу "${payload.group_name || ''}"`;
     case 'group_invitation_accepted':
-      return `Пользователь принял приглашение в группу "${payload.group_name}"`;
+      return `Пользователь принял приглашение в группу "${payload.group_name || ''}"`;
     case 'group_invitation_declined':
-      return `Пользователь отклонил приглашение в группу "${payload.group_name}"`;
+      return `Пользователь отклонил приглашение в группу "${payload.group_name || ''}"`;
     case 'system_update':
       return payload.message || 'Доступно обновление системы';
     case 'birthday':
-      return `У ${payload.user_name} сегодня день рождения!`;
+      return `У ${payload.user_name || 'пользователя'} сегодня день рождения!`;
+    case 'custom_v1':
+      return payload.text || 'Новое уведомление';
     case 'general':
     default:
       return payload.message || 'Новое уведомление';

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useCallback } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { RemoteParticipant } from 'livekit-client';
@@ -9,6 +10,7 @@ const MODE_SYNC_MESSAGE_TYPE = 'mode_sync';
 type ModeSyncPayload = {
   mode: 'compact' | 'full';
   boardId?: string;
+  classroom?: string;
 };
 
 export const useModeSync = () => {
@@ -47,7 +49,17 @@ export const useModeSync = () => {
           // Если есть boardId, переходим на доску
           if (payload.boardId && typeof payload.boardId === 'string') {
             console.log('🎯 Navigating to board:', payload.boardId);
-            navigate({ to: '/board/$boardId', params: { boardId: payload.boardId } });
+            if (payload.classroom) {
+              navigate({
+                to: '/classrooms/$classroomId/boards/$boardId',
+                params: { classroomId: payload.classroom, boardId: payload.boardId },
+              });
+            } else {
+              navigate({
+                to: '/board/$boardId',
+                params: { boardId: payload.boardId },
+              });
+            }
           }
         }
       } catch (error) {
@@ -62,7 +74,7 @@ export const useModeSync = () => {
   useLiveKitDataChannelListener(handleModeSyncMessage);
 
   const syncModeToOthers = useCallback(
-    (mode: 'compact' | 'full', boardId?: string) => {
+    (mode: 'compact' | 'full', boardId?: string, classroom?: string) => {
       try {
         // Валидируем входные параметры
         if (!mode || !['compact', 'full'].includes(mode)) {
@@ -78,6 +90,7 @@ export const useModeSync = () => {
         const payload: ModeSyncPayload = {
           mode,
           boardId,
+          classroom,
         };
 
         console.log('📤 Sending mode sync message to all participants:', payload);

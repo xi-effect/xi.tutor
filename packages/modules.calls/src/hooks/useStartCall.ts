@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useCurrentUser } from 'common.services';
 import { useReactivateCall } from 'common.services';
 import { useCreateTokenByTutor } from 'common.services';

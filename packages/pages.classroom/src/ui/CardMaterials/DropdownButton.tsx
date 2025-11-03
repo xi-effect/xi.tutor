@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React from 'react';
 
 import {
   DropdownMenu,
@@ -11,21 +11,30 @@ import {
   DropdownMenuCheckboxItem,
 } from '@xipkg/dropdown';
 import { Button } from '@xipkg/button';
-import { TypeWorkT } from './CardMaterials';
 import { MoreVert } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
+import { AccessModeT } from 'common.types';
 
-const options: { value: TypeWorkT; label: string }[] = [
-  { value: 'only_tutor', label: 'только репетитор' },
-  { value: 'draft', label: 'черновик' },
-  { value: 'collaboration', label: 'совместная работа' },
+const options: { value: AccessModeT; label: string }[] = [
+  { value: 'read_only', label: 'только репетитор' },
+  { value: 'no_access', label: 'черновик' },
+  { value: 'read_write', label: 'совместная работа' },
 ];
 
-export const DropdownButton = ({ accessType }: { accessType: TypeWorkT | '' }) => {
-  const [selected, setSelected] = useState<TypeWorkT | ''>(accessType);
-
-  const handleChange = (key: TypeWorkT) => {
-    setSelected(key);
+export const DropdownButton = ({
+  studentAccessMode,
+  onDelete,
+  onUpdateAccessMode,
+}: {
+  studentAccessMode: AccessModeT | '';
+  onDelete?: () => void;
+  onUpdateAccessMode?: (newAccessMode: AccessModeT) => void;
+}) => {
+  const handleChange = (key: AccessModeT) => {
+    // Вызываем функцию обновления только если выбран новый режим доступа
+    if (key !== studentAccessMode) {
+      onUpdateAccessMode?.(key);
+    }
   };
 
   const checkboxItemClassName =
@@ -35,7 +44,12 @@ export const DropdownButton = ({ accessType }: { accessType: TypeWorkT | '' }) =
     <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button className="h-8 min-h-8 w-8 min-w-8" variant="ghost" size="icon">
+          <Button
+            onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
+            className="h-8 min-h-8 w-8 min-w-8"
+            variant="ghost"
+            size="icon"
+          >
             <MoreVert className="h-4 w-4 dark:fill-gray-100" />
           </Button>
         </DropdownMenuTrigger>
@@ -44,22 +58,32 @@ export const DropdownButton = ({ accessType }: { accessType: TypeWorkT | '' }) =
           side="bottom"
           align="end"
           className="border-gray-10 bg-gray-0 text-xs-base w-[182px] rounded-lg border p-2 font-normal"
+          onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
         >
           <DropdownMenuSub>
-            <DropdownMenuSubTrigger>поменять доступ</DropdownMenuSubTrigger>
+            <DropdownMenuSubTrigger
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
+            >
+              поменять доступ
+            </DropdownMenuSubTrigger>
 
             <DropdownMenuSubContent
-              sideOffset={12}
+              alignOffset={-16}
+              sideOffset={16}
               className="border-gray-10 bg-gray-0 text-xs-base mt-2 rounded-lg border p-2 font-normal"
+              onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
             >
               {options.map(({ value, label }) => (
                 <DropdownMenuCheckboxItem
                   key={value}
-                  checked={selected === value}
+                  checked={studentAccessMode === value}
                   onCheckedChange={() => handleChange(value)}
+                  onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
                   className={cn(
                     checkboxItemClassName,
-                    selected === value ? 'bg-brand-0 text-brand-100 rounded-lg' : 'text-gray-80',
+                    studentAccessMode === value
+                      ? 'bg-brand-0 text-brand-100 cursor-pointer rounded-lg'
+                      : 'text-gray-80 cursor-pointer',
                   )}
                 >
                   <div className="w-full text-left">{label}</div>
@@ -68,11 +92,21 @@ export const DropdownButton = ({ accessType }: { accessType: TypeWorkT | '' }) =
             </DropdownMenuSubContent>
           </DropdownMenuSub>
 
-          <DropdownMenuItem className="hover:bg-brand-0 hover:text-brand-100 w-full px-2 py-[6px] hover:rounded-lg">
+          <DropdownMenuItem
+            className="hover:bg-brand-0 hover:text-brand-100 w-full px-2 py-[6px] hover:rounded-lg"
+            onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
+          >
             редактировать
           </DropdownMenuItem>
 
-          <DropdownMenuItem className="hover:bg-brand-0 hover:text-brand-100 w-full px-2 py-[6px] hover:rounded-lg">
+          <DropdownMenuItem
+            className="hover:bg-brand-0 hover:text-brand-100 w-full px-2 py-[6px] hover:rounded-lg"
+            onClick={(e: React.MouseEvent<HTMLDivElement>) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onDelete?.();
+            }}
+          >
             удалить
           </DropdownMenuItem>
         </DropdownMenuContent>

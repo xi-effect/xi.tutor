@@ -6,8 +6,8 @@ interface NotificationsContextType extends NotificationsStateT {
   markAsRead: (id: string) => Promise<void>;
   markAllAsRead: () => Promise<void>;
   deleteNotification: (id: string) => Promise<void>;
-  sendTestNotification: () => void;
   loadMore: () => void;
+  isFetchingNextPage?: boolean;
   refreshNotifications: () => void;
   refreshCount: () => void;
 }

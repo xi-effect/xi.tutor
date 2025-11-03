@@ -12,7 +12,7 @@ export interface CreateInvoicePayload {
     price: number;
     quantity: number;
   }>;
-  student_ids: number[];
+  student_ids: number[] | null;
 }
 
 export interface CreateInvoiceResponse {
@@ -20,16 +20,21 @@ export interface CreateInvoiceResponse {
   // Добавьте другие поля ответа по необходимости
 }
 
+interface CreateInvoiceParams {
+  classroomId: string;
+  payload: CreateInvoicePayload;
+}
+
 export const useCreateInvoice = () => {
   const queryClient = useQueryClient();
 
   const createInvoiceMutation = useMutation({
-    mutationFn: async (payload: CreateInvoicePayload) => {
+    mutationFn: async ({ classroomId, payload }: CreateInvoiceParams) => {
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
-          method: paymentsApiConfig[PaymentsQueryKey.AddPayment].method,
-          url: paymentsApiConfig[PaymentsQueryKey.AddPayment].getUrl(),
+          method: paymentsApiConfig[PaymentsQueryKey.AddInvoice].method,
+          url: paymentsApiConfig[PaymentsQueryKey.AddInvoice].getUrl(classroomId),
           data: payload,
           headers: {
             'Content-Type': 'application/json',

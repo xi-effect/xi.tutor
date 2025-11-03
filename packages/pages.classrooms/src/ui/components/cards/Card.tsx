@@ -10,7 +10,7 @@ import {
 } from '@xipkg/dropdown';
 
 import { StatusBadge } from './StatusBadge';
-import { useCurrentUser, useDeleteClassroom, useUserById } from 'common.services';
+import { useCurrentUser, useDeleteClassroom, useStudentById, useTutorById } from 'common.services';
 
 import { ClassroomPropsT } from '../../../types';
 import { useNavigate, useSearch } from '@tanstack/react-router';
@@ -26,7 +26,10 @@ type UserAvatarPropsT = {
 const avatarSize = 'l';
 
 const UserAvatar = ({ student_id }: UserAvatarPropsT) => {
-  const { data } = useUserById(student_id);
+  const { data: currentUser } = useCurrentUser();
+  const isTutor = currentUser?.default_layout === 'tutor';
+  const getUser = isTutor ? useStudentById : useTutorById;
+  const { data: user, isLoading } = getUser(Number(student_id));
 
   return (
     <Avatar size={avatarSize}>
@@ -34,10 +37,10 @@ const UserAvatar = ({ student_id }: UserAvatarPropsT) => {
         src={`https://api.sovlium.ru/files/users/${student_id}/avatar.webp`}
         alt="user avatar"
       />
-      {!data ? (
+      {isLoading ? (
         <AvatarFallback size={avatarSize} loading />
       ) : (
-        <AvatarFallback size={avatarSize}>{data?.display_name[0].toUpperCase()}</AvatarFallback>
+        <AvatarFallback size={avatarSize}>{user?.display_name[0].toUpperCase()}</AvatarFallback>
       )}
     </Avatar>
   );
@@ -72,7 +75,6 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation(); // Предотвращаем переход на страницу класса
-    console.log('handleDelete', id);
     deleteClassroom({ classroomId: id });
   };
 

@@ -5,4 +5,5 @@ export interface SearchParams {
   carouselType?: 'horizontal' | 'vertical';
   tab?: string;
   call?: string;
+  classroom?: string;
 }

@@ -20,6 +20,7 @@ import { Route as DeploymentsDeploymentIdEnableRouteImport } from './pages/deplo
 import { Route as authResetPasswordResetTokenRouteImport } from './pages/(auth)/reset-password/$resetToken'
 import { Route as appWelcomeLayoutRouteImport } from './pages/(app)/welcome/_layout'
 import { Route as appInviteInviteIdRouteImport } from './pages/(app)/invite/$inviteId'
+import { Route as appEmailEmailIdRouteImport } from './pages/(app)/email/$emailId'
 import { Route as appWelcomeUserIndexRouteImport } from './pages/(app)/welcome/user/index'
 import { Route as appWelcomeSocialsIndexRouteImport } from './pages/(app)/welcome/socials/index'
 import { Route as appWelcomeRoleIndexRouteImport } from './pages/(app)/welcome/role/index'
@@ -29,9 +30,13 @@ import { Route as appLayoutClassroomsIndexRouteImport } from './pages/(app)/_lay
 import { Route as appLayoutCallIndexRouteImport } from './pages/(app)/_layout/call/index'
 import { Route as appLayoutCalendarIndexRouteImport } from './pages/(app)/_layout/calendar/index'
 import { Route as appLayoutEditorEditorIdRouteImport } from './pages/(app)/_layout/editor/$editorId'
-import { Route as appLayoutClassroomsClassroomIdRouteImport } from './pages/(app)/_layout/classrooms/$classroomId'
 import { Route as appLayoutCallCallIdRouteImport } from './pages/(app)/_layout/call/$callId'
 import { Route as appLayoutBoardBoardIdRouteImport } from './pages/(app)/_layout/board/$boardId'
+import { Route as appLayoutClassroomsClassroomIdIndexRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/index'
+import { Route as appLayoutMaterialsMaterialIdNoteIndexRouteImport } from './pages/(app)/_layout/materials/$materialId/note/index'
+import { Route as appLayoutMaterialsMaterialIdBoardIndexRouteImport } from './pages/(app)/_layout/materials/$materialId/board/index'
+import { Route as appLayoutClassroomsClassroomIdNotesNoteIdRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/notes/$noteId'
+import { Route as appLayoutClassroomsClassroomIdBoardsBoardIdRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/boards/$boardId'
 
 const appWelcomeRouteImport = createFileRoute('/(app)/welcome')()
 
@@ -85,6 +90,11 @@ const appInviteInviteIdRoute = appInviteInviteIdRouteImport.update({
   path: '/invite/$inviteId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const appEmailEmailIdRoute = appEmailEmailIdRouteImport.update({
+  id: '/(app)/email/$emailId',
+  path: '/email/$emailId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const appWelcomeUserIndexRoute = appWelcomeUserIndexRouteImport.update({
   id: '/user/',
   path: '/user/',
@@ -131,12 +141,6 @@ const appLayoutEditorEditorIdRoute = appLayoutEditorEditorIdRouteImport.update({
   path: '/editor/$editorId',
   getParentRoute: () => appLayoutRoute,
 } as any)
-const appLayoutClassroomsClassroomIdRoute =
-  appLayoutClassroomsClassroomIdRouteImport.update({
-    id: '/classrooms/$classroomId',
-    path: '/classrooms/$classroomId',
-    getParentRoute: () => appLayoutRoute,
-  } as any)
 const appLayoutCallCallIdRoute = appLayoutCallCallIdRouteImport.update({
   id: '/call/$callId',
   path: '/call/$callId',
@@ -147,8 +151,39 @@ const appLayoutBoardBoardIdRoute = appLayoutBoardBoardIdRouteImport.update({
   path: '/board/$boardId',
   getParentRoute: () => appLayoutRoute,
 } as any)
+const appLayoutClassroomsClassroomIdIndexRoute =
+  appLayoutClassroomsClassroomIdIndexRouteImport.update({
+    id: '/classrooms/$classroomId/',
+    path: '/classrooms/$classroomId/',
+    getParentRoute: () => appLayoutRoute,
+  } as any)
+const appLayoutMaterialsMaterialIdNoteIndexRoute =
+  appLayoutMaterialsMaterialIdNoteIndexRouteImport.update({
+    id: '/materials/$materialId/note/',
+    path: '/materials/$materialId/note/',
+    getParentRoute: () => appLayoutRoute,
+  } as any)
+const appLayoutMaterialsMaterialIdBoardIndexRoute =
+  appLayoutMaterialsMaterialIdBoardIndexRouteImport.update({
+    id: '/materials/$materialId/board/',
+    path: '/materials/$materialId/board/',
+    getParentRoute: () => appLayoutRoute,
+  } as any)
+const appLayoutClassroomsClassroomIdNotesNoteIdRoute =
+  appLayoutClassroomsClassroomIdNotesNoteIdRouteImport.update({
+    id: '/classrooms/$classroomId/notes/$noteId',
+    path: '/classrooms/$classroomId/notes/$noteId',
+    getParentRoute: () => appLayoutRoute,
+  } as any)
+const appLayoutClassroomsClassroomIdBoardsBoardIdRoute =
+  appLayoutClassroomsClassroomIdBoardsBoardIdRouteImport.update({
+    id: '/classrooms/$classroomId/boards/$boardId',
+    path: '/classrooms/$classroomId/boards/$boardId',
+    getParentRoute: () => appLayoutRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
+  '/email/$emailId': typeof appEmailEmailIdRoute
   '/invite/$inviteId': typeof appInviteInviteIdRoute
   '/welcome': typeof appWelcomeLayoutRoute
   '/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute
@@ -159,7 +194,6 @@ export interface FileRoutesByFullPath {
   '/signup': typeof authSignupIndexRoute
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
-  '/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdRoute
   '/editor/$editorId': typeof appLayoutEditorEditorIdRoute
   '/calendar': typeof appLayoutCalendarIndexRoute
   '/call': typeof appLayoutCallIndexRoute
@@ -169,8 +203,14 @@ export interface FileRoutesByFullPath {
   '/welcome/role': typeof appWelcomeRoleIndexRoute
   '/welcome/socials': typeof appWelcomeSocialsIndexRoute
   '/welcome/user': typeof appWelcomeUserIndexRoute
+  '/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdIndexRoute
+  '/classrooms/$classroomId/boards/$boardId': typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
+  '/classrooms/$classroomId/notes/$noteId': typeof appLayoutClassroomsClassroomIdNotesNoteIdRoute
+  '/materials/$materialId/board': typeof appLayoutMaterialsMaterialIdBoardIndexRoute
+  '/materials/$materialId/note': typeof appLayoutMaterialsMaterialIdNoteIndexRoute
 }
 export interface FileRoutesByTo {
+  '/email/$emailId': typeof appEmailEmailIdRoute
   '/invite/$inviteId': typeof appInviteInviteIdRoute
   '/welcome': typeof appWelcomeLayoutRoute
   '/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute
@@ -181,7 +221,6 @@ export interface FileRoutesByTo {
   '/signup': typeof authSignupIndexRoute
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
-  '/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdRoute
   '/editor/$editorId': typeof appLayoutEditorEditorIdRoute
   '/calendar': typeof appLayoutCalendarIndexRoute
   '/call': typeof appLayoutCallIndexRoute
@@ -191,10 +230,16 @@ export interface FileRoutesByTo {
   '/welcome/role': typeof appWelcomeRoleIndexRoute
   '/welcome/socials': typeof appWelcomeSocialsIndexRoute
   '/welcome/user': typeof appWelcomeUserIndexRoute
+  '/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdIndexRoute
+  '/classrooms/$classroomId/boards/$boardId': typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
+  '/classrooms/$classroomId/notes/$noteId': typeof appLayoutClassroomsClassroomIdNotesNoteIdRoute
+  '/materials/$materialId/board': typeof appLayoutMaterialsMaterialIdBoardIndexRoute
+  '/materials/$materialId/note': typeof appLayoutMaterialsMaterialIdNoteIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)/_layout': typeof appLayoutRouteWithChildren
+  '/(app)/email/$emailId': typeof appEmailEmailIdRoute
   '/(app)/invite/$inviteId': typeof appInviteInviteIdRoute
   '/(app)/welcome': typeof appWelcomeRouteWithChildren
   '/(app)/welcome/_layout': typeof appWelcomeLayoutRoute
@@ -206,7 +251,6 @@ export interface FileRoutesById {
   '/(auth)/signup/': typeof authSignupIndexRoute
   '/(app)/_layout/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/(app)/_layout/call/$callId': typeof appLayoutCallCallIdRoute
-  '/(app)/_layout/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdRoute
   '/(app)/_layout/editor/$editorId': typeof appLayoutEditorEditorIdRoute
   '/(app)/_layout/calendar/': typeof appLayoutCalendarIndexRoute
   '/(app)/_layout/call/': typeof appLayoutCallIndexRoute
@@ -216,10 +260,16 @@ export interface FileRoutesById {
   '/(app)/welcome/role/': typeof appWelcomeRoleIndexRoute
   '/(app)/welcome/socials/': typeof appWelcomeSocialsIndexRoute
   '/(app)/welcome/user/': typeof appWelcomeUserIndexRoute
+  '/(app)/_layout/classrooms/$classroomId/': typeof appLayoutClassroomsClassroomIdIndexRoute
+  '/(app)/_layout/classrooms/$classroomId/boards/$boardId': typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
+  '/(app)/_layout/classrooms/$classroomId/notes/$noteId': typeof appLayoutClassroomsClassroomIdNotesNoteIdRoute
+  '/(app)/_layout/materials/$materialId/board/': typeof appLayoutMaterialsMaterialIdBoardIndexRoute
+  '/(app)/_layout/materials/$materialId/note/': typeof appLayoutMaterialsMaterialIdNoteIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/email/$emailId'
     | '/invite/$inviteId'
     | '/welcome'
     | '/reset-password/$resetToken'
@@ -230,7 +280,6 @@ export interface FileRouteTypes {
     | '/signup'
     | '/board/$boardId'
     | '/call/$callId'
-    | '/classrooms/$classroomId'
     | '/editor/$editorId'
     | '/calendar'
     | '/call'
@@ -240,8 +289,14 @@ export interface FileRouteTypes {
     | '/welcome/role'
     | '/welcome/socials'
     | '/welcome/user'
+    | '/classrooms/$classroomId'
+    | '/classrooms/$classroomId/boards/$boardId'
+    | '/classrooms/$classroomId/notes/$noteId'
+    | '/materials/$materialId/board'
+    | '/materials/$materialId/note'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/email/$emailId'
     | '/invite/$inviteId'
     | '/welcome'
     | '/reset-password/$resetToken'
@@ -252,7 +307,6 @@ export interface FileRouteTypes {
     | '/signup'
     | '/board/$boardId'
     | '/call/$callId'
-    | '/classrooms/$classroomId'
     | '/editor/$editorId'
     | '/calendar'
     | '/call'
@@ -262,9 +316,15 @@ export interface FileRouteTypes {
     | '/welcome/role'
     | '/welcome/socials'
     | '/welcome/user'
+    | '/classrooms/$classroomId'
+    | '/classrooms/$classroomId/boards/$boardId'
+    | '/classrooms/$classroomId/notes/$noteId'
+    | '/materials/$materialId/board'
+    | '/materials/$materialId/note'
   id:
     | '__root__'
     | '/(app)/_layout'
+    | '/(app)/email/$emailId'
     | '/(app)/invite/$inviteId'
     | '/(app)/welcome'
     | '/(app)/welcome/_layout'
@@ -276,7 +336,6 @@ export interface FileRouteTypes {
     | '/(auth)/signup/'
     | '/(app)/_layout/board/$boardId'
     | '/(app)/_layout/call/$callId'
-    | '/(app)/_layout/classrooms/$classroomId'
     | '/(app)/_layout/editor/$editorId'
     | '/(app)/_layout/calendar/'
     | '/(app)/_layout/call/'
@@ -286,10 +345,16 @@ export interface FileRouteTypes {
     | '/(app)/welcome/role/'
     | '/(app)/welcome/socials/'
     | '/(app)/welcome/user/'
+    | '/(app)/_layout/classrooms/$classroomId/'
+    | '/(app)/_layout/classrooms/$classroomId/boards/$boardId'
+    | '/(app)/_layout/classrooms/$classroomId/notes/$noteId'
+    | '/(app)/_layout/materials/$materialId/board/'
+    | '/(app)/_layout/materials/$materialId/note/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   appLayoutRoute: typeof appLayoutRouteWithChildren
+  appEmailEmailIdRoute: typeof appEmailEmailIdRoute
   appInviteInviteIdRoute: typeof appInviteInviteIdRoute
   appWelcomeRoute: typeof appWelcomeRouteWithChildren
   authResetPasswordResetTokenRoute: typeof authResetPasswordResetTokenRoute
@@ -371,6 +436,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appInviteInviteIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/(app)/email/$emailId': {
+      id: '/(app)/email/$emailId'
+      path: '/email/$emailId'
+      fullPath: '/email/$emailId'
+      preLoaderRoute: typeof appEmailEmailIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/(app)/welcome/user/': {
       id: '/(app)/welcome/user/'
       path: '/user'
@@ -434,13 +506,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutEditorEditorIdRouteImport
       parentRoute: typeof appLayoutRoute
     }
-    '/(app)/_layout/classrooms/$classroomId': {
-      id: '/(app)/_layout/classrooms/$classroomId'
-      path: '/classrooms/$classroomId'
-      fullPath: '/classrooms/$classroomId'
-      preLoaderRoute: typeof appLayoutClassroomsClassroomIdRouteImport
-      parentRoute: typeof appLayoutRoute
-    }
     '/(app)/_layout/call/$callId': {
       id: '/(app)/_layout/call/$callId'
       path: '/call/$callId'
@@ -455,6 +520,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutBoardBoardIdRouteImport
       parentRoute: typeof appLayoutRoute
     }
+    '/(app)/_layout/classrooms/$classroomId/': {
+      id: '/(app)/_layout/classrooms/$classroomId/'
+      path: '/classrooms/$classroomId'
+      fullPath: '/classrooms/$classroomId'
+      preLoaderRoute: typeof appLayoutClassroomsClassroomIdIndexRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
+    '/(app)/_layout/materials/$materialId/note/': {
+      id: '/(app)/_layout/materials/$materialId/note/'
+      path: '/materials/$materialId/note'
+      fullPath: '/materials/$materialId/note'
+      preLoaderRoute: typeof appLayoutMaterialsMaterialIdNoteIndexRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
+    '/(app)/_layout/materials/$materialId/board/': {
+      id: '/(app)/_layout/materials/$materialId/board/'
+      path: '/materials/$materialId/board'
+      fullPath: '/materials/$materialId/board'
+      preLoaderRoute: typeof appLayoutMaterialsMaterialIdBoardIndexRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
+    '/(app)/_layout/classrooms/$classroomId/notes/$noteId': {
+      id: '/(app)/_layout/classrooms/$classroomId/notes/$noteId'
+      path: '/classrooms/$classroomId/notes/$noteId'
+      fullPath: '/classrooms/$classroomId/notes/$noteId'
+      preLoaderRoute: typeof appLayoutClassroomsClassroomIdNotesNoteIdRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
+    '/(app)/_layout/classrooms/$classroomId/boards/$boardId': {
+      id: '/(app)/_layout/classrooms/$classroomId/boards/$boardId'
+      path: '/classrooms/$classroomId/boards/$boardId'
+      fullPath: '/classrooms/$classroomId/boards/$boardId'
+      preLoaderRoute: typeof appLayoutClassroomsClassroomIdBoardsBoardIdRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
   }
 }
 
@@ -462,26 +562,39 @@ interface appLayoutRouteChildren {
   appLayoutIndexRoute: typeof appLayoutIndexRoute
   appLayoutBoardBoardIdRoute: typeof appLayoutBoardBoardIdRoute
   appLayoutCallCallIdRoute: typeof appLayoutCallCallIdRoute
-  appLayoutClassroomsClassroomIdRoute: typeof appLayoutClassroomsClassroomIdRoute
   appLayoutEditorEditorIdRoute: typeof appLayoutEditorEditorIdRoute
   appLayoutCalendarIndexRoute: typeof appLayoutCalendarIndexRoute
   appLayoutCallIndexRoute: typeof appLayoutCallIndexRoute
   appLayoutClassroomsIndexRoute: typeof appLayoutClassroomsIndexRoute
   appLayoutMaterialsIndexRoute: typeof appLayoutMaterialsIndexRoute
   appLayoutPaymentsIndexRoute: typeof appLayoutPaymentsIndexRoute
+  appLayoutClassroomsClassroomIdIndexRoute: typeof appLayoutClassroomsClassroomIdIndexRoute
+  appLayoutClassroomsClassroomIdBoardsBoardIdRoute: typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
+  appLayoutClassroomsClassroomIdNotesNoteIdRoute: typeof appLayoutClassroomsClassroomIdNotesNoteIdRoute
+  appLayoutMaterialsMaterialIdBoardIndexRoute: typeof appLayoutMaterialsMaterialIdBoardIndexRoute
+  appLayoutMaterialsMaterialIdNoteIndexRoute: typeof appLayoutMaterialsMaterialIdNoteIndexRoute
 }
 
 const appLayoutRouteChildren: appLayoutRouteChildren = {
   appLayoutIndexRoute: appLayoutIndexRoute,
   appLayoutBoardBoardIdRoute: appLayoutBoardBoardIdRoute,
   appLayoutCallCallIdRoute: appLayoutCallCallIdRoute,
-  appLayoutClassroomsClassroomIdRoute: appLayoutClassroomsClassroomIdRoute,
   appLayoutEditorEditorIdRoute: appLayoutEditorEditorIdRoute,
   appLayoutCalendarIndexRoute: appLayoutCalendarIndexRoute,
   appLayoutCallIndexRoute: appLayoutCallIndexRoute,
   appLayoutClassroomsIndexRoute: appLayoutClassroomsIndexRoute,
   appLayoutMaterialsIndexRoute: appLayoutMaterialsIndexRoute,
   appLayoutPaymentsIndexRoute: appLayoutPaymentsIndexRoute,
+  appLayoutClassroomsClassroomIdIndexRoute:
+    appLayoutClassroomsClassroomIdIndexRoute,
+  appLayoutClassroomsClassroomIdBoardsBoardIdRoute:
+    appLayoutClassroomsClassroomIdBoardsBoardIdRoute,
+  appLayoutClassroomsClassroomIdNotesNoteIdRoute:
+    appLayoutClassroomsClassroomIdNotesNoteIdRoute,
+  appLayoutMaterialsMaterialIdBoardIndexRoute:
+    appLayoutMaterialsMaterialIdBoardIndexRoute,
+  appLayoutMaterialsMaterialIdNoteIndexRoute:
+    appLayoutMaterialsMaterialIdNoteIndexRoute,
 }
 
 const appLayoutRouteWithChildren = appLayoutRoute._addFileChildren(
@@ -508,6 +621,7 @@ const appWelcomeRouteWithChildren = appWelcomeRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   appLayoutRoute: appLayoutRouteWithChildren,
+  appEmailEmailIdRoute: appEmailEmailIdRoute,
   appInviteInviteIdRoute: appInviteInviteIdRoute,
   appWelcomeRoute: appWelcomeRouteWithChildren,
   authResetPasswordResetTokenRoute: authResetPasswordResetTokenRoute,

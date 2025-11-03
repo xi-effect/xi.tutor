@@ -8,7 +8,7 @@ import { PaymentApproveModal } from 'features.payment.approve';
 import { UserRoleT } from 'common.api';
 
 export const Payments = () => {
-  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
+  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom } = useGetClassroom(Number(classroomId));
   const isMobile = useMediaQuery('(max-width: 719px)');
 

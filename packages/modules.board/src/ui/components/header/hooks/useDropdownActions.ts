@@ -1,22 +1,52 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 // useBoardActions.ts
 import { useParams } from '@tanstack/react-router';
-import { useGetMaterial } from 'common.services';
-import { useEffect } from 'react';
+import {
+  useCurrentUser,
+  useGetClassroomMaterial,
+  useGetClassroomMaterialStudent,
+  useGetMaterial,
+} from 'common.services';
+import { useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useEditor } from 'tldraw';
 import { useYjsContext } from '../../../../providers/YjsProvider';
 
 export const useDropdownActions = () => {
   const editor = useEditor();
-  const { boardId = 'empty' } = useParams({ strict: false });
-  const { data } = useGetMaterial(boardId);
+  const { classroomId, boardId, materialId } = useParams({ strict: false });
+
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const getMaterial = (() => {
+    if (classroomId) {
+      if (isTutor) {
+        return useGetClassroomMaterial;
+      } else {
+        return useGetClassroomMaterialStudent;
+      }
+    }
+
+    return useGetMaterial;
+  })();
+
+  const materialIdValue = boardId ?? materialId;
+  if (!materialIdValue) {
+    throw new Error('boardId or materialId must be provided');
+  }
+
+  const { data } = getMaterial({
+    classroomId: classroomId || '',
+    id: materialIdValue,
+  });
   const { isReadonly, toggleReadonly } = useYjsContext();
 
   useEffect(() => {
     editor.updateInstanceState({ isReadonly });
   }, [editor, isReadonly]);
 
-  const saveCanvas = async () => {
+  const saveCanvas = useCallback(async () => {
     if (!editor) return;
 
     try {
@@ -54,7 +84,7 @@ export const useDropdownActions = () => {
       console.error('Ошибка при экспорте доски:', error);
       toast.error('Ошибка при экспорте доски');
     }
-  };
+  }, [editor, data?.name]);
 
   const clearBoard = () => {
     if (!editor) return;

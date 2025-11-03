@@ -14,7 +14,7 @@ import { useInvoiceForm } from '../hooks';
 import type { FormData } from '../model';
 import { SubjectRow } from './SubjectRow';
 import { CommentField } from './CommentField';
-import { StudentSelector } from './StudentSelector';
+import { ClassroomSelector } from './ClassroomSelector';
 import { TemplateSelector } from './TemplateSelector';
 
 type InvoiceModalProps = {
@@ -70,7 +70,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
               </p>
             </div>
 
-            <StudentSelector control={control} />
+            <ClassroomSelector control={control} />
 
             <div className="flex flex-row gap-2">
               <Button

@@ -7,13 +7,11 @@ import { MaterialsList } from './MaterialsList';
 import { PaymentsList } from './PaymentsList';
 import { StudentsList } from './StudentsList';
 
-import { CardMaterialsProps, materialsMock } from '../CardMaterials';
-
 export const Overview = () => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
+  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
 
   if (isLoading) {
@@ -76,7 +74,7 @@ export const Overview = () => {
         </div>
       </div> */}
       <SectionContainer title="Материалы" tabLink="materials">
-        <MaterialsList materials={materialsMock as CardMaterialsProps['accessTypes'][]} />
+        <MaterialsList />
       </SectionContainer>
       <SectionContainer title="Оплаты" tabLink="payments">
         <PaymentsList />

@@ -25,7 +25,8 @@ export type NotificationKind =
   | 'group_invitation_declined'
   | 'system_update'
   | 'birthday'
-  | 'general';
+  | 'general'
+  | 'custom_v1'; // Кастомный тип уведомления
 
 // Структура уведомления (новый контракт)
 export type NotificationT = {
@@ -54,23 +55,36 @@ export type LegacyNotificationT = {
 
 // События SocketIO для уведомлений
 export type NotificationSocketEvents = {
-  'create-notification': NotificationT; // Новое уведомление от сервера
-  'notification:read': { id: string };
-  'notification:read_all': void;
-  'notification:delete': { id: string };
-  'notification:test': NotificationT;
+  'new-notification': NotificationT; // Новое уведомление от сервера (push event)
+  // /=tmexio-SUB=/new-notification/ - техническая особенность бэка, имя события просто "new-notification"
 };
 
-// HTTP API типы
-export type NotificationsListResponse = {
-  notifications: NotificationT[];
-  has_more: boolean;
-  next_cursor?: string;
+// HTTP API типы для запросов
+export type NotificationSearchRequest = {
+  cursor?: string;
+  limit?: number; // 0 < limit < 100, default 12
 };
 
-export type NotificationCountResponse = {
-  count: number;
+// HTTP API типы для ответов
+// POST /notifications/searches/ возвращает массив RecipientNotification (обёрнутый формат)
+export type RecipientNotificationResponse = {
+  read_at: string | null;
+  notification: {
+    id: string;
+    created_at: string;
+    updated_at?: string;
+    payload: {
+      kind: string;
+      [key: string]: any;
+    };
+    actor_user_id?: number | null;
+  };
 };
+
+export type NotificationsSearchResponse = RecipientNotificationResponse[];
+
+// GET /unread-notifications-count/ возвращает integer
+// В query может быть limit?: number (>0, ≤100, default 100)
 
 // Состояние уведомлений
 export type NotificationsStateT = {

@@ -24,6 +24,7 @@ import {
 } from 'tldraw';
 import { YKeyValue } from 'y-utility/y-keyvalue';
 import * as Y from 'yjs';
+import { myAssetStore } from '../features/imageStore';
 
 /* ---------- Цвет по ID ---------- */
 function generateUserColor(userId: string): string {
@@ -34,9 +35,11 @@ function generateUserColor(userId: string): string {
 
 type UseYjsStoreArgs = Partial<{
   hostUrl: string;
-  roomId: string;
+  ydocId: string;
+  storageToken: string;
   version: number;
   shapeUtils: TLAnyShapeUtilConstructor[];
+  token: string; // Токен для asset store
 }>;
 
 export type ExtendedStoreStatus = {
@@ -53,18 +56,23 @@ export type ExtendedStoreStatus = {
 };
 
 export function useYjsStore({
-  roomId = 'test/demo-room',
+  ydocId = 'test/demo-room',
+  storageToken = 'test/demo-room',
   hostUrl = 'wss://hocus.sovlium.ru',
   shapeUtils = [],
+  token,
 }: UseYjsStoreArgs): ExtendedStoreStatus {
   const { data: currentUser } = useCurrentUser();
 
   /* ---------- TLStore (локальный) ---------- */
-  const [store] = useState(() =>
-    createTLStore({
+  const [store] = useState(() => {
+    const assetStore = token ? myAssetStore(token) : undefined;
+
+    return createTLStore({
       shapeUtils: [...defaultShapeUtils, ...shapeUtils],
-    }),
-  );
+      ...(assetStore ? { assets: assetStore } : {}),
+    });
+  });
 
   /* ---------- Undo/Redo refs & flags ---------- */
   const undoManagerRef = useRef<Y.UndoManager | null>(null);
@@ -83,22 +91,19 @@ export function useYjsStore({
   /* ---------- Yjs структуры + провайдер ---------- */
   const { yDoc, yStore, meta, room, readonlyMap } = useMemo(() => {
     const yDoc = new Y.Doc({ gc: true });
-    const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${roomId}`);
+    const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${ydocId}`);
     const yStore = new YKeyValue(yArr);
     const meta = yDoc.getMap<SerializedSchema>('meta');
     const readonlyMap = yDoc.getMap<boolean>('readonly');
 
-    console.log('roomId', roomId);
-
     const room = new HocuspocusProvider({
       url: hostUrl,
-      name: roomId,
+      name: ydocId,
       document: yDoc,
-      token: roomId,
+      token: storageToken,
       connect: false,
       forceSyncInterval: 20000,
       onAuthenticationFailed: (data) => {
-        console.log('onAuthenticationFailed', data);
         if (data.reason === 'permission-denied') {
           toast('Ошибка доступа к серверу совместного редактирования');
           console.error('hocuspocus: permission-denied');
@@ -107,7 +112,7 @@ export function useYjsStore({
     });
 
     return { yDoc, yStore, meta, room, readonlyMap };
-  }, [hostUrl, roomId]);
+  }, [hostUrl, ydocId, storageToken]);
 
   /* ---------- Главный эффект ---------- */
   useEffect(() => {

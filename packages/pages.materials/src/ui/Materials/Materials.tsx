@@ -11,8 +11,6 @@ export const Materials = () => {
   const { items, isError, isLoading } = useInfiniteQuery(parentRef, 'board');
   const rowVirtualizer = useVirtualGrid(parentRef, items, colCount, rowHeight);
 
-  console.log('items', items);
-
   const notFoundItems = !items.length && !isLoading && !isError;
 
   return (

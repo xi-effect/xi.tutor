@@ -1,7 +1,6 @@
-import { useParams } from '@tanstack/react-router';
-import { useGetMaterial } from 'common.services';
 import { createContext, ReactNode, useContext } from 'react';
 import { ExtendedStoreStatus, useYjsStore } from '../hooks/useYjsStore';
+import { StorageItemT } from 'common.types';
 
 type YjsContextType = ExtendedStoreStatus | null;
 
@@ -9,6 +8,7 @@ const YjsContext = createContext<YjsContextType>(null);
 
 type YjsProviderProps = {
   children: ReactNode;
+  storageItem: StorageItemT;
 };
 
 export const useYjsContext = () => {
@@ -19,12 +19,11 @@ export const useYjsContext = () => {
   return context;
 };
 
-export const YjsProvider = ({ children }: YjsProviderProps) => {
-  const { boardId = 'empty' } = useParams({ strict: false });
-  const { data } = useGetMaterial(boardId);
-
+export const YjsProvider = ({ children, storageItem }: YjsProviderProps) => {
   const yjsStore = useYjsStore({
-    roomId: data?.ydoc_id,
+    storageToken: storageItem?.storage_token || '',
+    ydocId: storageItem?.ydoc_id || '',
+    token: storageItem?.storage_token || '', // Передаем токен для asset store
   });
 
   return <YjsContext.Provider value={yjsStore}>{children}</YjsContext.Provider>;

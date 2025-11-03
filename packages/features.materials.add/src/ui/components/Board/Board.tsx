@@ -6,17 +6,54 @@ import {
   DropdownMenuItem,
 } from '@xipkg/dropdown';
 import { ChevronSmallBottom } from '@xipkg/icons';
+import { useAddMaterials, useAddClassroomMaterials } from 'common.services';
+import { useParams } from '@tanstack/react-router';
 
 interface BoardProps {
-  onCreate: () => void;
+  onCreate?: () => void;
   onlyDrafts?: boolean;
+  classroomId?: string;
 }
 
-export const Board = ({ onlyDrafts = false, onCreate }: BoardProps) => {
+type StudentAccessMode = 'no_access' | 'read_only' | 'read_write';
+
+export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps) => {
+  const { classroomId: paramsClassroomId } = useParams({ strict: false });
+  const { addMaterials } = useAddMaterials();
+  const { addClassroomMaterials } = useAddClassroomMaterials();
+
+  const currentClassroomId = classroomId || paramsClassroomId;
+
+  const handleCreateBoardDraft = () => {
+    if (onCreate) {
+      onCreate();
+    } else {
+      addMaterials.mutate({
+        content_kind: 'board',
+      });
+    }
+  };
+
+  const handleCreateBoardWithAccess = (studentAccessMode: StudentAccessMode) => {
+    if (currentClassroomId) {
+      addClassroomMaterials.mutate({
+        classroomId: currentClassroomId,
+        content_kind: 'board',
+        student_access_mode: studentAccessMode,
+      });
+    }
+  };
+
   if (onlyDrafts) {
     return (
-      <Button onClick={onCreate} size="s" variant="secondary" className="max-sm:hidden">
-        Создать доску
+      <Button
+        onClick={handleCreateBoardDraft}
+        size="s"
+        variant="secondary"
+        className="max-sm:hidden"
+        disabled={addMaterials.isPending}
+      >
+        {addMaterials.isPending ? 'Создание...' : 'Создать доску'}
       </Button>
     );
   }
@@ -30,22 +67,25 @@ export const Board = ({ onlyDrafts = false, onCreate }: BoardProps) => {
 
       <DropdownMenuContent className="border-gray-10 text-s-base w-[160px] border p-1 font-normal">
         <DropdownMenuItem
-          onClick={onCreate}
+          onClick={() => handleCreateBoardWithAccess('read_write')}
           className="hover:bg-brand-0 hover:text-brand-100 py-6 hover:rounded-lg"
+          disabled={addClassroomMaterials.isPending}
         >
           Совместная работа
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          onClick={onCreate}
+          onClick={() => handleCreateBoardWithAccess('read_only')}
           className="hover:bg-brand-0 hover:text-brand-100 hover:rounded-lg"
+          disabled={addClassroomMaterials.isPending}
         >
           Только репетитор
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          onClick={onCreate}
+          onClick={() => handleCreateBoardWithAccess('no_access')}
           className="hover:bg-brand-0 hover:text-brand-100 hover:rounded-lg"
+          disabled={addClassroomMaterials.isPending}
         >
           Черновики
         </DropdownMenuItem>

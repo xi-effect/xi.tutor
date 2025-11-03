@@ -53,7 +53,7 @@ export const getExtensions = (
       ],
     }),
     Placeholder.configure({
-      placeholder: 'Начни писать здесь…',
+      placeholder: 'Начните писать здесь…',
       emptyEditorClass: 'is-editor-empty',
       showOnlyWhenEditable: true,
     }),
@@ -66,12 +66,6 @@ export const getExtensions = (
     });
     return base;
   }
-
-  console.log('Инициализируем коллаборативные расширения TipTap', {
-    hasProvider: !!provider,
-    hasYdoc: !!ydoc,
-    providerConnected: provider?.isConnected,
-  });
 
   try {
     return [

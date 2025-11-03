@@ -29,6 +29,7 @@
     "common.entities": "*",
     "common.services": "*",
     "common.types": "*",
+    "common.ui": "*",
     "features.group.invite": "*",
     "features.group.manage": "*",
     "features.materials.add": "*",

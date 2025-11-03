@@ -19,16 +19,24 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
   const getAcceptButtonText = () => (isInviteAccepted ? 'Перейти в кабинет' : 'Принять');
 
   const acceptInvite = () => {
-    if (invite.kind === 'individual' && invite.existing_classroom_id) {
-      navigate({ to: `/classrooms/${invite.existing_classroom_id}` }); // Переход по старому приглашению в индивидуальный кабинет
-    } else if (invite.kind === 'group') {
-      if (invite.classroom?.id) {
-        navigate({ to: `/classrooms/${invite.classroom.id}` });
+    if (invite.kind === 'group') {
+      if (invite.has_already_joined) {
+        if (invite.classroom?.id) {
+          navigate({ to: `/classrooms/${invite.classroom.id}` });
+        } else {
+          navigate({ to: `/classrooms` });
+        }
       } else {
-        navigate({ to: `/classrooms` });
+        mutate(inviteId); // первое принятие приглашения
       }
-    } else {
-      mutate(inviteId); // первое принятие приглашения
+    }
+
+    if (invite.kind === 'individual') {
+      if (invite.existing_classroom_id) {
+        navigate({ to: `/classrooms/${invite.existing_classroom_id}` }); // Переход по старому приглашению в индивидуальный кабинет
+      } else {
+        mutate(inviteId); // первое принятие приглашения
+      }
     }
   };
 

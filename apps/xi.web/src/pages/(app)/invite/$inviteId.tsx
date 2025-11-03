@@ -11,9 +11,9 @@ const paramsSchema = z.object({
 export const Route = createFileRoute('/(app)/invite/$inviteId')({
   component: InvitePage,
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
-  beforeLoad: ({ context, location }) => {
-    console.log('Invites', context, location);
-  },
+  // beforeLoad: ({ context, location }) => {
+  //   console.log('Invites', context, location);
+  // },
 });
 
 function InvitePage() {

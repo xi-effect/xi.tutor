@@ -35,5 +35,6 @@ declare module '@tanstack/react-router' {
     tab?: string;
     goto?: string;
     call?: string;
+    classroom?: string;
   }
 }

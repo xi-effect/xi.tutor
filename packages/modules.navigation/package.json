@@ -27,6 +27,7 @@
     "common.types": "*",
     "common.ui": "*",
     "common.sockets": "*",
+    "modules.calls": "*",
     "i18next": "24.2.2",
     "modules.profile": "*",
     "react-i18next": "15.4.1",

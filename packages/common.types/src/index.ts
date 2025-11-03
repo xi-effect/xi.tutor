@@ -4,8 +4,17 @@ export type {
   NotificationT,
   NotificationSocketEvents,
   NotificationsStateT,
+  RecipientNotificationResponse,
+  NotificationsSearchResponse,
+  NotificationSearchRequest,
 } from './notifications';
-export type { MaterialT, UpdateMaterialDataT } from './materials';
+export type {
+  MaterialT,
+  UpdateMaterialDataT,
+  ClassroomMaterialsT,
+  AccessModeT,
+  StorageItemT,
+} from './materials';
 export type { TemplateT, PaymentTemplateDataT, UpdateTemplateDataT } from './payments';
 export type { InvitationDataT } from './invitations';
 export type {

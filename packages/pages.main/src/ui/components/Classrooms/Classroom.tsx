@@ -69,8 +69,6 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
     window.location.href = url;
   };
 
-  console.log('classroom', classroom);
-
   return (
     <div className="border-gray-30 relative flex min-h-[170px] max-w-[420px] min-w-[320px] flex-col items-start justify-start gap-1 rounded-2xl border bg-transparent p-4">
       <Tooltip delayDuration={1000}>
