@@ -20,7 +20,7 @@
     "@xipkg/scrollarea": "2.2.0",
     "@xipkg/tooltip": "2.1.0",
     "@xipkg/utils": "1.8.0",
-    "@xipkg/modal": "4.1.0",
+    "@xipkg/modal": "^4.3.0",
     "@xipkg/link": "^2.0.12",
     "@xipkg/select": "^2.2.5",
     "@xipkg/userprofile": "4.0.14",

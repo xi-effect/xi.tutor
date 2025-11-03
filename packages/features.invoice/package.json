@@ -20,7 +20,7 @@
     "common.api": "*",
     "common.env": "*",
     "common.types": "*",
-    "@xipkg/modal": "4.1.0",
+    "@xipkg/modal": "^4.3.0",
     "@xipkg/select": "2.2.5",
     "@xipkg/utils": "1.8.0",
     "@xipkg/form": "4.2.1",
