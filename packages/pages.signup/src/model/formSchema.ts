@@ -39,7 +39,7 @@ export const useFormSchema = () => {
         .min(passwordMinLength, {
           message: `${t('validation.minLength')}${t('validation.symbols', { count: passwordMinLength })}`,
         }),
-      consent: z.boolean().refine((value) => value === true, {
+      consent: z.boolean().refine((value) => !!value, {
         message: '',
       }),
     });
