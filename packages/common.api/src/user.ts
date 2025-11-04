@@ -24,7 +24,8 @@ const userApiConfig = {
     method: HttpMethod.PATCH,
   },
   [UserQueryKey.Email]: {
-    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/email/`,
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/email-change/requests/`,
     method: HttpMethod.PUT,
   },
   [UserQueryKey.Password]: {
@@ -39,7 +40,7 @@ const userApiConfig = {
   },
   [UserQueryKey.EmailConfirmationRequest]: {
     getUrl: () =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/email-confirmation-requests/`,
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/email-confirmation/requests/`,
     method: HttpMethod.POST,
   },
   [UserQueryKey.UpdateAvatar]: {

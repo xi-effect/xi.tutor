@@ -87,7 +87,7 @@ export const SignUpPage = () => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="pt-0" />
                 </FormItem>
               )}
             />
@@ -107,7 +107,7 @@ export const SignUpPage = () => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="pt-0" />
                 </FormItem>
               )}
             />
@@ -137,7 +137,7 @@ export const SignUpPage = () => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="pt-0" />
                 </FormItem>
               )}
             />

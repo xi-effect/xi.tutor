@@ -85,7 +85,7 @@ export const NewPassword = ({ token }: { token: string }) => {
                   }}
                 />
               </FormControl>
-              <FormMessage />
+              <FormMessage className="pt-0" />
             </FormItem>
           )}
         />
