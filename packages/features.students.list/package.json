@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@xipkg/button": "^3.1.8",
-    "@xipkg/icons": "^2.5.4",
+    "@xipkg/icons": "^2.6.0",
     "@xipkg/input": "^2.2.9",
     "@xipkg/modal": "^4.3.0",
     "@xipkg/scrollarea": "^2.2.0",

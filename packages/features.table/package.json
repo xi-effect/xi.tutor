@@ -16,7 +16,7 @@
     "@xipkg/button": "^3.1.8",
     "@xipkg/checkbox": "^4.0.14",
     "@xipkg/dropdown": "^3.0.12",
-    "@xipkg/icons": "^2.5.4",
+    "@xipkg/icons": "^2.6.0",
     "@xipkg/input": "^2.2.9",
     "@xipkg/userprofile": "^4.0.12",
     "@xipkg/utils": "^1.8.0",
