@@ -3,9 +3,11 @@ import { track, useEditor } from 'tldraw';
 import { Button } from '@xipkg/button';
 import { Trash, Copy, Unlocked } from '@xipkg/icons';
 import { MoreActionsMenu } from './MoreActionsMenu';
+import { useYjsContext } from '../../../providers/YjsProvider';
 
 export const SelectionMenu = track(function SelectionMenu() {
   const editor = useEditor();
+  const { isReadonly } = useYjsContext();
 
   const selectedShapes = editor.getSelectedShapes();
   const isLocked = selectedShapes.every((shape) => shape.isLocked);
@@ -28,6 +30,9 @@ export const SelectionMenu = track(function SelectionMenu() {
   }, [editor, selectedIds]);
 
   // --- Логика показа ПОСЛЕ хуков ---
+  // Скрываем меню в readonly режиме или если нет выделения
+  if (isReadonly) return null;
+
   const shouldShow = selectedIds.length > 0 && isSelect && !isBrushing && !!screenBounds;
 
   if (!shouldShow) return null;

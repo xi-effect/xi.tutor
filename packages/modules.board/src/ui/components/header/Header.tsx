@@ -18,10 +18,12 @@ import { useEffect } from 'react';
 import { EditableTitle } from './EditableTitle';
 import { SettingsDropdown } from './SettingsDropdown';
 import { HotkeysHelp } from '../shared/HotkeysHelp';
+import { useYjsContext } from '../../../providers/YjsProvider';
 
 export const Header = () => {
   const { isFullScreen, toggleFullScreen } = useFullScreen('whiteboard-container');
   const { classroomId, boardId, materialId } = useParams({ strict: false });
+  const { isReadonly } = useYjsContext();
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -92,7 +94,7 @@ export const Header = () => {
           )}
         </div>
         <div className="flex items-center gap-1">
-          <HotkeysHelp />
+          {!isReadonly && <HotkeysHelp />}
           <Button
             variant="ghost"
             onClick={toggleFullScreen}
@@ -101,7 +103,7 @@ export const Header = () => {
           >
             {isFullScreen ? <Minimize size="s" /> : <Maximize size="s" />}
           </Button>
-          <SettingsDropdown />
+          {!isReadonly && <SettingsDropdown />}
         </div>
       </div>
     </div>
