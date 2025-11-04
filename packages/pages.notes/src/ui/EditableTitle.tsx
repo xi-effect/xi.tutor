@@ -17,9 +17,15 @@ type EditableTitlePropsT = {
   title: string;
   materialId: string;
   className?: string;
+  isTutor?: boolean;
 };
 
-export const EditableTitle = ({ title, materialId, className }: EditableTitlePropsT) => {
+export const EditableTitle = ({
+  title,
+  materialId,
+  className,
+  isTutor = false,
+}: EditableTitlePropsT) => {
   const [isEditing, setIsEditing] = useState(false);
   const { update, isPending } = useMaterialUpdate();
 
@@ -96,10 +102,11 @@ export const EditableTitle = ({ title, materialId, className }: EditableTitlePro
   return (
     <h3
       className={cn(
-        'text-l-base sm:text-h6 xl:text-h3 cursor-pointer font-semibold break-all select-none',
+        'text-l-base sm:text-h6 xl:text-h3 font-semibold break-all select-none',
+        isTutor && 'cursor-pointer',
         className,
       )}
-      onDoubleClick={handleDoubleClick}
+      onDoubleClick={isTutor ? handleDoubleClick : undefined}
     >
       {title}
     </h3>

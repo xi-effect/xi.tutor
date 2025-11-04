@@ -63,7 +63,7 @@ export const Header = () => {
             {isLoading ? (
               <Skeleton variant="text" className="h-6 w-full" />
             ) : (
-              <EditableTitle title={material.name} materialId={materialIdValue} />
+              <EditableTitle title={material.name} materialId={materialIdValue} isTutor={isTutor} />
             )}
           </div>
         </div>
