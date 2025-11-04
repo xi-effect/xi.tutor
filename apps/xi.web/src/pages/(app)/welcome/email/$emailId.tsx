@@ -9,7 +9,7 @@ const paramsSchema = z.object({
   emailId: z.string(),
 });
 
-export const Route = createFileRoute('/(app)/email/$emailId')({
+export const Route = createFileRoute('/(app)/welcome/email/$emailId')({
   head: () => ({
     meta: [{ title: 'sovlium | Подтвердите почту' }],
   }),

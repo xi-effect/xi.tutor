@@ -26,7 +26,10 @@ export const useSignupForm = () => {
       mutate(data, {
         onSuccess: () => {
           navigate({
-            to: '/welcome/user',
+            to: '/welcome/email/$emailId',
+            params: {
+              emailId: 'confirm',
+            },
             search: {
               ...search,
             },

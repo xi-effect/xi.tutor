@@ -12,6 +12,8 @@ enum UserQueryKey {
   EmailConfirmationRequest = 'EmailConfirmationRequest',
   UpdateAvatar = 'UpdateAvatar',
   DeleteAvatar = 'DeleteAvatar',
+  EmailChange = 'EmailChange',
+  EmailChangeRequest = 'EmailChangeRequest',
 }
 
 const userApiConfig = {
@@ -50,6 +52,16 @@ const userApiConfig = {
   [UserQueryKey.DeleteAvatar]: {
     getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/avatar/`,
     method: HttpMethod.DELETE,
+  },
+  [UserQueryKey.EmailChange]: {
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/public/user-service/email-change/confirmations/`,
+    method: HttpMethod.POST,
+  },
+  [UserQueryKey.EmailChangeRequest]: {
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/email-change/requests/`,
+    method: HttpMethod.POST,
   },
 };
 

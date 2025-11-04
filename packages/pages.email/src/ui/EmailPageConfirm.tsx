@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { EmailPageLayout } from './EmailPageLayout';
 import { Button } from '@xipkg/button';
+import { useCurrentUser } from 'common.services';
 
 type EmailPageConfirmPropsT = {
   setStatus: Dispatch<SetStateAction<'confirm' | 'success'>>;
@@ -15,6 +16,8 @@ const formatTime = (seconds: number): string => {
 };
 
 export const EmailPageConfirm = ({ setStatus }: EmailPageConfirmPropsT) => {
+  const { data: user } = useCurrentUser();
+  const email = user?.email || '';
   const [timeRemaining, setTimeRemaining] = useState(INITIAL_TIMER_SECONDS);
 
   useEffect(() => {
@@ -46,7 +49,7 @@ export const EmailPageConfirm = ({ setStatus }: EmailPageConfirmPropsT) => {
         <span className="text-m-base w-full text-center text-gray-100">
           Перейдите по ссылке — отправили её на
         </span>
-        <span className="text-m-base w-full text-center text-gray-100">example@example.com</span>
+        <span className="text-m-base w-full text-center text-gray-100">{email}</span>
       </div>
       <Button
         size="m"

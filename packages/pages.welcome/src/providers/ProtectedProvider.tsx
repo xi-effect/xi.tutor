@@ -40,9 +40,6 @@ export const ProtectedProvider = ({ children }: ProtectedProviderPropsT) => {
 
     if (onboarding_stage === 'completed') return;
 
-    // Если мы уже в welcome-процессе, не делаем редиректы
-    if (isInWelcomeProcess) return;
-
     // Проверяем, есть ли invite параметр в search
     const hasInvite = search && typeof search === 'object' && 'invite' in search && search.invite;
 
@@ -53,7 +50,7 @@ export const ProtectedProvider = ({ children }: ProtectedProviderPropsT) => {
 
     if (!expectedPath) return;
 
-    // Редиректим только если мы вне welcome и не на правильном пути
+    // Редиректим если мы не на правильном пути (даже если мы уже в welcome-процессе)
     if (pathname !== expectedPath) {
       router.navigate({ to: expectedPath, search: { ...search } });
     }
