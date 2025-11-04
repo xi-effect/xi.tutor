@@ -26,11 +26,13 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
 
   const topMenu = [
     {
+      id: 'home-menu-item',
       titleKey: 'home',
       url: '/',
       icon: Home,
     },
     {
+      id: 'classrooms-menu-item',
       titleKey: 'classrooms',
       url: '/classrooms',
       icon: Group,
@@ -38,6 +40,7 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
     ...(isTutor
       ? [
           {
+            id: 'materials-menu-item',
             titleKey: 'materials',
             url: '/materials',
             icon: Materials,
@@ -45,6 +48,7 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
         ]
       : []),
     {
+      id: 'payments-menu-item',
       titleKey: 'payments',
       url: '/payments',
       icon: Payments,
@@ -117,7 +121,7 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
           <SidebarGroupContent>
             <SidebarMenu>
               {topMenu.map((item) => (
-                <SidebarMenuItem className="cursor-pointer" key={item.titleKey}>
+                <SidebarMenuItem id={item.id} className="cursor-pointer" key={item.titleKey}>
                   <SidebarMenuButton asChild isActive={getIsActiveItem(item.url)}>
                     <a onClick={() => handleClick(item.url)}>
                       <item.icon className="h-6 w-6" />
