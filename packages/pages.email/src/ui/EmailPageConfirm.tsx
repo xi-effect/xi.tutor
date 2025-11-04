@@ -1,13 +1,9 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { EmailPageLayout } from './EmailPageLayout';
 import { Button } from '@xipkg/button';
-import { useCurrentUser } from 'common.services';
+import { useCurrentUser, useEmailConfirmationRequest } from 'common.services';
 
-type EmailPageConfirmPropsT = {
-  setStatus: Dispatch<SetStateAction<'confirm' | 'success'>>;
-};
-
-const INITIAL_TIMER_SECONDS = 10 * 60; // 09:38 в секундах
+const INITIAL_TIMER_SECONDS = 10 * 60; // 10 минут в секундах
 
 const formatTime = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);
@@ -15,10 +11,11 @@ const formatTime = (seconds: number): string => {
   return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
 };
 
-export const EmailPageConfirm = ({ setStatus }: EmailPageConfirmPropsT) => {
+export const EmailPageConfirm = () => {
   const { data: user } = useCurrentUser();
   const email = user?.email || '';
-  const [timeRemaining, setTimeRemaining] = useState(INITIAL_TIMER_SECONDS);
+  const [timeRemaining, setTimeRemaining] = useState(0);
+  const { emailConfirmationRequest, isLoading } = useEmailConfirmationRequest();
 
   useEffect(() => {
     if (timeRemaining === 0) return;
@@ -35,13 +32,28 @@ export const EmailPageConfirm = ({ setStatus }: EmailPageConfirmPropsT) => {
     return () => clearInterval(interval);
   }, [timeRemaining]);
 
+  // Останавливаем таймер во время загрузки
+  useEffect(() => {
+    if (isLoading && timeRemaining > 0) {
+      setTimeRemaining(0);
+    }
+  }, [isLoading, timeRemaining]);
+
+  // Запускаем таймер после успешной отправки
+  useEffect(() => {
+    if (emailConfirmationRequest.isSuccess) {
+      setTimeRemaining(INITIAL_TIMER_SECONDS);
+    }
+  }, [emailConfirmationRequest.isSuccess]);
+
   const handleConfirm = () => {
-    if (timeRemaining > 0) return;
-    setStatus('success');
-    setTimeRemaining(INITIAL_TIMER_SECONDS);
+    if (timeRemaining > 0 || isLoading) return;
+    emailConfirmationRequest.mutate();
   };
 
-  const isButtonDisabled = timeRemaining > 0;
+  const isButtonDisabled = timeRemaining > 0 || isLoading;
+  const buttonText = timeRemaining > 0 ? 'Отправить ещё раз' : 'Получить новую ссылку';
+  const showHint = timeRemaining === 0 && !isLoading;
 
   return (
     <EmailPageLayout title="Подтвердите почту">
@@ -57,11 +69,16 @@ export const EmailPageConfirm = ({ setStatus }: EmailPageConfirmPropsT) => {
         onClick={handleConfirm}
         disabled={isButtonDisabled}
       >
-        Отправить ещё раз
+        {buttonText}
       </Button>
-      {isButtonDisabled && (
+      {timeRemaining > 0 && (
         <span className="text-xxs-base text-gray-60 mt-1 w-full text-center">
           Следующее письмо можно отправить через {formatTime(timeRemaining)}
+        </span>
+      )}
+      {showHint && (
+        <span className="text-xxs-base text-gray-60 mt-1 w-full text-center">
+          Если письмо не пришло, проверьте адрес и нажмите на эту кнопку
         </span>
       )}
     </EmailPageLayout>

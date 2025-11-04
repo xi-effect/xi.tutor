@@ -9,7 +9,6 @@ enum UserQueryKey {
   PasswordResetConfirm = 'PasswordResetConfirm',
   UserById = 'UserById',
   UserByUsername = 'UserByUsername',
-  EmailConfirmationRequest = 'EmailConfirmationRequest',
   UpdateAvatar = 'UpdateAvatar',
   DeleteAvatar = 'DeleteAvatar',
   EmailChange = 'EmailChange',
@@ -38,11 +37,6 @@ const userApiConfig = {
   [UserQueryKey.PasswordResetConfirm]: {
     getUrl: () =>
       `${env.VITE_SERVER_URL_BACKEND}/api/public/user-service/password-reset/confirmations/`,
-    method: HttpMethod.POST,
-  },
-  [UserQueryKey.EmailConfirmationRequest]: {
-    getUrl: () =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/email-confirmation/requests/`,
     method: HttpMethod.POST,
   },
   [UserQueryKey.UpdateAvatar]: {

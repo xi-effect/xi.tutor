@@ -1,14 +1,14 @@
-import { useState } from 'react';
 import { EmailPageConfirm } from './EmailPageConfirm';
 import { EmailPageSuccess } from './EmailPageSuccess';
+import { useParams } from '@tanstack/react-router';
 
 export const EmailPage = () => {
-  const [status, setStatus] = useState<'confirm' | 'success'>('confirm');
+  const { emailId } = useParams({ strict: false });
 
   return (
     <>
-      {status === 'confirm' && <EmailPageConfirm setStatus={setStatus} />}
-      {status === 'success' && <EmailPageSuccess />}
+      {emailId === 'confirm' && <EmailPageConfirm />}
+      {emailId !== 'confirm' && <EmailPageSuccess />}
     </>
   );
 };
