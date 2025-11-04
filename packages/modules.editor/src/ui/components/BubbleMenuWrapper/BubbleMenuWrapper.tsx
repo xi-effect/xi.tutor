@@ -13,7 +13,12 @@ interface BubbleMenuProps {
 export const BubbleMenuWrapper = ({ editor, isReadOnly }: BubbleMenuProps) => {
   const activeStates = useEditorActive(editor);
 
-  if (isReadOnly) return null;
+  // Блокируем меню если редактор в readonly режиме или не редактируемый
+  const shouldShow = !isReadOnly && editor.isEditable !== false;
+
+  if (!shouldShow) {
+    return null;
+  }
 
   return (
     <BubbleMenu

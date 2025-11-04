@@ -19,7 +19,7 @@ const blobUrlCache = new Map<string, string>();
 
 export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
   const src = node.attrs.src;
-  const { editor, storageToken } = useYjsContext();
+  const { editor, storageToken, isReadOnly } = useYjsContext();
   const { duplicate, remove, downloadImage, moveDown, moveUp } = useBlockMenuActions(editor);
   const [imageSrc, setImageSrc] = useState<string>(src);
 
@@ -122,32 +122,46 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
               <span className="text-sm">Скачать</span>
             </DropdownMenuItem>
 
-            <DropdownMenuSeparator />
+            {/* Остальные действия доступны только если редактор не в readonly режиме */}
+            {!isReadOnly && (
+              <>
+                <DropdownMenuSeparator />
 
-            <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={moveUp}>
-              <ArrowUp size="sm" />
-              <span className="text-sm">Выше</span>
-            </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+                  onSelect={moveUp}
+                >
+                  <ArrowUp size="sm" />
+                  <span className="text-sm">Выше</span>
+                </DropdownMenuItem>
 
-            <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={moveDown}>
-              <ArrowBottom size="sm" />
-              <span className="text-sm">Ниже</span>
-            </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+                  onSelect={moveDown}
+                >
+                  <ArrowBottom size="sm" />
+                  <span className="text-sm">Ниже</span>
+                </DropdownMenuItem>
 
-            <DropdownMenuSeparator />
+                <DropdownMenuSeparator />
 
-            <DropdownMenuItem
-              className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-              onSelect={duplicate}
-            >
-              <Copy size="sm" />
-              <span className="text-sm">Дублировать</span>
-            </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+                  onSelect={duplicate}
+                >
+                  <Copy size="sm" />
+                  <span className="text-sm">Дублировать</span>
+                </DropdownMenuItem>
 
-            <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onClick={remove}>
-              <Trash size="sm" />
-              <span className="text-sm">Удалить</span>
-            </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+                  onClick={remove}
+                >
+                  <Trash size="sm" />
+                  <span className="text-sm">Удалить</span>
+                </DropdownMenuItem>
+              </>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

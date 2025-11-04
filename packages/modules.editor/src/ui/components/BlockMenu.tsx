@@ -16,10 +16,19 @@ type BlockMenuPropsT = {
 
 export const BlockMenu = ({ children }: BlockMenuPropsT) => {
   const [open, setOpen] = useState(false);
-  const { editor } = useYjsContext();
+  const { editor, isReadOnly } = useYjsContext();
   const { openModal } = useInterfaceStore();
 
   const { changeType, duplicate, remove } = useBlockMenuActions(editor);
+
+  // Блокируем меню если редактор в readonly режиме
+  const shouldShow = editor && !isReadOnly && editor.isEditable !== false;
+
+  if (!shouldShow) {
+    // Возвращаем children без DropdownMenu, чтобы не ломать структуру
+    return <>{children({ open: false })}</>;
+  }
+
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false}>
       <DropdownMenuTrigger asChild>{children({ open })}</DropdownMenuTrigger>
