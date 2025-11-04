@@ -5,6 +5,8 @@ import { useMemo } from 'react';
 import { LocalAudioTrack, LocalVideoTrack } from 'livekit-client';
 import { useCallStore } from '../../../../store/callStore';
 import { useRoom } from '../../../../providers/RoomProvider';
+import { Alert, AlertIcon, AlertContainer, AlertDescription } from '@xipkg/alert';
+import { InfoCircle } from '@xipkg/icons';
 
 interface MediaDevicesProps {
   audioTrack?: LocalAudioTrack;
@@ -138,35 +140,49 @@ export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
   );
 
   return (
-    <div className="border-gray-30 flex flex-col justify-between rounded-[16px] border p-5">
-      <div>
-        <div className="mb-8">
-          <h2 className="mb-1 font-sans">Камера</h2>
-          <MediaDeviceMenu
-            initialSelection={videoDeviceId}
-            kind="videoinput"
-            onActiveDeviceChange={handleVideoDeviceChange}
-          />
-        </div>
-        <div className="my-4">
-          <h2 className="mb-1 font-sans">Звук</h2>
-          <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-4">
+      <div className="border-gray-30 flex flex-col justify-between rounded-[16px] border p-5">
+        <div>
+          <div className="mb-8">
+            <h2 className="mb-1 font-sans">Камера</h2>
             <MediaDeviceMenu
-              initialSelection={audioDeviceId}
-              kind="audioinput"
-              onActiveDeviceChange={handleAudioDeviceChange}
-            />
-            <MediaDeviceMenu
-              initialSelection={audioOutputDeviceId}
-              kind="audiooutput"
-              onActiveDeviceChange={(_, id) => saveAudioOutputDeviceId(id)}
+              initialSelection={videoDeviceId}
+              kind="videoinput"
+              onActiveDeviceChange={handleVideoDeviceChange}
             />
           </div>
+          <div className="my-4">
+            <h2 className="mb-1 font-sans">Звук</h2>
+            <div className="flex flex-col gap-2">
+              <MediaDeviceMenu
+                initialSelection={audioDeviceId}
+                kind="audioinput"
+                onActiveDeviceChange={handleAudioDeviceChange}
+              />
+              <MediaDeviceMenu
+                initialSelection={audioOutputDeviceId}
+                kind="audiooutput"
+                onActiveDeviceChange={(_, id) => saveAudioOutputDeviceId(id)}
+              />
+            </div>
+          </div>
         </div>
+        <Button onClick={() => handleJoin()} className="w-full" disabled={isConnecting}>
+          {isConnecting ? 'Подключение...' : 'Присоединиться'}
+        </Button>
       </div>
-      <Button onClick={() => handleJoin()} className="w-full" disabled={isConnecting}>
-        {isConnecting ? 'Подключение...' : 'Присоединиться'}
-      </Button>
+      <Alert className="h-full w-full max-w-[1720px]" variant="brand">
+        <AlertIcon>
+          <InfoCircle className="fill-brand-100" />
+        </AlertIcon>
+        <AlertContainer className="h-full">
+          <AlertDescription>
+            Перед началом занятия рекомендуется выбрать устройства для видео и звука. Если
+            устройства не доступны, проверьте настройки браузера. Необходимое разрешение на
+            использование микрофона и камеры будет запрошено автоматически.
+          </AlertDescription>
+        </AlertContainer>
+      </Alert>
     </div>
   );
 };

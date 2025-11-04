@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./utils/driver.css": "./utils/driver.css"
   },
   "license": "MIT",
   "scripts": {

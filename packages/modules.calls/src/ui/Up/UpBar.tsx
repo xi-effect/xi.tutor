@@ -21,6 +21,7 @@ import { env } from 'common.env';
 import { useTracks } from '@livekit/components-react';
 import { Track } from 'livekit-client';
 import { Settings } from './Settings';
+import { ONBOARDING_IDS } from '../Onboarding/CallsOnboarding';
 
 export const UpBar = () => {
   const { callId } = useParams({ strict: false });
@@ -101,6 +102,7 @@ export const UpBar = () => {
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button
+            id={ONBOARDING_IDS.BACK_BUTTON}
             onClick={() => {
               navigate({
                 to: '/classrooms/$classroomId',
@@ -149,6 +151,7 @@ export const UpBar = () => {
         <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
             <Button
+              id={ONBOARDING_IDS.LINK_BUTTON}
               onClick={onCopyLink}
               type="button"
               variant="ghost"
@@ -189,6 +192,7 @@ export const UpBar = () => {
       </button> */}
       <Settings>
         <Button
+          id={ONBOARDING_IDS.SETTINGS_BUTTON}
           type="button"
           variant="ghost"
           className="flex h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0"
