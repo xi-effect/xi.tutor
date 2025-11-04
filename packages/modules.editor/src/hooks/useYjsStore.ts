@@ -1,15 +1,18 @@
-import { useEffect, useMemo, useCallback } from 'react';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { useEffect, useMemo, useCallback, useState } from 'react';
 import * as Y from 'yjs';
 import { useEditor, Editor } from '@tiptap/react';
 import { getExtensions } from '../config/editorConfig';
 import { editorProps } from '../config/editorProps';
 import { toast } from 'sonner';
+import { StorageItemT } from 'common.types';
 
 import { HocuspocusProvider } from '@hocuspocus/provider';
 
 type UseYjsStoreArgs = {
   ydocId: string;
   storageToken: string;
+  storageItem: StorageItemT;
 };
 
 export type UseCollaborativeTiptapReturn = {
@@ -20,16 +23,34 @@ export type UseCollaborativeTiptapReturn = {
   canRedo: boolean;
   isReadOnly: boolean;
   storageToken: string;
+  storageItem: StorageItemT;
 };
 
 export function useYjsStore({
   ydocId,
   storageToken,
+  storageItem,
 }: UseYjsStoreArgs): UseCollaborativeTiptapReturn {
   const ydoc = useMemo(() => {
     console.log('Создаем новый Y.Doc для документа:', ydocId);
     return new Y.Doc();
   }, [ydocId]);
+
+  /* ---------- Readonly state ---------- */
+  const [serverReadonly, setServerReadonly] = useState<boolean>(false);
+
+  /* ---------- Функция проверки серверного readonly ---------- */
+  const checkServerReadonly = useCallback((room: HocuspocusProvider) => {
+    const authorizedScope = (room as any).authorizedScope;
+    const isReadOnly =
+      authorizedScope === 'read' ||
+      authorizedScope === 'readonly' ||
+      (typeof authorizedScope === 'string' &&
+        authorizedScope.includes('read') &&
+        !authorizedScope.includes('write'));
+    setServerReadonly(isReadOnly);
+    return isReadOnly;
+  }, []);
 
   const provider = useMemo(() => {
     if (!ydocId) {
@@ -37,11 +58,11 @@ export function useYjsStore({
       return undefined;
     }
     console.log('Создаем Hocuspocus provider для документа:', ydocId);
-    return new HocuspocusProvider({
+    const prov = new HocuspocusProvider({
       url: 'wss://hocus.sovlium.ru',
-      name: ydocId, // documentName,
+      name: ydocId,
       document: ydoc,
-      token: storageToken, // documentName,
+      token: storageToken,
       connect: false,
       forceSyncInterval: 20000, // Принудительная синхронизация каждые 20 секунд
       onAuthenticationFailed: (data) => {
@@ -51,8 +72,14 @@ export function useYjsStore({
           console.error('hocuspocus: permission-denied');
         }
       },
+      onAuthenticated: () => {
+        setTimeout(() => {
+          checkServerReadonly(prov);
+        }, 100);
+      },
     });
-  }, [ydocId, storageToken, ydoc]);
+    return prov;
+  }, [ydocId, storageToken, ydoc, checkServerReadonly]);
 
   const userData = useMemo(() => ({ name: 'Igor', color: '#ff00ff' }), []);
 
@@ -133,6 +160,9 @@ export function useYjsStore({
         hasContent: yXmlFragment.length > 0,
       });
 
+      // Проверяем readonly режим после синхронизации
+      checkServerReadonly(provider);
+
       // Не устанавливаем никакого начального содержимого
       // Позволяем Yjs самому управлять содержимым документа
       console.log('Документ синхронизирован, содержимое управляется Yjs');
@@ -144,7 +174,19 @@ export function useYjsStore({
       provider.off('synced', onSynced);
       // Не отключаем провайдер здесь, так как он может использоваться другими компонентами
     };
-  }, [provider, editor, ydoc]);
+  }, [provider, editor, ydoc, checkServerReadonly]);
+
+  /* ---------- Обновление editable редактора на основе serverReadonly ---------- */
+  useEffect(() => {
+    if (!editor || editor.isDestroyed) return;
+
+    const isEditable = !serverReadonly;
+    // Проверяем, что значение действительно изменилось, чтобы избежать лишних обновлений
+    if (editor.isEditable !== isEditable) {
+      editor.setEditable(isEditable);
+      console.log('Редактор обновлен, editable:', isEditable, 'serverReadonly:', serverReadonly);
+    }
+  }, [editor, serverReadonly]);
 
   // Отдельный эффект для очистки провайдера при размонтировании
   useEffect(() => {
@@ -162,7 +204,17 @@ export function useYjsStore({
   const canUndo = !!editor;
   const canRedo = !!editor;
 
-  const isReadOnly = editor ? !editor.isEditable : false;
+  // Объединяем readonly с сервера - если сервер установил readonly, это имеет приоритет
+  const isReadOnly = serverReadonly || (editor ? !editor.isEditable : false);
 
-  return { editor: editor ?? null, undo, redo, canUndo, canRedo, isReadOnly, storageToken };
+  return {
+    editor: editor ?? null,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+    isReadOnly,
+    storageToken,
+    storageItem,
+  };
 }

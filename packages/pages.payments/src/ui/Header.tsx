@@ -5,7 +5,7 @@ export const Header = ({ onCreateInvoice }: { onCreateInvoice: () => void }) => 
   const { data: user } = useCurrentUser();
 
   return (
-    <div className="flex flex-row items-center pt-1 pr-4">
+    <div className="flex flex-row items-center pt-1 pr-4 pb-4">
       <h1 className="text-2xl font-semibold text-gray-100">Контроль оплат</h1>
 
       {user?.default_layout === 'tutor' && (

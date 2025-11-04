@@ -82,6 +82,7 @@ export function useYjsStore({
 
   /* ---------- Readonly state ---------- */
   const [isReadonly, setIsReadonly] = useState<boolean>(false);
+  const [serverReadonly, setServerReadonly] = useState<boolean>(false);
 
   /* ---------- Статус ---------- */
   const [storeWithStatus, setStoreWithStatus] = useState<TLStoreWithStatus>({
@@ -108,6 +109,18 @@ export function useYjsStore({
           toast('Ошибка доступа к серверу совместного редактирования');
           console.error('hocuspocus: permission-denied');
         }
+      },
+      onAuthenticated: () => {
+        setTimeout(() => {
+          const authorizedScope = (room as any).authorizedScope;
+          const isReadOnly =
+            authorizedScope === 'read' ||
+            authorizedScope === 'readonly' ||
+            (typeof authorizedScope === 'string' &&
+              authorizedScope.includes('read') &&
+              !authorizedScope.includes('write'));
+          setServerReadonly(isReadOnly);
+        }, 100);
       },
     });
 
@@ -322,6 +335,18 @@ export function useYjsStore({
       });
     }
 
+    /* ========== SERVER READONLY (from Hocuspocus) ========== */
+    const checkServerReadonly = () => {
+      const authorizedScope = (room as any).authorizedScope;
+      const isReadOnly =
+        authorizedScope === 'read' ||
+        authorizedScope === 'readonly' ||
+        (typeof authorizedScope === 'string' &&
+          authorizedScope.includes('read') &&
+          !authorizedScope.includes('write'));
+      setServerReadonly(isReadOnly);
+    };
+
     let hasConnectedBefore = false;
     function handleStatusChange({ status }: { status: 'disconnected' | 'connected' }) {
       if (status === 'disconnected') {
@@ -335,6 +360,7 @@ export function useYjsStore({
 
       room.off('synced', handleSync);
       if (status === 'connected') {
+        checkServerReadonly();
         if (hasConnectedBefore) return;
         hasConnectedBefore = true;
         room.on('synced', handleSync);
@@ -344,6 +370,12 @@ export function useYjsStore({
 
     room.on('status', handleStatusChange);
     unsubs.push(() => room.off('status', handleStatusChange));
+
+    const handleSynced = () => {
+      checkServerReadonly();
+    };
+    room.on('synced', handleSynced);
+    unsubs.push(() => room.off('synced', handleSynced));
 
     return () => {
       unsubs.forEach((fn) => fn());
@@ -390,6 +422,10 @@ export function useYjsStore({
     toast.success(newReadonly ? 'Доска заблокирована!' : 'Доска разблокирована!');
   }
 
+  // Объединяем readonly с сервера и локальный readonly
+  // Если сервер установил readonly, это имеет приоритет
+  const finalIsReadonly = serverReadonly || isReadonly;
+
   return {
     ...storeWithStatus,
     connectionStatus: (storeWithStatus as any).connectionStatus,
@@ -398,6 +434,6 @@ export function useYjsStore({
     canUndo,
     canRedo,
     toggleReadonly,
-    isReadonly,
+    isReadonly: finalIsReadonly,
   };
 }

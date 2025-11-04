@@ -1,6 +1,7 @@
 import { ScrollArea } from '@xipkg/scrollarea';
 import { Materials, Payments, Classrooms } from './components';
 import { Menu } from 'common.ui';
+import { useCurrentUser } from 'common.services';
 // import { Sidebar } from './components/Sidebar';
 // import { AssignLessonButton } from './components/AssignLessonButton';
 
@@ -22,6 +23,9 @@ const steps = [
 ];
 
 export const MainPage = () => {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
   return (
     <div className="flex h-full flex-col overflow-auto lg:flex-row lg:gap-4">
       {/* <AssignLessonButton className="absolute right-4 hidden lg:flex" /> */}
@@ -33,7 +37,7 @@ export const MainPage = () => {
         {/* <Lessons /> */}
         <Classrooms />
         <Payments />
-        <Materials />
+        {isTutor && <Materials />}
         <Menu steps={steps} disabled={false} />
       </ScrollArea>
       {/* <Sidebar /> */}

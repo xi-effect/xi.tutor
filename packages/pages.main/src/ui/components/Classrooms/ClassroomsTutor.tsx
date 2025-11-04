@@ -77,7 +77,7 @@ export const ClassroomsTutor = () => {
         )}
         {classrooms && classrooms.length === 0 && (
           <div className="flex h-[180px] w-full flex-row items-center justify-center gap-8">
-            <p className="text-m-base lg:text-xl-base text-gray-60 text-center">
+            <p className="text-m-base text-gray-60 text-center">
               Пригласите учеников — индивидуально или в группу
             </p>
           </div>

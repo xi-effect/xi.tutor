@@ -21,10 +21,6 @@ export const usePaymentApproveForm = (recipientInvoiceId: number, isTutor: boole
   };
 
   const onSubmit = async (data: PaymentFormData) => {
-    console.log('recipientInvoiceId', recipientInvoiceId);
-    console.log('isTutor', isTutor);
-    console.log('data', data);
-
     try {
       if (isTutor) {
         // Для студента используем одностороннее подтверждение

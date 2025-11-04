@@ -16,6 +16,7 @@ import { SubjectRow } from './SubjectRow';
 import { CommentField } from './CommentField';
 import { ClassroomSelector } from './ClassroomSelector';
 import { TemplateSelector } from './TemplateSelector';
+import { useFetchClassrooms } from 'common.services';
 
 type InvoiceModalProps = {
   open: boolean;
@@ -23,16 +24,10 @@ type InvoiceModalProps = {
 };
 
 export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
-  const {
-    form,
-    control,
-    handleSubmit,
-    // fields,
-    handleClearForm,
-    onSubmit,
-    items,
-    append,
-  } = useInvoiceForm();
+  const { form, control, handleSubmit, handleClearForm, onSubmit, items, append } =
+    useInvoiceForm();
+
+  const { data: classrooms } = useFetchClassrooms();
 
   const totalLessons = items.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -121,7 +116,12 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
             )}
             <CommentField control={control} />
             <ModalFooter className="border-gray-20 flex gap-2 border-t px-0 pt-6 pb-0">
-              <Button className="w-[114px] rounded-2xl" type="submit" size="m">
+              <Button
+                disabled={classrooms && classrooms.length === 0}
+                className="w-[114px] rounded-2xl"
+                type="submit"
+                size="m"
+              >
                 Создать
               </Button>
               <Button

@@ -9,15 +9,15 @@ const paramsSchema = z.object({
   emailId: z.string(),
 });
 
-export const Route = createFileRoute('/(app)/email/$emailId')({
+export const Route = createFileRoute('/(app)/welcome/email/$emailId')({
   head: () => ({
     meta: [{ title: 'sovlium | Подтвердите почту' }],
   }),
   component: EditorPage,
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
-  beforeLoad: ({ context, location }) => {
-    console.log('Email', context, location);
-  },
+  // beforeLoad: ({ context, location }) => {
+  //   console.log('Email', context, location);
+  // },
 });
 
 function EditorPage() {

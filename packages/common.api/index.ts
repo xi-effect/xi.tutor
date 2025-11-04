@@ -37,3 +37,4 @@ export { subjectsApiConfig, SubjectsQueryKey } from './src/subjects';
 export { enrollmentsApiConfig, EnrollmentsQueryKey } from './src/enrollments';
 export { contactsApiConfig, ContactsQueryKey } from './src/contacts';
 export { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from './src/classrooms';
+export { classroomNotesApiConfig, ClassroomNotesQueryKey } from './src/classrooms';

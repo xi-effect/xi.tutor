@@ -5,6 +5,9 @@ export type {
   NotificationT,
   NotificationSocketEvents,
   NotificationsStateT,
+  RecipientNotificationResponse,
+  NotificationsSearchResponse,
+  NotificationSearchRequest,
 } from './src/notifications';
 export type {
   MaterialT,
@@ -13,6 +16,17 @@ export type {
   AccessModeT,
   StorageItemT,
 } from './src/materials';
+export type {
+  TemplateT,
+  PaymentTemplateDataT,
+  UpdateTemplateDataT,
+  PaymentStatusT,
+  PaymentTypeT,
+  PaymentDataT,
+  StudentPaymentT,
+  TutorPaymentT,
+  RolePaymentT,
+} from './src/payments';
 export type { InvitationDataT } from './src/invitations';
 export type { GroupStudentsListSchema } from './src/students';
 export type { ContactT, ContactsT } from './src/contacts';

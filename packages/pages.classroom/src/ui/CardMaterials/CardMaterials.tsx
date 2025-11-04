@@ -82,7 +82,7 @@ export const CardMaterials = ({ material, showIcon = true, onClick }: CardMateri
   return (
     <div
       role="group"
-      className="border-gray-30 bg-gray-0 hover:bg-gray-5 flex min-h-[96px] min-w-[350px] cursor-pointer flex-col items-start justify-start gap-2 rounded-2xl border p-4"
+      className="border-gray-30 bg-gray-0 hover:bg-gray-5 flex min-h-[96px] w-[350px] max-w-[350px] cursor-pointer flex-col items-start justify-start gap-2 rounded-2xl border p-4"
       onClick={onClick}
     >
       <div className="flex w-full flex-row items-center justify-between">
@@ -104,10 +104,12 @@ export const CardMaterials = ({ material, showIcon = true, onClick }: CardMateri
         )}
       </div>
 
-      <div className="flex flex-col items-start justify-start gap-4">
-        <div className="flex flex-row items-center justify-start gap-2">
+      <div className="flex w-full flex-col items-start justify-start gap-4">
+        <div className="flex w-full min-w-0 items-center gap-2">
           {showIcon && content_kind && mapIcon[content_kind]}
-          <div className="text-l-base font-medium text-gray-100">{name}</div>
+          <div className="text-l-base min-w-0 flex-1 overflow-hidden font-medium text-ellipsis whitespace-nowrap text-gray-100">
+            {name}
+          </div>
         </div>
 
         <div className="flex flex-row items-center justify-start gap-2">

@@ -6,49 +6,15 @@ import { useInterfaceStore } from '../../store/interfaceStore';
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
 import { optimizeImage } from '../../utils/optimizeImage';
-import {
-  useCurrentUser,
-  useGetClassroomStorageItem,
-  useGetClassroomStorageItemStudent,
-  useGetStorageItem,
-  useUploadImage,
-} from 'common.services';
+import { useUploadImage } from 'common.services';
 import { useBlockMenuActions, useYjsContext } from '../../hooks';
-import { useParams } from '@tanstack/react-router';
 
 export const ImageUploadModal = () => {
   const { closeModal, activeModal } = useInterfaceStore();
   const [mode, setMode] = useState<'upload' | 'link'>('upload');
   const [imageLink, setImageLink] = useState('');
 
-  const { classroomId, noteId, editorId, materialId } = useParams({ strict: false });
-
-  const { data: user } = useCurrentUser();
-  const isTutor = user?.default_layout === 'tutor';
-
-  const getStorageItem = (() => {
-    if (classroomId) {
-      if (isTutor) {
-        return useGetClassroomStorageItem;
-      } else {
-        return useGetClassroomStorageItemStudent;
-      }
-    }
-
-    return useGetStorageItem;
-  })();
-
-  const materialIdValue = noteId ?? editorId ?? materialId;
-  if (!materialIdValue) {
-    throw new Error('noteId or editorId or materialId must be provided');
-  }
-
-  const { data: storageItem } = getStorageItem({
-    classroomId: classroomId || '',
-    id: materialIdValue,
-  });
-
-  const { editor } = useYjsContext();
+  const { editor, storageItem } = useYjsContext();
 
   const { mutateAsync: uploadImage } = useUploadImage();
 

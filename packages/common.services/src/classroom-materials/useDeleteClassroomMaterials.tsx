@@ -50,8 +50,6 @@ export const useDeleteClassroomMaterials = () => {
       }
     },
     onMutate: async (params) => {
-      console.log('onMutate delete classroom materials', params);
-
       // Отменяем все queries, которые начинаются с [ClassroomMaterials, classroomId, kind]
       await queryClient.cancelQueries({
         queryKey: [

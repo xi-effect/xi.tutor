@@ -7,7 +7,7 @@ export const Socials = () => {
 
 export const Route = createFileRoute('/(app)/welcome/socials/')({
   component: Socials,
-  beforeLoad: ({ context }) => {
-    console.log('Socials', context, location);
-  },
+  // beforeLoad: ({ context }) => {
+  //   console.log('Socials', context, location);
+  // },
 });

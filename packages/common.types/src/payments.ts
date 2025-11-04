@@ -1,3 +1,5 @@
+import type { RoleT } from './user';
+
 export type TemplateT = {
   id: number;
   name: string;
@@ -15,3 +17,29 @@ export type UpdateTemplateDataT = {
   template_id: number;
   templateData: PaymentTemplateDataT;
 };
+
+export type PaymentStatusT = 'wf_sender_confirmation' | 'wf_receiver_confirmation' | 'complete';
+
+export type PaymentTypeT = 'cash' | 'transfer';
+
+type RoleIdField<Role extends RoleT> = Role extends 'tutor'
+  ? { student_id: number }
+  : Role extends 'student'
+    ? { tutor_id: number }
+    : never;
+
+export type PaymentDataT<Role extends RoleT> = {
+  id: number;
+  created_at: string;
+  total: string;
+  payment_type: PaymentTypeT;
+  status: PaymentStatusT;
+} & RoleIdField<Role>;
+
+export type StudentPaymentT = PaymentDataT<'tutor'>;
+
+export type TutorPaymentT = PaymentDataT<'student'>;
+
+export type RolePaymentT<Role extends RoleT> = Role extends 'tutor'
+  ? TutorPaymentT
+  : StudentPaymentT;

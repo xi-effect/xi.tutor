@@ -46,8 +46,6 @@ export const useUpdateClassroomMaterial = () => {
       }
     },
     onMutate: async ({ classroomId, id }) => {
-      console.log('onMutate update classroom material', classroomId, id);
-
       // Отменяем все queries для данного материала кабинета
       await queryClient.cancelQueries({
         queryKey: [ClassroomMaterialsQueryKey.GetClassroomMaterial, classroomId, id],
@@ -58,9 +56,7 @@ export const useUpdateClassroomMaterial = () => {
     onError: (err) => {
       handleError(err, 'materials');
     },
-    onSuccess: (response, { classroomId, id }) => {
-      console.log('onSuccess update classroom material', response, classroomId, id);
-
+    onSuccess: (_, { classroomId, id }) => {
       // Инвалидируем queries для данного материала кабинета
       queryClient.invalidateQueries({
         queryKey: [ClassroomMaterialsQueryKey.GetClassroomMaterial, classroomId, id],

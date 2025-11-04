@@ -31,9 +31,9 @@ export const Route = createFileRoute('/(app)/_layout/materials/$materialId/board
   component: MaterialsBoardPage,
   // @ts-ignore
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
-  beforeLoad: ({ context, location }) => {
-    console.log('Board', context, location);
-  },
+  // beforeLoad: ({ context, location }) => {
+  //   console.log('Board', context, location);
+  // },
 });
 
 function MaterialsBoardPage() {

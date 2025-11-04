@@ -37,8 +37,6 @@ export const useUpdateMaterial = () => {
       }
     },
     onMutate: async ({ id }) => {
-      console.log('onMutate update material', id);
-
       // Отменяем все queries для данного материала
       await queryClient.cancelQueries({
         queryKey: [MaterialsQueryKey.GetMaterial, id],

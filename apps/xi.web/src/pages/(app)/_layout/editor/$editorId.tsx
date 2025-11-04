@@ -16,9 +16,9 @@ export const Route = createFileRoute('/(app)/_layout/editor/$editorId')({
   }),
   component: EditorPage,
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
-  beforeLoad: ({ context, location }) => {
-    console.log('Editor', context, location);
-  },
+  // beforeLoad: ({ context, location }) => {
+  //   console.log('Editor', context, location);
+  // },
 });
 
 function EditorPage() {

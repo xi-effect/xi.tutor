@@ -31,8 +31,6 @@ const UserAvatar = ({ student_id }: UserAvatarPropsT) => {
   const getUser = isTutor ? useStudentById : useTutorById;
   const { data: user, isLoading } = getUser(Number(student_id));
 
-  console.log('user', user);
-
   return (
     <Avatar size={avatarSize}>
       <AvatarImage
@@ -77,7 +75,6 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
 
   const handleDelete = (e: React.MouseEvent) => {
     e.stopPropagation(); // Предотвращаем переход на страницу класса
-    console.log('handleDelete', id);
     deleteClassroom({ classroomId: id });
   };
 

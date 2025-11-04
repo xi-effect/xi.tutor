@@ -91,7 +91,7 @@ export const useBlockMenuActions = (editor: Editor | null) => {
   };
 
   const changeType = (type: BlockTypeT) => {
-    if (!editor) return;
+    if (!editor || !editor.isEditable) return;
 
     const changeTypeMap: Record<string, () => void> = {
       paragraph: () => editor.chain().focus().setParagraph().run(),
@@ -104,7 +104,7 @@ export const useBlockMenuActions = (editor: Editor | null) => {
   };
 
   const insertImage = (src: string, alt?: string) => {
-    if (!editor) return;
+    if (!editor || !editor.isEditable) return;
 
     const { state } = editor;
     const { selection } = state;

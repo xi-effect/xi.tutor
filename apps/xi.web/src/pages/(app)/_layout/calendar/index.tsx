@@ -17,9 +17,9 @@ export const Route = createFileRoute('/(app)/_layout/calendar/')({
     ],
   }),
   component: CalendarPage,
-  beforeLoad: ({ context, location }) => {
-    console.log('Calendar', context, location);
-  },
+  // beforeLoad: ({ context, location }) => {
+  //   console.log('Calendar', context, location);
+  // },
 });
 
 function CalendarPage() {

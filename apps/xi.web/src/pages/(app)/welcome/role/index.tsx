@@ -7,7 +7,7 @@ export const Role = () => {
 
 export const Route = createFileRoute('/(app)/welcome/role/')({
   component: Role,
-  beforeLoad: ({ context }) => {
-    console.log('Role', context, location);
-  },
+  // beforeLoad: ({ context }) => {
+  //   console.log('Role', context, location);
+  // },
 });

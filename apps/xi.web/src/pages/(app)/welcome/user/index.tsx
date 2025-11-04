@@ -7,7 +7,7 @@ export const User = () => {
 
 export const Route = createFileRoute('/(app)/welcome/user/')({
   component: User,
-  beforeLoad: ({ context }) => {
-    console.log('User', context, location);
-  },
+  // beforeLoad: ({ context }) => {
+  //   console.log('User', context, location);
+  // },
 });

@@ -9,15 +9,12 @@ export const DragHandleWrapper = ({
   editor,
   onDragStart,
   onDragEnd,
-  isReadOnly = false,
 }: {
   editor: Editor;
   onDragStart: () => void;
   onDragEnd: () => void;
   isReadOnly?: boolean;
 }) => {
-  if (isReadOnly) return null;
-
   return (
     <DragHandle editor={editor} computePositionConfig={{ placement: 'left' }}>
       <div className="mr-1 flex items-center gap-2">

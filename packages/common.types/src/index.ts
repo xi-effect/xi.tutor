@@ -4,6 +4,9 @@ export type {
   NotificationT,
   NotificationSocketEvents,
   NotificationsStateT,
+  RecipientNotificationResponse,
+  NotificationsSearchResponse,
+  NotificationSearchRequest,
 } from './notifications';
 export type {
   MaterialT,
@@ -12,7 +15,17 @@ export type {
   AccessModeT,
   StorageItemT,
 } from './materials';
-export type { TemplateT, PaymentTemplateDataT, UpdateTemplateDataT } from './payments';
+export type {
+  TemplateT,
+  PaymentTemplateDataT,
+  UpdateTemplateDataT,
+  PaymentStatusT,
+  PaymentTypeT,
+  PaymentDataT,
+  StudentPaymentT,
+  TutorPaymentT,
+  RolePaymentT,
+} from './payments';
 export type { InvitationDataT } from './invitations';
 export type {
   TutorStudentSchemaMarshal,

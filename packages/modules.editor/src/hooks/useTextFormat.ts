@@ -4,7 +4,7 @@ import { TextFormatTypeT } from '../types';
 
 export const useTextFormat = (editor: Editor | null, type: TextFormatTypeT) => {
   const toggleFormat = useCallback(() => {
-    if (!editor) return;
+    if (!editor || !editor.isEditable) return;
 
     if (type === 'link') {
       if (editor.isActive('link')) {

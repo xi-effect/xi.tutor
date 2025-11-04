@@ -23,10 +23,10 @@ export const Card = ({ value, onClick, onDelete }: CardProps) => {
       onClick={onClick}
       className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex h-[96px] w-[430px] cursor-pointer justify-between rounded-2xl border p-4"
     >
-      <div className="flex h-full w-[350px] flex-col gap-1 overflow-hidden">
-        <div className="flex h-full flex-col gap-4">
-          <div className="text-l-base line-clamp-2 w-full font-medium text-gray-100">
-            <p className="truncate">{name}</p>
+      <div className="flex h-full w-[350px] max-w-[350px] flex-col gap-1 overflow-hidden">
+        <div className="flex h-full w-full min-w-0 flex-col gap-4">
+          <div className="text-l-base w-full min-w-0 overflow-hidden font-medium text-ellipsis whitespace-nowrap text-gray-100">
+            {name}
           </div>
 
           <div className="text-s-base text-gray-60 font-normal">

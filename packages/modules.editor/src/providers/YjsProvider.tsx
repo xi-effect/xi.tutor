@@ -12,6 +12,7 @@ export const YjsProvider = ({ children, data }: YjsProviderProps) => {
   const yjsStore = useYjsStore({
     ydocId: data.ydoc_id || '',
     storageToken: data.storage_token || '',
+    storageItem: data,
   });
 
   return <YjsContext.Provider value={yjsStore}>{children}</YjsContext.Provider>;

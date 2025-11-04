@@ -101,8 +101,6 @@ export const useEventForm = () => {
       const endDateStr = data.endDate && data.endDate.trim() ? data.endDate : data.startDate;
       const end = parseDateTime(endDateStr, data.endTime);
 
-      console.log(data);
-
       const event: ICalendarEvent = {
         id: crypto.randomUUID(),
         title: data.title,
