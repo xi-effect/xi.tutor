@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { EmailPageLayout } from './EmailPageLayout';
 import { Button } from '@xipkg/button';
 import { useCurrentUser, useEmailConfirmationRequest } from 'common.services';
@@ -14,8 +14,33 @@ const formatTime = (seconds: number): string => {
 export const EmailPageConfirm = () => {
   const { data: user } = useCurrentUser();
   const email = user?.email || '';
-  const [timeRemaining, setTimeRemaining] = useState(INITIAL_TIMER_SECONDS);
+
+  // Проверяем, пришли ли мы с /signup через sessionStorage
+  const cameFromSignup = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    const savedPreviousPath = sessionStorage.getItem('previousPath');
+    return savedPreviousPath === '/signup' || savedPreviousPath === '/signup/';
+  }, []);
+
+  // Инициализируем таймер в зависимости от предыдущей страницы
+  const [timeRemaining, setTimeRemaining] = useState(() => {
+    // Проверяем при инициализации
+    if (typeof window === 'undefined') return 0;
+    const savedPreviousPath = sessionStorage.getItem('previousPath');
+    const isFromSignup = savedPreviousPath === '/signup' || savedPreviousPath === '/signup/';
+    return isFromSignup ? INITIAL_TIMER_SECONDS : 0;
+  });
   const { emailConfirmationRequest, isLoading } = useEmailConfirmationRequest();
+
+  // Очищаем sessionStorage после получения значения
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedPreviousPath = sessionStorage.getItem('previousPath');
+      if (savedPreviousPath) {
+        sessionStorage.removeItem('previousPath');
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (timeRemaining === 0) return;
@@ -48,6 +73,10 @@ export const EmailPageConfirm = () => {
 
   const handleConfirm = () => {
     if (timeRemaining > 0 || isLoading) return;
+    // Если пришли не с /signup, запускаем таймер при нажатии
+    if (!cameFromSignup && timeRemaining === 0) {
+      setTimeRemaining(INITIAL_TIMER_SECONDS);
+    }
     emailConfirmationRequest.mutate();
   };
 

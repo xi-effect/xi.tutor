@@ -60,6 +60,7 @@ const ProtectedLayout = () => {
 
   useEffect(() => {
     const stage = user?.onboarding_stage;
+
     if (
       stage &&
       stage !== 'completed' &&

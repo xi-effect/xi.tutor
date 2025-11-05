@@ -12,7 +12,7 @@ import { StorageItemT } from 'common.types';
 import { LoadingScreen } from 'common.ui';
 
 const EditorWithoutData = () => {
-  const { classroomId, noteId, editorId, materialId } = useParams({ strict: false });
+  const { classroomId, noteId, materialId } = useParams({ strict: false });
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -29,9 +29,9 @@ const EditorWithoutData = () => {
     return useGetStorageItem;
   })();
 
-  const materialIdValue = noteId ?? editorId ?? materialId;
+  const materialIdValue = noteId ?? materialId;
   if (!materialIdValue) {
-    throw new Error('noteId or editorId or materialId must be provided');
+    throw new Error('noteId or materialId must be provided');
   }
 
   const {

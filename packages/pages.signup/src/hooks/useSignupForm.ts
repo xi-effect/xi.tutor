@@ -25,6 +25,10 @@ export const useSignupForm = () => {
     startTransition(() => {
       mutate(data, {
         onSuccess: () => {
+          // Сохраняем предыдущий путь для страницы подтверждения email
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem('previousPath', '/signup');
+          }
           navigate({
             to: '/welcome/email/$emailId',
             params: {

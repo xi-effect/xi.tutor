@@ -28,7 +28,6 @@ import { Route as appLayoutCalendarIndexRouteImport } from './pages/(app)/_layou
 import { Route as commonWelcomeEmailEmailIdRouteImport } from './pages/(common)/welcome/email/$emailId'
 import { Route as commonLayoutInviteInviteIdRouteImport } from './pages/(common)/_layout/invite/$inviteId'
 import { Route as commonLayoutConfirmEmailEmailIdRouteImport } from './pages/(common)/_layout/confirm-email/$emailId'
-import { Route as appLayoutEditorEditorIdRouteImport } from './pages/(app)/_layout/editor/$editorId'
 import { Route as appLayoutCallCallIdRouteImport } from './pages/(app)/_layout/call/$callId'
 import { Route as appLayoutBoardBoardIdRouteImport } from './pages/(app)/_layout/board/$boardId'
 import { Route as appLayoutClassroomsClassroomIdIndexRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/index'
@@ -137,11 +136,6 @@ const commonLayoutConfirmEmailEmailIdRoute =
     path: '/confirm-email/$emailId',
     getParentRoute: () => commonLayoutRoute,
   } as any)
-const appLayoutEditorEditorIdRoute = appLayoutEditorEditorIdRouteImport.update({
-  id: '/editor/$editorId',
-  path: '/editor/$editorId',
-  getParentRoute: () => appLayoutRoute,
-} as any)
 const appLayoutCallCallIdRoute = appLayoutCallCallIdRouteImport.update({
   id: '/call/$callId',
   path: '/call/$callId',
@@ -192,7 +186,6 @@ export interface FileRoutesByFullPath {
   '/signup': typeof authSignupIndexRoute
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
-  '/editor/$editorId': typeof appLayoutEditorEditorIdRoute
   '/confirm-email/$emailId': typeof commonLayoutConfirmEmailEmailIdRoute
   '/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
   '/welcome/email/$emailId': typeof commonWelcomeEmailEmailIdRoute
@@ -219,7 +212,6 @@ export interface FileRoutesByTo {
   '/signup': typeof authSignupIndexRoute
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
-  '/editor/$editorId': typeof appLayoutEditorEditorIdRoute
   '/confirm-email/$emailId': typeof commonLayoutConfirmEmailEmailIdRoute
   '/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
   '/welcome/email/$emailId': typeof commonWelcomeEmailEmailIdRoute
@@ -249,7 +241,6 @@ export interface FileRoutesById {
   '/(auth)/signup/': typeof authSignupIndexRoute
   '/(app)/_layout/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/(app)/_layout/call/$callId': typeof appLayoutCallCallIdRoute
-  '/(app)/_layout/editor/$editorId': typeof appLayoutEditorEditorIdRoute
   '/(common)/_layout/confirm-email/$emailId': typeof commonLayoutConfirmEmailEmailIdRoute
   '/(common)/_layout/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
   '/(common)/welcome/email/$emailId': typeof commonWelcomeEmailEmailIdRoute
@@ -278,7 +269,6 @@ export interface FileRouteTypes {
     | '/signup'
     | '/board/$boardId'
     | '/call/$callId'
-    | '/editor/$editorId'
     | '/confirm-email/$emailId'
     | '/invite/$inviteId'
     | '/welcome/email/$emailId'
@@ -305,7 +295,6 @@ export interface FileRouteTypes {
     | '/signup'
     | '/board/$boardId'
     | '/call/$callId'
-    | '/editor/$editorId'
     | '/confirm-email/$emailId'
     | '/invite/$inviteId'
     | '/welcome/email/$emailId'
@@ -334,7 +323,6 @@ export interface FileRouteTypes {
     | '/(auth)/signup/'
     | '/(app)/_layout/board/$boardId'
     | '/(app)/_layout/call/$callId'
-    | '/(app)/_layout/editor/$editorId'
     | '/(common)/_layout/confirm-email/$emailId'
     | '/(common)/_layout/invite/$inviteId'
     | '/(common)/welcome/email/$emailId'
@@ -502,13 +490,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof commonLayoutConfirmEmailEmailIdRouteImport
       parentRoute: typeof commonLayoutRoute
     }
-    '/(app)/_layout/editor/$editorId': {
-      id: '/(app)/_layout/editor/$editorId'
-      path: '/editor/$editorId'
-      fullPath: '/editor/$editorId'
-      preLoaderRoute: typeof appLayoutEditorEditorIdRouteImport
-      parentRoute: typeof appLayoutRoute
-    }
     '/(app)/_layout/call/$callId': {
       id: '/(app)/_layout/call/$callId'
       path: '/call/$callId'
@@ -565,7 +546,6 @@ interface appLayoutRouteChildren {
   appLayoutIndexRoute: typeof appLayoutIndexRoute
   appLayoutBoardBoardIdRoute: typeof appLayoutBoardBoardIdRoute
   appLayoutCallCallIdRoute: typeof appLayoutCallCallIdRoute
-  appLayoutEditorEditorIdRoute: typeof appLayoutEditorEditorIdRoute
   appLayoutCalendarIndexRoute: typeof appLayoutCalendarIndexRoute
   appLayoutCallIndexRoute: typeof appLayoutCallIndexRoute
   appLayoutClassroomsIndexRoute: typeof appLayoutClassroomsIndexRoute
@@ -582,7 +562,6 @@ const appLayoutRouteChildren: appLayoutRouteChildren = {
   appLayoutIndexRoute: appLayoutIndexRoute,
   appLayoutBoardBoardIdRoute: appLayoutBoardBoardIdRoute,
   appLayoutCallCallIdRoute: appLayoutCallCallIdRoute,
-  appLayoutEditorEditorIdRoute: appLayoutEditorEditorIdRoute,
   appLayoutCalendarIndexRoute: appLayoutCalendarIndexRoute,
   appLayoutCallIndexRoute: appLayoutCallIndexRoute,
   appLayoutClassroomsIndexRoute: appLayoutClassroomsIndexRoute,
