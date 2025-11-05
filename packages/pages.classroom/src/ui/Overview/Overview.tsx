@@ -4,7 +4,7 @@ import { useGetClassroom, useCurrentUser } from 'common.services';
 import { OverviewSkeleton } from './OverviewSkeleton';
 import { SectionContainer } from './SectionContainer';
 import { MaterialsList } from './MaterialsList';
-import { PaymentsList } from './PaymentsList';
+// import { PaymentsList } from './PaymentsList';
 import { StudentsList } from './StudentsList';
 
 export const Overview = () => {
@@ -76,9 +76,9 @@ export const Overview = () => {
       <SectionContainer title="Материалы" tabLink="materials">
         <MaterialsList />
       </SectionContainer>
-      <SectionContainer title="Оплаты" tabLink="payments">
+      {/* <SectionContainer title="Оплаты" tabLink="payments">
         <PaymentsList />
-      </SectionContainer>
+      </SectionContainer> */}
       {classroom.kind === 'group' && isTutor && (
         <SectionContainer title="Ученики" tabLink="">
           <StudentsList classroomId={classroomId} />
