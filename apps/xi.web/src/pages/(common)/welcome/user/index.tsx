@@ -5,7 +5,9 @@ export const User = () => {
   return <WelcomeUserPage />;
 };
 
-export const Route = createFileRoute('/(app)/welcome/user/')({
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
+export const Route = createFileRoute('/(common)/welcome/user/')({
   component: User,
   // beforeLoad: ({ context }) => {
   //   console.log('User', context, location);

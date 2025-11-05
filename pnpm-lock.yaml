@@ -44,6 +44,9 @@ importers:
       '@xipkg/button':
         specifier: 3.2.0
         version: 3.2.0(@types/react@19.2.2)(react@19.2.0)
+      common.api:
+        specifier: '*'
+        version: link:../../packages/common.api
       common.auth:
         specifier: '*'
         version: link:../../packages/common.auth

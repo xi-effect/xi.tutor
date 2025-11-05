@@ -13,3 +13,4 @@ export {
   welcomeSocialsEn,
   welcomeSocialsRu,
 } from './src/locales';
+export { onboardingStageToPath } from './src/utils';
