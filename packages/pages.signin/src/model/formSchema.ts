@@ -2,7 +2,7 @@ import * as z from 'zod';
 import { useTranslation } from 'react-i18next';
 
 const passwordMinLength = 6;
-const passwordMaxLength = 20;
+const passwordMaxLength = 64;
 
 export const useFormSchema = () => {
   const { t } = useTranslation('signin');
