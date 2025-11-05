@@ -20,7 +20,8 @@ export const useEmailConfirmationRequest = () => {
       return response;
     },
     onError: (err) => {
-      handleError(err, 'email');
+      console.log('err', err);
+      handleError(err, 'emailConfirmation');
     },
     onSuccess: () => {
       // Инвалидируем данные пользователя после успешного запроса подтверждения email

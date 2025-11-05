@@ -1,15 +1,14 @@
-import { authApiConfig, AuthQueryKey, UserQueryKey } from 'common.api';
+import { authApiConfig, AuthQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { handleError, showSuccess } from 'common.services';
+import { useMutation } from '@tanstack/react-query';
+import { handleError } from 'common.services';
+import { AxiosError } from 'axios';
 
 type EmailConfirmationData = {
   token: string;
 };
 
 export const useEmailConfirmation = () => {
-  const queryClient = useQueryClient();
-
   const emailConfirmationMutation = useMutation({
     mutationFn: async (emailConfirmationData: EmailConfirmationData) => {
       const axiosInst = await getAxiosInstance();
@@ -25,12 +24,17 @@ export const useEmailConfirmation = () => {
       return response;
     },
     onError: (err) => {
-      handleError(err, 'email');
+      console.log('err', err);
+      // Для ошибки 409 (почта уже подтверждена) не показываем toast
+      if (err instanceof AxiosError && err.response?.status === 409) {
+        return;
+      }
+      handleError(err, 'emailConfirmationRequest');
     },
     onSuccess: () => {
       // Инвалидируем данные пользователя после успешного подтверждения email
-      queryClient.invalidateQueries({ queryKey: [UserQueryKey.Home] });
-      showSuccess('profile', 'Email успешно подтвержден');
+      // queryClient.invalidateQueries({ queryKey: [UserQueryKey.Home] });
+      // showSuccess('profile', 'Email успешно подтвержден');
     },
     onSettled: () => {
       // Гарантируем, что мутация завершится в любом случае
@@ -38,10 +42,17 @@ export const useEmailConfirmation = () => {
     },
   });
 
+  // Проверяем, является ли ошибка 409 (почта уже подтверждена)
+  const isAlreadyConfirmed =
+    emailConfirmationMutation.isError &&
+    emailConfirmationMutation.error instanceof AxiosError &&
+    emailConfirmationMutation.error.response?.status === 409;
+
   return {
     emailConfirmation: emailConfirmationMutation,
     isLoading: emailConfirmationMutation.isPending,
     isSuccess: emailConfirmationMutation.isSuccess,
     isError: emailConfirmationMutation.isError,
+    isAlreadyConfirmed,
   };
 };

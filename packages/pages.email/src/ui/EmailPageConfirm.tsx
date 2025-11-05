@@ -14,7 +14,7 @@ const formatTime = (seconds: number): string => {
 export const EmailPageConfirm = () => {
   const { data: user } = useCurrentUser();
   const email = user?.email || '';
-  const [timeRemaining, setTimeRemaining] = useState(0);
+  const [timeRemaining, setTimeRemaining] = useState(INITIAL_TIMER_SECONDS);
   const { emailConfirmationRequest, isLoading } = useEmailConfirmationRequest();
 
   useEffect(() => {

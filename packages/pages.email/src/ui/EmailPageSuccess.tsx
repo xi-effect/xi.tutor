@@ -1,7 +1,7 @@
 import { Button } from '@xipkg/button';
 import { EmailPageLayout } from './EmailPageLayout';
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
-import { useEmailConfirmation, useOnboardingTransition } from 'common.services';
+import { useEmailConfirmation } from 'common.services';
 import { useEffect, useRef } from 'react';
 
 const Loading = () => {
@@ -22,8 +22,7 @@ export const EmailPageSuccess = () => {
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
   const { emailId } = useParams({ strict: false });
-  const { emailConfirmation } = useEmailConfirmation();
-  const { transitionStage } = useOnboardingTransition('user-information', 'forwards');
+  const { emailConfirmation, isLoading, isSuccess, isAlreadyConfirmed } = useEmailConfirmation();
   const lastEmailIdRef = useRef<string | null>(null);
 
   useEffect(() => {
@@ -46,23 +45,21 @@ export const EmailPageSuccess = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [emailId, emailConfirmation.isPending]);
 
-  // Используем состояние мутации напрямую
-  const isLoading = emailConfirmation.isPending;
-  const isSuccess = emailConfirmation.isSuccess;
-  const hasError = emailConfirmation.isError || !!emailConfirmation.error;
+  // Определяем, есть ли ошибка (кроме 409)
+  const hasError = (emailConfirmation.isError || !!emailConfirmation.error) && !isAlreadyConfirmed;
+
+  console.log('isSuccess', isSuccess);
+  console.log('isLoading', isLoading);
+  console.log('hasError', hasError);
+  console.log('isAlreadyConfirmed', isAlreadyConfirmed);
+  console.log('emailConfirmation', emailConfirmation);
 
   const handleConfirm = async () => {
-    try {
-      await transitionStage.mutateAsync();
-      // Небольшая задержка для обновления данных пользователя
-      await new Promise((resolve) => setTimeout(resolve, 100));
-      navigate({ to: '/welcome/user', search: { ...search } });
-    } catch {
-      return;
-    }
+    navigate({ to: '/welcome/user', search: { ...search } });
   };
 
-  const isTransitionLoading = transitionStage.isPending;
+  // Определяем, нужно ли показывать кнопку "Продолжить"
+  const shouldShowButton = (isSuccess || isAlreadyConfirmed) && !isLoading;
 
   return (
     <EmailPageLayout title={isLoading ? 'Идёт подтверждение почты' : 'Вы подтвердили почту'}>
@@ -76,6 +73,13 @@ export const EmailPageSuccess = () => {
           <span className="text-m-base w-full text-center text-gray-100">Успешных уроков!</span>
         </div>
       )}
+      {isAlreadyConfirmed && !isLoading && (
+        <div className="mt-8 flex flex-col items-center gap-1">
+          <span className="text-m-base w-full text-center text-gray-100">
+            Почта уже подтверждена
+          </span>
+        </div>
+      )}
       {hasError && !isLoading && (
         <div className="mt-8 flex flex-col items-center gap-1">
           <span className="text-m-base w-full text-center text-gray-100">
@@ -83,13 +87,8 @@ export const EmailPageSuccess = () => {
           </span>
         </div>
       )}
-      {isSuccess && !isLoading && (
-        <Button
-          size="m"
-          className="mt-16 h-[48px] w-full rounded-xl"
-          onClick={handleConfirm}
-          disabled={isTransitionLoading}
-        >
+      {shouldShowButton && (
+        <Button size="m" className="mt-16 h-[48px] w-full rounded-xl" onClick={handleConfirm}>
           Продолжить
         </Button>
       )}
