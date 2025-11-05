@@ -1,6 +1,6 @@
-import { authApiConfig, AuthQueryKey } from 'common.api';
+import { authApiConfig, AuthQueryKey, UserQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError } from 'common.services';
 import { AxiosError } from 'axios';
 
@@ -9,6 +9,8 @@ type EmailConfirmationData = {
 };
 
 export const useEmailConfirmation = () => {
+  const queryClient = useQueryClient();
+
   const emailConfirmationMutation = useMutation({
     mutationFn: async (emailConfirmationData: EmailConfirmationData) => {
       const axiosInst = await getAxiosInstance();
@@ -33,8 +35,8 @@ export const useEmailConfirmation = () => {
     },
     onSuccess: () => {
       // Инвалидируем данные пользователя после успешного подтверждения email
-      // queryClient.invalidateQueries({ queryKey: [UserQueryKey.Home] });
-      // showSuccess('profile', 'Email успешно подтвержден');
+      // Это обновит onboarding_stage с 'email-confirmation' на 'user-information'
+      queryClient.invalidateQueries({ queryKey: [UserQueryKey.Home] });
     },
     onSettled: () => {
       // Гарантируем, что мутация завершится в любом случае
