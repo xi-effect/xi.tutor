@@ -97,6 +97,7 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
                     resolve(true);
                   },
                   onError: (error) => {
+                    console.error('Failed to update group classroom:', error);
                     reject(error);
                   },
                 },
@@ -118,6 +119,7 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
                     resolve(true);
                   },
                   onError: (error) => {
+                    console.error('Failed to update individual classroom:', error);
                     reject(error);
                   },
                 },
