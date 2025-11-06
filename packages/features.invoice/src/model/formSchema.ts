@@ -11,7 +11,7 @@ export const formSchema = z.object({
       }),
     )
     .min(1, 'Добавьте хотя бы один предмет'),
-  comment: z.string().nullable(),
+  comment: z.string().optional(),
 });
 
 export type FormData = z.infer<typeof formSchema>;

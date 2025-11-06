@@ -18,7 +18,7 @@ export const useInvoiceForm = () => {
     defaultValues: {
       classroomId: classroomIdFromUrl,
       items: [],
-      comment: null,
+      comment: '',
     },
   });
 
@@ -41,7 +41,7 @@ export const useInvoiceForm = () => {
   const handleClearForm = () => {
     // При очистке формы устанавливаем classroomId из URL, если он доступен
     setValue('classroomId', classroomIdFromUrl);
-    setValue('comment', null);
+    setValue('comment', '');
     setValue('items', [
       {
         name: '',
@@ -52,8 +52,9 @@ export const useInvoiceForm = () => {
   };
 
   const onSubmit = (data: FormData) => {
+    const comment: string | null = data.comment && data.comment.length > 0 ? data.comment : null;
     const payload = {
-      invoice: { comment: data.comment || null },
+      invoice: { comment },
       items: [...data.items],
       student_ids: null,
     };
