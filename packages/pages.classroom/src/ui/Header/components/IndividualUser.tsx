@@ -5,10 +5,9 @@ import { useUserByRole } from 'features.table';
 export const IndividualUser = ({ userId }: { userId: number }) => {
   const { data: currentUser } = useCurrentUser();
   const isTutor = currentUser?.default_layout === 'tutor';
-  // Используем useUserByRole вместо присваивания хука переменной
+  // Используем useUserByRole с userId напрямую
   const userRole = isTutor ? 'student' : 'tutor';
-  const userHook = useUserByRole(userRole);
-  const { data: user } = userHook(userId);
+  const { data: user } = useUserByRole(userRole, userId);
 
   return (
     <div className="flex flex-row items-center gap-2">

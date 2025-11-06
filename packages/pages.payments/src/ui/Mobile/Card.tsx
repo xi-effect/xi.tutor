@@ -23,8 +23,8 @@ export type CardPropsT = {
 export const Card = ({ payment, userId, currentUserRole, onApprovePayment }: CardPropsT) => {
   const { created_at, total, status } = { ...payment };
   const statusText = mapPaymentStatus[payment.status];
-  const userHook = useUserByRole(currentUserRole === 'student' ? 'tutor' : 'student');
-  const username = userHook(userId).data?.username;
+  const userData = useUserByRole(currentUserRole === 'student' ? 'tutor' : 'student', userId);
+  const username = userData.data?.username;
 
   const handleApprove = () => onApprovePayment(payment);
 

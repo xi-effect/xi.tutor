@@ -29,10 +29,9 @@ const avatarSize = 'l';
 const UserAvatar = ({ student_id }: UserAvatarPropsT) => {
   const { data: currentUser } = useCurrentUser();
   const isTutor = currentUser?.default_layout === 'tutor';
-  // Используем useUserByRole вместо присваивания хука переменной
+  // Используем useUserByRole с userId напрямую
   const userRole = isTutor ? 'student' : 'tutor';
-  const userHook = useUserByRole(userRole);
-  const { data: user, isLoading } = userHook(Number(student_id));
+  const { data: user, isLoading } = useUserByRole(userRole, Number(student_id));
 
   return (
     <Avatar size={avatarSize}>

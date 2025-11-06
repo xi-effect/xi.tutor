@@ -40,8 +40,7 @@ export const Payment = ({ payment, currentUserRole }: PaymentProps) => {
   const userRole = currentUserRole === 'tutor' ? 'student' : 'tutor';
 
   // Получаем данные пользователя
-  const userHook = useUserByRole(userRole);
-  const userData = userHook(userId);
+  const userData = useUserByRole(userRole, userId);
   const displayName = userData.data?.display_name;
   const username = userData.data?.username;
 
