@@ -59,7 +59,9 @@ export const SubjectRow = ({ control, index }: SubjectRowProps) => {
                 variant="s"
                 after={<span className="text-gray-60">₽</span>}
                 onChange={(e) => {
-                  formField.onChange(e.target.value);
+                  const numValue = e.target.valueAsNumber;
+                  const value = e.target.value === '' || isNaN(numValue) ? '' : numValue;
+                  formField.onChange(value);
                 }}
               />
             </FormControl>

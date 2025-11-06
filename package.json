@@ -3,8 +3,11 @@
   "private": true,
   "scripts": {
     "build": "turbo run build --no-daemon",
-    "dev": "turbo run dev --parallel --no-daemon --filter=xi.web",
+    "build:debug": "pnpm --filter xi.web build:debug",
+    "build:dev": "pnpm --filter xi.web build:dev",
+    "dev": "pnpm --filter xi.web dev",
     "dev:all": "turbo run dev --concurrency 30",
+    "preview": "pnpm --filter xi.web preview",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "format-check": "prettier --check \"**/*.{ts,tsx,md}\"",

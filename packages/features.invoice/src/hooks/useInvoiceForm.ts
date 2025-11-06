@@ -27,7 +27,15 @@ export const useInvoiceForm = () => {
     },
   });
 
-  const { control, watch, setValue, handleSubmit } = form;
+  const {
+    control,
+    watch,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = form;
+
+  console.log('errors', errors);
 
   // Обновляем classroomId при изменении URL
   useEffect(() => {
@@ -57,6 +65,7 @@ export const useInvoiceForm = () => {
   };
 
   const onSubmit = (data: FormData) => {
+    console.log('data', data);
     const comment: string | null = data.comment && data.comment.length > 0 ? data.comment : null;
     const payload = {
       invoice: { comment },
