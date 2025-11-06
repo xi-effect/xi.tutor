@@ -87,7 +87,7 @@ const initI18n = async () => {
     },
   };
 
-  i18n.use(initReactI18next).init({
+  await i18n.use(initReactI18next).init({
     resources,
     fallbackLng: 'ru',
     debug: import.meta.env.DEV,
@@ -106,7 +106,7 @@ const initI18n = async () => {
   });
 };
 
-// Инициализируем i18n
-initI18n();
+// Экспортируем промис инициализации для ожидания перед рендерингом
+export const i18nInitPromise = initI18n();
 
 export default i18n;
