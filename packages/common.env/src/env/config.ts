@@ -37,6 +37,7 @@ const env = {
     import.meta.env.VITE_ENABLE_PERFORMANCE_PROFILING,
     false,
   ),
+  VITE_GLITCHTIP_DSN: asString(import.meta.env.VITE_GLITCHTIP_DSN, ''),
 };
 
 const checkEnv = (envKey: keyof typeof env): boolean => {
