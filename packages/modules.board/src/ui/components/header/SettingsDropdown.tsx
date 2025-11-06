@@ -54,7 +54,7 @@ export const SettingsDropdown = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-[40px] w-[40px] p-2">
-          <MoreVert size="s" />
+          <MoreVert size="s" className="h-6 w-6" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
