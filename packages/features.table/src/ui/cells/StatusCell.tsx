@@ -1,7 +1,7 @@
 import clsx from 'clsx';
 import { Button } from '@xipkg/button';
 import { Check } from '@xipkg/icons';
-import { statusColorMap } from '../../utils';
+import { getStatusColor } from '../../utils';
 import { mapPaymentStatus, PaymentStatusT } from '../../types';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { usePaymentReceiverConfirmation } from 'common.services';
@@ -23,7 +23,7 @@ export const StatusCell = ({ status, onApprovePayment, isTutor = false, id }: St
 
   return (
     <div className="flex flex-row items-center justify-between gap-8">
-      <div className={clsx('font-normal', 'text-m-base', statusColorMap[status])}>{statusText}</div>
+      <div className={clsx('font-normal', 'text-m-base', getStatusColor(status))}>{statusText}</div>
 
       {status === 'wf_sender_confirmation' && (
         <div className="flex flex-row items-center justify-between gap-4">

@@ -5,7 +5,7 @@ import {
   useUserByRole,
   RoleT,
   mapPaymentStatus,
-  statusColorMap,
+  getStatusColor,
 } from 'features.table';
 import { UserRoleT } from 'common.api';
 import { UserProfile } from '@xipkg/userprofile';
@@ -54,7 +54,7 @@ export const Payment = ({ payment, currentUserRole }: PaymentProps) => {
           text={displayName || username || 'Имя не найдено'}
           src={`https://api.sovlium.ru/files/users/${userId}/avatar.webp`}
         />
-        <span className={cn('text-m-base font-normal', statusColorMap[payment.status])}>
+        <span className={cn('text-m-base font-normal', getStatusColor(payment.status))}>
           {statusText}
         </span>
       </div>

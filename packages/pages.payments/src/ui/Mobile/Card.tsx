@@ -5,7 +5,7 @@ import {
   mapPaymentStatus,
   RolePaymentT,
   type RoleT,
-  statusColorMap,
+  getStatusColor,
   useUserByRole,
 } from 'features.table';
 import { UserProfile } from '@xipkg/userprofile';
@@ -40,7 +40,7 @@ export const Card = ({ payment, userId, currentUserRole, onApprovePayment }: Car
       <div className="mt-2 flex flex-row items-baseline gap-1">
         <span className="text-brand-100 text-m-base font-normal">{total} </span>
         <span className="text-brand-40 text-xs-base font-normal">₽</span>
-        <div className={cn('text-m-base ml-4 font-normal', statusColorMap[status])}>
+        <div className={cn('text-m-base ml-4 font-normal', getStatusColor(status))}>
           {statusText}
         </div>
       </div>

@@ -59,8 +59,7 @@ export const SubjectRow = ({ control, index }: SubjectRowProps) => {
                 variant="s"
                 after={<span className="text-gray-60">₽</span>}
                 onChange={(e) => {
-                  const value = +e.target.value || 0;
-                  formField.onChange(value);
+                  formField.onChange(e.target.value);
                 }}
               />
             </FormControl>
@@ -98,6 +97,7 @@ export const SubjectRow = ({ control, index }: SubjectRowProps) => {
       <FormItem>
         <FormControl>
           <Input
+            className="pointer-events-none"
             type="number"
             value={totalPrice}
             placeholder="Сумма"
