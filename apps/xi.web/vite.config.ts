@@ -1,11 +1,11 @@
-import { ConfigEnv, defineConfig, searchForWorkspaceRoot } from 'vite';
+import { defineConfig, searchForWorkspaceRoot } from 'vite';
 import react from '@vitejs/plugin-react';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vite.dev/config/
-export default defineConfig(({ mode }: ConfigEnv) => {
+export default defineConfig(() => {
   return {
     plugins: [
       tanstackRouter({ target: 'react', autoCodeSplitting: true }),
@@ -29,9 +29,9 @@ export default defineConfig(({ mode }: ConfigEnv) => {
     ],
     build: {
       chunkSizeWarningLimit: 1000,
-      minify: mode === 'production',
+      minify: false, // Минификация отключена
       outDir: 'build',
-      sourcemap: mode === 'debug',
+      sourcemap: true, // Sourcemaps включены
       terserOptions: {
         compress: {
           drop_console: true, // Удалит все console.*
