@@ -53,6 +53,9 @@ importers:
       common.config:
         specifier: '*'
         version: link:../../packages/common.config
+      common.env:
+        specifier: '*'
+        version: link:../../packages/common.env
       common.services:
         specifier: '*'
         version: link:../../packages/common.services

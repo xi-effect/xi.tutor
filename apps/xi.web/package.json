@@ -24,6 +24,7 @@
     "common.ui": "*",
     "common.utils": "*",
     "common.services": "*",
+    "common.env": "*",
     "features.table": "*",
     "i18next": "24.2.2",
     "i18next-http-backend": "3.0.2",
