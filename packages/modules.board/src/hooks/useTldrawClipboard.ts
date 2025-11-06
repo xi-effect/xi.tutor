@@ -2,8 +2,9 @@
 import { useEffect } from 'react';
 import * as lz from 'lz-string';
 import { Editor, TLContent } from 'tldraw';
+import { insertImage } from '../features/pickAndInsertImage';
 
-export function useTldrawClipboard(editor: Editor | null) {
+export function useTldrawClipboard(editor: Editor | null, token?: string) {
   useEffect(() => {
     if (!editor) return;
 
@@ -176,10 +177,6 @@ export function useTldrawClipboard(editor: Editor | null) {
         event.preventDefault();
         await doCopy();
         if (!editor.getIsFocused()) editor.focus();
-      } else if (key === 'KeyV') {
-        event.preventDefault();
-        if (!editor.getIsFocused()) editor.focus();
-        await doPaste();
       } else if (key === 'KeyX') {
         event.preventDefault();
         if (!editor.getIsFocused()) editor.focus();
@@ -187,7 +184,54 @@ export function useTldrawClipboard(editor: Editor | null) {
       }
     };
 
+    const handlePaste = async (event: ClipboardEvent) => {
+      const target = event.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) {
+        return;
+      }
+
+      const clipboardData = event.clipboardData;
+
+      if (!clipboardData) {
+        return;
+      }
+
+      const items = Array.from(clipboardData.items);
+      const imageItems = items.filter((item) => item.type.startsWith('image/'));
+
+      const imageFiles: File[] = [];
+      for (const item of imageItems) {
+        const file = item.getAsFile();
+        if (file) {
+          imageFiles.push(file);
+        }
+      }
+
+      if (imageFiles.length > 0 && insertImage && token) {
+        event.preventDefault();
+        if (!editor.getIsFocused()) editor.focus();
+
+        for (const file of imageFiles) {
+          try {
+            await insertImage(editor, file, token);
+          } catch (error) {
+            console.error('Failed to paste image:', error);
+          }
+        }
+        return;
+      }
+
+      event.preventDefault();
+      if (!editor.getIsFocused()) editor.focus();
+      await doPaste();
+    };
+
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [editor]);
+    window.addEventListener('paste', handlePaste);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('paste', handlePaste);
+    };
+  }, [editor, token]);
 }
