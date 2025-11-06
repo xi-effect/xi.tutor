@@ -1,16 +1,21 @@
 import { useEffect } from 'react';
 import { useForm, useFieldArray } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useParams } from '@tanstack/react-router';
+import { useLocation } from '@tanstack/react-router';
 import { formSchema, type FormData } from '../model';
 import { useCreateInvoice } from './useCreateInvoice';
 
 export const useInvoiceForm = () => {
   const createInvoiceMutation = useCreateInvoice();
 
-  // Получаем classroomId из URL опционально
-  const params = useParams({ strict: false });
-  const classroomIdFromUrl = params.classroomId || '';
+  // Получаем classroomId из URL опционально через useLocation
+  // Это безопаснее, чем useParams, так как не требует наличия параметров в маршруте
+  const location = useLocation();
+  const pathname = location.pathname;
+
+  // Извлекаем classroomId из пути, если он есть (например, /classrooms/123/...)
+  const classroomIdMatch = pathname.match(/\/classrooms\/(\d+)/);
+  const classroomIdFromUrl = classroomIdMatch ? classroomIdMatch[1] : '';
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),

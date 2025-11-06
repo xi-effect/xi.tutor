@@ -1,11 +1,11 @@
-import { defineConfig, searchForWorkspaceRoot } from 'vite';
+import { ConfigEnv, defineConfig, searchForWorkspaceRoot } from 'vite';
 import react from '@vitejs/plugin-react';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vite.dev/config/
-export default defineConfig(() => {
+export default defineConfig(({ mode }: ConfigEnv) => {
   return {
     plugins: [
       tanstackRouter({ target: 'react', autoCodeSplitting: true }),
@@ -16,6 +16,7 @@ export default defineConfig(() => {
         injectRegister: 'auto',
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+          maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB (по умолчанию 2 MB)
           runtimeCaching: [
             {
               handler: 'NetworkOnly',
@@ -29,9 +30,9 @@ export default defineConfig(() => {
     ],
     build: {
       chunkSizeWarningLimit: 1000,
-      minify: false, // Минификация отключена
+      minify: mode === 'production',
       outDir: 'build',
-      sourcemap: true, // Sourcemaps включены
+      sourcemap: mode === 'debug',
       terserOptions: {
         compress: {
           drop_console: true, // Удалит все console.*

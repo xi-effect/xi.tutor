@@ -6,8 +6,10 @@
   "scripts": {
     "dev": "vite --force --host --port 5173",
     "build": "tsc -b && vite build",
+    "build:debug": "tsc -b && vite build --mode debug",
+    "build:dev": "tsc -b && vite build --mode development",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview --host --port 4173"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.0.9",
