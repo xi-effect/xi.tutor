@@ -5,7 +5,7 @@ import { handleError, showSuccess } from 'common.services';
 
 export interface CreateInvoicePayload {
   invoice: {
-    comment: string;
+    comment: string | null;
   };
   items: Array<{
     name: string;

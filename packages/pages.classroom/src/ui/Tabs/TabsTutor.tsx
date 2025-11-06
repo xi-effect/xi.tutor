@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { useState } from 'react';
 import { Tabs } from '@xipkg/tabs';
 import { useSearch, useNavigate, useParams } from '@tanstack/react-router';
 
@@ -12,11 +13,13 @@ import { Materials } from '../Materials';
 import { useGetClassroom } from 'common.services';
 import { ModalStudentsGroup } from 'features.group.manage';
 import { ModalGroupInvite } from 'features.group.invite';
+import { InvoiceModal } from 'features.invoice';
 
 export const TabsTutor = () => {
   const search: SearchParams = useSearch({ strict: false });
   const navigate = useNavigate();
   const currentTab = search.tab || 'overview';
+  const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
 
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom } = useGetClassroom(Number(classroomId));
@@ -70,6 +73,15 @@ export const TabsTutor = () => {
           </ModalGroupInvite>
         )}
         {currentTab === 'materials' && <MaterialsAdd />}
+        {currentTab === 'payments' && (
+          <Button
+            size="s"
+            className="ml-auto rounded-[8px]"
+            onClick={() => setIsInvoiceModalOpen(true)}
+          >
+            Создать счёт на оплату
+          </Button>
+        )}
       </div>
       <div className="pt-0">
         <Tabs.Content value="overview">
@@ -88,6 +100,9 @@ export const TabsTutor = () => {
           <InformationLayout />
         </Tabs.Content>
       </div>
+      {isInvoiceModalOpen && (
+        <InvoiceModal open={isInvoiceModalOpen} onOpenChange={setIsInvoiceModalOpen} />
+      )}
     </Tabs.Root>
   );
 };

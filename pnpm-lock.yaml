@@ -2891,6 +2891,9 @@ importers:
       features.group.manage:
         specifier: '*'
         version: link:../features.group.manage
+      features.invoice:
+        specifier: '*'
+        version: link:../features.invoice
       features.materials.add:
         specifier: '*'
         version: link:../features.materials.add
