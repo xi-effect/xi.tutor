@@ -42,7 +42,7 @@ export const BlockMenu = ({ children }: BlockMenuPropsT) => {
           className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
           onSelect={() => changeType('paragraph')}
         >
-          <Text size="sm" />
+          <Text size="sm" className="size-6" />
           <span className="text-sm">Текст</span>
         </DropdownMenuItem>
 
@@ -50,7 +50,7 @@ export const BlockMenu = ({ children }: BlockMenuPropsT) => {
           className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
           onSelect={() => changeType('heading1')}
         >
-          <H1 size="sm" />
+          <H1 size="sm" className="size-6" />
           <span className="text-sm">Заголовок 1</span>
         </DropdownMenuItem>
 
@@ -58,7 +58,7 @@ export const BlockMenu = ({ children }: BlockMenuPropsT) => {
           className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
           onSelect={() => changeType('heading2')}
         >
-          <H2 size="sm" />
+          <H2 size="sm" className="size-6" />
           <span className="text-sm">Заголовок 2</span>
         </DropdownMenuItem>
 
@@ -66,7 +66,7 @@ export const BlockMenu = ({ children }: BlockMenuPropsT) => {
           className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
           onSelect={() => changeType('heading3')}
         >
-          <H3 size="sm" />
+          <H3 size="sm" className="size-6" />
           <span className="text-sm">Заголовок 3</span>
         </DropdownMenuItem>
 
@@ -74,20 +74,20 @@ export const BlockMenu = ({ children }: BlockMenuPropsT) => {
           className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
           onSelect={() => openModal('uploadImage')}
         >
-          <Image size="sm" />
+          <Image size="sm" className="size-6" />
           <span className="text-sm">Изображение</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
         <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={duplicate}>
-          <Copy size="sm" />
+          <Copy size="sm" className="size-6" />
           <span className="text-sm">Дублировать</span>
           <span className="text-xxs-base ml-auto text-gray-50">Ctrl+D</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={remove}>
-          <Trash size="sm" />
+          <Trash size="sm" className="size-6" />
           <span className="text-sm">Удалить</span>
           <span className="text-xxs-base ml-auto text-gray-50">Del</span>
         </DropdownMenuItem>

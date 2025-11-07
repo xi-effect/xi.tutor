@@ -57,7 +57,7 @@ export const Header = () => {
             type="button"
             className="absolute top-0 left-0 h-10 w-10 p-2"
           >
-            <ArrowLeft size="s" />
+            <ArrowLeft size="s" className="size-6" />
           </Button>
           <div className="w-full max-w-4xl pl-16 lg:pl-20">
             {isLoading ? (

@@ -105,7 +105,7 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
             <Button size="s" variant="ghost" className="rounded-lg px-2">
-              <MoreVert size="sm" />
+              <MoreVert size="sm" className="size-6" />
             </Button>
           </DropdownMenuTrigger>
 
@@ -118,7 +118,7 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
               className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
               onSelect={() => downloadImage(src)}
             >
-              <Download size="sm" />
+              <Download size="sm" className="size-6" />
               <span className="text-sm">Скачать</span>
             </DropdownMenuItem>
 
@@ -131,7 +131,7 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
                   className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
                   onSelect={moveUp}
                 >
-                  <ArrowUp size="sm" />
+                  <ArrowUp size="sm" className="size-6" />
                   <span className="text-sm">Выше</span>
                 </DropdownMenuItem>
 
@@ -139,7 +139,7 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
                   className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
                   onSelect={moveDown}
                 >
-                  <ArrowBottom size="sm" />
+                  <ArrowBottom size="sm" className="size-6" />
                   <span className="text-sm">Ниже</span>
                 </DropdownMenuItem>
 
@@ -149,7 +149,7 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
                   className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
                   onSelect={duplicate}
                 >
-                  <Copy size="sm" />
+                  <Copy size="sm" className="size-6" />
                   <span className="text-sm">Дублировать</span>
                 </DropdownMenuItem>
 
@@ -157,7 +157,7 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
                   className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
                   onClick={remove}
                 >
-                  <Trash size="sm" />
+                  <Trash size="sm" className="size-6" />
                   <span className="text-sm">Удалить</span>
                 </DropdownMenuItem>
               </>

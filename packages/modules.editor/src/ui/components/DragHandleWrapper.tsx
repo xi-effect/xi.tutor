@@ -24,7 +24,11 @@ export const DragHandleWrapper = ({
               className="hover:bg-gray-5 active:bg-gray-5 group h-5 w-5 rounded p-0"
               variant="ghost"
             >
-              {open ? <Close size="sm" /> : <Plus size="sm" />}
+              {open ? (
+                <Close size="sm" className="size-6" />
+              ) : (
+                <Plus size="sm" className="size-6" />
+              )}
             </Button>
           )}
         </BlockMenu>
@@ -39,7 +43,7 @@ export const DragHandleWrapper = ({
           }}
           title="Перетащить блок"
         >
-          <Move size="sm" />
+          <Move size="sm" className="size-6" />
         </Button>
       </div>
     </DragHandle>

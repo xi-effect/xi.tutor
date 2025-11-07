@@ -84,7 +84,7 @@ export const Header = () => {
             type="button"
             className="h-[40px] w-[40px] p-2"
           >
-            <ArrowLeft size="s" className="h-6 w-6" />
+            <ArrowLeft size="s" className="size-6" />
           </Button>
           {isLoading ? (
             <Skeleton variant="text" className="h-6 w-24" />
@@ -101,9 +101,9 @@ export const Header = () => {
             className="h-[40px] w-[40px] p-2"
           >
             {isFullScreen ? (
-              <Minimize size="s" className="h-6 w-6" />
+              <Minimize size="s" className="size-6" />
             ) : (
-              <Maximize size="s" className="h-6 w-6" />
+              <Maximize size="s" className="size-6" />
             )}
           </Button>
           {!isReadonly && <SettingsDropdown />}
