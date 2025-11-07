@@ -251,7 +251,7 @@ export const Notifications = () => {
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-[32px] w-[32px] p-1">
-          <Notification className="fill-gray-80" size="s" />
+          <Notification className="fill-gray-80 h-6 w-6" size="s" />
           <NotificationBadge count={formatNotificationCount(unreadCount)} />
         </Button>
       </DropdownMenuTrigger>
@@ -273,7 +273,7 @@ export const Notifications = () => {
               </Button>
             )} */}
             <Button onClick={handleToSettings} variant="ghost" className="h-[32px] w-[32px] p-1">
-              <Settings className="fill-gray-80" size="s" />
+              <Settings className="fill-gray-80 h-6 w-6" size="s" />
             </Button>
           </div>
         </DropdownMenuLabel>
