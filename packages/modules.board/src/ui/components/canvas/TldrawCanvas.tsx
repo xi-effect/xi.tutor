@@ -24,7 +24,7 @@ export const TldrawCanvas = ({
 
   useRemoveMark();
   useLockedShapeSelection(editor);
-  useTldrawClipboard(editor);
+  useTldrawClipboard(editor, token);
 
   useKeyPress('Backspace', () => {
     if (selectedElementId) {
