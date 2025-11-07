@@ -108,6 +108,8 @@ export function useYjsStore({
         if (data.reason === 'permission-denied') {
           toast('Ошибка доступа к серверу совместного редактирования');
           console.error('hocuspocus: permission-denied');
+        } else {
+          console.error('hocuspocus: unknown error', data);
         }
       },
       onAuthenticated: () => {

@@ -38,3 +38,4 @@ export { enrollmentsApiConfig, EnrollmentsQueryKey } from './src/enrollments';
 export { contactsApiConfig, ContactsQueryKey } from './src/contacts';
 export { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from './src/classrooms';
 export { classroomNotesApiConfig, ClassroomNotesQueryKey } from './src/classrooms';
+export { classroomPaymentsApiConfig, ClassroomPaymentsQueryKey } from './src/classrooms';
