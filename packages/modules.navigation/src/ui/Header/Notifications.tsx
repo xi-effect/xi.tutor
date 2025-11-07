@@ -17,6 +17,7 @@ import { NotificationBadge } from './NotificationBadge';
 import {
   generateNotificationTitle,
   generateNotificationDescription,
+  generateNotificationAction,
   formatNotificationDate,
   formatFullNotificationDate,
   formatNotificationCount,
@@ -46,8 +47,8 @@ const NotificationItem = ({
       await onMarkAsRead(notification.id);
     }
 
-    // Получаем URL из payload (может быть в разных полях в зависимости от kind)
-    const url = notification.payload?.url || notification.payload?.link;
+    // Получаем URL из конфига уведомления
+    const url = generateNotificationAction(notification);
 
     // Закрываем dropdown
     onClose();

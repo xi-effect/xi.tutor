@@ -26,7 +26,13 @@ export type NotificationKind =
   | 'system_update'
   | 'birthday'
   | 'general'
-  | 'custom_v1'; // Кастомный тип уведомления
+  | 'custom_v1' // Кастомный тип уведомления
+  | 'individual_invitation_accepted_v1'
+  | 'group_invitation_accepted_v1'
+  | 'enrollment_created_v1'
+  | 'classroom_conference_started_v1'
+  | 'recipient_invoice_created_v1'
+  | 'student_recipient_invoice_payment_confirmed_v1';
 
 // Структура уведомления (новый контракт)
 export type NotificationT = {
