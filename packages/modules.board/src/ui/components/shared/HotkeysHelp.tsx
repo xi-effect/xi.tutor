@@ -88,7 +88,7 @@ export const HotkeysHelp = () => {
     <Modal>
       <ModalTrigger asChild>
         <Button variant="ghost" className="h-10 w-10 p-2">
-          <InfoCircle size="s" />
+          <InfoCircle size="s" className="size-6" />
         </Button>
       </ModalTrigger>
       <ModalContent className="max-h-[80vh] max-w-4xl" portalProps={{ container: portalContainer }}>

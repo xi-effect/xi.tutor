@@ -16,15 +16,15 @@ export type PopupItemT = {
 };
 
 export const navBarElements: NavbarElementT[] = [
-  { action: 'select', title: 'Выбор', icon: <Cursor size="l" /> },
+  { action: 'select', title: 'Выбор', icon: <Cursor size="l" className="h-8 w-8" /> },
   { action: 'hand', title: 'Рука', icon: <Hand /> },
   {
     action: 'pen',
     title: 'Перо',
-    icon: <Pen size="l" />,
+    icon: <Pen size="l" className="h-8 w-8" />,
     menuPopupContent: [
       {
-        icon: <Pen className="fill-unset" size="l" />,
+        icon: <Pen className="fill-unset h-8 w-8" size="l" />,
         action: 'open-style',
         color: 'blue',
       },
@@ -83,8 +83,8 @@ export const navBarElements: NavbarElementT[] = [
     ],
   },
   { action: 'text', title: 'Текст', icon: <TText /> },
-  { action: 'geo', title: 'Фигуры', icon: <Figures size="l" /> },
-  { action: 'arrow', title: 'Стрелка', icon: <Arrow size="l" /> },
+  { action: 'geo', title: 'Фигуры', icon: <Figures size="l" className="size-8" /> },
+  { action: 'arrow', title: 'Стрелка', icon: <Arrow size="l" className="size-8" /> },
   { action: 'asset', title: 'Изображение', icon: <Image /> },
   { action: 'eraser', title: 'Ластик', icon: <Eraser /> },
 ];

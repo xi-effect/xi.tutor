@@ -51,7 +51,7 @@ export const BarCardChart = ({
         <div className="text-muted-foreground flex items-center text-xs">
           <span className="text-gray-60">Предмет: </span>
           <span className={'mr-1 dark:text-gray-100'}> Любой</span>
-          <ChevronUp size={'sm'} className="dark:fill-gray-100" />
+          <ChevronUp size={'sm'} className="h-6 w-6 dark:fill-gray-100" />
         </div>
       </div>
       <div className="p-4 pt-0">

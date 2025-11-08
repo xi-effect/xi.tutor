@@ -110,7 +110,7 @@ export const SubjectRow = ({ control, index }: SubjectRowProps) => {
         </FormControl>
       </FormItem>
       <Button className="ml-2 h-[24px] w-[24px] p-0" variant="ghost" onClick={() => remove(index)}>
-        <Close size="s" className="fill-gray-40" />
+        <Close size="s" className="fill-gray-40 h-6 w-6" />
       </Button>
     </div>
   );
