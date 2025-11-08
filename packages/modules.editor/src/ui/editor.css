@@ -1,11 +1,6 @@
 /* Стили для Notion-like редактора */
 
 /* Основные стили редактора */
-.ProseMirror {
-  outline: none;
-  padding: 1rem;
-  min-height: 200px;
-}
 
 /* Стили для пустого редактора */
 .ProseMirror p.is-editor-empty:first-child::before {
@@ -179,10 +174,6 @@
 
 /* Стили для мобильных устройств */
 @media (max-width: 768px) {
-  .ProseMirror {
-    padding: 0.75rem;
-  }
-
   .ProseMirror h1 {
     font-size: 1.75rem;
   }
