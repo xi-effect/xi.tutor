@@ -37,5 +37,6 @@ declare module '@tanstack/react-router' {
     call?: string;
     classroom?: string;
     role?: 'tutor' | 'student';
+    recipient_invoice_id?: string;
   }
 }

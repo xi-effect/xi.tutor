@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useEffect } from 'react';
 import {
   Modal,
   ModalContent,
@@ -53,10 +53,25 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
     handleCloseModal();
   };
 
-  const getRecipientInvoice = isTutor
-    ? useGetRecipientInvoiceByTutor
-    : useGetRecipientInvoiceByStudent;
-  const { data } = getRecipientInvoice(recipientInvoiceId);
+  const {
+    data: dataByTutor,
+    refetch: refetchByTutor,
+    isLoading: isLoadingTutor,
+  } = useGetRecipientInvoiceByTutor(recipientInvoiceId, !open || !isTutor || !recipientInvoiceId);
+  const {
+    data: dataByStudent,
+    refetch: refetchByStudent,
+    isLoading: isLoadingStudent,
+  } = useGetRecipientInvoiceByStudent(recipientInvoiceId, !open || isTutor || !recipientInvoiceId);
+  const data = isTutor ? dataByTutor : dataByStudent;
+  const refetch = isTutor ? refetchByTutor : refetchByStudent;
+  const isLoadingInvoice = isTutor ? isLoadingTutor : isLoadingStudent;
+
+  useEffect(() => {
+    if (open && recipientInvoiceId && !data && !isLoadingInvoice) {
+      refetch();
+    }
+  }, [open, recipientInvoiceId, data, refetch, isLoadingInvoice]);
 
   const userId = isTutor
     ? (paymentDetails as RolePaymentT<'student'>).student_id
@@ -138,26 +153,38 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                 </div>
                 {data ? (
                   <>
-                    {data.invoice_items.map((item: InvoiceItemT, index: number) => (
-                      <div key={index} className="text-gray-80 flex gap-4 text-base">
-                        <p className="w-[250px]">{item.name}</p>
-                        <div className="flex gap-2">
-                          <p className="w-[78px]">
-                            {item.price}
-                            <span className="text-gray-60 text-xs-base">₽</span>
-                          </p>
-                          <p className="text-gray-60 w-[10px]">x</p>
-                          <p className="w-[78px]">{item.quantity}</p>
-                          <p className="text-gray-60 w-[10px]">=</p>
-                          <p className="w-[78px]">
-                            {parseFloat(item.price) * item.quantity}
-                            <span className="text-gray-60 text-xs-base">₽</span>
-                          </p>
+                    {data.invoice_items && data.invoice_items.length > 0 ? (
+                      data.invoice_items.map((item: InvoiceItemT, index: number) => (
+                        <div key={index} className="text-gray-80 flex gap-4 text-base">
+                          <p className="w-[250px]">{item.name}</p>
+                          <div className="flex gap-2">
+                            <p className="w-[78px]">
+                              {item.price}
+                              <span className="text-gray-60 text-xs-base">₽</span>
+                            </p>
+                            <p className="text-gray-60 w-[10px]">x</p>
+                            <p className="w-[78px]">{item.quantity}</p>
+                            <p className="text-gray-60 w-[10px]">=</p>
+                            <p className="w-[78px]">
+                              {parseFloat(item.price) * item.quantity}
+                              <span className="text-gray-60 text-xs-base">₽</span>
+                            </p>
+                          </div>
                         </div>
+                      ))
+                    ) : (
+                      <div className="text-gray-60 text-sm">
+                        Детальная информация о занятиях недоступна
                       </div>
-                    ))}
+                    )}
                   </>
-                ) : null}
+                ) : isLoadingInvoice ? (
+                  <div className="text-gray-60 text-sm">Загрузка детальной информации...</div>
+                ) : (
+                  <div className="text-gray-60 text-sm">
+                    Детальная информация о занятиях недоступна
+                  </div>
+                )}
 
                 <div className="flex gap-4 text-sm">
                   <p className="w-[250px] font-bold text-gray-100">Итого:</p>
@@ -167,7 +194,7 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
                     <p className="w-[78px]"></p>
                     <p className="w-[10px]"></p>
                     <p className="w-[78px]">
-                      {data?.recipient_invoice.total}
+                      {data?.recipient_invoice?.total || paymentDetails.total}
                       <span className="text-gray-60 text-xs-base">₽</span>
                     </p>
                   </div>
