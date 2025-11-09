@@ -19,7 +19,7 @@ export const TiptapEditor = () => {
   }
 
   return (
-    <div className="relative">
+    <div className="relative p-4">
       <EditorContent editor={editor} className="prose prose-gray max-w-none focus:outline-none" />
       <EditorToolkit editor={editor} isReadOnly={isReadOnly} />
     </div>
