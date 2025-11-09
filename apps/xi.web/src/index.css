@@ -73,4 +73,16 @@ html {
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 
+html,
+body,
+[style*='overflow'],
+.overflow-auto,
+.overflow-scroll,
+.overflow-x-auto,
+.overflow-y-auto,
+.overflow-x-scroll,
+.overflow-y-scroll {
+  scrollbar-gutter: stable;
+}
+
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
