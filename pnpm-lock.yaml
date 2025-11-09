@@ -2205,6 +2205,9 @@ importers:
       '@xipkg/sheet':
         specifier: 2.0.12
         version: 2.0.12(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
+      '@xipkg/textarea':
+        specifier: 1.1.0
+        version: 1.1.0(react@19.2.0)
       '@xipkg/tooltip':
         specifier: 2.1.0
         version: 2.1.0(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
@@ -10565,6 +10568,16 @@ packages:
   /@xipkg/tailwind@0.8.1:
     resolution: {integrity: sha512-DS6Z0m2fJsDjPyQMbIC9WHamGMP6k2QsVZZdNypAaIadWcKncStB1gKzCe14h4nv6kv2fdSJZmIjvLZjwu48ag==}
     dev: true
+
+  /@xipkg/textarea@1.1.0(react@19.2.0):
+    resolution: {integrity: sha512-StlNbNosP0c2mEz+dtEtVmi9zc0sjjZpR8u1kIFjI3PAlB/4EFgYemVRy+L4ujS4gD9Ut+zmsYPrUk+JwsP0LA==}
+    peerDependencies:
+      react: ^19
+    dependencies:
+      '@xipkg/utils': 1.8.0(react@19.2.0)
+      class-variance-authority: 0.7.1
+      react: 19.2.0
+    dev: false
 
   /@xipkg/toggle@2.0.13(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0):
     resolution: {integrity: sha512-bxQBfZxY6HcqXd8PccwBOKU6r6bcABjIkqHLpNgpHdUARihOUgT8LV9p8+OWzge4fyy3qeny+Q86h217JqS7vw==}

@@ -81,6 +81,7 @@ export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
                 source: Track.Source.Camera,
                 onChange: handleCameraToggle,
               }}
+              className="relative"
             />
           </div>
           <div className="bg-gray-0 border-gray-10 flex h-[48px] items-center justify-center gap-1 rounded-[16px] border p-1">

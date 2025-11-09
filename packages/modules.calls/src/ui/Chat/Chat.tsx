@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Button } from '@xipkg/button';
-import { Input } from '@xipkg/input';
+import { Textarea } from '@xipkg/textarea';
 import { Send, Close } from '@xipkg/icons';
+import { UserProfile } from '@xipkg/userprofile';
 import { useChat } from '../../hooks/useChat';
 import { useCallStore } from '../../store/callStore';
 import { useCurrentUser } from 'common.services';
@@ -17,6 +18,8 @@ export const Chat = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
   useEffect(() => {
     scrollToBottom();
   }, [chatMessages]);
@@ -26,12 +29,16 @@ export const Chat = () => {
       sendChatMessage(messageText);
       setMessageText('');
     }
+
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+    }
   };
 
   if (!isChatOpen) return null;
 
   return (
-    <div className="bg-gray-0 border-gray-20 flex h-full w-100 max-w-100 flex-col rounded-2xl border p-4">
+    <div className="bg-gray-0 border-gray-20 flex h-full max-w-[328px] min-w-[328px] flex-col overflow-y-auto rounded-2xl border p-4">
       {/* Заголовок */}
       <div className="border-gray-20 flex items-center justify-between">
         <h3 className="text-m-base font-medium text-gray-100">Чат</h3>
@@ -49,32 +56,35 @@ export const Chat = () => {
             </div>
           ) : (
             chatMessages.map((message) => {
-              const isOwnMessage = message.senderId === currentUser?.userId;
+              const isOwnMessage = Number(message.senderId) === Number(currentUser?.id);
               return (
                 <div
                   key={message.id}
                   className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div
-                    className={`max-w-[80%] rounded-lg px-3 py-2 select-text ${
-                      isOwnMessage ? 'bg-brand-100 text-brand-0' : 'bg-gray-10 text-gray-100'
-                    }`}
-                  >
+                  <div className="flex max-w-[90%] flex-col gap-1 rounded-lg text-gray-100 select-text">
                     {!isOwnMessage && (
-                      <div className="text-gray-60 mb-1 text-xs font-medium">
-                        {message.senderName}
+                      <div className="flex flex-row items-center gap-1 text-xs font-medium text-gray-100">
+                        <UserProfile
+                          size="s"
+                          userId={Number(message.senderId)}
+                          text={message.senderName}
+                          src={`https://api.sovlium.ru/files/users/${message.senderId}/avatar.webp`}
+                        />
+                        <div
+                          className={`text-xs-base ${isOwnMessage ? 'text-brand-20' : 'text-gray-60'}`}
+                        >
+                          {new Date(message.timestamp).toLocaleTimeString('ru-RU', {
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })}
+                        </div>
                       </div>
                     )}
-                    <div className="cursor-text text-sm wrap-break-word select-text">
-                      {message.text}
-                    </div>
                     <div
-                      className={`text-xs-base mt-1 text-end ${isOwnMessage ? 'text-brand-20' : 'text-gray-60'}`}
+                      className={`cursor-text rounded-lg px-3 py-2 text-sm wrap-break-word select-text ${isOwnMessage ? 'bg-brand-20' : 'bg-gray-5'}`}
                     >
-                      {new Date(message.timestamp).toLocaleTimeString('ru-RU', {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
+                      {message.text}
                     </div>
                   </div>
                 </div>
@@ -87,12 +97,19 @@ export const Chat = () => {
 
       {/* Поле ввода */}
       <div className="border-gray-20 flex w-full items-center gap-2">
-        <div className="w-full flex-1">
-          <Input
+        <div className="flex-1">
+          <Textarea
+            ref={textareaRef}
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
-            placeholder="Введите сообщение..."
-            className="w-full border-none"
+            placeholder="Напишите сообщение..."
+            className="flex-1 border-none px-0"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSendMessage();
+              }
+            }}
           />
         </div>
         <Button
