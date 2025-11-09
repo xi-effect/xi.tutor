@@ -68,6 +68,9 @@ importers:
       common.theme:
         specifier: '*'
         version: link:../../packages/common.theme
+      common.types:
+        specifier: '*'
+        version: link:../../packages/common.types
       common.ui:
         specifier: '*'
         version: link:../../packages/common.ui
