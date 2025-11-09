@@ -53,11 +53,13 @@ export const useModeSync = () => {
               navigate({
                 to: '/classrooms/$classroomId/boards/$boardId',
                 params: { classroomId: payload.classroom, boardId: payload.boardId },
+                search: { call: payload.classroom },
               });
             } else {
               navigate({
                 to: '/board/$boardId',
                 params: { boardId: payload.boardId },
+                search: { call: payload.classroom },
               });
             }
           }
