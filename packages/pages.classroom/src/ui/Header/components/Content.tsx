@@ -91,7 +91,7 @@ export const Content = ({ classroom }: ContentProps) => {
         <div className="flex flex-row items-end gap-2">
           <Button onClick={handleCallClick} size="s" disabled={isLoading}>
             <Conference className="fill-gray-0 mr-2 size-4" />
-            {isLoading ? 'Подключение...' : 'Начать Звонок'}
+            {isLoading ? 'Подключение...' : 'Начать звонок'}
           </Button>
         </div>
       </div>

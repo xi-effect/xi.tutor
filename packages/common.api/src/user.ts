@@ -9,9 +9,10 @@ enum UserQueryKey {
   PasswordResetConfirm = 'PasswordResetConfirm',
   UserById = 'UserById',
   UserByUsername = 'UserByUsername',
-  EmailConfirmationRequest = 'EmailConfirmationRequest',
   UpdateAvatar = 'UpdateAvatar',
   DeleteAvatar = 'DeleteAvatar',
+  EmailChange = 'EmailChange',
+  EmailChangeRequest = 'EmailChangeRequest',
 }
 
 const userApiConfig = {
@@ -38,11 +39,6 @@ const userApiConfig = {
       `${env.VITE_SERVER_URL_BACKEND}/api/public/user-service/password-reset/confirmations/`,
     method: HttpMethod.POST,
   },
-  [UserQueryKey.EmailConfirmationRequest]: {
-    getUrl: () =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/email-confirmation/requests/`,
-    method: HttpMethod.POST,
-  },
   [UserQueryKey.UpdateAvatar]: {
     getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/avatar/`,
     method: HttpMethod.PUT,
@@ -50,6 +46,16 @@ const userApiConfig = {
   [UserQueryKey.DeleteAvatar]: {
     getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/avatar/`,
     method: HttpMethod.DELETE,
+  },
+  [UserQueryKey.EmailChange]: {
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/public/user-service/email-change/confirmations/`,
+    method: HttpMethod.POST,
+  },
+  [UserQueryKey.EmailChangeRequest]: {
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/email-change/requests/`,
+    method: HttpMethod.POST,
   },
 };
 

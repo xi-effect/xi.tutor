@@ -15,7 +15,7 @@ export const TabsComponent = React.memo(({ onApprovePayment }: TabsComponentProp
   const parentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
-  const currentTab = search.tab || 'boards';
+  const currentTab = search.tab || 'invoices';
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -47,7 +47,7 @@ export const TabsComponent = React.memo(({ onApprovePayment }: TabsComponentProp
     if (prevIsTutor && !currentIsTutor && currentTab === 'templates') {
       navigate({
         // @ts-expect-error - TanStack Router search params typing issue
-        search: { tab: 'boards' },
+        search: { tab: 'invoices' },
       });
     }
 
@@ -65,7 +65,7 @@ export const TabsComponent = React.memo(({ onApprovePayment }: TabsComponentProp
   return (
     <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
       <Tabs.List className="flex w-80 flex-row gap-4">
-        <Tabs.Trigger value="boards" className="text-m-base font-medium text-gray-100">
+        <Tabs.Trigger value="invoices" className="text-m-base font-medium text-gray-100">
           Журнал оплат
         </Tabs.Trigger>
 
@@ -82,7 +82,7 @@ export const TabsComponent = React.memo(({ onApprovePayment }: TabsComponentProp
       </Tabs.List>
 
       <div className="h-full pt-0">
-        <Tabs.Content value="boards">
+        <Tabs.Content value="invoices">
           <VirtualizedPaymentsTable
             data={items}
             columns={defaultColumns}

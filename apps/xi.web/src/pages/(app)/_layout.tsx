@@ -1,4 +1,5 @@
-import { Outlet, createFileRoute, useRouter } from '@tanstack/react-router';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Outlet, createFileRoute, useNavigate, useRouter, useSearch } from '@tanstack/react-router';
 import { LoadingScreen } from 'common.ui';
 import { Suspense, lazy, useEffect } from 'react';
 
@@ -10,37 +11,15 @@ import {
   useCallStore,
   ModeSyncProvider,
 } from 'modules.calls';
+import { useCurrentUser, useUpdateProfile } from 'common.services';
+import { OnboardingStageT } from 'common.api';
+import { onboardingStageToPath } from 'pages.welcome';
+import { RoleT } from 'common.types';
 
 // Динамические импорты для крупных модулей
 const Navigation = lazy(() =>
   import('modules.navigation').then((module) => ({ default: module.Navigation })),
 );
-
-export const Route = createFileRoute('/(app)/_layout')({
-  head: () => ({
-    meta: [
-      {
-        // title: 'sovlium',
-      },
-      // {
-      //   name: 'description',
-      //   content: 'My App is a web application',
-      // },
-    ],
-    // links: [
-    //   {
-    //     rel: 'icon',
-    //     href: '/favicon.ico',
-    //   },
-    // ],
-    // scripts: [
-    //   {
-    //     src: 'https://www.google-analytics.com/analytics.js',
-    //   },
-    // ],
-  }),
-  component: LayoutComponent,
-});
 
 function LayoutComponent() {
   const router = useRouter();
@@ -76,3 +55,97 @@ function LayoutComponent() {
     </div>
   );
 }
+
+const ProtectedLayout = () => {
+  const { data: user } = useCurrentUser();
+  const navigate = useNavigate();
+  const search = useSearch({ strict: false }) as { role?: RoleT };
+  const { updateProfile } = useUpdateProfile();
+
+  useEffect(() => {
+    const stage = user?.onboarding_stage;
+
+    if (
+      stage &&
+      stage !== 'completed' &&
+      stage !== 'training' &&
+      Object.prototype.hasOwnProperty.call(onboardingStageToPath, stage)
+    ) {
+      navigate({ to: onboardingStageToPath[stage as OnboardingStageT] });
+    }
+  }, [user?.onboarding_stage, navigate]);
+
+  // Обработка параметра role из URL
+  useEffect(() => {
+    if (!user || !search.role) return;
+
+    const urlRole = search.role;
+    const currentLayout = user.default_layout;
+
+    // Проверяем, является ли role валидным значением
+    if (urlRole !== 'tutor' && urlRole !== 'student') return;
+
+    // Если role совпадает с текущим default_layout, просто удаляем параметр из URL
+    if (urlRole === currentLayout) {
+      const newSearch = { ...search };
+      delete newSearch.role;
+      navigate({
+        search: newSearch as any,
+        replace: true,
+      });
+      return;
+    }
+
+    // Если role отличается от currentLayout, обновляем default_layout
+    updateProfile.mutate(
+      { default_layout: urlRole },
+      {
+        onSuccess: () => {
+          // Удаляем параметр role из URL после успешного обновления
+          const newSearch = { ...search };
+          delete newSearch.role;
+          navigate({
+            search: newSearch as any,
+            replace: true,
+          });
+        },
+      },
+    );
+  }, []);
+
+  if (!user) {
+    return <LoadingScreen />;
+  }
+
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <LayoutComponent />
+    </Suspense>
+  );
+};
+
+export const Route = createFileRoute('/(app)/_layout')({
+  head: () => ({
+    meta: [
+      {
+        // title: 'sovlium',
+      },
+      // {
+      //   name: 'description',
+      //   content: 'My App is a web application',
+      // },
+    ],
+    // links: [
+    //   {
+    //     rel: 'icon',
+    //     href: '/favicon.ico',
+    //   },
+    // ],
+    // scripts: [
+    //   {
+    //     src: 'https://www.google-analytics.com/analytics.js',
+    //   },
+    // ],
+  }),
+  component: ProtectedLayout,
+});

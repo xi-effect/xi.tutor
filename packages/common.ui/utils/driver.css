@@ -80,3 +80,7 @@
   text-shadow: none;
   font-size: 14px;
 }
+
+.driver-popover-arrow {
+  display: none;
+}

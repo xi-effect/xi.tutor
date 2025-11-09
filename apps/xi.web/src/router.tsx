@@ -36,5 +36,6 @@ declare module '@tanstack/react-router' {
     goto?: string;
     call?: string;
     classroom?: string;
+    role?: 'tutor' | 'student';
   }
 }

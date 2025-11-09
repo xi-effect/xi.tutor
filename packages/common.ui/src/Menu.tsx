@@ -53,7 +53,16 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
     // Скрываем меню при начале обучения
     hideMenuForSession();
 
-    // Проверяем, что все необходимые элементы существуют
+    // Фильтруем шаги, оставляя только те, элементы которых существуют на странице
+    const validSteps = steps.filter((step) => {
+      if (typeof step.element === 'string') {
+        const element = document.querySelector(step.element);
+        return element !== null;
+      }
+      // Если element не строка (например, функция или HTMLElement), оставляем шаг
+      return true;
+    });
+
     const missingElements = steps
       .map((step) => step.element)
       .filter(
@@ -66,10 +75,16 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
       // Можно показать уведомление пользователю или пропустить обучение
     }
 
+    // Если нет валидных шагов, не запускаем обучение
+    if (validSteps.length === 0) {
+      console.warn('Нет валидных шагов для обучения');
+      return;
+    }
+
     const driverObj = driver({
       popoverClass: 'my-custom-popover-class',
       showProgress: true,
-      steps: steps,
+      steps: validSteps,
 
       onPopoverRender: (popover) => {
         const defaultCloseButton = popover.closeButton;
@@ -115,7 +130,7 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
 
   return (
     <>
-      <div className="bg-gray-0 border-gray-10 fixed bottom-0 left-1/2 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
+      <div className="bg-gray-0 border-gray-10 fixed bottom-0 left-72 z-100 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
         <Button
           variant="ghost"
           size="s"

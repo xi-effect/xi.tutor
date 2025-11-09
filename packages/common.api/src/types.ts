@@ -1,6 +1,7 @@
 export type MaterialsKindT = 'note' | 'board';
 
 export type OnboardingStageT =
+  | 'email-confirmation'
   | 'user-information'
   | 'default-layout'
   | 'notifications'

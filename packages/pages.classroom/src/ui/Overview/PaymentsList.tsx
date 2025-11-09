@@ -1,17 +1,55 @@
+import { useParams } from '@tanstack/react-router';
+import {
+  useCurrentUser,
+  useGetClassroomTutorPaymentsList,
+  useGetClassroomStudentPaymentsList,
+} from 'common.services';
+import { Payment } from './Payment';
+
 export const PaymentsList = () => {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
+
+  const { data: studentPayments, isLoading: isLoadingStudent } = useGetClassroomStudentPaymentsList(
+    {
+      classroomId,
+      disabled: isTutor,
+    },
+  );
+  const { data: tutorPayments, isLoading: isLoadingTutor } = useGetClassroomTutorPaymentsList({
+    classroomId,
+    disabled: !isTutor,
+  });
+
+  const payments = isTutor ? tutorPayments : studentPayments;
+  const isLoading = isTutor ? isLoadingTutor : isLoadingStudent;
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-row gap-8">
+        <p className="text-m-base text-gray-60">Загрузка...</p>
+      </div>
+    );
+  }
+
+  if (!payments || payments.length === 0) {
+    return (
+      <div className="flex h-[148px] w-full flex-row items-center justify-center gap-8">
+        <p className="text-m-base text-gray-60">Здесь пока пусто</p>
+      </div>
+    );
+  }
+
   return (
-    <div className="flex flex-row gap-8">
-      {[...new Array(10)].map((_, index) => (
-        <div
-          key={index}
-          className="border-gray-60 flex min-h-[96px] min-w-[350px] flex-col items-start justify-start gap-2 rounded-2xl border p-4"
-        >
-          <span className="text-s-base text-gray-80 font-medium">11 мая, 12:32</span>
-          <div className="flex flex-row items-baseline gap-0.5">
-            <h3 className="text-h6 font-medium text-gray-100">320</h3>
-            <span className="text-m-base text-gray-60 font-medium">₽</span>
-          </div>
-        </div>
+    <div className="flex flex-row gap-8 pb-4">
+      {payments.map((payment) => (
+        <Payment
+          key={payment.id}
+          payment={payment}
+          currentUserRole={isTutor ? 'tutor' : 'student'}
+        />
       ))}
     </div>
   );

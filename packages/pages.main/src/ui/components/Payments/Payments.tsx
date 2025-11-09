@@ -64,6 +64,7 @@ export const Payments = () => {
         {isTutor && (
           <div className="ml-auto flex flex-row items-center gap-2 max-sm:hidden">
             <Button
+              id="create-invoice-button"
               size="s"
               variant="secondary"
               className="rounded-lg px-4 py-2 font-medium max-[550px]:hidden"

@@ -35,6 +35,7 @@
     "features.materials.add": "*",
     "features.payment.approve": "*",
     "features.table": "*",
+    "features.invoice": "*",
     "modules.calendar": "*",
     "modules.calls": "*",
     "modules.editor": "*",

@@ -8,9 +8,9 @@ export type UserCellT = {
 };
 
 export const UserCell = ({ userId, userRole }: UserCellT) => {
-  const userHook = useUserByRole(userRole);
-  const username = userHook(userId).data?.username;
-  const displayName = userHook(userId).data?.display_name;
+  const userData = useUserByRole(userRole, userId);
+  const username = userData.data?.username;
+  const displayName = userData.data?.display_name;
   return (
     <UserProfile
       size="m"

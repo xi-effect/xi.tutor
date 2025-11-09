@@ -19,9 +19,15 @@ interface EditableTitleProps {
   title: string;
   materialId: string;
   className?: string;
+  isTutor?: boolean;
 }
 
-export const EditableTitle = ({ title, materialId, className }: EditableTitleProps) => {
+export const EditableTitle = ({
+  title,
+  materialId,
+  className,
+  isTutor = false,
+}: EditableTitleProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const { classroomId } = useParams({ strict: false });
 
@@ -107,8 +113,8 @@ export const EditableTitle = ({ title, materialId, className }: EditableTitlePro
 
   return (
     <h1
-      className={cn('text-xl-base cursor-pointer select-none', className)}
-      onDoubleClick={handleDoubleClick}
+      className={cn('text-xl-base select-none', isTutor && 'cursor-pointer', className)}
+      onDoubleClick={isTutor ? handleDoubleClick : undefined}
     >
       {title}
     </h1>

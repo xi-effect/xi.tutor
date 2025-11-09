@@ -13,11 +13,8 @@ export const useUserByPaymentDetails = (
   // Определяем роль для использования правильного хука
   const role = isTutorPayment ? 'student' : 'tutor';
 
-  // Получаем хук в зависимости от роли
-  const useUserHook = useUserByRole(role);
-
-  // Используем полученный хук
-  const userData = useUserHook(userId);
+  // Используем useUserByRole с userId напрямую
+  const userData = useUserByRole(role, userId);
 
   return {
     data: userData.data,

@@ -82,7 +82,7 @@ export const CardMaterials = ({ material, showIcon = true, onClick }: CardMateri
   return (
     <div
       role="group"
-      className="border-gray-30 bg-gray-0 hover:bg-gray-5 flex min-h-[96px] w-[350px] max-w-[350px] cursor-pointer flex-col items-start justify-start gap-2 rounded-2xl border p-4"
+      className="border-gray-30 bg-gray-0 hover:bg-gray-5 flex h-[140px] w-[350px] max-w-[350px] min-w-[350px] cursor-pointer flex-col items-start justify-start gap-2 rounded-2xl border p-4"
       onClick={onClick}
     >
       <div className="flex w-full flex-row items-center justify-between">

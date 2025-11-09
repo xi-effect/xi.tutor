@@ -1,9 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useSocketEvent } from 'common.sockets';
 import { NotificationT, NotificationsStateT, RecipientNotificationResponse } from 'common.types';
-import { generateNotificationTitle, generateNotificationDescription } from './notificationUtils';
+import {
+  generateNotificationTitle,
+  generateNotificationDescription,
+  getNotificationInvalidationKeys,
+} from './notificationUtils';
 import { useSearchNotifications } from './useSearchNotifications';
 import { useGetUnreadCount } from './useGetUnreadCount';
 import { useMarkNotificationAsRead } from './useMarkNotificationAsRead';
@@ -11,6 +16,7 @@ import { useCurrentUser } from '../user';
 
 export const useNotifications = () => {
   const [socketNotifications, setSocketNotifications] = useState<NotificationT[]>([]);
+  const queryClient = useQueryClient();
 
   // Проверяем, авторизован ли пользователь
   const { data: currentUser, isError: isUserError } = useCurrentUser();
@@ -74,6 +80,12 @@ export const useNotifications = () => {
         return [notification, ...prev];
       });
 
+      // Ревалидируем кеш связанных данных на основе конфига уведомления
+      const invalidationKeys = getNotificationInvalidationKeys(notification);
+      invalidationKeys.forEach((key) => {
+        queryClient.invalidateQueries({ queryKey: Array.isArray(key) ? key : [key] });
+      });
+
       // Обновляем счетчик непрочитанных с сервера (синхронизация)
       refetchCount();
 
@@ -86,7 +98,7 @@ export const useNotifications = () => {
         duration: 5000,
       });
     },
-    [refetchCount, transformNotification],
+    [refetchCount, transformNotification, queryClient],
   );
 
   // Обработчик для Socket.IO с проверкой авторизации
@@ -138,6 +150,9 @@ export const useNotifications = () => {
   // Отметить уведомление как прочитанное
   const markAsRead = useCallback(
     async (id: string) => {
+      // Находим уведомление для ревалидации кеша
+      const notification = allNotifications.find((n) => n.id === id);
+
       // Оптимистично обновляем локальное состояние
       setSocketNotifications((prev) =>
         prev.map((notification) =>
@@ -147,6 +162,15 @@ export const useNotifications = () => {
 
       try {
         await markAsReadMutation.mutateAsync(id);
+
+        // Ревалидируем кеш связанных данных на основе конфига уведомления
+        if (notification) {
+          const invalidationKeys = getNotificationInvalidationKeys(notification);
+          invalidationKeys.forEach((key) => {
+            queryClient.invalidateQueries({ queryKey: Array.isArray(key) ? key : [key] });
+          });
+        }
+
         // Обновляем счетчик и список после успешной отметки
         refetchCount();
         refetchNotifications();
@@ -160,7 +184,7 @@ export const useNotifications = () => {
         console.error('Ошибка при отметке уведомления как прочитанного:', error);
       }
     },
-    [markAsReadMutation, refetchCount, refetchNotifications],
+    [markAsReadMutation, refetchCount, refetchNotifications, allNotifications, queryClient],
   );
 
   // Отметить все уведомления как прочитанные (локально, API для этого нет)

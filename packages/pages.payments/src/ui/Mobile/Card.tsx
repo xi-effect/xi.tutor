@@ -5,7 +5,7 @@ import {
   mapPaymentStatus,
   RolePaymentT,
   type RoleT,
-  statusColorMap,
+  getStatusColor,
   useUserByRole,
 } from 'features.table';
 import { UserProfile } from '@xipkg/userprofile';
@@ -23,8 +23,8 @@ export type CardPropsT = {
 export const Card = ({ payment, userId, currentUserRole, onApprovePayment }: CardPropsT) => {
   const { created_at, total, status } = { ...payment };
   const statusText = mapPaymentStatus[payment.status];
-  const userHook = useUserByRole(currentUserRole === 'student' ? 'tutor' : 'student');
-  const username = userHook(userId).data?.username;
+  const userData = useUserByRole(currentUserRole === 'student' ? 'tutor' : 'student', userId);
+  const username = userData.data?.username;
 
   const handleApprove = () => onApprovePayment(payment);
 
@@ -40,7 +40,7 @@ export const Card = ({ payment, userId, currentUserRole, onApprovePayment }: Car
       <div className="mt-2 flex flex-row items-baseline gap-1">
         <span className="text-brand-100 text-m-base font-normal">{total} </span>
         <span className="text-brand-40 text-xs-base font-normal">₽</span>
-        <div className={cn('text-m-base ml-4 font-normal', statusColorMap[status])}>
+        <div className={cn('text-m-base ml-4 font-normal', getStatusColor(status))}>
           {statusText}
         </div>
       </div>

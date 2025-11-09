@@ -119,7 +119,7 @@ export const AvatarEditor = ({
           </div>
           <ModalFooter className="flex flex-col gap-4 sm:flex-row sm:items-start">
             <Button onClick={() => showCroppedImage()} className="w-full sm:w-[126px]">
-              Изменить
+              Сохранить
             </Button>
             <Button
               onClick={() => onOpenChange(false)}

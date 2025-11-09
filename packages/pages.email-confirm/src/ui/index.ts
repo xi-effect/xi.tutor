@@ -1,0 +1,1 @@
+export { EmailPageConfirm } from './EmailPageConfirm';

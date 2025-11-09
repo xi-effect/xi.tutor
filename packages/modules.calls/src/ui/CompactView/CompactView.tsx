@@ -15,7 +15,7 @@ import { CompactCall } from './CompactCall';
 import { useCallStore } from '../../store/callStore';
 import type { Corner } from '../../store/callStore';
 import { useNavigate, useRouter, useSearch } from '@tanstack/react-router';
-import { Chat } from '../Chat/Chat';
+// import { Chat } from '../Chat/Chat';
 import { useRoom } from '../../providers/RoomProvider';
 
 type CompactViewProps = {
@@ -72,7 +72,7 @@ const DroppableAreas: FC = () => {
 
 export const Compact: FC<CompactViewProps> = ({ children }) => {
   const router = useRouter();
-  const { isChatOpen, activeCorner, updateStore } = useCallStore();
+  const { activeCorner, updateStore } = useCallStore();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -119,13 +119,13 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
         {children}
 
         {/* Чат в режиме compact */}
-        {isChatOpen && (
+        {/* {isChatOpen && (
           <div className="absolute top-4 right-4 z-50">
             <div className="bg-gray-0 border-gray-20 flex h-96 w-80 flex-col rounded-2xl border shadow-lg">
               <Chat />
             </div>
           </div>
-        )}
+        )} */}
 
         {/* Обработка аудио как в основном режиме ВКС */}
         <RoomAudioRenderer />

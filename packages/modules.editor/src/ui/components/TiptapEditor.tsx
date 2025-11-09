@@ -19,16 +19,9 @@ export const TiptapEditor = () => {
   }
 
   return (
-    <div className="flex w-full justify-center overflow-auto py-8">
-      <div className="w-full max-w-4xl pl-16">
-        <div className="relative">
-          <EditorContent
-            editor={editor}
-            className="prose prose-gray max-w-none focus:outline-none"
-          />
-          <EditorToolkit editor={editor} isReadOnly={isReadOnly} />
-        </div>
-      </div>
+    <div className="relative p-4">
+      <EditorContent editor={editor} className="prose prose-gray max-w-none focus:outline-none" />
+      <EditorToolkit editor={editor} isReadOnly={isReadOnly} />
     </div>
   );
 };

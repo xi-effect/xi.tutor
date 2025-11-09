@@ -1,4 +1,5 @@
 import type { NotificationT } from 'common.types';
+import { notificationConfigs } from './notificationConfig';
 
 /**
  * Генерирует заголовок уведомления на основе kind и payload
@@ -9,36 +10,18 @@ export const generateNotificationTitle = (notification: NotificationT): string =
   }
 
   const { kind } = notification.payload;
+  const config = notificationConfigs[kind];
 
-  switch (kind) {
-    case 'classroom_material_created':
-      return 'Новый материал в классе';
-    case 'classroom_lesson_scheduled':
-      return 'Занятие запланировано';
-    case 'classroom_lesson_started':
-      return 'Занятие началось';
-    case 'classroom_lesson_ended':
-      return 'Занятие завершено';
-    case 'payment_success':
-      return 'Оплата прошла успешно';
-    case 'payment_failed':
-      return 'Ошибка оплаты';
-    case 'group_invitation':
-      return 'Приглашение в группу';
-    case 'group_invitation_accepted':
-      return 'Приглашение принято';
-    case 'group_invitation_declined':
-      return 'Приглашение отклонено';
-    case 'system_update':
-      return 'Обновление системы';
-    case 'birthday':
-      return 'День рождения';
-    case 'custom_v1':
-      return notification.payload.text || 'Новое уведомление';
-    case 'general':
-    default:
-      return 'Уведомление';
+  if (!config) {
+    return 'Уведомление';
   }
+
+  const title = config.title;
+  if (typeof title === 'function') {
+    return title(notification.payload);
+  }
+
+  return title;
 };
 
 /**
@@ -49,37 +32,52 @@ export const generateNotificationDescription = (notification: NotificationT): st
     return 'Новое уведомление';
   }
 
-  const { kind, ...payload } = notification.payload;
+  const { kind } = notification.payload;
+  const config = notificationConfigs[kind];
 
-  switch (kind) {
-    case 'classroom_material_created':
-      return `Добавлен новый материал в класс ${payload.classroom_id || ''}`;
-    case 'classroom_lesson_scheduled':
-      return `Занятие запланировано на ${payload.scheduled_at || ''}`;
-    case 'classroom_lesson_started':
-      return `Занятие началось в классе ${payload.classroom_id || ''}`;
-    case 'classroom_lesson_ended':
-      return `Занятие завершено в классе ${payload.classroom_id || ''}`;
-    case 'payment_success':
-      return `Оплата на сумму ${payload.amount || 0} ₽ прошла успешно`;
-    case 'payment_failed':
-      return `Ошибка при оплате ${payload.amount || 0} ₽`;
-    case 'group_invitation':
-      return `Вас пригласили в группу "${payload.group_name || ''}"`;
-    case 'group_invitation_accepted':
-      return `Пользователь принял приглашение в группу "${payload.group_name || ''}"`;
-    case 'group_invitation_declined':
-      return `Пользователь отклонил приглашение в группу "${payload.group_name || ''}"`;
-    case 'system_update':
-      return payload.message || 'Доступно обновление системы';
-    case 'birthday':
-      return `У ${payload.user_name || 'пользователя'} сегодня день рождения!`;
-    case 'custom_v1':
-      return payload.text || 'Новое уведомление';
-    case 'general':
-    default:
-      return payload.message || 'Новое уведомление';
+  if (!config) {
+    return 'Новое уведомление';
   }
+
+  return config.description(notification.payload);
+};
+
+/**
+ * Генерирует ссылку для перехода при клике на уведомление
+ */
+export const generateNotificationAction = (notification: NotificationT): string | null => {
+  if (!notification?.payload) {
+    return null;
+  }
+
+  const { kind } = notification.payload;
+  const config = notificationConfigs[kind];
+
+  if (!config) {
+    return null;
+  }
+
+  return config.action(notification.payload);
+};
+
+/**
+ * Получает ключи для ревалидации кеша React Query для уведомления
+ */
+export const getNotificationInvalidationKeys = (
+  notification: NotificationT,
+): Array<string | [string, ...unknown[]]> => {
+  if (!notification?.payload) {
+    return [];
+  }
+
+  const { kind } = notification.payload;
+  const config = notificationConfigs[kind];
+
+  if (!config) {
+    return [];
+  }
+
+  return config.invalidationKeys;
 };
 
 /**

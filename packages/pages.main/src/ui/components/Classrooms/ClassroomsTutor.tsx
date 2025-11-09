@@ -42,6 +42,7 @@ export const ClassroomsTutor = () => {
         <div className="ml-auto flex flex-row items-center gap-2 max-sm:hidden">
           <ModalAddGroup>
             <Button
+              id="create-group-button"
               variant="ghost"
               size="s"
               className="text-s-base rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
@@ -52,6 +53,7 @@ export const ClassroomsTutor = () => {
 
           <ModalInvitation>
             <Button
+              id="invite-student-button"
               size="s"
               variant="secondary"
               className="rounded-lg px-4 py-2 font-medium max-[550px]:hidden"

@@ -13,6 +13,7 @@ import {
   defaultUserPreferences,
   getUserPreferences,
   InstancePresenceRecordType,
+  loadSnapshot,
   react,
   SerializedSchema,
   setUserPreferences,
@@ -108,6 +109,8 @@ export function useYjsStore({
         if (data.reason === 'permission-denied') {
           toast('Ошибка доступа к серверу совместного редактирования');
           console.error('hocuspocus: permission-denied');
+        } else {
+          console.error('hocuspocus: unknown error', data);
         }
       },
       onAuthenticated: () => {
@@ -295,10 +298,7 @@ export function useYjsStore({
           meta.set('schema', ourSchema);
         }, 'init');
 
-        store.loadSnapshot({
-          store: migrationResult.value,
-          schema: ourSchema,
-        });
+        loadSnapshot(store, { store: migrationResult.value, schema: ourSchema });
       } else {
         yDoc.transact(() => {
           for (const rec of store.allRecords()) yStore.set(rec.id, rec);

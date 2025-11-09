@@ -1,12 +1,9 @@
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { EmailPageLayout } from './EmailPageLayout';
 import { Button } from '@xipkg/button';
+import { useCurrentUser, useEmailConfirmationRequest } from 'common.services';
 
-type EmailPageConfirmPropsT = {
-  setStatus: Dispatch<SetStateAction<'confirm' | 'success'>>;
-};
-
-const INITIAL_TIMER_SECONDS = 10 * 60; // 09:38 в секундах
+const INITIAL_TIMER_SECONDS = 10 * 60; // 10 минут в секундах
 
 const formatTime = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);
@@ -14,8 +11,36 @@ const formatTime = (seconds: number): string => {
   return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
 };
 
-export const EmailPageConfirm = ({ setStatus }: EmailPageConfirmPropsT) => {
-  const [timeRemaining, setTimeRemaining] = useState(INITIAL_TIMER_SECONDS);
+export const EmailPageConfirm = () => {
+  const { data: user } = useCurrentUser();
+  const email = user?.email || '';
+
+  // Проверяем, пришли ли мы с /signup через sessionStorage
+  const cameFromSignup = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    const savedPreviousPath = sessionStorage.getItem('previousPath');
+    return savedPreviousPath === '/signup' || savedPreviousPath === '/signup/';
+  }, []);
+
+  // Инициализируем таймер в зависимости от предыдущей страницы
+  const [timeRemaining, setTimeRemaining] = useState(() => {
+    // Проверяем при инициализации
+    if (typeof window === 'undefined') return 0;
+    const savedPreviousPath = sessionStorage.getItem('previousPath');
+    const isFromSignup = savedPreviousPath === '/signup' || savedPreviousPath === '/signup/';
+    return isFromSignup ? INITIAL_TIMER_SECONDS : 0;
+  });
+  const { emailConfirmationRequest, isLoading } = useEmailConfirmationRequest();
+
+  // Очищаем sessionStorage после получения значения
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedPreviousPath = sessionStorage.getItem('previousPath');
+      if (savedPreviousPath) {
+        sessionStorage.removeItem('previousPath');
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (timeRemaining === 0) return;
@@ -32,13 +57,32 @@ export const EmailPageConfirm = ({ setStatus }: EmailPageConfirmPropsT) => {
     return () => clearInterval(interval);
   }, [timeRemaining]);
 
+  // Останавливаем таймер во время загрузки
+  useEffect(() => {
+    if (isLoading && timeRemaining > 0) {
+      setTimeRemaining(0);
+    }
+  }, [isLoading, timeRemaining]);
+
+  // Запускаем таймер после успешной отправки
+  useEffect(() => {
+    if (emailConfirmationRequest.isSuccess) {
+      setTimeRemaining(INITIAL_TIMER_SECONDS);
+    }
+  }, [emailConfirmationRequest.isSuccess]);
+
   const handleConfirm = () => {
-    if (timeRemaining > 0) return;
-    setStatus('success');
-    setTimeRemaining(INITIAL_TIMER_SECONDS);
+    if (timeRemaining > 0 || isLoading) return;
+    // Если пришли не с /signup, запускаем таймер при нажатии
+    if (!cameFromSignup && timeRemaining === 0) {
+      setTimeRemaining(INITIAL_TIMER_SECONDS);
+    }
+    emailConfirmationRequest.mutate();
   };
 
-  const isButtonDisabled = timeRemaining > 0;
+  const isButtonDisabled = timeRemaining > 0 || isLoading;
+  const buttonText = timeRemaining > 0 ? 'Отправить ещё раз' : 'Получить новую ссылку';
+  const showHint = timeRemaining === 0 && !isLoading;
 
   return (
     <EmailPageLayout title="Подтвердите почту">
@@ -46,7 +90,7 @@ export const EmailPageConfirm = ({ setStatus }: EmailPageConfirmPropsT) => {
         <span className="text-m-base w-full text-center text-gray-100">
           Перейдите по ссылке — отправили её на
         </span>
-        <span className="text-m-base w-full text-center text-gray-100">example@example.com</span>
+        <span className="text-m-base w-full text-center text-gray-100">{email}</span>
       </div>
       <Button
         size="m"
@@ -54,11 +98,16 @@ export const EmailPageConfirm = ({ setStatus }: EmailPageConfirmPropsT) => {
         onClick={handleConfirm}
         disabled={isButtonDisabled}
       >
-        Отправить ещё раз
+        {buttonText}
       </Button>
-      {isButtonDisabled && (
+      {timeRemaining > 0 && (
         <span className="text-xxs-base text-gray-60 mt-1 w-full text-center">
           Следующее письмо можно отправить через {formatTime(timeRemaining)}
+        </span>
+      )}
+      {showHint && (
+        <span className="text-xxs-base text-gray-60 mt-1 w-full text-center">
+          Если письмо не пришло, проверьте адрес и нажмите на эту кнопку
         </span>
       )}
     </EmailPageLayout>

@@ -4,7 +4,8 @@ import { Button } from '@xipkg/button';
 import { Arrow, Conference } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import { useCurrentUser, useStudentById, useTutorById } from 'common.services';
+import { useCurrentUser } from 'common.services';
+import { useUserByRole } from 'features.table';
 import { SubjectBadge } from './SubjectBadge';
 
 type UserAvatarPropsT = {
@@ -16,9 +17,9 @@ const UserAvatar = ({ isLoading, classroom }: UserAvatarPropsT) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  const getUser = isTutor ? useStudentById : useTutorById;
-
-  const { data } = getUser(classroom.tutor_id ?? classroom.student_id ?? 0);
+  // Используем useUserByRole с userId напрямую
+  const userRole = isTutor ? 'student' : 'tutor';
+  const { data } = useUserByRole(userRole, classroom.tutor_id ?? classroom.student_id ?? 0);
 
   return (
     <Avatar size={avatarSize}>

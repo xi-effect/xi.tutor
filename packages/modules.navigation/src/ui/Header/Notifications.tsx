@@ -17,6 +17,7 @@ import { NotificationBadge } from './NotificationBadge';
 import {
   generateNotificationTitle,
   generateNotificationDescription,
+  generateNotificationAction,
   formatNotificationDate,
   formatFullNotificationDate,
   formatNotificationCount,
@@ -46,8 +47,8 @@ const NotificationItem = ({
       await onMarkAsRead(notification.id);
     }
 
-    // Получаем URL из payload (может быть в разных полях в зависимости от kind)
-    const url = notification.payload?.url || notification.payload?.link;
+    // Получаем URL из конфига уведомления
+    const url = generateNotificationAction(notification);
 
     // Закрываем dropdown
     onClose();
@@ -250,7 +251,7 @@ export const Notifications = () => {
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-[32px] w-[32px] p-1">
-          <Notification className="fill-gray-80" size="s" />
+          <Notification className="fill-gray-80 size-6" size="s" />
           <NotificationBadge count={formatNotificationCount(unreadCount)} />
         </Button>
       </DropdownMenuTrigger>
@@ -272,7 +273,7 @@ export const Notifications = () => {
               </Button>
             )} */}
             <Button onClick={handleToSettings} variant="ghost" className="h-[32px] w-[32px] p-1">
-              <Settings className="fill-gray-80" size="s" />
+              <Settings className="fill-gray-80 size-6" size="s" />
             </Button>
           </div>
         </DropdownMenuLabel>

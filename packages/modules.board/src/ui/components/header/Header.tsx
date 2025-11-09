@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 // import { Minimize, Maximize } from '@xipkg/icons';
 // import { useFullScreen } from 'pkg.utils.client';
 import { Button } from '@xipkg/button';
@@ -85,12 +84,12 @@ export const Header = () => {
             type="button"
             className="h-[40px] w-[40px] p-2"
           >
-            <ArrowLeft size="s" />
+            <ArrowLeft size="s" className="size-6" />
           </Button>
           {isLoading ? (
             <Skeleton variant="text" className="h-6 w-24" />
           ) : (
-            <EditableTitle title={material.name} materialId={materialIdValue} />
+            <EditableTitle title={material.name} materialId={materialIdValue} isTutor={isTutor} />
           )}
         </div>
         <div className="flex items-center gap-1">
@@ -101,7 +100,11 @@ export const Header = () => {
             type="button"
             className="h-[40px] w-[40px] p-2"
           >
-            {isFullScreen ? <Minimize size="s" /> : <Maximize size="s" />}
+            {isFullScreen ? (
+              <Minimize size="s" className="size-6" />
+            ) : (
+              <Maximize size="s" className="size-6" />
+            )}
           </Button>
           {!isReadonly && <SettingsDropdown />}
         </div>

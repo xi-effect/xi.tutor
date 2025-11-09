@@ -8,9 +8,8 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 import { Route as rootRouteImport } from './pages/__root'
+import { Route as commonLayoutRouteImport } from './pages/(common)/_layout'
 import { Route as appLayoutRouteImport } from './pages/(app)/_layout'
 import { Route as authSignupIndexRouteImport } from './pages/(auth)/signup/index'
 import { Route as authSigninIndexRouteImport } from './pages/(auth)/signin/index'
@@ -18,18 +17,17 @@ import { Route as authResetPasswordIndexRouteImport } from './pages/(auth)/reset
 import { Route as appLayoutIndexRouteImport } from './pages/(app)/_layout/index'
 import { Route as DeploymentsDeploymentIdEnableRouteImport } from './pages/deployments/$deploymentId.enable'
 import { Route as authResetPasswordResetTokenRouteImport } from './pages/(auth)/reset-password/$resetToken'
-import { Route as appWelcomeLayoutRouteImport } from './pages/(app)/welcome/_layout'
-import { Route as appInviteInviteIdRouteImport } from './pages/(app)/invite/$inviteId'
-import { Route as appEmailEmailIdRouteImport } from './pages/(app)/email/$emailId'
-import { Route as appWelcomeUserIndexRouteImport } from './pages/(app)/welcome/user/index'
-import { Route as appWelcomeSocialsIndexRouteImport } from './pages/(app)/welcome/socials/index'
-import { Route as appWelcomeRoleIndexRouteImport } from './pages/(app)/welcome/role/index'
+import { Route as commonWelcomeUserIndexRouteImport } from './pages/(common)/welcome/user/index'
+import { Route as commonWelcomeSocialsIndexRouteImport } from './pages/(common)/welcome/socials/index'
+import { Route as commonWelcomeRoleIndexRouteImport } from './pages/(common)/welcome/role/index'
 import { Route as appLayoutPaymentsIndexRouteImport } from './pages/(app)/_layout/payments/index'
 import { Route as appLayoutMaterialsIndexRouteImport } from './pages/(app)/_layout/materials/index'
 import { Route as appLayoutClassroomsIndexRouteImport } from './pages/(app)/_layout/classrooms/index'
 import { Route as appLayoutCallIndexRouteImport } from './pages/(app)/_layout/call/index'
 import { Route as appLayoutCalendarIndexRouteImport } from './pages/(app)/_layout/calendar/index'
-import { Route as appLayoutEditorEditorIdRouteImport } from './pages/(app)/_layout/editor/$editorId'
+import { Route as commonWelcomeEmailEmailIdRouteImport } from './pages/(common)/welcome/email/$emailId'
+import { Route as commonLayoutInviteInviteIdRouteImport } from './pages/(common)/_layout/invite/$inviteId'
+import { Route as commonLayoutConfirmEmailEmailIdRouteImport } from './pages/(common)/_layout/confirm-email/$emailId'
 import { Route as appLayoutCallCallIdRouteImport } from './pages/(app)/_layout/call/$callId'
 import { Route as appLayoutBoardBoardIdRouteImport } from './pages/(app)/_layout/board/$boardId'
 import { Route as appLayoutClassroomsClassroomIdIndexRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/index'
@@ -38,11 +36,8 @@ import { Route as appLayoutMaterialsMaterialIdBoardIndexRouteImport } from './pa
 import { Route as appLayoutClassroomsClassroomIdNotesNoteIdRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/notes/$noteId'
 import { Route as appLayoutClassroomsClassroomIdBoardsBoardIdRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/boards/$boardId'
 
-const appWelcomeRouteImport = createFileRoute('/(app)/welcome')()
-
-const appWelcomeRoute = appWelcomeRouteImport.update({
-  id: '/(app)/welcome',
-  path: '/welcome',
+const commonLayoutRoute = commonLayoutRouteImport.update({
+  id: '/(common)/_layout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const appLayoutRoute = appLayoutRouteImport.update({
@@ -81,34 +76,21 @@ const authResetPasswordResetTokenRoute =
     path: '/reset-password/$resetToken',
     getParentRoute: () => rootRouteImport,
   } as any)
-const appWelcomeLayoutRoute = appWelcomeLayoutRouteImport.update({
-  id: '/_layout',
-  getParentRoute: () => appWelcomeRoute,
-} as any)
-const appInviteInviteIdRoute = appInviteInviteIdRouteImport.update({
-  id: '/(app)/invite/$inviteId',
-  path: '/invite/$inviteId',
+const commonWelcomeUserIndexRoute = commonWelcomeUserIndexRouteImport.update({
+  id: '/(common)/welcome/user/',
+  path: '/welcome/user/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const appEmailEmailIdRoute = appEmailEmailIdRouteImport.update({
-  id: '/(app)/email/$emailId',
-  path: '/email/$emailId',
+const commonWelcomeSocialsIndexRoute =
+  commonWelcomeSocialsIndexRouteImport.update({
+    id: '/(common)/welcome/socials/',
+    path: '/welcome/socials/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const commonWelcomeRoleIndexRoute = commonWelcomeRoleIndexRouteImport.update({
+  id: '/(common)/welcome/role/',
+  path: '/welcome/role/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const appWelcomeUserIndexRoute = appWelcomeUserIndexRouteImport.update({
-  id: '/user/',
-  path: '/user/',
-  getParentRoute: () => appWelcomeRoute,
-} as any)
-const appWelcomeSocialsIndexRoute = appWelcomeSocialsIndexRouteImport.update({
-  id: '/socials/',
-  path: '/socials/',
-  getParentRoute: () => appWelcomeRoute,
-} as any)
-const appWelcomeRoleIndexRoute = appWelcomeRoleIndexRouteImport.update({
-  id: '/role/',
-  path: '/role/',
-  getParentRoute: () => appWelcomeRoute,
 } as any)
 const appLayoutPaymentsIndexRoute = appLayoutPaymentsIndexRouteImport.update({
   id: '/payments/',
@@ -136,11 +118,24 @@ const appLayoutCalendarIndexRoute = appLayoutCalendarIndexRouteImport.update({
   path: '/calendar/',
   getParentRoute: () => appLayoutRoute,
 } as any)
-const appLayoutEditorEditorIdRoute = appLayoutEditorEditorIdRouteImport.update({
-  id: '/editor/$editorId',
-  path: '/editor/$editorId',
-  getParentRoute: () => appLayoutRoute,
-} as any)
+const commonWelcomeEmailEmailIdRoute =
+  commonWelcomeEmailEmailIdRouteImport.update({
+    id: '/(common)/welcome/email/$emailId',
+    path: '/welcome/email/$emailId',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const commonLayoutInviteInviteIdRoute =
+  commonLayoutInviteInviteIdRouteImport.update({
+    id: '/invite/$inviteId',
+    path: '/invite/$inviteId',
+    getParentRoute: () => commonLayoutRoute,
+  } as any)
+const commonLayoutConfirmEmailEmailIdRoute =
+  commonLayoutConfirmEmailEmailIdRouteImport.update({
+    id: '/confirm-email/$emailId',
+    path: '/confirm-email/$emailId',
+    getParentRoute: () => commonLayoutRoute,
+  } as any)
 const appLayoutCallCallIdRoute = appLayoutCallCallIdRouteImport.update({
   id: '/call/$callId',
   path: '/call/$callId',
@@ -183,9 +178,6 @@ const appLayoutClassroomsClassroomIdBoardsBoardIdRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/email/$emailId': typeof appEmailEmailIdRoute
-  '/invite/$inviteId': typeof appInviteInviteIdRoute
-  '/welcome': typeof appWelcomeLayoutRoute
   '/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute
   '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
   '/': typeof appLayoutIndexRoute
@@ -194,15 +186,17 @@ export interface FileRoutesByFullPath {
   '/signup': typeof authSignupIndexRoute
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
-  '/editor/$editorId': typeof appLayoutEditorEditorIdRoute
+  '/confirm-email/$emailId': typeof commonLayoutConfirmEmailEmailIdRoute
+  '/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
+  '/welcome/email/$emailId': typeof commonWelcomeEmailEmailIdRoute
   '/calendar': typeof appLayoutCalendarIndexRoute
   '/call': typeof appLayoutCallIndexRoute
   '/classrooms': typeof appLayoutClassroomsIndexRoute
   '/materials': typeof appLayoutMaterialsIndexRoute
   '/payments': typeof appLayoutPaymentsIndexRoute
-  '/welcome/role': typeof appWelcomeRoleIndexRoute
-  '/welcome/socials': typeof appWelcomeSocialsIndexRoute
-  '/welcome/user': typeof appWelcomeUserIndexRoute
+  '/welcome/role': typeof commonWelcomeRoleIndexRoute
+  '/welcome/socials': typeof commonWelcomeSocialsIndexRoute
+  '/welcome/user': typeof commonWelcomeUserIndexRoute
   '/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdIndexRoute
   '/classrooms/$classroomId/boards/$boardId': typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
   '/classrooms/$classroomId/notes/$noteId': typeof appLayoutClassroomsClassroomIdNotesNoteIdRoute
@@ -210,9 +204,6 @@ export interface FileRoutesByFullPath {
   '/materials/$materialId/note': typeof appLayoutMaterialsMaterialIdNoteIndexRoute
 }
 export interface FileRoutesByTo {
-  '/email/$emailId': typeof appEmailEmailIdRoute
-  '/invite/$inviteId': typeof appInviteInviteIdRoute
-  '/welcome': typeof appWelcomeLayoutRoute
   '/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute
   '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
   '/': typeof appLayoutIndexRoute
@@ -221,15 +212,17 @@ export interface FileRoutesByTo {
   '/signup': typeof authSignupIndexRoute
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
-  '/editor/$editorId': typeof appLayoutEditorEditorIdRoute
+  '/confirm-email/$emailId': typeof commonLayoutConfirmEmailEmailIdRoute
+  '/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
+  '/welcome/email/$emailId': typeof commonWelcomeEmailEmailIdRoute
   '/calendar': typeof appLayoutCalendarIndexRoute
   '/call': typeof appLayoutCallIndexRoute
   '/classrooms': typeof appLayoutClassroomsIndexRoute
   '/materials': typeof appLayoutMaterialsIndexRoute
   '/payments': typeof appLayoutPaymentsIndexRoute
-  '/welcome/role': typeof appWelcomeRoleIndexRoute
-  '/welcome/socials': typeof appWelcomeSocialsIndexRoute
-  '/welcome/user': typeof appWelcomeUserIndexRoute
+  '/welcome/role': typeof commonWelcomeRoleIndexRoute
+  '/welcome/socials': typeof commonWelcomeSocialsIndexRoute
+  '/welcome/user': typeof commonWelcomeUserIndexRoute
   '/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdIndexRoute
   '/classrooms/$classroomId/boards/$boardId': typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
   '/classrooms/$classroomId/notes/$noteId': typeof appLayoutClassroomsClassroomIdNotesNoteIdRoute
@@ -239,10 +232,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)/_layout': typeof appLayoutRouteWithChildren
-  '/(app)/email/$emailId': typeof appEmailEmailIdRoute
-  '/(app)/invite/$inviteId': typeof appInviteInviteIdRoute
-  '/(app)/welcome': typeof appWelcomeRouteWithChildren
-  '/(app)/welcome/_layout': typeof appWelcomeLayoutRoute
+  '/(common)/_layout': typeof commonLayoutRouteWithChildren
   '/(auth)/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute
   '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
   '/(app)/_layout/': typeof appLayoutIndexRoute
@@ -251,15 +241,17 @@ export interface FileRoutesById {
   '/(auth)/signup/': typeof authSignupIndexRoute
   '/(app)/_layout/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/(app)/_layout/call/$callId': typeof appLayoutCallCallIdRoute
-  '/(app)/_layout/editor/$editorId': typeof appLayoutEditorEditorIdRoute
+  '/(common)/_layout/confirm-email/$emailId': typeof commonLayoutConfirmEmailEmailIdRoute
+  '/(common)/_layout/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
+  '/(common)/welcome/email/$emailId': typeof commonWelcomeEmailEmailIdRoute
   '/(app)/_layout/calendar/': typeof appLayoutCalendarIndexRoute
   '/(app)/_layout/call/': typeof appLayoutCallIndexRoute
   '/(app)/_layout/classrooms/': typeof appLayoutClassroomsIndexRoute
   '/(app)/_layout/materials/': typeof appLayoutMaterialsIndexRoute
   '/(app)/_layout/payments/': typeof appLayoutPaymentsIndexRoute
-  '/(app)/welcome/role/': typeof appWelcomeRoleIndexRoute
-  '/(app)/welcome/socials/': typeof appWelcomeSocialsIndexRoute
-  '/(app)/welcome/user/': typeof appWelcomeUserIndexRoute
+  '/(common)/welcome/role/': typeof commonWelcomeRoleIndexRoute
+  '/(common)/welcome/socials/': typeof commonWelcomeSocialsIndexRoute
+  '/(common)/welcome/user/': typeof commonWelcomeUserIndexRoute
   '/(app)/_layout/classrooms/$classroomId/': typeof appLayoutClassroomsClassroomIdIndexRoute
   '/(app)/_layout/classrooms/$classroomId/boards/$boardId': typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
   '/(app)/_layout/classrooms/$classroomId/notes/$noteId': typeof appLayoutClassroomsClassroomIdNotesNoteIdRoute
@@ -269,9 +261,6 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/email/$emailId'
-    | '/invite/$inviteId'
-    | '/welcome'
     | '/reset-password/$resetToken'
     | '/deployments/$deploymentId/enable'
     | '/'
@@ -280,7 +269,9 @@ export interface FileRouteTypes {
     | '/signup'
     | '/board/$boardId'
     | '/call/$callId'
-    | '/editor/$editorId'
+    | '/confirm-email/$emailId'
+    | '/invite/$inviteId'
+    | '/welcome/email/$emailId'
     | '/calendar'
     | '/call'
     | '/classrooms'
@@ -296,9 +287,6 @@ export interface FileRouteTypes {
     | '/materials/$materialId/note'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/email/$emailId'
-    | '/invite/$inviteId'
-    | '/welcome'
     | '/reset-password/$resetToken'
     | '/deployments/$deploymentId/enable'
     | '/'
@@ -307,7 +295,9 @@ export interface FileRouteTypes {
     | '/signup'
     | '/board/$boardId'
     | '/call/$callId'
-    | '/editor/$editorId'
+    | '/confirm-email/$emailId'
+    | '/invite/$inviteId'
+    | '/welcome/email/$emailId'
     | '/calendar'
     | '/call'
     | '/classrooms'
@@ -324,10 +314,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/(app)/_layout'
-    | '/(app)/email/$emailId'
-    | '/(app)/invite/$inviteId'
-    | '/(app)/welcome'
-    | '/(app)/welcome/_layout'
+    | '/(common)/_layout'
     | '/(auth)/reset-password/$resetToken'
     | '/deployments/$deploymentId/enable'
     | '/(app)/_layout/'
@@ -336,15 +323,17 @@ export interface FileRouteTypes {
     | '/(auth)/signup/'
     | '/(app)/_layout/board/$boardId'
     | '/(app)/_layout/call/$callId'
-    | '/(app)/_layout/editor/$editorId'
+    | '/(common)/_layout/confirm-email/$emailId'
+    | '/(common)/_layout/invite/$inviteId'
+    | '/(common)/welcome/email/$emailId'
     | '/(app)/_layout/calendar/'
     | '/(app)/_layout/call/'
     | '/(app)/_layout/classrooms/'
     | '/(app)/_layout/materials/'
     | '/(app)/_layout/payments/'
-    | '/(app)/welcome/role/'
-    | '/(app)/welcome/socials/'
-    | '/(app)/welcome/user/'
+    | '/(common)/welcome/role/'
+    | '/(common)/welcome/socials/'
+    | '/(common)/welcome/user/'
     | '/(app)/_layout/classrooms/$classroomId/'
     | '/(app)/_layout/classrooms/$classroomId/boards/$boardId'
     | '/(app)/_layout/classrooms/$classroomId/notes/$noteId'
@@ -354,23 +343,25 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   appLayoutRoute: typeof appLayoutRouteWithChildren
-  appEmailEmailIdRoute: typeof appEmailEmailIdRoute
-  appInviteInviteIdRoute: typeof appInviteInviteIdRoute
-  appWelcomeRoute: typeof appWelcomeRouteWithChildren
+  commonLayoutRoute: typeof commonLayoutRouteWithChildren
   authResetPasswordResetTokenRoute: typeof authResetPasswordResetTokenRoute
   DeploymentsDeploymentIdEnableRoute: typeof DeploymentsDeploymentIdEnableRoute
   authResetPasswordIndexRoute: typeof authResetPasswordIndexRoute
   authSigninIndexRoute: typeof authSigninIndexRoute
   authSignupIndexRoute: typeof authSignupIndexRoute
+  commonWelcomeEmailEmailIdRoute: typeof commonWelcomeEmailEmailIdRoute
+  commonWelcomeRoleIndexRoute: typeof commonWelcomeRoleIndexRoute
+  commonWelcomeSocialsIndexRoute: typeof commonWelcomeSocialsIndexRoute
+  commonWelcomeUserIndexRoute: typeof commonWelcomeUserIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/(app)/welcome': {
-      id: '/(app)/welcome'
-      path: '/welcome'
-      fullPath: '/welcome'
-      preLoaderRoute: typeof appWelcomeRouteImport
+    '/(common)/_layout': {
+      id: '/(common)/_layout'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof commonLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(app)/_layout': {
@@ -422,47 +413,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authResetPasswordResetTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(app)/welcome/_layout': {
-      id: '/(app)/welcome/_layout'
-      path: '/welcome'
-      fullPath: '/welcome'
-      preLoaderRoute: typeof appWelcomeLayoutRouteImport
-      parentRoute: typeof appWelcomeRoute
-    }
-    '/(app)/invite/$inviteId': {
-      id: '/(app)/invite/$inviteId'
-      path: '/invite/$inviteId'
-      fullPath: '/invite/$inviteId'
-      preLoaderRoute: typeof appInviteInviteIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(app)/email/$emailId': {
-      id: '/(app)/email/$emailId'
-      path: '/email/$emailId'
-      fullPath: '/email/$emailId'
-      preLoaderRoute: typeof appEmailEmailIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(app)/welcome/user/': {
-      id: '/(app)/welcome/user/'
-      path: '/user'
+    '/(common)/welcome/user/': {
+      id: '/(common)/welcome/user/'
+      path: '/welcome/user'
       fullPath: '/welcome/user'
-      preLoaderRoute: typeof appWelcomeUserIndexRouteImport
-      parentRoute: typeof appWelcomeRoute
+      preLoaderRoute: typeof commonWelcomeUserIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/(app)/welcome/socials/': {
-      id: '/(app)/welcome/socials/'
-      path: '/socials'
+    '/(common)/welcome/socials/': {
+      id: '/(common)/welcome/socials/'
+      path: '/welcome/socials'
       fullPath: '/welcome/socials'
-      preLoaderRoute: typeof appWelcomeSocialsIndexRouteImport
-      parentRoute: typeof appWelcomeRoute
+      preLoaderRoute: typeof commonWelcomeSocialsIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
-    '/(app)/welcome/role/': {
-      id: '/(app)/welcome/role/'
-      path: '/role'
+    '/(common)/welcome/role/': {
+      id: '/(common)/welcome/role/'
+      path: '/welcome/role'
       fullPath: '/welcome/role'
-      preLoaderRoute: typeof appWelcomeRoleIndexRouteImport
-      parentRoute: typeof appWelcomeRoute
+      preLoaderRoute: typeof commonWelcomeRoleIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/(app)/_layout/payments/': {
       id: '/(app)/_layout/payments/'
@@ -499,12 +469,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutCalendarIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
-    '/(app)/_layout/editor/$editorId': {
-      id: '/(app)/_layout/editor/$editorId'
-      path: '/editor/$editorId'
-      fullPath: '/editor/$editorId'
-      preLoaderRoute: typeof appLayoutEditorEditorIdRouteImport
-      parentRoute: typeof appLayoutRoute
+    '/(common)/welcome/email/$emailId': {
+      id: '/(common)/welcome/email/$emailId'
+      path: '/welcome/email/$emailId'
+      fullPath: '/welcome/email/$emailId'
+      preLoaderRoute: typeof commonWelcomeEmailEmailIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(common)/_layout/invite/$inviteId': {
+      id: '/(common)/_layout/invite/$inviteId'
+      path: '/invite/$inviteId'
+      fullPath: '/invite/$inviteId'
+      preLoaderRoute: typeof commonLayoutInviteInviteIdRouteImport
+      parentRoute: typeof commonLayoutRoute
+    }
+    '/(common)/_layout/confirm-email/$emailId': {
+      id: '/(common)/_layout/confirm-email/$emailId'
+      path: '/confirm-email/$emailId'
+      fullPath: '/confirm-email/$emailId'
+      preLoaderRoute: typeof commonLayoutConfirmEmailEmailIdRouteImport
+      parentRoute: typeof commonLayoutRoute
     }
     '/(app)/_layout/call/$callId': {
       id: '/(app)/_layout/call/$callId'
@@ -562,7 +546,6 @@ interface appLayoutRouteChildren {
   appLayoutIndexRoute: typeof appLayoutIndexRoute
   appLayoutBoardBoardIdRoute: typeof appLayoutBoardBoardIdRoute
   appLayoutCallCallIdRoute: typeof appLayoutCallCallIdRoute
-  appLayoutEditorEditorIdRoute: typeof appLayoutEditorEditorIdRoute
   appLayoutCalendarIndexRoute: typeof appLayoutCalendarIndexRoute
   appLayoutCallIndexRoute: typeof appLayoutCallIndexRoute
   appLayoutClassroomsIndexRoute: typeof appLayoutClassroomsIndexRoute
@@ -579,7 +562,6 @@ const appLayoutRouteChildren: appLayoutRouteChildren = {
   appLayoutIndexRoute: appLayoutIndexRoute,
   appLayoutBoardBoardIdRoute: appLayoutBoardBoardIdRoute,
   appLayoutCallCallIdRoute: appLayoutCallCallIdRoute,
-  appLayoutEditorEditorIdRoute: appLayoutEditorEditorIdRoute,
   appLayoutCalendarIndexRoute: appLayoutCalendarIndexRoute,
   appLayoutCallIndexRoute: appLayoutCallIndexRoute,
   appLayoutClassroomsIndexRoute: appLayoutClassroomsIndexRoute,
@@ -601,34 +583,32 @@ const appLayoutRouteWithChildren = appLayoutRoute._addFileChildren(
   appLayoutRouteChildren,
 )
 
-interface appWelcomeRouteChildren {
-  appWelcomeLayoutRoute: typeof appWelcomeLayoutRoute
-  appWelcomeRoleIndexRoute: typeof appWelcomeRoleIndexRoute
-  appWelcomeSocialsIndexRoute: typeof appWelcomeSocialsIndexRoute
-  appWelcomeUserIndexRoute: typeof appWelcomeUserIndexRoute
+interface commonLayoutRouteChildren {
+  commonLayoutConfirmEmailEmailIdRoute: typeof commonLayoutConfirmEmailEmailIdRoute
+  commonLayoutInviteInviteIdRoute: typeof commonLayoutInviteInviteIdRoute
 }
 
-const appWelcomeRouteChildren: appWelcomeRouteChildren = {
-  appWelcomeLayoutRoute: appWelcomeLayoutRoute,
-  appWelcomeRoleIndexRoute: appWelcomeRoleIndexRoute,
-  appWelcomeSocialsIndexRoute: appWelcomeSocialsIndexRoute,
-  appWelcomeUserIndexRoute: appWelcomeUserIndexRoute,
+const commonLayoutRouteChildren: commonLayoutRouteChildren = {
+  commonLayoutConfirmEmailEmailIdRoute: commonLayoutConfirmEmailEmailIdRoute,
+  commonLayoutInviteInviteIdRoute: commonLayoutInviteInviteIdRoute,
 }
 
-const appWelcomeRouteWithChildren = appWelcomeRoute._addFileChildren(
-  appWelcomeRouteChildren,
+const commonLayoutRouteWithChildren = commonLayoutRoute._addFileChildren(
+  commonLayoutRouteChildren,
 )
 
 const rootRouteChildren: RootRouteChildren = {
   appLayoutRoute: appLayoutRouteWithChildren,
-  appEmailEmailIdRoute: appEmailEmailIdRoute,
-  appInviteInviteIdRoute: appInviteInviteIdRoute,
-  appWelcomeRoute: appWelcomeRouteWithChildren,
+  commonLayoutRoute: commonLayoutRouteWithChildren,
   authResetPasswordResetTokenRoute: authResetPasswordResetTokenRoute,
   DeploymentsDeploymentIdEnableRoute: DeploymentsDeploymentIdEnableRoute,
   authResetPasswordIndexRoute: authResetPasswordIndexRoute,
   authSigninIndexRoute: authSigninIndexRoute,
   authSignupIndexRoute: authSignupIndexRoute,
+  commonWelcomeEmailEmailIdRoute: commonWelcomeEmailEmailIdRoute,
+  commonWelcomeRoleIndexRoute: commonWelcomeRoleIndexRoute,
+  commonWelcomeSocialsIndexRoute: commonWelcomeSocialsIndexRoute,
+  commonWelcomeUserIndexRoute: commonWelcomeUserIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
