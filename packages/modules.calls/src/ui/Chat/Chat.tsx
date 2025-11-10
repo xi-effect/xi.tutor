@@ -40,12 +40,12 @@ export const Chat = () => {
   if (!isChatOpen) return null;
 
   return (
-    <div className="bg-gray-0 border-gray-0 sm:border-gray-20 fixed flex h-full w-full max-w-none min-w-[328px] flex-col overflow-hidden rounded-2xl border p-4 sm:relative sm:max-w-[328px]">
+    <div className="bg-gray-0 border-gray-0 sm:border-gray-20 fixed flex h-full w-full max-w-none min-w-[328px] flex-col overflow-hidden rounded-2xl border p-4 pr-1 sm:relative sm:max-w-[328px]">
       {/* Заголовок */}
-      <div className="border-gray-20 flex items-center justify-between">
-        <h3 className="text-m-base font-medium text-gray-100">Чат</h3>
+      <div className="border-gray-20 flex items-center justify-between pr-3">
+        <h3 className="text-lg font-medium text-gray-100">Чат</h3>
         <Button size="icon" variant="ghost" onClick={closeChat}>
-          <Close className="h-4 w-4" aria-label="Закрыть чат" />
+          <Close className="h-6 w-6" aria-label="Закрыть чат" />
         </Button>
       </div>
 
@@ -105,7 +105,8 @@ export const Chat = () => {
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
             placeholder="Напишите сообщение..."
-            className="max-w-none flex-1 border-none px-0"
+            className="max-w-none flex-1 border-none p-0"
+            containerClassName="flex items-center"
             onKeyDown={(e) => {
               if (
                 (e.key === 'Enter' && !e.shiftKey) ||
@@ -121,7 +122,7 @@ export const Chat = () => {
             variant="ghost"
             onClick={handleSendMessage}
             disabled={!messageText.trim()}
-            className="hover:bg-gray-10 h-10 w-10 self-end"
+            className="hover:bg-gray-10 mr-3 h-8 w-8 self-end"
           >
             <Send className="h-6 w-6" />
           </Button>
