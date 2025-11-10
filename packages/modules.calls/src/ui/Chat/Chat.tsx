@@ -22,13 +22,14 @@ export const Chat = () => {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    scrollToBottom();
+    requestAnimationFrame(scrollToBottom);
   }, [chatMessages]);
 
   const handleSendMessage = () => {
     if (messageText.trim()) {
       sendChatMessage(messageText);
       setMessageText('');
+      scrollToBottom();
     }
 
     if (textareaRef.current) {
@@ -39,17 +40,17 @@ export const Chat = () => {
   if (!isChatOpen) return null;
 
   return (
-    <div className="bg-gray-0 border-gray-20 flex h-full max-w-[328px] min-w-[328px] flex-col overflow-hidden rounded-2xl border p-4">
+    <div className="bg-gray-0 border-gray-0 sm:border-gray-20 fixed flex h-full w-full max-w-none min-w-[328px] flex-col overflow-hidden rounded-2xl border p-4 sm:relative sm:max-w-[328px]">
       {/* Заголовок */}
       <div className="border-gray-20 flex items-center justify-between">
         <h3 className="text-m-base font-medium text-gray-100">Чат</h3>
         <Button size="icon" variant="ghost" onClick={closeChat}>
-          <Close className="h-4 w-4" />
+          <Close className="h-4 w-4" aria-label="Закрыть чат" />
         </Button>
       </div>
 
       {/* Сообщения */}
-      <ScrollArea className="flex-1 py-2">
+      <ScrollArea className="flex-1 py-2 pr-3">
         <div className="space-y-4">
           {chatMessages.length === 0 ? (
             <div className="text-gray-60 text-center">
@@ -61,27 +62,27 @@ export const Chat = () => {
               return (
                 <div
                   key={message.id}
-                  className={`flex ${isOwnMessage ? 'mr-3 justify-end' : 'justify-start'}`}
+                  className={`flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`}
                 >
                   <div className="flex max-w-[90%] flex-col gap-1 rounded-lg text-gray-100 select-text">
-                    {!isOwnMessage && (
-                      <div className="flex flex-row items-center gap-1 text-xs font-medium text-gray-100">
+                    <div className="flex flex-row items-center gap-1 text-xs font-medium text-gray-100">
+                      {!isOwnMessage && (
                         <UserProfile
                           size="s"
                           userId={Number(message.senderId)}
                           text={message.senderName}
                           src={`https://api.sovlium.ru/files/users/${message.senderId}/avatar.webp`}
                         />
-                        <div
-                          className={`text-xs-base ${isOwnMessage ? 'text-brand-20' : 'text-gray-60'}`}
-                        >
-                          {new Date(message.timestamp).toLocaleTimeString('ru-RU', {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}
-                        </div>
+                      )}
+                      <div
+                        className={`text-xs-base ${isOwnMessage ? 'text-brand-20 ml-auto' : 'text-gray-60'}`}
+                      >
+                        {new Date(message.timestamp).toLocaleTimeString('ru-RU', {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
                       </div>
-                    )}
+                    </div>
                     <div
                       className={`cursor-text rounded-lg px-3 py-2 text-sm wrap-break-word select-text ${isOwnMessage ? 'bg-brand-20' : 'bg-gray-5'}`}
                     >
@@ -98,15 +99,18 @@ export const Chat = () => {
 
       {/* Поле ввода */}
       <div className="border-gray-20 flex w-full items-center gap-2 overflow-auto">
-        <div className="items-between flex flex-row">
+        <div className="items-between flex flex-1 flex-row">
           <Textarea
             ref={textareaRef}
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
             placeholder="Напишите сообщение..."
-            className="flex-1 border-none px-0"
+            className="max-w-none flex-1 border-none px-0"
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.shiftKey) {
+              if (
+                (e.key === 'Enter' && !e.shiftKey) ||
+                (e.key === 'Enter' && (e.metaKey || e.ctrlKey))
+              ) {
                 e.preventDefault();
                 handleSendMessage();
               }
