@@ -6,7 +6,7 @@ import { UndoRedo } from './UndoRedo';
 import { useTldrawStore } from '../../../store';
 import { useTldrawStyles, useHotkeys } from '../../../hooks';
 import { NavbarButton } from '../shared';
-import { PenPopup, StickerPopup } from '../popups';
+import { ArrowsPopup, PenPopup, StickerPopup } from '../popups';
 import { ShapesPopup } from '../popups/Shapes';
 import { insertImage } from '../../../features/pickAndInsertImage';
 
@@ -202,6 +202,23 @@ export const Navbar = track(
                           </div>
                         </Tooltip>
                       </TooltipProvider>
+                    );
+                  }
+
+                  if (item.action === 'arrow') {
+                    return (
+                      <ArrowsPopup
+                        key={item.action}
+                        open={isPopupOpen('arrow')}
+                        onOpenChange={(open) => handlePopupToggle('arrow', open)}
+                      >
+                        <NavbarButton
+                          icon={item.icon}
+                          title={item.title}
+                          isActive={isActive}
+                          onClick={() => handleSelectTool(item.action)}
+                        />
+                      </ArrowsPopup>
                     );
                   }
 
