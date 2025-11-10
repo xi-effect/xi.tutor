@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError } from 'common.services';
 import { toast } from 'sonner';
 
-export const usePaymentReceiverConfirmation = () => {
+export const usePaymentReceiverConfirmation = ({ onSuccess }: { onSuccess?: () => void } = {}) => {
   const queryClient = useQueryClient();
 
   const paymentReceiverConfirmationMutation = useMutation({
@@ -28,6 +28,8 @@ export const usePaymentReceiverConfirmation = () => {
       handleError(err, 'addInvoiceTemplate');
     },
     onSuccess: (response) => {
+      onSuccess?.();
+
       if (response?.status === 204) {
         queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.TutorPayments, 'tutor'] });
       }

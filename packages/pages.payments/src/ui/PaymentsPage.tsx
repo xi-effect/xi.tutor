@@ -63,6 +63,7 @@ export const PaymentsPage = () => {
   const removeRecipientInvoiceIdFromUrl = useCallback(() => {
     const newSearch: Record<string, string | undefined> = { ...search };
     delete newSearch.recipient_invoice_id;
+    delete newSearch.role;
     navigate({
       // @ts-expect-error - TanStack Router search params typing issue
       search: newSearch,
