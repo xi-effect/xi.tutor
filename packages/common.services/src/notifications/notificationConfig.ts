@@ -1,5 +1,10 @@
 import type { NotificationT } from 'common.types';
-import { ClassroomsQueryKey, PaymentsQueryKey } from 'common.api';
+import {
+  ClassroomsQueryKey,
+  EnrollmentsQueryKey,
+  PaymentsQueryKey,
+  StudentQueryKey,
+} from 'common.api';
 
 /**
  * Тип для функции генерации ссылки на основе payload уведомления
@@ -29,58 +34,64 @@ export type NotificationConfig = {
  * Конфигурация всех типов уведомлений
  */
 export const notificationConfigs: Record<string, NotificationConfig> = {
-  individual_invitation_accepted_v1: {
-    title: 'У вас появился новый кабинет',
-    description: () => 'У вас появился новый кабинет',
+  // ученик
+  classroom_conference_started_v1: {
+    title: 'Репетитор начинает занятие',
+    description: () => 'Присоединяйтесь к видеозвонку',
     action: (payload) => {
       const classroomId = payload.classroom_id;
-      return classroomId ? `/classrooms/${classroomId}` : null;
+      return classroomId ? `/classrooms/${classroomId}?role=student&goto=call` : null;
+    },
+    invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
+  },
+  enrollment_created_v1: {
+    title: 'Вас добавили в группу',
+    description: () => 'Открыть группу',
+    action: (payload) => {
+      const classroomId = payload.classroom_id;
+      return classroomId ? `/classrooms/${classroomId}?role=student` : null;
+    },
+    invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
+  },
+  recipient_invoice_created_v1: {
+    title: 'Вы получили новый счёт',
+    description: () => 'Пожалуйста, оплатите его',
+    action: (payload) => {
+      const recipientInvoiceId = payload.recipient_invoice_id;
+      return recipientInvoiceId
+        ? `/payments?role=student&tab=invoices&recipient_invoice_id=${recipientInvoiceId}`
+        : '/payments?role=student&tab=invoices';
+    },
+    invalidationKeys: [PaymentsQueryKey.StudentPayments],
+  },
+  // репетитор
+  student_recipient_invoice_payment_confirmed_v1: {
+    title: 'Оплачен новый счёт',
+    description: () => 'Подтвердите, что получили деньги',
+    action: (payload) => {
+      const recipientInvoiceId = payload.recipient_invoice_id;
+      return recipientInvoiceId
+        ? `/payments?role=tutor&tab=invoices&recipient_invoice_id=${recipientInvoiceId}`
+        : '/payments?role=tutor&tab=invoices';
+    },
+    invalidationKeys: [PaymentsQueryKey.TutorPayments],
+  },
+  individual_invitation_accepted_v1: {
+    title: 'У вас появился новый кабинет',
+    description: () => 'Открыть кабинет',
+    action: (payload) => {
+      const classroomId = payload.classroom_id;
+      return classroomId ? `/classrooms/${classroomId}?role=tutor` : null;
     },
     invalidationKeys: [ClassroomsQueryKey.GetClassrooms],
   },
   group_invitation_accepted_v1: {
     title: 'В группе новый ученик',
-    description: () => 'В группе новый ученик',
+    description: () => 'Открыть группу',
     action: (payload) => {
       const classroomId = payload.classroom_id;
-      return classroomId ? `/classrooms/${classroomId}` : null;
+      return classroomId ? `/classrooms/${classroomId}?role=tutor` : null;
     },
-    invalidationKeys: [ClassroomsQueryKey.GetClassrooms],
-  },
-  enrollment_created_v1: {
-    title: 'Вас добавили в группу',
-    description: () => 'Вас добавили в группу',
-    action: (payload) => {
-      const classroomId = payload.classroom_id;
-      return classroomId ? `/classrooms/${classroomId}` : null;
-    },
-    invalidationKeys: [ClassroomsQueryKey.GetClassrooms],
-  },
-  classroom_conference_started_v1: {
-    title: 'Репетитор начал занятие',
-    description: () => 'Репетитор начал занятие',
-    action: (payload) => {
-      const classroomId = payload.classroom_id;
-      return classroomId ? `/call/${classroomId}` : null;
-    },
-    invalidationKeys: [ClassroomsQueryKey.GetClassrooms],
-  },
-  recipient_invoice_created_v1: {
-    title: 'Вы получили новый счёт. Пожалуйста, оплатите его',
-    description: () => 'Вы получили новый счёт. Пожалуйста, оплатите его',
-    action: (payload) => {
-      const recipientInvoiceId = payload.recipient_invoice_id;
-      return recipientInvoiceId ? `/payments?invoice=${recipientInvoiceId}` : '/payments';
-    },
-    invalidationKeys: [PaymentsQueryKey.StudentPayments, PaymentsQueryKey.TutorPayments],
-  },
-  student_recipient_invoice_payment_confirmed_v1: {
-    title: 'Оплачен новый счёт. Подтвердите, что получили деньги',
-    description: () => 'Оплачен новый счёт. Подтвердите, что получили деньги',
-    action: (payload) => {
-      const recipientInvoiceId = payload.recipient_invoice_id;
-      return recipientInvoiceId ? `/payments?invoice=${recipientInvoiceId}` : '/payments';
-    },
-    invalidationKeys: [PaymentsQueryKey.StudentPayments, PaymentsQueryKey.TutorPayments],
+    invalidationKeys: [EnrollmentsQueryKey.GetAllStudents],
   },
 };
