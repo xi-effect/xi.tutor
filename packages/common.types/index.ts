@@ -30,3 +30,4 @@ export type {
 export type { InvitationDataT } from './src/invitations';
 export type { GroupStudentsListSchema } from './src/students';
 export type { ContactT, ContactsT } from './src/contacts';
+export type { NotificationKind } from './src/notifications';

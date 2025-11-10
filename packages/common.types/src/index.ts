@@ -35,3 +35,4 @@ export type {
 } from './students';
 export type { SignupData } from './auth';
 export type { ContactT, ContactsT } from './contacts';
+export type { NotificationKind } from './notifications';

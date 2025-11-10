@@ -103,7 +103,9 @@ export const formatNotificationDate = (dateString: string): string => {
   }
 
   // Если дата в прошлом
-  if (Math.abs(diffInMinutes) < 60) {
+  if (Math.abs(diffInMinutes) === 0) {
+    return 'меньше минуты назад';
+  } else if (Math.abs(diffInMinutes) < 60) {
     return `${Math.abs(diffInMinutes)} мин. назад`;
   } else if (Math.abs(diffInHours) < 24) {
     return `${Math.abs(diffInHours)} ч. назад`;

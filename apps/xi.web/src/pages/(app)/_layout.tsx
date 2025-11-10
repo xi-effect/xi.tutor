@@ -73,7 +73,7 @@ const ProtectedLayout = () => {
     ) {
       navigate({ to: onboardingStageToPath[stage as OnboardingStageT] });
     }
-  }, [user?.onboarding_stage, navigate]);
+  }, []);
 
   // Обработка параметра role из URL
   useEffect(() => {

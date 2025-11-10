@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@tanstack/react-router": "^1.128.8",
+    "@xipkg/avatar": "3.0.10",
     "@xipkg/button": "3.2.0",
     "@xipkg/dropdown": "3.0.12",
     "@xipkg/icons": "^2.6.0",
@@ -27,6 +28,8 @@
     "common.types": "*",
     "common.ui": "*",
     "common.sockets": "*",
+    "common.api": "*",
+    "features.table": "*",
     "modules.calls": "*",
     "i18next": "24.2.2",
     "modules.profile": "*",

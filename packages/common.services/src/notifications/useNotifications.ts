@@ -16,13 +16,15 @@ import { useCurrentUser } from '../user';
 
 export const useNotifications = () => {
   const [socketNotifications, setSocketNotifications] = useState<NotificationT[]>([]);
+  const [shouldLoadNotifications, setShouldLoadNotifications] = useState(false);
   const queryClient = useQueryClient();
 
   // Проверяем, авторизован ли пользователь
   const { data: currentUser, isError: isUserError } = useCurrentUser();
   const isAuthenticated = !!currentUser && !isUserError;
 
-  // API хуки - отключаем запросы, если пользователь не авторизован
+  // API хуки - загружаем список уведомлений только когда shouldLoadNotifications = true
+  // Счетчик непрочитанных загружается всегда при авторизации
   const {
     notifications: apiNotifications,
     isLoading: isLoadingNotifications,
@@ -33,7 +35,7 @@ export const useNotifications = () => {
     refetch: refetchNotifications,
   } = useSearchNotifications({
     limit: 12,
-    enabled: isAuthenticated,
+    enabled: isAuthenticated && shouldLoadNotifications,
   });
 
   const {
@@ -123,12 +125,12 @@ export const useNotifications = () => {
     [isAuthenticated],
   );
 
-  // Загружаем уведомления при инициализации (только если пользователь авторизован)
+  // Обновляем счетчик непрочитанных при монтировании (только если пользователь авторизован)
+  // Список уведомлений загружается только при открытии dropdown
   useEffect(() => {
     if (!isAuthenticated) {
       return;
     }
-    // Первая загрузка происходит автоматически через useSearchNotifications
     // Обновляем счетчик при монтировании
     refetchCount();
   }, [refetchCount, isAuthenticated]);
@@ -222,6 +224,16 @@ export const useNotifications = () => {
     }
   }, [isFetchingNextPage, hasNextPage, fetchNextPage]);
 
+  // Загрузить список уведомлений (вызывается при открытии dropdown)
+  const loadNotifications = useCallback(() => {
+    if (isAuthenticated && !shouldLoadNotifications) {
+      setShouldLoadNotifications(true);
+    } else if (isAuthenticated) {
+      // Если уже загружали, просто обновляем данные
+      refetchNotifications();
+    }
+  }, [isAuthenticated, shouldLoadNotifications, refetchNotifications]);
+
   const state: NotificationsStateT = {
     notifications: allNotifications,
     unreadCount: unreadCount ?? 0,
@@ -244,5 +256,6 @@ export const useNotifications = () => {
     isFetchingNextPage,
     refreshNotifications: loadInitialNotifications,
     refreshCount: refetchCount,
+    loadNotifications,
   };
 };

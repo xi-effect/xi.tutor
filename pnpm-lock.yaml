@@ -2607,6 +2607,9 @@ importers:
       '@tanstack/react-router':
         specifier: ^1.128.8
         version: 1.128.8(react-dom@19.2.0)(react@19.2.0)
+      '@xipkg/avatar':
+        specifier: 3.0.10
+        version: 3.0.10(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/button':
         specifier: 3.2.0
         version: 3.2.0(@types/react@19.2.2)(react@19.2.0)
@@ -2637,6 +2640,9 @@ importers:
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.0)
+      common.api:
+        specifier: '*'
+        version: link:../common.api
       common.auth:
         specifier: '*'
         version: link:../common.auth
@@ -2652,6 +2658,9 @@ importers:
       common.ui:
         specifier: '*'
         version: link:../common.ui
+      features.table:
+        specifier: '*'
+        version: link:../features.table
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)

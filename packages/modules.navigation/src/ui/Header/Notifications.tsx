@@ -7,7 +7,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { UserProfile } from '@xipkg/userprofile';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import { useLocation, useNavigate } from '@tanstack/react-router';
 import { useRef, useEffect, useState } from 'react';
@@ -23,8 +22,7 @@ import {
   formatNotificationCount,
 } from 'common.services';
 import { cn } from '@xipkg/utils';
-
-// Удаляем старые функции форматирования, используем новые из utils
+import { NotificationAvatar } from './NotificationAvatar';
 
 // Компонент для отображения одного уведомления
 const NotificationItem = ({
@@ -73,6 +71,8 @@ const NotificationItem = ({
   const relativeTime = formatNotificationDate(notification.created_at);
   const fullTime = formatFullNotificationDate(notification.created_at);
 
+  console.log('notification', notification);
+
   return (
     <DropdownMenuItem
       className={cn(
@@ -82,7 +82,11 @@ const NotificationItem = ({
       )}
       onClick={handleClick}
     >
-      <UserProfile userId={notification.actor_user_id || 0} withOutText />
+      <NotificationAvatar
+        kind={notification.payload.kind}
+        classroomId={notification.payload.classroom_id}
+        recipientInvoiceId={notification.payload.recipient_invoice_id}
+      />
       <div className="flex flex-1 flex-col gap-1">
         <span className="text-m-base font-medium text-gray-100">{title}</span>
         <span className="text-gray-80 text-s-base font-normal">{description}</span>
@@ -135,6 +139,7 @@ export const Notifications = () => {
     hasMore,
     loadMore,
     isFetchingNextPage,
+    loadNotifications,
   } = useNotificationsContext();
 
   // Обработчик навигации по URL из уведомления
@@ -247,8 +252,16 @@ export const Notifications = () => {
     };
   }, [hasMore, isFetchingNextPage, loadMore]);
 
+  // Обработчик открытия dropdown - загружаем уведомления
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (open) {
+      loadNotifications();
+    }
+  };
+
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="relative h-[32px] w-[32px] p-1">
           <Notification className="fill-gray-80 size-6" size="s" />

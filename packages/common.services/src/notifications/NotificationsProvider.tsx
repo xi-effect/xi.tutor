@@ -10,6 +10,7 @@ interface NotificationsContextType extends NotificationsStateT {
   isFetchingNextPage?: boolean;
   refreshNotifications: () => void;
   refreshCount: () => void;
+  loadNotifications: () => void;
 }
 
 const NotificationsContext = createContext<NotificationsContextType | undefined>(undefined);
