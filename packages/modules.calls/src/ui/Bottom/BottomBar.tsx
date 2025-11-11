@@ -11,10 +11,11 @@ import { useCallback } from 'react';
 import { DisconnectButton } from './DisconnectButton';
 import { ScreenShareButton } from './ScreenShareButton';
 import { WhiteBoardButton } from './WhiteBoardButton';
-// import { ChatButton } from './ChatButton';
 import { RaiseHandButton } from './RaiseHandButton';
 import { ChatButton } from './ChatButton';
 import { useCurrentUser } from 'common.services';
+import { useCallStore } from '../../store';
+import { cn } from '@xipkg/utils';
 
 export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
   const { saveAudioInputEnabled, saveVideoInputEnabled } = usePersistentUserChoices({
@@ -57,11 +58,13 @@ export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
     cameraToggle.toggle();
   }, [cameraToggle]);
 
+  const { isChatOpen } = useCallStore();
+
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
   return (
-    <div className="w-full">
+    <div className={cn('w-full', isChatOpen && 'invisible sm:visible')}>
       <div className="flex w-full flex-row justify-between p-4">
         <div />
         <div className="flex flex-row gap-4">
@@ -81,6 +84,7 @@ export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
                 source: Track.Source.Camera,
                 onChange: handleCameraToggle,
               }}
+              className="relative"
             />
           </div>
           <div className="bg-gray-0 border-gray-10 flex h-[48px] items-center justify-center gap-1 rounded-[16px] border p-1">

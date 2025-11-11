@@ -13,7 +13,7 @@ export const ActiveRoom = () => {
     <div className="flex h-full flex-col justify-stretch">
       <CallsOnboarding />
       <UpBar />
-      <div className="flex h-full items-center justify-center gap-4 px-4">
+      <div className="flex h-full items-center justify-center gap-4 overflow-hidden px-4">
         <div className="h-full w-full text-center text-gray-100">
           <VideoGrid />
         </div>
