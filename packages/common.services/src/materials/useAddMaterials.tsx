@@ -83,7 +83,7 @@ export const useAddMaterials = () => {
         });
       }
 
-      showSuccess('materials', `${response.data.name} создан`);
+      showSuccess('materials', `${response.data.name} создана`);
     },
   });
 

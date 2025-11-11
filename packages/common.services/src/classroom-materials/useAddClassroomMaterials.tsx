@@ -89,7 +89,7 @@ export const useAddClassroomMaterials = () => {
         });
       }
 
-      showSuccess('materials', `${response.data.name} создан`);
+      showSuccess('materials', `${response.data.name} создана`);
     },
   });
 
