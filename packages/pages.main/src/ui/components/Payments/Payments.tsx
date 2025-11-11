@@ -83,7 +83,7 @@ export const Payments = () => {
         )}
         {!isLoading && payments && payments.length > 0 && (
           <ScrollArea
-            className="h-[148px] w-full sm:w-[calc(100vw-104px)]"
+            className="h-full min-h-[172px] w-full sm:w-[calc(100vw-104px)]"
             scrollBarProps={{ orientation: 'horizontal' }}
           >
             <div className="flex flex-row gap-8">

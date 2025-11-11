@@ -45,7 +45,7 @@ export const Payment = ({ payment, currentUserRole }: PaymentProps) => {
   const username = userData.data?.username;
 
   return (
-    <div className="border-gray-60 flex min-h-[130px] min-w-[350px] flex-col items-start justify-start gap-2 rounded-2xl border p-4">
+    <div className="border-gray-60 flex h-full min-h-[160px] min-w-[350px] flex-col items-start justify-start gap-2 rounded-2xl border p-4">
       <div className="flex w-full flex-row items-start justify-between gap-2">
         <UserProfile
           size="m"
@@ -53,11 +53,11 @@ export const Payment = ({ payment, currentUserRole }: PaymentProps) => {
           text={displayName || username || 'Имя не найдено'}
           src={`https://api.sovlium.ru/files/users/${userId}/avatar.webp`}
         />
-        <span className={cn('text-m-base font-normal', getStatusColor(payment.status))}>
+        <span className={cn('text-m-base text-end font-normal', getStatusColor(payment.status))}>
           {statusText}
         </span>
       </div>
-      <span className="text-s-base text-gray-80 font-medium">{formattedDate}</span>
+      <span className="text-s-base text-gray-80 mt-auto font-medium">{formattedDate}</span>
       <div className="flex flex-row items-baseline gap-0.5">
         <h3 className="text-h6 font-medium text-gray-100">{amount}</h3>
         <span className="text-m-base text-gray-60 font-medium">₽</span>
