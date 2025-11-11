@@ -7,6 +7,7 @@ import { ScrollArea } from '@xipkg/scrollarea';
 import { useChat } from '../../hooks/useChat';
 import { useCallStore } from '../../store/callStore';
 import { useCurrentUser } from 'common.services';
+import { cn } from '@xipkg/utils';
 
 export const Chat = () => {
   const [messageText, setMessageText] = useState('');
@@ -34,6 +35,13 @@ export const Chat = () => {
 
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
+    }
+  };
+
+  const handleKeyDownSendMessage = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && (!e.shiftKey || e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      handleSendMessage();
     }
   };
 
@@ -84,7 +92,10 @@ export const Chat = () => {
                       </div>
                     </div>
                     <div
-                      className={`cursor-text rounded-lg px-3 py-2 text-sm wrap-break-word select-text ${isOwnMessage ? 'bg-brand-20' : 'bg-gray-5'}`}
+                      className={cn(
+                        'cursor-text rounded-lg px-3 py-2 text-sm wrap-break-word select-text',
+                        isOwnMessage ? 'bg-brand-20' : 'bg-gray-5',
+                      )}
                     >
                       {message.text}
                     </div>
@@ -107,15 +118,7 @@ export const Chat = () => {
             placeholder="Напишите сообщение..."
             className="max-w-none flex-1 border-none p-0"
             containerClassName="flex items-center"
-            onKeyDown={(e) => {
-              if (
-                (e.key === 'Enter' && !e.shiftKey) ||
-                (e.key === 'Enter' && (e.metaKey || e.ctrlKey))
-              ) {
-                e.preventDefault();
-                handleSendMessage();
-              }
-            }}
+            onKeyDown={handleKeyDownSendMessage}
           />
           <Button
             size="icon"
