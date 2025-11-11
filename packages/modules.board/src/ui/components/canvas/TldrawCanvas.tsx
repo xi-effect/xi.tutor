@@ -130,6 +130,13 @@ export const TldrawCanvas = ({
                 isDebugMode: false,
                 isPenMode: false,
               });
+
+              editor.sideEffects.registerBeforeChangeHandler('instance', (prev, next) => {
+                if (next.isPenMode) {
+                  return prev;
+                }
+                return next;
+              });
             }}
             store={store}
             hideUi
