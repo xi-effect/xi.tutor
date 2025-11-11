@@ -2,6 +2,7 @@ import { useEditor, ArrowShapeArrowheadStartStyle, ArrowShapeArrowheadEndStyle }
 import { useState } from 'react';
 import { arrowVariants } from './arrowVariants';
 import { ArrowTypeT } from './types';
+import { cn } from '@xipkg/utils';
 
 export const ArrowSet = () => {
   const editor = useEditor();
@@ -23,7 +24,10 @@ export const ArrowSet = () => {
         return (
           <div
             key={item.name}
-            className={`flex rounded-lg p-1 ${isActive ? 'border-brand-60 border' : 'border border-transparent'}`}
+            className={cn(
+              'flex rounded-lg border p-1',
+              isActive ? 'border-brand-60' : 'border-transparent',
+            )}
           >
             <button
               type="button"
