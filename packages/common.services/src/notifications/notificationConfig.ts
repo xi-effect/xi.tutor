@@ -36,7 +36,7 @@ export type NotificationConfig = {
 export const notificationConfigs: Record<string, NotificationConfig> = {
   // ученик
   classroom_conference_started_v1: {
-    title: 'Репетитор начинает занятие',
+    title: 'Занятие началось',
     description: () => 'Присоединяйтесь к видеозвонку',
     action: (payload) => {
       const classroomId = payload.classroom_id;
