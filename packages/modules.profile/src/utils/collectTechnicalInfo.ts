@@ -1,9 +1,9 @@
 import { getCookies, getLocalStorageData, getSessionStorageData } from './technicalInfo/storage';
 import { getBrowserInfo } from './technicalInfo/browser';
-import { checkVideoSupport, checkAudioSupport } from './technicalInfo/media';
+import { checkVideoSupport, checkAudioSupport, checkWebRTCSupport } from './technicalInfo/media';
 import { getPermissions } from './technicalInfo/permissions';
 import { getGPUInfo } from './technicalInfo/gpu';
-import { getIPAddresses, getNetworkInfo } from './technicalInfo/network';
+import { getIPAddresses, getNetworkInfo, getPerformanceMemory } from './technicalInfo/network';
 
 export type ReportSection = {
   title?: string;
@@ -30,7 +30,7 @@ export const collectTechnicalInfo = async (): Promise<ReportSection[]> => {
   const { ipv4, ipv6 } = await getIPAddresses();
 
   sections.push({
-    title: 'Техническая информация',
+    title: 'Основная информация',
     data: {
       Домен: window.location.origin,
       Дата: now.toLocaleDateString('ru-RU'),
@@ -87,6 +87,12 @@ export const collectTechnicalInfo = async (): Promise<ReportSection[]> => {
     data: audioSupport,
   });
 
+  const webrtcSupport = checkWebRTCSupport();
+  sections.push({
+    title: 'WebRTC',
+    data: webrtcSupport,
+  });
+
   const gpuInfo = getGPUInfo();
   if (Object.keys(gpuInfo).length > 0) {
     sections.push({
@@ -115,6 +121,14 @@ export const collectTechnicalInfo = async (): Promise<ReportSection[]> => {
     title: 'Дополнительная информация',
     data: networkInfo,
   });
+
+  const performanceMemory = getPerformanceMemory();
+  if (Object.keys(performanceMemory).length > 0) {
+    sections.push({
+      title: 'Память',
+      data: performanceMemory,
+    });
+  }
 
   return sections;
 };

@@ -22,14 +22,12 @@ export const getNetworkInfo = (): Record<string, string> => {
     saveData?: boolean;
   };
 
-  const nav = navigator as Navigator & {
+  const navigatorInfo = navigator as Navigator & {
     connection?: NetworkInformation;
     mozConnection?: NetworkInformation;
     webkitConnection?: NetworkInformation;
     deviceMemory?: number;
   };
-
-  const connection = nav.connection || nav.mozConnection || nav.webkitConnection;
 
   const networkInfo: Record<string, string> = {
     'Язык браузера': navigator.language,
@@ -37,18 +35,57 @@ export const getNetworkInfo = (): Record<string, string> => {
     'Поддержка cookies': navigator.cookieEnabled ? 'да' : 'нет',
     'Онлайн статус': navigator.onLine ? 'да' : 'нет',
     'Количество ядер CPU': String(navigator.hardwareConcurrency || 'не определено'),
-    'Память устройства': nav.deviceMemory ? `${nav.deviceMemory} GB` : 'не определено',
+    'Память устройства': navigatorInfo.deviceMemory
+      ? `${navigatorInfo.deviceMemory} GB`
+      : 'не определено',
     'Максимальные точки касания': String(navigator.maxTouchPoints || 0),
   };
+
+  const connection =
+    navigatorInfo.connection || navigatorInfo.mozConnection || navigatorInfo.webkitConnection;
 
   if (connection) {
     networkInfo['Тип соединения'] = connection.effectiveType || 'не определен';
     networkInfo['Скорость загрузки'] = connection.downlink
       ? `${connection.downlink} Mbps`
       : 'не определена';
-    networkInfo['RTT'] = connection.rtt ? `${connection.rtt} ms` : 'не определен';
+    networkInfo['RTT (latency)'] = connection.rtt ? `${connection.rtt} ms` : 'не определен';
     networkInfo['Режим экономии данных'] = connection.saveData ? 'включен' : 'выключен';
+  } else {
+    networkInfo['Тип соединения'] = 'не поддерживается';
+    networkInfo['Скорость загрузки'] = 'не поддерживается';
+    networkInfo['RTT (latency)'] = 'не поддерживается';
   }
 
   return networkInfo;
+};
+
+export const getPerformanceMemory = (): Record<string, string> => {
+  const memoryInfo: Record<string, string> = {};
+
+  const performanceInfo = performance as Performance & {
+    memory?: {
+      jsHeapSizeLimit?: number;
+      totalJSHeapSize?: number;
+      usedJSHeapSize?: number;
+    };
+  };
+
+  const { memory } = performanceInfo;
+
+  if (memory) {
+    const formatBytes = (bytes?: number): string => {
+      if (bytes === undefined) return 'не определено';
+      const mb = bytes / (1024 * 1024);
+      return `${mb.toFixed(2)} MB`;
+    };
+
+    memoryInfo['Лимит JS Heap'] = formatBytes(memory.jsHeapSizeLimit);
+    memoryInfo['Общий размер JS Heap'] = formatBytes(memory.totalJSHeapSize);
+    memoryInfo['Используемый JS Heap'] = formatBytes(memory.usedJSHeapSize);
+  } else {
+    memoryInfo['Информация о памяти'] = 'не поддерживается (только Chrome/Edge)';
+  }
+
+  return memoryInfo;
 };

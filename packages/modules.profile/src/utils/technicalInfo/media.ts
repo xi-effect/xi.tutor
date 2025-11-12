@@ -76,3 +76,22 @@ export const checkAudioSupport = () => {
 
   return support;
 };
+
+export const checkWebRTCSupport = (): Record<string, string> => {
+  const support: Record<string, string> = {};
+
+  const hasRTCPeerConnection =
+    'RTCPeerConnection' in window ||
+    'webkitRTCPeerConnection' in window ||
+    'mozRTCPeerConnection' in window ||
+    typeof (window as Record<string, unknown>).RTCPeerConnection !== 'undefined';
+
+  support['WebRTC API support'] = hasRTCPeerConnection ? 'да' : 'нет';
+
+  const hasGetDisplayMedia =
+    navigator.mediaDevices && typeof navigator.mediaDevices.getDisplayMedia === 'function';
+
+  support['getDisplayMedia support'] = hasGetDisplayMedia ? 'да' : 'нет';
+
+  return support;
+};
