@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useMediaQuery } from '@xipkg/utils';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { Modal, ModalContent, ModalTitle } from '@xipkg/modal';
@@ -23,6 +23,10 @@ export const UserSettings = ({
   const profileType = search.profile || '';
 
   const [activeQuery, setActiveQuery] = React.useState<string>(profileType);
+
+  useEffect(() => {
+    setActiveQuery(profileType);
+  }, [profileType]);
 
   const handleClose = useCallback(() => {
     setShowContent(false);
