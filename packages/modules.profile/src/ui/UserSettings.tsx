@@ -6,14 +6,6 @@ import { Header } from './Header';
 import { Menu } from './Menu';
 import { Content } from './Content';
 
-// Список опций меню для поиска индекса по query
-// const options = [
-//   { query: 'personalInfo' },
-//   { query: 'personalisation' },
-//   { query: 'security' },
-//   { query: 'notifications' },
-// ];
-
 export const UserSettings = ({
   open,
   setOpen,

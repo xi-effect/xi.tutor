@@ -18,8 +18,8 @@ export const useUpdateEmail = () => {
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
-          method: userApiConfig[UserQueryKey.Email].method,
-          url: userApiConfig[UserQueryKey.Email].getUrl(),
+          method: userApiConfig[UserQueryKey.EmailChangeRequest].method,
+          url: userApiConfig[UserQueryKey.EmailChangeRequest].getUrl(),
           data: emailData,
           headers: {
             'Content-Type': 'application/json',

@@ -1,11 +1,16 @@
 import { useCallback } from 'react';
 import { track, useEditor } from 'tldraw';
 import { Button } from '@xipkg/button';
-import { Trash, Copy } from '@xipkg/icons';
+import { Trash, Copy, Unlocked } from '@xipkg/icons';
 import { MoreActionsMenu } from './MoreActionsMenu';
+import { useYjsContext } from '../../../providers/YjsProvider';
 
 export const SelectionMenu = track(function SelectionMenu() {
   const editor = useEditor();
+  const { isReadonly } = useYjsContext();
+
+  const selectedShapes = editor.getSelectedShapes();
+  const isLocked = selectedShapes.every((shape) => shape.isLocked);
 
   // --- Данные / вычисления (без ранних return) ---
   const selectedIds = editor.getSelectedShapeIds();
@@ -25,6 +30,9 @@ export const SelectionMenu = track(function SelectionMenu() {
   }, [editor, selectedIds]);
 
   // --- Логика показа ПОСЛЕ хуков ---
+  // Скрываем меню в readonly режиме или если нет выделения
+  if (isReadonly) return null;
+
   const shouldShow = selectedIds.length > 0 && isSelect && !isBrushing && !!screenBounds;
 
   if (!shouldShow) return null;
@@ -47,25 +55,43 @@ export const SelectionMenu = track(function SelectionMenu() {
         transition: 'left 60ms linear, top 60ms linear',
       }}
     >
-      <Button
-        variant="ghost"
-        size="s"
-        className="hover:bg-brand-0 p-1"
-        onClick={handleDuplicate}
-        title="Дублировать (Ctrl+D)"
-      >
-        <Copy />
-      </Button>
-      <Button
-        variant="ghost"
-        size="s"
-        className="hover:bg-brand-0 p-1"
-        onClick={handleDelete}
-        title="Удалить (Del)"
-      >
-        <Trash />
-      </Button>
-      <MoreActionsMenu />
+      {isLocked ? (
+        <>
+          <Button
+            variant="ghost"
+            size="s"
+            className="hover:bg-brand-0 p-1"
+            onClick={() => {
+              editor.toggleLock(selectedIds);
+            }}
+            title="Разблокировать"
+          >
+            <Unlocked />
+          </Button>
+        </>
+      ) : (
+        <>
+          <Button
+            variant="ghost"
+            size="s"
+            className="hover:bg-brand-0 p-1"
+            onClick={handleDuplicate}
+            title="Дублировать (Ctrl+D)"
+          >
+            <Copy />
+          </Button>
+          <Button
+            variant="ghost"
+            size="s"
+            className="hover:bg-brand-0 p-1"
+            onClick={handleDelete}
+            title="Удалить (Del)"
+          >
+            <Trash />
+          </Button>
+          <MoreActionsMenu />
+        </>
+      )}
     </div>
   );
 });

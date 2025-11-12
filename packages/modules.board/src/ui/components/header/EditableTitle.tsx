@@ -1,11 +1,13 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useState } from 'react';
 import { useForm } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { Form, FormControl, FormField, FormItem } from '@xipkg/form';
-import { useUpdateMaterial } from 'common.services';
+import { useUpdateClassroomMaterial, useUpdateMaterial } from 'common.services';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { cn } from '@xipkg/utils';
+import { useParams } from '@tanstack/react-router';
 
 const titleSchema = z.object({
   name: z.string().min(1, 'Название не может быть пустым').max(100, 'Название слишком длинное'),
@@ -17,11 +19,20 @@ interface EditableTitleProps {
   title: string;
   materialId: string;
   className?: string;
+  isTutor?: boolean;
 }
 
-export const EditableTitle = ({ title, materialId, className }: EditableTitleProps) => {
+export const EditableTitle = ({
+  title,
+  materialId,
+  className,
+  isTutor = false,
+}: EditableTitleProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  const { classroomId } = useParams({ strict: false });
+
   const { updateMaterial } = useUpdateMaterial();
+  const { updateClassroomMaterial } = useUpdateClassroomMaterial();
 
   const form = useForm<TitleFormData>({
     resolver: zodResolver(titleSchema),
@@ -39,10 +50,18 @@ export const EditableTitle = ({ title, materialId, className }: EditableTitlePro
 
   const onSubmit = async (data: TitleFormData) => {
     try {
-      await updateMaterial.mutateAsync({
-        id: materialId,
-        data: { name: data.name },
-      });
+      if (classroomId) {
+        await updateClassroomMaterial.mutateAsync({
+          classroomId: classroomId,
+          id: materialId,
+          data: { name: data.name },
+        });
+      } else {
+        await updateMaterial.mutateAsync({
+          id: materialId,
+          data: { name: data.name },
+        });
+      }
       setIsEditing(false);
     } catch (error) {
       console.error('Ошибка при обновлении названия:', error);
@@ -94,8 +113,8 @@ export const EditableTitle = ({ title, materialId, className }: EditableTitlePro
 
   return (
     <h1
-      className={cn('text-xl-base cursor-pointer select-none', className)}
-      onDoubleClick={handleDoubleClick}
+      className={cn('text-xl-base select-none', isTutor && 'cursor-pointer', className)}
+      onDoubleClick={isTutor ? handleDoubleClick : undefined}
     >
       {title}
     </h1>

@@ -2,27 +2,59 @@
 // import { useFullScreen } from 'pkg.utils.client';
 import { Button } from '@xipkg/button';
 
-import { useNavigate, useParams } from '@tanstack/react-router';
+import { useParams, useRouter } from '@tanstack/react-router';
 import { ArrowLeft, Maximize, Minimize } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
-import { useGetMaterial } from 'common.services';
+import {
+  useCurrentUser,
+  useGetClassroomMaterial,
+  useGetClassroomMaterialStudent,
+  useGetMaterial,
+} from 'common.services';
 import { Skeleton } from 'common.ui';
 import { useFullScreen } from 'common.utils';
 import { useEffect } from 'react';
 import { EditableTitle } from './EditableTitle';
 import { SettingsDropdown } from './SettingsDropdown';
 import { HotkeysHelp } from '../shared/HotkeysHelp';
+import { useYjsContext } from '../../../providers/YjsProvider';
 
 export const Header = () => {
   const { isFullScreen, toggleFullScreen } = useFullScreen('whiteboard-container');
-  const navigate = useNavigate();
+  const { classroomId, boardId, materialId } = useParams({ strict: false });
+  const { isReadonly } = useYjsContext();
 
-  const { boardId = 'empty' } = useParams({ strict: false });
-  const { data, isLoading } = useGetMaterial(boardId);
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const getMaterial = (() => {
+    if (classroomId) {
+      if (isTutor) {
+        return useGetClassroomMaterial;
+      } else {
+        return useGetClassroomMaterialStudent;
+      }
+    }
+
+    return useGetMaterial;
+  })();
+
+  const materialIdValue = boardId ?? materialId;
+  if (!materialIdValue) {
+    throw new Error('boardId or materialId must be provided');
+  }
+
+  const { data: material, isLoading } = getMaterial({
+    classroomId: classroomId || '',
+    id: materialIdValue,
+  });
+
+  const router = useRouter();
 
   const handleBack = () => {
     if (isFullScreen) toggleFullScreen();
-    navigate({ to: '/materials' });
+
+    router.history.back();
   };
 
   // Обработка событий от горячих клавиш
@@ -52,25 +84,29 @@ export const Header = () => {
             type="button"
             className="h-[40px] w-[40px] p-2"
           >
-            <ArrowLeft size="s" />
+            <ArrowLeft size="s" className="size-6" />
           </Button>
           {isLoading ? (
             <Skeleton variant="text" className="h-6 w-24" />
           ) : (
-            <EditableTitle title={data.name} materialId={boardId} />
+            <EditableTitle title={material.name} materialId={materialIdValue} isTutor={isTutor} />
           )}
         </div>
         <div className="flex items-center gap-1">
-          <HotkeysHelp />
+          {!isReadonly && <HotkeysHelp />}
           <Button
             variant="ghost"
             onClick={toggleFullScreen}
             type="button"
             className="h-[40px] w-[40px] p-2"
           >
-            {isFullScreen ? <Minimize size="s" /> : <Maximize size="s" />}
+            {isFullScreen ? (
+              <Minimize size="s" className="size-6" />
+            ) : (
+              <Maximize size="s" className="size-6" />
+            )}
           </Button>
-          <SettingsDropdown />
+          {!isReadonly && <SettingsDropdown />}
         </div>
       </div>
     </div>

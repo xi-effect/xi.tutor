@@ -1,16 +1,11 @@
+import { educationUtils } from 'common.entities';
+
 export const getStatusText = (status: string) => {
-  switch (status) {
-    case 'active':
-      return 'Учится';
-    case 'paused':
-      return 'На паузе';
-    case 'locked':
-      return 'Заблокировано';
-    case 'finished':
-      return 'Обучение завершено';
-    default:
-      return 'Неизвестно';
-  }
+  return educationUtils.getStatusTextFromString(status);
+};
+
+export const getStatusTextByRole = (status: string, isTutor: boolean) => {
+  return educationUtils.getStatusTextFromStringByRole(status, isTutor);
 };
 
 export const getStatusVariant = (status: string) => {
@@ -28,7 +23,6 @@ export const getStatusVariant = (status: string) => {
   }
 };
 
-export const handleTelegramClick = () => {
-  // TODO: Получить реальный telegram username из данных пользователя
-  window.open('https://t.me/nickname', '_blank');
+export const handleTelegramClick = ({ link }: { link: string }) => {
+  window.open(link, '_blank');
 };

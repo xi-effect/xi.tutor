@@ -28,9 +28,14 @@ export type {
   IndividualClassroomTutorResponseSchema,
   GroupClassroomTutorResponseSchema,
   ClassroomTutorResponseSchema,
+  UserRoleT,
 } from './src/types';
 export { notificationsApiConfig, NotificationsQueryKey } from './src/notifications';
 export { telegramConnectionApiConfig, TelegramConnectionQueryKey } from './src/telegramConnection';
 export { callsApiConfig, CallsQueryKey } from './src/calls';
 export { subjectsApiConfig, SubjectsQueryKey } from './src/subjects';
 export { enrollmentsApiConfig, EnrollmentsQueryKey } from './src/enrollments';
+export { contactsApiConfig, ContactsQueryKey } from './src/contacts';
+export { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from './src/classrooms';
+export { classroomNotesApiConfig, ClassroomNotesQueryKey } from './src/classrooms';
+export { classroomPaymentsApiConfig, ClassroomPaymentsQueryKey } from './src/classrooms';

@@ -9,9 +9,10 @@ enum UserQueryKey {
   PasswordResetConfirm = 'PasswordResetConfirm',
   UserById = 'UserById',
   UserByUsername = 'UserByUsername',
-  EmailConfirmationRequest = 'EmailConfirmationRequest',
   UpdateAvatar = 'UpdateAvatar',
   DeleteAvatar = 'DeleteAvatar',
+  EmailChange = 'EmailChange',
+  EmailChangeRequest = 'EmailChangeRequest',
 }
 
 const userApiConfig = {
@@ -20,12 +21,12 @@ const userApiConfig = {
     method: HttpMethod.GET,
   },
   [UserQueryKey.Profile]: {
-    getUrl: () =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/profile/`,
+    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/`,
     method: HttpMethod.PATCH,
   },
   [UserQueryKey.Email]: {
-    getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/email/`,
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/email-change/requests/`,
     method: HttpMethod.PUT,
   },
   [UserQueryKey.Password]: {
@@ -38,21 +39,6 @@ const userApiConfig = {
       `${env.VITE_SERVER_URL_BACKEND}/api/public/user-service/password-reset/confirmations/`,
     method: HttpMethod.POST,
   },
-  [UserQueryKey.UserById]: {
-    getUrl: (id: string) =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/by-id/${id}/profile/`,
-    method: HttpMethod.GET,
-  },
-  [UserQueryKey.UserByUsername]: {
-    getUrl: (username: string) =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/by-username/${username}/profile/`,
-    method: HttpMethod.GET,
-  },
-  [UserQueryKey.EmailConfirmationRequest]: {
-    getUrl: () =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/email-confirmation-requests/`,
-    method: HttpMethod.POST,
-  },
   [UserQueryKey.UpdateAvatar]: {
     getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/avatar/`,
     method: HttpMethod.PUT,
@@ -60,6 +46,16 @@ const userApiConfig = {
   [UserQueryKey.DeleteAvatar]: {
     getUrl: () => `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/avatar/`,
     method: HttpMethod.DELETE,
+  },
+  [UserQueryKey.EmailChange]: {
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/public/user-service/email-change/confirmations/`,
+    method: HttpMethod.POST,
+  },
+  [UserQueryKey.EmailChangeRequest]: {
+    getUrl: () =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/user-service/users/current/email-change/requests/`,
+    method: HttpMethod.POST,
   },
 };
 

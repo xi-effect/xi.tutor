@@ -15,9 +15,7 @@ import { Notifications } from './Notifications';
 import { MobileUserMenu } from './MobileUserMenu';
 import { DesktopUserMenu } from './DesktopUserMenu';
 import { useCurrentUser } from 'common.services';
-// import { TestNotificationButton } from './TestNotificationButton';
-// import { NotificationDebug } from './NotificationDebug';
-// import { SimpleTest } from './SimpleTest';
+import { LinkTanstack } from 'common.ui';
 
 const UserSettings = lazy(() =>
   import('modules.profile').then((module) => ({ default: module.UserSettings })),
@@ -81,7 +79,9 @@ export const Header = ({
     <div className="bg-gray-0 fixed top-0 right-0 left-0 z-20 flex h-[64px] w-full items-center gap-4 px-4 py-3">
       <SidebarTrigger onClick={handleToggle} className="dark:fill-gray-80" />
       <div className="flex flex-row items-center gap-4 pl-4">
-        <Logo />
+        <LinkTanstack to="/">
+          <Logo />
+        </LinkTanstack>
       </div>
       <div className="ml-auto flex flex-row items-center gap-4">
         <Notifications />
@@ -105,9 +105,6 @@ export const Header = ({
       </div>
 
       <UserSettings open={open} setOpen={setOpen} />
-      {/* <TestNotificationButton />
-      <NotificationDebug />
-      <SimpleTest /> */}
     </div>
   );
 };

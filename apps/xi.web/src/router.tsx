@@ -34,5 +34,9 @@ declare module '@tanstack/react-router' {
     carouselType?: 'horizontal' | 'vertical';
     tab?: string;
     goto?: string;
+    call?: string;
+    classroom?: string;
+    role?: 'tutor' | 'student';
+    recipient_invoice_id?: string;
   }
 }

@@ -1,14 +1,14 @@
 import { Note, Board } from './components';
 import { useAddMaterials, type MaterialsDataT } from 'common.services';
 
-export const MaterialsAdd = () => {
+export const MaterialsAdd = ({ onlyDrafts = false }: { onlyDrafts?: boolean }) => {
   const { addMaterials } = useAddMaterials();
 
   // const { data: user } = useCurrentUser();
   // const isTutor = user?.default_layout === 'tutor';
 
-  const handleCreate = async (kind: MaterialsDataT['kind']) => {
-    await addMaterials.mutateAsync({ kind });
+  const handleCreate = async (kind: MaterialsDataT['content_kind']) => {
+    await addMaterials.mutateAsync({ content_kind: kind });
   };
 
   return (
@@ -21,9 +21,9 @@ export const MaterialsAdd = () => {
         />
       )} */}
 
-      <Note onCreate={() => handleCreate('note')} />
+      <Note onlyDrafts={onlyDrafts} onCreate={() => handleCreate('note')} />
 
-      <Board onCreate={() => handleCreate('board')} />
+      <Board onlyDrafts={onlyDrafts} onCreate={() => handleCreate('board')} />
     </div>
   );
 };

@@ -75,7 +75,7 @@ export const SignInPage = () => {
                   <FormControl>
                     <Input error={!!errors?.email} autoComplete="on" type="email" {...field} />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="pt-0" />
                 </FormItem>
               )}
             />
@@ -105,7 +105,7 @@ export const SignInPage = () => {
                       {...field}
                     />
                   </FormControl>
-                  <FormMessage />
+                  <FormMessage className="pt-0" />
                 </FormItem>
               )}
             />

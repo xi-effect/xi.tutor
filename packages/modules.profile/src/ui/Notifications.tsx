@@ -23,7 +23,7 @@ export const Notifications = () => {
             className="hover:bg-gray-5 flex cursor-pointer flex-row items-center gap-4 rounded-xl bg-transparent p-2"
           >
             <div className="mt-2 flex-1 sm:mt-0 sm:flex-0">
-              <TelegramFilled size="lg" className="fill-brand-80" />
+              <TelegramFilled size="lg" className="fill-brand-80 h-8 w-8" />
             </div>
 
             <div className="flex w-full flex-col items-center gap-1 sm:flex-row">

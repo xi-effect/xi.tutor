@@ -13,9 +13,9 @@ export const Route = createFileRoute('/(auth)/reset-password/$resetToken')({
   }),
   component: NewPassword,
 
-  beforeLoad: ({ context, location }) => {
-    console.log('NewPasswordRoute', context, location);
-  },
+  // beforeLoad: ({ context, location }) => {
+  //   console.log('NewPasswordRoute', context, location);
+  // },
 });
 
 export function NewPassword() {

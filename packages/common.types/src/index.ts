@@ -2,12 +2,30 @@ export type { UserData, ProfileData, RoleT } from './user';
 export type {
   NotificationsSettingsT,
   NotificationT,
-  NotificationType,
   NotificationSocketEvents,
   NotificationsStateT,
+  RecipientNotificationResponse,
+  NotificationsSearchResponse,
+  NotificationSearchRequest,
 } from './notifications';
-export type { MaterialT, UpdateMaterialDataT } from './materials';
-export type { TemplateT, PaymentTemplateDataT, UpdateTemplateDataT } from './payments';
+export type {
+  MaterialT,
+  UpdateMaterialDataT,
+  ClassroomMaterialsT,
+  AccessModeT,
+  StorageItemT,
+} from './materials';
+export type {
+  TemplateT,
+  PaymentTemplateDataT,
+  UpdateTemplateDataT,
+  PaymentStatusT,
+  PaymentTypeT,
+  PaymentDataT,
+  StudentPaymentT,
+  TutorPaymentT,
+  RolePaymentT,
+} from './payments';
 export type { InvitationDataT } from './invitations';
 export type {
   TutorStudentSchemaMarshal,
@@ -16,3 +34,5 @@ export type {
   GroupStudentsListSchema,
 } from './students';
 export type { SignupData } from './auth';
+export type { ContactT, ContactsT } from './contacts';
+export type { NotificationKind } from './notifications';

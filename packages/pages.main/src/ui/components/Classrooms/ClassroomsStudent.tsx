@@ -21,7 +21,7 @@ export const ClassroomsStudent = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 px-4 pt-4 pb-1">
+    <div className="flex flex-col gap-4 px-4 pt-1 pb-1">
       <div className="flex flex-row items-center justify-start gap-2">
         <h2 className="text-xl-base font-medium text-gray-100">Кабинеты</h2>
         <Tooltip delayDuration={1000}>
@@ -53,7 +53,7 @@ export const ClassroomsStudent = () => {
         )}
         {classrooms && classrooms.length === 0 && (
           <div className="flex h-[180px] w-full flex-row items-center justify-center gap-8">
-            <p className="text-m-base lg:text-xl-base text-gray-60 text-center">
+            <p className="text-m-base text-gray-60 text-center">
               Перейдите по ссылке-приглашению, чтобы начать заниматься с репетитором
             </p>
           </div>

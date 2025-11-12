@@ -1,4 +1,4 @@
-import { createContext, useContext, ReactNode } from 'react';
+import { createContext, useContext, ReactNode, useMemo } from 'react';
 import { Room } from 'livekit-client';
 
 type RoomContextType = {
@@ -20,6 +20,8 @@ type RoomProviderProps = {
 };
 
 export const RoomProvider = ({ children }: RoomProviderProps) => {
-  const room = new Room();
+  // Создаем комнату только один раз при монтировании компонента
+  const room = useMemo(() => new Room(), []);
+
   return <RoomContext.Provider value={{ room }}>{children}</RoomContext.Provider>;
 };

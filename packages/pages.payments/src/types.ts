@@ -1,3 +1,6 @@
+import { UserRoleT } from 'common.api';
+import { RolePaymentT } from 'features.table';
+
 export type ModalTemplatePropsT = {
   isOpen: boolean;
   onClose: () => void;
@@ -16,4 +19,8 @@ export type PaymentPropsT = {
   typePayment: 'cash' | 'card';
   statusPayment: 'paid' | 'processing' | 'unpaid';
   last_opened_at: string;
+};
+
+export type TabsComponentPropsT = {
+  onApprovePayment: (payment: RolePaymentT<UserRoleT>) => void;
 };

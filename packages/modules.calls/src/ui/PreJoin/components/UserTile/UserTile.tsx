@@ -7,6 +7,7 @@ import { usePersistentUserChoices } from '../../../../hooks/usePersistentUserCho
 import { useCannotUseDevice } from '../../../../hooks/useCannotUseDevice';
 import { openPermissionsDialog } from '../../../../store/permissions';
 import { Button } from '@xipkg/button';
+import { SecureVideo } from '../../../shared';
 
 const UserTileUI = ({
   audioTrack,
@@ -83,8 +84,8 @@ const UserTileUI = ({
     }
 
     return (
-      <div className="aspect-video h-full w-full [transform:rotateY(180deg)]">
-        <video
+      <div className="aspect-video h-full w-full transform-[rotateY(180deg)]">
+        <SecureVideo
           ref={videoEl}
           data-lk-facing-mode={facingMode}
           className="h-full w-full object-cover"

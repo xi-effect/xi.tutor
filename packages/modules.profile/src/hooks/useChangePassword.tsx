@@ -50,16 +50,18 @@ export const useChangePassword = () => {
 
     try {
       await updatePassword.mutateAsync({
-        old_password: currentPassword,
+        password: currentPassword,
         new_password: newPassword,
-        confirm_password: newPassword,
       });
 
       toast('Пароль успешно изменен');
       setStage('success');
     } catch (error: any) {
       if (error?.response?.data?.detail === 'Wrong password') {
-        toast('Неверный пароль');
+        form.setError('currentPassword', {
+          type: 'manual',
+          message: 'Неверный пароль',
+        });
       } else {
         toast('Произошла ошибка');
       }

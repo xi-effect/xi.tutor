@@ -2,7 +2,7 @@ import { LiveKitRoom } from '@livekit/components-react';
 import { serverUrl, serverUrlDev, isDevMode, devToken } from '../utils/config';
 import { useCallStore } from '../store/callStore';
 import { useRoom } from './RoomProvider';
-import { useParams, useLocation, useNavigate } from '@tanstack/react-router';
+import { useParams, useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useEffect } from 'react';
 
 type LiveKitProviderProps = {
@@ -13,48 +13,62 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
   const { room } = useRoom();
   const { audioEnabled, videoEnabled, connect, token, updateStore } = useCallStore();
 
+  const { isStarted } = useCallStore();
+
   const handleConnect = () => {
     updateStore('connect', true);
-    console.log('Connected to LiveKit room');
   };
 
   const handleDisconnect = () => {
     updateStore('connect', false);
     updateStore('isStarted', false);
-    console.log('Disconnected from LiveKit room');
+    updateStore('mode', 'full');
+
+    // Очищаем все состояния интерфейса при отключении
+    const { clearAllRaisedHands, updateStore: updateCallStore } = useCallStore.getState();
+
+    // Очищаем поднятые руки
+    clearAllRaisedHands();
+
+    // Очищаем чат
+    updateCallStore('isChatOpen', false);
+    updateCallStore('chatMessages', []);
+    updateCallStore('unreadMessagesCount', 0);
+
+    // Удаляем параметр call из URL при отключении
+    if (search.call) {
+      const searchWithoutCall = { ...search };
+      delete searchWithoutCall.call;
+      navigate({
+        to: location.pathname,
+        search: searchWithoutCall,
+        replace: true,
+      });
+    }
+
+    console.log('Disconnected from LiveKit room - all interface states cleared');
   };
 
   const location = useLocation();
-  const { callId, classroomId } = useParams({ strict: false });
+  const { callId } = useParams({ strict: false });
   const navigate = useNavigate();
-
-  console.log('token', token);
-  console.log('location', location);
-  console.log('callId', callId);
-  console.log('classroomId', classroomId);
+  const search = useSearch({ strict: false }) as { call?: string };
 
   useEffect(() => {
     if (!token && callId && location.pathname.includes('/call/')) {
-      navigate({ to: '/classrooms/$classroomId', params: { classroomId: callId } });
+      navigate({
+        to: '/classrooms/$classroomId',
+        params: { classroomId: callId },
+        search: { call: callId },
+      });
     }
-  }, [location]);
+  }, [location, token, callId, navigate]);
 
-  if (!token) {
+  if (!token || !room) {
+    if (isStarted) console.warn('No token available for LiveKit connection');
+
     return <>{children}</>;
   }
-
-  // Если нет токена, не рендерим LiveKitRoom
-  if (!token) {
-    console.warn('No token available for LiveKit connection');
-    return <>{children}</>;
-  }
-
-  // console.log('LiveKitProvider state:', {
-  //   connect,
-  //   audioEnabled,
-  //   videoEnabled,
-  //   hasToken: !!token,
-  // });
 
   return (
     <LiveKitRoom

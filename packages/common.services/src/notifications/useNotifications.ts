@@ -1,191 +1,261 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
-import { useSocketEvent, useSocketEmit } from 'common.sockets';
-import { NotificationT, NotificationsStateT } from 'common.types';
-
-// Моковые данные для тестирования
-const mockNotifications: NotificationT[] = [
-  {
-    id: '1',
-    type: 'message',
-    title: 'Новое сообщение в чате',
-    description: 'Анна Петрова отправила вам сообщение',
-    date: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
-    isRead: false,
-  },
-  {
-    id: '2',
-    type: 'lesson_reminder',
-    title: 'Напоминание о занятии',
-    description: 'Через 30 минут начинается урок математики',
-    date: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
-    isRead: false,
-  },
-  {
-    id: '3',
-    type: 'new_material',
-    title: 'Новый материал доступен',
-    description: 'Загружен новый учебный материал по физике',
-    date: new Date(Date.now() - 6 * 60 * 60 * 1000).toISOString(),
-    isRead: true,
-  },
-  {
-    id: '4',
-    type: 'payment_success',
-    title: 'Оплата прошла успешно',
-    description: 'Ваш платеж на сумму 5000 ₽ обработан',
-    date: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
-    isRead: true,
-  },
-  {
-    id: '5',
-    type: 'group_invitation',
-    title: 'Приглашение в группу',
-    description: 'Вас пригласили в группу "Продвинутая математика"',
-    date: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString(),
-    isRead: true,
-  },
-];
+import { useSocketEvent } from 'common.sockets';
+import { NotificationT, NotificationsStateT, RecipientNotificationResponse } from 'common.types';
+import {
+  generateNotificationTitle,
+  generateNotificationDescription,
+  getNotificationInvalidationKeys,
+} from './notificationUtils';
+import { useSearchNotifications } from './useSearchNotifications';
+import { useGetUnreadCount } from './useGetUnreadCount';
+import { useMarkNotificationAsRead } from './useMarkNotificationAsRead';
+import { useCurrentUser } from '../user';
 
 export const useNotifications = () => {
-  const initialUnreadCount = mockNotifications.filter((n) => !n.isRead).length;
+  const [socketNotifications, setSocketNotifications] = useState<NotificationT[]>([]);
+  const [shouldLoadNotifications, setShouldLoadNotifications] = useState(false);
+  const queryClient = useQueryClient();
 
-  const [state, setState] = useState<NotificationsStateT>({
-    notifications: mockNotifications,
-    unreadCount: initialUnreadCount,
-    isLoading: false,
-    error: null,
+  // Проверяем, авторизован ли пользователь
+  const { data: currentUser, isError: isUserError } = useCurrentUser();
+  const isAuthenticated = !!currentUser && !isUserError;
+
+  // API хуки - загружаем список уведомлений только когда shouldLoadNotifications = true
+  // Счетчик непрочитанных загружается всегда при авторизации
+  const {
+    notifications: apiNotifications,
+    isLoading: isLoadingNotifications,
+    error: searchError,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch: refetchNotifications,
+  } = useSearchNotifications({
+    limit: 12,
+    enabled: isAuthenticated && shouldLoadNotifications,
   });
 
-  const emitNotification = useSocketEmit<{ id: string }>('notification:read');
-  const emitReadAll = useSocketEmit<void>('notification:read_all');
-  const emitDelete = useSocketEmit<{ id: string }>('notification:delete');
-  const emitTest = useSocketEmit<NotificationT>('notification:test');
+  const {
+    data: unreadCount,
+    isLoading: isLoadingCount,
+    refetch: refetchCount,
+  } = useGetUnreadCount({ enabled: isAuthenticated });
 
-  // Обработчик нового уведомления
-  const handleNewNotification = useCallback((notification: NotificationT) => {
-    console.log('📨 Получено новое уведомление:', notification);
+  const { markAsRead: markAsReadMutation } = useMarkNotificationAsRead();
 
-    setState((prev) => {
-      const newNotifications = [notification, ...prev.notifications];
-      const newUnreadCount = newNotifications.filter((n) => !n.isRead).length;
-
-      // Показываем toast уведомление
-      toast(notification.title, {
-        description: notification.description,
-        duration: 5000,
-      });
-
-      console.log('✅ Уведомление добавлено в состояние, новый счетчик:', newUnreadCount);
-
-      return {
-        ...prev,
-        notifications: newNotifications,
-        unreadCount: newUnreadCount,
-      };
-    });
-  }, []);
-
-  // Обработчик тестового уведомления
-  const handleTestNotification = useCallback(
-    (notification: NotificationT) => {
-      console.log('🧪 Получено тестовое уведомление через сокет:', notification);
-      handleNewNotification(notification);
+  // Трансформирует уведомление из формата API (если нужно) в наш формат
+  const transformNotification = useCallback(
+    (data: NotificationT | RecipientNotificationResponse): NotificationT => {
+      // Проверяем, является ли это обёрнутым форматом
+      if ('read_at' in data && 'notification' in data) {
+        const { read_at, notification } = data as RecipientNotificationResponse;
+        return {
+          id: notification.id,
+          actor_user_id: notification.actor_user_id ?? null,
+          is_read: read_at !== null,
+          payload: notification.payload as NotificationT['payload'],
+          created_at: notification.created_at,
+          updated_at: notification.updated_at || notification.created_at,
+        };
+      }
+      // Уже в правильном формате
+      return data as NotificationT;
     },
-    [handleNewNotification],
+    [],
   );
 
-  // Подписываемся на события SocketIO
-  useSocketEvent<NotificationT>('notification:new', handleNewNotification);
-  useSocketEvent<NotificationT>('notification:test', handleTestNotification);
+  // Обработчик нового уведомления от SocketIO
+  const handleNewNotification = useCallback(
+    (data: NotificationT | RecipientNotificationResponse) => {
+      const notification = transformNotification(data);
+
+      // Добавляем новое уведомление в начало списка socket-уведомлений (чтобы оно появилось вверху)
+      setSocketNotifications((prev) => {
+        // Проверяем, нет ли уже такого уведомления (по id)
+        if (prev.some((n) => n.id === notification.id)) {
+          return prev;
+        }
+        // Добавляем новое уведомление в начало массива, чтобы оно отображалось вверху
+        return [notification, ...prev];
+      });
+
+      // Ревалидируем кеш связанных данных на основе конфига уведомления
+      const invalidationKeys = getNotificationInvalidationKeys(notification);
+      invalidationKeys.forEach((key) => {
+        queryClient.invalidateQueries({ queryKey: Array.isArray(key) ? key : [key] });
+      });
+
+      // Обновляем счетчик непрочитанных с сервера (синхронизация)
+      refetchCount();
+
+      // Показываем toast уведомление
+      const title = generateNotificationTitle(notification);
+      const description = generateNotificationDescription(notification);
+
+      toast(title, {
+        description,
+        duration: 5000,
+      });
+    },
+    [refetchCount, transformNotification, queryClient],
+  );
+
+  // Обработчик для Socket.IO с проверкой авторизации
+  const handleSocketNotification = useCallback(
+    (data: NotificationT | RecipientNotificationResponse) => {
+      // Не обрабатываем события, если пользователь не авторизован
+      if (!isAuthenticated) {
+        return;
+      }
+      handleNewNotification(data);
+    },
+    [isAuthenticated, handleNewNotification],
+  );
+
+  // Подписываемся на события SocketIO (новый формат события)
+  // /=tmexio-SUB=/new-notification/ - это техническая особенность бэка, имя события просто "new-notification"
+  // WebSocket может возвращать как обёрнутый формат (RecipientNotificationResponse), так и прямой (NotificationT)
+  // Обработчик проверяет авторизацию перед обработкой события
+  useSocketEvent<NotificationT | RecipientNotificationResponse>(
+    'new-notification',
+    handleSocketNotification,
+    [isAuthenticated],
+  );
+
+  // Обновляем счетчик непрочитанных при монтировании (только если пользователь авторизован)
+  // Список уведомлений загружается только при открытии dropdown
+  useEffect(() => {
+    if (!isAuthenticated) {
+      return;
+    }
+    // Обновляем счетчик при монтировании
+    refetchCount();
+  }, [refetchCount, isAuthenticated]);
+
+  // Объединяем уведомления из API и Socket.IO
+  // Socket-уведомления идут первыми, затем API-уведомления (убираем дубликаты)
+  const allNotifications = useMemo(() => {
+    const apiIds = new Set(apiNotifications.map((n) => n.id));
+    const uniqueSocketNotifications = socketNotifications.filter((n) => !apiIds.has(n.id));
+    return [...uniqueSocketNotifications, ...apiNotifications];
+  }, [apiNotifications, socketNotifications]);
+
+  // Загрузить начальные уведомления (обновление списка)
+  const loadInitialNotifications = useCallback(() => {
+    setSocketNotifications([]);
+    refetchNotifications();
+  }, [refetchNotifications]);
 
   // Отметить уведомление как прочитанное
   const markAsRead = useCallback(
-    (id: string) => {
-      setState((prev) => {
-        const updatedNotifications = prev.notifications.map((notification) =>
-          notification.id === id ? { ...notification, isRead: true } : notification,
+    async (id: string) => {
+      // Находим уведомление для ревалидации кеша
+      const notification = allNotifications.find((n) => n.id === id);
+
+      // Оптимистично обновляем локальное состояние
+      setSocketNotifications((prev) =>
+        prev.map((notification) =>
+          notification.id === id ? { ...notification, is_read: true } : notification,
+        ),
+      );
+
+      try {
+        await markAsReadMutation.mutateAsync(id);
+
+        // Ревалидируем кеш связанных данных на основе конфига уведомления
+        if (notification) {
+          const invalidationKeys = getNotificationInvalidationKeys(notification);
+          invalidationKeys.forEach((key) => {
+            queryClient.invalidateQueries({ queryKey: Array.isArray(key) ? key : [key] });
+          });
+        }
+
+        // Обновляем счетчик и список после успешной отметки
+        refetchCount();
+        refetchNotifications();
+      } catch (error) {
+        // Откатываем оптимистичное обновление при ошибке
+        setSocketNotifications((prev) =>
+          prev.map((notification) =>
+            notification.id === id ? { ...notification, is_read: false } : notification,
+          ),
         );
-        const newUnreadCount = updatedNotifications.filter((n) => !n.isRead).length;
-
-        // Отправляем событие на сервер
-        emitNotification({ id });
-
-        return {
-          ...prev,
-          notifications: updatedNotifications,
-          unreadCount: newUnreadCount,
-        };
-      });
+        console.error('Ошибка при отметке уведомления как прочитанного:', error);
+      }
     },
-    [emitNotification],
+    [markAsReadMutation, refetchCount, refetchNotifications, allNotifications, queryClient],
   );
 
-  // Отметить все уведомления как прочитанные
-  const markAllAsRead = useCallback(() => {
-    setState((prev) => {
-      const updatedNotifications = prev.notifications.map((notification) => ({
-        ...notification,
-        isRead: true,
-      }));
+  // Отметить все уведомления как прочитанные (локально, API для этого нет)
+  const markAllAsRead = useCallback(async () => {
+    const unreadNotifications = allNotifications.filter((n) => !n.is_read);
 
-      // Отправляем событие на сервер
-      emitReadAll();
+    // Помечаем все непрочитанные уведомления как прочитанные
+    for (const notification of unreadNotifications) {
+      try {
+        await markAsReadMutation.mutateAsync(notification.id);
+      } catch (error) {
+        console.error(`Ошибка при отметке уведомления ${notification.id}:`, error);
+      }
+    }
 
-      return {
-        ...prev,
-        notifications: updatedNotifications,
-        unreadCount: 0,
-      };
-    });
-  }, [emitReadAll]);
+    // Обновляем счетчик и список
+    refetchCount();
+    refetchNotifications();
+  }, [allNotifications, markAsReadMutation, refetchCount, refetchNotifications]);
 
-  // Удалить уведомление
+  // Удалить уведомление (локально, API для этого нет в новом контракте)
   const deleteNotification = useCallback(
-    (id: string) => {
-      setState((prev) => {
-        const updatedNotifications = prev.notifications.filter((n) => n.id !== id);
-        const newUnreadCount = updatedNotifications.filter((n) => !n.isRead).length;
-
-        // Отправляем событие на сервер
-        emitDelete({ id });
-
-        return {
-          ...prev,
-          notifications: updatedNotifications,
-          unreadCount: newUnreadCount,
-        };
-      });
+    async (id: string) => {
+      setSocketNotifications((prev) => prev.filter((n) => n.id !== id));
+      // Обновляем счетчик после удаления
+      refetchCount();
     },
-    [emitDelete],
+    [refetchCount],
   );
 
-  // Отправить тестовое уведомление
-  const sendTestNotification = useCallback(() => {
-    console.log('🔔 Отправка тестового уведомления...');
+  // Загрузить больше уведомлений (пагинация)
+  const loadMore = useCallback(() => {
+    if (!isFetchingNextPage && hasNextPage) {
+      fetchNextPage();
+    }
+  }, [isFetchingNextPage, hasNextPage, fetchNextPage]);
 
-    const testNotification: NotificationT = {
-      id: `test-${Date.now()}`,
-      type: 'general',
-      title: 'Тестовое уведомление',
-      description: 'Это тестовое уведомление для проверки функциональности',
-      date: new Date().toISOString(),
-      isRead: false,
-    };
+  // Загрузить список уведомлений (вызывается при открытии dropdown)
+  const loadNotifications = useCallback(() => {
+    if (isAuthenticated && !shouldLoadNotifications) {
+      setShouldLoadNotifications(true);
+    } else if (isAuthenticated) {
+      // Если уже загружали, просто обновляем данные
+      refetchNotifications();
+    }
+  }, [isAuthenticated, shouldLoadNotifications, refetchNotifications]);
 
-    console.log('📤 Отправляем событие notification:test:', testNotification);
-    emitTest(testNotification);
-
-    // Также добавляем уведомление локально для тестирования
-    handleNewNotification(testNotification);
-  }, [emitTest, handleNewNotification]);
+  const state: NotificationsStateT = {
+    notifications: allNotifications,
+    unreadCount: unreadCount ?? 0,
+    isLoading: isLoadingNotifications || isLoadingCount,
+    error: searchError
+      ? searchError instanceof Error
+        ? searchError.message
+        : 'Ошибка загрузки уведомлений'
+      : null,
+    hasMore: hasNextPage ?? false,
+    nextCursor: undefined, // Больше не используем nextCursor, так как используем hasNextPage из useInfiniteQuery
+  };
 
   return {
     ...state,
     markAsRead,
     markAllAsRead,
     deleteNotification,
-    sendTestNotification,
+    loadMore,
+    isFetchingNextPage,
+    refreshNotifications: loadInitialNotifications,
+    refreshCount: refetchCount,
+    loadNotifications,
   };
 };

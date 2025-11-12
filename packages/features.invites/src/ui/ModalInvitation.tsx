@@ -99,7 +99,7 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
                           aria-label="loading"
                         />
                       ) : (
-                        <Trash size="sm" className="fill-gray-60 group-hover:flex" />
+                        <Trash size="sm" className="fill-gray-60 h-6 w-6 group-hover:flex" />
                       )}
                     </TableCell>
                   </TableRow>

@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import {
   DndContext,
   DragEndEvent,
@@ -10,17 +10,16 @@ import {
   useDndMonitor,
 } from '@dnd-kit/core';
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
+import { RoomAudioRenderer } from '@livekit/components-react';
 import { CompactCall } from './CompactCall';
 import { useCallStore } from '../../store/callStore';
-import { useRouter } from '@tanstack/react-router';
-import { Chat } from '../Chat/Chat';
-
-type Corner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+import type { Corner } from '../../store/callStore';
+import { useNavigate, useRouter, useSearch } from '@tanstack/react-router';
+// import { Chat } from '../Chat/Chat';
+import { useRoom } from '../../providers/RoomProvider';
 
 type CompactViewProps = {
   children: React.ReactNode;
-  firstId?: string;
-  secondId?: string;
 };
 
 const DroppableCorner = ({ id, className }: { id: string; className: string }) => {
@@ -72,9 +71,8 @@ const DroppableAreas: FC = () => {
 };
 
 export const Compact: FC<CompactViewProps> = ({ children }) => {
-  const [activeCorner, setActiveCorner] = useState<Corner>('top-left');
   const router = useRouter();
-  const { isChatOpen } = useCallStore();
+  const { activeCorner, updateStore } = useCallStore();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -87,7 +85,7 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
   const handleDragEnd = (event: DragEndEvent) => {
     const { over } = event;
     if (over) {
-      setActiveCorner(over.id as Corner);
+      updateStore('activeCorner', over.id as Corner);
     }
   };
 
@@ -109,7 +107,7 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
 
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
-      <div className="relative flex h-[calc(100vh-64px)] flex-col gap-2 bg-transparent">
+      <div className="relative flex h-[calc(100vh-64px)] flex-col bg-transparent">
         <DroppableAreas />
 
         <div
@@ -121,26 +119,60 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
         {children}
 
         {/* Чат в режиме compact */}
-        {isChatOpen && (
+        {/* {isChatOpen && (
           <div className="absolute top-4 right-4 z-50">
             <div className="bg-gray-0 border-gray-20 flex h-96 w-80 flex-col rounded-2xl border shadow-lg">
               <Chat />
             </div>
           </div>
-        )}
+        )} */}
+
+        {/* Обработка аудио как в основном режиме ВКС */}
+        <RoomAudioRenderer />
       </div>
     </DndContext>
   );
 };
 
-export const CompactView = ({ children, firstId = '1', secondId = '1' }: CompactViewProps) => {
+export const CompactView = ({ children }: CompactViewProps) => {
   const { mode } = useCallStore();
+  const { room } = useRoom();
+  const { token } = useCallStore();
+
+  const search = useSearch({ strict: false }) as { call?: string };
+  const navigate = useNavigate();
+
+  // Очищаем URL параметр call, если комната не инициализирована
+  useEffect(() => {
+    if ((!room || !token) && search.call) {
+      const searchWithoutCall = { ...search };
+      delete searchWithoutCall.call;
+      navigate({
+        to: location.pathname,
+        search: searchWithoutCall,
+        replace: true,
+      });
+
+      // Очищаем все состояния интерфейса при отключении
+      const { clearAllRaisedHands, updateStore: updateCallStore } = useCallStore.getState();
+
+      // Очищаем поднятые руки
+      clearAllRaisedHands();
+
+      // Очищаем чат
+      updateCallStore('isChatOpen', false);
+      updateCallStore('chatMessages', []);
+      updateCallStore('unreadMessagesCount', 0);
+
+      updateCallStore('mode', 'full');
+    }
+  }, [room, token, search.call, search, navigate]);
+
+  if (!room || !token) {
+    return <>{children}</>;
+  }
 
   if (mode === 'full') return <>{children}</>;
 
-  return (
-    <Compact firstId={firstId} secondId={secondId}>
-      {children}
-    </Compact>
-  );
+  return <Compact>{children}</Compact>;
 };

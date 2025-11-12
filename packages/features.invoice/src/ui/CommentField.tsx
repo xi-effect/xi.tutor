@@ -11,7 +11,7 @@ export const CommentField = ({ control }: CommentFieldProps) => {
     <FormField
       control={control}
       name="comment"
-      defaultValue=""
+      defaultValue={null}
       render={({ field: formField }) => (
         <FormItem>
           <FormLabel className="text-gray-100">

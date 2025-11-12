@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import '@livekit/components-styles';
-import { TrackReferenceOrPlaceholder } from '@livekit/components-core';
+import { TrackReferenceOrPlaceholder, isEqualTrackRef } from '@livekit/components-core';
+import { Track } from 'livekit-client';
 import {
   TrackLoop,
   useVisualStableUpdate,
@@ -10,11 +11,13 @@ import {
   usePagination,
   useSwipe,
 } from '@livekit/components-react';
-import { useSearch } from '@tanstack/react-router';
 import { useSize, useAdaptiveGrid } from '../../hooks';
 import { ParticipantTile } from '../Participant';
 import { SliderVideoGrid } from './SliderVideoGrid';
-import { SearchParams } from '../../types/router';
+import { HorizontalFocusLayout } from './HorizontalFocusLayout';
+import { VerticalFocusLayout } from './VerticalFocusLayout';
+import { GridPaginationControls } from './GridPaginationControls';
+import { useCallStore } from '../../store/callStore';
 import { GRID_CONFIG, getGridLayoutsForScreen } from '../../config/grid';
 
 export interface PaginationIndicatorProps {
@@ -34,11 +37,29 @@ export const EmptyItemContainerOfUser = ({ ...restProps }) => (
   </div>
 );
 
-const useEmptyItemContainerOfUser = (tracksLength: number) => {
-  const [isOneItem, setIsOneItem] = useState(tracksLength === 1);
+const useEmptyItemContainerOfUser = (
+  tracksLength: number,
+  tracks: TrackReferenceOrPlaceholder[],
+) => {
+  const [isOneItem, setIsOneItem] = useState(false);
+
   useEffect(() => {
-    setIsOneItem(tracksLength === 1);
-  }, [tracksLength]);
+    // Подсчитываем уникальных участников (не треков)
+    const uniqueParticipants = new Set(
+      tracks
+        .filter((track) => track.participant && track.participant.identity)
+        .map((track) => track.participant.identity),
+    );
+
+    // Показываем placeholder если только один участник
+    // Дополнительная проверка: если tracks пустой, но tracksLength > 0,
+    // это может означать, что участники еще не загрузились
+    const shouldShowPlaceholder =
+      uniqueParticipants.size === 1 || (tracks.length === 0 && tracksLength > 0);
+
+    setIsOneItem(shouldShowPlaceholder);
+  }, [tracksLength, tracks]);
+
   return isOneItem;
 };
 
@@ -90,7 +111,7 @@ export const CarouselLayout = ({
 
   const maxVisibleTiles = Math.floor(tilesThatFit);
   const sortedTiles = useVisualStableUpdate(tracks, maxVisibleTiles);
-  const isOneItem = useEmptyItemContainerOfUser(userTracks.length);
+  const isOneItem = useEmptyItemContainerOfUser(userTracks.length, userTracks);
   React.useLayoutEffect(() => {
     if (asideEl.current) {
       asideEl.current.dataset.lkOrientation = carouselOrientation;
@@ -131,7 +152,7 @@ export const PaginationIndicator = ({ totalPageCount, currentPage }: PaginationI
 };
 
 export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
-  const isOneItem = useEmptyItemContainerOfUser(tracks.length);
+  const isOneItem = useEmptyItemContainerOfUser(tracks.length, tracks);
   const gridEl = React.createRef<HTMLDivElement>();
 
   // Используем адаптивную сетку с кастомными конфигурациями
@@ -197,10 +218,16 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
       >
         <TrackLoop tracks={pagination.tracks}>{props.children}</TrackLoop>
         {isOneItem && <EmptyItemContainerOfUser />}
+
+        {/* Новые элементы управления пагинацией для grid режима */}
         {tracks.length > livekitLayout.maxTiles && (
-          <PaginationIndicator
-            totalPageCount={pagination.totalPageCount}
+          <GridPaginationControls
+            canPrev={pagination.currentPage > 1}
+            canNext={pagination.currentPage < pagination.totalPageCount}
+            onPrev={pagination.prevPage}
+            onNext={pagination.nextPage}
             currentPage={pagination.currentPage}
+            totalPages={pagination.totalPageCount}
           />
         )}
       </div>
@@ -210,41 +237,67 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
 
 type CarouselContainerProps = {
   focusTrack: TrackReferenceOrPlaceholder | undefined;
-  tracks: TrackReferenceOrPlaceholder[];
   carouselTracks: TrackReferenceOrPlaceholder[];
 };
 
-export const CarouselContainer = ({
-  focusTrack,
-  tracks,
-  carouselTracks,
-}: CarouselContainerProps) => {
-  const search: SearchParams = useSearch({ strict: false });
-  const [orientation, setCarouselType] = useState<'horizontal' | 'vertical'>('horizontal');
+export const CarouselContainer = ({ focusTrack, carouselTracks }: CarouselContainerProps) => {
+  // Получаем ориентацию из store
+  const carouselType = useCallStore((state) => state.carouselType);
+  const orientation = carouselType === 'vertical' ? 'vertical' : 'horizontal';
 
-  useEffect(() => {
-    setCarouselType(search.carouselType || 'horizontal');
-  }, [search.carouselType]);
+  // Создаем фокусный элемент
+  const focusElement = useMemo(() => {
+    // Если нет закрепленного трека, используем первый доступный трек участника
+    const trackToFocus =
+      focusTrack ||
+      carouselTracks.find((track) => track.publication?.source === Track.Source.Camera);
 
-  return (
-    <div
-      className={`flex h-full ${orientation === 'horizontal' ? 'flex-col' : ''} items-start justify-between gap-4`}
-    >
-      {orientation === 'vertical' ? (
-        <>
-          {focusTrack && <FocusLayout orientation={orientation} trackRef={focusTrack} />}
-          <CarouselLayout orientation={orientation} userTracks={tracks} tracks={carouselTracks}>
-            <ParticipantTile style={{ flex: 'unset' }} className="h-[144px] w-[250px]" />
-          </CarouselLayout>
-        </>
-      ) : (
-        <>
-          <CarouselLayout orientation={orientation} userTracks={tracks} tracks={carouselTracks}>
-            <ParticipantTile style={{ flex: 'unset' }} className="h-[144px] w-[250px]" />
-          </CarouselLayout>
-          {focusTrack && <FocusLayout orientation={orientation} trackRef={focusTrack} />}
-        </>
-      )}
-    </div>
-  );
+    if (!trackToFocus) {
+      // Если нет треков для фокуса, показываем заглушку
+      return (
+        <div className="bg-gray-40 flex h-full w-full items-center justify-center rounded-2xl">
+          <span className="text-lg text-gray-100">Нет участников для отображения</span>
+        </div>
+      );
+    }
+
+    return (
+      <ParticipantTile
+        isFocusToggleDisable
+        style={{
+          width: '100%',
+          height: '100%',
+        }}
+        className="h-full w-full [&_video]:object-contain lg:[&_video]:object-cover"
+        {...trackToFocus}
+      />
+    );
+  }, [focusTrack, carouselTracks]);
+
+  // Создаем превью элементы для карусели
+  const thumbElements = useMemo(() => {
+    // Исключаем трек, который используется как фокусный
+    const trackToFocus =
+      focusTrack ||
+      carouselTracks.find((track) => track.publication?.source === Track.Source.Camera);
+    const filteredCarouselTracks = trackToFocus
+      ? carouselTracks.filter((track) => !isEqualTrackRef(track, trackToFocus))
+      : carouselTracks;
+
+    return filteredCarouselTracks.map((track) => (
+      <ParticipantTile
+        key={`${track.participant.identity}-${track.source}`}
+        style={{ flex: 'unset' }}
+        className="h-full w-full [&_video]:object-cover"
+        {...track}
+      />
+    ));
+  }, [carouselTracks, focusTrack]);
+
+  // Выбираем правильный layout в зависимости от ориентации
+  if (orientation === 'vertical') {
+    return <VerticalFocusLayout focus={focusElement} thumbs={thumbElements} />;
+  }
+
+  return <HorizontalFocusLayout focus={focusElement} thumbs={thumbElements} />;
 };

@@ -1,42 +1,41 @@
 import { Tabs } from '@xipkg/tabs';
-import { useMemo, useRef, useEffect } from 'react';
+import React, { useMemo, useRef, useEffect } from 'react';
 import { VirtualizedPaymentsTable } from './VirtualizedPaymentsTable';
 import { useMedia } from 'common.utils';
-import { students, subjects, createPaymentColumns, PaymentT } from 'features.table';
+import { createPaymentColumns, useInfiniteQuery } from 'features.table';
+import { UserRoleT } from '../../../common.api/src/types';
 import { TemplatesGrid } from './Templates';
-import { useInfiniteQuery } from '../hooks';
 import { useCurrentUser } from 'common.services';
 import { useSearch, useNavigate } from '@tanstack/react-router';
+import { type TabsComponentPropsT } from '../types';
 // import { ChartsPage } from './Charts';
 
-type TabsComponentPropsT = {
-  onApprovePayment: (payment: PaymentT) => void;
-};
-
-export const TabsComponent = ({ onApprovePayment }: TabsComponentPropsT) => {
+export const TabsComponent = React.memo(({ onApprovePayment }: TabsComponentPropsT) => {
   const isMobile = useMedia('(max-width: 700px)');
   const parentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
-  const currentTab = search.tab || 'boards';
+  const currentTab = search.tab || 'invoices';
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const currentUserRole = isTutor ? 'tutor' : 'student';
   const prevIsTutorRef = useRef(isTutor);
 
-  const { items, isLoading, isFetchingNextPage, hasNextPage, fetchNextPage } =
-    useInfiniteQuery(parentRef);
+  const { items, isLoading, isFetchingNextPage, isError } = useInfiniteQuery(
+    parentRef,
+    currentUserRole,
+  );
 
   const defaultColumns = useMemo(
     () =>
-      createPaymentColumns({
-        withStudentColumn: true,
-        students,
-        subjects,
+      createPaymentColumns<UserRoleT>({
+        usersRole: isTutor ? 'student' : 'tutor',
         isMobile,
         onApprovePayment,
+        isTutor,
       }),
-    [isMobile, onApprovePayment],
+    [isMobile, onApprovePayment, isTutor],
   );
 
   // Отслеживаем изменения роли пользователя
@@ -48,7 +47,7 @@ export const TabsComponent = ({ onApprovePayment }: TabsComponentPropsT) => {
     if (prevIsTutor && !currentIsTutor && currentTab === 'templates') {
       navigate({
         // @ts-expect-error - TanStack Router search params typing issue
-        search: { tab: 'boards' },
+        search: { tab: 'invoices' },
       });
     }
 
@@ -66,7 +65,7 @@ export const TabsComponent = ({ onApprovePayment }: TabsComponentPropsT) => {
   return (
     <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
       <Tabs.List className="flex w-80 flex-row gap-4">
-        <Tabs.Trigger value="boards" className="text-m-base font-medium text-gray-100">
+        <Tabs.Trigger value="invoices" className="text-m-base font-medium text-gray-100">
           Журнал оплат
         </Tabs.Trigger>
 
@@ -83,17 +82,16 @@ export const TabsComponent = ({ onApprovePayment }: TabsComponentPropsT) => {
       </Tabs.List>
 
       <div className="h-full pt-0">
-        <Tabs.Content value="boards">
+        <Tabs.Content value="invoices">
           <VirtualizedPaymentsTable
             data={items}
             columns={defaultColumns}
-            students={students}
-            subjects={subjects}
             isLoading={isLoading}
             isFetchingNextPage={isFetchingNextPage}
-            hasNextPage={hasNextPage}
-            onLoadMore={fetchNextPage}
             onApprovePayment={onApprovePayment}
+            parentRef={parentRef}
+            isError={isError}
+            currentUserRole={currentUserRole}
           />
         </Tabs.Content>
 
@@ -110,4 +108,4 @@ export const TabsComponent = ({ onApprovePayment }: TabsComponentPropsT) => {
       </div>
     </Tabs.Root>
   );
-};
+});

@@ -56,8 +56,6 @@ const createNetworkErrorInterceptor = async (instance: AxiosInstance): Promise<A
         return Promise.reject(error);
       }
 
-      console.log('error', error);
-
       const errorKey = getErrorKey(error);
 
       // Сначала проверяем HTTP статус-коды, если они есть

@@ -1,14 +1,107 @@
-import { CardMaterials, type CardMaterialsProps } from '../CardMaterials';
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
+import {
+  useCurrentUser,
+  useGetClassroomMaterialsList,
+  useGetClassroomMaterialsListStudent,
+} from 'common.services';
+import { CardMaterials } from '../CardMaterials';
+import { ClassroomMaterialsT } from 'common.types';
 
-export const MaterialsList = ({
-  materials,
-}: {
-  materials: CardMaterialsProps['accessTypes'][];
-}) => {
+export const MaterialsList = () => {
+  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
+
+  const navigate = useNavigate();
+  const search = useSearch({ strict: false });
+
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const getList = isTutor ? useGetClassroomMaterialsList : useGetClassroomMaterialsListStudent;
+
+  // Получаем все материалы кабинета (и доски, и заметки)
+  const {
+    data: materials,
+    isLoading,
+    isError,
+  } = getList({
+    classroomId: classroomId || '',
+    content_type: null, // null означает все типы материалов
+    disabled: !classroomId,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex flex-row gap-8 pb-4">
+        {[...new Array(3)].map((_, index) => (
+          <div
+            key={index}
+            className="border-gray-30 bg-gray-0 flex min-h-[96px] min-w-[350px] animate-pulse flex-col items-start justify-start gap-2 rounded-2xl border p-4"
+          >
+            <div className="flex w-full flex-row items-center justify-between">
+              <div className="h-6 w-24 animate-pulse rounded bg-gray-200" />
+              <div className="h-6 w-6 animate-pulse rounded bg-gray-200" />
+            </div>
+            <div className="flex flex-col items-start justify-start gap-4">
+              <div className="flex flex-row items-center justify-start gap-2">
+                <div className="h-6 w-6 animate-pulse rounded bg-gray-200" />
+                <div className="h-5 w-32 animate-pulse rounded bg-gray-200" />
+              </div>
+              <div className="h-4 w-24 animate-pulse rounded bg-gray-200" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="flex h-[96px] w-full items-center justify-center">
+        <p className="text-gray-50">Ошибка загрузки материалов</p>
+      </div>
+    );
+  }
+
+  // Если нет данных или пустой массив
+  if (!materials || materials.length === 0) {
+    return (
+      <div className="flex h-[96px] w-full items-center justify-center">
+        <p className="text-gray-50">Нет материалов</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-row gap-8 pb-4">
-      {materials.map((material) => (
-        <CardMaterials key={material?.id} accessTypes={material} />
+      {materials.map((material: ClassroomMaterialsT) => (
+        <CardMaterials
+          key={material.id}
+          material={material}
+          onClick={() => {
+            // Сохраняем только параметр call при переходе
+            const filteredSearch = search.call ? { call: search.call } : {};
+
+            if (material.content_kind === 'board') {
+              navigate({
+                to: '/classrooms/$classroomId/boards/$boardId',
+                params: {
+                  classroomId: classroomId,
+                  boardId: material.id.toString(),
+                },
+                search: filteredSearch,
+              });
+            } else {
+              navigate({
+                to: '/classrooms/$classroomId/notes/$noteId',
+                params: {
+                  classroomId: classroomId,
+                  noteId: material.id.toString(),
+                },
+                search: filteredSearch,
+              });
+            }
+          }}
+        />
       ))}
     </div>
   );

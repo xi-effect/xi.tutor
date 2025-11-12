@@ -16,7 +16,7 @@ export const Route = createFileRoute('/(app)/_layout/materials/')({
     ],
   }),
   component: Materials,
-  beforeLoad: ({ context, location }) => {
-    console.log('Materials', context, location);
-  },
+  // beforeLoad: ({ context, location }) => {
+  //   console.log('Materials', context, location);
+  // },
 });

@@ -2,28 +2,32 @@ import { env } from 'common.env';
 import { HttpMethod } from './config';
 
 enum PaymentsQueryKey {
-  Payments = 'Payments',
+  StudentPayments = 'StudentPayments',
+  TutorPayments = 'TutorPayments',
   SearchPayments = 'SearchPayments',
-  AddPayment = 'AddPayment',
-  DeletePayment = 'DeletePayment',
-  GetPayment = 'GetPayment',
+  AddInvoice = 'AddInvoice',
+  DeleteRecipientInvoice = 'DeleteRecipientInvoice',
+  GetRecipientInvoiceByTutor = 'GetRecipientInvoiceByTutor',
+  GetRecipientInvoiceByStudent = 'GetRecipientInvoiceByStudent',
   UpdatePayment = 'UpdatePayment',
+  PaymentUnilateralConfirmation = 'PaymentUnilateralConfirmation',
+  PaymentReceiverConfirmation = 'PaymentReceiverConfirmation',
+  PaymentSenderConfirmation = 'PaymentSenderConfirmation',
 }
 
 const paymentsApiConfig = {
-  [PaymentsQueryKey.Payments]: {
-    getUrl: (limit: number, lastOpenedBefore?: string) => {
-      const params = new URLSearchParams({
-        limit: limit.toString(),
-      });
-
-      if (lastOpenedBefore) {
-        params.append('last_opened_before', lastOpenedBefore);
-      }
-
-      return `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/recipient-invoices/?${params.toString()}`;
+  [PaymentsQueryKey.StudentPayments]: {
+    getUrl: () => {
+      return `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/student/recipient-invoices/searches/`;
     },
-    method: HttpMethod.GET,
+    method: HttpMethod.POST,
+  },
+
+  [PaymentsQueryKey.TutorPayments]: {
+    getUrl: () => {
+      return `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/recipient-invoices/searches/`;
+    },
+    method: HttpMethod.POST,
   },
 
   [PaymentsQueryKey.SearchPayments]: {
@@ -32,28 +36,47 @@ const paymentsApiConfig = {
     method: HttpMethod.POST,
   },
 
-  [PaymentsQueryKey.AddPayment]: {
-    getUrl: () =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/invoices/`,
+  [PaymentsQueryKey.AddInvoice]: {
+    getUrl: (classroomId: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/classrooms/${classroomId}/invoices/`,
     method: HttpMethod.POST,
   },
 
-  [PaymentsQueryKey.DeletePayment]: {
+  [PaymentsQueryKey.DeleteRecipientInvoice]: {
     getUrl: (id: string) =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/recipient-invoices/${id}/`,
     method: HttpMethod.DELETE,
   },
 
-  [PaymentsQueryKey.GetPayment]: {
+  [PaymentsQueryKey.GetRecipientInvoiceByTutor]: {
     getUrl: (id: string) =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/recipient-invoices/${id}/`,
     method: HttpMethod.GET,
   },
-
+  [PaymentsQueryKey.GetRecipientInvoiceByStudent]: {
+    getUrl: (id: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/student/recipient-invoices/${id}/`,
+    method: HttpMethod.GET,
+  },
   [PaymentsQueryKey.UpdatePayment]: {
     getUrl: (id: string) =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/recipient-invoices/${id}/`,
     method: HttpMethod.PATCH,
+  },
+  [PaymentsQueryKey.PaymentUnilateralConfirmation]: {
+    getUrl: (recipient_invoice_id: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/recipient-invoices/${recipient_invoice_id}/payment-confirmations/unilateral/`,
+    method: HttpMethod.POST,
+  },
+  [PaymentsQueryKey.PaymentReceiverConfirmation]: {
+    getUrl: (recipient_invoice_id: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/tutor/recipient-invoices/${recipient_invoice_id}/payment-confirmations/receiver/`,
+    method: HttpMethod.POST,
+  },
+  [PaymentsQueryKey.PaymentSenderConfirmation]: {
+    getUrl: (recipient_invoice_id: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/invoice-service/roles/student/recipient-invoices/${recipient_invoice_id}/payment-confirmations/sender/`,
+    method: HttpMethod.POST,
   },
 };
 

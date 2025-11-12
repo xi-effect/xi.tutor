@@ -1,25 +1,30 @@
-import { useNavigate } from '@tanstack/react-router';
-import { ClassroomT } from 'common.api';
+import { useNavigate, useSearch } from '@tanstack/react-router';
+import { ClassroomT, IndividualClassroomT } from 'common.api';
 import { Button } from '@xipkg/button';
 import { Arrow, Conference } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import { useCurrentUser, useUserById } from 'common.services';
+import { useCurrentUser } from 'common.services';
+import { useUserByRole } from 'features.table';
 import { SubjectBadge } from './SubjectBadge';
 
 type UserAvatarPropsT = {
-  classroom: ClassroomT;
+  classroom: IndividualClassroomT;
   isLoading: boolean;
-  student_id: string;
 };
 
-const UserAvatar = ({ isLoading, student_id, classroom }: UserAvatarPropsT) => {
-  const { data } = useUserById(student_id);
+const UserAvatar = ({ isLoading, classroom }: UserAvatarPropsT) => {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  // Используем useUserByRole с userId напрямую
+  const userRole = isTutor ? 'student' : 'tutor';
+  const { data } = useUserByRole(userRole, classroom.tutor_id ?? classroom.student_id ?? 0);
 
   return (
     <Avatar size={avatarSize}>
       <AvatarImage
-        src={`https://api.sovlium.ru/files/users/${classroom.kind === 'individual' ? classroom.student_id : classroom.tutor_id}/avatar.webp`}
+        src={`https://api.sovlium.ru/files/users/${classroom.tutor_id ?? classroom.student_id ?? 0}/avatar.webp`}
         alt="user avatar"
       />
       {isLoading || !data ? (
@@ -40,15 +45,22 @@ type ClassroomProps = {
 
 export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   const navigate = useNavigate();
+  const search = useSearch({ strict: false });
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
   const handleClick = () => {
+    // Сохраняем параметр call при переходе в кабинет
+    const filteredSearch = search.call ? { call: search.call } : {};
+
     navigate({
       to: '/classrooms/$classroomId',
       params: { classroomId: classroom.id.toString() },
-      search: { tab: 'overview' },
+      search: {
+        tab: 'overview',
+        ...filteredSearch,
+      },
     });
   };
 
@@ -81,11 +93,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
 
       <div className="flex flex-row gap-2">
         {classroom.kind === 'individual' && (
-          <UserAvatar
-            classroom={classroom}
-            isLoading={isLoading}
-            student_id={classroom.student_id?.toString()}
-          />
+          <UserAvatar classroom={classroom} isLoading={isLoading} />
         )}
         {classroom.kind === 'group' && (
           <div className="bg-brand-80 text-gray-0 flex h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-[24px]">

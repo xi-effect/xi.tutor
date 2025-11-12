@@ -19,7 +19,11 @@ export type ErrorType =
   | 'acceptInvite'
   | 'classroom'
   | 'calls'
-  | 'createGroup';
+  | 'createGroup'
+  | 'files'
+  | 'notifications'
+  | 'emailConfirmation'
+  | 'emailConfirmationRequest';
 
 // Маппинг ошибок для разных операций
 const errorMessages: Record<ErrorType, Record<string, string>> = {
@@ -101,6 +105,23 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
     'Group name already exists': 'Группа с таким названием уже существует',
     'Subject not found': 'Предмет не найден',
   },
+  files: {
+    'Invalid file format': 'Недопустимый тип файла',
+  },
+  notifications: {
+    'Validation Error': 'Ошибка валидации',
+    'Notification not found': 'Уведомление не найдено',
+    'Notification access denied': 'Доступ к уведомлению запрещен',
+  },
+  emailConfirmation: {
+    'Too many emails': 'Слишком много запросов',
+    'Email already confirmed': 'Email уже подтвержден',
+    'Invalid token': 'Неверный токен',
+  },
+  emailConfirmationRequest: {
+    'Email already confirmed': 'Email уже подтвержден',
+    'Invalid token': 'Неверный токен',
+  },
 };
 
 // Общие сообщения об ошибках по статусам
@@ -132,6 +153,10 @@ const successMessages: Record<ErrorType, string> = {
   classroom: 'Статус класса обновлен',
   calls: 'Access token создан',
   createGroup: 'Группа успешно создана',
+  files: 'Файл успешно загружен',
+  notifications: 'Уведомление успешно отмечено как прочитанное',
+  emailConfirmation: 'Письмо для подтверждения email было отправлено',
+  emailConfirmationRequest: 'Почта успешно подтверждена',
 };
 
 /**
@@ -141,6 +166,17 @@ export const handleError = (error: unknown, type: ErrorType): void => {
   if (error instanceof AxiosError) {
     const status = error.response?.status;
     const detail = error.response?.data?.detail;
+
+    console.log('status', status);
+    console.log('detail', detail);
+    console.log('type', type);
+
+    if (type === 'emailConfirmationRequest' && status === 401) {
+      toast.error('Пользователь не найден');
+      return;
+    }
+
+    // if (type === 'emailConfirmation' && detail === 'Too many emails') {
 
     // Проверяем специфичные ошибки для типа операции
     if (detail && errorMessages[type][detail]) {
@@ -195,6 +231,10 @@ const getOperationName = (type: ErrorType): string => {
       return 'удалении ученика';
     case 'createGroup':
       return 'создании группы';
+    case 'files':
+      return 'загрузке файла';
+    case 'notifications':
+      return 'обработке уведомления';
     default:
       return 'выполнении операции';
   }

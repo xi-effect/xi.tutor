@@ -9,6 +9,10 @@ const paramsSchema = z.object({
   callId: z.string(),
 });
 
+const searchSchema = z.object({
+  carouselType: z.enum(['horizontal', 'vertical']).optional(),
+});
+
 // @ts-ignore
 export const Route = createFileRoute('/(app)/_layout/call/$callId')({
   head: () => ({
@@ -20,9 +24,10 @@ export const Route = createFileRoute('/(app)/_layout/call/$callId')({
   }),
   component: CallPage,
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
-  beforeLoad: () => {
-    // console.log('Call', context, location);
-  },
+  validateSearch: (search: Record<string, unknown>) => searchSchema.parse(search),
+  // beforeLoad: () => {
+  //   console.log('Call', context, location);
+  // },
 });
 
 function CallPage() {

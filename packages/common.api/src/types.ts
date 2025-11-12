@@ -1,6 +1,7 @@
 export type MaterialsKindT = 'note' | 'board';
 
 export type OnboardingStageT =
+  | 'email-confirmation'
   | 'user-information'
   | 'default-layout'
   | 'notifications'
@@ -10,6 +11,8 @@ export type OnboardingStageT =
 export type OnboardingTransitionModeT = 'forwards' | 'backwards';
 
 export type ClassroomStatusT = 'active' | 'paused' | 'locked' | 'finished';
+
+export type UserRoleT = 'tutor' | 'student';
 
 // Базовые типы для пользователей
 export interface UserProfileSchema {
@@ -54,7 +57,8 @@ export interface BaseClassroomT {
 
 export interface IndividualClassroomT extends BaseClassroomT {
   kind: 'individual';
-  student_id: number;
+  student_id?: number;
+  tutor_id?: number;
 }
 
 export interface GroupClassroomT extends BaseClassroomT {
@@ -95,6 +99,8 @@ export interface GroupClassroomTutorResponseSchema {
   invite_code: string;
   subject_id: number | null;
   name?: string;
+  tutor_id?: number;
+  enrollments_count?: number;
 }
 
 export type ClassroomTutorResponseSchema =

@@ -11,5 +11,6 @@
   "logout": "Logout",
   "role": "Role",
   "tutor": "Tutor",
-  "student": "Student"
+  "student": "Student",
+  "classrooms": "Classrooms"
 }

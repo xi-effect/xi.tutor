@@ -6,7 +6,7 @@ import { UndoRedo } from './UndoRedo';
 import { useTldrawStore } from '../../../store';
 import { useTldrawStyles, useHotkeys } from '../../../hooks';
 import { NavbarButton } from '../shared';
-import { PenPopup, StickerPopup } from '../popups';
+import { ArrowsPopup, PenPopup, StickerPopup } from '../popups';
 import { ShapesPopup } from '../popups/Shapes';
 import { insertImage } from '../../../features/pickAndInsertImage';
 
@@ -29,11 +29,13 @@ export const Navbar = track(
     redo,
     canUndo,
     canRedo,
+    token,
   }: {
     undo: () => void;
     redo: () => void;
     canUndo: boolean;
     canRedo: boolean;
+    token: string;
   }) => {
     const { pencilColor, pencilThickness, pencilOpacity, stickerColor } = useTldrawStore();
     const { resetToDefaults, setColor, setThickness, setOpacity } = useTldrawStyles();
@@ -67,7 +69,7 @@ export const Navbar = track(
           const file = (e.target as HTMLInputElement).files?.[0];
           if (file) {
             try {
-              await insertImage(editor, file);
+              await insertImage(editor, file, token);
             } catch (error) {
               console.error('Ошибка при загрузке изображения:', error);
             }
@@ -200,6 +202,23 @@ export const Navbar = track(
                           </div>
                         </Tooltip>
                       </TooltipProvider>
+                    );
+                  }
+
+                  if (item.action === 'arrow') {
+                    return (
+                      <ArrowsPopup
+                        key={item.action}
+                        open={isPopupOpen('arrow')}
+                        onOpenChange={(open) => handlePopupToggle('arrow', open)}
+                      >
+                        <NavbarButton
+                          icon={item.icon}
+                          title={item.title}
+                          isActive={isActive}
+                          onClick={() => handleSelectTool(item.action)}
+                        />
+                      </ArrowsPopup>
                     );
                   }
 

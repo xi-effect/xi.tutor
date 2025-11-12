@@ -1,16 +1,48 @@
 import { ScrollArea } from '@xipkg/scrollarea';
-import { useNavigate, useParams } from '@tanstack/react-router';
-import { boardsMock, notesMock } from '../../mocks';
-import { useGetClassroom } from 'common.services';
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
+import {
+  useCurrentUser,
+  useGetClassroom,
+  useGetClassroomMaterialsList,
+  useGetClassroomMaterialsListStudent,
+} from 'common.services';
 
-import { Card } from './Card';
+import { CardMaterials } from '../CardMaterials/CardMaterials';
 
 export const Materials = () => {
-  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId' });
+  const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
-  const navigate = useNavigate();
 
-  if (isLoading) {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const getList = isTutor ? useGetClassroomMaterialsList : useGetClassroomMaterialsListStudent;
+
+  // Получаем материалы кабинета
+  const {
+    data: boardsData,
+    isLoading: isBoardsLoading,
+    isError: isBoardsError,
+  } = getList({
+    classroomId: classroomId || '',
+    content_type: 'board',
+    disabled: !classroomId,
+  });
+
+  const {
+    data: notesData,
+    isLoading: isNotesLoading,
+    isError: isNotesError,
+  } = getList({
+    classroomId: classroomId || '',
+    content_type: 'note',
+    disabled: !classroomId,
+  });
+
+  const navigate = useNavigate();
+  const search = useSearch({ strict: false });
+
+  if (isLoading || isBoardsLoading || isNotesLoading) {
     return (
       <div className="flex flex-col">
         {/* Учебные доски секция */}
@@ -74,7 +106,7 @@ export const Materials = () => {
     );
   }
 
-  if (isError || !classroom) {
+  if (isError || isBoardsError || isNotesError || !classroom) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 p-8">
         <h2 className="text-xl font-medium text-gray-900">Ошибка загрузки данных</h2>
@@ -91,19 +123,36 @@ export const Materials = () => {
         </div>
         <div className="flex flex-row">
           <ScrollArea
-            className="max-h-[110px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
+            className="max-h-[150px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
             scrollBarProps={{ orientation: 'horizontal' }}
           >
             <div className="flex flex-row gap-8 pb-4">
-              {boardsMock.map((board) => (
-                <Card
-                  key={board.id}
-                  value={board}
-                  onClick={() => {
-                    navigate({ to: `/board/${board.id}` });
-                  }}
-                />
-              ))}
+              {boardsData?.length ? (
+                boardsData.map((board) => (
+                  <CardMaterials
+                    key={board.id}
+                    material={board}
+                    showIcon={false}
+                    onClick={() => {
+                      // Сохраняем только параметр call при переходе
+                      const filteredSearch = search.call ? { call: search.call } : {};
+
+                      navigate({
+                        to: '/classrooms/$classroomId/boards/$boardId',
+                        params: {
+                          classroomId: classroomId,
+                          boardId: board.id.toString(),
+                        },
+                        search: filteredSearch,
+                      });
+                    }}
+                  />
+                ))
+              ) : (
+                <div className="flex h-[150px] w-full items-center justify-center">
+                  <p className="text-gray-50">Нет учебных досок</p>
+                </div>
+              )}
             </div>
           </ScrollArea>
         </div>
@@ -115,19 +164,36 @@ export const Materials = () => {
         </div>
         <div className="flex flex-row">
           <ScrollArea
-            className="h-[110px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
+            className="h-[150px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
             scrollBarProps={{ orientation: 'horizontal' }}
           >
             <div className="flex flex-row gap-8">
-              {notesMock.map((note) => (
-                <Card
-                  key={note.id}
-                  value={note}
-                  onClick={() => {
-                    navigate({ to: `/editor/${note.id}` });
-                  }}
-                />
-              ))}
+              {notesData?.length ? (
+                notesData.map((note) => (
+                  <CardMaterials
+                    key={note.id}
+                    material={note}
+                    showIcon={false}
+                    onClick={() => {
+                      // Сохраняем только параметр call при переходе
+                      const filteredSearch = search.call ? { call: search.call } : {};
+
+                      navigate({
+                        to: '/classrooms/$classroomId/notes/$noteId',
+                        params: {
+                          classroomId: classroomId,
+                          noteId: note.id.toString(),
+                        },
+                        search: filteredSearch,
+                      });
+                    }}
+                  />
+                ))
+              ) : (
+                <div className="flex h-[150px] w-full items-center justify-center">
+                  <p className="text-gray-50">Нет заметок</p>
+                </div>
+              )}
             </div>
           </ScrollArea>
         </div>

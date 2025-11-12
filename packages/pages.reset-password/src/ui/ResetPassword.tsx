@@ -51,7 +51,7 @@ export const ResetPassword = () => {
                     }}
                   />
                 </FormControl>
-                <FormMessage className="text-red-80 text-sm font-normal" />
+                <FormMessage className="text-red-80 pt-0 text-sm font-normal" />
               </FormItem>
             )}
           />

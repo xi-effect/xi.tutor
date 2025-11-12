@@ -3,6 +3,7 @@ export type WelcomeContextT = {
   email: string | null;
   display_name: string | null;
   onboarding_stage:
+    | 'email-confirmation'
     | 'user-information'
     | 'default-layout'
     | 'notifications'

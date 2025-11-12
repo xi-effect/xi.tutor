@@ -7,16 +7,66 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from '@xipkg/sidebar';
-import { footerMenu, items } from './config';
-import { useLocation, useNavigate } from '@tanstack/react-router';
+import { useLocation, useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { SwiperRef } from 'swiper/react';
+import { Group, Home, Materials, Payments, TelegramFilled } from '@xipkg/icons';
+import { useCurrentUser } from 'common.services';
+import { useCallStore } from 'modules.calls';
 
 export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<SwiperRef | null> }) => {
   const { t } = useTranslation('navigation');
 
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const isStarted = useCallStore((state) => state.isStarted);
+  const mode = useCallStore((state) => state.mode);
+  const updateStore = useCallStore((state) => state.updateStore);
+
+  const topMenu = [
+    {
+      id: 'home-menu-item',
+      titleKey: 'home',
+      url: '/',
+      icon: Home,
+    },
+    {
+      id: 'classrooms-menu-item',
+      titleKey: 'classrooms',
+      url: '/classrooms',
+      icon: Group,
+    },
+    ...(isTutor
+      ? [
+          {
+            id: 'materials-menu-item',
+            titleKey: 'materials',
+            url: '/materials',
+            icon: Materials,
+          },
+        ]
+      : []),
+    {
+      id: 'payments-menu-item',
+      titleKey: 'payments',
+      url: '/payments',
+      icon: Payments,
+    },
+  ];
+
+  const footerMenu = [
+    {
+      titleKey: 'support',
+      url: 'https://t.me/sovlium_support_bot',
+      icon: TelegramFilled,
+    },
+  ];
+
   const navigate = useNavigate();
   const { pathname } = useLocation();
+  const search = useSearch({ strict: false });
+  const { callId } = useParams({ strict: false });
 
   const getIsActiveItem = (url: string) => {
     if (url === '/') {
@@ -38,7 +88,26 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
   };
 
   const handleClick = (url: string) => {
-    navigate({ to: url });
+    // Сохраняем только параметр call при переходе
+    const filteredSearch = search.call ? { call: search.call } : {};
+
+    if (isStarted && mode === 'full') {
+      updateStore('mode', 'compact');
+      navigate({
+        to: url,
+        search: () => ({
+          ...filteredSearch,
+          call: callId,
+        }),
+      });
+    } else {
+      navigate({
+        to: url,
+        search: () => ({
+          ...filteredSearch,
+        }),
+      });
+    }
 
     if (swiperRef && swiperRef.current) {
       swiperRef.current?.swiper.slideTo(1);
@@ -51,8 +120,8 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((item) => (
-                <SidebarMenuItem className="cursor-pointer" key={item.titleKey}>
+              {topMenu.map((item) => (
+                <SidebarMenuItem id={item.id} className="cursor-pointer" key={item.titleKey}>
                   <SidebarMenuButton asChild isActive={getIsActiveItem(item.url)}>
                     <a onClick={() => handleClick(item.url)}>
                       <item.icon className="h-6 w-6" />
@@ -70,7 +139,7 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
           {footerMenu.map((item) => (
             <SidebarMenuItem key={item.titleKey}>
               <SidebarMenuButton variant="ghost" asChild>
-                <a className="hover:underline" href={item.url}>
+                <a className="hover:underline" href={item.url} target="_blank">
                   <item.icon />
                   <span>{t(item.titleKey)}</span>
                 </a>

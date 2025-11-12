@@ -1,42 +1,46 @@
 import { useState } from 'react';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Button } from '@xipkg/button';
 import { ArrowRight } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
-import { useCurrentUser } from 'common.services';
+import {
+  useCurrentUser,
+  useGetStudentPaymentsList,
+  useGetTutorPaymentsList,
+} from 'common.services';
 import { InvoiceModal } from 'features.invoice';
 import { Payment } from './Payment';
-
-const paymentsMock = [
-  {
-    id: 1,
-    name: 'Past simple — 1',
-    updated_at: '9 февраля',
-  },
-  {
-    id: 2,
-    name: 'Past simple — 2',
-    updated_at: '9 февраля',
-  },
-  {
-    id: 3,
-    name: 'Past simple — 3',
-    updated_at: '9 февраля',
-  },
-];
 
 export const Payments = () => {
   const { data: user } = useCurrentUser();
 
   const isTutor = user?.default_layout === 'tutor';
 
+  const { data: studentPayments, isLoading: isLoadingStudent } = useGetStudentPaymentsList({
+    disabled: isTutor,
+  });
+  const { data: tutorPayments, isLoading: isLoadingTutor } = useGetTutorPaymentsList({
+    disabled: !isTutor,
+  });
+
+  const payments = isTutor ? tutorPayments : studentPayments;
+  const isLoading = isTutor ? isLoadingTutor : isLoadingStudent;
+
   const navigate = useNavigate();
+  const search = useSearch({ strict: false });
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
 
   const handleMore = () => {
+    // Сохраняем параметр call при переходе к оплатам
+    const filteredSearch = search.call ? { call: search.call } : {};
+
     navigate({
       to: '/payments',
+      search: (prev: Record<string, unknown>) => ({
+        ...prev,
+        ...filteredSearch,
+      }),
     });
   };
 
@@ -60,6 +64,7 @@ export const Payments = () => {
         {isTutor && (
           <div className="ml-auto flex flex-row items-center gap-2 max-sm:hidden">
             <Button
+              id="create-invoice-button"
               size="s"
               variant="secondary"
               className="rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
@@ -71,20 +76,29 @@ export const Payments = () => {
         )}
       </div>
       <div className="flex flex-row">
-        {paymentsMock && paymentsMock.length > 0 && (
+        {isLoading && (
+          <div className="flex flex-row gap-8">
+            <p className="text-m-base text-gray-60">Загрузка...</p>
+          </div>
+        )}
+        {!isLoading && payments && payments.length > 0 && (
           <ScrollArea
-            className="h-[110px] w-full sm:w-[calc(100vw-104px)]"
+            className="h-full min-h-[172px] w-full sm:w-[calc(100vw-104px)]"
             scrollBarProps={{ orientation: 'horizontal' }}
           >
             <div className="flex flex-row gap-8">
-              {paymentsMock.map((_, index) => (
-                <Payment key={index} />
+              {payments.map((payment) => (
+                <Payment
+                  key={payment.id}
+                  payment={payment}
+                  currentUserRole={isTutor ? 'tutor' : 'student'}
+                />
               ))}
             </div>
           </ScrollArea>
         )}
-        {paymentsMock && paymentsMock.length === 0 && (
-          <div className="flex flex-row gap-8">
+        {!isLoading && (!payments || payments.length === 0) && (
+          <div className="flex h-[148px] w-full flex-row items-center justify-center gap-8">
             <p className="text-m-base text-gray-60">Здесь пока пусто</p>
           </div>
         )}

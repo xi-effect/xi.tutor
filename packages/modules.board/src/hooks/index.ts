@@ -3,3 +3,5 @@ export { useYjsStore } from './useYjsStore';
 export { useRemoveMark } from './useRemoveMark';
 export { useTldrawStyles } from './useTldrawStyles';
 export { useHotkeys } from './useHotkeys';
+export { useLockedShapeSelection } from './useLockedShapeSelection';
+export { useTldrawClipboard } from './useTldrawClipboard';

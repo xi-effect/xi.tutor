@@ -1,26 +1,40 @@
+import { useEffect } from 'react';
 import { useForm, useFieldArray } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useLocation } from '@tanstack/react-router';
 import { formSchema, type FormData } from '../model';
-import { useFetchClassrooms } from 'common.services';
 import { useCreateInvoice } from './useCreateInvoice';
 
 export const useInvoiceForm = () => {
-  const { data: classrooms } = useFetchClassrooms();
   const createInvoiceMutation = useCreateInvoice();
+
+  // Получаем classroomId из URL опционально через useLocation
+  // Это безопаснее, чем useParams, так как не требует наличия параметров в маршруте
+  const location = useLocation();
+  const pathname = location.pathname;
+
+  // Извлекаем classroomId из пути, если он есть (например, /classrooms/123/...)
+  const classroomIdMatch = pathname.match(/\/classrooms\/(\d+)/);
+  const classroomIdFromUrl = classroomIdMatch ? classroomIdMatch[1] : '';
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     mode: 'onSubmit',
     defaultValues: {
-      studentId: '',
+      classroomId: classroomIdFromUrl,
       items: [],
       comment: '',
     },
   });
 
-  const { control, watch, setValue, handleSubmit, formState } = form;
+  const { control, watch, setValue, handleSubmit } = form;
 
-  console.log('errors', formState.errors);
+  // Обновляем classroomId при изменении URL
+  useEffect(() => {
+    if (classroomIdFromUrl) {
+      setValue('classroomId', classroomIdFromUrl);
+    }
+  }, [classroomIdFromUrl, setValue]);
 
   const items = watch('items');
 
@@ -30,7 +44,9 @@ export const useInvoiceForm = () => {
   });
 
   const handleClearForm = () => {
-    setValue('studentId', '');
+    // При очистке формы устанавливаем classroomId из URL, если он доступен
+    setValue('classroomId', classroomIdFromUrl);
+    setValue('comment', '');
     setValue('items', [
       {
         name: '',
@@ -41,18 +57,14 @@ export const useInvoiceForm = () => {
   };
 
   const onSubmit = (data: FormData) => {
-    const student = classrooms?.find((c) => c.id === Number(data.studentId));
-
-    // Формируем payload для отправки
-    const student_ids = student?.kind === 'individual' ? [student.student_id] : [];
-
+    const comment: string | null = data.comment && data.comment.length > 0 ? data.comment : null;
     const payload = {
-      invoice: { comment: data.comment || '' },
+      invoice: { comment },
       items: [...data.items],
-      student_ids,
+      student_ids: null,
     };
 
-    createInvoiceMutation.mutate(payload);
+    createInvoiceMutation.mutate({ classroomId: data.classroomId, payload });
   };
 
   return {

@@ -8,13 +8,17 @@ import {
   ModalTrigger,
 } from '@xipkg/modal';
 import { InfoCircle } from '@xipkg/icons';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { isMac } from '../../../utils';
+import { useFullScreen } from 'common.utils';
 
 interface HotkeyItem {
   keys: string[];
   description: string;
   category: string;
 }
+
+const modKey = isMac ? '⌘' : 'Ctrl';
 
 const hotkeyCategories: HotkeyItem[] = [
   // Инструменты
@@ -27,18 +31,23 @@ const hotkeyCategories: HotkeyItem[] = [
   { keys: ['E'], description: 'Ластик', category: 'Инструменты' },
 
   // Действия
-  { keys: ['Delete'], description: 'Удалить выбранное', category: 'Действия' },
-  { keys: ['Backspace'], description: 'Удалить выбранное', category: 'Действия' },
-  { keys: ['Ctrl', 'A'], description: 'Выбрать все', category: 'Действия' },
+  { keys: [modKey, 'A'], description: 'Выбрать все', category: 'Действия' },
   { keys: ['Escape'], description: 'Отменить выбор', category: 'Действия' },
-  { keys: ['Ctrl', 'D'], description: 'Дублировать', category: 'Действия' },
-  { keys: ['Ctrl', 'G'], description: 'Группировать/разгруппировать', category: 'Действия' },
+  { keys: [modKey, 'D'], description: 'Дублировать', category: 'Действия' },
+  { keys: ['Backspace'], description: 'Удалить выбранное', category: 'Действия' },
+  { keys: [modKey, 'C'], description: 'Копировать', category: 'Действия' },
+  { keys: ['Delete'], description: 'Удалить выбранное', category: 'Действия' },
+  { keys: [modKey, 'V'], description: 'Вставить', category: 'Действия' },
+  { keys: [modKey, 'Z'], description: 'Отменить', category: 'Действия' },
+  { keys: [modKey, 'X'], description: 'Вырезать', category: 'Действия' },
+  { keys: [modKey, 'Y'], description: 'Повторить', category: 'Действия' },
+  { keys: [modKey, 'G'], description: 'Группировать/разгруппировать', category: 'Действия' },
 
   // Масштабирование
-  { keys: ['Ctrl', '+'], description: 'Увеличить масштаб', category: 'Масштабирование' },
-  { keys: ['Ctrl', '-'], description: 'Уменьшить масштаб', category: 'Масштабирование' },
-  { keys: ['Ctrl', '0'], description: 'Сбросить масштаб', category: 'Масштабирование' },
-  { keys: ['Ctrl', '1'], description: 'Подогнать по размеру', category: 'Масштабирование' },
+  { keys: [modKey, '+'], description: 'Увеличить масштаб', category: 'Масштабирование' },
+  { keys: [modKey, '-'], description: 'Уменьшить масштаб', category: 'Масштабирование' },
+  { keys: [modKey, '0'], description: 'Сбросить масштаб', category: 'Масштабирование' },
+  { keys: [modKey, '1'], description: 'Подогнать по размеру', category: 'Масштабирование' },
 ];
 
 const groupByCategory = (items: HotkeyItem[]) => {
@@ -57,6 +66,11 @@ const groupByCategory = (items: HotkeyItem[]) => {
 export const HotkeysHelp = () => {
   // const [open, setOpen] = useState(false);
   const groupedHotkeys = groupByCategory(hotkeyCategories);
+  const { isFullScreen } = useFullScreen('whiteboard-container');
+
+  const portalContainer = useMemo(() => {
+    return isFullScreen ? document.getElementById('whiteboard-container') : undefined;
+  }, [isFullScreen]);
 
   // Обработка события от горячей клавиши F1
   useEffect(() => {
@@ -73,16 +87,16 @@ export const HotkeysHelp = () => {
   return (
     <Modal>
       <ModalTrigger asChild>
-        <Button variant="ghost" className="h-[40px] w-[40px] p-2">
-          <InfoCircle size="s" />
+        <Button variant="ghost" className="h-10 w-10 p-2">
+          <InfoCircle size="s" className="size-6" />
         </Button>
       </ModalTrigger>
-      <ModalContent className="max-h-[80vh] max-w-4xl">
+      <ModalContent className="max-h-[80vh] max-w-4xl" portalProps={{ container: portalContainer }}>
         <ModalHeader>
           <ModalCloseButton />
           <ModalTitle>Горячие клавиши</ModalTitle>
         </ModalHeader>
-        <div className="space-y-6 p-6">
+        <div className="space-y-6 overflow-auto p-6">
           {Object.entries(groupedHotkeys).map(([category, items]) => (
             <div key={category}>
               <h3 className="mb-3 text-lg font-semibold text-gray-100">{category}</h3>

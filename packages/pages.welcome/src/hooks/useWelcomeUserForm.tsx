@@ -19,7 +19,6 @@ export const useWelcomeUserForm = () => {
 
     try {
       await transitionStage.mutateAsync();
-      console.log('redirect to role', search);
       navigate({ to: '/welcome/role', search: { ...search } });
     } catch {
       return;

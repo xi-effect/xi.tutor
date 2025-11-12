@@ -19,15 +19,24 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
   const getAcceptButtonText = () => (isInviteAccepted ? 'Перейти в кабинет' : 'Принять');
 
   const acceptInvite = () => {
-    if (invite.kind === 'individual' && invite.existing_classroom_id) {
-      navigate({ to: `/classrooms/${invite.existing_classroom_id}` }); // Переход по старому приглашению в индивидуальный кабинет
-    } else if (invite.kind === 'group' && invite.has_already_joined) {
-      // Не хватает ID группы для перехода по приглашению в групповой кабинет
-      // Получаемая информация о группе на данный момент: classromm (name)
-      // ожидается: classroom (id + name + participant_count)
-      // navigate({ to: `/classrooms/${invite.classroom.id}` });
-    } else {
-      mutate(inviteId); // первое принятие приглашения
+    if (invite.kind === 'group') {
+      if (invite.has_already_joined) {
+        if (invite.classroom?.id) {
+          navigate({ to: `/classrooms/${invite.classroom.id}` });
+        } else {
+          navigate({ to: `/classrooms` });
+        }
+      } else {
+        mutate(inviteId); // первое принятие приглашения
+      }
+    }
+
+    if (invite.kind === 'individual') {
+      if (invite.existing_classroom_id) {
+        navigate({ to: `/classrooms/${invite.existing_classroom_id}` }); // Переход по старому приглашению в индивидуальный кабинет
+      } else {
+        mutate(inviteId); // первое принятие приглашения
+      }
     }
   };
 
@@ -35,7 +44,11 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
     <div className="flex w-full flex-col gap-8 p-2 sm:w-[500px]">
       <div className="text-center">
         <h3 className="text-xl-base mb-2 font-semibold">{getInviteTitle()}</h3>
-        <span>{invite.kind === 'individual' ? 'Репетитор' : 'Группа'}</span>
+        <span>
+          {invite.kind === 'individual'
+            ? 'Репетитор'
+            : `в группу «${invite.classroom.name}» от репетитора`}
+        </span>
       </div>
       <div className="flex flex-col items-center gap-2">
         <Avatar size="xl">
@@ -46,11 +59,8 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
           <AvatarFallback />
         </Avatar>
         <div className="flex flex-col items-center">
-          <p>{invite.kind === 'individual' ? invite.tutor.display_name : invite.classroom.name}</p>
-          <span className="text-s-base">
-            {invite.kind === 'individual' ? invite.tutor.username : '4 человека'}
-            {/*должно быть поле invite.classroom.participant_count для группы*/}
-          </span>
+          <p>{invite.tutor.display_name}</p>
+          <span className="text-s-base">{invite.tutor.username}</span>
         </div>
       </div>
 

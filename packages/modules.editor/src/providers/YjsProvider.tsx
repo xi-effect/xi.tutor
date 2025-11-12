@@ -1,18 +1,18 @@
 import { ReactNode } from 'react';
 import { useYjsStore } from '../hooks/useYjsStore';
 import { YjsContext } from '../context/YjsContext';
-import { MaterialT } from 'common.types';
+import { StorageItemT } from 'common.types';
 
 type YjsProviderProps = {
   children: ReactNode;
-  data: MaterialT;
+  data: StorageItemT;
 };
 
 export const YjsProvider = ({ children, data }: YjsProviderProps) => {
-  const documentName = data?.ydoc_id;
-
   const yjsStore = useYjsStore({
-    documentName: documentName, // Используем editorId как fallback
+    ydocId: data.ydoc_id || '',
+    storageToken: data.storage_token || '',
+    storageItem: data,
   });
 
   return <YjsContext.Provider value={yjsStore}>{children}</YjsContext.Provider>;

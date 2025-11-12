@@ -5,7 +5,7 @@ import { handleError, showSuccess } from 'common.services';
 
 interface DeleteMaterialsParams {
   id: string;
-  kind: 'note' | 'board';
+  content_kind: 'note' | 'board';
   name?: string;
 }
 
@@ -13,7 +13,7 @@ interface MutationContext {
   previousQueries: [readonly unknown[], unknown][];
 }
 
-const validateKind = (kind: string): kind is DeleteMaterialsParams['kind'] => {
+const validateKind = (kind: string): kind is DeleteMaterialsParams['content_kind'] => {
   return kind === 'note' || kind === 'board';
 };
 
@@ -22,7 +22,7 @@ export const useDeleteMaterials = () => {
 
   const deleteMaterialsMutation = useMutation<void, Error, DeleteMaterialsParams, MutationContext>({
     mutationFn: async (params: DeleteMaterialsParams) => {
-      if (!validateKind(params.kind)) {
+      if (!validateKind(params.content_kind)) {
         throw new Error('Invalid material kind');
       }
 
@@ -40,12 +40,10 @@ export const useDeleteMaterials = () => {
         throw err;
       }
     },
-    onMutate: async (params) => {
-      console.log('onMutate delete', params);
-
-      // Отменяем все queries, которые начинаются с [Materials, kind]
+    onMutate: async () => {
+      // Отменяем все queries, которые начинаются с [Materials]
       await queryClient.cancelQueries({
-        queryKey: [MaterialsQueryKey.Materials, params.kind],
+        queryKey: [MaterialsQueryKey.Materials],
       });
 
       return { previousQueries: [] };
@@ -54,14 +52,10 @@ export const useDeleteMaterials = () => {
       handleError(err, 'materials');
     },
     onSuccess: (_, params) => {
-      console.log('onSuccess delete', params);
-
-      // Инвалидируем все queries для данного kind, чтобы они перезапросились
-      const result = queryClient.invalidateQueries({
-        queryKey: [MaterialsQueryKey.Materials, params.kind],
+      // Инвалидируем все запросы материалов, включая список с 'all'
+      queryClient.invalidateQueries({
+        queryKey: [MaterialsQueryKey.Materials],
       });
-
-      console.log('Invalidation result:', result);
 
       showSuccess('materials', `${params.name || 'Материал'} удален`);
     },

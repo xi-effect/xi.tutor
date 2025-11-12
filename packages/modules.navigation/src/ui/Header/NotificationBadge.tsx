@@ -1,21 +1,21 @@
 import { cn } from '@xipkg/utils';
 
 interface NotificationBadgeProps {
-  count: number;
+  count: number | string;
   className?: string;
 }
 
 export const NotificationBadge = ({ count, className }: NotificationBadgeProps) => {
-  if (count === 0) return null;
+  if (count === 0 || count === '0') return null;
 
   return (
     <div
       className={cn(
-        'bg-brand-100 text-xxs-base text-brand-0 absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full font-normal',
+        'text-xxs-base-size bg-brand-100 absolute -top-2 -right-2 flex h-5 w-fit min-w-5 items-center justify-center rounded-full p-1',
         className,
       )}
     >
-      {count > 99 ? '99+' : count}
+      <p className={cn('text-gray-0', className)}>{count}</p>
     </div>
   );
 };

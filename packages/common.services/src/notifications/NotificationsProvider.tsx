@@ -3,10 +3,14 @@ import { useNotifications } from './useNotifications';
 import type { NotificationsStateT } from 'common.types';
 
 interface NotificationsContextType extends NotificationsStateT {
-  markAsRead: (id: string) => void;
-  markAllAsRead: () => void;
-  deleteNotification: (id: string) => void;
-  sendTestNotification: () => void;
+  markAsRead: (id: string) => Promise<void>;
+  markAllAsRead: () => Promise<void>;
+  deleteNotification: (id: string) => Promise<void>;
+  loadMore: () => void;
+  isFetchingNextPage?: boolean;
+  refreshNotifications: () => void;
+  refreshCount: () => void;
+  loadNotifications: () => void;
 }
 
 const NotificationsContext = createContext<NotificationsContextType | undefined>(undefined);

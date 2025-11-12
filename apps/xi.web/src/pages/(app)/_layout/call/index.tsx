@@ -11,9 +11,9 @@ export const Route = createFileRoute('/(app)/_layout/call/')({
     ],
   }),
   component: CallsList,
-  beforeLoad: () => {
-    // console.log('CallsList', context, location);
-  },
+  // beforeLoad: () => {
+  //   console.log('CallsList', context, location);
+  // },
 });
 
 function CallsList() {

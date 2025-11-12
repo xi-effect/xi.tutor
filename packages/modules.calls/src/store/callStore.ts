@@ -17,6 +17,8 @@ type RaisedHand = {
   timestamp: number;
 };
 
+export type Corner = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+
 type useCallStoreT = {
   // разрешение от браузера на использование камеры
   isCameraPermission: boolean | null;
@@ -36,6 +38,8 @@ type useCallStoreT = {
   isConnecting: boolean;
 
   mode: 'compact' | 'full';
+  carouselType: 'grid' | 'horizontal' | 'vertical';
+  activeCorner: Corner;
 
   // токен для конференции
   token: string | undefined;
@@ -55,6 +59,8 @@ type useCallStoreT = {
   addRaisedHand: (hand: RaisedHand) => void;
   removeRaisedHand: (participantId: string) => void;
   toggleHandRaised: () => void;
+  clearAllRaisedHands: () => void;
+  isHandRaisedByParticipant: (participantId: string) => boolean;
 };
 
 export const useCallStore = create<useCallStoreT>()(
@@ -71,6 +77,8 @@ export const useCallStore = create<useCallStoreT>()(
       isStarted: undefined,
       isConnecting: false,
       mode: 'full',
+      carouselType: 'grid',
+      activeCorner: 'top-left',
 
       // токен для конференции
       token: undefined,
@@ -87,7 +95,14 @@ export const useCallStore = create<useCallStoreT>()(
       updateStore: (type: keyof useCallStoreT, value: any) => set({ [type]: value }),
 
       addChatMessage: (message: ChatMessage) => {
-        const { isChatOpen, unreadMessagesCount } = get();
+        const { isChatOpen, unreadMessagesCount, chatMessages } = get();
+
+        // Проверяем, нет ли уже сообщения с таким ID (дедупликация)
+        const messageExists = chatMessages.some((msg) => msg.id === message.id);
+        if (messageExists) {
+          return;
+        }
+
         set((state) => ({
           chatMessages: [...state.chatMessages, message],
           unreadMessagesCount: isChatOpen ? unreadMessagesCount : unreadMessagesCount + 1,
@@ -98,12 +113,32 @@ export const useCallStore = create<useCallStoreT>()(
 
       // Поднятые руки
       addRaisedHand: (hand: RaisedHand) =>
-        set((state) => ({ raisedHands: [...state.raisedHands, hand] })),
+        set((state) => {
+          // Проверяем, есть ли уже рука от этого участника
+          const existingHand = state.raisedHands.find(
+            (h) => h.participantId === hand.participantId,
+          );
+          if (existingHand) {
+            // Обновляем существующую руку
+            return {
+              raisedHands: state.raisedHands.map((h) =>
+                h.participantId === hand.participantId ? hand : h,
+              ),
+            };
+          }
+          // Добавляем новую руку
+          return { raisedHands: [...state.raisedHands, hand] };
+        }),
       removeRaisedHand: (participantId: string) =>
         set((state) => ({
           raisedHands: state.raisedHands.filter((hand) => hand.participantId !== participantId),
         })),
       toggleHandRaised: () => set((state) => ({ isHandRaised: !state.isHandRaised })),
+      clearAllRaisedHands: () => set({ raisedHands: [], isHandRaised: false }),
+      isHandRaisedByParticipant: (participantId: string) => {
+        const state = get();
+        return state.raisedHands.some((hand) => hand.participantId === participantId);
+      },
     }),
     {
       name: 'call-store', // Название ключа в localStorage
@@ -114,6 +149,8 @@ export const useCallStore = create<useCallStoreT>()(
         videoEnabled: state.videoEnabled,
         audioDeviceId: state.audioDeviceId,
         videoDeviceId: state.videoDeviceId,
+        carouselType: state.carouselType,
+        activeCorner: state.activeCorner,
       }), // Сохраняем только нужные ключи
     },
   ),

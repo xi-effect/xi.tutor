@@ -59,7 +59,8 @@ export const SubjectRow = ({ control, index }: SubjectRowProps) => {
                 variant="s"
                 after={<span className="text-gray-60">₽</span>}
                 onChange={(e) => {
-                  const value = +e.target.value || 0;
+                  const numValue = e.target.valueAsNumber;
+                  const value = e.target.value === '' || isNaN(numValue) ? '' : numValue;
                   formField.onChange(value);
                 }}
               />
@@ -98,6 +99,7 @@ export const SubjectRow = ({ control, index }: SubjectRowProps) => {
       <FormItem>
         <FormControl>
           <Input
+            className="pointer-events-none"
             type="number"
             value={totalPrice}
             placeholder="Сумма"
@@ -108,7 +110,7 @@ export const SubjectRow = ({ control, index }: SubjectRowProps) => {
         </FormControl>
       </FormItem>
       <Button className="ml-2 h-[24px] w-[24px] p-0" variant="ghost" onClick={() => remove(index)}>
-        <Close size="s" className="fill-gray-40" />
+        <Close size="s" className="fill-gray-40 h-6 w-6" />
       </Button>
     </div>
   );

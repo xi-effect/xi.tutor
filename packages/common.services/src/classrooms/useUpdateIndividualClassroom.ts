@@ -18,7 +18,28 @@ interface UpdateIndividualClassroomParams {
 interface MutationContext {
   previousClassroom?: ClassroomT;
   previousClassrooms?: ClassroomT[];
+  previousInfiniteData?: {
+    pages: ClassroomT[][];
+    pageParams: (string | undefined)[];
+  };
 }
+
+// Тип для данных infinite query
+type InfiniteQueryData = {
+  pages: ClassroomT[][];
+  pageParams: (string | undefined)[];
+};
+
+// Проверка, является ли данные infinite query
+const isInfiniteQueryData = (data: unknown): data is InfiniteQueryData => {
+  return (
+    typeof data === 'object' &&
+    data !== null &&
+    'pages' in data &&
+    'pageParams' in data &&
+    Array.isArray((data as InfiniteQueryData).pages)
+  );
+};
 
 export const useUpdateIndividualClassroom = () => {
   const queryClient = useQueryClient();
@@ -62,14 +83,38 @@ export const useUpdateIndividualClassroom = () => {
       const previousClassrooms = queryClient.getQueryData<ClassroomT[]>([
         ClassroomsQueryKey.GetClassrooms,
       ]);
+      const previousInfiniteData = queryClient.getQueryData<InfiniteQueryData>([
+        ClassroomsQueryKey.GetClassrooms,
+      ]);
 
       // Оптимистично обновляем данные класса в списке
-      queryClient.setQueryData<ClassroomT[]>([ClassroomsQueryKey.GetClassrooms], (old) => {
-        if (!old) return old;
-        return old.map((classroom) =>
-          classroom.id === classroomId ? { ...classroom, ...data } : classroom,
-        );
-      });
+      queryClient.setQueryData(
+        [ClassroomsQueryKey.GetClassrooms],
+        (old: ClassroomT[] | InfiniteQueryData | undefined) => {
+          if (!old) return old;
+
+          // Если это infinite query формат
+          if (isInfiniteQueryData(old)) {
+            return {
+              ...old,
+              pages: old.pages.map((page) =>
+                page.map((classroom) =>
+                  classroom.id === classroomId ? { ...classroom, ...data } : classroom,
+                ),
+              ),
+            };
+          }
+
+          // Если это обычный массив
+          if (Array.isArray(old)) {
+            return old.map((classroom) =>
+              classroom.id === classroomId ? { ...classroom, ...data } : classroom,
+            );
+          }
+
+          return old;
+        },
+      );
 
       // Оптимистично обновляем данные конкретного класса
       queryClient.setQueryData<ClassroomT>(
@@ -81,7 +126,7 @@ export const useUpdateIndividualClassroom = () => {
       );
 
       // Возвращаем предыдущие значения для отката в случае ошибки
-      return { previousClassroom, previousClassrooms };
+      return { previousClassroom, previousClassrooms, previousInfiniteData };
     },
     onError: (err, { classroomId }, context) => {
       // В случае ошибки откатываем изменения
@@ -93,6 +138,9 @@ export const useUpdateIndividualClassroom = () => {
       }
       if (context?.previousClassrooms) {
         queryClient.setQueryData([ClassroomsQueryKey.GetClassrooms], context.previousClassrooms);
+      }
+      if (context?.previousInfiniteData) {
+        queryClient.setQueryData([ClassroomsQueryKey.GetClassrooms], context.previousInfiniteData);
       }
 
       // Показываем toast с ошибкой
@@ -107,12 +155,33 @@ export const useUpdateIndividualClassroom = () => {
         );
 
         // Обновляем класс в списке
-        queryClient.setQueryData<ClassroomT[]>([ClassroomsQueryKey.GetClassrooms], (old) => {
-          if (!old) return old;
-          return old.map((classroom) =>
-            classroom.id === classroomId ? updatedClassroom : classroom,
-          );
-        });
+        queryClient.setQueryData(
+          [ClassroomsQueryKey.GetClassrooms],
+          (old: ClassroomT[] | InfiniteQueryData | undefined) => {
+            if (!old) return old;
+
+            // Если это infinite query формат
+            if (isInfiniteQueryData(old)) {
+              return {
+                ...old,
+                pages: old.pages.map((page) =>
+                  page.map((classroom) =>
+                    classroom.id === classroomId ? updatedClassroom : classroom,
+                  ),
+                ),
+              };
+            }
+
+            // Если это обычный массив
+            if (Array.isArray(old)) {
+              return old.map((classroom) =>
+                classroom.id === classroomId ? updatedClassroom : classroom,
+              );
+            }
+
+            return old;
+          },
+        );
       }
 
       // Показываем успешное уведомление

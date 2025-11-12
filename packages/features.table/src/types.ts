@@ -1,10 +1,31 @@
 import { ColumnDef } from '@tanstack/react-table';
+import type {
+  RoleT,
+  PaymentStatusT,
+  PaymentTypeT,
+  PaymentDataT,
+  StudentPaymentT,
+  TutorPaymentT,
+  RolePaymentT,
+} from 'common.types';
+
+// Реэкспортируем типы из common.types для обратной совместимости
+export type {
+  RoleT,
+  PaymentStatusT,
+  PaymentTypeT,
+  PaymentDataT,
+  StudentPaymentT,
+  TutorPaymentT,
+  RolePaymentT,
+};
 
 export type StudentT = {
   id: number;
   name: string;
   description?: string | '';
   avatarUrl?: string;
+  status: PaymentStatusT;
 };
 
 export type SubjectT = {
@@ -24,19 +45,10 @@ export type DataTableProps<TData> = {
   subjects?: SubjectT[];
 };
 
-export type PaymentStatusT = 'paid' | 'processing' | 'unpaid';
-
 export const mapPaymentStatus: Record<PaymentStatusT, string> = {
-  paid: 'оплачен',
-  processing: 'ожидает подтверждения',
-  unpaid: 'ждет оплаты',
-};
-
-export type PaymentTypeT = 'cash' | 'card';
-
-export const mapPaymentType: Record<PaymentTypeT, string> = {
-  cash: 'наличные',
-  card: 'перевод',
+  complete: 'оплачен',
+  wf_receiver_confirmation: 'ожидает подтверждения',
+  wf_sender_confirmation: 'ждет оплаты',
 };
 
 export type PaymentT = {
@@ -45,17 +57,27 @@ export type PaymentT = {
   idSubject: number;
   datePayment: string;
   amountPayment: number;
-  typePayment: PaymentTypeT;
-  statusPayment: PaymentStatusT;
+  typePayment: 'card' | 'cash';
+  statusPayment: 'paid' | 'unpaid' | 'processing';
 };
 
-export const FILTER_KEYS = [
-  'datePayment',
-  'amountPayment',
-  'idStudent',
-  'idSubject',
-  'statusPayment',
-  'typePayment',
-] as const;
+export const mapPaymentType: Record<PaymentTypeT, string> = {
+  cash: 'наличные',
+  transfer: 'перевод',
+};
+
+export const FILTER_KEYS = ['created_at', 'total', 'status', 'payment_type'] as const;
 
 export type FilterColumnId = (typeof FILTER_KEYS)[number];
+
+export type UserT = {
+  tutorship: {
+    student_id: number;
+    created_at: string;
+    active_classroom_count: number;
+  };
+  user: {
+    username: string;
+    display_name: string;
+  };
+};

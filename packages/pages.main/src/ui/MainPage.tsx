@@ -1,34 +1,86 @@
+/* eslint-disable no-irregular-whitespace */
 import { useState } from 'react';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { Materials, Payments, Classrooms } from './components';
 import { Menu } from 'common.ui';
+import { useCurrentUser } from 'common.services';
 // import { Sidebar } from './components/Sidebar';
 import { AssignLessonButton } from './components/AssignLessonButton';
 import { AddingLessonModal } from 'features.lesson.add';
 
-const steps = [
-  {
-    element: '#sidebar',
-    popover: {
-      description: `Рабочее пространство в xi.effect состоит из нескольких разделов: Календарь, Кабинеты, Материалы и Контроль оплат.
-Для быстрого переключения между разделами используйте боковую панель — она находится в левой части экрана.`,
-    },
-  },
-  {
-    element: '#userprofile',
-    popover: {
-      description: `Чтобы перейти в настройки аккаунта, нажмите на иконку вашего профиля.
-В настройках можно поменять почту и пароль, подключить мессенджеры для получения уведомлений и настроить ваше оборудование для проведения видеозвонков с учениками.`,
-    },
-  },
-];
-
 export const MainPage = () => {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
   const [isOpen, setIsOpen] = useState(false);
 
   const handleOpenAddingModal = () => {
     setIsOpen(true);
   };
+
+  const steps = [
+    {
+      element: '#sidebar',
+      popover: {
+        description: `Используйте панель слева, чтобы открыть Главную страницу, Кабинеты${isTutor ? ', Материалы' : ''} или Контроль оплат`,
+      },
+    },
+    {
+      element: '#userprofile',
+      popover: {
+        description: `В настройках можно поменять почту и пароль, установить аватар, поменять отображаемое имя и подключить мессенджеры для получения уведомлений`,
+      },
+      side: 'bottom' as const,
+      align: 'end' as const,
+    },
+    {
+      element: '#classrooms-menu-item',
+      popover: {
+        description: `Кабинет — виртуальное пространство для работы с учениками и группами.
+В кабинете вы можете увидеть расписание занятий, сохраненные материалы и информацию об оплатах`,
+      },
+    },
+    {
+      element: '#invite-student-button',
+      popover: {
+        description: `Приглашайте учеников в sovlium с помощью ссылок-приглашений`,
+      },
+      side: 'bottom' as const,
+      align: 'end' as const,
+    },
+    {
+      element: '#create-group-button',
+      popover: {
+        description: `Или создайте группу и приглашайте учеников по общей ссылке.
+Если вы назначите групповое занятие, каждый ученик группы получит уведомление.
+Материалы и заметки, которые вы разместите в групповом кабинете, будут доступны всем ученикам группы`,
+      },
+      side: 'bottom' as const,
+      align: 'end' as const,
+    },
+    {
+      element: '#materials-menu-item',
+      popover: {
+        description: `«В Материалах» вы можете просматривать личные сохраненные учебные доски и заметки. Дублирование в кабинет позволит поделиться материалами с учениками, создав копию материала в кабинете`,
+      },
+      side: 'right' as const,
+      align: 'start' as const,
+    },
+    {
+      element: '#create-invoice-button',
+      popover: {
+        description: `Чтобы получить оплату за занятие, выставите ученику счёт.
+Если ученик не оплатит счет, вам не придется напоминать ему об этом: он получит автоматическое уведомление о просроченном платеже`,
+      },
+      side: 'bottom' as const,
+      align: 'end' as const,
+    },
+    {
+      element: '#payments-menu-item',
+      popover: {
+        description: `Контроль оплат поможет вам отслеживать все финансы внутри платформы: предстоящие, совершённые и просроченные платежи`,
+      },
+    },
+  ];
 
   return (
     <>
@@ -45,7 +97,7 @@ export const MainPage = () => {
           {/* <Lessons /> */}
           <Classrooms />
           <Payments />
-          <Materials />
+          {isTutor && <Materials />}
           <Menu steps={steps} disabled={false} />
         </ScrollArea>
         {/* <Sidebar /> */}

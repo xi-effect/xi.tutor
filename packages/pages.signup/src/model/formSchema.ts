@@ -10,35 +10,64 @@ export const useFormSchema = () => {
   const { t } = useTranslation('signup');
 
   const formSchema = useMemo(() => {
+    // Безопасное получение переводов с fallback значениями
+    const getTranslation = (
+      key: string,
+      params?: Record<string, unknown>,
+      fallback?: string,
+    ): string => {
+      const translation = t(key, params);
+      // Проверяем, что перевод - это строка и не пустая, иначе используем fallback
+      if (typeof translation === 'string' && translation.length > 0) {
+        return translation;
+      }
+      return fallback || key;
+    };
+
     return z.object({
       username: z
         .string()
         .min(1, {
-          message: t('validation.required'),
+          message: getTranslation('validation.required', undefined, 'This field is required'),
         })
         .min(usernameMinLength, {
-          message: `${t('validation.minLength')}${t('validation.symbols', { count: usernameMinLength })}`,
+          message: `${getTranslation('validation.minLength', undefined, 'Min length is ')}${getTranslation('validation.symbols', { count: usernameMinLength }, `${usernameMinLength} symbols`)}`,
         })
         .max(usernameMaxLength, {
-          message: `${t('validation.maxLength')}${t('validation.symbols', { count: usernameMaxLength })}`,
+          message: `${getTranslation('validation.maxLength', undefined, 'Max length is ')}${getTranslation('validation.symbols', { count: usernameMaxLength }, `${usernameMaxLength} symbols`)}`,
         })
         .regex(/^[a-z0-9_.]+$/, {
-          message: t('validation.no_symbols'),
+          message: getTranslation(
+            'validation.no_symbols',
+            undefined,
+            "Use only Latin alphabet, lowercase, numbers or symbols: '_' or '.'",
+          ),
         }),
       email: z
         .string({
-          required_error: t('validation.required'),
+          required_error: getTranslation(
+            'validation.required',
+            undefined,
+            'This field is required',
+          ),
         })
         .email({
-          message: t('validation.wrong_format'),
+          message: getTranslation('validation.wrong_format', undefined, 'Incorrect data format'),
         }),
       password: z
         .string({
-          required_error: t('validation.required'),
+          required_error: getTranslation(
+            'validation.required',
+            undefined,
+            'This field is required',
+          ),
         })
         .min(passwordMinLength, {
-          message: `${t('validation.minLength')}${t('validation.symbols', { count: passwordMinLength })}`,
+          message: `${getTranslation('validation.minLength', undefined, 'Min length is ')}${getTranslation('validation.symbols', { count: passwordMinLength }, `${passwordMinLength} symbols`)}`,
         }),
+      consent: z.boolean().refine((value) => !!value, {
+        message: '',
+      }),
     });
   }, [t]);
 
@@ -50,5 +79,6 @@ export type FormData = z.infer<
     username: z.ZodString;
     email: z.ZodString;
     password: z.ZodString;
+    consent: z.ZodLiteral<boolean>;
   }>
 >;

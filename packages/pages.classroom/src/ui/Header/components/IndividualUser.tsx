@@ -1,8 +1,13 @@
 import { UserProfile } from '@xipkg/userprofile';
-import { useUserById } from 'common.services';
+import { useCurrentUser } from 'common.services';
+import { useUserByRole } from 'features.table';
 
 export const IndividualUser = ({ userId }: { userId: number }) => {
-  const { data: user } = useUserById(userId.toString());
+  const { data: currentUser } = useCurrentUser();
+  const isTutor = currentUser?.default_layout === 'tutor';
+  // Используем useUserByRole с userId напрямую
+  const userRole = isTutor ? 'student' : 'tutor';
+  const { data: user } = useUserByRole(userRole, userId);
 
   return (
     <div className="flex flex-row items-center gap-2">

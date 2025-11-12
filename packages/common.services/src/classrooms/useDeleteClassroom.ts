@@ -22,8 +22,6 @@ export const useDeleteClassroom = () => {
           ),
         });
 
-        console.log('response', response);
-
         return response.data;
       } catch (err) {
         console.error('Ошибка при удалении класса:', err);

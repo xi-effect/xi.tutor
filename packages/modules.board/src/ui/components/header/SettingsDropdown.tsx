@@ -8,6 +8,8 @@ import {
 } from '@xipkg/dropdown';
 import { File, Locked, MoreVert, Trash, Unlocked } from '@xipkg/icons';
 import { useDropdownActions } from './hooks/useDropdownActions';
+import { useFullScreen } from 'common.utils';
+import { useMemo } from 'react';
 
 type ActionPropsT = {
   onClick: () => void;
@@ -42,15 +44,24 @@ const ClearBoardAction = ({ onClick }: ActionPropsT) => {
 
 export const SettingsDropdown = () => {
   const { isReadonly, saveCanvas, clearBoard, toggleReadonly } = useDropdownActions();
+  const { isFullScreen } = useFullScreen('whiteboard-container');
+
+  const portalContainer = useMemo(() => {
+    return isFullScreen ? document.getElementById('whiteboard-container') : undefined;
+  }, [isFullScreen]);
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-[40px] w-[40px] p-2">
-          <MoreVert size="s" />
+          <MoreVert size="s" className="size-6" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="flex w-[250px] flex-col gap-1 px-2 py-1">
+      <DropdownMenuContent
+        align="end"
+        className="flex w-[250px] flex-col gap-1 px-2 py-1"
+        portalProps={{ container: portalContainer }}
+      >
         <DropdownMenuGroup>
           <DownloadBoardAction onClick={saveCanvas} />
 

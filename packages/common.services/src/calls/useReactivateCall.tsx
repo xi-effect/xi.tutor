@@ -32,7 +32,7 @@ export const useReactivateCall = () => {
     },
     onSuccess: () => {
       // Показываем успешное уведомление
-      console.log('Access token создан успешно');
+      // console.log('Access token создан успешно');
       // showSuccess('calls');
     },
   });
