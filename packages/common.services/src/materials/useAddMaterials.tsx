@@ -1,13 +1,7 @@
 import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { generateNameWithDate } from 'common.utils';
 import { handleError, showSuccess } from 'common.services';
-
-enum MaterialsKind {
-  note = 'заметка',
-  board = 'доска',
-}
 
 interface MaterialsResponseT {
   data: MaterialsDataT & {
@@ -22,7 +16,7 @@ interface MutationContext {
 
 export type MaterialsDataT = {
   content_kind: 'note' | 'board';
-  name?: string;
+  name: string;
 };
 
 const validateKind = (kind: string): kind is MaterialsDataT['content_kind'] => {
@@ -50,8 +44,7 @@ export const useAddMaterials = () => {
           url: materialsApiConfig[MaterialsQueryKey.AddMaterials].getUrl(),
           data: {
             ...materialsData,
-            name:
-              materialsData.name || generateNameWithDate(MaterialsKind[materialsData.content_kind]),
+            name: materialsData.name,
           },
           headers: {
             'Content-Type': 'application/json',

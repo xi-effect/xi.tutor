@@ -14,7 +14,8 @@
     "@xipkg/button": "^3.1.8",
     "@xipkg/dropdown": "^3.0.12",
     "@xipkg/icons": "^2.7.0",
-    "@xipkg/utils": "^1.8.0"
+    "@xipkg/utils": "^1.8.0",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
