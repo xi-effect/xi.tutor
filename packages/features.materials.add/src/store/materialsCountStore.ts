@@ -10,12 +10,12 @@ type MaterialsCountStore = {
 };
 
 export const useMaterialsCountStore = create<MaterialsCountStore>((set) => ({
-  notesCount: 0,
-  boardsCount: 0,
+  notesCount: 1,
+  boardsCount: 1,
   incrementNotes: () => set((state) => ({ notesCount: state.notesCount + 1 })),
   incrementBoards: () => set((state) => ({ boardsCount: state.boardsCount + 1 })),
-  decrementNotes: () => set((state) => ({ notesCount: Math.max(0, state.notesCount - 1) })),
-  decrementBoards: () => set((state) => ({ boardsCount: Math.max(0, state.boardsCount - 1) })),
+  decrementNotes: () => set((state) => ({ notesCount: Math.max(1, state.notesCount - 1) })),
+  decrementBoards: () => set((state) => ({ boardsCount: Math.max(1, state.boardsCount - 1) })),
 }));
 
 export const materialsSelectors = {

@@ -50,12 +50,6 @@ export const useAddClassroomMaterials = () => {
           ? `Новая заметка ${notesCount}`
           : `Новая доска ${boardsCount}`);
 
-      if (materialsData.content_kind === 'note') {
-        incrementNotes();
-      } else {
-        incrementBoards();
-      }
-
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
@@ -97,6 +91,12 @@ export const useAddClassroomMaterials = () => {
         queryClient.invalidateQueries({
           queryKey: [ClassroomMaterialsQueryKey.ClassroomMaterials, materialsData.classroomId],
         });
+      }
+
+      if (materialsData.content_kind === 'note') {
+        incrementNotes();
+      } else {
+        incrementBoards();
       }
 
       showSuccess('materials', `${response.data.name} создана`);
