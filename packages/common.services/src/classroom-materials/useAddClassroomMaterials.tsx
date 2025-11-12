@@ -1,13 +1,8 @@
 import { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { generateNameWithDate } from 'common.utils';
 import { handleError, showSuccess } from 'common.services';
-
-enum ClassroomMaterialsKind {
-  note = 'заметка',
-  board = 'доска',
-}
+import { materialsSelectors } from 'features.materials.add';
 
 interface ClassroomMaterialsResponseT {
   data: ClassroomMaterialsDataT & {
@@ -33,6 +28,11 @@ const validateKind = (kind: string): kind is ClassroomMaterialsDataT['content_ki
 export const useAddClassroomMaterials = () => {
   const queryClient = useQueryClient();
 
+  const notesCount = materialsSelectors.useNotesCount();
+  const boardsCount = materialsSelectors.useBoardsCount();
+  const incrementNotes = materialsSelectors.useIncrementNotes();
+  const incrementBoards = materialsSelectors.useIncrementBoards();
+
   const addClassroomMaterialsMutation = useMutation<
     ClassroomMaterialsResponseT,
     Error,
@@ -42,6 +42,18 @@ export const useAddClassroomMaterials = () => {
     mutationFn: async (materialsData: ClassroomMaterialsDataT & { classroomId: string }) => {
       if (!validateKind(materialsData.content_kind)) {
         throw new Error('Invalid material kind');
+      }
+
+      const materialName =
+        materialsData.name ||
+        (materialsData.content_kind === 'note'
+          ? `Новая заметка ${notesCount}`
+          : `Новая доска ${boardsCount}`);
+
+      if (materialsData.content_kind === 'note') {
+        incrementNotes();
+      } else {
+        incrementBoards();
       }
 
       try {
@@ -54,9 +66,7 @@ export const useAddClassroomMaterials = () => {
           ),
           data: {
             content_kind: materialsData.content_kind,
-            name:
-              materialsData.name ||
-              generateNameWithDate(ClassroomMaterialsKind[materialsData.content_kind]),
+            name: materialName,
             student_access_mode: materialsData.student_access_mode || 'no_access',
           },
           headers: {
