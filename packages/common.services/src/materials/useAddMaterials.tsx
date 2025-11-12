@@ -2,7 +2,7 @@ import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError, showSuccess } from 'common.services';
-import { materialsSelectors } from 'features.materials.add';
+import { materialsSelectors } from 'common.services';
 
 interface MaterialsResponseT {
   data: MaterialsDataT & {
