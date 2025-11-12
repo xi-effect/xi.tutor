@@ -2,6 +2,7 @@ import { format } from 'date-fns';
 import { cn } from '@xipkg/utils';
 
 import { ScrollArea } from '@xipkg/scrollarea';
+import { getFullDateString } from '../utils/utils';
 
 // Функция для создания даты с сегодняшним днем и фиксированным временем
 const createTodayWithTime = (timeString: string) => {
@@ -100,7 +101,7 @@ export const DayCalendar = ({ day }: { day: Date }) => {
     <div className="h-[calc(100vh-112px)] w-full overflow-hidden">
       {/* Хедер */}
       <h5 className="text-gray-80 text-m-base text-center font-medium">
-        {format(day, 'd')} {format(day, 'MMMM')}
+        {getFullDateString(day, 'long')}
       </h5>
 
       {/* Основная прокручиваемая зона */}

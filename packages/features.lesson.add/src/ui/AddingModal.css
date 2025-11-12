@@ -1,0 +1,30 @@
+/* Убедитесь, что календарь DatePicker рендерится выше модального окна */
+/* Применяем стили ко всем возможным контейнерам календаря */
+[data-radix-popper-content-wrapper],
+div[data-radix-popper-content-wrapper],
+[data-radix-popover-content] {
+  z-index: 10000 !important;
+}
+
+/* Стили для календаря, который рендерится через портал в body */
+body > [data-radix-popover-content],
+body > [data-radix-popper-content-wrapper],
+body > div[data-radix-popper-content-wrapper] {
+  z-index: 10000 !important;
+  position: fixed !important;
+  pointer-events: auto !important;
+}
+
+/* Убедитесь, что календарь кликабелен */
+[data-radix-popover-content],
+[data-radix-popper-content-wrapper] {
+  pointer-events: auto !important;
+}
+
+/* Стили для всех элементов календаря */
+[data-radix-calendar],
+[data-radix-calendar-cell],
+[data-radix-calendar-day],
+[data-radix-calendar-cell] button {
+  pointer-events: auto !important;
+}

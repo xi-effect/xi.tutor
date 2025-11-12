@@ -18,10 +18,7 @@ export const formSchema = z
     studentId: z.string().min(1, 'Выберите студента'),
     startTime: timeValidation,
     endTime: timeValidation,
-    startDate: z
-      .string()
-      .min(1, 'Укажите дату')
-      .regex(/^\d{2}\.\d{2}\.\d{4}$/, 'Формат даты: дд.мм.гггг'),
+    startDate: z.date({ required_error: 'Укажите дату' }),
     shouldRepeat: z
       .enum([
         'dont_repeat',

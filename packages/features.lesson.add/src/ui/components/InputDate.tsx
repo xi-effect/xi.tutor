@@ -3,21 +3,29 @@ import { memo, useCallback, useEffect, useState } from 'react';
 import { DatePicker } from '@xipkg/datepicker';
 import { Calendar } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
-import { convertStringToDate, getFullDateString } from '../../utils/utils';
+import { getFullDateString } from '../../utils/utils';
 
 interface InputDateProps {
-  value?: string;
+  value?: Date;
+  onChange: (val: Date) => void;
 }
 
-export const InputDate = memo<InputDateProps>(({ value }) => {
-  const [date, setDate] = useState<Date>(convertStringToDate(value || ''));
+export const InputDate = memo<InputDateProps>(({ value, onChange }) => {
+  const [date, setDate] = useState<Date>(value || new Date());
 
-  const handleSelectDate = useCallback((newDate: Date) => {
-    setDate(newDate);
-  }, []);
+  const handleSelectDate = useCallback(
+    (newDate: Date) => {
+      console.log('newDate', newDate);
+      setDate(newDate);
+      onChange(newDate);
+    },
+    [onChange],
+  );
 
   useEffect(() => {
-    setDate(convertStringToDate(value || ''));
+    if (value) {
+      setDate(value);
+    }
   }, [value]);
 
   return (
@@ -25,6 +33,7 @@ export const InputDate = memo<InputDateProps>(({ value }) => {
       calendarProps={{ mode: 'single', selected: date, onSelect: handleSelectDate, required: true }}
     >
       <Input
+        name="startDate"
         value={getFullDateString(date)}
         variant="s"
         className="cursor-pointer border-1 text-left"

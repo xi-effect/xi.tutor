@@ -1359,6 +1359,9 @@ importers:
       '@xipkg/button':
         specifier: 3.2.0
         version: 3.2.0(@types/react@19.2.2)(react@19.2.0)
+      '@xipkg/datepicker':
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.2.1)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/form':
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.1)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
@@ -1368,6 +1371,9 @@ importers:
       '@xipkg/input':
         specifier: 2.2.9
         version: 2.2.9(react@19.2.0)
+      '@xipkg/inputmask':
+        specifier: 2.0.12
+        version: 2.0.12(react-dom@19.2.0)(react@19.2.0)
       '@xipkg/modal':
         specifier: 4.1.0
         version: 4.1.0(@types/react-dom@19.2.1)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)

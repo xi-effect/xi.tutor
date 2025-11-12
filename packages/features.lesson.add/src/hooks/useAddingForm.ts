@@ -9,7 +9,7 @@ const DEFAULT_VALUES: FormData = {
   studentId: '',
   startTime: '09:00',
   endTime: '10:00',
-  startDate: new Date().toLocaleDateString('ru-RU'),
+  startDate: new Date(),
   shouldRepeat: 'dont_repeat',
 };
 
@@ -22,7 +22,8 @@ export const useAddingForm = () => {
     defaultValues: DEFAULT_VALUES,
   });
 
-  const { control, handleSubmit, setValue, formState } = form;
+  const { control, handleSubmit, setValue, formState, watch } = form;
+  const eventDate = watch('startDate');
 
   console.log('errors', formState.errors);
 
@@ -57,6 +58,7 @@ export const useAddingForm = () => {
   return {
     form,
     control,
+    eventDate,
     handleSubmit,
     onSubmit,
     handleClearForm,

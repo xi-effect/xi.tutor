@@ -7,15 +7,16 @@ import { InputDate } from './InputDate';
 import { RepeatBlock } from './RepeatBlock';
 import { StudentSelector } from './StudentSelector';
 
-import type { FC, PropsWithChildren } from 'react';
+import { useEffect, type FC, type PropsWithChildren } from 'react';
 import type { FormData } from '../../model';
 
 interface AddingFormProps extends PropsWithChildren {
   onClose: () => void;
+  onDateChange: (date: Date) => void;
 }
 
-export const AddingForm: FC<AddingFormProps> = ({ children, onClose }) => {
-  const { form, control, handleSubmit, handleClearForm, onSubmit } = useAddingForm();
+export const AddingForm: FC<AddingFormProps> = ({ children, onClose, onDateChange }) => {
+  const { form, control, handleSubmit, handleClearForm, onSubmit, eventDate } = useAddingForm();
 
   const maskRefStartTime = useMaskInput('time');
   const maskRefEndTime = useMaskInput('time');
@@ -29,6 +30,12 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose }) => {
     onSubmit(data);
     onClose();
   };
+
+  useEffect(() => {
+    if (eventDate) {
+      onDateChange(eventDate);
+    }
+  }, [eventDate, onDateChange]);
 
   return (
     <Form {...form}>
@@ -113,7 +120,7 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose }) => {
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
-                    <InputDate {...field} />
+                    <InputDate value={field.value} onChange={field.onChange} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

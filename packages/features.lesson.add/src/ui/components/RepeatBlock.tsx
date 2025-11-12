@@ -26,7 +26,7 @@ export const RepeatBlock: FC<RepeatBlockProps> = ({ value, onChange }) => {
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger
-        className="no-arrow text-gray-80 border-1"
+        className="no-arrow text-gray-80 w-full border-1"
         size="s"
         before={<Redo className="fill-gray-80 h-4 w-4" />}
       >
