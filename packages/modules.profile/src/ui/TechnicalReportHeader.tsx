@@ -9,7 +9,7 @@ export const TechnicalReportHeader = () => {
         На этой странице собрана техническая информация о вашем браузере и устройстве. Эта
         информация помогает команде поддержки Sovlium быстрее находить и исправлять проблемы.
       </p>
-      <Alert variant="info" className="border-gray-30 w-full max-w-full rounded-lg border">
+      <Alert variant="brand" className="w-full max-w-full">
         <AlertIcon className="hidden md:block">
           <InfoCircle />
         </AlertIcon>

@@ -59,7 +59,7 @@ export const TechnicalReportBody = ({ isMobile }: TechnicalReportBodyProps) => {
           <p className="text-gray-80 dark:text-gray-80">Загрузка информации...</p>
         </div>
       ) : sections.length > 0 ? (
-        <div className="bg-gray-5 rounded-lg p-4">
+        <div className="bg-gray-5 rounded-2xl p-4">
           {sections.map(({ title, data }, index) => (
             <div key={index} className="mb-4 last:mb-0">
               {title && (
