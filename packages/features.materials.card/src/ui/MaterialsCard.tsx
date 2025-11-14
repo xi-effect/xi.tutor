@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 
 import { Button } from '@xipkg/button';
 import { LongAnswer, MoreVert, WhiteBoard } from '@xipkg/icons';
@@ -10,15 +10,43 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 
-import { MaterialPropsT } from '../types';
+import { AccessModeT, MaterialPropsT } from '../types';
 import { formatToShortDate } from '../utils';
-import { useDeleteMaterials } from 'common.services';
+import {
+  useCurrentUser,
+  useDeleteClassroomMaterials,
+  useDeleteMaterials,
+  useUpdateClassroomMaterial,
+} from 'common.services';
+import { cn } from '@xipkg/utils';
+import { DropdownButton } from './DropdownButton';
+import { Badge } from '@xipkg/badge';
+
+const accessMap: Record<AccessModeT, string> = {
+  read_write: 'совместная работа',
+  read_only: 'только репетитор',
+  no_access: 'черновик',
+};
+
+const mapStyles: Record<AccessModeT, string> = {
+  read_write: 'bg-gray-10 text-gray-60',
+  read_only: 'bg-cyan-20 text-cyan-100',
+  no_access: 'bg-violet-20 text-violet-100',
+};
+
+const iconClassName = 'size-6 fill-gray-100';
+
+const mapIcon: Record<'note' | 'board', React.ReactNode> = {
+  note: <LongAnswer className={iconClassName} aria-label="note" />,
+  board: <WhiteBoard className={iconClassName} aria-label="board" />,
+};
 
 export const MaterialsCard: React.FC<MaterialPropsT> = ({
   id,
   updated_at,
   name,
   content_kind,
+  student_access_mode,
   onOpenModal,
 }) => {
   const navigate = useNavigate();
@@ -26,8 +54,17 @@ export const MaterialsCard: React.FC<MaterialPropsT> = ({
   const { deleteMaterials } = useDeleteMaterials();
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  // Хук для удаления материалов
+  const { deleteClassroomMaterials } = useDeleteClassroomMaterials();
+
+  // Хук для обновления материалов
+  const { updateClassroomMaterial } = useUpdateClassroomMaterial();
+
   const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Предотвращаем переход на страницу материала
+    e.stopPropagation();
     setDropdownOpen(false);
     deleteMaterials.mutate({
       id: id.toString(),
@@ -36,10 +73,36 @@ export const MaterialsCard: React.FC<MaterialPropsT> = ({
     });
   };
 
+  const { classroomId } = useParams({ strict: false });
+
   const handleDuplicate = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Предотвращаем переход на страницу материала
+    e.stopPropagation();
     setDropdownOpen(false);
     onOpenModal(id);
+  };
+
+  const handleDeleteMaterial = () => {
+    if (classroomId) {
+      deleteClassroomMaterials.mutate({
+        classroomId: classroomId || '',
+        id: id.toString(),
+        content_kind: content_kind as 'note' | 'board',
+        name: name,
+      });
+    }
+  };
+
+  // Обработчик обновления режима доступа
+  const handleUpdateAccessMode = (newAccessMode: AccessModeT) => {
+    if (classroomId && newAccessMode !== student_access_mode) {
+      updateClassroomMaterial.mutate({
+        classroomId: classroomId || '',
+        id: id.toString(),
+        data: {
+          student_access_mode: newAccessMode,
+        },
+      });
+    }
   };
 
   return (
@@ -60,8 +123,17 @@ export const MaterialsCard: React.FC<MaterialPropsT> = ({
     >
       <div className="flex flex-col gap-1 overflow-hidden">
         <div className="flex h-full flex-col justify-between gap-4">
+          {student_access_mode && accessMap[student_access_mode] && (
+            <Badge
+              variant="default"
+              className={cn('text-s-base px-2 py-1 font-medium', mapStyles[student_access_mode])}
+            >
+              {accessMap[student_access_mode]}
+            </Badge>
+          )}
+
           <div className="text-l-base line-clamp-2 flex w-full items-center gap-2 font-medium text-gray-100">
-            {content_kind === 'board' ? <WhiteBoard /> : <LongAnswer />}
+            {mapIcon[content_kind]}
             <p className="truncate">{name}</p>
           </div>
           <div className="text-s-base text-gray-60 font-normal">
@@ -86,6 +158,13 @@ export const MaterialsCard: React.FC<MaterialPropsT> = ({
             <DropdownMenuItem onClick={handleDelete}>Удалить</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        {isTutor && (
+          <DropdownButton
+            studentAccessMode={student_access_mode ?? ''}
+            onDelete={handleDeleteMaterial}
+            onUpdateAccessMode={handleUpdateAccessMode}
+          />
+        )}
       </div>
     </div>
   );

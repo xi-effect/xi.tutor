@@ -1587,6 +1587,9 @@ importers:
       '@tanstack/react-query':
         specifier: 5.73.3
         version: 5.73.3(react@19.2.0)
+      '@xipkg/badge':
+        specifier: 2.0.12
+        version: 2.0.12(react@19.2.0)
       '@xipkg/button':
         specifier: ^3.1.8
         version: 3.2.0(@types/react@19.2.2)(react@19.2.0)
@@ -1605,6 +1608,9 @@ importers:
       common.services:
         specifier: '*'
         version: link:../common.services
+      common.types:
+        specifier: '*'
+        version: link:../common.types
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
