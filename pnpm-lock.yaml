@@ -3000,6 +3000,9 @@ importers:
       features.materials.add:
         specifier: '*'
         version: link:../features.materials.add
+      features.materials.card:
+        specifier: '*'
+        version: link:../features.materials.card
       features.payment.approve:
         specifier: '*'
         version: link:../features.payment.approve
@@ -3578,6 +3581,9 @@ importers:
       features.materials.add:
         specifier: '*'
         version: link:../features.materials.add
+      features.materials.card:
+        specifier: '*'
+        version: link:../features.materials.card
       features.materials.duplicate:
         specifier: '*'
         version: link:../features.materials.duplicate

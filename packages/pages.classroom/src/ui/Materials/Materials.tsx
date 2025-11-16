@@ -1,13 +1,12 @@
 import { ScrollArea } from '@xipkg/scrollarea';
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
+import { useParams } from '@tanstack/react-router';
 import {
   useCurrentUser,
   useGetClassroom,
   useGetClassroomMaterialsList,
   useGetClassroomMaterialsListStudent,
 } from 'common.services';
-
-import { CardMaterials } from '../CardMaterials/CardMaterials';
+import { MaterialsCard } from 'features.materials.card';
 
 export const Materials = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
@@ -39,9 +38,6 @@ export const Materials = () => {
     disabled: !classroomId,
   });
 
-  const navigate = useNavigate();
-  const search = useSearch({ strict: false });
-
   if (isLoading || isBoardsLoading || isNotesLoading) {
     return (
       <div className="flex flex-col">
@@ -51,7 +47,7 @@ export const Materials = () => {
             <div className="h-6 w-32 animate-pulse rounded bg-gray-200" />
           </div>
           <div className="flex flex-row">
-            <div className="h-[96px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]">
+            <div className="h-24 w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]">
               <div className="flex flex-row gap-8">
                 {[...new Array(3)].map((_, index) => (
                   <div
@@ -128,26 +124,7 @@ export const Materials = () => {
           >
             <div className="flex flex-row gap-8 pb-4">
               {boardsData?.length ? (
-                boardsData.map((board) => (
-                  <CardMaterials
-                    key={board.id}
-                    material={board}
-                    showIcon={false}
-                    onClick={() => {
-                      // Сохраняем только параметр call при переходе
-                      const filteredSearch = search.call ? { call: search.call } : {};
-
-                      navigate({
-                        to: '/classrooms/$classroomId/boards/$boardId',
-                        params: {
-                          classroomId: classroomId,
-                          boardId: board.id.toString(),
-                        },
-                        search: filteredSearch,
-                      });
-                    }}
-                  />
-                ))
+                boardsData.map((board) => <MaterialsCard {...board} hasIcon />)
               ) : (
                 <div className="flex h-[150px] w-full items-center justify-center">
                   <p className="text-gray-50">Нет учебных досок</p>
@@ -169,26 +146,7 @@ export const Materials = () => {
           >
             <div className="flex flex-row gap-8">
               {notesData?.length ? (
-                notesData.map((note) => (
-                  <CardMaterials
-                    key={note.id}
-                    material={note}
-                    showIcon={false}
-                    onClick={() => {
-                      // Сохраняем только параметр call при переходе
-                      const filteredSearch = search.call ? { call: search.call } : {};
-
-                      navigate({
-                        to: '/classrooms/$classroomId/notes/$noteId',
-                        params: {
-                          classroomId: classroomId,
-                          noteId: note.id.toString(),
-                        },
-                        search: filteredSearch,
-                      });
-                    }}
-                  />
-                ))
+                notesData.map((note) => <MaterialsCard {...note} hasIcon />)
               ) : (
                 <div className="flex h-[150px] w-full items-center justify-center">
                   <p className="text-gray-50">Нет заметок</p>

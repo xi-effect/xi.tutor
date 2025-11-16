@@ -31,6 +31,7 @@
     "features.invites": "*",
     "features.invoice": "*",
     "features.materials.add": "*",
+    "features.materials.card": "*",
     "features.group.add": "*",
     "features.materials.duplicate": "*",
     "features.table": "*",
