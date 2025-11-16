@@ -103,6 +103,45 @@ const isNonCritical4xxError = (event: ErrorEvent, hint: EventHint): boolean => {
 };
 
 /**
+ * Проверяет, является ли ошибка ошибкой регистрации Service Worker
+ */
+const isServiceWorkerError = (event: ErrorEvent, hint: EventHint): boolean => {
+  const originalException = hint.originalException;
+
+  // Проверяем сообщение об ошибке
+  const exception = event.exception?.values?.[0];
+  if (exception?.value) {
+    const errorMessage = exception.value.toLowerCase();
+    // Проверяем типичные признаки ошибок Service Worker
+    if (
+      errorMessage.includes('rejected') ||
+      errorMessage.includes('serviceworker') ||
+      errorMessage.includes('service worker') ||
+      errorMessage.includes('registerSW')
+    ) {
+      return true;
+    }
+  }
+
+  // Проверяем в исходном исключении
+  if (originalException instanceof Error) {
+    const errorMessage = originalException.message.toLowerCase();
+    const errorStack = originalException.stack?.toLowerCase() || '';
+    if (
+      errorMessage.includes('rejected') ||
+      errorMessage.includes('serviceworker') ||
+      errorMessage.includes('service worker') ||
+      errorStack.includes('registerSW') ||
+      errorStack.includes('serviceworker')
+    ) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+/**
  * Фильтр для исключения определенных ошибок из отправки в GlitchTip
  */
 const beforeSend = (event: ErrorEvent, hint: EventHint): ErrorEvent | null => {
@@ -121,6 +160,12 @@ const beforeSend = (event: ErrorEvent, hint: EventHint): ErrorEvent | null => {
   // Исключаем некритичные 4xx ошибки (404, 403, 400 и т.д.)
   if (isNonCritical4xxError(event, hint)) {
     return null; // Не отправляем некритичные клиентские ошибки
+  }
+
+  // Исключаем ошибки регистрации Service Worker
+  // Эти ошибки часто возникают, когда SW уже зарегистрирован или браузер блокирует регистрацию
+  if (isServiceWorkerError(event, hint)) {
+    return null; // Не отправляем ошибки Service Worker
   }
 
   return event;
