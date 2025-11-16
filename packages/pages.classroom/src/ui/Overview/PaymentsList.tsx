@@ -3,14 +3,16 @@ import {
   useCurrentUser,
   useGetClassroomTutorPaymentsList,
   useGetClassroomStudentPaymentsList,
+  useGetClassroom,
 } from 'common.services';
-import { Payment } from './Payment';
+import { InvoiceCard } from 'features.invoice.card';
 
 export const PaymentsList = () => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
+  const { data: classroom } = useGetClassroom(Number(classroomId));
 
   const { data: studentPayments, isLoading: isLoadingStudent } = useGetClassroomStudentPaymentsList(
     {
@@ -45,10 +47,11 @@ export const PaymentsList = () => {
   return (
     <div className="flex flex-row gap-8 pb-4">
       {payments.map((payment) => (
-        <Payment
+        <InvoiceCard
           key={payment.id}
           payment={payment}
           currentUserRole={isTutor ? 'tutor' : 'student'}
+          type={classroom?.kind === 'group' && isTutor ? 'full' : 'short'}
         />
       ))}
     </div>

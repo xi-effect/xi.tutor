@@ -10,7 +10,7 @@ import {
   useGetTutorPaymentsList,
 } from 'common.services';
 import { InvoiceModal } from 'features.invoice';
-import { Payment } from './Payment';
+import { InvoiceCard } from 'features.invoice.card';
 
 export const Payments = () => {
   const { data: user } = useCurrentUser();
@@ -88,7 +88,7 @@ export const Payments = () => {
           >
             <div className="flex flex-row gap-8">
               {payments.map((payment) => (
-                <Payment
+                <InvoiceCard
                   key={payment.id}
                   payment={payment}
                   currentUserRole={isTutor ? 'tutor' : 'student'}

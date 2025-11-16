@@ -1515,6 +1515,76 @@ importers:
         specifier: ^8.22.0
         version: 8.46.3(eslint@9.39.1)(typescript@5.7.3)
 
+  packages/features.invoice.card:
+    dependencies:
+      '@tanstack/react-query':
+        specifier: ^5.73.3
+        version: 5.73.3(react@19.2.0)
+      '@tanstack/react-router':
+        specifier: 1.120.11
+        version: 1.120.11(react-dom@19.2.0)(react@19.2.0)
+      '@xipkg/icons':
+        specifier: ^2.6.0
+        version: 2.7.0(react@19.2.0)
+      common.api:
+        specifier: '*'
+        version: link:../common.api
+      common.services:
+        specifier: '*'
+        version: link:../common.services
+      features.table:
+        specifier: '*'
+        version: link:../features.table
+      react:
+        specifier: '19'
+        version: 19.2.0
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.19.0
+        version: 9.39.1
+      '@types/node':
+        specifier: ^20.3.1
+        version: 20.19.24
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.2.2
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.2.2(@types/react@19.2.2)
+      '@xipkg/eslint':
+        specifier: 3.2.0
+        version: 3.2.0(eslint-plugin-jsx-a11y@6.10.2)(eslint@9.39.1)(turbo@2.6.0)(typescript@5.7.3)
+      '@xipkg/tailwind':
+        specifier: 0.8.1
+        version: 0.8.1
+      '@xipkg/typescript':
+        specifier: latest
+        version: 0.2.0
+      common.eslint:
+        specifier: '*'
+        version: link:../common.eslint
+      common.typescript:
+        specifier: '*'
+        version: link:../common.typescript
+      eslint:
+        specifier: ^9.19.0
+        version: 9.39.1
+      eslint-plugin-react-hooks:
+        specifier: ^5.0.0
+        version: 5.2.0(eslint@9.39.1)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.18
+        version: 0.4.18(eslint@9.39.1)
+      globals:
+        specifier: ^15.14.0
+        version: 15.15.0
+      typescript:
+        specifier: ~5.7.2
+        version: 5.7.3
+      typescript-eslint:
+        specifier: ^8.22.0
+        version: 8.46.3(eslint@9.39.1)(typescript@5.7.3)
+
   packages/features.materials.add:
     dependencies:
       '@xipkg/button':
@@ -2997,6 +3067,9 @@ importers:
       features.invoice:
         specifier: '*'
         version: link:../features.invoice
+      features.invoice.card:
+        specifier: '*'
+        version: link:../features.invoice.card
       features.materials.add:
         specifier: '*'
         version: link:../features.materials.add
@@ -3581,6 +3654,9 @@ importers:
       features.invoice:
         specifier: '*'
         version: link:../features.invoice
+      features.invoice.card:
+        specifier: '*'
+        version: link:../features.invoice.card
       features.materials.add:
         specifier: '*'
         version: link:../features.materials.add
