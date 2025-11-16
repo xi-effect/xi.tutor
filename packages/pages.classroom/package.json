@@ -34,6 +34,7 @@
     "features.group.manage": "*",
     "features.materials.add": "*",
     "features.payment.approve": "*",
+    "features.invoice.card": "*",
     "features.table": "*",
     "features.invoice": "*",
     "modules.calendar": "*",
