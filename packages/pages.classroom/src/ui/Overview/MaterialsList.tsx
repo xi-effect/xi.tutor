@@ -71,7 +71,13 @@ export const MaterialsList = () => {
   return (
     <div className="flex flex-row gap-8 pb-4">
       {materials.map((material: ClassroomMaterialsT) => (
-        <MaterialsCard key={material.id} {...material} isLoading={isLoading} hasIcon />
+        <MaterialsCard
+          key={material.id}
+          {...material}
+          isLoading={isLoading}
+          hasIcon
+          className="2xl:w-[430px]"
+        />
       ))}
     </div>
   );

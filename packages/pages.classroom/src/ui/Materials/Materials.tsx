@@ -124,7 +124,9 @@ export const Materials = () => {
           >
             <div className="flex flex-row gap-8 pb-4">
               {boardsData?.length ? (
-                boardsData.map((board) => <MaterialsCard {...board} hasIcon />)
+                boardsData.map((board) => (
+                  <MaterialsCard {...board} hasIcon className="2xl:w-[430px]" />
+                ))
               ) : (
                 <div className="flex h-[150px] w-full items-center justify-center">
                   <p className="text-gray-50">Нет учебных досок</p>
@@ -146,7 +148,9 @@ export const Materials = () => {
           >
             <div className="flex flex-row gap-8">
               {notesData?.length ? (
-                notesData.map((note) => <MaterialsCard {...note} hasIcon />)
+                notesData.map((note) => (
+                  <MaterialsCard {...note} hasIcon className="2xl:w-[430px]" />
+                ))
               ) : (
                 <div className="flex h-[150px] w-full items-center justify-center">
                   <p className="text-gray-50">Нет заметок</p>

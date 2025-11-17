@@ -19,6 +19,7 @@ export const MaterialsCard: React.FC<MaterialPropsT> = ({
   onDuplicate,
   hasIcon = false,
   isLoading,
+  className,
 }) => {
   const { classroomId } = useParams({ strict: false });
 
@@ -52,10 +53,13 @@ export const MaterialsCard: React.FC<MaterialPropsT> = ({
   return (
     <div
       onClick={handleCardClick}
-      className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex max-w-[350px] min-w-[350px] shrink-0 cursor-pointer justify-between rounded-2xl border p-4"
+      className={cn(
+        'hover:bg-gray-5 border-gray-30 bg-gray-0 flex w-[350px] min-w-[350px] shrink-0 cursor-pointer justify-between rounded-2xl border p-4',
+        className,
+      )}
     >
       <div className="flex flex-col gap-1 overflow-hidden">
-        <div className="flex h-full flex-col justify-between gap-4">
+        <div className="flex h-full flex-col justify-between gap-2">
           {student_access_mode && accessModeLabels[student_access_mode] && (
             <Badge
               variant="default"
@@ -72,7 +76,7 @@ export const MaterialsCard: React.FC<MaterialPropsT> = ({
             {hasIcon && cardIcon[content_kind]}
             <p className="truncate">{name}</p>
           </div>
-          <div className="text-s-base text-gray-60 font-normal">
+          <div className="text-s-base text-gray-60 mt-2 font-normal">
             Обновлено: {isLoading ? '...' : updated_at ? formatToShortDate(updated_at) : ''}
           </div>
         </div>

@@ -11,4 +11,5 @@ export type MaterialPropsT = {
   onDuplicate?: (id: number) => void;
   hasIcon?: boolean;
   isLoading?: boolean;
+  className?: string;
 };
