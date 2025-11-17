@@ -2,7 +2,7 @@ import { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from 'common.
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError, showSuccess } from 'common.services';
-import { materialsSelectors } from 'common.services';
+import { findNextAvailableName } from 'common.services';
 
 interface ClassroomMaterialsResponseT {
   data: ClassroomMaterialsDataT & {
@@ -28,11 +28,6 @@ const validateKind = (kind: string): kind is ClassroomMaterialsDataT['content_ki
 export const useAddClassroomMaterials = () => {
   const queryClient = useQueryClient();
 
-  const notesCount = materialsSelectors.useNotesCount();
-  const boardsCount = materialsSelectors.useBoardsCount();
-  const incrementNotes = materialsSelectors.useIncrementNotes();
-  const incrementBoards = materialsSelectors.useIncrementBoards();
-
   const addClassroomMaterialsMutation = useMutation<
     ClassroomMaterialsResponseT,
     Error,
@@ -44,11 +39,22 @@ export const useAddClassroomMaterials = () => {
         throw new Error('Invalid material kind');
       }
 
-      const materialName =
-        materialsData.name ||
-        (materialsData.content_kind === 'note'
-          ? `Новая заметка ${notesCount}`
-          : `Новая доска ${boardsCount}`);
+      let materialName = materialsData.name;
+
+      if (!materialName) {
+        const queries = queryClient.getQueriesData<Array<{ name: string }>>({
+          queryKey: [ClassroomMaterialsQueryKey.ClassroomMaterials, materialsData.classroomId],
+        });
+
+        const existingMaterials: Array<{ name: string }> = [];
+        queries.forEach(([, data]) => {
+          if (Array.isArray(data)) {
+            existingMaterials.push(...data);
+          }
+        });
+
+        materialName = findNextAvailableName(existingMaterials, materialsData.content_kind);
+      }
 
       try {
         const axiosInst = await getAxiosInstance();
@@ -91,12 +97,6 @@ export const useAddClassroomMaterials = () => {
         queryClient.invalidateQueries({
           queryKey: [ClassroomMaterialsQueryKey.ClassroomMaterials, materialsData.classroomId],
         });
-      }
-
-      if (materialsData.content_kind === 'note') {
-        incrementNotes();
-      } else {
-        incrementBoards();
       }
 
       showSuccess('materials', `${response.data.name} создана`);

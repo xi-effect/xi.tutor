@@ -1532,9 +1532,6 @@ importers:
       react:
         specifier: '19'
         version: 19.2.0
-      zustand:
-        specifier: ^5.0.3
-        version: 5.0.8(@types/react@19.2.2)(react@19.2.0)
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0

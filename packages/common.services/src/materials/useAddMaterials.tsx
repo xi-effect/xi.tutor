@@ -2,7 +2,7 @@ import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError, showSuccess } from 'common.services';
-import { materialsSelectors } from 'common.services';
+import { findNextAvailableName } from 'common.services';
 
 interface MaterialsResponseT {
   data: MaterialsDataT & {
@@ -27,11 +27,6 @@ const validateKind = (kind: string): kind is MaterialsDataT['content_kind'] => {
 export const useAddMaterials = () => {
   const queryClient = useQueryClient();
 
-  const notesCount = materialsSelectors.useNotesCount();
-  const boardsCount = materialsSelectors.useBoardsCount();
-  const incrementNotes = materialsSelectors.useIncrementNotes();
-  const incrementBoards = materialsSelectors.useIncrementBoards();
-
   const addMaterialsMutation = useMutation<
     MaterialsResponseT,
     Error,
@@ -43,11 +38,22 @@ export const useAddMaterials = () => {
         throw new Error('Invalid material kind');
       }
 
-      const materialName =
-        materialsData.name ||
-        (materialsData.content_kind === 'note'
-          ? `Новая заметка ${notesCount}`
-          : `Новая доска ${boardsCount}`);
+      let materialName = materialsData.name;
+
+      if (!materialName) {
+        const queries = queryClient.getQueriesData<Array<{ name: string }>>({
+          queryKey: [MaterialsQueryKey.Materials],
+        });
+
+        const existingMaterials: Array<{ name: string }> = [];
+        queries.forEach(([, data]) => {
+          if (Array.isArray(data)) {
+            existingMaterials.push(...data);
+          }
+        });
+
+        materialName = findNextAvailableName(existingMaterials, materialsData.content_kind);
+      }
 
       try {
         const axiosInst = await getAxiosInstance();
@@ -80,18 +86,12 @@ export const useAddMaterials = () => {
     onError: (err) => {
       handleError(err, 'materials');
     },
-    onSuccess: (response, materialsData) => {
+    onSuccess: (response) => {
       if (response.data) {
         // Инвалидируем все запросы материалов, включая список с 'all'
         queryClient.invalidateQueries({
           queryKey: [MaterialsQueryKey.Materials],
         });
-      }
-
-      if (materialsData.content_kind === 'note') {
-        incrementNotes();
-      } else {
-        incrementBoards();
       }
 
       showSuccess('materials', `${response.data.name} создана`);
