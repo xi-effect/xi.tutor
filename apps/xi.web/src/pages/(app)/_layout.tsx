@@ -57,7 +57,7 @@ function LayoutComponent() {
 }
 
 const ProtectedLayout = () => {
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading } = useCurrentUser();
   const navigate = useNavigate();
   const search = useSearch({ strict: false }) as { role?: RoleT };
   const { updateProfile } = useUpdateProfile();
@@ -73,7 +73,7 @@ const ProtectedLayout = () => {
     ) {
       navigate({ to: onboardingStageToPath[stage as OnboardingStageT] });
     }
-  }, []);
+  }, [navigate, user?.onboarding_stage]);
 
   // Обработка параметра role из URL
   useEffect(() => {
@@ -113,7 +113,7 @@ const ProtectedLayout = () => {
     );
   }, []);
 
-  if (!user) {
+  if (!user || isLoading) {
     return <LoadingScreen />;
   }
 

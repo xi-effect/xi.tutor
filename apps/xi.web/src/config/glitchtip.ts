@@ -31,9 +31,9 @@ const isCorsError = (error: unknown): boolean => {
 };
 
 /**
- * Проверяет, является ли ошибка HTTP ошибкой с кодом 401
+ * Получает HTTP статус код из ошибки
  */
-const is401Error = (event: ErrorEvent, hint: EventHint): boolean => {
+const getHttpStatus = (event: ErrorEvent, hint: EventHint): number | null => {
   const originalException = hint.originalException;
 
   // Проверяем AxiosError напрямую
@@ -43,25 +43,37 @@ const is401Error = (event: ErrorEvent, hint: EventHint): boolean => {
     'response' in originalException
   ) {
     const axiosError = originalException as { response?: { status?: number } };
-    if (axiosError.response?.status === 401) {
-      return true;
+    if (axiosError.response?.status) {
+      return axiosError.response.status;
     }
   }
 
   // Проверяем в контексте ответа
   const responseStatus = event.contexts?.response?.status_code;
-  if (responseStatus === 401) {
-    return true;
+  if (responseStatus) {
+    return responseStatus;
   }
 
   // Проверяем в extra данных
   const extra = event.extra as { response?: { status?: number } } | undefined;
-  if (extra?.response?.status === 401) {
-    return true;
+  if (extra?.response?.status) {
+    return extra.response.status;
   }
 
   // Проверяем в tags
-  if (event.tags?.status_code === 401) {
+  if (event.tags?.status_code) {
+    return event.tags.status_code as number;
+  }
+
+  return null;
+};
+
+/**
+ * Проверяет, является ли ошибка HTTP ошибкой с кодом 401
+ */
+const is401Error = (event: ErrorEvent, hint: EventHint): boolean => {
+  const status = getHttpStatus(event, hint);
+  if (status === 401) {
     return true;
   }
 
@@ -70,6 +82,58 @@ const is401Error = (event: ErrorEvent, hint: EventHint): boolean => {
   if (exception?.value) {
     const errorMessage = exception.value.toLowerCase();
     if (errorMessage.includes('401') || errorMessage.includes('unauthorized')) {
+      return true;
+    }
+  }
+
+  return false;
+};
+
+/**
+ * Проверяет, является ли ошибка некритичной HTTP ошибкой (4xx кроме 401)
+ */
+const isNonCritical4xxError = (event: ErrorEvent, hint: EventHint): boolean => {
+  const status = getHttpStatus(event, hint);
+  // Исключаем 4xx ошибки (кроме 401, которое уже обрабатывается отдельно)
+  // 404, 403, 400 и т.д. обычно не критичны для мониторинга
+  if (status && status >= 400 && status < 500 && status !== 401) {
+    return true;
+  }
+  return false;
+};
+
+/**
+ * Проверяет, является ли ошибка ошибкой регистрации Service Worker
+ */
+const isServiceWorkerError = (event: ErrorEvent, hint: EventHint): boolean => {
+  const originalException = hint.originalException;
+
+  // Проверяем сообщение об ошибке
+  const exception = event.exception?.values?.[0];
+  if (exception?.value) {
+    const errorMessage = exception.value.toLowerCase();
+    // Проверяем типичные признаки ошибок Service Worker
+    if (
+      errorMessage.includes('rejected') ||
+      errorMessage.includes('serviceworker') ||
+      errorMessage.includes('service worker') ||
+      errorMessage.includes('registerSW')
+    ) {
+      return true;
+    }
+  }
+
+  // Проверяем в исходном исключении
+  if (originalException instanceof Error) {
+    const errorMessage = originalException.message.toLowerCase();
+    const errorStack = originalException.stack?.toLowerCase() || '';
+    if (
+      errorMessage.includes('rejected') ||
+      errorMessage.includes('serviceworker') ||
+      errorMessage.includes('service worker') ||
+      errorStack.includes('registerSW') ||
+      errorStack.includes('serviceworker')
+    ) {
       return true;
     }
   }
@@ -91,6 +155,17 @@ const beforeSend = (event: ErrorEvent, hint: EventHint): ErrorEvent | null => {
   // Исключаем 401 ошибки
   if (is401Error(event, hint)) {
     return null; // Не отправляем 401 ошибки
+  }
+
+  // Исключаем некритичные 4xx ошибки (404, 403, 400 и т.д.)
+  if (isNonCritical4xxError(event, hint)) {
+    return null; // Не отправляем некритичные клиентские ошибки
+  }
+
+  // Исключаем ошибки регистрации Service Worker
+  // Эти ошибки часто возникают, когда SW уже зарегистрирован или браузер блокирует регистрацию
+  if (isServiceWorkerError(event, hint)) {
+    return null; // Не отправляем ошибки Service Worker
   }
 
   return event;
@@ -116,11 +191,14 @@ export const initGlitchTip = () => {
         blockAllMedia: false,
       }),
     ],
-    // Performance Monitoring
-    tracesSampleRate: env.DEV ? 1.0 : 0.1,
-    // Session Replay
-    replaysSessionSampleRate: env.DEV ? 1.0 : 0.1,
+    // Performance Monitoring - минимизируем до 1% транзакций в production
+    tracesSampleRate: env.DEV ? 1.0 : 0.01,
+    // Session Replay - минимизируем до 1% сессий в production
+    replaysSessionSampleRate: env.DEV ? 1.0 : 0.01,
+    // Реплеи при ошибках - оставляем 100% для эффективной отладки
     replaysOnErrorSampleRate: 1.0,
+    // Сэмплирование ошибок - отправляем 60% ошибок для баланса между объемом и эффективностью
+    sampleRate: env.DEV ? 1.0 : 0.7,
     // Фильтр ошибок перед отправкой
     beforeSend,
   });

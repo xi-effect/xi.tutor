@@ -14,6 +14,10 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       VitePWA({
         registerType: 'autoUpdate',
         injectRegister: 'auto',
+        // Отключаем регистрацию SW в dev режиме, чтобы избежать ошибок
+        devOptions: {
+          enabled: false,
+        },
         workbox: {
           globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
           maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB (по умолчанию 2 MB)
