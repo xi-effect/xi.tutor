@@ -27,7 +27,7 @@ export const Notes = () => {
           items={items}
           renderItem={(material) => (
             <div key={material.id} className="card-item">
-              <MaterialsCard {...material} onOpenModal={openModal} />
+              <MaterialsCard {...material} onDuplicate={openModal} className="w-full min-w-auto" />
             </div>
           )}
         />
