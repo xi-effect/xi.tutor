@@ -6,7 +6,7 @@ import type { FC } from 'react';
 
 type AssignLessonButtonProps = {
   className?: string;
-  onButtonClick: () => void;
+  onButtonClick?: () => void;
 };
 
 export const AssignLessonButton: FC<AssignLessonButtonProps> = ({ className, onButtonClick }) => {
