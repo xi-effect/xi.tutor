@@ -25,7 +25,8 @@
     "common.ui": "*",
     "dayjs": "^1.11.13",
     "features.materials.add": "*",
-    "features.materials.duplicate": "*"
+    "features.materials.duplicate": "*",
+    "features.materials.card": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

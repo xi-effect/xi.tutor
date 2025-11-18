@@ -1,5 +1,5 @@
 {
-  "name": "pages.main",
+  "name": "features.materials.card",
   "version": "0.0.0",
   "type": "module",
   "exports": {
@@ -11,34 +11,16 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "@hookform/resolvers": "5.0.1",
-    "@xipkg/avatar": "3.0.10",
-    "@xipkg/alert": "1.1.0",
+    "@tanstack/react-query": "5.73.3",
+    "@xipkg/button": "^3.1.8",
     "@xipkg/badge": "2.0.12",
-    "@xipkg/button": "3.2.0",
+    "@xipkg/dropdown": "^3.0.12",
     "@xipkg/icons": "^2.7.0",
-    "@xipkg/scrollarea": "2.2.0",
-    "@xipkg/tooltip": "2.1.0",
-    "@xipkg/userprofile": "4.0.14",
-    "@xipkg/utils": "1.8.0",
+    "@xipkg/utils": "^1.8.0",
     "common.api": "*",
-    "common.auth": "*",
-    "common.config": "*",
-    "common.env": "*",
     "common.services": "*",
     "common.types": "*",
-    "common.ui": "*",
-    "features.invites": "*",
-    "features.invoice": "*",
-    "features.materials.add": "*",
-    "features.materials.card": "*",
-    "features.group.add": "*",
-    "features.materials.duplicate": "*",
-    "features.table": "*",
-    "pages.classrooms": "*",
-    "pages.materials": "*",
-    "react-hook-form": "^7.55.0",
-    "zod": "3.24.2"
+    "dayjs": "^1.11.13"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -49,6 +31,7 @@
     "@xipkg/tailwind": "0.8.1",
     "@xipkg/typescript": "latest",
     "common.eslint": "*",
+    "common.services": "*",
     "common.typescript": "*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
@@ -58,10 +41,8 @@
     "typescript-eslint": "^8.22.0"
   },
   "peerDependencies": {
-    "@hookform/resolvers": "5.0.1",
-    "react": "19",
-    "react-hook-form": "^7.55.0"
+    "react": "19"
   },
-  "description": "form for signin",
+  "description": "features.materials.card",
   "author": "xi.effect"
 }

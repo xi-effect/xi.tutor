@@ -1,17 +1,14 @@
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
+import { useParams } from '@tanstack/react-router';
 import {
   useCurrentUser,
   useGetClassroomMaterialsList,
   useGetClassroomMaterialsListStudent,
 } from 'common.services';
-import { CardMaterials } from '../CardMaterials';
 import { ClassroomMaterialsT } from 'common.types';
+import { MaterialsCard } from 'features.materials.card';
 
 export const MaterialsList = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
-
-  const navigate = useNavigate();
-  const search = useSearch({ strict: false });
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -35,7 +32,7 @@ export const MaterialsList = () => {
         {[...new Array(3)].map((_, index) => (
           <div
             key={index}
-            className="border-gray-30 bg-gray-0 flex min-h-[96px] min-w-[350px] animate-pulse flex-col items-start justify-start gap-2 rounded-2xl border p-4"
+            className="border-gray-30 bg-gray-0 flex min-h-24 min-w-[350px] animate-pulse flex-col items-start justify-start gap-2 rounded-2xl border p-4"
           >
             <div className="flex w-full flex-row items-center justify-between">
               <div className="h-6 w-24 animate-pulse rounded bg-gray-200" />
@@ -56,7 +53,7 @@ export const MaterialsList = () => {
 
   if (isError) {
     return (
-      <div className="flex h-[96px] w-full items-center justify-center">
+      <div className="flex h-24 w-full items-center justify-center">
         <p className="text-gray-50">Ошибка загрузки материалов</p>
       </div>
     );
@@ -65,7 +62,7 @@ export const MaterialsList = () => {
   // Если нет данных или пустой массив
   if (!materials || materials.length === 0) {
     return (
-      <div className="flex h-[96px] w-full items-center justify-center">
+      <div className="flex h-24 w-full items-center justify-center">
         <p className="text-gray-50">Нет материалов</p>
       </div>
     );
@@ -74,33 +71,12 @@ export const MaterialsList = () => {
   return (
     <div className="flex flex-row gap-8 pb-4">
       {materials.map((material: ClassroomMaterialsT) => (
-        <CardMaterials
+        <MaterialsCard
           key={material.id}
-          material={material}
-          onClick={() => {
-            // Сохраняем только параметр call при переходе
-            const filteredSearch = search.call ? { call: search.call } : {};
-
-            if (material.content_kind === 'board') {
-              navigate({
-                to: '/classrooms/$classroomId/boards/$boardId',
-                params: {
-                  classroomId: classroomId,
-                  boardId: material.id.toString(),
-                },
-                search: filteredSearch,
-              });
-            } else {
-              navigate({
-                to: '/classrooms/$classroomId/notes/$noteId',
-                params: {
-                  classroomId: classroomId,
-                  noteId: material.id.toString(),
-                },
-                search: filteredSearch,
-              });
-            }
-          }}
+          {...material}
+          isLoading={isLoading}
+          hasIcon
+          className="2xl:w-[430px]"
         />
       ))}
     </div>
