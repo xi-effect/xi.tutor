@@ -74,7 +74,20 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose, onDateChang
           />
         </div>
         <div className="sm:py-2">
-          <StudentSelector control={control} />
+          <FormField
+            control={control}
+            name="studentId"
+            defaultValue=""
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="mb-2 block">Ученик или группа</FormLabel>
+                <FormControl>
+                  <StudentSelector {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
         <div className="sm:py-2">
           <h5 className="mb-2">Время</h5>

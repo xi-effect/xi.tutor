@@ -15,7 +15,6 @@ export const InputDate = memo<InputDateProps>(({ value, onChange }) => {
 
   const handleSelectDate = useCallback(
     (newDate: Date) => {
-      console.log('newDate', newDate);
       setDate(newDate);
       onChange(newDate);
     },
@@ -36,7 +35,7 @@ export const InputDate = memo<InputDateProps>(({ value, onChange }) => {
         name="startDate"
         value={getFullDateString(date)}
         variant="s"
-        className="cursor-pointer border-1 text-left"
+        className="cursor-pointer border text-left"
         before={<Calendar className="fill-gray-80 h-4 w-4" />}
       />
     </DatePicker>

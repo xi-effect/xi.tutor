@@ -25,8 +25,6 @@ export const useAddingForm = () => {
   const { control, handleSubmit, setValue, formState, watch } = form;
   const eventDate = watch('startDate');
 
-  console.log('errors', formState.errors);
-
   const onSubmit = (data: FormData) => {
     const student = classrooms?.find((c) => c.id === Number(data.studentId));
 
@@ -41,6 +39,8 @@ export const useAddingForm = () => {
       startDate: data.startDate,
       shouldRepeat: data.shouldRepeat,
     };
+
+    console.log('errors', formState.errors);
 
     console.log('payload', payload);
   };
