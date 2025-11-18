@@ -16,6 +16,7 @@
     "common.services": "*",
     "features.table": "*",
     "common.api": "*",
+    "common.utils": "*",
     "@xipkg/icons": "2.7.2"
   },
   "devDependencies": {

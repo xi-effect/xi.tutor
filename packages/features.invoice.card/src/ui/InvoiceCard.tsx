@@ -2,6 +2,7 @@ import { UserProfile } from '@xipkg/userprofile';
 import { RolePaymentT, useUserByRole, RoleT, PaymentTypeT } from 'features.table';
 import { UserRoleT } from 'common.api';
 import { formatPaymentDate } from '../utils';
+import { getUserAvatarUrl } from 'common.utils';
 import { StatusBadge } from './components';
 import { RubbleCircle, Card } from '@xipkg/icons';
 
@@ -11,22 +12,16 @@ export type InvoiceCardProps = {
   type?: 'full' | 'short';
 };
 
-const renderIcon = (paymentType: PaymentTypeT) => {
-  switch (paymentType) {
-    case 'cash':
-      return <RubbleCircle />;
-    case 'transfer':
-      return <Card />;
-    default:
-      return null;
-  }
+const iconsMap = {
+  cash: <RubbleCircle />,
+  transfer: <Card />,
 };
+
+const renderIcon = (paymentType: PaymentTypeT) => iconsMap[paymentType] ?? null;
 
 export const InvoiceCard = ({ payment, currentUserRole, type = 'full' }: InvoiceCardProps) => {
   const formattedDate = formatPaymentDate(payment.created_at);
   const amount = parseFloat(payment.total);
-
-  console.log('payment', payment);
 
   const userId =
     currentUserRole === 'student'
@@ -46,9 +41,9 @@ export const InvoiceCard = ({ payment, currentUserRole, type = 'full' }: Invoice
             size="m"
             userId={userId}
             text={displayName || username || 'Имя не найдено'}
-            src={`https://api.sovlium.ru/files/users/${userId}/avatar.webp`}
+            src={getUserAvatarUrl(userId)}
             classNameText="line-clamp-2 break-words"
-            className="h-auto overflow-x-hidden"
+            className="h-auto overflow-hidden"
           />
           <StatusBadge status={payment.status} />
         </div>
