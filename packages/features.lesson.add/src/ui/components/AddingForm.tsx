@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { useMaskInput } from '@xipkg/inputmask';
@@ -7,7 +8,7 @@ import { InputDate } from './InputDate';
 import { RepeatBlock } from './RepeatBlock';
 import { StudentSelector } from './StudentSelector';
 
-import { useEffect, type FC, type PropsWithChildren } from 'react';
+import type { FC, PropsWithChildren } from 'react';
 import type { FormData } from '../../model';
 
 interface AddingFormProps extends PropsWithChildren {
@@ -44,7 +45,7 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose, onDateChang
         onReset={handleReset}
         className="flex flex-col gap-4"
       >
-        <div className="py-2">
+        <div className="sm:py-2">
           <FormField
             control={control}
             name="title"
@@ -72,10 +73,10 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose, onDateChang
             )}
           />
         </div>
-        <div className="py-2">
+        <div className="sm:py-2">
           <StudentSelector control={control} />
         </div>
-        <div className="py-2">
+        <div className="sm:py-2">
           <h5 className="mb-2">Время</h5>
           <div className="grid grid-cols-2 gap-2">
             <FormField
@@ -118,9 +119,9 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose, onDateChang
               control={control}
               name="startDate"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="col-span-2 sm:col-span-1">
                   <FormControl>
-                    <InputDate value={field.value} onChange={field.onChange} />
+                    <InputDate {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -130,9 +131,9 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose, onDateChang
               control={control}
               name="shouldRepeat"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="col-span-2 sm:col-span-1">
                   <FormControl>
-                    <RepeatBlock value={field.value} onChange={field.onChange} />
+                    <RepeatBlock {...field} />
                   </FormControl>
                 </FormItem>
               )}

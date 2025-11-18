@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import { cn } from '@xipkg/utils';
 
 import { ScrollArea } from '@xipkg/scrollarea';
-import { getFullDateString } from '../utils/utils';
+import { getFullDateString } from '../../utils/utils';
 
 // Функция для создания даты с сегодняшним днем и фиксированным временем
 const createTodayWithTime = (timeString: string) => {
@@ -23,7 +23,6 @@ interface CalendarEventType {
   isCancelled?: boolean;
 }
 
-// Простой компонент события для моковых данных
 const CalendarEvent = ({ event }: { event: CalendarEventType }) => (
   <div className="group hover:bg-gray-5 text-gray-80 flex cursor-pointer gap-1 rounded-sm">
     <div
@@ -98,7 +97,7 @@ export const DayCalendar = ({ day }: { day: Date }) => {
   const colTemplate = '[grid-template-columns:theme(width.20)_1fr]';
 
   return (
-    <div className="h-[calc(100vh-112px)] w-full overflow-hidden">
+    <div className="h-full w-full overflow-hidden sm:h-[calc(100vh-112px)]">
       {/* Хедер */}
       <h5 className="text-gray-80 text-m-base text-center font-medium">
         {getFullDateString(day, 'long')}
@@ -114,7 +113,7 @@ export const DayCalendar = ({ day }: { day: Date }) => {
               Весь день
             </div>
             {hours.map((hour, i) => (
-              <div key={hour} className="h-20 w-20 pr-2">
+              <div key={hour} className="h-8 w-20 pr-2 sm:h-20">
                 <span className="relative -top-1.5 block dark:text-gray-100">
                   {i !== 0 && hour}
                 </span>
@@ -132,7 +131,7 @@ export const DayCalendar = ({ day }: { day: Date }) => {
 
             {/* Слоты часов */}
             {hours.map((hour) => (
-              <div key={hour} className="border-gray-10 h-20 border-b p-1">
+              <div key={hour} className="border-gray-10 h-8 border-b p-1 sm:h-20">
                 {MOCK_EVENTS.map((event) => {
                   const hourAsNumber = +hour.split(':')[0];
 

@@ -1,4 +1,4 @@
-import { FormControl, FormField, FormItem, FormLabel } from '@xipkg/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
 import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@xipkg/select';
 import { useFetchClassrooms } from 'common.services';
 
@@ -36,6 +36,7 @@ export const StudentSelector = ({ control }: StudentSelectorProps) => {
               </SelectContent>
             </Select>
           </FormControl>
+          <FormMessage />
         </FormItem>
       )}
     />
