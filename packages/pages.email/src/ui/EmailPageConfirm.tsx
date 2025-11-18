@@ -98,7 +98,7 @@ export const EmailPageConfirm = () => {
           </AlertIcon>
           <AlertContainer className="h-full">
             <AlertDescription>
-              Если письмо не пришло за несколько минут, проверьте папку «Спам»
+              Если письмо долго не приходит, проверьте папку «Спам» в вашей почте
             </AlertDescription>
           </AlertContainer>
         </Alert>
