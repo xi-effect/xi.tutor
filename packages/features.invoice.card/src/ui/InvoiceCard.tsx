@@ -47,6 +47,8 @@ export const InvoiceCard = ({ payment, currentUserRole, type = 'full' }: Invoice
             userId={userId}
             text={displayName || username || 'Имя не найдено'}
             src={`https://api.sovlium.ru/files/users/${userId}/avatar.webp`}
+            classNameText="line-clamp-2 break-words"
+            className="h-auto overflow-x-hidden"
           />
           <StatusBadge status={payment.status} />
         </div>
