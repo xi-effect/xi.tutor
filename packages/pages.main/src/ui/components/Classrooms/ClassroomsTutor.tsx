@@ -30,7 +30,7 @@ export const ClassroomsTutor = () => {
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
-              className="flex size-8 items-center justify-center rounded-[4px] p-0"
+              className="flex size-8 items-center justify-center rounded-sm p-0"
               onClick={handleMore}
             >
               <ArrowRight className="fill-gray-60 size-6" />

@@ -1,19 +1,18 @@
-import React from 'react';
-
+import { AccessModeT } from 'common.types';
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuTrigger,
   DropdownMenuSub,
-  DropdownMenuSubTrigger,
   DropdownMenuSubContent,
-  DropdownMenuCheckboxItem,
+  DropdownMenuSubTrigger,
+  DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { Button } from '@xipkg/button';
 import { MoreVert } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
-import { AccessModeT } from 'common.types';
+import { useState } from 'react';
 
 const options: { value: AccessModeT; label: string }[] = [
   { value: 'read_only', label: 'только репетитор' },
@@ -21,27 +20,40 @@ const options: { value: AccessModeT; label: string }[] = [
   { value: 'read_write', label: 'совместная работа' },
 ];
 
-export const DropdownButton = ({
+export const MaterialActionsMenu: React.FC<{
+  isClassroom: boolean;
+  isTutor: boolean;
+  studentAccessMode?: AccessModeT;
+  onDelete: () => void;
+  onDeleteFromClassroom: () => void;
+  onUpdateAccessMode: (mode: AccessModeT) => void;
+  onDuplicate: () => void;
+}> = ({
+  isClassroom,
+  isTutor,
   studentAccessMode,
   onDelete,
+  onDeleteFromClassroom,
   onUpdateAccessMode,
-}: {
-  studentAccessMode: AccessModeT | '';
-  onDelete?: () => void;
-  onUpdateAccessMode?: (newAccessMode: AccessModeT) => void;
+  onDuplicate,
 }) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const handleAction = (action: () => void) => (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDropdownOpen(false);
+
+    action();
+  };
+
   const handleChange = (key: AccessModeT) => {
-    // Вызываем функцию обновления только если выбран новый режим доступа
     if (key !== studentAccessMode) {
       onUpdateAccessMode?.(key);
     }
   };
 
-  const checkboxItemClassName =
-    'hover:bg-brand-0 hover:text-brand-100 relative flex w-full flex-row-reverse items-center justify-start gap-2 px-2 py-[6px] hover:rounded-lg [&>span.absolute]:static [&>span.absolute]:left-auto [&>span.absolute]:ml-2 [&>span>svg]:relative [&>span>svg]:top-[1px]';
-
-  return (
-    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
+  if (isClassroom && isTutor) {
+    return (
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
@@ -57,20 +69,20 @@ export const DropdownButton = ({
         <DropdownMenuContent
           side="bottom"
           align="end"
-          className="border-gray-10 bg-gray-0 text-xs-base w-[182px] rounded-lg border p-2 font-normal"
+          className="border-gray-10 bg-gray-0 w-48 space-y-1 rounded-lg border p-2 font-normal"
           onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
         >
           <DropdownMenuSub>
             <DropdownMenuSubTrigger
+              className="text-xs-base h-7 gap-2 rounded-lg"
               onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
             >
               поменять доступ
             </DropdownMenuSubTrigger>
 
             <DropdownMenuSubContent
-              alignOffset={-16}
               sideOffset={16}
-              className="border-gray-10 bg-gray-0 text-xs-base mt-2 rounded-lg border p-2 font-normal"
+              className="border-gray-10 bg-gray-0 space-y-1 rounded-lg border p-2 font-normal"
               onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
             >
               {options.map(({ value, label }) => (
@@ -80,37 +92,65 @@ export const DropdownButton = ({
                   onCheckedChange={() => handleChange(value)}
                   onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
                   className={cn(
-                    checkboxItemClassName,
+                    'text-xs-base h-7 rounded-lg',
                     studentAccessMode === value
-                      ? 'bg-brand-0 text-brand-100 cursor-pointer rounded-lg'
+                      ? 'bg-brand-0 text-brand-100 cursor-pointer'
                       : 'text-gray-80 cursor-pointer',
                   )}
                 >
-                  <div className="w-full text-left">{label}</div>
+                  <div className="text-xs-base w-full text-left">{label}</div>
                 </DropdownMenuCheckboxItem>
               ))}
             </DropdownMenuSubContent>
           </DropdownMenuSub>
 
           <DropdownMenuItem
-            className="hover:bg-brand-0 hover:text-brand-100 w-full px-2 py-[6px] hover:rounded-lg"
+            className="hover:bg-brand-0 hover:text-brand-100 text-xs-base h-7 w-full rounded-lg px-2"
             onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
           >
             редактировать
           </DropdownMenuItem>
 
           <DropdownMenuItem
-            className="hover:bg-brand-0 hover:text-brand-100 w-full px-2 py-[6px] hover:rounded-lg"
+            className="hover:bg-brand-0 hover:text-brand-100 text-xs-base h-7 w-full rounded-lg px-2"
             onClick={(e: React.MouseEvent<HTMLDivElement>) => {
               e.preventDefault();
               e.stopPropagation();
-              onDelete?.();
+              onDeleteFromClassroom?.();
             }}
           >
             удалить
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-    </div>
+    );
+  }
+
+  return (
+    <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button className="h-6 w-6" variant="ghost" size="icon">
+          <MoreVert className="h-4 w-4 dark:fill-gray-100" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        side="bottom"
+        align="end"
+        className="border-gray-10 bg-gray-0 w-52 space-y-1 border p-2 font-normal"
+      >
+        <DropdownMenuItem
+          className="text-xs-base hover:text-brand-100 h-7 rounded-lg px-2"
+          onClick={handleAction(onDuplicate)}
+        >
+          Дублировать в кабинет
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="text-xs-base hover:text-brand-100 h-7 rounded-lg px-2"
+          onClick={handleAction(onDelete)}
+        >
+          Удалить
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };

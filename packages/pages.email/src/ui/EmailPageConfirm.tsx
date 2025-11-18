@@ -2,6 +2,8 @@ import { useEffect, useState, useMemo } from 'react';
 import { EmailPageLayout } from './EmailPageLayout';
 import { Button } from '@xipkg/button';
 import { useCurrentUser, useEmailConfirmationRequest } from 'common.services';
+import { Alert, AlertIcon, AlertContainer, AlertDescription } from '@xipkg/alert';
+import { InfoCircle } from '@xipkg/icons';
 
 const formatTime = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);
@@ -89,6 +91,18 @@ export const EmailPageConfirm = () => {
           Если письмо не пришло, проверьте адрес и нажмите на эту кнопку
         </span>
       )}
+      <div className="mt-8">
+        <Alert className="h-full w-full" variant="brand">
+          <AlertIcon>
+            <InfoCircle className="fill-brand-100" />
+          </AlertIcon>
+          <AlertContainer className="h-full">
+            <AlertDescription>
+              Если письмо долго не приходит, проверьте папку «Спам» в вашей почте
+            </AlertDescription>
+          </AlertContainer>
+        </Alert>
+      </div>
     </EmailPageLayout>
   );
 };

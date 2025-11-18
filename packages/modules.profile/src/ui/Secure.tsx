@@ -22,7 +22,6 @@ export const Secure = () => {
         <h1 className="mb-4 text-3xl font-semibold dark:text-gray-100">Безопасность</h1>
       )}
       <div className="flex flex-col gap-6 sm:gap-8">
-        {/* {!user?.email_confirmed && <ConfirmEmail />} */}
         <div className="border-gray-80 flex w-full flex-col rounded-2xl border p-1">
           <div className="flex w-full flex-col p-3">
             <span className="text-xl font-semibold dark:text-gray-100">Данные аккаунта</span>
@@ -39,7 +38,7 @@ export const Secure = () => {
               <Key className="fill-brand-80" />
               <div className="items-star flex flex-col">
                 <span className="w-fit font-semibold dark:text-gray-100">Пароль</span>
-                <span className="dark:text-gray-80 text-xs font-normal">{`Обновлён ${getRelativeTime(user?.last_password_change)}`}</span>
+                <span className="dark:text-gray-80 text-xs font-normal">{`Обновлён ${getRelativeTime(user?.password_last_changed_at)}`}</span>
               </div>
               <ChevronRight className="fill-gray-80 ml-auto" />
             </button>
