@@ -5,3 +5,4 @@ export { useMedia } from './src/useMedia';
 export { generateNameWithDate } from './src/generateNameWithDate';
 export { useNetworkStatus, NetworkProvider } from './src/NetworkContext';
 export { useRetryQueue } from './src/useRetryQueue';
+export { getUserAvatarUrl } from './src/getUserAvatarUrl';
