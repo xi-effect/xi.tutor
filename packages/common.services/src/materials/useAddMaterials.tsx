@@ -41,14 +41,23 @@ export const useAddMaterials = () => {
       let materialName = materialsData.name;
 
       if (!materialName) {
-        const queries = queryClient.getQueriesData<Array<{ name: string }>>({
+        const queries = queryClient.getQueriesData<{
+          pages: Array<Array<{ name: string; content_kind: string }>>;
+        }>({
           queryKey: [MaterialsQueryKey.Materials],
         });
 
         const existingMaterials: Array<{ name: string }> = [];
         queries.forEach(([, data]) => {
-          if (Array.isArray(data)) {
-            existingMaterials.push(...data);
+          if (data?.pages) {
+            data.pages.forEach((page) => {
+              if (Array.isArray(page)) {
+                const filteredMaterials = page.filter(
+                  (material) => material.content_kind === materialsData.content_kind,
+                );
+                existingMaterials.push(...filteredMaterials);
+              }
+            });
           }
         });
 
