@@ -28,6 +28,7 @@
     "features.payment.approve": "*",
     "features.charts": "*",
     "features.invoice": "*",
+    "features.invoice.card": "*",
     "react-hook-form": "^7.56.3",
     "zod": "3.24.2",
     "@xipkg/button": "3.2.0",
