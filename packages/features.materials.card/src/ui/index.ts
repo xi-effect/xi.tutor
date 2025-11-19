@@ -1,0 +1,1 @@
+export { MaterialsCard } from './MaterialsCard';

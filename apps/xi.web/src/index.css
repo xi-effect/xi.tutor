@@ -23,6 +23,7 @@
 @source "../../../packages/pages.welcome/src";
 @source "../../../packages/pages.materials/src";
 @source "../../../packages/features.materials.add/src";
+@source "../../../packages/features.materials.card/src";
 @source "../../../packages/features.table/src";
 @source "../../../packages/features.avatar.editor/src";
 @source "../../../packages/features.charts/src";

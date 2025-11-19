@@ -43,7 +43,7 @@ export const useUpdatePassword = () => {
         if (!old) return old;
         return {
           ...old,
-          last_password_change: new Date().toISOString(),
+          password_last_changed_at: new Date().toISOString(),
         };
       });
 
@@ -63,7 +63,7 @@ export const useUpdatePassword = () => {
       }
     },
     onSettled: () => {
-      // Для пароля может потребоваться синхронизация, так как сервер может изменить last_password_change
+      // Для пароля может потребоваться синхронизация, так как сервер может изменить password_last_changed_at
       // или другие поля, связанные с безопасностью
       queryClient.invalidateQueries({ queryKey: [UserQueryKey.Home] });
     },

@@ -7,12 +7,12 @@ import { MaterialsAdd } from 'features.materials.add';
 import { useGetMaterialsList } from 'common.services';
 import { MaterialsDuplicateProvider, useMaterialsDuplicate } from 'pages.materials';
 import { MaterialsDuplicate } from 'features.materials.duplicate';
-import { Material } from './Material';
+import { MaterialsCard } from 'features.materials.card';
 
 const MaterialsContent = () => {
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
-  const { materialId, open, closeModal } = useMaterialsDuplicate();
+  const { materialId, open, closeModal, openModal } = useMaterialsDuplicate();
 
   const { data: materials, isLoading } = useGetMaterialsList({
     content_type: null, // null означает все типы материалов
@@ -40,7 +40,7 @@ const MaterialsContent = () => {
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
-                className="flex size-8 items-center justify-center rounded-[4px] p-0"
+                className="flex size-8 items-center justify-center rounded-sm p-0"
                 onClick={handleMore}
               >
                 <ArrowRight className="fill-gray-60 size-6" />
@@ -59,7 +59,13 @@ const MaterialsContent = () => {
             >
               <div className="flex flex-row gap-8">
                 {materials.map((material) => (
-                  <Material key={material.id} material={material} isLoading={isLoading} />
+                  <MaterialsCard
+                    key={material.id}
+                    onDuplicate={openModal}
+                    {...material}
+                    isLoading={isLoading}
+                    hasIcon
+                  />
                 ))}
               </div>
             </ScrollArea>

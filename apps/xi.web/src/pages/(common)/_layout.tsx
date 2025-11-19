@@ -14,7 +14,7 @@ function LayoutComponent() {
 }
 
 const ProtectedLayout = () => {
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading } = useCurrentUser();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,9 +27,9 @@ const ProtectedLayout = () => {
     ) {
       navigate({ to: onboardingStageToPath[stage as OnboardingStageT] });
     }
-  }, []);
+  }, [navigate, user?.onboarding_stage]);
 
-  if (!user) {
+  if (!user || isLoading) {
     return <LoadingScreen />;
   }
 

@@ -88,7 +88,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
       {classroom.subject_id ? (
         <SubjectBadge subject_id={classroom.subject_id} />
       ) : (
-        <div className="h-[28px] w-[28px]" />
+        <div className="h-7 w-7" />
       )}
 
       <div className="flex flex-row gap-2">
@@ -96,7 +96,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
           <UserAvatar classroom={classroom} isLoading={isLoading} />
         )}
         {classroom.kind === 'group' && (
-          <div className="bg-brand-80 text-gray-0 flex h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-[24px]">
+          <div className="bg-brand-80 text-gray-0 flex h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-3xl">
             {classroom.name?.[0].toUpperCase() ?? ''}
           </div>
         )}

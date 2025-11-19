@@ -5,8 +5,9 @@ export type UserData = {
   id: number;
   email: string;
   email_confirmed: boolean;
-  last_password_change: string;
+  password_last_changed_at: string;
   allowed_confirmation_resend: string;
+  email_confirmation_resend_allowed_at: string | null;
   onboarding_stage: string;
   username: string;
   display_name: string | null;

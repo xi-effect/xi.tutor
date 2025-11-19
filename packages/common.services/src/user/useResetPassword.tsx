@@ -45,7 +45,7 @@ export const useResetPasswordConfirm = () => {
           if (!old) return old;
           return {
             ...old,
-            last_password_change: new Date().toISOString(),
+            password_last_changed_at: new Date().toISOString(),
           };
         });
       }
