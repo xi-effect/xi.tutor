@@ -17,7 +17,9 @@
     "features.table": "*",
     "common.api": "*",
     "common.utils": "*",
-    "@xipkg/icons": "2.7.2"
+    "common.types": "*",
+    "@xipkg/icons": "2.7.2",
+    "@xipkg/button": "4.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

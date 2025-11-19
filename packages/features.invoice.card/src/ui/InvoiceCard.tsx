@@ -1,28 +1,13 @@
-import { UserProfile } from '@xipkg/userprofile';
-import { RolePaymentT, useUserByRole, RoleT, PaymentTypeT } from 'features.table';
-import { UserRoleT } from 'common.api';
-import { formatPaymentDate } from '../utils';
-import { getUserAvatarUrl } from 'common.utils';
-import { StatusBadge } from './components';
-import { RubbleCircle, Card } from '@xipkg/icons';
+import { useUserByRole } from 'features.table';
+import { DefaultCard, TableCard } from './components';
+import { InvoiceCardProps } from '../types';
 
-export type InvoiceCardProps = {
-  payment: RolePaymentT<UserRoleT>;
-  currentUserRole: RoleT;
-  type?: 'full' | 'short';
-};
-
-const iconsMap = {
-  cash: <RubbleCircle />,
-  transfer: <Card />,
-};
-
-const renderIcon = (paymentType: PaymentTypeT) => iconsMap[paymentType] ?? null;
-
-export const InvoiceCard = ({ payment, currentUserRole, type = 'full' }: InvoiceCardProps) => {
-  const formattedDate = formatPaymentDate(payment.created_at);
-  const amount = parseFloat(payment.total);
-
+export const InvoiceCard = ({
+  payment,
+  currentUserRole,
+  type = 'full',
+  variant = 'default',
+}: InvoiceCardProps) => {
   const userId =
     currentUserRole === 'student'
       ? (payment as { tutor_id: number }).tutor_id
@@ -30,32 +15,15 @@ export const InvoiceCard = ({ payment, currentUserRole, type = 'full' }: Invoice
 
   const userRole = currentUserRole === 'tutor' ? 'student' : 'tutor';
   const userData = useUserByRole(userRole, userId);
-  const displayName = userData.data?.display_name;
-  const username = userData.data?.username;
 
-  return (
-    <div className="border-gray-60 flex min-h-[130px] min-w-[350px] flex-col items-start justify-start gap-2 rounded-2xl border p-4">
-      {type === 'full' && (
-        <div className="flex w-full flex-row items-start justify-between gap-2">
-          <UserProfile
-            size="m"
-            userId={userId}
-            text={displayName || username || 'Имя не найдено'}
-            src={getUserAvatarUrl(userId)}
-            classNameText="line-clamp-2 break-words"
-            className="h-auto overflow-hidden"
-          />
-          <StatusBadge status={payment.status} />
-        </div>
-      )}
-      <div className="text-s-base text-gray-80 mt-auto flex w-full justify-between font-medium">
-        <span>{formattedDate}</span>
-        {type === 'short' && payment.payment_type && renderIcon(payment.payment_type)}
-      </div>
-      <div className="flex flex-row items-baseline gap-0.5">
-        <h3 className="text-h6 font-medium text-gray-100">{amount}</h3>
-        <span className="text-m-base text-gray-60 font-medium">₽</span>
-      </div>
-    </div>
+  return variant === 'table' ? (
+    <TableCard
+      userData={userData.data}
+      userId={userId}
+      payment={payment}
+      currentUserRole={currentUserRole}
+    />
+  ) : (
+    <DefaultCard type={type} userData={userData.data} userId={userId} payment={payment} />
   );
 };

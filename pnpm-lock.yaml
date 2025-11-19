@@ -735,6 +735,9 @@ importers:
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
+      common.api:
+        specifier: '*'
+        version: link:../common.api
       common.eslint:
         specifier: '*'
         version: link:../common.eslint
@@ -1523,6 +1526,9 @@ importers:
       '@tanstack/react-router':
         specifier: 1.120.11
         version: 1.120.11(react-dom@19.2.0)(react@19.2.0)
+      '@xipkg/button':
+        specifier: 4.0.0
+        version: 4.0.0(@types/react@19.2.6)(react@19.2.0)
       '@xipkg/icons':
         specifier: 2.7.2
         version: 2.7.2(react@19.2.0)
@@ -1532,6 +1538,9 @@ importers:
       common.services:
         specifier: '*'
         version: link:../common.services
+      common.types:
+        specifier: '*'
+        version: link:../common.types
       common.utils:
         specifier: '*'
         version: link:../common.utils
@@ -3978,6 +3987,9 @@ importers:
       features.invoice:
         specifier: '*'
         version: link:../features.invoice
+      features.invoice.card:
+        specifier: '*'
+        version: link:../features.invoice.card
       features.payment.approve:
         specifier: '*'
         version: link:../features.payment.approve
@@ -10644,6 +10656,19 @@ packages:
 
   /@xipkg/button@3.2.0(@types/react@19.2.6)(react@19.2.0):
     resolution: {integrity: sha512-o6S2V+h7Y/wX0kvxjCbq3/jwc8Tf/SNqZ7dksxbVufStBaSoljEGp66EDqK8EzKhdv9X85/H8SJDWtipqwMsCg==}
+    peerDependencies:
+      react: ^19
+    dependencies:
+      '@radix-ui/react-slot': 1.2.4(@types/react@19.2.6)(react@19.2.0)
+      '@xipkg/utils': 1.8.0(react@19.2.0)
+      class-variance-authority: 0.7.1
+      react: 19.2.0
+    transitivePeerDependencies:
+      - '@types/react'
+    dev: false
+
+  /@xipkg/button@4.0.0(@types/react@19.2.6)(react@19.2.0):
+    resolution: {integrity: sha512-R/XV5NAd5M2KAjeG0y451jMS2mVnx9TXnth8NFNYK5X2++Ti7xuodUbuiUn4z6KHzDLIARRJyAERBbPEEaYF3g==}
     peerDependencies:
       react: ^19
     dependencies:
