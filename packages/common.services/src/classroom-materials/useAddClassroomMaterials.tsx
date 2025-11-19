@@ -42,14 +42,39 @@ export const useAddClassroomMaterials = () => {
       let materialName = materialsData.name;
 
       if (!materialName) {
-        const queries = queryClient.getQueriesData<Array<{ name: string }>>({
+        const queries = queryClient.getQueriesData<
+          | { pages: Array<Array<{ name: string; content_kind: string }>> }
+          | Array<{ name: string; content_kind: string }>
+        >({
           queryKey: [ClassroomMaterialsQueryKey.ClassroomMaterials, materialsData.classroomId],
         });
 
         const existingMaterials: Array<{ name: string }> = [];
-        queries.forEach(([, data]) => {
-          if (Array.isArray(data)) {
-            existingMaterials.push(...data);
+        queries.forEach(([queryKey, data]) => {
+          if (data) {
+            const keyType = queryKey[2];
+            const isRelevantCache =
+              keyType === materialsData.content_kind || keyType === 'all' || keyType === null;
+
+            if (!isRelevantCache) {
+              return;
+            }
+
+            if ('pages' in data && data.pages) {
+              data.pages.forEach((page) => {
+                if (Array.isArray(page)) {
+                  const filteredMaterials = page.filter(
+                    (material) => material.content_kind === materialsData.content_kind,
+                  );
+                  existingMaterials.push(...filteredMaterials);
+                }
+              });
+            } else if (Array.isArray(data)) {
+              const filteredMaterials = data.filter(
+                (material) => material.content_kind === materialsData.content_kind,
+              );
+              existingMaterials.push(...filteredMaterials);
+            }
           }
         });
 
