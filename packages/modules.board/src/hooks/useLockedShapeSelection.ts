@@ -19,26 +19,39 @@ export const useLockedShapeSelection = (editor: Editor | null) => {
     };
 
     const handlePointerDown = (event: PointerEvent) => {
+      const target = event.target as HTMLElement;
+
+      const isInsideCanvas = target.closest('.tl-canvas');
+
+      if (!isInsideCanvas) {
+        return;
+      }
+      const currentTool = editor.getCurrentToolId();
+
+      if (currentTool !== 'select') {
+        return;
+      }
+
       const point = editor.screenToPage({
         x: event.clientX,
         y: event.clientY,
       });
 
-      const shapes = editor.getCurrentPageShapes();
-      const lockedShapes = shapes.filter((s) => s.isLocked);
-
-      let foundShape = null;
-
-      for (const shape of lockedShapes) {
+      const allShapesAtPoint = editor.getCurrentPageShapes().filter((shape) => {
         const bounds = editor.getShapePageBounds(shape.id);
-        if (bounds && bounds.containsPoint(point)) {
-          foundShape = shape;
-          break;
-        }
-      }
+        return bounds && bounds.containsPoint(point);
+      });
 
-      if (foundShape) {
-        editor.select(foundShape.id);
+      if (allShapesAtPoint.length === 0) return;
+
+      allShapesAtPoint.sort((a, b) => {
+        return a.index < b.index ? -1 : 1;
+      });
+
+      const topShape = allShapesAtPoint[allShapesAtPoint.length - 1];
+
+      if (topShape.isLocked) {
+        editor.select(topShape.id);
         event.preventDefault();
         event.stopPropagation();
       }
