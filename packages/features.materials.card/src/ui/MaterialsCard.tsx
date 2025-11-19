@@ -82,17 +82,19 @@ export const MaterialsCard: React.FC<MaterialPropsT> = ({
         </div>
       </div>
 
-      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
-        <MaterialActionsMenu
-          isClassroom={isClassroom}
-          isTutor={isTutor}
-          studentAccessMode={student_access_mode}
-          onDelete={handleDelete}
-          onDeleteFromClassroom={handleDeleteFromClassroom}
-          onUpdateAccessMode={handleAccessModeUpdate}
-          onDuplicate={handleDuplicate}
-        />
-      </div>
+      {isTutor && (
+        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
+          <MaterialActionsMenu
+            isClassroom={isClassroom}
+            isTutor={isTutor}
+            studentAccessMode={student_access_mode}
+            onDelete={handleDelete}
+            onDeleteFromClassroom={handleDeleteFromClassroom}
+            onUpdateAccessMode={handleAccessModeUpdate}
+            onDuplicate={handleDuplicate}
+          />
+        </div>
+      )}
     </div>
   );
 };
