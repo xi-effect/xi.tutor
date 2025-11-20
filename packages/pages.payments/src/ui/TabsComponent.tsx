@@ -7,10 +7,10 @@ import { UserRoleT } from '../../../common.api/src/types';
 import { TemplatesGrid } from './Templates';
 import { useCurrentUser } from 'common.services';
 import { useSearch, useNavigate } from '@tanstack/react-router';
-import { type TabsComponentPropsT } from '../types';
+import { PaymentApprovalFunctionT } from 'common.types';
 // import { ChartsPage } from './Charts';
 
-export const TabsComponent = React.memo(({ onApprovePayment }: TabsComponentPropsT) => {
+export const TabsComponent = React.memo(({ onApprovePayment }: PaymentApprovalFunctionT) => {
   const isMobile = useMedia('(max-width: 700px)');
   const parentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
