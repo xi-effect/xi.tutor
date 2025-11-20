@@ -3,13 +3,19 @@ import { renderIcon, formatPaymentDate } from '../../utils';
 import { getUserAvatarUrl } from 'common.utils';
 import { StatusBadge } from '../components';
 import { CardContentT } from '../../types';
+import { cn } from '@xipkg/utils';
 
-export const DefaultCard = ({ type, userData, userId, payment }: CardContentT) => {
+export const DefaultCard = ({ type, userData, userId, payment, className }: CardContentT) => {
   const formattedDate = formatPaymentDate(payment.created_at);
   const amount = parseFloat(payment.total);
 
   return (
-    <div className="border-gray-60 flex min-h-[130px] min-w-[350px] flex-col items-start justify-start gap-2 rounded-2xl border p-4">
+    <div
+      className={cn(
+        'border-gray-60 flex min-h-[130px] min-w-[350px] flex-col items-start justify-start gap-2 rounded-2xl border p-4',
+        className,
+      )}
+    >
       {type === 'full' && (
         <div className="flex w-full flex-row items-start justify-between gap-2">
           <UserProfile

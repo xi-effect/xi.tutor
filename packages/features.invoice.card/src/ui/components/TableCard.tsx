@@ -4,13 +4,19 @@ import { StatusBadge } from '../components';
 // import { Button } from '@xipkg/button';
 // import { Edit, Trash } from '@xipkg/icons';
 import { CardContentT } from '../../types';
+import { cn } from '@xipkg/utils';
 
-export const TableCard = ({ userData, userId, payment }: CardContentT) => {
+export const TableCard = ({ userData, userId, payment, className }: CardContentT) => {
   const formattedDate = formatPaymentDate(payment.created_at);
   const amount = parseFloat(payment.total);
 
   return (
-    <div className="border-gray-30 bg-gray-0 relative flex min-h-[112px] cursor-pointer flex-col justify-between gap-2 rounded-2xl border p-4">
+    <div
+      className={cn(
+        'border-gray-30 bg-gray-0 relative flex min-h-[112px] cursor-pointer flex-col justify-between gap-2 rounded-2xl border p-4',
+        className,
+      )}
+    >
       <div className="flex flex-row items-baseline gap-1">{formattedDate}</div>
       <UserProfile
         text={userData?.display_name || userData?.username || 'Имя не найдено'}
