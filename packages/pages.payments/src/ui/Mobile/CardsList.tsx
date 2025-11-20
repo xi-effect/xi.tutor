@@ -64,7 +64,6 @@ export const CardsList = <Role extends RoleT>({
                   payment={payment}
                   currentUserRole={currentUserRole}
                   variant="table"
-                  onApprovePayment
                   onApprovePayment={onApprovePayment}
                 />
               ))}
