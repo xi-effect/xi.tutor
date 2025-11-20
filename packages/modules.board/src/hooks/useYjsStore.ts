@@ -56,6 +56,8 @@ export type ExtendedStoreStatus = {
   toggleReadonly: () => void;
 };
 
+const BOARD_SCHEMA_VERSION = 'tldraw';
+
 export function useYjsStore({
   ydocId = 'test/demo-room',
   storageToken = 'test/demo-room',
@@ -95,7 +97,8 @@ export function useYjsStore({
     const yDoc = new Y.Doc({ gc: true });
     const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${ydocId}`);
     const yStore = new YKeyValue(yArr);
-    const meta = yDoc.getMap<SerializedSchema>('meta');
+    const meta = yDoc.getMap<SerializedSchema | string>('meta');
+    meta.set('schemaVersion', BOARD_SCHEMA_VERSION);
     const readonlyMap = yDoc.getMap<boolean>('readonly');
 
     const room = new HocuspocusProvider({
@@ -274,7 +277,7 @@ export function useYjsStore({
       /* ========== INITIAL SEED ========== */
       if (yStore.yarray.length) {
         const ourSchema = store.schema.serialize();
-        const theirSchema = meta.get('schema');
+        const theirSchema = meta.get('schema') as SerializedSchema | undefined;
         if (!theirSchema) throw new Error('No schema found in the yjs doc');
 
         const records = yStore.yarray.toJSON().map(({ val }) => val);
