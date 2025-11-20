@@ -1,13 +1,14 @@
 import { useUserByRole } from 'features.table';
 import { DefaultCard, TableCard } from './components';
-import { InvoiceCardProps } from '../types';
+import { InvoiceCardPropsT } from '../types';
 
 export const InvoiceCard = ({
   payment,
   currentUserRole,
   type = 'full',
   variant = 'default',
-}: InvoiceCardProps) => {
+  className,
+}: InvoiceCardPropsT) => {
   const userId =
     currentUserRole === 'student'
       ? (payment as { tutor_id: number }).tutor_id
@@ -22,8 +23,15 @@ export const InvoiceCard = ({
       userId={userId}
       payment={payment}
       currentUserRole={currentUserRole}
+      className={className}
     />
   ) : (
-    <DefaultCard type={type} userData={userData.data} userId={userId} payment={payment} />
+    <DefaultCard
+      type={type}
+      userData={userData.data}
+      userId={userId}
+      payment={payment}
+      className={className}
+    />
   );
 };
