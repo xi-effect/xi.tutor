@@ -2,8 +2,7 @@ import { paymentsApiConfig, PaymentsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError } from 'common.services';
-
-type PaymentTypeT = 'cash' | 'transfer';
+import { PaymentTypeT } from 'common.types';
 
 export const usePaymentSenderConfirmation = () => {
   const queryClient = useQueryClient();

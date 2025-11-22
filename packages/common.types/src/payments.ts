@@ -1,4 +1,5 @@
 import type { RoleT } from './user';
+import { UserRoleT } from 'common.api';
 
 export type TemplateT = {
   id: number;
@@ -43,3 +44,7 @@ export type TutorPaymentT = PaymentDataT<'student'>;
 export type RolePaymentT<Role extends RoleT> = Role extends 'tutor'
   ? TutorPaymentT
   : StudentPaymentT;
+
+export type PaymentApprovalFunctionT = {
+  onApprovePayment: (payment: RolePaymentT<UserRoleT>) => void;
+};

@@ -25,6 +25,7 @@ export type {
   StudentPaymentT,
   TutorPaymentT,
   RolePaymentT,
+  PaymentApprovalFunctionT,
 } from './payments';
 export type { InvitationDataT } from './invitations';
 export type {
