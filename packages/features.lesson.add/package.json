@@ -1,0 +1,55 @@
+{
+  "name": "features.lesson.add",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsc --watch",
+    "lint": "eslint \"**/*.{ts,tsx}\""
+  },
+  "dependencies": {
+    "@tanstack/react-router": "1.120.11",
+    "@tanstack/react-query": "^5.73.3",
+    "sonner": "^1.4.0",
+    "common.services": "*",
+    "common.utils": "*",
+    "common.config": "*",
+    "common.api": "*",
+    "common.env": "*",
+    "common.types": "*",
+    "@xipkg/modal": "4.1.0",
+    "@xipkg/select": "2.2.5",
+    "@xipkg/utils": "1.8.0",
+    "@xipkg/form": "4.2.1",
+    "@xipkg/button": "3.2.0",
+    "@xipkg/input": "2.2.9",
+    "@xipkg/icons": "^2.5.4",
+    "@xipkg/datepicker": "2.2.0",
+    "@xipkg/inputmask": "2.0.12"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "common.typescript": "*",
+    "common.eslint": "*",
+    "@types/node": "^20.3.1",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@xipkg/eslint": "3.2.0",
+    "@xipkg/tailwind": "0.8.1",
+    "@xipkg/typescript": "latest",
+    "eslint": "^9.19.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.18",
+    "globals": "^15.14.0",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.22.0"
+  },
+  "peerDependencies": {
+    "react": "19"
+  },
+  "description": "adding lesson feature",
+  "author": "xi.effect"
+}
