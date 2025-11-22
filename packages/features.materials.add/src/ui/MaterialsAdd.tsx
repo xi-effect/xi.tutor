@@ -7,8 +7,8 @@ export const MaterialsAdd = ({ onlyDrafts = false }: { onlyDrafts?: boolean }) =
   // const { data: user } = useCurrentUser();
   // const isTutor = user?.default_layout === 'tutor';
 
-  const handleCreate = async (kind: MaterialsDataT['content_kind']) => {
-    await addMaterials.mutateAsync({ content_kind: kind });
+  const handleCreate = (kind: MaterialsDataT['content_kind']) => {
+    addMaterials.mutate({ content_kind: kind });
   };
 
   return (

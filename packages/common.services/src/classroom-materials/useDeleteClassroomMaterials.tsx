@@ -74,7 +74,8 @@ export const useDeleteClassroomMaterials = () => {
         ],
       });
 
-      showSuccess('materials', `${params.name || 'Материал'} удален`);
+      const message = params.name ? `${params.name} удалена` : 'Материал удален';
+      showSuccess('materials', message);
     },
   });
 
