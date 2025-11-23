@@ -30,8 +30,6 @@ export const WelcomeUserAvatar = () => {
         richColors: true,
       });
     }
-
-    return;
   };
 
   const validateBeforeUpload = (files: File[]): string | undefined => {
@@ -44,8 +42,6 @@ export const WelcomeUserAvatar = () => {
     if (file.size > 5 * 1024 * 1024) {
       return 'Файл слишком большой';
     }
-
-    return undefined;
   };
 
   const handleInput = async (files: File[]) => {
