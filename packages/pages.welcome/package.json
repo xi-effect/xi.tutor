@@ -14,7 +14,7 @@
     "@xipkg/avatar": "3.0.10",
     "@xipkg/modal": "^4.3.0",
     "@xipkg/button": "3.2.0",
-    "@xipkg/fileuploader": "^2.0.12",
+    "@xipkg/fileuploader": "2.0.13",
     "@xipkg/form": "4.2.1",
     "@xipkg/icons": "^2.7.0",
     "@xipkg/input": "2.0.7",
