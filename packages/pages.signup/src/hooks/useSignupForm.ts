@@ -29,6 +29,12 @@ export const useSignupForm = () => {
           if (typeof window !== 'undefined') {
             sessionStorage.setItem('previousPath', '/signup');
           }
+
+          // Отправляем цель в Яндекс.Метрику
+          if (typeof window !== 'undefined' && window.ym) {
+            window.ym(103653512, 'reachGoal', 'registration_complete');
+          }
+
           navigate({
             to: '/welcome/email/$emailId',
             params: {

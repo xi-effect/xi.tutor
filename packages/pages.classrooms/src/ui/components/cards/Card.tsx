@@ -90,6 +90,11 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
       className="hover:bg-gray-5 border-gray-30 bg-gray-0 relative flex cursor-pointer justify-between rounded-2xl border p-4"
     >
       <div className="flex flex-col gap-4">
+        <div className="mt-auto mr-8 flex items-center gap-2">
+          <StatusBadge status={status} kind={kind} deleted={deleted} />
+
+          {subject_id && <SubjectBadge subject_id={subject_id} />}
+        </div>
         <div className="flex flex-row gap-2">
           {kind === 'individual' && (
             <UserAvatar kind={kind} student_id={student_id?.toString() ?? ''} />
@@ -109,16 +114,6 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
             </TooltipTrigger>
             <TooltipContent>{name}</TooltipContent>
           </Tooltip>
-        </div>
-
-        <div className="mt-auto flex items-center gap-2">
-          <StatusBadge status={status} kind={kind} deleted={deleted} />
-
-          {/* <Badge size="m" className="text-gray-80 bg-gray-5 rounded-lg border-none px-2 py-1">
-            {kind === 'individual' ? 'Индивидуальный' : 'Групповой'}
-          </Badge> */}
-
-          {subject_id && <SubjectBadge subject_id={subject_id} />}
         </div>
       </div>
 
