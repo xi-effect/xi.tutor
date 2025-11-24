@@ -14,6 +14,13 @@ interface MutationContext {
   previousQueries: [readonly unknown[], unknown][];
 }
 
+type MaterialItemT = {
+  name: string;
+  content_kind: string;
+};
+
+type ClassroomMaterialsCacheT = { pages: Array<Array<MaterialItemT>> } | Array<MaterialItemT>;
+
 export type MaterialsDataT = {
   content_kind: 'note' | 'board';
   name?: string;
@@ -40,10 +47,7 @@ export const useAddMaterials = () => {
       let materialName = materialsData.name;
 
       if (!materialName) {
-        const queries = queryClient.getQueriesData<
-          | { pages: Array<Array<{ name: string; content_kind: string }>> }
-          | Array<{ name: string; content_kind: string }>
-        >({
+        const queries = queryClient.getQueriesData<ClassroomMaterialsCacheT>({
           queryKey: [MaterialsQueryKey.Materials],
         });
 
