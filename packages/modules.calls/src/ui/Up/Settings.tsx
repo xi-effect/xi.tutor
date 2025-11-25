@@ -80,10 +80,16 @@ export const Settings = ({ children }: SettingsPropsT) => {
     saveVideoInputEnabled,
   } = usePersistentUserChoices();
 
-  // Получаем audioOutputDeviceId из store напрямую
+  // Получаем audioOutputDeviceId и blurEnabled из store напрямую
   const audioOutputDeviceId = useUserChoicesStore((state) => state.audioOutputDeviceId);
+  const blurEnabled = useUserChoicesStore((state) => state.blurEnabled);
+
   const saveAudioOutputDeviceId = useCallback((deviceId: string) => {
     useUserChoicesStore.setState({ audioOutputDeviceId: deviceId });
+  }, []);
+
+  const handleBlurToggle = useCallback((checked: boolean) => {
+    useUserChoicesStore.setState({ blurEnabled: checked });
   }, []);
 
   // Получаем треки из публикаций и приводим к правильному типу
@@ -219,6 +225,14 @@ export const Settings = ({ children }: SettingsPropsT) => {
               onDeviceChange={handleAudioOutputDeviceChange}
               icon={<SoundTwo className="h-4 w-4" />}
             />
+          </div>
+
+          {/* Размытие фона */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <Label className="font-medium text-gray-100">Размытие фона</Label>
+              <Switch checked={blurEnabled} onCheckedChange={handleBlurToggle} />
+            </div>
           </div>
         </div>
       </SheetContent>

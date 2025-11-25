@@ -4,10 +4,20 @@ import { UpBar } from '../Up';
 import { Chat } from '../Chat/Chat';
 import { useHandFocus } from '../../hooks/useHandFocus';
 import { CallsOnboarding } from '../Onboarding/CallsOnboarding';
+import { useLocalParticipant } from '@livekit/components-react';
+import { LocalVideoTrack } from 'livekit-client';
+import { useVideoBlur } from '../../hooks';
 
 export const ActiveRoom = () => {
   // Автоматический фокус на участниках с поднятыми руками
   useHandFocus();
+
+  // Получаем видео трек для применения блюра
+  const { cameraTrack } = useLocalParticipant();
+  const videoTrack = cameraTrack?.track as LocalVideoTrack | undefined;
+
+  // Передаем видеотрек для использования блюра
+  useVideoBlur(videoTrack);
 
   return (
     <div className="flex h-full flex-col justify-stretch">

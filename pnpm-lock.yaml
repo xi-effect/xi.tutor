@@ -2351,6 +2351,9 @@ importers:
       '@livekit/krisp-noise-filter':
         specifier: ^0.3.4
         version: 0.3.4(livekit-client@2.15.6)
+      '@livekit/track-processors':
+        specifier: ^0.6.1
+        version: 0.6.1(@types/dom-mediacapture-transform@0.1.11)(livekit-client@2.15.6)
       '@react-hook/latest':
         specifier: 1.0.3
         version: 1.0.3(react@19.2.0)
@@ -6391,6 +6394,17 @@ packages:
       '@bufbuild/protobuf': 1.10.1
     dev: false
 
+  /@livekit/track-processors@0.6.1(@types/dom-mediacapture-transform@0.1.11)(livekit-client@2.15.6):
+    resolution: {integrity: sha512-t9JMDvMUlaaURDDRZFQEkRYR4q2qROPOOIs3aZXQVL6v/QYgJ0tPg/QfbvHC8b6mYPwcaJgVz3KTk5XQ07fEMg==}
+    peerDependencies:
+      '@types/dom-mediacapture-transform': ^0.1.9
+      livekit-client: ^1.12.0 || ^2.1.0
+    dependencies:
+      '@mediapipe/tasks-vision': 0.10.14
+      '@types/dom-mediacapture-transform': 0.1.11
+      livekit-client: 2.15.6(@types/dom-mediacapture-record@1.0.22)
+    dev: false
+
   /@maskito/core@3.5.0:
     resolution: {integrity: sha512-zgmBjXeXc7BSBaw8jQw25dnwkFmKDvdj5rHzhEIxYhgGtnpli236F0YWPIOYzIwADjbefwDq1o7qpJfMsdDO4Q==}
     dev: false
@@ -6413,6 +6427,10 @@ packages:
       '@maskito/core': 3.5.0
       react: 19.2.0
       react-dom: 19.2.0(react@19.2.0)
+    dev: false
+
+  /@mediapipe/tasks-vision@0.10.14:
+    resolution: {integrity: sha512-vOifgZhkndgybdvoRITzRkIueWWSiCKuEUXXK6Q4FaJsFvRJuwgg++vqFUMlL0Uox62U5aEXFhHxlhV7Ja5e3Q==}
     dev: false
 
   /@napi-rs/wasm-runtime@0.2.12:
@@ -10199,6 +10217,16 @@ packages:
 
   /@types/dom-mediacapture-record@1.0.22:
     resolution: {integrity: sha512-mUMZLK3NvwRLcAAT9qmcK+9p7tpU2FHdDsntR3YI4+GY88XrgG4XiE7u1Q2LAN2/FZOz/tdMDC3GQCR4T8nFuw==}
+    dev: false
+
+  /@types/dom-mediacapture-transform@0.1.11:
+    resolution: {integrity: sha512-Y2p+nGf1bF2XMttBnsVPHUWzRRZzqUoJAKmiP10b5umnO6DDrWI0BrGDJy1pOHoOULVmGSfFNkQrAlC5dcj6nQ==}
+    dependencies:
+      '@types/dom-webcodecs': 0.1.17
+    dev: false
+
+  /@types/dom-webcodecs@0.1.17:
+    resolution: {integrity: sha512-IwKW5uKL0Zrv5ccUJpjIlqf7ppk2v29l/ZLQxLlwHxljBfnDD9Gxm+hzMkGM0AOAL/21H0pp7cTUYLiiVUGchA==}
     dev: false
 
   /@types/estree@0.0.39:
