@@ -31,7 +31,7 @@ export const useGetUnreadCount = ({ limit, enabled = true }: UseGetUnreadCountPr
       return response.data;
     },
     enabled,
-    refetchInterval: 30000, // Обновлять каждые 30 секунд
+    refetchInterval: 600000, // Обновлять каждые 10 минут
   });
 
   return {
