@@ -27,7 +27,9 @@ export const UpBar = () => {
   const { callId } = useParams({ strict: false });
   const { data: classroom } = useGetClassroom(Number(callId));
   const carouselType = useCallStore((state) => state.carouselType);
-  const { isFullScreen, toggleFullScreen } = useFullScreen('videoConferenceContainer');
+  const { isFullScreenSupported, isFullScreen, toggleFullScreen } = useFullScreen(
+    'videoConferenceContainer',
+  );
 
   // Получаем треки для проверки условий
   const tracks = useTracks(
@@ -165,25 +167,27 @@ export const UpBar = () => {
           </TooltipContent>
         </Tooltip>
       )}
-      <Tooltip delayDuration={1000}>
-        <TooltipTrigger asChild>
-          <Button
-            onClick={toggleFullScreen}
-            type="button"
-            variant="ghost"
-            className="ml-2 hidden h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0 md:flex"
-          >
-            {isFullScreen ? (
-              <Minimize className="fill-gray-100" />
-            ) : (
-              <Maximize className="fill-gray-100" />
-            )}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom" align="end">
-          {isFullScreen ? 'Свернуть' : 'Развернуть на весь экран'}
-        </TooltipContent>
-      </Tooltip>
+      {isFullScreenSupported && (
+        <Tooltip delayDuration={1000}>
+          <TooltipTrigger asChild>
+            <Button
+              onClick={toggleFullScreen}
+              type="button"
+              variant="ghost"
+              className="ml-2 hidden h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0 md:flex"
+            >
+              {isFullScreen ? (
+                <Minimize className="fill-gray-100" />
+              ) : (
+                <Maximize className="fill-gray-100" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" align="end">
+            {isFullScreen ? 'Свернуть' : 'Развернуть на весь экран'}
+          </TooltipContent>
+        </Tooltip>
+      )}
       {/* <button
         type="button"
       className="bg-gray-0 ml-2 flex h-10 w-10 flex-row items-center justify-center rounded-[20px]"
