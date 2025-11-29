@@ -20,7 +20,8 @@ import { HotkeysHelp } from '../shared/HotkeysHelp';
 import { useYjsContext } from '../../../providers/YjsProvider';
 
 export const Header = () => {
-  const { isFullScreen, toggleFullScreen } = useFullScreen('whiteboard-container');
+  const { isFullScreenSupported, isFullScreen, toggleFullScreen } =
+    useFullScreen('whiteboard-container');
   const { classroomId, boardId, materialId } = useParams({ strict: false });
   const { isReadonly } = useYjsContext();
 
@@ -94,18 +95,20 @@ export const Header = () => {
         </div>
         <div className="flex items-center gap-1">
           {!isReadonly && <HotkeysHelp />}
-          <Button
-            variant="ghost"
-            onClick={toggleFullScreen}
-            type="button"
-            className="h-[40px] w-[40px] p-2"
-          >
-            {isFullScreen ? (
-              <Minimize size="s" className="size-6" />
-            ) : (
-              <Maximize size="s" className="size-6" />
-            )}
-          </Button>
+          {isFullScreenSupported && (
+            <Button
+              variant="ghost"
+              onClick={toggleFullScreen}
+              type="button"
+              className="h-10 w-10 p-2"
+            >
+              {isFullScreen ? (
+                <Minimize size="s" className="size-6" />
+              ) : (
+                <Maximize size="s" className="size-6" />
+              )}
+            </Button>
+          )}
           {!isReadonly && <SettingsDropdown />}
         </div>
       </div>
