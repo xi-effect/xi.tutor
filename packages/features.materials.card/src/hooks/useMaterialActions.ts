@@ -2,8 +2,9 @@ import {
   useDeleteClassroomMaterials,
   useDeleteMaterials,
   useUpdateClassroomMaterial,
+  useUpdateMaterial,
 } from 'common.services';
-import { AccessModeT } from 'common.types';
+import { AccessModeT, UpdateMaterialDataT } from 'common.types';
 
 export const useMaterialActions = (
   id: number,
@@ -14,6 +15,7 @@ export const useMaterialActions = (
   const { deleteMaterials } = useDeleteMaterials();
   const { deleteClassroomMaterials } = useDeleteClassroomMaterials();
   const { updateClassroomMaterial } = useUpdateClassroomMaterial();
+  const { updateMaterial } = useUpdateMaterial();
 
   const handleDelete = () => {
     deleteMaterials.mutate({
@@ -46,9 +48,42 @@ export const useMaterialActions = (
     });
   };
 
+  const handleUpdateName = (
+    type: 'tutor' | 'classroom',
+    newName: UpdateMaterialDataT['name'],
+    onNameUpdated: () => void,
+  ) => {
+    if (newName === name) return;
+
+    const onSuccess = () => onNameUpdated?.();
+
+    if (type === 'classroom') {
+      if (!classroomId) return;
+
+      updateClassroomMaterial.mutate(
+        {
+          classroomId,
+          id: id.toString(),
+          data: { name: newName },
+        },
+        { onSuccess },
+      );
+      return;
+    }
+
+    updateMaterial.mutate(
+      {
+        id: id.toString(),
+        data: { name: newName },
+      },
+      { onSuccess },
+    );
+  };
+
   return {
     handleDelete,
     handleDeleteFromClassroom,
     handleUpdateAccessMode,
+    handleUpdateName,
   };
 };
