@@ -57,6 +57,8 @@ export const SignUpPage = () => {
     ? 'text-red-80 dark:text-red-40 decoration-red-40 hover:text-red-80 hover:decoration-red-80'
     : 'text-gray-60';
 
+  const isButtonDisabled = isPending;
+
   return (
     <div className="xs:min-h-screen dark:bg-gray-0 flex min-h-dvh w-screen flex-col flex-wrap content-center justify-center p-1 py-4">
       <div className="xs:border xs:border-gray-10 dark:bg-gray-5 xs:rounded-2xl flex min-h-[600px] w-full max-w-[420px] p-8">
@@ -186,8 +188,14 @@ export const SignUpPage = () => {
                   {t('sign_in')}
                 </LinkTanstack>
               </div>
-              {!isPending ? (
-                <Button size="m" variant="default" type="submit" className="w-[214px]">
+              {!isButtonDisabled ? (
+                <Button
+                  size="m"
+                  variant="default"
+                  type="submit"
+                  className="w-[214px]"
+                  disabled={isButtonDisabled}
+                >
                   {t('sign_up')}
                 </Button>
               ) : (
