@@ -48,7 +48,13 @@ export const WelcomeUserAvatar = () => {
           onOpenChange={setIsAvatarEditorOpen}
           setDate={setDate}
         />
-        <FileUploader onChange={handleInput} accept="image/*" size="small" />
+        <FileUploader
+          onChange={handleInput}
+          accept="image/*"
+          withError={false}
+          withLargeError={false}
+          size="small"
+        />
       </div>
     </div>
   );

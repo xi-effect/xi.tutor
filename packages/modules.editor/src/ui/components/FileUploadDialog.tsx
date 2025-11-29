@@ -71,7 +71,13 @@ export const ImageUploadModal = () => {
 
         <div className="mt-4">
           {mode === 'upload' ? (
-            <FileUploader onChange={handleInput} accept="image/*" size="large" />
+            <FileUploader
+              onChange={handleInput}
+              accept="image/*"
+              withError={false}
+              withLargeError={false}
+              size="large"
+            />
           ) : (
             <div className="flex gap-2">
               <div className="w-full">
