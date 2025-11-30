@@ -357,8 +357,6 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
   const refetch = isTutor ? refetchByTutor : refetchByStudent;
   const isLoadingInvoice = isTutor ? isLoadingTutor : isLoadingStudent;
 
-  console.log('data', data);
-
   useEffect(() => {
     if (open && recipientInvoiceId && !data && !isLoadingInvoice) {
       refetch();

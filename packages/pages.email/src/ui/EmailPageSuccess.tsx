@@ -48,12 +48,6 @@ export const EmailPageSuccess = () => {
   // Определяем, есть ли ошибка (кроме 409)
   const hasError = (emailConfirmation.isError || !!emailConfirmation.error) && !isAlreadyConfirmed;
 
-  console.log('isSuccess', isSuccess);
-  console.log('isLoading', isLoading);
-  console.log('hasError', hasError);
-  console.log('isAlreadyConfirmed', isAlreadyConfirmed);
-  console.log('emailConfirmation', emailConfirmation);
-
   const handleConfirm = async () => {
     navigate({ to: '/welcome/user', search: { ...search } });
   };

@@ -71,8 +71,6 @@ const NotificationItem = ({
   const relativeTime = formatNotificationDate(notification.created_at);
   const fullTime = formatFullNotificationDate(notification.created_at);
 
-  console.log('notification', notification);
-
   return (
     <DropdownMenuItem
       className={cn(
