@@ -14,7 +14,7 @@ export const useInfiniteQuery = (
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
     useTanStackInfiniteQuery<RolePaymentT<UserRoleT>[], unknown>({
-      queryKey: [queryKey, role, classroomId],
+      queryKey: [queryKey, role, classroomId || 'all'],
       queryFn: async ({ pageParam }) => {
         const axiosInst = await getAxiosInstance();
         const url = classroomId
