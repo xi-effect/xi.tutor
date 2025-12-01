@@ -30,6 +30,7 @@ export const Payments = () => {
   const { items, isLoading, isFetchingNextPage, isError } = useInfiniteQuery(
     parentRef,
     currentUserRole,
+    classroomId,
   );
 
   const defaultColumns = useMemo(
