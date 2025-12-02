@@ -710,6 +710,9 @@ importers:
 
   packages/common.types:
     dependencies:
+      common.api:
+        specifier: '*'
+        version: link:../common.api
       react:
         specifier: '19'
         version: 19.2.0
@@ -735,9 +738,6 @@ importers:
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
-      common.api:
-        specifier: '*'
-        version: link:../common.api
       common.eslint:
         specifier: '*'
         version: link:../common.eslint

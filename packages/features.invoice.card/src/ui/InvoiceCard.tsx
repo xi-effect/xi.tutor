@@ -17,15 +17,18 @@ export const InvoiceCard = ({
   const userRole = currentUserRole === 'tutor' ? 'student' : 'tutor';
   const userData = useUserByRole(userRole, userId);
 
-  return variant === 'table' ? (
-    <TableCard
-      userData={userData.data}
-      userId={userId}
-      payment={payment}
-      currentUserRole={currentUserRole}
-      className={className}
-    />
-  ) : (
+  if (variant === 'table')
+    return (
+      <TableCard
+        userData={userData.data}
+        userId={userId}
+        payment={payment}
+        currentUserRole={currentUserRole}
+        className={className}
+      />
+    );
+
+  return (
     <DefaultCard
       type={type}
       userData={userData.data}
