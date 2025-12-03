@@ -19,6 +19,7 @@ import {
 } from '@livekit/components-react';
 import { useMediaDeviceSelect } from '@livekit/components-react';
 import { Track, LocalAudioTrack, LocalVideoTrack } from 'livekit-client';
+import { supportsBackgroundProcessors } from '@livekit/track-processors';
 
 import { useUserChoicesStore } from '../../store/userChoices';
 
@@ -91,6 +92,8 @@ export const Settings = ({ children }: SettingsPropsT) => {
   const handleBlurToggle = useCallback((checked: boolean) => {
     useUserChoicesStore.setState({ blurEnabled: checked });
   }, []);
+
+  const isBlurSupported = supportsBackgroundProcessors();
 
   // Получаем треки из публикаций и приводим к правильному типу
   const audioTrack = microphoneTrack?.track as LocalAudioTrack | undefined;
@@ -228,12 +231,14 @@ export const Settings = ({ children }: SettingsPropsT) => {
           </div>
 
           {/* Размытие фона */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label className="font-medium text-gray-100">Размытие фона</Label>
-              <Switch checked={blurEnabled} onCheckedChange={handleBlurToggle} />
+          {isBlurSupported && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="font-medium text-gray-100">Размытие фона</Label>
+                <Switch checked={blurEnabled} onCheckedChange={handleBlurToggle} />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </SheetContent>
     </Sheet>

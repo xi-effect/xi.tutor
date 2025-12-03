@@ -7,11 +7,7 @@ export function useVideoBlur(videoTrack: LocalVideoTrack | null | undefined) {
   const blurEnabled = useUserChoicesStore((state) => state.blurEnabled);
 
   useEffect(() => {
-    if (!videoTrack) {
-      return;
-    }
-
-    if (!supportsBackgroundProcessors()) {
+    if (!videoTrack || !supportsBackgroundProcessors()) {
       return;
     }
 
@@ -20,7 +16,7 @@ export function useVideoBlur(videoTrack: LocalVideoTrack | null | undefined) {
         if (blurEnabled) {
           const processor = BackgroundProcessor({
             mode: 'background-blur',
-            blurRadius: 15,
+            blurRadius: 25,
           } as Parameters<typeof BackgroundProcessor>[0]);
 
           await videoTrack.setProcessor(processor);

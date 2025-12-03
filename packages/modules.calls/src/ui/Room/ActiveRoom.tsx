@@ -7,6 +7,7 @@ import { CallsOnboarding } from '../Onboarding/CallsOnboarding';
 import { useLocalParticipant } from '@livekit/components-react';
 import { LocalVideoTrack } from 'livekit-client';
 import { useVideoBlur } from '../../hooks';
+import { useCallStore } from '../../store/callStore';
 
 export const ActiveRoom = () => {
   // Автоматический фокус на участниках с поднятыми руками
@@ -16,8 +17,10 @@ export const ActiveRoom = () => {
   const { cameraTrack } = useLocalParticipant();
   const videoTrack = cameraTrack?.track as LocalVideoTrack | undefined;
 
-  // Передаем видеотрек для использования блюра
-  useVideoBlur(videoTrack);
+  // Применяем блюр только в полном режиме
+  const mode = useCallStore((state) => state.mode);
+  const videoTrackForBlur = mode === 'full' ? videoTrack : null;
+  useVideoBlur(videoTrackForBlur);
 
   return (
     <div className="flex h-full flex-col justify-stretch">
