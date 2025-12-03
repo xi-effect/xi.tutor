@@ -28,10 +28,27 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
     }
   }, []);
 
-  // Функция для скрытия меню в рамках сессии
+  // Функция для скрытия меню
   const hideMenuForSession = () => {
     sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
     setIsHidden(true);
+  };
+
+  const completeOnboarding = () => {
+    hideMenuForSession();
+
+    setIsTransitioning(true);
+
+    transitionStage.mutate(undefined, {
+      onSuccess: () => {
+        sessionStorage.removeItem(SESSION_STORAGE_KEY);
+        setIsTransitioning(false);
+      },
+      onError: (error) => {
+        console.error('Ошибка при завершении онбординга:', error);
+        setIsTransitioning(false);
+      },
+    });
   };
 
   // Если данные пользователя загружаются, не показываем меню
@@ -44,7 +61,7 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
     return null;
   }
 
-  // // Если onboarding_stage не "training" или меню скрыто в сессии, не показываем
+  // Если onboarding_stage не "training" или меню скрыто в сессии, не показываем
   if (user.onboarding_stage !== 'training' || isHidden || isTransitioning) {
     return null;
   }
@@ -75,9 +92,22 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
       // Можно показать уведомление пользователю или пропустить обучение
     }
 
-    // Если нет валидных шагов, не запускаем обучение
+    // Если нет валидных шагов, пропускаем обучение
     if (validSteps.length === 0) {
-      console.warn('Нет валидных шагов для обучения');
+      console.warn('Нет валидных шагов для обучения, автоматически завершаем онбординг');
+
+      setIsTransitioning(true);
+
+      transitionStage.mutate(undefined, {
+        onSuccess: () => {
+          sessionStorage.removeItem(SESSION_STORAGE_KEY);
+          setIsTransitioning(false);
+        },
+        onError: (error) => {
+          console.error('Ошибка при завершении онбординга:', error);
+          setIsTransitioning(false);
+        },
+      });
       return;
     }
 
@@ -168,7 +198,7 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
             variant="ghost"
             type="button"
             disabled={undefined}
-            onClick={hideMenuForSession}
+            onClick={completeOnboarding}
             size="s"
             className="hover:bg-gray-5 border-gray-30 mt-1 flex h-[32px] w-[153px] flex-row items-center justify-start rounded-lg border p-2 hover:cursor-pointer"
           >
