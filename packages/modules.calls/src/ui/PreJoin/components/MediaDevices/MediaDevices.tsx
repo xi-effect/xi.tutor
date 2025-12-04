@@ -7,6 +7,9 @@ import { useCallStore } from '../../../../store/callStore';
 import { useRoom } from '../../../../providers/RoomProvider';
 import { Alert, AlertIcon, AlertContainer, AlertDescription } from '@xipkg/alert';
 import { InfoCircle } from '@xipkg/icons';
+import { Label } from '@xipkg/label';
+import { Switch } from '@xipkg/switcher';
+import { supportsBackgroundProcessors } from '@livekit/track-processors';
 
 interface MediaDevicesProps {
   audioTrack?: LocalAudioTrack;
@@ -15,16 +18,19 @@ interface MediaDevicesProps {
 
 export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
   const {
-    userChoices: { audioDeviceId, audioOutputDeviceId, videoDeviceId },
+    userChoices: { audioDeviceId, audioOutputDeviceId, videoDeviceId, blurEnabled },
     saveAudioInputDeviceId,
     saveAudioOutputDeviceId,
     saveVideoInputDeviceId,
     saveAudioInputEnabled,
     saveVideoInputEnabled,
+    saveBlurEnabled,
   } = usePersistentUserChoices();
 
   const { updateStore, token, isConnecting } = useCallStore();
   const { room } = useRoom();
+
+  const isBlurSupported = supportsBackgroundProcessors();
 
   const handleJoin = async () => {
     if (!token) {
@@ -166,6 +172,14 @@ export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
               />
             </div>
           </div>
+          {isBlurSupported && (
+            <div className="my-4">
+              <div className="flex items-center justify-between">
+                <Label className="font-medium text-gray-100">Размытие фона</Label>
+                <Switch checked={blurEnabled} onCheckedChange={saveBlurEnabled} />
+              </div>
+            </div>
+          )}
         </div>
         <Button onClick={() => handleJoin()} className="w-full" disabled={isConnecting}>
           {isConnecting ? 'Подключение...' : 'Присоединиться'}
