@@ -2,6 +2,7 @@ import { uploadImageRequest, uploadFileRequest } from 'common.services';
 import { getAxiosInstance } from 'common.config';
 import { TLAsset } from 'tldraw';
 import { toast } from 'sonner';
+import { convertToWebp } from '../utils';
 
 export type TLAssetContextT = {
   screenScale: number;
@@ -87,11 +88,13 @@ export const myAssetStore = (token: string) => {
         return { src: urlUploaded };
       }
 
+      const { file: imageToUpload } = await convertToWebp(file);
+
       let objectUrl: string | null = null;
 
       try {
         // 1) Проверяем размеры изображения
-        const { w: srcW, h: srcH, objectUrl: url } = await probeImage(file);
+        const { w: srcW, h: srcH, objectUrl: url } = await probeImage(imageToUpload);
         objectUrl = url;
 
         // 2) Проверяем лимиты
@@ -108,7 +111,7 @@ export const myAssetStore = (token: string) => {
         }
 
         // 3) Простая загрузка без обработки
-        const urlUploaded = await postUpload(file, token);
+        const urlUploaded = await postUpload(imageToUpload, token);
         return { src: urlUploaded };
       } finally {
         if (objectUrl) URL.revokeObjectURL(objectUrl);
