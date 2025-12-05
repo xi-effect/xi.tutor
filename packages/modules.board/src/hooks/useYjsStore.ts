@@ -1,6 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
+/**
+ * ПРОФИЛИРОВАНИЕ ПОДКЛЮЧЕНИЙ:
+ *
+ * Все события подключения/отключения HocuspocusProvider логируются в консоль.
+ * Для просмотра итоговой статистики всех провайдеров выполните в консоли браузера:
+ *
+ *   window.__logYjsProviders()
+ *
+ * Это поможет выявить:
+ * - Повторные переподключения
+ * - Частые пересоздания провайдера
+ * - Проблемы с зависимостями useMemo/useEffect
+ */
+
 import { HocuspocusProvider } from '@hocuspocus/provider';
 import { useCurrentUser } from 'common.services';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -58,6 +72,108 @@ export type ExtendedStoreStatus = {
 
 const BOARD_SCHEMA_VERSION = 'tldraw';
 
+/* ---------- Безопасное логирование чувствительных данных ---------- */
+function maskToken(token: string | undefined): string {
+  if (!token) return 'undefined';
+  if (token.length <= 6) return '***';
+  return `${token.substring(0, 4)}...(${token.length})`;
+}
+
+function maskUrl(url: string | undefined): string {
+  if (!url) return 'undefined';
+  try {
+    const urlObj = new URL(url);
+    return urlObj.hostname || url;
+  } catch {
+    // Если не валидный URL, показываем только первые 20 символов
+    return url.length > 20 ? `${url.substring(0, 20)}...` : url;
+  }
+}
+
+function maskId(id: string | undefined): string {
+  if (!id) return 'undefined';
+  if (id.length <= 10) return id.substring(0, 4) + '***';
+  return `${id.substring(0, 8)}...(${id.length})`;
+}
+
+/* ---------- Профилирование подключений ---------- */
+let providerInstanceCounter = 0;
+const connectionProfiles = new Map<
+  string,
+  {
+    instanceId: number;
+    createdAt: number;
+    connectCount: number;
+    disconnectCount: number;
+    statusChanges: Array<{ status: string; timestamp: number }>;
+    syncedEvents: number;
+    lastConnectTime?: number;
+    lastDisconnectTime?: number;
+    hasCalledConnect?: boolean; // Флаг для отслеживания вызова connect()
+  }
+>();
+
+function logProviderEvent(instanceId: number, event: string, details?: Record<string, any>) {
+  const timestamp = Date.now();
+  const profile = connectionProfiles.get(`instance-${instanceId}`);
+
+  console.group(`🔌 [HocuspocusProvider #${instanceId}] ${event}`);
+  console.log(`⏰ Время: ${new Date(timestamp).toLocaleTimeString()}`);
+  if (details) {
+    Object.entries(details).forEach(([key, value]) => {
+      console.log(`  ${key}:`, value);
+    });
+  }
+
+  if (profile) {
+    const lifetime = timestamp - profile.createdAt;
+    console.log(`  📊 Статистика:`);
+    console.log(`    - Время жизни: ${Math.round(lifetime / 1000)}с`);
+    console.log(`    - Подключений: ${profile.connectCount}`);
+    console.log(`    - Отключений: ${profile.disconnectCount}`);
+    console.log(`    - Событий synced: ${profile.syncedEvents}`);
+    console.log(`    - Изменений статуса: ${profile.statusChanges.length}`);
+
+    // Предупреждение о множественных подключениях
+    if (profile.connectCount > 1) {
+      console.warn(`  ⚠️ ВНИМАНИЕ: Провайдер был подключен ${profile.connectCount} раз!`);
+    }
+
+    // Предупреждение о частых изменениях статуса
+    if (profile.statusChanges.length > 5) {
+      console.warn(
+        `  ⚠️ ВНИМАНИЕ: Слишком много изменений статуса (${profile.statusChanges.length})!`,
+      );
+    }
+  }
+  console.groupEnd();
+}
+
+// Функция для вывода итоговой статистики всех провайдеров
+function logAllProvidersSummary() {
+  console.group('📈 ИТОГОВАЯ СТАТИСТИКА ВСЕХ ПРОВАЙДЕРОВ');
+  connectionProfiles.forEach((profile) => {
+    const lifetime = Date.now() - profile.createdAt;
+    console.log(`\n🔌 Провайдер #${profile.instanceId}:`);
+    console.log(`  - Время жизни: ${Math.round(lifetime / 1000)}с`);
+    console.log(`  - Подключений: ${profile.connectCount}`);
+    console.log(`  - Отключений: ${profile.disconnectCount}`);
+    console.log(`  - Событий synced: ${profile.syncedEvents}`);
+    console.log(`  - Изменений статуса: ${profile.statusChanges.length}`);
+
+    if (profile.connectCount > 1) {
+      console.warn(`  ⚠️ ПРОБЛЕМА: Множественные подключения!`);
+    }
+  });
+  console.log(`\n📊 Всего создано провайдеров: ${providerInstanceCounter}`);
+  console.groupEnd();
+}
+
+// Экспортируем функцию для ручного вызова из консоли
+if (typeof window !== 'undefined') {
+  (window as any).__logYjsProviders = logAllProvidersSummary;
+}
+
 export function useYjsStore({
   ydocId = 'test/demo-room',
   storageToken = 'test/demo-room',
@@ -92,8 +208,71 @@ export function useYjsStore({
     status: 'loading',
   });
 
+  /* ---------- Отслеживание предыдущих значений зависимостей ---------- */
+  const prevDepsRef = useRef<{
+    hostUrl?: string;
+    ydocId?: string;
+    storageToken?: string;
+  }>({});
+
   /* ---------- Yjs структуры + провайдер ---------- */
-  const { yDoc, yStore, meta, room, readonlyMap } = useMemo(() => {
+  const { yDoc, yStore, meta, room, readonlyMap, instanceId } = useMemo(() => {
+    const instanceId = ++providerInstanceCounter;
+    const createdAt = Date.now();
+
+    // Определяем, какие зависимости изменились
+    const changedDeps: string[] = [];
+    if (prevDepsRef.current.hostUrl !== hostUrl) {
+      changedDeps.push('hostUrl');
+    }
+    if (prevDepsRef.current.ydocId !== ydocId) {
+      changedDeps.push('ydocId');
+    }
+    if (prevDepsRef.current.storageToken !== storageToken) {
+      changedDeps.push('storageToken');
+    }
+
+    // Сохраняем текущие значения
+    prevDepsRef.current = { hostUrl, ydocId, storageToken };
+
+    // Предупреждение о частых пересозданиях
+    if (providerInstanceCounter > 1) {
+      const previousProfile = connectionProfiles.get(`instance-${providerInstanceCounter - 1}`);
+      if (previousProfile) {
+        const timeSinceLast = createdAt - previousProfile.createdAt;
+        if (timeSinceLast < 5000) {
+          console.warn(
+            `⚠️ КРИТИЧНО: Провайдер пересоздан через ${Math.round(timeSinceLast)}мс! ` +
+              `Это может указывать на проблему с зависимостями useMemo.`,
+          );
+          console.warn(
+            `📋 Изменившиеся зависимости:`,
+            changedDeps.length > 0 ? changedDeps : 'НЕТ (возможно, объект пересоздан)',
+          );
+          if (changedDeps.includes('storageToken')) {
+            console.warn(
+              `⚠️ storageToken изменился! ` +
+                `Предыдущее: ${maskToken(prevDepsRef.current.storageToken)} ` +
+                `Новое: ${maskToken(storageToken)}`,
+            );
+          }
+        }
+      }
+    }
+
+    logProviderEvent(instanceId, 'СОЗДАНИЕ ПРОВАЙДЕРА', {
+      hostUrl: maskUrl(hostUrl),
+      ydocId: maskId(ydocId),
+      storageToken: maskToken(storageToken),
+      причина:
+        changedDeps.length > 0
+          ? `изменение зависимостей: ${changedDeps.join(', ')}`
+          : 'useMemo пересоздание (зависимости не изменились)',
+      зависимостей: `[hostUrl, ydocId, storageToken]`,
+      всегоСоздано: providerInstanceCounter,
+      изменившиесяЗависимости: changedDeps,
+    });
+
     const yDoc = new Y.Doc({ gc: true });
     const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${ydocId}`);
     const yStore = new YKeyValue(yArr);
@@ -109,6 +288,7 @@ export function useYjsStore({
       connect: false,
       forceSyncInterval: 20000,
       onAuthenticationFailed: (data) => {
+        logProviderEvent(instanceId, 'ОШИБКА АУТЕНТИФИКАЦИИ', { reason: data.reason });
         if (data.reason === 'permission-denied') {
           toast('Ошибка доступа к серверу совместного редактирования');
           console.error('hocuspocus: permission-denied');
@@ -117,6 +297,7 @@ export function useYjsStore({
         }
       },
       onAuthenticated: () => {
+        logProviderEvent(instanceId, 'АУТЕНТИФИКАЦИЯ УСПЕШНА');
         setTimeout(() => {
           const authorizedScope = (room as any).authorizedScope;
           const isReadOnly =
@@ -130,17 +311,105 @@ export function useYjsStore({
       },
     });
 
-    return { yDoc, yStore, meta, room, readonlyMap };
+    // Инициализация профиля
+    connectionProfiles.set(`instance-${instanceId}`, {
+      instanceId,
+      createdAt,
+      connectCount: 0,
+      disconnectCount: 0,
+      statusChanges: [],
+      syncedEvents: 0,
+      hasCalledConnect: false, // Флаг для отслеживания вызова connect()
+    });
+
+    return { yDoc, yStore, meta, room, readonlyMap, instanceId };
   }, [hostUrl, ydocId, storageToken]);
+
+  /* ---------- Защита от повторных подключений ---------- */
+  const isConnectingRef = useRef(false);
+  const hasConnectedRef = useRef(false);
+  const roomRef = useRef(room);
+
+  // Обновляем ref при изменении room (но не вызываем эффект)
+  roomRef.current = room;
 
   /* ---------- Главный эффект ---------- */
   useEffect(() => {
-    setStoreWithStatus({ status: 'loading' });
-    room.connect();
+    const profile = connectionProfiles.get(`instance-${instanceId}`);
+    const currentRoom = roomRef.current;
+
+    // Защита от React Strict Mode двойного вызова
+    // Используем только instanceId для ключа, чтобы эффект не пересоздавался при изменении статуса
+    const effectKey = `effect-${instanceId}`;
+
+    logProviderEvent(instanceId, 'ВЫЗОВ useEffect', {
+      причина: 'изменение зависимостей',
+      зависимости: {
+        room: !!currentRoom,
+        yDoc: !!yDoc,
+        store: !!store,
+        currentUser: !!currentUser,
+      },
+      ужеПодключался: hasConnectedRef.current,
+      hasCalledConnect: profile?.hasCalledConnect,
+      effectKey,
+      примечание: import.meta.env?.DEV
+        ? 'В dev режиме React Strict Mode может вызывать эффекты дважды - это нормально'
+        : undefined,
+    });
+
+    // КРИТИЧНО: Проверяем, был ли уже вызван connect() для этого экземпляра провайдера
+    // Этот флаг НЕ сбрасывается в cleanup, поэтому защищает от повторных вызовов в React Strict Mode
+    // НО: мы все равно регистрируем обработчики событий, чтобы они работали
+    const shouldConnect =
+      !profile?.hasCalledConnect &&
+      !isConnectingRef.current &&
+      !(hasConnectedRef.current && (currentRoom.isConnected || currentRoom.status === 'connected'));
+
+    if (shouldConnect) {
+      // Устанавливаем флаг подключения СРАЗУ, до всех остальных операций
+      isConnectingRef.current = true;
+
+      // КРИТИЧНО: Устанавливаем флаг, что connect() был вызван для этого экземпляра
+      // Этот флаг НЕ сбрасывается в cleanup, поэтому защищает от повторных вызовов
+      if (profile) {
+        profile.hasCalledConnect = true;
+        profile.connectCount++;
+        profile.lastConnectTime = Date.now();
+      }
+
+      setStoreWithStatus({ status: 'loading' });
+
+      logProviderEvent(instanceId, 'ВЫЗОВ room.connect()', {
+        текущийСтатус: currentRoom.status,
+        ужеПодключен: currentRoom.isConnected,
+      });
+
+      currentRoom.connect();
+    } else {
+      logProviderEvent(instanceId, 'ПРОПУСК connect()', {
+        причина: profile?.hasCalledConnect
+          ? 'connect() уже был вызван для этого экземпляра провайдера'
+          : isConnectingRef.current
+            ? 'уже идет процесс подключения'
+            : 'провайдер уже подключен',
+        текущийСтатус: currentRoom.status,
+        effectKey,
+      });
+    }
 
     const unsubs: (() => void)[] = [];
 
     function handleSync() {
+      const profile = connectionProfiles.get(`instance-${instanceId}`);
+      if (profile) {
+        profile.syncedEvents++;
+      }
+
+      logProviderEvent(instanceId, 'СОБЫТИЕ synced', {
+        всегоSynced: profile?.syncedEvents || 0,
+      });
+
       /* ========== DOCUMENT: store -> yDoc ========== */
       unsubs.push(
         store.listen(
@@ -205,9 +474,9 @@ export function useYjsStore({
       setIsReadonly(getReadonlyValue());
 
       /* ========== AWARENESS ========== */
-      if (!room.awareness) return;
+      if (!currentRoom.awareness) return;
 
-      const yClientId = room.awareness.clientID.toString();
+      const yClientId = currentRoom.awareness.clientID.toString();
       const userName =
         currentUser?.display_name || currentUser?.username || defaultUserPreferences.name;
       const userColor = generateUserColor(currentUser?.id?.toString() || yClientId);
@@ -234,13 +503,13 @@ export function useYjsStore({
       const presenceId = InstancePresenceRecordType.createId(yClientId);
       const presenceDerivation = createPresenceStateDerivation(userPreferences, presenceId)(store);
 
-      room.awareness.setLocalStateField('presence', presenceDerivation.get());
+      currentRoom.awareness.setLocalStateField('presence', presenceDerivation.get());
 
       unsubs.push(
         react('when presence changes', () => {
           const presence = presenceDerivation.get();
           requestAnimationFrame(() => {
-            room.awareness?.setLocalStateField('presence', presence);
+            currentRoom.awareness?.setLocalStateField('presence', presence);
           });
         }),
       );
@@ -250,7 +519,10 @@ export function useYjsStore({
         updated: number[];
         removed: number[];
       }) => {
-        const states = room.awareness!.getStates() as Map<number, { presence: TLInstancePresence }>;
+        const states = currentRoom.awareness!.getStates() as Map<
+          number,
+          { presence: TLInstancePresence }
+        >;
 
         const toRemove: TLInstancePresence['id'][] = [];
         const toPut: TLInstancePresence[] = [];
@@ -271,8 +543,8 @@ export function useYjsStore({
         });
       };
 
-      room.awareness.on('update', handleAwarenessUpdate);
-      unsubs.push(() => room.awareness?.off('update', handleAwarenessUpdate));
+      currentRoom.awareness.on('update', handleAwarenessUpdate);
+      unsubs.push(() => currentRoom.awareness?.off('update', handleAwarenessUpdate));
 
       /* ========== INITIAL SEED ========== */
       if (yStore.yarray.length) {
@@ -340,7 +612,7 @@ export function useYjsStore({
 
     /* ========== SERVER READONLY (from Hocuspocus) ========== */
     const checkServerReadonly = () => {
-      const authorizedScope = (room as any).authorizedScope;
+      const authorizedScope = (currentRoom as any).authorizedScope;
       const isReadOnly =
         authorizedScope === 'read' ||
         authorizedScope === 'readonly' ||
@@ -352,6 +624,22 @@ export function useYjsStore({
 
     let hasConnectedBefore = false;
     function handleStatusChange({ status }: { status: 'disconnected' | 'connected' }) {
+      const profile = connectionProfiles.get(`instance-${instanceId}`);
+      if (profile) {
+        profile.statusChanges.push({ status, timestamp: Date.now() });
+        if (status === 'disconnected') {
+          profile.disconnectCount++;
+          profile.lastDisconnectTime = Date.now();
+          hasConnectedRef.current = false;
+          isConnectingRef.current = false;
+        }
+      }
+
+      logProviderEvent(instanceId, `ИЗМЕНЕНИЕ СТАТУСА: ${status}`, {
+        былоПодключений: hasConnectedBefore,
+        всегоИзмененийСтатуса: profile?.statusChanges.length || 0,
+      });
+
       if (status === 'disconnected') {
         setStoreWithStatus({
           store,
@@ -361,29 +649,59 @@ export function useYjsStore({
         return;
       }
 
-      room.off('synced', handleSync);
+      currentRoom.off('synced', handleSync);
       if (status === 'connected') {
+        // Устанавливаем флаги при успешном подключении
+        hasConnectedRef.current = true;
+        isConnectingRef.current = false;
+
         checkServerReadonly();
-        if (hasConnectedBefore) return;
+        if (hasConnectedBefore) {
+          logProviderEvent(instanceId, 'ПОВТОРНОЕ ПОДКЛЮЧЕНИЕ (пропуск handleSync)', {
+            предупреждение: 'handleSync уже был зарегистрирован ранее',
+          });
+          return;
+        }
         hasConnectedBefore = true;
-        room.on('synced', handleSync);
-        unsubs.push(() => room.off('synced', handleSync));
+        currentRoom.on('synced', handleSync);
+        unsubs.push(() => currentRoom.off('synced', handleSync));
       }
     }
 
-    room.on('status', handleStatusChange);
-    unsubs.push(() => room.off('status', handleStatusChange));
+    currentRoom.on('status', handleStatusChange);
+    unsubs.push(() => currentRoom.off('status', handleStatusChange));
 
     const handleSynced = () => {
+      logProviderEvent(instanceId, 'СОБЫТИЕ synced (второй обработчик)', {
+        примечание: 'проверка readonly',
+      });
       checkServerReadonly();
     };
-    room.on('synced', handleSynced);
-    unsubs.push(() => room.off('synced', handleSynced));
+    currentRoom.on('synced', handleSynced);
+    unsubs.push(() => currentRoom.off('synced', handleSynced));
 
     return () => {
+      logProviderEvent(instanceId, 'ОЧИСТКА useEffect', {
+        количествоПодписок: unsubs.length,
+        будетОтключен: true,
+        былПодключен: hasConnectedRef.current,
+      });
+
+      // Сбрасываем флаги
+      isConnectingRef.current = false;
+
+      // Отключаем провайдер при очистке только если он был подключен
+      if (currentRoom.isConnected && hasConnectedRef.current) {
+        logProviderEvent(instanceId, 'ОТКЛЮЧЕНИЕ ПРОВАЙДЕРА', {
+          причина: 'cleanup useEffect',
+        });
+        currentRoom.disconnect();
+        hasConnectedRef.current = false;
+      }
+
       unsubs.forEach((fn) => fn());
     };
-  }, [room, yDoc, store, yStore, meta, readonlyMap, currentUser]);
+  }, [yDoc, store, yStore, meta, readonlyMap, currentUser, instanceId]);
 
   /* ---------- Public Undo/Redo API ---------- */
   function undo() {
