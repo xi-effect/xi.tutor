@@ -12,5 +12,6 @@
   "role": "Role",
   "tutor": "Tutor",
   "student": "Student",
-  "classrooms": "Classrooms"
+  "classrooms": "Classrooms",
+  "hints": "Hints"
 }

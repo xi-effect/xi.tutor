@@ -13,25 +13,64 @@ type MenuT = {
 };
 
 const SESSION_STORAGE_KEY = 'onboarding_menu_hidden';
+const SHOW_FOR_COMPLETED_KEY = 'show_onboarding_for_completed';
 
 export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
   const { data: user, isLoading } = useCurrentUser();
   const [isHidden, setIsHidden] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showForCompleted, setShowForCompleted] = useState(false);
   const { transitionStage } = useOnboardingTransition('completed', 'forwards');
 
-  // Проверяем sessionStorage при загрузке компонента
   useEffect(() => {
-    const hiddenInSession = sessionStorage.getItem(SESSION_STORAGE_KEY);
-    if (hiddenInSession === 'true') {
-      setIsHidden(true);
-    }
+    const checkSessionStorage = () => {
+      const hiddenInSession = sessionStorage.getItem(SESSION_STORAGE_KEY);
+      const showForCompletedInSession = sessionStorage.getItem(SHOW_FOR_COMPLETED_KEY);
+
+      setIsHidden(hiddenInSession === 'true');
+      setShowForCompleted(showForCompletedInSession === 'true');
+    };
+
+    checkSessionStorage();
+
+    const handleOnboardingShowRequested = () => {
+      checkSessionStorage();
+    };
+
+    window.addEventListener('onboarding-show-requested', handleOnboardingShowRequested);
+
+    return () => {
+      window.removeEventListener('onboarding-show-requested', handleOnboardingShowRequested);
+    };
   }, []);
 
-  // Функция для скрытия меню в рамках сессии
+  // Функция для скрытия меню
   const hideMenuForSession = () => {
     sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
+    sessionStorage.removeItem(SHOW_FOR_COMPLETED_KEY);
     setIsHidden(true);
+    setShowForCompleted(false);
+  };
+
+  const completeOnboarding = () => {
+    hideMenuForSession();
+
+    if (user?.onboarding_stage === 'completed') {
+      return;
+    }
+
+    setIsTransitioning(true);
+
+    transitionStage.mutate(undefined, {
+      onSuccess: () => {
+        sessionStorage.removeItem(SESSION_STORAGE_KEY);
+        setIsTransitioning(false);
+      },
+      onError: (error) => {
+        console.error('Ошибка при завершении онбординга:', error);
+        setIsTransitioning(false);
+      },
+    });
   };
 
   // Если данные пользователя загружаются, не показываем меню
@@ -44,10 +83,14 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
     return null;
   }
 
-  // // Если onboarding_stage не "training" или меню скрыто в сессии, не показываем
-  if (user.onboarding_stage !== 'training' || isHidden || isTransitioning) {
+  const shouldShowForCompleted = user.onboarding_stage === 'completed' && showForCompleted;
+  const shouldShowForTraining = user.onboarding_stage === 'training';
+
+  if ((!shouldShowForTraining && !shouldShowForCompleted) || isHidden || isTransitioning) {
     return null;
   }
+
+  const isTutor = user?.default_layout === 'tutor';
 
   const driverAction = () => {
     // Скрываем меню при начале обучения
@@ -75,9 +118,31 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
       // Можно показать уведомление пользователю или пропустить обучение
     }
 
-    // Если нет валидных шагов, не запускаем обучение
+    // Если нет валидных шагов, пропускаем обучение
     if (validSteps.length === 0) {
-      console.warn('Нет валидных шагов для обучения');
+      console.warn('Нет валидных шагов для обучения, автоматически завершаем онбординг');
+
+      if (user?.onboarding_stage === 'completed') {
+        sessionStorage.removeItem(SESSION_STORAGE_KEY);
+        sessionStorage.removeItem(SHOW_FOR_COMPLETED_KEY);
+        setShowForCompleted(false);
+        return;
+      }
+
+      setIsTransitioning(true);
+
+      transitionStage.mutate(undefined, {
+        onSuccess: () => {
+          sessionStorage.removeItem(SESSION_STORAGE_KEY);
+          sessionStorage.removeItem(SHOW_FOR_COMPLETED_KEY);
+          setShowForCompleted(false);
+          setIsTransitioning(false);
+        },
+        onError: (error) => {
+          console.error('Ошибка при завершении онбординга:', error);
+          setIsTransitioning(false);
+        },
+      });
       return;
     }
 
@@ -108,6 +173,13 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
         // Защита от повторных вызовов
         if (isTransitioning) return;
 
+        if (user?.onboarding_stage === 'completed') {
+          sessionStorage.removeItem(SESSION_STORAGE_KEY);
+          sessionStorage.removeItem(SHOW_FOR_COMPLETED_KEY);
+          setShowForCompleted(false);
+          return;
+        }
+
         setIsTransitioning(true);
 
         // Обновляем статус онбординга на 'completed' при завершении
@@ -115,6 +187,8 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
           onSuccess: () => {
             // Очищаем sessionStorage при успешном завершении онбординга
             sessionStorage.removeItem(SESSION_STORAGE_KEY);
+            sessionStorage.removeItem(SHOW_FOR_COMPLETED_KEY);
+            setShowForCompleted(false);
             setIsTransitioning(false);
           },
           onError: (error) => {
@@ -130,7 +204,7 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
 
   return (
     <>
-      <div className="bg-gray-0 border-gray-10 fixed bottom-0 left-72 z-100 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
+      <div className="bg-gray-0 border-gray-10 fixed bottom-0 left-72 z-100 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col items-start gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
         <Button
           variant="ghost"
           size="s"
@@ -147,9 +221,15 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
           </div>
           <div className="h-10">
             <span className="text-gray-80 text-sm font-normal tracking-tight">
-              Хотите узнать о возможностях платформы?
-              <br />
-              Вы сможете вернуться к обучению в любой момент.
+              {isTutor ? (
+                <>
+                  Хотите узнать о возможностях платформы?
+                  <br />
+                  Вы сможете вернуться к обучению в любой момент
+                </>
+              ) : (
+                <>Подсказать, как всё устроено?</>
+              )}
             </span>
           </div>
         </div>
@@ -160,19 +240,19 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
             disabled={disabled}
             onClick={() => driverAction()}
             size="s"
-            className="bg-brand-80 text-gray-0 mt-1 flex h-[32px] w-[153px] flex-row items-center justify-start rounded-lg p-2 hover:cursor-pointer"
+            className="bg-brand-80 text-gray-0 flex h-[32px] max-w-[177px] items-center justify-center rounded-lg pl-4 text-sm font-medium hover:cursor-pointer"
           >
-            <span className="pl-2 text-[14px] font-medium">Пройти обучение</span>
+            {isTutor ? 'Пройти обучение' : 'Смотреть подсказки'}
           </Button>
           <Button
             variant="ghost"
             type="button"
             disabled={undefined}
-            onClick={hideMenuForSession}
+            onClick={completeOnboarding}
             size="s"
-            className="hover:bg-gray-5 border-gray-30 mt-1 flex h-[32px] w-[153px] flex-row items-center justify-start rounded-lg border p-2 hover:cursor-pointer"
+            className="hover:bg-gray-5 border-gray-30 flex h-[32px] max-w-[153px] items-center justify-center rounded-lg border pl-4 text-sm font-medium hover:cursor-pointer"
           >
-            <span className="pl-2 text-[14px] font-medium">Вернуться позже</span>
+            {isTutor ? 'Вернуться позже' : 'Позже'}
           </Button>
         </div>
       </div>
