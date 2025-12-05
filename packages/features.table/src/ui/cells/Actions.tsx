@@ -2,13 +2,15 @@ import { Button } from '@xipkg/button';
 import { Trash } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useDeleteRecipientInvoice } from 'common.services';
+import { TutorPaymentT } from '../../types';
 
 type ActionsCellProps = {
-  invoiceId: number;
+  invoiceId: TutorPaymentT['id'];
+  classroomId?: TutorPaymentT['classroom_id'];
 };
 
-export const ActionsCell = ({ invoiceId }: ActionsCellProps) => {
-  const { mutate: deleteInvoice, isPending } = useDeleteRecipientInvoice();
+export const ActionsCell = ({ invoiceId, classroomId }: ActionsCellProps) => {
+  const { mutate: deleteInvoice, isPending } = useDeleteRecipientInvoice(classroomId?.toString());
 
   const handleDelete = () => {
     if (confirm('Вы уверены, что хотите удалить выставленный счет?')) {

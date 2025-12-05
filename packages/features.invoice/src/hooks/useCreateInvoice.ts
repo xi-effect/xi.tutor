@@ -49,10 +49,14 @@ export const useCreateInvoice = () => {
     onError: (err) => {
       handleError(err, 'addInvoiceTemplate');
     },
-    onSuccess: (response) => {
+    onSuccess: (response, variables) => {
       if (response?.data) {
+        const { classroomId } = variables;
         // Инвалидируем кеш для обновления списка счетов
         queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.TutorPayments, 'tutor'] });
+        queryClient.invalidateQueries({
+          queryKey: [PaymentsQueryKey.TutorPayments, classroomId, 'list'],
+        });
       }
 
       showSuccess('addInvoiceTemplate', 'Счёт успешно создан');
