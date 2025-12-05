@@ -1,4 +1,4 @@
-import { createContext, ReactNode, useContext } from 'react';
+import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { ExtendedStoreStatus, useYjsStore } from '../hooks/useYjsStore';
 import { StorageItemT } from 'common.types';
 
@@ -20,11 +20,44 @@ export const useYjsContext = () => {
 };
 
 export const YjsProvider = ({ children, storageItem }: YjsProviderProps) => {
-  const yjsStore = useYjsStore({
-    storageToken: storageItem?.storage_token || '',
-    ydocId: storageItem?.ydoc_id || '',
-    token: storageItem?.storage_token || '', // Передаем токен для asset store
-  });
+  // Извлекаем примитивные значения для мемоизации
+  const storageToken = storageItem?.storage_token || '';
+  const ydocId = storageItem?.ydoc_id || '';
+
+  // Мемоизируем параметры, чтобы избежать пересоздания провайдера
+  // Используем примитивные значения напрямую в зависимостях
+  // useMemo автоматически сравнивает зависимости по значению для примитивов
+  const storeParams = useMemo(
+    () => {
+      if (import.meta.env?.DEV) {
+        // Безопасное логирование чувствительных данных
+        const maskToken = (token: string | undefined): string => {
+          if (!token) return 'empty';
+          if (token.length <= 6) return '***';
+          return `${token.substring(0, 4)}...(${token.length})`;
+        };
+        const maskId = (id: string | undefined): string => {
+          if (!id) return 'empty';
+          if (id.length <= 10) return id.substring(0, 4) + '***';
+          return `${id.substring(0, 8)}...(${id.length})`;
+        };
+
+        console.log('🔄 YjsProvider: пересоздание storeParams', {
+          storageToken: maskToken(storageToken),
+          ydocId: maskId(ydocId),
+        });
+      }
+
+      return {
+        storageToken,
+        ydocId,
+        token: storageToken, // Передаем токен для asset store
+      };
+    },
+    [storageToken, ydocId], // Зависимости от примитивных значений
+  );
+
+  const yjsStore = useYjsStore(storeParams);
 
   return <YjsContext.Provider value={yjsStore}>{children}</YjsContext.Provider>;
 };
