@@ -8,7 +8,7 @@ import { useMaterialActions, useNavigateToMaterial } from '../hooks';
 import { cardIcon } from './CardIcon';
 import { AccessModeT, MaterialPropsT } from 'common.types';
 import { useCurrentUser } from 'common.services';
-import { ModalUpdateMaterialName } from './ModalUpdateMaterialName';
+import { ModalEditMaterialName } from 'features.materials.edit';
 
 export const MaterialsCard = ({
   id,
@@ -96,7 +96,7 @@ export const MaterialsCard = ({
         </div>
       )}
 
-      <ModalUpdateMaterialName
+      <ModalEditMaterialName
         isClassroom={isClassroom}
         isOpen={modalOpen}
         content_kind={content_kind}

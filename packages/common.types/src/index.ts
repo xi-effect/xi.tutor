@@ -16,7 +16,7 @@ export type {
   StorageItemT,
   MaterialActionsMenuPropsT,
   MaterialPropsT,
-  ModalUpdateMaterialNamePropsT,
+  ModalEditMaterialNamePropsT,
 } from './materials';
 export type {
   TemplateT,

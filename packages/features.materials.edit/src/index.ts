@@ -1,0 +1,1 @@
+export { ModalEditMaterialName } from './ui';

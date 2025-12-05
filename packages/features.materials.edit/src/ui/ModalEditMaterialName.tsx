@@ -9,7 +9,7 @@ import {
   ModalCloseButton,
 } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
-import { ModalUpdateMaterialNamePropsT } from 'common.types';
+import { ModalEditMaterialNamePropsT } from 'common.types';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { formSchema, FormData } from '../model';
 import * as z from 'zod';
@@ -24,14 +24,14 @@ import {
 } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 
-export const ModalUpdateMaterialName = ({
+export const ModalEditMaterialName = ({
   isClassroom,
   isOpen,
   onClose,
   name,
   content_kind,
   handleUpdateName,
-}: ModalUpdateMaterialNamePropsT) => {
+}: ModalEditMaterialNamePropsT) => {
   const initialValues = useMemo(() => ({ name: name || '' }), [name]);
 
   const form = useForm<z.input<typeof formSchema>>({

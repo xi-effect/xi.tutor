@@ -34,7 +34,7 @@ export type MaterialActionsMenuPropsT = {
   setModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
-export type ModalUpdateMaterialNamePropsT = {
+export type ModalEditMaterialNamePropsT = {
   isClassroom: boolean;
   isOpen: boolean;
   onClose: () => void;
