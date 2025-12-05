@@ -1,7 +1,6 @@
 import { nanoid } from 'nanoid';
 import { Editor, TLAssetId, TLShapeId } from 'tldraw';
 import { myAssetStore } from './imageStore';
-import webpfy from 'webpfy';
 
 /**
  * Вставка изображения с мгновенным preview и последующей загрузкой
@@ -57,25 +56,6 @@ export async function insertImage(editor: Editor, file: File, token: string) {
 
   (async () => {
     try {
-      let fileToUpload = file;
-      let mimeType = file.type;
-
-      if (!file.type.includes('webp')) {
-        try {
-          const { webpBlob, fileName } = await webpfy({
-            image: file,
-            quality: 90,
-          });
-          fileToUpload = new File([webpBlob], fileName, {
-            type: 'image/webp',
-            lastModified: Date.now(),
-          });
-          mimeType = 'image/webp';
-        } catch (error) {
-          console.warn('Не удалось конвертировать в WebP, используем оригинальный файл:', error);
-        }
-      }
-
       const uploadAsset = {
         id: tempAssetId,
         type: 'image' as const,
@@ -84,14 +64,14 @@ export async function insertImage(editor: Editor, file: File, token: string) {
           src: '',
           w,
           h,
-          mimeType,
-          name: fileToUpload.name,
+          mimeType: file.type,
+          name: file.name,
           isAnimated: false,
         },
         meta: {},
       };
 
-      const { src } = await myAssetStore(token).upload(uploadAsset, fileToUpload);
+      const { src } = await myAssetStore(token).upload(uploadAsset, file);
 
       // Обновляем asset.src на настоящий URL после загрузки
       editor.updateAssets([
@@ -103,8 +83,8 @@ export async function insertImage(editor: Editor, file: File, token: string) {
             src, // реальный URL с сервера
             w,
             h,
-            mimeType,
-            name: fileToUpload.name,
+            mimeType: file.type,
+            name: file.name,
             isAnimated: false,
           },
           meta: {},
@@ -112,6 +92,8 @@ export async function insertImage(editor: Editor, file: File, token: string) {
       ]);
     } catch (err) {
       console.error('Image upload failed:', err);
+      editor.deleteShapes([shapeId]);
+      editor.deleteAssets([tempAssetId]);
     }
   })();
 }

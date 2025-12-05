@@ -24,7 +24,7 @@ import { CardsList } from './Mobile';
 import { NotFoundItems } from './NotFoundItems';
 import { useResponsiveGrid, useVirtualGrid } from '../hooks';
 import { Loader } from './Loader';
-import { type TabsComponentPropsT } from '../types';
+import { type PaymentApprovalFunctionT } from 'common.types';
 import { UserRoleT } from '../../../common.api/src/types';
 
 export type VirtualizedPaymentsTableProps<T> = {
@@ -34,7 +34,7 @@ export type VirtualizedPaymentsTableProps<T> = {
   filterByClass?: boolean | string;
   isLoading?: boolean;
   isFetchingNextPage?: boolean;
-  onApprovePayment: TabsComponentPropsT['onApprovePayment'];
+  onApprovePayment: PaymentApprovalFunctionT['onApprovePayment'];
   isError: boolean;
   currentUserRole: RoleT;
 };

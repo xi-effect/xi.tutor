@@ -14,3 +14,4 @@ export { useResponsiveGrid, useAdaptiveGrid } from './useResponsiveGrid';
 export { useSpeakingParticipant } from './useSpeakingParticipant';
 export { useVideoSecurity } from './useVideoSecurity';
 export { useScreenShareCleanup } from './useScreenShareCleanup';
+export { useVideoBlur } from './useVideoBlur';
