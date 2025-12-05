@@ -90,6 +90,8 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
     return null;
   }
 
+  const isTutor = user?.default_layout === 'tutor';
+
   const driverAction = () => {
     // Скрываем меню при начале обучения
     hideMenuForSession();
@@ -202,7 +204,7 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
 
   return (
     <>
-      <div className="bg-gray-0 border-gray-10 fixed bottom-0 left-72 z-100 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
+      <div className="bg-gray-0 border-gray-10 fixed bottom-0 left-72 z-100 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col items-start gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
         <Button
           variant="ghost"
           size="s"
@@ -219,9 +221,15 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
           </div>
           <div className="h-10">
             <span className="text-gray-80 text-sm font-normal tracking-tight">
-              Хотите узнать о возможностях платформы?
-              <br />
-              Вы сможете вернуться к обучению в любой момент.
+              {isTutor ? (
+                <>
+                  Хотите узнать о возможностях платформы?
+                  <br />
+                  Вы сможете вернуться к обучению в любой момент
+                </>
+              ) : (
+                <>Подсказать, как всё устроено?</>
+              )}
             </span>
           </div>
         </div>
@@ -232,9 +240,9 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
             disabled={disabled}
             onClick={() => driverAction()}
             size="s"
-            className="bg-brand-80 text-gray-0 mt-1 flex h-[32px] w-[153px] flex-row items-center justify-start rounded-lg p-2 hover:cursor-pointer"
+            className="bg-brand-80 text-gray-0 flex h-[32px] max-w-[177px] items-center justify-center rounded-lg pl-4 text-sm font-medium hover:cursor-pointer"
           >
-            <span className="pl-2 text-[14px] font-medium">Пройти обучение</span>
+            {isTutor ? 'Пройти обучение' : 'Смотреть подсказки'}
           </Button>
           <Button
             variant="ghost"
@@ -242,9 +250,9 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
             disabled={undefined}
             onClick={completeOnboarding}
             size="s"
-            className="hover:bg-gray-5 border-gray-30 mt-1 flex h-[32px] w-[153px] flex-row items-center justify-start rounded-lg border p-2 hover:cursor-pointer"
+            className="hover:bg-gray-5 border-gray-30 flex h-[32px] max-w-[153px] items-center justify-center rounded-lg border pl-4 text-sm font-medium hover:cursor-pointer"
           >
-            <span className="pl-2 text-[14px] font-medium">Вернуться позже</span>
+            {isTutor ? 'Вернуться позже' : 'Позже'}
           </Button>
         </div>
       </div>
