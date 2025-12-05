@@ -13,29 +13,51 @@ type MenuT = {
 };
 
 const SESSION_STORAGE_KEY = 'onboarding_menu_hidden';
+const SHOW_FOR_COMPLETED_KEY = 'show_onboarding_for_completed';
 
 export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
   const { data: user, isLoading } = useCurrentUser();
   const [isHidden, setIsHidden] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showForCompleted, setShowForCompleted] = useState(false);
   const { transitionStage } = useOnboardingTransition('completed', 'forwards');
 
-  // Проверяем sessionStorage при загрузке компонента
   useEffect(() => {
-    const hiddenInSession = sessionStorage.getItem(SESSION_STORAGE_KEY);
-    if (hiddenInSession === 'true') {
-      setIsHidden(true);
-    }
+    const checkSessionStorage = () => {
+      const hiddenInSession = sessionStorage.getItem(SESSION_STORAGE_KEY);
+      const showForCompletedInSession = sessionStorage.getItem(SHOW_FOR_COMPLETED_KEY);
+
+      setIsHidden(hiddenInSession === 'true');
+      setShowForCompleted(showForCompletedInSession === 'true');
+    };
+
+    checkSessionStorage();
+
+    const handleOnboardingShowRequested = () => {
+      checkSessionStorage();
+    };
+
+    window.addEventListener('onboarding-show-requested', handleOnboardingShowRequested);
+
+    return () => {
+      window.removeEventListener('onboarding-show-requested', handleOnboardingShowRequested);
+    };
   }, []);
 
   // Функция для скрытия меню
   const hideMenuForSession = () => {
     sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
+    sessionStorage.removeItem(SHOW_FOR_COMPLETED_KEY);
     setIsHidden(true);
+    setShowForCompleted(false);
   };
 
   const completeOnboarding = () => {
     hideMenuForSession();
+
+    if (user?.onboarding_stage === 'completed') {
+      return;
+    }
 
     setIsTransitioning(true);
 
@@ -61,8 +83,10 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
     return null;
   }
 
-  // Если onboarding_stage не "training" или меню скрыто в сессии, не показываем
-  if (user.onboarding_stage !== 'training' || isHidden || isTransitioning) {
+  const shouldShowForCompleted = user.onboarding_stage === 'completed' && showForCompleted;
+  const shouldShowForTraining = user.onboarding_stage === 'training';
+
+  if ((!shouldShowForTraining && !shouldShowForCompleted) || isHidden || isTransitioning) {
     return null;
   }
 
@@ -96,11 +120,20 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
     if (validSteps.length === 0) {
       console.warn('Нет валидных шагов для обучения, автоматически завершаем онбординг');
 
+      if (user?.onboarding_stage === 'completed') {
+        sessionStorage.removeItem(SESSION_STORAGE_KEY);
+        sessionStorage.removeItem(SHOW_FOR_COMPLETED_KEY);
+        setShowForCompleted(false);
+        return;
+      }
+
       setIsTransitioning(true);
 
       transitionStage.mutate(undefined, {
         onSuccess: () => {
           sessionStorage.removeItem(SESSION_STORAGE_KEY);
+          sessionStorage.removeItem(SHOW_FOR_COMPLETED_KEY);
+          setShowForCompleted(false);
           setIsTransitioning(false);
         },
         onError: (error) => {
@@ -138,6 +171,13 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
         // Защита от повторных вызовов
         if (isTransitioning) return;
 
+        if (user?.onboarding_stage === 'completed') {
+          sessionStorage.removeItem(SESSION_STORAGE_KEY);
+          sessionStorage.removeItem(SHOW_FOR_COMPLETED_KEY);
+          setShowForCompleted(false);
+          return;
+        }
+
         setIsTransitioning(true);
 
         // Обновляем статус онбординга на 'completed' при завершении
@@ -145,6 +185,8 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
           onSuccess: () => {
             // Очищаем sessionStorage при успешном завершении онбординга
             sessionStorage.removeItem(SESSION_STORAGE_KEY);
+            sessionStorage.removeItem(SHOW_FOR_COMPLETED_KEY);
+            setShowForCompleted(false);
             setIsTransitioning(false);
           },
           onError: (error) => {

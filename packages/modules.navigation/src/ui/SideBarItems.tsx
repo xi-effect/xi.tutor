@@ -11,7 +11,7 @@ import { useLocation, useNavigate, useParams, useSearch } from '@tanstack/react-
 import { useTranslation } from 'react-i18next';
 import { SwiperRef } from 'swiper/react';
 import { Group, Home, Materials, Payments, TelegramFilled, InfoCircle } from '@xipkg/icons';
-import { useCurrentUser, useOnboardingTransition } from 'common.services';
+import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
 
 export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<SwiperRef | null> }) => {
@@ -23,8 +23,6 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
   const isStarted = useCallStore((state) => state.isStarted);
   const mode = useCallStore((state) => state.mode);
   const updateStore = useCallStore((state) => state.updateStore);
-
-  const { transitionStage } = useOnboardingTransition('training', 'forwards');
 
   const topMenu = [
     {
@@ -61,15 +59,12 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
     try {
       sessionStorage.removeItem('onboarding_menu_hidden');
 
-      if (user?.onboarding_stage === 'training') {
-        navigate({ to: '/' });
-      } else if (user?.onboarding_stage === 'completed') {
-        // Если пользователь завершил онбординг, переводим его обратно на training
-        await transitionStage.mutateAsync();
-        navigate({ to: '/' });
-      } else {
-        navigate({ to: '/' });
+      if (user?.onboarding_stage === 'completed') {
+        sessionStorage.setItem('show_onboarding_for_completed', 'true');
+        window.dispatchEvent(new Event('onboarding-show-requested'));
       }
+
+      navigate({ to: '/' });
 
       if (swiperRef && swiperRef.current) {
         swiperRef.current?.swiper.slideTo(1);
