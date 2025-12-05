@@ -35,6 +35,7 @@ export type PaymentDataT<Role extends RoleT> = {
   total: string;
   payment_type: PaymentTypeT;
   status: PaymentStatusT;
+  classroom_id: number;
 } & RoleIdField<Role>;
 
 export type StudentPaymentT = PaymentDataT<'tutor'>;

@@ -2,18 +2,24 @@ import React, { RefObject } from 'react';
 import { useInfiniteQuery as useTanStackInfiniteQuery } from '@tanstack/react-query';
 import { RolePaymentT } from 'features.table';
 import { getAxiosInstance } from 'common.config';
-import { paymentsApiConfig, UserRoleT } from 'common.api';
+import { paymentsApiConfig, classroomPaymentsApiConfig, UserRoleT } from 'common.api';
 import { getRolePaymentsQueryKey } from 'common.services';
 
-export const useInfiniteQuery = (parentRef: RefObject<HTMLDivElement | null>, role: UserRoleT) => {
+export const useInfiniteQuery = (
+  parentRef: RefObject<HTMLDivElement | null>,
+  role: UserRoleT,
+  classroomId?: string,
+) => {
   const queryKey = getRolePaymentsQueryKey(role);
 
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
     useTanStackInfiniteQuery<RolePaymentT<UserRoleT>[], unknown>({
-      queryKey: [queryKey, role],
+      queryKey: [queryKey, role, classroomId || 'all'],
       queryFn: async ({ pageParam }) => {
         const axiosInst = await getAxiosInstance();
-        const url = paymentsApiConfig[queryKey].getUrl();
+        const url = classroomId
+          ? classroomPaymentsApiConfig[queryKey].getUrl(classroomId)
+          : paymentsApiConfig[queryKey].getUrl();
 
         const response = await axiosInst({
           method: paymentsApiConfig[queryKey].method,
