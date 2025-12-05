@@ -11,6 +11,7 @@ export type VideoResolution = 'h720' | 'h360' | 'h180';
 
 export type LocalUserChoices = LocalUserChoicesLK & {
   noiseReductionEnabled?: boolean;
+  blurEnabled?: boolean;
   audioOutputDeviceId?: string;
   videoPublishResolution?: VideoResolution;
   videoSubscribeQuality?: VideoQuality;
@@ -19,6 +20,7 @@ export type LocalUserChoices = LocalUserChoicesLK & {
 function getUserChoicesState(): LocalUserChoices {
   return {
     noiseReductionEnabled: false,
+    blurEnabled: false,
     audioOutputDeviceId: 'default',
     videoPublishResolution: 'h720',
     videoSubscribeQuality: VideoQuality.HIGH,

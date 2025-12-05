@@ -9,9 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { NotificationKind } from 'common.types';
 
 const RecipientInvoiceAvatarByTutor = ({ recipientInvoiceId }: { recipientInvoiceId: number }) => {
-  console.log('recipientInvoiceId', recipientInvoiceId);
   const { data: recipientInvoiceDataTutor } = useGetRecipientInvoiceByTutor(recipientInvoiceId);
-  console.log('recipientInvoiceDataTutor', recipientInvoiceDataTutor);
   const { data: studentData } = useStudentById(recipientInvoiceDataTutor?.student_id);
 
   return (

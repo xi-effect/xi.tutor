@@ -19,9 +19,6 @@ export const ProtectedProvider = ({ children }: ProtectedProviderPropsT) => {
     select: (state) => state.location.pathname,
   });
 
-  console.log('pathname', pathname);
-  console.log('onboarding_stage', onboarding_stage);
-
   const search = useSearch({ strict: false });
 
   const router = useRouter();

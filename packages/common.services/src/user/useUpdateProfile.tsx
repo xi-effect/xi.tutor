@@ -61,7 +61,6 @@ export const useUpdateProfile = () => {
       }
 
       // Показываем успешное уведомление
-      console.log('showSuccess');
       showSuccess('profile');
     },
   });

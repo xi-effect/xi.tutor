@@ -144,13 +144,10 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
   const [selectedClassroomId, setSelectedClassroomId] = useState<number | null>(null);
   const [studentAccessMode, setStudentAccessMode] = useState<AccessModeT>('read_write');
 
-  console.log('materialId', materialId);
   const { data: material, isLoading: isMaterialLoading } = useGetMaterial({
     id: materialId.toString(),
     disabled: !open || !materialId,
   });
-
-  console.log('material', material);
 
   const { duplicateMaterial } = useDuplicateMaterial();
 
@@ -210,8 +207,6 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
     }
     onOpenChange(newOpen);
   };
-
-  console.log('classrooms', classrooms);
 
   return (
     <Modal open={open} onOpenChange={handleClose}>
