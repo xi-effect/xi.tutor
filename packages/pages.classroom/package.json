@@ -35,6 +35,7 @@
     "features.materials.add": "*",
     "features.payment.approve": "*",
     "features.materials.card": "*",
+    "features.invoice.card": "*",
     "features.table": "*",
     "features.invoice": "*",
     "modules.calendar": "*",

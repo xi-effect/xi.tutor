@@ -19,6 +19,7 @@ import { CompactNavigationControls } from './CompactNavigationControls';
 import { ParticipantTile } from '../Participant';
 import { ScreenShareButton } from '../Bottom/ScreenShareButton';
 import { RaiseHandButton } from '../Bottom/RaiseHandButton';
+import { useVideoBlur } from '../../hooks';
 
 export const CompactCall = ({ saveUserChoices = true }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -36,6 +37,13 @@ export const CompactCall = ({ saveUserChoices = true }) => {
 
   const { isMicrophoneEnabled, isCameraEnabled, microphoneTrack, cameraTrack } =
     useLocalParticipant();
+
+  const videoTrack = cameraTrack?.track as LocalVideoTrack | undefined;
+
+  // Применяем блюр только в компактном режиме
+  const mode = useCallStore((state) => state.mode);
+  const videoTrackForBlur = mode === 'compact' ? videoTrack : null;
+  useVideoBlur(videoTrackForBlur);
 
   // Используем useTrackToggle для правильного управления треками (как в BottomBar)
   const microphoneToggle = useTrackToggle({

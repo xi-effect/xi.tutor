@@ -10,7 +10,7 @@ import {
   useGetTutorPaymentsList,
 } from 'common.services';
 import { InvoiceModal } from 'features.invoice';
-import { Payment } from './Payment';
+import { InvoiceCard } from 'features.invoice.card';
 
 export const Payments = () => {
   const { data: user } = useCurrentUser();
@@ -83,12 +83,12 @@ export const Payments = () => {
         )}
         {!isLoading && payments && payments.length > 0 && (
           <ScrollArea
-            className="h-full min-h-[172px] w-full sm:w-[calc(100vw-104px)]"
+            className="h-full min-h-[196px] w-full sm:w-[calc(100vw-104px)]"
             scrollBarProps={{ orientation: 'horizontal' }}
           >
             <div className="flex flex-row gap-8">
               {payments.map((payment) => (
-                <Payment
+                <InvoiceCard
                   key={payment.id}
                   payment={payment}
                   currentUserRole={isTutor ? 'tutor' : 'student'}
