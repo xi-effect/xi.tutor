@@ -30,15 +30,23 @@ export const TabsStudent = () => {
     <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
       <div className="flex h-[56px] flex-row items-center overflow-x-auto pl-4">
         <Tabs.List className="flex flex-row gap-4">
-          <Tabs.Trigger value="overview" className="text-m-base font-medium text-gray-100" id="overview-tab">
+          <Tabs.Trigger value="overview" className="text-m-base font-medium text-gray-100">
             Сводка
           </Tabs.Trigger>
 
-          <Tabs.Trigger value="materials" className="text-m-base font-medium text-gray-100" id="materials-tab">
+          <Tabs.Trigger
+            value="materials"
+            className="text-m-base font-medium text-gray-100"
+            id="materials-tab"
+          >
             Материалы
           </Tabs.Trigger>
 
-          <Tabs.Trigger value="payments" className="text-m-base font-medium text-gray-100" id="payments-tab">
+          <Tabs.Trigger
+            value="payments"
+            className="text-m-base font-medium text-gray-100"
+            id="payments-tab"
+          >
             Оплаты
           </Tabs.Trigger>
         </Tabs.List>
