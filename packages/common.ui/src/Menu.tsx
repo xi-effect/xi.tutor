@@ -6,11 +6,15 @@ import '../utils/driver.css';
 import { createRoot } from 'react-dom/client';
 import { useCurrentUser, useOnboardingTransition } from 'common.services';
 import { useState, useEffect } from 'react';
+import { cn } from '@xipkg/utils';
 
 type MenuT = {
   disabled?: boolean;
   steps?: DriveStep[];
 };
+
+const buttonClassName =
+  'flex h-[32px] items-center justify-center rounded-lg text-sm font-medium hover:cursor-pointer';
 
 const SESSION_STORAGE_KEY = 'onboarding_menu_hidden';
 const SHOW_FOR_COMPLETED_KEY = 'show_onboarding_for_completed';
@@ -240,7 +244,11 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
           disabled={disabled}
           onClick={() => driverAction()}
           size="s"
-          className="bg-brand-80 text-gray-0 flex h-[32px] max-w-[177px] items-center justify-center rounded-lg pl-4 text-sm font-medium hover:cursor-pointer"
+          className={cn(
+            buttonClassName,
+            'bg-brand-80 text-gray-0',
+            isTutor ? 'max-w-[153px]' : 'max-w-[177px]',
+          )}
         >
           {isTutor ? 'Пройти обучение' : 'Смотреть подсказки'}
         </Button>
@@ -250,7 +258,11 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
           disabled={undefined}
           onClick={completeOnboarding}
           size="s"
-          className="hover:bg-gray-5 border-gray-30 flex h-[32px] max-w-[153px] items-center justify-center rounded-lg border pl-4 text-sm font-medium hover:cursor-pointer"
+          className={cn(
+            buttonClassName,
+            'hover:bg-gray-5 border-gray-30 border',
+            isTutor ? 'max-w-[153px]' : 'max-w-[78px]',
+          )}
         >
           {isTutor ? 'Вернуться позже' : 'Позже'}
         </Button>

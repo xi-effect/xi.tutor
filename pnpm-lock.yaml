@@ -779,6 +779,9 @@ importers:
       '@xipkg/link':
         specifier: 2.0.12
         version: 2.0.12(react@19.2.0)
+      '@xipkg/utils':
+        specifier: 1.8.0
+        version: 1.8.0(react@19.2.0)
       common.env:
         specifier: '*'
         version: link:../common.env
