@@ -119,14 +119,35 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
       updateStore('connect', true);
     };
 
+    // Обработка ошибок соединения
+    const handleConnectionStateChanged = (state: string) => {
+      console.log('LiveKit: Connection state changed:', state);
+    };
+
+    // Мониторинг качества соединения
+    let lastQuality: string | null = null;
+    const handleConnectionQualityChanged = (quality: string) => {
+      if (quality !== lastQuality) {
+        lastQuality = quality;
+        if (quality === 'poor' || quality === 'unknown') {
+          console.warn('LiveKit: Connection quality is poor');
+          // Здесь можно добавить уведомление пользователю
+        }
+      }
+    };
+
     document.addEventListener('visibilitychange', handleVisibilityChange);
     room.on('reconnecting', handleReconnecting);
     room.on('reconnected', handleReconnected);
+    room.on('connectionStateChanged', handleConnectionStateChanged);
+    room.on('connectionQualityChanged', handleConnectionQualityChanged);
 
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       room.off('reconnecting', handleReconnecting);
       room.off('reconnected', handleReconnected);
+      room.off('connectionStateChanged', handleConnectionStateChanged);
+      room.off('connectionQualityChanged', handleConnectionQualityChanged);
       if (reconnectTimeoutRef.current) {
         clearTimeout(reconnectTimeoutRef.current);
       }
