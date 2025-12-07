@@ -1,4 +1,5 @@
-import { AccessModeT } from 'common.types';
+import { useState } from 'react';
+import { AccessModeT, MaterialActionsMenuPropsT } from 'common.types';
 import {
   DropdownMenu,
   DropdownMenuCheckboxItem,
@@ -12,7 +13,6 @@ import {
 import { Button } from '@xipkg/button';
 import { MoreVert } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
-import { useState } from 'react';
 
 const options: { value: AccessModeT; label: string }[] = [
   { value: 'read_only', label: 'только репетитор' },
@@ -20,15 +20,7 @@ const options: { value: AccessModeT; label: string }[] = [
   { value: 'read_write', label: 'совместная работа' },
 ];
 
-export const MaterialActionsMenu: React.FC<{
-  isClassroom: boolean;
-  isTutor: boolean;
-  studentAccessMode?: AccessModeT;
-  onDelete: () => void;
-  onDeleteFromClassroom: () => void;
-  onUpdateAccessMode: (mode: AccessModeT) => void;
-  onDuplicate: () => void;
-}> = ({
+export const MaterialActionsMenu = ({
   isClassroom,
   isTutor,
   studentAccessMode,
@@ -36,7 +28,8 @@ export const MaterialActionsMenu: React.FC<{
   onDeleteFromClassroom,
   onUpdateAccessMode,
   onDuplicate,
-}) => {
+  setModalOpen,
+}: MaterialActionsMenuPropsT) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const handleAction = (action: () => void) => (e: React.MouseEvent) => {
@@ -52,32 +45,32 @@ export const MaterialActionsMenu: React.FC<{
     }
   };
 
-  if (isClassroom && isTutor) {
-    return (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
-            className="h-8 min-h-8 w-8 min-w-8"
-            variant="ghost"
-            size="icon"
-          >
-            <MoreVert className="h-4 w-4 dark:fill-gray-100" />
-          </Button>
-        </DropdownMenuTrigger>
-
-        <DropdownMenuContent
-          side="bottom"
-          align="end"
-          className="border-gray-10 bg-gray-0 w-48 space-y-1 rounded-lg border p-2 font-normal"
-          onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
+  return (
+    <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen} modal={false}>
+      <DropdownMenuTrigger asChild>
+        <Button
+          onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
+          className="h-8 min-h-8 w-8 min-w-8"
+          variant="ghost"
+          size="icon"
         >
+          <MoreVert className="h-4 w-4 dark:fill-gray-100" />
+        </Button>
+      </DropdownMenuTrigger>
+
+      <DropdownMenuContent
+        side="bottom"
+        align="end"
+        className="border-gray-10 bg-gray-0 w-48 space-y-1 rounded-lg border p-2 font-normal"
+        onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
+      >
+        {isClassroom && isTutor ? (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger
               className="text-xs-base h-7 gap-2 rounded-lg"
               onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
             >
-              поменять доступ
+              Поменять доступ
             </DropdownMenuSubTrigger>
 
             <DropdownMenuSubContent
@@ -103,50 +96,24 @@ export const MaterialActionsMenu: React.FC<{
               ))}
             </DropdownMenuSubContent>
           </DropdownMenuSub>
-
+        ) : (
           <DropdownMenuItem
-            className="hover:bg-brand-0 hover:text-brand-100 text-xs-base h-7 w-full rounded-lg px-2"
-            onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
+            className="text-xs-base hover:text-brand-100 h-7 rounded-lg px-2"
+            onClick={handleAction(onDuplicate)}
           >
-            редактировать
+            Дублировать в кабинет
           </DropdownMenuItem>
-
-          <DropdownMenuItem
-            className="hover:bg-brand-0 hover:text-brand-100 text-xs-base h-7 w-full rounded-lg px-2"
-            onClick={(e: React.MouseEvent<HTMLDivElement>) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onDeleteFromClassroom?.();
-            }}
-          >
-            удалить
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    );
-  }
-
-  return (
-    <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
-      <DropdownMenuTrigger asChild>
-        <Button className="h-6 w-6" variant="ghost" size="icon">
-          <MoreVert className="h-4 w-4 dark:fill-gray-100" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        side="bottom"
-        align="end"
-        className="border-gray-10 bg-gray-0 w-52 space-y-1 border p-2 font-normal"
-      >
+        )}
         <DropdownMenuItem
-          className="text-xs-base hover:text-brand-100 h-7 rounded-lg px-2"
-          onClick={handleAction(onDuplicate)}
+          className="hover:bg-brand-0 hover:text-brand-100 text-xs-base h-7 w-full rounded-lg px-2"
+          onClick={() => setModalOpen(true)}
         >
-          Дублировать в кабинет
+          Редактировать
         </DropdownMenuItem>
+
         <DropdownMenuItem
-          className="text-xs-base hover:text-brand-100 h-7 rounded-lg px-2"
-          onClick={handleAction(onDelete)}
+          className="hover:bg-brand-0 hover:text-brand-100 text-xs-base h-7 w-full rounded-lg px-2"
+          onClick={handleAction(isClassroom ? onDeleteFromClassroom : onDelete)}
         >
           Удалить
         </DropdownMenuItem>

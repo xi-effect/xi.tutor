@@ -1,16 +1,16 @@
+import { useState } from 'react';
 import { useParams } from '@tanstack/react-router';
-
-import { MaterialPropsT } from '../types';
 import { accessModeLabels, accessModeStyles, formatToShortDate } from '../utils';
 import { cn } from '@xipkg/utils';
 import { Badge } from '@xipkg/badge';
 import { MaterialActionsMenu } from './MaterialActionsMenu';
 import { useMaterialActions, useNavigateToMaterial } from '../hooks';
 import { cardIcon } from './CardIcon';
-import { AccessModeT } from 'common.types';
+import { AccessModeT, MaterialPropsT } from 'common.types';
 import { useCurrentUser } from 'common.services';
+import { ModalEditMaterialName } from 'features.materials.edit';
 
-export const MaterialsCard: React.FC<MaterialPropsT> = ({
+export const MaterialsCard = ({
   id,
   updated_at,
   name,
@@ -20,7 +20,7 @@ export const MaterialsCard: React.FC<MaterialPropsT> = ({
   hasIcon = false,
   isLoading,
   className,
-}) => {
+}: MaterialPropsT) => {
   const { classroomId } = useParams({ strict: false });
 
   const isClassroom = !!classroomId;
@@ -30,14 +30,13 @@ export const MaterialsCard: React.FC<MaterialPropsT> = ({
 
   const { navigateToMaterial } = useNavigateToMaterial();
 
-  const { handleDelete, handleDeleteFromClassroom, handleUpdateAccessMode } = useMaterialActions(
-    id,
-    content_kind,
-    name,
-    classroomId,
-  );
+  const { handleDelete, handleDeleteFromClassroom, handleUpdateAccessMode, handleUpdateName } =
+    useMaterialActions(id, content_kind, name, classroomId);
+
+  const [modalOpen, setModalOpen] = useState(false);
 
   const handleCardClick = () => {
+    if (modalOpen) return;
     navigateToMaterial(id, content_kind);
   };
 
@@ -92,9 +91,21 @@ export const MaterialsCard: React.FC<MaterialPropsT> = ({
             onDeleteFromClassroom={handleDeleteFromClassroom}
             onUpdateAccessMode={handleAccessModeUpdate}
             onDuplicate={handleDuplicate}
+            setModalOpen={setModalOpen}
           />
         </div>
       )}
+
+      <ModalEditMaterialName
+        isClassroom={isClassroom}
+        isOpen={modalOpen}
+        content_kind={content_kind}
+        name={name}
+        onClose={() => {
+          setModalOpen(false);
+        }}
+        handleUpdateName={handleUpdateName}
+      />
     </div>
   );
 };

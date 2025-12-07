@@ -20,7 +20,6 @@ export const Header = () => {
               navigate({
                 to: '/classrooms/$classroomId',
                 params: { classroomId: callId },
-                search: { call: callId },
               });
             }}
             type="button"

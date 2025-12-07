@@ -15,6 +15,9 @@ export type {
   ClassroomMaterialsT,
   AccessModeT,
   StorageItemT,
+  MaterialActionsMenuPropsT,
+  MaterialPropsT,
+  ModalUpdateMaterialNamePropsT,
 } from './src/materials';
 export type {
   TemplateT,
