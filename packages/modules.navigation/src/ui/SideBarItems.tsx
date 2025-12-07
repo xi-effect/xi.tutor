@@ -165,6 +165,7 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
           {footerMenu.map((item) => (
             <SidebarMenuItem key={item.titleKey}>
               <SidebarMenuButton
+                id={item.titleKey === 'hints' ? 'hints-button' : undefined}
                 variant="ghost"
                 onClick={item.onClick}
                 type="button"

@@ -149,6 +149,7 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
     const driverObj = driver({
       popoverClass: 'my-custom-popover-class',
       showProgress: true,
+      popoverOffset: 20,
       steps: validSteps,
 
       onPopoverRender: (popover) => {
@@ -167,7 +168,7 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
       },
       nextBtnText: 'Продолжить',
       prevBtnText: 'Назад',
-      doneBtnText: 'Завершить',
+      doneBtnText: 'Закрыть',
       progressText: '{{current}} из {{total}}',
       onDestroyed: () => {
         // Защита от повторных вызовов
@@ -203,59 +204,57 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
   };
 
   return (
-    <>
-      <div className="bg-gray-0 border-gray-10 fixed bottom-0 left-72 z-100 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col items-start gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
-        <Button
-          variant="ghost"
-          size="s"
-          className="hover:bg-gray-0 bg-gray-0 absolute top-1 right-1 hover:cursor-pointer"
-          onClick={hideMenuForSession}
-        >
-          <Close className="fill-gray-60 h-4 w-4" />
-        </Button>
-        <div className="flex flex-col gap-2">
-          <div className="h-8">
-            <span className="text-xl font-semibold text-gray-100">
-              Добро пожаловать в Sovlium! 😊
-            </span>
-          </div>
-          <div className="h-10">
-            <span className="text-gray-80 text-sm font-normal tracking-tight">
-              {isTutor ? (
-                <>
-                  Хотите узнать о возможностях платформы?
-                  <br />
-                  Вы сможете вернуться к обучению в любой момент
-                </>
-              ) : (
-                <>Подсказать, как всё устроено?</>
-              )}
-            </span>
-          </div>
+    <div className="bg-gray-0 border-gray-10 fixed bottom-0 left-72 z-100 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col items-start gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
+      <Button
+        variant="ghost"
+        size="s"
+        className="hover:bg-gray-0 bg-gray-0 absolute top-1 right-1 hover:cursor-pointer"
+        onClick={hideMenuForSession}
+      >
+        <Close className="fill-gray-60 h-4 w-4" />
+      </Button>
+      <div className="flex flex-col gap-2">
+        <div className="h-8">
+          <span className="text-xl font-semibold text-gray-100">
+            Добро пожаловать в Sovlium! 😊
+          </span>
         </div>
-        <div className="flex flex-row-reverse gap-4">
-          <Button
-            variant="brand"
-            type="button"
-            disabled={disabled}
-            onClick={() => driverAction()}
-            size="s"
-            className="bg-brand-80 text-gray-0 flex h-[32px] max-w-[177px] items-center justify-center rounded-lg pl-4 text-sm font-medium hover:cursor-pointer"
-          >
-            {isTutor ? 'Пройти обучение' : 'Смотреть подсказки'}
-          </Button>
-          <Button
-            variant="ghost"
-            type="button"
-            disabled={undefined}
-            onClick={completeOnboarding}
-            size="s"
-            className="hover:bg-gray-5 border-gray-30 flex h-[32px] max-w-[153px] items-center justify-center rounded-lg border pl-4 text-sm font-medium hover:cursor-pointer"
-          >
-            {isTutor ? 'Вернуться позже' : 'Позже'}
-          </Button>
+        <div className="h-10">
+          <span className="text-gray-80 text-sm font-normal tracking-tight">
+            {isTutor ? (
+              <>
+                Хотите узнать о возможностях платформы?
+                <br />
+                Вы сможете вернуться к обучению в любой момент
+              </>
+            ) : (
+              <>Подсказать, как всё устроено?</>
+            )}
+          </span>
         </div>
       </div>
-    </>
+      <div className="flex flex-row-reverse gap-4">
+        <Button
+          variant="brand"
+          type="button"
+          disabled={disabled}
+          onClick={() => driverAction()}
+          size="s"
+          className="bg-brand-80 text-gray-0 flex h-[32px] max-w-[177px] items-center justify-center rounded-lg pl-4 text-sm font-medium hover:cursor-pointer"
+        >
+          {isTutor ? 'Пройти обучение' : 'Смотреть подсказки'}
+        </Button>
+        <Button
+          variant="ghost"
+          type="button"
+          disabled={undefined}
+          onClick={completeOnboarding}
+          size="s"
+          className="hover:bg-gray-5 border-gray-30 flex h-[32px] max-w-[153px] items-center justify-center rounded-lg border pl-4 text-sm font-medium hover:cursor-pointer"
+        >
+          {isTutor ? 'Вернуться позже' : 'Позже'}
+        </Button>
+      </div>
+    </div>
   );
 };

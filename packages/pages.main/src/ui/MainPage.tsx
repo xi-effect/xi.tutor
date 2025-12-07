@@ -80,6 +80,14 @@ export const MainPage = () => {
       side: 'bottom' as const,
       align: 'end' as const,
     },
+    {
+      element: '#hints-button',
+      popover: {
+        description: `Если нужна помощь, нажмите сюда, чтобы посмотреть подсказки заново, или напишите в поддержку.<br />Желаем удачи!<br />Команда sovlium`,
+      },
+      side: 'right' as const,
+      align: 'end' as const,
+    },
   ];
 
   return (
