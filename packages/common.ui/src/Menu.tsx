@@ -100,8 +100,12 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
     // Скрываем меню при начале обучения
     hideMenuForSession();
 
-    // Фильтруем шаги, оставляя только те, элементы которых существуют на странице
+    // Фильтруем шаги, оставляя только те, элементы которых существуют на странице и у которых есть описание
     const validSteps = steps.filter((step) => {
+      if (!step.popover?.description || step.popover.description.trim() === '') {
+        return false;
+      }
+
       if (typeof step.element === 'string') {
         const element = document.querySelector(step.element);
         return element !== null;

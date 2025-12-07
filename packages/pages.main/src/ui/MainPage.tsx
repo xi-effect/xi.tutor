@@ -36,13 +36,33 @@ export const MainPage = () => {
       },
     },
     {
+      element: '#userprofile',
+      popover: {
+        description: `${isTutor ? '' : 'Переходите по ссылкам-приглашениям от репетиторов, чтобы добавлять новые кабинеты'}`,
+      },
+      side: 'bottom' as const,
+      align: 'end' as const,
+    },
+    // {
+    //   element: '#materials-tab',
+    //   popover: {
+    //     description: 'Изучайте материалы и закрепляйте навыки на практике',
+    //   },
+    //   side: 'bottom' as const,
+    //   align: 'end' as const,
+    // },
+    // {
+    //   element: '#payments-tab',
+    //   popover: {
+    //     description: 'Когда получите счёт, оплатите его удобным способом. Все оплаты — здесь',
+    //   },
+    //   side: 'bottom' as const,
+    //   align: 'end' as const,
+    // },
+    {
       element: '#invite-student-button',
       popover: {
-        description: `${
-          isTutor
-            ? 'Отправьте ученику ссылку-приглашение'
-            : 'Переходите по ссылкам-приглашениям от репетиторов, чтобы добавлять новые кабинеты'
-        }`,
+        description: 'Отправьте ученику ссылку-приглашение',
       },
       side: 'bottom' as const,
       align: 'end' as const,
@@ -83,7 +103,11 @@ export const MainPage = () => {
     {
       element: '#hints-button',
       popover: {
-        description: `Если нужна помощь, нажмите сюда, чтобы посмотреть подсказки заново, или напишите в поддержку.<br />Желаем удачи!<br />Команда sovlium`,
+        description: `${
+          isTutor
+            ? 'Если нужна помощь, нажмите сюда, чтобы посмотреть подсказки заново, или напишите в поддержку.<br />Желаем удачи!<br />Команда sovlium'
+            : 'Если нужна помощь, посмотрите подсказки заново или напишите в поддержку.<br />Отличной учёбы!<br />Команда sovlium'
+        }`,
       },
       side: 'right' as const,
       align: 'end' as const,
