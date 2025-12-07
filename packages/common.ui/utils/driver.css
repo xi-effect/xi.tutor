@@ -18,7 +18,11 @@
   background-color: var(--xi-brand-100);
 }
 
-.my-custom-popover-class .driver-popover-navigation-btns button + button {
+.my-custom-popover-class .driver-popover-navigation-btns {
+  flex-grow: 0;
+}
+
+.my-custom-popover-class .driver-popover-navigation-btns button+button {
   margin-left: 16px;
 }
 
@@ -51,7 +55,7 @@
   line-height: 28px;
 }
 
-.my-custom-popover-class .driver-popover-title[style*='block'] + .driver-popover-description {
+.my-custom-popover-class .driver-popover-title[style*='block']+.driver-popover-description {
   margin-top: 8px;
 }
 
@@ -74,6 +78,8 @@
 
 .my-custom-popover-class .driver-popover-footer {
   margin-top: 24px;
+  flex-direction: row-reverse;
+  justify-content: space-between;
 }
 
 .my-custom-popover-class .driver-popover-footer button {
