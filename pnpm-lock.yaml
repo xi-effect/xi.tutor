@@ -1924,12 +1924,12 @@ importers:
       common.services:
         specifier: '*'
         version: link:../common.services
+      common.types:
+        specifier: '*'
+        version: link:../common.types
       common.utils:
         specifier: '*'
         version: link:../common.utils
-      features.table:
-        specifier: '*'
-        version: link:../features.table
       react:
         specifier: '19'
         version: 19.2.0
@@ -2115,6 +2115,9 @@ importers:
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
+      features.payment.approve:
+        specifier: '*'
+        version: link:../features.payment.approve
       react:
         specifier: '19'
         version: 19.2.0

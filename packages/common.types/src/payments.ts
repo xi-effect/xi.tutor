@@ -49,3 +49,9 @@ export type RolePaymentT<Role extends RoleT> = Role extends 'tutor'
 export type PaymentApprovalFunctionT = {
   onApprovePayment: (payment: RolePaymentT<UserRoleT>) => void;
 };
+
+export const mapPaymentStatus = {
+  complete: 'оплачен',
+  wf_receiver_confirmation: 'ожидает подтверждения',
+  wf_sender_confirmation: 'ждет оплаты',
+} as const;

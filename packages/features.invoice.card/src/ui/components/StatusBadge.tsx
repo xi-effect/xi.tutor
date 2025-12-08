@@ -1,4 +1,5 @@
-import { mapPaymentStatus, PaymentStatusT, getStatusColor } from 'features.table';
+import { PaymentStatusT, getStatusColor } from 'features.table';
+import { mapPaymentStatus } from 'common.types';
 import { cn } from '@xipkg/utils';
 import { Badge } from '@xipkg/badge';
 

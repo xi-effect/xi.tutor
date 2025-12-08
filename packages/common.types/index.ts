@@ -17,7 +17,7 @@ export type {
   StorageItemT,
   MaterialActionsMenuPropsT,
   MaterialPropsT,
-  ModalUpdateMaterialNamePropsT,
+  ModalEditMaterialNamePropsT,
 } from './src/materials';
 export type {
   TemplateT,
@@ -30,6 +30,7 @@ export type {
   TutorPaymentT,
   RolePaymentT,
 } from './src/payments';
+export { mapPaymentStatus } from './src/payments';
 export type { InvitationDataT } from './src/invitations';
 export type { GroupStudentsListSchema } from './src/students';
 export type { ContactT, ContactsT } from './src/contacts';

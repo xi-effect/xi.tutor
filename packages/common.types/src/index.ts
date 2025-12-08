@@ -30,6 +30,7 @@ export type {
   RolePaymentT,
   PaymentApprovalFunctionT,
 } from './payments';
+export { mapPaymentStatus } from './payments';
 export type { InvitationDataT } from './invitations';
 export type {
   TutorStudentSchemaMarshal,

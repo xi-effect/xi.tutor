@@ -45,12 +45,6 @@ export type DataTableProps<TData> = {
   subjects?: SubjectT[];
 };
 
-export const mapPaymentStatus: Record<PaymentStatusT, string> = {
-  complete: 'оплачен',
-  wf_receiver_confirmation: 'ожидает подтверждения',
-  wf_sender_confirmation: 'ждет оплаты',
-};
-
 export type PaymentT = {
   id: number;
   idStudent: number;

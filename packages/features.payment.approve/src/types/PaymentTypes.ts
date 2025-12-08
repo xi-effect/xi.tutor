@@ -1,3 +1,5 @@
+import { PaymentStatusT } from 'common.types';
+
 export type InvoiceItemT = {
   name: string;
   price: string;
@@ -20,4 +22,11 @@ export type PaymentDataT = {
   invoice_items: InvoiceItemT[];
   recipient_invoice: RecipientInvoiceT;
   student_id: number | null;
+};
+
+export type ApprovePaymentPropsT = {
+  status: PaymentStatusT;
+  isTutor?: boolean;
+  onApprovePayment: () => void;
+  id?: number;
 };
