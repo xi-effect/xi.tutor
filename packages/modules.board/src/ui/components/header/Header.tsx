@@ -8,11 +8,11 @@ import {
   useGetClassroomMaterial,
   useGetClassroomMaterialStudent,
   useGetMaterial,
-  useUpdateClassroomMaterial,
   useUpdateMaterial,
 } from 'common.services';
 import { Skeleton } from 'common.ui';
 import { useFullScreen } from 'common.utils';
+import { useMaterialActions } from 'features.materials.card';
 import { ModalEditMaterialName } from 'features.materials.edit';
 import { useEffect, useState } from 'react';
 import { useYjsContext } from '../../../providers/YjsProvider';
@@ -28,7 +28,6 @@ export const Header = () => {
   const { isReadonly } = useYjsContext();
 
   const { updateMaterial } = useUpdateMaterial();
-  const { updateClassroomMaterial } = useUpdateClassroomMaterial();
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -55,6 +54,13 @@ export const Header = () => {
     id: materialIdValue,
   });
 
+  const { handleUpdateName } = useMaterialActions(
+    material.id,
+    material?.content_kind,
+    material?.name,
+    classroomId,
+  );
+
   const router = useRouter();
 
   const handleBack = () => {
@@ -69,31 +75,6 @@ export const Header = () => {
 
   const handleOpenModal = () => {
     setOpenModal(true);
-  };
-
-  const handleUpdateName = async (
-    _: 'classroom' | 'tutor',
-    name: string,
-    onCloseUpdateNameModal: () => void,
-  ) => {
-    try {
-      if (classroomId) {
-        await updateClassroomMaterial.mutateAsync({
-          classroomId: classroomId,
-          id: materialId as string,
-          data: { name },
-        });
-      } else {
-        await updateMaterial.mutateAsync({
-          id: materialId as string,
-          data: { name },
-        });
-      }
-
-      onCloseUpdateNameModal?.();
-    } catch (error) {
-      console.error('Ошибка при обновлении названия:', error);
-    }
   };
 
   // Обработка событий от горячих клавиш

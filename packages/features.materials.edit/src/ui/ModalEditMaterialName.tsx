@@ -61,7 +61,7 @@ export const ModalEditMaterialName = ({
   };
 
   const onSubmit = (data: FormData) => {
-    handleUpdateName(isClassroom ? 'classroom' : 'tutor', data.name ?? '', onClose);
+    handleUpdateName(isClassroom ? 'classroom' : 'tutor', data.name, onClose);
   };
 
   return (
