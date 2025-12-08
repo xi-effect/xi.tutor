@@ -80,12 +80,12 @@ export const Header = () => {
       if (classroomId) {
         await updateClassroomMaterial.mutateAsync({
           classroomId: classroomId,
-          id: materialId,
+          id: materialId as string,
           data: { name },
         });
       } else {
         await updateMaterial.mutateAsync({
-          id: materialId,
+          id: materialId as string,
           data: { name },
         });
       }
