@@ -72,13 +72,11 @@ export const Header = () => {
   };
 
   const handleUpdateName = async (
-    _: 'tutor' | 'classroom',
-    name: string | undefined,
+    _: 'classroom' | 'tutor',
+    name: string,
     onCloseUpdateNameModal: () => void,
   ) => {
     try {
-      if (!name?.trim()) return;
-
       if (classroomId) {
         await updateClassroomMaterial.mutateAsync({
           classroomId: classroomId,
