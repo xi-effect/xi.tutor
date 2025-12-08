@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { YjsProvider } from '../providers/YjsProvider';
 import { TiptapEditor } from './components/TiptapEditor';
 import { useParams } from '@tanstack/react-router';
