@@ -73,7 +73,7 @@ export const Header = () => {
 
   const handleUpdateName = async (
     _: 'classroom' | 'tutor',
-    name: string | undefined,
+    name: string,
     onCloseUpdateNameModal: () => void,
   ) => {
     try {
