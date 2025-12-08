@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Button } from '@xipkg/button';
 // import { patch } from 'pkg.utils';
 import { useMediaQuery } from '@xipkg/utils';

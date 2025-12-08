@@ -1,5 +1,3 @@
-// import { Minimize, Maximize } from '@xipkg/icons';
-// import { useFullScreen } from 'pkg.utils.client';
 import { Button } from '@xipkg/button';
 
 import { useParams, useRouter } from '@tanstack/react-router';
@@ -76,7 +74,7 @@ export const Header = () => {
   const handleUpdateName = async (
     _: 'tutor' | 'classroom',
     name: string | undefined,
-    onCloseUpdateNameModal: any,
+    onCloseUpdateNameModal: () => void,
   ) => {
     try {
       if (classroomId) {

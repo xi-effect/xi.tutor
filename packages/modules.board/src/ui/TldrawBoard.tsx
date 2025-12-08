@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { LoadingScreen } from 'common.ui';
 import { YjsProvider } from '../providers/YjsProvider';
 import { TldrawCanvas } from './components';

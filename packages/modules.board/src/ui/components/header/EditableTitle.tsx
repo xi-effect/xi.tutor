@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useState } from 'react';
 import { useForm } from '@xipkg/form';
 import { Input } from '@xipkg/input';
