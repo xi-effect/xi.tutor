@@ -1,18 +1,5 @@
-import { useEffect, useMemo } from 'react';
-import {
-  Modal,
-  ModalTitle,
-  ModalHeader,
-  ModalContent,
-  ModalBody,
-  ModalFooter,
-  ModalCloseButton,
-} from '@xipkg/modal';
-import { Button } from '@xipkg/button';
-import { ModalEditMaterialNamePropsT } from 'common.types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { formSchema, FormData } from '../model';
-import * as z from 'zod';
+import { Button } from '@xipkg/button';
 import {
   Form,
   FormControl,
@@ -23,13 +10,27 @@ import {
   useForm,
 } from '@xipkg/form';
 import { Input } from '@xipkg/input';
+import {
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalTitle,
+} from '@xipkg/modal';
+import { ModalEditMaterialNamePropsT } from 'common.types';
+import { useEffect, useMemo } from 'react';
+import * as z from 'zod';
+import { FormData, formSchema } from '../model';
 
 export const ModalEditMaterialName = ({
   isClassroom,
   isOpen,
-  onClose,
   name,
   content_kind,
+  isLoading = false,
+  onClose,
   handleUpdateName,
 }: ModalEditMaterialNamePropsT) => {
   const initialValues = useMemo(() => ({ name: name || '' }), [name]);
@@ -88,6 +89,7 @@ export const ModalEditMaterialName = ({
                         autoComplete="off"
                         type="text"
                         id="name"
+                        disabled={isLoading}
                         {...field}
                       />
                     </FormControl>

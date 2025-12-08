@@ -37,9 +37,10 @@ export type MaterialActionsMenuPropsT = {
 export type ModalEditMaterialNamePropsT = {
   isClassroom: boolean;
   isOpen: boolean;
-  onClose: () => void;
   name: MaterialPropsT['name'];
   content_kind: MaterialPropsT['content_kind'];
+  isLoading?: boolean;
+  onClose: () => void;
   handleUpdateName: (
     type: MaterialT['kind'],
     newName: UpdateMaterialDataT['name'],

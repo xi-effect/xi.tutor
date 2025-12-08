@@ -3,27 +3,34 @@
 import { Button } from '@xipkg/button';
 
 import { useParams, useRouter } from '@tanstack/react-router';
-import { ArrowLeft, Maximize, Minimize } from '@xipkg/icons';
+import { ArrowLeft, Edit, Maximize, Minimize } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import {
   useCurrentUser,
   useGetClassroomMaterial,
   useGetClassroomMaterialStudent,
   useGetMaterial,
+  useUpdateClassroomMaterial,
+  useUpdateMaterial,
 } from 'common.services';
 import { Skeleton } from 'common.ui';
 import { useFullScreen } from 'common.utils';
-import { useEffect } from 'react';
-import { EditableTitle } from './EditableTitle';
-import { SettingsDropdown } from './SettingsDropdown';
-import { HotkeysHelp } from '../shared/HotkeysHelp';
+import { ModalEditMaterialName } from 'features.materials.edit';
+import { useEffect, useState } from 'react';
 import { useYjsContext } from '../../../providers/YjsProvider';
+import { HotkeysHelp } from '../shared/HotkeysHelp';
+import { SettingsDropdown } from './SettingsDropdown';
 
 export const Header = () => {
+  const [openModal, setOpenModal] = useState(false);
+
   const { isFullScreenSupported, isFullScreen, toggleFullScreen } =
     useFullScreen('whiteboard-container');
   const { classroomId, boardId, materialId } = useParams({ strict: false });
   const { isReadonly } = useYjsContext();
+
+  const { updateMaterial } = useUpdateMaterial();
+  const { updateClassroomMaterial } = useUpdateClassroomMaterial();
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -58,6 +65,39 @@ export const Header = () => {
     router.history.back();
   };
 
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleUpdateName = async (
+    _: 'tutor' | 'classroom',
+    name: string | undefined,
+    onCloseUpdateNameModal: any,
+  ) => {
+    try {
+      if (classroomId) {
+        await updateClassroomMaterial.mutateAsync({
+          classroomId: classroomId,
+          id: materialId,
+          data: { name },
+        });
+      } else {
+        await updateMaterial.mutateAsync({
+          id: materialId,
+          data: { name },
+        });
+      }
+
+      onCloseUpdateNameModal?.();
+    } catch (error) {
+      console.error('Ошибка при обновлении названия:', error);
+    }
+  };
+
   // Обработка событий от горячих клавиш
   useEffect(() => {
     const handleToggleFullscreen = () => {
@@ -71,47 +111,68 @@ export const Header = () => {
   }, [toggleFullScreen]);
 
   return (
-    <div
-      className={cn(
-        'bg-gray-0 text-xl-base absolute z-50 w-full px-4 pb-4',
-        isFullScreen && 'pt-4',
-      )}
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex items-center justify-center gap-2">
-          <Button
-            variant="ghost"
-            onClick={handleBack}
-            type="button"
-            className="h-[40px] w-[40px] p-2"
-          >
-            <ArrowLeft size="s" className="size-6" />
-          </Button>
-          {isLoading ? (
-            <Skeleton variant="text" className="h-6 w-24" />
-          ) : (
-            <EditableTitle title={material.name} materialId={materialIdValue} isTutor={isTutor} />
-          )}
-        </div>
-        <div className="flex items-center gap-1">
-          {!isReadonly && <HotkeysHelp />}
-          {isFullScreenSupported && (
+    <>
+      <div
+        className={cn(
+          'bg-gray-0 text-xl-base absolute z-50 w-full px-4 pb-4',
+          isFullScreen && 'pt-4',
+        )}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center justify-center gap-2">
             <Button
               variant="ghost"
-              onClick={toggleFullScreen}
+              onClick={handleBack}
               type="button"
-              className="h-10 w-10 p-2"
+              className="h-[40px] w-[40px] p-2"
             >
-              {isFullScreen ? (
-                <Minimize size="s" className="size-6" />
-              ) : (
-                <Maximize size="s" className="size-6" />
-              )}
+              <ArrowLeft size="s" className="size-6" />
             </Button>
-          )}
-          {!isReadonly && <SettingsDropdown />}
+            {isLoading ? (
+              <Skeleton variant="text" className="h-6 w-24" />
+            ) : (
+              <div className="flex items-center gap-2">
+                <h1 className="text-xl-base select-none">{material.name}</h1>
+                {isTutor && (
+                  <Button type="button" variant="ghost" onClick={handleOpenModal}>
+                    <Edit size="s" className="size-6" />
+                  </Button>
+                )}
+              </div>
+            )}
+          </div>
+          <div className="flex items-center gap-1">
+            {!isReadonly && <HotkeysHelp />}
+            {isFullScreenSupported && (
+              <Button
+                variant="ghost"
+                onClick={toggleFullScreen}
+                type="button"
+                className="h-10 w-10 p-2"
+              >
+                {isFullScreen ? (
+                  <Minimize size="s" className="size-6" />
+                ) : (
+                  <Maximize size="s" className="size-6" />
+                )}
+              </Button>
+            )}
+            {!isReadonly && <SettingsDropdown />}
+          </div>
         </div>
       </div>
-    </div>
+
+      {openModal && (
+        <ModalEditMaterialName
+          isOpen={openModal}
+          name={material?.name}
+          content_kind={material?.content_kind}
+          isClassroom={!!classroomId}
+          isLoading={updateMaterial.isPending}
+          onClose={handleCloseModal}
+          handleUpdateName={handleUpdateName}
+        />
+      )}
+    </>
   );
 };

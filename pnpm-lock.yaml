@@ -2227,6 +2227,9 @@ importers:
       common.utils:
         specifier: '*'
         version: link:../common.utils
+      features.materials.edit:
+        specifier: '*'
+        version: link:../features.materials.edit
       pica:
         specifier: 9.0.1
         version: 9.0.1
