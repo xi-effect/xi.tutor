@@ -1,9 +1,7 @@
 import { LoadingScreen } from 'common.ui';
 import { useKeyPress } from 'common.utils';
-import { useEffect, useState } from 'react';
 import { JSX } from 'react/jsx-runtime';
 import { Editor, Tldraw, TldrawProps } from 'tldraw';
-import 'tldraw/tldraw.css';
 import { useLockedShapeSelection, useRemoveMark, useTldrawClipboard } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useTldrawStore } from '../../../store';
@@ -11,6 +9,8 @@ import { Header } from '../header';
 import { Navbar, SelectionMenu } from '../toolbar';
 import { CollaboratorCursor } from './CollaboratorCursor';
 import { TldrawZoomPanel } from './TldrawZoomPanel';
+import { useState, useEffect } from 'react';
+import 'tldraw/tldraw.css';
 import './customstyles.css';
 
 export const TldrawCanvas = ({

@@ -29,7 +29,7 @@ export const ModalEditMaterialName = ({
   isOpen,
   name,
   content_kind,
-  isLoading = false,
+  isLoading,
   onClose,
   handleUpdateName,
 }: ModalEditMaterialNamePropsT) => {
@@ -86,10 +86,10 @@ export const ModalEditMaterialName = ({
                     <FormControl>
                       <Input
                         error={!!errors?.name}
+                        disabled={isLoading}
                         autoComplete="off"
                         type="text"
                         id="name"
-                        disabled={isLoading}
                         {...field}
                       />
                     </FormControl>
