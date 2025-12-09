@@ -29,7 +29,7 @@ export const ModalEditMaterialName = ({
   isOpen,
   name,
   content_kind,
-  isLoading,
+  isLoading = false,
   onClose,
   handleUpdateName,
 }: ModalEditMaterialNamePropsT) => {

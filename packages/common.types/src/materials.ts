@@ -40,7 +40,7 @@ export type ModalEditMaterialNamePropsT = {
   onClose: () => void;
   name: MaterialPropsT['name'];
   content_kind: MaterialPropsT['content_kind'];
-  isLoading: boolean;
+  isLoading?: boolean;
   handleUpdateName: (
     type: MaterialT['kind'],
     newName: UpdateMaterialDataT['name'],
@@ -53,7 +53,7 @@ export type ClassroomMaterialsT = MaterialT & {
 };
 
 export type UpdateMaterialDataT = {
-  name: string;
+  name?: string;
   kind?: string;
   student_access_mode?: AccessModeT;
 };
