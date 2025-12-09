@@ -55,10 +55,10 @@ export const Header = () => {
   });
 
   const { handleUpdateName } = useMaterialActions(
-    material.id,
+    material?.id,
     material?.content_kind,
     material?.name,
-    classroomId,
+    classroomId || '',
   );
 
   const router = useRouter();
