@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useState } from 'react';
 import { Modal, ModalContent, ModalTitle } from '@xipkg/modal';
 import { FileUploader } from '@xipkg/fileuploader';

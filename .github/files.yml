@@ -8,17 +8,17 @@
 
 # Имена последних объектов (xi_web_files, lintable_files) лучше не менять
 
-config_files: &config_files # изменения тут обязательно запускают все пайплайны
+config_files: &config_files  # изменения тут обязательно запускают все пайплайны
   - '.github/workflows/*'
   - 'package.json'
   - 'package-lock.json'
   - 'turbo.json'
   - '.npmrc'
 
-app_common_files: &app_common_files # тригерят все билда (и депой в main-ветке)
+app_common_files: &app_common_files  # тригерят все билда (и депой в main-ветке)
   - *config_files
   - 'packages/**'
 
-xi_web_files: # запускает билд и депой для xi.web
+xi_web_files:  # запускает билд и депой для xi.web
   - *app_common_files
   - 'apps/xi.web/**'
