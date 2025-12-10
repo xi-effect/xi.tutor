@@ -53,6 +53,7 @@ const ApproveForm = ({
   isLoadingInvoice,
 }: ApproveFormPropsT) => {
   const { mutate: receiverConfirmationMutation, isPending } = usePaymentReceiverConfirmation({
+    classroomId: paymentDetails.classroom_id?.toString(),
     onSuccess: () => {
       handleCloseModal();
     },
@@ -183,6 +184,7 @@ const AdvanceForm = ({
   const { form, handleSubmit, onSubmit, isLoading } = usePaymentApproveForm(
     recipientInvoiceId,
     isTutor,
+    paymentDetails.classroom_id?.toString(),
   );
 
   const onFormSubmit = (data: PaymentFormData) => {

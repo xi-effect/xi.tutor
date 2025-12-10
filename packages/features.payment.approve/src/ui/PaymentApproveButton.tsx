@@ -1,32 +1,35 @@
 import { Button } from '@xipkg/button';
-import { Check } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { usePaymentReceiverConfirmation } from 'common.services';
-import { ApprovePaymentPropsT } from '../types';
+import { PaymentApproveButtonPropsT } from '../types';
+import { PaymentApproveButtonContent } from './PaymentApproveButtonContent';
 
 export const PaymentApproveButton = ({
+  type = 'default',
   status,
   onApprovePayment,
   isTutor = false,
   id,
-}: ApprovePaymentPropsT) => {
-  const { mutate: receiverConfirmationMutation, isPending } = usePaymentReceiverConfirmation();
+  classroomId,
+}: PaymentApproveButtonPropsT) => {
+  const { mutate: receiverConfirmationMutation, isPending } = usePaymentReceiverConfirmation({
+    classroomId: classroomId?.toString(),
+  });
 
   if (status === 'wf_sender_confirmation')
     return (
-      <div className="flex flex-row items-center justify-between gap-4">
+      <div
+        className={`flex flex-row items-center justify-between gap-4 ${type === 'table' ? 'w-full sm:w-auto' : ''} `}
+      >
         <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
             <Button
               variant="ghost"
               size="s"
-              className="bg-brand-0 hover:bg-brand-0/80 rounded-lg"
+              className="bg-brand-0 hover:bg-brand-0/80 flex-1 rounded-lg"
               onClick={onApprovePayment}
             >
-              <span className="text-s-base text-brand-100 hidden font-medium md:block">
-                Подтвердить
-              </span>
-              <Check className="fill-brand-100 block md:hidden" />
+              <PaymentApproveButtonContent type={type} />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="right" align="center" className="z-99999!">
@@ -51,10 +54,7 @@ export const PaymentApproveButton = ({
               loading={isPending}
               disabled={isPending}
             >
-              <span className="text-s-base text-brand-100 hidden font-medium md:block">
-                Подтвердить
-              </span>
-              <Check className="fill-brand-100 block md:hidden" />
+              <PaymentApproveButtonContent type={type} />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="right" align="center" className="z-99999!">

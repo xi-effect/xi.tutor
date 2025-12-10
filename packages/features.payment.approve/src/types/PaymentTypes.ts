@@ -1,4 +1,5 @@
-import { PaymentStatusT } from 'common.types';
+import { PaymentStatusT, RolePaymentT, InvoiceCardTypeT } from 'common.types';
+import { UserRoleT } from 'common.api';
 
 export type InvoiceItemT = {
   name: string;
@@ -25,8 +26,16 @@ export type PaymentDataT = {
 };
 
 export type ApprovePaymentPropsT = {
+  payment: RolePaymentT<UserRoleT> | null;
   status: PaymentStatusT;
   isTutor?: boolean;
   onApprovePayment: () => void;
   id?: number;
+};
+
+export type PaymentApproveActionPropsT = Pick<ApprovePaymentPropsT, 'payment' | 'isTutor'>;
+
+export type PaymentApproveButtonPropsT = Omit<ApprovePaymentPropsT, 'payment'> & {
+  type?: InvoiceCardTypeT;
+  classroomId?: number;
 };

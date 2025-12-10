@@ -35,6 +35,7 @@ export const InvoiceCard = ({
       userId={userId}
       payment={payment}
       className={className}
+      currentUserRole={currentUserRole}
     />
   );
 };

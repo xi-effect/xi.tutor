@@ -55,3 +55,5 @@ export const mapPaymentStatus = {
   wf_receiver_confirmation: 'ожидает подтверждения',
   wf_sender_confirmation: 'ждет оплаты',
 } as const;
+
+export type InvoiceCardTypeT = 'default' | 'table';

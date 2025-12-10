@@ -1,12 +1,12 @@
 import { RolePaymentT, RoleT } from 'features.table';
 import { UserRoleT } from 'common.api';
-import { PaymentApprovalFunctionT, UserData } from 'common.types';
+import { PaymentApprovalFunctionT, UserData, InvoiceCardTypeT } from 'common.types';
 
 export type InvoiceCardPropsT = {
   payment: RolePaymentT<UserRoleT>;
   currentUserRole: RoleT;
   type?: 'full' | 'short';
-  variant?: 'default' | 'table';
+  variant?: InvoiceCardTypeT;
   onApprovePayment?: PaymentApprovalFunctionT['onApprovePayment'] | null;
   className?: string;
 };

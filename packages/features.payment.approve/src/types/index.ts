@@ -4,4 +4,6 @@ export type {
   RecipientInvoiceT,
   PaymentDataT,
   ApprovePaymentPropsT,
+  PaymentApproveButtonPropsT,
+  PaymentApproveActionPropsT,
 } from './PaymentTypes';

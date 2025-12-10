@@ -1,12 +1,17 @@
 import { UserProfile } from '@xipkg/userprofile';
 import { formatPaymentDate } from '../../utils';
 import { StatusBadge } from '../components';
-// import { Button } from '@xipkg/button';
-// import { Edit, Trash } from '@xipkg/icons';
 import { CardContentT } from '../../types';
 import { cn } from '@xipkg/utils';
+import { PaymentApproveAction } from 'features.payment.approve';
 
-export const TableCard = ({ userData, userId, payment, className }: CardContentT) => {
+export const TableCard = ({
+  userData,
+  userId,
+  payment,
+  className,
+  currentUserRole,
+}: CardContentT) => {
   const formattedDate = formatPaymentDate(payment.created_at);
   const amount = parseFloat(payment.total);
 
@@ -32,27 +37,7 @@ export const TableCard = ({ userData, userId, payment, className }: CardContentT
         </div>
         <StatusBadge status={payment.status} />
       </div>
-      {/* Кнопка подтверждения оплаты и удаления/редактирования пока скрыты */}
-      {/* {payment.status !== 'complete' && (
-            <Button
-              variant="ghost"
-              size="s"
-              className="text-brand-100 bg-brand-0 hover:bg-brand-20/40 mt-2 rounded-lg"
-              onClick={handleApprove}
-            >
-              Подтвердить
-            </Button>
-          )}
-          {currentUserRole === 'tutor' && (
-            <div className="absolute top-4 right-4 flex flex-col items-center justify-between gap-2">
-              <Button className="size-8 rounded-lg p-0" variant="ghost" size="s">
-                <Trash className="fill-gray-60 size-4" />
-              </Button>
-              <Button className="size-8 rounded-lg p-0" variant="ghost" size="s">
-                <Edit className="fill-gray-60 size-4" />
-              </Button>
-            </div>
-          )} */}
+      <PaymentApproveAction payment={payment} isTutor={currentUserRole === 'tutor'} />
     </div>
   );
 };

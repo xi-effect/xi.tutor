@@ -1544,6 +1544,9 @@ importers:
       common.utils:
         specifier: '*'
         version: link:../common.utils
+      features.payment.approve:
+        specifier: '*'
+        version: link:../features.payment.approve
       features.table:
         specifier: '*'
         version: link:../features.table

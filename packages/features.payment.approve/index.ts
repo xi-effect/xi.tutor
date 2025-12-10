@@ -1,1 +1,6 @@
-export { PaymentApproveModal, PaymentApproveButton, type ApprovePaymentPropsT } from './src';
+export {
+  PaymentApproveModal,
+  PaymentApproveButton,
+  PaymentApproveAction,
+  type ApprovePaymentPropsT,
+} from './src';

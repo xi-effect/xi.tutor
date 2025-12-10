@@ -29,6 +29,7 @@ export type {
   StudentPaymentT,
   TutorPaymentT,
   RolePaymentT,
+  InvoiceCardTypeT,
 } from './src/payments';
 export { mapPaymentStatus } from './src/payments';
 export type { InvitationDataT } from './src/invitations';
