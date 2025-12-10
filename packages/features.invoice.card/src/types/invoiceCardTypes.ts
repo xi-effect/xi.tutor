@@ -1,4 +1,4 @@
-import { RolePaymentT, RoleT } from 'features.table';
+import { RolePaymentT, RoleT } from 'common.types';
 import { UserRoleT } from 'common.api';
 import { PaymentApprovalFunctionT, UserData, InvoiceCardTypeT } from 'common.types';
 

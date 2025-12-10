@@ -1,5 +1,5 @@
-import { useUserByRole } from 'features.table';
-import { RolePaymentT } from 'features.table';
+import { useUserByRole } from 'common.services';
+import { RolePaymentT } from 'common.types';
 
 export const useUserByPaymentDetails = (
   paymentDetails: RolePaymentT<'tutor'> | RolePaymentT<'student'>,

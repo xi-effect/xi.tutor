@@ -1547,9 +1547,6 @@ importers:
       features.payment.approve:
         specifier: '*'
         version: link:../features.payment.approve
-      features.table:
-        specifier: '*'
-        version: link:../features.table
       react:
         specifier: '19'
         version: 19.2.0
@@ -3309,9 +3306,6 @@ importers:
       features.students.list:
         specifier: '*'
         version: link:../features.students.list
-      features.table:
-        specifier: '*'
-        version: link:../features.table
       react:
         specifier: '19'
         version: 19.2.0
@@ -3760,9 +3754,6 @@ importers:
       features.materials.duplicate:
         specifier: '*'
         version: link:../features.materials.duplicate
-      features.table:
-        specifier: '*'
-        version: link:../features.table
       pages.classrooms:
         specifier: '*'
         version: link:../pages.classrooms
