@@ -41,7 +41,6 @@ export const usePaymentUnilateralConfirmation = (classroomId?: string) => {
         queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.TutorPayments, 'tutor'] });
         queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.TutorPayments, 'list'] });
         if (classroomId) {
-          console.log(classroomId, 'list');
           queryClient.invalidateQueries({
             queryKey: [ClassroomPaymentsQueryKey.TutorPayments, classroomId, 'list'],
           });

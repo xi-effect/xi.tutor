@@ -54,9 +54,12 @@ export const useCreateInvoice = () => {
         const { classroomId } = variables;
         // Инвалидируем кеш для обновления списка счетов
         queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.TutorPayments, 'tutor'] });
-        queryClient.invalidateQueries({
-          queryKey: [PaymentsQueryKey.TutorPayments, classroomId, 'list'],
-        });
+        queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.TutorPayments, 'list'] });
+        if (classroomId) {
+          queryClient.invalidateQueries({
+            queryKey: [PaymentsQueryKey.TutorPayments, classroomId, 'list'],
+          });
+        }
       }
 
       showSuccess('addInvoiceTemplate', 'Счёт успешно создан');
