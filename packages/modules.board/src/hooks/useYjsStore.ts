@@ -1,20 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-/**
- * ПРОФИЛИРОВАНИЕ ПОДКЛЮЧЕНИЙ:
- *
- * Все события подключения/отключения HocuspocusProvider логируются в консоль.
- * Для просмотра итоговой статистики всех провайдеров выполните в консоли браузера:
- *
- *   window.__logYjsProviders()
- *
- * Это поможет выявить:
- * - Повторные переподключения
- * - Частые пересоздания провайдера
- * - Проблемы с зависимостями useMemo/useEffect
- */
-
 import { HocuspocusProvider } from '@hocuspocus/provider';
 import { useCurrentUser } from 'common.services';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -40,13 +26,16 @@ import {
 import { YKeyValue } from 'y-utility/y-keyvalue';
 import * as Y from 'yjs';
 import { myAssetStore } from '../features/imageStore';
-
-/* ---------- Цвет по ID ---------- */
-function generateUserColor(userId: string): string {
-  const hash = Array.from(userId).reduce((h, c) => c.charCodeAt(0) + ((h << 5) - h), 0);
-  const hue = Math.abs(hash) % 360;
-  return `hsl(${hue}, 70%, 60%)`;
-}
+import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
+import { maskId, maskToken, maskUrl } from '../utils/maskSensitiveData';
+import {
+  createProviderInstance,
+  getOrCreateProfile,
+  getProfile,
+  logProviderEvent,
+  updateProfile,
+} from '../utils/yjsProfiling';
+import { generateUserColor } from '../utils/userColor';
 
 type UseYjsStoreArgs = Partial<{
   hostUrl: string;
@@ -69,110 +58,6 @@ export type ExtendedStoreStatus = {
   isReadonly: boolean;
   toggleReadonly: () => void;
 };
-
-const BOARD_SCHEMA_VERSION = 'tldraw';
-
-/* ---------- Безопасное логирование чувствительных данных ---------- */
-function maskToken(token: string | undefined): string {
-  if (!token) return 'undefined';
-  if (token.length <= 6) return '***';
-  return `${token.substring(0, 4)}...(${token.length})`;
-}
-
-function maskUrl(url: string | undefined): string {
-  if (!url) return 'undefined';
-  try {
-    const urlObj = new URL(url);
-    return urlObj.hostname || url;
-  } catch {
-    // Если не валидный URL, показываем только первые 20 символов
-    return url.length > 20 ? `${url.substring(0, 20)}...` : url;
-  }
-}
-
-function maskId(id: string | undefined): string {
-  if (!id) return 'undefined';
-  if (id.length <= 10) return id.substring(0, 4) + '***';
-  return `${id.substring(0, 8)}...(${id.length})`;
-}
-
-/* ---------- Профилирование подключений ---------- */
-let providerInstanceCounter = 0;
-const connectionProfiles = new Map<
-  string,
-  {
-    instanceId: number;
-    createdAt: number;
-    connectCount: number;
-    disconnectCount: number;
-    statusChanges: Array<{ status: string; timestamp: number }>;
-    syncedEvents: number;
-    lastConnectTime?: number;
-    lastDisconnectTime?: number;
-    hasCalledConnect?: boolean; // Флаг для отслеживания вызова connect()
-  }
->();
-
-function logProviderEvent(instanceId: number, event: string, details?: Record<string, any>) {
-  const timestamp = Date.now();
-  const profile = connectionProfiles.get(`instance-${instanceId}`);
-
-  console.group(`🔌 [HocuspocusProvider #${instanceId}] ${event}`);
-  console.log(`⏰ Время: ${new Date(timestamp).toLocaleTimeString()}`);
-  if (details) {
-    Object.entries(details).forEach(([key, value]) => {
-      console.log(`  ${key}:`, value);
-    });
-  }
-
-  if (profile) {
-    const lifetime = timestamp - profile.createdAt;
-    console.log(`  📊 Статистика:`);
-    console.log(`    - Время жизни: ${Math.round(lifetime / 1000)}с`);
-    console.log(`    - Подключений: ${profile.connectCount}`);
-    console.log(`    - Отключений: ${profile.disconnectCount}`);
-    console.log(`    - Событий synced: ${profile.syncedEvents}`);
-    console.log(`    - Изменений статуса: ${profile.statusChanges.length}`);
-
-    // Предупреждение о множественных подключениях
-    if (profile.connectCount > 1) {
-      console.warn(`  ⚠️ ВНИМАНИЕ: Провайдер был подключен ${profile.connectCount} раз!`);
-    }
-
-    // Предупреждение о частых изменениях статуса
-    if (profile.statusChanges.length > 5) {
-      console.warn(
-        `  ⚠️ ВНИМАНИЕ: Слишком много изменений статуса (${profile.statusChanges.length})!`,
-      );
-    }
-  }
-  console.groupEnd();
-}
-
-// Функция для вывода итоговой статистики всех провайдеров
-function logAllProvidersSummary() {
-  console.group('📈 ИТОГОВАЯ СТАТИСТИКА ВСЕХ ПРОВАЙДЕРОВ');
-  connectionProfiles.forEach((profile) => {
-    const lifetime = Date.now() - profile.createdAt;
-    console.log(`\n🔌 Провайдер #${profile.instanceId}:`);
-    console.log(`  - Время жизни: ${Math.round(lifetime / 1000)}с`);
-    console.log(`  - Подключений: ${profile.connectCount}`);
-    console.log(`  - Отключений: ${profile.disconnectCount}`);
-    console.log(`  - Событий synced: ${profile.syncedEvents}`);
-    console.log(`  - Изменений статуса: ${profile.statusChanges.length}`);
-
-    if (profile.connectCount > 1) {
-      console.warn(`  ⚠️ ПРОБЛЕМА: Множественные подключения!`);
-    }
-  });
-  console.log(`\n📊 Всего создано провайдеров: ${providerInstanceCounter}`);
-  console.groupEnd();
-}
-
-// Экспортируем функцию для ручного вызова из консоли
-if (typeof window !== 'undefined') {
-  (window as any).__logYjsProviders = logAllProvidersSummary;
-}
 
 export function useYjsStore({
   ydocId = 'test/demo-room',
@@ -215,9 +100,18 @@ export function useYjsStore({
     storageToken?: string;
   }>({});
 
+  /* ---------- BATChING: буфер изменений store -> Yjs ---------- */
+  const pendingChangesRef = useRef<{
+    added: Record<string, TLRecord>;
+    updated: Record<string, TLRecord>;
+    removed: Record<string, TLRecord>;
+  } | null>(null);
+
+  const flushTimeoutRef = useRef<number | null>(null);
+
   /* ---------- Yjs структуры + провайдер ---------- */
   const { yDoc, yStore, meta, room, readonlyMap, instanceId } = useMemo(() => {
-    const instanceId = ++providerInstanceCounter;
+    const instanceId = createProviderInstance();
     const createdAt = Date.now();
 
     // Определяем, какие зависимости изменились
@@ -236,8 +130,8 @@ export function useYjsStore({
     prevDepsRef.current = { hostUrl, ydocId, storageToken };
 
     // Предупреждение о частых пересозданиях
-    if (providerInstanceCounter > 1) {
-      const previousProfile = connectionProfiles.get(`instance-${providerInstanceCounter - 1}`);
+    if (instanceId > 1) {
+      const previousProfile = getProfile(instanceId - 1);
       if (previousProfile) {
         const timeSinceLast = createdAt - previousProfile.createdAt;
         if (timeSinceLast < 5000) {
@@ -269,7 +163,7 @@ export function useYjsStore({
           ? `изменение зависимостей: ${changedDeps.join(', ')}`
           : 'useMemo пересоздание (зависимости не изменились)',
       зависимостей: `[hostUrl, ydocId, storageToken]`,
-      всегоСоздано: providerInstanceCounter,
+      всегоСоздано: instanceId,
       изменившиесяЗависимости: changedDeps,
     });
 
@@ -312,15 +206,7 @@ export function useYjsStore({
     });
 
     // Инициализация профиля
-    connectionProfiles.set(`instance-${instanceId}`, {
-      instanceId,
-      createdAt,
-      connectCount: 0,
-      disconnectCount: 0,
-      statusChanges: [],
-      syncedEvents: 0,
-      hasCalledConnect: false, // Флаг для отслеживания вызова connect()
-    });
+    getOrCreateProfile(instanceId);
 
     return { yDoc, yStore, meta, room, readonlyMap, instanceId };
   }, [hostUrl, ydocId, storageToken]);
@@ -335,8 +221,32 @@ export function useYjsStore({
 
   /* ---------- Главный эффект ---------- */
   useEffect(() => {
-    const profile = connectionProfiles.get(`instance-${instanceId}`);
+    const profile = getProfile(instanceId);
     const currentRoom = roomRef.current;
+
+    // Функции батчинга привязаны к конкретному yDoc/yStore данного эффекта
+    const flushPendingChanges = () => {
+      const pending = pendingChangesRef.current;
+      if (!pending) return;
+
+      pendingChangesRef.current = null;
+
+      yDoc.transact(() => {
+        Object.values(pending.added).forEach((r) => yStore.set(r.id, r));
+        Object.values(pending.updated).forEach((r) => yStore.set(r.id, r));
+        Object.values(pending.removed).forEach((r) => yStore.delete(r.id));
+      }, 'user');
+    };
+
+    const scheduleFlush = () => {
+      if (flushTimeoutRef.current != null) return;
+
+      // 25 мс — фиксированный интервал батчинга
+      flushTimeoutRef.current = window.setTimeout(() => {
+        flushTimeoutRef.current = null;
+        flushPendingChanges();
+      }, 25);
+    };
 
     // Защита от React Strict Mode двойного вызова
     // Используем только instanceId для ключа, чтобы эффект не пересоздавался при изменении статуса
@@ -372,11 +282,11 @@ export function useYjsStore({
 
       // КРИТИЧНО: Устанавливаем флаг, что connect() был вызван для этого экземпляра
       // Этот флаг НЕ сбрасывается в cleanup, поэтому защищает от повторных вызовов
-      if (profile) {
-        profile.hasCalledConnect = true;
-        profile.connectCount++;
-        profile.lastConnectTime = Date.now();
-      }
+      updateProfile(instanceId, {
+        hasCalledConnect: true,
+        connectCount: (getProfile(instanceId)?.connectCount || 0) + 1,
+        lastConnectTime: Date.now(),
+      });
 
       setStoreWithStatus({ status: 'loading' });
 
@@ -401,28 +311,52 @@ export function useYjsStore({
     const unsubs: (() => void)[] = [];
 
     function handleSync() {
-      const profile = connectionProfiles.get(`instance-${instanceId}`);
+      const profile = getProfile(instanceId);
       if (profile) {
-        profile.syncedEvents++;
+        updateProfile(instanceId, {
+          syncedEvents: profile.syncedEvents + 1,
+        });
       }
 
       logProviderEvent(instanceId, 'СОБЫТИЕ synced', {
         всегоSynced: profile?.syncedEvents || 0,
       });
 
-      /* ========== DOCUMENT: store -> yDoc ========== */
+      /* ========== DOCUMENT: store -> yDoc (С БАТЧИНГОМ) ========== */
       unsubs.push(
         store.listen(
           ({ changes }) => {
             if (suppressSyncRef.current) return;
-            yDoc.transact(
-              () => {
-                Object.values(changes.added).forEach((r) => yStore.set(r.id, r));
-                Object.values(changes.updated).forEach(([_, r]) => yStore.set(r.id, r));
-                Object.values(changes.removed).forEach((r) => yStore.delete(r.id));
-              },
-              'user', // origin: локальные пользовательские изменения
-            );
+
+            if (!pendingChangesRef.current) {
+              pendingChangesRef.current = {
+                added: {},
+                updated: {},
+                removed: {},
+              };
+            }
+
+            const pending = pendingChangesRef.current;
+
+            // Добавленные
+            Object.values(changes.added).forEach((r) => {
+              pending.added[r.id] = r;
+              delete pending.removed[r.id];
+            });
+
+            // Обновлённые
+            Object.values(changes.updated).forEach(([_, r]) => {
+              pending.updated[r.id] = r;
+            });
+
+            // Удалённые
+            Object.values(changes.removed).forEach((r) => {
+              delete pending.added[r.id];
+              delete pending.updated[r.id];
+              pending.removed[r.id] = r;
+            });
+
+            scheduleFlush();
           },
           { source: 'user', scope: 'document' },
         ),
@@ -624,15 +558,19 @@ export function useYjsStore({
 
     let hasConnectedBefore = false;
     function handleStatusChange({ status }: { status: 'disconnected' | 'connected' }) {
-      const profile = connectionProfiles.get(`instance-${instanceId}`);
+      const profile = getProfile(instanceId);
       if (profile) {
-        profile.statusChanges.push({ status, timestamp: Date.now() });
+        const statusChanges = [...profile.statusChanges, { status, timestamp: Date.now() }];
+        const updates: Partial<typeof profile> = {
+          statusChanges,
+        };
         if (status === 'disconnected') {
-          profile.disconnectCount++;
-          profile.lastDisconnectTime = Date.now();
+          updates.disconnectCount = profile.disconnectCount + 1;
+          updates.lastDisconnectTime = Date.now();
           hasConnectedRef.current = false;
           isConnectingRef.current = false;
         }
+        updateProfile(instanceId, updates);
       }
 
       logProviderEvent(instanceId, `ИЗМЕНЕНИЕ СТАТУСА: ${status}`, {
@@ -689,6 +627,13 @@ export function useYjsStore({
 
       // Сбрасываем флаги
       isConnectingRef.current = false;
+
+      // Чистим таймер батчинга и буфер
+      if (flushTimeoutRef.current != null) {
+        clearTimeout(flushTimeoutRef.current);
+        flushTimeoutRef.current = null;
+      }
+      pendingChangesRef.current = null;
 
       // Отключаем провайдер при очистке только если он был подключен
       if (currentRoom.isConnected && hasConnectedRef.current) {
