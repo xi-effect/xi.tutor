@@ -5,7 +5,7 @@ import 'driver.js/dist/driver.css';
 import '../utils/driver.css';
 import { createRoot } from 'react-dom/client';
 import { useCurrentUser, useOnboardingTransition } from 'common.services';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { cn } from '@xipkg/utils';
 
 type MenuT = {
@@ -77,26 +77,11 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
     });
   };
 
-  // Если данные пользователя загружаются, не показываем меню
-  if (isLoading) {
-    return null;
-  }
-
-  // Если пользователь не найден, не показываем меню
-  if (!user) {
-    return null;
-  }
-
-  const shouldShowForCompleted = user.onboarding_stage === 'completed' && showForCompleted;
-  const shouldShowForTraining = user.onboarding_stage === 'training';
-
-  if ((!shouldShowForTraining && !shouldShowForCompleted) || isHidden || isTransitioning) {
-    return null;
-  }
-
   const isTutor = user?.default_layout === 'tutor';
+  const shouldShowForCompleted = user?.onboarding_stage === 'completed' && showForCompleted;
+  const shouldShowForTraining = user?.onboarding_stage === 'training';
 
-  const driverAction = () => {
+  const driverAction = useCallback(() => {
     // Скрываем меню при начале обучения
     hideMenuForSession();
 
@@ -209,7 +194,32 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
       },
     });
     driverObj.drive();
-  };
+  }, [steps, user, isTransitioning, transitionStage]);
+
+  useEffect(() => {
+    if (shouldShowForCompleted) {
+      driverAction();
+    }
+  }, [shouldShowForCompleted, driverAction]);
+
+  // Если данные пользователя загружаются, не показываем меню
+  if (isLoading) {
+    return null;
+  }
+
+  // Если пользователь не найден, не показываем меню
+  if (!user) {
+    return null;
+  }
+
+  if ((!shouldShowForTraining && !shouldShowForCompleted) || isHidden || isTransitioning) {
+    return null;
+  }
+
+  // Для пользователей с 'completed' не показываем меню, только запускаем обучение
+  if (shouldShowForCompleted) {
+    return null;
+  }
 
   return (
     <div className="bg-gray-0 border-gray-10 fixed bottom-0 left-72 z-100 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col items-start gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
