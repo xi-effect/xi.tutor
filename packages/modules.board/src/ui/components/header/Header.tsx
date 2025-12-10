@@ -113,7 +113,12 @@ export const Header = () => {
               <div className="flex items-center gap-2">
                 <h1 className="text-xl-base select-none">{material.name}</h1>
                 {isTutor && (
-                  <Button type="button" variant="ghost" onClick={handleOpenModal}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="h-10 w-10 p-2"
+                    onClick={handleOpenModal}
+                  >
                     <Edit size="s" className="size-6" />
                   </Button>
                 )}
