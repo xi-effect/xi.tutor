@@ -4,6 +4,7 @@ import { useCallStore } from '../store/callStore';
 import { useRoom } from './RoomProvider';
 import { useParams, useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
+import { Track } from 'livekit-client';
 
 type LiveKitProviderProps = {
   children: React.ReactNode;
@@ -82,6 +83,53 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
       return;
     }
 
+    // Функция для восстановления подписок на видеотреки
+    const restoreVideoSubscriptions = () => {
+      if (room.state !== 'connected') {
+        return;
+      }
+
+      console.log('Restoring video subscriptions for all participants...');
+      let restoredCount = 0;
+
+      // Проходим по всем удаленным участникам
+      room.remoteParticipants.forEach((participant) => {
+        // Проходим по всем видеотрекам участника
+        participant.videoTrackPublications.forEach((publication) => {
+          // Подписываемся только на треки камеры и демонстрации экрана
+          if (
+            (publication.source === Track.Source.Camera ||
+              publication.source === Track.Source.ScreenShare) &&
+            !publication.isSubscribed &&
+            publication.isEnabled
+          ) {
+            try {
+              // Используем setSubscribed - метод существует в runtime
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const pub = publication as any;
+              if (typeof pub.setSubscribed === 'function') {
+                pub.setSubscribed(true);
+                restoredCount++;
+                console.log(
+                  `Restored subscription for ${participant.identity} - ${publication.source}`,
+                );
+              } else {
+                console.warn(
+                  `setSubscribed method not available for ${participant.identity} - ${publication.source}`,
+                );
+              }
+            } catch (error) {
+              console.error(`Failed to restore subscription for ${participant.identity}:`, error);
+            }
+          }
+        });
+      });
+
+      if (restoredCount > 0) {
+        console.log(`Successfully restored ${restoredCount} video subscription(s)`);
+      }
+    };
+
     const handleVisibilityChange = () => {
       if (document.hidden) {
         // Страница скрыта - очищаем таймаут переподключения
@@ -103,6 +151,11 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
           if (currentIsStarted && room.state !== 'connected' && wasConnectedRef.current) {
             console.log('Page visible - attempting to reconnect...');
             updateStore('connect', true);
+          }
+
+          // Восстанавливаем подписки на видеотреки при возврате фокуса
+          if (room.state === 'connected') {
+            restoreVideoSubscriptions();
           }
         }, 1000); // Задержка для стабилизации после возврата на страницу
       }

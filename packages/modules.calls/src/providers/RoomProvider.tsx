@@ -32,7 +32,7 @@ export const RoomProvider = ({ children }: RoomProviderProps) => {
       // Не отключаемся при потере фокуса
       stopLocalTrackOnUnpublish: false,
       // Включаем адаптивный стриминг для оптимизации качества
-      adaptiveStream: false,
+      adaptiveStream: true,
       // Включаем dynacast для динамической подписки на треки
       dynacast: true,
     };
