@@ -34,11 +34,19 @@ export const TabsStudent = () => {
             Сводка
           </Tabs.Trigger>
 
-          <Tabs.Trigger value="materials" className="text-m-base font-medium text-gray-100">
+          <Tabs.Trigger
+            value="materials"
+            className="text-m-base font-medium text-gray-100"
+            id="materials-tab"
+          >
             Материалы
           </Tabs.Trigger>
 
-          <Tabs.Trigger value="payments" className="text-m-base font-medium text-gray-100">
+          <Tabs.Trigger
+            value="payments"
+            className="text-m-base font-medium text-gray-100"
+            id="payments-tab"
+          >
             Оплаты
           </Tabs.Trigger>
         </Tabs.List>

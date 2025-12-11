@@ -10,7 +10,7 @@ import {
 import { useLocation, useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { SwiperRef } from 'swiper/react';
-import { Group, Home, Materials, Payments, TelegramFilled } from '@xipkg/icons';
+import { Group, Home, Materials, Payments, TelegramFilled, InfoCircle } from '@xipkg/icons';
 import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
 
@@ -55,11 +55,37 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
     },
   ];
 
+  const handleOnboardingClick = async () => {
+    try {
+      sessionStorage.removeItem('onboarding_menu_hidden');
+
+      if (user?.onboarding_stage === 'completed') {
+        sessionStorage.setItem('show_onboarding_for_completed', 'true');
+        window.dispatchEvent(new Event('onboarding-show-requested'));
+      }
+
+      navigate({ to: '/' });
+
+      if (swiperRef && swiperRef.current) {
+        swiperRef.current?.swiper.slideTo(1);
+      }
+    } catch (error) {
+      console.error('Ошибка при запуске обучения:', error);
+    }
+  };
+
   const footerMenu = [
     {
       titleKey: 'support',
-      url: 'https://t.me/sovlium_support_bot',
+      onClick: () => {
+        window.open('https://t.me/sovlium_support_bot', '_blank');
+      },
       icon: TelegramFilled,
+    },
+    {
+      titleKey: 'hints',
+      onClick: handleOnboardingClick,
+      icon: InfoCircle,
     },
   ];
 
@@ -137,12 +163,17 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
       <SidebarFooter>
         <SidebarMenu>
           {footerMenu.map((item) => (
-            <SidebarMenuItem key={item.titleKey}>
-              <SidebarMenuButton variant="ghost" asChild>
-                <a className="hover:underline" href={item.url} target="_blank">
-                  <item.icon />
-                  <span>{t(item.titleKey)}</span>
-                </a>
+            <SidebarMenuItem key={item.titleKey} className="cursor-pointer">
+              <SidebarMenuButton
+                id={item.titleKey === 'hints' ? 'hints-button' : undefined}
+                variant="ghost"
+                onClick={item.onClick}
+                type="button"
+                className="bg-gray-0"
+                title={t(item.titleKey)}
+              >
+                <item.icon className="h-6 w-6" />
+                <div className="text-base font-medium text-gray-50">{t(item.titleKey)}</div>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}

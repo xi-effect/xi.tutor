@@ -40,6 +40,7 @@ export type ModalEditMaterialNamePropsT = {
   onClose: () => void;
   name: MaterialPropsT['name'];
   content_kind: MaterialPropsT['content_kind'];
+  isLoading?: boolean;
   handleUpdateName: (
     type: MaterialT['kind'],
     newName: UpdateMaterialDataT['name'],

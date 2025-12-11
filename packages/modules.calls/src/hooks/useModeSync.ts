@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useCallback } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { RemoteParticipant } from 'livekit-client';
