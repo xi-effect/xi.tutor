@@ -163,7 +163,7 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
       <SidebarFooter>
         <SidebarMenu>
           {footerMenu.map((item) => (
-            <SidebarMenuItem key={item.titleKey}>
+            <SidebarMenuItem key={item.titleKey} className="cursor-pointer">
               <SidebarMenuButton
                 id={item.titleKey === 'hints' ? 'hints-button' : undefined}
                 variant="ghost"
@@ -172,7 +172,8 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
                 className="bg-gray-0"
                 title={t(item.titleKey)}
               >
-                <item.icon />
+                <item.icon className="h-6 w-6" />
+                <div className="text-base font-medium text-gray-50">{t(item.titleKey)}</div>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}
