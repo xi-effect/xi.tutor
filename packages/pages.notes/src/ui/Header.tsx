@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
 import { useParams, useRouter } from '@tanstack/react-router';
 import {
   useCurrentUser,
