@@ -1,10 +1,10 @@
-import { paymentsApiConfig, PaymentsQueryKey } from 'common.api';
+import { paymentsApiConfig, PaymentsQueryKey, ClassroomPaymentsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError } from 'common.services';
 import { PaymentTypeT } from 'common.types';
 
-export const usePaymentSenderConfirmation = () => {
+export const usePaymentSenderConfirmation = (classroomId?: string) => {
   const queryClient = useQueryClient();
 
   const paymentSenderConfirmationMutation = useMutation({
@@ -39,6 +39,12 @@ export const usePaymentSenderConfirmation = () => {
     onSuccess: (response) => {
       if (response?.status === 204) {
         queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.StudentPayments, 'student'] });
+        queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.StudentPayments, 'list'] });
+        if (classroomId) {
+          queryClient.invalidateQueries({
+            queryKey: [ClassroomPaymentsQueryKey.StudentPayments, classroomId, 'list'],
+          });
+        }
       }
     },
   });

@@ -8,14 +8,8 @@ import {
   CheckboxFilter,
 } from '../filters';
 
-import {
-  FilterColumnId,
-  PaymentStatusT,
-  mapPaymentStatus,
-  RolePaymentT,
-  mapPaymentType,
-  RoleT,
-} from '../types';
+import { FilterColumnId, PaymentStatusT, RolePaymentT, mapPaymentType, RoleT } from '../types';
+import { mapPaymentStatus } from 'common.types';
 import { UserRoleT } from 'common.api';
 
 export const getFilterComponentMap = <TData,>(

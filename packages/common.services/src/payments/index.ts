@@ -7,3 +7,4 @@ export { useGetRecipientInvoiceByTutor } from './useGetRecipientInvoiceByTutor';
 export { useGetRecipientInvoiceByStudent } from './useGetRecipientInvoiceByStudent';
 export { useGetStudentPaymentsList } from './useGetStudentPaymentsList';
 export { useGetTutorPaymentsList } from './useGetTutorPaymentsList';
+export { getStatusColor, statusColorMap } from './statusColorMap';

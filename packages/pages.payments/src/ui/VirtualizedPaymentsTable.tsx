@@ -24,7 +24,6 @@ import { CardsList } from './Mobile';
 import { NotFoundItems } from './NotFoundItems';
 import { useResponsiveGrid, useVirtualGrid } from '../hooks';
 import { Loader } from './Loader';
-import { type PaymentApprovalFunctionT } from 'common.types';
 import { UserRoleT } from '../../../common.api/src/types';
 
 export type VirtualizedPaymentsTableProps<T> = {
@@ -34,7 +33,6 @@ export type VirtualizedPaymentsTableProps<T> = {
   filterByClass?: boolean | string;
   isLoading?: boolean;
   isFetchingNextPage?: boolean;
-  onApprovePayment: PaymentApprovalFunctionT['onApprovePayment'];
   isError: boolean;
   currentUserRole: RoleT;
 };
@@ -45,7 +43,6 @@ export const VirtualizedPaymentsTable = ({
   columns,
   isLoading = false,
   isFetchingNextPage = false,
-  onApprovePayment,
   isError,
   currentUserRole,
 }: VirtualizedPaymentsTableProps<RolePaymentT<UserRoleT>>) => {
@@ -81,7 +78,6 @@ export const VirtualizedPaymentsTable = ({
     return (
       <CardsList
         data={data}
-        onApprovePayment={onApprovePayment}
         rowVirtualizer={gridRowVirtualizer}
         parentRef={parentRef}
         colCount={colCount}

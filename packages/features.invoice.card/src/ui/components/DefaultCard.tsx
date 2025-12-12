@@ -4,8 +4,16 @@ import { getUserAvatarUrl } from 'common.utils';
 import { StatusBadge } from '../components';
 import { CardContentT } from '../../types';
 import { cn } from '@xipkg/utils';
+import { PaymentApproveAction } from 'features.payment.approve';
 
-export const DefaultCard = ({ type, userData, userId, payment, className }: CardContentT) => {
+export const DefaultCard = ({
+  type,
+  userData,
+  userId,
+  payment,
+  className,
+  currentUserRole,
+}: CardContentT) => {
   const formattedDate = formatPaymentDate(payment.created_at);
   const amount = parseFloat(payment.total);
 
@@ -32,9 +40,12 @@ export const DefaultCard = ({ type, userData, userId, payment, className }: Card
       )}
       <div className="text-s-base text-gray-80 mt-auto flex w-full flex-col gap-1 font-medium">
         <span>{formattedDate}</span>
-        <div className="flex flex-row items-baseline gap-0.5">
-          <h3 className="text-h6 font-medium text-gray-100">{amount}</h3>
-          <span className="text-m-base text-gray-60 font-medium">₽</span>
+        <div className="flex flex-row justify-between">
+          <div className="flex flex-row items-baseline gap-0.5">
+            <h3 className="text-h6 font-medium text-gray-100">{amount}</h3>
+            <span className="text-m-base text-gray-60 font-medium">₽</span>
+          </div>
+          <PaymentApproveAction payment={payment} isTutor={currentUserRole === 'tutor'} />
         </div>
       </div>
     </div>

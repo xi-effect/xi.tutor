@@ -10,9 +10,7 @@ import {
 } from '@xipkg/dropdown';
 
 import { StatusBadge } from './StatusBadge';
-import { useCurrentUser, useDeleteClassroom } from 'common.services';
-import { useUserByRole } from 'features.table';
-
+import { useCurrentUser, useDeleteClassroom, useUserByRole } from 'common.services';
 import { ClassroomPropsT } from '../../../types';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { SubjectBadge } from './SubjectBadge';

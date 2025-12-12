@@ -2,7 +2,7 @@ import { Button } from '@xipkg/button';
 import { Trash } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useDeleteRecipientInvoice } from 'common.services';
-import { TutorPaymentT } from '../../types';
+import { TutorPaymentT } from 'common.types';
 
 type ActionsCellProps = {
   invoiceId: TutorPaymentT['id'];

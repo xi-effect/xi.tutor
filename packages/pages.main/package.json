@@ -34,7 +34,6 @@
     "features.materials.card": "*",
     "features.group.add": "*",
     "features.materials.duplicate": "*",
-    "features.table": "*",
     "features.invoice.card": "*",
     "pages.classrooms": "*",
     "pages.materials": "*",

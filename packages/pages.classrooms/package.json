@@ -25,7 +25,6 @@
     "@xipkg/select": "^2.2.5",
     "@xipkg/userprofile": "4.0.14",
     "@tanstack/react-virtual": "3.13.9",
-    "features.table": "*",
     "features.invites": "*",
     "features.group.add": "*",
     "features.students.list": "*",
