@@ -80,7 +80,7 @@ const createNetworkErrorInterceptor = async (instance: AxiosInstance): Promise<A
             duration: 3000,
             description: 'У вас нет прав для выполнения этого действия.',
           });
-        } else if (status >= 400 && status < 500) {
+        } else if (status >= 400 && status < 500 && status !== 409) {
           // Остальные клиентские ошибки (4xx)
           showToastOnce(errorKey, 'Ошибка в запросе.', {
             duration: 3000,
@@ -160,18 +160,6 @@ const createAuthInterceptor = async (instance: AxiosInstance): Promise<AxiosInst
     async (error) => {
       if (error.response?.status === 401) {
         console.log('createAuthInterceptor 401');
-
-        // Получаем logout из useAuth и вызываем его
-        // const { logout } = useAuth();
-
-        // logout();
-
-        // redirect({
-        //   to: '/signin',
-        //   search: {
-        //     redirect: location.href,
-        //   },
-        // });
       }
 
       return Promise.reject(error);

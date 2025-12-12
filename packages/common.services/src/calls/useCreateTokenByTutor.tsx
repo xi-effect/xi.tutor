@@ -1,7 +1,6 @@
 import { callsApiConfig, CallsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation } from '@tanstack/react-query';
-import { handleError } from 'common.services';
 
 export interface CreateAccessTokenData {
   classroom_id: string;
@@ -30,15 +29,8 @@ export const useCreateTokenByTutor = () => {
         throw err;
       }
     },
-    onError: (err) => {
-      // Показываем toast с ошибкой
-      handleError(err, 'calls');
-    },
-    onSuccess: () => {
-      // Показываем успешное уведомление
-      // console.log('Access token создан успешно');
-      // showSuccess('calls');
-    },
+    onError: () => {},
+    onSuccess: () => {},
   });
 
   return { createTokenByTutor: createTokenByTutorMutation };
