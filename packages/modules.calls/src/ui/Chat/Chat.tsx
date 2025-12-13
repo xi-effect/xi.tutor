@@ -109,27 +109,26 @@ export const Chat = () => {
       </ScrollArea>
 
       {/* Поле ввода */}
-      <div className="border-gray-20 flex w-full items-center gap-2 overflow-auto">
-        <div className="items-between flex flex-1 flex-row">
+      <div className="flex items-end gap-2">
+        <div className="border-gray-20 max-h-40 flex-1 rounded-lg border py-2 pl-4">
           <Textarea
             ref={textareaRef}
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
             placeholder="Напишите сообщение..."
-            className="max-w-none flex-1 border-none p-0"
-            containerClassName="flex items-center"
+            className="max-h-32 min-w-full overflow-auto border-none p-0 pr-2"
             onKeyDown={handleKeyDownSendMessage}
           />
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={handleSendMessage}
-            disabled={!messageText.trim()}
-            className="hover:bg-gray-10 mr-3 h-8 w-8 self-end"
-          >
-            <Send className="h-6 w-6" />
-          </Button>
         </div>
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={handleSendMessage}
+          disabled={!messageText.trim()}
+          className="hover:bg-gray-10 mr-3 h-8 w-8 self-end"
+        >
+          <Send className="h-6 w-6" />
+        </Button>
       </div>
     </div>
   );
