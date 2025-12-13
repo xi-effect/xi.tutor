@@ -16,21 +16,27 @@ export const Chat = () => {
   const { chatMessages, isChatOpen } = useCallStore();
   const { data: currentUser } = useCurrentUser();
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
+    messagesEndRef.current?.scrollIntoView({ behavior });
   };
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    requestAnimationFrame(scrollToBottom);
-  }, [chatMessages]);
+    if (isChatOpen) {
+      requestAnimationFrame(() => {
+        scrollToBottom('auto');
+      });
+    }
+  }, [isChatOpen]);
 
   const handleSendMessage = () => {
     if (messageText.trim()) {
       sendChatMessage(messageText);
       setMessageText('');
-      scrollToBottom();
+      requestAnimationFrame(() => {
+        scrollToBottom('smooth');
+      });
     }
 
     if (textareaRef.current) {
