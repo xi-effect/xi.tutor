@@ -23,8 +23,8 @@ import {
   useCurrentUser,
   useGetRecipientInvoiceByStudent,
   usePaymentReceiverConfirmation,
+  useGetRecipientInvoiceByTutor,
 } from 'common.services';
-import { useGetRecipientInvoiceByTutor } from '../../../common.services/src/payments/useGetRecipientInvoiceByTutor';
 
 const mapPaymentType: Record<string, string> = {
   cash: 'наличные',

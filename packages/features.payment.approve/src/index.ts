@@ -1,4 +1,2 @@
-export { PaymentApproveModal } from './ui/PaymentApproveModal';
-export { PaymentApproveButton } from './ui/PaymentApproveButton';
-export { PaymentApproveAction } from './ui/PaymentApproveAction';
+export { PaymentApproveModal, PaymentApproveButton, PaymentApproveAction } from './ui';
 export type { ApprovePaymentPropsT, PaymentApproveButtonPropsT } from './types';
