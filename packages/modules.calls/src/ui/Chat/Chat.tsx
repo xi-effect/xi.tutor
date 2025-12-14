@@ -9,6 +9,30 @@ import { useCallStore } from '../../store/callStore';
 import { useCurrentUser } from 'common.services';
 import { cn } from '@xipkg/utils';
 
+const parseLinks = (message: string) => {
+  const urlRegex = /(https?:\/\/[^\s]+)/g;
+  const messageParts = message.split(urlRegex);
+
+  return messageParts.map((messagePart, index) => {
+    if (urlRegex.test(messagePart)) {
+      return (
+        <a
+          key={index}
+          href={messagePart}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-brand-80 hover:text-brand-100 cursor-pointer underline"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {messagePart}
+        </a>
+      );
+    }
+
+    return messagePart;
+  });
+};
+
 export const Chat = () => {
   const [messageText, setMessageText] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -103,7 +127,7 @@ export const Chat = () => {
                         isOwnMessage ? 'bg-brand-20' : 'bg-gray-5',
                       )}
                     >
-                      {message.text}
+                      {parseLinks(message.text)}
                     </div>
                   </div>
                 </div>
