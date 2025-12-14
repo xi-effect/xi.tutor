@@ -71,7 +71,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
         <Form {...form}>
           <form
             onSubmit={handleSubmit(onFormSubmit)}
-            className="flex flex-col gap-6 p-6 max-sm:p-4!"
+            className="flex flex-col gap-6 p-6 max-sm:p-4"
           >
             <div>
               <p className="text-gray-100 max-sm:text-base">Вы создаёте и отправляете счёт.</p>
