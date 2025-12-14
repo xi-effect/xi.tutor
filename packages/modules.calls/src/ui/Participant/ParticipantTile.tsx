@@ -165,7 +165,7 @@ export const ParticipantTile = ({
     >
       <TrackRefContextIfNeeded trackRef={trackReference}>
         <ParticipantContextIfNeeded participant={trackReference.participant}>
-          <div className="bg-gray-40 h-full rounded-[16px]">
+          <div className="bg-gray-40 aspect-video h-auto h-full overflow-hidden rounded-[16px]">
             {children ?? (
               <div className="relative h-full">
                 {/* Аватар всегда рендерится как фон */}

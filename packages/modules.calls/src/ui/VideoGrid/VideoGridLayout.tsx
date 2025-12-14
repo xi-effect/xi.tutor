@@ -189,7 +189,7 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
 
       // Устанавливаем кастомные переменные для адаптивности
       gridEl.current.style.setProperty('--lk-tile-size', `${tileSize.width}px`);
-      gridEl.current.style.setProperty('--lk-aspect-ratio', '1');
+      gridEl.current.style.setProperty('--lk-aspect-ratio', `${isDesktop ? '16 / 9' : '1'}`);
 
       // Переменные для разных устройств
       gridEl.current.style.setProperty(
@@ -200,7 +200,7 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
   }, [livekitLayout, gridEl, tileSize, isMobile, isTablet, isDesktop]);
 
   return (
-    <div className="m-auto w-full" style={{ height: 'var(--available-height)' }}>
+    <div className="m-auto w-full" style={{ height: 'auto' }}>
       <div
         ref={gridEl}
         style={
@@ -210,6 +210,7 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
             margin: '0 auto',
             '--lk-tile-width': `${tileSize.width}px`,
             '--lk-tile-height': `${tileSize.height}px`,
+            height: 'auto',
           } as React.CSSProperties
         }
         data-lk-pagination={pagination.totalPageCount + (isOneItem ? 1 : 0) > 1}
@@ -295,6 +296,8 @@ export const CarouselContainer = ({ focusTrack, carouselTracks }: CarouselContai
   }, [carouselTracks, focusTrack]);
 
   // Выбираем правильный layout в зависимости от ориентации
+  console.log(orientation);
+
   if (orientation === 'vertical') {
     return <VerticalFocusLayout focus={focusElement} thumbs={thumbElements} />;
   }
