@@ -4,8 +4,7 @@ import { Button } from '@xipkg/button';
 import { Arrow, Conference } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import { useCurrentUser } from 'common.services';
-import { useUserByRole } from 'features.table';
+import { useCurrentUser, useUserByRole } from 'common.services';
 import { SubjectBadge } from './SubjectBadge';
 
 type UserAvatarPropsT = {

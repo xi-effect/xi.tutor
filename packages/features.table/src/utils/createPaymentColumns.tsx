@@ -100,6 +100,7 @@ export const createPaymentColumns = <Role extends RoleT>({
       header: 'Статус',
       cell: ({ row }) => (
         <StatusCell
+          payment={row.original}
           isTutor={isTutor}
           id={row.original.id}
           status={row.original.status}

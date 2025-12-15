@@ -1,6 +1,6 @@
 import { UserProfile } from '@xipkg/userprofile';
 import { type RoleT } from '../../types';
-import { useUserByRole } from '../../hooks';
+import { useUserByRole } from 'common.services';
 
 export type UserCellT = {
   userId: number;

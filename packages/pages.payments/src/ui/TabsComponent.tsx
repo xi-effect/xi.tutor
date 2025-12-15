@@ -88,7 +88,6 @@ export const TabsComponent = React.memo(({ onApprovePayment }: PaymentApprovalFu
             columns={defaultColumns}
             isLoading={isLoading}
             isFetchingNextPage={isFetchingNextPage}
-            onApprovePayment={onApprovePayment}
             parentRef={parentRef}
             isError={isError}
             currentUserRole={currentUserRole}

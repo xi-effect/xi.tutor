@@ -29,6 +29,7 @@ export const useDeleteRecipientInvoice = (classroomId?: string) => {
     onSuccess: (response) => {
       if (response?.status === 204) {
         queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.TutorPayments, 'tutor'] });
+        queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.TutorPayments, 'list'] });
         if (classroomId) {
           queryClient.invalidateQueries({
             queryKey: [ClassroomPaymentsQueryKey.TutorPayments, classroomId, 'list'],

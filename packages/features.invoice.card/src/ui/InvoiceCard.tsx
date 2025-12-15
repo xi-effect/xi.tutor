@@ -1,4 +1,4 @@
-import { useUserByRole } from 'features.table';
+import { useUserByRole } from 'common.services';
 import { DefaultCard, TableCard } from './components';
 import { InvoiceCardPropsT } from '../types';
 
@@ -35,6 +35,7 @@ export const InvoiceCard = ({
       userId={userId}
       payment={payment}
       className={className}
+      currentUserRole={currentUserRole}
     />
   );
 };
