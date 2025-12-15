@@ -8,6 +8,7 @@ import { useChat } from '../../hooks/useChat';
 import { useCallStore } from '../../store/callStore';
 import { useCurrentUser } from 'common.services';
 import { cn } from '@xipkg/utils';
+import { parseLinks } from '../../utils/chat';
 
 export const Chat = () => {
   const [messageText, setMessageText] = useState('');
@@ -16,21 +17,27 @@ export const Chat = () => {
   const { chatMessages, isChatOpen } = useCallStore();
   const { data: currentUser } = useCurrentUser();
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
+    messagesEndRef.current?.scrollIntoView({ behavior });
   };
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    requestAnimationFrame(scrollToBottom);
-  }, [chatMessages]);
+    if (isChatOpen) {
+      requestAnimationFrame(() => {
+        scrollToBottom('auto');
+      });
+    }
+  }, [isChatOpen]);
 
   const handleSendMessage = () => {
     if (messageText.trim()) {
       sendChatMessage(messageText);
       setMessageText('');
-      scrollToBottom();
+      requestAnimationFrame(() => {
+        scrollToBottom('smooth');
+      });
     }
 
     if (textareaRef.current) {
@@ -97,7 +104,7 @@ export const Chat = () => {
                         isOwnMessage ? 'bg-brand-20' : 'bg-gray-5',
                       )}
                     >
-                      {message.text}
+                      {parseLinks(message.text)}
                     </div>
                   </div>
                 </div>
@@ -109,27 +116,26 @@ export const Chat = () => {
       </ScrollArea>
 
       {/* Поле ввода */}
-      <div className="border-gray-20 flex w-full items-center gap-2 overflow-auto">
-        <div className="items-between flex flex-1 flex-row">
+      <div className="flex items-end gap-2">
+        <div className="border-gray-20 max-h-40 flex-1 rounded-lg border py-2 pl-4">
           <Textarea
             ref={textareaRef}
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
             placeholder="Напишите сообщение..."
-            className="max-w-none flex-1 border-none p-0"
-            containerClassName="flex items-center"
+            className="max-h-32 min-w-full overflow-auto border-none p-0 pr-2"
             onKeyDown={handleKeyDownSendMessage}
           />
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={handleSendMessage}
-            disabled={!messageText.trim()}
-            className="hover:bg-gray-10 mr-3 h-8 w-8 self-end"
-          >
-            <Send className="h-6 w-6" />
-          </Button>
         </div>
+        <Button
+          size="icon"
+          variant="ghost"
+          onClick={handleSendMessage}
+          disabled={!messageText.trim()}
+          className="hover:bg-gray-10 mr-3 h-8 w-8 self-end"
+        >
+          <Send className="h-6 w-6" />
+        </Button>
       </div>
     </div>
   );
