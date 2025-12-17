@@ -189,7 +189,7 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
 
       // Устанавливаем кастомные переменные для адаптивности
       gridEl.current.style.setProperty('--lk-tile-size', `${tileSize.width}px`);
-      gridEl.current.style.setProperty('--lk-aspect-ratio', `${isDesktop ? '16 / 9' : '1'}`);
+      gridEl.current.style.setProperty('--lk-aspect-ratio', `${isDesktop ? '16 / 9' : 'auto'}`);
 
       // Переменные для разных устройств
       gridEl.current.style.setProperty(
