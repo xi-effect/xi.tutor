@@ -27,25 +27,32 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
 
   return (
     <div className="mb-4 flex flex-col gap-2">
-      <FormField
-        control={control}
-        name={`items.${index}.name`}
-        defaultValue={DEFAULT_VALUE}
-        render={({ field: formField }) => (
-          <FormItem>
-            <FormControl>
-              <Input
-                {...formField}
-                placeholder="Название"
-                variant="s"
-                onChange={(e) => {
-                  formField.onChange(e.target.value);
-                }}
-              />
-            </FormControl>
-          </FormItem>
-        )}
-      />
+      <div className="flex items-center">
+        <div className="min-w-[100px] flex-1">
+          <FormField
+            control={control}
+            name={`items.${index}.name`}
+            defaultValue={DEFAULT_VALUE}
+            render={({ field: formField }) => (
+              <FormItem>
+                <FormControl>
+                  <Input
+                    {...formField}
+                    placeholder="Название"
+                    variant="s"
+                    onChange={(e) => {
+                      formField.onChange(e.target.value);
+                    }}
+                  />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        </div>
+        <Button className="ml-2 h-6 w-6 p-0" variant="ghost" onClick={() => remove(index)}>
+          <Close size="s" className="fill-gray-40 h-6 w-6" />
+        </Button>
+      </div>
 
       <div className="flex items-center gap-2">
         <div className="min-w-[100px] flex-1">
@@ -120,9 +127,6 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
           </FormItem>
         </div>
       </div>
-      <Button className="ml-2 h-6 w-6 p-0" variant="ghost" onClick={() => remove(index)}>
-        <Close size="s" className="fill-gray-40 h-6 w-6" />
-      </Button>
     </div>
   );
 };

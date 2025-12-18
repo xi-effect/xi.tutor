@@ -82,7 +82,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
 
             <ClassroomSelector control={control} />
 
-            <div className="flex flex-row gap-2">
+            <div className={`flex gap-2 ${isMobile ? 'flex-col' : 'flex-row'}`}>
               <Button
                 className={`h-[32px] ${isMobile ? 'w-full' : 'w-fit'}`}
                 variant="secondary"
@@ -99,7 +99,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                 {isMobile ? 'Добавить строку' : 'Добавить занятие'}
               </Button>
 
-              {!isMobile && <TemplateSelector control={control} />}
+              <TemplateSelector control={control} />
             </div>
 
             {/* TODO: подумать над тем, чтобы сделать один компонент */}
@@ -138,7 +138,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                   <span>Количество</span>
                   <span>Сумма</span>
                 </div>
-                <div className="my-2">
+                <div className="my-2 flex flex-col gap-3">
                   {items.map((_, index) => (
                     <SubjectRowMobile key={index} control={control} index={index} />
                   ))}
