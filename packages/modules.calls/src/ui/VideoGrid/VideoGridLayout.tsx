@@ -189,7 +189,7 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
 
       // Устанавливаем кастомные переменные для адаптивности
       gridEl.current.style.setProperty('--lk-tile-size', `${tileSize.width}px`);
-      gridEl.current.style.setProperty('--lk-aspect-ratio', `${isDesktop ? '16 / 9' : 'auto'}`);
+      gridEl.current.style.setProperty('--lk-aspect-ratio', `${isDesktop ? '1' : 'auto'}`);
 
       // Переменные для разных устройств
       gridEl.current.style.setProperty(
@@ -269,7 +269,7 @@ export const CarouselContainer = ({ focusTrack, carouselTracks }: CarouselContai
           width: '100%',
           height: '100%',
         }}
-        className="h-full w-full [&_video]:object-contain lg:[&_video]:object-cover"
+        className="h-full w-full [&_video]:object-cover lg:[&_video]:object-cover"
         {...trackToFocus}
       />
     );

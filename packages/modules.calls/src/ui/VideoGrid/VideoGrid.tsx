@@ -109,7 +109,12 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
                 <GridLayout tracks={tracks}>
                   <ParticipantTile
                     isFocusToggleDisable
-                    style={{ flexDirection: 'column', maxWidth: '100%', maxHeight: '100%' }}
+                    style={{
+                      flexDirection: 'column',
+                      maxWidth: '100%',
+                      maxHeight: '100%',
+                      width: 'auto',
+                    }}
                   />
                 </GridLayout>
               </div>

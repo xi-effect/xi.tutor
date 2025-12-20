@@ -17,7 +17,7 @@ export function VerticalFocusLayout({ focus, thumbs, className = '' }: VerticalF
     <div className={`flex h-full w-full flex-row gap-2 p-1 ${className}`}>
       {/* Сцена - занимает основное пространство */}
       <div className="min-w-0 flex-1">
-        <FocusStage label="Focus">{focus}</FocusStage>
+        <FocusStage className="flex h-auto! w-full items-center">{focus}</FocusStage>
       </div>
 
       {/* Вертикальная карусель справа */}
