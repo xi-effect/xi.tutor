@@ -11,41 +11,30 @@ export const WelcomeUserAvatar = () => {
   const [file, setFile] = React.useState<string | ArrayBuffer | null>();
   const [avatarTimestamp, setAvatarTimestamp] = React.useState<number>(Date.now());
 
-  const handleError = (error: string) => {
-    if (error === 'Поддерживаются только файлы PNG и JPEG') {
-      toast.error('Этот формат не поддерживается', {
-        description: 'Загрузите фото в (png, jpeg)',
-        position: 'top-right',
-        richColors: true,
-      });
-    } else if (error === 'Файл слишком большой') {
-      toast.error('Фото слишком большое', {
-        description: 'Выберите фото до 1 Мб',
-        position: 'top-right',
-        richColors: true,
-      });
-    } else {
-      toast.error(error, {
-        position: 'top-right',
-        richColors: true,
-      });
-    }
-  };
+  const handleError = (titleError: string, subtitleError?: string) => {
+    if (!titleError) return;
 
-  const validateBeforeUpload = (files: File[]): string | undefined => {
-    const file = files[0];
-    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg'];
-    if (!allowedTypes.includes(file.type)) {
-      return 'Поддерживаются только файлы PNG и JPEG';
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      return 'Файл слишком большой';
-    }
+    toast.error(titleError, {
+      ...(subtitleError && { description: subtitleError }),
+      position: 'top-right',
+      richColors: true,
+    });
   };
 
   const handleInput = async (files: File[]) => {
     if (!files) return;
+
+    const file = files[0];
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      handleError('Этот формат не поддерживается', 'Загрузите фото в (png, jpeg, webp)');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      handleError('Файл слишком большой', 'Выберите фото до 1 Мб');
+      return;
+    }
 
     const imageDataUrl = await readFile(files[0]);
 
@@ -78,9 +67,7 @@ export const WelcomeUserAvatar = () => {
         />
         <FileUploader
           onChange={handleInput}
-          // @ts-expect-error - onError пересекается с пропсом DefaultInputPropsT
-          onError={handleError}
-          validateBeforeUpload={validateBeforeUpload}
+          onFileError={handleError}
           accept="image/*"
           size="small"
         />
