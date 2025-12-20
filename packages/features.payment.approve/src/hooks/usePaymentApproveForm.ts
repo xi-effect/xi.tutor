@@ -4,7 +4,11 @@ import { paymentFormSchema, PaymentFormData } from '../model';
 import { usePaymentSenderConfirmation } from 'common.services';
 import { usePaymentUnilateralConfirmation } from 'common.services';
 
-export const usePaymentApproveForm = (recipientInvoiceId: number, isTutor: boolean = false) => {
+export const usePaymentApproveForm = (
+  recipientInvoiceId: number,
+  isTutor: boolean = false,
+  classroomId?: string,
+) => {
   const form = useForm<PaymentFormData>({
     resolver: zodResolver(paymentFormSchema),
     defaultValues: {
@@ -13,8 +17,8 @@ export const usePaymentApproveForm = (recipientInvoiceId: number, isTutor: boole
   });
 
   // Инициализируем мутации
-  const senderConfirmationMutation = usePaymentSenderConfirmation();
-  const unilateralConfirmationMutation = usePaymentUnilateralConfirmation();
+  const senderConfirmationMutation = usePaymentSenderConfirmation(classroomId);
+  const unilateralConfirmationMutation = usePaymentUnilateralConfirmation(classroomId);
 
   const handleClearForm = () => {
     form.reset();

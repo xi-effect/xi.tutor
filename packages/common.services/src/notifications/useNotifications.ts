@@ -23,6 +23,18 @@ export const useNotifications = () => {
   const { data: currentUser, isError: isUserError } = useCurrentUser();
   const isAuthenticated = !!currentUser && !isUserError;
 
+  // Проверяем, находимся ли мы на страницах внутри (app)
+  // Используем window.location.pathname, так как NotificationsProvider находится вне RouterProvider
+  const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+  const isInApp = ![
+    '/signin',
+    '/signup',
+    '/reset-password',
+    '/welcome',
+    '/invite',
+    '/confirm-email',
+  ].some((route) => pathname.startsWith(route));
+
   // API хуки - загружаем список уведомлений только когда shouldLoadNotifications = true
   // Счетчик непрочитанных загружается всегда при авторизации
   const {
@@ -35,14 +47,14 @@ export const useNotifications = () => {
     refetch: refetchNotifications,
   } = useSearchNotifications({
     limit: 12,
-    enabled: isAuthenticated && shouldLoadNotifications,
+    enabled: isAuthenticated && isInApp && shouldLoadNotifications,
   });
 
   const {
     data: unreadCount,
     isLoading: isLoadingCount,
     refetch: refetchCount,
-  } = useGetUnreadCount({ enabled: isAuthenticated });
+  } = useGetUnreadCount({ enabled: isAuthenticated && isInApp });
 
   const { markAsRead: markAsReadMutation } = useMarkNotificationAsRead();
 
@@ -103,16 +115,16 @@ export const useNotifications = () => {
     [refetchCount, transformNotification, queryClient],
   );
 
-  // Обработчик для Socket.IO с проверкой авторизации
+  // Обработчик для Socket.IO с проверкой авторизации и нахождения в (app)
   const handleSocketNotification = useCallback(
     (data: NotificationT | RecipientNotificationResponse) => {
-      // Не обрабатываем события, если пользователь не авторизован
-      if (!isAuthenticated) {
+      // Не обрабатываем события, если пользователь не авторизован или не находится в (app)
+      if (!isAuthenticated || !isInApp) {
         return;
       }
       handleNewNotification(data);
     },
-    [isAuthenticated, handleNewNotification],
+    [isAuthenticated, isInApp, handleNewNotification],
   );
 
   // Подписываемся на события SocketIO (новый формат события)
@@ -122,18 +134,18 @@ export const useNotifications = () => {
   useSocketEvent<NotificationT | RecipientNotificationResponse>(
     'new-notification',
     handleSocketNotification,
-    [isAuthenticated],
+    [isAuthenticated, isInApp],
   );
 
-  // Обновляем счетчик непрочитанных при монтировании (только если пользователь авторизован)
+  // Обновляем счетчик непрочитанных при монтировании (только если пользователь авторизован и находится в (app))
   // Список уведомлений загружается только при открытии dropdown
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !isInApp) {
       return;
     }
     // Обновляем счетчик при монтировании
     refetchCount();
-  }, [refetchCount, isAuthenticated]);
+  }, [refetchCount, isAuthenticated, isInApp]);
 
   // Объединяем уведомления из API и Socket.IO
   // Socket-уведомления идут первыми, затем API-уведомления (убираем дубликаты)
@@ -226,13 +238,13 @@ export const useNotifications = () => {
 
   // Загрузить список уведомлений (вызывается при открытии dropdown)
   const loadNotifications = useCallback(() => {
-    if (isAuthenticated && !shouldLoadNotifications) {
+    if (isAuthenticated && isInApp && !shouldLoadNotifications) {
       setShouldLoadNotifications(true);
-    } else if (isAuthenticated) {
+    } else if (isAuthenticated && isInApp) {
       // Если уже загружали, просто обновляем данные
       refetchNotifications();
     }
-  }, [isAuthenticated, shouldLoadNotifications, refetchNotifications]);
+  }, [isAuthenticated, isInApp, shouldLoadNotifications, refetchNotifications]);
 
   const state: NotificationsStateT = {
     notifications: allNotifications,

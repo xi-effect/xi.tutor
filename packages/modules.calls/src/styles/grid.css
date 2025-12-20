@@ -7,9 +7,11 @@
   --header-height: 64px; /* Header из modules.navigation */
   --upbar-height: 60px; /* UpBar из modules.calls (flex items-end + pb-4) */
   --bottom-bar-height: 80px; /* BottomBar из modules.calls (h-[48px] + p-4) */
-  
+
   /* Доступная высота для сетки */
-  --available-height: calc(100vh - var(--header-height) - var(--upbar-height) - var(--bottom-bar-height));
+  --available-height: calc(
+    100vh - var(--header-height) - var(--upbar-height) - var(--bottom-bar-height)
+  );
 }
 
 .lk-grid-layout {
@@ -21,7 +23,7 @@
   --lk-col-count: 1;
   --lk-row-count: 1;
   --lk-device-type: desktop;
-  
+
   display: grid;
   gap: var(--lk-grid-gap);
   grid-template-columns: repeat(var(--lk-col-count), 1fr);
@@ -35,7 +37,9 @@
 
 /* Адаптивная сетка с соотношением сторон 1:1 */
 .lk-grid-layout.adaptive-grid {
-  transition: grid-template-columns 0.3s ease, grid-template-rows 0.3s ease;
+  transition:
+    grid-template-columns 0.3s ease,
+    grid-template-rows 0.3s ease;
 }
 
 /* Плитки участников с квадратным соотношением сторон */
@@ -47,10 +51,12 @@
   max-height: 100%;
   contain: layout style paint;
   transform: translateZ(0); /* Аппаратное ускорение */
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
-.lk-grid-layout[data-lk-pagination="true"] {
+.lk-grid-layout[data-lk-pagination='true'] {
   position: relative;
 }
 
@@ -104,13 +110,13 @@
     --upbar-height: 70px;
     --bottom-bar-height: 60px;
   }
-  
+
   .lk-grid-layout {
     --lk-grid-gap: 0.5rem;
     --lk-tile-size: 150px;
   }
-  
-  .lk-grid-layout[data-lk-device-type="mobile"] {
+
+  .lk-grid-layout[data-lk-device-type='mobile'] {
     --lk-grid-gap: 8px;
   }
 }
@@ -120,13 +126,13 @@
   :root {
     --upbar-height: 75px;
   }
-  
+
   .lk-grid-layout {
     --lk-grid-gap: 0.75rem;
     --lk-tile-size: 180px;
   }
-  
-  .lk-grid-layout[data-lk-device-type="tablet"] {
+
+  .lk-grid-layout[data-lk-device-type='tablet'] {
     --lk-grid-gap: 12px;
   }
 }
@@ -137,14 +143,14 @@
     --lk-grid-gap: 1rem;
     --lk-tile-size: 200px;
   }
-  
-  .lk-grid-layout[data-lk-device-type="desktop"] {
+
+  .lk-grid-layout[data-lk-device-type='desktop'] {
     --lk-grid-gap: 16px;
   }
 }
 
 /* Полноэкранный режим - скрываем UpBar */
-.lk-video-conference[data-fullscreen="true"] {
+.lk-video-conference[data-fullscreen='true'] {
   --upbar-height: 0px;
 }
 
@@ -171,12 +177,14 @@
 }
 
 /* Индикаторы состояния для адаптивной сетки */
-.lk-grid-layout.adaptive-grid .lk-participant-tile[data-lk-speaking="true"]:not([data-lk-source="screen_share"]) {
+.lk-grid-layout.adaptive-grid
+  .lk-participant-tile[data-lk-speaking='true']:not([data-lk-source='screen_share']) {
   transition: box-shadow 0.2s ease;
   box-shadow: 0 0 0 2px var(--xi-green-60);
 }
 
-.lk-grid-layout.adaptive-grid .lk-participant-tile[data-lk-muted="true"]:not([data-lk-source="screen_share"]) {
+.lk-grid-layout.adaptive-grid
+  .lk-participant-tile[data-lk-muted='true']:not([data-lk-source='screen_share']) {
   opacity: 0.8;
 }
 
@@ -188,7 +196,9 @@
 
 /* Анимации */
 .lk-grid-layout {
-  transition: grid-template-columns 0.3s ease, grid-template-rows 0.3s ease;
+  transition:
+    grid-template-columns 0.3s ease,
+    grid-template-rows 0.3s ease;
 }
 
 .lk-participant-tile {
@@ -310,7 +320,7 @@
   height: 16px;
 }
 
-.lk-connection-quality[data-lk-quality="excellent"] svg {
+.lk-connection-quality[data-lk-quality='excellent'] svg {
   fill: var(--xi-green-80);
 }
 
@@ -334,6 +344,6 @@
   opacity: 0.8;
 }
 
-.lk-participant-media-video[data-lk-orientation=landscape] {
+.lk-participant-media-video[data-lk-orientation='landscape'] {
   object-fit: contain !important;
 }

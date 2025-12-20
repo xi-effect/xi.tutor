@@ -34,5 +34,8 @@ export function usePersistentUserChoices() {
     saveNoiseReductionEnabled: (enabled: boolean) => {
       useUserChoicesStore.setState({ noiseReductionEnabled: enabled });
     },
+    saveBlurEnabled: (enabled: boolean) => {
+      useUserChoicesStore.setState({ blurEnabled: enabled });
+    },
   };
 }

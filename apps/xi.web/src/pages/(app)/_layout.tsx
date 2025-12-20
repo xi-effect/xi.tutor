@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Outlet, createFileRoute, useNavigate, useRouter, useSearch } from '@tanstack/react-router';
 import { LoadingScreen } from 'common.ui';
-import { Suspense, lazy, useEffect } from 'react';
+import { Suspense, lazy, useEffect, useRef, useCallback } from 'react';
 
 // Импортируем провайдеры синхронно, так как они нужны везде
 import {
@@ -11,7 +11,7 @@ import {
   useCallStore,
   ModeSyncProvider,
 } from 'modules.calls';
-import { useCurrentUser, useUpdateProfile } from 'common.services';
+import { useCurrentUser, useUpdateProfile, useMarkNotificationAsRead } from 'common.services';
 import { OnboardingStageT } from 'common.api';
 import { onboardingStageToPath } from 'pages.welcome';
 import { RoleT } from 'common.types';
@@ -59,8 +59,34 @@ function LayoutComponent() {
 const ProtectedLayout = () => {
   const { data: user, isLoading } = useCurrentUser();
   const navigate = useNavigate();
-  const search = useSearch({ strict: false }) as { role?: RoleT };
+  const search = useSearch({ strict: false }) as { role?: RoleT; read_notification_id?: string };
   const { updateProfile } = useUpdateProfile();
+  const processedNotificationIdRef = useRef<string | null>(null);
+
+  // Функция для удаления параметра из URL
+  const removeNotificationIdFromUrl = useCallback(() => {
+    navigate({
+      // @ts-expect-error - TanStack Router search params typing issue
+      search: (prev: any) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { read_notification_id: _, ...rest } = prev || {};
+        return rest;
+      },
+      replace: true,
+    });
+    processedNotificationIdRef.current = null;
+  }, [navigate]);
+
+  const { markAsRead } = useMarkNotificationAsRead({
+    onSuccess: () => {
+      // Удаляем параметр read_notification_id из URL после успешного обновления
+      removeNotificationIdFromUrl();
+    },
+    onError: () => {
+      // Даже в случае ошибки удаляем параметр из URL, чтобы избежать повторных попыток
+      removeNotificationIdFromUrl();
+    },
+  });
 
   useEffect(() => {
     const stage = user?.onboarding_stage;
@@ -112,6 +138,20 @@ const ProtectedLayout = () => {
       },
     );
   }, []);
+
+  // Обработка параметра read_notification_id из URL
+  useEffect(() => {
+    if (!user || !search.read_notification_id) return;
+
+    const notificationId = search.read_notification_id;
+
+    // Предотвращаем повторную обработку того же уведомления
+    if (processedNotificationIdRef.current === notificationId) return;
+    processedNotificationIdRef.current = notificationId;
+
+    // Отмечаем уведомление как прочитанное
+    markAsRead.mutate(notificationId);
+  }, [user, search.read_notification_id, markAsRead]);
 
   if (!user || isLoading) {
     return <LoadingScreen />;

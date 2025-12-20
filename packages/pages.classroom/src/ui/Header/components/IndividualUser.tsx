@@ -1,6 +1,5 @@
 import { UserProfile } from '@xipkg/userprofile';
-import { useCurrentUser } from 'common.services';
-import { useUserByRole } from 'features.table';
+import { useCurrentUser, useUserByRole } from 'common.services';
 
 export const IndividualUser = ({ userId }: { userId: number }) => {
   const { data: currentUser } = useCurrentUser();

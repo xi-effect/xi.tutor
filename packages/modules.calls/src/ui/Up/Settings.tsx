@@ -19,6 +19,7 @@ import {
 } from '@livekit/components-react';
 import { useMediaDeviceSelect } from '@livekit/components-react';
 import { Track, LocalAudioTrack, LocalVideoTrack } from 'livekit-client';
+import { supportsBackgroundProcessors } from '@livekit/track-processors';
 
 import { useUserChoicesStore } from '../../store/userChoices';
 
@@ -80,11 +81,19 @@ export const Settings = ({ children }: SettingsPropsT) => {
     saveVideoInputEnabled,
   } = usePersistentUserChoices();
 
-  // Получаем audioOutputDeviceId из store напрямую
+  // Получаем audioOutputDeviceId и blurEnabled из store напрямую
   const audioOutputDeviceId = useUserChoicesStore((state) => state.audioOutputDeviceId);
+  const blurEnabled = useUserChoicesStore((state) => state.blurEnabled);
+
   const saveAudioOutputDeviceId = useCallback((deviceId: string) => {
     useUserChoicesStore.setState({ audioOutputDeviceId: deviceId });
   }, []);
+
+  const handleBlurToggle = useCallback((checked: boolean) => {
+    useUserChoicesStore.setState({ blurEnabled: checked });
+  }, []);
+
+  const isBlurSupported = supportsBackgroundProcessors();
 
   // Получаем треки из публикаций и приводим к правильному типу
   const audioTrack = microphoneTrack?.track as LocalAudioTrack | undefined;
@@ -220,6 +229,16 @@ export const Settings = ({ children }: SettingsPropsT) => {
               icon={<SoundTwo className="h-4 w-4" />}
             />
           </div>
+
+          {/* Размытие фона */}
+          {isBlurSupported && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="font-medium text-gray-100">Размытие фона</Label>
+                <Switch checked={blurEnabled} onCheckedChange={handleBlurToggle} />
+              </div>
+            </div>
+          )}
         </div>
       </SheetContent>
     </Sheet>

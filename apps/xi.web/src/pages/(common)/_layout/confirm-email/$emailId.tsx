@@ -9,7 +9,6 @@ const paramsSchema = z.object({
   emailId: z.string(),
 });
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 export const Route = createFileRoute('/(common)/_layout/confirm-email/$emailId')({
   component: ConfirmEmailPage,

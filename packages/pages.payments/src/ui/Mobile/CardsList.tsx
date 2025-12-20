@@ -1,14 +1,12 @@
 import { type RefObject } from 'react';
 import type { Virtualizer } from '@tanstack/react-virtual';
 import { PaymentDataT, RoleT } from 'features.table';
-import { Card } from './Card';
+import { InvoiceCard } from 'features.invoice.card';
 import { Loader } from '../Loader';
-import { type TabsComponentPropsT } from '../../types';
 
 export type CardsListPropsT<Role extends RoleT> = {
   data: PaymentDataT<Role>[];
   rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
-  onApprovePayment: TabsComponentPropsT['onApprovePayment'];
   colCount: number;
   gap: number;
   parentRef: RefObject<HTMLDivElement | null>;
@@ -20,7 +18,6 @@ export type CardsListPropsT<Role extends RoleT> = {
 export const CardsList = <Role extends RoleT>({
   data,
   rowVirtualizer,
-  onApprovePayment,
   colCount,
   gap,
   parentRef,
@@ -59,16 +56,11 @@ export const CardsList = <Role extends RoleT>({
               }}
             >
               {rowItems.map((payment, index) => (
-                <Card
+                <InvoiceCard
                   key={startIndex + index}
                   payment={payment}
-                  onApprovePayment={onApprovePayment}
                   currentUserRole={currentUserRole}
-                  userId={
-                    currentUserRole === 'student'
-                      ? (payment as { tutor_id: number }).tutor_id
-                      : (payment as { student_id: number }).student_id
-                  }
+                  variant="table"
                 />
               ))}
             </div>

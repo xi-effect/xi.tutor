@@ -17,9 +17,9 @@
     "@xipkg/dropdown": "^3.0.12",
     "@xipkg/icons": "^2.7.0",
     "@xipkg/utils": "^1.8.0",
-    "common.api": "*",
     "common.services": "*",
     "common.types": "*",
+    "features.materials.edit": "*",
     "dayjs": "^1.11.13"
   },
   "devDependencies": {

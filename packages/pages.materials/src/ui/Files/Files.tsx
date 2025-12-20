@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef } from 'react';
 import { Card } from './Card';
 import { useResponsiveGrid, useInfiniteQuery, useVirtualGrid } from '../../hooks';

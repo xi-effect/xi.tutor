@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCurrentUser } from 'common.services';
 import { useReactivateCall } from 'common.services';
 import { useCreateTokenByTutor } from 'common.services';
 import { useCreateTokenByStudent } from 'common.services';
 import { useCallStore } from '../store/callStore';
 import { useNavigate } from '@tanstack/react-router';
-
 export interface StartCallData {
   classroom_id: string;
 }
@@ -21,33 +20,39 @@ export const useStartCall = () => {
   const { createTokenByTutor } = useCreateTokenByTutor();
   const { createTokenByStudent } = useCreateTokenByStudent();
 
+  const handleTokenToStartCall = async (data: StartCallData) => {
+    const tokenResponse = isTutor
+      ? await createTokenByTutor.mutateAsync(data)
+      : await createTokenByStudent.mutateAsync(data);
+
+    if (tokenResponse) {
+      updateStore('token', tokenResponse);
+
+      navigate({
+        to: '/call/$callId',
+        params: { callId: data.classroom_id },
+      });
+    }
+
+    return null;
+  };
+
   const startCall = async (data: StartCallData) => {
     try {
-      // 1. Сначала реактивируем комнату (только для репетитора)
-      if (isTutor) {
-        await reactivateCall.mutateAsync(data);
+      await handleTokenToStartCall(data);
+    } catch (error: any) {
+      if (error.response?.status === 409 && isTutor) {
+        try {
+          await reactivateCall.mutateAsync(data, {
+            onSuccess: async () => {
+              await handleTokenToStartCall(data);
+            },
+          });
+        } catch (error: any) {
+          console.error('Ошибка при реактивировании комнаты:', error);
+          throw error;
+        }
       }
-
-      // 2. Создаем токен в зависимости от роли
-      const tokenResponse = isTutor
-        ? await createTokenByTutor.mutateAsync(data)
-        : await createTokenByStudent.mutateAsync(data);
-
-      if (tokenResponse) {
-        updateStore('token', tokenResponse);
-
-        navigate({
-          to: '/call/$callId',
-          params: { callId: data.classroom_id },
-        });
-      }
-
-      // 3. Сохраняем токен в store
-
-      return tokenResponse;
-    } catch (error) {
-      console.error('Ошибка при запуске звонка:', error);
-      throw error;
     }
   };
 

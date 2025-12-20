@@ -1,9 +1,9 @@
-import { paymentsApiConfig, PaymentsQueryKey } from 'common.api';
+import { paymentsApiConfig, PaymentsQueryKey, ClassroomPaymentsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError } from 'common.services';
 
-export const useDeleteRecipientInvoice = () => {
+export const useDeleteRecipientInvoice = (classroomId?: string) => {
   const queryClient = useQueryClient();
 
   const deleteRecipientInvoiceMutation = useMutation({
@@ -29,6 +29,12 @@ export const useDeleteRecipientInvoice = () => {
     onSuccess: (response) => {
       if (response?.status === 204) {
         queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.TutorPayments, 'tutor'] });
+        queryClient.invalidateQueries({ queryKey: [PaymentsQueryKey.TutorPayments, 'list'] });
+        if (classroomId) {
+          queryClient.invalidateQueries({
+            queryKey: [ClassroomPaymentsQueryKey.TutorPayments, classroomId, 'list'],
+          });
+        }
       }
     },
   });

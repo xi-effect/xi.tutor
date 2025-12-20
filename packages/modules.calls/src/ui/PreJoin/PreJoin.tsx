@@ -12,6 +12,7 @@ import {
 import { usePreviewTracks } from '@livekit/components-react';
 import { usePersistentUserChoices } from '../../hooks/usePersistentUserChoices';
 import { useResolveInitiallyDefaultDeviceId } from '../../hooks/useResolveInitiallyDefaultDeviceId';
+import { useVideoBlur } from '../../hooks';
 
 export const PreJoin = () => {
   const {
@@ -189,6 +190,9 @@ export const PreJoin = () => {
   // Разрешаем device ID для треков
   useResolveInitiallyDefaultDeviceId(audioDeviceId, audioTrack, saveAudioInputDeviceId);
   useResolveInitiallyDefaultDeviceId(videoDeviceId, videoTrack, saveVideoInputDeviceId);
+
+  // Передаем видеотрек для использования блюра
+  useVideoBlur(videoTrack);
 
   return (
     <>
