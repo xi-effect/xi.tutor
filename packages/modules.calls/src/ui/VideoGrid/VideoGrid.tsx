@@ -114,6 +114,7 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
                       maxWidth: '100%',
                       maxHeight: '100%',
                       width: 'auto',
+                      height: 'auto',
                     }}
                   />
                 </GridLayout>

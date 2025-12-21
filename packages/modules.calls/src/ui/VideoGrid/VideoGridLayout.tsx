@@ -29,11 +29,14 @@ export type OrientationLayoutT = {
 };
 
 export const EmptyItemContainerOfUser = ({ ...restProps }) => (
-  <div
-    {...restProps}
-    className="bg-gray-40 flex w-full items-center justify-center rounded-[16px] text-center"
-  >
-    <p className="text-gray-0 font-sans text-3xl">Здесь пока никого нет</p>
+  <div>
+    <div
+      {...restProps}
+      className="bg-gray-40 flex h-auto max-h-full w-auto max-w-full items-center justify-center rounded-2xl text-center"
+      style={{ aspectRatio: 'var(--lk-aspect-ratio)' }}
+    >
+      <p className="text-gray-0 font-sans text-3xl">Здесь пока никого нет</p>
+    </div>
   </div>
 );
 
@@ -189,7 +192,7 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
 
       // Устанавливаем кастомные переменные для адаптивности
       gridEl.current.style.setProperty('--lk-tile-size', `${tileSize.width}px`);
-      gridEl.current.style.setProperty('--lk-aspect-ratio', `${isDesktop ? '1' : 'auto'}`);
+      gridEl.current.style.setProperty('--lk-aspect-ratio', `${isDesktop ? '16 / 9' : 'auto'}`);
 
       // Переменные для разных устройств
       gridEl.current.style.setProperty(
@@ -200,7 +203,7 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
   }, [livekitLayout, gridEl, tileSize, isMobile, isTablet, isDesktop]);
 
   return (
-    <div className="m-auto w-full" style={{ height: 'auto' }}>
+    <div className="m-auto flex w-full" style={{ height: 'var(--available-height)' }}>
       <div
         ref={gridEl}
         style={
@@ -211,6 +214,7 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
             '--lk-tile-width': `${tileSize.width}px`,
             '--lk-tile-height': `${tileSize.height}px`,
             height: 'auto',
+            alignItems: 'center',
           } as React.CSSProperties
         }
         data-lk-pagination={pagination.totalPageCount + (isOneItem ? 1 : 0) > 1}

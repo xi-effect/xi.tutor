@@ -165,9 +165,9 @@ export const ParticipantTile = ({
     >
       <TrackRefContextIfNeeded trackRef={trackReference}>
         <ParticipantContextIfNeeded participant={trackReference.participant}>
-          <div className="bg-gray-40 flex h-full justify-center overflow-hidden rounded-2xl">
+          <div className="bg-gray-40 flex h-full w-full justify-center overflow-hidden rounded-2xl">
             {children ?? (
-              <div className="relative flex h-full">
+              <div className="relative flex h-full w-full justify-center">
                 {/* Аватар всегда рендерится как фон */}
                 <div
                   style={{
@@ -175,7 +175,7 @@ export const ParticipantTile = ({
                     height: '100%',
                     backgroundColor: 'var(--xi-bg-gray-40)',
                   }}
-                  className="lk-participant-placeholder flex h-full w-full justify-center"
+                  className="lk-participant-placeholder flex aspect-video h-full w-full justify-center"
                 >
                   <Avatar size="xxl">
                     <AvatarImage
