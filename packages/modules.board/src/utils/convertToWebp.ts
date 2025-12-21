@@ -170,6 +170,18 @@ export async function convertToWebp(file: File): Promise<{
         fileName,
       });
 
+      // КРИТИЧЕСКАЯ ПРОВЕРКА: webpfy может вернуть PNG вместо WebP в Safari!
+      if (webpBlob.type !== 'image/webp') {
+        console.error('[convertToWebp] ❌ webpfy вернул blob не в формате WebP!', {
+          expectedType: 'image/webp',
+          actualType: webpBlob.type,
+          blobSize: webpBlob.size,
+        });
+        throw new Error(
+          `webpfy вернул ${webpBlob.type} вместо image/webp. Это означает, что конвертация не удалась.`,
+        );
+      }
+
       // Убеждаемся, что имя файла заканчивается на .webp
       const webpFileName = fileName.endsWith('.webp')
         ? fileName
@@ -180,9 +192,9 @@ export async function convertToWebp(file: File): Promise<{
         lastModified: Date.now(),
       });
 
-      // Проверяем, что файл действительно WebP
+      // Дополнительная проверка после создания File
       if (webpFile.type !== 'image/webp') {
-        throw new Error('webpfy вернул файл не в формате WebP');
+        throw new Error('Не удалось создать File объект с типом image/webp');
       }
 
       console.log('[convertToWebp] ✅ Успешно конвертировано через webpfy:', {
@@ -263,6 +275,18 @@ export async function convertToWebp(file: File): Promise<{
         fileName,
       });
 
+      // КРИТИЧЕСКАЯ ПРОВЕРКА: webpfy может вернуть PNG вместо WebP в Safari!
+      if (webpBlob.type !== 'image/webp') {
+        console.error('[convertToWebp] ❌ webpfy (fallback) вернул blob не в формате WebP!', {
+          expectedType: 'image/webp',
+          actualType: webpBlob.type,
+          blobSize: webpBlob.size,
+        });
+        throw new Error(
+          `webpfy вернул ${webpBlob.type} вместо image/webp. Это означает, что конвертация не удалась.`,
+        );
+      }
+
       // Убеждаемся, что имя файла заканчивается на .webp
       const webpFileName = fileName.endsWith('.webp')
         ? fileName
@@ -274,7 +298,7 @@ export async function convertToWebp(file: File): Promise<{
       });
 
       if (webpFile.type !== 'image/webp') {
-        throw new Error('webpfy вернул файл не в формате WebP');
+        throw new Error('Не удалось создать File объект с типом image/webp');
       }
 
       console.log('[convertToWebp] ✅ Успешно конвертировано через webpfy (fallback):', {
