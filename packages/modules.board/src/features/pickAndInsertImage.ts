@@ -1,5 +1,6 @@
 import { nanoid } from 'nanoid';
 import { Editor, TLAssetId, TLShapeId } from 'tldraw';
+import { toast } from 'sonner';
 import { myAssetStore } from './imageStore';
 
 /**
@@ -92,6 +93,11 @@ export async function insertImage(editor: Editor, file: File, token: string) {
       ]);
     } catch (err) {
       console.error('Image upload failed:', err);
+      const errorMessage = err instanceof Error ? err.message : 'Не удалось загрузить изображение';
+      toast.error('Ошибка загрузки изображения', {
+        description: errorMessage,
+        duration: 5000,
+      });
       editor.deleteShapes([shapeId]);
       editor.deleteAssets([tempAssetId]);
     }
