@@ -42,8 +42,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [isSuccess, isError, user]);
 
-  const login = () => {
+  const login = async () => {
     setIsAuthenticated(true);
+    await refetch();
   };
 
   const { signout: signoutService } = useSignout();

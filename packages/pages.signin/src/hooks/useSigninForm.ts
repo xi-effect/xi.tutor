@@ -43,11 +43,9 @@ export const useSigninForm = () => {
         // Здесь можно обработать тему
       }
 
-      login();
+      await login();
 
-      setTimeout(() => {
-        navigate({ to: search.redirect || '/' });
-      }, 10);
+      navigate({ to: search.redirect || '/' });
     } catch (error) {
       if (error instanceof AxiosError) {
         const status = error.response?.status;
