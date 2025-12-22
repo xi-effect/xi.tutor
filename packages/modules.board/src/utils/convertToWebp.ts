@@ -221,7 +221,14 @@ export async function convertToWebp(file: File): Promise<{
         });
         return { file: webpFile, mimeType: 'image/webp' };
       } catch (canvasError) {
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        const errorMessage = isSafari
+          ? 'Safari не поддерживает конвертацию изображений в WebP на клиенте. Пожалуйста, используйте другой браузер (Chrome, Firefox, Edge) или обновите Safari до последней версии. Если проблема сохраняется, обратитесь к администратору для настройки серверной конвертации.'
+          : 'Не удалось конвертировать изображение в WebP. Пожалуйста, попробуйте другое изображение или обновите браузер.';
+
         console.error('[convertToWebp] ❌ Оба метода не сработали:', {
+          isSafari,
+          userAgent: navigator.userAgent,
           webpfyError: {
             message: webpfyError instanceof Error ? webpfyError.message : String(webpfyError),
             stack: webpfyError instanceof Error ? webpfyError.stack : undefined,
@@ -231,9 +238,7 @@ export async function convertToWebp(file: File): Promise<{
             stack: canvasError instanceof Error ? canvasError.stack : undefined,
           },
         });
-        throw new Error(
-          'Не удалось конвертировать изображение в WebP. Пожалуйста, попробуйте другое изображение или обновите браузер.',
-        );
+        throw new Error(errorMessage);
       }
     }
   }
@@ -309,7 +314,14 @@ export async function convertToWebp(file: File): Promise<{
       });
       return { file: webpFile, mimeType: 'image/webp' };
     } catch (webpfyError) {
+      const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+      const errorMessage = isSafari
+        ? 'Safari не поддерживает конвертацию изображений в WebP на клиенте. Пожалуйста, используйте другой браузер (Chrome, Firefox, Edge) или обновите Safari до последней версии. Если проблема сохраняется, обратитесь к администратору для настройки серверной конвертации.'
+        : 'Не удалось конвертировать изображение в WebP. Пожалуйста, попробуйте другое изображение или обновите браузер.';
+
       console.error('[convertToWebp] ❌ Не удалось конвертировать в WebP ни одним методом:', {
+        isSafari,
+        userAgent: navigator.userAgent,
         canvasError: {
           message: canvasError instanceof Error ? canvasError.message : String(canvasError),
           stack: canvasError instanceof Error ? canvasError.stack : undefined,
@@ -319,9 +331,7 @@ export async function convertToWebp(file: File): Promise<{
           stack: webpfyError instanceof Error ? webpfyError.stack : undefined,
         },
       });
-      throw new Error(
-        'Не удалось конвертировать изображение в WebP. Пожалуйста, попробуйте другое изображение или обновите браузер.',
-      );
+      throw new Error(errorMessage);
     }
   }
 }
