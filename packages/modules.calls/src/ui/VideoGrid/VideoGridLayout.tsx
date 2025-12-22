@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import '@livekit/components-styles';
 import { TrackReferenceOrPlaceholder, isEqualTrackRef } from '@livekit/components-core';
 import { Track } from 'livekit-client';
@@ -11,7 +11,7 @@ import {
   usePagination,
   useSwipe,
 } from '@livekit/components-react';
-import { useSize, useAdaptiveGrid } from '../../hooks';
+import { useSize, useAdaptiveGrid, useEmptyItemContainerOfUser } from '../../hooks';
 import { ParticipantTile } from '../Participant';
 import { SliderVideoGrid } from './SliderVideoGrid';
 import { HorizontalFocusLayout } from './HorizontalFocusLayout';
@@ -39,32 +39,6 @@ export const EmptyItemContainerOfUser = ({ ...restProps }) => (
     </div>
   </div>
 );
-
-const useEmptyItemContainerOfUser = (
-  tracksLength: number,
-  tracks: TrackReferenceOrPlaceholder[],
-) => {
-  const [isOneItem, setIsOneItem] = useState(false);
-
-  useEffect(() => {
-    // Подсчитываем уникальных участников (не треков)
-    const uniqueParticipants = new Set(
-      tracks
-        .filter((track) => track.participant && track.participant.identity)
-        .map((track) => track.participant.identity),
-    );
-
-    // Показываем placeholder если только один участник
-    // Дополнительная проверка: если tracks пустой, но tracksLength > 0,
-    // это может означать, что участники еще не загрузились
-    const shouldShowPlaceholder =
-      uniqueParticipants.size === 1 || (tracks.length === 0 && tracksLength > 0);
-
-    setIsOneItem(shouldShowPlaceholder);
-  }, [tracksLength, tracks]);
-
-  return isOneItem;
-};
 
 export const FocusLayout = ({
   trackRef,
@@ -128,7 +102,7 @@ export const CarouselLayout = ({
       className={`${carouselOrientation === 'horizontal' ? 'm-auto w-full' : 'mx-5 max-w-[277px]'}`}
     >
       {isOneItem && (
-        <div className="h-[144px] w-[250px]">
+        <div className="h-36 w-[250px]">
           <EmptyItemContainerOfUser />
         </div>
       )}
@@ -256,7 +230,6 @@ export const CarouselContainer = ({ focusTrack, carouselTracks }: CarouselContai
     const trackToFocus =
       focusTrack ||
       carouselTracks.find((track) => track.publication?.source === Track.Source.Camera);
-    console.log(trackToFocus);
 
     if (!trackToFocus) {
       // Если нет треков для фокуса, показываем заглушку
@@ -301,7 +274,6 @@ export const CarouselContainer = ({ focusTrack, carouselTracks }: CarouselContai
   }, [carouselTracks, focusTrack]);
 
   // Выбираем правильный layout в зависимости от ориентации
-  console.log(orientation);
 
   if (orientation === 'vertical') {
     return <VerticalFocusLayout focus={focusElement} thumbs={thumbElements} />;

@@ -105,7 +105,9 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
         <LayoutContextProvider value={layoutContext}>
           <div
             className="lk-video-conference-inner"
-            style={{ width: `${carouselType === 'grid' ? 'auto' : '100%'}  ` }}
+            style={{
+              width: carouselType === 'grid' && canUseFocusLayout ? 'auto' : '100%',
+            }}
           >
             {effectiveCarouselType === 'grid' ? (
               <div className="h-full">
