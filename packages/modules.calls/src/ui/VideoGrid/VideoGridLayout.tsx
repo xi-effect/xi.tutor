@@ -256,6 +256,7 @@ export const CarouselContainer = ({ focusTrack, carouselTracks }: CarouselContai
     const trackToFocus =
       focusTrack ||
       carouselTracks.find((track) => track.publication?.source === Track.Source.Camera);
+    console.log(trackToFocus);
 
     if (!trackToFocus) {
       // Если нет треков для фокуса, показываем заглушку

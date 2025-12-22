@@ -100,10 +100,13 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
   useScreenShareCleanup(tracks);
 
   return (
-    <div className="lk-video-conference" {...props}>
+    <div className="lk-video-conference flex w-full justify-center" {...props}>
       {isWeb() && (
         <LayoutContextProvider value={layoutContext}>
-          <div className="lk-video-conference-inner">
+          <div
+            className="lk-video-conference-inner"
+            style={{ width: `${carouselType === 'grid' ? 'auto' : '100%'}  ` }}
+          >
             {effectiveCarouselType === 'grid' ? (
               <div className="h-full">
                 <GridLayout tracks={tracks}>

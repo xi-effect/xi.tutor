@@ -165,7 +165,7 @@ export const ParticipantTile = ({
     >
       <TrackRefContextIfNeeded trackRef={trackReference}>
         <ParticipantContextIfNeeded participant={trackReference.participant}>
-          <div className="bg-gray-40 flex h-full w-full justify-center overflow-hidden rounded-2xl">
+          <div className="flex h-full w-full justify-center overflow-hidden rounded-2xl">
             {children ?? (
               <div className="relative flex h-full w-full justify-center">
                 {/* Аватар всегда рендерится как фон */}
@@ -196,7 +196,7 @@ export const ParticipantTile = ({
                   !trackReference.publication?.track?.isMuted && (
                     <div className="relative inset-0">
                       <VideoTrack
-                        className="h-full w-full rounded-[16px]"
+                        className="h-full w-full rounded-2xl"
                         style={{
                           ...(trackReference.source === Track.Source.Camera && {
                             transform: 'rotateY(180deg)',
@@ -209,6 +209,33 @@ export const ParticipantTile = ({
                         onSubscriptionStatusChanged={handleSubscribe}
                         manageSubscription={autoManageSubscription}
                       />
+                      <div className="lk-participant-metadata p-1">
+                        <div>
+                          {trackReference.source === Track.Source.Camera ? (
+                            <div className="bg-gray-0/80 flex h-[24px] w-full gap-[6px] rounded-[8px] px-[6px] py-[4px]">
+                              {isEncrypted && <LockLockedIcon />}
+                              <TrackMutedIndicator
+                                trackRef={{
+                                  participant: trackReference.participant,
+                                  source: Track.Source.Microphone,
+                                }}
+                                show="muted"
+                                style={{ marginRight: '0.45rem', background: 'transparent' }}
+                              />
+                              <ParticipantName participant={trackReference.participant} />
+                            </div>
+                          ) : (
+                            <div className="bg-gray-0/80 flex h-[24px] items-center gap-[6px] rounded-[8px] px-[6px] py-[4px]">
+                              <ScreenShareIcon style={{ marginRight: '0.25rem' }} />
+                              <ParticipantName participant={trackReference.participant}>
+                                Демонстрация&nbsp;
+                              </ParticipantName>
+                              {/* Индикатор поднятой руки в метаданных */}
+                            </div>
+                          )}
+                        </div>
+                        <ConnectionQualityIndicator />
+                      </div>
                     </div>
                   )}
 
@@ -222,33 +249,6 @@ export const ParticipantTile = ({
                       onSubscriptionStatusChanged={handleSubscribe}
                     />
                   )}
-                <div className="lk-participant-metadata p-1">
-                  <div>
-                    {trackReference.source === Track.Source.Camera ? (
-                      <div className="bg-gray-0/80 flex h-[24px] w-full gap-[6px] rounded-[8px] px-[6px] py-[4px]">
-                        {isEncrypted && <LockLockedIcon />}
-                        <TrackMutedIndicator
-                          trackRef={{
-                            participant: trackReference.participant,
-                            source: Track.Source.Microphone,
-                          }}
-                          show="muted"
-                          style={{ marginRight: '0.45rem', background: 'transparent' }}
-                        />
-                        <ParticipantName participant={trackReference.participant} />
-                      </div>
-                    ) : (
-                      <div className="bg-gray-0/80 flex h-[24px] items-center gap-[6px] rounded-[8px] px-[6px] py-[4px]">
-                        <ScreenShareIcon style={{ marginRight: '0.25rem' }} />
-                        <ParticipantName participant={trackReference.participant}>
-                          Демонстрация&nbsp;
-                        </ParticipantName>
-                        {/* Индикатор поднятой руки в метаданных */}
-                      </div>
-                    )}
-                  </div>
-                  <ConnectionQualityIndicator />
-                </div>
               </div>
             )}
           </div>
