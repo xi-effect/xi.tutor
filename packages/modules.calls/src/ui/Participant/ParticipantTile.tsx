@@ -165,7 +165,7 @@ export const ParticipantTile = ({
     >
       <TrackRefContextIfNeeded trackRef={trackReference}>
         <ParticipantContextIfNeeded participant={trackReference.participant}>
-          <div className="flex h-full w-full justify-center overflow-hidden rounded-2xl">
+          <div className="m-auto flex w-full justify-center overflow-hidden rounded-2xl">
             {children ?? (
               <div className="relative flex h-full w-full justify-center">
                 {/* Аватар всегда рендерится как фон */}
@@ -193,7 +193,7 @@ export const ParticipantTile = ({
                   trackReference.publication?.isSubscribed &&
                   trackReference.publication?.isEnabled &&
                   !trackReference.publication?.track?.isMuted && (
-                    <div className="bg-gray-40 relative inset-0 m-auto aspect-video w-full rounded-2xl">
+                    <div className="bg-gray-40 relative inset-0 aspect-video w-full rounded-2xl">
                       <VideoTrack
                         className="h-full w-full rounded-2xl object-cover"
                         style={{
