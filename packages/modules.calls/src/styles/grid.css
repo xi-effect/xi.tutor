@@ -345,5 +345,6 @@
 }
 
 .lk-participant-media-video[data-lk-orientation='landscape'] {
-  object-fit: contain !important;
+  object-fit: auto !important;
+  background-color: var(--xi-gray-40) !important;
 }
