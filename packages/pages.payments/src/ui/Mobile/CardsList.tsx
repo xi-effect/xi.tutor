@@ -7,6 +7,7 @@ import { Loader } from '../Loader';
 export type CardsListPropsT<Role extends RoleT> = {
   data: PaymentDataT<Role>[];
   rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
+  measureCard: (index: number, el: HTMLDivElement | null) => void;
   colCount: number;
   gap: number;
   parentRef: RefObject<HTMLDivElement | null>;
@@ -18,6 +19,7 @@ export type CardsListPropsT<Role extends RoleT> = {
 export const CardsList = <Role extends RoleT>({
   data,
   rowVirtualizer,
+  measureCard,
   colCount,
   gap,
   parentRef,
@@ -41,6 +43,7 @@ export const CardsList = <Role extends RoleT>({
           return (
             <div
               key={virtualRow.key}
+              ref={(el) => measureCard(virtualRow.index, el)}
               style={{
                 position: 'absolute',
                 top: 0,

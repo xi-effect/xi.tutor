@@ -22,7 +22,7 @@ import { useMediaQuery } from '@xipkg/utils';
 import { RefObject } from 'react';
 import { CardsList } from './Mobile';
 import { NotFoundItems } from './NotFoundItems';
-import { useResponsiveGrid, useVirtualGrid } from '../hooks';
+import { useResponsiveGrid, useVirtualCards } from '../hooks';
 import { Loader } from './Loader';
 import { UserRoleT } from '../../../common.api/src/types';
 
@@ -65,8 +65,9 @@ export const VirtualizedPaymentsTable = ({
     overscan: 5,
   });
 
-  const { colCount, rowHeight, GAP } = useResponsiveGrid(parentRef);
-  const gridRowVirtualizer = useVirtualGrid(parentRef, data, colCount, rowHeight);
+  const { colCount } = useResponsiveGrid(parentRef);
+
+  const { virtualizer, measureCard } = useVirtualCards(parentRef, data, 300);
 
   const notFoundItems = !data.length && !isLoading && !isError && !isFetchingNextPage;
 
@@ -78,10 +79,11 @@ export const VirtualizedPaymentsTable = ({
     return (
       <CardsList
         data={data}
-        rowVirtualizer={gridRowVirtualizer}
+        rowVirtualizer={virtualizer}
+        measureCard={measureCard}
         parentRef={parentRef}
         colCount={colCount}
-        gap={GAP}
+        gap={12}
         isLoading={isLoading}
         isFetchingNextPage={isFetchingNextPage}
         currentUserRole={currentUserRole}
