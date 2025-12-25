@@ -165,7 +165,7 @@ export const ParticipantTile = ({
     >
       <TrackRefContextIfNeeded trackRef={trackReference}>
         <ParticipantContextIfNeeded participant={trackReference.participant}>
-          <div className="m-auto flex w-full justify-center overflow-hidden rounded-2xl">
+          <div className="m-auto flex h-full w-full justify-center overflow-hidden rounded-2xl">
             {children ?? (
               <div className="relative flex h-full w-full justify-center">
                 {/* Аватар всегда рендерится как фон */}
