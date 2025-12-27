@@ -10,7 +10,7 @@ export const useStudentById = (id: number, disabled?: boolean) => {
         'Content-Type': 'application/json',
       },
     },
-    disabled,
+    disabled: disabled || !id || id === 0,
     queryKey: [StudentsQueryKey.StudentById, id],
   });
 
