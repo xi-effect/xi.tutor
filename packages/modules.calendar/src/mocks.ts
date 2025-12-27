@@ -3,6 +3,132 @@
 
 import { ICalendarEvent } from './ui/types';
 
+/**
+ * Генерирует моковые события для текущего месяца
+ */
+const generateMockEventsForCurrentMonth = (): ICalendarEvent[] => {
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth();
+  const currentDay = now.getDate();
+
+  // Получаем количество дней в текущем месяце
+  const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+  const events: ICalendarEvent[] = [];
+  let eventId = 1;
+
+  // Генерируем события на разные дни месяца
+  const eventDays = [2, 3, 5, 7, 9, 10, 12, 14, 15, 17, 19, 21, 23, 24, 26, 28].filter(
+    (day) => day <= daysInMonth,
+  );
+
+  // Имена студентов для уроков
+  const studentNames = [
+    'Дмитрий',
+    'Анна',
+    'Елена',
+    'Николай',
+    'Алексей',
+    'Ольга',
+    'Владимир',
+    'Катерина',
+    'Олег',
+    'Наталья',
+    'Александр',
+    'Екатерина',
+    'Виктория',
+    'Василий',
+    'Мария',
+    'Иван',
+  ];
+
+  // Времена для уроков
+  const lessonTimes = [
+    { start: 9, end: 11 },
+    { start: 10, end: 12 },
+    { start: 11, end: 13 },
+    { start: 14, end: 16 },
+    { start: 15, end: 17 },
+    { start: 16, end: 18 },
+    { start: 17, end: 19 },
+    { start: 18, end: 20 },
+  ];
+
+  // Генерируем уроки
+  eventDays.forEach((day, index) => {
+    const studentName = studentNames[index % studentNames.length];
+    const timeSlot = lessonTimes[index % lessonTimes.length];
+
+    // Обычный урок
+    events.push({
+      id: String(eventId++),
+      title: studentName,
+      start: new Date(currentYear, currentMonth, day, timeSlot.start, 0),
+      end: new Date(currentYear, currentMonth, day, timeSlot.end, 0),
+      type: 'lesson',
+    });
+
+    // Иногда добавляем второй урок в тот же день
+    if (index % 3 === 0 && day <= daysInMonth) {
+      const secondTimeSlot = lessonTimes[(index + 1) % lessonTimes.length];
+      events.push({
+        id: String(eventId++),
+        title: studentNames[(index + 1) % studentNames.length],
+        start: new Date(currentYear, currentMonth, day, secondTimeSlot.start, 0),
+        end: new Date(currentYear, currentMonth, day, secondTimeSlot.end, 0),
+        type: 'lesson',
+        lessonInfo: {
+          studentName: studentNames[(index + 1) % studentNames.length],
+          subject: ['математика', 'английский', 'физика', 'химия'][index % 4],
+          lessonType: index % 2 === 0 ? 'group' : 'individual',
+          paid: index % 3 !== 0,
+          complete: day < currentDay,
+        },
+      });
+    }
+
+    // Иногда добавляем отмененный урок
+    if (index % 4 === 0 && day <= daysInMonth) {
+      events.push({
+        id: String(eventId++),
+        title: studentNames[(index + 2) % studentNames.length],
+        start: new Date(currentYear, currentMonth, day, 13, 0),
+        end: new Date(currentYear, currentMonth, day, 14, 0),
+        type: 'lesson',
+        isCancelled: true,
+      });
+    }
+  });
+
+  // Добавляем дни отдыха (выходные дни)
+  const restDays = [6, 13, 20, 27].filter((day) => day <= daysInMonth);
+  restDays.forEach((day) => {
+    events.push({
+      id: String(eventId++),
+      title: 'Отдых',
+      start: new Date(currentYear, currentMonth, day),
+      end: new Date(currentYear, currentMonth, day),
+      type: 'rest',
+      isAllDay: true,
+    });
+  });
+
+  // Добавляем несколько коротких перерывов
+  const shortRestDays = [4, 11, 18, 25].filter((day) => day <= daysInMonth);
+  shortRestDays.forEach((day) => {
+    events.push({
+      id: String(eventId++),
+      title: 'Отдых',
+      start: new Date(currentYear, currentMonth, day, 12, 0),
+      end: new Date(currentYear, currentMonth, day, 13, 0),
+      type: 'rest',
+    });
+  });
+
+  return events;
+};
+
 export type StudentT = {
   id: string;
   name: string;
@@ -41,165 +167,5 @@ export const students: StudentT[] = [
   },
 ];
 
-export const MOCK_EVENTS: ICalendarEvent[] = [
-  {
-    id: '1',
-    title: 'Дмитрий',
-    start: new Date('2025-09-29T17:40:00'),
-    end: new Date('2025-09-29T18:40:00'),
-    type: 'lesson',
-  },
-  {
-    id: '2',
-    title: 'Отдых',
-    start: new Date('2025-09-30T11:00:00'),
-    end: new Date('2025-09-30T13:00:00'),
-    type: 'rest',
-  },
-  {
-    id: '3',
-    title: 'Анна',
-    start: new Date('2025-09-28T17:40:00'),
-    end: new Date('2025-09-28T18:10:00'),
-    type: 'lesson',
-    isCancelled: true,
-  },
-  {
-    id: '5',
-    title: 'Елена',
-    start: new Date('2025-09-18T10:00:00'),
-    end: new Date('2025-09-18T12:00:00'),
-    type: 'lesson',
-  },
-  {
-    id: '6',
-    title: 'Николай',
-    start: new Date('2025-09-20T14:00:00'),
-    end: new Date('2025-09-20T16:00:00'),
-    type: 'lesson',
-  },
-  {
-    id: '7',
-    title: 'Алексей',
-    start: new Date('2025-09-23T09:00:00'),
-    end: new Date('2025-09-23T11:00:00'),
-    type: 'lesson',
-  },
-  {
-    id: '8',
-    title: 'Ольга',
-    start: new Date('2025-10-04T15:00:00'),
-    end: new Date('2025-10-04T17:00:00'),
-    type: 'lesson',
-  },
-  {
-    id: '9',
-    title: 'Владимир',
-    start: new Date('2025-09-05T10:00:00'),
-    end: new Date('2025-09-05T12:00:00'),
-    type: 'lesson',
-  },
-  {
-    id: '10',
-    title: 'Катерина',
-    start: new Date('2025-09-05T14:00:00'),
-    end: new Date('2025-09-05T16:00:00'),
-    type: 'lesson',
-  },
-  {
-    id: '11',
-    title: 'Олег',
-    start: new Date('2025-09-23T09:00:00'),
-    end: new Date('2025-09-23T11:00:00'),
-    type: 'lesson',
-  },
-  {
-    id: '12',
-    title: 'Наталья',
-    start: new Date('2025-09-07T15:00:00'),
-    end: new Date('2025-09-07T17:00:00'),
-    type: 'lesson',
-  },
-  {
-    id: '13',
-    title: 'Александр',
-    start: new Date('2025-09-07T12:00:00'),
-    end: new Date('2025-09-07T13:00:00'),
-    type: 'lesson',
-    lessonInfo: {
-      studentName: 'Александр',
-      subject: 'физика',
-      lessonType: 'group',
-      paid: true,
-      complete: true,
-    },
-  },
-  {
-    id: '14',
-    title: 'Екатерина',
-    start: new Date('2025-09-10T14:00:00'),
-    end: new Date('2025-09-10T16:00:00'),
-    type: 'lesson',
-    isCancelled: true,
-  },
-  {
-    id: '15',
-    title: 'Виктория',
-    start: new Date('2025-09-11T09:00:00'),
-    end: new Date('2025-09-11T11:00:00'),
-    type: 'lesson',
-    lessonInfo: {
-      studentName: 'Виктория',
-      subject: 'испанский язык',
-      lessonType: 'group',
-      paid: false,
-      complete: false,
-    },
-  },
-  {
-    id: '16',
-    title: 'Василий',
-    start: new Date('2025-09-12T15:00:00'),
-    end: new Date('2025-09-12T17:00:00'),
-    type: 'lesson',
-    lessonInfo: {
-      studentName: 'Василий',
-      subject: 'алгебра',
-      lessonType: 'individual',
-      paid: true,
-      complete: false,
-    },
-  },
-  {
-    id: '17',
-    title: 'Отдых',
-    start: new Date('2025-09-13'),
-    end: new Date('2025-09-13'),
-    type: 'rest',
-    isAllDay: true,
-  },
-  {
-    id: '18',
-    title: 'Отдых',
-    start: new Date('2025-09-06'),
-    end: new Date('2025-09-06'),
-    type: 'rest',
-    isAllDay: true,
-  },
-  {
-    id: '19',
-    title: 'Отдых',
-    start: new Date('2025-09-15'),
-    end: new Date('2025-09-15'),
-    type: 'rest',
-    isAllDay: true,
-  },
-  {
-    id: '20',
-    title: 'Отдых',
-    start: new Date('2025-09-16'),
-    end: new Date('2025-09-16'),
-    type: 'rest',
-    isAllDay: true,
-  },
-];
+// Генерируем моковые события для текущего месяца
+export const MOCK_EVENTS: ICalendarEvent[] = generateMockEventsForCurrentMonth();
