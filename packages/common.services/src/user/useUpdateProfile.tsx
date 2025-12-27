@@ -1,13 +1,25 @@
 import { userApiConfig, UserQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { UserData, ProfileData } from 'common.types';
+import { AxiosResponse } from 'axios';
+import { toast } from 'sonner';
+import { UserData, ProfileData, RoleT } from 'common.types';
 import { handleError, showSuccess } from 'common.services';
+
+interface MutationContext {
+  previousUser?: UserData;
+  profileData?: ProfileData;
+}
 
 export const useUpdateProfile = () => {
   const queryClient = useQueryClient();
 
-  const updateProfileMutation = useMutation({
+  const updateProfileMutation = useMutation<
+    AxiosResponse<UserData>,
+    Error,
+    ProfileData,
+    MutationContext
+  >({
     mutationFn: async (profileData: ProfileData) => {
       try {
         const axiosInst = await getAxiosInstance();
@@ -42,8 +54,8 @@ export const useUpdateProfile = () => {
         };
       });
 
-      // Возвращаем предыдущее значение для отката в случае ошибки
-      return { previousUser };
+      // Возвращаем предыдущее значение для отката в случае ошибки и сохраняем profileData
+      return { previousUser, profileData };
     },
     onError: (err, _profileData, context) => {
       // В случае ошибки откатываем изменения
@@ -54,14 +66,27 @@ export const useUpdateProfile = () => {
       // Показываем toast с ошибкой
       handleError(err, 'profile');
     },
-    onSuccess: (response) => {
+    onSuccess: (response, _profileData, context) => {
       // Если сервер вернул обновленные данные, обновляем кеш
       if (response?.data) {
         queryClient.setQueryData<UserData>([UserQueryKey.Home], response.data);
       }
 
-      // Показываем успешное уведомление
-      showSuccess('profile');
+      // Проверяем, обновляется ли только default_layout
+      const isOnlyRoleChange =
+        context?.profileData &&
+        Object.keys(context.profileData).length === 1 &&
+        'default_layout' in context.profileData;
+
+      if (isOnlyRoleChange && context.profileData) {
+        // Показываем конкретное уведомление для смены роли
+        const role = context.profileData.default_layout as RoleT;
+        const roleText = role === 'tutor' ? 'Репетитор' : 'Ученик';
+        toast.success(`Роль успешно изменена на ${roleText}`);
+      } else {
+        // Показываем стандартное уведомление для других изменений профиля
+        showSuccess('profile');
+      }
     },
   });
 
