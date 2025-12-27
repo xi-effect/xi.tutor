@@ -28,7 +28,7 @@ export const CardsList = <Role extends RoleT>({
   currentUserRole,
 }: CardsListPropsT<Role>) => {
   return (
-    <div className="h-[calc(100vh-204px)] w-full overflow-y-auto pr-4" ref={parentRef}>
+    <div className="h-[calc(100vh-154px)] w-full overflow-y-auto pr-4" ref={parentRef}>
       <div
         style={{
           height: `${rowVirtualizer.getTotalSize()}px`,
@@ -37,7 +37,7 @@ export const CardsList = <Role extends RoleT>({
         }}
       >
         {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-          const startIndex = virtualRow.index * colCount;
+          const startIndex = virtualRow.index;
           const rowItems = data.slice(startIndex, startIndex + colCount);
 
           return (
@@ -55,7 +55,6 @@ export const CardsList = <Role extends RoleT>({
                 padding: gap,
                 paddingLeft: 0,
                 boxSizing: 'border-box',
-                gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))`,
               }}
             >
               {rowItems.map((payment, index) => (

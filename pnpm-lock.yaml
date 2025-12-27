@@ -874,6 +874,9 @@ importers:
       common.eslint:
         specifier: '*'
         version: link:../common.eslint
+      common.types:
+        specifier: '*'
+        version: link:../common.types
       common.typescript:
         specifier: '*'
         version: link:../common.typescript
@@ -2118,6 +2121,9 @@ importers:
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
+      features.invoice.card:
+        specifier: '*'
+        version: link:../features.invoice.card
       features.payment.approve:
         specifier: '*'
         version: link:../features.payment.approve
@@ -3140,9 +3146,6 @@ importers:
       '@xipkg/userprofile':
         specifier: 4.0.14
         version: 4.0.14(@types/react-dom@19.2.2)(@types/react@19.2.2)(react-dom@19.2.0)(react@19.2.0)
-      '@xipkg/utils':
-        specifier: ^1.8.0
-        version: 1.8.0(react@19.2.0)
       common.api:
         specifier: '*'
         version: link:../common.api
@@ -3158,6 +3161,9 @@ importers:
       common.ui:
         specifier: '*'
         version: link:../common.ui
+      common.utils:
+        specifier: '*'
+        version: link:../common.utils
       features.group.invite:
         specifier: '*'
         version: link:../features.group.invite
@@ -10912,7 +10918,7 @@ packages:
       eslint-config-airbnb: 19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2)(eslint-plugin-react-hooks@5.1.0)(eslint-plugin-react@7.37.2)(eslint@9.39.1)
       eslint-config-next: 15.1.2(eslint@9.39.1)(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.39.1)
-      eslint-config-turbo: 2.6.3(eslint@9.39.1)(turbo@2.6.0)
+      eslint-config-turbo: 2.7.2(eslint@9.39.1)(turbo@2.6.0)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.46.3)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.1)
       eslint-plugin-react: 7.37.2(eslint@9.39.1)
       eslint-plugin-react-hooks: 5.1.0(eslint@9.39.1)
@@ -12450,14 +12456,14 @@ packages:
       eslint: 9.39.1
     dev: true
 
-  /eslint-config-turbo@2.6.3(eslint@9.39.1)(turbo@2.6.0):
-    resolution: {integrity: sha512-HS6aanr+Cg4X1Ss8AObgdsa9LvSi1rHAU7sHWqD4MWKe+/4uPt0Zqt6VqX1QMIJI6bles+QxSpMPnahMN9hPLg==}
+  /eslint-config-turbo@2.7.2(eslint@9.39.1)(turbo@2.6.0):
+    resolution: {integrity: sha512-Tj8P1kJFVNFZxH+BaQO9sowg11N5PkpD34aWZ87PImqkWo7Qk8yRGRpshCeqGwdO5YKX631ZyTQfcDvs4bqBMQ==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
     dependencies:
       eslint: 9.39.1
-      eslint-plugin-turbo: 2.6.3(eslint@9.39.1)(turbo@2.6.0)
+      eslint-plugin-turbo: 2.7.2(eslint@9.39.1)(turbo@2.6.0)
       turbo: 2.6.0
     dev: true
 
@@ -12684,8 +12690,8 @@ packages:
       turbo: 2.6.0
     dev: true
 
-  /eslint-plugin-turbo@2.6.3(eslint@9.39.1)(turbo@2.6.0):
-    resolution: {integrity: sha512-91WZ+suhT/pk+qNS0/rqT43xLUlUblsa3a8jKmAStGhkJCmR2uX0oWo/e0Edb+It8MdnteXuYpCkvsK4Vw8FtA==}
+  /eslint-plugin-turbo@2.7.2(eslint@9.39.1)(turbo@2.6.0):
+    resolution: {integrity: sha512-rZs+l0vQcFo/37OiCWDcTIcksrVfvSBwS6/CI41wc3hA/hWxGOAbT1Diy9/+PBrh2VJts0SzBXb80SqGgVFFPQ==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'

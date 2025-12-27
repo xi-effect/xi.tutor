@@ -97,7 +97,7 @@ export const VirtualizedPaymentsTable = ({
       type="always"
       className="h-[calc(100vh-164px)] w-full overflow-x-auto overflow-y-hidden"
     >
-      <div className="min-w-[1200px]">
+      <div>
         <Table className="table-fixed px-2">
           <TableHeader className="sticky top-0 bg-transparent">
             {table.getHeaderGroups().map((headerGroup) => (

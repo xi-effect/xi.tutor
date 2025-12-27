@@ -9,10 +9,11 @@ import {
   StatusCell,
   ActionsCell,
 } from '../ui/cells';
+import { ScreenSizeT } from 'common.types';
 
 type ColumnArgsT<Role extends RoleT = RoleT> = {
   usersRole: RoleT;
-  isMobile?: boolean;
+  screenSize?: ScreenSizeT;
   onApprovePayment?: (payment: RolePaymentT<Role>) => void;
   withStudentColumn?: boolean;
   isTutor?: boolean;
@@ -22,6 +23,7 @@ export const createPaymentColumns = <Role extends RoleT>({
   usersRole,
   onApprovePayment,
   isTutor,
+  screenSize,
 }: ColumnArgsT<Role>): ColumnDef<RolePaymentT<Role>>[] => {
   const baseColumns: (ColumnDef<RolePaymentT<Role>> | false)[] = [
     {
@@ -56,7 +58,7 @@ export const createPaymentColumns = <Role extends RoleT>({
         />
       );
     },
-    size: 160,
+    size: 180,
     filterFn: (row, columnId, value) => value.includes(row.getValue(columnId)),
     enableColumnFilter: true,
   };
@@ -87,7 +89,7 @@ export const createPaymentColumns = <Role extends RoleT>({
       },
       enableColumnFilter: true,
     },
-    {
+    screenSize === 'desktop' && {
       accessorKey: 'payment_type',
       header: 'Тип оплаты',
       cell: ({ row }) => <TypePaymentCell paymentType={row.original.payment_type} />,
@@ -107,7 +109,7 @@ export const createPaymentColumns = <Role extends RoleT>({
           onApprovePayment={() => onApprovePayment?.(row.original)}
         />
       ),
-      size: 220,
+      size: screenSize === 'desktop' ? 260 : 160,
       filterFn: (row, columnId, value) => value.includes(row.getValue(columnId)),
       enableColumnFilter: true,
     },
@@ -118,7 +120,7 @@ export const createPaymentColumns = <Role extends RoleT>({
         usersRole === 'student' ? (
           <ActionsCell invoiceId={row.original.id} classroomId={row.original.classroom_id} />
         ) : null,
-      size: usersRole === 'student' ? 96 : 0,
+      size: usersRole === 'student' ? (screenSize === 'desktop' ? 96 : 40) : 0,
       filterFn: (row, columnId, value) => value.includes(row.getValue(columnId)),
       enableColumnFilter: false,
     },
