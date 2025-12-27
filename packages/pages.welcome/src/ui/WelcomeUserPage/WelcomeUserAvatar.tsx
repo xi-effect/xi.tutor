@@ -31,7 +31,7 @@ export const WelcomeUserAvatar = () => {
       return;
     }
 
-    if (file.size > 5 * 1024 * 1024) {
+    if (file.size > 1 * 1024 * 1024) {
       handleError('Файл слишком большой', 'Выберите фото до 1 Мб');
       return;
     }
