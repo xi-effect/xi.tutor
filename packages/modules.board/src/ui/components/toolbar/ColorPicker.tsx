@@ -3,10 +3,31 @@ import { track, useEditor } from 'tldraw';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { Button } from '@xipkg/button';
 import { colorOptions } from '../../../utils/customConfig';
+import { navBarElements } from '../../../utils/navBarElements';
 import { useTldrawStyles } from '../../../hooks/useTldrawStyles';
 import { cn } from '@xipkg/utils';
 
-type ColorOptionT = (typeof colorOptions)[number]['name'];
+// Маппинг цветов стикеров на CSS классы
+const stickerColorMap: Record<string, string> = {
+  grey: 'bg-gray-60',
+  blue: 'bg-brand-80',
+  red: 'bg-red-80',
+  green: 'bg-green-80',
+  'light-red': 'bg-orange-80',
+  yellow: 'bg-yellow-100',
+  violet: 'bg-violet-100',
+  'light-violet': 'bg-pink-100',
+  'light-blue': 'bg-cyan-100',
+};
+
+// Цвета для стикеров из navBarElements
+const stickerColors =
+  navBarElements
+    .find((item) => item.action === 'sticker')
+    ?.menuPopupContent?.map((item) => ({
+      name: item.color,
+      class: stickerColorMap[item.color] || 'bg-gray-60',
+    })) || [];
 
 type ColorCircleT = {
   colorClass: string;
@@ -38,9 +59,19 @@ export const ColorPicker = track(() => {
 
   const selectedShapes = editor.getSelectedShapes();
 
+  // Определяем, является ли выбранный элемент стикером
+  const isSticker = useMemo(() => {
+    return selectedShapes.some((shape) => shape.type === 'note');
+  }, [selectedShapes]);
+
+  // Получаем доступные цвета в зависимости от типа элемента
+  const availableColors = useMemo(() => {
+    return isSticker ? stickerColors : colorOptions;
+  }, [isSticker]);
+
   // Получаем текущий цвет из выбранной фигуры (стрелки, геометрические фигуры, текст, рукописные линии или стикеры)
-  const currentColor = useMemo((): ColorOptionT => {
-    if (selectedShapes.length === 0) return 'black';
+  const currentColor = useMemo((): string => {
+    if (selectedShapes.length === 0) return isSticker ? 'grey' : 'black';
 
     try {
       const firstShape = selectedShapes[0];
@@ -50,18 +81,18 @@ export const ColorPicker = track(() => {
       if (shapeProps?.color) {
         const color = shapeProps.color;
         // Проверяем, что цвет есть в списке доступных цветов
-        if (colorOptions.some((opt) => opt.name === color)) {
-          return color as ColorOptionT;
+        if (availableColors.some((opt) => opt.name === color)) {
+          return color;
         }
       }
     } catch (error) {
       console.warn('Error getting shape color:', error);
     }
 
-    return 'black';
-  }, [selectedShapes]);
+    return isSticker ? 'grey' : 'black';
+  }, [selectedShapes, isSticker, availableColors]);
 
-  const handleColorClick = (colorName: ColorOptionT) => {
+  const handleColorClick = (colorName: string) => {
     setSelectedShapesColor(colorName);
     setOpen(false);
   };
@@ -83,13 +114,18 @@ export const ColorPicker = track(() => {
   }
 
   // Находим цвет для иконки
-  const currentColorOption = colorOptions.find((opt) => opt.name === currentColor);
+  const currentColorOption = availableColors.find((opt) => opt.name === currentColor);
+
+  // Определяем количество колонок для сетки (для стикеров может быть другое количество)
+  const gridCols = isSticker ? 'grid-cols-5' : 'grid-cols-5';
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button variant="ghost" size="s" className="hover:bg-brand-0 w-[32px] p-1" title="Цвет">
-          <div className={`h-4 w-4 rounded-full ${currentColorOption?.class || 'bg-gray-100'}`} />
+          <div
+            className={`h-4 w-4 rounded-full ${currentColorOption?.class || (isSticker ? 'bg-gray-60' : 'bg-gray-100')}`}
+          />
         </Button>
       </PopoverTrigger>
       <PopoverContent
@@ -98,8 +134,8 @@ export const ColorPicker = track(() => {
         sideOffset={8}
         className="border-gray-10 bg-gray-0 w-auto rounded-xl border p-4 shadow-md"
       >
-        <div className="grid grid-cols-5 gap-2">
-          {colorOptions.map(({ name, class: colorClass }) => (
+        <div className={`grid ${gridCols} gap-2`}>
+          {availableColors.map(({ name, class: colorClass }) => (
             <ColorCircle
               key={name}
               colorClass={colorClass}
