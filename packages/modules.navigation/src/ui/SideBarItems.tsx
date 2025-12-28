@@ -10,7 +10,15 @@ import {
 import { useLocation, useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { SwiperRef } from 'swiper/react';
-import { Group, Home, Materials, Payments, TelegramFilled, InfoCircle } from '@xipkg/icons';
+import {
+  Group,
+  Home,
+  Materials,
+  Payments,
+  TelegramFilled,
+  InfoCircle,
+  Calendar,
+} from '@xipkg/icons';
 import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
 
@@ -30,6 +38,12 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
       titleKey: 'home',
       url: '/',
       icon: Home,
+    },
+    {
+      id: 'calendar-menu-item',
+      titleKey: 'calendar',
+      url: '/calendar',
+      icon: Calendar,
     },
     {
       id: 'classrooms-menu-item',
