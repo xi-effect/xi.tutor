@@ -38,14 +38,14 @@ export const ColorPicker = track(() => {
 
   const selectedShapes = editor.getSelectedShapes();
 
-  // Получаем текущий цвет из выбранной стрелки
+  // Получаем текущий цвет из выбранной фигуры (стрелки или геометрические фигуры)
   const currentColor = useMemo((): ColorOptionT => {
     if (selectedShapes.length === 0) return 'black';
 
     try {
       const firstShape = selectedShapes[0];
       // В tldraw стили хранятся в props фигуры
-      // Для стрелок цвет может быть в shape.props.color
+      // Цвет может быть в shape.props.color для стрелок и geo фигур
       const shapeProps = (firstShape as { props?: { color?: string } }).props;
       if (shapeProps?.color) {
         const color = shapeProps.color;
@@ -66,10 +66,13 @@ export const ColorPicker = track(() => {
     setOpen(false);
   };
 
-  // Показываем только для стрелок и линий (в tldraw линии - это стрелки без наконечников)
-  const isArrowOrLine = selectedShapes.some((shape) => shape.type === 'arrow');
+  // Показываем для стрелок, линий и геометрических фигур
+  // В tldraw линии - это стрелки без наконечников, геометрические фигуры имеют тип 'geo'
+  const isSupportedShape = selectedShapes.some(
+    (shape) => shape.type === 'arrow' || shape.type === 'geo',
+  );
 
-  if (!isArrowOrLine || selectedShapes.length === 0) {
+  if (!isSupportedShape || selectedShapes.length === 0) {
     return null;
   }
 
