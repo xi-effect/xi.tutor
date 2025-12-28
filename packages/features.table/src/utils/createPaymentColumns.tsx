@@ -30,7 +30,7 @@ export const createPaymentColumns = <Role extends RoleT>({
       accessorKey: 'created_at',
       header: 'Дата',
       cell: ({ row }) => <DateCell date={row.original.created_at} />,
-      size: 82,
+      size: 96,
       filterFn: (row, columnId, value) => {
         const date = new Date(row.getValue(columnId)).getTime();
         const [from, to] = value;
