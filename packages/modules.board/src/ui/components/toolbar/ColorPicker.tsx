@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { track, useEditor } from 'tldraw';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { Button } from '@xipkg/button';
@@ -35,13 +35,34 @@ export const ColorPicker = track(() => {
   const editor = useEditor();
   const { setSelectedShapesColor } = useTldrawStyles();
   const [open, setOpen] = useState(false);
-  const [selectedColor, setSelectedColor] = useState<ColorOptionT>('black');
 
   const selectedShapes = editor.getSelectedShapes();
 
+  // Получаем текущий цвет из выбранной стрелки
+  const currentColor = useMemo((): ColorOptionT => {
+    if (selectedShapes.length === 0) return 'black';
+
+    try {
+      const firstShape = selectedShapes[0];
+      // В tldraw стили хранятся в props фигуры
+      // Для стрелок цвет может быть в shape.props.color
+      const shapeProps = (firstShape as { props?: { color?: string } }).props;
+      if (shapeProps?.color) {
+        const color = shapeProps.color;
+        // Проверяем, что цвет есть в списке доступных цветов
+        if (colorOptions.some((opt) => opt.name === color)) {
+          return color as ColorOptionT;
+        }
+      }
+    } catch (error) {
+      console.warn('Error getting shape color:', error);
+    }
+
+    return 'black';
+  }, [selectedShapes]);
+
   const handleColorClick = (colorName: ColorOptionT) => {
     setSelectedShapesColor(colorName);
-    setSelectedColor(colorName);
     setOpen(false);
   };
 
@@ -53,7 +74,7 @@ export const ColorPicker = track(() => {
   }
 
   // Находим цвет для иконки
-  const currentColorOption = colorOptions.find((opt) => opt.name === selectedColor);
+  const currentColorOption = colorOptions.find((opt) => opt.name === currentColor);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -73,7 +94,7 @@ export const ColorPicker = track(() => {
             <ColorCircle
               key={name}
               colorClass={colorClass}
-              isSelected={selectedColor === name}
+              isSelected={currentColor === name}
               handleClick={() => handleColorClick(name)}
             />
           ))}
