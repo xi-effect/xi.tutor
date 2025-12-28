@@ -95,7 +95,7 @@ export const VirtualizedPaymentsTable = ({
     <ScrollArea
       scrollBarProps={{ orientation: 'horizontal' }}
       type="always"
-      className="h-[calc(100vh-164px)] w-full overflow-x-auto overflow-y-hidden"
+      className="h-[calc(100dvh-152px)] w-full overflow-x-auto overflow-y-hidden"
     >
       <div>
         <Table className="table-fixed px-2">
@@ -116,7 +116,7 @@ export const VirtualizedPaymentsTable = ({
           </TableHeader>
         </Table>
 
-        <div ref={parentRef} className="h-[calc(100vh-242px)] w-full overflow-y-auto">
+        <div ref={parentRef} className="h-[calc(100dvh-218px)] w-full overflow-y-auto">
           <div
             style={{
               height: `${rowVirtualizer.getTotalSize()}px`,
