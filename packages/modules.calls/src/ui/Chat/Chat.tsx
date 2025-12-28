@@ -117,25 +117,25 @@ export const Chat = () => {
 
       {/* Поле ввода */}
       <div className="flex items-end gap-2">
-        <div className="border-gray-20 max-h-40 flex-1 rounded-lg border py-2 pl-4">
+        <div className="border-gray-20 flex max-h-40 w-full flex-1 items-center rounded-3xl border pl-4">
           <Textarea
             ref={textareaRef}
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
             placeholder="Напишите сообщение..."
-            className="max-h-32 min-w-full overflow-auto border-none p-0 pr-2"
+            className="my-2 max-h-32 min-w-full rounded-none border-none p-0 pr-2"
             onKeyDown={handleKeyDownSendMessage}
           />
+          <Button
+            size="icon"
+            variant="ghost"
+            onClick={handleSendMessage}
+            disabled={!messageText.trim()}
+            className="hover:bg-gray-10 h-12 w-12 rounded-full p-3"
+          >
+            <Send className="h-6 w-6" />
+          </Button>
         </div>
-        <Button
-          size="icon"
-          variant="ghost"
-          onClick={handleSendMessage}
-          disabled={!messageText.trim()}
-          className="hover:bg-gray-10 mr-3 h-8 w-8 self-end"
-        >
-          <Send className="h-6 w-6" />
-        </Button>
       </div>
     </div>
   );
