@@ -59,9 +59,9 @@ export const TrackMutedIndicator = ({
   return (
     <div data-lk-muted={isMuted}>
       {(props.children ?? isMuted) ? (
-        <div className="relative w-[12px]">
-          <MicrophoneOff className="absolute h-[16px] w-[16px] fill-gray-100" />
-          <RedLine className="fill-red-80 absolute h-[16px] w-[16px]" />
+        <div className="relative w-3">
+          <MicrophoneOff className="absolute h-4 w-4 fill-gray-100" />
+          <RedLine className="fill-red-80 absolute h-4 w-4" />
         </div>
       ) : null}
     </div>
@@ -165,17 +165,17 @@ export const ParticipantTile = ({
     >
       <TrackRefContextIfNeeded trackRef={trackReference}>
         <ParticipantContextIfNeeded participant={trackReference.participant}>
-          <div className="bg-gray-40 h-full rounded-[16px]">
+          <div className="m-auto flex h-full w-full justify-center overflow-hidden rounded-2xl">
             {children ?? (
-              <div className="relative h-full">
+              <div className="relative flex h-full w-full justify-center">
                 {/* Аватар всегда рендерится как фон */}
                 <div
                   style={{
                     borderRadius: '8px',
                     height: '100%',
-                    backgroundColor: 'var(--xi-bg-gray-40)',
+                    backgroundColor: 'var(--color-gray-40)',
                   }}
-                  className="lk-participant-placeholder flex h-full w-full justify-center"
+                  className="lk-participant-placeholder flex aspect-video h-full w-full items-center justify-center"
                 >
                   <Avatar size="xxl">
                     <AvatarImage
@@ -185,7 +185,6 @@ export const ParticipantTile = ({
                     <AvatarFallback size="xxl" loading />
                   </Avatar>
                 </div>
-
                 {/* Видео накладывается поверх аватара когда доступно */}
                 {isTrackReference(trackReference) &&
                   (trackReference.publication?.kind === 'video' ||
@@ -194,9 +193,9 @@ export const ParticipantTile = ({
                   trackReference.publication?.isSubscribed &&
                   trackReference.publication?.isEnabled &&
                   !trackReference.publication?.track?.isMuted && (
-                    <div className="absolute inset-0">
+                    <div className="bg-gray-40 relative inset-0 aspect-video w-full rounded-2xl">
                       <VideoTrack
-                        className="h-full w-full rounded-[16px]"
+                        className="h-full w-full rounded-2xl object-cover"
                         style={{
                           ...(trackReference.source === Track.Source.Camera && {
                             transform: 'rotateY(180deg)',
@@ -211,7 +210,6 @@ export const ParticipantTile = ({
                       />
                     </div>
                   )}
-
                 {/* Аудио трек для случаев без видео */}
                 {isTrackReference(trackReference) &&
                   (!trackReference.publication?.isSubscribed ||
@@ -225,7 +223,7 @@ export const ParticipantTile = ({
                 <div className="lk-participant-metadata p-1">
                   <div>
                     {trackReference.source === Track.Source.Camera ? (
-                      <div className="bg-gray-0/80 flex h-[24px] w-full gap-[6px] rounded-[8px] px-[6px] py-[4px]">
+                      <div className="bg-gray-0/80 flex h-6 w-full gap-1.5 rounded-lg px-1.5 py-1">
                         {isEncrypted && <LockLockedIcon />}
                         <TrackMutedIndicator
                           trackRef={{
@@ -238,7 +236,7 @@ export const ParticipantTile = ({
                         <ParticipantName participant={trackReference.participant} />
                       </div>
                     ) : (
-                      <div className="bg-gray-0/80 flex h-[24px] items-center gap-[6px] rounded-[8px] px-[6px] py-[4px]">
+                      <div className="bg-gray-0/80 flex h-6 items-center gap-1.5 rounded-lg px-1.5 py-1">
                         <ScreenShareIcon style={{ marginRight: '0.25rem' }} />
                         <ParticipantName participant={trackReference.participant}>
                           Демонстрация&nbsp;

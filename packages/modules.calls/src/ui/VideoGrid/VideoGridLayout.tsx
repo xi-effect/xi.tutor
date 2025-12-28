@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import '@livekit/components-styles';
 import { TrackReferenceOrPlaceholder, isEqualTrackRef } from '@livekit/components-core';
 import { Track } from 'livekit-client';
@@ -11,7 +11,7 @@ import {
   usePagination,
   useSwipe,
 } from '@livekit/components-react';
-import { useSize, useAdaptiveGrid } from '../../hooks';
+import { useSize, useAdaptiveGrid, useEmptyItemContainerOfUser } from '../../hooks';
 import { ParticipantTile } from '../Participant';
 import { SliderVideoGrid } from './SliderVideoGrid';
 import { HorizontalFocusLayout } from './HorizontalFocusLayout';
@@ -29,39 +29,16 @@ export type OrientationLayoutT = {
 };
 
 export const EmptyItemContainerOfUser = ({ ...restProps }) => (
-  <div
-    {...restProps}
-    className="bg-gray-40 flex w-full items-center justify-center rounded-[16px] text-center"
-  >
-    <p className="text-gray-0 font-sans text-3xl">Здесь пока никого нет</p>
+  <div>
+    <div
+      {...restProps}
+      className="bg-gray-40 flex h-auto max-h-full w-auto max-w-full items-center justify-center rounded-2xl text-center"
+      style={{ aspectRatio: 'var(--lk-aspect-ratio)' }}
+    >
+      <p className="text-gray-0 font-sans text-3xl">Здесь пока никого нет</p>
+    </div>
   </div>
 );
-
-const useEmptyItemContainerOfUser = (
-  tracksLength: number,
-  tracks: TrackReferenceOrPlaceholder[],
-) => {
-  const [isOneItem, setIsOneItem] = useState(false);
-
-  useEffect(() => {
-    // Подсчитываем уникальных участников (не треков)
-    const uniqueParticipants = new Set(
-      tracks
-        .filter((track) => track.participant && track.participant.identity)
-        .map((track) => track.participant.identity),
-    );
-
-    // Показываем placeholder если только один участник
-    // Дополнительная проверка: если tracks пустой, но tracksLength > 0,
-    // это может означать, что участники еще не загрузились
-    const shouldShowPlaceholder =
-      uniqueParticipants.size === 1 || (tracks.length === 0 && tracksLength > 0);
-
-    setIsOneItem(shouldShowPlaceholder);
-  }, [tracksLength, tracks]);
-
-  return isOneItem;
-};
 
 export const FocusLayout = ({
   trackRef,
@@ -125,7 +102,7 @@ export const CarouselLayout = ({
       className={`${carouselOrientation === 'horizontal' ? 'm-auto w-full' : 'mx-5 max-w-[277px]'}`}
     >
       {isOneItem && (
-        <div className="h-[144px] w-[250px]">
+        <div className="h-36 w-[250px]">
           <EmptyItemContainerOfUser />
         </div>
       )}
@@ -189,7 +166,7 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
 
       // Устанавливаем кастомные переменные для адаптивности
       gridEl.current.style.setProperty('--lk-tile-size', `${tileSize.width}px`);
-      gridEl.current.style.setProperty('--lk-aspect-ratio', '1');
+      gridEl.current.style.setProperty('--lk-aspect-ratio', `${isDesktop ? '16 / 9' : 'auto'}`);
 
       // Переменные для разных устройств
       gridEl.current.style.setProperty(
@@ -200,7 +177,7 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
   }, [livekitLayout, gridEl, tileSize, isMobile, isTablet, isDesktop]);
 
   return (
-    <div className="m-auto w-full" style={{ height: 'var(--available-height)' }}>
+    <div className="m-auto flex w-full" style={{ height: 'var(--available-height)' }}>
       <div
         ref={gridEl}
         style={
@@ -210,6 +187,8 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
             margin: '0 auto',
             '--lk-tile-width': `${tileSize.width}px`,
             '--lk-tile-height': `${tileSize.height}px`,
+            height: 'auto',
+            alignItems: 'center',
           } as React.CSSProperties
         }
         data-lk-pagination={pagination.totalPageCount + (isOneItem ? 1 : 0) > 1}
@@ -268,7 +247,7 @@ export const CarouselContainer = ({ focusTrack, carouselTracks }: CarouselContai
           width: '100%',
           height: '100%',
         }}
-        className="h-full w-full [&_video]:object-contain lg:[&_video]:object-cover"
+        className="h-full w-full [&_video]:object-cover lg:[&_video]:object-cover"
         {...trackToFocus}
       />
     );
@@ -295,6 +274,7 @@ export const CarouselContainer = ({ focusTrack, carouselTracks }: CarouselContai
   }, [carouselTracks, focusTrack]);
 
   // Выбираем правильный layout в зависимости от ориентации
+
   if (orientation === 'vertical') {
     return <VerticalFocusLayout focus={focusElement} thumbs={thumbElements} />;
   }
