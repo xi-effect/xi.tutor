@@ -113,14 +113,13 @@ export const createPaymentColumns = <Role extends RoleT>({
       filterFn: (row, columnId, value) => value.includes(row.getValue(columnId)),
       enableColumnFilter: true,
     },
-    {
+    usersRole === 'student' && {
       accessorKey: 'actions',
       header: '',
-      cell: ({ row }) =>
-        usersRole === 'student' ? (
-          <ActionsCell invoiceId={row.original.id} classroomId={row.original.classroom_id} />
-        ) : null,
-      size: usersRole === 'student' ? (screenSize === 'desktop' ? 96 : 40) : 0,
+      cell: ({ row }) => (
+        <ActionsCell invoiceId={row.original.id} classroomId={row.original.classroom_id} />
+      ),
+      size: screenSize === 'desktop' ? 96 : 40,
       filterFn: (row, columnId, value) => value.includes(row.getValue(columnId)),
       enableColumnFilter: false,
     },
