@@ -69,10 +69,30 @@ async function probeImage(
 /** POST через сервисные функции запросов (без хуков) */
 async function postUpload(file: File, token: string) {
   const isImage = file.type.startsWith('image/');
-  if (isImage) {
-    return await uploadImageRequest({ file, token });
+  console.log('[postUpload] Начало загрузки файла:', {
+    fileName: file.name,
+    fileType: file.type,
+    fileSize: file.size,
+    isImage,
+    hasToken: !!token,
+  });
+
+  try {
+    const result = isImage
+      ? await uploadImageRequest({ file, token })
+      : await uploadFileRequest({ file, token });
+    console.log('[postUpload] ✅ Файл успешно загружен:', { url: result });
+    return result;
+  } catch (error) {
+    console.error('[postUpload] ❌ Ошибка при загрузке файла:', {
+      error,
+      errorMessage: error instanceof Error ? error.message : String(error),
+      fileName: file.name,
+      fileType: file.type,
+      fileSize: file.size,
+    });
+    throw error;
   }
-  return await uploadFileRequest({ file, token });
 }
 
 /** Основной store — упрощенная версия */
@@ -80,22 +100,77 @@ export const myAssetStore = (token: string) => {
   return {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async upload(_asset: TLAsset, file: File, _abortSignal?: AbortSignal) {
+      console.log('[myAssetStore.upload] Начало загрузки:', {
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+        assetId: _asset.id,
+      });
+
       const opts = { ...DEFAULT_OPTIONS };
 
       // Не изображение — просто загрузка
       if (!file.type.startsWith('image/')) {
+        console.log('[myAssetStore.upload] Файл не является изображением, загружаем как есть');
         const urlUploaded = await postUpload(file, token);
+        console.log('[myAssetStore.upload] ✅ Файл загружен:', { url: urlUploaded });
         return { src: urlUploaded };
       }
 
-      const { file: imageToUpload } = await convertToWebp(file);
+      console.log('[myAssetStore.upload] Начинаем конвертацию в WebP');
+      const convertStartTime = performance.now();
+      const { file: imageToUpload, mimeType } = await convertToWebp(file);
+      const convertEndTime = performance.now();
+      console.log('[myAssetStore.upload] Конвертация завершена:', {
+        duration: `${(convertEndTime - convertStartTime).toFixed(2)}ms`,
+        originalType: file.type,
+        convertedType: imageToUpload.type,
+        mimeType,
+      });
+
+      // Проверяем, что файл действительно WebP
+      if (!imageToUpload.type.includes('webp') && mimeType !== 'image/webp') {
+        console.error('[myAssetStore.upload] ❌ Файл не конвертирован в WebP!', {
+          originalType: file.type,
+          originalSize: file.size,
+          convertedType: imageToUpload.type,
+          convertedSize: imageToUpload.size,
+          mimeType,
+          fileName: imageToUpload.name,
+        });
+        toast.error('Ошибка конвертации', {
+          description:
+            'Не удалось конвертировать изображение в WebP. Попробуйте другое изображение.',
+          duration: 5000,
+        });
+        throw new Error('Изображение не было конвертировано в WebP');
+      }
+
+      console.log('[myAssetStore.upload] Подготовка к загрузке WebP изображения:', {
+        originalType: file.type,
+        originalSize: file.size,
+        convertedType: imageToUpload.type,
+        convertedSize: imageToUpload.size,
+        mimeType,
+        fileName: imageToUpload.name,
+        sizeReduction: `${((1 - imageToUpload.size / file.size) * 100).toFixed(1)}%`,
+      });
 
       let objectUrl: string | null = null;
 
       try {
         // 1) Проверяем размеры изображения
+        console.log('[myAssetStore.upload] Проверяем размеры изображения');
+        const probeStartTime = performance.now();
         const { w: srcW, h: srcH, objectUrl: url } = await probeImage(imageToUpload);
+        const probeEndTime = performance.now();
         objectUrl = url;
+        console.log('[myAssetStore.upload] Размеры изображения:', {
+          width: srcW,
+          height: srcH,
+          megapixels: ((srcW * srcH) / 1_000_000).toFixed(2),
+          probeTime: `${(probeEndTime - probeStartTime).toFixed(2)}ms`,
+        });
 
         // 2) Проверяем лимиты
         const exceedsSideLimit = srcW > opts.maxSide! || srcH > opts.maxSide!;
@@ -111,7 +186,19 @@ export const myAssetStore = (token: string) => {
         }
 
         // 3) Простая загрузка без обработки
+        console.log('[myAssetStore.upload] Отправляем файл на сервер:', {
+          fileName: imageToUpload.name,
+          fileType: imageToUpload.type,
+          fileSize: imageToUpload.size,
+        });
+        const uploadStartTime = performance.now();
         const urlUploaded = await postUpload(imageToUpload, token);
+        const uploadEndTime = performance.now();
+        console.log('[myAssetStore.upload] ✅ Файл успешно загружен на сервер:', {
+          url: urlUploaded,
+          uploadTime: `${(uploadEndTime - uploadStartTime).toFixed(2)}ms`,
+          totalTime: `${(uploadEndTime - convertStartTime).toFixed(2)}ms`,
+        });
         return { src: urlUploaded };
       } finally {
         if (objectUrl) URL.revokeObjectURL(objectUrl);

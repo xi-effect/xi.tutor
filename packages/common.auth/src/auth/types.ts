@@ -4,7 +4,7 @@ import { SignupData } from 'common.types';
 
 export type AuthContextT = {
   isAuthenticated: boolean;
-  login: () => void;
+  login: () => Promise<void>;
   logout: () => void;
   signup: UseMutationResult<AxiosResponse<SignUpResponse>, AxiosError | Error, SignupData, unknown>;
 };

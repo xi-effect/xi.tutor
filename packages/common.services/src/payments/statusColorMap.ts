@@ -1,4 +1,4 @@
-import { PaymentStatusT } from '../types';
+import { PaymentStatusT } from 'common.types';
 
 // Приватная константа - не экспортируется напрямую, чтобы избежать использования как селектора Zustand
 const _statusTextColorMap: Record<PaymentStatusT, string> = {

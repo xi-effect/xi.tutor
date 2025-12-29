@@ -39,7 +39,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       sourcemap: mode === 'debug',
       terserOptions: {
         compress: {
-          drop_console: true, // Удалит все console.*
+          drop_console: true, // Временно отключено для отладки WebP конвертации
           drop_debugger: true, // Удалит debugger
         },
       },

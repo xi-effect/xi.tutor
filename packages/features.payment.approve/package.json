@@ -20,7 +20,7 @@
     "common.config": "*",
     "common.services": "*",
     "common.utils": "*",
-    "features.table": "*"
+    "common.types": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

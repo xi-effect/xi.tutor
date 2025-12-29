@@ -11,11 +11,28 @@ export const WelcomeUserAvatar = () => {
   const [file, setFile] = React.useState<string | ArrayBuffer | null>();
   const [avatarTimestamp, setAvatarTimestamp] = React.useState<number>(Date.now());
 
+  const handleError = (titleError: string, subtitleError?: string) => {
+    if (!titleError) return;
+
+    toast.error(titleError, {
+      ...(subtitleError && { description: subtitleError }),
+      position: 'top-right',
+      richColors: true,
+    });
+  };
+
   const handleInput = async (files: File[]) => {
     if (!files) return;
 
-    if (files[0].size > 5 * 1024 * 1024) {
-      toast('Файл слишком большой');
+    const file = files[0];
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
+    if (!allowedTypes.includes(file.type)) {
+      handleError('Этот формат не поддерживается', 'Загрузите фото в (png, jpeg, webp)');
+      return;
+    }
+
+    if (file.size > 1 * 1024 * 1024) {
+      handleError('Файл слишком большой', 'Выберите фото до 1 Мб');
       return;
     }
 
@@ -50,9 +67,8 @@ export const WelcomeUserAvatar = () => {
         />
         <FileUploader
           onChange={handleInput}
+          onFileError={handleError}
           accept="image/*"
-          withError={false}
-          withLargeError={false}
           size="small"
         />
       </div>
