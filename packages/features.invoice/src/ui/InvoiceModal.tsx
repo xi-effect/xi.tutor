@@ -1,22 +1,24 @@
+import { Button } from '@xipkg/button';
+import { Form } from '@xipkg/form';
+import { Close } from '@xipkg/icons';
 import {
   Modal,
+  ModalCloseButton,
   ModalContent,
+  ModalDescription,
+  ModalFooter,
   ModalHeader,
   ModalTitle,
-  ModalFooter,
-  ModalCloseButton,
-  ModalDescription,
 } from '@xipkg/modal';
-import { Form } from '@xipkg/form';
-import { Button } from '@xipkg/button';
-import { Close } from '@xipkg/icons';
+import { useMediaQuery } from '@xipkg/utils';
+import { useFetchClassrooms } from 'common.services';
 import { useInvoiceForm } from '../hooks';
 import type { FormData } from '../model';
-import { SubjectRow } from './SubjectRow';
-import { CommentField } from './CommentField';
 import { ClassroomSelector } from './ClassroomSelector';
+import { CommentField } from './CommentField';
+import { SubjectRow } from './SubjectRow';
+import { SubjectRowMobile } from './SubjectRowMobile';
 import { TemplateSelector } from './TemplateSelector';
-import { useFetchClassrooms } from 'common.services';
 
 type InvoiceModalProps = {
   open: boolean;
@@ -24,6 +26,9 @@ type InvoiceModalProps = {
 };
 
 export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
+  const isMobile = useMediaQuery('(max-width: 500px)');
+  const isTablet = useMediaQuery('(max-width: 719px)');
+
   const { form, control, handleSubmit, handleClearForm, onSubmit, items, append } =
     useInvoiceForm();
 
@@ -48,18 +53,28 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
 
   return (
     <Modal open={open} onOpenChange={handleCloseModal}>
-      <ModalContent className="max-w-[800px] md:w-[800px]">
-        <ModalCloseButton>
-          <Close className="fill-gray-80 sm:fill-gray-0 dark:fill-gray-100" />
-        </ModalCloseButton>
-        <ModalHeader className="border-gray-20 border-b">
-          <ModalTitle className="dark:text-gray-100">Создание счета на оплату</ModalTitle>
+      <ModalContent className="max-w-[800px] max-sm:w-fit md:w-[800px]">
+        {!isTablet ? (
+          <ModalCloseButton className="">
+            <Close className="fill-gray-80 sm:fill-gray-0 dark:fill-gray-100" />
+          </ModalCloseButton>
+        ) : (
+          <Close className="fill-gray-80 sm:fill-gray-0 absolute top-6 right-6 dark:fill-gray-100" />
+        )}
+
+        <ModalHeader className="border-gray-20 border-b" innerClassName="max-sm:p-4">
+          <ModalTitle className="max-[515px]:max-w-[215px] max-sm:text-xl dark:text-gray-100">
+            Создание счета на оплату
+          </ModalTitle>
           <ModalDescription className="sr-only">Создание счета на оплату</ModalDescription>
         </ModalHeader>
         <Form {...form}>
-          <form onSubmit={handleSubmit(onFormSubmit)} className="flex flex-col gap-6 p-6">
+          <form
+            onSubmit={handleSubmit(onFormSubmit)}
+            className="flex flex-col gap-6 p-6 max-sm:p-4"
+          >
             <div>
-              <p className="text-gray-100">Вы создаёте и отправляете счёт.</p>
+              <p className="text-gray-100 max-sm:text-base">Вы создаёте и отправляете счёт.</p>
               <p className="text-gray-100">
                 Ученик оплачивает счёт напрямую вам — переводом или наличными.
               </p>
@@ -67,9 +82,9 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
 
             <ClassroomSelector control={control} />
 
-            <div className="flex flex-row gap-2">
+            <div className={`flex gap-2 ${isMobile ? 'flex-col' : 'flex-row'}`}>
               <Button
-                className="h-[32px]"
+                className={`h-[32px] ${isMobile ? 'w-full' : 'w-fit'}`}
                 variant="secondary"
                 size="s"
                 type="button"
@@ -81,13 +96,14 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                   });
                 }}
               >
-                Добавить занятие
+                {isMobile ? 'Добавить строку' : 'Добавить занятие'}
               </Button>
 
               <TemplateSelector control={control} />
             </div>
 
-            {items.length > 0 && (
+            {/* TODO: подумать над тем, чтобы сделать один компонент */}
+            {!isMobile && items.length > 0 && (
               <div>
                 <div className="text-gray-60 grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2 text-sm">
                   <span>Занятия</span>
@@ -114,18 +130,40 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                 </div>
               </div>
             )}
+
+            {isMobile && items.length > 0 && (
+              <div>
+                <div className="text-gray-60 grid grid-cols-3 items-center gap-2 text-sm">
+                  <span>Стоимость</span>
+                  <span>Количество</span>
+                  <span>Сумма</span>
+                </div>
+                <div className="my-2 flex flex-col gap-3">
+                  {items.map((_, index) => (
+                    <SubjectRowMobile key={index} control={control} index={index} />
+                  ))}
+                  <div className="grid grid-cols-3 items-center gap-2">
+                    <span className="text-right dark:text-gray-100">Итого:</span>
+                    <span className="text-center dark:text-gray-100">{totalLessons}</span>
+                    <span className="text-right dark:text-gray-100">{totalInvoicePrice} ₽</span>
+                  </div>
+                </div>
+              </div>
+            )}
             <CommentField control={control} />
-            <ModalFooter className="border-gray-20 flex gap-2 border-t px-0 pt-6 pb-0">
+            <ModalFooter
+              className={`border-gray-20 flex gap-2 border-t px-0 pt-6 pb-0 ${isMobile ? 'flex-col' : ''}`}
+            >
               <Button
                 disabled={classrooms && classrooms.length === 0}
-                className="w-[114px] rounded-2xl"
+                className={`${isMobile ? 'w-full' : 'w-[114px]'} rounded-2xl`}
                 type="submit"
                 size="m"
               >
                 Создать
               </Button>
               <Button
-                className="w-[128px] rounded-2xl"
+                className={`${isMobile ? 'w-full' : 'w-[128px]'} rounded-2xl`}
                 size="m"
                 variant="secondary"
                 onClick={handleCloseModal}

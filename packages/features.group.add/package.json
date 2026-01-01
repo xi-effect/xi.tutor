@@ -11,11 +11,13 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
+    "@hookform/resolvers": "^3.3.2",
+    "@tanstack/react-query": "^5.0.0",
     "@xipkg/button": "^3.2.0",
     "@xipkg/command": "^1.0.0",
     "@xipkg/form": "4.2.1",
     "@xipkg/input": "^2.2.9",
-    "@xipkg/modal": "^4.3.0",
+    "@xipkg/modal": "^4.3.1",
     "@xipkg/popover": "^2.1.0",
     "@xipkg/utils": "^1.8.0",
     "common.api": "*",
@@ -23,9 +25,7 @@
     "common.services": "*",
     "lucide-react": "^0.263.1",
     "react-hook-form": "^7.45.4",
-    "zod": "^3.22.4",
-    "@hookform/resolvers": "^3.3.2",
-    "@tanstack/react-query": "^5.0.0"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
