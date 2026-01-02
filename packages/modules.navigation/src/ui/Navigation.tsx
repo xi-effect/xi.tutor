@@ -17,9 +17,9 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
 
 export const Navigation = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useMediaQuery('(max-width: 960px)');
-  const { isOpen, toggle } = useMenuStore();
+  const { isOpen, toggle, isDesktopOpen, setDesktopOpen } = useMenuStore();
 
-  // Для мобильной версии используем useMenuStore, для десктоп - собственное состояние SidebarProvider
+  // Для мобильной версии используем isOpen из useMenuStore для Drawer
   if (isMobile) {
     return (
       <SidebarProvider
@@ -37,7 +37,7 @@ export const Navigation = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  // Для десктоп версии SidebarProvider управляет своим состоянием
+  // Для десктоп версии используем isDesktopOpen из store с сохранением в localStorage
   return (
     <SidebarProvider
       style={
@@ -45,7 +45,8 @@ export const Navigation = ({ children }: { children: React.ReactNode }) => {
           '--sidebar-width': '300px',
         } as React.CSSProperties
       }
-      defaultOpen={true}
+      open={isDesktopOpen}
+      onOpenChange={setDesktopOpen}
     >
       <Header />
       <NavigationLayout>{children}</NavigationLayout>
