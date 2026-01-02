@@ -16,3 +16,4 @@ export { useVideoSecurity } from './useVideoSecurity';
 export { useScreenShareCleanup } from './useScreenShareCleanup';
 export { useVideoBlur } from './useVideoBlur';
 export { useEmptyItemContainerOfUser } from './useEmptyItemContainerOfUser';
+export { useSetParticipantRole } from './useSetParticipantRole';
