@@ -37,10 +37,12 @@ export const useModeSync = () => {
           const currentActiveBoardId = useCallStore.getState().activeBoardId;
 
           // Если пользователь находится на доске (есть activeBoardId),
-          // НЕ переключаем режим на full при получении сообщения от других участников
-          // Это позволяет каждому участнику независимо переключаться между режимами
-          if (payload.mode === 'full' && currentActiveBoardId) {
-            // Пользователь на доске - игнорируем сообщение о переключении на full
+          // проверяем, есть ли boardId в сообщении
+          // Если boardId отсутствует в сообщении о full mode - это означает,
+          // что репетитор хочет переключить всех на full (завершить работу с доской)
+          if (payload.mode === 'full' && currentActiveBoardId && payload.boardId) {
+            // Пользователь на доске, но в сообщении есть boardId - игнорируем
+            // (это сообщение от другого участника, который переключился сам)
             return;
           }
 
@@ -51,9 +53,26 @@ export const useModeSync = () => {
           if (payload.mode === 'compact' && payload.boardId) {
             updateStore('activeBoardId', payload.boardId);
             updateStore('activeClassroom', payload.classroom);
+          } else if (payload.mode === 'full' && !payload.boardId) {
+            // Если получаем full mode без boardId - это означает завершение работы с доской для всех
+            // Сохраняем activeClassroom перед очисткой для навигации
+            const currentActiveClassroom = useCallStore.getState().activeClassroom;
+            const classroomId = payload.classroom || currentActiveClassroom;
+
+            // Очищаем информацию о доске
+            updateStore('activeBoardId', undefined);
+            updateStore('activeClassroom', undefined);
+
+            // Переходим на страницу конференции, если есть classroomId
+            if (classroomId) {
+              navigate({
+                to: '/call/$callId',
+                params: { callId: classroomId },
+              });
+            }
           }
-          // Не очищаем activeBoardId и activeClassroom при переключении на full mode,
-          // чтобы пользователь мог вернуться на доску
+          // Если получаем full mode с boardId (не должно происходить) или compact mode без boardId,
+          // не изменяем activeBoardId и activeClassroom
 
           // Если есть boardId, переходим на доску
           if (payload.boardId && typeof payload.boardId === 'string') {

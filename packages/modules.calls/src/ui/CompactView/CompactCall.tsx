@@ -13,6 +13,13 @@ import { useCompactNavigation } from '../../hooks/useCompactNavigation';
 import { Maximize } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from '@xipkg/dropdown';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useCallStore } from '../../store/callStore';
 import { CompactNavigationControls } from './CompactNavigationControls';
@@ -101,7 +108,7 @@ export const CompactCall = ({ saveUserChoices = true }) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  const handleMaximize = () => {
+  const handleMaximize = (syncToAll: boolean = false) => {
     // Проверяем, что комната подключена (чтобы не терять ВКС)
     if (!room || !token || room.state !== 'connected') {
       return;
@@ -110,11 +117,21 @@ export const CompactCall = ({ saveUserChoices = true }) => {
     // Переключаем режим на full
     updateStore('mode', 'full');
 
-    // Синхронизируем режим с другими участниками только если это репетитор
-    // Ученики не должны влиять на режим других участников при переключении на full
-    // (репетитор может переключать всех на доску, но ученики переключаются только локально)
     if (isTutor && activeBoardId && activeClassroom) {
-      syncModeToOthers('full', undefined, undefined);
+      if (syncToAll) {
+        // Сохраняем activeClassroom перед очисткой для передачи в сообщении
+        const classroomId = activeClassroom;
+
+        // Если синхронизируем со всеми, очищаем информацию о доске
+        updateStore('activeBoardId', undefined);
+        updateStore('activeClassroom', undefined);
+        // Отправляем сообщение всем участникам о переключении на full (без boardId, но с classroom)
+        // Это сигнал для всех участников, что работа с доской завершена
+        // Передаем classroom, чтобы студенты могли перейти на страницу конференции
+        syncModeToOthers('full', undefined, classroomId);
+      }
+      // Если syncToAll = false, не отправляем сообщение другим участникам
+      // Они останутся на доске, а репетитор переключится только локально
     }
 
     // Переходим на страницу конференции с сохранением параметра call
@@ -188,19 +205,55 @@ export const CompactCall = ({ saveUserChoices = true }) => {
           <RaiseHandButton className="h-[32px] w-[32px]" />
         </div>
         <div className="bg-gray-0 border-gray-20 ml-1 flex items-center justify-center rounded-2xl border p-1 shadow-lg">
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={handleMaximize}
-                className="hover:bg-gray-5 relative m-0 h-8 w-8 rounded-xl p-0 text-gray-100"
-              >
-                <Maximize className="fill-gray-100" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Вернуться в конференцию</TooltipContent>
-          </Tooltip>
+          {isTutor ? (
+            <DropdownMenu>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="hover:bg-gray-5 relative m-0 h-8 w-8 rounded-xl p-0 text-gray-100"
+                    >
+                      <Maximize className="fill-gray-100" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                </TooltipTrigger>
+                <TooltipContent>Вернуться в конференцию</TooltipContent>
+              </Tooltip>
+              <DropdownMenuContent side="top" align="end" className="z-1000 min-w-[200px]">
+                <DropdownMenuLabel className="text-gray-60 text-sm">
+                  Вернуть в конференцию
+                </DropdownMenuLabel>
+                <DropdownMenuItem
+                  onClick={() => handleMaximize(false)}
+                  className="text-gray-80 cursor-pointer text-sm"
+                >
+                  Только меня
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleMaximize(true)}
+                  className="text-gray-80 cursor-pointer text-sm"
+                >
+                  Всех участников
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => handleMaximize(false)}
+                  className="hover:bg-gray-5 relative m-0 h-8 w-8 rounded-xl p-0 text-gray-100"
+                >
+                  <Maximize className="fill-gray-100" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Вернуться в конференцию</TooltipContent>
+            </Tooltip>
+          )}
           <DisconnectButton className="h-[32px] w-[32px] rounded-xl" />
         </div>
       </div>
