@@ -6,16 +6,12 @@ import { useHandFocus } from '../../hooks/useHandFocus';
 import { CallsOnboarding } from '../Onboarding/CallsOnboarding';
 import { useLocalParticipant } from '@livekit/components-react';
 import { LocalVideoTrack } from 'livekit-client';
-import { useVideoBlur, useSetParticipantRole } from '../../hooks';
+import { useVideoBlur } from '../../hooks';
 import { useCallStore } from '../../store/callStore';
 
 export const ActiveRoom = () => {
   // Автоматический фокус на участниках с поднятыми руками
   useHandFocus();
-
-  // Устанавливаем роль участника на основе default_layout пользователя
-  useSetParticipantRole();
-
   // Получаем видео трек для применения блюра
   const { cameraTrack } = useLocalParticipant();
   const videoTrack = cameraTrack?.track as LocalVideoTrack | undefined;

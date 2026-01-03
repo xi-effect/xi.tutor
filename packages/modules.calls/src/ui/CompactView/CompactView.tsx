@@ -15,7 +15,6 @@ import { CompactCall } from './CompactCall';
 import { useCallStore } from '../../store/callStore';
 import type { Corner } from '../../store/callStore';
 import { useNavigate, useRouter, useSearch } from '@tanstack/react-router';
-// import { Chat } from '../Chat/Chat';
 import { useRoom } from '../../providers/RoomProvider';
 
 type CompactViewProps = {

@@ -25,11 +25,6 @@ export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
   const { isMicrophoneEnabled, isCameraEnabled, microphoneTrack, cameraTrack } =
     useLocalParticipant();
 
-  // Получаем device ID из user choices (пока не используем, но оставляем для будущего)
-  // const {
-  //   userChoices: { audioDeviceId, videoDeviceId },
-  // } = usePersistentUserChoices();
-
   // Используем useTrackToggle для правильного управления треками (как в Settings)
   const microphoneToggle = useTrackToggle({
     source: Track.Source.Microphone,
