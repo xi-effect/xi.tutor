@@ -70,8 +70,6 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
     if (!callId) return;
 
     try {
-      console.log('🎯 Creating new board...');
-
       const result = await addClassroomMaterials.mutateAsync({
         classroomId: callId,
         content_kind: 'board',
@@ -80,7 +78,6 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
 
       if (result?.data?.id) {
         const newBoardId = parseInt(result.data.id);
-        console.log('✅ New board created with ID:', newBoardId);
 
         // Выбираем новую доску
         setSelectedBoardId(newBoardId);
@@ -88,11 +85,7 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
         // Если включен режим совместной работы, отправляем сообщение всем участникам
         if (isCollaborativeMode) {
           syncModeToOthers('compact', newBoardId.toString(), callId);
-          console.log('📤 Mode sync message sent to all participants for new board');
         }
-
-        // НЕ переходим на новую доску автоматически - пользователь может выбрать её вручную
-        console.log('✅ New board created and selected, ready for manual navigation');
       }
     } catch (error) {
       console.error('❌ Error creating new board:', error);
@@ -101,16 +94,14 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
 
   const handleConfirm = () => {
     if (selectedBoardId) {
-      console.log('🎯 WhiteboardsModal: handleConfirm called with boardId:', selectedBoardId);
-
-      // Обновляем локальный режим
+      // Обновляем локальный режим и сохраняем информацию о доске
       updateStore('mode', 'compact');
-      console.log('✅ Local mode updated to compact');
+      updateStore('activeBoardId', selectedBoardId.toString());
+      updateStore('activeClassroom', callId);
 
       // Если включен режим совместной работы, отправляем сообщение всем участникам
       if (isCollaborativeMode) {
         syncModeToOthers('compact', selectedBoardId.toString(), callId);
-        console.log('📤 Mode sync message sent to all participants for collaborative mode');
       }
 
       // Переходим на доску
@@ -126,7 +117,6 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
           params: { boardId: selectedBoardId.toString() },
         });
       }
-      console.log('🧭 Navigation to board initiated');
 
       onOpenChange(false);
     }

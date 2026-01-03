@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import { useNavigate } from '@tanstack/react-router';
-import { RemoteParticipant } from 'livekit-client';
 import { useCallStore } from '../store/callStore';
 import { useLiveKitDataChannel, useLiveKitDataChannelListener } from './useLiveKitDataChannel';
 
@@ -18,7 +17,7 @@ export const useModeSync = () => {
   const { sendMessage } = useLiveKitDataChannel();
 
   const handleModeSyncMessage = useCallback(
-    (message: { type: string; payload: unknown }, participant?: RemoteParticipant) => {
+    (message: { type: string; payload: unknown }) => {
       try {
         if (message.type === MODE_SYNC_MESSAGE_TYPE) {
           const payload = message.payload as ModeSyncPayload;
@@ -34,20 +33,21 @@ export const useModeSync = () => {
             return;
           }
 
-          console.log(
-            '🔄 Received mode sync message:',
-            payload,
-            'from participant:',
-            participant?.identity,
-          );
-
           // Обновляем режим в store
           updateStore('mode', payload.mode);
-          console.log('✅ Mode updated in store to:', payload.mode);
+
+          // Сохраняем информацию о доске в store
+          if (payload.mode === 'compact' && payload.boardId) {
+            updateStore('activeBoardId', payload.boardId);
+            updateStore('activeClassroom', payload.classroom);
+          } else if (payload.mode === 'full') {
+            // Очищаем информацию о доске при переключении на full mode
+            updateStore('activeBoardId', undefined);
+            updateStore('activeClassroom', undefined);
+          }
 
           // Если есть boardId, переходим на доску
           if (payload.boardId && typeof payload.boardId === 'string') {
-            console.log('🎯 Navigating to board:', payload.boardId);
             if (payload.classroom) {
               navigate({
                 to: '/classrooms/$classroomId/boards/$boardId',
@@ -94,14 +94,23 @@ export const useModeSync = () => {
           classroom,
         };
 
-        console.log('📤 Sending mode sync message to all participants:', payload);
+        // Сохраняем информацию о доске в store при отправке сообщения
+        if (mode === 'compact' && boardId) {
+          updateStore('activeBoardId', boardId);
+          updateStore('activeClassroom', classroom);
+        } else if (mode === 'full') {
+          // Очищаем информацию о доске при переключении на full mode
+          updateStore('activeBoardId', undefined);
+          updateStore('activeClassroom', undefined);
+        }
+
         sendMessage(MODE_SYNC_MESSAGE_TYPE, payload);
       } catch (error) {
         console.error('❌ Error sending mode sync message:', error);
         // Не выбрасываем ошибку, чтобы не нарушить соединение
       }
     },
-    [sendMessage],
+    [sendMessage, updateStore],
   );
 
   return {

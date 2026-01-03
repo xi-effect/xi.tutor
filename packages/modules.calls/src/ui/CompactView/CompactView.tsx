@@ -14,8 +14,9 @@ import { RoomAudioRenderer } from '@livekit/components-react';
 import { CompactCall } from './CompactCall';
 import { useCallStore } from '../../store/callStore';
 import type { Corner } from '../../store/callStore';
-import { useNavigate, useRouter, useSearch } from '@tanstack/react-router';
+import { useNavigate, useRouter, useSearch, useLocation } from '@tanstack/react-router';
 import { useRoom } from '../../providers/RoomProvider';
+import { useParticipantJoinSync } from '../../hooks/useParticipantJoinSync';
 
 type CompactViewProps = {
   children: React.ReactNode;
@@ -138,12 +139,24 @@ export const CompactView = ({ children }: CompactViewProps) => {
   const { room } = useRoom();
   const { token } = useCallStore();
 
+  // Синхронизация состояния при подключении новых участников (работает и в compact mode)
+  useParticipantJoinSync();
+
   const search = useSearch({ strict: false }) as { call?: string };
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Очищаем URL параметр call, если комната не инициализирована
+  // Очищаем URL параметр call, только если комната действительно отключена
+  // Не очищаем при навигации, если есть activeClassroom в store (комната может быть в процессе подключения)
   useEffect(() => {
-    if ((!room || !token) && search.call) {
+    const { activeClassroom } = useCallStore.getState();
+    const isOnBoardPage = location.pathname.includes('/board');
+
+    // Очищаем только если:
+    // 1. Комната и токен отсутствуют
+    // 2. НЕ находимся на странице доски (чтобы не очищать при навигации на доску)
+    // 3. НЕТ activeClassroom в store (комната действительно отключена, а не в процессе подключения)
+    if ((!room || !token) && search.call && !isOnBoardPage && !activeClassroom) {
       const searchWithoutCall = { ...search };
       delete searchWithoutCall.call;
       navigate({
