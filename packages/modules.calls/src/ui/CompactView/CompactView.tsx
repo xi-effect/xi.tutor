@@ -176,6 +176,10 @@ export const CompactView = ({ children }: CompactViewProps) => {
       updateCallStore('chatMessages', []);
       updateCallStore('unreadMessagesCount', 0);
 
+      // Очищаем информацию о доске при отключении
+      updateCallStore('activeBoardId', undefined);
+      updateCallStore('activeClassroom', undefined);
+
       updateCallStore('mode', 'full');
     }
   }, [room, token, search.call, search, navigate]);

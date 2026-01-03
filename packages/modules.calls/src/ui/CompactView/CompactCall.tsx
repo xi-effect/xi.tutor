@@ -19,7 +19,9 @@ import { CompactNavigationControls } from './CompactNavigationControls';
 import { ParticipantTile } from '../Participant';
 import { ScreenShareButton } from '../Bottom/ScreenShareButton';
 import { RaiseHandButton } from '../Bottom/RaiseHandButton';
-import { useVideoBlur } from '../../hooks';
+import { useVideoBlur, useModeSync } from '../../hooks';
+import { useRoom } from '../../providers/RoomProvider';
+import { useCurrentUser } from 'common.services';
 
 export const CompactCall = ({ saveUserChoices = true }) => {
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
@@ -91,10 +93,38 @@ export const CompactCall = ({ saveUserChoices = true }) => {
 
   const navigate = useNavigate();
   const updateStore = useCallStore((state) => state.updateStore);
+  const { syncModeToOthers } = useModeSync();
+  const activeBoardId = useCallStore((state) => state.activeBoardId);
+  const activeClassroom = useCallStore((state) => state.activeClassroom);
+  const { room } = useRoom();
+  const token = useCallStore((state) => state.token);
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
 
   const handleMaximize = () => {
-    navigate({ to: '/call/$callId', params: { callId: call ?? '' } });
+    // Проверяем, что комната подключена (чтобы не терять ВКС)
+    if (!room || !token || room.state !== 'connected') {
+      return;
+    }
+
+    // Переключаем режим на full
     updateStore('mode', 'full');
+
+    // Синхронизируем режим с другими участниками только если это репетитор
+    // Ученики не должны влиять на режим других участников при переключении на full
+    // (репетитор может переключать всех на доску, но ученики переключаются только локально)
+    if (isTutor && activeBoardId && activeClassroom) {
+      syncModeToOthers('full', undefined, undefined);
+    }
+
+    // Переходим на страницу конференции с сохранением параметра call
+    navigate({
+      to: '/call/$callId',
+      params: { callId: call ?? activeClassroom ?? '' },
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      search: call || activeClassroom ? { call: call || activeClassroom } : undefined,
+    });
   };
 
   return (

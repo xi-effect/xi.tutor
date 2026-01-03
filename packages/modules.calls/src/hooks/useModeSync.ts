@@ -33,6 +33,17 @@ export const useModeSync = () => {
             return;
           }
 
+          // Получаем текущее состояние доски
+          const currentActiveBoardId = useCallStore.getState().activeBoardId;
+
+          // Если пользователь находится на доске (есть activeBoardId),
+          // НЕ переключаем режим на full при получении сообщения от других участников
+          // Это позволяет каждому участнику независимо переключаться между режимами
+          if (payload.mode === 'full' && currentActiveBoardId) {
+            // Пользователь на доске - игнорируем сообщение о переключении на full
+            return;
+          }
+
           // Обновляем режим в store
           updateStore('mode', payload.mode);
 
@@ -40,11 +51,9 @@ export const useModeSync = () => {
           if (payload.mode === 'compact' && payload.boardId) {
             updateStore('activeBoardId', payload.boardId);
             updateStore('activeClassroom', payload.classroom);
-          } else if (payload.mode === 'full') {
-            // Очищаем информацию о доске при переключении на full mode
-            updateStore('activeBoardId', undefined);
-            updateStore('activeClassroom', undefined);
           }
+          // Не очищаем activeBoardId и activeClassroom при переключении на full mode,
+          // чтобы пользователь мог вернуться на доску
 
           // Если есть boardId, переходим на доску
           if (payload.boardId && typeof payload.boardId === 'string') {
@@ -98,11 +107,9 @@ export const useModeSync = () => {
         if (mode === 'compact' && boardId) {
           updateStore('activeBoardId', boardId);
           updateStore('activeClassroom', classroom);
-        } else if (mode === 'full') {
-          // Очищаем информацию о доске при переключении на full mode
-          updateStore('activeBoardId', undefined);
-          updateStore('activeClassroom', undefined);
         }
+        // Не очищаем activeBoardId и activeClassroom при переключении на full mode,
+        // чтобы пользователь мог вернуться на доску
 
         sendMessage(MODE_SYNC_MESSAGE_TYPE, payload);
       } catch (error) {

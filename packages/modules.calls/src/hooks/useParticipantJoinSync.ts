@@ -88,6 +88,22 @@ export const useParticipantJoinSync = () => {
             return;
           }
 
+          // Получаем текущий режим и состояние доски
+          const currentMode = useCallStore.getState().mode;
+          const currentActiveBoardId = useCallStore.getState().activeBoardId;
+          const isOnBoardPage = window.location.pathname.includes('/board');
+
+          // Если студент уже в full mode и НЕ на доске, проверяем, был ли он на доске ранее
+          // Если был activeBoardId (студент был на доске и переключился на full),
+          // то НЕ переключаем его обратно на доску
+          // Если НЕТ activeBoardId (студент только что подключился), то переключаемся на доску
+          const wasOnBoard = currentActiveBoardId !== undefined;
+
+          if (currentMode === 'full' && !isOnBoardPage && wasOnBoard) {
+            // Студент сам переключился на full mode с доски - игнорируем ответ о compact mode
+            return;
+          }
+
           // Если репетитор в compact mode на доске, переключаемся на эту доску
           if (payload.mode === 'compact' && payload.boardId) {
             // Обновляем режим в store
@@ -239,6 +255,8 @@ export const useParticipantJoinSync = () => {
         return;
       }
 
+      // Всегда запрашиваем состояние при подключении
+      // Защита от автоматического переключения обратно на доску реализована в handleStateResponse
       const localParticipant = room.localParticipant;
       if (!localParticipant) {
         return;
@@ -313,5 +331,5 @@ export const useParticipantJoinSync = () => {
     return () => {
       room.off(RoomEvent.ConnectionStateChanged, handleConnectionStateChanged);
     };
-  }, [room, isTutor, sendMessageToParticipant]);
+  }, [room, isTutor, sendMessageToParticipant, mode]);
 };
