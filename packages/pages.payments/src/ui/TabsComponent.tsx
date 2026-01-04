@@ -64,7 +64,7 @@ export const TabsComponent = React.memo(({ onApprovePayment }: PaymentApprovalFu
 
   return (
     <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
-      <Tabs.List className="flex w-80 flex-row gap-4">
+      <Tabs.List className="w-[calc(100% - 16px)] xs:w-80 xs:flex xs:flex-row mr-4 grid grid-cols-2 gap-4">
         <Tabs.Trigger value="invoices" className="text-m-base font-medium text-gray-100">
           Журнал оплат
         </Tabs.Trigger>

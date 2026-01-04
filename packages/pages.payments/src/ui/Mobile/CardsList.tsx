@@ -28,7 +28,7 @@ export const CardsList = <Role extends RoleT>({
   currentUserRole,
 }: CardsListPropsT<Role>) => {
   return (
-    <div className="h-[calc(100dvh-154px)] w-full overflow-y-auto pr-4 pl-px" ref={parentRef}>
+    <div className="h-[calc(100dvh-154px)] w-full overflow-y-auto pr-2 pl-px" ref={parentRef}>
       <div
         style={{
           height: `${rowVirtualizer.getTotalSize()}px`,
