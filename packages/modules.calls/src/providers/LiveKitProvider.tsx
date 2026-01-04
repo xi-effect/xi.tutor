@@ -13,6 +13,7 @@ type LiveKitProviderProps = {
 export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
   const { room } = useRoom();
   const { audioEnabled, videoEnabled, connect, token, updateStore } = useCallStore();
+  const { callId } = useParams({ strict: false });
 
   const { isStarted } = useCallStore();
   const wasConnectedRef = useRef(false);
@@ -21,6 +22,16 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
   const handleConnect = () => {
     wasConnectedRef.current = true;
     updateStore('connect', true);
+
+    // При подключении проверяем, соответствует ли activeClassroom текущему callId
+    // Если нет - очищаем информацию о доске (возможно, подключились к другой ВКС)
+    const { activeClassroom } = useCallStore.getState();
+
+    if (activeClassroom && callId && activeClassroom !== callId) {
+      // Подключились к другой ВКС - очищаем информацию о доске
+      updateStore('activeBoardId', undefined);
+      updateStore('activeClassroom', undefined);
+    }
   };
 
   const handleDisconnect = () => {
@@ -48,6 +59,10 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
     updateCallStore('chatMessages', []);
     updateCallStore('unreadMessagesCount', 0);
 
+    // Очищаем информацию о доске при отключении
+    updateCallStore('activeBoardId', undefined);
+    updateCallStore('activeClassroom', undefined);
+
     // Удаляем параметр call из URL при отключении
     if (search.call) {
       const searchWithoutCall = { ...search };
@@ -63,7 +78,6 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
   };
 
   const location = useLocation();
-  const { callId } = useParams({ strict: false });
   const navigate = useNavigate();
   const search = useSearch({ strict: false }) as { call?: string };
 

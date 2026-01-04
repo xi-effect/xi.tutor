@@ -29,14 +29,11 @@ export type OrientationLayoutT = {
 };
 
 export const EmptyItemContainerOfUser = ({ ...restProps }) => (
-  <div>
-    <div
-      {...restProps}
-      className="bg-gray-40 flex h-auto max-h-full w-auto max-w-full items-center justify-center rounded-2xl text-center"
-      style={{ aspectRatio: 'var(--lk-aspect-ratio)' }}
-    >
-      <p className="text-gray-0 font-sans text-3xl">Здесь пока никого нет</p>
-    </div>
+  <div
+    {...restProps}
+    className="bg-gray-40 flex aspect-video max-h-full w-full max-w-full items-center justify-center rounded-2xl text-center"
+  >
+    <p className="text-gray-0 font-sans text-3xl">Здесь пока никого нет</p>
   </div>
 );
 

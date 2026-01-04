@@ -49,7 +49,7 @@ export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
     }
 
     if (isConnecting) {
-      console.log('Already connecting to room...');
+      // console.log('Already connecting to room...');
       return;
     }
 
@@ -66,7 +66,7 @@ export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
       updateStore('audioEnabled', audioTrack ? !audioTrack.isMuted : false);
       updateStore('videoEnabled', videoTrack ? !videoTrack.isMuted : false);
 
-      console.log('Preparing to join room...');
+      // console.log('Preparing to join room...');
 
       // LiveKitRoom автоматически управляет подключением
       // Нам нужно только установить флаг подключения
@@ -74,13 +74,13 @@ export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
       updateStore('isStarted', true);
       updateStore('isConnecting', false);
 
-      console.log('Successfully joined room with devices:', {
-        audioDeviceId,
-        audioOutputDeviceId,
-        videoDeviceId,
-        audioEnabled: audioTrack ? !audioTrack.isMuted : false,
-        videoEnabled: videoTrack ? !videoTrack.isMuted : false,
-      });
+      // console.log('Successfully joined room with devices:', {
+      //   audioDeviceId,
+      //   audioOutputDeviceId,
+      //   videoDeviceId,
+      //   audioEnabled: audioTrack ? !audioTrack.isMuted : false,
+      //   videoEnabled: videoTrack ? !videoTrack.isMuted : false,
+      // });
     } catch (error) {
       console.error('Failed to join room:', error);
 

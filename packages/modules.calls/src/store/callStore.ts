@@ -41,6 +41,10 @@ type useCallStoreT = {
   carouselType: 'grid' | 'horizontal' | 'vertical';
   activeCorner: Corner;
 
+  // Текущая активная доска (для синхронизации с новыми участниками)
+  activeBoardId: string | undefined;
+  activeClassroom: string | undefined;
+
   // токен для конференции
   token: string | undefined;
 
@@ -79,6 +83,10 @@ export const useCallStore = create<useCallStoreT>()(
       mode: 'full',
       carouselType: 'grid',
       activeCorner: 'top-left',
+
+      // Текущая активная доска
+      activeBoardId: undefined,
+      activeClassroom: undefined,
 
       // токен для конференции
       token: undefined,

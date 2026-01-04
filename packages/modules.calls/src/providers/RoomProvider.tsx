@@ -35,6 +35,7 @@ export const RoomProvider = ({ children }: RoomProviderProps) => {
       adaptiveStream: false,
       // Включаем dynacast для динамической подписки на треки
       dynacast: true,
+      disconnectOnPageLeave: false,
     };
 
     const newRoom = new Room(roomOptions);

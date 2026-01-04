@@ -6,13 +6,14 @@ import { useHandFocus } from '../../hooks/useHandFocus';
 import { CallsOnboarding } from '../Onboarding/CallsOnboarding';
 import { useLocalParticipant } from '@livekit/components-react';
 import { LocalVideoTrack } from 'livekit-client';
-import { useVideoBlur } from '../../hooks';
+import { useVideoBlur, useParticipantJoinSync } from '../../hooks';
 import { useCallStore } from '../../store/callStore';
 
 export const ActiveRoom = () => {
   // Автоматический фокус на участниках с поднятыми руками
   useHandFocus();
-
+  // Синхронизация состояния при подключении новых участников
+  useParticipantJoinSync();
   // Получаем видео трек для применения блюра
   const { cameraTrack } = useLocalParticipant();
   const videoTrack = cameraTrack?.track as LocalVideoTrack | undefined;

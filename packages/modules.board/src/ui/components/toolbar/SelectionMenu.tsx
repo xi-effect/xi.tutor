@@ -3,6 +3,7 @@ import { track, useEditor } from 'tldraw';
 import { Button } from '@xipkg/button';
 import { Trash, Copy, Unlocked } from '@xipkg/icons';
 import { MoreActionsMenu } from './MoreActionsMenu';
+import { ColorPicker } from './ColorPicker';
 import { useYjsContext } from '../../../providers/YjsProvider';
 
 export const SelectionMenu = track(function SelectionMenu() {
@@ -89,6 +90,7 @@ export const SelectionMenu = track(function SelectionMenu() {
           >
             <Trash />
           </Button>
+          <ColorPicker />
           <MoreActionsMenu />
         </>
       )}
