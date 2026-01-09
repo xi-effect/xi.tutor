@@ -40,7 +40,7 @@ export const TabsTutor = () => {
 
   return (
     <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
-      <div className="flex h-[56px] flex-row items-center gap-4 overflow-x-auto">
+      <div className="flex h-[56px] flex-row items-center gap-4 overflow-x-auto pr-4 pl-4 sm:pr-0">
         <Tabs.List className="flex flex-row gap-4">
           <Tabs.Trigger value="overview" className="text-m-base font-medium text-gray-100">
             Сводка
