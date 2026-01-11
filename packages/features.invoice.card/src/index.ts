@@ -1,1 +1,1 @@
-export { InvoiceCard } from './ui/InvoiceCard';
+export { InvoiceCard, StatusBadge } from './ui';

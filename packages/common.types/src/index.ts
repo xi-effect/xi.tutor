@@ -42,3 +42,4 @@ export type {
 export type { SignupData } from './auth';
 export type { ContactT, ContactsT } from './contacts';
 export type { NotificationKind } from './notifications';
+export type { ScreenSizeT } from './screenSize';

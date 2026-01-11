@@ -1,6 +1,4 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react';
-import { Button } from '@xipkg/button';
-import { Plus } from '@xipkg/icons';
 import { InvoiceModal } from 'features.invoice';
 import { PaymentApproveModal } from 'features.payment.approve';
 import { RolePaymentT, useInfiniteQuery } from 'features.table';
@@ -158,14 +156,6 @@ export const PaymentsPage = () => {
         <TabsComponent onApprovePayment={onOpenPaymentApproveModal} />
       </div>
 
-      <div className="xs:hidden flex flex-row items-center justify-end">
-        <Button
-          size="small"
-          className="fixed right-4 bottom-10 z-50 flex h-12 w-12 items-center justify-center rounded-xl"
-        >
-          <Plus className="fill-brand-0" />
-        </Button>
-      </div>
       {paymentApproveModalState.isOpen && paymentApproveModalState.payment && (
         <PaymentApproveModal
           open={paymentApproveModalState.isOpen}

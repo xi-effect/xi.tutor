@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { PaymentApproveButton, PaymentApproveModal } from '.';
 import { PaymentApproveActionPropsT } from '../types';
 
-export const PaymentApproveAction = ({ payment, isTutor }: PaymentApproveActionPropsT) => {
+export const PaymentApproveAction = ({ payment, isTutor, type }: PaymentApproveActionPropsT) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handleModalState = () => setIsOpen((prev) => !prev);
@@ -17,6 +17,7 @@ export const PaymentApproveAction = ({ payment, isTutor }: PaymentApproveActionP
         isTutor={isTutor}
         id={payment.id}
         classroomId={payment.classroom_id}
+        type={type}
       />
       {isOpen && payment && (
         <PaymentApproveModal

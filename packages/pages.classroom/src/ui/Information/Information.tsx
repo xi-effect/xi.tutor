@@ -167,7 +167,7 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
   }, [form, onSubmit]);
 
   return (
-    <div className="flex flex-col gap-4 md:flex-row">
+    <div className="flex flex-col gap-4 pr-4 sm:pr-0 md:flex-row">
       <div className="order-2 flex h-full w-full flex-1 justify-center md:order-1">
         <InformationNote classroom={classroom} note={note} />
       </div>
