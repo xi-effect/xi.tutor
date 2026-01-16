@@ -5,7 +5,7 @@ import { Arrow, Conference } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { useCurrentUser, useUserByRole } from 'common.services';
-import { SubjectBadge } from './SubjectBadge';
+import { SubjectBadge } from 'features.classroom';
 
 type UserAvatarPropsT = {
   classroom: IndividualClassroomT;
@@ -85,7 +85,12 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
       </Tooltip>
 
       {classroom.subject_id ? (
-        <SubjectBadge subject_id={classroom.subject_id} />
+        <SubjectBadge
+          subject_id={classroom.subject_id}
+          isTooltip
+          className="max-w-[calc(100%-32px)] overflow-hidden"
+          textStyles="truncate max-w-full"
+        />
       ) : (
         <div className="h-7 w-7" />
       )}
