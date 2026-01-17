@@ -99,17 +99,12 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
   useScreenShareCleanup(tracks);
 
   return (
-    <div className="align-stretch relative flex h-full justify-center" {...props}>
+    <div className="align-stretch relative flex h-full w-full justify-center" {...props}>
       {isWeb() && (
         <LayoutContextProvider value={layoutContext}>
-          <div
-            className="flex-column align-stretch flex"
-            style={{
-              width: carouselType === 'grid' && canUseFocusLayout ? '' : '100%',
-            }}
-          >
+          <div className="flex h-full w-full items-center justify-center">
             {effectiveCarouselType === 'grid' ? (
-              <div className="h-full">
+              <div className="h-full w-full">
                 <GridLayout tracks={tracks}>
                   <ParticipantTile
                     isFocusToggleDisable
@@ -124,7 +119,7 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
                 </GridLayout>
               </div>
             ) : (
-              <div className="lk-focus-layout-wrapper">
+              <div className="h-[var(--available-height)] max-h-[var(--available-height)] w-full overflow-hidden">
                 <CarouselContainer focusTrack={focusTrack} carouselTracks={carouselTracks} />
               </div>
             )}
