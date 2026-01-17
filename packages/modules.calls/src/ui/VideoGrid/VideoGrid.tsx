@@ -1,5 +1,4 @@
 import React from 'react';
-import '@livekit/components-styles';
 import type { TrackReferenceOrPlaceholder } from '@livekit/components-core';
 import { isEqualTrackRef, isTrackReference, isWeb, log } from '@livekit/components-core';
 import { RoomEvent, Track } from 'livekit-client';
@@ -100,13 +99,13 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
   useScreenShareCleanup(tracks);
 
   return (
-    <div className="lk-video-conference flex w-full justify-center" {...props}>
+    <div className="align-stretch relative flex h-full justify-center" {...props}>
       {isWeb() && (
         <LayoutContextProvider value={layoutContext}>
           <div
-            className="lk-video-conference-inner"
+            className="flex-column align-stretch flex"
             style={{
-              width: carouselType === 'grid' && canUseFocusLayout ? 'auto' : '100%',
+              width: carouselType === 'grid' && canUseFocusLayout ? '' : '100%',
             }}
           >
             {effectiveCarouselType === 'grid' ? (

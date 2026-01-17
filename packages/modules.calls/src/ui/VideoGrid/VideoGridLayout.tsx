@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import '@livekit/components-styles';
 import { TrackReferenceOrPlaceholder, isEqualTrackRef } from '@livekit/components-core';
 import { Track } from 'livekit-client';
 import {
@@ -174,17 +173,20 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
   }, [livekitLayout, gridEl, tileSize, isMobile, isTablet, isDesktop]);
 
   return (
-    <div className="m-auto flex w-full" style={{ height: 'var(--available-height)' }}>
+    <div
+      className="m-auto flex items-center justify-center"
+      style={{ height: 'var(--available-height)' }}
+    >
       <div
         ref={gridEl}
         style={
           {
             gap: '1rem',
-            maxWidth: '100%',
-            margin: '0 auto',
+            // maxWidth: '100%',
+            // margin: '0 auto',
             '--lk-tile-width': `${tileSize.width}px`,
             '--lk-tile-height': `${tileSize.height}px`,
-            height: 'auto',
+            // height: 'auto',
             alignItems: 'center',
           } as React.CSSProperties
         }
