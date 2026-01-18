@@ -6,19 +6,9 @@ import { ParticipantTile } from '../Participant';
 import { HorizontalFocusLayout } from './HorizontalFocusLayout';
 import { VerticalFocusLayout } from './VerticalFocusLayout';
 import { useCallStore } from '../../store/callStore';
-
 export type OrientationLayoutT = {
   orientation: 'vertical' | 'horizontal' | 'grid';
 };
-
-export const EmptyItemContainerOfUser = ({ ...restProps }) => (
-  <div
-    {...restProps}
-    className="bg-gray-40 flex aspect-video max-h-full w-full max-w-full items-center justify-center rounded-2xl text-center"
-  >
-    <p className="text-gray-0 font-sans text-3xl">Здесь пока никого нет</p>
-  </div>
-);
 
 export const FocusLayout = ({
   trackRef,
@@ -123,7 +113,7 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const count = tracks.length;
 
-  useMeetLayout(containerRef as React.RefObject<HTMLElement>, count, 16);
+  useMeetLayout(containerRef as React.RefObject<HTMLElement>, count, 8);
 
   const gridStyle = useMemo<React.CSSProperties>(
     () => ({

@@ -3,7 +3,6 @@ import type { TrackReferenceOrPlaceholder } from '@livekit/components-core';
 import { isEqualTrackRef, isTrackReference, isWeb, log } from '@livekit/components-core';
 import { RoomEvent, Track } from 'livekit-client';
 import {
-  ConnectionStateToast,
   LayoutContextProvider,
   RoomAudioRenderer,
   VideoConferenceProps,
@@ -127,7 +126,6 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
         </LayoutContextProvider>
       )}
       <RoomAudioRenderer />
-      <ConnectionStateToast />
     </div>
   );
 };

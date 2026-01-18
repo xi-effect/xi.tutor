@@ -35,3 +35,38 @@
 .lk-video-conference[data-fullscreen='true'] {
   --upbar-height: 0px;
 }
+
+.lk-participant-tile {
+  contain: layout style paint;
+  transform: translateZ(0); /* Активируем аппаратное ускорение */
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--xi-bg-gray-0);
+  border: 2px solid transparent;
+  border-radius: 18px;
+}
+
+/* Индикаторы состояния для адаптивной сетки */
+.lk-participant-tile[data-lk-speaking='true']:not([data-lk-source='screen_share']) {
+  transition: box-shadow 0.3s ease;
+  border: 2px solid var(--xi-green-60);
+}
+
+.lk-participant-tile .lk-focus-toggle-button {
+  position: absolute;
+  background-color: var(--xi-gray-0) !important;
+  height: 24px;
+  width: 24px;
+  border-radius: 8px;
+  top: 8px;
+  right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  padding: 0 !important;
+}
+
+.lk-participant-tile:hover .lk-focus-toggle-button {
+  opacity: 0.8;
+}
