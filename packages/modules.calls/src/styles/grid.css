@@ -39,17 +39,15 @@
 .lk-participant-tile {
   contain: layout style paint;
   transform: translateZ(0); /* Активируем аппаратное ускорение */
-  border-radius: 16px;
   overflow: hidden;
+  border-radius: 16px;
   background: var(--xi-bg-gray-0);
-  border: 2px solid transparent;
-  border-radius: 18px;
 }
 
 /* Индикаторы состояния для адаптивной сетки */
 .lk-participant-tile[data-lk-speaking='true']:not([data-lk-source='screen_share']) {
   transition: box-shadow 0.3s ease;
-  border: 2px solid var(--xi-green-60);
+  box-shadow: 0 0 0 2px var(--xi-green-60);
 }
 
 .lk-participant-tile .lk-focus-toggle-button {
