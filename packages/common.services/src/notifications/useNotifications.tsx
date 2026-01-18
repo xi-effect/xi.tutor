@@ -1,20 +1,25 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { Button } from '@xipkg/button';
 import { useSocketEvent } from 'common.sockets';
 import { NotificationT, NotificationsStateT, RecipientNotificationResponse } from 'common.types';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
+import { useCurrentUser } from '../user';
+import { notificationConfigs } from './notificationConfig';
 import {
-  generateNotificationTitle,
+  generateNotificationAction,
   generateNotificationDescription,
+  generateNotificationTitle,
   getNotificationInvalidationKeys,
 } from './notificationUtils';
-import { useSearchNotifications } from './useSearchNotifications';
 import { useGetUnreadCount } from './useGetUnreadCount';
 import { useMarkNotificationAsRead } from './useMarkNotificationAsRead';
-import { useCurrentUser } from '../user';
+import { useSearchNotifications } from './useSearchNotifications';
 
 export const useNotifications = () => {
+  // const navigate = useNavigate();
+
   const [socketNotifications, setSocketNotifications] = useState<NotificationT[]>([]);
   const [shouldLoadNotifications, setShouldLoadNotifications] = useState(false);
   const queryClient = useQueryClient();
@@ -79,6 +84,22 @@ export const useNotifications = () => {
     [],
   );
 
+  // Обработчик навигации по URL из уведомления
+  const onNavigate = useCallback((url: string) => {
+    try {
+      // Проверяем, является ли URL относительным путем или полным URL
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        // Внешняя ссылка - открываем в новой вкладке
+        window.open(url, '_blank', 'noopener,noreferrer');
+      } else {
+        // Внутренняя навигация - используем window.location.href
+        window.location.href = url;
+      }
+    } catch (error) {
+      console.error('Ошибка при навигации:', error);
+    }
+  }, []);
+
   // Обработчик нового уведомления от SocketIO
   const handleNewNotification = useCallback(
     (data: NotificationT | RecipientNotificationResponse) => {
@@ -107,9 +128,28 @@ export const useNotifications = () => {
       const title = generateNotificationTitle(notification);
       const description = generateNotificationDescription(notification);
 
+      const { kind } = notification.payload;
+      const config = notificationConfigs[kind];
+
       toast(title, {
         description,
         duration: 5000,
+        action: config && (
+          <Button
+            size="s"
+            className="ml-[20px]"
+            onClick={(e) => {
+              e.stopPropagation();
+              // Получаем URL из конфига уведомления
+              const url = generateNotificationAction(notification);
+              if (url) {
+                onNavigate(url);
+              }
+            }}
+          >
+            Перейти
+          </Button>
+        ),
       });
     },
     [refetchCount, transformNotification, queryClient],

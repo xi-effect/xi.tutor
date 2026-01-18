@@ -1,10 +1,10 @@
 import { RouterProvider } from '@tanstack/react-router';
 import { AuthProvider, useAuth } from 'common.auth';
+import { NetworkProvider, NotificationsProvider } from 'common.services';
 import { ThemeProvider } from 'common.theme';
-import { NotificationsProvider, NetworkProvider } from 'common.services';
+import { Toaster } from 'sonner';
 import { router } from '../router';
 import { AuthSocketBridge } from './AuthSocketBridge';
-import { Toaster } from 'sonner';
 
 const RouterWithAuthContext = () => {
   const auth = useAuth();
@@ -20,7 +20,7 @@ export const RouterWithAuth = () => {
           <NetworkProvider>
             <NotificationsProvider>
               <RouterWithAuthContext />
-              <Toaster visibleToasts={3} expand />
+              <Toaster visibleToasts={3} expand closeButton />
             </NotificationsProvider>
           </NetworkProvider>
         </ThemeProvider>
