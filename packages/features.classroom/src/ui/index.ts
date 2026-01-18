@@ -1,0 +1,1 @@
+export { SubjectBadge } from './SubjectBadge';
