@@ -1,13 +1,14 @@
 {
   "name": "xi.desktop",
   "version": "1.0.0",
-  "main": "src/main/index.ts",
+  "main": "dist/main/index.js",
   "type": "module",
   "scripts": {
     "dev": "concurrently -k \"npm run dev:vite\" \"npm run dev:electron\"",
     "dev:vite": "vite",
-    "dev:electron": "wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .",
-    "build": "npm run build:vite && npm run build:electron",
+    "dev:electron": "npm run build:main && wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .",
+    "build": "npm run build:main && npm run build:vite && npm run build:electron",
+    "build:main": "tsc -p tsconfig.main.json",
     "build:vite": "vite build",
     "build:electron": "electron-builder",
     "electron": "electron .",
@@ -48,11 +49,34 @@
     "appId": "com.xi.desktop",
     "productName": "Xi Desktop",
     "directories": {
-      "output": "dist",
+      "output": "release",
       "buildResources": "build"
+    },
+    "files": [
+      "dist/**/*",
+      "package.json"
+    ],
+    "mac": {
+      "target": [
+        {
+          "target": "dmg",
+          "arch": ["x64", "arm64"]
+        },
+        {
+          "target": "zip",
+          "arch": ["x64", "arm64"]
+        }
+      ],
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": "portable"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
     }
-  },
-  "win": {
-    "target": "portable"
   }
 }
