@@ -4,13 +4,14 @@
   "main": "dist/main/index.js",
   "type": "module",
   "scripts": {
-    "dev": "concurrently -k \"npm run dev:vite\" \"npm run dev:electron\"",
-    "dev:vite": "vite",
-    "dev:electron": "npm run build:main && wait-on http://localhost:5173 && cross-env NODE_ENV=development electron .",
-    "build": "npm run build:main && npm run build:vite && npm run build:electron",
+    "dev": "concurrently -k \"pnpm run dev:web\" \"pnpm run dev:electron\"",
+    "dev:web": "cd ../xi.web && pnpm dev",
+    "dev:electron": "pnpm run build:main && wait-on http://localhost:5173 -t 30000 && cross-env NODE_ENV=development electron .",
+    "build": "pnpm run build:web && pnpm run build:main && pnpm run build:electron",
+    "build:web": "cd ../xi.web && pnpm build",
     "build:main": "tsc -p tsconfig.main.json",
-    "build:vite": "vite build",
     "build:electron": "electron-builder",
+    "clean": "rm -rf dist release",
     "electron": "electron .",
     "lint": "eslint ."
   },
@@ -53,8 +54,15 @@
       "buildResources": "build"
     },
     "files": [
-      "dist/**/*",
+      "dist/main/**/*",
       "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "../xi.web/build",
+        "to": "xi.web/build",
+        "filter": ["**/*"]
+      }
     ],
     "mac": {
       "target": [

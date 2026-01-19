@@ -12,8 +12,10 @@ export default defineConfig({
     emptyOutDir: true,
   },
   server: {
-    port: 5173,
-    strictPort: true,
+    // Этот конфиг не используется, так как renderer удалён
+    // Оставлено для совместимости, но можно удалить
+    port: 5174, // Запасной порт на случай, если понадобится
+    strictPort: false,
   },
   resolve: {
     alias: {
