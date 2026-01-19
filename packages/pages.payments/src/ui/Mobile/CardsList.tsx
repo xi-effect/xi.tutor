@@ -7,6 +7,7 @@ import { Loader } from '../Loader';
 export type CardsListPropsT<Role extends RoleT> = {
   data: PaymentDataT<Role>[];
   rowVirtualizer: Virtualizer<HTMLDivElement, Element>;
+  measureCard: (index: number, el: HTMLDivElement | null) => void;
   colCount: number;
   gap: number;
   parentRef: RefObject<HTMLDivElement | null>;
@@ -18,6 +19,7 @@ export type CardsListPropsT<Role extends RoleT> = {
 export const CardsList = <Role extends RoleT>({
   data,
   rowVirtualizer,
+  measureCard,
   colCount,
   gap,
   parentRef,
@@ -26,7 +28,7 @@ export const CardsList = <Role extends RoleT>({
   currentUserRole,
 }: CardsListPropsT<Role>) => {
   return (
-    <div className="h-[calc(100vh-204px)] w-full overflow-y-auto pr-4" ref={parentRef}>
+    <div className="h-[calc(100dvh-154px)] w-full overflow-y-auto pr-2 pl-px" ref={parentRef}>
       <div
         style={{
           height: `${rowVirtualizer.getTotalSize()}px`,
@@ -35,12 +37,13 @@ export const CardsList = <Role extends RoleT>({
         }}
       >
         {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-          const startIndex = virtualRow.index * colCount;
+          const startIndex = virtualRow.index;
           const rowItems = data.slice(startIndex, startIndex + colCount);
 
           return (
             <div
               key={virtualRow.key}
+              ref={(el) => measureCard(virtualRow.index, el)}
               style={{
                 position: 'absolute',
                 top: 0,
@@ -52,7 +55,6 @@ export const CardsList = <Role extends RoleT>({
                 padding: gap,
                 paddingLeft: 0,
                 boxSizing: 'border-box',
-                gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))`,
               }}
             >
               {rowItems.map((payment, index) => (

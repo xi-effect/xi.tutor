@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useState } from 'react';
 import { Modal, ModalContent, ModalTitle } from '@xipkg/modal';
 import { FileUploader } from '@xipkg/fileuploader';
@@ -71,13 +70,7 @@ export const ImageUploadModal = () => {
 
         <div className="mt-4">
           {mode === 'upload' ? (
-            <FileUploader
-              onChange={handleInput}
-              accept="image/*"
-              withError={false}
-              withLargeError={false}
-              size="large"
-            />
+            <FileUploader onChange={handleInput} accept="image/*" size="large" />
           ) : (
             <div className="flex gap-2">
               <div className="w-full">

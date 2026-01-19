@@ -1,46 +1,23 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Sidebar, SidebarInset } from '@xipkg/sidebar';
-import { Swiper, SwiperRef, SwiperSlide } from 'swiper/react';
+import { Drawer, DrawerContent } from '@xipkg/drawer';
+import { Sidebar } from '@xipkg/sidebar';
 import { useMenuStore } from '../store';
 import { SideBarItems } from './SideBarItems';
 
-// @ts-expect-error
-import 'swiper/css';
-
-export const Mobile = ({
-  children,
-  swiperRef,
-}: {
-  children: React.ReactNode;
-  swiperRef: React.RefObject<SwiperRef | null>;
-}) => {
-  const { isOpen, toggle } = useMenuStore();
-
-  const onSlideChange = () => {
-    toggle();
-  };
+export const Mobile = ({ children }: { children: React.ReactNode }) => {
+  const { isOpen, open: openMenu, close } = useMenuStore();
 
   return (
-    <div className="flex w-full overflow-hidden pt-[64px]">
-      <Swiper
-        slidesPerView={1}
-        initialSlide={Number(!isOpen)}
-        ref={swiperRef}
-        onSlideChange={onSlideChange}
-      >
-        <SwiperSlide>
-          <div className="dark:bg-gray-0 h-[calc(100dvh-64px)] p-4">
+    <>
+      <Drawer open={isOpen} onOpenChange={(open) => (open ? openMenu() : close())} modal>
+        <DrawerContent className="max-h-[calc(100dvh-64px)] w-full">
+          <div className="dark:bg-gray-0 h-full p-4">
             <Sidebar collapsible="none" variant="inset" className="w-full">
-              <SideBarItems swiperRef={swiperRef} />
+              <SideBarItems />
             </Sidebar>
           </div>
-        </SwiperSlide>
-        <SwiperSlide>
-          <SidebarInset className="overflow-none h-[calc(100dvh-64px)] w-full">
-            {children}
-          </SidebarInset>
-        </SwiperSlide>
-      </Swiper>
-    </div>
+        </DrawerContent>
+      </Drawer>
+      <div className="w-full pt-[64px]">{children}</div>
+    </>
   );
 };

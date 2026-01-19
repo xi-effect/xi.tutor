@@ -5,3 +5,4 @@ export { useMedia } from './src/useMedia';
 export { useNetworkStatus, NetworkProvider } from './src/NetworkContext';
 export { useRetryQueue } from './src/useRetryQueue';
 export { getUserAvatarUrl } from './src/getUserAvatarUrl';
+export { useScreenSize } from './src/useScreenSize';

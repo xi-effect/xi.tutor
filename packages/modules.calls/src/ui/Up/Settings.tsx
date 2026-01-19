@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   Sheet,
   SheetClose,
@@ -93,7 +93,8 @@ export const Settings = ({ children }: SettingsPropsT) => {
     useUserChoicesStore.setState({ blurEnabled: checked });
   }, []);
 
-  const isBlurSupported = supportsBackgroundProcessors();
+  // Мемоизируем проверку поддержки, чтобы не создавать WebGL контекст при каждом рендере
+  const isBlurSupported = useMemo(() => supportsBackgroundProcessors(), []);
 
   // Получаем треки из публикаций и приводим к правильному типу
   const audioTrack = microphoneTrack?.track as LocalAudioTrack | undefined;

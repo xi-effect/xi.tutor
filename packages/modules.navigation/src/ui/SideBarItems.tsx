@@ -9,13 +9,14 @@ import {
 } from '@xipkg/sidebar';
 import { useLocation, useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { SwiperRef } from 'swiper/react';
 import { Group, Home, Materials, Payments, TelegramFilled, InfoCircle } from '@xipkg/icons';
 import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
+import { useMenuStore } from '../store';
 
-export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<SwiperRef | null> }) => {
+export const SideBarItems = () => {
   const { t } = useTranslation('navigation');
+  const { close } = useMenuStore();
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -65,10 +66,7 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
       }
 
       navigate({ to: '/' });
-
-      if (swiperRef && swiperRef.current) {
-        swiperRef.current?.swiper.slideTo(1);
-      }
+      close();
     } catch (error) {
       console.error('Ошибка при запуске обучения:', error);
     }
@@ -135,9 +133,7 @@ export const SideBarItems = ({ swiperRef }: { swiperRef?: React.RefObject<Swiper
       });
     }
 
-    if (swiperRef && swiperRef.current) {
-      swiperRef.current?.swiper.slideTo(1);
-    }
+    close();
   };
 
   return (

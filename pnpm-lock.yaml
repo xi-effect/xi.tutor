@@ -947,6 +947,9 @@ importers:
       common.eslint:
         specifier: '*'
         version: link:../common.eslint
+      common.types:
+        specifier: '*'
+        version: link:../common.types
       common.typescript:
         specifier: '*'
         version: link:../common.typescript
@@ -2191,6 +2194,9 @@ importers:
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
+      features.invoice.card:
+        specifier: '*'
+        version: link:../features.invoice.card
       features.payment.approve:
         specifier: '*'
         version: link:../features.payment.approve
@@ -3231,6 +3237,9 @@ importers:
       common.ui:
         specifier: '*'
         version: link:../common.ui
+      common.utils:
+        specifier: '*'
+        version: link:../common.utils
       features.group.invite:
         specifier: '*'
         version: link:../features.group.invite
@@ -3388,6 +3397,9 @@ importers:
       features.students.list:
         specifier: '*'
         version: link:../features.students.list
+      features.table:
+        specifier: '*'
+        version: link:../features.table
       react:
         specifier: '19'
         version: 19.2.3

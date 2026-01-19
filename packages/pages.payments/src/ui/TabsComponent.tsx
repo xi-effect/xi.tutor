@@ -1,7 +1,7 @@
 import { Tabs } from '@xipkg/tabs';
 import React, { useMemo, useRef, useEffect } from 'react';
 import { VirtualizedPaymentsTable } from './VirtualizedPaymentsTable';
-import { useMedia } from 'common.utils';
+import { useScreenSize } from 'common.utils';
 import { createPaymentColumns, useInfiniteQuery } from 'features.table';
 import { UserRoleT } from '../../../common.api/src/types';
 import { TemplatesGrid } from './Templates';
@@ -11,7 +11,7 @@ import { PaymentApprovalFunctionT } from 'common.types';
 // import { ChartsPage } from './Charts';
 
 export const TabsComponent = React.memo(({ onApprovePayment }: PaymentApprovalFunctionT) => {
-  const isMobile = useMedia('(max-width: 700px)');
+  const screenSize = useScreenSize();
   const parentRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
@@ -31,11 +31,11 @@ export const TabsComponent = React.memo(({ onApprovePayment }: PaymentApprovalFu
     () =>
       createPaymentColumns<UserRoleT>({
         usersRole: isTutor ? 'student' : 'tutor',
-        isMobile,
         onApprovePayment,
         isTutor,
+        screenSize,
       }),
-    [isMobile, onApprovePayment, isTutor],
+    [screenSize, onApprovePayment, isTutor],
   );
 
   // Отслеживаем изменения роли пользователя
@@ -64,7 +64,7 @@ export const TabsComponent = React.memo(({ onApprovePayment }: PaymentApprovalFu
 
   return (
     <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
-      <Tabs.List className="flex w-80 flex-row gap-4">
+      <Tabs.List className="w-[calc(100% - 16px)] xs:w-80 xs:flex xs:flex-row mr-4 grid grid-cols-2 gap-4">
         <Tabs.Trigger value="invoices" className="text-m-base font-medium text-gray-100">
           Журнал оплат
         </Tabs.Trigger>

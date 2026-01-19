@@ -273,16 +273,6 @@ export const Notifications = () => {
         <DropdownMenuLabel className="text-m-base flex h-[48px] items-center p-3 font-semibold text-gray-100">
           Уведомления
           <div className="ml-auto flex items-center gap-1">
-            {/* {unreadCount > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 px-2 text-xs"
-                onClick={markAllAsRead}
-              >
-                Прочитать все
-              </Button>
-            )} */}
             <Button onClick={handleToSettings} variant="ghost" className="h-[32px] w-[32px] p-1">
               <Settings className="fill-gray-80 size-6" size="s" />
             </Button>

@@ -33,7 +33,9 @@ export type ApprovePaymentPropsT = {
   id?: number;
 };
 
-export type PaymentApproveActionPropsT = Pick<ApprovePaymentPropsT, 'payment' | 'isTutor'>;
+export type PaymentApproveActionPropsT = Pick<ApprovePaymentPropsT, 'payment' | 'isTutor'> & {
+  type?: InvoiceCardTypeT;
+};
 
 export type PaymentApproveButtonPropsT = Omit<ApprovePaymentPropsT, 'payment'> & {
   type?: InvoiceCardTypeT;

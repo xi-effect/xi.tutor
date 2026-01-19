@@ -1,14 +1,14 @@
 import { useMemo, useRef } from 'react';
 import { useInfiniteQuery, createPaymentColumns } from 'features.table';
 import { VirtualizedPaymentsTable } from 'pages.payments';
-import { useMediaQuery } from '@xipkg/utils';
+import { useScreenSize } from 'common.utils';
 import { useParams } from '@tanstack/react-router';
 import { useGetClassroom, useCurrentUser } from 'common.services';
 
 export const Payments = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom } = useGetClassroom(Number(classroomId));
-  const isMobile = useMediaQuery('(max-width: 719px)');
+  const screenSize = useScreenSize();
 
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -27,10 +27,10 @@ export const Payments = () => {
       createPaymentColumns({
         withStudentColumn: false,
         usersRole: isTutor ? 'student' : 'tutor',
-        isMobile,
+        screenSize,
         isTutor,
       }),
-    [isMobile, isTutor],
+    [screenSize, isTutor],
   );
 
   if (isLoading) {

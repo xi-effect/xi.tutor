@@ -25,7 +25,8 @@
     "common.api": "*",
     "common.services": "*",
     "common.types": "*",
-    "features.payment.approve": "*"
+    "features.payment.approve": "*",
+    "features.invoice.card": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

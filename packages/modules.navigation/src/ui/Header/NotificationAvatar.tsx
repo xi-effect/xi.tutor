@@ -10,7 +10,10 @@ import { NotificationKind } from 'common.types';
 
 const RecipientInvoiceAvatarByTutor = ({ recipientInvoiceId }: { recipientInvoiceId: number }) => {
   const { data: recipientInvoiceDataTutor } = useGetRecipientInvoiceByTutor(recipientInvoiceId);
-  const { data: studentData } = useStudentById(recipientInvoiceDataTutor?.student_id);
+  const { data: studentData } = useStudentById(
+    recipientInvoiceDataTutor?.student_id ?? 0,
+    !recipientInvoiceDataTutor?.student_id,
+  );
 
   return (
     <Avatar size={avatarSize}>
@@ -89,19 +92,23 @@ type UserAvatarPropsT = {
 
 export const NotificationAvatar = ({ classroomId, recipientInvoiceId, kind }: UserAvatarPropsT) => {
   if (kind === 'classroom_conference_started_v1' || kind === 'enrollment_created_v1') {
-    return <ClassroomAvatarByStudent classroomId={classroomId ?? 0} />;
+    if (!classroomId) return null;
+    return <ClassroomAvatarByStudent classroomId={classroomId} />;
   }
 
   if (kind === 'individual_invitation_accepted_v1' || kind === 'group_invitation_accepted_v1') {
-    return <ClassroomAvatarByTutor classroomId={classroomId ?? 0} />;
+    if (!classroomId) return null;
+    return <ClassroomAvatarByTutor classroomId={classroomId} />;
   }
 
   if (kind === 'recipient_invoice_created_v1') {
-    return <RecipientInvoiceAvatarByStudent recipientInvoiceId={recipientInvoiceId ?? 0} />;
+    if (!recipientInvoiceId) return null;
+    return <RecipientInvoiceAvatarByStudent recipientInvoiceId={recipientInvoiceId} />;
   }
 
   if (kind === 'student_recipient_invoice_payment_confirmed_v1') {
-    return <RecipientInvoiceAvatarByTutor recipientInvoiceId={recipientInvoiceId ?? 0} />;
+    if (!recipientInvoiceId) return null;
+    return <RecipientInvoiceAvatarByTutor recipientInvoiceId={recipientInvoiceId} />;
   }
 
   return null;

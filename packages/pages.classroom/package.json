@@ -24,7 +24,7 @@
     "@xipkg/tabs": "2.1.0",
     "@xipkg/tooltip": "2.1.0",
     "@xipkg/userprofile": "4.0.14",
-    "@xipkg/utils": "^1.8.0",
+    "common.utils": "*",
     "common.api": "*",
     "common.entities": "*",
     "common.services": "*",

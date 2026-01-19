@@ -18,9 +18,7 @@ export const PaymentApproveButton = ({
 
   if (status === 'wf_sender_confirmation')
     return (
-      <div
-        className={`flex flex-row items-center justify-between gap-4 ${type === 'table' ? 'w-full sm:w-auto' : ''} `}
-      >
+      <div className="flex flex-row items-center justify-between gap-4">
         <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
             <Button
@@ -49,7 +47,7 @@ export const PaymentApproveButton = ({
             <Button
               variant="ghost"
               size="s"
-              className="bg-brand-0 hover:bg-brand-0/80 rounded-lg"
+              className="bg-brand-0 hover:bg-brand-0/80 flex-1 rounded-lg"
               onClick={() => receiverConfirmationMutation(id?.toString() ?? '')}
               loading={isPending}
               disabled={isPending}

@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { Tabs } from '@xipkg/tabs';
 import { useSearch, useNavigate, useParams } from '@tanstack/react-router';
-
+import { Plus } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { Overview } from '../Overview';
 import { SearchParams } from '../../types/router';
@@ -40,7 +40,7 @@ export const TabsTutor = () => {
 
   return (
     <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
-      <div className="flex h-[56px] flex-row items-center overflow-x-auto pl-4">
+      <div className="flex h-[56px] flex-row items-center gap-4 overflow-x-auto pr-4 pl-4 sm:pr-0">
         <Tabs.List className="flex flex-row gap-4">
           <Tabs.Trigger value="overview" className="text-m-base font-medium text-gray-100">
             Сводка
@@ -60,14 +60,14 @@ export const TabsTutor = () => {
         </Tabs.List>
         {currentTab === 'overview' && classroom?.kind === 'group' && (
           <ModalStudentsGroup>
-            <Button size="s" variant="ghost" className="ml-auto rounded-[8px]">
+            <Button size="s" variant="ghost" className="ml-auto rounded-lg">
               Добавить ученика
             </Button>
           </ModalStudentsGroup>
         )}
         {currentTab === 'overview' && classroom?.kind === 'group' && (
           <ModalGroupInvite>
-            <Button size="s" variant="ghost" className="ml-1 rounded-[8px]">
+            <Button size="s" variant="ghost" className="ml-1 rounded-lg">
               Пригласить в группу
             </Button>
           </ModalGroupInvite>
@@ -76,10 +76,11 @@ export const TabsTutor = () => {
         {currentTab === 'payments' && (
           <Button
             size="s"
-            className="ml-auto rounded-[8px]"
+            className="ml-auto w-8 rounded-lg px-2 py-2 font-medium sm:w-auto sm:px-4"
             onClick={() => setIsInvoiceModalOpen(true)}
           >
-            Создать счёт на оплату
+            <span className="hidden sm:flex">Создать счёт на оплату</span>
+            <Plus size="sm" className="fill-brand-0 flex sm:hidden" />
           </Button>
         )}
       </div>
