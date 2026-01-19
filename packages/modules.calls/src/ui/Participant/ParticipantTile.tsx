@@ -5,7 +5,6 @@ import type { TrackReferenceOrPlaceholder } from '@livekit/components-core';
 import { isTrackReference, isTrackReferencePinned } from '@livekit/components-core';
 import {
   AudioTrack,
-  ConnectionQualityIndicator,
   LockLockedIcon,
   ParticipantContextIfNeeded,
   ParticipantTileProps,
@@ -27,6 +26,8 @@ import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { FocusToggle } from '../shared/FocusToggle';
 import { ParticipantName } from './ParticipantName';
 import { RaisedHandIndicator } from './RaisedHandIndicator';
+import { useCallStore } from '../../store/callStore';
+import { cn } from '@xipkg/utils';
 
 type TrackRefContextIfNeededPropsT = {
   trackRef?: TrackReferenceOrPlaceholder;
@@ -156,18 +157,32 @@ export const ParticipantTile = ({
     [trackReference, layoutContext],
   );
 
+  const carouselType = useCallStore((state) => state.carouselType);
+
+  const isHorizontalLayout = carouselType === 'horizontal';
+
+  const getVideoClassName = () => {
+    if (trackReference.source === Track.Source.ScreenShare) {
+      return 'object-contain';
+    }
+
+    if (isHorizontalLayout) {
+      return 'object-contain';
+    }
+    return 'object-cover';
+  };
+
   return (
     <div
-      style={{
-        position: 'relative',
-      }}
+      className="lk-participant-tile relative"
+      data-lk-source={trackReference.source}
       {...elementProps}
     >
       <TrackRefContextIfNeeded trackRef={trackReference}>
         <ParticipantContextIfNeeded participant={trackReference.participant}>
-          <div className="m-auto flex h-full w-full justify-center overflow-hidden rounded-2xl">
+          <div className="m-auto flex aspect-video h-full w-full justify-center overflow-hidden rounded-2xl in-[.lk-grid-layout]:relative in-[.lk-grid-layout]:overflow-hidden in-[.lk-grid-layout]:rounded-2xl [.lk-grid-layout_&]:m-0 [.lk-grid-layout_&]:flex-none [.lk-grid-layout_&]:bg-black">
             {children ?? (
-              <div className="relative flex h-full w-full justify-center">
+              <div className="relative flex h-full w-full justify-center in-[.lk-grid-layout]:relative in-[.lk-grid-layout]:h-full in-[.lk-grid-layout]:w-full">
                 {/* Аватар всегда рендерится как фон */}
                 <div
                   style={{
@@ -193,16 +208,18 @@ export const ParticipantTile = ({
                   trackReference.publication?.isSubscribed &&
                   trackReference.publication?.isEnabled &&
                   !trackReference.publication?.track?.isMuted && (
-                    <div className="bg-gray-40 relative inset-0 aspect-video w-full rounded-2xl">
+                    <div className="absolute inset-0 aspect-video h-full w-full rounded-2xl bg-gray-100/80">
                       <VideoTrack
-                        className="h-full w-full rounded-2xl object-cover"
+                        className={cn(
+                          `absolute inset-0 h-full w-full rounded-2xl object-cover object-center ${getVideoClassName()}`,
+                        )}
                         style={{
                           ...(trackReference.source === Track.Source.Camera && {
                             transform: 'rotateY(180deg)',
                           }),
                           boxSizing: 'border-box',
-                          background: 'var(--xi-bg-gray-40)',
-                          backgroundColor: 'var(--xi-bg-gray-40)',
+                          background: 'var(--xi-bg-gray-100)',
+                          backgroundColor: 'var(--xi-bg-gray-100)',
                         }}
                         trackRef={trackReference}
                         onSubscriptionStatusChanged={handleSubscribe}
@@ -220,10 +237,10 @@ export const ParticipantTile = ({
                       onSubscriptionStatusChanged={handleSubscribe}
                     />
                   )}
-                <div className="lk-participant-metadata p-1">
+                <div className="lk-participant-metadata absolute right-2 bottom-2 left-2 z-10 flex items-center justify-between gap-2">
                   <div>
                     {trackReference.source === Track.Source.Camera ? (
-                      <div className="bg-gray-0/80 flex h-6 w-full gap-1.5 rounded-lg px-1.5 py-1">
+                      <div className="bg-gray-0/80 flex h-6 gap-1.5 rounded-lg px-1.5 py-1 backdrop-blur">
                         {isEncrypted && <LockLockedIcon />}
                         <TrackMutedIndicator
                           trackRef={{
@@ -236,16 +253,14 @@ export const ParticipantTile = ({
                         <ParticipantName participant={trackReference.participant} />
                       </div>
                     ) : (
-                      <div className="bg-gray-0/80 flex h-6 items-center gap-1.5 rounded-lg px-1.5 py-1">
+                      <div className="bg-gray-0/80 flex h-6 items-center gap-1.5 rounded-lg px-1.5 py-1 backdrop-blur">
                         <ScreenShareIcon style={{ marginRight: '0.25rem' }} />
                         <ParticipantName participant={trackReference.participant}>
                           Демонстрация&nbsp;
                         </ParticipantName>
-                        {/* Индикатор поднятой руки в метаданных */}
                       </div>
                     )}
                   </div>
-                  <ConnectionQualityIndicator />
                 </div>
               </div>
             )}
