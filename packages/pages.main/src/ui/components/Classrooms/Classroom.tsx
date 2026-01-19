@@ -55,17 +55,26 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   const isTutor = user?.default_layout === 'tutor';
 
   // Получаем участников конференции в зависимости от роли
-  const { participants: participantsTutor } = useGetParticipantsByTutor(
-    classroom.id.toString(),
-    !isTutor,
-  );
-  const { participants: participantsStudent } = useGetParticipantsByStudent(
-    classroom.id.toString(),
-    isTutor,
-  );
+  // Логика определения активной конференции:
+  // - 409 ошибка = комната НЕ активна (была пустая >5 минут)
+  // - [] (пустой массив) = комната АКТИВНА, но пустая (репетитор начал, но еще не присоединился)
+  // - [участники] = комната активна, есть участники
+  // - undefined (при загрузке или других ошибках) = состояние неизвестно, кнопка disabled
+  const { participants: participantsStudent, isConferenceNotActive: isConferenceNotActiveStudent } =
+    useGetParticipantsByStudent(classroom.id.toString(), isTutor);
+
+  const { participants: participantsTutor, isConferenceNotActive: isConferenceNotActiveTutor } =
+    useGetParticipantsByTutor(classroom.id.toString(), !isTutor);
 
   const participants = isTutor ? participantsTutor : participantsStudent;
-  const isConferenceActive = participants && participants.length > 0;
+  const isConferenceNotActive = isTutor ? isConferenceNotActiveTutor : isConferenceNotActiveStudent;
+
+  // Конференция активна, если:
+  // 1. Нет ошибки 409 (комната активна)
+  // 2. И participants определен и является массивом (пустой [] или с участниками)
+  // При загрузке или других ошибках participants = undefined, поэтому isConferenceActive = false
+  const isConferenceActive =
+    !isConferenceNotActive && participants !== undefined && Array.isArray(participants);
 
   const handleClick = () => {
     // Сохраняем параметр call при переходе в кабинет
