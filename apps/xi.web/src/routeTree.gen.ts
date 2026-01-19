@@ -181,27 +181,27 @@ export interface FileRoutesByFullPath {
   '/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute
   '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
   '/': typeof appLayoutIndexRoute
-  '/reset-password': typeof authResetPasswordIndexRoute
-  '/signin': typeof authSigninIndexRoute
-  '/signup': typeof authSignupIndexRoute
+  '/reset-password/': typeof authResetPasswordIndexRoute
+  '/signin/': typeof authSigninIndexRoute
+  '/signup/': typeof authSignupIndexRoute
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
   '/confirm-email/$emailId': typeof commonLayoutConfirmEmailEmailIdRoute
   '/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
   '/welcome/email/$emailId': typeof commonWelcomeEmailEmailIdRoute
-  '/calendar': typeof appLayoutCalendarIndexRoute
-  '/call': typeof appLayoutCallIndexRoute
-  '/classrooms': typeof appLayoutClassroomsIndexRoute
-  '/materials': typeof appLayoutMaterialsIndexRoute
-  '/payments': typeof appLayoutPaymentsIndexRoute
-  '/welcome/role': typeof commonWelcomeRoleIndexRoute
-  '/welcome/socials': typeof commonWelcomeSocialsIndexRoute
-  '/welcome/user': typeof commonWelcomeUserIndexRoute
-  '/classrooms/$classroomId': typeof appLayoutClassroomsClassroomIdIndexRoute
+  '/calendar/': typeof appLayoutCalendarIndexRoute
+  '/call/': typeof appLayoutCallIndexRoute
+  '/classrooms/': typeof appLayoutClassroomsIndexRoute
+  '/materials/': typeof appLayoutMaterialsIndexRoute
+  '/payments/': typeof appLayoutPaymentsIndexRoute
+  '/welcome/role/': typeof commonWelcomeRoleIndexRoute
+  '/welcome/socials/': typeof commonWelcomeSocialsIndexRoute
+  '/welcome/user/': typeof commonWelcomeUserIndexRoute
+  '/classrooms/$classroomId/': typeof appLayoutClassroomsClassroomIdIndexRoute
   '/classrooms/$classroomId/boards/$boardId': typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
   '/classrooms/$classroomId/notes/$noteId': typeof appLayoutClassroomsClassroomIdNotesNoteIdRoute
-  '/materials/$materialId/board': typeof appLayoutMaterialsMaterialIdBoardIndexRoute
-  '/materials/$materialId/note': typeof appLayoutMaterialsMaterialIdNoteIndexRoute
+  '/materials/$materialId/board/': typeof appLayoutMaterialsMaterialIdBoardIndexRoute
+  '/materials/$materialId/note/': typeof appLayoutMaterialsMaterialIdNoteIndexRoute
 }
 export interface FileRoutesByTo {
   '/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute
@@ -264,27 +264,27 @@ export interface FileRouteTypes {
     | '/reset-password/$resetToken'
     | '/deployments/$deploymentId/enable'
     | '/'
-    | '/reset-password'
-    | '/signin'
-    | '/signup'
+    | '/reset-password/'
+    | '/signin/'
+    | '/signup/'
     | '/board/$boardId'
     | '/call/$callId'
     | '/confirm-email/$emailId'
     | '/invite/$inviteId'
     | '/welcome/email/$emailId'
-    | '/calendar'
-    | '/call'
-    | '/classrooms'
-    | '/materials'
-    | '/payments'
-    | '/welcome/role'
-    | '/welcome/socials'
-    | '/welcome/user'
-    | '/classrooms/$classroomId'
+    | '/calendar/'
+    | '/call/'
+    | '/classrooms/'
+    | '/materials/'
+    | '/payments/'
+    | '/welcome/role/'
+    | '/welcome/socials/'
+    | '/welcome/user/'
+    | '/classrooms/$classroomId/'
     | '/classrooms/$classroomId/boards/$boardId'
     | '/classrooms/$classroomId/notes/$noteId'
-    | '/materials/$materialId/board'
-    | '/materials/$materialId/note'
+    | '/materials/$materialId/board/'
+    | '/materials/$materialId/note/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/reset-password/$resetToken'
@@ -374,21 +374,21 @@ declare module '@tanstack/react-router' {
     '/(auth)/signup/': {
       id: '/(auth)/signup/'
       path: '/signup'
-      fullPath: '/signup'
+      fullPath: '/signup/'
       preLoaderRoute: typeof authSignupIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/signin/': {
       id: '/(auth)/signin/'
       path: '/signin'
-      fullPath: '/signin'
+      fullPath: '/signin/'
       preLoaderRoute: typeof authSigninIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/reset-password/': {
       id: '/(auth)/reset-password/'
       path: '/reset-password'
-      fullPath: '/reset-password'
+      fullPath: '/reset-password/'
       preLoaderRoute: typeof authResetPasswordIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -416,56 +416,56 @@ declare module '@tanstack/react-router' {
     '/(common)/welcome/user/': {
       id: '/(common)/welcome/user/'
       path: '/welcome/user'
-      fullPath: '/welcome/user'
+      fullPath: '/welcome/user/'
       preLoaderRoute: typeof commonWelcomeUserIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(common)/welcome/socials/': {
       id: '/(common)/welcome/socials/'
       path: '/welcome/socials'
-      fullPath: '/welcome/socials'
+      fullPath: '/welcome/socials/'
       preLoaderRoute: typeof commonWelcomeSocialsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(common)/welcome/role/': {
       id: '/(common)/welcome/role/'
       path: '/welcome/role'
-      fullPath: '/welcome/role'
+      fullPath: '/welcome/role/'
       preLoaderRoute: typeof commonWelcomeRoleIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(app)/_layout/payments/': {
       id: '/(app)/_layout/payments/'
       path: '/payments'
-      fullPath: '/payments'
+      fullPath: '/payments/'
       preLoaderRoute: typeof appLayoutPaymentsIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
     '/(app)/_layout/materials/': {
       id: '/(app)/_layout/materials/'
       path: '/materials'
-      fullPath: '/materials'
+      fullPath: '/materials/'
       preLoaderRoute: typeof appLayoutMaterialsIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
     '/(app)/_layout/classrooms/': {
       id: '/(app)/_layout/classrooms/'
       path: '/classrooms'
-      fullPath: '/classrooms'
+      fullPath: '/classrooms/'
       preLoaderRoute: typeof appLayoutClassroomsIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
     '/(app)/_layout/call/': {
       id: '/(app)/_layout/call/'
       path: '/call'
-      fullPath: '/call'
+      fullPath: '/call/'
       preLoaderRoute: typeof appLayoutCallIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
     '/(app)/_layout/calendar/': {
       id: '/(app)/_layout/calendar/'
       path: '/calendar'
-      fullPath: '/calendar'
+      fullPath: '/calendar/'
       preLoaderRoute: typeof appLayoutCalendarIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
@@ -507,21 +507,21 @@ declare module '@tanstack/react-router' {
     '/(app)/_layout/classrooms/$classroomId/': {
       id: '/(app)/_layout/classrooms/$classroomId/'
       path: '/classrooms/$classroomId'
-      fullPath: '/classrooms/$classroomId'
+      fullPath: '/classrooms/$classroomId/'
       preLoaderRoute: typeof appLayoutClassroomsClassroomIdIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
     '/(app)/_layout/materials/$materialId/note/': {
       id: '/(app)/_layout/materials/$materialId/note/'
       path: '/materials/$materialId/note'
-      fullPath: '/materials/$materialId/note'
+      fullPath: '/materials/$materialId/note/'
       preLoaderRoute: typeof appLayoutMaterialsMaterialIdNoteIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
     '/(app)/_layout/materials/$materialId/board/': {
       id: '/(app)/_layout/materials/$materialId/board/'
       path: '/materials/$materialId/board'
-      fullPath: '/materials/$materialId/board'
+      fullPath: '/materials/$materialId/board/'
       preLoaderRoute: typeof appLayoutMaterialsMaterialIdBoardIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }

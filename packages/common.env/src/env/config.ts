@@ -49,6 +49,8 @@ const env = {
   VITE_GLITCHTIP_DSN: asString(import.meta.env.VITE_GLITCHTIP_DSN, ''),
 };
 
+console.log('env', env);
+
 const checkEnv = (envKey: keyof typeof env): boolean => {
   if (envKey in env) return true;
   console.error(`%c• ${envKey} isn't defined`, 'color: red');
