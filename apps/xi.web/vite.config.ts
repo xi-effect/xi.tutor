@@ -7,6 +7,9 @@ import tailwindcss from '@tailwindcss/vite';
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv) => {
   return {
+    // Используем относительные пути для production build
+    // Это решает проблему, когда сервер возвращает HTML вместо JS файлов
+    base: mode === 'production' ? './' : '/',
     plugins: [
       tanstackRouter({ target: 'react', autoCodeSplitting: true }),
       react(),
