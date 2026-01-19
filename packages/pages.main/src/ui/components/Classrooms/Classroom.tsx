@@ -4,7 +4,12 @@ import { Button } from '@xipkg/button';
 import { Arrow, Conference } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import { useCurrentUser, useUserByRole } from 'common.services';
+import {
+  useCurrentUser,
+  useUserByRole,
+  useGetParticipantsByTutor,
+  useGetParticipantsByStudent,
+} from 'common.services';
 import { SubjectBadge } from './SubjectBadge';
 
 type UserAvatarPropsT = {
@@ -48,6 +53,19 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+
+  // Получаем участников конференции в зависимости от роли
+  const { participants: participantsTutor } = useGetParticipantsByTutor(
+    classroom.id.toString(),
+    !isTutor,
+  );
+  const { participants: participantsStudent } = useGetParticipantsByStudent(
+    classroom.id.toString(),
+    isTutor,
+  );
+
+  const participants = isTutor ? participantsTutor : participantsStudent;
+  const isConferenceActive = participants && participants.length > 0;
 
   const handleClick = () => {
     // Сохраняем параметр call при переходе в кабинет
@@ -116,8 +134,9 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         variant="secondary"
         className="group mt-auto w-full"
         onClick={handleStartLesson}
+        disabled={!isTutor && !isConferenceActive}
       >
-        {isTutor ? 'Начать занятие' : 'Присоединиться'}{' '}
+        {isConferenceActive ? 'Присоединиться' : isTutor ? 'Начать занятие' : 'Присоединиться'}{' '}
         <Conference className="group-hover:fill-gray-0 fill-brand-100 ml-2" />
       </Button>
     </div>
