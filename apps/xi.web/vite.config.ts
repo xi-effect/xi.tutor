@@ -6,10 +6,13 @@ import tailwindcss from '@tailwindcss/vite';
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv) => {
+  // Определяем base path из переменной окружения или используем относительные пути для production
+  const basePath = process.env.VITE_BASE_PATH || (mode === 'production' ? './' : '/');
+
   return {
-    // Используем относительные пути для production build
-    // Это решает проблему, когда сервер возвращает HTML вместо JS файлов
-    base: mode === 'production' ? './' : '/',
+    // Используем base path из переменной окружения или относительные пути для production
+    // Это помогает решить проблему, когда сервер возвращает HTML вместо JS файлов
+    base: basePath,
     plugins: [
       tanstackRouter({ target: 'react', autoCodeSplitting: true }),
       react(),
@@ -40,6 +43,19 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       minify: mode === 'production',
       outDir: 'build',
       sourcemap: mode === 'debug',
+      // Настройка путей для chunks - используем относительные пути для production
+      rollupOptions: {
+        output: {
+          // Используем относительные пути для всех chunks в production
+          ...(mode === 'production' && basePath === './'
+            ? {
+                entryFileNames: 'assets/[name]-[hash].js',
+                chunkFileNames: 'assets/[name]-[hash].js',
+                assetFileNames: 'assets/[name]-[hash].[ext]',
+              }
+            : {}),
+        },
+      },
       terserOptions: {
         compress: {
           drop_console: true, // Временно отключено для отладки WebP конвертации
