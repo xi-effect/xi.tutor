@@ -15,5 +15,4 @@ export { useSpeakingParticipant } from './useSpeakingParticipant';
 export { useVideoSecurity } from './useVideoSecurity';
 export { useScreenShareCleanup } from './useScreenShareCleanup';
 export { useVideoBlur } from './useVideoBlur';
-export { useEmptyItemContainerOfUser } from './useEmptyItemContainerOfUser';
 export { useParticipantJoinSync } from './useParticipantJoinSync';

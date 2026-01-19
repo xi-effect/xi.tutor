@@ -1,10 +1,8 @@
 import React from 'react';
-import '@livekit/components-styles';
 import type { TrackReferenceOrPlaceholder } from '@livekit/components-core';
 import { isEqualTrackRef, isTrackReference, isWeb, log } from '@livekit/components-core';
 import { RoomEvent, Track } from 'livekit-client';
 import {
-  ConnectionStateToast,
   LayoutContextProvider,
   RoomAudioRenderer,
   VideoConferenceProps,
@@ -100,17 +98,12 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
   useScreenShareCleanup(tracks);
 
   return (
-    <div className="lk-video-conference flex w-full justify-center" {...props}>
+    <div className="align-stretch relative flex h-full w-full justify-center" {...props}>
       {isWeb() && (
         <LayoutContextProvider value={layoutContext}>
-          <div
-            className="lk-video-conference-inner"
-            style={{
-              width: carouselType === 'grid' && canUseFocusLayout ? 'auto' : '100%',
-            }}
-          >
+          <div className="flex h-full w-full items-center justify-center">
             {effectiveCarouselType === 'grid' ? (
-              <div className="h-full">
+              <div className="h-full w-full">
                 <GridLayout tracks={tracks}>
                   <ParticipantTile
                     isFocusToggleDisable
@@ -125,7 +118,7 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
                 </GridLayout>
               </div>
             ) : (
-              <div className="lk-focus-layout-wrapper">
+              <div className="h-[var(--available-height)] max-h-[var(--available-height)] w-full overflow-hidden">
                 <CarouselContainer focusTrack={focusTrack} carouselTracks={carouselTracks} />
               </div>
             )}
@@ -133,7 +126,6 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
         </LayoutContextProvider>
       )}
       <RoomAudioRenderer />
-      <ConnectionStateToast />
     </div>
   );
 };

@@ -1,106 +1,18 @@
 /**
- * Стили для сетки пользователей в ВКС
+ * Стили для сетки пользователей в ВКС (Google Meet style)
+ * Минимальные CSS переменные для динамических значений
  */
 
 :root {
   /* Высоты панелей */
-  --header-height: 64px; /* Header из modules.navigation */
-  --upbar-height: 60px; /* UpBar из modules.calls (flex items-end + pb-4) */
-  --bottom-bar-height: 80px; /* BottomBar из modules.calls (h-[48px] + p-4) */
+  --header-height: 64px;
+  --upbar-height: 60px;
+  --bottom-bar-height: 80px;
 
   /* Доступная высота для сетки */
   --available-height: calc(
     100vh - var(--header-height) - var(--upbar-height) - var(--bottom-bar-height)
   );
-}
-
-.lk-grid-layout {
-  --lk-grid-gap: 1rem;
-  --lk-tile-height: 200px;
-  --lk-tile-width: 200px;
-  --lk-tile-size: 200px;
-  --lk-aspect-ratio: 1;
-  --lk-col-count: 1;
-  --lk-row-count: 1;
-  --lk-device-type: desktop;
-
-  display: grid;
-  gap: var(--lk-grid-gap);
-  grid-template-columns: repeat(var(--lk-col-count), 1fr);
-  grid-auto-rows: minmax(0, 1fr); /* Исправление LiveKit для гибких строк */
-  width: 100%;
-  height: var(--available-height);
-  max-height: var(--available-height);
-  overflow: hidden;
-  padding: 4px;
-}
-
-/* Адаптивная сетка с соотношением сторон 1:1 */
-.lk-grid-layout.adaptive-grid {
-  transition:
-    grid-template-columns 0.3s ease,
-    grid-template-rows 0.3s ease;
-}
-
-/* Плитки участников с квадратным соотношением сторон */
-.lk-grid-layout .lk-participant-tile {
-  aspect-ratio: var(--lk-aspect-ratio);
-  width: 100%;
-  height: 100%;
-  max-width: 100%;
-  max-height: 100%;
-  contain: layout style paint;
-  transform: translateZ(0); /* Аппаратное ускорение */
-  transition:
-    opacity 0.2s ease,
-    transform 0.2s ease;
-}
-
-.lk-grid-layout[data-lk-pagination='true'] {
-  position: relative;
-}
-
-.lk-pagination-indicator {
-  position: absolute;
-  bottom: 1rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  gap: 0.5rem;
-  z-index: 10;
-}
-
-.lk-pagination-indicator span {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.3);
-  transition: background-color 0.2s ease;
-}
-
-.lk-pagination-indicator span[data-lk-active] {
-  background-color: rgba(255, 255, 255, 1);
-}
-
-/* Стили для элементов управления пагинацией в grid режиме */
-.lk-grid-pagination-controls {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 10;
-}
-
-.lk-grid-pagination-controls button {
-  pointer-events: auto;
-  transition: all 0.2s ease;
-}
-
-.lk-grid-pagination-controls button:hover:not(:disabled) {
-  transform: scale(1.05);
-}
-
-.lk-grid-pagination-controls button:active:not(:disabled) {
-  transform: scale(0.95);
 }
 
 /* Адаптивность для мобильных устройств */
@@ -110,15 +22,6 @@
     --upbar-height: 70px;
     --bottom-bar-height: 60px;
   }
-
-  .lk-grid-layout {
-    --lk-grid-gap: 0.5rem;
-    --lk-tile-size: 150px;
-  }
-
-  .lk-grid-layout[data-lk-device-type='mobile'] {
-    --lk-grid-gap: 8px;
-  }
 }
 
 /* Адаптивность для планшетов */
@@ -126,205 +29,29 @@
   :root {
     --upbar-height: 75px;
   }
-
-  .lk-grid-layout {
-    --lk-grid-gap: 0.75rem;
-    --lk-tile-size: 180px;
-  }
-
-  .lk-grid-layout[data-lk-device-type='tablet'] {
-    --lk-grid-gap: 12px;
-  }
 }
 
-/* Адаптивность для десктопов */
-@media (min-width: 1025px) {
-  .lk-grid-layout {
-    --lk-grid-gap: 1rem;
-    --lk-tile-size: 200px;
-  }
-
-  .lk-grid-layout[data-lk-device-type='desktop'] {
-    --lk-grid-gap: 16px;
-  }
-}
-
-/* Полноэкранный режим - скрываем UpBar */
+/* Полноэкранный режим */
 .lk-video-conference[data-fullscreen='true'] {
   --upbar-height: 0px;
-}
-
-/* Дополнительная проверка для минимальной высоты */
-.lk-grid-layout {
-  min-height: 200px; /* Минимальная высота для корректного отображения */
-}
-
-/* Улучшения для производительности */
-.lk-grid-layout * {
-  will-change: transform;
 }
 
 .lk-participant-tile {
   contain: layout style paint;
   transform: translateZ(0); /* Активируем аппаратное ускорение */
-}
-
-/* Дополнительные стили для адаптивной сетки */
-.lk-grid-layout.adaptive-grid .lk-participant-tile {
-  border-radius: 16px;
   overflow: hidden;
+  border-radius: 16px;
   background: var(--xi-bg-gray-0);
 }
 
 /* Индикаторы состояния для адаптивной сетки */
-.lk-grid-layout.adaptive-grid
-  .lk-participant-tile[data-lk-speaking='true']:not([data-lk-source='screen_share']) {
-  transition: box-shadow 0.2s ease;
+.lk-participant-tile[data-lk-speaking='true']:not([data-lk-source='screen_share']) {
+  transition: box-shadow 0.3s ease;
   box-shadow: 0 0 0 2px var(--xi-green-60);
 }
 
-.lk-grid-layout.adaptive-grid
-  .lk-participant-tile[data-lk-muted='true']:not([data-lk-source='screen_share']) {
-  opacity: 0.8;
-}
-
-/* Фокус и доступность для адаптивной сетки */
-.lk-grid-layout.adaptive-grid .lk-participant-tile:focus-visible {
-  outline: 2px solid var(--xi-green-60);
-  outline-offset: 2px;
-}
-
-/* Анимации */
-.lk-grid-layout {
-  transition:
-    grid-template-columns 0.3s ease,
-    grid-template-rows 0.3s ease;
-}
-
-.lk-participant-tile {
-  transition: opacity 0.2s ease;
-}
-
-/* Focus Layout Container - для демонстрации экрана */
-.lk-focus-layout-wrapper {
-  height: var(--available-height);
-  max-height: var(--available-height);
-  overflow: hidden;
-}
-
-/* Стили для новых компонентов FocusLayout */
-.focus-stage {
-  position: relative;
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  border-radius: 12px;
-  background: #000;
-}
-
-.focus-stage video {
-  position: absolute;
-  inset: 0;
-  height: 100%;
-  width: 100%;
-  object-fit: contain;
-}
-
-.carousel {
-  position: relative;
-  display: flex;
-  overflow: hidden;
-}
-
-.carousel.vertical {
-  flex-direction: column;
-  height: 100%;
-}
-
-.carousel.horizontal {
-  flex-direction: row;
-  width: 100%;
-}
-
-.carousel-item {
-  flex: 0 0 auto;
-  overflow: hidden;
-  border-radius: 16px;
-  background: #000;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-}
-
-.carousel-btn {
-  position: absolute;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  transition: opacity 0.2s ease;
-  z-index: 10;
-}
-
-.carousel-btn:hover:not(:disabled) {
-  opacity: 1;
-}
-
-.carousel-btn:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.carousel-btn .btn-inner {
-  background: var(--xi-bg-gray-0);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  padding: 8px;
-}
-
-.carousel-btn.prev.v {
-  left: 50%;
-  top: 8px;
-  transform: translateX(-50%);
-}
-
-.carousel-btn.next.v {
-  left: 50%;
-  bottom: 8px;
-  transform: translateX(-50%);
-}
-
-.carousel-btn.prev.h {
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.carousel-btn.next.h {
-  right: 8px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.lk-connection-quality {
-  background-color: var(--xi-gray-0);
-  height: 24px;
-  width: 24px;
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.lk-connection-quality svg {
-  width: 16px;
-  height: 16px;
-}
-
-.lk-connection-quality[data-lk-quality='excellent'] svg {
-  fill: var(--xi-green-80);
-}
-
 .lk-participant-tile .lk-focus-toggle-button {
+  position: absolute;
   background-color: var(--xi-gray-0) !important;
   height: 24px;
   width: 24px;
@@ -334,17 +61,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  opacity: 0;
+  padding: 0 !important;
 }
 
 .lk-participant-tile:hover .lk-focus-toggle-button {
   opacity: 0.8;
-}
-
-.lk-participant-tile:hover .lk-connection-quality {
-  opacity: 0.8;
-}
-
-.lk-participant-media-video[data-lk-orientation='landscape'] {
-  object-fit: contain !important;
-  background-color: var(--xi-gray-40) !important;
 }
