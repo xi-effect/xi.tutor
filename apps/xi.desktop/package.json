@@ -47,8 +47,8 @@
   },
   "electronVersion": "39.2.7",
   "build": {
-    "appId": "com.xi.desktop",
-    "productName": "Xi Desktop",
+    "appId": "com.sovlium.desktop",
+    "productName": "Sovlium",
     "directories": {
       "output": "release",
       "buildResources": "build"
