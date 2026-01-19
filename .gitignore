@@ -10,10 +10,6 @@ node_modules
 .env.development.local
 .env.test.local
 .env.production.local
-/apps/xi.web/.env.local
-/apps/xi.web/.env.development.local
-/apps/xi.web/.env.test.local
-/apps/xi.web/.env.production.local
 
 # Testing
 coverage
