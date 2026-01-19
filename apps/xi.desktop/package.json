@@ -7,17 +7,19 @@
     "dev": "concurrently -k \"pnpm run dev:web\" \"pnpm run dev:electron\"",
     "dev:web": "cd ../xi.web && pnpm dev",
     "dev:electron": "pnpm run build:main && wait-on http://localhost:5173 -t 30000 && cross-env NODE_ENV=development electron .",
-    "build": "pnpm run build:web && pnpm run build:main && pnpm run build:electron",
+    "build": "pnpm run build:web && pnpm run build:main && pnpm run build:icons && pnpm run build:electron",
     "build:web": "cd ../xi.web && pnpm build",
-    "build:main": "tsc -p tsconfig.main.json",
+    "build:main": "tsc -p tsconfig.main.json && tsc -p tsconfig.preload.json",
+    "build:icons": "mkdir -p build/icons && cp ../xi.web/public/web-app-manifest-512x512.png build/icons/icon.png && cp ../xi.web/public/favicon.ico build/icons/icon.ico",
     "build:electron": "electron-builder",
     "clean": "rm -rf dist release",
     "electron": "electron .",
     "lint": "eslint ."
   },
-  "author": "",
+  "author": "Sovlium",
   "license": "ISC",
-  "description": "",
+  "description": "Sovlium Desktop - десктопное приложение для платформы обучения",
+  "homepage": "https://sovlium.ru",
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.9",
     "@types/node": "^20.3.1",
@@ -49,10 +51,15 @@
   "build": {
     "appId": "com.sovlium.desktop",
     "productName": "Sovlium",
+    "copyright": "Copyright © 2026 Sovlium",
     "directories": {
       "output": "release",
       "buildResources": "build"
     },
+    "asar": true,
+    "asarUnpack": [
+      "dist/main/preload.js"
+    ],
     "files": [
       "dist/main/**/*",
       "package.json"
@@ -65,6 +72,8 @@
       }
     ],
     "mac": {
+      "icon": "build/icons/icon.png",
+      "category": "public.app-category.productivity",
       "target": [
         {
           "target": "dmg",
@@ -75,16 +84,71 @@
           "arch": ["x64", "arm64"]
         }
       ],
-      "category": "public.app-category.productivity"
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false,
+      "entitlements": "build/entitlements.mac.plist",
+      "entitlementsInherit": "build/entitlements.mac.plist",
+      "darkModeSupport": true
+    },
+    "dmg": {
+      "title": "${productName} ${version}",
+      "icon": "build/icons/icon.png",
+      "background": null,
+      "contents": [
+        {
+          "x": 130,
+          "y": 220
+        },
+        {
+          "x": 410,
+          "y": 220,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ],
+      "window": {
+        "width": 540,
+        "height": 380
+      }
     },
     "win": {
-      "target": "portable"
+      "icon": "build/icons/icon.ico",
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64", "ia32"]
+        },
+        {
+          "target": "portable",
+          "arch": ["x64"]
+        }
+      ],
+      "verifyUpdateCodeSignature": false
     },
     "linux": {
+      "icon": "build/icons/icon.png",
       "target": [
-        "AppImage",
-        "deb"
-      ]
+        {
+          "target": "AppImage",
+          "arch": ["x64"]
+        },
+        {
+          "target": "deb",
+          "arch": ["x64"]
+        }
+      ],
+      "category": "Education",
+      "synopsis": "Платформа для обучения",
+      "description": "Sovlium Desktop - десктопное приложение для платформы обучения"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "installerIcon": "build/icons/icon.ico",
+      "uninstallerIcon": "build/icons/icon.ico",
+      "installerHeaderIcon": "build/icons/icon.ico"
     }
   }
 }

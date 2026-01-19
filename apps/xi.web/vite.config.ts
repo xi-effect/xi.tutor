@@ -7,6 +7,7 @@ import tailwindcss from '@tailwindcss/vite';
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv) => {
   return {
+    base: './', // Относительные пути для работы в Electron с file:// протоколом
     plugins: [
       tanstackRouter({ target: 'react', autoCodeSplitting: true }),
       react(),
@@ -36,10 +37,11 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       chunkSizeWarningLimit: 1000,
       minify: mode === 'production',
       outDir: 'build',
+      emptyOutDir: true, // Очищать выходную директорию перед сборкой
       sourcemap: mode === 'debug',
       terserOptions: {
         compress: {
-          drop_console: true, // Временно отключено для отладки WebP конвертации
+          drop_console: true, // Удаляет console.log из production сборки
           drop_debugger: true, // Удалит debugger
         },
       },

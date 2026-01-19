@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "ESNext",
-    "lib": ["ES2020"],
+    "module": "CommonJS",
+    "lib": ["ES2020", "DOM"],
     "outDir": "dist/main",
     "rootDir": "src/main",
     "strict": true,
@@ -11,11 +11,8 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
-    "allowSyntheticDefaultImports": true,
-    "composite": true,
-    "allowJs": true,
-    "checkJs": true
+    "allowSyntheticDefaultImports": true
   },
-  "include": ["src/main/index.ts"],
-  "exclude": ["node_modules", "src/main/preload.ts"]
+  "include": ["src/main/preload.ts"],
+  "exclude": ["node_modules"]
 }
