@@ -96,6 +96,12 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
     window.location.href = url;
   };
 
+  const getButtonText = () => {
+    if (isConferenceActive) return 'Присоединиться';
+    else if (isTutor) return 'Начать занятие';
+    else return 'Присоединиться';
+  };
+
   return (
     <div className="border-gray-30 relative flex min-h-[170px] max-w-[420px] min-w-[320px] flex-col items-start justify-start gap-1 rounded-2xl border bg-transparent p-4">
       <Tooltip delayDuration={1000}>
@@ -145,7 +151,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         onClick={handleStartLesson}
         disabled={!isTutor && !isConferenceActive}
       >
-        {isConferenceActive ? 'Присоединиться' : isTutor ? 'Начать занятие' : 'Присоединиться'}{' '}
+        {getButtonText()}
         <Conference className="group-hover:fill-gray-0 fill-brand-100 ml-2" />
       </Button>
     </div>
