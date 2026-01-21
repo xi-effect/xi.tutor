@@ -8,7 +8,7 @@ export interface Participant {
 }
 
 export const useGetParticipantsByTutor = (classroom_id: string, disabled?: boolean) => {
-  const queryResult = useFetching({
+  const { data, isError, isLoading, error, ...rest } = useFetching({
     apiConfig: {
       method: callsApiConfig[CallsQueryKey.GetParticipantsTutor].method,
       getUrl: () => callsApiConfig[CallsQueryKey.GetParticipantsTutor].getUrl(classroom_id),
@@ -22,13 +22,13 @@ export const useGetParticipantsByTutor = (classroom_id: string, disabled?: boole
 
   // Проверяем, является ли ошибка 409 (комната не активна)
   const isConferenceNotActive =
-    queryResult.isError &&
-    queryResult.error instanceof AxiosError &&
-    queryResult.error.response?.status === 409;
+    isError && error instanceof AxiosError && error.response?.status === 409;
 
   return {
-    participants: queryResult.data as Participant[] | undefined,
+    participants: data as Participant[] | undefined,
     isConferenceNotActive, // true если комната не активна (409)
-    ...queryResult,
+    isError,
+    isLoading,
+    ...rest,
   };
 };
