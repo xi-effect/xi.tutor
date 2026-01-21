@@ -4,7 +4,12 @@ import { Button } from '@xipkg/button';
 import { Arrow, Conference } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import { useCurrentUser, useUserByRole } from 'common.services';
+import {
+  useCurrentUser,
+  useUserByRole,
+  useGetParticipantsByTutor,
+  useGetParticipantsByStudent,
+} from 'common.services';
 import { SubjectBadge } from './SubjectBadge';
 
 type UserAvatarPropsT = {
@@ -49,6 +54,28 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
+  // Получаем участников конференции в зависимости от роли
+  // Логика определения активной конференции:
+  // - 409 ошибка = комната НЕ активна (была пустая >5 минут)
+  // - [] (пустой массив) = комната АКТИВНА, но пустая (репетитор начал, но еще не присоединился)
+  // - [участники] = комната активна, есть участники
+  // - undefined (при загрузке или других ошибках) = состояние неизвестно, кнопка disabled
+  const { participants: participantsStudent, isConferenceNotActive: isConferenceNotActiveStudent } =
+    useGetParticipantsByStudent(classroom.id.toString(), isTutor);
+
+  const { participants: participantsTutor, isConferenceNotActive: isConferenceNotActiveTutor } =
+    useGetParticipantsByTutor(classroom.id.toString(), !isTutor);
+
+  const participants = isTutor ? participantsTutor : participantsStudent;
+  const isConferenceNotActive = isTutor ? isConferenceNotActiveTutor : isConferenceNotActiveStudent;
+
+  // Конференция активна, если:
+  // 1. Нет ошибки 409 (комната активна)
+  // 2. И participants определен и является массивом (пустой [] или с участниками)
+  // При загрузке или других ошибках participants = undefined, поэтому isConferenceActive = false
+  const isConferenceActive =
+    !isConferenceNotActive && participants !== undefined && Array.isArray(participants);
+
   const handleClick = () => {
     // Сохраняем параметр call при переходе в кабинет
     const filteredSearch = search.call ? { call: search.call } : {};
@@ -67,6 +94,12 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
     // Переходим на страницу кабинета с параметром goto=call
     const url = `/classrooms/${classroom.id}?goto=call`;
     window.location.href = url;
+  };
+
+  const getButtonText = () => {
+    if (isConferenceActive) return 'Присоединиться';
+    else if (isTutor) return 'Начать занятие';
+    else return 'Присоединиться';
   };
 
   return (
@@ -116,8 +149,9 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         variant="secondary"
         className="group mt-auto w-full"
         onClick={handleStartLesson}
+        disabled={!isTutor && !isConferenceActive}
       >
-        {isTutor ? 'Начать занятие' : 'Присоединиться'}{' '}
+        {getButtonText()}
         <Conference className="group-hover:fill-gray-0 fill-brand-100 ml-2" />
       </Button>
     </div>
