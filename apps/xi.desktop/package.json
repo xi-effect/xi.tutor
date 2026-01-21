@@ -112,7 +112,7 @@
       }
     },
     "win": {
-      "icon": "build/icons/icon.ico",
+      "icon": "build/icons/icon.png",
       "target": [
         {
           "target": "nsis",
