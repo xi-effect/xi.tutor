@@ -18,8 +18,6 @@ import { useMarkNotificationAsRead } from './useMarkNotificationAsRead';
 import { useSearchNotifications } from './useSearchNotifications';
 
 export const useNotifications = () => {
-  // const navigate = useNavigate();
-
   const [socketNotifications, setSocketNotifications] = useState<NotificationT[]>([]);
   const [shouldLoadNotifications, setShouldLoadNotifications] = useState(false);
   const queryClient = useQueryClient();
@@ -92,8 +90,8 @@ export const useNotifications = () => {
         // Внешняя ссылка - открываем в новой вкладке
         window.open(url, '_blank', 'noopener,noreferrer');
       } else {
-        // Внутренняя навигация - используем window.location.href
-        window.location.href = url;
+        // Внутренняя навигация - используем window.history.push
+        window.history.pushState({}, '', url);
       }
     } catch (error) {
       console.error('Ошибка при навигации:', error);
@@ -135,20 +133,21 @@ export const useNotifications = () => {
         description,
         duration: 5000,
         action: config && (
-          <Button
-            size="s"
-            className="ml-[20px]"
-            onClick={(e) => {
-              e.stopPropagation();
-              // Получаем URL из конфига уведомления
-              const url = generateNotificationAction(notification);
-              if (url) {
-                onNavigate(url);
-              }
-            }}
-          >
-            Перейти
-          </Button>
+          <div className="flex flex-1 justify-end">
+            <Button
+              size="s"
+              onClick={(e) => {
+                e.stopPropagation();
+                // Получаем URL из конфига уведомления
+                const url = generateNotificationAction(notification);
+                if (url) {
+                  onNavigate(url);
+                }
+              }}
+            >
+              Перейти
+            </Button>
+          </div>
         ),
       });
     },
