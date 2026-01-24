@@ -9,7 +9,7 @@ import {
 } from '@xipkg/sidebar';
 import { useLocation, useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Group, Home, Materials, Payments, TelegramFilled, InfoCircle } from '@xipkg/icons';
+import { Group, Home, Payments, TelegramFilled, InfoCircle, BookOpened } from '@xipkg/icons';
 import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
 import { useMenuStore } from '../store';
@@ -44,7 +44,7 @@ export const SideBarItems = () => {
             id: 'materials-menu-item',
             titleKey: 'materials',
             url: '/materials',
-            icon: Materials,
+            icon: BookOpened,
           },
         ]
       : []),
