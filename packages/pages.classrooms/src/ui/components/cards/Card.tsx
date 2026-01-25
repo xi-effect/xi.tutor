@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 
-import { StatusBadge } from './StatusBadge';
+import { StatusBadge } from 'features.classroom';
 import { useCurrentUser, useDeleteClassroom, useUserByRole } from 'common.services';
 import { ClassroomPropsT } from '../../../types';
 import { useNavigate, useSearch } from '@tanstack/react-router';

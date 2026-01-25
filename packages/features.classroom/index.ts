@@ -1,1 +1,1 @@
-export { SubjectBadge } from './src';
+export { SubjectBadge, StatusBadge } from './src';

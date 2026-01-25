@@ -24,7 +24,6 @@
     "@xipkg/select": "^2.2.5",
     "@xipkg/tooltip": "2.1.0",
     "@xipkg/userprofile": "4.0.14",
-    "@xipkg/utils": "1.8.0",
     "common.entities": "*",
     "common.env": "*",
     "common.services": "*",
