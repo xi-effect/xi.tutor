@@ -11,7 +11,7 @@ type StatusBadgePropsT = {
   deleted?: boolean;
 };
 
-const styles = 'rounded-lg border-none px-2 py-1 font-medium text-s-base';
+const styles = 'rounded-lg border-none px-2 py-1 font-medium text-s-base shrink-0';
 
 const mapStyles: Record<StatusEducationT, string> = {
   active: 'text-green-80 bg-green-0',
