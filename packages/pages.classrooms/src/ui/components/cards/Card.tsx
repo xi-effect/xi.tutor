@@ -9,11 +9,10 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 
-import { StatusBadge } from 'features.classroom';
+import { StatusBadge, SubjectBadge } from 'features.classroom';
 import { useCurrentUser, useDeleteClassroom, useUserByRole } from 'common.services';
 import { ClassroomPropsT } from '../../../types';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { SubjectBadge } from 'features.classroom';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 
