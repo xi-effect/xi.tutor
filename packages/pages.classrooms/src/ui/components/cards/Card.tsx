@@ -93,9 +93,9 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
 
           {subject_id && (
             <SubjectBadge
-              subject_id={subject_id}
+              subjectId={subject_id}
               className="flex-1 overflow-hidden"
-              textStyles="truncate max-w-full"
+              textClassName="truncate max-w-full"
               isTooltip
             />
           )}

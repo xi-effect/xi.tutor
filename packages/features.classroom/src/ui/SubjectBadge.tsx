@@ -4,26 +4,26 @@ import { useSubjectsById } from 'common.services';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 
 type SubjectBadgePropsT = {
-  subject_id: number;
+  subjectId: number;
   className?: string;
-  textStyles?: string;
+  textClassName?: string;
   isTooltip?: boolean;
 };
 
 export const SubjectBadge = ({
-  subject_id,
+  subjectId,
   className,
-  textStyles,
+  textClassName,
   isTooltip = false,
 }: SubjectBadgePropsT) => {
-  const { data: subject } = useSubjectsById(subject_id);
+  const { data: subject } = useSubjectsById(subjectId);
 
   const badgeContent = (
     <Badge
       size="m"
       className={cn('text-gray-80 bg-gray-5 rounded-lg border-none px-2 py-1', className)}
     >
-      <span className={textStyles}>{subject?.name}</span>
+      <span className={textClassName}>{subject?.name}</span>
     </Badge>
   );
 
