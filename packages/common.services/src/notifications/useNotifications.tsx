@@ -129,7 +129,7 @@ export const useNotifications = () => {
       const { kind } = notification.payload;
       const config = notificationConfigs[kind];
 
-      toast(title, {
+      const toastId = toast(title, {
         description,
         duration: 5000,
         action: config && (
@@ -142,6 +142,7 @@ export const useNotifications = () => {
                 const url = generateNotificationAction(notification);
                 if (url) {
                   onNavigate(url);
+                  toast.dismiss(toastId);
                 }
               }}
             >
