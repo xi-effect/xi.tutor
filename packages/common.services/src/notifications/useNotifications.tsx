@@ -1,18 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { Button } from '@xipkg/button';
 import { useSocketEvent } from 'common.sockets';
 import { NotificationT, NotificationsStateT, RecipientNotificationResponse } from 'common.types';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { toast } from 'sonner';
+import { useCurrentUser } from '../user';
+import { notificationConfigs } from './notificationConfig';
 import {
-  generateNotificationTitle,
+  generateNotificationAction,
   generateNotificationDescription,
+  generateNotificationTitle,
   getNotificationInvalidationKeys,
 } from './notificationUtils';
-import { useSearchNotifications } from './useSearchNotifications';
 import { useGetUnreadCount } from './useGetUnreadCount';
 import { useMarkNotificationAsRead } from './useMarkNotificationAsRead';
-import { useCurrentUser } from '../user';
+import { useSearchNotifications } from './useSearchNotifications';
 
 export const useNotifications = () => {
   const [socketNotifications, setSocketNotifications] = useState<NotificationT[]>([]);
@@ -79,6 +82,22 @@ export const useNotifications = () => {
     [],
   );
 
+  // Обработчик навигации по URL из уведомления
+  const onNavigate = useCallback((url: string) => {
+    try {
+      // Проверяем, является ли URL относительным путем или полным URL
+      if (url.startsWith('http://') || url.startsWith('https://')) {
+        // Внешняя ссылка - открываем в новой вкладке
+        window.open(url, '_blank', 'noopener,noreferrer');
+      } else {
+        // Внутренняя навигация - используем window.history.push
+        window.history.pushState({}, '', url);
+      }
+    } catch (error) {
+      console.error('Ошибка при навигации:', error);
+    }
+  }, []);
+
   // Обработчик нового уведомления от SocketIO
   const handleNewNotification = useCallback(
     (data: NotificationT | RecipientNotificationResponse) => {
@@ -107,9 +126,30 @@ export const useNotifications = () => {
       const title = generateNotificationTitle(notification);
       const description = generateNotificationDescription(notification);
 
-      toast(title, {
+      const { kind } = notification.payload;
+      const config = notificationConfigs[kind];
+
+      const toastId = toast(title, {
         description,
         duration: 5000,
+        action: config && (
+          <div className="flex flex-1 justify-end">
+            <Button
+              size="s"
+              onClick={(e) => {
+                e.stopPropagation();
+                // Получаем URL из конфига уведомления
+                const url = generateNotificationAction(notification);
+                if (url) {
+                  onNavigate(url);
+                  toast.dismiss(toastId);
+                }
+              }}
+            >
+              Перейти
+            </Button>
+          </div>
+        ),
       });
     },
     [refetchCount, transformNotification, queryClient],
