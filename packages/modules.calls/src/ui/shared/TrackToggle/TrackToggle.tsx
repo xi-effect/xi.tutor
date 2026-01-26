@@ -153,6 +153,8 @@ export const TrackToggle = ({
         transition={{
           duration: 1,
         }}
+        data-umami-event="call-toggle-microphone"
+        data-umami-event-state={enabled ? 'on' : 'off'}
         {...(props as unknown as any)}
       >
         {showIcon && icon}
@@ -170,6 +172,14 @@ export const TrackToggle = ({
         enabled && 'bg-green-0 hover:bg-green-20',
         className,
       )}
+      data-umami-event={
+        source === Track.Source.Camera
+          ? 'call-toggle-camera'
+          : source === Track.Source.ScreenShare
+            ? 'call-toggle-screenshare'
+            : 'call-toggle-track'
+      }
+      data-umami-event-state={enabled ? 'on' : 'off'}
       {...props}
     >
       {showIcon && icon}

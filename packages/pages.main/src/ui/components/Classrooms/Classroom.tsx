@@ -77,6 +77,8 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
             onClick={handleClick}
             className="group bg-brand-0 absolute top-5 right-5 h-6 w-6 p-0"
             variant="icon"
+            data-umami-event="classroom-open"
+            data-umami-event-classroom-id={classroom.id}
           >
             <Arrow className="fill-brand-80 group-hover:fill-brand-100 h-4 w-4" />
           </Button>
@@ -116,6 +118,8 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         variant="secondary"
         className="group mt-auto w-full"
         onClick={handleStartLesson}
+        data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
+        data-umami-event-classroom-id={classroom.id}
       >
         {isTutor ? 'Начать занятие' : 'Присоединиться'}{' '}
         <Conference className="group-hover:fill-gray-0 fill-brand-100 ml-2" />

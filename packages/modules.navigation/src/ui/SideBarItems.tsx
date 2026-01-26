@@ -145,7 +145,11 @@ export const SideBarItems = () => {
               {topMenu.map((item) => (
                 <SidebarMenuItem id={item.id} className="cursor-pointer" key={item.titleKey}>
                   <SidebarMenuButton asChild isActive={getIsActiveItem(item.url)}>
-                    <a onClick={() => handleClick(item.url)}>
+                    <a
+                      onClick={() => handleClick(item.url)}
+                      data-umami-event={`navigation-${item.titleKey}`}
+                      data-umami-event-url={item.url}
+                    >
                       <item.icon className="h-6 w-6" />
                       <span className="text-base">{t(item.titleKey)}</span>
                     </a>
@@ -167,6 +171,10 @@ export const SideBarItems = () => {
                 type="button"
                 className="bg-gray-0"
                 title={t(item.titleKey)}
+                data-umami-event={`navigation-${item.titleKey}`}
+                {...(item.titleKey === 'support'
+                  ? { 'data-umami-event-url': 'https://t.me/sovlium_support_bot' }
+                  : {})}
               >
                 <item.icon className="h-6 w-6" />
                 <div className="text-base font-medium text-gray-50">{t(item.titleKey)}</div>

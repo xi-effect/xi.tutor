@@ -104,6 +104,7 @@ export const Header = () => {
               onClick={handleBack}
               type="button"
               className="h-[40px] w-[40px] p-2"
+              data-umami-event="board-back"
             >
               <ArrowLeft size="s" className="size-6" />
             </Button>
@@ -118,6 +119,7 @@ export const Header = () => {
                     variant="ghost"
                     className="h-10 w-10 p-2"
                     onClick={handleOpenModal}
+                    data-umami-event="board-edit-name"
                   >
                     <Edit size="s" className="size-6" />
                   </Button>
@@ -133,6 +135,8 @@ export const Header = () => {
                 onClick={toggleFullScreen}
                 type="button"
                 className="h-10 w-10 p-2"
+                data-umami-event="board-toggle-fullscreen"
+                data-umami-event-state={isFullScreen ? 'exit' : 'enter'}
               >
                 {isFullScreen ? (
                   <Minimize size="s" className="size-6" />

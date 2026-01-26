@@ -33,6 +33,8 @@ export const ActionsCell = ({ invoiceId, classroomId }: ActionsCellProps) => {
               size="s"
               onClick={handleDelete}
               disabled={isPending}
+              data-umami-event="invoice-delete"
+              data-umami-event-invoice-id={invoiceId}
             >
               <Trash className="size-4 fill-gray-100" />
             </Button>

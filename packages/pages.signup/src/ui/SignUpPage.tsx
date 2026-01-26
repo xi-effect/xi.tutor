@@ -165,6 +165,9 @@ export const SignUpPage = () => {
                         href="https://sovlium.ru/legal/terms"
                         target="_blank"
                         className={`${linkBaseClass} ${linkErrorClass}`}
+                        data-umami-event="outbound-link-click"
+                        data-umami-event-url="https://sovlium.ru/legal/terms"
+                        data-umami-event-type="terms"
                       >
                         пользовательского соглашения
                       </Link>{' '}
@@ -174,6 +177,9 @@ export const SignUpPage = () => {
                         href="https://sovlium.ru/legal/privacy"
                         target="_blank"
                         className={`${linkBaseClass} ${linkErrorClass}`}
+                        data-umami-event="outbound-link-click"
+                        data-umami-event-url="https://sovlium.ru/legal/privacy"
+                        data-umami-event-type="privacy"
                       >
                         политики конфиденциальности
                       </Link>
@@ -184,7 +190,13 @@ export const SignUpPage = () => {
             />
             <div className="flex w-full flex-1 items-end justify-between">
               <div className="flex h-[48px] items-center">
-                <LinkTanstack size="l" theme="brand" variant="hover" to={getSigninHref()}>
+                <LinkTanstack
+                  size="l"
+                  theme="brand"
+                  variant="hover"
+                  to={getSigninHref()}
+                  data-umami-event="auth-signin-link"
+                >
                   {t('sign_in')}
                 </LinkTanstack>
               </div>
@@ -195,6 +207,7 @@ export const SignUpPage = () => {
                   type="submit"
                   className="w-[214px]"
                   disabled={isButtonDisabled}
+                  data-umami-event="auth-signup-button"
                 >
                   {t('sign_up')}
                 </Button>

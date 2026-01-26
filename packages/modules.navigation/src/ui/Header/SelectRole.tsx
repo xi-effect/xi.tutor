@@ -23,6 +23,15 @@ export const SelectRole = () => {
   const { updateProfile } = useUpdateProfile();
 
   const handleChange = (value: RoleT) => {
+    // Отслеживаем смену роли через Umami
+    if (typeof window !== 'undefined' && window.umami) {
+      window.umami.track('role-change', {
+        from: user?.default_layout || 'unknown',
+        to: value,
+        source: 'desktop-dropdown',
+      });
+    }
+
     updateProfile.mutate(
       { default_layout: value },
       {
@@ -45,16 +54,27 @@ export const SelectRole = () => {
       <SelectTrigger
         className="text-gray-80 w-full border-none p-0 text-sm hover:border-none hover:bg-transparent focus:border-none"
         size="s"
+        data-umami-event="header-role-selector-open"
       >
         <SelectValue placeholder={t('role')} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectItem value="tutor" className="text-gray-80 text-sm">
+          <SelectItem
+            value="tutor"
+            className="text-gray-80 text-sm"
+            data-umami-event="role-select-tutor"
+            data-umami-event-from={user?.default_layout || 'unknown'}
+          >
             {t('tutor')}
           </SelectItem>
 
-          <SelectItem value="student" className="text-gray-80 text-sm">
+          <SelectItem
+            value="student"
+            className="text-gray-80 text-sm"
+            data-umami-event="role-select-student"
+            data-umami-event-from={user?.default_layout || 'unknown'}
+          >
             {t('student')}
           </SelectItem>
         </SelectGroup>

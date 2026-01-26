@@ -108,6 +108,8 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
                               className="bg-gray-5 hover:bg-gray-0 ml-auto size-8 rounded-lg p-0"
                               variant="ghost"
                               size="s"
+                              data-umami-event="student-delete-init"
+                              data-umami-event-student-id={student.tutorship.student_id}
                             >
                               <Trash className="size-4 fill-gray-100" />
                             </Button>
@@ -137,6 +139,8 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
                   variant="error"
                   size="l"
                   disabled={isDeleting}
+                  data-umami-event="student-delete-confirm"
+                  data-umami-event-student-id={selectedStudent}
                 >
                   {isDeleting ? 'Удаление...' : 'Удалить'}
                 </Button>
@@ -146,6 +150,7 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
                   variant="ghost"
                   size="l"
                   disabled={isDeleting}
+                  data-umami-event="student-delete-cancel"
                 >
                   Отмена
                 </Button>

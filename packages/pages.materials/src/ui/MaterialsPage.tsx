@@ -39,6 +39,7 @@ const MaterialsPageContent = () => {
           <Button
             size="small"
             className="fixed right-4 bottom-4 z-50 flex h-12 w-12 items-center justify-center rounded-xl"
+            data-umami-event="materials-create-material"
           >
             <Plus className="fill-brand-0" />
           </Button>

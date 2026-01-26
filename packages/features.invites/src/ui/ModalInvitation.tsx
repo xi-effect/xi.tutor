@@ -81,6 +81,8 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
                       <div
                         className="bg-gray-5 flex h-5 w-5 cursor-pointer items-center justify-center rounded-sm p-1"
                         onClick={handleCopyLink(invitation.code)}
+                        data-umami-event="invite-copy-link"
+                        data-umami-event-invite-id={invitation.id}
                       >
                         <Copy className="dark:fill-gray-80" />
                       </div>
@@ -91,6 +93,8 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
                     <TableCell
                       className="flex h-8 w-8 cursor-pointer items-center justify-center p-0"
                       onClick={handleDeleteInvitation(invitation.id)}
+                      data-umami-event="invite-delete"
+                      data-umami-event-invite-id={invitation.id}
                     >
                       {isDeleting && deletingId === invitation.id ? (
                         <div
@@ -116,6 +120,7 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
               onClick={handleAddInvitation}
               variant={isAdding && data?.length > 0 ? 'ghost-spinner' : 'default'}
               className="gap-2"
+              data-umami-event="invite-create"
             >
               Создать новое приглашение
             </Button>
