@@ -35,6 +35,7 @@
     "features.group.add": "*",
     "features.materials.duplicate": "*",
     "features.invoice.card": "*",
+    "features.classroom": "*",
     "pages.classrooms": "*",
     "pages.materials": "*",
     "react-hook-form": "^7.55.0",
