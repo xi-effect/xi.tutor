@@ -6,3 +6,4 @@ export { useNetworkStatus, NetworkProvider } from './src/NetworkContext';
 export { useRetryQueue } from './src/useRetryQueue';
 export { getUserAvatarUrl } from './src/getUserAvatarUrl';
 export { useScreenSize } from './src/useScreenSize';
+export { trackUmamiSession } from './src/umamiSession';

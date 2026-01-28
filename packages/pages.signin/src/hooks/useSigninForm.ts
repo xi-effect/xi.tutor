@@ -4,8 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { AxiosError } from 'axios';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 
-import { useSignin } from 'common.services';
+import { useSignin, useCurrentUser } from 'common.services';
 import { useAuth } from 'common.auth';
+import { trackUmamiSession } from 'common.utils';
 
 import { FormData } from '../model/formSchema';
 import { UseFormSetError } from 'react-hook-form';
@@ -24,6 +25,7 @@ export const useSigninForm = () => {
   const { signin } = useSignin();
   const { login } = useAuth();
   const navigate = useNavigate();
+  const { refetch: refetchUser } = useCurrentUser();
 
   const search = useSearch({ strict: false }) as { redirect?: string };
 
@@ -44,6 +46,16 @@ export const useSigninForm = () => {
       }
 
       await login();
+
+      // Трекинг сессии после успешного входа
+      // Дожидаемся обновления данных пользователя
+      refetchUser().then((result) => {
+        if (result.data) {
+          trackUmamiSession(result.data, 'signin').catch((error) => {
+            console.error('Failed to track Umami session:', error);
+          });
+        }
+      });
 
       navigate({ to: search.redirect || '/' });
     } catch (error) {

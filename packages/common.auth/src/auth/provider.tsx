@@ -4,12 +4,14 @@ import { getAxiosInstance } from 'common.config';
 import { userApiConfig, UserQueryKey } from 'common.api';
 import { LoadingScreen } from 'common.ui';
 import { useSignup, useSignout, useNetworkAuthIntegration } from 'common.services';
+import { trackUmamiSession } from 'common.utils';
 import { AuthContext } from './context';
 import { SignupData } from 'common.types';
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
   const [isAuthenticated, setIsAuthenticated] = React.useState<boolean | null>(null);
+  const [hasTrackedSessionInit, setHasTrackedSessionInit] = React.useState(false);
   const { handleAuthError } = useNetworkAuthIntegration();
 
   if (!queryClient) {
@@ -32,15 +34,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   });
 
   React.useEffect(() => {
-    if (isSuccess && user) {
+    if (isSuccess && user && !hasTrackedSessionInit) {
       setIsAuthenticated(true);
-      // Здесь можно выполнить и другие действия, которые раньше были в onSuccess
+      // Трекинг сессии для уже авторизованного пользователя при инициализации (только один раз)
+      trackUmamiSession(user, 'session_init').catch((error) => {
+        console.error('Failed to track Umami session:', error);
+      });
+      setHasTrackedSessionInit(true);
     }
     if (isError) {
       setIsAuthenticated(false);
       // Здесь можно выполнить и другие действия, которые раньше были в onSuccess
     }
-  }, [isSuccess, isError, user]);
+  }, [isSuccess, isError, user, hasTrackedSessionInit]);
 
   const login = async () => {
     setIsAuthenticated(true);
@@ -79,7 +85,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     onSuccess: async () => {
       setIsAuthenticated(true);
-      await refetch();
+      const result = await refetch();
+      // Трекинг сессии после успешной регистрации
+      if (result.data) {
+        trackUmamiSession(result.data, 'signup').catch((error) => {
+          console.error('Failed to track Umami session:', error);
+        });
+      }
     },
 
     onError: (error) => {
