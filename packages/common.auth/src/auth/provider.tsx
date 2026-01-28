@@ -37,7 +37,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (isSuccess && user && !hasTrackedSessionInit) {
       setIsAuthenticated(true);
       // Трекинг сессии для уже авторизованного пользователя при инициализации (только один раз)
-      trackUmamiSession(user, 'session_init');
+      trackUmamiSession(user, 'session_init').catch((error) => {
+        console.error('Failed to track Umami session:', error);
+      });
       setHasTrackedSessionInit(true);
     }
     if (isError) {
@@ -86,7 +88,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const result = await refetch();
       // Трекинг сессии после успешной регистрации
       if (result.data) {
-        trackUmamiSession(result.data, 'signup');
+        trackUmamiSession(result.data, 'signup').catch((error) => {
+          console.error('Failed to track Umami session:', error);
+        });
       }
     },
 

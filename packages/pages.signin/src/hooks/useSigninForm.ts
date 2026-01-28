@@ -51,7 +51,9 @@ export const useSigninForm = () => {
       // Дожидаемся обновления данных пользователя
       refetchUser().then((result) => {
         if (result.data) {
-          trackUmamiSession(result.data, 'signin');
+          trackUmamiSession(result.data, 'signin').catch((error) => {
+            console.error('Failed to track Umami session:', error);
+          });
         }
       });
 
