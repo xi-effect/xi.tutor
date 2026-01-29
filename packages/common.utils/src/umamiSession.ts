@@ -53,6 +53,7 @@ export const trackUmamiSession = async (
 
     // Идентифицируем пользователя с данными сессии
     window.umami.identify(user.id.toString(), {
+      id: user.id,
       username: user.username,
       display_name: user.display_name || undefined,
       role: user.default_layout,
