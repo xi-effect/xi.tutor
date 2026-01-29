@@ -16,7 +16,7 @@
     "@xipkg/alert": "1.1.0",
     "@xipkg/badge": "2.0.12",
     "@xipkg/button": "3.2.0",
-    "@xipkg/icons": "^3.0.1",
+    "@xipkg/icons": "^3.0.2",
     "@xipkg/scrollarea": "2.2.0",
     "@xipkg/tooltip": "2.1.0",
     "@xipkg/userprofile": "4.0.14",
