@@ -70,7 +70,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   };
 
   return (
-    <div className="border-gray-30 relative flex min-h-[170px] max-w-[420px] min-w-[320px] flex-col items-start justify-start gap-4 rounded-2xl border bg-transparent p-4">
+    <div className="border-gray-30 relative flex min-h-[170px] max-w-[420px] min-w-[320px] flex-col items-start justify-start gap-4 rounded-2xl border bg-transparent px-6 py-4">
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button
