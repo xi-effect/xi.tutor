@@ -8,10 +8,12 @@ type SubjectBadgePropsT = {
   className?: string;
   textClassName?: string;
   isTooltip?: boolean;
+  size?: 's' | 'm';
 };
 
 export const SubjectBadge = ({
   subjectId,
+  size = 'm',
   className,
   textClassName,
   isTooltip = false,
@@ -19,10 +21,7 @@ export const SubjectBadge = ({
   const { data: subject } = useSubjectsById(subjectId);
 
   const badgeContent = (
-    <Badge
-      size="m"
-      className={cn('text-gray-80 bg-gray-5 rounded-lg border-none px-2 py-1', className)}
-    >
+    <Badge size={size} className={cn('text-gray-80 bg-gray-10 border-none', className)}>
       <span className={textClassName}>{subject?.name}</span>
     </Badge>
   );
