@@ -33,6 +33,8 @@ export const collectTechnicalInfo = async (): Promise<ReportSection[]> => {
     title: 'Основная информация',
     data: {
       Домен: window.location.origin,
+      href: window.location.href,
+      secure: window.isSecureContext,
       Дата: now.toLocaleDateString('ru-RU'),
       Время: now.toLocaleTimeString('ru-RU'),
       'Часовой пояс': timezoneString,
