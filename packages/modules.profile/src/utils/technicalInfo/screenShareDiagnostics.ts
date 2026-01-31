@@ -70,7 +70,11 @@ function getDisplayMode(): ScreenShareDiagnostics['displayMode'] {
   return 'unknown';
 }
 
-async function queryPermission(name: PermissionName): Promise<PermissionState | 'unknown'> {
+type PermissionNameCamera = 'camera' | 'microphone';
+
+async function queryPermission(
+  name: PermissionName | PermissionNameCamera,
+): Promise<PermissionState | 'unknown'> {
   try {
     const p = await navigator.permissions.query({ name } as PermissionDescriptor);
     return p.state;
@@ -101,10 +105,10 @@ export async function collectScreenShareDiagnostics(
   const displayMode = getDisplayMode();
   const isStandalone = displayMode === 'standalone' || displayMode === 'fullscreen';
 
-  const isStandaloneIOSLegacy =
+  const isStandaloneIOSLegacy: boolean =
     typeof navigator !== 'undefined' &&
     typeof (navigator as Navigator & { standalone?: boolean }).standalone === 'boolean'
-      ? (navigator as Navigator & { standalone?: boolean }).standalone
+      ? !!(navigator as Navigator & { standalone?: boolean }).standalone
       : false;
 
   const isInIframe = safeBool(() => window.top !== window.self);
@@ -132,10 +136,12 @@ export async function collectScreenShareDiagnostics(
   const permissionsApiAvailable =
     typeof navigator !== 'undefined' && !!navigator.permissions?.query;
 
-  const [permissionCamera, permissionMicrophone] = await Promise.all([
-    permissionsApiAvailable ? queryPermission('camera') : Promise.resolve('unknown'),
-    permissionsApiAvailable ? queryPermission('microphone') : Promise.resolve('unknown'),
+  const permissionResult = await Promise.all([
+    permissionsApiAvailable ? queryPermission('camera') : Promise.resolve('unknown' as const),
+    permissionsApiAvailable ? queryPermission('microphone') : Promise.resolve('unknown' as const),
   ]);
+  const permissionCamera: PermissionState | 'unknown' = permissionResult[0];
+  const permissionMicrophone: PermissionState | 'unknown' = permissionResult[1];
 
   const hasServiceWorker = typeof navigator !== 'undefined' && 'serviceWorker' in navigator;
   const hasSWController = hasServiceWorker ? !!navigator.serviceWorker.controller : false;
