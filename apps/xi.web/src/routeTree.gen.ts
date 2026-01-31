@@ -20,6 +20,7 @@ import { Route as authResetPasswordResetTokenRouteImport } from './pages/(auth)/
 import { Route as commonWelcomeUserIndexRouteImport } from './pages/(common)/welcome/user/index'
 import { Route as commonWelcomeSocialsIndexRouteImport } from './pages/(common)/welcome/socials/index'
 import { Route as commonWelcomeRoleIndexRouteImport } from './pages/(common)/welcome/role/index'
+import { Route as commonWelcomeEmailIndexRouteImport } from './pages/(common)/welcome/email/index'
 import { Route as appLayoutPaymentsIndexRouteImport } from './pages/(app)/_layout/payments/index'
 import { Route as appLayoutMaterialsIndexRouteImport } from './pages/(app)/_layout/materials/index'
 import { Route as appLayoutClassroomsIndexRouteImport } from './pages/(app)/_layout/classrooms/index'
@@ -90,6 +91,11 @@ const commonWelcomeSocialsIndexRoute =
 const commonWelcomeRoleIndexRoute = commonWelcomeRoleIndexRouteImport.update({
   id: '/(common)/welcome/role/',
   path: '/welcome/role/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const commonWelcomeEmailIndexRoute = commonWelcomeEmailIndexRouteImport.update({
+  id: '/(common)/welcome/email/',
+  path: '/welcome/email/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const appLayoutPaymentsIndexRoute = appLayoutPaymentsIndexRouteImport.update({
@@ -194,6 +200,7 @@ export interface FileRoutesByFullPath {
   '/classrooms/': typeof appLayoutClassroomsIndexRoute
   '/materials/': typeof appLayoutMaterialsIndexRoute
   '/payments/': typeof appLayoutPaymentsIndexRoute
+  '/welcome/email/': typeof commonWelcomeEmailIndexRoute
   '/welcome/role/': typeof commonWelcomeRoleIndexRoute
   '/welcome/socials/': typeof commonWelcomeSocialsIndexRoute
   '/welcome/user/': typeof commonWelcomeUserIndexRoute
@@ -220,6 +227,7 @@ export interface FileRoutesByTo {
   '/classrooms': typeof appLayoutClassroomsIndexRoute
   '/materials': typeof appLayoutMaterialsIndexRoute
   '/payments': typeof appLayoutPaymentsIndexRoute
+  '/welcome/email': typeof commonWelcomeEmailIndexRoute
   '/welcome/role': typeof commonWelcomeRoleIndexRoute
   '/welcome/socials': typeof commonWelcomeSocialsIndexRoute
   '/welcome/user': typeof commonWelcomeUserIndexRoute
@@ -249,6 +257,7 @@ export interface FileRoutesById {
   '/(app)/_layout/classrooms/': typeof appLayoutClassroomsIndexRoute
   '/(app)/_layout/materials/': typeof appLayoutMaterialsIndexRoute
   '/(app)/_layout/payments/': typeof appLayoutPaymentsIndexRoute
+  '/(common)/welcome/email/': typeof commonWelcomeEmailIndexRoute
   '/(common)/welcome/role/': typeof commonWelcomeRoleIndexRoute
   '/(common)/welcome/socials/': typeof commonWelcomeSocialsIndexRoute
   '/(common)/welcome/user/': typeof commonWelcomeUserIndexRoute
@@ -277,6 +286,7 @@ export interface FileRouteTypes {
     | '/classrooms/'
     | '/materials/'
     | '/payments/'
+    | '/welcome/email/'
     | '/welcome/role/'
     | '/welcome/socials/'
     | '/welcome/user/'
@@ -303,6 +313,7 @@ export interface FileRouteTypes {
     | '/classrooms'
     | '/materials'
     | '/payments'
+    | '/welcome/email'
     | '/welcome/role'
     | '/welcome/socials'
     | '/welcome/user'
@@ -331,6 +342,7 @@ export interface FileRouteTypes {
     | '/(app)/_layout/classrooms/'
     | '/(app)/_layout/materials/'
     | '/(app)/_layout/payments/'
+    | '/(common)/welcome/email/'
     | '/(common)/welcome/role/'
     | '/(common)/welcome/socials/'
     | '/(common)/welcome/user/'
@@ -350,6 +362,7 @@ export interface RootRouteChildren {
   authSigninIndexRoute: typeof authSigninIndexRoute
   authSignupIndexRoute: typeof authSignupIndexRoute
   commonWelcomeEmailEmailIdRoute: typeof commonWelcomeEmailEmailIdRoute
+  commonWelcomeEmailIndexRoute: typeof commonWelcomeEmailIndexRoute
   commonWelcomeRoleIndexRoute: typeof commonWelcomeRoleIndexRoute
   commonWelcomeSocialsIndexRoute: typeof commonWelcomeSocialsIndexRoute
   commonWelcomeUserIndexRoute: typeof commonWelcomeUserIndexRoute
@@ -432,6 +445,13 @@ declare module '@tanstack/react-router' {
       path: '/welcome/role'
       fullPath: '/welcome/role/'
       preLoaderRoute: typeof commonWelcomeRoleIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(common)/welcome/email/': {
+      id: '/(common)/welcome/email/'
+      path: '/welcome/email'
+      fullPath: '/welcome/email/'
+      preLoaderRoute: typeof commonWelcomeEmailIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(app)/_layout/payments/': {
@@ -606,6 +626,7 @@ const rootRouteChildren: RootRouteChildren = {
   authSigninIndexRoute: authSigninIndexRoute,
   authSignupIndexRoute: authSignupIndexRoute,
   commonWelcomeEmailEmailIdRoute: commonWelcomeEmailEmailIdRoute,
+  commonWelcomeEmailIndexRoute: commonWelcomeEmailIndexRoute,
   commonWelcomeRoleIndexRoute: commonWelcomeRoleIndexRoute,
   commonWelcomeSocialsIndexRoute: commonWelcomeSocialsIndexRoute,
   commonWelcomeUserIndexRoute: commonWelcomeUserIndexRoute,
