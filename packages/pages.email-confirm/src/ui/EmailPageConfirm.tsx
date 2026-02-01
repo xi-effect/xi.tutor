@@ -1,8 +1,9 @@
 import { Logo } from 'common.ui';
 import { Button } from '@xipkg/button';
-import { useNavigate, useParams } from '@tanstack/react-router';
+import { useNavigate } from '@tanstack/react-router';
 import { useEmailChange } from 'common.services';
 import { useEffect, useRef } from 'react';
+import { useConfirmEmailToken } from './useConfirmEmailToken';
 
 const Loading = () => {
   return (
@@ -20,32 +21,30 @@ const Loading = () => {
 
 export const EmailPageConfirm = () => {
   const navigate = useNavigate();
-
-  const { emailId } = useParams({ strict: false });
-
+  const emailToken = useConfirmEmailToken();
   const { emailChange } = useEmailChange();
   const lastEmailIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    // Вызываем мутацию только если emailId изменился, это первый рендер и мутация не выполняется
+    // Вызываем мутацию только если token изменился (из path или query), это первый рендер и мутация не выполняется
     if (
-      emailId &&
-      emailId !== lastEmailIdRef.current &&
+      emailToken &&
+      emailToken !== lastEmailIdRef.current &&
       !emailChange.isPending &&
       !emailChange.isSuccess &&
       !emailChange.isError
     ) {
-      lastEmailIdRef.current = emailId;
+      lastEmailIdRef.current = emailToken;
 
       // Используем mutateAsync для явной обработки ошибок
-      emailChange.mutateAsync({ token: emailId }).catch((err) => {
+      emailChange.mutateAsync({ token: emailToken }).catch((err) => {
         // Явно обрабатываем ошибку, чтобы гарантировать завершение мутации
         console.error('Email confirmation error:', err);
       });
     }
     // emailChange.mutateAsync - стабильная функция из React Query, не требует включения в зависимости
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [emailId, emailChange.isPending, emailChange.isSuccess, emailChange.isError]);
+  }, [emailToken, emailChange.isPending, emailChange.isSuccess, emailChange.isError]);
 
   // Используем состояние мутации напрямую
   const isLoading = emailChange.isPending;
