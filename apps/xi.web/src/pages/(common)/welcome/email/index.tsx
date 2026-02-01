@@ -7,6 +7,7 @@ import { EmailPage } from 'pages.email';
 
 const searchSchema = z.object({
   token: z.string().optional(),
+  redirect: z.string().optional(),
 });
 
 // @ts-ignore

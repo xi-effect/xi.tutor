@@ -38,10 +38,7 @@ export const useSignupForm = () => {
         }
 
         navigate({
-          to: '/welcome/email/$emailId',
-          params: {
-            emailId: 'confirm',
-          },
+          to: '/welcome/email',
           search: {
             ...search,
           },
