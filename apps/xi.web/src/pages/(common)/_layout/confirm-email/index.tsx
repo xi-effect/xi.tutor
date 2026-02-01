@@ -5,21 +5,17 @@ import { Suspense } from 'react';
 import { z } from 'zod';
 import { EmailPageConfirm } from 'pages.email-confirm';
 
-const paramsSchema = z.object({
-  emailId: z.string(),
+const searchSchema = z.object({
+  token: z.string().optional(),
 });
 
 // @ts-ignore
-export const Route = createFileRoute('/(common)/_layout/confirm-email/$emailId')({
-  component: ConfirmEmailPage,
-  // @ts-ignore
-  parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
-  // beforeLoad: ({ context, location }) => {
-  //   console.log('Invites', context, location);
-  // },
+export const Route = createFileRoute('/(common)/_layout/confirm-email/')({
+  component: ConfirmEmailPageWrapper,
+  validateSearch: (search: Record<string, unknown>) => searchSchema.parse(search),
 });
 
-function ConfirmEmailPage() {
+function ConfirmEmailPageWrapper() {
   return (
     <Suspense fallback={<LoadingScreen />}>
       <EmailPageConfirm />
