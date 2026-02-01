@@ -16,7 +16,6 @@ import { Route as authSigninIndexRouteImport } from './pages/(auth)/signin/index
 import { Route as authResetPasswordIndexRouteImport } from './pages/(auth)/reset-password/index'
 import { Route as appLayoutIndexRouteImport } from './pages/(app)/_layout/index'
 import { Route as DeploymentsDeploymentIdEnableRouteImport } from './pages/deployments/$deploymentId.enable'
-import { Route as authResetPasswordResetTokenRouteImport } from './pages/(auth)/reset-password/$resetToken'
 import { Route as commonWelcomeUserIndexRouteImport } from './pages/(common)/welcome/user/index'
 import { Route as commonWelcomeSocialsIndexRouteImport } from './pages/(common)/welcome/socials/index'
 import { Route as commonWelcomeRoleIndexRouteImport } from './pages/(common)/welcome/role/index'
@@ -27,9 +26,7 @@ import { Route as appLayoutMaterialsIndexRouteImport } from './pages/(app)/_layo
 import { Route as appLayoutClassroomsIndexRouteImport } from './pages/(app)/_layout/classrooms/index'
 import { Route as appLayoutCallIndexRouteImport } from './pages/(app)/_layout/call/index'
 import { Route as appLayoutCalendarIndexRouteImport } from './pages/(app)/_layout/calendar/index'
-import { Route as commonWelcomeEmailEmailIdRouteImport } from './pages/(common)/welcome/email/$emailId'
 import { Route as commonLayoutInviteInviteIdRouteImport } from './pages/(common)/_layout/invite/$inviteId'
-import { Route as commonLayoutConfirmEmailEmailIdRouteImport } from './pages/(common)/_layout/confirm-email/$emailId'
 import { Route as appLayoutCallCallIdRouteImport } from './pages/(app)/_layout/call/$callId'
 import { Route as appLayoutBoardBoardIdRouteImport } from './pages/(app)/_layout/board/$boardId'
 import { Route as appLayoutClassroomsClassroomIdIndexRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/index'
@@ -70,12 +67,6 @@ const DeploymentsDeploymentIdEnableRoute =
   DeploymentsDeploymentIdEnableRouteImport.update({
     id: '/deployments/$deploymentId/enable',
     path: '/deployments/$deploymentId/enable',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const authResetPasswordResetTokenRoute =
-  authResetPasswordResetTokenRouteImport.update({
-    id: '/(auth)/reset-password/$resetToken',
-    path: '/reset-password/$resetToken',
     getParentRoute: () => rootRouteImport,
   } as any)
 const commonWelcomeUserIndexRoute = commonWelcomeUserIndexRouteImport.update({
@@ -131,22 +122,10 @@ const appLayoutCalendarIndexRoute = appLayoutCalendarIndexRouteImport.update({
   path: '/calendar/',
   getParentRoute: () => appLayoutRoute,
 } as any)
-const commonWelcomeEmailEmailIdRoute =
-  commonWelcomeEmailEmailIdRouteImport.update({
-    id: '/(common)/welcome/email/$emailId',
-    path: '/welcome/email/$emailId',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const commonLayoutInviteInviteIdRoute =
   commonLayoutInviteInviteIdRouteImport.update({
     id: '/invite/$inviteId',
     path: '/invite/$inviteId',
-    getParentRoute: () => commonLayoutRoute,
-  } as any)
-const commonLayoutConfirmEmailEmailIdRoute =
-  commonLayoutConfirmEmailEmailIdRouteImport.update({
-    id: '/confirm-email/$emailId',
-    path: '/confirm-email/$emailId',
     getParentRoute: () => commonLayoutRoute,
   } as any)
 const appLayoutCallCallIdRoute = appLayoutCallCallIdRouteImport.update({
@@ -191,7 +170,6 @@ const appLayoutClassroomsClassroomIdBoardsBoardIdRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute
   '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
   '/': typeof appLayoutIndexRoute
   '/reset-password/': typeof authResetPasswordIndexRoute
@@ -199,9 +177,7 @@ export interface FileRoutesByFullPath {
   '/signup/': typeof authSignupIndexRoute
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
-  '/confirm-email/$emailId': typeof commonLayoutConfirmEmailEmailIdRoute
   '/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
-  '/welcome/email/$emailId': typeof commonWelcomeEmailEmailIdRoute
   '/calendar/': typeof appLayoutCalendarIndexRoute
   '/call/': typeof appLayoutCallIndexRoute
   '/classrooms/': typeof appLayoutClassroomsIndexRoute
@@ -219,7 +195,6 @@ export interface FileRoutesByFullPath {
   '/materials/$materialId/note/': typeof appLayoutMaterialsMaterialIdNoteIndexRoute
 }
 export interface FileRoutesByTo {
-  '/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute
   '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
   '/': typeof appLayoutIndexRoute
   '/reset-password': typeof authResetPasswordIndexRoute
@@ -227,9 +202,7 @@ export interface FileRoutesByTo {
   '/signup': typeof authSignupIndexRoute
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
-  '/confirm-email/$emailId': typeof commonLayoutConfirmEmailEmailIdRoute
   '/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
-  '/welcome/email/$emailId': typeof commonWelcomeEmailEmailIdRoute
   '/calendar': typeof appLayoutCalendarIndexRoute
   '/call': typeof appLayoutCallIndexRoute
   '/classrooms': typeof appLayoutClassroomsIndexRoute
@@ -250,7 +223,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/(app)/_layout': typeof appLayoutRouteWithChildren
   '/(common)/_layout': typeof commonLayoutRouteWithChildren
-  '/(auth)/reset-password/$resetToken': typeof authResetPasswordResetTokenRoute
   '/deployments/$deploymentId/enable': typeof DeploymentsDeploymentIdEnableRoute
   '/(app)/_layout/': typeof appLayoutIndexRoute
   '/(auth)/reset-password/': typeof authResetPasswordIndexRoute
@@ -258,9 +230,7 @@ export interface FileRoutesById {
   '/(auth)/signup/': typeof authSignupIndexRoute
   '/(app)/_layout/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/(app)/_layout/call/$callId': typeof appLayoutCallCallIdRoute
-  '/(common)/_layout/confirm-email/$emailId': typeof commonLayoutConfirmEmailEmailIdRoute
   '/(common)/_layout/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
-  '/(common)/welcome/email/$emailId': typeof commonWelcomeEmailEmailIdRoute
   '/(app)/_layout/calendar/': typeof appLayoutCalendarIndexRoute
   '/(app)/_layout/call/': typeof appLayoutCallIndexRoute
   '/(app)/_layout/classrooms/': typeof appLayoutClassroomsIndexRoute
@@ -280,7 +250,6 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/reset-password/$resetToken'
     | '/deployments/$deploymentId/enable'
     | '/'
     | '/reset-password/'
@@ -288,9 +257,7 @@ export interface FileRouteTypes {
     | '/signup/'
     | '/board/$boardId'
     | '/call/$callId'
-    | '/confirm-email/$emailId'
     | '/invite/$inviteId'
-    | '/welcome/email/$emailId'
     | '/calendar/'
     | '/call/'
     | '/classrooms/'
@@ -308,7 +275,6 @@ export interface FileRouteTypes {
     | '/materials/$materialId/note/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/reset-password/$resetToken'
     | '/deployments/$deploymentId/enable'
     | '/'
     | '/reset-password'
@@ -316,9 +282,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/board/$boardId'
     | '/call/$callId'
-    | '/confirm-email/$emailId'
     | '/invite/$inviteId'
-    | '/welcome/email/$emailId'
     | '/calendar'
     | '/call'
     | '/classrooms'
@@ -338,7 +302,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/(app)/_layout'
     | '/(common)/_layout'
-    | '/(auth)/reset-password/$resetToken'
     | '/deployments/$deploymentId/enable'
     | '/(app)/_layout/'
     | '/(auth)/reset-password/'
@@ -346,9 +309,7 @@ export interface FileRouteTypes {
     | '/(auth)/signup/'
     | '/(app)/_layout/board/$boardId'
     | '/(app)/_layout/call/$callId'
-    | '/(common)/_layout/confirm-email/$emailId'
     | '/(common)/_layout/invite/$inviteId'
-    | '/(common)/welcome/email/$emailId'
     | '/(app)/_layout/calendar/'
     | '/(app)/_layout/call/'
     | '/(app)/_layout/classrooms/'
@@ -369,12 +330,10 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   appLayoutRoute: typeof appLayoutRouteWithChildren
   commonLayoutRoute: typeof commonLayoutRouteWithChildren
-  authResetPasswordResetTokenRoute: typeof authResetPasswordResetTokenRoute
   DeploymentsDeploymentIdEnableRoute: typeof DeploymentsDeploymentIdEnableRoute
   authResetPasswordIndexRoute: typeof authResetPasswordIndexRoute
   authSigninIndexRoute: typeof authSigninIndexRoute
   authSignupIndexRoute: typeof authSignupIndexRoute
-  commonWelcomeEmailEmailIdRoute: typeof commonWelcomeEmailEmailIdRoute
   commonWelcomeEmailIndexRoute: typeof commonWelcomeEmailIndexRoute
   commonWelcomeRoleIndexRoute: typeof commonWelcomeRoleIndexRoute
   commonWelcomeSocialsIndexRoute: typeof commonWelcomeSocialsIndexRoute
@@ -430,13 +389,6 @@ declare module '@tanstack/react-router' {
       path: '/deployments/$deploymentId/enable'
       fullPath: '/deployments/$deploymentId/enable'
       preLoaderRoute: typeof DeploymentsDeploymentIdEnableRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(auth)/reset-password/$resetToken': {
-      id: '/(auth)/reset-password/$resetToken'
-      path: '/reset-password/$resetToken'
-      fullPath: '/reset-password/$resetToken'
-      preLoaderRoute: typeof authResetPasswordResetTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(common)/welcome/user/': {
@@ -509,25 +461,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutCalendarIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
-    '/(common)/welcome/email/$emailId': {
-      id: '/(common)/welcome/email/$emailId'
-      path: '/welcome/email/$emailId'
-      fullPath: '/welcome/email/$emailId'
-      preLoaderRoute: typeof commonWelcomeEmailEmailIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/(common)/_layout/invite/$inviteId': {
       id: '/(common)/_layout/invite/$inviteId'
       path: '/invite/$inviteId'
       fullPath: '/invite/$inviteId'
       preLoaderRoute: typeof commonLayoutInviteInviteIdRouteImport
-      parentRoute: typeof commonLayoutRoute
-    }
-    '/(common)/_layout/confirm-email/$emailId': {
-      id: '/(common)/_layout/confirm-email/$emailId'
-      path: '/confirm-email/$emailId'
-      fullPath: '/confirm-email/$emailId'
-      preLoaderRoute: typeof commonLayoutConfirmEmailEmailIdRouteImport
       parentRoute: typeof commonLayoutRoute
     }
     '/(app)/_layout/call/$callId': {
@@ -624,13 +562,11 @@ const appLayoutRouteWithChildren = appLayoutRoute._addFileChildren(
 )
 
 interface commonLayoutRouteChildren {
-  commonLayoutConfirmEmailEmailIdRoute: typeof commonLayoutConfirmEmailEmailIdRoute
   commonLayoutInviteInviteIdRoute: typeof commonLayoutInviteInviteIdRoute
   commonLayoutConfirmEmailIndexRoute: typeof commonLayoutConfirmEmailIndexRoute
 }
 
 const commonLayoutRouteChildren: commonLayoutRouteChildren = {
-  commonLayoutConfirmEmailEmailIdRoute: commonLayoutConfirmEmailEmailIdRoute,
   commonLayoutInviteInviteIdRoute: commonLayoutInviteInviteIdRoute,
   commonLayoutConfirmEmailIndexRoute: commonLayoutConfirmEmailIndexRoute,
 }
@@ -642,12 +578,10 @@ const commonLayoutRouteWithChildren = commonLayoutRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   appLayoutRoute: appLayoutRouteWithChildren,
   commonLayoutRoute: commonLayoutRouteWithChildren,
-  authResetPasswordResetTokenRoute: authResetPasswordResetTokenRoute,
   DeploymentsDeploymentIdEnableRoute: DeploymentsDeploymentIdEnableRoute,
   authResetPasswordIndexRoute: authResetPasswordIndexRoute,
   authSigninIndexRoute: authSigninIndexRoute,
   authSignupIndexRoute: authSignupIndexRoute,
-  commonWelcomeEmailEmailIdRoute: commonWelcomeEmailEmailIdRoute,
   commonWelcomeEmailIndexRoute: commonWelcomeEmailIndexRoute,
   commonWelcomeRoleIndexRoute: commonWelcomeRoleIndexRoute,
   commonWelcomeSocialsIndexRoute: commonWelcomeSocialsIndexRoute,
