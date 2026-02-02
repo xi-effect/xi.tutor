@@ -146,6 +146,7 @@ export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
                   variant="default"
                   onClick={handleBackToBoard}
                   className="bg-brand-100 hover:bg-brand-80 absolute top-1 left-[-132px] m-0 h-10 w-[128px] rounded-xl"
+                  data-umami-event="call-back-to-board"
                 >
                   <WhiteBoard className="fill-gray-0" />
                   <span className="ml-2">К доске</span>

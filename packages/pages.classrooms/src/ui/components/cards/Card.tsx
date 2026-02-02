@@ -9,11 +9,10 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 
-import { StatusBadge } from './StatusBadge';
+import { StatusBadge, SubjectBadge } from 'features.classroom';
 import { useCurrentUser, useDeleteClassroom, useUserByRole } from 'common.services';
 import { ClassroomPropsT } from '../../../types';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { SubjectBadge } from './SubjectBadge';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 
@@ -87,11 +86,18 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
       onClick={handleClick}
       className="hover:bg-gray-5 border-gray-30 bg-gray-0 relative flex cursor-pointer justify-between rounded-2xl border p-4"
     >
-      <div className="flex flex-col gap-4">
-        <div className="mt-auto mr-8 flex items-center gap-2">
+      <div className="flex max-w-full flex-col gap-4">
+        <div className="mt-auto mr-8 flex w-auto max-w-[calc(100%-32px)] items-center gap-2">
           <StatusBadge status={status} kind={kind} deleted={deleted} />
 
-          {subject_id && <SubjectBadge subject_id={subject_id} />}
+          {subject_id && (
+            <SubjectBadge
+              subjectId={subject_id}
+              className="overflow-hidden"
+              textClassName="truncate max-w-full"
+              isTooltip
+            />
+          )}
         </div>
         <div className="flex flex-row gap-2">
           {kind === 'individual' && (

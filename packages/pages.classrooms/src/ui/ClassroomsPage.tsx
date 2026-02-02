@@ -18,7 +18,7 @@ export const ClassroomsPage = () => {
           {isTutor && <ButtonsHeader />}
 
           <div className="ml-auto flex items-center min-[570px]:hidden">
-            <Button variant="ghost" size="s">
+            <Button variant="ghost" size="s" data-umami-event="classrooms-filter">
               <Filter className="fill-gray-100" />
             </Button>
           </div>
@@ -32,6 +32,7 @@ export const ClassroomsPage = () => {
           <Button
             size="s"
             className="fixed right-4 bottom-4 z-50 flex h-12 w-12 items-center justify-center rounded-xl"
+            data-umami-event="classrooms-create-classroom"
           >
             <Plus className="fill-brand-0" />
           </Button>

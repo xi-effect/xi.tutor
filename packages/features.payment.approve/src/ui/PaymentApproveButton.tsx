@@ -26,6 +26,8 @@ export const PaymentApproveButton = ({
               size="s"
               className="bg-brand-0 hover:bg-brand-0/80 flex-1 rounded-lg"
               onClick={onApprovePayment}
+              data-umami-event="payment-approve-sender"
+              data-umami-event-role={isTutor ? 'tutor' : 'student'}
             >
               <PaymentApproveButtonContent type={type} />
             </Button>
@@ -51,6 +53,7 @@ export const PaymentApproveButton = ({
               onClick={() => receiverConfirmationMutation(id?.toString() ?? '')}
               loading={isPending}
               disabled={isPending}
+              data-umami-event="payment-approve-receiver"
             >
               <PaymentApproveButtonContent type={type} />
             </Button>

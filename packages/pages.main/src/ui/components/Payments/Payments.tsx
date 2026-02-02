@@ -54,6 +54,7 @@ export const Payments = () => {
               variant="ghost"
               className="flex size-8 items-center justify-center rounded-[4px] p-0"
               onClick={handleMore}
+              data-umami-event="main-navigate-payments"
             >
               <ArrowRight className="fill-gray-60 size-6" />
             </Button>
@@ -69,6 +70,7 @@ export const Payments = () => {
               variant="secondary"
               className="rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
               onClick={() => setIsInvoiceModalOpen(true)}
+              data-umami-event="main-create-invoice"
             >
               Создать счет на оплату
             </Button>

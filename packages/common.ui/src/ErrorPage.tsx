@@ -47,14 +47,29 @@ export const ErrorPage = ({
           <span className="flex items-center">
             в&nbsp;
             <TelegramFilled className="fill-brand-80 mr-1" />
-            <Link theme="brand" size="l" href="https://t.me/sovlium_support_bot" target="_blank">
+            <Link
+              theme="brand"
+              size="l"
+              href="https://t.me/sovlium_support_bot"
+              target="_blank"
+              data-umami-event="outbound-link-click"
+              data-umami-event-url="https://t.me/sovlium_support_bot"
+              data-umami-event-type="support-telegram"
+            >
               чат Telegram
             </Link>
           </span>
           <span className="flex items-center">
             &nbsp;или&nbsp;
             <MailRounded className="fill-brand-80 mr-1" />
-            <Link theme="brand" size="l" href="mailto:support@sovlium.ru">
+            <Link
+              theme="brand"
+              size="l"
+              href="mailto:support@sovlium.ru"
+              data-umami-event="outbound-link-click"
+              data-umami-event-url="mailto:support@sovlium.ru"
+              data-umami-event-type="support-email"
+            >
               на электронную почту
             </Link>
           </span>
@@ -62,7 +77,7 @@ export const ErrorPage = ({
       </p>
       <p className="text-gray-80 text-m-base mt-16 flex flex-row gap-2">
         Вернитесь
-        <LinkTanstack theme="brand" to="/">
+        <LinkTanstack theme="brand" to="/" data-umami-event="error-page-home-link">
           на главную
         </LinkTanstack>
       </p>

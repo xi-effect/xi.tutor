@@ -65,10 +65,21 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
       </div>
 
       <div className="flex flex-col justify-center gap-2">
-        <Button className="w-full rounded-xl" onClick={acceptInvite}>
+        <Button
+          className="w-full rounded-xl"
+          onClick={acceptInvite}
+          data-umami-event="invite-accept"
+          data-umami-event-kind={invite.kind}
+        >
           {getAcceptButtonText()}
         </Button>
-        <Button onClick={() => navigate({ to: '/' })} className="w-full rounded-xl" variant="ghost">
+        <Button
+          onClick={() => navigate({ to: '/' })}
+          className="w-full rounded-xl"
+          variant="ghost"
+          data-umami-event="invite-decline"
+          data-umami-event-kind={invite.kind}
+        >
           Отказаться
         </Button>
       </div>

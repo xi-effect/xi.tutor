@@ -19,6 +19,8 @@ export const RaiseHandButton = ({ className }: { className?: string }) => {
         }`,
         className,
       )}
+      data-umami-event="call-raise-hand"
+      data-umami-event-state={isHandRaised ? 'lower' : 'raise'}
     >
       <Hand className={cn('h-5 w-5', isHandRaised ? 'fill-brand-100' : 'fill-gray-100')} />
     </Button>

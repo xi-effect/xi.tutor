@@ -26,10 +26,19 @@ export const WelcomeButtons = ({
         className="w-[98px]"
         type="button"
         disabled={isLoading}
+        data-umami-event="welcome-back-button"
       >
         {t('buttons.back_button')}
       </Button>
-      <Button onClick={continueButtonHandler} className="w-full" type="submit" disabled={isLoading}>
+      <Button
+        onClick={continueButtonHandler}
+        className="w-full"
+        type="submit"
+        disabled={isLoading}
+        data-umami-event={
+          continueType === 'next' ? 'welcome-next-button' : 'welcome-continue-button'
+        }
+      >
         {customText ||
           (continueType === 'next' ? t('buttons.next_button') : t('buttons.continue_button'))}
       </Button>

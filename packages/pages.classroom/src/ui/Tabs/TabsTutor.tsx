@@ -60,14 +60,24 @@ export const TabsTutor = () => {
         </Tabs.List>
         {currentTab === 'overview' && classroom?.kind === 'group' && (
           <ModalStudentsGroup>
-            <Button size="s" variant="ghost" className="ml-auto rounded-lg">
+            <Button
+              size="s"
+              variant="ghost"
+              className="ml-auto rounded-lg"
+              data-umami-event="classroom-add-student"
+            >
               Добавить ученика
             </Button>
           </ModalStudentsGroup>
         )}
         {currentTab === 'overview' && classroom?.kind === 'group' && (
           <ModalGroupInvite>
-            <Button size="s" variant="ghost" className="ml-1 rounded-lg">
+            <Button
+              size="s"
+              variant="ghost"
+              className="ml-1 rounded-lg"
+              data-umami-event="classroom-invite-to-group"
+            >
               Пригласить в группу
             </Button>
           </ModalGroupInvite>
@@ -78,6 +88,7 @@ export const TabsTutor = () => {
             size="s"
             className="ml-auto w-8 rounded-lg px-2 py-2 font-medium sm:w-auto sm:px-4"
             onClick={() => setIsInvoiceModalOpen(true)}
+            data-umami-event="classroom-create-invoice"
           >
             <span className="hidden sm:flex">Создать счёт на оплату</span>
             <Plus size="sm" className="fill-brand-0 flex sm:hidden" />

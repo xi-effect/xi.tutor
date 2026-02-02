@@ -6,9 +6,11 @@ import { Copy } from '@xipkg/icons';
 
 interface TechnicalReportBodyProps {
   isMobile: boolean;
+  /** Опционально: buildId, version, gitSha для секции «Приложение» в отчёте */
+  app?: { buildId?: string; version?: string; gitSha?: string };
 }
 
-export const TechnicalReportBody = ({ isMobile }: TechnicalReportBodyProps) => {
+export const TechnicalReportBody = ({ isMobile, app }: TechnicalReportBodyProps) => {
   const [sections, setSections] = useState<ReportSection[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -16,7 +18,7 @@ export const TechnicalReportBody = ({ isMobile }: TechnicalReportBodyProps) => {
     const loadInfo = async () => {
       setIsLoading(true);
       try {
-        const reportSections = await collectTechnicalInfo();
+        const reportSections = await collectTechnicalInfo({ app });
         setSections(reportSections);
       } catch (error) {
         console.error('Ошибка при сборе технической информации:', error);
@@ -26,7 +28,7 @@ export const TechnicalReportBody = ({ isMobile }: TechnicalReportBodyProps) => {
     };
 
     loadInfo();
-  }, []);
+  }, [app]);
 
   const handleCopy = async () => {
     try {

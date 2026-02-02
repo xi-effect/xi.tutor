@@ -116,6 +116,7 @@ export const UpBar = () => {
             type="button"
             variant="ghost"
             className="flex size-[40px] items-center justify-center rounded-[12px] p-0"
+            data-umami-event="call-back-button"
           >
             <ArrowLeft className="fill-gray-100" />
           </Button>
@@ -138,6 +139,8 @@ export const UpBar = () => {
             variant="ghost"
             disabled={!canUseFocusLayout && carouselType === 'grid'}
             className="ml-auto flex h-10 w-[95px] flex-row items-center justify-center gap-2 rounded-[12px] disabled:opacity-50"
+            data-umami-event="call-toggle-layout"
+            data-umami-event-layout={carouselType}
           >
             {getViewIcon()}
             <span className="text-gray-100">Вид</span>
@@ -158,6 +161,7 @@ export const UpBar = () => {
               type="button"
               variant="ghost"
               className="ml-2 hidden h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0 md:flex"
+              data-umami-event="call-copy-link"
             >
               <LinkIcon className="fill-gray-100" />
             </Button>
@@ -175,6 +179,8 @@ export const UpBar = () => {
               type="button"
               variant="ghost"
               className="ml-2 hidden h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0 md:flex"
+              data-umami-event="call-toggle-fullscreen"
+              data-umami-event-state={isFullScreen ? 'exit' : 'enter'}
             >
               {isFullScreen ? (
                 <Minimize className="fill-gray-100" />
@@ -200,6 +206,7 @@ export const UpBar = () => {
           type="button"
           variant="ghost"
           className="flex h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0"
+          data-umami-event="call-settings-button"
         >
           <SettingsIcon className="fill-gray-100" />
         </Button>

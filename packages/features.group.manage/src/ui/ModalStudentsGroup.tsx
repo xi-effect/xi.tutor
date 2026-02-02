@@ -145,6 +145,8 @@ export const ModalStudentsGroup = ({ children }: ModalStudentsGroupProps) => {
                     key={student.tutorship.student_id}
                     className="group hover:bg-gray-5 flex h-[48px] cursor-pointer flex-row items-center gap-2 rounded-2xl px-4"
                     onClick={() => handleStudentToggle(student.tutorship.student_id)}
+                    data-umami-event="group-student-toggle"
+                    data-umami-event-student-id={student.tutorship.student_id}
                   >
                     <Checkbox checked={selectedStudents.has(student.tutorship.student_id)} />
                     <UserProfile
@@ -160,6 +162,7 @@ export const ModalStudentsGroup = ({ children }: ModalStudentsGroupProps) => {
           <Button
             onClick={handleSave}
             disabled={isSaving || addStudentMutation.isPending || deleteStudentMutation.isPending}
+            data-umami-event="group-students-save"
           >
             {isSaving ? 'Сохранение...' : 'Сохранить'}
           </Button>
@@ -174,6 +177,7 @@ export const ModalStudentsGroup = ({ children }: ModalStudentsGroupProps) => {
                 setSelectedStudents(groupStudentIds);
               }
             }}
+            data-umami-event="group-students-cancel"
           >
             Отмена
           </Button>

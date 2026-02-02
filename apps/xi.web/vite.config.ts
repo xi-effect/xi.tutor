@@ -2,7 +2,7 @@ import { ConfigEnv, defineConfig, searchForWorkspaceRoot } from 'vite';
 import react from '@vitejs/plugin-react';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
-// import { VitePWA } from 'vite-plugin-pwa';
+import { VitePWA } from 'vite-plugin-pwa';
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv) => {
@@ -11,26 +11,26 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       tanstackRouter({ target: 'react', autoCodeSplitting: true }),
       react(),
       tailwindcss(),
-      // VitePWA({
-      //   registerType: 'autoUpdate',
-      //   injectRegister: 'auto',
-      //   // Отключаем регистрацию SW в dev режиме, чтобы избежать ошибок
-      //   devOptions: {
-      //     enabled: false,
-      //   },
-      //   workbox: {
-      //     globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
-      //     maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB (по умолчанию 2 MB)
-      //     runtimeCaching: [
-      //       {
-      //         handler: 'NetworkOnly',
-      //         urlPattern: /\/deployments\/.*/,
-      //         method: 'GET',
-      //       },
-      //     ],
-      //     navigateFallbackDenylist: [/^\/deployments\/.*/],
-      //   },
-      // }),
+      VitePWA({
+        registerType: 'autoUpdate',
+        injectRegister: 'auto',
+        // Отключаем регистрацию SW в dev режиме, чтобы избежать ошибок
+        devOptions: {
+          enabled: false,
+        },
+        workbox: {
+          globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+          maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB (по умолчанию 2 MB)
+          runtimeCaching: [
+            {
+              handler: 'NetworkOnly',
+              urlPattern: /\/deployments\/.*/,
+              method: 'GET',
+            },
+          ],
+          navigateFallbackDenylist: [/^\/deployments\/.*/],
+        },
+      }),
     ],
     build: {
       chunkSizeWarningLimit: 1000,

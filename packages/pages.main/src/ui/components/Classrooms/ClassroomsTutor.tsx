@@ -32,6 +32,7 @@ export const ClassroomsTutor = () => {
               variant="ghost"
               className="flex size-8 items-center justify-center rounded-sm p-0"
               onClick={handleMore}
+              data-umami-event="main-navigate-classrooms"
             >
               <ArrowRight className="fill-gray-60 size-6" />
             </Button>
@@ -46,6 +47,7 @@ export const ClassroomsTutor = () => {
               variant="ghost"
               size="s"
               className="text-s-base rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
+              data-umami-event="main-create-group"
             >
               Создать группу
             </Button>
@@ -57,6 +59,7 @@ export const ClassroomsTutor = () => {
               size="s"
               variant="secondary"
               className="rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
+              data-umami-event="main-invite-student"
             >
               Пригласить
             </Button>

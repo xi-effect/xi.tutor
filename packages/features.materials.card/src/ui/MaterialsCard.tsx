@@ -56,6 +56,8 @@ export const MaterialsCard = ({
         'hover:bg-gray-5 border-gray-30 bg-gray-0 flex w-[350px] min-w-[350px] shrink-0 cursor-pointer justify-between rounded-2xl border p-4',
         className,
       )}
+      data-umami-event="material-card-open"
+      data-umami-event-type={content_kind}
     >
       <div className="flex flex-col gap-1 overflow-hidden">
         <div className="flex h-full flex-col justify-between gap-2">

@@ -15,6 +15,8 @@ export const ChatButton = () => {
       className={`relative m-0 h-10 w-10 min-w-10 rounded-lg p-0 ${
         isChatOpen ? 'bg-brand-0 text-brand-100' : 'hover:bg-gray-5 text-gray-100'
       }`}
+      data-umami-event="call-toggle-chat"
+      data-umami-event-state={isChatOpen ? 'close' : 'open'}
     >
       <Chat />
       {unreadMessagesCount > 0 && (

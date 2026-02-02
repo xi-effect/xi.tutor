@@ -1,7 +1,7 @@
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { ClassroomT, IndividualClassroomT } from 'common.api';
 import { Button } from '@xipkg/button';
-import { Arrow, Conference } from '@xipkg/icons';
+import { ArrowUpRight, Conference } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import {
@@ -10,7 +10,7 @@ import {
   useGetParticipantsByTutor,
   useGetParticipantsByStudent,
 } from 'common.services';
-import { SubjectBadge } from './SubjectBadge';
+import { SubjectBadge } from 'features.classroom';
 
 type UserAvatarPropsT = {
   classroom: IndividualClassroomT;
@@ -103,25 +103,33 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   };
 
   return (
-    <div className="border-gray-30 relative flex min-h-[170px] max-w-[420px] min-w-[320px] flex-col items-start justify-start gap-1 rounded-2xl border bg-transparent p-4">
+    <div className="border-gray-30 relative flex min-h-[170px] max-w-[420px] min-w-[320px] flex-col items-start justify-start gap-4 rounded-2xl border bg-transparent px-6 py-4">
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button
             onClick={handleClick}
-            className="group bg-brand-0 absolute top-5 right-5 h-6 w-6 p-0"
+            className="group bg-brand-0 absolute top-4 right-6 h-6 w-6 p-0"
             variant="icon"
+            data-umami-event="classroom-open"
+            data-umami-event-classroom-id={classroom.id}
           >
-            <Arrow className="fill-brand-80 group-hover:fill-brand-100 h-4 w-4" />
+            <ArrowUpRight className="fill-brand-80 group-hover:fill-brand-100 h-5 w-5" />
           </Button>
         </TooltipTrigger>
         <TooltipContent>Перейти в кабинет</TooltipContent>
       </Tooltip>
 
-      {classroom.subject_id ? (
-        <SubjectBadge subject_id={classroom.subject_id} />
-      ) : (
-        <div className="h-7 w-7" />
-      )}
+      <div className="flex h-6 w-full flex-row items-center">
+        {classroom.subject_id && (
+          <SubjectBadge
+            subjectId={classroom.subject_id}
+            isTooltip
+            className="max-w-[calc(100%-40px)] overflow-hidden"
+            textClassName="truncate max-w-full"
+            size="s"
+          />
+        )}
+      </div>
 
       <div className="flex flex-row gap-2">
         {classroom.kind === 'individual' && (
@@ -150,6 +158,8 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         className="group mt-auto w-full"
         onClick={handleStartLesson}
         disabled={!isTutor && !isConferenceActive}
+        data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
+        data-umami-event-classroom-id={classroom.id}
       >
         {getButtonText()}
         <Conference className="group-hover:fill-gray-0 fill-brand-100 ml-2" />

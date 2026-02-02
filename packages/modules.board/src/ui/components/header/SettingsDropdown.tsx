@@ -17,7 +17,12 @@ type ActionPropsT = {
 
 const BlockBoardAction = ({ onClick, isReadonly }: ActionPropsT & { isReadonly: boolean }) => {
   return (
-    <DropdownMenuItem className="flex gap-2 p-1" onClick={onClick}>
+    <DropdownMenuItem
+      className="flex gap-2 p-1"
+      onClick={onClick}
+      data-umami-event="board-toggle-lock"
+      data-umami-event-state={isReadonly ? 'unlock' : 'lock'}
+    >
       {isReadonly ? <Unlocked /> : <Locked />}
       <span>{isReadonly ? 'Разблокировать доску' : 'Заблокировать доску'}</span>
     </DropdownMenuItem>
@@ -26,7 +31,11 @@ const BlockBoardAction = ({ onClick, isReadonly }: ActionPropsT & { isReadonly: 
 
 const DownloadBoardAction = ({ onClick }: ActionPropsT) => {
   return (
-    <DropdownMenuItem className="flex gap-2 p-1" onClick={onClick}>
+    <DropdownMenuItem
+      className="flex gap-2 p-1"
+      onClick={onClick}
+      data-umami-event="board-download"
+    >
       <File />
       <span>Скачать</span>
     </DropdownMenuItem>
@@ -35,7 +44,7 @@ const DownloadBoardAction = ({ onClick }: ActionPropsT) => {
 
 const ClearBoardAction = ({ onClick }: ActionPropsT) => {
   return (
-    <DropdownMenuItem className="flex gap-2 p-1" onClick={onClick}>
+    <DropdownMenuItem className="flex gap-2 p-1" onClick={onClick} data-umami-event="board-clear">
       <Trash />
       <span>Очистить доску</span>
     </DropdownMenuItem>
@@ -53,7 +62,11 @@ export const SettingsDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="h-[40px] w-[40px] p-2">
+        <Button
+          variant="ghost"
+          className="h-[40px] w-[40px] p-2"
+          data-umami-event="board-settings-menu"
+        >
           <MoreVert size="s" className="size-6" />
         </Button>
       </DropdownMenuTrigger>

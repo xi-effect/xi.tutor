@@ -5,25 +5,21 @@ import { Suspense } from 'react';
 import { z } from 'zod';
 import { EmailPage } from 'pages.email';
 
-const paramsSchema = z.object({
-  emailId: z.string(),
+const searchSchema = z.object({
+  token: z.string().optional(),
+  redirect: z.string().optional(),
 });
 
 // @ts-ignore
-export const Route = createFileRoute('/(common)/welcome/email/$emailId')({
+export const Route = createFileRoute('/(common)/welcome/email/')({
   head: () => ({
     meta: [{ title: 'sovlium | Подтвердите почту' }],
   }),
-  component: EditorPage,
-
-  // @ts-ignore
-  parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
-  // beforeLoad: ({ context, location }) => {
-  //   console.log('Email', context, location);
-  // },
+  component: EmailPageWrapper,
+  validateSearch: (search: Record<string, unknown>) => searchSchema.parse(search),
 });
 
-function EditorPage() {
+function EmailPageWrapper() {
   return (
     <Suspense fallback={<LoadingScreen />}>
       <EmailPage />

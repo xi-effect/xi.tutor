@@ -27,7 +27,7 @@ export const DesktopUserMenu = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
+        <Button variant="ghost" size="icon" data-umami-event="header-user-menu-open">
           <UserProfile id="userprofile" userId={userId} size="m" withOutText />
         </Button>
       </DropdownMenuTrigger>
@@ -37,11 +37,19 @@ export const DesktopUserMenu = ({
           <SelectRole />
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={onOpenProfile} className="text-gray-80 text-sm">
+        <DropdownMenuItem
+          onClick={onOpenProfile}
+          className="text-gray-80 text-sm"
+          data-umami-event="header-profile-open"
+        >
           {profileText}
         </DropdownMenuItem>
 
-        <DropdownMenuItem onClick={onLogout} className="text-gray-80 text-sm">
+        <DropdownMenuItem
+          onClick={onLogout}
+          className="text-gray-80 text-sm"
+          data-umami-event="header-logout"
+        >
           {logoutText}
         </DropdownMenuItem>
       </DropdownMenuContent>

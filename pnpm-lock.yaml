@@ -301,6 +301,9 @@ importers:
       common.ui:
         specifier: '*'
         version: link:../common.ui
+      common.utils:
+        specifier: '*'
+        version: link:../common.utils
       react:
         specifier: '19'
         version: 19.2.3
@@ -774,8 +777,8 @@ importers:
         specifier: 3.2.0
         version: 3.2.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/link':
         specifier: 2.0.12
         version: 2.0.12(react@19.2.3)
@@ -908,8 +911,8 @@ importers:
         specifier: 3.2.0
         version: 3.2.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/slider':
         specifier: 2.0.12
         version: 2.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -1010,6 +1013,73 @@ importers:
       recharts:
         specifier: ^2.15.3
         version: 2.15.4(react-dom@19.2.3)(react@19.2.3)
+    devDependencies:
+      '@eslint/js':
+        specifier: ^9.19.0
+        version: 9.39.2
+      '@types/node':
+        specifier: ^20.3.1
+        version: 20.19.30
+      '@types/react':
+        specifier: ^19.0.2
+        version: 19.2.8
+      '@types/react-dom':
+        specifier: ^19.0.2
+        version: 19.2.3(@types/react@19.2.8)
+      '@xipkg/eslint':
+        specifier: 3.2.0
+        version: 3.2.0(eslint-plugin-jsx-a11y@6.10.2)(eslint@9.39.2)(turbo@2.7.5)(typescript@5.7.3)
+      '@xipkg/tailwind':
+        specifier: 0.8.1
+        version: 0.8.1
+      '@xipkg/typescript':
+        specifier: latest
+        version: 0.2.0
+      common.eslint:
+        specifier: '*'
+        version: link:../common.eslint
+      common.typescript:
+        specifier: '*'
+        version: link:../common.typescript
+      eslint:
+        specifier: ^9.19.0
+        version: 9.39.2
+      eslint-plugin-react-hooks:
+        specifier: ^5.0.0
+        version: 5.2.0(eslint@9.39.2)
+      eslint-plugin-react-refresh:
+        specifier: ^0.4.18
+        version: 0.4.18(eslint@9.39.2)
+      globals:
+        specifier: ^15.14.0
+        version: 15.15.0
+      typescript:
+        specifier: ~5.7.2
+        version: 5.7.3
+      typescript-eslint:
+        specifier: ^8.22.0
+        version: 8.53.0(eslint@9.39.2)(typescript@5.7.3)
+
+  packages/features.classroom:
+    dependencies:
+      '@xipkg/badge':
+        specifier: 2.0.12
+        version: 2.0.12(react@19.2.3)
+      '@xipkg/tooltip':
+        specifier: 2.1.0
+        version: 2.1.0(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
+      '@xipkg/utils':
+        specifier: 1.8.0
+        version: 1.8.0(react@19.2.3)
+      common.entities:
+        specifier: '*'
+        version: link:../common.entities
+      common.services:
+        specifier: '*'
+        version: link:../common.services
+      react:
+        specifier: '19'
+        version: 19.2.3
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0
@@ -1166,8 +1236,8 @@ importers:
         specifier: ^3.1.8
         version: 3.2.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/input':
         specifier: ^2.2.9
         version: 2.2.9(react@19.2.3)
@@ -1263,8 +1333,8 @@ importers:
         specifier: ^3.1.8
         version: 3.2.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/input':
         specifier: ^2.2.9
         version: 2.2.9(react@19.2.3)
@@ -1351,8 +1421,8 @@ importers:
         specifier: ^3.1.8
         version: 3.2.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/modal':
         specifier: ^4.3.1
         version: 4.3.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -1612,8 +1682,8 @@ importers:
         specifier: ^3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.3)
@@ -1685,8 +1755,8 @@ importers:
         specifier: ^3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.3)
@@ -1764,8 +1834,8 @@ importers:
         specifier: ^3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/modal':
         specifier: 4.3.0
         version: 4.3.0(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -1995,8 +2065,8 @@ importers:
         specifier: ^3.1.8
         version: 3.2.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/input':
         specifier: ^2.2.9
         version: 2.2.9(react@19.2.3)
@@ -2092,8 +2162,8 @@ importers:
         specifier: ^3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/input':
         specifier: ^2.2.9
         version: 2.2.9(react@19.2.3)
@@ -2201,8 +2271,8 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.2.3)
@@ -2337,8 +2407,8 @@ importers:
         specifier: 2.2.0
         version: 2.2.0(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/inputmask':
         specifier: 2.0.12
         version: 2.0.12(react-dom@19.2.3)(react@19.2.3)
@@ -2470,8 +2540,8 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/modal':
         specifier: ^4.3.1
         version: 4.3.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -2651,8 +2721,8 @@ importers:
         specifier: ^2.0.12
         version: 2.0.12(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/input':
         specifier: 2.2.9
         version: 2.2.9(react@19.2.3)
@@ -2775,8 +2845,8 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/link':
         specifier: 2.0.12
         version: 2.0.12(react@19.2.3)
@@ -2878,8 +2948,8 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/link':
         specifier: 2.0.12
         version: 2.0.12(react@19.2.3)
@@ -3011,8 +3081,8 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/modal':
         specifier: ^4.3.1
         version: 4.3.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -3126,8 +3196,8 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/input':
         specifier: 2.2.9
         version: 2.2.9(react@19.2.3)
@@ -3277,8 +3347,8 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/input':
         specifier: 2.2.9
         version: 2.2.9(react@19.2.3)
@@ -3300,9 +3370,6 @@ importers:
       '@xipkg/userprofile':
         specifier: 4.0.14
         version: 4.0.14(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
-      '@xipkg/utils':
-        specifier: 1.8.0
-        version: 1.8.0(react@19.2.3)
       common.entities:
         specifier: '*'
         version: link:../common.entities
@@ -3315,6 +3382,9 @@ importers:
       common.ui:
         specifier: '*'
         version: link:../common.ui
+      features.classroom:
+        specifier: '*'
+        version: link:../features.classroom
       features.group.add:
         specifier: '*'
         version: link:../features.group.add
@@ -3407,8 +3477,8 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.2.3)
@@ -3522,8 +3592,8 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.2.3)
@@ -3719,8 +3789,8 @@ importers:
         specifier: 3.2.0
         version: 3.2.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/scrollarea':
         specifier: 2.2.0
         version: 2.2.0(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -3754,6 +3824,9 @@ importers:
       common.ui:
         specifier: '*'
         version: link:../common.ui
+      features.classroom:
+        specifier: '*'
+        version: link:../features.classroom
       features.group.add:
         specifier: '*'
         version: link:../features.group.add
@@ -4043,8 +4116,8 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.2.3)
@@ -4173,8 +4246,8 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.2.3)
@@ -4282,8 +4355,8 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.2.3)
@@ -4308,6 +4381,9 @@ importers:
       common.ui:
         specifier: '*'
         version: link:../common.ui
+      common.utils:
+        specifier: '*'
+        version: link:../common.utils
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)
@@ -4388,8 +4464,8 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.2.3)
@@ -4488,8 +4564,8 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/icons':
-        specifier: ^2.7.0
-        version: 2.7.2(react@19.2.3)
+        specifier: ^3.0.2
+        version: 3.0.2(react@19.2.3)
       '@xipkg/input':
         specifier: 2.0.7
         version: 2.0.7(react@19.2.3)
@@ -8105,6 +8181,11 @@ packages:
     peerDependencies:
       react: ^19
 
+  '@xipkg/icons@3.0.2':
+    resolution: {integrity: sha512-5DWF8KdH/WT8uMegZjiHnYUnzPzpvv+83UAUwMT0pnLGC+fXnD5tgnZ9RDHI5UbugMsta5cbkzmgEtxBZHSwGA==}
+    peerDependencies:
+      react: ^19
+
   '@xipkg/input@2.0.7':
     resolution: {integrity: sha512-KkYiArRWIGORKeTBqeWAtCyLb7qVAzxRg7i72cZt7wSHztN8GY7tbhMFK/UXw5Pfp5O+gmFKR+EYWTeg1PNL7g==}
     peerDependencies:
@@ -8823,8 +8904,8 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-config-turbo@2.7.5:
-    resolution: {integrity: sha512-LKgZM73MqmEEwo1nEqnX6aNQoZ7ASL93H3Zb8PG6bYE9kI4aM2CFnOFKJf6lTQPBV92N5pdaxz1bE47J2LUdFw==}
+  eslint-config-turbo@2.8.0:
+    resolution: {integrity: sha512-ZOhpHssMcKAwkR+CKIduT5R+StBgZncqdEC2igYDL9DMOcIqyHhPnRUEe0FbXGLBxeaU982gVUH/Bgyj9BYa4w==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -8917,6 +8998,12 @@ packages:
 
   eslint-plugin-turbo@2.7.5:
     resolution: {integrity: sha512-dHUEEZyoUriaYqaqu6nlnkj0W+iDPYFhuMjLYGxn7p767kLCYTZgjR42urW56VLiRQUqDL+foOXufFM6+kXCEQ==}
+    peerDependencies:
+      eslint: '>6.6.0'
+      turbo: '>2.0.0'
+
+  eslint-plugin-turbo@2.8.0:
+    resolution: {integrity: sha512-MmDgInixZN9gqcg+4wbiRoflZSAZX7hTM9VIO3+U6jfYxQo0XNOslK7PvrmKxYcM8bNdQvwK9OO+DTWknVGZuQ==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -14625,7 +14712,7 @@ snapshots:
       eslint-config-airbnb: 19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2)(eslint-plugin-react-hooks@5.1.0)(eslint-plugin-react@7.37.2)(eslint@9.39.2)
       eslint-config-next: 15.1.2(eslint@9.39.2)(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.39.2)
-      eslint-config-turbo: 2.7.5(eslint@9.39.2)(turbo@2.7.5)
+      eslint-config-turbo: 2.8.0(eslint@9.39.2)(turbo@2.7.5)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.53.0)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2)
       eslint-plugin-react: 7.37.2(eslint@9.39.2)
       eslint-plugin-react-hooks: 5.1.0(eslint@9.39.2)
@@ -14675,6 +14762,13 @@ snapshots:
       - react-dom
 
   '@xipkg/icons@2.7.2(react@19.2.3)':
+    dependencies:
+      '@xipkg/utils': 1.8.0(react@19.2.3)
+      class-variance-authority: 0.7.1
+      lucide-react: 0.485.0(react@19.2.3)
+      react: 19.2.3
+
+  '@xipkg/icons@3.0.2(react@19.2.3)':
     dependencies:
       '@xipkg/utils': 1.8.0(react@19.2.3)
       class-variance-authority: 0.7.1
@@ -15669,10 +15763,10 @@ snapshots:
     dependencies:
       eslint: 9.39.2
 
-  eslint-config-turbo@2.7.5(eslint@9.39.2)(turbo@2.7.5):
+  eslint-config-turbo@2.8.0(eslint@9.39.2)(turbo@2.7.5):
     dependencies:
       eslint: 9.39.2
-      eslint-plugin-turbo: 2.7.5(eslint@9.39.2)(turbo@2.7.5)
+      eslint-plugin-turbo: 2.8.0(eslint@9.39.2)(turbo@2.7.5)
       turbo: 2.7.5
 
   eslint-import-resolver-node@0.3.9:
@@ -15813,6 +15907,12 @@ snapshots:
       string.prototype.repeat: 1.0.0
 
   eslint-plugin-turbo@2.7.5(eslint@9.39.2)(turbo@2.7.5):
+    dependencies:
+      dotenv: 16.0.3
+      eslint: 9.39.2
+      turbo: 2.7.5
+
+  eslint-plugin-turbo@2.8.0(eslint@9.39.2)(turbo@2.7.5):
     dependencies:
       dotenv: 16.0.3
       eslint: 9.39.2

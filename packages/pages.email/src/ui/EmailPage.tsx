@@ -1,14 +1,15 @@
 import { EmailPageConfirm } from './EmailPageConfirm';
 import { EmailPageSuccess } from './EmailPageSuccess';
-import { useParams } from '@tanstack/react-router';
+import { useEmailToken } from './useEmailToken';
 
 export const EmailPage = () => {
-  const { emailId } = useParams({ strict: false });
+  const emailToken = useEmailToken();
+  const isConfirmPage = emailToken === 'confirm' || emailToken === undefined;
 
   return (
     <>
-      {emailId === 'confirm' && <EmailPageConfirm />}
-      {emailId !== 'confirm' && <EmailPageSuccess />}
+      {isConfirmPage && <EmailPageConfirm />}
+      {!isConfirmPage && <EmailPageSuccess />}
     </>
   );
 };

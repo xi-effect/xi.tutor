@@ -53,6 +53,7 @@ export const MaterialActionsMenu = ({
           className="h-8 min-h-8 w-8 min-w-8"
           variant="ghost"
           size="icon"
+          data-umami-event="material-actions-menu-open"
         >
           <MoreVert className="h-4 w-4 dark:fill-gray-100" />
         </Button>
@@ -69,6 +70,7 @@ export const MaterialActionsMenu = ({
             <DropdownMenuSubTrigger
               className="text-xs-base h-7 gap-2 rounded-lg"
               onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
+              data-umami-event="material-change-access-open"
             >
               Поменять доступ
             </DropdownMenuSubTrigger>
@@ -90,6 +92,9 @@ export const MaterialActionsMenu = ({
                       ? 'bg-brand-0 text-brand-100 cursor-pointer'
                       : 'text-gray-80 cursor-pointer',
                   )}
+                  data-umami-event="material-access-mode-change"
+                  data-umami-event-mode={value}
+                  data-umami-event-from={studentAccessMode}
                 >
                   <div className="text-xs-base w-full text-left">{label}</div>
                 </DropdownMenuCheckboxItem>
@@ -100,6 +105,7 @@ export const MaterialActionsMenu = ({
           <DropdownMenuItem
             className="text-xs-base hover:text-brand-100 h-7 rounded-lg px-2"
             onClick={handleAction(onDuplicate)}
+            data-umami-event="material-duplicate-to-classroom"
           >
             Дублировать в кабинет
           </DropdownMenuItem>
@@ -107,6 +113,7 @@ export const MaterialActionsMenu = ({
         <DropdownMenuItem
           className="hover:bg-brand-0 hover:text-brand-100 text-xs-base h-7 w-full rounded-lg px-2"
           onClick={() => setModalOpen(true)}
+          data-umami-event="material-edit"
         >
           Редактировать
         </DropdownMenuItem>
@@ -114,6 +121,7 @@ export const MaterialActionsMenu = ({
         <DropdownMenuItem
           className="hover:bg-brand-0 hover:text-brand-100 text-xs-base h-7 w-full rounded-lg px-2"
           onClick={handleAction(isClassroom ? onDeleteFromClassroom : onDelete)}
+          data-umami-event={isClassroom ? 'material-delete-from-classroom' : 'material-delete'}
         >
           Удалить
         </DropdownMenuItem>

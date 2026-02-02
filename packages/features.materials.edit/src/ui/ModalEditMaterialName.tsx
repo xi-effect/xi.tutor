@@ -100,10 +100,20 @@ export const ModalEditMaterialName = ({
             </ModalBody>
 
             <ModalFooter className="flex flex-row items-center gap-2">
-              <Button className="gap-2" type="submit">
+              <Button
+                className="gap-2"
+                type="submit"
+                data-umami-event="material-edit-save"
+                data-umami-event-type={content_kind}
+              >
                 Сохранить
               </Button>
-              <Button variant="secondary" onClick={onClose} type="button">
+              <Button
+                variant="secondary"
+                onClick={onClose}
+                type="button"
+                data-umami-event="material-edit-cancel"
+              >
                 Отменить
               </Button>
             </ModalFooter>
