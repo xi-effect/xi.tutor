@@ -8,35 +8,11 @@ type ParticipantNamePropsT = {
   children?: React.ReactNode;
 };
 
-export const ParticipantName = ({ participant, id, username, children }: ParticipantNamePropsT) => {
+export const ParticipantName = ({ participant, children }: ParticipantNamePropsT) => {
   // Получаем мета-информацию участника из LiveKit
   const getParticipantInfo = () => {
-    if (participant) {
-      try {
-        // Парсим метаданные участника
-        const metadata = participant.metadata;
-        if (metadata) {
-          const userInfo = JSON.parse(metadata);
-          return {
-            displayName: userInfo?.display_name || userInfo?.name || userInfo?.username,
-            userId: userInfo?.user_id || userInfo?.id,
-          };
-        }
-      } catch (error) {
-        console.warn('⚠️ Failed to parse participant metadata:', error);
-      }
-
-      // Если метаданные недоступны, используем стандартные поля LiveKit
-      return {
-        displayName: participant.name || participant.identity,
-        userId: participant.identity,
-      };
-    }
-
-    // Fallback для обратной совместимости
     return {
-      displayName: username,
-      userId: id,
+      displayName: participant?.name,
     };
   };
 
