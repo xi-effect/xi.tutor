@@ -43,18 +43,17 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
     description: () => 'Присоединяйтесь к видеозвонку',
     action: (payload) => {
       const classroomId = payload?.classroom_id;
-      return classroomId
-        ? `/classrooms/${classroomId}?role=student&goto=call`
-        : null;
+      return classroomId ? `/classrooms/${classroomId}?role=student&goto=call` : null;
     },
     invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
     onNotify: (payload) => {
       const classroomId = payload?.classroom_id;
-
       if (!classroomId) return;
 
-      queryClient.refetchQueries({ queryKey: [CallsQueryKey.GetParticipants, classroomId, 'student'] });
-      queryClient.refetchQueries({ queryKey: [CallsQueryKey.GetParticipants, classroomId, 'tutor'] });
+      queryClient.refetchQueries({
+        queryKey: [CallsQueryKey.GetParticipants, classroomId],
+        exact: false,
+      });
     },
   },
 

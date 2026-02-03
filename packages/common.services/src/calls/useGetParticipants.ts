@@ -8,15 +8,11 @@ export interface Participant {
 
 type RoleT = 'student' | 'tutor';
 
-export const useGetParticipants = (
-  classroom_id: string,
-  role: RoleT,
-) => {
+export const useGetParticipants = (classroom_id: string, role: RoleT) => {
   const { data, isError, isLoading, error, ...rest } = useFetching({
     apiConfig: {
       method: callsApiConfig[CallsQueryKey.GetParticipants].method,
-      getUrl: () =>
-        callsApiConfig[CallsQueryKey.GetParticipants].getUrl(classroom_id, role),
+      getUrl: () => callsApiConfig[CallsQueryKey.GetParticipants].getUrl(classroom_id, role),
       headers: {
         'Content-Type': 'application/json',
       },

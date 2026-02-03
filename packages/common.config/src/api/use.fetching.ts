@@ -45,5 +45,9 @@ export const useFetching = ({
   return useQuery({
     queryKey,
     queryFn,
+    enabled: !disabled,
+    staleTime: 0,
+    refetchOnMount: 'always',
+    refetchOnWindowFocus: true,
   });
 };

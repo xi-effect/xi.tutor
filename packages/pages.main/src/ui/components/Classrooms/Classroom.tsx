@@ -4,11 +4,7 @@ import { Button } from '@xipkg/button';
 import { ArrowUpRight, Conference } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import {
-  useCurrentUser,
-  useUserByRole,
-  useGetParticipants,
-} from 'common.services';
+import { useCurrentUser, useUserByRole, useGetParticipants } from 'common.services';
 import { SubjectBadge } from 'features.classroom';
 
 type UserAvatarPropsT = {
@@ -57,14 +53,10 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
 
   const role: RoleT = isTutor ? 'tutor' : 'student';
 
-  const { participants, isConferenceNotActive } =
-    useGetParticipants(classroom.id.toString(), role);
-
+  const { participants, isConferenceNotActive } = useGetParticipants(classroom.id.toString(), role);
 
   const isConferenceActive =
-    !isConferenceNotActive &&
-    participants !== undefined &&
-    Array.isArray(participants);
+    !isConferenceNotActive && participants !== undefined && Array.isArray(participants);
 
   const handleClick = () => {
     // Сохраняем параметр call при переходе в кабинет
