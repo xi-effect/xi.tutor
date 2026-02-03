@@ -88,9 +88,11 @@ export const checkWebRTCSupport = (): Record<string, string> => {
 
   support['WebRTC API support'] = hasRTCPeerConnection ? 'да' : 'нет';
 
-  const hasGetDisplayMedia =
-    navigator.mediaDevices && typeof navigator.mediaDevices.getDisplayMedia === 'function';
+  const hasMediaDevices = !!navigator.mediaDevices;
+  const hasGetDisplayMedia = !!navigator.mediaDevices?.getDisplayMedia;
 
+  support.mediaDevices = hasMediaDevices ? 'да' : 'нет';
+  support.gdm = hasGetDisplayMedia ? 'да' : 'нет';
   support['getDisplayMedia support'] = hasGetDisplayMedia ? 'да' : 'нет';
 
   return support;

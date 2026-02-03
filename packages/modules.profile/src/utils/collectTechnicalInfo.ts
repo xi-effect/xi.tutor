@@ -4,13 +4,71 @@ import { checkVideoSupport, checkAudioSupport, checkWebRTCSupport } from './tech
 import { getPermissions } from './technicalInfo/permissions';
 import { getGPUInfo } from './technicalInfo/gpu';
 import { getIPAddresses, getNetworkInfo, getPerformanceMemory } from './technicalInfo/network';
+import {
+  collectScreenShareDiagnostics,
+  type ScreenShareDiagnostics,
+  type ScreenShareDiagnosticsParams,
+} from './technicalInfo/screenShareDiagnostics';
 
 export type ReportSection = {
   title?: string;
   data: Record<string, string | number | boolean | null | undefined>;
 };
 
-export const collectTechnicalInfo = async (): Promise<ReportSection[]> => {
+export type CollectTechnicalInfoOptions = {
+  app?: ScreenShareDiagnosticsParams['app'];
+};
+
+function diagnosticsToSections(d: ScreenShareDiagnostics): ReportSection[] {
+  const sections: ReportSection[] = [];
+
+  // Только то, чего нет в остальных секциях: PWA, iframe, iPad-под-Mac, Service Worker, причины Screen Share
+  sections.push({
+    title: 'PWA и контекст',
+    data: {
+      displayMode: d.displayMode,
+      isStandalone: d.isStandalone,
+      isStandaloneIOSLegacy: d.isStandaloneIOSLegacy,
+      hasOpener: d.hasOpener,
+      isInIframe: d.isInIframe,
+      isTopLevel: d.isTopLevel,
+      looksLikeIPad: d.looksLikeIPad,
+    },
+  });
+
+  sections.push({
+    title: 'Service Worker',
+    data: {
+      hasServiceWorker: d.hasServiceWorker,
+      hasSWController: d.hasSWController,
+    },
+  });
+
+  const avail = d.screenShareAvailability;
+  sections.push({
+    title: 'Причины недоступности Screen Share',
+    data: {
+      canAttempt: avail.canAttempt,
+      reasons: avail.reasons.join(', ') || '—',
+    },
+  });
+
+  if (d.app) {
+    const appData: ReportSection['data'] = {};
+    if (d.app.buildId != null) appData.buildId = d.app.buildId;
+    if (d.app.version != null) appData.version = d.app.version;
+    if (d.app.gitSha != null) appData.gitSha = d.app.gitSha;
+    if (Object.keys(appData).length > 0) {
+      sections.push({ title: 'Приложение', data: appData });
+    }
+  }
+
+  return sections;
+}
+
+export const collectTechnicalInfo = async (
+  options?: CollectTechnicalInfoOptions,
+): Promise<ReportSection[]> => {
   const sections: ReportSection[] = [];
 
   const now = new Date();
@@ -33,6 +91,8 @@ export const collectTechnicalInfo = async (): Promise<ReportSection[]> => {
     title: 'Основная информация',
     data: {
       Домен: window.location.origin,
+      href: window.location.href,
+      secure: window.isSecureContext,
       Дата: now.toLocaleDateString('ru-RU'),
       Время: now.toLocaleTimeString('ru-RU'),
       'Часовой пояс': timezoneString,
@@ -129,6 +189,9 @@ export const collectTechnicalInfo = async (): Promise<ReportSection[]> => {
       data: performanceMemory,
     });
   }
+
+  const screenShareDiagnostics = await collectScreenShareDiagnostics({ app: options?.app });
+  sections.push(...diagnosticsToSections(screenShareDiagnostics));
 
   return sections;
 };
