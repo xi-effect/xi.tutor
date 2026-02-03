@@ -7,8 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import {
   useCurrentUser,
   useUserByRole,
-  useGetParticipantsByTutor,
-  useGetParticipantsByStudent,
+  useGetParticipants,
 } from 'common.services';
 import { SubjectBadge } from 'features.classroom';
 
@@ -17,12 +16,16 @@ type UserAvatarPropsT = {
   isLoading: boolean;
 };
 
+type RoleT = 'student' | 'tutor';
+
+const avatarSize = 'l';
+
 const UserAvatar = ({ isLoading, classroom }: UserAvatarPropsT) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
   // Используем useUserByRole с userId напрямую
-  const userRole = isTutor ? 'student' : 'tutor';
+  const userRole: RoleT = isTutor ? 'student' : 'tutor';
   const { data } = useUserByRole(userRole, classroom.tutor_id ?? classroom.student_id ?? 0);
 
   return (
@@ -40,8 +43,6 @@ const UserAvatar = ({ isLoading, classroom }: UserAvatarPropsT) => {
   );
 };
 
-const avatarSize = 'l';
-
 type ClassroomProps = {
   isLoading: boolean;
   classroom: ClassroomT;
@@ -54,27 +55,16 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  // Получаем участников конференции в зависимости от роли
-  // Логика определения активной конференции:
-  // - 409 ошибка = комната НЕ активна (была пустая >5 минут)
-  // - [] (пустой массив) = комната АКТИВНА, но пустая (репетитор начал, но еще не присоединился)
-  // - [участники] = комната активна, есть участники
-  // - undefined (при загрузке или других ошибках) = состояние неизвестно, кнопка disabled
-  const { participants: participantsStudent, isConferenceNotActive: isConferenceNotActiveStudent } =
-    useGetParticipantsByStudent(classroom.id.toString(), isTutor);
+  const role: RoleT = isTutor ? 'tutor' : 'student';
 
-  const { participants: participantsTutor, isConferenceNotActive: isConferenceNotActiveTutor } =
-    useGetParticipantsByTutor(classroom.id.toString(), !isTutor);
+  const { participants, isConferenceNotActive } =
+    useGetParticipants(classroom.id.toString(), role);
 
-  const participants = isTutor ? participantsTutor : participantsStudent;
-  const isConferenceNotActive = isTutor ? isConferenceNotActiveTutor : isConferenceNotActiveStudent;
 
-  // Конференция активна, если:
-  // 1. Нет ошибки 409 (комната активна)
-  // 2. И participants определен и является массивом (пустой [] или с участниками)
-  // При загрузке или других ошибках participants = undefined, поэтому isConferenceActive = false
   const isConferenceActive =
-    !isConferenceNotActive && participants !== undefined && Array.isArray(participants);
+    !isConferenceNotActive &&
+    participants !== undefined &&
+    Array.isArray(participants);
 
   const handleClick = () => {
     // Сохраняем параметр call при переходе в кабинет
@@ -98,8 +88,8 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
 
   const getButtonText = () => {
     if (isConferenceActive) return 'Присоединиться';
-    else if (isTutor) return 'Начать занятие';
-    else return 'Присоединиться';
+    if (isTutor) return 'Начать занятие';
+    return 'Присоединиться';
   };
 
   return (
@@ -135,11 +125,13 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         {classroom.kind === 'individual' && (
           <UserAvatar classroom={classroom} isLoading={isLoading} />
         )}
+
         {classroom.kind === 'group' && (
           <div className="bg-brand-80 text-gray-0 flex h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-3xl">
             {classroom.name?.[0].toUpperCase() ?? ''}
           </div>
         )}
+
         <Tooltip delayDuration={2000}>
           <TooltipTrigger asChild>
             <div className="flex h-full w-full flex-row items-center justify-center gap-2">
