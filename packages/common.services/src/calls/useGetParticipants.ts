@@ -1,6 +1,7 @@
 import { callsApiConfig, CallsQueryKey } from 'common.api';
 import { useFetching } from 'common.config';
 import { AxiosError } from 'axios';
+
 export interface Participant {
   user_id: number;
   display_name: string;
@@ -13,12 +14,11 @@ export const useGetParticipants = (classroom_id: string, role: RoleT) => {
     apiConfig: {
       method: callsApiConfig[CallsQueryKey.GetParticipants].method,
       getUrl: () => callsApiConfig[CallsQueryKey.GetParticipants].getUrl(classroom_id, role),
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
     },
     disabled: !classroom_id,
     queryKey: [CallsQueryKey.GetParticipants, classroom_id, role],
+    refetchInterval: 5000,
   });
 
   const isConferenceNotActive =

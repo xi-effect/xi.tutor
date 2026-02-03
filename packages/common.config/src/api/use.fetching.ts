@@ -1,14 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useCallback, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, QueryObserverResult } from '@tanstack/react-query';
 import { getAxiosInstance } from './axios.instance';
 
 type ApiConfig = {
   method: string;
   getUrl: (params?: Record<string, unknown>) => string;
-  headers?: {
-    [key: string]: string | boolean;
-  };
+  headers?: { [key: string]: string | boolean };
 };
 
 type UseFetchingProps = {
@@ -17,6 +15,10 @@ type UseFetchingProps = {
   urlParams?: Record<string, unknown>;
   queryKey: (string | number)[];
   data?: any; // Новый параметр для передачи тела запроса
+  refetchInterval?:
+    | number
+    | false
+    | ((data: any, query: QueryObserverResult<any, unknown>) => number | false);
 };
 
 export const useFetching = ({
@@ -25,6 +27,7 @@ export const useFetching = ({
   urlParams,
   queryKey,
   data,
+  refetchInterval,
 }: UseFetchingProps) => {
   const { method, getUrl, headers } = apiConfig;
   const url = useMemo(() => getUrl(urlParams), [getUrl, urlParams]);
@@ -49,5 +52,6 @@ export const useFetching = ({
     staleTime: 0,
     refetchOnMount: 'always',
     refetchOnWindowFocus: true,
+    refetchInterval: refetchInterval as number | false,
   });
 };
