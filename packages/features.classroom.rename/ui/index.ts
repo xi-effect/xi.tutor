@@ -1,0 +1,1 @@
+export { ModalEditClassroomName } from './ModalEditClassroomName';
