@@ -20,7 +20,6 @@ import {
   ModalTitle,
 } from '@xipkg/modal';
 import { useUpdateGroupClassroom } from 'common.services';
-import React from 'react';
 import { z } from 'zod';
 import { FormData, formSchema } from '../model';
 import { type ModalEditClassroomPropsT } from '../types';
