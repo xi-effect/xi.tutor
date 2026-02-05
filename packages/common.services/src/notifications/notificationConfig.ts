@@ -36,7 +36,7 @@ export type NotificationConfig = {
   /** Функция генерации ссылки для перехода при клике на уведомление */
   action: NotificationActionFn;
   /** Ключи для ревалидации кеша React Query */
-  invalidationKeys: InvalidationKey[];
+  invalidationKeys: InvalidationKey[] | ((payload: NotificationT['payload']) => InvalidationKey[]);
   /** Если true, по клику открывается модалка (действие не на платформе) */
   opensModal?: boolean;
   onNotify?: (payload: NotificationT['payload']) => void; // делаем optional
@@ -54,15 +54,26 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
       const classroomId = payload?.classroom_id;
       return classroomId ? `/classrooms/${classroomId}?role=student&goto=call` : null;
     },
-    invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
-    onNotify: (payload) => {
+    invalidationKeys: (payload) => {
       const classroomId = payload?.classroom_id;
-      if (!classroomId) return;
+      const keys: InvalidationKey[] = [
+        ClassroomsQueryKey.GetClassrooms,
+        StudentQueryKey.Classrooms,
+      ];
 
-      queryClient.refetchQueries({
-        queryKey: [CallsQueryKey.GetParticipants, classroomId],
-        exact: false,
-      });
+      if (classroomId !== undefined && classroomId !== null) {
+        const classroomIdNumber = Number(classroomId);
+        const classroomIdString = String(classroomId);
+
+        if (Number.isFinite(classroomIdNumber)) {
+          keys.push([ClassroomsQueryKey.GetClassroom, classroomIdNumber]);
+          keys.push([StudentQueryKey.GetClassroom, classroomIdNumber]);
+        }
+        // Частичное совпадение по ключу обновит и tutor, и student варианты
+        keys.push([CallsQueryKey.GetParticipants, classroomIdString]);
+      }
+
+      return keys;
     },
   },
 
