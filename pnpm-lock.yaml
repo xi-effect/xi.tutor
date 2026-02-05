@@ -1150,9 +1150,6 @@ importers:
       common.services:
         specifier: '*'
         version: link:../common.services
-      lucide-react:
-        specifier: ^0.263.1
-        version: 0.263.1(react@19.2.3)
       react:
         specifier: '19'
         version: 19.2.3
@@ -11301,7 +11298,7 @@ packages:
       eslint-config-airbnb: 19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2)(eslint-plugin-react-hooks@5.1.0)(eslint-plugin-react@7.37.2)(eslint@9.39.2)
       eslint-config-next: 15.1.2(eslint@9.39.2)(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.39.2)
-      eslint-config-turbo: 2.8.1(eslint@9.39.2)(turbo@2.7.5)
+      eslint-config-turbo: 2.8.3(eslint@9.39.2)(turbo@2.7.5)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.53.0)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2)
       eslint-plugin-react: 7.37.2(eslint@9.39.2)
       eslint-plugin-react-hooks: 5.1.0(eslint@9.39.2)
@@ -12912,14 +12909,14 @@ packages:
       eslint: 9.39.2
     dev: true
 
-  /eslint-config-turbo@2.8.1(eslint@9.39.2)(turbo@2.7.5):
-    resolution: {integrity: sha512-E/yUaEP47+rxLw4TaqK+lUHoteck5T3Pw0q69gmcnMhTP5W07z/Lb+bPqkHTRpWaq6sz/K5D6eOaC7lCwHpFMg==}
+  /eslint-config-turbo@2.8.3(eslint@9.39.2)(turbo@2.7.5):
+    resolution: {integrity: sha512-cx9nT7IbP+insVejZPL4n55pkjPTlkWdjh3p/ZZL3W8BLt+2O1bWFJnT3lVyIGcC8v/4s6nZZPL+/id37zDdVA==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
     dependencies:
       eslint: 9.39.2
-      eslint-plugin-turbo: 2.8.1(eslint@9.39.2)(turbo@2.7.5)
+      eslint-plugin-turbo: 2.8.3(eslint@9.39.2)(turbo@2.7.5)
       turbo: 2.7.5
     dev: true
 
@@ -13146,8 +13143,8 @@ packages:
       turbo: 2.7.5
     dev: true
 
-  /eslint-plugin-turbo@2.8.1(eslint@9.39.2)(turbo@2.7.5):
-    resolution: {integrity: sha512-a6XyHDTGpvntjWXPppXU9y+LNvrSY45/ZSW4ReNkw9EvwToTwakxwJI+LQl65F2sLbopU4bC/OhA0BjOQ+rDqQ==}
+  /eslint-plugin-turbo@2.8.3(eslint@9.39.2)(turbo@2.7.5):
+    resolution: {integrity: sha512-9ACQrrjzOfrbBGG1CqzyC67NtOSRcA+vyc9cjbyLyIoVtcK27czO7/WM+R5K3Opz0fb4Uezo6X+csMfL//RfJQ==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -13561,6 +13558,7 @@ packages:
   /glob@11.1.0:
     resolution: {integrity: sha512-vuNwKSaKiqm7g0THUBu2x7ckSs3XJLXE+2ssL7/MfTGPLLcrJQ/4Uq1CjPTtO5cCIiRxqvN6Twy1qOwhL0Xjcw==}
     engines: {node: 20 || >=22}
+    deprecated: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
     hasBin: true
     dependencies:
       foreground-child: 3.3.1

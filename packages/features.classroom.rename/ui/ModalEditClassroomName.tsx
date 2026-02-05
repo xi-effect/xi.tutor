@@ -20,18 +20,18 @@ import {
   ModalTitle,
 } from '@xipkg/modal';
 import { useUpdateGroupClassroom } from 'common.services';
-import { useMemo } from 'react';
+import React from 'react';
 import { z } from 'zod';
 import { FormData, formSchema } from '../model';
 import { type ModalEditClassroomPropsT } from '../types';
 
 export const ModalEditClassroomName = ({
   open,
-  onClose,
   name,
   classroomId,
+  onClose,
 }: ModalEditClassroomPropsT) => {
-  const initialValues = useMemo<FormData>(() => ({ name: name ?? '' }), [name]);
+  const initialValues = { name: name ?? '' };
 
   // Mutations
   const { updateGroupClassroom, isUpdating } = useUpdateGroupClassroom();
@@ -68,15 +68,15 @@ export const ModalEditClassroomName = ({
   };
 
   const handleOpenChange = (open: boolean) => {
-    if (!open) {
-      form.reset(initialValues);
-      onClose();
-    }
+    if (open) return;
+
+    form.reset(initialValues);
+    onClose();
   };
 
   return (
     <Modal open={open} onOpenChange={handleOpenChange}>
-      <ModalContent className="max-w-150" aria-describedby={undefined}>
+      <ModalContent className="max-w-150" aria-describedby="Invoice template">
         <ModalHeader>
           <ModalCloseButton />
           <ModalTitle className="max-w-[calc(100%-48px)]">Шаблон счёта</ModalTitle>
