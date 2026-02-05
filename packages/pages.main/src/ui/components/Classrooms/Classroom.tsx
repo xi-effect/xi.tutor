@@ -53,10 +53,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
 
   const role: RoleT = isTutor ? 'tutor' : 'student';
 
-  const { participants, isConferenceNotActive } = useGetParticipants(classroom.id.toString(), role);
-
-  const isConferenceActive =
-    !isConferenceNotActive && participants !== undefined && Array.isArray(participants);
+  const { isConferenceNotActive } = useGetParticipants(classroom.id.toString(), role);
 
   const handleClick = () => {
     // Сохраняем параметр call при переходе в кабинет
@@ -76,6 +73,11 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
     // Переходим на страницу кабинета с параметром goto=call
     const url = `/classrooms/${classroom.id}?goto=call`;
     window.location.href = url;
+  };
+
+  const getButtonLabel = (isTutor: boolean, isConferenceActive: boolean) => {
+    if (!isTutor || isConferenceActive) return 'Присоединиться';
+    return 'Начать занятие';
   };
 
   return (
@@ -135,11 +137,11 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         variant="secondary"
         className="group mt-auto w-full"
         onClick={handleStartLesson}
-        disabled={!isTutor && !isConferenceActive}
+        disabled={!isTutor && isConferenceNotActive}
         data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
         data-umami-event-classroom-id={classroom.id}
       >
-        {isTutor ? 'Начать занятие' : 'Присоединиться'}
+        {getButtonLabel(isTutor, !isConferenceNotActive)}
         <Conference className="group-hover:fill-gray-0 fill-brand-100 ml-2" />
       </Button>
     </div>

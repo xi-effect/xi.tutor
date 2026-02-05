@@ -15,6 +15,32 @@ const truncateText = (text: string, maxLength: number): string => {
   return `${text.slice(0, maxLength).trim()}…`;
 };
 
+const getClassroomConferenceInvalidationKeys = (
+  payload: NotificationT['payload'],
+): InvalidationKey[] => {
+  const classroomId = payload?.classroom_id;
+  const keys: InvalidationKey[] = [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms];
+
+  if (classroomId !== undefined && classroomId !== null) {
+    const classroomIdNumber = Number(classroomId);
+    const classroomIdString = String(classroomId);
+
+    if (Number.isFinite(classroomIdNumber)) {
+      keys.push([ClassroomsQueryKey.GetClassroom, classroomIdNumber]);
+      keys.push([StudentQueryKey.GetClassroom, classroomIdNumber]);
+    }
+    // Частичное совпадение по ключу обновит и tutor, и student варианты
+    keys.push([CallsQueryKey.GetParticipants, classroomIdString]);
+  }
+
+  return keys;
+};
+
+const getClassroomAction = (payload: NotificationT['payload']): string | null => {
+  const classroomId = payload?.classroom_id;
+  return classroomId ? `/classrooms/${classroomId}` : null;
+};
+
 /**
  * Тип для функции генерации ссылки на основе payload уведомления
  */
@@ -54,27 +80,24 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
       const classroomId = payload?.classroom_id;
       return classroomId ? `/classrooms/${classroomId}?role=student&goto=call` : null;
     },
-    invalidationKeys: (payload) => {
+    invalidationKeys: getClassroomConferenceInvalidationKeys,
+  },
+
+  classroom_lesson_started: {
+    title: 'Занятие началось',
+    description: () => 'Присоединяйтесь к видеозвонку',
+    action: (payload) => {
       const classroomId = payload?.classroom_id;
-      const keys: InvalidationKey[] = [
-        ClassroomsQueryKey.GetClassrooms,
-        StudentQueryKey.Classrooms,
-      ];
-
-      if (classroomId !== undefined && classroomId !== null) {
-        const classroomIdNumber = Number(classroomId);
-        const classroomIdString = String(classroomId);
-
-        if (Number.isFinite(classroomIdNumber)) {
-          keys.push([ClassroomsQueryKey.GetClassroom, classroomIdNumber]);
-          keys.push([StudentQueryKey.GetClassroom, classroomIdNumber]);
-        }
-        // Частичное совпадение по ключу обновит и tutor, и student варианты
-        keys.push([CallsQueryKey.GetParticipants, classroomIdString]);
-      }
-
-      return keys;
+      return classroomId ? `/classrooms/${classroomId}?role=student&goto=call` : null;
     },
+    invalidationKeys: getClassroomConferenceInvalidationKeys,
+  },
+
+  classroom_lesson_ended: {
+    title: 'Занятие завершилось',
+    description: () => 'Звонок завершен',
+    action: getClassroomAction,
+    invalidationKeys: getClassroomConferenceInvalidationKeys,
   },
 
   enrollment_created_v1: {
