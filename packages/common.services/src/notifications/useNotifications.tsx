@@ -129,17 +129,16 @@ export const useNotifications = () => {
       const { kind } = notification.payload;
       const config = notificationConfigs[kind];
 
+      const url = config ? generateNotificationAction(notification) : null;
       const toastId = toast(title, {
         description,
         duration: 5000,
-        action: config && (
+        action: config && url && (
           <div className="flex flex-1 justify-end">
             <Button
               size="s"
               onClick={(e) => {
                 e.stopPropagation();
-                // Получаем URL из конфига уведомления
-                const url = generateNotificationAction(notification);
                 if (url) {
                   onNavigate(url);
                   toast.dismiss(toastId);

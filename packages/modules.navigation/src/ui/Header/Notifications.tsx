@@ -7,16 +7,28 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalTitle,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+} from '@xipkg/modal';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import { useLocation, useNavigate } from '@tanstack/react-router';
 import { useRef, useEffect, useState } from 'react';
 import { useNotificationsContext } from 'common.services';
 import type { NotificationT } from 'common.types';
+import type { CustomNotificationModalPayload } from 'common.services';
 import { NotificationBadge } from './NotificationBadge';
 import {
   generateNotificationTitle,
   generateNotificationDescription,
   generateNotificationAction,
+  getNotificationOpensModal,
+  getCustomNotificationModalPayload,
   formatNotificationDate,
   formatFullNotificationDate,
   formatNotificationCount,
@@ -30,28 +42,31 @@ const NotificationItem = ({
   onMarkAsRead,
   onNavigate,
   onClose,
+  onOpenCustomModal,
 }: {
   notification: NotificationT;
   onMarkAsRead: (id: string) => Promise<void>;
   onNavigate: (url: string) => void;
   onClose: () => void;
+  onOpenCustomModal: (payload: CustomNotificationModalPayload) => void;
 }) => {
-  // Обработчик клика по уведомлению - переход на целевую страницу
+  // Обработчик клика по уведомлению - переход на целевую страницу или открытие модалки
   const handleClick = async (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
 
-    // Помечаем уведомление как прочитанное
     if (!notification.is_read) {
       await onMarkAsRead(notification.id);
     }
 
-    // Получаем URL из конфига уведомления
-    const url = generateNotificationAction(notification);
-
-    // Закрываем dropdown
     onClose();
 
-    // Переходим на целевую страницу, если URL есть
+    if (getNotificationOpensModal(notification)) {
+      const payload = getCustomNotificationModalPayload(notification);
+      if (payload) onOpenCustomModal(payload);
+      return;
+    }
+
+    const url = generateNotificationAction(notification);
     if (url) {
       onNavigate(url);
     }
@@ -127,6 +142,8 @@ export const Notifications = () => {
   const location = useLocation();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(false);
+  const [customModalPayload, setCustomModalPayload] =
+    useState<CustomNotificationModalPayload | null>(null);
 
   const {
     notifications,
@@ -259,53 +276,93 @@ export const Notifications = () => {
   };
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-[32px] w-[32px] p-1">
-          <Notification className="fill-gray-80 size-6" size="s" />
-          <NotificationBadge count={formatNotificationCount(unreadCount)} />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end"
-        className="flex w-[310px] flex-col gap-1 rounded-[20px] border-2 px-1 py-1"
-      >
-        <DropdownMenuLabel className="text-m-base flex h-[48px] items-center p-3 font-semibold text-gray-100">
-          Уведомления
-          <div className="ml-auto flex items-center gap-1">
-            <Button onClick={handleToSettings} variant="ghost" className="h-[32px] w-[32px] p-1">
-              <Settings className="fill-gray-80 size-6" size="s" />
-            </Button>
-          </div>
-        </DropdownMenuLabel>
-        <div ref={scrollAreaRef} className="h-[300px] overflow-y-auto pr-1 pl-1">
-          {notifications.length > 0 ? (
-            <>
-              <div className="group flex flex-col gap-1">
-                {notifications.map((notification: NotificationT) => (
-                  <div key={notification.id}>
-                    <NotificationItem
-                      notification={notification}
-                      onMarkAsRead={markAsRead}
-                      onNavigate={handleNavigate}
-                      onClose={() => setIsOpen(false)}
-                    />
-                  </div>
-                ))}
-              </div>
-              {(isLoading || isFetchingNextPage) && (
-                <div className="flex justify-center p-4">
-                  <span className="text-gray-80 text-s-base">Загрузка...</span>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="flex h-[300px] flex-col items-center justify-center">
-              <span className="text-gray-80 text-m-base font-normal">Уведомлений нет</span>
+    <>
+      <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="relative h-[32px] w-[32px] p-1">
+            <Notification className="fill-gray-80 size-6" size="s" />
+            <NotificationBadge count={formatNotificationCount(unreadCount)} />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          align="end"
+          className="flex w-[310px] flex-col gap-1 rounded-[20px] border-2 px-1 py-1"
+        >
+          <DropdownMenuLabel className="text-m-base flex h-[48px] items-center p-3 font-semibold text-gray-100">
+            Уведомления
+            <div className="ml-auto flex items-center gap-1">
+              <Button onClick={handleToSettings} variant="ghost" className="h-[32px] w-[32px] p-1">
+                <Settings className="fill-gray-80 size-6" size="s" />
+              </Button>
             </div>
+          </DropdownMenuLabel>
+          <div ref={scrollAreaRef} className="h-[300px] overflow-y-auto pr-1 pl-1">
+            {notifications.length > 0 ? (
+              <>
+                <div className="group flex flex-col gap-1">
+                  {notifications.map((notification: NotificationT) => (
+                    <div key={notification.id}>
+                      <NotificationItem
+                        notification={notification}
+                        onMarkAsRead={markAsRead}
+                        onNavigate={handleNavigate}
+                        onClose={() => setIsOpen(false)}
+                        onOpenCustomModal={setCustomModalPayload}
+                      />
+                    </div>
+                  ))}
+                </div>
+                {(isLoading || isFetchingNextPage) && (
+                  <div className="flex justify-center p-4">
+                    <span className="text-gray-80 text-s-base">Загрузка...</span>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="flex h-[300px] flex-col items-center justify-center">
+                <span className="text-gray-80 text-m-base font-normal">Уведомлений нет</span>
+              </div>
+            )}
+          </div>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      <Modal
+        open={!!customModalPayload}
+        onOpenChange={(open) => !open && setCustomModalPayload(null)}
+      >
+        <ModalContent className="flex max-h-[90vh] max-w-[480px] flex-col">
+          <ModalHeader>
+            <ModalTitle className="text-m-lg font-semibold text-gray-100">
+              {customModalPayload?.header}
+            </ModalTitle>
+            <ModalCloseButton />
+          </ModalHeader>
+          <ModalBody className="text-s-base text-gray-80 flex-1 overflow-y-auto">
+            {customModalPayload?.content}
+          </ModalBody>
+          {customModalPayload?.button_text && customModalPayload?.button_link && (
+            <ModalFooter>
+              <Button
+                size="m"
+                onClick={() => {
+                  const link = customModalPayload?.button_link;
+                  if (link) {
+                    if (link.startsWith('http://') || link.startsWith('https://')) {
+                      window.open(link, '_blank', 'noopener,noreferrer');
+                    } else {
+                      navigate({ to: link });
+                    }
+                    setCustomModalPayload(null);
+                  }
+                }}
+              >
+                {customModalPayload.button_text}
+              </Button>
+            </ModalFooter>
           )}
-        </div>
-      </DropdownMenuContent>
-    </DropdownMenu>
+        </ModalContent>
+      </Modal>
+    </>
   );
 };

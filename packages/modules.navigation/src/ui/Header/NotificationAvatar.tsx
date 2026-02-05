@@ -7,6 +7,7 @@ import {
 } from 'common.services';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { NotificationKind } from 'common.types';
+import { cn } from '@xipkg/utils';
 
 const RecipientInvoiceAvatarByTutor = ({ recipientInvoiceId }: { recipientInvoiceId: number }) => {
   const { data: recipientInvoiceDataTutor } = useGetRecipientInvoiceByTutor(recipientInvoiceId);
@@ -109,6 +110,19 @@ export const NotificationAvatar = ({ classroomId, recipientInvoiceId, kind }: Us
   if (kind === 'student_recipient_invoice_payment_confirmed_v1') {
     if (!recipientInvoiceId) return null;
     return <RecipientInvoiceAvatarByTutor recipientInvoiceId={recipientInvoiceId} />;
+  }
+
+  if (kind === 'custom_v1') {
+    return (
+      <div
+        className={cn(
+          'bg-brand-10 flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full',
+        )}
+        aria-hidden
+      >
+        <img src="/assets/brand/small-brand.svg" alt="" className="size-12 object-contain" />
+      </div>
+    );
   }
 
   return null;

@@ -145,7 +145,7 @@ export const Header = () => {
                 )}
               </Button>
             )}
-            {!isReadonly && <SettingsDropdown />}
+            <SettingsDropdown />
           </div>
         </div>
       </div>
