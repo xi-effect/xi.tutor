@@ -27,7 +27,6 @@ export const useStartCall = () => {
 
     if (tokenResponse) {
       updateStore('token', tokenResponse);
-
       navigate({
         to: '/call/$callId',
         params: { callId: data.classroom_id },

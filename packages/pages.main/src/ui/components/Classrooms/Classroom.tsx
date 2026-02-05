@@ -4,7 +4,7 @@ import { Button } from '@xipkg/button';
 import { ArrowUpRight, Conference } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import { useCurrentUser, useUserByRole } from 'common.services';
+import { useCurrentUser, useUserByRole, useGetParticipants } from 'common.services';
 import { SubjectBadge } from 'features.classroom';
 
 type UserAvatarPropsT = {
@@ -12,12 +12,16 @@ type UserAvatarPropsT = {
   isLoading: boolean;
 };
 
+type RoleT = 'student' | 'tutor';
+
+const avatarSize = 'l';
+
 const UserAvatar = ({ isLoading, classroom }: UserAvatarPropsT) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
   // Используем useUserByRole с userId напрямую
-  const userRole = isTutor ? 'student' : 'tutor';
+  const userRole: RoleT = isTutor ? 'student' : 'tutor';
   const { data } = useUserByRole(userRole, classroom.tutor_id ?? classroom.student_id ?? 0);
 
   return (
@@ -35,8 +39,6 @@ const UserAvatar = ({ isLoading, classroom }: UserAvatarPropsT) => {
   );
 };
 
-const avatarSize = 'l';
-
 type ClassroomProps = {
   isLoading: boolean;
   classroom: ClassroomT;
@@ -48,6 +50,10 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+
+  const role: RoleT = isTutor ? 'tutor' : 'student';
+
+  const { isConferenceNotActive } = useGetParticipants(classroom.id.toString(), role);
 
   const handleClick = () => {
     // Сохраняем параметр call при переходе в кабинет
@@ -67,6 +73,11 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
     // Переходим на страницу кабинета с параметром goto=call
     const url = `/classrooms/${classroom.id}?goto=call`;
     window.location.href = url;
+  };
+
+  const getButtonLabel = (isTutor: boolean, isConferenceActive: boolean) => {
+    if (!isTutor || isConferenceActive) return 'Присоединиться';
+    return 'Начать занятие';
   };
 
   return (
@@ -102,11 +113,13 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         {classroom.kind === 'individual' && (
           <UserAvatar classroom={classroom} isLoading={isLoading} />
         )}
+
         {classroom.kind === 'group' && (
           <div className="bg-brand-80 text-gray-0 flex h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-3xl">
             {classroom.name?.[0].toUpperCase() ?? ''}
           </div>
         )}
+
         <Tooltip delayDuration={2000}>
           <TooltipTrigger asChild>
             <div className="flex h-full w-full flex-row items-center justify-center gap-2">
@@ -124,10 +137,11 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         variant="secondary"
         className="group mt-auto w-full"
         onClick={handleStartLesson}
+        disabled={!isTutor && isConferenceNotActive}
         data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
         data-umami-event-classroom-id={classroom.id}
       >
-        {isTutor ? 'Начать занятие' : 'Присоединиться'}{' '}
+        {getButtonLabel(isTutor, !isConferenceNotActive)}
         <Conference className="group-hover:fill-gray-0 fill-brand-100 ml-2" />
       </Button>
     </div>

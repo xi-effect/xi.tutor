@@ -3,8 +3,10 @@ import { serverUrl, serverUrlDev, isDevMode, devToken } from '../utils/config';
 import { useCallStore } from '../store/callStore';
 import { useRoom } from './RoomProvider';
 import { useParams, useLocation, useNavigate, useSearch } from '@tanstack/react-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { Track } from 'livekit-client';
+import { CallsQueryKey } from 'common.api';
 
 type LiveKitProviderProps = {
   children: React.ReactNode;
@@ -18,6 +20,25 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
   const { isStarted } = useCallStore();
   const wasConnectedRef = useRef(false);
   const reconnectTimeoutRef = useRef<number | null>(null);
+
+  const queryClient = useQueryClient();
+  const location = useLocation();
+  const navigate = useNavigate();
+  const search = useSearch({ strict: false }) as { call?: string };
+
+  const getCallIdFromPathname = (pathname: string): string | undefined => {
+    const callMatch = pathname.match(/^\/call\/([^/]+)$/);
+    if (callMatch) {
+      return callMatch[1];
+    }
+
+    const classroomMatch = pathname.match(/^\/classrooms\/([^/]+)/);
+    if (classroomMatch) {
+      return classroomMatch[1];
+    }
+
+    return undefined;
+  };
 
   const handleConnect = () => {
     wasConnectedRef.current = true;
@@ -35,6 +56,13 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
   };
 
   const handleDisconnect = () => {
+    const callIdentifier =
+      callId ??
+      search.call ??
+      getCallIdFromPathname(location.pathname) ??
+      useCallStore.getState().activeClassroom ??
+      undefined;
+
     // Не очищаем состояние, если это временное отключение из-за сворачивания окна
     // Проверяем, была ли страница скрыта в момент отключения
     if (document.hidden && wasConnectedRef.current) {
@@ -75,11 +103,28 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
     }
 
     console.log('Disconnected from LiveKit room - all interface states cleared');
-  };
 
-  const location = useLocation();
-  const navigate = useNavigate();
-  const search = useSearch({ strict: false }) as { call?: string };
+    if (callIdentifier) {
+      const callIdString = String(callIdentifier);
+
+      // Локально сбрасываем данные участников, чтобы кнопки обновились без запроса к бэку
+      queryClient.setQueriesData(
+        {
+          predicate: (query) => {
+            const key = query.queryKey;
+            if (!Array.isArray(key) || key.length < 2) return false;
+            if (String(key[1]) !== callIdString) return false;
+            return (
+              key[0] === CallsQueryKey.GetParticipants ||
+              key[0] === CallsQueryKey.GetParticipantsStudent ||
+              key[0] === CallsQueryKey.GetParticipantsTutor
+            );
+          },
+        },
+        undefined,
+      );
+    }
+  };
 
   useEffect(() => {
     if (!token && callId && location.pathname.includes('/call/')) {
