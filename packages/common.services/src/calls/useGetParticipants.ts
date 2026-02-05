@@ -18,7 +18,6 @@ export const useGetParticipants = (classroom_id: string, role: RoleT) => {
     },
     disabled: !classroom_id,
     queryKey: [CallsQueryKey.GetParticipants, classroom_id, role],
-    refetchInterval: 5000,
   });
 
   const isConferenceNotActive =

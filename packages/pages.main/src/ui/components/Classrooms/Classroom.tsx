@@ -78,12 +78,6 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
     window.location.href = url;
   };
 
-  const getButtonText = () => {
-    if (isConferenceActive) return 'Присоединиться';
-    if (isTutor) return 'Начать занятие';
-    return 'Присоединиться';
-  };
-
   return (
     <div className="border-gray-30 relative flex min-h-[170px] max-w-[420px] min-w-[320px] flex-col items-start justify-start gap-4 rounded-2xl border bg-transparent px-6 py-4">
       <Tooltip delayDuration={1000}>
@@ -145,7 +139,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
         data-umami-event-classroom-id={classroom.id}
       >
-        {getButtonText()}
+        {isTutor ? 'Начать занятие' : 'Присоединиться'}
         <Conference className="group-hover:fill-gray-0 fill-brand-100 ml-2" />
       </Button>
     </div>
