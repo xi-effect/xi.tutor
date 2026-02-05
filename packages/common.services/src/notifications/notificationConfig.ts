@@ -6,6 +6,14 @@ import {
   StudentQueryKey,
 } from 'common.api';
 
+const CUSTOM_NOTIFICATION_CONTENT_MAX_LENGTH = 80;
+
+const truncateText = (text: string, maxLength: number): string => {
+  if (typeof text !== 'string') return '';
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength).trim()}…`;
+};
+
 /**
  * Тип для функции генерации ссылки на основе payload уведомления
  */
@@ -28,6 +36,8 @@ export type NotificationConfig = {
   action: NotificationActionFn;
   /** Ключи для ревалидации кеша React Query */
   invalidationKeys: InvalidationKey[];
+  /** Если true, по клику открывается модалка (действие не на платформе) */
+  opensModal?: boolean;
 };
 
 /**
@@ -93,5 +103,17 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
       return classroomId ? `/classrooms/${classroomId}?role=tutor` : null;
     },
     invalidationKeys: [EnrollmentsQueryKey.GetAllStudents],
+  },
+  // Кастомное уведомление: без перехода на платформу, по клику открывается модалка
+  custom_v1: {
+    title: (payload) => (payload?.header ? String(payload.header) : 'Уведомление'),
+    description: (payload) =>
+      truncateText(
+        typeof payload?.content === 'string' ? payload.content : '',
+        CUSTOM_NOTIFICATION_CONTENT_MAX_LENGTH,
+      ),
+    action: () => null,
+    invalidationKeys: [],
+    opensModal: true,
   },
 };
