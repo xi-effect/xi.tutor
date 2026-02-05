@@ -150,9 +150,11 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
                 align="end"
                 className="border-gray-10 bg-gray-0 border p-1"
               >
-                <DropdownMenuItem onClick={handleOpenEditModal} data-umami-event="material-edit">
-                  Переименовать
-                </DropdownMenuItem>
+                {kind === 'group' && (
+                  <DropdownMenuItem onClick={handleOpenEditModal} data-umami-event="material-edit">
+                    Переименовать
+                  </DropdownMenuItem>
+                )}
 
                 <DropdownMenuItem
                   onClick={handleDelete}
