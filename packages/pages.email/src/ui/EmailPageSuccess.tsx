@@ -1,8 +1,9 @@
 import { Button } from '@xipkg/button';
 import { EmailPageLayout } from './EmailPageLayout';
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useEmailConfirmation } from 'common.services';
 import { useEffect, useRef } from 'react';
+import { useEmailToken } from './useEmailToken';
 
 const Loading = () => {
   return (
@@ -21,29 +22,29 @@ const Loading = () => {
 export const EmailPageSuccess = () => {
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
-  const { emailId } = useParams({ strict: false });
+  const emailToken = useEmailToken();
   const { emailConfirmation, isLoading, isSuccess, isAlreadyConfirmed } = useEmailConfirmation();
   const lastEmailIdRef = useRef<string | null>(null);
 
   useEffect(() => {
-    // Вызываем мутацию единожды для каждого уникального emailId
+    // Вызываем мутацию единожды для каждого уникального token (из path или query)
     if (
-      emailId &&
-      emailId !== 'confirm' &&
-      emailId !== lastEmailIdRef.current &&
+      emailToken &&
+      emailToken !== 'confirm' &&
+      emailToken !== lastEmailIdRef.current &&
       !emailConfirmation.isPending
     ) {
-      lastEmailIdRef.current = emailId;
+      lastEmailIdRef.current = emailToken;
 
       // Используем mutateAsync для явной обработки ошибок
-      emailConfirmation.mutateAsync({ token: emailId }).catch((err) => {
+      emailConfirmation.mutateAsync({ token: emailToken }).catch((err) => {
         // Явно обрабатываем ошибку, чтобы гарантировать завершение мутации
         console.error('Email confirmation error:', err);
       });
     }
     // emailConfirmation.mutateAsync - стабильная функция из React Query, не требует включения в зависимости
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [emailId, emailConfirmation.isPending]);
+  }, [emailToken, emailConfirmation.isPending]);
 
   // Определяем, есть ли ошибка (кроме 409)
   const hasError = (emailConfirmation.isError || !!emailConfirmation.error) && !isAlreadyConfirmed;

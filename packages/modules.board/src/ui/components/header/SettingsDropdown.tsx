@@ -10,6 +10,7 @@ import { File, Locked, MoreVert, Trash, Unlocked } from '@xipkg/icons';
 import { useDropdownActions } from './hooks/useDropdownActions';
 import { useFullScreen } from 'common.utils';
 import { useMemo } from 'react';
+import { useCurrentUser } from 'common.services';
 
 type ActionPropsT = {
   onClick: () => void;
@@ -54,6 +55,8 @@ const ClearBoardAction = ({ onClick }: ActionPropsT) => {
 export const SettingsDropdown = () => {
   const { isReadonly, saveCanvas, clearBoard, toggleReadonly } = useDropdownActions();
   const { isFullScreen } = useFullScreen('whiteboard-container');
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
 
   const portalContainer = useMemo(() => {
     return isFullScreen ? document.getElementById('whiteboard-container') : undefined;
@@ -78,9 +81,9 @@ export const SettingsDropdown = () => {
         <DropdownMenuGroup>
           <DownloadBoardAction onClick={saveCanvas} />
 
-          <ClearBoardAction onClick={clearBoard} />
+          {isTutor && !isReadonly && <ClearBoardAction onClick={clearBoard} />}
 
-          <BlockBoardAction onClick={toggleReadonly} isReadonly={isReadonly} />
+          {isTutor && <BlockBoardAction onClick={toggleReadonly} isReadonly={isReadonly} />}
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
