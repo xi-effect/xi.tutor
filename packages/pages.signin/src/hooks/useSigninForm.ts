@@ -47,15 +47,12 @@ export const useSigninForm = () => {
 
       await login();
 
-      // Трекинг сессии после успешного входа
-      // Дожидаемся обновления данных пользователя
-      refetchUser().then((result) => {
-        if (result.data) {
-          trackUmamiSession(result.data, 'signin').catch((error) => {
-            console.error('Failed to track Umami session:', error);
-          });
-        }
-      });
+      // Идентифицируем пользователя в Umami до навигации, чтобы properties записались
+      // в текущую сессию (страница логина), а не в «новую» после перехода
+      const result = await refetchUser();
+      if (result.data) {
+        await trackUmamiSession(result.data, 'signin');
+      }
 
       navigate({ to: search.redirect || '/' });
     } catch (error) {

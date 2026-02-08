@@ -87,18 +87,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const singupMutation = useMutation({
     mutationFn: async (userData: SignupData) => {
-      return await signupService(userData);
-    },
-
-    onSuccess: async () => {
+      const result = await signupService(userData);
       setIsAuthenticated(true);
-      const result = await refetch();
-      // Трекинг сессии после успешной регистрации
-      if (result.data) {
-        trackUmamiSession(result.data, 'signup').catch((error) => {
-          console.error('Failed to track Umami session:', error);
-        });
+      const refetched = await refetch();
+      // Идентифицируем до того, как форма сделает navigate — чтобы properties записались в текущую сессию
+      if (refetched.data) {
+        await trackUmamiSession(refetched.data, 'signup');
       }
+      return result;
     },
 
     onError: (error) => {
