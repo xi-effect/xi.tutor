@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
   const [isAuthenticated, setIsAuthenticated] = React.useState<boolean | null>(null);
   const [hasTrackedSessionInit, setHasTrackedSessionInit] = React.useState(false);
+  const hasEverBeenUnauthenticated = React.useRef(false);
   const { handleAuthError } = useNetworkAuthIntegration();
 
   if (!queryClient) {
@@ -34,19 +35,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   });
 
   React.useEffect(() => {
+    if (isError) {
+      hasEverBeenUnauthenticated.current = true;
+      setIsAuthenticated(false);
+    }
+  }, [isError]);
+
+  React.useEffect(() => {
     if (isSuccess && user && !hasTrackedSessionInit) {
       setIsAuthenticated(true);
-      // Трекинг сессии для уже авторизованного пользователя при инициализации (только один раз)
-      trackUmamiSession(user, 'session_init').catch((error) => {
-        console.error('Failed to track Umami session:', error);
-      });
+      // Трекинг только для «восстановленной» сессии (пользователь уже был авторизован при загрузке).
+      // После signin/signup идентификацию делают useSigninForm и signup onSuccess — не дублируем.
+      if (!hasEverBeenUnauthenticated.current) {
+        trackUmamiSession(user, 'session_init').catch((error) => {
+          console.error('Failed to track Umami session:', error);
+        });
+      }
       setHasTrackedSessionInit(true);
     }
-    if (isError) {
-      setIsAuthenticated(false);
-      // Здесь можно выполнить и другие действия, которые раньше были в onSuccess
-    }
-  }, [isSuccess, isError, user, hasTrackedSessionInit]);
+  }, [isSuccess, user, hasTrackedSessionInit]);
 
   const login = async () => {
     setIsAuthenticated(true);
