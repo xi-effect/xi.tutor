@@ -116,6 +116,8 @@ export const TldrawCanvas = ({
     }
   }, [editor, isReadonly]);
 
+  console.log('status', status);
+
   if (status === 'loading') return <LoadingScreen />;
 
   return (

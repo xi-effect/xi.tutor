@@ -59,5 +59,7 @@ export const YjsProvider = ({ children, storageItem }: YjsProviderProps) => {
 
   const yjsStore = useYjsStore(storeParams);
 
+  // console.log('yjsStore', yjsStore);
+
   return <YjsContext.Provider value={yjsStore}>{children}</YjsContext.Provider>;
 };
