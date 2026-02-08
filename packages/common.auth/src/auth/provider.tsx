@@ -23,6 +23,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     data: user,
     isSuccess,
     isError,
+    error,
     refetch,
   } = useQuery({
     queryKey: [UserQueryKey.Home],
@@ -34,25 +35,41 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     retry: false,
   });
 
-  React.useEffect(() => {
-    if (isError) {
-      hasEverBeenUnauthenticated.current = true;
-      setIsAuthenticated(false);
-    }
-  }, [isError]);
+  // Только 401 считаем «пользователь не залогинен» для блокировки session_init identify (signin/signup делают свой).
+  // Сетевая/5xx не должны навсегда блокировать identify при следующей успешной загрузке.
+  const isUnauthorized =
+    isError &&
+    error &&
+    typeof error === 'object' &&
+    'response' in error &&
+    (error as { response?: { status?: number } }).response?.status === 401;
 
   React.useEffect(() => {
-    if (isSuccess && user && !hasTrackedSessionInit) {
-      setIsAuthenticated(true);
-      // Трекинг только для «восстановленной» сессии (пользователь уже был авторизован при загрузке).
-      // После signin/signup идентификацию делают useSigninForm и signup onSuccess — не дублируем.
-      if (!hasEverBeenUnauthenticated.current) {
-        trackUmamiSession(user, 'session_init').catch((error) => {
-          console.error('Failed to track Umami session:', error);
-        });
-      }
-      setHasTrackedSessionInit(true);
+    if (isUnauthorized) {
+      hasEverBeenUnauthenticated.current = true;
     }
+    if (isError) {
+      setIsAuthenticated(false);
+    }
+  }, [isError, isUnauthorized]);
+
+  React.useEffect(() => {
+    if (!isSuccess || !user || hasTrackedSessionInit) return;
+
+    setIsAuthenticated(true);
+
+    // Identify только для «восстановленной» сессии (загрузка с уже валидными куками).
+    // После signin/signup идентификацию делают useSigninForm и signup — не дублируем.
+    if (hasEverBeenUnauthenticated.current) {
+      setHasTrackedSessionInit(true);
+      return;
+    }
+
+    setHasTrackedSessionInit(true);
+
+    trackUmamiSession(user, 'session_init').catch((err) => {
+      console.error('Failed to track Umami session:', err);
+    });
   }, [isSuccess, user, hasTrackedSessionInit]);
 
   const login = async () => {
