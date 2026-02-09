@@ -1,20 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Button } from '@xipkg/button';
-import { MoreVert } from '@xipkg/icons';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
+import { MoreVert } from '@xipkg/icons';
 
-import { StatusBadge, SubjectBadge } from 'features.classroom';
-import { useCurrentUser, useDeleteClassroom, useUserByRole } from 'common.services';
-import { ClassroomPropsT } from '../../../types';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { useCurrentUser, useDeleteClassroom, useUserByRole } from 'common.services';
+import { StatusBadge, SubjectBadge } from 'features.classroom';
+import { ModalEditClassroomName } from 'features.classroom.rename';
+import { ClassroomPropsT } from '../../../types';
 
 type UserAvatarPropsT = {
   kind: string;
@@ -58,6 +59,9 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
   const search = useSearch({ strict: false });
   const { deleteClassroom, isDeleting } = useDeleteClassroom();
 
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
   const handleClick = () => {
     // Сохраняем параметр call при переходе в кабинет
     const filteredSearch = search.call ? { call: search.call } : {};
@@ -77,75 +81,100 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
     deleteClassroom({ classroomId: id });
   };
 
+  const handleOpenEditModal = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Предотвращаем переход на страницу класса
+    setDropdownOpen(false);
+    setOpenEditModal(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setOpenEditModal(false);
+  };
+
   const { data: user } = useCurrentUser();
 
   const isTutor = user?.default_layout === 'tutor';
 
   return (
-    <div
-      onClick={handleClick}
-      className="hover:bg-gray-5 border-gray-30 bg-gray-0 relative flex cursor-pointer justify-between rounded-2xl border p-4"
-    >
-      <div className="flex max-w-full flex-col gap-4">
-        <div className="mt-auto mr-8 flex w-auto max-w-[calc(100%-32px)] items-center gap-2">
-          <StatusBadge status={status} kind={kind} deleted={deleted} />
+    <div data-umami-event="material-card-open" data-umami-event-type={student_id}>
+      <div
+        onClick={handleClick}
+        className="hover:bg-gray-5 border-gray-30 bg-gray-0 relative flex cursor-pointer justify-between rounded-2xl border p-4"
+      >
+        <div className="flex max-w-full flex-col gap-4">
+          <div className="mt-auto mr-8 flex w-auto max-w-[calc(100%-32px)] items-center gap-2">
+            <StatusBadge status={status} kind={kind} deleted={deleted} />
 
-          {subject_id && (
-            <SubjectBadge
-              subjectId={subject_id}
-              className="overflow-hidden"
-              textClassName="truncate max-w-full"
-              isTooltip
-            />
-          )}
-        </div>
-        <div className="flex flex-row gap-2">
-          {kind === 'individual' && (
-            <UserAvatar kind={kind} student_id={student_id?.toString() ?? ''} />
-          )}
-          {kind === 'group' && (
-            <div className="bg-brand-80 text-gray-0 flex h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-[24px]">
-              {name?.[0].toUpperCase() ?? ''}
-            </div>
-          )}
-          <Tooltip delayDuration={2000}>
-            <TooltipTrigger asChild>
-              <div className="flex h-full w-full flex-row items-center justify-center gap-2">
-                <h3 className="text-s-base line-clamp-2 w-full text-left font-medium text-gray-100">
-                  {name}
-                </h3>
+            {subject_id && (
+              <SubjectBadge
+                subjectId={subject_id}
+                className="overflow-hidden"
+                textClassName="truncate max-w-full"
+                isTooltip
+              />
+            )}
+          </div>
+          <div className="flex flex-row gap-2">
+            {kind === 'individual' && (
+              <UserAvatar kind={kind} student_id={student_id?.toString() ?? ''} />
+            )}
+            {kind === 'group' && (
+              <div className="bg-brand-80 text-gray-0 flex h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-3xl">
+                {name?.[0].toUpperCase() ?? ''}
               </div>
-            </TooltipTrigger>
-            <TooltipContent>{name}</TooltipContent>
-          </Tooltip>
+            )}
+            <Tooltip delayDuration={2000}>
+              <TooltipTrigger asChild>
+                <div className="flex h-full w-full flex-row items-center justify-center gap-2">
+                  <h3 className="text-s-base line-clamp-2 w-full text-left font-medium text-gray-100">
+                    {name}
+                  </h3>
+                </div>
+              </TooltipTrigger>
+              <TooltipContent>{name}</TooltipContent>
+            </Tooltip>
+          </div>
         </div>
+
+        {isTutor && (
+          <div className="absolute top-4 right-4 flex h-6 w-6 items-center justify-center">
+            <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+              <DropdownMenuTrigger asChild>
+                <Button className="h-6 w-6" variant="ghost" size="icon">
+                  <MoreVert className="h-4 w-4 dark:fill-gray-100" />
+                </Button>
+              </DropdownMenuTrigger>
+
+              <DropdownMenuContent
+                side="bottom"
+                align="end"
+                className="border-gray-10 bg-gray-0 border p-1"
+              >
+                {kind === 'group' && (
+                  <DropdownMenuItem onClick={handleOpenEditModal} data-umami-event="material-edit">
+                    Переименовать
+                  </DropdownMenuItem>
+                )}
+
+                <DropdownMenuItem
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                  className={isDeleting ? 'cursor-not-allowed opacity-50' : ''}
+                >
+                  {isDeleting ? 'Удаление...' : 'Удалить'}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        )}
       </div>
 
-      {isTutor && (
-        <div className="absolute top-4 right-4 flex h-6 w-6 items-center justify-center">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="h-6 w-6" variant="ghost" size="icon">
-                <MoreVert className="h-4 w-4 dark:fill-gray-100" />
-              </Button>
-            </DropdownMenuTrigger>
-
-            <DropdownMenuContent
-              side="bottom"
-              align="end"
-              className="border-gray-10 bg-gray-0 border p-1"
-            >
-              <DropdownMenuItem
-                onClick={handleDelete}
-                disabled={isDeleting}
-                className={isDeleting ? 'cursor-not-allowed opacity-50' : ''}
-              >
-                {isDeleting ? 'Удаление...' : 'Удалить'}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      )}
+      <ModalEditClassroomName
+        name={name}
+        open={openEditModal}
+        classroomId={id}
+        onClose={handleCloseEditModal}
+      />
     </div>
   );
 };
