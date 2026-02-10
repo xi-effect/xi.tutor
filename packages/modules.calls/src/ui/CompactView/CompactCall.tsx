@@ -212,7 +212,7 @@ export const CompactCall = ({ saveUserChoices = true }) => {
                   <DropdownMenuTrigger asChild>
                     <Button
                       size="icon"
-                      variant="ghost"
+                      variant="none"
                       className="hover:bg-gray-5 relative m-0 h-8 w-8 rounded-xl p-0 text-gray-100"
                     >
                       <Maximize className="fill-gray-100" />
@@ -244,7 +244,7 @@ export const CompactCall = ({ saveUserChoices = true }) => {
               <TooltipTrigger asChild>
                 <Button
                   size="icon"
-                  variant="ghost"
+                  variant="none"
                   onClick={() => handleMaximize(false)}
                   className="hover:bg-gray-5 relative m-0 h-8 w-8 rounded-xl p-0 text-gray-100"
                 >

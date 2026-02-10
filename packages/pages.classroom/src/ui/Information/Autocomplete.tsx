@@ -46,7 +46,7 @@ export const Autocomplete = ({ field, disabled }: AutocompleteProps) => {
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
         <Button
-          variant="ghost"
+          variant="none"
           role="combobox"
           aria-expanded={open}
           className="border-gray-30 h-[32px] w-full justify-between border-2 pl-3 hover:border-gray-50 hover:bg-transparent"

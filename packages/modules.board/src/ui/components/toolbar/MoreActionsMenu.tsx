@@ -14,7 +14,7 @@ export const MoreActionsMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="s" className="hover:bg-brand-0 p-1">
+        <Button variant="none" size="s" className="hover:bg-brand-0 p-1">
           <MenuDots className="rotate-90" />
         </Button>
       </DropdownMenuTrigger>

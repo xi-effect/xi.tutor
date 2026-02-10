@@ -114,13 +114,14 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
 
         <ModalFooter>
           {data?.length > 9 ? (
-            <Button variant="ghost">Максимум 10 приглашений</Button>
+            <Button variant="none">Максимум 10 приглашений</Button>
           ) : (
             <Button
               onClick={handleAddInvitation}
-              variant={isAdding && data?.length > 0 ? 'ghost-spinner' : 'default'}
+              variant="primary"
               className="gap-2"
               data-umami-event="invite-create"
+              loading={isAdding && data?.length > 0}
             >
               Создать новое приглашение
             </Button>

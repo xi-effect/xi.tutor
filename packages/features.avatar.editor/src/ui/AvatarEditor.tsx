@@ -92,7 +92,7 @@ export const AvatarEditor = ({
             <Button
               aria-label="Минус"
               type="button"
-              variant="ghost"
+              variant="none"
               className="m-0 h-8 w-8 bg-transparent p-1"
               onClick={decreaseZoom}
             >
@@ -110,7 +110,7 @@ export const AvatarEditor = ({
             <Button
               aria-label="Плюс"
               type="button"
-              variant="ghost"
+              variant="none"
               className="m-0 h-8 w-8 bg-transparent p-1"
               onClick={increaseZoom}
             >

@@ -19,6 +19,10 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
   const wasConnectedRef = useRef(false);
   const reconnectTimeoutRef = useRef<number | null>(null);
 
+  const location = useLocation();
+  const navigate = useNavigate();
+  const search = useSearch({ strict: false }) as { call?: string };
+
   const handleConnect = () => {
     wasConnectedRef.current = true;
     updateStore('connect', true);
@@ -76,10 +80,6 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
 
     console.log('Disconnected from LiveKit room - all interface states cleared');
   };
-
-  const location = useLocation();
-  const navigate = useNavigate();
-  const search = useSearch({ strict: false }) as { call?: string };
 
   useEffect(() => {
     if (!token && callId && location.pathname.includes('/call/')) {

@@ -37,10 +37,10 @@ export const TemplateCard = ({
         </div>
       </div>
 
-      <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
+      <div className="flex h-6 w-6 items-center justify-center rounded-full">
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
-            <Button className="h-6 w-6" variant="ghost" size="icon">
+            <Button className="h-6 w-6" variant="none" size="icon">
               <MoreVert className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>

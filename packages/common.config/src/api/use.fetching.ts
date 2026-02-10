@@ -6,9 +6,7 @@ import { getAxiosInstance } from './axios.instance';
 type ApiConfig = {
   method: string;
   getUrl: (params?: Record<string, unknown>) => string;
-  headers?: {
-    [key: string]: string | boolean;
-  };
+  headers?: { [key: string]: string | boolean };
 };
 
 type UseFetchingProps = {
@@ -45,5 +43,6 @@ export const useFetching = ({
   return useQuery({
     queryKey,
     queryFn,
+    enabled: !disabled,
   });
 };

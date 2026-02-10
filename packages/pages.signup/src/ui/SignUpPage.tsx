@@ -203,7 +203,7 @@ export const SignUpPage = () => {
               {!isButtonDisabled ? (
                 <Button
                   size="m"
-                  variant="default"
+                  variant="primary"
                   type="submit"
                   className="w-[214px]"
                   disabled={isButtonDisabled}
@@ -212,7 +212,7 @@ export const SignUpPage = () => {
                   {t('sign_up')}
                 </Button>
               ) : (
-                <Button variant="default-spinner" className="w-[214px]" disabled />
+                <Button loading className="w-[214px]" disabled />
               )}
             </div>
           </form>

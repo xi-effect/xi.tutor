@@ -51,7 +51,7 @@ export const Payments = () => {
         <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
             <Button
-              variant="ghost"
+              variant="none"
               className="flex size-8 items-center justify-center rounded-[4px] p-0"
               onClick={handleMore}
               data-umami-event="main-navigate-payments"

@@ -21,7 +21,7 @@ export const ActionsCell = ({ invoiceId, classroomId }: ActionsCellProps) => {
   return (
     <div className="invisible flex flex-row items-center justify-end group-hover:visible">
       <div className="flex flex-row items-center justify-between gap-2">
-        {/* <Button className="size-8 rounded-lg p-0" variant="ghost" size="s">
+        {/* <Button className="size-8 rounded-lg p-0" variant="none" size="s">
           <Edit className="size-4 fill-gray-100" />
         </Button> */}
 
@@ -29,7 +29,7 @@ export const ActionsCell = ({ invoiceId, classroomId }: ActionsCellProps) => {
           <TooltipTrigger asChild>
             <Button
               className="size-8 rounded-lg p-0"
-              variant="ghost"
+              variant="none"
               size="s"
               onClick={handleDelete}
               disabled={isPending}

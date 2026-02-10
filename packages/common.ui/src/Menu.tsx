@@ -224,7 +224,7 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
   return (
     <div className="bg-gray-0 border-gray-10 fixed bottom-0 left-72 z-100 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col items-start gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
       <Button
-        variant="ghost"
+        variant="none"
         size="s"
         className="hover:bg-gray-0 bg-gray-0 absolute top-1 right-1 hover:cursor-pointer"
         onClick={hideMenuForSession}
@@ -267,7 +267,7 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
           {isTutor ? 'Пройти обучение' : 'Смотреть подсказки'}
         </Button>
         <Button
-          variant="ghost"
+          variant="none"
           type="button"
           disabled={undefined}
           onClick={completeOnboarding}

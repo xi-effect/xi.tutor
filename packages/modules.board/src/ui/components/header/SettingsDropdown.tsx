@@ -66,7 +66,7 @@ export const SettingsDropdown = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="ghost"
+          variant="none"
           className="h-[40px] w-[40px] p-2"
           data-umami-event="board-settings-menu"
         >

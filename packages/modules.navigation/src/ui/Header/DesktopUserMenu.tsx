@@ -27,7 +27,12 @@ export const DesktopUserMenu = ({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" data-umami-event="header-user-menu-open">
+        <Button
+          variant="none"
+          className="hover:bg-transparent"
+          size="icon"
+          data-umami-event="header-user-menu-open"
+        >
           <UserProfile id="userprofile" userId={userId} size="m" withOutText />
         </Button>
       </DropdownMenuTrigger>

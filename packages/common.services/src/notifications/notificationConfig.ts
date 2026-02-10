@@ -1,5 +1,6 @@
 import type { NotificationT } from 'common.types';
 import {
+  CallsQueryKey,
   ClassroomsQueryKey,
   EnrollmentsQueryKey,
   PaymentsQueryKey,
@@ -38,6 +39,7 @@ export type NotificationConfig = {
   invalidationKeys: InvalidationKey[];
   /** Если true, по клику открывается модалка (действие не на платформе) */
   opensModal?: boolean;
+  onNotify?: (payload: NotificationT['payload']) => InvalidationKey[] | null;
 };
 
 /**
@@ -49,11 +51,23 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
     title: 'Занятие началось',
     description: () => 'Присоединяйтесь к видеозвонку',
     action: (payload) => {
-      const classroomId = payload.classroom_id;
+      const classroomId = payload?.classroom_id;
       return classroomId ? `/classrooms/${classroomId}?role=student&goto=call` : null;
     },
     invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
+    onNotify: (payload) => {
+      const classroomId = payload?.classroom_id.toString();
+
+      console.log('classroomId', classroomId);
+
+      if (classroomId) {
+        return [CallsQueryKey.GetParticipantsStudent, classroomId];
+      }
+
+      return null;
+    },
   },
+
   enrollment_created_v1: {
     title: 'Вас добавили в группу',
     description: () => 'Открыть группу',
@@ -63,6 +77,7 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
     },
     invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
   },
+
   recipient_invoice_created_v1: {
     title: 'Вы получили новый счёт',
     description: () => 'Пожалуйста, оплатите его',
@@ -74,6 +89,7 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
     },
     invalidationKeys: [PaymentsQueryKey.StudentPayments],
   },
+
   // репетитор
   student_recipient_invoice_payment_confirmed_v1: {
     title: 'Оплачен новый счёт',
@@ -86,6 +102,7 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
     },
     invalidationKeys: [PaymentsQueryKey.TutorPayments],
   },
+
   individual_invitation_accepted_v1: {
     title: 'У вас появился новый кабинет',
     description: () => 'Открыть кабинет',
@@ -95,6 +112,7 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
     },
     invalidationKeys: [ClassroomsQueryKey.GetClassrooms],
   },
+
   group_invitation_accepted_v1: {
     title: 'В группе новый ученик',
     description: () => 'Открыть группу',
