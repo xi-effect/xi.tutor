@@ -153,7 +153,7 @@ export const ModalAddGroup = ({ children }: { children: React.ReactNode }) => {
                 {isPending ? 'Создание...' : 'Создать'}
               </Button>
               <Button
-                variant="border"
+                variant="secondary"
                 type="button"
                 onClick={() => {
                   handleButtonClick();

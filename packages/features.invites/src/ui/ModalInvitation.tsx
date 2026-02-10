@@ -118,9 +118,10 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
           ) : (
             <Button
               onClick={handleAddInvitation}
-              variant={isAdding && data?.length > 0 ? 'ghost-spinner' : 'default'}
+              variant="primary"
               className="gap-2"
               data-umami-event="invite-create"
+              loading={isAdding && data?.length > 0}
             >
               Создать новое приглашение
             </Button>

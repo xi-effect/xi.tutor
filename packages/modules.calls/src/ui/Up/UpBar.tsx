@@ -138,7 +138,7 @@ export const UpBar = () => {
             type="button"
             variant="none"
             disabled={!canUseFocusLayout && carouselType === 'grid'}
-            className="ml-auto flex h-10 w-[95px] flex-row items-center justify-center gap-2 rounded-[12px] disabled:opacity-50"
+            className="ml-auto flex h-10 w-[95px] flex-row items-center justify-center gap-2 rounded-[12px] px-0 disabled:opacity-50"
             data-umami-event="call-toggle-layout"
             data-umami-event-layout={carouselType}
           >
