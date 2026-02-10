@@ -1,4 +1,4 @@
-import { LoadingScreen } from 'common.ui';
+// import { LoadingScreen } from 'common.ui';
 import { useKeyPress } from 'common.utils';
 import { JSX } from 'react/jsx-runtime';
 import { Editor, Tldraw, TldrawProps } from 'tldraw';
@@ -118,7 +118,7 @@ export const TldrawCanvas = ({
 
   console.log('status', status);
 
-  if (status === 'loading') return <LoadingScreen />;
+  // if (status === 'loading') return <LoadingScreen />;
 
   return (
     <div id="whiteboard-container" className="flex h-full w-full flex-col">

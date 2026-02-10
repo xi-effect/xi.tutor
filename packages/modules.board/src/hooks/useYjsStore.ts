@@ -1,7 +1,14 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { HocuspocusProvider } from '@hocuspocus/provider';
+import {
+  HocuspocusProvider,
+  HocuspocusProviderWebsocket,
+  WebSocketStatus,
+  type onAuthenticatedParameters,
+  type onAuthenticationFailedParameters,
+  type onStatusParameters,
+  type onSyncedParameters,
+} from '@hocuspocus/provider';
 import { useCurrentUser } from 'common.services';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -46,11 +53,14 @@ type UseYjsStoreArgs = Partial<{
   token: string; // Токен для asset store
 }>;
 
+type ConnectionStatus = 'online' | 'offline';
+type StoreWithStatusExt = TLStoreWithStatus & { connectionStatus?: ConnectionStatus };
+
 export type ExtendedStoreStatus = {
   store?: TLStore;
   status: TLStoreWithStatus['status'];
   error?: Error;
-  connectionStatus?: 'online' | 'offline';
+  connectionStatus?: ConnectionStatus;
   undo: () => void;
   redo: () => void;
   canUndo: boolean;
@@ -59,10 +69,144 @@ export type ExtendedStoreStatus = {
   toggleReadonly: () => void;
 };
 
+type PendingChanges = {
+  added: Record<string, TLRecord>;
+  updated: Record<string, TLRecord>;
+  removed: Record<string, TLRecord>;
+};
+
+/**
+ * ========= Shared WebSocket (v3) =========
+ * В v3 connect/disconnect делаются на websocketProvider, а provider нужно attach/detach.
+ * В DEV (StrictMode) эффекты вызываются дважды: mount -> cleanup -> mount.
+ * Если на cleanup мы делаем detach/destroy — рукопожатие не успевает отправить hocuspocus frames,
+ * сервер будет видеть только "Upgrading connection …".
+ *
+ * Поэтому:
+ *  - шарим websocketProvider по hostUrl
+ *  - refCount для потребителей
+ *  - disconnect делаем с небольшой задержкой (debounce), чтобы StrictMode успел перемонтировать
+ *  - detach/destroy provider тоже делаем с debounce и отменой
+ */
+type SharedSocketEntry = {
+  socket: HocuspocusProviderWebsocket;
+  refs: number;
+  disconnectTimer: number | null;
+  attachedProviders: Set<HocuspocusProvider>;
+};
+
+const sharedSockets = new Map<string, SharedSocketEntry>();
+
+function getSharedSocket(hostUrl: string): SharedSocketEntry {
+  const existing = sharedSockets.get(hostUrl);
+  if (existing) return existing;
+
+  const socket = new HocuspocusProviderWebsocket({
+    url: hostUrl,
+    autoConnect: false,
+    messageReconnectTimeout: 20_000,
+  });
+
+  const entry: SharedSocketEntry = {
+    socket,
+    refs: 0,
+    disconnectTimer: null,
+    attachedProviders: new Set(),
+  };
+  sharedSockets.set(hostUrl, entry);
+  return entry;
+}
+
+function retainSocket(entry: SharedSocketEntry) {
+  entry.refs += 1;
+
+  if (entry.disconnectTimer != null) {
+    clearTimeout(entry.disconnectTimer);
+    entry.disconnectTimer = null;
+  }
+}
+
+function releaseSocket(entry: SharedSocketEntry, hostUrl: string) {
+  entry.refs = Math.max(0, entry.refs - 1);
+
+  if (entry.refs > 0) return;
+
+  // debounce disconnect, чтобы StrictMode не рвал соединение между "двумя монтами"
+  entry.disconnectTimer = window.setTimeout(() => {
+    entry.disconnectTimer = null;
+
+    if (entry.refs > 0) return;
+    if (entry.attachedProviders.size > 0) return;
+
+    try {
+      entry.socket.disconnect();
+    } catch {
+      // ignore
+    }
+
+    try {
+      entry.socket.destroy();
+    } catch {
+      // ignore
+    }
+
+    sharedSockets.delete(hostUrl);
+  }, 200);
+}
+
+/**
+ * Debounced provider cleanup (защита от StrictMode):
+ * cleanup откладываем, а при повторном mount — отменяем.
+ */
+const providerCleanupTimers = new WeakMap<HocuspocusProvider, number>();
+
+function cancelProviderCleanup(provider: HocuspocusProvider) {
+  const t = providerCleanupTimers.get(provider);
+  if (t != null) {
+    clearTimeout(t);
+    providerCleanupTimers.delete(provider);
+  }
+}
+
+function scheduleProviderCleanup(
+  provider: HocuspocusProvider,
+  socketEntry: SharedSocketEntry,
+  websocketProvider: HocuspocusProviderWebsocket,
+  instanceId: number,
+) {
+  cancelProviderCleanup(provider);
+
+  const timer = window.setTimeout(() => {
+    providerCleanupTimers.delete(provider);
+
+    // DETACH (симметрично attach)
+    if (socketEntry.attachedProviders.has(provider)) {
+      socketEntry.attachedProviders.delete(provider);
+      try {
+        websocketProvider.detach(provider);
+      } catch {
+        // ignore
+      }
+      logProviderEvent(instanceId, 'DETACH provider <- websocketProvider (debounced)', {
+        attachedCount: socketEntry.attachedProviders.size,
+      });
+    }
+
+    // destroy провайдера — только после debounce
+    try {
+      provider.destroy();
+    } catch {
+      // ignore
+    }
+  }, 250);
+
+  providerCleanupTimers.set(provider, timer);
+}
+
 export function useYjsStore({
-  ydocId = 'test/demo-room',
-  storageToken = 'test/demo-room',
-  hostUrl = 'ws://localhost:1234',
+  ydocId = '',
+  storageToken = '',
+  hostUrl = import.meta.env.VITE_SERVER_URL_HOCUS,
   shapeUtils = [],
   token,
 }: UseYjsStoreArgs): ExtendedStoreStatus {
@@ -80,147 +224,107 @@ export function useYjsStore({
 
   /* ---------- Undo/Redo refs & flags ---------- */
   const undoManagerRef = useRef<Y.UndoManager | null>(null);
-  const suppressSyncRef = useRef(false); // защита от эха
-  const [canUndo, setCanUndo] = useState<boolean>(false);
-  const [canRedo, setCanRedo] = useState<boolean>(false);
+  const suppressSyncRef = useRef(false);
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
 
   /* ---------- Readonly state ---------- */
-  const [isReadonly, setIsReadonly] = useState<boolean>(false);
-  const [serverReadonly, setServerReadonly] = useState<boolean>(false);
+  const [isReadonly, setIsReadonly] = useState(false);
+  const [serverReadonly, setServerReadonly] = useState(false);
 
   /* ---------- Статус ---------- */
-  const [storeWithStatus, setStoreWithStatus] = useState<TLStoreWithStatus>({
+  const [storeWithStatus, setStoreWithStatus] = useState<StoreWithStatusExt>({
     status: 'loading',
   });
 
   /* ---------- Отслеживание предыдущих значений зависимостей ---------- */
-  const prevDepsRef = useRef<{
-    hostUrl?: string;
-    ydocId?: string;
-    storageToken?: string;
-  }>({});
+  const prevDepsRef = useRef<{ hostUrl?: string; ydocId?: string; storageToken?: string }>({});
 
-  /* ---------- BATChING: буфер изменений store -> Yjs ---------- */
-  const pendingChangesRef = useRef<{
-    added: Record<string, TLRecord>;
-    updated: Record<string, TLRecord>;
-    removed: Record<string, TLRecord>;
-  } | null>(null);
-
+  /* ---------- BATCHING: буфер изменений store -> Yjs ---------- */
+  const pendingChangesRef = useRef<PendingChanges | null>(null);
   const flushTimeoutRef = useRef<number | null>(null);
 
-  /* ---------- Yjs структуры + провайдер ---------- */
-  const { yDoc, yStore, meta, room, readonlyMap, instanceId } = useMemo(() => {
+  /* ---------- Yjs структуры + провайдер (v3.4.4) ---------- */
+  const { yDoc, yStore, meta, readonlyMap, provider, socketEntry, instanceId } = useMemo(() => {
     const instanceId = createProviderInstance();
-    const createdAt = Date.now();
 
-    // Определяем, какие зависимости изменились
     const changedDeps: string[] = [];
-    if (prevDepsRef.current.hostUrl !== hostUrl) {
-      changedDeps.push('hostUrl');
-    }
-    if (prevDepsRef.current.ydocId !== ydocId) {
-      changedDeps.push('ydocId');
-    }
-    if (prevDepsRef.current.storageToken !== storageToken) {
-      changedDeps.push('storageToken');
-    }
-
-    // Сохраняем текущие значения
+    if (prevDepsRef.current.hostUrl !== hostUrl) changedDeps.push('hostUrl');
+    if (prevDepsRef.current.ydocId !== ydocId) changedDeps.push('ydocId');
+    if (prevDepsRef.current.storageToken !== storageToken) changedDeps.push('storageToken');
     prevDepsRef.current = { hostUrl, ydocId, storageToken };
 
-    // Предупреждение о частых пересозданиях
-    if (instanceId > 1) {
-      const previousProfile = getProfile(instanceId - 1);
-      if (previousProfile) {
-        const timeSinceLast = createdAt - previousProfile.createdAt;
-        if (timeSinceLast < 5000) {
-          console.warn(
-            `⚠️ КРИТИЧНО: Провайдер пересоздан через ${Math.round(timeSinceLast)}мс! ` +
-              `Это может указывать на проблему с зависимостями useMemo.`,
-          );
-          console.warn(
-            `📋 Изменившиеся зависимости:`,
-            changedDeps.length > 0 ? changedDeps : 'НЕТ (возможно, объект пересоздан)',
-          );
-          if (changedDeps.includes('storageToken')) {
-            console.warn(
-              `⚠️ storageToken изменился! ` +
-                `Предыдущее: ${maskToken(prevDepsRef.current.storageToken)} ` +
-                `Новое: ${maskToken(storageToken)}`,
-            );
-          }
-        }
-      }
-    }
-
-    // logProviderEvent(instanceId, 'СОЗДАНИЕ ПРОВАЙДЕРА', {
-    //   hostUrl: maskUrl(hostUrl),
-    //   ydocId: maskId(ydocId),
-    //   storageToken: maskToken(storageToken),
-    //   причина:
-    //     changedDeps.length > 0
-    //       ? `изменение зависимостей: ${changedDeps.join(', ')}`
-    //       : 'useMemo пересоздание (зависимости не изменились)',
-    //   зависимостей: `[hostUrl, ydocId, storageToken]`,
-    //   всегоСоздано: instanceId,
-    //   изменившиесяЗависимости: changedDeps,
-    // });
+    logProviderEvent(instanceId, 'СОЗДАНИЕ ПРОВАЙДЕРА (v3)', {
+      hostUrl: maskUrl(hostUrl),
+      ydocId: maskId(ydocId),
+      storageToken: maskToken(storageToken),
+      причина:
+        changedDeps.length > 0
+          ? `изменение зависимостей: ${changedDeps.join(', ')}`
+          : 'useMemo пересоздание (зависимости не изменились)',
+      всегоСоздано: instanceId,
+    });
 
     const yDoc = new Y.Doc({ gc: true });
     const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${ydocId}`);
     const yStore = new YKeyValue(yArr);
+
     const meta = yDoc.getMap<SerializedSchema | string>('meta');
     meta.set('schemaVersion', BOARD_SCHEMA_VERSION);
+
     const readonlyMap = yDoc.getMap<boolean>('readonly');
 
-    const room = new HocuspocusProvider({
-      url: hostUrl,
+    const socketEntry = getSharedSocket(hostUrl);
+
+    const provider = new HocuspocusProvider({
       name: ydocId,
       document: yDoc,
+      websocketProvider: socketEntry.socket,
       token: storageToken,
-      forceSyncInterval: 20000,
-      onAuthenticationFailed: ({ reason }) => {
+      forceSyncInterval: 20_000,
+
+      onAuthenticationFailed: ({ reason }: onAuthenticationFailedParameters) => {
+        logProviderEvent(instanceId, 'ОШИБКА АУТЕНТИФИКАЦИИ', { reason });
+
+        setStoreWithStatus({
+          status: 'error',
+          error: new Error(`Authentication failed: ${reason}`),
+          connectionStatus: 'offline',
+        });
+
         if (reason === 'permission-denied') {
           toast('Ошибка доступа к серверу совместного редактирования');
-          console.error('hocuspocus: permission-denied');
-        } else {
-          console.error('hocuspocus: authentication failed', reason);
         }
       },
-      onAuthenticated: ({ scope }) => {
+
+      onAuthenticated: ({ scope }: onAuthenticatedParameters) => {
         setServerReadonly(scope === 'readonly');
+        logProviderEvent(instanceId, 'АУТЕНТИФИКАЦИЯ УСПЕШНА', { scope });
       },
     });
 
-    room.on('connect', () => {
-      setStoreWithStatus({
-        store,
-        status: 'synced-remote',
-        connectionStatus: 'online',
-      });
-    });
-
-    // Инициализация профиля
     getOrCreateProfile(instanceId);
 
-    return { yDoc, yStore, meta, room, readonlyMap, instanceId };
+    return { yDoc, yStore, meta, readonlyMap, provider, socketEntry, instanceId };
   }, [hostUrl, ydocId, storageToken]);
 
-  /* ---------- Защита от повторных подключений ---------- */
   const isConnectingRef = useRef(false);
   const hasConnectedRef = useRef(false);
-  const roomRef = useRef(room);
 
-  // Обновляем ref при изменении room (но не вызываем эффект)
-  roomRef.current = room;
+  const providerRef = useRef(provider);
+  providerRef.current = provider;
 
-  /* ---------- Главный эффект ---------- */
   useEffect(() => {
     const profile = getProfile(instanceId);
-    const currentRoom = roomRef.current;
+    const currentProvider = providerRef.current;
+    const websocketProvider = socketEntry.socket;
 
-    // Функции батчинга привязаны к конкретному yDoc/yStore данного эффекта
+    // ВАЖНО: отменяем возможный debounced cleanup для этого provider (StrictMode ре-маунт)
+    cancelProviderCleanup(currentProvider);
+
+    // refcount socket (важно для StrictMode)
+    retainSocket(socketEntry);
+
     const flushPendingChanges = () => {
       const pending = pendingChangesRef.current;
       if (!pending) return;
@@ -236,46 +340,45 @@ export function useYjsStore({
 
     const scheduleFlush = () => {
       if (flushTimeoutRef.current != null) return;
-
-      // 25 мс — фиксированный интервал батчинга
       flushTimeoutRef.current = window.setTimeout(() => {
         flushTimeoutRef.current = null;
         flushPendingChanges();
       }, 25);
     };
 
-    // Защита от React Strict Mode двойного вызова
-    // Используем только instanceId для ключа, чтобы эффект не пересоздавался при изменении статуса
-    // const effectKey = `effect-${instanceId}`;
+    const effectKey = `effect-${instanceId}`;
 
-    // logProviderEvent(instanceId, 'ВЫЗОВ useEffect', {
-    //   причина: 'изменение зависимостей',
-    //   зависимости: {
-    //     room: !!currentRoom,
-    //     yDoc: !!yDoc,
-    //     store: !!store,
-    //     currentUser: !!currentUser,
-    //   },
-    //   ужеПодключался: hasConnectedRef.current,
-    //   hasCalledConnect: profile?.hasCalledConnect,
-    //   effectKey,
-    //   примечание: import.meta.env?.DEV
-    //     ? 'В dev режиме React Strict Mode может вызывать эффекты дважды - это нормально'
-    //     : undefined,
-    // });
+    logProviderEvent(instanceId, 'ВЫЗОВ useEffect (v3)', {
+      effectKey,
+      websocketStatus: websocketProvider.status,
+      hasCalledConnect: profile?.hasCalledConnect,
+      alreadyConnected: hasConnectedRef.current,
+    });
 
-    // КРИТИЧНО: Проверяем, был ли уже вызван connect() для этого экземпляра провайдера
-    // Этот флаг НЕ сбрасывается в cleanup, поэтому защищает от повторных вызовов в React Strict Mode
-    // НО: мы все равно регистрируем обработчики событий, чтобы они работали
+    /**
+     * ✅ КРИТИЧНО: attach до/вместе с connect.
+     * Если attach слетает в StrictMode cleanup — сервер будет видеть только "Upgrading connection …"
+     */
+    if (!socketEntry.attachedProviders.has(currentProvider)) {
+      socketEntry.attachedProviders.add(currentProvider);
+      websocketProvider.attach(currentProvider);
+      logProviderEvent(instanceId, 'ATTACH provider -> websocketProvider', {
+        attachedCount: socketEntry.attachedProviders.size,
+      });
+    }
+
+    /**
+     * Connect делаем только при реальном Disconnected.
+     * Если уже connecting/connected — не дергаем.
+     */
     const shouldConnect =
-      !profile?.hasCalledConnect && !isConnectingRef.current && !hasConnectedRef.current;
+      !profile?.hasCalledConnect &&
+      !isConnectingRef.current &&
+      websocketProvider.status === WebSocketStatus.Disconnected;
 
     if (shouldConnect) {
-      // Устанавливаем флаг подключения СРАЗУ, до всех остальных операций
       isConnectingRef.current = true;
 
-      // КРИТИЧНО: Устанавливаем флаг, что connect() был вызван для этого экземпляра
-      // Этот флаг НЕ сбрасывается в cleanup, поэтому защищает от повторных вызовов
       updateProfile(instanceId, {
         hasCalledConnect: true,
         connectCount: (getProfile(instanceId)?.connectCount || 0) + 1,
@@ -284,37 +387,18 @@ export function useYjsStore({
 
       setStoreWithStatus({ status: 'loading' });
 
-      // logProviderEvent(instanceId, 'ВЫЗОВ room.connect()', {
-      //   текущийСтатус: currentRoom.status,
-      //   ужеПодключен: currentRoom.isConnected,
-      // });
+      logProviderEvent(instanceId, 'ВЫЗОВ websocketProvider.connect()', {
+        websocketStatus: websocketProvider.status,
+      });
 
-      currentRoom.connect();
-    } else {
-      // logProviderEvent(instanceId, 'ПРОПУСК connect()', {
-      //   причина: profile?.hasCalledConnect
-      //     ? 'connect() уже был вызван для этого экземпляра провайдера'
-      //     : isConnectingRef.current
-      //       ? 'уже идет процесс подключения'
-      //       : 'провайдер уже подключен',
-      //   текущийСтатус: currentRoom.status,
-      //   effectKey,
-      // });
+      websocketProvider.connect();
     }
 
-    const unsubs: (() => void)[] = [];
+    const unsubs: Array<() => void> = [];
 
-    function handleSync() {
-      const profile = getProfile(instanceId);
-      if (profile) {
-        updateProfile(instanceId, {
-          syncedEvents: profile.syncedEvents + 1,
-        });
-      }
-
-      // logProviderEvent(instanceId, 'СОБЫТИЕ synced', {
-      //   всегоSynced: profile?.syncedEvents || 0,
-      // });
+    const handleSynced = ({ state }: onSyncedParameters) => {
+      logProviderEvent(instanceId, 'СОБЫТИЕ synced', { state });
+      if (!state) return;
 
       /* ========== DOCUMENT: store -> yDoc (С БАТЧИНГОМ) ========== */
       unsubs.push(
@@ -323,27 +407,20 @@ export function useYjsStore({
             if (suppressSyncRef.current) return;
 
             if (!pendingChangesRef.current) {
-              pendingChangesRef.current = {
-                added: {},
-                updated: {},
-                removed: {},
-              };
+              pendingChangesRef.current = { added: {}, updated: {}, removed: {} };
             }
 
             const pending = pendingChangesRef.current;
 
-            // Добавленные
             Object.values(changes.added).forEach((r) => {
               pending.added[r.id] = r;
               delete pending.removed[r.id];
             });
 
-            // Обновлённые
             Object.values(changes.updated).forEach(([_, r]) => {
               pending.updated[r.id] = r;
             });
 
-            // Удалённые
             Object.values(changes.removed).forEach((r) => {
               delete pending.added[r.id];
               delete pending.updated[r.id];
@@ -366,10 +443,7 @@ export function useYjsStore({
         >,
         transaction: Y.Transaction,
       ) => {
-        // Пропускаем локальные НЕ undo/redo транзакции
-        if (transaction.local && transaction.origin !== undoManagerRef.current) {
-          return;
-        }
+        if (transaction.local && transaction.origin !== undoManagerRef.current) return;
 
         const toRemove: TLRecord['id'][] = [];
         const toPut: TLRecord[] = [];
@@ -392,19 +466,19 @@ export function useYjsStore({
       yStore.on('change', handleChange);
       unsubs.push(() => yStore.off('change', handleChange));
 
-      /* ========== READONLY ========== */
+      /* ========== READONLY (shared map) ========== */
       const getReadonlyValue = () => readonlyMap.get('isReadonly') ?? false;
       const handleReadonlyChange = () => setIsReadonly(getReadonlyValue());
 
       readonlyMap.observe(handleReadonlyChange);
       unsubs.push(() => readonlyMap.unobserve(handleReadonlyChange));
-
       setIsReadonly(getReadonlyValue());
 
       /* ========== AWARENESS ========== */
-      if (!currentRoom.awareness) return;
+      const awareness = currentProvider.awareness;
+      if (!awareness) return;
 
-      const yClientId = currentRoom.awareness.clientID.toString();
+      const yClientId = awareness.clientID.toString();
       const userName =
         currentUser?.display_name || currentUser?.username || defaultUserPreferences.name;
       const userColor = generateUserColor(currentUser?.id?.toString() || yClientId);
@@ -415,55 +489,52 @@ export function useYjsStore({
         color: userColor,
       });
 
-      const userPreferences = computed<{
-        id: string;
-        color: string;
-        name: string;
-      }>('userPreferences', () => {
-        const user = getUserPreferences();
-        return {
-          id: user.id,
-          color: user.color ?? userColor,
-          name: user.name ?? userName,
-        };
-      });
+      const userPreferences = computed<{ id: string; color: string; name: string }>(
+        'userPreferences',
+        () => {
+          const user = getUserPreferences();
+          return {
+            id: user.id,
+            color: user.color ?? userColor,
+            name: user.name ?? userName,
+          };
+        },
+      );
 
       const presenceId = InstancePresenceRecordType.createId(yClientId);
       const presenceDerivation = createPresenceStateDerivation(userPreferences, presenceId)(store);
 
-      currentRoom.setAwarenessField('presence', presenceDerivation.get());
+      awareness.setLocalStateField('presence', presenceDerivation.get());
 
       unsubs.push(
         react('when presence changes', () => {
           const presence = presenceDerivation.get();
           requestAnimationFrame(() => {
-            currentRoom.setAwarenessField('presence', presence);
+            awareness.setLocalStateField('presence', presence);
           });
         }),
       );
 
-      const handleAwarenessUpdate = (update: {
-        added: number[];
-        updated: number[];
-        removed: number[];
-      }) => {
-        const states = currentRoom.awareness!.getStates() as Map<
-          number,
-          { presence: TLInstancePresence }
-        >;
+      type PresenceState = { presence?: TLInstancePresence };
+      type AwarenessChange = { added: number[]; updated: number[]; removed: number[] };
 
-        const toRemove: TLInstancePresence['id'][] = [];
-        const toPut: TLInstancePresence[] = [];
+      let rafId: number | null = null;
 
-        for (const id of update.added.concat(update.updated)) {
-          const st = states.get(id);
-          if (st?.presence && st.presence.id !== presenceId) {
-            toPut.push(st.presence);
-          }
-        }
-        for (const id of update.removed) {
-          toRemove.push(InstancePresenceRecordType.createId(id.toString()));
-        }
+      const pendingRemote = {
+        toPut: new Map<string, TLInstancePresence>(),
+        toRemove: new Set<string>(),
+      };
+
+      const flushRemotePresence = () => {
+        rafId = null;
+
+        const toRemove = Array.from(pendingRemote.toRemove) as TLInstancePresence['id'][];
+        const toPut = Array.from(pendingRemote.toPut.values());
+
+        pendingRemote.toPut.clear();
+        pendingRemote.toRemove.clear();
+
+        if (!toRemove.length && !toPut.length) return;
 
         store.mergeRemoteChanges(() => {
           if (toRemove.length) store.remove(toRemove);
@@ -471,8 +542,44 @@ export function useYjsStore({
         });
       };
 
-      currentRoom.awareness.on('update', handleAwarenessUpdate);
-      unsubs.push(() => currentRoom.awareness?.off('update', handleAwarenessUpdate));
+      const scheduleFlushRemote = () => {
+        if (rafId != null) return;
+        rafId = requestAnimationFrame(flushRemotePresence);
+      };
+
+      const onAwarenessChange = ({ added, updated, removed }: AwarenessChange) => {
+        const states = awareness.getStates() as Map<number, PresenceState>;
+
+        for (const clientId of [...added, ...updated]) {
+          if (clientId.toString() === yClientId) continue;
+
+          const st = states.get(clientId);
+          const remotePresence = st?.presence;
+
+          if (remotePresence && remotePresence.id !== presenceId) {
+            pendingRemote.toPut.set(remotePresence.id, remotePresence);
+            pendingRemote.toRemove.delete(remotePresence.id);
+          }
+        }
+
+        for (const clientId of removed) {
+          const id = InstancePresenceRecordType.createId(clientId.toString());
+          pendingRemote.toRemove.add(id);
+          pendingRemote.toPut.delete(id);
+        }
+
+        scheduleFlushRemote();
+      };
+
+      awareness.on('change', onAwarenessChange);
+      unsubs.push(() => awareness.off('change', onAwarenessChange));
+
+      unsubs.push(() => {
+        if (rafId != null) cancelAnimationFrame(rafId);
+        rafId = null;
+        pendingRemote.toPut.clear();
+        pendingRemote.toRemove.clear();
+      });
 
       /* ========== INITIAL SEED ========== */
       if (yStore.yarray.length) {
@@ -486,6 +593,7 @@ export function useYjsStore({
           schema: theirSchema,
           store: Object.fromEntries(records.map((r) => [r.id, r])),
         });
+
         if (migrationResult.type === 'error') {
           console.warn('Schema updated, refresh.');
           return;
@@ -509,21 +617,24 @@ export function useYjsStore({
         }, 'init');
       }
 
-      /* ========== UNDO MANAGER (после seed) ========== */
+      /* ========== UNDO MANAGER ========== */
       if (!undoManagerRef.current) {
         undoManagerRef.current = new Y.UndoManager(yStore.yarray, {
           captureTimeout: 300,
           trackedOrigins: new Set(['user', null]),
         });
+
         const um = undoManagerRef.current;
         const updateFlags = () => {
           setCanUndo(um.canUndo());
           setCanRedo(um.canRedo());
         };
+
         um.on('stack-item-added', updateFlags);
         um.on('stack-item-popped', updateFlags);
         um.on('stack-cleared', updateFlags);
         updateFlags();
+
         unsubs.push(() => {
           um.off('stack-item-added', updateFlags);
           um.off('stack-item-popped', updateFlags);
@@ -536,115 +647,87 @@ export function useYjsStore({
         status: 'synced-remote',
         connectionStatus: 'online',
       });
-    }
-
-    /* ========== SERVER READONLY (from Hocuspocus v3: AuthorizedScope) ========== */
-    const checkServerReadonly = () => {
-      setServerReadonly(currentRoom.authorizedScope === 'readonly');
     };
 
-    let hasConnectedBefore = false;
-    function handleStatusChange({ status }: { status: 'disconnected' | 'connected' }) {
-      const profile = getProfile(instanceId);
-      if (profile) {
-        const statusChanges = [...profile.statusChanges, { status, timestamp: Date.now() }];
-        const updates: Partial<typeof profile> = {
-          statusChanges,
-        };
-        if (status === 'disconnected') {
-          updates.disconnectCount = profile.disconnectCount + 1;
-          updates.lastDisconnectTime = Date.now();
-          hasConnectedRef.current = false;
-          isConnectingRef.current = false;
-        }
-        updateProfile(instanceId, updates);
+    currentProvider.on('synced', handleSynced);
+    unsubs.push(() => currentProvider.off('synced', handleSynced));
+
+    const handleStatus = ({ status }: onStatusParameters) => {
+      const prof = getProfile(instanceId);
+      if (prof) {
+        updateProfile(instanceId, {
+          statusChanges: [...prof.statusChanges, { status, timestamp: Date.now() }],
+        });
       }
 
-      // logProviderEvent(instanceId, `ИЗМЕНЕНИЕ СТАТУСА: ${status}`, {
-      //   былоПодключений: hasConnectedBefore,
-      //   всегоИзмененийСтатуса: profile?.statusChanges.length || 0,
-      // });
+      logProviderEvent(instanceId, `ИЗМЕНЕНИЕ СТАТУСА (v3): ${status}`, {
+        websocketStatus: status,
+      });
 
-      if (status === 'disconnected') {
-        setStoreWithStatus({
-          store,
-          status: 'synced-remote',
+      if (status === WebSocketStatus.Disconnected) {
+        hasConnectedRef.current = false;
+        isConnectingRef.current = false;
+
+        setStoreWithStatus((prev) => ({
+          ...prev,
           connectionStatus: 'offline',
-        });
+        }));
         return;
       }
 
-      currentRoom.off('synced', handleSync);
-      if (status === 'connected') {
-        // Устанавливаем флаги при успешном подключении
+      if (status === WebSocketStatus.Connected) {
         hasConnectedRef.current = true;
         isConnectingRef.current = false;
 
-        checkServerReadonly();
-        if (hasConnectedBefore) {
-          // logProviderEvent(instanceId, 'ПОВТОРНОЕ ПОДКЛЮЧЕНИЕ (пропуск handleSync)', {
-          //   предупреждение: 'handleSync уже был зарегистрирован ранее',
-          // });
-          return;
-        }
-        hasConnectedBefore = true;
-        currentRoom.on('synced', handleSync);
-        unsubs.push(() => currentRoom.off('synced', handleSync));
+        setStoreWithStatus((prev) => ({
+          ...prev,
+          connectionStatus: 'online',
+        }));
       }
-    }
-
-    currentRoom.on('status', handleStatusChange);
-    unsubs.push(() => currentRoom.off('status', handleStatusChange));
-
-    const handleSynced = () => {
-      // logProviderEvent(instanceId, 'СОБЫТИЕ synced (второй обработчик)', {
-      //   примечание: 'проверка readonly',
-      // });
-      checkServerReadonly();
     };
-    currentRoom.on('synced', handleSynced);
-    unsubs.push(() => currentRoom.off('synced', handleSynced));
+
+    currentProvider.on('status', handleStatus);
+    unsubs.push(() => currentProvider.off('status', handleStatus));
 
     return () => {
-      // logProviderEvent(instanceId, 'ОЧИСТКА useEffect', {
-      //   количествоПодписок: unsubs.length,
-      //   будетОтключен: true,
-      //   былПодключен: hasConnectedRef.current,
-      // });
+      logProviderEvent(instanceId, 'ОЧИСТКА useEffect (v3)', {
+        unsubs: unsubs.length,
+        wasConnected: hasConnectedRef.current,
+      });
 
-      // Сбрасываем флаги
       isConnectingRef.current = false;
 
-      // Чистим таймер батчинга и буфер
       if (flushTimeoutRef.current != null) {
         clearTimeout(flushTimeoutRef.current);
         flushTimeoutRef.current = null;
       }
       pendingChangesRef.current = null;
 
-      // Отключаем провайдер при очистке только если он был подключен
-      if (hasConnectedRef.current) {
-        // logProviderEvent(instanceId, 'ОТКЛЮЧЕНИЕ ПРОВАЙДЕРА', {
-        //   причина: 'cleanup useEffect',
-        // });
-        currentRoom.disconnect();
-        hasConnectedRef.current = false;
-      }
-
+      // Снимаем подписки сразу (чтобы при ре-маунте не было дублей обработчиков)
       unsubs.forEach((fn) => fn());
+
+      // ✅ Самое важное: НЕ делать detach/destroy сразу —
+      // иначе StrictMode убивает рукопожатие Hocuspocus.
+      // Через 250ms таймер сработает, если cancelProviderCleanup не отменит его.
+      scheduleProviderCleanup(currentProvider, socketEntry, websocketProvider, instanceId);
+
+      // Отпускаем общий сокет (releaseSocket имеет свой debounce 200ms)
+      releaseSocket(socketEntry, hostUrl);
     };
-  }, [yDoc, store, yStore, meta, readonlyMap, currentUser, instanceId]);
+  }, [yDoc, store, yStore, meta, readonlyMap, currentUser, instanceId, socketEntry, hostUrl]);
 
   /* ---------- Public Undo/Redo API ---------- */
   function undo() {
     const um = undoManagerRef.current;
     if (!um?.canUndo()) return;
+
     suppressSyncRef.current = true;
     try {
-      um.undo(); // производит локальную транзакцию с origin === um
+      um.undo();
     } finally {
       suppressSyncRef.current = false;
     }
+
     setCanUndo(um.canUndo());
     setCanRedo(um.canRedo());
   }
@@ -652,12 +735,14 @@ export function useYjsStore({
   function redo() {
     const um = undoManagerRef.current;
     if (!um?.canRedo()) return;
+
     suppressSyncRef.current = true;
     try {
       um.redo();
     } finally {
       suppressSyncRef.current = false;
     }
+
     setCanUndo(um.canUndo());
     setCanRedo(um.canRedo());
   }
@@ -665,7 +750,6 @@ export function useYjsStore({
   /* ---------- Public Readonly API ---------- */
   function toggleReadonly() {
     const newReadonly = !isReadonly;
-
     setIsReadonly(newReadonly);
 
     yDoc.transact(() => {
@@ -675,13 +759,10 @@ export function useYjsStore({
     toast.success(newReadonly ? 'Доска заблокирована!' : 'Доска разблокирована!');
   }
 
-  // Объединяем readonly с сервера и локальный readonly
-  // Если сервер установил readonly, это имеет приоритет
   const finalIsReadonly = serverReadonly || isReadonly;
 
   return {
     ...storeWithStatus,
-    connectionStatus: (storeWithStatus as any).connectionStatus,
     undo,
     redo,
     canUndo,
