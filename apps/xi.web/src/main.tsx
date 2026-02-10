@@ -1,11 +1,11 @@
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { i18nInitPromise } from './config/i18n';
-import { initGlitchTip } from './config/glitchtip';
+import { initBugsink } from './config/bugsink';
 import { AppProviders } from './providers';
 
-// Инициализируем GlitchTip как можно раньше
-initGlitchTip();
+// Инициализируем BUGSINK как можно раньше
+initBugsink();
 
 // Ждем инициализации i18n перед рендерингом приложения
 const rootElement = document.getElementById('root')!;
