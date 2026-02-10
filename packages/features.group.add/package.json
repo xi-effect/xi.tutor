@@ -13,7 +13,7 @@
   "dependencies": {
     "@hookform/resolvers": "^3.3.2",
     "@tanstack/react-query": "^5.0.0",
-    "@xipkg/button": "^3.2.0",
+    "@xipkg/button": "4.0.0",
     "@xipkg/command": "^1.0.0",
     "@xipkg/form": "4.2.1",
     "@xipkg/input": "^2.2.9",

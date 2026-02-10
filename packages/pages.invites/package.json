@@ -15,7 +15,7 @@
     "axios": "1.8.1",
     "@xipkg/utils": "1.8.0",
     "@xipkg/avatar": "3.0.10",
-    "@xipkg/button": "3.2.0",
+    "@xipkg/button": "4.0.0",
     "common.ui": "*",
     "common.api": "*",
     "common.config": "*",

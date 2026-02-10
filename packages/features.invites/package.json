@@ -11,7 +11,7 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "@xipkg/button": "^3.1.8",
+    "@xipkg/button": "4.0.0",
     "@xipkg/icons": "^3.0.2",
     "@xipkg/modal": "^4.3.1",
     "@xipkg/utils": "^1.8.0",

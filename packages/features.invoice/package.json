@@ -13,7 +13,7 @@
   "dependencies": {
     "@tanstack/react-query": "^5.73.3",
     "@tanstack/react-router": "1.120.11",
-    "@xipkg/button": "3.2.0",
+    "@xipkg/button": "4.0.0",
     "@xipkg/form": "4.2.1",
     "@xipkg/icons": "^2.6.0",
     "@xipkg/input": "2.2.9",

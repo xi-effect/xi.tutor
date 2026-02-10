@@ -16,7 +16,7 @@
     "common.types": "*",
     "common.auth": "*",
     "common.ui": "*",
-    "@xipkg/button": "3.2.0",
+    "@xipkg/button": "4.0.0",
     "@xipkg/form": "4.2.1",
     "@xipkg/checkbox": "^5.0.0",
     "@xipkg/icons": "^3.0.2",

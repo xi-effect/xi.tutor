@@ -77,10 +77,6 @@ export const getNotificationInvalidationKeys = (
     return [];
   }
 
-  if (typeof config.invalidationKeys === 'function') {
-    return config.invalidationKeys(notification.payload);
-  }
-
   return config.invalidationKeys;
 };
 

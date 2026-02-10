@@ -36,11 +36,6 @@ const callsApiConfig = {
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/conference-service/roles/student/classrooms/${classroom_id}/conference/participants/`,
     method: HttpMethod.GET,
   },
-  [CallsQueryKey.GetParticipants]: {
-    getUrl: (classroom_id: string, role: 'student' | 'tutor') =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/conference-service/roles/${role}/classrooms/${classroom_id}/conference/participants/`,
-    method: HttpMethod.GET,
-  },
 };
 
 export { callsApiConfig, CallsQueryKey };

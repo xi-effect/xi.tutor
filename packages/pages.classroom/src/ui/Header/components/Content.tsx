@@ -12,7 +12,7 @@ import { useEffect, useCallback } from 'react';
 import { useSearch } from '@tanstack/react-router';
 import { StatusBadge } from '../../StatusBadge';
 import { ContactsBadge } from './ContactsBadge';
-import { useCurrentUser, useGetParticipants } from 'common.services';
+import { useCurrentUser } from 'common.services';
 
 interface ContentProps {
   classroom: ClassroomTutorResponseSchema;
@@ -21,9 +21,6 @@ interface ContentProps {
 export const Content = ({ classroom }: ContentProps) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
-  const role = isTutor ? 'tutor' : 'student';
-
-  const { isConferenceNotActive } = useGetParticipants(classroom.id.toString(), role);
 
   const { startCall, isLoading } = useStartCall();
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
@@ -92,19 +89,9 @@ export const Content = ({ classroom }: ContentProps) => {
 
       <div className="ml-auto flex flex-col items-end gap-2">
         <div className="flex flex-row items-end gap-2">
-          <Button
-            onClick={handleCallClick}
-            size="s"
-            disabled={isLoading || (!isTutor && isConferenceNotActive)}
-          >
+          <Button onClick={handleCallClick} size="s" disabled={isLoading}>
             <Conference className="fill-gray-0 mr-2 size-4" />
-            {isLoading
-              ? 'Подключение...'
-              : isTutor
-                ? !isConferenceNotActive
-                  ? 'Присоединиться'
-                  : 'Начать звонок'
-                : 'Присоединиться'}
+            {isLoading ? 'Подключение...' : 'Начать звонок'}
           </Button>
         </div>
       </div>

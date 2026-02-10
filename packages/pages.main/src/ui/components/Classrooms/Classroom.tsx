@@ -4,8 +4,14 @@ import { Button } from '@xipkg/button';
 import { ArrowUpRight, Conference } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import { useCurrentUser, useUserByRole, useGetParticipants } from 'common.services';
+import {
+  useCurrentUser,
+  useUserByRole,
+  useGetParticipantsByStudent,
+  useGetParticipantsByTutor,
+} from 'common.services';
 import { SubjectBadge } from 'features.classroom';
+import { cn } from '@xipkg/utils';
 
 type UserAvatarPropsT = {
   classroom: IndividualClassroomT;
@@ -39,6 +45,13 @@ const UserAvatar = ({ isLoading, classroom }: UserAvatarPropsT) => {
   );
 };
 
+const getButtonLabel = (isTutor: boolean, isConferenceNotActiveTutor: boolean) => {
+  // Преподаватель и конференция не активна
+  if (isTutor && !isConferenceNotActiveTutor) return 'Начать занятие';
+
+  return 'Присоединиться';
+};
+
 type ClassroomProps = {
   isLoading: boolean;
   classroom: ClassroomT;
@@ -51,9 +64,10 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  const role: RoleT = isTutor ? 'tutor' : 'student';
-
-  const { isConferenceNotActive } = useGetParticipants(classroom.id.toString(), role);
+  const { isConferenceNotActive: isConferenceNotActiveStudent, isLoading: isLoadingStudent } =
+    useGetParticipantsByStudent(classroom.id.toString(), isTutor);
+  const { isConferenceNotActive: isConferenceNotActiveTutor, isLoading: isLoadingTutor } =
+    useGetParticipantsByTutor(classroom.id.toString(), !isTutor);
 
   const handleClick = () => {
     // Сохраняем параметр call при переходе в кабинет
@@ -73,11 +87,6 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
     // Переходим на страницу кабинета с параметром goto=call
     const url = `/classrooms/${classroom.id}?goto=call`;
     window.location.href = url;
-  };
-
-  const getButtonLabel = (isTutor: boolean, isConferenceActive: boolean) => {
-    if (!isTutor || isConferenceActive) return 'Присоединиться';
-    return 'Начать занятие';
   };
 
   return (
@@ -132,18 +141,27 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         </Tooltip>
       </div>
 
-      <Button
-        size="s"
-        variant="secondary"
-        className="group mt-auto w-full"
-        onClick={handleStartLesson}
-        disabled={!isTutor && isConferenceNotActive}
-        data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
-        data-umami-event-classroom-id={classroom.id}
-      >
-        {getButtonLabel(isTutor, !isConferenceNotActive)}
-        <Conference className="group-hover:fill-gray-0 fill-brand-100 ml-2" />
-      </Button>
+      {isLoadingStudent || isLoadingTutor ? (
+        <Button size="s" className="group mt-auto w-full" disabled loading />
+      ) : (
+        <Button
+          size="s"
+          variant="secondary"
+          className="group mt-auto w-full"
+          onClick={handleStartLesson}
+          disabled={!isTutor && isConferenceNotActiveStudent}
+          data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
+          data-umami-event-classroom-id={classroom.id}
+        >
+          {getButtonLabel(isTutor, isConferenceNotActiveTutor)}
+          <Conference
+            className={cn(
+              'group-hover:fill-gray-0 fill-brand-100 ml-2',
+              !isTutor && isConferenceNotActiveStudent && 'fill-gray-40',
+            )}
+          />
+        </Button>
+      )}
     </div>
   );
 };
