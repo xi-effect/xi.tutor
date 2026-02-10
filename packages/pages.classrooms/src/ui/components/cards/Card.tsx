@@ -125,7 +125,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
         <div className="absolute top-4 right-4 flex h-6 w-6 items-center justify-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="h-6 w-6" variant="ghost" size="icon">
+              <Button className="h-6 w-6" variant="none" size="icon">
                 <MoreVert className="h-4 w-4 dark:fill-gray-100" />
               </Button>
             </DropdownMenuTrigger>

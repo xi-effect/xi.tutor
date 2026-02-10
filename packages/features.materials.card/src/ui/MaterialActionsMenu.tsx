@@ -50,8 +50,8 @@ export const MaterialActionsMenu = ({
       <DropdownMenuTrigger asChild>
         <Button
           onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
-          className="h-8 min-h-8 w-8 min-w-8"
-          variant="ghost"
+          className="h-8 min-h-8 w-8 min-w-8 rounded-sm"
+          variant="none"
           size="icon"
           data-umami-event="material-actions-menu-open"
         >

@@ -19,7 +19,7 @@ export const WhiteBoardButton = () => {
           <Button
             id={ONBOARDING_IDS.WHITEBOARD_BUTTON}
             size="icon"
-            variant="ghost"
+            variant="none"
             onClick={handleClick}
             className={'hover:bg-gray-5 relative m-0 h-10 w-10 rounded-xl p-0 text-gray-100'}
             data-umami-event="call-whiteboard-button"

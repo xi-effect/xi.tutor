@@ -45,8 +45,8 @@ importers:
         specifier: ^1.128.8
         version: 1.128.8(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       common.api:
         specifier: '*'
         version: link:../../packages/common.api
@@ -774,8 +774,8 @@ importers:
         specifier: 1.128.8
         version: 1.128.8(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/icons':
         specifier: ^3.0.2
         version: 3.0.2(react@19.2.3)
@@ -908,8 +908,8 @@ importers:
         specifier: ^1.109.0
         version: 1.128.8(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/icons':
         specifier: ^3.0.2
         version: 3.0.2(react@19.2.3)
@@ -1136,8 +1136,8 @@ importers:
         specifier: ^5.0.0
         version: 5.73.3(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/command':
         specifier: ^1.0.0
         version: 1.0.0(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -1233,8 +1233,8 @@ importers:
         specifier: ^1.128.8
         version: 1.128.8(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/icons':
         specifier: ^3.0.2
         version: 3.0.2(react@19.2.3)
@@ -1330,8 +1330,8 @@ importers:
         specifier: ^1.128.8
         version: 1.128.8(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/icons':
         specifier: ^3.0.2
         version: 3.0.2(react@19.2.3)
@@ -1418,8 +1418,8 @@ importers:
   packages/features.invites:
     dependencies:
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/icons':
         specifier: ^3.0.2
         version: 3.0.2(react@19.2.3)
@@ -1503,8 +1503,8 @@ importers:
         specifier: 1.120.11
         version: 1.120.11(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/form':
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -1676,8 +1676,8 @@ importers:
   packages/features.materials.add:
     dependencies:
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/dropdown':
         specifier: ^3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -1749,8 +1749,8 @@ importers:
         specifier: 2.0.12
         version: 2.0.12(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/dropdown':
         specifier: ^3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -1828,8 +1828,8 @@ importers:
         specifier: ^3.0.10
         version: 3.0.10(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/dropdown':
         specifier: ^3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -1907,8 +1907,8 @@ importers:
         specifier: 5.73.3
         version: 5.73.3(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/form':
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -1980,8 +1980,8 @@ importers:
         specifier: 1.120.11
         version: 1.120.11(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/form':
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -2062,8 +2062,8 @@ importers:
         specifier: ^5.73.3
         version: 5.73.3(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/icons':
         specifier: ^3.0.2
         version: 3.0.2(react@19.2.3)
@@ -2153,8 +2153,8 @@ importers:
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/checkbox':
         specifier: ^4.0.14
         version: 4.0.14(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -2262,8 +2262,8 @@ importers:
         specifier: 0.2.1
         version: 0.2.1(react-dom@19.2.3)(react@19.2.3)(signia-react@0.1.5)(signia@0.1.5)(yjs@13.6.29)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/dropdown':
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -2398,8 +2398,8 @@ importers:
         specifier: ^1.128.8
         version: 1.128.8(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/calendar':
         specifier: 2.1.0
         version: 2.1.0(@types/react@19.2.8)(react@19.2.3)
@@ -2534,8 +2534,8 @@ importers:
         specifier: 2.0.13
         version: 2.0.13(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/dropdown':
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -2712,8 +2712,8 @@ importers:
         specifier: ^3.0.0
         version: 3.0.1(prosemirror-model@1.25.4)(prosemirror-state@1.4.4)(prosemirror-view@1.41.5)(y-protocols@1.0.7)(yjs@13.6.29)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/dropdown':
         specifier: ^3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -2839,8 +2839,8 @@ importers:
         specifier: ^1.128.8
         version: 1.128.8(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/dropdown':
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -2939,8 +2939,8 @@ importers:
         specifier: 3.0.10
         version: 3.0.10(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/drawer':
         specifier: 0.1.0
         version: 0.1.0(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -3078,8 +3078,8 @@ importers:
         specifier: 2.0.12
         version: 2.0.12(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/dropdown':
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -3187,8 +3187,8 @@ importers:
         specifier: 2.0.12
         version: 2.0.12(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/command':
         specifier: 1.0.0
         version: 1.0.0(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -3344,8 +3344,8 @@ importers:
         specifier: 2.0.12
         version: 2.0.12(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/dropdown':
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -3471,8 +3471,8 @@ importers:
         specifier: 3.0.10
         version: 3.0.10(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/fileuploader':
         specifier: ^2.0.12
         version: 2.0.13(react@19.2.3)
@@ -3586,8 +3586,8 @@ importers:
         specifier: 3.0.10
         version: 3.0.10(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/fileuploader':
         specifier: ^2.0.12
         version: 2.0.13(react@19.2.3)
@@ -3704,8 +3704,8 @@ importers:
         specifier: 3.0.10
         version: 3.0.10(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.3)
@@ -3789,8 +3789,8 @@ importers:
         specifier: 2.0.12
         version: 2.0.12(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/icons':
         specifier: ^3.0.2
         version: 3.0.2(react@19.2.3)
@@ -3922,8 +3922,8 @@ importers:
         specifier: 3.13.9
         version: 3.13.9(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/dropdown':
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -4019,8 +4019,8 @@ importers:
         specifier: ^1.128.8
         version: 1.128.8(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/form':
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -4107,8 +4107,8 @@ importers:
         specifier: 3.0.10
         version: 3.0.10(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/dropdown':
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -4243,8 +4243,8 @@ importers:
         specifier: ^1.128.8
         version: 1.128.8(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/form':
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -4352,8 +4352,8 @@ importers:
         specifier: ^1.128.8
         version: 1.128.8(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/form':
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -4458,8 +4458,8 @@ importers:
         specifier: 5.0.1
         version: 5.0.1(react-hook-form@7.71.1)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/checkbox':
         specifier: ^5.0.0
         version: 5.0.0(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
@@ -4558,8 +4558,8 @@ importers:
         specifier: 3.0.10
         version: 3.0.10(@types/react-dom@19.2.3)(@types/react@19.2.8)(react-dom@19.2.3)(react@19.2.3)
       '@xipkg/button':
-        specifier: 4.0.0
-        version: 4.0.0(@types/react@19.2.8)(react@19.2.3)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.8)(react@19.2.3)
       '@xipkg/fileuploader':
         specifier: 5.0.0
         version: 5.0.0(react@19.2.3)
@@ -11086,6 +11086,19 @@ packages:
 
   /@xipkg/button@4.0.0(@types/react@19.2.8)(react@19.2.3):
     resolution: {integrity: sha512-R/XV5NAd5M2KAjeG0y451jMS2mVnx9TXnth8NFNYK5X2++Ti7xuodUbuiUn4z6KHzDLIARRJyAERBbPEEaYF3g==}
+    peerDependencies:
+      react: ^19
+    dependencies:
+      '@radix-ui/react-slot': 1.2.4(@types/react@19.2.8)(react@19.2.3)
+      '@xipkg/utils': 1.8.0(react@19.2.3)
+      class-variance-authority: 0.7.1
+      react: 19.2.3
+    transitivePeerDependencies:
+      - '@types/react'
+    dev: false
+
+  /@xipkg/button@4.1.0(@types/react@19.2.8)(react@19.2.3):
+    resolution: {integrity: sha512-otriuOCa9OFmfxIjN5XswQWSQygDLScrtXSG+oLvekcSGJJJuR4EE8zggfyTlAK6VZMa9orNsR7yAI4MCcPkww==}
     peerDependencies:
       react: ^19
     dependencies:

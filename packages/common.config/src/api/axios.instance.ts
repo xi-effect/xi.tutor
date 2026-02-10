@@ -102,6 +102,8 @@ const createNetworkErrorInterceptor = async (instance: AxiosInstance): Promise<A
             duration: 3000,
             description: `Сервер вернул ошибку ${status}.`,
           });
+        } else if (status === 409) {
+          // Комната не активна
         }
 
         return Promise.reject(error);

@@ -114,7 +114,7 @@ export const UpBar = () => {
               updateStore('mode', 'compact');
             }}
             type="button"
-            variant="ghost"
+            variant="none"
             className="flex size-[40px] items-center justify-center rounded-[12px] p-0"
             data-umami-event="call-back-button"
           >
@@ -136,7 +136,7 @@ export const UpBar = () => {
           <Button
             onClick={toggleLayout}
             type="button"
-            variant="ghost"
+            variant="none"
             disabled={!canUseFocusLayout && carouselType === 'grid'}
             className="ml-auto flex h-10 w-[95px] flex-row items-center justify-center gap-2 rounded-[12px] disabled:opacity-50"
             data-umami-event="call-toggle-layout"
@@ -159,7 +159,7 @@ export const UpBar = () => {
               id={ONBOARDING_IDS.LINK_BUTTON}
               onClick={onCopyLink}
               type="button"
-              variant="ghost"
+              variant="none"
               className="ml-2 hidden h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0 md:flex"
               data-umami-event="call-copy-link"
             >
@@ -177,7 +177,7 @@ export const UpBar = () => {
             <Button
               onClick={toggleFullScreen}
               type="button"
-              variant="ghost"
+              variant="none"
               className="ml-2 hidden h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0 md:flex"
               data-umami-event="call-toggle-fullscreen"
               data-umami-event-state={isFullScreen ? 'exit' : 'enter'}
@@ -204,7 +204,7 @@ export const UpBar = () => {
         <Button
           id={ONBOARDING_IDS.SETTINGS_BUTTON}
           type="button"
-          variant="ghost"
+          variant="none"
           className="flex h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0"
           data-umami-event="call-settings-button"
         >

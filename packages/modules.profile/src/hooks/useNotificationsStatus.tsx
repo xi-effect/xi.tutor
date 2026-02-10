@@ -43,7 +43,7 @@ export function useNotificationsStatus() {
     if (isTgConnectionActive) {
       return (
         <Button
-          variant="ghost"
+          variant="none"
           type="button"
           onClick={handleDisconnectTg}
           className="ml-auto bg-transparent"
@@ -57,7 +57,7 @@ export function useNotificationsStatus() {
     if (isTgConnectionBlocked) {
       return (
         <Button
-          variant="ghost"
+          variant="none"
           className="text-brand-100 ml-auto h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
           onClick={handleConnectTg}
         >
@@ -69,7 +69,7 @@ export function useNotificationsStatus() {
     if (isTgConnectionReplaced) {
       return (
         <Button
-          variant="ghost"
+          variant="none"
           className="text-brand-100 ml-auto h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
           onClick={handleConnectTg}
         >

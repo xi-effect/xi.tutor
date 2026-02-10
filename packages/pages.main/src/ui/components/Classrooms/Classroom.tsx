@@ -47,7 +47,7 @@ const UserAvatar = ({ isLoading, classroom }: UserAvatarPropsT) => {
 
 const getButtonLabel = (isTutor: boolean, isConferenceNotActiveTutor: boolean) => {
   // Преподаватель и конференция не активна
-  if (isTutor && !isConferenceNotActiveTutor) return 'Начать занятие';
+  if (isTutor && isConferenceNotActiveTutor) return 'Начать занятие';
 
   return 'Присоединиться';
 };
@@ -95,7 +95,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         <TooltipTrigger asChild>
           <Button
             onClick={handleClick}
-            className="group bg-brand-0 absolute top-4 right-6 h-6 w-6 p-0"
+            className="group bg-brand-0 absolute top-4 right-6 h-6 w-6 rounded-md p-0"
             variant="icon"
             data-umami-event="classroom-open"
             data-umami-event-classroom-id={classroom.id}

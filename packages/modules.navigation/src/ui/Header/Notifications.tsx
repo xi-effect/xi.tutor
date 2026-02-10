@@ -119,12 +119,12 @@ const NotificationItem = ({
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
-                variant="ghost"
+                variant="none"
                 size="sm"
-                className="h-6 w-6 p-0 opacity-0 transition-opacity group-hover:opacity-100"
+                className="group/button bg-gray-0 hover:bg-brand-80 h-6 w-6 rounded-sm p-0 opacity-0 transition-opacity group-hover:opacity-100"
                 onClick={handleMarkAsRead}
               >
-                <Check className="h-3 w-3" />
+                <Check className="group-hover/button:fill-gray-0 h-3 w-3 fill-gray-100" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="left">
@@ -279,7 +279,7 @@ export const Notifications = () => {
     <>
       <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
         <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative h-[32px] w-[32px] p-1">
+          <Button variant="none" className="relative h-[32px] w-[32px] p-1">
             <Notification className="fill-gray-80 size-6" size="s" />
             <NotificationBadge count={formatNotificationCount(unreadCount)} />
           </Button>
@@ -291,7 +291,7 @@ export const Notifications = () => {
           <DropdownMenuLabel className="text-m-base flex h-[48px] items-center p-3 font-semibold text-gray-100">
             Уведомления
             <div className="ml-auto flex items-center gap-1">
-              <Button onClick={handleToSettings} variant="ghost" className="h-[32px] w-[32px] p-1">
+              <Button onClick={handleToSettings} variant="none" className="h-[32px] w-[32px] p-1">
                 <Settings className="fill-gray-80 size-6" size="s" />
               </Button>
             </div>

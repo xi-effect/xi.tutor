@@ -114,7 +114,7 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
 
         <ModalFooter>
           {data?.length > 9 ? (
-            <Button variant="ghost">Максимум 10 приглашений</Button>
+            <Button variant="none">Максимум 10 приглашений</Button>
           ) : (
             <Button
               onClick={handleAddInvitation}

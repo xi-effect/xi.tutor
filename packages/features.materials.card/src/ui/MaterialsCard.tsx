@@ -84,7 +84,7 @@ export const MaterialsCard = ({
       </div>
 
       {isTutor && (
-        <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
+        <div className="flex h-6 w-6 items-center justify-center rounded-full">
           <MaterialActionsMenu
             isClassroom={isClassroom}
             isTutor={isTutor}

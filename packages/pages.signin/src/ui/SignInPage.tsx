@@ -134,10 +134,10 @@ export const SignInPage = () => {
               </div>
 
               {isPending ? (
-                <Button variant="default-spinner" type="submit" className="w-24" disabled />
+                <Button type="submit" loading className="w-24" />
               ) : (
                 <Button
-                  variant="default"
+                  variant="primary"
                   type="submit"
                   className="w-24"
                   disabled={isPending}

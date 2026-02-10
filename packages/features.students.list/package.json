@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.73.3",
-    "@xipkg/button": "4.0.0",
+    "@xipkg/button": "4.1.0",
     "@xipkg/icons": "^3.0.2",
     "@xipkg/input": "^2.2.9",
     "@xipkg/modal": "^4.3.1",
