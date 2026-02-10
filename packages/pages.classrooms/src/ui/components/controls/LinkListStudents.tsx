@@ -11,7 +11,7 @@ export const LinkListStudents = ({ className }: LinkListStudentsT) => {
     <ModalStudentsList>
       <Button
         size="s"
-        variant="ghost"
+        variant="none"
         className={`text-m-base text-gray-80 font-normal ${className || ''}`}
       >
         Список учеников

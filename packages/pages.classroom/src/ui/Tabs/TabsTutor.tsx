@@ -62,7 +62,7 @@ export const TabsTutor = () => {
           <ModalStudentsGroup>
             <Button
               size="s"
-              variant="ghost"
+              variant="none"
               className="ml-auto rounded-lg"
               data-umami-event="classroom-add-student"
             >
@@ -74,7 +74,7 @@ export const TabsTutor = () => {
           <ModalGroupInvite>
             <Button
               size="s"
-              variant="ghost"
+              variant="none"
               className="ml-1 rounded-lg"
               data-umami-event="classroom-invite-to-group"
             >

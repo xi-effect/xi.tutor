@@ -36,7 +36,7 @@ export const EditableDescription = ({
 
         {isTutor && (
           <Button
-            variant="ghost"
+            variant="none"
             size="s"
             onClick={handleEditClick}
             className="h-6 w-6 p-0 opacity-0 transition-opacity group-hover:opacity-100"

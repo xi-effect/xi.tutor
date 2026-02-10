@@ -39,7 +39,7 @@ const MaterialsContent = () => {
           <Tooltip delayDuration={1000}>
             <TooltipTrigger asChild>
               <Button
-                variant="ghost"
+                variant="none"
                 className="flex size-8 items-center justify-center rounded-sm p-0"
                 onClick={handleMore}
               >

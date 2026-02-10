@@ -94,7 +94,7 @@ export const ModalGroupInvite = ({ children }: ModalGroupInviteProps) => {
                 <DropdownMenuTrigger asChild>
                   <Button
                     className="h-12 w-12"
-                    variant="ghost"
+                    variant="none"
                     size="icon"
                     data-umami-event="group-invite-menu-open"
                   >

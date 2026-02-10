@@ -76,7 +76,7 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
         <Button
           onClick={() => navigate({ to: '/' })}
           className="w-full rounded-xl"
-          variant="ghost"
+          variant="none"
           data-umami-event="invite-decline"
           data-umami-event-kind={invite.kind}
         >

@@ -166,7 +166,7 @@ export const SideBarItems = () => {
             <SidebarMenuItem key={item.titleKey} className="cursor-pointer">
               <SidebarMenuButton
                 id={item.titleKey === 'hints' ? 'hints-button' : undefined}
-                variant="ghost"
+                variant="none"
                 onClick={item.onClick}
                 type="button"
                 className="bg-gray-0"

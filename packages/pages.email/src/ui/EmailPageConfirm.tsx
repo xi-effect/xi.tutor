@@ -78,6 +78,7 @@ export const EmailPageConfirm = () => {
         className="mt-16 h-[48px] w-full rounded-xl"
         onClick={handleConfirm}
         disabled={isButtonDisabled}
+        data-umami-event="email-confirm-button-resend"
       >
         {buttonText}
       </Button>

@@ -22,7 +22,7 @@ export const PaymentApproveButton = ({
         <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
             <Button
-              variant="ghost"
+              variant="none"
               size="s"
               className="bg-brand-0 hover:bg-brand-0/80 flex-1 rounded-lg"
               onClick={onApprovePayment}
@@ -47,7 +47,7 @@ export const PaymentApproveButton = ({
         <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
             <Button
-              variant="ghost"
+              variant="none"
               size="s"
               className="bg-brand-0 hover:bg-brand-0/80 flex-1 rounded-lg"
               onClick={() => receiverConfirmationMutation(id?.toString() ?? '')}

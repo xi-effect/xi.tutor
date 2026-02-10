@@ -50,7 +50,7 @@ export const Header = () => {
       <div className="flex items-center justify-between">
         <div className="relative flex w-full items-center justify-center gap-2">
           <Button
-            variant="ghost"
+            variant="none"
             onClick={handleBack}
             type="button"
             className="absolute top-0 left-0 h-10 w-10 p-2"

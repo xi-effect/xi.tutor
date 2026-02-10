@@ -87,7 +87,7 @@ export const HotkeysHelp = () => {
   return (
     <Modal>
       <ModalTrigger asChild>
-        <Button variant="ghost" className="h-10 w-10 p-2">
+        <Button variant="none" className="h-10 w-10 p-2">
           <InfoCircle size="s" className="size-6" />
         </Button>
       </ModalTrigger>

@@ -90,10 +90,10 @@ export const CalendarModule = () => {
             </Button>
 
             <div>
-              <Button variant="ghost" size="s" className="px-2">
+              <Button variant="none" size="s" className="px-2">
                 <ChevronUp className="h-4 w-4 dark:fill-gray-100" />
               </Button>
-              <Button variant="ghost" size="s" className="px-2">
+              <Button variant="none" size="s" className="px-2">
                 <ChevronBottom className="h-4 w-4 dark:fill-gray-100" />
               </Button>
             </div>
