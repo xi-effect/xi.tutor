@@ -51,9 +51,10 @@ export const trackUmamiSession = async (
       return;
     }
 
-    // Идентифицируем пользователя с данными сессии
-    window.umami.identify(user.id.toString(), {
-      id: user.id,
+    // Привязываем данные к текущей сессии (без unique_id в первом аргументе,
+    // чтобы не менять session hash и не создавать вторую сессию)
+    window.umami.identify({
+      user_id: user.id,
       username: user.username,
       display_name: user.display_name || undefined,
       role: user.default_layout,

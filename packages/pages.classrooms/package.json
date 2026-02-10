@@ -32,7 +32,8 @@
     "features.invites": "*",
     "features.students.list": "*",
     "features.table": "*",
-    "features.classroom": "*"
+    "features.classroom": "*",
+    "features.classroom.rename": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
