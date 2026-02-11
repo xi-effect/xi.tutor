@@ -46,7 +46,11 @@ const env = {
     import.meta.env.VITE_ENABLE_PERFORMANCE_PROFILING,
     false,
   ),
-  VITE_GLITCHTIP_DSN: asString(import.meta.env.VITE_GLITCHTIP_DSN, ''),
+  /** DSN для BUGSINK (Sentry-совместимый сбор ошибок). Поддерживается также VITE_GLITCHTIP_DSN для обратной совместимости. */
+  VITE_BUGSINK_DSN: asString(
+    import.meta.env.VITE_BUGSINK_DSN ?? import.meta.env.VITE_GLITCHTIP_DSN,
+    '',
+  ),
 };
 
 const checkEnv = (envKey: keyof typeof env): boolean => {

@@ -22,7 +22,7 @@ export const DragHandleWrapper = ({
           {({ open }) => (
             <Button
               className="hover:bg-gray-5 active:bg-gray-5 group h-5 w-5 rounded p-0"
-              variant="ghost"
+              variant="none"
             >
               {open ? (
                 <Close size="sm" className="size-6" />
@@ -35,7 +35,7 @@ export const DragHandleWrapper = ({
 
         <Button
           className="hover:bg-gray-5 active:bg-gray-5 group h-5 w-5 cursor-grab rounded p-0 active:cursor-grabbing"
-          variant="ghost"
+          variant="none"
           onDragStart={onDragStart}
           onDragEnd={(e) => {
             e.preventDefault();

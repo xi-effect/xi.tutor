@@ -11,7 +11,7 @@ export const RaiseHandButton = ({ className }: { className?: string }) => {
   return (
     <Button
       size="icon"
-      variant="ghost"
+      variant="none"
       onClick={toggleHand}
       className={cn(
         `relative m-0 h-10 w-10 rounded-lg p-0 ${

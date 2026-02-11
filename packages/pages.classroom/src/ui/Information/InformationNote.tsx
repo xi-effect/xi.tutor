@@ -18,7 +18,7 @@ const InformationNoteCreate = ({ classroom }: { classroom: ClassroomT }) => {
   };
 
   return (
-    <Button onClick={handleCreateNote} variant="ghost" className="m-6 h-[128px] w-full">
+    <Button onClick={handleCreateNote} variant="none" className="m-6 h-[128px] w-full">
       Это место для заметок к кабинету. Можно вести план занятий,
       <br />
       хранить контакты родителей ученика. Нажмите, чтобы начать редактировать

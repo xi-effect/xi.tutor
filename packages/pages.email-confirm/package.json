@@ -13,7 +13,7 @@
     "@hookform/resolvers": "^5.0.1",
     "@xipkg/avatar": "3.0.10",
     "@xipkg/modal": "4.2.0",
-    "@xipkg/button": "3.2.0",
+    "@xipkg/button": "4.1.0",
     "@xipkg/fileuploader": "^2.0.12",
     "@xipkg/form": "4.2.1",
     "@xipkg/icons": "^3.0.2",

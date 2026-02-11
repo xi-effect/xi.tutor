@@ -142,7 +142,7 @@ const isServiceWorkerError = (event: ErrorEvent, hint: EventHint): boolean => {
 };
 
 /**
- * Фильтр для исключения определенных ошибок из отправки в GlitchTip
+ * Фильтр для исключения определённых ошибок из отправки в BUGSINK
  */
 const beforeSend = (event: ErrorEvent, hint: EventHint): ErrorEvent | null => {
   const originalException = hint.originalException;
@@ -172,17 +172,17 @@ const beforeSend = (event: ErrorEvent, hint: EventHint): ErrorEvent | null => {
 };
 
 /**
- * Инициализация GlitchTip (совместим с Sentry SDK)
+ * Инициализация BUGSINK (Sentry-совместимый SDK)
  */
-export const initGlitchTip = () => {
-  // Инициализируем только если DSN указан
-  if (!env.VITE_GLITCHTIP_DSN) {
-    console.warn('GlitchTip DSN не указан. Мониторинг ошибок отключен.');
+export const initBugsink = () => {
+  const dsn = env.VITE_BUGSINK_DSN;
+  if (!dsn) {
+    console.warn('BUGSINK DSN не указан (VITE_BUGSINK_DSN). Мониторинг ошибок отключен.');
     return;
   }
 
   Sentry.init({
-    dsn: env.VITE_GLITCHTIP_DSN,
+    dsn,
     environment: env.DEV ? 'development' : 'production',
     integrations: [
       Sentry.browserTracingIntegration(),

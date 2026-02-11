@@ -22,7 +22,7 @@ export const WelcomeButtons = ({
     <menu className="mt-auto flex flex-row gap-6 pt-4">
       <Button
         onClick={backButtonHandler}
-        variant="ghost"
+        variant="none"
         className="w-[98px]"
         type="button"
         disabled={isLoading}

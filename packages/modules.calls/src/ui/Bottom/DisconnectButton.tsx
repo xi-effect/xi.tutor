@@ -17,7 +17,7 @@ export const DisconnectButton = ({ className }: { className?: string }) => {
 
   return (
     <Button
-      variant="ghost"
+      variant="none"
       type="button"
       disabled={buttonProps.disabled}
       onClick={handleDisconnect}

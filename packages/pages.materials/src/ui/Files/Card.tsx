@@ -26,7 +26,7 @@ export const Card: React.FC<MaterialPropsT> = ({ name }) => {
       <div className="absolute top-4 right-4 flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="h-6 w-6" variant="ghost" size="icon">
+            <Button className="h-6 w-6" variant="none" size="icon">
               <MoreVert className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>

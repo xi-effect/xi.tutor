@@ -100,7 +100,7 @@ export const Header = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center justify-center gap-2">
             <Button
-              variant="ghost"
+              variant="none"
               onClick={handleBack}
               type="button"
               className="h-[40px] w-[40px] p-2"
@@ -116,7 +116,7 @@ export const Header = () => {
                 {isTutor && (
                   <Button
                     type="button"
-                    variant="ghost"
+                    variant="none"
                     className="h-10 w-10 p-2"
                     onClick={handleOpenModal}
                     data-umami-event="board-edit-name"
@@ -131,7 +131,7 @@ export const Header = () => {
             {!isReadonly && <HotkeysHelp />}
             {isFullScreenSupported && (
               <Button
-                variant="ghost"
+                variant="none"
                 onClick={toggleFullScreen}
                 type="button"
                 className="h-10 w-10 p-2"

@@ -7,6 +7,7 @@ enum CallsQueryKey {
   CreateAccessTokenTutor = 'CreateAccessTokenTutor',
   GetParticipantsTutor = 'GetParticipantsTutor',
   GetParticipantsStudent = 'GetParticipantsStudent',
+  GetParticipants = 'GetParticipants',
 }
 
 const callsApiConfig = {
