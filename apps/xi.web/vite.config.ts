@@ -14,20 +14,35 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       VitePWA({
         registerType: 'autoUpdate',
         injectRegister: 'auto',
-        // Отключаем регистрацию SW в dev режиме, чтобы избежать ошибок
-        devOptions: {
-          enabled: false,
-        },
+        devOptions: { enabled: false },
+
+        // важно: чтобы новые версии SW активировались быстрее
         workbox: {
-          globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
-          maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB (по умолчанию 2 MB)
+          skipWaiting: true,
+          clientsClaim: true,
+
+          // ❗️убираем html из прекэша
+          globPatterns: ['**/*.{js,css,ico,png,svg,webmanifest}'],
+          maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
+
+          // навигации (index.html) — NetworkFirst, чтобы подтягивался свежий html
           runtimeCaching: [
+            {
+              urlPattern: ({ request }) => request.mode === 'navigate',
+              handler: 'NetworkFirst',
+              options: {
+                cacheName: 'html',
+                networkTimeoutSeconds: 3, // чтобы офлайн/плохая сеть быстрее отдавали кеш
+              },
+            },
             {
               handler: 'NetworkOnly',
               urlPattern: /\/deployments\/.*/,
               method: 'GET',
             },
           ],
+
+          // как у тебя было
           navigateFallbackDenylist: [/^\/deployments\/.*/],
         },
       }),
