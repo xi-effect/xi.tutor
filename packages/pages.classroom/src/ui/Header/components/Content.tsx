@@ -8,43 +8,39 @@ import { IndividualUser } from './IndividualUser';
 import { Button } from '@xipkg/button';
 import { SubjectBadge } from './SubjectBadge';
 import { useStartCall } from 'modules.calls';
-import { useEffect, useCallback, useMemo } from 'react';
+import { useEffect, useCallback } from 'react';
 import { useSearch } from '@tanstack/react-router';
 import { StatusBadge } from '../../StatusBadge';
 import { ContactsBadge } from './ContactsBadge';
+import { cn } from '@xipkg/utils';
 import {
   useCurrentUser,
   useGetParticipantsByStudent,
   useGetParticipantsByTutor,
-  useNotificationsContext,
 } from 'common.services';
 
 interface ContentProps {
   classroom: ClassroomTutorResponseSchema;
 }
 
+const getButtonLabel = (isTutor: boolean, isConferenceNotActiveTutor: boolean) => {
+  // Преподаватель и конференция не активна
+  if (isTutor && isConferenceNotActiveTutor) return 'Начать занятие';
+
+  return 'Присоединиться';
+};
+
 export const Content = ({ classroom }: ContentProps) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
-  const isStudent = user?.default_layout === 'student';
 
-  const tutorResult = useGetParticipantsByTutor(classroom?.id.toString(), !isTutor);
-  const studentResult = useGetParticipantsByStudent(classroom?.id.toString(), isTutor);
-
-  const { participants } = isTutor ? tutorResult : studentResult;
-
-  const { startCall, isLoading: isLoadingCall } = useStartCall();
+  const { startCall } = useStartCall();
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
 
-  const { notifications } = useNotificationsContext();
-
-  const hasConferenceNotification = useMemo(() => {
-    return notifications.some(
-      (notification) =>
-        notification.payload.kind === 'classroom_conference_started_v1' &&
-        notification.payload.classroom_id === classroom.id.toString(),
-    );
-  }, [notifications, classroom.id]);
+  const { isConferenceNotActive: isConferenceNotActiveStudent, isLoading: isLoadingStudent } =
+    useGetParticipantsByStudent(classroom.id.toString(), isTutor);
+  const { isConferenceNotActive: isConferenceNotActiveTutor, isLoading: isLoadingTutor } =
+    useGetParticipantsByTutor(classroom.id.toString(), !isTutor);
 
   const getDisplayName = () => {
     if (classroom.kind === 'individual') {
@@ -110,16 +106,27 @@ export const Content = ({ classroom }: ContentProps) => {
 
       <div className="ml-auto flex flex-col items-end gap-2">
         <div className="flex flex-row items-end gap-2">
-          <Button
-            onClick={handleCallClick}
-            size="s"
-            disabled={isLoadingCall || participants === undefined}
-            data-umami-event="header-content"
-          >
-            <Conference className="fill-gray-0 mr-2 size-4" />
-            {isStudent && hasConferenceNotification && 'Присоединиться'}
-            {isTutor ? 'Начать звонок' : 'Присоединиться к звонку'}
-          </Button>
+          {isLoadingStudent || isLoadingTutor ? (
+            <Button size="s" className="group mt-auto w-full" disabled loading />
+          ) : (
+            <Button
+              size="s"
+              variant="secondary"
+              className="group mt-auto w-full"
+              onClick={handleCallClick}
+              disabled={!isTutor && isConferenceNotActiveStudent}
+              data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
+              data-umami-event-classroom-id={classroom.id}
+            >
+              {getButtonLabel(isTutor, isConferenceNotActiveTutor)}
+              <Conference
+                className={cn(
+                  'group-hover:fill-gray-0 fill-brand-100 ml-2',
+                  !isTutor && isConferenceNotActiveStudent && 'fill-gray-40',
+                )}
+              />
+            </Button>
+          )}
         </div>
       </div>
     </div>
