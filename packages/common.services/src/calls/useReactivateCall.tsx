@@ -1,5 +1,5 @@
 import { callsApiConfig, CallsQueryKey } from 'common.api';
-import { getAxiosInstance } from 'common.config';
+import { getAxiosInstance, queryClient } from 'common.config';
 import { useMutation } from '@tanstack/react-query';
 import { handleError } from 'common.services';
 
@@ -30,10 +30,11 @@ export const useReactivateCall = () => {
       // Показываем toast с ошибкой
       handleError(err, 'calls');
     },
-    onSuccess: () => {
-      // Показываем успешное уведомление
-      // console.log('Access token создан успешно');
-      // showSuccess('calls');
+    onSuccess: (data) => {
+      const classroomId = data.classroom_id;
+      queryClient.invalidateQueries({
+        queryKey: [CallsQueryKey.GetParticipantsTutor, classroomId],
+      });
     },
   });
 

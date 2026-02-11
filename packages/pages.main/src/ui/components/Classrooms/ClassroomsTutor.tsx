@@ -29,7 +29,7 @@ export const ClassroomsTutor = () => {
         <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
             <Button
-              variant="ghost"
+              variant="none"
               className="flex size-8 items-center justify-center rounded-sm p-0"
               onClick={handleMore}
               data-umami-event="main-navigate-classrooms"
@@ -44,7 +44,7 @@ export const ClassroomsTutor = () => {
           <ModalAddGroup>
             <Button
               id="create-group-button"
-              variant="ghost"
+              variant="none"
               size="s"
               className="text-s-base rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
               data-umami-event="main-create-group"

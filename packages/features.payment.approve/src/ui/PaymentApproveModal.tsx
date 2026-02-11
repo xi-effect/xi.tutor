@@ -306,7 +306,7 @@ const AdvanceForm = ({
           </div>
         </ModalBody>
         <ModalFooter className="flex max-w-85 gap-4 sm:max-w-150">
-          <Button variant="default" className="w-38.5" type="submit" disabled={isLoading}>
+          <Button className="w-38.5" type="submit" disabled={isLoading}>
             {isLoading ? 'Подтверждение...' : 'Подтвердить'}
           </Button>
           <Button

@@ -129,6 +129,14 @@ export const useNotifications = () => {
       const { kind } = notification.payload;
       const config = notificationConfigs[kind];
 
+      if (config?.onNotify) {
+        const invalidationKey = config.onNotify(notification.payload);
+
+        if (!invalidationKey) return;
+
+        queryClient.invalidateQueries({ queryKey: invalidationKey });
+      }
+
       const url = config ? generateNotificationAction(notification) : null;
       const toastId = toast(title, {
         description,

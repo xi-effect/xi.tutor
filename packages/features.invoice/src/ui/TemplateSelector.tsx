@@ -37,7 +37,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
     return (
       <Button
         className="bg-brand-0 hover:bg-brand-0 text-brand-100 hover:text-brand-80 h-[32px]"
-        variant="ghost"
+        variant="none"
         size="s"
         type="button"
         disabled
@@ -51,7 +51,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
     return (
       <Button
         className="bg-brand-0 hover:bg-brand-0 text-brand-100 hover:text-brand-80 h-[32px]"
-        variant="ghost"
+        variant="none"
         size="s"
         type="button"
         disabled

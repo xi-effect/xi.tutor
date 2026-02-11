@@ -28,7 +28,7 @@ export const SectionHeader = ({ title, tabLink: tabLink }: SectionHeaderProps) =
     <div className="flex flex-row items-center justify-start gap-2">
       <h2 className="text-xl-base font-semibold text-gray-100 first-letter:uppercase">{title}</h2>
       <Button
-        variant="ghost"
+        variant="none"
         className="flex size-8 items-center justify-center rounded-[4px] p-0"
         onClick={() => handleTabChange(tabLink)}
       >

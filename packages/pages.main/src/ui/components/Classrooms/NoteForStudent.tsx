@@ -23,7 +23,7 @@ export const NoteForStudent = ({ onHide, isTutor }: NoteForStudentProps) => {
         <Button
           size="s"
           className="border-brand-100 text-brand-100 hover:bg-brand-100 hover:text-brand-0 mt-auto w-full border bg-transparent"
-          variant="ghost"
+          variant="none"
           onClick={onHide}
         >
           Скрыть

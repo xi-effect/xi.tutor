@@ -59,7 +59,7 @@ export const SelectionMenu = track(function SelectionMenu() {
       {isLocked ? (
         <>
           <Button
-            variant="ghost"
+            variant="none"
             size="s"
             className="hover:bg-brand-0 p-1"
             onClick={() => {
@@ -73,7 +73,7 @@ export const SelectionMenu = track(function SelectionMenu() {
       ) : (
         <>
           <Button
-            variant="ghost"
+            variant="none"
             size="s"
             className="hover:bg-brand-0 p-1"
             onClick={handleDuplicate}
@@ -82,7 +82,7 @@ export const SelectionMenu = track(function SelectionMenu() {
             <Copy />
           </Button>
           <Button
-            variant="ghost"
+            variant="none"
             size="s"
             className="hover:bg-brand-0 p-1"
             onClick={handleDelete}

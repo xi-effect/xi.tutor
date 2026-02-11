@@ -59,7 +59,7 @@ export const Chat = () => {
       {/* Заголовок */}
       <div className="border-gray-20 flex items-center justify-between pr-3">
         <h3 className="text-lg font-medium text-gray-100">Чат</h3>
-        <Button size="icon" variant="ghost" onClick={closeChat}>
+        <Button size="icon" variant="none" onClick={closeChat}>
           <Close className="h-6 w-6" aria-label="Закрыть чат" />
         </Button>
       </div>
@@ -129,7 +129,7 @@ export const Chat = () => {
           <div className="pr-2">
             <Button
               size="icon"
-              variant="ghost"
+              variant="none"
               onClick={handleSendMessage}
               disabled={!messageText.trim()}
               className="hover:bg-gray-5 p-2"

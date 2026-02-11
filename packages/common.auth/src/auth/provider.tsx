@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
   const [isAuthenticated, setIsAuthenticated] = React.useState<boolean | null>(null);
   const [hasTrackedSessionInit, setHasTrackedSessionInit] = React.useState(false);
+  const hasEverBeenUnauthenticated = React.useRef(false);
   const { handleAuthError } = useNetworkAuthIntegration();
 
   if (!queryClient) {
@@ -22,6 +23,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     data: user,
     isSuccess,
     isError,
+    error,
     refetch,
   } = useQuery({
     queryKey: [UserQueryKey.Home],
@@ -33,20 +35,42 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     retry: false,
   });
 
+  // Только 401 считаем «пользователь не залогинен» для блокировки session_init identify (signin/signup делают свой).
+  // Сетевая/5xx не должны навсегда блокировать identify при следующей успешной загрузке.
+  const isUnauthorized =
+    isError &&
+    error &&
+    typeof error === 'object' &&
+    'response' in error &&
+    (error as { response?: { status?: number } }).response?.status === 401;
+
   React.useEffect(() => {
-    if (isSuccess && user && !hasTrackedSessionInit) {
-      setIsAuthenticated(true);
-      // Трекинг сессии для уже авторизованного пользователя при инициализации (только один раз)
-      trackUmamiSession(user, 'session_init').catch((error) => {
-        console.error('Failed to track Umami session:', error);
-      });
-      setHasTrackedSessionInit(true);
+    if (isUnauthorized) {
+      hasEverBeenUnauthenticated.current = true;
     }
     if (isError) {
       setIsAuthenticated(false);
-      // Здесь можно выполнить и другие действия, которые раньше были в onSuccess
     }
-  }, [isSuccess, isError, user, hasTrackedSessionInit]);
+  }, [isError, isUnauthorized]);
+
+  React.useEffect(() => {
+    if (!isSuccess || !user || hasTrackedSessionInit) return;
+
+    setIsAuthenticated(true);
+
+    // Identify только для «восстановленной» сессии (загрузка с уже валидными куками).
+    // После signin/signup идентификацию делают useSigninForm и signup — не дублируем.
+    if (hasEverBeenUnauthenticated.current) {
+      setHasTrackedSessionInit(true);
+      return;
+    }
+
+    setHasTrackedSessionInit(true);
+
+    trackUmamiSession(user, 'session_init').catch((err) => {
+      console.error('Failed to track Umami session:', err);
+    });
+  }, [isSuccess, user, hasTrackedSessionInit]);
 
   const login = async () => {
     setIsAuthenticated(true);
@@ -80,18 +104,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const singupMutation = useMutation({
     mutationFn: async (userData: SignupData) => {
-      return await signupService(userData);
-    },
-
-    onSuccess: async () => {
+      const result = await signupService(userData);
       setIsAuthenticated(true);
-      const result = await refetch();
-      // Трекинг сессии после успешной регистрации
-      if (result.data) {
-        trackUmamiSession(result.data, 'signup').catch((error) => {
-          console.error('Failed to track Umami session:', error);
-        });
+      const refetched = await refetch();
+      // Идентифицируем до того, как форма сделает navigate — чтобы properties записались в текущую сессию
+      if (refetched.data) {
+        await trackUmamiSession(refetched.data, 'signup');
       }
+      return result;
     },
 
     onError: (error) => {

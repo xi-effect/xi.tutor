@@ -25,7 +25,7 @@ export const MobileUserMenu = ({
     <Drawer>
       <DrawerTrigger asChild>
         <Button
-          variant="ghost"
+          variant="none"
           size="icon"
           data-umami-event="header-user-menu-open"
           data-umami-event-device="mobile"

@@ -23,7 +23,7 @@ export const Header = () => {
               });
             }}
             type="button"
-            variant="ghost"
+            variant="none"
             className="flex size-[40px] items-center justify-center rounded-[12px] p-0"
           >
             <ArrowLeft className="fill-gray-100" />

@@ -122,7 +122,7 @@ export const ColorPicker = track(() => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="s" className="hover:bg-brand-0 w-[32px] p-1" title="Цвет">
+        <Button variant="none" size="s" className="hover:bg-brand-0 w-[32px] p-1" title="Цвет">
           <div
             className={`h-4 w-4 rounded-full ${currentColorOption?.class || (isSticker ? 'bg-gray-60' : 'bg-gray-100')}`}
           />
