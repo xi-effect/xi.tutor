@@ -48,6 +48,8 @@ export const TldrawBoard = ({ isDemo = false }: TldrawBoardProps) => {
 
   // console.log('storageItem', storageItem);
 
+  console.log('isDemo', isDemo);
+
   // В демо-режиме не проверяем наличие storageItem
   if (!isDemo && (!storageItem?.ydoc_id || !storageItem?.storage_token)) {
     return <div>Material not found</div>;
