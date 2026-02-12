@@ -144,6 +144,7 @@ const ApproveForm = ({
           className="w-38.5"
           onClick={() => receiverConfirmationMutation(recipientInvoiceId.toString())}
           disabled={isPending}
+          data-umami-event="payment-receiver-confirm"
         >
           {isPending ? 'Подтверждение...' : 'Подтвердить'}
         </Button>
@@ -306,7 +307,13 @@ const AdvanceForm = ({
           </div>
         </ModalBody>
         <ModalFooter className="flex max-w-85 gap-4 sm:max-w-150">
-          <Button className="w-38.5" type="submit" disabled={isLoading}>
+          <Button
+            className="w-38.5"
+            type="submit"
+            disabled={isLoading}
+            data-umami-event="payment-sender-confirm"
+            data-umami-event-role={isTutor ? 'tutor' : 'student'}
+          >
             {isLoading ? 'Подтверждение...' : 'Подтвердить'}
           </Button>
           <Button
