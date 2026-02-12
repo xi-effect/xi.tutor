@@ -39,8 +39,8 @@ export const Autocomplete = ({ field, disabled, containerRef }: AutocompleteProp
 
   // Получаем данные конкретного предмета по ID для отображения в кнопке
   const { data: selectedSubject, isLoading: isLoadingSelected } = useSubjectsById(
-    field.value,
-    field.value === 0, // Отключаем запрос если нет выбранного предмета
+    field.value || 0,
+    !field.value, // Отключаем запрос если нет выбранного предмета
   );
 
   return (

@@ -7,7 +7,7 @@ import {
 } from '@xipkg/dropdown';
 import { ChevronSmallBottom } from '@xipkg/icons';
 import { useAddMaterials, useAddClassroomMaterials } from 'common.services';
-import { useParams } from '@tanstack/react-router';
+import { useParams, useNavigate } from '@tanstack/react-router';
 
 interface NoteProps {
   onlyDrafts?: boolean;
@@ -19,6 +19,7 @@ type StudentAccessMode = 'no_access' | 'read_only' | 'read_write';
 
 export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) => {
   const { classroomId: paramsClassroomId } = useParams({ strict: false });
+  const navigate = useNavigate();
   const { addMaterials } = useAddMaterials();
   const { addClassroomMaterials } = useAddClassroomMaterials();
 
@@ -28,19 +29,36 @@ export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) =
     if (onCreate) {
       onCreate();
     } else {
-      addMaterials.mutate({
-        content_kind: 'note',
-      });
+      addMaterials.mutate(
+        { content_kind: 'note' },
+        {
+          onSuccess: (response) => {
+            navigate({
+              to: `/materials/${response.data.id}/${response.data.content_kind}`,
+            });
+          },
+        },
+      );
     }
   };
 
   const handleCreateNoteWithAccess = (studentAccessMode: StudentAccessMode) => {
     if (currentClassroomId) {
-      addClassroomMaterials.mutate({
-        classroomId: currentClassroomId,
-        content_kind: 'note',
-        student_access_mode: studentAccessMode,
-      });
+      addClassroomMaterials.mutate(
+        {
+          classroomId: currentClassroomId,
+          content_kind: 'note',
+          student_access_mode: studentAccessMode,
+        },
+        {
+          onSuccess: (response) => {
+            navigate({
+              to: '/classrooms/$classroomId/notes/$noteId',
+              params: { classroomId: currentClassroomId, noteId: response.data.id },
+            });
+          },
+        },
+      );
     }
   };
 

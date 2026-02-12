@@ -7,7 +7,7 @@ import {
 } from '@xipkg/dropdown';
 import { ChevronSmallBottom } from '@xipkg/icons';
 import { useAddMaterials, useAddClassroomMaterials } from 'common.services';
-import { useParams } from '@tanstack/react-router';
+import { useParams, useNavigate } from '@tanstack/react-router';
 
 interface BoardProps {
   onCreate?: () => void;
@@ -19,6 +19,7 @@ type StudentAccessMode = 'no_access' | 'read_only' | 'read_write';
 
 export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps) => {
   const { classroomId: paramsClassroomId } = useParams({ strict: false });
+  const navigate = useNavigate();
   const { addMaterials } = useAddMaterials();
   const { addClassroomMaterials } = useAddClassroomMaterials();
 
@@ -28,19 +29,36 @@ export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps)
     if (onCreate) {
       onCreate();
     } else {
-      addMaterials.mutate({
-        content_kind: 'board',
-      });
+      addMaterials.mutate(
+        { content_kind: 'board' },
+        {
+          onSuccess: (response) => {
+            navigate({
+              to: `/materials/${response.data.id}/${response.data.content_kind}`,
+            });
+          },
+        },
+      );
     }
   };
 
   const handleCreateBoardWithAccess = (studentAccessMode: StudentAccessMode) => {
     if (currentClassroomId) {
-      addClassroomMaterials.mutate({
-        classroomId: currentClassroomId,
-        content_kind: 'board',
-        student_access_mode: studentAccessMode,
-      });
+      addClassroomMaterials.mutate(
+        {
+          classroomId: currentClassroomId,
+          content_kind: 'board',
+          student_access_mode: studentAccessMode,
+        },
+        {
+          onSuccess: (response) => {
+            navigate({
+              to: '/classrooms/$classroomId/boards/$boardId',
+              params: { classroomId: currentClassroomId, boardId: response.data.id },
+            });
+          },
+        },
+      );
     }
   };
 
