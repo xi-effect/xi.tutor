@@ -311,7 +311,7 @@ export function useYjsStore({
 
             scheduleFlush();
           },
-          { scope: 'document' }, // ✅ без source-фильтра
+          { scope: 'document', source: 'user' }, // ✅ без source-фильтра
         ),
       );
 
