@@ -93,11 +93,6 @@ function makeKey(hostUrl: string, ydocId: string, storageToken: string) {
   return `${hostUrl}__${ydocId}__${storageToken}`;
 }
 
-function getWsStatus(provider: HocuspocusProvider): WebSocketStatus {
-  // v3: status лежит на websocketProvider
-  return provider.configuration.websocketProvider.status;
-}
-
 function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string): SharedEntry {
   const key = makeKey(hostUrl, ydocId, storageToken);
   const existing = shared.get(key);
