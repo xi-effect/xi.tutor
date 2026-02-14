@@ -55,7 +55,7 @@ const EditorWithoutData = () => {
   return (
     <div className="flex w-full justify-center pt-4 pb-8">
       <div className="w-full max-w-4xl pl-16">
-        <YjsProvider data={storageItem}>
+        <YjsProvider key={storageItem?.ydoc_id} data={storageItem}>
           <TiptapEditor />
         </YjsProvider>
       </div>
@@ -65,7 +65,7 @@ const EditorWithoutData = () => {
 
 const EditorWithData = ({ storageItem }: { storageItem: StorageItemT }) => {
   return (
-    <YjsProvider data={storageItem}>
+    <YjsProvider key={storageItem.ydoc_id} data={storageItem}>
       <TiptapEditor />
     </YjsProvider>
   );
