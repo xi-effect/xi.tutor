@@ -45,6 +45,7 @@ type UseYjsStoreArgs = Partial<{
 }>;
 
 type ConnectionStatus = 'online' | 'offline';
+
 type StoreWithStatusExt = {
   status: TLStoreWithStatus['status'];
   store?: TLStore;
@@ -71,6 +72,24 @@ type PendingChanges = {
   removed: Record<string, TLRecord>;
 };
 
+/**
+ * В tldraw тип changes иногда уезжает в unknown (зависит от версии/сборки),
+ * поэтому описываем минимально нужную форму и приводим к ней.
+ */
+type TLStoreChanges = {
+  added: Record<string, TLRecord>;
+  updated: Record<string, [TLRecord, TLRecord]>;
+  removed: Record<string, TLRecord>;
+};
+
+const FLUSH_MS = 50;
+
+/**
+ * Throttle для awareness/presence (курсоры / presence).
+ * 80ms ≈ 12.5Hz — обычно “как в фигме”: плавно, но без спама.
+ */
+const PRESENCE_FLUSH_MS = 80;
+
 /** =========================
  * Provider singleton registry
  * ========================= */
@@ -96,12 +115,15 @@ function makeKey(hostUrl: string, ydocId: string, storageToken: string) {
 function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string): SharedEntry {
   const key = makeKey(hostUrl, ydocId, storageToken);
   const existing = shared.get(key);
+
   if (existing) {
     existing.refs += 1;
+
     if (existing.releaseTimer != null) {
       clearTimeout(existing.releaseTimer);
       existing.releaseTimer = null;
     }
+
     return existing;
   }
 
@@ -116,11 +138,11 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
 
   const provider = new HocuspocusProvider({
     url: hostUrl,
-    name: ydocId, // важно: documentName
+    name: ydocId,
     document: yDoc,
     token: storageToken,
     forceSyncInterval: 20_000,
-    // attach() / detach() будем дергать сами
+    // attach() / detach() управляем снаружи (в хуке + refCount)
   });
 
   const entry: SharedEntry = {
@@ -135,20 +157,22 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
   };
 
   shared.set(key, entry);
+
   return entry;
 }
 
 function releaseShared(entry: SharedEntry) {
   entry.refs = Math.max(0, entry.refs - 1);
+
   if (entry.refs > 0) return;
 
   // debounce — чтобы StrictMode mount->cleanup->mount не рвал коннект
   entry.releaseTimer = window.setTimeout(() => {
     entry.releaseTimer = null;
+
     if (entry.refs > 0) return;
 
     try {
-      // detach безопаснее чем destroy при живых подписчиках
       entry.provider.detach();
     } catch {
       // ignore
@@ -195,7 +219,6 @@ export function useYjsStore({
   const [serverReadonly, setServerReadonly] = useState(false);
   const [localReadonly, setLocalReadonly] = useState(false);
 
-  /** store всегда возвращаем, даже пока loading */
   const [storeWithStatus, setStoreWithStatus] = useState<StoreWithStatusExt>(() => ({
     status: 'loading',
     store,
@@ -213,10 +236,10 @@ export function useYjsStore({
   const { provider, yDoc, yStore, meta, readonlyMap } = sharedEntry;
 
   useEffect(() => {
-    // чтобы компонент tldraw всегда работал с одним store
     setStoreWithStatus((prev) => ({ ...prev, status: 'loading', store }));
 
-    // StrictMode-safe: attach именно тут
+    // ВАЖНО: attach тут, а detach — ТОЛЬКО в releaseShared (когда refs = 0).
+    // Иначе при 2 потребителях или StrictMode будет "чужой" cleanup ронять сокет.
     provider.attach();
 
     const unsubs: Array<() => void> = [];
@@ -236,10 +259,11 @@ export function useYjsStore({
 
     const scheduleFlush = () => {
       if (flushTimeoutRef.current != null) return;
+
       flushTimeoutRef.current = window.setTimeout(() => {
         flushTimeoutRef.current = null;
         flushPendingChanges();
-      }, 25);
+      }, FLUSH_MS);
     };
 
     const handleAuthFailed = ({ reason }: onAuthenticationFailedParameters) => {
@@ -266,6 +290,7 @@ export function useYjsStore({
       if (status === WebSocketStatus.Disconnected) {
         setStoreWithStatus((prev) => ({ ...prev, connectionStatus: 'offline' }));
       }
+
       if (status === WebSocketStatus.Connected) {
         setStoreWithStatus((prev) => ({ ...prev, connectionStatus: 'online' }));
       }
@@ -288,17 +313,18 @@ export function useYjsStore({
             }
 
             const pending = pendingChangesRef.current;
+            const typedChanges = changes as unknown as TLStoreChanges;
 
-            Object.values(changes.added).forEach((r) => {
+            Object.values(typedChanges.added).forEach((r) => {
               pending.added[r.id] = r;
               delete pending.removed[r.id];
             });
 
-            Object.values(changes.updated).forEach(([_, r]) => {
+            Object.values(typedChanges.updated).forEach(([, r]) => {
               pending.updated[r.id] = r;
             });
 
-            Object.values(changes.removed).forEach((r) => {
+            Object.values(typedChanges.removed).forEach((r) => {
               delete pending.added[r.id];
               delete pending.updated[r.id];
               pending.removed[r.id] = r;
@@ -306,7 +332,7 @@ export function useYjsStore({
 
             scheduleFlush();
           },
-          { scope: 'document', source: 'user' }, // ✅ без source-фильтра
+          { scope: 'document', source: 'user' },
         ),
       );
 
@@ -353,6 +379,7 @@ export function useYjsStore({
 
       /** 4) awareness/presence */
       const awareness = provider.awareness;
+
       if (awareness) {
         const yClientId = awareness.clientID.toString();
         const userName =
@@ -379,21 +406,59 @@ export function useYjsStore({
           presenceId,
         )(store);
 
-        awareness.setLocalStateField('presence', presenceDerivation.get());
+        // ==== LOCAL presence batching (throttle + last-value-wins) ====
+        let presenceTimer: number | null = null;
+        let pendingPresence: TLInstancePresence | null = null;
 
+        const flushPresence = () => {
+          presenceTimer = null;
+
+          if (!pendingPresence) return;
+
+          awareness.setLocalStateField('presence', pendingPresence);
+          pendingPresence = null;
+        };
+
+        const schedulePresence = (next: TLInstancePresence | null) => {
+          // tldraw может вернуть null, например пока derivation не готов
+          if (!next) return;
+
+          pendingPresence = next;
+
+          if (presenceTimer != null) return;
+
+          presenceTimer = window.setTimeout(() => {
+            flushPresence();
+          }, PRESENCE_FLUSH_MS);
+        };
+
+        // initial push (сразу, чтобы другие сразу увидели)
+        const initialPresence = presenceDerivation.get();
+        if (initialPresence) {
+          awareness.setLocalStateField('presence', initialPresence);
+        }
+
+        // подписка на изменения presence в store
         unsubs.push(
           react('when presence changes', () => {
             const presence = presenceDerivation.get();
-            requestAnimationFrame(() => {
-              awareness.setLocalStateField('presence', presence);
-            });
+            schedulePresence(presence);
           }),
         );
 
+        // cleanup local presence batching
+        unsubs.push(() => {
+          if (presenceTimer != null) clearTimeout(presenceTimer);
+          presenceTimer = null;
+          pendingPresence = null;
+        });
+
+        // ==== REMOTE presence batching (у тебя уже было) ====
         type PresenceState = { presence?: TLInstancePresence };
         type AwarenessChange = { added: number[]; updated: number[]; removed: number[] };
 
         let rafId: number | null = null;
+
         const pendingRemote = {
           toPut: new Map<string, TLInstancePresence>(),
           toRemove: new Set<string>(),
@@ -426,6 +491,7 @@ export function useYjsStore({
 
           for (const clientId of [...added, ...updated]) {
             if (clientId.toString() === yClientId) continue;
+
             const st = states.get(clientId);
             const remotePresence = st?.presence;
 
@@ -450,6 +516,7 @@ export function useYjsStore({
         unsubs.push(() => {
           if (rafId != null) cancelAnimationFrame(rafId);
           rafId = null;
+
           pendingRemote.toPut.clear();
           pendingRemote.toRemove.clear();
         });
@@ -459,7 +526,10 @@ export function useYjsStore({
       if (yStore.yarray.length) {
         const ourSchema = store.schema.serialize();
         const theirSchema = meta.get('schema') as SerializedSchema | undefined;
-        if (!theirSchema) throw new Error('No schema found in the yjs doc');
+
+        if (!theirSchema) {
+          throw new Error('No schema found in the yjs doc');
+        }
 
         const records = yStore.yarray.toJSON().map(({ val }) => val);
 
@@ -477,9 +547,11 @@ export function useYjsStore({
           for (const r of records) {
             if (!migrationResult.value[r.id]) yStore.delete(r.id);
           }
+
           for (const r of Object.values(migrationResult.value) as TLRecord[]) {
             yStore.set(r.id, r);
           }
+
           meta.set('schema', ourSchema);
         }, 'init');
 
@@ -499,6 +571,7 @@ export function useYjsStore({
         });
 
         const um = undoManagerRef.current;
+
         const updateFlags = () => {
           setCanUndo(um.canUndo());
           setCanRedo(um.canRedo());
@@ -531,6 +604,7 @@ export function useYjsStore({
         clearTimeout(flushTimeoutRef.current);
         flushTimeoutRef.current = null;
       }
+
       pendingChangesRef.current = null;
 
       unsubs.forEach((fn) => fn());
@@ -538,13 +612,8 @@ export function useYjsStore({
       provider.off('authenticationFailed', handleAuthFailed as any);
       provider.off('authenticated', handleAuthenticated as any);
 
-      // detach в cleanup — как в официальном примере через attach/destroy,
-      // только мы делаем refCount-safe
-      try {
-        provider.detach();
-      } catch {
-        // ignore
-      }
+      // ВАЖНО: НЕТ provider.detach() здесь!
+      // detach/destroy делаем только когда refs упадет в 0 (releaseShared).
 
       releaseShared(sharedEntry);
     };
@@ -555,6 +624,7 @@ export function useYjsStore({
     if (!um?.canUndo()) return;
 
     suppressSyncRef.current = true;
+
     try {
       um.undo();
     } finally {
@@ -570,6 +640,7 @@ export function useYjsStore({
     if (!um?.canRedo()) return;
 
     suppressSyncRef.current = true;
+
     try {
       um.redo();
     } finally {
