@@ -86,7 +86,7 @@ const FLUSH_MS = 50;
 
 /**
  * Throttle для awareness/presence (курсоры / presence).
- * 80ms ≈ 12.5Hz — обычно “как в фигме”: плавно, но без спама.
+ * 80ms ≈ 12.5Hz — плавно, но без спама.
  */
 const PRESENCE_FLUSH_MS = 80;
 
@@ -280,7 +280,8 @@ export function useYjsStore({
     };
 
     const handleAuthenticated = ({ scope }: onAuthenticatedParameters) => {
-      setServerReadonly(scope === 'readonly');
+      const s = String(scope).toLowerCase();
+      setServerReadonly(s === 'read-only' || s === 'readonly' || s === 'read_only');
     };
 
     provider.on('authenticationFailed', handleAuthFailed as any);
@@ -346,7 +347,12 @@ export function useYjsStore({
         >,
         transaction: Y.Transaction,
       ) => {
-        if (transaction.local && transaction.origin !== undoManagerRef.current) return;
+        /**
+         * ВАЖНО (фикс readonly):
+         * Не фильтруем по transaction.local — сетевые апдейты могут применяться "локально"
+         * в Y.Doc. Нам нужно отсечь только эхо своих store->yjs транзакций.
+         */
+        if (transaction.origin === 'user') return;
 
         const toRemove: TLRecord['id'][] = [];
         const toPut: TLRecord[] = [];
@@ -419,8 +425,7 @@ export function useYjsStore({
           pendingPresence = null;
         };
 
-        const schedulePresence = (next: TLInstancePresence | null) => {
-          // tldraw может вернуть null, например пока derivation не готов
+        const schedulePresence = (next: TLInstancePresence | null | undefined) => {
           if (!next) return;
 
           pendingPresence = next;
@@ -453,7 +458,7 @@ export function useYjsStore({
           pendingPresence = null;
         });
 
-        // ==== REMOTE presence batching (у тебя уже было) ====
+        // ==== REMOTE presence batching (raf) ====
         type PresenceState = { presence?: TLInstancePresence };
         type AwarenessChange = { added: number[]; updated: number[]; removed: number[] };
 
@@ -614,7 +619,6 @@ export function useYjsStore({
 
       // ВАЖНО: НЕТ provider.detach() здесь!
       // detach/destroy делаем только когда refs упадет в 0 (releaseShared).
-
       releaseShared(sharedEntry);
     };
   }, [provider, yDoc, yStore, meta, readonlyMap, store, currentUser, sharedEntry]);
