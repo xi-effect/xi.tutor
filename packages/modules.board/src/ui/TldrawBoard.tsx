@@ -1,4 +1,3 @@
-// import { LoadingScreen } from 'common.ui';
 import { YjsProvider } from '../providers/YjsProvider';
 import { TldrawCanvas } from './components';
 import { useParams } from '@tanstack/react-router';
@@ -9,6 +8,7 @@ import {
   useGetStorageItem,
 } from 'common.services';
 import { DEMO_STORAGE_TOKEN } from '../utils/yjsConstants';
+import { LoadingScreen } from 'common.ui';
 
 type TldrawBoardProps = {
   /** Если true — используются тестовые значения ydocId и storageToken */
@@ -38,17 +38,12 @@ export const TldrawBoard = ({ isDemo = false }: TldrawBoardProps) => {
     throw new Error('boardId or materialId must be provided');
   }
 
-  // isLoading
-  const { data: storageItem } = getStorageItem({
+  const { data: storageItem, isLoading } = getStorageItem({
     classroomId: classroomId || '',
     id: materialIdValue || '',
   });
 
-  // if (isLoading) return <LoadingScreen />;
-
-  // console.log('storageItem', storageItem);
-
-  console.log('isDemo', isDemo);
+  if (isLoading) return <LoadingScreen />;
 
   // В демо-режиме не проверяем наличие storageItem
   if (!isDemo && (!storageItem?.ydoc_id || !storageItem?.storage_token)) {

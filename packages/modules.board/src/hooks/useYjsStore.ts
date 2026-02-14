@@ -170,7 +170,7 @@ function releaseShared(entry: SharedEntry) {
 export function useYjsStore({
   ydocId = '',
   storageToken = '',
-  hostUrl = import.meta.env.VITE_SERVER_URL_HOCUS,
+  hostUrl = import.meta.env.VITE_SERVER_URL_HOCUS ?? 'wss://hocus.sovlium.ru',
   shapeUtils = [],
   token,
 }: UseYjsStoreArgs): ExtendedStoreStatus {

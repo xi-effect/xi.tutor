@@ -39,7 +39,7 @@ export const Route = createFileRoute('/(app)/_layout/materials/$materialId/board
 function MaterialsBoardPage() {
   return (
     <Suspense fallback={<LoadingScreen />}>
-      <TldrawBoard isDemo />
+      <TldrawBoard />
     </Suspense>
   );
 }

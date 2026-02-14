@@ -53,6 +53,7 @@ export const YjsProvider = ({ children, storageItem, isDemo = false }: YjsProvid
       }
 
       return {
+        hostUrl: import.meta.env.VITE_SERVER_URL_HOCUS ?? 'wss://hocus.sovlium.ru',
         storageToken,
         ydocId,
         token: storageToken, // Передаем токен для asset store
