@@ -9,7 +9,7 @@ import { TextAlign } from '@tiptap/extension-text-align';
 import { TaskList, TaskItem } from '@tiptap/extension-list';
 import { UniqueID } from '@tiptap/extension-unique-id';
 import * as Y from 'yjs';
-import { CustomImage } from '../extensions';
+import { CustomImage, MoveBlockKeyboard, NormalizeSelection } from '../extensions';
 
 /** Курсор в стиле доски: вертикальная линия + шильдик с именем */
 function collaborationCaretRender(user: { name?: string; color?: string }): HTMLElement {
@@ -89,6 +89,8 @@ export const getExtensions = (
       emptyEditorClass: 'is-editor-empty',
       showOnlyWhenEditable: true,
     }),
+    MoveBlockKeyboard,
+    NormalizeSelection,
   ];
 
   if (!provider || !ydoc) {

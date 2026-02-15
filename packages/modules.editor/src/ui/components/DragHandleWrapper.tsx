@@ -18,6 +18,7 @@ export const DragHandleWrapper = ({
   return (
     <DragHandle
       editor={editor}
+      className="drag-handle"
       computePositionConfig={{ placement: 'left-start', strategy: 'absolute' }}
       onElementDragStart={onDragStart}
       onElementDragEnd={onDragEnd}

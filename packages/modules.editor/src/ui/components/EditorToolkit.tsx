@@ -3,6 +3,7 @@ import { BubbleMenuWrapper } from './BubbleMenuWrapper/BubbleMenuWrapper';
 import { DragHandleWrapper } from './DragHandleWrapper';
 import { Editor } from '@tiptap/core';
 import { ImageUploadModal } from './FileUploadDialog';
+import { normalizeSelectionAfterDrop } from '../../utils/normalizeSelectionAfterDrop';
 
 type EditorToolkitProps = {
   editor: Editor;
@@ -12,11 +13,16 @@ type EditorToolkitProps = {
 export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [hasMountedDragHandle, setHasMountedDragHandle] = useState(false);
+  const initialFixDone = React.useRef(false);
 
   const handleDragEnd = useCallback(() => {
-    setIsDragging(false);
-    // Выбор после drop оставляем как установил ProseMirror — не перезаписываем
-  }, []);
+    // Сначала нормализуем выделение в след. тике, потом снова показываем BubbleMenu.
+    // Так BubbleMenu не читает невалидный selection и не триггерит предупреждение.
+    setTimeout(() => {
+      normalizeSelectionAfterDrop(editor);
+      setIsDragging(false);
+    }, 0);
+  }, [editor]);
 
   const handleDragStart = useCallback(() => {
     setIsDragging(true);
@@ -25,8 +31,15 @@ export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly
   // Проверяем, можно ли показывать тулбар
   const canShowToolbar = !isReadOnly && editor.isEditable !== false;
 
+  // Даём appendTransaction шанс починить невалидную selection (напр. после загрузки Yjs)
+  React.useEffect(() => {
+    if (!editor?.isDestroyed && !initialFixDone.current) {
+      initialFixDone.current = true;
+      editor.view.dispatch(editor.state.tr);
+    }
+  }, [editor]);
+
   // Монтируем DragHandle только один раз при инициализации редактора
-  // Это предотвращает проблемы с размонтированием порталов
   React.useEffect(() => {
     if (editor && !hasMountedDragHandle) {
       setHasMountedDragHandle(true);
