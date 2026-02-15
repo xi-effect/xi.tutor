@@ -1,5 +1,6 @@
 import { ActiveRoom } from './Room/ActiveRoom';
 import { PreJoin } from './PreJoin';
+import { PermissionsDialog } from './shared/PermissionsDialog';
 import { useCallStore } from '../store/callStore';
 import { useInitUserDevices, useVideoSecurity } from '../hooks';
 import './shared/VideoTrack/video-security.css';
@@ -37,6 +38,7 @@ export const Call = () => {
           <PreJoin />
         )}
       </div>
+      <PermissionsDialog />
     </div>
   );
 };

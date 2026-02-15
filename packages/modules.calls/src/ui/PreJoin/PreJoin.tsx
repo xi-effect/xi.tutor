@@ -1,6 +1,5 @@
 import { ScrollArea } from '@xipkg/scrollarea';
 import { Header, UserTile, MediaDevices } from './components';
-import { PermissionsDialog } from '../shared/PermissionsDialog';
 import { useMemo, useRef, useEffect, useCallback, useState } from 'react';
 import {
   Track,
@@ -170,7 +169,6 @@ export const PreJoin = () => {
           </div>
         </div>
       </ScrollArea>
-      <PermissionsDialog />
     </>
   );
 };
