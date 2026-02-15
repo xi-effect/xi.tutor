@@ -15,26 +15,29 @@ export const useEditorActive = (editor: Editor | null) => {
 
     const updateActiveStates = () => {
       setActiveStates((prev) => {
-        const next = {
-          bold: editor.isActive('bold'),
-          italic: editor.isActive('italic'),
-          strike: editor.isActive('strike'),
-          underline: editor.isActive('underline'),
-          link: editor.isActive('link'),
-        };
+        try {
+          const next = {
+            bold: editor.isActive('bold'),
+            italic: editor.isActive('italic'),
+            strike: editor.isActive('strike'),
+            underline: editor.isActive('underline'),
+            link: editor.isActive('link'),
+          };
 
-        // React bail-out: если ничего не изменилось, возвращаем prev (тот же ref → нет ре-рендера)
-        if (
-          prev.bold === next.bold &&
-          prev.italic === next.italic &&
-          prev.strike === next.strike &&
-          prev.underline === next.underline &&
-          prev.link === next.link
-        ) {
+          if (
+            prev.bold === next.bold &&
+            prev.italic === next.italic &&
+            prev.strike === next.strike &&
+            prev.underline === next.underline &&
+            prev.link === next.link
+          ) {
+            return prev;
+          }
+
+          return next;
+        } catch {
           return prev;
         }
-
-        return next;
       });
     };
 

@@ -5,13 +5,14 @@ import { useEditor, Editor } from '@tiptap/react';
 import { getExtensions } from '../config/editorConfig';
 import { editorProps } from '../config/editorProps';
 import { toast } from 'sonner';
+import { useCurrentUser } from 'common.services';
 import { StorageItemT } from 'common.types';
-
 import {
   HocuspocusProvider,
   type onAuthenticatedParameters,
   type onAuthenticationFailedParameters,
 } from '@hocuspocus/provider';
+import { generateUserColor } from '../utils/userColor';
 
 type UseYjsStoreArgs = {
   hostUrl: string;
@@ -65,9 +66,14 @@ export function useYjsStore({
   const [serverReadonly, setServerReadonly] = useState(false);
 
   /* ==========================================================
-   * 3. User data — стабильная ссылка
+   * 3. User data для курсоров и awareness — из текущего пользователя
    * ========================================================== */
-  const userData = useMemo(() => ({ name: 'Igor', color: '#ff00ff' }), []);
+  const { data: currentUser } = useCurrentUser();
+  const userData = useMemo(() => {
+    const name = currentUser?.display_name || currentUser?.username || 'Участник';
+    const idForColor = currentUser?.id?.toString() ?? 'anonymous';
+    return { name, color: generateUserColor(idForColor) };
+  }, [currentUser?.id, currentUser?.display_name, currentUser?.username]);
 
   /* ==========================================================
    * 4. Extensions — мемоизированы, стабильная ссылка
@@ -126,9 +132,8 @@ export function useYjsStore({
   }, [provider, userData]);
 
   /* ==========================================================
-   * 6. Editor — deps = [] обходит refreshEditorInstance path,
-   *    используя только compareOptions (самый безопасный путь).
-   *    Все ссылки (extensions, editorProps) стабильны.
+   * 6. Editor — extensions в deps: при загрузке currentUser
+   *    userData обновляется, пересоздаём редактор с правильным именем/цветом для курсора.
    * ========================================================== */
   const editor = useEditor(
     {
@@ -136,7 +141,7 @@ export function useYjsStore({
       editable: true,
       editorProps,
     },
-    [],
+    [extensions],
   );
 
   /* ==========================================================
