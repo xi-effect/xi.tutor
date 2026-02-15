@@ -112,7 +112,7 @@ export const Content = ({ classroom }: ContentProps) => {
             <Button
               size="s"
               variant="primary"
-              className="group pr-2 pl-2"
+              className="group w-full pr-2 pl-2"
               onClick={handleCallClick}
               disabled={!isTutor && isConferenceNotActiveStudent}
               data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
@@ -121,7 +121,7 @@ export const Content = ({ classroom }: ContentProps) => {
               <Conference
                 size="sm"
                 className={cn(
-                  'group-hover:fill-gray-0 fill-brand-100 mr-1.5',
+                  'group-hover:fill-gray-0 fill-brand-0 mr-1.5',
                   !isTutor && isConferenceNotActiveStudent && 'fill-gray-40',
                 )}
               />
