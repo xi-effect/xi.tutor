@@ -12,6 +12,7 @@ import {
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { RoomAudioRenderer } from '@livekit/components-react';
 import { CompactCall } from './CompactCall';
+import { PermissionsDialog } from '../shared/PermissionsDialog';
 import { useCallStore } from '../../store/callStore';
 import type { Corner } from '../../store/callStore';
 import { useNavigate, useRouter, useSearch, useLocation } from '@tanstack/react-router';
@@ -118,15 +119,6 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
 
         {children}
 
-        {/* Чат в режиме compact */}
-        {/* {isChatOpen && (
-          <div className="absolute top-4 right-4 z-50">
-            <div className="bg-gray-0 border-gray-20 flex h-96 w-80 flex-col rounded-2xl border shadow-lg">
-              <Chat />
-            </div>
-          </div>
-        )} */}
-
         {/* Обработка аудио как в основном режиме ВКС */}
         <RoomAudioRenderer />
       </div>
@@ -185,10 +177,27 @@ export const CompactView = ({ children }: CompactViewProps) => {
   }, [room, token, search.call, search, navigate]);
 
   if (!room || !token) {
-    return <>{children}</>;
+    return (
+      <>
+        {children}
+        <PermissionsDialog />
+      </>
+    );
   }
 
-  if (mode === 'full') return <>{children}</>;
+  if (mode === 'full') {
+    return (
+      <>
+        {children}
+        <PermissionsDialog />
+      </>
+    );
+  }
 
-  return <Compact>{children}</Compact>;
+  return (
+    <>
+      <Compact>{children}</Compact>
+      <PermissionsDialog />
+    </>
+  );
 };
