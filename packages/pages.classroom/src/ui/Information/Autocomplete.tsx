@@ -1,8 +1,7 @@
-import * as React from 'react';
 import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
+import * as React from 'react';
 import { ControllerRenderProps } from 'react-hook-form';
 
-import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
 import {
   Command,
@@ -13,8 +12,9 @@ import {
   CommandList,
 } from '@xipkg/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
-import { useAutocompleteSubjects, useSubjectsById } from 'common.services';
+import { cn } from '@xipkg/utils';
 import { SubjectSchema } from 'common.api';
+import { useAutocompleteSubjects, useSubjectsById } from 'common.services';
 
 type AutocompleteProps = {
   field: ControllerRenderProps<{ subject: number | null }, 'subject'>;
@@ -49,13 +49,16 @@ export const Autocomplete = ({ field, disabled }: AutocompleteProps) => {
           variant="text"
           role="combobox"
           aria-expanded={open}
+          title={field.value && !isLoadingSelected ? selectedSubject?.name : undefined}
           className="border-gray-30 bg-gray-0 h-[32px] w-full justify-between rounded-lg border-2 pr-4 pl-3 hover:border-gray-50 hover:bg-transparent"
         >
-          {field.value
-            ? isLoadingSelected
-              ? 'Загрузка...'
-              : selectedSubject?.name || 'Предмет не найден'
-            : 'Выберите предмет...'}
+          <span className="truncate">
+            {field.value
+              ? isLoadingSelected
+                ? 'Загрузка...'
+                : selectedSubject?.name || 'Предмет не найден'
+              : 'Выберите предмет...'}
+          </span>
           <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0" />
         </Button>
       </PopoverTrigger>
