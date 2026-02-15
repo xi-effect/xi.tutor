@@ -42,27 +42,22 @@ export const PreJoin = () => {
     console.error('PreJoin ERROR:', e);
   }, []);
 
-  // Автоматически запрашиваем разрешения при загрузке
+  // При входе в PreJoin запрашиваем разрешения — браузер покажет диалог при первом заходе.
+  // Если пользователь отклонит или ещё не ответил, useWatchPermissions обновит store и покажем состояние «нет прав» на контролах.
   useEffect(() => {
-    const requestPermissions = async () => {
+    let cancelled = false;
+    const request = async () => {
       try {
-        // Проверяем, есть ли уже разрешения
-        const permissions = await navigator.permissions.query({ name: 'camera' as PermissionName });
-        if (permissions.state === 'prompt') {
-          // Запрашиваем разрешения
-          const stream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: true,
-          });
-          // Останавливаем поток, нам нужны только разрешения
-          stream.getTracks().forEach((track) => track.stop());
-        }
-      } catch (error) {
-        console.log('Permission request failed:', error);
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+        if (!cancelled) stream.getTracks().forEach((t) => t.stop());
+      } catch {
+        // Отказ или ошибка — состояние обработает useWatchPermissions и UI (перечёркнутые контролы)
       }
     };
-
-    requestPermissions();
+    request();
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   // Preview треки - создаются только если пользователь изначально включил их
@@ -156,36 +151,6 @@ export const PreJoin = () => {
   // Финальные треки (динамические имеют приоритет над preview)
   const videoTrack = dynamicVideoTrack || previewVideoTrack;
   const audioTrack = dynamicAudioTrack || previewAudioTrack;
-
-  // Отладочная информация
-  useEffect(() => {
-    console.log('PreJoin tracks debug:', {
-      initialUserChoices: initialUserChoices.current,
-      videoEnabled,
-      audioEnabled,
-      videoDeviceId,
-      audioDeviceId,
-      tracks: tracks?.map((t) => ({ kind: t.kind, enabled: !t.isMuted })),
-      previewVideoTrack: previewVideoTrack ? { enabled: !previewVideoTrack.isMuted } : null,
-      previewAudioTrack: previewAudioTrack ? { enabled: !previewAudioTrack.isMuted } : null,
-      dynamicVideoTrack: dynamicVideoTrack ? { enabled: !dynamicVideoTrack.isMuted } : null,
-      dynamicAudioTrack: dynamicAudioTrack ? { enabled: !dynamicAudioTrack.isMuted } : null,
-      finalVideoTrack: videoTrack ? { enabled: !videoTrack.isMuted } : null,
-      finalAudioTrack: audioTrack ? { enabled: !audioTrack.isMuted } : null,
-    });
-  }, [
-    tracks,
-    previewVideoTrack,
-    previewAudioTrack,
-    dynamicVideoTrack,
-    dynamicAudioTrack,
-    videoTrack,
-    audioTrack,
-    videoEnabled,
-    audioEnabled,
-    videoDeviceId,
-    audioDeviceId,
-  ]);
 
   // Разрешаем device ID для треков
   useResolveInitiallyDefaultDeviceId(audioDeviceId, audioTrack, saveAudioInputDeviceId);
