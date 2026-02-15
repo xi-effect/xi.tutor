@@ -172,6 +172,41 @@
   justify-content: center;
 }
 
+/* --- Курсоры совместного редактирования (стиль доски / Notion) --- */
+
+/* Курсор: вертикальная линия + шильдик с именем */
+.ProseMirror .collaboration-carets__caret.collaboration-cursor--board-style {
+  display: inline;
+  position: relative;
+  width: 0;
+  height: 1.125em;
+  margin: 0 -1px;
+  vertical-align: text-bottom;
+  border-left: 2px solid var(--collab-color, currentColor);
+  pointer-events: none;
+}
+
+.ProseMirror .collaboration-carets__caret .collaboration-carets__label {
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  margin-bottom: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  color: #fff;
+  white-space: nowrap;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  pointer-events: none;
+}
+
+/* Выделение текста другого участника — полупрозрачный фон в стиле Notion */
+.ProseMirror .collaboration-carets__selection {
+  border-radius: 2px;
+}
+
 /* Стили для мобильных устройств */
 @media (max-width: 768px) {
   .ProseMirror h1 {
