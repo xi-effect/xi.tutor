@@ -14,10 +14,9 @@ export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly
   const [hasMountedDragHandle, setHasMountedDragHandle] = useState(false);
 
   const handleDragEnd = useCallback(() => {
-    const from = editor.state.selection.from;
-    editor.commands.setTextSelection(from);
     setIsDragging(false);
-  }, [editor]);
+    // Выбор после drop оставляем как установил ProseMirror — не перезаписываем
+  }, []);
 
   const handleDragStart = useCallback(() => {
     setIsDragging(true);

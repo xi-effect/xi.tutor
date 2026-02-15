@@ -16,7 +16,13 @@ export const DragHandleWrapper = ({
   isReadOnly?: boolean;
 }) => {
   return (
-    <DragHandle editor={editor} computePositionConfig={{ placement: 'left' }}>
+    <DragHandle
+      editor={editor}
+      computePositionConfig={{ placement: 'left-start', strategy: 'absolute' }}
+      onElementDragStart={onDragStart}
+      onElementDragEnd={onDragEnd}
+      nested
+    >
       <div className="mr-1 flex items-center gap-2">
         <BlockMenu>
           {({ open }) => (
@@ -36,11 +42,6 @@ export const DragHandleWrapper = ({
         <Button
           className="hover:bg-gray-5 active:bg-gray-5 group h-5 w-5 cursor-grab rounded p-0 active:cursor-grabbing"
           variant="none"
-          onDragStart={onDragStart}
-          onDragEnd={(e) => {
-            e.preventDefault();
-            onDragEnd();
-          }}
           title="Перетащить блок"
         >
           <Move size="sm" className="size-6" />

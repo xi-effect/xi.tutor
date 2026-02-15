@@ -126,44 +126,62 @@
   border-radius: 0.25rem;
 }
 
-/* Стили для drag handle */
-.ProseMirror .drag-handle {
-  position: absolute;
-  left: -2rem;
-  top: 0;
+/* --- Drag handle (Notion-style): позиция задаётся плагином через floating-ui --- */
+.drag-handle {
   opacity: 0;
-  transition: opacity 0.2s;
+  transition: opacity 0.15s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
   cursor: grab;
+  border-radius: 0.25rem;
 }
-
-.ProseMirror .drag-handle:hover {
+.drag-handle:hover,
+.drag-handle[data-dragging='true'] {
   opacity: 1;
 }
-
-.ProseMirror .ProseMirror-selectednode .drag-handle {
-  opacity: 1;
+.drag-handle:active {
+  cursor: grabbing;
 }
 
-/* Стили для drop cursor */
+/* Место слева для ручки перетаскивания (Notion-style) */
+.ProseMirror {
+  padding-left: 2.5rem;
+}
+
+/* Подсветка блока при перетаскивании */
+.ProseMirror .ProseMirror-selectednode,
+.ProseMirror .ProseMirror-selectednoderange {
+  position: relative;
+}
+.ProseMirror .ProseMirror-selectednode::before,
+.ProseMirror .ProseMirror-selectednoderange::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: rgba(59, 130, 246, 0.08);
+  border-radius: 0.25rem;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Drop cursor — линия вставки при перетаскивании (Notion-style) */
 .ProseMirror .ProseMirror-dropcursor {
   position: relative;
   pointer-events: none;
 }
-
-.ProseMirror .ProseMirror-dropcursor:after {
+.ProseMirror .ProseMirror-dropcursor::after {
   content: '';
   position: absolute;
-  top: -2px;
+  top: 0;
   left: 0;
   right: 0;
-  height: 4px;
+  height: 2px;
   background: #3b82f6;
-  border-radius: 2px;
+  border-radius: 1px;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
 }
 
 /* Стили для выделения текста */
