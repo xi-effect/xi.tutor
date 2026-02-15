@@ -117,7 +117,7 @@ export const Chat = () => {
 
       {/* Поле ввода */}
       <div className="flex items-end gap-2 pr-3">
-        <div className="border-gray-20 flex max-h-40 w-full flex-1 items-center rounded-3xl border pl-4">
+        <div className="border-gray-20 flex max-h-40 w-full flex-1 items-center rounded-xl border pl-4">
           <Textarea
             ref={textareaRef}
             value={messageText}
@@ -126,15 +126,20 @@ export const Chat = () => {
             className="my-3 max-h-32 min-w-full rounded-none border-none p-0 pr-2"
             onKeyDown={handleKeyDownSendMessage}
           />
-          <div className="pr-2">
+          <div className="pr-1">
             <Button
               size="icon"
-              variant="none"
+              variant="primary"
               onClick={handleSendMessage}
               disabled={!messageText.trim()}
-              className="hover:bg-gray-5 p-2"
+              className="rounded-xl p-2"
             >
-              <Send className="h-6 w-6" />
+              <Send
+                className={cn(
+                  'fill-gray-0 h-6 w-6 group-hover:fill-gray-100',
+                  !messageText.trim() && 'fill-gray-100',
+                )}
+              />
             </Button>
           </div>
         </div>

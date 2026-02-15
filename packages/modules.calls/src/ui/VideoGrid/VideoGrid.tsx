@@ -103,7 +103,7 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
         <LayoutContextProvider value={layoutContext}>
           <div className="flex h-full w-full items-center justify-center">
             {effectiveCarouselType === 'grid' ? (
-              <div className="h-full w-full">
+              <div className="h-full w-full min-w-0">
                 <GridLayout tracks={tracks}>
                   <ParticipantTile
                     isFocusToggleDisable

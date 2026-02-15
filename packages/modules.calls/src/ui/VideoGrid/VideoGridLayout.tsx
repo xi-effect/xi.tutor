@@ -126,7 +126,7 @@ export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
   return (
     <div
       ref={containerRef}
-      className="grid h-full w-full place-content-center overflow-hidden"
+      className="grid h-full w-full min-w-0 place-content-center overflow-hidden"
       style={{ ...gridStyle, maxHeight: 'var(--available-height)' }}
     >
       <TrackLoop tracks={tracks}>{props.children}</TrackLoop>
