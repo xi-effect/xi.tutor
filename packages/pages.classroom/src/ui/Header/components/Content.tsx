@@ -12,18 +12,35 @@ import { useEffect, useCallback } from 'react';
 import { useSearch } from '@tanstack/react-router';
 import { StatusBadge } from '../../StatusBadge';
 import { ContactsBadge } from './ContactsBadge';
-import { useCurrentUser } from 'common.services';
+import { cn } from '@xipkg/utils';
+import {
+  useCurrentUser,
+  useGetParticipantsByStudent,
+  useGetParticipantsByTutor,
+} from 'common.services';
 
 interface ContentProps {
   classroom: ClassroomTutorResponseSchema;
 }
 
+const getButtonLabel = (isTutor: boolean, isConferenceNotActiveTutor: boolean) => {
+  // Преподаватель и конференция не активна
+  if (isTutor && isConferenceNotActiveTutor) return 'Начать занятие';
+
+  return 'Присоединиться';
+};
+
 export const Content = ({ classroom }: ContentProps) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  const { startCall, isLoading } = useStartCall();
+  const { startCall } = useStartCall();
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
+
+  const { isConferenceNotActive: isConferenceNotActiveStudent, isLoading: isLoadingStudent } =
+    useGetParticipantsByStudent(classroom.id.toString(), isTutor);
+  const { isConferenceNotActive: isConferenceNotActiveTutor, isLoading: isLoadingTutor } =
+    useGetParticipantsByTutor(classroom.id.toString(), !isTutor);
 
   const getDisplayName = () => {
     if (classroom.kind === 'individual') {
@@ -89,10 +106,28 @@ export const Content = ({ classroom }: ContentProps) => {
 
       <div className="ml-auto flex flex-col items-end gap-2">
         <div className="flex flex-row items-end gap-2">
-          <Button onClick={handleCallClick} size="s" disabled={isLoading}>
-            <Conference className="fill-gray-0 mr-2 size-4" />
-            {isLoading ? 'Подключение...' : 'Начать звонок'}
-          </Button>
+          {isLoadingStudent || isLoadingTutor ? (
+            <Button size="s" className="group mt-auto w-full" disabled loading />
+          ) : (
+            <Button
+              size="s"
+              variant="primary"
+              className="group w-full pr-2 pl-2"
+              onClick={handleCallClick}
+              disabled={!isTutor && isConferenceNotActiveStudent}
+              data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
+              data-umami-event-classroom-id={classroom.id}
+            >
+              <Conference
+                size="sm"
+                className={cn(
+                  'group-hover:fill-gray-0 fill-brand-0 mr-1.5',
+                  !isTutor && isConferenceNotActiveStudent && 'fill-gray-40',
+                )}
+              />
+              {getButtonLabel(isTutor, isConferenceNotActiveTutor)}
+            </Button>
+          )}
         </div>
       </div>
     </div>
