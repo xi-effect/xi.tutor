@@ -159,6 +159,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                 className={`${isMobile ? 'w-full' : 'w-[114px]'} rounded-2xl`}
                 type="submit"
                 size="m"
+                data-umami-event="invoice-create"
               >
                 Создать
               </Button>

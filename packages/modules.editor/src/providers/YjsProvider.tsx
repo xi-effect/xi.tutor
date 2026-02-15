@@ -8,10 +8,16 @@ type YjsProviderProps = {
   data: StorageItemT;
 };
 
+const isDemo = true;
+
+const DEMO_YDOC_ID = 'test/demo-room';
+const DEMO_STORAGE_TOKEN = 'test/demo-room';
+
 export const YjsProvider = ({ children, data }: YjsProviderProps) => {
   const yjsStore = useYjsStore({
-    ydocId: data.ydoc_id || '',
-    storageToken: data.storage_token || '',
+    hostUrl: import.meta.env.VITE_SERVER_URL_HOCUS ?? 'wss://hocus.sovlium.ru',
+    ydocId: isDemo ? DEMO_YDOC_ID : data.ydoc_id || '',
+    storageToken: isDemo ? DEMO_STORAGE_TOKEN : data.storage_token || '',
     storageItem: data,
   });
 

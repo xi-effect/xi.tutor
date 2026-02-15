@@ -2329,8 +2329,8 @@ importers:
   packages/modules.board:
     dependencies:
       '@hocuspocus/provider':
-        specifier: 2.15.0
-        version: 2.15.0(y-protocols@1.0.7)(yjs@13.6.29)
+        specifier: 3.4.4
+        version: 3.4.4(y-protocols@1.0.7)(yjs@13.6.29)
       '@hookform/resolvers':
         specifier: 5.0.1
         version: 5.0.1(react-hook-form@7.71.1)
@@ -2743,8 +2743,8 @@ importers:
         specifier: 0.27.8
         version: 0.27.8(react-dom@19.2.4)(react@19.2.4)
       '@hocuspocus/provider':
-        specifier: 2.15.0
-        version: 2.15.0(y-protocols@1.0.7)(yjs@13.6.29)
+        specifier: 3.4.4
+        version: 3.4.4(y-protocols@1.0.7)(yjs@13.6.29)
       '@tanstack/react-router':
         specifier: ^1.128.8
         version: 1.128.8(react-dom@19.2.4)(react@19.2.4)
@@ -6679,19 +6679,19 @@ packages:
     resolution: {integrity: sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ==}
     dev: false
 
-  /@hocuspocus/common@2.15.3:
-    resolution: {integrity: sha512-Rzh1HF0a2o/tf90A3w2XNdXd9Ym3aQzMDfD3lAUONCX9B9QOdqdyiORrj6M25QEaJrEIbXFy8LtAFcL0wRdWzA==}
+  /@hocuspocus/common@3.4.4:
+    resolution: {integrity: sha512-RykIJ0tsHHMP4Xk+4UCbc7SO5LgGxGUSTdbh6anJEsaALAyqinf1Nn5HYuMjLPolAmsar1v++m9zufR09NLpXA==}
     dependencies:
       lib0: 0.2.117
     dev: false
 
-  /@hocuspocus/provider@2.15.0(y-protocols@1.0.7)(yjs@13.6.29):
-    resolution: {integrity: sha512-Zd1YYVIg1PYfxqMbwWlb89+R/pOGg+UQZWBr7u3g2RDOttdM8F9zzyUzm9XcI7CAGZAUvuqB/oiSsMyGxDsuNg==}
+  /@hocuspocus/provider@3.4.4(y-protocols@1.0.7)(yjs@13.6.29):
+    resolution: {integrity: sha512-KbsMAfdYcIJD8eMU/5QnpXcSOvIWAcCNI33FSRSaKCIpYBFtAwkYIwWnZJmPZ8a1BMAtqQc+uvy9+UQf7GHnGQ==}
     peerDependencies:
       y-protocols: ^1.0.6
       yjs: ^13.6.8
     dependencies:
-      '@hocuspocus/common': 2.15.3
+      '@hocuspocus/common': 3.4.4
       '@lifeomic/attempt': 3.1.0
       lib0: 0.2.117
       ws: 8.19.0
@@ -11308,7 +11308,7 @@ packages:
       eslint-config-airbnb: 19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2)(eslint-plugin-react-hooks@5.1.0)(eslint-plugin-react@7.37.2)(eslint@9.39.2)
       eslint-config-next: 15.1.2(eslint@9.39.2)(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.39.2)
-      eslint-config-turbo: 2.8.6(eslint@9.39.2)(turbo@2.8.6)
+      eslint-config-turbo: 2.8.9(eslint@9.39.2)(turbo@2.8.6)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.55.0)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2)
       eslint-plugin-react: 7.37.2(eslint@9.39.2)
       eslint-plugin-react-hooks: 5.1.0(eslint@9.39.2)
@@ -12905,14 +12905,14 @@ packages:
       eslint: 9.39.2
     dev: true
 
-  /eslint-config-turbo@2.8.6(eslint@9.39.2)(turbo@2.8.6):
-    resolution: {integrity: sha512-oT6tqLqN5rjGiZMzox67wnFXNLRfJPuN5HSYSP27ZXKIoh18dbCp6uJ9OEv3kxw1QDBTU4CFl8rLyL8eiGk81Q==}
+  /eslint-config-turbo@2.8.9(eslint@9.39.2)(turbo@2.8.6):
+    resolution: {integrity: sha512-U+R5hYzLH5A393R4u6AGMftSLXEs0Gj7ys1ae2ha39YWi+Ei8K2ctOB5y+NQ7TOngvOVIK5uFhxMWQimKAglGw==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
     dependencies:
       eslint: 9.39.2
-      eslint-plugin-turbo: 2.8.6(eslint@9.39.2)(turbo@2.8.6)
+      eslint-plugin-turbo: 2.8.9(eslint@9.39.2)(turbo@2.8.6)
       turbo: 2.8.6
     dev: true
 
@@ -13130,6 +13130,17 @@ packages:
 
   /eslint-plugin-turbo@2.8.6(eslint@9.39.2)(turbo@2.8.6):
     resolution: {integrity: sha512-ApMp9vaw5BbqK76fYnWqaGRwlqWKLU11GTF8YuZsDKpJJ+fLwMwfvmapy70y6Bm+fQx7opuoJTlyhlNgcgjV0A==}
+    peerDependencies:
+      eslint: '>6.6.0'
+      turbo: '>2.0.0'
+    dependencies:
+      dotenv: 16.0.3
+      eslint: 9.39.2
+      turbo: 2.8.6
+    dev: true
+
+  /eslint-plugin-turbo@2.8.9(eslint@9.39.2)(turbo@2.8.6):
+    resolution: {integrity: sha512-gmhdR1SNrPxdXu00xxdhnt32SayUBjHbnhw3YpB939D9ZQjsK9Mthw7mPBrafifwb06kx0VqaFzxaP1JLCbh3g==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'

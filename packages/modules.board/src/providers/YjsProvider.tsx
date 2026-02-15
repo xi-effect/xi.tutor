@@ -1,6 +1,7 @@
 import { createContext, ReactNode, useContext, useMemo } from 'react';
 import { ExtendedStoreStatus, useYjsStore } from '../hooks/useYjsStore';
 import { StorageItemT } from 'common.types';
+import { DEMO_STORAGE_TOKEN, DEMO_YDOC_ID } from '../utils/yjsConstants';
 
 type YjsContextType = ExtendedStoreStatus | null;
 
@@ -8,7 +9,9 @@ const YjsContext = createContext<YjsContextType>(null);
 
 type YjsProviderProps = {
   children: ReactNode;
-  storageItem: StorageItemT;
+  storageItem?: StorageItemT;
+  /** Если true — используются тестовые значения ydocId и storageToken */
+  isDemo?: boolean;
 };
 
 export const useYjsContext = () => {
@@ -19,10 +22,10 @@ export const useYjsContext = () => {
   return context;
 };
 
-export const YjsProvider = ({ children, storageItem }: YjsProviderProps) => {
+export const YjsProvider = ({ children, storageItem, isDemo = false }: YjsProviderProps) => {
   // Извлекаем примитивные значения для мемоизации
-  const storageToken = storageItem?.storage_token || '';
-  const ydocId = storageItem?.ydoc_id || '';
+  const storageToken = isDemo ? DEMO_STORAGE_TOKEN : storageItem?.storage_token || '';
+  const ydocId = isDemo ? DEMO_YDOC_ID : storageItem?.ydoc_id || '';
 
   // Мемоизируем параметры, чтобы избежать пересоздания провайдера
   // Используем примитивные значения напрямую в зависимостях
@@ -45,16 +48,18 @@ export const YjsProvider = ({ children, storageItem }: YjsProviderProps) => {
         console.log('🔄 YjsProvider: пересоздание storeParams', {
           storageToken: maskToken(storageToken),
           ydocId: maskId(ydocId),
+          isDemo,
         });
       }
 
       return {
+        hostUrl: import.meta.env.VITE_SERVER_URL_HOCUS ?? 'wss://hocus.sovlium.ru',
         storageToken,
         ydocId,
         token: storageToken, // Передаем токен для asset store
       };
     },
-    [storageToken, ydocId], // Зависимости от примитивных значений
+    [storageToken, ydocId, isDemo], // Зависимости от примитивных значений
   );
 
   const yjsStore = useYjsStore(storeParams);

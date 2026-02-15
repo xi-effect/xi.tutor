@@ -10,7 +10,7 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "@hocuspocus/provider": "2.15.0",
+    "@hocuspocus/provider": "3.4.4",
     "@hookform/resolvers": "5.0.1",
     "@tanstack/react-router": "^1.128.8",
     "@tlsync-yjs/core": "0.2.1",

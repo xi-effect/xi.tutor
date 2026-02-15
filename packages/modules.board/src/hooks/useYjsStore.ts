@@ -1,7 +1,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { HocuspocusProvider } from '@hocuspocus/provider';
+import {
+  HocuspocusProvider,
+  WebSocketStatus,
+  type onAuthenticatedParameters,
+  type onAuthenticationFailedParameters,
+  type onStatusParameters,
+  type onSyncedParameters,
+} from '@hocuspocus/provider';
 import { useCurrentUser } from 'common.services';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -27,30 +34,30 @@ import { YKeyValue } from 'y-utility/y-keyvalue';
 import * as Y from 'yjs';
 import { myAssetStore } from '../features/imageStore';
 import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
-import { maskId, maskToken, maskUrl } from '../utils/maskSensitiveData';
-import {
-  createProviderInstance,
-  getOrCreateProfile,
-  getProfile,
-  logProviderEvent,
-  updateProfile,
-} from '../utils/yjsProfiling';
 import { generateUserColor } from '../utils/userColor';
 
 type UseYjsStoreArgs = Partial<{
   hostUrl: string;
   ydocId: string;
   storageToken: string;
-  version: number;
   shapeUtils: TLAnyShapeUtilConstructor[];
-  token: string; // Токен для asset store
+  token: string; // токен для asset store
 }>;
 
-export type ExtendedStoreStatus = {
+type ConnectionStatus = 'online' | 'offline';
+
+type StoreWithStatusExt = {
+  status: TLStoreWithStatus['status'];
   store?: TLStore;
+  error?: Error;
+  connectionStatus?: ConnectionStatus;
+};
+
+export type ExtendedStoreStatus = {
+  store: TLStore;
   status: TLStoreWithStatus['status'];
   error?: Error;
-  connectionStatus?: 'online' | 'offline';
+  connectionStatus?: ConnectionStatus;
   undo: () => void;
   redo: () => void;
   canUndo: boolean;
@@ -59,16 +66,141 @@ export type ExtendedStoreStatus = {
   toggleReadonly: () => void;
 };
 
+type PendingChanges = {
+  added: Record<string, TLRecord>;
+  updated: Record<string, TLRecord>;
+  removed: Record<string, TLRecord>;
+};
+
+/**
+ * В tldraw тип changes иногда уезжает в unknown (зависит от версии/сборки),
+ * поэтому описываем минимально нужную форму и приводим к ней.
+ */
+type TLStoreChanges = {
+  added: Record<string, TLRecord>;
+  updated: Record<string, [TLRecord, TLRecord]>;
+  removed: Record<string, TLRecord>;
+};
+
+const FLUSH_MS = 50;
+
+/**
+ * Throttle для awareness/presence (курсоры / presence).
+ * 80ms ≈ 12.5Hz — плавно, но без спама.
+ */
+const PRESENCE_FLUSH_MS = 80;
+
+/** =========================
+ * Provider singleton registry
+ * ========================= */
+type ProviderKey = string;
+
+type SharedEntry = {
+  key: ProviderKey;
+  refs: number;
+  provider: HocuspocusProvider;
+  yDoc: Y.Doc;
+  yStore: YKeyValue<TLRecord>;
+  meta: Y.Map<SerializedSchema | string>;
+  readonlyMap: Y.Map<boolean>;
+  releaseTimer: number | null;
+};
+
+const shared = new Map<ProviderKey, SharedEntry>();
+
+function makeKey(hostUrl: string, ydocId: string, storageToken: string) {
+  return `${hostUrl}__${ydocId}__${storageToken}`;
+}
+
+function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string): SharedEntry {
+  const key = makeKey(hostUrl, ydocId, storageToken);
+  const existing = shared.get(key);
+
+  if (existing) {
+    existing.refs += 1;
+
+    if (existing.releaseTimer != null) {
+      clearTimeout(existing.releaseTimer);
+      existing.releaseTimer = null;
+    }
+
+    return existing;
+  }
+
+  const yDoc = new Y.Doc({ gc: true });
+  const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${ydocId}`);
+  const yStore = new YKeyValue<TLRecord>(yArr);
+
+  const meta = yDoc.getMap<SerializedSchema | string>('meta');
+  meta.set('schemaVersion', BOARD_SCHEMA_VERSION);
+
+  const readonlyMap = yDoc.getMap<boolean>('readonly');
+
+  const provider = new HocuspocusProvider({
+    url: hostUrl,
+    name: ydocId,
+    document: yDoc,
+    token: storageToken,
+    forceSyncInterval: 20_000,
+    // attach() / detach() управляем снаружи (в хуке + refCount)
+  });
+
+  const entry: SharedEntry = {
+    key,
+    refs: 1,
+    provider,
+    yDoc,
+    yStore,
+    meta,
+    readonlyMap,
+    releaseTimer: null,
+  };
+
+  shared.set(key, entry);
+
+  return entry;
+}
+
+function releaseShared(entry: SharedEntry) {
+  entry.refs = Math.max(0, entry.refs - 1);
+
+  if (entry.refs > 0) return;
+
+  // debounce — чтобы StrictMode mount->cleanup->mount не рвал коннект
+  entry.releaseTimer = window.setTimeout(() => {
+    entry.releaseTimer = null;
+
+    if (entry.refs > 0) return;
+
+    try {
+      entry.provider.detach();
+    } catch {
+      // ignore
+    }
+
+    try {
+      entry.provider.destroy();
+    } catch {
+      // ignore
+    }
+
+    shared.delete(entry.key);
+  }, 250);
+}
+
+/** =========================
+ * Hook
+ * ========================= */
 export function useYjsStore({
-  ydocId = 'test/demo-room',
-  storageToken = 'test/demo-room',
-  hostUrl = 'wss://hocus.sovlium.ru',
+  ydocId = '',
+  storageToken = '',
+  hostUrl = import.meta.env.VITE_SERVER_URL_HOCUS ?? 'wss://hocus.sovlium.ru',
   shapeUtils = [],
   token,
 }: UseYjsStoreArgs): ExtendedStoreStatus {
   const { data: currentUser } = useCurrentUser();
 
-  /* ---------- TLStore (локальный) ---------- */
+  /** TLStore должен быть ОДИН и всегда один и тот же */
   const [store] = useState(() => {
     const assetStore = token ? myAssetStore(token) : undefined;
 
@@ -78,153 +210,40 @@ export function useYjsStore({
     });
   });
 
-  /* ---------- Undo/Redo refs & flags ---------- */
   const undoManagerRef = useRef<Y.UndoManager | null>(null);
-  const suppressSyncRef = useRef(false); // защита от эха
-  const [canUndo, setCanUndo] = useState<boolean>(false);
-  const [canRedo, setCanRedo] = useState<boolean>(false);
+  const suppressSyncRef = useRef(false);
 
-  /* ---------- Readonly state ---------- */
-  const [isReadonly, setIsReadonly] = useState<boolean>(false);
-  const [serverReadonly, setServerReadonly] = useState<boolean>(false);
+  const [canUndo, setCanUndo] = useState(false);
+  const [canRedo, setCanRedo] = useState(false);
 
-  /* ---------- Статус ---------- */
-  const [storeWithStatus, setStoreWithStatus] = useState<TLStoreWithStatus>({
+  const [serverReadonly, setServerReadonly] = useState(false);
+  const [localReadonly, setLocalReadonly] = useState(false);
+
+  const [storeWithStatus, setStoreWithStatus] = useState<StoreWithStatusExt>(() => ({
     status: 'loading',
-  });
+    store,
+    connectionStatus: 'offline',
+  }));
 
-  /* ---------- Отслеживание предыдущих значений зависимостей ---------- */
-  const prevDepsRef = useRef<{
-    hostUrl?: string;
-    ydocId?: string;
-    storageToken?: string;
-  }>({});
-
-  /* ---------- BATChING: буфер изменений store -> Yjs ---------- */
-  const pendingChangesRef = useRef<{
-    added: Record<string, TLRecord>;
-    updated: Record<string, TLRecord>;
-    removed: Record<string, TLRecord>;
-  } | null>(null);
-
+  /** batching store -> yjs */
+  const pendingChangesRef = useRef<PendingChanges | null>(null);
   const flushTimeoutRef = useRef<number | null>(null);
 
-  /* ---------- Yjs структуры + провайдер ---------- */
-  const { yDoc, yStore, meta, room, readonlyMap, instanceId } = useMemo(() => {
-    const instanceId = createProviderInstance();
-    const createdAt = Date.now();
-
-    // Определяем, какие зависимости изменились
-    const changedDeps: string[] = [];
-    if (prevDepsRef.current.hostUrl !== hostUrl) {
-      changedDeps.push('hostUrl');
-    }
-    if (prevDepsRef.current.ydocId !== ydocId) {
-      changedDeps.push('ydocId');
-    }
-    if (prevDepsRef.current.storageToken !== storageToken) {
-      changedDeps.push('storageToken');
-    }
-
-    // Сохраняем текущие значения
-    prevDepsRef.current = { hostUrl, ydocId, storageToken };
-
-    // Предупреждение о частых пересозданиях
-    if (instanceId > 1) {
-      const previousProfile = getProfile(instanceId - 1);
-      if (previousProfile) {
-        const timeSinceLast = createdAt - previousProfile.createdAt;
-        if (timeSinceLast < 5000) {
-          console.warn(
-            `⚠️ КРИТИЧНО: Провайдер пересоздан через ${Math.round(timeSinceLast)}мс! ` +
-              `Это может указывать на проблему с зависимостями useMemo.`,
-          );
-          console.warn(
-            `📋 Изменившиеся зависимости:`,
-            changedDeps.length > 0 ? changedDeps : 'НЕТ (возможно, объект пересоздан)',
-          );
-          if (changedDeps.includes('storageToken')) {
-            console.warn(
-              `⚠️ storageToken изменился! ` +
-                `Предыдущее: ${maskToken(prevDepsRef.current.storageToken)} ` +
-                `Новое: ${maskToken(storageToken)}`,
-            );
-          }
-        }
-      }
-    }
-
-    logProviderEvent(instanceId, 'СОЗДАНИЕ ПРОВАЙДЕРА', {
-      hostUrl: maskUrl(hostUrl),
-      ydocId: maskId(ydocId),
-      storageToken: maskToken(storageToken),
-      причина:
-        changedDeps.length > 0
-          ? `изменение зависимостей: ${changedDeps.join(', ')}`
-          : 'useMemo пересоздание (зависимости не изменились)',
-      зависимостей: `[hostUrl, ydocId, storageToken]`,
-      всегоСоздано: instanceId,
-      изменившиесяЗависимости: changedDeps,
-    });
-
-    const yDoc = new Y.Doc({ gc: true });
-    const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${ydocId}`);
-    const yStore = new YKeyValue(yArr);
-    const meta = yDoc.getMap<SerializedSchema | string>('meta');
-    meta.set('schemaVersion', BOARD_SCHEMA_VERSION);
-    const readonlyMap = yDoc.getMap<boolean>('readonly');
-
-    const room = new HocuspocusProvider({
-      url: hostUrl,
-      name: ydocId,
-      document: yDoc,
-      token: storageToken,
-      connect: false,
-      forceSyncInterval: 20000,
-      onAuthenticationFailed: (data) => {
-        logProviderEvent(instanceId, 'ОШИБКА АУТЕНТИФИКАЦИИ', { reason: data.reason });
-        if (data.reason === 'permission-denied') {
-          toast('Ошибка доступа к серверу совместного редактирования');
-          console.error('hocuspocus: permission-denied');
-        } else {
-          console.error('hocuspocus: unknown error', data);
-        }
-      },
-      onAuthenticated: () => {
-        logProviderEvent(instanceId, 'АУТЕНТИФИКАЦИЯ УСПЕШНА');
-        setTimeout(() => {
-          const authorizedScope = (room as any).authorizedScope;
-          const isReadOnly =
-            authorizedScope === 'read' ||
-            authorizedScope === 'readonly' ||
-            (typeof authorizedScope === 'string' &&
-              authorizedScope.includes('read') &&
-              !authorizedScope.includes('write'));
-          setServerReadonly(isReadOnly);
-        }, 100);
-      },
-    });
-
-    // Инициализация профиля
-    getOrCreateProfile(instanceId);
-
-    return { yDoc, yStore, meta, room, readonlyMap, instanceId };
+  const sharedEntry = useMemo(() => {
+    return getOrCreateShared(hostUrl, ydocId, storageToken);
   }, [hostUrl, ydocId, storageToken]);
 
-  /* ---------- Защита от повторных подключений ---------- */
-  const isConnectingRef = useRef(false);
-  const hasConnectedRef = useRef(false);
-  const roomRef = useRef(room);
+  const { provider, yDoc, yStore, meta, readonlyMap } = sharedEntry;
 
-  // Обновляем ref при изменении room (но не вызываем эффект)
-  roomRef.current = room;
-
-  /* ---------- Главный эффект ---------- */
   useEffect(() => {
-    const profile = getProfile(instanceId);
-    const currentRoom = roomRef.current;
+    setStoreWithStatus((prev) => ({ ...prev, status: 'loading', store }));
 
-    // Функции батчинга привязаны к конкретному yDoc/yStore данного эффекта
+    // ВАЖНО: attach тут, а detach — ТОЛЬКО в releaseShared (когда refs = 0).
+    // Иначе при 2 потребителях или StrictMode будет "чужой" cleanup ронять сокет.
+    provider.attach();
+
+    const unsubs: Array<() => void> = [];
+
     const flushPendingChanges = () => {
       const pending = pendingChangesRef.current;
       if (!pending) return;
@@ -241,116 +260,72 @@ export function useYjsStore({
     const scheduleFlush = () => {
       if (flushTimeoutRef.current != null) return;
 
-      // 25 мс — фиксированный интервал батчинга
       flushTimeoutRef.current = window.setTimeout(() => {
         flushTimeoutRef.current = null;
         flushPendingChanges();
-      }, 25);
+      }, FLUSH_MS);
     };
 
-    // Защита от React Strict Mode двойного вызова
-    // Используем только instanceId для ключа, чтобы эффект не пересоздавался при изменении статуса
-    const effectKey = `effect-${instanceId}`;
-
-    logProviderEvent(instanceId, 'ВЫЗОВ useEffect', {
-      причина: 'изменение зависимостей',
-      зависимости: {
-        room: !!currentRoom,
-        yDoc: !!yDoc,
-        store: !!store,
-        currentUser: !!currentUser,
-      },
-      ужеПодключался: hasConnectedRef.current,
-      hasCalledConnect: profile?.hasCalledConnect,
-      effectKey,
-      примечание: import.meta.env?.DEV
-        ? 'В dev режиме React Strict Mode может вызывать эффекты дважды - это нормально'
-        : undefined,
-    });
-
-    // КРИТИЧНО: Проверяем, был ли уже вызван connect() для этого экземпляра провайдера
-    // Этот флаг НЕ сбрасывается в cleanup, поэтому защищает от повторных вызовов в React Strict Mode
-    // НО: мы все равно регистрируем обработчики событий, чтобы они работали
-    const shouldConnect =
-      !profile?.hasCalledConnect &&
-      !isConnectingRef.current &&
-      !(hasConnectedRef.current && (currentRoom.isConnected || currentRoom.status === 'connected'));
-
-    if (shouldConnect) {
-      // Устанавливаем флаг подключения СРАЗУ, до всех остальных операций
-      isConnectingRef.current = true;
-
-      // КРИТИЧНО: Устанавливаем флаг, что connect() был вызван для этого экземпляра
-      // Этот флаг НЕ сбрасывается в cleanup, поэтому защищает от повторных вызовов
-      updateProfile(instanceId, {
-        hasCalledConnect: true,
-        connectCount: (getProfile(instanceId)?.connectCount || 0) + 1,
-        lastConnectTime: Date.now(),
+    const handleAuthFailed = ({ reason }: onAuthenticationFailedParameters) => {
+      setStoreWithStatus({
+        status: 'error',
+        store,
+        error: new Error(`Authentication failed: ${reason}`),
+        connectionStatus: 'offline',
       });
 
-      setStoreWithStatus({ status: 'loading' });
+      if (reason === 'permission-denied') {
+        toast('Ошибка доступа к серверу совместного редактирования');
+      }
+    };
 
-      logProviderEvent(instanceId, 'ВЫЗОВ room.connect()', {
-        текущийСтатус: currentRoom.status,
-        ужеПодключен: currentRoom.isConnected,
-      });
+    const handleAuthenticated = ({ scope }: onAuthenticatedParameters) => {
+      const s = String(scope).toLowerCase();
+      setServerReadonly(s === 'read-only' || s === 'readonly' || s === 'read_only');
+    };
 
-      currentRoom.connect();
-    } else {
-      logProviderEvent(instanceId, 'ПРОПУСК connect()', {
-        причина: profile?.hasCalledConnect
-          ? 'connect() уже был вызван для этого экземпляра провайдера'
-          : isConnectingRef.current
-            ? 'уже идет процесс подключения'
-            : 'провайдер уже подключен',
-        текущийСтатус: currentRoom.status,
-        effectKey,
-      });
-    }
+    provider.on('authenticationFailed', handleAuthFailed as any);
+    provider.on('authenticated', handleAuthenticated as any);
 
-    const unsubs: (() => void)[] = [];
-
-    function handleSync() {
-      const profile = getProfile(instanceId);
-      if (profile) {
-        updateProfile(instanceId, {
-          syncedEvents: profile.syncedEvents + 1,
-        });
+    const handleStatus = ({ status }: onStatusParameters) => {
+      if (status === WebSocketStatus.Disconnected) {
+        setStoreWithStatus((prev) => ({ ...prev, connectionStatus: 'offline' }));
       }
 
-      logProviderEvent(instanceId, 'СОБЫТИЕ synced', {
-        всегоSynced: profile?.syncedEvents || 0,
-      });
+      if (status === WebSocketStatus.Connected) {
+        setStoreWithStatus((prev) => ({ ...prev, connectionStatus: 'online' }));
+      }
+    };
 
-      /* ========== DOCUMENT: store -> yDoc (С БАТЧИНГОМ) ========== */
+    provider.on('status', handleStatus as any);
+    unsubs.push(() => provider.off('status', handleStatus as any));
+
+    const handleSynced = ({ state }: onSyncedParameters) => {
+      if (!state) return;
+
+      /** 1) store -> yjs (батчинг) */
       unsubs.push(
         store.listen(
           ({ changes }) => {
             if (suppressSyncRef.current) return;
 
             if (!pendingChangesRef.current) {
-              pendingChangesRef.current = {
-                added: {},
-                updated: {},
-                removed: {},
-              };
+              pendingChangesRef.current = { added: {}, updated: {}, removed: {} };
             }
 
             const pending = pendingChangesRef.current;
+            const typedChanges = changes as unknown as TLStoreChanges;
 
-            // Добавленные
-            Object.values(changes.added).forEach((r) => {
+            Object.values(typedChanges.added).forEach((r) => {
               pending.added[r.id] = r;
               delete pending.removed[r.id];
             });
 
-            // Обновлённые
-            Object.values(changes.updated).forEach(([_, r]) => {
+            Object.values(typedChanges.updated).forEach(([, r]) => {
               pending.updated[r.id] = r;
             });
 
-            // Удалённые
-            Object.values(changes.removed).forEach((r) => {
+            Object.values(typedChanges.removed).forEach((r) => {
               delete pending.added[r.id];
               delete pending.updated[r.id];
               pending.removed[r.id] = r;
@@ -358,11 +333,11 @@ export function useYjsStore({
 
             scheduleFlush();
           },
-          { source: 'user', scope: 'document' },
+          { scope: 'document', source: 'user' },
         ),
       );
 
-      /* ========== DOCUMENT: yDoc -> store ========== */
+      /** 2) yjs -> store */
       const handleChange = (
         changes: Map<
           string,
@@ -372,10 +347,12 @@ export function useYjsStore({
         >,
         transaction: Y.Transaction,
       ) => {
-        // Пропускаем локальные НЕ undo/redo транзакции
-        if (transaction.local && transaction.origin !== undoManagerRef.current) {
-          return;
-        }
+        /**
+         * ВАЖНО (фикс readonly):
+         * Не фильтруем по transaction.local — сетевые апдейты могут применяться "локально"
+         * в Y.Doc. Нам нужно отсечь только эхо своих store->yjs транзакций.
+         */
+        if (transaction.origin === 'user') return;
 
         const toRemove: TLRecord['id'][] = [];
         const toPut: TLRecord[] = [];
@@ -398,93 +375,166 @@ export function useYjsStore({
       yStore.on('change', handleChange);
       unsubs.push(() => yStore.off('change', handleChange));
 
-      /* ========== READONLY ========== */
+      /** 3) readonly (shared map) */
       const getReadonlyValue = () => readonlyMap.get('isReadonly') ?? false;
-      const handleReadonlyChange = () => setIsReadonly(getReadonlyValue());
+      const handleReadonlyChange = () => setLocalReadonly(getReadonlyValue());
 
       readonlyMap.observe(handleReadonlyChange);
       unsubs.push(() => readonlyMap.unobserve(handleReadonlyChange));
+      setLocalReadonly(getReadonlyValue());
 
-      setIsReadonly(getReadonlyValue());
+      /** 4) awareness/presence */
+      const awareness = provider.awareness;
 
-      /* ========== AWARENESS ========== */
-      if (!currentRoom.awareness) return;
+      if (awareness) {
+        const yClientId = awareness.clientID.toString();
+        const userName =
+          currentUser?.display_name || currentUser?.username || defaultUserPreferences.name;
+        const userColor = generateUserColor(currentUser?.id?.toString() || yClientId);
 
-      const yClientId = currentRoom.awareness.clientID.toString();
-      const userName =
-        currentUser?.display_name || currentUser?.username || defaultUserPreferences.name;
-      const userColor = generateUserColor(currentUser?.id?.toString() || yClientId);
+        setUserPreferences({ id: yClientId, name: userName, color: userColor });
 
-      setUserPreferences({
-        id: yClientId,
-        name: userName,
-        color: userColor,
-      });
+        const userPreferences = computed<{ id: string; color: string; name: string }>(
+          'userPreferences',
+          () => {
+            const u = getUserPreferences();
+            return {
+              id: u.id,
+              color: u.color ?? userColor,
+              name: u.name ?? userName,
+            };
+          },
+        );
 
-      const userPreferences = computed<{
-        id: string;
-        color: string;
-        name: string;
-      }>('userPreferences', () => {
-        const user = getUserPreferences();
-        return {
-          id: user.id,
-          color: user.color ?? userColor,
-          name: user.name ?? userName,
+        const presenceId = InstancePresenceRecordType.createId(yClientId);
+        const presenceDerivation = createPresenceStateDerivation(
+          userPreferences,
+          presenceId,
+        )(store);
+
+        // ==== LOCAL presence batching (throttle + last-value-wins) ====
+        let presenceTimer: number | null = null;
+        let pendingPresence: TLInstancePresence | null = null;
+
+        const flushPresence = () => {
+          presenceTimer = null;
+
+          if (!pendingPresence) return;
+
+          awareness.setLocalStateField('presence', pendingPresence);
+          pendingPresence = null;
         };
-      });
 
-      const presenceId = InstancePresenceRecordType.createId(yClientId);
-      const presenceDerivation = createPresenceStateDerivation(userPreferences, presenceId)(store);
+        const schedulePresence = (next: TLInstancePresence | null | undefined) => {
+          if (!next) return;
 
-      currentRoom.awareness.setLocalStateField('presence', presenceDerivation.get());
+          pendingPresence = next;
 
-      unsubs.push(
-        react('when presence changes', () => {
-          const presence = presenceDerivation.get();
-          requestAnimationFrame(() => {
-            currentRoom.awareness?.setLocalStateField('presence', presence);
-          });
-        }),
-      );
+          if (presenceTimer != null) return;
 
-      const handleAwarenessUpdate = (update: {
-        added: number[];
-        updated: number[];
-        removed: number[];
-      }) => {
-        const states = currentRoom.awareness!.getStates() as Map<
-          number,
-          { presence: TLInstancePresence }
-        >;
+          presenceTimer = window.setTimeout(() => {
+            flushPresence();
+          }, PRESENCE_FLUSH_MS);
+        };
 
-        const toRemove: TLInstancePresence['id'][] = [];
-        const toPut: TLInstancePresence[] = [];
-
-        for (const id of update.added.concat(update.updated)) {
-          const st = states.get(id);
-          if (st?.presence && st.presence.id !== presenceId) {
-            toPut.push(st.presence);
-          }
-        }
-        for (const id of update.removed) {
-          toRemove.push(InstancePresenceRecordType.createId(id.toString()));
+        // initial push (сразу, чтобы другие сразу увидели)
+        const initialPresence = presenceDerivation.get();
+        if (initialPresence) {
+          awareness.setLocalStateField('presence', initialPresence);
         }
 
-        store.mergeRemoteChanges(() => {
-          if (toRemove.length) store.remove(toRemove);
-          if (toPut.length) store.put(toPut);
+        // подписка на изменения presence в store
+        unsubs.push(
+          react('when presence changes', () => {
+            const presence = presenceDerivation.get();
+            schedulePresence(presence);
+          }),
+        );
+
+        // cleanup local presence batching
+        unsubs.push(() => {
+          if (presenceTimer != null) clearTimeout(presenceTimer);
+          presenceTimer = null;
+          pendingPresence = null;
         });
-      };
 
-      currentRoom.awareness.on('update', handleAwarenessUpdate);
-      unsubs.push(() => currentRoom.awareness?.off('update', handleAwarenessUpdate));
+        // ==== REMOTE presence batching (raf) ====
+        type PresenceState = { presence?: TLInstancePresence };
+        type AwarenessChange = { added: number[]; updated: number[]; removed: number[] };
 
-      /* ========== INITIAL SEED ========== */
+        let rafId: number | null = null;
+
+        const pendingRemote = {
+          toPut: new Map<string, TLInstancePresence>(),
+          toRemove: new Set<string>(),
+        };
+
+        const flushRemotePresence = () => {
+          rafId = null;
+
+          const toRemove = Array.from(pendingRemote.toRemove) as TLInstancePresence['id'][];
+          const toPut = Array.from(pendingRemote.toPut.values());
+
+          pendingRemote.toPut.clear();
+          pendingRemote.toRemove.clear();
+
+          if (!toRemove.length && !toPut.length) return;
+
+          store.mergeRemoteChanges(() => {
+            if (toRemove.length) store.remove(toRemove);
+            if (toPut.length) store.put(toPut);
+          });
+        };
+
+        const scheduleFlushRemote = () => {
+          if (rafId != null) return;
+          rafId = requestAnimationFrame(flushRemotePresence);
+        };
+
+        const onAwarenessChange = ({ added, updated, removed }: AwarenessChange) => {
+          const states = awareness.getStates() as Map<number, PresenceState>;
+
+          for (const clientId of [...added, ...updated]) {
+            if (clientId.toString() === yClientId) continue;
+
+            const st = states.get(clientId);
+            const remotePresence = st?.presence;
+
+            if (remotePresence && remotePresence.id !== presenceId) {
+              pendingRemote.toPut.set(remotePresence.id, remotePresence);
+              pendingRemote.toRemove.delete(remotePresence.id);
+            }
+          }
+
+          for (const clientId of removed) {
+            const id = InstancePresenceRecordType.createId(clientId.toString());
+            pendingRemote.toRemove.add(id);
+            pendingRemote.toPut.delete(id);
+          }
+
+          scheduleFlushRemote();
+        };
+
+        awareness.on('change', onAwarenessChange);
+        unsubs.push(() => awareness.off('change', onAwarenessChange));
+
+        unsubs.push(() => {
+          if (rafId != null) cancelAnimationFrame(rafId);
+          rafId = null;
+
+          pendingRemote.toPut.clear();
+          pendingRemote.toRemove.clear();
+        });
+      }
+
+      /** 5) initial seed / migrate */
       if (yStore.yarray.length) {
         const ourSchema = store.schema.serialize();
         const theirSchema = meta.get('schema') as SerializedSchema | undefined;
-        if (!theirSchema) throw new Error('No schema found in the yjs doc');
+
+        if (!theirSchema) {
+          throw new Error('No schema found in the yjs doc');
+        }
 
         const records = yStore.yarray.toJSON().map(({ val }) => val);
 
@@ -492,6 +542,7 @@ export function useYjsStore({
           schema: theirSchema,
           store: Object.fromEntries(records.map((r) => [r.id, r])),
         });
+
         if (migrationResult.type === 'error') {
           console.warn('Schema updated, refresh.');
           return;
@@ -501,9 +552,11 @@ export function useYjsStore({
           for (const r of records) {
             if (!migrationResult.value[r.id]) yStore.delete(r.id);
           }
+
           for (const r of Object.values(migrationResult.value) as TLRecord[]) {
             yStore.set(r.id, r);
           }
+
           meta.set('schema', ourSchema);
         }, 'init');
 
@@ -515,21 +568,25 @@ export function useYjsStore({
         }, 'init');
       }
 
-      /* ========== UNDO MANAGER (после seed) ========== */
+      /** 6) undo manager */
       if (!undoManagerRef.current) {
         undoManagerRef.current = new Y.UndoManager(yStore.yarray, {
           captureTimeout: 300,
           trackedOrigins: new Set(['user', null]),
         });
+
         const um = undoManagerRef.current;
+
         const updateFlags = () => {
           setCanUndo(um.canUndo());
           setCanRedo(um.canRedo());
         };
+
         um.on('stack-item-added', updateFlags);
         um.on('stack-item-popped', updateFlags);
         um.on('stack-cleared', updateFlags);
         updateFlags();
+
         unsubs.push(() => {
           um.off('stack-item-added', updateFlags);
           um.off('stack-item-popped', updateFlags);
@@ -542,122 +599,42 @@ export function useYjsStore({
         status: 'synced-remote',
         connectionStatus: 'online',
       });
-    }
-
-    /* ========== SERVER READONLY (from Hocuspocus) ========== */
-    const checkServerReadonly = () => {
-      const authorizedScope = (currentRoom as any).authorizedScope;
-      const isReadOnly =
-        authorizedScope === 'read' ||
-        authorizedScope === 'readonly' ||
-        (typeof authorizedScope === 'string' &&
-          authorizedScope.includes('read') &&
-          !authorizedScope.includes('write'));
-      setServerReadonly(isReadOnly);
     };
 
-    let hasConnectedBefore = false;
-    function handleStatusChange({ status }: { status: 'disconnected' | 'connected' }) {
-      const profile = getProfile(instanceId);
-      if (profile) {
-        const statusChanges = [...profile.statusChanges, { status, timestamp: Date.now() }];
-        const updates: Partial<typeof profile> = {
-          statusChanges,
-        };
-        if (status === 'disconnected') {
-          updates.disconnectCount = profile.disconnectCount + 1;
-          updates.lastDisconnectTime = Date.now();
-          hasConnectedRef.current = false;
-          isConnectingRef.current = false;
-        }
-        updateProfile(instanceId, updates);
-      }
-
-      logProviderEvent(instanceId, `ИЗМЕНЕНИЕ СТАТУСА: ${status}`, {
-        былоПодключений: hasConnectedBefore,
-        всегоИзмененийСтатуса: profile?.statusChanges.length || 0,
-      });
-
-      if (status === 'disconnected') {
-        setStoreWithStatus({
-          store,
-          status: 'synced-remote',
-          connectionStatus: 'offline',
-        });
-        return;
-      }
-
-      currentRoom.off('synced', handleSync);
-      if (status === 'connected') {
-        // Устанавливаем флаги при успешном подключении
-        hasConnectedRef.current = true;
-        isConnectingRef.current = false;
-
-        checkServerReadonly();
-        if (hasConnectedBefore) {
-          logProviderEvent(instanceId, 'ПОВТОРНОЕ ПОДКЛЮЧЕНИЕ (пропуск handleSync)', {
-            предупреждение: 'handleSync уже был зарегистрирован ранее',
-          });
-          return;
-        }
-        hasConnectedBefore = true;
-        currentRoom.on('synced', handleSync);
-        unsubs.push(() => currentRoom.off('synced', handleSync));
-      }
-    }
-
-    currentRoom.on('status', handleStatusChange);
-    unsubs.push(() => currentRoom.off('status', handleStatusChange));
-
-    const handleSynced = () => {
-      logProviderEvent(instanceId, 'СОБЫТИЕ synced (второй обработчик)', {
-        примечание: 'проверка readonly',
-      });
-      checkServerReadonly();
-    };
-    currentRoom.on('synced', handleSynced);
-    unsubs.push(() => currentRoom.off('synced', handleSynced));
+    provider.on('synced', handleSynced as any);
+    unsubs.push(() => provider.off('synced', handleSynced as any));
 
     return () => {
-      logProviderEvent(instanceId, 'ОЧИСТКА useEffect', {
-        количествоПодписок: unsubs.length,
-        будетОтключен: true,
-        былПодключен: hasConnectedRef.current,
-      });
-
-      // Сбрасываем флаги
-      isConnectingRef.current = false;
-
-      // Чистим таймер батчинга и буфер
       if (flushTimeoutRef.current != null) {
         clearTimeout(flushTimeoutRef.current);
         flushTimeoutRef.current = null;
       }
+
       pendingChangesRef.current = null;
 
-      // Отключаем провайдер при очистке только если он был подключен
-      if (currentRoom.isConnected && hasConnectedRef.current) {
-        logProviderEvent(instanceId, 'ОТКЛЮЧЕНИЕ ПРОВАЙДЕРА', {
-          причина: 'cleanup useEffect',
-        });
-        currentRoom.disconnect();
-        hasConnectedRef.current = false;
-      }
-
       unsubs.forEach((fn) => fn());
-    };
-  }, [yDoc, store, yStore, meta, readonlyMap, currentUser, instanceId]);
 
-  /* ---------- Public Undo/Redo API ---------- */
+      provider.off('authenticationFailed', handleAuthFailed as any);
+      provider.off('authenticated', handleAuthenticated as any);
+
+      // ВАЖНО: НЕТ provider.detach() здесь!
+      // detach/destroy делаем только когда refs упадет в 0 (releaseShared).
+      releaseShared(sharedEntry);
+    };
+  }, [provider, yDoc, yStore, meta, readonlyMap, store, currentUser, sharedEntry]);
+
   function undo() {
     const um = undoManagerRef.current;
     if (!um?.canUndo()) return;
+
     suppressSyncRef.current = true;
+
     try {
-      um.undo(); // производит локальную транзакцию с origin === um
+      um.undo();
     } finally {
       suppressSyncRef.current = false;
     }
+
     setCanUndo(um.canUndo());
     setCanRedo(um.canRedo());
   }
@@ -665,21 +642,22 @@ export function useYjsStore({
   function redo() {
     const um = undoManagerRef.current;
     if (!um?.canRedo()) return;
+
     suppressSyncRef.current = true;
+
     try {
       um.redo();
     } finally {
       suppressSyncRef.current = false;
     }
+
     setCanUndo(um.canUndo());
     setCanRedo(um.canRedo());
   }
 
-  /* ---------- Public Readonly API ---------- */
   function toggleReadonly() {
-    const newReadonly = !isReadonly;
-
-    setIsReadonly(newReadonly);
+    const newReadonly = !(readonlyMap.get('isReadonly') ?? false);
+    setLocalReadonly(newReadonly);
 
     yDoc.transact(() => {
       readonlyMap.set('isReadonly', newReadonly);
@@ -688,17 +666,19 @@ export function useYjsStore({
     toast.success(newReadonly ? 'Доска заблокирована!' : 'Доска разблокирована!');
   }
 
-  // Объединяем readonly с сервера и локальный readonly
-  // Если сервер установил readonly, это имеет приоритет
-  const finalIsReadonly = serverReadonly || isReadonly;
+  const finalIsReadonly = serverReadonly || localReadonly;
 
   return {
-    ...storeWithStatus,
-    connectionStatus: (storeWithStatus as any).connectionStatus,
+    store,
+    status: storeWithStatus.status,
+    error: storeWithStatus.error,
+    connectionStatus: storeWithStatus.connectionStatus,
+
     undo,
     redo,
     canUndo,
     canRedo,
+
     toggleReadonly,
     isReadonly: finalIsReadonly,
   };

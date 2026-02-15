@@ -112,7 +112,7 @@ export const Header = () => {
               <Skeleton variant="text" className="h-6 w-24" />
             ) : (
               <div className="flex items-center gap-2">
-                <h1 className="text-xl-base select-none">{material.name}</h1>
+                <h1 className="text-xl-base select-none">{material?.name || 'Untitled'}</h1>
                 {isTutor && (
                   <Button
                     type="button"
