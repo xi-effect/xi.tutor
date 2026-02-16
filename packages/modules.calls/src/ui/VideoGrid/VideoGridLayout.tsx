@@ -159,6 +159,7 @@ export const CarouselContainer = ({ focusTrack, carouselTracks }: CarouselContai
     return (
       <ParticipantTile
         isFocusToggleDisable
+        isFocusView
         style={{
           width: '100%',
           height: '100%',

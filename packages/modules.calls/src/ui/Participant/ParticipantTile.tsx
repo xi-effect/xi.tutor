@@ -26,6 +26,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { FocusToggle } from '../shared/FocusToggle';
 import { ParticipantName } from './ParticipantName';
 import { RaisedHandIndicator } from './RaisedHandIndicator';
+import { ScreenShareZoom } from './ScreenShareZoom';
 import { useCallStore } from '../../store/callStore';
 import { cn } from '@xipkg/utils';
 
@@ -73,8 +74,14 @@ type FocusToggleDisablePropsT = {
   isFocusToggleDisable?: boolean;
 };
 
+type FocusViewPropsT = {
+  /** Плитка в фокусе (в HorizontalFocusLayout / VerticalFocusLayout). Для демонстрации экрана включает зум. */
+  isFocusView?: boolean;
+};
+
 type ParticipantTilePropsT = ParticipantTileProps &
-  FocusToggleDisablePropsT & {
+  FocusToggleDisablePropsT &
+  FocusViewPropsT & {
     participant?: Participant;
     source?: Track.Source;
     publication?: unknown;
@@ -89,6 +96,7 @@ export const ParticipantTile = ({
   publication,
   disableSpeakingIndicator,
   isFocusToggleDisable,
+  isFocusView,
   ...htmlProps
 }: ParticipantTilePropsT) => {
   const maybeTrackRef = useMaybeTrackRefContext();
@@ -207,26 +215,34 @@ export const ParticipantTile = ({
                     trackReference.source === Track.Source.ScreenShare) &&
                   trackReference.publication?.isSubscribed &&
                   trackReference.publication?.isEnabled &&
-                  !trackReference.publication?.track?.isMuted && (
-                    <div className="absolute inset-0 aspect-video h-full w-full rounded-2xl bg-gray-100/80">
-                      <VideoTrack
-                        className={cn(
-                          `absolute inset-0 h-full w-full rounded-2xl object-cover object-center ${getVideoClassName()}`,
-                        )}
-                        style={{
-                          ...(trackReference.source === Track.Source.Camera && {
-                            transform: 'rotateY(180deg)',
-                          }),
-                          boxSizing: 'border-box',
-                          background: 'var(--xi-bg-gray-100)',
-                          backgroundColor: 'var(--xi-bg-gray-100)',
-                        }}
-                        trackRef={trackReference}
-                        onSubscriptionStatusChanged={handleSubscribe}
-                        manageSubscription={autoManageSubscription}
-                      />
-                    </div>
-                  )}
+                  !trackReference.publication?.track?.isMuted &&
+                  (() => {
+                    const videoBlock = (
+                      <div className="absolute inset-0 aspect-video h-full w-full rounded-2xl bg-gray-100/80">
+                        <VideoTrack
+                          className={cn(
+                            `absolute inset-0 h-full w-full rounded-2xl object-cover object-center ${getVideoClassName()}`,
+                          )}
+                          style={{
+                            ...(trackReference.source === Track.Source.Camera && {
+                              transform: 'rotateY(180deg)',
+                            }),
+                            boxSizing: 'border-box',
+                            background: 'var(--xi-bg-gray-100)',
+                            backgroundColor: 'var(--xi-bg-gray-100)',
+                          }}
+                          trackRef={trackReference}
+                          onSubscriptionStatusChanged={handleSubscribe}
+                          manageSubscription={autoManageSubscription}
+                        />
+                      </div>
+                    );
+                    return isFocusView && trackReference.source === Track.Source.ScreenShare ? (
+                      <ScreenShareZoom trackRef={trackReference}>{videoBlock}</ScreenShareZoom>
+                    ) : (
+                      videoBlock
+                    );
+                  })()}
                 {/* Аудио трек для случаев без видео */}
                 {isTrackReference(trackReference) &&
                   (!trackReference.publication?.isSubscribed ||
