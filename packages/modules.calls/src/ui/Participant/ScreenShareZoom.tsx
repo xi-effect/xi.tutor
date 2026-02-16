@@ -7,8 +7,8 @@ import { Button } from '@xipkg/button';
 import { Slider } from '@xipkg/slider';
 import { cn } from '@xipkg/utils';
 
-const MIN_ZOOM = 0.25;
-const MAX_ZOOM = 2;
+const MIN_ZOOM = 1;
+const MAX_ZOOM = 2.5;
 const ZOOM_STEP = 0.25;
 const THUMBNAIL_MAX_WIDTH = 240;
 const THUMBNAIL_MAX_HEIGHT = 135;
@@ -81,6 +81,14 @@ export function ScreenShareZoom({ trackRef, children, className }: ScreenShareZo
     setPanY((p) => Math.min(p, maxPanY));
   }, [zoomLevel, videoDimensions, containerSize]);
 
+  // При открытии панели зума сразу пересчитываем размеры видео, чтобы не было рамок из-за отсутствия transform
+  useEffect(() => {
+    if (isPanelOpen) {
+      updateVideoDimensions();
+      updateContainerSize();
+    }
+  }, [isPanelOpen, updateVideoDimensions, updateContainerSize]);
+
   const handleZoomIn = useCallback(() => {
     setIsPanelOpen(true);
     setZoomLevel((z) => Math.min(MAX_ZOOM, z + ZOOM_STEP));
@@ -150,19 +158,23 @@ export function ScreenShareZoom({ trackRef, children, className }: ScreenShareZo
   const showZoomButton = !isPanelOpen;
   const showPanel = isPanelOpen;
 
+  // Порядок важен: в CSS transform применяется справа налево — сначала scale, потом translate
   const zoomTransform =
     videoDimensions && isZoomed && containerSize
-      ? `scale(${zoomLevel}) translate(${-panX * zoomLevel}px, ${-panY * zoomLevel}px)`
+      ? `translate(${-panX * zoomLevel}px, ${-panY * zoomLevel}px) scale(${zoomLevel})`
       : undefined;
 
+  // Зум-режим: при открытии меню (zoom > 1) не используем flex-центрирование, чтобы не было серых рамок
+  const isZoomedState = zoomLevel > MIN_ZOOM;
+  const canApplyTransform = !!(videoDimensions && zoomTransform);
   const zoomableStyle: React.CSSProperties =
-    videoDimensions && zoomTransform
+    isZoomedState && canApplyTransform
       ? {
           position: 'absolute',
           left: 0,
           top: 0,
-          width: videoDimensions.width,
-          height: videoDimensions.height,
+          width: videoDimensions!.width,
+          height: videoDimensions!.height,
           transformOrigin: '0 0',
           transform: zoomTransform,
         }
@@ -172,6 +184,13 @@ export function ScreenShareZoom({ trackRef, children, className }: ScreenShareZo
           top: 0,
           right: 0,
           bottom: 0,
+          ...(zoomLevel <= MIN_ZOOM
+            ? {
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+              }
+            : {}),
         };
 
   // Миниатюра: масштаб под максимальные размеры
@@ -186,14 +205,22 @@ export function ScreenShareZoom({ trackRef, children, className }: ScreenShareZo
     thumbHeight = videoDimensions.height * thumbScale;
   }
 
+  // Синяя рамка в процентах от размеров видео, чтобы совпадала с основным видом при любом масштабе миниатюры
   const viewportRect =
-    containerSize && videoDimensions && thumbScale
-      ? {
-          left: (panX / videoDimensions.width) * thumbWidth,
-          top: (panY / videoDimensions.height) * thumbHeight,
-          width: (containerSize.width / zoomLevel / videoDimensions.width) * thumbWidth,
-          height: (containerSize.height / zoomLevel / videoDimensions.height) * thumbHeight,
-        }
+    containerSize && videoDimensions && thumbScale && thumbWidth > 0 && thumbHeight > 0
+      ? (() => {
+          const viewW = containerSize.width / zoomLevel;
+          const viewH = containerSize.height / zoomLevel;
+          const leftPct = (panX / videoDimensions.width) * 100;
+          const topPct = (panY / videoDimensions.height) * 100;
+          const widthPct = (viewW / videoDimensions.width) * 100;
+          const heightPct = (viewH / videoDimensions.height) * 100;
+          const left = Math.max(0, Math.min(100 - widthPct, leftPct));
+          const top = Math.max(0, Math.min(100 - heightPct, topPct));
+          const width = Math.max(2, Math.min(100 - left, widthPct));
+          const height = Math.max(2, Math.min(100 - top, heightPct));
+          return { left, top, width, height };
+        })()
       : null;
 
   return (
@@ -202,7 +229,13 @@ export function ScreenShareZoom({ trackRef, children, className }: ScreenShareZo
       className={cn('absolute inset-0 overflow-hidden rounded-2xl', className)}
     >
       <div className="absolute top-0 left-0 h-full w-full" style={zoomableStyle}>
-        {children}
+        {zoomLevel <= MIN_ZOOM ? (
+          <div className="flex h-full w-full items-center justify-center">
+            <div className="relative aspect-video max-h-full w-full min-w-0">{children}</div>
+          </div>
+        ) : (
+          children
+        )}
       </div>
 
       {/* Кнопка лупы — только когда панель закрыта */}
@@ -212,18 +245,18 @@ export function ScreenShareZoom({ trackRef, children, className }: ScreenShareZo
           size="icon"
           variant="none"
           onClick={handleZoomIn}
-          className="bg-gray-0/90 hover:bg-gray-0 absolute right-2 bottom-2 z-20 h-8 w-8 rounded-lg backdrop-blur"
+          className="bg-gray-0/80 hover:bg-gray-0 absolute right-2 bottom-2 z-20 h-8 w-8 rounded-lg backdrop-blur"
           aria-label="Приблизить"
         >
           <ZoomIn className="h-4 w-4" />
         </Button>
       )}
 
-      {/* Панель зума (миниатюра + слайдер + кнопки) — только после нажатия ZoomIn */}
+      {/* Панель зума: fixed в правом нижнем углу экрана, чтобы не «уезжала» при положении плитки слева */}
       {showPanel && (
-        <div className="border-gray-20 bg-brand-20/95 absolute right-1 bottom-1 z-20 w-[260px] rounded-xl border p-1 shadow-lg backdrop-blur">
+        <div className="bg-gray-0/80 fixed right-1 bottom-1 z-20 w-[260px] rounded-xl p-1 shadow-lg backdrop-blur">
           {/* Миниатюра с областью просмотра */}
-          <div className="relative mb-2 overflow-hidden rounded-lg bg-black">
+          <div className="bg-gray-20 relative mb-2 overflow-hidden rounded-lg">
             {isTrackReference(trackRef) && trackRef.publication?.track && (
               <div
                 className="relative flex items-center justify-center"
@@ -243,10 +276,10 @@ export function ScreenShareZoom({ trackRef, children, className }: ScreenShareZo
                     aria-label="Область просмотра, перетащите для перемещения"
                     className="border-brand-80 bg-brand-80/30 absolute cursor-grab rounded border-2 active:cursor-grabbing"
                     style={{
-                      left: viewportRect.left,
-                      top: viewportRect.top,
-                      width: Math.max(8, viewportRect.width),
-                      height: Math.max(8, viewportRect.height),
+                      left: `${viewportRect.left}%`,
+                      top: `${viewportRect.top}%`,
+                      width: `${viewportRect.width}%`,
+                      height: `${viewportRect.height}%`,
                     }}
                     onPointerDown={handleViewportRectPointerDown}
                     onPointerMove={handleViewportRectPointerMove}

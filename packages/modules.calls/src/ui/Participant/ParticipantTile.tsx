@@ -191,24 +191,44 @@ export const ParticipantTile = ({
           <div className="m-auto flex aspect-video h-full w-full justify-center overflow-hidden rounded-2xl in-[.lk-grid-layout]:relative in-[.lk-grid-layout]:overflow-hidden in-[.lk-grid-layout]:rounded-2xl [.lk-grid-layout_&]:m-0 [.lk-grid-layout_&]:flex-none [.lk-grid-layout_&]:bg-black">
             {children ?? (
               <div className="relative flex h-full w-full justify-center in-[.lk-grid-layout]:relative in-[.lk-grid-layout]:h-full in-[.lk-grid-layout]:w-full">
-                {/* Аватар всегда рендерится как фон */}
-                <div
-                  style={{
-                    borderRadius: '8px',
-                    height: '100%',
-                    backgroundColor: 'var(--color-gray-40)',
-                  }}
-                  className="lk-participant-placeholder flex aspect-video h-full w-full items-center justify-center"
-                >
-                  <Avatar size="xxl">
-                    <AvatarImage
-                      src={`https://api.sovlium.ru/files/users/${identity}/avatar.webp`}
-                      alt="user avatar"
+                {/* Аватар только когда камера выключена; для демонстрации экрана — только нейтральный фон */}
+                {(() => {
+                  const isScreenShare = trackReference.source === Track.Source.ScreenShare;
+                  const hasVideo =
+                    isTrackReference(trackReference) &&
+                    (trackReference.publication?.kind === 'video' ||
+                      trackReference.source === Track.Source.Camera ||
+                      trackReference.source === Track.Source.ScreenShare) &&
+                    trackReference.publication?.isSubscribed &&
+                    trackReference.publication?.isEnabled &&
+                    !trackReference.publication?.track?.isMuted;
+                  const showAvatar =
+                    !isScreenShare && trackReference.source === Track.Source.Camera && !hasVideo;
+                  return showAvatar ? (
+                    <div
+                      style={{
+                        borderRadius: '8px',
+                        height: '100%',
+                        backgroundColor: 'var(--color-gray-40)',
+                      }}
+                      className="lk-participant-placeholder flex aspect-video h-full w-full items-center justify-center"
+                    >
+                      <Avatar size="xxl">
+                        <AvatarImage
+                          src={`https://api.sovlium.ru/files/users/${identity}/avatar.webp`}
+                          alt="user avatar"
+                        />
+                        <AvatarFallback size="xxl" loading />
+                      </Avatar>
+                    </div>
+                  ) : (
+                    <div
+                      className="lk-participant-placeholder bg-gray-40 aspect-video h-full w-full rounded-lg"
+                      aria-hidden
                     />
-                    <AvatarFallback size="xxl" loading />
-                  </Avatar>
-                </div>
-                {/* Видео накладывается поверх аватара когда доступно */}
+                  );
+                })()}
+                {/* Видео накладывается поверх когда доступно (камера или демонстрация) */}
                 {isTrackReference(trackReference) &&
                   (trackReference.publication?.kind === 'video' ||
                     trackReference.source === Track.Source.Camera ||
