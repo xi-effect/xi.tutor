@@ -1,6 +1,7 @@
 import { LoadingScreen } from 'common.ui';
 import { useKeyPress } from 'common.utils';
 import { JSX } from 'react/jsx-runtime';
+import { useState, useEffect, useRef } from 'react';
 import { Editor, Tldraw, TldrawProps } from 'tldraw';
 import { useLockedShapeSelection, useRemoveMark, useTldrawClipboard } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
@@ -9,7 +10,6 @@ import { Header } from '../header';
 import { Navbar, SelectionMenu } from '../toolbar';
 import { CollaboratorCursor } from './CollaboratorCursor';
 import { TldrawZoomPanel } from './TldrawZoomPanel';
-import { useState, useEffect } from 'react';
 import 'tldraw/tldraw.css';
 import './customstyles.css';
 
@@ -20,7 +20,9 @@ export const TldrawCanvas = ({
   const [editor, setEditor] = useState<Editor | null>(null);
 
   const { selectedElementId, selectElement } = useTldrawStore();
-  const { store, status, undo, redo, canUndo, canRedo, isReadonly } = useYjsContext();
+  const { store, status, undo, redo, canUndo, canRedo, isReadonly, getUserCamera, setUserCamera } =
+    useYjsContext();
+  const appliedInitialCameraRef = useRef(false);
 
   useRemoveMark();
   useLockedShapeSelection(editor);
@@ -115,6 +117,33 @@ export const TldrawCanvas = ({
       return cleanup;
     }
   }, [editor, isReadonly]);
+
+  // Восстановление камеры пользователя при открытии доски (один раз после синка)
+  useEffect(() => {
+    if (!editor || status !== 'synced-remote' || appliedInitialCameraRef.current) return;
+    const saved = getUserCamera();
+    if (saved) {
+      editor.setCamera(saved);
+      appliedInitialCameraRef.current = true;
+    }
+  }, [editor, status]);
+
+  // Сохранение камеры: по таймеру и при уходе со вкладки
+  useEffect(() => {
+    if (!editor) return;
+    const CAMERA_SAVE_INTERVAL_MS = 2000;
+    const intervalId = window.setInterval(() => {
+      setUserCamera(editor.getCamera());
+    }, CAMERA_SAVE_INTERVAL_MS);
+    const onVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') setUserCamera(editor.getCamera());
+    };
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    return () => {
+      window.clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', onVisibilityChange);
+    };
+  }, [editor, setUserCamera]);
 
   if (status === 'loading') return <LoadingScreen />;
 

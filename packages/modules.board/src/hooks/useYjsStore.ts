@@ -53,6 +53,9 @@ type StoreWithStatusExt = {
   connectionStatus?: ConnectionStatus;
 };
 
+/** Координаты камеры (viewport) для персиста — x, y, zoom (z) */
+export type CameraState = { x: number; y: number; z: number };
+
 export type ExtendedStoreStatus = {
   store: TLStore;
   status: TLStoreWithStatus['status'];
@@ -64,6 +67,10 @@ export type ExtendedStoreStatus = {
   canRedo: boolean;
   isReadonly: boolean;
   toggleReadonly: () => void;
+  /** Последняя сохранённая камера текущего пользователя для этой доски (из Yjs meta) */
+  getUserCamera: () => CameraState | undefined;
+  /** Сохранить камеру текущего пользователя в Yjs meta (синхронизируется через Hocuspocus) */
+  setUserCamera: (camera: CameraState) => void;
 };
 
 type PendingChanges = {
@@ -103,6 +110,8 @@ type SharedEntry = {
   yStore: YKeyValue<TLRecord>;
   meta: Y.Map<SerializedSchema | string>;
   readonlyMap: Y.Map<boolean>;
+  /** Камеры по userId — каждый пользователь хранит свою последнюю позицию камеры (синхронизируется с сервером) */
+  userCamerasMap: Y.Map<CameraState>;
   releaseTimer: number | null;
 };
 
@@ -135,6 +144,7 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
   meta.set('schemaVersion', BOARD_SCHEMA_VERSION);
 
   const readonlyMap = yDoc.getMap<boolean>('readonly');
+  const userCamerasMap = yDoc.getMap<CameraState>('userCameras');
 
   const provider = new HocuspocusProvider({
     url: hostUrl,
@@ -153,6 +163,7 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
     yStore,
     meta,
     readonlyMap,
+    userCamerasMap,
     releaseTimer: null,
   };
 
@@ -233,7 +244,7 @@ export function useYjsStore({
     return getOrCreateShared(hostUrl, ydocId, storageToken);
   }, [hostUrl, ydocId, storageToken]);
 
-  const { provider, yDoc, yStore, meta, readonlyMap } = sharedEntry;
+  const { provider, yDoc, yStore, meta, readonlyMap, userCamerasMap } = sharedEntry;
 
   useEffect(() => {
     setStoreWithStatus((prev) => ({ ...prev, status: 'loading', store }));
@@ -666,6 +677,22 @@ export function useYjsStore({
     toast.success(newReadonly ? 'Доска заблокирована!' : 'Доска разблокирована!');
   }
 
+  function getUserCamera(): CameraState | undefined {
+    const id = currentUser?.id?.toString();
+    if (!id) return undefined;
+    const v = userCamerasMap.get(id);
+    if (typeof v !== 'object' || !v || !('x' in v) || !('y' in v) || !('z' in v)) return undefined;
+    return v as CameraState;
+  }
+
+  function setUserCamera(camera: CameraState) {
+    const id = currentUser?.id?.toString();
+    if (!id) return;
+    yDoc.transact(() => {
+      userCamerasMap.set(id, camera);
+    }, 'user-camera');
+  }
+
   const finalIsReadonly = serverReadonly || localReadonly;
 
   return {
@@ -681,5 +708,8 @@ export function useYjsStore({
 
     toggleReadonly,
     isReadonly: finalIsReadonly,
+
+    getUserCamera,
+    setUserCamera,
   };
 }
