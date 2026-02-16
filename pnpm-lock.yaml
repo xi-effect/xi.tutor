@@ -2406,9 +2406,6 @@ importers:
       tldraw:
         specifier: ^3.15.1
         version: 3.15.6(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
-      webpfy:
-        specifier: 1.0.9
-        version: 1.0.9
       y-utility:
         specifier: 0.1.4
         version: 0.1.4(yjs@13.6.29)

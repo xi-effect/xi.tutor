@@ -53,6 +53,9 @@ type StoreWithStatusExt = {
   connectionStatus?: ConnectionStatus;
 };
 
+/** Координаты камеры (viewport) для персиста — x, y, zoom (z) */
+export type CameraState = { x: number; y: number; z: number };
+
 export type ExtendedStoreStatus = {
   store: TLStore;
   status: TLStoreWithStatus['status'];
@@ -64,6 +67,12 @@ export type ExtendedStoreStatus = {
   canRedo: boolean;
   isReadonly: boolean;
   toggleReadonly: () => void;
+  /** ID своего presence (для фильтрации в списке коллабораторов). null до первой синхронизации. */
+  myPresenceId: string | null;
+  /** Последняя сохранённая камера текущего пользователя для этой доски (из Yjs meta) */
+  getUserCamera: () => CameraState | undefined;
+  /** Сохранить камеру текущего пользователя в Yjs meta (синхронизируется через Hocuspocus) */
+  setUserCamera: (camera: CameraState) => void;
 };
 
 type PendingChanges = {
@@ -103,6 +112,8 @@ type SharedEntry = {
   yStore: YKeyValue<TLRecord>;
   meta: Y.Map<SerializedSchema | string>;
   readonlyMap: Y.Map<boolean>;
+  /** Камеры по userId — каждый пользователь хранит свою последнюю позицию камеры (синхронизируется с сервером) */
+  userCamerasMap: Y.Map<CameraState>;
   releaseTimer: number | null;
 };
 
@@ -135,6 +146,7 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
   meta.set('schemaVersion', BOARD_SCHEMA_VERSION);
 
   const readonlyMap = yDoc.getMap<boolean>('readonly');
+  const userCamerasMap = yDoc.getMap<CameraState>('userCameras');
 
   const provider = new HocuspocusProvider({
     url: hostUrl,
@@ -153,6 +165,7 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
     yStore,
     meta,
     readonlyMap,
+    userCamerasMap,
     releaseTimer: null,
   };
 
@@ -225,6 +238,8 @@ export function useYjsStore({
     connectionStatus: 'offline',
   }));
 
+  const [myPresenceId, setMyPresenceId] = useState<string | null>(null);
+
   /** batching store -> yjs */
   const pendingChangesRef = useRef<PendingChanges | null>(null);
   const flushTimeoutRef = useRef<number | null>(null);
@@ -233,7 +248,7 @@ export function useYjsStore({
     return getOrCreateShared(hostUrl, ydocId, storageToken);
   }, [hostUrl, ydocId, storageToken]);
 
-  const { provider, yDoc, yStore, meta, readonlyMap } = sharedEntry;
+  const { provider, yDoc, yStore, meta, readonlyMap, userCamerasMap } = sharedEntry;
 
   useEffect(() => {
     setStoreWithStatus((prev) => ({ ...prev, status: 'loading', store }));
@@ -407,6 +422,7 @@ export function useYjsStore({
         );
 
         const presenceId = InstancePresenceRecordType.createId(yClientId);
+        setMyPresenceId(presenceId);
         const presenceDerivation = createPresenceStateDerivation(
           userPreferences,
           presenceId,
@@ -416,12 +432,24 @@ export function useYjsStore({
         let presenceTimer: number | null = null;
         let pendingPresence: TLInstancePresence | null = null;
 
+        const enrichPresenceWithBackendId = (p: TLInstancePresence): TLInstancePresence => {
+          const backendId = currentUser?.id;
+          if (backendId == null) return p;
+          return {
+            ...p,
+            meta: { ...(p.meta ?? {}), backendUserId: String(backendId) },
+          };
+        };
+
         const flushPresence = () => {
           presenceTimer = null;
 
           if (!pendingPresence) return;
 
-          awareness.setLocalStateField('presence', pendingPresence);
+          const presenceToSend = enrichPresenceWithBackendId(pendingPresence);
+          awareness.setLocalStateField('presence', presenceToSend);
+          // Свою presence кладём и в store, чтобы свой аватар отображался в CollaboratorAvatars
+          store.put([presenceToSend]);
           pendingPresence = null;
         };
 
@@ -437,11 +465,24 @@ export function useYjsStore({
           }, PRESENCE_FLUSH_MS);
         };
 
-        // initial push (сразу, чтобы другие сразу увидели)
+        // initial push (сразу, чтобы другие сразу увидели и свой аватар был в store)
         const initialPresence = presenceDerivation.get();
         if (initialPresence) {
-          awareness.setLocalStateField('presence', initialPresence);
+          const initialEnriched = enrichPresenceWithBackendId(initialPresence);
+          awareness.setLocalStateField('presence', initialEnriched);
+          store.put([initialEnriched]);
         }
+
+        // Повторная отправка presence через 2 с (когда currentUser уже мог подгрузиться), чтобы у других отображалась аватарка
+        const retryPresenceTimer = window.setTimeout(() => {
+          const p = presenceDerivation.get();
+          if (p) {
+            const enriched = enrichPresenceWithBackendId(p);
+            awareness.setLocalStateField('presence', enriched);
+            store.put([enriched]);
+          }
+        }, 2000);
+        unsubs.push(() => clearTimeout(retryPresenceTimer));
 
         // подписка на изменения presence в store
         unsubs.push(
@@ -666,6 +707,22 @@ export function useYjsStore({
     toast.success(newReadonly ? 'Доска заблокирована!' : 'Доска разблокирована!');
   }
 
+  function getUserCamera(): CameraState | undefined {
+    const id = currentUser?.id?.toString();
+    if (!id) return undefined;
+    const v = userCamerasMap.get(id);
+    if (typeof v !== 'object' || !v || !('x' in v) || !('y' in v) || !('z' in v)) return undefined;
+    return v as CameraState;
+  }
+
+  function setUserCamera(camera: CameraState) {
+    const id = currentUser?.id?.toString();
+    if (!id) return;
+    yDoc.transact(() => {
+      userCamerasMap.set(id, camera);
+    }, 'user-camera');
+  }
+
   const finalIsReadonly = serverReadonly || localReadonly;
 
   return {
@@ -681,5 +738,9 @@ export function useYjsStore({
 
     toggleReadonly,
     isReadonly: finalIsReadonly,
+
+    myPresenceId,
+    getUserCamera,
+    setUserCamera,
   };
 }
