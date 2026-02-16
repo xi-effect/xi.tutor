@@ -26,6 +26,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { FocusToggle } from '../shared/FocusToggle';
 import { ParticipantName } from './ParticipantName';
 import { RaisedHandIndicator } from './RaisedHandIndicator';
+import { ScreenShareZoom } from './ScreenShareZoom';
 import { useCallStore } from '../../store/callStore';
 import { cn } from '@xipkg/utils';
 
@@ -73,8 +74,14 @@ type FocusToggleDisablePropsT = {
   isFocusToggleDisable?: boolean;
 };
 
+type FocusViewPropsT = {
+  /** Плитка в фокусе (в HorizontalFocusLayout / VerticalFocusLayout). Для демонстрации экрана включает зум. */
+  isFocusView?: boolean;
+};
+
 type ParticipantTilePropsT = ParticipantTileProps &
-  FocusToggleDisablePropsT & {
+  FocusToggleDisablePropsT &
+  FocusViewPropsT & {
     participant?: Participant;
     source?: Track.Source;
     publication?: unknown;
@@ -89,6 +96,7 @@ export const ParticipantTile = ({
   publication,
   disableSpeakingIndicator,
   isFocusToggleDisable,
+  isFocusView,
   ...htmlProps
 }: ParticipantTilePropsT) => {
   const maybeTrackRef = useMaybeTrackRefContext();
@@ -183,50 +191,78 @@ export const ParticipantTile = ({
           <div className="m-auto flex aspect-video h-full w-full justify-center overflow-hidden rounded-2xl in-[.lk-grid-layout]:relative in-[.lk-grid-layout]:overflow-hidden in-[.lk-grid-layout]:rounded-2xl [.lk-grid-layout_&]:m-0 [.lk-grid-layout_&]:flex-none [.lk-grid-layout_&]:bg-black">
             {children ?? (
               <div className="relative flex h-full w-full justify-center in-[.lk-grid-layout]:relative in-[.lk-grid-layout]:h-full in-[.lk-grid-layout]:w-full">
-                {/* Аватар всегда рендерится как фон */}
-                <div
-                  style={{
-                    borderRadius: '8px',
-                    height: '100%',
-                    backgroundColor: 'var(--color-gray-40)',
-                  }}
-                  className="lk-participant-placeholder flex aspect-video h-full w-full items-center justify-center"
-                >
-                  <Avatar size="xxl">
-                    <AvatarImage
-                      src={`https://api.sovlium.ru/files/users/${identity}/avatar.webp`}
-                      alt="user avatar"
+                {/* Аватар только когда камера выключена; для демонстрации экрана — только нейтральный фон */}
+                {(() => {
+                  const isScreenShare = trackReference.source === Track.Source.ScreenShare;
+                  const hasVideo =
+                    isTrackReference(trackReference) &&
+                    (trackReference.publication?.kind === 'video' ||
+                      trackReference.source === Track.Source.Camera ||
+                      trackReference.source === Track.Source.ScreenShare) &&
+                    trackReference.publication?.isSubscribed &&
+                    trackReference.publication?.isEnabled &&
+                    !trackReference.publication?.track?.isMuted;
+                  const showAvatar =
+                    !isScreenShare && trackReference.source === Track.Source.Camera && !hasVideo;
+                  return showAvatar ? (
+                    <div
+                      style={{
+                        borderRadius: '8px',
+                        height: '100%',
+                        backgroundColor: 'var(--color-gray-40)',
+                      }}
+                      className="lk-participant-placeholder flex aspect-video h-full w-full items-center justify-center"
+                    >
+                      <Avatar size="xxl">
+                        <AvatarImage
+                          src={`https://api.sovlium.ru/files/users/${identity}/avatar.webp`}
+                          alt="user avatar"
+                        />
+                        <AvatarFallback size="xxl" loading />
+                      </Avatar>
+                    </div>
+                  ) : (
+                    <div
+                      className="lk-participant-placeholder bg-gray-40 aspect-video h-full w-full rounded-lg"
+                      aria-hidden
                     />
-                    <AvatarFallback size="xxl" loading />
-                  </Avatar>
-                </div>
-                {/* Видео накладывается поверх аватара когда доступно */}
+                  );
+                })()}
+                {/* Видео накладывается поверх когда доступно (камера или демонстрация) */}
                 {isTrackReference(trackReference) &&
                   (trackReference.publication?.kind === 'video' ||
                     trackReference.source === Track.Source.Camera ||
                     trackReference.source === Track.Source.ScreenShare) &&
                   trackReference.publication?.isSubscribed &&
                   trackReference.publication?.isEnabled &&
-                  !trackReference.publication?.track?.isMuted && (
-                    <div className="absolute inset-0 aspect-video h-full w-full rounded-2xl bg-gray-100/80">
-                      <VideoTrack
-                        className={cn(
-                          `absolute inset-0 h-full w-full rounded-2xl object-cover object-center ${getVideoClassName()}`,
-                        )}
-                        style={{
-                          ...(trackReference.source === Track.Source.Camera && {
-                            transform: 'rotateY(180deg)',
-                          }),
-                          boxSizing: 'border-box',
-                          background: 'var(--xi-bg-gray-100)',
-                          backgroundColor: 'var(--xi-bg-gray-100)',
-                        }}
-                        trackRef={trackReference}
-                        onSubscriptionStatusChanged={handleSubscribe}
-                        manageSubscription={autoManageSubscription}
-                      />
-                    </div>
-                  )}
+                  !trackReference.publication?.track?.isMuted &&
+                  (() => {
+                    const videoBlock = (
+                      <div className="absolute inset-0 aspect-video h-full w-full rounded-2xl bg-gray-100/80">
+                        <VideoTrack
+                          className={cn(
+                            `absolute inset-0 h-full w-full rounded-2xl object-cover object-center ${getVideoClassName()}`,
+                          )}
+                          style={{
+                            ...(trackReference.source === Track.Source.Camera && {
+                              transform: 'rotateY(180deg)',
+                            }),
+                            boxSizing: 'border-box',
+                            background: 'var(--xi-bg-gray-100)',
+                            backgroundColor: 'var(--xi-bg-gray-100)',
+                          }}
+                          trackRef={trackReference}
+                          onSubscriptionStatusChanged={handleSubscribe}
+                          manageSubscription={autoManageSubscription}
+                        />
+                      </div>
+                    );
+                    return isFocusView && trackReference.source === Track.Source.ScreenShare ? (
+                      <ScreenShareZoom trackRef={trackReference}>{videoBlock}</ScreenShareZoom>
+                    ) : (
+                      videoBlock
+                    );
+                  })()}
                 {/* Аудио трек для случаев без видео */}
                 {isTrackReference(trackReference) &&
                   (!trackReference.publication?.isSubscribed ||

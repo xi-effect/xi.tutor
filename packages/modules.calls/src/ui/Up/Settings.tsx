@@ -22,6 +22,8 @@ import { Track, LocalAudioTrack, LocalVideoTrack } from 'livekit-client';
 import { supportsBackgroundProcessors } from '@livekit/track-processors';
 
 import { useUserChoicesStore } from '../../store/userChoices';
+import { usePermissionsStore, openPermissionsDialog } from '../../store/permissions';
+import { Button } from '@xipkg/button';
 
 type SettingsPropsT = {
   children: React.ReactNode;
@@ -33,26 +35,32 @@ const placeholders = {
   videoinput: 'Встроенная камера',
 };
 
-// Компонент для выбора устройства
+// Компонент для выбора устройства (перемонтируется по key при смене разрешения, чтобы обновить список)
 const DeviceSelector = ({
   kind,
   currentDeviceId,
   onDeviceChange,
   icon,
+  disabled,
 }: {
   kind: 'videoinput' | 'audioinput' | 'audiooutput';
   currentDeviceId?: string;
   onDeviceChange: (deviceId: string) => void;
   icon: React.ReactNode;
+  disabled?: boolean;
 }) => {
   const { devices } = useMediaDeviceSelect({ kind });
 
-  // Находим текущее устройство для отображения
   const currentDevice = devices?.find((device) => device.deviceId === currentDeviceId);
   const displayValue = currentDevice?.label || placeholders[kind];
+  const hasDevices = devices && devices.length > 0 && devices[0].deviceId !== '';
 
   return (
-    <Select onValueChange={onDeviceChange} value={currentDeviceId || undefined}>
+    <Select
+      onValueChange={onDeviceChange}
+      value={currentDeviceId || undefined}
+      disabled={disabled || !hasDevices}
+    >
       <SelectTrigger className="w-full">
         <div className="flex items-center gap-2">
           {icon}
@@ -61,7 +69,7 @@ const DeviceSelector = ({
       </SelectTrigger>
       <SelectContent className="w-[352px]">
         {devices?.map((device) => (
-          <SelectItem key={device.deviceId} value={device.deviceId}>
+          <SelectItem key={device.deviceId} className="h-auto" value={device.deviceId}>
             {device.label || `Устройство ${device.deviceId.slice(0, 8)}`}
           </SelectItem>
         ))}
@@ -92,6 +100,17 @@ export const Settings = ({ children }: SettingsPropsT) => {
   const handleBlurToggle = useCallback((checked: boolean) => {
     useUserChoicesStore.setState({ blurEnabled: checked });
   }, []);
+
+  const cameraPermission = usePermissionsStore((s) => s.cameraPermission);
+  const microphonePermission = usePermissionsStore((s) => s.microphonePermission);
+
+  const isCameraGranted = cameraPermission === 'granted';
+  const isMicrophoneGranted = microphonePermission === 'granted';
+
+  // Ключи для перемонтирования селекторов при смене разрешения (обновление списка устройств)
+  const videoSelectorKey = `videoinput-${cameraPermission}`;
+  const audioInputSelectorKey = `audioinput-${microphonePermission}`;
+  const audioOutputSelectorKey = `audiooutput-${microphonePermission}`;
 
   // Мемоизируем проверку поддержки, чтобы не создавать WebGL контекст при каждом рендере
   const isBlurSupported = useMemo(() => supportsBackgroundProcessors(), []);
@@ -193,41 +212,62 @@ export const Settings = ({ children }: SettingsPropsT) => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label className="font-medium text-gray-100">Камера</Label>
-              <Switch checked={isCameraEnabled} onCheckedChange={handleCameraToggle} />
+              <Switch
+                checked={isCameraEnabled}
+                onCheckedChange={handleCameraToggle}
+                disabled={!isCameraGranted}
+              />
             </div>
-
             <DeviceSelector
+              key={videoSelectorKey}
               kind="videoinput"
               currentDeviceId={videoDeviceId}
               onDeviceChange={handleVideoDeviceChange}
               icon={<Conference className="h-4 w-4" />}
+              disabled={!isCameraGranted}
             />
+            {!isCameraGranted && (
+              <Button type="button" size="s" variant="ghost" onClick={openPermissionsDialog}>
+                Как разрешить камеру
+              </Button>
+            )}
           </div>
 
           {/* Микрофон */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label className="font-medium text-gray-100">Микрофон</Label>
-              <Switch checked={isMicrophoneEnabled} onCheckedChange={handleMicrophoneToggle} />
+              <Switch
+                checked={isMicrophoneEnabled}
+                onCheckedChange={handleMicrophoneToggle}
+                disabled={!isMicrophoneGranted}
+              />
             </div>
-
             <DeviceSelector
+              key={audioInputSelectorKey}
               kind="audioinput"
               currentDeviceId={audioDeviceId}
               onDeviceChange={handleAudioDeviceChange}
               icon={<Microphone className="h-4 w-4" />}
+              disabled={!isMicrophoneGranted}
             />
+            {!isMicrophoneGranted && (
+              <Button type="button" size="s" variant="ghost" onClick={openPermissionsDialog}>
+                Как разрешить микрофон
+              </Button>
+            )}
           </div>
 
-          {/* Динамики */}
+          {/* Динамики (список устройств вывода может зависеть от разрешения микрофона в части браузеров) */}
           <div className="space-y-3">
             <Label className="font-medium text-gray-100">Динамики</Label>
-
             <DeviceSelector
+              key={audioOutputSelectorKey}
               kind="audiooutput"
               currentDeviceId={audioOutputDeviceId}
               onDeviceChange={handleAudioOutputDeviceChange}
               icon={<SoundTwo className="h-4 w-4" />}
+              disabled={!isMicrophoneGranted}
             />
           </div>
 

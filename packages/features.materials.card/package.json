@@ -15,7 +15,7 @@
     "@xipkg/button": "4.1.0",
     "@xipkg/badge": "2.0.12",
     "@xipkg/dropdown": "^3.0.12",
-    "@xipkg/icons": "^3.0.2",
+    "@xipkg/icons": "^3.0.3",
     "@xipkg/utils": "^1.8.0",
     "common.services": "*",
     "common.types": "*",

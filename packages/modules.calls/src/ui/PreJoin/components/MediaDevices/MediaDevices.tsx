@@ -5,6 +5,7 @@ import { useMemo } from 'react';
 import { LocalAudioTrack, LocalVideoTrack } from 'livekit-client';
 import { useCallStore } from '../../../../store/callStore';
 import { useRoom } from '../../../../providers/RoomProvider';
+import { usePermissionsStore } from '../../../../store/permissions';
 import { Alert, AlertIcon, AlertContainer, AlertDescription } from '@xipkg/alert';
 import { InfoCircle } from '@xipkg/icons';
 import { Label } from '@xipkg/label';
@@ -29,8 +30,15 @@ export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
 
   const { updateStore, token, isConnecting } = useCallStore();
   const { room } = useRoom();
+  const cameraPermission = usePermissionsStore((s) => s.cameraPermission);
+  const microphonePermission = usePermissionsStore((s) => s.microphonePermission);
 
   const isBlurSupported = supportsBackgroundProcessors();
+
+  // Ключи по разрешениям: при смене denied → granted меню перемонтируется и заново запрашивает список устройств
+  const videoMenuKey = `videoinput-${cameraPermission}`;
+  const audioInputMenuKey = `audioinput-${microphonePermission}`;
+  const audioOutputMenuKey = `audiooutput-${microphonePermission}`;
 
   const handleJoin = async () => {
     if (!token) {
@@ -152,23 +160,29 @@ export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
           <div className="mb-8">
             <h2 className="mb-1 font-sans">Камера</h2>
             <MediaDeviceMenu
+              key={videoMenuKey}
               initialSelection={videoDeviceId}
               kind="videoinput"
               onActiveDeviceChange={handleVideoDeviceChange}
+              disabled={cameraPermission !== 'granted'}
             />
           </div>
           <div className="my-4">
             <h2 className="mb-1 font-sans">Звук</h2>
             <div className="flex flex-col gap-2">
               <MediaDeviceMenu
+                key={audioInputMenuKey}
                 initialSelection={audioDeviceId}
                 kind="audioinput"
                 onActiveDeviceChange={handleAudioDeviceChange}
+                disabled={microphonePermission !== 'granted'}
               />
               <MediaDeviceMenu
+                key={audioOutputMenuKey}
                 initialSelection={audioOutputDeviceId}
                 kind="audiooutput"
                 onActiveDeviceChange={(_, id) => saveAudioOutputDeviceId(id)}
+                disabled={microphonePermission !== 'granted'}
               />
             </div>
           </div>

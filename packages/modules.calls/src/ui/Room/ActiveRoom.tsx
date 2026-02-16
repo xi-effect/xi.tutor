@@ -28,7 +28,7 @@ export const ActiveRoom = () => {
       <CallsOnboarding />
       <UpBar />
       <div className="flex h-full items-center justify-center gap-4 overflow-hidden px-4">
-        <div className="flex h-full w-full justify-center text-center text-gray-100">
+        <div className="flex h-full w-full min-w-0 justify-center text-center text-gray-100">
           <VideoGrid />
         </div>
         <Chat />
