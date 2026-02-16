@@ -2,7 +2,6 @@ import { uploadImageRequest, uploadFileRequest } from 'common.services';
 import { getAxiosInstance } from 'common.config';
 import { TLAsset } from 'tldraw';
 import { toast } from 'sonner';
-import { convertToWebp } from '../utils';
 
 export type TLAssetContextT = {
   screenScale: number;
@@ -19,12 +18,6 @@ export type MediaResponseT = {
   name: string;
 };
 
-export type UploadOptions = {
-  maxSide?: number; // лимит по стороне (px)
-  maxMegapixels?: number; // лимит по общему числу пикселей (MP)
-  quality?: number; // качество WebP 0..1
-};
-
 export type TLAssetStoreT = {
   upload(
     asset: TLAsset,
@@ -34,21 +27,27 @@ export type TLAssetStoreT = {
   resolve?(asset: TLAsset, ctx: TLAssetContextT): Promise<string | null> | string | null;
 };
 
-// Загрузка будет выполняться через filesApiConfig (UploadImage / UploadAttachment)
+// Форматы, которые принимает бэкенд POST .../file-kinds/image/files/ (конвертирует в webp сам)
+const ALLOWED_IMAGE_MIME_TYPES = new Set([
+  'image/jpeg',
+  'image/jpx',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'image/tiff',
+  'image/bmp',
+  'image/x-icon',
+  'image/avif',
+]);
 
-const DEFAULT_OPTIONS: UploadOptions = {
-  maxSide: 4096, // лимит по стороне
-  maxMegapixels: 8.0, // лимит мегапикселей
-  quality: 100, // качество
-};
+const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
+const MAX_IMAGE_SIDE = 4096; // макс. сторона в пикселях
 
 // Кеш blob URL для уже загруженных изображений (по исходному src)
 const blobUrlCache = new Map<string, string>();
 
-/** Узнать исходные размеры (без тяжелых операций) */
-async function probeImage(
-  file: File,
-): Promise<{ w: number; h: number; objectUrl: string; img: HTMLImageElement }> {
+/** Узнать размеры изображения (без тяжёлых операций) */
+async function probeImage(file: File): Promise<{ w: number; h: number; objectUrl: string }> {
   const objectUrl = URL.createObjectURL(file);
   const img = new Image();
   img.decoding = 'async';
@@ -57,14 +56,12 @@ async function probeImage(
     img.onload = () => resolve();
     img.onerror = () => {
       URL.revokeObjectURL(objectUrl);
-      reject(new Error(`The source image cannot be decoded: ${file.name}`));
+      reject(new Error(`Не удалось декодировать изображение: ${file.name}`));
     };
     img.src = objectUrl;
   });
-  return { w: img.naturalWidth, h: img.naturalHeight, objectUrl, img };
+  return { w: img.naturalWidth, h: img.naturalHeight, objectUrl };
 }
-
-// Удалены все функции обработки изображений - теперь только простая загрузка
 
 /** POST через сервисные функции запросов (без хуков) */
 async function postUpload(file: File, token: string) {
@@ -107,8 +104,6 @@ export const myAssetStore = (token: string) => {
         assetId: _asset.id,
       });
 
-      const opts = { ...DEFAULT_OPTIONS };
-
       // Не изображение — просто загрузка
       if (!file.type.startsWith('image/')) {
         console.log('[myAssetStore.upload] Файл не является изображением, загружаем как есть');
@@ -117,92 +112,42 @@ export const myAssetStore = (token: string) => {
         return { src: urlUploaded };
       }
 
-      console.log('[myAssetStore.upload] Начинаем конвертацию в WebP');
-      const convertStartTime = performance.now();
-      const { file: imageToUpload, mimeType } = await convertToWebp(file);
-      const convertEndTime = performance.now();
-      console.log('[myAssetStore.upload] Конвертация завершена:', {
-        duration: `${(convertEndTime - convertStartTime).toFixed(2)}ms`,
-        originalType: file.type,
-        convertedType: imageToUpload.type,
-        mimeType,
-      });
-
-      // Проверяем, что файл действительно WebP
-      if (!imageToUpload.type.includes('webp') && mimeType !== 'image/webp') {
-        console.error('[myAssetStore.upload] ❌ Файл не конвертирован в WebP!', {
-          originalType: file.type,
-          originalSize: file.size,
-          convertedType: imageToUpload.type,
-          convertedSize: imageToUpload.size,
-          mimeType,
-          fileName: imageToUpload.name,
-        });
-        toast.error('Ошибка конвертации', {
-          description:
-            'Не удалось конвертировать изображение в WebP. Попробуйте другое изображение.',
-          duration: 5000,
-        });
-        throw new Error('Изображение не было конвертировано в WebP');
+      // Проверка формата (бэкенд принимает только эти типы)
+      if (!ALLOWED_IMAGE_MIME_TYPES.has(file.type)) {
+        const message = `Неподдерживаемый формат изображения (${file.type}). Допустимы: JPEG, PNG, WebP, GIF, TIFF, BMP, ICO, AVIF, JPX.`;
+        toast.error('Не удалось загрузить изображение', { description: message, duration: 5000 });
+        throw new Error(message);
       }
 
-      console.log('[myAssetStore.upload] Подготовка к загрузке WebP изображения:', {
-        originalType: file.type,
-        originalSize: file.size,
-        convertedType: imageToUpload.type,
-        convertedSize: imageToUpload.size,
-        mimeType,
-        fileName: imageToUpload.name,
-        sizeReduction: `${((1 - imageToUpload.size / file.size) * 100).toFixed(1)}%`,
-      });
+      // Проверка размера по оригиналу (макс. 1 MiB)
+      if (file.size > MAX_IMAGE_SIZE_BYTES) {
+        const message = `Размер изображения не должен превышать 1 MiB (сейчас ${(file.size / 1024 / 1024).toFixed(2)} MiB).`;
+        toast.error('Не удалось загрузить изображение', { description: message, duration: 5000 });
+        throw new Error(message);
+      }
 
+      // Проверка сторон (макс. 4096×4096)
       let objectUrl: string | null = null;
-
       try {
-        // 1) Проверяем размеры изображения
-        console.log('[myAssetStore.upload] Проверяем размеры изображения');
-        const probeStartTime = performance.now();
-        const { w: srcW, h: srcH, objectUrl: url } = await probeImage(imageToUpload);
-        const probeEndTime = performance.now();
+        const { w, h, objectUrl: url } = await probeImage(file);
         objectUrl = url;
-        console.log('[myAssetStore.upload] Размеры изображения:', {
-          width: srcW,
-          height: srcH,
-          megapixels: ((srcW * srcH) / 1_000_000).toFixed(2),
-          probeTime: `${(probeEndTime - probeStartTime).toFixed(2)}ms`,
-        });
-
-        // 2) Проверяем лимиты
-        const exceedsSideLimit = srcW > opts.maxSide! || srcH > opts.maxSide!;
-        const exceedsMegaPixelLimit = (srcW * srcH) / 1_000_000 > opts.maxMegapixels!;
-
-        if (exceedsSideLimit || exceedsMegaPixelLimit) {
-          const message = `Изображение слишком большое (${srcW}×${srcH}px). Максимальный размер: ${opts.maxSide}×${opts.maxSide}px или ${opts.maxMegapixels}MP`;
-          toast.error('Не удалось загрузить изображение', {
-            description: message,
-            duration: 5000,
-          });
+        if (w > MAX_IMAGE_SIDE || h > MAX_IMAGE_SIDE) {
+          const message = `Размер изображения не должен превышать ${MAX_IMAGE_SIDE}×${MAX_IMAGE_SIDE}px (сейчас ${w}×${h}px).`;
+          toast.error('Не удалось загрузить изображение', { description: message, duration: 5000 });
           throw new Error(message);
         }
-
-        // 3) Простая загрузка без обработки
-        console.log('[myAssetStore.upload] Отправляем файл на сервер:', {
-          fileName: imageToUpload.name,
-          fileType: imageToUpload.type,
-          fileSize: imageToUpload.size,
-        });
-        const uploadStartTime = performance.now();
-        const urlUploaded = await postUpload(imageToUpload, token);
-        const uploadEndTime = performance.now();
-        console.log('[myAssetStore.upload] ✅ Файл успешно загружен на сервер:', {
-          url: urlUploaded,
-          uploadTime: `${(uploadEndTime - uploadStartTime).toFixed(2)}ms`,
-          totalTime: `${(uploadEndTime - convertStartTime).toFixed(2)}ms`,
-        });
-        return { src: urlUploaded };
       } finally {
         if (objectUrl) URL.revokeObjectURL(objectUrl);
       }
+
+      console.log('[myAssetStore.upload] Отправляем изображение на сервер без конвертации:', {
+        fileName: file.name,
+        fileType: file.type,
+        fileSize: file.size,
+      });
+      const urlUploaded = await postUpload(file, token);
+      console.log('[myAssetStore.upload] ✅ Изображение загружено:', { url: urlUploaded });
+      return { src: urlUploaded };
     },
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
