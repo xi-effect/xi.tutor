@@ -1,9 +1,11 @@
-import { Notification, Settings, Check } from '@xipkg/icons';
+import { useRef, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from '@tanstack/react-router';
+import { Notification, Settings } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@xipkg/drawer';
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
@@ -16,132 +18,21 @@ import {
   ModalBody,
   ModalFooter,
 } from '@xipkg/modal';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
-import { useLocation, useNavigate } from '@tanstack/react-router';
-import { useRef, useEffect, useState } from 'react';
-import { useNotificationsContext } from 'common.services';
+import { cn, useMediaQuery } from '@xipkg/utils';
 import type { NotificationT } from 'common.types';
+import { formatNotificationCount, useNotificationsContext } from 'common.services';
 import type { CustomNotificationModalPayload } from 'common.services';
 import { NotificationBadge } from './NotificationBadge';
-import {
-  generateNotificationTitle,
-  generateNotificationDescription,
-  generateNotificationAction,
-  getNotificationOpensModal,
-  getCustomNotificationModalPayload,
-  formatNotificationDate,
-  formatFullNotificationDate,
-  formatNotificationCount,
-} from 'common.services';
-import { cn } from '@xipkg/utils';
-import { NotificationAvatar } from './NotificationAvatar';
-
-// Компонент для отображения одного уведомления
-const NotificationItem = ({
-  notification,
-  onMarkAsRead,
-  onNavigate,
-  onClose,
-  onOpenCustomModal,
-}: {
-  notification: NotificationT;
-  onMarkAsRead: (id: string) => Promise<void>;
-  onNavigate: (url: string) => void;
-  onClose: () => void;
-  onOpenCustomModal: (payload: CustomNotificationModalPayload) => void;
-}) => {
-  // Обработчик клика по уведомлению - переход на целевую страницу или открытие модалки
-  const handleClick = async (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-
-    if (!notification.is_read) {
-      await onMarkAsRead(notification.id);
-    }
-
-    onClose();
-
-    if (getNotificationOpensModal(notification)) {
-      const payload = getCustomNotificationModalPayload(notification);
-      if (payload) onOpenCustomModal(payload);
-      return;
-    }
-
-    const url = generateNotificationAction(notification);
-    if (url) {
-      onNavigate(url);
-    }
-  };
-
-  // Обработчик клика по кнопке прочтения - только пометить как прочитанное
-  const handleMarkAsRead = async (e: React.MouseEvent) => {
-    e.stopPropagation();
-    e.preventDefault();
-    if (!notification.is_read) {
-      await onMarkAsRead(notification.id);
-    }
-  };
-
-  const title = generateNotificationTitle(notification);
-  const description = generateNotificationDescription(notification);
-  const relativeTime = formatNotificationDate(notification.created_at);
-  const fullTime = formatFullNotificationDate(notification.created_at);
-
-  return (
-    <DropdownMenuItem
-      className={cn(
-        `flex h-full items-start gap-2 rounded-[16px] p-3 ${
-          !notification.is_read ? 'bg-brand-0 hover:bg-brand-0' : 'bg-gray-0 hover:bg-gray-5'
-        }`,
-      )}
-      onClick={handleClick}
-    >
-      <NotificationAvatar
-        kind={notification.payload.kind}
-        classroomId={notification.payload.classroom_id}
-        recipientInvoiceId={notification.payload.recipient_invoice_id}
-      />
-      <div className="flex flex-1 flex-col gap-1">
-        <span className="text-m-base font-medium text-gray-100">{title}</span>
-        <span className="text-gray-80 text-s-base font-normal">{description}</span>
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger className="w-fit" asChild>
-              <span className="text-gray-80 text-xs-base font-normal">{relativeTime}</span>
-            </TooltipTrigger>
-            <TooltipContent side="bottom">
-              <p>{fullTime}</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      </div>
-      {!notification.is_read && (
-        <TooltipProvider>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="none"
-                size="sm"
-                className="group/button bg-gray-0 hover:bg-brand-80 h-6 w-6 rounded-sm p-0 opacity-0 transition-opacity group-hover:opacity-100"
-                onClick={handleMarkAsRead}
-              >
-                <Check className="group-hover/button:fill-gray-0 h-3 w-3 fill-gray-100" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="left">
-              <p>Отметить как прочитанное</p>
-            </TooltipContent>
-          </Tooltip>
-        </TooltipProvider>
-      )}
-    </DropdownMenuItem>
-  );
-};
+import { NotificationItem } from './NotificationItem';
 
 export const Notifications = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const isMobile = useMediaQuery('(max-width: 960px)');
+
   const [isOpen, setIsOpen] = useState(false);
+
   const [customModalPayload, setCustomModalPayload] =
     useState<CustomNotificationModalPayload | null>(null);
 
@@ -275,57 +166,107 @@ export const Notifications = () => {
     }
   };
 
+  const notificationsList = (
+    <div
+      ref={scrollAreaRef}
+      className={cn(
+        'overflow-y-auto pr-1 pl-1',
+        isMobile ? 'max-h-[calc(100dvh-200px)]' : 'h-[300px]',
+      )}
+    >
+      {notifications.length > 0 ? (
+        <>
+          <div className="group flex flex-col gap-1">
+            {notifications.map((notification: NotificationT) => (
+              <div key={notification.id}>
+                <NotificationItem
+                  notification={notification}
+                  onMarkAsRead={markAsRead}
+                  onNavigate={handleNavigate}
+                  onClose={() => setIsOpen(false)}
+                  onOpenCustomModal={setCustomModalPayload}
+                  asDropdownItem={!isMobile}
+                />
+              </div>
+            ))}
+          </div>
+
+          {(isLoading || isFetchingNextPage) && (
+            <div className="flex justify-center p-4">
+              <span className="text-gray-80 text-s-base">Загрузка...</span>
+            </div>
+          )}
+        </>
+      ) : (
+        <div
+          className={cn(
+            'flex flex-col items-center justify-center',
+            isMobile ? 'h-[200px]' : 'h-[300px]',
+          )}
+        >
+          <span className="text-gray-80 text-m-base font-normal">Уведомлений нет</span>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <>
-      <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
-        <DropdownMenuTrigger asChild>
-          <Button variant="none" className="relative h-[32px] w-[32px] p-1">
-            <Notification className="fill-gray-80 size-6" size="s" />
-            <NotificationBadge count={formatNotificationCount(unreadCount)} />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="end"
-          className="flex w-[310px] flex-col gap-1 rounded-[20px] border-2 px-1 py-1"
-        >
-          <DropdownMenuLabel className="text-m-base flex h-[48px] items-center p-3 font-semibold text-gray-100">
-            Уведомления
-            <div className="ml-auto flex items-center gap-1">
-              <Button onClick={handleToSettings} variant="none" className="h-[32px] w-[32px] p-1">
-                <Settings className="fill-gray-80 size-6" size="s" />
-              </Button>
-            </div>
-          </DropdownMenuLabel>
-          <div ref={scrollAreaRef} className="h-[300px] overflow-y-auto pr-1 pl-1">
-            {notifications.length > 0 ? (
-              <>
-                <div className="group flex flex-col gap-1">
-                  {notifications.map((notification: NotificationT) => (
-                    <div key={notification.id}>
-                      <NotificationItem
-                        notification={notification}
-                        onMarkAsRead={markAsRead}
-                        onNavigate={handleNavigate}
-                        onClose={() => setIsOpen(false)}
-                        onOpenCustomModal={setCustomModalPayload}
-                      />
-                    </div>
-                  ))}
+      {isMobile ? (
+        <Drawer open={isOpen} onOpenChange={handleOpenChange}>
+          <DrawerTrigger asChild>
+            <Button variant="none" className="relative h-[32px] w-[32px] p-1">
+              <Notification className="fill-gray-80 size-6" size="s" />
+              <NotificationBadge count={formatNotificationCount(unreadCount)} />
+            </Button>
+          </DrawerTrigger>
+
+          <DrawerContent className="max-h-[calc(100dvh-64px)] w-full">
+            <div className="dark:bg-gray-0 h-full p-4">
+              <DrawerHeader className="flex items-center">
+                <DrawerTitle className="text-m-base font-semibold text-gray-100">
+                  Уведомления
+                </DrawerTitle>
+
+                <div className="ml-auto flex items-center gap-1">
+                  <Button
+                    onClick={handleToSettings}
+                    variant="none"
+                    className="h-[32px] w-[32px] p-1"
+                  >
+                    <Settings className="fill-gray-80 size-6" size="s" />
+                  </Button>
                 </div>
-                {(isLoading || isFetchingNextPage) && (
-                  <div className="flex justify-center p-4">
-                    <span className="text-gray-80 text-s-base">Загрузка...</span>
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className="flex h-[300px] flex-col items-center justify-center">
-                <span className="text-gray-80 text-m-base font-normal">Уведомлений нет</span>
+              </DrawerHeader>
+              {notificationsList}
+            </div>
+          </DrawerContent>
+        </Drawer>
+      ) : (
+        <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
+          <DropdownMenuTrigger asChild>
+            <Button variant="none" className="relative h-[32px] w-[32px] p-1">
+              <Notification className="fill-gray-80 size-6" size="s" />
+              <NotificationBadge count={formatNotificationCount(unreadCount)} />
+            </Button>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent
+            align="end"
+            className="flex w-[310px] flex-col gap-1 rounded-[20px] border-2 px-1 py-1"
+          >
+            <DropdownMenuLabel className="text-m-base flex h-[48px] items-center p-3 font-semibold text-gray-100">
+              Уведомления
+              <div className="ml-auto flex items-center gap-1">
+                <Button onClick={handleToSettings} variant="none" className="h-[32px] w-[32px] p-1">
+                  <Settings className="fill-gray-80 size-6" size="s" />
+                </Button>
               </div>
-            )}
-          </div>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            </DropdownMenuLabel>
+            {notificationsList}
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
 
       <Modal
         open={!!customModalPayload}
@@ -338,9 +279,11 @@ export const Notifications = () => {
             </ModalTitle>
             <ModalCloseButton />
           </ModalHeader>
+
           <ModalBody className="text-s-base text-gray-80 flex-1 overflow-y-auto">
             {customModalPayload?.content}
           </ModalBody>
+
           {customModalPayload?.button_text && customModalPayload?.button_link && (
             <ModalFooter>
               <Button
