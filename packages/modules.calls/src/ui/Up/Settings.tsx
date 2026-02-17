@@ -8,10 +8,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@xipkg/sheet';
-import { Close, Conference, Microphone, SoundTwo } from '@xipkg/icons';
+import { Close, Conference, Microphone, SoundTwo, Chat, Hand } from '@xipkg/icons';
 import { Label } from '@xipkg/label';
 import { Switch } from '@xipkg/switcher';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
+import { Slider } from '@xipkg/slider';
 import {
   useLocalParticipant,
   usePersistentUserChoices,
@@ -23,6 +24,7 @@ import { supportsBackgroundProcessors } from '@livekit/track-processors';
 
 import { useUserChoicesStore } from '../../store/userChoices';
 import { usePermissionsStore, openPermissionsDialog } from '../../store/permissions';
+import { useCallStore } from '../../store/callStore';
 import { Button } from '@xipkg/button';
 
 type SettingsPropsT = {
@@ -93,6 +95,11 @@ export const Settings = ({ children }: SettingsPropsT) => {
   const audioOutputDeviceId = useUserChoicesStore((state) => state.audioOutputDeviceId);
   const blurEnabled = useUserChoicesStore((state) => state.blurEnabled);
 
+  // Получаем настройки громкости звуков из callStore
+  const chatSoundVolume = useCallStore((state) => state.chatSoundVolume);
+  const handRaiseSoundVolume = useCallStore((state) => state.handRaiseSoundVolume);
+  const updateStore = useCallStore((state) => state.updateStore);
+
   const saveAudioOutputDeviceId = useCallback((deviceId: string) => {
     useUserChoicesStore.setState({ audioOutputDeviceId: deviceId });
   }, []);
@@ -100,6 +107,23 @@ export const Settings = ({ children }: SettingsPropsT) => {
   const handleBlurToggle = useCallback((checked: boolean) => {
     useUserChoicesStore.setState({ blurEnabled: checked });
   }, []);
+
+  // Обработчики изменения громкости звуков
+  const handleChatSoundVolumeChange = useCallback(
+    (value: number[]) => {
+      const volume = value[0] ?? 0.5;
+      updateStore('chatSoundVolume', volume);
+    },
+    [updateStore],
+  );
+
+  const handleHandRaiseSoundVolumeChange = useCallback(
+    (value: number[]) => {
+      const volume = value[0] ?? 0.5;
+      updateStore('handRaiseSoundVolume', volume);
+    },
+    [updateStore],
+  );
 
   const cameraPermission = usePermissionsStore((s) => s.cameraPermission);
   const microphonePermission = usePermissionsStore((s) => s.microphonePermission);
@@ -280,6 +304,51 @@ export const Settings = ({ children }: SettingsPropsT) => {
               </div>
             </div>
           )}
+
+          {/* Громкость звуков уведомлений */}
+          <div className="border-gray-10 space-y-4 border-t pt-6">
+            <Label className="text-base font-medium text-gray-100">Звуки уведомлений</Label>
+
+            {/* Громкость звука сообщений в чате */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Chat className="text-gray-60 h-4 w-4" />
+                  <Label className="text-gray-80 text-sm">Сообщения в чате</Label>
+                </div>
+                <span className="text-gray-60 text-sm">{Math.round(chatSoundVolume * 100)}%</span>
+              </div>
+              <Slider
+                value={[chatSoundVolume]}
+                onValueChange={handleChatSoundVolumeChange}
+                min={0}
+                max={1}
+                step={0.01}
+                className="w-full"
+              />
+            </div>
+
+            {/* Громкость звука поднятия руки */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Hand className="text-gray-60 h-4 w-4" />
+                  <Label className="text-gray-80 text-sm">Поднятие руки</Label>
+                </div>
+                <span className="text-gray-60 text-sm">
+                  {Math.round(handRaiseSoundVolume * 100)}%
+                </span>
+              </div>
+              <Slider
+                value={[handRaiseSoundVolume]}
+                onValueChange={handleHandRaiseSoundVolumeChange}
+                min={0}
+                max={1}
+                step={0.01}
+                className="w-full"
+              />
+            </div>
+          </div>
         </div>
       </SheetContent>
     </Sheet>
