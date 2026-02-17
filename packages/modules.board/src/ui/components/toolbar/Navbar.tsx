@@ -62,7 +62,8 @@ export const Navbar = track(
       if (toolName === 'asset') {
         const input = document.createElement('input');
         input.type = 'file';
-        input.accept = 'image/*';
+        input.accept =
+          'image/jpeg,image/jpx,image/png,image/gif,image/webp,image/tiff,image/bmp,image/x-icon,image/avif';
         input.multiple = false;
 
         input.onchange = async (e) => {

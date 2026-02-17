@@ -17,6 +17,7 @@ import { ModalEditMaterialName } from 'features.materials.edit';
 import { useEffect, useState } from 'react';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { HotkeysHelp } from '../shared/HotkeysHelp';
+import { CollaboratorAvatars } from './CollaboratorAvatars';
 import { SettingsDropdown } from './SettingsDropdown';
 
 export const Header = () => {
@@ -127,8 +128,13 @@ export const Header = () => {
               </div>
             )}
           </div>
-          <div className="flex items-center gap-1">
-            {!isReadonly && <HotkeysHelp />}
+          <div className="flex items-center gap-2">
+            {!isReadonly && (
+              <>
+                <CollaboratorAvatars />
+                <HotkeysHelp />
+              </>
+            )}
             {isFullScreenSupported && (
               <Button
                 variant="none"

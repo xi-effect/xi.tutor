@@ -19,13 +19,14 @@ export const useImageProcessing = ({
   setDate,
   onBase64Return,
 }: ImageProcessingProps) => {
+  // Бэкенд PUT .../users/current/avatar/ принимает любые форматы и сам делает 128×128 и webp
   const resizeFile = (file: File, type: 'blob' | 'base64') =>
     new Promise((resolve) => {
       Resizer.imageFileResizer(
         file,
         256,
         256,
-        'WEBP',
+        'PNG',
         100,
         0,
         (uri) => {
@@ -40,12 +41,12 @@ export const useImageProcessing = ({
       if (!croppedAreaPixels) return null;
 
       const croppedImage = (await getCroppedImg(file, croppedAreaPixels)) as Blob;
-      const f = new File([croppedImage], 'avatar.webp');
+      const f = new File([croppedImage], 'avatar.png', { type: 'image/png' });
       const resizedImage = (await resizeFile(f, 'blob')) as Blob;
       const resizedImageBase = (await resizeFile(f, 'base64')) as string;
 
       const form = new FormData();
-      form.append('avatar', resizedImage, 'avatar.webp');
+      form.append('avatar', resizedImage, 'avatar.png');
 
       if (!withLoadingToServer && onBase64Return) {
         return onBase64Return(resizedImageBase, form);
