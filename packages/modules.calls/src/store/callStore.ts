@@ -104,9 +104,9 @@ export const useCallStore = create<useCallStoreT>()(
       raisedHands: [],
       isHandRaised: false,
 
-      // Настройки громкости звуков (по умолчанию 50%)
-      chatSoundVolume: 0.5,
-      handRaiseSoundVolume: 0.5,
+      // Настройки громкости звуков (по умолчанию 30%)
+      chatSoundVolume: 0.25,
+      handRaiseSoundVolume: 0.25,
 
       updateStore: (type: keyof useCallStoreT, value: any) => set({ [type]: value }),
 

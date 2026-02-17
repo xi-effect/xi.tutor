@@ -310,7 +310,7 @@ export const Settings = ({ children }: SettingsPropsT) => {
             <Label className="text-base font-medium text-gray-100">Звуки уведомлений</Label>
 
             {/* Громкость звука сообщений в чате */}
-            <div className="space-y-2">
+            <div className="mt-2 space-y-2">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Chat className="text-gray-60 h-4 w-4" />
