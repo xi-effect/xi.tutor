@@ -1,43 +1,73 @@
 import { useMediaQuery } from '@xipkg/utils';
-import { Desktop } from './Desktop';
+import { Drawer, DrawerContent } from '@xipkg/drawer';
+import { Sidebar, SidebarInset } from '@xipkg/sidebar';
 import { Header } from './Header';
-import { Mobile } from './Mobile';
+import { SideBarItems } from './SideBarItems';
 import { SidebarProvider } from '@xipkg/sidebar';
 import { useMenuStore } from '../store';
+import { useMemo } from 'react';
 
 const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useMediaQuery('(max-width: 960px)');
+  const { isOpen, open: openMenu, close } = useMenuStore();
 
-  if (isMobile) {
-    return <Mobile>{children}</Mobile>;
-  }
+  // Мемоизируем children, чтобы они не пересоздавались при изменении isMobile
+  const stableChildren = useMemo(() => children, [children]);
 
-  return <Desktop>{children}</Desktop>;
+  // Используем один компонент, который условно рендерит нужную структуру
+  // но children всегда остаются в одном месте с одним ключом
+  // Это позволяет React сохранять состояние компонентов при переключении
+  return (
+    <>
+      {/* Mobile Drawer */}
+      {isMobile && (
+        <Drawer open={isOpen} onOpenChange={(open) => (open ? openMenu() : close())} modal>
+          <DrawerContent className="max-h-[calc(100dvh-64px)] w-full">
+            <div className="dark:bg-gray-0 h-full p-4">
+              <Sidebar collapsible="none" variant="inset" className="w-full">
+                <SideBarItems />
+              </Sidebar>
+            </div>
+          </DrawerContent>
+        </Drawer>
+      )}
+
+      {/* Desktop Sidebar */}
+      {!isMobile && (
+        <Sidebar
+          id="sidebar"
+          collapsible="icon"
+          className="dark:bg-gray-0 absolute w-full pt-[64px] md:w-[300px]"
+        >
+          <SideBarItems />
+        </Sidebar>
+      )}
+
+      {/* Children всегда рендерятся в одном месте с одним ключом и одним типом элемента */}
+      {/* Используем SidebarInset для обоих случаев, чтобы React сохранял состояние */}
+      <SidebarInset
+        className={isMobile ? 'w-full pt-[64px]' : 'h-screen overflow-hidden pt-[64px]'}
+        key="navigation-content"
+      >
+        {stableChildren}
+      </SidebarInset>
+    </>
+  );
 };
 
 export const Navigation = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useMediaQuery('(max-width: 960px)');
   const { isOpen, toggle, isDesktopOpen, setDesktopOpen } = useMenuStore();
 
-  // Для мобильной версии используем isOpen из useMenuStore для Drawer
-  if (isMobile) {
-    return (
-      <SidebarProvider
-        style={
-          {
-            '--sidebar-width': '300px',
-          } as React.CSSProperties
-        }
-        open={isOpen}
-        onOpenChange={toggle}
-      >
-        <Header />
-        <NavigationLayout>{children}</NavigationLayout>
-      </SidebarProvider>
-    );
-  }
+  // Мемоизируем children, чтобы они не пересоздавались при изменении размера окна
+  const stableChildren = useMemo(() => children, [children]);
 
-  // Для десктоп версии используем isDesktopOpen из store с сохранением в localStorage
+  // Динамически выбираем пропсы для SidebarProvider в зависимости от размера экрана
+  const sidebarOpen = isMobile ? isOpen : isDesktopOpen;
+  const sidebarOnOpenChange = isMobile ? toggle : setDesktopOpen;
+
+  // Используем один SidebarProvider с динамическими пропсами вместо условного рендеринга
+  // Это предотвращает пересоздание всего дерева компонентов при изменении размера окна
   return (
     <SidebarProvider
       style={
@@ -45,11 +75,11 @@ export const Navigation = ({ children }: { children: React.ReactNode }) => {
           '--sidebar-width': '300px',
         } as React.CSSProperties
       }
-      open={isDesktopOpen}
-      onOpenChange={setDesktopOpen}
+      open={sidebarOpen}
+      onOpenChange={sidebarOnOpenChange}
     >
       <Header />
-      <NavigationLayout>{children}</NavigationLayout>
+      <NavigationLayout>{stableChildren}</NavigationLayout>
     </SidebarProvider>
   );
 };
