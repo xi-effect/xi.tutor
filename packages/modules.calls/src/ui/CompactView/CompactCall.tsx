@@ -20,7 +20,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useCallStore } from '../../store/callStore';
 import { CompactNavigationControls } from './CompactNavigationControls';
 import { ParticipantTile } from '../Participant';
@@ -94,8 +94,8 @@ export const CompactCall = ({ saveUserChoices = true }) => {
     goToPrev,
   } = navigation;
 
-  // Безопасно получаем параметры call из URL
   const search = useSearch({ strict: false }) as { call?: string };
+  const params = useParams({ strict: false }) as { callId?: string; classroomId?: string };
   const { call } = search;
 
   const navigate = useNavigate();
@@ -109,38 +109,36 @@ export const CompactCall = ({ saveUserChoices = true }) => {
   const isTutor = user?.default_layout === 'tutor';
 
   const handleMaximize = (syncToAll: boolean = false) => {
-    // Проверяем, что комната подключена (чтобы не терять ВКС)
     if (!room || !token || room.state !== 'connected') {
       return;
     }
 
-    // Переключаем режим на full
-    updateStore('mode', 'full');
+    const targetCallId =
+      (typeof call === 'string' ? call.replace(/^"|"$/g, '').trim() : '') ||
+      activeClassroom ||
+      params.classroomId ||
+      params.callId ||
+      '';
 
-    if (isTutor && activeBoardId && activeClassroom) {
-      if (syncToAll) {
-        // Сохраняем activeClassroom перед очисткой для передачи в сообщении
-        const classroomId = activeClassroom;
-
-        // Если синхронизируем со всеми, очищаем информацию о доске
-        updateStore('activeBoardId', undefined);
-        updateStore('activeClassroom', undefined);
-        // Отправляем сообщение всем участникам о переключении на full (без boardId, но с classroom)
-        // Это сигнал для всех участников, что работа с доской завершена
-        // Передаем classroom, чтобы студенты могли перейти на страницу конференции
-        syncModeToOthers('full', undefined, classroomId);
-      }
-      // Если syncToAll = false, не отправляем сообщение другим участникам
-      // Они останутся на доске, а репетитор переключится только локально
+    if (syncToAll && isTutor && activeBoardId && targetCallId) {
+      // «Всех участников» — сбрасываем доску на сервере для всех
+      updateStore('localFullView', false);
+      updateStore('mode', 'full');
+      updateStore('activeBoardId', undefined);
+      updateStore('activeClassroom', undefined);
+      syncModeToOthers('full', undefined, targetCallId);
+    } else {
+      // «Только меня» — только локальный вид, комната на сервере остаётся на доске
+      updateStore('localFullView', true);
+      updateStore('mode', 'full');
+      // activeBoardId/activeClassroom не трогаем — нужны для кнопки «К доске»
     }
 
-    // Переходим на страницу конференции с сохранением параметра call
     navigate({
       to: '/call/$callId',
-      params: { callId: call ?? activeClassroom ?? '' },
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      search: call || activeClassroom ? { call: call || activeClassroom } : undefined,
+      params: { callId: targetCallId },
+      ...(targetCallId ? { search: { call: targetCallId } } : {}),
+      replace: true,
     });
   };
 
