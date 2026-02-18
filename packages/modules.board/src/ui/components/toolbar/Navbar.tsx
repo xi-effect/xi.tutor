@@ -1,5 +1,12 @@
 import React from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@xipkg/dropdown';
+import { MenuDots } from '@xipkg/icons';
 import { track, useEditor } from 'tldraw';
 import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
 import { UndoRedo } from './UndoRedo';
@@ -9,6 +16,7 @@ import { NavbarButton } from '../shared';
 import { ArrowsPopup, PenPopup, StickerPopup } from '../popups';
 import { ShapesPopup } from '../popups/Shapes';
 import { insertImage } from '../../../features/pickAndInsertImage';
+import { insertPdf } from '../../../features/pickAndInsertPdf';
 
 // Маппинг инструментов Kanva на Tldraw
 const toolMapping: Record<string, string> = {
@@ -102,6 +110,24 @@ export const Navbar = track(
       };
 
       return reverseMapping[currentToolId] || 'select';
+    };
+
+    const handleInsertPdf = () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'application/pdf';
+      input.multiple = false;
+      input.onchange = async (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (file) {
+          try {
+            await insertPdf(editor, file, token);
+          } catch (error) {
+            console.error('Ошибка при загрузке PDF:', error);
+          }
+        }
+      };
+      input.click();
     };
 
     const currentTool = getCurrentTool();
@@ -245,6 +271,26 @@ export const Navbar = track(
                     </TooltipProvider>
                   );
                 })}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      type="button"
+                      className="bg-gray-0 hover:bg-brand-0 pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg lg:h-8 lg:w-8"
+                    >
+                      <MenuDots className="rotate-90" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    side="top"
+                    align="end"
+                    sideOffset={8}
+                    className="border-gray-10 bg-gray-0 w-[180px] rounded-xl border p-1"
+                  >
+                    <DropdownMenuItem onClick={handleInsertPdf} className="rounded-lg px-3">
+                      Загрузить PDF
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
           </div>
