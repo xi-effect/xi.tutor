@@ -11296,7 +11296,7 @@ packages:
       eslint-config-airbnb: 19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2)(eslint-plugin-react-hooks@5.1.0)(eslint-plugin-react@7.37.2)(eslint@9.39.2)
       eslint-config-next: 15.1.2(eslint@9.39.2)(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.39.2)
-      eslint-config-turbo: 2.8.9(eslint@9.39.2)(turbo@2.8.7)
+      eslint-config-turbo: 2.8.10(eslint@9.39.2)(turbo@2.8.7)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.55.0)(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.2)
       eslint-plugin-react: 7.37.2(eslint@9.39.2)
       eslint-plugin-react-hooks: 5.1.0(eslint@9.39.2)
@@ -12907,14 +12907,14 @@ packages:
       eslint: 9.39.2
     dev: true
 
-  /eslint-config-turbo@2.8.9(eslint@9.39.2)(turbo@2.8.7):
-    resolution: {integrity: sha512-U+R5hYzLH5A393R4u6AGMftSLXEs0Gj7ys1ae2ha39YWi+Ei8K2ctOB5y+NQ7TOngvOVIK5uFhxMWQimKAglGw==}
+  /eslint-config-turbo@2.8.10(eslint@9.39.2)(turbo@2.8.7):
+    resolution: {integrity: sha512-qMCeIQQfJN6ZlWOEiM9VZ7XWiz5aVQ+5UYGgqzfhdupEBfJdA0LtU3c/3Im6k0IGeG0W8K/8Ny0w+QxOvy5z+w==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
     dependencies:
       eslint: 9.39.2
-      eslint-plugin-turbo: 2.8.9(eslint@9.39.2)(turbo@2.8.7)
+      eslint-plugin-turbo: 2.8.10(eslint@9.39.2)(turbo@2.8.7)
       turbo: 2.8.7
     dev: true
 
@@ -13130,8 +13130,8 @@ packages:
       string.prototype.repeat: 1.0.0
     dev: true
 
-  /eslint-plugin-turbo@2.8.7(eslint@9.39.2)(turbo@2.8.7):
-    resolution: {integrity: sha512-NzYLXQ4o7JOwdEpULd8+hU+9XwOyqZIsT87xHwfYyDUGssz2ra1oSVnK2aGP1j5RB+er4f832Eytn/6k1JDyGA==}
+  /eslint-plugin-turbo@2.8.10(eslint@9.39.2)(turbo@2.8.7):
+    resolution: {integrity: sha512-IeXO+znCnyQgy28TxqjvABC5DQOr+BzbhV6arDN+najkuEJ8czGeEni9qOInxoLFgNUJcy9kAVUqmGm2X93ZXw==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -13141,8 +13141,8 @@ packages:
       turbo: 2.8.7
     dev: true
 
-  /eslint-plugin-turbo@2.8.9(eslint@9.39.2)(turbo@2.8.7):
-    resolution: {integrity: sha512-gmhdR1SNrPxdXu00xxdhnt32SayUBjHbnhw3YpB939D9ZQjsK9Mthw7mPBrafifwb06kx0VqaFzxaP1JLCbh3g==}
+  /eslint-plugin-turbo@2.8.7(eslint@9.39.2)(turbo@2.8.7):
+    resolution: {integrity: sha512-NzYLXQ4o7JOwdEpULd8+hU+9XwOyqZIsT87xHwfYyDUGssz2ra1oSVnK2aGP1j5RB+er4f832Eytn/6k1JDyGA==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
