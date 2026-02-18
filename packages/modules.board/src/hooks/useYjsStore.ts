@@ -33,6 +33,7 @@ import {
 import { YKeyValue } from 'y-utility/y-keyvalue';
 import * as Y from 'yjs';
 import { myAssetStore } from '../features/imageStore';
+import { PdfShapeUtil } from '../shapes/pdf';
 import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
 import { generateUserColor } from '../utils/userColor';
 
@@ -73,6 +74,10 @@ export type ExtendedStoreStatus = {
   getUserCamera: () => CameraState | undefined;
   /** Сохранить камеру текущего пользователя в Yjs meta (синхронизируется через Hocuspocus) */
   setUserCamera: (camera: CameraState) => void;
+  /** Y.Map для хранения текущей страницы PDF по ключу `${shapeId}:${userId}` */
+  pdfPagesMap: Y.Map<number>;
+  /** Токен для доступа к файлам */
+  token: string;
 };
 
 type PendingChanges = {
@@ -114,6 +119,8 @@ type SharedEntry = {
   readonlyMap: Y.Map<boolean>;
   /** Камеры по userId — каждый пользователь хранит свою последнюю позицию камеры (синхронизируется с сервером) */
   userCamerasMap: Y.Map<CameraState>;
+  /** Текущие страницы PDF: ключ — `${shapeId}:${userId}`, значение — номер страницы */
+  pdfPagesMap: Y.Map<number>;
   releaseTimer: number | null;
 };
 
@@ -147,6 +154,7 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
 
   const readonlyMap = yDoc.getMap<boolean>('readonly');
   const userCamerasMap = yDoc.getMap<CameraState>('userCameras');
+  const pdfPagesMap = yDoc.getMap<number>('pdfPages');
 
   const provider = new HocuspocusProvider({
     url: hostUrl,
@@ -166,6 +174,7 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
     meta,
     readonlyMap,
     userCamerasMap,
+    pdfPagesMap,
     releaseTimer: null,
   };
 
@@ -218,7 +227,7 @@ export function useYjsStore({
     const assetStore = token ? myAssetStore(token) : undefined;
 
     return createTLStore({
-      shapeUtils: [...defaultShapeUtils, ...shapeUtils],
+      shapeUtils: [...defaultShapeUtils, PdfShapeUtil, ...shapeUtils],
       ...(assetStore ? { assets: assetStore } : {}),
     });
   });
@@ -248,7 +257,7 @@ export function useYjsStore({
     return getOrCreateShared(hostUrl, ydocId, storageToken);
   }, [hostUrl, ydocId, storageToken]);
 
-  const { provider, yDoc, yStore, meta, readonlyMap, userCamerasMap } = sharedEntry;
+  const { provider, yDoc, yStore, meta, readonlyMap, userCamerasMap, pdfPagesMap } = sharedEntry;
 
   useEffect(() => {
     setStoreWithStatus((prev) => ({ ...prev, status: 'loading', store }));
@@ -742,5 +751,8 @@ export function useYjsStore({
     myPresenceId,
     getUserCamera,
     setUserCamera,
+
+    pdfPagesMap,
+    token: token ?? '',
   };
 }

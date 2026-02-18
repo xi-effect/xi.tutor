@@ -1,7 +1,7 @@
 import { uploadImageRequest, uploadFileRequest } from 'common.services';
-import { getAxiosInstance } from 'common.config';
 import { TLAsset } from 'tldraw';
 import { toast } from 'sonner';
+import { resolveAssetUrl } from '../utils/resolveAssetUrl';
 
 export type TLAssetContextT = {
   screenScale: number;
@@ -42,9 +42,6 @@ const ALLOWED_IMAGE_MIME_TYPES = new Set([
 
 const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
 const MAX_IMAGE_SIDE = 4096; // макс. сторона в пикселях
-
-// Кеш blob URL для уже загруженных изображений (по исходному src)
-const blobUrlCache = new Map<string, string>();
 
 /** Узнать размеры изображения (без тяжёлых операций) */
 async function probeImage(file: File): Promise<{ w: number; h: number; objectUrl: string }> {
@@ -153,48 +150,12 @@ export const myAssetStore = (token: string) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async resolve(asset: TLAsset, _ctx: TLAssetContextT) {
       const src = asset.props.src;
-
-      // Если нет src или токена — возвращаем как есть
-      if (!src || !token) {
-        return src;
-      }
-
-      // Пропускаем data: и blob: URL — они уже пригодны к отображению
-      if (src.startsWith('data:') || src.startsWith('blob:')) {
-        return src;
-      }
-
-      // Проверяем кеш
-      const cached = blobUrlCache.get(src);
-      if (cached) {
-        return cached;
-      }
+      if (!src) return src;
 
       try {
-        // Загружаем изображение с заголовком токена через axios
-        const axiosInst = await getAxiosInstance();
-        const response = await axiosInst.get(src, {
-          responseType: 'blob',
-          headers: {
-            'x-storage-token': token,
-          },
-        });
-
-        if (response.status !== 200) {
-          return src;
-        }
-
-        // Создаем blob URL из загруженного изображения
-        const blob = response.data;
-        const blobUrl = URL.createObjectURL(blob);
-
-        // Сохраняем в кеш
-        blobUrlCache.set(src, blobUrl);
-
-        return blobUrl;
+        return await resolveAssetUrl(src, token);
       } catch (error) {
         console.error('[myAssetStore.resolve] Ошибка при загрузке изображения:', error);
-        // На любой ошибке возвращаем исходный src
         return src;
       }
     },
