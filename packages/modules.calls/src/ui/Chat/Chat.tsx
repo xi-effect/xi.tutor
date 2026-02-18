@@ -31,6 +31,15 @@ export const Chat = () => {
     }
   }, [isChatOpen]);
 
+  // Автоматическая прокрутка при получении новых сообщений
+  useEffect(() => {
+    if (isChatOpen && chatMessages.length > 0) {
+      requestAnimationFrame(() => {
+        scrollToBottom('smooth');
+      });
+    }
+  }, [chatMessages.length, isChatOpen]);
+
   const handleSendMessage = () => {
     if (messageText.trim()) {
       sendChatMessage(messageText);
@@ -46,10 +55,13 @@ export const Chat = () => {
   };
 
   const handleKeyDownSendMessage = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && (!e.shiftKey || e.metaKey || e.ctrlKey)) {
+    // Enter без Shift - отправка сообщения
+    // Shift+Enter - перенос строки (разрешаем стандартное поведение)
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
+    // Если Shift+Enter, не предотвращаем стандартное поведение - будет перенос строки
   };
 
   if (!isChatOpen) return null;
@@ -100,7 +112,7 @@ export const Chat = () => {
                     </div>
                     <div
                       className={cn(
-                        'cursor-text rounded-lg px-3 py-2 text-sm wrap-break-word select-text',
+                        'cursor-text rounded-lg px-3 py-2 text-sm wrap-break-word whitespace-pre-wrap select-text',
                         isOwnMessage ? 'bg-brand-20' : 'bg-gray-5',
                       )}
                     >
