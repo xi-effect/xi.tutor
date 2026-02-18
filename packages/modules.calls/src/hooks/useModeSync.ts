@@ -1,9 +1,13 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { RoomEvent } from 'livekit-client';
+import type { Room } from 'livekit-client';
 import { useCallStore } from '../store/callStore';
 import { useUpdateConferenceMetadata } from 'common.services';
 import { useRoom } from '../providers/RoomProvider';
+
+/** Один раз за сессию комнаты применяем начальные метаданные (чтобы при монтировании второго CompactCall в DragOverlay не редиректило) */
+const initialMetadataAppliedForRoomRef = { current: null as Room | null };
 
 /** Метаданные комнаты с бэкенда (обновляются через PUT .../metadata/) */
 type RoomMetadataPayload = {
@@ -70,14 +74,21 @@ export const useModeSync = () => {
         const localFullView = useCallStore.getState().localFullView;
         if (localFullView) return; // Пользователь сам в полной ВКС («Только меня») — не меняем mode и не навигируем
 
+        // Проверяем, не находимся ли мы уже на нужной странице доски (чтобы не редиректить при drag)
+        const currentParams = params as { classroomId?: string; boardId?: string };
+        const isAlreadyOnTargetBoard =
+          targetClassroom &&
+          currentParams.classroomId === targetClassroom &&
+          currentParams.boardId === boardId;
+
         updateStore('mode', 'compact');
-        if (targetClassroom) {
+        if (targetClassroom && !isAlreadyOnTargetBoard) {
           navigate({
             to: '/classrooms/$classroomId/boards/$boardId',
             params: { classroomId: targetClassroom, boardId },
             search: { call: targetClassroom },
           });
-        } else {
+        } else if (!targetClassroom && currentParams.boardId !== boardId) {
           navigate({
             to: '/board/$boardId',
             params: { boardId },
@@ -103,8 +114,10 @@ export const useModeSync = () => {
 
     room.on(RoomEvent.RoomMetadataChanged, handleRoomMetadataChanged);
 
-    // Начальное состояние при подключении к комнате (один раз за сессию комнаты)
-    if (room.metadata) {
+    // Начальное состояние — только один раз за сессию этой комнаты (при первом подключении).
+    // При монтировании второго CompactCall (напр. в DragOverlay) не вызываем apply снова.
+    if (room.metadata && initialMetadataAppliedForRoomRef.current !== room) {
+      initialMetadataAppliedForRoomRef.current = room;
       applyRoomMetadataRef.current(room.metadata);
     }
 

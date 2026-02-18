@@ -10,7 +10,7 @@ import {
 import { LocalAudioTrack, LocalVideoTrack, Track } from 'livekit-client';
 import { DisconnectButton } from '../Bottom/DisconnectButton';
 import { useCompactNavigation } from '../../hooks/useCompactNavigation';
-import { Maximize } from '@xipkg/icons';
+import { Maximize, WhiteBoard } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import {
@@ -37,7 +37,6 @@ export const CompactCall = ({ saveUserChoices = true }) => {
 
   const style = {
     transform: CSS.Translate.toString(transform),
-    cursor: 'move',
   };
 
   const { saveAudioInputEnabled, saveVideoInputEnabled } = usePersistentUserChoices({
@@ -95,7 +94,11 @@ export const CompactCall = ({ saveUserChoices = true }) => {
   } = navigation;
 
   const search = useSearch({ strict: false }) as { call?: string };
-  const params = useParams({ strict: false }) as { callId?: string; classroomId?: string };
+  const params = useParams({ strict: false }) as {
+    callId?: string;
+    classroomId?: string;
+    boardId?: string;
+  };
   const { call } = search;
 
   const navigate = useNavigate();
@@ -107,6 +110,19 @@ export const CompactCall = ({ saveUserChoices = true }) => {
   const token = useCallStore((state) => state.token);
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+
+  const isOnBoardPage = params.classroomId === activeClassroom && params.boardId === activeBoardId;
+  const showBackToBoardButton =
+    mode === 'compact' && !!activeBoardId && !!activeClassroom && !isOnBoardPage;
+
+  const handleBackToBoard = useCallback(() => {
+    if (!activeBoardId || !activeClassroom) return;
+    navigate({
+      to: '/classrooms/$classroomId/boards/$boardId',
+      params: { classroomId: activeClassroom, boardId: activeBoardId },
+      search: { call: activeClassroom },
+    });
+  }, [activeBoardId, activeClassroom, navigate]);
 
   const handleMaximize = (syncToAll: boolean = false) => {
     if (!room || !token || room.state !== 'connected') {
@@ -143,15 +159,13 @@ export const CompactCall = ({ saveUserChoices = true }) => {
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className="flex w-[320px] flex-col"
-    >
-      {/* Видео текущего участника */}
-      <div className="bg-gray-0 border-gray-20 group relative mb-2 flex h-[180px] w-[320px] items-center justify-center overflow-hidden rounded-2xl border shadow-lg">
+    <div ref={setNodeRef} style={style} className="flex w-[320px] flex-col">
+      {/* Ручка перетаскивания — только эта область запускает dnd, кнопки не срабатывают при отпускании */}
+      <div
+        {...attributes}
+        {...listeners}
+        className="bg-gray-0 border-gray-20 group relative mb-2 flex h-[180px] w-[320px] cursor-move items-center justify-center overflow-hidden rounded-2xl border shadow-lg"
+      >
         {currentParticipant ? (
           <ParticipantTile
             trackRef={currentParticipant}
@@ -197,6 +211,24 @@ export const CompactCall = ({ saveUserChoices = true }) => {
             }}
           />
         </div>
+        {showBackToBoardButton && (
+          <div className="bg-gray-0 border-gray-20 ml-1 flex items-center justify-center rounded-2xl border p-1 shadow-lg">
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="primary"
+                  className="h-8 w-8 rounded-xl p-0"
+                  onClick={handleBackToBoard}
+                  aria-label="На доску"
+                >
+                  <WhiteBoard className="fill-gray-0 h-5 w-5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Обратно на доску</TooltipContent>
+            </Tooltip>
+          </div>
+        )}
         <div className="bg-gray-0 border-gray-20 ml-auto flex items-center justify-center rounded-2xl border p-1 shadow-lg">
           <ScreenShareButton className="h-[32px] w-[32px]" />
           {/* <ChatButton /> */}
