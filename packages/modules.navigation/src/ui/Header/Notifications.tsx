@@ -169,10 +169,7 @@ export const Notifications = () => {
   const notificationsList = (
     <div
       ref={scrollAreaRef}
-      className={cn(
-        'overflow-y-auto pr-1 pl-1',
-        isMobile ? 'max-h-[calc(100dvh-200px)]' : 'h-[300px]',
-      )}
+      className={cn('overflow-y-auto', isMobile ? 'max-h-[calc(100dvh-200px)]' : 'h-[300px] px-1')}
     >
       {notifications.length > 0 ? (
         <>
@@ -222,13 +219,13 @@ export const Notifications = () => {
           </DrawerTrigger>
 
           <DrawerContent className="max-h-[calc(100dvh-64px)] w-full">
-            <div className="dark:bg-gray-0 h-full p-4">
-              <DrawerHeader className="flex items-center">
+            <div className="dark:bg-gray-0 h-full p-0.5">
+              <DrawerHeader className="flex items-center pt-2 pb-6 pl-1">
                 <DrawerTitle className="text-m-base font-semibold text-gray-100">
                   Уведомления
                 </DrawerTitle>
 
-                <div className="ml-auto flex items-center gap-1">
+                <div className="ml-auto flex items-center">
                   <Button
                     onClick={handleToSettings}
                     variant="none"
@@ -238,6 +235,7 @@ export const Notifications = () => {
                   </Button>
                 </div>
               </DrawerHeader>
+
               {notificationsList}
             </div>
           </DrawerContent>
