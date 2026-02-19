@@ -11,6 +11,7 @@ const paramsSchema = z.object({
 
 const searchSchema = z.object({
   carouselType: z.enum(['horizontal', 'vertical']).optional(),
+  call: z.string().optional(),
 });
 
 // @ts-ignore

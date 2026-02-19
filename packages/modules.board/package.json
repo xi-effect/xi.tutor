@@ -32,6 +32,7 @@
     "common.types": "*",
     "features.materials.edit": "*",
     "features.materials.card": "*",
+    "pdfjs-dist": "^4.10.38",
     "pica": "9.0.1",
     "react-hook-form": "^7.55.0",
     "tldraw": "^3.15.1",

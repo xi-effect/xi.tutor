@@ -2,6 +2,7 @@
 import { useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getAxiosInstance } from './axios.instance';
+import { AxiosError } from 'axios';
 
 type ApiConfig = {
   method: string;
@@ -34,8 +35,13 @@ export const useFetching = ({
       const axiosInstance = await getAxiosInstance();
       const response = await axiosInstance({ method, url, data, headers });
       return response.data;
-    } catch (error) {
-      console.error('Ошибка при получении данных:', error);
+    } catch (error: unknown) {
+      const errorStatus = error instanceof AxiosError ? error.response?.status : null;
+
+      if (errorStatus !== 401 && errorStatus !== 409) {
+        console.error('Ошибка при получении данных:', error);
+      }
+
       throw error;
     }
   }, [disabled, method, url, headers, data]);

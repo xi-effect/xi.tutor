@@ -32,8 +32,12 @@ type WhiteboardsModalProps = {
 export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) => {
   const navigate = useNavigate();
   const { callId } = useParams({ strict: false });
+  const activeClassroom = useCallStore((state) => state.activeClassroom);
   const updateStore = useCallStore((state) => state.updateStore);
   const { syncModeToOthers } = useModeSync();
+
+  // Текущий кабинет: из URL (callId) или из store (активная конференция)
+  const classroomId = callId ?? activeClassroom;
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const [searchQuery, setSearchQuery] = useState('');
@@ -43,15 +47,15 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
   // Хук для создания новой доски
   const { addClassroomMaterials } = useAddClassroomMaterials();
 
-  // Загружаем список досок кабинета (classroomId == callId)
+  // Загружаем список досок кабинета
   const {
     data: boards,
     isLoading,
     isError,
   } = useGetClassroomMaterialsList({
-    classroomId: callId || '',
+    classroomId: classroomId || '',
     content_type: 'board',
-    disabled: !callId || !isTutor,
+    disabled: !classroomId || !isTutor,
   });
 
   const filteredWhiteboards = (boards || [])
@@ -67,11 +71,11 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
   };
 
   const handleCreateNewBoard = async () => {
-    if (!callId) return;
+    if (!classroomId) return;
 
     try {
       const result = await addClassroomMaterials.mutateAsync({
-        classroomId: callId,
+        classroomId,
         content_kind: 'board',
         student_access_mode: 'read_write', // Режим совместного редактирования
       });
@@ -84,7 +88,7 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
 
         // Если включен режим совместной работы, отправляем сообщение всем участникам
         if (isCollaborativeMode) {
-          syncModeToOthers('compact', newBoardId.toString(), callId);
+          syncModeToOthers('compact', newBoardId.toString(), classroomId);
         }
       }
     } catch (error) {
@@ -97,19 +101,19 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
       // Обновляем локальный режим и сохраняем информацию о доске
       updateStore('mode', 'compact');
       updateStore('activeBoardId', selectedBoardId.toString());
-      updateStore('activeClassroom', callId);
+      updateStore('activeClassroom', classroomId);
 
       // Если включен режим совместной работы, отправляем сообщение всем участникам
       if (isCollaborativeMode) {
-        syncModeToOthers('compact', selectedBoardId.toString(), callId);
+        syncModeToOthers('compact', selectedBoardId.toString(), classroomId);
       }
 
-      // Переходим на доску
-      if (callId) {
+      // Переходим на доску: всегда в контексте кабинета /classrooms/:id/boards/:boardId
+      if (classroomId) {
         navigate({
           to: '/classrooms/$classroomId/boards/$boardId',
-          params: { classroomId: callId, boardId: selectedBoardId.toString() },
-          search: { call: callId },
+          params: { classroomId, boardId: selectedBoardId.toString() },
+          search: { call: classroomId },
         });
       } else {
         navigate({

@@ -20,7 +20,6 @@ import { useNavigate } from '@tanstack/react-router';
 import { WhiteBoard } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Button } from '@xipkg/button';
-import { useModeSync } from '../../hooks';
 import { useRoom } from '../../providers/RoomProvider';
 
 export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
@@ -67,7 +66,6 @@ export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
   const isTutor = user?.default_layout === 'tutor';
 
   const navigate = useNavigate();
-  const { syncModeToOthers } = useModeSync();
 
   // Показываем кнопку "обратно к доске" только если:
   // 1. Пользователь в full mode
@@ -86,23 +84,19 @@ export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
       return;
     }
 
-    // Проверяем, что комната подключена (чтобы не терять ВКС)
     if (!room || !token || room.state !== 'connected') {
       return;
     }
 
-    // Обновляем режим в store ПЕРЕД навигацией
+    // Возврат на доску: сбрасываем локальный переключатель (если был «Только меня»), комната на сервере уже на доске — API не вызываем
+    updateStore('localFullView', false);
     updateStore('mode', 'compact');
 
-    // Синхронизируем режим с другими участниками (если был collaborative mode)
-    syncModeToOthers('compact', activeBoardId, activeClassroom);
-
-    // Переходим на доску с обязательным параметром call для сохранения ВКС
     navigate({
       to: '/classrooms/$classroomId/boards/$boardId',
       params: { classroomId: activeClassroom, boardId: activeBoardId },
       search: { call: activeClassroom },
-      replace: false, // Не заменяем историю, чтобы можно было вернуться
+      replace: false,
     });
   };
 
@@ -145,11 +139,11 @@ export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
                   size="m"
                   variant="default"
                   onClick={handleBackToBoard}
-                  className="bg-brand-100 hover:bg-brand-80 absolute top-1 left-[-132px] m-0 h-10 w-[128px] rounded-xl"
+                  className="bg-brand-100 hover:bg-brand-80 absolute top-1 left-[-132px] m-0 h-10 w-[128px] rounded-xl px-2"
                   data-umami-event="call-back-to-board"
                 >
-                  <WhiteBoard className="fill-gray-0" />
-                  <span className="ml-2">К доске</span>
+                  <WhiteBoard className="fill-gray-0 h-5 w-5" />
+                  <span className="text-gray-0 ml-2">К доске</span>
                 </Button>
               </TooltipTrigger>
               <TooltipContent side="top" align="center">

@@ -62,8 +62,8 @@ const DroppableAreas: FC = () => {
 
   return (
     <>
-      <DroppableCorner id="top-left" className="top-4 left-4" />
-      <DroppableCorner id="top-right" className="top-4 right-4" />
+      <DroppableCorner id="top-left" className="top-16 left-4" />
+      <DroppableCorner id="top-right" className="top-16 right-4" />
       <DroppableCorner id="bottom-left" className="bottom-4 left-4" />
       <DroppableCorner id="bottom-right" className="right-4 bottom-18" />
       <DragOverlay>{isDragging ? <CompactCall /> : null}</DragOverlay>
@@ -96,9 +96,9 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
 
     switch (corner) {
       case 'top-left':
-        return 'top-4 left-4';
+        return 'top-16 left-4';
       case 'top-right':
-        return 'top-4 right-4';
+        return 'top-16 right-4';
       case 'bottom-left':
         return `${bottomOffset} left-4`;
       case 'bottom-right':

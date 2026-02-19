@@ -45,6 +45,9 @@ type useCallStoreT = {
   activeBoardId: string | undefined;
   activeClassroom: string | undefined;
 
+  /** Локальный переключатель: пользователь сам ушёл в полную ВКС («Только меня»), комната на сервере остаётся на доске */
+  localFullView: boolean;
+
   // токен для конференции
   token: string | undefined;
 
@@ -91,6 +94,8 @@ export const useCallStore = create<useCallStoreT>()(
       // Текущая активная доска
       activeBoardId: undefined,
       activeClassroom: undefined,
+
+      localFullView: false,
 
       // токен для конференции
       token: undefined,
