@@ -9,10 +9,8 @@ import { pdfDocCache } from './pdfDocCache';
 import { PdfPageControls } from './PdfPageControls';
 import type { PdfShape } from './PdfShape';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url,
-).toString();
+// Используем CDN для worker файла, чтобы избежать проблем с бандлингом в продакшене
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
 type PdfViewerProps = {
   shape: PdfShape;
