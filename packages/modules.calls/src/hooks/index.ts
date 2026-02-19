@@ -16,3 +16,4 @@ export { useVideoSecurity } from './useVideoSecurity';
 export { useScreenShareCleanup } from './useScreenShareCleanup';
 export { useVideoBlur } from './useVideoBlur';
 export { useParticipantJoinSync } from './useParticipantJoinSync';
+export { useUmamiActivityHeartbeat } from './useUmamiActivityHeartbeat';
