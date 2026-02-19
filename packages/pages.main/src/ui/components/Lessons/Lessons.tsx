@@ -1,10 +1,9 @@
 import { Button } from '@xipkg/button';
-import { ArrowRight } from '@xipkg/icons';
-import { ScrollArea } from '@xipkg/scrollarea';
-import { Lesson } from './Lesson';
+import { ArrowRight, Group } from '@xipkg/icons';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
-import { AssignLessonButton } from '../AssignLessonButton';
+import { NextLesson } from './NextLesson';
+import { AllLessons } from './AllLessons';
 
 export const Lessons = () => {
   const navigate = useNavigate();
@@ -24,9 +23,9 @@ export const Lessons = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 px-4 pb-4">
+    <div className="bg-gray-0 flex flex-col gap-4 rounded-2xl p-4">
       <div className="flex flex-row items-center justify-start gap-2">
-        <h2 className="text-xl-base font-medium text-gray-100">Ближайшие занятия</h2>
+        <h2 className="text-xl-base font-medium text-gray-100">Расписание на сегодня</h2>
         <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
             <Button
@@ -39,16 +38,26 @@ export const Lessons = () => {
           </TooltipTrigger>
           <TooltipContent>К календарю</TooltipContent>
         </Tooltip>
-        <AssignLessonButton className="lg:hidden" />
+        <div className="ml-auto">
+          <Button
+            variant="none"
+            className="flex size-8 items-center justify-center rounded-[4px] p-0"
+          >
+            <Group className="fill-gray-60 size-6" />
+          </Button>
+        </div>
       </div>
-      <div className="flex flex-row">
-        <ScrollArea className="h-[196px] w-full" scrollBarProps={{ orientation: 'horizontal' }}>
-          <div className="flex flex-row gap-8">
-            {[...new Array(10)].map((_, index) => (
-              <Lesson key={index} />
-            ))}
-          </div>
-        </ScrollArea>
+
+      <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <h3 className="text-m-base text-gray-80 font-medium">Ближайшее занятие</h3>
+          <NextLesson />
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <h3 className="text-m-base text-gray-80 font-medium">Все занятие</h3>
+          <AllLessons />
+        </div>
       </div>
     </div>
   );

@@ -35,7 +35,7 @@
     "@xipkg/sheet": "2.0.12",
     "@xipkg/textarea": "1.1.0",
     "@xipkg/tooltip": "2.1.0",
-    "@xipkg/userprofile": "4.0.14",
+    "@xipkg/userprofile": "4.1.0",
     "@xipkg/utils": "1.8.0",
     "common.api": "*",
     "common.env": "*",

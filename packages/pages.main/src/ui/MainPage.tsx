@@ -1,6 +1,13 @@
 /* eslint-disable no-irregular-whitespace */
 import { ScrollArea } from '@xipkg/scrollarea';
-import { Materials, Payments, Classrooms } from './components';
+import {
+  Materials,
+  Payments,
+  Classrooms,
+  Lessons,
+  ActionButtons,
+  DateTimeDisplay,
+} from './components';
 import { Menu } from 'common.ui';
 import { useCurrentUser } from 'common.services';
 // import { Sidebar } from './components/Sidebar';
@@ -115,20 +122,36 @@ export const MainPage = () => {
   ];
 
   return (
-    <div className="flex h-full flex-col overflow-auto lg:flex-row lg:gap-4">
-      {/* <AssignLessonButton className="absolute right-4 hidden lg:flex" /> */}
+    <div className="bg-gray-5 flex h-full flex-col overflow-auto">
       <ScrollArea
-        id="lessons"
         type="always"
         className="h-[calc(100vh-64px)] w-full flex-1 overflow-visible lg:overflow-auto"
       >
-        {/* <Lessons /> */}
-        <Classrooms />
-        <Payments />
-        {isTutor && <Materials />}
+        <div className="flex flex-col gap-4 p-4">
+          {/* Дата и время */}
+          <DateTimeDisplay />
+
+          {/* Кнопки действий сверху */}
+          <ActionButtons />
+
+          {/* Две колонки: Расписание слева, Кабинеты справа */}
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <div className="flex flex-col">
+              <Lessons />
+            </div>
+            <div className="flex flex-col">
+              <Classrooms />
+            </div>
+          </div>
+
+          {/* Финансовый блок */}
+          <Payments />
+
+          {/* Материалы */}
+          {isTutor && <Materials />}
+        </div>
         <Menu steps={steps} disabled={false} />
       </ScrollArea>
-      {/* <Sidebar /> */}
     </div>
   );
 };

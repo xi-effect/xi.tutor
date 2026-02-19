@@ -279,13 +279,19 @@ export const Notifications = () => {
     <>
       <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
         <DropdownMenuTrigger asChild>
-          <Button variant="none" className="relative h-[32px] w-[32px] p-1">
+          <Button
+            variant="none"
+            className="relative h-10 w-10 p-1 focus-visible:ring-0 focus-visible:ring-offset-0"
+          >
             <Notification className="fill-gray-80 size-6" size="s" />
             <NotificationBadge count={formatNotificationCount(unreadCount)} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           align="end"
+          side="right"
+          alignOffset={0}
+          sideOffset={16}
           className="flex w-[310px] flex-col gap-1 rounded-[20px] border-2 px-1 py-1"
         >
           <DropdownMenuLabel className="text-m-base flex h-[48px] items-center p-3 font-semibold text-gray-100">

@@ -34,7 +34,7 @@
     "@xipkg/button": "4.1.0",
     "@xipkg/dropdown": "3.0.12",
     "@xipkg/tabs": "^2.1.0",
-    "@xipkg/userprofile": "4.0.14",
+    "@xipkg/userprofile": "4.1.0",
     "@tanstack/react-virtual": "3.13.9",
     "@xipkg/scrollarea": "2.2.0"
   },
