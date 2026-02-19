@@ -15,6 +15,7 @@ import {
 } from 'common.services';
 import type { CustomNotificationModalPayload } from 'common.services';
 import { NotificationAvatar } from './NotificationAvatar';
+import type { NotificationLinkNavigateT } from './notificationsNavigation';
 
 export const NotificationItem = ({
   notification,
@@ -26,7 +27,7 @@ export const NotificationItem = ({
 }: {
   notification: NotificationT;
   onMarkAsRead: (id: string) => Promise<void>;
-  onNavigate: (url: string) => void;
+  onNavigate: NotificationLinkNavigateT;
   onClose: () => void;
   onOpenCustomModal: (payload: CustomNotificationModalPayload) => void;
   asDropdownItem?: boolean;
@@ -68,7 +69,7 @@ export const NotificationItem = ({
   const fullTime = formatFullNotificationDate(notification.created_at);
 
   const className = cn(
-    `flex h-full items-start gap-2 rounded-[16px] p-3 ${
+    `flex h-full items-start gap-2 rounded-4 p-3 ${
       !notification.is_read ? 'bg-brand-0 hover:bg-brand-0' : 'bg-gray-0 hover:bg-gray-5'
     }`,
   );
@@ -103,10 +104,10 @@ export const NotificationItem = ({
               <Button
                 variant="none"
                 size="sm"
-                className="group/button bg-gray-0 hover:bg-brand-80 h-6 w-6 rounded-sm p-0 opacity-0 transition-opacity group-hover:opacity-100"
+                className="group/button bg-gray-0 hover:bg-brand-80 size-6 rounded-sm p-0 opacity-0 transition-opacity group-hover:opacity-100"
                 onClick={handleMarkAsRead}
               >
-                <Check className="group-hover/button:fill-gray-0 h-3 w-3 fill-gray-100" />
+                <Check className="group-hover/button:fill-gray-0 size-3 fill-gray-100" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="left">
