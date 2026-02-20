@@ -9,7 +9,7 @@ import { NotificationsList } from './NotificationsList';
 import { NotificationsMobileDrawer } from './NotificationsMobileDrawer';
 import { CustomNotificationModal } from './CustomNotificationModal';
 import { openNotificationLink } from './notificationsNavigation';
-import { useNotificationsInfiniteScroll } from './useNotificationsInfiniteScroll';
+import { useNotificationsInfiniteScroll } from '../../../hooks';
 
 export const Notifications = () => {
   const navigate = useNavigate();
