@@ -27,7 +27,7 @@ export const Call = () => {
   }, [pathname, mode, updateStore]);
 
   return (
-    <div className="h-[calc(100vh-64px)]">
+    <div className="h-screen">
       <div className="flex h-full w-full flex-col">
         {isStarted ? (
           <div id="videoConferenceContainer" className="bg-gray-0 h-full">

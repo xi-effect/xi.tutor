@@ -18,7 +18,7 @@
     "common.api": "*",
     "common.utils": "*",
     "common.types": "*",
-    "@xipkg/icons": "^3.0.3",
+    "@xipkg/icons": "^3.0.4",
     "@xipkg/button": "4.0.0"
   },
   "devDependencies": {

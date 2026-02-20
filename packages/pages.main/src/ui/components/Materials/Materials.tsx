@@ -8,6 +8,7 @@ import { MaterialsDuplicate } from 'features.materials.duplicate';
 import { MaterialsCard } from 'features.materials.card';
 import { useState, useMemo } from 'react';
 import { cn } from '@xipkg/utils';
+import { ScrollArea } from '@xipkg/scrollarea';
 
 const MaterialsContent = () => {
   const { materialId, open, closeModal, openModal } = useMaterialsDuplicate();
@@ -37,7 +38,7 @@ const MaterialsContent = () => {
 
   return (
     <>
-      <div className="bg-gray-0 flex flex-col gap-4 rounded-2xl p-4">
+      <div className="bg-gray-0 flex h-[calc(100vh-272px)] w-full flex-col gap-4 rounded-2xl p-4">
         <div className="flex flex-row items-center justify-start gap-2">
           <h2 className="text-xl-base font-medium text-gray-100">Материалы</h2>
           <div className="ml-auto">
@@ -81,17 +82,19 @@ const MaterialsContent = () => {
             </div>
           )}
           {!isLoading && filteredMaterials && filteredMaterials.length > 0 && (
-            <div className="flex flex-col gap-2">
-              {filteredMaterials.map((material) => (
-                <MaterialsCard
-                  key={material.id}
-                  onDuplicate={openModal}
-                  {...material}
-                  isLoading={isLoading}
-                  hasIcon
-                />
-              ))}
-            </div>
+            <ScrollArea className="h-[calc(100vh-460px)] w-full overflow-x-auto overflow-y-hidden">
+              <div className="flex flex-col gap-2">
+                {filteredMaterials.map((material) => (
+                  <MaterialsCard
+                    key={material.id}
+                    onDuplicate={openModal}
+                    {...material}
+                    isLoading={isLoading}
+                    hasIcon
+                  />
+                ))}
+              </div>
+            </ScrollArea>
           )}
           {!isLoading && (!filteredMaterials || filteredMaterials.length === 0) && (
             <div className="flex h-[180px] w-full flex-row items-center justify-center gap-8">

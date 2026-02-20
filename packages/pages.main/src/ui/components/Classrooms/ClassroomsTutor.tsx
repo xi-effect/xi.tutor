@@ -7,6 +7,7 @@ import { useNoteVisibility } from '../../../hooks';
 import { NoteForStudent } from './NoteForStudent';
 import { useState, useMemo } from 'react';
 import { cn } from '@xipkg/utils';
+import { ScrollArea } from '@xipkg/scrollarea';
 
 export const ClassroomsTutor = () => {
   const { data: classrooms, isLoading } = useFetchClassrooms();
@@ -40,7 +41,7 @@ export const ClassroomsTutor = () => {
   ];
 
   return (
-    <div className="bg-gray-0 flex flex-col gap-4 rounded-2xl p-4">
+    <div className="bg-gray-0 flex h-[calc(100vh-112px)] flex-col gap-4 rounded-2xl p-4">
       <div className="flex flex-row items-center justify-start gap-2">
         <h2 className="text-xl-base font-medium text-gray-100">Кабинеты</h2>
         <div className="ml-auto">
@@ -88,16 +89,22 @@ export const ClassroomsTutor = () => {
             <p className="text-m-base text-gray-60">Загрузка...</p>
           </div>
         )}
-        {!isLoading && filteredClassrooms && filteredClassrooms.length > 0 && (
-          <>
-            {!isHidden && filteredClassrooms && filteredClassrooms.length > 0 && (
-              <NoteForStudent onHide={hideNote} isTutor={true} />
-            )}
-            {filteredClassrooms.map((classroom) => (
-              <Classroom key={classroom.id} classroom={classroom} isLoading={isLoading} />
-            ))}
-          </>
-        )}
+        <ScrollArea
+          className="flex h-[calc(100vh-312px)] w-full flex-col gap-3"
+          scrollBarProps={{ orientation: 'vertical' }}
+        >
+          {!isLoading && filteredClassrooms && filteredClassrooms.length > 0 && (
+            <>
+              {!isHidden && filteredClassrooms && filteredClassrooms.length > 0 && (
+                <NoteForStudent onHide={hideNote} isTutor={true} />
+              )}
+              {filteredClassrooms.map((classroom) => (
+                <Classroom key={classroom.id} classroom={classroom} isLoading={isLoading} />
+              ))}
+            </>
+          )}
+        </ScrollArea>
+
         {!isLoading && (!filteredClassrooms || filteredClassrooms.length === 0) && (
           <div className="flex h-[180px] w-full flex-row items-center justify-center gap-8">
             <p className="text-m-base text-gray-60 text-center">

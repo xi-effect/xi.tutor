@@ -14,7 +14,7 @@
     "@tanstack/react-router": "^1.128.8",
     "@xipkg/utils": "^1.8.0",
     "@xipkg/button": "4.1.0",
-    "@xipkg/icons": "^3.0.3",
+    "@xipkg/icons": "^3.0.4",
     "@xipkg/form": "4.2.1",
     "@xipkg/input": "2.0.7",
     "common.services": "*",
