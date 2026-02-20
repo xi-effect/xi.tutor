@@ -35,6 +35,7 @@ import {
 } from 'common.services';
 import { cn } from '@xipkg/utils';
 import { NotificationAvatar } from './NotificationAvatar';
+import { SidebarMenuButton, SidebarMenuItem } from '@xipkg/sidebar';
 
 // Компонент для отображения одного уведомления
 const NotificationItem = ({
@@ -279,20 +280,22 @@ export const Notifications = () => {
     <>
       <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
         <DropdownMenuTrigger asChild>
-          <Button
-            variant="none"
-            className="relative h-10 w-10 p-1 focus-visible:ring-0 focus-visible:ring-offset-0"
-          >
-            <Notification className="fill-gray-80 size-6" size="s" />
+          <SidebarMenuItem>
+            <SidebarMenuButton className="relative h-10 w-full p-2 focus-visible:ring-0 focus-visible:ring-offset-0">
+              <>
+                <Notification className="fill-gray-80 size-6" size="s" />
+                <span className="text-base">Уведомления</span>
+              </>
+            </SidebarMenuButton>
             <NotificationBadge count={formatNotificationCount(unreadCount)} />
-          </Button>
+          </SidebarMenuItem>
         </DropdownMenuTrigger>
         <DropdownMenuContent
-          align="end"
-          side="right"
+          align="start"
+          side="top"
           alignOffset={0}
-          sideOffset={16}
-          className="flex w-[310px] flex-col gap-1 rounded-[20px] border-2 px-1 py-1"
+          sideOffset={8}
+          className="flex w-[268px] flex-col gap-1 rounded-[20px] border-2 px-1 py-1"
         >
           <DropdownMenuLabel className="text-m-base flex h-[48px] items-center p-3 font-semibold text-gray-100">
             Уведомления
