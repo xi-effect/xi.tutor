@@ -10,7 +10,15 @@ import {
 } from '@xipkg/sidebar';
 import { useLocation, useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Group, Home, Payments, TelegramFilled, InfoCircle, BookOpened } from '@xipkg/icons';
+import {
+  Group,
+  Home,
+  Payments,
+  TelegramFilled,
+  InfoCircle,
+  BookOpened,
+  Calendar,
+} from '@xipkg/icons';
 import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
 import { useMenuStore } from '../store';
@@ -42,6 +50,12 @@ export const SideBarItems = () => {
       titleKey: 'home',
       url: '/',
       icon: Home,
+    },
+    {
+      id: 'calendar-menu-item',
+      titleKey: 'calendar',
+      url: '/calendar',
+      icon: Calendar,
     },
     {
       id: 'classrooms-menu-item',
