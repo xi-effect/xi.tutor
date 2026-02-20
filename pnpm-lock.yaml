@@ -1761,8 +1761,8 @@ importers:
         specifier: 1.120.11
         version: 1.120.11(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/button':
-        specifier: 3.2.0
-        version: 3.2.0(@types/react@19.2.14)(react@19.2.4)
+        specifier: 4.1.0
+        version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
       '@xipkg/datepicker':
         specifier: 2.2.0
         version: 2.2.0(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
@@ -1770,8 +1770,8 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^2.5.4
-        version: 2.7.2(react@19.2.4)
+        specifier: ^3.0.4
+        version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: 2.2.9
         version: 2.2.9(react@19.2.4)
@@ -1779,8 +1779,8 @@ importers:
         specifier: 2.0.12
         version: 2.0.12(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/modal':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
+        specifier: 4.3.1
+        version: 4.3.1(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/select':
         specifier: 2.2.5
         version: 2.2.5(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
@@ -11686,22 +11686,6 @@ packages:
       '@xipkg/utils': 1.8.0(react@19.2.4)
       class-variance-authority: 0.7.1
       react: 19.2.4
-    dev: false
-
-  /@xipkg/modal@4.1.0(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4):
-    resolution: {integrity: sha512-YVuwzTqFaTgouBd7EldpUYPpd3W3hE78LISDjFv9+f9w0rqRpMFhVKQpHpo8WdVb1ahwKDiH14ZssxzkNzKBUA==}
-    peerDependencies:
-      react: ^19
-    dependencies:
-      '@radix-ui/react-dialog': 1.1.6(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
-      '@xipkg/icons': 2.7.2(react@19.2.4)
-      '@xipkg/utils': 1.8.0(react@19.2.4)
-      lucide-react: 0.475.0(react@19.2.4)
-      react: 19.2.4
-    transitivePeerDependencies:
-      - '@types/react'
-      - '@types/react-dom'
-      - react-dom
     dev: false
 
   /@xipkg/modal@4.2.0(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4):

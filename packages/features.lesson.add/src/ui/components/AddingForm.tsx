@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { useMaskInput } from '@xipkg/inputmask';
@@ -13,11 +12,10 @@ import type { FormData } from '../../model';
 
 interface AddingFormProps extends PropsWithChildren {
   onClose: () => void;
-  onDateChange: (date: Date) => void;
 }
 
-export const AddingForm: FC<AddingFormProps> = ({ children, onClose, onDateChange }) => {
-  const { form, control, handleSubmit, handleClearForm, onSubmit, eventDate } = useAddingForm();
+export const AddingForm: FC<AddingFormProps> = ({ children, onClose }) => {
+  const { form, control, handleSubmit, handleClearForm, onSubmit } = useAddingForm();
 
   const maskRefStartTime = useMaskInput('time');
   const maskRefEndTime = useMaskInput('time');
@@ -31,12 +29,6 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose, onDateChang
     onSubmit(data);
     onClose();
   };
-
-  useEffect(() => {
-    if (eventDate) {
-      onDateChange(eventDate);
-    }
-  }, [eventDate, onDateChange]);
 
   return (
     <Form {...form}>
