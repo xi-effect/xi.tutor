@@ -53,7 +53,7 @@ export const MaterialsCard = ({
     <div
       onClick={handleCardClick}
       className={cn(
-        'hover:bg-gray-5 border-gray-30 bg-gray-0 flex w-[350px] min-w-[350px] shrink-0 cursor-pointer justify-between rounded-2xl border p-4',
+        'hover:bg-gray-5 border-gray-30 bg-gray-0 flex w-full shrink-0 cursor-pointer justify-between rounded-2xl border p-4',
         className,
       )}
       data-umami-event="material-card-open"

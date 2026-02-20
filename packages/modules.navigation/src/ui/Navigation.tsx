@@ -1,7 +1,7 @@
 import { useMediaQuery } from '@xipkg/utils';
 import { Drawer, DrawerContent } from '@xipkg/drawer';
 import { Sidebar, SidebarInset } from '@xipkg/sidebar';
-import { Header } from './Header';
+// import { Header } from './Header';
 import { SideBarItems } from './SideBarItems';
 import { SidebarProvider } from '@xipkg/sidebar';
 import { useMenuStore } from '../store';
@@ -37,7 +37,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
         <Sidebar
           id="sidebar"
           collapsible="icon"
-          className="dark:bg-gray-0 absolute w-full pt-[64px] md:w-[300px]"
+          className="dark:bg-gray-0 absolute w-full md:w-[300px]"
         >
           <SideBarItems />
         </Sidebar>
@@ -46,7 +46,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Children всегда рендерятся в одном месте с одним ключом и одним типом элемента */}
       {/* Используем SidebarInset для обоих случаев, чтобы React сохранял состояние */}
       <SidebarInset
-        className={isMobile ? 'w-full pt-[64px]' : 'h-screen overflow-hidden pt-[64px]'}
+        className={isMobile ? 'w-full' : 'h-screen overflow-hidden'}
         key="navigation-content"
       >
         {stableChildren}
@@ -78,7 +78,7 @@ export const Navigation = ({ children }: { children: React.ReactNode }) => {
       open={sidebarOpen}
       onOpenChange={sidebarOnOpenChange}
     >
-      <Header />
+      {/* <Header /> */}
       <NavigationLayout>{stableChildren}</NavigationLayout>
     </SidebarProvider>
   );

@@ -74,6 +74,7 @@ export const Header = () => {
           />
         ) : (
           <DesktopUserMenu
+            withOutText
             userId={user?.id || 0}
             onOpenProfile={handleOpenProfile}
             onLogout={handleLogout}

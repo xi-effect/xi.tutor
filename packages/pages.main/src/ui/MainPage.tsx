@@ -1,10 +1,16 @@
 /* eslint-disable no-irregular-whitespace */
 import { ScrollArea } from '@xipkg/scrollarea';
-import { Materials, Payments, Classrooms } from './components';
+import {
+  Materials,
+  Payments,
+  Classrooms,
+  Lessons,
+  ActionButtons,
+  DateTimeDisplay,
+} from './components';
 import { Menu } from 'common.ui';
 import { useCurrentUser } from 'common.services';
 // import { Sidebar } from './components/Sidebar';
-// import { AssignLessonButton } from './components/AssignLessonButton';
 
 export const MainPage = () => {
   const { data: user } = useCurrentUser();
@@ -115,20 +121,29 @@ export const MainPage = () => {
   ];
 
   return (
-    <div className="flex h-full flex-col overflow-auto lg:flex-row lg:gap-4">
-      {/* <AssignLessonButton className="absolute right-4 hidden lg:flex" /> */}
-      <ScrollArea
-        id="lessons"
-        type="always"
-        className="h-[calc(100vh-64px)] w-full flex-1 overflow-visible lg:overflow-auto"
-      >
-        {/* <Lessons /> */}
-        <Classrooms />
-        <Payments />
-        {isTutor && <Materials />}
+    <div className="bg-gray-5 flex h-screen flex-col overflow-auto">
+      <ScrollArea type="always" className="h-full w-full flex-1 overflow-visible lg:overflow-auto">
+        <div className="flex flex-col gap-4 pt-6 pl-8">
+          {/* Дата и время */}
+          <DateTimeDisplay />
+
+          {/* Три колонки: Расписание, Кабинеты, Payments и Materials */}
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <div className="flex flex-col">
+              <Lessons />
+            </div>
+            <div className="flex flex-col">
+              <Classrooms />
+            </div>
+            <div className="flex flex-col gap-4">
+              <ActionButtons />
+              <Payments />
+              {isTutor && <Materials />}
+            </div>
+          </div>
+        </div>
         <Menu steps={steps} disabled={false} />
       </ScrollArea>
-      {/* <Sidebar /> */}
     </div>
   );
 };
