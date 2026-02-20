@@ -23,10 +23,13 @@
 @source "../../../packages/pages.welcome/src";
 @source "../../../packages/pages.materials/src";
 @source "../../../packages/features.materials.add/src";
+@source "../../../packages/features.materials.edit/src";
+@source "../../../packages/features.materials.card/src";
 @source "../../../packages/features.table/src";
 @source "../../../packages/features.avatar.editor/src";
 @source "../../../packages/features.charts/src";
 @source "../../../packages/features.payment.approve/src";
+@source "../../../packages/features.classroom/src";
 @source "../../../packages/pages.payments/src";
 @source "../../../packages/pages.main/src";
 @source "../../../packages/pages.invites/src";

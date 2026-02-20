@@ -1,35 +1,10 @@
-import { useState } from 'react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Button } from '@xipkg/button';
-import { ArrowRight } from '@xipkg/icons';
-import { ScrollArea } from '@xipkg/scrollarea';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
-import {
-  useCurrentUser,
-  useGetStudentPaymentsList,
-  useGetTutorPaymentsList,
-} from 'common.services';
-import { InvoiceModal } from 'features.invoice';
-import { Payment } from './Payment';
+import { ArrowUpRight, Notification } from '@xipkg/icons';
 
 export const Payments = () => {
-  const { data: user } = useCurrentUser();
-
-  const isTutor = user?.default_layout === 'tutor';
-
-  const { data: studentPayments, isLoading: isLoadingStudent } = useGetStudentPaymentsList({
-    disabled: isTutor,
-  });
-  const { data: tutorPayments, isLoading: isLoadingTutor } = useGetTutorPaymentsList({
-    disabled: !isTutor,
-  });
-
-  const payments = isTutor ? tutorPayments : studentPayments;
-  const isLoading = isTutor ? isLoadingTutor : isLoadingStudent;
-
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
-  const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
 
   const handleMore = () => {
     // Сохраняем параметр call при переходе к оплатам
@@ -44,67 +19,28 @@ export const Payments = () => {
     });
   };
 
+  const handleRemind = () => {
+    // TODO: Реализовать функцию напоминания об оплате
+    console.log('Напомнить об оплате');
+  };
+
   return (
-    <div className="flex flex-col gap-4 p-4">
-      <div className="flex flex-row items-center justify-start gap-2">
-        <h2 className="text-xl-base font-medium text-gray-100">Оплаты</h2>
-        <Tooltip delayDuration={1000}>
-          <TooltipTrigger asChild>
-            <Button
-              variant="ghost"
-              className="flex size-8 items-center justify-center rounded-[4px] p-0"
-              onClick={handleMore}
-            >
-              <ArrowRight className="fill-gray-60 size-6" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>К оплатам</TooltipContent>
-        </Tooltip>
-
-        {isTutor && (
-          <div className="ml-auto flex flex-row items-center gap-2 max-sm:hidden">
-            <Button
-              id="create-invoice-button"
-              size="s"
-              variant="secondary"
-              className="rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
-              onClick={() => setIsInvoiceModalOpen(true)}
-            >
-              Создать счет на оплату
-            </Button>
-          </div>
-        )}
+    <div className="bg-gray-0 border-gray-30 flex flex-col gap-4 rounded-2xl border p-6">
+      <div className="flex flex-row gap-4">
+        <Button
+          variant="none"
+          size="s"
+          className="border-gray-30 flex-1 rounded-lg border"
+          onClick={handleMore}
+        >
+          Подробнее о финансах
+          <ArrowUpRight className="ml-2 h-4 w-4" />
+        </Button>
+        <Button variant="secondary" size="s" className="flex-1 rounded-lg" onClick={handleRemind}>
+          Напомнить об оплате
+          <Notification className="ml-2 h-4 w-4" />
+        </Button>
       </div>
-      <div className="flex flex-row">
-        {isLoading && (
-          <div className="flex flex-row gap-8">
-            <p className="text-m-base text-gray-60">Загрузка...</p>
-          </div>
-        )}
-        {!isLoading && payments && payments.length > 0 && (
-          <ScrollArea
-            className="h-full min-h-[172px] w-full sm:w-[calc(100vw-104px)]"
-            scrollBarProps={{ orientation: 'horizontal' }}
-          >
-            <div className="flex flex-row gap-8">
-              {payments.map((payment) => (
-                <Payment
-                  key={payment.id}
-                  payment={payment}
-                  currentUserRole={isTutor ? 'tutor' : 'student'}
-                />
-              ))}
-            </div>
-          </ScrollArea>
-        )}
-        {!isLoading && (!payments || payments.length === 0) && (
-          <div className="flex h-[148px] w-full flex-row items-center justify-center gap-8">
-            <p className="text-m-base text-gray-60">Здесь пока пусто</p>
-          </div>
-        )}
-      </div>
-
-      <InvoiceModal open={isInvoiceModalOpen} onOpenChange={setIsInvoiceModalOpen} />
     </div>
   );
 };

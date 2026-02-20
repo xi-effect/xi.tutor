@@ -13,19 +13,20 @@
   "dependencies": {
     "@tanstack/react-query": "5.73.3",
     "@tanstack/react-virtual": "3.13.9",
-    "@xipkg/button": "3.2.0",
+    "@xipkg/button": "4.1.0",
     "@xipkg/dropdown": "3.0.12",
     "@xipkg/file": "2.0.12",
     "@xipkg/scrollarea": "2.2.0",
     "@xipkg/tabs": "^2.1.0",
-    "@xipkg/userprofile": "4.0.14",
+    "@xipkg/userprofile": "4.1.0",
     "common.api": "*",
     "common.config": "*",
     "common.services": "*",
     "common.ui": "*",
     "dayjs": "^1.11.13",
     "features.materials.add": "*",
-    "features.materials.duplicate": "*"
+    "features.materials.duplicate": "*",
+    "features.materials.card": "*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

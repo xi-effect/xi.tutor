@@ -1,22 +1,23 @@
 import { useMemo } from 'react';
 import { usePermissionsStore } from '../store/permissions';
 
+/** Возвращает true, если устройство нельзя использовать: нет прав (denied / prompt / unavailable / ещё не выданы). */
 export const useCannotUseDevice = (kind: MediaDeviceKind) => {
-  const { isLoading, isMicrophoneDenied, isMicrophonePrompted, isCameraDenied, isCameraPrompted } =
-    usePermissionsStore();
+  const { isLoading, cameraPermission, microphonePermission } = usePermissionsStore();
 
   return useMemo(() => {
     if (isLoading) return true;
-
+    // Показываем «нет прав», если разрешение не выдано (любое состояние кроме 'granted')
+    const cameraBlocked = cameraPermission !== 'granted';
+    const microphoneBlocked = microphonePermission !== 'granted';
     switch (kind) {
       case 'audioinput':
-      case 'audiooutput': // audiooutput uses microphone permissions
-        return isMicrophoneDenied || isMicrophonePrompted;
+      case 'audiooutput':
+        return microphoneBlocked;
       case 'videoinput':
-        return isCameraDenied || isCameraPrompted;
-
+        return cameraBlocked;
       default:
         return false;
     }
-  }, [kind, isLoading, isMicrophoneDenied, isMicrophonePrompted, isCameraDenied, isCameraPrompted]);
+  }, [kind, isLoading, cameraPermission, microphonePermission]);
 };

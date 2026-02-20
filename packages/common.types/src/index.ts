@@ -14,6 +14,9 @@ export type {
   ClassroomMaterialsT,
   AccessModeT,
   StorageItemT,
+  MaterialActionsMenuPropsT,
+  MaterialPropsT,
+  ModalEditMaterialNamePropsT,
 } from './materials';
 export type {
   TemplateT,
@@ -25,7 +28,10 @@ export type {
   StudentPaymentT,
   TutorPaymentT,
   RolePaymentT,
+  PaymentApprovalFunctionT,
+  InvoiceCardTypeT,
 } from './payments';
+export { mapPaymentStatus } from './payments';
 export type { InvitationDataT } from './invitations';
 export type {
   TutorStudentSchemaMarshal,
@@ -36,3 +42,4 @@ export type {
 export type { SignupData } from './auth';
 export type { ContactT, ContactsT } from './contacts';
 export type { NotificationKind } from './notifications';
+export type { ScreenSizeT } from './screenSize';

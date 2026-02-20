@@ -8,7 +8,7 @@ export type UploadFileVars = { file: File; token?: string };
 
 export async function uploadFileRequest({ file, token }: UploadFileVars): Promise<string> {
   const axiosInst = await getAxiosInstance();
-  const { getUrl, method } = filesApiConfig[FilesQueryKey.UploadImage];
+  const { getUrl, method } = filesApiConfig[FilesQueryKey.UploadAttachment];
   const formData = new FormData();
   formData.append('upload', file);
 

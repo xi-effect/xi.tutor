@@ -115,6 +115,8 @@ const ClassroomCard = ({ classroom, isSelected, onSelect }: ClassroomCardProps) 
         isSelected ? 'border-brand-100 bg-brand-0' : ''
       }`}
       onClick={onSelect}
+      data-umami-event="material-duplicate-select-classroom"
+      data-umami-event-classroom-id={classroom.id}
     >
       {isIndividual && studentId ? (
         <Avatar size="m">
@@ -144,13 +146,10 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
   const [selectedClassroomId, setSelectedClassroomId] = useState<number | null>(null);
   const [studentAccessMode, setStudentAccessMode] = useState<AccessModeT>('read_write');
 
-  console.log('materialId', materialId);
   const { data: material, isLoading: isMaterialLoading } = useGetMaterial({
     id: materialId.toString(),
     disabled: !open || !materialId,
   });
-
-  console.log('material', material);
 
   const { duplicateMaterial } = useDuplicateMaterial();
 
@@ -211,8 +210,6 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
     onOpenChange(newOpen);
   };
 
-  console.log('classrooms', classrooms);
-
   return (
     <Modal open={open} onOpenChange={handleClose}>
       <ModalContent className="max-w-2xl">
@@ -242,13 +239,34 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
               value={studentAccessMode}
               onValueChange={(value) => setStudentAccessMode(value as AccessModeT)}
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger
+                className="w-full"
+                data-umami-event="material-duplicate-access-selector"
+              >
                 <SelectValue placeholder="Выберите тип доступа к материалу в кабинете" />
               </SelectTrigger>
               <SelectContent className="w-full">
-                <SelectItem value="read_write">Совместная работа</SelectItem>
-                <SelectItem value="read_only">Только репетитор</SelectItem>
-                <SelectItem value="no_access">Черновик</SelectItem>
+                <SelectItem
+                  value="read_write"
+                  data-umami-event="material-duplicate-access-mode"
+                  data-umami-event-mode="read_write"
+                >
+                  Совместная работа
+                </SelectItem>
+                <SelectItem
+                  value="read_only"
+                  data-umami-event="material-duplicate-access-mode"
+                  data-umami-event-mode="read_only"
+                >
+                  Только репетитор
+                </SelectItem>
+                <SelectItem
+                  value="no_access"
+                  data-umami-event="material-duplicate-access-mode"
+                  data-umami-event-mode="no_access"
+                >
+                  Черновик
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -257,10 +275,16 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
               size="m"
               onClick={handleConfirm}
               disabled={!selectedClassroomId || duplicateMaterial.isPending}
+              data-umami-event="material-duplicate-confirm"
             >
               {duplicateMaterial.isPending ? 'Дублирование...' : 'Дублировать'}
             </Button>
-            <Button size="m" variant="secondary" onClick={() => handleClose(false)}>
+            <Button
+              size="m"
+              variant="secondary"
+              onClick={() => handleClose(false)}
+              data-umami-event="material-duplicate-cancel"
+            >
               Отменить
             </Button>
           </div>

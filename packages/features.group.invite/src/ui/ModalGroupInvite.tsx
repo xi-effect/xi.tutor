@@ -84,6 +84,7 @@ export const ModalGroupInvite = ({ children }: ModalGroupInviteProps) => {
                     value={`${env.VITE_APP_DOMAIN}/invite/${data?.code}`}
                     onClick={handleCopyLink}
                     readOnly
+                    data-umami-event="group-invite-copy-link-input"
                   />
                 </div>
               )}
@@ -91,7 +92,12 @@ export const ModalGroupInvite = ({ children }: ModalGroupInviteProps) => {
             <div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button className="h-12 w-12" variant="ghost" size="icon">
+                  <Button
+                    className="h-12 w-12"
+                    variant="none"
+                    size="icon"
+                    data-umami-event="group-invite-menu-open"
+                  >
                     <MoreVert className="h-6 w-6 fill-gray-100" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -100,7 +106,12 @@ export const ModalGroupInvite = ({ children }: ModalGroupInviteProps) => {
                   align="end"
                   className="border-gray-10 bg-gray-0 border p-1"
                 >
-                  <DropdownMenuItem onClick={handleResetInvite}>Сбросить ссылку</DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={handleResetInvite}
+                    data-umami-event="group-invite-reset"
+                  >
+                    Сбросить ссылку
+                  </DropdownMenuItem>
                   {/* <DropdownMenuItem>
                     Деактивировать ссылку
                   </DropdownMenuItem> */}
@@ -118,7 +129,9 @@ export const ModalGroupInvite = ({ children }: ModalGroupInviteProps) => {
             )}
         </ModalBody>
         <ModalFooter className="flex gap-2">
-          <Button onClick={handleCopyLink}>Копировать ссылку</Button>
+          <Button onClick={handleCopyLink} data-umami-event="group-invite-copy-link-button">
+            Копировать ссылку
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

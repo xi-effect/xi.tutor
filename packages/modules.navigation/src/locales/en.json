@@ -12,5 +12,7 @@
   "role": "Role",
   "tutor": "Tutor",
   "student": "Student",
-  "classrooms": "Classrooms"
+  "classrooms": "Classrooms",
+  "hints": "Hints",
+  "roleChanged": "Role successfully changed to {{role}}"
 }

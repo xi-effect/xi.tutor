@@ -14,7 +14,7 @@ import { Button } from '@xipkg/button';
 import { Radio, RadioItem } from '@xipkg/radio';
 import { Form, FormField, FormItem, FormMessage } from '@xipkg/form';
 import { usePaymentApproveForm, useUserByPaymentDetails } from '../hooks';
-import { RolePaymentT } from 'features.table';
+import { RolePaymentT } from 'common.types';
 import { formatDate } from '../utils';
 import { UserProfile } from '@xipkg/userprofile';
 import { InvoiceItemT } from '../types';
@@ -23,8 +23,8 @@ import {
   useCurrentUser,
   useGetRecipientInvoiceByStudent,
   usePaymentReceiverConfirmation,
+  useGetRecipientInvoiceByTutor,
 } from 'common.services';
-import { useGetRecipientInvoiceByTutor } from '../../../common.services/src/payments/useGetRecipientInvoiceByTutor';
 
 const mapPaymentType: Record<string, string> = {
   cash: 'наличные',
@@ -53,6 +53,7 @@ const ApproveForm = ({
   isLoadingInvoice,
 }: ApproveFormPropsT) => {
   const { mutate: receiverConfirmationMutation, isPending } = usePaymentReceiverConfirmation({
+    classroomId: paymentDetails.classroom_id?.toString(),
     onSuccess: () => {
       handleCloseModal();
     },
@@ -143,6 +144,7 @@ const ApproveForm = ({
           className="w-38.5"
           onClick={() => receiverConfirmationMutation(recipientInvoiceId.toString())}
           disabled={isPending}
+          data-umami-event="payment-receiver-confirm"
         >
           {isPending ? 'Подтверждение...' : 'Подтвердить'}
         </Button>
@@ -183,6 +185,7 @@ const AdvanceForm = ({
   const { form, handleSubmit, onSubmit, isLoading } = usePaymentApproveForm(
     recipientInvoiceId,
     isTutor,
+    paymentDetails.classroom_id?.toString(),
   );
 
   const onFormSubmit = (data: PaymentFormData) => {
@@ -304,7 +307,13 @@ const AdvanceForm = ({
           </div>
         </ModalBody>
         <ModalFooter className="flex max-w-85 gap-4 sm:max-w-150">
-          <Button variant="default" className="w-38.5" type="submit" disabled={isLoading}>
+          <Button
+            className="w-38.5"
+            type="submit"
+            disabled={isLoading}
+            data-umami-event="payment-sender-confirm"
+            data-umami-event-role={isTutor ? 'tutor' : 'student'}
+          >
             {isLoading ? 'Подтверждение...' : 'Подтвердить'}
           </Button>
           <Button
@@ -356,8 +365,6 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
   const data = isTutor ? dataByTutor : dataByStudent;
   const refetch = isTutor ? refetchByTutor : refetchByStudent;
   const isLoadingInvoice = isTutor ? isLoadingTutor : isLoadingStudent;
-
-  console.log('data', data);
 
   useEffect(() => {
     if (open && recipientInvoiceId && !data && !isLoadingInvoice) {

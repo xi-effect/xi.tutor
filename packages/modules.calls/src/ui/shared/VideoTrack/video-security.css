@@ -19,26 +19,26 @@
   -webkit-media-controls-rewind-button: none;
   -webkit-media-controls-return-to-realtime-button: none;
   -webkit-media-controls-toggle-closed-captions-button: none;
-  
+
   /* Блокируем выделение и перетаскивание */
   user-select: none !important;
   -webkit-user-select: none !important;
   -moz-user-select: none !important;
   -ms-user-select: none !important;
-  
+
   /* Блокируем перетаскивание */
   -webkit-user-drag: none !important;
   -khtml-user-drag: none !important;
   -moz-user-drag: none !important;
   -o-user-drag: none !important;
   -webkit-user-drag: none !important;
-  
+
   /* Блокируем контекстное меню на мобильных устройствах */
   -webkit-touch-callout: none !important;
-  
+
   /* Убираем outline при фокусе */
   outline: none !important;
-  
+
   /* Блокируем pointer events для controls */
   pointer-events: auto !important;
 }

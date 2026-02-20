@@ -21,13 +21,13 @@ export const ClassroomsStudent = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4 px-4 pt-1 pb-1">
+    <div className="flex h-[calc(100vh-112px)] flex-col gap-4 px-4 pt-1 pb-1">
       <div className="flex flex-row items-center justify-start gap-2">
         <h2 className="text-xl-base font-medium text-gray-100">Кабинеты</h2>
         <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
             <Button
-              variant="ghost"
+              variant="none"
               className="flex size-8 items-center justify-center rounded-[4px] p-0"
               onClick={handleMore}
             >
@@ -40,7 +40,10 @@ export const ClassroomsStudent = () => {
 
       <div className="flex flex-row gap-8">
         {classrooms && classrooms?.length > 0 && (
-          <ScrollArea className="h-[180px] w-full" scrollBarProps={{ orientation: 'horizontal' }}>
+          <ScrollArea
+            className="h-[calc(100vh-580px)] max-h-[calc(100vh-580px)] w-full"
+            scrollBarProps={{ orientation: 'vertical' }}
+          >
             <div className="flex flex-row gap-8">
               {!isHidden && classrooms && classrooms?.length > 0 && (
                 <NoteForStudent onHide={hideNote} isTutor={false} />

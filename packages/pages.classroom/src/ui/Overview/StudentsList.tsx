@@ -72,10 +72,10 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
             </div>
             <ContactsBadge userId={user_id} />
           </div>
-          <div className="absolute top-4 right-4 flex h-8 w-8 rounded-full bg-gray-100">
+          <div className="absolute top-4 right-4 flex h-8 w-8 rounded-full">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button className="h-8 w-8" variant="ghost" size="icon">
+                <Button className="h-8 w-8 rounded-md" variant="none" size="icon">
                   <MoreVert className="h-4 w-4 dark:fill-gray-100" />
                 </Button>
               </DropdownMenuTrigger>

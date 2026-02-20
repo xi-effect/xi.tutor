@@ -167,10 +167,6 @@ export const handleError = (error: unknown, type: ErrorType): void => {
     const status = error.response?.status;
     const detail = error.response?.data?.detail;
 
-    console.log('status', status);
-    console.log('detail', detail);
-    console.log('type', type);
-
     if (type === 'emailConfirmationRequest' && status === 401) {
       toast.error('Пользователь не найден');
       return;

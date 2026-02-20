@@ -17,7 +17,7 @@ export const useSignout = () => {
           url: authApiConfig[AuthQueryKey.Signout].getUrl(),
           headers: {
             'Content-Type': 'application/json',
-            'X-Testing': env.VITE_ENABLE_X_TESTING ? env.VITE_ENABLE_X_TESTING : 'false',
+            'X-Testing': !env.VITE_ENABLE_X_TESTING ? 'false' : env.VITE_ENABLE_X_TESTING,
           },
         });
 

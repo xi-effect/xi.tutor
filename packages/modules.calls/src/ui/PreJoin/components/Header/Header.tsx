@@ -20,11 +20,10 @@ export const Header = () => {
               navigate({
                 to: '/classrooms/$classroomId',
                 params: { classroomId: callId },
-                search: { call: callId },
               });
             }}
             type="button"
-            variant="ghost"
+            variant="none"
             className="flex size-[40px] items-center justify-center rounded-[12px] p-0"
           >
             <ArrowLeft className="fill-gray-100" />

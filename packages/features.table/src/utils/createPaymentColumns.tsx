@@ -9,10 +9,11 @@ import {
   StatusCell,
   ActionsCell,
 } from '../ui/cells';
+import { ScreenSizeT } from 'common.types';
 
 type ColumnArgsT<Role extends RoleT = RoleT> = {
   usersRole: RoleT;
-  isMobile?: boolean;
+  screenSize?: ScreenSizeT;
   onApprovePayment?: (payment: RolePaymentT<Role>) => void;
   withStudentColumn?: boolean;
   isTutor?: boolean;
@@ -22,13 +23,14 @@ export const createPaymentColumns = <Role extends RoleT>({
   usersRole,
   onApprovePayment,
   isTutor,
+  screenSize,
 }: ColumnArgsT<Role>): ColumnDef<RolePaymentT<Role>>[] => {
   const baseColumns: (ColumnDef<RolePaymentT<Role>> | false)[] = [
     {
       accessorKey: 'created_at',
       header: 'Дата',
       cell: ({ row }) => <DateCell date={row.original.created_at} />,
-      size: 82,
+      size: 96,
       filterFn: (row, columnId, value) => {
         const date = new Date(row.getValue(columnId)).getTime();
         const [from, to] = value;
@@ -56,7 +58,7 @@ export const createPaymentColumns = <Role extends RoleT>({
         />
       );
     },
-    size: 160,
+    size: 180,
     filterFn: (row, columnId, value) => value.includes(row.getValue(columnId)),
     enableColumnFilter: true,
   };
@@ -87,7 +89,7 @@ export const createPaymentColumns = <Role extends RoleT>({
       },
       enableColumnFilter: true,
     },
-    {
+    screenSize === 'desktop' && {
       accessorKey: 'payment_type',
       header: 'Тип оплаты',
       cell: ({ row }) => <TypePaymentCell paymentType={row.original.payment_type} />,
@@ -100,22 +102,24 @@ export const createPaymentColumns = <Role extends RoleT>({
       header: 'Статус',
       cell: ({ row }) => (
         <StatusCell
+          payment={row.original}
           isTutor={isTutor}
           id={row.original.id}
           status={row.original.status}
           onApprovePayment={() => onApprovePayment?.(row.original)}
         />
       ),
-      size: 220,
+      size: screenSize === 'desktop' ? 260 : 160,
       filterFn: (row, columnId, value) => value.includes(row.getValue(columnId)),
       enableColumnFilter: true,
     },
-    {
+    usersRole === 'student' && {
       accessorKey: 'actions',
       header: '',
-      cell: ({ row }) =>
-        usersRole === 'student' ? <ActionsCell invoiceId={row.original.id} /> : null,
-      size: usersRole === 'student' ? 96 : 0,
+      cell: ({ row }) => (
+        <ActionsCell invoiceId={row.original.id} classroomId={row.original.classroom_id} />
+      ),
+      size: screenSize === 'desktop' ? 96 : 40,
       filterFn: (row, columnId, value) => value.includes(row.getValue(columnId)),
       enableColumnFilter: false,
     },

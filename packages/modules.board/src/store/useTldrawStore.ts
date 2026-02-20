@@ -17,6 +17,9 @@ interface TldrawState {
   setEditingElementId: (id: string | null) => void;
   stickerColor: string;
   setStickerColor: (color: string) => void;
+  // Настройки стрелок и линий
+  arrowColor: string;
+  setArrowColor: (color: string) => void;
   // Настройки карандаша
   pencilColor: string;
   setPencilColor: (color: string) => void;
@@ -57,6 +60,8 @@ export const useTldrawStore = create<TldrawState>()(
       setPencilOpacity: (opacity: number) => set(() => ({ pencilOpacity: opacity })),
       stickerColor: 'grey',
       setStickerColor: (color: string) => set(() => ({ stickerColor: color })),
+      arrowColor: 'black',
+      setArrowColor: (color: string) => set(() => ({ arrowColor: color })),
     }),
     { name: 'tldraw-storage' },
   ),

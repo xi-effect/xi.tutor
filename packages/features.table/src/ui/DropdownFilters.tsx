@@ -24,7 +24,7 @@ export const DropdownFilters = <TData,>({ column, table }: DropdownFiltersProps<
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="s">
+        <Button variant="none" size="s">
           {isOpen ? (
             <ChevronSmallTop size="sm" className="size-6" />
           ) : (

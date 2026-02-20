@@ -3,13 +3,13 @@ import { FormControl, FormField, FormItem, useFieldArray, useFormContext } from 
 import { Close } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
 
-type SubjectRowProps = {
+type SubjectRowPropsT = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: any;
   index: number;
 };
 
-export const SubjectRow = ({ control, index }: SubjectRowProps) => {
+export const SubjectRow = ({ control, index }: SubjectRowPropsT) => {
   const { watch } = useFormContext();
   const items = watch('items');
 
@@ -109,7 +109,7 @@ export const SubjectRow = ({ control, index }: SubjectRowProps) => {
           />
         </FormControl>
       </FormItem>
-      <Button className="ml-2 h-[24px] w-[24px] p-0" variant="ghost" onClick={() => remove(index)}>
+      <Button className="ml-2 h-[24px] w-[24px] p-0" variant="none" onClick={() => remove(index)}>
         <Close size="s" className="fill-gray-40 h-6 w-6" />
       </Button>
     </div>

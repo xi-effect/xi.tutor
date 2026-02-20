@@ -9,7 +9,7 @@ export const File = ({ onUpload }: FileProps) => {
     <Button
       onClick={onUpload}
       size="s"
-      variant="ghost"
+      variant="none"
       className="text-s-base rounded-lg px-4 py-2 font-medium text-gray-100 max-sm:hidden"
     >
       Загрузить файл

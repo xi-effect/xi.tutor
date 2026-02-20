@@ -1,7 +1,7 @@
 import { Editor } from '@tiptap/react';
 import { BlockTypeT } from '../types';
 import { NodeSelection, TextSelection } from '@tiptap/pm/state';
-import { getAnchorNodeAndPos } from '../utils/getAnchorNodeAndPos';
+import { moveBlock } from '../utils/moveBlock';
 
 export const useBlockMenuActions = (editor: Editor | null) => {
   const duplicate = () => {
@@ -129,70 +129,8 @@ export const useBlockMenuActions = (editor: Editor | null) => {
     link.click();
   };
 
-  const moveNode = (direction: 'up' | 'down'): boolean => {
-    if (!editor || !editor.isEditable) return false;
-
-    const nodeInfo = getAnchorNodeAndPos(editor);
-    if (!nodeInfo) return false;
-
-    try {
-      const { pos, node } = nodeInfo;
-      const { state, view } = editor;
-      const tr = state.tr;
-      const $pos = tr.doc.resolve(pos);
-      const parent = $pos.parent;
-      const index = $pos.index();
-
-      if (index < 0 || index >= parent.childCount) return false;
-
-      const movedNode = node.type.create(node.attrs, node.content, node.marks);
-
-      if (direction === 'up') {
-        if (index === 0) return false;
-
-        let insertPos = $pos.start($pos.depth);
-        for (let i = 0; i < index - 1; i++) {
-          insertPos += parent.child(i).nodeSize;
-        }
-
-        const movedNode = node.type.create(node.attrs, node.content, node.marks);
-
-        tr.deleteRange(pos, pos + node.nodeSize);
-
-        tr.insert(insertPos, movedNode);
-
-        tr.setSelection(NodeSelection.create(tr.doc, insertPos));
-        tr.scrollIntoView();
-        editor.view.dispatch(tr);
-        editor.view.focus();
-        return true;
-      }
-
-      if (direction === 'down') {
-        if (index >= parent.childCount - 1) return false;
-
-        const nextNode = parent.child(index + 1);
-        const insertPosEstimate = pos + nextNode.nodeSize;
-        tr.deleteRange(pos, pos + node.nodeSize);
-        const insertPos = insertPosEstimate;
-        const safeInsertPos = Math.min(insertPos, tr.doc.content.size);
-        tr.insert(safeInsertPos, movedNode);
-        tr.setSelection(NodeSelection.create(tr.doc, safeInsertPos));
-        tr.scrollIntoView();
-        view.dispatch(tr);
-        view.focus();
-        return true;
-      }
-
-      return false;
-    } catch (err) {
-      console.error('Error moving node:', err);
-      return false;
-    }
-  };
-
-  const moveUp = () => moveNode('up');
-  const moveDown = () => moveNode('down');
+  const moveUp = () => moveBlock(editor, 'up');
+  const moveDown = () => moveBlock(editor, 'down');
 
   return {
     duplicate,

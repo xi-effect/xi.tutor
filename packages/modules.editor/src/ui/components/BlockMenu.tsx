@@ -5,7 +5,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Copy, H1, H2, H3, Text, Trash, Image } from '@xipkg/icons';
+import { Copy, H1, H2, H3, Text, Trash, Image, ArrowUp, ArrowBottom } from '@xipkg/icons';
 import { ReactNode, useState } from 'react';
 import { useBlockMenuActions, useYjsContext } from '../../hooks';
 import { useInterfaceStore } from '../../store/interfaceStore';
@@ -19,7 +19,7 @@ export const BlockMenu = ({ children }: BlockMenuPropsT) => {
   const { editor, isReadOnly } = useYjsContext();
   const { openModal } = useInterfaceStore();
 
-  const { changeType, duplicate, remove } = useBlockMenuActions(editor);
+  const { changeType, duplicate, remove, moveUp, moveDown } = useBlockMenuActions(editor);
 
   // Блокируем меню если редактор в readonly режиме
   const shouldShow = editor && !isReadOnly && editor.isEditable !== false;
@@ -84,6 +84,18 @@ export const BlockMenu = ({ children }: BlockMenuPropsT) => {
           <Copy size="sm" className="size-6" />
           <span className="text-sm">Дублировать</span>
           <span className="text-xxs-base ml-auto text-gray-50">Ctrl+D</span>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={moveUp}>
+          <ArrowUp size="sm" className="size-6" />
+          <span className="text-sm">Переместить вверх</span>
+          <span className="text-xxs-base ml-auto text-gray-50">⌘⇧↑</span>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={moveDown}>
+          <ArrowBottom size="sm" className="size-6" />
+          <span className="text-sm">Переместить вниз</span>
+          <span className="text-xxs-base ml-auto text-gray-50">⌘⇧↓</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={remove}>

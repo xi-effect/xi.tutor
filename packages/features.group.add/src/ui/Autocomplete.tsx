@@ -34,23 +34,23 @@ export const Autocomplete = ({ field, disabled, containerRef }: AutocompleteProp
   } = useAutocompleteSubjects(
     search,
     10,
-    !open, // Отключаем запрос когда попап закрыт
+    !open || search.length < 1, // Запрос только при открытом попапе и search >= 1 символа
   );
 
   // Получаем данные конкретного предмета по ID для отображения в кнопке
   const { data: selectedSubject, isLoading: isLoadingSelected } = useSubjectsById(
-    field.value,
-    field.value === 0, // Отключаем запрос если нет выбранного предмета
+    field.value || 0,
+    !field.value, // Отключаем запрос если нет выбранного предмета
   );
 
   return (
     <Popover open={open} onOpenChange={setOpen} modal={false}>
       <PopoverTrigger asChild>
         <Button
-          variant="ghost"
+          variant="text"
           role="combobox"
           aria-expanded={open}
-          className="border-gray-30 h-[48px] w-full justify-between border-2 pl-3 hover:border-gray-50 hover:bg-transparent"
+          className="border-gray-30 bg-gray-0 h-[48px] w-full justify-between rounded-lg border-2 pl-3 hover:border-gray-50 hover:bg-transparent"
         >
           {field.value && field.value !== 0
             ? isLoadingSelected

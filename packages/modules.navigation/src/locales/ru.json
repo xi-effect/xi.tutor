@@ -12,5 +12,7 @@
   "role": "Роль",
   "tutor": "Репетитор",
   "student": "Ученик",
-  "classrooms": "Кабинеты"
+  "classrooms": "Кабинеты",
+  "hints": "Подсказки",
+  "roleChanged": "Роль успешно изменена на {{role}}"
 }

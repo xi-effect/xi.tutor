@@ -1,5 +1,5 @@
 import { LocalAudioTrack, LocalVideoTrack, Track } from 'livekit-client';
-import { useCallback, useMemo, useEffect } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { DevicesBar } from '../../../shared/DevicesBar';
 import { usePersistentUserChoices } from '../../../../hooks/usePersistentUserChoices';
@@ -16,23 +16,13 @@ export const Controls = ({ audioTrack, videoTrack }: ControlsProps) => {
     saveVideoInputEnabled,
   } = usePersistentUserChoices();
 
-  // Отладочная информация
-  useEffect(() => {
-    console.log('Controls state:', {
-      audioEnabled,
-      videoEnabled,
-      audioTrack: audioTrack ? { muted: audioTrack.isMuted } : null,
-      videoTrack: videoTrack ? { muted: videoTrack.isMuted } : null,
-    });
-  }, [audioEnabled, videoEnabled, audioTrack, videoTrack]);
-
   const handleAudioChange = useCallback(
     async (enabled: boolean) => {
-      console.log('Controls: handleAudioChange', {
-        enabled,
-        audioTrack: !!audioTrack,
-        currentMuted: audioTrack?.isMuted,
-      });
+      // console.log('Controls: handleAudioChange', {
+      //   enabled,
+      //   audioTrack: !!audioTrack,
+      //   currentMuted: audioTrack?.isMuted,
+      // });
       saveAudioInputEnabled(enabled);
       if (audioTrack) {
         if (enabled) {
@@ -52,11 +42,11 @@ export const Controls = ({ audioTrack, videoTrack }: ControlsProps) => {
 
   const handleVideoChange = useCallback(
     async (enabled: boolean) => {
-      console.log('Controls: handleVideoChange', {
-        enabled,
-        videoTrack: !!videoTrack,
-        currentMuted: videoTrack?.isMuted,
-      });
+      // console.log('Controls: handleVideoChange', {
+      //   enabled,
+      //   videoTrack: !!videoTrack,
+      //   currentMuted: videoTrack?.isMuted,
+      // });
       saveVideoInputEnabled(enabled);
       if (videoTrack) {
         if (enabled) {

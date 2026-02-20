@@ -20,6 +20,8 @@ export const WelcomeRoleButton = ({
       ref={ref}
       onClick={() => onButtonClick(tab)}
       className="ml-0 flex w-full flex-row items-start justify-start gap-2 bg-transparent p-4"
+      data-umami-event="welcome-role-select"
+      data-umami-event-role={text}
     >
       <div className="flex text-start">
         <span

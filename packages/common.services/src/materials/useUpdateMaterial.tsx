@@ -47,9 +47,7 @@ export const useUpdateMaterial = () => {
     onError: (err) => {
       handleError(err, 'materials');
     },
-    onSuccess: (response, { id }) => {
-      console.log('onSuccess update material', response, id);
-
+    onSuccess: (_response, { id }) => {
       // Инвалидируем queries для данного материала
       queryClient.invalidateQueries({
         queryKey: [MaterialsQueryKey.GetMaterial, id],

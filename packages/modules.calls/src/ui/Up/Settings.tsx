@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   Sheet,
   SheetClose,
@@ -8,10 +8,11 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@xipkg/sheet';
-import { Close, Conference, Microphone, SoundTwo } from '@xipkg/icons';
+import { Close, Conference, Microphone, SoundTwo, Chat, Hand } from '@xipkg/icons';
 import { Label } from '@xipkg/label';
 import { Switch } from '@xipkg/switcher';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
+import { Slider } from '@xipkg/slider';
 import {
   useLocalParticipant,
   usePersistentUserChoices,
@@ -19,8 +20,12 @@ import {
 } from '@livekit/components-react';
 import { useMediaDeviceSelect } from '@livekit/components-react';
 import { Track, LocalAudioTrack, LocalVideoTrack } from 'livekit-client';
+import { supportsBackgroundProcessors } from '@livekit/track-processors';
 
 import { useUserChoicesStore } from '../../store/userChoices';
+import { usePermissionsStore, openPermissionsDialog } from '../../store/permissions';
+import { useCallStore } from '../../store/callStore';
+import { Button } from '@xipkg/button';
 
 type SettingsPropsT = {
   children: React.ReactNode;
@@ -32,26 +37,32 @@ const placeholders = {
   videoinput: 'Встроенная камера',
 };
 
-// Компонент для выбора устройства
+// Компонент для выбора устройства (перемонтируется по key при смене разрешения, чтобы обновить список)
 const DeviceSelector = ({
   kind,
   currentDeviceId,
   onDeviceChange,
   icon,
+  disabled,
 }: {
   kind: 'videoinput' | 'audioinput' | 'audiooutput';
   currentDeviceId?: string;
   onDeviceChange: (deviceId: string) => void;
   icon: React.ReactNode;
+  disabled?: boolean;
 }) => {
   const { devices } = useMediaDeviceSelect({ kind });
 
-  // Находим текущее устройство для отображения
   const currentDevice = devices?.find((device) => device.deviceId === currentDeviceId);
   const displayValue = currentDevice?.label || placeholders[kind];
+  const hasDevices = devices && devices.length > 0 && devices[0].deviceId !== '';
 
   return (
-    <Select onValueChange={onDeviceChange} value={currentDeviceId || undefined}>
+    <Select
+      onValueChange={onDeviceChange}
+      value={currentDeviceId || undefined}
+      disabled={disabled || !hasDevices}
+    >
       <SelectTrigger className="w-full">
         <div className="flex items-center gap-2">
           {icon}
@@ -60,7 +71,7 @@ const DeviceSelector = ({
       </SelectTrigger>
       <SelectContent className="w-[352px]">
         {devices?.map((device) => (
-          <SelectItem key={device.deviceId} value={device.deviceId}>
+          <SelectItem key={device.deviceId} className="h-auto" value={device.deviceId}>
             {device.label || `Устройство ${device.deviceId.slice(0, 8)}`}
           </SelectItem>
         ))}
@@ -80,11 +91,53 @@ export const Settings = ({ children }: SettingsPropsT) => {
     saveVideoInputEnabled,
   } = usePersistentUserChoices();
 
-  // Получаем audioOutputDeviceId из store напрямую
+  // Получаем audioOutputDeviceId и blurEnabled из store напрямую
   const audioOutputDeviceId = useUserChoicesStore((state) => state.audioOutputDeviceId);
+  const blurEnabled = useUserChoicesStore((state) => state.blurEnabled);
+
+  // Получаем настройки громкости звуков из callStore
+  const chatSoundVolume = useCallStore((state) => state.chatSoundVolume);
+  const handRaiseSoundVolume = useCallStore((state) => state.handRaiseSoundVolume);
+  const updateStore = useCallStore((state) => state.updateStore);
+
   const saveAudioOutputDeviceId = useCallback((deviceId: string) => {
     useUserChoicesStore.setState({ audioOutputDeviceId: deviceId });
   }, []);
+
+  const handleBlurToggle = useCallback((checked: boolean) => {
+    useUserChoicesStore.setState({ blurEnabled: checked });
+  }, []);
+
+  // Обработчики изменения громкости звуков
+  const handleChatSoundVolumeChange = useCallback(
+    (value: number[]) => {
+      const volume = value[0] ?? 0.5;
+      updateStore('chatSoundVolume', volume);
+    },
+    [updateStore],
+  );
+
+  const handleHandRaiseSoundVolumeChange = useCallback(
+    (value: number[]) => {
+      const volume = value[0] ?? 0.5;
+      updateStore('handRaiseSoundVolume', volume);
+    },
+    [updateStore],
+  );
+
+  const cameraPermission = usePermissionsStore((s) => s.cameraPermission);
+  const microphonePermission = usePermissionsStore((s) => s.microphonePermission);
+
+  const isCameraGranted = cameraPermission === 'granted';
+  const isMicrophoneGranted = microphonePermission === 'granted';
+
+  // Ключи для перемонтирования селекторов при смене разрешения (обновление списка устройств)
+  const videoSelectorKey = `videoinput-${cameraPermission}`;
+  const audioInputSelectorKey = `audioinput-${microphonePermission}`;
+  const audioOutputSelectorKey = `audiooutput-${microphonePermission}`;
+
+  // Мемоизируем проверку поддержки, чтобы не создавать WebGL контекст при каждом рендере
+  const isBlurSupported = useMemo(() => supportsBackgroundProcessors(), []);
 
   // Получаем треки из публикаций и приводим к правильному типу
   const audioTrack = microphoneTrack?.track as LocalAudioTrack | undefined;
@@ -183,42 +236,118 @@ export const Settings = ({ children }: SettingsPropsT) => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label className="font-medium text-gray-100">Камера</Label>
-              <Switch checked={isCameraEnabled} onCheckedChange={handleCameraToggle} />
+              <Switch
+                checked={isCameraEnabled}
+                onCheckedChange={handleCameraToggle}
+                disabled={!isCameraGranted}
+              />
             </div>
-
             <DeviceSelector
+              key={videoSelectorKey}
               kind="videoinput"
               currentDeviceId={videoDeviceId}
               onDeviceChange={handleVideoDeviceChange}
               icon={<Conference className="h-4 w-4" />}
+              disabled={!isCameraGranted}
             />
+            {!isCameraGranted && (
+              <Button type="button" size="s" variant="ghost" onClick={openPermissionsDialog}>
+                Как разрешить камеру
+              </Button>
+            )}
           </div>
 
           {/* Микрофон */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label className="font-medium text-gray-100">Микрофон</Label>
-              <Switch checked={isMicrophoneEnabled} onCheckedChange={handleMicrophoneToggle} />
+              <Switch
+                checked={isMicrophoneEnabled}
+                onCheckedChange={handleMicrophoneToggle}
+                disabled={!isMicrophoneGranted}
+              />
             </div>
-
             <DeviceSelector
+              key={audioInputSelectorKey}
               kind="audioinput"
               currentDeviceId={audioDeviceId}
               onDeviceChange={handleAudioDeviceChange}
               icon={<Microphone className="h-4 w-4" />}
+              disabled={!isMicrophoneGranted}
             />
+            {!isMicrophoneGranted && (
+              <Button type="button" size="s" variant="ghost" onClick={openPermissionsDialog}>
+                Как разрешить микрофон
+              </Button>
+            )}
           </div>
 
-          {/* Динамики */}
+          {/* Динамики (список устройств вывода может зависеть от разрешения микрофона в части браузеров) */}
           <div className="space-y-3">
             <Label className="font-medium text-gray-100">Динамики</Label>
-
             <DeviceSelector
+              key={audioOutputSelectorKey}
               kind="audiooutput"
               currentDeviceId={audioOutputDeviceId}
               onDeviceChange={handleAudioOutputDeviceChange}
               icon={<SoundTwo className="h-4 w-4" />}
+              disabled={!isMicrophoneGranted}
             />
+          </div>
+
+          {/* Размытие фона */}
+          {isBlurSupported && (
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <Label className="font-medium text-gray-100">Размытие фона</Label>
+                <Switch checked={blurEnabled} onCheckedChange={handleBlurToggle} />
+              </div>
+            </div>
+          )}
+
+          {/* Громкость звуков уведомлений */}
+          <div className="border-gray-10 space-y-4 border-t pt-6">
+            <Label className="text-base font-medium text-gray-100">Звуки уведомлений</Label>
+
+            {/* Громкость звука сообщений в чате */}
+            <div className="mt-2 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Chat className="text-gray-60 h-4 w-4" />
+                  <Label className="text-gray-80 text-sm">Сообщения в чате</Label>
+                </div>
+                <span className="text-gray-60 text-sm">{Math.round(chatSoundVolume * 100)}%</span>
+              </div>
+              <Slider
+                value={[chatSoundVolume]}
+                onValueChange={handleChatSoundVolumeChange}
+                min={0}
+                max={1}
+                step={0.01}
+                className="w-full"
+              />
+            </div>
+
+            {/* Громкость звука поднятия руки */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Hand className="text-gray-60 h-4 w-4" />
+                  <Label className="text-gray-80 text-sm">Поднятие руки</Label>
+                </div>
+                <span className="text-gray-60 text-sm">
+                  {Math.round(handRaiseSoundVolume * 100)}%
+                </span>
+              </div>
+              <Slider
+                value={[handRaiseSoundVolume]}
+                onValueChange={handleHandRaiseSoundVolumeChange}
+                min={0}
+                max={1}
+                step={0.01}
+                className="w-full"
+              />
+            </div>
           </div>
         </div>
       </SheetContent>

@@ -57,6 +57,16 @@ const createNetworkErrorInterceptor = async (instance: AxiosInstance): Promise<A
       }
 
       const errorKey = getErrorKey(error);
+      const url = error.config?.url || '';
+
+      // Проверяем, является ли запрос связанным с уведомлениями (аватары)
+      // Эти запросы могут возвращать 403/404, но не должны показывать toast пользователю
+      const isNotificationRelatedRequest =
+        url.includes('/roles/student/classrooms/') ||
+        url.includes('/roles/tutor/students/') ||
+        url.includes('/roles/tutor/classrooms/') ||
+        url.includes('/roles/tutor/recipient-invoices/') ||
+        url.includes('/roles/student/recipient-invoices/');
 
       // Сначала проверяем HTTP статус-коды, если они есть
       if (error.response?.status) {
@@ -70,22 +80,30 @@ const createNetworkErrorInterceptor = async (instance: AxiosInstance): Promise<A
           });
         } else if (status === 404) {
           // Ресурс не найден
-          showToastOnce(errorKey, 'Запрашиваемый ресурс не найден.', {
-            duration: 3000,
-            description: 'Возможно, страница была перемещена или удалена.',
-          });
+          // Не показываем toast для запросов, связанных с уведомлениями
+          if (!isNotificationRelatedRequest) {
+            showToastOnce(errorKey, 'Запрашиваемый ресурс не найден.', {
+              duration: 3000,
+              description: 'Возможно, страница была перемещена или удалена.',
+            });
+          }
         } else if (status === 403) {
           // Доступ запрещен
-          showToastOnce(errorKey, 'Доступ запрещен.', {
-            duration: 3000,
-            description: 'У вас нет прав для выполнения этого действия.',
-          });
-        } else if (status >= 400 && status < 500) {
+          // Не показываем toast для запросов, связанных с уведомлениями
+          if (!isNotificationRelatedRequest) {
+            showToastOnce(errorKey, 'Доступ запрещен.', {
+              duration: 3000,
+              description: 'У вас нет прав для выполнения этого действия.',
+            });
+          }
+        } else if (status >= 400 && status < 500 && status !== 409) {
           // Остальные клиентские ошибки (4xx)
           showToastOnce(errorKey, 'Ошибка в запросе.', {
             duration: 3000,
             description: `Сервер вернул ошибку ${status}.`,
           });
+        } else if (status === 409) {
+          // Комната не активна
         }
 
         return Promise.reject(error);
@@ -160,18 +178,6 @@ const createAuthInterceptor = async (instance: AxiosInstance): Promise<AxiosInst
     async (error) => {
       if (error.response?.status === 401) {
         console.log('createAuthInterceptor 401');
-
-        // Получаем logout из useAuth и вызываем его
-        // const { logout } = useAuth();
-
-        // logout();
-
-        // redirect({
-        //   to: '/signin',
-        //   search: {
-        //     redirect: location.href,
-        //   },
-        // });
       }
 
       return Promise.reject(error);

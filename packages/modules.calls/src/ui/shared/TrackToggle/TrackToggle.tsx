@@ -9,10 +9,11 @@ import {
   CameraOff,
   Screenshare,
   RedLine,
-  // Screenshare,
 } from '@xipkg/icons';
 import { useMemo } from 'react';
 import { cn } from '@xipkg/utils';
+import { useCannotUseDevice } from '../../../hooks/useCannotUseDevice';
+import { openPermissionsDialog } from '../../../store/permissions';
 
 interface ExtendedTrackToggleProps extends TrackToggleProps<any> {
   microTrack?: LocalAudioTrack;
@@ -38,6 +39,15 @@ export const TrackToggle = ({
   className,
   ...props
 }: ExtendedTrackToggleProps) => {
+  const isMicPermissionBlocked = useCannotUseDevice('audioinput');
+  const isCameraPermissionBlocked = useCannotUseDevice('videoinput');
+  const permissionBlocked =
+    source === Track.Source.Microphone
+      ? isMicPermissionBlocked
+      : source === Track.Source.Camera
+        ? isCameraPermissionBlocked
+        : false;
+
   // Для PreJoin используем собственную логику, так как useTrackToggle работает с треками в комнате
   const track =
     source === Track.Source.Microphone
@@ -57,32 +67,21 @@ export const TrackToggle = ({
           : false;
 
   const toggle = () => {
-    console.log('handleClick', source);
-    console.log('track:', track);
+    if (permissionBlocked) {
+      openPermissionsDialog();
+      return;
+    }
     if (track) {
       const wasMuted = track.isMuted;
-      const newEnabled = wasMuted; // Если был замучен, то включаем (true), если не был замучен, то выключаем (false)
-
-      console.log('TrackToggle: changing state', { wasMuted, newEnabled });
-
+      const newEnabled = wasMuted;
       if (wasMuted) {
-        console.log('unmuting track');
         track.unmute();
       } else {
-        console.log('muting track');
         track.mute();
       }
-
-      // Передаем новое состояние enabled (true = включен, false = выключен)
       onChange?.(newEnabled, true);
     } else {
-      // Если трек не существует, переключаем состояние enabled
-      const newEnabled = !enabled;
-      console.log('TrackToggle: no track, toggling enabled state', {
-        currentEnabled: enabled,
-        newEnabled,
-      });
-      onChange?.(newEnabled, true);
+      onChange?.(!enabled, true);
     }
   };
 
@@ -90,22 +89,25 @@ export const TrackToggle = ({
 
   const volume = Math.round(trackVol * 100);
 
+  // При отсутствии разрешений показываем перечёркнутый значок (как выключенный)
+  const iconEnabled = enabled && !permissionBlocked;
+
   const icon = useMemo(() => {
     switch (source) {
       case Track.Source.Microphone:
-        return enabled ? (
+        return iconEnabled ? (
           <Microphone className="fill-green-100" />
         ) : (
-          <div className="flex items-center justify-center">
+          <div className="relative flex items-center justify-center">
             <MicrophoneOff className="absolute" />
             <RedLine className="fill-red-80 absolute" />
           </div>
         );
       case Track.Source.Camera:
-        return enabled ? (
+        return iconEnabled ? (
           <Conference className="fill-green-100" />
         ) : (
-          <div className="flex items-center justify-center">
+          <div className="relative flex items-center justify-center">
             <CameraOff className="absolute" />
             <RedLine className="fill-red-80 absolute" />
           </div>
@@ -119,12 +121,32 @@ export const TrackToggle = ({
       default:
         return null;
     }
-  }, [source, enabled]);
+  }, [source, iconEnabled, enabled]);
 
   const handleClick = () => {
-    // console.log('handleClick', source);
     toggle();
   };
+
+  const errorIndicator = permissionBlocked ? (
+    <span
+      className="bg-red-80 text-xxs-base-size absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 items-center justify-center rounded leading-none font-bold text-white"
+      aria-hidden
+    >
+      !
+    </span>
+  ) : null;
+
+  const buttonContent = (
+    <>
+      {showIcon && icon}
+      {errorIndicator}
+      {props.children}
+    </>
+  );
+
+  const permissionBlockedStyles = permissionBlocked
+    ? 'bg-red-0 border-2 border-red-80 shadow-[inset_0_0_0_1px_rgba(255,255,255,0.6)] hover:bg-red-5'
+    : '';
 
   if (source === Track.Source.Microphone) {
     return (
@@ -132,31 +154,29 @@ export const TrackToggle = ({
         type="button"
         onClick={handleClick}
         className={cn(
-          'bg-gray-0 hover:bg-gray-5 flex h-10 w-10 items-center justify-center rounded-[12px] transition-colors',
+          'relative flex h-10 w-10 items-center justify-center rounded-[12px] transition-colors',
+          !permissionBlocked && 'bg-gray-0 hover:bg-gray-5',
+          permissionBlockedStyles,
           className,
         )}
         animate={{
-          background: enabled
-            ? `linear-gradient(to top, var(--xi-green-20) 0%, transparent ${volume}%)`
-            : undefined,
+          background:
+            !permissionBlocked && iconEnabled
+              ? `linear-gradient(to top, var(--xi-green-20) 0%, transparent ${volume}%)`
+              : undefined,
         }}
         style={{
-          background: enabled
-            ? `linear-gradient(to top, var(--xi-green-20) 0%, transparent ${volume}%)`
-            : undefined,
-          hover: {
-            background: enabled
+          background:
+            !permissionBlocked && iconEnabled
               ? `linear-gradient(to top, var(--xi-green-20) 0%, transparent ${volume}%)`
-              : 'var(--xi-gray-5)',
-          },
+              : undefined,
         }}
-        transition={{
-          duration: 1,
-        }}
+        transition={{ duration: 1 }}
+        data-umami-event="call-toggle-microphone"
+        data-umami-event-state={enabled ? 'on' : 'off'}
         {...(props as unknown as any)}
       >
-        {showIcon && icon}
-        {props.children}
+        {buttonContent}
       </motion.button>
     );
   }
@@ -166,14 +186,23 @@ export const TrackToggle = ({
       type="button"
       onClick={handleClick}
       className={cn(
-        'bg-gray-0 hover:bg-gray-5 flex h-10 w-10 items-center justify-center rounded-[12px] transition-colors',
-        enabled && 'bg-green-0 hover:bg-green-20',
+        'relative flex h-10 w-10 items-center justify-center rounded-[12px] transition-colors',
+        !permissionBlocked && 'bg-gray-0 hover:bg-gray-5',
+        !permissionBlocked && iconEnabled && 'bg-green-0 hover:bg-green-20',
+        permissionBlockedStyles,
         className,
       )}
+      data-umami-event={
+        source === Track.Source.Camera
+          ? 'call-toggle-camera'
+          : source === Track.Source.ScreenShare
+            ? 'call-toggle-screenshare'
+            : 'call-toggle-track'
+      }
+      data-umami-event-state={enabled ? 'on' : 'off'}
       {...props}
     >
-      {showIcon && icon}
-      {props.children}
+      {buttonContent}
     </button>
   );
 };

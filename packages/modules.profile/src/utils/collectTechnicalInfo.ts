@@ -1,0 +1,210 @@
+import { getCookies, getLocalStorageData, getSessionStorageData } from './technicalInfo/storage';
+import { getBrowserInfo } from './technicalInfo/browser';
+import { checkVideoSupport, checkAudioSupport, checkWebRTCSupport } from './technicalInfo/media';
+import { getPermissions } from './technicalInfo/permissions';
+import { getGPUInfo } from './technicalInfo/gpu';
+import { getIPAddresses, getNetworkInfo, getPerformanceMemory } from './technicalInfo/network';
+import {
+  collectScreenShareDiagnostics,
+  type ScreenShareDiagnostics,
+  type ScreenShareDiagnosticsParams,
+} from './technicalInfo/screenShareDiagnostics';
+
+export type ReportSection = {
+  title?: string;
+  data: Record<string, string | number | boolean | null | undefined>;
+};
+
+export type CollectTechnicalInfoOptions = {
+  app?: ScreenShareDiagnosticsParams['app'];
+};
+
+function diagnosticsToSections(d: ScreenShareDiagnostics): ReportSection[] {
+  const sections: ReportSection[] = [];
+
+  // Только то, чего нет в остальных секциях: PWA, iframe, iPad-под-Mac, Service Worker, причины Screen Share
+  sections.push({
+    title: 'PWA и контекст',
+    data: {
+      displayMode: d.displayMode,
+      isStandalone: d.isStandalone,
+      isStandaloneIOSLegacy: d.isStandaloneIOSLegacy,
+      hasOpener: d.hasOpener,
+      isInIframe: d.isInIframe,
+      isTopLevel: d.isTopLevel,
+      looksLikeIPad: d.looksLikeIPad,
+    },
+  });
+
+  sections.push({
+    title: 'Service Worker',
+    data: {
+      hasServiceWorker: d.hasServiceWorker,
+      hasSWController: d.hasSWController,
+    },
+  });
+
+  const avail = d.screenShareAvailability;
+  sections.push({
+    title: 'Причины недоступности Screen Share',
+    data: {
+      canAttempt: avail.canAttempt,
+      reasons: avail.reasons.join(', ') || '—',
+    },
+  });
+
+  if (d.app) {
+    const appData: ReportSection['data'] = {};
+    if (d.app.buildId != null) appData.buildId = d.app.buildId;
+    if (d.app.version != null) appData.version = d.app.version;
+    if (d.app.gitSha != null) appData.gitSha = d.app.gitSha;
+    if (Object.keys(appData).length > 0) {
+      sections.push({ title: 'Приложение', data: appData });
+    }
+  }
+
+  return sections;
+}
+
+export const collectTechnicalInfo = async (
+  options?: CollectTechnicalInfoOptions,
+): Promise<ReportSection[]> => {
+  const sections: ReportSection[] = [];
+
+  const now = new Date();
+  const timezoneOffset = -now.getTimezoneOffset();
+  const timezoneSign = timezoneOffset >= 0 ? '+' : '-';
+  const timezoneHours = Math.floor(Math.abs(timezoneOffset) / 60);
+  const timezoneMinutes = Math.abs(timezoneOffset) % 60;
+  const timezoneString = `UTC ${timezoneSign}${String(timezoneHours).padStart(2, '0')}:${String(timezoneMinutes).padStart(2, '0')}`;
+
+  const browserInfo = getBrowserInfo();
+  const osFamily = browserInfo.OSFamily;
+  const browserName = browserInfo.BrowserName;
+  const browserVersion = browserInfo.BrowserVersion;
+  const browserEngine = browserInfo.BrowserEngine;
+  const browserEngineVersion = browserInfo.BrowserEngineVersion;
+
+  const { ipv4, ipv6 } = await getIPAddresses();
+
+  sections.push({
+    title: 'Основная информация',
+    data: {
+      Домен: window.location.origin,
+      href: window.location.href,
+      secure: window.isSecureContext,
+      Дата: now.toLocaleDateString('ru-RU'),
+      Время: now.toLocaleTimeString('ru-RU'),
+      'Часовой пояс': timezoneString,
+      'IPv4-адрес': ipv4,
+      'IPv6-адрес': ipv6,
+      Браузер: `${browserName} ${browserVersion} (${browserEngine} ${browserEngineVersion})`,
+      'Операционная система': osFamily,
+    },
+  });
+
+  sections.push({
+    title: 'Информация об экране',
+    data: {
+      'Разрешение экрана': `${screen.width}x${screen.height}`,
+      'Глубина цвета': `${screen.colorDepth} бит`,
+    },
+  });
+
+  const cookies = getCookies();
+  if (Object.keys(cookies).length > 0) {
+    sections.push({
+      title: 'Cookie браузера',
+      data: cookies,
+    });
+  } else {
+    sections.push({
+      title: 'Cookie браузера',
+      data: { 'нет cookies': 'отсутствуют' },
+    });
+  }
+
+  sections.push({
+    title: 'Информация о браузере',
+    data: browserInfo,
+  });
+
+  const permissions = await getPermissions();
+  sections.push({
+    title: 'Разрешения',
+    data: permissions,
+  });
+
+  const videoSupport = checkVideoSupport();
+  sections.push({
+    title: 'Поддержка видео',
+    data: videoSupport,
+  });
+
+  const audioSupport = checkAudioSupport();
+  sections.push({
+    title: 'Поддержка аудио',
+    data: audioSupport,
+  });
+
+  const webrtcSupport = checkWebRTCSupport();
+  sections.push({
+    title: 'WebRTC',
+    data: webrtcSupport,
+  });
+
+  const gpuInfo = getGPUInfo();
+  if (Object.keys(gpuInfo).length > 0) {
+    sections.push({
+      data: gpuInfo,
+    });
+  }
+
+  const localStorageData = getLocalStorageData();
+  sections.push({
+    title: 'localStorage',
+    data:
+      Object.keys(localStorageData).length > 0 ? localStorageData : { 'нет данных': 'отсутствуют' },
+  });
+
+  const sessionStorageData = getSessionStorageData();
+  sections.push({
+    title: 'sessionStorage',
+    data:
+      Object.keys(sessionStorageData).length > 0
+        ? sessionStorageData
+        : { 'нет данных': 'отсутствуют' },
+  });
+
+  const networkInfo = getNetworkInfo();
+  sections.push({
+    title: 'Дополнительная информация',
+    data: networkInfo,
+  });
+
+  const performanceMemory = getPerformanceMemory();
+  if (Object.keys(performanceMemory).length > 0) {
+    sections.push({
+      title: 'Память',
+      data: performanceMemory,
+    });
+  }
+
+  const screenShareDiagnostics = await collectScreenShareDiagnostics({ app: options?.app });
+  sections.push(...diagnosticsToSections(screenShareDiagnostics));
+
+  return sections;
+};
+
+export const formatReport = (sections: ReportSection[]): string => {
+  return sections
+    .map(({ title, data }) => {
+      const titleLine = title ? `${title}\n` : '';
+      const dataLines = Object.entries(data)
+        .map(([key, value]) => `${key}:${value}`)
+        .join('\n');
+      return `${titleLine}${dataLines}`;
+    })
+    .join('\n\n')
+    .trim();
+};

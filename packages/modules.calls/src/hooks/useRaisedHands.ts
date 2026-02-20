@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 import { useLiveKitDataChannel, useLiveKitDataChannelListener } from './useLiveKitDataChannel';
 import { useCallStore } from '../store/callStore';
 import { useRoom } from '../providers/RoomProvider';
+import { playSound } from '../utils/sounds';
 
 const RAISE_HAND_MESSAGE_TYPE = 'raise_hand';
 const LOWER_HAND_MESSAGE_TYPE = 'lower_hand';
@@ -14,7 +15,8 @@ type HandMessagePayload = {
 
 export const useRaisedHands = () => {
   const { sendMessage } = useLiveKitDataChannel();
-  const { addRaisedHand, removeRaisedHand, toggleHandRaised } = useCallStore();
+  const { addRaisedHand, removeRaisedHand, toggleHandRaised, handRaiseSoundVolume } =
+    useCallStore();
   const { room } = useRoom();
 
   // Получаем информацию о текущем участнике из LiveKit
@@ -64,6 +66,9 @@ export const useRaisedHands = () => {
           const currentParticipantInfo = getCurrentParticipantInfo();
           if (payload.participantId !== currentParticipantInfo.participantId) {
             addRaisedHand(payload);
+
+            // Воспроизводим звук уведомления о поднятии руки
+            playSound('handRaise', handRaiseSoundVolume);
           }
         } else if (message.type === LOWER_HAND_MESSAGE_TYPE) {
           const payload = message.payload as HandMessagePayload;
@@ -79,7 +84,7 @@ export const useRaisedHands = () => {
         console.error('❌ Error handling hand message:', error);
       }
     },
-    [addRaisedHand, removeRaisedHand, getCurrentParticipantInfo],
+    [addRaisedHand, removeRaisedHand, getCurrentParticipantInfo, handRaiseSoundVolume],
   );
 
   // Слушаем сообщения о поднятых руках

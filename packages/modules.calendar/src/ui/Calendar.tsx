@@ -49,7 +49,7 @@ export const CalendarModule = () => {
   }, []);
 
   return (
-    <div className="flex h-[calc(100vh-64px)] items-start">
+    <div className="flex h-screen items-start">
       <div className="grow px-[16px] md:pr-0 md:pl-[16px]">
         <div className="flex items-center justify-between pt-1 pb-4">
           <p>
@@ -90,10 +90,10 @@ export const CalendarModule = () => {
             </Button>
 
             <div>
-              <Button variant="ghost" size="s" className="px-2">
+              <Button variant="none" size="s" className="px-2">
                 <ChevronUp className="h-4 w-4 dark:fill-gray-100" />
               </Button>
-              <Button variant="ghost" size="s" className="px-2">
+              <Button variant="none" size="s" className="px-2">
                 <ChevronBottom className="h-4 w-4 dark:fill-gray-100" />
               </Button>
             </div>

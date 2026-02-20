@@ -7,6 +7,8 @@ enum CallsQueryKey {
   CreateAccessTokenTutor = 'CreateAccessTokenTutor',
   GetParticipantsTutor = 'GetParticipantsTutor',
   GetParticipantsStudent = 'GetParticipantsStudent',
+  GetParticipants = 'GetParticipants',
+  UpdateConferenceMetadata = 'UpdateConferenceMetadata',
 }
 
 const callsApiConfig = {
@@ -34,6 +36,11 @@ const callsApiConfig = {
     getUrl: (classroom_id: string) =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/conference-service/roles/student/classrooms/${classroom_id}/conference/participants/`,
     method: HttpMethod.GET,
+  },
+  [CallsQueryKey.UpdateConferenceMetadata]: {
+    getUrl: (classroom_id: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/conference-service/roles/tutor/classrooms/${classroom_id}/conference/metadata/`,
+    method: HttpMethod.PUT,
   },
 };
 

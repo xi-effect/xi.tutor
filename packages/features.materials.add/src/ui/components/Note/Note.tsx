@@ -7,7 +7,7 @@ import {
 } from '@xipkg/dropdown';
 import { ChevronSmallBottom } from '@xipkg/icons';
 import { useAddMaterials, useAddClassroomMaterials } from 'common.services';
-import { useParams } from '@tanstack/react-router';
+import { useParams, useNavigate } from '@tanstack/react-router';
 
 interface NoteProps {
   onlyDrafts?: boolean;
@@ -19,6 +19,7 @@ type StudentAccessMode = 'no_access' | 'read_only' | 'read_write';
 
 export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) => {
   const { classroomId: paramsClassroomId } = useParams({ strict: false });
+  const navigate = useNavigate();
   const { addMaterials } = useAddMaterials();
   const { addClassroomMaterials } = useAddClassroomMaterials();
 
@@ -28,19 +29,36 @@ export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) =
     if (onCreate) {
       onCreate();
     } else {
-      addMaterials.mutate({
-        content_kind: 'note',
-      });
+      addMaterials.mutate(
+        { content_kind: 'note' },
+        {
+          onSuccess: (response) => {
+            navigate({
+              to: `/materials/${response.data.id}/${response.data.content_kind}`,
+            });
+          },
+        },
+      );
     }
   };
 
   const handleCreateNoteWithAccess = (studentAccessMode: StudentAccessMode) => {
     if (currentClassroomId) {
-      addClassroomMaterials.mutate({
-        classroomId: currentClassroomId,
-        content_kind: 'note',
-        student_access_mode: studentAccessMode,
-      });
+      addClassroomMaterials.mutate(
+        {
+          classroomId: currentClassroomId,
+          content_kind: 'note',
+          student_access_mode: studentAccessMode,
+        },
+        {
+          onSuccess: (response) => {
+            navigate({
+              to: '/classrooms/$classroomId/notes/$noteId',
+              params: { classroomId: currentClassroomId, noteId: response.data.id },
+            });
+          },
+        },
+      );
     }
   };
 
@@ -52,6 +70,7 @@ export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) =
         variant="secondary"
         className="max-sm:hidden"
         disabled={addMaterials.isPending}
+        data-umami-event="material-create-note-draft"
       >
         {addMaterials.isPending ? 'Создание...' : 'Создать заметку'}
       </Button>
@@ -60,7 +79,10 @@ export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) =
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="group bg-gray-0 text-s-base hover:text-gray-0 hover:bg-brand-80 data-[state=open]:text-gray-0 data-[state=open]:bg-brand-80 border-gray-30 flex h-8 w-[160px] flex-row items-center justify-between gap-2 rounded-lg border px-2 font-medium text-gray-100 transition-colors duration-200 hover:border-gray-50 max-[550px]:hidden">
+      <DropdownMenuTrigger
+        className="group bg-gray-0 text-s-base hover:text-gray-0 hover:bg-brand-80 data-[state=open]:text-gray-0 data-[state=open]:bg-brand-80 border-gray-30 flex h-8 w-[160px] flex-row items-center justify-between gap-2 rounded-lg border px-2 font-medium text-gray-100 transition-colors duration-200 hover:border-gray-50 max-[550px]:hidden"
+        data-umami-event="material-create-note-menu-open"
+      >
         <span>Создать заметку</span>
 
         <ChevronSmallBottom className="group-hover:fill-gray-0 group-data-[state=open]:fill-gray-0 h-[16px] w-[16px] fill-gray-100 transition-transform duration-200 group-data-[state=open]:rotate-180" />
@@ -71,6 +93,8 @@ export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) =
           onClick={() => handleCreateNoteWithAccess('read_write')}
           className="hover:bg-brand-0 hover:text-brand-100 py-6 hover:rounded-lg"
           disabled={addClassroomMaterials.isPending}
+          data-umami-event="material-create-note"
+          data-umami-event-access-mode="read_write"
         >
           Совместная работа
         </DropdownMenuItem>
@@ -78,6 +102,8 @@ export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) =
           onClick={() => handleCreateNoteWithAccess('read_only')}
           className="hover:bg-brand-0 hover:text-brand-100 hover:rounded-lg"
           disabled={addClassroomMaterials.isPending}
+          data-umami-event="material-create-note"
+          data-umami-event-access-mode="read_only"
         >
           Только репетитор
         </DropdownMenuItem>
@@ -85,6 +111,8 @@ export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) =
           onClick={() => handleCreateNoteWithAccess('no_access')}
           className="hover:bg-brand-0 hover:text-brand-100 hover:rounded-lg"
           disabled={addClassroomMaterials.isPending}
+          data-umami-event="material-create-note"
+          data-umami-event-access-mode="no_access"
         >
           Черновики
         </DropdownMenuItem>

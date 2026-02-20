@@ -110,7 +110,12 @@ export const SignInPage = () => {
               )}
             />
 
-            <LinkTanstack size="l" variant="always" to="/reset-password">
+            <LinkTanstack
+              size="l"
+              variant="always"
+              to="/reset-password"
+              data-umami-event="auth-forgot-password-link"
+            >
               {t('forgot_password')}
             </LinkTanstack>
 
@@ -122,15 +127,22 @@ export const SignInPage = () => {
                   theme="brand"
                   variant="hover"
                   to={getUrlWithParams('/signup')}
+                  data-umami-event="auth-signup-link"
                 >
                   {t('register')}
                 </LinkTanstack>
               </div>
 
               {isPending ? (
-                <Button variant="default-spinner" type="submit" className="w-24" disabled />
+                <Button type="submit" loading className="w-24" />
               ) : (
-                <Button variant="default" type="submit" className="w-24" disabled={isPending}>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  className="w-24"
+                  disabled={isPending}
+                  data-umami-event="auth-signin-button"
+                >
                   {t('sign_in_button')}
                 </Button>
               )}

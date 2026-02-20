@@ -1,14 +1,11 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronUp } from '@xipkg/icons';
-import { Button } from '@xipkg/button';
+import { Radio, RadioItem } from '@xipkg/radio';
 
 import { type RoleT } from 'common.types';
 import { useCurrentUser, useUpdateProfile } from 'common.services';
 import { useNavigate } from '@tanstack/react-router';
 
 export const DrawerRoleSelector = () => {
-  const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation('navigation');
 
@@ -16,64 +13,72 @@ export const DrawerRoleSelector = () => {
   const { updateProfile } = useUpdateProfile();
 
   const handleRoleChange = (value: RoleT) => {
+    // Отслеживаем смену роли через Umami
+    if (typeof window !== 'undefined' && window.umami) {
+      window.umami.track('role-change', {
+        from: user?.default_layout || 'unknown',
+        to: value,
+        source: 'mobile-drawer',
+      });
+    }
+
     updateProfile.mutate(
       { default_layout: value },
       {
         onSuccess: () => {
           navigate({ to: '/' });
-          setIsExpanded(false);
         },
       },
     );
   };
 
-  const getCurrentRoleText = () => {
-    if (user?.default_layout === 'tutor') return t('tutor');
-    if (user?.default_layout === 'student') return t('student');
-    return t('role');
-  };
-
-  const getCurrentRoleIcon = () => {
-    return isExpanded ? (
-      <ChevronUp className="text-gray-60 h-4 w-4" />
-    ) : (
-      <ChevronUp className="text-gray-60 h-4 w-4 rotate-180" />
-    );
-  };
-
   return (
-    <div className="w-full">
-      <Button
-        variant="secondary"
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="text-gray-80 text-m-base flex w-full items-center justify-between"
+    <div className="w-full p-2">
+      <div className="text-base font-medium text-gray-50">{t('role')}</div>
+      <Radio
+        value={user?.default_layout || 'student'}
+        onValueChange={(value) => handleRoleChange(value as RoleT)}
+        className="flex flex-col gap-2"
       >
-        <span>{getCurrentRoleText()}</span>
-        {getCurrentRoleIcon()}
-      </Button>
-
-      {isExpanded && (
-        <div className="mt-2 flex flex-col gap-2 space-y-1">
-          <Button
-            variant="secondary"
-            onClick={() => handleRoleChange('tutor')}
-            className={`text-gray-80 text-m-base justify-start ${
-              user?.default_layout === 'tutor' ? 'bg-brand-40 text-gray-100' : ''
-            }`}
+        <div className="flex items-center gap-2">
+          <RadioItem
+            value="tutor"
+            id="tutor-role"
+            className="data-[state=checked]:bg-brand-100 data-[state=checked]:border-brand-100 text-gray-0 dark:bg-gray-10 border-gray-30 h-6 w-6 [&>span>svg]:h-3 [&>span>svg]:w-3"
+            data-umami-event="role-select-tutor"
+            data-umami-event-from={user?.default_layout || 'unknown'}
+            data-umami-event-device="mobile"
+          />
+          <label
+            htmlFor="tutor-role"
+            className="cursor-pointer text-base text-gray-100"
+            data-umami-event="role-select-tutor"
+            data-umami-event-from={user?.default_layout || 'unknown'}
+            data-umami-event-device="mobile"
           >
             {t('tutor')}
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => handleRoleChange('student')}
-            className={`text-gray-80 text-m-base justify-start ${
-              user?.default_layout === 'student' ? 'bg-brand-40 text-gray-100' : ''
-            }`}
+          </label>
+        </div>
+        <div className="flex items-center gap-2">
+          <RadioItem
+            value="student"
+            id="student-role"
+            className="data-[state=checked]:bg-brand-100 data-[state=checked]:border-brand-100 text-gray-0 dark:bg-gray-10 border-gray-30 h-6 w-6 [&>span>svg]:h-3 [&>span>svg]:w-3"
+            data-umami-event="role-select-student"
+            data-umami-event-from={user?.default_layout || 'unknown'}
+            data-umami-event-device="mobile"
+          />
+          <label
+            htmlFor="student-role"
+            className="cursor-pointer text-base text-gray-100"
+            data-umami-event="role-select-student"
+            data-umami-event-from={user?.default_layout || 'unknown'}
+            data-umami-event-device="mobile"
           >
             {t('student')}
-          </Button>
+          </label>
         </div>
-      )}
+      </Radio>
     </div>
   );
 };

@@ -140,3 +140,44 @@ export const formatFullNotificationDate = (dateString: string): string => {
 export const formatNotificationCount = (count: number): string => {
   return count > 99 ? '99+' : count.toString();
 };
+
+/**
+ * Проверяет, является ли уведомление кастомным (открывается модалка вместо перехода)
+ */
+export const isCustomNotification = (notification: NotificationT): boolean => {
+  return notification?.payload?.kind === 'custom_v1';
+};
+
+/**
+ * Данные для модалки кастомного уведомления (header, content, button_text, button_link)
+ */
+export type CustomNotificationModalPayload = {
+  header: string;
+  content: string;
+  button_text: string;
+  button_link: string;
+};
+
+/**
+ * Извлекает payload для модалки кастомного уведомления; возвращает null, если не custom_v1
+ */
+export const getCustomNotificationModalPayload = (
+  notification: NotificationT,
+): CustomNotificationModalPayload | null => {
+  if (!isCustomNotification(notification) || !notification.payload) return null;
+  const p = notification.payload as Record<string, unknown>;
+  const header = typeof p.header === 'string' ? p.header : '';
+  const content = typeof p.content === 'string' ? p.content : '';
+  const button_text = typeof p.button_text === 'string' ? p.button_text : '';
+  const button_link = typeof p.button_link === 'string' ? p.button_link : '';
+  return { header, content, button_text, button_link };
+};
+
+/**
+ * Возвращает true, если по клику на уведомление нужно открыть модалку (а не переходить по ссылке)
+ */
+export const getNotificationOpensModal = (notification: NotificationT): boolean => {
+  if (!notification?.payload) return false;
+  const config = notificationConfigs[notification.payload.kind];
+  return Boolean(config?.opensModal);
+};

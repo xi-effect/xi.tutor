@@ -6,8 +6,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { useTemplatesList } from 'common.services';
 import { Control, useFieldArray } from '@xipkg/form';
+import { useMediaQuery } from '@xipkg/utils';
+import { useTemplatesList } from 'common.services';
 import type { FormData } from '../model';
 
 type TemplateSelectorProps = {
@@ -15,6 +16,8 @@ type TemplateSelectorProps = {
 };
 
 export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
+  const isMobile = useMediaQuery('(max-width: 500px)');
+
   const { data: templates, isLoading, isError } = useTemplatesList();
 
   const { append } = useFieldArray({
@@ -34,7 +37,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
     return (
       <Button
         className="bg-brand-0 hover:bg-brand-0 text-brand-100 hover:text-brand-80 h-[32px]"
-        variant="ghost"
+        variant="none"
         size="s"
         type="button"
         disabled
@@ -48,7 +51,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
     return (
       <Button
         className="bg-brand-0 hover:bg-brand-0 text-brand-100 hover:text-brand-80 h-[32px]"
-        variant="ghost"
+        variant="none"
         size="s"
         type="button"
         disabled
@@ -65,7 +68,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
           Добавить занятие из шаблона
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-[400px] p-2">
+      <DropdownMenuContent className={`${isMobile ? 'w-[300px]' : 'w-[400px]'} p-2`}>
         {templates.map((template: any) => (
           <DropdownMenuItem
             key={template.id}

@@ -12,11 +12,12 @@ import {
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { RoomAudioRenderer } from '@livekit/components-react';
 import { CompactCall } from './CompactCall';
+import { PermissionsDialog } from '../shared/PermissionsDialog';
 import { useCallStore } from '../../store/callStore';
 import type { Corner } from '../../store/callStore';
-import { useNavigate, useRouter, useSearch } from '@tanstack/react-router';
-// import { Chat } from '../Chat/Chat';
+import { useNavigate, useRouter, useSearch, useLocation } from '@tanstack/react-router';
 import { useRoom } from '../../providers/RoomProvider';
+import { useParticipantJoinSync } from '../../hooks/useParticipantJoinSync';
 
 type CompactViewProps = {
   children: React.ReactNode;
@@ -61,8 +62,8 @@ const DroppableAreas: FC = () => {
 
   return (
     <>
-      <DroppableCorner id="top-left" className="top-4 left-4" />
-      <DroppableCorner id="top-right" className="top-4 right-4" />
+      <DroppableCorner id="top-left" className="top-16 left-4" />
+      <DroppableCorner id="top-right" className="top-16 right-4" />
       <DroppableCorner id="bottom-left" className="bottom-4 left-4" />
       <DroppableCorner id="bottom-right" className="right-4 bottom-18" />
       <DragOverlay>{isDragging ? <CompactCall /> : null}</DragOverlay>
@@ -95,9 +96,9 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
 
     switch (corner) {
       case 'top-left':
-        return 'top-4 left-4';
+        return 'top-16 left-4';
       case 'top-right':
-        return 'top-4 right-4';
+        return 'top-16 right-4';
       case 'bottom-left':
         return `${bottomOffset} left-4`;
       case 'bottom-right':
@@ -107,7 +108,7 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
 
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
-      <div className="relative flex h-[calc(100vh-64px)] flex-col bg-transparent">
+      <div className="relative flex h-screen flex-col bg-transparent">
         <DroppableAreas />
 
         <div
@@ -117,15 +118,6 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
         </div>
 
         {children}
-
-        {/* Чат в режиме compact */}
-        {/* {isChatOpen && (
-          <div className="absolute top-4 right-4 z-50">
-            <div className="bg-gray-0 border-gray-20 flex h-96 w-80 flex-col rounded-2xl border shadow-lg">
-              <Chat />
-            </div>
-          </div>
-        )} */}
 
         {/* Обработка аудио как в основном режиме ВКС */}
         <RoomAudioRenderer />
@@ -139,12 +131,24 @@ export const CompactView = ({ children }: CompactViewProps) => {
   const { room } = useRoom();
   const { token } = useCallStore();
 
+  // Синхронизация состояния при подключении новых участников (работает и в compact mode)
+  useParticipantJoinSync();
+
   const search = useSearch({ strict: false }) as { call?: string };
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Очищаем URL параметр call, если комната не инициализирована
+  // Очищаем URL параметр call, только если комната действительно отключена
+  // Не очищаем при навигации, если есть activeClassroom в store (комната может быть в процессе подключения)
   useEffect(() => {
-    if ((!room || !token) && search.call) {
+    const { activeClassroom } = useCallStore.getState();
+    const isOnBoardPage = location.pathname.includes('/board');
+
+    // Очищаем только если:
+    // 1. Комната и токен отсутствуют
+    // 2. НЕ находимся на странице доски (чтобы не очищать при навигации на доску)
+    // 3. НЕТ activeClassroom в store (комната действительно отключена, а не в процессе подключения)
+    if ((!room || !token) && search.call && !isOnBoardPage && !activeClassroom) {
       const searchWithoutCall = { ...search };
       delete searchWithoutCall.call;
       navigate({
@@ -164,15 +168,36 @@ export const CompactView = ({ children }: CompactViewProps) => {
       updateCallStore('chatMessages', []);
       updateCallStore('unreadMessagesCount', 0);
 
+      // Очищаем информацию о доске при отключении
+      updateCallStore('activeBoardId', undefined);
+      updateCallStore('activeClassroom', undefined);
+
       updateCallStore('mode', 'full');
     }
   }, [room, token, search.call, search, navigate]);
 
   if (!room || !token) {
-    return <>{children}</>;
+    return (
+      <>
+        {children}
+        <PermissionsDialog />
+      </>
+    );
   }
 
-  if (mode === 'full') return <>{children}</>;
+  if (mode === 'full') {
+    return (
+      <>
+        {children}
+        <PermissionsDialog />
+      </>
+    );
+  }
 
-  return <Compact>{children}</Compact>;
+  return (
+    <>
+      <Compact>{children}</Compact>
+      <PermissionsDialog />
+    </>
+  );
 };

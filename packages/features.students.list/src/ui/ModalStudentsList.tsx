@@ -106,8 +106,10 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
                             <Button
                               onClick={() => handleDeleteMode(student.tutorship.student_id)}
                               className="bg-gray-5 hover:bg-gray-0 ml-auto size-8 rounded-lg p-0"
-                              variant="ghost"
+                              variant="none"
                               size="s"
+                              data-umami-event="student-delete-init"
+                              data-umami-event-student-id={student.tutorship.student_id}
                             >
                               <Trash className="size-4 fill-gray-100" />
                             </Button>
@@ -137,15 +139,18 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
                   variant="error"
                   size="l"
                   disabled={isDeleting}
+                  data-umami-event="student-delete-confirm"
+                  data-umami-event-student-id={selectedStudent}
                 >
                   {isDeleting ? 'Удаление...' : 'Удалить'}
                 </Button>
                 <Button
                   onClick={() => setIsDelete(false)}
                   className="w-full rounded-2xl"
-                  variant="ghost"
+                  variant="none"
                   size="l"
                   disabled={isDeleting}
+                  data-umami-event="student-delete-cancel"
                 >
                   Отмена
                 </Button>

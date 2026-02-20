@@ -17,7 +17,7 @@ export const DisconnectButton = ({ className }: { className?: string }) => {
 
   return (
     <Button
-      variant="ghost"
+      variant="none"
       type="button"
       disabled={buttonProps.disabled}
       onClick={handleDisconnect}
@@ -25,6 +25,7 @@ export const DisconnectButton = ({ className }: { className?: string }) => {
         'bg-gray-0 hover:bg-red-0 flex h-10 w-10 flex-row items-center justify-center rounded-[16px] p-0',
         className,
       )}
+      data-umami-event="call-disconnect"
     >
       <Endcall className="fill-red-100" />
     </Button>

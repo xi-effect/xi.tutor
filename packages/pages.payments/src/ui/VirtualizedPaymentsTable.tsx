@@ -22,9 +22,8 @@ import { useMediaQuery } from '@xipkg/utils';
 import { RefObject } from 'react';
 import { CardsList } from './Mobile';
 import { NotFoundItems } from './NotFoundItems';
-import { useResponsiveGrid, useVirtualGrid } from '../hooks';
+import { useResponsiveGrid, useVirtualCards } from '../hooks';
 import { Loader } from './Loader';
-import { type TabsComponentPropsT } from '../types';
 import { UserRoleT } from '../../../common.api/src/types';
 
 export type VirtualizedPaymentsTableProps<T> = {
@@ -34,7 +33,6 @@ export type VirtualizedPaymentsTableProps<T> = {
   filterByClass?: boolean | string;
   isLoading?: boolean;
   isFetchingNextPage?: boolean;
-  onApprovePayment: TabsComponentPropsT['onApprovePayment'];
   isError: boolean;
   currentUserRole: RoleT;
 };
@@ -45,7 +43,6 @@ export const VirtualizedPaymentsTable = ({
   columns,
   isLoading = false,
   isFetchingNextPage = false,
-  onApprovePayment,
   isError,
   currentUserRole,
 }: VirtualizedPaymentsTableProps<RolePaymentT<UserRoleT>>) => {
@@ -68,8 +65,9 @@ export const VirtualizedPaymentsTable = ({
     overscan: 5,
   });
 
-  const { colCount, rowHeight, GAP } = useResponsiveGrid(parentRef);
-  const gridRowVirtualizer = useVirtualGrid(parentRef, data, colCount, rowHeight);
+  const { colCount } = useResponsiveGrid(parentRef);
+
+  const { virtualizer, measureCard } = useVirtualCards(parentRef, data, 300);
 
   const notFoundItems = !data.length && !isLoading && !isError && !isFetchingNextPage;
 
@@ -81,11 +79,11 @@ export const VirtualizedPaymentsTable = ({
     return (
       <CardsList
         data={data}
-        onApprovePayment={onApprovePayment}
-        rowVirtualizer={gridRowVirtualizer}
+        rowVirtualizer={virtualizer}
+        measureCard={measureCard}
         parentRef={parentRef}
         colCount={colCount}
-        gap={GAP}
+        gap={12}
         isLoading={isLoading}
         isFetchingNextPage={isFetchingNextPage}
         currentUserRole={currentUserRole}
@@ -97,9 +95,9 @@ export const VirtualizedPaymentsTable = ({
     <ScrollArea
       scrollBarProps={{ orientation: 'horizontal' }}
       type="always"
-      className="h-[calc(100vh-164px)] w-full overflow-x-auto overflow-y-hidden"
+      className="h-[calc(100dvh-152px)] w-full overflow-x-auto overflow-y-hidden"
     >
-      <div className="min-w-[1200px]">
+      <div>
         <Table className="table-fixed px-2">
           <TableHeader className="sticky top-0 bg-transparent">
             {table.getHeaderGroups().map((headerGroup) => (
@@ -118,7 +116,7 @@ export const VirtualizedPaymentsTable = ({
           </TableHeader>
         </Table>
 
-        <div ref={parentRef} className="h-[calc(100vh-242px)] w-full overflow-y-auto">
+        <div ref={parentRef} className="h-[calc(100dvh-218px)] w-full overflow-y-auto">
           <div
             style={{
               height: `${rowVirtualizer.getTotalSize()}px`,

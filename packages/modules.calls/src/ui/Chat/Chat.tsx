@@ -8,6 +8,7 @@ import { useChat } from '../../hooks/useChat';
 import { useCallStore } from '../../store/callStore';
 import { useCurrentUser } from 'common.services';
 import { cn } from '@xipkg/utils';
+import { parseLinks } from '../../utils/chat';
 
 export const Chat = () => {
   const [messageText, setMessageText] = useState('');
@@ -16,21 +17,36 @@ export const Chat = () => {
   const { chatMessages, isChatOpen } = useCallStore();
   const { data: currentUser } = useCurrentUser();
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
+    messagesEndRef.current?.scrollIntoView({ behavior });
   };
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    requestAnimationFrame(scrollToBottom);
-  }, [chatMessages]);
+    if (isChatOpen) {
+      requestAnimationFrame(() => {
+        scrollToBottom('auto');
+      });
+    }
+  }, [isChatOpen]);
+
+  // Автоматическая прокрутка при получении новых сообщений
+  useEffect(() => {
+    if (isChatOpen && chatMessages.length > 0) {
+      requestAnimationFrame(() => {
+        scrollToBottom('smooth');
+      });
+    }
+  }, [chatMessages.length, isChatOpen]);
 
   const handleSendMessage = () => {
     if (messageText.trim()) {
       sendChatMessage(messageText);
       setMessageText('');
-      scrollToBottom();
+      requestAnimationFrame(() => {
+        scrollToBottom('smooth');
+      });
     }
 
     if (textareaRef.current) {
@@ -39,10 +55,13 @@ export const Chat = () => {
   };
 
   const handleKeyDownSendMessage = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && (!e.shiftKey || e.metaKey || e.ctrlKey)) {
+    // Enter без Shift - отправка сообщения
+    // Shift+Enter - перенос строки (разрешаем стандартное поведение)
+    if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage();
     }
+    // Если Shift+Enter, не предотвращаем стандартное поведение - будет перенос строки
   };
 
   if (!isChatOpen) return null;
@@ -52,7 +71,7 @@ export const Chat = () => {
       {/* Заголовок */}
       <div className="border-gray-20 flex items-center justify-between pr-3">
         <h3 className="text-lg font-medium text-gray-100">Чат</h3>
-        <Button size="icon" variant="ghost" onClick={closeChat}>
+        <Button size="icon" variant="none" onClick={closeChat}>
           <Close className="h-6 w-6" aria-label="Закрыть чат" />
         </Button>
       </div>
@@ -93,11 +112,11 @@ export const Chat = () => {
                     </div>
                     <div
                       className={cn(
-                        'cursor-text rounded-lg px-3 py-2 text-sm wrap-break-word select-text',
+                        'cursor-text rounded-lg px-3 py-2 text-sm wrap-break-word whitespace-pre-wrap select-text',
                         isOwnMessage ? 'bg-brand-20' : 'bg-gray-5',
                       )}
                     >
-                      {message.text}
+                      {parseLinks(message.text)}
                     </div>
                   </div>
                 </div>
@@ -109,26 +128,32 @@ export const Chat = () => {
       </ScrollArea>
 
       {/* Поле ввода */}
-      <div className="border-gray-20 flex w-full items-center gap-2 overflow-auto">
-        <div className="items-between flex flex-1 flex-row">
+      <div className="flex items-end gap-2 pr-3">
+        <div className="border-gray-20 flex max-h-40 w-full flex-1 items-center rounded-xl border pl-4">
           <Textarea
             ref={textareaRef}
             value={messageText}
             onChange={(e) => setMessageText(e.target.value)}
             placeholder="Напишите сообщение..."
-            className="max-w-none flex-1 border-none p-0"
-            containerClassName="flex items-center"
+            className="my-3 max-h-32 min-w-full rounded-none border-none p-0 pr-2"
             onKeyDown={handleKeyDownSendMessage}
           />
-          <Button
-            size="icon"
-            variant="ghost"
-            onClick={handleSendMessage}
-            disabled={!messageText.trim()}
-            className="hover:bg-gray-10 mr-3 h-8 w-8 self-end"
-          >
-            <Send className="h-6 w-6" />
-          </Button>
+          <div className="pr-1">
+            <Button
+              size="icon"
+              variant="primary"
+              onClick={handleSendMessage}
+              disabled={!messageText.trim()}
+              className="rounded-xl p-2"
+            >
+              <Send
+                className={cn(
+                  'fill-gray-0 h-6 w-6 group-hover:fill-gray-100',
+                  !messageText.trim() && 'fill-gray-100',
+                )}
+              />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

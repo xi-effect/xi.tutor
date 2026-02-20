@@ -31,9 +31,12 @@ export function useServiceButton({
   if (link) {
     return (
       <Button
-        variant="ghost"
+        variant="none"
         className="text-s-base text-brand-100 ml-auto h-8 px-4 py-1.5 sm:h-12"
         onClick={() => window.open(link, '_blank')}
+        data-umami-event="service-external-link"
+        data-umami-event-service={service}
+        data-umami-event-url={link}
       >
         Перейти в {service}
       </Button>
@@ -42,9 +45,11 @@ export function useServiceButton({
 
   return (
     <Button
-      variant="ghost"
+      variant="none"
       className="text-s-base text-brand-100 ml-auto h-8 px-4 py-1.5 sm:h-12"
       onClick={createConnection}
+      data-umami-event="service-connect"
+      data-umami-event-service={service}
     >
       Подключить
     </Button>

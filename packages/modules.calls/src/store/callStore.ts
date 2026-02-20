@@ -41,6 +41,13 @@ type useCallStoreT = {
   carouselType: 'grid' | 'horizontal' | 'vertical';
   activeCorner: Corner;
 
+  // Текущая активная доска (для синхронизации с новыми участниками)
+  activeBoardId: string | undefined;
+  activeClassroom: string | undefined;
+
+  /** Локальный переключатель: пользователь сам ушёл в полную ВКС («Только меня»), комната на сервере остаётся на доске */
+  localFullView: boolean;
+
   // токен для конференции
   token: string | undefined;
 
@@ -52,6 +59,10 @@ type useCallStoreT = {
   // Поднятые руки
   raisedHands: RaisedHand[];
   isHandRaised: boolean;
+
+  // Настройки громкости звуков
+  chatSoundVolume: number; // от 0 до 1
+  handRaiseSoundVolume: number; // от 0 до 1
 
   updateStore: (type: keyof useCallStoreT, value: any) => void;
   addChatMessage: (message: ChatMessage) => void;
@@ -80,6 +91,12 @@ export const useCallStore = create<useCallStoreT>()(
       carouselType: 'grid',
       activeCorner: 'top-left',
 
+      // Текущая активная доска
+      activeBoardId: undefined,
+      activeClassroom: undefined,
+
+      localFullView: false,
+
       // токен для конференции
       token: undefined,
 
@@ -91,6 +108,10 @@ export const useCallStore = create<useCallStoreT>()(
       // Поднятые руки
       raisedHands: [],
       isHandRaised: false,
+
+      // Настройки громкости звуков (по умолчанию 30%)
+      chatSoundVolume: 0.25,
+      handRaiseSoundVolume: 0.25,
 
       updateStore: (type: keyof useCallStoreT, value: any) => set({ [type]: value }),
 
@@ -151,6 +172,8 @@ export const useCallStore = create<useCallStoreT>()(
         videoDeviceId: state.videoDeviceId,
         carouselType: state.carouselType,
         activeCorner: state.activeCorner,
+        chatSoundVolume: state.chatSoundVolume,
+        handRaiseSoundVolume: state.handRaiseSoundVolume,
       }), // Сохраняем только нужные ключи
     },
   ),

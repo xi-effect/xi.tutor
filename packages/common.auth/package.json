@@ -17,6 +17,7 @@
     "common.services": "*",
     "common.ui": "*",
     "common.types": "*",
+    "common.utils": "*",
     "@tanstack/react-query": "5.73.3",
     "axios": "1.8.1"
   },
@@ -42,4 +43,4 @@
   },
   "description": "Authentication context and provider",
   "author": "xi.effect"
-} 
+}

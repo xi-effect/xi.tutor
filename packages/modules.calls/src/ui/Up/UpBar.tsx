@@ -27,7 +27,9 @@ export const UpBar = () => {
   const { callId } = useParams({ strict: false });
   const { data: classroom } = useGetClassroom(Number(callId));
   const carouselType = useCallStore((state) => state.carouselType);
-  const { isFullScreen, toggleFullScreen } = useFullScreen('videoConferenceContainer');
+  const { isFullScreenSupported, isFullScreen, toggleFullScreen } = useFullScreen(
+    'videoConferenceContainer',
+  );
 
   // Получаем треки для проверки условий
   const tracks = useTracks(
@@ -112,8 +114,9 @@ export const UpBar = () => {
               updateStore('mode', 'compact');
             }}
             type="button"
-            variant="ghost"
+            variant="none"
             className="flex size-[40px] items-center justify-center rounded-[12px] p-0"
+            data-umami-event="call-back-button"
           >
             <ArrowLeft className="fill-gray-100" />
           </Button>
@@ -133,9 +136,11 @@ export const UpBar = () => {
           <Button
             onClick={toggleLayout}
             type="button"
-            variant="ghost"
+            variant="none"
             disabled={!canUseFocusLayout && carouselType === 'grid'}
-            className="ml-auto flex h-10 w-[95px] flex-row items-center justify-center gap-2 rounded-[12px] disabled:opacity-50"
+            className="ml-auto flex h-10 w-[95px] flex-row items-center justify-center gap-2 rounded-[12px] px-0 disabled:opacity-50"
+            data-umami-event="call-toggle-layout"
+            data-umami-event-layout={carouselType}
           >
             {getViewIcon()}
             <span className="text-gray-100">Вид</span>
@@ -154,8 +159,9 @@ export const UpBar = () => {
               id={ONBOARDING_IDS.LINK_BUTTON}
               onClick={onCopyLink}
               type="button"
-              variant="ghost"
+              variant="none"
               className="ml-2 hidden h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0 md:flex"
+              data-umami-event="call-copy-link"
             >
               <LinkIcon className="fill-gray-100" />
             </Button>
@@ -165,25 +171,29 @@ export const UpBar = () => {
           </TooltipContent>
         </Tooltip>
       )}
-      <Tooltip delayDuration={1000}>
-        <TooltipTrigger asChild>
-          <Button
-            onClick={toggleFullScreen}
-            type="button"
-            variant="ghost"
-            className="ml-2 hidden h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0 md:flex"
-          >
-            {isFullScreen ? (
-              <Minimize className="fill-gray-100" />
-            ) : (
-              <Maximize className="fill-gray-100" />
-            )}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom" align="end">
-          {isFullScreen ? 'Свернуть' : 'Развернуть на весь экран'}
-        </TooltipContent>
-      </Tooltip>
+      {isFullScreenSupported && (
+        <Tooltip delayDuration={1000}>
+          <TooltipTrigger asChild>
+            <Button
+              onClick={toggleFullScreen}
+              type="button"
+              variant="none"
+              className="ml-2 hidden h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0 md:flex"
+              data-umami-event="call-toggle-fullscreen"
+              data-umami-event-state={isFullScreen ? 'exit' : 'enter'}
+            >
+              {isFullScreen ? (
+                <Minimize className="fill-gray-100" />
+              ) : (
+                <Maximize className="fill-gray-100" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" align="end">
+            {isFullScreen ? 'Свернуть' : 'Развернуть на весь экран'}
+          </TooltipContent>
+        </Tooltip>
+      )}
       {/* <button
         type="button"
       className="bg-gray-0 ml-2 flex h-10 w-10 flex-row items-center justify-center rounded-[20px]"
@@ -194,8 +204,9 @@ export const UpBar = () => {
         <Button
           id={ONBOARDING_IDS.SETTINGS_BUTTON}
           type="button"
-          variant="ghost"
+          variant="none"
           className="flex h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0"
+          data-umami-event="call-settings-button"
         >
           <SettingsIcon className="fill-gray-100" />
         </Button>

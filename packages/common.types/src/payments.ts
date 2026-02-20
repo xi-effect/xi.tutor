@@ -1,4 +1,5 @@
 import type { RoleT } from './user';
+import { UserRoleT } from 'common.api';
 
 export type TemplateT = {
   id: number;
@@ -34,6 +35,7 @@ export type PaymentDataT<Role extends RoleT> = {
   total: string;
   payment_type: PaymentTypeT;
   status: PaymentStatusT;
+  classroom_id: number;
 } & RoleIdField<Role>;
 
 export type StudentPaymentT = PaymentDataT<'tutor'>;
@@ -43,3 +45,15 @@ export type TutorPaymentT = PaymentDataT<'student'>;
 export type RolePaymentT<Role extends RoleT> = Role extends 'tutor'
   ? TutorPaymentT
   : StudentPaymentT;
+
+export type PaymentApprovalFunctionT = {
+  onApprovePayment: (payment: RolePaymentT<UserRoleT>) => void;
+};
+
+export const mapPaymentStatus = {
+  complete: 'оплачен',
+  wf_receiver_confirmation: 'ожидает подтверждения',
+  wf_sender_confirmation: 'ждет оплаты',
+} as const;
+
+export type InvoiceCardTypeT = 'default' | 'table';

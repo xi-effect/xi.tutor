@@ -148,16 +148,18 @@ export const ModalAddGroup = ({ children }: { children: React.ReactNode }) => {
                 type="submit"
                 onClick={handleButtonClick}
                 disabled={isPending}
+                data-umami-event="group-create"
               >
                 {isPending ? 'Создание...' : 'Создать'}
               </Button>
               <Button
-                variant="border"
+                variant="secondary"
                 type="button"
                 onClick={() => {
                   handleButtonClick();
                   closeModal();
                 }}
+                data-umami-event="group-create-cancel"
               >
                 Отменить
               </Button>

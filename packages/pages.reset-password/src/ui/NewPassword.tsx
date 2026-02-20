@@ -94,7 +94,7 @@ export const NewPassword = ({ token }: { token: string }) => {
           <div className="flex h-14 items-center">
             <LinkTanstack
               id="to-signup-link"
-              data-umami-event="to-signup-link"
+              data-umami-event="auth-signin-link"
               size="l"
               theme="brand"
               variant="hover"
@@ -109,6 +109,7 @@ export const NewPassword = ({ token }: { token: string }) => {
             type="submit"
             loading={form.formState.isSubmitting}
             className="bg-brand-80 rounded-xl px-6 py-3"
+            data-umami-event="auth-new-password-save"
           >
             {t('save')}
           </Button>

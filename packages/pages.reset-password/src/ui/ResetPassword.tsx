@@ -66,11 +66,18 @@ export const ResetPassword = () => {
                 theme="brand"
                 variant="hover"
                 onClick={() => form.handleSubmit(onSubmit)()}
+                data-umami-event="auth-reset-password-resend"
               >
                 {t('resend')}
               </Link>
             ) : (
-              <LinkTanstack size="l" theme="brand" variant="hover" to="/signin">
+              <LinkTanstack
+                size="l"
+                theme="brand"
+                variant="hover"
+                to="/signin"
+                data-umami-event="auth-signin-link"
+              >
                 {t('sign_in_button')}
               </LinkTanstack>
             )}
@@ -80,6 +87,7 @@ export const ResetPassword = () => {
             <Button
               onClick={() => navigate({ to: '/signin' })}
               className="bg-brand-80 rounded-xl px-6 py-3"
+              data-umami-event="auth-reset-password-signin"
             >
               {t('sign_in_button')}
             </Button>
@@ -88,6 +96,7 @@ export const ResetPassword = () => {
               type="submit"
               loading={form.formState.isSubmitting}
               className="bg-brand-80 rounded-xl px-6 py-3"
+              data-umami-event="auth-reset-password-send"
             >
               {t('send')}
             </Button>

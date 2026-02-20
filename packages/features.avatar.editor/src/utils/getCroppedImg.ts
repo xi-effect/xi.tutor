@@ -50,13 +50,10 @@ export async function getCroppedImg(
     pixelCrop.height,
   );
 
-  // As Base64 string
-  // return croppedCanvas.toDataURL('image/webp');
-
-  // As a blob
+  // Бэкенд принимает PNG и сам конвертирует в webp; кроп важен — бэкенд делает 128×128 квадрат
   return new Promise((resolve) => {
     croppedCanvas.toBlob((file) => {
       resolve(file);
-    }, 'image/webp');
+    }, 'image/png');
   });
 }

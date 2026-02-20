@@ -1,25 +1,14 @@
-import { useMemo, useRef, useState, useCallback } from 'react';
-import { useInfiniteQuery, createPaymentColumns, RolePaymentT } from 'features.table';
+import { useMemo, useRef } from 'react';
+import { useInfiniteQuery, createPaymentColumns } from 'features.table';
 import { VirtualizedPaymentsTable } from 'pages.payments';
-import { useMediaQuery } from '@xipkg/utils';
+import { useScreenSize } from 'common.utils';
 import { useParams } from '@tanstack/react-router';
 import { useGetClassroom, useCurrentUser } from 'common.services';
-import { PaymentApproveModal } from 'features.payment.approve';
-import { UserRoleT } from 'common.api';
 
 export const Payments = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom } = useGetClassroom(Number(classroomId));
-  const isMobile = useMediaQuery('(max-width: 719px)');
-
-  const [paymentApproveModalState, setPaymentApproveModalState] = useState<{
-    isOpen: boolean;
-    payment: RolePaymentT<UserRoleT> | null;
-  }>({ isOpen: false, payment: null });
-
-  const onOpenPaymentApproveModal = useCallback((payment: RolePaymentT<UserRoleT>) => {
-    setPaymentApproveModalState({ isOpen: true, payment });
-  }, []);
+  const screenSize = useScreenSize();
 
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -30,18 +19,18 @@ export const Payments = () => {
   const { items, isLoading, isFetchingNextPage, isError } = useInfiniteQuery(
     parentRef,
     currentUserRole,
+    classroomId,
   );
 
   const defaultColumns = useMemo(
     () =>
       createPaymentColumns({
         withStudentColumn: false,
-        onApprovePayment: onOpenPaymentApproveModal,
         usersRole: isTutor ? 'student' : 'tutor',
-        isMobile,
+        screenSize,
         isTutor,
       }),
-    [isMobile, isTutor, onOpenPaymentApproveModal],
+    [screenSize, isTutor],
   );
 
   if (isLoading) {
@@ -68,22 +57,10 @@ export const Payments = () => {
         columns={defaultColumns}
         isLoading={isLoading}
         isFetchingNextPage={isFetchingNextPage}
-        onApprovePayment={onOpenPaymentApproveModal}
         parentRef={parentRef}
         isError={isError}
         currentUserRole={currentUserRole}
       />
-
-      {paymentApproveModalState.isOpen && paymentApproveModalState.payment && (
-        <PaymentApproveModal
-          open={paymentApproveModalState.isOpen}
-          onOpenChange={(open) =>
-            setPaymentApproveModalState({ ...paymentApproveModalState, isOpen: open })
-          }
-          paymentDetails={paymentApproveModalState.payment}
-          recipientInvoiceId={paymentApproveModalState.payment.id}
-        />
-      )}
     </div>
   );
 };

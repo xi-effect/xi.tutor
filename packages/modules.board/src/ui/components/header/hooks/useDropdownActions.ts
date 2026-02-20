@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 // useBoardActions.ts
 import { useParams } from '@tanstack/react-router';
 import {

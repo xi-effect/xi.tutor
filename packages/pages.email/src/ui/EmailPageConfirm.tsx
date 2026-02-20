@@ -2,8 +2,8 @@ import { useEffect, useState, useMemo } from 'react';
 import { EmailPageLayout } from './EmailPageLayout';
 import { Button } from '@xipkg/button';
 import { useCurrentUser, useEmailConfirmationRequest } from 'common.services';
-
-const INITIAL_TIMER_SECONDS = 10 * 60; // 10 минут в секундах
+import { Alert, AlertIcon, AlertContainer, AlertDescription } from '@xipkg/alert';
+import { InfoCircle } from '@xipkg/icons';
 
 const formatTime = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);
@@ -11,42 +11,41 @@ const formatTime = (seconds: number): string => {
   return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
 };
 
+// Вычисляет оставшееся время до разрешенной повторной отправки
+const calculateTimeRemaining = (allowedAt: string | null | undefined): number => {
+  if (!allowedAt) return 0;
+
+  const allowedDate = new Date(allowedAt);
+  const now = new Date();
+  const diffInSeconds = Math.floor((allowedDate.getTime() - now.getTime()) / 1000);
+
+  return Math.max(0, diffInSeconds);
+};
+
 export const EmailPageConfirm = () => {
   const { data: user } = useCurrentUser();
   const email = user?.email || '';
-
-  // Проверяем, пришли ли мы с /signup через sessionStorage
-  const cameFromSignup = useMemo(() => {
-    if (typeof window === 'undefined') return false;
-    const savedPreviousPath = sessionStorage.getItem('previousPath');
-    return savedPreviousPath === '/signup' || savedPreviousPath === '/signup/';
-  }, []);
-
-  // Инициализируем таймер в зависимости от предыдущей страницы
-  const [timeRemaining, setTimeRemaining] = useState(() => {
-    // Проверяем при инициализации
-    if (typeof window === 'undefined') return 0;
-    const savedPreviousPath = sessionStorage.getItem('previousPath');
-    const isFromSignup = savedPreviousPath === '/signup' || savedPreviousPath === '/signup/';
-    return isFromSignup ? INITIAL_TIMER_SECONDS : 0;
-  });
   const { emailConfirmationRequest, isLoading } = useEmailConfirmationRequest();
 
-  // Очищаем sessionStorage после получения значения
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const savedPreviousPath = sessionStorage.getItem('previousPath');
-      if (savedPreviousPath) {
-        sessionStorage.removeItem('previousPath');
-      }
-    }
-  }, []);
+  // Вычисляем оставшееся время на основе данных с бэкенда
+  const timeRemaining = useMemo(() => {
+    return calculateTimeRemaining(user?.email_confirmation_resend_allowed_at);
+  }, [user?.email_confirmation_resend_allowed_at]);
 
+  // Локальное состояние для отображения таймера (обновляется каждую секунду)
+  const [displayTimeRemaining, setDisplayTimeRemaining] = useState(timeRemaining);
+
+  // Обновляем отображаемое время при изменении данных пользователя
   useEffect(() => {
-    if (timeRemaining === 0) return;
+    setDisplayTimeRemaining(timeRemaining);
+  }, [timeRemaining]);
+
+  // Обновляем таймер каждую секунду
+  useEffect(() => {
+    if (displayTimeRemaining === 0) return;
 
     const interval = setInterval(() => {
-      setTimeRemaining((prev) => {
+      setDisplayTimeRemaining((prev) => {
         if (prev <= 1) {
           return 0;
         }
@@ -55,34 +54,16 @@ export const EmailPageConfirm = () => {
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [timeRemaining]);
-
-  // Останавливаем таймер во время загрузки
-  useEffect(() => {
-    if (isLoading && timeRemaining > 0) {
-      setTimeRemaining(0);
-    }
-  }, [isLoading, timeRemaining]);
-
-  // Запускаем таймер после успешной отправки
-  useEffect(() => {
-    if (emailConfirmationRequest.isSuccess) {
-      setTimeRemaining(INITIAL_TIMER_SECONDS);
-    }
-  }, [emailConfirmationRequest.isSuccess]);
+  }, [displayTimeRemaining]);
 
   const handleConfirm = () => {
-    if (timeRemaining > 0 || isLoading) return;
-    // Если пришли не с /signup, запускаем таймер при нажатии
-    if (!cameFromSignup && timeRemaining === 0) {
-      setTimeRemaining(INITIAL_TIMER_SECONDS);
-    }
+    if (displayTimeRemaining > 0 || isLoading) return;
     emailConfirmationRequest.mutate();
   };
 
-  const isButtonDisabled = timeRemaining > 0 || isLoading;
-  const buttonText = timeRemaining > 0 ? 'Отправить ещё раз' : 'Получить новую ссылку';
-  const showHint = timeRemaining === 0 && !isLoading;
+  const isButtonDisabled = displayTimeRemaining > 0 || isLoading;
+  const buttonText = displayTimeRemaining > 0 ? 'Отправить ещё раз' : 'Получить новую ссылку';
+  const showHint = displayTimeRemaining === 0 && !isLoading;
 
   return (
     <EmailPageLayout title="Подтвердите почту">
@@ -97,12 +78,13 @@ export const EmailPageConfirm = () => {
         className="mt-16 h-[48px] w-full rounded-xl"
         onClick={handleConfirm}
         disabled={isButtonDisabled}
+        data-umami-event="email-confirm-button-resend"
       >
         {buttonText}
       </Button>
-      {timeRemaining > 0 && (
+      {displayTimeRemaining > 0 && (
         <span className="text-xxs-base text-gray-60 mt-1 w-full text-center">
-          Следующее письмо можно отправить через {formatTime(timeRemaining)}
+          Следующее письмо можно отправить через {formatTime(displayTimeRemaining)}
         </span>
       )}
       {showHint && (
@@ -110,6 +92,18 @@ export const EmailPageConfirm = () => {
           Если письмо не пришло, проверьте адрес и нажмите на эту кнопку
         </span>
       )}
+      <div className="mt-8">
+        <Alert className="h-full w-full" variant="brand">
+          <AlertIcon>
+            <InfoCircle className="fill-brand-100" />
+          </AlertIcon>
+          <AlertContainer className="h-full">
+            <AlertDescription>
+              Если письмо долго не приходит, проверьте папку «Спам» в вашей почте
+            </AlertDescription>
+          </AlertContainer>
+        </Alert>
+      </div>
     </EmailPageLayout>
   );
 };

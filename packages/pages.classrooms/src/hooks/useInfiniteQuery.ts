@@ -1,9 +1,8 @@
 import { useInfiniteQuery as useTanStackInfiniteQuery } from '@tanstack/react-query';
-import { RefObject } from 'react';
-import { ClassroomPropsT } from '../types';
-import { getAxiosInstance } from 'common.config';
 import { classroomsApiConfig, ClassroomsQueryKey, ClassroomT } from 'common.api';
-import React from 'react';
+import { getAxiosInstance } from 'common.config';
+import React, { RefObject } from 'react';
+import { ClassroomPropsT } from '../types';
 
 // Адаптер для преобразования ClassroomT в ClassroomPropsT
 const adaptClassroom = (classroom: ClassroomT): ClassroomPropsT => ({
@@ -30,7 +29,7 @@ export const useInfiniteQuery = (parentRef: RefObject<HTMLDivElement | null>) =>
           url,
           params: {
             limit: 20,
-            last_opened_before: pageParam,
+            created_before: pageParam,
           },
           headers: {
             'Content-Type': 'application/json',
@@ -45,7 +44,6 @@ export const useInfiniteQuery = (parentRef: RefObject<HTMLDivElement | null>) =>
           return undefined;
         }
 
-        // Используем created_at для пагинации
         const nextParam = lastPage[lastPage.length - 1].created_at;
         return nextParam;
       },
@@ -55,21 +53,17 @@ export const useInfiniteQuery = (parentRef: RefObject<HTMLDivElement | null>) =>
 
   // Обработчик скролла для автоматической загрузки следующей страницы
   React.useEffect(() => {
-    const handleScroll = () => {
-      if (!parentRef.current || isFetchingNextPage || !hasNextPage) {
-        return;
-      }
+    if (!parentRef.current) return;
+    const el = parentRef.current;
 
-      const { scrollTop, scrollHeight, clientHeight } = parentRef.current;
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = el;
       const distanceToBottom = scrollHeight - scrollTop - clientHeight;
 
-      if (distanceToBottom < 100) {
+      if (distanceToBottom < 100 && !isFetchingNextPage) {
         fetchNextPage();
       }
     };
-
-    const el = parentRef.current;
-    if (!el) return;
 
     el.addEventListener('scroll', handleScroll);
     return () => el.removeEventListener('scroll', handleScroll);

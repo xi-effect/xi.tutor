@@ -104,7 +104,7 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
       >
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
-            <Button size="s" variant="ghost" className="rounded-lg px-2">
+            <Button size="s" variant="none" className="rounded-lg px-2">
               <MoreVert size="sm" className="size-6" />
             </Button>
           </DropdownMenuTrigger>

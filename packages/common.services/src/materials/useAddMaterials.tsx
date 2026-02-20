@@ -1,13 +1,7 @@
 import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { generateNameWithDate } from 'common.utils';
-import { handleError, showSuccess } from 'common.services';
-
-enum MaterialsKind {
-  note = 'заметка',
-  board = 'доска',
-}
+import { handleError, showSuccess, findNextAvailableName } from 'common.services';
 
 interface MaterialsResponseT {
   data: MaterialsDataT & {
@@ -19,6 +13,13 @@ interface MaterialsResponseT {
 interface MutationContext {
   previousQueries: [readonly unknown[], unknown][];
 }
+
+type MaterialItemT = {
+  name: string;
+  content_kind: string;
+};
+
+type ClassroomMaterialsCacheT = { pages: Array<Array<MaterialItemT>> } | Array<MaterialItemT>;
 
 export type MaterialsDataT = {
   content_kind: 'note' | 'board';
@@ -43,15 +44,53 @@ export const useAddMaterials = () => {
         throw new Error('Invalid material kind');
       }
 
+      let materialName = materialsData.name;
+
+      if (!materialName) {
+        const queries = queryClient.getQueriesData<ClassroomMaterialsCacheT>({
+          queryKey: [MaterialsQueryKey.Materials],
+        });
+
+        const existingMaterials: Array<{ name: string }> = [];
+        queries.forEach(([queryKey, data]) => {
+          if (data) {
+            const keyType = queryKey[1];
+            const isRelevantCache =
+              keyType === materialsData.content_kind || keyType === 'all' || keyType === null;
+
+            if (!isRelevantCache) {
+              return;
+            }
+
+            if ('pages' in data && data.pages) {
+              data.pages.forEach((page) => {
+                if (Array.isArray(page)) {
+                  const filteredMaterials = page.filter(
+                    (material) => material.content_kind === materialsData.content_kind,
+                  );
+                  existingMaterials.push(...filteredMaterials);
+                }
+              });
+            } else if (Array.isArray(data)) {
+              const filteredMaterials = data.filter(
+                (material) => material.content_kind === materialsData.content_kind,
+              );
+              existingMaterials.push(...filteredMaterials);
+            }
+          }
+        });
+
+        materialName = findNextAvailableName(existingMaterials, materialsData.content_kind);
+      }
+
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
           method: materialsApiConfig[MaterialsQueryKey.AddMaterials].method,
           url: materialsApiConfig[MaterialsQueryKey.AddMaterials].getUrl(),
           data: {
-            ...materialsData,
-            name:
-              materialsData.name || generateNameWithDate(MaterialsKind[materialsData.content_kind]),
+            content_kind: materialsData.content_kind,
+            name: materialName,
           },
           headers: {
             'Content-Type': 'application/json',
@@ -83,7 +122,7 @@ export const useAddMaterials = () => {
         });
       }
 
-      showSuccess('materials', `${response.data.name} создан`);
+      showSuccess('materials', `${response.data.name} создана`);
     },
   });
 

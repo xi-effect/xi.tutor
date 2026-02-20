@@ -5,11 +5,17 @@ import { useEditor, Editor } from '@tiptap/react';
 import { getExtensions } from '../config/editorConfig';
 import { editorProps } from '../config/editorProps';
 import { toast } from 'sonner';
+import { useCurrentUser } from 'common.services';
 import { StorageItemT } from 'common.types';
-
-import { HocuspocusProvider } from '@hocuspocus/provider';
+import {
+  HocuspocusProvider,
+  type onAuthenticatedParameters,
+  type onAuthenticationFailedParameters,
+} from '@hocuspocus/provider';
+import { generateUserColor } from '../utils/userColor';
 
 type UseYjsStoreArgs = {
+  hostUrl: string;
   ydocId: string;
   storageToken: string;
   storageItem: StorageItemT;
@@ -27,194 +33,154 @@ export type UseCollaborativeTiptapReturn = {
 };
 
 export function useYjsStore({
+  hostUrl,
   ydocId,
   storageToken,
   storageItem,
 }: UseYjsStoreArgs): UseCollaborativeTiptapReturn {
-  const ydoc = useMemo(() => {
-    console.log('Создаем новый Y.Doc для документа:', ydocId);
-    return new Y.Doc();
-  }, [ydocId]);
+  /* ==========================================================
+   * 1. Provider + Y.Doc через useState — React гарантирует
+   *    стабильность state через StrictMode remount.
+   *    Пересоздание при смене документа — через key prop.
+   * ========================================================== */
+  const [{ provider, ydoc }] = useState(() => {
+    const ydoc = new Y.Doc();
 
-  /* ---------- Readonly state ---------- */
-  const [serverReadonly, setServerReadonly] = useState<boolean>(false);
-
-  /* ---------- Функция проверки серверного readonly ---------- */
-  const checkServerReadonly = useCallback((room: HocuspocusProvider) => {
-    const authorizedScope = (room as any).authorizedScope;
-    const isReadOnly =
-      authorizedScope === 'read' ||
-      authorizedScope === 'readonly' ||
-      (typeof authorizedScope === 'string' &&
-        authorizedScope.includes('read') &&
-        !authorizedScope.includes('write'));
-    setServerReadonly(isReadOnly);
-    return isReadOnly;
-  }, []);
-
-  const provider = useMemo(() => {
-    if (!ydocId) {
-      console.log('Document name не предоставлен, работаем в автономном режиме');
-      return undefined;
-    }
-    console.log('Создаем Hocuspocus provider для документа:', ydocId);
-    const prov = new HocuspocusProvider({
-      url: 'wss://hocus.sovlium.ru',
+    // autoConnect: false передаётся в HocuspocusProviderWebsocket — не подключаться в конструкторе,
+    // только в useEffect (иначе при StrictMode — предупреждение "WebSocket is closed before the connection is established").
+    const provider = new HocuspocusProvider({
+      url: hostUrl,
       name: ydocId,
       document: ydoc,
       token: storageToken,
-      connect: false,
-      forceSyncInterval: 20000, // Принудительная синхронизация каждые 20 секунд
-      onAuthenticationFailed: (data) => {
-        console.log('onAuthenticationFailed', data);
-        if (data.reason === 'permission-denied') {
-          toast('Ошибка доступа к серверу совместного редактирования');
-          console.error('hocuspocus: permission-denied');
-        }
-      },
-      onAuthenticated: () => {
-        setTimeout(() => {
-          checkServerReadonly(prov);
-        }, 100);
-      },
-    });
-    return prov;
-  }, [ydocId, storageToken, ydoc, checkServerReadonly]);
+      forceSyncInterval: 20_000,
+      autoConnect: false,
+    } as any);
 
-  const userData = useMemo(() => ({ name: 'Igor', color: '#ff00ff' }), []);
+    return { provider, ydoc };
+  });
 
+  /* ==========================================================
+   * 2. Readonly state
+   * ========================================================== */
+  const [serverReadonly, setServerReadonly] = useState(false);
+
+  /* ==========================================================
+   * 3. User data для курсоров и awareness — из текущего пользователя
+   * ========================================================== */
+  const { data: currentUser } = useCurrentUser();
+  const userData = useMemo(() => {
+    const name = currentUser?.display_name || currentUser?.username || 'Участник';
+    const idForColor = currentUser?.id?.toString() ?? 'anonymous';
+    return { name, color: generateUserColor(idForColor) };
+  }, [currentUser?.id, currentUser?.display_name, currentUser?.username]);
+
+  /* ==========================================================
+   * 4. Extensions — мемоизированы, стабильная ссылка
+   *    provider и ydoc из useState, userData из useMemo([])
+   *    → extensions создаются один раз.
+   * ========================================================== */
+  const extensions = useMemo(
+    () => getExtensions(provider, ydoc, userData),
+    [provider, ydoc, userData],
+  );
+
+  /* ==========================================================
+   * 5. Provider lifecycle: connect, events, cleanup
+   * ========================================================== */
   useEffect(() => {
-    if (provider) {
-      provider.setAwarenessField('user', userData);
-
-      // Добавляем обработчики событий для отладки
-      provider.on('connect', () => {
-        console.log('Hocuspocus provider подключен к серверу:', ydocId);
-      });
-
-      provider.on('disconnect', () => {
-        console.log('Hocuspocus provider отключен от сервера:', ydocId);
-      });
-
-      provider.on('status', (event: { status: string }) => {
-        console.log('Hocuspocus provider статус:', ydocId, event);
-      });
-
-      // Подключаемся вручную, как в modules.board
+    // Отложенный connect: при StrictMode cleanup успевает отменить таймер,
+    // и мы не вызываем disconnect() до установки соединения.
+    const connectTimeoutId = window.setTimeout(() => {
       provider.connect();
-      console.log('Hocuspocus provider подключен для документа:', ydocId);
-    }
-  }, [provider, userData, ydocId]);
+    }, 0);
 
+    // Awareness
+    if (provider.awareness) {
+      provider.awareness.setLocalStateField('user', userData);
+    }
+
+    // Auth events
+    const handleAuthFailed = ({ reason }: onAuthenticationFailedParameters) => {
+      if (reason === 'permission-denied') {
+        toast('Ошибка доступа к серверу совместного редактирования');
+        console.error('hocuspocus: permission-denied');
+      }
+    };
+
+    const handleAuthenticated = ({ scope }: onAuthenticatedParameters) => {
+      setServerReadonly(scope === 'readonly');
+    };
+
+    provider.on('authenticationFailed', handleAuthFailed as any);
+    provider.on('authenticated', handleAuthenticated as any);
+
+    return () => {
+      window.clearTimeout(connectTimeoutId);
+      provider.off('authenticationFailed', handleAuthFailed as any);
+      provider.off('authenticated', handleAuthenticated as any);
+
+      // Только disconnect — provider принадлежит useState и будет
+      // переиспользован при StrictMode-ремаунте.
+      // destroy() вызовется при unmount через key-prop remount.
+      try {
+        provider.disconnect();
+      } catch {
+        // ignore
+      }
+    };
+  }, [provider, userData]);
+
+  /* ==========================================================
+   * 6. Editor — extensions в deps: при загрузке currentUser
+   *    userData обновляется, пересоздаём редактор с правильным именем/цветом для курсора.
+   * ========================================================== */
   const editor = useEditor(
     {
-      extensions: getExtensions(provider, ydoc, userData),
+      extensions,
       editable: true,
       editorProps,
     },
-    [provider, userData],
-  ); // Убираем ydoc из зависимостей
+    [extensions],
+  );
 
-  // Отладочная информация
-  useEffect(() => {
-    console.log('Editor state:', {
-      hasEditor: !!editor,
-      hasProvider: !!provider,
-      hasYdoc: !!ydoc,
-      providerConnected: provider?.isConnected,
-      ydocId,
-      ydocState: ydoc ? 'ready' : 'not ready',
-      providerState: provider ? 'created' : 'not created',
-    });
-
-    // Добавляем слушатель изменений документа для отладки
-    if (ydoc) {
-      const updateHandler = (update: Uint8Array, origin: unknown) => {
-        const yXmlFragment = ydoc.getXmlFragment('default');
-        console.log('Документ изменен:', {
-          fragmentLength: yXmlFragment.length,
-          fragmentContent: yXmlFragment.toString().substring(0, 100) + '...',
-          origin: origin?.constructor?.name || 'unknown',
-          updateSize: update.length,
-        });
-      };
-
-      ydoc.on('update', updateHandler);
-
-      return () => {
-        ydoc.off('update', updateHandler);
-      };
-    }
-  }, [editor, provider, ydoc, ydocId]);
-
-  useEffect(() => {
-    if (!provider || !editor) return;
-
-    const onSynced = () => {
-      console.log('Документ синхронизирован');
-      const yXmlFragment = ydoc.getXmlFragment('default');
-
-      console.log('Состояние документа после синхронизации:', {
-        fragmentLength: yXmlFragment.length,
-        fragmentContent: yXmlFragment.toString().substring(0, 200) + '...',
-        hasContent: yXmlFragment.length > 0,
-      });
-
-      // Проверяем readonly режим после синхронизации
-      checkServerReadonly(provider);
-
-      // Не устанавливаем никакого начального содержимого
-      // Позволяем Yjs самому управлять содержимым документа
-      console.log('Документ синхронизирован, содержимое управляется Yjs');
-    };
-
-    provider.on('synced', onSynced);
-
-    return () => {
-      provider.off('synced', onSynced);
-      // Не отключаем провайдер здесь, так как он может использоваться другими компонентами
-    };
-  }, [provider, editor, ydoc, checkServerReadonly]);
-
-  /* ---------- Обновление editable редактора на основе serverReadonly ---------- */
+  /* ==========================================================
+   * 7. Обновление editable на основе serverReadonly
+   * ========================================================== */
   useEffect(() => {
     if (!editor || editor.isDestroyed) return;
 
     const isEditable = !serverReadonly;
-    // Проверяем, что значение действительно изменилось, чтобы избежать лишних обновлений
     if (editor.isEditable !== isEditable) {
       editor.setEditable(isEditable);
-      console.log('Редактор обновлен, editable:', isEditable, 'serverReadonly:', serverReadonly);
     }
   }, [editor, serverReadonly]);
 
-  // Отдельный эффект для очистки провайдера при размонтировании
-  useEffect(() => {
-    return () => {
-      if (provider) {
-        provider.disconnect();
-        console.log('Hocuspocus provider отключен для документа:', ydocId);
-      }
-    };
-  }, [provider, ydocId]);
-
+  /* ==========================================================
+   * 8. Undo / Redo
+   * ========================================================== */
   const undo = useCallback(() => editor?.commands.undo(), [editor]);
   const redo = useCallback(() => editor?.commands.redo(), [editor]);
 
   const canUndo = !!editor;
   const canRedo = !!editor;
-
-  // Объединяем readonly с сервера - если сервер установил readonly, это имеет приоритет
   const isReadOnly = serverReadonly || (editor ? !editor.isEditable : false);
 
-  return {
-    editor: editor ?? null,
-    undo,
-    redo,
-    canUndo,
-    canRedo,
-    isReadOnly,
-    storageToken,
-    storageItem,
-  };
+  /* ==========================================================
+   * 9. Мемоизированное возвращаемое значение — предотвращает
+   *    ре-рендер ВСЕХ context consumers на каждый рендер
+   * ========================================================== */
+  return useMemo(
+    () => ({
+      editor: editor ?? null,
+      undo,
+      redo,
+      canUndo,
+      canRedo,
+      isReadOnly,
+      storageToken,
+      storageItem,
+    }),
+    [editor, undo, redo, canUndo, canRedo, isReadOnly, storageToken, storageItem],
+  );
 }

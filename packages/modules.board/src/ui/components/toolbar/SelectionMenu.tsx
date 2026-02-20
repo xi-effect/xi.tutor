@@ -3,6 +3,7 @@ import { track, useEditor } from 'tldraw';
 import { Button } from '@xipkg/button';
 import { Trash, Copy, Unlocked } from '@xipkg/icons';
 import { MoreActionsMenu } from './MoreActionsMenu';
+import { ColorPicker } from './ColorPicker';
 import { useYjsContext } from '../../../providers/YjsProvider';
 
 export const SelectionMenu = track(function SelectionMenu() {
@@ -58,7 +59,7 @@ export const SelectionMenu = track(function SelectionMenu() {
       {isLocked ? (
         <>
           <Button
-            variant="ghost"
+            variant="none"
             size="s"
             className="hover:bg-brand-0 p-1"
             onClick={() => {
@@ -72,7 +73,7 @@ export const SelectionMenu = track(function SelectionMenu() {
       ) : (
         <>
           <Button
-            variant="ghost"
+            variant="none"
             size="s"
             className="hover:bg-brand-0 p-1"
             onClick={handleDuplicate}
@@ -81,7 +82,7 @@ export const SelectionMenu = track(function SelectionMenu() {
             <Copy />
           </Button>
           <Button
-            variant="ghost"
+            variant="none"
             size="s"
             className="hover:bg-brand-0 p-1"
             onClick={handleDelete}
@@ -89,6 +90,7 @@ export const SelectionMenu = track(function SelectionMenu() {
           >
             <Trash />
           </Button>
+          <ColorPicker />
           <MoreActionsMenu />
         </>
       )}
