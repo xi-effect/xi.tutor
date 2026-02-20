@@ -39,6 +39,7 @@
 @source "../../../packages/pages.email/src";
 @source "../../../packages/pages.notes/src";
 @source "../../../packages/pages.email-confirm/src";
+@source "../../../packages/features.lesson.add/src";
 
 @source "../../../node_modules/@xipkg";
 

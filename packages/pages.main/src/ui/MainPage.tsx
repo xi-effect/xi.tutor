@@ -11,7 +11,6 @@ import {
 import { Menu } from 'common.ui';
 import { useCurrentUser } from 'common.services';
 // import { Sidebar } from './components/Sidebar';
-// import { AssignLessonButton } from './components/AssignLessonButton';
 
 export const MainPage = () => {
   const { data: user } = useCurrentUser();
