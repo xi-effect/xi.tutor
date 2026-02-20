@@ -13,6 +13,7 @@
   "dependencies": {
     "@tanstack/react-router": "1.120.11",
     "@tanstack/react-query": "^5.73.3",
+    "react-i18next": "15.4.1",
     "sonner": "^1.4.0",
     "common.services": "*",
     "common.utils": "*",

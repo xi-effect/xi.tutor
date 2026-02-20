@@ -15,7 +15,15 @@ interface AddingFormProps extends PropsWithChildren {
 }
 
 export const AddingForm: FC<AddingFormProps> = ({ children, onClose }) => {
-  const { form, control, handleSubmit, handleClearForm, onSubmit } = useAddingForm();
+  const {
+    form,
+    control,
+    handleSubmit,
+    handleClearForm,
+    onSubmit,
+    classrooms,
+    isClassroomsLoading,
+  } = useAddingForm();
 
   const maskRefStartTime = useMaskInput('time');
   const maskRefEndTime = useMaskInput('time');
@@ -33,6 +41,7 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose }) => {
   return (
     <Form {...form}>
       <form
+        id="adding-lesson-form"
         onSubmit={handleSubmit(onFormSubmit)}
         onReset={handleReset}
         className="flex flex-col gap-4"
@@ -74,7 +83,11 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose }) => {
               <FormItem>
                 <FormLabel className="mb-2 block">Ученик или группа</FormLabel>
                 <FormControl>
-                  <StudentSelector {...field} />
+                  <StudentSelector
+                    {...field}
+                    classrooms={classrooms}
+                    isLoading={isClassroomsLoading}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>

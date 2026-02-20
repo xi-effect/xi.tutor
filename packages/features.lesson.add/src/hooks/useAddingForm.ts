@@ -1,5 +1,6 @@
 import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
 import { formSchema, type FormData } from '../model/formSchema';
 import { useFetchClassrooms } from 'common.services';
 
@@ -14,7 +15,7 @@ const DEFAULT_VALUES: FormData = {
 };
 
 export const useAddingForm = () => {
-  const { data: classrooms } = useFetchClassrooms();
+  const { data: classrooms, isLoading: isClassroomsLoading } = useFetchClassrooms();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -22,45 +23,40 @@ export const useAddingForm = () => {
     defaultValues: DEFAULT_VALUES,
   });
 
-  const { control, handleSubmit, setValue, formState, watch } = form;
-  const eventDate = watch('startDate');
+  const { control, handleSubmit, reset } = form;
 
   const onSubmit = (data: FormData) => {
-    const student = classrooms?.find((c) => c.id === Number(data.studentId));
-
-    const student_ids = student?.kind === 'individual' ? [student.student_id] : [];
+    const classroom = classrooms?.find((c) => c.id === Number(data.studentId));
+    const studentIds = classroom?.kind === 'individual' ? [classroom.student_id] : [];
 
     const payload = {
       title: data.title,
-      description: data.description || '',
-      student_ids,
+      description: data.description ?? '',
+      studentIds,
       startTime: data.startTime,
       endTime: data.endTime,
       startDate: data.startDate,
       shouldRepeat: data.shouldRepeat,
     };
 
-    console.log('errors', formState.errors);
-
     console.log('payload', payload);
+
+    // TODO: подключить API создания урока (common.api или модуль календаря)
+    // await createLesson(payload);
+    toast.success('Урок назначен');
   };
 
   const handleClearForm = () => {
-    setValue('title', DEFAULT_VALUES.title);
-    setValue('description', DEFAULT_VALUES.description);
-    setValue('studentId', DEFAULT_VALUES.studentId);
-    setValue('startTime', DEFAULT_VALUES.startTime);
-    setValue('endTime', DEFAULT_VALUES.endTime);
-    setValue('startDate', DEFAULT_VALUES.startDate);
-    setValue('shouldRepeat', DEFAULT_VALUES.shouldRepeat);
+    reset(DEFAULT_VALUES);
   };
 
   return {
     form,
     control,
-    eventDate,
     handleSubmit,
     onSubmit,
     handleClearForm,
+    classrooms: classrooms ?? [],
+    isClassroomsLoading,
   };
 };

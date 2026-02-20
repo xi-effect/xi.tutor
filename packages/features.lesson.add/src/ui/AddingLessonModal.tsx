@@ -33,10 +33,10 @@ export const AddingLessonModal = ({ open, onOpenChange }: AddingLessonModalProps
           <AddingForm onClose={handleCloseModal} />
         </ModalBody>
         <ModalFooter className="flex flex-row items-center gap-2">
-          <Button size="m" variant="secondary" type="reset">
+          <Button form="adding-lesson-form" size="m" variant="secondary" type="reset">
             Отменить
           </Button>
-          <Button variant="primary" type="submit" size="m">
+          <Button form="adding-lesson-form" variant="primary" type="submit" size="m">
             Назначить
           </Button>
         </ModalFooter>
