@@ -14,6 +14,7 @@ import { ParticipantTile } from '../Participant';
 import { CarouselContainer, GridLayout } from './VideoGridLayout';
 import { useCallStore } from '../../store/callStore';
 import { useScreenShareCleanup } from '../../hooks/useScreenShareCleanup';
+import { useSortedTracks } from '../../hooks/useSortedTracks';
 import '../../styles/grid.css';
 
 export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
@@ -33,6 +34,8 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
     },
   );
 
+  const sortedTracks = useSortedTracks(tracks);
+
   const layoutContext = useCreateLayoutContext();
 
   const screenShareTracks = tracks
@@ -40,7 +43,7 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
     .filter((track) => track.publication.source === Track.Source.ScreenShare);
 
   const focusTrack = usePinnedTracks(layoutContext)?.[0];
-  const carouselTracks = tracks.filter((track) => !isEqualTrackRef(track, focusTrack));
+  const carouselTracks = sortedTracks.filter((track) => !isEqualTrackRef(track, focusTrack));
 
   // Проверяем условия для FocusLayout
   const hasScreenShare = screenShareTracks.some((track) => track.publication.isSubscribed);
@@ -104,7 +107,7 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
           <div className="flex h-full w-full items-center justify-center">
             {effectiveCarouselType === 'grid' ? (
               <div className="h-full w-full min-w-0">
-                <GridLayout tracks={tracks}>
+                <GridLayout tracks={sortedTracks}>
                   <ParticipantTile
                     isFocusToggleDisable
                     style={{

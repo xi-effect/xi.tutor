@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Track } from 'livekit-client';
 import { useTracks } from '@livekit/components-react';
 import { useScreenShareCleanup } from './useScreenShareCleanup';
+import { useSortedTracks } from './useSortedTracks';
 
 export const useCompactNavigation = () => {
   const [currentParticipantIndex, setCurrentParticipantIndex] = useState(0);
@@ -20,8 +21,10 @@ export const useCompactNavigation = () => {
   // Автоматическое удаление треков демонстрации экрана при их завершении
   useScreenShareCleanup(participants);
 
-  const currentParticipant = participants[currentParticipantIndex] || null;
-  const totalParticipants = participants.length;
+  const sorted = useSortedTracks(participants);
+
+  const currentParticipant = sorted[currentParticipantIndex] || null;
+  const totalParticipants = sorted.length;
 
   const canGoNext = currentParticipantIndex < totalParticipants - 1;
   const canGoPrev = currentParticipantIndex > 0;
@@ -56,7 +59,7 @@ export const useCompactNavigation = () => {
 
   return {
     currentParticipant,
-    participants,
+    participants: sorted,
     currentIndex: currentParticipantIndex,
     totalParticipants,
     canGoNext,

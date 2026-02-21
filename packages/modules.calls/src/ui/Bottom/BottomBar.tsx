@@ -102,7 +102,7 @@ export const BottomBar = ({ saveUserChoices = true }: ControlBarProps) => {
 
   return (
     <div className={cn('relative w-full', isChatOpen && 'invisible sm:visible')}>
-      <div className="flex w-full flex-row justify-between p-4">
+      <div className="flex w-full flex-row justify-between p-4 pt-0">
         <div />
         <div className="flex flex-row gap-4">
           <div className="bg-gray-0 border-gray-10 flex h-[48px] w-[92px] items-center justify-center gap-1 rounded-[16px] border">
