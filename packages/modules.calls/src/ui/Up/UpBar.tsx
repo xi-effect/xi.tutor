@@ -100,7 +100,7 @@ export const UpBar = () => {
   }, [isFullScreen]);
 
   return (
-    <div className={cn('flex w-full flex-row items-end px-4 pb-4', isFullScreen && 'pt-2')}>
+    <div className={cn('flex w-full flex-row items-end px-4 pb-1', isFullScreen && 'pt-2')}>
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button

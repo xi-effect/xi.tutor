@@ -6,8 +6,8 @@
 :root {
   /* Высоты панелей */
   --header-height: 64px;
-  --upbar-height: 60px;
-  --bottom-bar-height: 80px;
+  --upbar-height: 44px;
+  --bottom-bar-height: 68px;
 
   /* Доступная высота для сетки */
   --available-height: calc(
