@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useSearch } from '@tanstack/react-router';
 
 import { LinkTanstack, Logo } from 'common.ui';
-import { useGetUrlWithParams } from '../../../common.utils/src/useGetUrlWithParams';
+import { useGetUrlWithParams, useSyncAutofillOnSubmit } from 'common.utils';
 
 import { FormData, useFormSchema } from '../model';
 import { useSigninForm } from '../hooks';
@@ -37,10 +37,13 @@ export const SignInPage = () => {
 
   const {
     control,
-    handleSubmit,
     formState: { errors },
   } = form;
 
+  // Приведение типа из-за разных копий react-hook-form у @xipkg/form и в проекте
+  const syncAutofillAndSubmit = useSyncAutofillOnSubmit(
+    form as Parameters<typeof useSyncAutofillOnSubmit<FormData>>[0],
+  );
   const [isPasswordShow, setIsPasswordShow] = useState(false);
   const changePasswordShow = () => setIsPasswordShow((prev) => !prev);
 
@@ -52,7 +55,7 @@ export const SignInPage = () => {
     <div className="xs:h-screen dark:bg-gray-0 flex h-[100dvh] w-screen flex-col flex-wrap content-center justify-center p-1">
       <div className="xs:border xs:border-gray-10 xs:rounded-2xl dark:bg-gray-5 flex h-fit min-h-[600px] w-full max-w-[420px] p-8">
         <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-col gap-4">
+          <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex w-full flex-col gap-4">
             <div className="self-center">
               <Logo height={22} width={180} />
             </div>

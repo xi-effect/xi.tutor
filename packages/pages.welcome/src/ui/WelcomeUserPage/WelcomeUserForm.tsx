@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { Input } from '@xipkg/input';
 import { Button } from '@xipkg/button';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useSyncAutofillOnSubmit } from 'common.utils';
 import { useWelcomeUserFormSchema, type WelcomeUserFormData } from '../../model';
 import { useWelcomeUserForm, useWelcomeContext } from '../../hooks';
 
@@ -30,10 +31,10 @@ export const WelcomeUserForm = () => {
   const {
     control,
     watch,
-    handleSubmit,
     formState: { errors },
   } = form;
 
+  const syncAutofillAndSubmit = useSyncAutofillOnSubmit(form);
   const { onWelcomeUserForm, isLoading } = useWelcomeUserForm();
 
   const onSubmit = ({ displayName }: WelcomeUserFormData) => {
@@ -44,7 +45,7 @@ export const WelcomeUserForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex h-full w-full flex-col">
+      <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex h-full w-full flex-col">
         <FormField
           control={control}
           name="displayName"
