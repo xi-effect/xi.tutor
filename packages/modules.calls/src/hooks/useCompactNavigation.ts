@@ -21,7 +21,7 @@ export const useCompactNavigation = () => {
   // Автоматическое удаление треков демонстрации экрана при их завершении
   useScreenShareCleanup(participants);
 
-  const sorted = useSortedTracks(participants);
+  const sorted = useSortedTracks(participants, 1);
 
   const currentParticipant = sorted[currentParticipantIndex] || null;
   const totalParticipants = sorted.length;

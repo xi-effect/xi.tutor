@@ -42,7 +42,7 @@ type MeetLayout = {
   tileH: number;
 };
 
-function calcMeetLayout(
+export function calcMeetLayout(
   containerW: number,
   containerH: number,
   count: number,
