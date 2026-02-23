@@ -5,7 +5,7 @@ import type { SubmitEvent } from 'react';
  * (у @xipkg/form может быть своя копия, типы тогда расходятся).
  */
 interface FormWithSetValue<T extends Record<string, unknown>> {
-  setValue: (name: keyof T & string, value: unknown, opts?: { shouldValidate?: boolean }) => void;
+  setValue: (name: keyof T & string, value: string, opts?: { shouldValidate?: boolean }) => void;
   handleSubmit: (onSubmit: (data: T) => void) => (e: SubmitEvent<HTMLFormElement>) => void;
 }
 
