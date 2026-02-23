@@ -4363,6 +4363,9 @@ importers:
       common.ui:
         specifier: '*'
         version: link:../common.ui
+      common.utils:
+        specifier: '*'
+        version: link:../common.utils
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)
@@ -4681,6 +4684,9 @@ importers:
       common.types:
         specifier: '*'
         version: link:../common.types
+      common.utils:
+        specifier: '*'
+        version: link:../common.utils
       features.avatar.editor:
         specifier: ^0.0.0
         version: link:../features.avatar.editor
@@ -4727,9 +4733,6 @@ importers:
       common.ui:
         specifier: '*'
         version: link:../common.ui
-      common.utils:
-        specifier: '*'
-        version: link:../common.utils
       eslint:
         specifier: ^9.19.0
         version: 9.39.2

@@ -17,6 +17,7 @@
     "common.config": "*",
     "common.auth": "*",
     "common.ui": "*",
+    "common.utils": "*",
     "common.api": "*",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1",
