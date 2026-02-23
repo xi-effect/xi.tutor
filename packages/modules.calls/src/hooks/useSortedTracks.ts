@@ -6,6 +6,12 @@ import { useRoom } from '../providers/RoomProvider';
 
 const SPEAKER_STICKY_MS = 10_000;
 
+const PRIORITY_SCREEN_SHARE = 1;
+const PRIORITY_RAISED_HAND = 2;
+const PRIORITY_SPEAKING = 3;
+const PRIORITY_RECENT_SPEAKER = 4;
+const PRIORITY_NONE = 5;
+
 function getParticipantIds(participant: { identity: string; metadata?: string }): string[] {
   const ids = [participant.identity];
   if (participant.metadata) {
@@ -27,9 +33,15 @@ function getParticipantIds(participant: { identity: string; metadata?: string })
  *   3. Активно говорящий
  *   4. Недавно говоривший (sticky-окно SPEAKER_STICKY_MS)
  *   5. Остальные (стабильный порядок)
+ *
+ * Если передан firstPageSize > 0, участники уже находящиеся
+ * на первой странице (индексы 0..firstPageSize-1) сохраняют
+ * свой порядок. Продвигаются только приоритетные участники
+ * со страниц 2+.
  */
 export function useSortedTracks(
   tracks: TrackReferenceOrPlaceholder[],
+  firstPageSize: number = 0,
 ): TrackReferenceOrPlaceholder[] {
   const raisedHands = useCallStore((state) => state.raisedHands);
   const { room } = useRoom();
@@ -60,46 +72,61 @@ export function useSortedTracks(
 
     const recentSpeakers = recentSpeakersRef.current;
 
-    const indexed = tracks.map((track, i) => ({ track, idx: i }));
+    const getHandTs = (track: TrackReferenceOrPlaceholder): number | undefined => {
+      const ids = getParticipantIds(track.participant);
+      return ids.reduce<number | undefined>((acc, id) => acc ?? raisedHandMap.get(id), undefined);
+    };
 
-    indexed.sort((a, b) => {
-      const aIsScreen = a.track.source === Track.Source.ScreenShare;
-      const bIsScreen = b.track.source === Track.Source.ScreenShare;
+    const getPriority = (track: TrackReferenceOrPlaceholder): number => {
+      if (track.source === Track.Source.ScreenShare) return PRIORITY_SCREEN_SHARE;
+      if (getHandTs(track) !== undefined) return PRIORITY_RAISED_HAND;
+      if (activeSpeakerIds.has(track.participant.identity)) return PRIORITY_SPEAKING;
+      if (recentSpeakers.has(track.participant.identity)) return PRIORITY_RECENT_SPEAKER;
+      return PRIORITY_NONE;
+    };
 
-      if (aIsScreen !== bIsScreen) return aIsScreen ? -1 : 1;
+    const comparePriority = (
+      a: TrackReferenceOrPlaceholder,
+      b: TrackReferenceOrPlaceholder,
+    ): number => {
+      const pa = getPriority(a);
+      const pb = getPriority(b);
+      if (pa !== pb) return pa - pb;
+      if (pa === PRIORITY_RAISED_HAND) {
+        return (getHandTs(a) ?? 0) - (getHandTs(b) ?? 0);
+      }
+      return 0;
+    };
 
-      const aIds = getParticipantIds(a.track.participant);
-      const bIds = getParticipantIds(b.track.participant);
+    const clampedPageSize = Math.max(0, Math.min(firstPageSize, tracks.length));
 
-      const aHandTs = aIds.reduce<number | undefined>(
-        (acc, id) => acc ?? raisedHandMap.get(id),
-        undefined,
-      );
-      const bHandTs = bIds.reduce<number | undefined>(
-        (acc, id) => acc ?? raisedHandMap.get(id),
-        undefined,
-      );
+    if (clampedPageSize >= tracks.length) return tracks;
 
-      const aHasHand = aHandTs !== undefined;
-      const bHasHand = bHandTs !== undefined;
+    if (clampedPageSize === 0) {
+      const indexed = tracks.map((track, i) => ({ track, idx: i }));
+      indexed.sort((a, b) => comparePriority(a.track, b.track) || a.idx - b.idx);
+      return indexed.map(({ track }) => track);
+    }
 
-      if (aHasHand !== bHasHand) return aHasHand ? -1 : 1;
-      if (aHasHand && bHasHand) return aHandTs! - bHandTs!;
+    const firstPage = tracks.slice(0, clampedPageSize);
+    const rest = tracks.slice(clampedPageSize);
 
-      const aIsSpeaking = activeSpeakerIds.has(a.track.participant.identity);
-      const bIsSpeaking = activeSpeakerIds.has(b.track.participant.identity);
+    const priorityFromRest: TrackReferenceOrPlaceholder[] = [];
+    const nonPriorityFromRest: TrackReferenceOrPlaceholder[] = [];
 
-      if (aIsSpeaking !== bIsSpeaking) return aIsSpeaking ? -1 : 1;
+    for (const track of rest) {
+      if (getPriority(track) < PRIORITY_NONE) {
+        priorityFromRest.push(track);
+      } else {
+        nonPriorityFromRest.push(track);
+      }
+    }
 
-      const aRecent = recentSpeakers.has(a.track.participant.identity);
-      const bRecent = recentSpeakers.has(b.track.participant.identity);
+    if (priorityFromRest.length === 0) return tracks;
 
-      if (aRecent !== bRecent) return aRecent ? -1 : 1;
+    priorityFromRest.sort(comparePriority);
 
-      return a.idx - b.idx;
-    });
-
-    return indexed.map(({ track }) => track);
+    return [...priorityFromRest, ...firstPage, ...nonPriorityFromRest];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tracks, raisedHands, activeSpeakers]);
+  }, [tracks, raisedHands, activeSpeakers, firstPageSize]);
 }
