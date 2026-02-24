@@ -87,17 +87,19 @@ export const ResetPassword = () => {
 
           {isSubmitSuccessful ? (
             <Button
+              variant="primary"
               onClick={() => navigate({ to: '/signin' })}
-              className="bg-brand-80 rounded-xl px-6 py-3"
+              className="rounded-xl px-6 py-3"
               data-umami-event="auth-reset-password-signin"
             >
               {t('sign_in_button')}
             </Button>
           ) : (
             <Button
+              variant="primary"
               type="submit"
               loading={form.formState.isSubmitting}
-              className="bg-brand-80 rounded-xl px-6 py-3"
+              className="rounded-xl px-6 py-3"
               data-umami-event="auth-reset-password-send"
             >
               {t('send')}

@@ -107,7 +107,7 @@ export const NewPassword = ({ token }: { token: string }) => {
           </div>
 
           <Button
-            variant="default"
+            variant="primary"
             type="submit"
             loading={form.formState.isSubmitting}
             className="bg-brand-80 rounded-xl px-6 py-3"
