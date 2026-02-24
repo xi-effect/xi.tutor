@@ -7,6 +7,12 @@ const DAY_NAMES = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
 const SCROLL_STEP = 3;
 const DAY_PILL_MIN_WIDTH = 48;
 
+const styles = {
+  dayPillBase:
+    'flex h-[60px] w-[50px] min-w-[50px] shrink-0 flex-col items-center justify-center rounded-lg px-2 py-1.5 text-center',
+  dayPillDefaultHover: 'hover:bg-gray-10 hover:text-gray-80',
+} as const;
+
 const getDatesRange = (fromDays: number, toDays: number) => {
   const dates: Date[] = [];
   const today = new Date();
@@ -44,7 +50,11 @@ export const ScheduleDateCarousel = ({
   );
 
   const startIndex = useMemo(
-    () => Math.max(0, Math.min(effectiveIndex - visibleCount + 1, dates.length - visibleCount)),
+    () =>
+      Math.max(
+        0,
+        Math.min(effectiveIndex - Math.floor(visibleCount / 2), dates.length - visibleCount),
+      ),
     [dates.length, effectiveIndex, visibleCount],
   );
 
@@ -93,31 +103,36 @@ export const ScheduleDateCarousel = ({
         <ArrowLeft className="fill-brand-80 h-5 w-5" />
       </Button>
       <div className="flex min-w-0 flex-row items-center justify-center gap-2">
-        {visibleDates.map((date) => {
+        {visibleDates.map((date, slotIndex) => {
           const isSelected = date.getTime() === selectedDate.getTime();
           const dayName = DAY_NAMES[date.getDay()];
           const dayNum = date.getDate();
           return (
             <button
-              key={date.getTime()}
+              key={slotIndex}
               type="button"
               onClick={() => handleSelectDate(date)}
-              className={cn(
-                'flex h-[60px] w-[50px] min-w-[50px] shrink-0 flex-col items-center justify-center rounded-lg px-2 py-1.5 text-center transition-colors',
-                isSelected
-                  ? 'bg-brand-80 text-gray-0'
-                  : 'text-gray-60 hover:bg-gray-10 hover:text-gray-80 bg-transparent',
-              )}
-              style={{ minWidth: DAY_PILL_MIN_WIDTH }}
+              className={cn(styles.dayPillBase, !isSelected && styles.dayPillDefaultHover)}
+              style={{
+                minWidth: DAY_PILL_MIN_WIDTH,
+                backgroundColor: isSelected ? 'var(--xi-brand-80)' : 'transparent',
+                color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-60)',
+              }}
             >
-              <span className={cn('text-[10px]', isSelected ? 'text-gray-0' : 'text-gray-50')}>
+              <span
+                style={{
+                  fontSize: '10px',
+                  color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-50)',
+                }}
+              >
                 {dayName}
               </span>
               <span
-                className={cn(
-                  'text-[20px] font-medium',
-                  isSelected ? 'text-gray-0' : 'text-gray-70',
-                )}
+                style={{
+                  fontSize: '20px',
+                  fontWeight: 500,
+                  color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-70)',
+                }}
               >
                 {dayNum}
               </span>
