@@ -7,6 +7,7 @@ import { Link } from '@xipkg/link';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
 
 import { LinkTanstack, Logo } from 'common.ui';
+import { useSyncAutofillOnSubmit } from 'common.utils';
 
 import { usePasswordReset } from '../hooks';
 import { FormDataEmail } from '../model/formSchemaEmail';
@@ -16,10 +17,11 @@ export const ResetPassword = () => {
   const { t } = useTranslation('resetPassword');
 
   const { form, onSubmit, isSubmitSuccessful, submittedEmail } = usePasswordReset();
+  const syncAutofillAndSubmit = useSyncAutofillOnSubmit(form);
 
   return (
     <Form<FormDataEmail> {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="flex w-full flex-col gap-4">
+      <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex w-full flex-col gap-4">
         <div className="self-center">
           <Logo height={22} width={180} />
         </div>
@@ -85,17 +87,19 @@ export const ResetPassword = () => {
 
           {isSubmitSuccessful ? (
             <Button
+              variant="primary"
               onClick={() => navigate({ to: '/signin' })}
-              className="bg-brand-80 rounded-xl px-6 py-3"
+              className="rounded-xl px-6 py-3"
               data-umami-event="auth-reset-password-signin"
             >
               {t('sign_in_button')}
             </Button>
           ) : (
             <Button
+              variant="primary"
               type="submit"
               loading={form.formState.isSubmitting}
-              className="bg-brand-80 rounded-xl px-6 py-3"
+              className="rounded-xl px-6 py-3"
               data-umami-event="auth-reset-password-send"
             >
               {t('send')}

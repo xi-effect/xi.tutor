@@ -10,5 +10,6 @@ export {
   useRaisedHands,
   useHandFocus,
   useSpeakingParticipant,
+  useUmamiActivityHeartbeat,
 } from './hooks';
 export { useCallStore } from './store';

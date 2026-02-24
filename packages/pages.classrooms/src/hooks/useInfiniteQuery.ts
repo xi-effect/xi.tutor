@@ -28,7 +28,7 @@ export const useInfiniteQuery = (parentRef: RefObject<HTMLDivElement | null>) =>
           method: classroomsApiConfig[ClassroomsQueryKey.GetClassrooms].method,
           url,
           params: {
-            limit: 20,
+            limit: 25,
             created_before: pageParam,
           },
           headers: {

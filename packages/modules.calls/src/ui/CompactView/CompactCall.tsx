@@ -159,12 +159,12 @@ export const CompactCall = ({ saveUserChoices = true }) => {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="flex w-[320px] flex-col">
+    <div ref={setNodeRef} style={style} className="compact-call-container flex w-[320px] flex-col">
       {/* Ручка перетаскивания — только эта область запускает dnd, кнопки не срабатывают при отпускании */}
       <div
         {...attributes}
         {...listeners}
-        className="bg-gray-0 border-gray-20 group relative mb-2 flex h-[180px] w-[320px] cursor-move items-center justify-center overflow-hidden rounded-2xl border shadow-lg"
+        className="group relative mb-2 flex h-[180px] w-[320px] cursor-move items-center justify-center overflow-hidden rounded-2xl shadow-lg"
       >
         {currentParticipant ? (
           <ParticipantTile

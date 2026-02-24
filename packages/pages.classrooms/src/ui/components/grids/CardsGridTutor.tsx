@@ -34,7 +34,7 @@ export const CardsGridTutor = () => {
   }
 
   return (
-    <div ref={parentRef} className="h-[calc(100vh-204px)] w-full overflow-auto pr-4">
+    <div ref={parentRef} className="h-[calc(100vh-54px-64px)] w-full overflow-auto pr-4">
       <div className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-8">
         {items.map((classroom) => (
           <div key={classroom.id} className="classroom-card">

@@ -10,6 +10,7 @@ import {
   RoomProvider,
   useCallStore,
   ModeSyncProvider,
+  useUmamiActivityHeartbeat,
 } from 'modules.calls';
 import { useCurrentUser, useUpdateProfile, useMarkNotificationAsRead } from 'common.services';
 import { OnboardingStageT } from 'common.api';
@@ -24,6 +25,8 @@ const Navigation = lazy(() =>
 function LayoutComponent() {
   const router = useRouter();
   const updateStore = useCallStore((state) => state.updateStore);
+
+  useUmamiActivityHeartbeat();
 
   useEffect(() => {
     const pathname = router.state.location.pathname;

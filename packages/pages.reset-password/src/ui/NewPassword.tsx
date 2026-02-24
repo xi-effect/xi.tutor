@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { LinkTanstack, Logo } from 'common.ui';
+import { useSyncAutofillOnSubmit } from 'common.utils';
 
 import { Button } from '@xipkg/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
@@ -14,6 +15,7 @@ import { FormDataPassword } from '../model/formSchemaPassword';
 export const NewPassword = ({ token }: { token: string }) => {
   const { t } = useTranslation('resetPassword');
   const { form, onSubmit } = useNewPassword(token);
+  const syncAutofillAndSubmit = useSyncAutofillOnSubmit(form);
 
   const [isPasswordShowFirst, setIsPasswordShowFirst] = useState(false);
   const [isPasswordShowSecond, setIsPasswordShowSecond] = useState(false);
@@ -21,7 +23,7 @@ export const NewPassword = ({ token }: { token: string }) => {
   return (
     <Form<FormDataPassword> {...form}>
       <form
-        onSubmit={form.handleSubmit(onSubmit)}
+        onSubmit={syncAutofillAndSubmit(onSubmit)}
         className="flex h-full w-full flex-col space-y-4"
       >
         <div className="self-center">
@@ -105,7 +107,7 @@ export const NewPassword = ({ token }: { token: string }) => {
           </div>
 
           <Button
-            variant="default"
+            variant="primary"
             type="submit"
             loading={form.formState.isSubmitting}
             className="bg-brand-80 rounded-xl px-6 py-3"

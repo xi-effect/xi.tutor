@@ -188,7 +188,7 @@ export const ParticipantTile = ({
     >
       <TrackRefContextIfNeeded trackRef={trackReference}>
         <ParticipantContextIfNeeded participant={trackReference.participant}>
-          <div className="m-auto flex aspect-video h-full w-full justify-center overflow-hidden rounded-2xl in-[.lk-grid-layout]:relative in-[.lk-grid-layout]:overflow-hidden in-[.lk-grid-layout]:rounded-2xl [.lk-grid-layout_&]:m-0 [.lk-grid-layout_&]:flex-none [.lk-grid-layout_&]:bg-black">
+          <div className="m-auto flex aspect-video h-full w-full justify-center overflow-hidden rounded-xl in-[.lk-grid-layout]:relative in-[.lk-grid-layout]:overflow-hidden in-[.lk-grid-layout]:rounded-2xl [.lk-grid-layout_&]:m-0 [.lk-grid-layout_&]:flex-none [.lk-grid-layout_&]:bg-black">
             {children ?? (
               <div className="relative flex h-full w-full justify-center in-[.lk-grid-layout]:relative in-[.lk-grid-layout]:h-full in-[.lk-grid-layout]:w-full">
                 {/* Аватар только когда камера выключена; для демонстрации экрана — только нейтральный фон */}
@@ -238,10 +238,10 @@ export const ParticipantTile = ({
                   !trackReference.publication?.track?.isMuted &&
                   (() => {
                     const videoBlock = (
-                      <div className="absolute inset-0 aspect-video h-full w-full rounded-2xl bg-gray-100/80">
+                      <div className="absolute inset-0 aspect-video h-full w-full bg-gray-100/80">
                         <VideoTrack
                           className={cn(
-                            `absolute inset-0 h-full w-full rounded-2xl object-cover object-center ${getVideoClassName()}`,
+                            `absolute inset-0 h-full w-full object-cover object-center ${getVideoClassName()}`,
                           )}
                           style={{
                             ...(trackReference.source === Track.Source.Camera && {

@@ -7,3 +7,4 @@ export { useRetryQueue } from './src/useRetryQueue';
 export { getUserAvatarUrl } from './src/getUserAvatarUrl';
 export { useScreenSize } from './src/useScreenSize';
 export { trackUmamiSession } from './src/umamiSession';
+export { useSyncAutofillOnSubmit } from './src/useSyncAutofillOnSubmit';

@@ -1,9 +1,9 @@
-import React, { RefObject } from 'react';
 import { useInfiniteQuery as useTanStackInfiniteQuery } from '@tanstack/react-query';
-import { RolePaymentT } from 'features.table';
+import { UserRoleT, classroomPaymentsApiConfig, paymentsApiConfig } from 'common.api';
 import { getAxiosInstance } from 'common.config';
-import { paymentsApiConfig, classroomPaymentsApiConfig, UserRoleT } from 'common.api';
 import { getRolePaymentsQueryKey } from 'common.services';
+import { RolePaymentT } from 'features.table';
+import React, { RefObject } from 'react';
 
 export const useInfiniteQuery = (
   parentRef: RefObject<HTMLDivElement | null>,
@@ -29,7 +29,7 @@ export const useInfiniteQuery = (
           },
           data: {
             cursor: pageParam ?? null,
-            limit: 12,
+            limit: 15,
           },
         });
 
