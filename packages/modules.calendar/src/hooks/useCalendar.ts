@@ -1,18 +1,25 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { addWeeks, startOfWeek } from 'date-fns';
+import { getWeekDays } from '../utils';
 
-import { getMonthDays, getWeekDays, getYearDays } from '../utils';
-
-const currentDate = new Date(Date.now());
+const getInitialWeekStart = () => startOfWeek(new Date(), { weekStartsOn: 1 });
 
 export const useCalendar = () => {
-  const days = useMemo(() => {
-    return {
-      day: [currentDate],
-      week: getWeekDays(currentDate),
-      month: getMonthDays(currentDate),
-      year: getYearDays(currentDate),
-    };
+  const [weekStart, setWeekStart] = useState<Date>(getInitialWeekStart);
+
+  const weekDays = useMemo(() => getWeekDays(weekStart), [weekStart]);
+
+  const goToPrevWeek = useCallback(() => {
+    setWeekStart((prev) => addWeeks(prev, -1));
   }, []);
 
-  return { days, currentDate };
+  const goToNextWeek = useCallback(() => {
+    setWeekStart((prev) => addWeeks(prev, 1));
+  }, []);
+
+  const goToToday = useCallback(() => {
+    setWeekStart(getInitialWeekStart());
+  }, []);
+
+  return { weekDays, weekStart, goToPrevWeek, goToNextWeek, goToToday };
 };

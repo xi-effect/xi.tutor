@@ -1,2 +1,1 @@
-export { CalendarEvent } from './CalendarEvent';
 export { ScheduleKanban } from './ScheduleKanban';

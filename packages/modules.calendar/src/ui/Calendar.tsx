@@ -1,110 +1,50 @@
-import { useCallback, useState } from 'react';
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-} from '@xipkg/select';
 import { Button } from '@xipkg/button';
-import { ChevronBottom, ChevronUp } from '@xipkg/icons';
-import { isCalendarMode, isWeekOrDayMode, ModeVariant, type CalendarMode } from './types';
-import { MonthCalendar, Sidebar, YearCalendar, WeekCalendar } from './components';
-import { useCalendar } from '../hooks';
+import { ChevronLeft, ChevronRight } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
-
-const MODE_VARIANTS: ModeVariant[] = [
-  {
-    label: 'День',
-    value: 'day',
-  },
-  {
-    label: 'Неделя',
-    value: 'week',
-  },
-  {
-    label: 'Месяц',
-    value: 'month',
-  },
-  {
-    label: 'Год',
-    value: 'year',
-  },
-];
+import { ScheduleKanban } from './components';
+import { useCalendar } from '../hooks';
+import { formatWeekRange } from '../utils';
 
 export const CalendarModule = () => {
-  const [mode, setMode] = useState<CalendarMode>('month');
-  const { days, currentDate } = useCalendar();
   const { t } = useTranslation('calendar');
-
-  const MONTHS = t('months').split(',');
-
-  const handleChangeMode = useCallback((newMode: string) => {
-    if (isCalendarMode(newMode)) {
-      setMode(newMode);
-    } else {
-      console.error('Unexpected mode value');
-    }
-  }, []);
+  const { weekDays, weekStart, goToPrevWeek, goToNextWeek, goToToday } = useCalendar();
 
   return (
-    <div className="flex h-screen items-start">
-      <div className="grow px-[16px] md:pr-0 md:pl-[16px]">
-        <div className="flex items-center justify-between pt-1 pb-4">
-          <p>
-            <span className="text-xl-base font-bold dark:text-gray-100">
-              {MONTHS[currentDate.getMonth()]}{' '}
-            </span>
-            <span className="text-xl-base text-gray-60">{currentDate.getFullYear()}</span>
-          </p>
-          <div className="flex items-center gap-4 [&>span]:text-gray-100">
-            <Select value={mode} onValueChange={(value) => handleChangeMode(value)}>
-              <SelectTrigger size="s" className="w-32 dark:text-gray-100">
-                <SelectValue
-                  placeholder={t('change_view')}
-                  className="text-gray-100 [&>span]:text-gray-100"
-                />
-              </SelectTrigger>
-              <SelectContent className="text-gray-100 [&>span]:text-gray-100">
-                <SelectGroup className="text-gray-100 [&>span]:text-gray-100">
-                  {MODE_VARIANTS.map((variant) => (
-                    <SelectItem
-                      value={variant.value}
-                      key={variant.value}
-                      className="dark:text-gray-100"
-                    >
-                      {variant.label}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </SelectContent>
-            </Select>
-
-            <Button
-              variant="secondary"
-              size="s"
-              className="xs:block hidden rounded-md border px-4 py-1 text-sm font-medium dark:text-gray-100"
-            >
-              {t('today')}
-            </Button>
-
-            <div>
-              <Button variant="none" size="s" className="px-2">
-                <ChevronUp className="h-4 w-4 dark:fill-gray-100" />
-              </Button>
-              <Button variant="none" size="s" className="px-2">
-                <ChevronBottom className="h-4 w-4 dark:fill-gray-100" />
-              </Button>
-            </div>
-          </div>
+    <div className="flex min-h-0 flex-1 flex-col px-4">
+      <header className="flex flex-wrap items-center justify-between gap-3 pt-1 pb-4">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="none"
+            size="s"
+            className="rounded-md p-2 dark:text-gray-100"
+            onClick={goToPrevWeek}
+            aria-label={t('prev_week')}
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          <span className="text-xl-base text-gray-90 min-w-[200px] text-center font-medium dark:text-gray-100">
+            {formatWeekRange(weekStart)}
+          </span>
+          <Button
+            variant="none"
+            size="s"
+            className="rounded-md p-2 dark:text-gray-100"
+            onClick={goToNextWeek}
+            aria-label={t('next_week')}
+          >
+            <ChevronRight className="h-5 w-5" />
+          </Button>
         </div>
-        {mode === 'month' && <MonthCalendar days={days[mode]} />}
-        {mode === 'year' && <YearCalendar days={days[mode]} />}
-        {isWeekOrDayMode(mode) && <WeekCalendar days={days[mode]} view={mode} />}
-      </div>
-
-      {mode !== 'year' && <Sidebar />}
+        <Button
+          variant="secondary"
+          size="s"
+          className="rounded-md border px-4 py-1.5 text-sm font-medium dark:text-gray-100"
+          onClick={goToToday}
+        >
+          {t('today')}
+        </Button>
+      </header>
+      <ScheduleKanban weekDays={weekDays} />
     </div>
   );
 };

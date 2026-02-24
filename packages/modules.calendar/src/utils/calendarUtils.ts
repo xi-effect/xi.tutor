@@ -42,3 +42,17 @@ export const formatDate = (date: Date) => {
   const yyyy = String(date.getFullYear());
   return `${dd}.${mm}.${yyyy}`;
 };
+
+export const formatWeekRange = (weekStart: Date): string => {
+  const end = new Date(weekStart);
+  end.setDate(end.getDate() + 6);
+  const d1 = weekStart.getDate();
+  const d2 = end.getDate();
+  const m1 = weekStart.toLocaleDateString('ru-RU', { month: 'long' });
+  const m2 = end.toLocaleDateString('ru-RU', { month: 'long' });
+  const y = weekStart.getFullYear();
+  if (m1 === m2) {
+    return `${d1} - ${d2} ${m1} ${y}`;
+  }
+  return `${d1} ${m1} - ${d2} ${m2} ${y}`;
+};
