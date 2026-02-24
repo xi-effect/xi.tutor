@@ -33,9 +33,21 @@ import {
 import { YKeyValue } from 'y-utility/y-keyvalue';
 import * as Y from 'yjs';
 import { myAssetStore } from '../features/imageStore';
+import { EmbedShapeUtil } from '../shapes/embed';
 import { PdfShapeUtil } from '../shapes/pdf';
 import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
 import { generateUserColor } from '../utils/userColor';
+
+/** Подставляет props.html = '' для старых embedUrl-фигур без этого поля (совместимость с данными до добавления html). */
+function normalizeEmbedUrlShapeProps(record: TLRecord): TLRecord {
+  if (record.typeName === 'shape' && (record as any).type === 'embedUrl') {
+    const shape = record as any;
+    if (shape.props && shape.props.html === undefined) {
+      return { ...shape, props: { ...shape.props, html: '' } };
+    }
+  }
+  return record;
+}
 
 type UseYjsStoreArgs = Partial<{
   hostUrl: string;
@@ -227,7 +239,7 @@ export function useYjsStore({
     const assetStore = token ? myAssetStore(token) : undefined;
 
     return createTLStore({
-      shapeUtils: [...defaultShapeUtils, PdfShapeUtil, ...shapeUtils],
+      shapeUtils: [...defaultShapeUtils, EmbedShapeUtil, PdfShapeUtil, ...shapeUtils],
       ...(assetStore ? { assets: assetStore } : {}),
     });
   });
@@ -390,9 +402,11 @@ export function useYjsStore({
           }
         });
 
+        const normalizedPut = toPut.map(normalizeEmbedUrlShapeProps);
+
         store.mergeRemoteChanges(() => {
           if (toRemove.length) store.remove(toRemove);
-          if (toPut.length) store.put(toPut);
+          if (normalizedPut.length) store.put(normalizedPut);
         });
       };
 
@@ -598,19 +612,26 @@ export function useYjsStore({
           return;
         }
 
+        const normalizedStore = Object.fromEntries(
+          Object.entries(migrationResult.value).map(([id, r]) => [
+            id,
+            normalizeEmbedUrlShapeProps(r as TLRecord),
+          ]),
+        );
+
         yDoc.transact(() => {
           for (const r of records) {
             if (!migrationResult.value[r.id]) yStore.delete(r.id);
           }
 
-          for (const r of Object.values(migrationResult.value) as TLRecord[]) {
+          for (const r of Object.values(normalizedStore) as TLRecord[]) {
             yStore.set(r.id, r);
           }
 
           meta.set('schema', ourSchema);
         }, 'init');
 
-        loadSnapshot(store, { store: migrationResult.value, schema: ourSchema });
+        loadSnapshot(store, { store: normalizedStore, schema: ourSchema });
       } else {
         yDoc.transact(() => {
           for (const rec of store.allRecords()) yStore.set(rec.id, rec);

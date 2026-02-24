@@ -39,7 +39,8 @@
     "y-utility": "0.1.4",
     "yjs": "^13.6.26",
     "zod": "3.24.2",
-    "zustand": "5.0.3"
+    "zustand": "5.0.3",
+    "@xipkg/modal": "^4.3.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

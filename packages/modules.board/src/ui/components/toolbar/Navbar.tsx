@@ -17,6 +17,7 @@ import { ArrowsPopup, PenPopup, StickerPopup } from '../popups';
 import { ShapesPopup } from '../popups/Shapes';
 import { insertImage } from '../../../features/pickAndInsertImage';
 import { insertPdf } from '../../../features/pickAndInsertPdf';
+import { InsertEmbedModal } from '../InsertEmbedModal';
 
 // Маппинг инструментов Kanva на Tldraw
 const toolMapping: Record<string, string> = {
@@ -48,6 +49,7 @@ export const Navbar = track(
     const { pencilColor, pencilThickness, pencilOpacity, stickerColor } = useTldrawStore();
     const { resetToDefaults, setColor, setThickness, setOpacity } = useTldrawStyles();
     const [activePopup, setActivePopup] = React.useState<string | null>(null);
+    const [embedModalOpen, setEmbedModalOpen] = React.useState(false);
     const editor = useEditor();
 
     // Добавляем горячие клавиши
@@ -289,12 +291,19 @@ export const Navbar = track(
                     <DropdownMenuItem onClick={handleInsertPdf} className="rounded-lg px-3">
                       Загрузить PDF
                     </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => setEmbedModalOpen(true)}
+                      className="rounded-lg px-3"
+                    >
+                      Вставить ссылку
+                    </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
             </div>
           </div>
         </div>
+        <InsertEmbedModal open={embedModalOpen} onOpenChange={setEmbedModalOpen} editor={editor} />
       </div>
     );
   },

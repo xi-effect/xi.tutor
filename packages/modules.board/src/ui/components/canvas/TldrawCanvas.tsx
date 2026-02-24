@@ -6,6 +6,7 @@ import { Editor, TLInstancePresenceID, Tldraw, TldrawProps } from 'tldraw';
 import { useLockedShapeSelection, useRemoveMark, useTldrawClipboard } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore, useTldrawStore } from '../../../store';
+import { EmbedShapeUtil } from '../../../shapes/embed';
 import { PdfShapeUtil } from '../../../shapes/pdf';
 import { Header } from '../header';
 import { Navbar, SelectionMenu } from '../toolbar';
@@ -206,7 +207,7 @@ export const TldrawCanvas = ({
               });
             }}
             store={store}
-            shapeUtils={[PdfShapeUtil]}
+            shapeUtils={[EmbedShapeUtil, PdfShapeUtil]}
             hideUi
             components={{
               CollaboratorCursor: CollaboratorCursor,

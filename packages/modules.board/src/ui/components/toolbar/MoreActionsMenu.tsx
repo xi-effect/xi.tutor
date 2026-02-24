@@ -8,6 +8,7 @@ import {
 import { MenuDots } from '@xipkg/icons';
 import { useEditor } from 'tldraw';
 import { useCurrentUser } from 'common.services';
+import type { EmbedShape } from '../../../shapes/embed';
 import type { PdfShape } from '../../../shapes/pdf';
 
 export const MoreActionsMenu = () => {
@@ -19,6 +20,10 @@ export const MoreActionsMenu = () => {
   const selectedPdf =
     selectedShapes.length === 1 && selectedShapes[0].type === 'pdf'
       ? (selectedShapes[0] as PdfShape)
+      : null;
+  const selectedEmbed =
+    selectedShapes.length === 1 && selectedShapes[0].type === 'embedUrl'
+      ? (selectedShapes[0] as EmbedShape)
       : null;
 
   const handleToggleStudentFlip = () => {
@@ -55,6 +60,14 @@ export const MoreActionsMenu = () => {
         {isTutor && selectedPdf && (
           <DropdownMenuItem onClick={handleToggleStudentFlip} className="rounded-lg px-3">
             {selectedPdf.props.studentCanFlip ? 'Ограничить листание' : 'Разрешить листание'}
+          </DropdownMenuItem>
+        )}
+        {selectedEmbed && selectedEmbed.props.url && (
+          <DropdownMenuItem
+            onClick={() => window.open(selectedEmbed.props.url, '_blank', 'noopener,noreferrer')}
+            className="rounded-lg px-3"
+          >
+            Открыть в новой вкладке
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>
