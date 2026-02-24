@@ -1,11 +1,11 @@
 /* eslint-disable no-irregular-whitespace */
 import { ScrollArea } from '@xipkg/scrollarea';
 import {
-  Materials,
-  Payments,
-  Classrooms,
+  // Materials,
+  // Payments,
+  // Classrooms,
   Lessons,
-  ActionButtons,
+  // ActionButtons,
   DateTimeDisplay,
 } from './components';
 import { Menu } from 'common.ui';
@@ -132,14 +132,14 @@ export const MainPage = () => {
             <div className="flex flex-col">
               <Lessons />
             </div>
-            <div className="flex flex-col">
+            {/* <div className="flex flex-col">
               <Classrooms />
             </div>
             <div className="flex flex-col gap-4">
               <ActionButtons />
               <Payments />
               {isTutor && <Materials />}
-            </div>
+            </div> */}
           </div>
         </div>
         <Menu steps={steps} disabled={false} />

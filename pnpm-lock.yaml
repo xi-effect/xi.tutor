@@ -777,7 +777,7 @@ importers:
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/link':
         specifier: 2.0.12
@@ -911,7 +911,7 @@ importers:
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/slider':
         specifier: 2.0.12
@@ -1315,7 +1315,7 @@ importers:
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: ^2.2.9
@@ -1412,7 +1412,7 @@ importers:
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: ^2.2.9
@@ -1500,7 +1500,7 @@ importers:
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/modal':
         specifier: ^4.3.1
@@ -1588,7 +1588,7 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: 2.2.9
@@ -1685,7 +1685,7 @@ importers:
         specifier: 4.0.0
         version: 4.0.0(@types/react@19.2.14)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       common.api:
         specifier: '*'
@@ -1808,6 +1808,9 @@ importers:
       react:
         specifier: '19'
         version: 19.2.4
+      react-i18next:
+        specifier: 15.4.1
+        version: 15.4.1(i18next@24.2.2)(react-dom@19.2.4)(react@19.2.4)
       sonner:
         specifier: ^1.4.0
         version: 1.7.4(react-dom@19.2.4)(react@19.2.4)
@@ -1867,7 +1870,7 @@ importers:
         specifier: ^3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/utils':
         specifier: ^1.8.0
@@ -1940,7 +1943,7 @@ importers:
         specifier: ^3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/utils':
         specifier: ^1.8.0
@@ -2019,7 +2022,7 @@ importers:
         specifier: ^3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/modal':
         specifier: 4.3.0
@@ -2250,7 +2253,7 @@ importers:
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: ^2.2.9
@@ -2347,7 +2350,7 @@ importers:
         specifier: ^3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: ^2.2.9
@@ -2456,7 +2459,7 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: 2.0.7
@@ -2592,7 +2595,7 @@ importers:
         specifier: 2.2.0
         version: 2.2.0(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/inputmask':
         specifier: 2.0.12
@@ -2725,7 +2728,7 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/modal':
         specifier: ^4.3.1
@@ -2909,7 +2912,7 @@ importers:
         specifier: ^2.0.12
         version: 2.0.12(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: 2.2.9
@@ -3033,7 +3036,7 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/link':
         specifier: 2.0.12
@@ -3136,7 +3139,7 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/link':
         specifier: 2.0.12
@@ -3272,7 +3275,7 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/modal':
         specifier: ^4.3.1
@@ -3387,7 +3390,7 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: 2.2.9
@@ -3538,7 +3541,7 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: 2.2.9
@@ -3671,7 +3674,7 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: 2.0.7
@@ -3786,7 +3789,7 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: 2.0.7
@@ -3983,7 +3986,7 @@ importers:
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/scrollarea':
         specifier: 2.2.0
@@ -4219,7 +4222,7 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: 2.0.7
@@ -4313,7 +4316,7 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: 2.0.7
@@ -4443,7 +4446,7 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: 2.0.7
@@ -4555,7 +4558,7 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: 2.0.7
@@ -4664,7 +4667,7 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: 2.0.7
@@ -4764,7 +4767,7 @@ importers:
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3)(@types/react@19.2.14)(react-dom@19.2.4)(react@19.2.4)
       '@xipkg/icons':
-        specifier: ^3.0.3
+        specifier: ^3.0.4
         version: 3.0.4(react@19.2.4)
       '@xipkg/input':
         specifier: 2.0.7
