@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsc --watch",
-    "lint": "eslint \"**/*.{ts,tsx}\""
+    "lint": "eslint ."
   },
   "dependencies": {
     "@tanstack/react-virtual": "3.13.9",
@@ -24,16 +24,16 @@
     "@xipkg/select": "^2.2.5",
     "@xipkg/tooltip": "2.1.0",
     "@xipkg/userprofile": "4.0.14",
-    "common.entities": "*",
-    "common.env": "*",
-    "common.services": "*",
-    "common.ui": "*",
-    "features.group.add": "*",
-    "features.invites": "*",
-    "features.students.list": "*",
-    "features.table": "*",
-    "features.classroom": "*",
-    "features.classroom.rename": "*"
+    "common.entities": "workspace:*",
+    "common.env": "workspace:*",
+    "common.services": "workspace:*",
+    "common.ui": "workspace:*",
+    "features.group.add": "workspace:*",
+    "features.invites": "workspace:*",
+    "features.students.list": "workspace:*",
+    "features.table": "workspace:*",
+    "features.classroom": "workspace:*",
+    "features.classroom.rename": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -43,11 +43,11 @@
     "@xipkg/eslint": "3.2.0",
     "@xipkg/tailwind": "0.8.1",
     "@xipkg/typescript": "latest",
-    "common.api": "*",
-    "common.config": "*",
-    "common.eslint": "*",
-    "common.types": "*",
-    "common.typescript": "*",
+    "common.api": "workspace:*",
+    "common.config": "workspace:*",
+    "common.eslint": "workspace:*",
+    "common.types": "workspace:*",
+    "common.typescript": "workspace:*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",

@@ -7,7 +7,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "lint": "eslint .",
     "dev": "tsc --watch"
   },
   "dependencies": {
@@ -21,12 +21,12 @@
     "@xipkg/userprofile": "^4.0.12",
     "@xipkg/utils": "^1.8.0",
     "dayjs": "^1.11.13",
-    "common.config": "*",
-    "common.api": "*",
-    "common.services": "*",
-    "common.types": "*",
-    "features.payment.approve": "*",
-    "features.invoice.card": "*"
+    "common.config": "workspace:*",
+    "common.api": "workspace:*",
+    "common.services": "workspace:*",
+    "common.types": "workspace:*",
+    "features.payment.approve": "workspace:*",
+    "features.invoice.card": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -36,8 +36,8 @@
     "@xipkg/eslint": "3.2.0",
     "@xipkg/tailwind": "0.8.1",
     "@xipkg/typescript": "latest",
-    "common.eslint": "*",
-    "common.typescript": "*",
+    "common.eslint": "workspace:*",
+    "common.typescript": "workspace:*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
