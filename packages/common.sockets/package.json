@@ -7,18 +7,18 @@
   },
   "license": "MIT",
   "scripts": {
-    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "lint": "eslint .",
     "dev": "tsc --watch"
   },
   "dependencies": {
     "socket.io-client": "^4.7.3",
     "react": "^19.0.0",
-    "common.config": "*",
-    "common.env": "*"
+    "common.config": "workspace:*",
+    "common.env": "workspace:*"
   },
   "devDependencies": {
-    "common.eslint": "*",
-    "common.typescript": "*",
+    "common.eslint": "workspace:*",
+    "common.typescript": "workspace:*",
     "@types/react": "^19.0.8",
     "typescript": "~5.7.2",
     "eslint": "^9.19.0"

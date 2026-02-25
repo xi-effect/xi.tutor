@@ -7,13 +7,13 @@
   },
   "license": "MIT",
   "scripts": {
-    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "lint": "eslint .",
     "dev": "tsc --watch"
   },
   "dependencies": {
     "sonner": "^2.0.7",
-    "common.services": "*",
-    "common.ui": "*",
+    "common.services": "workspace:*",
+    "common.ui": "workspace:*",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1",
     "@tanstack/react-router": "^1.128.8",
@@ -29,14 +29,14 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
-    "common.typescript": "*",
+    "common.typescript": "workspace:*",
     "@types/node": "^20.3.1",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
     "@xipkg/eslint": "3.2.0",
     "@xipkg/tailwind": "0.8.1",
     "@xipkg/typescript": "latest",
-    "common.eslint": "*",
+    "common.eslint": "workspace:*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
