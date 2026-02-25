@@ -1,7 +1,7 @@
 import { Button } from '@xipkg/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import { useParams, useRouter } from '@tanstack/react-router';
-import { ArrowLeft, Edit } from '@xipkg/icons';
+import { ArrowLeft, Edit, Maximize, Minimize } from '@xipkg/icons';
 import {
   useCurrentUser,
   useGetClassroomMaterial,
@@ -12,15 +12,22 @@ import {
 import { Skeleton } from 'common.ui';
 import { useMaterialActions } from 'features.materials.card';
 import { ModalEditMaterialName } from 'features.materials.edit';
-import { useState } from 'react';
+import { useFocusModeStore } from 'common.ui';
+import { useEffect, useState } from 'react';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { CollaboratorAvatars } from './CollaboratorAvatars';
 import { SettingsDropdown } from './SettingsDropdown';
 
 export const Header = () => {
   const [openModal, setOpenModal] = useState(false);
+  const { focusMode, setFocusMode, toggleFocusMode } = useFocusModeStore();
 
   const { classroomId, boardId, materialId } = useParams({ strict: false });
+
+  // Сбрасываем режим фокуса при уходе со страницы доски
+  useEffect(() => {
+    return () => setFocusMode(false);
+  }, [setFocusMode]);
   const { isReadonly } = useYjsContext();
 
   const { updateMaterial } = useUpdateMaterial();
@@ -60,6 +67,7 @@ export const Header = () => {
   const router = useRouter();
 
   const handleBack = () => {
+    if (focusMode) setFocusMode(false);
     router.history.back();
   };
 
@@ -116,6 +124,20 @@ export const Header = () => {
         </div>
         <div className="bg-gray-0 border-gray-10 pointer-events-auto flex items-center justify-center gap-2 rounded-xl border p-1 pl-3 lg:rounded-2xl">
           {!isReadonly && <CollaboratorAvatars />}
+          <Button
+            variant="none"
+            onClick={toggleFocusMode}
+            type="button"
+            className="hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
+            data-umami-event="board-toggle-focus-mode"
+            data-umami-event-state={focusMode ? 'exit' : 'enter'}
+          >
+            {focusMode ? (
+              <Minimize size="s" className="h-4 w-4 lg:h-6 lg:w-6" />
+            ) : (
+              <Maximize size="s" className="h-4 w-4 lg:h-6 lg:w-6" />
+            )}
+          </Button>
           <SettingsDropdown />
         </div>
       </div>

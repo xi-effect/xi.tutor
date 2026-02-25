@@ -5,12 +5,16 @@ import {
   Link as LinkIcon,
   Settings as SettingsIcon,
   ArrowLeft,
+  Maximize,
+  Minimize,
 } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { TooltipContent, Tooltip, TooltipTrigger } from '@xipkg/tooltip';
 import { useCallStore } from '../../store/callStore';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { useCurrentUser, useGetClassroom } from 'common.services';
+import { useFocusModeStore } from 'common.ui';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
 import { env } from 'common.env';
 import { useTracks } from '@livekit/components-react';
@@ -22,6 +26,12 @@ export const UpBar = () => {
   const { callId } = useParams({ strict: false });
   const { data: classroom } = useGetClassroom(Number(callId));
   const carouselType = useCallStore((state) => state.carouselType);
+  const { focusMode, setFocusMode, toggleFocusMode } = useFocusModeStore();
+
+  // Сбрасываем режим фокуса при уходе со страницы звонка
+  useEffect(() => {
+    return () => setFocusMode(false);
+  }, [setFocusMode]);
 
   // Получаем треки для проверки условий
   const tracks = useTracks(
@@ -89,6 +99,7 @@ export const UpBar = () => {
           <Button
             id={ONBOARDING_IDS.BACK_BUTTON}
             onClick={() => {
+              if (focusMode) setFocusMode(false);
               navigate({
                 to: '/classrooms/$classroomId',
                 params: { classroomId: callId ?? '' },
@@ -133,6 +144,27 @@ export const UpBar = () => {
           {!canUseFocusLayout && carouselType === 'grid'
             ? 'Нужно больше 2 участников или демонстрация экрана для переключения вида'
             : 'Переключить вид сетки'}
+        </TooltipContent>
+      </Tooltip>
+      <Tooltip delayDuration={1000}>
+        <TooltipTrigger asChild>
+          <Button
+            onClick={toggleFocusMode}
+            type="button"
+            variant="none"
+            className="ml-2 flex h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0"
+            data-umami-event="call-toggle-focus-mode"
+            data-umami-event-state={focusMode ? 'exit' : 'enter'}
+          >
+            {focusMode ? (
+              <Minimize className="fill-gray-100" />
+            ) : (
+              <Maximize className="fill-gray-100" />
+            )}
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" align="end">
+          {focusMode ? 'Показать меню и шапку' : 'Скрыть меню и шапку'}
         </TooltipContent>
       </Tooltip>
       {isTutor && (
