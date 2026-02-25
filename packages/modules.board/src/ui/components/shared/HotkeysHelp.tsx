@@ -1,7 +1,5 @@
 import { Modal, ModalCloseButton, ModalContent, ModalHeader, ModalTitle } from '@xipkg/modal';
-import { useMemo } from 'react';
 import { isMac } from '../../../utils';
-import { useFullScreen } from 'common.utils';
 
 interface HotkeyItem {
   keys: string[];
@@ -56,53 +54,47 @@ const groupByCategory = (items: HotkeyItem[]) => {
 
 const groupedHotkeys = groupByCategory(hotkeyCategories);
 
-export type HotkeysHelpModalProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-};
-
-export const HotkeysHelpModal = ({ open, onOpenChange }: HotkeysHelpModalProps) => {
-  const { isFullScreen } = useFullScreen('whiteboard-container');
-
-  const portalContainer = useMemo(() => {
-    return isFullScreen ? document.getElementById('whiteboard-container') : undefined;
-  }, [isFullScreen]);
-
-  return (
-    <Modal open={open} onOpenChange={onOpenChange}>
-      <ModalContent className="max-h-[80vh] max-w-4xl" portalProps={{ container: portalContainer }}>
-        <ModalHeader>
-          <ModalCloseButton />
-          <ModalTitle>Горячие клавиши</ModalTitle>
-        </ModalHeader>
-        <div className="space-y-6 overflow-auto p-6">
-          {Object.entries(groupedHotkeys).map(([category, items]) => (
-            <div key={category}>
-              <h3 className="mb-3 text-lg font-semibold text-gray-100">{category}</h3>
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                {items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="bg-gray-5 flex items-center justify-between rounded-lg p-2"
-                  >
-                    <span className="text-sm text-gray-700">{item.description}</span>
-                    <div className="flex gap-1">
-                      {item.keys.map((key, keyIndex) => (
-                        <div key={keyIndex} className="flex items-center gap-1">
-                          {keyIndex > 0 && <span className="text-gray-400">+</span>}
-                          <kbd className="rounded border border-gray-300 bg-white px-2 py-1 font-mono text-xs shadow-sm">
-                            {key}
-                          </kbd>
-                        </div>
-                      ))}
-                    </div>
+/** Общий контент модалки: только список горячих клавиш */
+const HotkeysHelpBody = () => (
+  <div className="space-y-6 overflow-auto p-6">
+    {Object.entries(groupedHotkeys).map(([category, items]) => (
+      <div key={category}>
+        <h3 className="mb-3 text-lg font-semibold text-gray-100">{category}</h3>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          {items.map((item, index) => (
+            <div key={index} className="bg-gray-5 flex items-center justify-between rounded-lg p-2">
+              <span className="text-sm text-gray-700">{item.description}</span>
+              <div className="flex gap-1">
+                {item.keys.map((key, keyIndex) => (
+                  <div key={keyIndex} className="flex items-center gap-1">
+                    {keyIndex > 0 && <span className="text-gray-400">+</span>}
+                    <kbd className="rounded border border-gray-300 bg-white px-2 py-1 font-mono text-xs shadow-sm">
+                      {key}
+                    </kbd>
                   </div>
                 ))}
               </div>
             </div>
           ))}
         </div>
-      </ModalContent>
-    </Modal>
-  );
+      </div>
+    ))}
+  </div>
+);
+
+export type HotkeysHelpModalProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
 };
+
+export const HotkeysHelpModal = ({ open, onOpenChange }: HotkeysHelpModalProps) => (
+  <Modal open={open} onOpenChange={onOpenChange}>
+    <ModalContent className="max-h-[80vh] max-w-4xl">
+      <ModalHeader>
+        <ModalCloseButton onClick={() => onOpenChange(false)} />
+        <ModalTitle>Горячие клавиши</ModalTitle>
+      </ModalHeader>
+      <HotkeysHelpBody />
+    </ModalContent>
+  </Modal>
+);

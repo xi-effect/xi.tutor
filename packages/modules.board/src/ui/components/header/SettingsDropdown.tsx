@@ -8,8 +8,7 @@ import {
 } from '@xipkg/dropdown';
 import { File, InfoCircle, Locked, MoreVert, Trash, Unlocked } from '@xipkg/icons';
 import { useDropdownActions } from './hooks/useDropdownActions';
-import { useFullScreen } from 'common.utils';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useCurrentUser } from 'common.services';
 import { HotkeysHelpModal } from '../shared/HotkeysHelp';
 
@@ -55,14 +54,9 @@ const ClearBoardAction = ({ onClick }: ActionPropsT) => {
 
 export const SettingsDropdown = () => {
   const { isReadonly, saveCanvas, clearBoard, toggleReadonly } = useDropdownActions();
-  const { isFullScreen } = useFullScreen('whiteboard-container');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const [hotkeysOpen, setHotkeysOpen] = useState(false);
-
-  const portalContainer = useMemo(() => {
-    return isFullScreen ? document.getElementById('whiteboard-container') : undefined;
-  }, [isFullScreen]);
 
   useEffect(() => {
     const handleOpenHotkeysHelp = () => setHotkeysOpen(true);
@@ -82,11 +76,7 @@ export const SettingsDropdown = () => {
             <MoreVert size="s" className="h-4 w-4 lg:h-6 lg:w-6" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="end"
-          className="flex w-[250px] flex-col gap-1 px-2 py-1"
-          portalProps={{ container: portalContainer }}
-        >
+        <DropdownMenuContent align="end" className="flex w-[250px] flex-col gap-1 px-2 py-1">
           <DropdownMenuGroup>
             <DropdownMenuItem
               className="flex gap-2 p-1"

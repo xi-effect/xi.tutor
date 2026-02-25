@@ -1,16 +1,11 @@
-import { useEffect } from 'react';
 import {
   Grid,
   Speaker,
   SpeakerHorizontal,
   Link as LinkIcon,
   Settings as SettingsIcon,
-  Maximize,
-  Minimize,
   ArrowLeft,
 } from '@xipkg/icons';
-import { useFullScreen } from 'common.utils';
-import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
 import { TooltipContent, Tooltip, TooltipTrigger } from '@xipkg/tooltip';
 import { useCallStore } from '../../store/callStore';
@@ -27,9 +22,6 @@ export const UpBar = () => {
   const { callId } = useParams({ strict: false });
   const { data: classroom } = useGetClassroom(Number(callId));
   const carouselType = useCallStore((state) => state.carouselType);
-  const { isFullScreenSupported, isFullScreen, toggleFullScreen } = useFullScreen(
-    'videoConferenceContainer',
-  );
 
   // Получаем треки для проверки условий
   const tracks = useTracks(
@@ -90,17 +82,8 @@ export const UpBar = () => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  useEffect(() => {
-    const root = document.documentElement;
-    if (isFullScreen) {
-      root.style.setProperty('--header-height', '0px');
-    } else {
-      root.style.setProperty('--header-height', '64px');
-    }
-  }, [isFullScreen]);
-
   return (
-    <div className={cn('flex w-full flex-row items-end px-4 pb-1', isFullScreen && 'pt-2')}>
+    <div className="flex w-full flex-row items-end px-4 pb-1">
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button
@@ -168,29 +151,6 @@ export const UpBar = () => {
           </TooltipTrigger>
           <TooltipContent side="bottom" align="end">
             Скопировать ссылку-приглашение
-          </TooltipContent>
-        </Tooltip>
-      )}
-      {isFullScreenSupported && (
-        <Tooltip delayDuration={1000}>
-          <TooltipTrigger asChild>
-            <Button
-              onClick={toggleFullScreen}
-              type="button"
-              variant="none"
-              className="ml-2 hidden h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0 md:flex"
-              data-umami-event="call-toggle-fullscreen"
-              data-umami-event-state={isFullScreen ? 'exit' : 'enter'}
-            >
-              {isFullScreen ? (
-                <Minimize className="fill-gray-100" />
-              ) : (
-                <Maximize className="fill-gray-100" />
-              )}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" align="end">
-            {isFullScreen ? 'Свернуть' : 'Развернуть на весь экран'}
           </TooltipContent>
         </Tooltip>
       )}
