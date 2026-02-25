@@ -31,6 +31,10 @@
   }
 }
 
+.lk-room-container {
+  height: 100%;
+}
+
 /* Полноэкранный режим */
 .lk-video-conference[data-fullscreen='true'] {
   --upbar-height: 0px;

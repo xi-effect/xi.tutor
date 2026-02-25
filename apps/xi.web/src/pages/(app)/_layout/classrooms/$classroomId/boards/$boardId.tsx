@@ -39,8 +39,10 @@ export const Route = createFileRoute('/(app)/_layout/classrooms/$classroomId/boa
 
 function ClassroomsBoardPage() {
   return (
-    <Suspense fallback={<LoadingScreen />}>
-      <TldrawBoard />
-    </Suspense>
+    <div className="h-full min-h-0">
+      <Suspense fallback={<LoadingScreen />}>
+        <TldrawBoard />
+      </Suspense>
+    </div>
   );
 }

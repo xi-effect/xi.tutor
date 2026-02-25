@@ -67,7 +67,7 @@ export const Chat = () => {
   if (!isChatOpen) return null;
 
   return (
-    <div className="bg-gray-0 border-gray-0 sm:border-gray-20 fixed flex h-full w-full max-w-none min-w-[328px] flex-col overflow-hidden rounded-2xl border p-4 pr-1 sm:relative sm:max-w-[328px]">
+    <div className="bg-gray-0 border-gray-0 sm:border-gray-20 fixed flex h-full min-h-0 w-full max-w-none min-w-[328px] flex-col overflow-hidden rounded-2xl border p-4 pr-1 sm:relative sm:max-w-[328px]">
       {/* Заголовок */}
       <div className="border-gray-20 flex items-center justify-between pr-3">
         <h3 className="text-lg font-medium text-gray-100">Чат</h3>

@@ -1,3 +1,4 @@
 export { NavbarButton } from './NavbarButton';
 export { ToolPopup } from './ToolPopup';
-export { HotkeysHelp } from './HotkeysHelp';
+export { HotkeysHelpModal } from './HotkeysHelp';
+export type { HotkeysHelpModalProps } from './HotkeysHelp';
