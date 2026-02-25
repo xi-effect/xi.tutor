@@ -1,14 +1,5 @@
-import { Button } from '@xipkg/button';
-import {
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalTitle,
-  ModalTrigger,
-} from '@xipkg/modal';
-import { InfoCircle } from '@xipkg/icons';
-import { useEffect, useMemo } from 'react';
+import { Modal, ModalCloseButton, ModalContent, ModalHeader, ModalTitle } from '@xipkg/modal';
+import { useMemo } from 'react';
 import { isMac } from '../../../utils';
 import { useFullScreen } from 'common.utils';
 
@@ -63,34 +54,22 @@ const groupByCategory = (items: HotkeyItem[]) => {
   );
 };
 
-export const HotkeysHelp = () => {
-  // const [open, setOpen] = useState(false);
-  const groupedHotkeys = groupByCategory(hotkeyCategories);
+const groupedHotkeys = groupByCategory(hotkeyCategories);
+
+export type HotkeysHelpModalProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
+
+export const HotkeysHelpModal = ({ open, onOpenChange }: HotkeysHelpModalProps) => {
   const { isFullScreen } = useFullScreen('whiteboard-container');
 
   const portalContainer = useMemo(() => {
     return isFullScreen ? document.getElementById('whiteboard-container') : undefined;
   }, [isFullScreen]);
 
-  // Обработка события от горячей клавиши F1
-  useEffect(() => {
-    const handleOpenHotkeysHelp = () => {
-      // setOpen(true);
-    };
-
-    window.addEventListener('openHotkeysHelp', handleOpenHotkeysHelp);
-    return () => {
-      window.removeEventListener('openHotkeysHelp', handleOpenHotkeysHelp);
-    };
-  }, []);
-
   return (
-    <Modal>
-      <ModalTrigger asChild>
-        <Button variant="none" className="h-10 w-10 p-2">
-          <InfoCircle size="s" className="size-6" />
-        </Button>
-      </ModalTrigger>
+    <Modal open={open} onOpenChange={onOpenChange}>
       <ModalContent className="max-h-[80vh] max-w-4xl" portalProps={{ container: portalContainer }}>
         <ModalHeader>
           <ModalCloseButton />
