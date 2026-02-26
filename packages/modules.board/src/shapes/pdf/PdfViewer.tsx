@@ -29,6 +29,8 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const renderTaskRef = useRef<RenderTask | null>(null);
+  const loadKeyRef = useRef<string | null>(null);
+  const hasRenderedOnceRef = useRef(false);
 
   const [localPage, setLocalPage] = useState<number>(1);
   const [loading, setLoading] = useState(true);
@@ -86,11 +88,18 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
   useEffect(() => {
     if (!src || !token) return;
 
+    const loadKey = `${src}-${displayPage}`;
+    if (loadKeyRef.current !== loadKey) {
+      loadKeyRef.current = loadKey;
+      hasRenderedOnceRef.current = false;
+    }
+
     let cancelled = false;
 
     const render = async () => {
       try {
-        setLoading(true);
+        // Показываем "Загрузка" только при первой загрузке PDF/страницы, не при ресайзе
+        if (!hasRenderedOnceRef.current) setLoading(true);
         const blobUrl = await resolveAssetUrl(src, token);
         if (cancelled) return;
 
@@ -141,7 +150,10 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
         renderTaskRef.current = renderTask;
 
         await renderTask.promise;
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          hasRenderedOnceRef.current = true;
+          setLoading(false);
+        }
       } catch (err) {
         if (cancelled) return;
         if ((err as { name?: string })?.name === 'RenderingCancelledException') return;
