@@ -6,3 +6,4 @@ export { ErrorPage } from './src/ErrorPage';
 export { Menu } from './src/Menu';
 export { NetworkIndicator } from './src/NetworkIndicator';
 export { SmallLogo } from './src/SmallLogo';
+export { useFocusModeStore } from './src/store/useFocusModeStore';

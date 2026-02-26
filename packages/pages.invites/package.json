@@ -8,7 +8,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsc --watch",
-    "lint": "eslint \"**/*.{ts,tsx}\""
+    "lint": "eslint ."
   },
   "dependencies": {
     "@tanstack/react-query": "5.73.3",
@@ -16,10 +16,10 @@
     "@xipkg/utils": "1.8.0",
     "@xipkg/avatar": "3.0.10",
     "@xipkg/button": "4.1.0",
-    "common.ui": "*",
-    "common.api": "*",
-    "common.config": "*",
-    "common.services": "*",
+    "common.ui": "workspace:*",
+    "common.api": "workspace:*",
+    "common.config": "workspace:*",
+    "common.services": "workspace:*",
     "@tanstack/react-router": "^1.128.8"
   },
   "devDependencies": {
@@ -30,8 +30,8 @@
     "@xipkg/eslint": "3.2.0",
     "@xipkg/tailwind": "0.8.1",
     "@xipkg/typescript": "latest",
-    "common.eslint": "*",
-    "common.typescript": "*",
+    "common.eslint": "workspace:*",
+    "common.typescript": "workspace:*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",

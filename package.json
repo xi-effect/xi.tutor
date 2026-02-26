@@ -2,6 +2,7 @@
   "name": "xi.tutor",
   "private": true,
   "scripts": {
+    "install:ci": "pnpm install --ignore-scripts && pnpm run prepare",
     "build": "turbo run build --no-daemon",
     "build:debug": "pnpm --filter xi.web build:debug",
     "build:dev": "pnpm --filter xi.web build:dev",
@@ -25,9 +26,9 @@
   "engines": {
     "node": ">=20"
   },
-  "packageManager": "pnpm@8.15.4",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ]
+  "packageManager": "pnpm@10.30.0",
+  "workspaces": ["apps/*", "packages/*"],
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "core-js"]
+  }
 }

@@ -8,7 +8,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "lint": "eslint .",
     "dev": "tsc --watch"
   },
   "dependencies": {
@@ -17,10 +17,11 @@
     "@xipkg/icons": "^3.0.4",
     "@xipkg/link": "2.0.12",
     "@xipkg/utils": "1.8.0",
-    "common.env": "*",
-    "common.services": "*",
-    "common.utils": "*",
-    "driver.js": "^1.3.6"
+    "common.env": "workspace:*",
+    "common.services": "workspace:*",
+    "common.utils": "workspace:*",
+    "driver.js": "^1.3.6",
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -30,8 +31,8 @@
     "@types/react-dom": "^19.0.2",
     "@xipkg/eslint": "3.2.0",
     "@xipkg/typescript": "latest",
-    "common.eslint": "*",
-    "common.typescript": "*",
+    "common.eslint": "workspace:*",
+    "common.typescript": "workspace:*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",

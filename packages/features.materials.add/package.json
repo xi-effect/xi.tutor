@@ -7,7 +7,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "lint": "eslint .",
     "dev": "tsc --watch"
   },
   "dependencies": {
@@ -24,9 +24,9 @@
     "@xipkg/eslint": "3.2.0",
     "@xipkg/tailwind": "0.8.1",
     "@xipkg/typescript": "latest",
-    "common.eslint": "*",
-    "common.services": "*",
-    "common.typescript": "*",
+    "common.eslint": "workspace:*",
+    "common.services": "workspace:*",
+    "common.typescript": "workspace:*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",

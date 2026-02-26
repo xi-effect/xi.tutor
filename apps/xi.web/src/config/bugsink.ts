@@ -141,10 +141,21 @@ const isServiceWorkerError = (event: ErrorEvent, hint: EventHint): boolean => {
   return false;
 };
 
+/** Хост считается локальной разработкой — с него не отправляем события в Bugsink */
+const isLocalhost = (): boolean => {
+  if (typeof window === 'undefined') return false;
+  const host = window.location.hostname.toLowerCase();
+  return host === 'localhost' || host === '127.0.0.1' || host === '[::1]';
+};
+
 /**
  * Фильтр для исключения определённых ошибок из отправки в BUGSINK
  */
 const beforeSend = (event: ErrorEvent, hint: EventHint): ErrorEvent | null => {
+  if (isLocalhost()) {
+    return null; // не отправляем ошибки с localhost
+  }
+
   const originalException = hint.originalException;
 
   // Исключаем CORS ошибки
@@ -175,6 +186,10 @@ const beforeSend = (event: ErrorEvent, hint: EventHint): ErrorEvent | null => {
  * Инициализация BUGSINK (Sentry-совместимый SDK)
  */
 export const initBugsink = () => {
+  if (isLocalhost()) {
+    return; // не инициализируем Bugsink на localhost — не засоряем трекер ошибками разработки
+  }
+
   const dsn = env.VITE_BUGSINK_DSN;
   if (!dsn) {
     console.warn('BUGSINK DSN не указан (VITE_BUGSINK_DSN). Мониторинг ошибок отключен.');

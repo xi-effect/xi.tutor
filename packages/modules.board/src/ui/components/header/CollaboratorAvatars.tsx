@@ -122,9 +122,9 @@ const CollaboratorAvatarButton = ({
       type="button"
       variant="none"
       className={cn(
-        'relative h-8 w-8 shrink-0 rounded-full p-0 transition-all',
-        isMe && 'ring-gray-30 ring-offset-gray-0 ring-2 ring-offset-2',
-        isFollowing && 'ring-brand-50 ring-offset-gray-0 ring-2 ring-offset-2',
+        'relative h-6 w-6 shrink-0 rounded-full p-0 transition-all lg:h-7 lg:w-7',
+        isMe && 'ring-gray-30 ring-offset-gray-0 ring-1 ring-offset-1',
+        isFollowing && 'ring-brand-50 ring-offset-gray-0 ring-1 ring-offset-1',
       )}
       onClick={onFollow ?? undefined}
       onMouseEnter={() => setHover(true)}

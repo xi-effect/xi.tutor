@@ -21,7 +21,7 @@ export const FollowBanner = () => {
 
   return (
     <div
-      className="pointer-events-auto absolute top-6 left-1/2 z-100 -translate-x-1/2"
+      className="pointer-events-auto absolute top-1 left-1/2 z-100 -translate-x-1/2"
       role="status"
       aria-live="polite"
     >

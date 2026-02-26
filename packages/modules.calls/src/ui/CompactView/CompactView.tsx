@@ -15,6 +15,7 @@ import { CompactCall } from './CompactCall';
 import { PermissionsDialog } from '../shared/PermissionsDialog';
 import { useCallStore } from '../../store/callStore';
 import type { Corner } from '../../store/callStore';
+import { useFocusModeStore } from 'common.ui';
 import { useNavigate, useRouter, useSearch, useLocation } from '@tanstack/react-router';
 import { useRoom } from '../../providers/RoomProvider';
 import { useParticipantJoinSync } from '../../hooks/useParticipantJoinSync';
@@ -74,6 +75,7 @@ const DroppableAreas: FC = () => {
 export const Compact: FC<CompactViewProps> = ({ children }) => {
   const router = useRouter();
   const { activeCorner, updateStore } = useCallStore();
+  const focusMode = useFocusModeStore((s) => s.focusMode);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -108,7 +110,9 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
 
   return (
     <DndContext sensors={sensors} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
-      <div className="relative flex h-screen flex-col bg-transparent">
+      <div
+        className={`relative flex flex-col bg-transparent ${focusMode ? 'h-screen' : 'h-[calc(100vh-64px)]'}`}
+      >
         <DroppableAreas />
 
         <div
@@ -176,10 +180,16 @@ export const CompactView = ({ children }: CompactViewProps) => {
     }
   }, [room, token, search.call, search, navigate]);
 
+  const contentWrapper = (
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="min-h-0 flex-1">{children}</div>
+    </div>
+  );
+
   if (!room || !token) {
     return (
       <>
-        {children}
+        {contentWrapper}
         <PermissionsDialog />
       </>
     );
@@ -188,7 +198,7 @@ export const CompactView = ({ children }: CompactViewProps) => {
   if (mode === 'full') {
     return (
       <>
-        {children}
+        {contentWrapper}
         <PermissionsDialog />
       </>
     );

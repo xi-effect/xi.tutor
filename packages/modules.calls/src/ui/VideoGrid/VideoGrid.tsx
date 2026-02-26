@@ -54,6 +54,7 @@ function useFirstPageSize(
 
 export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
   const lastAutoFocusedScreenShareTrack = React.useRef<TrackReferenceOrPlaceholder | null>(null);
+  const hadScreenShareRef = React.useRef(false);
 
   const carouselType = useCallStore((state) => state.carouselType);
 
@@ -128,6 +129,23 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
       useCallStore.getState().updateStore('carouselType', 'grid');
     }
   }, [canUseFocusLayout, carouselType]);
+
+  // При появлении демонстрации экрана (переход нет → есть) один раз переключаем на фокусный вид. Пользователь может вручную вернуться в сетку.
+  React.useEffect(() => {
+    const screenShareJustStarted = hasScreenShare && !hadScreenShareRef.current;
+    hadScreenShareRef.current = hasScreenShare;
+
+    if (!screenShareJustStarted || carouselType !== 'grid') return;
+
+    const isWide = contentSize.width >= contentSize.height;
+    const focusLayout: 'horizontal' | 'vertical' =
+      contentSize.width > 0 && contentSize.height > 0
+        ? isWide
+          ? 'horizontal'
+          : 'vertical'
+        : 'horizontal';
+    useCallStore.getState().updateStore('carouselType', focusLayout);
+  }, [hasScreenShare, carouselType, contentSize.width, contentSize.height]);
 
   useScreenShareCleanup(tracks);
 

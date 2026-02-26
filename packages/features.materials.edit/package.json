@@ -7,7 +7,7 @@
   },
   "license": "MIT",
   "scripts": {
-    "lint": "eslint \"**/*.{ts,tsx}\"",
+    "lint": "eslint .",
     "dev": "tsc --watch"
   },
   "dependencies": {
@@ -15,8 +15,8 @@
     "@xipkg/button": "4.1.0",
     "@xipkg/form": "4.2.1",
     "@xipkg/input": "2.0.7",
-    "@xipkg/modal": "4.3.0",
-    "common.types": "*"
+    "@xipkg/modal": "^4.4.0",
+    "common.types": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -26,9 +26,9 @@
     "@xipkg/eslint": "3.2.0",
     "@xipkg/tailwind": "0.8.1",
     "@xipkg/typescript": "latest",
-    "common.eslint": "*",
-    "common.services": "*",
-    "common.typescript": "*",
+    "common.eslint": "workspace:*",
+    "common.services": "workspace:*",
+    "common.typescript": "workspace:*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
