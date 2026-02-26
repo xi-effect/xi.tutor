@@ -1,5 +1,5 @@
 import { BaseBoxShapeUtil, HTMLContainer, TLResizeInfo, resizeBox } from 'tldraw';
-import { PdfShape, pdfShapeProps } from './PdfShape';
+import { PDF_MIN_SIZE, PdfShape, pdfShapeProps } from './PdfShape';
 import { PdfViewer } from './PdfViewer';
 
 export class PdfShapeUtil extends BaseBoxShapeUtil<PdfShape> {
@@ -31,7 +31,15 @@ export class PdfShapeUtil extends BaseBoxShapeUtil<PdfShape> {
   }
 
   override onResize(shape: PdfShape, info: TLResizeInfo<PdfShape>) {
-    return resizeBox(shape, info);
+    const aspectRatio = shape.props.w / shape.props.h;
+    let minWidth = PDF_MIN_SIZE;
+    let minHeight = PDF_MIN_SIZE;
+    if (aspectRatio > 1) {
+      minWidth = Math.round(PDF_MIN_SIZE * aspectRatio);
+    } else {
+      minHeight = Math.round(PDF_MIN_SIZE / aspectRatio);
+    }
+    return resizeBox(shape, info, { minWidth, minHeight });
   }
 
   override component(shape: PdfShape) {

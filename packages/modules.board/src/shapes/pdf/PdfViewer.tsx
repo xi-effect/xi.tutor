@@ -12,6 +12,9 @@ import type { PdfShape } from './PdfShape';
 // Используем CDN для worker файла, чтобы избежать проблем с бандлингом в продакшене
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
+/** Множитель разрешения рендера (supersampling). 1 = только dpr, 1.5–2 = выше качество, больше память/CPU. */
+const PDF_RENDER_QUALITY_SCALE = 2;
+
 type PdfViewerProps = {
   shape: PdfShape;
 };
@@ -30,6 +33,24 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
   const [localPage, setLocalPage] = useState<number>(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [containerSize, setContainerSize] = useState<{ w: number; h: number }>({ w: 0, h: 0 });
+
+  // Учитываем реальный размер контейнера (в т.ч. после зума/ресайза), чтобы не рендерить в 0×0 и не получать мыло
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const updateSize = () => {
+      const w = el.clientWidth;
+      const h = el.clientHeight;
+      setContainerSize((prev) => (prev.w === w && prev.h === h ? prev : { w, h }));
+    };
+
+    updateSize();
+    const ro = new ResizeObserver(updateSize);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   const { src, totalPages, currentPage: tutorPage, studentCanFlip } = shape.props;
 
@@ -81,29 +102,42 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
         if (cancelled) return;
 
         const canvas = canvasRef.current;
-        const container = containerRef.current;
-        if (!canvas || !container) return;
+        if (!canvas) return;
+
+        const displayW = containerSize.w;
+        const displayH = containerSize.h;
+        if (displayW <= 0 || displayH <= 0) return;
 
         if (renderTaskRef.current) {
           renderTaskRef.current.cancel();
         }
 
         const dpr = window.devicePixelRatio || 1;
-        const displayW = container.clientWidth;
-        const displayH = container.clientHeight;
-        const baseScale = displayW / page.getViewport({ scale: 1 }).width;
-        const scale = baseScale * dpr;
+        const vp1 = page.getViewport({ scale: 1 });
+        const pageW = vp1.width;
+        const pageH = vp1.height;
+        // Вписываем страницу в контейнер с сохранением пропорций (contain), чтобы не растягивать и не мылить
+        const baseScale = Math.min(displayW / pageW, displayH / pageH);
+        // Рендер в повышенном разрешении (dpr × quality), отображаем в baseScale — меньше мыло, чётче текст/линии
+        const scale = baseScale * dpr * PDF_RENDER_QUALITY_SCALE;
 
         const viewport = page.getViewport({ scale });
         canvas.width = viewport.width;
         canvas.height = viewport.height;
-        canvas.style.width = `${displayW}px`;
-        canvas.style.height = `${displayH}px`;
+        const fittedW = pageW * baseScale;
+        const fittedH = pageH * baseScale;
+        canvas.style.width = `${fittedW}px`;
+        canvas.style.height = `${fittedH}px`;
 
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        const renderTask = page.render({ canvasContext: ctx, viewport });
+        // intent: 'print' даёт более точный рендер (антиалиасинг, градиенты и т.д.)
+        const renderTask = page.render({
+          canvasContext: ctx,
+          viewport,
+          intent: 'print',
+        });
         renderTaskRef.current = renderTask;
 
         await renderTask.promise;
@@ -126,7 +160,7 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
         renderTaskRef.current = null;
       }
     };
-  }, [src, token, displayPage, shape.props.w]);
+  }, [src, token, displayPage, shape.props.w, containerSize.w, containerSize.h]);
 
   const handlePageChange = useCallback(
     (page: number) => {
@@ -176,7 +210,10 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
 
   return (
     <div className="flex h-full w-full flex-col">
-      <div ref={containerRef} className="relative min-h-0 flex-1 overflow-hidden">
+      <div
+        ref={containerRef}
+        className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden"
+      >
         {loading && (
           <div className="text-gray-40 absolute inset-0 z-5 flex items-center justify-center text-sm">
             Загрузка...
@@ -184,7 +221,7 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
         )}
         <canvas
           ref={canvasRef}
-          className="block h-full w-full transition-opacity duration-200"
+          className="block max-h-full max-w-full transition-opacity duration-200"
           style={{ opacity: loading ? 0.3 : 1 }}
         />
       </div>
