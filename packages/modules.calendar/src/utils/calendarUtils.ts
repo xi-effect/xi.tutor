@@ -44,8 +44,14 @@ export const formatDate = (date: Date) => {
 };
 
 export const formatWeekRange = (weekStart: Date): string => {
+  return formatDateRange(weekStart, 7);
+};
+
+/** Диапазон дат от weekStart на dayCount дней (для заголовка при видимых столбцах канбана) */
+export const formatDateRange = (weekStart: Date, dayCount: number): string => {
+  const days = Math.max(1, Math.min(7, dayCount));
   const end = new Date(weekStart);
-  end.setDate(end.getDate() + 6);
+  end.setDate(end.getDate() + days - 1);
   const d1 = weekStart.getDate();
   const d2 = end.getDate();
   const m1 = weekStart.toLocaleDateString('ru-RU', { month: 'long' });

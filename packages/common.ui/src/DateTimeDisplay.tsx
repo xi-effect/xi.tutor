@@ -28,8 +28,12 @@ export const DateTimeDisplay = () => {
 
   return (
     <div className="flex flex-row items-center justify-start gap-3">
-      <div className="text-xl-base font-normal text-gray-100">{currentDateTime.time}</div>
-      <div className="text-m-base font-normal text-gray-100">{currentDateTime.date}</div>
+      <div className="text-xl-base text-gray-90 font-normal dark:text-gray-100">
+        {currentDateTime.time}
+      </div>
+      <div className="text-m-base text-gray-90 font-normal dark:text-gray-100">
+        {currentDateTime.date}
+      </div>
     </div>
   );
 };

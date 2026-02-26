@@ -6,9 +6,8 @@ import {
   // Classrooms,
   Lessons,
   // ActionButtons,
-  DateTimeDisplay,
 } from './components';
-import { Menu } from 'common.ui';
+import { DateTimeDisplay, Menu } from 'common.ui';
 import { useCurrentUser } from 'common.services';
 // import { Sidebar } from './components/Sidebar';
 

@@ -22,7 +22,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
       : 'h-screen overflow-hidden'
     : isMobile
       ? 'w-full pt-[64px]'
-      : 'h-screen overflow-hidden pt-[64px]';
+      : 'h-screen overflow-hidden';
 
   // Используем один компонент, который условно рендерит нужную структуру
   // но children всегда остаются в одном месте с одним ключом

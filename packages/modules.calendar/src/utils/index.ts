@@ -5,5 +5,6 @@ export {
   timeToString,
   isPastDay,
   formatWeekRange,
+  formatDateRange,
 } from './calendarUtils';
-export { getMonthDays, getYearDays, getWeekDays, getWeeksNumbers } from './getDays';
+export { getMonthDays, getYearDays, getWeekDays, getDaysFrom, getWeeksNumbers } from './getDays';
