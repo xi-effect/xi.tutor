@@ -166,8 +166,29 @@ export const ParticipantTile = ({
   );
 
   const carouselType = useCallStore((state) => state.carouselType);
+  const updateStore = useCallStore((state) => state.updateStore);
 
   const isHorizontalLayout = carouselType === 'horizontal';
+
+  const handleTileDoubleClick = React.useCallback(() => {
+    if (trackReference.source !== Track.Source.ScreenShare || !layoutContext?.pin.dispatch) return;
+    if (!isTrackReference(trackReference)) return;
+
+    const isPinned =
+      layoutContext.pin.state && isTrackReferencePinned(trackReference, layoutContext.pin.state);
+
+    if (carouselType === 'grid') {
+      const focusLayout: 'horizontal' | 'vertical' =
+        typeof window !== 'undefined' && window.innerWidth >= window.innerHeight
+          ? 'horizontal'
+          : 'vertical';
+      updateStore('carouselType', focusLayout);
+      layoutContext.pin.dispatch({ msg: 'set_pin', trackReference });
+    } else if (isPinned) {
+      updateStore('carouselType', 'grid');
+      layoutContext.pin.dispatch({ msg: 'clear_pin' });
+    }
+  }, [trackReference, carouselType, layoutContext, updateStore]);
 
   const getVideoClassName = () => {
     if (trackReference.source === Track.Source.ScreenShare) {
@@ -185,6 +206,14 @@ export const ParticipantTile = ({
       className="lk-participant-tile relative"
       data-lk-source={trackReference.source}
       {...elementProps}
+      onDoubleClick={
+        trackReference.source === Track.Source.ScreenShare &&
+        (carouselType === 'grid' ||
+          (layoutContext?.pin.state &&
+            isTrackReferencePinned(trackReference, layoutContext.pin.state)))
+          ? handleTileDoubleClick
+          : elementProps?.onDoubleClick
+      }
     >
       <TrackRefContextIfNeeded trackRef={trackReference}>
         <ParticipantContextIfNeeded participant={trackReference.participant}>
