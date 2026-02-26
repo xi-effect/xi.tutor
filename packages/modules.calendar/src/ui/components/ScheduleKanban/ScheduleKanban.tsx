@@ -9,9 +9,9 @@ import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
 
 interface ScheduleKanbanProps {
-  weekDays: Date[];
+  /** Видимые дни (то же, что в заголовке календаря) */
+  visibleDays: Date[];
   columnWidth: number;
-  visibleCount: number;
 }
 
 const getEventsForDay = (
@@ -29,15 +29,10 @@ const getDayNameRu = (date: Date): string => {
   return name.charAt(0).toUpperCase() + name.slice(1);
 };
 
-export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
-  weekDays,
-  columnWidth,
-  visibleCount,
-}) => {
+export const ScheduleKanban: FC<ScheduleKanbanProps> = ({ visibleDays, columnWidth }) => {
   const { t } = useTranslation('calendar');
   const eventsByDate = useEventsByDate();
   const today = new Date();
-  const visibleDays = weekDays.slice(0, visibleCount);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-7">

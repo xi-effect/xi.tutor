@@ -1,12 +1,13 @@
 import { memo } from 'react';
 import { cn } from '@xipkg/utils';
-import { Clock, Conference, Redo, Trash } from '@xipkg/icons';
+// import { Clock, Conference, Redo, Trash } from '@xipkg/icons';
+import { Clock } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
 import { timeToString } from '../../../utils';
-import { useDeleteEvent } from '../../../store/eventsStore';
+// import { useDeleteEvent } from '../../../store/eventsStore';
 import { CARD_MIN_WIDTH, CARD_MAX_WIDTH } from '../../../hooks/useKanbanColumns';
 import type { ICalendarEvent } from '../../types';
-import { Button } from '@xipkg/button';
+// import { Button } from '@xipkg/button';
 
 interface LessonCardProps {
   event: ICalendarEvent;
@@ -14,7 +15,7 @@ interface LessonCardProps {
 }
 
 export const LessonCard = memo<LessonCardProps>(({ event }) => {
-  const deleteEvent = useDeleteEvent();
+  // const deleteEvent = useDeleteEvent();
 
   const startTime = event.isAllDay ? null : timeToString(new Date(event.start));
   const endTime = event.isAllDay ? null : timeToString(new Date(event.end));
@@ -24,10 +25,10 @@ export const LessonCard = memo<LessonCardProps>(({ event }) => {
   const teacherId = event.lessonInfo?.teacherId;
   const lessonTitle = event.lessonInfo?.description ?? event.title;
 
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    deleteEvent(event.id);
-  };
+  // const handleDelete = (e: React.MouseEvent) => {
+  //   e.stopPropagation();
+  //   deleteEvent(event.id);
+  // };
 
   return (
     <div
@@ -69,7 +70,7 @@ export const LessonCard = memo<LessonCardProps>(({ event }) => {
       </div>
 
       {/* Действия при наведении */}
-      <div className={cn('mt-4 flex items-center justify-end gap-1 transition-opacity')}>
+      {/* <div className={cn('mt-4 flex items-center justify-end gap-1 transition-opacity')}>
         <Button
           variant="none"
           type="button"
@@ -95,7 +96,7 @@ export const LessonCard = memo<LessonCardProps>(({ event }) => {
         >
           <Trash className="fill-brand-100 h-4 w-4" />
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 });
