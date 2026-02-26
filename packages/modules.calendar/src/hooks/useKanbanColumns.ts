@@ -1,12 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 
 /** Минимальная ширина столбца дня (px) */
-export const COLUMN_MIN_WIDTH = 200;
+export const COLUMN_MIN_WIDTH = 240;
 /** Максимальная ширина столбца дня (px) */
 export const COLUMN_MAX_WIDTH = 320;
 
 /** Минимальная ширина карточки занятия (px) */
-export const CARD_MIN_WIDTH = 180;
+export const CARD_MIN_WIDTH = 220;
 /** Максимальная ширина карточки занятия (px) */
 export const CARD_MAX_WIDTH = 300;
 

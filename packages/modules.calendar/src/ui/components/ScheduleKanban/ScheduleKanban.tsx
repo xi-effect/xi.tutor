@@ -5,6 +5,8 @@ import { LessonCard } from './LessonCard';
 import { getDateKey, useEventsByDate } from '../../../store/eventsStore';
 import { isPastDay } from '../../../utils';
 import type { ICalendarEvent } from '../../types';
+import { cn } from '@xipkg/utils';
+import { Button } from '@xipkg/button';
 
 interface ScheduleKanbanProps {
   weekDays: Date[];
@@ -39,46 +41,46 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
 
   return (
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-7">
-      <div className="flex flex-1 gap-0 overflow-hidden" style={{ width: '100%' }}>
+      <div className="flex flex-1 gap-7 overflow-hidden" style={{ width: '100%' }}>
         {visibleDays.map((day) => {
           const events = getEventsForDay(eventsByDate, day);
           const dateNum = day.getDate();
           const dayName = getDayNameRu(day);
-          const isToday =
-            day.getDate() === today.getDate() &&
-            day.getMonth() === today.getMonth() &&
-            day.getFullYear() === today.getFullYear();
 
           return (
             <div
               key={day.toISOString()}
-              className="border-gray-20 dark:border-gray-70 flex shrink-0 flex-col border-r last:border-r-0"
+              className="group/day flex shrink-0 flex-col"
               style={{
                 minWidth: columnWidth,
                 maxWidth: columnWidth,
                 width: columnWidth,
               }}
             >
-              <div className="flex shrink-0 items-center justify-between gap-1 px-2 py-3">
+              <div className="flex shrink-0 items-center justify-between gap-1 py-4">
                 <span
-                  className={
-                    isToday
-                      ? 'text-primary-60 font-semibold'
-                      : 'text-gray-80 font-medium dark:text-gray-100'
-                  }
-                  style={{ fontSize: '13px' }}
+                  className={cn(
+                    'group-hover/day:text-brand-80 group-hover/day:bg-brand-0 text-gray-40 bg-gray-5 flex h-[32px] w-[38px] items-center justify-center rounded-[10px] text-[14px] font-semibold transition-colors duration-300',
+                  )}
                 >
-                  {dateNum} {dayName}
+                  {dateNum}
                 </span>
-                <button
-                  type="button"
-                  className="hover:text-primary-60 hover:bg-primary-5 dark:text-gray-60 dark:hover:bg-primary-10 flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-gray-50 transition-colors"
+                <span
+                  className={cn(
+                    'text-s-base text-gray-60 group-hover/day:text-gray-90 font-medium transition-colors duration-300',
+                  )}
+                >
+                  {dayName}
+                </span>
+                <Button
+                  variant="none"
+                  className="hover:text-primary-60 hover:bg-gray-5 flex h-[32px] w-[40px] shrink-0 items-center justify-center rounded-md p-0 text-gray-50 transition-colors"
                   aria-label={t('add_event')}
                 >
-                  <Plus className="h-4 w-4" />
-                </button>
+                  <Plus className="fill-gray-40 group-hover/day:fill-brand-80 h-5 w-5 transition-colors duration-300" />
+                </Button>
               </div>
-              <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto px-2 pb-4">
+              <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto pb-4">
                 {events.length === 0 ? (
                   <span className="dark:text-gray-60 text-xs text-gray-50">—</span>
                 ) : (

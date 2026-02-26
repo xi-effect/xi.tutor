@@ -16,6 +16,8 @@ export interface ILessonInfo {
   description?: string;
   paid?: boolean;
   complete?: boolean;
+  /** id пользователя (преподавателя/студента) для UserProfile */
+  teacherId?: number;
 }
 
 export type EventType = 'lesson' | 'rest';
