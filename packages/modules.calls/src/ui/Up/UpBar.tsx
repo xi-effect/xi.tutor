@@ -21,8 +21,11 @@ import { useTracks } from '@livekit/components-react';
 import { Track } from 'livekit-client';
 import { Settings } from './Settings';
 import { ONBOARDING_IDS } from '../Onboarding/CallsOnboarding';
+import { useMedia } from 'common.utils';
 
 export const UpBar = () => {
+  const isMobile = useMedia('(max-width: 720px)');
+
   const { callId } = useParams({ strict: false });
   const { data: classroom } = useGetClassroom(Number(callId));
   const carouselType = useCallStore((state) => state.carouselType);
@@ -120,7 +123,7 @@ export const UpBar = () => {
         </TooltipContent>
       </Tooltip>
 
-      <span className="ml-4 self-center text-2xl font-semibold text-gray-100">
+      <span className="text-m-base sm:text-xl-base md:text-2xl-base ml-4 max-w-[50vw] min-w-0 self-center truncate font-semibold text-gray-100">
         {classroom?.name}
       </span>
       {/* <span className="text-gray-70 ml-2 pb-1">Имя ученика</span> */}
@@ -146,27 +149,29 @@ export const UpBar = () => {
             : 'Переключить вид сетки'}
         </TooltipContent>
       </Tooltip>
-      <Tooltip delayDuration={1000}>
-        <TooltipTrigger asChild>
-          <Button
-            onClick={toggleFocusMode}
-            type="button"
-            variant="none"
-            className="ml-2 flex h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0"
-            data-umami-event="call-toggle-focus-mode"
-            data-umami-event-state={focusMode ? 'exit' : 'enter'}
-          >
-            {focusMode ? (
-              <Minimize className="fill-gray-100" />
-            ) : (
-              <Maximize className="fill-gray-100" />
-            )}
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="bottom" align="end">
-          {focusMode ? 'Показать меню и шапку' : 'Скрыть меню и шапку'}
-        </TooltipContent>
-      </Tooltip>
+      {!isMobile && (
+        <Tooltip delayDuration={1000}>
+          <TooltipTrigger asChild>
+            <Button
+              onClick={toggleFocusMode}
+              type="button"
+              variant="none"
+              className="ml-2 flex h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0"
+              data-umami-event="call-toggle-focus-mode"
+              data-umami-event-state={focusMode ? 'exit' : 'enter'}
+            >
+              {focusMode ? (
+                <Minimize className="fill-gray-100" />
+              ) : (
+                <Maximize className="fill-gray-100" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" align="end">
+            {focusMode ? 'Показать меню и шапку' : 'Скрыть меню и шапку'}
+          </TooltipContent>
+        </Tooltip>
+      )}
       {isTutor && (
         <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
