@@ -1,5 +1,12 @@
+import { useEffect } from 'react';
 import { Modal, ModalCloseButton, ModalContent, ModalHeader, ModalTitle } from '@xipkg/modal';
 import { isMac } from '../../../utils';
+
+const cleanupBodyScrollLock = () => {
+  document.body.style.overflow = '';
+  document.body.style.pointerEvents = '';
+  document.body.removeAttribute('data-scroll-locked');
+};
 
 interface HotkeyItem {
   keys: string[];
@@ -87,14 +94,32 @@ export type HotkeysHelpModalProps = {
   onOpenChange: (open: boolean) => void;
 };
 
-export const HotkeysHelpModal = ({ open, onOpenChange }: HotkeysHelpModalProps) => (
-  <Modal open={open} onOpenChange={onOpenChange}>
-    <ModalContent className="max-h-[80vh] max-w-4xl">
-      <ModalHeader>
-        <ModalCloseButton onClick={() => onOpenChange(false)} />
-        <ModalTitle>Горячие клавиши</ModalTitle>
-      </ModalHeader>
-      <HotkeysHelpBody />
-    </ModalContent>
-  </Modal>
-);
+export const HotkeysHelpModal = ({ open, onOpenChange }: HotkeysHelpModalProps) => {
+  const handleClose = () => {
+    onOpenChange(false);
+    cleanupBodyScrollLock();
+  };
+
+  useEffect(() => {
+    if (open === false) cleanupBodyScrollLock();
+    return cleanupBodyScrollLock;
+  }, [open]);
+
+  return (
+    <Modal
+      open={open}
+      onOpenChange={(next) => {
+        if (typeof next === 'boolean') onOpenChange(next);
+        if (next === false) cleanupBodyScrollLock();
+      }}
+    >
+      <ModalContent className="max-h-[80vh] max-w-4xl">
+        <ModalHeader>
+          <ModalCloseButton onClick={handleClose} />
+          <ModalTitle>Горячие клавиши</ModalTitle>
+        </ModalHeader>
+        <HotkeysHelpBody />
+      </ModalContent>
+    </Modal>
+  );
+};

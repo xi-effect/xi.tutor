@@ -18,6 +18,7 @@ import {
   DropdownMenuItem,
 } from '@xipkg/dropdown';
 
+import { useEffect } from 'react';
 import { useParams } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { env } from 'common.env';
@@ -28,10 +29,12 @@ import { useGetClassroom } from 'common.services';
 import { useResetGroupInvite } from '../services/useResetGroupInvite';
 
 type ModalGroupInviteProps = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
-export const ModalGroupInvite = ({ children }: ModalGroupInviteProps) => {
+export const ModalGroupInvite = ({ children, open, onOpenChange }: ModalGroupInviteProps) => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data, isLoading } = useGroupInvite({ classroomId: classroomId });
   const { data: classroom } = useGetClassroom(Number(classroomId));
@@ -53,12 +56,34 @@ export const ModalGroupInvite = ({ children }: ModalGroupInviteProps) => {
     });
   };
 
+  const cleanupBodyScrollLock = () => {
+    document.body.style.overflow = '';
+    document.body.style.pointerEvents = '';
+    document.body.removeAttribute('data-scroll-locked');
+  };
+
+  const handleClose = () => {
+    onOpenChange?.(false);
+    cleanupBodyScrollLock();
+  };
+
+  useEffect(() => {
+    if (open === false) cleanupBodyScrollLock();
+    return cleanupBodyScrollLock;
+  }, [open]);
+
   return (
-    <Modal>
-      <ModalTrigger asChild>{children}</ModalTrigger>
+    <Modal
+      open={open}
+      onOpenChange={(next) => {
+        if (typeof next === 'boolean') onOpenChange?.(next);
+        if (next === false) cleanupBodyScrollLock();
+      }}
+    >
+      {children && <ModalTrigger asChild>{children}</ModalTrigger>}
       <ModalContent className="max-w-[600px]">
         <ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton onClick={handleClose} />
           <ModalTitle className="dark:text-gray-100">Приглашение в группу</ModalTitle>
           <ModalDescription>
             Отправьте ссылку ученикам, чтобы пригласить их в группу

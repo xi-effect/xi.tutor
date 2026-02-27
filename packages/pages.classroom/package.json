@@ -11,6 +11,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@xipkg/actionbutton": "1.0.0",
     "@xipkg/badge": "2.0.12",
     "@xipkg/button": "4.1.0",
     "@xipkg/command": "1.0.0",

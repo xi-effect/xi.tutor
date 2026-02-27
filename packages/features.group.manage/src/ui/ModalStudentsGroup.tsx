@@ -24,11 +24,29 @@ import { useParams } from '@tanstack/react-router';
 import { toast } from 'sonner';
 
 type ModalStudentsGroupProps = {
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
-export const ModalStudentsGroup = ({ children }: ModalStudentsGroupProps) => {
+const cleanupBodyScrollLock = () => {
+  document.body.style.overflow = '';
+  document.body.style.pointerEvents = '';
+  document.body.removeAttribute('data-scroll-locked');
+};
+
+export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStudentsGroupProps) => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
+
+  const handleClose = () => {
+    onOpenChange?.(false);
+    cleanupBodyScrollLock();
+  };
+
+  useEffect(() => {
+    if (open === false) cleanupBodyScrollLock();
+    return cleanupBodyScrollLock;
+  }, [open]);
 
   const {
     data: allStudents,
@@ -113,11 +131,17 @@ export const ModalStudentsGroup = ({ children }: ModalStudentsGroupProps) => {
   const isError = isErrorAllStudents || isErrorGroupStudents;
 
   return (
-    <Modal>
-      <ModalTrigger asChild>{children}</ModalTrigger>
+    <Modal
+      open={open}
+      onOpenChange={(next) => {
+        if (typeof next === 'boolean') onOpenChange?.(next);
+        if (next === false) cleanupBodyScrollLock();
+      }}
+    >
+      {children && <ModalTrigger asChild>{children}</ModalTrigger>}
       <ModalContent>
         <ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton onClick={handleClose} />
           <ModalTitle className="dark:text-gray-100">Добавление ученика в группу</ModalTitle>
         </ModalHeader>
         <ModalBody className={cn('flex flex-col gap-4 px-2 pt-2')}>
