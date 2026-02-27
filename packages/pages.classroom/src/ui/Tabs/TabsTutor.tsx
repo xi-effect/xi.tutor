@@ -14,8 +14,11 @@ import { useGetClassroom } from 'common.services';
 import { ModalStudentsGroup } from 'features.group.manage';
 import { ModalGroupInvite } from 'features.group.invite';
 import { InvoiceModal } from 'features.invoice';
+import { useMedia } from 'common.utils';
 
 export const TabsTutor = () => {
+  const isMobile = useMedia('(max-width: 720px)');
+
   const search: SearchParams = useSearch({ strict: false });
   const navigate = useNavigate();
   const currentTab = search.tab || 'overview';
@@ -40,8 +43,8 @@ export const TabsTutor = () => {
 
   return (
     <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
-      <div className="flex h-[56px] flex-row items-center gap-4 overflow-x-auto pr-4 pl-4 sm:pr-0">
-        <Tabs.List className="flex flex-row gap-4">
+      <div className="flex h-[56px] flex-row items-center gap-4 overflow-x-auto px-4">
+        <Tabs.List className="flex w-full flex-row gap-4">
           <Tabs.Trigger value="overview" className="text-m-base font-medium text-gray-100">
             Сводка
           </Tabs.Trigger>
@@ -58,7 +61,7 @@ export const TabsTutor = () => {
             Информация
           </Tabs.Trigger>
         </Tabs.List>
-        {currentTab === 'overview' && classroom?.kind === 'group' && (
+        {currentTab === 'overview' && !isMobile && classroom?.kind === 'group' && (
           <ModalStudentsGroup>
             <Button
               size="s"
@@ -70,7 +73,7 @@ export const TabsTutor = () => {
             </Button>
           </ModalStudentsGroup>
         )}
-        {currentTab === 'overview' && classroom?.kind === 'group' && (
+        {currentTab === 'overview' && !isMobile && classroom?.kind === 'group' && (
           <ModalGroupInvite>
             <Button
               size="s"
@@ -82,8 +85,8 @@ export const TabsTutor = () => {
             </Button>
           </ModalGroupInvite>
         )}
-        {currentTab === 'materials' && <MaterialsAdd />}
-        {currentTab === 'payments' && (
+        {currentTab === 'materials' && !isMobile && <MaterialsAdd />}
+        {currentTab === 'payments' && !isMobile && (
           <Button
             size="s"
             className="ml-auto w-8 rounded-lg px-2 py-2 font-medium sm:w-auto sm:px-4"

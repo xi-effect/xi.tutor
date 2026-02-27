@@ -30,25 +30,12 @@ const getButtonLabel = (isTutor: boolean, isConferenceNotActiveTutor: boolean) =
   return 'Присоединиться';
 };
 
-export const Content = ({ classroom }: ContentProps) => {
+const CallButton = ({ classroom }: { classroom: ClassroomTutorResponseSchema }) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
   const { startCall } = useStartCall();
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
-
-  const { isConferenceNotActive: isConferenceNotActiveStudent, isLoading: isLoadingStudent } =
-    useGetParticipantsByStudent(classroom.id.toString(), isTutor);
-  const { isConferenceNotActive: isConferenceNotActiveTutor, isLoading: isLoadingTutor } =
-    useGetParticipantsByTutor(classroom.id.toString(), !isTutor);
-
-  const getDisplayName = () => {
-    if (classroom.kind === 'individual') {
-      return `${classroom.student.first_name} ${classroom.student.last_name}`;
-    } else {
-      return classroom.name;
-    }
-  };
 
   const handleCallClick = useCallback(async () => {
     try {
@@ -77,9 +64,54 @@ export const Content = ({ classroom }: ContentProps) => {
     }
   }, [search, handleCallClick]);
 
+  const { isConferenceNotActive: isConferenceNotActiveStudent, isLoading: isLoadingStudent } =
+    useGetParticipantsByStudent(classroom.id.toString(), isTutor);
+  const { isConferenceNotActive: isConferenceNotActiveTutor, isLoading: isLoadingTutor } =
+    useGetParticipantsByTutor(classroom.id.toString(), !isTutor);
+
   return (
-    <div className="flex flex-row items-start pr-4 pl-4 sm:pr-0">
-      <div className="flex flex-col items-start gap-4">
+    <div className="flex w-full flex-row items-end gap-2">
+      {isLoadingStudent || isLoadingTutor ? (
+        <Button size="s" className="group mt-auto w-full" disabled loading />
+      ) : (
+        <Button
+          size="s"
+          variant="primary"
+          className="group w-full pr-2 pl-2"
+          onClick={handleCallClick}
+          disabled={!isTutor && isConferenceNotActiveStudent}
+          data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
+          data-umami-event-classroom-id={classroom.id}
+        >
+          <Conference
+            size="sm"
+            className={cn(
+              'group-hover:fill-gray-0 fill-brand-0 mr-1.5',
+              !isTutor && isConferenceNotActiveStudent && 'fill-gray-40',
+            )}
+          />
+          {getButtonLabel(isTutor, isConferenceNotActiveTutor)}
+        </Button>
+      )}
+    </div>
+  );
+};
+
+export const Content = ({ classroom }: ContentProps) => {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const getDisplayName = () => {
+    if (classroom.kind === 'individual') {
+      return `${classroom.student.first_name} ${classroom.student.last_name}`;
+    } else {
+      return classroom.name;
+    }
+  };
+
+  return (
+    <div className="flex flex-row items-start px-4 pb-2">
+      <div className="flex w-full flex-col items-start gap-4">
         {classroom.kind === 'individual' ? (
           <IndividualUser userId={classroom.student_id ?? classroom.tutor_id ?? 0} />
         ) : (
@@ -102,33 +134,13 @@ export const Content = ({ classroom }: ContentProps) => {
             <ContactsBadge userId={classroom.tutor_id ?? 0} />
           )}
         </div>
+        <div className="flex w-full sm:hidden">
+          <CallButton classroom={classroom} />
+        </div>
       </div>
 
-      <div className="ml-auto flex flex-col items-end gap-2">
-        <div className="flex flex-row items-end gap-2">
-          {isLoadingStudent || isLoadingTutor ? (
-            <Button size="s" className="group mt-auto w-full" disabled loading />
-          ) : (
-            <Button
-              size="s"
-              variant="primary"
-              className="group w-full pr-2 pl-2"
-              onClick={handleCallClick}
-              disabled={!isTutor && isConferenceNotActiveStudent}
-              data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
-              data-umami-event-classroom-id={classroom.id}
-            >
-              <Conference
-                size="sm"
-                className={cn(
-                  'group-hover:fill-gray-0 fill-brand-0 mr-1.5',
-                  !isTutor && isConferenceNotActiveStudent && 'fill-gray-40',
-                )}
-              />
-              {getButtonLabel(isTutor, isConferenceNotActiveTutor)}
-            </Button>
-          )}
-        </div>
+      <div className="ml-auto hidden flex-col items-end gap-2 sm:flex">
+        <CallButton classroom={classroom} />
       </div>
     </div>
   );
