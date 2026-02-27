@@ -1,4 +1,4 @@
-import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { ClassroomT, IndividualClassroomT } from 'common.api';
 import { Button } from '@xipkg/button';
 import { ArrowUpRight, Conference } from '@xipkg/icons';
@@ -12,6 +12,7 @@ import {
 } from 'common.services';
 import { SubjectBadge } from 'features.classroom';
 import { cn } from '@xipkg/utils';
+import { useCallStore } from 'modules.calls';
 
 type UserAvatarPropsT = {
   classroom: IndividualClassroomT;
@@ -45,9 +46,14 @@ const UserAvatar = ({ isLoading, classroom }: UserAvatarPropsT) => {
   );
 };
 
-const getButtonLabel = (isTutor: boolean, isConferenceNotActiveTutor: boolean) => {
+const getButtonLabel = (
+  isTutor: boolean,
+  isConferenceNotActiveTutor: boolean,
+  isCallActive: boolean,
+) => {
   // Преподаватель и конференция не активна
   if (isTutor && isConferenceNotActiveTutor) return 'Начать занятие';
+  if (isCallActive) return 'Вернутся в конференцию';
 
   return 'Присоединиться';
 };
@@ -68,6 +74,46 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
     useGetParticipantsByStudent(classroom.id.toString(), isTutor);
   const { isConferenceNotActive: isConferenceNotActiveTutor, isLoading: isLoadingTutor } =
     useGetParticipantsByTutor(classroom.id.toString(), !isTutor);
+
+  const searchCall = useSearch({ strict: false }) as { call?: string };
+  const params = useParams({ strict: false }) as {
+    callId?: string;
+    classroomId?: string;
+    boardId?: string;
+  };
+  const { call } = searchCall;
+  const updateStore = useCallStore((state) => state.updateStore);
+
+  const activeClassroom = useCallStore((state) => state.activeClassroom);
+  const isStarted = useCallStore((state) => state.isStarted);
+  const token = useCallStore((state) => state.token);
+
+  const normalizedCallId = typeof call === 'string' ? call.replace(/^"|"$/g, '').trim() : undefined;
+
+  const isCallActive = Boolean(isStarted && token && normalizedCallId === classroom.id.toString());
+
+  const handleBackToRoom = () => {
+    if (!token || !isStarted) {
+      return;
+    }
+
+    const targetCallId =
+      normalizedCallId ||
+      activeClassroom ||
+      params.classroomId ||
+      params.callId ||
+      classroom.id.toString();
+
+    updateStore('localFullView', true);
+    updateStore('mode', 'full');
+
+    navigate({
+      to: '/call/$callId',
+      params: { callId: targetCallId },
+      search: { call: targetCallId },
+      replace: true,
+    });
+  };
 
   const handleClick = () => {
     // Сохраняем параметр call при переходе в кабинет
@@ -148,12 +194,12 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
           size="s"
           variant="secondary"
           className="group mt-auto w-full"
-          onClick={handleStartLesson}
+          onClick={isCallActive ? handleBackToRoom : handleStartLesson}
           disabled={!isTutor && isConferenceNotActiveStudent}
           data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
           data-umami-event-classroom-id={classroom.id}
         >
-          {getButtonLabel(isTutor, isConferenceNotActiveTutor)}
+          {getButtonLabel(isTutor, isConferenceNotActiveTutor, isCallActive)}
           <Conference
             className={cn(
               'group-hover:fill-gray-0 fill-brand-100 ml-2',
