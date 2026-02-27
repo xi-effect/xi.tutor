@@ -14,6 +14,7 @@ import { FollowBanner } from './FollowBanner';
 import { TldrawZoomPanel } from './TldrawZoomPanel';
 import 'tldraw/tldraw.css';
 import './customstyles.css';
+import { UndoRedo } from '../toolbar/UndoRedo';
 
 export const TldrawCanvas = ({
   token,
@@ -218,6 +219,9 @@ export const TldrawCanvas = ({
             {!isReadonly && (
               <Navbar undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} token={token} />
             )}
+            <div className="border-gray-10 bg-gray-0 absolute bottom-4 left-4 z-30 flex rounded-xl border p-1 sm:hidden">
+              <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
+            </div>
             <TldrawZoomPanel />
           </Tldraw>
         </div>
