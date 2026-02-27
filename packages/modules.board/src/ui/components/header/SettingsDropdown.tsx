@@ -56,17 +56,30 @@ export const SettingsDropdown = () => {
   const { isReadonly, saveCanvas, clearBoard, toggleReadonly } = useDropdownActions();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [hotkeysOpen, setHotkeysOpen] = useState(false);
 
+  const handleOpenHotkeysHelp = (open: boolean) => {
+    if (open) {
+      setDropdownOpen(false);
+      setHotkeysOpen(true);
+    } else {
+      setHotkeysOpen(false);
+    }
+  };
+
   useEffect(() => {
-    const handleOpenHotkeysHelp = () => setHotkeysOpen(true);
+    const handleOpenHotkeysHelp = () => {
+      setDropdownOpen(false);
+      setHotkeysOpen(true);
+    };
     window.addEventListener('openHotkeysHelp', handleOpenHotkeysHelp);
     return () => window.removeEventListener('openHotkeysHelp', handleOpenHotkeysHelp);
   }, []);
 
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
         <DropdownMenuTrigger asChild>
           <Button
             variant="none"
@@ -80,7 +93,7 @@ export const SettingsDropdown = () => {
           <DropdownMenuGroup>
             <DropdownMenuItem
               className="flex gap-2 p-1"
-              onClick={() => setHotkeysOpen(true)}
+              onClick={() => handleOpenHotkeysHelp(true)}
               data-umami-event="board-hotkeys-help"
             >
               <InfoCircle />
@@ -94,7 +107,7 @@ export const SettingsDropdown = () => {
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-      <HotkeysHelpModal open={hotkeysOpen} onOpenChange={setHotkeysOpen} />
+      <HotkeysHelpModal open={hotkeysOpen} onOpenChange={handleOpenHotkeysHelp} />
     </>
   );
 };
