@@ -21,7 +21,8 @@ export const TldrawCanvas = ({
 }: JSX.IntrinsicAttributes & TldrawProps & { token: string }) => {
   const [editor, setEditor] = useState<Editor | null>(null);
 
-  const { selectedElementId, selectElement } = useTldrawStore();
+  const { selectedElementId, selectElement, showDebugInfo } = useTldrawStore();
+  const [shapeCount, setShapeCount] = useState(0);
   const { store, status, undo, redo, canUndo, canRedo, isReadonly, getUserCamera, setUserCamera } =
     useYjsContext();
   const { followingPresenceId } = useFollowUserStore();
@@ -195,6 +196,15 @@ export const TldrawCanvas = ({
     return () => container.removeEventListener('pointerdown', onPointerDown, { capture: true });
   }, [editor]);
 
+  // Подписка на изменение количества фигур на текущей странице (для дебаг-всплывашки)
+  useEffect(() => {
+    if (!editor || !showDebugInfo) return;
+    const updateCount = () => setShapeCount(editor.getCurrentPageShapeIds().size);
+    updateCount();
+    const unsub = editor.store.listen(updateCount);
+    return unsub;
+  }, [editor, showDebugInfo]);
+
   if (status === 'loading') return <LoadingScreen />;
 
   return (
@@ -235,6 +245,15 @@ export const TldrawCanvas = ({
               <Navbar undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} token={token} />
             )}
             <TldrawZoomPanel />
+            {showDebugInfo && editor && (
+              <div
+                className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/70 px-2 py-1 font-mono text-xs text-white"
+                aria-live="polite"
+              >
+                <div className="font-sans font-medium">Отладочная информация</div>
+                Элементов на доске: {shapeCount}
+              </div>
+            )}
           </Tldraw>
         </div>
       </div>

@@ -20,6 +20,7 @@ import {
   Trash,
   Unlocked,
 } from '@xipkg/icons';
+import { cn } from '@xipkg/utils';
 import { useDropdownActions } from './hooks/useDropdownActions';
 import { useEffect, useState } from 'react';
 import { useCurrentUser } from 'common.services';
@@ -76,7 +77,7 @@ const INPUT_MODE_OPTIONS: { value: InputMode; label: string; icon: React.ReactNo
 
 export const SettingsDropdown = () => {
   const editor = useEditor();
-  const { inputMode, setInputMode } = useTldrawStore();
+  const { inputMode, setInputMode, showDebugInfo, setShowDebugInfo } = useTldrawStore();
   const { isReadonly, saveCanvas, clearBoard, toggleReadonly } = useDropdownActions();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -113,7 +114,10 @@ export const SettingsDropdown = () => {
             <MoreVert size="s" className="h-4 w-4 lg:h-6 lg:w-6" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="flex w-[250px] flex-col gap-1 px-2 py-1">
+        <DropdownMenuContent
+          align="end"
+          className="z-[100] flex w-[250px] flex-col gap-1 px-2 py-1"
+        >
           <DropdownMenuGroup>
             <DropdownMenuItem
               className="flex gap-2 p-1"
@@ -129,7 +133,7 @@ export const SettingsDropdown = () => {
                   <Pen />
                   <span>Режим ввода</span>
                 </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent className="w-[250px]">
+                <DropdownMenuSubContent className="z-[100] w-[250px]">
                   {INPUT_MODE_OPTIONS.map(({ value, label, icon }) => (
                     <DropdownMenuItem
                       key={value}
@@ -153,6 +157,16 @@ export const SettingsDropdown = () => {
               </DropdownMenuSub>
             )}
             <DownloadBoardAction onClick={saveCanvas} />
+
+            <DropdownMenuItem
+              className={cn('flex h-auto gap-2 p-1', showDebugInfo && 'bg-brand-0')}
+              onClick={() => setShowDebugInfo(!showDebugInfo)}
+              data-umami-event="board-toggle-debug-info"
+            >
+              <InfoCircle />
+              <span>Отладочная информация</span>
+              {showDebugInfo && <Check className="ml-auto" />}
+            </DropdownMenuItem>
 
             {isTutor && !isReadonly && <ClearBoardAction onClick={clearBoard} />}
 
