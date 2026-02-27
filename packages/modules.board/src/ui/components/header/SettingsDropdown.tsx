@@ -4,12 +4,28 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { File, InfoCircle, Locked, MoreVert, Trash, Unlocked } from '@xipkg/icons';
+import {
+  Check,
+  Cursor,
+  File,
+  InfoCircle,
+  Locked,
+  MoreVert,
+  Pen,
+  Trash,
+  Unlocked,
+} from '@xipkg/icons';
 import { useDropdownActions } from './hooks/useDropdownActions';
 import { useEffect, useState } from 'react';
 import { useCurrentUser } from 'common.services';
+import { useEditor } from 'tldraw';
+import type { InputMode } from '../../../store/useTldrawStore';
+import { useTldrawStore } from '../../../store';
 import { HotkeysHelpModal } from '../shared/HotkeysHelp';
 
 type ActionPropsT = {
@@ -52,7 +68,15 @@ const ClearBoardAction = ({ onClick }: ActionPropsT) => {
   );
 };
 
+const INPUT_MODE_OPTIONS: { value: InputMode; label: string; icon: React.ReactNode }[] = [
+  { value: 'auto', label: 'Авто (по устройству)', icon: null },
+  { value: 'pen', label: 'Перо', icon: <Pen /> },
+  { value: 'mouse', label: 'Мышь', icon: <Cursor /> },
+];
+
 export const SettingsDropdown = () => {
+  const editor = useEditor();
+  const { inputMode, setInputMode } = useTldrawStore();
   const { isReadonly, saveCanvas, clearBoard, toggleReadonly } = useDropdownActions();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -99,6 +123,35 @@ export const SettingsDropdown = () => {
               <InfoCircle />
               <span>Горячие клавиши</span>
             </DropdownMenuItem>
+            {editor && (
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className="flex gap-2 p-1">
+                  <Pen />
+                  <span>Режим ввода</span>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent className="w-[250px]">
+                  {INPUT_MODE_OPTIONS.map(({ value, label, icon }) => (
+                    <DropdownMenuItem
+                      key={value}
+                      className="flex gap-2 p-1"
+                      onClick={() => {
+                        setInputMode(value);
+                        if (value === 'pen') editor.updateInstanceState({ isPenMode: true });
+                        else if (value === 'mouse')
+                          editor.updateInstanceState({ isPenMode: false });
+                      }}
+                      data-umami-event="board-input-mode"
+                      data-umami-event-mode={value}
+                    >
+                      <span className="flex w-5 items-center justify-center">
+                        {inputMode === value ? <Check /> : icon}
+                      </span>
+                      <span>{label}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            )}
             <DownloadBoardAction onClick={saveCanvas} />
 
             {isTutor && !isReadonly && <ClearBoardAction onClick={clearBoard} />}

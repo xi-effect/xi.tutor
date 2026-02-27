@@ -182,6 +182,19 @@ export const TldrawCanvas = ({
     return unsub;
   }, [editor, store, followingPresenceId]);
 
+  // В режиме «Авто» синхронизируем isPenMode с текущим устройством при каждом pointerdown,
+  // чтобы можно было переключаться между планшетом и мышью без смены настройки в меню.
+  useEffect(() => {
+    if (!editor) return;
+    const container = editor.getContainer();
+    const onPointerDown = (e: PointerEvent) => {
+      if (useTldrawStore.getState().inputMode !== 'auto') return;
+      editor.updateInstanceState({ isPenMode: e.pointerType === 'pen' });
+    };
+    container.addEventListener('pointerdown', onPointerDown, { capture: true });
+    return () => container.removeEventListener('pointerdown', onPointerDown, { capture: true });
+  }, [editor]);
+
   if (status === 'loading') return <LoadingScreen />;
 
   return (
@@ -195,13 +208,16 @@ export const TldrawCanvas = ({
               editor.updateInstanceState({
                 isGridMode: true,
                 isDebugMode: false,
-                isPenMode: false,
               });
 
-              editor.sideEffects.registerBeforeChangeHandler('instance', (prev, next) => {
-                if (next.isPenMode) {
-                  return prev;
-                }
+              const inputMode = useTldrawStore.getState().inputMode;
+              if (inputMode === 'pen') editor.updateInstanceState({ isPenMode: true });
+              else if (inputMode === 'mouse') editor.updateInstanceState({ isPenMode: false });
+
+              editor.sideEffects.registerBeforeChangeHandler('instance', (_, next) => {
+                const mode = useTldrawStore.getState().inputMode;
+                if (mode === 'pen') return { ...next, isPenMode: true };
+                if (mode === 'mouse') return { ...next, isPenMode: false };
                 return next;
               });
             }}
