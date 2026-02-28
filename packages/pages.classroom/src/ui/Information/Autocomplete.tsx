@@ -1,7 +1,5 @@
 import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
 import * as React from 'react';
-import { ControllerRenderProps } from 'react-hook-form';
-
 import { Button } from '@xipkg/button';
 import {
   Command,
@@ -16,8 +14,11 @@ import { cn } from '@xipkg/utils';
 import { SubjectSchema } from 'common.api';
 import { useAutocompleteSubjects, useSubjectsById } from 'common.services';
 
+
+type SubjectField = { value: number | null; onChange: (value: number | null) => void };
+
 type AutocompleteProps = {
-  field: ControllerRenderProps<{ subject: number | null }, 'subject'>;
+  field: SubjectField;
   disabled?: boolean;
 };
 
