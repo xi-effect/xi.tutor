@@ -29,15 +29,16 @@ import { RaiseHandButton } from '../Bottom/RaiseHandButton';
 import { useVideoBlur, useModeSync } from '../../hooks';
 import { useRoom } from '../../providers/RoomProvider';
 import { useCurrentUser } from 'common.services';
+import { useMedia } from 'common.utils';
 
 export const CompactCall = ({ saveUserChoices = true }) => {
+  const isMobile = useMedia('(max-width: 720px)');
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: 'draggable-call',
+    disabled: isMobile,
   });
 
-  const style = {
-    transform: CSS.Translate.toString(transform),
-  };
+  const style = isMobile ? undefined : { transform: CSS.Translate.toString(transform) };
 
   const { saveAudioInputEnabled, saveVideoInputEnabled } = usePersistentUserChoices({
     preventSave: !saveUserChoices,
@@ -159,12 +160,17 @@ export const CompactCall = ({ saveUserChoices = true }) => {
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="compact-call-container flex w-[320px] flex-col">
-      {/* Ручка перетаскивания — только эта область запускает dnd, кнопки не срабатывают при отпускании */}
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`compact-call-container flex flex-col ${isMobile ? 'w-full' : 'w-[320px]'}`}
+    >
+      {/* Ручка перетаскивания — только на десктопе; на мобилке перетаскивание отключено */}
       <div
-        {...attributes}
-        {...listeners}
-        className="group relative mb-2 flex h-[180px] w-[320px] cursor-move items-center justify-center overflow-hidden rounded-2xl shadow-lg"
+        {...(isMobile ? {} : { ...attributes, ...listeners })}
+        className={`group relative mb-2 flex items-center justify-center overflow-hidden rounded-2xl shadow-lg ${
+          isMobile ? 'h-auto w-full' : 'h-[180px] w-[320px] cursor-move'
+        }`}
       >
         {currentParticipant ? (
           <ParticipantTile

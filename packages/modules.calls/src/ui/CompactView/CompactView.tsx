@@ -16,6 +16,7 @@ import { PermissionsDialog } from '../shared/PermissionsDialog';
 import { useCallStore } from '../../store/callStore';
 import type { Corner } from '../../store/callStore';
 import { useFocusModeStore } from 'common.ui';
+import { useMedia } from 'common.utils';
 import { useNavigate, useRouter, useSearch, useLocation } from '@tanstack/react-router';
 import { useRoom } from '../../providers/RoomProvider';
 import { useParticipantJoinSync } from '../../hooks/useParticipantJoinSync';
@@ -76,6 +77,7 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
   const router = useRouter();
   const { activeCorner, updateStore } = useCallStore();
   const focusMode = useFocusModeStore((s) => s.focusMode);
+  const isMobile = useMedia('(max-width: 720px)');
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -113,17 +115,26 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
       <div
         className={`relative flex flex-col bg-transparent ${focusMode ? 'h-screen' : 'h-[calc(100vh-64px)]'}`}
       >
-        <DroppableAreas />
+        {isMobile ? (
+          <>
+            {/* На мобилке: конференция фиксирована сверху под контролами доски (header), без перетаскивания */}
+            <div className="fixed top-[120px] right-0 left-0 z-10 w-full px-2 pt-2">
+              <CompactCall />
+            </div>
+            <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+          </>
+        ) : (
+          <>
+            <DroppableAreas />
+            <div
+              className={`absolute z-100 ${getCornerPosition(activeCorner)} transition-all duration-500 ease-out`}
+            >
+              <CompactCall />
+            </div>
+            {children}
+          </>
+        )}
 
-        <div
-          className={`absolute z-100 ${getCornerPosition(activeCorner)} transition-all duration-500 ease-out`}
-        >
-          <CompactCall />
-        </div>
-
-        {children}
-
-        {/* Обработка аудио как в основном режиме ВКС */}
         <RoomAudioRenderer />
       </div>
     </DndContext>
