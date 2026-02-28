@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
 import { DevicesBar } from '../shared';
@@ -10,7 +10,7 @@ import {
 import { LocalAudioTrack, LocalVideoTrack, Track } from 'livekit-client';
 import { DisconnectButton } from '../Bottom/DisconnectButton';
 import { useCompactNavigation } from '../../hooks/useCompactNavigation';
-import { Maximize, WhiteBoard } from '@xipkg/icons';
+import { ChevronUp, Maximize, WhiteBoard } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import {
@@ -22,6 +22,7 @@ import {
 } from '@xipkg/dropdown';
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useCallStore } from '../../store/callStore';
+import { CompactCallCollapsedBar } from './CompactCallCollapsedBar';
 import { CompactNavigationControls } from './CompactNavigationControls';
 import { ParticipantTile } from '../Participant';
 import { ScreenShareButton } from '../Bottom/ScreenShareButton';
@@ -95,6 +96,14 @@ export const CompactCall = ({ saveUserChoices = true, withOutShadows = false }) 
     goToPrev,
   } = navigation;
 
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const currentAudioTrack = currentParticipant?.participant?.getTrackPublication(
+    Track.Source.Microphone,
+  )?.track as
+    | import('livekit-client').RemoteAudioTrack
+    | import('livekit-client').LocalAudioTrack
+    | undefined;
+
   const search = useSearch({ strict: false }) as { call?: string };
   const params = useParams({ strict: false }) as {
     callId?: string;
@@ -166,40 +175,67 @@ export const CompactCall = ({ saveUserChoices = true, withOutShadows = false }) 
       style={style}
       className={`compact-call-container flex flex-col ${isMobile ? 'w-full' : 'w-[320px]'}`}
     >
-      {/* Ручка перетаскивания — только на десктопе; на мобилке перетаскивание отключено */}
-      <div
-        {...(isMobile ? {} : { ...attributes, ...listeners })}
-        className={cn(
-          'group relative mb-2 flex items-center justify-center overflow-hidden rounded-2xl',
-          withOutShadows ? '' : 'shadow-lg',
-          isMobile ? 'h-auto w-full' : 'h-[180px] w-[320px] cursor-move',
-        )}
-      >
-        {currentParticipant ? (
-          <ParticipantTile
-            trackRef={currentParticipant}
-            participant={currentParticipant.participant}
-            className="h-full w-full"
-            isFocusToggleDisable={true}
-          />
-        ) : (
-          <div className="bg-gray-40 flex h-full w-full items-center justify-center text-gray-100">
-            <span className="text-sm">Нет участников</span>
-          </div>
-        )}
+      {/* Ручка перетаскивания / свёрнутая полоса — только на мобилке; на десктопе только перетаскивание */}
+      {isMobile && isCollapsed ? (
+        <CompactCallCollapsedBar
+          participant={currentParticipant?.participant ?? null}
+          audioTrack={currentAudioTrack ?? null}
+          onExpand={() => setIsCollapsed(false)}
+          className={cn('mb-2', withOutShadows ? '' : 'shadow-lg')}
+        />
+      ) : (
+        <div
+          {...(isMobile ? {} : { ...attributes, ...listeners })}
+          className={cn(
+            'group relative mb-2 flex items-center justify-center overflow-hidden rounded-2xl',
+            withOutShadows ? '' : 'shadow-lg',
+            isMobile ? 'h-auto w-full' : 'h-[180px] w-[320px] cursor-move',
+          )}
+        >
+          {currentParticipant ? (
+            <ParticipantTile
+              trackRef={currentParticipant}
+              participant={currentParticipant.participant}
+              className="h-full w-full"
+              isFocusToggleDisable={true}
+            />
+          ) : (
+            <div className="bg-gray-40 flex h-full w-full items-center justify-center text-gray-100">
+              <span className="text-sm">Нет участников</span>
+            </div>
+          )}
 
-        {/* Элементы управления навигацией - только если есть участники */}
-        {totalParticipants > 0 && (
-          <CompactNavigationControls
-            canPrev={canGoPrev}
-            canNext={canGoNext}
-            onPrev={goToPrev}
-            onNext={goToNext}
-            currentIndex={currentIndex}
-            totalParticipants={totalParticipants}
-          />
-        )}
-      </div>
+          {/* Кнопка свернуть — только на мобилке, правый верхний угол */}
+          {isMobile && (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  size="icon"
+                  variant="none"
+                  onClick={() => setIsCollapsed(true)}
+                  className="bg-brand-100 hover:bg-gray-20 absolute top-2 right-2 z-10 h-8 w-8 rounded-xl p-0 text-gray-100"
+                  aria-label="Свернуть"
+                >
+                  <ChevronUp className="fill-gray-0 h-4 w-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>Свернуть</TooltipContent>
+            </Tooltip>
+          )}
+
+          {/* Элементы управления навигацией - только если есть участники */}
+          {totalParticipants > 0 && (
+            <CompactNavigationControls
+              canPrev={canGoPrev}
+              canNext={canGoNext}
+              onPrev={goToPrev}
+              onNext={goToNext}
+              currentIndex={currentIndex}
+              totalParticipants={totalParticipants}
+            />
+          )}
+        </div>
+      )}
       <div className="flex h-[40px] flex-row">
         <div
           className={cn(
