@@ -42,7 +42,11 @@ export const Header = () => {
   });
 
   const handleBack = () => {
-    router.history.back();
+    if (classroomId) {
+      router.navigate({ to: '/classrooms/$classroomId/', params: { classroomId } });
+    } else {
+      router.navigate({ to: '/materials/' });
+    }
   };
 
   return (
