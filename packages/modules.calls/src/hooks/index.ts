@@ -1,3 +1,4 @@
+export { useCompactAvailableHeight } from './useCompactAvailableHeight';
 export { useSize } from './useSize';
 export { useInitUserDevices } from './useInitUserDevices';
 export { useLiveKitDataChannel, useLiveKitDataChannelListener } from './useLiveKitDataChannel';

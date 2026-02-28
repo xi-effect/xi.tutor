@@ -66,7 +66,7 @@ const DroppableAreas: FC = () => {
     <>
       <DroppableCorner id="top-left" className="top-16 left-4" />
       <DroppableCorner id="top-right" className="top-16 right-4" />
-      <DroppableCorner id="bottom-left" className="bottom-4 left-4" />
+      <DroppableCorner id="bottom-left" className="bottom-18 left-4" />
       <DroppableCorner id="bottom-right" className="right-4 bottom-18" />
       <DragOverlay>{isDragging ? <CompactCall /> : null}</DragOverlay>
     </>
@@ -110,7 +110,7 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
 
   const getCornerPosition = (corner: Corner) => {
     const isBoardPage = router.state.location.pathname.includes('/board');
-    const bottomOffset = isBoardPage && corner === 'bottom-right' ? 'bottom-[72px]' : 'bottom-4';
+    const bottomOffset = isBoardPage ? 'bottom-[72px]' : 'bottom-4';
 
     switch (corner) {
       case 'top-left':
