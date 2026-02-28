@@ -30,8 +30,9 @@ import { useVideoBlur, useModeSync } from '../../hooks';
 import { useRoom } from '../../providers/RoomProvider';
 import { useCurrentUser } from 'common.services';
 import { useMedia } from 'common.utils';
+import { cn } from '@xipkg/utils';
 
-export const CompactCall = ({ saveUserChoices = true }) => {
+export const CompactCall = ({ saveUserChoices = true, withOutShadows = false }) => {
   const isMobile = useMedia('(max-width: 720px)');
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: 'draggable-call',
@@ -168,9 +169,11 @@ export const CompactCall = ({ saveUserChoices = true }) => {
       {/* Ручка перетаскивания — только на десктопе; на мобилке перетаскивание отключено */}
       <div
         {...(isMobile ? {} : { ...attributes, ...listeners })}
-        className={`group relative mb-2 flex items-center justify-center overflow-hidden rounded-2xl shadow-lg ${
-          isMobile ? 'h-auto w-full' : 'h-[180px] w-[320px] cursor-move'
-        }`}
+        className={cn(
+          'group relative mb-2 flex items-center justify-center overflow-hidden rounded-2xl',
+          withOutShadows ? '' : 'shadow-lg',
+          isMobile ? 'h-auto w-full' : 'h-[180px] w-[320px] cursor-move',
+        )}
       >
         {currentParticipant ? (
           <ParticipantTile
@@ -198,7 +201,12 @@ export const CompactCall = ({ saveUserChoices = true }) => {
         )}
       </div>
       <div className="flex h-[40px] flex-row">
-        <div className="bg-gray-0 border-gray-20 flex items-center justify-center gap-1 rounded-2xl border p-1 shadow-lg">
+        <div
+          className={cn(
+            'bg-gray-0 border-gray-20 flex items-center justify-center gap-1 rounded-2xl border p-1',
+            withOutShadows ? '' : 'shadow-lg',
+          )}
+        >
           <DevicesBar
             className="h-[32px] w-[32px]"
             microTrack={microphoneTrack?.track as LocalAudioTrack}
@@ -218,7 +226,12 @@ export const CompactCall = ({ saveUserChoices = true }) => {
           />
         </div>
         {showBackToBoardButton && (
-          <div className="bg-gray-0 border-gray-20 ml-1 flex items-center justify-center rounded-2xl border p-1 shadow-lg">
+          <div
+            className={cn(
+              'bg-gray-0 border-gray-20 ml-1 flex items-center justify-center rounded-2xl border p-1',
+              withOutShadows ? '' : 'shadow-lg',
+            )}
+          >
             <Tooltip>
               <TooltipTrigger asChild>
                 <Button
@@ -235,12 +248,22 @@ export const CompactCall = ({ saveUserChoices = true }) => {
             </Tooltip>
           </div>
         )}
-        <div className="bg-gray-0 border-gray-20 ml-auto flex items-center justify-center rounded-2xl border p-1 shadow-lg">
+        <div
+          className={cn(
+            'bg-gray-0 border-gray-20 ml-auto flex items-center justify-center rounded-2xl border p-1',
+            withOutShadows ? '' : 'shadow-lg',
+          )}
+        >
           <ScreenShareButton className="h-[32px] w-[32px]" />
           {/* <ChatButton /> */}
           <RaiseHandButton className="h-[32px] w-[32px]" />
         </div>
-        <div className="bg-gray-0 border-gray-20 ml-1 flex items-center justify-center rounded-2xl border p-1 shadow-lg">
+        <div
+          className={cn(
+            'bg-gray-0 border-gray-20 ml-1 flex items-center justify-center rounded-2xl border p-1',
+            withOutShadows ? '' : 'shadow-lg',
+          )}
+        >
           {isTutor ? (
             <DropdownMenu>
               <Tooltip>

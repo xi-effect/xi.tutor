@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useRef, useState } from 'react';
 import {
   DndContext,
   DragEndEvent,
@@ -78,6 +78,20 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
   const { activeCorner, updateStore } = useCallStore();
   const focusMode = useFocusModeStore((s) => s.focusMode);
   const isMobile = useMedia('(max-width: 720px)');
+  const headerRef = useRef<HTMLDivElement>(null);
+  const [headerHeight, setHeaderHeight] = useState(0);
+
+  useEffect(() => {
+    if (!isMobile || !headerRef.current) return;
+    const el = headerRef.current;
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) setHeaderHeight(entry.contentRect.height);
+    });
+    observer.observe(el);
+    setHeaderHeight(el.getBoundingClientRect().height);
+    return () => observer.disconnect();
+  }, [isMobile]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -118,10 +132,15 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
         {isMobile ? (
           <>
             {/* На мобилке: конференция фиксирована сверху под контролами доски (header), без перетаскивания */}
-            <div className="fixed top-[120px] right-0 left-0 z-10 w-full px-2 pt-2">
-              <CompactCall />
+            <div ref={headerRef} className="fixed top-[64px] right-0 left-0 z-10 w-full px-2">
+              <CompactCall withOutShadows />
             </div>
-            <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+            <div
+              className="flex min-h-0 flex-1 flex-col"
+              style={{ marginTop: headerHeight > 0 ? headerHeight : 120 }}
+            >
+              {children}
+            </div>
           </>
         ) : (
           <>
