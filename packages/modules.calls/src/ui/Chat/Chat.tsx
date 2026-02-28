@@ -4,10 +4,11 @@ import { Textarea } from '@xipkg/textarea';
 import { Send, Close } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
 import { ScrollArea } from '@xipkg/scrollarea';
+import { Modal, ModalContent } from '@xipkg/modal';
 import { useChat } from '../../hooks/useChat';
 import { useCallStore } from '../../store/callStore';
 import { useCurrentUser } from 'common.services';
-import { cn } from '@xipkg/utils';
+import { cn, useMediaQuery } from '@xipkg/utils';
 import { parseLinks } from '../../utils/chat';
 
 export const Chat = () => {
@@ -64,10 +65,11 @@ export const Chat = () => {
     // Если Shift+Enter, не предотвращаем стандартное поведение - будет перенос строки
   };
 
+  const isMobile = useMediaQuery('(max-width: 639px)');
   if (!isChatOpen) return null;
 
-  return (
-    <div className="bg-gray-0 border-gray-0 sm:border-gray-20 fixed flex h-full min-h-0 w-full max-w-none min-w-[328px] flex-col overflow-hidden rounded-2xl border p-4 pr-1 sm:relative sm:max-w-[328px]">
+  const chatContent = (
+    <>
       {/* Заголовок */}
       <div className="border-gray-20 flex items-center justify-between pr-3">
         <h3 className="text-lg font-medium text-gray-100">Чат</h3>
@@ -77,7 +79,7 @@ export const Chat = () => {
       </div>
 
       {/* Сообщения */}
-      <ScrollArea className="flex-1 py-2 pr-3">
+      <ScrollArea className="min-h-0 flex-1 py-2 pr-3">
         <div className="space-y-4">
           {chatMessages.length === 0 ? (
             <div className="text-gray-60 text-center">
@@ -156,6 +158,22 @@ export const Chat = () => {
           </div>
         </div>
       </div>
+    </>
+  );
+
+  if (isMobile) {
+    return (
+      <Modal open={isChatOpen} onOpenChange={(open) => !open && closeChat()}>
+        <ModalContent className="border-gray-20 bg-gray-0 flex h-[85dvh] max-h-[85dvh] w-[calc(100vw-32px)] max-w-[calc(100vw-32px)] flex-col gap-0 overflow-hidden rounded-2xl border p-4 pr-1">
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden">{chatContent}</div>
+        </ModalContent>
+      </Modal>
+    );
+  }
+
+  return (
+    <div className="bg-gray-0 border-gray-0 sm:border-gray-20 fixed flex h-full min-h-0 w-full max-w-none min-w-[328px] flex-col overflow-hidden rounded-2xl border p-4 pr-1 sm:relative sm:max-w-[328px]">
+      {chatContent}
     </div>
   );
 };

@@ -29,7 +29,7 @@ export const TabsStudent = () => {
   return (
     <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
       <div className="flex h-[56px] flex-row items-center overflow-x-auto pr-4 pl-4 sm:pr-0">
-        <Tabs.List className="flex flex-row gap-4">
+        <Tabs.List className="flex flex-row gap-4 max-sm:w-full">
           <Tabs.Trigger value="overview" className="text-m-base font-medium text-gray-100">
             Сводка
           </Tabs.Trigger>

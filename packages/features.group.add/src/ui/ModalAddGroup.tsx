@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Modal,
   ModalTitle,
@@ -29,8 +29,28 @@ import { useCreateGroup } from '../services';
 
 const initialValues = { name: '', subject: 0 };
 
-export const ModalAddGroup = ({ children }: { children: React.ReactNode }) => {
-  const [isOpen, setModalOpen] = useState(false);
+const cleanupBodyScrollLock = () => {
+  document.body.style.overflow = '';
+  document.body.style.pointerEvents = '';
+  document.body.removeAttribute('data-scroll-locked');
+};
+
+type ModalAddGroupProps = {
+  children?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+};
+
+export const ModalAddGroup = ({
+  children,
+  open: controlledOpen,
+  onOpenChange,
+}: ModalAddGroupProps) => {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const isOpen = isControlled ? controlledOpen : internalOpen;
+  const setModalOpen = isControlled ? (value: boolean) => onOpenChange?.(value) : setInternalOpen;
+
   const modalContentRef = useRef<HTMLDivElement | null>(null);
   const { mutate: createGroup, isPending } = useCreateGroup();
 
@@ -47,15 +67,21 @@ export const ModalAddGroup = ({ children }: { children: React.ReactNode }) => {
     reset,
   } = form;
 
-  const handleOpenChange = (isOpen: boolean) => {
-    if (!isOpen) reset(initialValues);
-    setModalOpen(isOpen);
+  const handleOpenChange = (next: boolean) => {
+    if (!next) reset(initialValues);
+    setModalOpen(next);
   };
 
   const closeModal = () => {
     reset(initialValues);
     setModalOpen(false);
+    cleanupBodyScrollLock();
   };
+
+  useEffect(() => {
+    if (isOpen === false) cleanupBodyScrollLock();
+    return cleanupBodyScrollLock;
+  }, [isOpen]);
 
   const onSubmit = (data: FormValues) => {
     createGroup(
@@ -84,8 +110,14 @@ export const ModalAddGroup = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <Modal open={isOpen} onOpenChange={handleOpenChange}>
-      <ModalTrigger asChild>{children}</ModalTrigger>
+    <Modal
+      open={isOpen}
+      onOpenChange={(next) => {
+        handleOpenChange(next);
+        if (next === false) cleanupBodyScrollLock();
+      }}
+    >
+      {children != null && <ModalTrigger asChild>{children}</ModalTrigger>}
       <ModalContent
         ref={modalContentRef}
         className="relative max-w-[600px]"

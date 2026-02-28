@@ -51,7 +51,7 @@ export const Payments = () => {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col max-sm:pl-4">
       <VirtualizedPaymentsTable
         data={items}
         columns={defaultColumns}

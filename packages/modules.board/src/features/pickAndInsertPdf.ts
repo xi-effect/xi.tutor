@@ -3,7 +3,7 @@ import { Editor, TLShapeId } from 'tldraw';
 import { toast } from 'sonner';
 import { uploadFileRequest } from 'common.services';
 import * as pdfjsLib from 'pdfjs-dist';
-import type { PdfShape } from '../shapes/pdf';
+import { PDF_MIN_SIZE, type PdfShape } from '../shapes/pdf';
 
 const MAX_PDF_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
 const MAX_PDF_SHAPES = 50;
@@ -57,6 +57,14 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
     // fall back to default dimensions
   } finally {
     URL.revokeObjectURL(objectUrl);
+  }
+
+  // Не создаём PDF меньше MIN_SIZE по меньшей стороне — иначе будет нечитаемо
+  const minSide = Math.min(pageWidth, pageHeight);
+  if (minSide < PDF_MIN_SIZE) {
+    const scale = PDF_MIN_SIZE / minSide;
+    pageWidth = Math.round(pageWidth * scale);
+    pageHeight = Math.round(pageHeight * scale);
   }
 
   const viewportCenter = editor.getViewportPageBounds().center;

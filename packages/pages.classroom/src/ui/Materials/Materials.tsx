@@ -1,5 +1,5 @@
-import { ScrollArea } from '@xipkg/scrollarea';
 import { useParams } from '@tanstack/react-router';
+import { ScrollArea } from '@xipkg/scrollarea';
 import {
   useCurrentUser,
   useGetClassroom,
@@ -125,7 +125,7 @@ export const Materials = () => {
             <div className="flex flex-row gap-8 pb-4">
               {boardsData?.length ? (
                 boardsData.map((board) => (
-                  <MaterialsCard {...board} hasIcon className="2xl:w-[430px]" />
+                  <MaterialsCard key={board.id} {...board} hasIcon className="2xl:w-[430px]" />
                 ))
               ) : (
                 <div className="flex h-[150px] w-full items-center justify-center">
