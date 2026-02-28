@@ -14,7 +14,6 @@ import { cn } from '@xipkg/utils';
 import { SubjectSchema } from 'common.api';
 import { useAutocompleteSubjects, useSubjectsById } from 'common.services';
 
-
 type SubjectField = { value: number | null; onChange: (value: number | null) => void };
 
 type AutocompleteProps = {

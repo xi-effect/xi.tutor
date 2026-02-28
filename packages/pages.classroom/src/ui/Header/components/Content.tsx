@@ -42,19 +42,39 @@ const CallButton = ({ classroom }: { classroom: ClassroomTutorResponseSchema }) 
   const { startCall } = useStartCall();
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
 
+  const handleCallClick = useCallback(async () => {
+    try {
+      // Запускаем процесс создания токена, сохранения в store и навигации
+      await startCall({ classroom_id: classroom.id.toString() });
+    } catch (error) {
+      console.error('Ошибка при запуске звонка:', error);
+      // Здесь можно добавить показ уведомления об ошибке
+    }
+  }, [startCall, classroom.id]);
+
+  // Перехват параметра goto=call
+  useEffect(() => {
+    const searchParams = search as any;
+
+    if (searchParams.goto && searchParams.goto === 'call') {
+      // Очищаем только goto параметр
+      const url = new URL(window.location.href);
+      url.searchParams.delete('goto');
+      window.history.replaceState({}, '', url.toString());
+
+      // Запускаем звонок
+      setTimeout(() => {
+        handleCallClick();
+      }, 100);
+    }
+  }, [search, handleCallClick]);
+
   const { isConferenceNotActive: isConferenceNotActiveStudent, isLoading: isLoadingStudent } =
     useGetParticipantsByStudent(classroom.id.toString(), isTutor);
   const { isConferenceNotActive: isConferenceNotActiveTutor, isLoading: isLoadingTutor } =
     useGetParticipantsByTutor(classroom.id.toString(), !isTutor);
 
-  const getDisplayName = () => {
-    if (classroom.kind === 'individual') {
-      return `${classroom.student.first_name} ${classroom.student.last_name}`;
-    } else {
-      return classroom.name;
-    }
-  };
-
+  const navigate = useNavigate();
   const searchCall = useSearch({ strict: false }) as { call?: string };
   const params = useParams({ strict: false }) as {
     callId?: string;
@@ -62,7 +82,6 @@ const CallButton = ({ classroom }: { classroom: ClassroomTutorResponseSchema }) 
     boardId?: string;
   };
   const { call } = searchCall;
-  const navigate = useNavigate();
   const updateStore = useCallStore((state) => state.updateStore);
 
   const activeClassroom = useCallStore((state) => state.activeClassroom);
@@ -96,38 +115,6 @@ const CallButton = ({ classroom }: { classroom: ClassroomTutorResponseSchema }) 
     });
   };
 
-  const handleCallClick = useCallback(async () => {
-    try {
-      // Запускаем процесс создания токена, сохранения в store и навигации
-      await startCall({ classroom_id: classroom.id.toString() });
-    } catch (error) {
-      console.error('Ошибка при запуске звонка:', error);
-      // Здесь можно добавить показ уведомления об ошибке
-    }
-  }, [startCall, classroom.id]);
-
-  // Перехват параметра goto=call
-  useEffect(() => {
-    const searchParams = search as any;
-
-    if (searchParams.goto && searchParams.goto === 'call') {
-      // Очищаем только goto параметр
-      const url = new URL(window.location.href);
-      url.searchParams.delete('goto');
-      window.history.replaceState({}, '', url.toString());
-
-      // Запускаем звонок
-      setTimeout(() => {
-        handleCallClick();
-      }, 100);
-    }
-  }, [search, handleCallClick]);
-
-  const { isConferenceNotActive: isConferenceNotActiveStudent, isLoading: isLoadingStudent } =
-    useGetParticipantsByStudent(classroom.id.toString(), isTutor);
-  const { isConferenceNotActive: isConferenceNotActiveTutor, isLoading: isLoadingTutor } =
-    useGetParticipantsByTutor(classroom.id.toString(), !isTutor);
-
   return (
     <div className="flex w-full flex-row items-end gap-2">
       {isLoadingStudent || isLoadingTutor ? (
@@ -137,7 +124,7 @@ const CallButton = ({ classroom }: { classroom: ClassroomTutorResponseSchema }) 
           size="s"
           variant="primary"
           className="group w-full pr-2 pl-2"
-          onClick={handleCallClick}
+          onClick={isCallActive ? handleBackToRoom : handleCallClick}
           disabled={!isTutor && isConferenceNotActiveStudent}
           data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
           data-umami-event-classroom-id={classroom.id}
@@ -149,7 +136,7 @@ const CallButton = ({ classroom }: { classroom: ClassroomTutorResponseSchema }) 
               !isTutor && isConferenceNotActiveStudent && 'fill-gray-40',
             )}
           />
-          {getButtonLabel(isTutor, isConferenceNotActiveTutor)}
+          {getButtonLabel(isTutor, isConferenceNotActiveTutor, isCallActive)}
         </Button>
       )}
     </div>
@@ -198,31 +185,8 @@ export const Content = ({ classroom }: ContentProps) => {
         </div>
       </div>
 
-      <div className="ml-auto flex flex-col items-end gap-2">
-        <div className="flex flex-row items-end gap-2">
-          {isLoadingStudent || isLoadingTutor ? (
-            <Button size="s" className="group mt-auto w-full" disabled loading />
-          ) : (
-            <Button
-              size="s"
-              variant="primary"
-              className="group w-full pr-2 pl-2"
-              onClick={isCallActive ? handleBackToRoom : handleCallClick}
-              disabled={!isTutor && isConferenceNotActiveStudent}
-              data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
-              data-umami-event-classroom-id={classroom.id}
-            >
-              <Conference
-                size="sm"
-                className={cn(
-                  'group-hover:fill-gray-0 fill-brand-0 mr-1.5',
-                  !isTutor && isConferenceNotActiveStudent && 'fill-gray-40',
-                )}
-              />
-              {getButtonLabel(isTutor, isConferenceNotActiveTutor, isCallActive)}
-            </Button>
-          )}
-        </div>
+      <div className="ml-auto hidden flex-col items-end gap-2 sm:flex">
+        <CallButton classroom={classroom} />
       </div>
     </div>
   );
