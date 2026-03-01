@@ -69,9 +69,9 @@ export const Header = () => {
   const handleBack = () => {
     if (focusMode) setFocusMode(false);
     if (classroomId) {
-      router.navigate({ to: '/classrooms/$classroomId/', params: { classroomId } });
+      router.navigate({ to: '/classrooms/$classroomId', params: { classroomId } });
     } else {
-      router.navigate({ to: '/materials/' });
+      router.navigate({ to: '/materials' });
     }
   };
 
