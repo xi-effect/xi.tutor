@@ -75,13 +75,12 @@ const CallButton = ({ classroom }: { classroom: ClassroomTutorResponseSchema }) 
     useGetParticipantsByTutor(classroom.id.toString(), !isTutor);
 
   const navigate = useNavigate();
-  const searchCall = useSearch({ strict: false }) as { call?: string };
+  const { call } = useSearch({ strict: false }) as { call?: string };
   const params = useParams({ strict: false }) as {
     callId?: string;
     classroomId?: string;
     boardId?: string;
   };
-  const { call } = searchCall;
   const updateStore = useCallStore((state) => state.updateStore);
 
   const activeClassroom = useCallStore((state) => state.activeClassroom);

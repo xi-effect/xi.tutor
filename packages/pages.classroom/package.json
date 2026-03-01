@@ -39,7 +39,6 @@
     "features.materials.card": "workspace:*",
     "features.payment.approve": "workspace:*",
     "features.table": "workspace:*",
-    "livekit-client": "2.15.6",
     "modules.calendar": "workspace:*",
     "modules.calls": "workspace:*",
     "modules.editor": "workspace:*",

@@ -3355,9 +3355,6 @@ importers:
       features.table:
         specifier: workspace:*
         version: link:../features.table
-      livekit-client:
-        specifier: 2.15.6
-        version: 2.15.6(@types/dom-mediacapture-record@1.0.22)
       modules.calendar:
         specifier: workspace:*
         version: link:../modules.calendar
