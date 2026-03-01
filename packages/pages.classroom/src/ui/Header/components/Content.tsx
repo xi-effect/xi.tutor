@@ -8,7 +8,7 @@ import { IndividualUser } from './IndividualUser';
 import { Button } from '@xipkg/button';
 import { SubjectBadge } from './SubjectBadge';
 import { useStartCall } from 'modules.calls';
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef } from 'react';
 import { useSearch } from '@tanstack/react-router';
 import { StatusBadge } from '../../StatusBadge';
 import { ContactsBadge } from './ContactsBadge';
@@ -35,7 +35,6 @@ const CallButton = ({ classroom }: { classroom: ClassroomTutorResponseSchema }) 
   const isTutor = user?.default_layout === 'tutor';
 
   const { startCall } = useStartCall();
-  const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
 
   const handleCallClick = useCallback(async () => {
     try {
@@ -46,23 +45,6 @@ const CallButton = ({ classroom }: { classroom: ClassroomTutorResponseSchema }) 
       // Здесь можно добавить показ уведомления об ошибке
     }
   }, [startCall, classroom.id]);
-
-  // Перехват параметра goto=call
-  useEffect(() => {
-    const searchParams = search as any;
-
-    if (searchParams.goto && searchParams.goto === 'call') {
-      // Очищаем только goto параметр
-      const url = new URL(window.location.href);
-      url.searchParams.delete('goto');
-      window.history.replaceState({}, '', url.toString());
-
-      // Запускаем звонок
-      setTimeout(() => {
-        handleCallClick();
-      }, 100);
-    }
-  }, [search, handleCallClick]);
 
   const { isConferenceNotActive: isConferenceNotActiveStudent, isLoading: isLoadingStudent } =
     useGetParticipantsByStudent(classroom.id.toString(), isTutor);
@@ -100,6 +82,26 @@ const CallButton = ({ classroom }: { classroom: ClassroomTutorResponseSchema }) 
 export const Content = ({ classroom }: ContentProps) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const { startCall } = useStartCall();
+  const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
+  const hasHandledGotoCallRef = useRef(false);
+
+  // Единая обработка goto=call (один раз на страницу), чтобы не дублировать запрос при двух рендерах CallButton (мобильный + десктоп)
+  useEffect(() => {
+    const searchParams = search as { goto?: string };
+    if (hasHandledGotoCallRef.current || !searchParams.goto || searchParams.goto !== 'call') {
+      return;
+    }
+    hasHandledGotoCallRef.current = true;
+    const url = new URL(window.location.href);
+    url.searchParams.delete('goto');
+    window.history.replaceState({}, '', url.toString());
+    setTimeout(() => {
+      startCall({ classroom_id: classroom.id.toString() }).catch((error) => {
+        console.error('Ошибка при запуске звонка (goto=call):', error);
+      });
+    }, 100);
+  }, [search, startCall, classroom.id]);
 
   const getDisplayName = () => {
     if (classroom.kind === 'individual') {
