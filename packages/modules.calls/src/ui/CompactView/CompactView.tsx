@@ -12,6 +12,7 @@ import {
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { RoomAudioRenderer } from '@livekit/components-react';
 import { CompactCall } from './CompactCall';
+import { Chat } from '../Chat/Chat';
 import { PermissionsDialog } from '../shared/PermissionsDialog';
 import { useCallStore } from '../../store/callStore';
 import type { Corner } from '../../store/callStore';
@@ -23,6 +24,13 @@ import { useParticipantJoinSync } from '../../hooks/useParticipantJoinSync';
 
 type CompactViewProps = {
   children: React.ReactNode;
+};
+
+const OPPOSITE_CORNER: Record<Corner, Corner> = {
+  'top-left': 'top-right',
+  'top-right': 'top-left',
+  'bottom-left': 'bottom-right',
+  'bottom-right': 'bottom-left',
 };
 
 const DroppableCorner = ({ id, className }: { id: string; className: string }) => {
@@ -108,10 +116,10 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
     }
   };
 
-  const getCornerPosition = (corner: Corner) => {
-    const isBoardPage = router.state.location.pathname.includes('/board');
-    const bottomOffset = isBoardPage ? 'bottom-[72px]' : 'bottom-4';
+  const isBoardPage = router.state.location.pathname.includes('/board');
+  const bottomOffset = isBoardPage ? 'bottom-[72px]' : 'bottom-4';
 
+  const getCornerPosition = (corner: Corner) => {
     switch (corner) {
       case 'top-left':
         return 'top-16 left-4';
@@ -122,6 +130,13 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
       case 'bottom-right':
         return `${bottomOffset} right-4`;
     }
+  };
+
+  /** Противоположный угол для чата (та же логика позиционирования, другой угол) */
+  const getChatPositionClasses = (corner: Corner) => {
+    const opposite = OPPOSITE_CORNER[corner];
+    const horizontal = opposite.includes('left') ? 'left-22' : 'right-4';
+    return `top-32 ${bottomOffset} ${horizontal}`;
   };
 
   return (
@@ -145,6 +160,8 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
         ) : (
           <>
             <DroppableAreas />
+            {/* Чат в противоположном углу, те же правила позиционирования что и компакт-ВКС */}
+            <Chat compactPositionClassName={getChatPositionClasses(activeCorner)} />
             <div
               className={`absolute z-100 ${getCornerPosition(activeCorner)} transition-all duration-500 ease-out`}
             >

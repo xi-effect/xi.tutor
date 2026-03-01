@@ -7,7 +7,7 @@ import { CompactCallCollapsedBar } from './CompactCallCollapsedBar';
 import { CompactNavigationControls } from './CompactNavigationControls';
 import { CompactMultiViewControls } from './CompactMultiViewControls';
 import { ParticipantTile } from '../Participant';
-import { TILE_GAP_PX } from './constants';
+import { TILE_GAP_PX, TILE_HEIGHT_16_9_PX } from './constants';
 
 type CompactCallVideoAreaProps = {
   isMobile: boolean;
@@ -83,10 +83,11 @@ export function CompactCallVideoArea({
       className={cn(
         'group relative mb-2 flex overflow-hidden rounded-2xl',
         withOutShadows ? '' : 'shadow-lg',
-        isMobile ? 'h-auto w-full items-center justify-center' : 'w-[320px] cursor-move flex-col',
-        !isMobile && compactViewMode === 'basic' && 'h-[180px]',
+        isMobile ? 'h-auto w-full items-center justify-center' : 'w-[360px] cursor-move flex-col',
+        !isMobile && compactViewMode === 'basic' && 'shrink-0',
         !isMobile && compactViewMode === 'expanded' && 'h-auto',
       )}
+      style={!isMobile && compactViewMode === 'basic' ? { height: TILE_HEIGHT_16_9_PX } : undefined}
     >
       {isMobile ? (
         currentParticipant ? (

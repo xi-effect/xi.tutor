@@ -12,6 +12,6 @@ export const TILES_PADDING_PX = 16;
 export const TILE_MIN_HEIGHT_PX = 120;
 export const TILE_GAP_PX = 8;
 
-/** Ширина панели компакт-ВКС; высота плитки 16:9 при этой ширине */
-export const COMPACT_PANEL_WIDTH_PX = 320;
-export const TILE_HEIGHT_16_9_PX = Math.round((COMPACT_PANEL_WIDTH_PX * 9) / 16); // 180
+/** Ширина панели компакт-ВКС (с запасом под кнопку чата); высота плитки 16:9 при этой ширине */
+export const COMPACT_PANEL_WIDTH_PX = 360;
+export const TILE_HEIGHT_16_9_PX = Math.round((COMPACT_PANEL_WIDTH_PX * 9) / 16); // 203 при ширине 360

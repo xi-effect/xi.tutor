@@ -13,6 +13,7 @@ import { cn } from '@xipkg/utils';
 import { DevicesBar } from '../shared';
 import { DisconnectButton } from '../Bottom/DisconnectButton';
 import { ScreenShareButton } from '../Bottom/ScreenShareButton';
+import { ChatButton } from '../Bottom/ChatButton';
 import { RaiseHandButton } from '../Bottom/RaiseHandButton';
 
 type CompactCallDevicesProps = {
@@ -122,6 +123,7 @@ export function CompactCallBottomBar({
 
       <div className={cn(barCn, 'ml-auto')}>
         <ScreenShareButton className="h-[32px] w-[32px]" />
+        <ChatButton className="h-8 w-8 min-w-8 rounded-xl" />
         <RaiseHandButton className="h-[32px] w-[32px]" />
       </div>
 

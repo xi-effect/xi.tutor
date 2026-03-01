@@ -11,7 +11,12 @@ import { useCurrentUser } from 'common.services';
 import { cn, useMediaQuery } from '@xipkg/utils';
 import { parseLinks } from '../../utils/chat';
 
-export const Chat = () => {
+type ChatProps = {
+  /** В компакт-режиме: классы позиционирования (как у CompactCall: top-16 bottom-4 left-4 и т.д.) */
+  compactPositionClassName?: string;
+};
+
+export const Chat = ({ compactPositionClassName }: ChatProps = {}) => {
   const [messageText, setMessageText] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { sendChatMessage, closeChat } = useChat();
@@ -168,6 +173,19 @@ export const Chat = () => {
           <div className="flex min-h-0 flex-1 flex-col overflow-hidden">{chatContent}</div>
         </ModalContent>
       </Modal>
+    );
+  }
+
+  if (compactPositionClassName) {
+    return (
+      <div
+        className={cn(
+          'border-gray-20 bg-gray-0 fixed z-100 flex min-h-0 w-[328px] flex-col overflow-hidden rounded-2xl border p-4 pr-1 shadow-lg',
+          compactPositionClassName,
+        )}
+      >
+        {chatContent}
+      </div>
     );
   }
 
