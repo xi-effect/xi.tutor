@@ -3,7 +3,6 @@ import type { LocalAudioTrack, RemoteAudioTrack } from 'livekit-client';
 import { Participant, Track } from 'livekit-client';
 import { ChevronBottom, MicrophoneOff, RedLine } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { ParticipantName, TrackMutedIndicator } from '../Participant';
 import { RaisedHandIndicator } from '../Participant/RaisedHandIndicator';
 import { cn } from '@xipkg/utils';
@@ -75,20 +74,15 @@ export function CompactCallCollapsedBar({
           <div className="bg-brand-60 h-2 w-12 rounded-full" />
         )}
       </div>
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            size="icon"
-            variant="none"
-            onClick={onExpand}
-            className="bg-brand-100 hover:bg-gray-20 h-8 w-8 shrink-0 rounded-xl p-0 text-gray-100"
-            aria-label="Развернуть"
-          >
-            <ChevronBottom className="fill-gray-0 h-4 w-4" />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent>Развернуть</TooltipContent>
-      </Tooltip>
+      <Button
+        size="icon"
+        variant="none"
+        onClick={onExpand}
+        className="bg-brand-100 hover:bg-brand-100/80 h-8 w-8 shrink-0 rounded-xl p-0 text-gray-100"
+        aria-label="Развернуть"
+      >
+        <ChevronBottom className="fill-gray-0 h-4 w-4" />
+      </Button>
     </div>
   );
 }

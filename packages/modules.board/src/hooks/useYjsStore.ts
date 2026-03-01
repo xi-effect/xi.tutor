@@ -234,7 +234,6 @@ export function useYjsStore({
 
   const undoManagerRef = useRef<Y.UndoManager | null>(null);
   const suppressSyncRef = useRef(false);
-
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
 
@@ -457,7 +456,6 @@ export function useYjsStore({
 
           const presenceToSend = enrichPresenceWithBackendId(pendingPresence);
           awareness.setLocalStateField('presence', presenceToSend);
-          // Свою presence кладём и в store, чтобы свой аватар отображался в CollaboratorAvatars
           store.put([presenceToSend]);
           pendingPresence = null;
         };

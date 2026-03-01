@@ -1,6 +1,5 @@
 import type { TrackReferenceOrPlaceholder } from '@livekit/components-core';
 import { Button } from '@xipkg/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { ChevronUp } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { CompactCallCollapsedBar } from './CompactCallCollapsedBar';
@@ -140,20 +139,15 @@ export function CompactCallVideoArea({
       )}
 
       {isMobile && (
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              size="icon"
-              variant="none"
-              onClick={() => onCollapsedChange(true)}
-              className="bg-brand-100 hover:bg-gray-20 absolute top-2 right-2 z-10 h-8 w-8 rounded-xl p-0 text-gray-100"
-              aria-label="Свернуть"
-            >
-              <ChevronUp className="fill-gray-0 h-4 w-4" />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Свернуть</TooltipContent>
-        </Tooltip>
+        <Button
+          size="icon"
+          variant="none"
+          onClick={() => onCollapsedChange(true)}
+          className="bg-brand-100 hover:bg-brand-100/80 absolute top-2 right-2 z-10 h-8 w-8 rounded-xl p-0 text-gray-100"
+          aria-label="Свернуть"
+        >
+          <ChevronUp className="fill-gray-0 h-4 w-4" />
+        </Button>
       )}
 
       {totalParticipants > 0 && (isMobile || compactViewMode === 'basic') && (
