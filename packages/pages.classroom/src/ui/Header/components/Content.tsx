@@ -1,15 +1,11 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-// import { Badge } from '@xipkg/badge';
 import { Conference } from '@xipkg/icons';
 import { ClassroomTutorResponseSchema } from 'common.api';
-// import { handleTelegramClick } from '../../../utils/header';
 import { IndividualUser } from './IndividualUser';
-// import { EditableDescription } from './EditableDescription';
 import { Button } from '@xipkg/button';
 import { SubjectBadge } from './SubjectBadge';
-import { useStartCall } from 'modules.calls';
 import { useEffect, useCallback, useRef } from 'react';
-import { useSearch } from '@tanstack/react-router';
+import { useCallStore, useStartCall } from 'modules.calls';
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { StatusBadge } from '../../StatusBadge';
 import { ContactsBadge } from './ContactsBadge';
 import { cn } from '@xipkg/utils';
@@ -23,9 +19,14 @@ interface ContentProps {
   classroom: ClassroomTutorResponseSchema;
 }
 
-const getButtonLabel = (isTutor: boolean, isConferenceNotActiveTutor: boolean) => {
+const getButtonLabel = (
+  isTutor: boolean,
+  isConferenceNotActiveTutor: boolean,
+  isCallActive: boolean,
+) => {
   // Преподаватель и конференция не активна
   if (isTutor && isConferenceNotActiveTutor) return 'Начать занятие';
+  if (isCallActive) return 'Вернутся в конференцию';
 
   return 'Присоединиться';
 };
@@ -51,6 +52,46 @@ const CallButton = ({ classroom }: { classroom: ClassroomTutorResponseSchema }) 
   const { isConferenceNotActive: isConferenceNotActiveTutor, isLoading: isLoadingTutor } =
     useGetParticipantsByTutor(classroom.id.toString(), !isTutor);
 
+  const navigate = useNavigate();
+  const { call } = useSearch({ strict: false }) as { call?: string };
+  const params = useParams({ strict: false }) as {
+    callId?: string;
+    classroomId?: string;
+    boardId?: string;
+  };
+  const updateStore = useCallStore((state) => state.updateStore);
+
+  const activeClassroom = useCallStore((state) => state.activeClassroom);
+  const isStarted = useCallStore((state) => state.isStarted);
+  const token = useCallStore((state) => state.token);
+
+  const normalizedCallId = typeof call === 'string' ? call.replace(/^"|"$/g, '').trim() : undefined;
+
+  const isCallActive = Boolean(isStarted && token && normalizedCallId === classroom.id.toString());
+
+  const handleBackToRoom = () => {
+    if (!token || !isStarted) {
+      return;
+    }
+
+    const targetCallId =
+      normalizedCallId ||
+      activeClassroom ||
+      params.classroomId ||
+      params.callId ||
+      classroom.id.toString();
+
+    updateStore('localFullView', true);
+    updateStore('mode', 'full');
+
+    navigate({
+      to: '/call/$callId',
+      params: { callId: targetCallId },
+      search: { call: targetCallId },
+      replace: true,
+    });
+  };
+
   return (
     <div className="flex w-full flex-row items-end gap-2">
       {isLoadingStudent || isLoadingTutor ? (
@@ -60,7 +101,7 @@ const CallButton = ({ classroom }: { classroom: ClassroomTutorResponseSchema }) 
           size="s"
           variant="primary"
           className="group w-full pr-2 pl-2"
-          onClick={handleCallClick}
+          onClick={isCallActive ? handleBackToRoom : handleCallClick}
           disabled={!isTutor && isConferenceNotActiveStudent}
           data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
           data-umami-event-classroom-id={classroom.id}
@@ -72,7 +113,7 @@ const CallButton = ({ classroom }: { classroom: ClassroomTutorResponseSchema }) 
               !isTutor && isConferenceNotActiveStudent && 'fill-gray-40',
             )}
           />
-          {getButtonLabel(isTutor, isConferenceNotActiveTutor)}
+          {getButtonLabel(isTutor, isConferenceNotActiveTutor, isCallActive)}
         </Button>
       )}
     </div>

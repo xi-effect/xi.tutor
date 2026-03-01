@@ -3375,7 +3375,7 @@ importers:
         version: 19.2.4
       react-hook-form:
         specifier: ^7
-        version: 7.71.2(react@19.2.4)
+        version: 7.55.0(react@19.2.4)
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0
@@ -3948,6 +3948,9 @@ importers:
       features.materials.duplicate:
         specifier: workspace:*
         version: link:../features.materials.duplicate
+      modules.calls:
+        specifier: workspace:*
+        version: link:../modules.calls
       pages.classrooms:
         specifier: workspace:*
         version: link:../pages.classrooms
