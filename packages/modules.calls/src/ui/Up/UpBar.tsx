@@ -102,13 +102,16 @@ export const UpBar = () => {
           <Button
             id={ONBOARDING_IDS.BACK_BUTTON}
             onClick={() => {
-              if (focusMode) setFocusMode(false);
+              if (focusMode) {
+                setFocusMode(false);
+              }
               navigate({
                 to: '/classrooms/$classroomId',
                 params: { classroomId: callId ?? '' },
                 search: { tab: 'overview', call: callId },
               });
-              updateStore('mode', 'compact');
+              // Ставим mode после смены маршрута, иначе эффект в Call.tsx видит «страница звонка + compact» и сбрасывает в full
+              setTimeout(() => updateStore('mode', 'compact'), 0);
             }}
             type="button"
             variant="none"

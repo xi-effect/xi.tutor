@@ -41,6 +41,9 @@ type useCallStoreT = {
   carouselType: 'grid' | 'horizontal' | 'vertical';
   activeCorner: Corner;
 
+  /** Режим вида компакт-ВКС на десктопе: одна плитка или развёрнутый список (учёт при DnD) */
+  compactViewMode: 'basic' | 'expanded';
+
   // Текущая активная доска (для синхронизации с новыми участниками)
   activeBoardId: string | undefined;
   activeClassroom: string | undefined;
@@ -90,6 +93,7 @@ export const useCallStore = create<useCallStoreT>()(
       mode: 'full',
       carouselType: 'grid',
       activeCorner: 'top-left',
+      compactViewMode: 'basic',
 
       // Текущая активная доска
       activeBoardId: undefined,

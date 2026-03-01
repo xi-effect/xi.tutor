@@ -28,6 +28,7 @@ import { ParticipantName } from './ParticipantName';
 import { RaisedHandIndicator } from './RaisedHandIndicator';
 import { ScreenShareZoom } from './ScreenShareZoom';
 import { useCallStore } from '../../store/callStore';
+import { isLocal } from '../../utils/livekit';
 import { cn } from '@xipkg/utils';
 
 type TrackRefContextIfNeededPropsT = {
@@ -273,9 +274,11 @@ export const ParticipantTile = ({
                             `absolute inset-0 h-full w-full object-cover object-center ${getVideoClassName()}`,
                           )}
                           style={{
-                            ...(trackReference.source === Track.Source.Camera && {
-                              transform: 'rotateY(180deg)',
-                            }),
+                            // Зеркалим только локальное превью (как в зеркале); остальные и демонстрация — без зеркала
+                            ...(trackReference.source === Track.Source.Camera &&
+                              isLocal(trackReference.participant) && {
+                                transform: 'rotateY(180deg)',
+                              }),
                             boxSizing: 'border-box',
                             background: 'var(--xi-bg-gray-100)',
                             backgroundColor: 'var(--xi-bg-gray-100)',

@@ -1,90 +1,61 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDraggable } from '@dnd-kit/core';
 import { CSS } from '@dnd-kit/utilities';
-import { DevicesBar } from '../shared';
 import {
   useLocalParticipant,
   usePersistentUserChoices,
   useTrackToggle,
 } from '@livekit/components-react';
 import { LocalAudioTrack, LocalVideoTrack, Track } from 'livekit-client';
-import { DisconnectButton } from '../Bottom/DisconnectButton';
-import { useCompactNavigation } from '../../hooks/useCompactNavigation';
-import { Maximize, WhiteBoard } from '@xipkg/icons';
-import { Button } from '@xipkg/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from '@xipkg/dropdown';
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useCallStore } from '../../store/callStore';
-import { CompactNavigationControls } from './CompactNavigationControls';
-import { ParticipantTile } from '../Participant';
-import { ScreenShareButton } from '../Bottom/ScreenShareButton';
-import { RaiseHandButton } from '../Bottom/RaiseHandButton';
-import { useVideoBlur, useModeSync } from '../../hooks';
+import { useCompactNavigation } from '../../hooks/useCompactNavigation';
+import { useCompactAvailableHeight, useVideoBlur, useModeSync } from '../../hooks';
 import { useRoom } from '../../providers/RoomProvider';
 import { useCurrentUser } from 'common.services';
+import { useMedia } from 'common.utils';
+import { CompactCallVideoArea } from './CompactCallVideoArea';
+import { CompactCallBottomBar } from './CompactCallBottomBar';
+import { TILE_GAP_PX, TILE_HEIGHT_16_9_PX } from './constants';
 
-export const CompactCall = ({ saveUserChoices = true }) => {
+export const CompactCall = ({ saveUserChoices = true, withOutShadows = false }) => {
+  const isMobile = useMedia('(max-width: 720px)');
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: 'draggable-call',
+    disabled: isMobile,
   });
-
-  const style = {
-    transform: CSS.Translate.toString(transform),
-  };
+  const style = isMobile ? undefined : { transform: CSS.Translate.toString(transform) };
 
   const { saveAudioInputEnabled, saveVideoInputEnabled } = usePersistentUserChoices({
     preventSave: !saveUserChoices,
   });
-
   const { isMicrophoneEnabled, isCameraEnabled, microphoneTrack, cameraTrack } =
     useLocalParticipant();
-
   const videoTrack = cameraTrack?.track as LocalVideoTrack | undefined;
 
-  // Применяем блюр только в компактном режиме
   const mode = useCallStore((state) => state.mode);
-  const videoTrackForBlur = mode === 'compact' ? videoTrack : null;
-  useVideoBlur(videoTrackForBlur);
+  useVideoBlur(mode === 'compact' ? videoTrack : null);
 
-  // Используем useTrackToggle для правильного управления треками (как в BottomBar)
   const microphoneToggle = useTrackToggle({
     source: Track.Source.Microphone,
     onChange: (enabled: boolean, isUserInitiated: boolean) => {
-      if (isUserInitiated) {
-        saveAudioInputEnabled(enabled);
-      }
+      if (isUserInitiated) saveAudioInputEnabled(enabled);
     },
   });
-
   const cameraToggle = useTrackToggle({
     source: Track.Source.Camera,
     onChange: (enabled: boolean, isUserInitiated: boolean) => {
-      if (isUserInitiated) {
-        saveVideoInputEnabled(enabled);
-      }
+      if (isUserInitiated) saveVideoInputEnabled(enabled);
     },
   });
 
-  // Обработчики включения/выключения (как в BottomBar)
-  const handleMicrophoneToggle = useCallback(async () => {
-    microphoneToggle.toggle();
-  }, [microphoneToggle]);
+  const handleMicrophoneToggle = useCallback(() => microphoneToggle.toggle(), [microphoneToggle]);
+  const handleCameraToggle = useCallback(() => cameraToggle.toggle(), [cameraToggle]);
 
-  const handleCameraToggle = useCallback(async () => {
-    cameraToggle.toggle();
-  }, [cameraToggle]);
-
-  // Навигация по участникам (только если есть комната)
   const navigation = useCompactNavigation();
   const {
     currentParticipant,
+    participants,
     currentIndex,
     totalParticipants,
     canGoNext,
@@ -93,16 +64,30 @@ export const CompactCall = ({ saveUserChoices = true }) => {
     goToPrev,
   } = navigation;
 
-  const search = useSearch({ strict: false }) as { call?: string };
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const compactViewMode = useCallStore((state) => state.compactViewMode);
+  const updateStore = useCallStore((state) => state.updateStore);
+  const setCompactViewMode = useCallback(
+    (mode: 'basic' | 'expanded') => updateStore('compactViewMode', mode),
+    [updateStore],
+  );
+  const [multiScrollIndex, setMultiScrollIndex] = useState(0);
+
+  const currentAudioTrack = currentParticipant?.participant?.getTrackPublication(
+    Track.Source.Microphone,
+  )?.track as
+    | import('livekit-client').RemoteAudioTrack
+    | import('livekit-client').LocalAudioTrack
+    | undefined;
+
   const params = useParams({ strict: false }) as {
     callId?: string;
     classroomId?: string;
     boardId?: string;
   };
+  const search = useSearch({ strict: false }) as { call?: string };
   const { call } = search;
-
   const navigate = useNavigate();
-  const updateStore = useCallStore((state) => state.updateStore);
   const { syncModeToOthers } = useModeSync();
   const activeBoardId = useCallStore((state) => state.activeBoardId);
   const activeClassroom = useCallStore((state) => state.activeClassroom);
@@ -115,6 +100,31 @@ export const CompactCall = ({ saveUserChoices = true }) => {
   const showBackToBoardButton =
     mode === 'compact' && !!activeBoardId && !!activeClassroom && !isOnBoardPage;
 
+  const availableHeight = useCompactAvailableHeight(isOnBoardPage);
+
+  const multiViewLayout = useMemo(() => {
+    const count = Math.max(
+      1,
+      Math.floor((availableHeight + TILE_GAP_PX) / (TILE_HEIGHT_16_9_PX + TILE_GAP_PX)),
+    );
+    const visibleCount = Math.min(count, totalParticipants);
+    return { visibleCount, tileHeightPx: TILE_HEIGHT_16_9_PX };
+  }, [availableHeight, totalParticipants]);
+
+  const { visibleCount: multiVisibleCount, tileHeightPx: multiTileHeightPx } = multiViewLayout;
+  const multiCanPrev = multiScrollIndex > 0;
+  const multiCanNext = multiScrollIndex + multiVisibleCount < totalParticipants;
+  const multiVisibleParticipants = participants.slice(
+    multiScrollIndex,
+    multiScrollIndex + multiVisibleCount,
+  );
+
+  useEffect(() => {
+    if (multiScrollIndex + multiVisibleCount > totalParticipants && totalParticipants > 0) {
+      setMultiScrollIndex(Math.max(0, totalParticipants - multiVisibleCount));
+    }
+  }, [totalParticipants, multiVisibleCount, multiScrollIndex]);
+
   const handleBackToBoard = useCallback(() => {
     if (!activeBoardId || !activeClassroom) return;
     navigate({
@@ -124,169 +134,106 @@ export const CompactCall = ({ saveUserChoices = true }) => {
     });
   }, [activeBoardId, activeClassroom, navigate]);
 
-  const handleMaximize = (syncToAll: boolean = false) => {
-    if (!room || !token || room.state !== 'connected') {
-      return;
-    }
-
-    const targetCallId =
-      (typeof call === 'string' ? call.replace(/^"|"$/g, '').trim() : '') ||
-      activeClassroom ||
-      params.classroomId ||
-      params.callId ||
-      '';
-
-    if (syncToAll && isTutor && activeBoardId && targetCallId) {
-      // «Всех участников» — сбрасываем доску на сервере для всех
-      updateStore('localFullView', false);
-      updateStore('mode', 'full');
-      updateStore('activeBoardId', undefined);
-      updateStore('activeClassroom', undefined);
-      syncModeToOthers('full', undefined, targetCallId);
-    } else {
-      // «Только меня» — только локальный вид, комната на сервере остаётся на доске
-      updateStore('localFullView', true);
-      updateStore('mode', 'full');
-      // activeBoardId/activeClassroom не трогаем — нужны для кнопки «К доске»
-    }
-
-    navigate({
-      to: '/call/$callId',
-      params: { callId: targetCallId },
-      ...(targetCallId ? { search: { call: targetCallId } } : {}),
-      replace: true,
-    });
-  };
+  const handleMaximize = useCallback(
+    (syncToAll: boolean = false) => {
+      if (!room || !token || room.state !== 'connected') return;
+      const targetCallId =
+        (typeof call === 'string' ? call.replace(/^"|"$/g, '').trim() : '') ||
+        activeClassroom ||
+        params.classroomId ||
+        params.callId ||
+        '';
+      if (syncToAll && isTutor && activeBoardId && targetCallId) {
+        updateStore('localFullView', false);
+        updateStore('mode', 'full');
+        updateStore('activeBoardId', undefined);
+        updateStore('activeClassroom', undefined);
+        syncModeToOthers('full', undefined, targetCallId);
+      } else {
+        updateStore('localFullView', true);
+        updateStore('mode', 'full');
+      }
+      navigate({
+        to: '/call/$callId',
+        params: { callId: targetCallId },
+        ...(targetCallId ? { search: { call: targetCallId } } : {}),
+        replace: true,
+      });
+    },
+    [
+      room,
+      token,
+      call,
+      activeClassroom,
+      params.classroomId,
+      params.callId,
+      isTutor,
+      activeBoardId,
+      updateStore,
+      syncModeToOthers,
+      navigate,
+    ],
+  );
 
   return (
-    <div ref={setNodeRef} style={style} className="compact-call-container flex w-[320px] flex-col">
-      {/* Ручка перетаскивания — только эта область запускает dnd, кнопки не срабатывают при отпускании */}
-      <div
-        {...attributes}
-        {...listeners}
-        className="group relative mb-2 flex h-[180px] w-[320px] cursor-move items-center justify-center overflow-hidden rounded-2xl shadow-lg"
-      >
-        {currentParticipant ? (
-          <ParticipantTile
-            trackRef={currentParticipant}
-            participant={currentParticipant.participant}
-            className="h-full w-full"
-            isFocusToggleDisable={true}
-          />
-        ) : (
-          <div className="bg-gray-40 flex h-full w-full items-center justify-center text-gray-100">
-            <span className="text-sm">Нет участников</span>
-          </div>
-        )}
-
-        {/* Элементы управления навигацией - только если есть участники */}
-        {totalParticipants > 0 && (
-          <CompactNavigationControls
-            canPrev={canGoPrev}
-            canNext={canGoNext}
-            onPrev={goToPrev}
-            onNext={goToNext}
-            currentIndex={currentIndex}
-            totalParticipants={totalParticipants}
-          />
-        )}
-      </div>
-      <div className="flex h-[40px] flex-row">
-        <div className="bg-gray-0 border-gray-20 flex items-center justify-center gap-1 rounded-2xl border p-1 shadow-lg">
-          <DevicesBar
-            className="h-[32px] w-[32px]"
-            microTrack={microphoneTrack?.track as LocalAudioTrack}
-            microEnabled={isMicrophoneEnabled}
-            microTrackToggle={{
-              showIcon: true,
-              source: Track.Source.Microphone,
-              onChange: handleMicrophoneToggle,
-            }}
-            videoTrack={cameraTrack?.track as unknown as LocalVideoTrack}
-            videoEnabled={isCameraEnabled}
-            videoTrackToggle={{
-              showIcon: true,
-              source: Track.Source.Camera,
-              onChange: handleCameraToggle,
-            }}
-          />
-        </div>
-        {showBackToBoardButton && (
-          <div className="bg-gray-0 border-gray-20 ml-1 flex items-center justify-center rounded-2xl border p-1 shadow-lg">
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="icon"
-                  variant="primary"
-                  className="h-8 w-8 rounded-xl p-0"
-                  onClick={handleBackToBoard}
-                  aria-label="На доску"
-                >
-                  <WhiteBoard className="fill-gray-0 h-5 w-5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Обратно на доску</TooltipContent>
-            </Tooltip>
-          </div>
-        )}
-        <div className="bg-gray-0 border-gray-20 ml-auto flex items-center justify-center rounded-2xl border p-1 shadow-lg">
-          <ScreenShareButton className="h-[32px] w-[32px]" />
-          {/* <ChatButton /> */}
-          <RaiseHandButton className="h-[32px] w-[32px]" />
-        </div>
-        <div className="bg-gray-0 border-gray-20 ml-1 flex items-center justify-center rounded-2xl border p-1 shadow-lg">
-          {isTutor ? (
-            <DropdownMenu>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <DropdownMenuTrigger asChild>
-                    <Button
-                      size="icon"
-                      variant="none"
-                      className="hover:bg-gray-5 relative m-0 h-8 w-8 rounded-xl p-0 text-gray-100"
-                    >
-                      <Maximize className="fill-gray-100" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                </TooltipTrigger>
-                <TooltipContent>Вернуться в конференцию</TooltipContent>
-              </Tooltip>
-              <DropdownMenuContent side="top" align="end" className="z-1000 min-w-[200px]">
-                <DropdownMenuLabel className="text-gray-60 text-sm">
-                  Вернуть в конференцию
-                </DropdownMenuLabel>
-                <DropdownMenuItem
-                  onClick={() => handleMaximize(false)}
-                  className="text-gray-80 cursor-pointer text-sm"
-                >
-                  Только меня
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  onClick={() => handleMaximize(true)}
-                  className="text-gray-80 cursor-pointer text-sm"
-                >
-                  Всех участников
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  size="icon"
-                  variant="none"
-                  onClick={() => handleMaximize(false)}
-                  className="hover:bg-gray-5 relative m-0 h-8 w-8 rounded-xl p-0 text-gray-100"
-                >
-                  <Maximize className="fill-gray-100" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>Вернуться в конференцию</TooltipContent>
-            </Tooltip>
-          )}
-          <DisconnectButton className="h-[32px] w-[32px] rounded-xl" />
-        </div>
-      </div>
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`compact-call-container flex flex-col ${isMobile ? 'w-full' : 'w-[360px]'}`}
+    >
+      <CompactCallVideoArea
+        isMobile={isMobile}
+        isCollapsed={isCollapsed}
+        onCollapsedChange={setIsCollapsed}
+        withOutShadows={withOutShadows}
+        dragAttributes={attributes as object}
+        dragListeners={listeners as object}
+        compactViewMode={compactViewMode}
+        currentParticipant={currentParticipant}
+        currentAudioTrack={currentAudioTrack ?? null}
+        totalParticipants={totalParticipants}
+        canGoPrev={canGoPrev}
+        canGoNext={canGoNext}
+        onPrev={goToPrev}
+        onNext={goToNext}
+        currentIndex={currentIndex}
+        multiVisibleParticipants={multiVisibleParticipants}
+        multiTileHeightPx={multiTileHeightPx}
+        multiCanPrev={multiCanPrev}
+        multiCanNext={multiCanNext}
+        onMultiPrev={() => setMultiScrollIndex((i) => Math.max(0, i - 1))}
+        onMultiNext={() =>
+          setMultiScrollIndex((i) => Math.min(totalParticipants - multiVisibleCount, i + 1))
+        }
+      />
+      <CompactCallBottomBar
+        withOutShadows={withOutShadows}
+        devices={{
+          microTrack: microphoneTrack?.track as LocalAudioTrack,
+          microEnabled: isMicrophoneEnabled,
+          microTrackToggle: {
+            showIcon: true,
+            source: Track.Source.Microphone,
+            onChange: handleMicrophoneToggle,
+          },
+          videoTrack: cameraTrack?.track as unknown as LocalVideoTrack,
+          videoEnabled: isCameraEnabled,
+          videoTrackToggle: {
+            showIcon: true,
+            source: Track.Source.Camera,
+            onChange: handleCameraToggle,
+          },
+        }}
+        isMobile={isMobile}
+        compactViewMode={compactViewMode}
+        onViewModeToggle={() =>
+          setCompactViewMode(compactViewMode === 'basic' ? 'expanded' : 'basic')
+        }
+        showBackToBoardButton={!!showBackToBoardButton}
+        onBackToBoard={handleBackToBoard}
+        onMaximize={handleMaximize}
+        isTutor={!!isTutor}
+      />
     </div>
   );
 };

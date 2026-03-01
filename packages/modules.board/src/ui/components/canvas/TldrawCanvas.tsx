@@ -1,7 +1,7 @@
 import { LoadingScreen } from 'common.ui';
 import { useKeyPress } from 'common.utils';
 import { JSX } from 'react/jsx-runtime';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Editor, TLInstancePresenceID, Tldraw, TldrawProps } from 'tldraw';
 import { useLockedShapeSelection, useRemoveMark, useTldrawClipboard } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
@@ -15,6 +15,7 @@ import { TldrawZoomPanel } from './TldrawZoomPanel';
 import 'tldraw/tldraw.css';
 import './customstyles.css';
 import { UndoRedo } from '../toolbar/UndoRedo';
+import { makeTldrawAssetUrls } from '../../../utils/assetsUrls';
 
 export const TldrawCanvas = ({
   token,
@@ -183,6 +184,8 @@ export const TldrawCanvas = ({
     return unsub;
   }, [editor, store, followingPresenceId]);
 
+  const assetUrls = useMemo(() => makeTldrawAssetUrls({ baseUrl: '/tldraw' }), []);
+
   if (status === 'loading') return <LoadingScreen />;
 
   return (
@@ -206,6 +209,7 @@ export const TldrawCanvas = ({
                 return next;
               });
             }}
+            assetUrls={assetUrls}
             store={store}
             shapeUtils={[PdfShapeUtil]}
             hideUi

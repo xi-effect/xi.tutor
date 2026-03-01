@@ -1,7 +1,6 @@
 import {
   ControlBarProps,
   useLocalParticipant,
-  // useLocalParticipantPermissions,
   usePersistentUserChoices,
   useTrackToggle,
 } from '@livekit/components-react';
