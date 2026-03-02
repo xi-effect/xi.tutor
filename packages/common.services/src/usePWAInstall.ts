@@ -7,6 +7,15 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed'; platform: string }>;
 }
 
+/** Экспериментальный Web Install API (Chrome/Edge 143+, origin trial). */
+interface NavigatorWithInstall extends Navigator {
+  install?: () => Promise<void>;
+}
+
+const hasInstallAPI = (): boolean =>
+  typeof navigator !== 'undefined' &&
+  typeof (navigator as NavigatorWithInstall).install === 'function';
+
 export interface UsePWAInstallReturn {
   /** Можно показать кнопку установки (есть событие и приложение ещё не установлено) */
   canInstall: boolean;
@@ -47,11 +56,17 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
   const promptInstall = useCallback(async () => {
     const win = window as Window & { __beforeInstallPrompt?: BeforeInstallPromptEvent | null };
     const ev = installEvent ?? win.__beforeInstallPrompt;
-    if (!ev) return;
-    await ev.prompt();
-    await ev.userChoice;
-    win.__beforeInstallPrompt = null;
-    setInstallEvent(null);
+
+    if (ev) {
+      await ev.prompt();
+      await ev.userChoice;
+      win.__beforeInstallPrompt = null;
+      setInstallEvent(null);
+    } else if (hasInstallAPI()) {
+      await (navigator as NavigatorWithInstall).install!();
+    } else {
+      return;
+    }
     setInstalled(isPWA());
   }, [installEvent]);
 
@@ -60,7 +75,7 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
       ? (window as Window & { __beforeInstallPrompt?: BeforeInstallPromptEvent | null })
       : null;
   const hasPrompt = Boolean(installEvent ?? win?.__beforeInstallPrompt);
-  const canInstall = hasPrompt && !installed;
+  const canInstall = (hasPrompt || hasInstallAPI()) && !installed;
 
   return { canInstall, promptInstall, isInstalled: installed };
 };

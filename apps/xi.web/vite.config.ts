@@ -17,6 +17,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         devOptions: { enabled: false },
 
         manifest: {
+          id: '/',
           name: 'sovlium',
           short_name: 'sovlium',
           description: 'web application for sovlium.ru',
