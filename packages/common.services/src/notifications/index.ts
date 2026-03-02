@@ -1,6 +1,8 @@
 export { NotificationsProvider, useNotificationsContext } from './NotificationsProvider';
 export * from './notificationUtils';
 export { useChangeContactsVisibility } from './useChangeContactsVisibility';
+export { useSystemNotificationSettings } from './useSystemNotificationSettings';
+export * from './webNotifications';
 export { useCreateTgConnection } from './useCreateTgConnection';
 export { useDeleteTgConnection } from './useDeleteTgConnection';
 export { useGetNotificationsStatus } from './useGetNotificationsStatus';
