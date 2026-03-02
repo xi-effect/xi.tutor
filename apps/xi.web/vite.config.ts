@@ -20,7 +20,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
           name: 'sovlium',
           short_name: 'sovlium',
           description: 'web application for sovlium.ru',
-          theme_color: '#42b883',
+          theme_color: '#c5caee',
           background_color: '#ffffff',
           display: 'standalone',
           start_url: '/',
