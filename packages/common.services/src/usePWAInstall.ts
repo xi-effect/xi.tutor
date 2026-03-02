@@ -27,9 +27,17 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
+    // Событие могло прийти до монтирования — читаем из глобала (выставляется в index.html)
+    const win = window as Window & { __beforeInstallPrompt?: BeforeInstallPromptEvent | null };
+    if (win.__beforeInstallPrompt) {
+      setInstallEvent(win.__beforeInstallPrompt);
+    }
+
     const handleBeforeInstallPrompt = (e: Event) => {
       e.preventDefault();
-      setInstallEvent(e as BeforeInstallPromptEvent);
+      const ev = e as BeforeInstallPromptEvent;
+      win.__beforeInstallPrompt = ev;
+      setInstallEvent(ev);
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
@@ -37,14 +45,22 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
   }, []);
 
   const promptInstall = useCallback(async () => {
-    if (!installEvent) return;
-    await installEvent.prompt();
-    await installEvent.userChoice;
-    setInstallEvent(null); // после выбора диалог больше не показывают
+    const win = window as Window & { __beforeInstallPrompt?: BeforeInstallPromptEvent | null };
+    const ev = installEvent ?? win.__beforeInstallPrompt;
+    if (!ev) return;
+    await ev.prompt();
+    await ev.userChoice;
+    win.__beforeInstallPrompt = null;
+    setInstallEvent(null);
     setInstalled(isPWA());
   }, [installEvent]);
 
-  const canInstall = Boolean(installEvent && !installed);
+  const win =
+    typeof window !== 'undefined'
+      ? (window as Window & { __beforeInstallPrompt?: BeforeInstallPromptEvent | null })
+      : null;
+  const hasPrompt = Boolean(installEvent ?? win?.__beforeInstallPrompt);
+  const canInstall = hasPrompt && !installed;
 
   return { canInstall, promptInstall, isInstalled: installed };
 };
