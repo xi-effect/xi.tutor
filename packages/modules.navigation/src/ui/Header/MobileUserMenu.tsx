@@ -4,7 +4,9 @@ import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@xipkg/sidebar'
 import { UserProfile } from '@xipkg/userprofile';
 
 import { DrawerRoleSelector } from './DrawerRoleSelector';
-import { Account, Exit } from '@xipkg/icons';
+import { Account, Exit, Download } from '@xipkg/icons';
+import { toast } from 'sonner';
+import { usePWAInstall } from 'common.services';
 
 interface MobileUserMenuProps {
   userId: number;
@@ -21,6 +23,8 @@ export const MobileUserMenu = ({
   profileText,
   logoutText,
 }: MobileUserMenuProps) => {
+  const { canInstall, promptInstall, isInstalled } = usePWAInstall();
+
   return (
     <Drawer>
       <DrawerTrigger asChild>
@@ -42,6 +46,24 @@ export const MobileUserMenu = ({
             <DrawerRoleSelector />
             <div className="bg-gray-20 h-px" />
             <SidebarMenu>
+              {!isInstalled && (
+                <SidebarMenuItem className="cursor-pointer">
+                  <SidebarMenuButton
+                    onClick={() => {
+                      if (canInstall) void promptInstall();
+                      else
+                        toast.info(
+                          'Используйте меню браузера (⋮) → «Установить sovlium» или откройте сайт в Chrome и обновите страницу.',
+                        );
+                    }}
+                    data-umami-event="header-pwa-install"
+                    data-umami-event-device="mobile"
+                  >
+                    <Download className="h-6 w-6" />
+                    <div className="text-base">Установить приложение</div>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
               <SidebarMenuItem className="cursor-pointer">
                 <SidebarMenuButton
                   onClick={onOpenProfile}
