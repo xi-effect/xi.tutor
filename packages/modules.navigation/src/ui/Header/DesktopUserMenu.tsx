@@ -6,8 +6,10 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { UserProfile } from '@xipkg/userprofile';
+import { toast } from 'sonner';
 
 import { SelectRole } from './SelectRole';
+import { usePWAInstall } from 'common.services';
 
 interface DesktopUserMenuProps {
   userId: number;
@@ -24,6 +26,8 @@ export const DesktopUserMenu = ({
   profileText,
   logoutText,
 }: DesktopUserMenuProps) => {
+  const { canInstall, promptInstall, isInstalled } = usePWAInstall();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -41,6 +45,22 @@ export const DesktopUserMenu = ({
         <DropdownMenuItem>
           <SelectRole />
         </DropdownMenuItem>
+
+        {!isInstalled && (
+          <DropdownMenuItem
+            onClick={() => {
+              if (canInstall) void promptInstall();
+              else
+                toast.info(
+                  'Используйте меню браузера (⋮) → «Установить sovlium» или откройте сайт в Chrome и обновите страницу.',
+                );
+            }}
+            className="text-gray-80 text-sm"
+            data-umami-event="header-pwa-install"
+          >
+            Установить приложение
+          </DropdownMenuItem>
+        )}
 
         <DropdownMenuItem
           onClick={onOpenProfile}
