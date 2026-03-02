@@ -26,7 +26,7 @@ export const DesktopUserMenu = ({
   profileText,
   logoutText,
 }: DesktopUserMenuProps) => {
-  const { canInstall, promptInstall, isInstalled } = usePWAInstall();
+  const { canInstall, promptInstall, isInstalled, installHint } = usePWAInstall();
 
   return (
     <DropdownMenu>
@@ -50,10 +50,7 @@ export const DesktopUserMenu = ({
           <DropdownMenuItem
             onClick={() => {
               if (canInstall) void promptInstall();
-              else
-                toast.info(
-                  'Используйте меню браузера (⋮) → «Установить sovlium» или откройте сайт в Chrome и обновите страницу.',
-                );
+              else toast.info(installHint);
             }}
             className="text-gray-80 text-sm"
             data-umami-event="header-pwa-install"

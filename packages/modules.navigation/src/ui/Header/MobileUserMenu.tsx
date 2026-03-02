@@ -23,7 +23,7 @@ export const MobileUserMenu = ({
   profileText,
   logoutText,
 }: MobileUserMenuProps) => {
-  const { canInstall, promptInstall, isInstalled } = usePWAInstall();
+  const { canInstall, promptInstall, isInstalled, installHint } = usePWAInstall();
 
   return (
     <Drawer>
@@ -51,10 +51,7 @@ export const MobileUserMenu = ({
                   <SidebarMenuButton
                     onClick={() => {
                       if (canInstall) void promptInstall();
-                      else
-                        toast.info(
-                          'Используйте меню браузера (⋮) → «Установить sovlium» или откройте сайт в Chrome и обновите страницу.',
-                        );
+                      else toast.info(installHint);
                     }}
                     data-umami-event="header-pwa-install"
                     data-umami-event-device="mobile"
