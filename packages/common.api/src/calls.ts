@@ -9,6 +9,8 @@ enum CallsQueryKey {
   GetParticipantsStudent = 'GetParticipantsStudent',
   GetParticipants = 'GetParticipants',
   UpdateConferenceMetadata = 'UpdateConferenceMetadata',
+  UpdateStudentMetadata = 'UpdateStudentMetadata',
+  UpdateTutorMetadata = 'UpdateTutorMetadata',
 }
 
 const callsApiConfig = {
@@ -40,6 +42,16 @@ const callsApiConfig = {
   [CallsQueryKey.UpdateConferenceMetadata]: {
     getUrl: (classroom_id: string) =>
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/conference-service/roles/tutor/classrooms/${classroom_id}/conference/metadata/`,
+    method: HttpMethod.PUT,
+  },
+  [CallsQueryKey.UpdateStudentMetadata]: {
+    getUrl: (classroom_id: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/conference-service/roles/student/classrooms/${classroom_id}/conference/participants/current/metadata/`,
+    method: HttpMethod.PUT,
+  },
+  [CallsQueryKey.UpdateTutorMetadata]: {
+    getUrl: (classroom_id: string) =>
+      `${env.VITE_SERVER_URL_BACKEND}/api/protected/conference-service/roles/tutor/classrooms/${classroom_id}/conference/participants/current/metadata/`,
     method: HttpMethod.PUT,
   },
 };
