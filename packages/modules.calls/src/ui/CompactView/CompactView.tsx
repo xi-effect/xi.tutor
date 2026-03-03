@@ -20,6 +20,7 @@ import { useFocusModeStore } from 'common.ui';
 import { useMedia } from 'common.utils';
 import { useNavigate, useRouter, useSearch, useLocation } from '@tanstack/react-router';
 import { useRoom } from '../../providers/RoomProvider';
+import { usePiP } from '../../providers/PiPProvider';
 import { useParticipantJoinSync } from '../../hooks/useParticipantJoinSync';
 
 type CompactViewProps = {
@@ -181,6 +182,7 @@ export const CompactView = ({ children }: CompactViewProps) => {
   const { mode } = useCallStore();
   const { room } = useRoom();
   const { token } = useCallStore();
+  const pip = usePiP();
 
   // Синхронизация состояния при подключении новых участников (работает и в compact mode)
   useParticipantJoinSync();
@@ -243,6 +245,15 @@ export const CompactView = ({ children }: CompactViewProps) => {
   }
 
   if (mode === 'full') {
+    return (
+      <>
+        {contentWrapper}
+        <PermissionsDialog />
+      </>
+    );
+  }
+
+  if (pip?.isPiPActive) {
     return (
       <>
         {contentWrapper}
