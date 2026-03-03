@@ -5,11 +5,11 @@ import { cn } from '@xipkg/utils';
 
 const DAY_NAMES = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
 const SCROLL_STEP = 3;
-const DAY_PILL_MIN_WIDTH = 48;
+const DAY_PILL_MIN_WIDTH = 36;
 
 const styles = {
   dayPillBase:
-    'flex h-[60px] w-[50px] min-w-[50px] shrink-0 flex-col items-center justify-center rounded-lg px-2 py-1.5 text-center',
+    'flex h-[48px] w-[36px] min-w-[36px] shrink-0 flex-col items-center justify-center rounded-lg px-2 py-1.5 text-center',
   dayPillDefaultHover: 'hover:bg-gray-10 hover:text-gray-80',
 } as const;
 
@@ -96,7 +96,7 @@ export const ScheduleDateCarousel = ({
     <div ref={containerRef} className="flex w-full flex-row items-center justify-center gap-2">
       <Button
         variant="none"
-        className="text-gray-80 hover:bg-gray-10 flex h-[60px] w-[50px] min-w-[50px] items-center justify-center rounded-lg p-0"
+        className="text-gray-80 hover:bg-gray-10 flex h-[48px] w-[36px] min-w-[36px] items-center justify-center rounded-lg p-0"
         onClick={goPrev}
         disabled={effectiveIndex === 0}
       >
@@ -142,7 +142,7 @@ export const ScheduleDateCarousel = ({
       </div>
       <Button
         variant="none"
-        className="text-gray-80 hover:bg-gray-10 flex h-[60px] w-[50px] min-w-[50px] shrink-0 items-center justify-center rounded-lg p-0"
+        className="text-gray-80 hover:bg-gray-10 flex h-[48px] w-[36px] min-w-[36px] shrink-0 items-center justify-center rounded-lg p-0"
         onClick={goNext}
         disabled={effectiveIndex >= dates.length - 1}
       >

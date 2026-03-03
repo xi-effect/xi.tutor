@@ -27,7 +27,7 @@ export const NotificationsMobileDrawer = ({
       <DrawerContent className="max-h-[calc(100dvh-64px)] w-full">
         <div className="dark:bg-gray-0 h-full p-0.5">
           <DrawerHeader className="flex items-center pt-2 pb-6 pl-1">
-            <DrawerTitle className="text-m-base font-semibold text-gray-100">
+            <DrawerTitle className="text-s-base font-semibold text-gray-100">
               Уведомления
             </DrawerTitle>
 

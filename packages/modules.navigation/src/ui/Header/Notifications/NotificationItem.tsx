@@ -83,12 +83,12 @@ export const NotificationItem = ({
       />
 
       <div className="flex flex-1 flex-col gap-1">
-        <span className="text-m-base font-medium text-gray-100">{title}</span>
-        <span className="text-gray-80 text-s-base font-normal">{description}</span>
+        <span className="text-s-base font-medium text-gray-100">{title}</span>
+        <span className="text-gray-80 text-xs-base font-normal">{description}</span>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger className="w-fit" asChild>
-              <span className="text-gray-80 text-xs-base font-normal">{relativeTime}</span>
+              <span className="text-gray-80 text-xxs-base font-normal">{relativeTime}</span>
             </TooltipTrigger>
             <TooltipContent side="bottom">
               <p>{fullTime}</p>
