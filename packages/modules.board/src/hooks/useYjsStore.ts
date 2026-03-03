@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import {
   HocuspocusProvider,
@@ -10,7 +9,7 @@ import {
   type onSyncedParameters,
 } from '@hocuspocus/provider';
 import { useCurrentUser } from 'common.services';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import {
   computed,
@@ -258,8 +257,12 @@ export function useYjsStore({
 
   const { provider, yDoc, yStore, meta, readonlyMap, userCamerasMap, pdfPagesMap } = sharedEntry;
 
-  useEffect(() => {
-    setStoreWithStatus((prev) => ({ ...prev, status: 'loading', store }));
+  // useLayoutEffect: при ремаунте (PiP и т.д.) обновляем статус до отрисовки, чтобы не мигал LoadingScreen.
+  useLayoutEffect(() => {
+    // Не сбрасываем в loading, если провайдер уже синхронизирован (ремаунт/PiP/смена фокуса).
+    if (!provider.synced) {
+      setStoreWithStatus((prev) => ({ ...prev, status: 'loading', store }));
+    }
 
     // ВАЖНО: attach тут, а detach — ТОЛЬКО в releaseShared (когда refs = 0).
     // Иначе при 2 потребителях или StrictMode будет "чужой" cleanup ронять сокет.
@@ -651,6 +654,18 @@ export function useYjsStore({
 
     provider.on('synced', handleSynced as any);
     unsubs.push(() => provider.off('synced', handleSynced as any));
+
+    // При ремаунте (PiP / смена фокуса) провайдер может быть уже синхронизирован.
+    // Событие 'synced' вызывается только один раз, поэтому вручную запускаем инициализацию.
+    // Сразу выставляем synced-remote, чтобы до отрисовки не показывать LoadingScreen.
+    if (provider.synced) {
+      setStoreWithStatus((prev) => ({
+        ...prev,
+        status: 'synced-remote',
+        connectionStatus: 'online',
+      }));
+      handleSynced({ state: true });
+    }
 
     return () => {
       if (flushTimeoutRef.current != null) {
