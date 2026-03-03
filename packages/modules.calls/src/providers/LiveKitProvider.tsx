@@ -5,6 +5,7 @@ import { useRoom } from './RoomProvider';
 import { useParams, useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useEffect, useRef } from 'react';
 import { Track } from 'livekit-client';
+import { PiPManager } from '../ui/PiPManager';
 
 type LiveKitProviderProps = {
   children: React.ReactNode;
@@ -239,6 +240,7 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
       video={videoEnabled || false}
     >
       {children}
+      <PiPManager />
     </LiveKitRoom>
   );
 };

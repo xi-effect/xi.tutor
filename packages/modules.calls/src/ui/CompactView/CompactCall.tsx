@@ -18,19 +18,7 @@ import { CompactCallVideoArea } from './CompactCallVideoArea';
 import { CompactCallBottomBar } from './CompactCallBottomBar';
 import { TILE_GAP_PX, TILE_HEIGHT_16_9_PX } from './constants';
 
-type CompactCallProps = {
-  saveUserChoices?: boolean;
-  withOutShadows?: boolean;
-  onOpenPiP?: () => void | Promise<unknown>;
-  isPiPActive?: boolean;
-};
-
-export const CompactCall = ({
-  saveUserChoices = true,
-  withOutShadows = false,
-  onOpenPiP,
-  isPiPActive = false,
-}: CompactCallProps) => {
+export const CompactCall = ({ saveUserChoices = true, withOutShadows = false }) => {
   const isMobile = useMedia('(max-width: 720px)');
   const { attributes, listeners, setNodeRef, transform } = useDraggable({
     id: 'draggable-call',
@@ -245,8 +233,6 @@ export const CompactCall = ({
         onBackToBoard={handleBackToBoard}
         onMaximize={handleMaximize}
         isTutor={!!isTutor}
-        onOpenPiP={onOpenPiP}
-        isPiPActive={isPiPActive}
       />
     </div>
   );

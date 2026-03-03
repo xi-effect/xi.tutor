@@ -1,5 +1,4 @@
 import { FC, useEffect, useRef, useState } from 'react';
-import { createPortal } from 'react-dom';
 import {
   DndContext,
   DragEndEvent,
@@ -13,12 +12,10 @@ import {
 import { restrictToWindowEdges } from '@dnd-kit/modifiers';
 import { RoomAudioRenderer } from '@livekit/components-react';
 import { CompactCall } from './CompactCall';
-import { PiPCompactCall } from './PiPCompactCall';
 import { Chat } from '../Chat/Chat';
 import { PermissionsDialog } from '../shared/PermissionsDialog';
 import { useCallStore } from '../../store/callStore';
 import type { Corner } from '../../store/callStore';
-import { useDocumentPiP } from '../../hooks/useDocumentPiP';
 import { useFocusModeStore } from 'common.ui';
 import { useMedia } from 'common.utils';
 import { useNavigate, useRouter, useSearch, useLocation } from '@tanstack/react-router';
@@ -91,21 +88,6 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
   const isMobile = useMedia('(max-width: 720px)');
   const headerRef = useRef<HTMLDivElement>(null);
   const [headerHeight, setHeaderHeight] = useState(0);
-
-  const audioEnabled = useCallStore((s) => s.audioEnabled);
-  const videoEnabled = useCallStore((s) => s.videoEnabled);
-  const {
-    pipWindow,
-    closePiP,
-    openPiP,
-    isSupported: isPiPSupported,
-  } = useDocumentPiP({
-    enabled: !isMobile,
-    width: 380,
-    height: 270,
-    microphoneActive: audioEnabled,
-    cameraActive: videoEnabled,
-  });
 
   useEffect(() => {
     if (!isMobile || !headerRef.current) return;
@@ -183,19 +165,13 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
             <div
               className={`absolute z-100 ${getCornerPosition(activeCorner)} transition-all duration-500 ease-out`}
             >
-              <CompactCall
-                onOpenPiP={isPiPSupported ? openPiP : undefined}
-                isPiPActive={!!pipWindow}
-              />
+              <CompactCall />
             </div>
             {children}
           </>
         )}
 
         <RoomAudioRenderer />
-
-        {pipWindow &&
-          createPortal(<PiPCompactCall onReturnToTab={closePiP} />, pipWindow.document.body)}
       </div>
     </DndContext>
   );

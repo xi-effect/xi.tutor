@@ -17,15 +17,19 @@ declare global {
   interface Window {
     documentPictureInPicture?: DocumentPictureInPicture;
   }
+
+  // setMicrophoneActive / setCameraActive есть в Chrome 93+, в lib.dom.d.ts пока нет
+  interface MediaSession {
+    setMicrophoneActive(active: boolean): void;
+    setCameraActive(active: boolean): void;
+  }
 }
 
 type UseDocumentPiPOptions = {
   width?: number;
   height?: number;
   enabled?: boolean;
-  /** Сообщить браузеру, что микрофон активен (нужно для авто-PiP в Chrome) */
   microphoneActive?: boolean;
-  /** Сообщить браузеру, что камера активна (нужно для авто-PiP в Chrome) */
   cameraActive?: boolean;
 };
 
@@ -53,7 +57,7 @@ function copyStylesToWindow(targetWindow: Window) {
       targetWindow.document.fonts.add(font);
     });
   } catch {
-    // Font copying not supported in this browser
+    // ignore
   }
 }
 
@@ -69,14 +73,33 @@ export function useDocumentPiP({
 
   const isSupported = typeof window !== 'undefined' && 'documentPictureInPicture' in window;
 
-  // Chrome требует setMicrophoneActive/setCameraActive для авто-PiP при переключении вкладки
+  // Диагностика при монтировании
   useEffect(() => {
-    if (!enabled || typeof navigator?.mediaSession === 'undefined') return;
+    if (!enabled) return;
+
+    console.info('[PiP] Document PiP API supported:', isSupported);
+    console.info('[PiP] enabled:', enabled);
+    console.info('[PiP] microphoneActive:', microphoneActive, 'cameraActive:', cameraActive);
+
+    if (typeof navigator?.mediaSession !== 'undefined') {
+      console.info('[PiP] Media Session API available');
+    } else {
+      console.warn('[PiP] Media Session API NOT available');
+    }
+  }, [enabled, isSupported, microphoneActive, cameraActive]);
+
+  // Chrome для авто-PiP при видеозвонках требует setCameraActive / setMicrophoneActive
+  useEffect(() => {
+    if (!enabled) return;
     try {
       navigator.mediaSession.setMicrophoneActive(microphoneActive);
+    } catch (e) {
+      console.warn('[PiP] setMicrophoneActive failed:', e);
+    }
+    try {
       navigator.mediaSession.setCameraActive(cameraActive);
-    } catch {
-      // ignore
+    } catch (e) {
+      console.warn('[PiP] setCameraActive failed:', e);
     }
   }, [enabled, microphoneActive, cameraActive]);
 
@@ -94,6 +117,7 @@ export function useDocumentPiP({
 
       pip.document.body.style.margin = '0';
       pip.document.body.style.overflow = 'hidden';
+      pip.document.body.style.background = 'var(--xi-gray-0, #fff)';
 
       pipWindowRef.current = pip;
       setPipWindow(pip);
@@ -116,51 +140,52 @@ export function useDocumentPiP({
     }
   }, []);
 
-  // Auto-PiP via Media Session API: browser triggers this on tab switch
-  // when there's active media (LiveKit audio/video satisfies this)
+  // Регистрируем Media Session handler — Chrome вызывает его автоматически
+  // при переключении вкладки, если getUserMedia активен
   useEffect(() => {
-    if (!isSupported || !enabled) return;
+    if (!isSupported || !enabled) {
+      console.info(
+        '[PiP] Skipping handler registration. isSupported:',
+        isSupported,
+        'enabled:',
+        enabled,
+      );
+      return;
+    }
 
-    const handler = async () => {
-      await openPiP();
-    };
-
+    const action = 'enterpictureinpicture' as MediaSessionAction;
     try {
-      navigator.mediaSession.setActionHandler('enterpictureinpicture', handler);
-    } catch {
-      // enterpictureinpicture action not supported
+      navigator.mediaSession.setActionHandler(action, async () => {
+        console.info('[PiP] enterpictureinpicture handler CALLED by browser');
+        await openPiP();
+      });
+      console.info('[PiP] enterpictureinpicture handler registered successfully');
+    } catch (e) {
+      console.warn('[PiP] Failed to register enterpictureinpicture handler:', e);
     }
 
     return () => {
       try {
-        navigator.mediaSession.setActionHandler('enterpictureinpicture', null);
+        navigator.mediaSession.setActionHandler(action, null);
       } catch {
         // ignore
       }
     };
   }, [isSupported, enabled, openPiP]);
 
-  // При скрытии вкладки пробуем открыть PiP (Chrome для видеозвонков может разрешить без жеста)
-  // При возврате на вкладку — закрываем PiP
+  // Закрываем PiP при возврате на вкладку
   useEffect(() => {
     if (!enabled) return;
 
     const handleVisibilityChange = () => {
-      if (document.hidden) {
-        if (pipWindowRef.current) return;
-        if (microphoneActive || cameraActive) {
-          openPiP().catch(() => {
-            // Нет user gesture — нормально, сработает Media Session handler или кнопка
-          });
-        }
-      } else if (pipWindowRef.current) {
+      if (!document.hidden && pipWindowRef.current) {
         closePiP();
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [enabled, closePiP, openPiP, microphoneActive, cameraActive]);
+  }, [enabled, closePiP]);
 
   // Cleanup on unmount
   useEffect(() => {
