@@ -8,7 +8,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Account, Maximize, Users, WhiteBoard } from '@xipkg/icons';
+import { Account, Conference, Maximize, Users, WhiteBoard } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { DevicesBar } from '../shared';
 import { DisconnectButton } from '../Bottom/DisconnectButton';
@@ -43,6 +43,8 @@ type CompactCallBottomBarProps = {
   onBackToBoard: () => void;
   onMaximize: (syncToAll?: boolean) => void;
   isTutor: boolean;
+  onOpenPiP?: () => void | Promise<unknown>;
+  isPiPActive?: boolean;
 };
 
 export function CompactCallBottomBar({
@@ -55,6 +57,8 @@ export function CompactCallBottomBar({
   onBackToBoard,
   onMaximize,
   isTutor,
+  onOpenPiP,
+  isPiPActive = false,
 }: CompactCallBottomBarProps) {
   const barCn = cn(
     'bg-gray-0 border-gray-20 flex items-center justify-center rounded-2xl border p-1',
@@ -122,6 +126,29 @@ export function CompactCallBottomBar({
       )}
 
       <div className={cn(barCn, 'ml-auto')}>
+        {onOpenPiP && (
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                size="icon"
+                variant="none"
+                onClick={() => void onOpenPiP()}
+                className={cn(
+                  'h-8 w-8 rounded-xl p-0 text-gray-100',
+                  isPiPActive ? 'bg-brand-20 text-brand-100' : 'hover:bg-gray-5',
+                )}
+                aria-label={isPiPActive ? 'Окно PiP открыто' : 'Открыть в отдельном окне (PiP)'}
+              >
+                <Conference className="h-5 w-5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {isPiPActive
+                ? 'Окно конференции открыто поверх других окон'
+                : 'Открыть в отдельном окне'}
+            </TooltipContent>
+          </Tooltip>
+        )}
         <ScreenShareButton className="h-[32px] w-[32px]" />
         <ChatButton className="h-8 w-8 min-w-8 rounded-xl" />
         <RaiseHandButton className="h-[32px] w-[32px]" />
