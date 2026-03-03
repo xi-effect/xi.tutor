@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState, useCallback } from 'react';
+import { useLayoutEffect, useState, useCallback, useEffect } from 'react';
 import {
   Modal,
   ModalTitle,
@@ -17,7 +17,38 @@ import { useInvitationsList, useAddInvitation, useDeleteInvitation } from 'commo
 import { InvitationDataT } from 'common.types';
 import { env } from 'common.env';
 
-export const ModalInvitation = ({ children }: { children: React.ReactNode }) => {
+const cleanupBodyScrollLock = () => {
+  document.body.style.overflow = '';
+  document.body.style.pointerEvents = '';
+  document.body.removeAttribute('data-scroll-locked');
+};
+
+type ModalInvitationProps = {
+  children?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+};
+
+export const ModalInvitation = ({
+  children,
+  open: controlledOpen,
+  onOpenChange,
+}: ModalInvitationProps) => {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? (value: boolean) => onOpenChange?.(value) : setInternalOpen;
+
+  const handleClose = () => {
+    setOpen(false);
+    cleanupBodyScrollLock();
+  };
+
+  useEffect(() => {
+    if (open === false) cleanupBodyScrollLock();
+    return cleanupBodyScrollLock;
+  }, [open]);
+
   const { data } = useInvitationsList();
 
   const { isPending: isAdding, mutate: addInvitationMutate } = useAddInvitation();
@@ -49,11 +80,17 @@ export const ModalInvitation = ({ children }: { children: React.ReactNode }) => 
   }, [data?.length, handleAddInvitation]);
 
   return (
-    <Modal>
-      <ModalTrigger asChild>{children}</ModalTrigger>
+    <Modal
+      open={open}
+      onOpenChange={(next) => {
+        if (typeof next === 'boolean') setOpen(next);
+        if (next === false) cleanupBodyScrollLock();
+      }}
+    >
+      {children != null && <ModalTrigger asChild>{children}</ModalTrigger>}
       <ModalContent className="max-w-[600px]">
         <ModalHeader>
-          <ModalCloseButton />
+          <ModalCloseButton onClick={handleClose} />
           <ModalTitle className="dark:text-gray-100">Индивидуальные приглашения</ModalTitle>
         </ModalHeader>
 

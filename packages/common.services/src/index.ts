@@ -9,6 +9,7 @@ export * from './utils';
 export * from './onboarding';
 export * from './classrooms';
 export * from './notifications';
+export { usePWAInstall } from './usePWAInstall';
 export * from './network';
 export * from './calls';
 export * from './subjects';

@@ -3386,6 +3386,9 @@ importers:
 
   packages/pages.classroom:
     dependencies:
+      '@xipkg/actionbutton':
+        specifier: 1.0.0
+        version: 1.0.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/badge':
         specifier: 2.0.12
         version: 2.0.12(react@19.2.4)
@@ -3540,6 +3543,9 @@ importers:
       '@tanstack/react-virtual':
         specifier: 3.13.9
         version: 3.13.9(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@xipkg/actionbutton':
+        specifier: 1.0.0
+        version: 1.0.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/avatar':
         specifier: 3.0.10
         version: 3.0.10(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -4060,6 +4066,9 @@ importers:
       features.materials.duplicate:
         specifier: workspace:*
         version: link:../features.materials.duplicate
+      modules.calls:
+        specifier: workspace:*
+        version: link:../modules.calls
       pages.classrooms:
         specifier: workspace:*
         version: link:../pages.classrooms
@@ -8394,6 +8403,11 @@ packages:
     peerDependencies:
       vite: ^4.2.0 || ^5.0.0 || ^6.0.0 || ^7.0.0
 
+  '@xipkg/actionbutton@1.0.0':
+    resolution: {integrity: sha512-a4xw+HR+gfX5Z21xQ+GEXwM3T0zlBGxrfDc6VOrvvs4E/gaWGkQ9sek5oihywlBo5K2yrPW06mPuw6TdMqlKRg==}
+    peerDependencies:
+      react: ^19
+
   '@xipkg/alert@1.1.0':
     resolution: {integrity: sha512-WGxGlMdcyTtX293ehTErFtNrapHhaWJfqvHztmCl2gAXn6zR/ztoft1FH5+sshr8Wl26Sfdp04V8xoCRYkpG0w==}
     peerDependencies:
@@ -9218,8 +9232,8 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-config-turbo@2.8.11:
-    resolution: {integrity: sha512-LMV1ZUNmzPxUEYf61N5SCtGxCx8+ZNnrHQhYshDdQCbqUUAdpCYq65foRzCTnHz9Ge57/ll9mWXllZHrsLyNAg==}
+  eslint-config-turbo@2.8.12:
+    resolution: {integrity: sha512-0MP/CzngIMalr0R8Q74VfGImVSFmDu7iL+v+1v16NdLG3xlHGE/mjtXDMYchEk6wWNlmaib3EjGifbQ2Jr5kxw==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -9312,6 +9326,12 @@ packages:
 
   eslint-plugin-turbo@2.8.11:
     resolution: {integrity: sha512-DTrc61/Ppvq5xt7tAukmmcL3o8aAKFi5SPTLZF2w5UeFpFuEM7ZptFdoTsdNZfQpOWKJ+sF7quv7usO11IP/kQ==}
+    peerDependencies:
+      eslint: '>6.6.0'
+      turbo: '>2.0.0'
+
+  eslint-plugin-turbo@2.8.12:
+    resolution: {integrity: sha512-Q0LcIS2bRivRDZbtHOrtNFUSclnvfL8Qn1yM8I7+1LRerPmdcLF++SYOOCsF9COCEvoP6O66+bnupDqpC/W59w==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -15016,6 +15036,19 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  '@xipkg/actionbutton@1.0.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+    dependencies:
+      '@xipkg/button': 3.2.0(@types/react@19.2.14)(react@19.2.4)
+      '@xipkg/dropdown': 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@xipkg/icons': 2.7.2(react@19.2.4)
+      '@xipkg/utils': 1.8.0(react@19.2.4)
+      class-variance-authority: 0.7.1
+      react: 19.2.4
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
+      - react-dom
+
   '@xipkg/alert@1.1.0(react@19.2.4)':
     dependencies:
       '@xipkg/icons': 2.7.2(react@19.2.4)
@@ -15190,7 +15223,7 @@ snapshots:
       eslint-config-airbnb: 19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2(eslint@9.39.3(jiti@2.6.1)))(eslint-plugin-react-hooks@5.1.0(eslint@9.39.3(jiti@2.6.1)))(eslint-plugin-react@7.37.2(eslint@9.39.3(jiti@2.6.1)))(eslint@9.39.3(jiti@2.6.1))
       eslint-config-next: 15.1.2(eslint@9.39.3(jiti@2.6.1))(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.39.3(jiti@2.6.1))
-      eslint-config-turbo: 2.8.11(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
+      eslint-config-turbo: 2.8.12(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.56.1(eslint@9.39.3(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.3(jiti@2.6.1))
       eslint-plugin-react: 7.37.2(eslint@9.39.3(jiti@2.6.1))
       eslint-plugin-react-hooks: 5.1.0(eslint@9.39.3(jiti@2.6.1))
@@ -16231,10 +16264,10 @@ snapshots:
     dependencies:
       eslint: 9.39.3(jiti@2.6.1)
 
-  eslint-config-turbo@2.8.11(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
+  eslint-config-turbo@2.8.12(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
     dependencies:
       eslint: 9.39.3(jiti@2.6.1)
-      eslint-plugin-turbo: 2.8.11(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
+      eslint-plugin-turbo: 2.8.12(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
       turbo: 2.8.11
 
   eslint-import-resolver-node@0.3.9:
@@ -16378,6 +16411,12 @@ snapshots:
       string.prototype.repeat: 1.0.0
 
   eslint-plugin-turbo@2.8.11(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
+    dependencies:
+      dotenv: 16.0.3
+      eslint: 9.39.3(jiti@2.6.1)
+      turbo: 2.8.11
+
+  eslint-plugin-turbo@2.8.12(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
     dependencies:
       dotenv: 16.0.3
       eslint: 9.39.3(jiti@2.6.1)

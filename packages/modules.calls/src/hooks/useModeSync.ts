@@ -50,6 +50,18 @@ export const useModeSync = () => {
       const targetClassroom = metadataClassroomId ?? currentActiveClassroom ?? classroomIdFromRoute;
 
       if (activeMaterialId === 0 || activeMaterialId === null) {
+        // Не редиректить на полный экран, если пользователь явно в кабинете на табе overview (компактный вид)
+        // Читаем реальный URL из window — колбэк вызывается из события до ре-рендера, location/search были бы старыми
+        const pathname = window.location.pathname;
+        const searchParams = new URLSearchParams(window.location.search);
+        const tab = searchParams.get('tab');
+        const call = searchParams.get('call');
+        const isOnClassroomOverview =
+          /^\/classrooms\/[^/]+$/.test(pathname) && (tab === 'overview' || !tab) && !!call;
+        if (isOnClassroomOverview) {
+          return;
+        }
+
         // Режим "полная ВКС для всех" — сервер сбросил доску
         updateStore('localFullView', false);
         updateStore('mode', 'full');
@@ -97,7 +109,7 @@ export const useModeSync = () => {
         }
       }
     },
-    [updateStore, navigate, classroomIdFromRoute],
+    [updateStore, navigate, classroomIdFromRoute, params],
   );
 
   const applyRoomMetadataRef = useRef(applyRoomMetadata);

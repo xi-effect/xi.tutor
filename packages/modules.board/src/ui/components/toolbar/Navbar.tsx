@@ -132,22 +132,31 @@ export const Navbar = track(
 
     const currentTool = getCurrentTool();
 
+    const mobileButtonClass = 'max-sm:flex-1 max-sm:min-h-12 max-sm:min-w-0 max-sm:h-full';
+
     return (
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute right-0 bottom-4 left-0 z-30 flex w-full items-center justify-center">
-          <div className="relative z-30 flex gap-7">
-            <div className="border-gray-10 bg-gray-0 absolute -left-[115px] z-30 flex rounded-xl border p-1">
+        <div className="xs:bottom-4 absolute right-0 bottom-14 left-0 z-30 flex w-full items-center justify-center px-4 sm:px-0">
+          <div className="relative z-30 flex w-full max-w-full gap-7 sm:w-auto">
+            <div className="border-gray-10 bg-gray-0 absolute -left-[115px] z-30 hidden rounded-xl border p-1 sm:flex">
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
-            <div className="border-gray-10 bg-gray-0 mx-auto flex gap-10 rounded-xl border">
-              <div className="flex gap-2 p-1">
+            <div className="border-gray-10 bg-gray-0 mx-auto flex w-full max-w-full gap-10 rounded-xl border sm:w-auto">
+              <div className="flex w-full min-w-0 flex-1 gap-1 p-1 sm:w-auto sm:flex-initial">
                 {navBarElements.map((item: NavbarElementT) => {
                   const isActive = item.action === currentTool;
+                  const wrap = (node: React.ReactNode) => (
+                    <div
+                      key={item.action}
+                      className="flex min-h-12 min-w-0 flex-1 sm:min-h-0 sm:flex-initial"
+                    >
+                      {node}
+                    </div>
+                  );
 
                   if (item.action === 'pen') {
-                    return (
+                    return wrap(
                       <PenPopup
-                        key={item.action}
                         open={isPopupOpen('pen')}
                         onOpenChange={(open) => {
                           if (open) {
@@ -162,16 +171,16 @@ export const Navbar = track(
                           icon={item.icon}
                           title={item.title}
                           isActive={isActive}
+                          className={mobileButtonClass}
                           onClick={() => handleSelectTool(item.action)}
                         />
-                      </PenPopup>
+                      </PenPopup>,
                     );
                   }
 
                   if (item.action === 'geo') {
-                    return (
+                    return wrap(
                       <ShapesPopup
-                        key={item.action}
                         open={isPopupOpen('shapes')}
                         onOpenChange={(open) => handlePopupToggle('shapes', open)}
                       >
@@ -179,16 +188,16 @@ export const Navbar = track(
                           icon={item.icon}
                           title={item.title}
                           isActive={isActive}
+                          className={mobileButtonClass}
                           onClick={() => handleSelectTool(item.action)}
                         />
-                      </ShapesPopup>
+                      </ShapesPopup>,
                     );
                   }
 
                   if (item.action === 'sticker') {
-                    return (
+                    return wrap(
                       <StickerPopup
-                        key={item.action}
                         open={isPopupOpen('sticker')}
                         onOpenChange={(open) => {
                           if (open) {
@@ -202,21 +211,25 @@ export const Navbar = track(
                           icon={item.icon}
                           title={item.title}
                           isActive={isActive}
+                          className={mobileButtonClass}
                           onClick={() => handleSelectTool(item.action)}
                         />
-                      </StickerPopup>
+                      </StickerPopup>,
                     );
                   }
 
                   if (item.action === 'asset') {
-                    return (
-                      <TooltipProvider key={item.action}>
+                    return wrap(
+                      <TooltipProvider>
                         <Tooltip>
-                          <div className="pointer-events-auto">
-                            <TooltipTrigger className="rounded-lg" asChild>
+                          <div className="pointer-events-auto flex h-full min-h-0 w-full min-w-0 sm:block sm:h-auto sm:w-auto">
+                            <TooltipTrigger
+                              className="flex h-full w-full rounded-lg sm:h-6 sm:w-6 lg:h-8 lg:w-8"
+                              asChild
+                            >
                               <button
                                 type="button"
-                                className={`pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${isActive ? 'bg-brand-0' : 'bg-gray-0'}`}
+                                className={`pointer-events-auto flex h-6 w-6 flex-1 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${mobileButtonClass} ${isActive ? 'bg-brand-0' : 'bg-gray-0'}`}
                                 data-isactive={isActive}
                                 onClick={() => handleSelectTool(item.action)}
                               >
@@ -228,14 +241,13 @@ export const Navbar = track(
                             </TooltipContent>
                           </div>
                         </Tooltip>
-                      </TooltipProvider>
+                      </TooltipProvider>,
                     );
                   }
 
                   if (item.action === 'arrow') {
-                    return (
+                    return wrap(
                       <ArrowsPopup
-                        key={item.action}
                         open={isPopupOpen('arrow')}
                         onOpenChange={(open) => handlePopupToggle('arrow', open)}
                       >
@@ -243,20 +255,24 @@ export const Navbar = track(
                           icon={item.icon}
                           title={item.title}
                           isActive={isActive}
+                          className={mobileButtonClass}
                           onClick={() => handleSelectTool(item.action)}
                         />
-                      </ArrowsPopup>
+                      </ArrowsPopup>,
                     );
                   }
 
-                  return (
-                    <TooltipProvider key={item.action}>
+                  return wrap(
+                    <TooltipProvider>
                       <Tooltip>
-                        <div className="pointer-events-auto">
-                          <TooltipTrigger className="rounded-lg" asChild>
+                        <div className="pointer-events-auto flex h-full min-h-0 w-full min-w-0 sm:block sm:h-auto sm:w-auto">
+                          <TooltipTrigger
+                            className="flex h-full w-full rounded-lg sm:h-6 sm:w-6 lg:h-8 lg:w-8"
+                            asChild
+                          >
                             <button
                               type="button"
-                              className={`pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${isActive ? 'bg-brand-0' : 'bg-gray-0'}`}
+                              className={`pointer-events-auto flex h-6 w-6 flex-1 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${mobileButtonClass} ${isActive ? 'bg-brand-0' : 'bg-gray-0'}`}
                               data-isactive={isActive}
                               onClick={() => handleSelectTool(item.action)}
                             >
@@ -268,29 +284,31 @@ export const Navbar = track(
                           </TooltipContent>
                         </div>
                       </Tooltip>
-                    </TooltipProvider>
+                    </TooltipProvider>,
                   );
                 })}
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button
-                      type="button"
-                      className="bg-gray-0 hover:bg-brand-0 pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg lg:h-8 lg:w-8"
+                <div className="flex min-h-12 min-w-0 flex-1 sm:min-h-0 sm:flex-initial">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        type="button"
+                        className={`bg-gray-0 hover:bg-brand-0 pointer-events-auto flex h-6 w-6 flex-1 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${mobileButtonClass}`}
+                      >
+                        <MenuDots className="rotate-90" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      side="top"
+                      align="end"
+                      sideOffset={8}
+                      className="border-gray-10 bg-gray-0 w-[180px] rounded-xl border p-1"
                     >
-                      <MenuDots className="rotate-90" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent
-                    side="top"
-                    align="end"
-                    sideOffset={8}
-                    className="border-gray-10 bg-gray-0 w-[180px] rounded-xl border p-1"
-                  >
-                    <DropdownMenuItem onClick={handleInsertPdf} className="rounded-lg px-3">
-                      Загрузить PDF
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                      <DropdownMenuItem onClick={handleInsertPdf} className="rounded-lg px-3">
+                        Загрузить PDF
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
               </div>
             </div>
           </div>

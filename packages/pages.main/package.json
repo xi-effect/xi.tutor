@@ -39,6 +39,7 @@
     "features.classroom": "workspace:*",
     "pages.classrooms": "workspace:*",
     "pages.materials": "workspace:*",
+    "modules.calls": "workspace:*",
     "react-hook-form": "^7.55.0",
     "zod": "3.24.2"
   },

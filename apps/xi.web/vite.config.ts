@@ -16,14 +16,43 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         injectRegister: 'auto',
         devOptions: { enabled: false },
 
+        manifest: {
+          id: '/',
+          name: 'sovlium',
+          short_name: 'sovlium',
+          description: 'web application for sovlium.ru',
+          theme_color: '#ffffff',
+          background_color: '#ffffff',
+          display: 'standalone',
+          start_url: '/',
+          icons: [
+            {
+              src: '/web-app-manifest-192x192.png',
+              sizes: '192x192',
+              type: 'image/png',
+              purpose: 'any',
+            },
+            {
+              src: '/web-app-manifest-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'any maskable',
+            },
+          ],
+        },
+
         // важно: чтобы новые версии SW активировались быстрее
         workbox: {
           skipWaiting: true,
           clientsClaim: true,
 
-          // ❗️убираем html из прекэша
-          globPatterns: ['**/*.{js,css,ico,png,svg,webmanifest}'],
+          // Прекэш: assets + index.html для SPA fallback при офлайн/прямых переходах на маршруты
+          globPatterns: ['**/*.{js,css,ico,png,svg,webmanifest}', '**/index.html'],
           maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
+
+          // SPA: при навигации на /signin, /classrooms и т.д. отдавать index.html (иначе 404)
+          navigateFallback: '/index.html',
+          navigateFallbackDenylist: [/^\/deployments\/.*/],
 
           // навигации (index.html) — NetworkFirst, чтобы подтягивался свежий html
           runtimeCaching: [
@@ -41,9 +70,6 @@ export default defineConfig(({ mode }: ConfigEnv) => {
               method: 'GET',
             },
           ],
-
-          // как у тебя было
-          navigateFallbackDenylist: [/^\/deployments\/.*/],
         },
       }),
     ],

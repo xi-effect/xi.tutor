@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Button } from '@xipkg/button';
 import { Form } from '@xipkg/form';
 import { Close } from '@xipkg/icons';
@@ -11,6 +12,12 @@ import {
   ModalTitle,
 } from '@xipkg/modal';
 import { useMediaQuery } from '@xipkg/utils';
+
+const cleanupBodyScrollLock = () => {
+  document.body.style.overflow = '';
+  document.body.style.pointerEvents = '';
+  document.body.removeAttribute('data-scroll-locked');
+};
 import { useFetchClassrooms } from 'common.services';
 import { useInvoiceForm } from '../hooks';
 import type { FormData } from '../model';
@@ -39,7 +46,13 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
   const handleCloseModal = () => {
     handleClearForm();
     onOpenChange(false);
+    cleanupBodyScrollLock();
   };
+
+  useEffect(() => {
+    if (open === false) cleanupBodyScrollLock();
+    return cleanupBodyScrollLock;
+  }, [open]);
 
   const onFormSubmit = (data: FormData) => {
     onSubmit(data);
@@ -52,14 +65,26 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
   }, 0);
 
   return (
-    <Modal open={open} onOpenChange={handleCloseModal}>
+    <Modal
+      open={open}
+      onOpenChange={(next) => {
+        if (typeof next === 'boolean') onOpenChange(next);
+        if (next === false) {
+          handleClearForm();
+          cleanupBodyScrollLock();
+        }
+      }}
+    >
       <ModalContent className="max-w-[800px] max-sm:w-fit md:w-[800px]">
         {!isTablet ? (
-          <ModalCloseButton className="">
+          <ModalCloseButton className="" onClick={handleCloseModal}>
             <Close className="fill-gray-80 sm:fill-gray-0 dark:fill-gray-100" />
           </ModalCloseButton>
         ) : (
-          <Close className="fill-gray-80 sm:fill-gray-0 absolute top-6 right-6 dark:fill-gray-100" />
+          <Close
+            className="fill-gray-80 sm:fill-gray-0 absolute top-6 right-6 cursor-pointer dark:fill-gray-100"
+            onClick={handleCloseModal}
+          />
         )}
 
         <ModalHeader className="border-gray-20 border-b" innerClassName="max-sm:p-4">

@@ -1,8 +1,8 @@
 import { LoadingScreen } from 'common.ui';
 import { useKeyPress } from 'common.utils';
 import { JSX } from 'react/jsx-runtime';
-import { useEffect, useRef, useState } from 'react';
-import { Editor, TLInstancePresenceID, Tldraw, TldrawProps } from 'tldraw';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Editor, TLInstancePresence, Tldraw, TldrawProps } from 'tldraw';
 import { useLockedShapeSelection, useRemoveMark, useTldrawClipboard } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore, useTldrawStore } from '../../../store';
@@ -14,6 +14,8 @@ import { FollowBanner } from './FollowBanner';
 import { TldrawZoomPanel } from './TldrawZoomPanel';
 import 'tldraw/tldraw.css';
 import './customstyles.css';
+import { UndoRedo } from '../toolbar/UndoRedo';
+import { makeTldrawAssetUrls } from '../../../utils/assetsUrls';
 
 export const TldrawCanvas = ({
   token,
@@ -121,12 +123,6 @@ export const TldrawCanvas = ({
     }
   }, [editor, isReadonly]);
 
-  // В режиме «Следуем за» блокируем управление камерой у ведомого — пан/зум только через крестик на плашке
-  useEffect(() => {
-    if (!editor) return;
-    editor.setCameraOptions({ isLocked: !!followingPresenceId });
-  }, [editor, followingPresenceId]);
-
   // Восстановление камеры пользователя при открытии доски (один раз после синка)
   useEffect(() => {
     if (!editor || status !== 'synced-remote' || appliedInitialCameraRef.current) return;
@@ -156,31 +152,85 @@ export const TldrawCanvas = ({
     };
   }, [editor, setUserCamera]);
 
-  // Режим "следовать за пользователем": камера в реальном времени повторяет вид коллаборатора (presence.camera из Hocuspocus).
-  // При isLocked программный setCamera тоже блокируется — временно снимаем блок на время синка.
+  // Follow: вписываем вид ведущего в viewport ведомого (fit-to-bounds).
+  // На большом экране зум совпадает; на маленьком — уменьшается, чтобы видеть всю область.
+  // Используем стандартные поля tldraw presence (camera, screenBounds).
   useEffect(() => {
     if (!editor || !store || !followingPresenceId) return;
-    const id = followingPresenceId as TLInstancePresenceID;
-    const syncCamera = () => {
-      const presence = store.get(id) as
-        | { camera?: { x: number; y: number; z: number } | null }
-        | undefined;
+
+    const id = followingPresenceId;
+    let raf = 0;
+
+    const sync = () => {
+      const presence = store.get(id as TLInstancePresence['id']) as TLInstancePresence | undefined;
       if (!presence?.camera) return;
+
+      const leaderCam = presence.camera;
+      const leaderSB = presence.screenBounds;
+      if (!leaderSB || leaderSB.w <= 0 || leaderSB.h <= 0) return;
+
+      // Вид ведущего в page-space
+      const leaderPageW = leaderSB.w / leaderCam.z;
+      const leaderPageH = leaderSB.h / leaderCam.z;
+      const centerX = -leaderCam.x + leaderPageW / 2;
+      const centerY = -leaderCam.y + leaderPageH / 2;
+
+      const vp = editor.getViewportScreenBounds();
+
+      // Зум, при котором весь вид ведущего вписывается в наш viewport.
+      // Не зумим ближе, чем у ведущего (если наш экран больше).
+      const z = Math.min(leaderCam.z, vp.w / leaderPageW, vp.h / leaderPageH);
+
+      const target = {
+        x: -(centerX - vp.w / (2 * z)),
+        y: -(centerY - vp.h / (2 * z)),
+        z,
+      };
+
+      const cur = editor.getCamera();
+      if (
+        Math.abs(cur.x - target.x) < 0.5 &&
+        Math.abs(cur.y - target.y) < 0.5 &&
+        Math.abs(cur.z - target.z) < 0.001
+      )
+        return;
+
       editor.setCameraOptions({ isLocked: false });
-      editor.setCamera(presence.camera);
+      editor.setCamera(target);
       editor.setCameraOptions({ isLocked: true });
     };
-    syncCamera();
+
+    const schedule = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        sync();
+      });
+    };
+
+    schedule();
+
     const unsub = store.listen(
       ({ changes }) => {
-        const added = changes.added as Record<string, unknown>;
-        const updated = changes.updated as Record<string, unknown>;
-        if (added[id] || updated[id]) syncCamera();
+        const added = (changes.added ?? {}) as Record<string, unknown>;
+        const updated = (changes.updated ?? {}) as Record<string, unknown>;
+        if (added[id] || updated[id]) schedule();
       },
       { scope: 'presence' },
     );
-    return unsub;
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(editor.getContainer());
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      unsub();
+      editor.setCameraOptions({ isLocked: false });
+    };
   }, [editor, store, followingPresenceId]);
+
+  const assetUrls = useMemo(() => makeTldrawAssetUrls({ baseUrl: '/tldraw' }), []);
 
   if (status === 'loading') return <LoadingScreen />;
 
@@ -205,6 +255,7 @@ export const TldrawCanvas = ({
                 return next;
               });
             }}
+            assetUrls={assetUrls}
             store={store}
             shapeUtils={[PdfShapeUtil]}
             hideUi
@@ -218,6 +269,9 @@ export const TldrawCanvas = ({
             {!isReadonly && (
               <Navbar undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} token={token} />
             )}
+            <div className="border-gray-10 bg-gray-0 absolute bottom-4 left-4 z-30 flex rounded-xl border p-1 sm:hidden">
+              <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
+            </div>
             <TldrawZoomPanel />
           </Tldraw>
         </div>
