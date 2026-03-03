@@ -70,69 +70,64 @@ export function useDocumentPiP({
 }: UseDocumentPiPOptions = {}) {
   const [pipWindow, setPipWindow] = useState<Window | null>(null);
   const pipWindowRef = useRef<Window | null>(null);
+  const micActiveRef = useRef(microphoneActive);
+  const camActiveRef = useRef(cameraActive);
+
+  micActiveRef.current = microphoneActive;
+  camActiveRef.current = cameraActive;
 
   const isSupported = typeof window !== 'undefined' && 'documentPictureInPicture' in window;
-
-  // Диагностика при монтировании
-  useEffect(() => {
-    if (!enabled) return;
-
-    console.info('[PiP] Document PiP API supported:', isSupported);
-    console.info('[PiP] enabled:', enabled);
-    console.info('[PiP] microphoneActive:', microphoneActive, 'cameraActive:', cameraActive);
-
-    if (typeof navigator?.mediaSession !== 'undefined') {
-      console.info('[PiP] Media Session API available');
-    } else {
-      console.warn('[PiP] Media Session API NOT available');
-    }
-  }, [enabled, isSupported, microphoneActive, cameraActive]);
 
   // Chrome для авто-PiP при видеозвонках требует setCameraActive / setMicrophoneActive
   useEffect(() => {
     if (!enabled) return;
     try {
       navigator.mediaSession.setMicrophoneActive(microphoneActive);
-    } catch (e) {
-      console.warn('[PiP] setMicrophoneActive failed:', e);
+    } catch {
+      // ignore
     }
     try {
       navigator.mediaSession.setCameraActive(cameraActive);
-    } catch (e) {
-      console.warn('[PiP] setCameraActive failed:', e);
+    } catch {
+      // ignore
     }
   }, [enabled, microphoneActive, cameraActive]);
 
-  const openPiP = useCallback(async (): Promise<Window | null> => {
-    if (!isSupported || !enabled) return null;
-    if (pipWindowRef.current) return pipWindowRef.current;
+  const openPiP = useCallback(
+    async (overrides?: { width?: number; height?: number }): Promise<Window | null> => {
+      if (!isSupported || !enabled) return null;
+      if (pipWindowRef.current) return pipWindowRef.current;
 
-    try {
-      const pip = await window.documentPictureInPicture!.requestWindow({
-        width,
-        height,
-      });
+      const w = overrides?.width ?? width;
+      const h = overrides?.height ?? height;
 
-      copyStylesToWindow(pip);
+      try {
+        const pip = await window.documentPictureInPicture!.requestWindow({
+          width: w,
+          height: h,
+        });
 
-      pip.document.body.style.margin = '0';
-      pip.document.body.style.overflow = 'hidden';
-      pip.document.body.style.background = 'var(--xi-gray-0, #fff)';
+        copyStylesToWindow(pip);
 
-      pipWindowRef.current = pip;
-      setPipWindow(pip);
+        pip.document.body.style.margin = '0';
+        pip.document.body.style.overflow = 'hidden';
+        pip.document.body.style.background = 'var(--xi-gray-0, #fff)';
 
-      pip.addEventListener('pagehide', () => {
-        pipWindowRef.current = null;
-        setPipWindow(null);
-      });
+        pipWindowRef.current = pip;
+        setPipWindow(pip);
 
-      return pip;
-    } catch (error) {
-      console.warn('[PiP] Failed to open:', error);
-      return null;
-    }
-  }, [isSupported, enabled, width, height]);
+        pip.addEventListener('pagehide', () => {
+          pipWindowRef.current = null;
+          setPipWindow(null);
+        });
+
+        return pip;
+      } catch {
+        return null;
+      }
+    },
+    [isSupported, enabled, width, height],
+  );
 
   const closePiP = useCallback(() => {
     if (pipWindowRef.current) {
@@ -140,28 +135,16 @@ export function useDocumentPiP({
     }
   }, []);
 
-  // Регистрируем Media Session handler — Chrome вызывает его автоматически
-  // при переключении вкладки, если getUserMedia активен
+  // Регистрируем Media Session handler — Chrome вызывает его сам при переключении вкладки.
+  // Handler должен быть зарегистрирован и не сниматься (компонент не размонтироваться при роутинге).
   useEffect(() => {
-    if (!isSupported || !enabled) {
-      console.info(
-        '[PiP] Skipping handler registration. isSupported:',
-        isSupported,
-        'enabled:',
-        enabled,
-      );
-      return;
-    }
+    if (!isSupported || !enabled) return;
 
     const action = 'enterpictureinpicture' as MediaSessionAction;
     try {
-      navigator.mediaSession.setActionHandler(action, async () => {
-        console.info('[PiP] enterpictureinpicture handler CALLED by browser');
-        await openPiP();
-      });
-      console.info('[PiP] enterpictureinpicture handler registered successfully');
-    } catch (e) {
-      console.warn('[PiP] Failed to register enterpictureinpicture handler:', e);
+      navigator.mediaSession.setActionHandler(action, () => void openPiP());
+    } catch {
+      // enterpictureinpicture не поддерживается
     }
 
     return () => {
@@ -195,11 +178,22 @@ export function useDocumentPiP({
     };
   }, []);
 
+  const resizePiP = useCallback((w: number, h: number) => {
+    if (pipWindowRef.current) {
+      try {
+        pipWindowRef.current.resizeTo(w, h);
+      } catch {
+        // ignore
+      }
+    }
+  }, []);
+
   return {
     isSupported,
     pipWindow,
     isPiPActive: pipWindow !== null,
     openPiP,
     closePiP,
+    resizePiP,
   };
 }

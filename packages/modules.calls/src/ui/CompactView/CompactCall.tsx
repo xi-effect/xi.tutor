@@ -16,7 +16,13 @@ import { useCurrentUser } from 'common.services';
 import { useMedia } from 'common.utils';
 import { CompactCallVideoArea } from './CompactCallVideoArea';
 import { CompactCallBottomBar } from './CompactCallBottomBar';
-import { TILE_GAP_PX, TILE_HEIGHT_16_9_PX } from './constants';
+import {
+  COMPACT_BOTTOM_BAR_PX,
+  EXPANDED_VIDEO_PADDING_VERTICAL_PX,
+  TILE_GAP_PX,
+  TILE_HEIGHT_16_9_PX,
+  TILE_MIN_HEIGHT_PX,
+} from './constants';
 
 export const CompactCall = ({ saveUserChoices = true, withOutShadows = false }) => {
   const isMobile = useMedia('(max-width: 720px)');
@@ -103,12 +109,34 @@ export const CompactCall = ({ saveUserChoices = true, withOutShadows = false }) 
   const availableHeight = useCompactAvailableHeight(isOnBoardPage);
 
   const multiViewLayout = useMemo(() => {
-    const count = Math.max(
-      1,
-      Math.floor((availableHeight + TILE_GAP_PX) / (TILE_HEIGHT_16_9_PX + TILE_GAP_PX)),
+    // Высота под плитки: общая доступная минус нижняя панель и padding контейнера
+    const heightForTiles = Math.max(
+      0,
+      availableHeight - COMPACT_BOTTOM_BAR_PX - EXPANDED_VIDEO_PADDING_VERTICAL_PX,
     );
-    const visibleCount = Math.min(count, totalParticipants);
-    return { visibleCount, tileHeightPx: TILE_HEIGHT_16_9_PX };
+    // Сколько плиток помещается при высоте 16:9
+    const countBy16_9 = Math.floor(
+      (heightForTiles + TILE_GAP_PX) / (TILE_HEIGHT_16_9_PX + TILE_GAP_PX),
+    );
+    // Сколько плиток помещается при минимальной высоте (показываем больше участников)
+    const countByMinHeight = Math.floor(
+      (heightForTiles + TILE_GAP_PX) / (TILE_MIN_HEIGHT_PX + TILE_GAP_PX),
+    );
+    const visibleCount = Math.min(
+      totalParticipants,
+      Math.max(1, Math.max(countBy16_9, countByMinHeight)),
+    );
+    // Высота плитки: распределяем доступное место, в пределах [min, 16:9]
+    const tileHeightPx = Math.round(
+      Math.min(
+        TILE_HEIGHT_16_9_PX,
+        Math.max(
+          TILE_MIN_HEIGHT_PX,
+          (heightForTiles - (visibleCount - 1) * TILE_GAP_PX) / visibleCount,
+        ),
+      ),
+    );
+    return { visibleCount, tileHeightPx };
   }, [availableHeight, totalParticipants]);
 
   const { visibleCount: multiVisibleCount, tileHeightPx: multiTileHeightPx } = multiViewLayout;

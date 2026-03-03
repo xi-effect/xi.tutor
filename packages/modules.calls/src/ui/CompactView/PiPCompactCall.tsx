@@ -9,21 +9,41 @@ import { Account, Users } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { cn } from '@xipkg/utils';
+import { useCallStore } from '../../store/callStore';
 import { useCompactNavigation } from '../../hooks/useCompactNavigation';
 import { ParticipantTile } from '../Participant';
 import { DevicesBar } from '../shared';
 import { DisconnectButton } from '../Bottom/DisconnectButton';
 import { RaiseHandButton } from '../Bottom/RaiseHandButton';
+import { ScreenShareButton } from '../Bottom/ScreenShareButton';
 import { CompactNavigationControls } from './CompactNavigationControls';
 import { CompactMultiViewControls } from './CompactMultiViewControls';
-import { TILE_GAP_PX } from './constants';
+import { PIP_RESERVED_HEIGHT_PX, PIP_TILE_HEIGHT_16_9_PX, TILE_GAP_PX } from './constants';
 
-const PIP_EXPANDED_VISIBLE_COUNT = 2;
-const PIP_VIDEO_HEIGHT_PX = 200;
+/**
+ * Минимальная высота окна PiP, необходимая для отображения n полных плиток
+ * вместе с панелью управления и всеми отступами.
+ */
+function requiredPipHeight(n: number): number {
+  return PIP_RESERVED_HEIGHT_PX + n * PIP_TILE_HEIGHT_16_9_PX + Math.max(0, n - 1) * TILE_GAP_PX;
+}
 
-export function PiPCompactCall() {
-  const [viewMode, setViewMode] = useState<'basic' | 'expanded'>('basic');
+type PiPCompactCallProps = {
+  pipWindow: Window;
+};
+
+export function PiPCompactCall({ pipWindow }: PiPCompactCallProps) {
+  const compactViewMode = useCallStore((s) => s.compactViewMode);
+  const updateStore = useCallStore((s) => s.updateStore);
+  const setViewMode = useCallback(
+    (mode: 'basic' | 'expanded') => updateStore('compactViewMode', mode),
+    [updateStore],
+  );
   const [multiScrollIndex, setMultiScrollIndex] = useState(0);
+  const [pipSize, setPipSize] = useState({
+    width: pipWindow.innerWidth,
+    height: pipWindow.innerHeight,
+  });
 
   const { saveAudioInputEnabled, saveVideoInputEnabled } = usePersistentUserChoices();
   const { isMicrophoneEnabled, isCameraEnabled, microphoneTrack, cameraTrack } =
@@ -56,21 +76,37 @@ export function PiPCompactCall() {
     goToPrev,
   } = useCompactNavigation();
 
+  // Размер окна PiP: подписка на resize — при изменении высоты подстраиваем количество плиток
+  useEffect(() => {
+    const updateSize = () =>
+      setPipSize({ width: pipWindow.innerWidth, height: pipWindow.innerHeight });
+    updateSize();
+    pipWindow.addEventListener('resize', updateSize);
+    return () => pipWindow.removeEventListener('resize', updateSize);
+  }, [pipWindow]);
+
+  // Сколько полных плиток (16:9) помещается при текущей высоте окна.
+  // Плитка добавляется, только когда есть полное место; убирается сразу, как перестаёт влезать.
+  const multiVisibleCount = useMemo(() => {
+    let n = 1;
+    while (n < totalParticipants && requiredPipHeight(n + 1) <= pipSize.height) {
+      n++;
+    }
+    return n;
+  }, [pipSize.height, totalParticipants]);
+
   const multiVisibleParticipants = useMemo(
-    () => participants.slice(multiScrollIndex, multiScrollIndex + PIP_EXPANDED_VISIBLE_COUNT),
-    [participants, multiScrollIndex],
+    () => participants.slice(multiScrollIndex, multiScrollIndex + multiVisibleCount),
+    [participants, multiScrollIndex, multiVisibleCount],
   );
   const multiCanPrev = multiScrollIndex > 0;
-  const multiCanNext = multiScrollIndex + PIP_EXPANDED_VISIBLE_COUNT < totalParticipants;
+  const multiCanNext = multiScrollIndex + multiVisibleCount < totalParticipants;
 
   useEffect(() => {
-    if (
-      multiScrollIndex + PIP_EXPANDED_VISIBLE_COUNT > totalParticipants &&
-      totalParticipants > 0
-    ) {
-      setMultiScrollIndex(Math.max(0, totalParticipants - PIP_EXPANDED_VISIBLE_COUNT));
+    if (multiScrollIndex + multiVisibleCount > totalParticipants && totalParticipants > 0) {
+      setMultiScrollIndex(Math.max(0, totalParticipants - multiVisibleCount));
     }
-  }, [totalParticipants, multiScrollIndex]);
+  }, [totalParticipants, multiVisibleCount, multiScrollIndex]);
 
   const emptyState = (
     <div className="bg-gray-40 flex h-full w-full items-center justify-center rounded-2xl text-gray-100">
@@ -85,7 +121,7 @@ export function PiPCompactCall() {
   return (
     <div className="flex h-full flex-col gap-1 p-1">
       <div className="group relative min-h-0 flex-1 overflow-hidden rounded-2xl">
-        {viewMode === 'expanded' ? (
+        {compactViewMode === 'expanded' ? (
           <div
             className="relative flex h-full flex-col overflow-hidden rounded-2xl p-0.5"
             style={{ gap: TILE_GAP_PX }}
@@ -96,9 +132,7 @@ export function PiPCompactCall() {
                   <div
                     key={`${trackRef.participant.identity}-${trackRef.source}`}
                     className="aspect-video w-full shrink-0 overflow-hidden rounded-xl"
-                    style={{
-                      minHeight: PIP_VIDEO_HEIGHT_PX / PIP_EXPANDED_VISIBLE_COUNT - TILE_GAP_PX / 2,
-                    }}
+                    style={{ minHeight: PIP_TILE_HEIGHT_16_9_PX }}
                   >
                     <ParticipantTile
                       trackRef={trackRef}
@@ -113,9 +147,7 @@ export function PiPCompactCall() {
               canNext={multiCanNext}
               onPrev={() => setMultiScrollIndex((i) => Math.max(0, i - 1))}
               onNext={() =>
-                setMultiScrollIndex((i) =>
-                  Math.min(totalParticipants - PIP_EXPANDED_VISIBLE_COUNT, i + 1),
-                )
+                setMultiScrollIndex((i) => Math.min(totalParticipants - multiVisibleCount, i + 1))
               }
             />
           </div>
@@ -143,7 +175,7 @@ export function PiPCompactCall() {
         )}
       </div>
 
-      <div className="flex h-[36px] shrink-0 items-center gap-0.5">
+      <div className="flex h-12 shrink-0 items-center gap-0.5">
         <div className={barCn}>
           <DevicesBar
             className="h-[28px] w-[28px]"
@@ -170,11 +202,11 @@ export function PiPCompactCall() {
               <Button
                 size="icon"
                 variant="none"
-                onClick={() => setViewMode(viewMode === 'basic' ? 'expanded' : 'basic')}
+                onClick={() => setViewMode(compactViewMode === 'basic' ? 'expanded' : 'basic')}
                 className="hover:bg-gray-5 h-[28px] w-[28px] rounded-xl p-0 text-gray-100"
-                aria-label={viewMode === 'basic' ? 'Развёрнутый вид' : 'Один участник'}
+                aria-label={compactViewMode === 'basic' ? 'Развёрнутый вид' : 'Один участник'}
               >
-                {viewMode === 'basic' ? (
+                {compactViewMode === 'basic' ? (
                   <Users className="h-4 w-4" />
                 ) : (
                   <Account className="h-4 w-4" />
@@ -182,12 +214,15 @@ export function PiPCompactCall() {
               </Button>
             </TooltipTrigger>
             <TooltipContent>
-              {viewMode === 'basic' ? 'Развёрнутый вид (несколько участников)' : 'Один участник'}
+              {compactViewMode === 'basic'
+                ? 'Развёрнутый вид (несколько участников)'
+                : 'Один участник'}
             </TooltipContent>
           </Tooltip>
         </div>
 
         <div className={cn(barCn, 'ml-auto')}>
+          <ScreenShareButton className="h-[28px] w-[28px]" />
           <RaiseHandButton className="h-[28px] w-[28px]" />
         </div>
 
