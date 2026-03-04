@@ -5,7 +5,7 @@ import { AddingLessonModal } from 'features.lesson.add';
 import { useState } from 'react';
 import { AllLessons } from './AllLessons';
 import type { ScheduleLessonRow } from './Lesson';
-import { ScheduleDateCarousel } from './ScheduleDateCarousel';
+import { ScheduleDateCarousel } from 'modules.calendar';
 
 // TODO: Заменить на данные из API по выбранной дате (selectedDate)
 const MOCK_LESSONS: ScheduleLessonRow[] = [
@@ -61,7 +61,7 @@ export const Lessons = () => {
         {/* Заголовок */}
         <div className="flex flex-row items-center justify-between gap-2">
           <div className="flex flex-row items-center gap-2">
-            <h2 className="text-xl-base font-semibold text-gray-100">Расписание</h2>
+            <h2 className="text-l-base 2xl:text-xl-base font-semibold text-gray-100">Расписание</h2>
           </div>
           <Button
             variant="none"

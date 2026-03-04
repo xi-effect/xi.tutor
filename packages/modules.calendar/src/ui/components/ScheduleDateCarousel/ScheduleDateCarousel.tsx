@@ -9,7 +9,7 @@ const DAY_PILL_MIN_WIDTH = 36;
 
 const styles = {
   dayPillBase:
-    'flex h-[48px] w-[36px] min-w-[36px] shrink-0 flex-col items-center justify-center rounded-lg px-2 py-1.5 text-center',
+    'flex h-[48px] w-[36px] min-w-[36px] shrink-0 flex-col items-center justify-center rounded-lg text-center',
   dayPillDefaultHover: 'hover:bg-gray-10 hover:text-gray-80',
 } as const;
 
@@ -122,6 +122,7 @@ export const ScheduleDateCarousel = ({
               <span
                 style={{
                   fontSize: '10px',
+                  lineHeight: '14px',
                   color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-50)',
                 }}
               >
@@ -129,7 +130,8 @@ export const ScheduleDateCarousel = ({
               </span>
               <span
                 style={{
-                  fontSize: '20px',
+                  fontSize: '14px',
+                  lineHeight: '20px',
                   fontWeight: 500,
                   color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-70)',
                 }}
