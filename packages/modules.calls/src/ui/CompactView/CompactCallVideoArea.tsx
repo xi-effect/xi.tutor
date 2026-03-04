@@ -1,12 +1,14 @@
 import type { TrackReferenceOrPlaceholder } from '@livekit/components-core';
 import { Button } from '@xipkg/button';
-import { ChevronUp } from '@xipkg/icons';
+import { ChevronUp, External } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
+import { usePiP } from '../../providers/PiPProvider';
 import { CompactCallCollapsedBar } from './CompactCallCollapsedBar';
 import { CompactNavigationControls } from './CompactNavigationControls';
 import { CompactMultiViewControls } from './CompactMultiViewControls';
 import { ParticipantTile } from '../Participant';
 import { TILE_GAP_PX, TILE_HEIGHT_16_9_PX } from './constants';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 
 type CompactCallVideoAreaProps = {
   isMobile: boolean;
@@ -59,6 +61,9 @@ export function CompactCallVideoArea({
   onMultiPrev,
   onMultiNext,
 }: CompactCallVideoAreaProps) {
+  const pip = usePiP();
+  const showPiPButton = pip?.isSupported && currentParticipant;
+
   const emptyState = (
     <div className="bg-gray-40 flex h-full w-full items-center justify-center text-gray-100">
       <span className="text-sm">Нет участников</span>
@@ -136,6 +141,23 @@ export function CompactCallVideoArea({
         />
       ) : (
         emptyState
+      )}
+
+      {showPiPButton && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              size="icon"
+              variant="none"
+              onClick={() => void pip!.openPiP()}
+              className="bg-gray-10/80 hover:bg-gray-10 text-gray-0 absolute top-2 right-2 z-10 h-8 w-8 rounded-xl p-0"
+              aria-label="Открыть в отдельном окне"
+            >
+              <External className="h-4 w-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>Открыть в отдельном окне</TooltipContent>
+        </Tooltip>
       )}
 
       {isMobile && (
