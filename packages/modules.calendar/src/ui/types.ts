@@ -23,6 +23,16 @@ export interface ILessonInfo {
 export type EventType = 'lesson' | 'rest';
 export type LessonType = 'group' | 'individual';
 
+/** Строка занятия в списке на день (расписание, виджет дня) */
+export type ScheduleLessonRow = {
+  id: number;
+  startTime: string;
+  endTime: string;
+  subject: string;
+  studentName: string;
+  studentId: number;
+};
+
 export type CalendarMode = 'day' | 'week' | 'month' | 'year';
 export type WeekOrDayMode = Extract<CalendarMode, 'week' | 'day'>;
 

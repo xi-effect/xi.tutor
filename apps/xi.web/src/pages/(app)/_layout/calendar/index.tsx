@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
-import { Suspense, lazy } from 'react';
+import { Suspense, lazy, useState } from 'react';
 import { LoadingScreen } from 'common.ui';
+import { AddingLessonModal } from 'features.lesson.add';
 
 const CalendarModule = lazy(() =>
   import('modules.calendar').then((module) => ({ default: module.CalendarModule })),
@@ -23,9 +24,12 @@ export const Route = createFileRoute('/(app)/_layout/calendar/')({
 });
 
 function CalendarPage() {
+  const [addingModalOpen, setAddingModalOpen] = useState(false);
+
   return (
     <Suspense fallback={<LoadingScreen />}>
-      <CalendarModule />
+      <AddingLessonModal open={addingModalOpen} onOpenChange={setAddingModalOpen} dayLessons={[]} />
+      <CalendarModule onAddLessonClick={() => setAddingModalOpen(true)} />
     </Suspense>
   );
 }

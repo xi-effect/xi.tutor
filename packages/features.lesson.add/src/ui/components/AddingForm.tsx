@@ -1,11 +1,12 @@
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { useMaskInput } from '@xipkg/inputmask';
-import { ArrowRight, Clock } from '@xipkg/icons';
+import { Clock, Account } from '@xipkg/icons';
+import { Switch } from '@xipkg/switcher';
 import { useAddingForm } from '../../hooks';
 import { InputDate } from './InputDate';
-import { RepeatBlock } from './RepeatBlock';
 import { StudentSelector } from './StudentSelector';
+import { addDurationToTime } from '../../utils/utils';
 
 import type { FC, PropsWithChildren } from 'react';
 import type { FormData } from '../../model';
@@ -26,7 +27,14 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose }) => {
   } = useAddingForm();
 
   const maskRefStartTime = useMaskInput('time');
-  const maskRefEndTime = useMaskInput('time');
+  const maskRefDuration = useMaskInput('time');
+
+  const startTime = form.watch('startTime');
+  const duration = form.watch('duration');
+  const endTimeDisplay =
+    startTime && duration && /^\d{1,2}:\d{2}$/.test(startTime) && /^\d{1,2}:\d{2}$/.test(duration)
+      ? addDurationToTime(startTime, duration)
+      : '—';
 
   const handleReset = () => {
     handleClearForm();
@@ -46,56 +54,55 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose }) => {
         onReset={handleReset}
         className="flex flex-col gap-4"
       >
-        <div className="sm:py-2">
-          <FormField
-            control={control}
-            name="title"
-            render={({ field }) => (
-              <FormItem className="mb-4">
-                <FormLabel className="mb-2 block">Название</FormLabel>
-                <FormControl>
-                  <Input {...field} variant="s" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="mb-2 block">Описание</FormLabel>
-                <FormControl>
-                  <Input {...field} variant="s" />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <div className="sm:py-2">
-          <FormField
-            control={control}
-            name="studentId"
-            defaultValue=""
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel className="mb-2 block">Ученик или группа</FormLabel>
-                <FormControl>
-                  <StudentSelector
-                    {...field}
-                    classrooms={classrooms}
-                    isLoading={isClassroomsLoading}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <div className="sm:py-2">
-          <h5 className="mb-2">Время</h5>
+        <FormField
+          control={control}
+          name="title"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="mb-2 block">Название</FormLabel>
+              <FormControl>
+                <Input {...field} variant="s" placeholder="Математика" />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="studentId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="mb-2 block">Кабинет</FormLabel>
+              <FormControl>
+                <StudentSelector
+                  {...field}
+                  classrooms={classrooms}
+                  isLoading={isClassroomsLoading}
+                  before={<Account className="fill-gray-80 h-4 w-4" />}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="startDate"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="mb-2 block">Дата</FormLabel>
+              <FormControl>
+                <InputDate {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <div>
+          <FormLabel className="mb-2 block">Начало и длительность урока</FormLabel>
           <div className="grid grid-cols-2 gap-2">
             <FormField
               control={control}
@@ -106,7 +113,7 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose }) => {
                     <Input
                       {...field}
                       ref={maskRefStartTime}
-                      placeholder="00:00"
+                      placeholder="17:40 Начало"
                       before={<Clock className="fill-gray-80 h-4 w-4" />}
                       variant="s"
                     />
@@ -117,15 +124,15 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose }) => {
             />
             <FormField
               control={control}
-              name="endTime"
+              name="duration"
               render={({ field }) => (
                 <FormItem>
                   <FormControl>
                     <Input
                       {...field}
-                      ref={maskRefEndTime}
-                      placeholder="00:00"
-                      before={<ArrowRight className="fill-gray-80 h-4 w-4" />}
+                      ref={maskRefDuration}
+                      placeholder="1:20 Длительность"
+                      before={<Clock className="fill-gray-80 h-4 w-4" />}
                       variant="s"
                     />
                   </FormControl>
@@ -133,31 +140,42 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose }) => {
                 </FormItem>
               )}
             />
-            <FormField
-              control={control}
-              name="startDate"
-              render={({ field }) => (
-                <FormItem className="col-span-2 sm:col-span-1">
-                  <FormControl>
-                    <InputDate {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={control}
-              name="shouldRepeat"
-              render={({ field }) => (
-                <FormItem className="col-span-2 sm:col-span-1">
-                  <FormControl>
-                    <RepeatBlock {...field} />
-                  </FormControl>
-                </FormItem>
-              )}
-            />
+            <div className="col-span-2">
+              <Input
+                readOnly
+                value={endTimeDisplay}
+                variant="s"
+                before={<Clock className="fill-gray-80 h-4 w-4" />}
+                className="bg-gray-5 cursor-default"
+              />
+              <span className="mt-1 block text-xs text-gray-50">Конец</span>
+            </div>
           </div>
         </div>
+
+        <FormField
+          control={control}
+          name="shouldRepeat"
+          render={({ field }) => (
+            <FormItem>
+              <div className="flex items-center gap-2 py-2">
+                <FormControl>
+                  <Switch
+                    id="repeat-lesson"
+                    checked={field.value}
+                    onCheckedChange={field.onChange}
+                    size="s"
+                  />
+                </FormControl>
+                <label htmlFor="repeat-lesson" className="text-gray-80 text-sm font-medium">
+                  Повторять занятие
+                </label>
+              </div>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         {children}
       </form>
     </Form>

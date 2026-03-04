@@ -1,22 +1,15 @@
 import { Button } from '@xipkg/button';
 import { Conference, Trash } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
+import type { ScheduleLessonRow } from '../../types';
 
-export type ScheduleLessonRow = {
-  id: number;
-  startTime: string;
-  endTime: string;
-  subject: string;
-  studentName: string;
-  studentId: number;
-};
-
-type LessonProps = {
+type DayLessonRowProps = {
   lesson: ScheduleLessonRow;
+  /** Показывать кнопки «Начать занятие», «Перенести», удалить. По умолчанию false */
   showActions?: boolean;
 };
 
-export const Lesson = ({ lesson, showActions = false }: LessonProps) => {
+export const DayLessonRow = ({ lesson, showActions = false }: DayLessonRowProps) => {
   return (
     <div className="border-gray-10 relative flex w-full flex-row items-start gap-4 border-b py-6 last:border-b-0">
       <div className="flex shrink-0 flex-col">

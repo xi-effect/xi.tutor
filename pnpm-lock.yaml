@@ -1787,6 +1787,9 @@ importers:
       '@xipkg/select':
         specifier: 2.2.5
         version: 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@xipkg/switcher':
+        specifier: 3.0.13
+        version: 3.0.13(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.4)
@@ -1808,6 +1811,9 @@ importers:
       common.utils:
         specifier: workspace:*
         version: link:../common.utils
+      modules.calendar:
+        specifier: workspace:*
+        version: link:../modules.calendar
       react:
         specifier: '19'
         version: 19.2.4

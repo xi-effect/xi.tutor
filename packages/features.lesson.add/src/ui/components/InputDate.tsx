@@ -3,7 +3,7 @@ import { memo, useCallback, useEffect, useState } from 'react';
 import { DatePicker } from '@xipkg/datepicker';
 import { Calendar } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
-import { getFullDateString } from '../../utils/utils';
+import { getShortDateString } from '../../utils/utils';
 
 interface InputDateProps {
   value?: Date;
@@ -33,7 +33,7 @@ export const InputDate = memo<InputDateProps>(({ value, onChange }) => {
     >
       <Input
         name="startDate"
-        value={getFullDateString(date)}
+        value={getShortDateString(date)}
         variant="s"
         className="cursor-pointer border text-left"
         before={<Calendar className="fill-gray-80 h-4 w-4" />}

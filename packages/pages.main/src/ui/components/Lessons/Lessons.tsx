@@ -4,8 +4,8 @@ import { ArrowUpRight } from '@xipkg/icons';
 import { AddingLessonModal } from 'features.lesson.add';
 import { useState } from 'react';
 import { AllLessons } from './AllLessons';
-import type { ScheduleLessonRow } from './Lesson';
 import { ScheduleDateCarousel } from 'modules.calendar';
+import type { ScheduleLessonRow } from 'modules.calendar';
 
 // TODO: Заменить на данные из API по выбранной дате (selectedDate)
 const MOCK_LESSONS: ScheduleLessonRow[] = [
@@ -54,9 +54,11 @@ export const Lessons = () => {
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getToday);
 
+  const dayLessonsForModal: ScheduleLessonRow[] = MOCK_LESSONS;
+
   return (
     <>
-      <AddingLessonModal open={open} onOpenChange={setOpen} />
+      <AddingLessonModal open={open} onOpenChange={setOpen} dayLessons={dayLessonsForModal} />
       <div className="bg-gray-0 flex h-[calc(100vh-112px)] w-[460px] flex-col gap-4 rounded-2xl p-6">
         {/* Заголовок */}
         <div className="flex flex-row items-center justify-between gap-2">

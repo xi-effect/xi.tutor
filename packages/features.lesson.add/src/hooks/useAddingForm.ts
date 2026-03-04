@@ -3,15 +3,15 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { formSchema, type FormData } from '../model/formSchema';
 import { useFetchClassrooms } from 'common.services';
+import { addDurationToTime } from '../utils/utils';
 
 const DEFAULT_VALUES: FormData = {
   title: '',
-  description: '',
   studentId: '',
-  startTime: '09:00',
-  endTime: '10:00',
+  startTime: '17:40',
+  duration: '1:20',
   startDate: new Date(),
-  shouldRepeat: 'dont_repeat',
+  shouldRepeat: false,
 };
 
 export const useAddingForm = () => {
@@ -28,13 +28,13 @@ export const useAddingForm = () => {
   const onSubmit = (data: FormData) => {
     const classroom = classrooms?.find((c) => c.id === Number(data.studentId));
     const studentIds = classroom?.kind === 'individual' ? [classroom.student_id] : [];
+    const endTime = addDurationToTime(data.startTime, data.duration);
 
     const payload = {
       title: data.title,
-      description: data.description ?? '',
       studentIds,
       startTime: data.startTime,
-      endTime: data.endTime,
+      endTime,
       startDate: data.startDate,
       shouldRepeat: data.shouldRepeat,
     };
@@ -43,7 +43,7 @@ export const useAddingForm = () => {
 
     // TODO: подключить API создания урока (common.api или модуль календаря)
     // await createLesson(payload);
-    toast.success('Урок назначен');
+    toast.success('Занятие добавлено');
   };
 
   const handleClearForm = () => {

@@ -1,2 +1,2 @@
 export { CalendarModule } from './Calendar';
-export { ScheduleDateCarousel } from './components';
+export { ScheduleDateCarousel, DayLessonRow, DayLessonsPanel } from './components';

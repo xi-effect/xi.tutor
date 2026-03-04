@@ -4,7 +4,12 @@ import { CalendarHeader } from './Header';
 import { useCalendar } from '../hooks';
 import { useKanbanColumns } from '../hooks/useKanbanColumns';
 
-export const CalendarModule = () => {
+type CalendarModuleProps = {
+  /** Вызывается при клике на кнопку добавления занятия в канбане */
+  onAddLessonClick?: () => void;
+};
+
+export const CalendarModule = ({ onAddLessonClick }: CalendarModuleProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const { weekDays, goToPrev, goToNext } = useCalendar();
   const { columnWidth, visibleCount } = useKanbanColumns(containerRef, weekDays.length);
@@ -18,7 +23,11 @@ export const CalendarModule = () => {
         onNext={() => goToNext(visibleCount)}
       />
       <div ref={containerRef} className="flex min-h-0 flex-1 overflow-hidden">
-        <ScheduleKanban visibleDays={visibleDays} columnWidth={columnWidth} />
+        <ScheduleKanban
+          visibleDays={visibleDays}
+          columnWidth={columnWidth}
+          onAddLessonClick={onAddLessonClick}
+        />
       </div>
     </div>
   );
