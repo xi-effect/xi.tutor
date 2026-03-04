@@ -3,12 +3,15 @@ import { Input } from '@xipkg/input';
 import { useMaskInput } from '@xipkg/inputmask';
 import { Clock, Account } from '@xipkg/icons';
 import { Switcher, SwitcherList, SwitcherTrigger } from '@xipkg/switcher';
+import { cn } from '@xipkg/utils';
 import { useAddingForm } from '../../hooks';
 import { InputDate } from './InputDate';
 import { StudentSelector } from './StudentSelector';
 import { addDurationToTime } from '../../utils/utils';
 
 import type { FC, PropsWithChildren } from 'react';
+
+const WEEKDAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] as const;
 import type { FormData } from '../../model';
 
 interface AddingFormProps extends PropsWithChildren {
@@ -31,6 +34,7 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose }) => {
 
   const startTime = form.watch('startTime');
   const duration = form.watch('duration');
+  const repeatMode = form.watch('repeatMode');
   const endTimeDisplay =
     startTime && duration && /^\d{1,2}:\d{2}$/.test(startTime) && /^\d{1,2}:\d{2}$/.test(duration)
       ? addDurationToTime(startTime, duration)
@@ -172,11 +176,11 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose }) => {
           control={control}
           name="repeatMode"
           render={({ field }) => (
-            <FormItem className="flex flex-col gap-2">
+            <FormItem className="flex flex-col gap-0">
               <FormLabel className="text-[14px] font-normal text-gray-100">Повторение</FormLabel>
               <FormControl>
                 <Switcher value={field.value} onValueChange={field.onChange}>
-                  <SwitcherList>
+                  <SwitcherList className="bg-gray-5">
                     <SwitcherTrigger value="none">Не повторять</SwitcherTrigger>
                     <SwitcherTrigger value="weekly">Раз в неделю</SwitcherTrigger>
                     <SwitcherTrigger value="custom">Выбрать дни</SwitcherTrigger>
@@ -187,6 +191,51 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose }) => {
             </FormItem>
           )}
         />
+
+        {repeatMode === 'custom' && (
+          <FormField
+            control={control}
+            name="repeatDays"
+            render={({ field }) => (
+              <FormItem className="flex flex-col gap-2">
+                <FormLabel className="text-[14px] font-normal text-gray-100">
+                  Повторять занятие каждую неделю в выбранные дни:
+                </FormLabel>
+                <FormControl>
+                  <div className="flex flex-row flex-wrap gap-2">
+                    {WEEKDAY_LABELS.map((label, index) => {
+                      const value = field.value ?? [];
+                      const isSelected = value.includes(index);
+                      return (
+                        <button
+                          key={index}
+                          type="button"
+                          onClick={() => {
+                            const next = isSelected
+                              ? value.filter((d) => d !== index)
+                              : [...value, index].sort((a, b) => a - b);
+                            field.onChange(next);
+                          }}
+                          className={cn(
+                            'flex h-[48px] min-w-[36px] shrink-0 items-center justify-center rounded-lg px-3 text-center text-sm font-medium transition-colors',
+                            !isSelected && 'hover:bg-gray-10 hover:text-gray-80',
+                          )}
+                          style={{
+                            backgroundColor: isSelected ? 'var(--xi-brand-80)' : 'transparent',
+                            color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-60)',
+                          }}
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         {children}
       </form>

@@ -19,6 +19,7 @@ export const formSchema = z.object({
   duration: durationValidation,
   startDate: z.date({ required_error: 'Укажите дату' }),
   repeatMode: z.enum(['none', 'weekly', 'custom']).default('none'),
+  repeatDays: z.array(z.number().min(0).max(6)).default([]), // 0 = Пн, 1 = Вт, ... 6 = Вс
 });
 
 export type FormData = z.infer<typeof formSchema>;

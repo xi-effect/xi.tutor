@@ -12,6 +12,7 @@ const DEFAULT_VALUES: FormData = {
   duration: '1:20',
   startDate: new Date(),
   repeatMode: 'none',
+  repeatDays: [],
 };
 
 export const useAddingForm = () => {
@@ -37,6 +38,7 @@ export const useAddingForm = () => {
       endTime,
       startDate: data.startDate,
       repeatMode: data.repeatMode,
+      ...(data.repeatMode === 'custom' && { repeatDays: data.repeatDays }),
     };
 
     console.log('payload', payload);
