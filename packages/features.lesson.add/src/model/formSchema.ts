@@ -18,7 +18,7 @@ export const formSchema = z.object({
   startTime: timeValidation,
   duration: durationValidation,
   startDate: z.date({ required_error: 'Укажите дату' }),
-  shouldRepeat: z.boolean().default(false),
+  repeatMode: z.enum(['none', 'weekly', 'custom']).default('none'),
 });
 
 export type FormData = z.infer<typeof formSchema>;

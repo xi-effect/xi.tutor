@@ -8,6 +8,8 @@ type DayLessonsPanelProps = {
   lessons: ScheduleLessonRow[];
   /** Показывать кнопки действий у первого урока. По умолчанию false */
   showFirstLessonActions?: boolean;
+  /** Не показывать заголовок. По умолчанию false */
+  withoutTitle?: boolean;
 };
 
 /** Виджет: переключатель дней + список занятий на день */
@@ -16,10 +18,13 @@ export const DayLessonsPanel = ({
   onSelectedDateChange,
   lessons,
   showFirstLessonActions = false,
+  withoutTitle = false,
 }: DayLessonsPanelProps) => {
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4">
-      <h3 className="text-l-base shrink-0 font-semibold text-gray-100">Занятия на день</h3>
+      {!withoutTitle && (
+        <h3 className="text-l-base shrink-0 font-semibold text-gray-100">Занятия на день</h3>
+      )}
       <ScheduleDateCarousel
         selectedDate={selectedDate}
         onSelectedDateChange={onSelectedDateChange}

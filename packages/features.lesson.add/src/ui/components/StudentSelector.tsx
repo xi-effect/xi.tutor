@@ -19,10 +19,14 @@ export const StudentSelector = ({
 }: StudentSelectorProps) => {
   return (
     <Select value={value} onValueChange={onChange}>
-      <SelectTrigger className="mt-1 mb-0 w-full border" size="s" before={before}>
-        <SelectValue placeholder={isLoading ? 'Загрузка...' : 'Иван Алексеев'} />
+      <SelectTrigger
+        className="border-gray-10 m-0 w-full rounded-lg border"
+        size="s"
+        before={before}
+      >
+        <SelectValue placeholder={isLoading ? 'Загрузка...' : 'Ученик или группа'} />
       </SelectTrigger>
-      <SelectContent className="w-full">
+      <SelectContent className="max-h-[300px] w-full">
         {classrooms.map((classroom) => (
           <SelectItem
             key={classroom.id}

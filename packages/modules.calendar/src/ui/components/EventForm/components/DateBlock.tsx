@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { FormControl, FormField, FormItem, FormMessage, useForm } from '@xipkg/form';
-import { Switch } from '@xipkg/switcher';
+import { Toggle } from '@xipkg/toggle';
 import { Input } from '@xipkg/input';
 import { useMaskInput } from '@xipkg/inputmask';
 import { ArrowRight, Clock } from '@xipkg/icons';
@@ -114,7 +114,7 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
           <FormItem>
             <div className="flex items-center gap-2 py-2">
               <FormControl>
-                <Switch
+                <Toggle
                   id="all-day-mode"
                   checked={field.value}
                   onCheckedChange={field.onChange}

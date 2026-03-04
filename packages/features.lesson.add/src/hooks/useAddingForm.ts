@@ -11,7 +11,7 @@ const DEFAULT_VALUES: FormData = {
   startTime: '17:40',
   duration: '1:20',
   startDate: new Date(),
-  shouldRepeat: false,
+  repeatMode: 'none',
 };
 
 export const useAddingForm = () => {
@@ -36,7 +36,7 @@ export const useAddingForm = () => {
       startTime: data.startTime,
       endTime,
       startDate: data.startDate,
-      shouldRepeat: data.shouldRepeat,
+      repeatMode: data.repeatMode,
     };
 
     console.log('payload', payload);

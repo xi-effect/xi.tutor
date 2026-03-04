@@ -21,7 +21,7 @@
     "@xipkg/scrollarea": "2.2.0",
     "@xipkg/calendar": "2.1.0",
     "@xipkg/select": "2.2.5",
-    "@xipkg/switcher": "3.0.13",
+    "@xipkg/toggle": "4.0.0",
     "@xipkg/inputmask": "2.0.12",
     "@xipkg/datepicker": "2.2.0",
     "@xipkg/userprofile": "4.1.0",

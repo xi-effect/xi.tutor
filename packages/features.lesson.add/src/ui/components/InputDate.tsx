@@ -1,8 +1,8 @@
 import { memo, useCallback, useEffect, useState } from 'react';
 
+import { Button } from '@xipkg/button';
 import { DatePicker } from '@xipkg/datepicker';
 import { Calendar } from '@xipkg/icons';
-import { Input } from '@xipkg/input';
 import { getShortDateString } from '../../utils/utils';
 
 interface InputDateProps {
@@ -31,13 +31,15 @@ export const InputDate = memo<InputDateProps>(({ value, onChange }) => {
     <DatePicker
       calendarProps={{ mode: 'single', selected: date, onSelect: handleSelectDate, required: true }}
     >
-      <Input
-        name="startDate"
-        value={getShortDateString(date)}
-        variant="s"
-        className="cursor-pointer border text-left"
-        before={<Calendar className="fill-gray-80 h-4 w-4" />}
-      />
+      <Button
+        type="button"
+        variant="text"
+        size="s"
+        className="border-gray-20 hover:bg-gray-5 w-full cursor-pointer justify-start gap-2 border bg-transparent px-3 py-2 text-left font-normal normal-case"
+      >
+        {getShortDateString(date)}
+        <Calendar className="fill-brand-80 ml-auto h-4 w-4 shrink-0" />
+      </Button>
     </DatePicker>
   );
 });

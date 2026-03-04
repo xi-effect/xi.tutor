@@ -1791,8 +1791,11 @@ importers:
         specifier: 2.2.5
         version: 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/switcher':
-        specifier: 3.0.13
-        version: 3.0.13(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: ^4.0.0
+        version: 4.0.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@xipkg/toggle':
+        specifier: 4.0.0
+        version: 4.0.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.4)
@@ -2621,9 +2624,9 @@ importers:
       '@xipkg/select':
         specifier: 2.2.5
         version: 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@xipkg/switcher':
-        specifier: 3.0.13
-        version: 3.0.13(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@xipkg/toggle':
+        specifier: 4.0.0
+        version: 4.0.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/userprofile':
         specifier: 4.1.0
         version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -2769,6 +2772,9 @@ importers:
       '@xipkg/textarea':
         specifier: 1.1.0
         version: 1.1.0(react@19.2.4)
+      '@xipkg/toggle':
+        specifier: 4.0.0
+        version: 4.0.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/tooltip':
         specifier: 2.1.0
         version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -3305,8 +3311,8 @@ importers:
         specifier: 2.2.5
         version: 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/toggle':
-        specifier: ^2.0.13
-        version: 2.0.13(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: ^4.0.0
+        version: 4.0.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/userprofile':
         specifier: 4.1.0
         version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -8671,8 +8677,8 @@ packages:
     peerDependencies:
       react: ^19
 
-  '@xipkg/switcher@3.0.13':
-    resolution: {integrity: sha512-H3yyIJ8/3tcLZ0Z7hfNeuO+qBqG2PZPDS330x7hjok4uk2HfajjYtdiSGdYn6QKCKj4ZB2XzTwXMBvxoLc9s/A==}
+  '@xipkg/switcher@4.0.0':
+    resolution: {integrity: sha512-p812yEhjnjQbG8Z6c9ZA8CKEsNlnJZl5Rr53i+ovfVDsnpcpjHUaH6fdK5XPKyBEa0FBgorQ1ZoY4f3yE1Vhrw==}
     peerDependencies:
       react: ^19
 
@@ -8692,8 +8698,8 @@ packages:
     peerDependencies:
       react: ^19
 
-  '@xipkg/toggle@2.0.13':
-    resolution: {integrity: sha512-bxQBfZxY6HcqXd8PccwBOKU6r6bcABjIkqHLpNgpHdUARihOUgT8LV9p8+OWzge4fyy3qeny+Q86h217JqS7vw==}
+  '@xipkg/toggle@4.0.0':
+    resolution: {integrity: sha512-ynazxvBoznjEakyL8SZ6KQCp7mx/7oqG8s/4pkRcIAm+nGthM1izRF3L31p363+o1mTn8ztNDWnni3hCOirBnQ==}
     peerDependencies:
       react: ^19
 
@@ -15523,10 +15529,11 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/switcher@3.0.13(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@xipkg/switcher@4.0.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
-      '@radix-ui/react-switch': 1.2.6(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@radix-ui/react-tabs': 1.1.11(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/utils': 1.8.0(react@19.2.4)
+      class-variance-authority: 0.7.1
       react: 19.2.4
     transitivePeerDependencies:
       - '@types/react'
@@ -15554,11 +15561,10 @@ snapshots:
       class-variance-authority: 0.7.1
       react: 19.2.4
 
-  '@xipkg/toggle@2.0.13(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@xipkg/toggle@4.0.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       '@radix-ui/react-switch': 1.2.6(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/utils': 1.8.0(react@19.2.4)
-      class-variance-authority: 0.7.1
       react: 19.2.4
     transitivePeerDependencies:
       - '@types/react'

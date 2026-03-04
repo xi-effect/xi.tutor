@@ -32,21 +32,22 @@ export const AddingLessonModal = ({
 
   return (
     <Modal open={open} onOpenChange={handleCloseModal}>
-      <ModalContent className="max-w-[960px]">
+      <ModalContent className="min-h-[740px] max-w-[960px]">
         <ModalCloseButton />
-        <ModalBody className="flex max-h-[70vh] flex-row gap-10">
+        <ModalBody className="flex h-full flex-row gap-10">
           <div className="flex min-h-0 w-1/2 min-w-0 flex-col gap-5">
             <h3 className="text-xl-base font-semibold text-gray-100">Расписание</h3>
             <DayLessonsPanel
               selectedDate={selectedDate}
               onSelectedDateChange={setSelectedDate}
               lessons={dayLessons}
+              withoutTitle
             />
           </div>
-          <div className="flex w-1/2 min-w-0 flex-col gap-5">
+          <div className="flex h-full w-1/2 min-w-0 flex-col gap-5">
             <h3 className="text-xl-base font-semibold text-gray-100">Добавить занятие</h3>
             <AddingForm onClose={handleCloseModal} />
-            <div className="flex flex-row gap-2">
+            <div className="mt-auto flex flex-row gap-2">
               <Button
                 className="w-full"
                 form="adding-lesson-form"
