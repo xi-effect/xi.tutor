@@ -12,8 +12,8 @@ interface ScheduleKanbanProps {
   /** Видимые дни (то же, что в заголовке календаря) */
   visibleDays: Date[];
   columnWidth: number;
-  /** Вызывается при клике на кнопку добавления занятия (плюс в заголовке дня) */
-  onAddLessonClick?: () => void;
+  /** Вызывается при клике на кнопку добавления занятия (плюс в заголовке дня). Передаётся дата колонки для предзаполнения формы. */
+  onAddLessonClick?: (date: Date) => void;
 }
 
 const getEventsForDay = (
@@ -77,7 +77,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
                   variant="none"
                   className="hover:text-primary-60 hover:bg-gray-5 flex h-[32px] w-[40px] shrink-0 items-center justify-center rounded-md p-0 text-gray-50 transition-colors"
                   aria-label={t('add_event')}
-                  onClick={() => onAddLessonClick?.()}
+                  onClick={() => onAddLessonClick?.(day)}
                 >
                   <Plus className="fill-gray-40 group-hover/day:fill-brand-80 h-5 w-5 transition-colors duration-300" />
                 </Button>

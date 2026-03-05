@@ -7,6 +7,41 @@ import type { ScheduleLessonRow } from 'modules.calendar';
 import { AddingForm } from './components/AddingForm';
 import './AddingModal.css';
 
+const MOCK_DAY_LESSONS: ScheduleLessonRow[] = [
+  {
+    id: 1,
+    startTime: '10:00',
+    endTime: '10:45',
+    subject: 'Математика',
+    studentName: 'Иван Петров',
+    studentId: 2,
+  },
+  {
+    id: 2,
+    startTime: '11:00',
+    endTime: '11:45',
+    subject: 'Физика',
+    studentName: 'Анна Кузнецова',
+    studentId: 3,
+  },
+  {
+    id: 3,
+    startTime: '14:00',
+    endTime: '14:45',
+    subject: 'Химия',
+    studentName: 'Олег Смирнов',
+    studentId: 4,
+  },
+  {
+    id: 4,
+    startTime: '16:30',
+    endTime: '17:15',
+    subject: 'История',
+    studentName: 'Елена Федорова',
+    studentId: 5,
+  },
+];
+
 const getToday = () => {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
@@ -18,12 +53,15 @@ type AddingLessonModalProps = {
   onOpenChange: (open: boolean) => void;
   /** Занятия на день для левой панели (виджет дня). Если не передано — показывается пустой список */
   dayLessons?: ScheduleLessonRow[];
+  /** Дата для предзаполнения поля «Дата» в форме (например, день колонки при клике на плюс в канбане) */
+  initialDate?: Date | null;
 };
 
 export const AddingLessonModal = ({
   open,
   onOpenChange,
   dayLessons = [],
+  initialDate = null,
 }: AddingLessonModalProps) => {
   const [selectedDate, setSelectedDate] = useState(getToday);
   const handleCloseModal = () => {
@@ -40,13 +78,13 @@ export const AddingLessonModal = ({
             <DayLessonsPanel
               selectedDate={selectedDate}
               onSelectedDateChange={setSelectedDate}
-              lessons={dayLessons}
+              lessons={dayLessons?.length ? dayLessons : MOCK_DAY_LESSONS}
               withoutTitle
             />
           </div>
           <div className="flex h-full w-1/2 min-w-0 flex-col gap-5">
             <h3 className="text-xl-base font-semibold text-gray-100">Добавить занятие</h3>
-            <AddingForm onClose={handleCloseModal} />
+            <AddingForm onClose={handleCloseModal} initialDate={initialDate} />
             <div className="mt-auto flex flex-row gap-2">
               <Button
                 className="w-full"

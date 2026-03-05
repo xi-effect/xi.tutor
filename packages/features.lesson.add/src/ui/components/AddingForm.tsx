@@ -9,6 +9,7 @@ import { InputDate } from './InputDate';
 import { StudentSelector } from './StudentSelector';
 import { addDurationToTime } from '../../utils/utils';
 
+import { useEffect } from 'react';
 import type { FC, PropsWithChildren } from 'react';
 
 const WEEKDAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] as const;
@@ -16,9 +17,11 @@ import type { FormData } from '../../model';
 
 interface AddingFormProps extends PropsWithChildren {
   onClose: () => void;
+  /** Дата для предзаполнения поля «Дата» (например, день колонки при клике на плюс в канбане) */
+  initialDate?: Date | null;
 }
 
-export const AddingForm: FC<AddingFormProps> = ({ children, onClose }) => {
+export const AddingForm: FC<AddingFormProps> = ({ children, onClose, initialDate }) => {
   const {
     form,
     control,
@@ -27,7 +30,13 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose }) => {
     onSubmit,
     classrooms,
     isClassroomsLoading,
-  } = useAddingForm();
+  } = useAddingForm(initialDate);
+
+  useEffect(() => {
+    if (initialDate != null) {
+      form.setValue('startDate', initialDate);
+    }
+  }, [initialDate, form]);
 
   const maskRefStartTime = useMaskInput('time');
   const maskRefDuration = useMaskInput('time');

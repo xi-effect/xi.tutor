@@ -5,23 +5,23 @@ import { formSchema, type FormData } from '../model/formSchema';
 import { useFetchClassrooms } from 'common.services';
 import { addDurationToTime } from '../utils/utils';
 
-const DEFAULT_VALUES: FormData = {
+const getDefaultValues = (initialDate?: Date | null): FormData => ({
   title: '',
   studentId: '',
   startTime: '17:40',
   duration: '1:20',
-  startDate: new Date(),
+  startDate: initialDate ?? new Date(),
   repeatMode: 'none',
   repeatDays: [],
-};
+});
 
-export const useAddingForm = () => {
+export const useAddingForm = (initialDate?: Date | null) => {
   const { data: classrooms, isLoading: isClassroomsLoading } = useFetchClassrooms();
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     mode: 'onSubmit',
-    defaultValues: DEFAULT_VALUES,
+    defaultValues: getDefaultValues(initialDate),
   });
 
   const { control, handleSubmit, reset } = form;
@@ -49,7 +49,7 @@ export const useAddingForm = () => {
   };
 
   const handleClearForm = () => {
-    reset(DEFAULT_VALUES);
+    reset(getDefaultValues(initialDate));
   };
 
   return {

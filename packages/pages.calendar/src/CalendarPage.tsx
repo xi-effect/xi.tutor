@@ -4,11 +4,22 @@ import { CalendarModule } from 'modules.calendar';
 
 export const CalendarPage = () => {
   const [addingModalOpen, setAddingModalOpen] = useState(false);
+  const [initialDate, setInitialDate] = useState<Date | null>(null);
+
+  const handleAddLessonClick = (date: Date) => {
+    setInitialDate(date);
+    setAddingModalOpen(true);
+  };
 
   return (
     <>
-      <AddingLessonModal open={addingModalOpen} onOpenChange={setAddingModalOpen} dayLessons={[]} />
-      <CalendarModule onAddLessonClick={() => setAddingModalOpen(true)} />
+      <AddingLessonModal
+        open={addingModalOpen}
+        onOpenChange={setAddingModalOpen}
+        dayLessons={[]}
+        initialDate={initialDate}
+      />
+      <CalendarModule onAddLessonClick={handleAddLessonClick} />
     </>
   );
 };

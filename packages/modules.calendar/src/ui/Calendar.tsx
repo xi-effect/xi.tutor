@@ -5,8 +5,8 @@ import { useCalendar } from '../hooks';
 import { useKanbanColumns } from '../hooks/useKanbanColumns';
 
 type CalendarModuleProps = {
-  /** Вызывается при клике на кнопку добавления занятия в канбане */
-  onAddLessonClick?: () => void;
+  /** Вызывается при клике на кнопку добавления занятия в канбане. Передаётся дата колонки. */
+  onAddLessonClick?: (date: Date) => void;
 };
 
 export const CalendarModule = ({ onAddLessonClick }: CalendarModuleProps) => {
