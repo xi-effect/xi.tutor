@@ -18,7 +18,7 @@ export const CalendarHeader = ({ visibleDays, onPrev, onNext }: CalendarHeaderPr
     visibleDays.length > 0 ? formatDateRange(visibleDays[0], visibleDays.length) : '';
 
   return (
-    <header className="flex flex-wrap items-center justify-between gap-3 p-7">
+    <header className="flex flex-wrap items-center justify-between gap-3 pt-6 pr-6 pb-2 pl-8">
       <DateTimeDisplay />
       <div className="flex items-center gap-2">
         <Button
