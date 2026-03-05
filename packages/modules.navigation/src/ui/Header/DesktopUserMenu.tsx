@@ -74,7 +74,7 @@ export const DesktopUserMenu = ({
         )}
 
         <DropdownMenuItem
-          onClick={onOpenProfile}
+          onSelect={onOpenProfile}
           className="text-gray-80 text-sm"
           data-umami-event="header-profile-open"
         >
@@ -82,7 +82,7 @@ export const DesktopUserMenu = ({
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          onClick={onLogout}
+          onSelect={onLogout}
           className="text-gray-80 text-sm"
           data-umami-event="header-logout"
         >

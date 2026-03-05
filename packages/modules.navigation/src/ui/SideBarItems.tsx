@@ -26,8 +26,13 @@ import { Notifications } from './Header/Notifications';
 import { Logo, SmallLogo } from 'common.ui';
 import { useMediaQuery } from '@xipkg/utils';
 import { DesktopUserMenu } from './Header/DesktopUserMenu';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import { useAuth } from 'common.auth';
+import { LayoutLeft } from '@xipkg/icons';
+
+const UserSettings = lazy(() =>
+  import('modules.profile').then((module) => ({ default: module.UserSettings })),
+);
 
 export const SideBarItems = () => {
   const { t } = useTranslation('navigation');
@@ -191,11 +196,14 @@ export const SideBarItems = () => {
 
   return (
     <>
-      <SidebarContent>
+      <SidebarContent className="overflow-visible group-data-[collapsible=icon]:overflow-visible">
         {/* Верхняя секция: профиль, бургер-меню, колокольчик */}
-        <div className="flex flex-col gap-4 pt-4">
+        <div className="flex flex-col gap-4 pt-5">
           {/* Профиль пользователя */}
-          <SidebarTrigger className="dark:fill-gray-80 hover:bg-brand-0 focus:bg-transparent" />
+          <SidebarTrigger className="group border-gray-10 bg-gray-5 hover:bg-gray-10 focus:bg-gray-10 active:bg-gray-10 absolute top-6.5 right-[-20px] h-7 min-h-7 w-7 min-w-7 rounded-lg border shadow-2xl">
+            <LayoutLeft className="text-gray-60 group-hover:text-gray-80 group-focus:text-gray-80 group-active:text-gray-80 h-5 w-5" />
+          </SidebarTrigger>
+
           <div className="flex items-center gap-2">
             <DesktopUserMenu
               withOutText={isCollapsed}
@@ -225,13 +233,13 @@ export const SideBarItems = () => {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              <Notifications />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="gap-1">
+      <SidebarFooter className="gap-2">
         <SidebarMenu>
-          <Notifications />
           {footerMenu.map((item) => (
             <SidebarMenuItem key={item.titleKey} className="cursor-pointer">
               <SidebarMenuButton
@@ -270,6 +278,10 @@ export const SideBarItems = () => {
           </div>
         </div>
       </SidebarFooter>
+
+      <Suspense fallback={null}>
+        <UserSettings open={open} setOpen={setOpen} />
+      </Suspense>
     </>
   );
 };

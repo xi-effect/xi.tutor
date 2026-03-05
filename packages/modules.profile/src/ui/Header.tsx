@@ -22,7 +22,7 @@ export const Header = ({ activeItem, showContent, setShowContent, handleClose }:
   const isMobile = useMediaQuery('(max-width: 719px)');
 
   return (
-    <div className="relative flex h-[40px] w-full items-center justify-start sm:mt-4">
+    <div className="xs:h-0 relative flex h-[40px] w-full items-center justify-start">
       {isMobile && showContent && (
         <button
           type="button"
@@ -37,10 +37,10 @@ export const Header = ({ activeItem, showContent, setShowContent, handleClose }:
       )}
       <ModalCloseButton
         onClick={() => handleClose()}
-        variant="full"
-        className="static right-[16px] ml-auto flex h-10 w-10 bg-transparent p-2 sm:absolute sm:top-0 sm:right-0 sm:bg-transparent xl:top-0 xl:right-[-56px]"
+        variant="none"
+        className="xs:top-0 xs:right-0"
       >
-        <Close className="dark:fill-gray-100" />
+        <Close className="" />
       </ModalCloseButton>
     </div>
   );

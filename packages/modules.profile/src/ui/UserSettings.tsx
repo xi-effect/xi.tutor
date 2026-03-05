@@ -72,8 +72,7 @@ export const UserSettings = ({
           event.preventDefault();
           document.body.style.pointerEvents = '';
         }}
-        variant="full"
-        className="p-4 lg:p-6"
+        className="h-[90vh] max-w-[1132px] p-4 lg:p-6"
       >
         <ModalTitle className="hidden"> Настройки пользователя </ModalTitle>
         <div className="flex w-full items-center justify-center">
@@ -84,7 +83,7 @@ export const UserSettings = ({
               setShowContent={memoizedSetShowContent}
               handleClose={handleClose}
             />
-            <div className="mt-4 flex h-full flex-row gap-8">
+            <div className="flex h-full flex-row gap-8">
               {isMobile ? (
                 <div className="flex-1">
                   {showContent ? (
