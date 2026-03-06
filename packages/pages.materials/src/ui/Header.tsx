@@ -21,8 +21,9 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
           tabs={tabs}
           activeTab={activeTab}
           onChange={onTabChange}
-          className="flex w-70 flex-row gap-4"
-          tabClassName="text-m-base font-medium text-gray-100"
+          className="flex h-[32px] w-70 flex-row gap-4 rounded-lg"
+          tabClassName="text-m-base font-medium text-gray-100 h-[28px]"
+          indicatorClassName="rounded-md"
         />
       </div>
 

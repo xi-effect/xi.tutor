@@ -32,8 +32,9 @@ export const Header = ({ onCreateInvoice, activeTab, onTabChange }: HeaderProps)
           tabs={tabs}
           activeTab={activeTab}
           onChange={onTabChange}
-          className="xs:w-80 xs:flex xs:flex-row mr-4 grid w-[calc(100%-16px)] grid-cols-2 gap-4"
-          tabClassName="text-m-base font-medium text-gray-100"
+          className="flex h-[32px] w-70 flex-row gap-4 rounded-lg"
+          tabClassName="text-m-base font-medium text-gray-100 h-[28px]"
+          indicatorClassName="rounded-md"
         />
       </div>
       {user?.default_layout === 'tutor' && (
