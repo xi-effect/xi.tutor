@@ -6,14 +6,13 @@ import { useFetchClassrooms } from 'common.services';
 import { useNoteVisibility } from '../../../hooks';
 import { NoteForStudent } from './NoteForStudent';
 import { useState, useMemo } from 'react';
-import { cn } from '@xipkg/utils';
 import { ScrollArea } from '@xipkg/scrollarea';
 
 export const ClassroomsTutor = () => {
   const { data: classrooms, isLoading } = useFetchClassrooms();
   const { isHidden, hideNote } = useNoteVisibility(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedSubject, setSelectedSubject] = useState<string>('all');
+  const [selectedSubject] = useState<string>('all');
 
   // Фильтрация кабинетов по поисковому запросу и предмету
   const filteredClassrooms = useMemo(() => {
@@ -34,14 +33,8 @@ export const ClassroomsTutor = () => {
     });
   }, [classrooms, searchQuery, selectedSubject]);
 
-  const subjects = [
-    { id: 'all', label: 'Все предметы' },
-    { id: 'english', label: 'Английский' },
-    { id: 'math', label: 'Математика' },
-  ];
-
   return (
-    <div className="bg-gray-0 flex h-[calc(100vh-112px)] flex-col gap-4 rounded-2xl p-4">
+    <div className="bg-gray-0 flex w-full flex-col gap-4 rounded-2xl p-4">
       <div className="flex flex-row items-center justify-start gap-2">
         <h2 className="text-xl-base font-medium text-gray-100">Кабинеты</h2>
         <div className="ml-auto">
@@ -62,36 +55,16 @@ export const ClassroomsTutor = () => {
         onChange={(e) => setSearchQuery(e.target.value)}
       />
 
-      {/* Фильтры по предметам */}
-      <div className="flex flex-row gap-2">
-        {subjects.map((subject) => (
-          <Button
-            key={subject.id}
-            variant={selectedSubject === subject.id ? 'secondary' : 'none'}
-            size="s"
-            className={cn(
-              'rounded-lg px-4 py-2 font-medium',
-              selectedSubject === subject.id
-                ? 'bg-brand-80 text-gray-0'
-                : 'border-gray-30 border text-gray-100',
-            )}
-            onClick={() => setSelectedSubject(subject.id)}
-          >
-            {subject.label}
-          </Button>
-        ))}
-      </div>
-
       {/* Список кабинетов */}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-row gap-2">
         {isLoading && (
           <div className="flex h-[180px] w-full flex-row items-center justify-center gap-8">
             <p className="text-m-base text-gray-60">Загрузка...</p>
           </div>
         )}
         <ScrollArea
-          className="flex h-[calc(100vh-312px)] w-full flex-col gap-3"
-          scrollBarProps={{ orientation: 'vertical' }}
+          className="flex h-[300px] w-full flex-row gap-3"
+          scrollBarProps={{ orientation: 'horizontal' }}
         >
           {!isLoading && filteredClassrooms && filteredClassrooms.length > 0 && (
             <>

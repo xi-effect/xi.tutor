@@ -1,14 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
-import {
-  // Materials,
-  // Payments,
-  // Classrooms,
-  Lessons,
-  // ActionButtons,
-} from './components';
+import { Classrooms, Lessons, Payments } from './components';
 import { DateTimeDisplay, Menu } from 'common.ui';
 import { useCurrentUser } from 'common.services';
-// import { Sidebar } from './components/Sidebar';
 
 export const MainPage = () => {
   const { data: user } = useCurrentUser();
@@ -127,18 +120,14 @@ export const MainPage = () => {
         </div>
 
         {/* Три колонки: Расписание, Кабинеты, Payments и Materials */}
-        <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+        <div className="flex flex-row gap-4">
           <div className="flex flex-col">
             <Lessons />
           </div>
-          {/* <div className="flex flex-col">
-              <Classrooms />
-            </div>
-            <div className="flex flex-col gap-4">
-              <ActionButtons />
-              <Payments />
-              {isTutor && <Materials />}
-            </div> */}
+          <div className="flex flex-col">
+            <Classrooms />
+            <Payments />
+          </div>
         </div>
       </div>
       <Menu steps={steps} disabled={false} />
