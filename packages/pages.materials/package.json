@@ -19,6 +19,7 @@
     "@xipkg/scrollarea": "2.2.0",
     "@xipkg/tabs": "^2.1.0",
     "@xipkg/userprofile": "4.1.0",
+    "@xipkg/switcher-animate": "1.0.1",
     "common.api": "workspace:*",
     "common.config": "workspace:*",
     "common.services": "workspace:*",
