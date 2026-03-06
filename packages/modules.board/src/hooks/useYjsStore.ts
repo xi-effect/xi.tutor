@@ -33,6 +33,7 @@ import { YKeyValue } from 'y-utility/y-keyvalue';
 import * as Y from 'yjs';
 import { myAssetStore } from '../features/imageStore';
 import { PdfShapeUtil } from '../shapes/pdf';
+import { AudioShapeUtil } from '../shapes/audio';
 import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
 import { generateUserColor } from '../utils/userColor';
 
@@ -75,6 +76,8 @@ export type ExtendedStoreStatus = {
   setUserCamera: (camera: CameraState) => void;
   /** Y.Map для хранения текущей страницы PDF по ключу `${shapeId}:${userId}` */
   pdfPagesMap: Y.Map<number>;
+  /** Y.Map для синхронного воспроизведения аудио: `${shapeId}:playing|time|ts` → number */
+  audioSyncMap: Y.Map<number>;
   /** Токен для доступа к файлам */
   token: string;
 };
@@ -120,6 +123,8 @@ type SharedEntry = {
   userCamerasMap: Y.Map<CameraState>;
   /** Текущие страницы PDF: ключ — `${shapeId}:${userId}`, значение — номер страницы */
   pdfPagesMap: Y.Map<number>;
+  /** Синхронное воспроизведение аудио: `${shapeId}:playing|time|ts` → number */
+  audioSyncMap: Y.Map<number>;
   releaseTimer: number | null;
 };
 
@@ -154,6 +159,7 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
   const readonlyMap = yDoc.getMap<boolean>('readonly');
   const userCamerasMap = yDoc.getMap<CameraState>('userCameras');
   const pdfPagesMap = yDoc.getMap<number>('pdfPages');
+  const audioSyncMap = yDoc.getMap<number>('audioSync');
 
   const provider = new HocuspocusProvider({
     url: hostUrl,
@@ -174,6 +180,7 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
     readonlyMap,
     userCamerasMap,
     pdfPagesMap,
+    audioSyncMap,
     releaseTimer: null,
   };
 
@@ -226,7 +233,7 @@ export function useYjsStore({
     const assetStore = token ? myAssetStore(token) : undefined;
 
     return createTLStore({
-      shapeUtils: [...defaultShapeUtils, PdfShapeUtil, ...shapeUtils],
+      shapeUtils: [...defaultShapeUtils, PdfShapeUtil, AudioShapeUtil, ...shapeUtils],
       ...(assetStore ? { assets: assetStore } : {}),
     });
   });
@@ -255,7 +262,8 @@ export function useYjsStore({
     return getOrCreateShared(hostUrl, ydocId, storageToken);
   }, [hostUrl, ydocId, storageToken]);
 
-  const { provider, yDoc, yStore, meta, readonlyMap, userCamerasMap, pdfPagesMap } = sharedEntry;
+  const { provider, yDoc, yStore, meta, readonlyMap, userCamerasMap, pdfPagesMap, audioSyncMap } =
+    sharedEntry;
 
   // useLayoutEffect: при ремаунте (PiP и т.д.) обновляем статус до отрисовки, чтобы не мигал LoadingScreen.
   useLayoutEffect(() => {
@@ -766,6 +774,7 @@ export function useYjsStore({
     setUserCamera,
 
     pdfPagesMap,
+    audioSyncMap,
     token: token ?? '',
   };
 }

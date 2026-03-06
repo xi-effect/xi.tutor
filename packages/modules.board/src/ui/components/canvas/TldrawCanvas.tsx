@@ -7,6 +7,7 @@ import { useLockedShapeSelection, useRemoveMark, useTldrawClipboard } from '../.
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore, useTldrawStore } from '../../../store';
 import { PdfShapeUtil } from '../../../shapes/pdf';
+import { AudioShapeUtil } from '../../../shapes/audio';
 import { Header } from '../header';
 import { Navbar, SelectionMenu } from '../toolbar';
 import { CollaboratorCursor } from './CollaboratorCursor';
@@ -257,7 +258,7 @@ export const TldrawCanvas = ({
             }}
             assetUrls={assetUrls}
             store={store}
-            shapeUtils={[PdfShapeUtil]}
+            shapeUtils={[PdfShapeUtil, AudioShapeUtil]}
             hideUi
             components={{
               CollaboratorCursor: CollaboratorCursor,

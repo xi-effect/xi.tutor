@@ -9,6 +9,7 @@ import { MenuDots } from '@xipkg/icons';
 import { useEditor } from 'tldraw';
 import { useCurrentUser } from 'common.services';
 import type { PdfShape } from '../../../shapes/pdf';
+import type { AudioShape } from '../../../shapes/audio';
 
 export const MoreActionsMenu = () => {
   const editor = useEditor();
@@ -21,12 +22,26 @@ export const MoreActionsMenu = () => {
       ? (selectedShapes[0] as PdfShape)
       : null;
 
+  const selectedAudio =
+    selectedShapes.length === 1 && selectedShapes[0].type === 'audio'
+      ? (selectedShapes[0] as AudioShape)
+      : null;
+
   const handleToggleStudentFlip = () => {
     if (!selectedPdf) return;
     editor.updateShape<PdfShape>({
       id: selectedPdf.id,
       type: 'pdf',
       props: { studentCanFlip: !selectedPdf.props.studentCanFlip },
+    });
+  };
+
+  const handleToggleSyncPlayback = () => {
+    if (!selectedAudio) return;
+    editor.updateShape<AudioShape>({
+      id: selectedAudio.id,
+      type: 'audio',
+      props: { syncPlayback: !selectedAudio.props.syncPlayback },
     });
   };
 
@@ -55,6 +70,13 @@ export const MoreActionsMenu = () => {
         {isTutor && selectedPdf && (
           <DropdownMenuItem onClick={handleToggleStudentFlip} className="rounded-lg px-3">
             {selectedPdf.props.studentCanFlip ? 'Ограничить листание' : 'Разрешить листание'}
+          </DropdownMenuItem>
+        )}
+        {isTutor && selectedAudio && (
+          <DropdownMenuItem onClick={handleToggleSyncPlayback} className="rounded-lg px-3">
+            {selectedAudio.props.syncPlayback
+              ? 'Локальное воспроизведение'
+              : 'Синхронное воспроизведение'}
           </DropdownMenuItem>
         )}
       </DropdownMenuContent>
