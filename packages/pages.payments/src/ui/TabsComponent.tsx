@@ -63,48 +63,46 @@ export const TabsComponent = React.memo(({ onApprovePayment }: PaymentApprovalFu
   };
 
   return (
-    <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
-      <Tabs.List className="w-[calc(100% - 16px)] xs:w-80 xs:flex xs:flex-row mr-4 grid grid-cols-2 gap-4">
-        <Tabs.Trigger value="invoices" className="text-m-base font-medium text-gray-100">
-          Журнал оплат
-        </Tabs.Trigger>
+    <div className="bg-gray-0 rounded-tl-2xl p-4">
+      <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
+        <Tabs.List className="w-[calc(100% - 16px)] xs:w-80 xs:flex xs:flex-row mr-4 grid grid-cols-2 gap-4">
+          <Tabs.Trigger value="invoices" className="text-m-base font-medium text-gray-100">
+            Журнал оплат
+          </Tabs.Trigger>
 
-        {/* <Tabs.Trigger value="charts" className="text-m-base font-medium text-gray-100">
+          {/* <Tabs.Trigger value="charts" className="text-m-base font-medium text-gray-100">
           Аналитика
         </Tabs.Trigger> */}
 
-        {/* Скрываем последнюю вкладку для студентов */}
-        {isTutor && (
-          <Tabs.Trigger value="templates" className="text-m-base font-medium text-gray-100">
-            Типы оплат
-          </Tabs.Trigger>
-        )}
-      </Tabs.List>
+          {/* Скрываем последнюю вкладку для студентов */}
+          {isTutor && (
+            <Tabs.Trigger value="templates" className="text-m-base font-medium text-gray-100">
+              Типы оплат
+            </Tabs.Trigger>
+          )}
+        </Tabs.List>
 
-      <div className="h-full pt-0">
-        <Tabs.Content value="invoices">
-          <VirtualizedPaymentsTable
-            data={items}
-            columns={defaultColumns}
-            isLoading={isLoading}
-            isFetchingNextPage={isFetchingNextPage}
-            parentRef={parentRef}
-            isError={isError}
-            currentUserRole={currentUserRole}
-          />
-        </Tabs.Content>
-
-        {/* <Tabs.Content value="charts">
-          <ChartsPage />
-        </Tabs.Content> */}
-
-        {/* Скрываем контент последней вкладки для студентов */}
-        {isTutor && (
-          <Tabs.Content value="templates">
-            <TemplatesGrid />
+        <div className="h-full pt-0">
+          <Tabs.Content value="invoices">
+            <VirtualizedPaymentsTable
+              data={items}
+              columns={defaultColumns}
+              isLoading={isLoading}
+              isFetchingNextPage={isFetchingNextPage}
+              parentRef={parentRef}
+              isError={isError}
+              currentUserRole={currentUserRole}
+            />
           </Tabs.Content>
-        )}
-      </div>
-    </Tabs.Root>
+
+          {/* Скрываем контент последней вкладки для студентов */}
+          {isTutor && (
+            <Tabs.Content value="templates">
+              <TemplatesGrid />
+            </Tabs.Content>
+          )}
+        </div>
+      </Tabs.Root>
+    </div>
   );
 });

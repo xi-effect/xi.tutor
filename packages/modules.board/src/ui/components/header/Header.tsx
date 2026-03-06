@@ -85,7 +85,7 @@ export const Header = () => {
 
   return (
     <>
-      <div className="text-xl-base pointer-events-none absolute top-4 right-0 left-0 z-50 flex items-center justify-between px-4 pb-4">
+      <div className="text-xl-base pointer-events-none absolute top-4 right-0 left-0 z-50 flex items-center justify-between px-4 pb-4 md:pl-8">
         <div className="bg-gray-0 border-gray-10 pointer-events-auto flex items-center justify-center gap-2 rounded-xl border p-1 lg:rounded-2xl">
           <Button
             variant="none"

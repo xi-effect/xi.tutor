@@ -150,7 +150,7 @@ export const PaymentsPage = () => {
   );
 
   return (
-    <div className="flex flex-col justify-between gap-6 pl-4">
+    <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pl-4">
       <div className="flex flex-col">
         <Header onCreateInvoice={onOpenInvoiceModal} />
         <TabsComponent onApprovePayment={onOpenPaymentApproveModal} />

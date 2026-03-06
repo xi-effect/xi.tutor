@@ -25,6 +25,7 @@
     "@xipkg/select": "^2.2.5",
     "@xipkg/tooltip": "2.1.0",
     "@xipkg/userprofile": "4.1.0",
+    "@xipkg/switcher-animate": "0.1.0",
     "common.entities": "workspace:*",
     "common.env": "workspace:*",
     "common.services": "workspace:*",

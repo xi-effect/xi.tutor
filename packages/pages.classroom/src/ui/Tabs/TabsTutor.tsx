@@ -70,185 +70,187 @@ export const TabsTutor = () => {
   };
 
   return (
-    <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
-      <div className="flex h-[56px] flex-row items-center gap-4 overflow-x-auto px-4">
-        <Tabs.List className="flex flex-row gap-4 max-sm:w-full">
-          <Tabs.Trigger value="overview" className="text-m-base font-medium text-gray-100">
-            Сводка
-          </Tabs.Trigger>
+    <div className="bg-gray-0 h-[calc(100vh-88px)] rounded-tl-2xl px-4 pt-0">
+      <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
+        <div className="flex h-[56px] flex-row items-center gap-4 overflow-x-auto px-4 md:p-0">
+          <Tabs.List className="flex flex-row gap-4 max-sm:w-full">
+            <Tabs.Trigger value="overview" className="text-m-base font-medium text-gray-100">
+              Сводка
+            </Tabs.Trigger>
 
-          <Tabs.Trigger value="materials" className="text-m-base font-medium text-gray-100">
-            Материалы
-          </Tabs.Trigger>
+            <Tabs.Trigger value="materials" className="text-m-base font-medium text-gray-100">
+              Материалы
+            </Tabs.Trigger>
 
-          <Tabs.Trigger value="payments" className="text-m-base font-medium text-gray-100">
-            Оплаты
-          </Tabs.Trigger>
+            <Tabs.Trigger value="payments" className="text-m-base font-medium text-gray-100">
+              Оплаты
+            </Tabs.Trigger>
 
-          <Tabs.Trigger value="info" className="text-m-base font-medium text-gray-100">
-            Информация
-          </Tabs.Trigger>
-        </Tabs.List>
-        {currentTab === 'overview' && !isMobile && classroom?.kind === 'group' && (
-          <ModalStudentsGroup>
+            <Tabs.Trigger value="info" className="text-m-base font-medium text-gray-100">
+              Информация
+            </Tabs.Trigger>
+          </Tabs.List>
+          {currentTab === 'overview' && !isMobile && classroom?.kind === 'group' && (
+            <ModalStudentsGroup>
+              <Button
+                size="s"
+                variant="none"
+                className="ml-auto rounded-lg"
+                data-umami-event="classroom-add-student"
+              >
+                Добавить ученика
+              </Button>
+            </ModalStudentsGroup>
+          )}
+          {currentTab === 'overview' && !isMobile && classroom?.kind === 'group' && (
+            <ModalGroupInvite>
+              <Button
+                size="s"
+                variant="none"
+                className="ml-1 rounded-lg"
+                data-umami-event="classroom-invite-to-group"
+              >
+                Пригласить в группу
+              </Button>
+            </ModalGroupInvite>
+          )}
+          {currentTab === 'materials' && !isMobile && <MaterialsAdd />}
+          {currentTab === 'payments' && !isMobile && (
             <Button
               size="s"
-              variant="none"
-              className="ml-auto rounded-lg"
-              data-umami-event="classroom-add-student"
+              className="ml-auto w-8 rounded-lg px-2 py-2 font-medium sm:w-auto sm:px-4"
+              onClick={() => setIsInvoiceModalOpen(true)}
+              data-umami-event="classroom-create-invoice"
             >
-              Добавить ученика
+              <span className="hidden sm:flex">Создать счёт на оплату</span>
+              <Plus size="sm" className="fill-brand-0 flex sm:hidden" />
             </Button>
-          </ModalStudentsGroup>
+          )}
+        </div>
+        <div className="pt-0">
+          <Tabs.Content value="overview">
+            <Overview />
+          </Tabs.Content>
+
+          <Tabs.Content value="materials">
+            <Materials />
+          </Tabs.Content>
+
+          <Tabs.Content value="payments">
+            <Payments />
+          </Tabs.Content>
+
+          <Tabs.Content value="info">
+            <InformationLayout />
+          </Tabs.Content>
+        </div>
+        {isInvoiceModalOpen && (
+          <InvoiceModal open={isInvoiceModalOpen} onOpenChange={setIsInvoiceModalOpen} />
         )}
-        {currentTab === 'overview' && !isMobile && classroom?.kind === 'group' && (
-          <ModalGroupInvite>
-            <Button
-              size="s"
-              variant="none"
-              className="ml-1 rounded-lg"
-              data-umami-event="classroom-invite-to-group"
+        {isMobile && (
+          <>
+            <ActionButton
+              classname="fixed bottom-5 right-4 z-50 h-[64px] w-[64px] rounded-2xl"
+              dropdownContentProps={{ className: 'w-auto py-2' }}
             >
-              Пригласить в группу
-            </Button>
-          </ModalGroupInvite>
+              {({ MenuItem }) => (
+                <>
+                  {currentTab === 'overview' && classroom?.kind === 'group' && (
+                    <>
+                      <MenuItem
+                        className="h-[48px] rounded-xl px-4 text-[22px]"
+                        data-umami-event="classroom-add-student"
+                        onClick={() => setIsStudentsModalOpen(true)}
+                      >
+                        Добавить ученика
+                      </MenuItem>
+                      <MenuItem
+                        className="h-[48px] rounded-xl px-4 text-[22px]"
+                        data-umami-event="classroom-invite-to-group"
+                        onClick={() => setIsGroupInviteModalOpen(true)}
+                      >
+                        Пригласить в группу
+                      </MenuItem>
+                    </>
+                  )}
+                  {currentTab === 'materials' && (
+                    <>
+                      <MenuItem
+                        className="h-[48px] rounded-xl px-4 text-[22px]"
+                        onClick={() => handleAddMaterial('note', 'read_write')}
+                        disabled={addClassroomMaterials.isPending}
+                        data-umami-event="material-create-note"
+                        data-umami-event-access-mode="read_write"
+                      >
+                        Заметка: Совместная работа
+                      </MenuItem>
+                      <MenuItem
+                        className="h-[48px] rounded-xl px-4 text-[22px]"
+                        onClick={() => handleAddMaterial('note', 'read_only')}
+                        disabled={addClassroomMaterials.isPending}
+                        data-umami-event="material-create-note"
+                        data-umami-event-access-mode="read_only"
+                      >
+                        Заметка: Только репетитор
+                      </MenuItem>
+                      <MenuItem
+                        className="h-[48px] rounded-xl px-4 text-[22px]"
+                        onClick={() => handleAddMaterial('note', 'no_access')}
+                        disabled={addClassroomMaterials.isPending}
+                        data-umami-event="material-create-note"
+                        data-umami-event-access-mode="no_access"
+                      >
+                        Заметка: Черновики
+                      </MenuItem>
+                      <MenuItem
+                        className="h-[48px] rounded-xl px-4 text-[22px]"
+                        onClick={() => handleAddMaterial('board', 'read_write')}
+                        disabled={addClassroomMaterials.isPending}
+                        data-umami-event="material-create-board"
+                        data-umami-event-access-mode="read_write"
+                      >
+                        Доска: Совместная работа
+                      </MenuItem>
+                      <MenuItem
+                        className="h-[48px] rounded-xl px-4 text-[22px]"
+                        onClick={() => handleAddMaterial('board', 'read_only')}
+                        disabled={addClassroomMaterials.isPending}
+                        data-umami-event="material-create-board"
+                        data-umami-event-access-mode="read_only"
+                      >
+                        Доска: Только репетитор
+                      </MenuItem>
+                      <MenuItem
+                        className="h-[48px] rounded-xl px-4 text-[22px]"
+                        onClick={() => handleAddMaterial('board', 'no_access')}
+                        disabled={addClassroomMaterials.isPending}
+                        data-umami-event="material-create-board"
+                        data-umami-event-access-mode="no_access"
+                      >
+                        Доска: Черновики
+                      </MenuItem>
+                    </>
+                  )}
+                  {currentTab === 'payments' && (
+                    <MenuItem
+                      className="h-[48px] w-full rounded-xl px-4 text-[22px]"
+                      onClick={() => setIsInvoiceModalOpen(true)}
+                      data-umami-event="classroom-create-invoice"
+                    >
+                      Создать счёт на оплату
+                    </MenuItem>
+                  )}
+                </>
+              )}
+            </ActionButton>
+            <ModalStudentsGroup open={isStudentsModalOpen} onOpenChange={setIsStudentsModalOpen} />
+            <ModalGroupInvite
+              open={isGroupInviteModalOpen}
+              onOpenChange={setIsGroupInviteModalOpen}
+            />
+          </>
         )}
-        {currentTab === 'materials' && !isMobile && <MaterialsAdd />}
-        {currentTab === 'payments' && !isMobile && (
-          <Button
-            size="s"
-            className="ml-auto w-8 rounded-lg px-2 py-2 font-medium sm:w-auto sm:px-4"
-            onClick={() => setIsInvoiceModalOpen(true)}
-            data-umami-event="classroom-create-invoice"
-          >
-            <span className="hidden sm:flex">Создать счёт на оплату</span>
-            <Plus size="sm" className="fill-brand-0 flex sm:hidden" />
-          </Button>
-        )}
-      </div>
-      <div className="pt-0">
-        <Tabs.Content value="overview">
-          <Overview />
-        </Tabs.Content>
-
-        <Tabs.Content value="materials">
-          <Materials />
-        </Tabs.Content>
-
-        <Tabs.Content value="payments">
-          <Payments />
-        </Tabs.Content>
-
-        <Tabs.Content value="info">
-          <InformationLayout />
-        </Tabs.Content>
-      </div>
-      {isInvoiceModalOpen && (
-        <InvoiceModal open={isInvoiceModalOpen} onOpenChange={setIsInvoiceModalOpen} />
-      )}
-      {isMobile && (
-        <>
-          <ActionButton
-            classname="fixed bottom-5 right-4 z-50 h-[64px] w-[64px] rounded-2xl"
-            dropdownContentProps={{ className: 'w-auto py-2' }}
-          >
-            {({ MenuItem }) => (
-              <>
-                {currentTab === 'overview' && classroom?.kind === 'group' && (
-                  <>
-                    <MenuItem
-                      className="h-[48px] rounded-xl px-4 text-[22px]"
-                      data-umami-event="classroom-add-student"
-                      onClick={() => setIsStudentsModalOpen(true)}
-                    >
-                      Добавить ученика
-                    </MenuItem>
-                    <MenuItem
-                      className="h-[48px] rounded-xl px-4 text-[22px]"
-                      data-umami-event="classroom-invite-to-group"
-                      onClick={() => setIsGroupInviteModalOpen(true)}
-                    >
-                      Пригласить в группу
-                    </MenuItem>
-                  </>
-                )}
-                {currentTab === 'materials' && (
-                  <>
-                    <MenuItem
-                      className="h-[48px] rounded-xl px-4 text-[22px]"
-                      onClick={() => handleAddMaterial('note', 'read_write')}
-                      disabled={addClassroomMaterials.isPending}
-                      data-umami-event="material-create-note"
-                      data-umami-event-access-mode="read_write"
-                    >
-                      Заметка: Совместная работа
-                    </MenuItem>
-                    <MenuItem
-                      className="h-[48px] rounded-xl px-4 text-[22px]"
-                      onClick={() => handleAddMaterial('note', 'read_only')}
-                      disabled={addClassroomMaterials.isPending}
-                      data-umami-event="material-create-note"
-                      data-umami-event-access-mode="read_only"
-                    >
-                      Заметка: Только репетитор
-                    </MenuItem>
-                    <MenuItem
-                      className="h-[48px] rounded-xl px-4 text-[22px]"
-                      onClick={() => handleAddMaterial('note', 'no_access')}
-                      disabled={addClassroomMaterials.isPending}
-                      data-umami-event="material-create-note"
-                      data-umami-event-access-mode="no_access"
-                    >
-                      Заметка: Черновики
-                    </MenuItem>
-                    <MenuItem
-                      className="h-[48px] rounded-xl px-4 text-[22px]"
-                      onClick={() => handleAddMaterial('board', 'read_write')}
-                      disabled={addClassroomMaterials.isPending}
-                      data-umami-event="material-create-board"
-                      data-umami-event-access-mode="read_write"
-                    >
-                      Доска: Совместная работа
-                    </MenuItem>
-                    <MenuItem
-                      className="h-[48px] rounded-xl px-4 text-[22px]"
-                      onClick={() => handleAddMaterial('board', 'read_only')}
-                      disabled={addClassroomMaterials.isPending}
-                      data-umami-event="material-create-board"
-                      data-umami-event-access-mode="read_only"
-                    >
-                      Доска: Только репетитор
-                    </MenuItem>
-                    <MenuItem
-                      className="h-[48px] rounded-xl px-4 text-[22px]"
-                      onClick={() => handleAddMaterial('board', 'no_access')}
-                      disabled={addClassroomMaterials.isPending}
-                      data-umami-event="material-create-board"
-                      data-umami-event-access-mode="no_access"
-                    >
-                      Доска: Черновики
-                    </MenuItem>
-                  </>
-                )}
-                {currentTab === 'payments' && (
-                  <MenuItem
-                    className="h-[48px] w-full rounded-xl px-4 text-[22px]"
-                    onClick={() => setIsInvoiceModalOpen(true)}
-                    data-umami-event="classroom-create-invoice"
-                  >
-                    Создать счёт на оплату
-                  </MenuItem>
-                )}
-              </>
-            )}
-          </ActionButton>
-          <ModalStudentsGroup open={isStudentsModalOpen} onOpenChange={setIsStudentsModalOpen} />
-          <ModalGroupInvite
-            open={isGroupInviteModalOpen}
-            onOpenChange={setIsGroupInviteModalOpen}
-          />
-        </>
-      )}
-    </Tabs.Root>
+      </Tabs.Root>
+    </div>
   );
 };

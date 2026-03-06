@@ -41,7 +41,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
   const today = new Date();
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden pr-6 pl-8">
+    <div className="flex h-[calc(100vh-72px)] flex-1 flex-col overflow-hidden">
       <div className="flex flex-1 gap-7 overflow-hidden" style={{ width: '100%' }}>
         {visibleDays.map((day) => {
           const events = getEventsForDay(eventsByDate, day);

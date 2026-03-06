@@ -27,43 +27,45 @@ export const TabsStudent = () => {
   };
 
   return (
-    <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
-      <div className="flex h-[56px] flex-row items-center overflow-x-auto pr-4 pl-4 sm:pr-0">
-        <Tabs.List className="flex flex-row gap-4 max-sm:w-full">
-          <Tabs.Trigger value="overview" className="text-m-base font-medium text-gray-100">
-            Сводка
-          </Tabs.Trigger>
+    <div className="bg-gray-0 rounded-tl-2xl p-4">
+      <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
+        <div className="flex h-[56px] flex-row items-center overflow-x-auto pr-4 pl-4 sm:p-0">
+          <Tabs.List className="flex flex-row gap-4 max-sm:w-full">
+            <Tabs.Trigger value="overview" className="text-m-base font-medium text-gray-100">
+              Сводка
+            </Tabs.Trigger>
 
-          <Tabs.Trigger
-            value="materials"
-            className="text-m-base font-medium text-gray-100"
-            id="materials-tab"
-          >
-            Материалы
-          </Tabs.Trigger>
+            <Tabs.Trigger
+              value="materials"
+              className="text-m-base font-medium text-gray-100"
+              id="materials-tab"
+            >
+              Материалы
+            </Tabs.Trigger>
 
-          <Tabs.Trigger
-            value="payments"
-            className="text-m-base font-medium text-gray-100"
-            id="payments-tab"
-          >
-            Оплаты
-          </Tabs.Trigger>
-        </Tabs.List>
-      </div>
-      <div className="pt-0">
-        <Tabs.Content value="overview">
-          <Overview />
-        </Tabs.Content>
+            <Tabs.Trigger
+              value="payments"
+              className="text-m-base font-medium text-gray-100"
+              id="payments-tab"
+            >
+              Оплаты
+            </Tabs.Trigger>
+          </Tabs.List>
+        </div>
+        <div className="pt-0">
+          <Tabs.Content value="overview">
+            <Overview />
+          </Tabs.Content>
 
-        <Tabs.Content value="materials">
-          <Materials />
-        </Tabs.Content>
+          <Tabs.Content value="materials">
+            <Materials />
+          </Tabs.Content>
 
-        <Tabs.Content value="payments">
-          <Payments />
-        </Tabs.Content>
-      </div>
-    </Tabs.Root>
+          <Tabs.Content value="payments">
+            <Payments />
+          </Tabs.Content>
+        </div>
+      </Tabs.Root>
+    </div>
   );
 };
