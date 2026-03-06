@@ -76,7 +76,7 @@ export const MaterialsList = () => {
           {...material}
           isLoading={isLoading}
           hasIcon
-          className="2xl:w-[430px]"
+          className="w-auto min-w-[350px]"
         />
       ))}
     </div>

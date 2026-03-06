@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useState } from 'react';
 import { Tabs } from '@xipkg/tabs';
+import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { useSearch, useNavigate, useParams } from '@tanstack/react-router';
 import { Plus } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
@@ -16,6 +17,13 @@ import { ModalStudentsGroup } from 'features.group.manage';
 import { ModalGroupInvite } from 'features.group.invite';
 import { InvoiceModal } from 'features.invoice';
 import { useMedia } from 'common.utils';
+
+const tabs = [
+  { id: 'overview', label: 'Сводка' },
+  { id: 'materials', label: 'Материалы' },
+  { id: 'payments', label: 'Оплаты' },
+  { id: 'info', label: 'Информация' },
+];
 
 export const TabsTutor = () => {
   const isMobile = useMedia('(max-width: 720px)');
@@ -73,23 +81,13 @@ export const TabsTutor = () => {
     <div className="bg-gray-0 h-[calc(100vh-88px)] rounded-tl-2xl px-4 pt-0">
       <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
         <div className="flex h-[56px] flex-row items-center gap-4 overflow-x-auto px-4 md:p-0">
-          <Tabs.List className="flex flex-row gap-4 max-sm:w-full">
-            <Tabs.Trigger value="overview" className="text-m-base font-medium text-gray-100">
-              Сводка
-            </Tabs.Trigger>
-
-            <Tabs.Trigger value="materials" className="text-m-base font-medium text-gray-100">
-              Материалы
-            </Tabs.Trigger>
-
-            <Tabs.Trigger value="payments" className="text-m-base font-medium text-gray-100">
-              Оплаты
-            </Tabs.Trigger>
-
-            <Tabs.Trigger value="info" className="text-m-base font-medium text-gray-100">
-              Информация
-            </Tabs.Trigger>
-          </Tabs.List>
+          <SwitcherAnimate
+            tabs={tabs}
+            activeTab={currentTab}
+            onChange={handleTabChange}
+            className="bg-gray-5 flex flex-row gap-4 max-sm:w-full"
+            tabClassName="text-m-base font-medium text-gray-100"
+          />
           {currentTab === 'overview' && !isMobile && classroom?.kind === 'group' && (
             <ModalStudentsGroup>
               <Button

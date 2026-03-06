@@ -22,6 +22,7 @@
     "@xipkg/link": "^2.0.12",
     "@xipkg/scrollarea": "2.2.0",
     "@xipkg/select": "^2.2.5",
+    "@xipkg/switcher-animate": "1.0.1",
     "@xipkg/tabs": "2.1.0",
     "@xipkg/tooltip": "2.1.0",
     "@xipkg/userprofile": "4.1.0",
