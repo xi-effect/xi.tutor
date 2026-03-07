@@ -2,13 +2,19 @@ import { nanoid } from 'nanoid';
 import { Editor, TLShapeId } from 'tldraw';
 import { toast } from 'sonner';
 import { uploadFileRequest } from 'common.services';
-import { AUDIO_SHAPE_WIDTH, AUDIO_SHAPE_HEIGHT, type AudioShape } from '../shapes/audio';
+import {
+  AUDIO_SHAPE_WIDTH,
+  AUDIO_SHAPE_HEIGHT,
+  type AudioShape,
+  ALLOWED_AUDIO_MIME_TYPES,
+  checkAudioMagicBytes,
+} from '../shapes/audio';
 
 const MAX_AUDIO_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
 const MAX_AUDIO_SHAPES = 20;
 
-export const AUDIO_ACCEPT =
-  'audio/mpeg,audio/ogg,audio/wav,audio/aac,audio/mp4,audio/webm,audio/flac,audio/x-m4a';
+/** Строка для input.accept (из whitelist MIME). */
+export const AUDIO_ACCEPT = Array.from(ALLOWED_AUDIO_MIME_TYPES).join(',');
 
 async function getAudioDuration(file: File): Promise<number> {
   return new Promise((resolve) => {
@@ -33,9 +39,18 @@ async function getAudioDuration(file: File): Promise<number> {
 }
 
 export async function insertAudio(editor: Editor, file: File, token: string) {
-  if (!file.type.startsWith('audio/')) {
+  if (!ALLOWED_AUDIO_MIME_TYPES.has(file.type)) {
     toast.error('Неподдерживаемый формат', {
       description: 'Выберите аудиофайл (MP3, OGG, WAV, AAC, FLAC и др.).',
+      duration: 5000,
+    });
+    return;
+  }
+
+  const signatureValid = await checkAudioMagicBytes(file);
+  if (!signatureValid) {
+    toast.error('Неверный формат файла', {
+      description: 'Содержимое файла не соответствует заявленному типу аудио.',
       duration: 5000,
     });
     return;
