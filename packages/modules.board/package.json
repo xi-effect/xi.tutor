@@ -10,6 +10,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "file-type": "^19.0.0",
     "@hocuspocus/provider": "3.4.4",
     "@hookform/resolvers": "5.0.1",
     "@tanstack/react-router": "^1.128.8",
