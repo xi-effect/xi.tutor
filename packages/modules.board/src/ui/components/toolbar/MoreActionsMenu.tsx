@@ -45,6 +45,15 @@ export const MoreActionsMenu = () => {
     });
   };
 
+  const handleToggleStudentsCanAddTimecodes = () => {
+    if (!selectedAudio) return;
+    editor.updateShape<AudioShape>({
+      id: selectedAudio.id,
+      type: 'audio',
+      props: { studentsCanAddTimecodes: !selectedAudio.props.studentsCanAddTimecodes },
+    });
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -73,11 +82,21 @@ export const MoreActionsMenu = () => {
           </DropdownMenuItem>
         )}
         {isTutor && selectedAudio && (
-          <DropdownMenuItem onClick={handleToggleSyncPlayback} className="rounded-lg px-3">
-            {selectedAudio.props.syncPlayback
-              ? 'Локальное воспроизведение'
-              : 'Синхронное воспроизведение'}
-          </DropdownMenuItem>
+          <>
+            <DropdownMenuItem onClick={handleToggleSyncPlayback} className="rounded-lg px-3">
+              {selectedAudio.props.syncPlayback
+                ? 'Локальное воспроизведение'
+                : 'Синхронное воспроизведение'}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleToggleStudentsCanAddTimecodes}
+              className="rounded-lg px-3"
+            >
+              {selectedAudio.props.studentsCanAddTimecodes
+                ? 'Запретить ученикам добавлять таймкоды'
+                : 'Разрешить ученикам добавлять таймкоды'}
+            </DropdownMenuItem>
+          </>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

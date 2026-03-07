@@ -4,6 +4,7 @@ import { AudioTimecodeRow } from './AudioTimecodeRow';
 type AudioTimecodesListProps = {
   timecodes: AudioTimecode[];
   isTutor: boolean;
+  canSeekTimecodes: boolean;
   onSeek: (time: number) => void;
   onLabelChange: (tcId: string, label: string) => void;
   onToggleVisibility: (tcId: string) => void;
@@ -13,6 +14,7 @@ type AudioTimecodesListProps = {
 export function AudioTimecodesList({
   timecodes,
   isTutor,
+  canSeekTimecodes,
   onSeek,
   onLabelChange,
   onToggleVisibility,
@@ -27,6 +29,7 @@ export function AudioTimecodesList({
           key={tc.id}
           timecode={tc}
           isTutor={isTutor}
+          canSeek={canSeekTimecodes}
           onSeek={onSeek}
           onLabelChange={onLabelChange}
           onToggleVisibility={onToggleVisibility}

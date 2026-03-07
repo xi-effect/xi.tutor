@@ -22,6 +22,7 @@ export class AudioShapeUtil extends BaseBoxShapeUtil<AudioShape> {
       w: AUDIO_SHAPE_WIDTH,
       h: AUDIO_SHAPE_HEIGHT,
       syncPlayback: false,
+      studentsCanAddTimecodes: false,
       timecodes: [],
     };
   }

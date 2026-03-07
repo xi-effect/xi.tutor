@@ -34,7 +34,7 @@ export function AudioWaveform({ waveform, progress, canControl, onSeek }: AudioW
             width={`${barW * (1 - gapRatio)}%`}
             height={barHeight}
             rx={1.5}
-            fill={played ? '#3B82F6' : '#CBD5E1'}
+            className={played ? 'fill-brand-80' : 'fill-gray-40'}
           />
         );
       })}

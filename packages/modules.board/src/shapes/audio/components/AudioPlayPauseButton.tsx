@@ -18,8 +18,9 @@ export function AudioPlayPauseButton({
       variant="none"
       size="s"
       disabled={disabled}
-      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full p-0 disabled:opacity-50"
-      style={{ pointerEvents: 'all', backgroundColor: '#3B82F6' }}
+      title={disabled ? 'Управление у репетитора' : undefined}
+      className="bg-brand-80 hover:bg-brand-100 focus:bg-brand-100 active:bg-brand-100 disabled:bg-gray-40 flex h-10 w-10 shrink-0 items-center justify-center rounded-full p-0 disabled:pointer-events-auto disabled:cursor-not-allowed"
+      style={{ pointerEvents: 'all' }}
       onPointerDown={stopEvent}
       onClick={(e) => {
         e.stopPropagation();

@@ -11,6 +11,7 @@ type AudioInfoRowProps = {
   isPlaying: boolean;
   syncPlayback: boolean;
   isTutor: boolean;
+  canAddTimecode: boolean;
   effectiveVolume: number;
   onAddTimecode: () => void;
   onVolumeChange: (value: number[]) => void;
@@ -23,7 +24,7 @@ export function AudioInfoRow({
   fileSize,
   isPlaying,
   syncPlayback,
-  isTutor,
+  canAddTimecode,
   effectiveVolume,
   onAddTimecode,
   onVolumeChange,
@@ -32,7 +33,7 @@ export function AudioInfoRow({
   return (
     <div className="flex items-center justify-between" style={{ fontSize: 10, color: '#6B7280' }}>
       <div className="flex items-center gap-1.5">
-        {isTutor && (
+        {canAddTimecode && (
           <Button
             type="button"
             variant="none"
@@ -87,9 +88,7 @@ export function AudioInfoRow({
           </Button>
         </div>
 
-        {syncPlayback && (
-          <span style={{ fontSize: 9, color: '#3B82F6', fontWeight: 500 }}>SYNC</span>
-        )}
+        {syncPlayback && <span className="text-xxs-base">Вместе</span>}
       </div>
     </div>
   );

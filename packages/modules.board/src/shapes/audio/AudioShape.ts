@@ -1,8 +1,8 @@
 import { T, TLBaseShape } from 'tldraw';
 
-export const AUDIO_SHAPE_WIDTH = 320;
+export const AUDIO_SHAPE_WIDTH = 392;
 export const AUDIO_SHAPE_HEIGHT = 80;
-export const AUDIO_MIN_WIDTH = 240;
+export const AUDIO_MIN_WIDTH = 392;
 /** Высота одной строки таймкода (до 3 строк описания) */
 export const TIMECODE_ROW_HEIGHT = 56;
 
@@ -11,6 +11,8 @@ export type AudioTimecode = {
   time: number;
   label: string;
   visibleToAll: boolean;
+  /** Таймкод создан учеником — ему разрешено редактировать описание и удалять */
+  createdByStudent?: boolean;
 };
 
 export type AudioShapeProps = {
@@ -21,6 +23,8 @@ export type AudioShapeProps = {
   w: number;
   h: number;
   syncPlayback: boolean;
+  /** Разрешить ученикам добавлять таймкоды (без настроек видимости, всегда видны всем) */
+  studentsCanAddTimecodes: boolean;
   timecodes: AudioTimecode[];
 };
 
@@ -31,6 +35,7 @@ const timecodeValidator = T.object({
   time: T.number,
   label: T.string,
   visibleToAll: T.boolean,
+  createdByStudent: T.boolean.optional(),
 });
 
 const timecodesValidator = {
@@ -44,6 +49,17 @@ const timecodesValidator = {
   },
 };
 
+const studentsCanAddTimecodesValidator = {
+  validate(value: unknown): boolean {
+    if (value === undefined || value === null) return false;
+    return T.boolean.validate(value);
+  },
+  validateUsingKnownGoodVersion(_knownGood: boolean, value: unknown): boolean {
+    if (value === undefined || value === null) return false;
+    return T.boolean.validate(value);
+  },
+};
+
 export const audioShapeProps = {
   src: T.string,
   fileName: T.string,
@@ -52,6 +68,7 @@ export const audioShapeProps = {
   w: T.number,
   h: T.number,
   syncPlayback: T.boolean,
+  studentsCanAddTimecodes: studentsCanAddTimecodesValidator,
   timecodes: timecodesValidator,
 };
 

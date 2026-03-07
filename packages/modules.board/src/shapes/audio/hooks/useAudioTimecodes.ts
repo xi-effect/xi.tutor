@@ -4,7 +4,7 @@ import { useEditor } from 'tldraw';
 import { computeAudioShapeHeight } from '../AudioShape';
 import type { AudioShape, AudioTimecode } from '../AudioShape';
 
-export function useAudioTimecodes(shape: AudioShape) {
+export function useAudioTimecodes(shape: AudioShape, isTutor: boolean) {
   const editor = useEditor();
 
   const addTimecode = useCallback(
@@ -13,7 +13,8 @@ export function useAudioTimecodes(shape: AudioShape) {
         id: nanoid(8),
         time: currentTime,
         label: '',
-        visibleToAll: false,
+        visibleToAll: !isTutor,
+        createdByStudent: !isTutor,
       };
       const next = [...shape.props.timecodes, tc].sort((a, b) => a.time - b.time);
       editor.updateShape<AudioShape>({
@@ -22,7 +23,7 @@ export function useAudioTimecodes(shape: AudioShape) {
         props: { timecodes: next, h: computeAudioShapeHeight(next.length) },
       });
     },
-    [editor, shape.id, shape.props.timecodes],
+    [editor, shape.id, shape.props.timecodes, isTutor],
   );
 
   const removeTimecode = useCallback(

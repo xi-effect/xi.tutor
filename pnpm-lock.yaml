@@ -2368,8 +2368,8 @@ importers:
         specifier: 2.0.12
         version: 2.0.12(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/textarea':
-        specifier: 1.1.0
-        version: 1.1.0(react@19.2.4)
+        specifier: 1.2.0
+        version: 1.2.0(react@19.2.4)
       '@xipkg/tooltip':
         specifier: ^2.1.0
         version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -2646,8 +2646,8 @@ importers:
         specifier: 2.0.12
         version: 2.0.12(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/textarea':
-        specifier: 1.1.0
-        version: 1.1.0(react@19.2.4)
+        specifier: 1.2.0
+        version: 1.2.0(react@19.2.4)
       '@xipkg/tooltip':
         specifier: 2.1.0
         version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -8488,8 +8488,8 @@ packages:
   '@xipkg/tailwind@0.8.1':
     resolution: {integrity: sha512-DS6Z0m2fJsDjPyQMbIC9WHamGMP6k2QsVZZdNypAaIadWcKncStB1gKzCe14h4nv6kv2fdSJZmIjvLZjwu48ag==}
 
-  '@xipkg/textarea@1.1.0':
-    resolution: {integrity: sha512-StlNbNosP0c2mEz+dtEtVmi9zc0sjjZpR8u1kIFjI3PAlB/4EFgYemVRy+L4ujS4gD9Ut+zmsYPrUk+JwsP0LA==}
+  '@xipkg/textarea@1.2.0':
+    resolution: {integrity: sha512-Ih0DvTM0Wao1xwnGa6PdTSeqAoxiUdcwaEVURgNT3h4L3x86vCdi78VoZ+P/Y/tSYBf0MeFI60PzmninRdYJdw==}
     peerDependencies:
       react: ^19
 
@@ -15312,7 +15312,7 @@ snapshots:
 
   '@xipkg/tailwind@0.8.1': {}
 
-  '@xipkg/textarea@1.1.0(react@19.2.4)':
+  '@xipkg/textarea@1.2.0(react@19.2.4)':
     dependencies:
       '@xipkg/utils': 1.8.0(react@19.2.4)
       class-variance-authority: 0.7.1

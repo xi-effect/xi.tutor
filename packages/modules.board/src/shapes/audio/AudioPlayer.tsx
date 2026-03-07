@@ -22,7 +22,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
   const { blobUrl, waveform, loading, error } = useAudioLoad(shape);
   const playback = useAudioPlayback(shape, blobUrl);
   const { addTimecode, removeTimecode, updateTimecodeLabel, toggleTimecodeVisibility } =
-    useAudioTimecodes(shape);
+    useAudioTimecodes(shape, isTutor);
 
   const visibleTimecodes = isTutor
     ? shape.props.timecodes
@@ -67,6 +67,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
             isPlaying={playback.localIsPlaying}
             syncPlayback={shape.props.syncPlayback}
             isTutor={isTutor}
+            canAddTimecode={isTutor || shape.props.studentsCanAddTimecodes}
             effectiveVolume={playback.effectiveVolume}
             onAddTimecode={() => addTimecode(playback.currentTime)}
             onVolumeChange={playback.onVolumeChange}
@@ -78,6 +79,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
       <AudioTimecodesList
         timecodes={visibleTimecodes}
         isTutor={isTutor}
+        canSeekTimecodes={playback.canControl}
         onSeek={playback.seekToTime}
         onLabelChange={updateTimecodeLabel}
         onToggleVisibility={toggleTimecodeVisibility}
