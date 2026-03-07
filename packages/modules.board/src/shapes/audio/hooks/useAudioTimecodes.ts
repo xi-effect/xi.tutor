@@ -13,7 +13,7 @@ export function useAudioTimecodes(shape: AudioShape, isTutor: boolean) {
         id: nanoid(8),
         time: currentTime,
         label: '',
-        visibleToAll: !isTutor,
+        visibleToAll: isTutor ? (shape.props.timecodesVisibleByDefault ?? true) : true,
         createdByStudent: !isTutor,
       };
       const next = [...shape.props.timecodes, tc].sort((a, b) => a.time - b.time);
@@ -58,7 +58,7 @@ export function useAudioTimecodes(shape: AudioShape, isTutor: boolean) {
       editor.updateShape<AudioShape>({
         id: shape.id,
         type: 'audio',
-        props: { timecodes: next },
+        props: { timecodes: next, h: computeAudioShapeHeight(next.length) },
       });
     },
     [editor, shape.id, shape.props.timecodes],

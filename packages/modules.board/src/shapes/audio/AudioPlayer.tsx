@@ -9,6 +9,7 @@ import {
   AudioTimecodesList,
   AudioPlayerError,
 } from './components';
+import { AUDIO_SHAPE_HEIGHT, computeAudioShapeHeight } from './AudioShape';
 import type { AudioShape } from './AudioShape';
 
 type AudioPlayerProps = {
@@ -28,23 +29,37 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
     ? shape.props.timecodes
     : shape.props.timecodes.filter((t) => t.visibleToAll);
 
+  const cardHeight = computeAudioShapeHeight(visibleTimecodes.length);
+
   if (error) {
-    return <AudioPlayerError message={error} />;
+    return (
+      <div
+        className="bg-gray-0 border-gray-10 overflow-hidden rounded-xl border shadow-md"
+        style={{ width: shape.props.w, height: AUDIO_SHAPE_HEIGHT }}
+      >
+        <AudioPlayerError message={error} />
+      </div>
+    );
   }
 
   if (loading || !shape.props.src) {
     return (
       <div
-        style={{ pointerEvents: 'none' }}
-        className="text-gray-40 flex h-full w-full items-center justify-center"
+        className="bg-gray-0 border-gray-10 overflow-hidden rounded-xl border shadow-md"
+        style={{ pointerEvents: 'none', width: shape.props.w, height: AUDIO_SHAPE_HEIGHT }}
       >
-        <span className="text-xs">Загрузка...</span>
+        <div className="text-gray-40 flex h-full w-full items-center justify-center">
+          <span className="text-xs">Загрузка...</span>
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ pointerEvents: 'none' }} className="flex h-full flex-col select-none">
+    <div
+      className="bg-gray-0 border-gray-10 overflow-hidden rounded-xl border shadow-md"
+      style={{ pointerEvents: 'none', width: shape.props.w, height: cardHeight }}
+    >
       <div className="flex h-[80px] shrink-0 items-center gap-3 px-3">
         <AudioPlayPauseButton
           isPlaying={playback.localIsPlaying}
@@ -76,15 +91,20 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
         </div>
       </div>
 
-      <AudioTimecodesList
-        timecodes={visibleTimecodes}
-        isTutor={isTutor}
-        canSeekTimecodes={playback.canControl}
-        onSeek={playback.seekToTime}
-        onLabelChange={updateTimecodeLabel}
-        onToggleVisibility={toggleTimecodeVisibility}
-        onRemove={removeTimecode}
-      />
+      <div
+        className="min-h-0 flex-1 overflow-y-auto"
+        style={{ maxHeight: cardHeight - AUDIO_SHAPE_HEIGHT }}
+      >
+        <AudioTimecodesList
+          timecodes={visibleTimecodes}
+          isTutor={isTutor}
+          canSeekTimecodes={playback.canControl}
+          onSeek={playback.seekToTime}
+          onLabelChange={updateTimecodeLabel}
+          onToggleVisibility={toggleTimecodeVisibility}
+          onRemove={removeTimecode}
+        />
+      </div>
     </div>
   );
 };

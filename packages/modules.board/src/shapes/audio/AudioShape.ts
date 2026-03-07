@@ -25,6 +25,8 @@ export type AudioShapeProps = {
   syncPlayback: boolean;
   /** Разрешить ученикам добавлять таймкоды (без настроек видимости, всегда видны всем) */
   studentsCanAddTimecodes: boolean;
+  /** Показывать новые таймкоды репетитора сразу всем (по умолчанию true) */
+  timecodesVisibleByDefault: boolean;
   timecodes: AudioTimecode[];
 };
 
@@ -69,8 +71,23 @@ export const audioShapeProps = {
   h: T.number,
   syncPlayback: T.boolean,
   studentsCanAddTimecodes: studentsCanAddTimecodesValidator,
+  timecodesVisibleByDefault: {
+    validate(value: unknown): boolean {
+      if (value === undefined || value === null) return true;
+      return T.boolean.validate(value);
+    },
+    validateUsingKnownGoodVersion(_knownGood: boolean, value: unknown): boolean {
+      if (value === undefined || value === null) return true;
+      return T.boolean.validate(value);
+    },
+  },
   timecodes: timecodesValidator,
 };
+
+/** Количество таймкодов, видимых ученикам */
+export function getVisibleTimecodesCount(timecodes: AudioTimecode[]): number {
+  return timecodes.filter((t) => t.visibleToAll).length;
+}
 
 export function computeAudioShapeHeight(timecodeCount: number): number {
   return AUDIO_SHAPE_HEIGHT + timecodeCount * TIMECODE_ROW_HEIGHT;

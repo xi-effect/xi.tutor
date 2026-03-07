@@ -54,6 +54,15 @@ export const MoreActionsMenu = () => {
     });
   };
 
+  const handleToggleTimecodesVisibleByDefault = () => {
+    if (!selectedAudio) return;
+    editor.updateShape<AudioShape>({
+      id: selectedAudio.id,
+      type: 'audio',
+      props: { timecodesVisibleByDefault: !selectedAudio.props.timecodesVisibleByDefault },
+    });
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -95,6 +104,14 @@ export const MoreActionsMenu = () => {
               {selectedAudio.props.studentsCanAddTimecodes
                 ? 'Запретить ученикам добавлять таймкоды'
                 : 'Разрешить ученикам добавлять таймкоды'}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleToggleTimecodesVisibleByDefault}
+              className="rounded-lg px-3"
+            >
+              {selectedAudio.props.timecodesVisibleByDefault
+                ? 'Скрывать новые таймкоды от учеников'
+                : 'Показывать новые таймкоды всем'}
             </DropdownMenuItem>
           </>
         )}

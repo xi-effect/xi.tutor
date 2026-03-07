@@ -78,6 +78,7 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
         h: AUDIO_SHAPE_HEIGHT,
         syncPlayback: false,
         studentsCanAddTimecodes: false,
+        timecodesVisibleByDefault: true,
         timecodes: [],
       },
     },

@@ -23,6 +23,7 @@ export class AudioShapeUtil extends BaseBoxShapeUtil<AudioShape> {
       h: AUDIO_SHAPE_HEIGHT,
       syncPlayback: false,
       studentsCanAddTimecodes: false,
+      timecodesVisibleByDefault: true,
       timecodes: [],
     };
   }
@@ -54,8 +55,11 @@ export class AudioShapeUtil extends BaseBoxShapeUtil<AudioShape> {
   override component(shape: AudioShape) {
     return (
       <HTMLContainer
-        className="bg-gray-0 border-gray-10 overflow-hidden rounded-xl border shadow-md"
-        style={{ width: shape.props.w, height: shape.props.h }}
+        style={{
+          width: shape.props.w,
+          height: shape.props.h,
+          overflow: 'hidden',
+        }}
       >
         <AudioPlayer shape={shape} />
       </HTMLContainer>
