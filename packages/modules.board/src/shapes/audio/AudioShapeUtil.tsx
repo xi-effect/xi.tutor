@@ -4,6 +4,7 @@ import {
   AUDIO_SHAPE_HEIGHT,
   AUDIO_SHAPE_WIDTH,
   audioShapeProps,
+  computeAudioShapeHeight,
 } from './AudioShape';
 import { AudioPlayer } from './AudioPlayer';
 import type { AudioShape } from './AudioShape';
@@ -21,6 +22,7 @@ export class AudioShapeUtil extends BaseBoxShapeUtil<AudioShape> {
       w: AUDIO_SHAPE_WIDTH,
       h: AUDIO_SHAPE_HEIGHT,
       syncPlayback: false,
+      timecodes: [],
     };
   }
 
@@ -37,13 +39,14 @@ export class AudioShapeUtil extends BaseBoxShapeUtil<AudioShape> {
   }
 
   override onResize(shape: AudioShape, info: TLResizeInfo<AudioShape>) {
+    const h = computeAudioShapeHeight(shape.props.timecodes.length);
     const next = resizeBox(shape, info, {
       minWidth: AUDIO_MIN_WIDTH,
-      minHeight: AUDIO_SHAPE_HEIGHT,
+      minHeight: h,
     });
     return {
       ...next,
-      props: { ...next.props, h: AUDIO_SHAPE_HEIGHT },
+      props: { ...next.props, h },
     };
   }
 

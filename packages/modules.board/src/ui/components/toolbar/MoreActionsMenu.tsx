@@ -56,7 +56,7 @@ export const MoreActionsMenu = () => {
         side="top"
         align="end"
         sideOffset={8}
-        className="border-gray-10 bg-gray-0 flex w-[220px] flex-col gap-1 rounded-xl border p-1"
+        className="border-gray-10 bg-gray-0 flex w-auto flex-col gap-1 rounded-xl border p-1"
       >
         <DropdownMenuItem
           onClick={() => {
