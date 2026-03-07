@@ -58,7 +58,7 @@ export const Navbar = track(
     const handlePopupToggle = (popup: string, open: boolean) => {
       setActivePopup(open ? popup : null);
 
-      if (!open) {
+      if (!open && popup !== 'pen') {
         resetToDefaults();
       }
     };
@@ -67,7 +67,14 @@ export const Navbar = track(
       editor.selectNone();
       setActivePopup(null);
 
-      // Специальная обработка для загрузки изображений
+      if (toolName === 'pen') {
+        setColor(pencilColor);
+        setThickness(pencilThickness);
+        setOpacity(pencilOpacity);
+      } else {
+        resetToDefaults();
+      }
+
       if (toolName === 'asset') {
         const input = document.createElement('input');
         input.type = 'file';
