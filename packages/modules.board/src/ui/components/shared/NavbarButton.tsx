@@ -14,7 +14,7 @@ export const NavbarButton = ({
   <button
     type="button"
     data-isactive={isActive}
-    className={`pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${isActive ? 'bg-brand-0' : 'bg-gray-0'} ${className ?? ''}`}
+    className={`pointer-events-auto flex h-6 w-6 min-w-0 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${isActive ? 'bg-brand-0' : 'bg-gray-0'} ${className ?? ''}`}
     {...props}
   >
     {icon ?? title}

@@ -22,7 +22,7 @@ import {
 } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { useDropdownActions } from './hooks/useDropdownActions';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCurrentUser } from 'common.services';
 import { useEditor } from 'tldraw';
 import type { InputMode } from '../../../store/useTldrawStore';
@@ -78,11 +78,14 @@ const INPUT_MODE_OPTIONS: { value: InputMode; label: string; icon: React.ReactNo
 export const SettingsDropdown = () => {
   const editor = useEditor();
   const { inputMode, setInputMode, showDebugInfo, setShowDebugInfo } = useTldrawStore();
-  const { isReadonly, saveCanvas, clearBoard, toggleReadonly } = useDropdownActions();
+  const { isReadonly, saveCanvas, clearBoard, toggleReadonly, importBoardFromJson } =
+    useDropdownActions();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [hotkeysOpen, setHotkeysOpen] = useState(false);
+  const [showImportOption, setShowImportOption] = useState(false);
+  const importInputRef = useRef<HTMLInputElement>(null);
 
   const handleOpenHotkeysHelp = (open: boolean) => {
     if (open) {
@@ -100,6 +103,12 @@ export const SettingsDropdown = () => {
     };
     window.addEventListener('openHotkeysHelp', handleOpenHotkeysHelp);
     return () => window.removeEventListener('openHotkeysHelp', handleOpenHotkeysHelp);
+  }, []);
+
+  useEffect(() => {
+    const handler = () => setShowImportOption(true);
+    window.addEventListener('showBoardImportJson', handler);
+    return () => window.removeEventListener('showBoardImportJson', handler);
   }, []);
 
   return (
@@ -157,6 +166,27 @@ export const SettingsDropdown = () => {
               </DropdownMenuSub>
             )}
             <DownloadBoardAction onClick={saveCanvas} />
+            {isTutor && !isReadonly && showImportOption && (
+              <DropdownMenuItem
+                className="flex gap-2 p-1"
+                onClick={() => importInputRef.current?.click()}
+                data-umami-event="board-import-json"
+              >
+                <File />
+                <span>Импорт из JSON</span>
+              </DropdownMenuItem>
+            )}
+            <input
+              ref={importInputRef}
+              type="file"
+              accept=".json,application/json"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) importBoardFromJson(file);
+                e.target.value = '';
+              }}
+            />
 
             <DropdownMenuItem
               className={cn('flex h-auto gap-2 p-1', showDebugInfo && 'bg-brand-0')}

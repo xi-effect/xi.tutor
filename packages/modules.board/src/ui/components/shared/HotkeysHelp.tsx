@@ -1,8 +1,15 @@
+import { useEffect } from 'react';
 import { Modal, ModalCloseButton, ModalContent, ModalHeader, ModalTitle } from '@xipkg/modal';
 import { createPortal } from 'react-dom';
 import { isMac } from '../../../utils';
 
 const BACKDROP_Z = 9999;
+
+const cleanupBodyScrollLock = () => {
+  document.body.style.overflow = '';
+  document.body.style.pointerEvents = '';
+  document.body.removeAttribute('data-scroll-locked');
+};
 
 interface HotkeyItem {
   keys: string[];
@@ -95,27 +102,45 @@ export type HotkeysHelpModalProps = {
  * Radix-оверлей могут перехватывать клики; этот слой поверх них, клик по нему
  * закрывает модалку. Контент модалки z-[10000], чтобы по окну не закрывать.
  */
-export const HotkeysHelpModal = ({ open, onOpenChange }: HotkeysHelpModalProps) => (
-  <>
-    {open &&
-      createPortal(
-        <div
-          role="presentation"
-          aria-hidden
-          className="fixed inset-0"
-          style={{ zIndex: BACKDROP_Z, pointerEvents: 'auto' }}
-          onClick={() => onOpenChange(false)}
-        />,
-        document.body,
-      )}
-    <Modal open={open} onOpenChange={onOpenChange}>
-      <ModalContent className="z-10000 max-h-[80vh] max-w-4xl">
-        <ModalHeader>
-          <ModalCloseButton />
-          <ModalTitle>Горячие клавиши</ModalTitle>
-        </ModalHeader>
-        <HotkeysHelpBody />
-      </ModalContent>
-    </Modal>
-  </>
-);
+export const HotkeysHelpModal = ({ open, onOpenChange }: HotkeysHelpModalProps) => {
+  const handleClose = () => {
+    onOpenChange(false);
+    cleanupBodyScrollLock();
+  };
+
+  useEffect(() => {
+    if (open === false) cleanupBodyScrollLock();
+    return cleanupBodyScrollLock;
+  }, [open]);
+
+  return (
+    <>
+      {open &&
+        createPortal(
+          <div
+            role="presentation"
+            aria-hidden
+            className="fixed inset-0"
+            style={{ zIndex: BACKDROP_Z, pointerEvents: 'auto' }}
+            onClick={handleClose}
+          />,
+          document.body,
+        )}
+      <Modal
+        open={open}
+        onOpenChange={(next) => {
+          if (typeof next === 'boolean') onOpenChange(next);
+          if (next === false) cleanupBodyScrollLock();
+        }}
+      >
+        <ModalContent className="z-10000 max-h-[80vh] max-w-4xl">
+          <ModalHeader>
+            <ModalCloseButton onClick={handleClose} />
+            <ModalTitle>Горячие клавиши</ModalTitle>
+          </ModalHeader>
+          <HotkeysHelpBody />
+        </ModalContent>
+      </Modal>
+    </>
+  );
+};

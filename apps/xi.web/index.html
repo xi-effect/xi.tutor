@@ -2,9 +2,19 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8" />
+    <!-- Перехват beforeinstallprompt до загрузки приложения, иначе событие можно пропустить -->
+    <script>
+      window.__beforeInstallPrompt = null;
+      window.addEventListener('beforeinstallprompt', function(e) {
+        e.preventDefault();
+        window.__beforeInstallPrompt = e;
+      });
+    </script>
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow" />
+    <!-- Название при добавлении PWA на экран «Домой» в iOS -->
+    <meta name="apple-mobile-web-app-title" content="sovlium" />
     <link rel="canonical" href="https://sovlium.com" />
     <title>sovlium</title>
     <script defer src="https://umami.sovlium.ru/script.js" data-website-id="5ae7f92f-b9ff-4533-9346-2e621d354220"></script>

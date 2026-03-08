@@ -13,6 +13,7 @@ import {
   generateNotificationTitle,
   getNotificationInvalidationKeys,
 } from './notificationUtils';
+import { shouldUseSystemNotifications, showSystemNotification } from './webNotifications';
 import { useGetUnreadCount } from './useGetUnreadCount';
 import { useMarkNotificationAsRead } from './useMarkNotificationAsRead';
 import { useSearchNotifications } from './useSearchNotifications';
@@ -138,26 +139,36 @@ export const useNotifications = () => {
       }
 
       const url = config ? generateNotificationAction(notification) : null;
-      const toastId = toast(title, {
-        description,
-        duration: 5000,
-        action: config && url && (
-          <div className="flex flex-1 justify-end">
-            <Button
-              size="s"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (url) {
-                  onNavigate(url);
-                  toast.dismiss(toastId);
-                }
-              }}
-            >
-              Перейти
-            </Button>
-          </div>
-        ),
-      });
+
+      if (shouldUseSystemNotifications()) {
+        showSystemNotification({
+          title,
+          body: description,
+          url: url ?? undefined,
+          onNavigate: url ? onNavigate : undefined,
+        });
+      } else {
+        const toastId = toast(title, {
+          description,
+          duration: 5000,
+          action: config && url && (
+            <div className="flex flex-1 justify-end">
+              <Button
+                size="s"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  if (url) {
+                    onNavigate(url);
+                    toast.dismiss(toastId);
+                  }
+                }}
+              >
+                Перейти
+              </Button>
+            </div>
+          ),
+        });
+      }
     },
     [refetchCount, transformNotification, queryClient],
   );
