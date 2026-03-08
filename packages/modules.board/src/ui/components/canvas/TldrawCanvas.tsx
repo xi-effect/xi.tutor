@@ -17,6 +17,7 @@ import 'tldraw/tldraw.css';
 import './customstyles.css';
 import { UndoRedo } from '../toolbar/UndoRedo';
 import { makeTldrawAssetUrls } from '../../../utils/assetsUrls';
+import { extractFileIdFromUrl } from '../../../utils/resolveAssetUrl';
 
 export const TldrawCanvas = ({
   token,
@@ -33,6 +34,17 @@ export const TldrawCanvas = ({
   useRemoveMark();
   useLockedShapeSelection(editor);
   useTldrawClipboard(editor, token);
+
+  useEffect(() => {
+    return () => {
+      const win = window as unknown as {
+        getBoardSnapshot?: () => unknown;
+        showBoardImportOption?: () => void;
+      };
+      delete win.getBoardSnapshot;
+      delete win.showBoardImportOption;
+    };
+  }, []);
 
   useKeyPress('Backspace', () => {
     if (selectedElementId) {
@@ -255,6 +267,49 @@ export const TldrawCanvas = ({
                 }
                 return next;
               });
+
+              const win = window as unknown as {
+                getBoardSnapshot?: () => unknown;
+                showBoardImportOption?: () => void;
+              };
+              win.getBoardSnapshot = () => {
+                const records = editor.store.allRecords();
+                const normalized = records.map((r) => {
+                  const raw = r as unknown as Record<string, unknown>;
+                  const rec = {
+                    ...r,
+                    props:
+                      raw.props && typeof raw.props === 'object'
+                        ? { ...(raw.props as Record<string, unknown>) }
+                        : raw.props,
+                  } as typeof r;
+                  const props = (rec as unknown as Record<string, unknown>).props as
+                    | Record<string, unknown>
+                    | undefined;
+                  if (props?.src && typeof props.src === 'string') {
+                    const fileId = extractFileIdFromUrl(props.src);
+                    if (fileId) props.src = fileId;
+                  }
+                  return rec;
+                });
+                const snapshot = {
+                  records: normalized,
+                  byId: Object.fromEntries(normalized.map((r) => [r.id, r])),
+                };
+                const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
+                  type: 'application/json',
+                });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `board-snapshot-${Date.now()}.json`;
+                link.click();
+                URL.revokeObjectURL(url);
+                return snapshot;
+              };
+              win.showBoardImportOption = () => {
+                window.dispatchEvent(new CustomEvent('showBoardImportJson'));
+              };
             }}
             assetUrls={assetUrls}
             store={store}

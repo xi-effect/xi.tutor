@@ -31,11 +31,13 @@ import {
 } from 'tldraw';
 import { YKeyValue } from 'y-utility/y-keyvalue';
 import * as Y from 'yjs';
+import { getFileUrl } from 'common.api';
 import { myAssetStore } from '../features/imageStore';
 import { PdfShapeUtil } from '../shapes/pdf';
 import { AudioShapeUtil } from '../shapes/audio';
 import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
 import { generateUserColor } from '../utils/userColor';
+import { extractFileIdFromUrl } from '../utils/resolveAssetUrl';
 
 type UseYjsStoreArgs = Partial<{
   hostUrl: string;
@@ -605,6 +607,33 @@ export function useYjsStore({
         if (migrationResult.type === 'error') {
           console.warn('Schema updated, refresh.');
           return;
+        }
+
+        // Migrate `src` values:
+        // - Shapes (audio, pdf): full URL → bare file ID (our validators accept any string)
+        // - Assets (image): bare ID → full URL (tldraw's built-in validator requires a valid URL)
+        for (const record of Object.values(migrationResult.value) as TLRecord[]) {
+          const props = (record as any).props;
+          if (!props?.src || typeof props.src !== 'string') continue;
+
+          const isAsset = (record as any).typeName === 'asset';
+          if (isAsset) {
+            const src = props.src as string;
+            const isBareId =
+              src !== '' &&
+              !src.startsWith('http://') &&
+              !src.startsWith('https://') &&
+              !src.startsWith('data:') &&
+              !src.startsWith('blob:');
+            if (isBareId) {
+              props.src = getFileUrl(src);
+            }
+          } else {
+            const fileId = extractFileIdFromUrl(props.src);
+            if (fileId) {
+              props.src = fileId;
+            }
+          }
         }
 
         yDoc.transact(() => {
