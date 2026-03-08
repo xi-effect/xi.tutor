@@ -1,7 +1,9 @@
 import { useCurrentUser } from 'common.services';
+import { useYjsContext } from '../../providers/YjsProvider';
 import { useAudioLoad } from './hooks/useAudioLoad';
 import { useAudioPlayback } from './hooks/useAudioPlayback';
 import { useAudioTimecodes } from './hooks/useAudioTimecodes';
+import { useIsShapeInViewport } from './hooks/useIsShapeInViewport';
 import {
   AudioPlayPauseButton,
   AudioWaveform,
@@ -12,6 +14,12 @@ import {
 import { AUDIO_SHAPE_HEIGHT, computeAudioShapeHeight } from './AudioShape';
 import type { AudioShape } from './AudioShape';
 
+function useIsSyncPlaybackActive(shape: AudioShape): boolean {
+  const { audioSyncMap } = useYjsContext();
+  if (!shape.props.syncPlayback || !audioSyncMap) return false;
+  return audioSyncMap.get(`${shape.id}:playing`) === 1;
+}
+
 type AudioPlayerProps = {
   shape: AudioShape;
 };
@@ -20,7 +28,11 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  const { blobUrl, waveform, loading, error } = useAudioLoad(shape);
+  const isInViewport = useIsShapeInViewport(shape.id);
+  const isSyncActive = useIsSyncPlaybackActive(shape);
+  const shouldLoad = isInViewport || isSyncActive;
+
+  const { blobUrl, waveform, status, error } = useAudioLoad(shape, shouldLoad);
   const playback = useAudioPlayback(shape, blobUrl);
   const { addTimecode, removeTimecode, updateTimecodeLabel, toggleTimecodeVisibility } =
     useAudioTimecodes(shape, isTutor);
@@ -42,14 +54,14 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
     );
   }
 
-  if (loading || !shape.props.src) {
+  if (status === 'idle' || status === 'loading' || !shape.props.src) {
     return (
       <div
         className="bg-gray-0 border-gray-10 overflow-hidden rounded-xl border shadow-md"
         style={{ pointerEvents: 'none', width: shape.props.w, height: AUDIO_SHAPE_HEIGHT }}
       >
         <div className="text-gray-40 flex h-full w-full items-center justify-center">
-          <span className="text-xs">Загрузка...</span>
+          <span className="text-xs">{status === 'idle' ? 'Аудио' : 'Загрузка...'}</span>
         </div>
       </div>
     );
