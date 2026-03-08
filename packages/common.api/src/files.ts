@@ -31,4 +31,8 @@ const filesApiConfig = {
   },
 };
 
-export { filesApiConfig, FilesQueryKey };
+function getFileUrl(fileId: string): string {
+  return filesApiConfig[FilesQueryKey.GetFile].getUrl(fileId);
+}
+
+export { filesApiConfig, FilesQueryKey, getFileUrl };
