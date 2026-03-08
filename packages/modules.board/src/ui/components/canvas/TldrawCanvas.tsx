@@ -25,7 +25,8 @@ export const TldrawCanvas = ({
 }: JSX.IntrinsicAttributes & TldrawProps & { token: string }) => {
   const [editor, setEditor] = useState<Editor | null>(null);
 
-  const { selectedElementId, selectElement } = useTldrawStore();
+  const { selectedElementId, selectElement, showDebugInfo } = useTldrawStore();
+  const [shapeCount, setShapeCount] = useState(0);
   const { store, status, undo, redo, canUndo, canRedo, isReadonly, getUserCamera, setUserCamera } =
     useYjsContext();
   const { followingPresenceId } = useFollowUserStore();
@@ -243,6 +244,28 @@ export const TldrawCanvas = ({
     };
   }, [editor, store, followingPresenceId]);
 
+  // В режиме «Авто» синхронизируем isPenMode с текущим устройством при каждом pointerdown,
+  // чтобы можно было переключаться между планшетом и мышью без смены настройки в меню.
+  useEffect(() => {
+    if (!editor) return;
+    const container = editor.getContainer();
+    const onPointerDown = (e: PointerEvent) => {
+      if (useTldrawStore.getState().inputMode !== 'auto') return;
+      editor.updateInstanceState({ isPenMode: e.pointerType === 'pen' });
+    };
+    container.addEventListener('pointerdown', onPointerDown, { capture: true });
+    return () => container.removeEventListener('pointerdown', onPointerDown, { capture: true });
+  }, [editor]);
+
+  // Подписка на изменение количества фигур на текущей странице (для дебаг-всплывашки)
+  useEffect(() => {
+    if (!editor || !showDebugInfo) return;
+    const updateCount = () => setShapeCount(editor.getCurrentPageShapeIds().size);
+    updateCount();
+    const unsub = editor.store.listen(updateCount);
+    return unsub;
+  }, [editor, showDebugInfo]);
+
   const assetUrls = useMemo(() => makeTldrawAssetUrls({ baseUrl: '/tldraw' }), []);
 
   if (status === 'loading') return <LoadingScreen />;
@@ -258,13 +281,16 @@ export const TldrawCanvas = ({
               editor.updateInstanceState({
                 isGridMode: true,
                 isDebugMode: false,
-                isPenMode: false,
               });
 
-              editor.sideEffects.registerBeforeChangeHandler('instance', (prev, next) => {
-                if (next.isPenMode) {
-                  return prev;
-                }
+              const inputMode = useTldrawStore.getState().inputMode;
+              if (inputMode === 'pen') editor.updateInstanceState({ isPenMode: true });
+              else if (inputMode === 'mouse') editor.updateInstanceState({ isPenMode: false });
+
+              editor.sideEffects.registerBeforeChangeHandler('instance', (_, next) => {
+                const mode = useTldrawStore.getState().inputMode;
+                if (mode === 'pen') return { ...next, isPenMode: true };
+                if (mode === 'mouse') return { ...next, isPenMode: false };
                 return next;
               });
 
@@ -329,6 +355,15 @@ export const TldrawCanvas = ({
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
             <TldrawZoomPanel />
+            {showDebugInfo && editor && (
+              <div
+                className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/70 px-2 py-1 font-mono text-xs text-white"
+                aria-live="polite"
+              >
+                <div className="font-sans font-medium">Отладочная информация</div>
+                Элементов на доске: {shapeCount}
+              </div>
+            )}
           </Tldraw>
         </div>
       </div>

@@ -1,6 +1,9 @@
 import { useEffect } from 'react';
 import { Modal, ModalCloseButton, ModalContent, ModalHeader, ModalTitle } from '@xipkg/modal';
+import { createPortal } from 'react-dom';
 import { isMac } from '../../../utils';
+
+const BACKDROP_Z = 9999;
 
 const cleanupBodyScrollLock = () => {
   document.body.style.overflow = '';
@@ -94,6 +97,11 @@ export type HotkeysHelpModalProps = {
   onOpenChange: (open: boolean) => void;
 };
 
+/**
+ * Свой backdrop в body (z 9999, pointer-events: auto). Канвас tldraw и
+ * Radix-оверлей могут перехватывать клики; этот слой поверх них, клик по нему
+ * закрывает модалку. Контент модалки z-[10000], чтобы по окну не закрывать.
+ */
 export const HotkeysHelpModal = ({ open, onOpenChange }: HotkeysHelpModalProps) => {
   const handleClose = () => {
     onOpenChange(false);
@@ -106,20 +114,33 @@ export const HotkeysHelpModal = ({ open, onOpenChange }: HotkeysHelpModalProps) 
   }, [open]);
 
   return (
-    <Modal
-      open={open}
-      onOpenChange={(next) => {
-        if (typeof next === 'boolean') onOpenChange(next);
-        if (next === false) cleanupBodyScrollLock();
-      }}
-    >
-      <ModalContent className="max-h-[80vh] max-w-4xl">
-        <ModalHeader>
-          <ModalCloseButton onClick={handleClose} />
-          <ModalTitle>Горячие клавиши</ModalTitle>
-        </ModalHeader>
-        <HotkeysHelpBody />
-      </ModalContent>
-    </Modal>
+    <>
+      {open &&
+        createPortal(
+          <div
+            role="presentation"
+            aria-hidden
+            className="fixed inset-0"
+            style={{ zIndex: BACKDROP_Z, pointerEvents: 'auto' }}
+            onClick={handleClose}
+          />,
+          document.body,
+        )}
+      <Modal
+        open={open}
+        onOpenChange={(next) => {
+          if (typeof next === 'boolean') onOpenChange(next);
+          if (next === false) cleanupBodyScrollLock();
+        }}
+      >
+        <ModalContent className="z-10000 max-h-[80vh] max-w-4xl">
+          <ModalHeader>
+            <ModalCloseButton onClick={handleClose} />
+            <ModalTitle>Горячие клавиши</ModalTitle>
+          </ModalHeader>
+          <HotkeysHelpBody />
+        </ModalContent>
+      </Modal>
+    </>
   );
 };
