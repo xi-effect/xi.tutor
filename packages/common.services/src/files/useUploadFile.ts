@@ -23,7 +23,7 @@ export async function uploadFileRequest({ file, token }: UploadFileVars): Promis
   });
 
   if (response.status !== 201) throw new Error(`File upload failed: ${response.status}`);
-  return `${filesApiConfig[FilesQueryKey.GetFile].getUrl(response.data.id)}`;
+  return response.data.id as string;
 }
 
 export const useUploadFile = () => {

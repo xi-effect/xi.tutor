@@ -23,7 +23,7 @@ export async function uploadImageRequest({ file, token }: UploadImageVars): Prom
   });
 
   if (response.status !== 201) throw new Error(`Image upload failed: ${response.status}`);
-  return `${filesApiConfig[FilesQueryKey.GetFile].getUrl(response.data.id)}`;
+  return response.data.id as string;
 }
 
 export const useUploadImage = () => {
