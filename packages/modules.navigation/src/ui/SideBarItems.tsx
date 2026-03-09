@@ -23,7 +23,7 @@ import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
 import { useMenuStore } from '../store';
 import { Notifications } from './Header/Notifications';
-import { Logo, SmallLogo } from 'common.ui';
+import { Logo } from 'common.ui';
 import { useMediaQuery } from '@xipkg/utils';
 import { DesktopUserMenu } from './Header/DesktopUserMenu';
 import { useEffect, useState, lazy, Suspense } from 'react';
@@ -197,12 +197,21 @@ export const SideBarItems = () => {
   return (
     <>
       <SidebarContent className="overflow-visible group-data-[collapsible=icon]:overflow-visible">
-        {/* Верхняя секция: профиль, бургер-меню, колокольчик */}
+        {/* Верхняя секция: триггер, логотип (только при открытом сайдбаре), профиль */}
         <div className="flex flex-col gap-4 pt-5">
-          {/* Профиль пользователя */}
-          <SidebarTrigger className="group border-gray-10 bg-gray-5 hover:bg-gray-10 focus:bg-gray-10 active:bg-gray-10 absolute top-6.5 right-[-20px] h-7 min-h-7 w-7 min-w-7 rounded-lg border shadow-2xl">
-            <LayoutLeft className="text-gray-60 group-hover:text-gray-80 group-focus:text-gray-80 group-active:text-gray-80 h-5 w-5" />
-          </SidebarTrigger>
+          <div className="flex w-full items-center justify-between">
+            <div
+              className="h-10 shrink-0 overflow-hidden transition-[width] duration-300 ease-out"
+              style={{ width: isCollapsed ? 0 : 135 }}
+            >
+              <div className="flex h-10 w-[135px] shrink-0 items-center">
+                <Logo width={135} height={40} />
+              </div>
+            </div>
+            <SidebarTrigger className="group hover:bg-gray-5 focus:bg-gray-10 active:bg-gray-10 ml-auto h-10 min-h-10 w-10 min-w-10 shrink-0 rounded-lg">
+              <LayoutLeft className="text-gray-60 group-hover:text-gray-80 group-focus:text-gray-80 group-active:text-gray-80 h-5 w-5" />
+            </SidebarTrigger>
+          </div>
 
           <div className="flex items-center gap-2">
             <DesktopUserMenu
@@ -247,7 +256,7 @@ export const SideBarItems = () => {
                 variant="none"
                 onClick={item.onClick}
                 type="button"
-                className="bg-gray-0"
+                className="bg-gray-0 hover:bg-gray-5 focus:bg-gray-10 active:bg-gray-10"
                 title={t(item.titleKey)}
                 data-umami-event={`navigation-${item.titleKey}`}
                 {...(item.titleKey === 'support'
@@ -260,23 +269,6 @@ export const SideBarItems = () => {
             </SidebarMenuItem>
           ))}
         </SidebarMenu>
-        {/* Логотип внизу — оба в DOM для плавного перехода без мигания */}
-        <div className="relative flex h-10 min-h-10 w-full min-w-[135px] items-center justify-start">
-          <div
-            className="pointer-events-none absolute inset-y-0 flex items-center justify-center transition-opacity duration-400 ease-out"
-            style={{ opacity: 1 }}
-            aria-hidden={!isCollapsed}
-          >
-            <SmallLogo width={40} height={40} />
-          </div>
-          <div
-            className="pointer-events-none absolute inset-y-0 left-0 flex items-center justify-start transition-opacity duration-400 ease-out"
-            style={{ opacity: isCollapsed ? 0 : 1, width: isCollapsed ? 0 : 135 }}
-            aria-hidden={isCollapsed}
-          >
-            <Logo width={135} height={40} />
-          </div>
-        </div>
       </SidebarFooter>
 
       <Suspense fallback={null}>
