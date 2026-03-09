@@ -72,7 +72,9 @@ export function PagedCarousel<T>({
   // Общие классы контейнера
   const containerCls = [
     'relative flex overflow-hidden', // чтобы кнопки располагались поверх
-    isVertical ? 'min-h-0 h-full flex-col justify-center' : 'h-36 w-full flex-row justify-center',
+    isVertical
+      ? 'min-h-0 h-full flex-col justify-center px-2 xs:px-0'
+      : 'h-36 w-full flex-row justify-center',
     className ?? '',
   ].join(' ');
 

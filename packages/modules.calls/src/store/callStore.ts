@@ -38,7 +38,7 @@ type useCallStoreT = {
   isConnecting: boolean;
 
   mode: 'compact' | 'full';
-  carouselType: 'grid' | 'horizontal' | 'vertical';
+  carouselType: 'grid' | 'focus';
   activeCorner: Corner;
 
   /** Режим вида компакт-ВКС на десктопе: одна плитка или развёрнутый список (учёт при DnD) */
@@ -166,7 +166,18 @@ export const useCallStore = create<useCallStoreT>()(
       },
     }),
     {
-      name: 'call-store', // Название ключа в localStorage
+      name: 'call-store',
+      version: 1,
+      migrate: (persisted, version) => {
+        const state = persisted as Record<string, unknown>;
+        if (version === 0) {
+          const ct = state.carouselType;
+          if (ct === 'horizontal' || ct === 'vertical') {
+            state.carouselType = 'focus';
+          }
+        }
+        return state as useCallStoreT;
+      },
       partialize: (state) => ({
         isCameraPermission: state.isCameraPermission,
         isMicroPermission: state.isMicroPermission,
@@ -178,7 +189,7 @@ export const useCallStore = create<useCallStoreT>()(
         activeCorner: state.activeCorner,
         chatSoundVolume: state.chatSoundVolume,
         handRaiseSoundVolume: state.handRaiseSoundVolume,
-      }), // Сохраняем только нужные ключи
+      }),
     },
   ),
 );

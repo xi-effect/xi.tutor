@@ -74,6 +74,16 @@
   padding: 0 !important;
 }
 
-.lk-participant-tile:hover .lk-focus-toggle-button {
-  opacity: 0.8;
+/* На десктопе кнопка фокуса показывается по hover */
+@media (min-width: 1025px) {
+  .lk-participant-tile:hover .lk-focus-toggle-button {
+    opacity: 0.8;
+  }
+}
+
+/* На мобилке и планшетах кнопка фокуса всегда видна */
+@media (max-width: 1024px) {
+  .lk-participant-tile .lk-focus-toggle-button {
+    opacity: 0.8;
+  }
 }
