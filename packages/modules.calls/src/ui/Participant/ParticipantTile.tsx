@@ -30,6 +30,7 @@ import { ScreenShareZoom } from './ScreenShareZoom';
 import { useCallStore } from '../../store/callStore';
 import { isLocal } from '../../utils/livekit';
 import { cn } from '@xipkg/utils';
+import { useMedia } from '../../../../common.utils/src/useMedia';
 
 type TrackRefContextIfNeededPropsT = {
   trackRef?: TrackReferenceOrPlaceholder;
@@ -76,7 +77,7 @@ type FocusToggleDisablePropsT = {
 };
 
 type FocusViewPropsT = {
-  /** Плитка в фокусе (в HorizontalFocusLayout / VerticalFocusLayout). Для демонстрации экрана включает зум. */
+  /** Плитка в фокусе (в FocusLayout). Для демонстрации экрана включает зум. */
   isFocusView?: boolean;
 };
 
@@ -169,7 +170,7 @@ export const ParticipantTile = ({
   const carouselType = useCallStore((state) => state.carouselType);
   const updateStore = useCallStore((state) => state.updateStore);
 
-  const isHorizontalLayout = carouselType === 'horizontal';
+  const isFocusLayout = carouselType !== 'grid';
 
   const handleTileDoubleClick = React.useCallback(() => {
     if (trackReference.source !== Track.Source.ScreenShare || !layoutContext?.pin.dispatch) return;
@@ -179,11 +180,7 @@ export const ParticipantTile = ({
       layoutContext.pin.state && isTrackReferencePinned(trackReference, layoutContext.pin.state);
 
     if (carouselType === 'grid') {
-      const focusLayout: 'horizontal' | 'vertical' =
-        typeof window !== 'undefined' && window.innerWidth >= window.innerHeight
-          ? 'horizontal'
-          : 'vertical';
-      updateStore('carouselType', focusLayout);
+      updateStore('carouselType', 'focus');
       layoutContext.pin.dispatch({ msg: 'set_pin', trackReference });
     } else if (isPinned) {
       updateStore('carouselType', 'grid');
@@ -196,11 +193,13 @@ export const ParticipantTile = ({
       return 'object-contain';
     }
 
-    if (isHorizontalLayout) {
+    if (isFocusLayout) {
       return 'object-contain';
     }
     return 'object-cover';
   };
+
+  const isMobile = useMedia('(max-width: 640px)');
 
   return (
     <div
@@ -289,7 +288,9 @@ export const ParticipantTile = ({
                         />
                       </div>
                     );
-                    return isFocusView && trackReference.source === Track.Source.ScreenShare ? (
+                    return !isMobile &&
+                      isFocusView &&
+                      trackReference.source === Track.Source.ScreenShare ? (
                       <ScreenShareZoom trackRef={trackReference}>{videoBlock}</ScreenShareZoom>
                     ) : (
                       videoBlock
