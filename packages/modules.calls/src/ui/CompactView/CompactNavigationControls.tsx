@@ -29,7 +29,7 @@ export function CompactNavigationControls({
     <div className="pointer-events-none absolute inset-0">
       {/* Индикатор участников вверху */}
       <div className="pointer-events-auto absolute top-2 left-1/2 -translate-x-1/2">
-        <div className="bg-gray-10/80 flex gap-1 rounded-full px-2 py-1 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+        <div className="bg-gray-10/80 flex gap-1 rounded-full px-2 py-1 transition-opacity duration-200 sm:opacity-0 sm:group-hover:opacity-100">
           {Array.from({ length: totalParticipants }, (_, index) => (
             <button
               key={index}
@@ -48,7 +48,7 @@ export function CompactNavigationControls({
       </div>
 
       {/* Кнопка "Предыдущий участник" */}
-      <div className="pointer-events-auto absolute top-1/2 left-2 -translate-y-1/2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+      <div className="pointer-events-auto absolute top-1/2 left-2 -translate-y-1/2 transition-opacity duration-200 sm:opacity-0 sm:group-hover:opacity-100">
         <button
           type="button"
           disabled={!canPrev}
@@ -61,7 +61,7 @@ export function CompactNavigationControls({
       </div>
 
       {/* Кнопка "Следующий участник" */}
-      <div className="pointer-events-auto absolute top-1/2 right-2 -translate-y-1/2 opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+      <div className="pointer-events-auto absolute top-1/2 right-2 -translate-y-1/2 transition-opacity duration-200 sm:opacity-0 sm:group-hover:opacity-100">
         <button
           type="button"
           disabled={!canNext}

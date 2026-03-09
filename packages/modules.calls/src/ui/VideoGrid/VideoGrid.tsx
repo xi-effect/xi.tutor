@@ -22,7 +22,7 @@ const GRID_GAP = 8;
 
 function useFirstPageSize(
   containerSize: { width: number; height: number },
-  layoutMode: 'grid' | 'horizontal' | 'vertical',
+  layoutMode: 'grid' | 'focus',
   trackCount: number,
 ): number {
   return React.useMemo(() => {
@@ -40,14 +40,8 @@ function useFirstPageSize(
       return Math.min(layout.cols * visibleRows, trackCount);
     }
 
-    if (layoutMode === 'vertical') {
-      const itemHeight = Math.max(120, Math.min(200, containerSize.height));
-      return Math.max(1, Math.floor(containerSize.height / (itemHeight + GRID_GAP)));
-    }
-
-    // horizontal
-    const carouselHeight = 144; // min-h-36 = 9rem = 144px
-    const itemWidth = Math.max(150, Math.min(250, carouselHeight * (16 / 9)));
+    const thumbHeight = 144;
+    const itemWidth = Math.max(100, Math.min(180, thumbHeight * (16 / 9)));
     return Math.max(1, Math.floor(containerSize.width / (itemWidth + GRID_GAP)));
   }, [containerSize.width, containerSize.height, layoutMode, trackCount]);
 }
@@ -78,7 +72,11 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
     (track) => track.publication?.source === Track.Source.Camera,
   ).length;
   const canUseFocusLayout = hasScreenShare || participantCount > 2;
-  const effectiveCarouselType = canUseFocusLayout ? carouselType : 'grid';
+  const effectiveCarouselType: 'grid' | 'focus' = canUseFocusLayout
+    ? carouselType === 'grid'
+      ? 'grid'
+      : 'focus'
+    : 'grid';
 
   const contentRef = React.useRef<HTMLDivElement>(null);
   const contentSize = useSize(contentRef as React.RefObject<HTMLDivElement>);
@@ -125,27 +123,19 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
   }, [screenShareTracks, focusTrack, layoutContext.pin, tracks]);
 
   React.useEffect(() => {
-    if (!canUseFocusLayout && (carouselType === 'horizontal' || carouselType === 'vertical')) {
+    if (!canUseFocusLayout && carouselType === 'focus') {
       useCallStore.getState().updateStore('carouselType', 'grid');
     }
   }, [canUseFocusLayout, carouselType]);
 
-  // При появлении демонстрации экрана (переход нет → есть) один раз переключаем на фокусный вид. Пользователь может вручную вернуться в сетку.
   React.useEffect(() => {
     const screenShareJustStarted = hasScreenShare && !hadScreenShareRef.current;
     hadScreenShareRef.current = hasScreenShare;
 
     if (!screenShareJustStarted || carouselType !== 'grid') return;
 
-    const isWide = contentSize.width >= contentSize.height;
-    const focusLayout: 'horizontal' | 'vertical' =
-      contentSize.width > 0 && contentSize.height > 0
-        ? isWide
-          ? 'horizontal'
-          : 'vertical'
-        : 'horizontal';
-    useCallStore.getState().updateStore('carouselType', focusLayout);
-  }, [hasScreenShare, carouselType, contentSize.width, contentSize.height]);
+    useCallStore.getState().updateStore('carouselType', 'focus');
+  }, [hasScreenShare, carouselType]);
 
   useScreenShareCleanup(tracks);
 

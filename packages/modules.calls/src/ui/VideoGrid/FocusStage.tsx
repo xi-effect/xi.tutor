@@ -11,7 +11,7 @@ interface FocusStageProps {
  */
 export function FocusStage({ children, className = '' }: FocusStageProps) {
   return (
-    <div className="flex h-full w-full items-center justify-center">
+    <div className="flex h-full w-full items-start justify-center">
       <div className={`relative overflow-hidden rounded-2xl ${className}`}>
         <div className="relative h-full w-full">{children}</div>
       </div>
