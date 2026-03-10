@@ -1,32 +1,21 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
-  BOARD_BOTTOM_TOOLBAR_PX,
-  BOARD_TOP_TOOLBAR_PX,
   BOTTOM_OFFSET_DEFAULT_PX,
-  COMPACT_BOTTOM_BAR_PX,
+  COMPACT_BOTTOM_OFFSET_BOARD_PX,
   HEADER_HEIGHT_PX,
-  TILES_PADDING_PX,
 } from '../ui/CompactView/constants';
 
+/**
+ * Максимальная высота, доступная для всего контейнера compact call
+ * (видеообласть + нижняя панель). Соответствует CSS-позиционированию
+ * top-16 / bottom-[72px] | bottom-4 в CompactView.
+ */
 function calcAvailableHeight(isOnBoardPage: boolean): number {
   if (typeof window === 'undefined') return 400;
-  if (isOnBoardPage) {
-    return (
-      window.innerHeight -
-      HEADER_HEIGHT_PX -
-      BOARD_TOP_TOOLBAR_PX -
-      BOARD_BOTTOM_TOOLBAR_PX -
-      COMPACT_BOTTOM_BAR_PX -
-      TILES_PADDING_PX
-    );
-  }
-  return (
-    window.innerHeight -
-    HEADER_HEIGHT_PX -
-    BOTTOM_OFFSET_DEFAULT_PX -
-    COMPACT_BOTTOM_BAR_PX -
-    TILES_PADDING_PX
-  );
+  const bottomOffset = isOnBoardPage
+    ? COMPACT_BOTTOM_OFFSET_BOARD_PX // 72, matches bottom-[72px]
+    : BOTTOM_OFFSET_DEFAULT_PX; // 16, matches bottom-4
+  return window.innerHeight - HEADER_HEIGHT_PX - bottomOffset;
 }
 
 export function useCompactAvailableHeight(isOnBoardPage: boolean): number {
