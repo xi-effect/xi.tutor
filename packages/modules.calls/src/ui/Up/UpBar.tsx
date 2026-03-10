@@ -1,35 +1,40 @@
-import { useEffect } from 'react';
 import {
   Grid,
   Speaker,
   SpeakerHorizontal,
   Link as LinkIcon,
   Settings as SettingsIcon,
+  ArrowLeft,
   Maximize,
   Minimize,
-  ArrowLeft,
 } from '@xipkg/icons';
-import { useFullScreen } from 'common.utils';
-import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
 import { TooltipContent, Tooltip, TooltipTrigger } from '@xipkg/tooltip';
 import { useCallStore } from '../../store/callStore';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { useCurrentUser, useGetClassroom } from 'common.services';
+import { useFocusModeStore } from 'common.ui';
+import { useEffect } from 'react';
 import { toast } from 'sonner';
 import { env } from 'common.env';
 import { useTracks } from '@livekit/components-react';
 import { Track } from 'livekit-client';
 import { Settings } from './Settings';
 import { ONBOARDING_IDS } from '../Onboarding/CallsOnboarding';
+import { useMedia } from 'common.utils';
 
 export const UpBar = () => {
+  const isMobile = useMedia('(max-width: 720px)');
+
   const { callId } = useParams({ strict: false });
   const { data: classroom } = useGetClassroom(Number(callId));
   const carouselType = useCallStore((state) => state.carouselType);
-  const { isFullScreenSupported, isFullScreen, toggleFullScreen } = useFullScreen(
-    'videoConferenceContainer',
-  );
+  const { focusMode, setFocusMode, toggleFocusMode } = useFocusModeStore();
+
+  // Сбрасываем режим фокуса при уходе со страницы звонка
+  useEffect(() => {
+    return () => setFocusMode(false);
+  }, [setFocusMode]);
 
   // Получаем треки для проверки условий
   const tracks = useTracks(
@@ -54,16 +59,14 @@ export const UpBar = () => {
   const navigate = useNavigate();
 
   const toggleLayout = () => {
-    const currentType = carouselType;
     let nextType: 'grid' | 'horizontal' | 'vertical';
 
-    if (currentType === 'horizontal') nextType = 'vertical';
-    else if (currentType === 'vertical') nextType = 'grid';
-    else if (currentType === 'grid') {
-      // Если условия не соблюдены, остаемся на grid
-      nextType = canUseFocusLayout ? 'horizontal' : 'grid';
+    if (isMobile) {
+      nextType = carouselType === 'grid' && canUseFocusLayout ? 'horizontal' : 'grid';
     } else {
-      nextType = 'grid';
+      if (carouselType === 'horizontal') nextType = 'vertical';
+      else if (carouselType === 'vertical') nextType = 'grid';
+      else nextType = canUseFocusLayout ? 'horizontal' : 'grid';
     }
 
     updateStore('carouselType', nextType);
@@ -76,7 +79,6 @@ export const UpBar = () => {
     if (carouselType === 'vertical') {
       return <SpeakerHorizontal className="fill-gray-100" />;
     }
-
     return <Grid className="fill-gray-100" />;
   };
 
@@ -90,28 +92,23 @@ export const UpBar = () => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  useEffect(() => {
-    const root = document.documentElement;
-    if (isFullScreen) {
-      root.style.setProperty('--header-height', '0px');
-    } else {
-      root.style.setProperty('--header-height', '64px');
-    }
-  }, [isFullScreen]);
-
   return (
-    <div className={cn('flex w-full flex-row items-end px-4 pb-1', isFullScreen && 'pt-2')}>
+    <div className="flex w-full flex-row items-end px-4 pb-1">
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button
             id={ONBOARDING_IDS.BACK_BUTTON}
             onClick={() => {
+              if (focusMode) {
+                setFocusMode(false);
+              }
               navigate({
                 to: '/classrooms/$classroomId',
                 params: { classroomId: callId ?? '' },
                 search: { tab: 'overview', call: callId },
               });
-              updateStore('mode', 'compact');
+              // Ставим mode после смены маршрута, иначе эффект в Call.tsx видит «страница звонка + compact» и сбрасывает в full
+              setTimeout(() => updateStore('mode', 'compact'), 0);
             }}
             type="button"
             variant="none"
@@ -126,7 +123,7 @@ export const UpBar = () => {
         </TooltipContent>
       </Tooltip>
 
-      <span className="ml-4 self-center text-2xl font-semibold text-gray-100">
+      <span className="text-m-base sm:text-xl-base md:text-2xl-base ml-4 max-w-[50vw] min-w-0 self-center truncate font-semibold text-gray-100">
         {classroom?.name}
       </span>
       {/* <span className="text-gray-70 ml-2 pb-1">Имя ученика</span> */}
@@ -152,6 +149,29 @@ export const UpBar = () => {
             : 'Переключить вид сетки'}
         </TooltipContent>
       </Tooltip>
+      {!isMobile && (
+        <Tooltip delayDuration={1000}>
+          <TooltipTrigger asChild>
+            <Button
+              onClick={toggleFocusMode}
+              type="button"
+              variant="none"
+              className="ml-2 flex h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0"
+              data-umami-event="call-toggle-focus-mode"
+              data-umami-event-state={focusMode ? 'exit' : 'enter'}
+            >
+              {focusMode ? (
+                <Minimize className="fill-gray-100" />
+              ) : (
+                <Maximize className="fill-gray-100" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom" align="end">
+            {focusMode ? 'Показать меню и шапку' : 'Скрыть меню и шапку'}
+          </TooltipContent>
+        </Tooltip>
+      )}
       {isTutor && (
         <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
@@ -168,29 +188,6 @@ export const UpBar = () => {
           </TooltipTrigger>
           <TooltipContent side="bottom" align="end">
             Скопировать ссылку-приглашение
-          </TooltipContent>
-        </Tooltip>
-      )}
-      {isFullScreenSupported && (
-        <Tooltip delayDuration={1000}>
-          <TooltipTrigger asChild>
-            <Button
-              onClick={toggleFullScreen}
-              type="button"
-              variant="none"
-              className="ml-2 hidden h-10 w-10 flex-row items-center justify-center rounded-[12px] p-0 md:flex"
-              data-umami-event="call-toggle-fullscreen"
-              data-umami-event-state={isFullScreen ? 'exit' : 'enter'}
-            >
-              {isFullScreen ? (
-                <Minimize className="fill-gray-100" />
-              ) : (
-                <Maximize className="fill-gray-100" />
-              )}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent side="bottom" align="end">
-            {isFullScreen ? 'Свернуть' : 'Развернуть на весь экран'}
           </TooltipContent>
         </Tooltip>
       )}

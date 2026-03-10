@@ -1,13 +1,14 @@
 import { LoadingScreen } from 'common.ui';
 import { useKeyPress } from 'common.utils';
 import { JSX } from 'react/jsx-runtime';
-import { useState, useEffect, useRef } from 'react';
-import { Editor, TLInstancePresenceID, Tldraw, TldrawProps } from 'tldraw';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { Editor, TLInstancePresence, Tldraw, TldrawProps } from 'tldraw';
 import { useLockedShapeSelection, useRemoveMark, useTldrawClipboard } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore, useTldrawStore } from '../../../store';
 import { EmbedShapeUtil } from '../../../shapes/embed';
 import { PdfShapeUtil } from '../../../shapes/pdf';
+import { AudioShapeUtil } from '../../../shapes/audio';
 import { Header } from '../header';
 import { Navbar, SelectionMenu } from '../toolbar';
 import { CollaboratorCursor } from './CollaboratorCursor';
@@ -15,6 +16,9 @@ import { FollowBanner } from './FollowBanner';
 import { TldrawZoomPanel } from './TldrawZoomPanel';
 import 'tldraw/tldraw.css';
 import './customstyles.css';
+import { UndoRedo } from '../toolbar/UndoRedo';
+import { makeTldrawAssetUrls } from '../../../utils/assetsUrls';
+import { extractFileIdFromUrl } from '../../../utils/resolveAssetUrl';
 
 export const TldrawCanvas = ({
   token,
@@ -22,7 +26,8 @@ export const TldrawCanvas = ({
 }: JSX.IntrinsicAttributes & TldrawProps & { token: string }) => {
   const [editor, setEditor] = useState<Editor | null>(null);
 
-  const { selectedElementId, selectElement } = useTldrawStore();
+  const { selectedElementId, selectElement, showDebugInfo } = useTldrawStore();
+  const [shapeCount, setShapeCount] = useState(0);
   const { store, status, undo, redo, canUndo, canRedo, isReadonly, getUserCamera, setUserCamera } =
     useYjsContext();
   const { followingPresenceId } = useFollowUserStore();
@@ -31,6 +36,17 @@ export const TldrawCanvas = ({
   useRemoveMark();
   useLockedShapeSelection(editor);
   useTldrawClipboard(editor, token);
+
+  useEffect(() => {
+    return () => {
+      const win = window as unknown as {
+        getBoardSnapshot?: () => unknown;
+        showBoardImportOption?: () => void;
+      };
+      delete win.getBoardSnapshot;
+      delete win.showBoardImportOption;
+    };
+  }, []);
 
   useKeyPress('Backspace', () => {
     if (selectedElementId) {
@@ -122,12 +138,6 @@ export const TldrawCanvas = ({
     }
   }, [editor, isReadonly]);
 
-  // В режиме «Следуем за» блокируем управление камерой у ведомого — пан/зум только через крестик на плашке
-  useEffect(() => {
-    if (!editor) return;
-    editor.setCameraOptions({ isLocked: !!followingPresenceId });
-  }, [editor, followingPresenceId]);
-
   // Восстановление камеры пользователя при открытии доски (один раз после синка)
   useEffect(() => {
     if (!editor || status !== 'synced-remote' || appliedInitialCameraRef.current) return;
@@ -157,31 +167,107 @@ export const TldrawCanvas = ({
     };
   }, [editor, setUserCamera]);
 
-  // Режим "следовать за пользователем": камера в реальном времени повторяет вид коллаборатора (presence.camera из Hocuspocus).
-  // При isLocked программный setCamera тоже блокируется — временно снимаем блок на время синка.
+  // Follow: вписываем вид ведущего в viewport ведомого (fit-to-bounds).
+  // На большом экране зум совпадает; на маленьком — уменьшается, чтобы видеть всю область.
+  // Используем стандартные поля tldraw presence (camera, screenBounds).
   useEffect(() => {
     if (!editor || !store || !followingPresenceId) return;
-    const id = followingPresenceId as TLInstancePresenceID;
-    const syncCamera = () => {
-      const presence = store.get(id) as
-        | { camera?: { x: number; y: number; z: number } | null }
-        | undefined;
+
+    const id = followingPresenceId;
+    let raf = 0;
+
+    const sync = () => {
+      const presence = store.get(id as TLInstancePresence['id']) as TLInstancePresence | undefined;
       if (!presence?.camera) return;
+
+      const leaderCam = presence.camera;
+      const leaderSB = presence.screenBounds;
+      if (!leaderSB || leaderSB.w <= 0 || leaderSB.h <= 0) return;
+
+      // Вид ведущего в page-space
+      const leaderPageW = leaderSB.w / leaderCam.z;
+      const leaderPageH = leaderSB.h / leaderCam.z;
+      const centerX = -leaderCam.x + leaderPageW / 2;
+      const centerY = -leaderCam.y + leaderPageH / 2;
+
+      const vp = editor.getViewportScreenBounds();
+
+      // Зум, при котором весь вид ведущего вписывается в наш viewport.
+      // Не зумим ближе, чем у ведущего (если наш экран больше).
+      const z = Math.min(leaderCam.z, vp.w / leaderPageW, vp.h / leaderPageH);
+
+      const target = {
+        x: -(centerX - vp.w / (2 * z)),
+        y: -(centerY - vp.h / (2 * z)),
+        z,
+      };
+
+      const cur = editor.getCamera();
+      if (
+        Math.abs(cur.x - target.x) < 0.5 &&
+        Math.abs(cur.y - target.y) < 0.5 &&
+        Math.abs(cur.z - target.z) < 0.001
+      )
+        return;
+
       editor.setCameraOptions({ isLocked: false });
-      editor.setCamera(presence.camera);
+      editor.setCamera(target);
       editor.setCameraOptions({ isLocked: true });
     };
-    syncCamera();
+
+    const schedule = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(() => {
+        raf = 0;
+        sync();
+      });
+    };
+
+    schedule();
+
     const unsub = store.listen(
       ({ changes }) => {
-        const added = changes.added as Record<string, unknown>;
-        const updated = changes.updated as Record<string, unknown>;
-        if (added[id] || updated[id]) syncCamera();
+        const added = (changes.added ?? {}) as Record<string, unknown>;
+        const updated = (changes.updated ?? {}) as Record<string, unknown>;
+        if (added[id] || updated[id]) schedule();
       },
       { scope: 'presence' },
     );
-    return unsub;
+
+    const ro = new ResizeObserver(() => schedule());
+    ro.observe(editor.getContainer());
+
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      ro.disconnect();
+      unsub();
+      editor.setCameraOptions({ isLocked: false });
+    };
   }, [editor, store, followingPresenceId]);
+
+  // В режиме «Авто» синхронизируем isPenMode с текущим устройством при каждом pointerdown,
+  // чтобы можно было переключаться между планшетом и мышью без смены настройки в меню.
+  useEffect(() => {
+    if (!editor) return;
+    const container = editor.getContainer();
+    const onPointerDown = (e: PointerEvent) => {
+      if (useTldrawStore.getState().inputMode !== 'auto') return;
+      editor.updateInstanceState({ isPenMode: e.pointerType === 'pen' });
+    };
+    container.addEventListener('pointerdown', onPointerDown, { capture: true });
+    return () => container.removeEventListener('pointerdown', onPointerDown, { capture: true });
+  }, [editor]);
+
+  // Подписка на изменение количества фигур на текущей странице (для дебаг-всплывашки)
+  useEffect(() => {
+    if (!editor || !showDebugInfo) return;
+    const updateCount = () => setShapeCount(editor.getCurrentPageShapeIds().size);
+    updateCount();
+    const unsub = editor.store.listen(updateCount);
+    return unsub;
+  }, [editor, showDebugInfo]);
+
+  const assetUrls = useMemo(() => makeTldrawAssetUrls({ baseUrl: '/tldraw' }), []);
 
   if (status === 'loading') return <LoadingScreen />;
 
@@ -196,18 +282,65 @@ export const TldrawCanvas = ({
               editor.updateInstanceState({
                 isGridMode: true,
                 isDebugMode: false,
-                isPenMode: false,
               });
 
-              editor.sideEffects.registerBeforeChangeHandler('instance', (prev, next) => {
-                if (next.isPenMode) {
-                  return prev;
-                }
+              const inputMode = useTldrawStore.getState().inputMode;
+              if (inputMode === 'pen') editor.updateInstanceState({ isPenMode: true });
+              else if (inputMode === 'mouse') editor.updateInstanceState({ isPenMode: false });
+
+              editor.sideEffects.registerBeforeChangeHandler('instance', (_, next) => {
+                const mode = useTldrawStore.getState().inputMode;
+                if (mode === 'pen') return { ...next, isPenMode: true };
+                if (mode === 'mouse') return { ...next, isPenMode: false };
                 return next;
               });
+
+              const win = window as unknown as {
+                getBoardSnapshot?: () => unknown;
+                showBoardImportOption?: () => void;
+              };
+              win.getBoardSnapshot = () => {
+                const records = editor.store.allRecords();
+                const normalized = records.map((r) => {
+                  const raw = r as unknown as Record<string, unknown>;
+                  const rec = {
+                    ...r,
+                    props:
+                      raw.props && typeof raw.props === 'object'
+                        ? { ...(raw.props as Record<string, unknown>) }
+                        : raw.props,
+                  } as typeof r;
+                  const props = (rec as unknown as Record<string, unknown>).props as
+                    | Record<string, unknown>
+                    | undefined;
+                  if (props?.src && typeof props.src === 'string') {
+                    const fileId = extractFileIdFromUrl(props.src);
+                    if (fileId) props.src = fileId;
+                  }
+                  return rec;
+                });
+                const snapshot = {
+                  records: normalized,
+                  byId: Object.fromEntries(normalized.map((r) => [r.id, r])),
+                };
+                const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
+                  type: 'application/json',
+                });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `board-snapshot-${Date.now()}.json`;
+                link.click();
+                URL.revokeObjectURL(url);
+                return snapshot;
+              };
+              win.showBoardImportOption = () => {
+                window.dispatchEvent(new CustomEvent('showBoardImportJson'));
+              };
             }}
+            assetUrls={assetUrls}
             store={store}
-            shapeUtils={[EmbedShapeUtil, PdfShapeUtil]}
+            shapeUtils={[PdfShapeUtil, AudioShapeUtil, EmbedShapeUtil]}
             hideUi
             components={{
               CollaboratorCursor: CollaboratorCursor,
@@ -219,7 +352,19 @@ export const TldrawCanvas = ({
             {!isReadonly && (
               <Navbar undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} token={token} />
             )}
+            <div className="border-gray-10 bg-gray-0 absolute bottom-4 left-4 z-30 flex rounded-xl border p-1 sm:hidden">
+              <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
+            </div>
             <TldrawZoomPanel />
+            {showDebugInfo && editor && (
+              <div
+                className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/70 px-2 py-1 font-mono text-xs text-white"
+                aria-live="polite"
+              >
+                <div className="font-sans font-medium">Отладочная информация</div>
+                Элементов на доске: {shapeCount}
+              </div>
+            )}
           </Tldraw>
         </div>
       </div>

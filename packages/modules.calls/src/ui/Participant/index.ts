@@ -1,2 +1,2 @@
 export { ParticipantName } from './ParticipantName';
-export { ParticipantTile } from './ParticipantTile';
+export { ParticipantTile, TrackMutedIndicator } from './ParticipantTile';

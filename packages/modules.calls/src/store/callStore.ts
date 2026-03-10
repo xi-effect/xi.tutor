@@ -41,6 +41,9 @@ type useCallStoreT = {
   carouselType: 'grid' | 'horizontal' | 'vertical';
   activeCorner: Corner;
 
+  /** Режим вида компакт-ВКС на десктопе: одна плитка или развёрнутый список (учёт при DnD) */
+  compactViewMode: 'basic' | 'expanded';
+
   // Текущая активная доска (для синхронизации с новыми участниками)
   activeBoardId: string | undefined;
   activeClassroom: string | undefined;
@@ -90,6 +93,7 @@ export const useCallStore = create<useCallStoreT>()(
       mode: 'full',
       carouselType: 'grid',
       activeCorner: 'top-left',
+      compactViewMode: 'basic',
 
       // Текущая активная доска
       activeBoardId: undefined,
@@ -162,7 +166,18 @@ export const useCallStore = create<useCallStoreT>()(
       },
     }),
     {
-      name: 'call-store', // Название ключа в localStorage
+      name: 'call-store',
+      version: 2,
+      migrate: (persisted, version) => {
+        const state = persisted as Record<string, unknown>;
+        if (version === 1) {
+          const ct = state.carouselType;
+          if (ct === 'focus') {
+            state.carouselType = 'horizontal';
+          }
+        }
+        return state as useCallStoreT;
+      },
       partialize: (state) => ({
         isCameraPermission: state.isCameraPermission,
         isMicroPermission: state.isMicroPermission,
@@ -174,7 +189,7 @@ export const useCallStore = create<useCallStoreT>()(
         activeCorner: state.activeCorner,
         chatSoundVolume: state.chatSoundVolume,
         handRaiseSoundVolume: state.handRaiseSoundVolume,
-      }), // Сохраняем только нужные ключи
+      }),
     },
   ),
 );

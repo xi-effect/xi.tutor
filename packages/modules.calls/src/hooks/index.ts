@@ -1,3 +1,4 @@
+export { useCompactAvailableHeight } from './useCompactAvailableHeight';
 export { useSize } from './useSize';
 export { useInitUserDevices } from './useInitUserDevices';
 export { useLiveKitDataChannel, useLiveKitDataChannelListener } from './useLiveKitDataChannel';
@@ -18,3 +19,4 @@ export { useVideoBlur } from './useVideoBlur';
 export { useParticipantJoinSync } from './useParticipantJoinSync';
 export { useUmamiActivityHeartbeat } from './useUmamiActivityHeartbeat';
 export { useSortedTracks } from './useSortedTracks';
+export { useDocumentPiP } from './useDocumentPiP';

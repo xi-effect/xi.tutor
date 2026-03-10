@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import {
   HocuspocusProvider,
@@ -10,7 +9,7 @@ import {
   type onSyncedParameters,
 } from '@hocuspocus/provider';
 import { useCurrentUser } from 'common.services';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import {
   computed,
@@ -32,11 +31,14 @@ import {
 } from 'tldraw';
 import { YKeyValue } from 'y-utility/y-keyvalue';
 import * as Y from 'yjs';
+import { getFileUrl } from 'common.api';
 import { myAssetStore } from '../features/imageStore';
 import { EmbedShapeUtil } from '../shapes/embed';
 import { PdfShapeUtil } from '../shapes/pdf';
+import { AudioShapeUtil } from '../shapes/audio';
 import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
 import { generateUserColor } from '../utils/userColor';
+import { extractFileIdFromUrl } from '../utils/resolveAssetUrl';
 
 /** Подставляет props.html = '' для старых embedUrl-фигур без этого поля (совместимость с данными до добавления html). */
 function normalizeEmbedUrlShapeProps(record: TLRecord): TLRecord {
@@ -88,6 +90,8 @@ export type ExtendedStoreStatus = {
   setUserCamera: (camera: CameraState) => void;
   /** Y.Map для хранения текущей страницы PDF по ключу `${shapeId}:${userId}` */
   pdfPagesMap: Y.Map<number>;
+  /** Y.Map для синхронного воспроизведения аудио: `${shapeId}:playing|time|ts` → number */
+  audioSyncMap: Y.Map<number>;
   /** Токен для доступа к файлам */
   token: string;
 };
@@ -133,6 +137,8 @@ type SharedEntry = {
   userCamerasMap: Y.Map<CameraState>;
   /** Текущие страницы PDF: ключ — `${shapeId}:${userId}`, значение — номер страницы */
   pdfPagesMap: Y.Map<number>;
+  /** Синхронное воспроизведение аудио: `${shapeId}:playing|time|ts` → number */
+  audioSyncMap: Y.Map<number>;
   releaseTimer: number | null;
 };
 
@@ -167,6 +173,7 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
   const readonlyMap = yDoc.getMap<boolean>('readonly');
   const userCamerasMap = yDoc.getMap<CameraState>('userCameras');
   const pdfPagesMap = yDoc.getMap<number>('pdfPages');
+  const audioSyncMap = yDoc.getMap<number>('audioSync');
 
   const provider = new HocuspocusProvider({
     url: hostUrl,
@@ -187,6 +194,7 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
     readonlyMap,
     userCamerasMap,
     pdfPagesMap,
+    audioSyncMap,
     releaseTimer: null,
   };
 
@@ -239,14 +247,19 @@ export function useYjsStore({
     const assetStore = token ? myAssetStore(token) : undefined;
 
     return createTLStore({
-      shapeUtils: [...defaultShapeUtils, EmbedShapeUtil, PdfShapeUtil, ...shapeUtils],
+      shapeUtils: [
+        ...defaultShapeUtils,
+        EmbedShapeUtil,
+        PdfShapeUtil,
+        AudioShapeUtil,
+        ...shapeUtils,
+      ],
       ...(assetStore ? { assets: assetStore } : {}),
     });
   });
 
   const undoManagerRef = useRef<Y.UndoManager | null>(null);
   const suppressSyncRef = useRef(false);
-
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
 
@@ -269,10 +282,15 @@ export function useYjsStore({
     return getOrCreateShared(hostUrl, ydocId, storageToken);
   }, [hostUrl, ydocId, storageToken]);
 
-  const { provider, yDoc, yStore, meta, readonlyMap, userCamerasMap, pdfPagesMap } = sharedEntry;
+  const { provider, yDoc, yStore, meta, readonlyMap, userCamerasMap, pdfPagesMap, audioSyncMap } =
+    sharedEntry;
 
-  useEffect(() => {
-    setStoreWithStatus((prev) => ({ ...prev, status: 'loading', store }));
+  // useLayoutEffect: при ремаунте (PiP и т.д.) обновляем статус до отрисовки, чтобы не мигал LoadingScreen.
+  useLayoutEffect(() => {
+    // Не сбрасываем в loading, если провайдер уже синхронизирован (ремаунт/PiP/смена фокуса).
+    if (!provider.synced) {
+      setStoreWithStatus((prev) => ({ ...prev, status: 'loading', store }));
+    }
 
     // ВАЖНО: attach тут, а detach — ТОЛЬКО в releaseShared (когда refs = 0).
     // Иначе при 2 потребителях или StrictMode будет "чужой" cleanup ронять сокет.
@@ -471,7 +489,6 @@ export function useYjsStore({
 
           const presenceToSend = enrichPresenceWithBackendId(pendingPresence);
           awareness.setLocalStateField('presence', presenceToSend);
-          // Свою presence кладём и в store, чтобы свой аватар отображался в CollaboratorAvatars
           store.put([presenceToSend]);
           pendingPresence = null;
         };
@@ -619,6 +636,33 @@ export function useYjsStore({
           ]),
         );
 
+        // Migrate `src` values:
+        // - Shapes (audio, pdf): full URL → bare file ID (our validators accept any string)
+        // - Assets (image): bare ID → full URL (tldraw's built-in validator requires a valid URL)
+        for (const record of Object.values(migrationResult.value) as TLRecord[]) {
+          const props = (record as any).props;
+          if (!props?.src || typeof props.src !== 'string') continue;
+
+          const isAsset = (record as any).typeName === 'asset';
+          if (isAsset) {
+            const src = props.src as string;
+            const isBareId =
+              src !== '' &&
+              !src.startsWith('http://') &&
+              !src.startsWith('https://') &&
+              !src.startsWith('data:') &&
+              !src.startsWith('blob:');
+            if (isBareId) {
+              props.src = getFileUrl(src);
+            }
+          } else {
+            const fileId = extractFileIdFromUrl(props.src);
+            if (fileId) {
+              props.src = fileId;
+            }
+          }
+        }
+
         yDoc.transact(() => {
           for (const r of records) {
             if (!migrationResult.value[r.id]) yStore.delete(r.id);
@@ -674,6 +718,18 @@ export function useYjsStore({
 
     provider.on('synced', handleSynced as any);
     unsubs.push(() => provider.off('synced', handleSynced as any));
+
+    // При ремаунте (PiP / смена фокуса) провайдер может быть уже синхронизирован.
+    // Событие 'synced' вызывается только один раз, поэтому вручную запускаем инициализацию.
+    // Сразу выставляем synced-remote, чтобы до отрисовки не показывать LoadingScreen.
+    if (provider.synced) {
+      setStoreWithStatus((prev) => ({
+        ...prev,
+        status: 'synced-remote',
+        connectionStatus: 'online',
+      }));
+      handleSynced({ state: true });
+    }
 
     return () => {
       if (flushTimeoutRef.current != null) {
@@ -774,6 +830,7 @@ export function useYjsStore({
     setUserCamera,
 
     pdfPagesMap,
+    audioSyncMap,
     token: token ?? '',
   };
 }

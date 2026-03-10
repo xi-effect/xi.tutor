@@ -44,8 +44,10 @@ export const Route = createFileRoute('/(app)/_layout/board/$boardId')({
 
 function BoardPage() {
   return (
-    <Suspense fallback={<LoadingScreen />}>
-      <TldrawBoard />
-    </Suspense>
+    <div className="h-full min-h-0">
+      <Suspense fallback={<LoadingScreen />}>
+        <TldrawBoard />
+      </Suspense>
+    </div>
   );
 }

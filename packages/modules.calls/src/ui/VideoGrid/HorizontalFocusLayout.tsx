@@ -36,8 +36,8 @@ export function HorizontalFocusLayout({
       </div>
 
       {/* Сцена - занимает основное пространство */}
-      <div className="h-full min-h-0 flex-1">
-        <FocusStage className="h-full w-full">{focus}</FocusStage>
+      <div className="min-h-0 flex-1">
+        <FocusStage>{focus}</FocusStage>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ interface GridPaginationControlsProps {
   canNext: boolean;
   onPrev: () => void;
   onNext: () => void;
+  onGoToPage?: (page: number) => void;
   currentPage: number;
   totalPages: number;
 }
@@ -18,6 +19,7 @@ export function GridPaginationControls({
   canNext,
   onPrev,
   onNext,
+  onGoToPage,
   currentPage,
   totalPages,
 }: GridPaginationControlsProps) {
@@ -60,10 +62,7 @@ export function GridPaginationControls({
             <button
               key={index}
               type="button"
-              onClick={() => {
-                // Здесь можно добавить логику для прямого перехода к странице
-                // Пока оставляем только навигацию через кнопки
-              }}
+              onClick={() => onGoToPage?.(index + 1)}
               className={`h-2 w-2 rounded-full transition-colors ${
                 index === currentPage - 1 ? 'bg-gray-100' : 'bg-gray-100/50 hover:bg-gray-100/75'
               }`}

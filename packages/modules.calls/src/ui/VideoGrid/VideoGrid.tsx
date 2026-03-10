@@ -11,14 +11,15 @@ import {
   useTracks,
 } from '@livekit/components-react';
 import { ParticipantTile } from '../Participant';
-import { calcMeetLayout, CarouselContainer, GridLayout } from './VideoGridLayout';
+import { calcMaxTilesPerPage, CarouselContainer, GridLayout } from './VideoGridLayout';
 import { useCallStore } from '../../store/callStore';
-import { useScreenShareCleanup } from '../../hooks/useScreenShareCleanup';
 import { useSortedTracks } from '../../hooks/useSortedTracks';
 import { useSize } from '../../hooks';
 import '../../styles/grid.css';
 
 const GRID_GAP = 8;
+
+const MIN_TILE_H = 200;
 
 function useFirstPageSize(
   containerSize: { width: number; height: number },
@@ -29,31 +30,26 @@ function useFirstPageSize(
     if (!containerSize.width || !containerSize.height || trackCount === 0) return 0;
 
     if (layoutMode === 'grid') {
-      const layout = calcMeetLayout(
-        containerSize.width,
-        containerSize.height,
+      return Math.min(
+        calcMaxTilesPerPage(containerSize.width, containerSize.height, GRID_GAP, MIN_TILE_H),
         trackCount,
-        GRID_GAP,
       );
-      if (layout.tileH <= 0) return 0;
-      const visibleRows = Math.floor((containerSize.height + GRID_GAP) / (layout.tileH + GRID_GAP));
-      return Math.min(layout.cols * visibleRows, trackCount);
     }
 
     if (layoutMode === 'vertical') {
-      const itemHeight = Math.max(120, Math.min(200, containerSize.height));
-      return Math.max(1, Math.floor(containerSize.height / (itemHeight + GRID_GAP)));
+      const thumbHeight = Math.max(120, Math.min(200, containerSize.height / 4));
+      return Math.max(1, Math.floor(containerSize.height / (thumbHeight + GRID_GAP)));
     }
 
-    // horizontal
-    const carouselHeight = 144; // min-h-36 = 9rem = 144px
-    const itemWidth = Math.max(150, Math.min(250, carouselHeight * (16 / 9)));
+    const thumbHeight = 144;
+    const itemWidth = Math.max(100, Math.min(180, thumbHeight * (16 / 9)));
     return Math.max(1, Math.floor(containerSize.width / (itemWidth + GRID_GAP)));
   }, [containerSize.width, containerSize.height, layoutMode, trackCount]);
 }
 
 export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
   const lastAutoFocusedScreenShareTrack = React.useRef<TrackReferenceOrPlaceholder | null>(null);
+  const hadScreenShareRef = React.useRef(false);
 
   const carouselType = useCallStore((state) => state.carouselType);
 
@@ -77,7 +73,9 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
     (track) => track.publication?.source === Track.Source.Camera,
   ).length;
   const canUseFocusLayout = hasScreenShare || participantCount > 2;
-  const effectiveCarouselType = canUseFocusLayout ? carouselType : 'grid';
+  const effectiveCarouselType: 'grid' | 'horizontal' | 'vertical' = canUseFocusLayout
+    ? carouselType
+    : 'grid';
 
   const contentRef = React.useRef<HTMLDivElement>(null);
   const contentSize = useSize(contentRef as React.RefObject<HTMLDivElement>);
@@ -124,12 +122,19 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
   }, [screenShareTracks, focusTrack, layoutContext.pin, tracks]);
 
   React.useEffect(() => {
-    if (!canUseFocusLayout && (carouselType === 'horizontal' || carouselType === 'vertical')) {
+    if (!canUseFocusLayout && carouselType !== 'grid') {
       useCallStore.getState().updateStore('carouselType', 'grid');
     }
   }, [canUseFocusLayout, carouselType]);
 
-  useScreenShareCleanup(tracks);
+  React.useEffect(() => {
+    const screenShareJustStarted = hasScreenShare && !hadScreenShareRef.current;
+    hadScreenShareRef.current = hasScreenShare;
+
+    if (!screenShareJustStarted || carouselType !== 'grid') return;
+
+    useCallStore.getState().updateStore('carouselType', 'horizontal');
+  }, [hasScreenShare, carouselType]);
 
   return (
     <div className="align-stretch relative flex h-full w-full justify-center" {...props}>

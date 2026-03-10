@@ -8,11 +8,11 @@
   "license": "MIT",
   "scripts": {
     "dev": "tsc --watch",
-    "lint": "eslint \"**/*.{ts,tsx}\""
+    "lint": "eslint ."
   },
   "dependencies": {
-    "common.services": "*",
-    "common.entities": "*",
+    "common.services": "workspace:*",
+    "common.entities": "workspace:*",
     "@xipkg/badge": "2.0.12",
     "@xipkg/utils": "1.8.0",
     "@xipkg/tooltip": "2.1.0"
@@ -25,8 +25,8 @@
     "@xipkg/eslint": "3.2.0",
     "@xipkg/tailwind": "0.8.1",
     "@xipkg/typescript": "latest",
-    "common.eslint": "*",
-    "common.typescript": "*",
+    "common.eslint": "workspace:*",
+    "common.typescript": "workspace:*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",

@@ -2,7 +2,15 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { ToolType } from '../types';
 
+export type InputMode = 'auto' | 'pen' | 'mouse';
+
 interface TldrawState {
+  /** Режим ввода: авто (по устройству), перо, мышь */
+  inputMode: InputMode;
+  setInputMode: (mode: InputMode) => void;
+  /** Показывать всплывашку с дебаг-инфой (кол-во элементов на доске) */
+  showDebugInfo: boolean;
+  setShowDebugInfo: (show: boolean) => void;
   selectedTool: ToolType;
   setSelectedTool: (tool: ToolType) => void;
   selectedElementId: string | null;
@@ -32,6 +40,10 @@ interface TldrawState {
 export const useTldrawStore = create<TldrawState>()(
   persist(
     (set) => ({
+      inputMode: 'auto',
+      setInputMode: (mode: InputMode) => set(() => ({ inputMode: mode })),
+      showDebugInfo: false,
+      setShowDebugInfo: (show) => set(() => ({ showDebugInfo: show })),
       selectedTool: 'select',
       setSelectedTool: (tool: ToolType) => set(() => ({ selectedTool: tool })),
       selectedElementId: null,

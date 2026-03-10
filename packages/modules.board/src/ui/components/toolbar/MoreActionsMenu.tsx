@@ -10,6 +10,7 @@ import { useEditor } from 'tldraw';
 import { useCurrentUser } from 'common.services';
 import type { EmbedShape } from '../../../shapes/embed';
 import type { PdfShape } from '../../../shapes/pdf';
+import type { AudioShape } from '../../../shapes/audio';
 
 export const MoreActionsMenu = () => {
   const editor = useEditor();
@@ -26,12 +27,44 @@ export const MoreActionsMenu = () => {
       ? (selectedShapes[0] as EmbedShape)
       : null;
 
+  const selectedAudio =
+    selectedShapes.length === 1 && selectedShapes[0].type === 'audio'
+      ? (selectedShapes[0] as AudioShape)
+      : null;
+
   const handleToggleStudentFlip = () => {
     if (!selectedPdf) return;
     editor.updateShape<PdfShape>({
       id: selectedPdf.id,
       type: 'pdf',
       props: { studentCanFlip: !selectedPdf.props.studentCanFlip },
+    });
+  };
+
+  const handleToggleSyncPlayback = () => {
+    if (!selectedAudio) return;
+    editor.updateShape<AudioShape>({
+      id: selectedAudio.id,
+      type: 'audio',
+      props: { syncPlayback: !selectedAudio.props.syncPlayback },
+    });
+  };
+
+  const handleToggleStudentsCanAddTimecodes = () => {
+    if (!selectedAudio) return;
+    editor.updateShape<AudioShape>({
+      id: selectedAudio.id,
+      type: 'audio',
+      props: { studentsCanAddTimecodes: !selectedAudio.props.studentsCanAddTimecodes },
+    });
+  };
+
+  const handleToggleTimecodesVisibleByDefault = () => {
+    if (!selectedAudio) return;
+    editor.updateShape<AudioShape>({
+      id: selectedAudio.id,
+      type: 'audio',
+      props: { timecodesVisibleByDefault: !selectedAudio.props.timecodesVisibleByDefault },
     });
   };
 
@@ -46,7 +79,7 @@ export const MoreActionsMenu = () => {
         side="top"
         align="end"
         sideOffset={8}
-        className="border-gray-10 bg-gray-0 flex w-[220px] flex-col gap-1 rounded-xl border p-1"
+        className="border-gray-10 bg-gray-0 flex w-auto flex-col gap-1 rounded-xl border p-1"
       >
         <DropdownMenuItem
           onClick={() => {
@@ -69,6 +102,31 @@ export const MoreActionsMenu = () => {
           >
             Открыть в новой вкладке
           </DropdownMenuItem>
+        )}
+        {isTutor && selectedAudio && (
+          <>
+            <DropdownMenuItem onClick={handleToggleSyncPlayback} className="rounded-lg px-3">
+              {selectedAudio.props.syncPlayback
+                ? 'Локальное воспроизведение'
+                : 'Синхронное воспроизведение'}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleToggleStudentsCanAddTimecodes}
+              className="rounded-lg px-3"
+            >
+              {selectedAudio.props.studentsCanAddTimecodes
+                ? 'Запретить ученикам добавлять таймкоды'
+                : 'Разрешить ученикам добавлять таймкоды'}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={handleToggleTimecodesVisibleByDefault}
+              className="rounded-lg px-3"
+            >
+              {selectedAudio.props.timecodesVisibleByDefault
+                ? 'Скрывать новые таймкоды от учеников'
+                : 'Показывать новые таймкоды всем'}
+            </DropdownMenuItem>
+          </>
         )}
       </DropdownMenuContent>
     </DropdownMenu>

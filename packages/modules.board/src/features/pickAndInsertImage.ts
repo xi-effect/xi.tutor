@@ -3,13 +3,39 @@ import { Editor, TLAssetId, TLShapeId } from 'tldraw';
 import { toast } from 'sonner';
 import { myAssetStore } from './imageStore';
 
+const DECODE_ERROR_MESSAGE =
+  'Не удалось прочитать изображение. Возможные причины: повреждённый файл, неподдерживаемый формат в этом браузере или вставка из буфера обмена (попробуйте вставить картинку по ссылке через кнопку «Изображение»).';
+
 /**
  * Вставка изображения с мгновенным preview и последующей загрузкой
  */
 export async function insertImage(editor: Editor, file: File, token: string) {
-  // 1️ Получаем размеры изображения
-  const bitmap = await createImageBitmap(file);
+  if (!file.size) {
+    toast.error('Файл пустой', { description: 'Выберите изображение с ненулевым размером.' });
+    return;
+  }
+
+  let bitmap: ImageBitmap;
+  try {
+    bitmap = await createImageBitmap(file);
+  } catch (err) {
+    const isDecodeError =
+      err instanceof Error &&
+      (err.name === 'EncodingError' || err.message.includes('cannot be decoded'));
+    const message = isDecodeError
+      ? DECODE_ERROR_MESSAGE
+      : err instanceof Error
+        ? err.message
+        : 'Неизвестная ошибка';
+    toast.error('Ошибка при открытии изображения', {
+      description: message,
+      duration: 5000,
+    });
+    throw err; // по-прежнему пробрасываем для логирования в Bugsink, но пользователь уже видит понятное сообщение
+  }
+
   const { width: w, height: h } = bitmap;
+  bitmap.close();
 
   // 2️ Создаём shape + asset с временным data URL
   const tempAssetId = `asset:${nanoid()}` as TLAssetId;

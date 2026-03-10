@@ -1,16 +1,15 @@
-import { Button } from '@xipkg/button';
-import {
-  Modal,
-  ModalCloseButton,
-  ModalContent,
-  ModalHeader,
-  ModalTitle,
-  ModalTrigger,
-} from '@xipkg/modal';
-import { InfoCircle } from '@xipkg/icons';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
+import { Modal, ModalCloseButton, ModalContent, ModalHeader, ModalTitle } from '@xipkg/modal';
+import { createPortal } from 'react-dom';
 import { isMac } from '../../../utils';
-import { useFullScreen } from 'common.utils';
+
+const BACKDROP_Z = 9999;
+
+const cleanupBodyScrollLock = () => {
+  document.body.style.overflow = '';
+  document.body.style.pointerEvents = '';
+  document.body.removeAttribute('data-scroll-locked');
+};
 
 interface HotkeyItem {
   keys: string[];
@@ -63,67 +62,85 @@ const groupByCategory = (items: HotkeyItem[]) => {
   );
 };
 
-export const HotkeysHelp = () => {
-  // const [open, setOpen] = useState(false);
-  const groupedHotkeys = groupByCategory(hotkeyCategories);
-  const { isFullScreen } = useFullScreen('whiteboard-container');
+const groupedHotkeys = groupByCategory(hotkeyCategories);
 
-  const portalContainer = useMemo(() => {
-    return isFullScreen ? document.getElementById('whiteboard-container') : undefined;
-  }, [isFullScreen]);
-
-  // Обработка события от горячей клавиши F1
-  useEffect(() => {
-    const handleOpenHotkeysHelp = () => {
-      // setOpen(true);
-    };
-
-    window.addEventListener('openHotkeysHelp', handleOpenHotkeysHelp);
-    return () => {
-      window.removeEventListener('openHotkeysHelp', handleOpenHotkeysHelp);
-    };
-  }, []);
-
-  return (
-    <Modal>
-      <ModalTrigger asChild>
-        <Button variant="none" className="h-10 w-10 p-2">
-          <InfoCircle size="s" className="size-6" />
-        </Button>
-      </ModalTrigger>
-      <ModalContent className="max-h-[80vh] max-w-4xl" portalProps={{ container: portalContainer }}>
-        <ModalHeader>
-          <ModalCloseButton />
-          <ModalTitle>Горячие клавиши</ModalTitle>
-        </ModalHeader>
-        <div className="space-y-6 overflow-auto p-6">
-          {Object.entries(groupedHotkeys).map(([category, items]) => (
-            <div key={category}>
-              <h3 className="mb-3 text-lg font-semibold text-gray-100">{category}</h3>
-              <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                {items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="bg-gray-5 flex items-center justify-between rounded-lg p-2"
-                  >
-                    <span className="text-sm text-gray-700">{item.description}</span>
-                    <div className="flex gap-1">
-                      {item.keys.map((key, keyIndex) => (
-                        <div key={keyIndex} className="flex items-center gap-1">
-                          {keyIndex > 0 && <span className="text-gray-400">+</span>}
-                          <kbd className="rounded border border-gray-300 bg-white px-2 py-1 font-mono text-xs shadow-sm">
-                            {key}
-                          </kbd>
-                        </div>
-                      ))}
-                    </div>
+/** Общий контент модалки: только список горячих клавиш */
+const HotkeysHelpBody = () => (
+  <div className="space-y-6 overflow-auto p-6">
+    {Object.entries(groupedHotkeys).map(([category, items]) => (
+      <div key={category}>
+        <h3 className="mb-3 text-lg font-semibold text-gray-100">{category}</h3>
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+          {items.map((item, index) => (
+            <div key={index} className="bg-gray-5 flex items-center justify-between rounded-lg p-2">
+              <span className="text-sm text-gray-700">{item.description}</span>
+              <div className="flex gap-1">
+                {item.keys.map((key, keyIndex) => (
+                  <div key={keyIndex} className="flex items-center gap-1">
+                    {keyIndex > 0 && <span className="text-gray-400">+</span>}
+                    <kbd className="rounded border border-gray-300 bg-white px-2 py-1 font-mono text-xs shadow-sm">
+                      {key}
+                    </kbd>
                   </div>
                 ))}
               </div>
             </div>
           ))}
         </div>
-      </ModalContent>
-    </Modal>
+      </div>
+    ))}
+  </div>
+);
+
+export type HotkeysHelpModalProps = {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+};
+
+/**
+ * Свой backdrop в body (z 9999, pointer-events: auto). Канвас tldraw и
+ * Radix-оверлей могут перехватывать клики; этот слой поверх них, клик по нему
+ * закрывает модалку. Контент модалки z-[10000], чтобы по окну не закрывать.
+ */
+export const HotkeysHelpModal = ({ open, onOpenChange }: HotkeysHelpModalProps) => {
+  const handleClose = () => {
+    onOpenChange(false);
+    cleanupBodyScrollLock();
+  };
+
+  useEffect(() => {
+    if (open === false) cleanupBodyScrollLock();
+    return cleanupBodyScrollLock;
+  }, [open]);
+
+  return (
+    <>
+      {open &&
+        createPortal(
+          <div
+            role="presentation"
+            aria-hidden
+            className="fixed inset-0"
+            style={{ zIndex: BACKDROP_Z, pointerEvents: 'auto' }}
+            onClick={handleClose}
+          />,
+          document.body,
+        )}
+      <Modal
+        open={open}
+        onOpenChange={(next) => {
+          if (typeof next === 'boolean') onOpenChange(next);
+          if (next === false) cleanupBodyScrollLock();
+        }}
+      >
+        <ModalContent className="z-10000 max-h-[80vh] max-w-4xl">
+          <ModalHeader>
+            <ModalCloseButton onClick={handleClose} />
+            <ModalTitle>Горячие клавиши</ModalTitle>
+          </ModalHeader>
+          <HotkeysHelpBody />
+        </ModalContent>
+      </Modal>
+    </>
   );
 };

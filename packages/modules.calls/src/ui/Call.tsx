@@ -2,12 +2,14 @@ import { ActiveRoom } from './Room/ActiveRoom';
 import { PreJoin } from './PreJoin';
 import { useCallStore } from '../store/callStore';
 import { useInitUserDevices, useVideoSecurity } from '../hooks';
+import { useFocusModeStore } from 'common.ui';
 import './shared/VideoTrack/video-security.css';
 import { useEffect } from 'react';
 import { useLocation } from '@tanstack/react-router';
 
 export const Call = () => {
   const isStarted = useCallStore((state) => state.isStarted);
+  const focusMode = useFocusModeStore((s) => s.focusMode);
 
   useInitUserDevices();
   useVideoSecurity();
@@ -27,7 +29,18 @@ export const Call = () => {
   }, [pathname, mode, updateStore]);
 
   return (
-    <div className="h-[calc(100vh-64px)]">
+    <div
+      className={focusMode ? 'h-full' : 'h-[calc(100vh-64px)]'}
+      style={
+        focusMode
+          ? ({
+              '--header-height': '0px',
+              '--available-height':
+                'calc(100vh - 0px - var(--upbar-height) - var(--bottom-bar-height))',
+            } as React.CSSProperties)
+          : undefined
+      }
+    >
       <div className="flex h-full w-full flex-col">
         {isStarted ? (
           <div id="videoConferenceContainer" className="bg-gray-0 h-full">

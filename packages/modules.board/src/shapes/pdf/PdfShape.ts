@@ -1,5 +1,8 @@
 import { T, TLBaseShape } from 'tldraw';
 
+/** Минимальный размер по меньшей стороне — меньше этого PDF нечитаем. Используется при создании и ресайзе. */
+export const PDF_MIN_SIZE = 520;
+
 export type PdfShapeProps = {
   src: string;
   fileName: string;
