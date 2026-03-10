@@ -38,7 +38,7 @@ type useCallStoreT = {
   isConnecting: boolean;
 
   mode: 'compact' | 'full';
-  carouselType: 'grid' | 'focus';
+  carouselType: 'grid' | 'horizontal' | 'vertical';
   activeCorner: Corner;
 
   /** Режим вида компакт-ВКС на десктопе: одна плитка или развёрнутый список (учёт при DnD) */
@@ -167,13 +167,13 @@ export const useCallStore = create<useCallStoreT>()(
     }),
     {
       name: 'call-store',
-      version: 1,
+      version: 2,
       migrate: (persisted, version) => {
         const state = persisted as Record<string, unknown>;
-        if (version === 0) {
+        if (version === 1) {
           const ct = state.carouselType;
-          if (ct === 'horizontal' || ct === 'vertical') {
-            state.carouselType = 'focus';
+          if (ct === 'focus') {
+            state.carouselType = 'horizontal';
           }
         }
         return state as useCallStoreT;
