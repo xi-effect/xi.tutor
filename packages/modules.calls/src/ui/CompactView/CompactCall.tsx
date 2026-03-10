@@ -7,7 +7,7 @@ import {
   useTrackToggle,
 } from '@livekit/components-react';
 import { LocalAudioTrack, LocalVideoTrack, Track } from 'livekit-client';
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
+import { useNavigate, useParams, useRouter, useSearch } from '@tanstack/react-router';
 import { useCallStore } from '../../store/callStore';
 import { useCompactNavigation } from '../../hooks/useCompactNavigation';
 import { useCompactAvailableHeight, useVideoBlur, useModeSync } from '../../hooks';
@@ -18,10 +18,10 @@ import { CompactCallVideoArea } from './CompactCallVideoArea';
 import { CompactCallBottomBar } from './CompactCallBottomBar';
 import {
   COMPACT_BOTTOM_BAR_PX,
+  COMPACT_VIDEO_AREA_MARGIN_PX,
   EXPANDED_VIDEO_PADDING_VERTICAL_PX,
   TILE_GAP_PX,
   TILE_HEIGHT_16_9_PX,
-  TILE_MIN_HEIGHT_PX,
 } from './constants';
 
 export const CompactCall = ({ saveUserChoices = true, withOutShadows = false }) => {
@@ -102,41 +102,28 @@ export const CompactCall = ({ saveUserChoices = true, withOutShadows = false }) 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
+  const router = useRouter();
+  const isBoardPage = router.state.location.pathname.includes('/board');
   const isOnBoardPage = params.classroomId === activeClassroom && params.boardId === activeBoardId;
   const showBackToBoardButton =
     mode === 'compact' && !!activeBoardId && !!activeClassroom && !isOnBoardPage;
 
-  const availableHeight = useCompactAvailableHeight(isOnBoardPage);
+  const availableHeight = useCompactAvailableHeight(isBoardPage);
 
   const multiViewLayout = useMemo(() => {
-    // Высота под плитки: общая доступная минус нижняя панель и padding контейнера
     const heightForTiles = Math.max(
       0,
-      availableHeight - COMPACT_BOTTOM_BAR_PX - EXPANDED_VIDEO_PADDING_VERTICAL_PX,
+      availableHeight -
+        COMPACT_BOTTOM_BAR_PX -
+        EXPANDED_VIDEO_PADDING_VERTICAL_PX -
+        COMPACT_VIDEO_AREA_MARGIN_PX,
     );
-    // Сколько плиток помещается при высоте 16:9
-    const countBy16_9 = Math.floor(
-      (heightForTiles + TILE_GAP_PX) / (TILE_HEIGHT_16_9_PX + TILE_GAP_PX),
-    );
-    // Сколько плиток помещается при минимальной высоте (показываем больше участников)
-    const countByMinHeight = Math.floor(
-      (heightForTiles + TILE_GAP_PX) / (TILE_MIN_HEIGHT_PX + TILE_GAP_PX),
-    );
+    // Плитки имеют aspect-video (16:9), их высота фиксирована шириной контейнера
     const visibleCount = Math.min(
       totalParticipants,
-      Math.max(1, Math.max(countBy16_9, countByMinHeight)),
+      Math.max(1, Math.floor((heightForTiles + TILE_GAP_PX) / (TILE_HEIGHT_16_9_PX + TILE_GAP_PX))),
     );
-    // Высота плитки: распределяем доступное место, в пределах [min, 16:9]
-    const tileHeightPx = Math.round(
-      Math.min(
-        TILE_HEIGHT_16_9_PX,
-        Math.max(
-          TILE_MIN_HEIGHT_PX,
-          (heightForTiles - (visibleCount - 1) * TILE_GAP_PX) / visibleCount,
-        ),
-      ),
-    );
-    return { visibleCount, tileHeightPx };
+    return { visibleCount, tileHeightPx: TILE_HEIGHT_16_9_PX };
   }, [availableHeight, totalParticipants]);
 
   const { visibleCount: multiVisibleCount, tileHeightPx: multiTileHeightPx } = multiViewLayout;

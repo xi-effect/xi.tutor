@@ -1,6 +1,7 @@
 import {
   Grid,
   Speaker,
+  SpeakerHorizontal,
   Link as LinkIcon,
   Settings as SettingsIcon,
   ArrowLeft,
@@ -58,13 +59,25 @@ export const UpBar = () => {
   const navigate = useNavigate();
 
   const toggleLayout = () => {
-    const nextType = carouselType === 'grid' && canUseFocusLayout ? 'focus' : 'grid';
+    let nextType: 'grid' | 'horizontal' | 'vertical';
+
+    if (isMobile) {
+      nextType = carouselType === 'grid' && canUseFocusLayout ? 'horizontal' : 'grid';
+    } else {
+      if (carouselType === 'horizontal') nextType = 'vertical';
+      else if (carouselType === 'vertical') nextType = 'grid';
+      else nextType = canUseFocusLayout ? 'horizontal' : 'grid';
+    }
+
     updateStore('carouselType', nextType);
   };
 
   const getViewIcon = () => {
-    if (carouselType !== 'grid') {
+    if (carouselType === 'horizontal') {
       return <Speaker className="fill-gray-100" />;
+    }
+    if (carouselType === 'vertical') {
+      return <SpeakerHorizontal className="fill-gray-100" />;
     }
     return <Grid className="fill-gray-100" />;
   };
