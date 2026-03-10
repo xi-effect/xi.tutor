@@ -21,7 +21,7 @@ type UserAvatarPropsT = {
 
 type RoleT = 'student' | 'tutor';
 
-const avatarSize = 'l';
+const avatarSize = 'm';
 
 const UserAvatar = ({ isLoading, classroom }: UserAvatarPropsT) => {
   const { data: user } = useCurrentUser();
@@ -136,7 +136,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   };
 
   return (
-    <div className="border-gray-30 relative flex min-h-[170px] w-full flex-col items-start justify-start gap-4 rounded-2xl border bg-transparent px-6 py-4">
+    <div className="border-gray-30 relative flex min-h-[140px] flex-col items-start justify-start gap-4 rounded-2xl border bg-transparent px-6 py-4">
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button
@@ -157,8 +157,8 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
           <SubjectBadge
             subjectId={classroom.subject_id}
             isTooltip
-            className="max-w-[calc(100%-40px)] overflow-hidden"
-            textClassName="truncate max-w-full"
+            className="max-w-[calc(100%-40px)] overflow-hidden bg-transparent p-0"
+            textClassName="truncate max-w-full text-gray-60"
             size="s"
           />
         )}
@@ -170,14 +170,14 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         )}
 
         {classroom.kind === 'group' && (
-          <div className="bg-brand-80 text-gray-0 flex h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-3xl">
+          <div className="bg-brand-80 text-gray-0 flex h-8 min-h-8 w-8 min-w-8 items-center justify-center rounded-3xl">
             {classroom.name?.[0].toUpperCase() ?? ''}
           </div>
         )}
 
         <Tooltip delayDuration={2000}>
           <TooltipTrigger asChild>
-            <div className="flex h-full w-full flex-row items-center justify-center gap-2">
+            <div className="flex h-8 w-full flex-row items-center justify-center gap-2">
               <h3 className="text-s-base line-clamp-2 w-full text-left font-medium text-gray-100">
                 {classroom.name}
               </h3>
@@ -192,8 +192,8 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
       ) : (
         <Button
           size="s"
-          variant="secondary"
-          className="group mt-auto w-full"
+          variant="ghost"
+          className="text-brand-80 group hover:text-brand-100 mt-auto w-full"
           onClick={isCallActive ? handleBackToRoom : handleStartLesson}
           disabled={!isTutor && isConferenceNotActiveStudent}
           data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
@@ -202,7 +202,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
           {getButtonLabel(isTutor, isConferenceNotActiveTutor, isCallActive)}
           <Conference
             className={cn(
-              'group-hover:fill-gray-0 fill-brand-100 ml-2',
+              'group-hover:fill-brand-100 fill-brand-80 ml-2',
               !isTutor && isConferenceNotActiveStudent && 'fill-gray-40',
             )}
           />

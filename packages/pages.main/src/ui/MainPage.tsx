@@ -112,7 +112,7 @@ export const MainPage = () => {
   ];
 
   return (
-    <div className="bg-gray-5 flex h-screen flex-col overflow-auto">
+    <div className="bg-gray-5 overflow-none flex h-screen flex-col">
       <div className="flex flex-col gap-4 pl-4">
         {/* Дата и время */}
         <div className="pt-6 pl-4">
@@ -124,7 +124,7 @@ export const MainPage = () => {
           <div className="flex flex-col">
             <Lessons />
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-5">
             <Classrooms />
             <Payments />
           </div>

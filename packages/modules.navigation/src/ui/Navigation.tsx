@@ -8,6 +8,9 @@ import { useFocusModeStore } from 'common.ui';
 import { useMenuStore } from '../store';
 import { useEffect, useMemo } from 'react';
 
+const SIDEBAR_WIDTH_EXPANDED = '300px';
+const SIDEBAR_WIDTH_COLLAPSED = '72px';
+
 const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useMediaQuery('(max-width: 960px)');
   const { isOpen, open: openMenu, close } = useMenuStore();
@@ -47,7 +50,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
         <Sidebar
           id="sidebar"
           collapsible="icon"
-          className="dark:bg-gray-0 absolute w-full md:w-[300px]"
+          className="dark:bg-gray-0 absolute w-full md:w-(--sidebar-width)"
         >
           <SideBarItems />
         </Sidebar>
@@ -88,15 +91,17 @@ export const Navigation = ({ children }: { children: React.ReactNode }) => {
   // Используем один SidebarProvider с динамическими пропсами вместо условного рендеринга
   // Это предотвращает пересоздание всего дерева компонентов при изменении размера окна
   // В режиме фокуса (доска на весь экран) не показываем верхний хедер приложения
+  const sidebarWidth = sidebarOpen ? SIDEBAR_WIDTH_EXPANDED : SIDEBAR_WIDTH_COLLAPSED;
+
   return (
     <SidebarProvider
-      style={
-        {
-          '--sidebar-width': '300px',
-        } as React.CSSProperties
-      }
       open={sidebarOpen}
       onOpenChange={sidebarOnOpenChange}
+      style={
+        {
+          '--sidebar-width': sidebarWidth,
+        } as React.CSSProperties
+      }
     >
       <NavigationLayout>{stableChildren}</NavigationLayout>
     </SidebarProvider>
