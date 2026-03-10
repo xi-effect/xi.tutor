@@ -4,6 +4,7 @@ import { EmbedViewer } from './EmbedViewer';
 
 const DEFAULT_EMBED_WIDTH = 640;
 const DEFAULT_EMBED_HEIGHT = 360;
+const EMBED_PADDING = 16;
 
 export class EmbedShapeUtil extends BaseBoxShapeUtil<EmbedShape> {
   static override type = 'embedUrl' as const;
@@ -23,15 +24,6 @@ export class EmbedShapeUtil extends BaseBoxShapeUtil<EmbedShape> {
     return false;
   }
 
-  /** Обрабатываем двойной клик сами: включаем режим взаимодействия с iframe и возвращаем no-op, чтобы tldraw не создавал текстовую фигуру */
-  override onDoubleClick(shape: EmbedShape) {
-    (this.editor as unknown as { emit: (name: string, data: unknown) => void }).emit(
-      'embedurl:enter-interact',
-      { shapeId: shape.id },
-    );
-    return { id: shape.id, type: 'embedUrl' as const, props: { ...shape.props } };
-  }
-
   override canResize() {
     return true;
   }
@@ -48,7 +40,12 @@ export class EmbedShapeUtil extends BaseBoxShapeUtil<EmbedShape> {
     return (
       <HTMLContainer
         className="bg-gray-5 border-gray-10 overflow-hidden rounded-xl border shadow-md"
-        style={{ width: shape.props.w, height: shape.props.h }}
+        style={{
+          width: shape.props.w,
+          height: shape.props.h,
+          padding: EMBED_PADDING,
+          pointerEvents: 'none',
+        }}
       >
         <EmbedViewer shape={shape} />
       </HTMLContainer>
