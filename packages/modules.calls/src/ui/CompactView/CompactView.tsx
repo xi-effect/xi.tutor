@@ -20,6 +20,7 @@ import { useFocusModeStore } from 'common.ui';
 import { useMedia } from 'common.utils';
 import { useNavigate, useRouter, useSearch, useLocation } from '@tanstack/react-router';
 import { useRoom } from '../../providers/RoomProvider';
+import { usePiP } from '../../providers/PiPProvider';
 import { useParticipantJoinSync } from '../../hooks/useParticipantJoinSync';
 
 type CompactViewProps = {
@@ -81,7 +82,12 @@ const DroppableAreas: FC = () => {
   );
 };
 
-export const Compact: FC<CompactViewProps> = ({ children }) => {
+type CompactProps = CompactViewProps & {
+  /** При true не рендерить оверлей (звонок, чат, углы). Используется при PiP, чтобы children не размонтировались. */
+  hideOverlay?: boolean;
+};
+
+export const Compact: FC<CompactProps> = ({ children, hideOverlay = false }) => {
   const router = useRouter();
   const { activeCorner, updateStore } = useCallStore();
   const focusMode = useFocusModeStore((s) => s.focusMode);
@@ -90,7 +96,7 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
   const [headerHeight, setHeaderHeight] = useState(0);
 
   useEffect(() => {
-    if (!isMobile || !headerRef.current) return;
+    if (!isMobile || hideOverlay || !headerRef.current) return;
     const el = headerRef.current;
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0];
@@ -99,7 +105,7 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
     observer.observe(el);
     setHeaderHeight(el.getBoundingClientRect().height);
     return () => observer.disconnect();
-  }, [isMobile]);
+  }, [isMobile, hideOverlay]);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -139,40 +145,50 @@ export const Compact: FC<CompactViewProps> = ({ children }) => {
     return `top-32 ${bottomOffset} ${horizontal}`;
   };
 
-  return (
-    <DndContext sensors={sensors} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
-      <div
-        className={`relative flex flex-col bg-transparent ${focusMode ? 'h-screen' : 'h-[calc(100vh-64px)]'}`}
-      >
-        {isMobile ? (
-          <>
-            {/* На мобилке: конференция фиксирована сверху под контролами доски (header), без перетаскивания */}
+  const container = (
+    <div
+      className={`relative flex flex-col bg-transparent ${focusMode ? 'h-screen' : 'h-[calc(100vh-64px)]'}`}
+    >
+      {isMobile ? (
+        <>
+          {!hideOverlay && (
             <div ref={headerRef} className="fixed top-[64px] right-0 left-0 z-10 w-full px-2">
               <CompactCall withOutShadows />
             </div>
-            <div
-              className="flex min-h-0 flex-1 flex-col"
-              style={{ marginTop: headerHeight > 0 ? headerHeight : 120 }}
-            >
-              {children}
-            </div>
-          </>
-        ) : (
-          <>
-            <DroppableAreas />
-            {/* Чат в противоположном углу, те же правила позиционирования что и компакт-ВКС */}
-            <Chat compactPositionClassName={getChatPositionClasses(activeCorner)} />
-            <div
-              className={`absolute z-100 ${getCornerPosition(activeCorner)} transition-all duration-500 ease-out`}
-            >
-              <CompactCall />
-            </div>
+          )}
+          <div
+            className="flex min-h-0 flex-1 flex-col"
+            style={{ marginTop: hideOverlay ? 0 : headerHeight > 0 ? headerHeight : 120 }}
+          >
             {children}
-          </>
-        )}
+          </div>
+        </>
+      ) : (
+        <>
+          {!hideOverlay && (
+            <>
+              <DroppableAreas />
+              <Chat compactPositionClassName={getChatPositionClasses(activeCorner)} />
+              <div
+                className={`absolute z-100 ${getCornerPosition(activeCorner)} transition-all duration-500 ease-out`}
+              >
+                <CompactCall />
+              </div>
+            </>
+          )}
+          {children}
+        </>
+      )}
 
-        <RoomAudioRenderer />
-      </div>
+      <RoomAudioRenderer />
+    </div>
+  );
+
+  // Всегда один и тот же корень (DndContext), иначе при hideOverlay React размонтирует
+  // container и всё дерево доски (YjsProvider пересоздаётся → белый экран).
+  return (
+    <DndContext sensors={sensors} onDragEnd={handleDragEnd} modifiers={[restrictToWindowEdges]}>
+      {container}
     </DndContext>
   );
 };
@@ -181,6 +197,8 @@ export const CompactView = ({ children }: CompactViewProps) => {
   const { mode } = useCallStore();
   const { room } = useRoom();
   const { token } = useCallStore();
+  const pip = usePiP();
+  const isPiPActive = !!pip?.isPiPActive;
 
   // Синхронизация состояния при подключении новых участников (работает и в compact mode)
   useParticipantJoinSync();
@@ -251,9 +269,10 @@ export const CompactView = ({ children }: CompactViewProps) => {
     );
   }
 
+  // Всегда один и тот же Compact — при PiP только скрываем оверлей (hideOverlay).
   return (
     <>
-      <Compact>{children}</Compact>
+      <Compact hideOverlay={isPiPActive}>{children}</Compact>
       <PermissionsDialog />
     </>
   );

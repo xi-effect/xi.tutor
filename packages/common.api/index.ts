@@ -11,7 +11,7 @@ export {
   StudentsQueryKey,
 } from './src/tutor';
 export { studentApiConfig, StudentQueryKey } from './src/student';
-export { filesApiConfig, FilesQueryKey } from './src/files';
+export { filesApiConfig, FilesQueryKey, getFileUrl } from './src/files';
 export { onboardingApiConfig } from './src/onboarding';
 export type {
   MaterialsKindT,

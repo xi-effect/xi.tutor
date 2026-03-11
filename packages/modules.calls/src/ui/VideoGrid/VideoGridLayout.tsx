@@ -1,40 +1,23 @@
-import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { TrackReferenceOrPlaceholder, isEqualTrackRef } from '@livekit/components-core';
 import { Track } from 'livekit-client';
-import { TrackLoop, FocusLayoutProps, GridLayoutProps } from '@livekit/components-react';
+import { TrackLoop, GridLayoutProps } from '@livekit/components-react';
 import { ParticipantTile } from '../Participant';
+import { FocusLayout } from './FocusLayout';
 import { HorizontalFocusLayout } from './HorizontalFocusLayout';
 import { VerticalFocusLayout } from './VerticalFocusLayout';
+import { PagedCarousel } from './PagedCarousel';
+import { GridPaginationControls } from './GridPaginationControls';
+import { useSize } from '../../hooks/useSize';
 import { useCallStore } from '../../store/callStore';
+
+const ASPECT = 16 / 9;
+const GRID_GAP = 8;
+const MIN_TILE_H = 200;
+
 export type OrientationLayoutT = {
   orientation: 'vertical' | 'horizontal' | 'grid';
 };
-
-export const FocusLayout = ({
-  trackRef,
-  orientation,
-  ...htmlProps
-}: FocusLayoutProps & OrientationLayoutT) => {
-  const trackReference = trackRef;
-
-  return (
-    <div
-      className={`${orientation === 'vertical' ? 'w-[calc(100%-277px)]' : 'm-auto w-fit min-w-[calc(100vh-20%)]'} flex flex-col`}
-    >
-      <ParticipantTile
-        isFocusToggleDisable
-        style={{
-          width: '100%',
-          height: '100%',
-        }}
-        {...trackReference}
-        {...htmlProps}
-      />
-    </div>
-  );
-};
-
-const ASPECT = 16 / 9;
 
 type MeetLayout = {
   cols: number;
@@ -80,6 +63,19 @@ export function calcMeetLayout(
   };
 }
 
+export function calcMaxTilesPerPage(
+  containerW: number,
+  containerH: number,
+  gap: number,
+  minTileH: number,
+): number {
+  if (containerW <= 0 || containerH <= 0) return 1;
+  const minTileW = minTileH * ASPECT;
+  const maxCols = Math.max(1, Math.floor((containerW + gap) / (minTileW + gap)));
+  const maxRows = Math.max(1, Math.floor((containerH + gap) / (minTileH + gap)));
+  return maxCols * maxRows;
+}
+
 function useMeetLayout(ref: React.RefObject<HTMLElement>, count: number, gap: number) {
   const [layout, setLayout] = useState<MeetLayout>({ cols: 1, tileW: 0, tileH: 0 });
 
@@ -109,27 +105,99 @@ function useMeetLayout(ref: React.RefObject<HTMLElement>, count: number, gap: nu
   return layout;
 }
 
+const MOBILE_BREAKPOINT = 640;
+
 export const GridLayout = ({ tracks, ...props }: GridLayoutProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const containerSize = useSize(containerRef as React.RefObject<HTMLDivElement>);
   const count = tracks.length;
+  const isMobile = containerSize.width > 0 && containerSize.width < MOBILE_BREAKPOINT;
 
-  useMeetLayout(containerRef as React.RefObject<HTMLElement>, count, 8);
+  const [page, setPage] = useState(0);
 
-  const gridStyle = useMemo<React.CSSProperties>(
-    () => ({
-      gridTemplateColumns: 'repeat(var(--meet-cols), var(--meet-tile-w))',
-      gap: 'var(--meet-gap)',
-    }),
-    [],
-  );
+  const maxTilesPerPage = useMemo(() => {
+    if (isMobile || !containerSize.width || !containerSize.height) return count;
+    return calcMaxTilesPerPage(containerSize.width, containerSize.height, GRID_GAP, MIN_TILE_H);
+  }, [isMobile, containerSize.width, containerSize.height, count]);
+
+  const totalPages = Math.max(1, Math.ceil(count / maxTilesPerPage));
+
+  useEffect(() => {
+    if (page >= totalPages) setPage(Math.max(0, totalPages - 1));
+  }, [page, totalPages]);
+
+  const clampedPage = Math.min(page, totalPages - 1);
+
+  const pageTracks = useMemo(() => {
+    if (isMobile || maxTilesPerPage >= count) return tracks;
+    const start = clampedPage * maxTilesPerPage;
+    return tracks.slice(start, start + maxTilesPerPage);
+  }, [tracks, clampedPage, maxTilesPerPage, count, isMobile]);
+
+  useMeetLayout(containerRef as React.RefObject<HTMLElement>, pageTracks.length, GRID_GAP);
+
+  const mobileTiles = useMemo(() => {
+    if (!isMobile) return [];
+    return tracks.map((track) => (
+      <ParticipantTile
+        key={`${track.participant.identity}-${track.source}`}
+        isFocusToggleDisable
+        style={{ width: '100%', height: '100%' }}
+        className="h-full w-full"
+        {...track}
+      />
+    ));
+  }, [isMobile, tracks]);
+
+  if (isMobile) {
+    return (
+      <div
+        ref={containerRef}
+        className="h-full w-full"
+        style={{ maxHeight: 'var(--available-height)' }}
+      >
+        <PagedCarousel
+          items={mobileTiles}
+          orientation="vertical"
+          aspectRatio={16 / 9}
+          minItemSize={120}
+          maxItemSize={200}
+          renderItem={(node) => (
+            <div className="relative h-full w-full">
+              <div className="absolute inset-0">{node}</div>
+            </div>
+          )}
+        />
+      </div>
+    );
+  }
 
   return (
     <div
       ref={containerRef}
-      className="grid h-full w-full min-w-0 place-content-center overflow-hidden"
-      style={{ ...gridStyle, maxHeight: 'var(--available-height)' }}
+      className="relative h-full w-full"
+      style={{ maxHeight: 'var(--available-height)' }}
     >
-      <TrackLoop tracks={tracks}>{props.children}</TrackLoop>
+      <div
+        className="grid h-full w-full min-w-0 place-content-center overflow-hidden"
+        style={{
+          gridTemplateColumns: 'repeat(var(--meet-cols), var(--meet-tile-w))',
+          gap: 'var(--meet-gap)',
+        }}
+      >
+        <TrackLoop tracks={pageTracks}>{props.children}</TrackLoop>
+      </div>
+      {totalPages > 1 && (
+        <GridPaginationControls
+          canPrev={clampedPage > 0}
+          canNext={clampedPage < totalPages - 1}
+          onPrev={() => setPage((p) => Math.max(0, p - 1))}
+          onNext={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+          onGoToPage={(p) => setPage(p - 1)}
+          currentPage={clampedPage + 1}
+          totalPages={totalPages}
+        />
+      )}
     </div>
   );
 };
@@ -140,8 +208,10 @@ type CarouselContainerProps = {
 };
 
 export const CarouselContainer = ({ focusTrack, carouselTracks }: CarouselContainerProps) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const containerSize = useSize(containerRef as React.RefObject<HTMLDivElement>);
+  const isMobile = containerSize.width > 0 && containerSize.width < MOBILE_BREAKPOINT;
   const carouselType = useCallStore((state) => state.carouselType);
-  const orientation = carouselType === 'vertical' ? 'vertical' : 'horizontal';
 
   const focusElement = useMemo(() => {
     const trackToFocus =
@@ -188,9 +258,19 @@ export const CarouselContainer = ({ focusTrack, carouselTracks }: CarouselContai
     ));
   }, [carouselTracks, focusTrack]);
 
-  if (orientation === 'vertical') {
-    return <VerticalFocusLayout focus={focusElement} thumbs={thumbElements} />;
-  }
+  const renderLayout = () => {
+    if (isMobile) {
+      return <FocusLayout focus={focusElement} thumbs={thumbElements} />;
+    }
+    if (carouselType === 'vertical') {
+      return <VerticalFocusLayout focus={focusElement} thumbs={thumbElements} />;
+    }
+    return <HorizontalFocusLayout focus={focusElement} thumbs={thumbElements} />;
+  };
 
-  return <HorizontalFocusLayout focus={focusElement} thumbs={thumbElements} />;
+  return (
+    <div ref={containerRef} className="h-full w-full">
+      {renderLayout()}
+    </div>
+  );
 };

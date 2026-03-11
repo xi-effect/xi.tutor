@@ -1,7 +1,7 @@
 export interface SearchParams {
   redirect?: string;
   profile?: string;
-  carouselType?: 'horizontal' | 'vertical';
+  carouselType?: 'focus';
   call?: string;
   classroom?: string;
 }

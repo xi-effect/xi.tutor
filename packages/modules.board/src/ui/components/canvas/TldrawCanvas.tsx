@@ -7,6 +7,7 @@ import { useLockedShapeSelection, useRemoveMark, useTldrawClipboard } from '../.
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore, useTldrawStore } from '../../../store';
 import { PdfShapeUtil } from '../../../shapes/pdf';
+import { AudioShapeUtil } from '../../../shapes/audio';
 import { Header } from '../header';
 import { Navbar, SelectionMenu } from '../toolbar';
 import { CollaboratorCursor } from './CollaboratorCursor';
@@ -16,6 +17,7 @@ import 'tldraw/tldraw.css';
 import './customstyles.css';
 import { UndoRedo } from '../toolbar/UndoRedo';
 import { makeTldrawAssetUrls } from '../../../utils/assetsUrls';
+import { extractFileIdFromUrl } from '../../../utils/resolveAssetUrl';
 
 export const TldrawCanvas = ({
   token,
@@ -23,7 +25,8 @@ export const TldrawCanvas = ({
 }: JSX.IntrinsicAttributes & TldrawProps & { token: string }) => {
   const [editor, setEditor] = useState<Editor | null>(null);
 
-  const { selectedElementId, selectElement } = useTldrawStore();
+  const { selectedElementId, selectElement, showDebugInfo } = useTldrawStore();
+  const [shapeCount, setShapeCount] = useState(0);
   const { store, status, undo, redo, canUndo, canRedo, isReadonly, getUserCamera, setUserCamera } =
     useYjsContext();
   const { followingPresenceId } = useFollowUserStore();
@@ -32,6 +35,17 @@ export const TldrawCanvas = ({
   useRemoveMark();
   useLockedShapeSelection(editor);
   useTldrawClipboard(editor, token);
+
+  useEffect(() => {
+    return () => {
+      const win = window as unknown as {
+        getBoardSnapshot?: () => unknown;
+        showBoardImportOption?: () => void;
+      };
+      delete win.getBoardSnapshot;
+      delete win.showBoardImportOption;
+    };
+  }, []);
 
   useKeyPress('Backspace', () => {
     if (selectedElementId) {
@@ -230,6 +244,28 @@ export const TldrawCanvas = ({
     };
   }, [editor, store, followingPresenceId]);
 
+  // В режиме «Авто» синхронизируем isPenMode с текущим устройством при каждом pointerdown,
+  // чтобы можно было переключаться между планшетом и мышью без смены настройки в меню.
+  useEffect(() => {
+    if (!editor) return;
+    const container = editor.getContainer();
+    const onPointerDown = (e: PointerEvent) => {
+      if (useTldrawStore.getState().inputMode !== 'auto') return;
+      editor.updateInstanceState({ isPenMode: e.pointerType === 'pen' });
+    };
+    container.addEventListener('pointerdown', onPointerDown, { capture: true });
+    return () => container.removeEventListener('pointerdown', onPointerDown, { capture: true });
+  }, [editor]);
+
+  // Подписка на изменение количества фигур на текущей странице (для дебаг-всплывашки)
+  useEffect(() => {
+    if (!editor || !showDebugInfo) return;
+    const updateCount = () => setShapeCount(editor.getCurrentPageShapeIds().size);
+    updateCount();
+    const unsub = editor.store.listen(updateCount);
+    return unsub;
+  }, [editor, showDebugInfo]);
+
   const assetUrls = useMemo(() => makeTldrawAssetUrls({ baseUrl: '/tldraw' }), []);
 
   if (status === 'loading') return <LoadingScreen />;
@@ -245,19 +281,65 @@ export const TldrawCanvas = ({
               editor.updateInstanceState({
                 isGridMode: true,
                 isDebugMode: false,
-                isPenMode: false,
               });
 
-              editor.sideEffects.registerBeforeChangeHandler('instance', (prev, next) => {
-                if (next.isPenMode) {
-                  return prev;
-                }
+              const inputMode = useTldrawStore.getState().inputMode;
+              if (inputMode === 'pen') editor.updateInstanceState({ isPenMode: true });
+              else if (inputMode === 'mouse') editor.updateInstanceState({ isPenMode: false });
+
+              editor.sideEffects.registerBeforeChangeHandler('instance', (_, next) => {
+                const mode = useTldrawStore.getState().inputMode;
+                if (mode === 'pen') return { ...next, isPenMode: true };
+                if (mode === 'mouse') return { ...next, isPenMode: false };
                 return next;
               });
+
+              const win = window as unknown as {
+                getBoardSnapshot?: () => unknown;
+                showBoardImportOption?: () => void;
+              };
+              win.getBoardSnapshot = () => {
+                const records = editor.store.allRecords();
+                const normalized = records.map((r) => {
+                  const raw = r as unknown as Record<string, unknown>;
+                  const rec = {
+                    ...r,
+                    props:
+                      raw.props && typeof raw.props === 'object'
+                        ? { ...(raw.props as Record<string, unknown>) }
+                        : raw.props,
+                  } as typeof r;
+                  const props = (rec as unknown as Record<string, unknown>).props as
+                    | Record<string, unknown>
+                    | undefined;
+                  if (props?.src && typeof props.src === 'string') {
+                    const fileId = extractFileIdFromUrl(props.src);
+                    if (fileId) props.src = fileId;
+                  }
+                  return rec;
+                });
+                const snapshot = {
+                  records: normalized,
+                  byId: Object.fromEntries(normalized.map((r) => [r.id, r])),
+                };
+                const blob = new Blob([JSON.stringify(snapshot, null, 2)], {
+                  type: 'application/json',
+                });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url;
+                link.download = `board-snapshot-${Date.now()}.json`;
+                link.click();
+                URL.revokeObjectURL(url);
+                return snapshot;
+              };
+              win.showBoardImportOption = () => {
+                window.dispatchEvent(new CustomEvent('showBoardImportJson'));
+              };
             }}
             assetUrls={assetUrls}
             store={store}
-            shapeUtils={[PdfShapeUtil]}
+            shapeUtils={[PdfShapeUtil, AudioShapeUtil]}
             hideUi
             components={{
               CollaboratorCursor: CollaboratorCursor,
@@ -273,6 +355,15 @@ export const TldrawCanvas = ({
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
             <TldrawZoomPanel />
+            {showDebugInfo && editor && (
+              <div
+                className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/70 px-2 py-1 font-mono text-xs text-white"
+                aria-live="polite"
+              >
+                <div className="font-sans font-medium">Отладочная информация</div>
+                Элементов на доске: {shapeCount}
+              </div>
+            )}
           </Tldraw>
         </div>
       </div>

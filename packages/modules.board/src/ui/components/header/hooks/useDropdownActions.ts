@@ -9,7 +9,13 @@ import {
 import { useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useEditor } from 'tldraw';
+import type { TLRecord } from 'tldraw';
 import { useYjsContext } from '../../../../providers/YjsProvider';
+
+type BoardSnapshotJson = {
+  records?: TLRecord[];
+  byId?: Record<string, TLRecord>;
+};
 
 export const useDropdownActions = () => {
   const editor = useEditor();
@@ -106,6 +112,42 @@ export const useDropdownActions = () => {
     }
   };
 
+  const importBoardFromJson = useCallback(
+    async (file: File) => {
+      if (!editor) return;
+
+      try {
+        const text = await file.text();
+        const data = JSON.parse(text) as BoardSnapshotJson;
+        const records: TLRecord[] = Array.isArray(data)
+          ? data
+          : (data.records ?? (data.byId ? Object.values(data.byId) : []));
+
+        if (records.length === 0) {
+          toast.error('В файле нет записей для импорта');
+          return;
+        }
+
+        const toPut = records.filter(
+          (r) => r && typeof r === 'object' && (r.typeName === 'shape' || r.typeName === 'asset'),
+        );
+
+        if (toPut.length === 0) {
+          toast.error('В файле нет фигур или ассетов для импорта');
+          return;
+        }
+
+        editor.store.put(toPut);
+        toast.success(`Импортировано записей: ${toPut.length}`);
+      } catch (err) {
+        console.error('Ошибка импорта доски из JSON:', err);
+        const msg = err instanceof Error ? err.message : 'Неверный формат JSON';
+        toast.error('Ошибка импорта', { description: msg, duration: 5000 });
+      }
+    },
+    [editor],
+  );
+
   // Обработка событий от горячих клавиш
   useEffect(() => {
     const handleSaveCanvas = () => {
@@ -125,5 +167,5 @@ export const useDropdownActions = () => {
     };
   }, [saveCanvas, toggleReadonly]);
 
-  return { toggleReadonly, saveCanvas, clearBoard, isReadonly };
+  return { toggleReadonly, saveCanvas, clearBoard, importBoardFromJson, isReadonly };
 };

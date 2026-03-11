@@ -3,11 +3,13 @@ import { useEffect } from 'react';
 import { useTldrawStore } from '../store';
 import { isEditableTarget } from '../utils';
 import { useYjsContext } from '../providers/YjsProvider';
+import { useTldrawStyles } from './useTldrawStyles';
 
 export const useHotkeys = () => {
   const editor = useEditor();
   const { selectedElementId, selectElement, setSelectedTool } = useTldrawStore();
   const { undo, redo } = useYjsContext();
+  const { resetToDefaults, setColor, setThickness, setOpacity } = useTldrawStyles();
 
   useEffect(() => {
     if (!editor) return;
@@ -35,6 +37,7 @@ export const useHotkeys = () => {
       // Основные инструменты
       if (code === 'KeyV' && !modKey && !shiftKey && !altKey) {
         event.preventDefault();
+        resetToDefaults();
         editor.setCurrentTool('select');
         setSelectedTool('select');
         return;
@@ -42,6 +45,7 @@ export const useHotkeys = () => {
 
       if (code === 'KeyH' && !modKey && !shiftKey && !altKey) {
         event.preventDefault();
+        resetToDefaults();
         editor.setCurrentTool('hand');
         setSelectedTool('hand');
         return;
@@ -49,6 +53,10 @@ export const useHotkeys = () => {
 
       if (code === 'KeyP' && !modKey && !shiftKey && !altKey) {
         event.preventDefault();
+        const { pencilColor, pencilThickness, pencilOpacity } = useTldrawStore.getState();
+        setColor(pencilColor);
+        setThickness(pencilThickness);
+        setOpacity(pencilOpacity);
         editor.setCurrentTool('draw');
         setSelectedTool('pen');
         return;
@@ -56,6 +64,7 @@ export const useHotkeys = () => {
 
       if (code === 'KeyT' && !modKey && !shiftKey && !altKey) {
         event.preventDefault();
+        resetToDefaults();
         editor.setCurrentTool('text');
         setSelectedTool('text');
         return;
@@ -63,6 +72,7 @@ export const useHotkeys = () => {
 
       if (code === 'KeyG' && !modKey && !shiftKey && !altKey) {
         event.preventDefault();
+        resetToDefaults();
         editor.setCurrentTool('geo');
         setSelectedTool('geo');
         return;
@@ -70,6 +80,7 @@ export const useHotkeys = () => {
 
       if (code === 'KeyA' && !modKey && !shiftKey && !altKey) {
         event.preventDefault();
+        resetToDefaults();
         editor.setCurrentTool('arrow');
         setSelectedTool('arrow');
         return;
@@ -77,6 +88,7 @@ export const useHotkeys = () => {
 
       if (code === 'KeyE' && !modKey && !shiftKey && !altKey) {
         event.preventDefault();
+        resetToDefaults();
         editor.setCurrentTool('eraser');
         setSelectedTool('eraser');
         return;
@@ -195,5 +207,16 @@ export const useHotkeys = () => {
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [editor, selectedElementId, selectElement, setSelectedTool, undo, redo]);
+  }, [
+    editor,
+    selectedElementId,
+    selectElement,
+    setSelectedTool,
+    undo,
+    redo,
+    resetToDefaults,
+    setColor,
+    setThickness,
+    setOpacity,
+  ]);
 };

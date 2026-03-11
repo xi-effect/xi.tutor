@@ -4,12 +4,29 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { File, InfoCircle, Locked, MoreVert, Trash, Unlocked } from '@xipkg/icons';
+import {
+  Check,
+  Cursor,
+  File,
+  InfoCircle,
+  Locked,
+  MoreVert,
+  Pen,
+  Trash,
+  Unlocked,
+} from '@xipkg/icons';
+import { cn } from '@xipkg/utils';
 import { useDropdownActions } from './hooks/useDropdownActions';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useCurrentUser } from 'common.services';
+import { useEditor } from 'tldraw';
+import type { InputMode } from '../../../store/useTldrawStore';
+import { useTldrawStore } from '../../../store';
 import { HotkeysHelpModal } from '../shared/HotkeysHelp';
 
 type ActionPropsT = {
@@ -52,21 +69,51 @@ const ClearBoardAction = ({ onClick }: ActionPropsT) => {
   );
 };
 
+const INPUT_MODE_OPTIONS: { value: InputMode; label: string; icon: React.ReactNode }[] = [
+  { value: 'auto', label: 'Авто (по устройству)', icon: null },
+  { value: 'pen', label: 'Перо', icon: <Pen /> },
+  { value: 'mouse', label: 'Мышь', icon: <Cursor /> },
+];
+
 export const SettingsDropdown = () => {
-  const { isReadonly, saveCanvas, clearBoard, toggleReadonly } = useDropdownActions();
+  const editor = useEditor();
+  const { inputMode, setInputMode, showDebugInfo, setShowDebugInfo } = useTldrawStore();
+  const { isReadonly, saveCanvas, clearBoard, toggleReadonly, importBoardFromJson } =
+    useDropdownActions();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [hotkeysOpen, setHotkeysOpen] = useState(false);
+  const [showImportOption, setShowImportOption] = useState(false);
+  const importInputRef = useRef<HTMLInputElement>(null);
+
+  const handleOpenHotkeysHelp = (open: boolean) => {
+    if (open) {
+      setDropdownOpen(false);
+      setHotkeysOpen(true);
+    } else {
+      setHotkeysOpen(false);
+    }
+  };
 
   useEffect(() => {
-    const handleOpenHotkeysHelp = () => setHotkeysOpen(true);
+    const handleOpenHotkeysHelp = () => {
+      setDropdownOpen(false);
+      setHotkeysOpen(true);
+    };
     window.addEventListener('openHotkeysHelp', handleOpenHotkeysHelp);
     return () => window.removeEventListener('openHotkeysHelp', handleOpenHotkeysHelp);
   }, []);
 
+  useEffect(() => {
+    const handler = () => setShowImportOption(true);
+    window.addEventListener('showBoardImportJson', handler);
+    return () => window.removeEventListener('showBoardImportJson', handler);
+  }, []);
+
   return (
     <>
-      <DropdownMenu>
+      <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
         <DropdownMenuTrigger asChild>
           <Button
             variant="none"
@@ -76,17 +123,80 @@ export const SettingsDropdown = () => {
             <MoreVert size="s" className="h-4 w-4 lg:h-6 lg:w-6" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="flex w-[250px] flex-col gap-1 px-2 py-1">
+        <DropdownMenuContent
+          align="end"
+          className="z-[100] flex w-[250px] flex-col gap-1 px-2 py-1"
+        >
           <DropdownMenuGroup>
             <DropdownMenuItem
               className="flex gap-2 p-1"
-              onClick={() => setHotkeysOpen(true)}
+              onClick={() => handleOpenHotkeysHelp(true)}
               data-umami-event="board-hotkeys-help"
             >
               <InfoCircle />
               <span>Горячие клавиши</span>
             </DropdownMenuItem>
+            {editor && (
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className="flex gap-2 p-1">
+                  <Pen />
+                  <span>Режим ввода</span>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent className="z-[100] w-[250px]">
+                  {INPUT_MODE_OPTIONS.map(({ value, label, icon }) => (
+                    <DropdownMenuItem
+                      key={value}
+                      className="flex gap-2 p-1"
+                      onClick={() => {
+                        setInputMode(value);
+                        if (value === 'pen') editor.updateInstanceState({ isPenMode: true });
+                        else if (value === 'mouse')
+                          editor.updateInstanceState({ isPenMode: false });
+                      }}
+                      data-umami-event="board-input-mode"
+                      data-umami-event-mode={value}
+                    >
+                      <span className="flex w-5 items-center justify-center">
+                        {inputMode === value ? <Check /> : icon}
+                      </span>
+                      <span>{label}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            )}
             <DownloadBoardAction onClick={saveCanvas} />
+            {isTutor && !isReadonly && showImportOption && (
+              <DropdownMenuItem
+                className="flex gap-2 p-1"
+                onClick={() => importInputRef.current?.click()}
+                data-umami-event="board-import-json"
+              >
+                <File />
+                <span>Импорт из JSON</span>
+              </DropdownMenuItem>
+            )}
+            <input
+              ref={importInputRef}
+              type="file"
+              accept=".json,application/json"
+              className="hidden"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) importBoardFromJson(file);
+                e.target.value = '';
+              }}
+            />
+
+            <DropdownMenuItem
+              className={cn('flex h-auto gap-2 p-1', showDebugInfo && 'bg-brand-0')}
+              onClick={() => setShowDebugInfo(!showDebugInfo)}
+              data-umami-event="board-toggle-debug-info"
+            >
+              <InfoCircle />
+              <span>Отладочная информация</span>
+              {showDebugInfo && <Check className="ml-auto" />}
+            </DropdownMenuItem>
 
             {isTutor && !isReadonly && <ClearBoardAction onClick={clearBoard} />}
 
@@ -94,7 +204,7 @@ export const SettingsDropdown = () => {
           </DropdownMenuGroup>
         </DropdownMenuContent>
       </DropdownMenu>
-      <HotkeysHelpModal open={hotkeysOpen} onOpenChange={setHotkeysOpen} />
+      <HotkeysHelpModal open={hotkeysOpen} onOpenChange={handleOpenHotkeysHelp} />
     </>
   );
 };
