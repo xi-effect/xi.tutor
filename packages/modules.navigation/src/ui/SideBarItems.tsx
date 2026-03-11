@@ -23,7 +23,6 @@ export const SideBarItems = () => {
 
   const isStarted = useCallStore((state) => state.isStarted);
   const mode = useCallStore((state) => state.mode);
-  const updateStore = useCallStore((state) => state.updateStore);
 
   const topMenu = [
     {
@@ -116,7 +115,8 @@ export const SideBarItems = () => {
     const filteredSearch = search.call ? { call: search.call } : {};
 
     if (isStarted && mode === 'full') {
-      updateStore('mode', 'compact');
+      // Только навигация; mode в compact выставит лейаут при смене pathname (см. _layout.tsx),
+      // иначе эффект в Call.tsx видит «страница звонка + compact» и сбрасывает в full
       navigate({
         to: url,
         search: () => ({
