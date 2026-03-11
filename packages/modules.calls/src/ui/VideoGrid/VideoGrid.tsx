@@ -123,6 +123,9 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
 
   React.useEffect(() => {
     if (!canUseFocusLayout && carouselType !== 'grid') {
+      useCallStore
+        .getState()
+        .updateStore('preferredFocusLayout', carouselType as 'horizontal' | 'vertical');
       useCallStore.getState().updateStore('carouselType', 'grid');
     }
   }, [canUseFocusLayout, carouselType]);
@@ -133,7 +136,8 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
 
     if (!screenShareJustStarted || carouselType !== 'grid') return;
 
-    useCallStore.getState().updateStore('carouselType', 'horizontal');
+    const { preferredFocusLayout } = useCallStore.getState();
+    useCallStore.getState().updateStore('carouselType', preferredFocusLayout);
   }, [hasScreenShare, carouselType]);
 
   return (

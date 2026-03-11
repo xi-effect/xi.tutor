@@ -39,6 +39,7 @@ type useCallStoreT = {
 
   mode: 'compact' | 'full';
   carouselType: 'grid' | 'horizontal' | 'vertical';
+  preferredFocusLayout: 'horizontal' | 'vertical';
   activeCorner: Corner;
 
   /** Режим вида компакт-ВКС на десктопе: одна плитка или развёрнутый список (учёт при DnD) */
@@ -92,6 +93,7 @@ export const useCallStore = create<useCallStoreT>()(
       isConnecting: false,
       mode: 'full',
       carouselType: 'grid',
+      preferredFocusLayout: 'horizontal',
       activeCorner: 'top-left',
       compactViewMode: 'basic',
 
@@ -167,14 +169,18 @@ export const useCallStore = create<useCallStoreT>()(
     }),
     {
       name: 'call-store',
-      version: 2,
+      version: 3,
       migrate: (persisted, version) => {
         const state = persisted as Record<string, unknown>;
-        if (version === 1) {
+        if (version < 2) {
           const ct = state.carouselType;
           if (ct === 'focus') {
             state.carouselType = 'horizontal';
           }
+        }
+        if (version < 3) {
+          const ct = state.carouselType;
+          state.preferredFocusLayout = ct === 'horizontal' || ct === 'vertical' ? ct : 'horizontal';
         }
         return state as useCallStoreT;
       },
@@ -186,6 +192,7 @@ export const useCallStore = create<useCallStoreT>()(
         audioDeviceId: state.audioDeviceId,
         videoDeviceId: state.videoDeviceId,
         carouselType: state.carouselType,
+        preferredFocusLayout: state.preferredFocusLayout,
         activeCorner: state.activeCorner,
         chatSoundVolume: state.chatSoundVolume,
         handRaiseSoundVolume: state.handRaiseSoundVolume,

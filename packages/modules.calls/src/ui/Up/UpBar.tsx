@@ -58,15 +58,21 @@ export const UpBar = () => {
   const updateStore = useCallStore((state) => state.updateStore);
   const navigate = useNavigate();
 
+  const preferredFocusLayout = useCallStore((state) => state.preferredFocusLayout);
+
   const toggleLayout = () => {
     let nextType: 'grid' | 'horizontal' | 'vertical';
 
     if (isMobile) {
-      nextType = carouselType === 'grid' && canUseFocusLayout ? 'horizontal' : 'grid';
+      nextType = carouselType === 'grid' && canUseFocusLayout ? preferredFocusLayout : 'grid';
     } else {
-      if (carouselType === 'horizontal') nextType = 'vertical';
-      else if (carouselType === 'vertical') nextType = 'grid';
-      else nextType = canUseFocusLayout ? 'horizontal' : 'grid';
+      if (carouselType === 'grid') {
+        nextType = canUseFocusLayout ? preferredFocusLayout : 'grid';
+      } else if (carouselType === preferredFocusLayout) {
+        nextType = preferredFocusLayout === 'horizontal' ? 'vertical' : 'horizontal';
+      } else {
+        nextType = 'grid';
+      }
     }
 
     updateStore('carouselType', nextType);
