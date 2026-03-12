@@ -1912,6 +1912,9 @@ importers:
       '@xipkg/button':
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
+      '@xipkg/checkbox':
+        specifier: ^5.0.0
+        version: 5.0.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/dropdown':
         specifier: ^3.0.12
         version: 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -1930,6 +1933,9 @@ importers:
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.4)
+      common.utils:
+        specifier: workspace:*
+        version: link:../common.utils
       react:
         specifier: '19'
         version: 19.2.4
