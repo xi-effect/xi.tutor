@@ -10,6 +10,10 @@ import { AccessModeT, MaterialPropsT } from 'common.types';
 import { useCurrentUser } from 'common.services';
 import { ModalEditMaterialName } from 'features.materials.edit';
 
+type MaterialsCardProps = MaterialPropsT & {
+  layout?: 'default' | 'compact';
+};
+
 export const MaterialsCard = ({
   id,
   updated_at,
@@ -20,7 +24,8 @@ export const MaterialsCard = ({
   hasIcon = false,
   isLoading,
   className,
-}: MaterialPropsT) => {
+  layout = 'default',
+}: MaterialsCardProps) => {
   const { classroomId } = useParams({ strict: false });
 
   const isClassroom = !!classroomId;
@@ -48,6 +53,60 @@ export const MaterialsCard = ({
   const handleAccessModeUpdate = (newMode: AccessModeT) => {
     handleUpdateAccessMode(newMode, student_access_mode);
   };
+
+  const menu = isTutor && (
+    <MaterialActionsMenu
+      isClassroom={isClassroom}
+      isTutor={isTutor}
+      studentAccessMode={student_access_mode}
+      onDelete={handleDelete}
+      onDeleteFromClassroom={handleDeleteFromClassroom}
+      onUpdateAccessMode={handleAccessModeUpdate}
+      onDuplicate={handleDuplicate}
+      setModalOpen={setModalOpen}
+    />
+  );
+
+  if (layout === 'compact') {
+    return (
+      <>
+        <div
+          onClick={handleCardClick}
+          className={cn(
+            'hover:bg-gray-5 box-border flex min-h-[100px] min-w-[394px] flex-1 cursor-pointer flex-row items-start gap-4 rounded-2xl border border-[#E7E7E9] bg-white p-4',
+            className,
+          )}
+          data-umami-event="material-card-open"
+          data-umami-event-type={content_kind}
+        >
+          {hasIcon && (
+            <div className="size-6 shrink-0 [&>svg]:size-6">{cardIcon[content_kind]}</div>
+          )}
+          <div className="flex min-w-0 flex-1 flex-col gap-2 overflow-hidden">
+            <p className="truncate text-base leading-[22px] font-medium text-[#0F0F11]">{name}</p>
+            <span className="text-sm leading-5 font-normal text-[#6A6C77]">
+              Изменено: {isLoading ? '...' : updated_at ? formatToShortDate(updated_at) : ''}
+            </span>
+          </div>
+          {menu && (
+            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white">
+              {menu}
+            </div>
+          )}
+        </div>
+        <ModalEditMaterialName
+          isClassroom={isClassroom}
+          isOpen={modalOpen}
+          content_kind={content_kind}
+          name={name}
+          onClose={() => {
+            setModalOpen(false);
+          }}
+          handleUpdateName={handleUpdateName}
+        />
+      </>
+    );
+  }
 
   return (
     <div
@@ -84,18 +143,7 @@ export const MaterialsCard = ({
       </div>
 
       {isTutor && (
-        <div className="flex h-6 w-6 items-center justify-center rounded-full">
-          <MaterialActionsMenu
-            isClassroom={isClassroom}
-            isTutor={isTutor}
-            studentAccessMode={student_access_mode}
-            onDelete={handleDelete}
-            onDeleteFromClassroom={handleDeleteFromClassroom}
-            onUpdateAccessMode={handleAccessModeUpdate}
-            onDuplicate={handleDuplicate}
-            setModalOpen={setModalOpen}
-          />
-        </div>
+        <div className="flex h-6 w-6 items-center justify-center rounded-full">{menu}</div>
       )}
 
       <ModalEditMaterialName

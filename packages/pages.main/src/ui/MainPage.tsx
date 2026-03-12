@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-import { Classrooms, Lessons, Payments } from './components';
+import { Classrooms, Lessons, Payments, Materials } from './components';
 import { DateTimeDisplay, Menu } from 'common.ui';
 import { useCurrentUser } from 'common.services';
 
@@ -127,6 +127,7 @@ export const MainPage = () => {
           <div className="flex flex-col gap-5">
             <Classrooms />
             <Payments />
+            <Materials />
           </div>
         </div>
       </div>
