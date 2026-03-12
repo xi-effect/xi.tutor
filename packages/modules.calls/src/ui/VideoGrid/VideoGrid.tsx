@@ -69,9 +69,7 @@ export const VideoGrid = ({ ...props }: VideoConferenceProps) => {
     .filter((track) => track.publication.source === Track.Source.ScreenShare);
 
   const hasScreenShare = screenShareTracks.some((track) => track.publication.isSubscribed);
-  const participantCount = tracks.filter(
-    (track) => track.publication?.source === Track.Source.Camera,
-  ).length;
+  const participantCount = tracks.filter((track) => track.source === Track.Source.Camera).length;
   const canUseFocusLayout = hasScreenShare || participantCount > 2;
   const effectiveCarouselType: 'grid' | 'horizontal' | 'vertical' = canUseFocusLayout
     ? carouselType
