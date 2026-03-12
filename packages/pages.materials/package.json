@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "5.73.3",
+    "@tanstack/react-router": "^1.166.6",
     "@tanstack/react-virtual": "3.13.9",
     "@xipkg/button": "4.1.0",
     "@xipkg/dropdown": "3.0.12",
@@ -25,8 +26,8 @@
     "common.ui": "workspace:*",
     "dayjs": "^1.11.13",
     "features.materials.add": "workspace:*",
-    "features.materials.duplicate": "workspace:*",
-    "features.materials.card": "workspace:*"
+    "features.materials.card": "workspace:*",
+    "features.materials.duplicate": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
