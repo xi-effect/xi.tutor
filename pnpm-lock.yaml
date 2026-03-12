@@ -1770,8 +1770,8 @@ importers:
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
       '@xipkg/datepicker':
-        specifier: 2.2.0
-        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/form':
         specifier: 4.2.1
         version: 4.2.1(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -2613,11 +2613,11 @@ importers:
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
       '@xipkg/calendar':
-        specifier: 2.1.0
-        version: 2.1.0(@types/react@19.2.14)(react@19.2.4)
+        specifier: 2.3.0
+        version: 2.3.0(@types/react@19.2.14)(react@19.2.4)
       '@xipkg/datepicker':
-        specifier: 2.2.0
-        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/icons':
         specifier: ^3.0.6
         version: 3.0.6(react@19.2.4)
@@ -7579,6 +7579,10 @@ packages:
   '@surma/rollup-plugin-off-main-thread@2.2.3':
     resolution: {integrity: sha512-lR8q/9W7hZpMWweNiAKU7NQerBnzQQLvi8qnTDU/fxItPhtZVMbPV3lbCwjhIlNBe9Bbr5V+KHshvWmVSG9cxQ==}
 
+  '@tabby_ai/hijri-converter@1.0.5':
+    resolution: {integrity: sha512-r5bClKrcIusDoo049dSL8CawnHR6mRdDwhlQuIgZRNty68q0x8k3Lf1BtPAMxRf/GgnHBnIO4ujd3+GQdLWzxQ==}
+    engines: {node: '>=16.0.0'}
+
   '@tailwindcss/node@4.2.1':
     resolution: {integrity: sha512-jlx6sLk4EOwO6hHe1oCGm1Q4AN/s0rSrTTPBGPM0/RQ6Uylwq17FuU8IeJJKEjtc6K6O07zsvP+gDO6MMWo7pg==}
 
@@ -8552,8 +8556,8 @@ packages:
     peerDependencies:
       react: ^19
 
-  '@xipkg/calendar@2.1.0':
-    resolution: {integrity: sha512-7y523UYxfCvOipAu2LrPtfsMrLiskKWiUrYY6CAltU150+1oLrPvgR/EKI+zZU6BO1hJSgGLikA6nP+fGXXfiA==}
+  '@xipkg/calendar@2.3.0':
+    resolution: {integrity: sha512-V/5jAngYdKFGWjVJF5zOi9AVnbhVuvm4o63LVKNqVHbBtqCMM3futgDDidLYLvpcao1yPNgkf/MXBWQzNT0y/g==}
     peerDependencies:
       react: ^19
 
@@ -8572,8 +8576,8 @@ packages:
     peerDependencies:
       react: ^19
 
-  '@xipkg/datepicker@2.2.0':
-    resolution: {integrity: sha512-Ecf+fb8kLxUsJ2vSDKufaYbxsPEVLtzK7UWcEtKvqf05wP4CsaAMMTvJbF54JwJ5ExZODR06p9NIw1n3dJH8pg==}
+  '@xipkg/datepicker@2.3.0':
+    resolution: {integrity: sha512-N2H5GuH3oCLLroddkOb5gcu3cVoEta66Is95wh2czdLdJGe5hRliwMDcbQIwAZ4Q5V5+J+6VHPDXbvOxlotOCA==}
     peerDependencies:
       react: ^19
 
@@ -9333,8 +9337,8 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-config-turbo@2.8.14:
-    resolution: {integrity: sha512-WYB0jwiITLpiWx42J7p1XNSAzRxAwmX9qpRBCIH4+R/9mgp72o8GtUKLX8vgxK4c8Vwqiedv4MqPwDxJurrVWQ==}
+  eslint-config-turbo@2.8.16:
+    resolution: {integrity: sha512-7JY6vlgFZWUH1YlLpxQjgia3bjcIpWxYahDQ/XfXSU5etv2KyEPY/O6jK/8Tg+Z2xjZm8ZQFgqK15K5MLIQAFA==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -9431,8 +9435,8 @@ packages:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
 
-  eslint-plugin-turbo@2.8.14:
-    resolution: {integrity: sha512-AU3H0trwN9AoDZHHIx+TWSLc/AXIqk0iB93dy5zF5EmhAS3KTVPlFRJHWXc4BdKo8gy/Z11DKrZZQTpqIZ8k4A==}
+  eslint-plugin-turbo@2.8.16:
+    resolution: {integrity: sha512-fhvTLe0PnyV72npfBi/IwwVMzkTnUw9MxS2S2Q0Oo1aed7woAtHwSL5DEdTTV6tXZSKbqRHaIbjV6rwx+1iRYA==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -10663,8 +10667,8 @@ packages:
   randomcolor@0.6.2:
     resolution: {integrity: sha512-Mn6TbyYpFgwFuQ8KJKqf3bqqY9O1y37/0jgSK/61PUxV4QfIMv0+K2ioq8DfOjkBslcjwSzRfIDEXfzA9aCx7A==}
 
-  react-day-picker@9.13.2:
-    resolution: {integrity: sha512-IMPiXfXVIAuR5Yk58DDPBC8QKClrhdXV+Tr/alBrwrHUw0qDDYB1m5zPNuTnnPIr/gmJ4ChMxmtqPdxm8+R4Eg==}
+  react-day-picker@9.14.0:
+    resolution: {integrity: sha512-tBaoDWjPwe0M5pGrum4H0SR6Lyk+BO9oHnp9JbKpGKW2mlraNPgP9BMfsg5pWpwrssARmeqk7YBl2oXutZTaHA==}
     engines: {node: '>=18'}
     peerDependencies:
       react: '>=16.8.0'
@@ -14218,6 +14222,8 @@ snapshots:
       magic-string: 0.25.9
       string.prototype.matchall: 4.0.12
 
+  '@tabby_ai/hijri-converter@1.0.5': {}
+
   '@tailwindcss/node@4.2.1':
     dependencies:
       '@jridgewell/remapping': 2.3.5
@@ -15294,15 +15300,15 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@xipkg/calendar@2.1.0(@types/react@19.2.14)(react@19.2.4)':
+  '@xipkg/calendar@2.3.0(@types/react@19.2.14)(react@19.2.4)':
     dependencies:
       '@radix-ui/react-slot': 1.2.4(@types/react@19.2.14)(react@19.2.4)
-      '@xipkg/button': 3.2.0(@types/react@19.2.14)(react@19.2.4)
-      '@xipkg/icons': 2.7.2(react@19.2.4)
+      '@xipkg/button': 4.1.0(@types/react@19.2.14)(react@19.2.4)
+      '@xipkg/icons': 3.0.6(react@19.2.4)
       '@xipkg/utils': 1.8.0(react@19.2.4)
       class-variance-authority: 0.7.1
       react: 19.2.4
-      react-day-picker: 9.13.2(react@19.2.4)
+      react-day-picker: 9.14.0(react@19.2.4)
     transitivePeerDependencies:
       - '@types/react'
 
@@ -15342,18 +15348,18 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/datepicker@2.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@xipkg/datepicker@2.3.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       '@radix-ui/react-slot': 1.2.4(@types/react@19.2.14)(react@19.2.4)
-      '@xipkg/button': 3.2.0(@types/react@19.2.14)(react@19.2.4)
-      '@xipkg/calendar': 2.1.0(@types/react@19.2.14)(react@19.2.4)
-      '@xipkg/icons': 2.7.2(react@19.2.4)
+      '@xipkg/button': 4.1.0(@types/react@19.2.14)(react@19.2.4)
+      '@xipkg/calendar': 2.3.0(@types/react@19.2.14)(react@19.2.4)
+      '@xipkg/icons': 3.0.6(react@19.2.4)
       '@xipkg/popover': 3.0.5(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/utils': 1.8.0(react@19.2.4)
       class-variance-authority: 0.7.1
       date-fns: 4.1.0
       react: 19.2.4
-      react-day-picker: 9.13.2(react@19.2.4)
+      react-day-picker: 9.14.0(react@19.2.4)
     transitivePeerDependencies:
       - '@types/react'
       - '@types/react-dom'
@@ -15387,7 +15393,7 @@ snapshots:
       eslint-config-airbnb: 19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2(eslint@9.39.3(jiti@2.6.1)))(eslint-plugin-react-hooks@5.1.0(eslint@9.39.3(jiti@2.6.1)))(eslint-plugin-react@7.37.2(eslint@9.39.3(jiti@2.6.1)))(eslint@9.39.3(jiti@2.6.1))
       eslint-config-next: 15.1.2(eslint@9.39.3(jiti@2.6.1))(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.39.3(jiti@2.6.1))
-      eslint-config-turbo: 2.8.14(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
+      eslint-config-turbo: 2.8.16(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.56.1(eslint@9.39.3(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.3(jiti@2.6.1))
       eslint-plugin-react: 7.37.2(eslint@9.39.3(jiti@2.6.1))
       eslint-plugin-react-hooks: 5.1.0(eslint@9.39.3(jiti@2.6.1))
@@ -16434,10 +16440,10 @@ snapshots:
     dependencies:
       eslint: 9.39.3(jiti@2.6.1)
 
-  eslint-config-turbo@2.8.14(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
+  eslint-config-turbo@2.8.16(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
     dependencies:
       eslint: 9.39.3(jiti@2.6.1)
-      eslint-plugin-turbo: 2.8.14(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
+      eslint-plugin-turbo: 2.8.16(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
       turbo: 2.8.11
 
   eslint-import-resolver-node@0.3.9:
@@ -16586,7 +16592,7 @@ snapshots:
       eslint: 9.39.3(jiti@2.6.1)
       turbo: 2.8.11
 
-  eslint-plugin-turbo@2.8.14(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
+  eslint-plugin-turbo@2.8.16(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
     dependencies:
       dotenv: 16.0.3
       eslint: 9.39.3(jiti@2.6.1)
@@ -17754,9 +17760,10 @@ snapshots:
 
   randomcolor@0.6.2: {}
 
-  react-day-picker@9.13.2(react@19.2.4):
+  react-day-picker@9.14.0(react@19.2.4):
     dependencies:
       '@date-fns/tz': 1.4.1
+      '@tabby_ai/hijri-converter': 1.0.5
       date-fns: 4.1.0
       date-fns-jalali: 4.1.0-0
       react: 19.2.4

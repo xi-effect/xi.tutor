@@ -43,6 +43,20 @@ export const formatDate = (date: Date) => {
   return `${dd}.${mm}.${yyyy}`;
 };
 
+/** Формат диапазона для кнопки DatePicker: ДД.ММ.ГГ - ДД.ММ.ГГГГ */
+export const formatDateRangeDisplay = (weekStart: Date, dayCount: number): string => {
+  const days = Math.max(1, Math.min(7, dayCount));
+  const end = new Date(weekStart);
+  end.setDate(end.getDate() + days - 1);
+  const d1 = String(weekStart.getDate()).padStart(2, '0');
+  const m1 = String(weekStart.getMonth() + 1).padStart(2, '0');
+  const y1 = String(weekStart.getFullYear()).slice(-2);
+  const d2 = String(end.getDate()).padStart(2, '0');
+  const m2 = String(end.getMonth() + 1).padStart(2, '0');
+  const y2 = String(end.getFullYear());
+  return `${d1}.${m1}.${y1} - ${d2}.${m2}.${y2}`;
+};
+
 export const formatWeekRange = (weekStart: Date): string => {
   return formatDateRange(weekStart, 7);
 };

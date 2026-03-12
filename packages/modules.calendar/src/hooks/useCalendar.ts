@@ -22,5 +22,10 @@ export const useCalendar = () => {
     setWeekStart(getInitialWeekStart());
   }, []);
 
-  return { weekDays, weekStart, goToPrev, goToNext, goToToday };
+  /** Переход к неделе, содержащей указанную дату */
+  const goToWeekStart = useCallback((date: Date) => {
+    setWeekStart(startOfWeek(date, { weekStartsOn: 1 }));
+  }, []);
+
+  return { weekDays, weekStart, goToPrev, goToNext, goToToday, goToWeekStart };
 };

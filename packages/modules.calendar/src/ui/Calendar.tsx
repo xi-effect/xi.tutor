@@ -11,16 +11,18 @@ type CalendarModuleProps = {
 
 export const CalendarModule = ({ onAddLessonClick }: CalendarModuleProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const { weekDays, goToPrev, goToNext } = useCalendar();
+  const { weekDays, weekStart, goToPrev, goToNext, goToWeekStart } = useCalendar();
   const { columnWidth, visibleCount } = useKanbanColumns(containerRef, weekDays.length);
   const visibleDays = weekDays.slice(0, visibleCount);
 
   return (
     <div className="bg-gray-5 flex min-h-screen flex-1 flex-col pl-4">
       <CalendarHeader
+        weekStart={weekStart}
         visibleDays={visibleDays}
         onPrev={() => goToPrev(visibleCount)}
         onNext={() => goToNext(visibleCount)}
+        onWeekSelect={goToWeekStart}
       />
       <div className="bg-gray-0 rounded-tl-2xl pl-4">
         <div ref={containerRef} className="flex min-h-0 flex-1 overflow-hidden">

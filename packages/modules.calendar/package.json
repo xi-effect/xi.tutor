@@ -19,11 +19,11 @@
     "@xipkg/icons": "^3.0.6",
     "@xipkg/utils": "1.8.0",
     "@xipkg/scrollarea": "2.2.0",
-    "@xipkg/calendar": "2.1.0",
+    "@xipkg/calendar": "2.3.0",
     "@xipkg/select": "2.2.5",
     "@xipkg/toggle": "^4.1.0",
     "@xipkg/inputmask": "2.0.12",
-    "@xipkg/datepicker": "2.2.0",
+    "@xipkg/datepicker": "2.3.0",
     "@xipkg/userprofile": "4.1.0",
     "zod": "3.24.2",
     "zustand": "^5.0.3"
