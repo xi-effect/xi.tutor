@@ -71,7 +71,7 @@ export const CalendarHeader = ({
             type="button"
             className="bg-gray-0 border-gray-10 dark:border-gray-70 flex h-8 w-[204px] flex-none flex-row items-center justify-center gap-3 border px-5 py-2 text-center font-medium dark:bg-transparent dark:text-gray-100"
           >
-            <span className="text-xs-base text-gray-80">{dateRangeLabel}</span>
+            <span className="text-xs-base text-gray-80 w-full">{dateRangeLabel}</span>
             <Calendar className="fill-brand-80 dark:fill-brand-80 h-5 w-5 flex-none" />
           </button>
         </DatePicker>
