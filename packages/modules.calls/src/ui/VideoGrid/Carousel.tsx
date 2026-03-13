@@ -67,7 +67,7 @@ export const Carousel = ({
         />
       </div>
       <div
-        className={`${orientation === 'vertical' ? 'my-14 flex h-[calc(100vh-20rem)] flex-col' : 'mx-14'} relative z-0 flex h-full w-full touch-pan-x snap-x snap-mandatory gap-5 overflow-hidden scroll-smooth`}
+        className={`${orientation === 'vertical' ? 'my-14 flex h-[calc(100dvh-20rem)] flex-col' : 'mx-14'} relative z-0 flex h-full w-full touch-pan-x snap-x snap-mandatory gap-5 overflow-hidden scroll-smooth`}
       >
         {children}
       </div>

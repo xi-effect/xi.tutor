@@ -11,7 +11,7 @@
 
   /* Доступная высота для сетки */
   --available-height: calc(
-    100vh - var(--header-height) - var(--upbar-height) - var(--bottom-bar-height)
+    100dvh - var(--header-height) - var(--upbar-height) - var(--bottom-bar-height)
   );
 }
 
