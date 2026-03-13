@@ -12,7 +12,7 @@ export const Route = createFileRoute('/(app)/_layout/schedule/')({
   head: () => ({
     meta: [
       {
-        title: 'sovlium | Календарь',
+        title: 'sovlium | Расписание',
       },
     ],
   }),

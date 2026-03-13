@@ -58,7 +58,7 @@ export const SideBarItems = () => {
     },
     {
       id: 'calendar-menu-item',
-      titleKey: 'calendar',
+      titleKey: 'schedule',
       url: '/schedule',
       icon: Calendar,
     },

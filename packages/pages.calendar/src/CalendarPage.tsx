@@ -6,8 +6,8 @@ export const CalendarPage = () => {
   const [addingModalOpen, setAddingModalOpen] = useState(false);
   const [initialDate, setInitialDate] = useState<Date | null>(null);
 
-  const handleAddLessonClick = (date: Date) => {
-    setInitialDate(date);
+  const handleAddLessonClick = (date?: Date) => {
+    setInitialDate(date ?? null);
     setAddingModalOpen(true);
   };
 

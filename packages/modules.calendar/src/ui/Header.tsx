@@ -16,6 +16,8 @@ interface CalendarHeaderProps {
   onNext: () => void;
   /** Переход к выбранной в календаре неделе */
   onWeekSelect: (date: Date) => void;
+  /** Открытие модалки добавления занятия (кнопка «Добавить занятие») */
+  onAddLessonClick?: () => void;
 }
 
 export const CalendarHeader = ({
@@ -24,6 +26,7 @@ export const CalendarHeader = ({
   onPrev,
   onNext,
   onWeekSelect,
+  onAddLessonClick,
 }: CalendarHeaderProps) => {
   const { t } = useTranslation('calendar');
 
@@ -89,7 +92,7 @@ export const CalendarHeader = ({
           variant="ghost"
           size="s"
           className="text-s-base text-brand-80 h-[32px] font-medium"
-          onClick={() => {}}
+          onClick={() => onAddLessonClick?.()}
         >
           Добавить занятие
           <Plus className="fill-brand-80 ml-3 h-5 w-5" />
