@@ -6,6 +6,7 @@ import {
   LocalUserChoices as LocalUserChoicesLK,
 } from '@livekit/components-core';
 import { VideoQuality } from 'livekit-client';
+import type { NoiseCancellationMode } from '../types/noiseCancellation';
 
 export type VideoResolution = 'h720' | 'h360' | 'h180';
 
@@ -15,6 +16,10 @@ export type LocalUserChoices = LocalUserChoicesLK & {
   audioOutputDeviceId?: string;
   videoPublishResolution?: VideoResolution;
   videoSubscribeQuality?: VideoQuality;
+  /** Включено ли шумоподавление (любой режим кроме off). */
+  noiseCancellationEnabled?: boolean;
+  /** Режим шумоподавления: off | webrtc | krisp. */
+  noiseCancellationMode?: NoiseCancellationMode;
 };
 
 function getUserChoicesState(): LocalUserChoices {
@@ -24,6 +29,8 @@ function getUserChoicesState(): LocalUserChoices {
     audioOutputDeviceId: 'default',
     videoPublishResolution: 'h720',
     videoSubscribeQuality: VideoQuality.HIGH,
+    noiseCancellationEnabled: false,
+    noiseCancellationMode: 'webrtc',
     ...loadUserChoices(),
   };
 }

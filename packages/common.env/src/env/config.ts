@@ -35,6 +35,16 @@ const env = {
   ),
   VITE_LIVEKIT_DEV_TOKEN: asString(import.meta.env.VITE_LIVEKIT_DEV_TOKEN, ''),
   VITE_LIVEKIT_DEV_MODE: asBoolean(import.meta.env.VITE_LIVEKIT_DEV_MODE, false),
+  /** Включить опцию «Усиленное» шумоподавление (Krisp) в UI. Связано с LiveKit Cloud. */
+  VITE_ALLOW_KRISP_NOISE_CANCELLATION: asBoolean(
+    import.meta.env.VITE_ALLOW_KRISP_NOISE_CANCELLATION,
+    true,
+  ),
+  /** Показывать UI шумоподавления (Стандартное/Усиленное). По умолчанию выключено — используется только WebRTC через audioCaptureDefaults комнаты. */
+  VITE_NOISE_CANCELLATION_FEATURE_ENABLED: asBoolean(
+    import.meta.env.VITE_NOISE_CANCELLATION_FEATURE_ENABLED,
+    false,
+  ),
   VITE_SERVER_URL_HOCUS: asString(
     import.meta.env.VITE_SERVER_URL_HOCUS,
     'https://hocus.sovlium.ru',
