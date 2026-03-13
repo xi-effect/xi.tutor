@@ -11,5 +11,8 @@ export {
   useHandFocus,
   useSpeakingParticipant,
   useUmamiActivityHeartbeat,
+  useNoiseCancellation,
+  type UseNoiseCancellationOptions,
+  type UseNoiseCancellationResult,
 } from './hooks';
 export { useCallStore } from './store';

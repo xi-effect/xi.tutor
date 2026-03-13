@@ -11,13 +11,16 @@ import { InfoCircle } from '@xipkg/icons';
 import { Label } from '@xipkg/label';
 import { Toggle } from '@xipkg/toggle';
 import { supportsBackgroundProcessors } from '@livekit/track-processors';
+import type { UseNoiseCancellationResult } from '../../../../hooks/useNoiseCancellation';
+import { NoiseCancellationSettings } from '../../../../ui/shared/NoiseCancellationSettings';
 
 interface MediaDevicesProps {
   audioTrack?: LocalAudioTrack;
   videoTrack?: LocalVideoTrack;
+  noiseCancellation?: UseNoiseCancellationResult;
 }
 
-export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
+export const MediaDevices = ({ audioTrack, videoTrack, noiseCancellation }: MediaDevicesProps) => {
   const {
     userChoices: { audioDeviceId, audioOutputDeviceId, videoDeviceId, blurEnabled },
     saveAudioInputDeviceId,
@@ -192,6 +195,11 @@ export const MediaDevices = ({ audioTrack, videoTrack }: MediaDevicesProps) => {
                 <Label className="font-medium text-gray-100">Размытие фона</Label>
                 <Toggle checked={blurEnabled} onCheckedChange={saveBlurEnabled} />
               </div>
+            </div>
+          )}
+          {noiseCancellation && (
+            <div className="my-4">
+              <NoiseCancellationSettings nc={noiseCancellation} hideOffOption />
             </div>
           )}
         </div>
