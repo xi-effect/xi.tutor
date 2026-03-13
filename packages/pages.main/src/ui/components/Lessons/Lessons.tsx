@@ -69,7 +69,7 @@ export const Lessons = () => {
             variant="none"
             size="s"
             className="text-gray-60 hover:text-gray-80 flex items-center gap-1.5 font-normal"
-            onClick={() => navigate({ to: '/calendar' })}
+            onClick={() => navigate({ to: '/schedule' })}
           >
             Подробное
             <ArrowUpRight className="fill-brand-80 h-5 w-5" />

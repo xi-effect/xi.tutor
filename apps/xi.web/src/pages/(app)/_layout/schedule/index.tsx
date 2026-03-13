@@ -8,7 +8,7 @@ const CalendarPageLazy = lazy(() =>
 );
 
 // @ts-ignore
-export const Route = createFileRoute('/(app)/_layout/calendar/')({
+export const Route = createFileRoute('/(app)/_layout/schedule/')({
   head: () => ({
     meta: [
       {
