@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 
 import { SelectRole } from './SelectRole';
 import { useCurrentUser } from 'common.services';
-import { Collapse } from '@xipkg/icons';
+import { Account, Collapse, Download, Exit } from '@xipkg/icons';
 import { usePWAInstall } from 'common.services';
 
 interface DesktopUserMenuProps {
@@ -55,11 +55,10 @@ export const DesktopUserMenu = ({
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-[268px]" side="bottom" align="start">
-        <DropdownMenuItem>
+      <DropdownMenuContent className="w-[276px] p-4" side="bottom" align="start">
+        <div className="mb-4 w-[228px]">
           <SelectRole />
-        </DropdownMenuItem>
-
+        </div>
         {!isInstalled && (
           <DropdownMenuItem
             onClick={() => {
@@ -69,6 +68,7 @@ export const DesktopUserMenu = ({
             className="text-gray-80 text-sm"
             data-umami-event="header-pwa-install"
           >
+            <Download className="fill-gray-80 mr-2 h-5 w-5" />
             Установить приложение
           </DropdownMenuItem>
         )}
@@ -78,6 +78,7 @@ export const DesktopUserMenu = ({
           className="text-gray-80 text-sm"
           data-umami-event="header-profile-open"
         >
+          <Account className="fill-gray-80 mr-2 h-5 w-5" />
           {profileText}
         </DropdownMenuItem>
 
@@ -86,6 +87,7 @@ export const DesktopUserMenu = ({
           className="text-gray-80 text-sm"
           data-umami-event="header-logout"
         >
+          <Exit className="fill-gray-80 mr-2 h-5 w-5" />
           {logoutText}
         </DropdownMenuItem>
       </DropdownMenuContent>
