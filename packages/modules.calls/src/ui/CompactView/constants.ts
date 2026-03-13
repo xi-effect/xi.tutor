@@ -14,6 +14,10 @@ export const TILE_GAP_PX = 8;
 
 /** Вертикальный padding контейнера expanded-режима (p-1: 4px сверху + 4px снизу) */
 export const EXPANDED_VIDEO_PADDING_VERTICAL_PX = 8;
+/** Отступ между областью видео и нижней панелью (mb-2 на контейнере видео) */
+export const COMPACT_VIDEO_AREA_MARGIN_PX = 8;
+/** Нижний отступ compact call на странице доски, соответствует CSS bottom-[72px] */
+export const COMPACT_BOTTOM_OFFSET_BOARD_PX = BOARD_BOTTOM_TOOLBAR_PX + TILE_GAP_PX; // 72
 
 /** Ширина панели компакт-ВКС (с запасом под кнопку чата); высота плитки 16:9 при этой ширине */
 export const COMPACT_PANEL_WIDTH_PX = 360;

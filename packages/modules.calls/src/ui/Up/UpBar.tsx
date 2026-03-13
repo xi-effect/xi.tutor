@@ -1,6 +1,7 @@
 import {
   Grid,
   Speaker,
+  SpeakerHorizontal,
   Link as LinkIcon,
   Settings as SettingsIcon,
   ArrowLeft,
@@ -35,13 +36,13 @@ export const UpBar = () => {
     return () => setFocusMode(false);
   }, [setFocusMode]);
 
-  // Получаем треки для проверки условий
+  // Получаем треки для проверки условий (onlySubscribed: false, чтобы учитывать локального участника при подсчёте)
   const tracks = useTracks(
     [
       { source: Track.Source.Camera, withPlaceholder: true },
       { source: Track.Source.ScreenShare, withPlaceholder: false },
     ],
-    { onlySubscribed: true },
+    { onlySubscribed: false },
   );
 
   // Проверяем условия для FocusLayout
@@ -49,22 +50,38 @@ export const UpBar = () => {
     (track) =>
       track.publication?.source === Track.Source.ScreenShare && track.publication?.isSubscribed,
   );
-  const participantCount = tracks.filter(
-    (track) => track.publication?.source === Track.Source.Camera,
-  ).length;
+  const participantCount = tracks.filter((track) => track.source === Track.Source.Camera).length;
   const canUseFocusLayout = hasScreenShare || participantCount > 2;
 
   const updateStore = useCallStore((state) => state.updateStore);
   const navigate = useNavigate();
 
+  const preferredFocusLayout = useCallStore((state) => state.preferredFocusLayout);
+
   const toggleLayout = () => {
-    const nextType = carouselType === 'grid' && canUseFocusLayout ? 'focus' : 'grid';
+    let nextType: 'grid' | 'horizontal' | 'vertical';
+
+    if (isMobile) {
+      nextType = carouselType === 'grid' && canUseFocusLayout ? preferredFocusLayout : 'grid';
+    } else {
+      if (carouselType === 'grid') {
+        nextType = canUseFocusLayout ? preferredFocusLayout : 'grid';
+      } else if (carouselType === preferredFocusLayout) {
+        nextType = preferredFocusLayout === 'horizontal' ? 'vertical' : 'horizontal';
+      } else {
+        nextType = 'grid';
+      }
+    }
+
     updateStore('carouselType', nextType);
   };
 
   const getViewIcon = () => {
-    if (carouselType !== 'grid') {
+    if (carouselType === 'horizontal') {
       return <Speaker className="fill-gray-100" />;
+    }
+    if (carouselType === 'vertical') {
+      return <SpeakerHorizontal className="fill-gray-100" />;
     }
     return <Grid className="fill-gray-100" />;
   };
@@ -113,7 +130,6 @@ export const UpBar = () => {
       <span className="text-m-base sm:text-xl-base md:text-2xl-base ml-4 max-w-[50vw] min-w-0 self-center truncate font-semibold text-gray-100">
         {classroom?.name}
       </span>
-      {/* <span className="text-gray-70 ml-2 pb-1">Имя ученика</span> */}
       <div className="ml-auto flex flex-row gap-2" />
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>

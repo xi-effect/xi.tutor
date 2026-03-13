@@ -34,8 +34,8 @@ function LayoutComponent() {
 
     if (pathname.includes('/call')) {
       updateStore('mode', 'full');
-    } else if (pathname.includes('/classrooms') && search.call) {
-      // Если мы на странице classroom и есть параметр call, переключаемся в compact режим
+    } else if (search.call) {
+      // На любой странице (главная, classrooms, materials и т.д.) с параметром call — compact
       updateStore('mode', 'compact');
     }
   }, [router.state.location.pathname, router.state.location.search, updateStore]);

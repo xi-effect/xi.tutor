@@ -170,8 +170,6 @@ export const ParticipantTile = ({
   const carouselType = useCallStore((state) => state.carouselType);
   const updateStore = useCallStore((state) => state.updateStore);
 
-  const isFocusLayout = carouselType !== 'grid';
-
   const handleTileDoubleClick = React.useCallback(() => {
     if (trackReference.source !== Track.Source.ScreenShare || !layoutContext?.pin.dispatch) return;
     if (!isTrackReference(trackReference)) return;
@@ -180,7 +178,7 @@ export const ParticipantTile = ({
       layoutContext.pin.state && isTrackReferencePinned(trackReference, layoutContext.pin.state);
 
     if (carouselType === 'grid') {
-      updateStore('carouselType', 'focus');
+      updateStore('carouselType', 'horizontal');
       layoutContext.pin.dispatch({ msg: 'set_pin', trackReference });
     } else if (isPinned) {
       updateStore('carouselType', 'grid');
@@ -190,10 +188,6 @@ export const ParticipantTile = ({
 
   const getVideoClassName = () => {
     if (trackReference.source === Track.Source.ScreenShare) {
-      return 'object-contain';
-    }
-
-    if (isFocusLayout) {
       return 'object-contain';
     }
     return 'object-cover';
