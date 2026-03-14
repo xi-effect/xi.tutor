@@ -3,7 +3,7 @@ import { Editor, TLShapeId } from 'tldraw';
 import { toast } from 'sonner';
 import { uploadFileRequest } from 'common.services';
 import * as pdfjsLib from 'pdfjs-dist';
-import { PDF_MIN_SIZE, type PdfShape } from '../shapes/pdf';
+import { PDF_MAX_SIZE, PDF_MIN_SIZE, type PdfShape } from '../shapes/pdf';
 
 const MAX_PDF_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
 const MAX_PDF_SHAPES = 50;
@@ -67,6 +67,14 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
     pageHeight = Math.round(pageHeight * scale);
   }
 
+  // Ограничиваем размер по большей стороне (как у изображений 4096×4096)
+  const maxSide = Math.max(pageWidth, pageHeight);
+  if (maxSide > PDF_MAX_SIZE) {
+    const scale = PDF_MAX_SIZE / maxSide;
+    pageWidth = Math.round(pageWidth * scale);
+    pageHeight = Math.round(pageHeight * scale);
+  }
+
   const viewportCenter = editor.getViewportPageBounds().center;
 
   editor.createShapes<PdfShape>([
@@ -83,6 +91,7 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
         w: pageWidth,
         h: pageHeight,
         studentCanFlip: true,
+        pagesVisible: 1,
       },
     },
   ]);

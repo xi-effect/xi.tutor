@@ -5,9 +5,11 @@ import * as pdfjsLib from 'pdfjs-dist';
 import type { RenderTask } from 'pdfjs-dist';
 import { useYjsContext } from '../../providers/YjsProvider';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
+import { insertImage } from '../../features/pickAndInsertImage';
 import { pdfDocCache } from './pdfDocCache';
 import { PdfPageControls } from './PdfPageControls';
 import type { PdfShape } from './PdfShape';
+import { PDF_PAGES_VISIBLE_MAX, PDF_PAGES_VISIBLE_MIN } from './PdfShape';
 
 // Используем CDN для worker файла, чтобы избежать проблем с бандлингом в продакшене
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -22,13 +24,13 @@ type PdfViewerProps = {
 export const PdfViewer = ({ shape }: PdfViewerProps) => {
   const editor = useEditor();
   const { data: user } = useCurrentUser();
-  const { pdfPagesMap, token } = useYjsContext();
+  const { pdfPagesMap, token, isReadonly } = useYjsContext();
   const isTutor = user?.default_layout === 'tutor';
   const userId = user?.id?.toString() ?? '';
 
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const renderTaskRef = useRef<RenderTask | null>(null);
+  const canvasRefs = useRef<(HTMLCanvasElement | null)[]>([]);
+  const renderTasksRef = useRef<(RenderTask | null)[]>([]);
   const loadKeyRef = useRef<string | null>(null);
   const hasRenderedOnceRef = useRef(false);
 
@@ -55,6 +57,10 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
   }, []);
 
   const { src, totalPages, currentPage: tutorPage, studentCanFlip } = shape.props;
+  const pagesVisible = Math.min(
+    PDF_PAGES_VISIBLE_MAX,
+    Math.max(PDF_PAGES_VISIBLE_MIN, shape.props.pagesVisible ?? 1),
+  );
 
   const canFlip = isTutor || studentCanFlip;
   const displayPage = !isTutor && !studentCanFlip ? tutorPage : localPage;
@@ -88,17 +94,17 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
   useEffect(() => {
     if (!src || !token) return;
 
-    const loadKey = `${src}-${displayPage}`;
+    const loadKey = `${src}-${displayPage}-${pagesVisible}-${containerSize.w}-${containerSize.h}`;
     if (loadKeyRef.current !== loadKey) {
       loadKeyRef.current = loadKey;
       hasRenderedOnceRef.current = false;
     }
 
     let cancelled = false;
+    const tasks: (RenderTask | null)[] = [];
 
     const render = async () => {
       try {
-        // Показываем "Загрузка" только при первой загрузке PDF/страницы, не при ресайзе
         if (!hasRenderedOnceRef.current) setLoading(true);
         const blobUrl = await resolveAssetUrl(src, token);
         if (cancelled) return;
@@ -106,51 +112,61 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
         const pdfDoc = await pdfDocCache.get(blobUrl);
         if (cancelled) return;
 
-        const pageNum = Math.min(Math.max(1, displayPage), pdfDoc.numPages);
-        const page = await pdfDoc.getPage(pageNum);
-        if (cancelled) return;
-
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-
         const displayW = containerSize.w;
-        const displayH = containerSize.h;
-        if (displayW <= 0 || displayH <= 0) return;
+        const displayHTotal = containerSize.h;
+        if (displayW <= 0 || displayHTotal <= 0) return;
 
-        if (renderTaskRef.current) {
-          renderTaskRef.current.cancel();
+        const cellH = displayHTotal / pagesVisible;
+        let anyRendered = false;
+
+        for (let i = 0; i < renderTasksRef.current.length; i++) {
+          const t = renderTasksRef.current[i];
+          if (t) t.cancel();
+        }
+        renderTasksRef.current = [];
+
+        for (let i = 0; i < pagesVisible; i++) {
+          const pageNum = displayPage + i;
+          if (pageNum > pdfDoc.numPages) break;
+
+          const canvas = canvasRefs.current[i];
+          if (!canvas) continue;
+
+          const page = await pdfDoc.getPage(pageNum);
+          if (cancelled) return;
+
+          const dpr = window.devicePixelRatio || 1;
+          const vp1 = page.getViewport({ scale: 1 });
+          const pageW = vp1.width;
+          const pageH = vp1.height;
+          const baseScale = Math.min(displayW / pageW, cellH / pageH);
+          const scale = baseScale * dpr * PDF_RENDER_QUALITY_SCALE;
+
+          const viewport = page.getViewport({ scale });
+          canvas.width = viewport.width;
+          canvas.height = viewport.height;
+          const fittedW = pageW * baseScale;
+          const fittedH = pageH * baseScale;
+          canvas.style.width = `${fittedW}px`;
+          canvas.style.height = `${fittedH}px`;
+
+          const ctx = canvas.getContext('2d');
+          if (!ctx) continue;
+
+          const renderTask = page.render({
+            canvasContext: ctx,
+            viewport,
+            intent: 'print',
+          });
+          renderTasksRef.current[i] = renderTask;
+          tasks.push(renderTask);
+
+          await renderTask.promise;
+          anyRendered = true;
+          if (cancelled) return;
         }
 
-        const dpr = window.devicePixelRatio || 1;
-        const vp1 = page.getViewport({ scale: 1 });
-        const pageW = vp1.width;
-        const pageH = vp1.height;
-        // Вписываем страницу в контейнер с сохранением пропорций (contain), чтобы не растягивать и не мылить
-        const baseScale = Math.min(displayW / pageW, displayH / pageH);
-        // Рендер в повышенном разрешении (dpr × quality), отображаем в baseScale — меньше мыло, чётче текст/линии
-        const scale = baseScale * dpr * PDF_RENDER_QUALITY_SCALE;
-
-        const viewport = page.getViewport({ scale });
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
-        const fittedW = pageW * baseScale;
-        const fittedH = pageH * baseScale;
-        canvas.style.width = `${fittedW}px`;
-        canvas.style.height = `${fittedH}px`;
-
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
-        // intent: 'print' даёт более точный рендер (антиалиасинг, градиенты и т.д.)
-        const renderTask = page.render({
-          canvasContext: ctx,
-          viewport,
-          intent: 'print',
-        });
-        renderTaskRef.current = renderTask;
-
-        await renderTask.promise;
-        if (!cancelled) {
+        if (!cancelled && anyRendered) {
           hasRenderedOnceRef.current = true;
           setLoading(false);
         }
@@ -167,12 +183,111 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
 
     return () => {
       cancelled = true;
-      if (renderTaskRef.current) {
-        renderTaskRef.current.cancel();
-        renderTaskRef.current = null;
-      }
+      renderTasksRef.current.forEach((t) => {
+        if (t) t.cancel();
+      });
+      renderTasksRef.current = [];
     };
-  }, [src, token, displayPage, shape.props.w, containerSize.w, containerSize.h]);
+  }, [src, token, displayPage, pagesVisible, shape.props.w, containerSize.w, containerSize.h]);
+
+  const handleExtractPage = useCallback(async () => {
+    if (loading || !token) return;
+
+    const bounds = editor.getShapePageBounds(shape.id);
+    if (!bounds) return;
+
+    const canvases: HTMLCanvasElement[] = [];
+    for (let i = 0; i < pagesVisible; i++) {
+      if (displayPage + i > totalPages) break;
+      const c = canvasRefs.current[i];
+      if (c && c.width > 0 && c.height > 0) canvases.push(c);
+    }
+    if (canvases.length === 0) return;
+
+    let blob: Blob | null;
+    const baseName = shape.props.fileName?.replace(/\.pdf$/i, '') || 'pdf';
+
+    if (canvases.length === 1) {
+      blob = await new Promise<Blob | null>((resolve) => {
+        canvases[0].toBlob(resolve, 'image/png');
+      });
+    } else {
+      const first = canvases[0];
+      const commonW = first.width;
+      let combinedH = 0;
+      const heights: number[] = [];
+      for (let i = 0; i < canvases.length; i++) {
+        const h = (canvases[i].height / canvases[i].width) * commonW;
+        heights.push(h);
+        combinedH += h;
+      }
+      const offscreen = document.createElement('canvas');
+      offscreen.width = commonW;
+      offscreen.height = Math.round(combinedH);
+      const ctx = offscreen.getContext('2d');
+      if (!ctx) return;
+      let y = 0;
+      for (let i = 0; i < canvases.length; i++) {
+        const c = canvases[i];
+        const h = heights[i];
+        ctx.drawImage(c, 0, 0, c.width, c.height, 0, y, commonW, h);
+        y += h;
+      }
+      blob = await new Promise<Blob | null>((resolve) => {
+        offscreen.toBlob(resolve, 'image/png');
+      });
+    }
+
+    if (!blob) return;
+
+    const pageRange =
+      canvases.length === 1
+        ? `p${displayPage}`
+        : `p${displayPage}-${displayPage + canvases.length - 1}`;
+    const file = new File([blob], `${baseName}_${pageRange}.png`, { type: 'image/png' });
+
+    const pdfH = bounds.h;
+    const imageH = pdfH;
+    let imageW: number;
+    if (canvases.length === 1) {
+      imageW = (canvases[0].width / canvases[0].height) * pdfH;
+    } else {
+      const commonW = canvases[0].width;
+      let combinedH = 0;
+      for (let i = 0; i < canvases.length; i++) {
+        combinedH += (canvases[i].height / canvases[i].width) * commonW;
+      }
+      imageW = (commonW / combinedH) * pdfH;
+    }
+    const gap = 24;
+
+    await insertImage(editor, file, token, {
+      x: bounds.maxX + gap,
+      y: bounds.y,
+      w: imageW,
+      h: imageH,
+    });
+  }, [
+    loading,
+    token,
+    shape.id,
+    shape.props.fileName,
+    displayPage,
+    totalPages,
+    pagesVisible,
+    editor,
+  ]);
+
+  const handlePagesVisibleChange = useCallback(
+    (n: number) => {
+      editor.updateShape<PdfShape>({
+        id: shape.id,
+        type: 'pdf',
+        props: { pagesVisible: n },
+      });
+    },
+    [editor, shape.id],
+  );
 
   const handlePageChange = useCallback(
     (page: number) => {
@@ -222,20 +337,32 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
 
   return (
     <div className="flex h-full w-full flex-col">
-      <div
-        ref={containerRef}
-        className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden"
-      >
+      <div ref={containerRef} className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
         {loading && (
           <div className="text-gray-40 absolute inset-0 z-5 flex items-center justify-center text-sm">
             Загрузка...
           </div>
         )}
-        <canvas
-          ref={canvasRef}
-          className="block max-h-full max-w-full transition-opacity duration-200"
-          style={{ opacity: loading ? 0.3 : 1 }}
-        />
+        {Array.from({ length: pagesVisible }, (_, i) => {
+          const pageNum = displayPage + i;
+          const inRange = pageNum <= totalPages;
+          return (
+            <div
+              key={i}
+              className="flex min-h-0 flex-1 items-center justify-center"
+              style={{ opacity: loading ? 0.3 : 1 }}
+            >
+              {inRange ? (
+                <canvas
+                  ref={(el) => {
+                    canvasRefs.current[i] = el;
+                  }}
+                  className="block max-h-full max-w-full transition-opacity duration-200"
+                />
+              ) : null}
+            </div>
+          );
+        })}
       </div>
       <PdfPageControls
         fileName={shape.props.fileName}
@@ -243,6 +370,9 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
         totalPages={totalPages}
         disabled={!canFlip}
         onPageChange={handlePageChange}
+        onExtractPage={!isReadonly && !loading ? handleExtractPage : undefined}
+        pagesVisible={pagesVisible}
+        onPagesVisibleChange={!isReadonly ? handlePagesVisibleChange : undefined}
       />
     </div>
   );
