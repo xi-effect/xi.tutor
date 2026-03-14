@@ -40,6 +40,22 @@ const MOCK_LESSONS: ScheduleLessonRow[] = [
     studentName: 'Елена Федорова',
     studentId: 5,
   },
+  {
+    id: 2,
+    startTime: '20:45',
+    endTime: '21:30',
+    subject: 'Физика',
+    studentName: 'Анна Кузнецова',
+    studentId: 3,
+  },
+  {
+    id: 3,
+    startTime: '22:45',
+    endTime: '23:30',
+    subject: 'Химия',
+    studentName: 'Олег Смирнов',
+    studentId: 4,
+  },
 ];
 
 const getToday = () => {
@@ -57,7 +73,7 @@ export const Lessons = () => {
   return (
     <>
       <AddingLessonModal open={open} onOpenChange={setOpen} dayLessons={dayLessonsForModal} />
-      <div className="bg-gray-0 flex h-[calc(100vh-112px)] w-(--lessons-panel-width) flex-col gap-4 rounded-2xl p-4">
+      <div className="bg-gray-0 flex h-[calc(100vh-88px)] w-(--lessons-panel-width) flex-col gap-4 rounded-2xl p-4">
         {/* Заголовок */}
         <div className="flex flex-row items-center justify-between gap-2">
           <div className="flex flex-row items-center gap-2">

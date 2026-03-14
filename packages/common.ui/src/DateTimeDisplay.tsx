@@ -4,20 +4,24 @@ export const DateTimeDisplay = () => {
   const [currentDateTime, setCurrentDateTime] = useState(() => {
     const now = new Date();
     const time = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-    const weekday = now.toLocaleDateString('ru-RU', { weekday: 'long' });
-    const day = now.getDate();
-    const month = now.toLocaleDateString('ru-RU', { month: 'long' });
-    return { time, date: `${weekday}, ${day} ${month}` };
+    const date = now.toLocaleDateString('ru-RU', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+    });
+    return { time, date };
   });
 
   useEffect(() => {
     const updateDateTime = () => {
       const now = new Date();
       const time = now.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' });
-      const weekday = now.toLocaleDateString('ru-RU', { weekday: 'long' });
-      const day = now.getDate();
-      const month = now.toLocaleDateString('ru-RU', { month: 'long' });
-      setCurrentDateTime({ time, date: `${weekday}, ${day} ${month}` });
+      const date = now.toLocaleDateString('ru-RU', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+      });
+      setCurrentDateTime({ time, date });
     };
 
     updateDateTime();
