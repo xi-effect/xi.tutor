@@ -3186,9 +3186,6 @@ importers:
       '@xipkg/scrollarea':
         specifier: 2.2.0
         version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      '@xipkg/select':
-        specifier: ^2.2.5
-        version: 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/sidebar':
         specifier: 0.3.0
         version: 0.3.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -4091,6 +4088,9 @@ importers:
       '@xipkg/button':
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
+      '@xipkg/dropdown':
+        specifier: 3.0.12
+        version: 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/icons':
         specifier: ^3.0.6
         version: 3.0.6(react@19.2.4)
@@ -9286,8 +9286,8 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-config-turbo@2.8.16:
-    resolution: {integrity: sha512-7JY6vlgFZWUH1YlLpxQjgia3bjcIpWxYahDQ/XfXSU5etv2KyEPY/O6jK/8Tg+Z2xjZm8ZQFgqK15K5MLIQAFA==}
+  eslint-config-turbo@2.8.17:
+    resolution: {integrity: sha512-sLjl8LT+NHy825rWW5W5whiJDh2mncf+i1RMgw52mioSy+1kithfKpVsZ68Ah/4nnE2rhGQGlrhCZXcmWM/duw==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -9379,6 +9379,12 @@ packages:
 
   eslint-plugin-turbo@2.8.16:
     resolution: {integrity: sha512-fhvTLe0PnyV72npfBi/IwwVMzkTnUw9MxS2S2Q0Oo1aed7woAtHwSL5DEdTTV6tXZSKbqRHaIbjV6rwx+1iRYA==}
+    peerDependencies:
+      eslint: '>6.6.0'
+      turbo: '>2.0.0'
+
+  eslint-plugin-turbo@2.8.17:
+    resolution: {integrity: sha512-ueZdnMyqZ6Q8dntbG98Ylyu6dqYt3MgoRELKGfDQDhPmwtxWwtimas0BDx8x/Ex4nnfg1pvr9HKxew/rHdvHIw==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -15277,7 +15283,7 @@ snapshots:
       eslint-config-airbnb: 19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2(eslint@9.39.4(jiti@2.6.1)))(eslint-plugin-react-hooks@5.1.0(eslint@9.39.4(jiti@2.6.1)))(eslint-plugin-react@7.37.2(eslint@9.39.4(jiti@2.6.1)))(eslint@9.39.4(jiti@2.6.1))
       eslint-config-next: 15.1.2(eslint@9.39.4(jiti@2.6.1))(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.39.4(jiti@2.6.1))
-      eslint-config-turbo: 2.8.16(eslint@9.39.4(jiti@2.6.1))(turbo@2.8.16)
+      eslint-config-turbo: 2.8.17(eslint@9.39.4(jiti@2.6.1))(turbo@2.8.16)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.57.0(eslint@9.39.4(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.4(jiti@2.6.1))
       eslint-plugin-react: 7.37.2(eslint@9.39.4(jiti@2.6.1))
       eslint-plugin-react-hooks: 5.1.0(eslint@9.39.4(jiti@2.6.1))
@@ -16328,10 +16334,10 @@ snapshots:
     dependencies:
       eslint: 9.39.4(jiti@2.6.1)
 
-  eslint-config-turbo@2.8.16(eslint@9.39.4(jiti@2.6.1))(turbo@2.8.16):
+  eslint-config-turbo@2.8.17(eslint@9.39.4(jiti@2.6.1))(turbo@2.8.16):
     dependencies:
       eslint: 9.39.4(jiti@2.6.1)
-      eslint-plugin-turbo: 2.8.16(eslint@9.39.4(jiti@2.6.1))(turbo@2.8.16)
+      eslint-plugin-turbo: 2.8.17(eslint@9.39.4(jiti@2.6.1))(turbo@2.8.16)
       turbo: 2.8.16
 
   eslint-import-resolver-node@0.3.9:
@@ -16475,6 +16481,12 @@ snapshots:
       string.prototype.repeat: 1.0.0
 
   eslint-plugin-turbo@2.8.16(eslint@9.39.4(jiti@2.6.1))(turbo@2.8.16):
+    dependencies:
+      dotenv: 16.0.3
+      eslint: 9.39.4(jiti@2.6.1)
+      turbo: 2.8.16
+
+  eslint-plugin-turbo@2.8.17(eslint@9.39.4(jiti@2.6.1))(turbo@2.8.16):
     dependencies:
       dotenv: 16.0.3
       eslint: 9.39.4(jiti@2.6.1)

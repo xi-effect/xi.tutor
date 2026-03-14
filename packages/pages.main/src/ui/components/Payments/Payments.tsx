@@ -13,6 +13,8 @@ import {
 } from 'common.services';
 import { mapPaymentStatus, PaymentStatusT, RolePaymentT } from 'common.types';
 import { cn } from '@xipkg/utils';
+import { InvoiceModal } from 'features.invoice';
+import { useState } from 'react';
 
 const PAYMENTS_PREVIEW_LIMIT = 10;
 
@@ -84,6 +86,7 @@ export const Payments = () => {
   const payments = isTutor ? tutorPayments : studentPayments;
   const isLoading = isTutor ? isLoadingTutor : isLoadingStudent;
   const previewList = (payments ?? []).slice(0, PAYMENTS_PREVIEW_LIMIT);
+  const [invoiceModalOpen, setInvoiceModalOpen] = useState(false);
 
   const handleMore = () => {
     const filteredSearch = search.call ? { call: search.call } : {};
@@ -97,7 +100,7 @@ export const Payments = () => {
   };
 
   const handleAdd = () => {
-    handleMore();
+    setInvoiceModalOpen(true);
   };
 
   return (
@@ -105,14 +108,15 @@ export const Payments = () => {
       <div className="flex flex-row items-center justify-between">
         <h2 className="text-l-base font-medium text-gray-100">Оплата</h2>
         <Button
-          variant="icon"
-          className="bg-brand-100 flex size-10 items-center justify-center rounded-full p-0"
+          variant="none"
+          className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
           onClick={handleAdd}
           data-umami-event="create-invoice-button"
           id="create-invoice-button"
         >
-          <Add className="fill-gray-0 size-5" />
+          <Add className="fill-brand-80 size-6" />
         </Button>
+        <InvoiceModal open={invoiceModalOpen} onOpenChange={setInvoiceModalOpen} />
       </div>
 
       {isLoading ? (

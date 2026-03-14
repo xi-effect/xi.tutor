@@ -1,6 +1,5 @@
-import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@xipkg/button';
-import { ArrowUpRight } from '@xipkg/icons';
+import { Add } from '@xipkg/icons';
 import { AddingLessonModal } from 'features.lesson.add';
 import { useState } from 'react';
 import { AllLessons } from './AllLessons';
@@ -50,7 +49,6 @@ const getToday = () => {
 };
 
 export const Lessons = () => {
-  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getToday);
 
@@ -67,12 +65,12 @@ export const Lessons = () => {
           </div>
           <Button
             variant="none"
-            size="s"
-            className="text-gray-60 hover:text-gray-80 flex items-center gap-1.5 font-normal"
-            onClick={() => navigate({ to: '/schedule' })}
+            className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
+            onClick={() => setOpen(true)}
+            data-umami-event="add-lesson-button"
+            id="add-lesson-button"
           >
-            Подробное
-            <ArrowUpRight className="fill-brand-80 h-5 w-5" />
+            <Add className="fill-brand-80 size-6" />
           </Button>
         </div>
 
