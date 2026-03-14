@@ -6,10 +6,24 @@ import { myAssetStore } from './imageStore';
 const DECODE_ERROR_MESSAGE =
   'Не удалось прочитать изображение. Возможные причины: повреждённый файл, неподдерживаемый формат в этом браузере или вставка из буфера обмена (попробуйте вставить картинку по ссылке через кнопку «Изображение»).';
 
+export type InsertImagePlacement = {
+  /** Позиция и размер на доске (в координатах страницы). Если не задано — по центру вьюпорта с натуральными размерами. */
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+};
+
 /**
  * Вставка изображения с мгновенным preview и последующей загрузкой
+ * @param placement — опционально: позиция (x, y) и размер (w, h) на доске
  */
-export async function insertImage(editor: Editor, file: File, token: string) {
+export async function insertImage(
+  editor: Editor,
+  file: File,
+  token: string,
+  placement?: InsertImagePlacement,
+) {
   if (!file.size) {
     toast.error('Файл пустой', { description: 'Выберите изображение с ненулевым размером.' });
     return;
@@ -48,7 +62,14 @@ export async function insertImage(editor: Editor, file: File, token: string) {
     reader.readAsDataURL(file);
   });
 
-  const viewportCenter = editor.getViewportPageBounds().center;
+  const position = placement
+    ? { x: placement.x, y: placement.y }
+    : (() => {
+        const center = editor.getViewportPageBounds().center;
+        return { x: center.x - w / 2, y: center.y - h / 2 };
+      })();
+  const shapeW = placement ? placement.w : w;
+  const shapeH = placement ? placement.h : h;
 
   editor.createAssets([
     {
@@ -71,11 +92,11 @@ export async function insertImage(editor: Editor, file: File, token: string) {
     {
       id: shapeId,
       type: 'image',
-      x: viewportCenter.x - w / 2,
-      y: viewportCenter.y - h / 2,
+      x: position.x,
+      y: position.y,
       props: {
-        w,
-        h,
+        w: shapeW,
+        h: shapeH,
         assetId: tempAssetId,
       },
     },
