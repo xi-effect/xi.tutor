@@ -13,10 +13,11 @@ export const ClassroomsPage = () => {
   const [isAddGroupModalOpen, setIsAddGroupModalOpen] = useState(false);
 
   return (
-    <div className="flex flex-col justify-between gap-6 pr-0 pl-4">
-      <div className="flex flex-col">
-        <div className="flex flex-row items-center pt-1 pb-4">
-          <h1 className="text-2xl font-semibold text-gray-100">Кабинеты</h1>
+    <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pr-0 pl-4">
+      <div className="flex h-screen flex-col">
+        <div className="flex flex-row items-center pt-6 pr-6 pb-4 pl-4">
+          <h1 className="text-2xl font-normal text-gray-100">Кабинеты</h1>
+
           <div className="mr-2 ml-auto flex items-center">
             {isTutor && <LinkListStudents src="#" />}
           </div>

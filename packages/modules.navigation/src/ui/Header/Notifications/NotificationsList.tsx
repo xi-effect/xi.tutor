@@ -49,7 +49,7 @@ export const NotificationsList = ({
 
           {(isLoading || isFetchingNextPage) && (
             <div className="flex justify-center p-4">
-              <span className="text-gray-80 text-s-base">Загрузка...</span>
+              <span className="text-gray-80 text-xs-base">Загрузка...</span>
             </div>
           )}
         </>
@@ -60,7 +60,7 @@ export const NotificationsList = ({
             isMobile ? 'h-[200px]' : 'h-[300px]',
           )}
         >
-          <span className="text-gray-80 text-m-base font-normal">Уведомлений нет</span>
+          <span className="text-gray-80 text-s-base font-normal">Уведомлений нет</span>
         </div>
       )}
     </div>

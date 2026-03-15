@@ -153,19 +153,19 @@ export const Content = ({ classroom }: ContentProps) => {
   };
 
   return (
-    <div className="flex flex-row items-start px-4 pb-2">
-      <div className="flex w-full flex-col items-start gap-4">
+    <div className="flex flex-row items-center pt-6 pr-6 pb-4 pl-4">
+      <div className="flex w-full flex-row items-center gap-4">
         {classroom.kind === 'individual' ? (
           <IndividualUser userId={classroom.student_id ?? classroom.tutor_id ?? 0} />
         ) : (
-          <div className="flex flex-row items-center gap-2">
+          <div className="flex flex-row items-center justify-center gap-2">
             <div className="bg-brand-80 text-gray-0 flex h-12 w-12 items-center justify-center rounded-[24px]">
               {getDisplayName()?.[0].toUpperCase() ?? ''}
             </div>
             <div className="text-xl-base font-semibold text-gray-100">{getDisplayName()}</div>
           </div>
         )}
-        <div className="flex flex-row items-center gap-2">
+        <div className="flex flex-row items-center justify-center gap-2">
           {classroom.subject_id && <SubjectBadge subject_id={classroom.subject_id} />}
 
           <StatusBadge status={classroom.status} kind={classroom.kind} />
@@ -177,12 +177,12 @@ export const Content = ({ classroom }: ContentProps) => {
             <ContactsBadge userId={classroom.tutor_id ?? 0} />
           )}
         </div>
-        <div className="flex w-full sm:hidden">
+        <div className="flex w-full justify-center sm:hidden">
           <CallButton classroom={classroom} />
         </div>
       </div>
 
-      <div className="ml-auto hidden flex-col items-end gap-2 sm:flex">
+      <div className="ml-auto hidden flex-col items-center justify-center gap-2 sm:flex">
         <CallButton classroom={classroom} />
       </div>
     </div>

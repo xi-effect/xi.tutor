@@ -10,7 +10,7 @@ import {
 } from '@xipkg/sheet';
 import { Close, Conference, Microphone, SoundTwo, Chat, Hand } from '@xipkg/icons';
 import { Label } from '@xipkg/label';
-import { Switch } from '@xipkg/switcher';
+import { Toggle } from '@xipkg/toggle';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
 import { Slider } from '@xipkg/slider';
 import {
@@ -242,7 +242,7 @@ export const Settings = ({ children }: SettingsPropsT) => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label className="font-medium text-gray-100">Камера</Label>
-              <Switch
+              <Toggle
                 checked={isCameraEnabled}
                 onCheckedChange={handleCameraToggle}
                 disabled={!isCameraGranted}
@@ -267,7 +267,7 @@ export const Settings = ({ children }: SettingsPropsT) => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label className="font-medium text-gray-100">Микрофон</Label>
-              <Switch
+              <Toggle
                 checked={isMicrophoneEnabled}
                 onCheckedChange={handleMicrophoneToggle}
                 disabled={!isMicrophoneGranted}
@@ -312,7 +312,7 @@ export const Settings = ({ children }: SettingsPropsT) => {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label className="font-medium text-gray-100">Размытие фона</Label>
-                <Switch checked={blurEnabled} onCheckedChange={handleBlurToggle} />
+                <Toggle checked={blurEnabled} onCheckedChange={handleBlurToggle} />
               </div>
             </div>
           )}

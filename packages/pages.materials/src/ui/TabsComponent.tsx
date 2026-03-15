@@ -4,36 +4,29 @@ import { Materials } from './Materials';
 import { Notes } from './Notes';
 // import { Files } from './Files';
 
-export const TabsComponent = () => {
+interface TabsComponentProps {
+  activeTab: string;
+  onTabChange: (tabId: string) => void;
+}
+
+export const TabsComponent = ({ activeTab, onTabChange }: TabsComponentProps) => {
   return (
-    <Tabs.Root defaultValue="boards">
-      <Tabs.List className="flex w-70 flex-row gap-4">
-        <Tabs.Trigger value="boards" className="text-m-base font-medium text-gray-100">
-          Учебные доски
-        </Tabs.Trigger>
+    <div className="bg-gray-0 rounded-tl-2xl">
+      <Tabs.Root value={activeTab} onValueChange={onTabChange}>
+        <div className="h-[calc(100vh-88px)] pl-4">
+          <Tabs.Content value="boards">
+            <Materials />
+          </Tabs.Content>
 
-        <Tabs.Trigger value="notes" className="text-m-base font-medium text-gray-100">
-          Заметки
-        </Tabs.Trigger>
+          <Tabs.Content value="notes">
+            <Notes />
+          </Tabs.Content>
 
-        {/* <Tabs.Trigger value="files" className="text-m-base font-medium text-gray-100">
-          Файлы
-        </Tabs.Trigger> */}
-      </Tabs.List>
-
-      <div className="pt-0">
-        <Tabs.Content value="boards">
-          <Materials />
-        </Tabs.Content>
-
-        <Tabs.Content value="notes">
-          <Notes />
-        </Tabs.Content>
-
-        {/* <Tabs.Content value="files">
+          {/* <Tabs.Content value="files">
           <Files />
         </Tabs.Content> */}
-      </div>
-    </Tabs.Root>
+        </div>
+      </Tabs.Root>
+    </div>
   );
 };

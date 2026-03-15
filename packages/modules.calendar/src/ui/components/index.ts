@@ -1,5 +1,5 @@
 export { CalendarEvent } from './CalendarEvent';
-export { MonthCalendar } from './MonthCalendar';
-export { Sidebar } from './Sidebar';
-export { WeekCalendar } from './WeekCalendar';
-export { YearCalendar } from './YearCalendar';
+export { ScheduleKanban } from './ScheduleKanban';
+export { ScheduleDateCarousel } from './ScheduleDateCarousel';
+export { DayLessonRow } from './DayLessonRow';
+export { DayLessonsPanel } from './DayLessonsPanel';

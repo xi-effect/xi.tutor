@@ -1,5 +1,6 @@
 import { Button } from '@xipkg/button';
 import { Plus } from '@xipkg/icons';
+import * as React from 'react';
 
 import { Header } from './Header';
 import { TabsComponent } from './TabsComponent';
@@ -12,6 +13,7 @@ import {
 import { MaterialsDuplicate } from 'features.materials.duplicate';
 
 const MaterialsPageContent = () => {
+  const [activeTab, setActiveTab] = React.useState('boards');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const { materialId, open, closeModal } = useMaterialsDuplicate();
@@ -29,10 +31,10 @@ const MaterialsPageContent = () => {
 
   return (
     <>
-      <div className="flex flex-col justify-between gap-6 pl-4">
-        <div className="flex flex-col pt-1">
-          <Header />
-          <TabsComponent />
+      <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pl-4">
+        <div className="flex flex-col">
+          <Header activeTab={activeTab} onTabChange={setActiveTab} />
+          <TabsComponent activeTab={activeTab} onTabChange={setActiveTab} />
         </div>
 
         <div className="xs:hidden flex flex-row items-center justify-end">

@@ -8,7 +8,7 @@ export const Desktop = ({ children }: { children: React.ReactNode }) => {
       <Sidebar
         id="sidebar"
         collapsible="icon"
-        className="dark:bg-gray-0 absolute w-full pt-[64px] md:w-[300px]"
+        className="dark:bg-gray-0 absolute w-full pt-[64px] md:w-[var(--sidebar-width)]"
       >
         <SideBarItems />
       </Sidebar>

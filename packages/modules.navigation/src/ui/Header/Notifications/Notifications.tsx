@@ -26,7 +26,6 @@ export const Notifications = () => {
     notifications,
     unreadCount,
     markAsRead,
-    // markAllAsRead,
     isLoading,
     hasMore,
     loadMore,

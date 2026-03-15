@@ -1,11 +1,18 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Tabs } from '@xipkg/tabs';
+import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { useSearch, useNavigate } from '@tanstack/react-router';
 
 import { Overview } from '../Overview';
 import { SearchParams } from '../../types/router';
 import { Payments } from '../Payments';
 import { Materials } from '../Materials';
+
+const tabs = [
+  { id: 'overview', label: 'Сводка' },
+  { id: 'materials', label: 'Материалы' },
+  { id: 'payments', label: 'Оплаты' },
+];
 
 export const TabsStudent = () => {
   const search: SearchParams = useSearch({ strict: false });
@@ -27,43 +34,31 @@ export const TabsStudent = () => {
   };
 
   return (
-    <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
-      <div className="flex h-[56px] flex-row items-center overflow-x-auto pr-4 pl-4 sm:pr-0">
-        <Tabs.List className="flex flex-row gap-4 max-sm:w-full">
-          <Tabs.Trigger value="overview" className="text-m-base font-medium text-gray-100">
-            Сводка
-          </Tabs.Trigger>
+    <div className="bg-gray-0 rounded-tl-2xl p-4">
+      <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
+        <div className="flex h-[56px] flex-row items-center overflow-x-auto pr-4 pl-4 sm:p-0">
+          <SwitcherAnimate
+            tabs={tabs}
+            activeTab={currentTab}
+            onChange={handleTabChange}
+            className="flex flex-row gap-4 max-sm:w-full"
+            tabClassName="text-m-base font-medium text-gray-100"
+          />
+        </div>
+        <div className="pt-0">
+          <Tabs.Content value="overview">
+            <Overview />
+          </Tabs.Content>
 
-          <Tabs.Trigger
-            value="materials"
-            className="text-m-base font-medium text-gray-100"
-            id="materials-tab"
-          >
-            Материалы
-          </Tabs.Trigger>
+          <Tabs.Content value="materials">
+            <Materials />
+          </Tabs.Content>
 
-          <Tabs.Trigger
-            value="payments"
-            className="text-m-base font-medium text-gray-100"
-            id="payments-tab"
-          >
-            Оплаты
-          </Tabs.Trigger>
-        </Tabs.List>
-      </div>
-      <div className="pt-0">
-        <Tabs.Content value="overview">
-          <Overview />
-        </Tabs.Content>
-
-        <Tabs.Content value="materials">
-          <Materials />
-        </Tabs.Content>
-
-        <Tabs.Content value="payments">
-          <Payments />
-        </Tabs.Content>
-      </div>
-    </Tabs.Root>
+          <Tabs.Content value="payments">
+            <Payments />
+          </Tabs.Content>
+        </div>
+      </Tabs.Root>
+    </div>
   );
 };

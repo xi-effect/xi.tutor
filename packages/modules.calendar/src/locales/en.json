@@ -1,6 +1,8 @@
 {
   "change_view": "Change view",
   "today": "Today",
+  "prev_week": "Previous week",
+  "next_week": "Next week",
   "week_days": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
   "months": "January,February,March,April,May,June,July,August,September,October,November,December",
   "add_event": "Create an event",

@@ -35,6 +35,7 @@
     "modules.editor": "workspace:*",
     "modules.calendar": "workspace:*",
     "modules.navigation": "workspace:*",
+    "pages.calendar": "workspace:*",
     "pages.classroom": "workspace:*",
     "pages.classrooms": "workspace:*",
     "pages.main": "workspace:*",

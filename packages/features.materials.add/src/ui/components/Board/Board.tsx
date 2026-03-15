@@ -67,7 +67,7 @@ export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps)
       <Button
         onClick={handleCreateBoardDraft}
         size="s"
-        variant="secondary"
+        variant="ghost"
         className="max-sm:hidden"
         disabled={addMaterials.isPending}
         data-umami-event="material-create-board-draft"

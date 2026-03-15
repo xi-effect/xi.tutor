@@ -6,6 +6,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
+import { SidebarMenuButton, SidebarMenuItem } from '@xipkg/sidebar';
 
 export const NotificationsDropdown = ({
   isOpen,
@@ -23,20 +24,28 @@ export const NotificationsDropdown = ({
   return (
     <DropdownMenu open={isOpen} onOpenChange={onOpenChange}>
       <DropdownMenuTrigger asChild>
-        <Button variant="none" className="relative size-8 p-1">
-          <Notification className="fill-gray-80 size-6" size="s" />
+        <SidebarMenuItem>
+          <SidebarMenuButton className="relative h-10 w-full p-2 focus-visible:ring-0 focus-visible:ring-offset-0">
+            <>
+              <Notification className="fill-gray-80 size-6" size="s" />
+              <span className="text-s-base">Уведомления</span>
+            </>
+          </SidebarMenuButton>
           {badge}
-        </Button>
+        </SidebarMenuItem>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        align="end"
-        className="rounded-5 flex w-[310px] flex-col gap-1 border-2 p-1"
+        align="start"
+        side="top"
+        alignOffset={0}
+        sideOffset={8}
+        className="flex w-[268px] flex-col gap-1 rounded-[20px] border-2 px-1 py-1"
       >
-        <DropdownMenuLabel className="text-m-base flex h-12 items-center p-3 font-semibold text-gray-100">
+        <DropdownMenuLabel className="text-s-base flex h-[48px] items-center p-3 font-semibold text-gray-100">
           Уведомления
           <div className="ml-auto flex items-center gap-1">
-            <Button onClick={onOpenSettings} variant="none" className="size-8 p-1">
+            <Button onClick={onOpenSettings} variant="none" className="h-[32px] w-[32px] p-1">
               <Settings className="fill-gray-80 size-6" size="s" />
             </Button>
           </div>

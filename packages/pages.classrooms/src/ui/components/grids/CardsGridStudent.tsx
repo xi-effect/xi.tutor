@@ -16,7 +16,7 @@ export const CardsGridStudent = () => {
 
   if (isError) {
     return (
-      <div className="flex h-64 items-center justify-center">
+      <div className="bg-gray-0 flex h-64 items-center justify-center">
         <p className="text-red-50">Ошибка загрузки кабинетов</p>
       </div>
     );
@@ -24,7 +24,7 @@ export const CardsGridStudent = () => {
 
   if (items.length === 0) {
     return (
-      <div className="flex h-full min-h-[90dvh] flex-col items-center justify-center gap-2">
+      <div className="bg-gray-0 flex h-full min-h-[90dvh] flex-col items-center justify-center gap-2">
         <p className="text-xl-base text-center font-semibold text-gray-100">
           Здесь будут ваши кабинеты
         </p>
@@ -36,7 +36,7 @@ export const CardsGridStudent = () => {
   }
 
   return (
-    <div ref={parentRef} className="h-[calc(100vh-204px)] w-full overflow-auto pr-4">
+    <div ref={parentRef} className="bg-gray-0 h-[calc(100vh-204px)] w-full overflow-auto pr-4">
       <div className="max-xs:gap-4 grid grid-cols-1 gap-8 min-[550px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {items.map((classroom) => (
           <div key={classroom.id} className="classroom-card">

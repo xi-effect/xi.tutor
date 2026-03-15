@@ -9,7 +9,7 @@ import { usePermissionsStore } from '../../../../store/permissions';
 import { Alert, AlertIcon, AlertContainer, AlertDescription } from '@xipkg/alert';
 import { InfoCircle } from '@xipkg/icons';
 import { Label } from '@xipkg/label';
-import { Switch } from '@xipkg/switcher';
+import { Toggle } from '@xipkg/toggle';
 import { supportsBackgroundProcessors } from '@livekit/track-processors';
 import type { UseNoiseCancellationResult } from '../../../../hooks/useNoiseCancellation';
 import { NoiseCancellationSettings } from '../../../../ui/shared/NoiseCancellationSettings';
@@ -193,7 +193,7 @@ export const MediaDevices = ({ audioTrack, videoTrack, noiseCancellation }: Medi
             <div className="my-4">
               <div className="flex items-center justify-between">
                 <Label className="font-medium text-gray-100">Размытие фона</Label>
-                <Switch checked={blurEnabled} onCheckedChange={saveBlurEnabled} />
+                <Toggle checked={blurEnabled} onCheckedChange={saveBlurEnabled} />
               </div>
             </div>
           )}

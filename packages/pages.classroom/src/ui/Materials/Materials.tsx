@@ -42,7 +42,7 @@ export const Materials = () => {
     return (
       <div className="flex flex-col">
         {/* Учебные доски секция */}
-        <div className="flex flex-col gap-4 p-4">
+        <div className="flex flex-col gap-4">
           <div className="flex flex-row items-center justify-start gap-2">
             <div className="h-6 w-32 animate-pulse rounded bg-gray-200" />
           </div>
@@ -113,7 +113,7 @@ export const Materials = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="flex flex-col gap-4 p-4">
+      <div className="flex flex-col gap-4">
         <div className="flex flex-row items-center justify-start gap-2">
           <h2 className="text-xl-base font-medium text-gray-100">Учебные доски</h2>
         </div>
@@ -125,7 +125,12 @@ export const Materials = () => {
             <div className="flex flex-row gap-8 pb-4">
               {boardsData?.length ? (
                 boardsData.map((board) => (
-                  <MaterialsCard key={board.id} {...board} hasIcon className="2xl:w-[430px]" />
+                  <MaterialsCard
+                    key={board.id}
+                    {...board}
+                    hasIcon
+                    className="w-auto min-w-[350px]"
+                  />
                 ))
               ) : (
                 <div className="flex h-[150px] w-full items-center justify-center">
@@ -137,7 +142,7 @@ export const Materials = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 p-4">
+      <div className="flex flex-col gap-4">
         <div className="flex flex-row items-center justify-start gap-2">
           <h2 className="text-xl-base font-medium text-gray-100">Заметки</h2>
         </div>
@@ -149,7 +154,7 @@ export const Materials = () => {
             <div className="flex flex-row gap-8">
               {notesData?.length ? (
                 notesData.map((note) => (
-                  <MaterialsCard {...note} hasIcon className="2xl:w-[430px]" />
+                  <MaterialsCard {...note} hasIcon className="w-auto min-w-[350px]" />
                 ))
               ) : (
                 <div className="flex h-[150px] w-full items-center justify-center">

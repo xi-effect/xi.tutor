@@ -41,7 +41,135 @@ export const students: StudentT[] = [
   },
 ];
 
+/** Возвращает понедельник текущей недели (weekStartsOn: 1) */
+const getWeekStart = (d: Date): Date => {
+  const date = new Date(d);
+  const day = date.getDay();
+  const diff = day === 0 ? -6 : 1 - day; // Пн = 1, Вс = 0
+  date.setDate(date.getDate() + diff);
+  date.setHours(0, 0, 0, 0);
+  return date;
+};
+
+/** Карточки занятий на текущую неделю — всегда видны при открытии календаря */
+const getLessonCardMocks = (): ICalendarEvent[] => {
+  const mon = getWeekStart(new Date());
+  const day = (d: number, h: number, min: number) => {
+    const x = new Date(mon);
+    x.setDate(mon.getDate() + d);
+    x.setHours(h, min, 0, 0);
+    return x;
+  };
+  return [
+    {
+      id: 'card-1',
+      title: 'Основы органической химии',
+      start: day(0, 11, 0),
+      end: day(0, 12, 0),
+      type: 'lesson',
+      lessonInfo: {
+        studentName: 'Иван Смирнов',
+        subject: 'Химия',
+        lessonType: 'individual',
+        description: 'Основы органической химии',
+      },
+    },
+    {
+      id: 'card-2',
+      title: 'Законы Ньютона',
+      start: day(0, 13, 0),
+      end: day(0, 14, 0),
+      type: 'lesson',
+      lessonInfo: {
+        studentName: 'Анна Петрова',
+        subject: 'Физика',
+        lessonType: 'individual',
+        description: 'Законы Ньютона',
+      },
+    },
+    {
+      id: 'card-3',
+      title: 'Классическая механика',
+      start: day(1, 15, 0),
+      end: day(1, 16, 0),
+      type: 'lesson',
+      lessonInfo: {
+        studentName: 'Сергей Кузнецов',
+        subject: 'Физика',
+        lessonType: 'group',
+        description: 'Классическая механика',
+      },
+    },
+    {
+      id: 'card-4',
+      title: 'Алгебра и геометрия',
+      start: day(1, 9, 0),
+      end: day(1, 10, 0),
+      type: 'lesson',
+      lessonInfo: {
+        studentName: 'Елена Михайлова',
+        subject: 'Математика',
+        lessonType: 'individual',
+        description: 'Алгебра и геометрия',
+      },
+    },
+    {
+      id: 'card-5',
+      title: 'Эволюционная теория',
+      start: day(2, 11, 0),
+      end: day(2, 12, 0),
+      type: 'lesson',
+      lessonInfo: {
+        studentName: 'Сергей Иванов',
+        subject: 'Биология',
+        lessonType: 'individual',
+        description: 'Эволюционная теория',
+      },
+    },
+    {
+      id: 'card-6',
+      title: 'Генетика и ДНК',
+      start: day(2, 15, 0),
+      end: day(2, 16, 0),
+      type: 'lesson',
+      lessonInfo: {
+        studentName: 'Мария Васильева',
+        subject: 'Биология',
+        lessonType: 'group',
+        description: 'Генетика и ДНК',
+      },
+    },
+    {
+      id: 'card-7',
+      title: 'Древний Рим',
+      start: day(3, 15, 0),
+      end: day(3, 16, 0),
+      type: 'lesson',
+      lessonInfo: {
+        studentName: 'Максим Иванов',
+        subject: 'История',
+        lessonType: 'individual',
+        description: 'Древний Рим',
+      },
+    },
+    {
+      id: 'card-8',
+      title: 'Разбор домашнего задания',
+      start: day(4, 10, 0),
+      end: day(4, 11, 0),
+      type: 'lesson',
+      lessonInfo: {
+        studentName: 'Иван Смирнов',
+        subject: 'Химия',
+        lessonType: 'individual',
+        description: 'Разбор домашнего задания',
+      },
+    },
+  ];
+};
+
 export const MOCK_EVENTS: ICalendarEvent[] = [
+  ...getLessonCardMocks(),
   {
     id: '1',
     title: 'Дмитрий',

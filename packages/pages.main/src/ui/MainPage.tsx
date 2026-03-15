@@ -1,10 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
-import { ScrollArea } from '@xipkg/scrollarea';
-import { Materials, Payments, Classrooms } from './components';
-import { Menu } from 'common.ui';
+import { Classrooms, Lessons, Payments, Materials } from './components';
+import { DateTimeDisplay, Menu } from 'common.ui';
 import { useCurrentUser } from 'common.services';
-// import { Sidebar } from './components/Sidebar';
-// import { AssignLessonButton } from './components/AssignLessonButton';
 
 export const MainPage = () => {
   const { data: user } = useCurrentUser();
@@ -115,20 +112,26 @@ export const MainPage = () => {
   ];
 
   return (
-    <div className="flex h-full flex-col overflow-auto lg:flex-row lg:gap-4">
-      {/* <AssignLessonButton className="absolute right-4 hidden lg:flex" /> */}
-      <ScrollArea
-        id="lessons"
-        type="always"
-        className="h-[calc(100vh-64px)] w-full flex-1 overflow-visible lg:overflow-auto"
-      >
-        {/* <Lessons /> */}
-        <Classrooms />
-        <Payments />
-        {isTutor && <Materials />}
-        <Menu steps={steps} disabled={false} />
-      </ScrollArea>
-      {/* <Sidebar /> */}
+    <div className="bg-gray-5 overflow-none flex h-screen flex-col">
+      <div className="flex flex-col gap-4 pl-4">
+        {/* Дата и время */}
+        <div className="pt-6 pl-4">
+          <DateTimeDisplay />
+        </div>
+
+        {/* Три колонки: Расписание, Кабинеты, Payments и Materials */}
+        <div className="flex flex-row gap-4">
+          <div className="flex flex-col">
+            <Lessons />
+          </div>
+          <div className="flex flex-col gap-5">
+            <Classrooms />
+            <Payments />
+            <Materials />
+          </div>
+        </div>
+      </div>
+      <Menu steps={steps} disabled={false} />
     </div>
   );
 };

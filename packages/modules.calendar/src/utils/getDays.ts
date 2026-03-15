@@ -1,4 +1,5 @@
 import {
+  addDays,
   startOfYear,
   endOfYear,
   eachMonthOfInterval,
@@ -40,6 +41,12 @@ export const getWeekDays = (currentDate: Date) => {
   const weekEnd = endOfWeek(currentDate, { weekStartsOn: 1 });
 
   return eachDayOfInterval({ start: weekStart, end: weekEnd });
+};
+
+/** Дни начиная с start в количестве count */
+export const getDaysFrom = (start: Date, count: number): Date[] => {
+  const end = addDays(start, count - 1);
+  return eachDayOfInterval({ start, end });
 };
 
 export const getWeeksNumbers = (days: Date[]) => {

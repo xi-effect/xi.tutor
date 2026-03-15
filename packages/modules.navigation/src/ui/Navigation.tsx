@@ -1,12 +1,15 @@
 import { useMediaQuery } from '@xipkg/utils';
 import { Drawer, DrawerContent } from '@xipkg/drawer';
 import { Sidebar, SidebarInset } from '@xipkg/sidebar';
-import { Header } from './Header';
+// import { Header } from './Header';
 import { SideBarItems } from './SideBarItems';
 import { SidebarProvider } from '@xipkg/sidebar';
 import { useFocusModeStore } from 'common.ui';
 import { useMenuStore } from '../store';
 import { useEffect, useMemo } from 'react';
+
+const SIDEBAR_WIDTH_EXPANDED = '300px';
+const SIDEBAR_WIDTH_COLLAPSED = '72px';
 
 const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useMediaQuery('(max-width: 960px)');
@@ -22,7 +25,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
       : 'h-screen overflow-hidden'
     : isMobile
       ? 'w-full pt-[64px]'
-      : 'h-screen overflow-hidden pt-[64px]';
+      : 'h-screen overflow-hidden';
 
   // Используем один компонент, который условно рендерит нужную структуру
   // но children всегда остаются в одном месте с одним ключом
@@ -47,7 +50,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
         <Sidebar
           id="sidebar"
           collapsible="icon"
-          className="dark:bg-gray-0 absolute w-full pt-[64px] md:w-[300px]"
+          className="dark:bg-gray-0 absolute w-full md:w-(--sidebar-width)"
         >
           <SideBarItems />
         </Sidebar>
@@ -88,17 +91,18 @@ export const Navigation = ({ children }: { children: React.ReactNode }) => {
   // Используем один SidebarProvider с динамическими пропсами вместо условного рендеринга
   // Это предотвращает пересоздание всего дерева компонентов при изменении размера окна
   // В режиме фокуса (доска на весь экран) не показываем верхний хедер приложения
+  const sidebarWidth = sidebarOpen ? SIDEBAR_WIDTH_EXPANDED : SIDEBAR_WIDTH_COLLAPSED;
+
   return (
     <SidebarProvider
-      style={
-        {
-          '--sidebar-width': '300px',
-        } as React.CSSProperties
-      }
       open={sidebarOpen}
       onOpenChange={sidebarOnOpenChange}
+      style={
+        {
+          '--sidebar-width': sidebarWidth,
+        } as React.CSSProperties
+      }
     >
-      {!focusMode && <Header />}
       <NavigationLayout>{stableChildren}</NavigationLayout>
     </SidebarProvider>
   );

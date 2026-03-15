@@ -3,8 +3,8 @@ import { Tabs } from './Tabs';
 
 export const ClassroomPage = () => {
   return (
-    <div className="flex h-full flex-col justify-between gap-6 overflow-y-auto">
-      <div className="flex flex-col pt-1">
+    <div className="bg-gray-5 flex h-full flex-col justify-between gap-6 overflow-y-auto">
+      <div className="flex flex-col pl-4">
         <Header />
         <Tabs />
       </div>
