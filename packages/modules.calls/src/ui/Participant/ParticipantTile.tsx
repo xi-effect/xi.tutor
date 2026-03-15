@@ -30,7 +30,7 @@ import { ScreenShareZoom } from './ScreenShareZoom';
 import { useCallStore } from '../../store/callStore';
 import { isLocal } from '../../utils/livekit';
 import { cn } from '@xipkg/utils';
-import { useMedia } from '../../../../common.utils/src/useMedia';
+import { useMedia } from 'common.utils';
 
 type TrackRefContextIfNeededPropsT = {
   trackRef?: TrackReferenceOrPlaceholder;
@@ -332,7 +332,7 @@ export const ParticipantTile = ({
           {/* Индикатор поднятой руки в верхнем правом углу - скрываем для ScreenShare */}
           {trackReference.source !== Track.Source.ScreenShare && (
             <div className="absolute top-2 left-2 z-10">
-              <RaisedHandIndicator participantId={identity || 'unknown'} />
+              <RaisedHandIndicator participant={trackReference.participant} />
             </div>
           )}
 

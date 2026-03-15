@@ -1,17 +1,17 @@
-import { useEffect, useCallback } from 'react';
-import { Participant, RoomEvent } from 'livekit-client';
-import { useParams } from '@tanstack/react-router';
-
+import { useCallback } from 'react';
 import { useRoom } from '../providers/RoomProvider';
-import { useCallStore } from '../store/callStore';
 import { useCurrentUser, useUpdateParticipantMetadata } from 'common.services';
+import { useParams } from '@tanstack/react-router';
+import { useParticipantInfo } from '@livekit/components-react';
 
 export const useRaisedHands = () => {
   const { callId } = useParams({ strict: false });
   const { room } = useRoom();
   const { data: user } = useCurrentUser();
+  const participant = room?.localParticipant;
 
-  const { isHandRaised, updateStore, addRaisedHand, removeRaisedHand } = useCallStore();
+  const { metadata } = useParticipantInfo({ participant });
+  const isHandRaised = JSON.parse(metadata || '{}').is_hand_raised;
 
   const { updateParticipantMetadata } = useUpdateParticipantMetadata(user.default_layout);
 
@@ -28,50 +28,9 @@ export const useRaisedHands = () => {
     }
   }, [room, callId, isHandRaised, updateParticipantMetadata]);
 
-  useEffect(() => {
-    if (!room) return;
-
-    const syncParticipant = (participant: Participant) => {
-      try {
-        const parsed = JSON.parse(participant.metadata || '{}');
-
-        if (!('is_hand_raised' in parsed)) return;
-
-        if (parsed.is_hand_raised) {
-          addRaisedHand({
-            participantId: participant.identity,
-            participantName: participant.name ?? participant.identity,
-            timestamp: Date.now(),
-          });
-        } else {
-          removeRaisedHand(participant.identity);
-        }
-
-        if (participant.identity === room.localParticipant.identity) {
-          updateStore('isHandRaised', parsed.is_hand_raised);
-        }
-      } catch (e) {
-        console.error('metadata parse error', e);
-      }
-    };
-
-    const handler = (_metadata: string | undefined, participant: Participant) => {
-      syncParticipant(participant);
-    };
-
-    room.on(RoomEvent.ParticipantMetadataChanged, handler);
-
-    syncParticipant(room.localParticipant);
-    room.remoteParticipants.forEach(syncParticipant);
-
-    return () => {
-      room.off(RoomEvent.ParticipantMetadataChanged, handler);
-    };
-  }, [room, addRaisedHand, removeRaisedHand, updateStore]);
-
   return {
-    toggleHand,
     isHandRaised,
+    toggleHand,
     isPending: updateParticipantMetadata.isPending,
   };
 };
