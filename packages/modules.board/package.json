@@ -22,6 +22,7 @@
     "@xipkg/icons": "^3.0.6",
     "@xipkg/input": "2.0.7",
     "@xipkg/popover": "^2.1.0",
+    "@xipkg/select": "^2.2.5",
     "@xipkg/slider": "2.0.12",
     "@xipkg/textarea": "1.2.0",
     "@xipkg/tooltip": "^2.1.0",
