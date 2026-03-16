@@ -17,7 +17,7 @@ export const Mobile = ({ children }: { children: React.ReactNode }) => {
           </div>
         </DrawerContent>
       </Drawer>
-      <div className="w-full pt-[64px]">{children}</div>
+      <div className="w-full pb-[64px]">{children}</div>
     </>
   );
 };

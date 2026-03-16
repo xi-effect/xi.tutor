@@ -3,6 +3,7 @@ import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from 
 import { SidebarMenu, SidebarMenuItem, SidebarMenuButton } from '@xipkg/sidebar';
 import { UserProfile } from '@xipkg/userprofile';
 
+import { DRAWER_CONTENT_ABOVE_BAR_CLASS } from '../constants';
 import { DrawerRoleSelector } from './DrawerRoleSelector';
 import { Account, Exit, Download } from '@xipkg/icons';
 import { toast } from 'sonner';
@@ -37,7 +38,7 @@ export const MobileUserMenu = ({
           <UserProfile id="userprofile" userId={userId} size="m" withOutText />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className="max-h-[calc(100dvh-64px)] w-full">
+      <DrawerContent className={DRAWER_CONTENT_ABOVE_BAR_CLASS}>
         <div className="dark:bg-gray-0 h-full p-4">
           <DrawerHeader>
             <DrawerTitle>Меню пользователя</DrawerTitle>

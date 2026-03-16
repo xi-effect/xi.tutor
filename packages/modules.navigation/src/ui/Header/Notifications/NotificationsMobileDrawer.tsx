@@ -1,6 +1,7 @@
 import { Notification, Settings } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from '@xipkg/drawer';
+import { DRAWER_CONTENT_ABOVE_BAR_CLASS } from '../../constants';
 
 export const NotificationsMobileDrawer = ({
   isOpen,
@@ -24,7 +25,7 @@ export const NotificationsMobileDrawer = ({
         </Button>
       </DrawerTrigger>
 
-      <DrawerContent className="max-h-[calc(100dvh-64px)] w-full">
+      <DrawerContent className={DRAWER_CONTENT_ABOVE_BAR_CLASS}>
         <div className="dark:bg-gray-0 h-full p-0.5">
           <DrawerHeader className="flex items-center pt-2 pb-6 pl-1">
             <DrawerTitle className="text-s-base font-semibold text-gray-100">

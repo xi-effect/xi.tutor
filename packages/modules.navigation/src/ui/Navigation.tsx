@@ -1,12 +1,14 @@
 import { useMediaQuery } from '@xipkg/utils';
 import { Drawer, DrawerContent } from '@xipkg/drawer';
 import { Sidebar, SidebarInset } from '@xipkg/sidebar';
-// import { Header } from './Header';
 import { SideBarItems } from './SideBarItems';
 import { SidebarProvider } from '@xipkg/sidebar';
 import { useFocusModeStore } from 'common.ui';
 import { useMenuStore } from '../store';
 import { useEffect, useMemo } from 'react';
+import { MobileBottomBar } from './MobileBottomBar';
+import { MobileMenuDrawerContent } from './MobileMenuDrawerContent';
+import { DRAWER_CONTENT_ABOVE_BAR_CLASS } from './constants';
 
 const SIDEBAR_WIDTH_EXPANDED = '300px';
 const SIDEBAR_WIDTH_COLLAPSED = '72px';
@@ -24,7 +26,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
       ? 'w-full h-screen overflow-hidden'
       : 'h-screen overflow-hidden'
     : isMobile
-      ? 'w-full pt-[64px]'
+      ? 'w-full pb-[64px]'
       : 'h-screen overflow-hidden';
 
   // Используем один компонент, который условно рендерит нужную структуру
@@ -32,15 +34,11 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
   // Это позволяет React сохранять состояние компонентов при переключении
   return (
     <>
-      {/* Mobile Drawer — скрыт в режиме фокуса */}
+      {/* Мобильное меню по бургеру — список навигации (не перекрывает нижнюю панель) */}
       {isMobile && !focusMode && (
         <Drawer open={isOpen} onOpenChange={(open) => (open ? openMenu() : close())} modal>
-          <DrawerContent className="max-h-[calc(100dvh-64px)] w-full">
-            <div className="dark:bg-gray-0 h-full p-4">
-              <Sidebar collapsible="none" variant="inset" className="w-full">
-                <SideBarItems />
-              </Sidebar>
-            </div>
+          <DrawerContent className={DRAWER_CONTENT_ABOVE_BAR_CLASS}>
+            <MobileMenuDrawerContent onClose={close} />
           </DrawerContent>
         </Drawer>
       )}
@@ -61,6 +59,9 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
       <SidebarInset className={insetClassName} key="navigation-content">
         {stableChildren}
       </SidebarInset>
+
+      {/* Мобильная нижняя панель навигации (не в режиме фокуса) */}
+      {isMobile && !focusMode && <MobileBottomBar />}
     </>
   );
 };

@@ -8,11 +8,11 @@ export const Desktop = ({ children }: { children: React.ReactNode }) => {
       <Sidebar
         id="sidebar"
         collapsible="icon"
-        className="dark:bg-gray-0 absolute w-full pt-[64px] md:w-[var(--sidebar-width)]"
+        className="dark:bg-gray-0 absolute w-full pb-[64px] md:w-[var(--sidebar-width)]"
       >
         <SideBarItems />
       </Sidebar>
-      <SidebarInset className="h-screen overflow-hidden pt-[64px]">{children}</SidebarInset>
+      <SidebarInset className="h-screen overflow-hidden pb-[64px]">{children}</SidebarInset>
     </>
   );
 };

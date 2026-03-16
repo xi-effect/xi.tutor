@@ -15,5 +15,7 @@
   "student": "Student",
   "classrooms": "Classrooms",
   "hints": "Hints",
+  "menu": "Menu",
+  "close": "Close",
   "roleChanged": "Role successfully changed to {{role}}"
 }
