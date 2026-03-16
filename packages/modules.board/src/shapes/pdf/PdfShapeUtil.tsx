@@ -1,5 +1,5 @@
 import { BaseBoxShapeUtil, HTMLContainer, TLResizeInfo, resizeBox } from 'tldraw';
-import { PDF_MIN_SIZE, PdfShape, pdfShapeProps } from './PdfShape';
+import { PDF_MAX_SIZE, PDF_MIN_SIZE, PdfShape, pdfShapeProps } from './PdfShape';
 import { PdfViewer } from './PdfViewer';
 
 export class PdfShapeUtil extends BaseBoxShapeUtil<PdfShape> {
@@ -15,6 +15,7 @@ export class PdfShapeUtil extends BaseBoxShapeUtil<PdfShape> {
       w: 400,
       h: 565,
       studentCanFlip: true,
+      pagesVisible: 1,
     };
   }
 
@@ -39,7 +40,12 @@ export class PdfShapeUtil extends BaseBoxShapeUtil<PdfShape> {
     } else {
       minHeight = Math.round(PDF_MIN_SIZE / aspectRatio);
     }
-    return resizeBox(shape, info, { minWidth, minHeight });
+    return resizeBox(shape, info, {
+      minWidth,
+      minHeight,
+      maxWidth: PDF_MAX_SIZE,
+      maxHeight: PDF_MAX_SIZE,
+    });
   }
 
   override component(shape: PdfShape) {

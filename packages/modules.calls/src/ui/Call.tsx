@@ -30,13 +30,13 @@ export const Call = () => {
 
   return (
     <div
-      className={focusMode ? 'h-full' : 'h-[calc(100vh-64px)]'}
+      className={focusMode ? 'h-full' : 'h-[calc(100dvh-64px)]'}
       style={
         focusMode
           ? ({
               '--header-height': '0px',
               '--available-height':
-                'calc(100vh - 0px - var(--upbar-height) - var(--bottom-bar-height))',
+                'calc(100dvh - 0px - var(--upbar-height) - var(--bottom-bar-height))',
             } as React.CSSProperties)
           : undefined
       }

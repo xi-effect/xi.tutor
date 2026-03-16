@@ -16,6 +16,11 @@ export { useSpeakingParticipant } from './useSpeakingParticipant';
 export { useVideoSecurity } from './useVideoSecurity';
 export { useScreenShareCleanup } from './useScreenShareCleanup';
 export { useVideoBlur } from './useVideoBlur';
+export {
+  useNoiseCancellation,
+  type UseNoiseCancellationOptions,
+  type UseNoiseCancellationResult,
+} from './useNoiseCancellation';
 export { useParticipantJoinSync } from './useParticipantJoinSync';
 export { useUmamiActivityHeartbeat } from './useUmamiActivityHeartbeat';
 export { useSortedTracks } from './useSortedTracks';

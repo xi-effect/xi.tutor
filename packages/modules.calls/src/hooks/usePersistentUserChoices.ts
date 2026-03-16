@@ -1,6 +1,7 @@
 import { useUserChoicesStore } from '../store/userChoices';
 import type { VideoResolution } from '../store/userChoices';
 import type { VideoQuality } from 'livekit-client';
+import type { NoiseCancellationMode } from '../types/noiseCancellation';
 
 export function usePersistentUserChoices() {
   const userChoices = useUserChoicesStore();
@@ -36,6 +37,12 @@ export function usePersistentUserChoices() {
     },
     saveBlurEnabled: (enabled: boolean) => {
       useUserChoicesStore.setState({ blurEnabled: enabled });
+    },
+    saveNoiseCancellationEnabled: (enabled: boolean) => {
+      useUserChoicesStore.setState({ noiseCancellationEnabled: enabled });
+    },
+    saveNoiseCancellationMode: (mode: NoiseCancellationMode) => {
+      useUserChoicesStore.setState({ noiseCancellationMode: mode });
     },
   };
 }

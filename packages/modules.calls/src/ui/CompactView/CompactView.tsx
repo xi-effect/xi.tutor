@@ -147,7 +147,7 @@ export const Compact: FC<CompactProps> = ({ children, hideOverlay = false }) => 
 
   const container = (
     <div
-      className={`relative flex flex-col bg-transparent ${focusMode ? 'h-screen' : 'h-[calc(100vh-64px)]'}`}
+      className={`relative flex flex-col bg-transparent ${focusMode ? 'h-[100dvh]' : 'h-[calc(100dvh-64px)]'}`}
     >
       {isMobile ? (
         <>

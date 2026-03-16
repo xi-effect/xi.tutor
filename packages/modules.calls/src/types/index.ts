@@ -5,3 +5,6 @@ export type ParticipantType = {
   isMuted: boolean;
   isVideoEnabled: boolean;
 };
+
+export type { NoiseCancellationMode } from './noiseCancellation';
+export { NOISE_CANCELLATION_MODES, isNoiseCancellationMode } from './noiseCancellation';

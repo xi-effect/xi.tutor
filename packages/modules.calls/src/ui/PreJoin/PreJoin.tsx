@@ -11,7 +11,11 @@ import {
 import { usePreviewTracks } from '@livekit/components-react';
 import { usePersistentUserChoices } from '../../hooks/usePersistentUserChoices';
 import { useResolveInitiallyDefaultDeviceId } from '../../hooks/useResolveInitiallyDefaultDeviceId';
-import { useVideoBlur } from '../../hooks';
+import { useVideoBlur, useNoiseCancellation } from '../../hooks';
+import {
+  getBaselineAudioCaptureOptions,
+  noiseCancellationFeatureEnabled,
+} from '../../utils/config';
 
 export const PreJoin = () => {
   const {
@@ -60,10 +64,12 @@ export const PreJoin = () => {
   }, []);
 
   // Preview треки - создаются только если пользователь изначально включил их
+  const baselineAudio = getBaselineAudioCaptureOptions();
   const tracks = usePreviewTracks(
     {
       audio: !!initialUserChoices.current &&
         initialUserChoices.current?.audioEnabled && {
+          ...baselineAudio,
           deviceId: initialUserChoices.current.audioDeviceId,
         },
       video: !!initialUserChoices.current &&
@@ -116,6 +122,7 @@ export const PreJoin = () => {
     const createAudioTrack = async () => {
       try {
         const track = await createLocalAudioTrack({
+          ...getBaselineAudioCaptureOptions(),
           deviceId: { exact: audioDeviceId },
         });
         setDynamicAudioTrack(track);
@@ -158,6 +165,10 @@ export const PreJoin = () => {
   // Передаем видеотрек для использования блюра
   useVideoBlur(videoTrack);
 
+  const noiseCancellation = useNoiseCancellation(null, {
+    localAudioTrack: audioTrack ?? undefined,
+  });
+
   return (
     <>
       <ScrollArea className="h-full w-full">
@@ -165,7 +176,11 @@ export const PreJoin = () => {
           <Header />
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             <UserTile audioTrack={audioTrack} videoTrack={videoTrack} />
-            <MediaDevices audioTrack={audioTrack} videoTrack={videoTrack} />
+            <MediaDevices
+              audioTrack={audioTrack}
+              videoTrack={videoTrack}
+              noiseCancellation={noiseCancellationFeatureEnabled ? noiseCancellation : undefined}
+            />
           </div>
         </div>
       </ScrollArea>

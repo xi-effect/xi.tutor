@@ -23,6 +23,10 @@ import { Track, LocalAudioTrack, LocalVideoTrack } from 'livekit-client';
 import { supportsBackgroundProcessors } from '@livekit/track-processors';
 
 import { useUserChoicesStore } from '../../store/userChoices';
+import { useRoom } from '../../providers/RoomProvider';
+import { useNoiseCancellation } from '../../hooks/useNoiseCancellation';
+import { NoiseCancellationSettings } from '../shared/NoiseCancellationSettings';
+import { noiseCancellationFeatureEnabled } from '../../utils/config';
 import { usePermissionsStore, openPermissionsDialog } from '../../store/permissions';
 import { useCallStore } from '../../store/callStore';
 import { Button } from '@xipkg/button';
@@ -81,8 +85,10 @@ const DeviceSelector = ({
 };
 
 export const Settings = ({ children }: SettingsPropsT) => {
+  const { room } = useRoom();
   const { microphoneTrack, cameraTrack, isMicrophoneEnabled, isCameraEnabled } =
     useLocalParticipant();
+  const noiseCancellation = useNoiseCancellation(room);
   const {
     userChoices: { audioDeviceId, videoDeviceId },
     saveAudioInputDeviceId,
@@ -279,6 +285,12 @@ export const Settings = ({ children }: SettingsPropsT) => {
               <Button type="button" size="s" variant="ghost" onClick={openPermissionsDialog}>
                 Как разрешить микрофон
               </Button>
+            )}
+
+            {noiseCancellationFeatureEnabled && (
+              <div className="mt-4">
+                <NoiseCancellationSettings nc={noiseCancellation} hideOffOption />
+              </div>
             )}
           </div>
 
