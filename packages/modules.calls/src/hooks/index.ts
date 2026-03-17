@@ -25,3 +25,4 @@ export { useParticipantJoinSync } from './useParticipantJoinSync';
 export { useUmamiActivityHeartbeat } from './useUmamiActivityHeartbeat';
 export { useSortedTracks } from './useSortedTracks';
 export { useDocumentPiP } from './useDocumentPiP';
+export { useNoiseGate } from './useNoiseGate';

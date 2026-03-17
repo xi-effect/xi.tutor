@@ -15,4 +15,5 @@ export {
   type UseNoiseCancellationOptions,
   type UseNoiseCancellationResult,
 } from './hooks';
-export { useCallStore } from './store';
+export { useCallStore, useUserChoicesStore } from './store';
+export { usePersistentUserChoices } from './hooks';
