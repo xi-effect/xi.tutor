@@ -21,6 +21,7 @@
     "@xipkg/toggle": "^2.0.13",
     "@xipkg/userprofile": "4.0.14",
     "@xipkg/utils": "1.8.0",
+    "modules.calls": "workspace:*",
     "common.api": "workspace:*",
     "common.auth": "workspace:*",
     "common.config": "workspace:*",

@@ -6,6 +6,12 @@ import { useParams, useLocation, useNavigate, useSearch } from '@tanstack/react-
 import { useEffect, useRef } from 'react';
 import { Track } from 'livekit-client';
 import { PiPProvider } from './PiPProvider';
+import { useNoiseGate } from '../hooks/useNoiseGate';
+
+function NoiseGateEffect() {
+  useNoiseGate();
+  return null;
+}
 
 type LiveKitProviderProps = {
   children: React.ReactNode;
@@ -239,6 +245,7 @@ export const LiveKitProvider = ({ children }: LiveKitProviderProps) => {
       audio={audioEnabled || false}
       video={videoEnabled || false}
     >
+      <NoiseGateEffect />
       <PiPProvider>{children}</PiPProvider>
     </LiveKitRoom>
   );

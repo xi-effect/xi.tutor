@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useCallback, useMemo } from 'react';
+import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import {
   Sheet,
   SheetClose,
@@ -8,7 +9,15 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@xipkg/sheet';
-import { Close, Conference, Microphone, SoundTwo, Chat, Hand } from '@xipkg/icons';
+import {
+  Close,
+  Conference,
+  Microphone,
+  SoundTwo,
+  Chat,
+  Hand,
+  Settings as SettingsIcon,
+} from '@xipkg/icons';
 import { Label } from '@xipkg/label';
 import { Switch } from '@xipkg/switcher';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
@@ -85,6 +94,13 @@ const DeviceSelector = ({
 };
 
 export const Settings = ({ children }: SettingsPropsT) => {
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const search = useSearch({ strict: false }) as {
+    profile?: string;
+    call?: string;
+    classroom?: string;
+  };
   const { room } = useRoom();
   const { microphoneTrack, cameraTrack, isMicrophoneEnabled, isCameraEnabled } =
     useLocalParticipant();
@@ -215,6 +231,13 @@ export const Settings = ({ children }: SettingsPropsT) => {
     [saveAudioOutputDeviceId],
   );
 
+  const handleOpenSoundSettings = useCallback(() => {
+    navigate({
+      to: pathname,
+      search: { ...search, profile: 'soundAndVideo' },
+    });
+  }, [navigate, pathname, search]);
+
   // Обработчики включения/выключения
   const handleMicrophoneToggle = useCallback(async () => {
     microphoneToggle.toggle();
@@ -229,7 +252,7 @@ export const Settings = ({ children }: SettingsPropsT) => {
       <SheetTrigger className="ml-2" asChild>
         {children}
       </SheetTrigger>
-      <SheetContent className="bg-gray-0 w-[400px] rounded-tl-2xl rounded-bl-2xl border-none p-4 shadow-2xl">
+      <SheetContent className="bg-gray-0 w-full max-w-[400px] rounded-tl-2xl rounded-bl-2xl border-none p-4 shadow-2xl">
         <SheetHeader className="mb-6 flex h-10 flex-row items-center justify-between space-y-0">
           <SheetTitle className="text-gray-100">Настройки</SheetTitle>
           <SheetClose className="hover:bg-gray-5 mt-0 rounded-md bg-transparent p-1">
@@ -306,6 +329,17 @@ export const Settings = ({ children }: SettingsPropsT) => {
               disabled={!isMicrophoneGranted}
             />
           </div>
+
+          <Button
+            type="button"
+            size="s"
+            variant="ghost"
+            onClick={handleOpenSoundSettings}
+            className="w-full justify-start gap-2"
+          >
+            <SettingsIcon className="text-gray-60 h-4 w-4" />
+            Расширенные настройки звука
+          </Button>
 
           {/* Размытие фона */}
           {isBlurSupported && (

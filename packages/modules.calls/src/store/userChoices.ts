@@ -20,6 +20,8 @@ export type LocalUserChoices = LocalUserChoicesLK & {
   noiseCancellationEnabled?: boolean;
   /** Режим шумоподавления: off | webrtc | krisp. */
   noiseCancellationMode?: NoiseCancellationMode;
+  /** Порог чувствительности микрофона (0–1). 0 = noise gate выключен, >0 = порог срабатывания. */
+  micInputSensitivity?: number;
 };
 
 function getUserChoicesState(): LocalUserChoices {
@@ -31,6 +33,7 @@ function getUserChoicesState(): LocalUserChoices {
     videoSubscribeQuality: VideoQuality.HIGH,
     noiseCancellationEnabled: false,
     noiseCancellationMode: 'webrtc',
+    micInputSensitivity: 0,
     ...loadUserChoices(),
   };
 }

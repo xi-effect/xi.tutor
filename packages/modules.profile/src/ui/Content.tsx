@@ -4,6 +4,7 @@ import { Secure } from './Secure';
 import { PersonalData } from './PersonalData';
 import { Notifications } from './Notifications';
 import { TechnicalReport } from './TechnicalReport';
+import { SoundAndVideo } from './SoundAndVideo';
 
 type ComponentMapT = {
   [key: string]: ReactElement;
@@ -13,6 +14,7 @@ const componentMap: ComponentMapT = {
   personalInfo: <PersonalData />,
   personalisation: <Customization />,
   security: <Secure />,
+  soundAndVideo: <SoundAndVideo />,
   notifications: <Notifications />,
   report: <TechnicalReport />,
 };
