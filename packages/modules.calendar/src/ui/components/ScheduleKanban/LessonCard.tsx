@@ -12,9 +12,11 @@ import type { ICalendarEvent } from '../../types';
 interface LessonCardProps {
   event: ICalendarEvent;
   isPast?: boolean;
+  /** На всю ширину контейнера (для мобильного списка по дням) */
+  fullWidth?: boolean;
 }
 
-export const LessonCard = memo<LessonCardProps>(({ event }) => {
+export const LessonCard = memo<LessonCardProps>(({ event, fullWidth }) => {
   // const deleteEvent = useDeleteEvent();
 
   const startTime = event.isAllDay ? null : timeToString(new Date(event.start));
@@ -37,7 +39,7 @@ export const LessonCard = memo<LessonCardProps>(({ event }) => {
         event.type === 'rest' && 'bg-gray-5 dark:bg-gray-10',
         event.isCancelled && 'border-red-20 bg-red-5 opacity-75',
       )}
-      style={{ minWidth: CARD_MIN_WIDTH, maxWidth: CARD_MAX_WIDTH }}
+      style={fullWidth ? { width: '100%' } : { minWidth: CARD_MIN_WIDTH, maxWidth: CARD_MAX_WIDTH }}
     >
       <div className="flex flex-col gap-2">
         {/* Предмет — мелкий серый тег */}

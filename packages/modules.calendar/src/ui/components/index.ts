@@ -1,5 +1,8 @@
 export { CalendarEvent } from './CalendarEvent';
 export { ScheduleKanban } from './ScheduleKanban';
 export { ScheduleDateCarousel } from './ScheduleDateCarousel';
+export { ScheduleWeekCarousel } from './ScheduleWeekCarousel';
+export { ScheduleDaySwiper } from './ScheduleDaySwiper';
+export { ScheduleMobileView } from './ScheduleMobileView';
 export { DayLessonRow } from './DayLessonRow';
 export { DayLessonsPanel } from './DayLessonsPanel';

@@ -1,7 +1,7 @@
 import { useRef } from 'react';
-import { ScheduleKanban } from './components';
+import { ScheduleKanban, ScheduleMobileView } from './components';
 import { CalendarHeader } from './Header';
-import { useCalendar } from '../hooks';
+import { useCalendar, useIsMobile } from '../hooks';
 import { useKanbanColumns } from '../hooks/useKanbanColumns';
 
 type CalendarModuleProps = {
@@ -10,10 +10,19 @@ type CalendarModuleProps = {
 };
 
 export const CalendarModule = ({ onAddLessonClick }: CalendarModuleProps) => {
+  const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
   const { weekDays, weekStart, goToPrev, goToNext, goToWeekStart } = useCalendar();
   const { columnWidth, visibleCount } = useKanbanColumns(containerRef, weekDays.length);
   const visibleDays = weekDays.slice(0, visibleCount);
+
+  if (isMobile) {
+    return (
+      <div className="bg-gray-5 flex min-h-screen flex-1 flex-col">
+        <ScheduleMobileView onAddLessonClick={onAddLessonClick} />
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-5 flex min-h-screen flex-1 flex-col pl-4">

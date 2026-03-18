@@ -2718,6 +2718,9 @@ importers:
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      swiper:
+        specifier: ^11.2.6
+        version: 11.2.10
       zod:
         specifier: 3.24.2
         version: 3.24.2
@@ -9407,8 +9410,8 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-config-turbo@2.8.17:
-    resolution: {integrity: sha512-sLjl8LT+NHy825rWW5W5whiJDh2mncf+i1RMgw52mioSy+1kithfKpVsZ68Ah/4nnE2rhGQGlrhCZXcmWM/duw==}
+  eslint-config-turbo@2.8.18:
+    resolution: {integrity: sha512-sfyBAy/Dx1fdpR0k3e9xJHR/fDoXisl6BelCnpSv7OFP7WS1se3GMfQPXazBFOg2QbBr98S7ANRgyvzwStAygQ==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -9505,8 +9508,8 @@ packages:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
 
-  eslint-plugin-turbo@2.8.17:
-    resolution: {integrity: sha512-ueZdnMyqZ6Q8dntbG98Ylyu6dqYt3MgoRELKGfDQDhPmwtxWwtimas0BDx8x/Ex4nnfg1pvr9HKxew/rHdvHIw==}
+  eslint-plugin-turbo@2.8.18:
+    resolution: {integrity: sha512-FxllB4af8WTmvrCpR1HA6hkto/B2/XE6VpU/P1MBv4DX9Cu9KZO3D5aYj2yhDqfrcSLlG/PtBN6qu2D5ykQFFA==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -15466,7 +15469,7 @@ snapshots:
       eslint-config-airbnb: 19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2(eslint@9.39.3(jiti@2.6.1)))(eslint-plugin-react-hooks@5.1.0(eslint@9.39.3(jiti@2.6.1)))(eslint-plugin-react@7.37.2(eslint@9.39.3(jiti@2.6.1)))(eslint@9.39.3(jiti@2.6.1))
       eslint-config-next: 15.1.2(eslint@9.39.3(jiti@2.6.1))(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.39.3(jiti@2.6.1))
-      eslint-config-turbo: 2.8.17(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
+      eslint-config-turbo: 2.8.18(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.56.1(eslint@9.39.3(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.3(jiti@2.6.1))
       eslint-plugin-react: 7.37.2(eslint@9.39.3(jiti@2.6.1))
       eslint-plugin-react-hooks: 5.1.0(eslint@9.39.3(jiti@2.6.1))
@@ -16513,10 +16516,10 @@ snapshots:
     dependencies:
       eslint: 9.39.3(jiti@2.6.1)
 
-  eslint-config-turbo@2.8.17(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
+  eslint-config-turbo@2.8.18(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
     dependencies:
       eslint: 9.39.3(jiti@2.6.1)
-      eslint-plugin-turbo: 2.8.17(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
+      eslint-plugin-turbo: 2.8.18(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
       turbo: 2.8.11
 
   eslint-import-resolver-node@0.3.9:
@@ -16665,7 +16668,7 @@ snapshots:
       eslint: 9.39.3(jiti@2.6.1)
       turbo: 2.8.11
 
-  eslint-plugin-turbo@2.8.17(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
+  eslint-plugin-turbo@2.8.18(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
     dependencies:
       dotenv: 16.0.3
       eslint: 9.39.3(jiti@2.6.1)
