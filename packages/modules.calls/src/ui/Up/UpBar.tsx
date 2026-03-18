@@ -97,7 +97,7 @@ export const UpBar = () => {
   const isTutor = user?.default_layout === 'tutor';
 
   return (
-    <div className="flex w-full flex-row items-end px-4 pb-1">
+    <div className="flex w-full flex-row items-end px-4 pt-4 pb-1">
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button

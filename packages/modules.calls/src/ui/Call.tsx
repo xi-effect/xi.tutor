@@ -30,7 +30,7 @@ export const Call = () => {
 
   return (
     <div
-      className={focusMode ? 'h-full' : 'h-[calc(100dvh-64px)]'}
+      className={'h-full'}
       style={
         focusMode
           ? ({
