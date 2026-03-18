@@ -34,7 +34,7 @@ export const NextLesson = () => {
         <Button variant="none" size="s" className="border-gray-30 flex-1 rounded-lg border">
           Перенести занятие
         </Button>
-        <Button variant="secondary" size="s" className="flex-1 rounded-lg">
+        <Button variant="ghost" size="s" className="flex-1 rounded-lg">
           Начать занятие
           <Conference className="ml-2 h-4 w-4" />
         </Button>

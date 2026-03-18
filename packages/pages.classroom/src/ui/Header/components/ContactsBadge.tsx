@@ -14,7 +14,7 @@ const TelegramBadge = ({ title, link }: { title: string; link: string }) => {
     <Badge
       className="bg-brand-0 text-s-base text-brand-80 flex cursor-pointer flex-row items-center gap-2 font-medium"
       onClick={() => handleTelegramClick({ link })}
-      variant="secondary"
+      variant="ghost"
       size="m"
     >
       <TelegramFilled className="fill-brand-80 size-4" />

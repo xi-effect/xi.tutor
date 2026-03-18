@@ -64,7 +64,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="h-[32px]" variant="secondary" size="s" type="button">
+        <Button className="h-[32px]" variant="ghost" size="s" type="button">
           Добавить занятие из шаблона
         </Button>
       </DropdownMenuTrigger>

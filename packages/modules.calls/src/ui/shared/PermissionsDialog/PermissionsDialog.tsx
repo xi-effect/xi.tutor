@@ -186,7 +186,7 @@ export const PermissionsDialog = () => {
         </div>
 
         <ModalFooter className="border-gray-20 flex border-t">
-          <Button type="button" variant="secondary" onClick={closePermissionsDialog}>
+          <Button type="button" variant="ghost" onClick={closePermissionsDialog}>
             Закрыть
           </Button>
         </ModalFooter>

@@ -246,7 +246,7 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
             </Button>
             <Button
               size="m"
-              variant="secondary"
+              variant="ghost"
               onClick={() => onOpenChange(false)}
               className={isMobile ? 'min-h-11 w-full' : ''}
             >

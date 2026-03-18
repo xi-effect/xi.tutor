@@ -134,7 +134,7 @@ export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT)
                   <Button disabled={timer} className="disabled:cursor-not-allowed" type="submit">
                     Изменить
                   </Button>
-                  <Button onClick={() => onOpenChange(false)} type="button" variant="secondary">
+                  <Button onClick={() => onOpenChange(false)} type="button" variant="ghost">
                     Отменить
                   </Button>
                 </M.ModalFooter>

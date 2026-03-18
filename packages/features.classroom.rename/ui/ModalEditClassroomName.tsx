@@ -117,7 +117,7 @@ export const ModalEditClassroomName = ({
                 Сохранить
               </Button>
               <Button
-                variant="secondary"
+                variant="ghost"
                 type="button"
                 data-umami-event="material-edit-cancel"
                 disabled={isUpdating}

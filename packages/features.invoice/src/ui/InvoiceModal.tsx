@@ -110,7 +110,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
             <div className={`flex gap-2 ${isMobile ? 'flex-col' : 'flex-row'}`}>
               <Button
                 className={`h-[32px] ${isMobile ? 'w-full' : 'w-fit'}`}
-                variant="secondary"
+                variant="ghost"
                 size="s"
                 type="button"
                 onClick={() => {
@@ -191,7 +191,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
               <Button
                 className={`${isMobile ? 'w-full' : 'w-[128px]'} rounded-2xl`}
                 size="m"
-                variant="secondary"
+                variant="ghost"
                 onClick={handleCloseModal}
               >
                 Отменить

@@ -97,7 +97,7 @@ export const EventForm = () => {
           <div className="flex w-full justify-between gap-4 pt-2">
             <Button
               size="s"
-              variant="secondary"
+              variant="ghost"
               className="w-full"
               type="button"
               onClick={handleCloseForm}

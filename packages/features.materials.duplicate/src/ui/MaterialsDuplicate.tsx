@@ -281,7 +281,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
             </Button>
             <Button
               size="m"
-              variant="secondary"
+              variant="ghost"
               onClick={() => handleClose(false)}
               data-umami-event="material-duplicate-cancel"
             >
