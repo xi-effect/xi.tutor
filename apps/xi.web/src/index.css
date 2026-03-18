@@ -44,6 +44,7 @@
 @source "../../../packages/features.group.manage/src";
 @source "../../../packages/features.group.invite/src";
 @source "../../../packages/pages.calendar/src";
+@source "../../../packages/features.lesson.cancel/src";
 
 @source "../../../node_modules/@xipkg";
 

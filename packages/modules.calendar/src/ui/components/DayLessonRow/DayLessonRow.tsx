@@ -1,15 +1,38 @@
+import { useState } from 'react';
 import { Button } from '@xipkg/button';
 import { Conference, Trash } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
+import { CancelLessonModal } from 'features.lesson.cancel';
 import type { ScheduleLessonRow } from '../../types';
 
 type DayLessonRowProps = {
   lesson: ScheduleLessonRow;
   /** Показывать кнопки «Начать занятие», «Перенести», удалить. По умолчанию false */
   showActions?: boolean;
+  /** Вызов при выборе «Отменить только это занятие» */
+  onCancelOne?: (lesson: ScheduleLessonRow) => void;
+  /** Вызов при выборе «Отменить все после этого» */
+  onCancelAll?: (lesson: ScheduleLessonRow) => void;
 };
 
-export const DayLessonRow = ({ lesson, showActions = false }: DayLessonRowProps) => {
+export const DayLessonRow = ({
+  lesson,
+  showActions = false,
+  onCancelOne,
+  onCancelAll,
+}: DayLessonRowProps) => {
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
+
+  const handleCancelOne = () => {
+    onCancelOne?.(lesson);
+    setCancelModalOpen(false);
+  };
+
+  const handleCancelAll = () => {
+    onCancelAll?.(lesson);
+    setCancelModalOpen(false);
+  };
+
   return (
     <div className="border-gray-10 relative flex w-full flex-row items-start gap-4 border-b py-6 last:border-b-0">
       <div className="flex shrink-0 flex-col">
@@ -46,13 +69,20 @@ export const DayLessonRow = ({ lesson, showActions = false }: DayLessonRowProps)
               variant="none"
               size="s"
               className="absolute top-6 right-0 h-[38px] w-[38px] min-w-[38px] p-0"
-              onClick={() => {}}
+              onClick={() => setCancelModalOpen(true)}
             >
               <Trash className="fill-gray-60 h-5 w-5" />
             </Button>
           </div>
         )}
       </div>
+
+      <CancelLessonModal
+        open={cancelModalOpen}
+        onOpenChange={setCancelModalOpen}
+        onCancelOne={handleCancelOne}
+        onCancelAll={handleCancelAll}
+      />
     </div>
   );
 };
