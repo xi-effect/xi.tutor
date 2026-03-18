@@ -6,17 +6,16 @@ export const getFullDateString = (
   locale: string = DEFAULT_LOCALE,
 ) => {
   const weekDayName = date.toLocaleDateString(locale, { weekday: format });
-  const monthName = date.toLocaleDateString(locale, { month: 'long' });
+  const dayAndMonth = date.toLocaleDateString(locale, { day: 'numeric', month: 'long' });
 
-  return `${weekDayName} ${date.getDate()} ${monthName}`;
+  return `${weekDayName} ${dayAndMonth}`;
 };
 
 /** Формат как в макете: "6 февраля, вс" */
 export const getShortDateString = (date: Date, locale: string = DEFAULT_LOCALE): string => {
-  const day = date.getDate();
-  const month = date.toLocaleDateString(locale, { month: 'long' });
+  const dayAndMonth = date.toLocaleDateString(locale, { day: 'numeric', month: 'long' });
   const weekDayShort = date.toLocaleDateString(locale, { weekday: 'short' });
-  return `${day} ${month}, ${weekDayShort}`;
+  return `${dayAndMonth}, ${weekDayShort}`;
 };
 
 /** Перевести время "HH:MM" в минуты от полуночи */

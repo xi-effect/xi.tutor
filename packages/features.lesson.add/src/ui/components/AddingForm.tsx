@@ -191,8 +191,7 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose, initialDate
                 <Switcher value={field.value} onValueChange={field.onChange}>
                   <SwitcherList className="bg-gray-5">
                     <SwitcherTrigger value="none">Не повторять</SwitcherTrigger>
-                    <SwitcherTrigger value="weekly">Раз в неделю</SwitcherTrigger>
-                    <SwitcherTrigger value="custom">Выбрать дни</SwitcherTrigger>
+                    <SwitcherTrigger value="weekly">Еженедельно</SwitcherTrigger>
                   </SwitcherList>
                 </Switcher>
               </FormControl>
