@@ -80,6 +80,8 @@ export type ExtendedStoreStatus = {
   pdfPagesMap: Y.Map<number>;
   /** Y.Map для синхронного воспроизведения аудио: `${shapeId}:playing|time|ts` → number */
   audioSyncMap: Y.Map<number>;
+  /** Y.Map для синхронизации состояния таймера доски */
+  timerMap: Y.Map<number | boolean>;
   /** Токен для доступа к файлам */
   token: string;
 };
@@ -127,6 +129,8 @@ type SharedEntry = {
   pdfPagesMap: Y.Map<number>;
   /** Синхронное воспроизведение аудио: `${shapeId}:playing|time|ts` → number */
   audioSyncMap: Y.Map<number>;
+  /** Синхронизация таймера доски */
+  timerMap: Y.Map<number | boolean>;
   releaseTimer: number | null;
 };
 
@@ -162,6 +166,7 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
   const userCamerasMap = yDoc.getMap<CameraState>('userCameras');
   const pdfPagesMap = yDoc.getMap<number>('pdfPages');
   const audioSyncMap = yDoc.getMap<number>('audioSync');
+  const timerMap = yDoc.getMap<number | boolean>('timer');
 
   const provider = new HocuspocusProvider({
     url: hostUrl,
@@ -183,6 +188,7 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
     userCamerasMap,
     pdfPagesMap,
     audioSyncMap,
+    timerMap,
     releaseTimer: null,
   };
 
@@ -264,8 +270,17 @@ export function useYjsStore({
     return getOrCreateShared(hostUrl, ydocId, storageToken);
   }, [hostUrl, ydocId, storageToken]);
 
-  const { provider, yDoc, yStore, meta, readonlyMap, userCamerasMap, pdfPagesMap, audioSyncMap } =
-    sharedEntry;
+  const {
+    provider,
+    yDoc,
+    yStore,
+    meta,
+    readonlyMap,
+    userCamerasMap,
+    pdfPagesMap,
+    audioSyncMap,
+    timerMap,
+  } = sharedEntry;
 
   // useLayoutEffect: при ремаунте (PiP и т.д.) обновляем статус до отрисовки, чтобы не мигал LoadingScreen.
   useLayoutEffect(() => {
@@ -804,6 +819,7 @@ export function useYjsStore({
 
     pdfPagesMap,
     audioSyncMap,
+    timerMap,
     token: token ?? '',
   };
 }

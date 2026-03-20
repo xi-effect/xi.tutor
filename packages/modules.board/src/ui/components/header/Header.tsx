@@ -17,6 +17,7 @@ import { useEffect, useState } from 'react';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { CollaboratorAvatars } from './CollaboratorAvatars';
 import { SettingsDropdown } from './SettingsDropdown';
+import { TimerDropdown } from './TimerDropdown';
 
 export const Header = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -128,6 +129,7 @@ export const Header = () => {
         </div>
         <div className="bg-gray-0 border-gray-10 pointer-events-auto flex items-center justify-center gap-2 rounded-xl border p-1 pl-3 lg:rounded-2xl">
           {!isReadonly && <CollaboratorAvatars />}
+          <TimerDropdown />
           <Button
             variant="none"
             onClick={toggleFocusMode}
