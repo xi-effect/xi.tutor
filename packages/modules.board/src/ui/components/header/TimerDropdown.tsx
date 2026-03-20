@@ -13,22 +13,14 @@ import {
   useState,
 } from 'react';
 import { stopEvent } from '../../../shapes/audio/constants';
-import { useYjsContext } from '../../../providers/YjsProvider';
+import { useBoardTimer } from '../../../hooks/useBoardTimer';
 import {
   playBoardTimerEndSound,
   playBoardTimerWarnSound,
   unlockBoardTimerAudio,
 } from './boardTimerAudio';
 
-const DEFAULT_DURATION_MS = 5 * 60 * 1000;
 const MAX_DURATION_MS = 99 * 60 * 1000 + 59 * 1000;
-
-const TIMER_KEYS = {
-  baseMs: 'baseMs',
-  remainingMs: 'remainingMs',
-  isRunning: 'isRunning',
-  endsAtMs: 'endsAtMs',
-} as const;
 
 const WARN_BEFORE_END_MS = 45_000;
 
@@ -99,7 +91,7 @@ type TimerDropdownProps = {
 };
 
 export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
-  const { timerMap } = useYjsContext();
+  const { snapshot, updateTimer } = useBoardTimer();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
@@ -178,23 +170,6 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
 
   const [fields, setFields] = useState({ minutes: '05', seconds: '00' });
 
-  const snapshot = (() => {
-    const baseMs = Number(timerMap.get(TIMER_KEYS.baseMs) ?? DEFAULT_DURATION_MS);
-    const remainingMs = Number(timerMap.get(TIMER_KEYS.remainingMs) ?? baseMs);
-    const isRunning = Boolean(timerMap.get(TIMER_KEYS.isRunning) ?? false);
-    const endsAtMs = Number(timerMap.get(TIMER_KEYS.endsAtMs) ?? 0);
-
-    const safeBaseMs = clampMs(baseMs);
-    const safeRemainingMs = clampMs(remainingMs);
-
-    return {
-      baseMs: safeBaseMs,
-      remainingMs: safeRemainingMs,
-      isRunning,
-      endsAtMs,
-    };
-  })();
-
   useLayoutEffect(() => {
     if (!open || !isDesktopWide) return;
 
@@ -215,7 +190,7 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
   /**
    * На паузе интервал не тикает — `tick` в state замирает. Если считать `endsAtMs - tick`,
    * после старта первый кадр даёт гигантский остаток и ложное «пересечение» 45 с.
-   * Пока идёт отсчёт — всегда `Date.now()`; ререндеры дают интервал и observer на timerMap.
+   * Пока идёт отсчёт — всегда `Date.now()`; ререндеры дают интервал и awareness-таймер.
    */
   const currentRemainingMs = !snapshot.isRunning
     ? snapshot.remainingMs
@@ -229,23 +204,6 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
     window.addEventListener('pointerdown', onFirstPointer, { capture: true, once: true });
     return () => window.removeEventListener('pointerdown', onFirstPointer, { capture: true });
   }, []);
-
-  useEffect(() => {
-    if (timerMap.has(TIMER_KEYS.baseMs)) return;
-
-    timerMap.doc?.transact(() => {
-      timerMap.set(TIMER_KEYS.baseMs, DEFAULT_DURATION_MS);
-      timerMap.set(TIMER_KEYS.remainingMs, DEFAULT_DURATION_MS);
-      timerMap.set(TIMER_KEYS.isRunning, false);
-      timerMap.set(TIMER_KEYS.endsAtMs, 0);
-    }, 'timer-init');
-  }, [timerMap]);
-
-  useEffect(() => {
-    const observer = () => setTick(Date.now());
-    timerMap.observe(observer);
-    return () => timerMap.unobserve(observer);
-  }, [timerMap]);
 
   useEffect(() => {
     if (!snapshot.isRunning) return;
@@ -331,12 +289,13 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
   useEffect(() => {
     if (!isTutor || !snapshot.isRunning || currentRemainingMs > 0) return;
 
-    timerMap.doc?.transact(() => {
-      timerMap.set(TIMER_KEYS.isRunning, false);
-      timerMap.set(TIMER_KEYS.remainingMs, 0);
-      timerMap.set(TIMER_KEYS.endsAtMs, 0);
-    }, 'timer-finish');
-  }, [currentRemainingMs, isTutor, snapshot.isRunning, timerMap]);
+    updateTimer(() => ({
+      baseMs: snapshot.baseMs,
+      remainingMs: 0,
+      isRunning: false,
+      endsAtMs: 0,
+    }));
+  }, [currentRemainingMs, isTutor, snapshot.baseMs, snapshot.isRunning, updateTimer]);
 
   const updatePausedValue = (minutesValue: string, secondsValue: string) => {
     if (!isTutor) return;
@@ -345,12 +304,12 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
     const seconds = parseFieldValue(secondsValue, 59);
     const nextMs = clampMs((minutes * 60 + seconds) * 1000);
 
-    timerMap.doc?.transact(() => {
-      timerMap.set(TIMER_KEYS.baseMs, nextMs);
-      timerMap.set(TIMER_KEYS.remainingMs, nextMs);
-      timerMap.set(TIMER_KEYS.isRunning, false);
-      timerMap.set(TIMER_KEYS.endsAtMs, 0);
-    }, 'timer-set');
+    updateTimer(() => ({
+      baseMs: nextMs,
+      remainingMs: nextMs,
+      isRunning: false,
+      endsAtMs: 0,
+    }));
   };
 
   const handleMinutesChange = (value: string) => {
@@ -373,11 +332,12 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
     if (!isTutor || snapshot.isRunning) return;
     const next = clampMs(snapshot.remainingMs + deltaMs);
 
-    timerMap.doc?.transact(() => {
-      timerMap.set(TIMER_KEYS.baseMs, next);
-      timerMap.set(TIMER_KEYS.remainingMs, next);
-      timerMap.set(TIMER_KEYS.endsAtMs, 0);
-    }, 'timer-shift-paused');
+    updateTimer((prev) => ({
+      ...prev,
+      baseMs: next,
+      remainingMs: next,
+      endsAtMs: 0,
+    }));
   };
 
   const shiftRunningBy = (deltaMs: number) => {
@@ -385,10 +345,11 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
     const nextRemaining = clampMs(currentRemainingMs + deltaMs);
     const nextEndsAt = Date.now() + nextRemaining;
 
-    timerMap.doc?.transact(() => {
-      timerMap.set(TIMER_KEYS.endsAtMs, nextEndsAt);
-      timerMap.set(TIMER_KEYS.remainingMs, nextRemaining);
-    }, 'timer-shift-running');
+    updateTimer((prev) => ({
+      ...prev,
+      endsAtMs: nextEndsAt,
+      remainingMs: nextRemaining,
+    }));
   };
 
   const handlePlay = () => {
@@ -396,32 +357,35 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
     const remaining = snapshot.remainingMs > 0 ? snapshot.remainingMs : snapshot.baseMs;
     const safeRemaining = clampMs(remaining);
 
-    timerMap.doc?.transact(() => {
-      timerMap.set(TIMER_KEYS.isRunning, true);
-      timerMap.set(TIMER_KEYS.remainingMs, safeRemaining);
-      timerMap.set(TIMER_KEYS.endsAtMs, Date.now() + safeRemaining);
-    }, 'timer-play');
+    updateTimer((prev) => ({
+      ...prev,
+      isRunning: true,
+      remainingMs: safeRemaining,
+      endsAtMs: Date.now() + safeRemaining,
+    }));
   };
 
   const handlePause = () => {
     if (!isTutor) return;
     const remaining = clampMs(snapshot.endsAtMs - Date.now());
 
-    timerMap.doc?.transact(() => {
-      timerMap.set(TIMER_KEYS.isRunning, false);
-      timerMap.set(TIMER_KEYS.remainingMs, remaining);
-      timerMap.set(TIMER_KEYS.endsAtMs, 0);
-    }, 'timer-pause');
+    updateTimer((prev) => ({
+      ...prev,
+      isRunning: false,
+      remainingMs: remaining,
+      endsAtMs: 0,
+    }));
   };
 
   const handleReset = () => {
     if (!isTutor) return;
 
-    timerMap.doc?.transact(() => {
-      timerMap.set(TIMER_KEYS.isRunning, false);
-      timerMap.set(TIMER_KEYS.remainingMs, snapshot.baseMs);
-      timerMap.set(TIMER_KEYS.endsAtMs, 0);
-    }, 'timer-reset');
+    updateTimer((prev) => ({
+      ...prev,
+      isRunning: false,
+      remainingMs: prev.baseMs,
+      endsAtMs: 0,
+    }));
   };
 
   const totalSeconds = Math.floor(currentRemainingMs / 1000);

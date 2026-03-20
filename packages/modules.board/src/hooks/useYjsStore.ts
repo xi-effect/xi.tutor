@@ -80,8 +80,8 @@ export type ExtendedStoreStatus = {
   pdfPagesMap: Y.Map<number>;
   /** Y.Map для синхронного воспроизведения аудио: `${shapeId}:playing|time|ts` → number */
   audioSyncMap: Y.Map<number>;
-  /** Y.Map для синхронизации состояния таймера доски */
-  timerMap: Y.Map<number | boolean>;
+  /** Hocuspocus-провайдер (awareness — эфемерное состояние, не в персисте Y.Doc) */
+  provider: HocuspocusProvider;
   /** Токен для доступа к файлам */
   token: string;
 };
@@ -129,8 +129,6 @@ type SharedEntry = {
   pdfPagesMap: Y.Map<number>;
   /** Синхронное воспроизведение аудио: `${shapeId}:playing|time|ts` → number */
   audioSyncMap: Y.Map<number>;
-  /** Синхронизация таймера доски */
-  timerMap: Y.Map<number | boolean>;
   releaseTimer: number | null;
 };
 
@@ -166,7 +164,6 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
   const userCamerasMap = yDoc.getMap<CameraState>('userCameras');
   const pdfPagesMap = yDoc.getMap<number>('pdfPages');
   const audioSyncMap = yDoc.getMap<number>('audioSync');
-  const timerMap = yDoc.getMap<number | boolean>('timer');
 
   const provider = new HocuspocusProvider({
     url: hostUrl,
@@ -188,7 +185,6 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
     userCamerasMap,
     pdfPagesMap,
     audioSyncMap,
-    timerMap,
     releaseTimer: null,
   };
 
@@ -270,17 +266,8 @@ export function useYjsStore({
     return getOrCreateShared(hostUrl, ydocId, storageToken);
   }, [hostUrl, ydocId, storageToken]);
 
-  const {
-    provider,
-    yDoc,
-    yStore,
-    meta,
-    readonlyMap,
-    userCamerasMap,
-    pdfPagesMap,
-    audioSyncMap,
-    timerMap,
-  } = sharedEntry;
+  const { provider, yDoc, yStore, meta, readonlyMap, userCamerasMap, pdfPagesMap, audioSyncMap } =
+    sharedEntry;
 
   // useLayoutEffect: при ремаунте (PiP и т.д.) обновляем статус до отрисовки, чтобы не мигал LoadingScreen.
   useLayoutEffect(() => {
@@ -353,6 +340,12 @@ export function useYjsStore({
 
     const handleSynced = ({ state }: onSyncedParameters) => {
       if (!state) return;
+
+      /** Раньше таймер жил в Y.Map `timer` и попадал в персист документа; теперь только awareness — чистим наследие */
+      yDoc.transact(() => {
+        const legacyTimer = yDoc.getMap('timer');
+        if (legacyTimer.size > 0) legacyTimer.clear();
+      }, 'timer-legacy-remove');
 
       /** 1) store -> yjs (батчинг) */
       unsubs.push(
@@ -819,7 +812,7 @@ export function useYjsStore({
 
     pdfPagesMap,
     audioSyncMap,
-    timerMap,
+    provider,
     token: token ?? '',
   };
 }
