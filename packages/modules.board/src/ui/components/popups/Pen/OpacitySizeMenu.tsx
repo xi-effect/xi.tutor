@@ -3,7 +3,7 @@ import { ColorGrid } from './ColorSet';
 import { useTldrawStore } from '../../../../store/useTldrawStore';
 import { useTldrawStyles } from '../../../../hooks/useTldrawStyles';
 
-const sizes = ['s', 'm', 'l', 'xl'] as const;
+const sizes = ['xs', 's', 'm', 'l', 'xl'] as const;
 
 export const OpacitySizeMenu = () => {
   // Получаем значения и функции из стора
@@ -41,7 +41,7 @@ export const OpacitySizeMenu = () => {
                   onValueChange={(value) => handleSize(value)}
                   value={[getSizeIndex(pencilThickness)]}
                   min={1}
-                  max={4}
+                  max={5}
                   step={1}
                   minStepsBetweenThumbs={1}
                 />
