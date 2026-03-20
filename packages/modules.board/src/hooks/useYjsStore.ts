@@ -80,6 +80,8 @@ export type ExtendedStoreStatus = {
   pdfPagesMap: Y.Map<number>;
   /** Y.Map для синхронного воспроизведения аудио: `${shapeId}:playing|time|ts` → number */
   audioSyncMap: Y.Map<number>;
+  /** Hocuspocus-провайдер (awareness — эфемерное состояние, не в персисте Y.Doc) */
+  provider: HocuspocusProvider;
   /** Токен для доступа к файлам */
   token: string;
 };
@@ -338,6 +340,12 @@ export function useYjsStore({
 
     const handleSynced = ({ state }: onSyncedParameters) => {
       if (!state) return;
+
+      /** Раньше таймер жил в Y.Map `timer` и попадал в персист документа; теперь только awareness — чистим наследие */
+      yDoc.transact(() => {
+        const legacyTimer = yDoc.getMap('timer');
+        if (legacyTimer.size > 0) legacyTimer.clear();
+      }, 'timer-legacy-remove');
 
       /** 1) store -> yjs (батчинг) */
       unsubs.push(
@@ -804,6 +812,7 @@ export function useYjsStore({
 
     pdfPagesMap,
     audioSyncMap,
+    provider,
     token: token ?? '',
   };
 }
