@@ -1,8 +1,8 @@
 import { Button } from '@xipkg/button';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from '@xipkg/dropdown';
-import { AlarmClock, Minus, Plus, Redo } from '@xipkg/icons';
+import { AlarmClock, Close, Minus, Plus, Redo } from '@xipkg/icons';
+import { cn } from '@xipkg/utils';
 import { useCurrentUser } from 'common.services';
-import { type MouseEvent, useEffect, useMemo, useRef, useState } from 'react';
+import { type MouseEvent as ReactMouseEvent, useEffect, useMemo, useRef, useState } from 'react';
 import { stopEvent } from '../../../shapes/audio/constants';
 import { useYjsContext } from '../../../providers/YjsProvider';
 
@@ -160,7 +160,7 @@ export const TimerDropdown = () => {
     setFields((prev) => ({ ...prev, seconds: masked }));
   };
 
-  const onControlClick = (e: MouseEvent<HTMLButtonElement>, handler: () => void) => {
+  const onControlClick = (e: ReactMouseEvent<HTMLButtonElement>, handler: () => void) => {
     e.stopPropagation();
     handler();
   };
@@ -225,104 +225,110 @@ export const TimerDropdown = () => {
   const seconds = totalSeconds % 60;
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="none"
-          className="hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
-          data-umami-event="board-timer-menu"
-        >
-          <AlarmClock size="s" className="h-4 w-4 lg:h-6 lg:w-6" />
-        </Button>
-      </DropdownMenuTrigger>
+    <div className="relative">
+      <Button
+        variant="none"
+        className={cn(
+          'hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl',
+          open && 'bg-brand-20/40 focus:bg-brand-20/40',
+        )}
+        data-umami-event="board-timer-menu"
+        onPointerDown={stopEvent}
+        onClick={(e) => {
+          e.stopPropagation();
+          setOpen((prev) => !prev);
+        }}
+      >
+        <AlarmClock size="s" className="h-4 w-4 lg:h-6 lg:w-6" />
+      </Button>
 
-      <DropdownMenuContent align="end" className="z-100 rounded-2xl p-4">
-        <div className="flex items-center gap-4">
-          <div className="flex flex-1 items-center gap-3">
-            {snapshot.isRunning ? (
-              <div className="text-[48px] leading-[0.95] font-medium tabular-nums select-none">
-                {formatTwo(minutes)} : {formatTwo(seconds)}
-              </div>
-            ) : (
-              <div className="flex items-center gap-1 text-[48px] leading-[0.95] font-medium tabular-nums">
-                <input
-                  value={fields.minutes}
-                  onChange={(e) => handleMinutesChange(e.target.value)}
-                  onBlur={() => updatePausedValue(fields.minutes, fields.seconds)}
-                  disabled={!isTutor}
-                  className="h-16 w-20 bg-transparent p-0 text-center text-[48px] leading-[0.95] outline-none"
-                  inputMode="numeric"
-                  maxLength={2}
-                  placeholder="--"
-                  onPointerDown={stopEvent}
-                />
-                <span>:</span>
-                <input
-                  value={fields.seconds}
-                  onChange={(e) => handleSecondsChange(e.target.value)}
-                  onBlur={() => updatePausedValue(fields.minutes, fields.seconds)}
-                  disabled={!isTutor}
-                  className="h-16 w-20 bg-transparent p-0 text-center text-[48px] leading-[0.95] outline-none"
-                  inputMode="numeric"
-                  maxLength={2}
-                  placeholder="--"
-                  onPointerDown={stopEvent}
-                />
-              </div>
-            )}
+      {open && (
+        <div className="bg-gray-0 border-gray-10 absolute top-[-4px] right-[80px] z-100 mr-2 rounded-2xl border p-2 shadow-sm">
+          <div className="flex items-center gap-4">
+            <div className="flex flex-1 items-center gap-3">
+              {snapshot.isRunning ? (
+                <div className="w-[200px] text-[48px] leading-[0.95] font-medium tabular-nums select-none">
+                  {formatTwo(minutes)} : {formatTwo(seconds)}
+                </div>
+              ) : (
+                <div className="flex w-[200px] items-center justify-center gap-1 text-[48px] leading-[0.95] font-medium tabular-nums">
+                  <input
+                    value={fields.minutes}
+                    onChange={(e) => handleMinutesChange(e.target.value)}
+                    onBlur={() => updatePausedValue(fields.minutes, fields.seconds)}
+                    disabled={!isTutor}
+                    className="h-16 w-20 bg-transparent p-0 text-center text-[48px] leading-[0.95] outline-none"
+                    inputMode="numeric"
+                    maxLength={2}
+                    placeholder="--"
+                    onPointerDown={stopEvent}
+                  />
+                  <span className="text-[48px] leading-[0.95] font-medium tabular-nums">:</span>
+                  <input
+                    value={fields.seconds}
+                    onChange={(e) => handleSecondsChange(e.target.value)}
+                    onBlur={() => updatePausedValue(fields.minutes, fields.seconds)}
+                    disabled={!isTutor}
+                    className="h-16 w-20 bg-transparent p-0 text-center text-[48px] leading-[0.95] outline-none"
+                    inputMode="numeric"
+                    maxLength={2}
+                    placeholder="--"
+                    onPointerDown={stopEvent}
+                  />
+                </div>
+              )}
 
-            {snapshot.isRunning ? (
-              <div className="flex items-center gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="h-10 rounded-xl px-3"
-                  onPointerDown={stopEvent}
-                  onClick={(e) => onControlClick(e, () => shiftRunningBy(15_000))}
-                  disabled={!isTutor}
-                >
-                  +15с
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="h-10 rounded-xl px-3"
-                  onPointerDown={stopEvent}
-                  onClick={(e) => onControlClick(e, () => shiftRunningBy(60_000))}
-                  disabled={!isTutor}
-                >
-                  +1м
-                </Button>
-              </div>
-            ) : (
-              <div className="flex flex-col gap-2">
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="h-8 w-8 rounded-full p-0"
-                  onPointerDown={stopEvent}
-                  onClick={(e) => onControlClick(e, () => shiftPausedBy(30_000))}
-                  disabled={!isTutor}
-                >
-                  <Plus className="h-4 w-4" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="h-8 w-8 rounded-full p-0"
-                  onPointerDown={stopEvent}
-                  onClick={(e) => onControlClick(e, () => shiftPausedBy(-30_000))}
-                  disabled={!isTutor}
-                >
-                  <Minus className="h-4 w-4" />
-                </Button>
-              </div>
-            )}
-          </div>
+              {snapshot.isRunning ? (
+                <div className="flex flex-col gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-10 w-12 rounded-xl p-0 text-[12px]"
+                    onPointerDown={stopEvent}
+                    onClick={(e) => onControlClick(e, () => shiftRunningBy(15_000))}
+                    disabled={!isTutor}
+                  >
+                    +15с
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-10 w-12 rounded-xl p-0 text-[12px]"
+                    onPointerDown={stopEvent}
+                    onClick={(e) => onControlClick(e, () => shiftRunningBy(60_000))}
+                    disabled={!isTutor}
+                  >
+                    +1м
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-10 w-12 rounded-xl p-0"
+                    onPointerDown={stopEvent}
+                    onClick={(e) => onControlClick(e, () => shiftPausedBy(30_000))}
+                    disabled={!isTutor}
+                  >
+                    <Plus className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="h-10 w-12 rounded-xl p-0"
+                    onPointerDown={stopEvent}
+                    onClick={(e) => onControlClick(e, () => shiftPausedBy(-30_000))}
+                    disabled={!isTutor}
+                  >
+                    <Minus className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
+            </div>
 
-          <div className="bg-gray-10 h-20 w-px shrink-0" />
+            <div className="bg-gray-10 h-20 w-px shrink-0" />
 
-          <div className="flex flex-col items-center gap-2">
             <Button
               type="button"
               variant="none"
@@ -335,21 +341,39 @@ export const TimerDropdown = () => {
             >
               <PlayPauseIcon isPlaying={snapshot.isRunning} />
             </Button>
-            <Button
-              type="button"
-              variant="none"
-              className="bg-gray-5 hover:bg-gray-10 focus:bg-gray-10 active:bg-gray-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full p-0"
-              onPointerDown={stopEvent}
-              onClick={(e) => onControlClick(e, handleReset)}
-              disabled={!isTutor}
-              data-umami-event="board-timer-reset"
-              title="Сброс"
-            >
-              <Redo className="h-4 w-4" />
-            </Button>
+
+            <div className="flex h-full flex-col gap-6">
+              <Button
+                type="button"
+                variant="none"
+                className="bg-gray-5 hover:bg-gray-10 focus:bg-gray-10 active:bg-gray-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full p-0"
+                onPointerDown={stopEvent}
+                onClick={(e) =>
+                  onControlClick(e, () => {
+                    setOpen(false);
+                  })
+                }
+                data-umami-event="board-timer-close"
+                title="Закрыть таймер"
+              >
+                <Close className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                variant="none"
+                className="bg-gray-5 hover:bg-gray-10 focus:bg-gray-10 active:bg-gray-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full p-0"
+                onPointerDown={stopEvent}
+                onClick={(e) => onControlClick(e, handleReset)}
+                disabled={!isTutor}
+                data-umami-event="board-timer-reset"
+                title="Сброс"
+              >
+                <Redo className="h-4 w-4" />
+              </Button>
+            </div>
           </div>
         </div>
-      </DropdownMenuContent>
-    </DropdownMenu>
+      )}
+    </div>
   );
 };
