@@ -170,7 +170,11 @@ export const SettingsDropdown = () => {
             <MoreVert size="s" className="h-4 w-4 lg:h-6 lg:w-6" />
           </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="z-100 flex w-[250px] flex-col gap-1 px-2 py-1">
+        <DropdownMenuContent
+          sideOffset={12}
+          align="end"
+          className="z-100 flex w-[250px] flex-col gap-1 px-2 py-1"
+        >
           <div className="bg-brand-0/40 mb-1 rounded-lg px-2 py-2">
             <div className="mb-1 flex items-center justify-between text-xs">
               <span className="text-gray-80">Заполнение доски</span>

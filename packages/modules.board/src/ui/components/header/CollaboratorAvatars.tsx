@@ -51,7 +51,7 @@ export const CollaboratorAvatars = () => {
     currentUser?.id != null ? `${AVATAR_API_BASE}/${currentUser.id}/avatar.webp` : undefined;
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2">
       {allPresences.length > 0 && (
         <div className="flex shrink-0 items-center gap-2">
           {allPresences.map((presence) => {

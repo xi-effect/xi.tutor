@@ -1,10 +1,23 @@
 import { Button } from '@xipkg/button';
-import { AlarmClock, Close, Minus, Plus, Redo } from '@xipkg/icons';
+import { Close, Minus, Plus, Redo } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { useCurrentUser } from 'common.services';
-import { type MouseEvent as ReactMouseEvent, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  type Dispatch,
+  type MouseEvent as ReactMouseEvent,
+  type SetStateAction,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { stopEvent } from '../../../shapes/audio/constants';
 import { useYjsContext } from '../../../providers/YjsProvider';
+import {
+  playBoardTimerEndSound,
+  playBoardTimerWarnSound,
+  unlockBoardTimerAudio,
+} from './boardTimerAudio';
 
 const DEFAULT_DURATION_MS = 5 * 60 * 1000;
 const MAX_DURATION_MS = 99 * 60 * 1000 + 59 * 1000;
@@ -15,6 +28,10 @@ const TIMER_KEYS = {
   isRunning: 'isRunning',
   endsAtMs: 'endsAtMs',
 } as const;
+
+const WARN_BEFORE_END_MS = 45_000;
+
+const PANEL_SHAKE_MS = 420;
 
 const clampMs = (value: number) => Math.max(0, Math.min(MAX_DURATION_MS, value));
 
@@ -27,6 +44,8 @@ const parseFieldValue = (value: string, max: number) => {
 };
 
 const normalizeMaskInput = (value: string) => value.replace(/\D/g, '').slice(0, 2);
+const TIMER_VALUE_CLASS =
+  'text-[18px] lg:text-[24px] leading-[1] font-medium tabular-nums font-sans';
 
 const PlayPauseIcon = ({ isPlaying }: { isPlaying: boolean }) => {
   if (isPlaying) {
@@ -45,14 +64,48 @@ const PlayPauseIcon = ({ isPlaying }: { isPlaying: boolean }) => {
   );
 };
 
-export const TimerDropdown = () => {
+type TimerDropdownProps = {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+};
+
+export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
   const { timerMap } = useYjsContext();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  const [open, setOpen] = useState(false);
-  const [tick, setTick] = useState(() => Date.now());
+  const panelRef = useRef<HTMLDivElement | null>(null);
+
+  const runPanelShake = useCallback(() => {
+    const el = panelRef.current;
+    if (!el) return;
+    try {
+      el.getAnimations?.().forEach((a) => a.cancel());
+      el.animate(
+        [
+          { transform: 'translate3d(0,0,0)' },
+          { transform: 'translate3d(-6px,0,0)' },
+          { transform: 'translate3d(6px,0,0)' },
+          { transform: 'translate3d(-4px,0,0)' },
+          { transform: 'translate3d(4px,0,0)' },
+          { transform: 'translate3d(-2px,0,0)' },
+          { transform: 'translate3d(2px,0,0)' },
+          { transform: 'translate3d(0,0,0)' },
+        ],
+        { duration: PANEL_SHAKE_MS, iterations: 2, easing: 'ease-in-out' },
+      );
+    } catch {
+      /* Web Animations API not supported */
+    }
+  }, []);
+
+  const [, setTick] = useState(() => Date.now());
   const prevRunningRef = useRef<boolean>(false);
+  const played45sWarningRef = useRef(false);
+  /** Предыдущий остаток в прогоне — чтобы «45 с» срабатывало только при пересечении порога сверху вниз */
+  const lastRemainingFor45sWarnRef = useRef<number | null>(null);
+  /** null = ещё не инициализировано (первый тик эффекта) */
+  const wasRunningForEndSoundRef = useRef<boolean | null>(null);
 
   const [fields, setFields] = useState({ minutes: '05', seconds: '00' });
 
@@ -73,10 +126,23 @@ export const TimerDropdown = () => {
     };
   })();
 
-  const currentRemainingMs = useMemo(() => {
-    if (!snapshot.isRunning) return snapshot.remainingMs;
-    return clampMs(snapshot.endsAtMs - tick);
-  }, [snapshot, tick]);
+  /**
+   * На паузе интервал не тикает — `tick` в state замирает. Если считать `endsAtMs - tick`,
+   * после старта первый кадр даёт гигантский остаток и ложное «пересечение» 45 с.
+   * Пока идёт отсчёт — всегда `Date.now()`; ререндеры дают интервал и observer на timerMap.
+   */
+  const currentRemainingMs = !snapshot.isRunning
+    ? snapshot.remainingMs
+    : clampMs(snapshot.endsAtMs - Date.now());
+
+  /** Первый клик/тап по странице (доска, UI) — разблокирует звук для ученика и всех без клика по колокольчику */
+  useEffect(() => {
+    const onFirstPointer = () => {
+      unlockBoardTimerAudio();
+    };
+    window.addEventListener('pointerdown', onFirstPointer, { capture: true, once: true });
+    return () => window.removeEventListener('pointerdown', onFirstPointer, { capture: true });
+  }, []);
 
   useEffect(() => {
     if (timerMap.has(TIMER_KEYS.baseMs)) return;
@@ -108,9 +174,60 @@ export const TimerDropdown = () => {
   useEffect(() => {
     if (snapshot.isRunning && !prevRunningRef.current) {
       setOpen(true);
+      played45sWarningRef.current = false;
+      lastRemainingFor45sWarnRef.current = null;
     }
     prevRunningRef.current = snapshot.isRunning;
-  }, [snapshot.isRunning]);
+  }, [setOpen, snapshot.isRunning]);
+
+  /**
+   * За 45 с до конца: только если таймер реально «вошёл» в последние 45 с (было > 45 с, стало ≤ 45 с).
+   * Если стартовали с 30 с — порог не пересекается, уведомление не играем.
+   * Сброс флага, если снова стало > 45 с (+время на ходу).
+   */
+  useEffect(() => {
+    if (!snapshot.isRunning) {
+      lastRemainingFor45sWarnRef.current = null;
+      return;
+    }
+
+    const prev = lastRemainingFor45sWarnRef.current;
+
+    if (currentRemainingMs > WARN_BEFORE_END_MS) {
+      played45sWarningRef.current = false;
+      lastRemainingFor45sWarnRef.current = currentRemainingMs;
+      return;
+    }
+
+    if (
+      currentRemainingMs > 0 &&
+      prev !== null &&
+      prev > WARN_BEFORE_END_MS &&
+      !played45sWarningRef.current
+    ) {
+      played45sWarningRef.current = true;
+      playBoardTimerWarnSound();
+      requestAnimationFrame(() => runPanelShake());
+    }
+
+    lastRemainingFor45sWarnRef.current = currentRemainingMs;
+  }, [currentRemainingMs, runPanelShake, snapshot.isRunning]);
+
+  /** Окончание отсчёта: переход running → stopped при остатке 0 */
+  useEffect(() => {
+    if (wasRunningForEndSoundRef.current === null) {
+      wasRunningForEndSoundRef.current = snapshot.isRunning;
+      return;
+    }
+
+    const wasRunning = wasRunningForEndSoundRef.current;
+    wasRunningForEndSoundRef.current = snapshot.isRunning;
+
+    if (wasRunning && !snapshot.isRunning && snapshot.remainingMs === 0) {
+      playBoardTimerEndSound();
+      requestAnimationFrame(() => runPanelShake());
+    }
+  }, [runPanelShake, snapshot.isRunning, snapshot.remainingMs]);
 
   useEffect(() => {
     if (snapshot.isRunning) return;
@@ -162,6 +279,7 @@ export const TimerDropdown = () => {
 
   const onControlClick = (e: ReactMouseEvent<HTMLButtonElement>, handler: () => void) => {
     e.stopPropagation();
+    unlockBoardTimerAudio();
     handler();
   };
 
@@ -224,156 +342,160 @@ export const TimerDropdown = () => {
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
 
+  if (!open) return null;
+
   return (
-    <div className="relative">
-      <Button
-        variant="none"
-        className={cn(
-          'hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl',
-          open && 'bg-brand-20/40 focus:bg-brand-20/40',
-        )}
-        data-umami-event="board-timer-menu"
-        onPointerDown={stopEvent}
-        onClick={(e) => {
-          e.stopPropagation();
-          setOpen((prev) => !prev);
-        }}
-      >
-        <AlarmClock size="s" className="h-4 w-4 lg:h-6 lg:w-6" />
-      </Button>
-
-      {open && (
-        <div className="bg-gray-0 border-gray-10 absolute top-[-4px] right-[80px] z-100 mr-2 rounded-2xl border p-2 shadow-sm">
-          <div className="flex items-center gap-4">
-            <div className="flex flex-1 items-center gap-3">
-              {snapshot.isRunning ? (
-                <div className="w-[200px] text-[48px] leading-[0.95] font-medium tabular-nums select-none">
-                  {formatTwo(minutes)} : {formatTwo(seconds)}
-                </div>
-              ) : (
-                <div className="flex w-[200px] items-center justify-center gap-1 text-[48px] leading-[0.95] font-medium tabular-nums">
-                  <input
-                    value={fields.minutes}
-                    onChange={(e) => handleMinutesChange(e.target.value)}
-                    onBlur={() => updatePausedValue(fields.minutes, fields.seconds)}
-                    disabled={!isTutor}
-                    className="h-16 w-20 bg-transparent p-0 text-center text-[48px] leading-[0.95] outline-none"
-                    inputMode="numeric"
-                    maxLength={2}
-                    placeholder="--"
-                    onPointerDown={stopEvent}
-                  />
-                  <span className="text-[48px] leading-[0.95] font-medium tabular-nums">:</span>
-                  <input
-                    value={fields.seconds}
-                    onChange={(e) => handleSecondsChange(e.target.value)}
-                    onBlur={() => updatePausedValue(fields.minutes, fields.seconds)}
-                    disabled={!isTutor}
-                    className="h-16 w-20 bg-transparent p-0 text-center text-[48px] leading-[0.95] outline-none"
-                    inputMode="numeric"
-                    maxLength={2}
-                    placeholder="--"
-                    onPointerDown={stopEvent}
-                  />
-                </div>
+    <div
+      ref={panelRef}
+      className="bg-gray-0 border-gray-10 pointer-events-auto rounded-xl border p-1 will-change-transform lg:rounded-2xl"
+      onPointerDownCapture={() => unlockBoardTimerAudio()}
+    >
+      <div className="flex items-center justify-center gap-2">
+        {snapshot.isRunning ? (
+          <div className={cn('flex items-center justify-center gap-1 px-2', TIMER_VALUE_CLASS)}>
+            <div
+              className={cn(
+                'w-8 bg-transparent p-0 text-center outline-none select-none',
+                TIMER_VALUE_CLASS,
               )}
-
-              {snapshot.isRunning ? (
-                <div className="flex flex-col gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-10 w-12 rounded-xl p-0 text-[12px]"
-                    onPointerDown={stopEvent}
-                    onClick={(e) => onControlClick(e, () => shiftRunningBy(15_000))}
-                    disabled={!isTutor}
-                  >
-                    +15с
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-10 w-12 rounded-xl p-0 text-[12px]"
-                    onPointerDown={stopEvent}
-                    onClick={(e) => onControlClick(e, () => shiftRunningBy(60_000))}
-                    disabled={!isTutor}
-                  >
-                    +1м
-                  </Button>
-                </div>
-              ) : (
-                <div className="flex flex-col gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-10 w-12 rounded-xl p-0"
-                    onPointerDown={stopEvent}
-                    onClick={(e) => onControlClick(e, () => shiftPausedBy(30_000))}
-                    disabled={!isTutor}
-                  >
-                    <Plus className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="h-10 w-12 rounded-xl p-0"
-                    onPointerDown={stopEvent}
-                    onClick={(e) => onControlClick(e, () => shiftPausedBy(-30_000))}
-                    disabled={!isTutor}
-                  >
-                    <Minus className="h-4 w-4" />
-                  </Button>
-                </div>
-              )}
+            >
+              {formatTwo(minutes)}
             </div>
+            <span className={TIMER_VALUE_CLASS}>:</span>
+            <div
+              className={cn(
+                'w-8 bg-transparent p-0 text-center outline-none select-none',
+                TIMER_VALUE_CLASS,
+              )}
+            >
+              {formatTwo(seconds)}
+            </div>
+          </div>
+        ) : (
+          <div className={cn('flex items-center justify-center gap-1 px-2', TIMER_VALUE_CLASS)}>
+            <input
+              value={fields.minutes}
+              onChange={(e) => handleMinutesChange(e.target.value)}
+              onBlur={() => updatePausedValue(fields.minutes, fields.seconds)}
+              disabled={!isTutor}
+              className={cn(
+                'w-8 bg-transparent p-0 text-center outline-none placeholder:text-current',
+                TIMER_VALUE_CLASS,
+              )}
+              inputMode="numeric"
+              maxLength={2}
+              placeholder="--"
+              onPointerDown={stopEvent}
+            />
+            <span className={TIMER_VALUE_CLASS}>:</span>
+            <input
+              value={fields.seconds}
+              onChange={(e) => handleSecondsChange(e.target.value)}
+              onBlur={() => updatePausedValue(fields.minutes, fields.seconds)}
+              disabled={!isTutor}
+              className={cn(
+                'w-8 bg-transparent p-0 text-center outline-none placeholder:text-current',
+                TIMER_VALUE_CLASS,
+              )}
+              inputMode="numeric"
+              maxLength={2}
+              placeholder="--"
+              onPointerDown={stopEvent}
+            />
+          </div>
+        )}
 
-            <div className="bg-gray-10 h-20 w-px shrink-0" />
+        {isTutor && (
+          <>
+            {snapshot.isRunning ? (
+              <div className="flex items-center gap-1">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="text-xs-base-size h-6 w-8 rounded-lg p-0 lg:h-8 lg:w-10 lg:rounded-xl"
+                  onPointerDown={stopEvent}
+                  onClick={(e) => onControlClick(e, () => shiftRunningBy(15_000))}
+                >
+                  +15с
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="text-xs-base-size h-6 w-8 rounded-lg p-0 lg:h-8 lg:w-10 lg:rounded-xl"
+                  onPointerDown={stopEvent}
+                  onClick={(e) => onControlClick(e, () => shiftRunningBy(60_000))}
+                >
+                  +1м
+                </Button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-1">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-6 w-8 rounded-lg p-0 lg:h-8 lg:w-10 lg:rounded-xl"
+                  onPointerDown={stopEvent}
+                  onClick={(e) => onControlClick(e, () => shiftPausedBy(30_000))}
+                >
+                  <Plus className="h-4 w-4" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="h-6 w-8 rounded-lg p-0 lg:h-8 lg:w-10 lg:rounded-xl"
+                  onPointerDown={stopEvent}
+                  onClick={(e) => onControlClick(e, () => shiftPausedBy(-30_000))}
+                >
+                  <Minus className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+
+            <div className="bg-gray-10 h-6 w-px shrink-0 lg:h-8" />
 
             <Button
               type="button"
               variant="none"
-              className="bg-brand-80 hover:bg-brand-100 focus:bg-brand-100 active:bg-brand-100 disabled:bg-gray-40 flex h-10 w-10 shrink-0 items-center justify-center rounded-full p-0"
+              className="bg-brand-80 hover:bg-brand-100 focus:bg-brand-100 active:bg-brand-100 disabled:bg-gray-40 flex h-6 w-6 shrink-0 items-center justify-center rounded-full p-0 lg:h-8 lg:w-8"
               onPointerDown={stopEvent}
               onClick={(e) => onControlClick(e, snapshot.isRunning ? handlePause : handlePlay)}
-              disabled={!isTutor || (!snapshot.isRunning && snapshot.remainingMs <= 0)}
+              disabled={!snapshot.isRunning && snapshot.remainingMs <= 0}
               data-umami-event={snapshot.isRunning ? 'board-timer-pause' : 'board-timer-play'}
               title={snapshot.isRunning ? 'Пауза' : 'Старт'}
             >
               <PlayPauseIcon isPlaying={snapshot.isRunning} />
             </Button>
+            <Button
+              type="button"
+              variant="none"
+              className="bg-gray-5 hover:bg-gray-10 focus:bg-gray-10 active:bg-gray-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full p-0 lg:h-8 lg:w-8"
+              onPointerDown={stopEvent}
+              onClick={(e) => onControlClick(e, handleReset)}
+              data-umami-event="board-timer-reset"
+              title="Сброс"
+            >
+              <Redo className="h-4 w-4" />
+            </Button>
+          </>
+        )}
 
-            <div className="flex h-full flex-col gap-6">
-              <Button
-                type="button"
-                variant="none"
-                className="bg-gray-5 hover:bg-gray-10 focus:bg-gray-10 active:bg-gray-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full p-0"
-                onPointerDown={stopEvent}
-                onClick={(e) =>
-                  onControlClick(e, () => {
-                    setOpen(false);
-                  })
-                }
-                data-umami-event="board-timer-close"
-                title="Закрыть таймер"
-              >
-                <Close className="h-4 w-4" />
-              </Button>
-              <Button
-                type="button"
-                variant="none"
-                className="bg-gray-5 hover:bg-gray-10 focus:bg-gray-10 active:bg-gray-10 flex h-8 w-8 shrink-0 items-center justify-center rounded-full p-0"
-                onPointerDown={stopEvent}
-                onClick={(e) => onControlClick(e, handleReset)}
-                disabled={!isTutor}
-                data-umami-event="board-timer-reset"
-                title="Сброс"
-              >
-                <Redo className="h-4 w-4" />
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+        <div className="bg-gray-10 h-6 w-px shrink-0 lg:h-8" />
+        <Button
+          type="button"
+          variant="none"
+          className="bg-gray-5 hover:bg-gray-10 focus:bg-gray-10 active:bg-gray-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full p-0 lg:h-8 lg:w-8"
+          onPointerDown={stopEvent}
+          onClick={(e) =>
+            onControlClick(e, () => {
+              setOpen(false);
+            })
+          }
+          data-umami-event="board-timer-close"
+          title="Закрыть таймер"
+        >
+          <Close className="h-4 w-4" />
+        </Button>
+      </div>
     </div>
   );
 };
