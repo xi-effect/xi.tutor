@@ -77,7 +77,7 @@ export const Lessons = () => {
         {/* Заголовок */}
         <div className="flex flex-row items-center justify-between gap-2">
           <div className="flex flex-row items-center gap-2">
-            <h2 className="text-l-base 2xl:text-xl-base font-semibold text-gray-100">Расписание</h2>
+            <h2 className="text-l-base 2xl:text-xl-base font-medium text-gray-100">Расписание</h2>
           </div>
           <Button
             variant="none"
