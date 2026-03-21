@@ -7,6 +7,9 @@ import {
   DEFAULT_PEN_THICKNESS,
 } from '../ui/components/config';
 
+const DEFAULT_STROKE_SIZE_S = STROKE_SIZES.s;
+const XS_STROKE_SIZE_S = Math.max(1, Math.round(DEFAULT_STROKE_SIZE_S / 2));
+
 export const useTldrawStyles = () => {
   const editor = useEditor();
 
@@ -30,9 +33,16 @@ export const useTldrawStyles = () => {
   );
 
   const setThickness = useCallback(
-    (size: 's' | 'm' | 'l' | 'xl') => {
+    (size: 'xs' | 's' | 'm' | 'l' | 'xl') => {
       if (!editor) return;
       try {
+        if (size === 'xs') {
+          STROKE_SIZES.s = XS_STROKE_SIZE_S;
+          editor.setStyleForNextShapes(DefaultSizeStyle, 's');
+          return;
+        }
+
+        STROKE_SIZES.s = DEFAULT_STROKE_SIZE_S;
         editor.setStyleForNextShapes(DefaultSizeStyle, size);
       } catch (error) {
         console.warn('Error setting thickness:', error);
@@ -94,8 +104,15 @@ export const useTldrawStyles = () => {
   );
 
   const setSelectedShapesThickness = useCallback(
-    (size: 's' | 'm' | 'l' | 'xl') => {
+    (size: 'xs' | 's' | 'm' | 'l' | 'xl') => {
       if (!editor) return;
+      if (size === 'xs') {
+        STROKE_SIZES.s = XS_STROKE_SIZE_S;
+        editor.setStyleForSelectedShapes(DefaultSizeStyle, 's');
+        return;
+      }
+
+      STROKE_SIZES.s = DEFAULT_STROKE_SIZE_S;
       editor.setStyleForSelectedShapes(DefaultSizeStyle, size);
     },
     [editor],
