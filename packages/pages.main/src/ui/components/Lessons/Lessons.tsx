@@ -73,9 +73,9 @@ export const Lessons = () => {
   return (
     <>
       <AddingLessonModal open={open} onOpenChange={setOpen} dayLessons={dayLessonsForModal} />
-      <div className="bg-gray-0 flex h-[calc(100vh-98px)] w-(--lessons-panel-width) flex-col gap-4 rounded-2xl p-4">
+      <div className="bg-gray-0 flex h-[calc(100vh-98px)] w-(--lessons-panel-width) flex-col gap-4 rounded-2xl p-4 pr-2 pl-5">
         {/* Заголовок */}
-        <div className="flex flex-row items-center justify-between gap-2">
+        <div className="flex flex-row items-center justify-between gap-2 pr-3">
           <div className="flex flex-row items-center gap-2">
             <h2 className="text-l-base 2xl:text-xl-base font-medium text-gray-100">Расписание</h2>
           </div>
@@ -91,7 +91,11 @@ export const Lessons = () => {
         </div>
 
         {/* Карусель дат */}
-        <ScheduleDateCarousel selectedDate={selectedDate} onSelectedDateChange={setSelectedDate} />
+        <ScheduleDateCarousel
+          className="pr-3"
+          selectedDate={selectedDate}
+          onSelectedDateChange={setSelectedDate}
+        />
 
         {/* Список занятий на выбранный день */}
         <AllLessons lessons={MOCK_LESSONS} />

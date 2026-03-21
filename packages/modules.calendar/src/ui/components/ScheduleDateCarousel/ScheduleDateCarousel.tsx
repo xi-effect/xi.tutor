@@ -28,9 +28,11 @@ const getDatesRange = (fromDays: number, toDays: number) => {
 type ScheduleDateCarouselProps = {
   selectedDate: Date;
   onSelectedDateChange: (date: Date) => void;
+  className?: string;
 };
 
 export const ScheduleDateCarousel = ({
+  className = '',
   selectedDate,
   onSelectedDateChange,
 }: ScheduleDateCarouselProps) => {
@@ -93,7 +95,10 @@ export const ScheduleDateCarousel = ({
   );
 
   return (
-    <div ref={containerRef} className="flex w-full flex-row items-center justify-center gap-2">
+    <div
+      ref={containerRef}
+      className={cn('flex w-full flex-row items-center justify-center gap-2', className)}
+    >
       <Button
         variant="none"
         className="text-gray-80 hover:bg-gray-10 flex h-[48px] w-[36px] min-w-[36px] items-center justify-center rounded-lg p-0"

@@ -1,7 +1,7 @@
 import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { ClassroomT, IndividualClassroomT } from 'common.api';
 import { Button } from '@xipkg/button';
-import { ArrowUpRight, Conference } from '@xipkg/icons';
+import { Account, Conference } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import {
@@ -136,23 +136,23 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   };
 
   return (
-    <div className="border-gray-30 relative flex min-h-[140px] flex-col items-start justify-start gap-4 rounded-2xl border bg-transparent px-6 py-4">
+    <div className="border-gray-30 relative flex min-h-[140px] w-[240px] flex-col items-start justify-start gap-3 rounded-2xl border bg-transparent px-5 py-4 xl:w-[280px]">
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button
             onClick={handleClick}
-            className="group bg-brand-0 absolute top-4 right-6 h-6 w-6 rounded-md p-0"
+            className="group hover:bg-brand-0 absolute top-4 right-6 h-8 w-10 rounded-md bg-transparent p-0"
             variant="icon"
             data-umami-event="classroom-open"
             data-umami-event-classroom-id={classroom.id}
           >
-            <ArrowUpRight className="fill-brand-80 group-hover:fill-brand-100 h-5 w-5" />
+            <Account className="fill-gray-60 group-hover:fill-brand-100 h-5 w-5" />
           </Button>
         </TooltipTrigger>
         <TooltipContent>Перейти в кабинет</TooltipContent>
       </Tooltip>
 
-      <div className="flex h-6 w-full flex-row items-center">
+      <div className="flex h-4 w-full flex-row items-center">
         {classroom.subject_id && (
           <SubjectBadge
             subjectId={classroom.subject_id}
@@ -175,10 +175,10 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
           </div>
         )}
 
-        <Tooltip delayDuration={2000}>
+        <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
-            <div className="flex h-8 w-full flex-row items-center justify-center gap-2">
-              <h3 className="text-s-base line-clamp-2 w-full text-left font-medium text-gray-100">
+            <div className="flex h-8 w-full flex-row items-center justify-start gap-2">
+              <h3 className="text-s-base line-clamp-2 w-[80%] text-left font-medium text-gray-100">
                 {classroom.name}
               </h3>
             </div>
@@ -188,12 +188,12 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
       </div>
 
       {isLoadingStudent || isLoadingTutor ? (
-        <Button size="s" className="group mt-auto w-full" disabled loading />
+        <Button size="s" className="group mt-auto h-[32px] w-full" disabled loading />
       ) : (
         <Button
           size="s"
           variant="ghost"
-          className="text-brand-80 group hover:text-brand-100 mt-auto w-full"
+          className="text-brand-80 group hover:text-brand-100 mt-auto h-[32px] w-full"
           onClick={isCallActive ? handleBackToRoom : handleStartLesson}
           disabled={!isTutor && isConferenceNotActiveStudent}
           data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}

@@ -104,7 +104,7 @@ export const Payments = () => {
   };
 
   return (
-    <div className="bg-gray-0 flex w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)] flex-col gap-4 rounded-2xl p-4 transition-all duration-200 ease-linear">
+    <div className="bg-gray-0 flex w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)] flex-col gap-4 rounded-2xl px-5 pt-4 pb-1 transition-all duration-200 ease-linear">
       <div className="flex flex-row items-center justify-between">
         <h2 className="text-l-base font-medium text-gray-100">Оплата</h2>
         <Button
@@ -124,11 +124,8 @@ export const Payments = () => {
           <p className="text-m-base text-gray-60">Загрузка...</p>
         </div>
       ) : previewList.length > 0 ? (
-        <ScrollArea
-          // className="w-full"
-          scrollBarProps={{ orientation: 'horizontal' }}
-        >
-          <div className="flex flex-row gap-3 pb-2">
+        <ScrollArea scrollBarProps={{ orientation: 'horizontal' }}>
+          <div className="flex flex-row gap-3 pb-3">
             {previewList.map((payment) => (
               <PaymentCard
                 key={payment.id}

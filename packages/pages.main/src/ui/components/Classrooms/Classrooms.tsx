@@ -68,7 +68,7 @@ export const Classrooms = () => {
   return (
     <div
       className={cn(
-        'bg-gray-0 flex w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)] flex-col gap-4 rounded-2xl p-4 transition-all duration-200 ease-linear',
+        'bg-gray-0 flex w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)] flex-col gap-4 rounded-2xl px-5 pt-4 pb-1 transition-all duration-200 ease-linear',
       )}
     >
       <div className="flex flex-row items-center gap-2">
@@ -159,10 +159,10 @@ export const Classrooms = () => {
         </div>
       ) : filteredClassrooms && filteredClassrooms.length > 0 ? (
         <ScrollArea className="w-full" scrollBarProps={{ orientation: 'horizontal' }}>
-          <div className="flex flex-row gap-3 pb-2">
+          <div className="flex flex-row gap-3 pb-3">
             {!isHidden && <NoteForStudent onHide={hideNote} isTutor={isTutor} />}
             {filteredClassrooms.map((classroom) => (
-              <div key={classroom.id} className="max-w-[320px] min-w-[320px] shrink-0">
+              <div key={classroom.id} className="w-[240px] shrink-0 xl:w-[280px]">
                 <Classroom classroom={classroom} isLoading={isLoading} />
               </div>
             ))}

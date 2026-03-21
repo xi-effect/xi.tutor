@@ -41,7 +41,7 @@ const MaterialsContent = () => {
 
   return (
     <>
-      <div className="bg-gray-0 flex w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)] flex-col gap-5 rounded-2xl p-5 pr-3 pl-6 transition-all duration-200 ease-linear">
+      <div className="bg-gray-0 flex w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)] flex-col gap-5 rounded-2xl p-4 pr-2 pl-5 transition-all duration-200 ease-linear">
         {/* Header: title + tabs + add button */}
         <div className="flex flex-row flex-wrap items-center gap-5">
           <h2 className="text-l-base font-medium text-gray-100">Материалы</h2>
