@@ -73,7 +73,7 @@ export const Lessons = () => {
   return (
     <>
       <AddingLessonModal open={open} onOpenChange={setOpen} dayLessons={dayLessonsForModal} />
-      <div className="bg-gray-0 flex h-[calc(100vh-88px)] w-(--lessons-panel-width) flex-col gap-4 rounded-2xl p-4">
+      <div className="bg-gray-0 flex h-[calc(100vh-98px)] w-(--lessons-panel-width) flex-col gap-4 rounded-2xl p-4">
         {/* Заголовок */}
         <div className="flex flex-row items-center justify-between gap-2">
           <div className="flex flex-row items-center gap-2">

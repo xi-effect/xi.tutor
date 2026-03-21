@@ -7,6 +7,7 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { Add, FileSmall, WhiteBoard } from '@xipkg/icons';
+import { ScrollArea } from '@xipkg/scrollarea';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { useGetMaterialsList } from 'common.services';
 import { MaterialsDuplicateProvider, useMaterialsDuplicate } from 'pages.materials';
@@ -40,7 +41,7 @@ const MaterialsContent = () => {
 
   return (
     <>
-      <div className="bg-gray-0 flex w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)] flex-col gap-5 rounded-2xl p-5 px-6 transition-all duration-200 ease-linear">
+      <div className="bg-gray-0 flex w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)] flex-col gap-5 rounded-2xl p-5 pr-3 pl-6 transition-all duration-200 ease-linear">
         {/* Header: title + tabs + add button */}
         <div className="flex flex-row flex-wrap items-center gap-5">
           <h2 className="text-l-base font-medium text-gray-100">Материалы</h2>
@@ -55,7 +56,7 @@ const MaterialsContent = () => {
             indicatorClassName="rounded-[10px] bg-brand-80"
           />
 
-          <div className="ml-auto">
+          <div className="ml-auto pr-3">
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -103,16 +104,14 @@ const MaterialsContent = () => {
             </DropdownMenu>
           </div>
         </div>
-
-        {/* Cards grid */}
-        <div className="flex flex-row flex-wrap content-start gap-3">
-          {isLoading && (
-            <div className="flex h-[180px] w-full flex-row items-center justify-center">
-              <p className="text-m-base text-gray-60">Загрузка...</p>
-            </div>
-          )}
-          {!isLoading && filteredMaterials.length > 0 && (
-            <>
+        {/* Cards row */}
+        {isLoading ? (
+          <div className="flex h-[180px] w-full flex-row items-center justify-center">
+            <p className="text-m-base text-gray-60">Загрузка...</p>
+          </div>
+        ) : filteredMaterials.length > 0 ? (
+          <ScrollArea className="h-[300px] w-full">
+            <div className="flex flex-row flex-wrap content-start gap-3 pr-3">
               {filteredMaterials.map((material) => (
                 <MaterialsCard
                   key={material.id}
@@ -123,14 +122,13 @@ const MaterialsContent = () => {
                   isLoading={isLoading}
                 />
               ))}
-            </>
-          )}
-          {!isLoading && filteredMaterials.length === 0 && (
-            <div className="flex h-[180px] w-full flex-row items-center justify-center">
-              <p className="text-m-base text-gray-60">Здесь пока пусто</p>
             </div>
-          )}
-        </div>
+          </ScrollArea>
+        ) : (
+          <div className="flex h-[180px] w-full flex-row items-center justify-center">
+            <p className="text-m-base text-gray-60">Здесь пока пусто</p>
+          </div>
+        )}
       </div>
 
       {materialId !== null && (

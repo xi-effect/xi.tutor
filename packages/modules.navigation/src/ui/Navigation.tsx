@@ -23,11 +23,11 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
 
   const insetClassName = focusMode
     ? isMobile
-      ? 'w-full h-screen overflow-hidden'
-      : 'h-screen overflow-hidden'
+      ? 'w-full h-screen min-h-0 overflow-hidden'
+      : 'h-screen min-h-0 overflow-hidden'
     : isMobile
       ? 'w-full pb-[64px]'
-      : 'h-screen overflow-hidden';
+      : 'h-screen min-h-0 overflow-hidden';
 
   // Используем один компонент, который условно рендерит нужную структуру
   // но children всегда остаются в одном месте с одним ключом

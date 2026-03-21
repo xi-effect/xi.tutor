@@ -112,19 +112,18 @@ export const MainPage = () => {
   ];
 
   return (
-    <div className="bg-gray-5 overflow-none flex h-screen flex-col">
-      <div className="flex flex-col gap-4 pl-4">
-        {/* Дата и время */}
-        <div className="pt-6 pl-4">
-          <DateTimeDisplay />
-        </div>
-
-        {/* Три колонки: Расписание, Кабинеты, Payments и Materials */}
-        <div className="flex flex-row gap-4">
-          <div className="flex flex-col">
+    <div className="bg-gray-5 flex h-full min-h-0 flex-col">
+      {/* Шапка на всю ширину контентной области; не участвует в прокрутке ниже */}
+      <div className="shrink-0 pt-6 pr-4 pb-5 pl-4">
+        <DateTimeDisplay />
+      </div>
+      {/* Ниже шапки — оставшаяся высота; справа один скролл по кабинетам / оплатам / материалам */}
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="flex min-h-0 flex-1 flex-row items-start gap-4 pb-6 pl-4">
+          <div className="lg:bg-gray-5 flex shrink-0 flex-col lg:sticky lg:top-0 lg:z-10 lg:self-start">
             <Lessons />
           </div>
-          <div className="flex flex-col gap-5">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-5 self-stretch overflow-y-auto overscroll-contain">
             <Classrooms />
             <Payments />
             <Materials />
