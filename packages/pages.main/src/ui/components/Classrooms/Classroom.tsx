@@ -141,7 +141,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         <TooltipTrigger asChild>
           <Button
             onClick={handleClick}
-            className="group hover:bg-brand-0 absolute top-4 right-6 h-8 w-10 rounded-md bg-transparent p-0"
+            className="group hover:bg-brand-0 absolute top-2 right-4 h-8 w-10 rounded-md bg-transparent p-0"
             variant="icon"
             data-umami-event="classroom-open"
             data-umami-event-classroom-id={classroom.id}
@@ -178,7 +178,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
             <div className="flex h-8 w-full flex-row items-center justify-start gap-2">
-              <h3 className="text-s-base line-clamp-2 w-[80%] text-left font-medium text-gray-100">
+              <h3 className="text-s-base line-clamp-2 text-left font-medium text-gray-100">
                 {classroom.name}
               </h3>
             </div>

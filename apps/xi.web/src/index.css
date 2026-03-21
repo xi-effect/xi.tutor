@@ -45,6 +45,7 @@
 @source "../../../packages/features.group.invite/src";
 @source "../../../packages/pages.calendar/src";
 @source "../../../packages/features.lesson.cancel/src";
+@source "../../../packages/features.invoice.card/src";
 
 @source "../../../node_modules/@xipkg";
 

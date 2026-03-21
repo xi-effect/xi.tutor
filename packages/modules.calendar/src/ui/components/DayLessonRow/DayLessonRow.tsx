@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Button } from '@xipkg/button';
-import { Conference, Trash } from '@xipkg/icons';
+import { Conference, Close } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
 import { CancelLessonModal } from 'features.lesson.cancel';
 import type { ScheduleLessonRow } from '../../types';
@@ -71,7 +71,7 @@ export const DayLessonRow = ({
               className="absolute top-6 right-0 h-[38px] w-[38px] min-w-[38px] p-0"
               onClick={() => setCancelModalOpen(true)}
             >
-              <Trash className="fill-gray-60 h-5 w-5" />
+              <Close className="fill-gray-60 h-5 w-5" />
             </Button>
           </div>
         )}

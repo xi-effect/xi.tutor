@@ -1,5 +1,5 @@
 import { UserProfile } from '@xipkg/userprofile';
-import { renderIcon, formatPaymentDate } from '../../utils';
+import { renderIcon } from '../../utils';
 import { getUserAvatarUrl } from 'common.utils';
 import { StatusBadge } from '../components';
 import { CardContentT } from '../../types';
@@ -14,13 +14,12 @@ export const DefaultCard = ({
   className,
   currentUserRole,
 }: CardContentT) => {
-  const formattedDate = formatPaymentDate(payment.created_at);
   const amount = parseFloat(payment.total);
 
   return (
     <div
       className={cn(
-        'border-gray-30 flex min-h-[130px] min-w-[350px] flex-col items-start justify-start gap-4 rounded-2xl border p-4',
+        'border-gray-30 flex min-h-[130px] w-[240px] min-w-[240px] flex-1 flex-col items-start justify-start gap-4 rounded-2xl border px-5 py-4 xl:w-[280px] xl:min-w-[280px]',
         className,
       )}
     >
@@ -29,24 +28,22 @@ export const DefaultCard = ({
         {payment.payment_type && renderIcon(payment.payment_type)}
       </div>
       {type === 'full' && (
-        <UserProfile
-          size="m"
-          userId={userId}
-          text={userData?.display_name || userData?.username || 'Имя не найдено'}
-          src={getUserAvatarUrl(userId)}
-          classNameText="line-clamp-2 break-words"
-          className="h-auto overflow-hidden"
-        />
+        <div className="flex w-full flex-row items-center justify-between gap-2">
+          <UserProfile
+            size="m"
+            userId={userId}
+            text={userData?.display_name || userData?.username || 'Имя не найдено'}
+            src={getUserAvatarUrl(userId)}
+            classNameText="line-clamp-2 break-words"
+            className="h-auto overflow-hidden"
+          />
+          <div className="flex flex-row items-baseline gap-0.5">
+            <h3 className="text-m-base font-medium text-gray-100">{amount} ₽</h3>
+          </div>
+        </div>
       )}
       <div className="text-s-base text-gray-80 mt-auto flex w-full flex-col gap-1 font-medium">
-        <span>{formattedDate}</span>
-        <div className="flex flex-row justify-between">
-          <div className="flex flex-row items-baseline gap-0.5">
-            <h3 className="text-h6 font-medium text-gray-100">{amount}</h3>
-            <span className="text-m-base text-gray-60 font-medium">₽</span>
-          </div>
-          <PaymentApproveAction payment={payment} isTutor={currentUserRole === 'tutor'} />
-        </div>
+        <PaymentApproveAction payment={payment} isTutor={currentUserRole === 'tutor'} />
       </div>
     </div>
   );
