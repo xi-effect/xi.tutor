@@ -51,8 +51,8 @@ const MaterialsContent = () => {
             tabs={filters}
             activeTab={selectedFilter}
             onChange={(id) => setSelectedFilter(id as 'all' | 'note' | 'board')}
-            className="bg-gray-5 flex h-9 flex-row rounded-xl p-1"
-            tabClassName="rounded-[10px] px-3 py-1.5 text-s-base font-medium text-gray-80 data-[active=true]:text-gray-0"
+            className="bg-gray-0 flex h-8 flex-row rounded-xl p-1"
+            tabClassName="h-[26px] rounded-[10px] px-3 py-1.5 text-s-base font-medium text-gray-80 data-[active=true]:text-gray-0"
             indicatorClassName="rounded-[10px] bg-brand-80"
           />
 
@@ -116,7 +116,7 @@ const MaterialsContent = () => {
                 <MaterialsCard
                   key={material.id}
                   onDuplicate={openModal}
-                  layout="compact"
+                  className="w-auto min-w-[394px] flex-1"
                   hasIcon
                   {...material}
                   isLoading={isLoading}

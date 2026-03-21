@@ -10,7 +10,7 @@ import { MobileBottomBar } from './MobileBottomBar';
 import { MobileMenuDrawerContent } from './MobileMenuDrawerContent';
 import { DRAWER_CONTENT_ABOVE_BAR_CLASS } from './constants';
 
-const SIDEBAR_WIDTH_EXPANDED = '300px';
+const SIDEBAR_WIDTH_EXPANDED = '260px';
 const SIDEBAR_WIDTH_COLLAPSED = '72px';
 
 const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
