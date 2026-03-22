@@ -79,23 +79,23 @@ const MaterialsContent = () => {
                 <div className="flex flex-col gap-3">
                   <DropdownMenuItem
                     className="border-gray-10 bg-gray-0 focus:bg-gray-0 data-highlighted:bg-gray-5 flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
-                    onSelect={() => handleCreateMaterial('note')}
-                    data-umami-event="materials-add-note"
-                  >
-                    <FileSmall className="fill-gray-80 size-4 shrink-0" />
-                    <span className="text-s-base text-gray-80 flex-1 text-left font-medium">
-                      Заметку
-                    </span>
-                    <Add className="fill-brand-80 size-4 shrink-0" />
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="border-gray-10 bg-gray-0 focus:bg-gray-0 data-highlighted:bg-gray-5 flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
                     onSelect={() => handleCreateMaterial('board')}
                     data-umami-event="materials-add-board"
                   >
                     <WhiteBoard className="fill-gray-80 size-4 shrink-0" />
                     <span className="text-s-base text-gray-80 flex-1 text-left font-medium">
                       Доску
+                    </span>
+                    <Add className="fill-brand-80 size-4 shrink-0" />
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="border-gray-10 bg-gray-0 focus:bg-gray-0 data-highlighted:bg-gray-5 flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
+                    onSelect={() => handleCreateMaterial('note')}
+                    data-umami-event="materials-add-note"
+                  >
+                    <FileSmall className="fill-gray-80 size-4 shrink-0" />
+                    <span className="text-s-base text-gray-80 flex-1 text-left font-medium">
+                      Заметку
                     </span>
                     <Add className="fill-brand-80 size-4 shrink-0" />
                   </DropdownMenuItem>

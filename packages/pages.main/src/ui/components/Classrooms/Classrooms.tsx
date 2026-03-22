@@ -15,8 +15,6 @@ import { useState, useMemo } from 'react';
 import { ModalAddGroup } from 'features.group.add';
 import { ModalInvitation } from 'features.invites';
 import { Classroom } from './Classroom';
-import { useNoteVisibility } from '../../../hooks';
-import { NoteForStudent } from './NoteForStudent';
 import { cn } from '@xipkg/utils';
 
 export const Classrooms = () => {
@@ -35,7 +33,6 @@ export const Classrooms = () => {
   const classrooms = isTutor ? tutorClassrooms : studentClassrooms;
   const isLoading = isTutor ? isTutorLoading : isStudentLoading;
 
-  const { isHidden, hideNote } = useNoteVisibility(isTutor);
   const [selectedSubject] = useState<string>('all');
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [inviteModalOpen, setInviteModalOpen] = useState(false);
@@ -154,7 +151,6 @@ export const Classrooms = () => {
       ) : filteredClassrooms && filteredClassrooms.length > 0 ? (
         <ScrollArea className="w-full" scrollBarProps={{ orientation: 'horizontal' }}>
           <div className="flex flex-row gap-3 pb-3">
-            {!isHidden && <NoteForStudent onHide={hideNote} isTutor={isTutor} />}
             {filteredClassrooms.map((classroom) => (
               <div key={classroom.id} className="w-[240px] shrink-0 xl:w-[280px]">
                 <Classroom classroom={classroom} isLoading={isLoading} />
