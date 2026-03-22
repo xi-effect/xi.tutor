@@ -48,7 +48,7 @@ export const CalendarHeader = ({
     <header className="flex flex-wrap items-center justify-between gap-3 pt-6 pr-6 pb-4 pl-4">
       <DateTimeDisplay />
       {/* Блок навигации по макету: 323×32px, три части с общими границами */}
-      <div className="flex h-8 w-[323px] flex-none flex-row items-center" style={{ flexGrow: 0 }}>
+      <div className="flex h-8 flex-none flex-row items-center" style={{ flexGrow: 0 }}>
         <Button
           type="button"
           variant="text"
@@ -69,7 +69,7 @@ export const CalendarHeader = ({
         >
           <button
             type="button"
-            className="bg-gray-0 border-gray-10 dark:border-gray-70 flex h-8 w-[204px] flex-none flex-row items-center justify-center gap-3 border px-5 py-2 text-center font-medium dark:bg-transparent dark:text-gray-100"
+            className="bg-gray-0 border-gray-10 dark:border-gray-70 flex h-8 flex-none flex-row items-center justify-center gap-3 border px-5 py-2 text-center font-medium dark:bg-transparent dark:text-gray-100"
           >
             <span className="text-xs-base text-gray-80 w-full">{dateRangeLabel}</span>
             <Calendar className="fill-brand-80 dark:fill-brand-80 h-5 w-5 flex-none" />
