@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
+import { isSameDay } from 'date-fns';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
 import { LessonCard } from '../ScheduleKanban/LessonCard';
@@ -20,14 +21,15 @@ const getEventsForDay = (
 };
 
 type ScheduleDaySwiperProps = {
-  weekDays: Date[];
+  /** Подряд идущие дни (несколько недель) — см. `getWeeksRangeDays` */
+  days: Date[];
   selectedDate: Date;
   onSelectedDateChange: (date: Date) => void;
   onAddLessonClick?: (date: Date) => void;
 };
 
 export const ScheduleDaySwiper = ({
-  weekDays,
+  days,
   selectedDate,
   onSelectedDateChange,
   onAddLessonClick,
@@ -36,7 +38,7 @@ export const ScheduleDaySwiper = ({
   const today = new Date();
   const swiperRef = useRef<SwiperType | null>(null);
 
-  const selectedIndex = weekDays.findIndex((d) => d.getTime() === selectedDate.getTime());
+  const selectedIndex = days.findIndex((d) => isSameDay(d, selectedDate));
   const activeIndex = selectedIndex >= 0 ? selectedIndex : 0;
 
   const handleSwiper = useCallback((swiper: SwiperType) => {
@@ -51,12 +53,12 @@ export const ScheduleDaySwiper = ({
 
   const handleSlideChange = useCallback(
     (swiper: SwiperType) => {
-      const newDate = weekDays[swiper.activeIndex];
+      const newDate = days[swiper.activeIndex];
       if (newDate) {
         onSelectedDateChange(newDate);
       }
     },
-    [weekDays, onSelectedDateChange],
+    [days, onSelectedDateChange],
   );
 
   return (
@@ -69,7 +71,7 @@ export const ScheduleDaySwiper = ({
       initialSlide={activeIndex}
       resistanceRatio={0.85}
     >
-      {weekDays.map((day) => {
+      {days.map((day) => {
         const events = getEventsForDay(eventsByDate, day);
         const isPast = isPastDay(day, today);
         return (

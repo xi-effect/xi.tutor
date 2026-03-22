@@ -14,7 +14,7 @@ const INITIAL_SLIDE_INDEX = 2; // текущая неделя по центру
 
 const styles = {
   dayPillBase:
-    'flex h-12 min-w-[36px] flex-1 flex-col items-center justify-center rounded-xl text-center transition-colors',
+    'flex h-10 min-w-[36px] flex-1 flex-col items-center justify-center rounded-xl text-center transition-colors',
 } as const;
 
 type ScheduleWeekCarouselProps = {
@@ -77,7 +77,7 @@ export const ScheduleWeekCarousel = ({
 
   return (
     <Swiper
-      className="w-full"
+      className="h-[84px] w-full"
       slidesPerView={1}
       spaceBetween={0}
       onSwiper={handleSwiper}
@@ -87,7 +87,7 @@ export const ScheduleWeekCarousel = ({
       {weeks.map((start) => {
         const days = getWeekDays(start);
         return (
-          <SwiperSlide key={start.toISOString()}>
+          <SwiperSlide key={start.toISOString()} className="py-6">
             <div className="grid grid-cols-7 gap-1 px-1">
               {days.map((date, i) => {
                 const isSelected = date.getTime() === selectedDate.getTime();
