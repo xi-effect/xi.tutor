@@ -7,7 +7,7 @@ import { ScheduleDateCarousel } from 'modules.calendar';
 import type { ScheduleLessonRow } from 'modules.calendar';
 
 // TODO: Заменить на данные из API по выбранной дате (selectedDate)
-const MOCK_LESSONS: ScheduleLessonRow[] = [
+export const MOCK_LESSONS: ScheduleLessonRow[] = [
   {
     id: 1,
     startTime: '15:45',

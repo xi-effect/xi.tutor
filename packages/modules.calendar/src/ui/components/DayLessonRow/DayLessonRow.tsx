@@ -1,8 +1,7 @@
-import { useState } from 'react';
 import { Button } from '@xipkg/button';
 import { Conference, Close } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
-import { CancelLessonModal } from 'features.lesson.cancel';
+import { useCancelLessonModal } from '../../../hooks';
 import type { ScheduleLessonRow } from '../../types';
 
 type DayLessonRowProps = {
@@ -21,17 +20,10 @@ export const DayLessonRow = ({
   onCancelOne,
   onCancelAll,
 }: DayLessonRowProps) => {
-  const [cancelModalOpen, setCancelModalOpen] = useState(false);
-
-  const handleCancelOne = () => {
-    onCancelOne?.(lesson);
-    setCancelModalOpen(false);
-  };
-
-  const handleCancelAll = () => {
-    onCancelAll?.(lesson);
-    setCancelModalOpen(false);
-  };
+  const { setCancelModalOpen, cancelLessonModal } = useCancelLessonModal(lesson, {
+    onCancelOne,
+    onCancelAll,
+  });
 
   return (
     <div className="border-gray-10 relative flex w-full flex-row items-start gap-4 border-b py-6 last:border-b-0">
@@ -77,12 +69,7 @@ export const DayLessonRow = ({
         )}
       </div>
 
-      <CancelLessonModal
-        open={cancelModalOpen}
-        onOpenChange={setCancelModalOpen}
-        onCancelOne={handleCancelOne}
-        onCancelAll={handleCancelAll}
-      />
+      {cancelLessonModal}
     </div>
   );
 };

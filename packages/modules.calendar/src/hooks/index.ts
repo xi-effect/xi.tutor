@@ -3,3 +3,4 @@ export { useEventForm } from './useEventForm';
 export { useConstants } from './useConstants';
 export { useKanbanColumns } from './useKanbanColumns';
 export { useIsMobile } from './useIsMobile';
+export { useCancelLessonModal } from './useCancelLessonModal';

@@ -2,10 +2,15 @@
 import { Classrooms, Lessons, Payments, Materials } from './components';
 import { DateTimeDisplay, Menu } from 'common.ui';
 import { useCurrentUser } from 'common.services';
+import { useMediaQuery } from '@xipkg/utils';
+import { NearestLessonCard } from 'modules.calendar';
+import { MOCK_LESSONS } from './components/Lessons/Lessons';
 
 export const MainPage = () => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+
+  const isMobile = useMediaQuery('(max-width: 720px)');
 
   const steps = [
     {
@@ -98,16 +103,21 @@ export const MainPage = () => {
   return (
     <div className="bg-gray-5 flex h-full min-h-0 flex-col">
       {/* Шапка на всю ширину контентной области; не участвует в прокрутке ниже */}
-      <div className="shrink-0 pt-6 pr-4 pb-5 pl-4">
-        <DateTimeDisplay />
-      </div>
+      {!isMobile && (
+        <div className="shrink-0 pt-6 pr-4 pb-5 pl-4">
+          <DateTimeDisplay />
+        </div>
+      )}
       {/* Ниже шапки — оставшаяся высота; справа один скролл по кабинетам / оплатам / материалам */}
       <div className="flex min-h-0 flex-1 flex-col">
-        <div className="flex min-h-0 flex-1 flex-row items-start gap-4 pl-4">
-          <div className="lg:bg-gray-5 flex shrink-0 flex-col pb-6 lg:sticky lg:top-0 lg:z-10 lg:self-start">
-            <Lessons />
-          </div>
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-5 self-stretch overflow-y-auto overscroll-contain pb-6">
+        <div className="flex min-h-0 flex-1 flex-col items-start gap-4 p-4 pl-4 sm:flex-row sm:py-0 sm:pr-4">
+          {!isMobile && (
+            <div className="lg:bg-gray-5 flex shrink-0 flex-col pb-6 lg:sticky lg:top-0 lg:z-10 lg:self-start">
+              <Lessons />
+            </div>
+          )}
+          {isMobile && <NearestLessonCard lesson={MOCK_LESSONS[0]} />}
+          <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-5 self-stretch overscroll-contain pb-6 sm:overflow-y-auto">
             <Classrooms />
             <Payments />
             <Materials />

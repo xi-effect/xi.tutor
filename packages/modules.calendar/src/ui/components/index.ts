@@ -6,3 +6,4 @@ export { ScheduleDaySwiper } from './ScheduleDaySwiper';
 export { ScheduleMobileView } from './ScheduleMobileView';
 export { DayLessonRow } from './DayLessonRow';
 export { DayLessonsPanel } from './DayLessonsPanel';
+export { NearestLessonCard } from './NearestLessonCard';
