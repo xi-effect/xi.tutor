@@ -42,7 +42,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
 
   return (
     <div className="flex h-[calc(100vh-72px)] flex-1 flex-col overflow-hidden">
-      <div className="flex flex-1 gap-7 overflow-hidden" style={{ width: '100%' }}>
+      <div className="flex w-full min-w-0 flex-1 gap-7 overflow-hidden">
         {visibleDays.map((day) => {
           const events = getEventsForDay(eventsByDate, day);
           const dateNum = day.getDate();
@@ -51,12 +51,8 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
           return (
             <div
               key={day.toISOString()}
-              className="group/day flex shrink-0 flex-col"
-              style={{
-                minWidth: columnWidth,
-                maxWidth: columnWidth,
-                width: columnWidth,
-              }}
+              className="group/day flex min-w-0 flex-1 flex-col"
+              style={{ minWidth: columnWidth }}
             >
               <div className="flex shrink-0 items-center justify-between gap-1 py-4">
                 <span

@@ -65,7 +65,7 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose, initialDate
         id="adding-lesson-form"
         onSubmit={handleSubmit(onFormSubmit)}
         onReset={handleReset}
-        className="flex flex-col gap-6"
+        className="flex w-full min-w-0 flex-col gap-6"
       >
         <FormField
           control={control}

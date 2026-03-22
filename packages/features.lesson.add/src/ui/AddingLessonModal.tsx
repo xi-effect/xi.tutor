@@ -70,11 +70,11 @@ export const AddingLessonModal = ({
 
   return (
     <Modal open={open} onOpenChange={handleCloseModal}>
-      <ModalContent className="min-h-[740px] max-w-[960px]">
+      <ModalContent className="flex min-h-[740px] w-full max-w-[960px] min-w-0 flex-col">
         <ModalCloseButton />
-        <ModalBody className="flex h-full flex-row gap-10">
-          <div className="flex min-h-0 w-1/2 min-w-0 flex-col gap-5">
-            <h3 className="text-xl-base font-semibold text-gray-100">Расписание</h3>
+        <ModalBody className="grid min-h-0 w-full min-w-0 grid-cols-2 gap-10">
+          <div className="flex min-h-0 min-w-0 flex-col gap-5">
+            <h3 className="text-xl-base shrink-0 font-semibold text-gray-100">Расписание</h3>
             <DayLessonsPanel
               selectedDate={selectedDate}
               onSelectedDateChange={setSelectedDate}
@@ -82,12 +82,12 @@ export const AddingLessonModal = ({
               withoutTitle
             />
           </div>
-          <div className="flex h-full w-1/2 min-w-0 flex-col gap-5">
-            <h3 className="text-xl-base font-semibold text-gray-100">Добавить занятие</h3>
+          <div className="flex h-full min-h-0 min-w-0 flex-col gap-5">
+            <h3 className="text-xl-base shrink-0 font-semibold text-gray-100">Добавить занятие</h3>
             <AddingForm onClose={handleCloseModal} initialDate={initialDate} />
-            <div className="mt-auto flex flex-row gap-2">
+            <div className="mt-auto flex w-full min-w-0 flex-row gap-2">
               <Button
-                className="w-full"
+                className="min-w-0 flex-1"
                 form="adding-lesson-form"
                 size="m"
                 variant="text"
@@ -96,7 +96,7 @@ export const AddingLessonModal = ({
                 Отменить
               </Button>
               <Button
-                className="w-full"
+                className="min-w-0 flex-1"
                 form="adding-lesson-form"
                 variant="primary"
                 type="submit"

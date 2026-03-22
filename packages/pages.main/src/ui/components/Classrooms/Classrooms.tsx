@@ -148,13 +148,7 @@ export const Classrooms = () => {
       </div>
 
       {isLoading ? (
-        <div
-          className={
-            isTutor
-              ? 'flex h-[200px] w-full flex-row items-center justify-center'
-              : 'flex h-[180px] w-full flex-row items-center justify-center'
-          }
-        >
+        <div className={'flex h-[152px] w-full flex-row items-center justify-center'}>
           <p className="text-m-base text-gray-60">Загрузка...</p>
         </div>
       ) : filteredClassrooms && filteredClassrooms.length > 0 ? (
@@ -169,7 +163,7 @@ export const Classrooms = () => {
           </div>
         </ScrollArea>
       ) : (
-        <div className="flex h-[180px] w-full flex-row items-center justify-center">
+        <div className="flex h-[152px] w-full flex-row items-center justify-center">
           <p className="text-m-base text-gray-60 text-center">{emptyMessage}</p>
         </div>
       )}

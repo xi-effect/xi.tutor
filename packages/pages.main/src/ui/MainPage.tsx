@@ -40,22 +40,6 @@ export const MainPage = () => {
       side: 'bottom' as const,
       align: 'end' as const,
     },
-    // {
-    //   element: '#materials-tab',
-    //   popover: {
-    //     description: 'Изучайте материалы и закрепляйте навыки на практике',
-    //   },
-    //   side: 'bottom' as const,
-    //   align: 'end' as const,
-    // },
-    // {
-    //   element: '#payments-tab',
-    //   popover: {
-    //     description: 'Когда получите счёт, оплатите его удобным способом. Все оплаты — здесь',
-    //   },
-    //   side: 'bottom' as const,
-    //   align: 'end' as const,
-    // },
     {
       element: '#invite-student-button',
       popover: {

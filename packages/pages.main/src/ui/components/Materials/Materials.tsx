@@ -106,7 +106,7 @@ const MaterialsContent = () => {
         </div>
         {/* Cards row */}
         {isLoading ? (
-          <div className="flex h-[180px] w-full flex-row items-center justify-center">
+          <div className="flex h-[300px] w-full flex-row items-center justify-center">
             <p className="text-m-base text-gray-60">Загрузка...</p>
           </div>
         ) : filteredMaterials.length > 0 ? (
@@ -125,7 +125,7 @@ const MaterialsContent = () => {
             </div>
           </ScrollArea>
         ) : (
-          <div className="flex h-[180px] w-full flex-row items-center justify-center">
+          <div className="flex h-[300px] w-full flex-row items-center justify-center">
             <p className="text-m-base text-gray-60">Здесь пока пусто</p>
           </div>
         )}

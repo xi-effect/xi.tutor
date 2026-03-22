@@ -63,7 +63,7 @@ export const Payments = () => {
       </div>
 
       {isLoading ? (
-        <div className="flex h-[120px] w-full items-center justify-center">
+        <div className="flex h-[178px] w-full items-center justify-center">
           <p className="text-m-base text-gray-60">Загрузка...</p>
         </div>
       ) : previewList.length > 0 ? (
@@ -79,7 +79,7 @@ export const Payments = () => {
           </div>
         </ScrollArea>
       ) : (
-        <div className="flex h-[120px] w-full flex-col items-center justify-center gap-2">
+        <div className="flex h-[178px] w-full flex-col items-center justify-center gap-2">
           <p className="text-m-base text-gray-60 text-center">Пока нет платежей</p>
           <Button
             variant="none"
