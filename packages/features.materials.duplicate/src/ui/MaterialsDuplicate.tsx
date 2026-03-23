@@ -214,7 +214,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
 
   return (
     <Modal open={open} onOpenChange={handleClose}>
-      <ModalContent className="max-w-2xl max-sm:w-[calc(100%)]">
+      <ModalContent className="max-sm:w-[calc(50 %)] max-w-2xl">
         <ModalCloseButton className="right-2">
           <Close className="fill-gray-80 sm:fill-gray-0" />
         </ModalCloseButton>
