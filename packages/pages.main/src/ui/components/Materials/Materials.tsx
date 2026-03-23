@@ -26,6 +26,7 @@ const MaterialsContent = () => {
       to: '/materials',
       search: (prev: Record<string, unknown>) => ({
         ...prev,
+        tab: 'boards',
         ...filteredSearch,
       }),
     });

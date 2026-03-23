@@ -22,7 +22,8 @@ export const TabsTutor = () => {
 
   const search: SearchParams = useSearch({ strict: false });
   const navigate = useNavigate();
-  const currentTab = search.tab || 'overview';
+  const currentTab =
+    search.tab === 'notes' || search.tab === 'boards' ? 'materials' : search.tab || 'overview';
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [isStudentsModalOpen, setIsStudentsModalOpen] = useState(false);
   const [isGroupInviteModalOpen, setIsGroupInviteModalOpen] = useState(false);
@@ -63,7 +64,7 @@ export const TabsTutor = () => {
       // @ts-ignore
       search: {
         // @ts-ignore
-        tab: value,
+        tab: value === 'materials' ? 'boards' : value,
         ...filteredSearch,
       },
     });

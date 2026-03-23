@@ -1757,6 +1757,9 @@ importers:
 
   packages/features.materials.add:
     dependencies:
+      '@tanstack/react-router':
+        specifier: ^1.128.8
+        version: 1.166.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/button':
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
@@ -1769,6 +1772,9 @@ importers:
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.4)
+      common.utils:
+        specifier: workspace:*
+        version: link:../common.utils
       react:
         specifier: '19'
         version: 19.2.4
@@ -1827,6 +1833,9 @@ importers:
       '@tanstack/react-query':
         specifier: 5.73.3
         version: 5.73.3(react@19.2.4)
+      '@tanstack/react-router':
+        specifier: ^1.128.8
+        version: 1.166.6(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/badge':
         specifier: 2.0.12
         version: 2.0.12(react@19.2.4)
@@ -1848,6 +1857,9 @@ importers:
       common.types:
         specifier: workspace:*
         version: link:../common.types
+      common.utils:
+        specifier: workspace:*
+        version: link:../common.utils
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -2853,6 +2865,9 @@ importers:
       common.ui:
         specifier: workspace:*
         version: link:../common.ui
+      common.utils:
+        specifier: workspace:*
+        version: link:../common.utils
       nanoid:
         specifier: 5.1.5
         version: 5.1.5
@@ -4066,6 +4081,9 @@ importers:
       common.ui:
         specifier: workspace:*
         version: link:../common.ui
+      common.utils:
+        specifier: workspace:*
+        version: link:../common.utils
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -4078,6 +4096,12 @@ importers:
       features.materials.duplicate:
         specifier: workspace:*
         version: link:../features.materials.duplicate
+      modules.board:
+        specifier: workspace:*
+        version: link:../modules.board
+      pages.notes:
+        specifier: workspace:*
+        version: link:../pages.notes
       react:
         specifier: '19'
         version: 19.2.4
@@ -4154,6 +4178,9 @@ importers:
       common.ui:
         specifier: workspace:*
         version: link:../common.ui
+      common.utils:
+        specifier: workspace:*
+        version: link:../common.utils
       modules.editor:
         specifier: workspace:*
         version: link:../modules.editor
@@ -9141,8 +9168,8 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-config-turbo@2.8.15:
-    resolution: {integrity: sha512-5Iey4LquppJJyx0xZq/XF897gGZihmCBxPKP9c1/YOzy5a90rO1UUhKIldTkxDT1SLELNkS90cbpn4NXst8vig==}
+  eslint-config-turbo@2.8.20:
+    resolution: {integrity: sha512-zT17KSqM4gTrChIocN+WfSdjg21QZTCDrcssylFab/wxu6S1EHDbt0JOna9b8rH5OKafZxDuFxKMV8BkulWShg==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -9239,8 +9266,8 @@ packages:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
 
-  eslint-plugin-turbo@2.8.15:
-    resolution: {integrity: sha512-7Hu08p6oG3lLnvTvrd5iZVIKFgmUYIZr/m1ZoQQDiZA4xBOSQLiXshzxXZHECwO8iXgYBDRrBC1fBhm8U3Avzg==}
+  eslint-plugin-turbo@2.8.20:
+    resolution: {integrity: sha512-sMDremg73XbX+Imh7iDRS3TAro5jIf7CdzSqrT50wCGhClbiUvmWcLomnX+ldUbfTy+OvtqOeePvTivJMR87eQ==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -15177,7 +15204,7 @@ snapshots:
       eslint-config-airbnb: 19.0.4(eslint-plugin-import@2.31.0)(eslint-plugin-jsx-a11y@6.10.2(eslint@9.39.3(jiti@2.6.1)))(eslint-plugin-react-hooks@5.1.0(eslint@9.39.3(jiti@2.6.1)))(eslint-plugin-react@7.37.2(eslint@9.39.3(jiti@2.6.1)))(eslint@9.39.3(jiti@2.6.1))
       eslint-config-next: 15.1.2(eslint@9.39.3(jiti@2.6.1))(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.39.3(jiti@2.6.1))
-      eslint-config-turbo: 2.8.15(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
+      eslint-config-turbo: 2.8.20(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.56.1(eslint@9.39.3(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.3(jiti@2.6.1))
       eslint-plugin-react: 7.37.2(eslint@9.39.3(jiti@2.6.1))
       eslint-plugin-react-hooks: 5.1.0(eslint@9.39.3(jiti@2.6.1))
@@ -16202,10 +16229,10 @@ snapshots:
     dependencies:
       eslint: 9.39.3(jiti@2.6.1)
 
-  eslint-config-turbo@2.8.15(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
+  eslint-config-turbo@2.8.20(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
     dependencies:
       eslint: 9.39.3(jiti@2.6.1)
-      eslint-plugin-turbo: 2.8.15(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
+      eslint-plugin-turbo: 2.8.20(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
       turbo: 2.8.11
 
   eslint-import-resolver-node@0.3.9:
@@ -16354,7 +16381,7 @@ snapshots:
       eslint: 9.39.3(jiti@2.6.1)
       turbo: 2.8.11
 
-  eslint-plugin-turbo@2.8.15(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
+  eslint-plugin-turbo@2.8.20(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
     dependencies:
       dotenv: 16.0.3
       eslint: 9.39.3(jiti@2.6.1)

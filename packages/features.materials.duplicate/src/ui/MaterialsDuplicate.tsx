@@ -10,7 +10,6 @@ import {
 import { Button } from '@xipkg/button';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { Close } from '@xipkg/icons';
-import { Checkbox } from '@xipkg/checkbox';
 import {
   useFetchClassrooms,
   useStudentById,
@@ -20,7 +19,7 @@ import {
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import { useMedia } from 'common.utils';
+import { cn } from '@xipkg/utils';
 
 type AccessModeT = 'no_access' | 'read_only' | 'read_write';
 
@@ -111,35 +110,32 @@ const ClassroomCard = ({ classroom, isSelected, onSelect }: ClassroomCardProps) 
     !isIndividual || !studentId,
   );
 
-  const isSmall = useMedia('(max-width: 376px)', false);
-  const avatarSize = isSmall ? 's' : 'm';
-
   return (
     <div
-      className={`hover:bg-gray-5 flex cursor-pointer items-center p-4 ${!isSmall ? 'gap-3 rounded-2xl border' : 'gap-2'} ${
-        isSelected ? 'border-brand-100 bg-brand-0' : ''
-      }`}
+      className={cn(
+        'hover:bg-gray-5 flex cursor-pointer items-center gap-3 rounded-2xl border p-4',
+        isSelected ? 'border-brand-100 bg-brand-0' : '',
+      )}
       onClick={onSelect}
       data-umami-event="material-duplicate-select-classroom"
       data-umami-event-classroom-id={classroom.id}
     >
-      {isSmall && <Checkbox />}
       {isIndividual && studentId ? (
-        <Avatar size={avatarSize}>
+        <Avatar size="m">
           <AvatarImage
             src={`https://api.sovlium.ru/files/users/${studentId}/avatar.webp`}
             alt="user avatar"
           />
           {isLoadingStudent ? (
-            <AvatarFallback size={avatarSize} loading />
+            <AvatarFallback size="m" loading />
           ) : (
-            <AvatarFallback size={avatarSize}>
+            <AvatarFallback size="m">
               {student?.display_name?.[0]?.toUpperCase() || classroom.name[0]?.toUpperCase()}
             </AvatarFallback>
           )}
         </Avatar>
       ) : (
-        <div className="bg-brand-80 text-gray-0 flex h-10 min-h-10 w-10 min-w-10 items-center justify-center rounded-full text-sm font-medium max-[376px]:h-6 max-[376px]:min-h-6 max-[376px]:w-6 max-[376px]:min-w-6">
+        <div className="bg-brand-80 text-gray-0 flex h-10 min-h-10 w-10 min-w-10 items-center justify-center rounded-full text-sm font-medium">
           {classroom.name[0]?.toUpperCase() || ''}
         </div>
       )}
@@ -218,8 +214,8 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
 
   return (
     <Modal open={open} onOpenChange={handleClose}>
-      <ModalContent className="max-w-2xl">
-        <ModalCloseButton>
+      <ModalContent className="max-w-2xl max-sm:w-[calc(100%)]">
+        <ModalCloseButton className="right-2">
           <Close className="fill-gray-80 sm:fill-gray-0" />
         </ModalCloseButton>
         <ModalHeader className="border-gray-20 border-b">

@@ -20,7 +20,7 @@ export const TabsStudent = () => {
       // @ts-ignore
       search: {
         // @ts-ignore
-        tab: value,
+        tab: value === 'materials' ? 'boards' : value,
         ...filteredSearch,
       },
     });

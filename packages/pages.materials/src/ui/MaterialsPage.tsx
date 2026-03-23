@@ -3,16 +3,21 @@ import { Plus } from '@xipkg/icons';
 
 import { Header } from './Header';
 import { TabsComponent } from './TabsComponent';
-import { useAddMaterials, useCurrentUser, type MaterialsDataT } from 'common.services';
+import { useAddMaterials, useCurrentUser } from 'common.services';
 import { ErrorPage } from 'common.ui';
 import {
   MaterialsDuplicateProvider,
   useMaterialsDuplicate,
 } from '../provider/MaterialsDuplicateContext';
 import { MaterialsDuplicate } from 'features.materials.duplicate';
-import { useNavigate } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 
 const MaterialsPageContent = () => {
+  const search = useSearch({ strict: false }) as Record<string, unknown>;
+  const hasValidTab = search.tab === 'notes' || search.tab === 'boards';
+
+  const currentTab = hasValidTab ? (search.tab as 'notes' | 'boards') : 'boards';
+
   const { addMaterials } = useAddMaterials();
   const navigate = useNavigate();
   const { data: user } = useCurrentUser();
@@ -30,17 +35,38 @@ const MaterialsPageContent = () => {
     );
   }
 
-  const handleCreate = (kind: MaterialsDataT['content_kind']) => {
-    addMaterials.mutate(
-      { content_kind: kind },
-      {
-        onSuccess: (response) => {
-          navigate({
-            to: `/materials/${response.data.id}/${response.data.content_kind}`,
-          });
+  const handleCreate = () => {
+    if (currentTab === 'notes') {
+      addMaterials.mutate(
+        { content_kind: 'note' },
+        {
+          onSuccess: (response) => {
+            navigate({
+              to: `/materials/$id/$contentKind`,
+              params: {
+                id: response.data.id,
+                contentKind: response.data.content_kind,
+              },
+            });
+          },
         },
-      },
-    );
+      );
+    } else if (currentTab === 'boards') {
+      addMaterials.mutate(
+        { content_kind: 'board' },
+        {
+          onSuccess: (response) => {
+            navigate({
+              to: `/materials/$id/$contentKind`,
+              params: {
+                id: response.data.id,
+                contentKind: response.data.content_kind,
+              },
+            });
+          },
+        },
+      );
+    }
   };
 
   return (
@@ -56,7 +82,7 @@ const MaterialsPageContent = () => {
             size="small"
             className="fixed right-4 bottom-4 z-50 flex h-12 w-12 items-center justify-center rounded-xl"
             data-umami-event="materials-create-material"
-            onClick={() => handleCreate('board')}
+            onClick={handleCreate}
           >
             <Plus className="fill-brand-0" />
           </Button>

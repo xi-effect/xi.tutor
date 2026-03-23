@@ -29,8 +29,7 @@ export const useNavigateToMaterial = () => {
     } else {
       navigate({
         to: `/materials/${id}/${contentKind}`,
-        search: (prev: Record<string, unknown>) => ({
-          ...prev,
+        search: () => ({
           ...filteredSearch,
         }),
       });

@@ -114,6 +114,7 @@ export const SideBarItems = () => {
   const handleClick = (url: string) => {
     // Сохраняем только параметр call при переходе
     const filteredSearch = search.call ? { call: search.call } : {};
+    const materialsTabSearch = url === '/materials' ? { tab: 'boards' } : {};
 
     if (isStarted && mode === 'full') {
       updateStore('mode', 'compact');
@@ -121,6 +122,7 @@ export const SideBarItems = () => {
         to: url,
         search: () => ({
           ...filteredSearch,
+          ...materialsTabSearch,
           call: callId,
         }),
       });
@@ -129,6 +131,7 @@ export const SideBarItems = () => {
         to: url,
         search: () => ({
           ...filteredSearch,
+          ...materialsTabSearch,
         }),
       });
     }
