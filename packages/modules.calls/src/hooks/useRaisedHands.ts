@@ -1,13 +1,16 @@
 import { useEffect, useCallback, useMemo } from 'react';
 import { Participant, RoomEvent } from 'livekit-client';
-import { useParams } from '@tanstack/react-router';
+import { useParams, useSearch } from '@tanstack/react-router';
 
 import { useRoom } from '../providers/RoomProvider';
 import { useCallStore } from '../store/callStore';
 import { useCurrentUser, useUpdateParticipantMetadata } from 'common.services';
 
 export const useRaisedHands = () => {
-  const { callId } = useParams({ strict: false });
+  const { callId: paramsCallId } = useParams({ strict: false });
+  const { call: searchCallId } = useSearch({ strict: false });
+
+  const callId = paramsCallId ?? searchCallId;
   const { room } = useRoom();
   const { data: user } = useCurrentUser();
 
