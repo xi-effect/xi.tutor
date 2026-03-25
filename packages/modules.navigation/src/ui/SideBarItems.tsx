@@ -10,15 +10,7 @@ import {
 } from '@xipkg/sidebar';
 import { useLocation, useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import {
-  Group,
-  Home,
-  Payments,
-  TelegramFilled,
-  InfoCircle,
-  BookOpened,
-  Calendar,
-} from '@xipkg/icons';
+import { LayoutLeft } from '@xipkg/icons';
 import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
 import { useMenuStore } from '../store';
@@ -28,7 +20,7 @@ import { useMediaQuery } from '@xipkg/utils';
 import { DesktopUserMenu } from './Header/DesktopUserMenu';
 import { useEffect, useState, lazy, Suspense } from 'react';
 import { useAuth } from 'common.auth';
-import { LayoutLeft } from '@xipkg/icons';
+import { getFooterMenuConfig, getTopMenuConfig } from './config/sidebarMenuConfig';
 
 const UserSettings = lazy(() =>
   import('modules.profile').then((module) => ({ default: module.UserSettings })),
@@ -48,42 +40,7 @@ export const SideBarItems = () => {
   const isStarted = useCallStore((state) => state.isStarted);
   const mode = useCallStore((state) => state.mode);
 
-  const topMenu = [
-    {
-      id: 'home-menu-item',
-      titleKey: 'home',
-      url: '/',
-      icon: Home,
-    },
-    {
-      id: 'calendar-menu-item',
-      titleKey: 'schedule',
-      url: '/schedule',
-      icon: Calendar,
-    },
-    {
-      id: 'classrooms-menu-item',
-      titleKey: 'classrooms',
-      url: '/classrooms',
-      icon: Group,
-    },
-    ...(isTutor
-      ? [
-          {
-            id: 'materials-menu-item',
-            titleKey: 'materials',
-            url: '/materials',
-            icon: BookOpened,
-          },
-        ]
-      : []),
-    {
-      id: 'payments-menu-item',
-      titleKey: 'payments',
-      url: '/payments',
-      icon: Payments,
-    },
-  ];
+  const topMenu = getTopMenuConfig(Boolean(isTutor));
 
   const handleOnboardingClick = async () => {
     try {
@@ -101,20 +58,7 @@ export const SideBarItems = () => {
     }
   };
 
-  const footerMenu = [
-    {
-      titleKey: 'support',
-      onClick: () => {
-        window.open('https://t.me/sovlium_support_bot', '_blank');
-      },
-      icon: TelegramFilled,
-    },
-    {
-      titleKey: 'hints',
-      onClick: handleOnboardingClick,
-      icon: InfoCircle,
-    },
-  ];
+  const footerMenu = getFooterMenuConfig(handleOnboardingClick);
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -235,9 +179,12 @@ export const SideBarItems = () => {
                       onClick={() => handleClick(item.url)}
                       data-umami-event={`navigation-${item.titleKey}`}
                       data-umami-event-url={item.url}
+                      className="group gap-5 rounded-lg!"
                     >
                       <item.icon className="h-6 w-6 text-gray-50" />
-                      <span className="text-base">{t(item.titleKey)}</span>
+                      <span className="text-s-base group-data-[active=true]:font-medium">
+                        {t(item.titleKey)}
+                      </span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -256,7 +203,7 @@ export const SideBarItems = () => {
                 variant="none"
                 onClick={item.onClick}
                 type="button"
-                className="bg-gray-0 hover:bg-gray-5 focus:bg-gray-10 active:bg-gray-10"
+                className="bg-gray-0 hover:bg-gray-5 focus:bg-gray-10 active:bg-gray-10 gap-5 rounded-lg!"
                 title={t(item.titleKey)}
                 data-umami-event={`navigation-${item.titleKey}`}
                 {...(item.titleKey === 'support'

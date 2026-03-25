@@ -17,5 +17,6 @@
   "hints": "Hints",
   "menu": "Menu",
   "close": "Close",
-  "roleChanged": "Role successfully changed to {{role}}"
+  "roleChanged": "Role successfully changed to {{role}}",
+  "wiki": "Knowledge base"
 }

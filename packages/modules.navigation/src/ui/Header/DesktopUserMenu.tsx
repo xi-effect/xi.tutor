@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 
 import { SelectRole } from './SelectRole';
 import { useCurrentUser } from 'common.services';
-import { Account, Collapse, Download, Exit } from '@xipkg/icons';
+import { Account, ChevronUp, Download, Exit } from '@xipkg/icons';
 import { usePWAInstall } from 'common.services';
 
 interface DesktopUserMenuProps {
@@ -38,7 +38,7 @@ export const DesktopUserMenu = ({
       <DropdownMenuTrigger asChild>
         <Button
           variant="none"
-          className="flex w-full justify-start rounded-md hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+          className="group flex w-full justify-start rounded-lg hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
           size="icon"
           data-umami-event="header-user-menu-open"
         >
@@ -49,9 +49,10 @@ export const DesktopUserMenu = ({
             userId={userId}
             size="40"
             withOutText={withOutText}
-            classNameText="text-left"
+            classNameText="text-s-base pl-1 text-left"
+            classNameLabel="text-xxs-base text-gray-60 pl-1 text-left"
           />
-          <Collapse className="mr-3.5 ml-auto h-4 w-4 text-gray-50" />
+          <ChevronUp className="mr-3 ml-auto h-4 w-4 rotate-x-180 text-gray-50 group-data-[state=open]:rotate-x-0" />
         </Button>
       </DropdownMenuTrigger>
 
