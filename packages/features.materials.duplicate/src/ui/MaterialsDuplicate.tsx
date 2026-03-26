@@ -214,7 +214,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
 
   return (
     <Modal open={open} onOpenChange={handleClose}>
-      <ModalContent className="max-sm:w-[calc(50 %)] max-w-2xl">
+      <ModalContent className="w-full max-w-2xl max-sm:w-[calc(100vw-32px)]">
         <ModalCloseButton className="right-2">
           <Close className="fill-gray-80 sm:fill-gray-0" />
         </ModalCloseButton>
@@ -225,7 +225,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
           </ModalDescription>
         </ModalHeader>
 
-        <div className="min-h-[300px] py-4 pr-2 pl-6">
+        <div className="min-h-[300px] py-4 pr-2 pl-6 max-sm:min-h-[240px] max-sm:py-3 max-sm:pr-3 max-sm:pl-3">
           <ClassroomsList
             isLoading={isLoading}
             isError={isError}
@@ -272,11 +272,12 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
               </SelectContent>
             </Select>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 max-sm:flex-col max-sm:gap-3">
             <Button
               size="m"
               onClick={handleConfirm}
               disabled={!selectedClassroomId || duplicateMaterial.isPending}
+              className="w-full sm:w-fit"
               data-umami-event="material-duplicate-confirm"
             >
               {duplicateMaterial.isPending ? 'Дублирование...' : 'Дублировать'}
@@ -285,6 +286,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
               size="m"
               variant="secondary"
               onClick={() => handleClose(false)}
+              className="w-full sm:w-fit"
               data-umami-event="material-duplicate-cancel"
             >
               Отменить
