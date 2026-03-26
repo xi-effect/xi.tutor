@@ -1,5 +1,6 @@
 import { createContext, useContext, ReactNode, useMemo } from 'react';
 import { Room, RoomOptions, ConnectionQuality, Track } from 'livekit-client';
+import { getBaselineAudioCaptureOptions } from '../utils/config';
 
 type RoomContextType = {
   room: Room;
@@ -36,6 +37,8 @@ export const RoomProvider = ({ children }: RoomProviderProps) => {
       // Включаем dynacast для динамической подписки на треки
       dynacast: true,
       disconnectOnPageLeave: false,
+      // Шумоподавление на уровне WebRTC для всех аудиотреков комнаты
+      audioCaptureDefaults: getBaselineAudioCaptureOptions(),
     };
 
     const newRoom = new Room(roomOptions);

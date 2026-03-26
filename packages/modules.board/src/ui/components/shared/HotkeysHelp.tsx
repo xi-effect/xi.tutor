@@ -133,7 +133,7 @@ export const HotkeysHelpModal = ({ open, onOpenChange }: HotkeysHelpModalProps) 
           if (next === false) cleanupBodyScrollLock();
         }}
       >
-        <ModalContent className="z-10000 max-h-[80vh] max-w-4xl">
+        <ModalContent className="z-10000 max-h-[80dvh] max-w-4xl">
           <ModalHeader>
             <ModalCloseButton onClick={handleClose} />
             <ModalTitle>Горячие клавиши</ModalTitle>

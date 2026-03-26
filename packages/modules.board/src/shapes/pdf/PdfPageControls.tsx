@@ -1,6 +1,8 @@
 import { useCallback } from 'react';
 import { Button } from '@xipkg/button';
-import { ArrowLeft, ArrowRight } from '@xipkg/icons';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '@xipkg/select';
+import { ArrowLeft, ArrowRight, Image } from '@xipkg/icons';
+import { PDF_PAGES_VISIBLE_MAX } from './PdfShape';
 
 type PdfPageControlsProps = {
   fileName: string;
@@ -8,6 +10,9 @@ type PdfPageControlsProps = {
   totalPages: number;
   disabled: boolean;
   onPageChange: (page: number) => void;
+  onExtractPage?: () => void;
+  pagesVisible?: number;
+  onPagesVisibleChange?: (n: number) => void;
 };
 
 export const PdfPageControls = ({
@@ -16,6 +21,9 @@ export const PdfPageControls = ({
   totalPages,
   disabled,
   onPageChange,
+  onExtractPage,
+  pagesVisible = 1,
+  onPagesVisibleChange,
 }: PdfPageControlsProps) => {
   const goPrev = useCallback(
     (e: React.PointerEvent) => {
@@ -68,6 +76,50 @@ export const PdfPageControls = ({
             <ArrowRight className="h-4 w-4" />
           </Button>
         </>
+      )}
+      {onPagesVisibleChange && (
+        <Select
+          value={String(pagesVisible)}
+          onValueChange={(v) => {
+            const n = Number(v);
+            if (Number.isFinite(n) && n >= 1 && n <= PDF_PAGES_VISIBLE_MAX) {
+              onPagesVisibleChange(n);
+            }
+          }}
+        >
+          <SelectTrigger
+            className="text-gray-80 border-gray-10 h-6 w-20 shrink-0 text-xs"
+            size="s"
+            onPointerDown={(e) => e.stopPropagation()}
+          >
+            {pagesVisible} стр.
+          </SelectTrigger>
+          <SelectContent className="w-[120px]">
+            <span className="text-gray-80 px-2 text-xs"> Показывать </span>
+            {Array.from({ length: PDF_PAGES_VISIBLE_MAX }, (_, i) => {
+              const n = i + 1;
+              return (
+                <SelectItem key={n} value={String(n)}>
+                  {n} стр.
+                </SelectItem>
+              );
+            })}
+          </SelectContent>
+        </Select>
+      )}
+      {onExtractPage && (
+        <Button
+          variant="none"
+          size="s"
+          className="hover:bg-brand-0 h-6 w-6 shrink-0 rounded-lg p-0"
+          onPointerDown={(e) => {
+            e.stopPropagation();
+            onExtractPage();
+          }}
+          title="Извлечь страницу как изображение"
+        >
+          <Image className="h-4 w-4" />
+        </Button>
       )}
     </div>
   );
