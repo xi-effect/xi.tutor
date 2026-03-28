@@ -12,13 +12,15 @@ import type { ICalendarEvent } from '../../types';
 interface LessonCardProps {
   event: ICalendarEvent;
   isPast?: boolean;
+  /** День колонки — сегодня (рамка brand вместо hover) */
+  isToday?: boolean;
   /** На всю ширину контейнера (для мобильного списка по дням) */
   fullWidth?: boolean;
   /** Открыть модалку с подробностями занятия */
   onClick?: () => void;
 }
 
-export const LessonCard = memo<LessonCardProps>(({ event, fullWidth, onClick }) => {
+export const LessonCard = memo<LessonCardProps>(({ event, isToday, fullWidth, onClick }) => {
   // const deleteEvent = useDeleteEvent();
 
   const startTime = event.isAllDay ? null : timeToString(new Date(event.start));
@@ -42,10 +44,14 @@ export const LessonCard = memo<LessonCardProps>(({ event, fullWidth, onClick }) 
   //   deleteEvent(event.id);
   // };
 
+  const todayBorder = isToday && !event.isCancelled;
+
   return (
     <div
       className={cn(
-        'group border-gray-10 group-hover/day:border-brand-80 relative flex w-full flex-col rounded-2xl border bg-white p-5 transition-colors duration-300',
+        'relative flex w-full flex-col rounded-2xl p-5 transition-colors duration-300',
+        'group-hover:bg-[rgb(15_15_17/0.02)]',
+        todayBorder ? 'border-brand-80 border-2 bg-white' : 'border-gray-10 border bg-white',
         event.type === 'rest' && 'bg-gray-5 dark:bg-gray-10',
         event.isCancelled && 'border-red-20 bg-red-5 opacity-75',
         onClick && 'cursor-pointer',

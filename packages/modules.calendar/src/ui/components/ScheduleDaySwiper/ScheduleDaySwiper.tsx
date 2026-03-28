@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { isSameDay } from 'date-fns';
+import { isSameDay, startOfDay } from 'date-fns';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
 import { LessonCard } from '../ScheduleKanban/LessonCard';
 import { ScheduleEmptyState } from '../ScheduleKanban/ScheduleEmptyState';
 import { getDateKey, useEventsByDate } from '../../../store/eventsStore';
 import { useLessonInfoModal } from '../../../hooks';
-import { isPastDay } from '../../../utils';
+import { isCurrentDay, isPastDay } from '../../../utils';
 import type { ICalendarEvent } from '../../types';
 import { Button } from '@xipkg/button';
 import { Plus } from '@xipkg/icons';
@@ -40,6 +40,7 @@ export const ScheduleDaySwiper = ({
   const { t } = useTranslation('calendar');
   const eventsByDate = useEventsByDate();
   const today = new Date();
+  const todayStart = startOfDay(today);
   const swiperRef = useRef<SwiperType | null>(null);
   const { openLessonInfo, lessonInfoModal } = useLessonInfoModal();
 
@@ -82,7 +83,7 @@ export const ScheduleDaySwiper = ({
           const isPast = isPastDay(day, today);
           return (
             <SwiperSlide key={day.toISOString()} className="h-full">
-              <div className="flex h-full flex-col overflow-auto pb-4">
+              <div className="group flex h-full flex-col overflow-auto pb-4">
                 <div className="flex shrink-0 items-center justify-between gap-2 py-3">
                   <Button
                     variant="none"
@@ -106,6 +107,7 @@ export const ScheduleDaySwiper = ({
                         key={event.id}
                         event={event}
                         isPast={isPast}
+                        isToday={isCurrentDay(day, todayStart)}
                         fullWidth
                         onClick={() => openLessonInfo(event)}
                       />

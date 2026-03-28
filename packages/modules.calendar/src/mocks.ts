@@ -130,6 +130,57 @@ const mkDenseDay = (
   return mkLessons(monday, seeds);
 };
 
+/** Несколько занятий строго на календарный «сегодня» (для проверки колонки / подсветки дня) */
+const buildTodayMockEvents = (): ICalendarEvent[] => {
+  const now = new Date();
+  const y = now.getFullYear();
+  const mo = now.getMonth();
+  const day = now.getDate();
+  const at = (h: number, min: number) => new Date(y, mo, day, h, min, 0, 0);
+
+  return [
+    {
+      id: 'mock-today-1',
+      title: 'Математика (мок)',
+      start: at(9, 0),
+      end: at(10, 0),
+      type: 'lesson' as const,
+      lessonInfo: {
+        studentName: 'Иван Смирнов',
+        subject: 'Математика',
+        lessonType: 'individual',
+        description: 'Подготовка к контрольной',
+      },
+    },
+    {
+      id: 'mock-today-2',
+      title: 'Английский (мок)',
+      start: at(12, 30),
+      end: at(13, 30),
+      type: 'lesson' as const,
+      lessonInfo: {
+        studentName: 'Анна Петрова',
+        subject: 'Английский язык',
+        lessonType: 'group',
+        description: 'Speaking practice',
+      },
+    },
+    {
+      id: 'mock-today-3',
+      title: 'Физика (мок)',
+      start: at(16, 0),
+      end: at(17, 30),
+      type: 'lesson' as const,
+      lessonInfo: {
+        studentName: 'Сергей Кузнецов',
+        subject: 'Физика',
+        lessonType: 'individual',
+        description: 'Электродинамика',
+      },
+    },
+  ];
+};
+
 /**
  * Набор недель относительно текущей — листайте «пред/след неделя», чтобы проверить:
  * пустую неделю, один день, сшитые пустые колонки, «дыры» между занятыми днями, плотное расписание.
@@ -728,5 +779,6 @@ const buildLegacyStaticEvents = (): ICalendarEvent[] => [
 
 export const MOCK_EVENTS: ICalendarEvent[] = [
   ...buildScenarioWeeks(),
+  ...buildTodayMockEvents(),
   ...buildLegacyStaticEvents(),
 ];
