@@ -6,7 +6,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Add, FileSmall, WhiteBoard } from '@xipkg/icons';
+import { Add, FileSmall, Upload, WhiteBoard } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { useGetMaterialsList } from 'common.services';
@@ -14,7 +14,9 @@ import { MaterialsDuplicateProvider, useMaterialsDuplicate } from 'pages.materia
 import { MaterialsDuplicate } from 'features.materials.duplicate';
 import { MaterialsCard } from 'features.materials.card';
 import { useCreateMaterial } from 'features.materials.add';
+import { useNavigate } from '@tanstack/react-router';
 import { useState, useMemo } from 'react';
+import { SectionEmptyState } from '../SectionEmptyState';
 
 const filters = [
   { id: 'all' as const, label: 'Все' },
@@ -23,6 +25,7 @@ const filters = [
 ];
 
 const MaterialsContent = () => {
+  const navigate = useNavigate();
   const { createMaterial } = useCreateMaterial();
   const { materialId, open, closeModal, openModal } = useMaterialsDuplicate();
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'note' | 'board'>('all');
@@ -39,11 +42,33 @@ const MaterialsContent = () => {
 
   const filteredMaterials = useMemo(() => materials ?? [], [materials]);
 
+  const emptyCopy = useMemo(() => {
+    if (selectedFilter === 'note') {
+      return {
+        title: 'У вас нет заметок',
+        description: 'Добавьте заметку, чтобы проводить уроки было удобнее',
+      };
+    }
+    if (selectedFilter === 'board') {
+      return {
+        title: 'У вас нет досок',
+        description: 'Добавьте интерактивную доску для уроков',
+      };
+    }
+    return {
+      title: 'У вас нет материалов',
+      description: 'Добавляйте интерактивные доски и заметки, чтобы проводить уроки было удобнее',
+    };
+  }, [selectedFilter]);
+
+  const emptyActionButtonClass =
+    'bg-gray-5 hover:bg-gray-10 text-xs-base h-8 rounded-lg px-4 font-medium text-gray-80';
+
   return (
     <>
-      <div className="bg-gray-0 flex w-full flex-col gap-5 rounded-2xl p-4 pr-2 pl-5 transition-all duration-200 ease-linear sm:w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)]">
+      <div className="bg-gray-0 flex w-full flex-col gap-4 rounded-2xl px-5 pt-4 pb-1 transition-all duration-200 ease-linear sm:w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)]">
         {/* Header: title + tabs + add button */}
-        <div className="flex flex-row flex-wrap items-center gap-5">
+        <div className="flex flex-row flex-wrap items-center gap-4">
           <h2 className="text-l-base font-medium text-gray-100">Материалы</h2>
 
           {/* Tabs (Brand) */}
@@ -56,7 +81,17 @@ const MaterialsContent = () => {
             indicatorClassName="rounded-[10px] bg-brand-80"
           />
 
-          <div className="ml-auto pr-3">
+          <div className="ml-auto flex flex-row items-center gap-2">
+            <Button
+              type="button"
+              variant="none"
+              className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
+              aria-label="Перейти к материалам для загрузки"
+              onClick={() => navigate({ to: '/materials' })}
+              data-umami-event="materials-upload-open"
+            >
+              <Upload className="fill-brand-80 size-6" />
+            </Button>
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
               <DropdownMenuTrigger asChild>
                 <Button
@@ -125,9 +160,35 @@ const MaterialsContent = () => {
             </div>
           </ScrollArea>
         ) : (
-          <div className="flex h-[300px] w-full flex-row items-center justify-center">
-            <p className="text-m-base text-gray-60">Здесь пока пусто</p>
-          </div>
+          <SectionEmptyState
+            title={emptyCopy.title}
+            description={emptyCopy.description}
+            minHeightClass="min-h-[300px]"
+            actions={
+              <>
+                <Button
+                  type="button"
+                  variant="none"
+                  className={emptyActionButtonClass}
+                  onClick={() => handleCreateMaterial('note')}
+                  data-umami-event="materials-empty-add-note"
+                >
+                  Заметка
+                  <Add className="fill-gray-80 ml-1 size-4 shrink-0" />
+                </Button>
+                <Button
+                  type="button"
+                  variant="none"
+                  className={emptyActionButtonClass}
+                  onClick={() => handleCreateMaterial('board')}
+                  data-umami-event="materials-empty-add-board"
+                >
+                  Доска
+                  <Add className="fill-gray-80 ml-1 size-4 shrink-0" />
+                </Button>
+              </>
+            }
+          />
         )}
       </div>
 

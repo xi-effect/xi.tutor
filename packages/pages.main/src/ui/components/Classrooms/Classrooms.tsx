@@ -15,6 +15,7 @@ import { useState, useMemo } from 'react';
 import { ModalAddGroup } from 'features.group.add';
 import { ModalInvitation } from 'features.invites';
 import { Classroom } from './Classroom';
+import { SectionEmptyState } from '../SectionEmptyState';
 import { cn } from '@xipkg/utils';
 
 export const Classrooms = () => {
@@ -61,6 +62,11 @@ export const Classrooms = () => {
       ? 'Ничего не найдено'
       : 'Пригласите учеников — индивидуально или в группу'
     : 'Перейдите по ссылке-приглашению, чтобы начать заниматься с репетитором';
+
+  const emptyButtonClass =
+    'bg-gray-5 hover:bg-gray-10 text-xs-base h-8 rounded-lg px-4 font-medium text-gray-80';
+  const inviteEmptyButtonClass =
+    'bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 text-xs-base flex h-8 items-center gap-2 rounded-lg border-transparent px-4 font-medium text-brand-100';
 
   return (
     <div
@@ -158,10 +164,38 @@ export const Classrooms = () => {
             ))}
           </div>
         </ScrollArea>
+      ) : isTutor && selectedSubject === 'all' ? (
+        <SectionEmptyState
+          title="У вас нет кабинетов"
+          description="Вы можете создать кабинет для групповых или индивидуальных занятий"
+          minHeightClass="min-h-[132px]"
+          actions={
+            <>
+              <Button
+                type="button"
+                variant="none"
+                className={emptyButtonClass}
+                onClick={() => setAddGroupModalOpen(true)}
+                data-umami-event="classrooms-empty-create-group"
+              >
+                Создать группу
+                <Add className="fill-gray-80 ml-1 size-4 shrink-0" />
+              </Button>
+              <Button
+                type="button"
+                variant="none"
+                className={inviteEmptyButtonClass}
+                onClick={() => setInviteModalOpen(true)}
+                data-umami-event="classrooms-empty-invite"
+              >
+                Пригласить ученика
+                <UserPlus className="text-brand-100 size-4 shrink-0" />
+              </Button>
+            </>
+          }
+        />
       ) : (
-        <div className="flex h-[152px] w-full flex-row items-center justify-center">
-          <p className="text-m-base text-gray-60 text-center">{emptyMessage}</p>
-        </div>
+        <SectionEmptyState title={emptyMessage} minHeightClass="min-h-[152px]" />
       )}
     </div>
   );

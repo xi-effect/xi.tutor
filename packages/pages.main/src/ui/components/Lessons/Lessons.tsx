@@ -90,10 +90,10 @@ export const Lessons = () => {
   return (
     <>
       <AddingLessonModal open={open} onOpenChange={setOpen} dayLessons={dayLessonsForModal} />
-      <div className="bg-gray-0 flex h-[calc(100vh-98px)] w-(--lessons-panel-width) flex-col gap-4 rounded-2xl p-4 pr-2 pl-5">
+      <div className="bg-gray-0 flex h-[calc(100vh-98px)] w-(--lessons-panel-width) flex-col gap-4 rounded-2xl px-5 pt-4 pr-2 pb-1">
         {/* Заголовок */}
-        <div className="flex flex-row items-center justify-between gap-2 pr-3">
-          <div className="flex min-w-0 flex-row items-baseline gap-3">
+        <div className="flex flex-row items-center gap-2 pr-3">
+          <div className="flex min-w-0 flex-1 flex-row items-baseline gap-3">
             <h2 className="text-l-base 2xl:text-xl-base m-0 shrink-0 font-medium text-gray-100">
               Расписание
             </h2>
@@ -103,7 +103,7 @@ export const Lessons = () => {
               </span>
             ) : null}
           </div>
-          <div className="flex shrink-0 flex-row items-center gap-2">
+          <div className="ml-auto flex shrink-0 flex-row items-center gap-2">
             {!isTodayVisibleInCarousel ? (
               <Button
                 variant="none"
