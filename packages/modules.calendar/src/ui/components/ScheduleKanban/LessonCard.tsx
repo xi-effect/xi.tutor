@@ -49,11 +49,10 @@ export const LessonCard = memo<LessonCardProps>(({ event, isToday, fullWidth, on
   return (
     <div
       className={cn(
-        'relative flex w-full flex-col rounded-2xl p-5 transition-colors duration-300',
+        'relative flex w-full flex-col rounded-2xl border p-5 transition-colors duration-300',
         'group-hover:bg-[rgb(15_15_17/0.02)]',
-        todayBorder ? 'border-brand-80 border-2 bg-white' : 'border-gray-10 border bg-white',
+        todayBorder ? 'border-brand-80 bg-white' : 'border-gray-10 bg-white',
         event.type === 'rest' && 'bg-gray-5 dark:bg-gray-10',
-        event.isCancelled && 'border-red-20 bg-red-5 opacity-75',
         onClick && 'cursor-pointer',
       )}
       style={fullWidth ? { width: '100%' } : { minWidth: CARD_MIN_WIDTH, maxWidth: CARD_MAX_WIDTH }}
