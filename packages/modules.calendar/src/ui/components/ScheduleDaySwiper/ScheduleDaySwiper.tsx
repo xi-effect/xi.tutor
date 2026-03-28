@@ -4,6 +4,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
 import { LessonCard } from '../ScheduleKanban/LessonCard';
 import { getDateKey, useEventsByDate } from '../../../store/eventsStore';
+import { useLessonInfoModal } from '../../../hooks';
 import { isPastDay } from '../../../utils';
 import type { ICalendarEvent } from '../../types';
 import { Button } from '@xipkg/button';
@@ -37,6 +38,7 @@ export const ScheduleDaySwiper = ({
   const eventsByDate = useEventsByDate();
   const today = new Date();
   const swiperRef = useRef<SwiperType | null>(null);
+  const { openLessonInfo, lessonInfoModal } = useLessonInfoModal();
 
   const selectedIndex = days.findIndex((d) => isSameDay(d, selectedDate));
   const activeIndex = selectedIndex >= 0 ? selectedIndex : 0;
@@ -62,44 +64,53 @@ export const ScheduleDaySwiper = ({
   );
 
   return (
-    <Swiper
-      className="h-full w-full"
-      slidesPerView={1}
-      spaceBetween={0}
-      onSwiper={handleSwiper}
-      onSlideChange={handleSlideChange}
-      initialSlide={activeIndex}
-      resistanceRatio={0.85}
-    >
-      {days.map((day) => {
-        const events = getEventsForDay(eventsByDate, day);
-        const isPast = isPastDay(day, today);
-        return (
-          <SwiperSlide key={day.toISOString()} className="h-full">
-            <div className="flex h-full flex-col overflow-auto pb-4">
-              <div className="flex shrink-0 items-center justify-between gap-2 py-3">
-                <Button
-                  variant="none"
-                  className="text-gray-80 hover:bg-gray-10 flex h-9 min-w-[120px] items-center justify-center gap-2 rounded-lg px-3 text-sm font-medium"
-                  onClick={() => onAddLessonClick?.(day)}
-                >
-                  <Plus className="h-4 w-4" />
-                  Добавить занятие
-                </Button>
+    <>
+      <Swiper
+        className="h-full w-full"
+        slidesPerView={1}
+        spaceBetween={0}
+        onSwiper={handleSwiper}
+        onSlideChange={handleSlideChange}
+        initialSlide={activeIndex}
+        resistanceRatio={0.85}
+      >
+        {days.map((day) => {
+          const events = getEventsForDay(eventsByDate, day);
+          const isPast = isPastDay(day, today);
+          return (
+            <SwiperSlide key={day.toISOString()} className="h-full">
+              <div className="flex h-full flex-col overflow-auto pb-4">
+                <div className="flex shrink-0 items-center justify-between gap-2 py-3">
+                  <Button
+                    variant="none"
+                    className="text-gray-80 hover:bg-gray-10 flex h-9 min-w-[120px] items-center justify-center gap-2 rounded-lg px-3 text-sm font-medium"
+                    onClick={() => onAddLessonClick?.(day)}
+                  >
+                    <Plus className="h-4 w-4" />
+                    Добавить занятие
+                  </Button>
+                </div>
+                <div className="flex flex-1 flex-col gap-3">
+                  {events.length === 0 ? (
+                    <p className="text-sm text-gray-50">Нет занятий на этот день</p>
+                  ) : (
+                    events.map((event) => (
+                      <LessonCard
+                        key={event.id}
+                        event={event}
+                        isPast={isPast}
+                        fullWidth
+                        onClick={() => openLessonInfo(event)}
+                      />
+                    ))
+                  )}
+                </div>
               </div>
-              <div className="flex flex-1 flex-col gap-3">
-                {events.length === 0 ? (
-                  <p className="text-sm text-gray-50">Нет занятий на этот день</p>
-                ) : (
-                  events.map((event) => (
-                    <LessonCard key={event.id} event={event} isPast={isPast} fullWidth />
-                  ))
-                )}
-              </div>
-            </div>
-          </SwiperSlide>
-        );
-      })}
-    </Swiper>
+            </SwiperSlide>
+          );
+        })}
+      </Swiper>
+      {lessonInfoModal}
+    </>
   );
 };

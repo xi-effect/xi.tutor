@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Plus } from '@xipkg/icons';
 import { LessonCard } from './LessonCard';
 import { getDateKey, useEventsByDate } from '../../../store/eventsStore';
+import { useLessonInfoModal } from '../../../hooks';
 import { isPastDay } from '../../../utils';
 import type { ICalendarEvent } from '../../types';
 import { cn } from '@xipkg/utils';
@@ -39,6 +40,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
   const { t } = useTranslation('calendar');
   const eventsByDate = useEventsByDate();
   const today = new Date();
+  const { openLessonInfo, lessonInfoModal } = useLessonInfoModal();
 
   return (
     <div className="flex h-[calc(100vh-72px)] flex-1 flex-col overflow-hidden">
@@ -83,7 +85,12 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
                   <span className="dark:text-gray-60 text-xs text-gray-50">—</span>
                 ) : (
                   events.map((event) => (
-                    <LessonCard key={event.id} event={event} isPast={isPastDay(day, today)} />
+                    <LessonCard
+                      key={event.id}
+                      event={event}
+                      isPast={isPastDay(day, today)}
+                      onClick={() => openLessonInfo(event)}
+                    />
                   ))
                 )}
               </div>
@@ -91,6 +98,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
           );
         })}
       </div>
+      {lessonInfoModal}
     </div>
   );
 };

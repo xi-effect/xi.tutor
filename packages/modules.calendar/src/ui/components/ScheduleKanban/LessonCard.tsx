@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, type KeyboardEvent } from 'react';
 import { cn } from '@xipkg/utils';
 // import { Clock, Conference, Redo, Trash } from '@xipkg/icons';
 import { Clock } from '@xipkg/icons';
@@ -14,9 +14,11 @@ interface LessonCardProps {
   isPast?: boolean;
   /** На всю ширину контейнера (для мобильного списка по дням) */
   fullWidth?: boolean;
+  /** Открыть модалку с подробностями занятия */
+  onClick?: () => void;
 }
 
-export const LessonCard = memo<LessonCardProps>(({ event, fullWidth }) => {
+export const LessonCard = memo<LessonCardProps>(({ event, fullWidth, onClick }) => {
   // const deleteEvent = useDeleteEvent();
 
   const startTime = event.isAllDay ? null : timeToString(new Date(event.start));
@@ -26,6 +28,14 @@ export const LessonCard = memo<LessonCardProps>(({ event, fullWidth }) => {
   const teacherName = event.lessonInfo?.studentName ?? event.title;
   const teacherId = event.lessonInfo?.teacherId;
   const lessonTitle = event.lessonInfo?.description ?? event.title;
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+    if (!onClick) return;
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      onClick();
+    }
+  };
 
   // const handleDelete = (e: React.MouseEvent) => {
   //   e.stopPropagation();
@@ -38,8 +48,13 @@ export const LessonCard = memo<LessonCardProps>(({ event, fullWidth }) => {
         'group border-gray-10 group-hover/day:border-brand-80 relative flex w-full flex-col rounded-2xl border bg-white p-5 transition-colors duration-300',
         event.type === 'rest' && 'bg-gray-5 dark:bg-gray-10',
         event.isCancelled && 'border-red-20 bg-red-5 opacity-75',
+        onClick && 'cursor-pointer',
       )}
       style={fullWidth ? { width: '100%' } : { minWidth: CARD_MIN_WIDTH, maxWidth: CARD_MAX_WIDTH }}
+      onClick={onClick}
+      onKeyDown={handleKeyDown}
+      role={onClick ? 'button' : undefined}
+      tabIndex={onClick ? 0 : undefined}
     >
       <div className="flex flex-col gap-2">
         {/* Предмет — мелкий серый тег */}
