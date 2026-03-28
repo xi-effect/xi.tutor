@@ -1,1 +1,1 @@
-export { ScheduleDateCarousel } from './ScheduleDateCarousel';
+export { ScheduleDateCarousel, type DominantVisibleMonthInfo } from './ScheduleDateCarousel';

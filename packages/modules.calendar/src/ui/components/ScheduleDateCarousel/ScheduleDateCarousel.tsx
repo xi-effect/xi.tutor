@@ -1,6 +1,6 @@
 import { Button } from '@xipkg/button';
 import { ArrowLeft, ArrowRight } from '@xipkg/icons';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
 import { cn } from '@xipkg/utils';
@@ -37,16 +37,74 @@ const getDatesRange = (fromDays: number, toDays: number) => {
   return dates;
 };
 
+/** Месяц, которому принадлежит больше всего дат во вьюпорте; при равенстве — месяц, который начинается раньше в окне */
+const getDominantVisibleMonthInfo = (
+  dates: Date[],
+  startIndex: number,
+  visibleCount: number,
+): { label: string; year: number; monthIndex: number } | null => {
+  if (dates.length === 0 || visibleCount <= 0) return null;
+  const end = Math.min(startIndex + visibleCount, dates.length);
+  if (startIndex >= end) return null;
+
+  const counts = new Map<string, number>();
+  const firstIndex = new Map<string, number>();
+
+  for (let i = startIndex; i < end; i++) {
+    const d = dates[i];
+    const key = `${d.getFullYear()}-${d.getMonth()}`;
+    counts.set(key, (counts.get(key) ?? 0) + 1);
+    if (!firstIndex.has(key)) firstIndex.set(key, i);
+  }
+
+  let bestKey = '';
+  let bestCount = -1;
+  let bestFirst = Infinity;
+
+  for (const [key, cnt] of counts) {
+    const fi = firstIndex.get(key)!;
+    if (cnt > bestCount || (cnt === bestCount && fi < bestFirst)) {
+      bestCount = cnt;
+      bestKey = key;
+      bestFirst = fi;
+    }
+  }
+
+  if (!bestKey) return null;
+
+  const [yearStr, monthStr] = bestKey.split('-');
+  const year = Number(yearStr);
+  const monthIndex = Number(monthStr);
+  const d = new Date(year, monthIndex, 1);
+  const raw = d.toLocaleDateString('ru-RU', { month: 'long' });
+  const label = raw.charAt(0).toUpperCase() + raw.slice(1);
+  return { label, year, monthIndex };
+};
+
+export type DominantVisibleMonthInfo = {
+  label: string;
+  year: number;
+  monthIndex: number;
+};
+
 type ScheduleDateCarouselProps = {
   selectedDate: Date;
   onSelectedDateChange: (date: Date) => void;
   className?: string;
+  /** Увеличьте, чтобы прокрутить карусель к выбранной дате (например «К сегодня», когда дата уже сегодня) */
+  alignCarouselNonce?: number;
+  onDominantVisibleMonthChange?: (info: DominantVisibleMonthInfo | null) => void;
+  /** true, если сегодняшний день попадает в видимые 7 дней карусели */
+  onTodayVisibleInViewportChange?: (visible: boolean) => void;
 };
 
 export const ScheduleDateCarousel = ({
   className = '',
   selectedDate,
   onSelectedDateChange,
+  alignCarouselNonce = 0,
+  onDominantVisibleMonthChange,
+  onTodayVisibleInViewportChange,
 }: ScheduleDateCarouselProps) => {
   const swiperRef = useRef<SwiperType | null>(null);
 
@@ -74,7 +132,7 @@ export const ScheduleDateCarousel = ({
 
   useEffect(() => {
     setCarouselStartIndex(alignedStartIndex);
-  }, [selectedDate, alignedStartIndex]);
+  }, [selectedDate, alignedStartIndex, alignCarouselNonce]);
 
   const handleSwiper = useCallback(
     (swiper: SwiperType) => {
@@ -112,6 +170,29 @@ export const ScheduleDateCarousel = ({
     t.setHours(0, 0, 0, 0);
     return t.getTime();
   }, []);
+
+  const todayIndex = useMemo(
+    () => dates.findIndex((d) => d.getTime() === todayStartMs),
+    [dates, todayStartMs],
+  );
+
+  const isTodayVisibleInViewport = useMemo(() => {
+    if (todayIndex < 0) return false;
+    return todayIndex >= carouselStartIndex && todayIndex < carouselStartIndex + DAYS_VISIBLE;
+  }, [todayIndex, carouselStartIndex]);
+
+  const dominantVisibleMonthInfo = useMemo(
+    () => getDominantVisibleMonthInfo(dates, carouselStartIndex, DAYS_VISIBLE),
+    [dates, carouselStartIndex],
+  );
+
+  useLayoutEffect(() => {
+    onDominantVisibleMonthChange?.(dominantVisibleMonthInfo);
+  }, [dominantVisibleMonthInfo, onDominantVisibleMonthChange]);
+
+  useLayoutEffect(() => {
+    onTodayVisibleInViewportChange?.(isTodayVisibleInViewport);
+  }, [isTodayVisibleInViewport, onTodayVisibleInViewportChange]);
 
   return (
     <div className={cn('flex w-full flex-row items-center justify-center gap-2', className)}>

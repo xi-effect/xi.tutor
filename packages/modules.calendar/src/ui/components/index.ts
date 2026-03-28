@@ -1,6 +1,6 @@
 export { CalendarEvent } from './CalendarEvent';
 export { ScheduleKanban } from './ScheduleKanban';
-export { ScheduleDateCarousel } from './ScheduleDateCarousel';
+export { ScheduleDateCarousel, type DominantVisibleMonthInfo } from './ScheduleDateCarousel';
 export { ScheduleWeekCarousel } from './ScheduleWeekCarousel';
 export { ScheduleDaySwiper } from './ScheduleDaySwiper';
 export { ScheduleMobileView } from './ScheduleMobileView';
