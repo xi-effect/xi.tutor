@@ -3,6 +3,14 @@ import { useCallback, useEffect, useState } from 'react';
 /** Минимальная ширина столбца дня (px) */
 export const COLUMN_MIN_WIDTH = 240;
 
+/**
+ * Внутренний отступ справа у области скролла канбана (`ScheduleKanban`: `pr-6`).
+ * В расчёт ширины колонок нужно закладывать **до** `repeat(..., minmax(...))`, иначе
+ * сумма колонок + gap чуть шире фактической ширины контента → горизонтальный overflow
+ * и последняя колонка визуально «под» overlay-скроллбаром.
+ */
+export const KANBAN_SCROLL_INNER_PADDING_END_PX = 24;
+
 /** Зазор между колонками (gap-7 = 28px) */
 const COLUMN_GAP = 28;
 
@@ -27,9 +35,8 @@ export const useKanbanColumns = (
     if (!el || totalDays === 0) return;
 
     const containerWidth = el.clientWidth;
-    if (containerWidth < COLUMN_MIN_WIDTH) return;
-
-    const availableForColumns = containerWidth;
+    const availableForColumns = containerWidth - KANBAN_SCROLL_INNER_PADDING_END_PX;
+    if (availableForColumns < COLUMN_MIN_WIDTH) return;
     // Сколько колонок помещается: n * COLUMN_MIN_WIDTH + (n - 1) * GAP <= availableForColumns
     const maxVisible = Math.max(
       1,

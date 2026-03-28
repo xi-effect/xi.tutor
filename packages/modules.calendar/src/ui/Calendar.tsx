@@ -34,7 +34,7 @@ export const CalendarModule = ({ onAddLessonClick }: CalendarModuleProps) => {
         onWeekSelect={goToWeekStart}
         onAddLessonClick={() => onAddLessonClick?.()}
       />
-      <div className="bg-gray-0 rounded-tl-2xl pr-6 pl-4">
+      <div className="bg-gray-0 rounded-tl-2xl pl-4">
         <div ref={containerRef} className="flex min-h-0 flex-1 overflow-hidden">
           <ScheduleKanban
             visibleDays={visibleDays}

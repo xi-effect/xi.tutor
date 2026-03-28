@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { isSameDay } from 'date-fns';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
 import { LessonCard } from '../ScheduleKanban/LessonCard';
+import { ScheduleEmptyState } from '../ScheduleKanban/ScheduleEmptyState';
 import { getDateKey, useEventsByDate } from '../../../store/eventsStore';
 import { useLessonInfoModal } from '../../../hooks';
 import { isPastDay } from '../../../utils';
@@ -35,6 +37,7 @@ export const ScheduleDaySwiper = ({
   onSelectedDateChange,
   onAddLessonClick,
 }: ScheduleDaySwiperProps) => {
+  const { t } = useTranslation('calendar');
   const eventsByDate = useEventsByDate();
   const today = new Date();
   const swiperRef = useRef<SwiperType | null>(null);
@@ -87,12 +90,16 @@ export const ScheduleDaySwiper = ({
                     onClick={() => onAddLessonClick?.(day)}
                   >
                     <Plus className="h-4 w-4" />
-                    Добавить занятие
+                    {t('add_lesson')}
                   </Button>
                 </div>
-                <div className="flex flex-1 flex-col gap-3">
+                <div className="flex min-h-0 flex-1 flex-col gap-3">
                   {events.length === 0 ? (
-                    <p className="text-sm text-gray-50">Нет занятий на этот день</p>
+                    <ScheduleEmptyState
+                      days={[day]}
+                      onScheduleClick={() => onAddLessonClick?.(day)}
+                      className="min-h-0"
+                    />
                   ) : (
                     events.map((event) => (
                       <LessonCard
