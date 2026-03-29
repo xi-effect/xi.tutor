@@ -75,7 +75,8 @@ export const Notifications = () => {
     />
   );
 
-  const badge = <NotificationBadge count={formatNotificationCount(unreadCount)} />;
+  const countLabel = formatNotificationCount(unreadCount);
+  const hasUnread = unreadCount > 0;
 
   return (
     <>
@@ -85,7 +86,7 @@ export const Notifications = () => {
           onOpenChange={handleOpenChange}
           onOpenSettings={handleToSettings}
           notificationsList={notificationsList}
-          badge={badge}
+          badge={<NotificationBadge count={countLabel} variant="mobile" />}
         />
       ) : (
         <NotificationsDropdown
@@ -93,7 +94,8 @@ export const Notifications = () => {
           onOpenChange={handleOpenChange}
           onOpenSettings={handleToSettings}
           notificationsList={notificationsList}
-          badge={badge}
+          hasUnread={hasUnread}
+          countLabel={countLabel}
         />
       )}
 
