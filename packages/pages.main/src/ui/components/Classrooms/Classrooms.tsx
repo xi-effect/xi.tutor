@@ -75,7 +75,7 @@ export const Classrooms = () => {
       )}
     >
       <div className="flex flex-row items-center gap-2">
-        <h2 className="text-l-base font-medium text-gray-100">Учебные кабинеты</h2>
+        <h2 className="text-l-base font-medium text-gray-100">Кабинеты</h2>
         <div className="ml-auto">
           {isTutor ? (
             <>

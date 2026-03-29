@@ -3,6 +3,7 @@ import { Conference, Close } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
 import { useCancelLessonModal } from '../../../hooks';
 import type { ScheduleLessonRow } from '../../types';
+import { cn } from '@xipkg/utils';
 
 type DayLessonRowProps = {
   lesson: ScheduleLessonRow;
@@ -26,7 +27,12 @@ export const DayLessonRow = ({
   });
 
   return (
-    <div className="border-gray-10 relative flex w-full flex-row items-start gap-4 border-b py-6 last:border-b-0">
+    <div
+      className={cn(
+        'border-gray-10 relative flex flex-row items-start gap-4 border-b p-4 last:border-b-0',
+        showActions && 'border-brand-80 rounded-2xl border',
+      )}
+    >
       <div className="flex shrink-0 flex-col">
         <span className="text-xl-base font-normal text-gray-100">{lesson.startTime}</span>
         <span className="text-m-base text-gray-60">{lesson.endTime}</span>
@@ -43,16 +49,16 @@ export const DayLessonRow = ({
             <Button
               variant="ghost"
               size="s"
-              className="text-brand-100 h-[38px] w-full"
+              className="text-brand-100 h-[32px] w-full px-0 text-[12px]"
               onClick={() => {}}
             >
               Начать занятие
-              <Conference className="fill-brand-100 ml-1.5 h-4 w-4" />
+              <Conference className="fill-brand-100 ml-3 h-4 w-4" />
             </Button>
             <Button
               variant="none"
               size="s"
-              className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 h-[38px] w-full"
+              className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 h-[32px] w-full px-0 text-[12px]"
               onClick={() => {}}
             >
               Перенести занятие
@@ -60,7 +66,7 @@ export const DayLessonRow = ({
             <Button
               variant="none"
               size="s"
-              className="absolute top-6 right-0 h-[38px] w-[38px] min-w-[38px] p-0"
+              className="absolute top-6 right-4 h-[38px] w-[38px] min-w-[38px] p-0"
               onClick={() => setCancelModalOpen(true)}
             >
               <Close className="fill-gray-60 h-5 w-5" />
