@@ -231,6 +231,8 @@ export function useYjsStore({
   token,
 }: UseYjsStoreArgs): ExtendedStoreStatus {
   const { data: currentUser } = useCurrentUser();
+  const currentUserRef = useRef(currentUser);
+  currentUserRef.current = currentUser;
 
   /** TLStore должен быть ОДИН и всегда один и тот же */
   const [store] = useState(() => {
@@ -433,8 +435,10 @@ export function useYjsStore({
       if (awareness) {
         const yClientId = awareness.clientID.toString();
         const userName =
-          currentUser?.display_name || currentUser?.username || defaultUserPreferences.name;
-        const userColor = generateUserColor(currentUser?.id?.toString() || yClientId);
+          currentUserRef.current?.display_name ||
+          currentUserRef.current?.username ||
+          defaultUserPreferences.name;
+        const userColor = generateUserColor(currentUserRef.current?.id?.toString() || yClientId);
 
         setUserPreferences({ id: yClientId, name: userName, color: userColor });
 
@@ -462,7 +466,7 @@ export function useYjsStore({
         let pendingPresence: TLInstancePresence | null = null;
 
         const enrichPresenceWithBackendId = (p: TLInstancePresence): TLInstancePresence => {
-          const backendId = currentUser?.id;
+          const backendId = currentUserRef.current?.id;
           if (backendId == null) return p;
           return {
             ...p,
@@ -597,6 +601,28 @@ export function useYjsStore({
       }
 
       /** 5) initial seed / migrate */
+
+      // При дублировании доски бэкенд копирует бинарный Y.Doc, но данные внутри хранятся
+      // в массиве `tl_${sourceYdocId}`. Клиент обращается к `tl_${newYdocId}` — он пуст.
+      // Ищем данные в любом другом `tl_*` массиве и копируем в текущий.
+      if (yStore.yarray.length === 0) {
+        const currentKey = `tl_${ydocId}`;
+
+        for (const [key] of yDoc.share.entries()) {
+          if (key === currentKey || !key.startsWith('tl_')) continue;
+
+          const candidateArr = yDoc.getArray<{ key: string; val: TLRecord }>(key);
+          if (candidateArr.length === 0) continue;
+
+          yDoc.transact(() => {
+            for (const item of candidateArr.toJSON()) {
+              yStore.set(item.key, item.val);
+            }
+          }, 'duplicate-migration');
+          break;
+        }
+      }
+
       if (yStore.yarray.length) {
         const ourSchema = store.schema.serialize();
         const theirSchema = meta.get('schema') as SerializedSchema | undefined;
@@ -729,7 +755,7 @@ export function useYjsStore({
       // detach/destroy делаем только когда refs упадет в 0 (releaseShared).
       releaseShared(sharedEntry);
     };
-  }, [provider, yDoc, yStore, meta, readonlyMap, store, currentUser, sharedEntry]);
+  }, [provider, yDoc, yStore, meta, readonlyMap, store, sharedEntry]);
 
   function undo() {
     const um = undoManagerRef.current;
