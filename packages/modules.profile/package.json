@@ -11,7 +11,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@xipkg/avatar": "3.2.0",
+    "@xipkg/avatar": "3.3.0",
     "@xipkg/badge": "2.0.12",
     "@xipkg/button": "4.1.0",
     "@xipkg/dropdown": "3.0.12",

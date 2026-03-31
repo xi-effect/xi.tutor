@@ -1,24 +1,29 @@
-import { Button } from '@xipkg/button';
-import { Eyeon } from '@xipkg/icons';
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarFallback,
+  AvatarGroup,
+  AvatarGroupCount,
+  AvatarImage,
+} from '@xipkg/avatar';
+import { Eyeoff, Eyeon } from '@xipkg/icons';
+import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { TLInstancePresence } from 'tldraw';
 import { useCurrentUser } from 'common.services';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore } from '../../../store';
 
 const AVATAR_API_BASE = 'https://api.sovlium.ru/files/users';
+const MAX_VISIBLE_AVATARS = 3;
 
-/**
- * Аватары всех пользователей на доске (как в Miro): себя + остальных.
- * При наведении на чужой аватар — иконка глазика; по клику камера следует за видом этого пользователя.
- * Когда режим включён — надпись «Следуем за X» и отмена показываются в плавающем баннере над канвасом (FollowBanner).
- */
 export const CollaboratorAvatars = () => {
   const { store, myPresenceId, status } = useYjsContext();
   const { followingPresenceId, setFollowingPresenceId } = useFollowUserStore();
   const { data: currentUser } = useCurrentUser();
   const [allPresences, setAllPresences] = useState<TLInstancePresence[]>([]);
+  const [popoverOpen, setPopoverOpen] = useState(false);
 
   useEffect(() => {
     if (status !== 'synced-remote') {
@@ -45,43 +50,101 @@ export const CollaboratorAvatars = () => {
     };
   }, [store, status]);
 
-  if (allPresences.length === 0 && !followingPresenceId) return null;
-
   const myAvatarUrl =
     currentUser?.id != null ? `${AVATAR_API_BASE}/${currentUser.id}/avatar.webp` : undefined;
 
+  const sortedPresences = useMemo(() => {
+    return [...allPresences].sort((a, b) => {
+      if (a.id === followingPresenceId) return -1;
+      if (b.id === followingPresenceId) return 1;
+      return 0;
+    });
+  }, [allPresences, followingPresenceId]);
+
+  if (allPresences.length === 0 && !followingPresenceId) return null;
+
+  const visiblePresences = sortedPresences.slice(0, MAX_VISIBLE_AVATARS);
+  const overflowCount = Math.max(0, sortedPresences.length - MAX_VISIBLE_AVATARS);
+
   return (
-    <div className="flex items-center gap-2">
-      {allPresences.length > 0 && (
-        <div className="flex shrink-0 items-center gap-2">
-          {allPresences.map((presence) => {
+    <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+      <PopoverTrigger asChild>
+        <button type="button" className="cursor-pointer border-none bg-transparent p-0">
+          <AvatarGroup>
+            {visiblePresences.map((presence) => {
+              const isMe = presence.id === myPresenceId;
+              const isFollowed = followingPresenceId === presence.id;
+              const name = presence.userName || 'Участник';
+              const initial = name.charAt(0).toUpperCase();
+              const avatarUrl = isMe ? myAvatarUrl : getAvatarUrlFromPresence(presence);
+
+              return (
+                <Avatar key={presence.id} size="s">
+                  {avatarUrl && <AvatarImage src={avatarUrl} alt={isMe ? 'Вы' : name} size="s" />}
+                  <AvatarFallback size="s">{initial}</AvatarFallback>
+                  {isFollowed && (
+                    <AvatarBadge
+                      align="start"
+                      className="bg-brand-80 dark:bg-brand-60"
+                      title="Отслеживается"
+                      aria-hidden
+                    />
+                  )}
+                </Avatar>
+              );
+            })}
+            {overflowCount > 0 && <AvatarGroupCount>+{overflowCount}</AvatarGroupCount>}
+          </AvatarGroup>
+        </button>
+      </PopoverTrigger>
+      <PopoverContent align="end" side="bottom" sideOffset={8} className="w-64 p-2">
+        <div className="flex flex-col gap-1">
+          <p className="text-gray-60 px-2 py-1 text-xs">Участники на доске</p>
+          {sortedPresences.map((presence) => {
             const isMe = presence.id === myPresenceId;
-            const isFollowing = followingPresenceId === presence.id;
+            const isFollowed = followingPresenceId === presence.id;
             const name = presence.userName || 'Участник';
             const initial = name.charAt(0).toUpperCase();
             const avatarUrl = isMe ? myAvatarUrl : getAvatarUrlFromPresence(presence);
+
             return (
-              <CollaboratorAvatarButton
+              <div
                 key={presence.id}
-                initial={initial}
-                color={presence.color}
-                name={isMe ? 'Вы' : name}
-                avatarUrl={avatarUrl}
-                isMe={isMe}
-                isFollowing={isFollowing}
-                onFollow={
-                  isMe ? undefined : () => setFollowingPresenceId(isFollowing ? null : presence.id)
-                }
-              />
+                className="hover:bg-gray-5 flex items-center gap-2 rounded-lg px-2 py-1.5"
+              >
+                <Avatar size="s">
+                  {avatarUrl && <AvatarImage src={avatarUrl} alt={isMe ? 'Вы' : name} size="s" />}
+                  <AvatarFallback size="s">{initial}</AvatarFallback>
+                </Avatar>
+                <span className="flex-1 truncate text-sm text-gray-100">{isMe ? 'Вы' : name}</span>
+                {!isMe && (
+                  <button
+                    type="button"
+                    className={cn(
+                      'group flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors',
+                      isFollowed ? 'bg-brand-0' : 'hover:bg-gray-5',
+                    )}
+                    onClick={() => setFollowingPresenceId(isFollowed ? null : presence.id)}
+                    title={isFollowed ? 'Прекратить отслеживание' : `Следить за ${name}`}
+                    data-umami-event="board-follow-user"
+                    data-umami-event-state={isFollowed ? 'stop' : 'start'}
+                  >
+                    {isFollowed ? (
+                      <Eyeon className="fill-brand-80 size-4 shrink-0" />
+                    ) : (
+                      <Eyeoff className="fill-gray-40 group-hover:fill-gray-80 size-4 shrink-0" />
+                    )}
+                  </button>
+                )}
+              </div>
             );
           })}
         </div>
-      )}
-    </div>
+      </PopoverContent>
+    </Popover>
   );
 };
 
-/** URL аватарки из meta presence (backendUserId кладётся при отправке своей presence в useYjsStore) */
 function getAvatarUrlFromPresence(presence: TLInstancePresence): string | undefined {
   const meta = presence.meta as Record<string, unknown> | undefined;
   if (!meta || typeof meta !== 'object') return undefined;
@@ -91,76 +154,3 @@ function getAvatarUrlFromPresence(presence: TLInstancePresence): string | undefi
   if (!idStr) return undefined;
   return `${AVATAR_API_BASE}/${idStr}/avatar.webp`;
 }
-
-type CollaboratorAvatarButtonProps = {
-  initial: string;
-  color: string;
-  name: string;
-  avatarUrl?: string;
-  isMe: boolean;
-  isFollowing: boolean;
-  onFollow: (() => void) | undefined;
-};
-
-const CollaboratorAvatarButton = ({
-  initial,
-  color,
-  name,
-  avatarUrl,
-  isMe,
-  isFollowing,
-  onFollow,
-}: CollaboratorAvatarButtonProps) => {
-  const [hover, setHover] = useState(false);
-  const [imgError, setImgError] = useState(false);
-  const canFollow = !isMe && onFollow != null;
-  const showEye = canFollow && (hover || isFollowing);
-  const showImage = avatarUrl && !imgError;
-
-  return (
-    <Button
-      type="button"
-      variant="none"
-      className={cn(
-        'relative h-6 w-6 shrink-0 rounded-full p-0 transition-all lg:h-7 lg:w-7',
-        isMe && 'ring-gray-30 ring-offset-gray-0 ring-1 ring-offset-1',
-        isFollowing && 'ring-brand-50 ring-offset-gray-0 ring-1 ring-offset-1',
-      )}
-      onClick={onFollow ?? undefined}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-      title={
-        isMe ? name : isFollowing ? `Следить за ${name} (клик — отключить)` : `Следить за ${name}`
-      }
-      data-umami-event={isMe ? undefined : 'board-follow-user'}
-      data-umami-event-state={isMe ? undefined : isFollowing ? 'stop' : 'start'}
-      disabled={!canFollow}
-    >
-      <div
-        className={cn(
-          'relative flex h-full w-full shrink-0 items-center justify-center overflow-hidden rounded-full text-xs font-semibold text-white',
-          isMe && 'opacity-90',
-        )}
-        style={showImage ? undefined : { backgroundColor: color }}
-      >
-        {showImage ? (
-          <img
-            key={avatarUrl}
-            src={avatarUrl}
-            alt=""
-            className="h-full w-full object-cover"
-            referrerPolicy="no-referrer"
-            onError={() => setImgError(true)}
-          />
-        ) : (
-          <span>{initial}</span>
-        )}
-        {showEye && (
-          <span className="bg-gray-90/50 absolute inset-0 flex items-center justify-center rounded-full">
-            <Eyeon className="size-4 shrink-0 fill-white" />
-          </span>
-        )}
-      </div>
-    </Button>
-  );
-};
