@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "5.0.1",
-    "@xipkg/avatar": "3.0.10",
+    "@xipkg/avatar": "3.2.0",
     "@xipkg/alert": "1.1.0",
     "@xipkg/badge": "2.0.12",
     "@xipkg/button": "4.1.0",

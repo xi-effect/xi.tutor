@@ -17,7 +17,7 @@
     "@xipkg/utils": "^1.8.0",
     "@xipkg/select": "^2.2.5",
     "@xipkg/modal": "^4.4.0",
-    "@xipkg/avatar": "^3.0.10",
+    "@xipkg/avatar": "3.2.0",
     "@xipkg/scrollarea": "^2.2.0"
   },
   "devDependencies": {

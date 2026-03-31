@@ -1907,8 +1907,8 @@ importers:
   packages/features.materials.duplicate:
     dependencies:
       '@xipkg/avatar':
-        specifier: ^3.0.10
-        version: 3.0.10(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 3.2.0
+        version: 3.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/button':
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
@@ -3033,8 +3033,8 @@ importers:
         specifier: ^1.128.8
         version: 1.128.8(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/avatar':
-        specifier: 3.0.10
-        version: 3.0.10(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 3.2.0
+        version: 3.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/button':
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
@@ -3169,8 +3169,8 @@ importers:
   packages/modules.profile:
     dependencies:
       '@xipkg/avatar':
-        specifier: 3.0.10
-        version: 3.0.10(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 3.2.0
+        version: 3.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/badge':
         specifier: 2.0.12
         version: 2.0.12(react@19.2.4)
@@ -3441,8 +3441,8 @@ importers:
         specifier: 1.0.0
         version: 1.0.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/avatar':
-        specifier: 3.0.10
-        version: 3.0.10(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 3.2.0
+        version: 3.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/badge':
         specifier: 2.0.12
         version: 2.0.12(react@19.2.4)
@@ -3574,8 +3574,8 @@ importers:
         specifier: 1.1.0
         version: 1.1.0(react@19.2.4)
       '@xipkg/avatar':
-        specifier: 3.0.10
-        version: 3.0.10(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 3.2.0
+        version: 3.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/button':
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
@@ -3689,8 +3689,8 @@ importers:
         specifier: ^5.0.1
         version: 5.0.1(react-hook-form@7.71.2(react@19.2.4))
       '@xipkg/avatar':
-        specifier: 3.0.10
-        version: 3.0.10(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 3.2.0
+        version: 3.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/button':
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
@@ -3807,8 +3807,8 @@ importers:
         specifier: ^1.128.8
         version: 1.128.8(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/avatar':
-        specifier: 3.0.10
-        version: 3.0.10(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 3.2.0
+        version: 3.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/button':
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
@@ -3889,8 +3889,8 @@ importers:
         specifier: 1.1.0
         version: 1.1.0(react@19.2.4)
       '@xipkg/avatar':
-        specifier: 3.0.10
-        version: 3.0.10(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 3.2.0
+        version: 3.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/badge':
         specifier: 2.0.12
         version: 2.0.12(react@19.2.4)
@@ -4213,8 +4213,8 @@ importers:
         specifier: 1.1.0
         version: 1.1.0(react@19.2.4)
       '@xipkg/avatar':
-        specifier: 3.0.10
-        version: 3.0.10(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 3.2.0
+        version: 3.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/button':
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
@@ -4667,8 +4667,8 @@ importers:
         specifier: ^5.0.1
         version: 5.0.1(react-hook-form@7.71.2(react@19.2.4))
       '@xipkg/avatar':
-        specifier: 3.0.10
-        version: 3.0.10(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 3.2.0
+        version: 3.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/button':
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.14)(react@19.2.4)
@@ -8319,6 +8319,11 @@ packages:
     peerDependencies:
       react: ^19
 
+  '@xipkg/avatar@3.2.0':
+    resolution: {integrity: sha512-Yu2FWl2D9RrjxgQZCkQygqzMpAJzBTB1pCeZYbyNYe66toJPzfSa8ZuaaGLEh7EQUcbcIWjGIrKPJP/z6vq/2Q==}
+    peerDependencies:
+      react: ^19
+
   '@xipkg/badge@2.0.12':
     resolution: {integrity: sha512-TQXPdo/3pxe/Qb3Z81J4WTkg/OXENFR719YqUvqXzYiHnrtA7lXVsZVHsa1R2fKSf8dvrKKCUOkEQaJISrgU0w==}
     peerDependencies:
@@ -9115,8 +9120,8 @@ packages:
     peerDependencies:
       eslint: '>=7.0.0'
 
-  eslint-config-turbo@2.8.20:
-    resolution: {integrity: sha512-zT17KSqM4gTrChIocN+WfSdjg21QZTCDrcssylFab/wxu6S1EHDbt0JOna9b8rH5OKafZxDuFxKMV8BkulWShg==}
+  eslint-config-turbo@2.9.2:
+    resolution: {integrity: sha512-tuMHWC6GIoK/gljNo2yUYsv9YNxc0C+wRRSZIbQraAjMKHxvuBNPr4mxgo1MwfPaFtqriyeRZzTrgz6XjNM7Jg==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -9213,8 +9218,8 @@ packages:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
 
-  eslint-plugin-turbo@2.8.20:
-    resolution: {integrity: sha512-sMDremg73XbX+Imh7iDRS3TAro5jIf7CdzSqrT50wCGhClbiUvmWcLomnX+ldUbfTy+OvtqOeePvTivJMR87eQ==}
+  eslint-plugin-turbo@2.9.2:
+    resolution: {integrity: sha512-4nJRXdWe1Ad28MNuNUnEAR5b3Xrgg7wbGFaD2J/WGI8aTcb2OxpuK9+Kz3SOXAW4eVOWeDQaUyHwVCHOsnqV2Q==}
     peerDependencies:
       eslint: '>6.6.0'
       turbo: '>2.0.0'
@@ -14985,6 +14990,17 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
+  '@xipkg/avatar@3.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+    dependencies:
+      '@radix-ui/react-avatar': 1.1.11(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@xipkg/utils': 1.8.0(react@19.2.4)
+      class-variance-authority: 0.7.1
+      react: 19.2.4
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
+      - react-dom
+
   '@xipkg/badge@2.0.12(react@19.2.4)':
     dependencies:
       '@xipkg/utils': 1.8.0(react@19.2.4)
@@ -15121,7 +15137,7 @@ snapshots:
       eslint-config-airbnb: 19.0.4(eslint-plugin-import@2.31.0(@typescript-eslint/parser@8.56.1(eslint@9.39.3(jiti@2.6.1))(typescript@5.7.3))(eslint@9.39.3(jiti@2.6.1)))(eslint-plugin-jsx-a11y@6.10.2(eslint@9.39.3(jiti@2.6.1)))(eslint-plugin-react-hooks@5.1.0(eslint@9.39.3(jiti@2.6.1)))(eslint-plugin-react@7.37.2(eslint@9.39.3(jiti@2.6.1)))(eslint@9.39.3(jiti@2.6.1))
       eslint-config-next: 15.1.2(eslint@9.39.3(jiti@2.6.1))(typescript@5.7.3)
       eslint-config-prettier: 9.1.0(eslint@9.39.3(jiti@2.6.1))
-      eslint-config-turbo: 2.8.20(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
+      eslint-config-turbo: 2.9.2(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
       eslint-plugin-import: 2.31.0(@typescript-eslint/parser@8.56.1(eslint@9.39.3(jiti@2.6.1))(typescript@5.7.3))(eslint-import-resolver-typescript@3.10.1)(eslint@9.39.3(jiti@2.6.1))
       eslint-plugin-react: 7.37.2(eslint@9.39.3(jiti@2.6.1))
       eslint-plugin-react-hooks: 5.1.0(eslint@9.39.3(jiti@2.6.1))
@@ -16146,10 +16162,10 @@ snapshots:
     dependencies:
       eslint: 9.39.3(jiti@2.6.1)
 
-  eslint-config-turbo@2.8.20(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
+  eslint-config-turbo@2.9.2(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
     dependencies:
       eslint: 9.39.3(jiti@2.6.1)
-      eslint-plugin-turbo: 2.8.20(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
+      eslint-plugin-turbo: 2.9.2(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11)
       turbo: 2.8.11
 
   eslint-import-resolver-node@0.3.9:
@@ -16298,7 +16314,7 @@ snapshots:
       eslint: 9.39.3(jiti@2.6.1)
       turbo: 2.8.11
 
-  eslint-plugin-turbo@2.8.20(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
+  eslint-plugin-turbo@2.9.2(eslint@9.39.3(jiti@2.6.1))(turbo@2.8.11):
     dependencies:
       dotenv: 16.0.3
       eslint: 9.39.3(jiti@2.6.1)
