@@ -15,7 +15,7 @@
     "@xipkg/badge": "2.0.12",
     "@xipkg/button": "4.1.0",
     "@xipkg/dropdown": "3.0.12",
-    "@xipkg/icons": "^3.0.8",
+    "@xipkg/icons": "^3.0.10",
     "@xipkg/modal": "^4.4.0",
     "@xipkg/select": "2.2.5",
     "@xipkg/toggle": "^2.0.13",

@@ -340,8 +340,52 @@ export function useYjsStore({
     provider.on('status', handleStatus as any);
     unsubs.push(() => provider.off('status', handleStatus as any));
 
+    /**
+     * `synced` может прийти несколько раз (реконнект, повторный вызов при уже synced).
+     * Повторный полный init дублирует store.listen / awareness и накапливает «мертвые» instance_presence
+     * в Y.Doc — в шапке видно много одинаковых аватарок одного пользователя.
+     */
+    let syncedFullInitDone = false;
+
+    const cleanupStaleOwnPresenceRecords = (presenceId: TLInstancePresence['id']) => {
+      const backendId = currentUserRef.current?.id;
+      if (backendId == null) return;
+
+      const bid = String(backendId);
+      const all = store
+        .allRecords()
+        .filter((r): r is TLInstancePresence => r.typeName === 'instance_presence');
+
+      const stale = all.filter((p) => {
+        if (p.id === presenceId) return false;
+        const m = p.meta as Record<string, unknown> | undefined;
+        if (!m || typeof m !== 'object') return false;
+        const pbid = m.backendUserId;
+        return pbid === bid || pbid === backendId;
+      });
+
+      if (stale.length === 0) return;
+
+      store.mergeRemoteChanges(() => {
+        store.remove(stale.map((p) => p.id));
+      });
+    };
+
     const handleSynced = ({ state }: onSyncedParameters) => {
       if (!state) return;
+
+      const awarenessEarly = provider.awareness;
+      if (syncedFullInitDone) {
+        if (awarenessEarly) {
+          const yClientId = awarenessEarly.clientID.toString();
+          const presenceId = InstancePresenceRecordType.createId(yClientId);
+          setMyPresenceId(presenceId);
+          cleanupStaleOwnPresenceRecords(presenceId);
+        }
+        return;
+      }
+
+      syncedFullInitDone = true;
 
       /** Раньше таймер жил в Y.Map `timer` и попадал в персист документа; теперь только awareness — чистим наследие */
       yDoc.transact(() => {
