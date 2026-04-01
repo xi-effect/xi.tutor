@@ -34,6 +34,15 @@ function trackOnboardingTourComplete(layout: string | undefined) {
   });
 }
 
+/** driver.js в onDestroyed передаёт не ссылку из steps[], а клон `{ ...step, popover: merged }` — indexOf не сработает. */
+function isDestroyedOnLastTourStep(step: DriveStep | undefined, validSteps: DriveStep[]): boolean {
+  if (!step || validSteps.length === 0) {
+    return false;
+  }
+  const last = validSteps[validSteps.length - 1];
+  return last.element === step.element;
+}
+
 export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopupT) => {
   const { data: user, isLoading } = useCurrentUser();
   const [isHidden, setIsHidden] = useState(false);
@@ -189,9 +198,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
           return;
         }
 
-        const lastIndex = validSteps.length - 1;
-        const passedAllSteps =
-          lastIndex >= 0 && step !== undefined && validSteps.indexOf(step) === lastIndex;
+        const passedAllSteps = isDestroyedOnLastTourStep(step, validSteps);
 
         setIsTransitioning(true);
 
