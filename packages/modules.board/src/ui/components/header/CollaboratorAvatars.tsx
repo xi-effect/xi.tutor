@@ -206,7 +206,7 @@ export const CollaboratorAvatars = () => {
           </button>
         </PopoverTrigger>
       </div>
-      <PopoverContent align="end" side="bottom" sideOffset={8} className="w-64 p-2">
+      <PopoverContent align="end" side="bottom" sideOffset={12} className="z-100 w-64 p-2">
         <div className="flex flex-col gap-1">
           {isTutor && (
             <Button
