@@ -18,7 +18,7 @@
     "common.api": "workspace:*",
     "common.utils": "workspace:*",
     "common.types": "workspace:*",
-    "@xipkg/icons": "^3.0.8",
+    "@xipkg/icons": "^3.0.10",
     "@xipkg/button": "4.0.0"
   },
   "devDependencies": {

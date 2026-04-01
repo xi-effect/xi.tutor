@@ -24,7 +24,7 @@ const calculateTimeRemaining = (allowedAt: string | null | undefined): number =>
 
 export const EmailPageConfirm = () => {
   const { data: user } = useCurrentUser();
-  const email = user?.email || '';
+  const email = user?.email || 'вашу почту';
   const { emailConfirmationRequest, isLoading } = useEmailConfirmationRequest();
 
   // Вычисляем оставшееся время на основе данных с бэкенда
