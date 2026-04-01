@@ -8,7 +8,7 @@ import { useCurrentUser, useOnboardingTransition } from 'common.services';
 import { useState, useEffect, useCallback } from 'react';
 import { cn } from '@xipkg/utils';
 
-type MenuT = {
+type OnboardingPopupT = {
   disabled?: boolean;
   steps?: DriveStep[];
 };
@@ -19,7 +19,22 @@ const buttonClassName =
 const SESSION_STORAGE_KEY = 'onboarding_menu_hidden';
 const SHOW_FOR_COMPLETED_KEY = 'show_onboarding_for_completed';
 
-export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
+function trackOnboardingTourComplete(layout: string | undefined) {
+  if (typeof window === 'undefined') {
+    return;
+  }
+  const win = window as Window & {
+    umami?: { track: (name: string, data?: Record<string, unknown>) => void };
+  };
+  if (!win.umami) {
+    return;
+  }
+  win.umami.track('onboarding-complete', {
+    layout: layout === 'tutor' ? 'tutor' : 'student',
+  });
+}
+
+export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopupT) => {
   const { data: user, isLoading } = useCurrentUser();
   const [isHidden, setIsHidden] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -163,7 +178,7 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
       prevBtnText: 'Назад',
       doneBtnText: 'Закрыть',
       progressText: '{{current}} из {{total}}',
-      onDestroyed: () => {
+      onDestroyed: (_element, step) => {
         // Защита от повторных вызовов
         if (isTransitioning) return;
 
@@ -173,6 +188,10 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
           setShowForCompleted(false);
           return;
         }
+
+        const lastIndex = validSteps.length - 1;
+        const passedAllSteps =
+          lastIndex >= 0 && step !== undefined && validSteps.indexOf(step) === lastIndex;
 
         setIsTransitioning(true);
 
@@ -184,6 +203,9 @@ export const Menu = ({ disabled = false, steps = [] }: MenuT) => {
             sessionStorage.removeItem(SHOW_FOR_COMPLETED_KEY);
             setShowForCompleted(false);
             setIsTransitioning(false);
+            if (passedAllSteps) {
+              trackOnboardingTourComplete(user?.default_layout);
+            }
           },
           onError: (error) => {
             console.error('Ошибка при завершении онбординга:', error);
