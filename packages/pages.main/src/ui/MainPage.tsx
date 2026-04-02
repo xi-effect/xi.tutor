@@ -1,10 +1,10 @@
 /* eslint-disable no-irregular-whitespace */
-import { Classrooms, Lessons, Payments, Materials } from './components';
-import { DateTimeDisplay, Menu } from 'common.ui';
+import { Materials, Payments, Classrooms } from './components';
+import { DateTimeDisplay, OnboardingPopup } from 'common.ui';
 import { useCurrentUser } from 'common.services';
 import { useMediaQuery } from '@xipkg/utils';
 import { NearestLessonCard } from 'modules.calendar';
-import { MOCK_LESSONS } from './components/Lessons/Lessons';
+import { Lessons, MOCK_LESSONS } from './components/Lessons/Lessons';
 
 export const MainPage = () => {
   const { data: user } = useCurrentUser();
@@ -124,7 +124,7 @@ export const MainPage = () => {
           </div>
         </div>
       </div>
-      <Menu steps={steps} disabled={false} />
+      <OnboardingPopup steps={steps} disabled={false} />
     </div>
   );
 };
