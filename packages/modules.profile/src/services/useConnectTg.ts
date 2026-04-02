@@ -14,10 +14,15 @@ export const useConnectTg = () => {
   const handleConnectTg = () => {
     if (status === 'active') return;
 
+    const telegramLinkTab = window.open('', '_blank');
+
     const connect = () => {
       createConnection(undefined, {
         onSuccess: (link: string) => {
-          if (link) window.open(link, '_blank');
+          if (telegramLinkTab) telegramLinkTab.location.href = link;
+        },
+        onError: () => {
+          telegramLinkTab?.close();
         },
       });
     };
