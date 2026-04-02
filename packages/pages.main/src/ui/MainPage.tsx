@@ -1,7 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
 import { ScrollArea } from '@xipkg/scrollarea';
 import { Materials, Payments, Classrooms } from './components';
-import { Menu } from 'common.ui';
+import { OnboardingPopup } from 'common.ui';
 import { useCurrentUser } from 'common.services';
 // import { Sidebar } from './components/Sidebar';
 // import { AssignLessonButton } from './components/AssignLessonButton';
@@ -126,7 +126,7 @@ export const MainPage = () => {
         <Classrooms />
         <Payments />
         {isTutor && <Materials />}
-        <Menu steps={steps} disabled={false} />
+        <OnboardingPopup steps={steps} disabled={false} />
       </ScrollArea>
       {/* <Sidebar /> */}
     </div>
