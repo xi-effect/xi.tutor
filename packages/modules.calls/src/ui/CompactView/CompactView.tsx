@@ -22,6 +22,7 @@ import { useNavigate, useRouter, useSearch, useLocation } from '@tanstack/react-
 import { useRoom } from '../../providers/RoomProvider';
 import { usePiP } from '../../providers/PiPProvider';
 import { useParticipantJoinSync } from '../../hooks/useParticipantJoinSync';
+import { useParticipantSounds } from '../../hooks/useParticipantSounds';
 
 type CompactViewProps = {
   children: React.ReactNode;
@@ -202,6 +203,7 @@ export const CompactView = ({ children }: CompactViewProps) => {
 
   // Синхронизация состояния при подключении новых участников (работает и в compact mode)
   useParticipantJoinSync();
+  useParticipantSounds();
 
   const search = useSearch({ strict: false }) as { call?: string };
   const navigate = useNavigate();

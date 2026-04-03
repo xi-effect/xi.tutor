@@ -144,6 +144,8 @@ export const Effects = () => {
 
   const chatMessageVolume = useSoundEffectsStore((s) => s.chatMessageVolume);
   const handRaiseVolume = useSoundEffectsStore((s) => s.handRaiseVolume);
+  const userJoinVolume = useSoundEffectsStore((s) => s.userJoinVolume);
+  const userLeftVolume = useSoundEffectsStore((s) => s.userLeftVolume);
   const boardTimerEndVolume = useSoundEffectsStore((s) => s.boardTimerEndVolume);
   const boardTimerWarnVolume = useSoundEffectsStore((s) => s.boardTimerWarnVolume);
   const setSoundVolume = useSoundEffectsStore((s) => s.setSoundVolume);
@@ -164,6 +166,18 @@ export const Effects = () => {
             label="Поднятие руки"
             soundKey="handRaise"
             volume={handRaiseVolume}
+            onVolumeChange={setSoundVolume}
+          />
+          <SoundItem
+            label="Подключение участника"
+            soundKey="userJoin"
+            volume={userJoinVolume}
+            onVolumeChange={setSoundVolume}
+          />
+          <SoundItem
+            label="Отключение участника"
+            soundKey="userLeft"
+            volume={userLeftVolume}
             onVolumeChange={setSoundVolume}
           />
         </Category>

@@ -5,6 +5,8 @@
 const SOUND_PATHS = {
   chatMessage: '/sounds/chat-message.wav',
   handRaise: '/sounds/hand-raise.wav',
+  userJoin: '/sounds/user-join-to-call.mp3',
+  userLeft: '/sounds/user-left-from-call.mp3',
 } as const;
 
 type SoundType = keyof typeof SOUND_PATHS;
