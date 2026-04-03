@@ -301,7 +301,8 @@ export const Settings = ({ children }: SettingsPropsT) => {
           <div className="border-gray-10 border-t pt-6">
             <Button
               type="button"
-              variant="secondary"
+              variant="ghost"
+              size="s"
               className="w-full gap-2"
               onClick={() => {
                 navigate({
@@ -311,7 +312,7 @@ export const Settings = ({ children }: SettingsPropsT) => {
               }}
             >
               <Music className="h-4 w-4" />
-              Настройки звуков
+              Настройки эффектов
             </Button>
           </div>
         </div>

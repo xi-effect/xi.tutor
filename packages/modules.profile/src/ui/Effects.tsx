@@ -5,9 +5,6 @@ import { Toggle } from '@xipkg/toggle';
 import { useMediaQuery } from '@xipkg/utils';
 import { useSoundEffectsStore, SOUND_DEFAULTS, type SoundKey } from 'common.ui';
 
-/** Доля слева (0–100), визуально «заблокирована»; слайдер только справа от границы. */
-const FORBIDDEN_ZONE_PERCENT = 20;
-
 type SoundItemProps = {
   label: string;
   soundKey: SoundKey;
@@ -15,8 +12,8 @@ type SoundItemProps = {
   onVolumeChange: (key: SoundKey, volume: number) => void;
   minVolume?: number;
   disableable?: boolean;
-  /** Шкала 0–100% по всей ширине, левая часть недоступна для выбора (см. FORBIDDEN_ZONE_PERCENT). */
-  scaleWithForbiddenLeading?: boolean;
+  /** Шкала 0–100, зона слева до этого процента недоступна (Slider restrictedMin). */
+  restrictedMinPercent?: number;
 };
 
 const SoundItem = ({
@@ -26,7 +23,7 @@ const SoundItem = ({
   onVolumeChange,
   minVolume = 0,
   disableable = true,
-  scaleWithForbiddenLeading = false,
+  restrictedMinPercent,
 }: SoundItemProps) => {
   const savedVolumeRef = useRef<number>(SOUND_DEFAULTS[soundKey]);
 
@@ -34,16 +31,17 @@ const SoundItem = ({
 
   const handleSliderChange = useCallback(
     (values: number[]) => {
-      let newVolume = values[0] ?? volume;
-      if (scaleWithForbiddenLeading && minVolume > 0) {
-        newVolume = Math.max(newVolume, minVolume);
-      }
+      const raw = values[0];
+      const newVolume =
+        restrictedMinPercent !== undefined
+          ? (raw ?? Math.round(volume * 100)) / 100
+          : (raw ?? volume);
       onVolumeChange(soundKey, newVolume);
       if (newVolume > 0) {
         savedVolumeRef.current = newVolume;
       }
     },
-    [soundKey, volume, onVolumeChange, scaleWithForbiddenLeading, minVolume],
+    [soundKey, volume, onVolumeChange, restrictedMinPercent],
   );
 
   const handleToggle = useCallback(
@@ -70,45 +68,16 @@ const SoundItem = ({
           {disableable && <Toggle checked={isEnabled} size="s" onCheckedChange={handleToggle} />}
         </div>
       </div>
-      {scaleWithForbiddenLeading && minVolume > 0 ? (
-        <div className="relative w-full">
-          <Slider
-            value={[volume]}
-            onValueChange={handleSliderChange}
-            min={0}
-            max={1}
-            step={0.01}
-            className="w-full"
-          />
-          {/* Заблокированная зона 0–20%: полоса поверх трека, пропускает клики к слайдеру */}
-          <div
-            className="bg-gray-40 dark:bg-gray-60 pointer-events-none absolute top-1/2 left-0 z-10 flex h-1 -translate-y-1/2 items-center overflow-hidden rounded-l-full"
-            style={{ width: `${FORBIDDEN_ZONE_PERCENT}%` }}
-            aria-hidden
-          >
-            <svg className="h-full w-full opacity-30" preserveAspectRatio="none">
-              <defs>
-                <pattern
-                  id="disabled-hatch"
-                  width="6"
-                  height="6"
-                  patternUnits="userSpaceOnUse"
-                  patternTransform="rotate(45)"
-                >
-                  <line
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="6"
-                    className="dark:stroke-gray-0 stroke-gray-100"
-                    strokeWidth="1.5"
-                  />
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#disabled-hatch)" />
-            </svg>
-          </div>
-        </div>
+      {restrictedMinPercent !== undefined ? (
+        <Slider
+          value={[Math.round(volume * 100)]}
+          onValueChange={handleSliderChange}
+          min={0}
+          max={100}
+          step={1}
+          restrictedMin={restrictedMinPercent}
+          className="w-full"
+        />
       ) : (
         <Slider
           value={[volume]}
@@ -188,9 +157,8 @@ export const Effects = () => {
             soundKey="boardTimerEnd"
             volume={boardTimerEndVolume}
             onVolumeChange={setSoundVolume}
-            minVolume={0.2}
             disableable={false}
-            scaleWithForbiddenLeading
+            restrictedMinPercent={20}
           />
           <SoundItem
             label="Предупреждение таймера"
