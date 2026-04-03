@@ -6,3 +6,8 @@ export { ErrorPage } from './src/ErrorPage';
 export { OnboardingPopup } from './src/OnboardingPopup';
 export { NetworkIndicator } from './src/NetworkIndicator';
 export { useFocusModeStore } from './src/store/useFocusModeStore';
+export {
+  useSoundEffectsStore,
+  SOUND_DEFAULTS,
+  type SoundKey,
+} from './src/store/useSoundEffectsStore';

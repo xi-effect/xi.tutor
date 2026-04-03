@@ -6,7 +6,7 @@ import { useHandFocus } from '../../hooks/useHandFocus';
 import { CallsOnboarding } from '../Onboarding/CallsOnboarding';
 import { useLocalParticipant } from '@livekit/components-react';
 import { LocalVideoTrack } from 'livekit-client';
-import { useVideoBlur, useParticipantJoinSync } from '../../hooks';
+import { useVideoBlur, useParticipantJoinSync, useParticipantSounds } from '../../hooks';
 import { useCallStore } from '../../store/callStore';
 
 export const ActiveRoom = () => {
@@ -14,6 +14,7 @@ export const ActiveRoom = () => {
   useHandFocus();
   // Синхронизация состояния при подключении новых участников
   useParticipantJoinSync();
+  useParticipantSounds();
   // Получаем видео трек для применения блюра
   const { cameraTrack } = useLocalParticipant();
   const videoTrack = cameraTrack?.track as LocalVideoTrack | undefined;

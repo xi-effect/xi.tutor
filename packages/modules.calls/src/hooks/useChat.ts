@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useSoundEffectsStore } from 'common.ui';
 import { useLiveKitDataChannel, useLiveKitDataChannelListener } from './useLiveKitDataChannel';
 import { useCallStore } from '../store/callStore';
 import { useRoom } from '../providers/RoomProvider';
@@ -16,7 +17,8 @@ type ChatMessagePayload = {
 
 export const useChat = () => {
   const { sendMessage } = useLiveKitDataChannel();
-  const { addChatMessage, clearUnreadMessages, updateStore, chatSoundVolume } = useCallStore();
+  const { addChatMessage, clearUnreadMessages, updateStore } = useCallStore();
+  const chatSoundVolume = useSoundEffectsStore((s) => s.chatMessageVolume);
   const { room } = useRoom();
 
   // Получаем информацию о текущем участнике из LiveKit

@@ -22,6 +22,7 @@ export {
   type UseNoiseCancellationResult,
 } from './useNoiseCancellation';
 export { useParticipantJoinSync } from './useParticipantJoinSync';
+export { useParticipantSounds } from './useParticipantSounds';
 export { useUmamiActivityHeartbeat } from './useUmamiActivityHeartbeat';
 export { useSortedTracks } from './useSortedTracks';
 export { useDocumentPiP } from './useDocumentPiP';
