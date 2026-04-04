@@ -37,9 +37,6 @@ export const Notifications = () => {
     openNotificationLink(url, navigate);
   };
 
-  // Виртуализация списка уведомлений (временно отключено для проверки)
-  // const virtualizer = useVirtualList(scrollAreaRef, notifications);
-
   const handleToSettings = () => {
     navigate({ to: location.pathname, search: { profile: 'notifications' } });
   };
