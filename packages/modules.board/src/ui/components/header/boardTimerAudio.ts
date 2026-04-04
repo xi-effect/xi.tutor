@@ -6,6 +6,8 @@
  * иначе async-колбэк после «тихого» play мог обрывать реальное воспроизведение.
  */
 
+import { useSoundEffectsStore } from 'common.ui';
+
 const resolveSoundUrl = (file: string): string => {
   const base = import.meta.env.BASE_URL ?? '/';
   const path =
@@ -75,11 +77,14 @@ export function unlockBoardTimerAudio(): void {
 }
 
 export function playBoardTimerWarnSound(): void {
+  const volume = useSoundEffectsStore.getState().boardTimerWarnVolume;
+  if (volume <= 0) return;
+
   const audio = getAudioToEnd();
   try {
     audio.pause();
     audio.currentTime = 0;
-    audio.volume = 1;
+    audio.volume = Math.max(0, Math.min(1, volume));
     void audio.play().catch(() => {});
   } catch {
     /* ignore */
@@ -87,11 +92,13 @@ export function playBoardTimerWarnSound(): void {
 }
 
 export function playBoardTimerEndSound(): void {
+  const volume = useSoundEffectsStore.getState().boardTimerEndVolume;
+
   const audio = getAudioEnd();
   try {
     audio.pause();
     audio.currentTime = 0;
-    audio.volume = 1;
+    audio.volume = Math.max(0.2, Math.min(1, volume));
     void audio.play().catch(() => {});
   } catch {
     /* ignore */

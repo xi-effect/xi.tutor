@@ -8,3 +8,8 @@ export { OnboardingPopup } from './src/OnboardingPopup';
 export { NetworkIndicator } from './src/NetworkIndicator';
 export { SmallLogo } from './src/SmallLogo';
 export { useFocusModeStore } from './src/store/useFocusModeStore';
+export {
+  useSoundEffectsStore,
+  SOUND_DEFAULTS,
+  type SoundKey,
+} from './src/store/useSoundEffectsStore';

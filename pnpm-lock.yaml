@@ -920,8 +920,8 @@ importers:
         specifier: ^3.0.10
         version: 3.0.10(react@19.2.4)
       '@xipkg/slider':
-        specifier: 2.0.12
-        version: 2.0.12(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.4)
@@ -2726,8 +2726,8 @@ importers:
         specifier: ^2.2.5
         version: 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/slider':
-        specifier: 2.0.12
-        version: 2.0.12(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/textarea':
         specifier: 1.2.0
         version: 1.2.0(react@19.2.4)
@@ -3022,8 +3022,8 @@ importers:
         specifier: 2.0.12
         version: 2.0.12(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/slider':
-        specifier: 2.0.12
-        version: 2.0.12(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/textarea':
         specifier: 1.2.0
         version: 1.2.0(react@19.2.4)
@@ -3565,6 +3565,9 @@ importers:
       '@xipkg/select':
         specifier: 2.2.5
         version: 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@xipkg/slider':
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/toggle':
         specifier: ^4.1.0
         version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -3595,6 +3598,9 @@ importers:
       common.types:
         specifier: workspace:*
         version: link:../common.types
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
       dayjs:
         specifier: 1.11.13
         version: 1.11.13
@@ -8951,8 +8957,8 @@ packages:
     peerDependencies:
       react: ^19
 
-  '@xipkg/slider@2.0.12':
-    resolution: {integrity: sha512-v20cT3Q1299FZ9vxzH8isoyDYkX7Ojc5/tBhv2wmvxxIjuVfxeMDUfZrbyAiJ3YhWghfF8PCytOtaxTcCKb+jg==}
+  '@xipkg/slider@2.2.0':
+    resolution: {integrity: sha512-hBnYKlP2tjMHgIUWd7lkUyOJtXVETIp44Jv/H9FWF5KCFv9nQj+c1huxHZwnnufth9ewyJgJArn5/+dhF3arDA==}
     peerDependencies:
       react: ^19
 
@@ -15861,7 +15867,7 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/slider@2.0.12(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@xipkg/slider@2.2.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
       '@radix-ui/react-slider': 1.3.6(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/utils': 1.8.0(react@19.2.4)

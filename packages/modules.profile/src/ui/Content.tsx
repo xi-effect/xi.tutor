@@ -3,6 +3,7 @@ import { Customization } from './Customization';
 import { Secure } from './Secure';
 import { PersonalData } from './PersonalData';
 import { Notifications } from './Notifications';
+import { Effects } from './Effects';
 import { TechnicalReport } from './TechnicalReport';
 
 type ComponentMapT = {
@@ -14,6 +15,7 @@ const componentMap: ComponentMapT = {
   personalisation: <Customization />,
   security: <Secure />,
   notifications: <Notifications />,
+  effects: <Effects />,
   report: <TechnicalReport />,
 };
 

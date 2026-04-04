@@ -1,4 +1,5 @@
 import { useCallback } from 'react';
+import { useSoundEffectsStore } from 'common.ui';
 import { useLiveKitDataChannel, useLiveKitDataChannelListener } from './useLiveKitDataChannel';
 import { useCallStore } from '../store/callStore';
 import { useRoom } from '../providers/RoomProvider';
@@ -15,8 +16,8 @@ type HandMessagePayload = {
 
 export const useRaisedHands = () => {
   const { sendMessage } = useLiveKitDataChannel();
-  const { addRaisedHand, removeRaisedHand, toggleHandRaised, handRaiseSoundVolume } =
-    useCallStore();
+  const { addRaisedHand, removeRaisedHand, toggleHandRaised } = useCallStore();
+  const handRaiseSoundVolume = useSoundEffectsStore((s) => s.handRaiseVolume);
   const { room } = useRoom();
 
   // Получаем информацию о текущем участнике из LiveKit
