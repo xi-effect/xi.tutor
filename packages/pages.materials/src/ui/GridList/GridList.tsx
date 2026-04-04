@@ -38,7 +38,7 @@ export const GridList = <T,>({
               transform: `translateY(${virtualRow.start}px)`,
               display: 'grid',
               gap: gap,
-              padding: gap,
+              // padding: gap,
               paddingLeft: 0,
               boxSizing: 'border-box',
               gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))`,

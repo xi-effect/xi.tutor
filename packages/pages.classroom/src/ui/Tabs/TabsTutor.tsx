@@ -79,7 +79,7 @@ export const TabsTutor = () => {
 
   return (
     <div className="bg-gray-0 h-[calc(100vh-88px)] rounded-tl-2xl px-4 pt-0">
-      <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
+      <Tabs.Root className="pt-2" value={currentTab} onValueChange={handleTabChange}>
         <div className="flex h-[56px] flex-row items-center gap-4 overflow-x-auto px-4 md:p-0">
           <SwitcherAnimate
             tabs={tabs}

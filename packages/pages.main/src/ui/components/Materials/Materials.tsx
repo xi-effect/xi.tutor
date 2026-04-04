@@ -6,7 +6,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Add, FileSmall, Upload, WhiteBoard } from '@xipkg/icons';
+import { Add, FileSmall, WhiteBoard } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { useGetMaterialsList } from 'common.services';
@@ -14,7 +14,6 @@ import { MaterialsDuplicateProvider, useMaterialsDuplicate } from 'pages.materia
 import { MaterialsDuplicate } from 'features.materials.duplicate';
 import { MaterialsCard } from 'features.materials.card';
 import { useCreateMaterial } from 'features.materials.add';
-import { useNavigate } from '@tanstack/react-router';
 import { useState, useMemo } from 'react';
 import { SectionEmptyState } from '../SectionEmptyState';
 
@@ -25,7 +24,6 @@ const filters = [
 ];
 
 const MaterialsContent = () => {
-  const navigate = useNavigate();
   const { createMaterial } = useCreateMaterial();
   const { materialId, open, closeModal, openModal } = useMaterialsDuplicate();
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'note' | 'board'>('all');
@@ -82,16 +80,6 @@ const MaterialsContent = () => {
           />
 
           <div className="ml-auto flex flex-row items-center gap-2">
-            <Button
-              type="button"
-              variant="none"
-              className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
-              aria-label="Перейти к материалам для загрузки"
-              onClick={() => navigate({ to: '/materials' })}
-              data-umami-event="materials-upload-open"
-            >
-              <Upload className="fill-brand-80 size-6" />
-            </Button>
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
               <DropdownMenuTrigger asChild>
                 <Button
