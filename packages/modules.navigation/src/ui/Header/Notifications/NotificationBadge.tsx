@@ -4,7 +4,7 @@ interface NotificationBadgeProps {
   count: number | string;
   className?: string;
   /**
-   * `mobile` — только нижняя панель (`NotificationsMobileDrawer`), бейдж в углу иконки.
+   * `mobile` — бейдж в углу иконки (сейчас не используется).
    * `sidebar` — только пункт «Уведомления» в сайдбаре (`NotificationsDropdown`), бейдж в строке меню.
    */
   variant?: 'mobile' | 'sidebar';

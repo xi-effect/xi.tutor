@@ -28,7 +28,10 @@ export const NotificationsList = ({
   return (
     <div
       ref={scrollAreaRef}
-      className={cn('overflow-y-auto', isMobile ? 'max-h-[calc(100dvh-200px)]' : 'h-[300px] px-1')}
+      className={cn(
+        'overflow-y-auto',
+        isMobile ? 'max-h-[min(320px,calc(100dvh-140px))]' : 'h-[300px] px-1',
+      )}
     >
       {notifications.length > 0 ? (
         <>

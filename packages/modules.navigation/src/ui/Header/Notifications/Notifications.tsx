@@ -3,10 +3,9 @@ import { useLocation, useNavigate } from '@tanstack/react-router';
 import { useMediaQuery } from '@xipkg/utils';
 import { formatNotificationCount, useNotificationsContext } from 'common.services';
 import type { CustomNotificationModalPayload } from 'common.services';
-import { NotificationBadge } from './NotificationBadge';
 import { NotificationsDropdown } from './NotificationsDropdown';
 import { NotificationsList } from './NotificationsList';
-import { NotificationsMobileDrawer } from './NotificationsMobileDrawer';
+import { NotificationsMobileDropdown } from './NotificationsMobileDropdown';
 import { CustomNotificationModal } from './CustomNotificationModal';
 import { openNotificationLink } from './notificationsNavigation';
 import { useNotificationsInfiniteScroll } from '../../../hooks';
@@ -81,13 +80,11 @@ export const Notifications = () => {
   return (
     <>
       {isMobile ? (
-        <NotificationsMobileDrawer
+        <NotificationsMobileDropdown
           isOpen={isOpen}
           onOpenChange={handleOpenChange}
           onOpenSettings={handleToSettings}
           notificationsList={notificationsList}
-          badge={<NotificationBadge count={countLabel} variant="mobile" />}
-          countLabel={countLabel}
           hasUnread={hasUnread}
         />
       ) : (
