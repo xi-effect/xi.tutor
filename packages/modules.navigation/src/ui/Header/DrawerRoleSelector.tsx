@@ -6,7 +6,12 @@ import { useNavigate } from '@tanstack/react-router';
 
 import { RoleSwitcher } from './RoleSwitcher';
 
-export const DrawerRoleSelector = () => {
+type DrawerRoleSelectorProps = {
+  /** Без подписи «Роль» — для нижнего листа профиля на мобилке */
+  compact?: boolean;
+};
+
+export const DrawerRoleSelector = ({ compact = false }: DrawerRoleSelectorProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation('navigation');
 
@@ -39,9 +44,19 @@ export const DrawerRoleSelector = () => {
   };
 
   return (
-    <div className="w-full p-2">
-      <div className="mb-2 text-base font-medium text-gray-50">{t('role')}</div>
-      <RoleSwitcher value={currentRole} onChange={handleRoleChange} />
+    <div className={compact ? 'w-full' : 'w-full p-2'}>
+      {!compact && <div className="mb-2 text-base font-medium text-gray-50">{t('role')}</div>}
+      <RoleSwitcher
+        value={currentRole}
+        onChange={handleRoleChange}
+        className={
+          compact
+            ? 'bg-gray-5 mx-auto flex h-[48px] w-full shrink-0 flex-row rounded-lg p-1'
+            : undefined
+        }
+        tabClassName={compact ? 'h-[42px] w-full' : undefined}
+        indicatorClassName={compact ? 'h-[42px] w-full rounded-[10px]' : undefined}
+      />
     </div>
   );
 };

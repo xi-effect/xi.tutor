@@ -1,4 +1,8 @@
 {
+  "profileDrawerTitle": "Profile",
+  "installApp": "Install app",
+  "notifications": "Notifications",
+  "notificationSettings": "Notification settings",
   "home": "Home",
   "calendar": "Calendar",
   "schedule": "Schedule",

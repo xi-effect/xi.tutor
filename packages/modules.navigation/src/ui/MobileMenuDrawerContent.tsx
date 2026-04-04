@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Group, Home, Payments, BookOpened, Calendar } from '@xipkg/icons';
+import { Group, Home, Payments, BookOpened, Calendar, Close } from '@xipkg/icons';
 import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
 import { useMenuStore } from '../store';
@@ -27,8 +27,8 @@ export const MobileMenuDrawerContent = ({ onClose }: { onClose: () => void }) =>
 
   const menuItems: MenuItem[] = [
     { id: 'home-menu-item', titleKey: 'home', url: '/', icon: Home },
-    { id: 'calendar-menu-item', titleKey: 'schedule', url: '/schedule', icon: Calendar },
     { id: 'classrooms-menu-item', titleKey: 'classrooms', url: '/classrooms', icon: Group },
+    { id: 'calendar-menu-item', titleKey: 'schedule', url: '/schedule', icon: Calendar },
     ...(isTutor
       ? [{ id: 'materials-menu-item', titleKey: 'materials', url: '/materials', icon: BookOpened }]
       : []),
@@ -57,8 +57,8 @@ export const MobileMenuDrawerContent = ({ onClose }: { onClose: () => void }) =>
   };
 
   return (
-    <div className="bg-gray-0 flex flex-col rounded-t-xl">
-      <div className="flex flex-col gap-1 p-3">
+    <div className="bg-gray-0 flex flex-col rounded-t-2xl">
+      <div className="flex flex-col gap-2 p-3">
         {menuItems.map((item) => {
           const isActive = getIsActive(item.url);
           const Icon = item.icon;
@@ -70,10 +70,10 @@ export const MobileMenuDrawerContent = ({ onClose }: { onClose: () => void }) =>
               data-umami-event={`navigation-mobile-${item.titleKey}`}
               data-umami-event-url={item.url}
               className={cn(
-                'flex w-full items-center gap-3 rounded-lg px-3 py-3 text-left transition-colors',
+                'flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors',
                 isActive
                   ? 'bg-brand-5 text-brand-100'
-                  : 'hover:bg-gray-5 bg-transparent text-gray-100',
+                  : 'border-gray-10 bg-gray-0 hover:bg-gray-5 border text-gray-100',
               )}
             >
               <Icon
@@ -97,29 +97,9 @@ export const MobileMenuDrawerContent = ({ onClose }: { onClose: () => void }) =>
           aria-label={t('close')}
           className="text-gray-80 hover:bg-gray-10 focus:bg-gray-10 size-8 rounded-lg p-1 transition-colors"
         >
-          <CloseIcon className="size-5" />
+          <Close className="size-5" />
         </button>
       </div>
     </div>
   );
 };
-
-function CloseIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="20"
-      height="20"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M18 6 6 18" />
-      <path d="m6 6 12 12" />
-    </svg>
-  );
-}

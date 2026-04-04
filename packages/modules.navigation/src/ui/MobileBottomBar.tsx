@@ -10,6 +10,7 @@ import { Notifications } from './Header/Notifications';
 import { MobileUserMenu } from './Header/MobileUserMenu';
 import { MOBILE_BOTTOM_BAR_HEIGHT } from './constants';
 import { useEffect, useState, lazy, Suspense } from 'react';
+import { Burger } from '@xipkg/icons';
 
 const UserSettings = lazy(() =>
   import('modules.profile').then((module) => ({ default: module.UserSettings })),
@@ -51,10 +52,9 @@ export const MobileBottomBar = () => {
 
   return (
     <>
-      <nav className="bg-gray-0 border-gray-10 fixed right-0 bottom-0 left-0 z-30 flex h-[64px] items-center border-t px-4 pb-[env(safe-area-inset-bottom)]">
+      <nav className="bg-gray-0 fixed right-0 bottom-0 left-0 z-30 flex h-[64px] items-center rounded-t-2xl px-3 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_24px_rgba(15,23,42,0.06)]">
         <div className="flex w-full items-center gap-1">
-          {/* Аватар — меню пользователя */}
-          <div className="justify-start">
+          <div className="flex shrink-0 items-center gap-1">
             <MobileUserMenu
               userId={user?.id ?? 0}
               onOpenProfile={handleOpenProfile}
@@ -62,35 +62,29 @@ export const MobileBottomBar = () => {
               profileText={t('profile')}
               logoutText={t('logout')}
             />
-          </div>
-
-          {/* Уведомления */}
-          <div className="justify-center">
             <Notifications />
           </div>
 
-          {/* Логотип — переход на главную (по центру панели) */}
-          <div className="ml-auto flex w-[104px] justify-center">
+          <div className="flex min-w-0 flex-1 justify-center px-1">
             <LinkTanstack
               to="/"
-              className="focus-visible:ring-brand-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              className="focus-visible:ring-brand-100 flex max-w-[min(100%,120px)] shrink-0 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
               data-umami-event="navigation-mobile-logo"
             >
               <Logo width={104} height={40} />
             </LinkTanstack>
           </div>
 
-          {/* Гамбургер — открытие основного меню */}
-          <div className="s">
+          <div className="flex shrink-0 justify-end">
             <Button
               variant="none"
               size="icon"
-              className="text-gray-80 hover:bg-gray-10 focus:bg-gray-10 size-10 shrink-0 rounded-lg"
+              className="text-gray-80 hover:bg-gray-10 focus:bg-gray-10 size-10 shrink-0 rounded-xl"
               onClick={() => openMenu()}
               aria-label={t('menu')}
               data-umami-event="navigation-mobile-menu"
             >
-              <MenuIcon className="size-6 fill-current" />
+              <Burger className="size-6 fill-current" />
             </Button>
           </div>
         </div>
@@ -102,25 +96,3 @@ export const MobileBottomBar = () => {
     </>
   );
 };
-
-/** Иконка гамбургер-меню (три горизонтальные линии) */
-function MenuIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <line x1="4" x2="20" y1="6" y2="6" />
-      <line x1="4" x2="20" y1="12" y2="12" />
-      <line x1="4" x2="20" y1="18" y2="18" />
-    </svg>
-  );
-}

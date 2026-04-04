@@ -2,14 +2,23 @@ import { useTranslation } from 'react-i18next';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
 
 import { type RoleT } from 'common.types';
+import { cn } from '@xipkg/utils';
 
 interface RoleSwitcherProps {
   value: RoleT;
   onChange: (value: RoleT) => void;
   className?: string;
+  tabClassName?: string;
+  indicatorClassName?: string;
 }
 
-export const RoleSwitcher = ({ value, onChange, className }: RoleSwitcherProps) => {
+export const RoleSwitcher = ({
+  value,
+  onChange,
+  className,
+  tabClassName,
+  indicatorClassName,
+}: RoleSwitcherProps) => {
   const { t } = useTranslation('navigation');
 
   const tabs = [
@@ -22,9 +31,12 @@ export const RoleSwitcher = ({ value, onChange, className }: RoleSwitcherProps) 
       tabs={tabs}
       activeTab={value}
       onChange={(v) => onChange(v as RoleT)}
-      className={className ?? 'bg-gray-5 flex h-9 w-[228px] flex-row rounded-lg p-1'}
-      tabClassName="w-[114px] text-m-base font-medium text-gray-100 data-[active=true]:text-gray-0"
-      indicatorClassName="w-[114px] rounded-md bg-brand-100"
+      className={cn('bg-gray-5 flex h-9 w-[228px] flex-row rounded-lg p-1', className)}
+      tabClassName={cn(
+        'w-[114px] text-m-base font-medium text-gray-100 data-[active=true]:text-gray-0',
+        tabClassName,
+      )}
+      indicatorClassName={cn('w-[114px] rounded-md bg-brand-100', indicatorClassName)}
     />
   );
 };

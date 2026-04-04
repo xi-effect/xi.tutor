@@ -1,4 +1,8 @@
 {
+  "profileDrawerTitle": "Профиль",
+  "installApp": "Установить приложение",
+  "notifications": "Уведомления",
+  "notificationSettings": "Настройки уведомлений",
   "home": "Главная",
   "calendar": "Календарь",
   "schedule": "Расписание",

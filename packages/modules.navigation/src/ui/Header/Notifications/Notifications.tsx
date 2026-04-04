@@ -87,6 +87,8 @@ export const Notifications = () => {
           onOpenSettings={handleToSettings}
           notificationsList={notificationsList}
           badge={<NotificationBadge count={countLabel} variant="mobile" />}
+          countLabel={countLabel}
+          hasUnread={hasUnread}
         />
       ) : (
         <NotificationsDropdown
