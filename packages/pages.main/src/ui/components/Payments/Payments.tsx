@@ -89,6 +89,7 @@ export const Payments = () => {
                 key={payment.id}
                 payment={payment}
                 currentUserRole={isTutor ? 'tutor' : 'student'}
+                withoutPaymentType
               />
             ))}
           </div>

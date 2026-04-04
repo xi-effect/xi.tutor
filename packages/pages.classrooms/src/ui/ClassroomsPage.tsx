@@ -29,9 +29,9 @@ export const ClassroomsPage = () => {
       </div>
 
       {isTutor && (
-        <div className="fixed right-4 bottom-5 z-50 sm:hidden">
+        <div className="fixed right-4 bottom-[84px] z-50 sm:hidden">
           <ActionButton
-            classname="h-[64px] w-[64px] rounded-2xl"
+            classname="h-[64px] w-[64px] rounded-2xl bottom-[84px]"
             dropdownContentProps={{ className: 'w-auto py-2' }}
           >
             {({ MenuItem }) => (

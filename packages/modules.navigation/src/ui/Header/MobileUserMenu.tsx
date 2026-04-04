@@ -47,7 +47,7 @@ export const MobileUserMenu = ({
           data-umami-event="header-user-menu-open"
           data-umami-event-device="mobile"
         >
-          <UserProfile id="userprofile" userId={userId} size="m" withOutText />
+          <UserProfile id="userprofile" userId={userId} size="40" withOutText />
         </Button>
       </DrawerTrigger>
       <DrawerContent className={DRAWER_CONTENT_ABOVE_BAR_CLASS}>

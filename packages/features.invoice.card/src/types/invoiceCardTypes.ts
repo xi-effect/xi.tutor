@@ -9,9 +9,11 @@ export type InvoiceCardPropsT = {
   variant?: InvoiceCardTypeT;
   onApprovePayment?: PaymentApprovalFunctionT['onApprovePayment'] | null;
   className?: string;
+  withoutPaymentType?: boolean;
 };
 
 export type CardContentT = {
+  withoutPaymentType?: boolean;
   type?: InvoiceCardPropsT['type'];
   payment: InvoiceCardPropsT['payment'];
   userId: number;

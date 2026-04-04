@@ -13,6 +13,7 @@ export const DefaultCard = ({
   payment,
   className,
   currentUserRole,
+  withoutPaymentType = false,
 }: CardContentT) => {
   const amount = parseFloat(payment.total);
 
@@ -25,7 +26,7 @@ export const DefaultCard = ({
     >
       <div className="flex w-full flex-row items-start justify-between gap-2">
         <StatusBadge status={payment.status} withBg={true} className="text-right" />
-        {payment.payment_type && renderIcon(payment.payment_type)}
+        {payment.payment_type && !withoutPaymentType && renderIcon(payment.payment_type)}
       </div>
       {type === 'full' && (
         <div className="flex w-full flex-row items-center justify-between gap-2">

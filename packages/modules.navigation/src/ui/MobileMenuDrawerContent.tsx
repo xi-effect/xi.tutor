@@ -6,6 +6,10 @@ import { useCallStore } from 'modules.calls';
 import { useMenuStore } from '../store';
 import { cn } from '@xipkg/utils';
 
+const menuRowClassName = cn(
+  'flex h-[48px] w-full items-center gap-3 rounded-xl border px-4 text-left transition-colors',
+);
+
 type MenuItem = {
   id: string;
   titleKey: string;
@@ -57,8 +61,8 @@ export const MobileMenuDrawerContent = ({ onClose }: { onClose: () => void }) =>
   };
 
   return (
-    <div className="bg-gray-0 flex flex-col rounded-t-2xl">
-      <div className="flex flex-col gap-2 p-3">
+    <div className="dark:bg-gray-0 flex flex-col gap-5 rounded-t-2xl">
+      <div className="flex flex-col gap-3">
         {menuItems.map((item) => {
           const isActive = getIsActive(item.url);
           const Icon = item.icon;
@@ -70,24 +74,30 @@ export const MobileMenuDrawerContent = ({ onClose }: { onClose: () => void }) =>
               data-umami-event={`navigation-mobile-${item.titleKey}`}
               data-umami-event-url={item.url}
               className={cn(
-                'flex w-full items-center gap-3 rounded-xl px-3 py-3 text-left transition-colors',
+                menuRowClassName,
                 isActive
-                  ? 'bg-brand-5 text-brand-100'
+                  ? 'bg-brand-0 text-brand-80 border-transparent'
                   : 'border-gray-10 bg-gray-0 hover:bg-gray-5 border text-gray-100',
               )}
             >
               <Icon
-                className={cn('size-6 shrink-0', isActive ? 'text-brand-100' : 'text-gray-60')}
+                className={cn('size-6 shrink-0', isActive ? 'fill-brand-80' : 'fill-gray-60')}
               />
-              <span className="text-m-base font-medium">{t(item.titleKey)}</span>
+              <span
+                className={cn(
+                  'text-m-base font-medium',
+                  isActive ? 'text-brand-100' : 'text-gray-100',
+                )}
+              >
+                {t(item.titleKey)}
+              </span>
             </button>
           );
         })}
       </div>
 
-      {/* Подвал: «Меню» и кнопка закрытия */}
-      <div className="border-gray-10 flex items-center justify-between border-t px-4 py-3">
-        <span className="text-m-base text-gray-60">{t('menu')}</span>
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-m-base font-medium text-gray-100">{t('menu')}</span>
         <button
           type="button"
           onClick={() => {
@@ -95,9 +105,9 @@ export const MobileMenuDrawerContent = ({ onClose }: { onClose: () => void }) =>
             onClose();
           }}
           aria-label={t('close')}
-          className="text-gray-80 hover:bg-gray-10 focus:bg-gray-10 size-8 rounded-lg p-1 transition-colors"
+          className="text-gray-80 hover:bg-gray-10 focus:bg-gray-10 size-10 shrink-0 rounded-lg transition-colors"
         >
-          <Close className="size-5" />
+          <Close className="mx-auto size-5" />
         </button>
       </div>
     </div>

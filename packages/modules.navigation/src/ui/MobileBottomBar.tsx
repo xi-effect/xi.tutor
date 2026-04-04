@@ -52,7 +52,7 @@ export const MobileBottomBar = () => {
 
   return (
     <>
-      <nav className="bg-gray-0 fixed right-0 bottom-0 left-0 z-30 flex h-[64px] items-center rounded-t-2xl px-3 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_24px_rgba(15,23,42,0.06)]">
+      <nav className="bg-gray-0 fixed right-0 bottom-0 left-0 z-30 flex h-[64px] items-center px-4">
         <div className="flex w-full items-center gap-1">
           <div className="flex shrink-0 items-center gap-1">
             <MobileUserMenu
@@ -65,13 +65,13 @@ export const MobileBottomBar = () => {
             <Notifications />
           </div>
 
-          <div className="flex min-w-0 flex-1 justify-center px-1">
+          <div className="flex min-w-0 flex-1 justify-end">
             <LinkTanstack
               to="/"
-              className="focus-visible:ring-brand-100 flex max-w-[min(100%,120px)] shrink-0 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              className="focus-visible:ring-brand-100 flex shrink-0 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
               data-umami-event="navigation-mobile-logo"
             >
-              <Logo width={104} height={40} />
+              <Logo width={138} height={40} />
             </LinkTanstack>
           </div>
 

@@ -36,7 +36,10 @@ export const CardsGridStudent = () => {
   }
 
   return (
-    <div ref={parentRef} className="bg-gray-0 h-[calc(100vh-204px)] w-full overflow-auto pr-4">
+    <div
+      ref={parentRef}
+      className="bg-gray-0 h-[calc(100vh-72px)] w-full overflow-auto rounded-tl-2xl p-4 pr-4"
+    >
       <div className="max-xs:gap-4 grid grid-cols-1 gap-8 min-[550px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {items.map((classroom) => (
           <div key={classroom.id} className="classroom-card">
