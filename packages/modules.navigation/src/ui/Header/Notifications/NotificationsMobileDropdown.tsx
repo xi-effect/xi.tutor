@@ -9,18 +9,22 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 
+import { NotificationBadge } from './NotificationBadge';
+
 export const NotificationsMobileDropdown = ({
   isOpen,
   onOpenChange,
   onOpenSettings,
   notificationsList,
   hasUnread,
+  countLabel,
 }: {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onOpenSettings: () => void;
   notificationsList: React.ReactNode;
   hasUnread: boolean;
+  countLabel: string;
 }) => {
   const { t } = useTranslation('navigation');
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -71,9 +75,10 @@ export const NotificationsMobileDropdown = ({
         collisionPadding={16}
         className="flex w-[calc(100vw-32px)] max-w-[480px] flex-col gap-1 rounded-[20px] border-2 px-1 py-1"
       >
-        <DropdownMenuLabel className="text-s-base flex h-[48px] items-center p-3 font-semibold text-gray-100">
-          {t('notifications')}
-          <div className="ml-auto flex items-center gap-1">
+        <DropdownMenuLabel className="text-s-base flex min-h-[48px] flex-row flex-wrap items-center gap-2 p-3 font-semibold text-gray-100">
+          <span className="min-w-0 shrink">{t('notifications')}</span>
+          {hasUnread && <NotificationBadge count={countLabel} variant="sidebar" />}
+          <div className="ml-auto flex shrink-0 items-center gap-1">
             <Button onClick={onOpenSettings} variant="none" className="h-[32px] w-[32px] p-1">
               <Settings className="fill-gray-80 size-6" size="s" />
             </Button>
