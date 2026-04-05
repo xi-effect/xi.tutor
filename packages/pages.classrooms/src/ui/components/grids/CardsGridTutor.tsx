@@ -24,7 +24,7 @@ export const CardsGridTutor = () => {
 
   if (items.length === 0) {
     return (
-      <div className="flex h-full min-h-[90dvh] flex-col items-center justify-center gap-2">
+      <div className="bg-gray-0 flex h-[calc(100vh-72px)] w-full flex-col items-center justify-center gap-2 overflow-auto rounded-tl-2xl p-4 pr-4">
         <p className="text-xl-base text-center font-semibold text-gray-100">
           Здесь будут ваши ученики и группы
         </p>
