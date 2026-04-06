@@ -9,6 +9,7 @@ import { MaterialsCard } from 'features.materials.card';
 import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
 import { MaterialSection } from './components/MaterialSection';
+import { LoadingState } from './components/LoadingState';
 
 export const Materials = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
@@ -40,67 +41,7 @@ export const Materials = () => {
   });
 
   if (isLoading || isBoardsLoading || isNotesLoading) {
-    return (
-      <div className="flex flex-col">
-        {/* Учебные доски секция */}
-        <div className="flex flex-col gap-4 p-4">
-          <div className="flex flex-row items-center justify-start gap-2">
-            <div className="h-6 w-32 animate-pulse rounded bg-gray-200" />
-          </div>
-          <div className="flex flex-row">
-            <div className="h-24 w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]">
-              <div className="flex flex-row gap-8">
-                {[...new Array(3)].map((_, index) => (
-                  <div
-                    key={index}
-                    className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex justify-between rounded-2xl border p-4"
-                  >
-                    <div className="flex flex-col gap-1 overflow-hidden">
-                      <div className="flex h-full flex-col justify-between">
-                        <div className="h-5 w-32 animate-pulse rounded bg-gray-200" />
-                        <div className="h-4 w-24 animate-pulse rounded bg-gray-200" />
-                      </div>
-                    </div>
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
-                      <div className="h-4 w-4 animate-pulse rounded bg-gray-200" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Заметки секция */}
-        <div className="flex flex-col gap-4 p-4">
-          <div className="flex flex-row items-center justify-start gap-2">
-            <div className="h-6 w-16 animate-pulse rounded bg-gray-200" />
-          </div>
-          <div className="flex flex-row">
-            <div className="h-[110px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]">
-              <div className="flex flex-row gap-8">
-                {[...new Array(3)].map((_, index) => (
-                  <div
-                    key={index}
-                    className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex justify-between rounded-2xl border p-4"
-                  >
-                    <div className="flex flex-col gap-1 overflow-hidden">
-                      <div className="flex h-full flex-col justify-between gap-4">
-                        <div className="h-5 w-32 animate-pulse rounded bg-gray-200" />
-                        <div className="h-4 w-24 animate-pulse rounded bg-gray-200" />
-                      </div>
-                    </div>
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
-                      <div className="h-4 w-4 animate-pulse rounded bg-gray-200" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingState />;
   }
 
   if (isError || isBoardsError || isNotesError || !classroom) {
