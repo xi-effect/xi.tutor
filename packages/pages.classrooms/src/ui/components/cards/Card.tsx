@@ -102,7 +102,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
         className="hover:bg-gray-5 border-gray-30 bg-gray-0 relative flex cursor-pointer justify-between rounded-2xl border p-4"
       >
         <div className="flex max-w-full flex-col gap-4">
-          <div className="mt-auto mr-8 flex w-auto max-w-[calc(100%-32px)] items-center gap-2">
+          <div className="mr-8 flex w-auto max-w-[calc(100%-32px)] items-center gap-2">
             <StatusBadge status={status} kind={kind} deleted={deleted} />
 
             {subject_id && (
@@ -119,7 +119,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
               <UserAvatar kind={kind} student_id={student_id?.toString() ?? ''} />
             )}
             {kind === 'group' && (
-              <div className="bg-brand-80 text-gray-0 flex h-12 min-h-12 w-12 min-w-12 items-center justify-center rounded-3xl">
+              <div className="bg-brand-80 text-gray-0 flex size-12 shrink-0 items-center justify-center rounded-full">
                 {name?.[0].toUpperCase() ?? ''}
               </div>
             )}
