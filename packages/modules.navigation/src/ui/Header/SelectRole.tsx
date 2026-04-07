@@ -52,7 +52,7 @@ export const SelectRole = () => {
       onValueChange={handleChange}
     >
       <SelectTrigger
-        className="text-gray-80 w-full border-none p-0 text-sm hover:border-none hover:bg-transparent focus:border-none"
+        className="text-gray-80 w-full border-none p-0 text-sm shadow-none ring-0 outline-none hover:border-none hover:bg-transparent focus:border-none focus:ring-0 focus:outline-none focus-visible:border-none focus-visible:ring-0 focus-visible:outline-none"
         size="s"
         data-umami-event="header-role-selector-open"
       >
