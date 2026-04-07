@@ -42,9 +42,9 @@ export const DesktopUserMenu = ({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent side="bottom" align="end">
-        <DropdownMenuItem>
+        <div className="px-2 py-1.5">
           <SelectRole />
-        </DropdownMenuItem>
+        </div>
 
         {!isInstalled && (
           <DropdownMenuItem
