@@ -168,7 +168,7 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
 
   return (
     <div className="flex flex-col gap-4 p-4 sm:p-0 md:flex-row">
-      <div className="order-2 flex h-full w-full flex-1 justify-center md:order-1">
+      <div className="order-2 flex h-full w-full min-w-0 flex-1 justify-center md:order-1">
         <InformationNote classroom={classroom} note={note} />
       </div>
 
