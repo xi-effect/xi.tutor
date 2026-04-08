@@ -17,11 +17,7 @@ export const CalendarModule = ({ onAddLessonClick }: CalendarModuleProps) => {
   const visibleDays = weekDays.slice(0, visibleCount);
 
   if (isMobile) {
-    return (
-      <div className="bg-gray-5 flex min-h-screen flex-1 flex-col">
-        <ScheduleMobileView onAddLessonClick={onAddLessonClick} />
-      </div>
-    );
+    return <ScheduleMobileView onAddLessonClick={onAddLessonClick} />;
   }
 
   return (

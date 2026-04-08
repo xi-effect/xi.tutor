@@ -26,12 +26,12 @@ export const StudentSelector = ({
       >
         <SelectValue placeholder={isLoading ? 'Загрузка...' : 'Ученик или группа'} />
       </SelectTrigger>
-      <SelectContent className="max-h-[300px] w-full">
+      <SelectContent className="max-h-[300px] w-[var(--radix-select-trigger-width)] max-w-[var(--radix-select-trigger-width)]">
         {classrooms.map((classroom) => (
           <SelectItem
             key={classroom.id}
             value={classroom.id.toString()}
-            className="dark:text-gray-100"
+            className="max-w-full min-w-0 truncate dark:text-gray-100"
           >
             {classroom.name}
           </SelectItem>

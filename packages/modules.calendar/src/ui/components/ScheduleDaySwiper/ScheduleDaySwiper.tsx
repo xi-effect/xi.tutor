@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { useTranslation } from 'react-i18next';
 import { isSameDay, startOfDay } from 'date-fns';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
@@ -9,8 +8,6 @@ import { getDateKey, useEventsByDate } from '../../../store/eventsStore';
 import { useLessonInfoModal } from '../../../hooks';
 import { isCurrentDay, isPastDay } from '../../../utils';
 import type { ICalendarEvent } from '../../types';
-import { Button } from '@xipkg/button';
-import { Plus } from '@xipkg/icons';
 
 import 'swiper/css';
 
@@ -37,7 +34,6 @@ export const ScheduleDaySwiper = ({
   onSelectedDateChange,
   onAddLessonClick,
 }: ScheduleDaySwiperProps) => {
-  const { t } = useTranslation('calendar');
   const eventsByDate = useEventsByDate();
   const today = new Date();
   const todayStart = startOfDay(today);
@@ -70,9 +66,10 @@ export const ScheduleDaySwiper = ({
   return (
     <>
       <Swiper
-        className="h-full w-full"
+        className="w-full"
         slidesPerView={1}
         spaceBetween={0}
+        autoHeight
         onSwiper={handleSwiper}
         onSlideChange={handleSlideChange}
         initialSlide={activeIndex}
@@ -82,19 +79,9 @@ export const ScheduleDaySwiper = ({
           const events = getEventsForDay(eventsByDate, day);
           const isPast = isPastDay(day, today);
           return (
-            <SwiperSlide key={day.toISOString()} className="h-full">
-              <div className="group flex h-full flex-col overflow-auto pb-4">
-                <div className="flex shrink-0 items-center justify-between gap-2 py-3">
-                  <Button
-                    variant="none"
-                    className="text-gray-80 hover:bg-gray-10 flex h-9 min-w-[120px] items-center justify-center gap-2 rounded-lg px-3 text-sm font-medium"
-                    onClick={() => onAddLessonClick?.(day)}
-                  >
-                    <Plus className="h-4 w-4" />
-                    {t('add_lesson')}
-                  </Button>
-                </div>
-                <div className="flex min-h-0 flex-1 flex-col gap-3">
+            <SwiperSlide key={day.toISOString()}>
+              <div className="flex flex-col pb-4">
+                <div className="flex flex-col gap-3">
                   {events.length === 0 ? (
                     <ScheduleEmptyState
                       days={[day]}

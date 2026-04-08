@@ -158,7 +158,7 @@ export const Content = ({ classroom }: ContentProps) => {
         {classroom.kind === 'individual' ? (
           <IndividualUser userId={classroom.student_id ?? classroom.tutor_id ?? 0} />
         ) : (
-          <div className="flex w-full max-w-[min(100%,300px)] min-w-0 flex-row items-center gap-2 sm:max-w-[300px] sm:flex-1">
+          <div className="flex w-full max-w-[min(100%,300px)] min-w-0 flex-row items-center gap-2 sm:w-max sm:max-w-[300px] sm:shrink">
             <div className="bg-brand-80 text-gray-0 flex h-12 w-12 shrink-0 items-center justify-center rounded-[24px]">
               {getDisplayName()?.[0].toUpperCase() ?? ''}
             </div>
