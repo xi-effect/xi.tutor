@@ -1,21 +1,30 @@
-import { useRef } from 'react';
-import { useInfiniteQuery, useResponsiveGrid, useVirtualGrid } from '../../../hooks';
-import { Card } from '../cards';
+import { RefObject } from 'react';
 import { CardsGridSkeleton } from './CardsGridSkeleton';
+import { Card } from '../cards/Card';
+import { ClassroomPropsT } from '../../../types';
+import { VirtualGridlList } from './VirtualGridlList';
 
-export const CardsGrid = () => {
-  const parentRef = useRef<HTMLDivElement>(null);
+interface ICardsGridProps {
+  items: ClassroomPropsT[];
+  isLoading: boolean;
+  isError: boolean;
+  isFetchingNextPage: boolean;
+  hasNextPage: boolean;
+  parentRef: RefObject<HTMLDivElement | null>;
+  emptyText: string;
+  inviteText: string;
+}
 
-  // Используем бесконечный запрос
-  const { items, isLoading, isError, isFetchingNextPage, hasNextPage } =
-    useInfiniteQuery(parentRef);
-
-  // Настройки адаптивной сетки
-  const { colCount, rowHeight, GAP } = useResponsiveGrid(parentRef);
-
-  // Виртуализация
-  const rowVirtualizer = useVirtualGrid(parentRef, items, colCount, rowHeight);
-
+export const CardsGrid: React.FC<ICardsGridProps> = ({
+  items,
+  isLoading,
+  isError,
+  isFetchingNextPage,
+  hasNextPage,
+  parentRef,
+  emptyText,
+  inviteText,
+}) => {
   if (isLoading) {
     return <CardsGridSkeleton count={12} />;
   }
@@ -30,55 +39,24 @@ export const CardsGrid = () => {
 
   if (items.length === 0) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <p className="text-gray-500">Здесь пока нет кабинетов</p>
+      <div className="flex h-full min-h-[90dvh] flex-col items-center justify-center gap-2">
+        <p className="text-xl-base text-center font-semibold text-gray-100">{emptyText}</p>
+        <p className="text-m-base text-gray-80 text-center">{inviteText}</p>
       </div>
     );
   }
 
   return (
-    <div
-      ref={parentRef}
-      className="h-[calc(100vh-204px)] w-full overflow-auto pr-4"
-      style={{
-        height: `${rowVirtualizer.getTotalSize()}px`,
-        width: '100%',
-        position: 'relative',
-      }}
-    >
-      {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-        const startIndex = virtualRow.index * colCount;
-        const rowItems = items.slice(startIndex, startIndex + colCount);
-
-        return (
-          <div
-            key={virtualRow.index}
-            className="absolute top-0 left-0 w-full"
-            style={{
-              transform: `translateY(${virtualRow.start}px)`,
-            }}
-          >
-            <div
-              className="grid gap-5"
-              style={{
-                gridTemplateColumns: `repeat(${colCount}, 1fr)`,
-                gap: `${GAP}px`,
-              }}
-            >
-              {rowItems.map((classroom) => (
-                <div key={classroom.id} className="classroom-card">
-                  <Card {...classroom} />
-                </div>
-              ))}
-
-              {/* Заполняем пустые ячейки в последней строке */}
-              {Array.from({ length: colCount - rowItems.length }).map((_, index) => (
-                <div key={`empty-${index}`} />
-              ))}
-            </div>
-          </div>
-        );
-      })}
+    <div ref={parentRef} className="h-[calc(100vh-116px)] w-full overflow-auto">
+      <VirtualGridlList
+        items={items}
+        parentRef={parentRef}
+        gap={20}
+        defaultRowHeight={145}
+        minItemWidth={320}
+        maxColumns={4}
+        renderItem={(item) => <Card {...item} />}
+      />
 
       {/* Индикатор загрузки следующей страницы */}
       {isFetchingNextPage && (
@@ -86,7 +64,6 @@ export const CardsGrid = () => {
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-gray-300"></div>
         </div>
       )}
-
       {/* Сообщение о конце списка */}
       {!hasNextPage && items.length > 0 && (
         <div className="py-4 text-center text-gray-500">Все кабинеты загружены</div>
