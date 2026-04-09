@@ -70,12 +70,17 @@ async function reuploadSrc(
   }
 
   let blob: Blob | null = null;
+  const isDirectlyFetchable =
+    src.startsWith('data:') || src.startsWith('blob:') || src.startsWith('http');
 
-  // 1. Try direct fetch (works for data: URLs, blob: URLs)
-  try {
-    blob = await fetchBlob(src);
-  } catch {
-    blob = null;
+  // 1. Try direct fetch (only for data:/blob:/http URLs — bare file IDs
+  //    would hit the SPA fallback and return index.html instead of 404)
+  if (isDirectlyFetchable) {
+    try {
+      blob = await fetchBlob(src);
+    } catch {
+      blob = null;
+    }
   }
 
   // 2. Primary fallback: use sourceToken from clipboard meta

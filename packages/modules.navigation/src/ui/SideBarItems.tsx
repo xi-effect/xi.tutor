@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import {
   SidebarContent,
   SidebarFooter,
@@ -9,14 +10,16 @@ import {
 } from '@xipkg/sidebar';
 import { useLocation, useNavigate, useParams, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { Group, Home, Payments, TelegramFilled, InfoCircle, BookOpened } from '@xipkg/icons';
+import { Group, Home, Payments, MessageHeartCircle, InfoCircle, BookOpened } from '@xipkg/icons';
 import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
 import { useMenuStore } from '../store';
+import { SupportModal } from './SupportModal';
 
 export const SideBarItems = () => {
   const { t } = useTranslation('navigation');
   const { close } = useMenuStore();
+  const [isSupportOpen, setIsSupportOpen] = useState(false);
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -74,10 +77,8 @@ export const SideBarItems = () => {
   const footerMenu = [
     {
       titleKey: 'support',
-      onClick: () => {
-        window.open('https://t.me/sovlium_support_bot', '_blank');
-      },
-      icon: TelegramFilled,
+      onClick: () => setIsSupportOpen(true),
+      icon: MessageHeartCircle,
     },
     {
       titleKey: 'hints',
@@ -172,9 +173,6 @@ export const SideBarItems = () => {
                 className="bg-gray-0"
                 title={t(item.titleKey)}
                 data-umami-event={`navigation-${item.titleKey}`}
-                {...(item.titleKey === 'support'
-                  ? { 'data-umami-event-url': 'https://t.me/sovlium_support_bot' }
-                  : {})}
               >
                 <item.icon className="h-6 w-6" />
                 <div className="text-base font-medium text-gray-50">{t(item.titleKey)}</div>
@@ -183,6 +181,7 @@ export const SideBarItems = () => {
           ))}
         </SidebarMenu>
       </SidebarFooter>
+      <SupportModal open={isSupportOpen} onOpenChange={setIsSupportOpen} />
     </>
   );
 };

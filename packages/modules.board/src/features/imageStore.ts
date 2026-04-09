@@ -3,7 +3,7 @@ import { getFileUrl } from 'common.api';
 import { TLAsset } from 'tldraw';
 import { toast } from 'sonner';
 import { resolveAssetUrl } from '../utils/resolveAssetUrl';
-import { registerToken, getRegisteredTokens } from '../utils/tokenRegistry';
+import { registerToken } from '../utils/tokenRegistry';
 
 export type TLAssetContextT = {
   screenScale: number;
@@ -122,29 +122,8 @@ export const myAssetStore = (token: string) => {
 
       try {
         return await resolveAssetUrl(src, token);
-      } catch (primaryError) {
-        // Cross-board fallback 1: use sourceToken from clipboard meta
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const sourceToken = (asset.meta as Record<string, any>)?.sourceToken as string | undefined;
-        if (sourceToken && sourceToken !== token) {
-          try {
-            return await resolveAssetUrl(src, sourceToken);
-          } catch {
-            /* continue to registry fallback */
-          }
-        }
-
-        // Cross-board fallback 2: try all known tokens from the registry
-        for (const altToken of getRegisteredTokens()) {
-          if (altToken === token || altToken === sourceToken) continue;
-          try {
-            return await resolveAssetUrl(src, altToken);
-          } catch {
-            continue;
-          }
-        }
-
-        console.error('[myAssetStore.resolve] Ошибка при загрузке изображения:', primaryError);
+      } catch (error) {
+        console.error('[myAssetStore.resolve] Ошибка при загрузке изображения:', error);
         return src;
       }
     },
