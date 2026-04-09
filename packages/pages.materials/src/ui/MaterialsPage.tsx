@@ -10,19 +10,20 @@ import {
   useMaterialsDuplicate,
 } from '../provider/MaterialsDuplicateContext';
 import { MaterialsDuplicate } from 'features.materials.duplicate';
-import { useNavigate, useSearch } from '@tanstack/react-router';
 
 const MaterialsPageContent = () => {
-  const search = useSearch({ strict: false }) as Record<string, unknown>;
-  const hasValidTab = search.tab === 'notes' || search.tab === 'boards';
-
-  const currentTab = hasValidTab ? (search.tab as 'notes' | 'boards') : 'boards';
-
   const { addMaterials } = useAddMaterials();
-  const navigate = useNavigate();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const { materialId, open, closeModal } = useMaterialsDuplicate();
+
+  const navigateToMaterial = (id: string | number, contentKind: string) => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    window.location.assign(`/materials/${id}/${contentKind}`);
+  };
 
   if (!isTutor) {
     return (
@@ -36,18 +37,16 @@ const MaterialsPageContent = () => {
   }
 
   const handleCreate = () => {
+    const tab =
+      typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('tab');
+    const currentTab = tab === 'notes' || tab === 'boards' ? tab : 'boards';
+
     if (currentTab === 'notes') {
       addMaterials.mutate(
         { content_kind: 'note' },
         {
           onSuccess: (response) => {
-            navigate({
-              to: `/materials/$id/$contentKind`,
-              params: {
-                id: response.data.id,
-                contentKind: response.data.content_kind,
-              },
-            });
+            navigateToMaterial(response.data.id, response.data.content_kind);
           },
         },
       );
@@ -56,13 +55,7 @@ const MaterialsPageContent = () => {
         { content_kind: 'board' },
         {
           onSuccess: (response) => {
-            navigate({
-              to: `/materials/$id/$contentKind`,
-              params: {
-                id: response.data.id,
-                contentKind: response.data.content_kind,
-              },
-            });
+            navigateToMaterial(response.data.id, response.data.content_kind);
           },
         },
       );

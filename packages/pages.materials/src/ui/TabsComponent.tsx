@@ -1,29 +1,48 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Tabs } from '@xipkg/tabs';
-import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useEffect, useState } from 'react';
 
 import { Materials } from './Materials';
 import { Notes } from './Notes';
 // import { Files } from './Files';
 
 export const TabsComponent = () => {
-  const navigate = useNavigate();
-  const search = useSearch({ strict: false }) as Record<string, unknown>;
-  const currentTab =
-    search.tab === 'notes' || search.tab === 'boards'
-      ? (search.tab as 'notes' | 'boards')
-      : 'boards';
+  const getTabFromUrl = (): 'notes' | 'boards' => {
+    if (typeof window === 'undefined') {
+      return 'boards';
+    }
+
+    const tab = new URLSearchParams(window.location.search).get('tab');
+    return tab === 'notes' || tab === 'boards' ? tab : 'boards';
+  };
+  const [currentTab, setCurrentTab] = useState<'notes' | 'boards'>(() => getTabFromUrl());
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const syncTabFromUrl = () => {
+      setCurrentTab(getTabFromUrl());
+    };
+
+    window.addEventListener('popstate', syncTabFromUrl);
+    return () => {
+      window.removeEventListener('popstate', syncTabFromUrl);
+    };
+  }, []);
 
   const handleTabChange = (value: string) => {
-    navigate({
-      // @ts-ignore
-      search: {
-        ...search,
-        // @ts-ignore
-        tab: value,
-      },
-      replace: true,
-    });
+    if (typeof window === 'undefined') {
+      return;
+    }
+    if (value !== 'notes' && value !== 'boards') {
+      return;
+    }
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('tab', value);
+    window.history.replaceState({}, '', url);
+    setCurrentTab(value);
   };
 
   return (
