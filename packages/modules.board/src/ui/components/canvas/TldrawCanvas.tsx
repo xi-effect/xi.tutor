@@ -8,6 +8,7 @@ import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore, useTldrawStore } from '../../../store';
 import { PdfShapeUtil } from '../../../shapes/pdf';
 import { AudioShapeUtil } from '../../../shapes/audio';
+import { CustomImageShapeUtil } from '../../../shapes/image';
 import { Header } from '../header';
 import { Navbar, SelectionMenu } from '../toolbar';
 import { CollaboratorCursor } from './CollaboratorCursor';
@@ -339,7 +340,7 @@ export const TldrawCanvas = ({
             }}
             assetUrls={assetUrls}
             store={store}
-            shapeUtils={[PdfShapeUtil, AudioShapeUtil]}
+            shapeUtils={[PdfShapeUtil, AudioShapeUtil, CustomImageShapeUtil]}
             hideUi
             components={{
               CollaboratorCursor: CollaboratorCursor,
