@@ -7,7 +7,7 @@ import { useAcceptInvite } from '../services';
 export const Invite = ({ invite }: { invite: InviteT }) => {
   const navigate = useNavigate();
   const { inviteId } = useParams({ strict: false }) as { inviteId: string };
-  const { mutate } = useAcceptInvite();
+  const { mutate, isPending } = useAcceptInvite();
 
   const isInviteAccepted =
     (invite.kind === 'individual' && invite.existing_classroom_id) ||
@@ -68,6 +68,8 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
         <Button
           className="w-full rounded-xl"
           onClick={acceptInvite}
+          loading={isPending}
+          disabled={isPending}
           data-umami-event="invite-accept"
           data-umami-event-kind={invite.kind}
         >
@@ -77,6 +79,7 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
           onClick={() => navigate({ to: '/' })}
           className="w-full rounded-xl"
           variant="none"
+          disabled={isPending}
           data-umami-event="invite-decline"
           data-umami-event-kind={invite.kind}
         >

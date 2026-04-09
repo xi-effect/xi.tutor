@@ -64,10 +64,6 @@ type useCallStoreT = {
   raisedHands: RaisedHand[];
   isHandRaised: boolean;
 
-  // Настройки громкости звуков
-  chatSoundVolume: number; // от 0 до 1
-  handRaiseSoundVolume: number; // от 0 до 1
-
   updateStore: (type: keyof useCallStoreT, value: any) => void;
   addChatMessage: (message: ChatMessage) => void;
   clearUnreadMessages: () => void;
@@ -114,10 +110,6 @@ export const useCallStore = create<useCallStoreT>()(
       // Поднятые руки
       raisedHands: [],
       isHandRaised: false,
-
-      // Настройки громкости звуков (по умолчанию 30%)
-      chatSoundVolume: 0.25,
-      handRaiseSoundVolume: 0.25,
 
       updateStore: (type: keyof useCallStoreT, value: any) => set({ [type]: value }),
 
@@ -194,8 +186,6 @@ export const useCallStore = create<useCallStoreT>()(
         carouselType: state.carouselType,
         preferredFocusLayout: state.preferredFocusLayout,
         activeCorner: state.activeCorner,
-        chatSoundVolume: state.chatSoundVolume,
-        handRaiseSoundVolume: state.handRaiseSoundVolume,
       }),
     },
   ),

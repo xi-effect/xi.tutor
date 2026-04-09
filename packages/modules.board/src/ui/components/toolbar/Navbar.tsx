@@ -162,7 +162,7 @@ export const Navbar = track(
 
     return (
       <div className="pointer-events-none absolute inset-0">
-        <div className="xs:bottom-4 absolute right-0 bottom-14 left-0 z-30 flex w-full items-center justify-center px-4 sm:px-0">
+        <div className="absolute right-0 bottom-14 left-0 z-30 flex w-full items-center justify-center px-4 sm:bottom-4 sm:px-0">
           <div className="relative z-30 flex w-full max-w-full gap-7 sm:w-auto">
             <div className="border-gray-10 bg-gray-0 absolute -left-[115px] z-30 hidden rounded-xl border p-1 sm:flex">
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />

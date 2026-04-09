@@ -31,8 +31,8 @@ interface TldrawState {
   // Настройки карандаша
   pencilColor: string;
   setPencilColor: (color: string) => void;
-  pencilThickness: 's' | 'm' | 'l' | 'xl';
-  setPencilThickness: (thickness: 's' | 'm' | 'l' | 'xl') => void;
+  pencilThickness: 'xs' | 's' | 'm' | 'l' | 'xl';
+  setPencilThickness: (thickness: 'xs' | 's' | 'm' | 'l' | 'xl') => void;
   pencilOpacity: number;
   setPencilOpacity: (opacity: number) => void;
 }
@@ -66,7 +66,7 @@ export const useTldrawStore = create<TldrawState>()(
       pencilColor: 'black',
       setPencilColor: (color: string) => set(() => ({ pencilColor: color })),
       pencilThickness: 'm',
-      setPencilThickness: (thickness: 's' | 'm' | 'l' | 'xl') =>
+      setPencilThickness: (thickness: 'xs' | 's' | 'm' | 'l' | 'xl') =>
         set(() => ({ pencilThickness: thickness })),
       pencilOpacity: 100,
       setPencilOpacity: (opacity: number) => set(() => ({ pencilOpacity: opacity })),

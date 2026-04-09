@@ -1,14 +1,18 @@
-import { useEffect, useCallback, useMemo } from 'react';
+import { useEffect, useCallback, useMemo, useRef } from 'react';
 import { Participant, RoomEvent } from 'livekit-client';
 import { useParams, useSearch } from '@tanstack/react-router';
 
 import { useRoom } from '../providers/RoomProvider';
 import { useCallStore } from '../store/callStore';
 import { useCurrentUser, useUpdateParticipantMetadata } from 'common.services';
+import { useSoundEffectsStore } from 'common.ui';
+import { playSound } from '../utils/sounds';
 
 export const useRaisedHands = () => {
   const { callId: paramsCallId } = useParams({ strict: false });
   const { call: searchCallId } = useSearch({ strict: false });
+  const prevHands = useRef<Record<string, boolean>>({});
+  const handRaiseSoundVolume = useSoundEffectsStore((s) => s.handRaiseVolume);
 
   const callId = paramsCallId ?? searchCallId;
   const { room } = useRoom();
@@ -49,12 +53,18 @@ export const useRaisedHands = () => {
 
         if (!('is_hand_raised' in parsed)) return;
 
+        const prev = prevHands.current[participant.identity];
+
         if (parsed.is_hand_raised) {
           addRaisedHand({
             participantId: participant.identity,
             participantName: participant.name ?? participant.identity,
             timestamp: Date.now(),
           });
+
+          if (!prev) {
+            playSound('handRaise', handRaiseSoundVolume);
+          }
         } else {
           removeRaisedHand(participant.identity);
         }
