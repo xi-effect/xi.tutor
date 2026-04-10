@@ -58,7 +58,7 @@ export function CompactCallCollapsedBar({
           </>
         )}
       </div>
-      {participant && <RaisedHandIndicator participantId={participant.identity ?? 'unknown'} />}
+      {participant && <RaisedHandIndicator participant={participant ?? 'unknown'} />}
       <div className="flex min-w-0 flex-1 items-center justify-center gap-0.5 py-1">
         {bars.length > 0 ? (
           <div className="flex h-4 items-end justify-center gap-0.5">
