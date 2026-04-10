@@ -91,6 +91,52 @@ export const useDropdownActions = () => {
     }
   }, [editor, data?.name]);
 
+  const lockShapes = useCallback(
+    (types?: string[]) => {
+      if (!editor) return;
+
+      const allShapes = editor.getCurrentPageShapes();
+      const unlockedShapes = types
+        ? allShapes.filter((shape) => !shape.isLocked && types.includes(shape.type))
+        : allShapes.filter((shape) => !shape.isLocked);
+
+      if (unlockedShapes.length === 0) {
+        toast.info('Нет незаблокированных элементов');
+        return;
+      }
+
+      editor.updateShapes(
+        unlockedShapes.map((shape) => ({ id: shape.id, type: shape.type, isLocked: true })),
+      );
+
+      toast.success(`Заблокировано элементов: ${unlockedShapes.length}`);
+    },
+    [editor],
+  );
+
+  const unlockShapes = useCallback(
+    (types?: string[]) => {
+      if (!editor) return;
+
+      const allShapes = editor.getCurrentPageShapes();
+      const lockedShapes = types
+        ? allShapes.filter((shape) => shape.isLocked && types.includes(shape.type))
+        : allShapes.filter((shape) => shape.isLocked);
+
+      if (lockedShapes.length === 0) {
+        toast.info('Нет заблокированных элементов');
+        return;
+      }
+
+      editor.updateShapes(
+        lockedShapes.map((shape) => ({ id: shape.id, type: shape.type, isLocked: false })),
+      );
+
+      toast.success(`Разблокировано элементов: ${lockedShapes.length}`);
+    },
+    [editor],
+  );
+
   const clearBoard = () => {
     if (!editor) return;
 
@@ -167,5 +213,13 @@ export const useDropdownActions = () => {
     };
   }, [saveCanvas, toggleReadonly]);
 
-  return { toggleReadonly, saveCanvas, clearBoard, importBoardFromJson, isReadonly };
+  return {
+    toggleReadonly,
+    saveCanvas,
+    clearBoard,
+    lockShapes,
+    unlockShapes,
+    importBoardFromJson,
+    isReadonly,
+  };
 };

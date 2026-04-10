@@ -63,6 +63,10 @@ export const MoreActionsMenu = () => {
     });
   };
 
+  const hasItems = isTutor && (!!selectedPdf || !!selectedAudio);
+
+  if (!hasItems) return null;
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -76,15 +80,6 @@ export const MoreActionsMenu = () => {
         sideOffset={8}
         className="border-gray-10 bg-gray-0 flex w-auto flex-col gap-1 rounded-xl border p-1"
       >
-        <DropdownMenuItem
-          onClick={() => {
-            const selectedIds = editor.getSelectedShapeIds();
-            editor.toggleLock(selectedIds);
-          }}
-          className="rounded-lg px-3"
-        >
-          Заблокировать
-        </DropdownMenuItem>
         {isTutor && selectedPdf && (
           <DropdownMenuItem onClick={handleToggleStudentFlip} className="rounded-lg px-3">
             {selectedPdf.props.studentCanFlip ? 'Ограничить листание' : 'Разрешить листание'}

@@ -4,6 +4,7 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -17,6 +18,8 @@ import {
   Locked,
   MoreVert,
   Pen,
+  Shield,
+  ShieldOff,
   Trash,
   Unlocked,
 } from '@xipkg/icons';
@@ -40,10 +43,10 @@ const BlockBoardAction = ({ onClick, isReadonly }: ActionPropsT & { isReadonly: 
       className="flex gap-2 p-1"
       onClick={onClick}
       data-umami-event="board-toggle-lock"
-      data-umami-event-state={isReadonly ? 'unlock' : 'lock'}
+      data-umami-event-state={isReadonly ? 'resume' : 'pause'}
     >
-      {isReadonly ? <Unlocked /> : <Locked />}
-      <span>{isReadonly ? 'Разблокировать доску' : 'Заблокировать доску'}</span>
+      {isReadonly ? <ShieldOff /> : <Shield />}
+      <span>{isReadonly ? 'Возобновить работу с доской' : 'Приостановить работу с доской'}</span>
     </DropdownMenuItem>
   );
 };
@@ -76,14 +79,31 @@ const INPUT_MODE_OPTIONS: { value: InputMode; label: string; icon: React.ReactNo
   { value: 'mouse', label: 'Мышь', icon: <Cursor /> },
 ];
 
+const SHAPE_CATEGORIES: { label: string; types: string[] }[] = [
+  { label: 'Изображения', types: ['image'] },
+  { label: 'Текст', types: ['text'] },
+  { label: 'Рисунки', types: ['draw', 'highlight', 'line'] },
+  { label: 'Фигуры', types: ['geo'] },
+  { label: 'Заметки', types: ['note'] },
+  { label: 'Стрелки', types: ['arrow'] },
+  { label: 'Медиа', types: ['pdf', 'audio', 'video', 'embed', 'bookmark'] },
+];
+
 const BOARD_ELEMENTS_LIMIT = 4000;
 const BOARD_ELEMENTS_WARNING_THRESHOLD = 3000;
 
 export const SettingsDropdown = () => {
   const editor = useEditor();
   const { inputMode, setInputMode } = useTldrawStore();
-  const { isReadonly, saveCanvas, clearBoard, toggleReadonly, importBoardFromJson } =
-    useDropdownActions();
+  const {
+    isReadonly,
+    saveCanvas,
+    clearBoard,
+    lockShapes,
+    unlockShapes,
+    toggleReadonly,
+    importBoardFromJson,
+  } = useDropdownActions();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -173,7 +193,7 @@ export const SettingsDropdown = () => {
         <DropdownMenuContent
           sideOffset={12}
           align="end"
-          className="z-100 flex w-[250px] flex-col gap-1 px-2 py-1"
+          className="z-100 flex w-[286px] flex-col gap-1 px-2 py-1"
         >
           <div className="bg-brand-0/40 mb-1 rounded-lg px-2 py-2">
             <div className="mb-1 flex items-center justify-between text-xs">
@@ -264,6 +284,72 @@ export const SettingsDropdown = () => {
             </DropdownMenuItem> */}
 
             {isTutor && !isReadonly && <ClearBoardAction onClick={clearBoard} />}
+
+            {isTutor && !isReadonly && (
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className="flex gap-2 p-1">
+                  <Locked />
+                  <span>Заблокировать элементы</span>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent className="z-100 w-[250px]">
+                  <p className="text-gray-60 px-3 py-2 text-xs">
+                    Можно заблокировать все элементы на доске или выбрать конкретные категории
+                  </p>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="flex gap-2 px-3 py-1.5"
+                    onClick={() => lockShapes()}
+                    data-umami-event="board-lock-all"
+                  >
+                    <span>Все элементы</span>
+                  </DropdownMenuItem>
+                  {SHAPE_CATEGORIES.map(({ label, types }) => (
+                    <DropdownMenuItem
+                      key={label}
+                      className="flex gap-2 px-3 py-1.5"
+                      onClick={() => lockShapes(types)}
+                      data-umami-event="board-lock-category"
+                      data-umami-event-category={label}
+                    >
+                      <span>{label}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            )}
+
+            {isTutor && !isReadonly && (
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className="flex gap-2 p-1">
+                  <Unlocked />
+                  <span>Разблокировать элементы</span>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent className="z-100 w-[250px]">
+                  <p className="text-gray-60 px-3 py-2 text-xs">
+                    Снимает блокировку, позволяя снова редактировать элементы на доске
+                  </p>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="flex gap-2 px-3 py-1.5"
+                    onClick={() => unlockShapes()}
+                    data-umami-event="board-unlock-all"
+                  >
+                    <span>Все элементы</span>
+                  </DropdownMenuItem>
+                  {SHAPE_CATEGORIES.map(({ label, types }) => (
+                    <DropdownMenuItem
+                      key={label}
+                      className="flex gap-2 px-3 py-1.5"
+                      onClick={() => unlockShapes(types)}
+                      data-umami-event="board-unlock-category"
+                      data-umami-event-category={label}
+                    >
+                      <span>{label}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            )}
 
             {isTutor && <BlockBoardAction onClick={toggleReadonly} isReadonly={isReadonly} />}
           </DropdownMenuGroup>
