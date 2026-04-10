@@ -1,136 +1,95 @@
-import { useCallback } from 'react';
-import { useSoundEffectsStore } from 'common.ui';
-import { useLiveKitDataChannel, useLiveKitDataChannelListener } from './useLiveKitDataChannel';
-import { useCallStore } from '../store/callStore';
+import { useEffect, useCallback, useMemo, useRef } from 'react';
+import { Participant, RoomEvent } from 'livekit-client';
+import { useParams, useSearch } from '@tanstack/react-router';
+
 import { useRoom } from '../providers/RoomProvider';
+import { useCallStore } from '../store/callStore';
+import { useCurrentUser, useUpdateParticipantMetadata } from 'common.services';
+import { useSoundEffectsStore } from 'common.ui';
 import { playSound } from '../utils/sounds';
 
-const RAISE_HAND_MESSAGE_TYPE = 'raise_hand';
-const LOWER_HAND_MESSAGE_TYPE = 'lower_hand';
-
-type HandMessagePayload = {
-  participantId: string;
-  participantName: string;
-  timestamp: number;
-};
-
 export const useRaisedHands = () => {
-  const { sendMessage } = useLiveKitDataChannel();
-  const { addRaisedHand, removeRaisedHand, toggleHandRaised } = useCallStore();
+  const { callId: paramsCallId } = useParams({ strict: false });
+  const { call: searchCallId } = useSearch({ strict: false });
+  const prevHands = useRef<Record<string, boolean>>({});
   const handRaiseSoundVolume = useSoundEffectsStore((s) => s.handRaiseVolume);
+
+  const callId = paramsCallId ?? searchCallId;
   const { room } = useRoom();
+  const { data: user } = useCurrentUser();
 
-  // Получаем информацию о текущем участнике из LiveKit
-  const getCurrentParticipantInfo = useCallback(() => {
-    if (!room?.localParticipant) {
-      return {
-        participantId: 'unknown',
-        participantName: 'Unknown User',
-      };
+  const { addRaisedHand, removeRaisedHand } = useCallStore();
+
+  const { updateParticipantMetadata } = useUpdateParticipantMetadata(user.default_layout);
+
+  const isHandRaised = useMemo(() => {
+    try {
+      const parsed = JSON.parse(room?.localParticipant?.metadata ?? '{}');
+      return !!parsed.is_hand_raised;
+    } catch {
+      return false;
     }
+  }, [room?.localParticipant?.metadata]);
 
-    const participant = room.localParticipant;
+  const toggleHand = useCallback(async () => {
+    if (!room?.localParticipant || !callId) return;
 
     try {
-      // Парсим метаданные участника
-      const metadata = participant.metadata;
-      if (metadata) {
-        const userInfo = JSON.parse(metadata);
-        return {
-          participantId: userInfo?.user_id || userInfo?.id || participant.identity,
-          participantName:
-            userInfo?.display_name ||
-            userInfo?.name ||
-            userInfo?.username ||
-            participant.name ||
-            participant.identity,
-        };
-      }
-    } catch (error) {
-      console.warn('⚠️ Failed to parse participant metadata:', error);
+      await updateParticipantMetadata.mutate({
+        classroom_id: callId,
+        is_hand_raised: !isHandRaised,
+      });
+    } catch (e) {
+      console.error('raise hand error', e);
     }
+  }, [room, callId, isHandRaised, updateParticipantMetadata]);
 
-    // Fallback на стандартные поля LiveKit
-    return {
-      participantId: participant.identity,
-      participantName: participant.name || participant.identity,
-    };
-  }, [room]);
+  useEffect(() => {
+    if (!room) return;
 
-  const handleHandMessage = useCallback(
-    (message: { type: string; payload: unknown }) => {
+    const syncParticipant = (participant: Participant) => {
       try {
-        if (message.type === RAISE_HAND_MESSAGE_TYPE) {
-          const payload = message.payload as HandMessagePayload;
+        const parsed = JSON.parse(participant.metadata || '{}');
 
-          // Проверяем, не от текущего пользователя ли сообщение
-          const currentParticipantInfo = getCurrentParticipantInfo();
-          if (payload.participantId !== currentParticipantInfo.participantId) {
-            addRaisedHand(payload);
+        if (!('is_hand_raised' in parsed)) return;
 
-            // Воспроизводим звук уведомления о поднятии руки
+        const prev = prevHands.current[participant.identity];
+
+        if (parsed.is_hand_raised) {
+          addRaisedHand({
+            participantId: participant.identity,
+            participantName: participant.name ?? participant.identity,
+            timestamp: Date.now(),
+          });
+
+          if (!prev) {
             playSound('handRaise', handRaiseSoundVolume);
           }
-        } else if (message.type === LOWER_HAND_MESSAGE_TYPE) {
-          const payload = message.payload as HandMessagePayload;
-          console.log('🤚 Received lower hand message:', payload);
-
-          // Проверяем, не от текущего пользователя ли сообщение
-          const currentParticipantInfo = getCurrentParticipantInfo();
-          if (payload.participantId !== currentParticipantInfo.participantId) {
-            removeRaisedHand(payload.participantId);
-          }
+        } else {
+          removeRaisedHand(participant.identity);
         }
-      } catch (error) {
-        console.error('❌ Error handling hand message:', error);
+      } catch (e) {
+        console.error('metadata parse error', e);
       }
-    },
-    [addRaisedHand, removeRaisedHand, getCurrentParticipantInfo, handRaiseSoundVolume],
-  );
-
-  // Слушаем сообщения о поднятых руках
-  useLiveKitDataChannelListener(handleHandMessage);
-
-  const raiseHand = useCallback(() => {
-    const participantInfo = getCurrentParticipantInfo();
-    const message: HandMessagePayload = {
-      participantId: participantInfo.participantId,
-      participantName: participantInfo.participantName,
-      timestamp: Date.now(),
     };
 
-    sendMessage(RAISE_HAND_MESSAGE_TYPE, message);
-    // Добавляем руку в локальный store для текущего пользователя
-    addRaisedHand(message);
-    toggleHandRaised();
-  }, [sendMessage, getCurrentParticipantInfo, addRaisedHand, toggleHandRaised]);
-
-  const lowerHand = useCallback(() => {
-    const participantInfo = getCurrentParticipantInfo();
-    const message: HandMessagePayload = {
-      participantId: participantInfo.participantId,
-      participantName: participantInfo.participantName,
-      timestamp: Date.now(),
+    const handler = (_metadata: string | undefined, participant: Participant) => {
+      syncParticipant(participant);
     };
 
-    sendMessage(LOWER_HAND_MESSAGE_TYPE, message);
-    // Удаляем руку из локального store для текущего пользователя
-    removeRaisedHand(participantInfo.participantId);
-    toggleHandRaised();
-  }, [sendMessage, getCurrentParticipantInfo, removeRaisedHand, toggleHandRaised]);
+    room.on(RoomEvent.ParticipantMetadataChanged, handler);
 
-  const toggleHand = useCallback(() => {
-    const { isHandRaised } = useCallStore.getState();
-    if (isHandRaised) {
-      lowerHand();
-    } else {
-      raiseHand();
-    }
-  }, [raiseHand, lowerHand]);
+    syncParticipant(room.localParticipant);
+    room.remoteParticipants.forEach(syncParticipant);
+
+    return () => {
+      room.off(RoomEvent.ParticipantMetadataChanged, handler);
+    };
+  }, [room, addRaisedHand, removeRaisedHand]);
 
   return {
-    raiseHand,
-    lowerHand,
     toggleHand,
+    isHandRaised,
+    isPending: updateParticipantMetadata.isPending,
   };
 };

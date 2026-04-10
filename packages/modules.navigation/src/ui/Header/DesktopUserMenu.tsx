@@ -56,10 +56,11 @@ export const DesktopUserMenu = ({
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="w-[276px] p-4" side="bottom" align="start">
-        <div className="mb-4 w-[228px]">
+      <DropdownMenuContent side="bottom" align="end">
+        <div className="text-gray-80 fill-gray-80 focus:bg-brand-0 hover:bg-brand-0 relative flex h-8 cursor-pointer items-center rounded px-2 py-1.5 text-sm outline-none select-none hover:fill-gray-100 hover:text-gray-100 data-disabled:pointer-events-none data-disabled:opacity-50">
           <SelectRole />
         </div>
+
         {!isInstalled && (
           <DropdownMenuItem
             onClick={() => {

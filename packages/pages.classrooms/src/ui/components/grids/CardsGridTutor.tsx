@@ -38,21 +38,19 @@ export const CardsGridTutor = () => {
       ref={parentRef}
       className="bg-gray-0 h-[calc(100vh-72px)] w-full overflow-auto rounded-tl-2xl p-4 pr-4"
     >
-      <div className="max-xs:gap-4 grid grid-cols-1 gap-4 min-[550px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {items.map((classroom) => (
           <div key={classroom.id} className="classroom-card">
             <Card {...classroom} />
           </div>
         ))}
       </div>
-
       {/* Индикатор загрузки следующей страницы */}
       {isFetchingNextPage && (
         <div className="flex justify-center py-4">
           <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-gray-300"></div>
         </div>
       )}
-
       {/* Сообщение о конце списка */}
       {!hasNextPage && items.length > 0 && (
         <div className="py-4 text-center text-gray-500">Все кабинеты загружены</div>

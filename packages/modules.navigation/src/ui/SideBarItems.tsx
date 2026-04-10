@@ -1,3 +1,4 @@
+import { useState, useEffect, lazy, Suspense } from 'react';
 import {
   SidebarContent,
   SidebarFooter,
@@ -18,9 +19,9 @@ import { Notifications } from './Header/Notifications';
 import { Logo } from 'common.ui';
 import { useMediaQuery } from '@xipkg/utils';
 import { DesktopUserMenu } from './Header/DesktopUserMenu';
-import { useEffect, useState, lazy, Suspense } from 'react';
 import { useAuth } from 'common.auth';
 import { getFooterMenuConfig, getTopMenuConfig } from './config/sidebarMenuConfig';
+import { SupportModal } from './SupportModal';
 
 const UserSettings = lazy(() =>
   import('modules.profile').then((module) => ({ default: module.UserSettings })),
@@ -30,6 +31,12 @@ export const SideBarItems = () => {
   const { t } = useTranslation('navigation');
   const { close, isDesktopOpen } = useMenuStore();
   const isMobile = useMediaQuery('(max-width: 960px)');
+  const [isSupportOpen, setIsSupportOpen] = useState(false);
+
+  const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const search = useSearch({ strict: false });
+  const { callId } = useParams({ strict: false });
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -58,12 +65,9 @@ export const SideBarItems = () => {
     }
   };
 
-  const footerMenu = getFooterMenuConfig(handleOnboardingClick);
-
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
-  const search = useSearch({ strict: false });
-  const { callId } = useParams({ strict: false });
+  const footerMenu = getFooterMenuConfig(handleOnboardingClick).map((item) =>
+    item.titleKey === 'support' ? { ...item, onClick: () => setIsSupportOpen(true) } : item,
+  );
 
   const getIsActiveItem = (url: string) => {
     if (url === '/') {
@@ -206,9 +210,6 @@ export const SideBarItems = () => {
                 className="bg-gray-0 hover:bg-gray-5 focus:bg-gray-10 active:bg-gray-10 gap-5 rounded-lg!"
                 title={t(item.titleKey)}
                 data-umami-event={`navigation-${item.titleKey}`}
-                {...(item.titleKey === 'support'
-                  ? { 'data-umami-event-url': 'https://t.me/sovlium_support_bot' }
-                  : {})}
               >
                 <item.icon className="h-6 w-6 fill-gray-50 text-gray-50" />
                 <div className="text-base font-medium text-gray-50">{t(item.titleKey)}</div>
@@ -221,6 +222,7 @@ export const SideBarItems = () => {
       <Suspense fallback={null}>
         <UserSettings open={open} setOpen={setOpen} />
       </Suspense>
+      <SupportModal open={isSupportOpen} onOpenChange={setIsSupportOpen} />
     </>
   );
 };

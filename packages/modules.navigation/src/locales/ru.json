@@ -19,8 +19,19 @@
   "student": "Ученик",
   "classrooms": "Кабинеты",
   "hints": "Подсказки",
-  "menu": "Меню",
-  "close": "Закрыть",
   "roleChanged": "Роль успешно изменена на {{role}}",
-  "wiki": "База знаний"
+  "supportModal": {
+    "title": "Свяжитесь с нами",
+    "description": "Выберите удобный способ связи — мы всегда рады помочь!",
+    "telegram": "Telegram",
+    "telegramDesc": "@sovlium_support_bot",
+    "vk": "ВКонтакте",
+    "vkDesc": "Сообщество Sovlium",
+    "email": "Электронная почта",
+    "emailDesc": "support@sovlium.ru",
+    "responseTime": "Обычно отвечаем за пару часов, максимум — в течение суток",
+    "socials": "Следить за актуальными новостями платформы",
+    "socialTelegram": "Канал в Telegram",
+    "socialVk": "Группа ВКонтакте"
+  }
 }

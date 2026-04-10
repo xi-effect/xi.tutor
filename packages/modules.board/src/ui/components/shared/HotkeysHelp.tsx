@@ -1,15 +1,15 @@
-import { useEffect } from 'react';
-import { Modal, ModalCloseButton, ModalContent, ModalHeader, ModalTitle } from '@xipkg/modal';
-import { createPortal } from 'react-dom';
+import { useEffect, useRef, useState } from 'react';
+import {
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalTitle,
+} from '@xipkg/modal';
 import { isMac } from '../../../utils';
 
-const BACKDROP_Z = 9999;
-
-const cleanupBodyScrollLock = () => {
-  document.body.style.overflow = '';
-  document.body.style.pointerEvents = '';
-  document.body.removeAttribute('data-scroll-locked');
-};
+const PORTAL_Z = 9999;
 
 interface HotkeyItem {
   keys: string[];
@@ -41,6 +41,7 @@ const hotkeyCategories: HotkeyItem[] = [
   { keys: [modKey, 'X'], description: 'Вырезать', category: 'Действия' },
   { keys: [modKey, 'Y'], description: 'Повторить', category: 'Действия' },
   { keys: [modKey, 'G'], description: 'Группировать/разгруппировать', category: 'Действия' },
+  { keys: [modKey, 'L'], description: 'Заблокировать/разблокировать', category: 'Действия' },
 
   // Масштабирование
   { keys: [modKey, '+'], description: 'Увеличить масштаб', category: 'Масштабирование' },
@@ -64,9 +65,8 @@ const groupByCategory = (items: HotkeyItem[]) => {
 
 const groupedHotkeys = groupByCategory(hotkeyCategories);
 
-/** Общий контент модалки: только список горячих клавиш */
 const HotkeysHelpBody = () => (
-  <div className="space-y-6 overflow-auto p-6">
+  <div className="space-y-6 p-6">
     {Object.entries(groupedHotkeys).map(([category, items]) => (
       <div key={category}>
         <h3 className="mb-3 text-lg font-semibold text-gray-100">{category}</h3>
@@ -98,49 +98,43 @@ export type HotkeysHelpModalProps = {
 };
 
 /**
- * Свой backdrop в body (z 9999, pointer-events: auto). Канвас tldraw и
- * Radix-оверлей могут перехватывать клики; этот слой поверх них, клик по нему
- * закрывает модалку. Контент модалки z-[10000], чтобы по окну не закрывать.
+ * Портал модалки рендерится в отдельный контейнер с высоким z-index,
+ * чтобы и overlay (backdrop + скролл), и контент были выше tldraw-канваса.
+ * Overlay из @xipkg/modal сам обрабатывает клик снаружи и скролл.
  */
 export const HotkeysHelpModal = ({ open, onOpenChange }: HotkeysHelpModalProps) => {
-  const handleClose = () => {
-    onOpenChange(false);
-    cleanupBodyScrollLock();
-  };
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [portalReady, setPortalReady] = useState(false);
 
   useEffect(() => {
-    if (open === false) cleanupBodyScrollLock();
-    return cleanupBodyScrollLock;
-  }, [open]);
+    const el = document.createElement('div');
+    el.style.position = 'relative';
+    el.style.zIndex = String(PORTAL_Z);
+    document.body.appendChild(el);
+    containerRef.current = el;
+    setPortalReady(true);
+    return () => {
+      document.body.removeChild(el);
+      containerRef.current = null;
+    };
+  }, []);
+
+  if (!portalReady) return null;
 
   return (
-    <>
-      {open &&
-        createPortal(
-          <div
-            role="presentation"
-            aria-hidden
-            className="fixed inset-0"
-            style={{ zIndex: BACKDROP_Z, pointerEvents: 'auto' }}
-            onClick={handleClose}
-          />,
-          document.body,
-        )}
-      <Modal
-        open={open}
-        onOpenChange={(next) => {
-          if (typeof next === 'boolean') onOpenChange(next);
-          if (next === false) cleanupBodyScrollLock();
-        }}
+    <Modal open={open} onOpenChange={onOpenChange}>
+      <ModalContent
+        className="max-w-4xl"
+        portalProps={{ container: containerRef.current ?? undefined }}
       >
-        <ModalContent className="z-10000 max-h-[80dvh] max-w-4xl">
-          <ModalHeader>
-            <ModalCloseButton onClick={handleClose} />
-            <ModalTitle>Горячие клавиши</ModalTitle>
-          </ModalHeader>
+        <ModalHeader>
+          <ModalCloseButton />
+          <ModalTitle>Горячие клавиши</ModalTitle>
+        </ModalHeader>
+        <ModalBody style={{ maxHeight: 'calc(80dvh - 80px)', overflowY: 'auto', padding: 0 }}>
           <HotkeysHelpBody />
-        </ModalContent>
-      </Modal>
-    </>
+        </ModalBody>
+      </ModalContent>
+    </Modal>
   );
 };
