@@ -24,7 +24,7 @@ export const CardsGridTutor = () => {
 
   if (items.length === 0) {
     return (
-      <div className="bg-gray-0 flex h-[calc(100vh-72px)] w-full flex-col items-center justify-center gap-2 overflow-auto rounded-tl-2xl p-4 pr-4">
+      <div className="flex h-[calc(100vh-72px)] w-full flex-col items-center justify-center gap-2 overflow-auto rounded-tl-2xl p-4 pr-4">
         <p className="text-xl-base text-center font-semibold text-gray-100">
           Здесь будут ваши ученики и группы
         </p>
@@ -36,7 +36,7 @@ export const CardsGridTutor = () => {
   return (
     <div
       ref={parentRef}
-      className="bg-gray-0 h-[calc(100vh-72px)] w-full overflow-auto rounded-tl-2xl p-4 pr-4"
+      className="h-[calc(100vh-72px)] w-full overflow-auto rounded-tl-2xl p-5 pt-1"
     >
       <div className="grid grid-cols-[repeat(auto-fit,minmax(320px,1fr))] gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
         {items.map((classroom) => (

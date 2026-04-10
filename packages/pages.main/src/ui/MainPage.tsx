@@ -104,13 +104,13 @@ export const MainPage = () => {
     <div className="bg-gray-5 flex h-full min-h-0 flex-col">
       {/* Шапка на всю ширину контентной области; не участвует в прокрутке ниже */}
       {!isMobile && (
-        <div className="shrink-0 pt-6 pr-4 pb-5 pl-4">
+        <div className="shrink-0 p-5">
           <DateTimeDisplay />
         </div>
       )}
       {/* Ниже шапки — оставшаяся высота; справа один скролл по кабинетам / оплатам / материалам */}
       <div className="flex min-h-0 flex-1 flex-col">
-        <div className="flex min-h-0 flex-1 flex-col items-start gap-4 p-4 pl-4 sm:flex-row sm:py-0 sm:pr-0">
+        <div className="flex min-h-0 flex-1 flex-col items-start gap-4 p-5 sm:flex-row sm:py-0 sm:pr-0">
           {!isMobile && (
             <div className="lg:bg-gray-5 flex shrink-0 flex-col pb-6 lg:sticky lg:top-0 lg:z-10 lg:self-start">
               <Lessons />

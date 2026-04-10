@@ -3,6 +3,7 @@ import { ActionButton } from '@xipkg/actionbutton';
 import { ModalInvitation } from 'features.invites';
 import { ModalAddGroup } from 'features.group.add';
 
+import { DateTimeDisplay } from 'common.ui';
 import { ButtonsHeader, LinkListStudents, CardsGridSimple } from './components';
 import { useCurrentUser } from 'common.services';
 
@@ -13,16 +14,21 @@ export const ClassroomsPage = () => {
   const [isAddGroupModalOpen, setIsAddGroupModalOpen] = useState(false);
 
   return (
-    <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pr-0 pl-4">
+    <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pr-0">
       <div className="flex h-screen flex-col">
-        <div className="flex flex-row items-center pt-6 pr-6 pb-4 pl-4">
-          <h1 className="text-2xl font-normal text-gray-100">Кабинеты</h1>
-
-          <div className="mr-2 ml-auto flex items-center">
-            {isTutor && <LinkListStudents src="#" />}
+        <div className="flex flex-col gap-5 px-5 pt-5">
+          <div className="flex h-8 items-center">
+            <DateTimeDisplay />
           </div>
+          <div className="flex flex-row items-center pb-4">
+            <h1 className="text-2xl font-normal text-gray-100">Кабинеты</h1>
 
-          {isTutor && <ButtonsHeader />}
+            <div className="mr-2 ml-auto flex items-center">
+              {isTutor && <LinkListStudents src="#" />}
+            </div>
+
+            {isTutor && <ButtonsHeader />}
+          </div>
         </div>
 
         <CardsGridSimple />
