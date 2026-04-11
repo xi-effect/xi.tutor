@@ -3,10 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { startOfDay } from 'date-fns';
 import { Plus } from '@xipkg/icons';
 import { LessonCard } from './LessonCard';
+import { LessonCardSkeleton } from './LessonCardSkeleton';
 import { ScheduleEmptyState } from './ScheduleEmptyState';
-import { getDateKey, useEventsByDate } from '../../../store/eventsStore';
+import { getDateKey, useEventsByDate, useEventsLoading } from '../../../store/eventsStore';
 import { useLessonInfoModal } from '../../../hooks';
-import { isCurrentDay, isPastDay } from '../../../utils';
+import { getLessonCardSkeletonCountForDay, isCurrentDay, isPastDay } from '../../../utils';
 import type { ICalendarEvent } from '../../types';
 import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
@@ -63,6 +64,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
 }) => {
   const { t } = useTranslation('calendar');
   const eventsByDate = useEventsByDate();
+  const eventsLoading = useEventsLoading();
   const today = new Date();
   const todayStart = startOfDay(today);
   const { openLessonInfo, lessonInfoModal } = useLessonInfoModal();
@@ -153,56 +155,71 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
           style={{ paddingRight: KANBAN_SCROLL_INNER_PADDING_END_PX }}
         >
           <div className="grid flex-1 items-stretch gap-x-7 pb-4" style={{ gridTemplateColumns }}>
-            {segments.map((seg) => {
-              if (seg.type === 'lessons') {
-                const day = visibleDays[seg.index];
-                const events = eventsPerDay[seg.index] ?? [];
-                return (
-                  <div
-                    key={`lessons-${seg.index}`}
-                    className="flex min-h-0 min-w-0 flex-col gap-4 self-stretch"
-                    style={{ gridColumn: seg.index + 1 }}
-                  >
-                    {events.map((event) => (
-                      <LessonCard
-                        key={event.id}
-                        event={event}
-                        isPast={isPastDay(day, today)}
-                        isToday={isCurrentDay(day, todayStart)}
-                        onClick={() => openLessonInfo(event)}
-                      />
-                    ))}
-                  </div>
-                );
-              }
-
-              const { start, end } = seg;
-              const firstDay = visibleDays[start];
-              const colStart = start + 1;
-              const colEnd = end + 2;
-
-              return (
-                <div
-                  key={`empty-${start}-${end}`}
-                  className="flex h-full min-h-0 min-w-0 flex-col self-stretch"
-                  style={{ gridColumn: `${colStart} / ${colEnd}` }}
-                >
-                  <div className="relative h-full min-h-0 w-full">
+            {eventsLoading
+              ? visibleDays.map((day, colIndex) => {
+                  const skeletonCount = getLessonCardSkeletonCountForDay(day);
+                  return (
                     <div
-                      className="sticky top-0 z-10 w-full self-start pb-2"
-                      style={{ height: scheduleEmptyBlockHeight() }}
+                      key={`skeleton-${day.toISOString()}`}
+                      className="flex min-h-0 min-w-0 flex-col gap-4 self-stretch"
+                      style={{ gridColumn: colIndex + 1 }}
                     >
-                      <ScheduleEmptyState
-                        fillColumn
-                        days={visibleDays.slice(start, end + 1)}
-                        onScheduleClick={() => onAddLessonClick?.(firstDay)}
-                        className="h-full w-full"
-                      />
+                      {Array.from({ length: skeletonCount }, (_, i) => (
+                        <LessonCardSkeleton key={i} isToday={isCurrentDay(day, todayStart)} />
+                      ))}
                     </div>
-                  </div>
-                </div>
-              );
-            })}
+                  );
+                })
+              : segments.map((seg) => {
+                  if (seg.type === 'lessons') {
+                    const day = visibleDays[seg.index];
+                    const events = eventsPerDay[seg.index] ?? [];
+                    return (
+                      <div
+                        key={`lessons-${seg.index}`}
+                        className="flex min-h-0 min-w-0 flex-col gap-4 self-stretch"
+                        style={{ gridColumn: seg.index + 1 }}
+                      >
+                        {events.map((event) => (
+                          <LessonCard
+                            key={event.id}
+                            event={event}
+                            isPast={isPastDay(day, today)}
+                            isToday={isCurrentDay(day, todayStart)}
+                            onClick={() => openLessonInfo(event)}
+                          />
+                        ))}
+                      </div>
+                    );
+                  }
+
+                  const { start, end } = seg;
+                  const firstDay = visibleDays[start];
+                  const colStart = start + 1;
+                  const colEnd = end + 2;
+
+                  return (
+                    <div
+                      key={`empty-${start}-${end}`}
+                      className="flex h-full min-h-0 min-w-0 flex-col self-stretch"
+                      style={{ gridColumn: `${colStart} / ${colEnd}` }}
+                    >
+                      <div className="relative h-full min-h-0 w-full">
+                        <div
+                          className="sticky top-0 z-10 w-full self-start pb-2"
+                          style={{ height: scheduleEmptyBlockHeight() }}
+                        >
+                          <ScheduleEmptyState
+                            fillColumn
+                            days={visibleDays.slice(start, end + 1)}
+                            onScheduleClick={() => onAddLessonClick?.(firstDay)}
+                            className="h-full w-full"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
           </div>
         </div>
       </div>

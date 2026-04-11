@@ -3,10 +3,11 @@ import { isSameDay, startOfDay } from 'date-fns';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
 import { LessonCard } from '../ScheduleKanban/LessonCard';
+import { LessonCardSkeleton } from '../ScheduleKanban/LessonCardSkeleton';
 import { ScheduleEmptyState } from '../ScheduleKanban/ScheduleEmptyState';
-import { getDateKey, useEventsByDate } from '../../../store/eventsStore';
+import { getDateKey, useEventsByDate, useEventsLoading } from '../../../store/eventsStore';
 import { useLessonInfoModal } from '../../../hooks';
-import { isCurrentDay, isPastDay } from '../../../utils';
+import { getLessonCardSkeletonCountForDay, isCurrentDay, isPastDay } from '../../../utils';
 import type { ICalendarEvent } from '../../types';
 
 import 'swiper/css';
@@ -35,6 +36,7 @@ export const ScheduleDaySwiper = ({
   onAddLessonClick,
 }: ScheduleDaySwiperProps) => {
   const eventsByDate = useEventsByDate();
+  const eventsLoading = useEventsLoading();
   const today = new Date();
   const todayStart = startOfDay(today);
   const swiperRef = useRef<SwiperType | null>(null);
@@ -82,7 +84,15 @@ export const ScheduleDaySwiper = ({
             <SwiperSlide key={day.toISOString()}>
               <div className="flex flex-col pb-4">
                 <div className="flex flex-col gap-3">
-                  {events.length === 0 ? (
+                  {eventsLoading ? (
+                    Array.from({ length: getLessonCardSkeletonCountForDay(day) }, (_, i) => (
+                      <LessonCardSkeleton
+                        key={i}
+                        isToday={isCurrentDay(day, todayStart)}
+                        fullWidth
+                      />
+                    ))
+                  ) : events.length === 0 ? (
                     <ScheduleEmptyState
                       days={[day]}
                       onScheduleClick={() => onAddLessonClick?.(day)}

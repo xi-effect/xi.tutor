@@ -1,4 +1,4 @@
-import { isBefore, isSameDay, startOfDay, parse } from 'date-fns';
+import { format, isBefore, isSameDay, startOfDay, parse } from 'date-fns';
 
 export const isCurrentMonth = (date: Date, monthIndex: number) => {
   return date.getMonth() === monthIndex;
@@ -82,4 +82,25 @@ export const formatDateRange = (weekStart: Date, dayCount: number): string => {
     return `${d1} - ${d2} ${m1} ${y}`;
   }
   return `${d1} ${m1} - ${d2} ${m2} ${y}`;
+};
+
+const LESSON_CARD_SKELETON_COUNT_MIN = 2;
+const LESSON_CARD_SKELETON_COUNT_MAX = 5;
+
+/**
+ * Псевдослучайное число скелетонов карточек для календарного дня.
+ * Одна и та же дата всегда даёт одно значение (без мерцания при ре-рендерах).
+ */
+export const getLessonCardSkeletonCountForDay = (
+  day: Date,
+  min: number = LESSON_CARD_SKELETON_COUNT_MIN,
+  max: number = LESSON_CARD_SKELETON_COUNT_MAX,
+): number => {
+  const key = format(startOfDay(day), 'yyyy-MM-dd');
+  let h = 0;
+  for (let i = 0; i < key.length; i++) {
+    h = (h * 31 + key.charCodeAt(i)) | 0;
+  }
+  const span = Math.max(1, max - min + 1);
+  return min + (Math.abs(h) % span);
 };

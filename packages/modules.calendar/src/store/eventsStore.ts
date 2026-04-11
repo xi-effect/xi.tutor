@@ -29,6 +29,9 @@ const getEventDateKeys = (event: ICalendarEvent): string[] => {
 
 interface EventsStore {
   events: ICalendarEvent[];
+  /** Пока true — в канбане и мобильном расписании показываются скелетоны карточек */
+  eventsLoading: boolean;
+  setEventsLoading: (loading: boolean) => void;
 
   getEventById: (eventId: string) => ICalendarEvent | undefined;
   getEventsByDate: (date: Date) => ICalendarEvent[];
@@ -40,6 +43,8 @@ interface EventsStore {
 
 const useEventsStore = create<EventsStore>((set, get) => ({
   events: MOCK_EVENTS,
+  eventsLoading: false,
+  setEventsLoading: (loading) => set({ eventsLoading: loading }),
 
   getEventById: (eventId) => get().events.find((event) => event.id === eventId),
 
@@ -78,6 +83,10 @@ const useEventsStore = create<EventsStore>((set, get) => ({
 }));
 
 // Селекторы
+export const useEventsLoading = () => useEventsStore((s) => s.eventsLoading);
+
+export const useSetEventsLoading = () => useEventsStore((s) => s.setEventsLoading);
+
 export const useEventsByDate = (): Record<string, ICalendarEvent[]> => {
   const allEvents = useEventsStore((state) => state.events);
 

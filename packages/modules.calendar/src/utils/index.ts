@@ -7,6 +7,7 @@ export {
   formatWeekRange,
   formatDateRange,
   formatDateRangeDisplay,
+  getLessonCardSkeletonCountForDay,
 } from './calendarUtils';
 export {
   getMonthDays,
