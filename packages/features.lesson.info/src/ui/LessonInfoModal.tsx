@@ -8,7 +8,7 @@ import {
   ModalTitle,
 } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
-import { Clock, Conference, Redo, Trash } from '@xipkg/icons';
+import { Clock, Conference, Edit, Redo, Trash } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
 
 export type LessonInfoModalProps = {
@@ -22,6 +22,7 @@ export type LessonInfoModalProps = {
   endTime: string | null;
   onStartLesson?: () => void;
   onReschedule?: () => void;
+  onEditLesson?: () => void;
   onCancelLesson?: () => void;
 };
 
@@ -36,6 +37,7 @@ export const LessonInfoModal = ({
   endTime,
   onStartLesson,
   onReschedule,
+  onEditLesson,
   onCancelLesson,
 }: LessonInfoModalProps) => {
   const handleOpenChange = (next: boolean) => {
@@ -46,7 +48,7 @@ export const LessonInfoModal = ({
 
   return (
     <Modal open={open} onOpenChange={handleOpenChange}>
-      <ModalContent className="relative w-full max-w-[480px]" aria-describedby={undefined}>
+      <ModalContent className="relative w-full max-w-[560px]" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton />
           <ModalTitle className="text-xl-base max-w-[calc(100%-56px)] font-semibold text-gray-100">
@@ -86,8 +88,7 @@ export const LessonInfoModal = ({
           <Button
             type="button"
             variant="ghost"
-            size="m"
-            className="text-brand-100 bg-brand-0 hover:bg-brand-20/50 h-11 flex-1 p-0"
+            className="text-brand-100 bg-brand-0 hover:bg-brand-20/50 h-12 flex-1"
             onClick={onStartLesson}
           >
             Начать занятие
@@ -96,8 +97,7 @@ export const LessonInfoModal = ({
           <Button
             type="button"
             variant="none"
-            size="m"
-            className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 h-11 flex-1 p-0"
+            className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 h-12 flex-1"
             onClick={onReschedule}
           >
             Перенести
@@ -106,13 +106,22 @@ export const LessonInfoModal = ({
           <Button
             type="button"
             variant="none"
-            size="m"
-            className="text-gray-80 h-11 flex-1 font-medium hover:text-gray-100"
+            className="bg-gray-5 text-gray-80 flex h-12 w-12 shrink-0 items-center justify-center p-0 hover:text-gray-100 max-sm:mx-auto"
             onClick={onCancelLesson}
           >
-            Отменить
-            <Trash className="fill-gray-60 ml-1.5 h-4 w-4" />
+            <Trash className="fill-gray-60 h-5 w-5" />
           </Button>
+          {onEditLesson != null ? (
+            <Button
+              type="button"
+              variant="none"
+              className="bg-gray-5 text-gray-80 flex h-12 w-12 shrink-0 items-center justify-center p-0 hover:text-gray-100 max-sm:mx-auto"
+              onClick={onEditLesson}
+              aria-label="Редактировать"
+            >
+              <Edit className="fill-gray-60 h-5 w-5" />
+            </Button>
+          ) : null}
         </ModalFooter>
       </ModalContent>
     </Modal>
