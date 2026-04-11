@@ -5,8 +5,8 @@ import {
   HelpCircle,
   Home,
   InfoCircle,
+  MessageHeartCircle,
   Payments,
-  TelegramFilled,
 } from '@xipkg/icons';
 import { type ComponentType } from 'react';
 
@@ -64,13 +64,14 @@ export const getTopMenuConfig = (isTutor: boolean): TopMenuItem[] => {
   return topMenu;
 };
 
-export const getFooterMenuConfig = (onHintsClick: () => void): FooterMenuItem[] => [
+export const getFooterMenuConfig = (
+  onHintsClick: () => void,
+  onSupportClick: () => void,
+): FooterMenuItem[] => [
   {
     titleKey: 'support',
-    onClick: () => {
-      window.open('https://t.me/sovlium_support_bot', '_blank');
-    },
-    icon: TelegramFilled,
+    onClick: onSupportClick,
+    icon: MessageHeartCircle,
   },
   {
     titleKey: 'wiki',

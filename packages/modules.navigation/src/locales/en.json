@@ -20,6 +20,7 @@
   "classrooms": "Classrooms",
   "hints": "Hints",
   "roleChanged": "Role successfully changed to {{role}}",
+  "wiki": "Knowledge base",
   "supportModal": {
     "title": "Contact us",
     "description": "Choose a convenient way to reach us — we're always happy to help!",

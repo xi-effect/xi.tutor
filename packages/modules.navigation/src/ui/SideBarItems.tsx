@@ -65,9 +65,7 @@ export const SideBarItems = () => {
     }
   };
 
-  const footerMenu = getFooterMenuConfig(handleOnboardingClick).map((item) =>
-    item.titleKey === 'support' ? { ...item, onClick: () => setIsSupportOpen(true) } : item,
-  );
+  const footerMenu = getFooterMenuConfig(handleOnboardingClick, () => setIsSupportOpen(true));
 
   const getIsActiveItem = (url: string) => {
     if (url === '/') {
