@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef } from 'react';
 import { isSameDay, startOfDay } from 'date-fns';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
+import { Virtual } from 'swiper/modules';
 import { LessonCard } from '../ScheduleKanban/LessonCard';
 import { LessonCardSkeleton } from '../ScheduleKanban/LessonCardSkeleton';
 import { ScheduleEmptyState } from '../ScheduleKanban/ScheduleEmptyState';
@@ -11,6 +12,7 @@ import { getLessonCardSkeletonCountForDay, isCurrentDay, isPastDay } from '../..
 import type { ICalendarEvent } from '../../types';
 
 import 'swiper/css';
+import 'swiper/css/virtual';
 
 const getEventsForDay = (
   eventsByDate: Record<string, ICalendarEvent[]>,
@@ -47,6 +49,11 @@ export const ScheduleDaySwiper = ({
 
   const handleSwiper = useCallback((swiper: SwiperType) => {
     swiperRef.current = swiper;
+    // swiper.params.autoHeight = false;
+    // swiper.originalParams.autoHeight = false;
+    // swiper.el.classList.remove(`${swiper.params.containerModifierClass}autoheight`);
+    // swiper.wrapperEl.style.removeProperty('height');
+    // swiper.update();
   }, []);
 
   useEffect(() => {
@@ -68,22 +75,34 @@ export const ScheduleDaySwiper = ({
   return (
     <>
       <Swiper
-        className="w-full"
-        slidesPerView={1}
-        spaceBetween={0}
+        modules={[Virtual]}
+        className="min-h-0 w-full flex-1 [&_.swiper-wrapper]:min-h-[calc(100dvh-292px)]"
         autoHeight
+        touchEventsTarget="container"
+        touchStartPreventDefault={false}
+        slidesPerView={1}
+        spaceBetween={8}
+        virtual={{
+          enabled: true,
+          addSlidesBefore: 1,
+          addSlidesAfter: 1,
+        }}
         onSwiper={handleSwiper}
         onSlideChange={handleSlideChange}
         initialSlide={activeIndex}
         resistanceRatio={0.85}
       >
-        {days.map((day) => {
+        {days.map((day, dayIndex) => {
           const events = getEventsForDay(eventsByDate, day);
           const isPast = isPastDay(day, today);
           return (
-            <SwiperSlide key={day.toISOString()}>
-              <div className="flex flex-col pb-4">
-                <div className="flex flex-col gap-3">
+            <SwiperSlide
+              key={day.toISOString()}
+              virtualIndex={dayIndex}
+              className="box-border h-full min-h-0"
+            >
+              <div className="flex h-full min-h-0 flex-col pb-4">
+                <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto">
                   {eventsLoading ? (
                     Array.from({ length: getLessonCardSkeletonCountForDay(day) }, (_, i) => (
                       <LessonCardSkeleton
@@ -96,6 +115,7 @@ export const ScheduleDaySwiper = ({
                     <ScheduleEmptyState
                       days={[day]}
                       onScheduleClick={() => onAddLessonClick?.(day)}
+                      fillColumn
                       className="min-h-0"
                     />
                   ) : (

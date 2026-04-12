@@ -43,7 +43,7 @@ export const ScheduleMobileView = ({ onAddLessonClick }: ScheduleMobileViewProps
   );
 
   return (
-    <div className="bg-gray-5 flex min-h-0 flex-1 flex-col">
+    <div className="bg-gray-5 xs:max-h-none xs:min-h-0 xs:overflow-visible relative flex min-h-[calc(100dvh-64px)] flex-1 flex-col overflow-hidden">
       <div className="bg-gray-5 sticky top-0 z-10 px-4 pt-4 pb-3">
         <div className="bg-gray-0 flex h-[184px] flex-col rounded-[20px] p-4">
           <div className="flex h-[32px] flex-row items-center justify-between gap-2">
@@ -69,7 +69,7 @@ export const ScheduleMobileView = ({ onAddLessonClick }: ScheduleMobileViewProps
           </div>
         </div>
       </div>
-      <div className="px-4 pb-4">
+      <div className="flex min-h-0 flex-1 flex-col px-4 pb-4">
         <ScheduleDaySwiper
           days={slideDays}
           selectedDate={selectedDate}

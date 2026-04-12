@@ -21,6 +21,7 @@
   "hints": "Hints",
   "roleChanged": "Role successfully changed to {{role}}",
   "wiki": "Knowledge base",
+  "menu": "Menu",
   "supportModal": {
     "title": "Contact us",
     "description": "Choose a convenient way to reach us — we're always happy to help!",

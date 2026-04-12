@@ -31,12 +31,12 @@ export const RoleSwitcher = ({
       tabs={tabs}
       activeTab={value}
       onChange={(v) => onChange(v as RoleT)}
-      className={cn('bg-gray-5 flex h-9 w-[228px] flex-row rounded-lg p-1', className)}
+      className={cn('bg-gray-5 flex h-9 w-full flex-row rounded-lg p-1', className)}
       tabClassName={cn(
-        'w-[114px] text-m-base font-medium text-gray-100 data-[active=true]:text-gray-0',
+        'w-full text-m-base font-medium text-gray-100 data-[active=true]:text-gray-0',
         tabClassName,
       )}
-      indicatorClassName={cn('w-[114px] rounded-md bg-brand-100', indicatorClassName)}
+      indicatorClassName={cn('w-full rounded-md bg-brand-100', indicatorClassName)}
     />
   );
 };

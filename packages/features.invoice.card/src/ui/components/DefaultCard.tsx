@@ -20,7 +20,7 @@ export const DefaultCard = ({
   return (
     <div
       className={cn(
-        'border-gray-30 flex min-h-[130px] w-[240px] min-w-[240px] flex-1 flex-col items-start justify-start gap-4 rounded-2xl border px-5 py-4 xl:w-[280px] xl:min-w-[280px]',
+        'border-gray-30 flex min-h-[130px] w-[260px] min-w-[260px] flex-1 flex-col items-start justify-start gap-4 rounded-2xl border px-5 py-4 xl:w-[280px] xl:min-w-[280px]',
         className,
       )}
     >

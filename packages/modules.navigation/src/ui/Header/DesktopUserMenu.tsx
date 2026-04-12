@@ -12,6 +12,7 @@ import { SelectRole } from './SelectRole';
 import { useCurrentUser } from 'common.services';
 import { Account, ChevronUp, Download, Exit } from '@xipkg/icons';
 import { usePWAInstall } from 'common.services';
+import { useMenuStore } from '../../store/useMenuStore';
 
 interface DesktopUserMenuProps {
   withOutText: boolean;
@@ -30,6 +31,8 @@ export const DesktopUserMenu = ({
   profileText,
   logoutText,
 }: DesktopUserMenuProps) => {
+  const { isDesktopOpen } = useMenuStore();
+
   const { data: user } = useCurrentUser();
   const { canInstall, promptInstall, isInstalled, installHint } = usePWAInstall();
 
@@ -56,8 +59,12 @@ export const DesktopUserMenu = ({
         </Button>
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent side="bottom" align="end">
-        <div className="text-gray-80 fill-gray-80 focus:bg-brand-0 hover:bg-brand-0 relative flex h-8 cursor-pointer items-center rounded px-2 py-1.5 text-sm outline-none select-none hover:fill-gray-100 hover:text-gray-100 data-disabled:pointer-events-none data-disabled:opacity-50">
+      <DropdownMenuContent
+        className="flex w-[244px] flex-col gap-3 p-2"
+        side="bottom"
+        align={isDesktopOpen ? 'center' : 'start'}
+      >
+        <div className="h-9">
           <SelectRole />
         </div>
 

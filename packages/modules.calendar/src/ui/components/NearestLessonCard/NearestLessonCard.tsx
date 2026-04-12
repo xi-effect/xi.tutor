@@ -1,3 +1,4 @@
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Button } from '@xipkg/button';
 import { Close, Conference, External, Redo } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
@@ -8,7 +9,7 @@ export type NearestLessonCardProps = {
   lesson: ScheduleLessonRow;
   onStartLesson?: () => void;
   onReschedule?: () => void;
-  /** Ссылка «Расписание» внизу карточки */
+  /** Переопределяет переход на страницу расписания по кнопке внизу карточки */
   onScheduleNavigate?: () => void;
   onCancelOne?: (lesson: ScheduleLessonRow) => void;
   onCancelAll?: (lesson: ScheduleLessonRow) => void;
@@ -22,10 +23,27 @@ export const NearestLessonCard = ({
   onCancelOne,
   onCancelAll,
 }: NearestLessonCardProps) => {
+  const navigate = useNavigate();
+  const search = useSearch({ strict: false });
   const { setCancelModalOpen, cancelLessonModal } = useCancelLessonModal(lesson, {
     onCancelOne,
     onCancelAll,
   });
+
+  const handleScheduleClick = () => {
+    if (onScheduleNavigate) {
+      onScheduleNavigate();
+      return;
+    }
+    const filteredSearch = search.call ? { call: search.call } : {};
+    navigate({
+      to: '/schedule',
+      search: (prev: Record<string, unknown>) => ({
+        ...prev,
+        ...filteredSearch,
+      }),
+    });
+  };
 
   return (
     <div className="border-brand-80 bg-gray-0 relative flex w-full flex-col gap-4 rounded-2xl border-2 p-5">
@@ -81,7 +99,7 @@ export const NearestLessonCard = ({
           variant="none"
           size="s"
           className="text-m-base text-gray-70 inline-flex h-[36px] w-full cursor-pointer items-center gap-1 font-medium hover:text-gray-100"
-          onClick={onScheduleNavigate}
+          onClick={handleScheduleClick}
         >
           Расписание
           <External className="h-4 w-4" />
