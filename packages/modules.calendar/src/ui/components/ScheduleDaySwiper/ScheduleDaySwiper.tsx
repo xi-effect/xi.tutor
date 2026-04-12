@@ -49,11 +49,6 @@ export const ScheduleDaySwiper = ({
 
   const handleSwiper = useCallback((swiper: SwiperType) => {
     swiperRef.current = swiper;
-    // swiper.params.autoHeight = false;
-    // swiper.originalParams.autoHeight = false;
-    // swiper.el.classList.remove(`${swiper.params.containerModifierClass}autoheight`);
-    // swiper.wrapperEl.style.removeProperty('height');
-    // swiper.update();
   }, []);
 
   useEffect(() => {
