@@ -4,7 +4,7 @@ import { Card } from '../cards/Card';
 import { ClassroomPropsT } from '../../../types';
 import { VirtualGridlList } from './VirtualGridlList';
 
-interface ICardsGridProps {
+type TCardsGridProps = {
   items: ClassroomPropsT[];
   isLoading: boolean;
   isError: boolean;
@@ -13,9 +13,9 @@ interface ICardsGridProps {
   parentRef: RefObject<HTMLDivElement | null>;
   emptyText: string;
   inviteText: string;
-}
+};
 
-export const CardsGrid: React.FC<ICardsGridProps> = ({
+export const CardsGrid: React.FC<TCardsGridProps> = ({
   items,
   isLoading,
   isError,

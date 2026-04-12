@@ -6,7 +6,7 @@ interface IItem {
   id: number;
 }
 
-type VirtualGridlListProps<T> = {
+type TVirtualGridlListProps<T> = {
   items: T[];
   renderItem: (item: T) => React.ReactNode;
   className?: string;
@@ -26,7 +26,7 @@ export const VirtualGridlList = <T extends IItem>({
   minItemWidth = 0,
   gap = 0,
   maxColumns = 1,
-}: VirtualGridlListProps<T>) => {
+}: TVirtualGridlListProps<T>) => {
   const { colCount } = useResponsiveGrid(parentRef, minItemWidth, gap, maxColumns);
 
   const rowVirtualizer = useVirtualizer({
