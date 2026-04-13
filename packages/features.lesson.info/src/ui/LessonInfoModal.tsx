@@ -84,11 +84,11 @@ export const LessonInfoModal = ({
           </div>
         </ModalBody>
 
-        <ModalFooter className="flex flex-col gap-2 px-6 pb-6 sm:flex-row sm:items-stretch">
+        <ModalFooter className="xs:gap-2 flex flex-col gap-3 px-6 pb-6 sm:flex-row sm:items-stretch">
           <Button
             type="button"
             variant="ghost"
-            className="text-brand-100 bg-brand-0 hover:bg-brand-20/50 h-12 flex-1"
+            className="text-brand-100 bg-brand-0 hover:bg-brand-20/50 h-12 min-h-12 flex-1"
             onClick={onStartLesson}
           >
             Начать занятие
@@ -97,7 +97,7 @@ export const LessonInfoModal = ({
           <Button
             type="button"
             variant="none"
-            className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 h-12 flex-1"
+            className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 h-12 min-h-12 flex-1"
             onClick={onReschedule}
           >
             Перенести
@@ -106,20 +106,22 @@ export const LessonInfoModal = ({
           <Button
             type="button"
             variant="none"
-            className="bg-gray-5 text-gray-80 flex h-12 w-12 shrink-0 items-center justify-center p-0 hover:text-gray-100 max-sm:mx-auto"
+            className="bg-gray-5 text-gray-80 xs:w-12 flex h-12 min-h-12 w-full shrink-0 items-center justify-center p-0 hover:text-gray-100 max-sm:mx-auto"
             onClick={onCancelLesson}
           >
-            <Trash className="fill-gray-60 h-5 w-5" />
+            <span className="xs:sr-only block">Удалить</span>
+            <Trash className="fill-gray-60 xs:ml-0 ml-2 h-5 w-5" />
           </Button>
           {onEditLesson != null ? (
             <Button
               type="button"
               variant="none"
-              className="bg-gray-5 text-gray-80 flex h-12 w-12 shrink-0 items-center justify-center p-0 hover:text-gray-100 max-sm:mx-auto"
+              className="bg-gray-5 text-gray-80 xs:w-12 flex h-12 min-h-12 w-full shrink-0 items-center justify-center p-0 hover:text-gray-100 max-sm:mx-auto"
               onClick={onEditLesson}
               aria-label="Редактировать"
             >
-              <Edit className="fill-gray-60 h-5 w-5" />
+              <span className="xs:sr-only block">Редактировать</span>
+              <Edit className="fill-gray-60 xs:ml-0 ml-2 h-5 w-5" />
             </Button>
           ) : null}
         </ModalFooter>
