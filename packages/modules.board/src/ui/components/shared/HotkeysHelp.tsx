@@ -28,6 +28,7 @@ const hotkeyCategories: HotkeyItem[] = [
   { keys: ['G'], description: 'Фигуры', category: 'Инструменты' },
   { keys: ['A'], description: 'Стрелка', category: 'Инструменты' },
   { keys: ['E'], description: 'Ластик', category: 'Инструменты' },
+  { keys: ['F'], description: 'Фрейм', category: 'Инструменты' },
 
   // Действия
   { keys: [modKey, 'A'], description: 'Выбрать все', category: 'Действия' },

@@ -106,7 +106,8 @@ export const ColorPicker = track(() => {
       shape.type === 'geo' ||
       shape.type === 'text' ||
       shape.type === 'draw' ||
-      shape.type === 'note',
+      shape.type === 'note' ||
+      shape.type === 'frame',
   );
 
   if (!isSupportedShape || selectedShapes.length === 0) {

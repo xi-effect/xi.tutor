@@ -1,5 +1,16 @@
 import { ReactNode } from 'react';
-import { Arrow, Cursor, Eraser, Figures, Hand, Image, Pen, Sticker, TText } from '@xipkg/icons';
+import {
+  Arrow,
+  Cursor,
+  Eraser,
+  Figures,
+  Hand,
+  Image,
+  Pen,
+  Sticker,
+  Transform,
+  TText,
+} from '@xipkg/icons';
 
 export type NavbarElementT = {
   action: string;
@@ -87,4 +98,5 @@ export const navBarElements: NavbarElementT[] = [
   { action: 'arrow', title: 'Стрелка', icon: <Arrow size="l" className="size-8" /> },
   { action: 'asset', title: 'Изображение', icon: <Image /> },
   { action: 'eraser', title: 'Ластик', icon: <Eraser /> },
+  { action: 'frame', title: 'Фрейм', icon: <Transform /> },
 ];
