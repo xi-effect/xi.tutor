@@ -107,7 +107,7 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
       </FormItem>
       <Button
         type="button"
-        className="ml;-2 h-[24px] w-[24px] p-0"
+        className="ml-2 h-[24px] w-[24px] p-0"
         variant="none"
         onClick={onRemove}
       >
