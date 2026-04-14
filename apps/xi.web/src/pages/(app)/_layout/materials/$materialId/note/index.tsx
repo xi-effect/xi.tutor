@@ -33,7 +33,6 @@ export const Route = createFileRoute('/(app)/_layout/materials/$materialId/note/
   //   console.log('Editor', context, location);
   // },
 });
-
 function MaterialsNotesPage() {
   return (
     <Suspense fallback={<LoadingScreen />}>

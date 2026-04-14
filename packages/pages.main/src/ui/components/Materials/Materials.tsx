@@ -24,10 +24,10 @@ const MaterialsContent = () => {
 
     navigate({
       to: '/materials',
-      search: (prev: Record<string, unknown>) => ({
-        ...prev,
+      search: {
+        tab: 'boards' as const,
         ...filteredSearch,
-      }),
+      },
     });
   };
 

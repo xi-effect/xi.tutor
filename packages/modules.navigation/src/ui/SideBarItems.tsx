@@ -114,6 +114,7 @@ export const SideBarItems = () => {
   const handleClick = (url: string) => {
     // Сохраняем только параметр call при переходе
     const filteredSearch = search.call ? { call: search.call } : {};
+    const materialsTabSearch = url === '/materials' ? { tab: 'boards' } : {};
 
     if (isStarted && mode === 'full') {
       // Только навигация; mode в compact выставит лейаут при смене pathname (см. _layout.tsx),
@@ -122,6 +123,7 @@ export const SideBarItems = () => {
         to: url,
         search: () => ({
           ...filteredSearch,
+          ...materialsTabSearch,
           call: callId,
         }),
       });
@@ -130,6 +132,7 @@ export const SideBarItems = () => {
         to: url,
         search: () => ({
           ...filteredSearch,
+          ...materialsTabSearch,
         }),
       });
     }

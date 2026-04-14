@@ -35,7 +35,6 @@ export const Route = createFileRoute('/(app)/_layout/materials/$materialId/board
   //   console.log('Board', context, location);
   // },
 });
-
 function MaterialsBoardPage() {
   return (
     <div className="h-full min-h-0">
