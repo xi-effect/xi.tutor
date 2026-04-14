@@ -1,4 +1,4 @@
-import { Account, Exit, Key, Palette, Notification, File } from '@xipkg/icons';
+import { Account, Exit, Key, Palette, Notification, File, Music } from '@xipkg/icons';
 import { Dispatch, SetStateAction } from 'react';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useAuth } from 'common.auth';
@@ -24,6 +24,10 @@ const options: ItemT[] = [
   {
     name: 'Уведомления',
     query: 'notifications',
+  },
+  {
+    name: 'Эффекты',
+    query: 'effects',
   },
   {
     name: 'Отчёт',
@@ -62,6 +66,8 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
         return <Key className={iconClasses} key="key-icon" />;
       case 'notifications':
         return <Notification className={iconClasses} key="notification-icon" />;
+      case 'effects':
+        return <Music className={iconClasses} key="music-icon" />;
       case 'report':
         return <File className={iconClasses} key="report-icon" />;
       default:

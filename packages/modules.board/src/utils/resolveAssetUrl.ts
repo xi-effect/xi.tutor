@@ -1,5 +1,6 @@
 import { getAxiosInstance } from 'common.config';
 import { getFileUrl } from 'common.api';
+import { getRegisteredTokens } from './tokenRegistry';
 
 const blobUrlCache = new Map<string, string>();
 
@@ -23,6 +24,10 @@ export function extractFileIdFromUrl(src: string): string | null {
 /**
  * Resolves a file `src` (either a file ID or a full URL for backward compatibility)
  * into a blob URL. Fetches with x-storage-token and caches the result.
+ *
+ * On failure, automatically tries all tokens from the registry (cross-board
+ * fallback). This lets PDF/audio shapes resolve files from other boards
+ * without any changes to their rendering code.
  */
 export async function resolveAssetUrl(src: string, token: string): Promise<string> {
   if (!src || !token) return src;
@@ -34,16 +39,32 @@ export async function resolveAssetUrl(src: string, token: string): Promise<strin
 
   const url = isFullUrl(src) ? src : getFileUrl(src);
 
+  try {
+    return await fetchAndCacheBlobUrl(url, src, token);
+  } catch (primaryError) {
+    for (const altToken of getRegisteredTokens()) {
+      if (altToken === token) continue;
+      try {
+        return await fetchAndCacheBlobUrl(url, src, altToken);
+      } catch {
+        continue;
+      }
+    }
+    throw primaryError;
+  }
+}
+
+async function fetchAndCacheBlobUrl(url: string, cacheKey: string, token: string): Promise<string> {
   const axiosInst = await getAxiosInstance();
   const response = await axiosInst.get(url, {
     responseType: 'blob',
     headers: { 'x-storage-token': token },
   });
 
-  if (response.status !== 200) return src;
+  if (response.status !== 200) throw new Error(`Unexpected status ${response.status}`);
 
   const blobUrl = URL.createObjectURL(response.data);
-  blobUrlCache.set(src, blobUrl);
+  blobUrlCache.set(cacheKey, blobUrl);
   return blobUrl;
 }
 

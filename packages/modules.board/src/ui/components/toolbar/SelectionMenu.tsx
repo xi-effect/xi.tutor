@@ -1,10 +1,13 @@
 import { useCallback } from 'react';
 import { track, useEditor } from 'tldraw';
 import { Button } from '@xipkg/button';
-import { Trash, Copy, Unlocked } from '@xipkg/icons';
+import { Trash, Copy, Locked, Unlocked } from '@xipkg/icons';
 import { MoreActionsMenu } from './MoreActionsMenu';
 import { ColorPicker } from './ColorPicker';
 import { useYjsContext } from '../../../providers/YjsProvider';
+import { isMac } from '../../../utils';
+
+const modKey = isMac ? '⌘' : 'Ctrl';
 
 export const SelectionMenu = track(function SelectionMenu() {
   const editor = useEditor();
@@ -65,7 +68,7 @@ export const SelectionMenu = track(function SelectionMenu() {
             onClick={() => {
               editor.toggleLock(selectedIds);
             }}
-            title="Разблокировать"
+            title={`Разблокировать (${modKey}+L)`}
           >
             <Unlocked />
           </Button>
@@ -89,6 +92,17 @@ export const SelectionMenu = track(function SelectionMenu() {
             title="Удалить (Del)"
           >
             <Trash />
+          </Button>
+          <Button
+            variant="none"
+            size="s"
+            className="hover:bg-brand-0 p-1"
+            onClick={() => {
+              editor.toggleLock(selectedIds);
+            }}
+            title={`Заблокировать (${modKey}+L)`}
+          >
+            <Locked />
           </Button>
           <ColorPicker />
           <MoreActionsMenu />

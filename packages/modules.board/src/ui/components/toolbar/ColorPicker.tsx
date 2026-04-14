@@ -1,13 +1,13 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import { track, useEditor } from 'tldraw';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
+import { Slider } from '@xipkg/slider';
 import { Button } from '@xipkg/button';
 import { colorOptions } from '../../../utils/customConfig';
 import { navBarElements } from '../../../utils/navBarElements';
 import { useTldrawStyles } from '../../../hooks/useTldrawStyles';
 import { cn } from '@xipkg/utils';
 
-// Маппинг цветов стикеров на CSS классы
 const stickerColorMap: Record<string, string> = {
   grey: 'bg-gray-60',
   blue: 'bg-brand-80',
@@ -20,7 +20,6 @@ const stickerColorMap: Record<string, string> = {
   'light-blue': 'bg-cyan-100',
 };
 
-// Цвета для стикеров из navBarElements
 const stickerColors =
   navBarElements
     .find((item) => item.action === 'sticker')
@@ -29,100 +28,120 @@ const stickerColors =
       class: stickerColorMap[item.color] || 'bg-gray-60',
     })) || [];
 
-type ColorCircleT = {
+const sizes = ['xs', 's', 'm', 'l', 'xl'] as const;
+
+const supportedShapeTypes = new Set(['arrow', 'geo', 'text', 'draw', 'note']);
+const drawShapeTypes = new Set(['draw']);
+
+type ColorDotProps = {
   colorClass: string;
   isSelected: boolean;
-  handleClick: () => void;
+  onClick: () => void;
 };
 
-const ColorCircle = ({ colorClass, isSelected, handleClick }: ColorCircleT) => (
-  <div
+const ColorDot = ({ colorClass, isSelected, onClick }: ColorDotProps) => (
+  <button
+    type="button"
+    onClick={onClick}
     className={cn(
-      'm-auto flex h-[36px] w-[36px] items-center justify-center rounded-full',
-      isSelected ? 'border-grey-100 border' : 'border border-transparent',
+      'h-6 w-6 shrink-0 cursor-pointer rounded-full transition-all',
+      colorClass,
+      isSelected ? 'ring-2 ring-gray-100 ring-offset-1' : 'hover:scale-110',
     )}
-  >
-    <button
-      onClick={handleClick}
-      type="button"
-      aria-label={`Select ${colorClass}`}
-      tabIndex={0}
-      className={`h-[31px] w-[31px] cursor-pointer rounded-full ${colorClass}`}
-    />
-  </div>
+    aria-label={`Color ${colorClass}`}
+  />
 );
 
 export const ColorPicker = track(() => {
   const editor = useEditor();
-  const { setSelectedShapesColor } = useTldrawStyles();
+  const { setSelectedShapesColor, setSelectedShapesThickness, setSelectedShapesOpacity } =
+    useTldrawStyles();
   const [open, setOpen] = useState(false);
 
   const selectedShapes = editor.getSelectedShapes();
 
-  // Определяем, является ли выбранный элемент стикером
-  const isSticker = useMemo(() => {
-    return selectedShapes.some((shape) => shape.type === 'note');
-  }, [selectedShapes]);
+  const isSticker = useMemo(
+    () => selectedShapes.some((shape) => shape.type === 'note'),
+    [selectedShapes],
+  );
 
-  // Получаем доступные цвета в зависимости от типа элемента
-  const availableColors = useMemo(() => {
-    return isSticker ? stickerColors : colorOptions;
-  }, [isSticker]);
+  const isDrawShape = useMemo(
+    () => selectedShapes.some((shape) => drawShapeTypes.has(shape.type)),
+    [selectedShapes],
+  );
 
-  // Получаем текущий цвет из выбранной фигуры (стрелки, геометрические фигуры, текст, рукописные линии или стикеры)
+  const availableColors = useMemo(() => (isSticker ? stickerColors : colorOptions), [isSticker]);
+
   const currentColor = useMemo((): string => {
     if (selectedShapes.length === 0) return isSticker ? 'grey' : 'black';
-
     try {
-      const firstShape = selectedShapes[0];
-      // В tldraw стили хранятся в props фигуры
-      // Цвет может быть в shape.props.color для стрелок, geo фигур, текста, рукописных линий и стикеров
-      const shapeProps = (firstShape as { props?: { color?: string } }).props;
-      if (shapeProps?.color) {
-        const color = shapeProps.color;
-        // Проверяем, что цвет есть в списке доступных цветов
-        if (availableColors.some((opt) => opt.name === color)) {
-          return color;
-        }
+      const shapeProps = (selectedShapes[0] as { props?: { color?: string } }).props;
+      if (shapeProps?.color && availableColors.some((opt) => opt.name === shapeProps.color)) {
+        return shapeProps.color;
       }
     } catch (error) {
       console.warn('Error getting shape color:', error);
     }
-
     return isSticker ? 'grey' : 'black';
   }, [selectedShapes, isSticker, availableColors]);
 
-  const handleColorClick = (colorName: string) => {
-    setSelectedShapesColor(colorName);
-    setOpen(false);
-  };
+  const currentThickness = useMemo((): string => {
+    if (selectedShapes.length === 0) return 'm';
+    try {
+      const shapeProps = (selectedShapes[0] as { props?: { size?: string } }).props;
+      if (shapeProps?.size) return shapeProps.size;
+    } catch {
+      /* fallback */
+    }
+    return 'm';
+  }, [selectedShapes]);
 
-  // Показываем для стрелок, линий, геометрических фигур, текста, рукописных линий и стикеров
-  // В tldraw линии - это стрелки без наконечников, геометрические фигуры имеют тип 'geo',
-  // текст - тип 'text', рукописные линии - тип 'draw', стикеры - тип 'note'
-  const isSupportedShape = selectedShapes.some(
-    (shape) =>
-      shape.type === 'arrow' ||
-      shape.type === 'geo' ||
-      shape.type === 'text' ||
-      shape.type === 'draw' ||
-      shape.type === 'note',
+  const currentOpacity = useMemo((): number => {
+    if (selectedShapes.length === 0) return 100;
+    try {
+      const opacity = (selectedShapes[0] as { opacity?: number }).opacity;
+      if (opacity !== undefined) return Math.round(opacity * 100);
+    } catch {
+      /* fallback */
+    }
+    return 100;
+  }, [selectedShapes]);
+
+  const handleColorClick = useCallback(
+    (colorName: string) => {
+      setSelectedShapesColor(colorName);
+    },
+    [setSelectedShapesColor],
   );
+
+  const handleSize = useCallback(
+    (value: number[]) => {
+      const size = sizes[value[0] - 1];
+      setSelectedShapesThickness(size);
+    },
+    [setSelectedShapesThickness],
+  );
+
+  const handleOpacity = useCallback(
+    (value: number[]) => {
+      setSelectedShapesOpacity(value[0]);
+    },
+    [setSelectedShapesOpacity],
+  );
+
+  const isSupportedShape = selectedShapes.some((shape) => supportedShapeTypes.has(shape.type));
 
   if (!isSupportedShape || selectedShapes.length === 0) {
     return null;
   }
 
-  // Находим цвет для иконки
   const currentColorOption = availableColors.find((opt) => opt.name === currentColor);
-
-  // Определяем количество колонок для сетки (для стикеров может быть другое количество)
-  const gridCols = isSticker ? 'grid-cols-5' : 'grid-cols-5';
+  const getSizeIndex = (size: string) => sizes.indexOf(size as (typeof sizes)[number]) + 1;
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="none" size="s" className="hover:bg-brand-0 w-[32px] p-1" title="Цвет">
+        <Button variant="none" size="s" className="hover:bg-brand-0 w-[32px] p-1" title="Стиль">
           <div
             className={`h-4 w-4 rounded-full ${currentColorOption?.class || (isSticker ? 'bg-gray-60' : 'bg-gray-100')}`}
           />
@@ -132,17 +151,56 @@ export const ColorPicker = track(() => {
         side="top"
         align="center"
         sideOffset={8}
-        className="border-gray-10 bg-gray-0 w-auto rounded-xl border p-4 shadow-md"
+        className="border-gray-10 bg-gray-0 w-auto rounded-xl border p-3 shadow-md"
       >
-        <div className={`grid ${gridCols} gap-2`}>
-          {availableColors.map(({ name, class: colorClass }) => (
-            <ColorCircle
-              key={name}
-              colorClass={colorClass}
-              isSelected={currentColor === name}
-              handleClick={() => handleColorClick(name)}
-            />
-          ))}
+        <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+          {/* Слайдеры — только для draw-фигур */}
+          {isDrawShape && (
+            <>
+              <div className="flex min-w-0 flex-col gap-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-20 shrink-0 sm:w-24">
+                    <Slider
+                      onValueChange={handleSize}
+                      value={[getSizeIndex(currentThickness)]}
+                      min={1}
+                      max={5}
+                      step={1}
+                      minStepsBetweenThumbs={1}
+                    />
+                  </div>
+                  <span className="text-gray-80 w-5 shrink-0 text-xs">
+                    {(currentThickness || 'm').toUpperCase()}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-20 shrink-0 sm:w-24">
+                    <Slider
+                      onValueChange={handleOpacity}
+                      value={[currentOpacity]}
+                      min={10}
+                      max={100}
+                      step={10}
+                    />
+                  </div>
+                  <span className="text-gray-80 w-5 shrink-0 text-xs">{currentOpacity}</span>
+                </div>
+              </div>
+              <div className="bg-gray-10 hidden h-8 w-px shrink-0 sm:block" />
+            </>
+          )}
+
+          {/* Цвета */}
+          <div className="flex flex-wrap items-center gap-1.5">
+            {availableColors.map(({ name, class: colorClass }) => (
+              <ColorDot
+                key={name}
+                colorClass={colorClass}
+                isSelected={currentColor === name}
+                onClick={() => handleColorClick(name)}
+              />
+            ))}
+          </div>
         </div>
       </PopoverContent>
     </Popover>

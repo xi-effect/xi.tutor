@@ -14,5 +14,19 @@
   "student": "Student",
   "classrooms": "Classrooms",
   "hints": "Hints",
-  "roleChanged": "Role successfully changed to {{role}}"
+  "roleChanged": "Role successfully changed to {{role}}",
+  "supportModal": {
+    "title": "Contact us",
+    "description": "Choose a convenient way to reach us — we're always happy to help!",
+    "telegram": "Telegram",
+    "telegramDesc": "@sovlium_support_bot",
+    "vk": "VKontakte",
+    "vkDesc": "Sovlium Community",
+    "email": "Email",
+    "emailDesc": "support@sovlium.ru",
+    "responseTime": "We usually respond within a couple of hours, at most — within a day",
+    "socials": "Stay up to date with platform news",
+    "socialTelegram": "Telegram channel",
+    "socialVk": "VKontakte group"
+  }
 }

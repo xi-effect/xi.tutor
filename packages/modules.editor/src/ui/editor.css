@@ -149,6 +149,9 @@
 /* Место слева для ручки перетаскивания (Notion-style) */
 .xi-editor .ProseMirror {
   padding-left: 2.5rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* Подсветка блока при перетаскивании */

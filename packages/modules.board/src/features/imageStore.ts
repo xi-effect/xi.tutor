@@ -3,6 +3,7 @@ import { getFileUrl } from 'common.api';
 import { TLAsset } from 'tldraw';
 import { toast } from 'sonner';
 import { resolveAssetUrl } from '../utils/resolveAssetUrl';
+import { registerToken } from '../utils/tokenRegistry';
 
 export type TLAssetContextT = {
   screenScale: number;
@@ -64,49 +65,20 @@ async function probeImage(file: File): Promise<{ w: number; h: number; objectUrl
 /** POST через сервисные функции запросов (без хуков) */
 async function postUpload(file: File, token: string) {
   const isImage = file.type.startsWith('image/');
-  console.log('[postUpload] Начало загрузки файла:', {
-    fileName: file.name,
-    fileType: file.type,
-    fileSize: file.size,
-    isImage,
-    hasToken: !!token,
-  });
-
-  try {
-    const result = isImage
-      ? await uploadImageRequest({ file, token })
-      : await uploadFileRequest({ file, token });
-    console.log('[postUpload] ✅ Файл успешно загружен:', { url: result });
-    return result;
-  } catch (error) {
-    console.error('[postUpload] ❌ Ошибка при загрузке файла:', {
-      error,
-      errorMessage: error instanceof Error ? error.message : String(error),
-      fileName: file.name,
-      fileType: file.type,
-      fileSize: file.size,
-    });
-    throw error;
-  }
+  return isImage
+    ? await uploadImageRequest({ file, token })
+    : await uploadFileRequest({ file, token });
 }
 
 /** Основной store — упрощенная версия */
 export const myAssetStore = (token: string) => {
+  registerToken(token);
+
   return {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async upload(_asset: TLAsset, file: File, _abortSignal?: AbortSignal) {
-      console.log('[myAssetStore.upload] Начало загрузки:', {
-        fileName: file.name,
-        fileType: file.type,
-        fileSize: file.size,
-        assetId: _asset.id,
-      });
-
-      // Не изображение — просто загрузка (возвращаем bare ID)
       if (!file.type.startsWith('image/')) {
-        console.log('[myAssetStore.upload] Файл не является изображением, загружаем как есть');
         const fileId = await postUpload(file, token);
-        console.log('[myAssetStore.upload] ✅ Файл загружен:', { fileId });
         return { src: fileId };
       }
 
@@ -138,15 +110,8 @@ export const myAssetStore = (token: string) => {
         if (objectUrl) URL.revokeObjectURL(objectUrl);
       }
 
-      console.log('[myAssetStore.upload] Отправляем изображение на сервер без конвертации:', {
-        fileName: file.name,
-        fileType: file.type,
-        fileSize: file.size,
-      });
       const fileId = await postUpload(file, token);
-      // tldraw's built-in image asset validates src as a URL, so we must provide the full URL here
       const src = getFileUrl(fileId);
-      console.log('[myAssetStore.upload] ✅ Изображение загружено:', { fileId, src });
       return { src };
     },
 

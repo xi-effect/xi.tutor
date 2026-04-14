@@ -1,27 +1,47 @@
 import { Track, LocalVideoTrack } from 'livekit-client';
 import { supportsScreenSharing } from '@livekit/components-core';
-import { useTrackToggle } from '@livekit/components-react';
-import { TrackToggle } from '../shared/TrackToggle/TrackToggle';
+import { useRoomContext, useTrackToggle } from '@livekit/components-react';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { useCallback, useState } from 'react';
+import { TrackToggle } from '../shared';
 
 export const ScreenShareButton = ({ className }: { className?: string }) => {
-  const visibleControls = { leave: true, screenShare: true };
-  const browserSupportsScreenSharing = supportsScreenSharing();
+  const [isScreenShareEnabled, setIsScreenShareEnabled] = useState(false);
 
-  const { toggle, enabled, track } = useTrackToggle({
+  const browserSupportsScreenSharing = supportsScreenSharing();
+  const room = useRoomContext();
+
+  const { toggle, track, enabled } = useTrackToggle({
     source: Track.Source.ScreenShare,
     captureOptions: { audio: true, selfBrowserSurface: 'include' },
   });
 
-  const handleScreenShareToggle = (_enabled: boolean, isUserInitiated: boolean) => {
-    if (isUserInitiated) {
+  const closeAllScreenShareTracks = useCallback(() => {
+    const pubs = room.localParticipant.getTrackPublications();
+
+    pubs.forEach((pub) => {
+      if (pub.source === Track.Source.ScreenShare || pub.source === Track.Source.ScreenShareAudio) {
+        const mediaStreamTrack = pub.track?.mediaStreamTrack;
+        mediaStreamTrack?.stop();
+      }
+    });
+  }, [room.localParticipant]);
+
+  const toggleScreenShare = useCallback(() => {
+    closeAllScreenShareTracks();
+    if (!isScreenShareEnabled) {
+      setIsScreenShareEnabled(true);
+      toggle();
+    } else {
+      setIsScreenShareEnabled(false);
+
       toggle();
     }
-  };
+  }, [closeAllScreenShareTracks, isScreenShareEnabled, toggle]);
 
   return (
     <>
-      {visibleControls.screenShare && browserSupportsScreenSharing && (
+      {browserSupportsScreenSharing && (
         <Tooltip delayDuration={1000}>
           <TooltipTrigger className="bg-transparent" asChild>
             <div>
@@ -30,12 +50,12 @@ export const ScreenShareButton = ({ className }: { className?: string }) => {
                 source={Track.Source.ScreenShare}
                 screenShareTrack={track?.track as LocalVideoTrack}
                 screenShareEnabled={enabled}
-                onChange={handleScreenShareToggle}
+                onChange={toggleScreenShare}
               />
             </div>
           </TooltipTrigger>
           <TooltipContent side="top" align="center">
-            {enabled ? 'Остановить показ экрана' : 'Поделиться экраном'}
+            {isScreenShareEnabled ? 'Остановить показ экрана' : 'Поделиться экраном'}
           </TooltipContent>
         </Tooltip>
       )}
