@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Button } from '@xipkg/button';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import { useParams, useRouter } from '@tanstack/react-router';
@@ -76,7 +77,11 @@ export const Header = () => {
     if (classroomId) {
       router.navigate({ to: '/classrooms/$classroomId', params: { classroomId } });
     } else {
-      router.navigate({ to: '/materials' });
+      router.navigate({
+        to: '/materials',
+        // @ts-ignore
+        search: { tab: 'boards' },
+      });
     }
   };
 

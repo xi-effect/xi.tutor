@@ -1,17 +1,88 @@
 import { Slider } from '@xipkg/slider';
-import { ColorGrid } from './ColorSet';
 import { useTldrawStore } from '../../../../store/useTldrawStore';
 import { useTldrawStyles } from '../../../../hooks/useTldrawStyles';
+import { colorOptions } from '../../../../utils/customConfig';
+import { cn } from '@xipkg/utils';
+import type { PenPreset, PenThickness } from '../../../../store/useTldrawStore';
 
 const sizes = ['xs', 's', 'm', 'l', 'xl'] as const;
 
-export const OpacitySizeMenu = () => {
-  // Получаем значения и функции из стора
-  const { pencilColor, pencilThickness, pencilOpacity, setPencilThickness, setPencilOpacity } =
-    useTldrawStore();
+const colorClassMap: Record<string, string> = Object.fromEntries(
+  colorOptions.map(({ name, class: cls }) => [name, cls]),
+);
 
-  // Получаем функции для обновления стилей в редакторе
-  const { setThickness, setOpacity } = useTldrawStyles();
+const thicknessSizeMap: Record<string, number> = {
+  xs: 8,
+  s: 12,
+  m: 16,
+  l: 20,
+  xl: 24,
+};
+
+type PresetButtonProps = {
+  preset: PenPreset;
+  isActive: boolean;
+  onClick: () => void;
+};
+
+const PresetButton = ({ preset, isActive, onClick }: PresetButtonProps) => {
+  const dotSize = thicknessSizeMap[preset.thickness] ?? 16;
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        'flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all',
+        isActive ? 'ring-brand-80 ring-2 ring-offset-1' : 'hover:ring-gray-30 hover:ring-1',
+      )}
+      aria-label="Preset"
+    >
+      <span
+        className={cn('block rounded-full', colorClassMap[preset.color] || 'bg-gray-100')}
+        style={{
+          width: dotSize,
+          height: dotSize,
+          opacity: preset.opacity / 100,
+        }}
+      />
+    </button>
+  );
+};
+
+type ColorDotProps = {
+  colorClass: string;
+  isSelected: boolean;
+  onClick: () => void;
+};
+
+const ColorDot = ({ colorClass, isSelected, onClick }: ColorDotProps) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={cn(
+      'h-6 w-6 shrink-0 cursor-pointer rounded-full transition-all',
+      colorClass,
+      isSelected ? 'ring-2 ring-gray-100 ring-offset-1' : 'hover:scale-110',
+    )}
+    aria-label={`Color ${colorClass}`}
+  />
+);
+
+export const OpacitySizeMenu = () => {
+  const {
+    pencilColor,
+    pencilThickness,
+    pencilOpacity,
+    setPencilColor,
+    setPencilThickness,
+    setPencilOpacity,
+    penPresets,
+    activePresetIndex,
+    setActivePreset,
+  } = useTldrawStore();
+
+  const { setColor, setThickness, setOpacity } = useTldrawStyles();
 
   const handleSize = (value: number[]) => {
     const size = sizes[value[0] - 1];
@@ -25,49 +96,81 @@ export const OpacitySizeMenu = () => {
     setPencilOpacity(opacity);
   };
 
-  // Получаем индекс текущего размера для слайдера
-  const getSizeIndex = (size: string) => {
-    return sizes.indexOf(size as (typeof sizes)[number]) + 1;
+  const handleColorClick = (colorName: string) => {
+    setColor(colorName);
+    setPencilColor(colorName);
   };
 
+  const handlePresetClick = (index: number) => {
+    setActivePreset(index);
+    const preset = penPresets[index];
+    setColor(preset.color);
+    setThickness(preset.thickness as PenThickness);
+    setOpacity(preset.opacity);
+  };
+
+  const getSizeIndex = (size: string) => sizes.indexOf(size as (typeof sizes)[number]) + 1;
+
   return (
-    <div className="border-gray-10 bg-gray-0 flex h-full w-full rounded-xl border shadow-none md:w-[562px]">
-      <div className="flex w-full flex-col items-center justify-center gap-2 md:flex-row">
-        <div className="w-[276px] p-2">
-          <div className="flex w-full flex-col justify-center gap-6">
-            <div className="flex w-full items-center justify-between gap-4">
-              <div className="w-full">
-                <Slider
-                  onValueChange={(value) => handleSize(value)}
-                  value={[getSizeIndex(pencilThickness)]}
-                  min={1}
-                  max={5}
-                  step={1}
-                  minStepsBetweenThumbs={1}
-                />
-              </div>
-              <div className="w-8">
-                <p>{pencilThickness.toUpperCase()}</p>
-              </div>
+    <div className="border-gray-10 bg-gray-0 w-full rounded-xl border shadow-none">
+      <div className="flex w-full flex-col items-stretch gap-3 p-3 sm:flex-row sm:items-center">
+        {/* Пресеты */}
+        <div className="flex shrink-0 items-center gap-1.5">
+          {penPresets.map((preset, index) => (
+            <PresetButton
+              key={index}
+              preset={preset}
+              isActive={index === activePresetIndex}
+              onClick={() => handlePresetClick(index)}
+            />
+          ))}
+        </div>
+
+        <div className="bg-gray-10 hidden h-8 w-px shrink-0 sm:block" />
+
+        {/* Слайдеры */}
+        <div className="flex min-w-0 flex-col gap-3">
+          <div className="flex items-center gap-2">
+            <div className="w-20 shrink-0 sm:w-24">
+              <Slider
+                onValueChange={handleSize}
+                value={[getSizeIndex(pencilThickness)]}
+                min={1}
+                max={5}
+                step={1}
+                minStepsBetweenThumbs={1}
+              />
             </div>
-            <div className="flex w-full items-center justify-between gap-4">
-              <div className="w-full">
-                <Slider
-                  onValueChange={(value) => handleOpacity(value)}
-                  value={[pencilOpacity]}
-                  min={10}
-                  max={100}
-                  step={1}
-                />
-              </div>
-              <div className="w-8">
-                <p>{pencilOpacity}</p>
-              </div>
+            <span className="text-gray-80 w-5 shrink-0 text-xs">
+              {pencilThickness.toUpperCase()}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-20 shrink-0 sm:w-24">
+              <Slider
+                onValueChange={handleOpacity}
+                value={[pencilOpacity]}
+                min={10}
+                max={100}
+                step={10}
+              />
             </div>
+            <span className="text-gray-80 w-5 shrink-0 text-xs">{pencilOpacity}</span>
           </div>
         </div>
-        <div className="w-[276px] p-2">
-          <ColorGrid currentColor={pencilColor} />
+
+        <div className="bg-gray-10 hidden h-8 w-px shrink-0 sm:block" />
+
+        {/* Цвета */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          {colorOptions.map(({ name, class: colorClass }) => (
+            <ColorDot
+              key={name}
+              colorClass={colorClass}
+              isSelected={pencilColor === name}
+              onClick={() => handleColorClick(name)}
+            />
+          ))}
         </div>
       </div>
     </div>

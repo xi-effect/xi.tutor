@@ -3,6 +3,19 @@ import { persist } from 'zustand/middleware';
 import { ToolType } from '../types';
 
 export type InputMode = 'auto' | 'pen' | 'mouse';
+export type PenThickness = 'xs' | 's' | 'm' | 'l' | 'xl';
+
+export interface PenPreset {
+  color: string;
+  thickness: PenThickness;
+  opacity: number;
+}
+
+const DEFAULT_PEN_PRESETS: PenPreset[] = [
+  { color: 'black', thickness: 'm', opacity: 100 },
+  { color: 'blue', thickness: 's', opacity: 100 },
+  { color: 'red', thickness: 'l', opacity: 50 },
+];
 
 interface TldrawState {
   /** Режим ввода: авто (по устройству), перо, мышь */
@@ -25,21 +38,25 @@ interface TldrawState {
   setEditingElementId: (id: string | null) => void;
   stickerColor: string;
   setStickerColor: (color: string) => void;
-  // Настройки стрелок и линий
   arrowColor: string;
   setArrowColor: (color: string) => void;
-  // Настройки карандаша
+  // Пресеты карандаша
+  penPresets: PenPreset[];
+  activePresetIndex: number;
+  setActivePreset: (index: number) => void;
+  updateActivePreset: (patch: Partial<PenPreset>) => void;
+  // Вычисляемые из активного пресета (обратная совместимость)
   pencilColor: string;
   setPencilColor: (color: string) => void;
-  pencilThickness: 'xs' | 's' | 'm' | 'l' | 'xl';
-  setPencilThickness: (thickness: 'xs' | 's' | 'm' | 'l' | 'xl') => void;
+  pencilThickness: PenThickness;
+  setPencilThickness: (thickness: PenThickness) => void;
   pencilOpacity: number;
   setPencilOpacity: (opacity: number) => void;
 }
 
 export const useTldrawStore = create<TldrawState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       inputMode: 'auto',
       setInputMode: (mode: InputMode) => set(() => ({ inputMode: mode })),
       showDebugInfo: false,
@@ -62,14 +79,53 @@ export const useTldrawStore = create<TldrawState>()(
       },
       editingElementId: null,
       setEditingElementId: (id: string | null) => set(() => ({ editingElementId: id })),
-      // Настройки карандаша
-      pencilColor: 'black',
-      setPencilColor: (color: string) => set(() => ({ pencilColor: color })),
-      pencilThickness: 'm',
-      setPencilThickness: (thickness: 'xs' | 's' | 'm' | 'l' | 'xl') =>
-        set(() => ({ pencilThickness: thickness })),
-      pencilOpacity: 100,
-      setPencilOpacity: (opacity: number) => set(() => ({ pencilOpacity: opacity })),
+
+      penPresets: DEFAULT_PEN_PRESETS,
+      activePresetIndex: 0,
+
+      setActivePreset: (index: number) => {
+        const { penPresets } = get();
+        const preset = penPresets[index];
+        if (!preset) return;
+        set({
+          activePresetIndex: index,
+          pencilColor: preset.color,
+          pencilThickness: preset.thickness,
+          pencilOpacity: preset.opacity,
+        });
+      },
+
+      updateActivePreset: (patch: Partial<PenPreset>) => {
+        const { penPresets, activePresetIndex } = get();
+        const updated = penPresets.map((p, i) =>
+          i === activePresetIndex ? { ...p, ...patch } : p,
+        );
+        set({ penPresets: updated });
+      },
+
+      pencilColor: DEFAULT_PEN_PRESETS[0].color,
+      setPencilColor: (color: string) => {
+        const { activePresetIndex, penPresets } = get();
+        const updated = penPresets.map((p, i) => (i === activePresetIndex ? { ...p, color } : p));
+        set({ pencilColor: color, penPresets: updated });
+      },
+
+      pencilThickness: DEFAULT_PEN_PRESETS[0].thickness,
+      setPencilThickness: (thickness: PenThickness) => {
+        const { activePresetIndex, penPresets } = get();
+        const updated = penPresets.map((p, i) =>
+          i === activePresetIndex ? { ...p, thickness } : p,
+        );
+        set({ pencilThickness: thickness, penPresets: updated });
+      },
+
+      pencilOpacity: DEFAULT_PEN_PRESETS[0].opacity,
+      setPencilOpacity: (opacity: number) => {
+        const { activePresetIndex, penPresets } = get();
+        const updated = penPresets.map((p, i) => (i === activePresetIndex ? { ...p, opacity } : p));
+        set({ pencilOpacity: opacity, penPresets: updated });
+      },
+
       stickerColor: 'grey',
       setStickerColor: (color: string) => set(() => ({ stickerColor: color })),
       arrowColor: 'black',

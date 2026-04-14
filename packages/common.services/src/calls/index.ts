@@ -7,3 +7,4 @@ export {
   useUpdateConferenceMetadata,
   type UpdateConferenceMetadataData,
 } from './useUpdateConferenceMetadata';
+export { useUpdateParticipantMetadata } from './useUpdateParticipantMetadata';

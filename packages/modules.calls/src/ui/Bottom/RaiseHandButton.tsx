@@ -1,12 +1,10 @@
 import { Button } from '@xipkg/button';
 import { Hand } from '@xipkg/icons';
-import { useRaisedHands } from '../../hooks/useRaisedHands';
-import { useCallStore } from '../../store/callStore';
 import { cn } from '@xipkg/utils';
+import { useRaisedHands } from '../../hooks';
 
 export const RaiseHandButton = ({ className }: { className?: string }) => {
-  const { toggleHand } = useRaisedHands();
-  const { isHandRaised } = useCallStore();
+  const { toggleHand, isHandRaised, isPending } = useRaisedHands();
 
   return (
     <Button
@@ -21,6 +19,7 @@ export const RaiseHandButton = ({ className }: { className?: string }) => {
       )}
       data-umami-event="call-raise-hand"
       data-umami-event-state={isHandRaised ? 'lower' : 'raise'}
+      disabled={isPending}
     >
       <Hand className={cn('h-5 w-5', isHandRaised ? 'fill-brand-100' : 'fill-gray-100')} />
     </Button>

@@ -16,26 +16,28 @@ export const ScreenShareButton = ({ className }: { className?: string }) => {
     captureOptions: { audio: true, selfBrowserSurface: 'include' },
   });
 
+  const closeAllScreenShareTracks = useCallback(() => {
+    const pubs = room.localParticipant.getTrackPublications();
+
+    pubs.forEach((pub) => {
+      if (pub.source === Track.Source.ScreenShare || pub.source === Track.Source.ScreenShareAudio) {
+        const mediaStreamTrack = pub.track?.mediaStreamTrack;
+        mediaStreamTrack?.stop();
+      }
+    });
+  }, [room.localParticipant]);
+
   const toggleScreenShare = useCallback(() => {
+    closeAllScreenShareTracks();
     if (!isScreenShareEnabled) {
       setIsScreenShareEnabled(true);
       toggle();
     } else {
       setIsScreenShareEnabled(false);
-      const pubs = room.localParticipant.getTrackPublications();
 
-      pubs.forEach((pub) => {
-        if (
-          pub.source === Track.Source.ScreenShare ||
-          pub.source === Track.Source.ScreenShareAudio
-        ) {
-          const mediaStreamTrack = pub.track?.mediaStreamTrack;
-          mediaStreamTrack?.stop();
-        }
-      });
       toggle();
     }
-  }, [isScreenShareEnabled, room.localParticipant, toggle]);
+  }, [closeAllScreenShareTracks, isScreenShareEnabled, toggle]);
 
   return (
     <>

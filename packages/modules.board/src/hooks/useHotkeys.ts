@@ -202,6 +202,16 @@ export const useHotkeys = () => {
         return;
       }
 
+      // Блокировка / разблокировка
+      if (code === 'KeyL' && modKey && !shiftKey && !altKey) {
+        event.preventDefault();
+        const selectedIds = editor.getSelectedShapeIds();
+        if (selectedIds.length > 0) {
+          editor.toggleLock(selectedIds);
+        }
+        return;
+      }
+
       // Справка по горячим клавишам
       if (code === 'F1') {
         event.preventDefault();

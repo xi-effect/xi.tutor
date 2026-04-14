@@ -9,7 +9,7 @@ export const InformationLayout = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col gap-4 md:flex-row">
+      <div className="flex flex-col gap-4 p-4 md:flex-row">
         <div className="order-2 flex h-full w-full flex-1 justify-center md:order-1">
           <div className="h-64 w-full animate-pulse rounded bg-gray-200" />
         </div>
