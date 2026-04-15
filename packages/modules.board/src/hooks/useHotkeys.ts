@@ -94,6 +94,14 @@ export const useHotkeys = () => {
         return;
       }
 
+      if (code === 'KeyF' && !modKey && !shiftKey && !altKey) {
+        event.preventDefault();
+        resetToDefaults();
+        editor.setCurrentTool('frame');
+        setSelectedTool('frame');
+        return;
+      }
+
       // Удаление
       if (code === 'Delete' || code === 'Backspace') {
         const selectedShapes = editor.getSelectedShapes();

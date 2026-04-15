@@ -30,7 +30,7 @@ const stickerColors =
 
 const sizes = ['xs', 's', 'm', 'l', 'xl'] as const;
 
-const supportedShapeTypes = new Set(['arrow', 'geo', 'text', 'draw', 'note']);
+const supportedShapeTypes = new Set(['arrow', 'geo', 'text', 'draw', 'note', 'frame']);
 const drawShapeTypes = new Set(['draw']);
 
 type ColorDotProps = {
