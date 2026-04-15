@@ -15,6 +15,7 @@ export const SelectionMenu = track(function SelectionMenu() {
 
   const selectedShapes = editor.getSelectedShapes();
   const isLocked = selectedShapes.every((shape) => shape.isLocked);
+  const isFrame = selectedShapes.length === 1 && selectedShapes[0].type === 'frame';
 
   // --- Данные / вычисления (без ранних return) ---
   const selectedIds = editor.getSelectedShapeIds();
@@ -47,7 +48,7 @@ export const SelectionMenu = track(function SelectionMenu() {
   const localX = screenBounds!.x - rect.left;
   const localY = screenBounds!.y - rect.top;
   const centerX = localX + screenBounds!.width / 2;
-  const topY = localY - 16;
+  const topY = isFrame ? localY - 30 : localY - 16;
 
   return (
     <div
