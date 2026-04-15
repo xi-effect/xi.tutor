@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useParams, useRouter } from '@tanstack/react-router';
 import {
   useCurrentUser,
@@ -45,7 +46,11 @@ export const Header = () => {
     if (classroomId) {
       router.navigate({ to: '/classrooms/$classroomId', params: { classroomId } });
     } else {
-      router.navigate({ to: '/materials' });
+      router.navigate({
+        to: '/materials',
+        // @ts-ignore
+        search: { tab: 'notes' },
+      });
     }
   };
 

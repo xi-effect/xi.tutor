@@ -4,7 +4,7 @@ import * as React from 'react';
 
 import { Header } from './Header';
 import { TabsComponent } from './TabsComponent';
-import { useCurrentUser } from 'common.services';
+import { useAddMaterials, useCurrentUser } from 'common.services';
 import { ErrorPage } from 'common.ui';
 import {
   MaterialsDuplicateProvider,
@@ -14,9 +14,18 @@ import { MaterialsDuplicate } from 'features.materials.duplicate';
 
 const MaterialsPageContent = () => {
   const [activeTab, setActiveTab] = React.useState('boards');
+  const { addMaterials } = useAddMaterials();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const { materialId, open, closeModal } = useMaterialsDuplicate();
+
+  const navigateToMaterial = (id: string | number, contentKind: string) => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    window.location.assign(`/materials/${id}/${contentKind}`);
+  };
 
   if (!isTutor) {
     return (
@@ -28,6 +37,32 @@ const MaterialsPageContent = () => {
       />
     );
   }
+
+  const handleCreate = () => {
+    const tab =
+      typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('tab');
+    const currentTab = tab === 'notes' || tab === 'boards' ? tab : 'boards';
+
+    if (currentTab === 'notes') {
+      addMaterials.mutate(
+        { content_kind: 'note' },
+        {
+          onSuccess: (response) => {
+            navigateToMaterial(response.data.id, response.data.content_kind);
+          },
+        },
+      );
+    } else if (currentTab === 'boards') {
+      addMaterials.mutate(
+        { content_kind: 'board' },
+        {
+          onSuccess: (response) => {
+            navigateToMaterial(response.data.id, response.data.content_kind);
+          },
+        },
+      );
+    }
+  };
 
   return (
     <>
@@ -42,6 +77,7 @@ const MaterialsPageContent = () => {
             size="small"
             className="fixed right-4 bottom-4 z-50 flex h-12 w-12 items-center justify-center rounded-xl"
             data-umami-event="materials-create-material"
+            onClick={handleCreate}
           >
             <Plus className="fill-brand-0" />
           </Button>

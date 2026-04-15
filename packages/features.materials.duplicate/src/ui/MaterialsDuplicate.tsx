@@ -19,6 +19,7 @@ import {
 import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
+import { cn } from '@xipkg/utils';
 
 type AccessModeT = 'no_access' | 'read_only' | 'read_write';
 
@@ -111,9 +112,10 @@ const ClassroomCard = ({ classroom, isSelected, onSelect }: ClassroomCardProps) 
 
   return (
     <div
-      className={`hover:bg-gray-5 flex cursor-pointer items-center gap-3 rounded-2xl border p-4 ${
-        isSelected ? 'border-brand-100 bg-brand-0' : ''
-      }`}
+      className={cn(
+        'hover:bg-gray-5 flex cursor-pointer items-center gap-3 rounded-2xl border p-4',
+        isSelected ? 'border-brand-100 bg-brand-0' : '',
+      )}
       onClick={onSelect}
       data-umami-event="material-duplicate-select-classroom"
       data-umami-event-classroom-id={classroom.id}
@@ -212,8 +214,8 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
 
   return (
     <Modal open={open} onOpenChange={handleClose}>
-      <ModalContent className="max-w-2xl">
-        <ModalCloseButton>
+      <ModalContent className="w-full max-w-2xl max-sm:w-[calc(100vw-32px)]">
+        <ModalCloseButton className="right-2">
           <Close className="fill-gray-80 sm:fill-gray-0" />
         </ModalCloseButton>
         <ModalHeader className="border-gray-20 border-b">
@@ -223,7 +225,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
           </ModalDescription>
         </ModalHeader>
 
-        <div className="min-h-[300px] py-4 pr-2 pl-6">
+        <div className="min-h-[300px] py-4 pr-2 pl-6 max-sm:min-h-[240px] max-sm:py-3 max-sm:pr-3 max-sm:pl-3">
           <ClassroomsList
             isLoading={isLoading}
             isError={isError}
@@ -270,11 +272,12 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
               </SelectContent>
             </Select>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 max-sm:flex-col max-sm:gap-3">
             <Button
               size="m"
               onClick={handleConfirm}
               disabled={!selectedClassroomId || duplicateMaterial.isPending}
+              className="w-full sm:w-fit"
               data-umami-event="material-duplicate-confirm"
             >
               {duplicateMaterial.isPending ? 'Дублирование...' : 'Дублировать'}
@@ -283,6 +286,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
               size="m"
               variant="ghost"
               onClick={() => handleClose(false)}
+              className="w-full sm:w-fit"
               data-umami-event="material-duplicate-cancel"
             >
               Отменить
