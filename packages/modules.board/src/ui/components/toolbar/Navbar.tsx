@@ -29,6 +29,7 @@ const toolMapping: Record<string, string> = {
   arrow: 'arrow',
   eraser: 'eraser',
   sticker: 'note', // Используем note как аналог стикера
+  frame: 'frame',
   // asset: 'image', // Убираем image, так как его нет в Tldraw
 };
 
@@ -114,6 +115,7 @@ export const Navbar = track(
         arrow: 'arrow',
         eraser: 'eraser',
         note: 'sticker',
+        frame: 'frame',
         // image: 'asset', // Убираем, так как image не существует в Tldraw
       };
 
@@ -285,6 +287,18 @@ export const Navbar = track(
                           onClick={() => handleSelectTool(item.action)}
                         />
                       </ArrowsPopup>,
+                    );
+                  }
+
+                  if (item.action === 'frame') {
+                    return wrap(
+                      <NavbarButton
+                        icon={item.icon}
+                        title={item.title}
+                        isActive={isActive}
+                        className={mobileButtonClass}
+                        onClick={() => handleSelectTool(item.action)}
+                      />,
                     );
                   }
 

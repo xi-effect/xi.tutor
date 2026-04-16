@@ -10,7 +10,8 @@ export type ToolType =
   | 'hand'
   | 'arrow'
   | 'asset'
-  | 'geo';
+  | 'geo'
+  | 'frame';
 
 export type ElementType =
   | 'line'
@@ -23,7 +24,8 @@ export type ElementType =
   | 'toolbar'
   | 'note'
   | 'draw'
-  | 'geo';
+  | 'geo'
+  | 'frame';
 
 export interface BoardElement {
   id: string;

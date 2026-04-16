@@ -19,6 +19,7 @@ import './customstyles.css';
 import { UndoRedo } from '../toolbar/UndoRedo';
 import { makeTldrawAssetUrls } from '../../../utils/assetsUrls';
 import { extractFileIdFromUrl } from '../../../utils/resolveAssetUrl';
+import { FrameShapeUtil } from '../../../shapes/frame';
 
 export const TldrawCanvas = ({
   token,
@@ -340,7 +341,7 @@ export const TldrawCanvas = ({
             }}
             assetUrls={assetUrls}
             store={store}
-            shapeUtils={[PdfShapeUtil, AudioShapeUtil, CustomImageShapeUtil]}
+            shapeUtils={[PdfShapeUtil, AudioShapeUtil, FrameShapeUtil, CustomImageShapeUtil]}
             hideUi
             components={{
               CollaboratorCursor: CollaboratorCursor,
