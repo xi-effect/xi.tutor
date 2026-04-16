@@ -13,7 +13,7 @@ import { GroupStudentsListSchema } from 'common.types';
 import { useGroupStudentsList } from 'common.services';
 import { toast } from 'sonner';
 import { ContactsBadge } from '../Header/components/ContactsBadge';
-import { ClassroomCardsRow, StudentCardSkeleton } from '../Skeletons/classroomSkeletons';
+import { StudentsListSkeleton } from './StudentsListSkeleon';
 
 type StudentsListPropsT = {
   classroomId: string;
@@ -24,11 +24,13 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
   const deleteStudentMutation = useDeleteStudentFromGroup({ classroom_id: classroomId });
 
   if (isLoading) {
-    <ClassroomCardsRow className="pb-4">
-      {Array.from({ length: 3 }).map((_, i) => (
-        <StudentCardSkeleton key={i} className="h-30" />
-      ))}
-    </ClassroomCardsRow>;
+    return (
+      <div className="flex flex-row gap-8 pb-4">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <StudentsListSkeleton key={i} className="h-30 w-[350px] min-w-[350px]" />
+        ))}
+      </div>
+    );
   }
 
   if (isError || !students) {

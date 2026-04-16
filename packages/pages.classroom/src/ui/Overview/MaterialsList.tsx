@@ -6,7 +6,7 @@ import {
 } from 'common.services';
 import { ClassroomMaterialsT } from 'common.types';
 import { MaterialsCard } from 'features.materials.card';
-import { ClassroomCardsRow, MaterialCardSkeleton } from '../Skeletons';
+import { MaterialsListSkeleton } from './MaterialsListSkeleton';
 
 export const MaterialsList = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
@@ -29,11 +29,11 @@ export const MaterialsList = () => {
 
   if (isLoading) {
     return (
-      <ClassroomCardsRow className="pb-4">
+      <div className="flex flex-row gap-8 pb-4">
         {Array.from({ length: 3 }).map((_, i) => (
-          <MaterialCardSkeleton key={i} className="h-33.5 2xl:w-[430px]" />
+          <MaterialsListSkeleton key={i} className="h-33.5 w-[350px] min-w-[350px] 2xl:w-[430px]" />
         ))}
-      </ClassroomCardsRow>
+      </div>
     );
   }
 

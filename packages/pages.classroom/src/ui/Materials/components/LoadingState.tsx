@@ -1,4 +1,4 @@
-import { ClassroomCardsRow, MaterialCardSkeleton } from '../../Skeletons/classroomSkeletons';
+import { MaterialsListSkeleton } from '../../Overview/MaterialsListSkeleton';
 import { MaterialHeader } from './MaterialHeader';
 
 export const LoadingState = () => {
@@ -6,19 +6,25 @@ export const LoadingState = () => {
     <div>
       <div className="flex flex-col gap-4 p-4">
         <MaterialHeader title="Учебные доски" />
-        <ClassroomCardsRow className="pb-4">
+        <div className="flex flex-row gap-8 pb-4">
           {Array.from({ length: 3 }).map((_, i) => (
-            <MaterialCardSkeleton key={i} className="h-33.5 2xl:w-[430px]" />
+            <MaterialsListSkeleton
+              key={i}
+              className="h-33.5 w-[350px] min-w-[350px] 2xl:w-[430px]"
+            />
           ))}
-        </ClassroomCardsRow>
+        </div>
       </div>
       <div className="flex flex-col gap-4 p-4">
         <MaterialHeader title="Заметки" />
-        <ClassroomCardsRow className="pb-4">
+        <div className="flex flex-row gap-8 pb-4">
           {Array.from({ length: 3 }).map((_, i) => (
-            <MaterialCardSkeleton key={i} className="h-33.5 2xl:w-[430px]" />
+            <MaterialsListSkeleton
+              key={i}
+              className="h-33.5 w-[350px] min-w-[350px] 2xl:w-[430px]"
+            />
           ))}
-        </ClassroomCardsRow>
+        </div>
       </div>
     </div>
   );

@@ -3,7 +3,7 @@ import { ScrollArea } from '@xipkg/scrollarea';
 import { cn } from '@xipkg/utils';
 import { MaterialHeader } from './MaterialHeader';
 
-type MaterialsHorizontalSectionProps = {
+type MaterialsHorizontalSectionPropsT = {
   children: ReactNode;
   headerTitle: string;
   rowClassName?: string;
@@ -13,7 +13,7 @@ export const MaterialSection = ({
   headerTitle,
   rowClassName,
   children,
-}: MaterialsHorizontalSectionProps) => {
+}: MaterialsHorizontalSectionPropsT) => {
   return (
     <div className="flex flex-col gap-4 p-4">
       <MaterialHeader title={headerTitle} />
