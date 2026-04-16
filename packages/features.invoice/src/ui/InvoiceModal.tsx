@@ -26,6 +26,7 @@ import { CommentField } from './CommentField';
 import { SubjectRow } from './SubjectRow';
 import { SubjectRowMobile } from './SubjectRowMobile';
 import { TemplateSelector } from './TemplateSelector';
+import { generateRandomId } from '../utils';
 
 type InvoiceModalProps = {
   open: boolean;
@@ -120,6 +121,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                 type="button"
                 onClick={() => {
                   append({
+                    id: generateRandomId(),
                     name: '',
                     price: 0,
                     quantity: 1,
@@ -145,9 +147,9 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                   <div className="ml-2 h-[24px] w-[24px]" />
                 </div>
                 <div className="my-2">
-                  {items.map((_, index) => (
+                  {items.map((item, index) => (
                     <SubjectRow
-                      key={index}
+                      key={item.id}
                       control={control}
                       index={index}
                       onRemove={() => remove(index)}

@@ -5,6 +5,7 @@ export const formSchema = z.object({
   items: z
     .array(
       z.object({
+        id: z.string(),
         name: z.string().min(1, 'Название предмета обязательно'),
         price: z
           .union([z.string(), z.number()])
