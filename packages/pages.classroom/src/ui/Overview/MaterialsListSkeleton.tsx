@@ -5,6 +5,7 @@ type MaterialsListSkeletonPropsT = {
   className?: string;
 };
 
+// skeleton that copies materials card
 export const MaterialsListSkeleton = ({ className }: MaterialsListSkeletonPropsT) => (
   <div
     className={cn('border-gray-30 bg-gray-0 flex flex-col gap-2 rounded-2xl border p-4', className)}

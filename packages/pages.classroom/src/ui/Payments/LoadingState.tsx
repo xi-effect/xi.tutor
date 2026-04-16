@@ -1,5 +1,6 @@
 import { Skeleton } from 'common.ui';
 
+// skeleton that copies payments table layout
 export const LoadingState = () => {
   return (
     <div className={'flex min-h-30 flex-col rounded-2xl p-4'}>

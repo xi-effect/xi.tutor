@@ -5,6 +5,7 @@ type StudentsListSkeletonPropsT = {
   className?: string;
 };
 
+// skeleton that copies student card
 export const StudentsListSkeleton = ({ className }: StudentsListSkeletonPropsT) => (
   <div className={cn('border-gray-60 flex min-h-30 flex-col rounded-2xl border p-4', className)}>
     <div className="flex w-full flex-row justify-end pr-2">

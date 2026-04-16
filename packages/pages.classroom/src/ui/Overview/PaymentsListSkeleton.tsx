@@ -5,6 +5,7 @@ type PaymentsListSkeletonPropsT = {
   className?: string;
 };
 
+// skeleton that copies payment card
 export const PaymentsListSkeleton = ({ className }: PaymentsListSkeletonPropsT) => (
   <div
     className={cn(
