@@ -47,7 +47,7 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
   }
 
   return (
-    <div ref={parentRef} className="h-[calc(100vh-116px)] w-full overflow-auto">
+    <div ref={parentRef} className="h-[calc(100vh-116px)] w-full overflow-auto pl-4">
       <VirtualGridlList
         items={items}
         parentRef={parentRef}
