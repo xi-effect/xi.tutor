@@ -1,23 +1,57 @@
+import { useEffect, useState } from 'react';
 import { Button } from '@xipkg/button';
 import { Plus } from '@xipkg/icons';
-import * as React from 'react';
 
 import { Header } from './Header';
 import { TabsComponent } from './TabsComponent';
 import { useAddMaterials, useCurrentUser } from 'common.services';
-import { ErrorPage } from 'common.ui';
+import { DateTimeDisplay, ErrorPage } from 'common.ui';
 import {
   MaterialsDuplicateProvider,
   useMaterialsDuplicate,
 } from '../provider/MaterialsDuplicateContext';
 import { MaterialsDuplicate } from 'features.materials.duplicate';
 
+const getTabFromUrl = (): 'notes' | 'boards' => {
+  if (typeof window === 'undefined') {
+    return 'boards';
+  }
+
+  const tab = new URLSearchParams(window.location.search).get('tab');
+  return tab === 'notes' || tab === 'boards' ? tab : 'boards';
+};
+
 const MaterialsPageContent = () => {
-  const [activeTab, setActiveTab] = React.useState('boards');
+  const [activeTab, setActiveTab] = useState<'notes' | 'boards'>(() => getTabFromUrl());
   const { addMaterials } = useAddMaterials();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const { materialId, open, closeModal } = useMaterialsDuplicate();
+
+  useEffect(() => {
+    const syncTabFromUrl = () => {
+      setActiveTab(getTabFromUrl());
+    };
+
+    window.addEventListener('popstate', syncTabFromUrl);
+    return () => {
+      window.removeEventListener('popstate', syncTabFromUrl);
+    };
+  }, []);
+
+  const handleTabChange = (tabId: string) => {
+    if (tabId !== 'notes' && tabId !== 'boards') {
+      return;
+    }
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const url = new URL(window.location.href);
+    url.searchParams.set('tab', tabId);
+    window.history.replaceState({}, '', url);
+    setActiveTab(tabId);
+  };
 
   const navigateToMaterial = (id: string | number, contentKind: string) => {
     if (typeof window === 'undefined') {
@@ -66,10 +100,15 @@ const MaterialsPageContent = () => {
 
   return (
     <>
-      <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pl-4">
-        <div className="flex flex-col">
-          <Header activeTab={activeTab} onTabChange={setActiveTab} />
-          <TabsComponent />
+      <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pr-0">
+        <div className="flex min-h-0 flex-1 flex-col">
+          <div className="flex shrink-0 flex-col gap-5 px-5 pt-5">
+            <div className="flex h-8 items-center">
+              <DateTimeDisplay />
+            </div>
+            <Header activeTab={activeTab} onTabChange={handleTabChange} />
+          </div>
+          <TabsComponent activeTab={activeTab} />
         </div>
 
         <div className="xs:hidden flex flex-row items-center justify-end">

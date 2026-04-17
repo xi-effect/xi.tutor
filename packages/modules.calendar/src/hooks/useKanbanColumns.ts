@@ -17,7 +17,7 @@ const COLUMN_GAP = 28;
 /** Минимальная ширина карточки занятия (px) */
 export const CARD_MIN_WIDTH = 200;
 /** Максимальная ширина карточки занятия (px) */
-export const CARD_MAX_WIDTH = 320;
+export const CARD_MAX_WIDTH = 420;
 
 /**
  * Считает ширину контейнера и возвращает число видимых дней и равную долю ширины

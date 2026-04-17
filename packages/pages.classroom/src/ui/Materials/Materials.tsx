@@ -50,7 +50,7 @@ export const Materials = () => {
 
   return (
     <div className="flex flex-col">
-      <MaterialSection headerTitle="Учебные доски" rowClassName="pb-4">
+      <MaterialSection headerTitle="Доски" rowClassName="pb-4">
         {boardsData?.length ? (
           boardsData.map((board) => (
             <MaterialsCard key={board.id} {...board} hasIcon className="2xl:w-[430px]" />

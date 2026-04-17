@@ -2,7 +2,7 @@ import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { MaterialsAdd } from 'features.materials.add';
 
 const tabs = [
-  { id: 'boards', label: 'Учебные доски' },
+  { id: 'boards', label: 'Доски' },
   { id: 'notes', label: 'Заметки' },
 ];
 
@@ -13,7 +13,7 @@ interface HeaderProps {
 
 export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
   return (
-    <div className="flex flex-row items-center pt-6 pr-6 pb-4 pl-4">
+    <div className="flex flex-row items-center pb-4">
       <h1 className="text-2xl font-normal text-gray-100">Материалы</h1>
 
       <div className="ml-4 flex h-[32px] flex-row items-center gap-2">
@@ -27,7 +27,9 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
         />
       </div>
 
-      <MaterialsAdd onlyDrafts />
+      <div className="ml-auto flex items-center">
+        <MaterialsAdd onlyDrafts />
+      </div>
     </div>
   );
 };

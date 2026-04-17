@@ -6,6 +6,7 @@ type GridListProps<T> = {
   gap: number;
   items: T[];
   renderItem: (item: T) => React.ReactNode;
+  minItemWidth?: number;
 };
 
 export const GridList = <T,>({
@@ -14,6 +15,7 @@ export const GridList = <T,>({
   gap,
   items,
   renderItem,
+  minItemWidth = 0,
 }: GridListProps<T>) => {
   return (
     <div
@@ -35,13 +37,12 @@ export const GridList = <T,>({
               top: 0,
               left: 0,
               width: '100%',
-              transform: `translateY(${virtualRow.start}px)`,
               display: 'grid',
-              gap: gap,
-              // padding: gap,
-              paddingLeft: 0,
-              boxSizing: 'border-box',
-              gridTemplateColumns: `repeat(${colCount}, minmax(0, 1fr))`,
+              gap,
+              paddingRight: gap,
+              paddingBottom: gap,
+              gridTemplateColumns: `repeat(${colCount}, minmax(${minItemWidth}px,1fr)`,
+              transform: `translateY(${virtualRow.start}px)`,
             }}
           >
             {rowItems.map((material) => renderItem(material))}

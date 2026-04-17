@@ -213,7 +213,9 @@ export const SideBarItems = () => {
                 data-umami-event={`navigation-${item.titleKey}`}
               >
                 <item.icon className="h-6 w-6 fill-gray-50 text-gray-50" />
-                <div className="text-base font-medium text-gray-50">{t(item.titleKey)}</div>
+                <div className="h-[24px] text-base font-medium whitespace-nowrap text-gray-50">
+                  {t(item.titleKey)}
+                </div>
               </SidebarMenuButton>
             </SidebarMenuItem>
           ))}

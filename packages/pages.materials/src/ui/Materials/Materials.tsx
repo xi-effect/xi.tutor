@@ -17,7 +17,7 @@ export const Materials = () => {
   const notFoundItems = !items.length && !isLoading && !isError;
 
   return (
-    <div ref={parentRef} className="">
+    <div ref={parentRef} className="min-h-0 flex-1 overflow-auto pl-4">
       {notFoundItems ? (
         <NotFoundItems text="Здесь пока нет досок" />
       ) : (
