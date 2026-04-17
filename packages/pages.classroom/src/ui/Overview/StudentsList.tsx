@@ -11,9 +11,9 @@ import { ModalStudentsGroup, useDeleteStudentFromGroup } from 'features.group.ma
 import { ErrorState } from './ErrorState';
 import { GroupStudentsListSchema } from 'common.types';
 import { useGroupStudentsList } from 'common.services';
-import { OverviewSkeleton } from './OverviewSkeleton';
 import { toast } from 'sonner';
 import { ContactsBadge } from '../Header/components/ContactsBadge';
+import { StudentsListSkeleton } from './StudentsListSkeleon';
 
 type StudentsListPropsT = {
   classroomId: string;
@@ -24,7 +24,13 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
   const deleteStudentMutation = useDeleteStudentFromGroup({ classroom_id: classroomId });
 
   if (isLoading) {
-    return <OverviewSkeleton numberOfSections={1} />;
+    return (
+      <div className="flex flex-row gap-8 pb-4">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <StudentsListSkeleton key={i} className="h-30 w-[350px] min-w-[350px]" />
+        ))}
+      </div>
+    );
   }
 
   if (isError || !students) {
