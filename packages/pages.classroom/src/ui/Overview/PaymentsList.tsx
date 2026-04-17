@@ -6,6 +6,7 @@ import {
   useGetClassroom,
 } from 'common.services';
 import { InvoiceCard } from 'features.invoice.card';
+import { PaymentsListSkeleton } from './PaymentsListSkeleton';
 
 export const PaymentsList = () => {
   const { data: user } = useCurrentUser();
@@ -30,8 +31,10 @@ export const PaymentsList = () => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-row gap-8">
-        <p className="text-m-base text-gray-60">Загрузка...</p>
+      <div className="flex flex-row gap-8 pb-4">
+        {Array.from({ length: 3 }).map((_, i) => (
+          <PaymentsListSkeleton key={i} className="h-46.5 w-[350px] min-w-[350px]" />
+        ))}
       </div>
     );
   }

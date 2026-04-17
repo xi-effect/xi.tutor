@@ -4,6 +4,7 @@ import { VirtualizedPaymentsTable } from 'pages.payments';
 import { useScreenSize } from 'common.utils';
 import { useParams } from '@tanstack/react-router';
 import { useGetClassroom, useCurrentUser } from 'common.services';
+import { LoadingState } from './LoadingState';
 
 export const Payments = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
@@ -34,11 +35,7 @@ export const Payments = () => {
   );
 
   if (isLoading) {
-    return (
-      <div className="flex flex-col">
-        <div className="h-64 w-full animate-pulse rounded bg-gray-200" />
-      </div>
-    );
+    return <LoadingState />;
   }
 
   if (isError || !classroom) {
