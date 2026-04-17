@@ -27,7 +27,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { formSchema } from '../model';
 import { useCreateGroup } from '../services';
 
-const initialValues = { name: '', subject: 0 };
+const initialValues = { name: '', subject: null };
 
 const cleanupBodyScrollLock = () => {
   document.body.style.overflow = '';

@@ -10,7 +10,7 @@ import { useAutocompleteSubjects, useSubjectsById } from 'common.services';
 import { SubjectSchema } from 'common.api';
 
 type AutocompleteProps = {
-  field: ControllerRenderProps<{ subject: number }, 'subject'>;
+  field: ControllerRenderProps<{ subject: number | null }, 'subject'>;
   disabled?: boolean;
   containerRef?: React.RefObject<HTMLElement | null>;
 };
