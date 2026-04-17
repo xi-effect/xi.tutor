@@ -2,7 +2,9 @@ import * as z from 'zod';
 
 export const formSchema = z.object({
   name: z.string().min(1, 'Укажите название').max(100, 'Название не должно превышать 100 символов'),
-  subject: z.number().refine((val) => val !== 0, 'Выберите предмет'),
+  subject: z
+    .number({ invalid_type_error: 'Выберите предмет' })
+    .refine((val) => val !== 0, 'Выберите предмет'),
 });
 
 export type FormData = z.infer<typeof formSchema>;
