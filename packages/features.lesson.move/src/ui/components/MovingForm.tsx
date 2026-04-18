@@ -1,31 +1,81 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import type { FC, PropsWithChildren } from 'react';
+import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { useMaskInput } from '@xipkg/inputmask';
-import { ArrowRight, Clock, Account } from '@xipkg/icons';
+import { ArrowRight, Clock, InfoCircle } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { useMovingForm } from '../../hooks';
 import type { FormData } from '../../model';
-import { addDurationToTime, getShortDateString } from '../../utils/utils';
+import {
+  formatDurationBetweenRu,
+  getDayMonthRu,
+  getShortDateString,
+  WEEKDAY_FULL_NAMES,
+} from '../../utils/utils';
 import { InputDate } from './InputDate';
-import { StudentSelector } from './StudentSelector';
 
-interface MovingFormProps extends PropsWithChildren {
+const WEEKDAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] as const;
+
+export type MovingFormProps = PropsWithChildren<{
   onClose: () => void;
   initialDate?: Date | null;
+  initialStartTime?: string | null;
+  initialEndTime?: string | null;
+  lessonKind: 'one-off' | 'recurring';
+  teacherName: string;
+  subjectLabel: string;
+  lessonTitle: string;
+  lessonDescription?: string;
+  teacherAvatarUrl?: string | null;
+  /** День недели серии (0 — пн), для текста подсказки в режиме «Это занятие» */
+  seriesWeekdayIndex?: number;
+}>;
+
+function buildInfoText(
+  moveMode: 'single' | 'single_and_next' | undefined,
+  startDate: Date,
+  startTime: string,
+  endTime: string,
+  repeatWeekdays: number[],
+  seriesWeekdayIndex: number,
+): string {
+  const dateStr = getDayMonthRu(startDate);
+  const repeatPart =
+    moveMode === 'single_and_next'
+      ? (() => {
+          const sorted = [...repeatWeekdays].sort((a, b) => a - b);
+          if (sorted.length === 1) {
+            return `будут повторяться каждый ${WEEKDAY_FULL_NAMES[sorted[0]!]}`;
+          }
+          return `будут повторяться по дням: ${sorted.map((i) => WEEKDAY_FULL_NAMES[i]).join(', ')}`;
+        })()
+      : `будут повторяться каждый ${WEEKDAY_FULL_NAMES[seriesWeekdayIndex] ?? WEEKDAY_FULL_NAMES[0]}`;
+
+  return `С ${dateStr} занятия будут начинаться в ${startTime}, конец в ${endTime}, ${repeatPart}`;
 }
 
-export const MovingForm: FC<MovingFormProps> = ({ children, onClose, initialDate }) => {
-  const {
-    form,
-    control,
-    handleSubmit,
-    handleClearForm,
-    onSubmit,
-    classrooms,
-    isClassroomsLoading,
-  } = useMovingForm(initialDate);
+export const MovingForm: FC<MovingFormProps> = ({
+  children,
+  onClose,
+  initialDate,
+  initialStartTime,
+  initialEndTime,
+  lessonKind,
+  teacherName,
+  subjectLabel,
+  lessonTitle,
+  lessonDescription,
+  teacherAvatarUrl,
+  seriesWeekdayIndex = 0,
+}) => {
+  const { form, control, handleSubmit, handleClearForm, onSubmit } = useMovingForm(
+    lessonKind,
+    initialDate,
+    initialStartTime,
+    initialEndTime,
+  );
 
   useEffect(() => {
     if (initialDate != null) {
@@ -33,17 +83,50 @@ export const MovingForm: FC<MovingFormProps> = ({ children, onClose, initialDate
     }
   }, [initialDate, form]);
 
-  const maskRefStartTime = useMaskInput('time');
-  const maskRefDuration = useMaskInput('time');
-  const startTime = form.watch('startTime');
-  const duration = form.watch('duration');
-  const moveMode = form.watch('moveMode');
-  const sourceDate = initialDate ?? form.watch('startDate');
+  useEffect(() => {
+    if (initialStartTime) {
+      form.setValue('startTime', initialStartTime);
+    }
+    if (initialEndTime) {
+      form.setValue('endTime', initialEndTime);
+    }
+  }, [initialStartTime, initialEndTime, form]);
 
-  const endTimeDisplay =
-    startTime && duration && /^\d{1,2}:\d{2}$/.test(startTime) && /^\d{1,2}:\d{2}$/.test(duration)
-      ? addDurationToTime(startTime, duration)
-      : '—';
+  const maskRefStartTime = useMaskInput('time');
+  const maskRefEndTime = useMaskInput('time');
+
+  const startTime = form.watch('startTime');
+  const endTime = form.watch('endTime');
+  const moveMode = form.watch('moveMode');
+  const startDate = form.watch('startDate');
+  const repeatWeekdays = form.watch('repeatWeekdays');
+
+  const sourceDate = initialDate ?? startDate;
+
+  const durationLabel = useMemo(
+    () => formatDurationBetweenRu(startTime, endTime),
+    [startTime, endTime],
+  );
+
+  const showSwitcher = lessonKind === 'recurring';
+  const showDateArrow = lessonKind === 'one-off' || moveMode !== 'single_and_next';
+  const showRepetitions = lessonKind === 'recurring' && moveMode === 'single_and_next';
+  const showInfoBanner = lessonKind === 'recurring';
+
+  const infoText = useMemo(
+    () =>
+      showInfoBanner
+        ? buildInfoText(
+            moveMode,
+            startDate,
+            startTime,
+            endTime,
+            repeatWeekdays ?? [],
+            seriesWeekdayIndex,
+          )
+        : null,
+    [showInfoBanner, moveMode, startDate, startTime, endTime, repeatWeekdays, seriesWeekdayIndex],
+  );
 
   const handleReset = () => {
     handleClearForm();
@@ -55,6 +138,8 @@ export const MovingForm: FC<MovingFormProps> = ({ children, onClose, initialDate
     onClose();
   };
 
+  const initial = teacherName.trim().charAt(0).toUpperCase() || '?';
+
   return (
     <Form {...form}>
       <form
@@ -63,63 +148,101 @@ export const MovingForm: FC<MovingFormProps> = ({ children, onClose, initialDate
         onReset={handleReset}
         className="flex w-full min-w-0 flex-col gap-6"
       >
-        <FormField
-          control={control}
-          name="title"
-          render={({ field }) => (
-            <FormItem className="flex flex-col gap-0">
-              <FormLabel className="text-[14px] font-normal text-gray-100">Название</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  variant="s"
-                  placeholder="Математика"
-                  className="border-gray-10 rounded-lg border"
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="flex gap-3">
+          <Avatar size="m">
+            {teacherAvatarUrl ? <AvatarImage src={teacherAvatarUrl} alt="" size="m" /> : null}
+            <AvatarFallback size="m">{initial}</AvatarFallback>
+          </Avatar>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="text-md-base font-medium text-gray-100">{teacherName}</span>
+              <span className="bg-gray-10 text-gray-80 shrink-0 rounded-full px-2.5 py-1 text-xs font-medium">
+                {subjectLabel}
+              </span>
+            </div>
+            <p className="mt-2 text-base font-semibold text-gray-100">{lessonTitle}</p>
+            {lessonDescription ? (
+              <p className="text-gray-60 mt-1 text-sm leading-normal">{lessonDescription}</p>
+            ) : null}
+          </div>
+        </div>
 
-        <FormField
-          control={control}
-          name="studentId"
-          render={({ field }) => (
-            <FormItem className="flex flex-col">
-              <FormLabel className="text-[14px] font-normal text-gray-100">Кабинет</FormLabel>
-              <FormControl>
-                <StudentSelector
-                  {...field}
-                  classrooms={classrooms}
-                  isLoading={isClassroomsLoading}
-                  before={<Account className="fill-gray-80 h-4 w-4" />}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        {showSwitcher && (
+          <FormField
+            control={control}
+            name="moveMode"
+            render={({ field }) => (
+              <FormItem className="flex flex-col gap-2">
+                <FormControl>
+                  <div className="bg-gray-5 flex w-full max-w-md items-center rounded-xl p-1">
+                    <button
+                      type="button"
+                      onClick={() => field.onChange('single')}
+                      className={cn(
+                        'min-w-0 flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                        field.value === 'single'
+                          ? 'bg-brand-80 text-gray-0'
+                          : 'text-gray-80 hover:bg-gray-10',
+                      )}
+                    >
+                      Это занятие
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => field.onChange('single_and_next')}
+                      className={cn(
+                        'min-w-0 flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                        field.value === 'single_and_next'
+                          ? 'bg-brand-80 text-gray-0'
+                          : 'text-gray-80 hover:bg-gray-10',
+                      )}
+                    >
+                      Это и следующие
+                    </button>
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <div className="flex flex-col gap-2">
-          <FormLabel className="text-[14px] font-normal text-gray-100">Дата</FormLabel>
-          <div className="flex w-full flex-row gap-2">
-            <FormItem className="w-full">
-              <FormControl>
-                <Input
-                  value={sourceDate ? getShortDateString(sourceDate) : ''}
-                  readOnly
-                  variant="s"
-                  className="border-gray-10 rounded-lg border"
-                  after={<ArrowRight className="fill-brand-80 h-4 w-4" />}
-                />
-              </FormControl>
-            </FormItem>
+          <FormLabel className="text-[14px] font-normal text-gray-100">
+            {showDateArrow ? 'Дата' : 'Дата начала повторений'}
+          </FormLabel>
+          {showDateArrow ? (
+            <div className="flex w-full flex-row gap-2">
+              <FormItem className="w-full">
+                <FormControl>
+                  <Input
+                    value={sourceDate ? getShortDateString(sourceDate) : ''}
+                    readOnly
+                    variant="s"
+                    className="border-gray-10 rounded-lg border"
+                    after={<ArrowRight className="fill-brand-80 h-4 w-4" />}
+                  />
+                </FormControl>
+              </FormItem>
+              <FormField
+                control={control}
+                name="startDate"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormControl>
+                      <InputDate {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+          ) : (
             <FormField
               control={control}
               name="startDate"
               render={({ field }) => (
-                <FormItem className="w-full">
+                <FormItem>
                   <FormControl>
                     <InputDate {...field} />
                   </FormControl>
@@ -127,11 +250,14 @@ export const MovingForm: FC<MovingFormProps> = ({ children, onClose, initialDate
                 </FormItem>
               )}
             />
-          </div>
+          )}
         </div>
 
         <div className="flex flex-col gap-2">
-          <FormLabel className="text-[14px] font-normal text-gray-100">Время урока</FormLabel>
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <FormLabel className="text-[14px] font-normal text-gray-100">Время урока</FormLabel>
+            <span className="text-gray-60 text-xs">Длительность занятия — {durationLabel}</span>
+          </div>
           <div className="flex w-full flex-row gap-2">
             <FormField
               control={control}
@@ -154,14 +280,14 @@ export const MovingForm: FC<MovingFormProps> = ({ children, onClose, initialDate
             />
             <FormField
               control={control}
-              name="duration"
+              name="endTime"
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormControl>
                     <Input
                       {...field}
-                      ref={maskRefDuration}
-                      placeholder="1:20 Длительность"
+                      ref={maskRefEndTime}
+                      placeholder="19:00 Конец"
                       className="border-gray-10 rounded-lg border"
                       after={<Clock className="fill-brand-80 h-4 w-4" />}
                       variant="s"
@@ -172,60 +298,68 @@ export const MovingForm: FC<MovingFormProps> = ({ children, onClose, initialDate
               )}
             />
           </div>
-          <div className="flex w-full flex-row gap-2">
-            <FormItem className="w-full">
-              <FormControl>
-                <Input
-                  value={`${endTimeDisplay} Конец`}
-                  readOnly
-                  variant="s"
-                  after={<Clock className="fill-brand-80 h-4 w-4" />}
-                  className="border-gray-10 rounded-lg border"
-                />
-              </FormControl>
-            </FormItem>
-            <div className="w-full" />
-          </div>
         </div>
 
-        <FormField
-          control={control}
-          name="moveMode"
-          render={({ field }) => (
-            <FormItem className="flex flex-col gap-2">
-              <FormLabel className="text-[14px] font-normal text-gray-100">Перенести</FormLabel>
-              <FormControl>
-                <div className="bg-gray-5 flex w-fit items-center rounded-xl p-1">
-                  <button
-                    type="button"
-                    onClick={() => field.onChange('single')}
-                    className={cn(
-                      'rounded-lg px-4 py-2 text-sm font-medium transition-colors',
-                      moveMode === 'single'
-                        ? 'bg-brand-80 text-gray-0'
-                        : 'text-gray-80 hover:bg-gray-10',
-                    )}
-                  >
-                    Это занятие
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => field.onChange('single_and_next')}
-                    className={cn(
-                      'rounded-lg px-4 py-2 text-sm font-medium transition-colors',
-                      moveMode === 'single_and_next'
-                        ? 'bg-brand-80 text-gray-0'
-                        : 'text-gray-80 hover:bg-gray-10',
-                    )}
-                  >
-                    Это и следующие
-                  </button>
+        {showRepetitions && (
+          <FormField
+            control={control}
+            name="repeatWeekdays"
+            render={({ field }) => (
+              <FormItem className="flex flex-col gap-2">
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <FormLabel className="text-[14px] font-normal text-gray-100">
+                    Повторения
+                  </FormLabel>
+                  <span className="text-gray-60 inline-flex items-center gap-1 text-xs">
+                    Можно редактировать
+                    <InfoCircle className="fill-gray-40 h-3.5 w-3.5 shrink-0" aria-hidden />
+                  </span>
                 </div>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+                <FormControl>
+                  <div className="flex flex-row flex-wrap gap-2">
+                    {WEEKDAY_LABELS.map((label, index) => {
+                      const value = field.value ?? [];
+                      const isSelected = value.includes(index);
+                      return (
+                        <button
+                          key={label}
+                          type="button"
+                          onClick={() => {
+                            const next = isSelected
+                              ? value.filter((d) => d !== index)
+                              : [...value, index].sort((a, b) => a - b);
+                            field.onChange(next);
+                          }}
+                          className={cn(
+                            'flex h-11 min-w-[36px] shrink-0 items-center justify-center rounded-lg px-3 text-center text-sm font-medium transition-colors',
+                            !isSelected && 'hover:bg-gray-10 hover:text-gray-80',
+                          )}
+                          style={{
+                            backgroundColor: isSelected ? 'var(--xi-brand-80)' : 'transparent',
+                            color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-60)',
+                          }}
+                        >
+                          {label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
+
+        {showInfoBanner && infoText ? (
+          <div
+            className="border-brand-40 bg-brand-0 flex gap-2 rounded-lg border p-3 text-sm leading-snug text-gray-100"
+            role="status"
+          >
+            <InfoCircle className="fill-brand-80 mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+            <p>{infoText}</p>
+          </div>
+        ) : null}
 
         {children}
       </form>

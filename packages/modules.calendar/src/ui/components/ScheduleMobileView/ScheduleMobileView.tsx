@@ -6,15 +6,20 @@ import { ScheduleDaySwiper } from '../ScheduleDaySwiper';
 import { getWeeksRangeDays } from '../../../utils';
 import { Button } from '@xipkg/button';
 import { Plus } from '@xipkg/icons';
+import type { ICalendarEvent } from '../../types';
 
 const getInitialWeekStart = () => startOfWeek(new Date(), { weekStartsOn: 1 });
 
 type ScheduleMobileViewProps = {
   onAddLessonClick?: (date?: Date) => void;
+  onLessonReschedule?: (event: ICalendarEvent) => void;
 };
 
 /** Мобильный вид расписания в стиле iOS Calendar: карусель недель + свайп по дням */
-export const ScheduleMobileView = ({ onAddLessonClick }: ScheduleMobileViewProps) => {
+export const ScheduleMobileView = ({
+  onAddLessonClick,
+  onLessonReschedule,
+}: ScheduleMobileViewProps) => {
   const { t } = useTranslation('calendar');
   const [weekStart, setWeekStart] = useState<Date>(getInitialWeekStart);
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
@@ -75,6 +80,7 @@ export const ScheduleMobileView = ({ onAddLessonClick }: ScheduleMobileViewProps
           selectedDate={selectedDate}
           onSelectedDateChange={handleSelectedDateChange}
           onAddLessonClick={handleAddLesson}
+          onLessonReschedule={onLessonReschedule}
         />
       </div>
     </div>

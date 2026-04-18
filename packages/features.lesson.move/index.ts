@@ -1,1 +1,1 @@
-export { MovingLessonModal } from './src';
+export { MovingLessonModal, type MovingLessonModalProps, type MovingFormProps } from './src';

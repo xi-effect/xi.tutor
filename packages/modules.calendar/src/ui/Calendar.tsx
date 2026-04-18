@@ -3,16 +3,20 @@ import { ScheduleKanban, ScheduleMobileView } from './components';
 import { CalendarHeader } from './Header';
 import { useCalendar, useIsMobile } from '../hooks';
 import { useKanbanColumns } from '../hooks/useKanbanColumns';
+import type { ICalendarEvent } from './types';
 
 type CalendarModuleProps = {
   /** Вызывается при клике на кнопку добавления занятия (в хедере или в колонке канбана). Дата колонки передаётся при клике в канбане. */
   onAddLessonClick?: (date?: Date) => void;
+  /** «Перенести» в карточке — передать в модалку переноса на уровне приложения */
+  onLessonReschedule?: (event: ICalendarEvent) => void;
   /** Показывать дату и время в начале шапки (как на отдельной странице календаря) */
   showDateTimeInHeader?: boolean;
 };
 
 export const CalendarModule = ({
   onAddLessonClick,
+  onLessonReschedule,
   showDateTimeInHeader = true,
 }: CalendarModuleProps) => {
   const isMobile = useIsMobile();
@@ -22,7 +26,12 @@ export const CalendarModule = ({
   const visibleDays = weekDays.slice(0, visibleCount);
 
   if (isMobile) {
-    return <ScheduleMobileView onAddLessonClick={onAddLessonClick} />;
+    return (
+      <ScheduleMobileView
+        onAddLessonClick={onAddLessonClick}
+        onLessonReschedule={onLessonReschedule}
+      />
+    );
   }
 
   return (
@@ -42,6 +51,7 @@ export const CalendarModule = ({
             visibleDays={visibleDays}
             columnWidth={columnWidth}
             onAddLessonClick={onAddLessonClick}
+            onLessonReschedule={onLessonReschedule}
           />
         </div>
       </div>

@@ -11,6 +11,7 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "@xipkg/avatar": "3.3.0",
     "@hookform/resolvers": "^5.2.2",
     "@tanstack/react-query": "^5.73.3",
     "@tanstack/react-router": "1.120.11",
@@ -22,6 +23,7 @@
     "@xipkg/inputmask": "2.0.12",
     "@xipkg/modal": "4.3.1",
     "@xipkg/select": "2.2.5",
+    "@xipkg/utils": "1.8.0",
     "common.api": "workspace:*",
     "common.config": "workspace:*",
     "common.env": "workspace:*",

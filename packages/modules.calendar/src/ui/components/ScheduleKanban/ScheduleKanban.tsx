@@ -19,6 +19,8 @@ interface ScheduleKanbanProps {
   columnWidth: number;
   /** Вызывается при клике на кнопку добавления занятия (плюс в заголовке дня). Передаётся дата колонки для предзаполнения формы. */
   onAddLessonClick?: (date: Date) => void;
+  /** «Перенести» в карточке занятия — открыть модалку переноса снаружи (например `features.lesson.move`) */
+  onLessonReschedule?: (event: ICalendarEvent) => void;
 }
 
 const getEventsForDay = (
@@ -60,13 +62,16 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
   visibleDays,
   columnWidth,
   onAddLessonClick,
+  onLessonReschedule,
 }) => {
   const { t } = useTranslation('calendar');
   const eventsByDate = useEventsByDate();
   const eventsLoading = useEventsLoading();
   const today = new Date();
   const todayStart = startOfDay(today);
-  const { openLessonInfo, lessonInfoModal } = useLessonInfoModal();
+  const { openLessonInfo, lessonInfoModal } = useLessonInfoModal({
+    onReschedule: onLessonReschedule,
+  });
 
   const eventsPerDay = useMemo(
     () => visibleDays.map((d) => getEventsForDay(eventsByDate, d)),

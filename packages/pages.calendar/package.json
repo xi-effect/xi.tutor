@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "features.lesson.add": "workspace:*",
+    "features.lesson.move": "workspace:*",
     "modules.calendar": "workspace:*"
   },
   "devDependencies": {

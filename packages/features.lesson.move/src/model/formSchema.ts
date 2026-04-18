@@ -1,22 +1,39 @@
 import * as z from 'zod';
+import { timeToMinutes } from '../utils/utils';
 
 const timeValidation = z.string().refine((time) => {
   const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
   return timeRegex.test(time);
 }, 'Неверный формат времени');
 
-const durationValidation = z.string().refine((dur) => {
-  const regex = /^([0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/;
-  return regex.test(dur);
-}, 'Неверный формат длительности');
-
-export const formSchema = z.object({
-  title: z.string().min(1, 'Введите название'),
-  studentId: z.string().min(1, 'Выберите кабинет'),
-  startTime: timeValidation,
-  duration: durationValidation,
+const movingFormBase = z.object({
   startDate: z.date({ required_error: 'Укажите дату' }),
-  moveMode: z.enum(['single', 'single_and_next']).default('single_and_next'),
+  startTime: timeValidation,
+  endTime: timeValidation,
+  moveMode: z.enum(['single', 'single_and_next']).optional(),
+  repeatWeekdays: z.array(z.number().min(0).max(6)).default([]),
 });
 
-export type FormData = z.infer<typeof formSchema>;
+export const createMovingFormSchema = (lessonKind: 'one-off' | 'recurring') =>
+  movingFormBase.superRefine((data, ctx) => {
+    if (timeToMinutes(data.endTime) <= timeToMinutes(data.startTime)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Время окончания должно быть позже начала',
+        path: ['endTime'],
+      });
+    }
+    if (
+      lessonKind === 'recurring' &&
+      data.moveMode === 'single_and_next' &&
+      !data.repeatWeekdays?.length
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Выберите хотя бы один день',
+        path: ['repeatWeekdays'],
+      });
+    }
+  });
+
+export type FormData = z.infer<typeof movingFormBase>;

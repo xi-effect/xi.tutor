@@ -30,6 +30,7 @@
     "common.types": "workspace:*",
     "common.ui": "workspace:*",
     "features.lesson.add": "workspace:*",
+    "features.lesson.move": "workspace:*",
     "features.invites": "workspace:*",
     "features.invoice": "workspace:*",
     "features.materials.add": "workspace:*",

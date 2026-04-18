@@ -1,16 +1,26 @@
 /* eslint-disable no-irregular-whitespace */
+import { useState } from 'react';
 import { Materials, Payments, Classrooms, FirstLessonGuideBanner } from './components';
 import { DateTimeDisplay, OnboardingPopup } from 'common.ui';
 import { useCurrentUser } from 'common.services';
 import { useMediaQuery } from '@xipkg/utils';
 import { NearestLessonCard } from 'modules.calendar';
+import { MovingLessonModal } from 'features.lesson.move';
 import { Lessons, MOCK_LESSONS } from './components/Lessons/Lessons';
+
+const getToday = () => {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
 
 export const MainPage = () => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
   const isMobile = useMediaQuery('(max-width: 720px)');
+  const [moveLessonOpen, setMoveLessonOpen] = useState(false);
+  const nearestLesson = MOCK_LESSONS[0];
 
   const steps = [
     {
@@ -116,7 +126,27 @@ export const MainPage = () => {
               <Lessons />
             </div>
           )}
-          {isMobile && <NearestLessonCard lesson={MOCK_LESSONS[0]} />}
+          {isMobile && (
+            <>
+              <NearestLessonCard
+                lesson={nearestLesson}
+                onReschedule={() => setMoveLessonOpen(true)}
+              />
+              <MovingLessonModal
+                key={String(nearestLesson.id)}
+                open={moveLessonOpen}
+                onOpenChange={setMoveLessonOpen}
+                formKey={String(nearestLesson.id)}
+                lessonKind="one-off"
+                initialDate={getToday()}
+                initialStartTime={nearestLesson.startTime}
+                initialEndTime={nearestLesson.endTime}
+                teacherName={nearestLesson.studentName}
+                subjectLabel={nearestLesson.subject}
+                lessonTitle={nearestLesson.subject}
+              />
+            </>
+          )}
           <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-5 self-stretch overscroll-contain pb-6 sm:overflow-y-auto">
             <FirstLessonGuideBanner />
             <Classrooms />

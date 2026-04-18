@@ -1,42 +1,52 @@
+import { useMemo } from 'react';
 import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { useFetchClassrooms } from 'common.services';
-import { formSchema, type FormData } from '../model/formSchema';
-import { addDurationToTime } from '../utils/utils';
+import { createMovingFormSchema, type FormData } from '../model/formSchema';
 
-const getDefaultValues = (initialDate?: Date | null): FormData => ({
-  title: '',
-  studentId: '',
-  startTime: '17:40',
-  duration: '1:20',
-  startDate: initialDate ?? new Date(),
-  moveMode: 'single_and_next',
-});
+const getDefaultValues = (
+  lessonKind: 'one-off' | 'recurring',
+  initialDate?: Date | null,
+  initialStartTime?: string | null,
+  initialEndTime?: string | null,
+): FormData => {
+  const startDate = initialDate ?? new Date();
+  return {
+    startDate,
+    startTime: initialStartTime ?? '17:40',
+    endTime: initialEndTime ?? '19:00',
+    moveMode: lessonKind === 'recurring' ? 'single' : undefined,
+    repeatWeekdays: lessonKind === 'recurring' ? [0] : [],
+  };
+};
 
-export const useMovingForm = (initialDate?: Date | null) => {
-  const { data: classrooms, isLoading: isClassroomsLoading } = useFetchClassrooms();
+export const useMovingForm = (
+  lessonKind: 'one-off' | 'recurring',
+  initialDate?: Date | null,
+  initialStartTime?: string | null,
+  initialEndTime?: string | null,
+) => {
+  const schema = useMemo(() => createMovingFormSchema(lessonKind), [lessonKind]);
 
   const form = useForm<FormData>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(schema),
     mode: 'onSubmit',
-    defaultValues: getDefaultValues(initialDate),
+    defaultValues: getDefaultValues(lessonKind, initialDate, initialStartTime, initialEndTime),
   });
 
   const { control, handleSubmit, reset } = form;
 
   const onSubmit = (data: FormData) => {
-    const classroom = classrooms?.find((c) => c.id === Number(data.studentId));
-    const studentIds = classroom?.kind === 'individual' ? [classroom.student_id] : [];
-    const endTime = addDurationToTime(data.startTime, data.duration);
-
     const payload = {
-      title: data.title,
-      studentIds,
-      startTime: data.startTime,
-      endTime,
       startDate: data.startDate,
-      moveMode: data.moveMode,
+      startTime: data.startTime,
+      endTime: data.endTime,
+      ...(lessonKind === 'recurring' && data.moveMode
+        ? {
+            moveMode: data.moveMode,
+            repeatWeekdays: data.moveMode === 'single_and_next' ? data.repeatWeekdays : undefined,
+          }
+        : {}),
     };
 
     console.log('move payload', payload);
@@ -46,7 +56,7 @@ export const useMovingForm = (initialDate?: Date | null) => {
   };
 
   const handleClearForm = () => {
-    reset(getDefaultValues(initialDate));
+    reset(getDefaultValues(lessonKind, initialDate, initialStartTime, initialEndTime));
   };
 
   return {
@@ -55,7 +65,5 @@ export const useMovingForm = (initialDate?: Date | null) => {
     handleSubmit,
     onSubmit,
     handleClearForm,
-    classrooms: classrooms ?? [],
-    isClassroomsLoading,
   };
 };

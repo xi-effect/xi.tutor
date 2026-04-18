@@ -32,6 +32,7 @@ export type UseLessonInfoModalOptions = {
 
 /**
  * Одна модалка «Информация о занятии» на выбранное событие — для канбана и мобильного списка.
+ * Передайте `onReschedule` (например из `features.lesson.move`), чтобы открыть перенос занятия.
  */
 export const useLessonInfoModal = ({
   onStartLesson,
