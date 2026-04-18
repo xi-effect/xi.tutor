@@ -3886,6 +3886,9 @@ importers:
       features.invoice.card:
         specifier: workspace:*
         version: link:../features.invoice.card
+      features.lesson.add:
+        specifier: workspace:*
+        version: link:../features.lesson.add
       features.materials.add:
         specifier: workspace:*
         version: link:../features.materials.add
@@ -4818,6 +4821,9 @@ importers:
       common.types:
         specifier: workspace:*
         version: link:../common.types
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
       features.charts:
         specifier: workspace:*
         version: link:../features.charts
@@ -4873,9 +4879,6 @@ importers:
       common.typescript:
         specifier: workspace:*
         version: link:../common.typescript
-      common.ui:
-        specifier: workspace:*
-        version: link:../common.ui
       common.utils:
         specifier: workspace:*
         version: link:../common.utils

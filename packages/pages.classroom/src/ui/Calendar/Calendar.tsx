@@ -1,10 +1,23 @@
-import { CalendarModule } from 'modules.calendar';
+import { ScheduleMobileView, useIsMobile } from 'modules.calendar';
 import { useParams } from '@tanstack/react-router';
-import { useGetClassroom } from 'common.services';
+import { useCurrentUser, useGetClassroom, useGetClassroomStudent } from 'common.services';
+import { useClassroomSchedule } from './ClassroomScheduleContext';
+import { CalendarScheduleKanban } from './ClassroomScheduleParts';
 
 export const Calendar = () => {
+  const isMobile = useIsMobile();
+  const { onAddLessonClick } = useClassroomSchedule();
+
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
-  const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const tutorQuery = useGetClassroom(Number(classroomId), isUserLoading || !isTutor);
+  const studentQuery = useGetClassroomStudent(Number(classroomId), isUserLoading || isTutor);
+
+  const classroom = isTutor ? tutorQuery.data : studentQuery.data;
+  const isLoading = isUserLoading || (isTutor ? tutorQuery.isLoading : studentQuery.isLoading);
+  const isError = isTutor ? tutorQuery.isError : studentQuery.isError;
 
   if (isLoading) {
     return (
@@ -23,9 +36,9 @@ export const Calendar = () => {
     );
   }
 
-  return (
-    <div className="flex flex-col">
-      <CalendarModule />
-    </div>
-  );
+  if (isMobile) {
+    return <ScheduleMobileView onAddLessonClick={onAddLessonClick} />;
+  }
+
+  return <CalendarScheduleKanban />;
 };

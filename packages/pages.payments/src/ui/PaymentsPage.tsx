@@ -11,6 +11,7 @@ import {
   useGetRecipientInvoiceByStudent,
 } from 'common.services';
 import { UserRoleT } from 'common.api';
+import { DateTimeDisplay } from 'common.ui';
 
 export const PaymentsPage = () => {
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
@@ -163,13 +164,18 @@ export const PaymentsPage = () => {
   );
 
   return (
-    <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pl-4">
-      <div className="flex flex-col">
-        <Header
-          onCreateInvoice={onOpenInvoiceModal}
-          activeTab={activeTab}
-          onTabChange={onTabChange}
-        />
+    <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pr-0">
+      <div className="flex h-screen flex-col">
+        <div className="flex flex-col gap-5 px-5 pt-5">
+          <div className="flex h-8 items-center">
+            <DateTimeDisplay />
+          </div>
+          <Header
+            onCreateInvoice={onOpenInvoiceModal}
+            activeTab={activeTab}
+            onTabChange={onTabChange}
+          />
+        </div>
         <TabsComponent
           onApprovePayment={onOpenPaymentApproveModal}
           activeTab={activeTab}

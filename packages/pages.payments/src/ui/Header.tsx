@@ -24,7 +24,7 @@ export const Header = ({ onCreateInvoice, activeTab, onTabChange }: HeaderProps)
   );
 
   return (
-    <div className="xs:flex-row flex flex-col items-center pt-6 pr-6 pb-4 pl-4">
+    <div className="xs:flex-row flex flex-col items-center pb-4">
       <h1 className="text-2xl font-normal text-gray-100">Контроль оплат</h1>
 
       <div className="ml-4 flex h-[32px] flex-row items-center gap-2">
