@@ -154,7 +154,7 @@ export const Content = ({ classroom }: ContentProps) => {
   };
 
   return (
-    <div className="flex flex-row items-start gap-4 pt-6 pr-6 pb-4 pl-4">
+    <div className="flex flex-row items-start gap-4 pt-6 pr-6 pb-4">
       <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <div className="flex w-full min-w-0 flex-row items-center gap-2 sm:w-auto sm:gap-3">
           <Button
@@ -199,7 +199,7 @@ export const Content = ({ classroom }: ContentProps) => {
         </div>
       </div>
 
-      <div className="ml-auto hidden shrink-0 flex-col items-center justify-center gap-2 sm:flex">
+      <div className="ml-auto hidden h-full shrink-0 flex-col items-center justify-center gap-2 sm:flex">
         <CallButton classroom={classroom} />
       </div>
     </div>

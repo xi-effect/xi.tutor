@@ -77,21 +77,11 @@ export const MediaDevices = ({ audioTrack, videoTrack, noiseCancellation }: Medi
       updateStore('audioEnabled', audioTrack ? !audioTrack.isMuted : false);
       updateStore('videoEnabled', videoTrack ? !videoTrack.isMuted : false);
 
-      // console.log('Preparing to join room...');
-
       // LiveKitRoom автоматически управляет подключением
       // Нам нужно только установить флаг подключения
       updateStore('connect', true);
       updateStore('isStarted', true);
       updateStore('isConnecting', false);
-
-      // console.log('Successfully joined room with devices:', {
-      //   audioDeviceId,
-      //   audioOutputDeviceId,
-      //   videoDeviceId,
-      //   audioEnabled: audioTrack ? !audioTrack.isMuted : false,
-      //   videoEnabled: videoTrack ? !videoTrack.isMuted : false,
-      // });
     } catch (error) {
       console.error('Failed to join room:', error);
 
@@ -120,11 +110,6 @@ export const MediaDevices = ({ audioTrack, videoTrack, noiseCancellation }: Medi
           await audioTrack.setDeviceId({ exact: deviceId });
           // Синхронизируем состояние после смены устройства
           const isActuallyEnabled = !audioTrack.isMuted;
-          // console.log('MediaDevices: audio device changed, syncing state', {
-          //   deviceId,
-          //   trackMuted: audioTrack.isMuted,
-          //   shouldBeEnabled: isActuallyEnabled,
-          // });
           saveAudioInputEnabled(isActuallyEnabled);
         }
       } catch (err) {
@@ -142,11 +127,6 @@ export const MediaDevices = ({ audioTrack, videoTrack, noiseCancellation }: Medi
           await videoTrack.setDeviceId({ exact: deviceId });
           // Синхронизируем состояние после смены устройства
           const isActuallyEnabled = !videoTrack.isMuted;
-          // console.log('MediaDevices: video device changed, syncing state', {
-          //   deviceId,
-          //   trackMuted: videoTrack.isMuted,
-          //   shouldBeEnabled: isActuallyEnabled,
-          // });
           saveVideoInputEnabled(isActuallyEnabled);
         }
       } catch (err) {
@@ -158,7 +138,7 @@ export const MediaDevices = ({ audioTrack, videoTrack, noiseCancellation }: Medi
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="border-gray-30 flex flex-col justify-between rounded-[16px] border p-5">
+      <div className="border-gray-30 bg-gray-0 flex flex-col justify-between rounded-2xl border p-5">
         <div>
           <div className="mb-8">
             <h2 className="mb-1 font-sans">Камера</h2>

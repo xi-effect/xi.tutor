@@ -206,9 +206,7 @@ export const Settings = ({ children }: SettingsPropsT) => {
 
   return (
     <Sheet>
-      <SheetTrigger className="ml-2" asChild>
-        {children}
-      </SheetTrigger>
+      <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent className="bg-gray-0 w-[400px] rounded-tl-2xl rounded-bl-2xl border-none p-4 shadow-2xl">
         <SheetHeader className="mb-6 flex h-10 flex-row items-center justify-between space-y-0">
           <SheetTitle className="text-gray-100">Настройки</SheetTitle>

@@ -43,7 +43,7 @@ export const Call = () => {
     >
       <div className="flex h-full w-full flex-col">
         {isStarted ? (
-          <div id="videoConferenceContainer" className="bg-gray-0 h-full">
+          <div id="videoConferenceContainer" className="bg-gray-5 h-full">
             <ActiveRoom />
           </div>
         ) : (

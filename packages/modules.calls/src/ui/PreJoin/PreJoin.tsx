@@ -172,7 +172,7 @@ export const PreJoin = () => {
   return (
     <>
       <ScrollArea className="h-full w-full">
-        <div className="p-4">
+        <div className="bg-gray-5 h-full min-h-[calc(100dvh)] p-5">
           <Header />
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
             <UserTile audioTrack={audioTrack} videoTrack={videoTrack} />
