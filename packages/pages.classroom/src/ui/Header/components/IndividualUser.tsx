@@ -9,7 +9,7 @@ export const IndividualUser = ({ userId }: { userId: number }) => {
   const { data: user } = useUserByRole(userRole, userId);
 
   return (
-    <div className="flex w-full max-w-[min(100%,300px)] min-w-0 flex-row items-center gap-2 sm:max-w-[300px] sm:flex-1">
+    <div className="flex w-full max-w-[min(100%,300px)] min-w-0 flex-row items-center gap-2 sm:w-fit sm:max-w-[300px]">
       <UserProfile
         className="shrink-0"
         text={user?.display_name ?? user?.username}
@@ -17,7 +17,7 @@ export const IndividualUser = ({ userId }: { userId: number }) => {
         size="l"
         withOutText
       />
-      <div className="text-xl-base min-w-0 flex-1 truncate font-semibold text-gray-100">
+      <div className="text-xl-base min-w-0 truncate font-semibold text-gray-100">
         {user?.display_name ?? user?.username}
       </div>
     </div>
