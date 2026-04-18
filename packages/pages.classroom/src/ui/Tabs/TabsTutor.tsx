@@ -92,8 +92,12 @@ export const TabsTutor = () => {
 
   return (
     <ClassroomScheduleProvider onAddLessonClick={handleAddLessonClick}>
-      <div className="bg-gray-0 h-[calc(100vh-88px)] rounded-tl-2xl px-4 pt-0">
-        <Tabs.Root className="pt-2" value={currentTab} onValueChange={handleTabChange}>
+      <div className="bg-gray-0 flex h-[calc(100vh-88px)] min-h-0 min-w-0 flex-col rounded-tl-2xl px-4 pt-0">
+        <Tabs.Root
+          className="flex min-h-0 min-w-0 flex-1 flex-col pt-2"
+          value={currentTab}
+          onValueChange={handleTabChange}
+        >
           <div className="flex h-[56px] flex-row items-center gap-4 overflow-x-auto px-4 md:p-0">
             <SwitcherAnimate
               tabs={tabs}
@@ -154,7 +158,7 @@ export const TabsTutor = () => {
               </Button>
             )}
           </div>
-          <div className="pt-0">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col pt-0">
             <Tabs.Content value="overview">
               <Overview />
             </Tabs.Content>

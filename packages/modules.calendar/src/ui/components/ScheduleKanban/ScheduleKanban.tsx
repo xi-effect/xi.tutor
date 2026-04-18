@@ -11,7 +11,6 @@ import { getLessonCardSkeletonCountForDay, isCurrentDay, isPastDay } from '../..
 import type { ICalendarEvent } from '../../types';
 import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
-import { KANBAN_SCROLL_INNER_PADDING_END_PX } from '../../../hooks/useKanbanColumns';
 import { scheduleEmptyBlockHeight } from './scheduleEmptyLayout';
 
 interface ScheduleKanbanProps {
@@ -97,13 +96,12 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
     n > 0 ? `repeat(${n}, minmax(${Math.max(columnWidth, 0)}px, 1fr))` : '1fr';
 
   return (
-    <div className="flex h-[calc(100vh-72px)] flex-1 flex-col overflow-hidden">
+    <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
       {/* Заголовки дней — без скролла */}
       <div
         className="grid shrink-0 gap-x-7"
         style={{
           gridTemplateColumns,
-          paddingRight: KANBAN_SCROLL_INNER_PADDING_END_PX,
         }}
       >
         {visibleDays.map((day, colIndex) => {
@@ -150,10 +148,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
         ref={scrollAreaRef}
         className="flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto [scrollbar-gutter:stable]"
       >
-        <div
-          className="box-border flex min-h-full min-w-0 flex-1 flex-col"
-          style={{ paddingRight: KANBAN_SCROLL_INNER_PADDING_END_PX }}
-        >
+        <div className="box-border flex min-h-full min-w-0 flex-1 flex-col">
           <div className="grid flex-1 items-stretch gap-x-7 pb-4" style={{ gridTemplateColumns }}>
             {eventsLoading
               ? visibleDays.map((day, colIndex) => {

@@ -1,14 +1,12 @@
-import { createContext, useContext, useMemo, useRef, type ReactNode } from 'react';
-import { useCalendar, useKanbanColumns } from 'modules.calendar';
+import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import { useCalendar } from 'modules.calendar';
 
 type ClassroomScheduleContextValue = {
-  containerRef: React.RefObject<HTMLDivElement | null>;
+  weekDays: Date[];
   weekStart: Date;
-  visibleDays: Date[];
-  goToPrev: () => void;
-  goToNext: () => void;
+  goToPrev: (count: number) => void;
+  goToNext: (count: number) => void;
   goToWeekStart: (date: Date) => void;
-  columnWidth: number;
   onAddLessonClick?: (date?: Date) => void;
 };
 
@@ -33,32 +31,11 @@ export const ClassroomScheduleProvider = ({
   children,
   onAddLessonClick,
 }: ClassroomScheduleProviderProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
   const { weekDays, weekStart, goToPrev, goToNext, goToWeekStart } = useCalendar();
-  const { columnWidth, visibleCount } = useKanbanColumns(containerRef, weekDays.length);
-  const visibleDays = weekDays.slice(0, visibleCount);
 
   const value = useMemo(
-    () => ({
-      containerRef,
-      weekStart,
-      visibleDays,
-      columnWidth,
-      goToPrev: () => goToPrev(visibleCount),
-      goToNext: () => goToNext(visibleCount),
-      goToWeekStart,
-      onAddLessonClick,
-    }),
-    [
-      weekStart,
-      visibleDays,
-      columnWidth,
-      visibleCount,
-      goToPrev,
-      goToNext,
-      goToWeekStart,
-      onAddLessonClick,
-    ],
+    () => ({ weekDays, weekStart, goToPrev, goToNext, goToWeekStart, onAddLessonClick }),
+    [weekDays, weekStart, goToPrev, goToNext, goToWeekStart, onAddLessonClick],
   );
 
   return (

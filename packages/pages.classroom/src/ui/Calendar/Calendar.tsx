@@ -40,5 +40,9 @@ export const Calendar = () => {
     return <ScheduleMobileView onAddLessonClick={onAddLessonClick} />;
   }
 
-  return <CalendarScheduleKanban />;
+  return (
+    <div className="">
+      <CalendarScheduleKanban />
+    </div>
+  );
 };
