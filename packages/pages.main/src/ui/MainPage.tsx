@@ -1,5 +1,5 @@
 /* eslint-disable no-irregular-whitespace */
-import { Materials, Payments, Classrooms } from './components';
+import { Materials, Payments, Classrooms, FirstLessonGuideBanner } from './components';
 import { DateTimeDisplay, OnboardingPopup } from 'common.ui';
 import { useCurrentUser } from 'common.services';
 import { useMediaQuery } from '@xipkg/utils';
@@ -118,6 +118,7 @@ export const MainPage = () => {
           )}
           {isMobile && <NearestLessonCard lesson={MOCK_LESSONS[0]} />}
           <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-5 self-stretch overscroll-contain pb-6 sm:overflow-y-auto">
+            <FirstLessonGuideBanner />
             <Classrooms />
             <Payments />
             <Materials />
