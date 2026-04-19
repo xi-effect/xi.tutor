@@ -8,7 +8,9 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint .",
-    "dev": "tsc --watch"
+    "dev": "tsc --watch",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "axios": "1.15.0",
@@ -21,6 +23,7 @@
     "common.sockets": "workspace:*"
   },
   "devDependencies": {
+    "vitest": "^3.1.1",
     "@tanstack/react-query-devtools": "5.73.3",
     "@eslint/js": "^9.19.0",
     "common.typescript": "workspace:*",

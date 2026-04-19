@@ -15,6 +15,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         registerType: 'autoUpdate',
         injectRegister: 'auto',
         devOptions: { enabled: false },
+        inlineWorkboxRuntime: true,
 
         manifest: {
           id: '/',
@@ -43,6 +44,11 @@ export default defineConfig(({ mode }: ConfigEnv) => {
 
         // важно: чтобы новые версии SW активировались быстрее
         workbox: {
+          // workbox-build 7.x использует @rollup/plugin-terser в воркерах,
+          // которые при большом числе прекэш-чанков могут зависнуть (race condition).
+          // mode: 'development' пропускает terser — SW не минифицируется, но стабильно собирается.
+          mode: 'development',
+
           skipWaiting: true,
           clientsClaim: true,
 

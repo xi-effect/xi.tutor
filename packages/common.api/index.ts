@@ -39,3 +39,21 @@ export { contactsApiConfig, ContactsQueryKey } from './src/contacts';
 export { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from './src/classrooms';
 export { classroomNotesApiConfig, ClassroomNotesQueryKey } from './src/classrooms';
 export { classroomPaymentsApiConfig, ClassroomPaymentsQueryKey } from './src/classrooms';
+export {
+  schedulerApiConfig,
+  SchedulerQueryKey,
+  type SchedulerEventDto,
+  type OccurrenceModeDto,
+  type OccurrenceModeInputDto,
+  type SingleOccurrenceModeDto,
+  type DailyOccurrenceModeDto,
+  type WeeklyOccurrenceModeDto,
+  type ExceptionalOccurrenceModeDto,
+  type SingleOccurrenceModeInputDto,
+  type DailyOccurrenceModeInputDto,
+  type WeeklyOccurrenceModeInputDto,
+  type EventInstanceDto,
+  type GetClassroomScheduleResponseDto,
+  type CreateClassroomEventRequestDto,
+  type UpdateClassroomEventRequestDto,
+} from './src/scheduler';

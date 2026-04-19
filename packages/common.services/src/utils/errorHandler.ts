@@ -23,7 +23,8 @@ export type ErrorType =
   | 'files'
   | 'notifications'
   | 'emailConfirmation'
-  | 'emailConfirmationRequest';
+  | 'emailConfirmationRequest'
+  | 'scheduler';
 
 // Маппинг ошибок для разных операций
 const errorMessages: Record<ErrorType, Record<string, string>> = {
@@ -122,6 +123,11 @@ const errorMessages: Record<ErrorType, Record<string, string>> = {
     'Email already confirmed': 'Email уже подтвержден',
     'Invalid token': 'Неверный токен',
   },
+  scheduler: {
+    'Validation Error': 'Ошибка валидации',
+    'Event not found': 'Событие не найдено',
+    'Event access denied': 'Доступ к событию запрещён',
+  },
 };
 
 // Общие сообщения об ошибках по статусам
@@ -157,6 +163,7 @@ const successMessages: Record<ErrorType, string> = {
   notifications: 'Уведомление успешно отмечено как прочитанное',
   emailConfirmation: 'Письмо для подтверждения email было отправлено',
   emailConfirmationRequest: 'Почта успешно подтверждена',
+  scheduler: 'Операция с расписанием выполнена',
 };
 
 /**
