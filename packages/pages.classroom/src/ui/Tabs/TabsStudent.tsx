@@ -18,18 +18,18 @@ export const TabsStudent = () => {
 
   return (
     <ClassroomScheduleProvider>
-      <div className="bg-gray-0 flex h-[calc(100vh-88px)] min-h-0 min-w-0 flex-col rounded-tl-2xl px-4 pt-0">
+      <div className="flex h-[calc(100vh-80px)] min-h-0 min-w-0 flex-col">
         <Tabs.Root
-          className="flex min-h-0 min-w-0 flex-1 flex-col pt-2"
+          className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 pt-2"
           value={currentTab}
           onValueChange={handleTabChange}
         >
-          <div className="flex h-[56px] flex-row items-center gap-4 overflow-x-auto pr-4 pl-4 sm:p-0">
+          <div className="bg-gray-0 mr-4 flex h-[56px] flex-row items-center gap-4 overflow-x-auto rounded-2xl px-2">
             <SwitcherAnimate
               tabs={tabs}
               activeTab={currentTab}
               onChange={handleTabChange}
-              className="flex flex-row gap-4 max-sm:w-full"
+              className="bg-gray-0 flex flex-row gap-0 max-sm:w-full"
               tabClassName="text-m-base font-medium text-gray-100"
             />
             {currentTab === 'schedule' && !isMobile && (
@@ -39,7 +39,7 @@ export const TabsStudent = () => {
             )}
           </div>
 
-          <div className="flex min-h-0 min-w-0 flex-1 flex-col pt-0">
+          <div className="bg-gray-0 flex min-h-0 min-w-0 flex-1 flex-col rounded-tl-2xl px-4 pt-0">
             <SharedTabsContent />
           </div>
         </Tabs.Root>

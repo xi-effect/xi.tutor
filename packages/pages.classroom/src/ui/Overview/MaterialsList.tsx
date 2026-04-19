@@ -62,7 +62,7 @@ export const MaterialsList = () => {
           {...material}
           isLoading={isLoading}
           hasIcon
-          className="w-auto min-w-[350px]"
+          className="w-full max-w-[430px] min-w-[300px]"
         />
       ))}
     </div>

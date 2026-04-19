@@ -338,7 +338,7 @@ export const TabsTutor = () => {
               tabs={tabs}
               activeTab={currentTab}
               onChange={handleTabChange}
-              className="bg-gray-0 flex flex-row gap-2 max-sm:w-full"
+              className="bg-gray-0 flex flex-row gap-0 max-sm:w-full"
               tabClassName="text-m-base font-medium text-gray-100 hover:bg-gray-5"
             />
             {!isMobile && (

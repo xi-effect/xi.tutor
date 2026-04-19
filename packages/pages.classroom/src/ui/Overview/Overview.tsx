@@ -28,7 +28,7 @@ export const Overview = () => {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col pt-2">
       <SectionContainer title="Материалы" tabLink="materials">
         <MaterialsList />
       </SectionContainer>
