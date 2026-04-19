@@ -99,7 +99,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
     <div data-umami-event="material-card-open" data-umami-event-type={student_id}>
       <div
         onClick={handleClick}
-        className="hover:border-brand-80 border-gray-5 bg-gray-0 relative flex cursor-pointer justify-between rounded-2xl border p-4 transition-all duration-200 ease-linear"
+        className="hover:border-brand-80 border-gray-20 bg-gray-0 relative flex cursor-pointer justify-between rounded-2xl border p-4 transition-all duration-200 ease-linear"
       >
         <div className="flex max-w-full flex-col gap-4">
           <div className="mr-8 flex w-auto max-w-[calc(100%-32px)] items-center gap-2">
