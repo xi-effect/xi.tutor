@@ -11,7 +11,7 @@ import { ClassroomScheduleProvider } from '../Calendar/ClassroomScheduleContext'
 import { CalendarScheduleToolbar } from '../Calendar/ClassroomScheduleParts';
 import { AddingLessonModal } from 'features.lesson.add';
 import { MaterialsAdd } from 'features.materials.add';
-import { useGetClassroom, useAddClassroomMaterials } from 'common.services';
+import { useGetClassroom, useAddClassroomMaterials, useDeleteClassroom } from 'common.services';
 import { ModalStudentsGroup } from 'features.group.manage';
 import { ModalGroupInvite } from 'features.group.invite';
 import { InvoiceModal } from 'features.invoice';
@@ -41,6 +41,8 @@ interface TutorDesktopToolbarProps {
   classroomKind: string | undefined;
   onAddLessonClick: () => void;
   onOpenInvoiceModal: () => void;
+  onDeleteClassroom: () => void;
+  isDeletingClassroom: boolean;
 }
 
 const TutorDesktopToolbar = ({
@@ -48,6 +50,8 @@ const TutorDesktopToolbar = ({
   classroomKind,
   onAddLessonClick,
   onOpenInvoiceModal,
+  onDeleteClassroom,
+  isDeletingClassroom,
 }: TutorDesktopToolbarProps) => {
   if (currentTab === 'overview' && classroomKind === 'group') {
     return (
@@ -55,7 +59,7 @@ const TutorDesktopToolbar = ({
         <ModalStudentsGroup>
           <Button
             size="s"
-            variant="none"
+            variant="ghost"
             className="ml-auto rounded-lg"
             data-umami-event="classroom-add-student"
           >
@@ -65,7 +69,7 @@ const TutorDesktopToolbar = ({
         <ModalGroupInvite>
           <Button
             size="s"
-            variant="none"
+            variant="ghost"
             className="ml-1 rounded-lg"
             data-umami-event="classroom-invite-to-group"
           >
@@ -110,6 +114,21 @@ const TutorDesktopToolbar = ({
     );
   }
 
+  if (currentTab === 'info') {
+    return (
+      <Button
+        size="s"
+        variant="text"
+        className="bg-red-20/50 text-red-60 hover:bg-red-20/80 hover:text-red-60 ml-auto rounded-lg"
+        onClick={onDeleteClassroom}
+        disabled={isDeletingClassroom}
+        data-umami-event="classroom-delete"
+      >
+        {isDeletingClassroom ? 'Удаление...' : 'Удалить кабинет'}
+      </Button>
+    );
+  }
+
   return null;
 };
 
@@ -119,10 +138,12 @@ interface TutorMobileActionsProps {
   currentTab: string;
   classroomKind: string | undefined;
   isPendingAddMaterial: boolean;
+  isDeletingClassroom: boolean;
   isStudentsModalOpen: boolean;
   isGroupInviteModalOpen: boolean;
   onAddMaterial: (contentKind: ContentKind, studentAccessMode: StudentAccessMode) => void;
   onOpenInvoiceModal: () => void;
+  onDeleteClassroom: () => void;
   onStudentsModalChange: (open: boolean) => void;
   onGroupInviteModalChange: (open: boolean) => void;
 }
@@ -131,10 +152,12 @@ const TutorMobileActions = ({
   currentTab,
   classroomKind,
   isPendingAddMaterial,
+  isDeletingClassroom,
   isStudentsModalOpen,
   isGroupInviteModalOpen,
   onAddMaterial,
   onOpenInvoiceModal,
+  onDeleteClassroom,
   onStudentsModalChange,
   onGroupInviteModalChange,
 }: TutorMobileActionsProps) => (
@@ -230,6 +253,16 @@ const TutorMobileActions = ({
               Создать счёт на оплату
             </MenuItem>
           )}
+          {currentTab === 'info' && (
+            <MenuItem
+              className="text-red-60 h-[48px] w-full rounded-xl px-4 text-[22px]"
+              onClick={onDeleteClassroom}
+              disabled={isDeletingClassroom}
+              data-umami-event="classroom-delete"
+            >
+              {isDeletingClassroom ? 'Удаление...' : 'Удалить кабинет'}
+            </MenuItem>
+          )}
         </>
       )}
     </ActionButton>
@@ -260,6 +293,15 @@ export const TabsTutor = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom } = useGetClassroom(Number(classroomId));
   const { addClassroomMaterials } = useAddClassroomMaterials();
+  const { deleteClassroom, isDeleting: isDeletingClassroom } = useDeleteClassroom();
+
+  const handleDeleteClassroom = () => {
+    if (!classroomId) return;
+    deleteClassroom(
+      { classroomId: Number(classroomId) },
+      { onSuccess: () => navigate({ to: '/classrooms' }) },
+    );
+  };
 
   const handleAddMaterial = (contentKind: ContentKind, studentAccessMode: StudentAccessMode) => {
     if (!classroomId) return;
@@ -305,6 +347,8 @@ export const TabsTutor = () => {
                 classroomKind={classroom?.kind}
                 onAddLessonClick={() => handleAddLessonClick()}
                 onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
+                onDeleteClassroom={handleDeleteClassroom}
+                isDeletingClassroom={isDeletingClassroom}
               />
             )}
           </div>
@@ -335,10 +379,12 @@ export const TabsTutor = () => {
               currentTab={currentTab}
               classroomKind={classroom?.kind}
               isPendingAddMaterial={addClassroomMaterials.isPending}
+              isDeletingClassroom={isDeletingClassroom}
               isStudentsModalOpen={isStudentsModalOpen}
               isGroupInviteModalOpen={isGroupInviteModalOpen}
               onAddMaterial={handleAddMaterial}
               onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
+              onDeleteClassroom={handleDeleteClassroom}
               onStudentsModalChange={setIsStudentsModalOpen}
               onGroupInviteModalChange={setIsGroupInviteModalOpen}
             />
