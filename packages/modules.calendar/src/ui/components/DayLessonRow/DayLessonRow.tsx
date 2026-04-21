@@ -5,6 +5,7 @@ import { useCancelLessonModal } from '../../../hooks';
 import type { ScheduleLessonRow } from '../../types';
 import { cn } from '@xipkg/utils';
 import { StartLessonButton } from '../StartLessonButton';
+import { useLessonClassroomPresentation } from '../../../hooks/useLessonClassroomPresentation';
 
 type DayLessonRowProps = {
   lesson: ScheduleLessonRow;
@@ -26,6 +27,11 @@ export const DayLessonRow = ({
     onCancelOne,
     onCancelAll,
   });
+  const { classroomName, avatarUserId, subjectName } = useLessonClassroomPresentation({
+    classroomId: lesson.classroomId,
+    fallbackClassroomName: lesson.studentName,
+    fallbackAvatarUserId: lesson.studentId,
+  });
 
   return (
     <div
@@ -40,9 +46,11 @@ export const DayLessonRow = ({
       </div>
       <div className="flex w-full flex-col justify-start gap-5">
         <div className="flex flex-col gap-2">
-          <span className="text-xs-base text-gray-60 font-medium">{lesson.subject}</span>
+          {subjectName != null ? (
+            <span className="text-xs-base text-gray-60 font-medium">{subjectName}</span>
+          ) : null}
           <div className="flex flex-row items-center gap-2">
-            <UserProfile userId={lesson.studentId} text={lesson.studentName} size="m" />
+            <UserProfile userId={avatarUserId ?? lesson.studentId} text={classroomName} size="m" />
           </div>
         </div>
         {showActions && (

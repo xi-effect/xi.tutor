@@ -8,6 +8,7 @@ import { timeToString } from '../../../utils';
 import { CARD_MIN_WIDTH, CARD_MAX_WIDTH } from '../../../hooks/useKanbanColumns';
 import type { ICalendarEvent } from '../../types';
 // import { Button } from '@xipkg/button';
+import { useLessonClassroomPresentation } from '../../../hooks/useLessonClassroomPresentation';
 
 interface LessonCardProps {
   event: ICalendarEvent;
@@ -26,10 +27,14 @@ export const LessonCard = memo<LessonCardProps>(({ event, isToday, fullWidth, on
   const startTime = event.isAllDay ? null : timeToString(new Date(event.start));
   const endTime = event.isAllDay ? null : timeToString(new Date(event.end));
 
-  const subject = event.lessonInfo?.subject ?? event.title;
   const teacherName = event.lessonInfo?.studentName ?? event.title;
   const teacherId = event.lessonInfo?.teacherId;
   const lessonTitle = event.lessonInfo?.description ?? event.title;
+  const { classroomName, avatarUserId, subjectName } = useLessonClassroomPresentation({
+    classroomId: event.lessonInfo?.classroomId,
+    fallbackClassroomName: teacherName,
+    fallbackAvatarUserId: teacherId,
+  });
 
   const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     if (!onClick) return;
@@ -62,12 +67,11 @@ export const LessonCard = memo<LessonCardProps>(({ event, isToday, fullWidth, on
       tabIndex={onClick ? 0 : undefined}
     >
       <div className="flex flex-col gap-2">
-        {/* Предмет — мелкий серый тег */}
-        <span className="text-gray-40 text-xs">{subject}</span>
+        {subjectName != null ? <span className="text-gray-40 text-xs">{subjectName}</span> : null}
 
         {/* Преподаватель */}
         <div className="flex items-center gap-2">
-          <UserProfile size="s" userId={teacherId ?? 0} text={teacherName} />
+          <UserProfile size="s" userId={avatarUserId ?? teacherId ?? 0} text={classroomName} />
         </div>
 
         {/* Название занятия — крупнее, может переноситься */}

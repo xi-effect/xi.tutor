@@ -5,6 +5,7 @@ import { UserProfile } from '@xipkg/userprofile';
 import { useCancelLessonModal } from '../../../hooks';
 import type { ScheduleLessonRow } from '../../types';
 import { StartLessonButton } from '../StartLessonButton';
+import { useLessonClassroomPresentation } from '../../../hooks/useLessonClassroomPresentation';
 
 export type NearestLessonCardProps = {
   lesson: ScheduleLessonRow;
@@ -27,6 +28,11 @@ export const NearestLessonCard = ({
   const { setCancelModalOpen, cancelLessonModal } = useCancelLessonModal(lesson, {
     onCancelOne,
     onCancelAll,
+  });
+  const { classroomName, avatarUserId, subjectName } = useLessonClassroomPresentation({
+    classroomId: lesson.classroomId,
+    fallbackClassroomName: lesson.studentName,
+    fallbackAvatarUserId: lesson.studentId,
   });
 
   const handleScheduleClick = () => {
@@ -56,8 +62,10 @@ export const NearestLessonCard = ({
           <span className="text-m-base text-gray-60">{lesson.endTime}</span>
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-2">
-          <span className="text-xs-base text-gray-60 font-medium">{lesson.subject}</span>
-          <UserProfile userId={lesson.studentId} text={lesson.studentName} size="m" />
+          {subjectName != null ? (
+            <span className="text-xs-base text-gray-60 font-medium">{subjectName}</span>
+          ) : null}
+          <UserProfile userId={avatarUserId ?? lesson.studentId} text={classroomName} size="m" />
         </div>
       </div>
 

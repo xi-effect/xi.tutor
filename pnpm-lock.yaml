@@ -2982,6 +2982,9 @@ importers:
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.4)
+      common.api:
+        specifier: workspace:*
+        version: link:../common.api
       common.services:
         specifier: workspace:*
         version: link:../common.services
