@@ -4,6 +4,7 @@ import { Button } from '@xipkg/button';
 import { Account, Conference } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
+import { useEffect, useRef, useState } from 'react';
 import {
   useCurrentUser,
   useUserByRole,
@@ -66,14 +67,55 @@ type ClassroomProps = {
 export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [hasBeenVisible, setHasBeenVisible] = useState(false);
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
+  useEffect(() => {
+    if (hasBeenVisible) {
+      return;
+    }
+
+    if (typeof IntersectionObserver === 'undefined') {
+      setHasBeenVisible(true);
+      return;
+    }
+
+    const currentCard = cardRef.current;
+
+    if (!currentCard) {
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setHasBeenVisible(true);
+          observer.disconnect();
+        }
+      },
+      {
+        rootMargin: '200px 0px',
+        threshold: 0.1,
+      },
+    );
+
+    observer.observe(currentCard);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [hasBeenVisible]);
+
+  const shouldDisableStudentParticipantsQuery = isTutor || !hasBeenVisible;
+  const shouldDisableTutorParticipantsQuery = !isTutor || !hasBeenVisible;
+
   const { isConferenceNotActive: isConferenceNotActiveStudent, isLoading: isLoadingStudent } =
-    useGetParticipantsByStudent(classroom.id.toString(), isTutor);
+    useGetParticipantsByStudent(classroom.id.toString(), shouldDisableStudentParticipantsQuery);
   const { isConferenceNotActive: isConferenceNotActiveTutor, isLoading: isLoadingTutor } =
-    useGetParticipantsByTutor(classroom.id.toString(), !isTutor);
+    useGetParticipantsByTutor(classroom.id.toString(), shouldDisableTutorParticipantsQuery);
 
   const searchCall = useSearch({ strict: false }) as { call?: string };
   const params = useParams({ strict: false }) as {
@@ -136,7 +178,10 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   };
 
   return (
-    <div className="border-gray-30 relative flex min-h-[140px] w-[240px] flex-col items-start justify-start gap-3 rounded-2xl border bg-transparent px-5 py-4 xl:w-[280px]">
+    <div
+      ref={cardRef}
+      className="border-gray-30 relative flex min-h-[140px] w-[240px] flex-col items-start justify-start gap-3 rounded-2xl border bg-transparent px-5 py-4 xl:w-[280px]"
+    >
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button
