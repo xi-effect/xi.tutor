@@ -1,8 +1,16 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ChangeLessonModal, type ChangeLessonFormData } from 'features.lesson.change';
 import { LessonInfoModal } from 'features.lesson.info';
+import { useCurrentUser } from 'common.services';
 import type { ICalendarEvent } from '../ui/types';
 import { timeToString } from '../utils';
+
+const FIVE_MINUTES_MS = 5 * 60 * 1000;
+const SCHEDULE_TOOLTIP = 'Кнопка станет активной за 5 минут до начала занятия';
+
+function isWithinStartWindow(start: Date): boolean {
+  return start.getTime() - Date.now() <= FIVE_MINUTES_MS;
+}
 
 function mapEventToLessonInfo(event: ICalendarEvent) {
   const startTime = event.isAllDay ? null : timeToString(new Date(event.start));
@@ -43,6 +51,44 @@ export const useLessonInfoModal = ({
   const [selectedEvent, setSelectedEvent] = useState<ICalendarEvent | null>(null);
   const [isEditing, setIsEditing] = useState(false);
 
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const [canStartNow, setCanStartNow] = useState(() =>
+    selectedEvent ? isWithinStartWindow(new Date(selectedEvent.start)) : true,
+  );
+
+  useEffect(() => {
+    if (!selectedEvent) return;
+    const startDate = new Date(selectedEvent.start);
+    if (isWithinStartWindow(startDate)) {
+      setCanStartNow(true);
+      return;
+    }
+    setCanStartNow(false);
+    const msUntilWindow = startDate.getTime() - Date.now() - FIVE_MINUTES_MS;
+    if (msUntilWindow <= 0) {
+      setCanStartNow(true);
+      return;
+    }
+    const timer = setTimeout(() => setCanStartNow(true), msUntilWindow);
+    return () => clearTimeout(timer);
+  }, [selectedEvent]);
+
+  const isStartLessonDisabled = isTutor && !canStartNow;
+  const startLessonTooltip = isStartLessonDisabled ? SCHEDULE_TOOLTIP : undefined;
+
+  const handleStartLesson = (event: ICalendarEvent) => {
+    if (onStartLesson) {
+      onStartLesson(event);
+      return;
+    }
+    const classroomId = event.lessonInfo?.classroomId;
+    if (classroomId != null) {
+      window.location.href = `/classrooms/${classroomId}?goto=call`;
+    }
+  };
+
   const close = useCallback(() => {
     setSelectedEvent(null);
     setIsEditing(false);
@@ -58,7 +104,9 @@ export const useLessonInfoModal = ({
               if (!o) close();
             }}
             {...mapEventToLessonInfo(selectedEvent)}
-            onStartLesson={() => onStartLesson?.(selectedEvent)}
+            onStartLesson={() => handleStartLesson(selectedEvent)}
+            isStartLessonDisabled={isStartLessonDisabled}
+            startLessonTooltip={startLessonTooltip}
             onReschedule={() => onReschedule?.(selectedEvent)}
             onEditLesson={() => setIsEditing(true)}
             onCancelLesson={() => onCancelLesson?.(selectedEvent)}

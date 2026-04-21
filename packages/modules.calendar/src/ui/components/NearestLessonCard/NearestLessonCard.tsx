@@ -1,13 +1,13 @@
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Button } from '@xipkg/button';
-import { Close, Conference, External, Redo } from '@xipkg/icons';
+import { Close, External, Redo } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
 import { useCancelLessonModal } from '../../../hooks';
 import type { ScheduleLessonRow } from '../../types';
+import { StartLessonButton } from '../StartLessonButton';
 
 export type NearestLessonCardProps = {
   lesson: ScheduleLessonRow;
-  onStartLesson?: () => void;
   onReschedule?: () => void;
   /** Переопределяет переход на страницу расписания по кнопке внизу карточки */
   onScheduleNavigate?: () => void;
@@ -17,7 +17,6 @@ export type NearestLessonCardProps = {
 
 export const NearestLessonCard = ({
   lesson,
-  onStartLesson,
   onReschedule,
   onScheduleNavigate,
   onCancelOne,
@@ -73,16 +72,13 @@ export const NearestLessonCard = ({
           <Redo className="fill-gray-70 mr-1.5 h-4 w-4" />
           Перенести
         </Button>
-        <Button
-          type="button"
-          variant="ghost"
-          size="s"
-          className="text-brand-100 bg-brand-0 hover:bg-brand-20/50 h-[38px] flex-1 p-0"
-          onClick={onStartLesson}
-        >
-          Начать занятие
-          <Conference className="fill-brand-100 ml-1.5 h-4 w-4" />
-        </Button>
+        {lesson.classroomId != null && (
+          <StartLessonButton
+            classroomId={lesson.classroomId}
+            scheduledAt={lesson.startAt}
+            className="bg-brand-0 hover:bg-brand-20/50 h-[38px] flex-1 p-0"
+          />
+        )}
         <Button
           variant="none"
           size="s"

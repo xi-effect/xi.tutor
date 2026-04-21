@@ -1,9 +1,10 @@
 import { Button } from '@xipkg/button';
-import { Conference, Close } from '@xipkg/icons';
+import { Close } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
 import { useCancelLessonModal } from '../../../hooks';
 import type { ScheduleLessonRow } from '../../types';
 import { cn } from '@xipkg/utils';
+import { StartLessonButton } from '../StartLessonButton';
 
 type DayLessonRowProps = {
   lesson: ScheduleLessonRow;
@@ -46,19 +47,17 @@ export const DayLessonRow = ({
         </div>
         {showActions && (
           <div className="flex shrink-0 flex-row items-center gap-2">
-            <Button
-              variant="ghost"
-              size="s"
-              className="text-brand-100 h-[32px] w-full px-0 text-[12px]"
-              onClick={() => {}}
-            >
-              Начать занятие
-              <Conference className="fill-brand-100 ml-3 h-4 w-4" />
-            </Button>
+            {lesson.classroomId != null && (
+              <StartLessonButton
+                classroomId={lesson.classroomId}
+                scheduledAt={lesson.startAt}
+                className="text-xs-base-size px-0"
+              />
+            )}
             <Button
               variant="none"
               size="s"
-              className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 h-[32px] w-full px-0 text-[12px]"
+              className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 text-xs-base-size h-[32px] w-full px-0"
               onClick={() => {}}
             >
               Перенести занятие

@@ -64,10 +64,21 @@ type LessonSeed = {
   dayIndex: number;
   start: [number, number];
   end: [number, number];
+  classroomId?: number;
   subject: string;
   studentName: string;
   description: string;
   lessonType?: 'individual' | 'group';
+};
+
+const REAL_CLASSROOM_IDS = [
+  710, 708, 476, 457, 456, 452, 451, 450, 449, 448, 447, 446, 445, 444, 443, 388, 379, 378, 377,
+  376,
+];
+
+const getClassroomIdBySeedId = (seedId: string): number => {
+  const hash = [...seedId].reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+  return REAL_CLASSROOM_IDS[hash % REAL_CLASSROOM_IDS.length];
 };
 
 const mkLessons = (monday: Date, seeds: LessonSeed[]): ICalendarEvent[] =>
@@ -89,6 +100,7 @@ const mkLessons = (monday: Date, seeds: LessonSeed[]): ICalendarEvent[] =>
         subject: s.subject,
         lessonType: s.lessonType ?? 'individual',
         description: s.description,
+        classroomId: s.classroomId ?? getClassroomIdBySeedId(s.id),
       },
     };
   });
@@ -122,6 +134,7 @@ const mkDenseDay = (
       dayIndex,
       start: [h, m],
       end: [eh, m],
+      classroomId: REAL_CLASSROOM_IDS[i % REAL_CLASSROOM_IDS.length],
       subject: SUBJECTS_ROT[i % SUBJECTS_ROT.length],
       studentName: `Ученик ${i + 1}`,
       description: `Блок ${i + 1}`,
@@ -150,6 +163,7 @@ const buildTodayMockEvents = (): ICalendarEvent[] => {
         subject: 'Математика',
         lessonType: 'individual',
         description: 'Подготовка к контрольной',
+        classroomId: 710,
       },
     },
     {
@@ -163,6 +177,7 @@ const buildTodayMockEvents = (): ICalendarEvent[] => {
         subject: 'Английский язык',
         lessonType: 'group',
         description: 'Speaking practice',
+        classroomId: 708,
       },
     },
     {
@@ -176,6 +191,7 @@ const buildTodayMockEvents = (): ICalendarEvent[] => {
         subject: 'Физика',
         lessonType: 'individual',
         description: 'Электродинамика',
+        classroomId: 476,
       },
     },
   ];

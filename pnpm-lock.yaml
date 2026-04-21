@@ -2030,6 +2030,9 @@ importers:
       '@xipkg/modal':
         specifier: 4.3.1
         version: 4.3.1(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@xipkg/tooltip':
+        specifier: 2.1.0
+        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/userprofile':
         specifier: 4.1.0
         version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -2970,12 +2973,18 @@ importers:
       '@xipkg/toggle':
         specifier: ^4.1.0
         version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@xipkg/tooltip':
+        specifier: 2.1.0
+        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/userprofile':
         specifier: 4.1.0
         version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.4)
+      common.services:
+        specifier: workspace:*
+        version: link:../common.services
       common.ui:
         specifier: workspace:*
         version: link:../common.ui
@@ -2991,6 +3000,9 @@ importers:
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)
+      modules.calls:
+        specifier: workspace:*
+        version: link:../modules.calls
       react:
         specifier: '19'
         version: 19.2.4

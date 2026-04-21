@@ -10,6 +10,7 @@ import {
 import { Button } from '@xipkg/button';
 import { Clock, Conference, Edit, Redo, Trash } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 
 export type LessonInfoModalProps = {
   open: boolean;
@@ -21,6 +22,10 @@ export type LessonInfoModalProps = {
   startTime: string | null;
   endTime: string | null;
   onStartLesson?: () => void;
+  /** Принудительно заблокировать кнопку «Начать занятие» */
+  isStartLessonDisabled?: boolean;
+  /** Тултип при заблокированной кнопке «Начать занятие» */
+  startLessonTooltip?: string;
   onReschedule?: () => void;
   onEditLesson?: () => void;
   onCancelLesson?: () => void;
@@ -36,6 +41,8 @@ export const LessonInfoModal = ({
   startTime,
   endTime,
   onStartLesson,
+  isStartLessonDisabled,
+  startLessonTooltip,
   onReschedule,
   onEditLesson,
   onCancelLesson,
@@ -85,15 +92,35 @@ export const LessonInfoModal = ({
         </ModalBody>
 
         <ModalFooter className="xs:gap-2 flex flex-col gap-3 px-6 pb-6 sm:flex-row sm:items-stretch">
-          <Button
-            type="button"
-            variant="ghost"
-            className="text-brand-100 bg-brand-0 hover:bg-brand-20/50 h-12 min-h-12 flex-1"
-            onClick={onStartLesson}
-          >
-            Начать занятие
-            <Conference className="fill-brand-100 ml-1.5 h-4 w-4" />
-          </Button>
+          {isStartLessonDisabled && startLessonTooltip ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span className="flex-1">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    className="text-brand-100 bg-brand-0 hover:bg-brand-20/50 h-12 min-h-12 w-full"
+                    disabled
+                  >
+                    Начать занятие
+                    <Conference className="fill-gray-40 ml-1.5 h-4 w-4" />
+                  </Button>
+                </span>
+              </TooltipTrigger>
+              <TooltipContent>{startLessonTooltip}</TooltipContent>
+            </Tooltip>
+          ) : (
+            <Button
+              type="button"
+              variant="ghost"
+              className="text-brand-100 bg-brand-0 hover:bg-brand-20/50 h-12 min-h-12 flex-1"
+              onClick={onStartLesson}
+              disabled={isStartLessonDisabled}
+            >
+              Начать занятие
+              <Conference className="fill-brand-100 ml-1.5 h-4 w-4" />
+            </Button>
+          )}
           <Button
             type="button"
             variant="none"

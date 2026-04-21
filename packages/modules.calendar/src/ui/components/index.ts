@@ -7,3 +7,4 @@ export { ScheduleMobileView } from './ScheduleMobileView';
 export { DayLessonRow } from './DayLessonRow';
 export { DayLessonsPanel } from './DayLessonsPanel';
 export { NearestLessonCard } from './NearestLessonCard';
+export { StartLessonButton, type StartLessonButtonProps } from './StartLessonButton';

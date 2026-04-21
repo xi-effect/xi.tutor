@@ -6,10 +6,18 @@ import { AllLessons } from './AllLessons';
 import { ScheduleDateCarousel } from 'modules.calendar';
 import type { DominantVisibleMonthInfo, ScheduleLessonRow } from 'modules.calendar';
 
+const makeTodayAt = (hours: number, minutes: number) => {
+  const date = new Date();
+  date.setHours(hours, minutes, 0, 0);
+  return date;
+};
+
 // TODO: Заменить на данные из API по выбранной дате (selectedDate)
 export const MOCK_LESSONS: ScheduleLessonRow[] = [
   {
     id: 1,
+    classroomId: 710,
+    startAt: makeTodayAt(15, 45),
     startTime: '15:45',
     endTime: '16:30',
     subject: 'Математика',
@@ -18,6 +26,8 @@ export const MOCK_LESSONS: ScheduleLessonRow[] = [
   },
   {
     id: 2,
+    classroomId: 708,
+    startAt: makeTodayAt(16, 45),
     startTime: '16:45',
     endTime: '17:30',
     subject: 'Физика',
@@ -26,6 +36,8 @@ export const MOCK_LESSONS: ScheduleLessonRow[] = [
   },
   {
     id: 3,
+    classroomId: 476,
+    startAt: makeTodayAt(17, 45),
     startTime: '17:45',
     endTime: '18:30',
     subject: 'Химия',
@@ -34,6 +46,8 @@ export const MOCK_LESSONS: ScheduleLessonRow[] = [
   },
   {
     id: 4,
+    classroomId: 457,
+    startAt: makeTodayAt(19, 45),
     startTime: '19:45',
     endTime: '20:30',
     subject: 'История',
@@ -41,7 +55,9 @@ export const MOCK_LESSONS: ScheduleLessonRow[] = [
     studentId: 5,
   },
   {
-    id: 2,
+    id: 5,
+    classroomId: 456,
+    startAt: makeTodayAt(20, 45),
     startTime: '20:45',
     endTime: '21:30',
     subject: 'Физика',
@@ -49,7 +65,9 @@ export const MOCK_LESSONS: ScheduleLessonRow[] = [
     studentId: 3,
   },
   {
-    id: 3,
+    id: 6,
+    classroomId: 452,
+    startAt: makeTodayAt(22, 45),
     startTime: '22:45',
     endTime: '23:30',
     subject: 'Химия',

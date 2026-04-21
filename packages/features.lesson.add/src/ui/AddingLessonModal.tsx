@@ -10,6 +10,7 @@ import './AddingModal.css';
 const MOCK_DAY_LESSONS: ScheduleLessonRow[] = [
   {
     id: 1,
+    classroomId: 710,
     startTime: '10:00',
     endTime: '10:45',
     subject: 'Математика',
@@ -18,6 +19,7 @@ const MOCK_DAY_LESSONS: ScheduleLessonRow[] = [
   },
   {
     id: 2,
+    classroomId: 708,
     startTime: '11:00',
     endTime: '11:45',
     subject: 'Физика',
@@ -26,6 +28,7 @@ const MOCK_DAY_LESSONS: ScheduleLessonRow[] = [
   },
   {
     id: 3,
+    classroomId: 476,
     startTime: '14:00',
     endTime: '14:45',
     subject: 'Химия',
@@ -34,6 +37,7 @@ const MOCK_DAY_LESSONS: ScheduleLessonRow[] = [
   },
   {
     id: 4,
+    classroomId: 457,
     startTime: '16:30',
     endTime: '17:15',
     subject: 'История',

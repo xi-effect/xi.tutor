@@ -14,6 +14,7 @@
     "@xipkg/button": "4.1.0",
     "@xipkg/icons": "^3.0.9",
     "@xipkg/modal": "4.3.1",
+    "@xipkg/tooltip": "2.1.0",
     "@xipkg/userprofile": "4.1.0"
   },
   "devDependencies": {

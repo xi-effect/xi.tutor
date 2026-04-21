@@ -18,6 +18,8 @@ export interface ILessonInfo {
   complete?: boolean;
   /** id пользователя (преподавателя/студента) для UserProfile */
   teacherId?: number;
+  /** id кабинета, привязанного к занятию */
+  classroomId?: number;
 }
 
 export type EventType = 'lesson' | 'rest';
@@ -26,6 +28,10 @@ export type LessonType = 'group' | 'individual';
 /** Строка занятия в списке на день (расписание, виджет дня) */
 export type ScheduleLessonRow = {
   id: number;
+  /** id кабинета, привязанного к занятию */
+  classroomId?: number;
+  /** Точное время начала занятия (для расчёта окна 5 минут) */
+  startAt?: Date;
   startTime: string;
   endTime: string;
   subject: string;
