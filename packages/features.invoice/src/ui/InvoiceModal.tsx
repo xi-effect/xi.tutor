@@ -20,7 +20,7 @@ const cleanupBodyScrollLock = () => {
 };
 import { useFetchClassrooms } from 'common.services';
 import { useInvoiceForm } from '../hooks';
-import type { FormData } from '../model';
+import { roundMoney, type FormData } from '../model';
 import { ClassroomSelector } from './ClassroomSelector';
 import { CommentField } from './CommentField';
 import { SubjectRow } from './SubjectRow';
@@ -60,9 +60,11 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
   };
 
   // Вычисляем общую стоимость счёта
-  const totalInvoicePrice = items.reduce((total, item) => {
-    return total + item.price * (item.quantity || 0);
-  }, 0);
+  const totalInvoicePrice = roundMoney(
+    items.reduce((total, item) => {
+      return total + item.price * (item.quantity || 0);
+    }, 0),
+  );
 
   return (
     <Modal
