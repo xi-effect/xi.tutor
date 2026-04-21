@@ -28,8 +28,13 @@ export const DefaultCard = ({
         <StatusBadge status={payment.status} withBg={true} className="text-right" />
         {payment.payment_type && !withoutPaymentType && renderIcon(payment.payment_type)}
       </div>
-      {type === 'full' && (
-        <div className="flex w-full flex-row items-center justify-between gap-2">
+      <div
+        className={cn(
+          'flex w-full flex-row items-center gap-2',
+          type === 'full' ? 'justify-between' : 'justify-end',
+        )}
+      >
+        {type === 'full' && (
           <UserProfile
             size="m"
             userId={userId}
@@ -38,11 +43,11 @@ export const DefaultCard = ({
             classNameText="line-clamp-2 break-words"
             className="h-auto overflow-hidden"
           />
-          <div className="flex flex-row items-baseline gap-0.5">
-            <h3 className="text-m-base font-medium text-gray-100">{amount} ₽</h3>
-          </div>
+        )}
+        <div className="flex flex-row items-baseline gap-0.5">
+          <h3 className="text-m-base font-medium text-gray-100">{amount} ₽</h3>
         </div>
-      )}
+      </div>
       <div className="text-s-base text-gray-80 mt-auto flex w-full flex-col gap-1 font-medium">
         <PaymentApproveAction payment={payment} isTutor={currentUserRole === 'tutor'} />
       </div>

@@ -104,7 +104,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
     <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
       {/* Заголовки дней — без скролла */}
       <div
-        className="grid shrink-0 gap-x-7"
+        className="grid shrink-0 gap-x-7 pr-3"
         style={{
           gridTemplateColumns,
         }}
@@ -151,7 +151,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
       {/* Один общий вертикальный скролл для всех колонок */}
       <div
         ref={scrollAreaRef}
-        className="flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto [scrollbar-gutter:stable]"
+        className="flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto pr-3 [scrollbar-gutter:stable]"
       >
         <div className="box-border flex min-h-full min-w-0 flex-1 flex-col">
           <div className="grid flex-1 items-stretch gap-x-7 pb-4" style={{ gridTemplateColumns }}>

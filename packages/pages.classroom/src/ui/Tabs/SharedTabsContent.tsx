@@ -19,7 +19,7 @@ export const SharedTabsContent = ({ extraContent }: SharedTabsContentProps) => (
       <Materials />
     </Tabs.Content>
 
-    <Tabs.Content value="schedule">
+    <Tabs.Content className="flex min-h-0 flex-1 flex-col outline-none" value="schedule">
       <Calendar />
     </Tabs.Content>
 

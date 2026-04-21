@@ -28,11 +28,7 @@ export const CalendarScheduleKanban = ({ onLessonReschedule }: CalendarScheduleK
   const visibleDays = weekDays.slice(0, visibleCount);
 
   return (
-    <div
-      ref={containerRef}
-      // 88px — шапка кабинета, 8px — pt-2 на Tabs.Root, 56px — таб-бар
-      className="h-[calc(100vh-160px)] w-full min-w-0 flex-col overflow-hidden"
-    >
+    <div ref={containerRef} className="flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden">
       <ScheduleKanban
         visibleDays={visibleDays}
         columnWidth={columnWidth}

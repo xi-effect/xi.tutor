@@ -81,7 +81,7 @@ export const Calendar = () => {
           onLessonReschedule={handleLessonReschedule}
         />
       ) : (
-        <div className="">
+        <div className="flex h-full min-h-0 min-w-0 flex-col">
           <CalendarScheduleKanban onLessonReschedule={handleLessonReschedule} />
         </div>
       )}

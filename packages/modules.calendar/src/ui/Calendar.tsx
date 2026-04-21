@@ -35,7 +35,7 @@ export const CalendarModule = ({
   }
 
   return (
-    <div className="bg-gray-5 flex min-h-screen flex-1 flex-col pl-4">
+    <div className="bg-gray-5 flex h-full min-h-0 min-w-0 flex-1 flex-col pl-4">
       <CalendarHeader
         weekStart={weekStart}
         visibleDays={visibleDays}

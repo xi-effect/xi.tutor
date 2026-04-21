@@ -4,12 +4,12 @@ import { useCallback, useEffect, useState } from 'react';
 export const COLUMN_MIN_WIDTH = 240;
 
 /**
- * Внутренний отступ справа у области скролла канбана (`ScheduleKanban`: `pr-6`).
+ * Внутренний отступ справа у области скролла канбана (`ScheduleKanban`: `pr-3`, 12px).
  * В расчёт ширины колонок нужно закладывать **до** `repeat(..., minmax(...))`, иначе
  * сумма колонок + gap чуть шире фактической ширины контента → горизонтальный overflow
  * и последняя колонка визуально «под» overlay-скроллбаром.
  */
-export const KANBAN_SCROLL_INNER_PADDING_END_PX = 24;
+export const KANBAN_SCROLL_INNER_PADDING_END_PX = 12;
 
 /** Зазор между колонками (gap-7 = 28px) */
 const COLUMN_GAP = 28;
