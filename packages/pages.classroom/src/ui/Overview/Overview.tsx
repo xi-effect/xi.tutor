@@ -6,6 +6,7 @@ import { SectionContainer } from './SectionContainer';
 import { MaterialsList } from './MaterialsList';
 import { PaymentsList } from './PaymentsList';
 import { StudentsList } from './StudentsList';
+import { UpcomingLessonsSection } from './UpcomingLessonsSection';
 
 export const Overview = () => {
   const { data: user } = useCurrentUser();
@@ -28,7 +29,8 @@ export const Overview = () => {
   }
 
   return (
-    <div className="flex flex-col pt-2">
+    <div className="flex flex-col gap-6 pt-2">
+      <UpcomingLessonsSection />
       <SectionContainer title="Материалы" tabLink="materials">
         <MaterialsList />
       </SectionContainer>

@@ -18,7 +18,7 @@
     "@xipkg/button": "4.1.0",
     "@xipkg/datepicker": "2.3.0",
     "@xipkg/form": "4.2.2",
-    "@xipkg/icons": "^3.0.6",
+    "@xipkg/icons": "^3.0.15",
     "@xipkg/input": "2.2.9",
     "@xipkg/inputmask": "2.0.12",
     "@xipkg/modal": "4.3.1",

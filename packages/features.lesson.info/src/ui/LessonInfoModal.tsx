@@ -10,7 +10,7 @@ import {
   ModalTitle,
 } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
-import { Clock, Conference, Edit, Redo, Trash } from '@xipkg/icons';
+import { Clock, Conference, Edit05, Redo, Trash } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 
@@ -187,7 +187,7 @@ export const LessonInfoModal = ({
                 aria-label="Редактировать"
               >
                 <span className="xs:sr-only block">Редактировать</span>
-                <Edit className="fill-gray-60 xs:ml-0 ml-2 h-5 w-5" />
+                <Edit05 className="text-gray-60 xs:ml-0 ml-2 h-5 w-5" />
               </Button>
             ) : null}
           </ModalFooter>

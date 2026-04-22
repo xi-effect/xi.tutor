@@ -29,3 +29,7 @@ export type { UseLessonInfoModalOptions } from './src/hooks/useLessonInfoModal';
 export type { UseChangeLessonModalOptions } from './src/hooks/useChangeLessonModal';
 export { calendarEn, calendarRu } from './src/locales';
 export { getScheduleLessonEndAt } from './src/utils/getScheduleLessonEndAt';
+export {
+  StartLessonButton,
+  type StartLessonButtonProps,
+} from './src/ui/components/StartLessonButton';

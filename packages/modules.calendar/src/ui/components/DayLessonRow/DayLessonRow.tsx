@@ -1,6 +1,6 @@
 import { useMemo, type KeyboardEvent } from 'react';
 import { Button } from '@xipkg/button';
-import { Close, CornerUpRight, Edit } from '@xipkg/icons';
+import { Close, CornerUpRight, Edit05 } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useCurrentUser } from 'common.services';
@@ -181,7 +181,7 @@ export const DayLessonRow = ({
                       className="bg-gray-0/80 hover:bg-gray-10 h-[32px] w-[32px] min-w-[32px] p-0"
                       onClick={() => setChangeModalOpen(true)}
                     >
-                      <Edit className="fill-gray-60 h-5 w-5" />
+                      <Edit05 className="text-gray-60 h-5 w-5" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>Редактировать занятие</TooltipContent>
