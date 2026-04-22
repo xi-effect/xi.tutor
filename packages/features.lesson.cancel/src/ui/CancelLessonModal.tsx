@@ -31,7 +31,7 @@ export const CancelLessonModal = ({
             Отменить только это занятие
           </Button>
           <Button className="w-full" variant="ghost" size="m" onClick={onCancelAll}>
-            Отменить все после этого
+            Отменить это и все последующие занятия
           </Button>
 
           <Button

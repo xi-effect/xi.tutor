@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ScrollArea } from '@xipkg/scrollarea';
-import { DayLessonListMetaProvider, DayLessonRow } from 'modules.calendar';
-import type { ScheduleLessonRow } from 'modules.calendar';
+import { DayLessonListMetaProvider, DayLessonRow, getScheduleLessonEndAt } from 'modules.calendar';
+import type { ChangeLessonFormData, ScheduleLessonRow } from 'modules.calendar';
 
 type AllLessonsProps = {
   lessons: ScheduleLessonRow[];
@@ -12,28 +12,13 @@ type AllLessonsProps = {
   dayDate: Date;
   /** Панель действий (начать, иконки препода) на каждой карточке. По умолчанию true */
   showLessonActions?: boolean;
-  /** Показать иконки-действия препода по ховеру (при showLessonActions) */
-  isTutor?: boolean;
+  onSaveLesson?: (lesson: ScheduleLessonRow, data: ChangeLessonFormData) => void;
 };
-
-function getLessonEnd(lesson: ScheduleLessonRow, dayDate: Date): Date | null {
-  const [h, m] = lesson.endTime.split(':').map((x) => parseInt(x, 10));
-  if (Number.isNaN(h) || Number.isNaN(m)) return null;
-  if (lesson.startAt != null) {
-    const d = new Date(lesson.startAt);
-    d.setHours(h, m, 0, 0);
-    return d;
-  }
-  const d = new Date(dayDate);
-  d.setHours(0, 0, 0, 0);
-  d.setHours(h, m, 0, 0);
-  return d;
-}
 
 /** Первое занятие в списке, которое ещё не закончилось (текущее или ближайшее) */
 function findNearestLessonIndex(lessons: ScheduleLessonRow[], now: Date, dayDate: Date): number {
   for (let i = 0; i < lessons.length; i++) {
-    const end = getLessonEnd(lessons[i], dayDate);
+    const end = getScheduleLessonEndAt(lessons[i], dayDate);
     if (end != null && now < end) {
       return i;
     }
@@ -45,7 +30,7 @@ export const AllLessons = ({
   lessons,
   dayDate,
   showLessonActions = true,
-  isTutor = false,
+  onSaveLesson,
 }: AllLessonsProps) => {
   const nearestIndex = useMemo(
     () => findNearestLessonIndex(lessons, new Date(), dayDate),
@@ -60,9 +45,10 @@ export const AllLessons = ({
             <DayLessonRow
               key={lesson.id}
               lesson={lesson}
+              lessonDay={dayDate}
               showActions={showLessonActions}
-              isTutor={isTutor && showLessonActions}
               isNearestLesson={nearestIndex >= 0 && index === nearestIndex}
+              onSaveLesson={onSaveLesson}
             />
           ))}
         </div>

@@ -1,14 +1,17 @@
-import type { KeyboardEvent } from 'react';
+import { useMemo, type KeyboardEvent } from 'react';
 import { Button } from '@xipkg/button';
 import { Close, CornerUpRight, Edit } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
-import { useCancelLessonModal } from '../../../hooks';
+import { useCurrentUser } from 'common.services';
+import { useCancelLessonModal, useChangeLessonModal } from '../../../hooks';
 import { useDayLessonListMeta } from '../../contexts/DayLessonListMetaContext';
 import type { ScheduleLessonRow } from '../../types';
 import { cn } from '@xipkg/utils';
 import { StartLessonButton } from '../StartLessonButton';
 import { useLessonClassroomPresentation } from '../../../hooks/useLessonClassroomPresentation';
+import { getScheduleLessonEndAt } from '../../../utils/getScheduleLessonEndAt';
+import type { ChangeLessonFormData } from 'features.lesson.change';
 
 const ACTIVATE_KEYS = new Set(['Enter', ' ']);
 
@@ -36,32 +39,37 @@ type DayLessonRowProps = {
   lesson: ScheduleLessonRow;
   /** Показывать блок действий: «Начать занятие» и (для препода) иконки по ховеру. По умолчанию false */
   showActions?: boolean;
-  /** Показывать колонку иконок-действий по ховеру (только при showActions) */
-  isTutor?: boolean;
   /** Синяя рамка «предстоящее / текущее» — только у ближайшего к моменту просмотра занятия в списке */
   isNearestLesson?: boolean;
+  /** Календарный день списка — для расчёта окончания слота, если нет `lesson.startAt` */
+  lessonDay?: Date;
   onCancelOne?: (lesson: ScheduleLessonRow) => void;
   onCancelAll?: (lesson: ScheduleLessonRow) => void;
   onReschedule?: (lesson: ScheduleLessonRow) => void;
-  onEditLesson?: (lesson: ScheduleLessonRow) => void;
+  onSaveLesson?: (lesson: ScheduleLessonRow, data: ChangeLessonFormData) => void;
 };
 
 export const DayLessonRow = ({
   lesson,
   showActions = false,
-  isTutor = false,
   isNearestLesson = false,
+  lessonDay,
   onCancelOne,
   onCancelAll,
   onReschedule,
-  onEditLesson,
+  onSaveLesson,
 }: DayLessonRowProps) => {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
   const listMeta = useDayLessonListMeta();
   const showLessonDescription = listMeta?.showLessonDescription ?? false;
   const toggleLessonDescription = listMeta?.toggleLessonDescription;
   const { setCancelModalOpen, cancelLessonModal } = useCancelLessonModal(lesson, {
     onCancelOne,
     onCancelAll,
+  });
+  const { setChangeModalOpen, changeLessonModal } = useChangeLessonModal(lesson, {
+    onSaveLesson,
   });
   const { classroomName, avatarUserId, subjectName } = useLessonClassroomPresentation({
     classroomId: lesson.classroomId,
@@ -72,10 +80,16 @@ export const DayLessonRow = ({
   const descriptionText = lesson.description?.trim();
   const handleToggleDescription = () => toggleLessonDescription?.();
 
+  const scheduledEndsAt = useMemo(
+    () => getScheduleLessonEndAt(lesson, lessonDay) ?? undefined,
+    [lesson, lessonDay],
+  );
+
   return (
     <div
       className={cn(
-        'group/day-lesson border-gray-10 relative flex h-[136px] max-h-[136px] shrink-0 flex-row items-stretch gap-4 overflow-hidden p-4 pb-3.5 transition-[padding] duration-200 ease-linear hover:pr-14',
+        'border-gray-10 relative flex h-[136px] max-h-[136px] shrink-0 flex-row items-stretch gap-4 overflow-hidden p-4 pb-3.5 transition-[padding] duration-200 ease-linear',
+        showTutorIconColumn && 'group/day-lesson hover:pr-14',
         isNearestLesson ? 'border-brand-80 rounded-2xl border' : 'border-b last:border-b-0',
       )}
     >
@@ -165,7 +179,7 @@ export const DayLessonRow = ({
                       variant="none"
                       size="s"
                       className="bg-gray-0/80 hover:bg-gray-10 h-[32px] w-[32px] min-w-[32px] p-0"
-                      onClick={() => onEditLesson?.(lesson)}
+                      onClick={() => setChangeModalOpen(true)}
                     >
                       <Edit className="fill-gray-60 h-5 w-5" />
                     </Button>
@@ -181,6 +195,7 @@ export const DayLessonRow = ({
             <StartLessonButton
               classroomId={lesson.classroomId}
               scheduledAt={lesson.startAt}
+              scheduledEndsAt={scheduledEndsAt}
               className="w-full min-w-0 flex-1 px-0 text-[12px]"
             />
           </div>
@@ -188,6 +203,7 @@ export const DayLessonRow = ({
       </div>
 
       {cancelLessonModal}
+      {changeLessonModal}
     </div>
   );
 };

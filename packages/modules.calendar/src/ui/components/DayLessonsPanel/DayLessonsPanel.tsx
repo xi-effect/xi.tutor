@@ -1,3 +1,4 @@
+import type { ChangeLessonFormData } from 'features.lesson.change';
 import type { ScheduleLessonRow } from '../../types';
 import { DayLessonListMetaProvider } from '../../contexts/DayLessonListMetaContext';
 import { ScheduleDateCarousel } from '../ScheduleDateCarousel';
@@ -9,10 +10,9 @@ type DayLessonsPanelProps = {
   lessons: ScheduleLessonRow[];
   /** Панель действий на каждой карточке занятия. По умолчанию false */
   showLessonActions?: boolean;
-  /** Показать иконки-действия препода по ховеру (при showLessonActions) */
-  isTutor?: boolean;
   /** Не показывать заголовок. По умолчанию false */
   withoutTitle?: boolean;
+  onSaveLesson?: (lesson: ScheduleLessonRow, data: ChangeLessonFormData) => void;
 };
 
 /** Виджет: переключатель дней + список занятий на день */
@@ -21,8 +21,8 @@ export const DayLessonsPanel = ({
   onSelectedDateChange,
   lessons,
   showLessonActions = false,
-  isTutor = false,
   withoutTitle = false,
+  onSaveLesson,
 }: DayLessonsPanelProps) => {
   return (
     <DayLessonListMetaProvider>
@@ -39,8 +39,9 @@ export const DayLessonsPanel = ({
             <DayLessonRow
               key={lesson.id}
               lesson={lesson}
+              lessonDay={selectedDate}
               showActions={showLessonActions}
-              isTutor={isTutor && showLessonActions}
+              onSaveLesson={onSaveLesson}
             />
           ))}
         </div>

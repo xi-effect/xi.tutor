@@ -167,7 +167,7 @@ export const Lessons = () => {
         />
 
         {/* Список занятий на выбранный день */}
-        <AllLessons dayDate={selectedDate} lessons={MOCK_LESSONS} isTutor />
+        <AllLessons dayDate={selectedDate} lessons={MOCK_LESSONS} />
       </div>
     </>
   );

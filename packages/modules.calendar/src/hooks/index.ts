@@ -5,5 +5,6 @@ export { useConstants } from './useConstants';
 export { useKanbanColumns } from './useKanbanColumns';
 export { useIsMobile } from './useIsMobile';
 export { useCancelLessonModal } from './useCancelLessonModal';
+export { useChangeLessonModal } from './useChangeLessonModal';
 export { useLessonInfoModal } from './useLessonInfoModal';
 export { useLessonClassroomPresentation } from './useLessonClassroomPresentation';

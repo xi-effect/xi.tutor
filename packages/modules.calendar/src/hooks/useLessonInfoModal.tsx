@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ChangeLessonModal, type ChangeLessonFormData } from 'features.lesson.change';
+import type { ChangeLessonFormData } from 'features.lesson.change';
 import { LessonInfoModal } from 'features.lesson.info';
 import { useCurrentUser } from 'common.services';
 import type { ICalendarEvent } from '../ui/types';
@@ -49,7 +49,6 @@ export const useLessonInfoModal = ({
   onSaveLesson,
 }: UseLessonInfoModalOptions = {}) => {
   const [selectedEvent, setSelectedEvent] = useState<ICalendarEvent | null>(null);
-  const [isEditing, setIsEditing] = useState(false);
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -91,38 +90,26 @@ export const useLessonInfoModal = ({
 
   const close = useCallback(() => {
     setSelectedEvent(null);
-    setIsEditing(false);
   }, []);
 
   const lessonInfoModal =
     selectedEvent != null ? (
-      <>
-        {!isEditing ? (
-          <LessonInfoModal
-            open
-            onOpenChange={(o) => {
-              if (!o) close();
-            }}
-            {...mapEventToLessonInfo(selectedEvent)}
-            onStartLesson={() => handleStartLesson(selectedEvent)}
-            isStartLessonDisabled={isStartLessonDisabled}
-            startLessonTooltip={startLessonTooltip}
-            onReschedule={() => onReschedule?.(selectedEvent)}
-            onEditLesson={() => setIsEditing(true)}
-            onCancelLesson={() => onCancelLesson?.(selectedEvent)}
-          />
-        ) : null}
-        {isEditing ? (
-          <ChangeLessonModal
-            open
-            onOpenChange={(o) => {
-              if (!o) setIsEditing(false);
-            }}
-            {...mapEventToChangeLesson(selectedEvent)}
-            onSave={(data) => onSaveLesson?.(selectedEvent, data)}
-          />
-        ) : null}
-      </>
+      <LessonInfoModal
+        open
+        onOpenChange={(o) => {
+          if (!o) close();
+        }}
+        {...mapEventToLessonInfo(selectedEvent)}
+        onStartLesson={() => handleStartLesson(selectedEvent)}
+        isStartLessonDisabled={isStartLessonDisabled}
+        startLessonTooltip={startLessonTooltip}
+        onReschedule={() => onReschedule?.(selectedEvent)}
+        changeLesson={{
+          ...mapEventToChangeLesson(selectedEvent),
+          onSave: (data) => onSaveLesson?.(selectedEvent, data),
+        }}
+        onCancelLesson={() => onCancelLesson?.(selectedEvent)}
+      />
     ) : null;
 
   return {

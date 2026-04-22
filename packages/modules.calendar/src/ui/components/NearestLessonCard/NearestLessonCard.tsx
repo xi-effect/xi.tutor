@@ -6,6 +6,7 @@ import { useCancelLessonModal } from '../../../hooks';
 import type { ScheduleLessonRow } from '../../types';
 import { StartLessonButton } from '../StartLessonButton';
 import { useLessonClassroomPresentation } from '../../../hooks/useLessonClassroomPresentation';
+import { getScheduleLessonEndAt } from '../../../utils/getScheduleLessonEndAt';
 
 export type NearestLessonCardProps = {
   lesson: ScheduleLessonRow;
@@ -84,6 +85,7 @@ export const NearestLessonCard = ({
           <StartLessonButton
             classroomId={lesson.classroomId}
             scheduledAt={lesson.startAt}
+            scheduledEndsAt={getScheduleLessonEndAt(lesson) ?? undefined}
             className="bg-brand-0 hover:bg-brand-20/50 h-[38px] flex-1 p-0"
           />
         )}
