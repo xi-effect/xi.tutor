@@ -36,7 +36,7 @@ export type VirtualizedPaymentsTableProps<T> = {
   isFetchingNextPage?: boolean;
   isError: boolean;
   currentUserRole: RoleT;
-  onViewInvoice: (payment: CommonRolePaymentT<UserRoleT>) => void;
+  onViewInvoice?: (payment: CommonRolePaymentT<UserRoleT>) => void;
 };
 
 export const VirtualizedPaymentsTable = ({

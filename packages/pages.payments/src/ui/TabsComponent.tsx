@@ -7,11 +7,10 @@ import { UserRoleT } from '../../../common.api/src/types';
 import { TemplatesGrid } from './Templates';
 import { useCurrentUser } from 'common.services';
 import { useSearch, useNavigate } from '@tanstack/react-router';
-import { RolePaymentT } from 'common.types';
+import { PaymentApprovalFunctionT, RolePaymentT } from 'common.types';
 // import { ChartsPage } from './Charts';
 
-type TabsComponentPropsT = {
-  onApprovePayment: (payment: RolePaymentT<UserRoleT>) => void;
+type TabsComponentPropsT = PaymentApprovalFunctionT & {
   onViewInvoice: (payment: RolePaymentT<UserRoleT>) => void;
 };
 

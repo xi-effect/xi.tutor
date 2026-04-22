@@ -16,7 +16,7 @@ export type CardsListPropsT<Role extends RoleT> = {
   isLoading: boolean;
   isFetchingNextPage: boolean;
   currentUserRole: Role;
-  onViewInvoice: (payment: RolePaymentT<UserRoleT>) => void;
+  onViewInvoice?: (payment: RolePaymentT<UserRoleT>) => void;
 };
 
 export const CardsList = <Role extends RoleT>({
