@@ -27,6 +27,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
 
   const handleTemplateSelect = (template: any) => {
     append({
+      id: template.id,
       name: template.name,
       price: Number(template.price),
       quantity: 1,
