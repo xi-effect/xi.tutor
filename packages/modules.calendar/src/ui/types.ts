@@ -35,6 +35,8 @@ export type ScheduleLessonRow = {
   startTime: string;
   endTime: string;
   subject: string;
+  /** Текстовое описание занятия (тема, план) */
+  description?: string;
   studentName: string;
   studentId: number;
 };

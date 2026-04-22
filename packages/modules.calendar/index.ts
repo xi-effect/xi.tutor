@@ -19,5 +19,9 @@ export {
   useCancelLessonModal,
   useLessonInfoModal,
 } from './src/hooks';
+export {
+  DayLessonListMetaProvider,
+  useDayLessonListMeta,
+} from './src/ui/contexts/DayLessonListMetaContext';
 export type { UseLessonInfoModalOptions } from './src/hooks/useLessonInfoModal';
 export { calendarEn, calendarRu } from './src/locales';

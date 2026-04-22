@@ -12,6 +12,7 @@ import {
 import { useCallStore } from 'modules.calls';
 
 const FIVE_MINUTES_MS = 5 * 60 * 1000;
+const TOOLTIP_OPEN_DELAY_MS = 1000;
 const SCHEDULE_TOOLTIP = 'Кнопка станет активной за 5 минут до начала занятия';
 
 function isWithinStartWindow(startAt: Date): boolean {
@@ -176,7 +177,7 @@ export const StartLessonButton = ({
   if (isTimeRestricted) {
     return (
       <div ref={cardRef} className="w-full">
-        <Tooltip>
+        <Tooltip delayDuration={TOOLTIP_OPEN_DELAY_MS}>
           <TooltipTrigger asChild>
             <span className="w-full">{button}</span>
           </TooltipTrigger>

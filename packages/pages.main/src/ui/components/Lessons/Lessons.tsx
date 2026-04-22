@@ -21,6 +21,8 @@ export const MOCK_LESSONS: ScheduleLessonRow[] = [
     startTime: '15:45',
     endTime: '16:30',
     subject: 'Математика',
+    description:
+      'Разбор домашнего задания. Повторение темы «Производная и её геометрический смысл», задачи 12–18.',
     studentName: 'Иван Петров',
     studentId: 2,
   },
@@ -31,6 +33,8 @@ export const MOCK_LESSONS: ScheduleLessonRow[] = [
     startTime: '16:45',
     endTime: '17:30',
     subject: 'Физика',
+    description:
+      'Лабораторная работа: определение ускорения свободного падения. Подготовить отчёт по шаблону.',
     studentName: 'Анна Кузнецова',
     studentId: 3,
   },
@@ -41,6 +45,7 @@ export const MOCK_LESSONS: ScheduleLessonRow[] = [
     startTime: '17:45',
     endTime: '18:30',
     subject: 'Химия',
+    description: 'Органическая химия: спирты и альдегиды. Контрольные вопросы в конце занятия.',
     studentName: 'Олег Смирнов',
     studentId: 4,
   },
@@ -51,6 +56,8 @@ export const MOCK_LESSONS: ScheduleLessonRow[] = [
     startTime: '19:45',
     endTime: '20:30',
     subject: 'История',
+    description:
+      'Россия в начале XX века. Доклад по одной из заданных тем (на выбор) на 5–7 минут.',
     studentName: 'Елена Федорова',
     studentId: 5,
   },
@@ -61,6 +68,7 @@ export const MOCK_LESSONS: ScheduleLessonRow[] = [
     startTime: '20:45',
     endTime: '21:30',
     subject: 'Физика',
+    description: 'Подготовка к олимпиаде: механика, разбор задания прошлого тура.',
     studentName: 'Анна Кузнецова',
     studentId: 3,
   },
@@ -71,6 +79,7 @@ export const MOCK_LESSONS: ScheduleLessonRow[] = [
     startTime: '22:45',
     endTime: '23:30',
     subject: 'Химия',
+    description: 'Итоговое повторение перед зачётом. Принести тетрадь с конспектами.',
     studentName: 'Олег Смирнов',
     studentId: 4,
   },
@@ -158,7 +167,7 @@ export const Lessons = () => {
         />
 
         {/* Список занятий на выбранный день */}
-        <AllLessons lessons={MOCK_LESSONS} />
+        <AllLessons dayDate={selectedDate} lessons={MOCK_LESSONS} isTutor />
       </div>
     </>
   );
