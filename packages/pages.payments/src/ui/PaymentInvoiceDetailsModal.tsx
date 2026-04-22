@@ -161,7 +161,7 @@ export const PaymentInvoiceDetailsModal: FC<PaymentInvoiceDetailsModalPropsT> = 
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
-      <ModalContent className="relative flex max-h-[90dvh] w-[calc(100vw-32px)] max-w-[960px] flex-col overflow-hidden">
+      <ModalContent className="relative flex max-h-[90dvh] w-[calc(100vw-32px)] max-w-[960px] flex-col overflow-y-auto max-sm:max-h-[calc(100dvh-32px)] sm:overflow-hidden">
         <Button
           type="button"
           variant="none"
@@ -180,7 +180,7 @@ export const PaymentInvoiceDetailsModal: FC<PaymentInvoiceDetailsModalPropsT> = 
           <ModalDescription />
         </ModalHeader>
 
-        <ModalBody className="flex flex-1 flex-col gap-6 overflow-y-auto p-4 sm:p-6">
+        <ModalBody className="flex flex-1 flex-col gap-6 p-4 max-sm:overflow-visible sm:overflow-y-auto sm:p-6">
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
             <div className="border-gray-20 flex flex-col gap-4 rounded-2xl border p-4">
               <div className="grid gap-4 sm:grid-cols-2">
@@ -264,6 +264,10 @@ export const PaymentInvoiceDetailsModal: FC<PaymentInvoiceDetailsModalPropsT> = 
               Обновить
             </Button>
           )}
+
+          <Button className="w-31.75" variant="secondary" onClick={() => onOpenChange(false)}>
+            Закрыть
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
