@@ -9,10 +9,10 @@ import {
 import { Control, useFieldArray } from '@xipkg/form';
 import { useMediaQuery } from '@xipkg/utils';
 import { useTemplatesList } from 'common.services';
-import type { FormData } from '../model';
+import type { FormData, FormInput } from '../model';
 
 type TemplateSelectorProps = {
-  control: Control<FormData>;
+  control: Control<FormInput, unknown, FormData>;
 };
 
 export const TemplateSelector = ({ control }: TemplateSelectorProps) => {

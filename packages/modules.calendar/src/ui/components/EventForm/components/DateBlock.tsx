@@ -9,10 +9,10 @@ import { InputDate } from './InputDate';
 import { RepeatBlock } from './RepeatBlock';
 
 import type { FC } from 'react';
-import type { EventFormData } from '../../../../model';
+import type { EventFormData, EventFormInput } from '../../../../model';
 
 interface DateBlockProps {
-  form: ReturnType<typeof useForm<EventFormData>>;
+  form: ReturnType<typeof useForm<EventFormInput, unknown, EventFormData>>;
 }
 
 export const DateBlock: FC<DateBlockProps> = ({ form }) => {

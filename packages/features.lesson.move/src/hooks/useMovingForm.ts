@@ -2,14 +2,14 @@ import { useMemo } from 'react';
 import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
-import { createMovingFormSchema, type FormData } from '../model/formSchema';
+import { createMovingFormSchema, type FormData, type FormInput } from '../model/formSchema';
 
 const getDefaultValues = (
   lessonKind: 'one-off' | 'recurring',
   initialDate?: Date | null,
   initialStartTime?: string | null,
   initialEndTime?: string | null,
-): FormData => {
+): FormInput => {
   const startDate = initialDate ?? new Date();
   return {
     startDate,
@@ -28,7 +28,7 @@ export const useMovingForm = (
 ) => {
   const schema = useMemo(() => createMovingFormSchema(lessonKind), [lessonKind]);
 
-  const form = useForm<FormData>({
+  const form = useForm<FormInput, unknown, FormData>({
     resolver: zodResolver(schema),
     mode: 'onSubmit',
     defaultValues: getDefaultValues(lessonKind, initialDate, initialStartTime, initialEndTime),

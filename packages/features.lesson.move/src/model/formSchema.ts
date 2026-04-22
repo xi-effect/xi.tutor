@@ -7,7 +7,7 @@ const timeValidation = z.string().refine((time) => {
 }, 'Неверный формат времени');
 
 const movingFormBase = z.object({
-  startDate: z.date({ required_error: 'Укажите дату' }),
+  startDate: z.date({ error: 'Укажите дату' }),
   startTime: timeValidation,
   endTime: timeValidation,
   moveMode: z.enum(['single', 'single_and_next']).optional(),
@@ -36,4 +36,5 @@ export const createMovingFormSchema = (lessonKind: 'one-off' | 'recurring') =>
     }
   });
 
-export type FormData = z.infer<typeof movingFormBase>;
+export type FormInput = z.input<typeof movingFormBase>;
+export type FormData = z.output<typeof movingFormBase>;

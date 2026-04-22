@@ -62,7 +62,8 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
   // Вычисляем общую стоимость счёта
   const totalInvoicePrice = roundMoney(
     items.reduce((total, item) => {
-      return total + item.price * (item.quantity || 0);
+      const priceNum = typeof item.price === 'string' ? Number(item.price) || 0 : item.price;
+      return total + priceNum * (item.quantity || 0);
     }, 0),
   );
 

@@ -15,7 +15,7 @@ const timeToMinutes = (time: string) => {
 const baseFields = z.object({
   title: z.string().min(1, 'Введите название события'),
   type: z.enum(['lesson', 'rest'], {
-    required_error: 'Выберите тип события',
+    error: 'Выберите тип события',
   }),
 });
 
@@ -48,7 +48,7 @@ const lessonFields = z.object({
   studentId: z.string().min(1, 'Выберите студента'),
   subjectName: z.string().min(1, 'Введите название предмета'),
   lessonType: z.enum(['group', 'individual'], {
-    required_error: 'Выберите тип занятия',
+    error: 'Выберите тип занятия',
   }),
   description: z.string().optional(),
 });
@@ -83,6 +83,7 @@ export const eventFormSchema = z
     },
   );
 
-export type EventFormData = z.infer<typeof eventFormSchema>;
+export type EventFormInput = z.input<typeof eventFormSchema>;
+export type EventFormData = z.output<typeof eventFormSchema>;
 export type LessonFields = z.infer<typeof lessonFields>;
 export type TimeFields = z.infer<typeof timeFields>;

@@ -20,4 +20,5 @@ export const formSchema = z.object({
   comment: z.string().optional(),
 });
 
-export type FormData = z.infer<typeof formSchema>;
+export type FormInput = z.input<typeof formSchema>;
+export type FormData = z.output<typeof formSchema>;

@@ -17,9 +17,10 @@ export const formSchema = z.object({
   studentId: z.string().min(1, 'Выберите ученика или группу'),
   startTime: timeValidation,
   duration: durationValidation,
-  startDate: z.date({ required_error: 'Укажите дату' }),
+  startDate: z.date({ error: 'Укажите дату' }),
   repeatMode: z.enum(['none', 'weekly', 'custom']).default('none'),
   repeatDays: z.array(z.number().min(0).max(6)).default([]), // 0 = Пн, 1 = Вт, ... 6 = Вс
 });
 
-export type FormData = z.infer<typeof formSchema>;
+export type FormInput = z.input<typeof formSchema>;
+export type FormData = z.output<typeof formSchema>;

@@ -11,12 +11,12 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "@hookform/resolvers": "5.0.1",
+    "@hookform/resolvers": "^5.2.2",
     "@xipkg/avatar": "3.3.0",
     "@xipkg/alert": "1.1.0",
     "@xipkg/badge": "2.0.12",
     "@xipkg/button": "4.1.0",
-    "@xipkg/icons": "^3.0.14",
+    "@xipkg/icons": "^3.0.15",
     "@xipkg/scrollarea": "2.2.0",
     "@xipkg/switcher-animate": "1.0.1",
     "@xipkg/tooltip": "2.1.0",
@@ -44,7 +44,7 @@
     "modules.calendar": "workspace:*",
     "modules.calls": "workspace:*",
     "react-hook-form": "^7.55.0",
-    "zod": "3.24.2"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -64,7 +64,7 @@
     "typescript-eslint": "^8.22.0"
   },
   "peerDependencies": {
-    "@hookform/resolvers": "5.0.1",
+    "@hookform/resolvers": "^5.2.2",
     "react": "19",
     "react-hook-form": "^7.55.0"
   },
