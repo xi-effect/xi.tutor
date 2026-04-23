@@ -20,6 +20,7 @@ import { UndoRedo } from '../toolbar/UndoRedo';
 import { makeTldrawAssetUrls } from '../../../utils/assetsUrls';
 import { extractFileIdFromUrl } from '../../../utils/resolveAssetUrl';
 import { FrameShapeUtil } from '../../../shapes/frame';
+import { FileShapeUtil } from '../../../shapes/file';
 
 export const TldrawCanvas = ({
   token,
@@ -341,7 +342,13 @@ export const TldrawCanvas = ({
             }}
             assetUrls={assetUrls}
             store={store}
-            shapeUtils={[PdfShapeUtil, AudioShapeUtil, FrameShapeUtil, CustomImageShapeUtil]}
+            shapeUtils={[
+              PdfShapeUtil,
+              AudioShapeUtil,
+              FileShapeUtil,
+              FrameShapeUtil,
+              CustomImageShapeUtil,
+            ]}
             hideUi
             components={{
               CollaboratorCursor: CollaboratorCursor,
