@@ -1,5 +1,5 @@
 import { useParams, useNavigate, useSearch } from '@tanstack/react-router';
-import { Add, Eyeon } from '@xipkg/icons';
+import { Add } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { useCurrentUser } from 'common.services';
@@ -33,15 +33,6 @@ export const UpcomingLessonsSection = () => {
       <div className="flex flex-row items-center justify-between gap-2 pr-0 sm:pr-0">
         <h2 className="text-xl-base text-gray-100 first-letter:uppercase">Ближайшие занятия</h2>
         <div className="flex items-center gap-1">
-          <Button
-            type="button"
-            variant="none"
-            className="text-gray-60 hover:text-gray-80 flex h-8 w-8 items-center justify-center rounded-lg p-0"
-            onClick={goSchedule}
-            aria-label="Открыть расписание"
-          >
-            <Eyeon className="fill-gray-60 size-6" />
-          </Button>
           {isTutor ? (
             <Button
               type="button"

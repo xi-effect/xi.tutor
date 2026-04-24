@@ -146,35 +146,6 @@ export const LessonCard = memo<LessonCardProps>(({ event, isToday, fullWidth, on
           </div>
         )}
       </div>
-
-      {/* Действия при наведении */}
-      {/* <div className={cn('mt-4 flex items-center justify-end gap-1 transition-opacity')}>
-        <Button
-          variant="none"
-          type="button"
-          className="flex h-8 w-full items-center justify-center rounded-md p-0"
-          aria-label="Видеозвонок"
-        >
-          <Conference className="fill-brand-100 h-4 w-4" />
-        </Button>
-        <Button
-          variant="none"
-          type="button"
-          className="flex h-8 w-full items-center justify-center rounded-md p-0"
-          aria-label="Перенести"
-        >
-          <Redo className="fill-brand-100 h-4 w-4" />
-        </Button>
-        <Button
-          variant="none"
-          type="button"
-          className="flex h-8 w-full items-center justify-center rounded-md p-0"
-          aria-label="Удалить"
-          onClick={handleDelete}
-        >
-          <Trash className="fill-brand-100 h-4 w-4" />
-        </Button>
-      </div> */}
     </div>
   );
 });
