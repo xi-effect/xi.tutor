@@ -43,7 +43,7 @@ export const FileBadge = ({ shape }: FileBadgeProps) => {
       style={{ pointerEvents: 'none' }}
     >
       <div
-        className="flex h-10 w-10 shrink-0 items-center justify-center"
+        className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center"
         onPointerDown={handleIconClick}
         style={{ pointerEvents: 'all' }}
       >

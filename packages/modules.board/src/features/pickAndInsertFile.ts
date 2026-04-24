@@ -62,7 +62,10 @@ export async function insertFile(editor: Editor, file: File, token: string) {
   (async () => {
     try {
       const fileId = await uploadFileRequest({ file, token });
-      console.log('[insertFile] Upload successful, fileId:', fileId);
+
+      toast.success('Файл успешно загружен', {
+        duration: 5000,
+      });
 
       editor.updateShape<FileShape>({
         id: shapeId,
