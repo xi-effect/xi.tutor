@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocation } from '@tanstack/react-router';
 import { formSchema, type FormData } from '../model';
 import { useCreateInvoice } from './useCreateInvoice';
+import { generateRandomId } from '../utils';
 
 export const useInvoiceForm = () => {
   const createInvoiceMutation = useCreateInvoice();
@@ -49,6 +50,7 @@ export const useInvoiceForm = () => {
     setValue('comment', '');
     setValue('items', [
       {
+        id: generateRandomId(),
         name: '',
         price: 0,
         quantity: 0,
