@@ -4,6 +4,7 @@ import { PaymentApproveModal } from 'features.payment.approve';
 import { RolePaymentT, useInfiniteQuery } from 'features.table';
 import { Header } from './Header';
 import { TabsComponent } from './TabsComponent';
+import { PaymentInvoiceDetailsModal } from './PaymentInvoiceDetailsModal';
 import { useSearch, useNavigate } from '@tanstack/react-router';
 import {
   useCurrentUser,
@@ -14,6 +15,10 @@ import { UserRoleT } from 'common.api';
 
 export const PaymentsPage = () => {
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+  const [invoiceDetailsModalState, setInvoiceDetailsModalState] = useState<{
+    isOpen: boolean;
+    payment: RolePaymentT<'tutor'> | RolePaymentT<'student'> | null;
+  }>({ isOpen: false, payment: null });
   const [paymentApproveModalState, setPaymentApproveModalState] = useState<{
     isOpen: boolean;
     payment: RolePaymentT<'tutor'> | RolePaymentT<'student'> | null;
@@ -149,13 +154,37 @@ export const PaymentsPage = () => {
     [],
   );
 
+  const onOpenInvoiceDetailsModal = useCallback(
+    (payment: RolePaymentT<'tutor'> | RolePaymentT<'student'>) => {
+      setInvoiceDetailsModalState({ isOpen: true, payment });
+    },
+    [],
+  );
+
   return (
     <div className="flex flex-col justify-between gap-6 pl-4">
       <div className="flex flex-col">
         <Header onCreateInvoice={onOpenInvoiceModal} />
-        <TabsComponent onApprovePayment={onOpenPaymentApproveModal} />
+        <TabsComponent
+          onApprovePayment={onOpenPaymentApproveModal}
+          onViewInvoice={onOpenInvoiceDetailsModal}
+        />
       </div>
 
+      {invoiceDetailsModalState.isOpen && invoiceDetailsModalState.payment && (
+        <PaymentInvoiceDetailsModal
+          open={invoiceDetailsModalState.isOpen}
+          onOpenChange={(open) =>
+            setInvoiceDetailsModalState((prev) => ({
+              ...prev,
+              isOpen: open,
+            }))
+          }
+          paymentDetails={invoiceDetailsModalState.payment}
+          recipientInvoiceId={invoiceDetailsModalState.payment.id}
+          currentUserRole={currentUserRole}
+        />
+      )}
       {paymentApproveModalState.isOpen && paymentApproveModalState.payment && (
         <PaymentApproveModal
           open={paymentApproveModalState.isOpen}

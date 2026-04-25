@@ -1,4 +1,6 @@
 import { UserProfile } from '@xipkg/userprofile';
+import { Button } from '@xipkg/button';
+import { InfoCircle } from '@xipkg/icons';
 import { formatPaymentDate } from '../../utils';
 import { StatusBadge } from '../components';
 import { CardContentT } from '../../types';
@@ -11,6 +13,7 @@ export const TableCard = ({
   payment,
   className,
   currentUserRole,
+  onViewInvoice,
 }: CardContentT) => {
   const formattedDate = formatPaymentDate(payment.created_at);
   const amount = parseFloat(payment.total);
@@ -37,7 +40,18 @@ export const TableCard = ({
         </div>
         <StatusBadge status={payment.status} />
       </div>
-      <PaymentApproveAction payment={payment} isTutor={currentUserRole === 'tutor'} />
+      <div className="ml-auto flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="s"
+          className="text-gray-60 hover:text-brand-100 h-8 w-8 rounded-full border-none bg-transparent p-0 shadow-none hover:border-transparent hover:bg-transparent focus-visible:ring-0"
+          onClick={() => onViewInvoice?.(payment)}
+          aria-label="Просмотреть информацию о счёте"
+        >
+          <InfoCircle className="h-5 w-5" />
+        </Button>
+        <PaymentApproveAction payment={payment} isTutor={currentUserRole === 'tutor'} />
+      </div>
     </div>
   );
 };
