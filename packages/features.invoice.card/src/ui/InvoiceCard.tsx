@@ -9,6 +9,7 @@ export const InvoiceCard = ({
   variant = 'default',
   className,
   withoutPaymentType = false,
+  onViewInvoice,
 }: InvoiceCardPropsT) => {
   const userId =
     currentUserRole === 'student'
@@ -27,6 +28,7 @@ export const InvoiceCard = ({
         currentUserRole={currentUserRole}
         className={className}
         withoutPaymentType={withoutPaymentType}
+        onViewInvoice={onViewInvoice}
       />
     );
 

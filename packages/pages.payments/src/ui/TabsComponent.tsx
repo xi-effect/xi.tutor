@@ -6,16 +6,16 @@ import { createPaymentColumns, useInfiniteQuery } from 'features.table';
 import { UserRoleT } from '../../../common.api/src/types';
 import { TemplatesGrid } from './Templates';
 import { useCurrentUser } from 'common.services';
-import { PaymentApprovalFunctionT } from 'common.types';
-// import { ChartsPage } from './Charts';
+import { PaymentApprovalFunctionT, RolePaymentT } from 'common.types';
 
 interface TabsComponentProps extends PaymentApprovalFunctionT {
+  onViewInvoice: (payment: RolePaymentT<UserRoleT>) => void;
   activeTab: string;
   onTabChange: (tabId: string) => void;
 }
 
 export const TabsComponent = React.memo(
-  ({ onApprovePayment, activeTab, onTabChange }: TabsComponentProps) => {
+  ({ onApprovePayment, onViewInvoice, activeTab, onTabChange }: TabsComponentProps) => {
     const screenSize = useScreenSize();
     const parentRef = useRef<HTMLDivElement>(null);
 
@@ -34,17 +34,17 @@ export const TabsComponent = React.memo(
         createPaymentColumns<UserRoleT>({
           usersRole: isTutor ? 'student' : 'tutor',
           onApprovePayment,
+          onViewInvoice,
           isTutor,
           screenSize,
         }),
-      [screenSize, onApprovePayment, isTutor],
+      [screenSize, onApprovePayment, onViewInvoice, isTutor],
     );
 
     // Отслеживаем изменения роли пользователя
     useEffect(() => {
       const prevIsTutor = prevIsTutorRef.current;
       const currentIsTutor = isTutor;
-
       // Если роль изменилась с tutor на student и мы находимся на вкладке templates
       if (prevIsTutor && !currentIsTutor && activeTab === 'templates') {
         onTabChange('invoices');
@@ -67,6 +67,7 @@ export const TabsComponent = React.memo(
                 parentRef={parentRef}
                 isError={isError}
                 currentUserRole={currentUserRole}
+                onViewInvoice={onViewInvoice}
               />
             </Tabs.Content>
 

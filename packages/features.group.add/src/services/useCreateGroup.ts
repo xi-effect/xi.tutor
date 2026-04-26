@@ -4,7 +4,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError } from 'common.services';
 
 export interface CreateGroupRequest {
-  subject_id: number;
+  subject_id: number | null;
   name: string;
 }
 

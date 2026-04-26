@@ -25,6 +25,7 @@ import { NotFoundItems } from './NotFoundItems';
 import { useResponsiveGrid, useVirtualCards } from '../hooks';
 import { Loader } from './Loader';
 import { UserRoleT } from '../../../common.api/src/types';
+import { RolePaymentT as CommonRolePaymentT } from 'common.types';
 
 export type VirtualizedPaymentsTableProps<T> = {
   parentRef: RefObject<HTMLDivElement | null>;
@@ -35,6 +36,7 @@ export type VirtualizedPaymentsTableProps<T> = {
   isFetchingNextPage?: boolean;
   isError: boolean;
   currentUserRole: RoleT;
+  onViewInvoice?: (payment: CommonRolePaymentT<UserRoleT>) => void;
 };
 
 export const VirtualizedPaymentsTable = ({
@@ -45,6 +47,7 @@ export const VirtualizedPaymentsTable = ({
   isFetchingNextPage = false,
   isError,
   currentUserRole,
+  onViewInvoice,
 }: VirtualizedPaymentsTableProps<RolePaymentT<UserRoleT>>) => {
   const isMobile = useMediaQuery('(max-width: 719px)');
 
@@ -87,6 +90,7 @@ export const VirtualizedPaymentsTable = ({
         isLoading={isLoading}
         isFetchingNextPage={isFetchingNextPage}
         currentUserRole={currentUserRole}
+        onViewInvoice={onViewInvoice}
       />
     );
   }

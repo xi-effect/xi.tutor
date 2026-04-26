@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Button } from '@xipkg/button';
-import { Form } from '@xipkg/form';
+import { Form, useFieldArray } from '@xipkg/form';
 import { Close } from '@xipkg/icons';
 import {
   Modal,
@@ -26,6 +26,7 @@ import { CommentField } from './CommentField';
 import { SubjectRow } from './SubjectRow';
 import { SubjectRowMobile } from './SubjectRowMobile';
 import { TemplateSelector } from './TemplateSelector';
+import { generateRandomId } from '../utils';
 
 type InvoiceModalProps = {
   open: boolean;
@@ -42,6 +43,11 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
   const { data: classrooms } = useFetchClassrooms();
 
   const totalLessons = items.reduce((acc, item) => acc + item.quantity, 0);
+
+  const { remove } = useFieldArray({
+    control,
+    name: 'items',
+  });
 
   const handleCloseModal = () => {
     handleClearForm();
@@ -118,6 +124,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                 type="button"
                 onClick={() => {
                   append({
+                    id: generateRandomId(),
                     name: '',
                     price: 0,
                     quantity: 1,
@@ -143,8 +150,13 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                   <div className="ml-2 h-[24px] w-[24px]" />
                 </div>
                 <div className="my-2">
-                  {items.map((_, index) => (
-                    <SubjectRow key={index} control={control} index={index} />
+                  {items.map((item, index) => (
+                    <SubjectRow
+                      key={item.id}
+                      control={control}
+                      index={index}
+                      onRemove={() => remove(index)}
+                    />
                   ))}
                   <div className="grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2">
                     <div />
