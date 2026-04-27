@@ -14,7 +14,7 @@ export async function downloadFileRequest({
   fileId,
   fileName,
   token,
-}: DownloadFileVars): Promise<string> {
+}: DownloadFileVars): Promise<void> {
   const axiosInst = await getAxiosInstance();
   const { getUrl, method } = filesApiConfig[FilesQueryKey.GetFile];
 
@@ -23,9 +23,11 @@ export async function downloadFileRequest({
     url: getUrl(fileId),
     responseType: 'blob',
     headers: {
-      ...(token ? { 'x-storage-token': token } : {}),
+      ...{ 'x-storage-token': token },
     },
   });
+
+  if (response.status !== 200) throw new Error(`File download failed: ${response.status}`);
 
   const blob = response.data;
 
@@ -39,14 +41,10 @@ export async function downloadFileRequest({
 
   a.remove();
   window.URL.revokeObjectURL(url);
-
-  if (response.status !== 200) throw new Error(`File download failed: ${response.status}`);
-
-  return response.data;
 }
 
 export const useDownloadFile = () => {
-  return useMutation<string, Error, DownloadFileVars>({
+  return useMutation<void, Error, DownloadFileVars>({
     mutationFn: downloadFileRequest,
     onSuccess: () => toast('Файл успешно загружен'),
     onError: (err) => handleError(err, 'files'),

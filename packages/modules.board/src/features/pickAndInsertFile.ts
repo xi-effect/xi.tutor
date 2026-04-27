@@ -13,7 +13,8 @@ export const FILE_ACCEPT = Array.from(ALLOWED_FILE_MIME_TYPES).join(',');
 export async function insertFile(editor: Editor, file: File, token: string) {
   if (!ALLOWED_FILE_MIME_TYPES.has(file.type)) {
     toast.error('Неподдерживаемый формат', {
-      description: 'Выберите файл (doc, xls, ppt и др.).',
+      description:
+        'Выберите другой файл с поддерживаемым расширением, например, doc, xls, ppt, pdf.',
       duration: 5000,
     });
     return;

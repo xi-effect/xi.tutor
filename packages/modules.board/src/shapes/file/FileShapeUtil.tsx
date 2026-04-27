@@ -39,6 +39,7 @@ export class FileShapeUtil extends BaseBoxShapeUtil<FileShape> {
     const next = resizeBox(shape, info, {
       minWidth: FILE_MIN_WIDTH,
       minHeight: FILE_SHAPE_HEIGHT,
+      maxHeight: FILE_SHAPE_HEIGHT,
     });
     return {
       ...next,

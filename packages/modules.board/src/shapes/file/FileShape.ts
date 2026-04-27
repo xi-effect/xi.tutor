@@ -3,6 +3,7 @@ import { T, TLBaseShape } from 'tldraw';
 export const FILE_SHAPE_WIDTH = 360;
 export const FILE_SHAPE_HEIGHT = 80;
 export const FILE_MIN_WIDTH = 300;
+export const FILE_MAX_WIDTH = 400;
 
 export type FileShapeProps = {
   src: string;
