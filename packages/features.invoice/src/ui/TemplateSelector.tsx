@@ -10,6 +10,7 @@ import { Control, useFieldArray } from '@xipkg/form';
 import { useMediaQuery } from '@xipkg/utils';
 import { useTemplatesList } from 'common.services';
 import type { FormData } from '../model';
+import { generateRandomId } from '../utils';
 
 type TemplateSelectorProps = {
   control: Control<FormData>;
@@ -27,7 +28,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
 
   const handleTemplateSelect = (template: any) => {
     append({
-      id: template.id,
+      id: generateRandomId(),
       name: template.name,
       price: Number(template.price),
       quantity: 1,
