@@ -3,15 +3,19 @@ import { HttpMethod } from '../config';
 
 export {
   type SchedulerEventDto,
-  type OccurrenceModeDto,
-  type OccurrenceModeInputDto,
-  type SingleOccurrenceModeDto,
-  type DailyOccurrenceModeDto,
-  type WeeklyOccurrenceModeDto,
-  type ExceptionalOccurrenceModeDto,
-  type SingleOccurrenceModeInputDto,
-  type DailyOccurrenceModeInputDto,
-  type WeeklyOccurrenceModeInputDto,
+  type EventInputDto,
+  type SoleEventInstanceInputDto,
+  type DailyRepetitionModeInputDto,
+  type WeeklyRepetitionModeInputDto,
+  type RepetitionModeInputDto,
+  type SingleEventInputDto,
+  type RepeatingEventInputDto,
+  type DailyRepetitionModeDto,
+  type WeeklyRepetitionModeDto,
+  type RepetitionModeDto,
+  type SoleEventInstanceDto,
+  type PersistedRepeatedEventInstanceDto,
+  type VirtualRepeatedEventInstanceDto,
   type EventInstanceDto,
   type GetClassroomScheduleResponseDto,
   type CreateClassroomEventRequestDto,
@@ -23,7 +27,8 @@ export {
 // ---------------------------------------------------------------------------
 
 export enum SchedulerQueryKey {
-  GetClassroomSchedule = 'GetClassroomSchedule',
+  GetTutorClassroomSchedule = 'GetTutorClassroomSchedule',
+  GetStudentClassroomSchedule = 'GetStudentClassroomSchedule',
   CreateClassroomEvent = 'CreateClassroomEvent',
   UpdateClassroomEvent = 'UpdateClassroomEvent',
   DeleteClassroomEvent = 'DeleteClassroomEvent',
@@ -33,34 +38,39 @@ export enum SchedulerQueryKey {
 // Helpers
 // ---------------------------------------------------------------------------
 
-const classroomBase = (classroomId: string) =>
-  `${env.VITE_SERVER_URL_BACKEND}/api/protected/scheduler-service/roles/tutor/classrooms/${classroomId}`;
+const classroomBase = (role: 'student' | 'tutor', classroomId: string) =>
+  `${env.VITE_SERVER_URL_BACKEND}/api/protected/scheduler-service/roles/${role}/classrooms/${classroomId}`;
 
 // ---------------------------------------------------------------------------
 // API config
 // ---------------------------------------------------------------------------
 
 export const schedulerApiConfig = {
-  [SchedulerQueryKey.GetClassroomSchedule]: {
-    getUrl: (classroomId: string) => `${classroomBase(classroomId)}/schedule/`,
+  [SchedulerQueryKey.GetTutorClassroomSchedule]: {
+    getUrl: (classroomId: string) => `${classroomBase('tutor', classroomId)}/schedule/`,
+    method: HttpMethod.GET,
+  },
+
+  [SchedulerQueryKey.GetStudentClassroomSchedule]: {
+    getUrl: (classroomId: string) => `${classroomBase('student', classroomId)}/schedule/`,
     method: HttpMethod.GET,
   },
 
   [SchedulerQueryKey.CreateClassroomEvent]: {
-    getUrl: (classroomId: string) => `${classroomBase(classroomId)}/events/`,
+    getUrl: (classroomId: string) => `${classroomBase('tutor', classroomId)}/events/`,
     method: HttpMethod.POST,
   },
 
   /** event_id — числовой id события (приводится к строке) */
   [SchedulerQueryKey.UpdateClassroomEvent]: {
     getUrl: (classroomId: string, eventId: string) =>
-      `${classroomBase(classroomId)}/events/${eventId}/`,
+      `${classroomBase('tutor', classroomId)}/events/${eventId}/`,
     method: HttpMethod.PATCH,
   },
 
   [SchedulerQueryKey.DeleteClassroomEvent]: {
     getUrl: (classroomId: string, eventId: string) =>
-      `${classroomBase(classroomId)}/events/${eventId}/`,
+      `${classroomBase('tutor', classroomId)}/events/${eventId}/`,
     method: HttpMethod.DELETE,
   },
 };

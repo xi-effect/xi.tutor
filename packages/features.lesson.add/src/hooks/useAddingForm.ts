@@ -5,9 +5,14 @@ import { formSchema, type FormData, type FormInput } from '../model/formSchema';
 import { useFetchClassrooms } from 'common.services';
 import { addDurationToTime } from '../utils/utils';
 
-const getDefaultValues = (initialDate?: Date | null): FormInput => ({
+type UseAddingFormOptions = {
+  fixedClassroomId?: number;
+  onSubmit?: (data: FormData) => void | Promise<void>;
+};
+
+const getDefaultValues = (initialDate?: Date | null, fixedClassroomId?: number): FormInput => ({
   title: '',
-  studentId: '',
+  studentId: fixedClassroomId != null ? String(fixedClassroomId) : '',
   startTime: '17:40',
   duration: '1:20',
   startDate: initialDate ?? new Date(),
@@ -15,18 +20,24 @@ const getDefaultValues = (initialDate?: Date | null): FormInput => ({
   repeatDays: [],
 });
 
-export const useAddingForm = (initialDate?: Date | null) => {
+export const useAddingForm = (initialDate?: Date | null, options: UseAddingFormOptions = {}) => {
   const { data: classrooms, isLoading: isClassroomsLoading } = useFetchClassrooms();
+  const { fixedClassroomId, onSubmit: externalSubmit } = options;
 
   const form = useForm<FormInput, unknown, FormData>({
     resolver: zodResolver(formSchema),
     mode: 'onSubmit',
-    defaultValues: getDefaultValues(initialDate),
+    defaultValues: getDefaultValues(initialDate, fixedClassroomId),
   });
 
   const { control, handleSubmit, reset } = form;
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
+    if (externalSubmit) {
+      await externalSubmit(data);
+      return;
+    }
+
     const classroom = classrooms?.find((c) => c.id === Number(data.studentId));
     const studentIds = classroom?.kind === 'individual' ? [classroom.student_id] : [];
     const endTime = addDurationToTime(data.startTime, data.duration);
@@ -49,7 +60,7 @@ export const useAddingForm = (initialDate?: Date | null) => {
   };
 
   const handleClearForm = () => {
-    reset(getDefaultValues(initialDate));
+    reset(getDefaultValues(initialDate, fixedClassroomId));
   };
 
   return {

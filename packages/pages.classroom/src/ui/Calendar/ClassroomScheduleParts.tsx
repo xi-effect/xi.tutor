@@ -18,9 +18,13 @@ export const CalendarScheduleToolbar = () => {
 
 type CalendarScheduleKanbanProps = {
   onLessonReschedule?: (event: ICalendarEvent) => void;
+  onLessonCancel?: (event: ICalendarEvent) => void;
 };
 
-export const CalendarScheduleKanban = ({ onLessonReschedule }: CalendarScheduleKanbanProps) => {
+export const CalendarScheduleKanban = ({
+  onLessonReschedule,
+  onLessonCancel,
+}: CalendarScheduleKanbanProps) => {
   const { weekDays, onAddLessonClick } = useClassroomSchedule();
 
   const containerRef = useRef<HTMLDivElement>(null);
@@ -34,6 +38,7 @@ export const CalendarScheduleKanban = ({ onLessonReschedule }: CalendarScheduleK
         columnWidth={columnWidth}
         onAddLessonClick={onAddLessonClick ? (date: Date) => onAddLessonClick(date) : undefined}
         onLessonReschedule={onLessonReschedule}
+        onLessonCancel={onLessonCancel}
       />
     </div>
   );

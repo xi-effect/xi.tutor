@@ -30,6 +30,7 @@ type ScheduleDaySwiperProps = {
   onSelectedDateChange: (date: Date) => void;
   onAddLessonClick?: (date: Date) => void;
   onLessonReschedule?: (event: ICalendarEvent) => void;
+  onLessonCancel?: (event: ICalendarEvent) => void;
 };
 
 export const ScheduleDaySwiper = ({
@@ -38,6 +39,7 @@ export const ScheduleDaySwiper = ({
   onSelectedDateChange,
   onAddLessonClick,
   onLessonReschedule,
+  onLessonCancel,
 }: ScheduleDaySwiperProps) => {
   const eventsByDate = useEventsByDate();
   const eventsLoading = useEventsLoading();
@@ -46,6 +48,7 @@ export const ScheduleDaySwiper = ({
   const swiperRef = useRef<SwiperType | null>(null);
   const { openLessonInfo, lessonInfoModal } = useLessonInfoModal({
     onReschedule: onLessonReschedule,
+    onCancelLesson: onLessonCancel,
   });
 
   const selectedIndex = days.findIndex((d) => isSameDay(d, selectedDate));

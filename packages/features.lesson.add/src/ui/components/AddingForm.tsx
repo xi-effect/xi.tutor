@@ -19,9 +19,17 @@ interface AddingFormProps extends PropsWithChildren {
   onClose: () => void;
   /** Дата для предзаполнения поля «Дата» (например, день колонки при клике на плюс в канбане) */
   initialDate?: Date | null;
+  fixedClassroomId?: number;
+  onSubmit?: (data: FormData) => void | Promise<void>;
 }
 
-export const AddingForm: FC<AddingFormProps> = ({ children, onClose, initialDate }) => {
+export const AddingForm: FC<AddingFormProps> = ({
+  children,
+  onClose,
+  initialDate,
+  fixedClassroomId,
+  onSubmit: externalSubmit,
+}) => {
   const {
     form,
     control,
@@ -30,7 +38,7 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose, initialDate
     onSubmit,
     classrooms,
     isClassroomsLoading,
-  } = useAddingForm(initialDate);
+  } = useAddingForm(initialDate, { fixedClassroomId, onSubmit: externalSubmit });
 
   useEffect(() => {
     if (initialDate != null) {
@@ -38,12 +46,19 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose, initialDate
     }
   }, [initialDate, form]);
 
+  useEffect(() => {
+    if (fixedClassroomId != null) {
+      form.setValue('studentId', String(fixedClassroomId));
+    }
+  }, [fixedClassroomId, form]);
+
   const maskRefStartTime = useMaskInput('time');
   const maskRefDuration = useMaskInput('time');
 
   const startTime = form.watch('startTime');
   const duration = form.watch('duration');
   const repeatMode = form.watch('repeatMode');
+  const fixedClassroom = classrooms.find((classroom) => classroom.id === fixedClassroomId);
   const endTimeDisplay =
     startTime && duration && /^\d{1,2}:\d{2}$/.test(startTime) && /^\d{1,2}:\d{2}$/.test(duration)
       ? addDurationToTime(startTime, duration)
@@ -54,8 +69,8 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose, initialDate
     onClose();
   };
 
-  const onFormSubmit = (data: FormData) => {
-    onSubmit(data);
+  const onFormSubmit = async (data: FormData) => {
+    await onSubmit(data);
     onClose();
   };
 
@@ -93,12 +108,22 @@ export const AddingForm: FC<AddingFormProps> = ({ children, onClose, initialDate
             <FormItem className="flex flex-col">
               <FormLabel className="text-[14px] font-normal text-gray-100">Кабинет</FormLabel>
               <FormControl>
-                <StudentSelector
-                  {...field}
-                  classrooms={classrooms}
-                  isLoading={isClassroomsLoading}
-                  before={<Account className="fill-gray-80 h-4 w-4" />}
-                />
+                {fixedClassroomId != null ? (
+                  <Input
+                    value={fixedClassroom?.name ?? 'Текущий кабинет'}
+                    disabled
+                    variant="s"
+                    className="border-gray-10 rounded-lg border"
+                    before={<Account className="fill-gray-80 h-4 w-4" />}
+                  />
+                ) : (
+                  <StudentSelector
+                    {...field}
+                    classrooms={classrooms}
+                    isLoading={isClassroomsLoading}
+                    before={<Account className="fill-gray-80 h-4 w-4" />}
+                  />
+                )}
               </FormControl>
               <FormMessage />
             </FormItem>

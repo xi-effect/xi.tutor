@@ -1,18 +1,36 @@
-export type { SchedulerEvent, OccurrenceMode, EventInstance, ScheduleItem } from './model/types';
+export type {
+  SchedulerEvent,
+  SingleEvent,
+  RepeatingEvent,
+  RepetitionMode,
+  EventInstance,
+  SoleEventInstance,
+  PersistedRepeatedEventInstance,
+  VirtualRepeatedEventInstance,
+  ScheduleItem,
+} from './model/types';
 
 export {
   buildEventsById,
-  buildOccurrenceModesById,
+  buildRepetitionModesById,
   mapEventInstanceToScheduleItem,
   mapScheduleResponseToScheduleItems,
 } from './model/adapters';
 
 export {
+  getTutorClassroomSchedule,
+  getStudentClassroomSchedule,
+  createClassroomEvent,
+  updateClassroomEvent,
+  deleteClassroomEvent,
   schedulerQueryKeys,
   useClassroomSchedule,
+  useTutorClassroomSchedule,
+  useStudentClassroomSchedule,
   useCreateClassroomEvent,
   useUpdateClassroomEvent,
   useDeleteClassroomEvent,
+  type GetClassroomScheduleParams,
   type UseClassroomScheduleParams,
   type CreateClassroomEventParams,
   type UpdateClassroomEventParams,

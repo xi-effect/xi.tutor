@@ -6,45 +6,7 @@ import { DayLessonsPanel } from 'modules.calendar';
 import type { ScheduleLessonRow } from 'modules.calendar';
 import { AddingForm } from './components/AddingForm';
 import './AddingModal.css';
-
-const MOCK_DAY_LESSONS: ScheduleLessonRow[] = [
-  {
-    id: 1,
-    classroomId: 710,
-    startTime: '10:00',
-    endTime: '10:45',
-    subject: 'Математика',
-    studentName: 'Иван Петров',
-    studentId: 2,
-  },
-  {
-    id: 2,
-    classroomId: 708,
-    startTime: '11:00',
-    endTime: '11:45',
-    subject: 'Физика',
-    studentName: 'Анна Кузнецова',
-    studentId: 3,
-  },
-  {
-    id: 3,
-    classroomId: 476,
-    startTime: '14:00',
-    endTime: '14:45',
-    subject: 'Химия',
-    studentName: 'Олег Смирнов',
-    studentId: 4,
-  },
-  {
-    id: 4,
-    classroomId: 457,
-    startTime: '16:30',
-    endTime: '17:15',
-    subject: 'История',
-    studentName: 'Елена Федорова',
-    studentId: 5,
-  },
-];
+import type { FormData } from '../model';
 
 const getToday = () => {
   const d = new Date();
@@ -59,6 +21,8 @@ type AddingLessonModalProps = {
   dayLessons?: ScheduleLessonRow[];
   /** Дата для предзаполнения поля «Дата» в форме (например, день колонки при клике на плюс в канбане) */
   initialDate?: Date | null;
+  fixedClassroomId?: number;
+  onSubmit?: (data: FormData) => void | Promise<void>;
 };
 
 export const AddingLessonModal = ({
@@ -66,6 +30,8 @@ export const AddingLessonModal = ({
   onOpenChange,
   dayLessons = [],
   initialDate = null,
+  fixedClassroomId,
+  onSubmit,
 }: AddingLessonModalProps) => {
   const [selectedDate, setSelectedDate] = useState(getToday);
   const handleCloseModal = () => {
@@ -83,7 +49,7 @@ export const AddingLessonModal = ({
               <DayLessonsPanel
                 selectedDate={selectedDate}
                 onSelectedDateChange={setSelectedDate}
-                lessons={dayLessons?.length ? dayLessons : MOCK_DAY_LESSONS}
+                lessons={dayLessons}
                 withoutTitle
               />
             </div>
@@ -91,7 +57,12 @@ export const AddingLessonModal = ({
           <div className="flex h-full min-h-0 min-w-0 flex-col gap-5 overflow-hidden">
             <h3 className="text-xl-base shrink-0 font-semibold text-gray-100">Добавить занятие</h3>
             <div className="min-h-0 flex-1 overflow-y-auto">
-              <AddingForm onClose={handleCloseModal} initialDate={initialDate} />
+              <AddingForm
+                onClose={handleCloseModal}
+                initialDate={initialDate}
+                fixedClassroomId={fixedClassroomId}
+                onSubmit={onSubmit}
+              />
             </div>
             <div className="flex w-full min-w-0 shrink-0 flex-row gap-2">
               <Button

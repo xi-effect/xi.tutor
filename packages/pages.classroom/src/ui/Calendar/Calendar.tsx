@@ -1,11 +1,20 @@
-import { useState } from 'react';
-import { ScheduleMobileView, useIsMobile } from 'modules.calendar';
+import { useEffect, useMemo, useState } from 'react';
+import {
+  ScheduleMobileView,
+  useDeleteClassroomEvent,
+  useIsMobile,
+  useSetEvents,
+  useSetEventsLoading,
+  useStudentClassroomSchedule,
+  useTutorClassroomSchedule,
+} from 'modules.calendar';
 import type { ICalendarEvent } from 'modules.calendar';
 import { useParams } from '@tanstack/react-router';
 import { useCurrentUser, useGetClassroom, useGetClassroomStudent } from 'common.services';
 import { MovingLessonModal } from 'features.lesson.move';
 import { useClassroomSchedule } from './ClassroomScheduleContext';
 import { CalendarScheduleKanban } from './ClassroomScheduleParts';
+import { getScheduleQueryRange, mapScheduleItemsToCalendarEvents } from './schedulerMapping';
 
 function jsWeekdayToSeriesIndex(date: Date): number {
   const d = date.getDay();
@@ -38,19 +47,52 @@ function movingModalPropsFromEvent(event: ICalendarEvent) {
 
 export const Calendar = () => {
   const isMobile = useIsMobile();
-  const { onAddLessonClick } = useClassroomSchedule();
+  const { weekDays, onAddLessonClick } = useClassroomSchedule();
   const [moveEvent, setMoveEvent] = useState<ICalendarEvent | null>(null);
+  const setEvents = useSetEvents();
+  const setEventsLoading = useSetEventsLoading();
 
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
+  const numericClassroomId = Number(classroomId);
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const scheduleRange = useMemo(() => getScheduleQueryRange(weekDays), [weekDays]);
 
-  const tutorQuery = useGetClassroom(Number(classroomId), isUserLoading || !isTutor);
-  const studentQuery = useGetClassroomStudent(Number(classroomId), isUserLoading || isTutor);
+  const tutorQuery = useGetClassroom(numericClassroomId, isUserLoading || !isTutor);
+  const studentQuery = useGetClassroomStudent(numericClassroomId, isUserLoading || isTutor);
+  const tutorScheduleQuery = useTutorClassroomSchedule({
+    classroomId: numericClassroomId,
+    ...scheduleRange,
+    enabled: !isUserLoading && isTutor === true,
+  });
+  const studentScheduleQuery = useStudentClassroomSchedule({
+    classroomId: numericClassroomId,
+    ...scheduleRange,
+    enabled: !isUserLoading && isTutor === false,
+  });
+  const deleteClassroomEvent = useDeleteClassroomEvent();
 
   const classroom = isTutor ? tutorQuery.data : studentQuery.data;
   const isLoading = isUserLoading || (isTutor ? tutorQuery.isLoading : studentQuery.isLoading);
   const isError = isTutor ? tutorQuery.isError : studentQuery.isError;
+  const scheduleQuery = isTutor ? tutorScheduleQuery : studentScheduleQuery;
+
+  useEffect(() => {
+    setEventsLoading(scheduleQuery.isLoading || scheduleQuery.isFetching);
+  }, [scheduleQuery.isFetching, scheduleQuery.isLoading, setEventsLoading]);
+
+  useEffect(() => {
+    if (scheduleQuery.data) {
+      setEvents(mapScheduleItemsToCalendarEvents(scheduleQuery.data));
+      return;
+    }
+
+    if (scheduleQuery.isError) {
+      setEvents([]);
+    }
+  }, [scheduleQuery.data, scheduleQuery.isError, setEvents]);
+
+  useEffect(() => () => setEvents([]), [setEvents]);
 
   if (isLoading) {
     return (
@@ -73,16 +115,30 @@ export const Calendar = () => {
     setMoveEvent(event);
   };
 
+  const handleLessonCancel = (event: ICalendarEvent) => {
+    const eventId = event.scheduler?.eventId;
+    if (!isTutor || eventId == null) return;
+
+    deleteClassroomEvent.mutate({
+      classroomId: numericClassroomId,
+      eventId,
+    });
+  };
+
   return (
     <>
       {isMobile ? (
         <ScheduleMobileView
           onAddLessonClick={onAddLessonClick}
           onLessonReschedule={handleLessonReschedule}
+          onLessonCancel={handleLessonCancel}
         />
       ) : (
         <div className="flex h-full min-h-0 min-w-0 flex-col">
-          <CalendarScheduleKanban onLessonReschedule={handleLessonReschedule} />
+          <CalendarScheduleKanban
+            onLessonReschedule={handleLessonReschedule}
+            onLessonCancel={handleLessonCancel}
+          />
         </div>
       )}
       {moveEvent != null ? (

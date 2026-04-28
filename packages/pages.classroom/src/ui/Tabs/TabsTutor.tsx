@@ -10,14 +10,17 @@ import { InformationLayout } from '../Information';
 import { ClassroomScheduleProvider } from '../Calendar/ClassroomScheduleContext';
 import { CalendarScheduleToolbar } from '../Calendar/ClassroomScheduleParts';
 import { AddingLessonModal } from 'features.lesson.add';
+import type { FormData as AddingLessonFormData } from 'features.lesson.add';
 import { MaterialsAdd } from 'features.materials.add';
 import { useGetClassroom, useAddClassroomMaterials, useDeleteClassroom } from 'common.services';
+import { useCreateClassroomEvent } from 'modules.calendar';
 import { ModalStudentsGroup } from 'features.group.manage';
 import { ModalGroupInvite } from 'features.group.invite';
 import { InvoiceModal } from 'features.invoice';
 
 import { SharedTabsContent } from './SharedTabsContent';
 import { useTabNavigation } from './useTabNavigation';
+import { buildCreateClassroomEventRequest } from '../Calendar/schedulerMapping';
 
 // --- Типы ---
 
@@ -294,6 +297,7 @@ export const TabsTutor = () => {
   const { data: classroom } = useGetClassroom(Number(classroomId));
   const { addClassroomMaterials } = useAddClassroomMaterials();
   const { deleteClassroom, isDeleting: isDeletingClassroom } = useDeleteClassroom();
+  const createClassroomEvent = useCreateClassroomEvent();
 
   const handleDeleteClassroom = () => {
     if (!classroomId) return;
@@ -323,6 +327,13 @@ export const TabsTutor = () => {
         },
       },
     );
+  };
+
+  const handleAddLessonSubmit = async (data: AddingLessonFormData) => {
+    await createClassroomEvent.mutateAsync({
+      classroomId: Number(classroomId),
+      body: buildCreateClassroomEventRequest(data),
+    });
   };
 
   return (
@@ -368,6 +379,8 @@ export const TabsTutor = () => {
             onOpenChange={setAddLessonOpen}
             dayLessons={[]}
             initialDate={addLessonInitialDate}
+            fixedClassroomId={Number(classroomId)}
+            onSubmit={handleAddLessonSubmit}
           />
 
           {isInvoiceModalOpen && (

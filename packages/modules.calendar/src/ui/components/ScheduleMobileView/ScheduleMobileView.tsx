@@ -13,12 +13,14 @@ const getInitialWeekStart = () => startOfWeek(new Date(), { weekStartsOn: 1 });
 type ScheduleMobileViewProps = {
   onAddLessonClick?: (date?: Date) => void;
   onLessonReschedule?: (event: ICalendarEvent) => void;
+  onLessonCancel?: (event: ICalendarEvent) => void;
 };
 
 /** Мобильный вид расписания в стиле iOS Calendar: карусель недель + свайп по дням */
 export const ScheduleMobileView = ({
   onAddLessonClick,
   onLessonReschedule,
+  onLessonCancel,
 }: ScheduleMobileViewProps) => {
   const { t } = useTranslation('calendar');
   const [weekStart, setWeekStart] = useState<Date>(getInitialWeekStart);
@@ -81,6 +83,7 @@ export const ScheduleMobileView = ({
           onSelectedDateChange={handleSelectedDateChange}
           onAddLessonClick={handleAddLesson}
           onLessonReschedule={onLessonReschedule}
+          onLessonCancel={onLessonCancel}
         />
       </div>
     </div>

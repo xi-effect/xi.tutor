@@ -25,6 +25,7 @@ export {
   DayLessonListMetaProvider,
   useDayLessonListMeta,
 } from './src/ui/contexts/DayLessonListMetaContext';
+export { useSetEvents, useSetEventsLoading } from './src/store/eventsStore';
 export type { UseLessonInfoModalOptions } from './src/hooks/useLessonInfoModal';
 export type { UseChangeLessonModalOptions } from './src/hooks/useChangeLessonModal';
 export { calendarEn, calendarRu } from './src/locales';
@@ -33,3 +34,55 @@ export {
   StartLessonButton,
   type StartLessonButtonProps,
 } from './src/ui/components/StartLessonButton';
+export {
+  buildEventsById,
+  buildRepetitionModesById,
+  mapEventInstanceToScheduleItem,
+  mapScheduleResponseToScheduleItems,
+  getTutorClassroomSchedule,
+  getStudentClassroomSchedule,
+  createClassroomEvent,
+  updateClassroomEvent,
+  deleteClassroomEvent,
+  schedulerQueryKeys,
+  useTutorClassroomSchedule,
+  useStudentClassroomSchedule,
+  useCreateClassroomEvent,
+  useUpdateClassroomEvent,
+  useDeleteClassroomEvent,
+} from 'common.services';
+export type {
+  SchedulerEvent,
+  SingleEvent,
+  RepeatingEvent,
+  RepetitionMode,
+  EventInstance,
+  SoleEventInstance,
+  PersistedRepeatedEventInstance,
+  VirtualRepeatedEventInstance,
+  ScheduleItem,
+  GetClassroomScheduleParams,
+  UseClassroomScheduleParams,
+  CreateClassroomEventParams,
+  UpdateClassroomEventParams,
+  DeleteClassroomEventParams,
+} from 'common.services';
+export type {
+  SchedulerEventDto,
+  SoleEventInstanceInputDto,
+  SingleEventInputDto,
+  RepeatingEventInputDto,
+  CreateClassroomEventRequestDto,
+  UpdateClassroomEventRequestDto,
+  DailyRepetitionModeInputDto,
+  WeeklyRepetitionModeInputDto,
+  RepetitionModeInputDto,
+  DailyRepetitionModeDto,
+  WeeklyRepetitionModeDto,
+  RepetitionModeDto,
+  SoleEventInstanceDto,
+  PersistedRepeatedEventInstanceDto,
+  VirtualRepeatedEventInstanceDto,
+  EventInstanceDto,
+  GetClassroomScheduleResponseDto,
+} from 'common.api';

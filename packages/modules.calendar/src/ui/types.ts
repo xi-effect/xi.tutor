@@ -7,6 +7,7 @@ export interface ICalendarEvent {
   isCancelled?: boolean;
   isAllDay?: boolean;
   lessonInfo?: ILessonInfo;
+  scheduler?: ISchedulerEventMeta;
 }
 
 export interface ILessonInfo {
@@ -20,6 +21,15 @@ export interface ILessonInfo {
   teacherId?: number;
   /** id кабинета, привязанного к занятию */
   classroomId?: number;
+}
+
+export interface ISchedulerEventMeta {
+  eventId: number;
+  instanceKind: 'sole' | 'repeated_virtual' | 'repeated_persistent';
+  repetitionKind?: 'daily' | 'weekly' | null;
+  repetitionModeId?: string;
+  instanceIndex?: number | null;
+  cancelledAt?: string | null;
 }
 
 export type EventType = 'lesson' | 'rest';

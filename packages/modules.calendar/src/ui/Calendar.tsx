@@ -10,6 +10,7 @@ type CalendarModuleProps = {
   onAddLessonClick?: (date?: Date) => void;
   /** «Перенести» в карточке — передать в модалку переноса на уровне приложения */
   onLessonReschedule?: (event: ICalendarEvent) => void;
+  onLessonCancel?: (event: ICalendarEvent) => void;
   /** Показывать дату и время в начале шапки (как на отдельной странице календаря) */
   showDateTimeInHeader?: boolean;
 };
@@ -17,6 +18,7 @@ type CalendarModuleProps = {
 export const CalendarModule = ({
   onAddLessonClick,
   onLessonReschedule,
+  onLessonCancel,
   showDateTimeInHeader = true,
 }: CalendarModuleProps) => {
   const isMobile = useIsMobile();
@@ -30,6 +32,7 @@ export const CalendarModule = ({
       <ScheduleMobileView
         onAddLessonClick={onAddLessonClick}
         onLessonReschedule={onLessonReschedule}
+        onLessonCancel={onLessonCancel}
       />
     );
   }
@@ -52,6 +55,7 @@ export const CalendarModule = ({
             columnWidth={columnWidth}
             onAddLessonClick={onAddLessonClick}
             onLessonReschedule={onLessonReschedule}
+            onLessonCancel={onLessonCancel}
           />
         </div>
       </div>

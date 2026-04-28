@@ -1,78 +1,61 @@
 import type {
   EventInstanceDto,
   GetClassroomScheduleResponseDto,
-  OccurrenceModeDto,
+  RepetitionModeDto,
   SchedulerEventDto,
 } from 'common.api';
 import type { ScheduleItem } from './types';
-
-// ---------------------------------------------------------------------------
-// Builders
-// ---------------------------------------------------------------------------
 
 export function buildEventsById(events: SchedulerEventDto[]): Map<number, SchedulerEventDto> {
   return new Map(events.map((e) => [e.id, e]));
 }
 
-export function buildOccurrenceModesById(
-  modes: OccurrenceModeDto[],
-): Map<string, OccurrenceModeDto> {
+export function buildRepetitionModesById(
+  modes: RepetitionModeDto[],
+): Map<string, RepetitionModeDto> {
   return new Map(modes.map((m) => [m.id, m]));
 }
 
-// ---------------------------------------------------------------------------
-// Single-instance mapper
-// ---------------------------------------------------------------------------
-
-/**
- * Собирает один ScheduleItem из EventInstance + заранее построенных Map-ов.
- *
- * Битые связи (отсутствие occurrence_mode или event) не бросают исключений:
- * соответствующее поле будет undefined, а title/description/classroomId
- * получат дефолтные значения. UI сам решает, как отобразить «битый» элемент.
- */
 export function mapEventInstanceToScheduleItem(
   eventInstance: EventInstanceDto,
-  occurrenceModesById: Map<string, OccurrenceModeDto>,
   eventsById: Map<number, SchedulerEventDto>,
+  repetitionModesById: Map<string, RepetitionModeDto>,
 ): ScheduleItem {
-  const occurrenceMode = occurrenceModesById.get(eventInstance.occurrence_mode_id);
-  const event = occurrenceMode ? eventsById.get(occurrenceMode.event_id) : undefined;
+  const event = eventsById.get(eventInstance.event_id);
+  const repetitionMode =
+    'repetition_mode_id' in eventInstance
+      ? repetitionModesById.get(eventInstance.repetition_mode_id)
+      : undefined;
+  const cancelledAt = 'cancelled_at' in eventInstance ? eventInstance.cancelled_at : null;
+  const instanceIndex = 'instance_index' in eventInstance ? eventInstance.instance_index : null;
 
   return {
+    eventId: eventInstance.event_id,
     startsAt: eventInstance.starts_at,
     endsAt: eventInstance.ends_at,
-    eventInstance,
-    occurrenceMode,
-    event,
-    title: event?.name ?? '',
-    description: event?.description ?? null,
+    title: eventInstance.name,
+    description: eventInstance.description ?? null,
     classroomId: event?.classroom_id ?? null,
-    occurrenceKind: occurrenceMode?.kind ?? null,
+    eventInstance,
+    event,
+    repetitionMode,
+    instanceKind: eventInstance.kind,
+    repetitionKind: repetitionMode?.kind ?? null,
+    instanceIndex,
+    cancelledAt,
+    isSingle: eventInstance.kind === 'sole',
+    isRepeatedVirtual: eventInstance.kind === 'repeated_virtual',
+    isRepeatedPersistent: eventInstance.kind === 'repeated_persistent',
   };
 }
 
-// ---------------------------------------------------------------------------
-// Full-response mapper
-// ---------------------------------------------------------------------------
-
-/**
- * Маппит полный ответ GET /schedule/ в массив ScheduleItem.
- *
- * Lookup-логика (Map-построение) сосредоточена здесь, UI-компоненты
- * получают уже готовые плоские объекты.
- *
- * Поддерживает мульти-кабинетный сценарий: если в одном ответе придут
- * события нескольких кабинетов, они корректно попадут в плоский список.
- * Для фильтрации по кабинету используйте ScheduleItem.classroomId.
- */
 export function mapScheduleResponseToScheduleItems(
   response: GetClassroomScheduleResponseDto,
 ): ScheduleItem[] {
   const eventsById = buildEventsById(response.events);
-  const occurrenceModesById = buildOccurrenceModesById(response.occurrence_modes);
+  const repetitionModesById = buildRepetitionModesById(response.repetition_modes);
 
   return response.event_instances.map((instance) =>
-    mapEventInstanceToScheduleItem(instance, occurrenceModesById, eventsById),
+    mapEventInstanceToScheduleItem(instance, eventsById, repetitionModesById),
   );
 }

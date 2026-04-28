@@ -3,29 +3,135 @@ import {
   schedulerApiConfig,
   SchedulerQueryKey,
   type CreateClassroomEventRequestDto,
-  type UpdateClassroomEventRequestDto,
   type GetClassroomScheduleResponseDto,
+  type SchedulerEventDto,
+  type UpdateClassroomEventRequestDto,
 } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { handleError } from '../../utils';
 import { mapScheduleResponseToScheduleItems } from './adapters';
 import type { ScheduleItem } from './types';
 
-// ---------------------------------------------------------------------------
-// Query keys factory
-// ---------------------------------------------------------------------------
+export interface GetClassroomScheduleParams {
+  classroomId: number;
+  happensAfter: string;
+  happensBefore: string;
+}
+
+export interface CreateClassroomEventParams {
+  classroomId: number;
+  body: CreateClassroomEventRequestDto;
+}
+
+export interface UpdateClassroomEventParams {
+  classroomId: number;
+  eventId: number;
+  body: UpdateClassroomEventRequestDto;
+}
+
+export interface DeleteClassroomEventParams {
+  classroomId: number;
+  eventId: number;
+}
 
 export const schedulerQueryKeys = {
-  classroomSchedule: (classroomId: number, happensAfter: string, happensBefore: string) =>
-    ['classroom-schedule', classroomId, happensAfter, happensBefore] as const,
+  tutorClassroomSchedule: (classroomId: number, happensAfter: string, happensBefore: string) =>
+    ['tutor-classroom-schedule', classroomId, happensAfter, happensBefore] as const,
 
-  /** Для инвалидации всего расписания кабинета без привязки к диапазону */
-  allForClassroom: (classroomId: number) => ['classroom-schedule', classroomId] as const,
+  studentClassroomSchedule: (classroomId: number, happensAfter: string, happensBefore: string) =>
+    ['student-classroom-schedule', classroomId, happensAfter, happensBefore] as const,
+
+  tutorAllForClassroom: (classroomId: number) => ['tutor-classroom-schedule', classroomId] as const,
+
+  studentAllForClassroom: (classroomId: number) =>
+    ['student-classroom-schedule', classroomId] as const,
 } as const;
 
-// ---------------------------------------------------------------------------
-// useClassroomSchedule
-// ---------------------------------------------------------------------------
+export async function getTutorClassroomSchedule({
+  classroomId,
+  happensAfter,
+  happensBefore,
+}: GetClassroomScheduleParams): Promise<GetClassroomScheduleResponseDto> {
+  const axiosInst = await getAxiosInstance();
+  const response = await axiosInst<GetClassroomScheduleResponseDto>({
+    method: schedulerApiConfig[SchedulerQueryKey.GetTutorClassroomSchedule].method,
+    url: schedulerApiConfig[SchedulerQueryKey.GetTutorClassroomSchedule].getUrl(
+      classroomId.toString(),
+    ),
+    params: {
+      happens_after: happensAfter,
+      happens_before: happensBefore,
+    },
+  });
+
+  return response.data;
+}
+
+export async function getStudentClassroomSchedule({
+  classroomId,
+  happensAfter,
+  happensBefore,
+}: GetClassroomScheduleParams): Promise<GetClassroomScheduleResponseDto> {
+  const axiosInst = await getAxiosInstance();
+  const response = await axiosInst<GetClassroomScheduleResponseDto>({
+    method: schedulerApiConfig[SchedulerQueryKey.GetStudentClassroomSchedule].method,
+    url: schedulerApiConfig[SchedulerQueryKey.GetStudentClassroomSchedule].getUrl(
+      classroomId.toString(),
+    ),
+    params: {
+      happens_after: happensAfter,
+      happens_before: happensBefore,
+    },
+  });
+
+  return response.data;
+}
+
+export async function createClassroomEvent({
+  classroomId,
+  body,
+}: CreateClassroomEventParams): Promise<SchedulerEventDto> {
+  const axiosInst = await getAxiosInstance();
+  const response = await axiosInst<SchedulerEventDto>({
+    method: schedulerApiConfig[SchedulerQueryKey.CreateClassroomEvent].method,
+    url: schedulerApiConfig[SchedulerQueryKey.CreateClassroomEvent].getUrl(classroomId.toString()),
+    data: body,
+  });
+
+  return response.data;
+}
+
+export async function updateClassroomEvent({
+  classroomId,
+  eventId,
+  body,
+}: UpdateClassroomEventParams): Promise<SchedulerEventDto> {
+  const axiosInst = await getAxiosInstance();
+  const response = await axiosInst<SchedulerEventDto>({
+    method: schedulerApiConfig[SchedulerQueryKey.UpdateClassroomEvent].method,
+    url: schedulerApiConfig[SchedulerQueryKey.UpdateClassroomEvent].getUrl(
+      classroomId.toString(),
+      eventId.toString(),
+    ),
+    data: body,
+  });
+
+  return response.data;
+}
+
+export async function deleteClassroomEvent({
+  classroomId,
+  eventId,
+}: DeleteClassroomEventParams): Promise<void> {
+  const axiosInst = await getAxiosInstance();
+  await axiosInst({
+    method: schedulerApiConfig[SchedulerQueryKey.DeleteClassroomEvent].method,
+    url: schedulerApiConfig[SchedulerQueryKey.DeleteClassroomEvent].getUrl(
+      classroomId.toString(),
+      eventId.toString(),
+    ),
+  });
+}
 
 export interface UseClassroomScheduleParams {
   classroomId: number;
@@ -34,128 +140,95 @@ export interface UseClassroomScheduleParams {
   enabled?: boolean;
 }
 
-export function useClassroomSchedule({
+export function useTutorClassroomSchedule({
   classroomId,
   happensAfter,
   happensBefore,
   enabled = true,
 }: UseClassroomScheduleParams) {
   return useQuery<ScheduleItem[]>({
-    queryKey: schedulerQueryKeys.classroomSchedule(classroomId, happensAfter, happensBefore),
+    queryKey: schedulerQueryKeys.tutorClassroomSchedule(classroomId, happensAfter, happensBefore),
     queryFn: async () => {
-      const axiosInst = await getAxiosInstance();
-      const response = await axiosInst<GetClassroomScheduleResponseDto>({
-        method: schedulerApiConfig[SchedulerQueryKey.GetClassroomSchedule].method,
-        url: schedulerApiConfig[SchedulerQueryKey.GetClassroomSchedule].getUrl(
-          classroomId.toString(),
-        ),
-        params: {
-          happens_after: happensAfter,
-          happens_before: happensBefore,
-        },
+      const response = await getTutorClassroomSchedule({
+        classroomId,
+        happensAfter,
+        happensBefore,
       });
-      return mapScheduleResponseToScheduleItems(response.data);
+      return mapScheduleResponseToScheduleItems(response);
     },
     enabled: enabled && classroomId > 0,
   });
 }
 
-// ---------------------------------------------------------------------------
-// useCreateClassroomEvent
-// ---------------------------------------------------------------------------
-
-export interface CreateClassroomEventParams {
-  classroomId: number;
-  body: CreateClassroomEventRequestDto;
+export function useStudentClassroomSchedule({
+  classroomId,
+  happensAfter,
+  happensBefore,
+  enabled = true,
+}: UseClassroomScheduleParams) {
+  return useQuery<ScheduleItem[]>({
+    queryKey: schedulerQueryKeys.studentClassroomSchedule(classroomId, happensAfter, happensBefore),
+    queryFn: async () => {
+      const response = await getStudentClassroomSchedule({
+        classroomId,
+        happensAfter,
+        happensBefore,
+      });
+      return mapScheduleResponseToScheduleItems(response);
+    },
+    enabled: enabled && classroomId > 0,
+  });
 }
 
 export function useCreateClassroomEvent() {
   const queryClient = useQueryClient();
 
-  return useMutation<void, Error, CreateClassroomEventParams>({
-    mutationFn: async ({ classroomId, body }) => {
-      const axiosInst = await getAxiosInstance();
-      await axiosInst({
-        method: schedulerApiConfig[SchedulerQueryKey.CreateClassroomEvent].method,
-        url: schedulerApiConfig[SchedulerQueryKey.CreateClassroomEvent].getUrl(
-          classroomId.toString(),
-        ),
-        data: body,
-      });
-    },
+  return useMutation<SchedulerEventDto, Error, CreateClassroomEventParams>({
+    mutationFn: createClassroomEvent,
     onSuccess: (_data, { classroomId }) => {
       queryClient.invalidateQueries({
-        queryKey: schedulerQueryKeys.allForClassroom(classroomId),
+        queryKey: schedulerQueryKeys.tutorAllForClassroom(classroomId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: schedulerQueryKeys.studentAllForClassroom(classroomId),
       });
     },
     onError: (err) => {
       handleError(err, 'scheduler');
     },
   });
-}
-
-// ---------------------------------------------------------------------------
-// useUpdateClassroomEvent
-// ---------------------------------------------------------------------------
-
-export interface UpdateClassroomEventParams {
-  classroomId: number;
-  eventId: number;
-  body: UpdateClassroomEventRequestDto;
 }
 
 export function useUpdateClassroomEvent() {
   const queryClient = useQueryClient();
 
-  return useMutation<void, Error, UpdateClassroomEventParams>({
-    mutationFn: async ({ classroomId, eventId, body }) => {
-      const axiosInst = await getAxiosInstance();
-      await axiosInst({
-        method: schedulerApiConfig[SchedulerQueryKey.UpdateClassroomEvent].method,
-        url: schedulerApiConfig[SchedulerQueryKey.UpdateClassroomEvent].getUrl(
-          classroomId.toString(),
-          eventId.toString(),
-        ),
-        data: body,
-      });
-    },
+  return useMutation<SchedulerEventDto, Error, UpdateClassroomEventParams>({
+    mutationFn: updateClassroomEvent,
     onSuccess: (_data, { classroomId }) => {
       queryClient.invalidateQueries({
-        queryKey: schedulerQueryKeys.allForClassroom(classroomId),
+        queryKey: schedulerQueryKeys.tutorAllForClassroom(classroomId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: schedulerQueryKeys.studentAllForClassroom(classroomId),
       });
     },
     onError: (err) => {
       handleError(err, 'scheduler');
     },
   });
-}
-
-// ---------------------------------------------------------------------------
-// useDeleteClassroomEvent
-// ---------------------------------------------------------------------------
-
-export interface DeleteClassroomEventParams {
-  classroomId: number;
-  eventId: number;
 }
 
 export function useDeleteClassroomEvent() {
   const queryClient = useQueryClient();
 
   return useMutation<void, Error, DeleteClassroomEventParams>({
-    mutationFn: async ({ classroomId, eventId }) => {
-      const axiosInst = await getAxiosInstance();
-      await axiosInst({
-        method: schedulerApiConfig[SchedulerQueryKey.DeleteClassroomEvent].method,
-        url: schedulerApiConfig[SchedulerQueryKey.DeleteClassroomEvent].getUrl(
-          classroomId.toString(),
-          eventId.toString(),
-        ),
-      });
-    },
+    mutationFn: deleteClassroomEvent,
     onSuccess: (_data, { classroomId }) => {
       queryClient.invalidateQueries({
-        queryKey: schedulerQueryKeys.allForClassroom(classroomId),
+        queryKey: schedulerQueryKeys.tutorAllForClassroom(classroomId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: schedulerQueryKeys.studentAllForClassroom(classroomId),
       });
     },
     onError: (err) => {
@@ -163,3 +236,5 @@ export function useDeleteClassroomEvent() {
     },
   });
 }
+
+export const useClassroomSchedule = useTutorClassroomSchedule;

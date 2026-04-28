@@ -1,24 +1,20 @@
-import { describe, it, expect } from 'vitest';
+import { describe, expect, it } from 'vitest';
 import type {
-  EventInstanceDto,
+  DailyRepetitionModeDto,
   GetClassroomScheduleResponseDto,
-  OccurrenceModeDto,
+  PersistedRepeatedEventInstanceDto,
+  RepetitionModeDto,
   SchedulerEventDto,
-  SingleOccurrenceModeDto,
-  DailyOccurrenceModeDto,
-  WeeklyOccurrenceModeDto,
-  ExceptionalOccurrenceModeDto,
+  SoleEventInstanceDto,
+  VirtualRepeatedEventInstanceDto,
+  WeeklyRepetitionModeDto,
 } from 'common.api';
 import {
   buildEventsById,
-  buildOccurrenceModesById,
+  buildRepetitionModesById,
   mapEventInstanceToScheduleItem,
   mapScheduleResponseToScheduleItems,
 } from '../adapters';
-
-// ---------------------------------------------------------------------------
-// Фикстуры
-// ---------------------------------------------------------------------------
 
 const makeEvent = (overrides: Partial<SchedulerEventDto> = {}): SchedulerEventDto => ({
   id: 1,
@@ -29,71 +25,78 @@ const makeEvent = (overrides: Partial<SchedulerEventDto> = {}): SchedulerEventDt
   ...overrides,
 });
 
-const makeSingleMode = (
-  overrides: Partial<SingleOccurrenceModeDto> = {},
-): SingleOccurrenceModeDto => ({
-  id: 'mode-uuid-single',
-  event_id: 1,
-  starts_at: '2026-04-21T10:00:00Z',
-  duration_seconds: 3600,
-  kind: 'single',
-  ...overrides,
-});
-
 const makeDailyMode = (
-  overrides: Partial<DailyOccurrenceModeDto> = {},
-): DailyOccurrenceModeDto => ({
+  overrides: Partial<DailyRepetitionModeDto> = {},
+): DailyRepetitionModeDto => ({
   id: 'mode-uuid-daily',
   event_id: 1,
   starts_at: '2026-04-21T10:00:00Z',
   duration_seconds: 3600,
-  kind: 'daily',
   active_period_days: 30,
+  kind: 'daily',
   ...overrides,
 });
 
 const makeWeeklyMode = (
-  overrides: Partial<WeeklyOccurrenceModeDto> = {},
-): WeeklyOccurrenceModeDto => ({
+  overrides: Partial<WeeklyRepetitionModeDto> = {},
+): WeeklyRepetitionModeDto => ({
   id: 'mode-uuid-weekly',
   event_id: 1,
   starts_at: '2026-04-21T10:00:00Z',
   duration_seconds: 5400,
-  kind: 'weekly',
   active_period_days: 90,
-  weekly_starting_bitmask: 0b0000010, // понедельник
+  weekly_starting_bitmask: 0b0000010,
+  kind: 'weekly',
   ...overrides,
 });
 
-const makeExceptionalMode = (
-  overrides: Partial<ExceptionalOccurrenceModeDto> = {},
-): ExceptionalOccurrenceModeDto => ({
-  id: 'mode-uuid-exceptional',
+const makeSoleInstance = (overrides: Partial<SoleEventInstanceDto> = {}): SoleEventInstanceDto => ({
+  id: 'instance-uuid-sole',
+  cancelled_at: null,
   event_id: 1,
-  starts_at: '2026-04-28T10:00:00Z',
-  duration_seconds: 3600,
-  kind: 'exceptional',
-  ...overrides,
-});
-
-const makeInstance = (
-  occurrenceModeId: string,
-  overrides: Partial<EventInstanceDto> = {},
-): EventInstanceDto => ({
   starts_at: '2026-04-21T10:00:00Z',
   ends_at: '2026-04-21T11:00:00Z',
-  occurrence_mode_id: occurrenceModeId,
+  name: 'Инстанс: алгебра',
+  description: 'Описание инстанса',
+  kind: 'sole',
   ...overrides,
 });
 
-// ---------------------------------------------------------------------------
-// buildEventsById
-// ---------------------------------------------------------------------------
+const makeVirtualRepeatedInstance = (
+  overrides: Partial<VirtualRepeatedEventInstanceDto> = {},
+): VirtualRepeatedEventInstanceDto => ({
+  event_id: 1,
+  starts_at: '2026-04-21T10:00:00Z',
+  ends_at: '2026-04-21T11:00:00Z',
+  name: 'Виртуальный повтор',
+  description: null,
+  repetition_mode_id: 'mode-uuid-weekly',
+  instance_index: 2,
+  kind: 'repeated_virtual',
+  ...overrides,
+});
+
+const makePersistedRepeatedInstance = (
+  overrides: Partial<PersistedRepeatedEventInstanceDto> = {},
+): PersistedRepeatedEventInstanceDto => ({
+  id: 'instance-uuid-repeated',
+  cancelled_at: null,
+  event_id: 1,
+  starts_at: '2026-04-28T11:00:00Z',
+  ends_at: '2026-04-28T12:00:00Z',
+  name: 'Перенесённый повтор',
+  description: 'Описание перенесённого повтора',
+  repetition_mode_id: 'mode-uuid-weekly',
+  instance_index: 3,
+  kind: 'repeated_persistent',
+  ...overrides,
+});
 
 describe('buildEventsById', () => {
   it('строит Map по id события', () => {
     const event = makeEvent({ id: 7 });
     const map = buildEventsById([event]);
+
     expect(map.get(7)).toBe(event);
     expect(map.size).toBe(1);
   });
@@ -103,236 +106,224 @@ describe('buildEventsById', () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// buildOccurrenceModesById
-// ---------------------------------------------------------------------------
-
-describe('buildOccurrenceModesById', () => {
+describe('buildRepetitionModesById', () => {
   it('строит Map по uuid режима', () => {
-    const mode = makeSingleMode({ id: 'abc-123' });
-    const map = buildOccurrenceModesById([mode]);
+    const mode = makeWeeklyMode({ id: 'abc-123' });
+    const map = buildRepetitionModesById([mode]);
+
     expect(map.get('abc-123')).toBe(mode);
   });
 
   it('возвращает пустой Map для пустого массива', () => {
-    expect(buildOccurrenceModesById([]).size).toBe(0);
+    expect(buildRepetitionModesById([]).size).toBe(0);
   });
 });
-
-// ---------------------------------------------------------------------------
-// mapEventInstanceToScheduleItem — полная цепочка
-// ---------------------------------------------------------------------------
 
 describe('mapEventInstanceToScheduleItem', () => {
-  it('single: корректно склеивает instance → mode → event', () => {
+  it('создаёт ScheduleItem из sole без repetitionMode', () => {
     const event = makeEvent();
-    const mode = makeSingleMode();
-    const instance = makeInstance(mode.id);
+    const instance = makeSoleInstance();
+    const item = mapEventInstanceToScheduleItem(
+      instance,
+      buildEventsById([event]),
+      buildRepetitionModesById([]),
+    );
 
-    const eventsMap = buildEventsById([event]);
-    const modesMap = buildOccurrenceModesById([mode]);
-
-    const item = mapEventInstanceToScheduleItem(instance, modesMap, eventsMap);
-
+    expect(item.eventId).toBe(instance.event_id);
     expect(item.startsAt).toBe(instance.starts_at);
     expect(item.endsAt).toBe(instance.ends_at);
+    expect(item.title).toBe(instance.name);
+    expect(item.description).toBe(instance.description);
     expect(item.eventInstance).toBe(instance);
-    expect(item.occurrenceMode).toBe(mode);
+    expect(item.repetitionMode).toBeUndefined();
     expect(item.event).toBe(event);
-    expect(item.title).toBe(event.name);
-    expect(item.description).toBe(event.description);
     expect(item.classroomId).toBe(event.classroom_id);
-    expect(item.occurrenceKind).toBe('single');
+    expect(item.instanceKind).toBe('sole');
+    expect(item.repetitionKind).toBeNull();
+    expect(item.instanceIndex).toBeNull();
+    expect(item.cancelledAt).toBeNull();
+    expect(item.isSingle).toBe(true);
+    expect(item.isRepeatedVirtual).toBe(false);
+    expect(item.isRepeatedPersistent).toBe(false);
   });
 
-  it('daily: occurrenceKind = "daily", поля active_period_days доступны через occurrenceMode', () => {
-    const event = makeEvent();
-    const mode = makeDailyMode();
-    const instance = makeInstance(mode.id);
-
-    const item = mapEventInstanceToScheduleItem(
-      instance,
-      buildOccurrenceModesById([mode]),
-      buildEventsById([event]),
-    );
-
-    expect(item.occurrenceKind).toBe('daily');
-    expect(item.occurrenceMode?.kind).toBe('daily');
-  });
-
-  it('weekly: occurrenceKind = "weekly", weekly_starting_bitmask доступен через occurrenceMode', () => {
+  it('создаёт ScheduleItem из repeated_virtual и склеивает repetition_mode', () => {
     const event = makeEvent();
     const mode = makeWeeklyMode();
-    const instance = makeInstance(mode.id);
-
+    const instance = makeVirtualRepeatedInstance({ repetition_mode_id: mode.id });
     const item = mapEventInstanceToScheduleItem(
       instance,
-      buildOccurrenceModesById([mode]),
       buildEventsById([event]),
+      buildRepetitionModesById([mode]),
     );
 
-    expect(item.occurrenceKind).toBe('weekly');
-    if (item.occurrenceMode?.kind === 'weekly') {
-      expect(item.occurrenceMode.weekly_starting_bitmask).toBe(0b0000010);
-    }
+    expect(item.repetitionMode).toBe(mode);
+    expect(item.repetitionKind).toBe('weekly');
+    expect(item.instanceKind).toBe('repeated_virtual');
+    expect(item.instanceIndex).toBe(instance.instance_index);
+    expect(item.cancelledAt).toBeNull();
+    expect(item.isRepeatedVirtual).toBe(true);
   });
 
-  it('exceptional: occurrenceKind = "exceptional"', () => {
+  it('создаёт ScheduleItem из repeated_persistent', () => {
     const event = makeEvent();
-    const mode = makeExceptionalMode();
-    const instance = makeInstance(mode.id);
-
+    const mode = makeWeeklyMode();
+    const instance = makePersistedRepeatedInstance({ repetition_mode_id: mode.id });
     const item = mapEventInstanceToScheduleItem(
       instance,
-      buildOccurrenceModesById([mode]),
       buildEventsById([event]),
+      buildRepetitionModesById([mode]),
     );
 
-    expect(item.occurrenceKind).toBe('exceptional');
+    expect(item.repetitionMode).toBe(mode);
+    expect(item.instanceKind).toBe('repeated_persistent');
+    expect(item.isRepeatedPersistent).toBe(true);
+    expect(item.title).toBe(instance.name);
   });
 
-  it('битая связь: occurrence_mode_id не найден → occurrenceMode=undefined, event=undefined, title=""', () => {
-    const instance = makeInstance('non-existent-uuid');
+  it('учитывает cancelled_at у persisted instance', () => {
+    const event = makeEvent();
+    const mode = makeWeeklyMode();
+    const instance = makePersistedRepeatedInstance({
+      repetition_mode_id: mode.id,
+      cancelled_at: '2026-04-28T09:00:00Z',
+    });
+    const item = mapEventInstanceToScheduleItem(
+      instance,
+      buildEventsById([event]),
+      buildRepetitionModesById([mode]),
+    );
+
+    expect(item.cancelledAt).toBe('2026-04-28T09:00:00Z');
+  });
+
+  it('корректно склеивает event_instance -> event', () => {
+    const event = makeEvent({ id: 77, classroom_id: 501 });
+    const instance = makeSoleInstance({ event_id: event.id });
+    const item = mapEventInstanceToScheduleItem(
+      instance,
+      buildEventsById([event]),
+      buildRepetitionModesById([]),
+    );
+
+    expect(item.event).toBe(event);
+    expect(item.classroomId).toBe(501);
+  });
+
+  it('корректно склеивает event_instance -> repetition_mode', () => {
+    const mode = makeDailyMode({ id: 'daily-id' });
+    const instance = makeVirtualRepeatedInstance({ repetition_mode_id: mode.id });
+    const item = mapEventInstanceToScheduleItem(
+      instance,
+      buildEventsById([makeEvent()]),
+      buildRepetitionModesById([mode]),
+    );
+
+    expect(item.repetitionMode).toBe(mode);
+    expect(item.repetitionKind).toBe('daily');
+  });
+
+  it('не падает при отсутствии event', () => {
+    const instance = makeSoleInstance({ event_id: 999 });
     const item = mapEventInstanceToScheduleItem(instance, new Map(), new Map());
 
-    expect(item.occurrenceMode).toBeUndefined();
     expect(item.event).toBeUndefined();
-    expect(item.title).toBe('');
-    expect(item.description).toBeNull();
-    expect(item.classroomId).toBeNull();
-    expect(item.occurrenceKind).toBeNull();
-  });
-
-  it('битая связь: event_id не найден в eventsById → event=undefined, title=""', () => {
-    const mode = makeSingleMode({ event_id: 999 });
-    const instance = makeInstance(mode.id);
-
-    const item = mapEventInstanceToScheduleItem(
-      instance,
-      buildOccurrenceModesById([mode]),
-      new Map(), // eventsById пуст
-    );
-
-    expect(item.occurrenceMode).toBe(mode);
-    expect(item.event).toBeUndefined();
-    expect(item.title).toBe('');
+    expect(item.title).toBe(instance.name);
     expect(item.classroomId).toBeNull();
   });
 
-  it('event.description = null передаётся корректно', () => {
-    const event = makeEvent({ description: null });
-    const mode = makeSingleMode();
-    const instance = makeInstance(mode.id);
+  it('не падает при отсутствии repetition_mode для repeated instance', () => {
+    const event = makeEvent();
+    const instance = makeVirtualRepeatedInstance({ repetition_mode_id: 'missing-mode' });
+    const item = mapEventInstanceToScheduleItem(instance, buildEventsById([event]), new Map());
 
-    const item = mapEventInstanceToScheduleItem(
-      instance,
-      buildOccurrenceModesById([mode]),
-      buildEventsById([event]),
-    );
-
-    expect(item.description).toBeNull();
-  });
-
-  it('event.classroom_id = null передаётся корректно', () => {
-    const event = makeEvent({ classroom_id: null });
-    const mode = makeSingleMode();
-    const instance = makeInstance(mode.id);
-
-    const item = mapEventInstanceToScheduleItem(
-      instance,
-      buildOccurrenceModesById([mode]),
-      buildEventsById([event]),
-    );
-
-    expect(item.classroomId).toBeNull();
+    expect(item.event).toBe(event);
+    expect(item.repetitionMode).toBeUndefined();
+    expect(item.repetitionKind).toBeNull();
+    expect(item.instanceIndex).toBe(instance.instance_index);
   });
 });
-
-// ---------------------------------------------------------------------------
-// mapScheduleResponseToScheduleItems
-// ---------------------------------------------------------------------------
 
 describe('mapScheduleResponseToScheduleItems', () => {
   it('возвращает пустой массив для пустого ответа', () => {
     const response: GetClassroomScheduleResponseDto = {
       events: [],
-      occurrence_modes: [],
+      repetition_modes: [],
       event_instances: [],
     };
+
     expect(mapScheduleResponseToScheduleItems(response)).toHaveLength(0);
   });
 
   it('маппит несколько инстансов разных видов', () => {
     const event = makeEvent({ id: 1 });
-    const single = makeSingleMode({ id: 'single-id', event_id: 1 });
-    const daily = makeDailyMode({ id: 'daily-id', event_id: 1 });
     const weekly = makeWeeklyMode({ id: 'weekly-id', event_id: 1 });
-    const exceptional = makeExceptionalMode({ id: 'exceptional-id', event_id: 1 });
-
     const response: GetClassroomScheduleResponseDto = {
       events: [event],
-      occurrence_modes: [single, daily, weekly, exceptional] as OccurrenceModeDto[],
+      repetition_modes: [weekly] as RepetitionModeDto[],
       event_instances: [
-        makeInstance('single-id', {
+        makeSoleInstance({
           starts_at: '2026-04-21T10:00:00Z',
           ends_at: '2026-04-21T11:00:00Z',
         }),
-        makeInstance('daily-id', {
+        makeVirtualRepeatedInstance({
+          repetition_mode_id: weekly.id,
           starts_at: '2026-04-22T10:00:00Z',
           ends_at: '2026-04-22T11:00:00Z',
         }),
-        makeInstance('weekly-id', {
+        makePersistedRepeatedInstance({
+          repetition_mode_id: weekly.id,
           starts_at: '2026-04-28T10:00:00Z',
           ends_at: '2026-04-28T11:30:00Z',
-        }),
-        makeInstance('exceptional-id', {
-          starts_at: '2026-04-29T10:00:00Z',
-          ends_at: '2026-04-29T11:00:00Z',
         }),
       ],
     };
 
     const items = mapScheduleResponseToScheduleItems(response);
-    expect(items).toHaveLength(4);
-    expect(items.map((i) => i.occurrenceKind)).toEqual([
-      'single',
-      'daily',
-      'weekly',
-      'exceptional',
+
+    expect(items).toHaveLength(3);
+    expect(items.map((i) => i.instanceKind)).toEqual([
+      'sole',
+      'repeated_virtual',
+      'repeated_persistent',
     ]);
     items.forEach((item) => {
-      expect(item.title).toBe(event.name);
+      expect(item.event).toBe(event);
       expect(item.classroomId).toBe(event.classroom_id);
     });
   });
 
-  it('не падает при битых связях в ответе — возвращает дефолтные поля', () => {
+  it('не падает при битых связях в ответе', () => {
     const response: GetClassroomScheduleResponseDto = {
       events: [],
-      occurrence_modes: [],
-      event_instances: [makeInstance('broken-uuid')],
+      repetition_modes: [],
+      event_instances: [
+        makeVirtualRepeatedInstance({ event_id: 999, repetition_mode_id: 'broken-uuid' }),
+      ],
     };
 
     const items = mapScheduleResponseToScheduleItems(response);
+
     expect(items).toHaveLength(1);
-    expect(items[0]?.title).toBe('');
-    expect(items[0]?.occurrenceMode).toBeUndefined();
+    expect(items[0]?.title).toBe('Виртуальный повтор');
+    expect(items[0]?.repetitionMode).toBeUndefined();
     expect(items[0]?.event).toBeUndefined();
   });
 
   it('задел под мульти-кабинетный сценарий: classroomId берётся из event, не из контекста', () => {
     const eventA = makeEvent({ id: 1, classroom_id: 10 });
     const eventB = makeEvent({ id: 2, classroom_id: 20 });
-    const modeA = makeSingleMode({ id: 'mode-a', event_id: 1 });
-    const modeB = makeSingleMode({ id: 'mode-b', event_id: 2 });
-
     const response: GetClassroomScheduleResponseDto = {
       events: [eventA, eventB],
-      occurrence_modes: [modeA, modeB],
-      event_instances: [makeInstance('mode-a'), makeInstance('mode-b')],
+      repetition_modes: [],
+      event_instances: [
+        makeSoleInstance({ id: 'instance-a', event_id: eventA.id }),
+        makeSoleInstance({ id: 'instance-b', event_id: eventB.id }),
+      ],
     };
 
     const items = mapScheduleResponseToScheduleItems(response);
+
     expect(items[0]?.classroomId).toBe(10);
     expect(items[1]?.classroomId).toBe(20);
   });
