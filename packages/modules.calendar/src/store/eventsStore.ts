@@ -85,6 +85,9 @@ const useEventsStore = create<EventsStore>((set, get) => ({
 }));
 
 // Селекторы
+/** Список всех событий календаря (рефетч расписания и синхронизация открытых модалок). */
+export const useCalendarEvents = () => useEventsStore((s) => s.events);
+
 export const useEventsLoading = () => useEventsStore((s) => s.eventsLoading);
 
 export const useSetEventsLoading = () => useEventsStore((s) => s.setEventsLoading);
