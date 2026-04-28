@@ -83,7 +83,14 @@ export const LessonCard = memo<LessonCardProps>(
 
     const teacherName = event.lessonInfo?.studentName ?? event.title;
     const teacherId = event.lessonInfo?.teacherId;
-    const lessonTitle = event.lessonInfo?.description ?? event.title;
+    const trimmedTitle = event.title.trim();
+    const lessonDescription = event.lessonInfo?.description?.trim();
+    const primaryHeading = trimmedTitle !== '' ? trimmedTitle : (lessonDescription ?? '');
+    const showDescriptionBelow =
+      trimmedTitle !== '' &&
+      lessonDescription != null &&
+      lessonDescription.length > 0 &&
+      lessonDescription !== trimmedTitle;
     const { classroomName, avatarUserId, subjectName } = useLessonClassroomPresentation({
       classroomId: event.lessonInfo?.classroomId,
       fallbackClassroomName: teacherName,
@@ -132,12 +139,17 @@ export const LessonCard = memo<LessonCardProps>(
 
           <p
             className={cn(
-              'text-gray-90 line-clamp-2 h-[40px] text-[14px] leading-snug font-semibold',
+              'text-gray-90 line-clamp-2 text-[14px] leading-snug font-semibold',
               hideClassroomAndSubject ? 'mt-0' : 'mt-2',
             )}
           >
-            {lessonTitle}
+            {primaryHeading}
           </p>
+          {showDescriptionBelow ? (
+            <p className="text-gray-70 mt-1 line-clamp-2 text-xs leading-snug wrap-break-word">
+              {lessonDescription}
+            </p>
+          ) : null}
 
           {startTime != null && endTime != null && (
             <div className="mt-2 flex w-full items-center gap-2">

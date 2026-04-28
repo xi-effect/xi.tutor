@@ -8,7 +8,8 @@ import { ScheduleEmptyState } from './ScheduleEmptyState';
 import { getDateKey, useEventsByDate, useEventsLoading } from '../../../store/eventsStore';
 import { useLessonInfoModal } from '../../../hooks';
 import { getLessonCardSkeletonCountForDay, isCurrentDay, isPastDay } from '../../../utils';
-import type { ICalendarEvent } from '../../types';
+import type { ChangeLessonFormData } from 'features.lesson.change';
+import type { ICalendarEvent, LessonCancelScope } from '../../types';
 import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
 import { scheduleEmptyBlockHeight } from './scheduleEmptyLayout';
@@ -21,7 +22,9 @@ interface ScheduleKanbanProps {
   onAddLessonClick?: (date: Date) => void;
   /** «Перенести» в карточке занятия — открыть модалку переноса снаружи (например `features.lesson.move`) */
   onLessonReschedule?: (event: ICalendarEvent) => void;
-  onLessonCancel?: (event: ICalendarEvent) => void;
+  onLessonCancel?: (event: ICalendarEvent, scope: LessonCancelScope) => void;
+  /** Сохранение названия и описания (PATCH события) — обычно только для преподавателя */
+  onSaveLesson?: (event: ICalendarEvent, data: ChangeLessonFormData) => void;
   /** Скрыть в карточке строки кабинета и предмета (контекст одного кабинета) */
   hideLessonCardClassroomAndSubject?: boolean;
 }
@@ -67,6 +70,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
   onAddLessonClick,
   onLessonReschedule,
   onLessonCancel,
+  onSaveLesson,
   hideLessonCardClassroomAndSubject = false,
 }) => {
   const { t } = useTranslation('calendar');
@@ -77,6 +81,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
   const { openLessonInfo, lessonInfoModal } = useLessonInfoModal({
     onReschedule: onLessonReschedule,
     onCancelLesson: onLessonCancel,
+    onSaveLesson,
   });
 
   const eventsPerDay = useMemo(

@@ -2,8 +2,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Badge } from '@xipkg/badge';
 import { Button } from '@xipkg/button';
 import { Form, FormControl, FormField, FormItem, FormMessage, useForm } from '@xipkg/form';
-import { InfoCircle } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
+import { Textarea } from '@xipkg/textarea';
 import {
   Modal,
   ModalBody,
@@ -14,6 +14,7 @@ import {
   ModalTitle,
 } from '@xipkg/modal';
 import { UserProfile } from '@xipkg/userprofile';
+import { cn } from '@xipkg/utils';
 import { useEffect } from 'react';
 import type { z } from 'zod';
 import { changeLessonFormSchema, type ChangeLessonFormData } from '../model';
@@ -132,16 +133,21 @@ export const ChangeLessonModal = ({
                   render={({ field }) => (
                     <FormItem className="space-y-1">
                       <FormControl>
-                        <Input
-                          {...field}
+                        <Textarea
                           value={field.value ?? ''}
-                          error={!!errors.description}
-                          autoComplete="off"
-                          type="text"
+                          onChange={field.onChange}
+                          onBlur={field.onBlur}
+                          name={field.name}
+                          ref={field.ref}
                           id="change-lesson-description"
                           placeholder="Добавить описание"
-                          before={<InfoCircle className="fill-gray-40 h-4 w-4" />}
-                          variant="s"
+                          maxRows={6}
+                          hideCounter
+                          aria-invalid={!!errors.description}
+                          className={cn(
+                            'border-gray-10 placeholder:text-gray-40 min-h-[88px] resize-y rounded-lg border px-3 py-2 text-sm text-gray-100',
+                            errors.description && 'border-red-60',
+                          )}
                         />
                       </FormControl>
                       <FormMessage />

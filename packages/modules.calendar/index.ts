@@ -9,7 +9,7 @@ export {
   ScheduleMobileView,
 } from './src/ui';
 export type { CalendarWeekNavProps } from './src/ui';
-export type { ScheduleLessonRow, ICalendarEvent } from './src/ui/types';
+export type { ScheduleLessonRow, ICalendarEvent, LessonCancelScope } from './src/ui/types';
 export type { ChangeLessonFormData } from 'features.lesson.change';
 export type { DominantVisibleMonthInfo } from './src/ui';
 export type { NearestLessonCardProps } from './src/ui/components/NearestLessonCard';
@@ -35,8 +35,6 @@ export {
   type StartLessonButtonProps,
 } from './src/ui/components/StartLessonButton';
 export {
-  buildEventsById,
-  buildRepetitionModesById,
   mapEventInstanceToScheduleItem,
   mapScheduleResponseToScheduleItems,
   getTutorClassroomSchedule,

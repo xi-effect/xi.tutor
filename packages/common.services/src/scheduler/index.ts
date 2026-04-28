@@ -11,8 +11,6 @@ export type {
 } from './model/types';
 
 export {
-  buildEventsById,
-  buildRepetitionModesById,
   mapEventInstanceToScheduleItem,
   mapScheduleResponseToScheduleItems,
 } from './model/adapters';

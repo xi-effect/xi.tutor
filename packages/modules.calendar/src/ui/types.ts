@@ -32,6 +32,9 @@ export interface ISchedulerEventMeta {
   cancelledAt?: string | null;
 }
 
+/** Область отмены из модалки «Информация о занятии» / отмены занятия */
+export type LessonCancelScope = 'this_occurrence' | 'whole_series';
+
 export type EventType = 'lesson' | 'rest';
 export type LessonType = 'group' | 'individual';
 
@@ -49,6 +52,8 @@ export type ScheduleLessonRow = {
   description?: string;
   studentName: string;
   studentId: number;
+  /** Тип инстанса из планировщика — для UX отмены (одиночное / серия) */
+  instanceKind?: ISchedulerEventMeta['instanceKind'];
 };
 
 export type CalendarMode = 'day' | 'week' | 'month' | 'year';

@@ -7,9 +7,11 @@ import {
   useSetEventsLoading,
   useStudentClassroomSchedule,
   useTutorClassroomSchedule,
+  useUpdateClassroomEvent,
 } from 'modules.calendar';
-import type { ICalendarEvent } from 'modules.calendar';
+import type { ChangeLessonFormData, ICalendarEvent, LessonCancelScope } from 'modules.calendar';
 import { useParams } from '@tanstack/react-router';
+import { toast } from 'sonner';
 import { useCurrentUser, useGetClassroom, useGetClassroomStudent } from 'common.services';
 import { MovingLessonModal } from 'features.lesson.move';
 import { useClassroomSchedule } from './ClassroomScheduleContext';
@@ -71,6 +73,7 @@ export const Calendar = () => {
     enabled: !isUserLoading && isTutor === false,
   });
   const deleteClassroomEvent = useDeleteClassroomEvent();
+  const updateClassroomEvent = useUpdateClassroomEvent();
 
   const classroom = isTutor ? tutorQuery.data : studentQuery.data;
   const isLoading = isUserLoading || (isTutor ? tutorQuery.isLoading : studentQuery.isLoading);
@@ -115,9 +118,35 @@ export const Calendar = () => {
     setMoveEvent(event);
   };
 
-  const handleLessonCancel = (event: ICalendarEvent) => {
+  const handleLessonSave = (event: ICalendarEvent, data: ChangeLessonFormData) => {
+    if (!isTutor) return;
+    const eventId = event.scheduler?.eventId;
+    if (eventId == null) return;
+
+    const description = data.description?.trim() ?? '';
+    updateClassroomEvent.mutate({
+      classroomId: numericClassroomId,
+      eventId,
+      body: {
+        name: data.title.trim(),
+        description: description === '' ? null : description,
+      },
+    });
+  };
+
+  const handleLessonCancel = (event: ICalendarEvent, scope: LessonCancelScope) => {
     const eventId = event.scheduler?.eventId;
     if (!isTutor || eventId == null) return;
+
+    const instanceKind = event.scheduler?.instanceKind;
+    const isSole = instanceKind == null || instanceKind === 'sole';
+
+    if (scope === 'this_occurrence' && !isSole) {
+      toast.info(
+        'Отмена одного занятия из повторяющейся серии пока недоступна. При необходимости отмените всю серию.',
+      );
+      return;
+    }
 
     deleteClassroomEvent.mutate({
       classroomId: numericClassroomId,
@@ -132,6 +161,7 @@ export const Calendar = () => {
           onAddLessonClick={onAddLessonClick}
           onLessonReschedule={handleLessonReschedule}
           onLessonCancel={handleLessonCancel}
+          onSaveLesson={isTutor ? handleLessonSave : undefined}
           hideLessonCardClassroomAndSubject
         />
       ) : (
@@ -139,6 +169,7 @@ export const Calendar = () => {
           <CalendarScheduleKanban
             onLessonReschedule={handleLessonReschedule}
             onLessonCancel={handleLessonCancel}
+            onSaveLesson={isTutor ? handleLessonSave : undefined}
           />
         </div>
       )}

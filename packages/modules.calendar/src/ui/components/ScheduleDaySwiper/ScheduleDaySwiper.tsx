@@ -9,7 +9,8 @@ import { ScheduleEmptyState } from '../ScheduleKanban/ScheduleEmptyState';
 import { getDateKey, useEventsByDate, useEventsLoading } from '../../../store/eventsStore';
 import { useLessonInfoModal } from '../../../hooks';
 import { getLessonCardSkeletonCountForDay, isCurrentDay, isPastDay } from '../../../utils';
-import type { ICalendarEvent } from '../../types';
+import type { ChangeLessonFormData } from 'features.lesson.change';
+import type { ICalendarEvent, LessonCancelScope } from '../../types';
 
 import 'swiper/css';
 import 'swiper/css/virtual';
@@ -30,7 +31,8 @@ type ScheduleDaySwiperProps = {
   onSelectedDateChange: (date: Date) => void;
   onAddLessonClick?: (date: Date) => void;
   onLessonReschedule?: (event: ICalendarEvent) => void;
-  onLessonCancel?: (event: ICalendarEvent) => void;
+  onLessonCancel?: (event: ICalendarEvent, scope: LessonCancelScope) => void;
+  onSaveLesson?: (event: ICalendarEvent, data: ChangeLessonFormData) => void;
   hideLessonCardClassroomAndSubject?: boolean;
 };
 
@@ -41,6 +43,7 @@ export const ScheduleDaySwiper = ({
   onAddLessonClick,
   onLessonReschedule,
   onLessonCancel,
+  onSaveLesson,
   hideLessonCardClassroomAndSubject = false,
 }: ScheduleDaySwiperProps) => {
   const eventsByDate = useEventsByDate();
@@ -51,6 +54,7 @@ export const ScheduleDaySwiper = ({
   const { openLessonInfo, lessonInfoModal } = useLessonInfoModal({
     onReschedule: onLessonReschedule,
     onCancelLesson: onLessonCancel,
+    onSaveLesson,
   });
 
   const selectedIndex = days.findIndex((d) => isSameDay(d, selectedDate));

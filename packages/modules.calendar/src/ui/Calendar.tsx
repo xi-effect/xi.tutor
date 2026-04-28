@@ -3,14 +3,16 @@ import { ScheduleKanban, ScheduleMobileView } from './components';
 import { CalendarHeader } from './Header';
 import { useCalendar, useIsMobile } from '../hooks';
 import { useKanbanColumns } from '../hooks/useKanbanColumns';
-import type { ICalendarEvent } from './types';
+import type { ChangeLessonFormData } from 'features.lesson.change';
+import type { ICalendarEvent, LessonCancelScope } from './types';
 
 type CalendarModuleProps = {
   /** Вызывается при клике на кнопку добавления занятия (в хедере или в колонке канбана). Дата колонки передаётся при клике в канбане. */
   onAddLessonClick?: (date?: Date) => void;
   /** «Перенести» в карточке — передать в модалку переноса на уровне приложения */
   onLessonReschedule?: (event: ICalendarEvent) => void;
-  onLessonCancel?: (event: ICalendarEvent) => void;
+  onLessonCancel?: (event: ICalendarEvent, scope: LessonCancelScope) => void;
+  onSaveLesson?: (event: ICalendarEvent, data: ChangeLessonFormData) => void;
   /** Показывать дату и время в начале шапки (как на отдельной странице календаря) */
   showDateTimeInHeader?: boolean;
 };
@@ -19,6 +21,7 @@ export const CalendarModule = ({
   onAddLessonClick,
   onLessonReschedule,
   onLessonCancel,
+  onSaveLesson,
   showDateTimeInHeader = true,
 }: CalendarModuleProps) => {
   const isMobile = useIsMobile();
@@ -33,6 +36,7 @@ export const CalendarModule = ({
         onAddLessonClick={onAddLessonClick}
         onLessonReschedule={onLessonReschedule}
         onLessonCancel={onLessonCancel}
+        onSaveLesson={onSaveLesson}
       />
     );
   }
@@ -56,6 +60,7 @@ export const CalendarModule = ({
             onAddLessonClick={onAddLessonClick}
             onLessonReschedule={onLessonReschedule}
             onLessonCancel={onLessonCancel}
+            onSaveLesson={onSaveLesson}
           />
         </div>
       </div>

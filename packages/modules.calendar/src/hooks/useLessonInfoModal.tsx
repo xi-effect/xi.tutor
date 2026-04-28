@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { ChangeLessonFormData } from 'features.lesson.change';
+import { CancelLessonModal, type CancelLessonVariant } from 'features.lesson.cancel';
 import { LessonInfoModal } from 'features.lesson.info';
 import { useCurrentUser, useGetClassroom, useGetClassroomStudent } from 'common.services';
-import type { ICalendarEvent } from '../ui/types';
+import type { ICalendarEvent, LessonCancelScope } from '../ui/types';
 import { timeToString } from '../utils';
 
 const FIVE_MINUTES_MS = 5 * 60 * 1000;
@@ -10,6 +11,11 @@ const SCHEDULE_TOOLTIP = 'Кнопка станет активной за 5 ми
 
 function isWithinStartWindow(start: Date): boolean {
   return start.getTime() - Date.now() <= FIVE_MINUTES_MS;
+}
+
+function cancelVariantFromEvent(event: ICalendarEvent): CancelLessonVariant {
+  const kind = event.scheduler?.instanceKind;
+  return kind == null || kind === 'sole' ? 'sole' : 'recurring';
 }
 
 function mapEventToLessonInfo(event: ICalendarEvent) {
@@ -38,7 +44,8 @@ function mapEventToChangeLesson(event: ICalendarEvent) {
 export type UseLessonInfoModalOptions = {
   onStartLesson?: (event: ICalendarEvent) => void;
   onReschedule?: (event: ICalendarEvent) => void;
-  onCancelLesson?: (event: ICalendarEvent) => void;
+  /** Отмена: одиночное занятие / одно из серии / вся серия — см. {@link LessonCancelScope} */
+  onCancelLesson?: (event: ICalendarEvent, scope: LessonCancelScope) => void;
   onSaveLesson?: (event: ICalendarEvent, data: ChangeLessonFormData) => void;
 };
 
@@ -53,6 +60,7 @@ export const useLessonInfoModal = ({
   onSaveLesson,
 }: UseLessonInfoModalOptions = {}) => {
   const [selectedEvent, setSelectedEvent] = useState<ICalendarEvent | null>(null);
+  const [cancelModalOpen, setCancelModalOpen] = useState(false);
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -87,6 +95,12 @@ export const useLessonInfoModal = ({
     return () => clearTimeout(timer);
   }, [selectedEvent]);
 
+  useEffect(() => {
+    if (!selectedEvent) {
+      setCancelModalOpen(false);
+    }
+  }, [selectedEvent]);
+
   const isStartLessonDisabled = isTutor && !canStartNow;
   const startLessonTooltip = isStartLessonDisabled ? SCHEDULE_TOOLTIP : undefined;
 
@@ -95,37 +109,65 @@ export const useLessonInfoModal = ({
       onStartLesson(event);
       return;
     }
-    const classroomId = event.lessonInfo?.classroomId;
-    if (classroomId != null) {
-      window.location.href = `/classrooms/${classroomId}?goto=call`;
+    const cid = event.lessonInfo?.classroomId;
+    if (cid != null) {
+      window.location.href = `/classrooms/${cid}?goto=call`;
     }
   };
 
   const close = useCallback(() => {
     setSelectedEvent(null);
+    setCancelModalOpen(false);
   }, []);
+
+  const emitCancel = useCallback(
+    (scope: LessonCancelScope) => {
+      if (selectedEvent == null || !onCancelLesson) return;
+      onCancelLesson(selectedEvent, scope);
+      setCancelModalOpen(false);
+      close();
+    },
+    [close, onCancelLesson, selectedEvent],
+  );
+
+  const showCancelFlow = Boolean(onCancelLesson);
 
   const lessonInfoModal =
     selectedEvent != null ? (
-      <LessonInfoModal
-        open
-        onOpenChange={(o) => {
-          if (!o) close();
-        }}
-        {...mapEventToLessonInfo(selectedEvent)}
-        classroomId={classroomId}
-        classroom={classroomQuery.data}
-        classroomLoading={classroomId != null && classroomQuery.isLoading}
-        onStartLesson={() => handleStartLesson(selectedEvent)}
-        isStartLessonDisabled={isStartLessonDisabled}
-        startLessonTooltip={startLessonTooltip}
-        onReschedule={() => onReschedule?.(selectedEvent)}
-        changeLesson={{
-          ...mapEventToChangeLesson(selectedEvent),
-          onSave: (data) => onSaveLesson?.(selectedEvent, data),
-        }}
-        onCancelLesson={() => onCancelLesson?.(selectedEvent)}
-      />
+      <>
+        <LessonInfoModal
+          open
+          onOpenChange={(o) => {
+            if (!o) close();
+          }}
+          {...mapEventToLessonInfo(selectedEvent)}
+          classroomId={classroomId}
+          classroom={classroomQuery.data}
+          classroomLoading={classroomId != null && classroomQuery.isLoading}
+          onStartLesson={() => handleStartLesson(selectedEvent)}
+          isStartLessonDisabled={isStartLessonDisabled}
+          startLessonTooltip={startLessonTooltip}
+          onReschedule={() => onReschedule?.(selectedEvent)}
+          changeLesson={
+            onSaveLesson != null
+              ? {
+                  ...mapEventToChangeLesson(selectedEvent),
+                  onSave: (data) => onSaveLesson(selectedEvent, data),
+                }
+              : undefined
+          }
+          onCancelClick={showCancelFlow ? () => setCancelModalOpen(true) : undefined}
+        />
+        {showCancelFlow ? (
+          <CancelLessonModal
+            open={cancelModalOpen}
+            onOpenChange={setCancelModalOpen}
+            variant={cancelVariantFromEvent(selectedEvent)}
+            onCancelOne={() => emitCancel('this_occurrence')}
+            onCancelAll={() => emitCancel('whole_series')}
+          />
+        ) : null}
+      </>
     ) : null;
 
   return {

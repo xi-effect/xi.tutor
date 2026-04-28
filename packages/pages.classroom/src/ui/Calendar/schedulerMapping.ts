@@ -47,7 +47,7 @@ export const mapScheduleItemToCalendarEvent = (item: ScheduleItem): ICalendarEve
   type: 'lesson',
   isCancelled: item.cancelledAt != null,
   lessonInfo: {
-    studentName: item.event?.name ?? item.title,
+    studentName: item.title,
     subject: item.title,
     lessonType: 'individual',
     description: item.description ?? undefined,
@@ -80,6 +80,7 @@ export const mapCalendarEventsToDayLessons = (events: ICalendarEvent[]): Schedul
     description: event.lessonInfo?.description,
     studentName: event.lessonInfo?.studentName ?? event.title,
     studentId: event.lessonInfo?.teacherId ?? 0,
+    instanceKind: event.scheduler?.instanceKind,
   }));
 
 export const buildCreateClassroomEventRequest = (

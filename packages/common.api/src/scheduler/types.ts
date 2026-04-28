@@ -107,7 +107,5 @@ export type EventInstanceDto =
   | VirtualRepeatedEventInstanceDto;
 
 export interface GetClassroomScheduleResponseDto {
-  events: SchedulerEventDto[];
-  repetition_modes: RepetitionModeDto[];
   event_instances: EventInstanceDto[];
 }

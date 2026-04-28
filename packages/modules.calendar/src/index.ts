@@ -3,8 +3,6 @@ export * from './hooks';
 export * from './model';
 export { useSetEvents, useSetEventsLoading } from './store/eventsStore';
 export {
-  buildEventsById,
-  buildRepetitionModesById,
   mapEventInstanceToScheduleItem,
   mapScheduleResponseToScheduleItems,
   getTutorClassroomSchedule,

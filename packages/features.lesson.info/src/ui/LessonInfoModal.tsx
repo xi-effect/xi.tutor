@@ -51,7 +51,7 @@ export type LessonInfoModalProps = {
    * Если задана, кнопка «Редактировать» открывает её; иначе вызывается `onEditLesson`.
    */
   changeLesson?: LessonInfoChangeLessonConfig;
-  onCancelLesson?: () => void;
+  onCancelClick?: () => void;
 };
 
 export const LessonInfoModal = ({
@@ -71,7 +71,7 @@ export const LessonInfoModal = ({
   onReschedule,
   onEditLesson,
   changeLesson,
-  onCancelLesson,
+  onCancelClick,
 }: LessonInfoModalProps) => {
   const [isChangeLessonOpen, setIsChangeLessonOpen] = useState(false);
 
@@ -193,15 +193,17 @@ export const LessonInfoModal = ({
               Перенести
               <Redo className="fill-gray-70 ml-1.5 h-4 w-4" />
             </Button>
-            <Button
-              type="button"
-              variant="none"
-              className="bg-gray-5 text-gray-80 xs:w-12 flex h-12 min-h-12 w-full shrink-0 items-center justify-center p-0 hover:text-gray-100 max-sm:mx-auto"
-              onClick={onCancelLesson}
-            >
-              <span className="xs:sr-only block">Удалить</span>
-              <Trash className="fill-gray-60 xs:ml-0 ml-2 h-5 w-5" />
-            </Button>
+            {onCancelClick != null ? (
+              <Button
+                type="button"
+                variant="none"
+                className="bg-gray-5 text-gray-80 xs:w-12 flex h-12 min-h-12 w-full shrink-0 items-center justify-center p-0 hover:text-gray-100 max-sm:mx-auto"
+                onClick={onCancelClick}
+              >
+                <span className="xs:sr-only block">Удалить</span>
+                <Trash className="fill-gray-60 xs:ml-0 ml-2 h-5 w-5" />
+              </Button>
+            ) : null}
             {showEdit ? (
               <Button
                 type="button"

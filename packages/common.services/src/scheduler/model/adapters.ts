@@ -1,31 +1,10 @@
-import type {
-  EventInstanceDto,
-  GetClassroomScheduleResponseDto,
-  RepetitionModeDto,
-  SchedulerEventDto,
-} from 'common.api';
+import type { EventInstanceDto, GetClassroomScheduleResponseDto } from 'common.api';
 import type { ScheduleItem } from './types';
-
-export function buildEventsById(events: SchedulerEventDto[]): Map<number, SchedulerEventDto> {
-  return new Map(events.map((e) => [e.id, e]));
-}
-
-export function buildRepetitionModesById(
-  modes: RepetitionModeDto[],
-): Map<string, RepetitionModeDto> {
-  return new Map(modes.map((m) => [m.id, m]));
-}
 
 export function mapEventInstanceToScheduleItem(
   eventInstance: EventInstanceDto,
-  eventsById: Map<number, SchedulerEventDto>,
-  repetitionModesById: Map<string, RepetitionModeDto>,
+  classroomId: number | null,
 ): ScheduleItem {
-  const event = eventsById.get(eventInstance.event_id);
-  const repetitionMode =
-    'repetition_mode_id' in eventInstance
-      ? repetitionModesById.get(eventInstance.repetition_mode_id)
-      : undefined;
   const cancelledAt = 'cancelled_at' in eventInstance ? eventInstance.cancelled_at : null;
   const instanceIndex = 'instance_index' in eventInstance ? eventInstance.instance_index : null;
 
@@ -35,12 +14,12 @@ export function mapEventInstanceToScheduleItem(
     endsAt: eventInstance.ends_at,
     title: eventInstance.name,
     description: eventInstance.description ?? null,
-    classroomId: event?.classroom_id ?? null,
+    classroomId,
     eventInstance,
-    event,
-    repetitionMode,
+    event: undefined,
+    repetitionMode: undefined,
     instanceKind: eventInstance.kind,
-    repetitionKind: repetitionMode?.kind ?? null,
+    repetitionKind: null,
     instanceIndex,
     cancelledAt,
     isSingle: eventInstance.kind === 'sole',
@@ -51,11 +30,9 @@ export function mapEventInstanceToScheduleItem(
 
 export function mapScheduleResponseToScheduleItems(
   response: GetClassroomScheduleResponseDto,
+  classroomId: number,
 ): ScheduleItem[] {
-  const eventsById = buildEventsById(response.events);
-  const repetitionModesById = buildRepetitionModesById(response.repetition_modes);
-
   return response.event_instances.map((instance) =>
-    mapEventInstanceToScheduleItem(instance, eventsById, repetitionModesById),
+    mapEventInstanceToScheduleItem(instance, classroomId),
   );
 }

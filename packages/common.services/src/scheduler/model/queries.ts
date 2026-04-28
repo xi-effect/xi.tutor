@@ -154,7 +154,7 @@ export function useTutorClassroomSchedule({
         happensAfter,
         happensBefore,
       });
-      return mapScheduleResponseToScheduleItems(response);
+      return mapScheduleResponseToScheduleItems(response, classroomId);
     },
     enabled: enabled && classroomId > 0,
   });
@@ -174,7 +174,7 @@ export function useStudentClassroomSchedule({
         happensAfter,
         happensBefore,
       });
-      return mapScheduleResponseToScheduleItems(response);
+      return mapScheduleResponseToScheduleItems(response, classroomId);
     },
     enabled: enabled && classroomId > 0,
   });
