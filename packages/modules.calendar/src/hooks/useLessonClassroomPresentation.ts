@@ -38,18 +38,24 @@ type UseLessonClassroomPresentationParamsT = {
   classroomId?: number;
   fallbackClassroomName: string;
   fallbackAvatarUserId?: number;
+  /** false — не запрашивать кабинеты и предмет (например, когда строка кабинета/предмета в карточке скрыта) */
+  enabled?: boolean;
 };
 
 export const useLessonClassroomPresentation = ({
   classroomId,
   fallbackClassroomName,
   fallbackAvatarUserId,
+  enabled = true,
 }: UseLessonClassroomPresentationParamsT): LessonClassroomPresentationT => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  const tutorClassrooms = useFetchClassrooms({ limit: CLASSROOMS_LIMIT }, !isTutor);
-  const studentClassrooms = useFetchClassroomsByStudent({ limit: CLASSROOMS_LIMIT }, isTutor);
+  const tutorClassrooms = useFetchClassrooms({ limit: CLASSROOMS_LIMIT }, !isTutor || !enabled);
+  const studentClassrooms = useFetchClassroomsByStudent(
+    { limit: CLASSROOMS_LIMIT },
+    isTutor || !enabled,
+  );
 
   const classrooms = isTutor ? tutorClassrooms.data : studentClassrooms.data;
   const isLoading = isTutor ? tutorClassrooms.isLoading : studentClassrooms.isLoading;
@@ -62,14 +68,24 @@ export const useLessonClassroomPresentation = ({
   const classroom = classroomId != null ? classroomsById.get(classroomId) : undefined;
 
   const subjectId = classroom?.subject_id ?? undefined;
-  const shouldLoadSubject = subjectId != null;
+  const shouldLoadSubject = enabled && subjectId != null;
   const { data: subjectData } = useSubjectsById(subjectId ?? 0, !shouldLoadSubject);
 
   const subjectName = useMemo(() => {
-    if (!shouldLoadSubject) return undefined;
+    if (!enabled || !shouldLoadSubject) return undefined;
     const name = subjectData?.name?.trim();
     return name || undefined;
-  }, [shouldLoadSubject, subjectData?.name]);
+  }, [enabled, shouldLoadSubject, subjectData?.name]);
+
+  if (!enabled) {
+    return {
+      subjectId: undefined,
+      subjectName: undefined,
+      classroomName: fallbackClassroomName,
+      avatarUserId: fallbackAvatarUserId,
+      isLoading: false,
+    };
+  }
 
   return {
     subjectId,

@@ -8,7 +8,6 @@ import type {
 
 const MS_PER_SECOND = 1000;
 const WEEKDAY_TO_BIT = [1, 2, 4, 8, 16, 32, 64] as const;
-const DEFAULT_REPETITION_ACTIVE_PERIOD_DAYS = 365;
 
 const parseTimeParts = (time: string): [number, number] => {
   const [hours = '0', minutes = '0'] = time.split(':');
@@ -22,9 +21,12 @@ const combineDateAndTime = (date: Date, time: string): Date => {
   return result;
 };
 
-const durationToSeconds = (duration: string): number => {
-  const [hours, minutes] = parseTimeParts(duration);
-  return (hours * 60 + minutes) * 60;
+const durationBetweenToSeconds = (startTime: string, endTime: string): number => {
+  const [startHours, startMinutes] = parseTimeParts(startTime);
+  const [endHours, endMinutes] = parseTimeParts(endTime);
+  const startTotalMinutes = startHours * 60 + startMinutes;
+  const endTotalMinutes = endHours * 60 + endMinutes;
+  return (endTotalMinutes - startTotalMinutes) * 60;
 };
 
 const getCalendarEventId = (item: ScheduleItem): string => {
@@ -84,10 +86,11 @@ export const buildCreateClassroomEventRequest = (
   data: AddingLessonFormData,
 ): CreateClassroomEventRequestDto => {
   const startsAt = combineDateAndTime(data.startDate, data.startTime);
-  const durationSeconds = durationToSeconds(data.duration);
+  const durationSeconds = durationBetweenToSeconds(data.startTime, data.endTime);
+  const descriptionTrimmed = data.description?.trim() ?? '';
   const event = {
     name: data.title,
-    description: null,
+    description: descriptionTrimmed.length > 0 ? descriptionTrimmed : null,
   };
 
   if (data.repeatMode === 'none') {
@@ -111,7 +114,6 @@ export const buildCreateClassroomEventRequest = (
       kind: 'weekly',
       starts_at: startsAt.toISOString(),
       duration_seconds: durationSeconds,
-      active_period_days: DEFAULT_REPETITION_ACTIVE_PERIOD_DAYS,
       weekly_bitmask: weeklyBitmask,
     },
   };

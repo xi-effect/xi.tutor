@@ -9,10 +9,11 @@ import {
   ModalHeader,
   ModalTitle,
 } from '@xipkg/modal';
+import type { ClassroomTutorResponseSchema } from 'common.api';
 import { Button } from '@xipkg/button';
 import { Clock, Conference, Edit05, Redo, Trash } from '@xipkg/icons';
-import { UserProfile } from '@xipkg/userprofile';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { LessonInfoClassroomBlock } from './LessonInfoClassroomBlock';
 
 export type LessonInfoChangeLessonConfig = {
   subject: string;
@@ -26,10 +27,16 @@ export type LessonInfoChangeLessonConfig = {
 export type LessonInfoModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** Подпись над карточкой, если нет бейджа предмета из кабинета */
   subject: string;
-  teacherName: string;
-  teacherId?: number;
+  /** Название занятия (как в расписании / в событии) */
   lessonTitle: string;
+  /** Текстовое описание (тема, план) — показывается под названием */
+  lessonDescription?: string;
+  classroomId?: number;
+  /** Данные кабинета (GET tutor/student classroom) — как на карточке на главной */
+  classroom?: ClassroomTutorResponseSchema;
+  classroomLoading?: boolean;
   startTime: string | null;
   endTime: string | null;
   onStartLesson?: () => void;
@@ -51,9 +58,11 @@ export const LessonInfoModal = ({
   open,
   onOpenChange,
   subject,
-  teacherName,
-  teacherId,
   lessonTitle,
+  lessonDescription,
+  classroomId,
+  classroom,
+  classroomLoading,
   startTime,
   endTime,
   onStartLesson,
@@ -83,6 +92,13 @@ export const LessonInfoModal = ({
 
   const showEdit = changeLesson != null || onEditLesson != null;
 
+  const showClassroomBlock = classroomId != null;
+  const hasClassroomSubjectLabel = Boolean(classroom?.subject?.name?.trim());
+  const showSubjectFallback =
+    subject.trim().length > 0 &&
+    !hasClassroomSubjectLabel &&
+    (!showClassroomBlock || !classroomLoading);
+
   const openEdit = () => {
     if (changeLesson != null) {
       setIsChangeLessonOpen(true);
@@ -104,15 +120,23 @@ export const LessonInfoModal = ({
 
           <ModalBody className="flex flex-col gap-4 px-6 pt-0 pb-4">
             <div className="border-gray-10 flex flex-col gap-2 rounded-2xl border bg-white p-5">
-              <span className="text-gray-40 text-xs">{subject}</span>
+              {showSubjectFallback ? <span className="text-gray-40 text-xs">{subject}</span> : null}
 
-              <div className="flex items-center gap-2">
-                <UserProfile size="s" userId={teacherId ?? 0} text={teacherName} />
-              </div>
+              {showClassroomBlock ? (
+                <LessonInfoClassroomBlock
+                  classroomId={classroomId}
+                  classroom={classroom}
+                  classroomLoading={classroomLoading === true}
+                />
+              ) : null}
 
               <p className="text-gray-90 mt-2 text-[14px] leading-snug font-semibold">
                 {lessonTitle}
               </p>
+
+              {lessonDescription != null && lessonDescription.trim().length > 0 ? (
+                <p className="text-gray-60 text-sm leading-snug">{lessonDescription.trim()}</p>
+              ) : null}
 
               {startTime != null && endTime != null && (
                 <div className="mt-2 flex w-full items-center gap-2">

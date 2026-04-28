@@ -3,7 +3,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { formSchema, type FormData, type FormInput } from '../model/formSchema';
 import { useFetchClassrooms } from 'common.services';
-import { addDurationToTime } from '../utils/utils';
 
 type UseAddingFormOptions = {
   fixedClassroomId?: number;
@@ -12,9 +11,10 @@ type UseAddingFormOptions = {
 
 const getDefaultValues = (initialDate?: Date | null, fixedClassroomId?: number): FormInput => ({
   title: '',
+  description: '',
   studentId: fixedClassroomId != null ? String(fixedClassroomId) : '',
-  startTime: '17:40',
-  duration: '1:20',
+  startTime: '',
+  endTime: '',
   startDate: initialDate ?? new Date(),
   repeatMode: 'none',
   repeatDays: [],
@@ -40,13 +40,13 @@ export const useAddingForm = (initialDate?: Date | null, options: UseAddingFormO
 
     const classroom = classrooms?.find((c) => c.id === Number(data.studentId));
     const studentIds = classroom?.kind === 'individual' ? [classroom.student_id] : [];
-    const endTime = addDurationToTime(data.startTime, data.duration);
 
     const payload = {
       title: data.title,
+      description: data.description,
       studentIds,
       startTime: data.startTime,
-      endTime,
+      endTime: data.endTime,
       startDate: data.startDate,
       repeatMode: data.repeatMode,
       ...(data.repeatMode === 'custom' && { repeatDays: data.repeatDays }),

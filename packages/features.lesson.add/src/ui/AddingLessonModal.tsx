@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Modal, ModalContent, ModalCloseButton, ModalBody } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
 
@@ -34,6 +34,17 @@ export const AddingLessonModal = ({
   onSubmit,
 }: AddingLessonModalProps) => {
   const [selectedDate, setSelectedDate] = useState(getToday);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const handleSubmittingChange = useCallback((submitting: boolean) => {
+    setIsSubmitting(submitting);
+  }, []);
+
+  useEffect(() => {
+    if (!open) {
+      setIsSubmitting(false);
+    }
+  }, [open]);
+
   const handleCloseModal = () => {
     onOpenChange(false);
   };
@@ -62,6 +73,7 @@ export const AddingLessonModal = ({
                 initialDate={initialDate}
                 fixedClassroomId={fixedClassroomId}
                 onSubmit={onSubmit}
+                onSubmittingChange={handleSubmittingChange}
               />
             </div>
             <div className="flex w-full min-w-0 shrink-0 flex-row gap-2">
@@ -71,6 +83,7 @@ export const AddingLessonModal = ({
                 size="m"
                 variant="text"
                 type="reset"
+                disabled={isSubmitting}
               >
                 Отменить
               </Button>
@@ -80,6 +93,8 @@ export const AddingLessonModal = ({
                 variant="primary"
                 type="submit"
                 size="m"
+                loading={isSubmitting}
+                disabled={isSubmitting}
               >
                 Добавить
               </Button>

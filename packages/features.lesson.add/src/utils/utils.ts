@@ -38,3 +38,35 @@ export const addDurationToTime = (startTime: string, duration: string): string =
   const durationMin = durHours * 60 + durMinutes;
   return minutesToTime(startMin + durationMin);
 };
+
+const pluralRu = (n: number, one: string, few: string, many: string): string => {
+  const mod100 = n % 100;
+  const mod10 = n % 10;
+  if (mod100 >= 11 && mod100 <= 14) return many;
+  if (mod10 === 1) return one;
+  if (mod10 >= 2 && mod10 <= 4) return few;
+  return many;
+};
+
+/** Длительность между двумя временами в формате макета: «1 час 20 минут». Пустая строка, если посчитать нельзя. */
+export const formatDurationBetweenRu = (startTime: string, endTime: string): string => {
+  if (!/^\d{1,2}:\d{2}$/.test(startTime) || !/^\d{1,2}:\d{2}$/.test(endTime)) {
+    return '';
+  }
+
+  const diff = timeToMinutes(endTime) - timeToMinutes(startTime);
+  if (diff <= 0) return '';
+
+  const hours = Math.floor(diff / 60);
+  const minutes = diff % 60;
+  const parts: string[] = [];
+
+  if (hours > 0) {
+    parts.push(`${hours} ${pluralRu(hours, 'час', 'часа', 'часов')}`);
+  }
+  if (minutes > 0) {
+    parts.push(`${minutes} ${pluralRu(minutes, 'минута', 'минуты', 'минут')}`);
+  }
+
+  return parts.length ? parts.join(' ') : '';
+};

@@ -11,7 +11,10 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "common.api": "workspace:*",
+    "common.services": "workspace:*",
     "features.lesson.change": "workspace:*",
+    "@xipkg/avatar": "3.3.0",
     "@xipkg/button": "4.1.0",
     "@xipkg/icons": "^3.0.15",
     "@xipkg/modal": "4.3.1",

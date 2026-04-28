@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Modal, ModalContent, ModalCloseButton, ModalBody } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
 import { DayLessonsPanel } from 'modules.calendar';
 import type { ScheduleLessonRow } from 'modules.calendar';
 import { MovingForm } from './components/MovingForm';
+import type { FormData } from '../model';
 import './MovingModal.css';
 
 const MOCK_DAY_LESSONS: ScheduleLessonRow[] = [
@@ -70,6 +71,7 @@ export type MovingLessonModalProps = {
   teacherAvatarUrl?: string | null;
   /** День недели серии (0 — пн), для подсказки при «Это занятие» */
   seriesWeekdayIndex?: number;
+  onSubmit?: (data: FormData) => void | Promise<void>;
 };
 
 const DEFAULT_TEACHER = 'Анна Смирнова';
@@ -91,8 +93,20 @@ export const MovingLessonModal = ({
   lessonDescription,
   teacherAvatarUrl = null,
   seriesWeekdayIndex = 0,
+  onSubmit,
 }: MovingLessonModalProps) => {
   const [selectedDate, setSelectedDate] = useState(getToday);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const handleSubmittingChange = useCallback((submitting: boolean) => {
+    setIsSubmitting(submitting);
+  }, []);
+
+  useEffect(() => {
+    if (!open) {
+      setIsSubmitting(false);
+    }
+  }, [open]);
+
   const handleCloseModal = () => {
     onOpenChange(false);
   };
@@ -132,6 +146,8 @@ export const MovingLessonModal = ({
                 lessonDescription={lessonDescription}
                 teacherAvatarUrl={teacherAvatarUrl}
                 seriesWeekdayIndex={seriesWeekdayIndex}
+                onSubmit={onSubmit}
+                onSubmittingChange={handleSubmittingChange}
               />
             </div>
             <div className="flex w-full min-w-0 shrink-0 flex-row gap-2">
@@ -141,6 +157,7 @@ export const MovingLessonModal = ({
                 size="m"
                 variant="text"
                 type="reset"
+                disabled={isSubmitting}
               >
                 Отменить
               </Button>
@@ -150,6 +167,8 @@ export const MovingLessonModal = ({
                 variant="primary"
                 type="submit"
                 size="m"
+                loading={isSubmitting}
+                disabled={isSubmitting}
               >
                 Перенести
               </Button>

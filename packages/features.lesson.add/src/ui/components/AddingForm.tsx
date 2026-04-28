@@ -1,5 +1,6 @@
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@xipkg/form';
 import { Input } from '@xipkg/input';
+import { Textarea } from '@xipkg/textarea';
 import { useMaskInput } from '@xipkg/inputmask';
 import { Clock, Account } from '@xipkg/icons';
 import { Toggle } from '@xipkg/toggle';
@@ -7,13 +8,14 @@ import { cn } from '@xipkg/utils';
 import { useAddingForm } from '../../hooks';
 import { InputDate } from './InputDate';
 import { StudentSelector } from './StudentSelector';
-import { addDurationToTime } from '../../utils/utils';
+import { formatDurationBetweenRu } from '../../utils/utils';
 
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import type { FC, PropsWithChildren } from 'react';
+import { useFormState } from 'react-hook-form';
+import type { FormData } from '../../model';
 
 const WEEKDAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] as const;
-import type { FormData } from '../../model';
 
 interface AddingFormProps extends PropsWithChildren {
   onClose: () => void;
@@ -21,6 +23,8 @@ interface AddingFormProps extends PropsWithChildren {
   initialDate?: Date | null;
   fixedClassroomId?: number;
   onSubmit?: (data: FormData) => void | Promise<void>;
+  /** Состояние отправки формы (для лоадера на кнопках в модалке) */
+  onSubmittingChange?: (isSubmitting: boolean) => void;
 }
 
 export const AddingForm: FC<AddingFormProps> = ({
@@ -29,6 +33,7 @@ export const AddingForm: FC<AddingFormProps> = ({
   initialDate,
   fixedClassroomId,
   onSubmit: externalSubmit,
+  onSubmittingChange,
 }) => {
   const {
     form,
@@ -39,6 +44,12 @@ export const AddingForm: FC<AddingFormProps> = ({
     classrooms,
     isClassroomsLoading,
   } = useAddingForm(initialDate, { fixedClassroomId, onSubmit: externalSubmit });
+
+  const { isSubmitting } = useFormState({ control });
+
+  useEffect(() => {
+    onSubmittingChange?.(isSubmitting);
+  }, [isSubmitting, onSubmittingChange]);
 
   useEffect(() => {
     if (initialDate != null) {
@@ -53,16 +64,16 @@ export const AddingForm: FC<AddingFormProps> = ({
   }, [fixedClassroomId, form]);
 
   const maskRefStartTime = useMaskInput('time');
-  const maskRefDuration = useMaskInput('time');
+  const maskRefEndTime = useMaskInput('time');
 
   const startTime = form.watch('startTime');
-  const duration = form.watch('duration');
+  const endTime = form.watch('endTime');
   const repeatMode = form.watch('repeatMode');
   const fixedClassroom = classrooms.find((classroom) => classroom.id === fixedClassroomId);
-  const endTimeDisplay =
-    startTime && duration && /^\d{1,2}:\d{2}$/.test(startTime) && /^\d{1,2}:\d{2}$/.test(duration)
-      ? addDurationToTime(startTime, duration)
-      : '—';
+  const durationLabel = useMemo(
+    () => formatDurationBetweenRu(startTime, endTime),
+    [startTime, endTime],
+  );
 
   const handleReset = () => {
     handleClearForm();
@@ -80,7 +91,7 @@ export const AddingForm: FC<AddingFormProps> = ({
         id="adding-lesson-form"
         onSubmit={handleSubmit(onFormSubmit)}
         onReset={handleReset}
-        className="flex w-full min-w-0 flex-col gap-6"
+        className="flex w-full min-w-0 flex-col gap-4"
       >
         <FormField
           control={control}
@@ -94,6 +105,31 @@ export const AddingForm: FC<AddingFormProps> = ({
                   variant="s"
                   placeholder="Математика"
                   className="border-gray-10 rounded-lg border"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="description"
+          render={({ field }) => (
+            <FormItem className="flex flex-col gap-0">
+              <FormLabel className="text-[14px] font-normal text-gray-100">Описание</FormLabel>
+              <FormControl>
+                <Textarea
+                  value={field.value}
+                  onChange={field.onChange}
+                  onBlur={field.onBlur}
+                  name={field.name}
+                  ref={field.ref}
+                  placeholder="Тема урока, план, комментарий…"
+                  maxLength={4000}
+                  maxRows={5}
+                  hideCounter
+                  className="border-gray-10 placeholder:text-gray-40 min-h-[88px] resize-y rounded-lg border px-3 py-2 text-sm text-gray-100"
                 />
               </FormControl>
               <FormMessage />
@@ -148,9 +184,10 @@ export const AddingForm: FC<AddingFormProps> = ({
         </div>
 
         <div className="flex flex-col gap-2">
-          <FormLabel className="text-[14px] font-normal text-gray-100">
-            Начало и длительность урока
-          </FormLabel>
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <FormLabel className="text-[14px] font-normal text-gray-100">Время урока</FormLabel>
+            {durationLabel ? <span className="text-gray-60 text-sm">{durationLabel}</span> : null}
+          </div>
           <div className="flex w-full flex-row gap-2">
             <FormField
               control={control}
@@ -173,14 +210,14 @@ export const AddingForm: FC<AddingFormProps> = ({
             />
             <FormField
               control={control}
-              name="duration"
+              name="endTime"
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormControl>
                     <Input
                       {...field}
-                      ref={maskRefDuration}
-                      placeholder="1:20 Длительность"
+                      ref={maskRefEndTime}
+                      placeholder="19:00 Конец"
                       className="border-gray-10 rounded-lg border"
                       after={<Clock className="fill-brand-80 h-4 w-4" />}
                       variant="s"
@@ -190,19 +227,6 @@ export const AddingForm: FC<AddingFormProps> = ({
                 </FormItem>
               )}
             />
-          </div>
-          <div className="flex w-full flex-row gap-2">
-            <FormItem className="w-full">
-              <FormControl>
-                <Input
-                  value={endTimeDisplay}
-                  variant="s"
-                  after={<Clock className="fill-brand-80 h-4 w-4" />}
-                  className="border-gray-10 rounded-lg border"
-                />
-              </FormControl>
-            </FormItem>
-            <div className="w-full" />
           </div>
         </div>
 

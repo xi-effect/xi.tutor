@@ -22,6 +22,8 @@ interface ScheduleKanbanProps {
   /** «Перенести» в карточке занятия — открыть модалку переноса снаружи (например `features.lesson.move`) */
   onLessonReschedule?: (event: ICalendarEvent) => void;
   onLessonCancel?: (event: ICalendarEvent) => void;
+  /** Скрыть в карточке строки кабинета и предмета (контекст одного кабинета) */
+  hideLessonCardClassroomAndSubject?: boolean;
 }
 
 const getEventsForDay = (
@@ -65,6 +67,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
   onAddLessonClick,
   onLessonReschedule,
   onLessonCancel,
+  hideLessonCardClassroomAndSubject = false,
 }) => {
   const { t } = useTranslation('calendar');
   const eventsByDate = useEventsByDate();
@@ -189,6 +192,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
                             event={event}
                             isPast={isPastDay(day, today)}
                             isToday={isCurrentDay(day, todayStart)}
+                            hideClassroomAndSubject={hideLessonCardClassroomAndSubject}
                             onClick={() => openLessonInfo(event)}
                           />
                         ))}

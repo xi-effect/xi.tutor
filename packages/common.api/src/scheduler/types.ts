@@ -20,14 +20,16 @@ export interface DailyRepetitionModeInputDto {
   kind: 'daily';
   starts_at: string;
   duration_seconds: number;
-  active_period_days: number;
+  /** Если не задано — поведение определяет бэкенд */
+  active_period_days?: number;
 }
 
 export interface WeeklyRepetitionModeInputDto {
   kind: 'weekly';
   starts_at: string;
   duration_seconds: number;
-  active_period_days: number;
+  /** Если не задано — поведение определяет бэкенд */
+  active_period_days?: number;
   weekly_bitmask: number;
 }
 

@@ -37,13 +37,13 @@ const pluralRu = (n: number, one: string, few: string, many: string): string => 
   return many;
 };
 
-/** Длительность между двумя временами в формате макета: «1 час 20 минут» */
+/** Длительность между двумя временами в формате макета: «1 час 20 минут». Пустая строка, если посчитать нельзя. */
 export const formatDurationBetweenRu = (startTime: string, endTime: string): string => {
   if (!/^\d{1,2}:\d{2}$/.test(startTime) || !/^\d{1,2}:\d{2}$/.test(endTime)) {
-    return '—';
+    return '';
   }
   const diff = timeToMinutes(endTime) - timeToMinutes(startTime);
-  if (diff <= 0) return '—';
+  if (diff <= 0) return '';
   const h = Math.floor(diff / 60);
   const m = diff % 60;
   const parts: string[] = [];
@@ -53,7 +53,7 @@ export const formatDurationBetweenRu = (startTime: string, endTime: string): str
   if (m > 0) {
     parts.push(`${m} ${pluralRu(m, 'минута', 'минуты', 'минут')}`);
   }
-  return parts.length ? parts.join(' ') : '—';
+  return parts.length ? parts.join(' ') : '';
 };
 
 /** Дата для сводки: «6 апреля» */

@@ -4,6 +4,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { createMovingFormSchema, type FormData, type FormInput } from '../model/formSchema';
 
+type UseMovingFormOptions = {
+  onSubmit?: (data: FormData) => void | Promise<void>;
+};
+
 const getDefaultValues = (
   lessonKind: 'one-off' | 'recurring',
   initialDate?: Date | null,
@@ -13,8 +17,8 @@ const getDefaultValues = (
   const startDate = initialDate ?? new Date();
   return {
     startDate,
-    startTime: initialStartTime ?? '17:40',
-    endTime: initialEndTime ?? '19:00',
+    startTime: initialStartTime ?? '',
+    endTime: initialEndTime ?? '',
     moveMode: lessonKind === 'recurring' ? 'single' : undefined,
     repeatWeekdays: lessonKind === 'recurring' ? [0] : [],
   };
@@ -25,7 +29,9 @@ export const useMovingForm = (
   initialDate?: Date | null,
   initialStartTime?: string | null,
   initialEndTime?: string | null,
+  options: UseMovingFormOptions = {},
 ) => {
+  const { onSubmit: externalSubmit } = options;
   const schema = useMemo(() => createMovingFormSchema(lessonKind), [lessonKind]);
 
   const form = useForm<FormInput, unknown, FormData>({
@@ -36,7 +42,12 @@ export const useMovingForm = (
 
   const { control, handleSubmit, reset } = form;
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
+    if (externalSubmit) {
+      await externalSubmit(data);
+      return;
+    }
+
     const payload = {
       startDate: data.startDate,
       startTime: data.startTime,

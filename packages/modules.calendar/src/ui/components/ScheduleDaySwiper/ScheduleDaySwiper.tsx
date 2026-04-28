@@ -31,6 +31,7 @@ type ScheduleDaySwiperProps = {
   onAddLessonClick?: (date: Date) => void;
   onLessonReschedule?: (event: ICalendarEvent) => void;
   onLessonCancel?: (event: ICalendarEvent) => void;
+  hideLessonCardClassroomAndSubject?: boolean;
 };
 
 export const ScheduleDaySwiper = ({
@@ -40,6 +41,7 @@ export const ScheduleDaySwiper = ({
   onAddLessonClick,
   onLessonReschedule,
   onLessonCancel,
+  hideLessonCardClassroomAndSubject = false,
 }: ScheduleDaySwiperProps) => {
   const eventsByDate = useEventsByDate();
   const eventsLoading = useEventsLoading();
@@ -128,6 +130,7 @@ export const ScheduleDaySwiper = ({
                         isPast={isPast}
                         isToday={isCurrentDay(day, todayStart)}
                         fullWidth
+                        hideClassroomAndSubject={hideLessonCardClassroomAndSubject}
                         onClick={() => openLessonInfo(event)}
                       />
                     ))

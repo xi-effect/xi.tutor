@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { ChangeLessonFormData } from 'features.lesson.change';
 import { LessonInfoModal } from 'features.lesson.info';
-import { useCurrentUser } from 'common.services';
+import { useCurrentUser, useGetClassroom, useGetClassroomStudent } from 'common.services';
 import type { ICalendarEvent } from '../ui/types';
 import { timeToString } from '../utils';
 
@@ -15,11 +15,15 @@ function isWithinStartWindow(start: Date): boolean {
 function mapEventToLessonInfo(event: ICalendarEvent) {
   const startTime = event.isAllDay ? null : timeToString(new Date(event.start));
   const endTime = event.isAllDay ? null : timeToString(new Date(event.end));
-  const subject = event.lessonInfo?.subject ?? event.title;
-  const teacherName = event.lessonInfo?.studentName ?? event.title;
-  const teacherId = event.lessonInfo?.teacherId;
-  const lessonTitle = event.lessonInfo?.description ?? event.title;
-  return { subject, teacherName, teacherId, lessonTitle, startTime, endTime };
+  const lessonTitle = event.title;
+  const rawSubject = event.lessonInfo?.subject ?? '';
+  const subject =
+    rawSubject.trim() !== lessonTitle.trim() && rawSubject.trim().length > 0
+      ? rawSubject.trim()
+      : '';
+  const desc = event.lessonInfo?.description?.trim();
+  const lessonDescription = desc != null && desc.length > 0 ? desc : undefined;
+  return { subject, lessonTitle, lessonDescription, startTime, endTime };
 }
 
 function mapEventToChangeLesson(event: ICalendarEvent) {
@@ -52,6 +56,15 @@ export const useLessonInfoModal = ({
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+
+  const classroomId = selectedEvent?.lessonInfo?.classroomId;
+  const tutorClassroomQuery = useGetClassroom(classroomId ?? 0, !isTutor || classroomId == null);
+  const studentClassroomQuery = useGetClassroomStudent(
+    classroomId ?? 0,
+    isTutor || classroomId == null,
+  );
+
+  const classroomQuery = isTutor ? tutorClassroomQuery : studentClassroomQuery;
 
   const [canStartNow, setCanStartNow] = useState(() =>
     selectedEvent ? isWithinStartWindow(new Date(selectedEvent.start)) : true,
@@ -100,6 +113,9 @@ export const useLessonInfoModal = ({
           if (!o) close();
         }}
         {...mapEventToLessonInfo(selectedEvent)}
+        classroomId={classroomId}
+        classroom={classroomQuery.data}
+        classroomLoading={classroomId != null && classroomQuery.isLoading}
         onStartLesson={() => handleStartLesson(selectedEvent)}
         isStartLessonDisabled={isStartLessonDisabled}
         startLessonTooltip={startLessonTooltip}

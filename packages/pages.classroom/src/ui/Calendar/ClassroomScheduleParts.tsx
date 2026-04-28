@@ -39,6 +39,7 @@ export const CalendarScheduleKanban = ({
         onAddLessonClick={onAddLessonClick ? (date: Date) => onAddLessonClick(date) : undefined}
         onLessonReschedule={onLessonReschedule}
         onLessonCancel={onLessonCancel}
+        hideLessonCardClassroomAndSubject
       />
     </div>
   );

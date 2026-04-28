@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import type { FC, PropsWithChildren } from 'react';
+import { useFormState } from 'react-hook-form';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@xipkg/form';
 import { Input } from '@xipkg/input';
@@ -31,6 +32,8 @@ export type MovingFormProps = PropsWithChildren<{
   teacherAvatarUrl?: string | null;
   /** День недели серии (0 — пн), для текста подсказки в режиме «Это занятие» */
   seriesWeekdayIndex?: number;
+  onSubmit?: (data: FormData) => void | Promise<void>;
+  onSubmittingChange?: (isSubmitting: boolean) => void;
 }>;
 
 function buildInfoText(
@@ -69,13 +72,22 @@ export const MovingForm: FC<MovingFormProps> = ({
   lessonDescription,
   teacherAvatarUrl,
   seriesWeekdayIndex = 0,
+  onSubmit: externalSubmit,
+  onSubmittingChange,
 }) => {
   const { form, control, handleSubmit, handleClearForm, onSubmit } = useMovingForm(
     lessonKind,
     initialDate,
     initialStartTime,
     initialEndTime,
+    { onSubmit: externalSubmit },
   );
+
+  const { isSubmitting } = useFormState({ control });
+
+  useEffect(() => {
+    onSubmittingChange?.(isSubmitting);
+  }, [isSubmitting, onSubmittingChange]);
 
   useEffect(() => {
     if (initialDate != null) {
@@ -133,8 +145,8 @@ export const MovingForm: FC<MovingFormProps> = ({
     onClose();
   };
 
-  const onFormSubmit = (data: FormData) => {
-    onSubmit(data);
+  const onFormSubmit = async (data: FormData) => {
+    await onSubmit(data);
     onClose();
   };
 
@@ -146,7 +158,7 @@ export const MovingForm: FC<MovingFormProps> = ({
         id="moving-lesson-form"
         onSubmit={handleSubmit(onFormSubmit)}
         onReset={handleReset}
-        className="flex w-full min-w-0 flex-col gap-6"
+        className="flex w-full min-w-0 flex-col gap-4"
       >
         <div className="flex gap-3">
           <Avatar size="m">
@@ -256,7 +268,7 @@ export const MovingForm: FC<MovingFormProps> = ({
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <FormLabel className="text-[14px] font-normal text-gray-100">Время урока</FormLabel>
-            <span className="text-gray-60 text-xs">Длительность занятия — {durationLabel}</span>
+            {durationLabel ? <span className="text-gray-60 text-sm">{durationLabel}</span> : null}
           </div>
           <div className="flex w-full flex-row gap-2">
             <FormField

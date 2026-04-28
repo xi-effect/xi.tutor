@@ -14,6 +14,7 @@ type ScheduleMobileViewProps = {
   onAddLessonClick?: (date?: Date) => void;
   onLessonReschedule?: (event: ICalendarEvent) => void;
   onLessonCancel?: (event: ICalendarEvent) => void;
+  hideLessonCardClassroomAndSubject?: boolean;
 };
 
 /** Мобильный вид расписания в стиле iOS Calendar: карусель недель + свайп по дням */
@@ -21,6 +22,7 @@ export const ScheduleMobileView = ({
   onAddLessonClick,
   onLessonReschedule,
   onLessonCancel,
+  hideLessonCardClassroomAndSubject = false,
 }: ScheduleMobileViewProps) => {
   const { t } = useTranslation('calendar');
   const [weekStart, setWeekStart] = useState<Date>(getInitialWeekStart);
@@ -84,6 +86,7 @@ export const ScheduleMobileView = ({
           onAddLessonClick={handleAddLesson}
           onLessonReschedule={onLessonReschedule}
           onLessonCancel={onLessonCancel}
+          hideLessonCardClassroomAndSubject={hideLessonCardClassroomAndSubject}
         />
       </div>
     </div>

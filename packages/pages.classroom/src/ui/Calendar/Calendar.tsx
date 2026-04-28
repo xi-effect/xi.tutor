@@ -132,6 +132,7 @@ export const Calendar = () => {
           onAddLessonClick={onAddLessonClick}
           onLessonReschedule={handleLessonReschedule}
           onLessonCancel={handleLessonCancel}
+          hideLessonCardClassroomAndSubject
         />
       ) : (
         <div className="flex h-full min-h-0 min-w-0 flex-col">
