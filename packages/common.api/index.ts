@@ -57,7 +57,6 @@ export {
   type PersistedRepeatedEventInstanceDto,
   type VirtualRepeatedEventInstanceDto,
   type EventInstanceDto,
-  type GetClassroomScheduleResponseDto,
   type CreateClassroomEventRequestDto,
   type UpdateClassroomEventRequestDto,
 } from './src/scheduler';

@@ -105,7 +105,3 @@ export type EventInstanceDto =
   | SoleEventInstanceDto
   | PersistedRepeatedEventInstanceDto
   | VirtualRepeatedEventInstanceDto;
-
-export interface GetClassroomScheduleResponseDto {
-  event_instances: EventInstanceDto[];
-}

@@ -1,4 +1,4 @@
-import type { EventInstanceDto, GetClassroomScheduleResponseDto } from 'common.api';
+import type { EventInstanceDto } from 'common.api';
 import type { ScheduleItem } from './types';
 
 export function mapEventInstanceToScheduleItem(
@@ -29,10 +29,8 @@ export function mapEventInstanceToScheduleItem(
 }
 
 export function mapScheduleResponseToScheduleItems(
-  response: GetClassroomScheduleResponseDto,
+  response: EventInstanceDto[],
   classroomId: number,
 ): ScheduleItem[] {
-  return response.event_instances.map((instance) =>
-    mapEventInstanceToScheduleItem(instance, classroomId),
-  );
+  return response.map((instance) => mapEventInstanceToScheduleItem(instance, classroomId));
 }

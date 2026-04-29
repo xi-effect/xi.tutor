@@ -55,6 +55,7 @@ export const mapScheduleItemToCalendarEvent = (item: ScheduleItem): ICalendarEve
   },
   scheduler: {
     eventId: item.eventId,
+    eventInstanceId: 'id' in item.eventInstance ? item.eventInstance.id : undefined,
     instanceKind: item.instanceKind,
     repetitionKind: item.repetitionKind,
     repetitionModeId:

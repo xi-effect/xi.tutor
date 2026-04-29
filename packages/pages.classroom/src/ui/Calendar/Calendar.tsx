@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   ScheduleMobileView,
+  buildOccurrenceCancellationParams,
+  useCancelEventInstance,
+  useCancelRepeatedVirtualInstance,
   useDeleteClassroomEvent,
   useIsMobile,
   useSetEvents,
@@ -73,6 +76,8 @@ export const Calendar = () => {
     enabled: !isUserLoading && isTutor === false,
   });
   const deleteClassroomEvent = useDeleteClassroomEvent();
+  const cancelEventInstance = useCancelEventInstance();
+  const cancelRepeatedVirtualInstance = useCancelRepeatedVirtualInstance();
   const updateClassroomEvent = useUpdateClassroomEvent();
 
   const classroom = isTutor ? tutorQuery.data : studentQuery.data;
@@ -138,20 +143,44 @@ export const Calendar = () => {
     const eventId = event.scheduler?.eventId;
     if (!isTutor || eventId == null) return;
 
-    const instanceKind = event.scheduler?.instanceKind;
-    const isSole = instanceKind == null || instanceKind === 'sole';
-
-    if (scope === 'this_occurrence' && !isSole) {
-      toast.info(
-        'Отмена одного занятия из повторяющейся серии пока недоступна. При необходимости отмените всю серию.',
-      );
+    if (scope === 'whole_series') {
+      deleteClassroomEvent.mutate({
+        classroomId: numericClassroomId,
+        eventId,
+      });
       return;
     }
 
-    deleteClassroomEvent.mutate({
-      classroomId: numericClassroomId,
-      eventId,
+    const meta = event.scheduler;
+    if (meta == null) {
+      toast.error('Не удалось определить занятие для отмены.');
+      return;
+    }
+
+    const target = buildOccurrenceCancellationParams({
+      instanceKind: meta.instanceKind,
+      eventInstanceId: meta.eventInstanceId,
+      repetitionModeId: meta.repetitionModeId,
+      instanceIndex: meta.instanceIndex,
     });
+
+    if (target == null) {
+      toast.error('Не удалось определить занятие для отмены.');
+      return;
+    }
+
+    if (target.kind === 'instance') {
+      cancelEventInstance.mutate({
+        classroomId: numericClassroomId,
+        eventInstanceId: target.eventInstanceId,
+      });
+    } else {
+      cancelRepeatedVirtualInstance.mutate({
+        classroomId: numericClassroomId,
+        repetitionModeId: target.repetitionModeId,
+        instanceIndex: target.instanceIndex,
+      });
+    }
   };
 
   return (

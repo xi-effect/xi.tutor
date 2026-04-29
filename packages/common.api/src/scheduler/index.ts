@@ -17,7 +17,6 @@ export {
   type PersistedRepeatedEventInstanceDto,
   type VirtualRepeatedEventInstanceDto,
   type EventInstanceDto,
-  type GetClassroomScheduleResponseDto,
   type CreateClassroomEventRequestDto,
   type UpdateClassroomEventRequestDto,
 } from './types';
@@ -32,6 +31,9 @@ export enum SchedulerQueryKey {
   CreateClassroomEvent = 'CreateClassroomEvent',
   UpdateClassroomEvent = 'UpdateClassroomEvent',
   DeleteClassroomEvent = 'DeleteClassroomEvent',
+  CancelEventInstance = 'CancelEventInstance',
+  UncancelEventInstance = 'UncancelEventInstance',
+  CancelRepeatedVirtualInstance = 'CancelRepeatedVirtualInstance',
 }
 
 // ---------------------------------------------------------------------------
@@ -72,5 +74,26 @@ export const schedulerApiConfig = {
     getUrl: (classroomId: string, eventId: string) =>
       `${classroomBase('tutor', classroomId)}/events/${eventId}/`,
     method: HttpMethod.DELETE,
+  },
+
+  [SchedulerQueryKey.CancelEventInstance]: {
+    getUrl: (classroomId: string, eventInstanceId: string) =>
+      `${classroomBase('tutor', classroomId)}/event-instances/${eventInstanceId}/cancellation/`,
+    method: HttpMethod.POST,
+  },
+
+  [SchedulerQueryKey.UncancelEventInstance]: {
+    getUrl: (classroomId: string, eventInstanceId: string) =>
+      `${classroomBase('tutor', classroomId)}/event-instances/${eventInstanceId}/cancellation/`,
+    method: HttpMethod.DELETE,
+  },
+
+  [SchedulerQueryKey.CancelRepeatedVirtualInstance]: {
+    getUrl: (classroomId: string, repetitionModeId: string, instanceIndex: number) =>
+      `${classroomBase(
+        'tutor',
+        classroomId,
+      )}/repetition-modes/${repetitionModeId}/instances/${instanceIndex}/cancellation/`,
+    method: HttpMethod.POST,
   },
 };

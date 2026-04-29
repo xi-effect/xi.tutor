@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type {
-  GetClassroomScheduleResponseDto,
+  EventInstanceDto,
   PersistedRepeatedEventInstanceDto,
   SoleEventInstanceDto,
   VirtualRepeatedEventInstanceDto,
@@ -104,6 +104,13 @@ describe('mapEventInstanceToScheduleItem', () => {
     expect(item.cancelledAt).toBe('2026-04-28T09:00:00Z');
   });
 
+  it('учитывает cancelled_at у sole', () => {
+    const instance = makeSoleInstance({ cancelled_at: '2026-04-21T08:00:00Z' });
+    const item = mapEventInstanceToScheduleItem(instance, CLASSROOM_ID);
+
+    expect(item.cancelledAt).toBe('2026-04-21T08:00:00Z');
+  });
+
   it('classroomId может быть null', () => {
     const instance = makeSoleInstance();
     const item = mapEventInstanceToScheduleItem(instance, null);
@@ -114,30 +121,26 @@ describe('mapEventInstanceToScheduleItem', () => {
 
 describe('mapScheduleResponseToScheduleItems', () => {
   it('возвращает пустой массив для пустого ответа', () => {
-    const response: GetClassroomScheduleResponseDto = {
-      event_instances: [],
-    };
+    const response: EventInstanceDto[] = [];
 
     expect(mapScheduleResponseToScheduleItems(response, CLASSROOM_ID)).toHaveLength(0);
   });
 
   it('маппит несколько инстансов разных видов и прокидывает classroomId', () => {
-    const response: GetClassroomScheduleResponseDto = {
-      event_instances: [
-        makeSoleInstance({
-          starts_at: '2026-04-21T10:00:00Z',
-          ends_at: '2026-04-21T11:00:00Z',
-        }),
-        makeVirtualRepeatedInstance({
-          starts_at: '2026-04-22T10:00:00Z',
-          ends_at: '2026-04-22T11:00:00Z',
-        }),
-        makePersistedRepeatedInstance({
-          starts_at: '2026-04-28T10:00:00Z',
-          ends_at: '2026-04-28T11:30:00Z',
-        }),
-      ],
-    };
+    const response: EventInstanceDto[] = [
+      makeSoleInstance({
+        starts_at: '2026-04-21T10:00:00Z',
+        ends_at: '2026-04-21T11:00:00Z',
+      }),
+      makeVirtualRepeatedInstance({
+        starts_at: '2026-04-22T10:00:00Z',
+        ends_at: '2026-04-22T11:00:00Z',
+      }),
+      makePersistedRepeatedInstance({
+        starts_at: '2026-04-28T10:00:00Z',
+        ends_at: '2026-04-28T11:30:00Z',
+      }),
+    ];
 
     const items = mapScheduleResponseToScheduleItems(response, CLASSROOM_ID);
 
@@ -153,11 +156,9 @@ describe('mapScheduleResponseToScheduleItems', () => {
   });
 
   it('не падает при инстансе без repetition_mode в теле ответа', () => {
-    const response: GetClassroomScheduleResponseDto = {
-      event_instances: [
-        makeVirtualRepeatedInstance({ event_id: 999, repetition_mode_id: 'broken-uuid' }),
-      ],
-    };
+    const response: EventInstanceDto[] = [
+      makeVirtualRepeatedInstance({ event_id: 999, repetition_mode_id: 'broken-uuid' }),
+    ];
 
     const items = mapScheduleResponseToScheduleItems(response, CLASSROOM_ID);
 

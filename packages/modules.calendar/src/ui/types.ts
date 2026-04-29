@@ -25,6 +25,8 @@ export interface ILessonInfo {
 
 export interface ISchedulerEventMeta {
   eventId: number;
+  /** UUID persisted-инстанса (sole / repeated_persistent); у repeated_virtual нет */
+  eventInstanceId?: string;
   instanceKind: 'sole' | 'repeated_virtual' | 'repeated_persistent';
   repetitionKind?: 'daily' | 'weekly' | null;
   repetitionModeId?: string;

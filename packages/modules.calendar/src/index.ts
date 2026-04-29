@@ -5,17 +5,24 @@ export { useSetEvents, useSetEventsLoading } from './store/eventsStore';
 export {
   mapEventInstanceToScheduleItem,
   mapScheduleResponseToScheduleItems,
+  buildOccurrenceCancellationParams,
   getTutorClassroomSchedule,
   getStudentClassroomSchedule,
   createClassroomEvent,
   updateClassroomEvent,
   deleteClassroomEvent,
+  cancelEventInstance,
+  uncancelEventInstance,
+  cancelRepeatedVirtualInstance,
   schedulerQueryKeys,
   useTutorClassroomSchedule,
   useStudentClassroomSchedule,
   useCreateClassroomEvent,
   useUpdateClassroomEvent,
   useDeleteClassroomEvent,
+  useCancelEventInstance,
+  useUncancelEventInstance,
+  useCancelRepeatedVirtualInstance,
 } from 'common.services';
 export type {
   SchedulerEvent,
@@ -32,6 +39,10 @@ export type {
   CreateClassroomEventParams,
   UpdateClassroomEventParams,
   DeleteClassroomEventParams,
+  CancelEventInstanceParams,
+  UncancelEventInstanceParams,
+  CancelRepeatedVirtualInstanceParams,
+  OccurrenceCancelApiTarget,
 } from 'common.services';
 export type {
   SchedulerEventDto,
@@ -50,5 +61,4 @@ export type {
   PersistedRepeatedEventInstanceDto,
   VirtualRepeatedEventInstanceDto,
   EventInstanceDto,
-  GetClassroomScheduleResponseDto,
 } from 'common.api';
