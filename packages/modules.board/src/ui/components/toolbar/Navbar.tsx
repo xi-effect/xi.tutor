@@ -25,7 +25,7 @@ const toolMapping: Record<string, string> = {
   hand: 'hand',
   pen: 'draw',
   text: 'text',
-  geo: 'geo',
+  geo: 'xi-geo',
   arrow: 'arrow',
   eraser: 'eraser',
   sticker: 'note', // Используем note как аналог стикера
@@ -111,7 +111,7 @@ export const Navbar = track(
         hand: 'hand',
         draw: 'pen',
         text: 'text',
-        geo: 'geo',
+        'xi-geo': 'geo',
         arrow: 'arrow',
         eraser: 'eraser',
         note: 'sticker',

@@ -1,12 +1,13 @@
 import { useState, useMemo, useCallback } from 'react';
 import { track, useEditor } from 'tldraw';
-import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { Slider } from '@xipkg/slider';
-import { Button } from '@xipkg/button';
 import { colorOptions } from '../../../utils/customConfig';
 import { navBarElements } from '../../../utils/navBarElements';
 import { useTldrawStyles } from '../../../hooks/useTldrawStyles';
-import { cn } from '@xipkg/utils';
+import { ColorDot } from '../canvas';
+import { FillTypePicker } from '../../../shapes/geo';
+import { useTldrawStore } from '../../../store';
+import { Picker } from '../popups';
 
 const stickerColorMap: Record<string, string> = {
   grey: 'bg-gray-60',
@@ -30,38 +31,25 @@ const stickerColors =
 
 const sizes = ['xs', 's', 'm', 'l', 'xl'] as const;
 
-const supportedShapeTypes = new Set(['arrow', 'geo', 'text', 'draw', 'note', 'frame']);
+const supportedShapeTypes = new Set(['arrow', 'xi-geo', 'text', 'draw', 'note', 'frame']);
 const drawShapeTypes = new Set(['draw']);
 
-type ColorDotProps = {
-  colorClass: string;
-  isSelected: boolean;
-  onClick: () => void;
-};
-
-const ColorDot = ({ colorClass, isSelected, onClick }: ColorDotProps) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className={cn(
-      'h-6 w-6 shrink-0 cursor-pointer rounded-full transition-all',
-      colorClass,
-      isSelected ? 'ring-2 ring-gray-100 ring-offset-1' : 'hover:scale-110',
-    )}
-    aria-label={`Color ${colorClass}`}
-  />
-);
-
 export const ColorPicker = track(() => {
+  const [open, setOpen] = useState(false);
   const editor = useEditor();
   const { setSelectedShapesColor, setSelectedShapesThickness, setSelectedShapesOpacity } =
     useTldrawStyles();
-  const [open, setOpen] = useState(false);
+  const { setGeoColor } = useTldrawStore();
 
   const selectedShapes = editor.getSelectedShapes();
 
   const isSticker = useMemo(
     () => selectedShapes.some((shape) => shape.type === 'note'),
+    [selectedShapes],
+  );
+
+  const isGeo = useMemo(
+    () => selectedShapes.some((shape) => shape.type === 'xi-geo'),
     [selectedShapes],
   );
 
@@ -110,8 +98,9 @@ export const ColorPicker = track(() => {
   const handleColorClick = useCallback(
     (colorName: string) => {
       setSelectedShapesColor(colorName);
+      if (isGeo) setGeoColor(colorName);
     },
-    [setSelectedShapesColor],
+    [setSelectedShapesColor, setGeoColor, isGeo],
   );
 
   const handleSize = useCallback(
@@ -139,20 +128,16 @@ export const ColorPicker = track(() => {
   const getSizeIndex = (size: string) => sizes.indexOf(size as (typeof sizes)[number]) + 1;
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
-        <Button variant="none" size="s" className="hover:bg-brand-0 w-[32px] p-1" title="Стиль">
-          <div
-            className={`h-4 w-4 rounded-full ${currentColorOption?.class || (isSticker ? 'bg-gray-60' : 'bg-gray-100')}`}
-          />
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent
-        side="top"
-        align="center"
-        sideOffset={8}
-        className="border-gray-10 bg-gray-0 w-auto rounded-xl border p-3 shadow-md"
-      >
+    <Picker
+      open={open}
+      setOpen={setOpen}
+      triggerTitle="Стиль"
+      triggerChild={
+        <div
+          className={`h-4 w-4 rounded-full ${currentColorOption?.class || (isSticker ? 'bg-gray-60' : 'bg-gray-100')}`}
+        />
+      }
+      popoverChild={
         <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
           {/* Слайдеры — только для draw-фигур */}
           {isDrawShape && (
@@ -174,7 +159,7 @@ export const ColorPicker = track(() => {
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-20 shrink-0 sm:w-24">
+                  <div className="border-green-80 w-20 shrink-0 sm:w-24">
                     <Slider
                       onValueChange={handleOpacity}
                       value={[currentOpacity]}
@@ -186,6 +171,14 @@ export const ColorPicker = track(() => {
                   <span className="text-gray-80 w-5 shrink-0 text-xs">{currentOpacity}</span>
                 </div>
               </div>
+              <div className="bg-gray-10 hidden h-8 w-px shrink-0 sm:block" />
+            </>
+          )}
+
+          {/* Тип заливки */}
+          {isGeo && (
+            <>
+              <FillTypePicker />
               <div className="bg-gray-10 hidden h-8 w-px shrink-0 sm:block" />
             </>
           )}
@@ -202,7 +195,7 @@ export const ColorPicker = track(() => {
             ))}
           </div>
         </div>
-      </PopoverContent>
-    </Popover>
+      }
+    />
   );
 });
