@@ -1,21 +1,21 @@
-import { useEditor, GeoShapeGeoStyle, DefaultDashStyle } from 'tldraw';
-import { ShapeOptionT } from './types';
-import { shapes } from './shapeVariants';
 import { useState } from 'react';
+import { useEditor, GeoShapeGeoStyle } from 'tldraw';
+import { TShapeOption } from './types';
+import { shapes } from './shapeVariants';
+import { useTldrawStyles } from '../../../../hooks';
+import { TGeoShape } from '../../../../types';
 
 export const ShapeSet = () => {
   const editor = useEditor();
-  const [activeShape, setActiveShape] = useState<string | null>(null);
+  const [activeShape, setActiveShape] = useState<TGeoShape | null>(null);
+  const { applyStoreStylesForShape } = useTldrawStyles();
 
-  const handleShapeClick = (item: ShapeOptionT) => {
+  const handleShapeClick = (item: TShapeOption) => {
     editor.run(() => {
+      editor.setCurrentTool('xi-geo');
       editor.setStyleForNextShapes(GeoShapeGeoStyle, item.geo);
 
-      if (item.dash) {
-        editor.setStyleForNextShapes(DefaultDashStyle, item.dash);
-      }
-
-      editor.setCurrentTool('geo');
+      applyStoreStylesForShape('xi-geo');
       setActiveShape(item.name);
     });
   };
