@@ -43,8 +43,6 @@ type DayLessonRowProps = {
   isNearestLesson?: boolean;
   /** Календарный день списка — для расчёта окончания слота, если нет `lesson.startAt` */
   lessonDay?: Date;
-  onCancelOne?: (lesson: ScheduleLessonRow) => void;
-  onCancelAll?: (lesson: ScheduleLessonRow) => void;
   onReschedule?: (lesson: ScheduleLessonRow) => void;
   onSaveLesson?: (lesson: ScheduleLessonRow, data: ChangeLessonFormData) => void;
 };
@@ -54,8 +52,6 @@ export const DayLessonRow = ({
   showActions = false,
   isNearestLesson = false,
   lessonDay,
-  onCancelOne,
-  onCancelAll,
   onReschedule,
   onSaveLesson,
 }: DayLessonRowProps) => {
@@ -64,10 +60,8 @@ export const DayLessonRow = ({
   const listMeta = useDayLessonListMeta();
   const showLessonDescription = listMeta?.showLessonDescription ?? false;
   const toggleLessonDescription = listMeta?.toggleLessonDescription;
-  const { setCancelModalOpen, cancelLessonModal } = useCancelLessonModal(lesson, {
-    onCancelOne,
-    onCancelAll,
-  });
+  const canCancelLesson = lesson.schedulerMeta != null && lesson.classroomId != null;
+  const { setCancelModalOpen, cancelLessonModal } = useCancelLessonModal(lesson);
   const { setChangeModalOpen, changeLessonModal } = useChangeLessonModal(lesson, {
     onSaveLesson,
   });
@@ -160,19 +154,21 @@ export const DayLessonRow = ({
                   </TooltipTrigger>
                   <TooltipContent>Перенести занятие</TooltipContent>
                 </Tooltip>
-                <Tooltip delayDuration={TOOLTIP_OPEN_DELAY_MS}>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="none"
-                      size="s"
-                      className="bg-gray-0/80 hover:bg-gray-10 h-[32px] w-[32px] min-w-[32px] p-0"
-                      onClick={() => setCancelModalOpen(true)}
-                    >
-                      <Close className="fill-gray-60 h-5 w-5" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>Отменить занятие</TooltipContent>
-                </Tooltip>
+                {canCancelLesson ? (
+                  <Tooltip delayDuration={TOOLTIP_OPEN_DELAY_MS}>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="none"
+                        size="s"
+                        className="bg-gray-0/80 hover:bg-gray-10 h-[32px] w-[32px] min-w-[32px] p-0"
+                        onClick={() => setCancelModalOpen(true)}
+                      >
+                        <Close className="fill-gray-60 h-5 w-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Отменить занятие</TooltipContent>
+                  </Tooltip>
+                ) : null}
                 <Tooltip delayDuration={TOOLTIP_OPEN_DELAY_MS}>
                   <TooltipTrigger asChild>
                     <Button

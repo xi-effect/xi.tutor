@@ -13,23 +13,17 @@ export type NearestLessonCardProps = {
   onReschedule?: () => void;
   /** Переопределяет переход на страницу расписания по кнопке внизу карточки */
   onScheduleNavigate?: () => void;
-  onCancelOne?: (lesson: ScheduleLessonRow) => void;
-  onCancelAll?: (lesson: ScheduleLessonRow) => void;
 };
 
 export const NearestLessonCard = ({
   lesson,
   onReschedule,
   onScheduleNavigate,
-  onCancelOne,
-  onCancelAll,
 }: NearestLessonCardProps) => {
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
-  const { setCancelModalOpen, cancelLessonModal } = useCancelLessonModal(lesson, {
-    onCancelOne,
-    onCancelAll,
-  });
+  const canCancelLesson = lesson.schedulerMeta != null && lesson.classroomId != null;
+  const { setCancelModalOpen, cancelLessonModal } = useCancelLessonModal(lesson);
   const { classroomName, avatarUserId, subjectName } = useLessonClassroomPresentation({
     classroomId: lesson.classroomId,
     fallbackClassroomName: lesson.studentName,
@@ -89,14 +83,16 @@ export const NearestLessonCard = ({
             className="bg-brand-0 hover:bg-brand-20/50 h-[38px] flex-1 p-0"
           />
         )}
-        <Button
-          variant="none"
-          size="s"
-          className="bg-gray-5 absolute top-16 right-5 h-[38px] w-[38px] min-w-[38px] p-0"
-          onClick={() => setCancelModalOpen(true)}
-        >
-          <Close className="fill-gray-60 h-5 w-5" />
-        </Button>
+        {canCancelLesson ? (
+          <Button
+            variant="none"
+            size="s"
+            className="bg-gray-5 absolute top-16 right-5 h-[38px] w-[38px] min-w-[38px] p-0"
+            onClick={() => setCancelModalOpen(true)}
+          >
+            <Close className="fill-gray-60 h-5 w-5" />
+          </Button>
+        ) : null}
       </div>
 
       <div className="flex w-full justify-center">

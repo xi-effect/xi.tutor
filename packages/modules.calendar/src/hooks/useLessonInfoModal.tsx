@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ChangeLessonFormData } from 'features.lesson.change';
-import { CancelLessonModal, type CancelLessonVariant } from 'features.lesson.cancel';
+import { CancelLessonModal } from 'features.lesson.cancel';
 import { LessonInfoModal } from 'features.lesson.info';
 import { useCurrentUser, useGetClassroom, useGetClassroomStudent } from 'common.services';
-import type { ICalendarEvent, LessonCancelScope } from '../ui/types';
+import type { ICalendarEvent } from '../ui/types';
 import { timeToString } from '../utils';
 import { useCalendarEvents } from '../store/eventsStore';
 
@@ -12,11 +12,6 @@ const SCHEDULE_TOOLTIP = 'Кнопка станет активной за 5 ми
 
 function isWithinStartWindow(start: Date): boolean {
   return start.getTime() - Date.now() <= FIVE_MINUTES_MS;
-}
-
-function cancelVariantFromEvent(event: ICalendarEvent): CancelLessonVariant {
-  const kind = event.scheduler?.instanceKind;
-  return kind == null || kind === 'sole' ? 'sole' : 'recurring';
 }
 
 function mapEventToLessonInfo(event: ICalendarEvent) {
@@ -45,8 +40,6 @@ function mapEventToChangeLesson(event: ICalendarEvent) {
 export type UseLessonInfoModalOptions = {
   onStartLesson?: (event: ICalendarEvent) => void;
   onReschedule?: (event: ICalendarEvent) => void;
-  /** Отмена: одиночное занятие / одно из серии / вся серия — см. {@link LessonCancelScope} */
-  onCancelLesson?: (event: ICalendarEvent, scope: LessonCancelScope) => void;
   onSaveLesson?: (event: ICalendarEvent, data: ChangeLessonFormData) => void;
 };
 
@@ -57,7 +50,6 @@ export type UseLessonInfoModalOptions = {
 export const useLessonInfoModal = ({
   onStartLesson,
   onReschedule,
-  onCancelLesson,
   onSaveLesson,
 }: UseLessonInfoModalOptions = {}) => {
   const events = useCalendarEvents();
@@ -128,17 +120,22 @@ export const useLessonInfoModal = ({
     setCancelModalOpen(false);
   }, []);
 
-  const emitCancel = useCallback(
-    (scope: LessonCancelScope) => {
-      if (resolvedEvent == null || !onCancelLesson) return;
-      onCancelLesson(resolvedEvent, scope);
-      setCancelModalOpen(false);
-      close();
-    },
-    [close, onCancelLesson, resolvedEvent],
-  );
+  const showCancelFlow =
+    isTutor &&
+    classroomId != null &&
+    resolvedEvent?.scheduler != null &&
+    resolvedEvent.isCancelled !== true;
 
-  const showCancelFlow = Boolean(onCancelLesson);
+  const schedulerMetaForCancel =
+    resolvedEvent?.scheduler != null
+      ? {
+          eventId: resolvedEvent.scheduler.eventId,
+          instanceKind: resolvedEvent.scheduler.instanceKind,
+          eventInstanceId: resolvedEvent.scheduler.eventInstanceId,
+          repetitionModeId: resolvedEvent.scheduler.repetitionModeId,
+          instanceIndex: resolvedEvent.scheduler.instanceIndex,
+        }
+      : null;
 
   const lessonInfoModal =
     resolvedEvent != null ? (
@@ -170,9 +167,9 @@ export const useLessonInfoModal = ({
           <CancelLessonModal
             open={cancelModalOpen}
             onOpenChange={setCancelModalOpen}
-            variant={cancelVariantFromEvent(resolvedEvent)}
-            onCancelOne={() => emitCancel('this_occurrence')}
-            onCancelAll={() => emitCancel('whole_series')}
+            classroomId={classroomId}
+            schedulerMeta={schedulerMetaForCancel}
+            onSuccess={close}
           />
         ) : null}
       </>

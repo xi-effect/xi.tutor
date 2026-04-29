@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { CalendarWeekNav, ScheduleKanban, useKanbanColumns } from 'modules.calendar';
-import type { ChangeLessonFormData, ICalendarEvent, LessonCancelScope } from 'modules.calendar';
+import type { ChangeLessonFormData, ICalendarEvent } from 'modules.calendar';
 import { useClassroomSchedule } from './ClassroomScheduleContext';
 
 export const CalendarScheduleToolbar = () => {
@@ -18,13 +18,11 @@ export const CalendarScheduleToolbar = () => {
 
 type CalendarScheduleKanbanProps = {
   onLessonReschedule?: (event: ICalendarEvent) => void;
-  onLessonCancel?: (event: ICalendarEvent, scope: LessonCancelScope) => void;
   onSaveLesson?: (event: ICalendarEvent, data: ChangeLessonFormData) => void;
 };
 
 export const CalendarScheduleKanban = ({
   onLessonReschedule,
-  onLessonCancel,
   onSaveLesson,
 }: CalendarScheduleKanbanProps) => {
   const { weekDays, onAddLessonClick } = useClassroomSchedule();
@@ -40,7 +38,6 @@ export const CalendarScheduleKanban = ({
         columnWidth={columnWidth}
         onAddLessonClick={onAddLessonClick ? (date: Date) => onAddLessonClick(date) : undefined}
         onLessonReschedule={onLessonReschedule}
-        onLessonCancel={onLessonCancel}
         onSaveLesson={onSaveLesson}
         hideLessonCardClassroomAndSubject
       />

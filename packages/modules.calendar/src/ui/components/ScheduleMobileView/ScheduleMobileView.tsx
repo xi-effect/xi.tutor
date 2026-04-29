@@ -7,14 +7,13 @@ import { getWeeksRangeDays } from '../../../utils';
 import { Button } from '@xipkg/button';
 import { Plus } from '@xipkg/icons';
 import type { ChangeLessonFormData } from 'features.lesson.change';
-import type { ICalendarEvent, LessonCancelScope } from '../../types';
+import type { ICalendarEvent } from '../../types';
 
 const getInitialWeekStart = () => startOfWeek(new Date(), { weekStartsOn: 1 });
 
 type ScheduleMobileViewProps = {
   onAddLessonClick?: (date?: Date) => void;
   onLessonReschedule?: (event: ICalendarEvent) => void;
-  onLessonCancel?: (event: ICalendarEvent, scope: LessonCancelScope) => void;
   onSaveLesson?: (event: ICalendarEvent, data: ChangeLessonFormData) => void;
   hideLessonCardClassroomAndSubject?: boolean;
 };
@@ -23,7 +22,6 @@ type ScheduleMobileViewProps = {
 export const ScheduleMobileView = ({
   onAddLessonClick,
   onLessonReschedule,
-  onLessonCancel,
   onSaveLesson,
   hideLessonCardClassroomAndSubject = false,
 }: ScheduleMobileViewProps) => {
@@ -88,7 +86,6 @@ export const ScheduleMobileView = ({
           onSelectedDateChange={handleSelectedDateChange}
           onAddLessonClick={handleAddLesson}
           onLessonReschedule={onLessonReschedule}
-          onLessonCancel={onLessonCancel}
           onSaveLesson={onSaveLesson}
           hideLessonCardClassroomAndSubject={hideLessonCardClassroomAndSubject}
         />

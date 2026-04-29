@@ -51,7 +51,7 @@ export const CalendarWeekNav = ({
         onClick={onPrev}
         aria-label={t('prev_week')}
       >
-        <ArrowLeft className="text-gray-80 dark:text-gray-90 h-5 w-5" />
+        <ArrowLeft className="fill-gray-80 dark:fill-gray-90 h-5 w-5" />
       </Button>
 
       <DatePicker
@@ -78,7 +78,7 @@ export const CalendarWeekNav = ({
         onClick={onNext}
         aria-label={t('next_week')}
       >
-        <ArrowRight className="text-gray-80 dark:text-gray-90 h-5 w-5" />
+        <ArrowRight className="fill-gray-80 dark:fill-gray-90 h-5 w-5" />
       </Button>
     </div>
   );

@@ -9,7 +9,7 @@ import { getDateKey, useEventsByDate, useEventsLoading } from '../../../store/ev
 import { useLessonInfoModal } from '../../../hooks';
 import { getLessonCardSkeletonCountForDay, isCurrentDay, isPastDay } from '../../../utils';
 import type { ChangeLessonFormData } from 'features.lesson.change';
-import type { ICalendarEvent, LessonCancelScope } from '../../types';
+import type { ICalendarEvent } from '../../types';
 import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
 import { scheduleEmptyBlockHeight } from './scheduleEmptyLayout';
@@ -22,7 +22,6 @@ interface ScheduleKanbanProps {
   onAddLessonClick?: (date: Date) => void;
   /** «Перенести» в карточке занятия — открыть модалку переноса снаружи (например `features.lesson.move`) */
   onLessonReschedule?: (event: ICalendarEvent) => void;
-  onLessonCancel?: (event: ICalendarEvent, scope: LessonCancelScope) => void;
   /** Сохранение названия и описания (PATCH события) — обычно только для преподавателя */
   onSaveLesson?: (event: ICalendarEvent, data: ChangeLessonFormData) => void;
   /** Скрыть в карточке строки кабинета и предмета (контекст одного кабинета) */
@@ -69,7 +68,6 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
   columnWidth,
   onAddLessonClick,
   onLessonReschedule,
-  onLessonCancel,
   onSaveLesson,
   hideLessonCardClassroomAndSubject = false,
 }) => {
@@ -80,7 +78,6 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
   const todayStart = startOfDay(today);
   const { openLessonInfo, lessonInfoModal } = useLessonInfoModal({
     onReschedule: onLessonReschedule,
-    onCancelLesson: onLessonCancel,
     onSaveLesson,
   });
 

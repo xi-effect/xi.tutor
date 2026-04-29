@@ -1,10 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import {
   ScheduleMobileView,
-  buildOccurrenceCancellationParams,
-  useCancelEventInstance,
-  useCancelRepeatedVirtualInstance,
-  useDeleteClassroomEvent,
   useIsMobile,
   useSetEvents,
   useSetEventsLoading,
@@ -12,9 +8,8 @@ import {
   useTutorClassroomSchedule,
   useUpdateClassroomEvent,
 } from 'modules.calendar';
-import type { ChangeLessonFormData, ICalendarEvent, LessonCancelScope } from 'modules.calendar';
+import type { ChangeLessonFormData, ICalendarEvent } from 'modules.calendar';
 import { useParams } from '@tanstack/react-router';
-import { toast } from 'sonner';
 import { useCurrentUser, useGetClassroom, useGetClassroomStudent } from 'common.services';
 import { MovingLessonModal } from 'features.lesson.move';
 import { useClassroomSchedule } from './ClassroomScheduleContext';
@@ -75,9 +70,6 @@ export const Calendar = () => {
     ...scheduleRange,
     enabled: !isUserLoading && isTutor === false,
   });
-  const deleteClassroomEvent = useDeleteClassroomEvent();
-  const cancelEventInstance = useCancelEventInstance();
-  const cancelRepeatedVirtualInstance = useCancelRepeatedVirtualInstance();
   const updateClassroomEvent = useUpdateClassroomEvent();
 
   const classroom = isTutor ? tutorQuery.data : studentQuery.data;
@@ -139,57 +131,12 @@ export const Calendar = () => {
     });
   };
 
-  const handleLessonCancel = (event: ICalendarEvent, scope: LessonCancelScope) => {
-    const eventId = event.scheduler?.eventId;
-    if (!isTutor || eventId == null) return;
-
-    if (scope === 'whole_series') {
-      deleteClassroomEvent.mutate({
-        classroomId: numericClassroomId,
-        eventId,
-      });
-      return;
-    }
-
-    const meta = event.scheduler;
-    if (meta == null) {
-      toast.error('Не удалось определить занятие для отмены.');
-      return;
-    }
-
-    const target = buildOccurrenceCancellationParams({
-      instanceKind: meta.instanceKind,
-      eventInstanceId: meta.eventInstanceId,
-      repetitionModeId: meta.repetitionModeId,
-      instanceIndex: meta.instanceIndex,
-    });
-
-    if (target == null) {
-      toast.error('Не удалось определить занятие для отмены.');
-      return;
-    }
-
-    if (target.kind === 'instance') {
-      cancelEventInstance.mutate({
-        classroomId: numericClassroomId,
-        eventInstanceId: target.eventInstanceId,
-      });
-    } else {
-      cancelRepeatedVirtualInstance.mutate({
-        classroomId: numericClassroomId,
-        repetitionModeId: target.repetitionModeId,
-        instanceIndex: target.instanceIndex,
-      });
-    }
-  };
-
   return (
     <>
       {isMobile ? (
         <ScheduleMobileView
           onAddLessonClick={onAddLessonClick}
           onLessonReschedule={handleLessonReschedule}
-          onLessonCancel={handleLessonCancel}
           onSaveLesson={isTutor ? handleLessonSave : undefined}
           hideLessonCardClassroomAndSubject
         />
@@ -197,7 +144,6 @@ export const Calendar = () => {
         <div className="flex h-full min-h-0 min-w-0 flex-col">
           <CalendarScheduleKanban
             onLessonReschedule={handleLessonReschedule}
-            onLessonCancel={handleLessonCancel}
             onSaveLesson={isTutor ? handleLessonSave : undefined}
           />
         </div>

@@ -10,7 +10,7 @@ import { getDateKey, useEventsByDate, useEventsLoading } from '../../../store/ev
 import { useLessonInfoModal } from '../../../hooks';
 import { getLessonCardSkeletonCountForDay, isCurrentDay, isPastDay } from '../../../utils';
 import type { ChangeLessonFormData } from 'features.lesson.change';
-import type { ICalendarEvent, LessonCancelScope } from '../../types';
+import type { ICalendarEvent } from '../../types';
 
 import 'swiper/css';
 import 'swiper/css/virtual';
@@ -31,7 +31,6 @@ type ScheduleDaySwiperProps = {
   onSelectedDateChange: (date: Date) => void;
   onAddLessonClick?: (date: Date) => void;
   onLessonReschedule?: (event: ICalendarEvent) => void;
-  onLessonCancel?: (event: ICalendarEvent, scope: LessonCancelScope) => void;
   onSaveLesson?: (event: ICalendarEvent, data: ChangeLessonFormData) => void;
   hideLessonCardClassroomAndSubject?: boolean;
 };
@@ -42,7 +41,6 @@ export const ScheduleDaySwiper = ({
   onSelectedDateChange,
   onAddLessonClick,
   onLessonReschedule,
-  onLessonCancel,
   onSaveLesson,
   hideLessonCardClassroomAndSubject = false,
 }: ScheduleDaySwiperProps) => {
@@ -53,7 +51,6 @@ export const ScheduleDaySwiper = ({
   const swiperRef = useRef<SwiperType | null>(null);
   const { openLessonInfo, lessonInfoModal } = useLessonInfoModal({
     onReschedule: onLessonReschedule,
-    onCancelLesson: onLessonCancel,
     onSaveLesson,
   });
 

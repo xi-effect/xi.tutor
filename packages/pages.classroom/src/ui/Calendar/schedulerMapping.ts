@@ -81,7 +81,15 @@ export const mapCalendarEventsToDayLessons = (events: ICalendarEvent[]): Schedul
     description: event.lessonInfo?.description,
     studentName: event.lessonInfo?.studentName ?? event.title,
     studentId: event.lessonInfo?.teacherId ?? 0,
-    instanceKind: event.scheduler?.instanceKind,
+    schedulerMeta: event.scheduler
+      ? {
+          eventId: event.scheduler.eventId,
+          instanceKind: event.scheduler.instanceKind,
+          eventInstanceId: event.scheduler.eventInstanceId,
+          repetitionModeId: event.scheduler.repetitionModeId,
+          instanceIndex: event.scheduler.instanceIndex,
+        }
+      : undefined,
   }));
 
 export const buildCreateClassroomEventRequest = (

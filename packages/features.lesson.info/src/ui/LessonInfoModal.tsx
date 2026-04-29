@@ -200,7 +200,7 @@ export const LessonInfoModal = ({
                 className="bg-gray-5 text-gray-80 xs:w-12 flex h-12 min-h-12 w-full shrink-0 items-center justify-center p-0 hover:text-gray-100 max-sm:mx-auto"
                 onClick={onCancelClick}
               >
-                <span className="xs:sr-only block">Удалить</span>
+                <span className="xs:sr-only block">Отменить</span>
                 <Trash className="fill-gray-60 xs:ml-0 ml-2 h-5 w-5" />
               </Button>
             ) : null}

@@ -1890,9 +1890,15 @@ importers:
       '@xipkg/modal':
         specifier: 4.3.1
         version: 4.3.1(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
+      common.services:
+        specifier: workspace:*
+        version: link:../common.services
       react:
         specifier: '19'
         version: 19.2.5
+      sonner:
+        specifier: ^2.0.7
+        version: 2.0.7(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0

@@ -1,30 +1,112 @@
+import { useCallback } from 'react';
 import { Modal, ModalContent, ModalBody } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
+import { toast } from 'sonner';
+import {
+  buildOccurrenceCancellationParams,
+  useCancelEventInstance,
+  useCancelRepeatedVirtualInstance,
+  useDeleteClassroomEvent,
+} from 'common.services';
 
-/** Одиночное занятие — две кнопки (отмена + закрыть). Серия — три («только это», «это и следующие», закрыть). */
-export type CancelLessonVariant = 'sole' | 'recurring';
+/**
+ * Метаданные для отмены: POST по инстансу / виртуальному повтору + числовой event_id для
+ * удаления серии из кабинета («это и все последующие»).
+ */
+export type LessonSchedulerMetaForCancel = {
+  eventId: number;
+  instanceKind: 'sole' | 'repeated_virtual' | 'repeated_persistent';
+  eventInstanceId?: string;
+  repetitionModeId?: string;
+  instanceIndex?: number | null;
+};
 
 export type CancelLessonModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** По умолчанию «повторяющееся» (три кнопки), как раньше */
-  variant?: CancelLessonVariant;
-  /** Одно занятие / только это из серии */
-  onCancelOne: () => void;
-  /** Серия целиком (только для variant recurring) */
-  onCancelAll: () => void;
+  classroomId: number | null | undefined;
+  schedulerMeta: LessonSchedulerMetaForCancel | null | undefined;
+  /** После успешной отмены (закрыть родительские модалки и т.п.) */
+  onSuccess?: () => void;
 };
 
 export const CancelLessonModal = ({
   open,
   onOpenChange,
-  variant = 'recurring',
-  onCancelOne,
-  onCancelAll,
+  classroomId,
+  schedulerMeta,
+  onSuccess,
 }: CancelLessonModalProps) => {
+  const cancelInstance = useCancelEventInstance();
+  const cancelVirtual = useCancelRepeatedVirtualInstance();
+  const deleteClassroomEvent = useDeleteClassroomEvent();
+  const isPending =
+    cancelInstance.isPending || cancelVirtual.isPending || deleteClassroomEvent.isPending;
+
   const handleClose = () => {
     onOpenChange(false);
   };
+
+  const finishSuccess = useCallback(() => {
+    onOpenChange(false);
+    onSuccess?.();
+  }, [onOpenChange, onSuccess]);
+
+  const handleCancelThisOccurrence = () => {
+    if (classroomId == null || classroomId <= 0) {
+      toast.error('Не удалось определить кабинет для отмены занятия.');
+      return;
+    }
+    if (schedulerMeta == null) {
+      toast.error('Не удалось определить занятие для отмены.');
+      return;
+    }
+
+    const target = buildOccurrenceCancellationParams({
+      instanceKind: schedulerMeta.instanceKind,
+      eventInstanceId: schedulerMeta.eventInstanceId,
+      repetitionModeId: schedulerMeta.repetitionModeId,
+      instanceIndex: schedulerMeta.instanceIndex,
+    });
+
+    if (target == null) {
+      toast.error('Не удалось определить занятие для отмены.');
+      return;
+    }
+
+    if (target.kind === 'instance') {
+      cancelInstance.mutate(
+        { classroomId, eventInstanceId: target.eventInstanceId },
+        { onSuccess: finishSuccess },
+      );
+    } else {
+      cancelVirtual.mutate(
+        {
+          classroomId,
+          repetitionModeId: target.repetitionModeId,
+          instanceIndex: target.instanceIndex,
+        },
+        { onSuccess: finishSuccess },
+      );
+    }
+  };
+
+  const handleCancelThisAndFollowing = () => {
+    if (classroomId == null || classroomId <= 0) {
+      toast.error('Не удалось определить кабинет для отмены занятия.');
+      return;
+    }
+    if (schedulerMeta == null) {
+      toast.error('Не удалось определить занятие для отмены.');
+      return;
+    }
+    deleteClassroomEvent.mutate(
+      { classroomId, eventId: schedulerMeta.eventId },
+      { onSuccess: finishSuccess },
+    );
+  };
+
+  const isRecurring = schedulerMeta != null && schedulerMeta.instanceKind !== 'sole';
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
@@ -35,38 +117,47 @@ export const CancelLessonModal = ({
             Занятие нельзя будет восстановить после отмены
           </p>
 
-          {variant === 'sole' ? (
+          {isRecurring ? (
             <>
-              <Button className="w-full" variant="primary" size="m" onClick={onCancelOne}>
-                Отменить занятие
+              <Button
+                className="w-full"
+                variant="primary"
+                size="m"
+                onClick={handleCancelThisOccurrence}
+                disabled={isPending}
+              >
+                Отменить это
               </Button>
               <Button
-                variant="none"
+                className="w-full"
+                variant="ghost"
                 size="m"
-                className="text-m-base w-full cursor-pointer font-semibold text-gray-100"
-                onClick={handleClose}
+                onClick={handleCancelThisAndFollowing}
+                disabled={isPending}
               >
-                Закрыть
+                Отменить это и все последующие
               </Button>
             </>
           ) : (
-            <>
-              <Button className="w-full" variant="primary" size="m" onClick={onCancelOne}>
-                Отменить только это занятие
-              </Button>
-              <Button className="w-full" variant="ghost" size="m" onClick={onCancelAll}>
-                Отменить это и все последующие занятия
-              </Button>
-              <Button
-                variant="none"
-                size="m"
-                className="text-m-base w-full cursor-pointer font-semibold text-gray-100"
-                onClick={handleClose}
-              >
-                Закрыть
-              </Button>
-            </>
+            <Button
+              className="w-full"
+              variant="primary"
+              size="m"
+              onClick={handleCancelThisOccurrence}
+              disabled={isPending}
+            >
+              Отменить занятие
+            </Button>
           )}
+          <Button
+            variant="none"
+            size="m"
+            className="text-m-base w-full cursor-pointer font-semibold text-gray-100"
+            onClick={handleClose}
+            disabled={isPending}
+          >
+            Закрыть
+          </Button>
         </ModalBody>
       </ModalContent>
     </Modal>
