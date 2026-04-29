@@ -18,12 +18,12 @@ const ACTIVATE_KEYS = new Set(['Enter', ' ']);
 /**
  * Кастомное имя group — стили `group-hover/day-lesson:*` срабатывают только с hover этой карточки,
  * без конфликта с `group` у тултипов и вложенных UI.
- * Классы заданы строками, чтобы Tailwind подхватывал их в сборке.
+ * Ниже `lg` (планшет/мобилка) иконки действий видны всегда; от `lg` — только по ховеру карточки.
  */
 const gHover = {
-  pr4: 'group-hover/day-lesson:pr-4',
-  pointer: 'group-hover/day-lesson:pointer-events-auto',
-  opacity: 'group-hover/day-lesson:opacity-100',
+  pr4: 'lg:group-hover/day-lesson:pr-4',
+  pointer: 'lg:group-hover/day-lesson:pointer-events-auto',
+  opacity: 'lg:group-hover/day-lesson:opacity-100',
 } as const;
 
 const TOOLTIP_OPEN_DELAY_MS = 1000;
@@ -37,7 +37,7 @@ function handleActivateKey(e: KeyboardEvent, action: () => void) {
 
 type DayLessonRowProps = {
   lesson: ScheduleLessonRow;
-  /** Показывать блок действий: «Начать занятие» и (для препода) иконки по ховеру. По умолчанию false */
+  /** Показывать блок действий: «Начать занятие» и (для препода) иконки справа (ниже lg — всегда, от lg — по ховеру карточки). По умолчанию false */
   showActions?: boolean;
   /** Синяя рамка «предстоящее / текущее» — только у ближайшего к моменту просмотра занятия в списке */
   isNearestLesson?: boolean;
@@ -83,7 +83,7 @@ export const DayLessonRow = ({
     <div
       className={cn(
         'border-gray-10 relative flex h-[136px] max-h-[136px] shrink-0 flex-row items-stretch gap-4 overflow-hidden p-4 pb-3.5 transition-[padding] duration-200 ease-linear',
-        showTutorIconColumn && 'group/day-lesson hover:pr-14',
+        showTutorIconColumn && 'group/day-lesson pr-14 lg:pr-4 lg:hover:pr-14',
         isNearestLesson ? 'border-brand-80 rounded-2xl border' : 'border-b last:border-b-0',
       )}
     >
@@ -104,7 +104,7 @@ export const DayLessonRow = ({
                 'focus-visible:ring-brand-80 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
                 // overflow только для блока с метой+аватаром; иначе ломаем line-clamp и режем по середине строки
                 !showLessonDescription && 'overflow-hidden',
-                showTutorIconColumn && ['pr-0', gHover.pr4],
+                showTutorIconColumn && ['pr-4 lg:pr-0', gHover.pr4],
               )}
             >
               {showLessonDescription ? (
@@ -134,7 +134,9 @@ export const DayLessonRow = ({
             {showTutorIconColumn && (
               <div
                 className={cn(
-                  'pointer-events-none absolute top-0 right-[-40px] z-10 flex flex-col gap-1 opacity-0 transition-opacity duration-200',
+                  'absolute top-0 right-[-40px] z-10 flex flex-col gap-1 transition-opacity duration-200',
+                  'pointer-events-auto opacity-100',
+                  'lg:pointer-events-none lg:opacity-0',
                   gHover.pointer,
                   gHover.opacity,
                 )}
