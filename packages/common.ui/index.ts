@@ -1,3 +1,7 @@
+export { EmptyClassrooms } from './src/empty/EmptyClassrooms';
+export { EmptyMaterials } from './src/empty/EmptyMaterials';
+export { EmptyPayments } from './src/empty/EmptyPayments';
+export { EmptySchedule } from './src/empty/EmptySchedule';
 export { DateTimeDisplay } from './src/DateTimeDisplay';
 export { LoadingScreen } from './src/LoadingScreen';
 export { Logo } from './src/Logo';

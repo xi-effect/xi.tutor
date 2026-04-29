@@ -14,8 +14,9 @@ import { MaterialsDuplicateProvider, useMaterialsDuplicate } from 'pages.materia
 import { MaterialsDuplicate } from 'features.materials.duplicate';
 import { MaterialsCard } from 'features.materials.card';
 import { useCreateMaterial } from 'features.materials.add';
+import { EmptyMaterials } from 'common.ui';
 import { useState, useMemo } from 'react';
-import { SectionEmptyState } from '../SectionEmptyState';
+import { SectionEmptyState, sectionEmptyStateIllustrationClass } from '../SectionEmptyState';
 
 const filters = [
   { id: 'all' as const, label: 'Все' },
@@ -151,7 +152,8 @@ const MaterialsContent = () => {
           <SectionEmptyState
             title={emptyCopy.title}
             description={emptyCopy.description}
-            minHeightClass="min-h-[300px]"
+            minHeightClass="min-h-[160px]"
+            illustration={<EmptyMaterials className={sectionEmptyStateIllustrationClass} />}
             actions={
               <>
                 <Button

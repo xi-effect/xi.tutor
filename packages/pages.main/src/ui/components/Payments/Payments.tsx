@@ -1,7 +1,7 @@
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Button } from '@xipkg/button';
 import { Add, ArrowUpRight } from '@xipkg/icons';
-import { SectionEmptyState } from '../SectionEmptyState';
+import { SectionEmptyState, sectionEmptyStateIllustrationClass } from '../SectionEmptyState';
 import { ScrollArea } from '@xipkg/scrollarea';
 import {
   useCurrentUser,
@@ -10,6 +10,7 @@ import {
 } from 'common.services';
 import { InvoiceModal } from 'features.invoice';
 import { InvoiceCard } from 'features.invoice.card';
+import { EmptyPayments } from 'common.ui';
 import { useState } from 'react';
 
 const PAYMENTS_PREVIEW_LIMIT = 10;
@@ -98,7 +99,8 @@ export const Payments = () => {
         <SectionEmptyState
           title="У вас нет платежей"
           description="Вы можете выставить счет на оплату или почитать подробнее в базе знаний"
-          minHeightClass="min-h-[166px]"
+          minHeightClass="min-h-[160px]"
+          illustration={<EmptyPayments className={sectionEmptyStateIllustrationClass} />}
           actions={
             <>
               <Button
@@ -128,7 +130,8 @@ export const Payments = () => {
         <SectionEmptyState
           title="У вас нет платежей"
           description="Счета от репетиторов появятся здесь после выставления"
-          minHeightClass="min-h-[152px]"
+          minHeightClass="min-h-[180px] sm:min-h-[200px]"
+          illustration={<EmptyPayments className={sectionEmptyStateIllustrationClass} />}
           actions={
             <Button
               type="button"

@@ -166,8 +166,14 @@ export const Lessons = () => {
           onTodayVisibleInViewportChange={setIsTodayVisibleInCarousel}
         />
 
-        {/* Список занятий на выбранный день */}
-        <AllLessons dayDate={selectedDate} lessons={MOCK_LESSONS} />
+        {/* Список занятий на выбранный день — flex-1 + min-h-0, чтобы список / пустое состояние занимали оставшуюся высоту карточки */}
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+          <AllLessons
+            dayDate={selectedDate}
+            lessons={MOCK_LESSONS}
+            onAddLesson={() => setOpen(true)}
+          />
+        </div>
       </div>
     </>
   );
