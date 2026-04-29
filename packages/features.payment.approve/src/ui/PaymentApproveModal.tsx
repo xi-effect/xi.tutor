@@ -149,7 +149,7 @@ const ApproveForm = ({
           {isPending ? 'Подтверждение...' : 'Подтвердить'}
         </Button>
         <Button
-          variant="secondary"
+          variant="ghost"
           className="w-31.75"
           onClick={() => handleCloseModal()}
           disabled={isPending}
@@ -317,7 +317,7 @@ const AdvanceForm = ({
             {isLoading ? 'Подтверждение...' : 'Подтвердить'}
           </Button>
           <Button
-            variant="secondary"
+            variant="ghost"
             className="w-31.75"
             onClick={() => handleCloseModal()}
             disabled={isLoading}

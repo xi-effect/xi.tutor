@@ -2,6 +2,7 @@ import { Button } from '@xipkg/button';
 import { FormControl, FormField, FormItem, useFieldArray, useFormContext } from '@xipkg/form';
 import { Close } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
+import { roundMoney } from '../model';
 
 type SubjectRowPropsT = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -18,7 +19,7 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
 
   const item = items[index];
 
-  const totalPrice = item.price * (item.quantity || 0);
+  const totalPrice = roundMoney(item.price * (item.quantity || 0));
 
   const { remove } = useFieldArray({
     control,
@@ -68,12 +69,28 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
                     type="number"
                     placeholder="Стоимость"
                     min={DEFAULT_VALUE}
+                    step={0.01}
                     variant="s"
                     after={<span className="text-gray-60">₽</span>}
                     onChange={(e) => {
-                      const numValue = e.target.valueAsNumber;
-                      const value = e.target.value === '' || isNaN(numValue) ? '' : numValue;
-                      formField.onChange(value);
+                      const rawValue = e.target.value.replace(',', '.');
+
+                      if (rawValue === '') {
+                        formField.onChange('');
+                        return;
+                      }
+
+                      if (!/^\d*(\.\d{0,2})?$/.test(rawValue)) {
+                        return;
+                      }
+
+                      const numValue = Number(rawValue);
+
+                      if (isNaN(numValue)) {
+                        return;
+                      }
+
+                      formField.onChange(numValue);
                     }}
                   />
                 </FormControl>

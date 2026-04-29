@@ -20,12 +20,12 @@
     "common.ui": "workspace:*",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1",
-    "@xipkg/icons": "^3.0.14",
+    "@xipkg/icons": "^3.0.15",
     "@xipkg/utils": "1.8.0",
     "@xipkg/slider": "2.2.0",
     "common.config": "workspace:*",
     "common.env": "workspace:*",
-    "zod": "3.24.2",
+    "zod": "^4.3.6",
     "zustand": "^5.0.3"
   },
   "devDependencies": {

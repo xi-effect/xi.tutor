@@ -10,12 +10,12 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@hookform/resolvers": "^5.0.1",
+    "@hookform/resolvers": "^5.2.2",
     "@xipkg/avatar": "3.3.0",
     "@xipkg/button": "4.1.0",
     "@xipkg/fileuploader": "5.0.0",
-    "@xipkg/form": "4.2.1",
-    "@xipkg/icons": "^3.0.14",
+    "@xipkg/form": "4.2.2",
+    "@xipkg/icons": "^3.0.15",
     "@xipkg/input": "2.0.7",
     "@xipkg/modal": "^4.4.0",
     "@xipkg/utils": "1.8.0",
@@ -28,7 +28,7 @@
     "common.utils": "workspace:*",
     "features.avatar.editor": "workspace:*",
     "react-hook-form": "^7.56.3",
-    "zod": "3.24.2"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

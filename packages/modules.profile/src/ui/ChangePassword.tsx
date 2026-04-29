@@ -126,7 +126,7 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
                   <Button type="submit" disabled={isLoading}>
                     Изменить
                   </Button>
-                  <Button onClick={() => onOpenChange(false)} variant="secondary">
+                  <Button onClick={() => onOpenChange(false)} variant="ghost">
                     Отменить
                   </Button>
                 </div>

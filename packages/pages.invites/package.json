@@ -12,7 +12,7 @@
   },
   "dependencies": {
     "@tanstack/react-query": "5.73.3",
-    "axios": "1.8.1",
+    "axios": "1.15.0",
     "@xipkg/utils": "1.8.0",
     "@xipkg/avatar": "3.3.0",
     "@xipkg/button": "4.1.0",

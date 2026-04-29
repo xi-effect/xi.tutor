@@ -160,7 +160,7 @@ const UserTileUI = ({
               Камеру или микрофон можно отключить в любой момент.
             </p>
             {permissionsButtonLabel && (
-              <Button size="m" variant="secondary" onClick={openPermissionsDialog}>
+              <Button size="m" variant="ghost" onClick={openPermissionsDialog}>
                 {permissionsButtonLabel}
               </Button>
             )}

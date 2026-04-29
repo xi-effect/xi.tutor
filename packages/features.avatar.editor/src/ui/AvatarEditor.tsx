@@ -124,7 +124,7 @@ export const AvatarEditor = ({
             <Button
               onClick={() => onOpenChange(false)}
               className="w-full sm:w-[126px]"
-              variant="secondary"
+              variant="ghost"
             >
               Отменить
             </Button>

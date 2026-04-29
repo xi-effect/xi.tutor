@@ -49,11 +49,16 @@ export const Materials = () => {
   }
 
   return (
-    <div className="flex flex-col">
-      <MaterialSection headerTitle="Учебные доски" rowClassName="pb-4">
+    <div className="flex flex-col pt-2">
+      <MaterialSection headerTitle="Доски" rowClassName="pb-4">
         {boardsData?.length ? (
           boardsData.map((board) => (
-            <MaterialsCard key={board.id} {...board} hasIcon className="2xl:w-[430px]" />
+            <MaterialsCard
+              key={board.id}
+              {...board}
+              hasIcon
+              className="w-full max-w-[430px] min-w-[300px]"
+            />
           ))
         ) : (
           <EmptyDataState title="Нет учебных досок" />
@@ -62,7 +67,12 @@ export const Materials = () => {
       <MaterialSection headerTitle="Заметки">
         {notesData?.length ? (
           notesData.map((note) => (
-            <MaterialsCard key={note.id} {...note} hasIcon className="2xl:w-[430px]" />
+            <MaterialsCard
+              key={note.id}
+              {...note}
+              hasIcon
+              className="w-full max-w-[430px] min-w-[300px]"
+            />
           ))
         ) : (
           <EmptyDataState title="Нет заметок" />

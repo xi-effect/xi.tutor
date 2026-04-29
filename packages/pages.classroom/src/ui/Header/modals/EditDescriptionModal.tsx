@@ -117,7 +117,7 @@ export const EditDescriptionModal = ({
               >
                 {isUpdating ? 'Сохранение...' : 'Сохранить'}
               </Button>
-              <Button variant="secondary" onClick={onClose} type="button" disabled={isUpdating}>
+              <Button variant="ghost" onClick={onClose} type="button" disabled={isUpdating}>
                 Отмена
               </Button>
             </ModalFooter>

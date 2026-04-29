@@ -16,7 +16,7 @@ export const Notes = () => {
   const notFoundItems = !items.length && !isLoading && !isError;
 
   return (
-    <div ref={parentRef} className="h-[calc(100vh-158px)] overflow-auto">
+    <div ref={parentRef} className="min-h-0 flex-1 overflow-auto pl-4">
       {notFoundItems ? (
         <NotFoundItems text="Здесь пока нет заметок" />
       ) : (

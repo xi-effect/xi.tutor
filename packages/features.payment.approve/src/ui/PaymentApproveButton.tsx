@@ -24,7 +24,7 @@ export const PaymentApproveButton = ({
             <Button
               variant="none"
               size="s"
-              className="bg-brand-0 hover:bg-brand-0/80 flex-1 rounded-lg"
+              className="bg-gray-5 text-gray-70 hover:bg-gray-10/80 flex-1 rounded-lg"
               onClick={onApprovePayment}
               data-umami-event="payment-approve-sender"
               data-umami-event-role={isTutor ? 'tutor' : 'student'}

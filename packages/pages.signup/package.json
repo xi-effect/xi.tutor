@@ -17,15 +17,15 @@
     "common.auth": "workspace:*",
     "common.ui": "workspace:*",
     "@xipkg/button": "4.1.0",
-    "@xipkg/form": "4.2.1",
+    "@xipkg/form": "4.2.2",
     "@xipkg/checkbox": "^5.0.0",
-    "@xipkg/icons": "^3.0.14",
+    "@xipkg/icons": "^3.0.15",
     "@xipkg/input": "2.0.7",
     "@xipkg/link": "2.0.12",
     "@xipkg/utils": "1.8.0",
-    "zod": "3.24.2",
+    "zod": "^4.3.6",
     "react-hook-form": "^7.55.0",
-    "@hookform/resolvers": "5.0.1"
+    "@hookform/resolvers": "^5.2.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -47,7 +47,7 @@
   "peerDependencies": {
     "react": "19",
     "react-hook-form": "^7.55.0",
-    "@hookform/resolvers": "5.0.1"
+    "@hookform/resolvers": "^5.2.2"
   },
   "description": "form for signin",
   "author": "xi.effect"

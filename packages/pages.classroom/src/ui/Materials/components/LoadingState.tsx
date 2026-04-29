@@ -5,7 +5,7 @@ export const LoadingState = () => {
   return (
     <div>
       <div className="flex flex-col gap-4 p-4">
-        <MaterialHeader title="Учебные доски" />
+        <MaterialHeader title="Доски" />
         <div className="flex flex-row gap-8 pb-4">
           {Array.from({ length: 3 }).map((_, i) => (
             <MaterialsListSkeleton

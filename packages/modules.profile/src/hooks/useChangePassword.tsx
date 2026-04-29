@@ -8,7 +8,7 @@ import { useUpdatePassword } from '../services/useUpdatePassword';
 
 const schema = z
   .object({
-    currentPassword: z.string({ required_error: 'Обязательное поле' }),
+    currentPassword: z.string({ error: 'Обязательное поле' }),
     newPassword: z.string().min(6, { message: 'Пароль должен содержать минимум 6 символов' }),
     confirmPassword: z.string().min(1, { message: 'Обязательное поле' }),
   })

@@ -26,22 +26,14 @@ export const useFormSchema = () => {
     return z.object({
       email: z
         .string({
-          required_error: getTranslation(
-            'validation.required',
-            undefined,
-            'This field is required',
-          ),
+          error: getTranslation('validation.required', undefined, 'This field is required'),
         })
         .email({
           message: getTranslation('validation.wrong_format', undefined, 'Incorrect data format'),
         }),
       password: z
         .string({
-          required_error: getTranslation(
-            'validation.required',
-            undefined,
-            'This field is required',
-          ),
+          error: getTranslation('validation.required', undefined, 'This field is required'),
         })
         .min(passwordMinLength, {
           message: getTranslation(

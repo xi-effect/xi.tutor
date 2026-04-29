@@ -69,7 +69,7 @@ export const NotificationItem = ({
   const fullTime = formatFullNotificationDate(notification.created_at);
 
   const className = cn(
-    `flex h-full items-start gap-2 rounded-4 p-3 ${
+    `flex h-full items-start gap-2 rounded-[16px] p-3 ${
       !notification.is_read ? 'bg-brand-0 hover:bg-brand-0' : 'bg-gray-0 hover:bg-gray-5'
     }`,
   );
@@ -83,12 +83,12 @@ export const NotificationItem = ({
       />
 
       <div className="flex flex-1 flex-col gap-1">
-        <span className="text-m-base font-medium text-gray-100">{title}</span>
-        <span className="text-gray-80 text-s-base font-normal">{description}</span>
+        <span className="text-s-base font-medium text-gray-100">{title}</span>
+        <span className="text-gray-80 text-xs-base font-normal">{description}</span>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger className="w-fit" asChild>
-              <span className="text-gray-80 text-xs-base font-normal">{relativeTime}</span>
+              <span className="text-gray-80 text-xxs-base font-normal">{relativeTime}</span>
             </TooltipTrigger>
             <TooltipContent side="bottom">
               <p>{fullTime}</p>
@@ -104,10 +104,10 @@ export const NotificationItem = ({
               <Button
                 variant="none"
                 size="sm"
-                className="group/button bg-gray-0 hover:bg-brand-80 size-6 rounded-sm p-0 opacity-0 transition-opacity group-hover:opacity-100"
+                className="group/button bg-gray-0 hover:bg-brand-80 h-6 w-6 rounded-sm p-0 opacity-0 transition-opacity group-hover:opacity-100"
                 onClick={handleMarkAsRead}
               >
-                <Check className="group-hover/button:fill-gray-0 size-3 fill-gray-100" />
+                <Check className="group-hover/button:fill-gray-0 h-3 w-3 fill-gray-100" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="left">

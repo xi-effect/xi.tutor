@@ -69,7 +69,7 @@ export const Sidebar = () => {
           )}
         </div>
         <div className="text-s-base mt-auto">
-          <Button variant="secondary" size="s" className="w-full rounded-lg">
+          <Button variant="ghost" size="s" className="w-full rounded-lg">
             Открыть расписание
           </Button>
         </div>

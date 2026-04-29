@@ -1,14 +1,26 @@
 /* eslint-disable no-irregular-whitespace */
-import { ScrollArea } from '@xipkg/scrollarea';
-import { Materials, Payments, Classrooms } from './components';
-import { OnboardingPopup } from 'common.ui';
+import { useState } from 'react';
+import { Materials, Payments, Classrooms, FirstLessonGuideBanner } from './components';
+import { DateTimeDisplay, OnboardingPopup } from 'common.ui';
 import { useCurrentUser } from 'common.services';
-// import { Sidebar } from './components/Sidebar';
-// import { AssignLessonButton } from './components/AssignLessonButton';
+import { useMediaQuery } from '@xipkg/utils';
+import { NearestLessonCard } from 'modules.calendar';
+import { MovingLessonModal } from 'features.lesson.move';
+import { Lessons, MOCK_LESSONS } from './components/Lessons/Lessons';
+
+const getToday = () => {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  return d;
+};
 
 export const MainPage = () => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+
+  const isMobile = useMediaQuery('(max-width: 720px)');
+  const [moveLessonOpen, setMoveLessonOpen] = useState(false);
+  const nearestLesson = MOCK_LESSONS[0];
 
   const steps = [
     {
@@ -43,22 +55,6 @@ export const MainPage = () => {
       side: 'bottom' as const,
       align: 'end' as const,
     },
-    // {
-    //   element: '#materials-tab',
-    //   popover: {
-    //     description: 'Изучайте материалы и закрепляйте навыки на практике',
-    //   },
-    //   side: 'bottom' as const,
-    //   align: 'end' as const,
-    // },
-    // {
-    //   element: '#payments-tab',
-    //   popover: {
-    //     description: 'Когда получите счёт, оплатите его удобным способом. Все оплаты — здесь',
-    //   },
-    //   side: 'bottom' as const,
-    //   align: 'end' as const,
-    // },
     {
       element: '#invite-student-button',
       popover: {
@@ -115,20 +111,51 @@ export const MainPage = () => {
   ];
 
   return (
-    <div className="flex h-full flex-col overflow-auto lg:flex-row lg:gap-4">
-      {/* <AssignLessonButton className="absolute right-4 hidden lg:flex" /> */}
-      <ScrollArea
-        id="lessons"
-        type="always"
-        className="h-[calc(100vh-64px)] w-full flex-1 overflow-visible lg:overflow-auto"
-      >
-        {/* <Lessons /> */}
-        <Classrooms />
-        <Payments />
-        {isTutor && <Materials />}
-        <OnboardingPopup steps={steps} disabled={false} />
-      </ScrollArea>
-      {/* <Sidebar /> */}
+    <div className="bg-gray-5 flex h-full min-h-0 flex-col">
+      {/* Шапка на всю ширину контентной области; не участвует в прокрутке ниже */}
+      {!isMobile && (
+        <div className="shrink-0 p-5">
+          <DateTimeDisplay />
+        </div>
+      )}
+      {/* Ниже шапки — оставшаяся высота; справа один скролл по кабинетам / оплатам / материалам */}
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="flex min-h-0 flex-1 flex-col items-start gap-4 p-5 sm:flex-row sm:py-0 sm:pr-0">
+          {!isMobile && (
+            <div className="lg:bg-gray-5 flex shrink-0 flex-col pb-6 lg:sticky lg:top-0 lg:z-10 lg:self-start">
+              <Lessons />
+            </div>
+          )}
+          {isMobile && (
+            <>
+              <NearestLessonCard
+                lesson={nearestLesson}
+                onReschedule={() => setMoveLessonOpen(true)}
+              />
+              <MovingLessonModal
+                key={String(nearestLesson.id)}
+                open={moveLessonOpen}
+                onOpenChange={setMoveLessonOpen}
+                formKey={String(nearestLesson.id)}
+                lessonKind="one-off"
+                initialDate={getToday()}
+                initialStartTime={nearestLesson.startTime}
+                initialEndTime={nearestLesson.endTime}
+                teacherName={nearestLesson.studentName}
+                subjectLabel={nearestLesson.subject}
+                lessonTitle={nearestLesson.subject}
+              />
+            </>
+          )}
+          <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-5 self-stretch overscroll-contain pb-6 sm:overflow-y-auto">
+            <FirstLessonGuideBanner />
+            <Classrooms />
+            <Payments />
+            <Materials />
+          </div>
+        </div>
+      </div>
+      <OnboardingPopup steps={steps} disabled={false} />
     </div>
   );
 };

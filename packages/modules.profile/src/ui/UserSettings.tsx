@@ -14,6 +14,7 @@ export const UserSettings = ({
   setOpen: (open: boolean) => void;
 }) => {
   const isMobile = useMediaQuery('(max-width: 719px)');
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
   const [activeContent, setActiveContent] = React.useState<number>(0);
   const [showContent, setShowContent] = React.useState(false);
   const navigate = useNavigate();
@@ -72,8 +73,8 @@ export const UserSettings = ({
           event.preventDefault();
           document.body.style.pointerEvents = '';
         }}
-        variant="full"
-        className="p-4 lg:p-6"
+        variant={isDesktop ? 'default' : 'full'}
+        className={isDesktop ? 'h-[90vh] max-w-[1132px] p-4 lg:p-6' : 'p-4 lg:p-6'}
       >
         <ModalTitle className="hidden"> Настройки пользователя </ModalTitle>
         <div className="flex w-full items-center justify-center">
@@ -84,7 +85,11 @@ export const UserSettings = ({
               setShowContent={memoizedSetShowContent}
               handleClose={handleClose}
             />
-            <div className="mt-4 flex h-full flex-row gap-8">
+            <div
+              className={
+                isDesktop ? 'flex h-full flex-row gap-8' : 'mt-4 flex h-full flex-row gap-8'
+              }
+            >
               {isMobile ? (
                 <div className="flex-1">
                   {showContent ? (
