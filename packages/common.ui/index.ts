@@ -1,6 +1,8 @@
 export { EmptyClassrooms } from './src/empty/EmptyClassrooms';
 export { EmptyMaterials } from './src/empty/EmptyMaterials';
+export { EmptyMaterialsFull } from './src/empty/EmptyMaterialsFull';
 export { EmptyPayments } from './src/empty/EmptyPayments';
+export { EmptyPaymentsFull } from './src/empty/EmptyPaymentsFull';
 export { EmptySchedule } from './src/empty/EmptySchedule';
 export { DateTimeDisplay } from './src/DateTimeDisplay';
 export { LoadingScreen } from './src/LoadingScreen';

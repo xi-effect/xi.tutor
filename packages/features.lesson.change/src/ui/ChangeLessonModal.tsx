@@ -168,7 +168,7 @@ export const ChangeLessonModal = ({
                 </div>
               ) : null}
 
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-col gap-3 pt-2">
                 <span className="text-sm font-medium text-gray-100">О занятии</span>
 
                 <FormField

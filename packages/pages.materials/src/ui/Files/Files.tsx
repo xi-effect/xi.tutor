@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { Card } from './Card';
 import { useResponsiveGrid, useInfiniteQuery, useVirtualGrid } from '../../hooks';
-import { NotFoundItems } from '../NotFoundItems';
+import { MaterialsTabEmptyState } from '../MaterialsTabEmptyState';
 import { GridList } from '../GridList';
 
 export const Files = () => {
@@ -16,7 +16,10 @@ export const Files = () => {
   return (
     <div ref={parentRef} className="h-[calc(100vh-158px)] overflow-auto">
       {notFoundItems ? (
-        <NotFoundItems text="Здесь пока нет файлов" />
+        <MaterialsTabEmptyState
+          title="Пока нет файлов"
+          description="Загруженные файлы появятся в этом списке."
+        />
       ) : (
         <GridList
           rowVirtualizer={rowVirtualizer}

@@ -2,6 +2,7 @@ import { RefObject } from 'react';
 import { CardsGridSkeleton } from './CardsGridSkeleton';
 import { Card } from '../cards/Card';
 import { ClassroomPropsT } from '../../../types';
+import { ClassroomsEmptyState } from './ClassroomsEmptyState';
 import { VirtualGridlList } from './VirtualGridlList';
 
 type TCardsGridProps = {
@@ -13,6 +14,7 @@ type TCardsGridProps = {
   parentRef: RefObject<HTMLDivElement | null>;
   emptyText: string;
   inviteText: string;
+  withHelpLink?: boolean;
 };
 
 export const CardsGrid: React.FC<TCardsGridProps> = ({
@@ -24,6 +26,7 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
   parentRef,
   emptyText,
   inviteText,
+  withHelpLink = false,
 }) => {
   if (isLoading) {
     return <CardsGridSkeleton count={12} />;
@@ -39,10 +42,11 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
 
   if (items.length === 0) {
     return (
-      <div className="flex h-full min-h-[90dvh] flex-col items-center justify-center gap-2">
-        <p className="text-xl-base text-center font-semibold text-gray-100">{emptyText}</p>
-        <p className="text-m-base text-gray-80 text-center">{inviteText}</p>
-      </div>
+      <ClassroomsEmptyState
+        title={emptyText}
+        description={inviteText}
+        withHelpLink={withHelpLink}
+      />
     );
   }
 

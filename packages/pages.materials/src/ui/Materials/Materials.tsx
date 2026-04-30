@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { useResponsiveGrid, useInfiniteQuery, useVirtualGrid } from '../../hooks';
-import { NotFoundItems } from '../NotFoundItems';
+import { MaterialsTabEmptyState } from '../MaterialsTabEmptyState';
 import { GridList } from '../GridList';
 import { MaterialsCard } from 'features.materials.card';
 import { useMaterialsDuplicate } from '../../provider';
@@ -19,7 +19,10 @@ export const Materials = () => {
   return (
     <div ref={parentRef} className="min-h-0 flex-1 overflow-auto pl-4">
       {notFoundItems ? (
-        <NotFoundItems text="Здесь пока нет досок" />
+        <MaterialsTabEmptyState
+          title="Пока нет досок"
+          description="Создайте доску — она появится в этом списке."
+        />
       ) : (
         <GridList
           rowVirtualizer={rowVirtualizer}

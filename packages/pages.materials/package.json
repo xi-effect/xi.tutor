@@ -15,6 +15,8 @@
     "@tanstack/react-router": "^1.166.6",
     "@tanstack/react-virtual": "3.13.9",
     "@xipkg/button": "4.1.0",
+    "@xipkg/icons": "^3.0.15",
+    "@xipkg/utils": "1.8.0",
     "@xipkg/dropdown": "3.0.12",
     "@xipkg/file": "2.0.12",
     "@xipkg/scrollarea": "2.2.0",
