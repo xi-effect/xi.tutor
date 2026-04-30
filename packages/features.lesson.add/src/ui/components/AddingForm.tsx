@@ -1,4 +1,12 @@
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@xipkg/form';
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormMessage,
+  useFormState,
+} from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { Textarea } from '@xipkg/textarea';
 import { useMaskInput } from '@xipkg/inputmask';
@@ -12,7 +20,6 @@ import { formatDurationBetweenRu } from '../../utils/utils';
 
 import { useEffect, useMemo } from 'react';
 import type { FC, PropsWithChildren } from 'react';
-import { useFormState } from 'react-hook-form';
 import type { FormData } from '../../model';
 
 const WEEKDAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] as const;

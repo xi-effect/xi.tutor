@@ -30,7 +30,7 @@
     "features.charts": "workspace:*",
     "features.invoice": "workspace:*",
     "features.invoice.card": "workspace:*",
-    "react-hook-form": "^7.56.3",
+    "react-hook-form": "^7.73.1",
     "zod": "^4.3.6",
     "@xipkg/button": "4.1.0",
     "@xipkg/dropdown": "3.0.12",

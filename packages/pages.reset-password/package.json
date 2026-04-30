@@ -29,7 +29,7 @@
     "@xipkg/link": "2.0.12",
     "@xipkg/utils": "1.6.3",
     "zod": "^4.3.6",
-    "react-hook-form": "^7.55.0",
+    "react-hook-form": "^7.73.1",
     "@hookform/resolvers": "^5.2.2"
   },
   "devDependencies": {
@@ -51,7 +51,7 @@
   },
   "peerDependencies": {
     "react": "19",
-    "react-hook-form": "^7.55.0",
+    "react-hook-form": "^7.73.1",
     "@hookform/resolvers": "^5.2.2"
   },
   "description": "form for reset password",
