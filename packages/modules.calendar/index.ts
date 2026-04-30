@@ -46,9 +46,15 @@ export {
   cancelEventInstance,
   uncancelEventInstance,
   cancelRepeatedVirtualInstance,
+  getTutorEventInstanceDetails,
+  getStudentEventInstanceDetails,
+  rescheduleRepeatedVirtualInstance,
   schedulerQueryKeys,
   useTutorClassroomSchedule,
   useStudentClassroomSchedule,
+  useTutorEventInstanceDetails,
+  useStudentEventInstanceDetails,
+  useRescheduleRepeatedVirtualInstance,
   useCreateClassroomEvent,
   useUpdateClassroomEvent,
   useDeleteClassroomEvent,
@@ -74,6 +80,9 @@ export type {
   CancelEventInstanceParams,
   UncancelEventInstanceParams,
   CancelRepeatedVirtualInstanceParams,
+  RescheduleRepeatedVirtualInstanceParams,
+  GetEventInstanceDetailsParams,
+  UseEventInstanceDetailsParams,
   OccurrenceCancelApiTarget,
 } from 'common.services';
 export type {
@@ -93,4 +102,5 @@ export type {
   PersistedRepeatedEventInstanceDto,
   VirtualRepeatedEventInstanceDto,
   EventInstanceDto,
+  EventInstanceTimeSlotInputDto,
 } from 'common.api';

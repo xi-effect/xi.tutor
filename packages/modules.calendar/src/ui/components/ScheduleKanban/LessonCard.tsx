@@ -61,7 +61,7 @@ function LessonCardClassroomLine({
   );
 }
 
-interface LessonCardProps {
+type LessonCardProps = {
   event: ICalendarEvent;
   isPast?: boolean;
   /** День колонки — сегодня (рамка brand вместо hover) */
@@ -72,7 +72,7 @@ interface LessonCardProps {
   hideClassroomAndSubject?: boolean;
   /** Открыть модалку с подробностями занятия */
   onClick?: () => void;
-}
+};
 
 export const LessonCard = memo<LessonCardProps>(
   ({ event, isToday, fullWidth, hideClassroomAndSubject = false, onClick }) => {

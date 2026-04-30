@@ -14,7 +14,7 @@ import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
 import { scheduleEmptyBlockHeight } from './scheduleEmptyLayout';
 
-interface ScheduleKanbanProps {
+type ScheduleKanbanProps = {
   /** Видимые дни (то же, что в заголовке календаря) */
   visibleDays: Date[];
   columnWidth: number;
@@ -26,7 +26,7 @@ interface ScheduleKanbanProps {
   onSaveLesson?: (event: ICalendarEvent, data: ChangeLessonFormData) => void;
   /** Скрыть в карточке строки кабинета и предмета (контекст одного кабинета) */
   hideLessonCardClassroomAndSubject?: boolean;
-}
+};
 
 const getEventsForDay = (
   eventsByDate: Record<string, ICalendarEvent[]>,

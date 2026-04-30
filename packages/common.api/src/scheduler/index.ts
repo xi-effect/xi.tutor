@@ -17,6 +17,8 @@ export {
   type PersistedRepeatedEventInstanceDto,
   type VirtualRepeatedEventInstanceDto,
   type EventInstanceDto,
+  type EventInstanceTimeSlotInputDto,
+  type GetEventInstanceDetailsResponseDto,
   type CreateClassroomEventRequestDto,
   type UpdateClassroomEventRequestDto,
 } from './types';
@@ -28,12 +30,15 @@ export {
 export enum SchedulerQueryKey {
   GetTutorClassroomSchedule = 'GetTutorClassroomSchedule',
   GetStudentClassroomSchedule = 'GetStudentClassroomSchedule',
+  GetTutorEventInstanceDetails = 'GetTutorEventInstanceDetails',
+  GetStudentEventInstanceDetails = 'GetStudentEventInstanceDetails',
   CreateClassroomEvent = 'CreateClassroomEvent',
   UpdateClassroomEvent = 'UpdateClassroomEvent',
   DeleteClassroomEvent = 'DeleteClassroomEvent',
   CancelEventInstance = 'CancelEventInstance',
   UncancelEventInstance = 'UncancelEventInstance',
   CancelRepeatedVirtualInstance = 'CancelRepeatedVirtualInstance',
+  RescheduleRepeatedVirtualInstance = 'RescheduleRepeatedVirtualInstance',
 }
 
 // ---------------------------------------------------------------------------
@@ -95,5 +100,26 @@ export const schedulerApiConfig = {
         classroomId,
       )}/repetition-modes/${repetitionModeId}/instances/${instanceIndex}/cancellation/`,
     method: HttpMethod.POST,
+  },
+
+  [SchedulerQueryKey.GetTutorEventInstanceDetails]: {
+    getUrl: (classroomId: string, eventInstanceId: string) =>
+      `${classroomBase('tutor', classroomId)}/event-instances/${eventInstanceId}/`,
+    method: HttpMethod.GET,
+  },
+
+  [SchedulerQueryKey.GetStudentEventInstanceDetails]: {
+    getUrl: (classroomId: string, eventInstanceId: string) =>
+      `${classroomBase('student', classroomId)}/event-instances/${eventInstanceId}/`,
+    method: HttpMethod.GET,
+  },
+
+  [SchedulerQueryKey.RescheduleRepeatedVirtualInstance]: {
+    getUrl: (classroomId: string, repetitionModeId: string, instanceIndex: number) =>
+      `${classroomBase(
+        'tutor',
+        classroomId,
+      )}/repetition-modes/${repetitionModeId}/instances/${instanceIndex}/time-slot/`,
+    method: HttpMethod.PUT,
   },
 };

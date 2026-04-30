@@ -14,10 +14,10 @@ import { useConstants } from '../../../../hooks';
 
 import type { FC } from 'react';
 
-interface RepeatBlockProps {
+type RepeatBlockProps = {
   value: string;
   onChange: (value: string) => void;
-}
+};
 
 export const RepeatBlock: FC<RepeatBlockProps> = ({ value, onChange }) => {
   const { t } = useTranslation('calendar');

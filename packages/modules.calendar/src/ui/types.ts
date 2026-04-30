@@ -1,6 +1,6 @@
 import type { LessonSchedulerMetaForCancel } from 'features.lesson.cancel';
 
-export interface ICalendarEvent {
+export type ICalendarEvent = {
   id: string;
   title: string;
   start: Date;
@@ -10,9 +10,9 @@ export interface ICalendarEvent {
   isAllDay?: boolean;
   lessonInfo?: ILessonInfo;
   scheduler?: ISchedulerEventMeta;
-}
+};
 
-export interface ILessonInfo {
+export type ILessonInfo = {
   studentName: string;
   subject: string;
   lessonType: LessonType;
@@ -23,9 +23,9 @@ export interface ILessonInfo {
   teacherId?: number;
   /** id кабинета, привязанного к занятию */
   classroomId?: number;
-}
+};
 
-export interface ISchedulerEventMeta {
+export type ISchedulerEventMeta = {
   eventId: number;
   /** UUID persisted-инстанса (sole / repeated_persistent); у repeated_virtual нет */
   eventInstanceId?: string;
@@ -34,7 +34,7 @@ export interface ISchedulerEventMeta {
   repetitionModeId?: string;
   instanceIndex?: number | null;
   cancelledAt?: string | null;
-}
+};
 
 export type EventType = 'lesson' | 'rest';
 export type LessonType = 'group' | 'individual';
@@ -62,9 +62,9 @@ export type WeekOrDayMode = Extract<CalendarMode, 'week' | 'day'>;
 
 export type CalendarDays<T extends CalendarMode> = T extends 'year' ? Date[][] : Date[];
 
-export interface CalendarProps<T extends CalendarMode> {
+export type CalendarProps<T extends CalendarMode> = {
   days: CalendarDays<T>;
-}
+};
 
 export type ModeVariant = {
   label: string;

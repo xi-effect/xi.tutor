@@ -14,17 +14,17 @@ export type SoleEventInstance = SoleEventInstanceDto;
 export type PersistedRepeatedEventInstance = PersistedRepeatedEventInstanceDto;
 export type VirtualRepeatedEventInstance = VirtualRepeatedEventInstanceDto;
 
-export interface SingleEvent extends SchedulerEvent {
+export type SingleEvent = SchedulerEvent & {
   scheduleKind: 'single';
   soleInstance: SoleEventInstance;
-}
+};
 
-export interface RepeatingEvent extends SchedulerEvent {
+export type RepeatingEvent = SchedulerEvent & {
   scheduleKind: 'repeating';
   repetitionMode: RepetitionMode;
-}
+};
 
-export interface ScheduleItem {
+export type ScheduleItem = {
   eventId: number;
   startsAt: string;
   endsAt: string;
@@ -41,4 +41,4 @@ export interface ScheduleItem {
   isSingle: boolean;
   isRepeatedVirtual: boolean;
   isRepeatedPersistent: boolean;
-}
+};

@@ -7,7 +7,7 @@ import { addDays } from 'date-fns';
 import { DateTimeDisplay } from 'common.ui';
 import { formatDateRangeDisplay } from '../utils';
 
-export interface CalendarWeekNavProps {
+export type CalendarWeekNavProps = {
   /** Начало текущей недели */
   weekStart: Date;
   /** Видимые дни расписания (то же, что отображается в канбане) */
@@ -16,7 +16,7 @@ export interface CalendarWeekNavProps {
   onNext: () => void;
   /** Переход к выбранной в календаре неделе */
   onWeekSelect: (date: Date) => void;
-}
+};
 
 /** Только блок «назад — диапазон дат — вперёд» (без даты/времени и без кнопки добавления) */
 export const CalendarWeekNav = ({
@@ -84,7 +84,7 @@ export const CalendarWeekNav = ({
   );
 };
 
-interface CalendarHeaderProps {
+type CalendarHeaderProps = {
   /** Начало текущей недели */
   weekStart: Date;
   /** Видимые дни расписания (то же, что отображается в канбане) */
@@ -97,7 +97,7 @@ interface CalendarHeaderProps {
   onAddLessonClick?: () => void;
   /** Блок с текущими датой и временем слева в шапке (на вложенных экранах часто скрывают) */
   showDateTime?: boolean;
-}
+};
 
 export const CalendarHeader = ({
   weekStart,

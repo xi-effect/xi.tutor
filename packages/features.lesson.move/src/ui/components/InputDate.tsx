@@ -4,10 +4,10 @@ import { DatePicker } from '@xipkg/datepicker';
 import { Calendar } from '@xipkg/icons';
 import { getShortDateString } from '../../utils/utils';
 
-interface InputDateProps {
+type InputDateProps = {
   value?: Date;
   onChange: (val: Date) => void;
-}
+};
 
 export const InputDate = memo<InputDateProps>(({ value, onChange }) => {
   const [date, setDate] = useState<Date>(value || new Date());

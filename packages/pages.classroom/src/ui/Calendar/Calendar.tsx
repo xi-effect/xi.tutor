@@ -11,7 +11,7 @@ import {
 import type { ChangeLessonFormData, ICalendarEvent } from 'modules.calendar';
 import { useParams } from '@tanstack/react-router';
 import { useCurrentUser, useGetClassroom, useGetClassroomStudent } from 'common.services';
-import { MovingLessonModal } from 'features.lesson.move';
+import { MovingLessonModal, type RepeatedVirtualRescheduleTarget } from 'features.lesson.move';
 import { useClassroomSchedule } from './ClassroomScheduleContext';
 import { CalendarScheduleKanban } from './ClassroomScheduleParts';
 import { getScheduleQueryRange, mapScheduleItemsToCalendarEvents } from './schedulerMapping';
@@ -25,14 +25,28 @@ function formatTimeHm(d: Date): string {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
 }
 
-function movingModalPropsFromEvent(event: ICalendarEvent) {
+function movingModalPropsFromEvent(event: ICalendarEvent, classroomId: number) {
   const start = new Date(event.start);
   const end = new Date(event.end);
   const subject = event.lessonInfo?.subject ?? event.title;
   const teacherName = event.lessonInfo?.studentName ?? event.title;
   const lessonTitle = event.lessonInfo?.description ?? event.title;
+  const instanceKind = event.scheduler?.instanceKind;
+  const isRepeatedVirtual = instanceKind === 'repeated_virtual';
+
+  const schedulerTarget: RepeatedVirtualRescheduleTarget | undefined =
+    isRepeatedVirtual &&
+    event.scheduler?.repetitionModeId != null &&
+    event.scheduler.instanceIndex != null
+      ? {
+          classroomId,
+          repetitionModeId: event.scheduler.repetitionModeId,
+          instanceIndex: event.scheduler.instanceIndex,
+        }
+      : undefined;
+
   return {
-    lessonKind: 'one-off' as const,
+    lessonKind: isRepeatedVirtual ? ('recurring' as const) : ('one-off' as const),
     initialDate: event.start,
     initialStartTime: event.isAllDay ? null : formatTimeHm(start),
     initialEndTime: event.isAllDay ? null : formatTimeHm(end),
@@ -42,6 +56,7 @@ function movingModalPropsFromEvent(event: ICalendarEvent) {
     lessonDescription: event.lessonInfo?.description,
     formKey: event.id,
     seriesWeekdayIndex: jsWeekdayToSeriesIndex(start),
+    schedulerTarget,
   };
 }
 
@@ -155,7 +170,7 @@ export const Calendar = () => {
           onOpenChange={(open) => {
             if (!open) setMoveEvent(null);
           }}
-          {...movingModalPropsFromEvent(moveEvent)}
+          {...movingModalPropsFromEvent(moveEvent, numericClassroomId)}
         />
       ) : null}
     </>

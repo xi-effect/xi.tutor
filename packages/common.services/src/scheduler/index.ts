@@ -10,6 +10,8 @@ export type {
   ScheduleItem,
 } from './model/types';
 
+export type { GetEventInstanceDetailsResponseDto } from 'common.api';
+
 export {
   mapEventInstanceToScheduleItem,
   mapScheduleResponseToScheduleItems,
@@ -23,6 +25,9 @@ export {
 export {
   getTutorClassroomSchedule,
   getStudentClassroomSchedule,
+  getTutorEventInstanceDetails,
+  getStudentEventInstanceDetails,
+  rescheduleRepeatedVirtualInstance,
   createClassroomEvent,
   updateClassroomEvent,
   deleteClassroomEvent,
@@ -33,6 +38,9 @@ export {
   useClassroomSchedule,
   useTutorClassroomSchedule,
   useStudentClassroomSchedule,
+  useTutorEventInstanceDetails,
+  useStudentEventInstanceDetails,
+  useRescheduleRepeatedVirtualInstance,
   useCreateClassroomEvent,
   useUpdateClassroomEvent,
   useDeleteClassroomEvent,
@@ -41,10 +49,13 @@ export {
   useCancelRepeatedVirtualInstance,
   type GetClassroomScheduleParams,
   type UseClassroomScheduleParams,
+  type UseEventInstanceDetailsParams,
+  type GetEventInstanceDetailsParams,
   type CreateClassroomEventParams,
   type UpdateClassroomEventParams,
   type DeleteClassroomEventParams,
   type CancelEventInstanceParams,
   type UncancelEventInstanceParams,
   type CancelRepeatedVirtualInstanceParams,
+  type RescheduleRepeatedVirtualInstanceParams,
 } from './model/queries';

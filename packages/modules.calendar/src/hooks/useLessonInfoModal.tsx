@@ -2,7 +2,13 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { ChangeLessonFormData } from 'features.lesson.change';
 import { CancelLessonModal } from 'features.lesson.cancel';
 import { LessonInfoModal } from 'features.lesson.info';
-import { useCurrentUser, useGetClassroom, useGetClassroomStudent } from 'common.services';
+import {
+  useCurrentUser,
+  useGetClassroom,
+  useGetClassroomStudent,
+  useTutorEventInstanceDetails,
+  useStudentEventInstanceDetails,
+} from 'common.services';
 import type { ICalendarEvent } from '../ui/types';
 import { timeToString } from '../utils';
 import { useCalendarEvents } from '../store/eventsStore';
@@ -14,16 +20,33 @@ function isWithinStartWindow(start: Date): boolean {
   return start.getTime() - Date.now() <= FIVE_MINUTES_MS;
 }
 
-function mapEventToLessonInfo(event: ICalendarEvent) {
-  const startTime = event.isAllDay ? null : timeToString(new Date(event.start));
-  const endTime = event.isAllDay ? null : timeToString(new Date(event.end));
-  const lessonTitle = event.title;
+function mapEventToLessonInfo(
+  event: ICalendarEvent,
+  instanceDetails?: {
+    name: string;
+    description: string | null;
+    starts_at: string;
+    ends_at: string;
+  },
+) {
+  const startTime = event.isAllDay
+    ? null
+    : instanceDetails
+      ? timeToString(new Date(instanceDetails.starts_at))
+      : timeToString(new Date(event.start));
+  const endTime = event.isAllDay
+    ? null
+    : instanceDetails
+      ? timeToString(new Date(instanceDetails.ends_at))
+      : timeToString(new Date(event.end));
+  const lessonTitle = instanceDetails?.name ?? event.title;
   const rawSubject = event.lessonInfo?.subject ?? '';
   const subject =
     rawSubject.trim() !== lessonTitle.trim() && rawSubject.trim().length > 0
       ? rawSubject.trim()
       : '';
-  const desc = event.lessonInfo?.description?.trim();
+  const rawDesc = instanceDetails?.description ?? event.lessonInfo?.description;
+  const desc = rawDesc?.trim();
   const lessonDescription = desc != null && desc.length > 0 ? desc : undefined;
   return { subject, lessonTitle, lessonDescription, startTime, endTime };
 }
@@ -73,6 +96,26 @@ export const useLessonInfoModal = ({
   );
 
   const classroomQuery = isTutor ? tutorClassroomQuery : studentClassroomQuery;
+
+  const eventInstanceId = resolvedEvent?.scheduler?.eventInstanceId ?? '';
+  const canFetchInstanceDetails =
+    classroomId != null && eventInstanceId.length > 0 && resolvedEvent != null;
+
+  const tutorInstanceDetailsQuery = useTutorEventInstanceDetails({
+    classroomId: classroomId ?? 0,
+    eventInstanceId,
+    enabled: isTutor && canFetchInstanceDetails,
+  });
+
+  const studentInstanceDetailsQuery = useStudentEventInstanceDetails({
+    classroomId: classroomId ?? 0,
+    eventInstanceId,
+    enabled: !isTutor && canFetchInstanceDetails,
+  });
+
+  const instanceDetails = isTutor
+    ? tutorInstanceDetailsQuery.data
+    : studentInstanceDetailsQuery.data;
 
   const [canStartNow, setCanStartNow] = useState(() =>
     resolvedEvent ? isWithinStartWindow(new Date(resolvedEvent.start)) : true,
@@ -145,7 +188,7 @@ export const useLessonInfoModal = ({
           onOpenChange={(o) => {
             if (!o) close();
           }}
-          {...mapEventToLessonInfo(resolvedEvent)}
+          {...mapEventToLessonInfo(resolvedEvent, instanceDetails)}
           classroomId={classroomId}
           classroom={classroomQuery.data}
           classroomLoading={classroomId != null && classroomQuery.isLoading}

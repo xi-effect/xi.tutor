@@ -11,9 +11,9 @@ import { RepeatBlock } from './RepeatBlock';
 import type { FC } from 'react';
 import type { EventFormData, EventFormInput } from '../../../../model';
 
-interface DateBlockProps {
+type DateBlockProps = {
   form: ReturnType<typeof useForm<EventFormInput, unknown, EventFormData>>;
-}
+};
 
 export const DateBlock: FC<DateBlockProps> = ({ form }) => {
   const { t } = useTranslation('calendar');

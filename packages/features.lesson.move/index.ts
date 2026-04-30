@@ -1,1 +1,6 @@
-export { MovingLessonModal, type MovingLessonModalProps, type MovingFormProps } from './src';
+export {
+  MovingLessonModal,
+  type MovingLessonModalProps,
+  type MovingFormProps,
+  type RepeatedVirtualRescheduleTarget,
+} from './src';

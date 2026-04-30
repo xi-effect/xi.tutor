@@ -18,9 +18,9 @@ import type { FC } from 'react';
 import { useForm } from '@xipkg/form';
 import type { EventFormData, EventFormInput } from '../../../../model';
 
-interface LessonBlockProps {
+type LessonBlockProps = {
   form: ReturnType<typeof useForm<EventFormInput, unknown, EventFormData>>;
-}
+};
 
 export const LessonBlock: FC<LessonBlockProps> = ({ form }) => {
   const { t } = useTranslation('calendar');

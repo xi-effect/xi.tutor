@@ -4,6 +4,7 @@ import { Button } from '@xipkg/button';
 import { DayLessonsPanel } from 'modules.calendar';
 import type { ScheduleLessonRow } from 'modules.calendar';
 import { MovingForm } from './components/MovingForm';
+import type { RepeatedVirtualRescheduleTarget } from '../hooks';
 import type { FormData } from '../model';
 import './MovingModal.css';
 
@@ -71,6 +72,11 @@ export type MovingLessonModalProps = {
   teacherAvatarUrl?: string | null;
   /** День недели серии (0 — пн), для подсказки при «Это занятие» */
   seriesWeekdayIndex?: number;
+  /**
+   * Параметры для переноса виртуального повторяющегося инстанса (`repeated_virtual`).
+   * Если задан и `onSubmit` не передан — при сабмите вызывается PUT reschedule API.
+   */
+  schedulerTarget?: RepeatedVirtualRescheduleTarget;
   onSubmit?: (data: FormData) => void | Promise<void>;
 };
 
@@ -93,6 +99,7 @@ export const MovingLessonModal = ({
   lessonDescription,
   teacherAvatarUrl = null,
   seriesWeekdayIndex = 0,
+  schedulerTarget,
   onSubmit,
 }: MovingLessonModalProps) => {
   const [selectedDate, setSelectedDate] = useState(getToday);
@@ -146,6 +153,7 @@ export const MovingLessonModal = ({
                 lessonDescription={lessonDescription}
                 teacherAvatarUrl={teacherAvatarUrl}
                 seriesWeekdayIndex={seriesWeekdayIndex}
+                schedulerTarget={schedulerTarget}
                 onSubmit={onSubmit}
                 onSubmittingChange={handleSubmittingChange}
               />

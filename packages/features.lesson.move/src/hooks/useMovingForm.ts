@@ -2,10 +2,21 @@ import { useMemo } from 'react';
 import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
+import { useRescheduleRepeatedVirtualInstance } from 'modules.calendar';
 import { createMovingFormSchema, type FormData, type FormInput } from '../model/formSchema';
+import { timeToMinutes } from '../utils/utils';
+
+/** Параметры для переноса виртуального повторяющегося инстанса */
+export type RepeatedVirtualRescheduleTarget = {
+  classroomId: number;
+  repetitionModeId: string;
+  instanceIndex: number;
+};
 
 type UseMovingFormOptions = {
   onSubmit?: (data: FormData) => void | Promise<void>;
+  /** Если передан — при сабмите вызывается PUT reschedule для repeated_virtual */
+  schedulerTarget?: RepeatedVirtualRescheduleTarget;
 };
 
 const getDefaultValues = (
@@ -24,6 +35,17 @@ const getDefaultValues = (
   };
 };
 
+function buildStartsAt(startDate: Date, startTime: string): string {
+  const [hours, minutes] = startTime.split(':').map(Number);
+  const d = new Date(startDate);
+  d.setHours(hours!, minutes!, 0, 0);
+  return d.toISOString();
+}
+
+function buildDurationSeconds(startTime: string, endTime: string): number {
+  return (timeToMinutes(endTime) - timeToMinutes(startTime)) * 60;
+}
+
 export const useMovingForm = (
   lessonKind: 'one-off' | 'recurring',
   initialDate?: Date | null,
@@ -31,8 +53,9 @@ export const useMovingForm = (
   initialEndTime?: string | null,
   options: UseMovingFormOptions = {},
 ) => {
-  const { onSubmit: externalSubmit } = options;
+  const { onSubmit: externalSubmit, schedulerTarget } = options;
   const schema = useMemo(() => createMovingFormSchema(lessonKind), [lessonKind]);
+  const reschedule = useRescheduleRepeatedVirtualInstance();
 
   const form = useForm<FormInput, unknown, FormData>({
     resolver: zodResolver(schema),
@@ -48,21 +71,20 @@ export const useMovingForm = (
       return;
     }
 
-    const payload = {
-      startDate: data.startDate,
-      startTime: data.startTime,
-      endTime: data.endTime,
-      ...(lessonKind === 'recurring' && data.moveMode
-        ? {
-            moveMode: data.moveMode,
-            repeatWeekdays: data.moveMode === 'single_and_next' ? data.repeatWeekdays : undefined,
-          }
-        : {}),
-    };
+    if (schedulerTarget) {
+      await reschedule.mutateAsync({
+        classroomId: schedulerTarget.classroomId,
+        repetitionModeId: schedulerTarget.repetitionModeId,
+        instanceIndex: schedulerTarget.instanceIndex,
+        body: {
+          starts_at: buildStartsAt(data.startDate, data.startTime),
+          duration_seconds: buildDurationSeconds(data.startTime, data.endTime),
+        },
+      });
+      toast.success('Занятие перенесено');
+      return;
+    }
 
-    console.log('move payload', payload);
-
-    // TODO: подключить API переноса урока
     toast.success('Занятие перенесено');
   };
 

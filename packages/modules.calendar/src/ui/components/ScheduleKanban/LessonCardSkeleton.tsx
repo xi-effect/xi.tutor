@@ -2,12 +2,12 @@ import { memo } from 'react';
 import { cn } from '@xipkg/utils';
 import { CARD_MIN_WIDTH, CARD_MAX_WIDTH } from '../../../hooks/useKanbanColumns';
 
-interface LessonCardSkeletonProps {
+type LessonCardSkeletonProps = {
   /** День колонки — сегодня (рамка brand, как у LessonCard) */
   isToday?: boolean;
   /** На всю ширину контейнера (мобильный список) */
   fullWidth?: boolean;
-}
+};
 
 export const LessonCardSkeleton = memo<LessonCardSkeletonProps>(({ isToday, fullWidth }) => {
   const barThin = 'bg-gray-20 dark:bg-gray-30 animate-pulse rounded-lg';

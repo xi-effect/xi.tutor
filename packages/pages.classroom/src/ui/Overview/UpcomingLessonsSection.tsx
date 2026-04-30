@@ -1,14 +1,52 @@
+import { useMemo } from 'react';
 import { useParams, useNavigate, useSearch } from '@tanstack/react-router';
 import { Add } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { useCurrentUser } from 'common.services';
+import {
+  useTutorClassroomSchedule,
+  useStudentClassroomSchedule,
+  type ScheduleItem,
+} from 'modules.calendar';
+import type { ScheduleLessonRow } from 'modules.calendar';
 import { useClassroomSchedule } from '../Calendar/ClassroomScheduleContext';
 import { UpcomingLessonCard } from './UpcomingLessonCard';
-import { getMockUpcomingLessons } from './getMockUpcomingLessons';
+import { UpcomingLessonCardSkeleton } from './UpcomingLessonCardSkeleton';
+
+function getUpcomingRange() {
+  const now = new Date();
+  const happensAfter = now.toISOString();
+  const end = new Date(now);
+  end.setDate(end.getDate() + 7);
+  const happensBefore = end.toISOString();
+  return { happensAfter, happensBefore };
+}
+
+function formatTime(date: Date): string {
+  const h = String(date.getHours()).padStart(2, '0');
+  const m = String(date.getMinutes()).padStart(2, '0');
+  return `${h}:${m}`;
+}
+
+function scheduleItemToRow(item: ScheduleItem): ScheduleLessonRow {
+  const startDate = new Date(item.startsAt);
+  const endDate = new Date(item.endsAt);
+  return {
+    id: item.eventId,
+    classroomId: item.classroomId ?? undefined,
+    startAt: startDate,
+    startTime: formatTime(startDate),
+    endTime: formatTime(endDate),
+    subject: item.title,
+    description: item.description ?? undefined,
+    studentName: '',
+    studentId: 0,
+  };
+}
 
 export const UpcomingLessonsSection = () => {
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const { onAddLessonClick } = useClassroomSchedule();
   const navigate = useNavigate();
@@ -18,6 +56,31 @@ export const UpcomingLessonsSection = () => {
   });
   const classroomId = Number(classroomIdParam);
 
+  const range = useMemo(() => getUpcomingRange(), []);
+
+  const tutorScheduleQuery = useTutorClassroomSchedule({
+    classroomId,
+    ...range,
+    enabled: !isUserLoading && isTutor === true,
+  });
+
+  const studentScheduleQuery = useStudentClassroomSchedule({
+    classroomId,
+    ...range,
+    enabled: !isUserLoading && isTutor === false,
+  });
+
+  const scheduleQuery = isTutor ? tutorScheduleQuery : studentScheduleQuery;
+  const isLoading = isUserLoading || scheduleQuery.isLoading;
+
+  const lessons = useMemo<ScheduleLessonRow[]>(() => {
+    if (!scheduleQuery.data) return [];
+    return scheduleQuery.data
+      .filter((item) => item.cancelledAt == null)
+      .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())
+      .map(scheduleItemToRow);
+  }, [scheduleQuery.data]);
+
   const goSchedule = () => {
     const filteredSearch = search.call ? { call: search.call } : {};
     navigate({
@@ -25,8 +88,6 @@ export const UpcomingLessonsSection = () => {
       search: { tab: 'schedule', ...filteredSearch },
     });
   };
-
-  const lessons = getMockUpcomingLessons(classroomId);
 
   return (
     <div className="flex flex-col gap-4">
@@ -53,15 +114,25 @@ export const UpcomingLessonsSection = () => {
           scrollBarProps={{ orientation: 'horizontal' }}
         >
           <div className="flex w-max flex-row gap-4 pr-1 pb-4">
-            {lessons.map((lesson, index) => (
-              <UpcomingLessonCard
-                key={lesson.id}
-                lesson={lesson}
-                classroomId={classroomId}
-                isNearest={index === 0}
-                onReschedule={goSchedule}
-              />
-            ))}
+            {isLoading ? (
+              <>
+                <UpcomingLessonCardSkeleton />
+                <UpcomingLessonCardSkeleton />
+                <UpcomingLessonCardSkeleton />
+              </>
+            ) : lessons.length === 0 ? (
+              <p className="text-gray-40 self-center text-sm">Ближайших занятий нет</p>
+            ) : (
+              lessons.map((lesson, index) => (
+                <UpcomingLessonCard
+                  key={`${lesson.classroomId}-${lesson.startAt?.toISOString()}`}
+                  lesson={lesson}
+                  classroomId={classroomId}
+                  isNearest={index === 0}
+                  onReschedule={goSchedule}
+                />
+              ))
+            )}
           </div>
         </ScrollArea>
       </div>

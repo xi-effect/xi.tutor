@@ -1,1 +1,1 @@
-export { useMovingForm } from './useMovingForm';
+export { useMovingForm, type RepeatedVirtualRescheduleTarget } from './useMovingForm';

@@ -7,7 +7,7 @@ import { Input } from '@xipkg/input';
 import { useMaskInput } from '@xipkg/inputmask';
 import { ArrowRight, Clock, InfoCircle } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
-import { useMovingForm } from '../../hooks';
+import { useMovingForm, type RepeatedVirtualRescheduleTarget } from '../../hooks';
 import type { FormData } from '../../model';
 import {
   formatDurationBetweenRu,
@@ -32,6 +32,11 @@ export type MovingFormProps = PropsWithChildren<{
   teacherAvatarUrl?: string | null;
   /** День недели серии (0 — пн), для текста подсказки в режиме «Это занятие» */
   seriesWeekdayIndex?: number;
+  /**
+   * Параметры для переноса виртуального повторяющегося инстанса.
+   * Когда задан и `onSubmit` не передан — вызывается PUT reschedule API.
+   */
+  schedulerTarget?: RepeatedVirtualRescheduleTarget;
   onSubmit?: (data: FormData) => void | Promise<void>;
   onSubmittingChange?: (isSubmitting: boolean) => void;
 }>;
@@ -72,6 +77,7 @@ export const MovingForm: FC<MovingFormProps> = ({
   lessonDescription,
   teacherAvatarUrl,
   seriesWeekdayIndex = 0,
+  schedulerTarget,
   onSubmit: externalSubmit,
   onSubmittingChange,
 }) => {
@@ -80,7 +86,7 @@ export const MovingForm: FC<MovingFormProps> = ({
     initialDate,
     initialStartTime,
     initialEndTime,
-    { onSubmit: externalSubmit },
+    { onSubmit: externalSubmit, schedulerTarget },
   );
 
   const { isSubmitting } = useFormState({ control });

@@ -27,7 +27,7 @@ const getEventDateKeys = (event: ICalendarEvent): string[] => {
   return keys;
 };
 
-interface EventsStore {
+type EventsStore = {
   events: ICalendarEvent[];
   /** Пока true — в канбане и мобильном расписании показываются скелетоны карточек */
   eventsLoading: boolean;
@@ -40,7 +40,7 @@ interface EventsStore {
   addEvent: (event: ICalendarEvent) => void;
   updateEvent: (eventId: string, updates: Partial<ICalendarEvent>) => void;
   deleteEvent: (eventId: string) => void;
-}
+};
 
 const useEventsStore = create<EventsStore>((set, get) => ({
   events: MOCK_EVENTS,
