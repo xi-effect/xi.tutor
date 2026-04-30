@@ -14,7 +14,8 @@ export type ICalendarEvent = {
 
 export type ILessonInfo = {
   studentName: string;
-  subject: string;
+  /** Академический предмет из домена занятия; в расписании кабинета обычно нет — берётся из кабинета (`subject_id`) */
+  subject?: string;
   lessonType: LessonType;
   description?: string;
   paid?: boolean;

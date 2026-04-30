@@ -16,9 +16,11 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { LessonInfoClassroomBlock } from './LessonInfoClassroomBlock';
 
 export type LessonInfoChangeLessonConfig = {
-  subject: string;
-  participantName: string;
-  participantId?: number;
+  hideClassroomAndSubject?: boolean;
+  subjectName?: string | null;
+  classroomName: string;
+  classroomLineUserId?: number;
+  teacherId?: number;
   defaultTitle: string;
   defaultDescription?: string;
   onSave: (data: ChangeLessonFormData) => void;
@@ -27,8 +29,10 @@ export type LessonInfoChangeLessonConfig = {
 export type LessonInfoModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** Подпись над карточкой, если нет бейджа предмета из кабинета */
+  /** Предмет из события (редко), только если не совпадает с названием занятия */
   subject: string;
+  /** Предмет как на LessonCard: из списка кабинетов + API предметов по `subject_id` (до/параллельно GET кабинета) */
+  presentationSubjectName?: string;
   /** Название занятия (как в расписании / в событии) */
   lessonTitle: string;
   /** Текстовое описание (тема, план) — показывается под названием */
@@ -58,6 +62,7 @@ export const LessonInfoModal = ({
   open,
   onOpenChange,
   subject,
+  presentationSubjectName,
   lessonTitle,
   lessonDescription,
   classroomId,
@@ -93,11 +98,13 @@ export const LessonInfoModal = ({
   const showEdit = changeLesson != null || onEditLesson != null;
 
   const showClassroomBlock = classroomId != null;
-  const hasClassroomSubjectLabel = Boolean(classroom?.subject?.name?.trim());
-  const showSubjectFallback =
-    subject.trim().length > 0 &&
-    !hasClassroomSubjectLabel &&
-    (!showClassroomBlock || !classroomLoading);
+  /** Как предмет на LessonCard: кабинет → та же цепочка, что у канбана (presentation) → осмысленная строка из события */
+  const lessonTitleTrimmed = lessonTitle.trim();
+  const subjectHeadingLabel =
+    classroom?.subject?.name?.trim() ||
+    presentationSubjectName?.trim() ||
+    (subject.trim().length > 0 && subject.trim() !== lessonTitleTrimmed ? subject.trim() : '') ||
+    '';
 
   const openEdit = () => {
     if (changeLesson != null) {
@@ -120,7 +127,9 @@ export const LessonInfoModal = ({
 
           <ModalBody className="flex flex-col gap-4 px-6 pt-0 pb-4">
             <div className="border-gray-10 flex flex-col gap-2 rounded-2xl border bg-white p-5">
-              {showSubjectFallback ? <span className="text-gray-40 text-xs">{subject}</span> : null}
+              {subjectHeadingLabel ? (
+                <span className="text-gray-40 text-xs">{subjectHeadingLabel}</span>
+              ) : null}
 
               {showClassroomBlock ? (
                 <LessonInfoClassroomBlock

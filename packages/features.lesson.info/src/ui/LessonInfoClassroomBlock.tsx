@@ -89,18 +89,9 @@ export const LessonInfoClassroomBlock: FC<LessonInfoClassroomBlockProps> = ({
   }
 
   const heading = classroomHeadingText(classroom);
-  const subjectLabel = classroom.subject?.name?.trim() ?? '';
 
   return (
     <>
-      {subjectLabel.length > 0 ? (
-        <div className="flex min-h-0 w-full flex-row items-center">
-          <span className="text-xs-base text-gray-60 line-clamp-2 max-w-full font-medium">
-            {subjectLabel}
-          </span>
-        </div>
-      ) : null}
-
       <div className="flex min-w-0 flex-row gap-2">
         {classroom.kind === 'individual' ? (
           <LessonInfoUserAvatar classroom={classroom} isLoading={false} />

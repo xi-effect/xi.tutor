@@ -1,5 +1,4 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Badge } from '@xipkg/badge';
 import { Button } from '@xipkg/button';
 import { Form, FormControl, FormField, FormItem, FormMessage, useForm } from '@xipkg/form';
 import { Input } from '@xipkg/input';
@@ -13,18 +12,75 @@ import {
   ModalHeader,
   ModalTitle,
 } from '@xipkg/modal';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { UserProfile } from '@xipkg/userprofile';
 import { cn } from '@xipkg/utils';
-import { useEffect } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { z } from 'zod';
 import { changeLessonFormSchema, type ChangeLessonFormData } from '../model';
+
+/** Как строка кабинета в {@link LessonCard} ScheduleKanban: аватар + подпись с truncate и Tooltip при обрезке. */
+function ChangeLessonModalClassroomLine({
+  classroomName,
+  userId,
+}: {
+  classroomName: string;
+  userId: number;
+}) {
+  const labelRef = useRef<HTMLSpanElement>(null);
+  const [isTruncated, setIsTruncated] = useState(false);
+
+  useLayoutEffect(() => {
+    const el = labelRef.current;
+    if (!el) return;
+
+    const update = () => {
+      setIsTruncated(el.scrollWidth > el.clientWidth + 1);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [classroomName]);
+
+  return (
+    <div className="flex w-full min-w-0 items-center gap-1.5">
+      <UserProfile
+        className="min-w-0 shrink-0"
+        size="s"
+        userId={userId}
+        text={classroomName}
+        withOutText
+      />
+      <Tooltip {...(!isTruncated ? { open: false } : {})}>
+        <TooltipTrigger asChild>
+          <span
+            ref={labelRef}
+            className="text-xs-base-size min-w-0 flex-1 truncate text-left leading-normal text-gray-100"
+          >
+            {classroomName}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent align="start" side="top" className="max-w-sm font-normal wrap-break-word">
+          {classroomName}
+        </TooltipContent>
+      </Tooltip>
+    </div>
+  );
+}
 
 export type ChangeLessonModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  subject: string;
-  participantName: string;
-  participantId?: number;
+  /** Как у LessonCard: скрыть строки предмета и кабинета (расписание внутри одного кабинета). */
+  hideClassroomAndSubject?: boolean;
+  /** Название предмета из API кабинета — строка `text-gray-40 text-xs`, как на LessonCard */
+  subjectName?: string | null;
+  /** Подпись строки кабинета / участника */
+  classroomName: string;
+  /** userId для аватара строки кабинета: как `avatarUserId ?? teacherId` на LessonCard */
+  classroomLineUserId?: number;
+  teacherId?: number;
   defaultTitle: string;
   defaultDescription?: string;
   onSave: (data: ChangeLessonFormData) => void;
@@ -33,9 +89,11 @@ export type ChangeLessonModalProps = {
 export const ChangeLessonModal = ({
   open,
   onOpenChange,
-  subject,
-  participantName,
-  participantId,
+  hideClassroomAndSubject = false,
+  subjectName,
+  classroomName,
+  classroomLineUserId,
+  teacherId,
   defaultTitle,
   defaultDescription = '',
   onSave,
@@ -82,6 +140,8 @@ export const ChangeLessonModal = ({
     handleClose();
   };
 
+  const lineUserId = classroomLineUserId ?? teacherId ?? 0;
+
   return (
     <Modal open={open} onOpenChange={handleOpenChange}>
       <ModalContent className="relative w-full max-w-[480px]" aria-describedby={undefined}>
@@ -95,15 +155,18 @@ export const ChangeLessonModal = ({
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <ModalBody className="flex flex-col gap-4 px-6 pt-0 pb-4">
-              <div className="flex items-center gap-3">
-                <UserProfile size="s" userId={participantId ?? 0} text={participantName} />
-                <Badge
-                  size="m"
-                  className="text-gray-60 bg-gray-10 text-s-base ml-auto shrink-0 rounded-lg border-none px-2 py-1 font-medium"
-                >
-                  <span className="max-w-[180px] truncate">{subject}</span>
-                </Badge>
-              </div>
+              {!hideClassroomAndSubject ? (
+                <div className="flex min-w-0 flex-col gap-2">
+                  {subjectName != null ? (
+                    <span className="text-gray-40 text-xs">{subjectName}</span>
+                  ) : null}
+
+                  <ChangeLessonModalClassroomLine
+                    classroomName={classroomName}
+                    userId={lineUserId}
+                  />
+                </div>
+              ) : null}
 
               <div className="flex flex-col gap-3">
                 <span className="text-sm font-medium text-gray-100">О занятии</span>

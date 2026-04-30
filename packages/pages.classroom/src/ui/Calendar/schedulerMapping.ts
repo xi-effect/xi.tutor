@@ -48,7 +48,6 @@ export const mapScheduleItemToCalendarEvent = (item: ScheduleItem): ICalendarEve
   isCancelled: item.cancelledAt != null,
   lessonInfo: {
     studentName: item.title,
-    subject: item.title,
     lessonType: 'individual',
     description: item.description ?? undefined,
     classroomId: item.classroomId ?? undefined,

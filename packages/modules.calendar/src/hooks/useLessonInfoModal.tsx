@@ -12,6 +12,7 @@ import {
 import type { ICalendarEvent } from '../ui/types';
 import { timeToString } from '../utils';
 import { useCalendarEvents } from '../store/eventsStore';
+import { useLessonClassroomPresentation } from './useLessonClassroomPresentation';
 
 const FIVE_MINUTES_MS = 5 * 60 * 1000;
 const SCHEDULE_TOOLTIP = 'Кнопка станет активной за 5 минут до начала занятия';
@@ -41,23 +42,16 @@ function mapEventToLessonInfo(
       : timeToString(new Date(event.end));
   const lessonTitle = instanceDetails?.name ?? event.title;
   const rawSubject = event.lessonInfo?.subject ?? '';
+  const rawSubjectTrimmed = rawSubject.trim();
+  /** Отдельная строка предмета из события — только если не дублирует название занятия (имя слота ≠ учебный предмет). */
   const subject =
-    rawSubject.trim() !== lessonTitle.trim() && rawSubject.trim().length > 0
-      ? rawSubject.trim()
+    rawSubjectTrimmed.length > 0 && rawSubjectTrimmed !== lessonTitle.trim()
+      ? rawSubjectTrimmed
       : '';
   const rawDesc = instanceDetails?.description ?? event.lessonInfo?.description;
   const desc = rawDesc?.trim();
   const lessonDescription = desc != null && desc.length > 0 ? desc : undefined;
   return { subject, lessonTitle, lessonDescription, startTime, endTime };
-}
-
-function mapEventToChangeLesson(event: ICalendarEvent) {
-  const subject = event.lessonInfo?.subject ?? event.title;
-  const participantName = event.lessonInfo?.studentName ?? event.title;
-  const participantId = event.lessonInfo?.teacherId;
-  const defaultTitle = event.title;
-  const defaultDescription = event.lessonInfo?.description ?? '';
-  return { subject, participantName, participantId, defaultTitle, defaultDescription };
 }
 
 export type UseLessonInfoModalOptions = {
@@ -116,6 +110,13 @@ export const useLessonInfoModal = ({
   const instanceDetails = isTutor
     ? tutorInstanceDetailsQuery.data
     : studentInstanceDetailsQuery.data;
+
+  const changeLessonPresentation = useLessonClassroomPresentation({
+    classroomId: resolvedEvent?.lessonInfo?.classroomId,
+    fallbackClassroomName: resolvedEvent?.lessonInfo?.studentName ?? resolvedEvent?.title ?? '',
+    fallbackAvatarUserId: resolvedEvent?.lessonInfo?.teacherId,
+    enabled: resolvedEvent != null,
+  });
 
   const [canStartNow, setCanStartNow] = useState(() =>
     resolvedEvent ? isWithinStartWindow(new Date(resolvedEvent.start)) : true,
@@ -189,6 +190,7 @@ export const useLessonInfoModal = ({
             if (!o) close();
           }}
           {...mapEventToLessonInfo(resolvedEvent, instanceDetails)}
+          presentationSubjectName={changeLessonPresentation.subjectName}
           classroomId={classroomId}
           classroom={classroomQuery.data}
           classroomLoading={classroomId != null && classroomQuery.isLoading}
@@ -197,9 +199,17 @@ export const useLessonInfoModal = ({
           startLessonTooltip={startLessonTooltip}
           onReschedule={() => onReschedule?.(resolvedEvent)}
           changeLesson={
-            onSaveLesson != null
+            onSaveLesson != null && resolvedEvent != null
               ? {
-                  ...mapEventToChangeLesson(resolvedEvent),
+                  hideClassroomAndSubject: false,
+                  subjectName: changeLessonPresentation.subjectName,
+                  classroomName: changeLessonPresentation.classroomName,
+                  classroomLineUserId:
+                    changeLessonPresentation.avatarUserId ??
+                    resolvedEvent.lessonInfo?.teacherId ??
+                    0,
+                  defaultTitle: resolvedEvent.title,
+                  defaultDescription: resolvedEvent.lessonInfo?.description ?? '',
                   onSave: (data) => onSaveLesson(resolvedEvent, data),
                 }
               : undefined

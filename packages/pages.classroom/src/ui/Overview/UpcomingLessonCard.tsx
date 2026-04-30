@@ -13,6 +13,9 @@ type UpcomingLessonCardProps = {
   classroomId: number;
   isNearest: boolean;
   onReschedule: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  showActions?: boolean;
 };
 
 export const UpcomingLessonCard = ({
@@ -20,6 +23,9 @@ export const UpcomingLessonCard = ({
   classroomId,
   isNearest,
   onReschedule,
+  onEdit,
+  onDelete,
+  showActions = true,
 }: UpcomingLessonCardProps) => {
   const dateLabel = lesson.startAt ? formatUpcomingDate(lesson.startAt) : '—';
   const endAt = getScheduleLessonEndAt(lesson, lesson.startAt) ?? undefined;
@@ -27,7 +33,7 @@ export const UpcomingLessonCard = ({
   return (
     <div
       className={cn(
-        'group/lesson-card flex w-full max-w-[min(100%,400px)] min-w-[300px] flex-col gap-2 rounded-2xl border bg-white p-5 sm:min-w-[320px]',
+        'group/lesson-card flex min-h-[220px] w-full max-w-[min(100%,400px)] min-w-[300px] flex-col gap-2 rounded-2xl border bg-white p-5 sm:min-w-[320px]',
         isNearest ? 'border-brand-80 border-2' : 'border-gray-10 border',
       )}
     >
@@ -35,38 +41,41 @@ export const UpcomingLessonCard = ({
         <span className="text-xs-base text-brand-80 min-w-0 font-medium first-letter:uppercase">
           {dateLabel}
         </span>
-        <div className="absolute top-[-16px] right-0 flex shrink-0 gap-1 opacity-0 transition-all duration-200 ease-linear group-hover/lesson-card:top-[-4px] group-hover/lesson-card:opacity-100">
-          <Button
-            type="button"
-            variant="none"
-            size="s"
-            className="text-gray-60 hover:text-gray-80 h-6 w-6 p-0"
-            onClick={onReschedule}
-            title="Перенести"
-            aria-label="Перенести занятие"
-          >
-            <CornerUpRight className="text-gray-60 h-4 w-4" />
-          </Button>
-          <Button
-            type="button"
-            variant="none"
-            size="s"
-            className="text-gray-60 hover:text-gray-80 h-6 w-6 p-0"
-            title="Скоро"
-            aria-label="Редактировать занятие"
-          >
-            <Edit05 className="text-gray-60 h-4 w-4" />
-          </Button>
-          <Button
-            type="button"
-            variant="none"
-            size="s"
-            className="text-gray-60 hover:text-gray-80 h-6 w-6 p-0"
-            aria-label="Удалить занятие"
-          >
-            <Trash className="fill-gray-60 h-4 w-4" />
-          </Button>
-        </div>
+        {showActions ? (
+          <div className="absolute top-[-16px] right-0 flex shrink-0 gap-1 opacity-0 transition-all duration-200 ease-linear group-hover/lesson-card:top-[-4px] group-hover/lesson-card:opacity-100">
+            <Button
+              type="button"
+              variant="none"
+              size="s"
+              className="text-gray-60 hover:text-gray-80 h-6 w-6 p-0"
+              onClick={onReschedule}
+              title="Перенести"
+              aria-label="Перенести занятие"
+            >
+              <CornerUpRight className="text-gray-60 h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="none"
+              size="s"
+              className="text-gray-60 hover:text-gray-80 h-6 w-6 p-0"
+              onClick={onEdit}
+              aria-label="Редактировать занятие"
+            >
+              <Edit05 className="text-gray-60 h-4 w-4" />
+            </Button>
+            <Button
+              type="button"
+              variant="none"
+              size="s"
+              className="text-gray-60 hover:text-gray-80 h-6 w-6 p-0"
+              onClick={onDelete}
+              aria-label="Удалить занятие"
+            >
+              <Trash className="fill-gray-60 h-4 w-4" />
+            </Button>
+          </div>
+        ) : null}
       </div>
 
       {/* Время как в ScheduleKanban/LessonCard: часы — линия — часы */}
