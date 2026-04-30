@@ -3,7 +3,7 @@ import { memo, useCallback, useEffect, useState } from 'react';
 import { Button } from '@xipkg/button';
 import { DatePicker } from '@xipkg/datepicker';
 import { Calendar } from '@xipkg/icons';
-import { getShortDateString } from '../../utils/utils';
+import { getShortDateString } from '../../utils';
 
 interface InputDateProps {
   value?: Date;

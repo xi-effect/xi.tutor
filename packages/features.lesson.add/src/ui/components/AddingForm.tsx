@@ -16,7 +16,7 @@ import { cn } from '@xipkg/utils';
 import { useAddingForm } from '../../hooks';
 import { InputDate } from './InputDate';
 import { StudentSelector } from './StudentSelector';
-import { formatDurationBetweenRu } from '../../utils/utils';
+import { formatDurationBetweenRu } from '../../utils';
 
 import { useEffect, useMemo } from 'react';
 import type { FC, PropsWithChildren } from 'react';

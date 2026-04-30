@@ -1,5 +1,5 @@
 import * as z from 'zod';
-import { timeToMinutes } from '../utils/utils';
+import { timeToMinutes } from '../utils';
 
 // Валидация времени HH:MM (пустая строка допустима до отправки формы)
 const timeValidation = z.string().refine((time) => {
