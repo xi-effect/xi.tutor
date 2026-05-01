@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
 import type { FC, PropsWithChildren } from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
+import { UserProfile } from '@xipkg/userprofile';
 import {
   Form,
   FormField,
@@ -14,7 +14,12 @@ import { Input } from '@xipkg/input';
 import { useMaskInput } from '@xipkg/inputmask';
 import { ArrowRight, Clock, InfoCircle } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
-import { useMovingForm, type RepeatedVirtualRescheduleTarget } from '../../hooks';
+import { useLessonClassroomPresentation } from 'modules.calendar';
+import {
+  useMovingForm,
+  type RepeatedVirtualRescheduleTarget,
+  type SoleRescheduleTarget,
+} from '../../hooks';
 import type { FormData } from '../../model';
 import {
   formatDurationBetweenRu,
@@ -32,11 +37,14 @@ export type MovingFormProps = PropsWithChildren<{
   initialStartTime?: string | null;
   initialEndTime?: string | null;
   lessonKind: 'one-off' | 'recurring';
-  teacherName: string;
-  subjectLabel: string;
+  /** id кабинета для отображения названия, предмета и аватара через useLessonClassroomPresentation */
+  classroomId?: number;
+  /** id пользователя (репетитор/студент) — запасной аватар если кабинет не загружен */
+  teacherId?: number;
+  /** Запасное название кабинета до загрузки данных */
+  fallbackName?: string;
   lessonTitle: string;
   lessonDescription?: string;
-  teacherAvatarUrl?: string | null;
   /** День недели серии (0 — пн), для текста подсказки в режиме «Это занятие» */
   seriesWeekdayIndex?: number;
   /**
@@ -44,6 +52,11 @@ export type MovingFormProps = PropsWithChildren<{
    * Когда задан и `onSubmit` не передан — вызывается PUT reschedule API.
    */
   schedulerTarget?: RepeatedVirtualRescheduleTarget;
+  /**
+   * Параметры для переноса инстанса с явным id (sole / repeated_persistent).
+   * Когда задан и `onSubmit` не передан — вызывается PUT /event-instances/{id}/time-slot/.
+   */
+  soleTarget?: SoleRescheduleTarget;
   onSubmit?: (data: FormData) => void | Promise<void>;
   onSubmittingChange?: (isSubmitting: boolean) => void;
 }>;
@@ -78,13 +91,14 @@ export const MovingForm: FC<MovingFormProps> = ({
   initialStartTime,
   initialEndTime,
   lessonKind,
-  teacherName,
-  subjectLabel,
+  classroomId,
+  teacherId,
+  fallbackName = '',
   lessonTitle,
   lessonDescription,
-  teacherAvatarUrl,
   seriesWeekdayIndex = 0,
   schedulerTarget,
+  soleTarget,
   onSubmit: externalSubmit,
   onSubmittingChange,
 }) => {
@@ -93,7 +107,7 @@ export const MovingForm: FC<MovingFormProps> = ({
     initialDate,
     initialStartTime,
     initialEndTime,
-    { onSubmit: externalSubmit, schedulerTarget },
+    { onSubmit: externalSubmit, schedulerTarget, soleTarget },
   );
 
   const { isSubmitting } = useFormState({ control });
@@ -153,6 +167,12 @@ export const MovingForm: FC<MovingFormProps> = ({
     [showInfoBanner, moveMode, startDate, startTime, endTime, repeatWeekdays, seriesWeekdayIndex],
   );
 
+  const { classroomName, avatarUserId, subjectName } = useLessonClassroomPresentation({
+    classroomId,
+    fallbackClassroomName: fallbackName,
+    fallbackAvatarUserId: teacherId,
+  });
+
   const handleReset = () => {
     handleClearForm();
     onClose();
@@ -163,8 +183,6 @@ export const MovingForm: FC<MovingFormProps> = ({
     onClose();
   };
 
-  const initial = teacherName.trim().charAt(0).toUpperCase() || '?';
-
   return (
     <Form {...form}>
       <form
@@ -173,23 +191,31 @@ export const MovingForm: FC<MovingFormProps> = ({
         onReset={handleReset}
         className="flex w-full min-w-0 flex-col gap-4"
       >
-        <div className="flex gap-3">
-          <Avatar size="m">
-            {teacherAvatarUrl ? <AvatarImage src={teacherAvatarUrl} alt="" size="m" /> : null}
-            <AvatarFallback size="m">{initial}</AvatarFallback>
-          </Avatar>
-          <div className="min-w-0 flex-1">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <span className="text-md-base font-medium text-gray-100">{teacherName}</span>
-              <span className="bg-gray-10 text-gray-80 shrink-0 rounded-full px-2.5 py-1 text-xs font-medium">
-                {subjectLabel}
+        <div className="grid w-full min-w-0 grid-cols-[auto_minmax(0,1fr)] gap-x-3 gap-y-1">
+          <UserProfile
+            size="m"
+            userId={avatarUserId ?? 0}
+            withOutText
+            className="row-start-1 self-center"
+          />
+          <div className="row-start-1 flex min-w-0 flex-wrap items-center justify-between gap-x-2 gap-y-1">
+            <span className="text-md-base leading-snug font-medium text-gray-100">
+              {classroomName}
+            </span>
+            {subjectName ? (
+              <span className="bg-gray-10 text-gray-80 shrink-0 rounded-full px-2.5 py-1 text-xs leading-none font-medium">
+                {subjectName}
               </span>
-            </div>
-            <p className="mt-2 text-base font-semibold text-gray-100">{lessonTitle}</p>
-            {lessonDescription ? (
-              <p className="text-gray-60 mt-1 text-sm leading-normal">{lessonDescription}</p>
             ) : null}
           </div>
+          <p className="col-span-2 row-start-2 mt-5 text-base leading-snug font-semibold text-gray-100">
+            {lessonTitle}
+          </p>
+          {lessonDescription ? (
+            <p className="text-gray-60 col-span-2 row-start-3 mt-1 text-sm leading-normal">
+              {lessonDescription}
+            </p>
+          ) : null}
         </div>
 
         {showSwitcher && (

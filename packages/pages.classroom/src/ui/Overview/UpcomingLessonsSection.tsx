@@ -14,7 +14,11 @@ import type { ChangeLessonFormData } from 'features.lesson.change';
 import { ChangeLessonModal } from 'features.lesson.change';
 import type { ScheduleLessonRow } from 'modules.calendar';
 import { EmptySchedule } from 'common.ui';
-import { MovingLessonModal, type RepeatedVirtualRescheduleTarget } from 'features.lesson.move';
+import {
+  MovingLessonModal,
+  type RepeatedVirtualRescheduleTarget,
+  type SoleRescheduleTarget,
+} from 'features.lesson.move';
 import { CancelLessonModal, type LessonSchedulerMetaForCancel } from 'features.lesson.cancel';
 import { useClassroomSchedule } from '../Calendar/ClassroomScheduleContext';
 import { UpcomingLessonCard } from './UpcomingLessonCard';
@@ -92,6 +96,13 @@ function getSchedulerTarget(
     repetitionModeId: instance.repetition_mode_id,
     instanceIndex: instance.instance_index,
   };
+}
+
+function getSoleTarget(item: ScheduleItem, classroomId: number): SoleRescheduleTarget | undefined {
+  if (item.instanceKind === 'repeated_virtual') return undefined;
+  const instance = item.eventInstance;
+  if (!('id' in instance)) return undefined;
+  return { classroomId, eventInstanceId: instance.id };
 }
 
 export const UpcomingLessonsSection = () => {
@@ -229,12 +240,13 @@ export const UpcomingLessonsSection = () => {
           initialDate={new Date(moveItem.startsAt)}
           initialStartTime={formatTimeHm(new Date(moveItem.startsAt))}
           initialEndTime={formatTimeHm(new Date(moveItem.endsAt))}
-          teacherName={moveItem.title}
-          subjectLabel={moveItem.title}
+          classroomId={moveItem.classroomId ?? undefined}
+          fallbackName={moveItem.title}
           lessonTitle={moveItem.title}
           lessonDescription={moveItem.description ?? undefined}
           seriesWeekdayIndex={jsWeekdayToSeriesIndex(new Date(moveItem.startsAt))}
           schedulerTarget={getSchedulerTarget(moveItem, classroomId)}
+          soleTarget={getSoleTarget(moveItem, classroomId)}
         />
       ) : null}
       {deleteItem != null ? (

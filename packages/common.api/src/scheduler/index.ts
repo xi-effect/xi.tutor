@@ -39,6 +39,7 @@ export enum SchedulerQueryKey {
   UncancelEventInstance = 'UncancelEventInstance',
   CancelRepeatedVirtualInstance = 'CancelRepeatedVirtualInstance',
   RescheduleRepeatedVirtualInstance = 'RescheduleRepeatedVirtualInstance',
+  RescheduleSoleEventInstance = 'RescheduleSoleEventInstance',
 }
 
 // ---------------------------------------------------------------------------
@@ -114,12 +115,20 @@ export const schedulerApiConfig = {
     method: HttpMethod.GET,
   },
 
+  /** Повторяющийся виртуальный инстанс: repetition_mode_id + instance_index */
   [SchedulerQueryKey.RescheduleRepeatedVirtualInstance]: {
     getUrl: (classroomId: string, repetitionModeId: string, instanceIndex: number) =>
       `${classroomBase(
         'tutor',
         classroomId,
       )}/repetition-modes/${repetitionModeId}/instances/${instanceIndex}/time-slot/`,
+    method: HttpMethod.PUT,
+  },
+
+  /** Перенос по event_instance_id: sole, repeated_persistent (тело — EventInstanceTimeSlotInput) */
+  [SchedulerQueryKey.RescheduleSoleEventInstance]: {
+    getUrl: (classroomId: string, eventInstanceId: string) =>
+      `${classroomBase('tutor', classroomId)}/event-instances/${eventInstanceId}/time-slot/`,
     method: HttpMethod.PUT,
   },
 };

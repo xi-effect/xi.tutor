@@ -28,6 +28,7 @@ export {
   getTutorEventInstanceDetails,
   getStudentEventInstanceDetails,
   rescheduleRepeatedVirtualInstance,
+  rescheduleSoleEventInstance,
   createClassroomEvent,
   updateClassroomEvent,
   deleteClassroomEvent,
@@ -41,6 +42,7 @@ export {
   useTutorEventInstanceDetails,
   useStudentEventInstanceDetails,
   useRescheduleRepeatedVirtualInstance,
+  useRescheduleSoleEventInstance,
   useCreateClassroomEvent,
   useUpdateClassroomEvent,
   useDeleteClassroomEvent,
@@ -58,4 +60,5 @@ export {
   type UncancelEventInstanceParams,
   type CancelRepeatedVirtualInstanceParams,
   type RescheduleRepeatedVirtualInstanceParams,
+  type RescheduleSoleEventInstanceParams,
 } from './model/queries';

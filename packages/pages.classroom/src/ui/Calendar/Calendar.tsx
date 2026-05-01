@@ -11,7 +11,11 @@ import {
 import type { ChangeLessonFormData, ICalendarEvent } from 'modules.calendar';
 import { useParams } from '@tanstack/react-router';
 import { useCurrentUser, useGetClassroom, useGetClassroomStudent } from 'common.services';
-import { MovingLessonModal, type RepeatedVirtualRescheduleTarget } from 'features.lesson.move';
+import {
+  MovingLessonModal,
+  type RepeatedVirtualRescheduleTarget,
+  type SoleRescheduleTarget,
+} from 'features.lesson.move';
 import { useClassroomSchedule } from './ClassroomScheduleContext';
 import { CalendarScheduleKanban } from './ClassroomScheduleParts';
 import { getScheduleQueryRange, mapScheduleItemsToCalendarEvents } from './schedulerMapping';
@@ -28,8 +32,6 @@ function formatTimeHm(d: Date): string {
 function movingModalPropsFromEvent(event: ICalendarEvent, classroomId: number) {
   const start = new Date(event.start);
   const end = new Date(event.end);
-  const subject = event.lessonInfo?.subject ?? event.title;
-  const teacherName = event.lessonInfo?.studentName ?? event.title;
   const lessonTitle = event.lessonInfo?.description ?? event.title;
   const instanceKind = event.scheduler?.instanceKind;
   const isRepeatedVirtual = instanceKind === 'repeated_virtual';
@@ -45,18 +47,26 @@ function movingModalPropsFromEvent(event: ICalendarEvent, classroomId: number) {
         }
       : undefined;
 
+  const hasSoleId = event.scheduler?.eventInstanceId != null;
+  const soleTarget: SoleRescheduleTarget | undefined =
+    !isRepeatedVirtual && hasSoleId
+      ? { classroomId, eventInstanceId: event.scheduler!.eventInstanceId! }
+      : undefined;
+
   return {
     lessonKind: isRepeatedVirtual ? ('recurring' as const) : ('one-off' as const),
     initialDate: event.start,
     initialStartTime: event.isAllDay ? null : formatTimeHm(start),
     initialEndTime: event.isAllDay ? null : formatTimeHm(end),
-    teacherName,
-    subjectLabel: subject,
+    classroomId: event.lessonInfo?.classroomId ?? classroomId,
+    teacherId: event.lessonInfo?.teacherId,
+    fallbackName: event.lessonInfo?.studentName ?? event.title,
     lessonTitle,
     lessonDescription: event.lessonInfo?.description,
     formKey: event.id,
     seriesWeekdayIndex: jsWeekdayToSeriesIndex(start),
     schedulerTarget,
+    soleTarget,
   };
 }
 

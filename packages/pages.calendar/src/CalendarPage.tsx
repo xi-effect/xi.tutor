@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { AddingLessonModal } from 'features.lesson.add';
-import { MovingLessonModal } from 'features.lesson.move';
+import { MovingLessonModal, type SoleRescheduleTarget } from 'features.lesson.move';
 import { CalendarModule } from 'modules.calendar';
 import type { ICalendarEvent } from 'modules.calendar';
 
@@ -16,20 +16,27 @@ function formatTimeHm(d: Date): string {
 function movingModalPropsFromEvent(event: ICalendarEvent) {
   const start = new Date(event.start);
   const end = new Date(event.end);
-  const subject = event.lessonInfo?.subject ?? event.title;
-  const teacherName = event.lessonInfo?.studentName ?? event.title;
   const lessonTitle = event.lessonInfo?.description ?? event.title;
+  const classroomId = event.lessonInfo?.classroomId;
+
+  const soleTarget: SoleRescheduleTarget | undefined =
+    event.scheduler?.eventInstanceId != null && classroomId != null
+      ? { classroomId, eventInstanceId: event.scheduler.eventInstanceId }
+      : undefined;
+
   return {
     lessonKind: 'one-off' as const,
     initialDate: event.start,
     initialStartTime: event.isAllDay ? null : formatTimeHm(start),
     initialEndTime: event.isAllDay ? null : formatTimeHm(end),
-    teacherName,
-    subjectLabel: subject,
+    classroomId,
+    teacherId: event.lessonInfo?.teacherId,
+    fallbackName: event.lessonInfo?.studentName ?? event.title,
     lessonTitle,
     lessonDescription: event.lessonInfo?.description,
     formKey: event.id,
     seriesWeekdayIndex: jsWeekdayToSeriesIndex(start),
+    soleTarget,
   };
 }
 

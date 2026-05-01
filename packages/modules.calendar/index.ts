@@ -29,6 +29,10 @@ export { useSetEvents, useSetEventsLoading } from './src/store/eventsStore';
 export type { UseLessonInfoModalOptions } from './src/hooks/useLessonInfoModal';
 export type { UseChangeLessonModalOptions } from './src/hooks/useChangeLessonModal';
 export { calendarEn, calendarRu } from './src/locales';
+export {
+  useLessonClassroomPresentation,
+  type LessonClassroomPresentationT,
+} from './src/hooks/useLessonClassroomPresentation';
 export { getScheduleLessonEndAt } from './src/utils/getScheduleLessonEndAt';
 export {
   StartLessonButton,
@@ -55,6 +59,7 @@ export {
   useTutorEventInstanceDetails,
   useStudentEventInstanceDetails,
   useRescheduleRepeatedVirtualInstance,
+  useRescheduleSoleEventInstance,
   useCreateClassroomEvent,
   useUpdateClassroomEvent,
   useDeleteClassroomEvent,
@@ -81,6 +86,7 @@ export type {
   UncancelEventInstanceParams,
   CancelRepeatedVirtualInstanceParams,
   RescheduleRepeatedVirtualInstanceParams,
+  RescheduleSoleEventInstanceParams,
   GetEventInstanceDetailsParams,
   UseEventInstanceDetailsParams,
   OccurrenceCancelApiTarget,

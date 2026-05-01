@@ -3,4 +3,5 @@ export {
   type MovingLessonModalProps,
   type MovingFormProps,
   type RepeatedVirtualRescheduleTarget,
+  type SoleRescheduleTarget,
 } from './src';

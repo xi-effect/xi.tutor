@@ -64,6 +64,12 @@ export type RescheduleRepeatedVirtualInstanceParams = {
   body: EventInstanceTimeSlotInputDto;
 };
 
+export type RescheduleSoleEventInstanceParams = {
+  classroomId: number;
+  eventInstanceId: string;
+  body: EventInstanceTimeSlotInputDto;
+};
+
 export const schedulerQueryKeys = {
   tutorClassroomSchedule: (classroomId: number, happensAfter: string, happensBefore: string) =>
     ['tutor-classroom-schedule', classroomId, happensAfter, happensBefore] as const,
@@ -81,6 +87,13 @@ export const schedulerQueryKeys = {
 
   studentEventInstanceDetails: (classroomId: number, eventInstanceId: string) =>
     ['student-event-instance-details', classroomId, eventInstanceId] as const,
+
+  /** Префикс для invalidateQueries — все детали инстансов кабинета (см. useLessonInfoModal) */
+  tutorEventInstanceDetailsForClassroom: (classroomId: number) =>
+    ['tutor-event-instance-details', classroomId] as const,
+
+  studentEventInstanceDetailsForClassroom: (classroomId: number) =>
+    ['student-event-instance-details', classroomId] as const,
 } as const;
 
 export async function getTutorClassroomSchedule({
@@ -219,6 +232,17 @@ function invalidateClassroomSchedules(queryClient: QueryClient, classroomId: num
   });
   queryClient.invalidateQueries({
     queryKey: schedulerQueryKeys.studentAllForClassroom(classroomId),
+  });
+}
+
+/** После переноса слота: расписание + GET event-instance (модалка «Информация о занятии») */
+function invalidateAfterRescheduleTimeSlot(queryClient: QueryClient, classroomId: number) {
+  invalidateClassroomSchedules(queryClient, classroomId);
+  queryClient.invalidateQueries({
+    queryKey: schedulerQueryKeys.tutorEventInstanceDetailsForClassroom(classroomId),
+  });
+  queryClient.invalidateQueries({
+    queryKey: schedulerQueryKeys.studentEventInstanceDetailsForClassroom(classroomId),
   });
 }
 
@@ -403,6 +427,22 @@ export async function rescheduleRepeatedVirtualInstance({
   });
 }
 
+export async function rescheduleSoleEventInstance({
+  classroomId,
+  eventInstanceId,
+  body,
+}: RescheduleSoleEventInstanceParams): Promise<void> {
+  const axiosInst = await getAxiosInstance();
+  await axiosInst({
+    method: schedulerApiConfig[SchedulerQueryKey.RescheduleSoleEventInstance].method,
+    url: schedulerApiConfig[SchedulerQueryKey.RescheduleSoleEventInstance].getUrl(
+      classroomId.toString(),
+      eventInstanceId,
+    ),
+    data: body,
+  });
+}
+
 export type UseEventInstanceDetailsParams = {
   classroomId: number;
   eventInstanceId: string;
@@ -439,7 +479,21 @@ export function useRescheduleRepeatedVirtualInstance() {
   return useMutation<void, Error, RescheduleRepeatedVirtualInstanceParams>({
     mutationFn: rescheduleRepeatedVirtualInstance,
     onSuccess: (_data, { classroomId }) => {
-      invalidateClassroomSchedules(queryClient, classroomId);
+      invalidateAfterRescheduleTimeSlot(queryClient, classroomId);
+    },
+    onError: (err) => {
+      handleError(err, 'scheduler');
+    },
+  });
+}
+
+export function useRescheduleSoleEventInstance() {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, RescheduleSoleEventInstanceParams>({
+    mutationFn: rescheduleSoleEventInstance,
+    onSuccess: (_data, { classroomId }) => {
+      invalidateAfterRescheduleTimeSlot(queryClient, classroomId);
     },
     onError: (err) => {
       handleError(err, 'scheduler');

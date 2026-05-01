@@ -141,8 +141,9 @@ export const MainPage = () => {
                 initialDate={getToday()}
                 initialStartTime={nearestLesson.startTime}
                 initialEndTime={nearestLesson.endTime}
-                teacherName={nearestLesson.studentName}
-                subjectLabel={nearestLesson.subject}
+                classroomId={nearestLesson.classroomId}
+                teacherId={nearestLesson.studentId}
+                fallbackName={nearestLesson.studentName}
                 lessonTitle={nearestLesson.subject}
               />
             </>

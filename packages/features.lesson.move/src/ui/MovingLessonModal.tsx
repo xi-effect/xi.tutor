@@ -4,7 +4,7 @@ import { Button } from '@xipkg/button';
 import { DayLessonsPanel } from 'modules.calendar';
 import type { ScheduleLessonRow } from 'modules.calendar';
 import { MovingForm } from './components/MovingForm';
-import type { RepeatedVirtualRescheduleTarget } from '../hooks';
+import type { RepeatedVirtualRescheduleTarget, SoleRescheduleTarget } from '../hooks';
 import type { FormData } from '../model';
 import './MovingModal.css';
 
@@ -65,11 +65,14 @@ export type MovingLessonModalProps = {
   formKey?: string;
   /** Одноразовое занятие или входящее в серию повторений */
   lessonKind: 'one-off' | 'recurring';
-  teacherName?: string;
-  subjectLabel?: string;
+  /** id кабинета — для названия, предмета и аватара */
+  classroomId?: number;
+  /** id пользователя — запасной аватар */
+  teacherId?: number;
+  /** Запасное название кабинета */
+  fallbackName?: string;
   lessonTitle?: string;
   lessonDescription?: string;
-  teacherAvatarUrl?: string | null;
   /** День недели серии (0 — пн), для подсказки при «Это занятие» */
   seriesWeekdayIndex?: number;
   /**
@@ -77,11 +80,14 @@ export type MovingLessonModalProps = {
    * Если задан и `onSubmit` не передан — при сабмите вызывается PUT reschedule API.
    */
   schedulerTarget?: RepeatedVirtualRescheduleTarget;
+  /**
+   * Параметры для переноса инстанса с явным id (`sole` / `repeated_persistent`).
+   * Если задан и `onSubmit` не передан — при сабмите вызывается PUT /event-instances/{id}/time-slot/.
+   */
+  soleTarget?: SoleRescheduleTarget;
   onSubmit?: (data: FormData) => void | Promise<void>;
 };
 
-const DEFAULT_TEACHER = 'Анна Смирнова';
-const DEFAULT_SUBJECT = 'Английский язык';
 const DEFAULT_LESSON_TITLE = 'Изучаем что-то';
 
 export const MovingLessonModal = ({
@@ -93,13 +99,14 @@ export const MovingLessonModal = ({
   initialEndTime = null,
   formKey,
   lessonKind,
-  teacherName = DEFAULT_TEACHER,
-  subjectLabel = DEFAULT_SUBJECT,
+  classroomId,
+  teacherId,
+  fallbackName,
   lessonTitle = DEFAULT_LESSON_TITLE,
   lessonDescription,
-  teacherAvatarUrl = null,
   seriesWeekdayIndex = 0,
   schedulerTarget,
+  soleTarget,
   onSubmit,
 }: MovingLessonModalProps) => {
   const [selectedDate, setSelectedDate] = useState(getToday);
@@ -118,8 +125,7 @@ export const MovingLessonModal = ({
     onOpenChange(false);
   };
 
-  const formTitle =
-    lessonKind === 'one-off' ? 'Перенести одноразовое занятие' : 'Перенести занятие';
+  const formTitle = 'Перенести занятие';
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
@@ -147,13 +153,14 @@ export const MovingLessonModal = ({
                 initialStartTime={initialStartTime}
                 initialEndTime={initialEndTime}
                 lessonKind={lessonKind}
-                teacherName={teacherName}
-                subjectLabel={subjectLabel}
+                classroomId={classroomId}
+                teacherId={teacherId}
+                fallbackName={fallbackName}
                 lessonTitle={lessonTitle}
                 lessonDescription={lessonDescription}
-                teacherAvatarUrl={teacherAvatarUrl}
                 seriesWeekdayIndex={seriesWeekdayIndex}
                 schedulerTarget={schedulerTarget}
+                soleTarget={soleTarget}
                 onSubmit={onSubmit}
                 onSubmittingChange={handleSubmittingChange}
               />
