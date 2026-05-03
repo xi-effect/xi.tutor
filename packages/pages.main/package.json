@@ -29,6 +29,7 @@
     "common.services": "workspace:*",
     "common.types": "workspace:*",
     "common.ui": "workspace:*",
+    "features.lesson.start": "workspace:*",
     "features.lesson.add": "workspace:*",
     "features.lesson.move": "workspace:*",
     "features.invites": "workspace:*",

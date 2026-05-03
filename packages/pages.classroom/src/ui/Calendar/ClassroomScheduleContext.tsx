@@ -1,9 +1,13 @@
-import { createContext, useContext, useMemo, type ReactNode } from 'react';
+import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
 import { useCalendar } from 'modules.calendar';
 
 type ClassroomScheduleContextValue = {
   weekDays: Date[];
   weekStart: Date;
+  /** Срез weekDays по числу видимых колонок, вычисляется в CalendarScheduleKanban через ResizeObserver. */
+  visibleDays: Date[];
+  /** Вызывается из CalendarScheduleKanban при изменении числа видимых колонок. */
+  setVisibleCount: (count: number) => void;
   goToPrev: (count: number) => void;
   goToNext: (count: number) => void;
   goToWeekStart: (date: Date) => void;
@@ -32,10 +36,21 @@ export const ClassroomScheduleProvider = ({
   onAddLessonClick,
 }: ClassroomScheduleProviderProps) => {
   const { weekDays, weekStart, goToPrev, goToNext, goToWeekStart } = useCalendar();
+  const [visibleCount, setVisibleCount] = useState(weekDays.length);
+  const visibleDays = useMemo(() => weekDays.slice(0, visibleCount), [weekDays, visibleCount]);
 
   const value = useMemo(
-    () => ({ weekDays, weekStart, goToPrev, goToNext, goToWeekStart, onAddLessonClick }),
-    [weekDays, weekStart, goToPrev, goToNext, goToWeekStart, onAddLessonClick],
+    () => ({
+      weekDays,
+      weekStart,
+      visibleDays,
+      setVisibleCount,
+      goToPrev,
+      goToNext,
+      goToWeekStart,
+      onAddLessonClick,
+    }),
+    [weekDays, weekStart, visibleDays, goToPrev, goToNext, goToWeekStart, onAddLessonClick],
   );
 
   return (

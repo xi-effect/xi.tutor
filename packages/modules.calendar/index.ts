@@ -41,10 +41,7 @@ export {
   mapScheduleItemsToCalendarEvents,
   getScheduleQueryRange,
 } from './src/utils/scheduleMapping';
-export {
-  StartLessonButton,
-  type StartLessonButtonProps,
-} from './src/ui/components/StartLessonButton';
+export { StartLessonButton, type StartLessonButtonProps } from 'features.lesson.start';
 export {
   mapEventInstanceToScheduleItem,
   mapScheduleResponseToScheduleItems,

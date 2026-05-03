@@ -13,13 +13,7 @@ import type { ICalendarEvent } from '../ui/types';
 import { timeToString } from '../utils';
 import { useCalendarEvents } from '../store/eventsStore';
 import { useLessonClassroomPresentation } from './useLessonClassroomPresentation';
-
-const FIVE_MINUTES_MS = 5 * 60 * 1000;
-const SCHEDULE_TOOLTIP = 'Кнопка станет активной за 5 минут до начала занятия';
-
-function isWithinStartWindow(start: Date): boolean {
-  return start.getTime() - Date.now() <= FIVE_MINUTES_MS;
-}
+import { StartLessonButton } from 'features.lesson.start';
 
 function safeTimeToString(primary: string | undefined | null, fallback: Date): string {
   if (primary != null && primary.length > 0) {
@@ -57,7 +51,6 @@ function mapEventToLessonInfo(
 }
 
 export type UseLessonInfoModalOptions = {
-  onStartLesson?: (event: ICalendarEvent) => void;
   onReschedule?: (event: ICalendarEvent) => void;
   onSaveLesson?: (event: ICalendarEvent, data: ChangeLessonFormData) => void;
 };
@@ -67,7 +60,6 @@ export type UseLessonInfoModalOptions = {
  * Передайте `onReschedule` (например из `features.lesson.move`), чтобы открыть перенос занятия.
  */
 export const useLessonInfoModal = ({
-  onStartLesson,
   onReschedule,
   onSaveLesson,
 }: UseLessonInfoModalOptions = {}) => {
@@ -120,46 +112,11 @@ export const useLessonInfoModal = ({
     enabled: resolvedEvent != null,
   });
 
-  const [canStartNow, setCanStartNow] = useState(() =>
-    resolvedEvent ? isWithinStartWindow(new Date(resolvedEvent.start)) : true,
-  );
-
-  useEffect(() => {
-    if (!resolvedEvent) return;
-    const startDate = new Date(resolvedEvent.start);
-    if (isWithinStartWindow(startDate)) {
-      setCanStartNow(true);
-      return;
-    }
-    setCanStartNow(false);
-    const msUntilWindow = startDate.getTime() - Date.now() - FIVE_MINUTES_MS;
-    if (msUntilWindow <= 0) {
-      setCanStartNow(true);
-      return;
-    }
-    const timer = setTimeout(() => setCanStartNow(true), msUntilWindow);
-    return () => clearTimeout(timer);
-  }, [resolvedEvent]);
-
   useEffect(() => {
     if (!resolvedEvent) {
       setCancelModalOpen(false);
     }
   }, [resolvedEvent]);
-
-  const isStartLessonDisabled = isTutor && !canStartNow;
-  const startLessonTooltip = isStartLessonDisabled ? SCHEDULE_TOOLTIP : undefined;
-
-  const handleStartLesson = (event: ICalendarEvent) => {
-    if (onStartLesson) {
-      onStartLesson(event);
-      return;
-    }
-    const cid = event.lessonInfo?.classroomId;
-    if (cid != null) {
-      window.location.href = `/classrooms/${cid}?goto=call`;
-    }
-  };
 
   const close = useCallback(() => {
     setSelectedEvent(null);
@@ -196,9 +153,16 @@ export const useLessonInfoModal = ({
           classroomId={classroomId}
           classroom={classroomQuery.data}
           classroomLoading={classroomId != null && classroomQuery.isLoading}
-          onStartLesson={() => handleStartLesson(resolvedEvent)}
-          isStartLessonDisabled={isStartLessonDisabled}
-          startLessonTooltip={startLessonTooltip}
+          startLessonSlot={
+            classroomId != null ? (
+              <StartLessonButton
+                classroomId={classroomId}
+                scheduledAt={resolvedEvent.start}
+                scheduledEndsAt={resolvedEvent.end}
+                className="text-brand-100 bg-brand-0 hover:bg-brand-20/50 h-12 min-h-12"
+              />
+            ) : undefined
+          }
           onReschedule={() => onReschedule?.(resolvedEvent)}
           changeLesson={
             onSaveLesson != null && resolvedEvent != null

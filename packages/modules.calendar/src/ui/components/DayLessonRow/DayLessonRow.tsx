@@ -8,7 +8,7 @@ import { useCancelLessonModal, useChangeLessonModal } from '../../../hooks';
 import { useDayLessonListMeta } from '../../contexts/DayLessonListMetaContext';
 import type { ScheduleLessonRow } from '../../types';
 import { cn } from '@xipkg/utils';
-import { StartLessonButton } from '../StartLessonButton';
+import { StartLessonButton } from 'features.lesson.start';
 import { useLessonClassroomPresentation } from '../../../hooks/useLessonClassroomPresentation';
 import { getScheduleLessonEndAt } from '../../../utils/getScheduleLessonEndAt';
 import type { ChangeLessonFormData } from 'features.lesson.change';
@@ -139,7 +139,7 @@ export const DayLessonRow = ({
             {showTutorIconColumn && (
               <div
                 className={cn(
-                  'absolute top-0 right-[-40px] z-10 flex flex-col gap-1 transition-opacity duration-200',
+                  'absolute top-1 right-[-40px] z-10 flex flex-col gap-1 transition-opacity duration-200',
                   'pointer-events-auto opacity-100',
                   'lg:pointer-events-none lg:opacity-0',
                   gHover.pointer,

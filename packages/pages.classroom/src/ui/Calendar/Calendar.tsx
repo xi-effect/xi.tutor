@@ -72,7 +72,7 @@ function movingModalPropsFromEvent(event: ICalendarEvent, classroomId: number) {
 
 export const Calendar = () => {
   const isMobile = useIsMobile();
-  const { weekDays, onAddLessonClick } = useClassroomSchedule();
+  const { visibleDays, onAddLessonClick } = useClassroomSchedule();
   const [moveEvent, setMoveEvent] = useState<ICalendarEvent | null>(null);
   const setEvents = useSetEvents();
   const setEventsLoading = useSetEventsLoading();
@@ -81,7 +81,7 @@ export const Calendar = () => {
   const numericClassroomId = Number(classroomId);
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
-  const scheduleRange = useMemo(() => getScheduleQueryRange(weekDays), [weekDays]);
+  const scheduleRange = useMemo(() => getScheduleQueryRange(visibleDays), [visibleDays]);
 
   const tutorQuery = useGetClassroom(numericClassroomId, isUserLoading || !isTutor);
   const studentQuery = useGetClassroomStudent(numericClassroomId, isUserLoading || isTutor);

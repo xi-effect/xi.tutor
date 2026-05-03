@@ -1,124 +1,19 @@
-import { ArrowLeft, Conference } from '@xipkg/icons';
+import { ArrowLeft } from '@xipkg/icons';
 import { ClassroomTutorResponseSchema } from 'common.api';
 import { IndividualUser } from './IndividualUser';
 import { Button } from '@xipkg/button';
 import { SubjectBadge } from './SubjectBadge';
 import { useEffect, useCallback, useRef } from 'react';
-import { useCallStore, useStartCall } from 'modules.calls';
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
+import { useStartCall } from 'modules.calls';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { StatusBadge } from '../../StatusBadge';
 import { ContactsBadge } from './ContactsBadge';
-import { cn } from '@xipkg/utils';
-import {
-  useCurrentUser,
-  useGetParticipantsByStudent,
-  useGetParticipantsByTutor,
-} from 'common.services';
+import { useCurrentUser } from 'common.services';
+import { StartLessonButton } from 'features.lesson.start';
 
 interface ContentProps {
   classroom: ClassroomTutorResponseSchema;
 }
-
-const getButtonLabel = (
-  isTutor: boolean,
-  isConferenceNotActiveTutor: boolean,
-  isCallActive: boolean,
-) => {
-  // Преподаватель и конференция не активна
-  if (isTutor && isConferenceNotActiveTutor) return 'Начать занятие';
-  if (isCallActive) return 'Вернутся в конференцию';
-
-  return 'Присоединиться';
-};
-
-const CallButton = ({ classroom }: { classroom: ClassroomTutorResponseSchema }) => {
-  const { data: user } = useCurrentUser();
-  const isTutor = user?.default_layout === 'tutor';
-
-  const { startCall } = useStartCall();
-
-  const handleCallClick = useCallback(async () => {
-    try {
-      // Запускаем процесс создания токена, сохранения в store и навигации
-      await startCall({ classroom_id: classroom.id.toString() });
-    } catch (error) {
-      console.error('Ошибка при запуске звонка:', error);
-      // Здесь можно добавить показ уведомления об ошибке
-    }
-  }, [startCall, classroom.id]);
-
-  const { isConferenceNotActive: isConferenceNotActiveStudent, isLoading: isLoadingStudent } =
-    useGetParticipantsByStudent(classroom.id.toString(), isTutor);
-  const { isConferenceNotActive: isConferenceNotActiveTutor, isLoading: isLoadingTutor } =
-    useGetParticipantsByTutor(classroom.id.toString(), !isTutor);
-
-  const navigate = useNavigate();
-  const { call } = useSearch({ strict: false }) as { call?: string };
-  const params = useParams({ strict: false }) as {
-    callId?: string;
-    classroomId?: string;
-    boardId?: string;
-  };
-  const updateStore = useCallStore((state) => state.updateStore);
-
-  const activeClassroom = useCallStore((state) => state.activeClassroom);
-  const isStarted = useCallStore((state) => state.isStarted);
-  const token = useCallStore((state) => state.token);
-
-  const normalizedCallId = typeof call === 'string' ? call.replace(/^"|"$/g, '').trim() : undefined;
-
-  const isCallActive = Boolean(isStarted && token && normalizedCallId === classroom.id.toString());
-
-  const handleBackToRoom = () => {
-    if (!token || !isStarted) {
-      return;
-    }
-
-    const targetCallId =
-      normalizedCallId ||
-      activeClassroom ||
-      params.classroomId ||
-      params.callId ||
-      classroom.id.toString();
-
-    updateStore('localFullView', true);
-    updateStore('mode', 'full');
-
-    navigate({
-      to: '/call/$callId',
-      params: { callId: targetCallId },
-      search: { call: targetCallId },
-      replace: true,
-    });
-  };
-
-  return (
-    <div className="flex w-full flex-row items-end gap-2">
-      {isLoadingStudent || isLoadingTutor ? (
-        <Button size="s" className="group mt-auto w-full" disabled loading />
-      ) : (
-        <Button
-          size="s"
-          variant="primary"
-          className="group w-full pr-2 pl-2"
-          onClick={isCallActive ? handleBackToRoom : handleCallClick}
-          disabled={!isTutor && isConferenceNotActiveStudent}
-          data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
-          data-umami-event-classroom-id={classroom.id}
-        >
-          <Conference
-            size="sm"
-            className={cn(
-              'group-hover:fill-gray-0 fill-brand-0 mr-1.5',
-              !isTutor && isConferenceNotActiveStudent && 'fill-gray-40',
-            )}
-          />
-          {getButtonLabel(isTutor, isConferenceNotActiveTutor, isCallActive)}
-        </Button>
-      )}
-    </div>
-  );
-};
 
 export const Content = ({ classroom }: ContentProps) => {
   const { data: user } = useCurrentUser();
@@ -128,7 +23,7 @@ export const Content = ({ classroom }: ContentProps) => {
   const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const hasHandledGotoCallRef = useRef(false);
 
-  // Единая обработка goto=call (один раз на страницу), чтобы не дублировать запрос при двух рендерах CallButton (мобильный + десктоп)
+  // Единая обработка goto=call (один раз на страницу), чтобы не дублировать запрос при двух рендерах StartLessonButton (мобильный + десктоп)
   useEffect(() => {
     const searchParams = search as { goto?: string };
     if (hasHandledGotoCallRef.current || !searchParams.goto || searchParams.goto !== 'call') {
@@ -144,6 +39,14 @@ export const Content = ({ classroom }: ContentProps) => {
       });
     }, 100);
   }, [search, startCall, classroom.id]);
+
+  const handleStartCall = useCallback(async () => {
+    try {
+      await startCall({ classroom_id: classroom.id.toString() });
+    } catch (error) {
+      console.error('Ошибка при запуске звонка:', error);
+    }
+  }, [startCall, classroom.id]);
 
   const getDisplayName = () => {
     if (classroom.kind === 'individual') {
@@ -195,12 +98,16 @@ export const Content = ({ classroom }: ContentProps) => {
           )}
         </div>
         <div className="w-full sm:hidden">
-          <CallButton classroom={classroom} />
+          <StartLessonButton
+            classroomId={classroom.id}
+            variant="primary"
+            onStart={handleStartCall}
+          />
         </div>
       </div>
 
       <div className="ml-auto hidden h-full shrink-0 flex-col items-center justify-center gap-2 sm:flex">
-        <CallButton classroom={classroom} />
+        <StartLessonButton classroomId={classroom.id} variant="primary" onStart={handleStartCall} />
       </div>
     </div>
   );

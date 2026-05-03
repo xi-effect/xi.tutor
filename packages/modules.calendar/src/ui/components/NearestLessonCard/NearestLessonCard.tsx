@@ -4,7 +4,7 @@ import { Close, External, Redo } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
 import { useCancelLessonModal } from '../../../hooks';
 import type { ScheduleLessonRow } from '../../types';
-import { StartLessonButton } from '../StartLessonButton';
+import { StartLessonButton } from 'features.lesson.start';
 import { useLessonClassroomPresentation } from '../../../hooks/useLessonClassroomPresentation';
 import { getScheduleLessonEndAt } from '../../../utils/getScheduleLessonEndAt';
 

@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { ScheduleKanban, ScheduleMobileView } from './components';
 import { CalendarHeader } from './Header';
 import { useIsMobile } from '../hooks';
@@ -25,9 +25,14 @@ export const CalendarModule = ({
 }: CalendarModuleProps) => {
   const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
-  const { weekDays, weekStart, goToPrev, goToNext, goToWeekStart } = useCalendarSchedule();
+  const { weekDays, weekStart, goToPrev, goToNext, goToWeekStart, setVisibleCount } =
+    useCalendarSchedule();
   const { columnWidth, visibleCount } = useKanbanColumns(containerRef, weekDays.length);
   const visibleDays = weekDays.slice(0, visibleCount);
+
+  useEffect(() => {
+    setVisibleCount(visibleCount);
+  }, [visibleCount, setVisibleCount]);
 
   if (isMobile) {
     return (

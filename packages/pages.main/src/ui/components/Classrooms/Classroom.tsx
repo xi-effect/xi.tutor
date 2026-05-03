@@ -1,19 +1,12 @@
-import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
+import { useNavigate, useSearch } from '@tanstack/react-router';
 import { ClassroomT, IndividualClassroomT } from 'common.api';
 import { Button } from '@xipkg/button';
-import { Account, Conference } from '@xipkg/icons';
+import { Account } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import { useEffect, useRef, useState } from 'react';
-import {
-  useCurrentUser,
-  useUserByRole,
-  useGetParticipantsByStudent,
-  useGetParticipantsByTutor,
-} from 'common.services';
+import { useCurrentUser, useUserByRole } from 'common.services';
 import { SubjectBadge } from 'features.classroom';
-import { cn } from '@xipkg/utils';
-import { useCallStore } from 'modules.calls';
+import { StartLessonButton } from 'features.lesson.start';
 
 type UserAvatarPropsT = {
   classroom: IndividualClassroomT;
@@ -28,7 +21,6 @@ const UserAvatar = ({ isLoading, classroom }: UserAvatarPropsT) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  // Используем useUserByRole с userId напрямую
   const userRole: RoleT = isTutor ? 'student' : 'tutor';
   const { data } = useUserByRole(userRole, classroom.tutor_id ?? classroom.student_id ?? 0);
 
@@ -47,18 +39,6 @@ const UserAvatar = ({ isLoading, classroom }: UserAvatarPropsT) => {
   );
 };
 
-const getButtonLabel = (
-  isTutor: boolean,
-  isConferenceNotActiveTutor: boolean,
-  isCallActive: boolean,
-) => {
-  // Преподаватель и конференция не активна
-  if (isTutor && isConferenceNotActiveTutor) return 'Начать занятие';
-  if (isCallActive) return 'Вернутся в конференцию';
-
-  return 'Присоединиться';
-};
-
 type ClassroomProps = {
   isLoading: boolean;
   classroom: ClassroomT;
@@ -67,99 +47,11 @@ type ClassroomProps = {
 export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [hasBeenVisible, setHasBeenVisible] = useState(false);
-
-  const { data: user } = useCurrentUser();
-  const isTutor = user?.default_layout === 'tutor';
-
-  useEffect(() => {
-    if (hasBeenVisible) {
-      return;
-    }
-
-    if (typeof IntersectionObserver === 'undefined') {
-      setHasBeenVisible(true);
-      return;
-    }
-
-    const currentCard = cardRef.current;
-
-    if (!currentCard) {
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setHasBeenVisible(true);
-          observer.disconnect();
-        }
-      },
-      {
-        rootMargin: '200px 0px',
-        threshold: 0.1,
-      },
-    );
-
-    observer.observe(currentCard);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [hasBeenVisible]);
-
-  const shouldDisableStudentParticipantsQuery = isTutor || !hasBeenVisible;
-  const shouldDisableTutorParticipantsQuery = !isTutor || !hasBeenVisible;
-
-  const { isConferenceNotActive: isConferenceNotActiveStudent, isLoading: isLoadingStudent } =
-    useGetParticipantsByStudent(classroom.id.toString(), shouldDisableStudentParticipantsQuery);
-  const { isConferenceNotActive: isConferenceNotActiveTutor, isLoading: isLoadingTutor } =
-    useGetParticipantsByTutor(classroom.id.toString(), shouldDisableTutorParticipantsQuery);
-
-  const searchCall = useSearch({ strict: false }) as { call?: string };
-  const params = useParams({ strict: false }) as {
-    callId?: string;
-    classroomId?: string;
-    boardId?: string;
-  };
-  const { call } = searchCall;
-  const updateStore = useCallStore((state) => state.updateStore);
-
-  const activeClassroom = useCallStore((state) => state.activeClassroom);
-  const isStarted = useCallStore((state) => state.isStarted);
-  const token = useCallStore((state) => state.token);
-
-  const normalizedCallId = typeof call === 'string' ? call.replace(/^"|"$/g, '').trim() : undefined;
-
-  const isCallActive = Boolean(isStarted && token && normalizedCallId === classroom.id.toString());
-
-  const handleBackToRoom = () => {
-    if (!token || !isStarted) {
-      return;
-    }
-
-    const targetCallId =
-      normalizedCallId ||
-      activeClassroom ||
-      params.classroomId ||
-      params.callId ||
-      classroom.id.toString();
-
-    updateStore('localFullView', true);
-    updateStore('mode', 'full');
-
-    navigate({
-      to: '/call/$callId',
-      params: { callId: targetCallId },
-      search: { call: targetCallId },
-      replace: true,
-    });
-  };
 
   const handleClick = () => {
-    // Сохраняем параметр call при переходе в кабинет
-    const filteredSearch = search.call ? { call: search.call } : {};
+    const filteredSearch = (search as { call?: string }).call
+      ? { call: (search as { call?: string }).call }
+      : {};
 
     navigate({
       to: '/classrooms/$classroomId',
@@ -171,17 +63,8 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
     });
   };
 
-  const handleStartLesson = () => {
-    // Переходим на страницу кабинета с параметром goto=call
-    const url = `/classrooms/${classroom.id}?goto=call`;
-    window.location.href = url;
-  };
-
   return (
-    <div
-      ref={cardRef}
-      className="border-gray-30 relative flex min-h-[140px] w-[240px] flex-col items-start justify-start gap-3 rounded-2xl border bg-transparent px-5 py-4 xl:w-[280px]"
-    >
+    <div className="border-gray-30 relative flex min-h-[140px] w-[240px] flex-col items-start justify-start gap-3 rounded-2xl border bg-transparent px-5 py-4 xl:w-[280px]">
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button
@@ -232,27 +115,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         </Tooltip>
       </div>
 
-      {isLoadingStudent || isLoadingTutor ? (
-        <Button size="s" className="group mt-auto h-[32px] w-full" disabled loading />
-      ) : (
-        <Button
-          size="s"
-          variant="ghost"
-          className="text-brand-80 group hover:text-brand-100 mt-auto h-[32px] w-full"
-          onClick={isCallActive ? handleBackToRoom : handleStartLesson}
-          disabled={!isTutor && isConferenceNotActiveStudent}
-          data-umami-event={isTutor ? 'classroom-start-lesson' : 'classroom-join-lesson'}
-          data-umami-event-classroom-id={classroom.id}
-        >
-          {getButtonLabel(isTutor, isConferenceNotActiveTutor, isCallActive)}
-          <Conference
-            className={cn(
-              'group-hover:fill-brand-100 fill-brand-80 ml-2',
-              !isTutor && isConferenceNotActiveStudent && 'fill-gray-40',
-            )}
-          />
-        </Button>
-      )}
+      <StartLessonButton classroomId={classroom.id} className="mt-auto" />
     </div>
   );
 };

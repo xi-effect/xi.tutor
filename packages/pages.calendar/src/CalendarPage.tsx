@@ -75,8 +75,8 @@ const CalendarPageContent = () => {
   const [initialDate, setInitialDate] = useState<Date | null>(null);
   const [moveEvent, setMoveEvent] = useState<ICalendarEvent | null>(null);
 
-  const { weekDays } = useCalendarSchedule();
-  const range = useMemo(() => getScheduleQueryRange(weekDays), [weekDays]);
+  const { visibleDays } = useCalendarSchedule();
+  const range = useMemo(() => getScheduleQueryRange(visibleDays), [visibleDays]);
 
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';

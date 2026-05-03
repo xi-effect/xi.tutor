@@ -11,8 +11,8 @@ import {
 } from '@xipkg/modal';
 import type { ClassroomTutorResponseSchema } from 'common.api';
 import { Button } from '@xipkg/button';
-import { Clock, Conference, Edit05, Redo, Trash } from '@xipkg/icons';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { Clock, Edit05, Redo, Trash } from '@xipkg/icons';
+import type { ReactNode } from 'react';
 import { LessonInfoClassroomBlock } from './LessonInfoClassroomBlock';
 
 export type LessonInfoChangeLessonConfig = {
@@ -43,11 +43,6 @@ export type LessonInfoModalProps = {
   classroomLoading?: boolean;
   startTime: string | null;
   endTime: string | null;
-  onStartLesson?: () => void;
-  /** Принудительно заблокировать кнопку «Начать занятие» */
-  isStartLessonDisabled?: boolean;
-  /** Тултип при заблокированной кнопке «Начать занятие» */
-  startLessonTooltip?: string;
   onReschedule?: () => void;
   onEditLesson?: () => void;
   /**
@@ -56,6 +51,12 @@ export type LessonInfoModalProps = {
    */
   changeLesson?: LessonInfoChangeLessonConfig;
   onCancelClick?: () => void;
+  /**
+   * Готовый ReactNode для кнопки «Начать занятие» — заменяет встроенную кнопку.
+   * Используйте для передачи `<StartLessonButton>` из вышестоящего слоя
+   * без создания циклических зависимостей пакетов.
+   */
+  startLessonSlot?: ReactNode;
 };
 
 export const LessonInfoModal = ({
@@ -70,13 +71,11 @@ export const LessonInfoModal = ({
   classroomLoading,
   startTime,
   endTime,
-  onStartLesson,
-  isStartLessonDisabled,
-  startLessonTooltip,
   onReschedule,
   onEditLesson,
   changeLesson,
   onCancelClick,
+  startLessonSlot,
 }: LessonInfoModalProps) => {
   const [isChangeLessonOpen, setIsChangeLessonOpen] = useState(false);
 
@@ -117,7 +116,10 @@ export const LessonInfoModal = ({
   return (
     <>
       <Modal open={showInfo} onOpenChange={handleOpenChange}>
-        <ModalContent className="relative w-full max-w-[560px]" aria-describedby={undefined}>
+        <ModalContent
+          className="xs:w-[580px] xs:max-w-[580px] relative w-full"
+          aria-describedby={undefined}
+        >
           <ModalHeader>
             <ModalCloseButton />
             <ModalTitle className="text-xl-base max-w-[calc(100%-56px)] font-semibold text-gray-100">
@@ -164,35 +166,7 @@ export const LessonInfoModal = ({
           </ModalBody>
 
           <ModalFooter className="xs:gap-2 flex flex-col gap-3 px-6 pb-6 sm:flex-row sm:items-stretch">
-            {isStartLessonDisabled && startLessonTooltip ? (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <span className="flex-1">
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      className="text-brand-100 bg-brand-0 hover:bg-brand-20/50 h-12 min-h-12 w-full"
-                      disabled
-                    >
-                      Начать занятие
-                      <Conference className="fill-gray-40 ml-1.5 h-4 w-4" />
-                    </Button>
-                  </span>
-                </TooltipTrigger>
-                <TooltipContent>{startLessonTooltip}</TooltipContent>
-              </Tooltip>
-            ) : (
-              <Button
-                type="button"
-                variant="ghost"
-                className="text-brand-100 bg-brand-0 hover:bg-brand-20/50 h-12 min-h-12 flex-1"
-                onClick={onStartLesson}
-                disabled={isStartLessonDisabled}
-              >
-                Начать занятие
-                <Conference className="fill-brand-100 ml-1.5 h-4 w-4" />
-              </Button>
-            )}
+            {startLessonSlot != null ? <div className="flex-1">{startLessonSlot}</div> : null}
             <Button
               type="button"
               variant="none"

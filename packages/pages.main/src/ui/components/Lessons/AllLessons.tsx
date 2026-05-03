@@ -7,7 +7,7 @@ import { DayLessonListMetaProvider, DayLessonRow, getScheduleLessonEndAt } from 
 import type { ChangeLessonFormData, ScheduleLessonRow } from 'modules.calendar';
 import { cn } from '@xipkg/utils';
 
-const SKELETON_COUNT = 5;
+const SKELETON_COUNT = 4;
 
 type AllLessonsProps = {
   lessons: ScheduleLessonRow[];

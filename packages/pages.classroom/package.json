@@ -36,6 +36,7 @@
     "features.group.manage": "workspace:*",
     "features.invoice": "workspace:*",
     "features.invoice.card": "workspace:*",
+    "features.lesson.start": "workspace:*",
     "features.lesson.add": "workspace:*",
     "features.lesson.cancel": "workspace:*",
     "features.lesson.change": "workspace:*",

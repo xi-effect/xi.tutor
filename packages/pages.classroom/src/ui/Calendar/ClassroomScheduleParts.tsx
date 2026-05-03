@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { CalendarWeekNav, ScheduleKanban, useKanbanColumns } from 'modules.calendar';
 import type { ChangeLessonFormData, ICalendarEvent } from 'modules.calendar';
 import { useClassroomSchedule } from './ClassroomScheduleContext';
@@ -25,11 +25,15 @@ export const CalendarScheduleKanban = ({
   onLessonReschedule,
   onSaveLesson,
 }: CalendarScheduleKanbanProps) => {
-  const { weekDays, onAddLessonClick } = useClassroomSchedule();
+  const { weekDays, onAddLessonClick, setVisibleCount } = useClassroomSchedule();
 
   const containerRef = useRef<HTMLDivElement>(null);
   const { columnWidth, visibleCount } = useKanbanColumns(containerRef, weekDays.length);
   const visibleDays = weekDays.slice(0, visibleCount);
+
+  useEffect(() => {
+    setVisibleCount(visibleCount);
+  }, [visibleCount, setVisibleCount]);
 
   return (
     <div ref={containerRef} className="flex h-full min-h-0 w-full min-w-0 flex-col overflow-hidden">
