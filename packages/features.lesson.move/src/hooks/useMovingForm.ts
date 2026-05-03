@@ -5,6 +5,8 @@ import { toast } from 'sonner';
 import {
   useRescheduleRepeatedVirtualInstance,
   useRescheduleSoleEventInstance,
+  bitmaskUtcToLocal,
+  bitmaskToWeekdays,
 } from 'modules.calendar';
 import { createMovingFormSchema, type FormData, type FormInput } from '../model/formSchema';
 import { timeToMinutes } from '../utils/utils';
@@ -37,6 +39,12 @@ type UseMovingFormOptions = {
   schedulerTarget?: RepeatedVirtualRescheduleTarget;
   /** Перенос sole или repeated_persisted — PUT /event-instances/{id}/time-slot/ */
   soleTarget?: SoleRescheduleTarget;
+  /**
+   * UTC-битмаска серии повторений из API (`weekly_starting_bitmask`).
+   * Если передана вместе с `initialDate`, используется для предзаполнения
+   * дней повторения в форме (с конверсией UTC → локальный TZ пользователя).
+   */
+  weeklyBitmask?: number;
 };
 
 const getDefaultValues = (
@@ -44,14 +52,27 @@ const getDefaultValues = (
   initialDate?: Date | null,
   initialStartTime?: string | null,
   initialEndTime?: string | null,
+  weeklyBitmask?: number,
 ): FormInput => {
   const startDate = initialDate ?? new Date();
+
+  let repeatWeekdays: number[] = [];
+  if (lessonKind === 'recurring') {
+    if (weeklyBitmask != null && initialDate != null) {
+      // Конвертируем UTC-битмаску из API в локальный TZ пользователя для отображения
+      const localBitmask = bitmaskUtcToLocal(weeklyBitmask, initialDate);
+      repeatWeekdays = bitmaskToWeekdays(localBitmask);
+    } else {
+      repeatWeekdays = [0];
+    }
+  }
+
   return {
     startDate,
     startTime: initialStartTime ?? '',
     endTime: initialEndTime ?? '',
     moveMode: lessonKind === 'recurring' ? 'single' : undefined,
-    repeatWeekdays: lessonKind === 'recurring' ? [0] : [],
+    repeatWeekdays,
   };
 };
 
@@ -73,7 +94,7 @@ export const useMovingForm = (
   initialEndTime?: string | null,
   options: UseMovingFormOptions = {},
 ) => {
-  const { onSubmit: externalSubmit, schedulerTarget, soleTarget } = options;
+  const { onSubmit: externalSubmit, schedulerTarget, soleTarget, weeklyBitmask } = options;
   const schema = useMemo(() => createMovingFormSchema(lessonKind), [lessonKind]);
   const reschedule = useRescheduleRepeatedVirtualInstance();
   const rescheduleSole = useRescheduleSoleEventInstance();
@@ -81,7 +102,13 @@ export const useMovingForm = (
   const form = useForm<FormInput, unknown, FormData>({
     resolver: zodResolver(schema),
     mode: 'onSubmit',
-    defaultValues: getDefaultValues(lessonKind, initialDate, initialStartTime, initialEndTime),
+    defaultValues: getDefaultValues(
+      lessonKind,
+      initialDate,
+      initialStartTime,
+      initialEndTime,
+      weeklyBitmask,
+    ),
   });
 
   const { control, handleSubmit, reset } = form;
@@ -122,7 +149,9 @@ export const useMovingForm = (
   };
 
   const handleClearForm = () => {
-    reset(getDefaultValues(lessonKind, initialDate, initialStartTime, initialEndTime));
+    reset(
+      getDefaultValues(lessonKind, initialDate, initialStartTime, initialEndTime, weeklyBitmask),
+    );
   };
 
   return {

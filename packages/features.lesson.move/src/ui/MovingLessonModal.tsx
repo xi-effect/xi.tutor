@@ -43,6 +43,12 @@ export type MovingLessonModalProps = {
   /** День недели серии (0 — пн), для подсказки при «Это занятие» */
   seriesWeekdayIndex?: number;
   /**
+   * UTC-битмаска серии из API (`weekly_starting_bitmask`).
+   * Предзаполняет дни повторений в режиме «Это и следующие»
+   * с автоматическим сдвигом UTC → локальный TZ пользователя.
+   */
+  weeklyBitmask?: number;
+  /**
    * Параметры для переноса виртуального повторяющегося инстанса (`repeated_virtual`).
    * Если задан и `onSubmit` не передан — при сабмите вызывается PUT reschedule API.
    */
@@ -72,6 +78,7 @@ export const MovingLessonModal = ({
   lessonTitle = DEFAULT_LESSON_TITLE,
   lessonDescription,
   seriesWeekdayIndex = 0,
+  weeklyBitmask,
   schedulerTarget,
   soleTarget,
   onSubmit,
@@ -133,6 +140,7 @@ export const MovingLessonModal = ({
                 lessonTitle={lessonTitle}
                 lessonDescription={lessonDescription}
                 seriesWeekdayIndex={seriesWeekdayIndex}
+                weeklyBitmask={weeklyBitmask}
                 schedulerTarget={schedulerTarget}
                 soleTarget={soleTarget}
                 onSubmit={onSubmit}

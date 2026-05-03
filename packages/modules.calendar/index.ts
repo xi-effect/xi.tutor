@@ -38,6 +38,12 @@ export {
 export { getScheduleLessonEndAt } from './src/utils/getScheduleLessonEndAt';
 export { getCalendarDayQueryRange } from './src/utils/getCalendarDayQueryRange';
 export { mapScheduleItemToLessonRow } from './src/utils/mapScheduleItemToLessonRow';
+export {
+  bitmaskUtcToLocal,
+  bitmaskLocalToUtc,
+  bitmaskToWeekdays,
+  weekdaysToBitmask,
+} from './src/utils/bitmaskTimezone';
 export { findNearestLessonIndex } from './src/utils/findNearestLessonIndex';
 export { useScheduleLessonRowsForDay } from './src/hooks/useScheduleLessonRowsForDay';
 export {

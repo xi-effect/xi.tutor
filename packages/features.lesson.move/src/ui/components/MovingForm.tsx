@@ -48,6 +48,12 @@ export type MovingFormProps = PropsWithChildren<{
   /** День недели серии (0 — пн), для текста подсказки в режиме «Это занятие» */
   seriesWeekdayIndex?: number;
   /**
+   * UTC-битмаска серии из API (`weekly_starting_bitmask`).
+   * Используется для предзаполнения дней повторений в режиме «Это и следующие»
+   * (с автоматической конверсией UTC → локальный TZ пользователя).
+   */
+  weeklyBitmask?: number;
+  /**
    * Параметры для переноса виртуального повторяющегося инстанса.
    * Когда задан и `onSubmit` не передан — вызывается PUT reschedule API.
    */
@@ -97,6 +103,7 @@ export const MovingForm: FC<MovingFormProps> = ({
   lessonTitle,
   lessonDescription,
   seriesWeekdayIndex = 0,
+  weeklyBitmask,
   schedulerTarget,
   soleTarget,
   onSubmit: externalSubmit,
@@ -107,7 +114,7 @@ export const MovingForm: FC<MovingFormProps> = ({
     initialDate,
     initialStartTime,
     initialEndTime,
-    { onSubmit: externalSubmit, schedulerTarget, soleTarget },
+    { onSubmit: externalSubmit, schedulerTarget, soleTarget, weeklyBitmask },
   );
 
   const { isSubmitting } = useFormState({ control });
