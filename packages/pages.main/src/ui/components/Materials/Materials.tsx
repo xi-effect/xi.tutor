@@ -9,7 +9,7 @@ import {
 import { Add, FileSmall, WhiteBoard } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
-import { useGetMaterialsList } from 'common.services';
+import { useCurrentUser, useGetMaterialsList } from 'common.services';
 import { MaterialsDuplicateProvider, useMaterialsDuplicate } from 'pages.materials';
 import { MaterialsDuplicate } from 'features.materials.duplicate';
 import { MaterialsCard } from 'features.materials.card';
@@ -25,6 +25,9 @@ const filters = [
 ];
 
 const MaterialsContent = () => {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
   const { createMaterial } = useCreateMaterial();
   const { materialId, open, closeModal, openModal } = useMaterialsDuplicate();
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'note' | 'board'>('all');
@@ -80,53 +83,55 @@ const MaterialsContent = () => {
             indicatorClassName="rounded-[10px] bg-brand-80"
           />
 
-          <div className="ml-auto flex flex-row items-center gap-2">
-            <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="none"
-                  className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
-                  data-umami-event="materials-add-button"
-                  id="materials-add-button"
+          {isTutor && (
+            <div className="ml-auto flex flex-row items-center gap-2">
+              <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="none"
+                    className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
+                    data-umami-event="materials-add-button"
+                    id="materials-add-button"
+                  >
+                    <Add className="fill-brand-80 size-6" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  align="end"
+                  side="bottom"
+                  className="border-gray-10 bg-gray-0 flex w-[320px] flex-col gap-2.5 rounded-2xl border px-6 py-5 shadow-lg"
                 >
-                  <Add className="fill-brand-80 size-6" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                side="bottom"
-                className="border-gray-10 bg-gray-0 flex w-[320px] flex-col gap-2.5 rounded-2xl border px-6 py-5 shadow-lg"
-              >
-                <DropdownMenuLabel className="text-m-base p-0 font-medium text-gray-100">
-                  Добавить
-                </DropdownMenuLabel>
-                <div className="flex flex-col gap-3">
-                  <DropdownMenuItem
-                    className="border-gray-10 bg-gray-0 focus:bg-gray-0 data-highlighted:bg-gray-5 flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
-                    onSelect={() => handleCreateMaterial('board')}
-                    data-umami-event="materials-add-board"
-                  >
-                    <WhiteBoard className="fill-gray-80 size-4 shrink-0" />
-                    <span className="text-s-base text-gray-80 flex-1 text-left font-medium">
-                      Доску
-                    </span>
-                    <Add className="fill-brand-80 size-4 shrink-0" />
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    className="border-gray-10 bg-gray-0 focus:bg-gray-0 data-highlighted:bg-gray-5 flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
-                    onSelect={() => handleCreateMaterial('note')}
-                    data-umami-event="materials-add-note"
-                  >
-                    <FileSmall className="fill-gray-80 size-4 shrink-0" />
-                    <span className="text-s-base text-gray-80 flex-1 text-left font-medium">
-                      Заметку
-                    </span>
-                    <Add className="fill-brand-80 size-4 shrink-0" />
-                  </DropdownMenuItem>
-                </div>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+                  <DropdownMenuLabel className="text-m-base p-0 font-medium text-gray-100">
+                    Добавить
+                  </DropdownMenuLabel>
+                  <div className="flex flex-col gap-3">
+                    <DropdownMenuItem
+                      className="border-gray-10 bg-gray-0 focus:bg-gray-0 data-highlighted:bg-gray-5 flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
+                      onSelect={() => handleCreateMaterial('board')}
+                      data-umami-event="materials-add-board"
+                    >
+                      <WhiteBoard className="fill-gray-80 size-4 shrink-0" />
+                      <span className="text-s-base text-gray-80 flex-1 text-left font-medium">
+                        Доску
+                      </span>
+                      <Add className="fill-brand-80 size-4 shrink-0" />
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="border-gray-10 bg-gray-0 focus:bg-gray-0 data-highlighted:bg-gray-5 flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
+                      onSelect={() => handleCreateMaterial('note')}
+                      data-umami-event="materials-add-note"
+                    >
+                      <FileSmall className="fill-gray-80 size-4 shrink-0" />
+                      <span className="text-s-base text-gray-80 flex-1 text-left font-medium">
+                        Заметку
+                      </span>
+                      <Add className="fill-brand-80 size-4 shrink-0" />
+                    </DropdownMenuItem>
+                  </div>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
         </div>
         {/* Cards row */}
         {isLoading ? (
@@ -156,26 +161,30 @@ const MaterialsContent = () => {
             illustration={<EmptyMaterials className={sectionEmptyStateIllustrationClass} />}
             actions={
               <>
-                <Button
-                  type="button"
-                  variant="none"
-                  className={emptyActionButtonClass}
-                  onClick={() => handleCreateMaterial('note')}
-                  data-umami-event="materials-empty-add-note"
-                >
-                  Заметка
-                  <Add className="fill-gray-80 ml-1 size-4 shrink-0" />
-                </Button>
-                <Button
-                  type="button"
-                  variant="none"
-                  className={emptyActionButtonClass}
-                  onClick={() => handleCreateMaterial('board')}
-                  data-umami-event="materials-empty-add-board"
-                >
-                  Доска
-                  <Add className="fill-gray-80 ml-1 size-4 shrink-0" />
-                </Button>
+                {isTutor && (
+                  <Button
+                    type="button"
+                    variant="none"
+                    className={emptyActionButtonClass}
+                    onClick={() => handleCreateMaterial('note')}
+                    data-umami-event="materials-empty-add-note"
+                  >
+                    Заметка
+                    <Add className="fill-gray-80 ml-1 size-4 shrink-0" />
+                  </Button>
+                )}
+                {isTutor && (
+                  <Button
+                    type="button"
+                    variant="none"
+                    className={emptyActionButtonClass}
+                    onClick={() => handleCreateMaterial('board')}
+                    data-umami-event="materials-empty-add-board"
+                  >
+                    Доска
+                    <Add className="fill-gray-80 ml-1 size-4 shrink-0" />
+                  </Button>
+                )}
               </>
             }
           />

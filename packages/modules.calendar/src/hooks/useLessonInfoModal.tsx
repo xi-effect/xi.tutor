@@ -21,6 +21,14 @@ function isWithinStartWindow(start: Date): boolean {
   return start.getTime() - Date.now() <= FIVE_MINUTES_MS;
 }
 
+function safeTimeToString(primary: string | undefined | null, fallback: Date): string {
+  if (primary != null && primary.length > 0) {
+    const d = new Date(primary);
+    if (!isNaN(d.getTime())) return timeToString(d);
+  }
+  return timeToString(new Date(fallback));
+}
+
 function mapEventToLessonInfo(
   event: ICalendarEvent,
   instanceDetails?: {
@@ -32,14 +40,8 @@ function mapEventToLessonInfo(
 ) {
   const startTime = event.isAllDay
     ? null
-    : instanceDetails
-      ? timeToString(new Date(instanceDetails.starts_at))
-      : timeToString(new Date(event.start));
-  const endTime = event.isAllDay
-    ? null
-    : instanceDetails
-      ? timeToString(new Date(instanceDetails.ends_at))
-      : timeToString(new Date(event.end));
+    : safeTimeToString(instanceDetails?.starts_at, event.start);
+  const endTime = event.isAllDay ? null : safeTimeToString(instanceDetails?.ends_at, event.end);
   const lessonTitle = instanceDetails?.name ?? event.title;
   const rawSubject = event.lessonInfo?.subject ?? '';
   const rawSubjectTrimmed = rawSubject.trim();

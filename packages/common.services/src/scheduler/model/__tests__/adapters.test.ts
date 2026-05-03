@@ -111,11 +111,43 @@ describe('mapEventInstanceToScheduleItem', () => {
     expect(item.cancelledAt).toBe('2026-04-21T08:00:00Z');
   });
 
-  it('classroomId может быть null', () => {
+  it('classroomId может быть null когда нет event и параметр null', () => {
     const instance = makeSoleInstance();
     const item = mapEventInstanceToScheduleItem(instance, null);
 
     expect(item.classroomId).toBeNull();
+  });
+
+  it('classroomId берётся из прямого поля classroom_id инстанса (глобальное расписание)', () => {
+    const instance = makeSoleInstance({ classroom_id: 55 });
+    const item = mapEventInstanceToScheduleItem(instance, null);
+
+    expect(item.classroomId).toBe(55);
+  });
+
+  it('classroom_id инстанса приоритетнее переданного параметра', () => {
+    const instance = makeSoleInstance({ classroom_id: 55 });
+    const item = mapEventInstanceToScheduleItem(instance, 42);
+
+    expect(item.classroomId).toBe(55);
+  });
+
+  it('classroomId берётся из event.classroom_id если прямого поля нет', () => {
+    const instance = makeSoleInstance({
+      event: { id: 1, name: 'Тест', description: null, classroom_id: 99, kind: 'classroom' },
+    });
+    const item = mapEventInstanceToScheduleItem(instance, null);
+
+    expect(item.classroomId).toBe(99);
+  });
+
+  it('classroomId из параметра используется как fallback когда оба поля отсутствуют/null', () => {
+    const instance = makeSoleInstance({
+      event: { id: 1, name: 'Тест', description: null, classroom_id: null, kind: 'classroom' },
+    });
+    const item = mapEventInstanceToScheduleItem(instance, 77);
+
+    expect(item.classroomId).toBe(77);
   });
 });
 

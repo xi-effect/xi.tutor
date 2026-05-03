@@ -16,11 +16,7 @@ import type {
   ScheduleLessonRow,
 } from 'modules.calendar';
 import { useCurrentUser } from 'common.services';
-import {
-  isOnSameLocalDay,
-  movingPropsFromLessonRow,
-  scheduleItemToLessonRow,
-} from './scheduleHelpers';
+import { movingPropsFromLessonRow, scheduleItemToLessonRow } from './scheduleHelpers';
 
 const getToday = () => {
   const d = new Date();
@@ -28,18 +24,15 @@ const getToday = () => {
   return d;
 };
 
-/** Окно загрузки расписания вокруг сегодняшней даты (в днях). */
-const SCHEDULE_WINDOW_DAYS = 30;
-
-const getScheduleWindow = () => {
-  const after = getToday();
-  after.setDate(after.getDate() - SCHEDULE_WINDOW_DAYS);
-  const before = getToday();
-  before.setDate(before.getDate() + SCHEDULE_WINDOW_DAYS);
-  before.setHours(23, 59, 59, 999);
+/** Диапазон [начало дня, конец дня] для запроса расписания. */
+const getDayRange = (date: Date) => {
+  const start = new Date(date);
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(date);
+  end.setHours(23, 59, 59, 999);
   return {
-    happensAfter: after.toISOString(),
-    happensBefore: new Date(before.getTime() + 1).toISOString(),
+    happensAfter: start.toISOString(),
+    happensBefore: new Date(end.getTime() + 1).toISOString(),
   };
 };
 
@@ -76,7 +69,7 @@ export const Lessons = () => {
     [updateEvent],
   );
 
-  const range = useMemo(getScheduleWindow, []);
+  const range = useMemo(() => getDayRange(selectedDate), [selectedDate]);
   const tutorScheduleQuery = useTutorSchedule({
     ...range,
     enabled: !isUserLoading && isTutor === true,
@@ -90,11 +83,10 @@ export const Lessons = () => {
   const lessonsForSelectedDay = useMemo<ScheduleLessonRow[]>(() => {
     const items = scheduleQuery.data ?? [];
     return items
-      .filter((item) => isOnSameLocalDay(item, selectedDate))
       .filter((item) => item.cancelledAt == null)
       .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())
       .map(scheduleItemToLessonRow);
-  }, [scheduleQuery.data, selectedDate]);
+  }, [scheduleQuery.data]);
 
   const monthLabelInHeader = useMemo(() => {
     if (!visibleMonthInfo) return null;
@@ -112,7 +104,9 @@ export const Lessons = () => {
 
   return (
     <>
-      <AddingLessonModal open={open} onOpenChange={setOpen} dayLessons={lessonsForSelectedDay} />
+      {isTutor ? (
+        <AddingLessonModal open={open} onOpenChange={setOpen} dayLessons={lessonsForSelectedDay} />
+      ) : null}
       <div className="bg-gray-0 flex h-[calc(100vh-98px)] w-(--lessons-panel-width) flex-col gap-4 rounded-2xl px-5 pt-4 pr-2 pb-1">
         {/* Заголовок */}
         <div className="flex flex-row items-center gap-2 pr-3">
@@ -140,15 +134,17 @@ export const Lessons = () => {
                 <span className="text-s-base 2xl:text-m-base font-normal">К сегодня</span>
               </Button>
             ) : null}
-            <Button
-              variant="none"
-              className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
-              onClick={() => setOpen(true)}
-              data-umami-event="add-lesson-button"
-              id="add-lesson-button"
-            >
-              <Add className="fill-brand-80 size-6" />
-            </Button>
+            {isTutor ? (
+              <Button
+                variant="none"
+                className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
+                onClick={() => setOpen(true)}
+                data-umami-event="add-lesson-button"
+                id="add-lesson-button"
+              >
+                <Add className="fill-brand-80 size-6" />
+              </Button>
+            ) : null}
           </div>
         </div>
 
@@ -167,9 +163,10 @@ export const Lessons = () => {
           <AllLessons
             dayDate={selectedDate}
             lessons={lessonsForSelectedDay}
+            isLoading={scheduleQuery.isLoading || scheduleQuery.isFetching}
             onReschedule={handleReschedule}
             onSaveLesson={isTutor ? handleSaveLesson : undefined}
-            onAddLesson={() => setOpen(true)}
+            onAddLesson={isTutor ? () => setOpen(true) : undefined}
           />
         </div>
       </div>

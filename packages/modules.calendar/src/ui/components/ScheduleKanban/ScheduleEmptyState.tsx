@@ -7,7 +7,8 @@ import { cn } from '@xipkg/utils';
 type ScheduleEmptyStateProps = {
   /** Дни, к которым относится пустое состояние (один или несколько подряд выбранных дней) */
   days: Date[];
-  onScheduleClick: () => void;
+  /** Если не передано — только текст без кнопки (например, у ученика) */
+  onScheduleClick?: () => void;
   className?: string;
   /**
    * Канбан: высота блока по viewport (calc(100dvh − шапки − отступы)), не на всю высоту скролла.
@@ -41,16 +42,18 @@ export const ScheduleEmptyState: FC<ScheduleEmptyStateProps> = ({
         )}
       >
         <p className="text-s-base text-gray-60 text-center dark:text-gray-50">{t(messageKey)}</p>
-        <Button
-          type="button"
-          variant="ghost"
-          size="s"
-          className="text-brand-80 h-9 shrink-0 font-medium"
-          onClick={onScheduleClick}
-        >
-          {t('add_lesson')}
-          <Plus className="fill-brand-80 ml-2 h-5 w-5" />
-        </Button>
+        {onScheduleClick ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="s"
+            className="text-brand-80 h-9 shrink-0 font-medium"
+            onClick={onScheduleClick}
+          >
+            {t('add_lesson')}
+            <Plus className="fill-brand-80 ml-2 h-5 w-5" />
+          </Button>
+        ) : null}
       </div>
     </div>
   );

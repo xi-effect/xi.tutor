@@ -5,6 +5,7 @@ import {
   type CancelRepeatingEventAfterTimestampInputDto,
   type CreateClassroomEventRequestDto,
   type CreateClassroomEventResponseDto,
+  type DetailedEventInstanceDto,
   type EventInstanceDto,
   type EventInstanceTimeSlotInputDto,
   type GetEventInstanceDetailsResponseDto,
@@ -195,9 +196,9 @@ export async function getStudentClassroomSchedule({
 export async function getTutorSchedule({
   happensAfter,
   happensBefore,
-}: GetGlobalScheduleParams): Promise<EventInstanceDto[]> {
+}: GetGlobalScheduleParams): Promise<DetailedEventInstanceDto[]> {
   const axiosInst = await getAxiosInstance();
-  const response = await axiosInst<EventInstanceDto[]>({
+  const response = await axiosInst<DetailedEventInstanceDto[]>({
     method: schedulerApiConfig[SchedulerQueryKey.GetTutorSchedule].method,
     url: schedulerApiConfig[SchedulerQueryKey.GetTutorSchedule].getUrl(),
     params: {
@@ -211,9 +212,9 @@ export async function getTutorSchedule({
 export async function getStudentSchedule({
   happensAfter,
   happensBefore,
-}: GetGlobalScheduleParams): Promise<EventInstanceDto[]> {
+}: GetGlobalScheduleParams): Promise<DetailedEventInstanceDto[]> {
   const axiosInst = await getAxiosInstance();
-  const response = await axiosInst<EventInstanceDto[]>({
+  const response = await axiosInst<DetailedEventInstanceDto[]>({
     method: schedulerApiConfig[SchedulerQueryKey.GetStudentSchedule].method,
     url: schedulerApiConfig[SchedulerQueryKey.GetStudentSchedule].getUrl(),
     params: {

@@ -12,10 +12,12 @@ import {
   scheduleItemToLessonRow,
 } from './components/Lessons/scheduleHelpers';
 
+const NEAREST_LESSON_DAYS = 7;
+
 const getNearestLessonRange = () => {
   const now = new Date();
   const before = new Date(now);
-  before.setDate(before.getDate() + 30);
+  before.setDate(before.getDate() + NEAREST_LESSON_DAYS);
   return {
     happensAfter: now.toISOString(),
     happensBefore: before.toISOString(),
@@ -39,6 +41,8 @@ export const MainPage = () => {
     enabled: isMobile && !isUserLoading && isTutor === false,
   });
   const scheduleQuery = isTutor ? tutorScheduleQuery : studentScheduleQuery;
+
+  const isNearestLoading = isUserLoading || scheduleQuery.isLoading;
 
   const nearestLesson = useMemo(() => {
     const items = scheduleQuery.data ?? [];
@@ -153,6 +157,14 @@ export const MainPage = () => {
               <Lessons />
             </div>
           )}
+          {isMobile && !isNearestLoading && nearestLesson == null && (
+            <div className="border-gray-10 bg-gray-0 flex w-full flex-col items-center gap-2 rounded-2xl border border-dashed px-4 py-6 text-center">
+              <p className="text-m-base font-semibold text-gray-100">Занятий нет</p>
+              <p className="text-s-base text-gray-60">
+                В ближайшие {NEAREST_LESSON_DAYS} дней занятий не запланировано
+              </p>
+            </div>
+          )}
           {isMobile && nearestLesson != null && (
             <>
               <NearestLessonCard
@@ -167,7 +179,7 @@ export const MainPage = () => {
             </>
           )}
           <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-5 self-stretch overscroll-contain pb-6 sm:overflow-y-auto">
-            <FirstLessonGuideBanner />
+            {!isMobile && isTutor && <FirstLessonGuideBanner />}
             <Classrooms />
             <Payments />
             <Materials />

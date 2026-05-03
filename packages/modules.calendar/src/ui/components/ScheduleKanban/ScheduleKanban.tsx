@@ -142,14 +142,18 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
                 >
                   {dayName}
                 </span>
-                <Button
-                  variant="none"
-                  className="hover:text-primary-60 hover:bg-gray-5 flex h-[32px] w-[40px] shrink-0 items-center justify-center rounded-md p-0 text-gray-50 transition-colors"
-                  aria-label={t('add_event')}
-                  onClick={() => onAddLessonClick?.(day)}
-                >
-                  <Plus className="fill-gray-40 group-hover/day:fill-brand-80 h-5 w-5 transition-colors duration-300" />
-                </Button>
+                {onAddLessonClick ? (
+                  <Button
+                    variant="none"
+                    className="hover:text-primary-60 hover:bg-gray-5 flex h-[32px] w-[40px] shrink-0 items-center justify-center rounded-md p-0 text-gray-50 transition-colors"
+                    aria-label={t('add_event')}
+                    onClick={() => onAddLessonClick(day)}
+                  >
+                    <Plus className="fill-gray-40 group-hover/day:fill-brand-80 h-5 w-5 transition-colors duration-300" />
+                  </Button>
+                ) : (
+                  <span className="h-[32px] w-[40px] shrink-0" aria-hidden />
+                )}
               </div>
             </div>
           );
@@ -221,7 +225,11 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
                           <ScheduleEmptyState
                             fillColumn
                             days={visibleDays.slice(start, end + 1)}
-                            onScheduleClick={() => onAddLessonClick?.(firstDay)}
+                            onScheduleClick={
+                              onAddLessonClick != null
+                                ? () => onAddLessonClick(firstDay)
+                                : undefined
+                            }
                             className="h-full w-full"
                           />
                         </div>

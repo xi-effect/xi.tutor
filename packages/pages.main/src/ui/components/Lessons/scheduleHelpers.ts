@@ -24,7 +24,7 @@ export const scheduleItemToLessonRow = (item: ScheduleItem): ScheduleLessonRow =
     endTime: formatTime(end),
     subject: item.title,
     description: item.description ?? undefined,
-    studentName: '',
+    studentName: item.title,
     studentId: 0,
     schedulerMeta: {
       eventId: item.eventId,

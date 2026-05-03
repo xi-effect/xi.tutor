@@ -93,7 +93,7 @@ type CalendarHeaderProps = {
   onNext: () => void;
   /** Переход к выбранной в календаре неделе */
   onWeekSelect: (date: Date) => void;
-  /** Открытие модалки добавления занятия (кнопка «Добавить занятие») */
+  /** Открытие модалки добавления занятия; без колбэка кнопка не показывается */
   onAddLessonClick?: () => void;
   /** Блок с текущими датой и временем слева в шапке (на вложенных экранах часто скрывают) */
   showDateTime?: boolean;
@@ -118,18 +118,20 @@ export const CalendarHeader = ({
         onNext={onNext}
         onWeekSelect={onWeekSelect}
       />
-      <div>
-        <Button
-          type="button"
-          variant="ghost"
-          size="s"
-          className="text-s-base text-brand-80 h-[32px] font-medium"
-          onClick={() => onAddLessonClick?.()}
-        >
-          Добавить занятие
-          <Plus className="fill-brand-80 ml-3 h-5 w-5" />
-        </Button>
-      </div>
+      {onAddLessonClick ? (
+        <div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="s"
+            className="text-s-base text-brand-80 h-[32px] font-medium"
+            onClick={() => onAddLessonClick()}
+          >
+            Добавить занятие
+            <Plus className="fill-brand-80 ml-3 h-5 w-5" />
+          </Button>
+        </div>
+      ) : null}
     </header>
   );
 };

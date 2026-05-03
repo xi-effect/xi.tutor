@@ -7,9 +7,10 @@ import {
 } from 'features.lesson.move';
 import {
   CalendarModule,
+  CalendarScheduleProvider,
   getScheduleQueryRange,
   mapScheduleItemsToCalendarEvents,
-  useCalendar,
+  useCalendarSchedule,
   useSetEvents,
   useSetEventsLoading,
   useStudentSchedule,
@@ -69,12 +70,12 @@ function movingModalPropsFromEvent(event: ICalendarEvent) {
   };
 }
 
-export const CalendarPage = () => {
+const CalendarPageContent = () => {
   const [addingModalOpen, setAddingModalOpen] = useState(false);
   const [initialDate, setInitialDate] = useState<Date | null>(null);
   const [moveEvent, setMoveEvent] = useState<ICalendarEvent | null>(null);
 
-  const { weekDays } = useCalendar();
+  const { weekDays } = useCalendarSchedule();
   const range = useMemo(() => getScheduleQueryRange(weekDays), [weekDays]);
 
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
@@ -117,14 +118,16 @@ export const CalendarPage = () => {
 
   return (
     <>
-      <AddingLessonModal
-        open={addingModalOpen}
-        onOpenChange={setAddingModalOpen}
-        dayLessons={[]}
-        initialDate={initialDate}
-      />
+      {isTutor ? (
+        <AddingLessonModal
+          open={addingModalOpen}
+          onOpenChange={setAddingModalOpen}
+          dayLessons={[]}
+          initialDate={initialDate}
+        />
+      ) : null}
       <CalendarModule
-        onAddLessonClick={handleAddLessonClick}
+        onAddLessonClick={isTutor ? handleAddLessonClick : undefined}
         onLessonReschedule={(event) => setMoveEvent(event)}
       />
       {moveEvent != null ? (
@@ -140,3 +143,9 @@ export const CalendarPage = () => {
     </>
   );
 };
+
+export const CalendarPage = () => (
+  <CalendarScheduleProvider>
+    <CalendarPageContent />
+  </CalendarScheduleProvider>
+);

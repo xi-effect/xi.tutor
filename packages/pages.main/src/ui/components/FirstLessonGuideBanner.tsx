@@ -34,7 +34,7 @@ export const FirstLessonGuideBanner = () => {
   };
 
   return (
-    <div className="bg-brand-100 mr-3 flex h-[92px] max-w-full shrink-0 items-center justify-between gap-4 overflow-hidden rounded-2xl px-5 max-[720px]:hidden">
+    <div className="bg-brand-100 mr-3 flex h-[92px] max-w-full shrink-0 items-center justify-between gap-4 overflow-hidden rounded-2xl px-5">
       <div className="min-w-0 flex-1 pr-2">
         <div className="text-gray-0 text-m-base leading-tight font-semibold">
           Как начать первое занятие?

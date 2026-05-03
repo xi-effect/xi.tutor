@@ -66,17 +66,19 @@ export const ScheduleMobileView = ({
             onWeekStartChange={handleWeekStartChange}
             onSelectedDateChange={handleSelectedDateChange}
           />
-          <div>
-            <Button
-              variant="primary"
-              size="s"
-              className="flex w-full items-center justify-center gap-2"
-              onClick={() => handleAddLesson(selectedDate)}
-            >
-              <Plus className="fill-gray-0 h-4 w-4 shrink-0" />
-              {t('add_lesson')}
-            </Button>
-          </div>
+          {onAddLessonClick ? (
+            <div>
+              <Button
+                variant="primary"
+                size="s"
+                className="flex w-full items-center justify-center gap-2"
+                onClick={() => handleAddLesson(selectedDate)}
+              >
+                <Plus className="fill-gray-0 h-4 w-4 shrink-0" />
+                {t('add_lesson')}
+              </Button>
+            </div>
+          ) : null}
         </div>
       </div>
       <div className="flex min-h-0 flex-1 flex-col px-4 pb-4">
@@ -84,7 +86,7 @@ export const ScheduleMobileView = ({
           days={slideDays}
           selectedDate={selectedDate}
           onSelectedDateChange={handleSelectedDateChange}
-          onAddLessonClick={handleAddLesson}
+          onAddLessonClick={onAddLessonClick != null ? handleAddLesson : undefined}
           onLessonReschedule={onLessonReschedule}
           onSaveLesson={onSaveLesson}
           hideLessonCardClassroomAndSubject={hideLessonCardClassroomAndSubject}

@@ -1,5 +1,7 @@
 export {
   CalendarModule,
+  CalendarScheduleProvider,
+  useCalendarSchedule,
   CalendarWeekNav,
   ScheduleDateCarousel,
   DayLessonRow,

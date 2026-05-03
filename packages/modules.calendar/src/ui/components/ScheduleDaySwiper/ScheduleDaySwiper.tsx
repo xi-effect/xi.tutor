@@ -119,7 +119,9 @@ export const ScheduleDaySwiper = ({
                   ) : events.length === 0 ? (
                     <ScheduleEmptyState
                       days={[day]}
-                      onScheduleClick={() => onAddLessonClick?.(day)}
+                      onScheduleClick={
+                        onAddLessonClick != null ? () => onAddLessonClick(day) : undefined
+                      }
                       fillColumn
                       className="min-h-0"
                     />

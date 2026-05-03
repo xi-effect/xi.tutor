@@ -1,6 +1,6 @@
 import { useMemo, type KeyboardEvent } from 'react';
 import { Button } from '@xipkg/button';
-import { Close, CornerUpRight, Edit05 } from '@xipkg/icons';
+import { CornerUpRight, Edit05, Trash } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useCurrentUser } from 'common.services';
@@ -82,7 +82,7 @@ export const DayLessonRow = ({
   return (
     <div
       className={cn(
-        'border-gray-10 relative flex h-[136px] max-h-[136px] shrink-0 flex-row items-stretch gap-4 overflow-hidden p-4 pb-3.5 transition-[padding] duration-200 ease-linear',
+        'border-gray-10 relative flex min-h-[136px] shrink-0 flex-row items-stretch gap-4 overflow-hidden p-4 pb-3.5 transition-[padding] duration-200 ease-linear',
         showTutorIconColumn && 'group/day-lesson pr-14 lg:pr-4 lg:hover:pr-14',
         isNearestLesson ? 'border-brand-80 rounded-2xl border' : 'border-b last:border-b-0',
       )}
@@ -128,6 +128,11 @@ export const DayLessonRow = ({
                       size="m"
                     />
                   </div>
+                  {lesson.subject.trim() !== '' ? (
+                    <p className="text-s-base text-gray-90 line-clamp-2 leading-snug font-semibold">
+                      {lesson.subject}
+                    </p>
+                  ) : null}
                 </>
               )}
             </div>
@@ -156,21 +161,6 @@ export const DayLessonRow = ({
                   </TooltipTrigger>
                   <TooltipContent>Перенести занятие</TooltipContent>
                 </Tooltip>
-                {canCancelLesson ? (
-                  <Tooltip delayDuration={TOOLTIP_OPEN_DELAY_MS}>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="none"
-                        size="s"
-                        className="bg-gray-0/80 hover:bg-gray-10 h-[32px] w-[32px] min-w-[32px] p-0"
-                        onClick={() => setCancelModalOpen(true)}
-                      >
-                        <Close className="fill-gray-60 h-5 w-5" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>Отменить занятие</TooltipContent>
-                  </Tooltip>
-                ) : null}
                 <Tooltip delayDuration={TOOLTIP_OPEN_DELAY_MS}>
                   <TooltipTrigger asChild>
                     <Button
@@ -184,6 +174,21 @@ export const DayLessonRow = ({
                   </TooltipTrigger>
                   <TooltipContent>Редактировать занятие</TooltipContent>
                 </Tooltip>
+                {canCancelLesson ? (
+                  <Tooltip delayDuration={TOOLTIP_OPEN_DELAY_MS}>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="none"
+                        size="s"
+                        className="bg-gray-0/80 hover:bg-gray-10 h-[32px] w-[32px] min-w-[32px] p-0"
+                        onClick={() => setCancelModalOpen(true)}
+                      >
+                        <Trash className="fill-gray-60 h-5 w-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>Отменить занятие</TooltipContent>
+                  </Tooltip>
+                ) : null}
               </div>
             )}
           </div>

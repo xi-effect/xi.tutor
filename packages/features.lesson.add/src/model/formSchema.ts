@@ -43,6 +43,14 @@ export const formSchema = z
         path: ['endTime'],
       });
     }
+
+    if (data.repeatMode !== 'none' && data.repeatDays.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Выберите хотя бы один день недели',
+        path: ['repeatDays'],
+      });
+    }
   });
 
 export type FormInput = z.input<typeof formSchema>;

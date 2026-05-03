@@ -2,7 +2,8 @@ import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { formSchema, type FormData, type FormInput } from '../model/formSchema';
-import { useFetchClassrooms } from 'common.services';
+import { useFetchClassrooms, useCreateClassroomEvent } from 'common.services';
+import type { CreateClassroomEventRequestDto } from 'common.api';
 
 type UseAddingFormOptions = {
   fixedClassroomId?: number;
@@ -20,9 +21,72 @@ const getDefaultValues = (initialDate?: Date | null, fixedClassroomId?: number):
   repeatDays: [],
 });
 
+/** Объединить дату и строку времени "HH:MM" в ISO-строку */
+const buildStartsAt = (startDate: Date, startTime: string): string => {
+  const [hours, minutes] = startTime.split(':').map(Number);
+  const d = new Date(startDate);
+  d.setHours(hours, minutes, 0, 0);
+  return d.toISOString();
+};
+
+/** Разница между endTime и startTime в секундах */
+const buildDurationSeconds = (startTime: string, endTime: string): number => {
+  const [sh, sm] = startTime.split(':').map(Number);
+  const [eh, em] = endTime.split(':').map(Number);
+  return (eh * 60 + em - (sh * 60 + sm)) * 60;
+};
+
+/**
+ * Биткарта недели: 0=Пн, 1=Вт, ..., 6=Вс → бит 0 = Пн, бит 1 = Вт, ...
+ * Если список дней пустой, кладём в маску день из startsAt.
+ */
+const buildWeeklyBitmask = (days: number[], fallbackDate: Date): number => {
+  if (days.length > 0) {
+    return days.reduce((mask, day) => mask | (1 << day), 0);
+  }
+  // js getDay(): 0=Вс, 1=Пн…6=Сб → конвертируем в 0=Пн…6=Вс
+  const jsDay = fallbackDate.getDay();
+  const day = jsDay === 0 ? 6 : jsDay - 1;
+  return 1 << day;
+};
+
+const buildRequestBody = (data: FormData): CreateClassroomEventRequestDto => {
+  const startsAt = buildStartsAt(data.startDate, data.startTime);
+  const durationSeconds = buildDurationSeconds(data.startTime, data.endTime);
+
+  if (data.repeatMode === 'none') {
+    return {
+      kind: 'single',
+      event: {
+        name: data.title,
+        description: data.description || null,
+      },
+      sole_instance: {
+        starts_at: startsAt,
+        duration_seconds: durationSeconds,
+      },
+    };
+  }
+
+  return {
+    kind: 'repeating',
+    event: {
+      name: data.title,
+      description: data.description || null,
+    },
+    repetition_mode: {
+      kind: 'weekly',
+      starts_at: startsAt,
+      duration_seconds: durationSeconds,
+      weekly_bitmask: buildWeeklyBitmask(data.repeatDays, data.startDate),
+    },
+  };
+};
+
 export const useAddingForm = (initialDate?: Date | null, options: UseAddingFormOptions = {}) => {
   const { data: classrooms, isLoading: isClassroomsLoading } = useFetchClassrooms();
   const { fixedClassroomId, onSubmit: externalSubmit } = options;
+  const createEvent = useCreateClassroomEvent();
 
   const form = useForm<FormInput, unknown, FormData>({
     resolver: zodResolver(formSchema),
@@ -38,24 +102,10 @@ export const useAddingForm = (initialDate?: Date | null, options: UseAddingFormO
       return;
     }
 
-    const classroom = classrooms?.find((c) => c.id === Number(data.studentId));
-    const studentIds = classroom?.kind === 'individual' ? [classroom.student_id] : [];
+    const classroomId = Number(data.studentId);
+    const body = buildRequestBody(data);
 
-    const payload = {
-      title: data.title,
-      description: data.description,
-      studentIds,
-      startTime: data.startTime,
-      endTime: data.endTime,
-      startDate: data.startDate,
-      repeatMode: data.repeatMode,
-      ...(data.repeatMode === 'custom' && { repeatDays: data.repeatDays }),
-    };
-
-    console.log('payload', payload);
-
-    // TODO: подключить API создания урока (common.api или модуль календаря)
-    // await createLesson(payload);
+    await createEvent.mutateAsync({ classroomId, body });
     toast.success('Занятие добавлено');
   };
 

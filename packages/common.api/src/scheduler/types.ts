@@ -89,6 +89,13 @@ type EventInstanceBaseDto = {
   ends_at: string;
   name: string;
   description: string | null;
+  /**
+   * Присутствует в ответах глобального расписания (`roles/{role}/schedule/`).
+   * В расписании конкретного кабинета отсутствует — classroomId берётся из параметра URL.
+   */
+  classroom_id?: number | null;
+  /** Присутствует в детальных ручках и, возможно, в глобальном расписании */
+  event?: SchedulerEventDto;
 };
 
 export type SoleEventInstanceDto = EventInstanceBaseDto & {
