@@ -3,7 +3,7 @@ import { Button } from '@xipkg/button';
 import { Add } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { EmptySchedule } from 'common.ui';
-import { DayLessonListMetaProvider, DayLessonRow, getScheduleLessonEndAt } from 'modules.calendar';
+import { DayLessonListMetaProvider, DayLessonRow, findNearestLessonIndex } from 'modules.calendar';
 import type { ChangeLessonFormData, ScheduleLessonRow } from 'modules.calendar';
 import { cn } from '@xipkg/utils';
 
@@ -25,17 +25,6 @@ type AllLessonsProps = {
   /** Открыть модалку добавления занятия (кнопка в пустом состоянии) */
   onAddLesson?: () => void;
 };
-
-/** Первое занятие в списке, которое ещё не закончилось (текущее или ближайшее) */
-function findNearestLessonIndex(lessons: ScheduleLessonRow[], now: Date, dayDate: Date): number {
-  for (let i = 0; i < lessons.length; i++) {
-    const end = getScheduleLessonEndAt(lessons[i], dayDate);
-    if (end != null && now < end) {
-      return i;
-    }
-  }
-  return -1;
-}
 
 const scheduleEmptyActionButtonClass =
   'bg-gray-5 hover:bg-gray-10 text-xs-base h-8 rounded-lg px-4 font-medium text-gray-80';

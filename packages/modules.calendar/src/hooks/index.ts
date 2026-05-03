@@ -8,3 +8,4 @@ export { useCancelLessonModal } from './useCancelLessonModal';
 export { useChangeLessonModal } from './useChangeLessonModal';
 export { useLessonInfoModal } from './useLessonInfoModal';
 export { useLessonClassroomPresentation } from './useLessonClassroomPresentation';
+export { useScheduleLessonRowsForDay } from './useScheduleLessonRowsForDay';

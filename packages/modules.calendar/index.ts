@@ -36,6 +36,10 @@ export {
   type LessonClassroomPresentationT,
 } from './src/hooks/useLessonClassroomPresentation';
 export { getScheduleLessonEndAt } from './src/utils/getScheduleLessonEndAt';
+export { getCalendarDayQueryRange } from './src/utils/getCalendarDayQueryRange';
+export { mapScheduleItemToLessonRow } from './src/utils/mapScheduleItemToLessonRow';
+export { findNearestLessonIndex } from './src/utils/findNearestLessonIndex';
+export { useScheduleLessonRowsForDay } from './src/hooks/useScheduleLessonRowsForDay';
 export {
   mapScheduleItemToCalendarEvent,
   mapScheduleItemsToCalendarEvents,

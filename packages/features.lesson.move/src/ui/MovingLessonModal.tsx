@@ -2,50 +2,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { Modal, ModalContent, ModalCloseButton, ModalBody } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
 import { DayLessonsPanel } from 'modules.calendar';
-import type { ScheduleLessonRow } from 'modules.calendar';
 import { MovingForm } from './components/MovingForm';
 import type { RepeatedVirtualRescheduleTarget, SoleRescheduleTarget } from '../hooks';
 import type { FormData } from '../model';
 import './MovingModal.css';
-
-const MOCK_DAY_LESSONS: ScheduleLessonRow[] = [
-  {
-    id: 1,
-    classroomId: 710,
-    startTime: '10:00',
-    endTime: '10:45',
-    subject: 'Математика',
-    studentName: 'Иван Петров',
-    studentId: 2,
-  },
-  {
-    id: 2,
-    classroomId: 708,
-    startTime: '11:00',
-    endTime: '11:45',
-    subject: 'Физика',
-    studentName: 'Анна Кузнецова',
-    studentId: 3,
-  },
-  {
-    id: 3,
-    classroomId: 476,
-    startTime: '14:00',
-    endTime: '14:45',
-    subject: 'Химия',
-    studentName: 'Олег Смирнов',
-    studentId: 4,
-  },
-  {
-    id: 4,
-    classroomId: 457,
-    startTime: '16:30',
-    endTime: '17:15',
-    subject: 'История',
-    studentName: 'Елена Федорова',
-    studentId: 5,
-  },
-];
 
 const getToday = () => {
   const d = new Date();
@@ -53,10 +13,17 @@ const getToday = () => {
   return d;
 };
 
+const normalizeCalendarDay = (d: Date) => {
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  return x;
+};
+
 export type MovingLessonModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  dayLessons?: ScheduleLessonRow[];
+  /** День левой панели при открытии; по умолчанию из `initialDate` */
+  scheduleListSeedDate?: Date | null;
   initialDate?: Date | null;
   /** Предзаполнение времени из события (формат HH:MM) */
   initialStartTime?: string | null;
@@ -93,7 +60,7 @@ const DEFAULT_LESSON_TITLE = 'Изучаем что-то';
 export const MovingLessonModal = ({
   open,
   onOpenChange,
-  dayLessons = [],
+  scheduleListSeedDate,
   initialDate = null,
   initialStartTime = null,
   initialEndTime = null,
@@ -118,8 +85,15 @@ export const MovingLessonModal = ({
   useEffect(() => {
     if (!open) {
       setIsSubmitting(false);
+      return;
     }
-  }, [open]);
+    const seed = scheduleListSeedDate ?? initialDate;
+    if (seed != null) {
+      setSelectedDate(normalizeCalendarDay(seed));
+    } else {
+      setSelectedDate(getToday());
+    }
+  }, [open, scheduleListSeedDate, initialDate]);
 
   const handleCloseModal = () => {
     onOpenChange(false);
@@ -132,14 +106,14 @@ export const MovingLessonModal = ({
       <ModalContent className="flex max-h-[min(100dvh,100%)] min-h-0 w-full max-w-[960px] min-w-0 flex-col overflow-hidden md:min-h-[min(740px,100dvh)]">
         <ModalCloseButton />
         <ModalBody className="grid min-h-0 w-full min-w-0 flex-1 grid-cols-1 gap-6 overflow-hidden md:grid-cols-2 md:gap-10">
-          <div className="hidden min-h-0 min-w-0 flex-col gap-5 overflow-hidden md:flex">
-            <h3 className="text-xl-base shrink-0 font-semibold text-gray-100">Расписание</h3>
-            <div className="min-h-0 flex-1 overflow-y-auto">
+          <div className="hidden min-h-0 min-w-0 flex-col overflow-hidden md:flex">
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
               <DayLessonsPanel
+                scheduleHeadingTitle="Расписание"
                 selectedDate={selectedDate}
                 onSelectedDateChange={setSelectedDate}
-                lessons={dayLessons?.length ? dayLessons : MOCK_DAY_LESSONS}
-                withoutTitle
+                fetchEnabled={open}
+                showLessonActions={false}
               />
             </div>
           </div>

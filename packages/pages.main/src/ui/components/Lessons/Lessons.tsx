@@ -105,7 +105,12 @@ export const Lessons = () => {
   return (
     <>
       {isTutor ? (
-        <AddingLessonModal open={open} onOpenChange={setOpen} dayLessons={lessonsForSelectedDay} />
+        <AddingLessonModal
+          open={open}
+          onOpenChange={setOpen}
+          scheduleListSeedDate={selectedDate}
+          initialDate={selectedDate}
+        />
       ) : null}
       <div className="bg-gray-0 flex h-[calc(100vh-98px)] w-(--lessons-panel-width) flex-col gap-4 rounded-2xl px-5 pt-4 pr-2 pb-1">
         {/* Заголовок */}

@@ -377,7 +377,6 @@ export const TabsTutor = () => {
           <AddingLessonModal
             open={addLessonOpen}
             onOpenChange={setAddLessonOpen}
-            dayLessons={[]}
             initialDate={addLessonInitialDate}
             fixedClassroomId={Number(classroomId)}
             onSubmit={handleAddLessonSubmit}

@@ -3,7 +3,6 @@ import { Modal, ModalContent, ModalCloseButton, ModalBody } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
 
 import { DayLessonsPanel } from 'modules.calendar';
-import type { ScheduleLessonRow } from 'modules.calendar';
 import { AddingForm } from './components/AddingForm';
 import './AddingModal.css';
 import type { FormData } from '../model';
@@ -14,12 +13,21 @@ const getToday = () => {
   return d;
 };
 
+const normalizeCalendarDay = (d: Date) => {
+  const x = new Date(d);
+  x.setHours(0, 0, 0, 0);
+  return x;
+};
+
 type AddingLessonModalProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** Занятия на день для левой панели (виджет дня). Если не передано — показывается пустой список */
-  dayLessons?: ScheduleLessonRow[];
-  /** Дата для предзаполнения поля «Дата» в форме (например, день колонки при клике на плюс в канбане) */
+  /**
+   * День расписания в левой панели при открытии (карусель и список).
+   * По умолчанию совпадает с `initialDate`, иначе сегодня.
+   */
+  scheduleListSeedDate?: Date | null;
+  /** Дата для предзаполнения поля «Дата» в форме */
   initialDate?: Date | null;
   fixedClassroomId?: number;
   onSubmit?: (data: FormData) => void | Promise<void>;
@@ -28,7 +36,7 @@ type AddingLessonModalProps = {
 export const AddingLessonModal = ({
   open,
   onOpenChange,
-  dayLessons = [],
+  scheduleListSeedDate,
   initialDate = null,
   fixedClassroomId,
   onSubmit,
@@ -42,8 +50,11 @@ export const AddingLessonModal = ({
   useEffect(() => {
     if (!open) {
       setIsSubmitting(false);
+      return;
     }
-  }, [open]);
+    const seed = scheduleListSeedDate ?? initialDate;
+    setSelectedDate(seed != null ? normalizeCalendarDay(seed) : getToday());
+  }, [open, scheduleListSeedDate, initialDate]);
 
   const handleCloseModal = () => {
     onOpenChange(false);
@@ -54,14 +65,14 @@ export const AddingLessonModal = ({
       <ModalContent className="flex max-h-[min(100dvh,100%)] min-h-0 w-full max-w-[960px] min-w-0 flex-col overflow-hidden md:min-h-[min(740px,100dvh)]">
         <ModalCloseButton />
         <ModalBody className="grid min-h-0 w-full min-w-0 flex-1 grid-cols-1 gap-6 overflow-hidden md:grid-cols-2 md:gap-10">
-          <div className="hidden min-h-0 min-w-0 flex-col gap-5 overflow-hidden md:flex">
-            <h3 className="text-xl-base shrink-0 font-semibold text-gray-100">Расписание</h3>
-            <div className="min-h-0 flex-1 overflow-y-auto">
+          <div className="hidden min-h-0 min-w-0 flex-col overflow-hidden md:flex">
+            <div className="flex min-h-0 min-w-0 flex-1 flex-col">
               <DayLessonsPanel
+                scheduleHeadingTitle="Расписание"
                 selectedDate={selectedDate}
                 onSelectedDateChange={setSelectedDate}
-                lessons={dayLessons}
-                withoutTitle
+                fetchEnabled={open}
+                showLessonActions={false}
               />
             </div>
           </div>

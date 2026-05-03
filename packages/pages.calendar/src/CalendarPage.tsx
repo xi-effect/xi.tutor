@@ -122,7 +122,6 @@ const CalendarPageContent = () => {
         <AddingLessonModal
           open={addingModalOpen}
           onOpenChange={setAddingModalOpen}
-          dayLessons={[]}
           initialDate={initialDate}
         />
       ) : null}

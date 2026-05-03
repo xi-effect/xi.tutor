@@ -1,40 +1,8 @@
 import type { ScheduleItem, ScheduleLessonRow } from 'modules.calendar';
+import { mapScheduleItemToLessonRow as scheduleItemToLessonRow } from 'modules.calendar';
 import type { RepeatedVirtualRescheduleTarget, SoleRescheduleTarget } from 'features.lesson.move';
 
-const formatTime = (date: Date): string =>
-  `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
-
-/**
- * `ScheduleItem` → строка занятия для виджета расписания (`ScheduleLessonRow`).
- * Используется виджетом расписания на главной и `NearestLessonCard`.
- */
-export const scheduleItemToLessonRow = (item: ScheduleItem): ScheduleLessonRow => {
-  const start = new Date(item.startsAt);
-  const end = new Date(item.endsAt);
-  const instance = item.eventInstance;
-  const eventInstanceId = 'id' in instance ? instance.id : undefined;
-  const repetitionModeId =
-    'repetition_mode_id' in instance ? instance.repetition_mode_id : undefined;
-  const instanceIndex = 'instance_index' in instance ? instance.instance_index : undefined;
-  return {
-    id: item.eventId,
-    classroomId: item.classroomId ?? undefined,
-    startAt: start,
-    startTime: formatTime(start),
-    endTime: formatTime(end),
-    subject: item.title,
-    description: item.description ?? undefined,
-    studentName: item.title,
-    studentId: 0,
-    schedulerMeta: {
-      eventId: item.eventId,
-      instanceKind: item.instanceKind,
-      eventInstanceId,
-      repetitionModeId,
-      instanceIndex,
-    },
-  };
-};
+export { scheduleItemToLessonRow };
 
 function jsWeekdayToSeriesIndex(date: Date): number {
   const d = date.getDay();
