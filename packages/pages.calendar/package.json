@@ -11,6 +11,7 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
+    "common.services": "workspace:*",
     "features.lesson.add": "workspace:*",
     "features.lesson.move": "workspace:*",
     "modules.calendar": "workspace:*"

@@ -15,6 +15,7 @@ type AllLessonsProps = {
   dayDate: Date;
   /** Панель действий (начать, иконки препода) на каждой карточке. По умолчанию true */
   showLessonActions?: boolean;
+  onReschedule?: (lesson: ScheduleLessonRow) => void;
   onSaveLesson?: (lesson: ScheduleLessonRow, data: ChangeLessonFormData) => void;
   /** Открыть модалку добавления занятия (кнопка в пустом состоянии) */
   onAddLesson?: () => void;
@@ -38,6 +39,7 @@ export const AllLessons = ({
   lessons,
   dayDate,
   showLessonActions = true,
+  onReschedule,
   onSaveLesson,
   onAddLesson,
 }: AllLessonsProps) => {
@@ -87,6 +89,7 @@ export const AllLessons = ({
                   lessonDay={dayDate}
                   showActions={showLessonActions}
                   isNearestLesson={nearestIndex >= 0 && index === nearestIndex}
+                  onReschedule={onReschedule}
                   onSaveLesson={onSaveLesson}
                 />
               ))}

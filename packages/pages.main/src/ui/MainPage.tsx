@@ -1,26 +1,53 @@
 /* eslint-disable no-irregular-whitespace */
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Materials, Payments, Classrooms, FirstLessonGuideBanner } from './components';
 import { DateTimeDisplay, OnboardingPopup } from 'common.ui';
 import { useCurrentUser } from 'common.services';
 import { useMediaQuery } from '@xipkg/utils';
-import { NearestLessonCard } from 'modules.calendar';
+import { NearestLessonCard, useStudentSchedule, useTutorSchedule } from 'modules.calendar';
 import { MovingLessonModal } from 'features.lesson.move';
-import { Lessons, MOCK_LESSONS } from './components/Lessons/Lessons';
+import { Lessons } from './components/Lessons/Lessons';
+import {
+  movingPropsFromLessonRow,
+  scheduleItemToLessonRow,
+} from './components/Lessons/scheduleHelpers';
 
-const getToday = () => {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  return d;
+const getNearestLessonRange = () => {
+  const now = new Date();
+  const before = new Date(now);
+  before.setDate(before.getDate() + 30);
+  return {
+    happensAfter: now.toISOString(),
+    happensBefore: before.toISOString(),
+  };
 };
 
 export const MainPage = () => {
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
   const isMobile = useMediaQuery('(max-width: 720px)');
   const [moveLessonOpen, setMoveLessonOpen] = useState(false);
-  const nearestLesson = MOCK_LESSONS[0];
+
+  const range = useMemo(getNearestLessonRange, []);
+  const tutorScheduleQuery = useTutorSchedule({
+    ...range,
+    enabled: isMobile && !isUserLoading && isTutor === true,
+  });
+  const studentScheduleQuery = useStudentSchedule({
+    ...range,
+    enabled: isMobile && !isUserLoading && isTutor === false,
+  });
+  const scheduleQuery = isTutor ? tutorScheduleQuery : studentScheduleQuery;
+
+  const nearestLesson = useMemo(() => {
+    const items = scheduleQuery.data ?? [];
+    const upcoming = items
+      .filter((item) => item.cancelledAt == null)
+      .filter((item) => new Date(item.endsAt).getTime() > Date.now())
+      .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime());
+    return upcoming[0] ? scheduleItemToLessonRow(upcoming[0]) : null;
+  }, [scheduleQuery.data]);
 
   const steps = [
     {
@@ -126,25 +153,16 @@ export const MainPage = () => {
               <Lessons />
             </div>
           )}
-          {isMobile && (
+          {isMobile && nearestLesson != null && (
             <>
               <NearestLessonCard
                 lesson={nearestLesson}
                 onReschedule={() => setMoveLessonOpen(true)}
               />
               <MovingLessonModal
-                key={String(nearestLesson.id)}
                 open={moveLessonOpen}
                 onOpenChange={setMoveLessonOpen}
-                formKey={String(nearestLesson.id)}
-                lessonKind="one-off"
-                initialDate={getToday()}
-                initialStartTime={nearestLesson.startTime}
-                initialEndTime={nearestLesson.endTime}
-                classroomId={nearestLesson.classroomId}
-                teacherId={nearestLesson.studentId}
-                fallbackName={nearestLesson.studentName}
-                lessonTitle={nearestLesson.subject}
+                {...movingPropsFromLessonRow(nearestLesson)}
               />
             </>
           )}

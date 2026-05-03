@@ -53,7 +53,7 @@ export type MovingFormProps = PropsWithChildren<{
    */
   schedulerTarget?: RepeatedVirtualRescheduleTarget;
   /**
-   * Параметры для переноса инстанса с явным id (sole / repeated_persistent).
+   * Параметры для переноса инстанса с явным id (sole / repeated_persisted).
    * Когда задан и `onSubmit` не передан — вызывается PUT /event-instances/{id}/time-slot/.
    */
   soleTarget?: SoleRescheduleTarget;

@@ -2,11 +2,12 @@ import { useQuery, useMutation, useQueryClient, type QueryClient } from '@tansta
 import {
   schedulerApiConfig,
   SchedulerQueryKey,
+  type CancelRepeatingEventAfterTimestampInputDto,
   type CreateClassroomEventRequestDto,
+  type CreateClassroomEventResponseDto,
   type EventInstanceDto,
   type EventInstanceTimeSlotInputDto,
   type GetEventInstanceDetailsResponseDto,
-  type SchedulerEventDto,
   type UpdateClassroomEventRequestDto,
 } from 'common.api';
 import { getAxiosInstance } from 'common.config';
@@ -52,9 +53,26 @@ export type CancelRepeatedVirtualInstanceParams = {
   instanceIndex: number;
 };
 
+export type CancelRepeatingEventAfterTimestampParams = {
+  classroomId: number;
+  eventId: number;
+  body: CancelRepeatingEventAfterTimestampInputDto;
+};
+
 export type GetEventInstanceDetailsParams = {
   classroomId: number;
   eventInstanceId: string;
+};
+
+export type GetRepeatedEventInstanceDetailsParams = {
+  classroomId: number;
+  repetitionModeId: string;
+  instanceIndex: number;
+};
+
+export type GetGlobalScheduleParams = {
+  happensAfter: string;
+  happensBefore: string;
 };
 
 export type RescheduleRepeatedVirtualInstanceParams = {
@@ -82,6 +100,14 @@ export const schedulerQueryKeys = {
   studentAllForClassroom: (classroomId: number) =>
     ['student-classroom-schedule', classroomId] as const,
 
+  /** Глобальное расписание (без classroom_id). */
+  tutorSchedule: (happensAfter: string, happensBefore: string) =>
+    ['tutor-schedule', happensAfter, happensBefore] as const,
+  studentSchedule: (happensAfter: string, happensBefore: string) =>
+    ['student-schedule', happensAfter, happensBefore] as const,
+  tutorScheduleAll: () => ['tutor-schedule'] as const,
+  studentScheduleAll: () => ['student-schedule'] as const,
+
   tutorEventInstanceDetails: (classroomId: number, eventInstanceId: string) =>
     ['tutor-event-instance-details', classroomId, eventInstanceId] as const,
 
@@ -94,6 +120,36 @@ export const schedulerQueryKeys = {
 
   studentEventInstanceDetailsForClassroom: (classroomId: number) =>
     ['student-event-instance-details', classroomId] as const,
+
+  tutorRepeatedEventInstanceDetails: (
+    classroomId: number,
+    repetitionModeId: string,
+    instanceIndex: number,
+  ) =>
+    [
+      'tutor-repeated-event-instance-details',
+      classroomId,
+      repetitionModeId,
+      instanceIndex,
+    ] as const,
+
+  studentRepeatedEventInstanceDetails: (
+    classroomId: number,
+    repetitionModeId: string,
+    instanceIndex: number,
+  ) =>
+    [
+      'student-repeated-event-instance-details',
+      classroomId,
+      repetitionModeId,
+      instanceIndex,
+    ] as const,
+
+  tutorRepeatedEventInstanceDetailsForClassroom: (classroomId: number) =>
+    ['tutor-repeated-event-instance-details', classroomId] as const,
+
+  studentRepeatedEventInstanceDetailsForClassroom: (classroomId: number) =>
+    ['student-repeated-event-instance-details', classroomId] as const,
 } as const;
 
 export async function getTutorClassroomSchedule({
@@ -136,12 +192,44 @@ export async function getStudentClassroomSchedule({
   return response.data;
 }
 
+export async function getTutorSchedule({
+  happensAfter,
+  happensBefore,
+}: GetGlobalScheduleParams): Promise<EventInstanceDto[]> {
+  const axiosInst = await getAxiosInstance();
+  const response = await axiosInst<EventInstanceDto[]>({
+    method: schedulerApiConfig[SchedulerQueryKey.GetTutorSchedule].method,
+    url: schedulerApiConfig[SchedulerQueryKey.GetTutorSchedule].getUrl(),
+    params: {
+      happens_after: happensAfter,
+      happens_before: happensBefore,
+    },
+  });
+  return response.data;
+}
+
+export async function getStudentSchedule({
+  happensAfter,
+  happensBefore,
+}: GetGlobalScheduleParams): Promise<EventInstanceDto[]> {
+  const axiosInst = await getAxiosInstance();
+  const response = await axiosInst<EventInstanceDto[]>({
+    method: schedulerApiConfig[SchedulerQueryKey.GetStudentSchedule].method,
+    url: schedulerApiConfig[SchedulerQueryKey.GetStudentSchedule].getUrl(),
+    params: {
+      happens_after: happensAfter,
+      happens_before: happensBefore,
+    },
+  });
+  return response.data;
+}
+
 export async function createClassroomEvent({
   classroomId,
   body,
-}: CreateClassroomEventParams): Promise<SchedulerEventDto> {
+}: CreateClassroomEventParams): Promise<CreateClassroomEventResponseDto> {
   const axiosInst = await getAxiosInstance();
-  const response = await axiosInst<SchedulerEventDto>({
+  const response = await axiosInst<CreateClassroomEventResponseDto>({
     method: schedulerApiConfig[SchedulerQueryKey.CreateClassroomEvent].method,
     url: schedulerApiConfig[SchedulerQueryKey.CreateClassroomEvent].getUrl(classroomId.toString()),
     data: body,
@@ -154,9 +242,9 @@ export async function updateClassroomEvent({
   classroomId,
   eventId,
   body,
-}: UpdateClassroomEventParams): Promise<SchedulerEventDto> {
+}: UpdateClassroomEventParams): Promise<CreateClassroomEventResponseDto> {
   const axiosInst = await getAxiosInstance();
-  const response = await axiosInst<SchedulerEventDto>({
+  const response = await axiosInst<CreateClassroomEventResponseDto>({
     method: schedulerApiConfig[SchedulerQueryKey.UpdateClassroomEvent].method,
     url: schedulerApiConfig[SchedulerQueryKey.UpdateClassroomEvent].getUrl(
       classroomId.toString(),
@@ -235,14 +323,30 @@ function invalidateClassroomSchedules(queryClient: QueryClient, classroomId: num
   });
 }
 
+function invalidateGlobalSchedules(queryClient: QueryClient) {
+  queryClient.invalidateQueries({
+    queryKey: schedulerQueryKeys.tutorScheduleAll(),
+  });
+  queryClient.invalidateQueries({
+    queryKey: schedulerQueryKeys.studentScheduleAll(),
+  });
+}
+
 /** После переноса слота: расписание + GET event-instance (модалка «Информация о занятии») */
 function invalidateAfterRescheduleTimeSlot(queryClient: QueryClient, classroomId: number) {
   invalidateClassroomSchedules(queryClient, classroomId);
+  invalidateGlobalSchedules(queryClient);
   queryClient.invalidateQueries({
     queryKey: schedulerQueryKeys.tutorEventInstanceDetailsForClassroom(classroomId),
   });
   queryClient.invalidateQueries({
     queryKey: schedulerQueryKeys.studentEventInstanceDetailsForClassroom(classroomId),
+  });
+  queryClient.invalidateQueries({
+    queryKey: schedulerQueryKeys.tutorRepeatedEventInstanceDetailsForClassroom(classroomId),
+  });
+  queryClient.invalidateQueries({
+    queryKey: schedulerQueryKeys.studentRepeatedEventInstanceDetailsForClassroom(classroomId),
   });
 }
 
@@ -296,10 +400,11 @@ export function useStudentClassroomSchedule({
 export function useCreateClassroomEvent() {
   const queryClient = useQueryClient();
 
-  return useMutation<SchedulerEventDto, Error, CreateClassroomEventParams>({
+  return useMutation<CreateClassroomEventResponseDto, Error, CreateClassroomEventParams>({
     mutationFn: createClassroomEvent,
     onSuccess: (_data, { classroomId }) => {
       invalidateClassroomSchedules(queryClient, classroomId);
+      invalidateGlobalSchedules(queryClient);
     },
     onError: (err) => {
       handleError(err, 'scheduler');
@@ -310,10 +415,11 @@ export function useCreateClassroomEvent() {
 export function useUpdateClassroomEvent() {
   const queryClient = useQueryClient();
 
-  return useMutation<SchedulerEventDto, Error, UpdateClassroomEventParams>({
+  return useMutation<CreateClassroomEventResponseDto, Error, UpdateClassroomEventParams>({
     mutationFn: updateClassroomEvent,
     onSuccess: (_data, { classroomId }) => {
       invalidateClassroomSchedules(queryClient, classroomId);
+      invalidateGlobalSchedules(queryClient);
     },
     onError: (err) => {
       handleError(err, 'scheduler');
@@ -328,6 +434,7 @@ export function useDeleteClassroomEvent() {
     mutationFn: deleteClassroomEvent,
     onSuccess: (_data, { classroomId }) => {
       invalidateClassroomSchedules(queryClient, classroomId);
+      invalidateGlobalSchedules(queryClient);
     },
     onError: (err) => {
       handleError(err, 'scheduler');
@@ -342,6 +449,7 @@ export function useCancelEventInstance() {
     mutationFn: cancelEventInstance,
     onSuccess: (_data, { classroomId }) => {
       invalidateClassroomSchedules(queryClient, classroomId);
+      invalidateGlobalSchedules(queryClient);
     },
     onError: (err) => {
       handleError(err, 'scheduler');
@@ -356,6 +464,7 @@ export function useUncancelEventInstance() {
     mutationFn: uncancelEventInstance,
     onSuccess: (_data, { classroomId }) => {
       invalidateClassroomSchedules(queryClient, classroomId);
+      invalidateGlobalSchedules(queryClient);
     },
     onError: (err) => {
       handleError(err, 'scheduler');
@@ -370,10 +479,84 @@ export function useCancelRepeatedVirtualInstance() {
     mutationFn: cancelRepeatedVirtualInstance,
     onSuccess: (_data, { classroomId }) => {
       invalidateClassroomSchedules(queryClient, classroomId);
+      invalidateGlobalSchedules(queryClient);
     },
     onError: (err) => {
       handleError(err, 'scheduler');
     },
+  });
+}
+
+export async function cancelRepeatingEventAfterTimestamp({
+  classroomId,
+  eventId,
+  body,
+}: CancelRepeatingEventAfterTimestampParams): Promise<void> {
+  const axiosInst = await getAxiosInstance();
+  await axiosInst({
+    method: schedulerApiConfig[SchedulerQueryKey.CancelRepeatingEventAfterTimestamp].method,
+    url: schedulerApiConfig[SchedulerQueryKey.CancelRepeatingEventAfterTimestamp].getUrl(
+      classroomId.toString(),
+      eventId.toString(),
+    ),
+    data: body,
+  });
+}
+
+export function useCancelRepeatingEventAfterTimestamp() {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, CancelRepeatingEventAfterTimestampParams>({
+    mutationFn: cancelRepeatingEventAfterTimestamp,
+    onSuccess: (_data, { classroomId }) => {
+      invalidateClassroomSchedules(queryClient, classroomId);
+      invalidateGlobalSchedules(queryClient);
+      queryClient.invalidateQueries({
+        queryKey: schedulerQueryKeys.tutorEventInstanceDetailsForClassroom(classroomId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: schedulerQueryKeys.studentEventInstanceDetailsForClassroom(classroomId),
+      });
+    },
+    onError: (err) => {
+      handleError(err, 'scheduler');
+    },
+  });
+}
+
+export type UseGlobalScheduleParams = {
+  happensAfter: string;
+  happensBefore: string;
+  enabled?: boolean;
+};
+
+export function useTutorSchedule({
+  happensAfter,
+  happensBefore,
+  enabled = true,
+}: UseGlobalScheduleParams) {
+  return useQuery<ScheduleItem[]>({
+    queryKey: schedulerQueryKeys.tutorSchedule(happensAfter, happensBefore),
+    queryFn: async () => {
+      const response = await getTutorSchedule({ happensAfter, happensBefore });
+      return mapScheduleResponseToScheduleItems(response, null);
+    },
+    enabled,
+  });
+}
+
+export function useStudentSchedule({
+  happensAfter,
+  happensBefore,
+  enabled = true,
+}: UseGlobalScheduleParams) {
+  return useQuery<ScheduleItem[]>({
+    queryKey: schedulerQueryKeys.studentSchedule(happensAfter, happensBefore),
+    queryFn: async () => {
+      const response = await getStudentSchedule({ happensAfter, happensBefore });
+      return mapScheduleResponseToScheduleItems(response, null);
+    },
+    enabled,
   });
 }
 
@@ -470,6 +653,93 @@ export function useStudentEventInstanceDetails({
     queryKey: schedulerQueryKeys.studentEventInstanceDetails(classroomId, eventInstanceId),
     queryFn: () => getStudentEventInstanceDetails({ classroomId, eventInstanceId }),
     enabled: enabled && classroomId > 0 && eventInstanceId.length > 0,
+  });
+}
+
+export async function getTutorRepeatedEventInstanceDetails({
+  classroomId,
+  repetitionModeId,
+  instanceIndex,
+}: GetRepeatedEventInstanceDetailsParams): Promise<GetEventInstanceDetailsResponseDto> {
+  const axiosInst = await getAxiosInstance();
+  const response = await axiosInst<GetEventInstanceDetailsResponseDto>({
+    method: schedulerApiConfig[SchedulerQueryKey.GetTutorRepeatedEventInstanceDetails].method,
+    url: schedulerApiConfig[SchedulerQueryKey.GetTutorRepeatedEventInstanceDetails].getUrl(
+      classroomId.toString(),
+      repetitionModeId,
+      instanceIndex,
+    ),
+  });
+  return response.data;
+}
+
+export async function getStudentRepeatedEventInstanceDetails({
+  classroomId,
+  repetitionModeId,
+  instanceIndex,
+}: GetRepeatedEventInstanceDetailsParams): Promise<GetEventInstanceDetailsResponseDto> {
+  const axiosInst = await getAxiosInstance();
+  const response = await axiosInst<GetEventInstanceDetailsResponseDto>({
+    method: schedulerApiConfig[SchedulerQueryKey.GetStudentRepeatedEventInstanceDetails].method,
+    url: schedulerApiConfig[SchedulerQueryKey.GetStudentRepeatedEventInstanceDetails].getUrl(
+      classroomId.toString(),
+      repetitionModeId,
+      instanceIndex,
+    ),
+  });
+  return response.data;
+}
+
+export type UseRepeatedEventInstanceDetailsParams = {
+  classroomId: number;
+  repetitionModeId: string;
+  instanceIndex: number;
+  enabled?: boolean;
+};
+
+export function useTutorRepeatedEventInstanceDetails({
+  classroomId,
+  repetitionModeId,
+  instanceIndex,
+  enabled = true,
+}: UseRepeatedEventInstanceDetailsParams) {
+  return useQuery<GetEventInstanceDetailsResponseDto>({
+    queryKey: schedulerQueryKeys.tutorRepeatedEventInstanceDetails(
+      classroomId,
+      repetitionModeId,
+      instanceIndex,
+    ),
+    queryFn: () =>
+      getTutorRepeatedEventInstanceDetails({ classroomId, repetitionModeId, instanceIndex }),
+    enabled:
+      enabled &&
+      classroomId > 0 &&
+      repetitionModeId.length > 0 &&
+      Number.isInteger(instanceIndex) &&
+      instanceIndex >= 0,
+  });
+}
+
+export function useStudentRepeatedEventInstanceDetails({
+  classroomId,
+  repetitionModeId,
+  instanceIndex,
+  enabled = true,
+}: UseRepeatedEventInstanceDetailsParams) {
+  return useQuery<GetEventInstanceDetailsResponseDto>({
+    queryKey: schedulerQueryKeys.studentRepeatedEventInstanceDetails(
+      classroomId,
+      repetitionModeId,
+      instanceIndex,
+    ),
+    queryFn: () =>
+      getStudentRepeatedEventInstanceDetails({ classroomId, repetitionModeId, instanceIndex }),
+    enabled:
+      enabled &&
+      classroomId > 0 &&
+      repetitionModeId.length > 0 &&
+      Number.isInteger(instanceIndex) &&
+      instanceIndex >= 0,
   });
 }
 

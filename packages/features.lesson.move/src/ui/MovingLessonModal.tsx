@@ -81,7 +81,7 @@ export type MovingLessonModalProps = {
    */
   schedulerTarget?: RepeatedVirtualRescheduleTarget;
   /**
-   * Параметры для переноса инстанса с явным id (`sole` / `repeated_persistent`).
+   * Параметры для переноса инстанса с явным id (`sole` / `repeated_persisted`).
    * Если задан и `onSubmit` не передан — при сабмите вызывается PUT /event-instances/{id}/time-slot/.
    */
   soleTarget?: SoleRescheduleTarget;

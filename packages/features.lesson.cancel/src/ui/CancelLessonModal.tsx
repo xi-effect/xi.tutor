@@ -15,7 +15,7 @@ import {
  */
 export type LessonSchedulerMetaForCancel = {
   eventId: number;
-  instanceKind: 'sole' | 'repeated_virtual' | 'repeated_persistent';
+  instanceKind: 'sole' | 'repeated_virtual' | 'repeated_persisted';
   eventInstanceId?: string;
   repetitionModeId?: string;
   instanceIndex?: number | null;

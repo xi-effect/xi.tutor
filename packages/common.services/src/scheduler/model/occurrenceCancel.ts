@@ -8,7 +8,7 @@ export type OccurrenceCancelApiTarget =
  * `repeated_virtual` — только repetition_mode_id + instance_index; id инстанса нет.
  */
 export function buildOccurrenceCancellationParams(args: {
-  instanceKind: 'sole' | 'repeated_virtual' | 'repeated_persistent';
+  instanceKind: 'sole' | 'repeated_virtual' | 'repeated_persisted';
   eventInstanceId?: string | undefined;
   repetitionModeId?: string | undefined;
   instanceIndex?: number | null | undefined;

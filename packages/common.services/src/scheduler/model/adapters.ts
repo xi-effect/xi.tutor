@@ -24,13 +24,13 @@ export function mapEventInstanceToScheduleItem(
     cancelledAt,
     isSingle: eventInstance.kind === 'sole',
     isRepeatedVirtual: eventInstance.kind === 'repeated_virtual',
-    isRepeatedPersistent: eventInstance.kind === 'repeated_persistent',
+    isRepeatedPersistent: eventInstance.kind === 'repeated_persisted',
   };
 }
 
 export function mapScheduleResponseToScheduleItems(
   response: EventInstanceDto[],
-  classroomId: number,
+  classroomId: number | null,
 ): ScheduleItem[] {
   return response.map((instance) => mapEventInstanceToScheduleItem(instance, classroomId));
 }

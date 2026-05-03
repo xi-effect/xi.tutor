@@ -12,7 +12,7 @@ import { timeToMinutes } from '../utils/utils';
 /**
  * Выбор ручки переноса (тело везде — EventInstanceTimeSlotInput):
  * - sole → PUT …/event-instances/{event_instance_id}/time-slot/
- * - repeated_persistent → тот же PUT по event_instance_id
+ * - repeated_persisted → тот же PUT по event_instance_id
  * - repeated_virtual → PUT …/repetition-modes/{repetition_mode_id}/instances/{instance_index}/time-slot/
  *
  * На форме: приоритет `schedulerTarget` (virtual), иначе `soleTarget` (sole / persistent).
@@ -25,7 +25,7 @@ export type RepeatedVirtualRescheduleTarget = {
   instanceIndex: number;
 };
 
-/** Параметры для переноса по `event_instance_id` (`sole` или `repeated_persistent`) */
+/** Параметры для переноса по `event_instance_id` (`sole` или `repeated_persisted`) */
 export type SoleRescheduleTarget = {
   classroomId: number;
   eventInstanceId: string;
@@ -35,7 +35,7 @@ type UseMovingFormOptions = {
   onSubmit?: (data: FormData) => void | Promise<void>;
   /** Перенос repeated_virtual — PUT /repetition-modes/{id}/instances/{n}/time-slot/ */
   schedulerTarget?: RepeatedVirtualRescheduleTarget;
-  /** Перенос sole или repeated_persistent — PUT /event-instances/{id}/time-slot/ */
+  /** Перенос sole или repeated_persisted — PUT /event-instances/{id}/time-slot/ */
   soleTarget?: SoleRescheduleTarget;
 };
 

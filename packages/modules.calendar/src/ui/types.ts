@@ -28,9 +28,9 @@ export type ILessonInfo = {
 
 export type ISchedulerEventMeta = {
   eventId: number;
-  /** UUID persisted-инстанса (sole / repeated_persistent); у repeated_virtual нет */
+  /** UUID persisted-инстанса (sole / repeated_persisted); у repeated_virtual нет */
   eventInstanceId?: string;
-  instanceKind: 'sole' | 'repeated_virtual' | 'repeated_persistent';
+  instanceKind: 'sole' | 'repeated_virtual' | 'repeated_persisted';
   repetitionKind?: 'daily' | 'weekly' | null;
   repetitionModeId?: string;
   instanceIndex?: number | null;

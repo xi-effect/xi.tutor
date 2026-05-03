@@ -47,7 +47,7 @@ const makePersistedRepeatedInstance = (
   description: 'Описание перенесённого повтора',
   repetition_mode_id: 'mode-uuid-weekly',
   instance_index: 3,
-  kind: 'repeated_persistent',
+  kind: 'repeated_persisted',
   ...overrides,
 });
 
@@ -86,11 +86,11 @@ describe('mapEventInstanceToScheduleItem', () => {
     expect(item.isRepeatedVirtual).toBe(true);
   });
 
-  it('создаёт ScheduleItem из repeated_persistent', () => {
+  it('создаёт ScheduleItem из repeated_persisted', () => {
     const instance = makePersistedRepeatedInstance();
     const item = mapEventInstanceToScheduleItem(instance, CLASSROOM_ID);
 
-    expect(item.instanceKind).toBe('repeated_persistent');
+    expect(item.instanceKind).toBe('repeated_persisted');
     expect(item.isRepeatedPersistent).toBe(true);
     expect(item.title).toBe(instance.name);
   });
@@ -148,7 +148,7 @@ describe('mapScheduleResponseToScheduleItems', () => {
     expect(items.map((i) => i.instanceKind)).toEqual([
       'sole',
       'repeated_virtual',
-      'repeated_persistent',
+      'repeated_persisted',
     ]);
     items.forEach((item) => {
       expect(item.classroomId).toBe(CLASSROOM_ID);

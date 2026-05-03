@@ -1,94 +1,46 @@
 import { Button } from '@xipkg/button';
 import { Add, Undo } from '@xipkg/icons';
 import { AddingLessonModal } from 'features.lesson.add';
-import { useMemo, useState } from 'react';
+import { MovingLessonModal } from 'features.lesson.move';
+import { useCallback, useMemo, useState } from 'react';
 import { AllLessons } from './AllLessons';
-import { ScheduleDateCarousel } from 'modules.calendar';
-import type { DominantVisibleMonthInfo, ScheduleLessonRow } from 'modules.calendar';
-
-const makeTodayAt = (hours: number, minutes: number) => {
-  const date = new Date();
-  date.setHours(hours, minutes, 0, 0);
-  return date;
-};
-
-// TODO: Заменить на данные из API по выбранной дате (selectedDate)
-export const MOCK_LESSONS: ScheduleLessonRow[] = [
-  {
-    id: 1,
-    classroomId: 710,
-    startAt: makeTodayAt(15, 45),
-    startTime: '15:45',
-    endTime: '16:30',
-    subject: 'Математика',
-    description:
-      'Разбор домашнего задания. Повторение темы «Производная и её геометрический смысл», задачи 12–18.',
-    studentName: 'Иван Петров',
-    studentId: 2,
-  },
-  {
-    id: 2,
-    classroomId: 708,
-    startAt: makeTodayAt(16, 45),
-    startTime: '16:45',
-    endTime: '17:30',
-    subject: 'Физика',
-    description:
-      'Лабораторная работа: определение ускорения свободного падения. Подготовить отчёт по шаблону.',
-    studentName: 'Анна Кузнецова',
-    studentId: 3,
-  },
-  {
-    id: 3,
-    classroomId: 476,
-    startAt: makeTodayAt(17, 45),
-    startTime: '17:45',
-    endTime: '18:30',
-    subject: 'Химия',
-    description: 'Органическая химия: спирты и альдегиды. Контрольные вопросы в конце занятия.',
-    studentName: 'Олег Смирнов',
-    studentId: 4,
-  },
-  {
-    id: 4,
-    classroomId: 457,
-    startAt: makeTodayAt(19, 45),
-    startTime: '19:45',
-    endTime: '20:30',
-    subject: 'История',
-    description:
-      'Россия в начале XX века. Доклад по одной из заданных тем (на выбор) на 5–7 минут.',
-    studentName: 'Елена Федорова',
-    studentId: 5,
-  },
-  {
-    id: 5,
-    classroomId: 456,
-    startAt: makeTodayAt(20, 45),
-    startTime: '20:45',
-    endTime: '21:30',
-    subject: 'Физика',
-    description: 'Подготовка к олимпиаде: механика, разбор задания прошлого тура.',
-    studentName: 'Анна Кузнецова',
-    studentId: 3,
-  },
-  {
-    id: 6,
-    classroomId: 452,
-    startAt: makeTodayAt(22, 45),
-    startTime: '22:45',
-    endTime: '23:30',
-    subject: 'Химия',
-    description: 'Итоговое повторение перед зачётом. Принести тетрадь с конспектами.',
-    studentName: 'Олег Смирнов',
-    studentId: 4,
-  },
-];
+import {
+  ScheduleDateCarousel,
+  useStudentSchedule,
+  useTutorSchedule,
+  useUpdateClassroomEvent,
+} from 'modules.calendar';
+import type {
+  ChangeLessonFormData,
+  DominantVisibleMonthInfo,
+  ScheduleLessonRow,
+} from 'modules.calendar';
+import { useCurrentUser } from 'common.services';
+import {
+  isOnSameLocalDay,
+  movingPropsFromLessonRow,
+  scheduleItemToLessonRow,
+} from './scheduleHelpers';
 
 const getToday = () => {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
   return d;
+};
+
+/** Окно загрузки расписания вокруг сегодняшней даты (в днях). */
+const SCHEDULE_WINDOW_DAYS = 30;
+
+const getScheduleWindow = () => {
+  const after = getToday();
+  after.setDate(after.getDate() - SCHEDULE_WINDOW_DAYS);
+  const before = getToday();
+  before.setDate(before.getDate() + SCHEDULE_WINDOW_DAYS);
+  before.setHours(23, 59, 59, 999);
+  return {
+    happensAfter: after.toISOString(),
+    happensBefore: new Date(before.getTime() + 1).toISOString(),
+  };
 };
 
 export const Lessons = () => {
@@ -97,6 +49,52 @@ export const Lessons = () => {
   const [visibleMonthInfo, setVisibleMonthInfo] = useState<DominantVisibleMonthInfo | null>(null);
   const [alignCarouselNonce, setAlignCarouselNonce] = useState(0);
   const [isTodayVisibleInCarousel, setIsTodayVisibleInCarousel] = useState(true);
+  const [moveLesson, setMoveLesson] = useState<ScheduleLessonRow | null>(null);
+
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const updateEvent = useUpdateClassroomEvent();
+
+  const handleReschedule = useCallback((lesson: ScheduleLessonRow) => {
+    setMoveLesson(lesson);
+  }, []);
+
+  const handleSaveLesson = useCallback(
+    (lesson: ScheduleLessonRow, data: ChangeLessonFormData) => {
+      if (lesson.classroomId == null || lesson.schedulerMeta == null) return;
+      const description = data.description?.trim() ?? '';
+      updateEvent.mutate({
+        classroomId: lesson.classroomId,
+        eventId: lesson.schedulerMeta.eventId,
+        body: {
+          name: data.title.trim(),
+          description: description === '' ? null : description,
+        },
+      });
+    },
+    [updateEvent],
+  );
+
+  const range = useMemo(getScheduleWindow, []);
+  const tutorScheduleQuery = useTutorSchedule({
+    ...range,
+    enabled: !isUserLoading && isTutor === true,
+  });
+  const studentScheduleQuery = useStudentSchedule({
+    ...range,
+    enabled: !isUserLoading && isTutor === false,
+  });
+  const scheduleQuery = isTutor ? tutorScheduleQuery : studentScheduleQuery;
+
+  const lessonsForSelectedDay = useMemo<ScheduleLessonRow[]>(() => {
+    const items = scheduleQuery.data ?? [];
+    return items
+      .filter((item) => isOnSameLocalDay(item, selectedDate))
+      .filter((item) => item.cancelledAt == null)
+      .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime())
+      .map(scheduleItemToLessonRow);
+  }, [scheduleQuery.data, selectedDate]);
 
   const monthLabelInHeader = useMemo(() => {
     if (!visibleMonthInfo) return null;
@@ -112,11 +110,9 @@ export const Lessons = () => {
     setAlignCarouselNonce((n) => n + 1);
   };
 
-  const dayLessonsForModal: ScheduleLessonRow[] = MOCK_LESSONS;
-
   return (
     <>
-      <AddingLessonModal open={open} onOpenChange={setOpen} dayLessons={dayLessonsForModal} />
+      <AddingLessonModal open={open} onOpenChange={setOpen} dayLessons={lessonsForSelectedDay} />
       <div className="bg-gray-0 flex h-[calc(100vh-98px)] w-(--lessons-panel-width) flex-col gap-4 rounded-2xl px-5 pt-4 pr-2 pb-1">
         {/* Заголовок */}
         <div className="flex flex-row items-center gap-2 pr-3">
@@ -170,11 +166,22 @@ export const Lessons = () => {
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <AllLessons
             dayDate={selectedDate}
-            lessons={MOCK_LESSONS}
+            lessons={lessonsForSelectedDay}
+            onReschedule={handleReschedule}
+            onSaveLesson={isTutor ? handleSaveLesson : undefined}
             onAddLesson={() => setOpen(true)}
           />
         </div>
       </div>
+      {moveLesson != null ? (
+        <MovingLessonModal
+          open
+          onOpenChange={(open) => {
+            if (!open) setMoveLesson(null);
+          }}
+          {...movingPropsFromLessonRow(moveLesson)}
+        />
+      ) : null}
     </>
   );
 };

@@ -17,3 +17,8 @@ export {
   getWeeksNumbers,
   getWeeksRangeDays,
 } from './getDays';
+export {
+  mapScheduleItemToCalendarEvent,
+  mapScheduleItemsToCalendarEvents,
+  getScheduleQueryRange,
+} from './scheduleMapping';

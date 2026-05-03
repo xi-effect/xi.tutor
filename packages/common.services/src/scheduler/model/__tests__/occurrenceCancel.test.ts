@@ -11,10 +11,10 @@ describe('buildOccurrenceCancellationParams', () => {
     ).toEqual({ kind: 'instance', eventInstanceId: 'uuid-one' });
   });
 
-  it('repeated_persistent: по uuid инстанса', () => {
+  it('repeated_persisted: по uuid инстанса', () => {
     expect(
       buildOccurrenceCancellationParams({
-        instanceKind: 'repeated_persistent',
+        instanceKind: 'repeated_persisted',
         eventInstanceId: 'uuid-persisted',
         repetitionModeId: 'mode',
         instanceIndex: 3,

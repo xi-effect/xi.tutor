@@ -61,4 +61,12 @@ export {
   type GetEventInstanceDetailsResponseDto,
   type CreateClassroomEventRequestDto,
   type UpdateClassroomEventRequestDto,
+  type SoleEventInstanceDetailedDto,
+  type PersistedRepeatedEventInstanceDetailedDto,
+  type VirtualRepeatedEventInstanceDetailedDto,
+  type DetailedEventInstanceDto,
+  type CancelRepeatingEventAfterTimestampInputDto,
+  type CreateSingleEventResponseDto,
+  type CreateRepeatingEventResponseDto,
+  type CreateClassroomEventResponseDto,
 } from './src/scheduler';
