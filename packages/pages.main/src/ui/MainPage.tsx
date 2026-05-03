@@ -182,7 +182,7 @@ export const MainPage = () => {
             {!isMobile && isTutor && <FirstLessonGuideBanner />}
             <Classrooms />
             <Payments />
-            <Materials />
+            {isTutor && <Materials />}
           </div>
         </div>
       </div>

@@ -11,7 +11,7 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@tanstack/react-router": "1.120.11",
+    "@tanstack/react-router": "^1.166.6",
     "@tanstack/react-query": "^5.73.3",
     "common.services": "workspace:*",
     "features.payment.approve": "workspace:*",

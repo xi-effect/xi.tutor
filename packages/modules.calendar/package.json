@@ -20,7 +20,7 @@
     "sonner": "^2.0.7",
     "i18next": "24.2.2",
     "react-i18next": "15.4.1",
-    "@tanstack/react-router": "^1.128.8",
+    "@tanstack/react-router": "^1.166.6",
     "@xipkg/button": "4.1.0",
     "@xipkg/icons": "^3.0.15",
     "@xipkg/tooltip": "2.1.0",

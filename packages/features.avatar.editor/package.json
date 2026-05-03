@@ -11,7 +11,7 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "@tanstack/react-router": "^1.109.0",
+    "@tanstack/react-router": "^1.166.6",
     "@xipkg/button": "4.1.0",
     "react-easy-crop": "5.4.1",
     "react-image-file-resizer": "0.4.8",

@@ -183,7 +183,12 @@ export const Classrooms = () => {
           }
         />
       ) : (
-        <SectionEmptyState title={emptyMessage} minHeightClass="min-h-[152px]" />
+        <SectionEmptyState
+          title={emptyMessage}
+          description="Ссылку-приглашение вам должен отправить ваш репетитор"
+          minHeightClass="min-h-[160px]"
+          illustration={<EmptyClassrooms className={sectionEmptyStateIllustrationClass} />}
+        />
       )}
     </div>
   );

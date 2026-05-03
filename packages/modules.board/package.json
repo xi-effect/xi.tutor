@@ -12,7 +12,7 @@
   "dependencies": {
     "@hocuspocus/provider": "3.4.4",
     "@hookform/resolvers": "^5.2.2",
-    "@tanstack/react-router": "^1.128.8",
+    "@tanstack/react-router": "^1.166.6",
     "@tlsync-yjs/core": "0.2.1",
     "@xipkg/avatar": "3.3.0",
     "@xipkg/button": "4.1.0",

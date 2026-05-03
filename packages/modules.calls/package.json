@@ -20,7 +20,7 @@
     "@livekit/krisp-noise-filter": "^0.3.4",
     "@livekit/track-processors": "^0.6.1",
     "@react-hook/latest": "1.0.3",
-    "@tanstack/react-router": "1.128.8",
+    "@tanstack/react-router": "^1.166.6",
     "@xipkg/alert": "1.1.0",
     "@xipkg/aspect-ratio": "^2.0.11",
     "@xipkg/badge": "2.0.12",

@@ -1,6 +1,7 @@
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Button } from '@xipkg/button';
-import { Add, ArrowUpRight } from '@xipkg/icons';
+import { Add, ArrowRight, ArrowUpRight } from '@xipkg/icons';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { SectionEmptyState, sectionEmptyStateIllustrationClass } from '../SectionEmptyState';
 import { ScrollArea } from '@xipkg/scrollarea';
 import {
@@ -62,8 +63,8 @@ export const Payments = () => {
     <div className="bg-gray-0 flex w-full flex-col gap-4 rounded-2xl px-5 pt-4 pb-1 transition-all duration-200 ease-linear sm:w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)]">
       <div className="flex flex-row items-center gap-2">
         <h2 className="text-l-base font-medium text-gray-100">Оплата</h2>
-        {isTutor ? (
-          <div className="ml-auto">
+        <div className="ml-auto">
+          {isTutor ? (
             <Button
               variant="none"
               className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
@@ -73,8 +74,21 @@ export const Payments = () => {
             >
               <Add className="fill-brand-80 size-6" />
             </Button>
-          </div>
-        ) : null}
+          ) : (
+            <Tooltip delayDuration={1000}>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="none"
+                  className="flex size-8 items-center justify-center rounded-[4px] p-0"
+                  onClick={handleMore}
+                >
+                  <ArrowRight className="fill-gray-60 size-6" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>К оплатам</TooltipContent>
+            </Tooltip>
+          )}
+        </div>
       </div>
       <InvoiceModal open={invoiceModalOpen} onOpenChange={setInvoiceModalOpen} />
 
@@ -130,7 +144,7 @@ export const Payments = () => {
         <SectionEmptyState
           title="У вас нет платежей"
           description="Счета от репетиторов появятся здесь после выставления"
-          minHeightClass="min-h-[180px] sm:min-h-[200px]"
+          minHeightClass="min-h-[160px]"
           illustration={<EmptyPayments className={sectionEmptyStateIllustrationClass} />}
           actions={
             <Button

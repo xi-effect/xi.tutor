@@ -14,7 +14,7 @@
     "@xipkg/userprofile": "4.1.0",
     "@hookform/resolvers": "^5.2.2",
     "@tanstack/react-query": "^5.73.3",
-    "@tanstack/react-router": "1.120.11",
+    "@tanstack/react-router": "^1.166.6",
     "@xipkg/button": "4.1.0",
     "@xipkg/datepicker": "2.3.0",
     "@xipkg/form": "4.2.2",
