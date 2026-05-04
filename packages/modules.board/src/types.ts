@@ -1,3 +1,14 @@
+import {
+  DefaultColorStyle,
+  DefaultDashStyle,
+  DefaultFillStyle,
+  DefaultFontStyle,
+  DefaultSizeStyle,
+  DefaultTextAlignStyle,
+  DefaultVerticalAlignStyle,
+  GeoShapeGeoStyle,
+} from 'tldraw';
+
 // types/index.ts
 export type ToolType =
   | 'pen'
@@ -11,7 +22,8 @@ export type ToolType =
   | 'arrow'
   | 'asset'
   | 'geo'
-  | 'frame';
+  | 'frame'
+  | 'xi-geo';
 
 export type ElementType =
   | 'line'
@@ -25,7 +37,8 @@ export type ElementType =
   | 'note'
   | 'draw'
   | 'geo'
-  | 'frame';
+  | 'frame'
+  | 'xi-geo';
 
 export interface BoardElement {
   id: string;
@@ -63,3 +76,12 @@ export interface Point {
 export interface ToolbarElement extends BoardElement {
   type: 'toolbar';
 }
+
+export type TGeoShape = (typeof GeoShapeGeoStyle)['defaultValue'];
+export type TColor = (typeof DefaultColorStyle)['defaultValue'];
+export type TSize = (typeof DefaultSizeStyle)['defaultValue'];
+export type TFill = (typeof DefaultFillStyle)['defaultValue'];
+export type TDash = (typeof DefaultDashStyle)['defaultValue'];
+export type TFont = (typeof DefaultFontStyle)['defaultValue'];
+export type TAlign = (typeof DefaultTextAlignStyle)['defaultValue'];
+export type TVerticalAlign = (typeof DefaultVerticalAlignStyle)['defaultValue'];
