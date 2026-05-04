@@ -21,6 +21,7 @@ import { makeTldrawAssetUrls } from '../../../utils/assetsUrls';
 import { extractFileIdFromUrl } from '../../../utils/resolveAssetUrl';
 import { FrameShapeUtil } from '../../../shapes/frame';
 import { XiGeoShapeUtil, XiGeoTool } from '../../../shapes/geo';
+import { StickerShapeUtil } from '../../../shapes/sticker';
 
 export const TldrawCanvas = ({
   token,
@@ -349,6 +350,7 @@ export const TldrawCanvas = ({
               FrameShapeUtil,
               XiGeoShapeUtil,
               CustomImageShapeUtil,
+              StickerShapeUtil,
             ]}
             hideUi
             components={{
