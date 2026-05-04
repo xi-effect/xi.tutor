@@ -1,15 +1,21 @@
-import { useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useInfiniteQuery, createPaymentColumns } from 'features.table';
-import { VirtualizedPaymentsTable } from 'pages.payments';
+import { PaymentInvoiceDetailsModal, VirtualizedPaymentsTable } from 'pages.payments';
 import { useScreenSize } from 'common.utils';
 import { useParams } from '@tanstack/react-router';
 import { useGetClassroom, useCurrentUser } from 'common.services';
 import { LoadingState } from './LoadingState';
+import { RolePaymentT } from 'common.types';
+import { UserRoleT } from 'common.api';
 
 export const Payments = () => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom } = useGetClassroom(Number(classroomId));
   const screenSize = useScreenSize();
+  const [invoiceDetailsModalState, setInvoiceDetailsModalState] = useState<{
+    isOpen: boolean;
+    payment: RolePaymentT<'tutor'> | RolePaymentT<'student'> | null;
+  }>({ isOpen: false, payment: null });
 
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -23,6 +29,10 @@ export const Payments = () => {
     classroomId,
   );
 
+  const onOpenInvoiceDetailsModal = useCallback((payment: RolePaymentT<UserRoleT>) => {
+    setInvoiceDetailsModalState({ isOpen: true, payment });
+  }, []);
+
   const defaultColumns = useMemo(
     () =>
       createPaymentColumns({
@@ -30,8 +40,9 @@ export const Payments = () => {
         usersRole: isTutor ? 'student' : 'tutor',
         screenSize,
         isTutor,
+        onViewInvoice: onOpenInvoiceDetailsModal,
       }),
-    [screenSize, isTutor],
+    [screenSize, isTutor, onOpenInvoiceDetailsModal],
   );
 
   if (isLoading) {
@@ -49,6 +60,20 @@ export const Payments = () => {
 
   return (
     <div className="flex flex-col max-sm:pl-4">
+      {invoiceDetailsModalState.isOpen && invoiceDetailsModalState.payment && (
+        <PaymentInvoiceDetailsModal
+          open={invoiceDetailsModalState.isOpen}
+          onOpenChange={(open) =>
+            setInvoiceDetailsModalState((prev) => ({
+              ...prev,
+              isOpen: open,
+            }))
+          }
+          paymentDetails={invoiceDetailsModalState.payment}
+          recipientInvoiceId={invoiceDetailsModalState.payment.id}
+          currentUserRole={currentUserRole}
+        />
+      )}
       <VirtualizedPaymentsTable
         data={items}
         columns={defaultColumns}
@@ -57,6 +82,7 @@ export const Payments = () => {
         parentRef={parentRef}
         isError={isError}
         currentUserRole={currentUserRole}
+        onViewInvoice={onOpenInvoiceDetailsModal}
       />
     </div>
   );

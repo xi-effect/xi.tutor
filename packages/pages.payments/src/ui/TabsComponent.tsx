@@ -7,104 +7,112 @@ import { UserRoleT } from '../../../common.api/src/types';
 import { TemplatesGrid } from './Templates';
 import { useCurrentUser } from 'common.services';
 import { useSearch, useNavigate } from '@tanstack/react-router';
-import { PaymentApprovalFunctionT } from 'common.types';
+import { PaymentApprovalFunctionT, RolePaymentT } from 'common.types';
 // import { ChartsPage } from './Charts';
 
-export const TabsComponent = React.memo(({ onApprovePayment }: PaymentApprovalFunctionT) => {
-  const screenSize = useScreenSize();
-  const parentRef = useRef<HTMLDivElement>(null);
-  const navigate = useNavigate();
-  const search = useSearch({ strict: false });
-  const currentTab = search.tab || 'invoices';
+type TabsComponentPropsT = PaymentApprovalFunctionT & {
+  onViewInvoice: (payment: RolePaymentT<UserRoleT>) => void;
+};
 
-  const { data: user } = useCurrentUser();
-  const isTutor = user?.default_layout === 'tutor';
-  const currentUserRole = isTutor ? 'tutor' : 'student';
-  const prevIsTutorRef = useRef(isTutor);
+export const TabsComponent = React.memo(
+  ({ onApprovePayment, onViewInvoice }: TabsComponentPropsT) => {
+    const screenSize = useScreenSize();
+    const parentRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
+    const search = useSearch({ strict: false });
+    const currentTab = search.tab || 'invoices';
 
-  const { items, isLoading, isFetchingNextPage, isError } = useInfiniteQuery(
-    parentRef,
-    currentUserRole,
-  );
+    const { data: user } = useCurrentUser();
+    const isTutor = user?.default_layout === 'tutor';
+    const currentUserRole = isTutor ? 'tutor' : 'student';
+    const prevIsTutorRef = useRef(isTutor);
 
-  const defaultColumns = useMemo(
-    () =>
-      createPaymentColumns<UserRoleT>({
-        usersRole: isTutor ? 'student' : 'tutor',
-        onApprovePayment,
-        isTutor,
-        screenSize,
-      }),
-    [screenSize, onApprovePayment, isTutor],
-  );
+    const { items, isLoading, isFetchingNextPage, isError } = useInfiniteQuery(
+      parentRef,
+      currentUserRole,
+    );
 
-  // Отслеживаем изменения роли пользователя
-  useEffect(() => {
-    const prevIsTutor = prevIsTutorRef.current;
-    const currentIsTutor = isTutor;
+    const defaultColumns = useMemo(
+      () =>
+        createPaymentColumns<UserRoleT>({
+          usersRole: isTutor ? 'student' : 'tutor',
+          onApprovePayment,
+          onViewInvoice,
+          isTutor,
+          screenSize,
+        }),
+      [screenSize, onApprovePayment, onViewInvoice, isTutor],
+    );
 
-    // Если роль изменилась с tutor на student и мы находимся на вкладке templates
-    if (prevIsTutor && !currentIsTutor && currentTab === 'templates') {
+    // Отслеживаем изменения роли пользователя
+    useEffect(() => {
+      const prevIsTutor = prevIsTutorRef.current;
+      const currentIsTutor = isTutor;
+
+      // Если роль изменилась с tutor на student и мы находимся на вкладке templates
+      if (prevIsTutor && !currentIsTutor && currentTab === 'templates') {
+        navigate({
+          // @ts-expect-error - TanStack Router search params typing issue
+          search: { tab: 'invoices' },
+        });
+      }
+
+      // Обновляем предыдущее значение
+      prevIsTutorRef.current = currentIsTutor;
+    }, [isTutor, currentTab, navigate]);
+
+    const handleTabChange = (value: string) => {
       navigate({
         // @ts-expect-error - TanStack Router search params typing issue
-        search: { tab: 'invoices' },
+        search: { tab: value },
       });
-    }
+    };
 
-    // Обновляем предыдущее значение
-    prevIsTutorRef.current = currentIsTutor;
-  }, [isTutor, currentTab, navigate]);
-
-  const handleTabChange = (value: string) => {
-    navigate({
-      // @ts-expect-error - TanStack Router search params typing issue
-      search: { tab: value },
-    });
-  };
-
-  return (
-    <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
-      <Tabs.List className="w-[calc(100% - 16px)] xs:w-80 xs:flex xs:flex-row mr-4 grid grid-cols-2 gap-4">
-        <Tabs.Trigger value="invoices" className="text-m-base font-medium text-gray-100">
-          Журнал оплат
-        </Tabs.Trigger>
-
-        {/* <Tabs.Trigger value="charts" className="text-m-base font-medium text-gray-100">
-          Аналитика
-        </Tabs.Trigger> */}
-
-        {/* Скрываем последнюю вкладку для студентов */}
-        {isTutor && (
-          <Tabs.Trigger value="templates" className="text-m-base font-medium text-gray-100">
-            Типы оплат
+    return (
+      <Tabs.Root value={currentTab} onValueChange={handleTabChange}>
+        <Tabs.List className="w-[calc(100% - 16px)] xs:w-80 xs:flex xs:flex-row mr-4 grid grid-cols-2 gap-4">
+          <Tabs.Trigger value="invoices" className="text-m-base font-medium text-gray-100">
+            Журнал оплат
           </Tabs.Trigger>
-        )}
-      </Tabs.List>
 
-      <div className="h-full pt-0">
-        <Tabs.Content value="invoices">
-          <VirtualizedPaymentsTable
-            data={items}
-            columns={defaultColumns}
-            isLoading={isLoading}
-            isFetchingNextPage={isFetchingNextPage}
-            parentRef={parentRef}
-            isError={isError}
-            currentUserRole={currentUserRole}
-          />
-        </Tabs.Content>
+          {/* <Tabs.Trigger value="charts" className="text-m-base font-medium text-gray-100">
+            Аналитика
+          </Tabs.Trigger> */}
 
-        {/* <Tabs.Content value="charts">
-          <ChartsPage />
-        </Tabs.Content> */}
+          {/* Скрываем последнюю вкладку для студентов */}
+          {isTutor && (
+            <Tabs.Trigger value="templates" className="text-m-base font-medium text-gray-100">
+              Типы оплат
+            </Tabs.Trigger>
+          )}
+        </Tabs.List>
 
-        {/* Скрываем контент последней вкладки для студентов */}
-        {isTutor && (
-          <Tabs.Content value="templates">
-            <TemplatesGrid />
+        <div className="h-full pt-0">
+          <Tabs.Content value="invoices">
+            <VirtualizedPaymentsTable
+              data={items}
+              columns={defaultColumns}
+              isLoading={isLoading}
+              isFetchingNextPage={isFetchingNextPage}
+              parentRef={parentRef}
+              isError={isError}
+              currentUserRole={currentUserRole}
+              onViewInvoice={onViewInvoice}
+            />
           </Tabs.Content>
-        )}
-      </div>
-    </Tabs.Root>
-  );
-});
+
+          {/* <Tabs.Content value="charts">
+            <ChartsPage />
+          </Tabs.Content> */}
+
+          {/* Скрываем контент последней вкладки для студентов */}
+          {isTutor && (
+            <Tabs.Content value="templates">
+              <TemplatesGrid />
+            </Tabs.Content>
+          )}
+        </div>
+      </Tabs.Root>
+    );
+  },
+);

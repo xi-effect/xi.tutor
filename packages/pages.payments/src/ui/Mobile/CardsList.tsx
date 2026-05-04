@@ -3,6 +3,8 @@ import type { Virtualizer } from '@tanstack/react-virtual';
 import { PaymentDataT, RoleT } from 'features.table';
 import { InvoiceCard } from 'features.invoice.card';
 import { Loader } from '../Loader';
+import { UserRoleT } from 'common.api';
+import { RolePaymentT } from 'common.types';
 
 export type CardsListPropsT<Role extends RoleT> = {
   data: PaymentDataT<Role>[];
@@ -14,6 +16,7 @@ export type CardsListPropsT<Role extends RoleT> = {
   isLoading: boolean;
   isFetchingNextPage: boolean;
   currentUserRole: Role;
+  onViewInvoice?: (payment: RolePaymentT<UserRoleT>) => void;
 };
 
 export const CardsList = <Role extends RoleT>({
@@ -26,6 +29,7 @@ export const CardsList = <Role extends RoleT>({
   isLoading,
   isFetchingNextPage,
   currentUserRole,
+  onViewInvoice,
 }: CardsListPropsT<Role>) => {
   return (
     <div className="h-[calc(100dvh-154px)] w-full overflow-y-auto pr-2 pl-px" ref={parentRef}>
@@ -63,6 +67,7 @@ export const CardsList = <Role extends RoleT>({
                   payment={payment}
                   currentUserRole={currentUserRole}
                   variant="table"
+                  onViewInvoice={onViewInvoice}
                 />
               ))}
             </div>
