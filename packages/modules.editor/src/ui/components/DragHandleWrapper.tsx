@@ -11,7 +11,7 @@ export const DragHandleWrapper = ({
   onDragEnd,
 }: {
   editor: Editor;
-  onDragStart: () => void;
+  onDragStart?: () => void;
   onDragEnd: () => void;
   isReadOnly?: boolean;
 }) => {
