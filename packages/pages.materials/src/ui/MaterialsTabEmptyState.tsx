@@ -4,7 +4,7 @@ import { cn } from '@xipkg/utils';
 import { EmptyMaterialsFull } from 'common.ui';
 
 /** База знаний — как на странице оплат */
-const MATERIALS_HELP_URL = 'https://support.sovlium.ru';
+const MATERIALS_HELP_URL = 'https://support.sovlium.ru/board-and-notes';
 
 const emptyMaterialsHelpLinkClass =
   'bg-gray-5 hover:bg-gray-10 text-xs-base h-8 rounded-lg px-4 font-medium text-gray-80';

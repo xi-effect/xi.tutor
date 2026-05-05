@@ -17,7 +17,7 @@ import { useState } from 'react';
 const PAYMENTS_PREVIEW_LIMIT = 10;
 
 /** База знаний (как в сайдбаре «Справка») */
-const PAYMENTS_HELP_URL = 'https://support.sovlium.ru';
+const PAYMENTS_HELP_URL = 'https://support.sovlium.ru/payments';
 
 export const Payments = () => {
   const navigate = useNavigate();

@@ -30,7 +30,7 @@ import { UserRoleT } from '../../../common.api/src/types';
 import { RolePaymentT as CommonRolePaymentT } from 'common.types';
 
 /** База знаний — как в блоке «Оплата» на главной */
-const PAYMENTS_HELP_URL = 'https://support.sovlium.ru';
+const PAYMENTS_HELP_URL = 'https://support.sovlium.ru/payments';
 
 const emptyPaymentsHelpLinkClass =
   'bg-gray-5 hover:bg-gray-10 text-xs-base h-8 rounded-lg px-4 font-medium text-gray-80';

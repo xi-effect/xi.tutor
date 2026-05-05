@@ -3,7 +3,7 @@ import { ArrowUpRight } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { EmptyClassrooms } from 'common.ui';
 
-const CLASSROOMS_HELP_URL = 'https://support.sovlium.ru';
+const CLASSROOMS_HELP_URL = 'https://support.sovlium.ru/classrooms';
 
 const emptyClassroomsHelpLinkClass =
   'bg-gray-5 hover:bg-gray-10 text-xs-base h-8 rounded-lg px-4 font-medium text-gray-80';

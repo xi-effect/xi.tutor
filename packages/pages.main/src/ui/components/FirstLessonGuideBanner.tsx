@@ -3,7 +3,8 @@ import { Button } from '@xipkg/button';
 import { ArrowUpRight, Close } from '@xipkg/icons';
 
 /** Согласовано с блоком «Контроль оплат» (PAYMENTS_HELP_URL) */
-const FIRST_LESSON_GUIDE_URL = 'https://support.sovlium.ru';
+const FIRST_LESSON_GUIDE_URL =
+  'https://support.sovlium.ru/getting-started#%D1%87%D1%82%D0%BE-%D0%B4%D0%B0%D0%BB%D1%8C%D1%88%D0%B5';
 
 /** Флаг в localStorage: при значении `'true'` плашка не показывается */
 export const FIRST_LESSON_GUIDE_BANNER_STORAGE_KEY = 'sovlium.main.firstLessonGuideBannerDismissed';
