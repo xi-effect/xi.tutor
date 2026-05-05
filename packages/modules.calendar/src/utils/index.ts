@@ -28,3 +28,4 @@ export {
   bitmaskToWeekdays,
   weekdaysToBitmask,
 } from './bitmaskTimezone';
+export { toLocalISOString } from './dateTimezone';

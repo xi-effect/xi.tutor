@@ -16,8 +16,8 @@ import {
   useStudentSchedule,
   useTutorSchedule,
 } from 'modules.calendar';
-import type { ICalendarEvent } from 'modules.calendar';
-import { useCurrentUser } from 'common.services';
+import type { ChangeLessonFormData, ICalendarEvent } from 'modules.calendar';
+import { useCurrentUser, useUpdateClassroomEvent } from 'common.services';
 
 function jsWeekdayToSeriesIndex(date: Date): number {
   const d = date.getDay();
@@ -111,9 +111,28 @@ const CalendarPageContent = () => {
 
   useEffect(() => () => setEvents([]), [setEvents]);
 
+  const updateClassroomEvent = useUpdateClassroomEvent();
+
   const handleAddLessonClick = (date?: Date) => {
     setInitialDate(date ?? null);
     setAddingModalOpen(true);
+  };
+
+  const handleSaveLesson = (event: ICalendarEvent, data: ChangeLessonFormData) => {
+    const classroomId = event.lessonInfo?.classroomId;
+    if (!isTutor || classroomId == null) return;
+    const eventId = event.scheduler?.eventId;
+    if (eventId == null) return;
+
+    const description = data.description?.trim() ?? '';
+    updateClassroomEvent.mutate({
+      classroomId,
+      eventId,
+      body: {
+        name: data.title.trim(),
+        description: description === '' ? null : description,
+      },
+    });
   };
 
   return (
@@ -128,6 +147,7 @@ const CalendarPageContent = () => {
       <CalendarModule
         onAddLessonClick={isTutor ? handleAddLessonClick : undefined}
         onLessonReschedule={(event) => setMoveEvent(event)}
+        onSaveLesson={isTutor ? handleSaveLesson : undefined}
       />
       {moveEvent != null ? (
         <MovingLessonModal

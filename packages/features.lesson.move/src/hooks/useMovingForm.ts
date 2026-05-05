@@ -7,6 +7,7 @@ import {
   useRescheduleSoleEventInstance,
   bitmaskUtcToLocal,
   bitmaskToWeekdays,
+  toLocalISOString,
 } from 'modules.calendar';
 import { createMovingFormSchema, type FormData, type FormInput } from '../model/formSchema';
 import { timeToMinutes } from '../utils/utils';
@@ -80,7 +81,8 @@ function buildStartsAt(startDate: Date, startTime: string): string {
   const [hours, minutes] = startTime.split(':').map(Number);
   const d = new Date(startDate);
   d.setHours(hours!, minutes!, 0, 0);
-  return d.toISOString();
+  // toLocalISOString сохраняет offset пользователя (например +03:00), не нормализует в UTC
+  return toLocalISOString(d);
 }
 
 function buildDurationSeconds(startTime: string, endTime: string): number {

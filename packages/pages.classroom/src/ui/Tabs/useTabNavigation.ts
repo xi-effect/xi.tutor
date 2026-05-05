@@ -27,7 +27,7 @@ export const useTabNavigation = ({
       // @ts-ignore
       search: {
         // @ts-ignore
-        tab: value === 'materials' ? 'boards' : value,
+        tab: normalizeMaterialTabs && value === 'materials' ? 'boards' : value,
         ...filteredSearch,
       },
     });

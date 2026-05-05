@@ -165,7 +165,7 @@ export const useLessonInfoModal = ({
           }
           onReschedule={() => onReschedule?.(resolvedEvent)}
           changeLesson={
-            onSaveLesson != null && resolvedEvent != null
+            isTutor && resolvedEvent != null
               ? {
                   hideClassroomAndSubject: false,
                   subjectName: changeLessonPresentation.subjectName,
@@ -176,7 +176,7 @@ export const useLessonInfoModal = ({
                     0,
                   defaultTitle: resolvedEvent.title,
                   defaultDescription: resolvedEvent.lessonInfo?.description ?? '',
-                  onSave: (data) => onSaveLesson(resolvedEvent, data),
+                  onSave: (data) => onSaveLesson?.(resolvedEvent, data),
                 }
               : undefined
           }

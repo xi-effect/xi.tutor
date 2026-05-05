@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { formSchema, type FormData, type FormInput } from '../model/formSchema';
 import { useFetchClassrooms, useCreateClassroomEvent } from 'common.services';
 import type { CreateClassroomEventRequestDto } from 'common.api';
+import { toLocalISOString } from 'modules.calendar';
 
 type UseAddingFormOptions = {
   fixedClassroomId?: number;
@@ -21,12 +22,13 @@ const getDefaultValues = (initialDate?: Date | null, fixedClassroomId?: number):
   repeatDays: [],
 });
 
-/** Объединить дату и строку времени "HH:MM" в ISO-строку */
+/** Объединить дату и строку времени "HH:MM" в ISO-строку с timezone пользователя */
 const buildStartsAt = (startDate: Date, startTime: string): string => {
   const [hours, minutes] = startTime.split(':').map(Number);
   const d = new Date(startDate);
   d.setHours(hours, minutes, 0, 0);
-  return d.toISOString();
+  // toLocalISOString сохраняет offset пользователя (например +03:00), не нормализует в UTC
+  return toLocalISOString(d);
 };
 
 /** Разница между endTime и startTime в секундах */

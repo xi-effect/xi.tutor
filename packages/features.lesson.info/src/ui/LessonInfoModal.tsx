@@ -14,6 +14,7 @@ import { Button } from '@xipkg/button';
 import { Clock, Edit05, Redo, Trash } from '@xipkg/icons';
 import type { ReactNode } from 'react';
 import { LessonInfoClassroomBlock } from './LessonInfoClassroomBlock';
+import { useCurrentUser } from 'common.services';
 
 export type LessonInfoChangeLessonConfig = {
   hideClassroomAndSubject?: boolean;
@@ -77,6 +78,9 @@ export const LessonInfoModal = ({
   onCancelClick,
   startLessonSlot,
 }: LessonInfoModalProps) => {
+  const { data: user } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
   const [isChangeLessonOpen, setIsChangeLessonOpen] = useState(false);
 
   useEffect(() => {
@@ -93,8 +97,6 @@ export const LessonInfoModal = ({
       onOpenChange(false);
     }
   };
-
-  const showEdit = changeLesson != null || onEditLesson != null;
 
   const showClassroomBlock = classroomId != null;
   /** Как предмет на LessonCard: кабинет → та же цепочка, что у канбана (presentation) → осмысленная строка из события */
@@ -167,15 +169,17 @@ export const LessonInfoModal = ({
 
           <ModalFooter className="xs:gap-2 flex flex-col gap-3 px-6 pb-6 sm:flex-row sm:items-stretch">
             {startLessonSlot != null ? <div className="flex-1">{startLessonSlot}</div> : null}
-            <Button
-              type="button"
-              variant="none"
-              className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 h-12 min-h-12 flex-1"
-              onClick={onReschedule}
-            >
-              Перенести
-              <Redo className="fill-gray-70 ml-1.5 h-4 w-4" />
-            </Button>
+            {isTutor && (
+              <Button
+                type="button"
+                variant="none"
+                className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 h-12 min-h-12 flex-1"
+                onClick={onReschedule}
+              >
+                Перенести
+                <Redo className="fill-gray-70 ml-1.5 h-4 w-4" />
+              </Button>
+            )}
             {onCancelClick != null ? (
               <Button
                 type="button"
@@ -187,7 +191,7 @@ export const LessonInfoModal = ({
                 <Trash className="fill-gray-60 xs:ml-0 ml-2 h-5 w-5" />
               </Button>
             ) : null}
-            {showEdit ? (
+            {isTutor ? (
               <Button
                 type="button"
                 variant="none"

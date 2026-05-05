@@ -44,6 +44,7 @@ export {
   bitmaskToWeekdays,
   weekdaysToBitmask,
 } from './src/utils/bitmaskTimezone';
+export { toLocalISOString } from './src/utils/dateTimezone';
 export { findNearestLessonIndex } from './src/utils/findNearestLessonIndex';
 export { useScheduleLessonRowsForDay } from './src/hooks/useScheduleLessonRowsForDay';
 export {

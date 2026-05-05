@@ -1,5 +1,6 @@
 import type { ScheduleItem } from 'common.services';
 import type { ICalendarEvent } from '../ui/types';
+import { toLocalISOString } from './dateTimezone';
 
 const getCalendarEventId = (item: ScheduleItem): string => {
   const instance = item.eventInstance;
@@ -56,7 +57,8 @@ export const getScheduleQueryRange = (
   const happensBefore = new Date(lastDay);
   happensBefore.setHours(23, 59, 59, 999);
   return {
-    happensAfter: happensAfter.toISOString(),
-    happensBefore: new Date(happensBefore.getTime() + 1).toISOString(),
+    // Отправляем в timezone пользователя: бэкенд принимает timestamp с любым offset
+    happensAfter: toLocalISOString(happensAfter),
+    happensBefore: toLocalISOString(new Date(happensBefore.getTime() + 1)),
   };
 };
