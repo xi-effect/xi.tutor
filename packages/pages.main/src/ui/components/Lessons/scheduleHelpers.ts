@@ -25,6 +25,7 @@ export function movingPropsFromLessonRow(lesson: ScheduleLessonRow) {
     meta?.instanceIndex != null
       ? {
           classroomId: lesson.classroomId,
+          eventId: meta.eventId,
           repetitionModeId: meta.repetitionModeId,
           instanceIndex: meta.instanceIndex,
         }

@@ -29,6 +29,7 @@ export {
   type CreateSingleEventResponseDto,
   type CreateRepeatingEventResponseDto,
   type CreateClassroomEventResponseDto,
+  type CreateLastRepetitionModeResponseDto,
 } from './types';
 
 // ---------------------------------------------------------------------------
@@ -53,6 +54,7 @@ export enum SchedulerQueryKey {
   CancelRepeatingEventAfterTimestamp = 'CancelRepeatingEventAfterTimestamp',
   RescheduleRepeatedVirtualInstance = 'RescheduleRepeatedVirtualInstance',
   RescheduleSoleEventInstance = 'RescheduleSoleEventInstance',
+  CreateLastRepetitionMode = 'CreateLastRepetitionMode',
 }
 
 // ---------------------------------------------------------------------------
@@ -181,5 +183,15 @@ export const schedulerApiConfig = {
     getUrl: (classroomId: string, eventInstanceId: string) =>
       `${classroomBase('tutor', classroomId)}/event-instances/${eventInstanceId}/time-slot/`,
     method: HttpMethod.PUT,
+  },
+
+  /**
+   * Создаёт новый repetition mode в конце для существующего события
+   * (сценарий «это и следующие» при переносе повторяющегося занятия).
+   */
+  [SchedulerQueryKey.CreateLastRepetitionMode]: {
+    getUrl: (classroomId: string, eventId: string) =>
+      `${classroomBase('tutor', classroomId)}/events/${eventId}/last-repetition-mode/`,
+    method: HttpMethod.POST,
   },
 };

@@ -1,6 +1,6 @@
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Button } from '@xipkg/button';
-import { Close, External, Redo } from '@xipkg/icons';
+import { External, Redo, Trash } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
 import { useCancelLessonModal } from '../../../hooks';
 import type { ScheduleLessonRow } from '../../types';
@@ -64,17 +64,7 @@ export const NearestLessonCard = ({
         </div>
       </div>
 
-      <div className="flex w-full flex-row gap-2">
-        <Button
-          type="button"
-          variant="none"
-          size="s"
-          className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 h-[38px] flex-1 p-0"
-          onClick={onReschedule}
-        >
-          <Redo className="fill-gray-70 mr-1.5 h-4 w-4" />
-          Перенести
-        </Button>
+      <div className="flex w-full flex-col gap-3">
         {lesson.classroomId != null && (
           <StartLessonButton
             classroomId={lesson.classroomId}
@@ -83,6 +73,16 @@ export const NearestLessonCard = ({
             className="bg-brand-0 hover:bg-brand-20/50 h-[38px] flex-1 p-0"
           />
         )}
+        <Button
+          type="button"
+          variant="none"
+          size="s"
+          className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 h-[38px] min-h-[38px] flex-1 p-0"
+          onClick={onReschedule}
+        >
+          <Redo className="fill-gray-70 mr-1.5 h-4 w-4" />
+          Перенести
+        </Button>
         {canCancelLesson ? (
           <Button
             variant="none"
@@ -90,7 +90,7 @@ export const NearestLessonCard = ({
             className="bg-gray-5 absolute top-16 right-5 h-[38px] w-[38px] min-w-[38px] p-0"
             onClick={() => setCancelModalOpen(true)}
           >
-            <Close className="fill-gray-60 h-5 w-5" />
+            <Trash className="fill-gray-60 h-5 w-5" />
           </Button>
         ) : null}
       </div>

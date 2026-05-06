@@ -175,3 +175,6 @@ export type CreateRepeatingEventResponseDto = {
 export type CreateClassroomEventResponseDto =
   | CreateSingleEventResponseDto
   | CreateRepeatingEventResponseDto;
+
+/** Ответ POST …/events/{event_id}/last-repetition-mode/ */
+export type CreateLastRepetitionModeResponseDto = RepetitionModeDto;

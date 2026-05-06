@@ -5,10 +5,12 @@ import {
   type CancelRepeatingEventAfterTimestampInputDto,
   type CreateClassroomEventRequestDto,
   type CreateClassroomEventResponseDto,
+  type CreateLastRepetitionModeResponseDto,
   type DetailedEventInstanceDto,
   type EventInstanceDto,
   type EventInstanceTimeSlotInputDto,
   type GetEventInstanceDetailsResponseDto,
+  type RepetitionModeInputDto,
   type UpdateClassroomEventRequestDto,
 } from 'common.api';
 import { getAxiosInstance } from 'common.config';
@@ -87,6 +89,12 @@ export type RescheduleSoleEventInstanceParams = {
   classroomId: number;
   eventInstanceId: string;
   body: EventInstanceTimeSlotInputDto;
+};
+
+export type CreateLastRepetitionModeParams = {
+  classroomId: number;
+  eventId: number;
+  body: RepetitionModeInputDto;
 };
 
 export const schedulerQueryKeys = {
@@ -765,6 +773,38 @@ export function useRescheduleSoleEventInstance() {
     mutationFn: rescheduleSoleEventInstance,
     onSuccess: (_data, { classroomId }) => {
       invalidateAfterRescheduleTimeSlot(queryClient, classroomId);
+    },
+    onError: (err) => {
+      handleError(err, 'scheduler');
+    },
+  });
+}
+
+export async function createLastRepetitionMode({
+  classroomId,
+  eventId,
+  body,
+}: CreateLastRepetitionModeParams): Promise<CreateLastRepetitionModeResponseDto> {
+  const axiosInst = await getAxiosInstance();
+  const response = await axiosInst<CreateLastRepetitionModeResponseDto>({
+    method: schedulerApiConfig[SchedulerQueryKey.CreateLastRepetitionMode].method,
+    url: schedulerApiConfig[SchedulerQueryKey.CreateLastRepetitionMode].getUrl(
+      classroomId.toString(),
+      eventId.toString(),
+    ),
+    data: body,
+  });
+  return response.data;
+}
+
+export function useCreateLastRepetitionMode() {
+  const queryClient = useQueryClient();
+
+  return useMutation<CreateLastRepetitionModeResponseDto, Error, CreateLastRepetitionModeParams>({
+    mutationFn: createLastRepetitionMode,
+    onSuccess: (_data, { classroomId }) => {
+      invalidateClassroomSchedules(queryClient, classroomId);
+      invalidateGlobalSchedules(queryClient);
     },
     onError: (err) => {
       handleError(err, 'scheduler');

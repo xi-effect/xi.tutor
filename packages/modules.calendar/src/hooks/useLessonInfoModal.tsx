@@ -6,8 +6,10 @@ import {
   useCurrentUser,
   useGetClassroom,
   useGetClassroomStudent,
-  useTutorEventInstanceDetails,
   useStudentEventInstanceDetails,
+  useStudentRepeatedEventInstanceDetails,
+  useTutorEventInstanceDetails,
+  useTutorRepeatedEventInstanceDetails,
 } from 'common.services';
 import type { ICalendarEvent } from '../ui/types';
 import { timeToString } from '../utils';
@@ -101,9 +103,65 @@ export const useLessonInfoModal = ({
     enabled: !isTutor && canFetchInstanceDetails,
   });
 
+  const repetitionModeId = resolvedEvent?.scheduler?.repetitionModeId ?? '';
+  const repeatedInstanceIndex = resolvedEvent?.scheduler?.instanceIndex;
+  const isRepeatedVirtual = resolvedEvent?.scheduler?.instanceKind === 'repeated_virtual';
+  const canFetchRepeatedInstanceDetails =
+    classroomId != null &&
+    repetitionModeId.length > 0 &&
+    typeof repeatedInstanceIndex === 'number' &&
+    Number.isInteger(repeatedInstanceIndex) &&
+    repeatedInstanceIndex >= 0;
+
+  const tutorRepeatedInstanceDetailsQuery = useTutorRepeatedEventInstanceDetails({
+    classroomId: classroomId ?? 0,
+    repetitionModeId,
+    instanceIndex: typeof repeatedInstanceIndex === 'number' ? repeatedInstanceIndex : -1,
+    enabled: isTutor && isRepeatedVirtual && canFetchRepeatedInstanceDetails,
+  });
+
+  const studentRepeatedInstanceDetailsQuery = useStudentRepeatedEventInstanceDetails({
+    classroomId: classroomId ?? 0,
+    repetitionModeId,
+    instanceIndex: typeof repeatedInstanceIndex === 'number' ? repeatedInstanceIndex : -1,
+    enabled: !isTutor && isRepeatedVirtual && canFetchRepeatedInstanceDetails,
+  });
+
+  const repeatedInstanceDetailsQuery = isTutor
+    ? tutorRepeatedInstanceDetailsQuery
+    : studentRepeatedInstanceDetailsQuery;
+
+  const scheduleTimesLoading =
+    isTutor &&
+    isRepeatedVirtual &&
+    canFetchRepeatedInstanceDetails &&
+    repeatedInstanceDetailsQuery.isPending;
+
   const instanceDetails = isTutor
-    ? tutorInstanceDetailsQuery.data
-    : studentInstanceDetailsQuery.data;
+    ? isRepeatedVirtual
+      ? tutorRepeatedInstanceDetailsQuery.data
+      : tutorInstanceDetailsQuery.data
+    : isRepeatedVirtual
+      ? studentRepeatedInstanceDetailsQuery.data
+      : studentInstanceDetailsQuery.data;
+
+  const resolvedScheduleAt = useMemo(() => {
+    const raw = instanceDetails?.starts_at;
+    if (raw != null && raw.length > 0) {
+      const d = new Date(raw);
+      if (Number.isFinite(d.getTime())) return d;
+    }
+    return resolvedEvent?.start;
+  }, [instanceDetails?.starts_at, resolvedEvent?.start]);
+
+  const resolvedScheduleEndsAt = useMemo(() => {
+    const raw = instanceDetails?.ends_at;
+    if (raw != null && raw.length > 0) {
+      const d = new Date(raw);
+      if (Number.isFinite(d.getTime())) return d;
+    }
+    return resolvedEvent?.end;
+  }, [instanceDetails?.ends_at, resolvedEvent?.end]);
 
   const changeLessonPresentation = useLessonClassroomPresentation({
     classroomId: resolvedEvent?.lessonInfo?.classroomId,
@@ -157,8 +215,9 @@ export const useLessonInfoModal = ({
             classroomId != null ? (
               <StartLessonButton
                 classroomId={classroomId}
-                scheduledAt={resolvedEvent.start}
-                scheduledEndsAt={resolvedEvent.end}
+                scheduledAt={resolvedScheduleAt}
+                scheduledEndsAt={resolvedScheduleEndsAt}
+                scheduleTimesLoading={scheduleTimesLoading}
                 className="text-brand-100 bg-brand-0 hover:bg-brand-20/50 h-12 min-h-12"
               />
             ) : undefined

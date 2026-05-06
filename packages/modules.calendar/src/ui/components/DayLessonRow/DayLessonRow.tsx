@@ -12,6 +12,7 @@ import { StartLessonButton } from 'features.lesson.start';
 import { useLessonClassroomPresentation } from '../../../hooks/useLessonClassroomPresentation';
 import { useInView } from '../../../hooks/useInView';
 import { getScheduleLessonEndAt } from '../../../utils/getScheduleLessonEndAt';
+import { getScheduleLessonStartAt } from '../../../utils/getScheduleLessonStartAt';
 import type { ChangeLessonFormData } from 'features.lesson.change';
 
 const ACTIVATE_KEYS = new Set(['Enter', ' ']);
@@ -79,6 +80,10 @@ export const DayLessonRow = ({
 
   const scheduledEndsAt = useMemo(
     () => getScheduleLessonEndAt(lesson, lessonDay) ?? undefined,
+    [lesson, lessonDay],
+  );
+  const scheduledStartAt = useMemo(
+    () => getScheduleLessonStartAt(lesson, lessonDay) ?? undefined,
     [lesson, lessonDay],
   );
 
@@ -201,7 +206,7 @@ export const DayLessonRow = ({
           <div className="mt-auto flex w-full shrink-0 flex-row items-center gap-2 pt-2">
             <StartLessonButton
               classroomId={lesson.classroomId}
-              scheduledAt={lesson.startAt}
+              scheduledAt={scheduledStartAt}
               scheduledEndsAt={scheduledEndsAt}
               className="w-full min-w-0 flex-1 px-0 text-[12px]"
             />

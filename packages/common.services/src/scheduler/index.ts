@@ -62,6 +62,8 @@ export {
   useStudentRepeatedEventInstanceDetails,
   useRescheduleRepeatedVirtualInstance,
   useRescheduleSoleEventInstance,
+  createLastRepetitionMode,
+  useCreateLastRepetitionMode,
   useCreateClassroomEvent,
   useUpdateClassroomEvent,
   useDeleteClassroomEvent,
@@ -86,4 +88,5 @@ export {
   type CancelRepeatingEventAfterTimestampParams,
   type RescheduleRepeatedVirtualInstanceParams,
   type RescheduleSoleEventInstanceParams,
+  type CreateLastRepetitionModeParams,
 } from './model/queries';

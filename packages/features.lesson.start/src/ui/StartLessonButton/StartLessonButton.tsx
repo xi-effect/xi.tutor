@@ -12,12 +12,20 @@ import {
 import { useCallStore } from 'modules.calls';
 
 const FIVE_MINUTES_MS = 5 * 60 * 1000;
+// setTimeout хранит задержку в 32-битном знаковом целом.
+// При превышении ~24.8 дней таймер срабатывает немедленно → canStartNow ложно становится true.
+const MAX_SAFE_TIMEOUT_MS = 2_147_483_647;
 const TOOLTIP_OPEN_DELAY_MS = 1000;
 const SCHEDULE_TOOLTIP = 'Кнопка станет активной за 5 минут до начала занятия';
+const SCHEDULE_TIMES_LOADING_TOOLTIP = 'Уточняем время занятия…';
 const LESSON_ENDED_TOOLTIP = 'Нельзя начать занятие: прошло более 5 минут после окончания слота';
 
 function isWithinStartWindow(startAt: Date): boolean {
   return startAt.getTime() - Date.now() <= FIVE_MINUTES_MS;
+}
+
+function isFiniteDate(d: Date): boolean {
+  return Number.isFinite(d.getTime());
 }
 
 function getLabel(isTutor: boolean, isConferenceNotActiveTutor: boolean, isCallActive: boolean) {
@@ -47,6 +55,11 @@ export type StartLessonButtonProps = {
    * Используйте для прямого вызова API (например startCall() на странице кабинета).
    */
   onStart?: () => void | Promise<void>;
+  /**
+   * Пока грузятся точные границы слота (например API инстанса для repeated_virtual) —
+   * для тьютора кнопка остаётся неактивной, чтобы не опираться на неверные даты из списка.
+   */
+  scheduleTimesLoading?: boolean;
 };
 
 export const StartLessonButton = ({
@@ -57,6 +70,7 @@ export const StartLessonButton = ({
   size = 's',
   className,
   onStart,
+  scheduleTimesLoading = false,
 }: StartLessonButtonProps) => {
   const navigate = useNavigate();
   const search = useSearch({ strict: false }) as { call?: string };
@@ -116,22 +130,30 @@ export const StartLessonButton = ({
 
   // --- Режим расписания: блокировка до 5 минут перед началом ---
   const scheduledMode = scheduledAt != null || scheduledEndsAt != null;
+  const scheduleStartTs =
+    scheduledAt != null && isFiniteDate(scheduledAt) ? scheduledAt.getTime() : null;
+  const hasInvalidScheduledStart = scheduledAt != null && scheduleStartTs == null;
 
-  const [canStartNow, setCanStartNow] = useState(() =>
-    scheduledAt ? isWithinStartWindow(scheduledAt) : true,
-  );
+  const [canStartNow, setCanStartNow] = useState(() => {
+    if (scheduleStartTs == null) return true;
+    return isWithinStartWindow(new Date(scheduleStartTs));
+  });
 
   useEffect(() => {
-    if (!scheduledAt) return;
-    if (canStartNow) return;
-    const msUntilWindow = scheduledAt.getTime() - Date.now() - FIVE_MINUTES_MS;
-    if (msUntilWindow <= 0) {
+    if (scheduleStartTs == null) {
       setCanStartNow(true);
       return;
     }
-    const timer = setTimeout(() => setCanStartNow(true), msUntilWindow);
-    return () => clearTimeout(timer);
-  }, [scheduledAt, canStartNow]);
+    const within = isWithinStartWindow(new Date(scheduleStartTs));
+    setCanStartNow(within);
+    if (within) return;
+    const msUntilWindow = scheduleStartTs - Date.now() - FIVE_MINUTES_MS;
+    // Занятие слишком далеко: setTimeout с задержкой > 24.8 дней переполняет 32-битный int
+    // и срабатывает немедленно — не устанавливаем таймер, компонент пересчитается при следующем монтировании.
+    if (msUntilWindow > MAX_SAFE_TIMEOUT_MS) return;
+    const id = setTimeout(() => setCanStartNow(true), msUntilWindow);
+    return () => clearTimeout(id);
+  }, [scheduleStartTs]);
 
   // --- Режим расписания: блокировка спустя 5 минут после окончания ---
   const [pastLessonGracePeriod, setPastLessonGracePeriod] = useState(false);
@@ -151,7 +173,12 @@ export const StartLessonButton = ({
 
   const isTooLateForTutorToStart =
     scheduledMode && isTutor && pastLessonGracePeriod && isConferenceNotActiveTutor;
-  const isTimeRestricted = scheduledMode && isTutor && scheduledAt != null && !canStartNow;
+  const isTimeRestricted =
+    scheduledMode &&
+    isTutor &&
+    (hasInvalidScheduledStart ||
+      (scheduleStartTs == null && scheduledEndsAt != null) ||
+      (scheduleStartTs != null && !canStartNow));
 
   const handleBackToRoom = () => {
     if (!token || !isStarted) return;
@@ -189,7 +216,9 @@ export const StartLessonButton = ({
 
   const isDisabledStudent = !isTutor && isConferenceNotActiveStudent;
   // Ограничения по слоту не должны блокировать возврат в уже идущий звонок
-  const scheduleLocksTutor = !isCallActive && (isTimeRestricted || isTooLateForTutorToStart);
+  const scheduleLocksTutor =
+    !isCallActive &&
+    ((scheduleTimesLoading && isTutor) || isTimeRestricted || isTooLateForTutorToStart);
   const isDisabled = scheduleLocksTutor || isDisabledStudent;
 
   const label = getLabel(isTutor, isConferenceNotActiveTutor, isCallActive);
@@ -233,9 +262,11 @@ export const StartLessonButton = ({
   const tooltipText =
     !isCallActive && isTooLateForTutorToStart
       ? LESSON_ENDED_TOOLTIP
-      : !isCallActive && isTimeRestricted
-        ? SCHEDULE_TOOLTIP
-        : null;
+      : !isCallActive && scheduleTimesLoading && isTutor
+        ? SCHEDULE_TIMES_LOADING_TOOLTIP
+        : !isCallActive && isTimeRestricted
+          ? SCHEDULE_TOOLTIP
+          : null;
 
   if (tooltipText) {
     return (

@@ -93,6 +93,7 @@ function getSchedulerTarget(
   if (!('repetition_mode_id' in instance) || !('instance_index' in instance)) return undefined;
   return {
     classroomId,
+    eventId: item.eventId,
     repetitionModeId: instance.repetition_mode_id,
     instanceIndex: instance.instance_index,
   };

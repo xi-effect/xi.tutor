@@ -5,10 +5,12 @@ import { toast } from 'sonner';
 import {
   useRescheduleRepeatedVirtualInstance,
   useRescheduleSoleEventInstance,
+  useCreateLastRepetitionMode,
   useTutorRepeatedEventInstanceDetails,
   useTutorEventInstanceDetails,
   bitmaskUtcToLocal,
   bitmaskToWeekdays,
+  weekdaysToBitmask,
   toLocalISOString,
 } from 'modules.calendar';
 import { createMovingFormSchema, type FormData, type FormInput } from '../model/formSchema';
@@ -26,6 +28,8 @@ import { timeToMinutes } from '../utils/utils';
 /** Параметры для переноса виртуального повторяющегося инстанса (`repeated_virtual`) */
 export type RepeatedVirtualRescheduleTarget = {
   classroomId: number;
+  /** Числовой id события — нужен для POST last-repetition-mode/ (сценарий «это и следующие») */
+  eventId: number;
   repetitionModeId: string;
   instanceIndex: number;
 };
@@ -102,6 +106,7 @@ export const useMovingForm = (
   const schema = useMemo(() => createMovingFormSchema(lessonKind), [lessonKind]);
   const reschedule = useRescheduleRepeatedVirtualInstance();
   const rescheduleSole = useRescheduleSoleEventInstance();
+  const createLastRepetitionMode = useCreateLastRepetitionMode();
 
   // Если битмаска не передана снаружи — подтягиваем её из детального запроса.
   // Это позволяет корректно отображать повторения независимо от того, с какой страницы
@@ -166,12 +171,25 @@ export const useMovingForm = (
     };
 
     if (schedulerTarget) {
-      await reschedule.mutateAsync({
-        classroomId: schedulerTarget.classroomId,
-        repetitionModeId: schedulerTarget.repetitionModeId,
-        instanceIndex: schedulerTarget.instanceIndex,
-        body: timeSlotBody,
-      });
+      if (data.moveMode === 'single_and_next') {
+        await createLastRepetitionMode.mutateAsync({
+          classroomId: schedulerTarget.classroomId,
+          eventId: schedulerTarget.eventId,
+          body: {
+            kind: 'weekly',
+            starts_at: buildStartsAt(data.startDate, data.startTime),
+            duration_seconds: buildDurationSeconds(data.startTime, data.endTime),
+            weekly_bitmask: weekdaysToBitmask(data.repeatWeekdays),
+          },
+        });
+      } else {
+        await reschedule.mutateAsync({
+          classroomId: schedulerTarget.classroomId,
+          repetitionModeId: schedulerTarget.repetitionModeId,
+          instanceIndex: schedulerTarget.instanceIndex,
+          body: timeSlotBody,
+        });
+      }
       toast.success('Занятие перенесено');
       return;
     }

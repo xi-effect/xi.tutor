@@ -42,6 +42,7 @@ function movingModalPropsFromEvent(event: ICalendarEvent, classroomId: number) {
     event.scheduler.instanceIndex != null
       ? {
           classroomId,
+          eventId: event.scheduler.eventId,
           repetitionModeId: event.scheduler.repetitionModeId,
           instanceIndex: event.scheduler.instanceIndex,
         }
