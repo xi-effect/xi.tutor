@@ -47,6 +47,7 @@ export function movingPropsFromLessonRow(lesson: ScheduleLessonRow) {
     lessonDescription: lesson.description,
     formKey: `${lesson.id}-${meta?.eventInstanceId ?? meta?.repetitionModeId ?? ''}`,
     seriesWeekdayIndex: lesson.startAt ? jsWeekdayToSeriesIndex(lesson.startAt) : 0,
+    weeklyBitmask: lesson.weeklyBitmask,
     schedulerTarget,
     soleTarget,
   };

@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
@@ -114,6 +114,12 @@ export const useMovingForm = (
   });
 
   const { control, handleSubmit, reset } = form;
+
+  useEffect(() => {
+    if (lessonKind !== 'recurring' || weeklyBitmask == null || initialDate == null) return;
+    const localBitmask = bitmaskUtcToLocal(weeklyBitmask, initialDate);
+    form.setValue('repeatWeekdays', bitmaskToWeekdays(localBitmask));
+  }, [weeklyBitmask, initialDate, lessonKind, form]);
 
   const onSubmit = async (data: FormData) => {
     if (externalSubmit) {

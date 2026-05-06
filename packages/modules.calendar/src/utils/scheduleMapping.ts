@@ -1,21 +1,14 @@
 import type { ScheduleItem } from 'common.services';
 import type { ICalendarEvent } from '../ui/types';
 import { toLocalISOString } from './dateTimezone';
-
-const getCalendarEventId = (item: ScheduleItem): string => {
-  const instance = item.eventInstance;
-  if ('id' in instance) {
-    return instance.id;
-  }
-  return `${item.eventId}:${item.instanceKind}:${item.instanceIndex ?? 'unknown'}:${item.startsAt}`;
-};
+import { getScheduleItemRowKey } from './getScheduleItemRowKey';
 
 /**
  * Маппит ScheduleItem (из API расписания) → ICalendarEvent для отображения в календаре/виджетах.
  * Используется и для расписания одного кабинета, и для глобального расписания (без `classroom_id`).
  */
 export const mapScheduleItemToCalendarEvent = (item: ScheduleItem): ICalendarEvent => ({
-  id: getCalendarEventId(item),
+  id: getScheduleItemRowKey(item),
   title: item.title,
   start: new Date(item.startsAt),
   end: new Date(item.endsAt),
@@ -38,6 +31,10 @@ export const mapScheduleItemToCalendarEvent = (item: ScheduleItem): ICalendarEve
         : undefined,
     instanceIndex: item.instanceIndex,
     cancelledAt: item.cancelledAt,
+    weeklyBitmask:
+      item.repetitionMode?.kind === 'weekly'
+        ? (item.repetitionMode.weekly_starting_bitmask ?? undefined)
+        : undefined,
   },
 });
 

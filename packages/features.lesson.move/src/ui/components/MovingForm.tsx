@@ -12,7 +12,7 @@ import {
 } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { useMaskInput } from '@xipkg/inputmask';
-import { ArrowRight, Clock, InfoCircle } from '@xipkg/icons';
+import { ArrowRight, Clock } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { useLessonClassroomPresentation } from 'modules.calendar';
 import {
@@ -21,12 +21,7 @@ import {
   type SoleRescheduleTarget,
 } from '../../hooks';
 import type { FormData } from '../../model';
-import {
-  formatDurationBetweenRu,
-  getDayMonthRu,
-  getShortDateString,
-  WEEKDAY_FULL_NAMES,
-} from '../../utils/utils';
+import { formatDurationBetweenRu, getShortDateString } from '../../utils/utils';
 import { InputDate } from './InputDate';
 
 const WEEKDAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] as const;
@@ -45,7 +40,7 @@ export type MovingFormProps = PropsWithChildren<{
   fallbackName?: string;
   lessonTitle: string;
   lessonDescription?: string;
-  /** День недели серии (0 — пн), для текста подсказки в режиме «Это занятие» */
+  /** День недели серии (0 — пн) */
   seriesWeekdayIndex?: number;
   /**
    * UTC-битмаска серии из API (`weekly_starting_bitmask`).
@@ -67,29 +62,6 @@ export type MovingFormProps = PropsWithChildren<{
   onSubmittingChange?: (isSubmitting: boolean) => void;
 }>;
 
-function buildInfoText(
-  moveMode: 'single' | 'single_and_next' | undefined,
-  startDate: Date,
-  startTime: string,
-  endTime: string,
-  repeatWeekdays: number[],
-  seriesWeekdayIndex: number,
-): string {
-  const dateStr = getDayMonthRu(startDate);
-  const repeatPart =
-    moveMode === 'single_and_next'
-      ? (() => {
-          const sorted = [...repeatWeekdays].sort((a, b) => a - b);
-          if (sorted.length === 1) {
-            return `будут повторяться каждый ${WEEKDAY_FULL_NAMES[sorted[0]!]}`;
-          }
-          return `будут повторяться по дням: ${sorted.map((i) => WEEKDAY_FULL_NAMES[i]).join(', ')}`;
-        })()
-      : `будут повторяться каждый ${WEEKDAY_FULL_NAMES[seriesWeekdayIndex] ?? WEEKDAY_FULL_NAMES[0]}`;
-
-  return `С ${dateStr} занятия будут начинаться в ${startTime}, конец в ${endTime}, ${repeatPart}`;
-}
-
 export const MovingForm: FC<MovingFormProps> = ({
   children,
   onClose,
@@ -102,7 +74,6 @@ export const MovingForm: FC<MovingFormProps> = ({
   fallbackName = '',
   lessonTitle,
   lessonDescription,
-  seriesWeekdayIndex = 0,
   weeklyBitmask,
   schedulerTarget,
   soleTarget,
@@ -145,7 +116,6 @@ export const MovingForm: FC<MovingFormProps> = ({
   const endTime = form.watch('endTime');
   const moveMode = form.watch('moveMode');
   const startDate = form.watch('startDate');
-  const repeatWeekdays = form.watch('repeatWeekdays');
 
   const sourceDate = initialDate ?? startDate;
 
@@ -157,22 +127,6 @@ export const MovingForm: FC<MovingFormProps> = ({
   const showSwitcher = lessonKind === 'recurring';
   const showDateArrow = lessonKind === 'one-off' || moveMode !== 'single_and_next';
   const showRepetitions = lessonKind === 'recurring' && moveMode === 'single_and_next';
-  const showInfoBanner = lessonKind === 'recurring';
-
-  const infoText = useMemo(
-    () =>
-      showInfoBanner
-        ? buildInfoText(
-            moveMode,
-            startDate,
-            startTime,
-            endTime,
-            repeatWeekdays ?? [],
-            seriesWeekdayIndex,
-          )
-        : null,
-    [showInfoBanner, moveMode, startDate, startTime, endTime, repeatWeekdays, seriesWeekdayIndex],
-  );
 
   const { classroomName, avatarUserId, subjectName } = useLessonClassroomPresentation({
     classroomId,
@@ -276,6 +230,7 @@ export const MovingForm: FC<MovingFormProps> = ({
                   <Input
                     value={sourceDate ? getShortDateString(sourceDate) : ''}
                     readOnly
+                    disabled
                     variant="s"
                     className="border-gray-10 rounded-lg border"
                     after={<ArrowRight className="fill-brand-80 h-4 w-4" />}
@@ -368,10 +323,6 @@ export const MovingForm: FC<MovingFormProps> = ({
                   <FormLabel className="text-[14px] font-normal text-gray-100">
                     Повторения
                   </FormLabel>
-                  <span className="text-gray-60 inline-flex items-center gap-1 text-xs">
-                    Можно редактировать
-                    <InfoCircle className="fill-gray-40 h-3.5 w-3.5 shrink-0" aria-hidden />
-                  </span>
                 </div>
                 <FormControl>
                   <div className="flex flex-row flex-wrap gap-2">
@@ -408,16 +359,6 @@ export const MovingForm: FC<MovingFormProps> = ({
             )}
           />
         )}
-
-        {showInfoBanner && infoText ? (
-          <div
-            className="border-brand-40 bg-brand-0 flex gap-2 rounded-lg border p-3 text-sm leading-snug text-gray-100"
-            role="status"
-          >
-            <InfoCircle className="fill-brand-80 mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-            <p>{infoText}</p>
-          </div>
-        ) : null}
 
         {children}
       </form>

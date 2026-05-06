@@ -35,6 +35,8 @@ export type ISchedulerEventMeta = {
   repetitionModeId?: string;
   instanceIndex?: number | null;
   cancelledAt?: string | null;
+  /** UTC-битмаска дней повторений (`weekly_starting_bitmask` из API) */
+  weeklyBitmask?: number;
 };
 
 export type EventType = 'lesson' | 'rest';
@@ -56,6 +58,8 @@ export type ScheduleLessonRow = {
   studentId: number;
   /** Метаданные планировщика для отмены вхождения (есть у событий из API расписания) */
   schedulerMeta?: LessonSchedulerMetaForCancel | null;
+  /** UTC-битмаска дней повторений серии (`weekly_starting_bitmask` из API) */
+  weeklyBitmask?: number;
 };
 
 export type CalendarMode = 'day' | 'week' | 'month' | 'year';

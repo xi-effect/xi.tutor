@@ -38,6 +38,7 @@ export {
 export { getScheduleLessonEndAt } from './src/utils/getScheduleLessonEndAt';
 export { getCalendarDayQueryRange } from './src/utils/getCalendarDayQueryRange';
 export { mapScheduleItemToLessonRow } from './src/utils/mapScheduleItemToLessonRow';
+export { getScheduleItemRowKey } from './src/utils/getScheduleItemRowKey';
 export {
   bitmaskUtcToLocal,
   bitmaskLocalToUtc,

@@ -5,6 +5,7 @@ import { MovingLessonModal } from 'features.lesson.move';
 import { useCallback, useMemo, useState } from 'react';
 import { AllLessons } from './AllLessons';
 import {
+  getCalendarDayQueryRange,
   ScheduleDateCarousel,
   useStudentSchedule,
   useTutorSchedule,
@@ -22,18 +23,6 @@ const getToday = () => {
   const d = new Date();
   d.setHours(0, 0, 0, 0);
   return d;
-};
-
-/** Диапазон [начало дня, конец дня] для запроса расписания. */
-const getDayRange = (date: Date) => {
-  const start = new Date(date);
-  start.setHours(0, 0, 0, 0);
-  const end = new Date(date);
-  end.setHours(23, 59, 59, 999);
-  return {
-    happensAfter: start.toISOString(),
-    happensBefore: new Date(end.getTime() + 1).toISOString(),
-  };
 };
 
 export const Lessons = () => {
@@ -69,7 +58,7 @@ export const Lessons = () => {
     [updateEvent],
   );
 
-  const range = useMemo(() => getDayRange(selectedDate), [selectedDate]);
+  const range = useMemo(() => getCalendarDayQueryRange(selectedDate), [selectedDate]);
   const tutorScheduleQuery = useTutorSchedule({
     ...range,
     enabled: !isUserLoading && isTutor === true,

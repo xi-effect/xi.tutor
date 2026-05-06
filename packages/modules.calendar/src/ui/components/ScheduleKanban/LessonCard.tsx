@@ -1,15 +1,13 @@
 import { memo, useLayoutEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { cn } from '@xipkg/utils';
-// import { Clock, Conference, Redo, Trash } from '@xipkg/icons';
 import { Clock } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { UserProfile } from '@xipkg/userprofile';
 import { timeToString } from '../../../utils';
-// import { useDeleteEvent } from '../../../store/eventsStore';
 import { CARD_MIN_WIDTH, CARD_MAX_WIDTH } from '../../../hooks/useKanbanColumns';
 import type { ICalendarEvent } from '../../types';
-// import { Button } from '@xipkg/button';
 import { useLessonClassroomPresentation } from '../../../hooks/useLessonClassroomPresentation';
+import { useInView } from '../../../hooks/useInView';
 
 /** Строка «кабинет»: аватар как в `UserProfile`, подпись с `truncate` и Tooltip только при обрезке. */
 function LessonCardClassroomLine({
@@ -78,6 +76,8 @@ export const LessonCard = memo<LessonCardProps>(
   ({ event, isToday, fullWidth, hideClassroomAndSubject = false, onClick }) => {
     // const deleteEvent = useDeleteEvent();
 
+    const { ref: cardRef, isInView } = useInView<HTMLDivElement>();
+
     const startTime = event.isAllDay ? null : timeToString(new Date(event.start));
     const endTime = event.isAllDay ? null : timeToString(new Date(event.end));
 
@@ -95,7 +95,7 @@ export const LessonCard = memo<LessonCardProps>(
       classroomId: event.lessonInfo?.classroomId,
       fallbackClassroomName: teacherName,
       fallbackAvatarUserId: teacherId,
-      enabled: !hideClassroomAndSubject,
+      enabled: !hideClassroomAndSubject && isInView,
     });
 
     const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
@@ -110,6 +110,7 @@ export const LessonCard = memo<LessonCardProps>(
 
     return (
       <div
+        ref={cardRef}
         className={cn(
           'relative flex w-full flex-col rounded-2xl border p-5 transition-colors duration-300',
           'group-hover:bg-[rgb(15_15_17/0.02)]',

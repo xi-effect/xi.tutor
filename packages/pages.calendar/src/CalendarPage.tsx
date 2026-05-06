@@ -31,7 +31,7 @@ function formatTimeHm(d: Date): string {
 function movingModalPropsFromEvent(event: ICalendarEvent) {
   const start = new Date(event.start);
   const end = new Date(event.end);
-  const lessonTitle = event.lessonInfo?.description ?? event.title;
+  const lessonTitle = event.title;
   const classroomId = event.lessonInfo?.classroomId;
   const instanceKind = event.scheduler?.instanceKind;
   const isRepeatedVirtual = instanceKind === 'repeated_virtual';
@@ -65,6 +65,7 @@ function movingModalPropsFromEvent(event: ICalendarEvent) {
     lessonDescription: event.lessonInfo?.description,
     formKey: event.id,
     seriesWeekdayIndex: jsWeekdayToSeriesIndex(start),
+    weeklyBitmask: event.scheduler?.weeklyBitmask,
     schedulerTarget,
     soleTarget,
   };

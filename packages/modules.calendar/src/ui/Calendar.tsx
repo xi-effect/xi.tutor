@@ -27,8 +27,14 @@ export const CalendarModule = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const { weekDays, weekStart, goToPrev, goToNext, goToWeekStart, setVisibleCount } =
     useCalendarSchedule();
-  const { columnWidth, visibleCount } = useKanbanColumns(containerRef, weekDays.length);
-  const visibleDays = weekDays.slice(0, visibleCount);
+  const { columnWidth, visibleCount, hasMeasured } = useKanbanColumns(
+    containerRef,
+    weekDays.length,
+  );
+  // До первого замера ResizeObserver передаём пустой массив дней, чтобы ScheduleKanban
+  // не рендерил LessonCard (и не запускал useGetClassroom) до определения реального числа колонок.
+  // useLayoutEffect в useKanbanColumns гарантирует, что hasMeasured=true до первого пейнта.
+  const visibleDays = hasMeasured ? weekDays.slice(0, visibleCount) : [];
 
   useEffect(() => {
     setVisibleCount(visibleCount);

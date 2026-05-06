@@ -245,6 +245,11 @@ export const UpcomingLessonsSection = () => {
           lessonTitle={moveItem.title}
           lessonDescription={moveItem.description ?? undefined}
           seriesWeekdayIndex={jsWeekdayToSeriesIndex(new Date(moveItem.startsAt))}
+          weeklyBitmask={
+            moveItem.repetitionMode?.kind === 'weekly'
+              ? (moveItem.repetitionMode.weekly_starting_bitmask ?? undefined)
+              : undefined
+          }
           schedulerTarget={getSchedulerTarget(moveItem, classroomId)}
           soleTarget={getSoleTarget(moveItem, classroomId)}
         />

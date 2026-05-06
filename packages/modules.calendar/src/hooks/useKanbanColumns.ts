@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 /** Минимальная ширина столбца дня (px) */
 export const COLUMN_MIN_WIDTH = 240;
@@ -29,6 +29,8 @@ export const useKanbanColumns = (
 ) => {
   const [columnWidth, setColumnWidth] = useState(COLUMN_MIN_WIDTH);
   const [visibleCount, setVisibleCount] = useState(totalDays);
+  const [hasMeasured, setHasMeasured] = useState(false);
+  const hasMeasuredRef = useRef(false);
 
   const updateColumns = useCallback(() => {
     const el = containerRef.current;
@@ -50,9 +52,17 @@ export const useKanbanColumns = (
 
     setVisibleCount(count);
     setColumnWidth(width);
+
+    if (!hasMeasuredRef.current) {
+      hasMeasuredRef.current = true;
+      setHasMeasured(true);
+    }
   }, [containerRef, totalDays]);
 
-  useEffect(() => {
+  // useLayoutEffect вместо useEffect: замер происходит до первого пейнта браузера,
+  // поэтому visibleDays обновляется до того, как ScheduleKanban успевает отрендерить
+  // карточки занятий и запустить useGetClassroom для всей недели.
+  useLayoutEffect(() => {
     updateColumns();
     const el = containerRef.current;
     if (!el) return;
@@ -62,5 +72,5 @@ export const useKanbanColumns = (
     return () => observer.disconnect();
   }, [containerRef, totalDays, updateColumns]);
 
-  return { columnWidth, visibleCount };
+  return { columnWidth, visibleCount, hasMeasured };
 };

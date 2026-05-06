@@ -10,6 +10,7 @@ import type { ScheduleLessonRow } from '../../types';
 import { cn } from '@xipkg/utils';
 import { StartLessonButton } from 'features.lesson.start';
 import { useLessonClassroomPresentation } from '../../../hooks/useLessonClassroomPresentation';
+import { useInView } from '../../../hooks/useInView';
 import { getScheduleLessonEndAt } from '../../../utils/getScheduleLessonEndAt';
 import type { ChangeLessonFormData } from 'features.lesson.change';
 
@@ -55,6 +56,7 @@ export const DayLessonRow = ({
   onReschedule,
   onSaveLesson,
 }: DayLessonRowProps) => {
+  const { ref: rowRef, isInView } = useInView<HTMLDivElement>();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const listMeta = useDayLessonListMeta();
@@ -69,6 +71,7 @@ export const DayLessonRow = ({
     classroomId: lesson.classroomId,
     fallbackClassroomName: lesson.studentName,
     fallbackAvatarUserId: lesson.studentId,
+    enabled: isInView,
   });
   const showTutorIconColumn = isTutor && showActions;
   const descriptionText = lesson.description?.trim();
@@ -81,6 +84,7 @@ export const DayLessonRow = ({
 
   return (
     <div
+      ref={rowRef}
       className={cn(
         'border-gray-10 relative flex min-h-[136px] shrink-0 flex-row items-stretch gap-4 overflow-hidden p-4 pb-3.5 transition-[padding] duration-200 ease-linear',
         showTutorIconColumn && 'group/day-lesson pr-14 lg:pr-4 lg:hover:pr-14',

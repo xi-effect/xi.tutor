@@ -13,6 +13,11 @@ export const mapScheduleItemToLessonRow = (item: ScheduleItem): ScheduleLessonRo
   const repetitionModeId =
     'repetition_mode_id' in instance ? instance.repetition_mode_id : undefined;
   const instanceIndex = 'instance_index' in instance ? instance.instance_index : undefined;
+  const weeklyBitmask =
+    item.repetitionMode?.kind === 'weekly'
+      ? (item.repetitionMode.weekly_starting_bitmask ?? undefined)
+      : undefined;
+
   return {
     id: item.eventId,
     classroomId: item.classroomId ?? undefined,
@@ -23,6 +28,7 @@ export const mapScheduleItemToLessonRow = (item: ScheduleItem): ScheduleLessonRo
     description: item.description ?? undefined,
     studentName: item.title,
     studentId: 0,
+    weeklyBitmask,
     schedulerMeta: {
       eventId: item.eventId,
       instanceKind: item.instanceKind,

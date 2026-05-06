@@ -1,4 +1,4 @@
-import type { EventInstanceDto } from 'common.api';
+import type { EventInstanceDto, RepetitionModeDto } from 'common.api';
 import type { ScheduleItem } from './types';
 
 export function mapEventInstanceToScheduleItem(
@@ -7,6 +7,11 @@ export function mapEventInstanceToScheduleItem(
 ): ScheduleItem {
   const cancelledAt = 'cancelled_at' in eventInstance ? eventInstance.cancelled_at : null;
   const instanceIndex = 'instance_index' in eventInstance ? eventInstance.instance_index : null;
+  // DetailedEventInstanceDto (глобальное расписание) содержит вложенный repetition_mode
+  const repetitionMode: RepetitionModeDto | undefined =
+    'repetition_mode' in eventInstance
+      ? (eventInstance.repetition_mode as RepetitionModeDto | undefined)
+      : undefined;
 
   return {
     eventId: eventInstance.event_id,
@@ -17,9 +22,9 @@ export function mapEventInstanceToScheduleItem(
     classroomId: eventInstance.classroom_id ?? eventInstance.event?.classroom_id ?? classroomId,
     eventInstance,
     event: eventInstance.event,
-    repetitionMode: undefined,
+    repetitionMode,
     instanceKind: eventInstance.kind,
-    repetitionKind: null,
+    repetitionKind: repetitionMode?.kind ?? null,
     instanceIndex,
     cancelledAt,
     isSingle: eventInstance.kind === 'sole',
