@@ -136,6 +136,7 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
             ? 'flex max-h-[90dvh] w-[calc(100vw-32px)] max-w-[calc(100vw-32px)] flex-col rounded-2xl'
             : 'w-[680px]'
         }
+        aria-describedby={undefined}
       >
         <ModalCloseButton>
           <Close className="fill-gray-80 sm:fill-gray-0" />
@@ -246,7 +247,7 @@ export const WhiteboardsModal = ({ open, onOpenChange }: WhiteboardsModalProps) 
             </Button>
             <Button
               size="m"
-              variant="secondary"
+              variant="ghost"
               onClick={() => onOpenChange(false)}
               className={isMobile ? 'min-h-11 w-full' : ''}
             >

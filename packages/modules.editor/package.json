@@ -11,7 +11,7 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "@tanstack/react-router": "^1.128.8",
+    "@tanstack/react-router": "^1.166.6",
     "@dnd-kit/core": "6.3.1",
     "@dnd-kit/modifiers": "9.0.0",
     "@dnd-kit/sortable": "10.0.0",
@@ -35,7 +35,7 @@
     "@xipkg/button": "4.1.0",
     "@xipkg/dropdown": "^3.0.12",
     "@xipkg/file": "^2.0.12",
-    "@xipkg/icons": "^3.0.14",
+    "@xipkg/icons": "^3.0.15",
     "@xipkg/input": "2.2.9",
     "@xipkg/popover": "^2.1.0",
     "@xipkg/select": "^2.2.5",

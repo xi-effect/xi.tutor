@@ -1,0 +1,49 @@
+{
+  "name": "features.lesson.change",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "license": "MIT",
+  "scripts": {
+    "dev": "tsc --watch",
+    "lint": "eslint \"**/*.{ts,tsx}\""
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.2.2",
+    "@xipkg/button": "4.1.0",
+    "@xipkg/form": "4.2.2",
+    "@xipkg/icons": "^3.0.15",
+    "@xipkg/input": "2.2.9",
+    "@xipkg/modal": "4.3.1",
+    "@xipkg/textarea": "1.2.0",
+    "@xipkg/tooltip": "2.1.0",
+    "@xipkg/userprofile": "4.1.0",
+    "@xipkg/utils": "1.8.0",
+    "react-hook-form": "^7.73.1",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.19.0",
+    "@types/node": "^20.3.1",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@xipkg/eslint": "3.2.0",
+    "@xipkg/tailwind": "0.8.1",
+    "@xipkg/typescript": "latest",
+    "common.eslint": "workspace:*",
+    "common.typescript": "workspace:*",
+    "eslint": "^9.19.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
+    "eslint-plugin-react-refresh": "^0.4.18",
+    "globals": "^15.14.0",
+    "typescript": "~5.7.2",
+    "typescript-eslint": "^8.22.0"
+  },
+  "peerDependencies": {
+    "react": "19"
+  },
+  "description": "Change lesson details modal",
+  "author": "xi.effect"
+}

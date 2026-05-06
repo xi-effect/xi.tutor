@@ -74,7 +74,7 @@ export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT)
   return (
     <M.Modal open={open} onOpenChange={(value) => onOpenChange(value)}>
       <M.ModalTrigger asChild>{children}</M.ModalTrigger>
-      <M.ModalContent>
+      <M.ModalContent aria-describedby={undefined}>
         {(stage.type === 'form' && (
           <>
             <M.ModalCloseButton>
@@ -134,7 +134,7 @@ export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT)
                   <Button disabled={timer} className="disabled:cursor-not-allowed" type="submit">
                     Изменить
                   </Button>
-                  <Button onClick={() => onOpenChange(false)} type="button" variant="secondary">
+                  <Button onClick={() => onOpenChange(false)} type="button" variant="ghost">
                     Отменить
                   </Button>
                 </M.ModalFooter>

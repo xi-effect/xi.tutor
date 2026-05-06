@@ -12,6 +12,7 @@ import {
   useGetRecipientInvoiceByStudent,
 } from 'common.services';
 import { UserRoleT } from 'common.api';
+import { DateTimeDisplay } from 'common.ui';
 
 export const PaymentsPage = () => {
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
@@ -26,7 +27,20 @@ export const PaymentsPage = () => {
   const processedInvoiceIdRef = useRef<number | null>(null);
 
   const navigate = useNavigate();
-  const search = useSearch({ strict: false }) as { recipient_invoice_id?: string };
+  const search = useSearch({ strict: false }) as {
+    recipient_invoice_id?: string;
+    tab?: string;
+  };
+  const activeTab = search.tab ?? 'invoices';
+  const onTabChange = useCallback(
+    (tab: string) => {
+      navigate({
+        // @ts-expect-error - TanStack Router search params typing issue
+        search: { ...search, tab },
+      });
+    },
+    [navigate, search],
+  );
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const currentUserRole: UserRoleT = isTutor ? 'tutor' : 'student';
@@ -162,11 +176,22 @@ export const PaymentsPage = () => {
   );
 
   return (
-    <div className="flex flex-col justify-between gap-6 pl-4">
-      <div className="flex flex-col">
-        <Header onCreateInvoice={onOpenInvoiceModal} />
+    <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pr-0">
+      <div className="flex h-screen flex-col pl-5">
+        <div className="flex flex-col gap-5 pt-5 pr-5">
+          <div className="flex h-8 items-center">
+            <DateTimeDisplay />
+          </div>
+          <Header
+            onCreateInvoice={onOpenInvoiceModal}
+            activeTab={activeTab}
+            onTabChange={onTabChange}
+          />
+        </div>
         <TabsComponent
           onApprovePayment={onOpenPaymentApproveModal}
+          activeTab={activeTab}
+          onTabChange={onTabChange}
           onViewInvoice={onOpenInvoiceDetailsModal}
         />
       </div>

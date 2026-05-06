@@ -11,9 +11,9 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@tanstack/react-router": "1.120.11",
+    "@tanstack/react-router": "^1.166.6",
     "@xipkg/button": "4.1.0",
-    "@xipkg/form": "4.2.1",
+    "@xipkg/form": "4.2.2",
     "@xipkg/modal": "^4.4.0",
     "@xipkg/radio": "^2.0.6",
     "common.api": "workspace:*",

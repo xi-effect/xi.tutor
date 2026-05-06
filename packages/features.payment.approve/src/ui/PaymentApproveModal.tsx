@@ -149,7 +149,7 @@ const ApproveForm = ({
           {isPending ? 'Подтверждение...' : 'Подтвердить'}
         </Button>
         <Button
-          variant="secondary"
+          variant="ghost"
           className="w-31.75"
           onClick={() => handleCloseModal()}
           disabled={isPending}
@@ -317,7 +317,7 @@ const AdvanceForm = ({
             {isLoading ? 'Подтверждение...' : 'Подтвердить'}
           </Button>
           <Button
-            variant="secondary"
+            variant="ghost"
             className="w-31.75"
             onClick={() => handleCloseModal()}
             disabled={isLoading}
@@ -384,7 +384,9 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
           <ModalTitle className="m-0 pr-10 text-gray-100 sm:pr-0">
             Подтверждение оплаты по счёту
           </ModalTitle>
-          <ModalDescription />
+          <ModalDescription className="sr-only">
+            Укажите детали платежа и подтвердите получение перевода или просмотрите условия счёта.
+          </ModalDescription>
         </ModalHeader>
         {data && data.recipient_invoice.status !== 'wf_receiver_confirmation' && (
           <AdvanceForm

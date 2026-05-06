@@ -1,4 +1,5 @@
 export { CardsGrid } from './CardsGrid';
+export { ClassroomsEmptyState } from './ClassroomsEmptyState';
 export { CardsGridSimple } from './CardsGridSimple';
 export { CardsGridSkeleton } from './CardsGridSkeleton';
 export { CardsGridSkeletonAdvanced } from './CardsGridSkeletonAdvanced';

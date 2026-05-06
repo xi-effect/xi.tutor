@@ -1,0 +1,223 @@
+import { useEffect, useMemo } from 'react';
+import { useForm } from '@xipkg/form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
+import {
+  useRescheduleRepeatedVirtualInstance,
+  useRescheduleSoleEventInstance,
+  useCreateLastRepetitionMode,
+  useTutorRepeatedEventInstanceDetails,
+  useTutorEventInstanceDetails,
+  bitmaskUtcToLocal,
+  bitmaskToWeekdays,
+  weekdaysToBitmask,
+  toLocalISOString,
+} from 'modules.calendar';
+import { createMovingFormSchema, type FormData, type FormInput } from '../model/formSchema';
+import { timeToMinutes } from '../utils/utils';
+
+/**
+ * Выбор ручки переноса (тело везде — EventInstanceTimeSlotInput):
+ * - sole → PUT …/event-instances/{event_instance_id}/time-slot/
+ * - repeated_persisted → тот же PUT по event_instance_id
+ * - repeated_virtual → PUT …/repetition-modes/{repetition_mode_id}/instances/{instance_index}/time-slot/
+ *
+ * На форме: приоритет `schedulerTarget` (virtual), иначе `soleTarget` (sole / persistent).
+ */
+
+/** Параметры для переноса виртуального повторяющегося инстанса (`repeated_virtual`) */
+export type RepeatedVirtualRescheduleTarget = {
+  classroomId: number;
+  /** Числовой id события — нужен для POST last-repetition-mode/ (сценарий «это и следующие») */
+  eventId: number;
+  repetitionModeId: string;
+  instanceIndex: number;
+};
+
+/** Параметры для переноса по `event_instance_id` (`sole` или `repeated_persisted`) */
+export type SoleRescheduleTarget = {
+  classroomId: number;
+  eventInstanceId: string;
+};
+
+type UseMovingFormOptions = {
+  onSubmit?: (data: FormData) => void | Promise<void>;
+  /** Перенос repeated_virtual — PUT /repetition-modes/{id}/instances/{n}/time-slot/ */
+  schedulerTarget?: RepeatedVirtualRescheduleTarget;
+  /** Перенос sole или repeated_persisted — PUT /event-instances/{id}/time-slot/ */
+  soleTarget?: SoleRescheduleTarget;
+  /**
+   * UTC-битмаска серии повторений из API (`weekly_starting_bitmask`).
+   * Если передана вместе с `initialDate`, используется для предзаполнения
+   * дней повторения в форме (с конверсией UTC → локальный TZ пользователя).
+   */
+  weeklyBitmask?: number;
+};
+
+const getDefaultValues = (
+  lessonKind: 'one-off' | 'recurring',
+  initialDate?: Date | null,
+  initialStartTime?: string | null,
+  initialEndTime?: string | null,
+  weeklyBitmask?: number,
+): FormInput => {
+  const startDate = initialDate ?? new Date();
+
+  let repeatWeekdays: number[] = [];
+  if (lessonKind === 'recurring') {
+    if (weeklyBitmask != null && initialDate != null) {
+      // Конвертируем UTC-битмаску из API в локальный TZ пользователя для отображения
+      const localBitmask = bitmaskUtcToLocal(weeklyBitmask, initialDate);
+      repeatWeekdays = bitmaskToWeekdays(localBitmask);
+    } else {
+      repeatWeekdays = [0];
+    }
+  }
+
+  return {
+    startDate,
+    startTime: initialStartTime ?? '',
+    endTime: initialEndTime ?? '',
+    moveMode: lessonKind === 'recurring' ? 'single' : undefined,
+    repeatWeekdays,
+  };
+};
+
+function buildStartsAt(startDate: Date, startTime: string): string {
+  const [hours, minutes] = startTime.split(':').map(Number);
+  const d = new Date(startDate);
+  d.setHours(hours!, minutes!, 0, 0);
+  // toLocalISOString сохраняет offset пользователя (например +03:00), не нормализует в UTC
+  return toLocalISOString(d);
+}
+
+function buildDurationSeconds(startTime: string, endTime: string): number {
+  return (timeToMinutes(endTime) - timeToMinutes(startTime)) * 60;
+}
+
+export const useMovingForm = (
+  lessonKind: 'one-off' | 'recurring',
+  initialDate?: Date | null,
+  initialStartTime?: string | null,
+  initialEndTime?: string | null,
+  options: UseMovingFormOptions = {},
+) => {
+  const { onSubmit: externalSubmit, schedulerTarget, soleTarget, weeklyBitmask } = options;
+  const schema = useMemo(() => createMovingFormSchema(lessonKind), [lessonKind]);
+  const reschedule = useRescheduleRepeatedVirtualInstance();
+  const rescheduleSole = useRescheduleSoleEventInstance();
+  const createLastRepetitionMode = useCreateLastRepetitionMode();
+
+  // Если битмаска не передана снаружи — подтягиваем её из детального запроса.
+  // Это позволяет корректно отображать повторения независимо от того, с какой страницы
+  // открыта модалка (глобальный календарь, кабинет, главная и т.д.).
+  const needFetch = lessonKind === 'recurring' && weeklyBitmask == null;
+
+  const repeatedDetailsQuery = useTutorRepeatedEventInstanceDetails({
+    classroomId: schedulerTarget?.classroomId ?? 0,
+    repetitionModeId: schedulerTarget?.repetitionModeId ?? '',
+    instanceIndex: schedulerTarget?.instanceIndex ?? -1,
+    enabled: needFetch && schedulerTarget != null,
+  });
+
+  const persistedDetailsQuery = useTutorEventInstanceDetails({
+    classroomId: soleTarget?.classroomId ?? 0,
+    eventInstanceId: soleTarget?.eventInstanceId ?? '',
+    enabled: needFetch && soleTarget != null,
+  });
+
+  const detailedData = repeatedDetailsQuery.data ?? persistedDetailsQuery.data;
+  const detailedRepetitionMode =
+    detailedData && 'repetition_mode' in detailedData ? detailedData.repetition_mode : undefined;
+  const fetchedBitmask =
+    detailedRepetitionMode?.kind === 'weekly'
+      ? (detailedRepetitionMode.weekly_starting_bitmask ?? undefined)
+      : undefined;
+
+  // Пропсовая битмаска имеет приоритет; фетчнутая — запасной вариант
+  const resolvedBitmask = weeklyBitmask ?? fetchedBitmask;
+
+  const form = useForm<FormInput, unknown, FormData>({
+    resolver: zodResolver(schema),
+    mode: 'onSubmit',
+    defaultValues: getDefaultValues(
+      lessonKind,
+      initialDate,
+      initialStartTime,
+      initialEndTime,
+      weeklyBitmask,
+    ),
+  });
+
+  const { control, handleSubmit, reset } = form;
+
+  // Обновляем дни повторений когда resolvedBitmask становится известен
+  // (либо сразу из пропсов, либо после ответа детального API)
+  useEffect(() => {
+    if (lessonKind !== 'recurring' || resolvedBitmask == null || initialDate == null) return;
+    const localBitmask = bitmaskUtcToLocal(resolvedBitmask, initialDate);
+    form.setValue('repeatWeekdays', bitmaskToWeekdays(localBitmask));
+  }, [resolvedBitmask, initialDate, lessonKind, form]);
+
+  const onSubmit = async (data: FormData) => {
+    if (externalSubmit) {
+      await externalSubmit(data);
+      return;
+    }
+
+    const timeSlotBody = {
+      starts_at: buildStartsAt(data.startDate, data.startTime),
+      duration_seconds: buildDurationSeconds(data.startTime, data.endTime),
+    };
+
+    if (schedulerTarget) {
+      if (data.moveMode === 'single_and_next') {
+        await createLastRepetitionMode.mutateAsync({
+          classroomId: schedulerTarget.classroomId,
+          eventId: schedulerTarget.eventId,
+          body: {
+            kind: 'weekly',
+            starts_at: buildStartsAt(data.startDate, data.startTime),
+            duration_seconds: buildDurationSeconds(data.startTime, data.endTime),
+            weekly_bitmask: weekdaysToBitmask(data.repeatWeekdays),
+          },
+        });
+      } else {
+        await reschedule.mutateAsync({
+          classroomId: schedulerTarget.classroomId,
+          repetitionModeId: schedulerTarget.repetitionModeId,
+          instanceIndex: schedulerTarget.instanceIndex,
+          body: timeSlotBody,
+        });
+      }
+      toast.success('Занятие перенесено');
+      return;
+    }
+
+    if (soleTarget) {
+      await rescheduleSole.mutateAsync({
+        classroomId: soleTarget.classroomId,
+        eventInstanceId: soleTarget.eventInstanceId,
+        body: timeSlotBody,
+      });
+      toast.success('Занятие перенесено');
+      return;
+    }
+
+    toast.success('Занятие перенесено');
+  };
+
+  const handleClearForm = () => {
+    reset(
+      getDefaultValues(lessonKind, initialDate, initialStartTime, initialEndTime, weeklyBitmask),
+    );
+  };
+
+  return {
+    form,
+    control,
+    handleSubmit,
+    onSubmit,
+    handleClearForm,
+  };
+};

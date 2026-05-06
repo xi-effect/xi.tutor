@@ -50,7 +50,7 @@ export const AvatarEditor = ({
 
   return (
     <Modal open={open} onOpenChange={(value) => onOpenChange(value)}>
-      <ModalContent className="z-50 sm:max-w-[600px]">
+      <ModalContent className="z-50 sm:max-w-[600px]" aria-describedby={undefined}>
         <ModalCloseButton>
           <Close className="fill-gray-80 sm:fill-gray-0" />
         </ModalCloseButton>
@@ -124,7 +124,7 @@ export const AvatarEditor = ({
             <Button
               onClick={() => onOpenChange(false)}
               className="w-full sm:w-[126px]"
-              variant="secondary"
+              variant="ghost"
             >
               Отменить
             </Button>

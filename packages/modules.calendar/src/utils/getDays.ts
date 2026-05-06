@@ -1,4 +1,6 @@
 import {
+  addDays,
+  addWeeks,
   startOfYear,
   endOfYear,
   eachMonthOfInterval,
@@ -42,6 +44,12 @@ export const getWeekDays = (currentDate: Date) => {
   return eachDayOfInterval({ start: weekStart, end: weekEnd });
 };
 
+/** Дни начиная с start в количестве count */
+export const getDaysFrom = (start: Date, count: number): Date[] => {
+  const end = addDays(start, count - 1);
+  return eachDayOfInterval({ start, end });
+};
+
 export const getWeeksNumbers = (days: Date[]) => {
   const weeks: Date[][] = [];
   for (let i = 0; i < days.length; i += 7) {
@@ -49,4 +57,21 @@ export const getWeeksNumbers = (days: Date[]) => {
   }
 
   return weeks.map((week) => getWeek(week[0]));
+};
+
+/**
+ * Подряд идущие календарные дни на нескольких неделях (для «бесконечной» ленты свайпа по дням).
+ * weekAnchor — любой день недели; берутся недели от (anchor − weeksBefore) до (anchor + weeksAfter).
+ */
+export const getWeeksRangeDays = (
+  weekAnchor: Date,
+  weeksBefore: number,
+  weeksAfter: number,
+): Date[] => {
+  const days: Date[] = [];
+  for (let w = -weeksBefore; w <= weeksAfter; w++) {
+    const week = addWeeks(weekAnchor, w);
+    getWeekDays(week).forEach((d) => days.push(new Date(d)));
+  }
+  return days;
 };

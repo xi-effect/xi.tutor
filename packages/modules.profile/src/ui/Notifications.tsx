@@ -88,7 +88,7 @@ export const Notifications = () => {
                   </span>
                   <Button
                     size="s"
-                    variant="secondary"
+                    variant="ghost"
                     onClick={() => {
                       const ok = showTestSystemNotification();
                       if (!ok) {

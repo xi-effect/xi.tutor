@@ -15,7 +15,7 @@ export const MaterialSection = ({
   children,
 }: MaterialsHorizontalSectionPropsT) => {
   return (
-    <div className="flex flex-col gap-4 p-4">
+    <div className="flex flex-col gap-4">
       <MaterialHeader title={headerTitle} />
       <div className="flex flex-row">
         <ScrollArea

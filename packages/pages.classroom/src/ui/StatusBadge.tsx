@@ -11,7 +11,8 @@ type StatusBadgePropsT = {
   deleted?: boolean;
 };
 
-const styles = 'rounded-lg border-none px-2 py-1 font-medium text-s-base shrink-0';
+const styles =
+  'min-w-0 max-w-full rounded-lg border-none px-2 py-1 font-medium text-s-base sm:shrink-0 max-sm:flex max-sm:w-full max-sm:items-center max-sm:justify-center';
 
 const mapStyles: Record<StatusEducationT, string> = {
   active: 'text-green-80 bg-green-0',
@@ -29,7 +30,7 @@ export const StatusBadge = ({ status, deleted }: StatusBadgePropsT) => {
 
   return (
     <Badge size="m" className={cn(styles, baseClasses)}>
-      {statusText}
+      <span className="max-w-full min-w-0 truncate text-center">{statusText}</span>
     </Badge>
   );
 };

@@ -53,7 +53,7 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
   return (
     <Modal>
       <ModalTrigger asChild>{children}</ModalTrigger>
-      <ModalContent onClose={() => setIsDelete(false)}>
+      <ModalContent onClose={() => setIsDelete(false)} aria-describedby={undefined}>
         {!isDelete && (
           <ModalHeader>
             <ModalCloseButton />

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { FormControl, FormField, FormItem, FormMessage, useForm } from '@xipkg/form';
-import { Switch } from '@xipkg/switcher';
+import { Toggle } from '@xipkg/toggle';
 import { Input } from '@xipkg/input';
 import { useMaskInput } from '@xipkg/inputmask';
 import { ArrowRight, Clock } from '@xipkg/icons';
@@ -9,11 +9,11 @@ import { InputDate } from './InputDate';
 import { RepeatBlock } from './RepeatBlock';
 
 import type { FC } from 'react';
-import type { EventFormData } from '../../../../model';
+import type { EventFormData, EventFormInput } from '../../../../model';
 
-interface DateBlockProps {
-  form: ReturnType<typeof useForm<EventFormData>>;
-}
+type DateBlockProps = {
+  form: ReturnType<typeof useForm<EventFormInput, unknown, EventFormData>>;
+};
 
 export const DateBlock: FC<DateBlockProps> = ({ form }) => {
   const { t } = useTranslation('calendar');
@@ -114,7 +114,7 @@ export const DateBlock: FC<DateBlockProps> = ({ form }) => {
           <FormItem>
             <div className="flex items-center gap-2 py-2">
               <FormControl>
-                <Switch
+                <Toggle
                   id="all-day-mode"
                   checked={field.value}
                   onCheckedChange={field.onChange}

@@ -5,11 +5,11 @@ import { Calendar } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
 import { convertStringToDate, getFullDateString } from '../../../../utils/calendarUtils';
 
-interface InputDateProps {
+type InputDateProps = {
   value?: string;
   onChange: (val: Date, key: 'startDate' | 'endDate') => void;
   name: 'startDate' | 'endDate';
-}
+};
 
 export const InputDate = memo<InputDateProps>(({ value, name, onChange }) => {
   const [date, setDate] = useState<Date>(convertStringToDate(value || ''));

@@ -8,9 +8,10 @@ import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from '@
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { useAutocompleteSubjects, useSubjectsById } from 'common.services';
 import { SubjectSchema } from 'common.api';
+import type { FormData } from '../model';
 
 type AutocompleteProps = {
-  field: ControllerRenderProps<{ subject: number | null }, 'subject'>;
+  field: ControllerRenderProps<FormData, 'subject'>;
   disabled?: boolean;
   containerRef?: React.RefObject<HTMLElement | null>;
 };

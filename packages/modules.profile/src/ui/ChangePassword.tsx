@@ -22,7 +22,7 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
   return (
     <M.Modal open={open} onOpenChange={(value) => onOpenChange(value)}>
       <M.ModalTrigger asChild>{children}</M.ModalTrigger>
-      <M.ModalContent>
+      <M.ModalContent aria-describedby={undefined}>
         {(stage === 'form' && (
           <>
             <M.ModalCloseButton>
@@ -126,7 +126,7 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
                   <Button type="submit" disabled={isLoading}>
                     Изменить
                   </Button>
-                  <Button onClick={() => onOpenChange(false)} variant="secondary">
+                  <Button onClick={() => onOpenChange(false)} variant="ghost">
                     Отменить
                   </Button>
                 </div>
