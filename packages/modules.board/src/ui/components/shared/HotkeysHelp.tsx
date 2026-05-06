@@ -127,6 +127,7 @@ export const HotkeysHelpModal = ({ open, onOpenChange }: HotkeysHelpModalProps) 
       <ModalContent
         className="max-w-4xl"
         portalProps={{ container: containerRef.current ?? undefined }}
+        aria-describedby={undefined}
       >
         <ModalHeader>
           <ModalCloseButton />

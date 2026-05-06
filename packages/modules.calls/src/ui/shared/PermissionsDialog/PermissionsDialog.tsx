@@ -92,7 +92,7 @@ export const PermissionsDialog = () => {
 
   return (
     <Modal open={isPermissionDialogOpen} onOpenChange={closePermissionsDialog}>
-      <ModalContent>
+      <ModalContent aria-describedby={undefined}>
         <ModalCloseButton>
           <Close className="fill-gray-80 sm:fill-gray-0" />
         </ModalCloseButton>

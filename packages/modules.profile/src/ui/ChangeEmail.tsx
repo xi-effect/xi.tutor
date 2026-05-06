@@ -74,7 +74,7 @@ export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT)
   return (
     <M.Modal open={open} onOpenChange={(value) => onOpenChange(value)}>
       <M.ModalTrigger asChild>{children}</M.ModalTrigger>
-      <M.ModalContent>
+      <M.ModalContent aria-describedby={undefined}>
         {(stage.type === 'form' && (
           <>
             <M.ModalCloseButton>

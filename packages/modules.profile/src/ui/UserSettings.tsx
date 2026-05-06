@@ -75,6 +75,7 @@ export const UserSettings = ({
         }}
         variant={isDesktop ? 'default' : 'full'}
         className={isDesktop ? 'h-[90vh] max-w-[1132px] p-4 lg:p-6' : 'p-4 lg:p-6'}
+        aria-describedby={undefined}
       >
         <ModalTitle className="hidden"> Настройки пользователя </ModalTitle>
         <div className="flex w-full items-center justify-center">

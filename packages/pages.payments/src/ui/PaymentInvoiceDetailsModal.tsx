@@ -177,7 +177,9 @@ export const PaymentInvoiceDetailsModal: FC<PaymentInvoiceDetailsModalPropsT> = 
           <ModalTitle className="m-0 pr-10 text-gray-100">
             Информация о выставленном счёте
           </ModalTitle>
-          <ModalDescription />
+          <ModalDescription className="sr-only">
+            Детали выставленного счёта, статус оплаты и позиции.
+          </ModalDescription>
         </ModalHeader>
 
         <ModalBody className="flex flex-1 flex-col gap-6 p-4 max-sm:overflow-visible sm:overflow-y-auto sm:p-6">

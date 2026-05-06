@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Modal, ModalContent, ModalBody } from '@xipkg/modal';
+import { Modal, ModalContent, ModalTitle, ModalBody } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
 import { toast } from 'sonner';
 import {
@@ -110,7 +110,8 @@ export const CancelLessonModal = ({
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
-      <ModalContent className="w-full max-w-[480px]">
+      <ModalContent className="w-full max-w-[480px]" aria-describedby={undefined}>
+        <ModalTitle className="sr-only">Отменить занятие?</ModalTitle>
         <ModalBody className="flex flex-col items-center gap-4 p-6">
           <h3 className="text-xl-base font-semibold text-gray-100">Отменить занятие?</h3>
           <p className="text-m-base text-gray-60 text-center">

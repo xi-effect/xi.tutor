@@ -22,7 +22,10 @@ export const CustomNotificationModal = ({
 }) => {
   return (
     <Modal open={!!payload} onOpenChange={(open) => !open && onClose()}>
-      <ModalContent className="flex max-h-[90vh] max-w-[480px] flex-col">
+      <ModalContent
+        className="flex max-h-[90vh] max-w-[480px] flex-col"
+        aria-describedby={undefined}
+      >
         <ModalHeader>
           <ModalTitle className="text-m-base font-semibold text-gray-100">
             {payload?.header}

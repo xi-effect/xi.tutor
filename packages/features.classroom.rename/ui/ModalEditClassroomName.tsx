@@ -75,7 +75,7 @@ export const ModalEditClassroomName = ({
 
   return (
     <Modal open={open} onOpenChange={handleOpenChange}>
-      <ModalContent className="max-w-150" aria-describedby="Invoice template">
+      <ModalContent className="max-w-150" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton />
           <ModalTitle className="max-w-[calc(100%-48px)]">Шаблон счёта</ModalTitle>

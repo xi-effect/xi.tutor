@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Modal, ModalContent, ModalCloseButton, ModalBody } from '@xipkg/modal';
+import { Modal, ModalContent, ModalTitle, ModalCloseButton, ModalBody } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
 import { DayLessonsPanel } from 'modules.calendar';
 import { MovingForm } from './components/MovingForm';
@@ -110,7 +110,11 @@ export const MovingLessonModal = ({
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
-      <ModalContent className="flex max-h-[min(100dvh,100%)] min-h-0 w-full max-w-[960px] min-w-0 flex-col overflow-hidden md:min-h-[min(740px,100dvh)]">
+      <ModalContent
+        className="flex max-h-[min(100dvh,100%)] min-h-0 w-full max-w-[960px] min-w-0 flex-col overflow-hidden md:min-h-[min(740px,100dvh)]"
+        aria-describedby={undefined}
+      >
+        <ModalTitle className="sr-only">{formTitle}</ModalTitle>
         <ModalCloseButton />
         <ModalBody className="grid min-h-0 w-full min-w-0 flex-1 grid-cols-1 gap-6 overflow-hidden md:grid-cols-2 md:gap-10">
           <div className="hidden min-h-0 min-w-0 flex-col overflow-hidden md:flex">
