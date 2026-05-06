@@ -4,6 +4,7 @@ import { cn, formatBytesSize } from '@xipkg/utils';
 import { downloadFileRequest } from 'common.services';
 import { SyntheticEvent } from 'react';
 import { useYjsContext } from '../../providers/YjsProvider';
+import { toast } from 'sonner';
 
 type FileBadgeProps = {
   shape: FileShape;
@@ -15,12 +16,26 @@ export const FileBadge = ({ shape }: FileBadgeProps) => {
 
   const handleIconClick = async (e: SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
+    toast.success('Загрузка началась...', { duration: 5000 });
     await downloadFileRequest({
       fileId,
       fileName,
       token: yjsToken,
     });
   };
+
+  if (status === 'offline') {
+    return (
+      <div
+        className="border-gray-10 bg-gray-0 dark:border-gray-70 flex h-full w-full items-center gap-2 rounded-xl border py-2 pr-[14px] pl-3 shadow-md transition dark:bg-gray-100"
+        style={{ pointerEvents: 'none' }}
+      >
+        <div className="text-gray-40 flex h-full w-full items-center justify-center">
+          <span className="text-xs">{'Отсутствует соединение'}</span>
+        </div>
+      </div>
+    );
+  }
 
   if (status === 'loading' || !fileId) {
     return (

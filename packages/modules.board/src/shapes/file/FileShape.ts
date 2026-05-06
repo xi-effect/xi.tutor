@@ -11,7 +11,7 @@ export type FileShapeProps = {
   fileSize: number;
   w: number;
   h: number;
-  status: 'loading' | 'uploaded';
+  status: 'loading' | 'uploaded' | 'offline' | 'error';
 };
 
 export const fileShapeProps = {
@@ -20,7 +20,7 @@ export const fileShapeProps = {
   fileSize: T.number,
   w: T.number,
   h: T.number,
-  status: T.literalEnum('loading', 'uploaded'),
+  status: T.literalEnum('loading', 'uploaded', 'offline', 'error'),
 };
 
 export type FileShape = TLBaseShape<'file', FileShapeProps>;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import {
   DropdownMenu,
@@ -19,6 +19,7 @@ import { insertImage } from '../../../features/pickAndInsertImage';
 import { insertPdf } from '../../../features/pickAndInsertPdf';
 import { insertAudio, AUDIO_ACCEPT } from '../../../features/pickAndInsertAudio';
 import { insertFile, FILE_ACCEPT } from '../../../features/pickAndInsertFile';
+import { useRetryQueue } from 'common.utils';
 
 // Маппинг инструментов Kanva на Tldraw
 const toolMapping: Record<string, string> = {
@@ -52,6 +53,14 @@ export const Navbar = track(
     const { resetToDefaults, setColor, setThickness, setOpacity } = useTldrawStyles();
     const [activePopup, setActivePopup] = React.useState<string | null>(null);
     const editor = useEditor();
+    const retryQueue = useRetryQueue();
+    const isOnline = retryQueue.isOnline;
+
+    useEffect(() => {
+      if (isOnline) {
+        retryQueue.processQueue();
+      }
+    }, [isOnline, retryQueue]);
 
     // Добавляем горячие клавиши
     useHotkeys();
@@ -168,7 +177,7 @@ export const Navbar = track(
         const file = (e.target as HTMLInputElement).files?.[0];
         if (file) {
           try {
-            await insertFile(editor, file, token);
+            await insertFile(editor, file, token, retryQueue);
           } catch (error) {
             console.error('Ошибка при загрузке файла:', error);
           }
