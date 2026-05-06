@@ -5,6 +5,8 @@ import { toast } from 'sonner';
 import {
   useRescheduleRepeatedVirtualInstance,
   useRescheduleSoleEventInstance,
+  useTutorRepeatedEventInstanceDetails,
+  useTutorEventInstanceDetails,
   bitmaskUtcToLocal,
   bitmaskToWeekdays,
   toLocalISOString,
@@ -101,6 +103,35 @@ export const useMovingForm = (
   const reschedule = useRescheduleRepeatedVirtualInstance();
   const rescheduleSole = useRescheduleSoleEventInstance();
 
+  // Если битмаска не передана снаружи — подтягиваем её из детального запроса.
+  // Это позволяет корректно отображать повторения независимо от того, с какой страницы
+  // открыта модалка (глобальный календарь, кабинет, главная и т.д.).
+  const needFetch = lessonKind === 'recurring' && weeklyBitmask == null;
+
+  const repeatedDetailsQuery = useTutorRepeatedEventInstanceDetails({
+    classroomId: schedulerTarget?.classroomId ?? 0,
+    repetitionModeId: schedulerTarget?.repetitionModeId ?? '',
+    instanceIndex: schedulerTarget?.instanceIndex ?? -1,
+    enabled: needFetch && schedulerTarget != null,
+  });
+
+  const persistedDetailsQuery = useTutorEventInstanceDetails({
+    classroomId: soleTarget?.classroomId ?? 0,
+    eventInstanceId: soleTarget?.eventInstanceId ?? '',
+    enabled: needFetch && soleTarget != null,
+  });
+
+  const detailedData = repeatedDetailsQuery.data ?? persistedDetailsQuery.data;
+  const detailedRepetitionMode =
+    detailedData && 'repetition_mode' in detailedData ? detailedData.repetition_mode : undefined;
+  const fetchedBitmask =
+    detailedRepetitionMode?.kind === 'weekly'
+      ? (detailedRepetitionMode.weekly_starting_bitmask ?? undefined)
+      : undefined;
+
+  // Пропсовая битмаска имеет приоритет; фетчнутая — запасной вариант
+  const resolvedBitmask = weeklyBitmask ?? fetchedBitmask;
+
   const form = useForm<FormInput, unknown, FormData>({
     resolver: zodResolver(schema),
     mode: 'onSubmit',
@@ -115,11 +146,13 @@ export const useMovingForm = (
 
   const { control, handleSubmit, reset } = form;
 
+  // Обновляем дни повторений когда resolvedBitmask становится известен
+  // (либо сразу из пропсов, либо после ответа детального API)
   useEffect(() => {
-    if (lessonKind !== 'recurring' || weeklyBitmask == null || initialDate == null) return;
-    const localBitmask = bitmaskUtcToLocal(weeklyBitmask, initialDate);
+    if (lessonKind !== 'recurring' || resolvedBitmask == null || initialDate == null) return;
+    const localBitmask = bitmaskUtcToLocal(resolvedBitmask, initialDate);
     form.setValue('repeatWeekdays', bitmaskToWeekdays(localBitmask));
-  }, [weeklyBitmask, initialDate, lessonKind, form]);
+  }, [resolvedBitmask, initialDate, lessonKind, form]);
 
   const onSubmit = async (data: FormData) => {
     if (externalSubmit) {

@@ -3,7 +3,11 @@ import { Modal, ModalContent, ModalTitle, ModalCloseButton, ModalBody } from '@x
 import { Button } from '@xipkg/button';
 import { DayLessonsPanel } from 'modules.calendar';
 import { MovingForm } from './components/MovingForm';
-import type { RepeatedVirtualRescheduleTarget, SoleRescheduleTarget } from '../hooks';
+import {
+  useResolvedWeeklyBitmask,
+  type RepeatedVirtualRescheduleTarget,
+  type SoleRescheduleTarget,
+} from '../hooks';
 import type { FormData } from '../model';
 import './MovingModal.css';
 
@@ -102,6 +106,15 @@ export const MovingLessonModal = ({
     }
   }, [open, scheduleListSeedDate, initialDate]);
 
+  // Догружаем weekly_starting_bitmask из детальной ручки, если расписание прислало
+  // «тонкий» инстанс без вложенного repetition_mode (например, /classrooms/{id}/schedule/).
+  const resolvedWeeklyBitmask = useResolvedWeeklyBitmask({
+    enabled: open && lessonKind === 'recurring',
+    schedulerTarget,
+    soleTarget,
+    fallback: weeklyBitmask,
+  });
+
   const handleCloseModal = () => {
     onOpenChange(false);
   };
@@ -144,7 +157,7 @@ export const MovingLessonModal = ({
                 lessonTitle={lessonTitle}
                 lessonDescription={lessonDescription}
                 seriesWeekdayIndex={seriesWeekdayIndex}
-                weeklyBitmask={weeklyBitmask}
+                weeklyBitmask={resolvedWeeklyBitmask}
                 schedulerTarget={schedulerTarget}
                 soleTarget={soleTarget}
                 onSubmit={onSubmit}

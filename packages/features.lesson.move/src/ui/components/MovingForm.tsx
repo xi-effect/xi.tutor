@@ -13,6 +13,7 @@ import {
 import { Input } from '@xipkg/input';
 import { useMaskInput } from '@xipkg/inputmask';
 import { ArrowRight, Clock } from '@xipkg/icons';
+import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { cn } from '@xipkg/utils';
 import { useLessonClassroomPresentation } from 'modules.calendar';
 import {
@@ -25,6 +26,11 @@ import { formatDurationBetweenRu, getShortDateString } from '../../utils/utils';
 import { InputDate } from './InputDate';
 
 const WEEKDAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] as const;
+
+const MOVE_MODE_TABS = [
+  { id: 'single', label: 'Это занятие' },
+  { id: 'single_and_next', label: 'Это и следующие' },
+];
 
 export type MovingFormProps = PropsWithChildren<{
   onClose: () => void;
@@ -186,32 +192,16 @@ export const MovingForm: FC<MovingFormProps> = ({
             render={({ field }) => (
               <FormItem className="flex flex-col gap-2">
                 <FormControl>
-                  <div className="bg-gray-5 flex w-full max-w-md items-center rounded-xl p-1">
-                    <button
-                      type="button"
-                      onClick={() => field.onChange('single')}
-                      className={cn(
-                        'min-w-0 flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                        field.value === 'single'
-                          ? 'bg-brand-80 text-gray-0'
-                          : 'text-gray-80 hover:bg-gray-10',
-                      )}
-                    >
-                      Это занятие
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => field.onChange('single_and_next')}
-                      className={cn(
-                        'min-w-0 flex-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                        field.value === 'single_and_next'
-                          ? 'bg-brand-80 text-gray-0'
-                          : 'text-gray-80 hover:bg-gray-10',
-                      )}
-                    >
-                      Это и следующие
-                    </button>
-                  </div>
+                  <SwitcherAnimate
+                    tabs={MOVE_MODE_TABS}
+                    activeTab={field.value ?? 'single'}
+                    onChange={(v) => field.onChange(v as 'single' | 'single_and_next')}
+                    className={cn('bg-gray-5 flex h-8 max-w-md flex-row rounded-[10px] p-1')}
+                    tabClassName={cn(
+                      'h-[26px] text-s-base font-medium text-gray-100 data-[active=true]:text-gray-0',
+                    )}
+                    indicatorClassName="rounded-lg bg-brand-100"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
