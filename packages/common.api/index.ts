@@ -69,4 +69,5 @@ export {
   type CreateSingleEventResponseDto,
   type CreateRepeatingEventResponseDto,
   type CreateClassroomEventResponseDto,
+  type CreateLastRepetitionModeResponseDto,
 } from './src/scheduler';
