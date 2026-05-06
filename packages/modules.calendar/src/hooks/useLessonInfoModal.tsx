@@ -202,7 +202,7 @@ export const useLessonInfoModal = ({
     resolvedEvent != null ? (
       <>
         <LessonInfoModal
-          open
+          open={!cancelModalOpen}
           onOpenChange={(o) => {
             if (!o) close();
           }}

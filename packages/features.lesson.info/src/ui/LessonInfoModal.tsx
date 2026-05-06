@@ -174,7 +174,11 @@ export const LessonInfoModal = ({
                 type="button"
                 variant="none"
                 className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 h-12 min-h-12 flex-1"
-                onClick={onReschedule}
+                onClick={() => {
+                  if (onReschedule == null) return;
+                  onReschedule();
+                  onOpenChange(false);
+                }}
               >
                 Перенести
                 <Redo className="fill-gray-70 ml-1.5 h-4 w-4" />
