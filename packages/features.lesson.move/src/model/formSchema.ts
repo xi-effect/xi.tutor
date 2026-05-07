@@ -1,6 +1,9 @@
 import * as z from 'zod';
 import { timeToMinutes } from '../utils/utils';
 
+/** Максимальная длительность занятия (минуты) */
+const MAX_LESSON_DURATION_MINUTES = 12 * 60;
+
 const timeValidation = z.string().refine((time) => {
   if (time === '') return true;
   const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
@@ -31,16 +34,22 @@ export const createMovingFormSchema = (lessonKind: 'one-off' | 'recurring') =>
         path: ['endTime'],
       });
     }
-    if (
-      data.startTime !== '' &&
-      data.endTime !== '' &&
-      timeToMinutes(data.endTime) <= timeToMinutes(data.startTime)
-    ) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Время окончания должно быть позже начала',
-        path: ['endTime'],
-      });
+    if (data.startTime !== '' && data.endTime !== '') {
+      const startM = timeToMinutes(data.startTime);
+      const endM = timeToMinutes(data.endTime);
+      if (endM <= startM) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Время окончания должно быть позже начала',
+          path: ['endTime'],
+        });
+      } else if (endM - startM > MAX_LESSON_DURATION_MINUTES) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Максимальная длительность занятия — 12 часов',
+          path: ['endTime'],
+        });
+      }
     }
     if (
       lessonKind === 'recurring' &&
