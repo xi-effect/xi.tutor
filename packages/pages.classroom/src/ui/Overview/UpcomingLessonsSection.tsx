@@ -251,6 +251,7 @@ export const UpcomingLessonsSection = () => {
               ? (moveItem.repetitionMode.weekly_starting_bitmask ?? undefined)
               : undefined
           }
+          repetitionKind={moveItem.repetitionKind}
           schedulerTarget={getSchedulerTarget(moveItem, classroomId)}
           soleTarget={getSoleTarget(moveItem, classroomId)}
         />

@@ -67,6 +67,7 @@ function movingModalPropsFromEvent(event: ICalendarEvent) {
     formKey: event.id,
     seriesWeekdayIndex: jsWeekdayToSeriesIndex(start),
     weeklyBitmask: event.scheduler?.weeklyBitmask,
+    repetitionKind: event.scheduler?.repetitionKind ?? null,
     schedulerTarget,
     soleTarget,
   };

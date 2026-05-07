@@ -19,6 +19,8 @@ export type LessonSchedulerMetaForCancel = {
   eventInstanceId?: string;
   repetitionModeId?: string;
   instanceIndex?: number | null;
+  /** Режим серии повторений из расписания (тонкий инстанс без вложенного `repetition_mode`). */
+  repetitionKind?: 'daily' | 'weekly' | null;
 };
 
 export type CancelLessonModalProps = {

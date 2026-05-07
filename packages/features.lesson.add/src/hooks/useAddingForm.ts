@@ -52,6 +52,9 @@ const buildWeeklyBitmask = (days: number[], fallbackDate: Date): number => {
   return 1 << day;
 };
 
+/** 0=Пн … 6=Вс — все дни выбраны */
+const FULL_WEEK_BITMASK = 0x7f;
+
 const buildRequestBody = (data: FormData): CreateClassroomEventRequestDto => {
   const startsAt = buildStartsAt(data.startDate, data.startTime);
   const durationSeconds = buildDurationSeconds(data.startTime, data.endTime);
@@ -70,18 +73,27 @@ const buildRequestBody = (data: FormData): CreateClassroomEventRequestDto => {
     };
   }
 
+  const weeklyBitmask = buildWeeklyBitmask(data.repeatDays, data.startDate);
+
   return {
     kind: 'repeating',
     event: {
       name: data.title,
       description: data.description || null,
     },
-    repetition_mode: {
-      kind: 'weekly',
-      starts_at: startsAt,
-      duration_seconds: durationSeconds,
-      weekly_bitmask: buildWeeklyBitmask(data.repeatDays, data.startDate),
-    },
+    repetition_mode:
+      weeklyBitmask === FULL_WEEK_BITMASK
+        ? {
+            kind: 'daily',
+            starts_at: startsAt,
+            duration_seconds: durationSeconds,
+          }
+        : {
+            kind: 'weekly',
+            starts_at: startsAt,
+            duration_seconds: durationSeconds,
+            weekly_bitmask: weeklyBitmask,
+          },
   };
 };
 

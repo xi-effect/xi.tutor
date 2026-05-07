@@ -35,6 +35,7 @@ export const mapScheduleItemToLessonRow = (item: ScheduleItem): ScheduleLessonRo
       eventInstanceId,
       repetitionModeId,
       instanceIndex,
+      repetitionKind: item.repetitionKind,
     },
   };
 };

@@ -63,6 +63,10 @@ export const mapScheduleItemToCalendarEvent = (item: ScheduleItem): ICalendarEve
         : undefined,
     instanceIndex: item.instanceIndex,
     cancelledAt: item.cancelledAt,
+    weeklyBitmask:
+      item.repetitionMode?.kind === 'weekly'
+        ? (item.repetitionMode.weekly_starting_bitmask ?? undefined)
+        : undefined,
   },
 });
 
@@ -80,6 +84,7 @@ export const mapCalendarEventsToDayLessons = (events: ICalendarEvent[]): Schedul
     description: event.lessonInfo?.description,
     studentName: event.lessonInfo?.studentName ?? event.title,
     studentId: event.lessonInfo?.teacherId ?? 0,
+    weeklyBitmask: event.scheduler?.weeklyBitmask,
     schedulerMeta: event.scheduler
       ? {
           eventId: event.scheduler.eventId,
@@ -87,6 +92,7 @@ export const mapCalendarEventsToDayLessons = (events: ICalendarEvent[]): Schedul
           eventInstanceId: event.scheduler.eventInstanceId,
           repetitionModeId: event.scheduler.repetitionModeId,
           instanceIndex: event.scheduler.instanceIndex,
+          repetitionKind: event.scheduler.repetitionKind,
         }
       : undefined,
   }));

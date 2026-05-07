@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Modal, ModalContent, ModalTitle, ModalCloseButton, ModalBody } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
 import { DayLessonsPanel } from 'modules.calendar';
 import { MovingForm } from './components/MovingForm';
 import {
-  useResolvedWeeklyBitmask,
+  useMovingRepetitionResolution,
   type RepeatedVirtualRescheduleTarget,
   type SoleRescheduleTarget,
 } from '../hooks';
@@ -47,11 +47,12 @@ export type MovingLessonModalProps = {
   /** День недели серии (0 — пн), для подсказки при «Это занятие» */
   seriesWeekdayIndex?: number;
   /**
-   * UTC-битмаска серии из API (`weekly_starting_bitmask`).
-   * Предзаполняет дни повторений в режиме «Это и следующие»
-   * с автоматическим сдвигом UTC → локальный TZ пользователя.
+   * UTC-битмаска серии из API (`weekly_starting_bitmask`), если пришла в ответе расписания.
+   * Для серий `daily` обычно отсутствует — тогда подсказка по `repetitionKind` или детальная ручка.
    */
   weeklyBitmask?: number;
+  /** Режим повторения серии из расписания (тонкий инстанс вне детальной ручки). */
+  repetitionKind?: 'daily' | 'weekly' | null;
   /**
    * Параметры для переноса виртуального повторяющегося инстанса (`repeated_virtual`).
    * Если задан и `onSubmit` не передан — при сабмите вызывается PUT reschedule API.
@@ -83,6 +84,7 @@ export const MovingLessonModal = ({
   lessonDescription,
   seriesWeekdayIndex = 0,
   weeklyBitmask,
+  repetitionKind,
   schedulerTarget,
   soleTarget,
   onSubmit,
@@ -106,14 +108,20 @@ export const MovingLessonModal = ({
     }
   }, [open, scheduleListSeedDate, initialDate]);
 
-  // Догружаем weekly_starting_bitmask из детальной ручки, если расписание прислало
-  // «тонкий» инстанс без вложенного repetition_mode (например, /classrooms/{id}/schedule/).
-  const resolvedWeeklyBitmask = useResolvedWeeklyBitmask({
+  const movingRepetition = useMovingRepetitionResolution({
     enabled: open && lessonKind === 'recurring',
     schedulerTarget,
     soleTarget,
-    fallback: weeklyBitmask,
+    scheduleWeeklyBitmaskUtc: weeklyBitmask,
+    scheduleRepetitionKind: repetitionKind ?? null,
   });
+
+  const formMovingRepetition = useMemo(() => {
+    if (lessonKind !== 'recurring') {
+      return { isDailySeries: false as const, bitmaskUtc: undefined as number | undefined };
+    }
+    return movingRepetition;
+  }, [lessonKind, movingRepetition]);
 
   const handleCloseModal = () => {
     onOpenChange(false);
@@ -157,7 +165,7 @@ export const MovingLessonModal = ({
                 lessonTitle={lessonTitle}
                 lessonDescription={lessonDescription}
                 seriesWeekdayIndex={seriesWeekdayIndex}
-                weeklyBitmask={resolvedWeeklyBitmask}
+                movingRepetition={formMovingRepetition}
                 schedulerTarget={schedulerTarget}
                 soleTarget={soleTarget}
                 onSubmit={onSubmit}

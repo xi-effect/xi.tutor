@@ -6,8 +6,6 @@ import {
   useRescheduleRepeatedVirtualInstance,
   useRescheduleSoleEventInstance,
   useCreateLastRepetitionMode,
-  useTutorRepeatedEventInstanceDetails,
-  useTutorEventInstanceDetails,
   bitmaskUtcToLocal,
   bitmaskToWeekdays,
   weekdaysToBitmask,
@@ -15,6 +13,23 @@ import {
 } from 'modules.calendar';
 import { createMovingFormSchema, type FormData, type FormInput } from '../model/formSchema';
 import { timeToMinutes } from '../utils/utils';
+import type { MovingRepetitionResolution } from './useMovingRepetitionResolution';
+
+const ALL_REPEAT_WEEKDAY_INDICES = [0, 1, 2, 3, 4, 5, 6] as const;
+
+function recurringRepeatWeekdaysFromResolution(
+  initialDate: Date | null | undefined,
+  repetition: MovingRepetitionResolution,
+): number[] {
+  if (repetition.isDailySeries) {
+    return [...ALL_REPEAT_WEEKDAY_INDICES];
+  }
+  if (repetition.bitmaskUtc != null && initialDate != null) {
+    const localBitmask = bitmaskUtcToLocal(repetition.bitmaskUtc, initialDate);
+    return bitmaskToWeekdays(localBitmask);
+  }
+  return [0];
+}
 
 /**
  * Выбор ручки переноса (тело везде — EventInstanceTimeSlotInput):
@@ -47,31 +62,24 @@ type UseMovingFormOptions = {
   /** Перенос sole или repeated_persisted — PUT /event-instances/{id}/time-slot/ */
   soleTarget?: SoleRescheduleTarget;
   /**
-   * UTC-битмаска серии повторений из API (`weekly_starting_bitmask`).
-   * Если передана вместе с `initialDate`, используется для предзаполнения
-   * дней повторения в форме (с конверсией UTC → локальный TZ пользователя).
+   * Режим повторений для предзаполнения дней недели (`daily` — все дни, без битмаски).
+   * Без значения считается «weekly без данных» (пока не придёт резолвер из модалки).
    */
-  weeklyBitmask?: number;
+  movingRepetition?: MovingRepetitionResolution;
 };
 
 const getDefaultValues = (
   lessonKind: 'one-off' | 'recurring',
+  movingRepetition: MovingRepetitionResolution,
   initialDate?: Date | null,
   initialStartTime?: string | null,
   initialEndTime?: string | null,
-  weeklyBitmask?: number,
 ): FormInput => {
   const startDate = initialDate ?? new Date();
 
   let repeatWeekdays: number[] = [];
   if (lessonKind === 'recurring') {
-    if (weeklyBitmask != null && initialDate != null) {
-      // Конвертируем UTC-битмаску из API в локальный TZ пользователя для отображения
-      const localBitmask = bitmaskUtcToLocal(weeklyBitmask, initialDate);
-      repeatWeekdays = bitmaskToWeekdays(localBitmask);
-    } else {
-      repeatWeekdays = [0];
-    }
+    repeatWeekdays = recurringRepeatWeekdaysFromResolution(initialDate, movingRepetition);
   }
 
   return {
@@ -95,6 +103,14 @@ function buildDurationSeconds(startTime: string, endTime: string): number {
   return (timeToMinutes(endTime) - timeToMinutes(startTime)) * 60;
 }
 
+/** 0=Пн … 6=Вс — все дни выбраны */
+const FULL_WEEK_BITMASK = 0x7f;
+
+const defaultMovingRepetition: MovingRepetitionResolution = {
+  isDailySeries: false,
+  bitmaskUtc: undefined,
+};
+
 export const useMovingForm = (
   lessonKind: 'one-off' | 'recurring',
   initialDate?: Date | null,
@@ -102,62 +118,40 @@ export const useMovingForm = (
   initialEndTime?: string | null,
   options: UseMovingFormOptions = {},
 ) => {
-  const { onSubmit: externalSubmit, schedulerTarget, soleTarget, weeklyBitmask } = options;
+  const {
+    onSubmit: externalSubmit,
+    schedulerTarget,
+    soleTarget,
+    movingRepetition: repetitionOption,
+  } = options;
+  const movingRepetition = repetitionOption ?? defaultMovingRepetition;
   const schema = useMemo(() => createMovingFormSchema(lessonKind), [lessonKind]);
   const reschedule = useRescheduleRepeatedVirtualInstance();
   const rescheduleSole = useRescheduleSoleEventInstance();
   const createLastRepetitionMode = useCreateLastRepetitionMode();
-
-  // Если битмаска не передана снаружи — подтягиваем её из детального запроса.
-  // Это позволяет корректно отображать повторения независимо от того, с какой страницы
-  // открыта модалка (глобальный календарь, кабинет, главная и т.д.).
-  const needFetch = lessonKind === 'recurring' && weeklyBitmask == null;
-
-  const repeatedDetailsQuery = useTutorRepeatedEventInstanceDetails({
-    classroomId: schedulerTarget?.classroomId ?? 0,
-    repetitionModeId: schedulerTarget?.repetitionModeId ?? '',
-    instanceIndex: schedulerTarget?.instanceIndex ?? -1,
-    enabled: needFetch && schedulerTarget != null,
-  });
-
-  const persistedDetailsQuery = useTutorEventInstanceDetails({
-    classroomId: soleTarget?.classroomId ?? 0,
-    eventInstanceId: soleTarget?.eventInstanceId ?? '',
-    enabled: needFetch && soleTarget != null,
-  });
-
-  const detailedData = repeatedDetailsQuery.data ?? persistedDetailsQuery.data;
-  const detailedRepetitionMode =
-    detailedData && 'repetition_mode' in detailedData ? detailedData.repetition_mode : undefined;
-  const fetchedBitmask =
-    detailedRepetitionMode?.kind === 'weekly'
-      ? (detailedRepetitionMode.weekly_starting_bitmask ?? undefined)
-      : undefined;
-
-  // Пропсовая битмаска имеет приоритет; фетчнутая — запасной вариант
-  const resolvedBitmask = weeklyBitmask ?? fetchedBitmask;
 
   const form = useForm<FormInput, unknown, FormData>({
     resolver: zodResolver(schema),
     mode: 'onSubmit',
     defaultValues: getDefaultValues(
       lessonKind,
+      movingRepetition,
       initialDate,
       initialStartTime,
       initialEndTime,
-      weeklyBitmask,
     ),
   });
 
   const { control, handleSubmit, reset } = form;
 
-  // Обновляем дни повторений когда resolvedBitmask становится известен
-  // (либо сразу из пропсов, либо после ответа детального API)
+  // Догрузка `repetition_mode`, смена даты первого занятия или подсказки из расписания
   useEffect(() => {
-    if (lessonKind !== 'recurring' || resolvedBitmask == null || initialDate == null) return;
-    const localBitmask = bitmaskUtcToLocal(resolvedBitmask, initialDate);
-    form.setValue('repeatWeekdays', bitmaskToWeekdays(localBitmask));
-  }, [resolvedBitmask, initialDate, lessonKind, form]);
+    if (lessonKind !== 'recurring') return;
+    form.setValue(
+      'repeatWeekdays',
+      recurringRepeatWeekdaysFromResolution(initialDate, movingRepetition),
+    );
+  }, [lessonKind, movingRepetition, initialDate, form]);
 
   const onSubmit = async (data: FormData) => {
     if (externalSubmit) {
@@ -172,15 +166,25 @@ export const useMovingForm = (
 
     if (schedulerTarget) {
       if (data.moveMode === 'single_and_next') {
+        const startsAtNext = buildStartsAt(data.startDate, data.startTime);
+        const durationNext = buildDurationSeconds(data.startTime, data.endTime);
+        const nextWeeklyBitmask = weekdaysToBitmask(data.repeatWeekdays);
         await createLastRepetitionMode.mutateAsync({
           classroomId: schedulerTarget.classroomId,
           eventId: schedulerTarget.eventId,
-          body: {
-            kind: 'weekly',
-            starts_at: buildStartsAt(data.startDate, data.startTime),
-            duration_seconds: buildDurationSeconds(data.startTime, data.endTime),
-            weekly_bitmask: weekdaysToBitmask(data.repeatWeekdays),
-          },
+          body:
+            nextWeeklyBitmask === FULL_WEEK_BITMASK
+              ? {
+                  kind: 'daily',
+                  starts_at: startsAtNext,
+                  duration_seconds: durationNext,
+                }
+              : {
+                  kind: 'weekly',
+                  starts_at: startsAtNext,
+                  duration_seconds: durationNext,
+                  weekly_bitmask: nextWeeklyBitmask,
+                },
         });
       } else {
         await reschedule.mutateAsync({
@@ -209,7 +213,7 @@ export const useMovingForm = (
 
   const handleClearForm = () => {
     reset(
-      getDefaultValues(lessonKind, initialDate, initialStartTime, initialEndTime, weeklyBitmask),
+      getDefaultValues(lessonKind, movingRepetition, initialDate, initialStartTime, initialEndTime),
     );
   };
 

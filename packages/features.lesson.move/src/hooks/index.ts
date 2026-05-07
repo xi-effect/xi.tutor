@@ -3,4 +3,8 @@ export {
   type RepeatedVirtualRescheduleTarget,
   type SoleRescheduleTarget,
 } from './useMovingForm';
-export { useResolvedWeeklyBitmask } from './useResolvedWeeklyBitmask';
+export {
+  useMovingRepetitionResolution,
+  type MovingRepetitionResolution,
+  type UseMovingRepetitionResolutionParams,
+} from './useMovingRepetitionResolution';

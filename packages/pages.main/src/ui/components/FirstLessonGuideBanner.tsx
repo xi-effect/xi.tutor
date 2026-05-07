@@ -41,7 +41,7 @@ export const FirstLessonGuideBanner = () => {
           Как начать первое занятие?
         </div>
         <p className="text-gray-0/85 text-s-base mt-0.5 line-clamp-2 leading-snug">
-          Подготовили гайд о том как сделать первые шаги на платформе и начать первое занятие
+          Подготовили гайд о том, как сделать первые шаги на платформе и начать первое занятие
         </p>
       </div>
       <div className="flex shrink-0 items-center gap-2">

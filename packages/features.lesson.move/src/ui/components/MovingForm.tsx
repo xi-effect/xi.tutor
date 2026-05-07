@@ -20,6 +20,7 @@ import {
   useMovingForm,
   type RepeatedVirtualRescheduleTarget,
   type SoleRescheduleTarget,
+  type MovingRepetitionResolution,
 } from '../../hooks';
 import type { FormData } from '../../model';
 import { formatDurationBetweenRu, getShortDateString } from '../../utils/utils';
@@ -49,11 +50,10 @@ export type MovingFormProps = PropsWithChildren<{
   /** День недели серии (0 — пн) */
   seriesWeekdayIndex?: number;
   /**
-   * UTC-битмаска серии из API (`weekly_starting_bitmask`).
-   * Используется для предзаполнения дней повторений в режиме «Это и следующие»
-   * (с автоматической конверсией UTC → локальный TZ пользователя).
+   * Итог режима повторений: daily (все дни) или weekly с UTC-битмаской.
+   * Считается в модалке из детальных ручек и/или пропсов расписания.
    */
-  weeklyBitmask?: number;
+  movingRepetition: MovingRepetitionResolution;
   /**
    * Параметры для переноса виртуального повторяющегося инстанса.
    * Когда задан и `onSubmit` не передан — вызывается PUT reschedule API.
@@ -80,7 +80,7 @@ export const MovingForm: FC<MovingFormProps> = ({
   fallbackName = '',
   lessonTitle,
   lessonDescription,
-  weeklyBitmask,
+  movingRepetition,
   schedulerTarget,
   soleTarget,
   onSubmit: externalSubmit,
@@ -91,7 +91,7 @@ export const MovingForm: FC<MovingFormProps> = ({
     initialDate,
     initialStartTime,
     initialEndTime,
-    { onSubmit: externalSubmit, schedulerTarget, soleTarget, weeklyBitmask },
+    { onSubmit: externalSubmit, schedulerTarget, soleTarget, movingRepetition },
   );
 
   const { isSubmitting } = useFormState({ control });
