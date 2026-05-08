@@ -48,6 +48,13 @@ export async function insertFile(
   ]);
 
   const uploadAndUpdate = async () => {
+    editor.updateShape<FileShape>({
+      id: shapeId,
+      type: 'file',
+      props: {
+        status: 'loading',
+      },
+    });
     const fileId = await uploadFileRequest({ file, token });
 
     editor.updateShape<FileShape>({
