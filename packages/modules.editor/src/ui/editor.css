@@ -190,7 +190,7 @@
 /* Стили для выделения текста */
 .xi-editor .ProseMirror .ProseMirror-selectednode {
   display: flex;
-  justify-content: center;
+  color: gray;
 }
 
 /* --- Курсоры совместного редактирования (стиль доски / Notion) --- */
