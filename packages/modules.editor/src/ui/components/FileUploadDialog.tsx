@@ -45,11 +45,7 @@ export const ImageUploadModal = () => {
 
   return (
     <Modal open={activeModal === 'uploadImage'} onOpenChange={closeModal}>
-      <ModalContent
-        aria-labelledby="modal-title"
-        aria-describedby="modal-description"
-        className="max-w-md rounded-3xl p-4"
-      >
+      <ModalContent aria-describedby={undefined} className="max-w-md rounded-3xl p-4">
         <ModalTitle className="flex gap-1">
           <Button
             variant={mode === 'upload' ? 'default' : 'ghost'}

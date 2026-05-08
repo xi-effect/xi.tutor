@@ -67,7 +67,7 @@ export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) =
       <Button
         onClick={handleCreateNoteDraft}
         size="s"
-        variant="secondary"
+        variant="ghost"
         className="max-sm:hidden"
         disabled={addMaterials.isPending}
         data-umami-event="material-create-note-draft"

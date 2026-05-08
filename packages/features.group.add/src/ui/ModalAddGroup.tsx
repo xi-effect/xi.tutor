@@ -185,7 +185,7 @@ export const ModalAddGroup = ({
                 {isPending ? 'Создание...' : 'Создать'}
               </Button>
               <Button
-                variant="secondary"
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   handleButtonClick();

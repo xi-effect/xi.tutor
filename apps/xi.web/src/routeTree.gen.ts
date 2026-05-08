@@ -21,11 +21,11 @@ import { Route as commonWelcomeSocialsIndexRouteImport } from './pages/(common)/
 import { Route as commonWelcomeRoleIndexRouteImport } from './pages/(common)/welcome/role/index'
 import { Route as commonWelcomeEmailIndexRouteImport } from './pages/(common)/welcome/email/index'
 import { Route as commonLayoutConfirmEmailIndexRouteImport } from './pages/(common)/_layout/confirm-email/index'
+import { Route as appLayoutScheduleIndexRouteImport } from './pages/(app)/_layout/schedule/index'
 import { Route as appLayoutPaymentsIndexRouteImport } from './pages/(app)/_layout/payments/index'
 import { Route as appLayoutMaterialsIndexRouteImport } from './pages/(app)/_layout/materials/index'
 import { Route as appLayoutClassroomsIndexRouteImport } from './pages/(app)/_layout/classrooms/index'
 import { Route as appLayoutCallIndexRouteImport } from './pages/(app)/_layout/call/index'
-import { Route as appLayoutCalendarIndexRouteImport } from './pages/(app)/_layout/calendar/index'
 import { Route as commonLayoutInviteInviteIdRouteImport } from './pages/(common)/_layout/invite/$inviteId'
 import { Route as appLayoutCallCallIdRouteImport } from './pages/(app)/_layout/call/$callId'
 import { Route as appLayoutBoardBoardIdRouteImport } from './pages/(app)/_layout/board/$boardId'
@@ -96,6 +96,11 @@ const commonLayoutConfirmEmailIndexRoute =
     path: '/confirm-email/',
     getParentRoute: () => commonLayoutRoute,
   } as any)
+const appLayoutScheduleIndexRoute = appLayoutScheduleIndexRouteImport.update({
+  id: '/schedule/',
+  path: '/schedule/',
+  getParentRoute: () => appLayoutRoute,
+} as any)
 const appLayoutPaymentsIndexRoute = appLayoutPaymentsIndexRouteImport.update({
   id: '/payments/',
   path: '/payments/',
@@ -115,11 +120,6 @@ const appLayoutClassroomsIndexRoute =
 const appLayoutCallIndexRoute = appLayoutCallIndexRouteImport.update({
   id: '/call/',
   path: '/call/',
-  getParentRoute: () => appLayoutRoute,
-} as any)
-const appLayoutCalendarIndexRoute = appLayoutCalendarIndexRouteImport.update({
-  id: '/calendar/',
-  path: '/calendar/',
   getParentRoute: () => appLayoutRoute,
 } as any)
 const commonLayoutInviteInviteIdRoute =
@@ -178,11 +178,11 @@ export interface FileRoutesByFullPath {
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
   '/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
-  '/calendar/': typeof appLayoutCalendarIndexRoute
   '/call/': typeof appLayoutCallIndexRoute
   '/classrooms/': typeof appLayoutClassroomsIndexRoute
   '/materials/': typeof appLayoutMaterialsIndexRoute
   '/payments/': typeof appLayoutPaymentsIndexRoute
+  '/schedule/': typeof appLayoutScheduleIndexRoute
   '/confirm-email/': typeof commonLayoutConfirmEmailIndexRoute
   '/welcome/email/': typeof commonWelcomeEmailIndexRoute
   '/welcome/role/': typeof commonWelcomeRoleIndexRoute
@@ -203,11 +203,11 @@ export interface FileRoutesByTo {
   '/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/call/$callId': typeof appLayoutCallCallIdRoute
   '/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
-  '/calendar': typeof appLayoutCalendarIndexRoute
   '/call': typeof appLayoutCallIndexRoute
   '/classrooms': typeof appLayoutClassroomsIndexRoute
   '/materials': typeof appLayoutMaterialsIndexRoute
   '/payments': typeof appLayoutPaymentsIndexRoute
+  '/schedule': typeof appLayoutScheduleIndexRoute
   '/confirm-email': typeof commonLayoutConfirmEmailIndexRoute
   '/welcome/email': typeof commonWelcomeEmailIndexRoute
   '/welcome/role': typeof commonWelcomeRoleIndexRoute
@@ -231,11 +231,11 @@ export interface FileRoutesById {
   '/(app)/_layout/board/$boardId': typeof appLayoutBoardBoardIdRoute
   '/(app)/_layout/call/$callId': typeof appLayoutCallCallIdRoute
   '/(common)/_layout/invite/$inviteId': typeof commonLayoutInviteInviteIdRoute
-  '/(app)/_layout/calendar/': typeof appLayoutCalendarIndexRoute
   '/(app)/_layout/call/': typeof appLayoutCallIndexRoute
   '/(app)/_layout/classrooms/': typeof appLayoutClassroomsIndexRoute
   '/(app)/_layout/materials/': typeof appLayoutMaterialsIndexRoute
   '/(app)/_layout/payments/': typeof appLayoutPaymentsIndexRoute
+  '/(app)/_layout/schedule/': typeof appLayoutScheduleIndexRoute
   '/(common)/_layout/confirm-email/': typeof commonLayoutConfirmEmailIndexRoute
   '/(common)/welcome/email/': typeof commonWelcomeEmailIndexRoute
   '/(common)/welcome/role/': typeof commonWelcomeRoleIndexRoute
@@ -258,11 +258,11 @@ export interface FileRouteTypes {
     | '/board/$boardId'
     | '/call/$callId'
     | '/invite/$inviteId'
-    | '/calendar/'
     | '/call/'
     | '/classrooms/'
     | '/materials/'
     | '/payments/'
+    | '/schedule/'
     | '/confirm-email/'
     | '/welcome/email/'
     | '/welcome/role/'
@@ -283,11 +283,11 @@ export interface FileRouteTypes {
     | '/board/$boardId'
     | '/call/$callId'
     | '/invite/$inviteId'
-    | '/calendar'
     | '/call'
     | '/classrooms'
     | '/materials'
     | '/payments'
+    | '/schedule'
     | '/confirm-email'
     | '/welcome/email'
     | '/welcome/role'
@@ -310,11 +310,11 @@ export interface FileRouteTypes {
     | '/(app)/_layout/board/$boardId'
     | '/(app)/_layout/call/$callId'
     | '/(common)/_layout/invite/$inviteId'
-    | '/(app)/_layout/calendar/'
     | '/(app)/_layout/call/'
     | '/(app)/_layout/classrooms/'
     | '/(app)/_layout/materials/'
     | '/(app)/_layout/payments/'
+    | '/(app)/_layout/schedule/'
     | '/(common)/_layout/confirm-email/'
     | '/(common)/welcome/email/'
     | '/(common)/welcome/role/'
@@ -426,6 +426,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof commonLayoutConfirmEmailIndexRouteImport
       parentRoute: typeof commonLayoutRoute
     }
+    '/(app)/_layout/schedule/': {
+      id: '/(app)/_layout/schedule/'
+      path: '/schedule'
+      fullPath: '/schedule/'
+      preLoaderRoute: typeof appLayoutScheduleIndexRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
     '/(app)/_layout/payments/': {
       id: '/(app)/_layout/payments/'
       path: '/payments'
@@ -452,13 +459,6 @@ declare module '@tanstack/react-router' {
       path: '/call'
       fullPath: '/call/'
       preLoaderRoute: typeof appLayoutCallIndexRouteImport
-      parentRoute: typeof appLayoutRoute
-    }
-    '/(app)/_layout/calendar/': {
-      id: '/(app)/_layout/calendar/'
-      path: '/calendar'
-      fullPath: '/calendar/'
-      preLoaderRoute: typeof appLayoutCalendarIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
     '/(common)/_layout/invite/$inviteId': {
@@ -524,11 +524,11 @@ interface appLayoutRouteChildren {
   appLayoutIndexRoute: typeof appLayoutIndexRoute
   appLayoutBoardBoardIdRoute: typeof appLayoutBoardBoardIdRoute
   appLayoutCallCallIdRoute: typeof appLayoutCallCallIdRoute
-  appLayoutCalendarIndexRoute: typeof appLayoutCalendarIndexRoute
   appLayoutCallIndexRoute: typeof appLayoutCallIndexRoute
   appLayoutClassroomsIndexRoute: typeof appLayoutClassroomsIndexRoute
   appLayoutMaterialsIndexRoute: typeof appLayoutMaterialsIndexRoute
   appLayoutPaymentsIndexRoute: typeof appLayoutPaymentsIndexRoute
+  appLayoutScheduleIndexRoute: typeof appLayoutScheduleIndexRoute
   appLayoutClassroomsClassroomIdIndexRoute: typeof appLayoutClassroomsClassroomIdIndexRoute
   appLayoutClassroomsClassroomIdBoardsBoardIdRoute: typeof appLayoutClassroomsClassroomIdBoardsBoardIdRoute
   appLayoutClassroomsClassroomIdNotesNoteIdRoute: typeof appLayoutClassroomsClassroomIdNotesNoteIdRoute
@@ -540,11 +540,11 @@ const appLayoutRouteChildren: appLayoutRouteChildren = {
   appLayoutIndexRoute: appLayoutIndexRoute,
   appLayoutBoardBoardIdRoute: appLayoutBoardBoardIdRoute,
   appLayoutCallCallIdRoute: appLayoutCallCallIdRoute,
-  appLayoutCalendarIndexRoute: appLayoutCalendarIndexRoute,
   appLayoutCallIndexRoute: appLayoutCallIndexRoute,
   appLayoutClassroomsIndexRoute: appLayoutClassroomsIndexRoute,
   appLayoutMaterialsIndexRoute: appLayoutMaterialsIndexRoute,
   appLayoutPaymentsIndexRoute: appLayoutPaymentsIndexRoute,
+  appLayoutScheduleIndexRoute: appLayoutScheduleIndexRoute,
   appLayoutClassroomsClassroomIdIndexRoute:
     appLayoutClassroomsClassroomIdIndexRoute,
   appLayoutClassroomsClassroomIdBoardsBoardIdRoute:

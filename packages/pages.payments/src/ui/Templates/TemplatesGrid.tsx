@@ -14,7 +14,7 @@ export const TemplatesGrid = () => {
   };
 
   return (
-    <ScrollArea className="h-[calc(100vh-204px)] w-full p-4 pl-0">
+    <ScrollArea className="h-[calc(100vh-72px)] w-full p-4 pl-0">
       <ul className="max-xs:gap-4 grid grid-cols-1 gap-8 min-[550px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {data &&
           data.map((template: TemplateT) => (

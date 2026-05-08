@@ -8,6 +8,7 @@ import { ColorDot } from '../canvas';
 import { FillTypePicker } from '../../../shapes/geo';
 import { useTldrawStore } from '../../../store';
 import { Picker } from '../popups';
+import { cn } from '@xipkg/utils';
 
 const stickerColorMap: Record<string, string> = {
   grey: 'bg-gray-60',
@@ -134,7 +135,10 @@ export const ColorPicker = track(() => {
       triggerTitle="Стиль"
       triggerChild={
         <div
-          className={`h-4 w-4 rounded-full ${currentColorOption?.class || (isSticker ? 'bg-gray-60' : 'bg-gray-100')}`}
+          className={cn(
+            'h-4 w-4 rounded-full',
+            currentColorOption?.class || (isSticker ? 'bg-gray-60' : 'bg-gray-100'),
+          )}
         />
       }
       popoverChild={

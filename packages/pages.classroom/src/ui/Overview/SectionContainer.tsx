@@ -9,7 +9,7 @@ type SectionContainerPropsT = {
 };
 
 export const SectionContainer = ({ title, tabLink, children }: SectionContainerPropsT) => (
-  <div className="flex flex-col gap-4 p-4">
+  <div className="flex flex-col gap-4">
     <SectionHeader title={title} tabLink={tabLink} />
     <div className="flex flex-row">
       <ScrollArea

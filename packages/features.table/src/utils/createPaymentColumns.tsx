@@ -1,4 +1,6 @@
 import { ColumnDef } from '@tanstack/react-table';
+import { Button } from '@xipkg/button';
+import { InfoCircle } from '@xipkg/icons';
 import { RolePaymentT, RoleT, StudentPaymentT, TutorPaymentT } from '../types';
 import {
   DateCell,
@@ -15,6 +17,7 @@ type ColumnArgsT<Role extends RoleT = RoleT> = {
   usersRole: RoleT;
   screenSize?: ScreenSizeT;
   onApprovePayment?: (payment: RolePaymentT<Role>) => void;
+  onViewInvoice?: (payment: RolePaymentT<Role>) => void;
   withStudentColumn?: boolean;
   isTutor?: boolean;
 };
@@ -22,10 +25,30 @@ type ColumnArgsT<Role extends RoleT = RoleT> = {
 export const createPaymentColumns = <Role extends RoleT>({
   usersRole,
   onApprovePayment,
+  onViewInvoice,
   isTutor,
   screenSize,
 }: ColumnArgsT<Role>): ColumnDef<RolePaymentT<Role>>[] => {
   const baseColumns: (ColumnDef<RolePaymentT<Role>> | false)[] = [
+    onViewInvoice
+      ? {
+          id: 'invoice_info',
+          header: '',
+          cell: ({ row }) => (
+            <Button
+              variant="ghost"
+              size="s"
+              className="text-gray-60 hover:text-brand-100 h-8 w-8 rounded-full border-none bg-transparent p-0 shadow-none hover:border-transparent hover:bg-transparent focus-visible:ring-0"
+              onClick={() => onViewInvoice(row.original)}
+              aria-label="Просмотреть информацию о счёте"
+            >
+              <InfoCircle className="h-5 w-5" />
+            </Button>
+          ),
+          size: 56,
+          enableColumnFilter: false,
+        }
+      : false,
     {
       accessorKey: 'created_at',
       header: 'Дата',
