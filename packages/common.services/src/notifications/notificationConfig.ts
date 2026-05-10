@@ -6,6 +6,7 @@ import {
   PaymentsQueryKey,
   StudentQueryKey,
 } from 'common.api';
+import { schedulerQueryKeys } from '../scheduler';
 
 const CUSTOM_NOTIFICATION_CONTENT_MAX_LENGTH = 80;
 
@@ -23,7 +24,7 @@ type NotificationActionFn = (payload: NotificationT['payload']) => string | null
 /**
  * Тип для ключей ревалидации кеша
  */
-type InvalidationKey = string | [string, ...unknown[]];
+type InvalidationKey = string | readonly [string, ...unknown[]];
 
 /**
  * Конфигурация уведомления
@@ -56,15 +57,140 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
     },
     invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
     onNotify: (payload) => {
-      const classroomId = payload?.classroom_id.toString();
-
-      console.log('classroomId', classroomId);
-
-      if (classroomId) {
-        return [CallsQueryKey.GetParticipantsStudent, classroomId];
+      const classroomId = payload?.classroom_id;
+      if (typeof classroomId === 'number') {
+        return [[CallsQueryKey.GetParticipantsStudent, classroomId.toString()]];
       }
-
       return null;
+    },
+  },
+
+  single_classroom_event_created_v1: {
+    title: 'Новое занятие',
+    description: () => 'Одноразовое занятие добавлено в расписание',
+    action: (payload) => {
+      const classroomId = payload.classroom_id;
+      const eventInstanceId =
+        'event_instance_id' in payload ? String(payload.event_instance_id).trim() : '';
+      if (typeof classroomId !== 'number' || !eventInstanceId) return null;
+      const q = new URLSearchParams({ tab: 'schedule', event_instance_id: eventInstanceId });
+      return `/classrooms/${classroomId}?${q.toString()}`;
+    },
+    invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
+    onNotify: (payload) => {
+      const cid = payload.classroom_id;
+      if (typeof cid !== 'number') return null;
+      return [
+        schedulerQueryKeys.tutorAllForClassroom(cid),
+        schedulerQueryKeys.studentAllForClassroom(cid),
+      ];
+    },
+  },
+
+  classroom_event_instance_rescheduled_v1: {
+    title: 'Занятие перенесено',
+    description: () => 'Время занятия в расписании изменено',
+    action: (payload) => {
+      const classroomId = payload.classroom_id;
+      const eventInstanceId =
+        'event_instance_id' in payload ? String(payload.event_instance_id).trim() : '';
+      if (typeof classroomId !== 'number' || !eventInstanceId) return null;
+      const q = new URLSearchParams({ tab: 'schedule', event_instance_id: eventInstanceId });
+      return `/classrooms/${classroomId}?${q.toString()}`;
+    },
+    invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
+    onNotify: (payload) => {
+      const cid = payload.classroom_id;
+      if (typeof cid !== 'number') return null;
+      return [
+        schedulerQueryKeys.tutorAllForClassroom(cid),
+        schedulerQueryKeys.studentAllForClassroom(cid),
+      ];
+    },
+  },
+
+  classroom_event_instance_cancelled_v1: {
+    title: 'Занятие отменено',
+    description: () => 'Конкретное занятие убрано из расписания',
+    action: (payload) => {
+      const classroomId = payload.classroom_id;
+      const eventInstanceId =
+        'event_instance_id' in payload ? String(payload.event_instance_id).trim() : '';
+      if (typeof classroomId !== 'number' || !eventInstanceId) return null;
+      const q = new URLSearchParams({ tab: 'schedule', event_instance_id: eventInstanceId });
+      return `/classrooms/${classroomId}?${q.toString()}`;
+    },
+    invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
+    onNotify: (payload) => {
+      const cid = payload.classroom_id;
+      if (typeof cid !== 'number') return null;
+      return [
+        schedulerQueryKeys.tutorAllForClassroom(cid),
+        schedulerQueryKeys.studentAllForClassroom(cid),
+      ];
+    },
+  },
+
+  repeating_classroom_event_created_v1: {
+    title: 'Новая серия занятий',
+    description: () => 'В расписание добавлено повторяющееся занятие',
+    action: (payload) => {
+      const classroomId = payload.classroom_id;
+      const focusedAt = 'focused_at' in payload ? String(payload.focused_at).trim() : '';
+      if (typeof classroomId !== 'number' || !focusedAt) return null;
+      const q = new URLSearchParams({ tab: 'schedule', focused_at: focusedAt });
+      return `/classrooms/${classroomId}?${q.toString()}`;
+    },
+    invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
+    onNotify: (payload) => {
+      const cid = payload.classroom_id;
+      if (typeof cid !== 'number') return null;
+      return [
+        schedulerQueryKeys.tutorAllForClassroom(cid),
+        schedulerQueryKeys.studentAllForClassroom(cid),
+      ];
+    },
+  },
+
+  classroom_event_repetition_updated_v1: {
+    title: 'Повторение занятий обновлено',
+    description: () => 'Изменены правила повторения в расписании',
+    action: (payload) => {
+      const classroomId = payload.classroom_id;
+      const focusedAt = 'focused_at' in payload ? String(payload.focused_at).trim() : '';
+      if (typeof classroomId !== 'number' || !focusedAt) return null;
+      const q = new URLSearchParams({ tab: 'schedule', focused_at: focusedAt });
+      return `/classrooms/${classroomId}?${q.toString()}`;
+    },
+    invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
+    onNotify: (payload) => {
+      const cid = payload.classroom_id;
+      if (typeof cid !== 'number') return null;
+      return [
+        schedulerQueryKeys.tutorAllForClassroom(cid),
+        schedulerQueryKeys.studentAllForClassroom(cid),
+      ];
+    },
+  },
+
+  classroom_event_repetition_cancelled_v1: {
+    title: 'Повторение отменено',
+    description: () => 'Серия занятий больше не повторяется',
+    action: (payload) => {
+      const classroomId = payload.classroom_id;
+      const focusedAt = 'focused_at' in payload ? String(payload.focused_at).trim() : '';
+      if (typeof classroomId !== 'number' || !focusedAt) return null;
+      const q = new URLSearchParams({ tab: 'schedule', focused_at: focusedAt });
+      return `/classrooms/${classroomId}?${q.toString()}`;
+    },
+    invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
+    onNotify: (payload) => {
+      const cid = payload.classroom_id;
+      if (typeof cid !== 'number') return null;
+      return [
+        schedulerQueryKeys.tutorAllForClassroom(cid),
+        schedulerQueryKeys.studentAllForClassroom(cid),
+      ];
     },
   },
 
@@ -82,7 +208,8 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
     title: 'Вы получили новый счёт',
     description: () => 'Пожалуйста, оплатите его',
     action: (payload) => {
-      const recipientInvoiceId = payload.recipient_invoice_id;
+      const recipientInvoiceId =
+        'recipient_invoice_id' in payload ? payload.recipient_invoice_id : undefined;
       return recipientInvoiceId
         ? `/payments?role=student&tab=invoices&recipient_invoice_id=${recipientInvoiceId}`
         : '/payments?role=student&tab=invoices';
@@ -95,7 +222,8 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
     title: 'Оплачен новый счёт',
     description: () => 'Подтвердите, что получили деньги',
     action: (payload) => {
-      const recipientInvoiceId = payload.recipient_invoice_id;
+      const recipientInvoiceId =
+        'recipient_invoice_id' in payload ? payload.recipient_invoice_id : undefined;
       return recipientInvoiceId
         ? `/payments?role=tutor&tab=invoices&recipient_invoice_id=${recipientInvoiceId}`
         : '/payments?role=tutor&tab=invoices';
@@ -124,10 +252,11 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
   },
   // Кастомное уведомление: без перехода на платформу, по клику открывается модалка
   custom_v1: {
-    title: (payload) => (payload?.header ? String(payload.header) : 'Уведомление'),
+    title: (payload) =>
+      'header' in payload && payload.header != null ? String(payload.header) : 'Уведомление',
     description: (payload) =>
       truncateText(
-        typeof payload?.content === 'string' ? payload.content : '',
+        'content' in payload && typeof payload.content === 'string' ? payload.content : '',
         CUSTOM_NOTIFICATION_CONTENT_MAX_LENGTH,
       ),
     action: () => null,
