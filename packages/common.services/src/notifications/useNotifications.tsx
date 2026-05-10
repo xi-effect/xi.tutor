@@ -117,7 +117,7 @@ export const useNotifications = () => {
       // Ревалидируем кеш связанных данных на основе конфига уведомления
       const invalidationKeys = getNotificationInvalidationKeys(notification);
       invalidationKeys.forEach((key) => {
-        queryClient.invalidateQueries({ queryKey: Array.isArray(key) ? key : [key] });
+        queryClient.invalidateQueries({ queryKey: Array.isArray(key) ? [...key] : [key] });
       });
 
       // Обновляем счетчик непрочитанных с сервера (синхронизация)
@@ -131,11 +131,14 @@ export const useNotifications = () => {
       const config = notificationConfigs[kind];
 
       if (config?.onNotify) {
-        const invalidationKey = config.onNotify(notification.payload);
-
-        if (!invalidationKey) return;
-
-        queryClient.invalidateQueries({ queryKey: invalidationKey });
+        const keys = config.onNotify(notification.payload);
+        if (keys?.length) {
+          keys.forEach((key) => {
+            queryClient.invalidateQueries({
+              queryKey: Array.isArray(key) ? [...key] : [key],
+            });
+          });
+        }
       }
 
       const url = config ? generateNotificationAction(notification) : null;
@@ -239,7 +242,7 @@ export const useNotifications = () => {
         if (notification) {
           const invalidationKeys = getNotificationInvalidationKeys(notification);
           invalidationKeys.forEach((key) => {
-            queryClient.invalidateQueries({ queryKey: Array.isArray(key) ? key : [key] });
+            queryClient.invalidateQueries({ queryKey: Array.isArray(key) ? [...key] : [key] });
           });
         }
 

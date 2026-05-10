@@ -12,6 +12,31 @@ export type NotificationsSettingsT = {
   };
 };
 
+/** Инстанс занятия: одноразовое создание / перенос / отмена конкретного занятия */
+export type ClassroomEventInstanceNotificationKind =
+  | 'single_classroom_event_created_v1'
+  | 'classroom_event_instance_rescheduled_v1'
+  | 'classroom_event_instance_cancelled_v1';
+
+export type ClassroomEventInstanceNotificationPayload = {
+  kind: ClassroomEventInstanceNotificationKind;
+  classroom_id: number;
+  event_instance_id: string;
+};
+
+/** Расписание / повторение: фокус на дате, без привязки к одному инстансу */
+export type ClassroomScheduleFocusNotificationKind =
+  | 'repeating_classroom_event_created_v1'
+  | 'classroom_event_repetition_updated_v1'
+  | 'classroom_event_repetition_cancelled_v1';
+
+export type ClassroomScheduleFocusNotificationPayload = {
+  kind: ClassroomScheduleFocusNotificationKind;
+  classroom_id: number;
+  /** ISO-8601 или иной формат даты/времени от бэка — передаётся в диплинк `focused_at` */
+  focused_at: string;
+};
+
 // Типы уведомлений (kind в payload)
 export type NotificationKind =
   | 'classroom_material_created'
@@ -32,17 +57,30 @@ export type NotificationKind =
   | 'enrollment_created_v1'
   | 'classroom_conference_started_v1'
   | 'recipient_invoice_created_v1'
-  | 'student_recipient_invoice_payment_confirmed_v1';
+  | 'student_recipient_invoice_payment_confirmed_v1'
+  | ClassroomEventInstanceNotificationKind
+  | ClassroomScheduleFocusNotificationKind;
+
+/** Остальные payload с прежней гибкой формой полей */
+export type NotificationLegacyPayload = {
+  kind: Exclude<
+    NotificationKind,
+    ClassroomEventInstanceNotificationKind | ClassroomScheduleFocusNotificationKind
+  >;
+  [key: string]: any;
+};
+
+export type NotificationPayload =
+  | ClassroomEventInstanceNotificationPayload
+  | ClassroomScheduleFocusNotificationPayload
+  | NotificationLegacyPayload;
 
 // Структура уведомления (новый контракт)
 export type NotificationT = {
   id: string;
   actor_user_id: number | null;
   is_read: boolean;
-  payload: {
-    kind: NotificationKind;
-    [key: string]: any; // Дополнительные атрибуты в зависимости от kind
-  };
+  payload: NotificationPayload;
   created_at: string;
   updated_at: string;
 };
@@ -79,10 +117,7 @@ export type RecipientNotificationResponse = {
     id: string;
     created_at: string;
     updated_at?: string;
-    payload: {
-      kind: string;
-      [key: string]: any;
-    };
+    payload: NotificationPayload;
     actor_user_id?: number | null;
   };
 };
