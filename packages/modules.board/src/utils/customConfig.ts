@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { TColor } from '../types';
+
 /*
 This is necessary because if we set hiddenUi to the
 Tldraw components, all keyboard shortcuts will be hidden as well,
@@ -29,8 +31,17 @@ export const hiddenComponents: Required<any> = {
   TopPanel: null,
 };
 
-export const colorOptions = [
-  { name: 'black', class: 'bg-gray-100' },
+export type TColorOption = {
+  name: TColor;
+  class: string;
+};
+
+export const DEFAULT_BG_COLOR = 'bg-gray-100';
+export const DEFAULT_BORDER_COLOR = 'border-gray-100';
+export const DEFAULT_FILL_TYPE = 'semi';
+
+export const colorOptions: TColorOption[] = [
+  { name: 'black', class: DEFAULT_BG_COLOR },
   { name: 'blue', class: 'bg-brand-80' },
   { name: 'red', class: 'bg-red-80' },
   { name: 'green', class: 'bg-green-80' },
@@ -40,6 +51,19 @@ export const colorOptions = [
   { name: 'light-violet', class: 'bg-pink-100' },
   { name: 'light-blue', class: 'bg-cyan-100' },
   { name: 'grey', class: 'bg-gray-60' },
+] as const;
+
+export const borderColorOptions = [
+  { name: 'black', class: DEFAULT_BORDER_COLOR },
+  { name: 'blue', class: 'border-brand-80' },
+  { name: 'red', class: 'border-red-80' },
+  { name: 'green', class: 'border-green-80' },
+  { name: 'orange', class: 'border-orange-80' },
+  { name: 'yellow', class: 'border-yellow-100' },
+  { name: 'violet', class: 'border-violet-100' },
+  { name: 'light-violet', class: 'border-pink-100' },
+  { name: 'light-blue', class: 'border-cyan-100' },
+  { name: 'grey', class: 'border-gray-60' },
 ] as const;
 
 /*

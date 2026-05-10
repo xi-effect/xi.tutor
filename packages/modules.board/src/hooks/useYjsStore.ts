@@ -38,6 +38,7 @@ import { AudioShapeUtil } from '../shapes/audio';
 import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
 import { generateUserColor } from '../utils/userColor';
 import { extractFileIdFromUrl } from '../utils/resolveAssetUrl';
+import { XiGeoShapeUtil } from '../shapes/geo';
 
 type UseYjsStoreArgs = Partial<{
   hostUrl: string;
@@ -239,7 +240,13 @@ export function useYjsStore({
     const assetStore = token ? myAssetStore(token) : undefined;
 
     return createTLStore({
-      shapeUtils: [...defaultShapeUtils, PdfShapeUtil, AudioShapeUtil, ...shapeUtils],
+      shapeUtils: [
+        ...defaultShapeUtils,
+        PdfShapeUtil,
+        AudioShapeUtil,
+        XiGeoShapeUtil,
+        ...shapeUtils,
+      ],
       ...(assetStore ? { assets: assetStore } : {}),
     });
   });

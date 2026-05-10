@@ -9,12 +9,13 @@ export const useHotkeys = () => {
   const editor = useEditor();
   const { selectedElementId, selectElement, setSelectedTool } = useTldrawStore();
   const { undo, redo } = useYjsContext();
-  const { resetToDefaults, setColor, setThickness, setOpacity } = useTldrawStyles();
+  const { resetToDefaults, setColor, setThickness, setOpacity, applyStoreStylesForShape } =
+    useTldrawStyles();
 
   useEffect(() => {
     if (!editor) return;
 
-    const handleKeyDown = (event: KeyboardEvent) => {
+    function handleKeyDown(event: KeyboardEvent) {
       if (isEditableTarget(event.target)) return;
 
       const { code, ctrlKey, shiftKey, metaKey, altKey } = event;
@@ -72,9 +73,10 @@ export const useHotkeys = () => {
 
       if (code === 'KeyG' && !modKey && !shiftKey && !altKey) {
         event.preventDefault();
-        resetToDefaults();
-        editor.setCurrentTool('geo');
-        setSelectedTool('geo');
+        editor.setCurrentTool('xi-geo');
+        setSelectedTool('xi-geo');
+        applyStoreStylesForShape('xi-geo');
+
         return;
       }
 
@@ -219,7 +221,7 @@ export const useHotkeys = () => {
         window.dispatchEvent(customEvent);
         return;
       }
-    };
+    }
 
     window.addEventListener('keydown', handleKeyDown);
     return () => {
@@ -236,5 +238,6 @@ export const useHotkeys = () => {
     setColor,
     setThickness,
     setOpacity,
+    applyStoreStylesForShape,
   ]);
 };

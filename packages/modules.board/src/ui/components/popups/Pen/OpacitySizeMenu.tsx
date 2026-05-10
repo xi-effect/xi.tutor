@@ -4,6 +4,7 @@ import { useTldrawStyles } from '../../../../hooks/useTldrawStyles';
 import { colorOptions } from '../../../../utils/customConfig';
 import { cn } from '@xipkg/utils';
 import type { PenPreset, PenThickness } from '../../../../store/useTldrawStore';
+import { ColorDot } from '../../canvas';
 
 const sizes = ['xs', 's', 'm', 'l', 'xl'] as const;
 
@@ -49,25 +50,6 @@ const PresetButton = ({ preset, isActive, onClick }: PresetButtonProps) => {
     </button>
   );
 };
-
-type ColorDotProps = {
-  colorClass: string;
-  isSelected: boolean;
-  onClick: () => void;
-};
-
-const ColorDot = ({ colorClass, isSelected, onClick }: ColorDotProps) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className={cn(
-      'h-6 w-6 shrink-0 cursor-pointer rounded-full transition-all',
-      colorClass,
-      isSelected ? 'ring-2 ring-gray-100 ring-offset-1' : 'hover:scale-110',
-    )}
-    aria-label={`Color ${colorClass}`}
-  />
-);
 
 export const OpacitySizeMenu = () => {
   const {
