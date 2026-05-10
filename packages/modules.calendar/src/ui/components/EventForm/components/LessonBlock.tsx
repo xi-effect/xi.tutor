@@ -15,12 +15,12 @@ import { students } from '../../../../mocks';
 import { useLessonFields } from '../../../../hooks/useEventForm';
 
 import type { FC } from 'react';
-import type { useForm } from '@xipkg/form';
-import type { EventFormData } from '../../../../model';
+import { useForm } from '@xipkg/form';
+import type { EventFormData, EventFormInput } from '../../../../model';
 
-interface LessonBlockProps {
-  form: ReturnType<typeof useForm<EventFormData>>;
-}
+type LessonBlockProps = {
+  form: ReturnType<typeof useForm<EventFormInput, unknown, EventFormData>>;
+};
 
 export const LessonBlock: FC<LessonBlockProps> = ({ form }) => {
   const { t } = useTranslation('calendar');

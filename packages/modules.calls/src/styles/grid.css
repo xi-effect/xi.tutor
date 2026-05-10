@@ -6,12 +6,12 @@
 :root {
   /* Высоты панелей */
   --header-height: 64px;
-  --upbar-height: 44px;
+  --upbar-height: 50px;
   --bottom-bar-height: 68px;
 
   /* Доступная высота для сетки */
   --available-height: calc(
-    100dvh - var(--header-height) - var(--upbar-height) - var(--bottom-bar-height)
+    100dvh - var(--upbar-height) - var(--bottom-bar-height)
   );
 }
 

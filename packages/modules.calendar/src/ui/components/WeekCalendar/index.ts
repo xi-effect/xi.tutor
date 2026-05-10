@@ -1,1 +1,0 @@
-export { WeekCalendar } from './WeekCalendar';

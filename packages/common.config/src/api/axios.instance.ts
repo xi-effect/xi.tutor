@@ -124,9 +124,10 @@ const createNetworkErrorInterceptor = async (instance: AxiosInstance): Promise<A
           });
         } else {
           // Интернет есть, но сервер недоступен
-          showToastOnce(errorKey, 'Сервер недоступен. Попробуйте позже.', {
-            duration: 4000,
-            description: 'Возможно, сервер временно недоступен или перегружен.',
+          showToastOnce(errorKey, 'Ошибка обработки запроса сервером. Попробуйте позже.', {
+            duration: 6000,
+            description:
+              'Возможно, сервер временно недоступен или перегружен. Если ошибка повторяется, обратитесь в поддержку.',
           });
         }
       } else if (error.code === 'ECONNABORTED') {

@@ -3,7 +3,7 @@ import { EventFormData } from '../model';
 import { ICalendarEvent } from '../ui/types';
 import { formatDate } from '../utils/calendarUtils';
 
-interface FormEventStore {
+type FormEventStore = {
   isOpen: boolean;
   defaultFormValues: EventFormData;
   activeEventId: string;
@@ -11,7 +11,7 @@ interface FormEventStore {
   complete: boolean;
   openForm: (calendarEvent?: ICalendarEvent) => void;
   closeForm: () => void;
-}
+};
 
 const INITIAL_VALUES: EventFormData = {
   title: '',

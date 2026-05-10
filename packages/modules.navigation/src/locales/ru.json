@@ -1,6 +1,11 @@
 {
+  "profileDrawerTitle": "Профиль",
+  "installApp": "Установить приложение",
+  "notifications": "Уведомления",
+  "notificationSettings": "Настройки уведомлений",
   "home": "Главная",
   "calendar": "Календарь",
+  "schedule": "Расписание",
   "students": "Ученики",
   "materials": "Материалы",
   "payments": "Оплаты",
@@ -15,6 +20,8 @@
   "classrooms": "Кабинеты",
   "hints": "Подсказки",
   "roleChanged": "Роль успешно изменена на {{role}}",
+  "wiki": "База знаний",
+  "menu": "Меню",
   "supportModal": {
     "title": "Свяжитесь с нами",
     "description": "Выберите удобный способ связи — мы всегда рады помочь!",

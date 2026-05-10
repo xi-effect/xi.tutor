@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useEffect, useCallback } from 'react';
 import { useForm } from '@xipkg/form';
-import { eventFormSchema, type EventFormData } from '../model';
+import { eventFormSchema, type EventFormData, type EventFormInput } from '../model';
 import { formatDate, parseDateTime } from '../utils/calendarUtils';
 import { useCloseForm, useDefaultValues } from '../store/formEventStore';
 import { useAddEvent } from '../store/eventsStore';
@@ -9,7 +9,9 @@ import { useAddEvent } from '../store/eventsStore';
 import type { StudentT } from '../mocks';
 import type { EventType, ICalendarEvent } from '../ui/types';
 
-export const useLessonFields = (form: ReturnType<typeof useForm<EventFormData>>) => {
+export const useLessonFields = (
+  form: ReturnType<typeof useForm<EventFormInput, unknown, EventFormData>>,
+) => {
   const { control, setValue } = form;
 
   const handleStudentChange = (student: StudentT) => {
@@ -23,7 +25,9 @@ export const useLessonFields = (form: ReturnType<typeof useForm<EventFormData>>)
   };
 };
 
-export const useDateFields = (form: ReturnType<typeof useForm<EventFormData>>) => {
+export const useDateFields = (
+  form: ReturnType<typeof useForm<EventFormInput, unknown, EventFormData>>,
+) => {
   const { control, watch, setValue } = form;
   const startDate = watch('startDate');
   const startTime = watch('startTime');
@@ -65,7 +69,7 @@ export const useEventForm = () => {
   const handleCloseForm = useCloseForm();
   const defaultFormValues = useDefaultValues();
 
-  const form = useForm<EventFormData>({
+  const form = useForm<EventFormInput, unknown, EventFormData>({
     resolver: zodResolver(eventFormSchema),
     defaultValues: defaultFormValues,
   });

@@ -19,14 +19,14 @@ export const useFormSchemaPassword = () => {
       .object({
         password: z
           .string({
-            required_error: t('validation.required'),
+            error: t('validation.required'),
           })
           .min(passwordMinLength, {
             message: t('validation.minLength') + passwordMinLength,
           }),
         confirmPassword: z
           .string({
-            required_error: t('validation.required'),
+            error: t('validation.required'),
           })
           .min(passwordMinLength, {
             message: t('validation.minLength') + passwordMinLength,

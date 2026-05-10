@@ -8,10 +8,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 // Схема валидации для формы изменения почты
 const schema = z.object({
-  email: z
-    .string({ required_error: 'Обязательное поле' })
-    .email({ message: 'Некорректный формат данных' }),
-  password: z.string({ required_error: 'Обязательное поле' }).min(6, {
+  email: z.string({ error: 'Обязательное поле' }).email({ message: 'Некорректный формат данных' }),
+  password: z.string({ error: 'Обязательное поле' }).min(6, {
     message: 'Минимальная длина пароля - 6 символов',
   }),
 });

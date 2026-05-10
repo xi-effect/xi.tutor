@@ -1,20 +1,11 @@
-import {
-  Circle,
-  Rectangle,
-  RoundedRectangle,
-  Trapezoid,
-  Triangle,
-  Star,
-  Diamond,
-} from '@xipkg/icons';
-import { ShapeOptionT } from './types';
+import { Circle, Rectangle, Trapezoid, Triangle, Star, Diamond } from '@xipkg/icons';
+import { TShapeOption } from './types';
 
-export const shapes: ShapeOptionT[] = [
-  { name: 'Rectangle', icon: <Rectangle />, geo: 'rectangle', dash: 'solid' },
-  { name: 'Rounded Rectangle', icon: <RoundedRectangle />, geo: 'rectangle', dash: 'draw' },
-  { name: 'Oval', icon: <Circle />, geo: 'ellipse' },
-  { name: 'Triangle', icon: <Triangle />, geo: 'triangle' },
-  { name: 'Diamond', icon: <Diamond />, geo: 'diamond' },
-  { name: 'Star', icon: <Star />, geo: 'star' },
-  { name: 'Rhombus', icon: <Trapezoid />, geo: 'rhombus' },
+export const shapes: TShapeOption[] = [
+  { name: 'rectangle', icon: <Rectangle />, geo: 'rectangle' },
+  { name: 'ellipse', icon: <Circle />, geo: 'ellipse' },
+  { name: 'triangle', icon: <Triangle />, geo: 'triangle' },
+  { name: 'diamond', icon: <Diamond />, geo: 'diamond' },
+  { name: 'star', icon: <Star />, geo: 'star' },
+  { name: 'rhombus', icon: <Trapezoid />, geo: 'rhombus' },
 ];

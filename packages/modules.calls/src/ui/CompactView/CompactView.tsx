@@ -16,7 +16,6 @@ import { Chat } from '../Chat/Chat';
 import { PermissionsDialog } from '../shared/PermissionsDialog';
 import { useCallStore } from '../../store/callStore';
 import type { Corner } from '../../store/callStore';
-import { useFocusModeStore } from 'common.ui';
 import { useMedia } from 'common.utils';
 import { useNavigate, useRouter, useSearch, useLocation } from '@tanstack/react-router';
 import { useRoom } from '../../providers/RoomProvider';
@@ -91,7 +90,6 @@ type CompactProps = CompactViewProps & {
 export const Compact: FC<CompactProps> = ({ children, hideOverlay = false }) => {
   const router = useRouter();
   const { activeCorner, updateStore } = useCallStore();
-  const focusMode = useFocusModeStore((s) => s.focusMode);
   const isMobile = useMedia('(max-width: 720px)');
   const headerRef = useRef<HTMLDivElement>(null);
   const [headerHeight, setHeaderHeight] = useState(0);
@@ -147,9 +145,7 @@ export const Compact: FC<CompactProps> = ({ children, hideOverlay = false }) => 
   };
 
   const container = (
-    <div
-      className={`relative flex flex-col bg-transparent ${focusMode ? 'h-[100dvh]' : 'h-[calc(100dvh-64px)]'}`}
-    >
+    <div className={`relative flex h-dvh flex-col bg-transparent`}>
       {isMobile ? (
         <>
           {!hideOverlay && (

@@ -10,7 +10,7 @@ import {
 } from '@xipkg/sheet';
 import { Close, Conference, Microphone, SoundTwo, Music } from '@xipkg/icons';
 import { Label } from '@xipkg/label';
-import { Switch } from '@xipkg/switcher';
+import { Toggle } from '@xipkg/toggle';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
 import {
   useLocalParticipant,
@@ -206,9 +206,7 @@ export const Settings = ({ children }: SettingsPropsT) => {
 
   return (
     <Sheet>
-      <SheetTrigger className="ml-2" asChild>
-        {children}
-      </SheetTrigger>
+      <SheetTrigger asChild>{children}</SheetTrigger>
       <SheetContent className="bg-gray-0 w-[400px] rounded-tl-2xl rounded-bl-2xl border-none p-4 shadow-2xl">
         <SheetHeader className="mb-6 flex h-10 flex-row items-center justify-between space-y-0">
           <SheetTitle className="text-gray-100">Настройки</SheetTitle>
@@ -222,7 +220,7 @@ export const Settings = ({ children }: SettingsPropsT) => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label className="font-medium text-gray-100">Камера</Label>
-              <Switch
+              <Toggle
                 checked={isCameraEnabled}
                 onCheckedChange={handleCameraToggle}
                 disabled={!isCameraGranted}
@@ -247,7 +245,7 @@ export const Settings = ({ children }: SettingsPropsT) => {
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <Label className="font-medium text-gray-100">Микрофон</Label>
-              <Switch
+              <Toggle
                 checked={isMicrophoneEnabled}
                 onCheckedChange={handleMicrophoneToggle}
                 disabled={!isMicrophoneGranted}
@@ -292,7 +290,7 @@ export const Settings = ({ children }: SettingsPropsT) => {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <Label className="font-medium text-gray-100">Размытие фона</Label>
-                <Switch checked={blurEnabled} onCheckedChange={handleBlurToggle} />
+                <Toggle checked={blurEnabled} onCheckedChange={handleBlurToggle} />
               </div>
             </div>
           )}
