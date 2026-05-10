@@ -9,7 +9,7 @@ import {
   useUpdateClassroomEvent,
 } from 'modules.calendar';
 import type { ChangeLessonFormData, ICalendarEvent } from 'modules.calendar';
-import { useParams } from '@tanstack/react-router';
+import { useParams, useSearch } from '@tanstack/react-router';
 import { useCurrentUser, useGetClassroom, useGetClassroomStudent } from 'common.services';
 import {
   MovingLessonModal,
@@ -17,6 +17,7 @@ import {
   type SoleRescheduleTarget,
 } from 'features.lesson.move';
 import { useClassroomSchedule } from './ClassroomScheduleContext';
+import { useClassroomScheduleDeepLink } from './useClassroomScheduleDeepLink';
 import { CalendarScheduleKanban } from './ClassroomScheduleParts';
 import { getScheduleQueryRange, mapScheduleItemsToCalendarEvents } from './schedulerMapping';
 
@@ -76,6 +77,13 @@ function movingModalPropsFromEvent(event: ICalendarEvent, classroomId: number) {
 export const Calendar = () => {
   const isMobile = useIsMobile();
   const { visibleDays, onAddLessonClick } = useClassroomSchedule();
+
+  const search = useSearch({ strict: false }) as { tab?: string };
+  const scheduleDeepLinkEnabled = (search.tab ?? 'overview') === 'schedule';
+  const scheduleDeepLink = useClassroomScheduleDeepLink({
+    enabled: scheduleDeepLinkEnabled,
+  });
+
   const [moveEvent, setMoveEvent] = useState<ICalendarEvent | null>(null);
   const setEvents = useSetEvents();
   const setEventsLoading = useSetEventsLoading();
@@ -163,16 +171,22 @@ export const Calendar = () => {
     <>
       {isMobile ? (
         <ScheduleMobileView
+          key={numericClassroomId}
           onAddLessonClick={onAddLessonClick}
           onLessonReschedule={handleLessonReschedule}
           onSaveLesson={isTutor ? handleLessonSave : undefined}
           hideLessonCardClassroomAndSubject
+          mobileScheduleAnchorTs={scheduleDeepLink.mobileScheduleAnchorTs}
+          openLessonInstanceId={scheduleDeepLink.pendingOpenLessonInstanceId}
+          onOpenLessonInstanceConsumed={scheduleDeepLink.acknowledgePendingLessonOpen}
         />
       ) : (
         <div className="flex h-full min-h-0 min-w-0 flex-col">
           <CalendarScheduleKanban
             onLessonReschedule={handleLessonReschedule}
             onSaveLesson={isTutor ? handleLessonSave : undefined}
+            openLessonInstanceId={scheduleDeepLink.pendingOpenLessonInstanceId}
+            onOpenLessonInstanceConsumed={scheduleDeepLink.acknowledgePendingLessonOpen}
           />
         </div>
       )}

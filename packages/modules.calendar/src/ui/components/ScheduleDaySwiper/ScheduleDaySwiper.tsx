@@ -6,8 +6,14 @@ import { Virtual } from 'swiper/modules';
 import { LessonCard } from '../ScheduleKanban/LessonCard';
 import { LessonCardSkeleton } from '../ScheduleKanban/LessonCardSkeleton';
 import { ScheduleEmptyState } from '../ScheduleKanban/ScheduleEmptyState';
-import { getDateKey, useEventsByDate, useEventsLoading } from '../../../store/eventsStore';
+import {
+  getDateKey,
+  useCalendarEvents,
+  useEventsByDate,
+  useEventsLoading,
+} from '../../../store/eventsStore';
 import { useLessonInfoModal } from '../../../hooks';
+import { useOpenLessonByInstanceWhenLoaded } from '../../../hooks/useOpenLessonByInstanceWhenLoaded';
 import { getLessonCardSkeletonCountForDay, isCurrentDay, isPastDay } from '../../../utils';
 import type { ChangeLessonFormData } from 'features.lesson.change';
 import type { ICalendarEvent } from '../../types';
@@ -33,6 +39,8 @@ type ScheduleDaySwiperProps = {
   onLessonReschedule?: (event: ICalendarEvent) => void;
   onSaveLesson?: (event: ICalendarEvent, data: ChangeLessonFormData) => void;
   hideLessonCardClassroomAndSubject?: boolean;
+  openLessonInstanceId?: string | null;
+  onOpenLessonInstanceConsumed?: () => void;
 };
 
 export const ScheduleDaySwiper = ({
@@ -43,15 +51,26 @@ export const ScheduleDaySwiper = ({
   onLessonReschedule,
   onSaveLesson,
   hideLessonCardClassroomAndSubject = false,
+  openLessonInstanceId,
+  onOpenLessonInstanceConsumed,
 }: ScheduleDaySwiperProps) => {
   const eventsByDate = useEventsByDate();
   const eventsLoading = useEventsLoading();
+  const allEvents = useCalendarEvents();
   const today = new Date();
   const todayStart = startOfDay(today);
   const swiperRef = useRef<SwiperType | null>(null);
   const { openLessonInfo, lessonInfoModal } = useLessonInfoModal({
     onReschedule: onLessonReschedule,
     onSaveLesson,
+  });
+
+  useOpenLessonByInstanceWhenLoaded({
+    instanceId: openLessonInstanceId ?? null,
+    events: allEvents,
+    eventsLoading,
+    openLessonInfo,
+    onConsumed: onOpenLessonInstanceConsumed,
   });
 
   const selectedIndex = days.findIndex((d) => isSameDay(d, selectedDate));

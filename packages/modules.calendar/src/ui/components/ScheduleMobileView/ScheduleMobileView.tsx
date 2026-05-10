@@ -1,6 +1,6 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { startOfWeek } from 'date-fns';
+import { startOfDay, startOfWeek } from 'date-fns';
 import { ScheduleWeekCarousel } from '../ScheduleWeekCarousel';
 import { ScheduleDaySwiper } from '../ScheduleDaySwiper';
 import { getWeeksRangeDays } from '../../../utils';
@@ -16,6 +16,10 @@ type ScheduleMobileViewProps = {
   onLessonReschedule?: (event: ICalendarEvent) => void;
   onSaveLesson?: (event: ICalendarEvent, data: ChangeLessonFormData) => void;
   hideLessonCardClassroomAndSubject?: boolean;
+  /** Синхронизация недели с десктопным провайдером / диплинком (moment `getTime()`) */
+  mobileScheduleAnchorTs?: number | null;
+  openLessonInstanceId?: string | null;
+  onOpenLessonInstanceConsumed?: () => void;
 };
 
 /** Мобильный вид расписания в стиле iOS Calendar: карусель недель + свайп по дням */
@@ -24,6 +28,9 @@ export const ScheduleMobileView = ({
   onLessonReschedule,
   onSaveLesson,
   hideLessonCardClassroomAndSubject = false,
+  mobileScheduleAnchorTs,
+  openLessonInstanceId,
+  onOpenLessonInstanceConsumed,
 }: ScheduleMobileViewProps) => {
   const { t } = useTranslation('calendar');
   const [weekStart, setWeekStart] = useState<Date>(getInitialWeekStart);
@@ -33,7 +40,18 @@ export const ScheduleMobileView = ({
     return today;
   });
 
-  /** ~±26 недель от текущей недели — длинная лента дней для свайпа без упора в край */
+  const lastAnchorTsRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (mobileScheduleAnchorTs == null || !Number.isFinite(mobileScheduleAnchorTs)) return;
+    if (lastAnchorTsRef.current === mobileScheduleAnchorTs) return;
+    lastAnchorTsRef.current = mobileScheduleAnchorTs;
+
+    const anchor = new Date(mobileScheduleAnchorTs);
+    setWeekStart(startOfWeek(anchor, { weekStartsOn: 1 }));
+    setSelectedDate(startOfDay(anchor));
+  }, [mobileScheduleAnchorTs]);
+
   const slideDays = useMemo(() => getWeeksRangeDays(weekStart, 26, 26), [weekStart]);
 
   const handleWeekStartChange = useCallback((date: Date) => {
@@ -90,6 +108,8 @@ export const ScheduleMobileView = ({
           onLessonReschedule={onLessonReschedule}
           onSaveLesson={onSaveLesson}
           hideLessonCardClassroomAndSubject={hideLessonCardClassroomAndSubject}
+          openLessonInstanceId={openLessonInstanceId ?? null}
+          onOpenLessonInstanceConsumed={onOpenLessonInstanceConsumed}
         />
       </div>
     </div>

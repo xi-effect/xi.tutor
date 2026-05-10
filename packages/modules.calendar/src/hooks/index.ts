@@ -9,3 +9,7 @@ export { useChangeLessonModal } from './useChangeLessonModal';
 export { useLessonInfoModal } from './useLessonInfoModal';
 export { useLessonClassroomPresentation } from './useLessonClassroomPresentation';
 export { useScheduleLessonRowsForDay } from './useScheduleLessonRowsForDay';
+export {
+  findCalendarEventByInstanceId,
+  useOpenLessonByInstanceWhenLoaded,
+} from './useOpenLessonByInstanceWhenLoaded';

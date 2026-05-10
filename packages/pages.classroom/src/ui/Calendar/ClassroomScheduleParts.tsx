@@ -19,11 +19,15 @@ export const CalendarScheduleToolbar = () => {
 type CalendarScheduleKanbanProps = {
   onLessonReschedule?: (event: ICalendarEvent) => void;
   onSaveLesson?: (event: ICalendarEvent, data: ChangeLessonFormData) => void;
+  openLessonInstanceId?: string | null;
+  onOpenLessonInstanceConsumed?: () => void;
 };
 
 export const CalendarScheduleKanban = ({
   onLessonReschedule,
   onSaveLesson,
+  openLessonInstanceId,
+  onOpenLessonInstanceConsumed,
 }: CalendarScheduleKanbanProps) => {
   const { weekDays, onAddLessonClick, setVisibleCount } = useClassroomSchedule();
 
@@ -44,6 +48,8 @@ export const CalendarScheduleKanban = ({
         onLessonReschedule={onLessonReschedule}
         onSaveLesson={onSaveLesson}
         hideLessonCardClassroomAndSubject
+        openLessonInstanceId={openLessonInstanceId ?? null}
+        onOpenLessonInstanceConsumed={onOpenLessonInstanceConsumed}
       />
     </div>
   );

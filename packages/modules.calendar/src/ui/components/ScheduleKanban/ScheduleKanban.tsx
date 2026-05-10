@@ -5,8 +5,14 @@ import { Plus } from '@xipkg/icons';
 import { LessonCard } from './LessonCard';
 import { LessonCardSkeleton } from './LessonCardSkeleton';
 import { ScheduleEmptyState } from './ScheduleEmptyState';
-import { getDateKey, useEventsByDate, useEventsLoading } from '../../../store/eventsStore';
+import {
+  getDateKey,
+  useCalendarEvents,
+  useEventsByDate,
+  useEventsLoading,
+} from '../../../store/eventsStore';
 import { useLessonInfoModal } from '../../../hooks';
+import { useOpenLessonByInstanceWhenLoaded } from '../../../hooks/useOpenLessonByInstanceWhenLoaded';
 import { getLessonCardSkeletonCountForDay, isCurrentDay, isPastDay } from '../../../utils';
 import type { ChangeLessonFormData } from 'features.lesson.change';
 import type { ICalendarEvent } from '../../types';
@@ -26,6 +32,10 @@ type ScheduleKanbanProps = {
   onSaveLesson?: (event: ICalendarEvent, data: ChangeLessonFormData) => void;
   /** Скрыть в карточке строки кабинета и предмета (контекст одного кабинета) */
   hideLessonCardClassroomAndSubject?: boolean;
+  /** Диплинк: открыть карточку по `event_instance_id` после загрузки сетки */
+  openLessonInstanceId?: string | null;
+  /** Сообщить странице, что диплинк обработан (событие найдено или нет) */
+  onOpenLessonInstanceConsumed?: () => void;
 };
 
 const getEventsForDay = (
@@ -70,15 +80,26 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
   onLessonReschedule,
   onSaveLesson,
   hideLessonCardClassroomAndSubject = false,
+  openLessonInstanceId,
+  onOpenLessonInstanceConsumed,
 }) => {
   const { t } = useTranslation('calendar');
   const eventsByDate = useEventsByDate();
   const eventsLoading = useEventsLoading();
+  const allEvents = useCalendarEvents();
   const today = new Date();
   const todayStart = startOfDay(today);
   const { openLessonInfo, lessonInfoModal } = useLessonInfoModal({
     onReschedule: onLessonReschedule,
     onSaveLesson,
+  });
+
+  useOpenLessonByInstanceWhenLoaded({
+    instanceId: openLessonInstanceId ?? null,
+    events: allEvents,
+    eventsLoading,
+    openLessonInfo,
+    onConsumed: onOpenLessonInstanceConsumed,
   });
 
   const eventsPerDay = useMemo(

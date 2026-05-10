@@ -39,5 +39,8 @@ declare module '@tanstack/react-router' {
     role?: 'tutor' | 'student';
     recipient_invoice_id?: string;
     read_notification_id?: string;
+    /** Диплинк расписания кабинета — см. validateSearch маршрута кабинета */
+    focused_at?: string;
+    event_instance_id?: string;
   }
 }
