@@ -123,11 +123,16 @@ export const myAssetStore = (token: string) => {
       try {
         return await resolveAssetUrl(src, token);
       } catch (error) {
-        // Returning null tells tldraw to show a placeholder instead of passing
-        // the raw authenticated URL to <img src>, which would trigger a direct
-        // browser request without x-storage-token and get a 403.
+        // ВАЖНО: возвращаем именно `src`, а не null. Внутри tldraw `useImageOrVideoAsset`
+        // есть guard `if (previousUrl.current === url) return`, из-за которого при `url === null`
+        // флаг `didAlreadyResolve` не выставляется, и встроенный 500мс debounce между
+        // ресолвами не активируется. Каждое движение камеры / culling-тик / ресайз shape тогда
+        // дёргает ресолв заново, что генерирует шторм 403-запросов (negative cache успевает
+        // истечь через 30 с — и всё начинается снова). Отдавая src, мы получаем максимум
+        // один лишний <img src> запрос на shape, после чего CustomImageShape ловит onError
+        // и показывает placeholder; повторных axios-запросов не будет из-за negative cache.
         console.error('[myAssetStore.resolve] Ошибка при загрузке изображения:', error);
-        return null;
+        return src;
       }
     },
   };
