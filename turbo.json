@@ -8,6 +8,28 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": ["build"]
     },
+    "build:frontend": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": ["build"]
+    },
+    "xi.tauri#build": {
+      "dependsOn": ["^build", "xi.tauri#build:frontend"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*", "src-tauri/**"],
+      "outputs": ["src-tauri/target/release/bundle/**"],
+      "env": [
+        "TAURI_SIGNING_PRIVATE_KEY",
+        "TAURI_SIGNING_PRIVATE_KEY_PASSWORD",
+        "APPLE_CERTIFICATE",
+        "APPLE_CERTIFICATE_PASSWORD",
+        "APPLE_SIGNING_IDENTITY",
+        "APPLE_ID",
+        "APPLE_PASSWORD",
+        "APPLE_TEAM_ID",
+        "WINDOWS_CERTIFICATE",
+        "WINDOWS_CERTIFICATE_PASSWORD"
+      ]
+    },
     "lint": {
       "dependsOn": ["^lint"],
       "cache": true

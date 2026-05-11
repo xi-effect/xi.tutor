@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="apple-mobile-web-app-title" content="Sovlium" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Sovlium</title>
+    <style>
+      :root {
+        /* Force light color-scheme so WKWebView/WebView2 doesn't apply the
+           OS dark appearance before ThemeProvider mounts. The app controls
+           its own dark mode via data-theme="dark" on <html>. */
+        color-scheme: light;
+      }
+      html,
+      body,
+      #root {
+        height: 100%;
+        margin: 0;
+        background: transparent;
+      }
+      /* Avoid native overscroll glow on mobile WebViews. */
+      html,
+      body {
+        overscroll-behavior: none;
+        -webkit-touch-callout: none;
+        -webkit-user-select: none;
+        user-select: none;
+      }
+      /* Allow text selection inside editable surfaces. */
+      input,
+      textarea,
+      [contenteditable='true'],
+      [data-allow-select='true'],
+      [data-allow-select='true'] * {
+        -webkit-user-select: text;
+        user-select: text;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

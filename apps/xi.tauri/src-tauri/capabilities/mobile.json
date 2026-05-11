@@ -1,0 +1,8 @@
+{
+  "$schema": "../gen/schemas/mobile-schema.json",
+  "identifier": "mobile",
+  "description": "Mobile-only capabilities. Updates are delegated to the App Store / Play Store, so no updater scope is granted here.",
+  "platforms": ["iOS", "android"],
+  "windows": ["main"],
+  "permissions": []
+}

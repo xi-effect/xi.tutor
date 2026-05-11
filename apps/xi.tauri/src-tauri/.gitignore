@@ -1,0 +1,15 @@
+# Cargo build output.
+/target/
+
+# Tauri-generated mobile projects. Re-create with `pnpm ios:init` / `android:init`.
+/gen/
+
+# Tauri caches.
+.tauri/
+
+# Local secrets used by the bundler. NEVER commit these.
+*.key
+*.pem
+*.p12
+*.mobileprovision
+*.keystore

@@ -1,0 +1,112 @@
+name: xi.tauri Desktop Release
+
+# Triggered manually or by pushing a tag like `xi.tauri-vX.Y.Z`. Mobile builds
+# are NOT covered here — App Store / Play Store deployment lives in dedicated
+# pipelines because their secrets and toolchains are platform-specific.
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Release tag (e.g. xi.tauri-v0.1.0). Created if missing.'
+        required: true
+        type: string
+      draft:
+        description: 'Create the GitHub release as a draft'
+        required: false
+        default: 'true'
+        type: string
+  push:
+    tags:
+      - 'xi.tauri-v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: macos-latest
+            rust_targets: 'aarch64-apple-darwin,x86_64-apple-darwin'
+            tauri_args: '--target universal-apple-darwin -c src-tauri/tauri.macos.bundle-installers.conf.json'
+          - os: windows-latest
+            rust_targets: 'x86_64-pc-windows-msvc'
+            tauri_args: '-c src-tauri/tauri.windows.conf.json'
+
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4.3.0
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      - name: Setup Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.rust_targets }}
+
+      - name: Cache Rust build
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: apps/xi.tauri/src-tauri -> target
+
+      - name: Install Linux deps (skipped — not in matrix)
+        if: matrix.os == 'ubuntu-latest'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf
+
+      - name: Install JS deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Build with Tauri Action
+        uses: tauri-apps/tauri-action@v0
+        env:
+          # Updater signing key (generated once via `tauri signer generate`).
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+
+          # Apple code signing / notarisation. All optional — when absent, the
+          # build still succeeds but produces an unsigned DMG.
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+
+          # Windows authenticode (Azure Code Signing / SafeNet / pfx).
+          WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+          WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+        with:
+          projectPath: apps/xi.tauri
+          tagName: ${{ github.event.inputs.release_tag || github.ref_name }}
+          releaseName: 'Sovlium ${{ github.event.inputs.release_tag || github.ref_name }}'
+          releaseDraft: ${{ github.event.inputs.draft || 'true' }}
+          prerelease: false
+          args: ${{ matrix.tauri_args }}
+
+      - name: Upload updater manifest artifact
+        if: success()
+        uses: actions/upload-artifact@v4.6.0
+        with:
+          name: updater-${{ matrix.os }}
+          path: |
+            apps/xi.tauri/src-tauri/target/release/bundle/**/*.sig
+            apps/xi.tauri/src-tauri/target/**/release/bundle/**/*.sig
+          if-no-files-found: ignore

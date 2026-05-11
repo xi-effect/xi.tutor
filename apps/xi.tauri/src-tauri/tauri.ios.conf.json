@@ -1,0 +1,23 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "identifier": "ru.sovlium.mobile",
+  "bundle": {
+    "iOS": {
+      "developmentTeam": null,
+      "minimumSystemVersion": "14.0"
+    }
+  },
+  "plugins": {
+    "updater": {
+      "active": false
+    },
+    "deep-link": {
+      "mobile": [
+        {
+          "host": "app.sovlium.ru",
+          "pathPrefix": ["/"]
+        }
+      ]
+    }
+  }
+}

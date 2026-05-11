@@ -1,0 +1,23 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "bundle": {
+    "targets": ["nsis", "msi"],
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": "http://timestamp.digicert.com",
+      "tsp": false,
+      "webviewInstallMode": {
+        "type": "downloadBootstrapper"
+      },
+      "wix": {
+        "language": ["en-US", "ru-RU"]
+      },
+      "nsis": {
+        "displayLanguageSelector": false,
+        "languages": ["English", "Russian"],
+        "installMode": "perMachine"
+      }
+    }
+  }
+}

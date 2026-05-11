@@ -1,0 +1,22 @@
+/*
+ * Tailwind entrypoint for the Tauri shell.
+ *
+ * We re-import xi.web's stylesheet so that all `@source` directives that point
+ * to monorepo packages resolve identically. Tailwind v4 evaluates `@source`
+ * paths relative to the file in which they are declared — keeping the canonical
+ * file inside `xi.web/src/index.css` means we only have one place to maintain
+ * when new packages are added to the design system.
+ */
+
+@import '../../xi.web/src/index.css';
+
+/* Tauri-specific overlays. Keep this minimal; share visual rules through
+ * shared packages (common.theme / common.ui) whenever possible. */
+@layer base {
+  /* Native shells should never show a default browser caret outline inside
+     non-focusable surfaces. */
+  html,
+  body {
+    background-color: transparent;
+  }
+}

@@ -1,0 +1,46 @@
+[package]
+name = "sovlium"
+version = "0.0.0"
+description = "Sovlium native shell"
+authors = ["xi.effect"]
+license = "Proprietary"
+edition = "2021"
+rust-version = "1.77"
+# Disable the auto-discovered library target so we can pin the crate name to
+# `sovlium_lib` (referenced from `main.rs`) regardless of the project name.
+autolibs = false
+
+[lib]
+name = "sovlium_lib"
+path = "src/lib.rs"
+# Required for the Android target so cargo emits a cdylib that JNI can load.
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["protocol-asset"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+log = "0.4"
+
+# Cross-platform plugins.
+tauri-plugin-log = "2"
+tauri-plugin-os = "2"
+tauri-plugin-dialog = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-deep-link = "2"
+
+# Desktop-only plugins. Mobile platforms either ship store-managed updates
+# (updater) or have no concept equivalent to `relaunch` from the user's side
+# (process), so we gate these by target.
+[target.'cfg(not(any(target_os = "ios", target_os = "android")))'.dependencies]
+tauri-plugin-updater = "2"
+tauri-plugin-process = "2"
+tauri-plugin-single-instance = "2"
+
+[features]
+# Used by the Tauri CLI to enable the development asset protocol.
+default = ["custom-protocol"]
+custom-protocol = ["tauri/custom-protocol"]
