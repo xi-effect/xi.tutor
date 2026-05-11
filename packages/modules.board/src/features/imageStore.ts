@@ -123,8 +123,11 @@ export const myAssetStore = (token: string) => {
       try {
         return await resolveAssetUrl(src, token);
       } catch (error) {
+        // Returning null tells tldraw to show a placeholder instead of passing
+        // the raw authenticated URL to <img src>, which would trigger a direct
+        // browser request without x-storage-token and get a 403.
         console.error('[myAssetStore.resolve] Ошибка при загрузке изображения:', error);
-        return src;
+        return null;
       }
     },
   };

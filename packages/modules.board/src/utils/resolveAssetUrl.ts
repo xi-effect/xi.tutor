@@ -2,7 +2,28 @@ import { getAxiosInstance } from 'common.config';
 import { getFileUrl } from 'common.api';
 import { getRegisteredTokens } from './tokenRegistry';
 
+/** Успешно загруженные blob URL — живут до закрытия вкладки */
 const blobUrlCache = new Map<string, string>();
+
+/**
+ * In-flight дедупликация: если для данного src уже идёт запрос,
+ * повторные вызовы получают тот же Promise и не создают новых HTTP-запросов.
+ */
+const inFlightCache = new Map<string, Promise<string>>();
+
+/**
+ * Негативный кэш: src → время истечения блокировки (ms).
+ * Если все попытки загрузки (включая fallback-токены) провалились,
+ * мы не повторяем запросы до истечения TTL.
+ */
+const negativeCache = new Map<string, number>();
+const NEGATIVE_CACHE_TTL_MS = 30_000;
+
+/**
+ * Сколько чужих (fallback) токенов из реестра пробуем при ошибке.
+ * Ограничиваем, чтобы одна битая картинка не порождала 20 лишних запросов.
+ */
+const MAX_FALLBACK_TOKENS = 3;
 
 function isFullUrl(src: string): boolean {
   return src.startsWith('http://') || src.startsWith('https://');
@@ -25,9 +46,12 @@ export function extractFileIdFromUrl(src: string): string | null {
  * Resolves a file `src` (either a file ID or a full URL for backward compatibility)
  * into a blob URL. Fetches with x-storage-token and caches the result.
  *
- * On failure, automatically tries all tokens from the registry (cross-board
- * fallback). This lets PDF/audio shapes resolve files from other boards
- * without any changes to their rendering code.
+ * Optimisations:
+ * - In-flight deduplication: concurrent calls for the same src share one request.
+ * - Negative cache: failed src is blocked for NEGATIVE_CACHE_TTL_MS to prevent
+ *   request storms when tldraw re-resolves assets on each viewport change.
+ * - Limited fallback: at most MAX_FALLBACK_TOKENS alternative tokens are tried
+ *   instead of iterating all 20 stored tokens.
  */
 export async function resolveAssetUrl(src: string, token: string): Promise<string> {
   if (!src || !token) return src;
@@ -37,21 +61,41 @@ export async function resolveAssetUrl(src: string, token: string): Promise<strin
   const cached = blobUrlCache.get(src);
   if (cached) return cached;
 
+  const negExpiry = negativeCache.get(src);
+  if (negExpiry !== undefined && Date.now() < negExpiry) {
+    throw new Error(`[resolveAssetUrl] asset in negative cache: ${src}`);
+  }
+
+  const existing = inFlightCache.get(src);
+  if (existing) return existing;
+
   const url = isFullUrl(src) ? src : getFileUrl(src);
 
-  try {
-    return await fetchAndCacheBlobUrl(url, src, token);
-  } catch (primaryError) {
-    for (const altToken of getRegisteredTokens()) {
-      if (altToken === token) continue;
-      try {
-        return await fetchAndCacheBlobUrl(url, src, altToken);
-      } catch {
-        continue;
+  const promise = (async () => {
+    try {
+      return await fetchAndCacheBlobUrl(url, src, token);
+    } catch (primaryError) {
+      const fallbackTokens = getRegisteredTokens()
+        .filter((t) => t !== token)
+        .slice(0, MAX_FALLBACK_TOKENS);
+
+      for (const altToken of fallbackTokens) {
+        try {
+          return await fetchAndCacheBlobUrl(url, src, altToken);
+        } catch {
+          continue;
+        }
       }
+
+      negativeCache.set(src, Date.now() + NEGATIVE_CACHE_TTL_MS);
+      throw primaryError;
+    } finally {
+      inFlightCache.delete(src);
     }
-    throw primaryError;
-  }
+  })();
+
+  inFlightCache.set(src, promise);
+  return promise;
 }
 
 async function fetchAndCacheBlobUrl(url: string, cacheKey: string, token: string): Promise<string> {
