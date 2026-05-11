@@ -9,11 +9,7 @@ type LinkListStudentsT = {
 export const LinkListStudents = ({ className }: LinkListStudentsT) => {
   return (
     <ModalStudentsList>
-      <Button
-        size="s"
-        variant="none"
-        className={`text-m-base text-gray-80 font-normal ${className || ''}`}
-      >
+      <Button size="s" variant="ghost" className={`text-m-base font-normal ${className || ''}`}>
         Список учеников
       </Button>
     </ModalStudentsList>

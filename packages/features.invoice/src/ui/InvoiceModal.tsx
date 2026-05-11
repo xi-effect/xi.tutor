@@ -20,7 +20,7 @@ const cleanupBodyScrollLock = () => {
 };
 import { useFetchClassrooms } from 'common.services';
 import { useInvoiceForm } from '../hooks';
-import type { FormData } from '../model';
+import { roundMoney, type FormData } from '../model';
 import { ClassroomSelector } from './ClassroomSelector';
 import { CommentField } from './CommentField';
 import { SubjectRow } from './SubjectRow';
@@ -66,9 +66,12 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
   };
 
   // Вычисляем общую стоимость счёта
-  const totalInvoicePrice = items.reduce((total, item) => {
-    return total + item.price * (item.quantity || 0);
-  }, 0);
+  const totalInvoicePrice = roundMoney(
+    items.reduce((total, item) => {
+      const priceNum = typeof item.price === 'string' ? Number(item.price) || 0 : item.price;
+      return total + priceNum * (item.quantity || 0);
+    }, 0),
+  );
 
   return (
     <Modal
@@ -116,7 +119,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
             <div className={`flex gap-2 ${isMobile ? 'flex-col' : 'flex-row'}`}>
               <Button
                 className={`h-[32px] ${isMobile ? 'w-full' : 'w-fit'}`}
-                variant="secondary"
+                variant="ghost"
                 size="s"
                 type="button"
                 onClick={() => {
@@ -203,7 +206,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
               <Button
                 className={`${isMobile ? 'w-full' : 'w-[128px]'} rounded-2xl`}
                 size="m"
-                variant="secondary"
+                variant="ghost"
                 onClick={handleCloseModal}
               >
                 Отменить

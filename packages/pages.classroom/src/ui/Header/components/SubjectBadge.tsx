@@ -12,9 +12,9 @@ export const SubjectBadge = ({ subject_id }: SubjectBadgePropsT) => {
   return (
     <Badge
       size="m"
-      className="text-gray-60 bg-gray-10 text-s-base rounded-lg border-none px-2 py-1 font-medium"
+      className="text-gray-60 bg-gray-10 text-s-base max-w-full min-w-0 rounded-lg border-none px-2 py-1 font-medium max-sm:flex max-sm:w-full max-sm:items-center max-sm:justify-center"
     >
-      {subject?.name}
+      <span className="max-w-full min-w-0 truncate text-center">{subject?.name}</span>
     </Badge>
   );
 };

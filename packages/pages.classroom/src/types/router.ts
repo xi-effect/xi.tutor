@@ -6,4 +6,6 @@ export interface SearchParams {
   tab?: string;
   call?: string;
   classroom?: string;
+  focused_at?: string;
+  event_instance_id?: string;
 }

@@ -42,7 +42,7 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
       <div className="flex flex-col items-center gap-4 pt-5">
         <h2 className="text-lg font-semibold text-gray-100">Добавьте ученика в группу</h2>
         <ModalStudentsGroup>
-          <Button size="m" variant="secondary">
+          <Button size="m" variant="ghost">
             Добавить ученика
           </Button>
         </ModalStudentsGroup>

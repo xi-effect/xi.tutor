@@ -4,7 +4,7 @@ import { TemplatesGrid } from './TemplatesGrid';
 
 export const TemplatesPage = () => {
   return (
-    <div className="flex flex-col justify-between gap-6 pr-0 pl-4">
+    <div className="flex h-[calc(100vh-72px)] flex-col justify-between gap-6 pr-0 pl-4">
       <div className="flex flex-col">
         <TemplatesGrid />
       </div>

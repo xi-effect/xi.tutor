@@ -4,6 +4,7 @@ import { colorOptions } from '../../utils/customConfig';
 import { useTldrawStyles } from '../../hooks';
 import { useTldrawStore } from '../../store';
 import { Slider } from '@xipkg/slider';
+import { cn } from '@xipkg/utils';
 import { TColor } from '../../types';
 import { useXiGeoStyles } from './useXiGeoStyles';
 
@@ -40,7 +41,9 @@ export const BorderPicker = () => {
       open={open}
       setOpen={setOpen}
       triggerTitle="Цвет обводки"
-      triggerChild={<div className={`h-5 w-5 rounded-full border-3 ${borderCurrentColorClass}`} />}
+      triggerChild={
+        <div className={cn('h-5 w-5 rounded-full border-3', borderCurrentColorClass)} />
+      }
       popoverChild={
         <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
           <div className="flex min-w-0 flex-col gap-3">

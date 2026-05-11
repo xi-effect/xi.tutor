@@ -14,6 +14,7 @@ import {
 import { Eyeoff, Eyeon } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
 import { useSearch } from '@tanstack/react-router';
+import type { UseFormSetError } from 'react-hook-form';
 
 import { LinkTanstack, Logo } from 'common.ui';
 import { useGetUrlWithParams, useSyncAutofillOnSubmit } from 'common.utils';
@@ -48,7 +49,7 @@ export const SignInPage = () => {
   const changePasswordShow = () => setIsPasswordShow((prev) => !prev);
 
   const onSubmit = (data: FormData) => {
-    onSigninForm(data, form.setError);
+    onSigninForm(data, form.setError as UseFormSetError<FormData>);
   };
 
   return (

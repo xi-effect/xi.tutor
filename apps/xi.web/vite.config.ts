@@ -15,7 +15,6 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         registerType: 'autoUpdate',
         injectRegister: 'auto',
         devOptions: { enabled: false },
-
         manifest: {
           id: '/',
           name: 'sovlium',
@@ -43,6 +42,11 @@ export default defineConfig(({ mode }: ConfigEnv) => {
 
         // важно: чтобы новые версии SW активировались быстрее
         workbox: {
+          // workbox-build 7.x использует @rollup/plugin-terser в воркерах,
+          // которые при большом числе прекэш-чанков могут зависнуть (race condition).
+          // mode: 'development' пропускает terser — SW не минифицируется, но стабильно собирается.
+          mode: 'development',
+
           skipWaiting: true,
           clientsClaim: true,
 
@@ -94,7 +98,17 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         target: 'es2020',
       },
       // Включаем критические зависимости для предварительной обработки
-      include: ['react', 'react-dom', 'react/jsx-runtime', 'sonner', 'i18next', 'react-i18next'],
+      include: [
+        'react',
+        'react-dom',
+        'react/jsx-runtime',
+        'sonner',
+        'i18next',
+        'react-i18next',
+        'livekit-client',
+        '@livekit/components-react',
+        '@livekit/components-core',
+      ],
       // Принудительно предварительно обрабатываем React
       force: true,
     },
@@ -122,7 +136,18 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       },
       // убедитесь, что symlink‑ы раскрываются ‑ это настройка по‑умолчанию
       preserveSymlinks: false,
-      dedupe: ['react', 'react-dom', 'react/jsx-runtime', 'sonner'],
+      dedupe: [
+        'react',
+        'react-dom',
+        'react/jsx-runtime',
+        'sonner',
+        '@tanstack/react-router',
+        '@tanstack/router-core',
+        '@tanstack/react-store',
+        'livekit-client',
+        '@livekit/components-react',
+        '@livekit/components-core',
+      ],
     },
     css: {
       // Оптимизация CSS

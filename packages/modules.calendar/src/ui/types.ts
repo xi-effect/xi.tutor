@@ -1,4 +1,6 @@
-export interface ICalendarEvent {
+import type { LessonSchedulerMetaForCancel } from 'features.lesson.cancel';
+
+export type ICalendarEvent = {
   id: string;
   title: string;
   start: Date;
@@ -7,28 +9,67 @@ export interface ICalendarEvent {
   isCancelled?: boolean;
   isAllDay?: boolean;
   lessonInfo?: ILessonInfo;
-}
+  scheduler?: ISchedulerEventMeta;
+};
 
-export interface ILessonInfo {
+export type ILessonInfo = {
   studentName: string;
-  subject: string;
+  /** Академический предмет из домена занятия; в расписании кабинета обычно нет — берётся из кабинета (`subject_id`) */
+  subject?: string;
   lessonType: LessonType;
   description?: string;
   paid?: boolean;
   complete?: boolean;
-}
+  /** id пользователя (преподавателя/студента) для UserProfile */
+  teacherId?: number;
+  /** id кабинета, привязанного к занятию */
+  classroomId?: number;
+};
+
+export type ISchedulerEventMeta = {
+  eventId: number;
+  /** UUID persisted-инстанса (sole / repeated_persisted); у repeated_virtual нет */
+  eventInstanceId?: string;
+  instanceKind: 'sole' | 'repeated_virtual' | 'repeated_persisted';
+  repetitionKind?: 'daily' | 'weekly' | null;
+  repetitionModeId?: string;
+  instanceIndex?: number | null;
+  cancelledAt?: string | null;
+  /** UTC-битмаска дней повторений (`weekly_starting_bitmask` из API) */
+  weeklyBitmask?: number;
+};
 
 export type EventType = 'lesson' | 'rest';
 export type LessonType = 'group' | 'individual';
+
+/** Строка занятия в списке на день (расписание, виджет дня) */
+export type ScheduleLessonRow = {
+  id: number;
+  /** id кабинета, привязанного к занятию */
+  classroomId?: number;
+  /** Точное время начала занятия (для расчёта окна 5 минут) */
+  startAt?: Date;
+  startTime: string;
+  endTime: string;
+  subject: string;
+  /** Текстовое описание занятия (тема, план) */
+  description?: string;
+  studentName: string;
+  studentId: number;
+  /** Метаданные планировщика для отмены вхождения (есть у событий из API расписания) */
+  schedulerMeta?: LessonSchedulerMetaForCancel | null;
+  /** UTC-битмаска дней повторений серии (`weekly_starting_bitmask` из API) */
+  weeklyBitmask?: number;
+};
 
 export type CalendarMode = 'day' | 'week' | 'month' | 'year';
 export type WeekOrDayMode = Extract<CalendarMode, 'week' | 'day'>;
 
 export type CalendarDays<T extends CalendarMode> = T extends 'year' ? Date[][] : Date[];
 
-export interface CalendarProps<T extends CalendarMode> {
+export type CalendarProps<T extends CalendarMode> = {
   days: CalendarDays<T>;
-}
+};
 
 export type ModeVariant = {
   label: string;

@@ -296,7 +296,7 @@ export function ScreenShareZoom({ trackRef, children, className }: ScreenShareZo
             <Button
               type="button"
               size="icon"
-              variant="secondary"
+              variant="ghost"
               onClick={handleZoomOut}
               disabled={zoomLevel <= MIN_ZOOM}
               className="group fill-gray-0 h-8 w-8 shrink-0 rounded-lg disabled:pointer-events-none disabled:opacity-50"
@@ -315,7 +315,7 @@ export function ScreenShareZoom({ trackRef, children, className }: ScreenShareZo
             <Button
               type="button"
               size="icon"
-              variant="secondary"
+              variant="ghost"
               onClick={handleZoomIn}
               disabled={zoomLevel >= MAX_ZOOM}
               className="group h-8 w-8 shrink-0 rounded-lg disabled:pointer-events-none disabled:opacity-50"
