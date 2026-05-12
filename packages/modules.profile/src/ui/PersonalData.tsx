@@ -18,8 +18,8 @@ import { UserPreview } from './UserPreview';
 import { useCurrentUser, useUpdateProfile } from 'common.services';
 
 const FormSchema = z.object({
-  username: z.string({ required_error: 'Обязательное поле' }),
-  displayName: z.string({ required_error: 'Обязательное поле' }),
+  username: z.string({ error: 'Обязательное поле' }),
+  displayName: z.string({ error: 'Обязательное поле' }),
 });
 
 export const PersonalData = () => {

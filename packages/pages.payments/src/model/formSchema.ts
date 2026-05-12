@@ -11,7 +11,7 @@ export const formSchema = z.object({
       return Number(val);
     },
     z
-      .number({ required_error: 'Введите число', invalid_type_error: 'Введите число' })
+      .number({ error: 'Введите число' })
       .positive('Стоимость должна быть больше нуля')
       .lt(100000, 'Стоимость не должна превышать 100000')
       .refine(

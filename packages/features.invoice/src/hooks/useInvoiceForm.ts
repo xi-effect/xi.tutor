@@ -2,8 +2,9 @@ import { useEffect } from 'react';
 import { useForm, useFieldArray } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocation } from '@tanstack/react-router';
-import { formSchema, type FormData } from '../model';
+import { formSchema, type FormData, type FormInput } from '../model';
 import { useCreateInvoice } from './useCreateInvoice';
+import { generateRandomId } from '../utils';
 
 export const useInvoiceForm = () => {
   const createInvoiceMutation = useCreateInvoice();
@@ -17,7 +18,7 @@ export const useInvoiceForm = () => {
   const classroomIdMatch = pathname.match(/\/classrooms\/(\d+)/);
   const classroomIdFromUrl = classroomIdMatch ? classroomIdMatch[1] : '';
 
-  const form = useForm<FormData>({
+  const form = useForm<FormInput, unknown, FormData>({
     resolver: zodResolver(formSchema),
     mode: 'onSubmit',
     defaultValues: {
@@ -49,6 +50,7 @@ export const useInvoiceForm = () => {
     setValue('comment', '');
     setValue('items', [
       {
+        id: generateRandomId(),
         name: '',
         price: 0,
         quantity: 0,

@@ -1,9 +1,14 @@
 {
   "change_view": "Change view",
   "today": "Today",
+  "prev_week": "Previous week",
+  "next_week": "Next week",
   "week_days": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
   "months": "January,February,March,April,May,June,July,August,September,October,November,December",
   "add_event": "Create an event",
+  "schedule_empty_day": "No lessons on this day",
+  "schedule_empty_selected_days": "No lessons on the selected days",
+  "add_lesson": "Add lesson",
   "pick_time": "Or set aside time on your calendar",
   "event_form": {
     "lesson": "Lesson",

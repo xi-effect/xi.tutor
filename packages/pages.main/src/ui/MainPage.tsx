@@ -1,14 +1,57 @@
 /* eslint-disable no-irregular-whitespace */
-import { ScrollArea } from '@xipkg/scrollarea';
-import { Materials, Payments, Classrooms } from './components';
-import { OnboardingPopup } from 'common.ui';
+import { useMemo, useState } from 'react';
+import { Materials, Payments, Classrooms, FirstLessonGuideBanner } from './components';
+import { DateTimeDisplay, OnboardingPopup } from 'common.ui';
 import { useCurrentUser } from 'common.services';
-// import { Sidebar } from './components/Sidebar';
-// import { AssignLessonButton } from './components/AssignLessonButton';
+import { useMediaQuery } from '@xipkg/utils';
+import { NearestLessonCard, useStudentSchedule, useTutorSchedule } from 'modules.calendar';
+import { MovingLessonModal } from 'features.lesson.move';
+import { Lessons } from './components/Lessons/Lessons';
+import {
+  movingPropsFromLessonRow,
+  scheduleItemToLessonRow,
+} from './components/Lessons/scheduleHelpers';
+
+const NEAREST_LESSON_DAYS = 7;
+
+const getNearestLessonRange = () => {
+  const now = new Date();
+  const before = new Date(now);
+  before.setDate(before.getDate() + NEAREST_LESSON_DAYS);
+  return {
+    happensAfter: now.toISOString(),
+    happensBefore: before.toISOString(),
+  };
+};
 
 export const MainPage = () => {
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+
+  const isMobile = useMediaQuery('(max-width: 720px)');
+  const [moveLessonOpen, setMoveLessonOpen] = useState(false);
+
+  const range = useMemo(getNearestLessonRange, []);
+  const tutorScheduleQuery = useTutorSchedule({
+    ...range,
+    enabled: isMobile && !isUserLoading && isTutor === true,
+  });
+  const studentScheduleQuery = useStudentSchedule({
+    ...range,
+    enabled: isMobile && !isUserLoading && isTutor === false,
+  });
+  const scheduleQuery = isTutor ? tutorScheduleQuery : studentScheduleQuery;
+
+  const isNearestLoading = isUserLoading || scheduleQuery.isLoading;
+
+  const nearestLesson = useMemo(() => {
+    const items = scheduleQuery.data ?? [];
+    const upcoming = items
+      .filter((item) => item.cancelledAt == null)
+      .filter((item) => new Date(item.endsAt).getTime() > Date.now())
+      .sort((a, b) => new Date(a.startsAt).getTime() - new Date(b.startsAt).getTime());
+    return upcoming[0] ? scheduleItemToLessonRow(upcoming[0]) : null;
+  }, [scheduleQuery.data]);
 
   const steps = [
     {
@@ -43,22 +86,6 @@ export const MainPage = () => {
       side: 'bottom' as const,
       align: 'end' as const,
     },
-    // {
-    //   element: '#materials-tab',
-    //   popover: {
-    //     description: 'Изучайте материалы и закрепляйте навыки на практике',
-    //   },
-    //   side: 'bottom' as const,
-    //   align: 'end' as const,
-    // },
-    // {
-    //   element: '#payments-tab',
-    //   popover: {
-    //     description: 'Когда получите счёт, оплатите его удобным способом. Все оплаты — здесь',
-    //   },
-    //   side: 'bottom' as const,
-    //   align: 'end' as const,
-    // },
     {
       element: '#invite-student-button',
       popover: {
@@ -115,20 +142,51 @@ export const MainPage = () => {
   ];
 
   return (
-    <div className="flex h-full flex-col overflow-auto lg:flex-row lg:gap-4">
-      {/* <AssignLessonButton className="absolute right-4 hidden lg:flex" /> */}
-      <ScrollArea
-        id="lessons"
-        type="always"
-        className="h-[calc(100vh-64px)] w-full flex-1 overflow-visible lg:overflow-auto"
-      >
-        {/* <Lessons /> */}
-        <Classrooms />
-        <Payments />
-        {isTutor && <Materials />}
-        <OnboardingPopup steps={steps} disabled={false} />
-      </ScrollArea>
-      {/* <Sidebar /> */}
+    <div className="bg-gray-5 flex h-full min-h-0 flex-col">
+      {/* Шапка на всю ширину контентной области; не участвует в прокрутке ниже */}
+      {!isMobile && (
+        <div className="shrink-0 p-5">
+          <DateTimeDisplay />
+        </div>
+      )}
+      {/* Ниже шапки — оставшаяся высота; справа один скролл по кабинетам / оплатам / материалам */}
+      <div className="flex min-h-0 flex-1 flex-col">
+        <div className="flex min-h-0 flex-1 flex-col items-start gap-4 p-5 sm:flex-row sm:py-0 sm:pr-0">
+          {!isMobile && (
+            <div className="lg:bg-gray-5 flex shrink-0 flex-col pb-6 lg:sticky lg:top-0 lg:z-10 lg:self-start">
+              <Lessons />
+            </div>
+          )}
+          {isMobile && !isNearestLoading && nearestLesson == null && (
+            <div className="border-gray-10 bg-gray-0 flex w-full flex-col items-center gap-2 rounded-2xl border border-dashed px-4 py-6 text-center">
+              <p className="text-m-base font-semibold text-gray-100">Занятий нет</p>
+              <p className="text-s-base text-gray-60">
+                В ближайшие {NEAREST_LESSON_DAYS} дней занятий не запланировано
+              </p>
+            </div>
+          )}
+          {isMobile && nearestLesson != null && (
+            <>
+              <NearestLessonCard
+                lesson={nearestLesson}
+                onReschedule={() => setMoveLessonOpen(true)}
+              />
+              <MovingLessonModal
+                open={moveLessonOpen}
+                onOpenChange={setMoveLessonOpen}
+                {...movingPropsFromLessonRow(nearestLesson)}
+              />
+            </>
+          )}
+          <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-5 self-stretch overscroll-contain pb-6 sm:overflow-y-auto">
+            {!isMobile && isTutor && <FirstLessonGuideBanner />}
+            <Classrooms />
+            <Payments />
+            {isTutor && <Materials />}
+          </div>
+        </div>
+      </div>
+      <OnboardingPopup steps={steps} disabled={false} />
     </div>
   );
 };

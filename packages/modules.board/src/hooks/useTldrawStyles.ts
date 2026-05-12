@@ -1,24 +1,48 @@
-import { useEditor } from 'tldraw';
-import { DefaultColorStyle, DefaultSizeStyle, STROKE_SIZES } from 'tldraw';
 import { useCallback } from 'react';
+import {
+  DefaultFillStyle,
+  useEditor,
+  DefaultColorStyle,
+  DefaultSizeStyle,
+  STROKE_SIZES,
+} from 'tldraw';
 import {
   DEFAULT_PEN_COLOR,
   DEFAULT_PEN_OPACITY,
   DEFAULT_PEN_THICKNESS,
 } from '../ui/components/config';
+import { BorderColorStyle } from '../shapes/shapeStyles';
+import { useTldrawStore } from '../store';
+import { TColor, TFill, ToolType } from '../types';
 
 const DEFAULT_STROKE_SIZE_S = STROKE_SIZES.s;
 const XS_STROKE_SIZE_S = Math.max(1, Math.round(DEFAULT_STROKE_SIZE_S / 2));
 
 export const useTldrawStyles = () => {
   const editor = useEditor();
+  const { geoColor, geoBorderColor, geoFillType, geoBorderThickness } = useTldrawStore();
 
   const resetToDefaults = useCallback(() => {
     if (!editor) return;
+
     editor.setStyleForNextShapes(DefaultColorStyle, DEFAULT_PEN_COLOR);
     editor.setStyleForNextShapes(DefaultSizeStyle, DEFAULT_PEN_THICKNESS);
     editor.setOpacityForNextShapes(DEFAULT_PEN_OPACITY);
   }, [editor]);
+
+  const applyStoreStylesForShape = useCallback(
+    (toolName: ToolType) => {
+      if (!editor) return;
+
+      if (toolName === 'xi-geo') {
+        editor.setStyleForNextShapes(DefaultFillStyle, geoFillType);
+        editor.setStyleForNextShapes(BorderColorStyle, geoBorderColor);
+        editor.setStyleForNextShapes(DefaultColorStyle, geoColor);
+        editor.setStyleForNextShapes(DefaultSizeStyle, geoBorderThickness);
+      }
+    },
+    [editor, geoFillType, geoBorderColor, geoColor, geoBorderThickness],
+  );
 
   const setColor = useCallback(
     (colorName: string) => {
@@ -103,6 +127,24 @@ export const useTldrawStyles = () => {
     [editor],
   );
 
+  const setSelectedShapesBorderColor = useCallback(
+    (colorName: TColor) => {
+      if (!editor) return;
+
+      editor.setStyleForSelectedShapes(BorderColorStyle, colorName);
+    },
+    [editor],
+  );
+
+  const setSelectedShapesFillType = useCallback(
+    (fillType: TFill) => {
+      if (!editor) return;
+
+      editor.setStyleForSelectedShapes(DefaultFillStyle, fillType);
+    },
+    [editor],
+  );
+
   const setSelectedShapesThickness = useCallback(
     (size: 'xs' | 's' | 'm' | 'l' | 'xl') => {
       if (!editor) return;
@@ -136,5 +178,8 @@ export const useTldrawStyles = () => {
     setSelectedShapesColor,
     setSelectedShapesThickness,
     setSelectedShapesOpacity,
+    setSelectedShapesBorderColor,
+    setSelectedShapesFillType,
+    applyStoreStylesForShape,
   };
 };

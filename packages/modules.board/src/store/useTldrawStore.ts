@@ -4,6 +4,7 @@ import { ToolType } from '../types';
 
 export type InputMode = 'auto' | 'pen' | 'mouse';
 export type PenThickness = 'xs' | 's' | 'm' | 'l' | 'xl';
+export type TGeoBorderThickness = 's' | 'm' | 'l' | 'xl';
 
 export interface PenPreset {
   color: string;
@@ -52,6 +53,15 @@ interface TldrawState {
   setPencilThickness: (thickness: PenThickness) => void;
   pencilOpacity: number;
   setPencilOpacity: (opacity: number) => void;
+  // xi-geo
+  geoColor: string;
+  setGeoColor: (color: string) => void;
+  geoBorderColor: string;
+  setGeoBorderColor: (color: string) => void;
+  geoFillType: string;
+  setGeoFillType: (value: string) => void;
+  geoBorderThickness: TGeoBorderThickness;
+  setGeoBorderThickness: (thickness: TGeoBorderThickness) => void;
 }
 
 export const useTldrawStore = create<TldrawState>()(
@@ -130,6 +140,16 @@ export const useTldrawStore = create<TldrawState>()(
       setStickerColor: (color: string) => set(() => ({ stickerColor: color })),
       arrowColor: 'black',
       setArrowColor: (color: string) => set(() => ({ arrowColor: color })),
+
+      geoColor: 'white',
+      setGeoColor: (color: string) => set(() => ({ geoColor: color })),
+      geoBorderColor: 'black',
+      setGeoBorderColor: (color: string) => set(() => ({ geoBorderColor: color })),
+      geoFillType: 'semi',
+      setGeoFillType: (value: string) => set(() => ({ geoFillType: value })),
+      geoBorderThickness: 'm',
+      setGeoBorderThickness: (thickness: TGeoBorderThickness) =>
+        set(() => ({ geoBorderThickness: thickness })),
     }),
     { name: 'tldraw-storage' },
   ),

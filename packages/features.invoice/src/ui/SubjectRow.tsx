@@ -1,26 +1,23 @@
 import { Button } from '@xipkg/button';
-import { FormControl, FormField, FormItem, useFieldArray, useFormContext } from '@xipkg/form';
+import { FormControl, FormField, FormItem, useFormContext } from '@xipkg/form';
 import { Close } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
+import { roundMoney } from '../model';
 
 type SubjectRowPropsT = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   control: any;
   index: number;
+  onRemove: () => void;
 };
 
-export const SubjectRow = ({ control, index }: SubjectRowPropsT) => {
+export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
   const { watch } = useFormContext();
   const items = watch('items');
 
   const item = items[index];
 
-  const totalPrice = item.price * (item.quantity || 0);
-
-  const { remove } = useFieldArray({
-    control,
-    name: 'items',
-  });
+  const totalPrice = roundMoney(item.price * (item.quantity || 0));
 
   return (
     <div className="mb-4 grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2">
@@ -56,12 +53,28 @@ export const SubjectRow = ({ control, index }: SubjectRowPropsT) => {
                 type="number"
                 placeholder="Стоимость"
                 min={0}
+                step={0.01}
                 variant="s"
                 after={<span className="text-gray-60">₽</span>}
                 onChange={(e) => {
-                  const numValue = e.target.valueAsNumber;
-                  const value = e.target.value === '' || isNaN(numValue) ? '' : numValue;
-                  formField.onChange(value);
+                  const rawValue = e.target.value.replace(',', '.');
+
+                  if (rawValue === '') {
+                    formField.onChange('');
+                    return;
+                  }
+
+                  if (!/^\d*(\.\d{0,2})?$/.test(rawValue)) {
+                    return;
+                  }
+
+                  const numValue = Number(rawValue);
+
+                  if (isNaN(numValue)) {
+                    return;
+                  }
+
+                  formField.onChange(numValue);
                 }}
               />
             </FormControl>
@@ -109,7 +122,12 @@ export const SubjectRow = ({ control, index }: SubjectRowPropsT) => {
           />
         </FormControl>
       </FormItem>
-      <Button className="ml-2 h-[24px] w-[24px] p-0" variant="none" onClick={() => remove(index)}>
+      <Button
+        type="button"
+        className="ml-2 h-[24px] w-[24px] p-0"
+        variant="none"
+        onClick={onRemove}
+      >
         <Close size="s" className="fill-gray-40 h-6 w-6" />
       </Button>
     </div>

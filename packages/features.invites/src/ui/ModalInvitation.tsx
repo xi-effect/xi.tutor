@@ -88,7 +88,7 @@ export const ModalInvitation = ({
       }}
     >
       {children != null && <ModalTrigger asChild>{children}</ModalTrigger>}
-      <ModalContent className="max-w-[600px]">
+      <ModalContent className="max-w-[600px]" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
           <ModalTitle className="dark:text-gray-100">Индивидуальные приглашения</ModalTitle>

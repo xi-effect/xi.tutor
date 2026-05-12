@@ -1,1 +1,0 @@
-export { YearCalendar } from './YearCalendar';

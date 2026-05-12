@@ -14,6 +14,10 @@ const paramsSchema = z.object({
 const searchSchema = z.object({
   tab: z.string().optional(),
   call: z.string().optional(),
+  /** ISO-дата — перейти на неделю расписания, содержащую этот момент (вместе с `tab=schedule`). */
+  focused_at: z.string().optional(),
+  /** Persisted инстанс — открыть карточку занятия; дата недели берётся из ответа деталей (`starts_at`). */
+  event_instance_id: z.string().optional(),
 });
 
 // @ts-ignore

@@ -19,6 +19,7 @@ export const CardsGridTutor = () => {
       parentRef={parentRef}
       emptyText="Здесь будут ваши ученики и группы"
       inviteText="Пригласите кого-нибудь"
+      withHelpLink
     />
   );
 };

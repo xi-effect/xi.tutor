@@ -1,6 +1,11 @@
 {
+  "profileDrawerTitle": "Profile",
+  "installApp": "Install app",
+  "notifications": "Notifications",
+  "notificationSettings": "Notification settings",
   "home": "Home",
   "calendar": "Calendar",
+  "schedule": "Schedule",
   "students": "Students",
   "materials": "Materials",
   "payments": "Payments",
@@ -15,6 +20,8 @@
   "classrooms": "Classrooms",
   "hints": "Hints",
   "roleChanged": "Role successfully changed to {{role}}",
+  "wiki": "Knowledge base",
+  "menu": "Menu",
   "supportModal": {
     "title": "Contact us",
     "description": "Choose a convenient way to reach us — we're always happy to help!",

@@ -8,6 +8,7 @@ export interface CreateInvoicePayload {
     comment: string | null;
   };
   items: Array<{
+    id: string;
     name: string;
     price: number;
     quantity: number;

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { Button } from '@xipkg/button';
-import { Form } from '@xipkg/form';
+import { Form, useFieldArray } from '@xipkg/form';
 import { Close } from '@xipkg/icons';
 import {
   Modal,
@@ -20,12 +20,13 @@ const cleanupBodyScrollLock = () => {
 };
 import { useFetchClassrooms } from 'common.services';
 import { useInvoiceForm } from '../hooks';
-import type { FormData } from '../model';
+import { roundMoney, type FormData } from '../model';
 import { ClassroomSelector } from './ClassroomSelector';
 import { CommentField } from './CommentField';
 import { SubjectRow } from './SubjectRow';
 import { SubjectRowMobile } from './SubjectRowMobile';
 import { TemplateSelector } from './TemplateSelector';
+import { generateRandomId } from '../utils';
 
 type InvoiceModalProps = {
   open: boolean;
@@ -42,6 +43,11 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
   const { data: classrooms } = useFetchClassrooms();
 
   const totalLessons = items.reduce((acc, item) => acc + item.quantity, 0);
+
+  const { remove } = useFieldArray({
+    control,
+    name: 'items',
+  });
 
   const handleCloseModal = () => {
     handleClearForm();
@@ -60,9 +66,12 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
   };
 
   // Вычисляем общую стоимость счёта
-  const totalInvoicePrice = items.reduce((total, item) => {
-    return total + item.price * (item.quantity || 0);
-  }, 0);
+  const totalInvoicePrice = roundMoney(
+    items.reduce((total, item) => {
+      const priceNum = typeof item.price === 'string' ? Number(item.price) || 0 : item.price;
+      return total + priceNum * (item.quantity || 0);
+    }, 0),
+  );
 
   return (
     <Modal
@@ -110,11 +119,12 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
             <div className={`flex gap-2 ${isMobile ? 'flex-col' : 'flex-row'}`}>
               <Button
                 className={`h-[32px] ${isMobile ? 'w-full' : 'w-fit'}`}
-                variant="secondary"
+                variant="ghost"
                 size="s"
                 type="button"
                 onClick={() => {
                   append({
+                    id: generateRandomId(),
                     name: '',
                     price: 0,
                     quantity: 1,
@@ -140,8 +150,13 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                   <div className="ml-2 h-[24px] w-[24px]" />
                 </div>
                 <div className="my-2">
-                  {items.map((_, index) => (
-                    <SubjectRow key={index} control={control} index={index} />
+                  {items.map((item, index) => (
+                    <SubjectRow
+                      key={item.id}
+                      control={control}
+                      index={index}
+                      onRemove={() => remove(index)}
+                    />
                   ))}
                   <div className="grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2">
                     <div />
@@ -191,7 +206,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
               <Button
                 className={`${isMobile ? 'w-full' : 'w-[128px]'} rounded-2xl`}
                 size="m"
-                variant="secondary"
+                variant="ghost"
                 onClick={handleCloseModal}
               >
                 Отменить

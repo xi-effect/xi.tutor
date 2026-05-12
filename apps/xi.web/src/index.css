@@ -39,10 +39,25 @@
 @source "../../../packages/pages.email/src";
 @source "../../../packages/pages.notes/src";
 @source "../../../packages/pages.email-confirm/src";
+@source "../../../packages/features.lesson.add/src";
+@source "../../../packages/features.lesson.move/src";
+@source "../../../packages/features.group.add/src";
+@source "../../../packages/features.group.manage/src";
+@source "../../../packages/features.group.invite/src";
+@source "../../../packages/pages.calendar/src";
+@source "../../../packages/features.lesson.cancel/src";
+@source "../../../packages/features.invoice.card/src";
+@source "../../../packages/features.lesson.info/src";
+@source "../../../packages/features.lesson.change/src";
+
 
 @source "../../../node_modules/@xipkg";
 
 /* app.css или globals.css */
+:root {
+  --lessons-panel-width: 460px;
+}
+
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;

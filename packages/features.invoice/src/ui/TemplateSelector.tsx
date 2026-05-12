@@ -9,10 +9,11 @@ import {
 import { Control, useFieldArray } from '@xipkg/form';
 import { useMediaQuery } from '@xipkg/utils';
 import { useTemplatesList } from 'common.services';
-import type { FormData } from '../model';
+import { generateRandomId } from '../utils';
+import type { FormData, FormInput } from '../model';
 
 type TemplateSelectorProps = {
-  control: Control<FormData>;
+  control: Control<FormInput, unknown, FormData>;
 };
 
 export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
@@ -27,6 +28,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
 
   const handleTemplateSelect = (template: any) => {
     append({
+      id: generateRandomId(),
       name: template.name,
       price: Number(template.price),
       quantity: 1,
@@ -64,7 +66,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="h-[32px]" variant="secondary" size="s" type="button">
+        <Button className="h-[32px]" variant="ghost" size="s" type="button">
           Добавить занятие из шаблона
         </Button>
       </DropdownMenuTrigger>

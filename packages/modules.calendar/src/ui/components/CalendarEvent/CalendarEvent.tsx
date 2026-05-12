@@ -6,10 +6,10 @@ import { useOpenForm } from '../../../store/formEventStore';
 
 import type { ICalendarEvent } from '../../types';
 
-interface CalendarEventProps {
+type CalendarEventProps = {
   event: ICalendarEvent;
   isPast?: boolean;
-}
+};
 
 export const CalendarEvent = memo<CalendarEventProps>(({ event, isPast }) => {
   const handleOpenForm = useOpenForm();
