@@ -13,6 +13,7 @@ import { useBlockMenuActions, useYjsContext } from '../../hooks';
 import { cn } from '@xipkg/utils';
 import { useState, useEffect } from 'react';
 import { getAxiosInstance } from 'common.config';
+import { filesApiConfig, FilesQueryKey } from 'common.services';
 
 // Кеш blob URL для уже загруженных изображений (по исходному src)
 const blobUrlCache = new Map<string, string>();
@@ -32,7 +33,12 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
       }
 
       // Пропускаем data: и blob: URL — они уже пригодны к отображению
-      if (src.startsWith('data:') || src.startsWith('blob:')) {
+      if (
+        src.startsWith('data:') ||
+        src.startsWith('blob:') ||
+        src.startsWith('https') ||
+        src.startsWith('http')
+      ) {
         setImageSrc(src);
         return;
       }
@@ -46,8 +52,11 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
 
       try {
         // Загружаем изображение с заголовком токена через axios
+        const { getUrl } = filesApiConfig[FilesQueryKey.GetFile];
+        const srcUrl = getUrl(src);
+
         const axiosInst = await getAxiosInstance();
-        const response = await axiosInst.get(src, {
+        const response = await axiosInst.get(srcUrl, {
           responseType: 'blob',
           headers: {
             'x-storage-token': storageToken,

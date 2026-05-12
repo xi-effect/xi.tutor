@@ -24,13 +24,12 @@ export const ImageUploadModal = () => {
     const file = files[0];
     const optimizedImage = await optimizeImage(file);
     try {
-      const uploadedUrl = await uploadImage({
+      const uploadedId = await uploadImage({
         file: optimizedImage,
         token: storageItem.storage_token,
       });
 
-      insertImage(uploadedUrl);
-
+      insertImage(uploadedId);
       closeModal();
     } catch (err) {
       console.error('Ошибка при загрузке изображения:', err);
