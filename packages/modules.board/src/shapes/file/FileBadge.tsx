@@ -2,7 +2,7 @@ import { FileShape } from './FileShape';
 import { Download } from '@xipkg/icons';
 import { cn, formatBytesSize } from '@xipkg/utils';
 import { downloadFileRequest } from 'common.services';
-import { SyntheticEvent } from 'react';
+import { SyntheticEvent, useState } from 'react';
 import { useYjsContext } from '../../providers/YjsProvider';
 import { toast } from 'sonner';
 
@@ -13,15 +13,19 @@ type FileBadgeProps = {
 export const FileBadge = ({ shape }: FileBadgeProps) => {
   const { src: fileId, fileName, fileSize: size, status } = shape.props;
   const { token: yjsToken } = useYjsContext();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleIconClick = async (e: SyntheticEvent<HTMLDivElement>) => {
     e.stopPropagation();
+    if (isLoading) return;
+    setIsLoading(true);
     toast.success('Загрузка началась...', { duration: 5000 });
     await downloadFileRequest({
       fileId,
       fileName,
       token: yjsToken,
     });
+    setIsLoading(false);
   };
 
   if (status === 'offline') {
