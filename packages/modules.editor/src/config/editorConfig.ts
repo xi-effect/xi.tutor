@@ -56,6 +56,7 @@ export const getExtensions = (
       // Отключаем undoRedo — Collaboration приносит свою реализацию,
       // конфликт двух history-плагинов вызывает infinite update loop
       undoRedo: false,
+
       // Отключаем некоторые расширения, которые будем настраивать отдельно
       horizontalRule: false,
       underline: false, // подключаем Underline отдельно ниже — иначе дубликат имени

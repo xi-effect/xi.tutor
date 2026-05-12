@@ -138,10 +138,13 @@
   cursor: grab;
   border-radius: 0.25rem;
 }
+
+.ProseMirror:hover + div .drag-handle,
 .xi-editor .drag-handle:hover,
 .xi-editor .drag-handle[data-dragging='true'] {
   opacity: 1;
 }
+
 .xi-editor .drag-handle:active {
   cursor: grabbing;
 }
