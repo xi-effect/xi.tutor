@@ -73,7 +73,7 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
         const blobUrl = URL.createObjectURL(blob);
 
         // Сохраняем в кеш
-        blobUrlCache.set(src, blobUrl);
+        blobUrlCache.set(srcUrl, blobUrl);
 
         setImageSrc(blobUrl);
       } catch (error) {
@@ -108,7 +108,9 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
       <div
         className={cn(
           'absolute top-2 right-2 flex transition-opacity',
-          selected ? 'opacity-100' : 'pointer-events-none opacity-0',
+          'pointer-events-auto opacity-100',
+          // selected ? 'opacity-100' : 'pointer-events-none opacity-0',
+          //будут ли работать другие функции меню если картинка не selected node
         )}
       >
         <DropdownMenu modal={false}>
@@ -125,7 +127,7 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
           >
             <DropdownMenuItem
               className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-              onSelect={() => downloadImage(src)}
+              onSelect={() => downloadImage(imageSrc)}
             >
               <Download size="sm" className="size-6" />
               <span className="text-sm">Скачать</span>

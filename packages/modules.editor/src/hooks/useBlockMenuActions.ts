@@ -133,8 +133,6 @@ export const useBlockMenuActions = (editor: Editor | null) => {
   };
 
   const downloadImage = (src: string) => {
-    //TODO: downloading is not working
-
     const link = document.createElement('a');
     link.href = src;
     link.download = 'image.png';
