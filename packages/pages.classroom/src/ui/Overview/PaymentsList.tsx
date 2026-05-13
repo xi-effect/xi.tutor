@@ -51,6 +51,7 @@ export const PaymentsList = () => {
     <div className="flex flex-row gap-8 pb-4">
       {payments.map((payment) => (
         <InvoiceCard
+          className="w-full max-w-[430px] min-w-[300px]"
           key={payment.id}
           payment={payment}
           currentUserRole={isTutor ? 'tutor' : 'student'}

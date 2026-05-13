@@ -3,10 +3,9 @@ import { useLocation, useNavigate } from '@tanstack/react-router';
 import { useMediaQuery } from '@xipkg/utils';
 import { formatNotificationCount, useNotificationsContext } from 'common.services';
 import type { CustomNotificationModalPayload } from 'common.services';
-import { NotificationBadge } from './NotificationBadge';
 import { NotificationsDropdown } from './NotificationsDropdown';
 import { NotificationsList } from './NotificationsList';
-import { NotificationsMobileDrawer } from './NotificationsMobileDrawer';
+import { NotificationsMobileDropdown } from './NotificationsMobileDropdown';
 import { CustomNotificationModal } from './CustomNotificationModal';
 import { openNotificationLink } from './notificationsNavigation';
 import { useNotificationsInfiniteScroll } from '../../../hooks';
@@ -26,7 +25,6 @@ export const Notifications = () => {
     notifications,
     unreadCount,
     markAsRead,
-    // markAllAsRead,
     isLoading,
     hasMore,
     loadMore,
@@ -38,9 +36,6 @@ export const Notifications = () => {
   const handleNavigate = (url: string) => {
     openNotificationLink(url, navigate);
   };
-
-  // Виртуализация списка уведомлений (временно отключено для проверки)
-  // const virtualizer = useVirtualList(scrollAreaRef, notifications);
 
   const handleToSettings = () => {
     navigate({ to: location.pathname, search: { profile: 'notifications' } });
@@ -76,17 +71,19 @@ export const Notifications = () => {
     />
   );
 
-  const badge = <NotificationBadge count={formatNotificationCount(unreadCount)} />;
+  const countLabel = formatNotificationCount(unreadCount);
+  const hasUnread = unreadCount > 0;
 
   return (
     <>
       {isMobile ? (
-        <NotificationsMobileDrawer
+        <NotificationsMobileDropdown
           isOpen={isOpen}
           onOpenChange={handleOpenChange}
           onOpenSettings={handleToSettings}
           notificationsList={notificationsList}
-          badge={badge}
+          hasUnread={hasUnread}
+          countLabel={countLabel}
         />
       ) : (
         <NotificationsDropdown
@@ -94,7 +91,8 @@ export const Notifications = () => {
           onOpenChange={handleOpenChange}
           onOpenSettings={handleToSettings}
           notificationsList={notificationsList}
-          badge={badge}
+          hasUnread={hasUnread}
+          countLabel={countLabel}
         />
       )}
 

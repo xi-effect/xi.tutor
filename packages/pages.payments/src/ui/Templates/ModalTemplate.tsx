@@ -159,7 +159,7 @@ export const ModalTemplate = ({ isOpen, type, onClose, name, price, id }: ModalT
               >
                 {type === 'edit' ? 'Сохранить' : 'Создать'}
               </Button>
-              <Button variant="secondary" onClick={onClose} type="button">
+              <Button variant="ghost" onClick={onClose} type="button">
                 Отменить
               </Button>
             </ModalFooter>

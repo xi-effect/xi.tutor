@@ -109,7 +109,7 @@ export const ModalEditMaterialName = ({
                 Сохранить
               </Button>
               <Button
-                variant="secondary"
+                variant="ghost"
                 onClick={onClose}
                 type="button"
                 data-umami-event="material-edit-cancel"

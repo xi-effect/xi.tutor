@@ -1,26 +1,8 @@
+import { useCreateMaterial } from '../hooks/useCreateMaterial';
 import { Note, Board } from './components';
-import { useAddMaterials, type MaterialsDataT } from 'common.services';
-import { useNavigate } from '@tanstack/react-router';
 
 export const MaterialsAdd = ({ onlyDrafts = false }: { onlyDrafts?: boolean }) => {
-  const { addMaterials } = useAddMaterials();
-  const navigate = useNavigate();
-
-  // const { data: user } = useCurrentUser();
-  // const isTutor = user?.default_layout === 'tutor';
-
-  const handleCreate = (kind: MaterialsDataT['content_kind']) => {
-    addMaterials.mutate(
-      { content_kind: kind },
-      {
-        onSuccess: (response) => {
-          navigate({
-            to: `/materials/${response.data.id}/${response.data.content_kind}`,
-          });
-        },
-      },
-    );
-  };
+  const { createMaterial } = useCreateMaterial();
 
   return (
     <div className="ml-auto flex flex-row items-center gap-2">
@@ -32,9 +14,9 @@ export const MaterialsAdd = ({ onlyDrafts = false }: { onlyDrafts?: boolean }) =
         />
       )} */}
 
-      <Note onlyDrafts={onlyDrafts} onCreate={() => handleCreate('note')} />
+      <Note onlyDrafts={onlyDrafts} onCreate={() => createMaterial('note')} />
 
-      <Board onlyDrafts={onlyDrafts} onCreate={() => handleCreate('board')} />
+      <Board onlyDrafts={onlyDrafts} onCreate={() => createMaterial('board')} />
     </div>
   );
 };

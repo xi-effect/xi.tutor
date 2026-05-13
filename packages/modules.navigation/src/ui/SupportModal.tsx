@@ -49,7 +49,7 @@ export const SupportModal = ({ open, onOpenChange }: SupportModalProps) => {
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
-      <ModalContent className="max-w-[480px]">
+      <ModalContent className="max-w-[480px]" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton />
           <ModalTitle>{t('supportModal.title')}</ModalTitle>

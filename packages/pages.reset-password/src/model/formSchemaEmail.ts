@@ -15,7 +15,7 @@ export const useFormSchemaEmail = () => {
     return z.object({
       email: z
         .string({
-          required_error: t('validation.required'),
+          error: t('validation.required'),
         })
         .min(1, { message: t('validation.required') })
         .email({ message: t('validation.wrong_format') })

@@ -139,7 +139,7 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
       }}
     >
       {children && <ModalTrigger asChild>{children}</ModalTrigger>}
-      <ModalContent>
+      <ModalContent aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
           <ModalTitle className="dark:text-gray-100">Добавление ученика в группу</ModalTitle>

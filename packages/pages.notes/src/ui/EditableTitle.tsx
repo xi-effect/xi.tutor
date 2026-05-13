@@ -80,7 +80,7 @@ export const EditableTitle = ({
                     onBlur={handleBlur}
                     onKeyDown={handleKeyDown}
                     className={cn(
-                      'text-l-base sm:text-h6 xl:text-h3 h-7 w-full border-none bg-transparent p-0 shadow-none sm:h-9 xl:h-12',
+                      'h-7 w-full border-none bg-transparent p-0 text-[16px] shadow-none sm:h-9 sm:text-[28px]',
                       className,
                     )}
                     autoFocus
@@ -102,7 +102,7 @@ export const EditableTitle = ({
   return (
     <h3
       className={cn(
-        'text-l-base sm:text-h6 xl:text-h3 font-semibold break-all select-none',
+        'text-[16px] font-semibold break-all select-none sm:text-[28px]',
         isTutor && 'cursor-pointer',
         className,
       )}

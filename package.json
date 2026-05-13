@@ -26,9 +26,15 @@
   "engines": {
     "node": ">=20"
   },
-  "packageManager": "pnpm@10.30.0",
-  "workspaces": ["apps/*", "packages/*"],
+  "packageManager": "pnpm@10.33.2",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild", "core-js"]
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "core-js"
+    ]
   }
 }

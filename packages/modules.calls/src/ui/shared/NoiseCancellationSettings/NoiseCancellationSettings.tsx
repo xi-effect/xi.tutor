@@ -1,5 +1,5 @@
 import { Label } from '@xipkg/label';
-import { Switch } from '@xipkg/switcher';
+import { Toggle } from '@xipkg/toggle';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
 import type { UseNoiseCancellationResult } from '../../../hooks/useNoiseCancellation';
 import type { NoiseCancellationMode } from '../../../types/noiseCancellation';
@@ -39,7 +39,7 @@ export function NoiseCancellationSettings({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <Label className="font-medium text-gray-100">Шумоподавление</Label>
-        <Switch
+        <Toggle
           checked={nc.isEnabled}
           onCheckedChange={nc.setEnabled}
           disabled={nc.isApplying}

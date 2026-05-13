@@ -55,8 +55,8 @@ export const Header = () => {
   };
 
   return (
-    <div className="bg-gray-0 text-xl-base sticky top-0 z-50 w-full px-4 pb-4">
-      <div className="flex items-center justify-between">
+    <div className="bg-gray-0 border-gray-10 sticky top-0 z-50 flex h-[56px] min-h-[56px] w-full rounded-2xl border px-2">
+      <div className="flex w-full items-center justify-between">
         <div className="relative flex w-full items-center justify-center gap-2">
           <Button
             variant="none"
@@ -66,7 +66,7 @@ export const Header = () => {
           >
             <ArrowLeft size="s" className="size-6" />
           </Button>
-          <div className="w-full max-w-4xl pl-16 lg:pl-20">
+          <div className="w-full max-w-4xl pl-29">
             {isLoading ? (
               <Skeleton variant="text" className="h-6 w-full" />
             ) : (
