@@ -19,7 +19,7 @@ import { insertImage } from '../../../features/pickAndInsertImage';
 import { insertPdf } from '../../../features/pickAndInsertPdf';
 import { insertAudio, AUDIO_ACCEPT } from '../../../features/pickAndInsertAudio';
 import { insertFile, FILE_ACCEPT } from '../../../features/pickAndInsertFile';
-import { useRetryFileQueue } from 'common.services';
+import { initFileDB, useRetryFileQueue } from 'common.services';
 
 // Маппинг инструментов Kanva на Tldraw
 const toolMapping: Record<string, string> = {
@@ -75,6 +75,10 @@ export const Navbar = track(
         });
       })();
     }, [isOnline, processQueue, editor]);
+
+    useEffect(() => {
+      initFileDB();
+    }, []);
 
     // Добавляем горячие клавиши
     useHotkeys();

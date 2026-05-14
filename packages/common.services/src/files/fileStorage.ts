@@ -1,6 +1,7 @@
 const DB_NAME = 'file-upload-db';
 const STORE_NAME = 'files';
 const VERSION = 1;
+
 type FileShape = {
   file: File;
   token: string;
@@ -20,6 +21,10 @@ function openDB(): Promise<IDBDatabase> {
     request.onsuccess = () => resolve(request.result);
     request.onerror = () => reject(request.error);
   });
+}
+
+export async function initFileDB() {
+  await openDB();
 }
 
 export async function saveFileToDB(key: string, { file, token }: FileShape) {
