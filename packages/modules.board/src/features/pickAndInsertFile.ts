@@ -4,7 +4,7 @@ import { uploadFileRequest } from 'common.services';
 import { nanoid } from 'nanoid';
 import { ALLOWED_FILE_MIME_TYPES, FileShape } from '../shapes/file';
 import { FILE_SHAPE_HEIGHT, FILE_SHAPE_WIDTH } from '../shapes/file/FileShape';
-import { saveFileToDB, deleteFileFromDB } from 'common.services';
+import { saveFileToDB } from 'common.services';
 import { type RetryRequest } from 'common.services';
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
@@ -47,8 +47,7 @@ export async function insertFile(
     },
   ]);
 
-  const fileKey = nanoid();
-  await saveFileToDB(fileKey, file);
+  await saveFileToDB(shapeId, { file, token });
 
   try {
     if (!editor.getShape(shapeId)) return; // если shape уже удалён
@@ -73,10 +72,8 @@ export async function insertFile(
     });
 
     toast.success('Файл успешно загружен', { duration: 5000 });
-    await deleteFileFromDB(fileKey);
   } catch (err) {
     if (!editor.getShape(shapeId)) return;
-
     const isOffline = !navigator.onLine;
 
     editor.updateShape<FileShape>({
@@ -88,7 +85,6 @@ export async function insertFile(
     });
 
     addToQueue({
-      fileKey,
       shapeId,
       retryCount: 0,
       maxRetries: 5,

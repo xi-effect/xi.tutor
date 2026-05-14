@@ -1,6 +1,10 @@
 const DB_NAME = 'file-upload-db';
 const STORE_NAME = 'files';
 const VERSION = 1;
+type FileShape = {
+  file: File;
+  token: string;
+};
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -18,21 +22,21 @@ function openDB(): Promise<IDBDatabase> {
   });
 }
 
-export async function saveFileToDB(key: string, file: File) {
+export async function saveFileToDB(key: string, { file, token }: FileShape) {
   const db = await openDB();
 
   return new Promise<void>((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, 'readwrite');
     const store = tx.objectStore(STORE_NAME);
 
-    store.put(file, key);
+    store.put({ file, token }, key);
 
     tx.oncomplete = () => resolve();
     tx.onerror = () => reject(tx.error);
   });
 }
 
-export async function getFileFromDB(key: string): Promise<File | undefined> {
+export async function getFileFromDB(key: string): Promise<FileShape | undefined> {
   const db = await openDB();
 
   return new Promise((resolve, reject) => {
@@ -57,5 +61,19 @@ export async function deleteFileFromDB(key: string) {
 
     tx.oncomplete = () => resolve();
     tx.onerror = () => reject(tx.error);
+  });
+}
+
+export async function getAllFileKeys(): Promise<string[]> {
+  const db = await openDB();
+
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, 'readonly');
+    const store = tx.objectStore(STORE_NAME);
+
+    const request = store.getAllKeys();
+
+    request.onsuccess = () => resolve(request.result as string[]);
+    request.onerror = () => reject(request.error);
   });
 }

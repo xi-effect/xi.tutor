@@ -1,13 +1,18 @@
 import { useRef, useCallback } from 'react';
-import { useNetworkStatus } from '../../../common.utils/src/NetworkContext';
+import { useNetworkStatus } from 'common.utils';
+import { nanoid } from 'nanoid';
 
-import { uploadFileRequest, deleteFileFromDB, getFileFromDB } from 'common.services';
+import {
+  uploadFileRequest,
+  deleteFileFromDB,
+  getFileFromDB,
+  getAllFileKeys,
+} from 'common.services';
 import { TLShapeId } from 'tldraw';
 
 export type RetryRequest = {
   id: string;
-  shapeId: TLShapeId;
-  fileKey: string; // ключ в IndexedDB
+  shapeId: TLShapeId; // он же ключ в IndexedDB
   retryCount: number;
   maxRetries: number;
   timestamp: number;
@@ -34,25 +39,44 @@ export const useRetryFileQueue = () => {
   }, []);
 
   const processQueue = useCallback(async () => {
-    if (!isOnline) return [];
-
     const results: { fileId: string; shapeId: TLShapeId }[] = [];
+
+    if (queueRef.current.length === 0) {
+      const keys = await getAllFileKeys();
+
+      for (const key of keys) {
+        const file = await getFileFromDB(key);
+        if (!file) {
+          await deleteFileFromDB(key);
+          continue;
+        }
+
+        queueRef.current.push({
+          id: nanoid(),
+          shapeId: key as TLShapeId,
+          retryCount: 0,
+          maxRetries: 5,
+          token: file.token,
+          timestamp: Date.now(),
+        });
+      }
+    }
 
     for (const req of [...queueRef.current]) {
       try {
-        const file = await getFileFromDB(req.fileKey);
+        const fileObject = await getFileFromDB(req.shapeId);
 
-        if (!file) {
+        if (!fileObject) {
           removeFromQueue(req.id);
           continue;
         }
 
         const fileId = await uploadFileRequest({
-          file,
-          token: req.token,
+          file: fileObject.file,
+          token: fileObject.token,
         });
 
-        await deleteFileFromDB(req.fileKey);
+        await deleteFileFromDB(req.shapeId);
         removeFromQueue(req.id);
 
         results.push({
@@ -71,7 +95,7 @@ export const useRetryFileQueue = () => {
     }
 
     return results;
-  }, [isOnline, removeFromQueue]);
+  }, [removeFromQueue]);
 
   const clearQueue = useCallback(() => {
     queueRef.current = [];
