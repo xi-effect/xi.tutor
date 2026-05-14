@@ -1,11 +1,11 @@
 import { Editor, TLShapeId } from 'tldraw';
 import { toast } from 'sonner';
 import { uploadFileRequest } from 'common.services';
-
 import { nanoid } from 'nanoid';
 import { ALLOWED_FILE_MIME_TYPES, FileShape } from '../shapes/file';
 import { FILE_SHAPE_HEIGHT, FILE_SHAPE_WIDTH } from '../shapes/file/FileShape';
-import { useRetryQueue } from 'common.utils';
+import { saveFileToDB, deleteFileFromDB } from 'common.services';
+import { type RetryRequest } from 'common.services';
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
 const MAX_FILE_SHAPES = 20;
@@ -15,7 +15,7 @@ export async function insertFile(
   editor: Editor,
   file: File,
   token: string,
-  retryQueue: ReturnType<typeof useRetryQueue>,
+  addToQueue: (request: Omit<RetryRequest, 'id' | 'timestamp'>) => void,
 ) {
   const validationError = validateFile(editor, file);
 
@@ -47,25 +47,8 @@ export async function insertFile(
     },
   ]);
 
-  const uploadAndUpdate = async () => {
-    editor.updateShape<FileShape>({
-      id: shapeId,
-      type: 'file',
-      props: {
-        status: 'loading',
-      },
-    });
-    const fileId = await uploadFileRequest({ file, token });
-
-    editor.updateShape<FileShape>({
-      id: shapeId,
-      type: 'file',
-      props: {
-        src: fileId,
-        status: 'uploaded',
-      },
-    });
-  };
+  const fileKey = nanoid();
+  await saveFileToDB(fileKey, file);
 
   try {
     if (!editor.getShape(shapeId)) return; // если shape уже удалён
@@ -77,17 +60,6 @@ export async function insertFile(
         status: 'loading',
       },
     });
-
-    if (!retryQueue.isOnline) {
-      editor.updateShape<FileShape>({
-        id: shapeId,
-        type: 'file',
-        props: {
-          status: 'offline',
-        },
-      });
-      throw new Error('Отсутствует подключение, файл будет загружен при восстановлении соединения');
-    }
 
     const fileId = await uploadFileRequest({ file, token });
 
@@ -101,10 +73,11 @@ export async function insertFile(
     });
 
     toast.success('Файл успешно загружен', { duration: 5000 });
+    await deleteFileFromDB(fileKey);
   } catch (err) {
     if (!editor.getShape(shapeId)) return;
 
-    const isOffline = !retryQueue.isOnline;
+    const isOffline = !navigator.onLine;
 
     editor.updateShape<FileShape>({
       id: shapeId,
@@ -114,20 +87,21 @@ export async function insertFile(
       },
     });
 
-    retryQueue.addToQueue({
-      fn: uploadAndUpdate,
+    addToQueue({
+      fileKey,
+      shapeId,
       retryCount: 0,
       maxRetries: 5,
+      token,
     });
 
     console.error('[insertFile] Upload failed:', err);
 
-    const msg =
-      err instanceof Error
+    const msg = isOffline
+      ? 'Нет подключения к сети, загрузки продолжится при подключении'
+      : err instanceof Error
         ? err.message
-        : isOffline
-          ? 'Нет интернета. Загрузка возобновится автоматически'
-          : 'Не удалось загрузить файл';
+        : 'Не удалось загрузить файл';
     toast.error('Ошибка загрузки файла', { description: msg, duration: 5000 });
   }
 }

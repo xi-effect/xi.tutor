@@ -19,7 +19,7 @@ import { insertImage } from '../../../features/pickAndInsertImage';
 import { insertPdf } from '../../../features/pickAndInsertPdf';
 import { insertAudio, AUDIO_ACCEPT } from '../../../features/pickAndInsertAudio';
 import { insertFile, FILE_ACCEPT } from '../../../features/pickAndInsertFile';
-import { useRetryQueue } from 'common.utils';
+import { useRetryFileQueue } from 'common.services';
 
 // Маппинг инструментов Kanva на Tldraw
 const toolMapping: Record<string, string> = {
@@ -53,14 +53,28 @@ export const Navbar = track(
     const { resetToDefaults, setColor, setThickness, setOpacity } = useTldrawStyles();
     const [activePopup, setActivePopup] = React.useState<string | null>(null);
     const editor = useEditor();
-    const retryQueue = useRetryQueue();
-    const isOnline = retryQueue.isOnline;
+    const { processQueue, isOnline, addToQueue } = useRetryFileQueue();
 
     useEffect(() => {
-      if (isOnline) {
-        retryQueue.processQueue();
-      }
-    }, [isOnline, retryQueue]);
+      if (!isOnline) return;
+
+      (async () => {
+        const fileQueue = await processQueue();
+
+        fileQueue?.forEach(({ fileId, shapeId }) => {
+          if (!editor.getShape(shapeId)) return;
+
+          editor.updateShape({
+            id: shapeId,
+            type: 'file',
+            props: {
+              src: fileId,
+              status: 'uploaded',
+            },
+          });
+        });
+      })();
+    }, [isOnline, processQueue, editor]);
 
     // Добавляем горячие клавиши
     useHotkeys();
@@ -177,7 +191,7 @@ export const Navbar = track(
         const file = (e.target as HTMLInputElement).files?.[0];
         if (file) {
           try {
-            await insertFile(editor, file, token, retryQueue);
+            await insertFile(editor, file, token, addToQueue);
           } catch (error) {
             console.error('Ошибка при загрузке файла:', error);
           }
