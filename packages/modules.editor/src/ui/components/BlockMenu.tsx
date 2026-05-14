@@ -36,7 +36,7 @@ export const BlockMenu = ({ children }: BlockMenuPropsT) => {
       <DropdownMenuContent
         side="right"
         align="start"
-        className="flex w-[200px] flex-col space-y-1 p-2"
+        className="flex w-auto flex-col gap-1 space-y-1 p-2"
       >
         <DropdownMenuItem
           className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
