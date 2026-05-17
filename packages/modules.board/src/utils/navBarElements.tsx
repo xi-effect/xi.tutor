@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import {
   Arrow,
   Cursor,
+  Emotions,
   Eraser,
   Figures,
   Hand,
@@ -99,4 +100,5 @@ export const navBarElements: NavbarElementT[] = [
   { action: 'asset', title: 'Изображение', icon: <Image /> },
   { action: 'eraser', title: 'Ластик', icon: <Eraser /> },
   { action: 'frame', title: 'Фрейм', icon: <Transform /> },
+  { action: 'emoji', title: 'Эмодзи', icon: <Emotions /> },
 ];

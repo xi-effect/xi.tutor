@@ -62,6 +62,9 @@ interface TldrawState {
   setGeoFillType: (value: string) => void;
   geoBorderThickness: TGeoBorderThickness;
   setGeoBorderThickness: (thickness: TGeoBorderThickness) => void;
+  // emojis
+  recentEmojis: string[];
+  addRecentEmoji: (emoji: string) => void;
 }
 
 export const useTldrawStore = create<TldrawState>()(
@@ -150,6 +153,15 @@ export const useTldrawStore = create<TldrawState>()(
       geoBorderThickness: 'm',
       setGeoBorderThickness: (thickness: TGeoBorderThickness) =>
         set(() => ({ geoBorderThickness: thickness })),
+
+      recentEmojis: [],
+      addRecentEmoji: (emoji) => {
+        if (!emoji) return;
+
+        const { recentEmojis } = get();
+        const emojis = [emoji, ...recentEmojis].slice(0, 8);
+        set(() => ({ recentEmojis: emojis }));
+      },
     }),
     { name: 'tldraw-storage' },
   ),

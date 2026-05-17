@@ -21,6 +21,7 @@ import { makeTldrawAssetUrls } from '../../../utils/assetsUrls';
 import { extractFileIdFromUrl } from '../../../utils/resolveAssetUrl';
 import { FrameShapeUtil } from '../../../shapes/frame';
 import { XiGeoShapeUtil, XiGeoTool } from '../../../shapes/geo';
+import { EmojiShapeUtil, EmojiTool } from '../../../shapes/emoji';
 
 export const TldrawCanvas = ({
   token,
@@ -342,13 +343,14 @@ export const TldrawCanvas = ({
             }}
             assetUrls={assetUrls}
             store={store}
-            tools={[XiGeoTool]}
+            tools={[XiGeoTool, EmojiTool]}
             shapeUtils={[
               PdfShapeUtil,
               AudioShapeUtil,
               FrameShapeUtil,
               XiGeoShapeUtil,
               CustomImageShapeUtil,
+              EmojiShapeUtil,
             ]}
             hideUi
             components={{
