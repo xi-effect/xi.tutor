@@ -119,16 +119,29 @@ export const useBlockMenuActions = (editor: Editor | null) => {
       return;
     }
 
-    editor.chain().focus().insertContent({ type: 'image', attrs: { src, alt } }).run();
+    editor
+      .chain()
+      .focus()
+      .insertContent({
+        type: 'image',
+        attrs: {
+          src,
+          alt,
+        },
+      })
+      .run();
   };
 
   const downloadImage = (src: string) => {
+    //TODO: downloading is not working
+
     const link = document.createElement('a');
     link.href = src;
     link.download = 'image.png';
     link.click();
   };
 
+  //TODO: moving is not working
   const moveUp = () => moveBlock(editor, 'up');
   const moveDown = () => moveBlock(editor, 'down');
 
