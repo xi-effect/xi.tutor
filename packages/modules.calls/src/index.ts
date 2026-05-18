@@ -1,4 +1,4 @@
-export { Call, CompactView } from './ui';
+export { Call, CompactView, MediaDeviceMenu, UserTile } from './ui';
 export { RoomProvider, LiveKitProvider, ModeSyncProvider } from './providers';
 export {
   useSize,
@@ -12,7 +12,8 @@ export {
   useSpeakingParticipant,
   useUmamiActivityHeartbeat,
   useNoiseCancellation,
+  usePersistentUserChoices,
   type UseNoiseCancellationOptions,
   type UseNoiseCancellationResult,
 } from './hooks';
-export { useCallStore } from './store';
+export { useCallStore, usePermissionsStore } from './store';

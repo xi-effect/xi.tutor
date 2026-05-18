@@ -1,18 +1,18 @@
 import { Button } from '@xipkg/button';
 import { MediaDeviceMenu } from './MediaDeviceMenu';
-import { usePersistentUserChoices } from '../../../../hooks/usePersistentUserChoices';
+import { usePersistentUserChoices } from '../../hooks/usePersistentUserChoices';
 import { useMemo } from 'react';
 import { LocalAudioTrack, LocalVideoTrack } from 'livekit-client';
-import { useCallStore } from '../../../../store/callStore';
-import { useRoom } from '../../../../providers/RoomProvider';
-import { usePermissionsStore } from '../../../../store/permissions';
+import { useCallStore } from '../../store/callStore';
+import { useRoom } from '../../providers/RoomProvider';
+import { usePermissionsStore } from '../../store/permissions';
 import { Alert, AlertIcon, AlertContainer, AlertDescription } from '@xipkg/alert';
 import { InfoCircle } from '@xipkg/icons';
 import { Label } from '@xipkg/label';
 import { Toggle } from '@xipkg/toggle';
 import { supportsBackgroundProcessors } from '@livekit/track-processors';
-import type { UseNoiseCancellationResult } from '../../../../hooks/useNoiseCancellation';
-import { NoiseCancellationSettings } from '../../../../ui/shared/NoiseCancellationSettings';
+import type { UseNoiseCancellationResult } from '../../hooks/useNoiseCancellation';
+import { NoiseCancellationSettings } from '../shared/NoiseCancellationSettings';
 
 interface MediaDevicesProps {
   audioTrack?: LocalAudioTrack;

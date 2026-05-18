@@ -3,11 +3,11 @@ import { Camera } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { Category } from './Category';
 import { useMediaQuery } from '@xipkg/utils';
-import { MediaDeviceMenu } from '../../../modules.calls/src/ui/PreJoin/components/MediaDevices/MediaDeviceMenu';
-import { UserTile } from '../../../modules.calls/src/ui/PreJoin/components/UserTile';
-import { useEffect, useMemo, useState } from 'react';
-import { usePersistentUserChoices } from '../../../modules.calls/src/hooks/usePersistentUserChoices';
-import { usePermissionsStore } from '../../../modules.calls/src/store/permissions';
+import { MediaDeviceMenu } from 'modules.calls';
+import { UserTile } from 'modules.calls';
+import { useCallback, useEffect, useState } from 'react';
+import { usePersistentUserChoices } from 'modules.calls';
+import { usePermissionsStore } from 'modules.calls';
 
 export const CameraSettings = () => {
   const isMobile = useMediaQuery('(max-width: 719px)');
@@ -36,8 +36,8 @@ export const CameraSettings = () => {
     initCamera();
   }, [videoDeviceId]);
 
-  const handleVideoDeviceChange = useMemo(
-    () => async (_kind: MediaDeviceKind, deviceId: string) => {
+  const handleVideoDeviceChange = useCallback(
+    async (_kind: MediaDeviceKind, deviceId: string) => {
       try {
         saveVideoInputDeviceId(deviceId);
         if (videoTrack) {

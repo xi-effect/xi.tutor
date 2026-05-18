@@ -1,8 +1,8 @@
 import { useMemo, useRef, useEffect, useState } from 'react';
 import { facingModeFromLocalTrack, LocalVideoTrack, LocalAudioTrack } from 'livekit-client';
 import { useCurrentUser } from 'common.services';
-import { usePersistentUserChoices } from '../../../../hooks/usePersistentUserChoices';
-import { useCannotUseDevice } from '../../../../hooks/useCannotUseDevice';
+import { usePersistentUserChoices } from '../../hooks/usePersistentUserChoices';
+import { useCannotUseDevice } from '../../hooks/useCannotUseDevice';
 import { UserTileUI } from './UserTileUI';
 
 interface UserTileProps {

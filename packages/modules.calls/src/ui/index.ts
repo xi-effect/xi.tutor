@@ -4,3 +4,5 @@ export { ChatButton } from './Bottom/ChatButton';
 export { Chat } from './Chat/Chat';
 export { RaiseHandButton } from './Bottom/RaiseHandButton';
 export { RaisedHandIndicator } from './Participant/RaisedHandIndicator';
+export { MediaDeviceMenu } from './MediaDevices';
+export { UserTile } from './UserTile';

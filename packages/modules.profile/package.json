@@ -35,6 +35,7 @@
     "common.types": "workspace:*",
     "dayjs": "1.11.13",
     "features.avatar.editor": "workspace:*",
+    "modules.calls": "workspace:*",
     "sonner": "^2.0.7"
   },
   "devDependencies": {

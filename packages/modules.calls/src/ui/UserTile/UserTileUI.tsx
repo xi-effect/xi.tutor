@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { LocalAudioTrack, LocalVideoTrack } from 'livekit-client';
-import { isSafari } from '../../../../utils/livekit';
-import { openPermissionsDialog } from '../../../../store/permissions';
+import { isSafari } from '../../utils/livekit';
+import { openPermissionsDialog } from '../../store/permissions';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { Button } from '@xipkg/button';
 import { Settings } from '@xipkg/icons';
-import { SecureVideo } from '../../../shared';
+import { SecureVideo } from '../shared';
 import { Controls } from './Controls';
 
 export const UserTileUI = ({
