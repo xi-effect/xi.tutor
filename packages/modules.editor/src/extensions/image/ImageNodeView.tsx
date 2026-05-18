@@ -18,10 +18,11 @@ import { filesApiConfig, FilesQueryKey } from 'common.services';
 // Кеш blob URL для уже загруженных изображений (по исходному src)
 const blobUrlCache = new Map<string, string>();
 
-export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
+export const ImageNodeView = ({ node, selected, deleteNode }: NodeViewProps) => {
   const src = node.attrs.src;
   const { editor, storageToken, isReadOnly } = useYjsContext();
-  const { duplicate, remove, downloadImage, moveDown, moveUp } = useBlockMenuActions(editor);
+  const { /*duplicate , remove, */ downloadImage /*, moveDown, moveUp */ } =
+    useBlockMenuActions(editor);
   const [imageSrc, setImageSrc] = useState<string>(src);
 
   useEffect(() => {
@@ -112,6 +113,9 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
           // selected ? 'opacity-100' : 'pointer-events-none opacity-0',
           //будут ли работать другие функции меню если картинка не selected node
         )}
+        onClick={(e) => {
+          console.log(e.isPropagationStopped());
+        }}
       >
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
@@ -140,7 +144,10 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
 
                 <DropdownMenuItem
                   className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-                  onSelect={moveUp}
+                  onSelect={() => {
+                    // moveUp();
+                    console.log('node', node, selected);
+                  }}
                 >
                   <ArrowUp size="sm" className="size-6" />
                   <span className="text-sm">Выше</span>
@@ -148,7 +155,7 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
 
                 <DropdownMenuItem
                   className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-                  onSelect={moveDown}
+                  // onSelect={moveDown}
                 >
                   <ArrowBottom size="sm" className="size-6" />
                   <span className="text-sm">Ниже</span>
@@ -158,7 +165,7 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
 
                 <DropdownMenuItem
                   className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-                  onSelect={duplicate}
+                  // onSelect={() => duplicate(node)}
                 >
                   <Copy size="sm" className="size-6" />
                   <span className="text-sm">Дублировать</span>
@@ -166,7 +173,7 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
 
                 <DropdownMenuItem
                   className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-                  onClick={remove}
+                  onClick={deleteNode}
                 >
                   <Trash size="sm" className="size-6" />
                   <span className="text-sm">Удалить</span>

@@ -1,12 +1,17 @@
 import type { Editor } from '@tiptap/core';
-import { NodeSelection } from '@tiptap/pm/state';
+import { ActiveBlockT } from '../types';
 import { getAnchorNodeAndPos } from './getAnchorNodeAndPos';
+import { NodeSelection } from '@tiptap/pm/state';
 
 /**
  * Перемещает текущий блок вверх или вниз в документе.
  * Используется для DnD-альтернативы (меню, горячие клавиши).
  */
-export function moveBlock(editor: Editor | null, direction: 'up' | 'down'): boolean {
+export function moveBlock(
+  editor: Editor | null,
+  activeBlock: ActiveBlockT,
+  direction: 'up' | 'down',
+): boolean {
   if (!editor || !editor.isEditable) return false;
 
   const nodeInfo = getAnchorNodeAndPos(editor);
