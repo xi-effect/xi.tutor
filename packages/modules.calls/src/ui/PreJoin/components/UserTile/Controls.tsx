@@ -7,9 +7,10 @@ import { usePersistentUserChoices } from '../../../../hooks/usePersistentUserCho
 type ControlsProps = {
   audioTrack?: LocalAudioTrack;
   videoTrack?: LocalVideoTrack;
+  disableMicroToggle?: boolean;
 };
 
-export const Controls = ({ audioTrack, videoTrack }: ControlsProps) => {
+export const Controls = ({ audioTrack, videoTrack, disableMicroToggle = false }: ControlsProps) => {
   const {
     userChoices: { audioEnabled, videoEnabled },
     saveAudioInputEnabled,
@@ -83,11 +84,11 @@ export const Controls = ({ audioTrack, videoTrack }: ControlsProps) => {
   );
 
   return (
-    <div className="bg-gray-0 border-gray-10 flex h-[48px] w-[92px] items-center justify-center gap-1 rounded-[16px] border">
+    <div className="bg-gray-0 border-gray-10 flex h-[48px] items-center justify-center gap-1 rounded-[16px] border px-1">
       <DevicesBar
         microTrack={audioTrack}
         microEnabled={audioEnabled}
-        microTrackToggle={microTrackToggle}
+        microTrackToggle={disableMicroToggle ? undefined : microTrackToggle}
         videoTrack={videoTrack}
         videoEnabled={videoEnabled}
         videoTrackToggle={videoTrackToggle}

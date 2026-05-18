@@ -11,6 +11,9 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@livekit/components-core": "0.12.9",
+    "@livekit/components-react": "2.9.14",
+    "@livekit/components-styles": "1.1.6",
     "@xipkg/avatar": "3.3.0",
     "@xipkg/badge": "2.0.12",
     "@xipkg/button": "4.1.0",
