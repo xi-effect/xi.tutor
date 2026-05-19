@@ -1,6 +1,6 @@
 import { Editor } from '@tiptap/react';
 import { ActiveBlockT, BlockTypeT } from '../types';
-import { NodeSelection } from '@tiptap/pm/state';
+// import { NodeSelection } from '@tiptap/pm/state';
 import { moveBlock } from '../utils/moveBlock';
 
 const TEXT_BLOCKS = ['paragraph', 'heading'];
@@ -86,29 +86,21 @@ export const useBlockMenuActions = (editor: Editor | null) => {
   const insertImage = (src: string, alt?: string) => {
     if (!editor || !editor.isEditable) return;
 
-    const { state } = editor;
-    const { selection } = state;
-
-    if (selection instanceof NodeSelection) {
-      const posAfter = selection.to;
-      editor
-        .chain()
-        .focus()
-        .insertContentAt(posAfter, { type: 'image', attrs: { src, alt } })
-        .run();
-      return;
-    }
+    const endPos = editor.state.doc.content.size;
 
     editor
       .chain()
       .focus()
-      .insertContent({
-        type: 'image',
-        attrs: {
-          src,
-          alt,
+      .insertContentAt(endPos, [
+        {
+          type: 'image',
+          attrs: {
+            src,
+            alt,
+          },
         },
-      })
+      ])
+      .setTextSelection(endPos + 2)
       .run();
   };
 
@@ -119,7 +111,6 @@ export const useBlockMenuActions = (editor: Editor | null) => {
     link.click();
   };
 
-  //TODO: moving is not working
   const moveUp = (activeBlock: ActiveBlockT) => moveBlock(editor, activeBlock, 'up');
   const moveDown = (activeBlock: ActiveBlockT) => moveBlock(editor, activeBlock, 'down');
 

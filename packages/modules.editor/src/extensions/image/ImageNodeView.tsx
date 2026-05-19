@@ -20,6 +20,7 @@ const blobUrlCache = new Map<string, string>();
 
 export const ImageNodeView = ({ node, selected, deleteNode }: NodeViewProps) => {
   const src = node.attrs.src;
+
   const { editor, storageToken, isReadOnly } = useYjsContext();
   const { /*duplicate , remove, */ downloadImage /*, moveDown, moveUp */ } =
     useBlockMenuActions(editor);

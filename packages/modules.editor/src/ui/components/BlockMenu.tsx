@@ -21,12 +21,6 @@ type BlockMenuPropsT = {
   activeBlock?: ActiveBlockT;
 };
 
-//упростить типизацию
-// type HandlerArgsT = {
-//   activeBlock: ActiveBlock;
-//   option?: string;
-// };
-
 export const BlockMenu = ({
   children,
   editor,
