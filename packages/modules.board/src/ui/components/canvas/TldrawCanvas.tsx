@@ -20,6 +20,7 @@ import { UndoRedo } from '../toolbar/UndoRedo';
 import { makeTldrawAssetUrls } from '../../../utils/assetsUrls';
 import { extractFileIdFromUrl } from '../../../utils/resolveAssetUrl';
 import { FrameShapeUtil } from '../../../shapes/frame';
+import { FileShapeUtil } from '../../../shapes/file';
 import { XiGeoShapeUtil, XiGeoTool } from '../../../shapes/geo';
 import { StickerShapeUtil } from '../../../shapes/sticker';
 
@@ -351,6 +352,7 @@ export const TldrawCanvas = ({
               XiGeoShapeUtil,
               CustomImageShapeUtil,
               StickerShapeUtil,
+              FileShapeUtil,
             ]}
             hideUi
             components={{

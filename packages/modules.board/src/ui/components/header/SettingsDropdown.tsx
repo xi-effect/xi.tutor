@@ -86,7 +86,7 @@ const SHAPE_CATEGORIES: { label: string; types: string[] }[] = [
   { label: 'Фигуры', types: ['geo'] },
   { label: 'Заметки', types: ['note'] },
   { label: 'Стрелки', types: ['arrow'] },
-  { label: 'Медиа', types: ['pdf', 'audio', 'video', 'embed', 'bookmark'] },
+  { label: 'Медиа', types: ['pdf', 'audio', 'video', 'embed', 'bookmark', 'file'] },
 ];
 
 const BOARD_ELEMENTS_LIMIT = 4000;

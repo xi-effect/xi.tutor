@@ -38,6 +38,7 @@ import { AudioShapeUtil } from '../shapes/audio';
 import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
 import { generateUserColor } from '../utils/userColor';
 import { extractFileIdFromUrl } from '../utils/resolveAssetUrl';
+import { FileShapeUtil } from '../shapes/file';
 import { XiGeoShapeUtil } from '../shapes/geo';
 
 type UseYjsStoreArgs = Partial<{
@@ -244,6 +245,7 @@ export function useYjsStore({
         ...defaultShapeUtils,
         PdfShapeUtil,
         AudioShapeUtil,
+        FileShapeUtil,
         XiGeoShapeUtil,
         ...shapeUtils,
       ],
