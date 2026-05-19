@@ -100,7 +100,6 @@ export const useBlockMenuActions = (editor: Editor | null) => {
           },
         },
       ])
-      .setTextSelection(endPos + 2)
       .run();
   };
 
