@@ -39,6 +39,7 @@ import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
 import { generateUserColor } from '../utils/userColor';
 import { extractFileIdFromUrl } from '../utils/resolveAssetUrl';
 import { XiGeoShapeUtil } from '../shapes/geo';
+import { EmojiShapeUtil } from '../shapes/emoji';
 
 type UseYjsStoreArgs = Partial<{
   hostUrl: string;
@@ -245,6 +246,7 @@ export function useYjsStore({
         PdfShapeUtil,
         AudioShapeUtil,
         XiGeoShapeUtil,
+        EmojiShapeUtil,
         ...shapeUtils,
       ],
       ...(assetStore ? { assets: assetStore } : {}),
