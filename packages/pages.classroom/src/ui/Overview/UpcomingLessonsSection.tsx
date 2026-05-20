@@ -215,7 +215,7 @@ export const UpcomingLessonsSection = () => {
               <div className="flex min-h-[220px] w-max flex-row items-stretch gap-4 pr-1 pb-4">
                 {lessons.map(({ lesson, item }, index) => (
                   <UpcomingLessonCard
-                    key={`${lesson.classroomId}-${lesson.startAt?.toISOString()}`}
+                    key={`${lesson.id}`}
                     lesson={lesson}
                     classroomId={classroomId}
                     isNearest={index === 0}
