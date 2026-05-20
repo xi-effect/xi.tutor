@@ -22,6 +22,7 @@ import { extractFileIdFromUrl } from '../../../utils/resolveAssetUrl';
 import { FrameShapeUtil } from '../../../shapes/frame';
 import { XiGeoShapeUtil, XiGeoTool } from '../../../shapes/geo';
 import { StickerShapeUtil } from '../../../shapes/sticker';
+import { isShapeErasable } from '../../../utils';
 
 export const TldrawCanvas = ({
   token,
@@ -296,6 +297,16 @@ export const TldrawCanvas = ({
                 if (mode === 'pen') return { ...next, isPenMode: true };
                 if (mode === 'mouse') return { ...next, isPenMode: false };
                 return next;
+              });
+
+              editor.sideEffects.registerBeforeDeleteHandler('shape', (shape) => {
+                if (editor.getCurrentToolId() !== 'eraser') {
+                  return;
+                }
+
+                if (!isShapeErasable(shape.type)) {
+                  return false;
+                }
               });
 
               const win = window as unknown as {
