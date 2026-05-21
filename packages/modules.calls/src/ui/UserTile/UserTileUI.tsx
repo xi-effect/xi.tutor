@@ -136,10 +136,7 @@ export const UserTileUI = ({
   }, [videoTrack, userId, isCameraDeniedOrPrompted]);
 
   return (
-    <div
-      onClick={() => {}}
-      className="bg-gray-40 relative flex aspect-video h-full w-full items-center justify-center overflow-hidden rounded-[16px]"
-    >
+    <div className="bg-gray-40 relative flex aspect-video h-full w-full items-center justify-center overflow-hidden rounded-[16px]">
       <div className="relative h-full w-full">
         {renderVideo}
         {renderAvatar}
