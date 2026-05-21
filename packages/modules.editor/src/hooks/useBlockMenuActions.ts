@@ -1,6 +1,5 @@
 import { Editor } from '@tiptap/react';
 import { ActiveBlockT, BlockTypeT } from '../types';
-// import { NodeSelection } from '@tiptap/pm/state';
 import { moveBlock } from '../utils/moveBlock';
 
 const TEXT_BLOCKS = ['paragraph', 'heading'];
@@ -105,6 +104,7 @@ export const useBlockMenuActions = (editor: Editor | null) => {
 
   const downloadImage = (src: string) => {
     const link = document.createElement('a');
+    link.setAttribute('target', '_blank');
     link.href = src;
     link.download = 'image.png';
     link.click();
