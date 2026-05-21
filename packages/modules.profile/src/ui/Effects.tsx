@@ -4,6 +4,7 @@ import { Slider } from '@xipkg/slider';
 import { Toggle } from '@xipkg/toggle';
 import { useMediaQuery } from '@xipkg/utils';
 import { useSoundEffectsStore, SOUND_DEFAULTS, type SoundKey } from 'common.ui';
+import { Category } from './Category';
 
 type SoundItemProps = {
   label: string;
@@ -91,22 +92,6 @@ const SoundItem = ({
     </div>
   );
 };
-
-type CategoryProps = {
-  icon: React.ReactNode;
-  title: string;
-  children: React.ReactNode;
-};
-
-const Category = ({ icon, title, children }: CategoryProps) => (
-  <div className="border-gray-30 rounded-2xl border p-4">
-    <div className="mb-4 flex items-center gap-2">
-      {icon}
-      <span className="text-base font-semibold dark:text-gray-100">{title}</span>
-    </div>
-    <div className="flex flex-col">{children}</div>
-  </div>
-);
 
 export const Effects = () => {
   const isMobile = useMediaQuery('(max-width: 719px)');

@@ -1,4 +1,4 @@
-import { Account, Exit, Key, Palette, Notification, File, Music } from '@xipkg/icons';
+import { Account, Exit, Key, Palette, Notification, File, Music, Camera } from '@xipkg/icons';
 import { Dispatch, SetStateAction } from 'react';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useAuth } from 'common.auth';
@@ -28,6 +28,10 @@ const options: ItemT[] = [
   {
     name: 'Эффекты',
     query: 'effects',
+  },
+  {
+    name: 'Настройки видео',
+    query: 'cameraSettings',
   },
   {
     name: 'Отчёт',
@@ -70,6 +74,8 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
         return <Music className={iconClasses} key="music-icon" />;
       case 'report':
         return <File className={iconClasses} key="report-icon" />;
+      case 'cameraSettings':
+        return <Camera className={iconClasses} key="camera-icon" />;
       default:
         return null;
     }
@@ -123,7 +129,7 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
   };
 
   return (
-    <div className="flex w-full flex-col gap-1 sm:w-[220px]">
+    <div className="flex w-full flex-col gap-1 sm:w-[250px]">
       {options.map((item, index) => (
         <Item item={item} index={index} key={index} onMenuItemChange={handleMenuItem} />
       ))}

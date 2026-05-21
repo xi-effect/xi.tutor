@@ -1,5 +1,7 @@
 import { ScrollArea } from '@xipkg/scrollarea';
-import { Header, UserTile, MediaDevices } from './components';
+import { Header } from './components';
+import { UserTile } from '../UserTile';
+import { MediaDevices } from '../MediaDevices';
 import { useMemo, useRef, useEffect, useCallback, useState } from 'react';
 import {
   Track,

@@ -1,6 +1,6 @@
 export { Call, CompactView, useModeSync, ModeSyncProvider } from './src';
 export { LiveKitProvider } from './src/providers/LiveKitProvider';
 export { RoomProvider } from './src/providers/RoomProvider';
-export { useCallStore } from './src/store/callStore';
-export { useStartCall } from './src/hooks';
-export { useUmamiActivityHeartbeat } from './src';
+export { useCallStore, usePermissionsStore } from './src/store';
+export { useStartCall, usePersistentUserChoices } from './src/hooks';
+export { useUmamiActivityHeartbeat, MediaDeviceMenu, UserTile } from './src';
