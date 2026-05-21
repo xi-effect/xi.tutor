@@ -7,6 +7,7 @@ import { Input } from '@xipkg/input';
 import { optimizeImage } from '../../utils/optimizeImage';
 import { useUploadImage } from 'common.services';
 import { useBlockMenuActions, useYjsContext } from '../../hooks';
+import { toast } from 'sonner';
 
 export const ImageUploadModal = () => {
   const { closeModal, activeModal } = useInterfaceStore();
@@ -36,9 +37,20 @@ export const ImageUploadModal = () => {
     }
   };
 
-  const handleAddLink = () => {
-    if (!imageLink.trim()) return;
-    insertImage(imageLink.trim());
+  const handleAddLink = async () => {
+    const trimmedLink = imageLink.trim();
+
+    if (!trimmedLink) return;
+
+    const isValidImage = await checkImageUrl(trimmedLink);
+
+    if (!isValidImage) {
+      toast.error('Некорректная ссылка на изображение');
+      return;
+    }
+
+    insertImage(trimmedLink);
+
     closeModal();
   };
 
@@ -88,3 +100,19 @@ export const ImageUploadModal = () => {
     </Modal>
   );
 };
+
+function checkImageUrl(url: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    const img = new window.Image();
+
+    img.onload = () => {
+      resolve(true);
+    };
+
+    img.onerror = () => {
+      resolve(false);
+    };
+
+    img.src = url;
+  });
+}

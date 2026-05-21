@@ -1,149 +1,117 @@
 import { Editor } from '@tiptap/react';
-import { BlockTypeT } from '../types';
-import { NodeSelection, TextSelection } from '@tiptap/pm/state';
+import { ActiveBlockT, BlockTypeT } from '../types';
 import { moveBlock } from '../utils/moveBlock';
 
+const TEXT_BLOCKS = ['paragraph', 'heading'];
+const NODE_TYPES_MAP = {
+  paragraph: {
+    type: 'paragraph',
+    attrs: {},
+  },
+
+  heading1: {
+    type: 'heading',
+    attrs: { level: 1 },
+  },
+
+  heading2: {
+    type: 'heading',
+    attrs: { level: 2 },
+  },
+
+  heading3: {
+    type: 'heading',
+    attrs: { level: 3 },
+  },
+};
+
 export const useBlockMenuActions = (editor: Editor | null) => {
-  const duplicate = () => {
-    if (!editor || !editor.isEditable) return false;
+  const duplicate = (activeBlock: ActiveBlockT) => {
+    if (!editor) return;
+    if (!activeBlock.node) return;
+    const positionAfterActiveNode = activeBlock.pos + activeBlock.node.nodeSize;
+    const copiedNode = activeBlock.node.toJSON();
 
-    try {
-      const { state } = editor;
-      const { selection } = state;
-      const chain = editor.chain().focus();
-
-      if (selection instanceof NodeSelection) {
-        const selectedNode = selection.node;
-        const insertPos = selection.to;
-
-        chain.insertContentAt(insertPos, selectedNode.toJSON()).run();
-        return true;
-      }
-
-      const $anchor = selection.$anchor;
-
-      for (let depth = 1; depth <= $anchor.depth; depth++) {
-        const node = $anchor.node(depth);
-
-        if (node.type.name === 'doc' || !node.type.spec.group) {
-          continue;
-        }
-
-        const nodeStart = $anchor.start(depth);
-        const insertPos = Math.min(nodeStart + node.nodeSize, state.doc.content.size);
-
-        chain.insertContentAt(insertPos, node.toJSON()).run();
-        return true;
-      }
-
-      return false;
-    } catch {
-      return false;
-    }
+    editor.chain().focus().insertContentAt(positionAfterActiveNode, copiedNode).run();
   };
 
-  const deleteNodeAtPosition = (editor: Editor, pos: number, nodeSize: number): boolean => {
-    const chain = editor.chain().focus();
-
-    let success = chain.deleteRange({ from: pos, to: pos + nodeSize }).run();
-    if (success) return true;
-
-    success = chain.setNodeSelection(pos).deleteSelection().run();
-    return success;
-  };
-
-  const remove = () => {
+  const remove = (activeBlock: ActiveBlockT) => {
     if (!editor || !editor.isEditable) return false;
-
     try {
-      const { state } = editor;
-      const { selection } = state;
+      const node = activeBlock.node;
 
-      if (selection instanceof NodeSelection) {
-        const pos = selection.from;
-        const node = selection.node;
-        if (!node) return false;
-        return deleteNodeAtPosition(editor, pos, node.nodeSize);
-      }
+      if (!node) return;
 
-      const $pos = selection.$anchor;
-
-      for (let depth = $pos.depth; depth >= 0; depth--) {
-        const node = $pos.node(depth);
-        const pos = $pos.before(depth);
-
-        if (!node) continue;
-
-        if (node.isBlock || node.type.name === 'image') {
-          return deleteNodeAtPosition(editor, pos, node.nodeSize);
-        }
-      }
-
-      if (selection instanceof TextSelection && !selection.empty) {
-        return editor.chain().focus().deleteSelection().run();
-      }
-
-      return false;
+      editor
+        .chain()
+        .focus()
+        .deleteRange({
+          from: activeBlock.pos,
+          to: activeBlock.pos + node.nodeSize,
+        })
+        .run();
     } catch (err) {
       console.warn('Ошибка при удалении:', err);
       return false;
     }
   };
 
-  const changeType = (type: BlockTypeT) => {
-    if (!editor || !editor.isEditable) return;
+  const changeType = (activeBlock: ActiveBlockT, type?: BlockTypeT) => {
+    if (!editor || !editor.isEditable || !type) return;
 
-    const changeTypeMap: Record<string, () => void> = {
-      paragraph: () => editor.chain().focus().setParagraph().run(),
-      heading1: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
-      heading2: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
-      heading3: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
-    };
+    const config = NODE_TYPES_MAP[type];
 
-    changeTypeMap[type]?.();
+    if (!config) return;
+
+    const nodeType = editor.schema.nodes[config.type];
+
+    if (!nodeType) return;
+
+    const currentType = activeBlock.node?.type.name || '';
+
+    if (!TEXT_BLOCKS.includes(currentType)) {
+      return;
+    }
+
+    editor.commands.command(({ tr, dispatch }) => {
+      tr.setNodeMarkup(activeBlock.pos, nodeType, config.attrs);
+
+      dispatch?.(tr);
+
+      return true;
+    });
   };
 
   const insertImage = (src: string, alt?: string) => {
     if (!editor || !editor.isEditable) return;
 
-    const { state } = editor;
-    const { selection } = state;
-
-    if (selection instanceof NodeSelection) {
-      const posAfter = selection.to;
-      editor
-        .chain()
-        .focus()
-        .insertContentAt(posAfter, { type: 'image', attrs: { src, alt } })
-        .run();
-      return;
-    }
+    const endPos = editor.state.doc.content.size;
 
     editor
       .chain()
       .focus()
-      .insertContent({
-        type: 'image',
-        attrs: {
-          src,
-          alt,
+      .insertContentAt(endPos, [
+        {
+          type: 'image',
+          attrs: {
+            src,
+            alt,
+          },
         },
-      })
+      ])
       .run();
   };
 
   const downloadImage = (src: string) => {
-    //TODO: downloading is not working
-
     const link = document.createElement('a');
+    link.setAttribute('target', '_blank');
     link.href = src;
     link.download = 'image.png';
     link.click();
   };
 
-  //TODO: moving is not working
-  const moveUp = () => moveBlock(editor, 'up');
-  const moveDown = () => moveBlock(editor, 'down');
+  const moveUp = (activeBlock: ActiveBlockT) => moveBlock(editor, activeBlock, 'up');
+  const moveDown = (activeBlock: ActiveBlockT) => moveBlock(editor, activeBlock, 'down');
 
   return {
     duplicate,
