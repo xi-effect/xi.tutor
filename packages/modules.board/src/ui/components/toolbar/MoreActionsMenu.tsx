@@ -41,7 +41,7 @@ export const MoreActionsMenu = () => {
     editor.updateShape<AudioShape>({
       id: selectedAudio.id,
       type: 'audio',
-      props: { syncPlayback: !selectedAudio.props.syncPlayback },
+      props: { syncPlayback: !selectedAudio.props.syncPlayback, studentsCanControlPlayback: false },
     });
   };
 
@@ -60,6 +60,15 @@ export const MoreActionsMenu = () => {
       id: selectedAudio.id,
       type: 'audio',
       props: { timecodesVisibleByDefault: !selectedAudio.props.timecodesVisibleByDefault },
+    });
+  };
+
+  const handleToggleStudentsCanControlPlayback = () => {
+    if (!selectedAudio) return;
+    editor.updateShape<AudioShape>({
+      id: selectedAudio.id,
+      type: 'audio',
+      props: { studentsCanControlPlayback: !selectedAudio.props.studentsCanControlPlayback },
     });
   };
 
@@ -108,6 +117,16 @@ export const MoreActionsMenu = () => {
                 ? 'Скрывать новые таймкоды от учеников'
                 : 'Показывать новые таймкоды всем'}
             </DropdownMenuItem>
+            {selectedAudio.props.syncPlayback && (
+              <DropdownMenuItem
+                onClick={handleToggleStudentsCanControlPlayback}
+                className="rounded-lg px-3"
+              >
+                {selectedAudio.props.studentsCanControlPlayback
+                  ? 'Запретить управление'
+                  : 'Разрешить управление'}
+              </DropdownMenuItem>
+            )}
           </>
         )}
       </DropdownMenuContent>

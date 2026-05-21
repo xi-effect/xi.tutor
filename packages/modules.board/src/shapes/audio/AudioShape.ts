@@ -27,6 +27,8 @@ export type AudioShapeProps = {
   studentsCanAddTimecodes: boolean;
   /** Показывать новые таймкоды репетитора сразу всем (по умолчанию true) */
   timecodesVisibleByDefault: boolean;
+  /** Разрешить ученикам управлять воспроизведением (play/pause, перемотка) */
+  studentsCanControlPlayback: boolean;
   timecodes: AudioTimecode[];
 };
 
@@ -81,6 +83,7 @@ export const audioShapeProps = {
       return T.boolean.validate(value);
     },
   },
+  studentsCanControlPlayback: T.boolean.optional(),
   timecodes: timecodesValidator,
 };
 
