@@ -3,13 +3,18 @@ import { useKeyPress } from 'common.utils';
 import { JSX } from 'react/jsx-runtime';
 import { useEffect, useRef, useState } from 'react';
 import { Editor, DrInstancePresence, Draw, DrawProps } from '@ibodr/draw';
-import { useLockedShapeSelection, useDrawClipboard } from '../../../hooks';
+import {
+  useLockedShapeSelection,
+  useDrawClipboard,
+  useOverlayRepaintOnSelection,
+} from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore, useDrawStore } from '../../../store';
 import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
 import { hiddenComponents } from '../../../utils/customConfig';
 import { Header } from '../header';
-import { Navbar, SelectionMenu } from '../toolbar';
+import { Navbar } from '../toolbar';
+import { SelectionOverlay } from './SelectionOverlay';
 import { FollowBanner } from './FollowBanner';
 import { DrawZoomPanel } from './DrawZoomPanel';
 import '@ibodr/draw/draw.css';
@@ -34,20 +39,34 @@ export const DrawCanvas = ({
 
   useLockedShapeSelection(editor);
   useDrawClipboard(editor, token);
+  useOverlayRepaintOnSelection(editor);
 
-  // Корректные bounds viewport — без этого culling/hit-test ломает выделение
+  // Viewport bounds должны совпадать с .dr-canvas — overlay выделения рисуется на canvas
+  // внутри этого элемента; синхронизация по .dr-container смещает screenBounds.
   useEffect(() => {
     if (!editor) return;
 
     const container = editor.getContainer();
-    const syncViewport = () => editor.updateViewportScreenBounds(container);
+
+    const syncViewport = () => {
+      const canvasEl = container.querySelector<HTMLElement>('.dr-canvas');
+      if (canvasEl) editor.updateViewportScreenBounds(canvasEl);
+    };
 
     syncViewport();
+    const rafId = requestAnimationFrame(syncViewport);
+    const settleTimer = window.setTimeout(syncViewport, 100);
 
     const ro = new ResizeObserver(syncViewport);
     ro.observe(container);
+    window.addEventListener('resize', syncViewport);
 
-    return () => ro.disconnect();
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.clearTimeout(settleTimer);
+      ro.disconnect();
+      window.removeEventListener('resize', syncViewport);
+    };
   }, [editor]);
 
   useEffect(() => {
@@ -353,7 +372,7 @@ export const DrawCanvas = ({
             hideUi
             components={{
               ...hiddenComponents,
-              InFrontOfTheCanvas: SelectionMenu,
+              InFrontOfTheCanvas: SelectionOverlay,
             }}
             {...props}
           >

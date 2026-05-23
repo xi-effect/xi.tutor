@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect } from 'react';
-import { Editor, react, DrAssetId } from '@ibodr/draw';
+import { Editor, react, DrAssetId, DrShapeId } from '@ibodr/draw';
 import { insertImage } from '../features/pickAndInsertImage';
 import {
   deserializeDrawContent,
@@ -221,14 +221,19 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
       const uploadTasks = token ? preparePastedContent(content, editor!, token) : [];
 
       // 2) Мгновенная вставка: shape'ы появляются на доске сразу.
-      //    preserveIds:true нужно, чтобы потом по сохранённым id обновлять
-      //    src через editor.updateAssets/updateShape по мере готовности upload'а.
+      //    На той же доске id из clipboard уже есть в store — preserveIds:true
+      //    не создаёт копии, а смещает существующие фигуры. Для cross-board
+      //    preserveIds:true сохраняет id, чтобы uploadPastedAssetsInBackground
+      //    мог обновить src по task.id после re-upload.
+      const shapesAlreadyOnBoard = (content.shapes ?? []).some((shape) =>
+        editor!.store.has(shape.id as DrShapeId),
+      );
       try {
         const point = editor!.inputs.currentPagePoint;
         await editor!.putContentOntoCurrentPage(content, {
           point: { x: point.x + 20, y: point.y + 20 },
           select: true,
-          preserveIds: true,
+          preserveIds: !shapesAlreadyOnBoard,
         });
       } catch (err) {
         console.error('Failed to paste content:', err);

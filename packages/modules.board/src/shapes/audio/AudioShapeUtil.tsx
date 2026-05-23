@@ -68,7 +68,7 @@ export class AudioShapeUtil extends BaseBoxShapeUtil<AudioShape> {
 
   override getIndicatorPath(shape: AudioShape) {
     const path = new Path2D();
-    path.roundRect(0, 0, shape.props.w, shape.props.h, 12);
+    path.rect(0, 0, shape.props.w, shape.props.h);
     return path;
   }
 }

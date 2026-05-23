@@ -4,3 +4,4 @@ export { useDrawStyles } from './useDrawStyles';
 export { useHotkeys } from './useHotkeys';
 export { useLockedShapeSelection } from './useLockedShapeSelection';
 export { useDrawClipboard } from './useDrawClipboard';
+export { useOverlayRepaintOnSelection } from './useOverlayRepaintOnSelection';

@@ -24,8 +24,20 @@ export const useLockedShapeSelection = (editor: Editor | null) => {
       if (!target.closest('.dr-canvas')) return;
       if (editor.getCurrentToolId() !== 'select') return;
 
-      // Не мешаем мультивыделению и стандартному select tool
+      // Не мешаем мультивыделению, рамке выделения и стандартному select tool
       if (event.shiftKey || event.metaKey || event.ctrlKey) return;
+      if (editor.getSelectedShapeIds().length > 1) return;
+      if (
+        editor.isInAny(
+          'select.brushing',
+          'select.scribble_brushing',
+          'select.translating',
+          'select.resizing',
+        )
+      ) {
+        return;
+      }
+      if (editor.inputs.getIsDragging()) return;
 
       const point = editor.screenToPage({
         x: event.clientX,

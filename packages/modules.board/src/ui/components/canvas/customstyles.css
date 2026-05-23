@@ -9,6 +9,19 @@
 }
 
 /*
+ * PDF рендерит страницы в <canvas> с pointer-events: auto по умолчанию.
+ * Canvas внутри transformed .dr-html-layer может перекрывать overlay выделения (GPU compositing).
+ */
+.dr-shape[data-shape-type='pdf'] canvas {
+  pointer-events: none;
+}
+
+/* Overlay выделения — поверх GPU-слоёв HTML-фигур (Safari/Chrome) */
+.dr-canvas-overlays {
+  transform: translateZ(0);
+}
+
+/*
  * Курсоры ресайза и вращения: при наведении на ручки и во время действия
  * курсор остаётся соответствующим (ресайз/вращение). Редактор задаёт
  * --dr-cursor (в т.ч. кастомные SVG с учётом поворота фигуры).

@@ -42,6 +42,7 @@ import { extractFileIdFromUrl } from '../utils/resolveAssetUrl';
 import {
   nextBoardSchemaVersion,
   prepareLegacyYjsStoreSnapshot,
+  repairMigratedBoardStore,
 } from '../utils/migrateLegacyTldrawSnapshot';
 
 type UseYjsStoreArgs = Partial<{
@@ -139,6 +140,8 @@ type SharedEntry = {
   pdfPagesMap: Y.Map<number>;
   /** Синхронное воспроизведение аудио: `${shapeId}:playing|time|ts` → number */
   audioSyncMap: Y.Map<number>;
+  /** Документ из Yjs уже загружен в store — повторный loadSnapshot сбрасывает выделение. */
+  yjsDocumentHydrated: boolean;
   releaseTimer: number | null;
 };
 
@@ -194,6 +197,7 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
     userCamerasMap,
     pdfPagesMap,
     audioSyncMap,
+    yjsDocumentHydrated: false,
     releaseTimer: null,
   };
 
@@ -300,9 +304,15 @@ export function useYjsStore({
       pendingChangesRef.current = null;
 
       yDoc.transact(() => {
-        Object.values(pending.added).forEach((r) => yStore.set(r.id, r));
-        Object.values(pending.updated).forEach((r) => yStore.set(r.id, r));
-        Object.values(pending.removed).forEach((r) => yStore.delete(r.id));
+        Object.values(pending.added).forEach((r) => {
+          if (isDocumentRecord(store, r)) yStore.set(r.id, r);
+        });
+        Object.values(pending.updated).forEach((r) => {
+          if (isDocumentRecord(store, r)) yStore.set(r.id, r);
+        });
+        Object.values(pending.removed).forEach((r) => {
+          if (isDocumentRecord(store, r)) yStore.delete(r.id);
+        });
       }, 'user');
     };
 
@@ -350,11 +360,11 @@ export function useYjsStore({
     unsubs.push(() => provider.off('status', handleStatus as any));
 
     /**
-     * `synced` может прийти несколько раз (реконнект, повторный вызов при уже synced).
-     * Повторный полный init дублирует store.listen / awareness и накапливает «мертвые» instance_presence
-     * в Y.Doc — в шапке видно много одинаковых аватарок одного пользователя.
+     * `synced` может прийти несколько раз (реконнект). Слушатели вешаем один раз на mount
+     * effect'а; документ из Yjs гидрируем один раз на SharedEntry (повторный loadSnapshot
+     * сбрасывает локальное выделение).
      */
-    let syncedFullInitDone = false;
+    let syncListenersBound = false;
 
     const cleanupStaleOwnPresenceRecords = (
       presenceId: DrInstancePresence['id'],
@@ -390,18 +400,24 @@ export function useYjsStore({
       if (!state) return;
 
       const awarenessEarly = provider.awareness;
-      if (syncedFullInitDone) {
-        if (awarenessEarly) {
-          const yClientId = awarenessEarly.clientID.toString();
-          const drawUserId = createUserId(yClientId);
-          const presenceId = InstancePresenceRecordType.createId(yClientId);
-          setMyPresenceId(presenceId);
-          cleanupStaleOwnPresenceRecords(presenceId, drawUserId);
-        }
+      if (awarenessEarly) {
+        const yClientId = awarenessEarly.clientID.toString();
+        const drawUserId = createUserId(yClientId);
+        const presenceId = InstancePresenceRecordType.createId(yClientId);
+        setMyPresenceId(presenceId);
+        cleanupStaleOwnPresenceRecords(presenceId, drawUserId);
+      }
+
+      if (syncListenersBound) {
+        setStoreWithStatus((prev) => ({
+          ...prev,
+          status: 'synced-remote',
+          connectionStatus: 'online',
+        }));
         return;
       }
 
-      syncedFullInitDone = true;
+      syncListenersBound = true;
 
       /** Раньше таймер жил в Y.Map `timer` и попадал в персист документа; теперь только awareness — чистим наследие */
       yDoc.transact(() => {
@@ -423,19 +439,30 @@ export function useYjsStore({
             const typedChanges = changes as unknown as DrStoreChanges;
 
             Object.values(typedChanges.added).forEach((r) => {
+              if (!isDocumentRecord(store, r)) return;
               pending.added[r.id] = r;
               delete pending.removed[r.id];
             });
 
             Object.values(typedChanges.updated).forEach(([, r]) => {
+              if (!isDocumentRecord(store, r)) return;
               pending.updated[r.id] = r;
             });
 
             Object.values(typedChanges.removed).forEach((r) => {
+              if (!isDocumentRecord(store, r)) return;
               delete pending.added[r.id];
               delete pending.updated[r.id];
               pending.removed[r.id] = r;
             });
+
+            if (
+              Object.keys(pending.added).length === 0 &&
+              Object.keys(pending.updated).length === 0 &&
+              Object.keys(pending.removed).length === 0
+            ) {
+              return;
+            }
 
             scheduleFlush();
           },
@@ -670,122 +697,132 @@ export function useYjsStore({
         });
       }
 
-      /** 5) initial seed / migrate */
+      /** 5) initial seed / migrate (один раз на комнату — повторный loadSnapshot сбрасывает выделение) */
+      if (!sharedEntry.yjsDocumentHydrated) {
+        sharedEntry.yjsDocumentHydrated = true;
 
-      // При дублировании доски бэкенд копирует бинарный Y.Doc, но данные внутри хранятся
-      // в массиве `tl_${sourceYdocId}`. Клиент обращается к `tl_${newYdocId}` — он пуст.
-      // Ищем данные в любом другом `tl_*` массиве и копируем в текущий.
-      if (yStore.yarray.length === 0) {
-        const currentKey = `tl_${ydocId}`;
+        // При дублировании доски бэкенд копирует бинарный Y.Doc, но данные внутри хранятся
+        // в массиве `tl_${sourceYdocId}`. Клиент обращается к `tl_${newYdocId}` — он пуст.
+        // Ищем данные в любом другом `tl_*` массиве и копируем в текущий.
+        if (yStore.yarray.length === 0) {
+          const currentKey = `tl_${ydocId}`;
 
-        for (const [key] of yDoc.share.entries()) {
-          if (key === currentKey || !key.startsWith('tl_')) continue;
+          for (const [key] of yDoc.share.entries()) {
+            if (key === currentKey || !key.startsWith('tl_')) continue;
 
-          const candidateArr = yDoc.getArray<{ key: string; val: DrRecord }>(key);
-          if (candidateArr.length === 0) continue;
+            const candidateArr = yDoc.getArray<{ key: string; val: DrRecord }>(key);
+            if (candidateArr.length === 0) continue;
+
+            yDoc.transact(() => {
+              for (const item of candidateArr.toJSON()) {
+                yStore.set(item.key, item.val);
+              }
+            }, 'duplicate-migration');
+            break;
+          }
+        }
+
+        if (yStore.yarray.length) {
+          const ourSchema = store.schema.serialize();
+          const theirSchema = meta.get('schema') as SerializedSchema | undefined;
+          const metaSchemaVersion = meta.get('schemaVersion');
+
+          if (!theirSchema) {
+            throw new Error('No schema found in the yjs doc');
+          }
+
+          const allYjsRecords = yStore.yarray.toJSON().map(({ val }) => val) as DrRecord[];
+          const legacySessionRecords = allYjsRecords.filter((r) => !isDocumentRecord(store, r));
+
+          if (legacySessionRecords.length > 0) {
+            yDoc.transact(() => {
+              for (const r of legacySessionRecords) yStore.delete(r.id);
+            }, 'init-cleanup-session');
+          }
+
+          const records = allYjsRecords.filter((r) => isDocumentRecord(store, r));
+          const storeSnapshot = Object.fromEntries(records.map((r) => [r.id, r]));
+
+          const prepared = prepareLegacyYjsStoreSnapshot({
+            schema: theirSchema,
+            store: storeSnapshot,
+            metaSchemaVersion,
+          });
+
+          if (prepared.wasLegacy) {
+            console.info(
+              '[modules.board] Migrating legacy tldraw Yjs room to draw schema (com.tldraw.* → com.draw.*)',
+            );
+          }
+
+          const migrationResult = store.schema.migrateStoreSnapshot({
+            schema: prepared.schema,
+            store: prepared.store,
+          });
+
+          if (migrationResult.type === 'error') {
+            console.warn('Schema updated, refresh.');
+            return;
+          }
+
+          let migratedStore = migrationResult.value as Record<string, DrRecord>;
+
+          migratedStore = repairMigratedBoardStore(migratedStore);
+
+          // Migrate `src` values:
+          // - Shapes (audio, pdf): full URL → bare file ID (our validators accept any string)
+          // - Assets (image): bare ID → full URL (tldraw's built-in validator requires a valid URL)
+          for (const record of Object.values(migratedStore) as DrRecord[]) {
+            const props = (record as any).props;
+            if (!props?.src || typeof props.src !== 'string') continue;
+
+            const isAsset = (record as any).typeName === 'asset';
+            if (isAsset) {
+              const src = props.src as string;
+              const isBareId =
+                src !== '' &&
+                !src.startsWith('http://') &&
+                !src.startsWith('https://') &&
+                !src.startsWith('data:') &&
+                !src.startsWith('blob:');
+              if (isBareId) {
+                props.src = getFileUrl(src);
+              }
+            } else {
+              const fileId = extractFileIdFromUrl(props.src);
+              if (fileId) {
+                props.src = fileId;
+              }
+            }
+          }
 
           yDoc.transact(() => {
-            for (const item of candidateArr.toJSON()) {
-              yStore.set(item.key, item.val);
+            for (const r of records) {
+              if (!migratedStore[r.id]) yStore.delete(r.id);
             }
-          }, 'duplicate-migration');
-          break;
-        }
-      }
 
-      if (yStore.yarray.length) {
-        const ourSchema = store.schema.serialize();
-        const theirSchema = meta.get('schema') as SerializedSchema | undefined;
-        const metaSchemaVersion = meta.get('schemaVersion');
+            for (const r of Object.values(migratedStore) as DrRecord[]) {
+              if (isDocumentRecord(store, r)) yStore.set(r.id, r);
+            }
 
-        if (!theirSchema) {
-          throw new Error('No schema found in the yjs doc');
-        }
+            meta.set('schema', ourSchema);
+            meta.set(
+              'schemaVersion',
+              nextBoardSchemaVersion(metaSchemaVersion, prepared.wasLegacy),
+            );
+          }, 'init');
 
-        const allYjsRecords = yStore.yarray.toJSON().map(({ val }) => val) as DrRecord[];
-        const legacySessionRecords = allYjsRecords.filter((r) => !isDocumentRecord(store, r));
-
-        if (legacySessionRecords.length > 0) {
+          loadSnapshot(store, { store: migratedStore, schema: ourSchema });
+        } else {
+          const docSnapshot = store.getStoreSnapshot();
           yDoc.transact(() => {
-            for (const r of legacySessionRecords) yStore.delete(r.id);
-          }, 'init-cleanup-session');
-        }
-
-        const records = allYjsRecords.filter((r) => isDocumentRecord(store, r));
-        const storeSnapshot = Object.fromEntries(records.map((r) => [r.id, r]));
-
-        const prepared = prepareLegacyYjsStoreSnapshot({
-          schema: theirSchema,
-          store: storeSnapshot,
-          metaSchemaVersion,
-        });
-
-        if (prepared.wasLegacy) {
-          console.info(
-            '[modules.board] Migrating legacy tldraw Yjs room to draw schema (com.tldraw.* → com.draw.*)',
-          );
-        }
-
-        const migrationResult = store.schema.migrateStoreSnapshot({
-          schema: prepared.schema,
-          store: prepared.store,
-        });
-
-        if (migrationResult.type === 'error') {
-          console.warn('Schema updated, refresh.');
-          return;
-        }
-
-        // Migrate `src` values:
-        // - Shapes (audio, pdf): full URL → bare file ID (our validators accept any string)
-        // - Assets (image): bare ID → full URL (tldraw's built-in validator requires a valid URL)
-        for (const record of Object.values(migrationResult.value) as DrRecord[]) {
-          const props = (record as any).props;
-          if (!props?.src || typeof props.src !== 'string') continue;
-
-          const isAsset = (record as any).typeName === 'asset';
-          if (isAsset) {
-            const src = props.src as string;
-            const isBareId =
-              src !== '' &&
-              !src.startsWith('http://') &&
-              !src.startsWith('https://') &&
-              !src.startsWith('data:') &&
-              !src.startsWith('blob:');
-            if (isBareId) {
-              props.src = getFileUrl(src);
+            for (const rec of Object.values(docSnapshot.store) as DrRecord[]) {
+              yStore.set(rec.id, rec);
             }
-          } else {
-            const fileId = extractFileIdFromUrl(props.src);
-            if (fileId) {
-              props.src = fileId;
-            }
-          }
+            meta.set('schema', docSnapshot.schema);
+            meta.set('schemaVersion', BOARD_SCHEMA_VERSION);
+          }, 'init');
         }
-
-        yDoc.transact(() => {
-          for (const r of records) {
-            if (!migrationResult.value[r.id]) yStore.delete(r.id);
-          }
-
-          for (const r of Object.values(migrationResult.value) as DrRecord[]) {
-            if (isDocumentRecord(store, r)) yStore.set(r.id, r);
-          }
-
-          meta.set('schema', ourSchema);
-          meta.set('schemaVersion', nextBoardSchemaVersion(metaSchemaVersion, prepared.wasLegacy));
-        }, 'init');
-
-        loadSnapshot(store, { store: migrationResult.value, schema: ourSchema });
-      } else {
-        const docSnapshot = store.getStoreSnapshot();
-        yDoc.transact(() => {
-          for (const rec of Object.values(docSnapshot.store) as DrRecord[]) {
-            yStore.set(rec.id, rec);
-          }
-          meta.set('schema', docSnapshot.schema);
-          meta.set('schemaVersion', BOARD_SCHEMA_VERSION);
-        }, 'init');
       }
 
       /** 6) undo manager */

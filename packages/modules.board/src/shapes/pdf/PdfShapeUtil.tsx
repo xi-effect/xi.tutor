@@ -61,7 +61,7 @@ export class PdfShapeUtil extends BaseBoxShapeUtil<PdfShape> {
 
   override getIndicatorPath(shape: PdfShape) {
     const path = new Path2D();
-    path.roundRect(0, 0, shape.props.w, shape.props.h, 12);
+    path.rect(0, 0, shape.props.w, shape.props.h);
     return path;
   }
 }
