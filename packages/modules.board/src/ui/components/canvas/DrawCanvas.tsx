@@ -6,9 +6,8 @@ import { Editor, DrInstancePresence, Draw, DrawProps } from '@ibodr/draw';
 import { useLockedShapeSelection, useDrawClipboard } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore, useDrawStore } from '../../../store';
-import { PdfShapeUtil } from '../../../shapes/pdf';
-import { AudioShapeUtil } from '../../../shapes/audio';
-import { CustomImageShapeUtil } from '../../../shapes/image';
+import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
+import { hiddenComponents } from '../../../utils/customConfig';
 import { Header } from '../header';
 import { Navbar, SelectionMenu } from '../toolbar';
 import { FollowBanner } from './FollowBanner';
@@ -17,10 +16,8 @@ import '@ibodr/draw/draw.css';
 import './customstyles.css';
 import { UndoRedo } from '../toolbar/UndoRedo';
 import { extractFileIdFromUrl } from '../../../utils/resolveAssetUrl';
-import { FrameShapeUtil } from '../../../shapes/frame';
-import { XiGeoShapeUtil, XiGeoTool } from '../../../shapes/geo';
-import { StickerShapeUtil } from '../../../shapes/sticker';
-import { EmojiShapeUtil, EmojiTool } from '../../../shapes/emoji';
+import { XiGeoTool } from '../../../shapes/geo';
+import { EmojiTool } from '../../../shapes/emoji';
 
 export const DrawCanvas = ({
   token,
@@ -37,6 +34,21 @@ export const DrawCanvas = ({
 
   useLockedShapeSelection(editor);
   useDrawClipboard(editor, token);
+
+  // Корректные bounds viewport — без этого culling/hit-test ломает выделение
+  useEffect(() => {
+    if (!editor) return;
+
+    const container = editor.getContainer();
+    const syncViewport = () => editor.updateViewportScreenBounds(container);
+
+    syncViewport();
+
+    const ro = new ResizeObserver(syncViewport);
+    ro.observe(container);
+
+    return () => ro.disconnect();
+  }, [editor]);
 
   useEffect(() => {
     return () => {
@@ -105,34 +117,29 @@ export const DrawCanvas = ({
       });
       container.addEventListener('click', handleClick, { capture: true, passive: false });
 
-      // Более агрессивное снятие выделения - используем requestAnimationFrame для лучшей производительности
       let isSelecting = false;
-      const unsubscribe = editor.store.listen(() => {
-        if (isSelecting) return;
 
-        const currentSelectedIds = editor.getSelectedShapeIds();
-        if (currentSelectedIds.length > 0) {
-          isSelecting = true;
-          requestAnimationFrame(() => {
-            editor.selectNone();
-            isSelecting = false;
-          });
-        }
-      });
+      // Снимаем выделение только при изменениях session-состояния (не presence каждые ~80ms)
+      const unsubscribe = editor.store.listen(
+        () => {
+          if (isSelecting) return;
 
-      // Дополнительная проверка через интервал на случай, если слушатель не сработал
-      const intervalId = setInterval(() => {
-        const currentSelectedIds = editor.getSelectedShapeIds();
-        if (currentSelectedIds.length > 0) {
-          editor.selectNone();
-        }
-      }, 100);
+          const currentSelectedIds = editor.getSelectedShapeIds();
+          if (currentSelectedIds.length > 0) {
+            isSelecting = true;
+            requestAnimationFrame(() => {
+              editor.selectNone();
+              isSelecting = false;
+            });
+          }
+        },
+        { scope: 'session' },
+      );
 
       const cleanup = () => {
         container.removeEventListener('pointerdown', handlePointerDown, { capture: true });
         container.removeEventListener('click', handleClick, { capture: true });
         unsubscribe();
-        clearInterval(intervalId);
       };
 
       return cleanup;
@@ -342,17 +349,10 @@ export const DrawCanvas = ({
             }}
             store={store}
             tools={[XiGeoTool, EmojiTool]}
-            shapeUtils={[
-              PdfShapeUtil,
-              AudioShapeUtil,
-              FrameShapeUtil,
-              XiGeoShapeUtil,
-              CustomImageShapeUtil,
-              StickerShapeUtil,
-              EmojiShapeUtil,
-            ]}
+            shapeUtils={boardCustomShapeUtils}
             hideUi
             components={{
+              ...hiddenComponents,
               InFrontOfTheCanvas: SelectionMenu,
             }}
             {...props}

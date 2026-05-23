@@ -54,12 +54,16 @@ export const SelectionMenu = track(function SelectionMenu() {
 
   return (
     <div
-      className="border-gray-10 bg-gray-0 absolute z-30 flex gap-2 rounded-xl border p-1 shadow-md"
+      className="border-gray-10 bg-gray-0 pointer-events-auto absolute z-30 flex gap-2 rounded-xl border p-1 shadow-md"
       style={{
         left: centerX,
         top: topY,
         transform: 'translate(-50%, -100%)',
         transition: 'left 60ms linear, top 60ms linear',
+      }}
+      onPointerDown={(e) => {
+        editor.markEventAsHandled(e);
+        e.stopPropagation();
       }}
     >
       {isLocked ? (
