@@ -7,7 +7,7 @@ import {
   DefaultTextAlignStyle,
   DefaultVerticalAlignStyle,
   GeoShapeGeoStyle,
-} from 'tldraw';
+} from '@ibodr/draw';
 
 // types/index.ts
 export type ToolType =
@@ -23,8 +23,7 @@ export type ToolType =
   | 'asset'
   | 'geo'
   | 'frame'
-  | 'xi-geo'
-  | 'emoji';
+  | 'xi-geo';
 
 export type ElementType =
   | 'line'
@@ -39,8 +38,7 @@ export type ElementType =
   | 'draw'
   | 'geo'
   | 'frame'
-  | 'xi-geo'
-  | 'emoji';
+  | 'xi-geo';
 
 export interface BoardElement {
   id: string;
@@ -87,4 +85,3 @@ export type TDash = (typeof DefaultDashStyle)['defaultValue'];
 export type TFont = (typeof DefaultFontStyle)['defaultValue'];
 export type TAlign = (typeof DefaultTextAlignStyle)['defaultValue'];
 export type TVerticalAlign = (typeof DefaultVerticalAlignStyle)['defaultValue'];
-export type TEmoji = string;

@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { track, useEditor } from 'tldraw';
+import { track, useEditor } from '@ibodr/draw';
 import { Button } from '@xipkg/button';
 import { Trash, Copy, Locked, Unlocked } from '@xipkg/icons';
 import { MoreActionsMenu } from './MoreActionsMenu';

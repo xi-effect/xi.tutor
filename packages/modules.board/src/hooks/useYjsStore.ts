@@ -14,7 +14,8 @@ import { toast } from 'sonner';
 import {
   computed,
   createPresenceStateDerivation,
-  createTLStore,
+  createDrStore,
+  createUserId,
   defaultShapeUtils,
   defaultUserPreferences,
   getUserPreferences,
@@ -23,12 +24,14 @@ import {
   react,
   SerializedSchema,
   setUserPreferences,
-  TLAnyShapeUtilConstructor,
-  TLInstancePresence,
-  TLRecord,
-  TLStore,
-  TLStoreWithStatus,
-} from 'tldraw';
+  UserRecordType,
+  DrAnyShapeUtilConstructor,
+  DrInstancePresence,
+  DrRecord,
+  DrStore,
+  DrStoreWithStatus,
+  type DrUser,
+} from '@ibodr/draw';
 import { YKeyValue } from 'y-utility/y-keyvalue';
 import * as Y from 'yjs';
 import { getFileUrl } from 'common.api';
@@ -39,21 +42,24 @@ import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
 import { generateUserColor } from '../utils/userColor';
 import { extractFileIdFromUrl } from '../utils/resolveAssetUrl';
 import { XiGeoShapeUtil } from '../shapes/geo';
-import { EmojiShapeUtil } from '../shapes/emoji';
+import {
+  nextBoardSchemaVersion,
+  prepareLegacyYjsStoreSnapshot,
+} from '../utils/migrateLegacyTldrawSnapshot';
 
 type UseYjsStoreArgs = Partial<{
   hostUrl: string;
   ydocId: string;
   storageToken: string;
-  shapeUtils: TLAnyShapeUtilConstructor[];
+  shapeUtils: DrAnyShapeUtilConstructor[];
   token: string; // токен для asset store
 }>;
 
 type ConnectionStatus = 'online' | 'offline';
 
 type StoreWithStatusExt = {
-  status: TLStoreWithStatus['status'];
-  store?: TLStore;
+  status: DrStoreWithStatus['status'];
+  store?: DrStore;
   error?: Error;
   connectionStatus?: ConnectionStatus;
 };
@@ -62,8 +68,8 @@ type StoreWithStatusExt = {
 export type CameraState = { x: number; y: number; z: number };
 
 export type ExtendedStoreStatus = {
-  store: TLStore;
-  status: TLStoreWithStatus['status'];
+  store: DrStore;
+  status: DrStoreWithStatus['status'];
   error?: Error;
   connectionStatus?: ConnectionStatus;
   undo: () => void;
@@ -89,19 +95,19 @@ export type ExtendedStoreStatus = {
 };
 
 type PendingChanges = {
-  added: Record<string, TLRecord>;
-  updated: Record<string, TLRecord>;
-  removed: Record<string, TLRecord>;
+  added: Record<string, DrRecord>;
+  updated: Record<string, DrRecord>;
+  removed: Record<string, DrRecord>;
 };
 
 /**
  * В tldraw тип changes иногда уезжает в unknown (зависит от версии/сборки),
  * поэтому описываем минимально нужную форму и приводим к ней.
  */
-type TLStoreChanges = {
-  added: Record<string, TLRecord>;
-  updated: Record<string, [TLRecord, TLRecord]>;
-  removed: Record<string, TLRecord>;
+type DrStoreChanges = {
+  added: Record<string, DrRecord>;
+  updated: Record<string, [DrRecord, DrRecord]>;
+  removed: Record<string, DrRecord>;
 };
 
 const FLUSH_MS = 50;
@@ -122,7 +128,7 @@ type SharedEntry = {
   refs: number;
   provider: HocuspocusProvider;
   yDoc: Y.Doc;
-  yStore: YKeyValue<TLRecord>;
+  yStore: YKeyValue<DrRecord>;
   meta: Y.Map<SerializedSchema | string>;
   readonlyMap: Y.Map<boolean>;
   /** Камеры по userId — каждый пользователь хранит свою последнюю позицию камеры (синхронизируется с сервером) */
@@ -156,11 +162,10 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
   }
 
   const yDoc = new Y.Doc({ gc: true });
-  const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${ydocId}`);
-  const yStore = new YKeyValue<TLRecord>(yArr);
+  const yArr = yDoc.getArray<{ key: string; val: DrRecord }>(`tl_${ydocId}`);
+  const yStore = new YKeyValue<DrRecord>(yArr);
 
   const meta = yDoc.getMap<SerializedSchema | string>('meta');
-  meta.set('schemaVersion', BOARD_SCHEMA_VERSION);
 
   const readonlyMap = yDoc.getMap<boolean>('readonly');
   const userCamerasMap = yDoc.getMap<CameraState>('userCameras');
@@ -236,17 +241,16 @@ export function useYjsStore({
   const currentUserRef = useRef(currentUser);
   currentUserRef.current = currentUser;
 
-  /** TLStore должен быть ОДИН и всегда один и тот же */
+  /** DrStore должен быть ОДИН и всегда один и тот же */
   const [store] = useState(() => {
     const assetStore = token ? myAssetStore(token) : undefined;
 
-    return createTLStore({
+    return createDrStore({
       shapeUtils: [
         ...defaultShapeUtils,
         PdfShapeUtil,
         AudioShapeUtil,
         XiGeoShapeUtil,
-        EmojiShapeUtil,
         ...shapeUtils,
       ],
       ...(assetStore ? { assets: assetStore } : {}),
@@ -356,14 +360,14 @@ export function useYjsStore({
      */
     let syncedFullInitDone = false;
 
-    const cleanupStaleOwnPresenceRecords = (presenceId: TLInstancePresence['id']) => {
+    const cleanupStaleOwnPresenceRecords = (presenceId: DrInstancePresence['id']) => {
       const backendId = currentUserRef.current?.id;
       if (backendId == null) return;
 
       const bid = String(backendId);
       const all = store
         .allRecords()
-        .filter((r): r is TLInstancePresence => r.typeName === 'instance_presence');
+        .filter((r): r is DrInstancePresence => r.typeName === 'instance_presence');
 
       const stale = all.filter((p) => {
         if (p.id === presenceId) return false;
@@ -413,7 +417,7 @@ export function useYjsStore({
             }
 
             const pending = pendingChangesRef.current;
-            const typedChanges = changes as unknown as TLStoreChanges;
+            const typedChanges = changes as unknown as DrStoreChanges;
 
             Object.values(typedChanges.added).forEach((r) => {
               pending.added[r.id] = r;
@@ -440,9 +444,9 @@ export function useYjsStore({
       const handleChange = (
         changes: Map<
           string,
-          | { action: 'delete'; oldValue: TLRecord }
-          | { action: 'update'; oldValue: TLRecord; newValue: TLRecord }
-          | { action: 'add'; newValue: TLRecord }
+          | { action: 'delete'; oldValue: DrRecord }
+          | { action: 'update'; oldValue: DrRecord; newValue: DrRecord }
+          | { action: 'add'; newValue: DrRecord }
         >,
         transaction: Y.Transaction,
       ) => {
@@ -453,12 +457,12 @@ export function useYjsStore({
          */
         if (transaction.origin === 'user') return;
 
-        const toRemove: TLRecord['id'][] = [];
-        const toPut: TLRecord[] = [];
+        const toRemove: DrRecord['id'][] = [];
+        const toPut: DrRecord[] = [];
 
         changes.forEach((change, id) => {
           if (change.action === 'delete') {
-            toRemove.push(id as TLRecord['id']);
+            toRemove.push(id as DrRecord['id']);
           } else {
             const record = yStore.get(id);
             if (record) toPut.push(record);
@@ -495,30 +499,32 @@ export function useYjsStore({
 
         setUserPreferences({ id: yClientId, name: userName, color: userColor });
 
-        const userPreferences = computed<{ id: string; color: string; name: string }>(
-          'userPreferences',
-          () => {
-            const u = getUserPreferences();
-            return {
-              id: u.id,
-              color: u.color ?? userColor,
-              name: u.name ?? userName,
-            };
-          },
-        );
+        const $boardUser = computed<DrUser | null>('boardUser', () => {
+          const prefs = getUserPreferences();
+          const name =
+            currentUserRef.current?.display_name ||
+            currentUserRef.current?.username ||
+            prefs.name ||
+            defaultUserPreferences.name;
+          const color = generateUserColor(currentUserRef.current?.id?.toString() || yClientId);
+          return UserRecordType.create({
+            id: createUserId(yClientId),
+            name,
+            color,
+          });
+        });
 
         const presenceId = InstancePresenceRecordType.createId(yClientId);
         setMyPresenceId(presenceId);
-        const presenceDerivation = createPresenceStateDerivation(
-          userPreferences,
-          presenceId,
-        )(store);
+        const presenceDerivation = createPresenceStateDerivation($boardUser, {
+          instanceId: presenceId,
+        })(store);
 
         // ==== LOCAL presence batching (throttle + last-value-wins) ====
         let presenceTimer: number | null = null;
-        let pendingPresence: TLInstancePresence | null = null;
+        let pendingPresence: DrInstancePresence | null = null;
 
-        const enrichPresenceWithBackendId = (p: TLInstancePresence): TLInstancePresence => {
+        const enrichPresenceWithBackendId = (p: DrInstancePresence): DrInstancePresence => {
           const backendId = currentUserRef.current?.id;
           if (backendId == null) return p;
           return {
@@ -538,7 +544,7 @@ export function useYjsStore({
           pendingPresence = null;
         };
 
-        const schedulePresence = (next: TLInstancePresence | null | undefined) => {
+        const schedulePresence = (next: DrInstancePresence | null | undefined) => {
           if (!next) return;
 
           pendingPresence = next;
@@ -585,20 +591,20 @@ export function useYjsStore({
         });
 
         // ==== REMOTE presence batching (raf) ====
-        type PresenceState = { presence?: TLInstancePresence };
+        type PresenceState = { presence?: DrInstancePresence };
         type AwarenessChange = { added: number[]; updated: number[]; removed: number[] };
 
         let rafId: number | null = null;
 
         const pendingRemote = {
-          toPut: new Map<string, TLInstancePresence>(),
+          toPut: new Map<string, DrInstancePresence>(),
           toRemove: new Set<string>(),
         };
 
         const flushRemotePresence = () => {
           rafId = null;
 
-          const toRemove = Array.from(pendingRemote.toRemove) as TLInstancePresence['id'][];
+          const toRemove = Array.from(pendingRemote.toRemove) as DrInstancePresence['id'][];
           const toPut = Array.from(pendingRemote.toPut.values());
 
           pendingRemote.toPut.clear();
@@ -664,7 +670,7 @@ export function useYjsStore({
         for (const [key] of yDoc.share.entries()) {
           if (key === currentKey || !key.startsWith('tl_')) continue;
 
-          const candidateArr = yDoc.getArray<{ key: string; val: TLRecord }>(key);
+          const candidateArr = yDoc.getArray<{ key: string; val: DrRecord }>(key);
           if (candidateArr.length === 0) continue;
 
           yDoc.transact(() => {
@@ -679,16 +685,30 @@ export function useYjsStore({
       if (yStore.yarray.length) {
         const ourSchema = store.schema.serialize();
         const theirSchema = meta.get('schema') as SerializedSchema | undefined;
+        const metaSchemaVersion = meta.get('schemaVersion');
 
         if (!theirSchema) {
           throw new Error('No schema found in the yjs doc');
         }
 
         const records = yStore.yarray.toJSON().map(({ val }) => val);
+        const storeSnapshot = Object.fromEntries(records.map((r) => [r.id, r]));
+
+        const prepared = prepareLegacyYjsStoreSnapshot({
+          schema: theirSchema,
+          store: storeSnapshot,
+          metaSchemaVersion,
+        });
+
+        if (prepared.wasLegacy) {
+          console.info(
+            '[modules.board] Migrating legacy tldraw Yjs room to draw schema (com.tldraw.* → com.draw.*)',
+          );
+        }
 
         const migrationResult = store.schema.migrateStoreSnapshot({
-          schema: theirSchema,
-          store: Object.fromEntries(records.map((r) => [r.id, r])),
+          schema: prepared.schema,
+          store: prepared.store,
         });
 
         if (migrationResult.type === 'error') {
@@ -699,7 +719,7 @@ export function useYjsStore({
         // Migrate `src` values:
         // - Shapes (audio, pdf): full URL → bare file ID (our validators accept any string)
         // - Assets (image): bare ID → full URL (tldraw's built-in validator requires a valid URL)
-        for (const record of Object.values(migrationResult.value) as TLRecord[]) {
+        for (const record of Object.values(migrationResult.value) as DrRecord[]) {
           const props = (record as any).props;
           if (!props?.src || typeof props.src !== 'string') continue;
 
@@ -728,11 +748,12 @@ export function useYjsStore({
             if (!migrationResult.value[r.id]) yStore.delete(r.id);
           }
 
-          for (const r of Object.values(migrationResult.value) as TLRecord[]) {
+          for (const r of Object.values(migrationResult.value) as DrRecord[]) {
             yStore.set(r.id, r);
           }
 
           meta.set('schema', ourSchema);
+          meta.set('schemaVersion', nextBoardSchemaVersion(metaSchemaVersion, prepared.wasLegacy));
         }, 'init');
 
         loadSnapshot(store, { store: migrationResult.value, schema: ourSchema });
@@ -740,6 +761,7 @@ export function useYjsStore({
         yDoc.transact(() => {
           for (const rec of store.allRecords()) yStore.set(rec.id, rec);
           meta.set('schema', store.schema.serialize());
+          meta.set('schemaVersion', BOARD_SCHEMA_VERSION);
         }, 'init');
       }
 

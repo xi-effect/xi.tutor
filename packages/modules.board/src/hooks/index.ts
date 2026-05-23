@@ -1,7 +1,6 @@
 export { useThrottle } from './useThrottle';
 export { useYjsStore } from './useYjsStore';
-export { useRemoveMark } from './useRemoveMark';
-export { useTldrawStyles } from './useTldrawStyles';
+export { useDrawStyles } from './useDrawStyles';
 export { useHotkeys } from './useHotkeys';
 export { useLockedShapeSelection } from './useLockedShapeSelection';
-export { useTldrawClipboard } from './useTldrawClipboard';
+export { useDrawClipboard } from './useDrawClipboard';

@@ -1,11 +1,11 @@
-import { TLDefaultColorTheme } from 'tldraw';
+import { DrThemeColors, getColorValue } from '@ibodr/draw';
 import { TColor, TFill, TSize } from '../../types';
 
 const SIZE_IN_PIXELS: Partial<Record<TSize, number>> = { xl: 20, l: 16, m: 10 };
 
-export const getFillColor = (theme: TLDefaultColorTheme, fill: TFill, color: TColor): string => {
-  if (fill === 'solid') return theme[color].solid;
-  if (fill === 'semi') return theme[color].semi;
+export const getFillColor = (colors: DrThemeColors, fill: TFill, color: TColor): string => {
+  if (fill === 'solid') return getColorValue(colors, color, 'solid');
+  if (fill === 'semi') return getColorValue(colors, color, 'semi');
 
   return 'transparent';
 };

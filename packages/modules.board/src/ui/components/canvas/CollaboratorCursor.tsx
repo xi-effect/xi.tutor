@@ -1,8 +1,19 @@
 import React from 'react';
-import { TLCursorProps } from 'tldraw';
 import { Cursor } from '@xipkg/icons';
 
-export const CollaboratorCursor: React.FC<TLCursorProps> = ({ point, color, name }) => {
+/** Props for the custom collaborator cursor overlay (DOM layer). */
+export type CollaboratorCursorProps = {
+  point: { x: number; y: number } | null;
+  color: string;
+  name?: string | null;
+};
+
+/**
+ * Custom DOM cursor for collaborators. In draw v5 built-in cursors render on the canvas
+ * via CollaboratorCursorOverlayUtil; pass this through InFrontOfTheCanvas only if you
+ * disable the default overlay util.
+ */
+export const CollaboratorCursor: React.FC<CollaboratorCursorProps> = ({ point, color, name }) => {
   if (!point) return null;
 
   return (
@@ -13,20 +24,19 @@ export const CollaboratorCursor: React.FC<TLCursorProps> = ({ point, color, name
         left: point.x,
         top: point.y,
         pointerEvents: 'none',
-        transform: 'translate(0, 0)', // Курсор указывает точно на позицию мыши
+        transform: 'translate(0, 0)',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-start',
         zIndex: 1000,
       }}
     >
-      {/* Иконка курсора */}
       <div
         style={{
           position: 'relative',
           width: 20,
           height: 20,
-          transform: 'translate(-16px, -2px)', // Смещаем курсор так, чтобы остриё указывало на позицию мыши
+          transform: 'translate(-16px, -2px)',
           filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))',
         }}
       >
@@ -39,7 +49,6 @@ export const CollaboratorCursor: React.FC<TLCursorProps> = ({ point, color, name
         />
       </div>
 
-      {/* Имя пользователя */}
       <div
         style={{
           marginTop: 0,

@@ -5,15 +5,15 @@ import {
   DefaultSizeStyle,
   GeoShapeGeoStyle,
   StateNode,
-  TLShapeId,
+  DrShapeId,
   VecLike,
-} from 'tldraw';
+} from '@ibodr/draw';
 import { BorderColorStyle } from '../shapeStyles';
 
 export class XiGeoTool extends StateNode {
   static override id = 'xi-geo';
 
-  private currentShapeId: TLShapeId | null = null;
+  private currentShapeId: DrShapeId | null = null;
   private startPoint: VecLike | null = null;
 
   override onPointerDown() {

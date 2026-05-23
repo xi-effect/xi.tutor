@@ -1,4 +1,4 @@
-import { StyleProp, T } from 'tldraw';
+import { StyleProp } from '@ibodr/draw';
 
 export const BorderColorStyle = StyleProp.defineEnum('xi:borderColor', {
   values: [
@@ -17,9 +17,4 @@ export const BorderColorStyle = StyleProp.defineEnum('xi:borderColor', {
     'yellow',
   ],
   defaultValue: 'black',
-});
-
-export const EmojiStyle = StyleProp.define('xi:emoji', {
-  defaultValue: '😀',
-  type: T.string,
 });

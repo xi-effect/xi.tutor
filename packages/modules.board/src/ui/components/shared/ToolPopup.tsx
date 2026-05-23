@@ -6,18 +6,11 @@ type ToolPopupProps = {
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
   content: React.ReactNode;
-  isCloseOnOutside?: boolean;
 };
 
-export const ToolPopup = ({
-  children,
-  open,
-  onOpenChange,
-  content,
-  isCloseOnOutside = false,
-}: ToolPopupProps) => {
+export const ToolPopup = ({ children, open, onOpenChange, content }: ToolPopupProps) => {
   const handleEvent = (e: any) => {
-    if (!isCloseOnOutside && e.target.classList.contains('tl-container')) {
+    if (e.target.classList.contains('dr-container')) {
       e.preventDefault();
     }
   };

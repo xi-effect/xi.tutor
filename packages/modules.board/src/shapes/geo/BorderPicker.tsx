@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 import { ColorDot, Picker } from '../../ui/components';
 import { colorOptions } from '../../utils/customConfig';
-import { useTldrawStyles } from '../../hooks';
-import { useTldrawStore } from '../../store';
+import { useDrawStyles } from '../../hooks';
+import { useDrawStore } from '../../store';
 import { Slider } from '@xipkg/slider';
 import { cn } from '@xipkg/utils';
 import { TColor } from '../../types';
@@ -12,8 +12,8 @@ const sizes = ['s', 'm', 'l', 'xl'] as const;
 
 export const BorderPicker = () => {
   const [open, setOpen] = useState(false);
-  const { setSelectedShapesBorderColor, setSelectedShapesThickness } = useTldrawStyles();
-  const { setGeoBorderColor, setGeoBorderThickness } = useTldrawStore();
+  const { setSelectedShapesBorderColor, setSelectedShapesThickness } = useDrawStyles();
+  const { setGeoBorderColor, setGeoBorderThickness } = useDrawStore();
   const { currentBorderColorOption, borderCurrentColorClass, currentBorderThickness } =
     useXiGeoStyles();
 

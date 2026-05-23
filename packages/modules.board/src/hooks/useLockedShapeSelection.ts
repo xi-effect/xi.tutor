@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Editor } from 'tldraw';
+import { Editor } from '@ibodr/draw';
 
 export const useLockedShapeSelection = (editor: Editor | null) => {
   useEffect(() => {
@@ -21,7 +21,7 @@ export const useLockedShapeSelection = (editor: Editor | null) => {
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target as HTMLElement;
 
-      const isInsideCanvas = target.closest('.tl-canvas');
+      const isInsideCanvas = target.closest('.dr-canvas');
 
       if (!isInsideCanvas) {
         return;

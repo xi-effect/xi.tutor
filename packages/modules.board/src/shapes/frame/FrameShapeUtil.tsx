@@ -1,3 +1,3 @@
-import { FrameShapeUtil as FrameShapeUtilTldraw } from 'tldraw';
+import { FrameShapeUtil as FrameShapeUtilDraw } from '@ibodr/draw';
 
-export const FrameShapeUtil = FrameShapeUtilTldraw.configure({ showColors: true });
+export const FrameShapeUtil = FrameShapeUtilDraw.configure({ showColors: true });
