@@ -20,6 +20,7 @@ import { extractFileIdFromUrl } from '../../../utils/resolveAssetUrl';
 import { FrameShapeUtil } from '../../../shapes/frame';
 import { XiGeoShapeUtil, XiGeoTool } from '../../../shapes/geo';
 import { StickerShapeUtil } from '../../../shapes/sticker';
+import { EmojiShapeUtil, EmojiTool } from '../../../shapes/emoji';
 
 export const DrawCanvas = ({
   token,
@@ -340,7 +341,7 @@ export const DrawCanvas = ({
               });
             }}
             store={store}
-            tools={[XiGeoTool]}
+            tools={[XiGeoTool, EmojiTool]}
             shapeUtils={[
               PdfShapeUtil,
               AudioShapeUtil,
@@ -348,6 +349,7 @@ export const DrawCanvas = ({
               XiGeoShapeUtil,
               CustomImageShapeUtil,
               StickerShapeUtil,
+              EmojiShapeUtil,
             ]}
             hideUi
             components={{

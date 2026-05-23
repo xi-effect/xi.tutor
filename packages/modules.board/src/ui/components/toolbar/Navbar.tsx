@@ -12,12 +12,14 @@ import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
 import { UndoRedo } from './UndoRedo';
 import { useDrawStore } from '../../../store';
 import { useDrawStyles, useHotkeys } from '../../../hooks';
-import { NavbarButton } from '../shared';
+import { NavbarButton, ToolPopup } from '../shared';
 import { ArrowsPopup, PenPopup, StickerPopup } from '../popups';
 import { ShapesPopup } from '../popups/Shapes';
 import { insertImage } from '../../../features/pickAndInsertImage';
 import { insertPdf } from '../../../features/pickAndInsertPdf';
 import { insertAudio, AUDIO_ACCEPT } from '../../../features/pickAndInsertAudio';
+import { EmojiPickerPopup } from '@xipkg/emojipicker';
+import { EmojiStyle } from '../../../shapes/shapeStyles';
 
 // Маппинг инструментов Kanva на Draw
 const toolMapping: Record<string, string> = {
@@ -30,6 +32,7 @@ const toolMapping: Record<string, string> = {
   eraser: 'eraser',
   sticker: 'note', // Используем note как аналог стикера
   frame: 'frame',
+  emoji: 'emoji',
   // asset: 'image', // Убираем image, так как его нет в Draw
 };
 
@@ -47,7 +50,14 @@ export const Navbar = track(
     canRedo: boolean;
     token: string;
   }) => {
-    const { pencilColor, pencilThickness, pencilOpacity, stickerColor } = useDrawStore();
+    const {
+      pencilColor,
+      pencilThickness,
+      pencilOpacity,
+      stickerColor,
+      recentEmojis,
+      addRecentEmoji,
+    } = useDrawStore();
     const { resetToDefaults, setColor, setThickness, setOpacity } = useDrawStyles();
     const [activePopup, setActivePopup] = React.useState<string | null>(null);
     const editor = useEditor();
@@ -116,6 +126,7 @@ export const Navbar = track(
         eraser: 'eraser',
         note: 'sticker',
         frame: 'frame',
+        emoji: 'emoji',
         // image: 'asset', // Убираем, так как image не существует в Draw
       };
 
@@ -299,6 +310,33 @@ export const Navbar = track(
                         className={mobileButtonClass}
                         onClick={() => handleSelectTool(item.action)}
                       />,
+                    );
+                  }
+
+                  if (item.action === 'emoji') {
+                    return wrap(
+                      <ToolPopup
+                        open={isPopupOpen('emoji')}
+                        onOpenChange={(open) => handlePopupToggle('emoji', open)}
+                        isCloseOnOutside
+                        content={
+                          <EmojiPickerPopup
+                            recentEmojis={recentEmojis}
+                            onEmojiSelect={(emoji) => {
+                              editor.setStyleForNextShapes(EmojiStyle, emoji);
+                              addRecentEmoji(emoji);
+                            }}
+                          />
+                        }
+                      >
+                        <NavbarButton
+                          icon={item.icon}
+                          title={item.title}
+                          isActive={isActive}
+                          className={mobileButtonClass}
+                          onClick={() => handleSelectTool(item.action)}
+                        />
+                      </ToolPopup>,
                     );
                   }
 

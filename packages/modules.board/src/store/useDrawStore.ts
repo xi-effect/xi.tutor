@@ -62,6 +62,8 @@ interface DrawState {
   setGeoFillType: (value: string) => void;
   geoBorderThickness: TGeoBorderThickness;
   setGeoBorderThickness: (thickness: TGeoBorderThickness) => void;
+  recentEmojis: string[];
+  addRecentEmoji: (emoji: string) => void;
 }
 
 export const useDrawStore = create<DrawState>()(
@@ -150,6 +152,15 @@ export const useDrawStore = create<DrawState>()(
       geoBorderThickness: 'm',
       setGeoBorderThickness: (thickness: TGeoBorderThickness) =>
         set(() => ({ geoBorderThickness: thickness })),
+
+      recentEmojis: [],
+      addRecentEmoji: (emoji) => {
+        if (!emoji) return;
+
+        const { recentEmojis } = get();
+        const emojis = [emoji, ...recentEmojis].slice(0, 8);
+        set(() => ({ recentEmojis: emojis }));
+      },
     }),
     { name: 'draw-storage' },
   ),
