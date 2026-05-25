@@ -1,6 +1,7 @@
 import { Editor } from '@tiptap/react';
 import { ActiveBlockT, BlockTypeT } from '../types';
 import { moveBlock } from '../utils/moveBlock';
+import { getCurrentBlock } from '../utils/getCurrentBlock';
 
 const TEXT_BLOCKS = ['paragraph', 'heading'];
 const NODE_TYPES_MAP = {
@@ -25,20 +26,26 @@ const NODE_TYPES_MAP = {
   },
 };
 
-export const useBlockMenuActions = (editor: Editor | null) => {
-  const duplicate = (activeBlock: ActiveBlockT) => {
+export const useBlockMenuActions = (editor: Editor | null, activeBlock?: ActiveBlockT) => {
+  const duplicate = () => {
     if (!editor) return;
-    if (!activeBlock.node) return;
-    const positionAfterActiveNode = activeBlock.pos + activeBlock.node.nodeSize;
-    const copiedNode = activeBlock.node.toJSON();
+    const currentBlock = getCurrentBlock(editor, activeBlock);
+    if (!currentBlock || !currentBlock.node) return;
+    const positionAfterActiveNode = currentBlock.pos + currentBlock.node.nodeSize;
+    const copiedNode = currentBlock.node.toJSON();
 
     editor.chain().focus().insertContentAt(positionAfterActiveNode, copiedNode).run();
   };
 
-  const remove = (activeBlock: ActiveBlockT) => {
+  const remove = () => {
     if (!editor || !editor.isEditable) return false;
+
+    const currentBlock = getCurrentBlock(editor, activeBlock);
+
+    if (!currentBlock || !currentBlock.node) return;
+
     try {
-      const node = activeBlock.node;
+      const node = currentBlock.node;
 
       if (!node) return;
 
@@ -46,8 +53,8 @@ export const useBlockMenuActions = (editor: Editor | null) => {
         .chain()
         .focus()
         .deleteRange({
-          from: activeBlock.pos,
-          to: activeBlock.pos + node.nodeSize,
+          from: currentBlock.pos,
+          to: currentBlock.pos + node.nodeSize,
         })
         .run();
     } catch (err) {
@@ -56,8 +63,11 @@ export const useBlockMenuActions = (editor: Editor | null) => {
     }
   };
 
-  const changeType = (activeBlock: ActiveBlockT, type?: BlockTypeT) => {
+  const changeType = (type?: BlockTypeT) => {
     if (!editor || !editor.isEditable || !type) return;
+    const currentBlock = getCurrentBlock(editor, activeBlock);
+
+    if (!currentBlock || !currentBlock.node) return;
 
     const config = NODE_TYPES_MAP[type];
 
@@ -67,14 +77,14 @@ export const useBlockMenuActions = (editor: Editor | null) => {
 
     if (!nodeType) return;
 
-    const currentType = activeBlock.node?.type.name || '';
+    const currentType = currentBlock.node?.type.name || '';
 
     if (!TEXT_BLOCKS.includes(currentType)) {
       return;
     }
 
     editor.commands.command(({ tr, dispatch }) => {
-      tr.setNodeMarkup(activeBlock.pos, nodeType, config.attrs);
+      tr.setNodeMarkup(currentBlock.pos, nodeType, config.attrs);
 
       dispatch?.(tr);
 
@@ -110,8 +120,8 @@ export const useBlockMenuActions = (editor: Editor | null) => {
     link.click();
   };
 
-  const moveUp = (activeBlock: ActiveBlockT) => moveBlock(editor, activeBlock, 'up');
-  const moveDown = (activeBlock: ActiveBlockT) => moveBlock(editor, activeBlock, 'down');
+  const moveUp = () => moveBlock(editor, 'up', activeBlock);
+  const moveDown = () => moveBlock(editor, 'down', activeBlock);
 
   return {
     duplicate,

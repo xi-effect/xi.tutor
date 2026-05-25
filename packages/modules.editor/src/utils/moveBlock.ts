@@ -1,6 +1,7 @@
 import type { Editor } from '@tiptap/core';
-import { ActiveBlockT } from '../types';
 import { NodeSelection } from '@tiptap/pm/state';
+import { getCurrentBlock } from './getCurrentBlock';
+import { ActiveBlockT } from '../types';
 
 /**
  * Перемещает текущий блок вверх или вниз в документе.
@@ -8,10 +9,12 @@ import { NodeSelection } from '@tiptap/pm/state';
  */
 export function moveBlock(
   editor: Editor | null,
-  activeBlock: ActiveBlockT,
   direction: 'up' | 'down',
+  block?: ActiveBlockT,
 ): boolean {
-  if (!editor || !editor.isEditable) return false;
+  const activeBlock = getCurrentBlock(editor, block);
+
+  if (!editor || !editor.isEditable || !activeBlock) return false;
 
   const { state, view } = editor;
   const { doc } = state;

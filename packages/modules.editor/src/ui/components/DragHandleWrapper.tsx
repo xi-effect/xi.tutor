@@ -23,6 +23,13 @@ export const DragHandleWrapper = ({
   const [activeBlock, setActiveBlock] = useState<ActiveBlockT>();
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const handleNodeChange = (data: ActiveBlockT) => {
+    if (menuOpen) return;
+    if (editor.isActive('image')) return;
+
+    setActiveBlock(data);
+  };
+
   return (
     <DragHandle
       editor={editor}
@@ -34,10 +41,7 @@ export const DragHandleWrapper = ({
       onElementDragStart={onDragStart}
       onElementDragEnd={onDragEnd}
       nested
-      onNodeChange={(data) => {
-        if (menuOpen) return;
-        setActiveBlock(data);
-      }}
+      onNodeChange={handleNodeChange}
     >
       <div className="mr-1 flex items-center gap-2">
         <BlockMenu

@@ -10,7 +10,7 @@ import { ReactNode } from 'react';
 import { useBlockMenuActions } from '../../hooks';
 import { Editor } from '@tiptap/core';
 import { useInterfaceStore } from '../../store/interfaceStore';
-import { ActiveBlockT, BlockTypeT } from '../../types';
+import { ActiveBlockT } from '../../types';
 
 type BlockMenuPropsT = {
   children: ReactNode;
@@ -30,19 +30,10 @@ export const BlockMenu = ({
   activeBlock,
 }: BlockMenuPropsT) => {
   const { openModal } = useInterfaceStore();
-  const { changeType, duplicate, remove, moveUp, moveDown } = useBlockMenuActions(editor);
-
-  const selectHandle = (
-    handler: (activeBlock: ActiveBlockT, type?: BlockTypeT) => void,
-    type?: BlockTypeT,
-  ) => {
-    if (!activeBlock) return;
-    if (type) {
-      handler(activeBlock, type);
-      return;
-    }
-    handler(activeBlock);
-  };
+  const { changeType, duplicate, remove, moveUp, moveDown } = useBlockMenuActions(
+    editor,
+    activeBlock,
+  );
 
   // Блокируем меню если редактор в readonly режиме
   const shouldShow = editor && !isReadOnly && editor.isEditable !== false;
@@ -52,7 +43,7 @@ export const BlockMenu = ({
   }
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen} modal={true}>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
 
       <DropdownMenuContent
@@ -62,7 +53,7 @@ export const BlockMenu = ({
       >
         <DropdownMenuItem
           className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => selectHandle(changeType, 'paragraph')}
+          onSelect={() => changeType('paragraph')}
         >
           <Text size="sm" className="size-6" />
           <span className="text-sm">Текст</span>
@@ -70,7 +61,7 @@ export const BlockMenu = ({
 
         <DropdownMenuItem
           className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => selectHandle(changeType, 'heading1')}
+          onSelect={() => changeType('heading1')}
         >
           <H1 size="sm" className="size-6" />
           <span className="text-sm">Заголовок 1</span>
@@ -78,7 +69,7 @@ export const BlockMenu = ({
 
         <DropdownMenuItem
           className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => selectHandle(changeType, 'heading2')}
+          onSelect={() => changeType('heading2')}
         >
           <H2 size="sm" className="size-6" />
           <span className="text-sm">Заголовок 2</span>
@@ -86,7 +77,7 @@ export const BlockMenu = ({
 
         <DropdownMenuItem
           className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => selectHandle(changeType, 'heading3')}
+          onSelect={() => changeType('heading3')}
         >
           <H3 size="sm" className="size-6" />
           <span className="text-sm">Заголовок 3</span>
@@ -102,39 +93,25 @@ export const BlockMenu = ({
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem
-          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => {
-            selectHandle(duplicate);
-          }}
-        >
+        <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={duplicate}>
           <Copy size="sm" className="size-6" />
           <span className="text-sm">Дублировать</span>
           <span className="text-xxs-base ml-auto text-gray-50">Ctrl+D</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => selectHandle(moveUp)}
-        >
+        <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={moveUp}>
           <ArrowUp size="sm" className="size-6" />
           <span className="text-sm">Переместить вверх</span>
           <span className="text-xxs-base ml-auto text-gray-50">⌘⇧↑</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => selectHandle(moveDown)}
-        >
+        <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={moveDown}>
           <ArrowBottom size="sm" className="size-6" />
           <span className="text-sm">Переместить вниз</span>
           <span className="text-xxs-base ml-auto text-gray-50">⌘⇧↓</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => selectHandle(remove)}
-        >
+        <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={remove}>
           <Trash size="sm" className="size-6" />
           <span className="text-sm">Удалить</span>
           <span className="text-xxs-base ml-auto text-gray-50">Del</span>

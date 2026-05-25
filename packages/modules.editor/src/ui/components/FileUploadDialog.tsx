@@ -8,6 +8,7 @@ import { optimizeImage } from '../../utils/optimizeImage';
 import { useUploadImage } from 'common.services';
 import { useBlockMenuActions, useYjsContext } from '../../hooks';
 import { toast } from 'sonner';
+import { checkImageUrl } from '../../utils/checkImageUrl';
 
 export const ImageUploadModal = () => {
   const { closeModal, activeModal } = useInterfaceStore();
@@ -24,17 +25,14 @@ export const ImageUploadModal = () => {
     if (!files) return;
     const file = files[0];
     const optimizedImage = await optimizeImage(file);
-    try {
-      const uploadedId = await uploadImage({
-        file: optimizedImage,
-        token: storageItem.storage_token,
-      });
 
-      insertImage(uploadedId);
-      closeModal();
-    } catch (err) {
-      console.error('Ошибка при загрузке изображения:', err);
-    }
+    const uploadedId = await uploadImage({
+      file: optimizedImage,
+      token: storageItem.storage_token,
+    });
+
+    insertImage(uploadedId);
+    closeModal();
   };
 
   const handleAddLink = async () => {
@@ -100,19 +98,3 @@ export const ImageUploadModal = () => {
     </Modal>
   );
 };
-
-function checkImageUrl(url: string): Promise<boolean> {
-  return new Promise((resolve) => {
-    const img = new window.Image();
-
-    img.onload = () => {
-      resolve(true);
-    };
-
-    img.onerror = () => {
-      resolve(false);
-    };
-
-    img.src = url;
-  });
-}

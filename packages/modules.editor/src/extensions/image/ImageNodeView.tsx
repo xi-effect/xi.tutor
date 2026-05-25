@@ -1,4 +1,3 @@
-// /* eslint-disable @typescript-eslint/no-explicit-any */
 import { NodeViewWrapper, NodeViewProps } from '@tiptap/react';
 import {
   DropdownMenu,
@@ -11,44 +10,46 @@ import { Button } from '@xipkg/button';
 import { ArrowBottom, ArrowUp, Copy, Download, MoreVert, Trash } from '@xipkg/icons';
 import { useBlockMenuActions, useProtectedImage, useYjsContext } from '../../hooks';
 import { cn } from '@xipkg/utils';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { ActiveBlockT } from '../../types';
 
 export const ImageNodeView = ({ node, selected, getPos }: NodeViewProps) => {
+  const [hovered, setHovered] = useState(false);
   const src = node.attrs.src;
 
   const { editor, storageToken, isReadOnly } = useYjsContext();
-  const { duplicate, remove, downloadImage, moveDown, moveUp } = useBlockMenuActions(editor);
+
+  const currentBlock = useMemo<ActiveBlockT | undefined>(() => {
+    if (typeof getPos !== 'function' || !editor) {
+      return;
+    }
+
+    try {
+      const currentPosition = getPos();
+      if (currentPosition == null) return;
+      return {
+        editor,
+        node,
+        pos: currentPosition,
+      };
+    } catch {
+      return;
+    }
+  }, [editor, getPos, node]);
+
+  const { duplicate, remove, downloadImage, moveDown, moveUp } = useBlockMenuActions(
+    editor,
+    currentBlock,
+  );
 
   const imageSrc = useProtectedImage(src, storageToken);
 
-  const currentBlock = useMemo<ActiveBlockT | null>(() => {
-    if (typeof getPos !== 'function' || !editor) {
-      return null;
-    }
-    let currentPosition;
-    try {
-      currentPosition = getPos();
-    } catch {
-      return null;
-    }
-
-    if (currentPosition == null) return null;
-    return {
-      editor,
-      node,
-      pos: currentPosition,
-    };
-  }, [editor, getPos, node]);
-
-  const selectHandle = (handler: (activeBlock: ActiveBlockT) => unknown) => {
-    if (!currentBlock) return;
-
-    return handler(currentBlock);
-  };
-
   return (
-    <NodeViewWrapper className="group relative flex justify-center">
+    <NodeViewWrapper
+      className="group relative flex justify-center"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <img
         src={imageSrc}
         alt={node.attrs.alt || ''}
@@ -60,7 +61,7 @@ export const ImageNodeView = ({ node, selected, getPos }: NodeViewProps) => {
       <div
         className={cn(
           'absolute top-2 right-2 flex transition-opacity',
-          'pointer-events-auto opacity-100',
+          hovered ? 'pointer-events-auto opacity-100' : 'opacity-0',
         )}
       >
         <DropdownMenu modal={false}>
@@ -90,7 +91,7 @@ export const ImageNodeView = ({ node, selected, getPos }: NodeViewProps) => {
 
                 <DropdownMenuItem
                   className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-                  onSelect={() => selectHandle(moveUp)}
+                  onSelect={moveUp}
                 >
                   <ArrowUp size="sm" className="size-6" />
                   <span className="text-sm">Выше</span>
@@ -98,7 +99,7 @@ export const ImageNodeView = ({ node, selected, getPos }: NodeViewProps) => {
 
                 <DropdownMenuItem
                   className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-                  onSelect={() => selectHandle(moveDown)}
+                  onSelect={moveDown}
                 >
                   <ArrowBottom size="sm" className="size-6" />
                   <span className="text-sm">Ниже</span>
@@ -108,7 +109,7 @@ export const ImageNodeView = ({ node, selected, getPos }: NodeViewProps) => {
 
                 <DropdownMenuItem
                   className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-                  onSelect={() => selectHandle(duplicate)}
+                  onSelect={duplicate}
                 >
                   <Copy size="sm" className="size-6" />
                   <span className="text-sm">Дублировать</span>
@@ -116,7 +117,7 @@ export const ImageNodeView = ({ node, selected, getPos }: NodeViewProps) => {
 
                 <DropdownMenuItem
                   className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-                  onSelect={() => selectHandle(remove)}
+                  onSelect={remove}
                 >
                   <Trash size="sm" className="size-6" />
                   <span className="text-sm">Удалить</span>
