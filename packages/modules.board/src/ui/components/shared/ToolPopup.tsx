@@ -17,7 +17,7 @@ export const ToolPopup = ({
   isCloseOnOutside = false,
 }: ToolPopupProps) => {
   const handleEvent = (e: any) => {
-    if (!isCloseOnOutside && e.target.classList.contains('tl-container')) {
+    if (!isCloseOnOutside && e.target.classList.contains('dr-container')) {
       e.preventDefault();
     }
   };

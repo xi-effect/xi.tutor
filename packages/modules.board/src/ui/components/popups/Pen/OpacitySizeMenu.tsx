@@ -1,9 +1,9 @@
 import { Slider } from '@xipkg/slider';
-import { useTldrawStore } from '../../../../store/useTldrawStore';
-import { useTldrawStyles } from '../../../../hooks/useTldrawStyles';
+import { useDrawStore } from '../../../../store/useDrawStore';
+import { useDrawStyles } from '../../../../hooks/useDrawStyles';
 import { colorOptions } from '../../../../utils/customConfig';
 import { cn } from '@xipkg/utils';
-import type { PenPreset, PenThickness } from '../../../../store/useTldrawStore';
+import type { PenPreset, PenThickness } from '../../../../store/useDrawStore';
 import { ColorDot } from '../../canvas';
 
 const sizes = ['xs', 's', 'm', 'l', 'xl'] as const;
@@ -62,9 +62,9 @@ export const OpacitySizeMenu = () => {
     penPresets,
     activePresetIndex,
     setActivePreset,
-  } = useTldrawStore();
+  } = useDrawStore();
 
-  const { setColor, setThickness, setOpacity } = useTldrawStyles();
+  const { setColor, setThickness, setOpacity } = useDrawStyles();
 
   const handleSize = (value: number[]) => {
     const size = sizes[value[0] - 1];

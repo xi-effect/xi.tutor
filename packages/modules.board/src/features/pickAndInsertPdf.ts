@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { Editor, TLShapeId } from 'tldraw';
+import { Editor, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { uploadFileRequest } from 'common.services';
 import * as pdfjsLib from 'pdfjs-dist';
@@ -36,7 +36,7 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
     return;
   }
 
-  const shapeId = `shape:${nanoid()}` as TLShapeId;
+  const shapeId = `shape:${nanoid()}` as DrShapeId;
 
   let totalPages = 1;
   let pageWidth = DEFAULT_PDF_WIDTH;

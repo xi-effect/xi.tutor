@@ -1,4 +1,4 @@
-import { NoteShapeUtil } from 'tldraw';
+import { NoteShapeUtil } from '@ibodr/draw';
 
 export const StickerShapeUtil = NoteShapeUtil.configure({
   resizeMode: 'scale',

@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { useEditor, GeoShapeGeoStyle } from 'tldraw';
+import { useEditor, GeoShapeGeoStyle } from '@ibodr/draw';
 import { TShapeOption } from './types';
 import { shapes } from './shapeVariants';
-import { useTldrawStyles } from '../../../../hooks';
+import { useDrawStyles } from '../../../../hooks';
 import { TGeoShape } from '../../../../types';
 
 export const ShapeSet = () => {
   const editor = useEditor();
   const [activeShape, setActiveShape] = useState<TGeoShape | null>(null);
-  const { applyStoreStylesForShape } = useTldrawStyles();
+  const { applyStoreStylesForShape } = useDrawStyles();
 
   const handleShapeClick = (item: TShapeOption) => {
     editor.run(() => {

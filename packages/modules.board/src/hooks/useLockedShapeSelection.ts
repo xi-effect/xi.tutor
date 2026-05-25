@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Editor } from 'tldraw';
+import { Editor } from '@ibodr/draw';
 
 export const useLockedShapeSelection = (editor: Editor | null) => {
   useEffect(() => {
@@ -21,40 +21,35 @@ export const useLockedShapeSelection = (editor: Editor | null) => {
     const handlePointerDown = (event: PointerEvent) => {
       const target = event.target as HTMLElement;
 
-      const isInsideCanvas = target.closest('.tl-canvas');
+      if (!target.closest('.dr-canvas')) return;
+      if (editor.getCurrentToolId() !== 'select') return;
 
-      if (!isInsideCanvas) {
+      // Не мешаем мультивыделению, рамке выделения и стандартному select tool
+      if (event.shiftKey || event.metaKey || event.ctrlKey) return;
+      if (editor.getSelectedShapeIds().length > 1) return;
+      if (
+        editor.isInAny(
+          'select.brushing',
+          'select.scribble_brushing',
+          'select.translating',
+          'select.resizing',
+        )
+      ) {
         return;
       }
-      const currentTool = editor.getCurrentToolId();
-
-      if (currentTool !== 'select') {
-        return;
-      }
+      if (editor.inputs.getIsDragging()) return;
 
       const point = editor.screenToPage({
         x: event.clientX,
         y: event.clientY,
       });
 
-      const allShapesAtPoint = editor.getCurrentPageShapes().filter((shape) => {
-        const bounds = editor.getShapePageBounds(shape.id);
-        return bounds && bounds.containsPoint(point);
-      });
+      const hitShape = editor.getShapeAtPoint(point, { hitLocked: true });
+      if (!hitShape?.isLocked) return;
 
-      if (allShapesAtPoint.length === 0) return;
-
-      allShapesAtPoint.sort((a, b) => {
-        return a.index < b.index ? -1 : 1;
-      });
-
-      const topShape = allShapesAtPoint[allShapesAtPoint.length - 1];
-
-      if (topShape.isLocked) {
-        editor.select(topShape.id);
-        event.preventDefault();
-        event.stopPropagation();
-      }
+      editor.select(hitShape.id);
+      event.preventDefault();
+      event.stopPropagation();
     };
 
     const unsubscribe = editor.store.listen(() => {

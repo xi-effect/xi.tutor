@@ -7,11 +7,11 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { MenuDots } from '@xipkg/icons';
-import { track, useEditor } from 'tldraw';
+import { track, useEditor } from '@ibodr/draw';
 import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
 import { UndoRedo } from './UndoRedo';
-import { useTldrawStore } from '../../../store';
-import { useTldrawStyles, useHotkeys } from '../../../hooks';
+import { useDrawStore } from '../../../store';
+import { useDrawStyles, useHotkeys } from '../../../hooks';
 import { NavbarButton, ToolPopup } from '../shared';
 import { ArrowsPopup, PenPopup, StickerPopup } from '../popups';
 import { ShapesPopup } from '../popups/Shapes';
@@ -21,7 +21,7 @@ import { insertAudio, AUDIO_ACCEPT } from '../../../features/pickAndInsertAudio'
 import { EmojiPickerPopup } from '@xipkg/emojipicker';
 import { EmojiStyle } from '../../../shapes/shapeStyles';
 
-// Маппинг инструментов Kanva на Tldraw
+// Маппинг инструментов Kanva на Draw
 const toolMapping: Record<string, string> = {
   select: 'select',
   hand: 'hand',
@@ -33,7 +33,7 @@ const toolMapping: Record<string, string> = {
   sticker: 'note', // Используем note как аналог стикера
   frame: 'frame',
   emoji: 'emoji',
-  // asset: 'image', // Убираем image, так как его нет в Tldraw
+  // asset: 'image', // Убираем image, так как его нет в Draw
 };
 
 export const Navbar = track(
@@ -57,8 +57,8 @@ export const Navbar = track(
       stickerColor,
       recentEmojis,
       addRecentEmoji,
-    } = useTldrawStore();
-    const { resetToDefaults, setColor, setThickness, setOpacity } = useTldrawStyles();
+    } = useDrawStore();
+    const { resetToDefaults, setColor, setThickness, setOpacity } = useDrawStyles();
     const [activePopup, setActivePopup] = React.useState<string | null>(null);
     const editor = useEditor();
 
@@ -127,7 +127,7 @@ export const Navbar = track(
         note: 'sticker',
         frame: 'frame',
         emoji: 'emoji',
-        // image: 'asset', // Убираем, так как image не существует в Tldraw
+        // image: 'asset', // Убираем, так как image не существует в Draw
       };
 
       return reverseMapping[currentToolId] || 'select';
@@ -150,6 +150,7 @@ export const Navbar = track(
       };
       input.click();
     };
+
     const handleInsertAudio = () => {
       const input = document.createElement('input');
       input.type = 'file';

@@ -7,7 +7,7 @@ import {
   DefaultTextAlignStyle,
   DefaultVerticalAlignStyle,
   GeoShapeGeoStyle,
-} from 'tldraw';
+} from '@ibodr/draw';
 
 // types/index.ts
 export type ToolType =
