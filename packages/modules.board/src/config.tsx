@@ -1,4 +1,4 @@
-import type { InputMode } from '../../store/useTldrawStore';
+import type { InputMode } from './store/useTldrawStore';
 import { Cursor, Pen } from '@xipkg/icons';
 
 export type ShapeCategoryT = {

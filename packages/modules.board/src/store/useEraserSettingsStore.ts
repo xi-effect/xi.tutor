@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { ERASER_CATEGORIES } from '../ui/components/config';
+import { ERASER_CATEGORIES } from '../config';
+import { areAllEraserCategoriesEnabled } from '../utils/areAllEraserCategoriesEnabled';
 
 type EraserSettings = Record<string, boolean>;
 
@@ -54,21 +55,13 @@ export const useEraserSettingsStore = create<Store>((set, get) => ({
     });
   },
 
-  toggleAll: () => {
+  toggleAll: () =>
     set((state) => {
-      const values = Object.values(state.settings);
-      const nextValue = !values.every(Boolean);
-
-      const next = Object.keys(state.settings).reduce((acc, key) => {
-        acc[key] = nextValue;
-        return acc;
-      }, {} as EraserSettings);
-
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-
-      return { settings: next };
-    });
-  },
+      const allEnabled = areAllEraserCategoriesEnabled(state.settings);
+      return {
+        settings: Object.fromEntries(ERASER_CATEGORIES.map(({ key }) => [key, !allEnabled])),
+      };
+    }),
 
   isTypeErasable: (shapeType) => {
     const settings = get().settings;

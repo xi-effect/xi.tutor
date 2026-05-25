@@ -31,7 +31,8 @@ import { toast } from 'sonner';
 import { useEditor } from 'tldraw';
 import { useEraserSettingsStore, useTldrawStore } from '../../../store';
 import { HotkeysHelpModal } from '../shared/HotkeysHelp';
-import { ERASER_CATEGORIES, INPUT_MODE_OPTIONS, SHAPE_CATEGORIES } from '../config';
+import { ERASER_CATEGORIES, INPUT_MODE_OPTIONS, SHAPE_CATEGORIES } from '../../../config';
+import { areAllEraserCategoriesEnabled } from '../../../utils/areAllEraserCategoriesEnabled';
 
 type ActionPropsT = {
   onClick: () => void;
@@ -103,6 +104,8 @@ export const SettingsDropdown = () => {
   const isLimitReached = elementsCount >= BOARD_ELEMENTS_LIMIT;
 
   const { settings, toggleCategory, toggleAll } = useEraserSettingsStore();
+
+  const allChecked = areAllEraserCategoriesEnabled(settings);
 
   const handleOpenHotkeysHelp = (open: boolean) => {
     if (open) {
@@ -198,7 +201,7 @@ export const SettingsDropdown = () => {
               />
             </div>
           </div>
-          <DropdownMenuGroup>
+          <DropdownMenuGroup className="space-y-0.5">
             <DropdownMenuItem
               className="flex gap-2 p-1"
               onClick={() => handleOpenHotkeysHelp(true)}
@@ -351,19 +354,23 @@ export const SettingsDropdown = () => {
 
                   <DropdownMenuSeparator />
 
-                  <DropdownMenuItem
-                    className="flex gap-2 px-3 py-1.5"
-                    onClick={() => toggleAll()}
-                    data-umami-event="board-unlock-all"
+                  <DropdownMenuCheckboxItem
+                    checked={allChecked}
+                    onCheckedChange={() => toggleAll()}
+                    onSelect={(e) => e.preventDefault()}
+                    className="py-1.5 pr-3 pl-8"
                   >
-                    <span>Все элементы</span>
-                  </DropdownMenuItem>
+                    Все элементы
+                  </DropdownMenuCheckboxItem>
+
+                  <DropdownMenuSeparator />
 
                   {ERASER_CATEGORIES.map(({ key, label }) => (
                     <DropdownMenuCheckboxItem
                       key={key}
                       checked={settings[key]}
                       onCheckedChange={() => toggleCategory(key)}
+                      onSelect={(e) => e.preventDefault()}
                       className="py-1.5 pr-3 pl-8"
                     >
                       {label}
