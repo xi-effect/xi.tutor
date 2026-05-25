@@ -4,11 +4,20 @@ import {
   DefaultFillStyle,
   DefaultSizeStyle,
   GeoShapeGeoStyle,
+  getGeoTypeDefinition,
   StateNode,
   DrShapeId,
   VecLike,
 } from '@ibodr/draw';
 import { BorderColorStyle } from '../shapeStyles';
+
+/** Порог «клик без протягивания» — ниже считаем, что пользователь не задавал размер. */
+const CLICK_DRAG_THRESHOLD = 4;
+
+/** Минимальный размер при протягивании (как в @ibodr/draw: Math.max(1, …)). */
+const MIN_DRAG_SIZE = 1;
+
+const DEFAULT_CLICK_SIZE = { w: 100, h: 100 };
 
 export class XiGeoTool extends StateNode {
   static override id = 'xi-geo';
@@ -72,16 +81,33 @@ export class XiGeoTool extends StateNode {
     if (!this.currentShapeId || !this.startPoint) return;
 
     const currentPoint = this.editor.inputs.currentPagePoint;
-    const width = Math.abs(currentPoint.x - this.startPoint.x);
-    const height = Math.abs(currentPoint.y - this.startPoint.y);
+    const dragW = Math.abs(currentPoint.x - this.startPoint.x);
+    const dragH = Math.abs(currentPoint.y - this.startPoint.y);
+
+    const shape = this.editor.getShape(this.currentShapeId);
+    if (!shape || !this.editor.isShapeOfType(shape, 'xi-geo')) {
+      this.currentShapeId = null;
+      this.startPoint = null;
+      return;
+    }
+
+    const def = getGeoTypeDefinition(shape.props.geo);
+    const defaultSize = def?.defaultSize ?? DEFAULT_CLICK_SIZE;
+
+    const isClick = dragW < CLICK_DRAG_THRESHOLD && dragH < CLICK_DRAG_THRESHOLD;
+
+    const w = isClick ? defaultSize.w : Math.max(MIN_DRAG_SIZE, dragW);
+    const h = isClick ? defaultSize.h : Math.max(MIN_DRAG_SIZE, dragH);
+
+    const x = isClick ? this.startPoint.x - w / 2 : Math.min(currentPoint.x, this.startPoint.x);
+    const y = isClick ? this.startPoint.y - h / 2 : Math.min(currentPoint.y, this.startPoint.y);
 
     this.editor.updateShape({
       id: this.currentShapeId,
       type: 'xi-geo',
-      props: {
-        w: width > 100 ? width : 100,
-        h: height > 100 ? height : 100,
-      },
+      x,
+      y,
+      props: { w, h },
     });
 
     this.editor.setCurrentTool('select');

@@ -1,7 +1,7 @@
 import { LoadingScreen } from 'common.ui';
 import { useKeyPress } from 'common.utils';
 import { JSX } from 'react/jsx-runtime';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Editor, DrInstancePresence, Draw, DrawProps } from '@ibodr/draw';
 import {
   useLockedShapeSelection,
@@ -14,6 +14,7 @@ import { boardCustomShapeUtils } from '../../../shapes/boardShapeUtils';
 import { hiddenComponents } from '../../../utils/customConfig';
 import { Header } from '../header';
 import { Navbar } from '../toolbar';
+import { CollaboratorCursor } from './CollaboratorCursor';
 import { SelectionOverlay } from './SelectionOverlay';
 import { FollowBanner } from './FollowBanner';
 import { DrawZoomPanel } from './DrawZoomPanel';
@@ -36,6 +37,15 @@ export const DrawCanvas = ({
     useYjsContext();
   const { followingPresenceId } = useFollowUserStore();
   const appliedInitialCameraRef = useRef(false);
+
+  const drawComponents = useMemo(
+    () => ({
+      ...hiddenComponents,
+      InFrontOfTheCanvas: SelectionOverlay,
+      CollaboratorCursor,
+    }),
+    [],
+  );
 
   useLockedShapeSelection(editor);
   useDrawClipboard(editor, token);
@@ -370,9 +380,10 @@ export const DrawCanvas = ({
             tools={[XiGeoTool, EmojiTool]}
             shapeUtils={boardCustomShapeUtils}
             hideUi
-            components={{
-              ...hiddenComponents,
-              InFrontOfTheCanvas: SelectionOverlay,
+            components={drawComponents}
+            collaboratorCursorLayout={{
+              badgeOffset: { x: 2, y: 4 },
+              iconOffset: { x: -16, y: 2 },
             }}
             {...props}
           >

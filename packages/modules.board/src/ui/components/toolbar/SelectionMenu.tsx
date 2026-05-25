@@ -23,6 +23,7 @@ export const SelectionMenu = track(function SelectionMenu() {
   const selectedIds = editor.getSelectedShapeIds();
   const isSelect = editor.isIn('select');
   const isBrushing = editor.isIn('select.brushing');
+  const isEditingShape = editor.isIn('select.editing_shape');
   const screenBounds = editor.getSelectionRotatedScreenBounds();
 
   // --- Обработчики (хуки всегда вызываются) ---
@@ -40,7 +41,8 @@ export const SelectionMenu = track(function SelectionMenu() {
   // Скрываем меню в readonly режиме или если нет выделения
   if (isReadonly) return null;
 
-  const shouldShow = selectedIds.length > 0 && isSelect && !isBrushing && !!screenBounds;
+  const shouldShow =
+    selectedIds.length > 0 && isSelect && !isBrushing && !isEditingShape && !!screenBounds;
 
   if (!shouldShow) return null;
 

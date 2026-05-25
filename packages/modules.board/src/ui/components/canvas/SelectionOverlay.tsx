@@ -1,13 +1,7 @@
 import { track } from '@ibodr/draw';
 import { SelectionMenu } from '../toolbar/SelectionMenu';
-import { SelectionOutline } from './SelectionOutline';
 
-/** Плавающий UI и DOM-рамка выделения поверх canvas */
+/** Плавающее меню выделения поверх canvas (рамки рисует @ibodr/draw на .dr-canvas-overlays) */
 export const SelectionOverlay = track(function SelectionOverlay() {
-  return (
-    <>
-      <SelectionOutline />
-      <SelectionMenu />
-    </>
-  );
+  return <SelectionMenu />;
 });

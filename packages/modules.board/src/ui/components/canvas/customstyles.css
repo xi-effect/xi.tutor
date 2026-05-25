@@ -22,6 +22,51 @@
 }
 
 /*
+ * Text shape: компонент использует dr-text-shape-label__inner, а draw.css позиционирует
+ * редактор только для .dr-text-label__inner — input попадает в поток документа ниже
+ * превью и выглядит как «дубликат» с подсветкой выделения, без курсора.
+ */
+.dr-text-shape-label[data-isediting='true'] {
+  background-color: transparent;
+  min-height: auto;
+}
+
+.dr-rich-text-wrapper[data-isediting='true'] .tl-text-content,
+.dr-plain-text-wrapper[data-isediting='true'] .tl-text-content {
+  display: none;
+}
+
+.dr-text-shape-label__inner {
+  position: relative;
+}
+
+.dr-text-shape-label__inner > .dr-text-shape.tl-text-content {
+  position: relative;
+  top: 0;
+  left: 0;
+  padding: inherit;
+  height: fit-content;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.dr-text-shape-label__inner > .tl-text-input,
+.dr-text-shape-label__inner > .dr-rich-text.tl-text-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: inherit;
+  margin: 0;
+}
+
+.dr-text-shape-label__inner .ProseMirror {
+  caret-color: var(--dr-color-text);
+  outline: none;
+  min-height: 1em;
+}
+
+/*
  * Курсоры ресайза и вращения: при наведении на ручки и во время действия
  * курсор остаётся соответствующим (ресайз/вращение). Редактор задаёт
  * --dr-cursor (в т.ч. кастомные SVG с учётом поворота фигуры).
