@@ -2,11 +2,11 @@ import { create } from 'zustand';
 import { ERASER_CATEGORIES } from '../config';
 import { areAllEraserCategoriesEnabled } from '../utils/areAllEraserCategoriesEnabled';
 
-type EraserSettings = Record<string, boolean>;
+type EraserSettingsT = Record<string, boolean>;
 
 const STORAGE_KEY = 'board-eraser-settings';
 
-const DEFAULT_ERASER_SETTINGS: EraserSettings = {
+const DEFAULT_ERASER_SETTINGS: EraserSettingsT = {
   text: true,
   images: true,
   files: true,
@@ -17,14 +17,14 @@ const DEFAULT_ERASER_SETTINGS: EraserSettings = {
   lines: true,
 };
 
-type Store = {
-  settings: EraserSettings;
+type StoreT = {
+  settings: EraserSettingsT;
   toggleCategory: (key: string) => void;
   toggleAll: () => void;
   isTypeErasable: (shapeType: string) => boolean;
 };
 
-const loadSettings = (): EraserSettings => {
+const loadSettings = (): EraserSettingsT => {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
 
@@ -39,7 +39,7 @@ const loadSettings = (): EraserSettings => {
   }
 };
 
-export const useEraserSettingsStore = create<Store>((set, get) => ({
+export const useEraserSettingsStore = create<StoreT>((set, get) => ({
   settings: loadSettings(),
 
   toggleCategory: (key) => {

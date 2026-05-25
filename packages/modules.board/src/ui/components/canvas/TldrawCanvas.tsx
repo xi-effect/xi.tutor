@@ -300,7 +300,6 @@ export const TldrawCanvas = ({
               });
 
               editor.sideEffects.registerBeforeDeleteHandler('shape', (shape) => {
-                console.log(editor.getCurrentPageShapes().map((s) => s.type));
                 if (editor.getCurrentToolId() !== 'eraser') {
                   return;
                 }
