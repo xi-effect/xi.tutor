@@ -5,6 +5,7 @@ import { PersonalData } from './PersonalData';
 import { Notifications } from './Notifications';
 import { Effects } from './Effects';
 import { TechnicalReport } from './TechnicalReport';
+import { CameraSettings } from './CameraSettings';
 
 type ComponentMapT = {
   [key: string]: ReactElement;
@@ -17,6 +18,7 @@ const componentMap: ComponentMapT = {
   notifications: <Notifications />,
   effects: <Effects />,
   report: <TechnicalReport />,
+  cameraSettings: <CameraSettings />,
 };
 
 type ContentPropsT = {
