@@ -13,6 +13,7 @@ import {
 } from '@xipkg/dropdown';
 import {
   Check,
+  Eraser,
   File,
   InfoCircle,
   Locked,
@@ -343,7 +344,7 @@ export const SettingsDropdown = () => {
             {isTutor && !isReadonly && (
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger className="flex gap-2 p-1">
-                  <Trash />
+                  <Eraser />
                   <span>Ластик</span>
                 </DropdownMenuSubTrigger>
 

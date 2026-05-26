@@ -1,10 +1,10 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
+
 import { ERASER_CATEGORIES } from '../config';
 import { areAllEraserCategoriesEnabled } from '../utils/areAllEraserCategoriesEnabled';
 
 type EraserSettingsT = Record<string, boolean>;
-
-const STORAGE_KEY = 'board-eraser-settings';
 
 const DEFAULT_ERASER_SETTINGS: EraserSettingsT = {
   text: true,
@@ -19,57 +19,52 @@ const DEFAULT_ERASER_SETTINGS: EraserSettingsT = {
 
 type StoreT = {
   settings: EraserSettingsT;
+
   toggleCategory: (key: string) => void;
+
   toggleAll: () => void;
+
   isTypeErasable: (shapeType: string) => boolean;
 };
 
-const loadSettings = (): EraserSettingsT => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+export const useEraserSettingsStore = create<StoreT>()(
+  persist(
+    (set, get) => ({
+      settings: DEFAULT_ERASER_SETTINGS,
 
-    if (!raw) return DEFAULT_ERASER_SETTINGS;
+      toggleCategory: (key) => {
+        set((state) => ({
+          settings: {
+            ...state.settings,
+            [key]: !state.settings[key],
+          },
+        }));
+      },
 
-    return {
-      ...DEFAULT_ERASER_SETTINGS,
-      ...JSON.parse(raw),
-    };
-  } catch {
-    return DEFAULT_ERASER_SETTINGS;
-  }
-};
+      toggleAll: () => {
+        set((state) => {
+          const allEnabled = areAllEraserCategoriesEnabled(state.settings);
 
-export const useEraserSettingsStore = create<StoreT>((set, get) => ({
-  settings: loadSettings(),
+          return {
+            settings: Object.fromEntries(ERASER_CATEGORIES.map(({ key }) => [key, !allEnabled])),
+          };
+        });
+      },
 
-  toggleCategory: (key) => {
-    set((state) => {
-      const next = {
-        ...state.settings,
-        [key]: !state.settings[key],
-      };
+      isTypeErasable: (shapeType) => {
+        const settings = get().settings;
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+        const category = ERASER_CATEGORIES.find(({ types }) => types.includes(shapeType));
 
-      return { settings: next };
-    });
-  },
+        if (!category) {
+          return true;
+        }
 
-  toggleAll: () =>
-    set((state) => {
-      const allEnabled = areAllEraserCategoriesEnabled(state.settings);
-      return {
-        settings: Object.fromEntries(ERASER_CATEGORIES.map(({ key }) => [key, !allEnabled])),
-      };
+        return settings[category.key];
+      },
     }),
-
-  isTypeErasable: (shapeType) => {
-    const settings = get().settings;
-
-    const category = ERASER_CATEGORIES.find((item) => item.types.includes(shapeType));
-
-    if (!category) return true;
-
-    return settings[category.key];
-  },
-}));
+    {
+      name: 'board-eraser-settings',
+    },
+  ),
+);
