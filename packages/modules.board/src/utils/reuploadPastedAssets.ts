@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import type { TLContent, Editor, TLAssetId, TLShapeId } from 'tldraw';
+import type { DrContent, Editor, DrAssetId, DrShapeId } from '@ibodr/draw';
 import { uploadImageRequest, uploadFileRequest } from 'common.services';
 import { getFileUrl } from 'common.api';
 import { resolveAssetUrl, getCachedBlobUrl } from './resolveAssetUrl';
@@ -35,7 +35,7 @@ export interface PasteUploadTask {
  * вытащит blob из in-memory cache или сходит за ним по sourceToken).
  */
 export function preparePastedContent(
-  content: TLContent,
+  content: DrContent,
   editor: Editor,
   token: string,
 ): PasteUploadTask[] {
@@ -127,7 +127,7 @@ export function uploadPastedAssetsInBackground(
     if (!newSrc) return;
 
     if (task.kind === 'asset') {
-      const existing = editor.getAsset(task.id as TLAssetId);
+      const existing = editor.getAsset(task.id as DrAssetId);
       if (!existing) return;
       editor.updateAssets([
         {
@@ -136,10 +136,10 @@ export function uploadPastedAssetsInBackground(
         },
       ]);
     } else {
-      const shape = editor.getShape(task.id as TLShapeId);
+      const shape = editor.getShape(task.id as DrShapeId);
       if (!shape) return;
       editor.updateShape({
-        id: task.id as TLShapeId,
+        id: task.id as DrShapeId,
         type: shape.type,
         props: { ...(shape.props as any), src: newSrc },
       });
@@ -171,7 +171,7 @@ function reconcilePasteInlineSources(editor: Editor, tasks: PasteUploadTask[]): 
     if (!fallback) continue;
 
     if (task.kind === 'asset') {
-      const asset = editor.getAsset(task.id as TLAssetId);
+      const asset = editor.getAsset(task.id as DrAssetId);
       if (!asset) continue;
       const src = (asset.props as any)?.src as string | undefined;
       if (!src || !isInlineAssetSrc(src) || src === fallback) continue;
@@ -182,12 +182,12 @@ function reconcilePasteInlineSources(editor: Editor, tasks: PasteUploadTask[]): 
         },
       ]);
     } else {
-      const shape = editor.getShape(task.id as TLShapeId);
+      const shape = editor.getShape(task.id as DrShapeId);
       if (!shape) continue;
       const src = (shape.props as any)?.src as string | undefined;
       if (!src || !isInlineAssetSrc(src) || src === fallback) continue;
       editor.updateShape({
-        id: task.id as TLShapeId,
+        id: task.id as DrShapeId,
         type: shape.type,
         props: { ...(shape.props as any), src: fallback },
       });

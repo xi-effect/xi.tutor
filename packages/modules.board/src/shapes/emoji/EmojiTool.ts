@@ -1,5 +1,4 @@
-// tools/EmojiTool.ts
-import { StateNode, createShapeId, VecLike } from 'tldraw';
+import { StateNode, createShapeId, VecLike } from '@ibodr/draw';
 import { EmojiStyle } from '../shapeStyles';
 
 export class EmojiTool extends StateNode {

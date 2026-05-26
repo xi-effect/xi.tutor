@@ -1,4 +1,4 @@
-import { useEditor, ArrowShapeArrowheadStartStyle, ArrowShapeArrowheadEndStyle } from 'tldraw';
+import { useEditor, ArrowShapeArrowheadStartStyle, ArrowShapeArrowheadEndStyle } from '@ibodr/draw';
 import { useState } from 'react';
 import { arrowVariants } from './arrowVariants';
 import { ArrowTypeT } from './types';

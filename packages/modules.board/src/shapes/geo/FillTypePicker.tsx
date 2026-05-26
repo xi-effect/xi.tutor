@@ -1,14 +1,14 @@
 import { useCallback } from 'react';
 import { Button } from '@xipkg/button';
-import { useTldrawStyles } from '../../hooks';
-import { useTldrawStore } from '../../store';
+import { useDrawStyles } from '../../hooks';
+import { useDrawStore } from '../../store';
 import { useXiGeoStyles } from './useXiGeoStyles';
 import { TFill } from '../../types';
 import { cn } from '@xipkg/utils';
 
 export const FillTypePicker = () => {
-  const { setGeoFillType } = useTldrawStore();
-  const { setSelectedShapesFillType } = useTldrawStyles();
+  const { setGeoFillType } = useDrawStore();
+  const { setSelectedShapesFillType } = useDrawStyles();
   const { bgCurrentColorClass, borderCurrentColorClass, currentFillType } = useXiGeoStyles();
 
   const handleFillType = useCallback(

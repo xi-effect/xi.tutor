@@ -2,7 +2,6 @@ import { ReactNode } from 'react';
 import {
   Arrow,
   Cursor,
-  Emotions,
   Eraser,
   Figures,
   Hand,
@@ -11,6 +10,7 @@ import {
   Sticker,
   Transform,
   TText,
+  Emotions,
 } from '@xipkg/icons';
 
 export type NavbarElementT = {

@@ -1,4 +1,4 @@
-const STORAGE_KEY = 'xi-tldraw-board-tokens';
+const STORAGE_KEY = 'xi-draw-board-tokens';
 /**
  * Сколько токенов держим в реестре. 5 — компромисс между поддержкой
  * cross-board paste и шумом при битых токенах: каждый мёртвый токен

@@ -1,23 +1,25 @@
-import { BaseBoxShapeUtil, T, RecordProps, TLBaseShape, HTMLContainer, Rectangle2d } from 'tldraw';
+import {
+  BaseBoxShapeUtil,
+  T,
+  RecordProps,
+  DrBaseShape,
+  HTMLContainer,
+  Rectangle2d,
+} from '@ibodr/draw';
 import { EmojiStyle } from '../shapeStyles';
 import { TEmoji } from '../../types';
 
-export type EmojiShape = TLBaseShape<
-  'emoji',
-  {
-    w: number;
-    h: number;
-    emoji: TEmoji;
-  }
->;
+export type EmojiShapeProps = {
+  w: number;
+  h: number;
+  emoji: TEmoji;
+};
 
-declare module 'tldraw' {
-  export interface TLGlobalShapePropsMap {
-    emoji: {
-      w: number;
-      h: number;
-      emoji: TEmoji;
-    };
+export type EmojiShape = DrBaseShape<'emoji', EmojiShapeProps>;
+
+declare module '@ibodr/draw' {
+  export interface DrGlobalShapePropsMap {
+    emoji: EmojiShapeProps;
   }
 }
 
@@ -69,8 +71,10 @@ export class EmojiShapeUtil extends BaseBoxShapeUtil<EmojiShape> {
     );
   }
 
-  override indicator(shape: EmojiShape) {
-    return <rect width={shape.props.w} height={shape.props.h} />;
+  override getIndicatorPath(shape: EmojiShape) {
+    const path = new Path2D();
+    path.rect(0, 0, shape.props.w, shape.props.h);
+    return path;
   }
 
   override isAspectRatioLocked() {

@@ -8,13 +8,13 @@ import {
 } from 'common.services';
 import { useCallback, useEffect } from 'react';
 import { toast } from 'sonner';
-import { useEditor } from 'tldraw';
-import type { TLRecord } from 'tldraw';
+import { useEditor } from '@ibodr/draw';
+import type { DrRecord } from '@ibodr/draw';
 import { useYjsContext } from '../../../../providers/YjsProvider';
 
 type BoardSnapshotJson = {
-  records?: TLRecord[];
-  byId?: Record<string, TLRecord>;
+  records?: DrRecord[];
+  byId?: Record<string, DrRecord>;
 };
 
 export const useDropdownActions = () => {
@@ -165,7 +165,7 @@ export const useDropdownActions = () => {
       try {
         const text = await file.text();
         const data = JSON.parse(text) as BoardSnapshotJson;
-        const records: TLRecord[] = Array.isArray(data)
+        const records: DrRecord[] = Array.isArray(data)
           ? data
           : (data.records ?? (data.byId ? Object.values(data.byId) : []));
 

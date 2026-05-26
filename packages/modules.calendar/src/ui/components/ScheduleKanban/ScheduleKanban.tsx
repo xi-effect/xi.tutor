@@ -184,7 +184,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
       {/* Один общий вертикальный скролл для всех колонок */}
       <div
         ref={scrollAreaRef}
-        className="flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto pr-3 [scrollbar-gutter:stable]"
+        className="flex min-h-0 flex-1 [scrollbar-gutter:stable] flex-col overflow-x-hidden overflow-y-auto pr-3"
       >
         <div className="box-border flex min-h-full min-w-0 flex-1 flex-col">
           <div className="grid flex-1 items-stretch gap-x-7 pb-4" style={{ gridTemplateColumns }}>

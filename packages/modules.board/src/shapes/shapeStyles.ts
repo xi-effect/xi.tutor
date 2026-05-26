@@ -1,4 +1,4 @@
-import { StyleProp, T } from 'tldraw';
+import { StyleProp, T } from '@ibodr/draw';
 
 export const BorderColorStyle = StyleProp.defineEnum('xi:borderColor', {
   values: [
