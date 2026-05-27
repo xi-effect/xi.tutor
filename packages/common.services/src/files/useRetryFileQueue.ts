@@ -8,11 +8,11 @@ import {
   getFileFromDB,
   getAllFileKeys,
 } from 'common.services';
-import { TLShapeId } from 'tldraw';
+import { DrShapeId } from '@ibodr/draw';
 
 export type RetryRequest = {
   id: string;
-  shapeId: TLShapeId; // он же ключ в IndexedDB
+  shapeId: DrShapeId; // он же ключ в IndexedDB
   retryCount: number;
   maxRetries: number;
   timestamp: number;
@@ -39,7 +39,7 @@ export const useRetryFileQueue = () => {
   }, []);
 
   const processQueue = useCallback(async () => {
-    const results: { fileId: string; shapeId: TLShapeId }[] = [];
+    const results: { fileId: string; shapeId: DrShapeId }[] = [];
 
     if (queueRef.current.length === 0) {
       const keys = await getAllFileKeys();
@@ -53,7 +53,7 @@ export const useRetryFileQueue = () => {
 
         queueRef.current.push({
           id: nanoid(),
-          shapeId: key as TLShapeId,
+          shapeId: key as DrShapeId,
           retryCount: 0,
           maxRetries: 5,
           token: file.token,

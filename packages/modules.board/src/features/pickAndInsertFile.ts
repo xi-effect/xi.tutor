@@ -1,4 +1,4 @@
-import { Editor, TLShapeId } from 'tldraw';
+import { Editor, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { uploadFileRequest } from 'common.services';
 import { nanoid } from 'nanoid';
@@ -27,7 +27,7 @@ export async function insertFile(
     return;
   }
 
-  const shapeId = `shape:${nanoid()}` as TLShapeId;
+  const shapeId = `shape:${nanoid()}` as DrShapeId;
   const viewportCenter = editor.getViewportPageBounds().center;
 
   editor.createShapes<FileShape>([
