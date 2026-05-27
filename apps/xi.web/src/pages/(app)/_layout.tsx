@@ -4,14 +4,7 @@ import { LoadingScreen } from 'common.ui';
 import { Suspense, lazy, useEffect, useRef, useCallback } from 'react';
 
 // Импортируем провайдеры синхронно, так как они нужны везде
-import {
-  CompactView,
-  LiveKitProvider,
-  RoomProvider,
-  useCallStore,
-  ModeSyncProvider,
-  useUmamiActivityHeartbeat,
-} from 'modules.calls';
+import { CallsShell, CompactView, useCallStore, useUmamiActivityHeartbeat } from 'modules.calls';
 import { useCurrentUser, useUpdateProfile, useMarkNotificationAsRead } from 'common.services';
 import { OnboardingStageT } from 'common.api';
 import { onboardingStageToPath } from 'pages.welcome';
@@ -43,17 +36,13 @@ function LayoutComponent() {
   return (
     <div className="relative flex min-h-svh flex-col overflow-hidden">
       <Suspense fallback={<LoadingScreen />}>
-        <Navigation>
-          <RoomProvider>
-            <LiveKitProvider>
-              <ModeSyncProvider>
-                <CompactView>
-                  <Outlet />
-                </CompactView>
-              </ModeSyncProvider>
-            </LiveKitProvider>
-          </RoomProvider>
-        </Navigation>
+        <CallsShell>
+          <Navigation>
+            <CompactView>
+              <Outlet />
+            </CompactView>
+          </Navigation>
+        </CallsShell>
       </Suspense>
     </div>
   );

@@ -134,6 +134,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         // импорт `@acme/ui` будет указывать прямо на исходники
         // 'pages.classrooms': path.resolve(__dirname, '../../packages/pages.classrooms/index.ts'),
       },
+      conditions: mode === 'development' ? ['development', 'import'] : ['import'],
       // убедитесь, что symlink‑ы раскрываются ‑ это настройка по‑умолчанию
       preserveSymlinks: false,
       dedupe: [

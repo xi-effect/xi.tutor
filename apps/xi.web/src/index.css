@@ -12,7 +12,7 @@
 @source "../../../packages/modules.profile/src";
 @source "../../../packages/modules.navigation/src";
 @source "../../../packages/modules.board/src";
-@source "../../../packages/modules.calls/src";
+@source "../../../packages/modules.calls";
 @source "../../../packages/modules.calendar/src";
 @source "../../../packages/modules.editor/src";
 @source "../../../packages/common.ui/src";
