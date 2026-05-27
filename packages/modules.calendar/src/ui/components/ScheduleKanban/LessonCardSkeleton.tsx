@@ -17,7 +17,7 @@ export const LessonCardSkeleton = memo<LessonCardSkeletonProps>(({ isToday, full
     <div
       className={cn(
         'relative flex min-h-[188px] w-full flex-col rounded-2xl border p-6',
-        isToday ? 'border-brand-80 bg-white' : 'border-gray-10 bg-white',
+        isToday ? 'border-brand-80 bg-gray-0' : 'border-gray-10 bg-gray-0',
       )}
       style={fullWidth ? { width: '100%' } : { minWidth: CARD_MIN_WIDTH, maxWidth: CARD_MAX_WIDTH }}
       aria-hidden

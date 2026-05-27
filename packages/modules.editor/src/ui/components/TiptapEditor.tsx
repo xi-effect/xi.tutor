@@ -10,7 +10,7 @@ export const TiptapEditor = () => {
   if (!editor) {
     return (
       <div className="flex w-full justify-center py-8">
-        <div className="w-full max-w-5xl overflow-hidden rounded-lg bg-white">
+        <div className="bg-gray-0 w-full max-w-5xl overflow-hidden rounded-lg">
           <div className="relative px-16 py-12">
             <div className="text-center text-gray-500">Инициализация редактора...</div>
           </div>

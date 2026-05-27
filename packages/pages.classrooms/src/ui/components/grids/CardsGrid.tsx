@@ -65,7 +65,7 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
       {/* Индикатор загрузки следующей страницы */}
       {isFetchingNextPage && (
         <div className="flex justify-center py-4">
-          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-gray-300"></div>
+          <div className="border-gray-30 h-8 w-8 animate-spin rounded-full border-b-2"></div>
         </div>
       )}
       {/* Сообщение о конце списка */}

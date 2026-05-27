@@ -73,7 +73,7 @@ export const MaterialsCard = ({
         <div
           onClick={handleCardClick}
           className={cn(
-            'group hover:bg-gray-5 box-border flex min-h-[100px] min-w-[394px] flex-1 cursor-pointer flex-row items-start gap-4 rounded-2xl border border-[#E7E7E9] bg-white p-4',
+            'group hover:bg-gray-5 border-gray-10 bg-gray-0 box-border flex min-h-[100px] min-w-[394px] flex-1 cursor-pointer flex-row items-start gap-4 rounded-2xl border p-4',
             className,
           )}
           data-umami-event="material-card-open"
@@ -83,13 +83,13 @@ export const MaterialsCard = ({
             <div className="size-6 shrink-0 [&>svg]:size-6">{cardIcon[content_kind]}</div>
           )}
           <div className="flex min-w-0 flex-1 flex-col gap-2 overflow-hidden">
-            <p className="truncate text-base leading-[22px] font-medium text-[#0F0F11]">{name}</p>
-            <span className="text-sm leading-5 font-normal text-[#6A6C77]">
+            <p className="truncate text-base leading-[22px] font-medium text-gray-100">{name}</p>
+            <span className="text-gray-60 text-sm leading-5 font-normal">
               Изменено: {isLoading ? '...' : updated_at ? formatToShortDate(updated_at) : ''}
             </span>
           </div>
           {menu && (
-            <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white">
+            <div className="bg-gray-0 flex size-8 shrink-0 items-center justify-center rounded-lg">
               {menu}
             </div>
           )}
@@ -112,7 +112,7 @@ export const MaterialsCard = ({
     <div
       onClick={handleCardClick}
       className={cn(
-        'group hover:border-brand-80 border-gray-20 flex w-full shrink-0 cursor-pointer justify-between rounded-2xl border bg-white p-4 transition-all duration-200 ease-linear',
+        'group hover:border-brand-80 border-gray-20 bg-gray-0 flex w-full shrink-0 cursor-pointer justify-between rounded-2xl border p-4 transition-all duration-200 ease-linear',
         className,
       )}
       data-umami-event="material-card-open"

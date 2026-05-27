@@ -6,7 +6,7 @@
 .xi-editor .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;
-  color: #9ca3af;
+  color: var(--xi-gray-40);
   pointer-events: none;
   height: 0;
 }
@@ -83,25 +83,30 @@
 
 /* Стили для цитат */
 .xi-editor .ProseMirror blockquote {
-  border-left: 4px solid #d1d5db;
+  border-left: 4px solid var(--xi-gray-20);
   padding-left: 1rem;
   margin: 1rem 0;
   font-style: italic;
-  color: #6b7280;
+  color: var(--xi-gray-60);
 }
 
 /* Стили для кода */
 .xi-editor .ProseMirror pre {
-  background: #1f2937;
-  color: #f9fafb;
+  background: var(--xi-gray-90);
+  color: var(--xi-gray-0);
   padding: 1rem;
   border-radius: 0.5rem;
   margin: 1rem 0;
   overflow-x: auto;
 }
 
+[data-theme='dark'] .xi-editor .ProseMirror pre {
+  background: var(--xi-gray-10);
+  color: var(--xi-gray-100);
+}
+
 .xi-editor .ProseMirror code {
-  background: #f3f4f6;
+  background: var(--xi-gray-5);
   padding: 0.125rem 0.25rem;
   border-radius: 0.25rem;
   font-size: 0.875em;
@@ -115,18 +120,18 @@
 
 /* Стили для ссылок */
 .xi-editor .ProseMirror a {
-  color: #3b82f6;
+  color: var(--xi-brand-80);
   text-decoration: underline;
   cursor: pointer;
 }
 
 .xi-editor .ProseMirror a:hover {
-  color: #1d4ed8;
+  color: var(--xi-brand-100);
 }
 
 /* Стили для выделения */
 .xi-editor .ProseMirror mark {
-  background-color: #fef3c7;
+  background-color: var(--xi-yellow-20);
   padding: 0.125rem 0.25rem;
   border-radius: 0.25rem;
 }
@@ -190,9 +195,9 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: #3b82f6;
+  background: var(--xi-brand-80);
   border-radius: 1px;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--xi-brand-80) 20%, transparent);
 }
 
 /* Стили для выделения текста */
