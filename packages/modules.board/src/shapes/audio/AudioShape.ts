@@ -1,4 +1,4 @@
-import { T, TLBaseShape } from 'tldraw';
+import { T, DrBaseShape } from '@ibodr/draw';
 
 export const AUDIO_SHAPE_WIDTH = 392;
 export const AUDIO_SHAPE_HEIGHT = 80;
@@ -30,7 +30,13 @@ export type AudioShapeProps = {
   timecodes: AudioTimecode[];
 };
 
-export type AudioShape = TLBaseShape<'audio', AudioShapeProps>;
+export type AudioShape = DrBaseShape<'audio', AudioShapeProps>;
+
+declare module '@ibodr/draw' {
+  export interface DrGlobalShapePropsMap {
+    audio: AudioShapeProps;
+  }
+}
 
 const timecodeValidator = T.object({
   id: T.string,

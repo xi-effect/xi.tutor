@@ -1,4 +1,4 @@
-import { T, TLBaseShape } from 'tldraw';
+import { T, DrBaseShape } from '@ibodr/draw';
 
 export const FILE_SHAPE_WIDTH = 360;
 export const FILE_SHAPE_HEIGHT = 80;
@@ -23,4 +23,10 @@ export const fileShapeProps = {
   status: T.literalEnum('loading', 'uploaded', 'offline', 'error'),
 };
 
-export type FileShape = TLBaseShape<'file', FileShapeProps>;
+export type FileShape = DrBaseShape<'file', FileShapeProps>;
+
+declare module '@ibodr/draw' {
+  export interface DrGlobalShapePropsMap {
+    file: FileShapeProps;
+  }
+}

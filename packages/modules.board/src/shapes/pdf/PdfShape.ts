@@ -1,4 +1,4 @@
-import { T, TLBaseShape } from 'tldraw';
+import { T, DrBaseShape } from '@ibodr/draw';
 
 /** Минимальный размер по меньшей стороне — меньше этого PDF нечитаем. Используется при создании и ресайзе. */
 export const PDF_MIN_SIZE = 520;
@@ -22,7 +22,13 @@ export type PdfShapeProps = {
   pagesVisible: number;
 };
 
-export type PdfShape = TLBaseShape<'pdf', PdfShapeProps>;
+export type PdfShape = DrBaseShape<'pdf', PdfShapeProps>;
+
+declare module '@ibodr/draw' {
+  export interface DrGlobalShapePropsMap {
+    pdf: PdfShapeProps;
+  }
+}
 
 export const pdfShapeProps = {
   src: T.string,

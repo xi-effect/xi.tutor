@@ -1,65 +1,48 @@
-import React from 'react';
-import { TLCursorProps } from 'tldraw';
 import { Cursor } from '@xipkg/icons';
+import type { DrCollaboratorCursorProps } from '@ibodr/draw';
+import { CollaboratorCursorBadge } from '@ibodr/draw';
 
-export const CollaboratorCursor: React.FC<TLCursorProps> = ({ point, color, name }) => {
-  if (!point) return null;
+export type CollaboratorCursorProps = DrCollaboratorCursorProps;
+
+export function CollaboratorCursor({
+  point,
+  color,
+  name,
+  scale,
+  layout,
+}: DrCollaboratorCursorProps) {
+  const badgeOffset = layout?.badgeOffset ?? { x: 2, y: 4 };
+  const iconOffset = layout?.iconOffset ?? { x: -12, y: -12 };
 
   return (
     <div
       style={{
         position: 'absolute',
-        marginLeft: 12,
         left: point.x,
         top: point.y,
         pointerEvents: 'none',
-        transform: 'translate(0, 0)', // Курсор указывает точно на позицию мыши
+        transform: `scale(${scale})`,
+        transformOrigin: '0 0',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-start',
-        zIndex: 1000,
+        zIndex: 1100,
       }}
     >
-      {/* Иконка курсора */}
       <div
         style={{
-          position: 'relative',
-          width: 20,
-          height: 20,
-          transform: 'translate(-16px, -2px)', // Смещаем курсор так, чтобы остриё указывало на позицию мыши
+          transform: `translate(${iconOffset.x}px, ${iconOffset.y}px)`,
           filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))',
         }}
       >
-        <Cursor
-          style={{
-            width: '20px',
-            height: '20px',
-            fill: color,
-          }}
-        />
+        <Cursor style={{ width: 20, height: 20, fill: color }} />
       </div>
 
-      {/* Имя пользователя */}
-      <div
-        style={{
-          marginTop: 0,
-          marginLeft: 4,
-          padding: '4px 8px',
-          backgroundColor: color,
-          color: 'white',
-          fontSize: 11,
-          fontWeight: 600,
-          borderRadius: 8,
-          whiteSpace: 'nowrap',
-          boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
-          maxWidth: 120,
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          border: '1px solid rgba(255,255,255,0.3)',
-        }}
-      >
-        {name || 'Пользователь'}
-      </div>
+      <CollaboratorCursorBadge
+        color={color}
+        name={name ?? 'Пользователь'}
+        badgeOffset={badgeOffset}
+      />
     </div>
   );
-};
+}

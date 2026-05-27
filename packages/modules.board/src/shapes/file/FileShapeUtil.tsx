@@ -1,4 +1,4 @@
-import { BaseBoxShapeUtil, HTMLContainer, TLResizeInfo, resizeBox } from 'tldraw';
+import { BaseBoxShapeUtil, HTMLContainer, DrResizeInfo, resizeBox } from '@ibodr/draw';
 import {
   FILE_MIN_WIDTH,
   FILE_SHAPE_HEIGHT,
@@ -35,7 +35,7 @@ export class FileShapeUtil extends BaseBoxShapeUtil<FileShape> {
     return false;
   }
 
-  override onResize(shape: FileShape, info: TLResizeInfo<FileShape>) {
+  override onResize(shape: FileShape, info: DrResizeInfo<FileShape>) {
     const next = resizeBox(shape, info, {
       minWidth: FILE_MIN_WIDTH,
       minHeight: FILE_SHAPE_HEIGHT,
@@ -61,7 +61,9 @@ export class FileShapeUtil extends BaseBoxShapeUtil<FileShape> {
     );
   }
 
-  override indicator(shape: FileShape) {
-    return <rect width={shape.props.w} height={shape.props.h} rx={12} ry={12} />;
+  override getIndicatorPath(shape: FileShape) {
+    const path = new Path2D();
+    path.rect(0, 0, shape.props.w, shape.props.h);
+    return path;
   }
 }

@@ -10,6 +10,7 @@ import {
   Sticker,
   Transform,
   TText,
+  Emotions,
 } from '@xipkg/icons';
 
 export type NavbarElementT = {
@@ -99,4 +100,5 @@ export const navBarElements: NavbarElementT[] = [
   { action: 'asset', title: 'Изображение', icon: <Image /> },
   { action: 'eraser', title: 'Ластик', icon: <Eraser /> },
   { action: 'frame', title: 'Фрейм', icon: <Transform /> },
+  { action: 'emoji', title: 'Эмодзи', icon: <Emotions /> },
 ];

@@ -14,9 +14,11 @@ interface BubbleMenuProps {
 /** Показывать BubbleMenu только при валидной TextSelection внутри textblock (не doc, не блок без inline). */
 function isValidTextSelectionForBubbleMenu(state: EditorState): boolean {
   const { doc, selection } = state;
+
   if (!(selection instanceof TextSelection) || selection.empty) return false;
   const from = selection.from;
   const to = selection.to;
+
   if (from === 0 || to === 0) return false;
   try {
     const $from = doc.resolve(from);

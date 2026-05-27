@@ -2,28 +2,42 @@ import {
   HTMLContainer,
   PlainTextLabel,
   SVGContainer,
-  TLGeoShape,
-  useDefaultColorTheme,
+  getColorValue,
+  getFontFamily,
   useEditor,
-} from 'tldraw';
+  useValue,
+} from '@ibodr/draw';
 import { getFillColor, getSizeInPixels } from './geoUtils';
-import { TXiGeoShapeProps } from './type';
+import type { XiGeoShape, TXiGeoShapeProps } from './type';
 
 type TXiGeoComponent = {
-  shape: TLGeoShape;
+  shape: XiGeoShape;
 };
 
 const DEFAULT_SIZE_SCALE = 0.6;
 
 export const XiGeoComponent: React.FC<TXiGeoComponent> = ({ shape }) => {
   const editor = useEditor();
-  const theme = useDefaultColorTheme();
-  const { borderColor, color, fill, size, text, w, h } = shape.props as TXiGeoShapeProps;
+  const theme = useValue('theme', () => editor.getCurrentTheme(), [editor]);
+  const colorMode = useValue('colorMode', () => editor.getColorMode(), [editor]);
+  const colors = theme.colors[colorMode];
+  const isSelected = useValue('isSelected', () => editor.getOnlySelectedShapeId() === shape.id, [
+    editor,
+    shape.id,
+  ]);
+
+  const { borderColor, color, fill, size, text, w, h, labelColor, font, align, verticalAlign } =
+    shape.props as TXiGeoShapeProps;
 
   const geometry = editor.getShapeGeometry(shape);
   const pathData = geometry.getSvgPathData(false);
-  const fillColor = getFillColor(theme, fill, color);
+  const fillColor = getFillColor(colors, fill, color);
   const strokeWidth = getSizeInPixels(size);
+  const strokeColor = getColorValue(colors, borderColor, 'fill');
+  const textColor = getColorValue(colors, labelColor, 'solid');
+
+  const textAlign = align === 'middle' ? 'center' : align === 'end' ? 'end' : 'start';
+  const vAlign = verticalAlign === 'middle' ? 'middle' : verticalAlign === 'end' ? 'end' : 'start';
 
   return (
     <HTMLContainer
@@ -38,7 +52,7 @@ export const XiGeoComponent: React.FC<TXiGeoComponent> = ({ shape }) => {
           <path
             d={pathData}
             fill={fillColor}
-            stroke={theme[borderColor].fill}
+            stroke={strokeColor}
             strokeWidth={strokeWidth}
             strokeLinejoin="round"
           />
@@ -54,13 +68,13 @@ export const XiGeoComponent: React.FC<TXiGeoComponent> = ({ shape }) => {
         <PlainTextLabel
           type="xi-geo"
           shapeId={shape.id}
-          font="draw"
-          fontSize={16}
-          lineHeight={2}
-          align="middle"
-          verticalAlign="middle"
-          isSelected
-          labelColor={shape.props.labelColor}
+          fontFamily={getFontFamily(theme, font ?? 'draw')}
+          fontSize={theme.fontSize}
+          lineHeight={theme.lineHeight}
+          textAlign={textAlign}
+          verticalAlign={vAlign}
+          isSelected={isSelected}
+          labelColor={textColor}
           text={text}
         />
       </div>

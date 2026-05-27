@@ -39,6 +39,11 @@
   line-height: 1.6;
 }
 
+/* Стили для img */
+.xi-editor .node-image {
+  display: flex;
+}
+
 /* Стили для списков */
 .xi-editor .ProseMirror ul,
 .xi-editor .ProseMirror ol {
@@ -138,10 +143,13 @@
   cursor: grab;
   border-radius: 0.25rem;
 }
+
+.ProseMirror:hover + div .drag-handle,
 .xi-editor .drag-handle:hover,
 .xi-editor .drag-handle[data-dragging='true'] {
   opacity: 1;
 }
+
 .xi-editor .drag-handle:active {
   cursor: grabbing;
 }
@@ -190,7 +198,7 @@
 /* Стили для выделения текста */
 .xi-editor .ProseMirror .ProseMirror-selectednode {
   display: flex;
-  justify-content: center;
+  color: gray;
 }
 
 /* --- Курсоры совместного редактирования (стиль доски / Notion) --- */

@@ -28,9 +28,9 @@ import { useDropdownActions } from './hooks/useDropdownActions';
 import { useEffect, useRef, useState } from 'react';
 import { useCurrentUser } from 'common.services';
 import { toast } from 'sonner';
-import { useEditor } from 'tldraw';
-import type { InputMode } from '../../../store/useTldrawStore';
-import { useTldrawStore } from '../../../store';
+import { useEditor } from '@ibodr/draw';
+import type { InputMode } from '../../../store/useDrawStore';
+import { useDrawStore } from '../../../store';
 import { HotkeysHelpModal } from '../shared/HotkeysHelp';
 
 type ActionPropsT = {
@@ -94,7 +94,7 @@ const BOARD_ELEMENTS_WARNING_THRESHOLD = 3000;
 
 export const SettingsDropdown = () => {
   const editor = useEditor();
-  const { inputMode, setInputMode } = useTldrawStore();
+  const { inputMode, setInputMode } = useDrawStore();
   const {
     isReadonly,
     saveCanvas,
