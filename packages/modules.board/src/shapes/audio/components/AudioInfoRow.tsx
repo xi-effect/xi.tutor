@@ -13,6 +13,7 @@ type AudioInfoRowProps = {
   isTutor: boolean;
   canAddTimecode: boolean;
   effectiveVolume: number;
+  isInteractive: boolean;
   onAddTimecode: () => void;
   onVolumeChange: (value: number[]) => void;
   onToggleMute: () => void;
@@ -26,6 +27,7 @@ export function AudioInfoRow({
   syncPlayback,
   canAddTimecode,
   effectiveVolume,
+  isInteractive,
   onAddTimecode,
   onVolumeChange,
   onToggleMute,
@@ -38,12 +40,17 @@ export function AudioInfoRow({
             type="button"
             variant="none"
             className="hover:text-gray-80 flex h-5 min-w-5 items-center justify-center p-0 text-gray-50"
-            style={{ pointerEvents: 'all' }}
-            onPointerDown={stopEvent}
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddTimecode();
-            }}
+            style={{ pointerEvents: isInteractive ? 'all' : 'none' }}
+            data-audio-control=""
+            onPointerDown={isInteractive ? stopEvent : undefined}
+            onClick={
+              isInteractive
+                ? (e) => {
+                    e.stopPropagation();
+                    onAddTimecode();
+                  }
+                : undefined
+            }
           >
             <Plus className="h-3.5 w-3.5" />
           </Button>
@@ -58,11 +65,12 @@ export function AudioInfoRow({
       <div className="flex items-center gap-1.5">
         <div
           className="group flex items-center gap-1.5"
-          style={{ pointerEvents: 'all' }}
-          onPointerDown={stopEvent}
-          onPointerMove={stopEvent}
-          onPointerUp={stopEvent}
-          onClick={stopEvent}
+          style={{ pointerEvents: isInteractive ? 'all' : 'none' }}
+          data-audio-control=""
+          onPointerDown={isInteractive ? stopEvent : undefined}
+          onPointerMove={isInteractive ? stopEvent : undefined}
+          onPointerUp={isInteractive ? stopEvent : undefined}
+          onClick={isInteractive ? stopEvent : undefined}
         >
           <div className="flex min-h-6 max-w-0 min-w-0 items-center overflow-hidden opacity-0 transition-[max-width,opacity] duration-150 group-hover:max-w-[80px] group-hover:opacity-100">
             <Slider

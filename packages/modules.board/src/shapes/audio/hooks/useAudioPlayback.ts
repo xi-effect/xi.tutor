@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useEditor } from 'tldraw';
+import { useEditor } from '@ibodr/draw';
 import { useCurrentUser } from 'common.services';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import type { AudioShape } from '../AudioShape';
@@ -177,14 +177,14 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
       audioRef.current.currentTime = time;
       setCurrentTime(time);
 
-      if (syncPlayback && isTutor && audioSyncMap) {
+      if (syncPlayback && audioSyncMap) {
         audioSyncMap.doc?.transact(() => {
           audioSyncMap.set(`${shape.id}:time`, time);
           audioSyncMap.set(`${shape.id}:ts`, Date.now());
         }, 'audio-sync');
       }
     },
-    [canControl, duration, syncPlayback, isTutor, audioSyncMap, shape.id],
+    [canControl, duration, syncPlayback, audioSyncMap, shape.id],
   );
 
   const seekToTime = useCallback(
@@ -193,14 +193,14 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
       audioRef.current.currentTime = time;
       setCurrentTime(time);
 
-      if (syncPlayback && isTutor && audioSyncMap) {
+      if (syncPlayback && audioSyncMap) {
         audioSyncMap.doc?.transact(() => {
           audioSyncMap.set(`${shape.id}:time`, time);
           audioSyncMap.set(`${shape.id}:ts`, Date.now());
         }, 'audio-sync');
       }
     },
-    [syncPlayback, isTutor, audioSyncMap, shape.id],
+    [syncPlayback, audioSyncMap, shape.id],
   );
 
   const toggleMute = useCallback(() => {

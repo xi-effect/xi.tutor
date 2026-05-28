@@ -39,6 +39,11 @@
   line-height: 1.6;
 }
 
+/* Стили для img */
+.xi-editor .node-image {
+  display: flex;
+}
+
 /* Стили для списков */
 .xi-editor .ProseMirror ul,
 .xi-editor .ProseMirror ol {

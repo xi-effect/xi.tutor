@@ -1,12 +1,12 @@
 import { useState, useMemo, useCallback } from 'react';
-import { track, useEditor } from 'tldraw';
+import { track, useEditor } from '@ibodr/draw';
 import { Slider } from '@xipkg/slider';
 import { colorOptions } from '../../../utils/customConfig';
 import { navBarElements } from '../../../utils/navBarElements';
-import { useTldrawStyles } from '../../../hooks/useTldrawStyles';
+import { useDrawStyles } from '../../../hooks/useDrawStyles';
 import { ColorDot } from '../canvas';
 import { FillTypePicker } from '../../../shapes/geo';
-import { useTldrawStore } from '../../../store';
+import { useDrawStore } from '../../../store';
 import { Picker } from '../popups';
 import { cn } from '@xipkg/utils';
 
@@ -39,8 +39,8 @@ export const ColorPicker = track(() => {
   const [open, setOpen] = useState(false);
   const editor = useEditor();
   const { setSelectedShapesColor, setSelectedShapesThickness, setSelectedShapesOpacity } =
-    useTldrawStyles();
-  const { setGeoColor } = useTldrawStore();
+    useDrawStyles();
+  const { setGeoColor } = useDrawStore();
 
   const selectedShapes = editor.getSelectedShapes();
 

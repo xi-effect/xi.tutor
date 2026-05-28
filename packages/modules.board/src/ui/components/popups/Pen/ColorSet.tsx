@@ -1,6 +1,6 @@
 import { colorOptions } from '../../../../utils/customConfig';
-import { useTldrawStyles } from '../../../../hooks/useTldrawStyles';
-import { useTldrawStore } from '../../../../store/useTldrawStore';
+import { useDrawStyles } from '../../../../hooks/useDrawStyles';
+import { useDrawStore } from '../../../../store/useDrawStore';
 import { ColorDot } from '../../canvas';
 
 type ColorOptionT = (typeof colorOptions)[number]['name'];
@@ -10,8 +10,8 @@ type ColorGridProps = {
 };
 
 export const ColorGrid = ({ currentColor }: ColorGridProps) => {
-  const { pencilColor, setPencilColor } = useTldrawStore();
-  const { setColor } = useTldrawStyles();
+  const { pencilColor, setPencilColor } = useDrawStore();
+  const { setColor } = useDrawStyles();
 
   const handleColorClick = (colorName: ColorOptionT) => {
     setColor(colorName);

@@ -1,16 +1,16 @@
-import { TLShapeId, useEditor } from 'tldraw';
+import { DrShapeId, useEditor } from '@ibodr/draw';
 import { useEffect } from 'react';
-import { useTldrawStore } from '../store';
+import { useDrawStore } from '../store';
 import { isEditableTarget } from '../utils';
 import { useYjsContext } from '../providers/YjsProvider';
-import { useTldrawStyles } from './useTldrawStyles';
+import { useDrawStyles } from './useDrawStyles';
 
 export const useHotkeys = () => {
   const editor = useEditor();
-  const { selectedElementId, selectElement, setSelectedTool } = useTldrawStore();
+  const { selectedElementId, selectElement, setSelectedTool } = useDrawStore();
   const { undo, redo } = useYjsContext();
   const { resetToDefaults, setColor, setThickness, setOpacity, applyStoreStylesForShape } =
-    useTldrawStyles();
+    useDrawStyles();
 
   useEffect(() => {
     if (!editor) return;
@@ -54,7 +54,7 @@ export const useHotkeys = () => {
 
       if (code === 'KeyP' && !modKey && !shiftKey && !altKey) {
         event.preventDefault();
-        const { pencilColor, pencilThickness, pencilOpacity } = useTldrawStore.getState();
+        const { pencilColor, pencilThickness, pencilOpacity } = useDrawStore.getState();
         setColor(pencilColor);
         setThickness(pencilThickness);
         setOpacity(pencilOpacity);
@@ -111,7 +111,7 @@ export const useHotkeys = () => {
           editor.deleteShapes(selectedShapes);
         } else if (selectedElementId) {
           try {
-            editor.deleteShapes([selectedElementId as TLShapeId]);
+            editor.deleteShapes([selectedElementId as DrShapeId]);
           } catch (error) {
             console.warn('Could not delete shape:', error);
           }
@@ -178,7 +178,7 @@ export const useHotkeys = () => {
         const selectedShapes = editor.getSelectedShapes();
         if (selectedShapes.length === 0) return;
 
-        const ids = selectedShapes.map((s) => s.id as TLShapeId);
+        const ids = selectedShapes.map((s) => s.id as DrShapeId);
 
         if (shiftKey) {
           const hasGroup = selectedShapes.some((shape) => shape.type === 'group');

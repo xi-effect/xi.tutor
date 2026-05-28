@@ -6,32 +6,45 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { Copy, H1, H2, H3, Text, Trash, Image, ArrowUp, ArrowBottom } from '@xipkg/icons';
-import { ReactNode, useState } from 'react';
-import { useBlockMenuActions, useYjsContext } from '../../hooks';
+import { ReactNode } from 'react';
+import { useBlockMenuActions } from '../../hooks';
+import { Editor } from '@tiptap/core';
 import { useInterfaceStore } from '../../store/interfaceStore';
+import { ActiveBlockT } from '../../types';
 
 type BlockMenuPropsT = {
-  children: (props: { open: boolean }) => ReactNode;
+  children: ReactNode;
+  editor: Editor;
+  isReadOnly?: boolean;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  activeBlock?: ActiveBlockT;
 };
 
-export const BlockMenu = ({ children }: BlockMenuPropsT) => {
-  const [open, setOpen] = useState(false);
-  const { editor, isReadOnly } = useYjsContext();
+export const BlockMenu = ({
+  children,
+  editor,
+  isReadOnly,
+  open,
+  setOpen,
+  activeBlock,
+}: BlockMenuPropsT) => {
   const { openModal } = useInterfaceStore();
-
-  const { changeType, duplicate, remove, moveUp, moveDown } = useBlockMenuActions(editor);
+  const { changeType, duplicate, remove, moveUp, moveDown } = useBlockMenuActions(
+    editor,
+    activeBlock,
+  );
 
   // Блокируем меню если редактор в readonly режиме
   const shouldShow = editor && !isReadOnly && editor.isEditable !== false;
 
   if (!shouldShow) {
-    // Возвращаем children без DropdownMenu, чтобы не ломать структуру
-    return <>{children({ open: false })}</>;
+    return null;
   }
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen} modal={false}>
-      <DropdownMenuTrigger asChild>{children({ open })}</DropdownMenuTrigger>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
+      <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
 
       <DropdownMenuContent
         side="right"

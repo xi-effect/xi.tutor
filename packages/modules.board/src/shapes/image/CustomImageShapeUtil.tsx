@@ -1,24 +1,24 @@
 import {
-  ImageShapeUtil as TldrawImageShapeUtil,
-  TLImageShape,
+  ImageShapeUtil as DrawImageShapeUtil,
+  DrImageShape,
   HTMLContainer,
   useEditor,
   useImageOrVideoAsset,
   getUncroppedSize,
   usePrefersReducedMotion,
   useValue,
-  TLAssetId,
+  DrAssetId,
   Editor,
-} from 'tldraw';
+} from '@ibodr/draw';
 import { memo, useCallback, useEffect, useState } from 'react';
 
-export class CustomImageShapeUtil extends TldrawImageShapeUtil {
-  override component(shape: TLImageShape) {
+export class CustomImageShapeUtil extends DrawImageShapeUtil {
+  override component(shape: DrImageShape) {
     return <CustomImageShape shape={shape} />;
   }
 }
 
-function getCroppedContainerStyle(shape: TLImageShape) {
+function getCroppedContainerStyle(shape: DrImageShape) {
   const crop = shape.props.crop;
   const topLeft = crop?.topLeft;
   if (!topLeft) {
@@ -32,7 +32,7 @@ function getCroppedContainerStyle(shape: TLImageShape) {
   };
 }
 
-function getFlipStyle(shape: TLImageShape) {
+function getFlipStyle(shape: DrImageShape) {
   const { flipX, flipY } = shape.props;
   if (!flipX && !flipY) return undefined;
   return {
@@ -41,7 +41,7 @@ function getFlipStyle(shape: TLImageShape) {
   };
 }
 
-function getIsAnimated(editor: Editor, assetId: TLAssetId) {
+function getIsAnimated(editor: Editor, assetId: DrAssetId) {
   const asset = editor.getAsset(assetId);
   if (!asset) return false;
   return (
@@ -117,7 +117,7 @@ function ImagePlaceholderIcon() {
   );
 }
 
-const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: TLImageShape }) {
+const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrImageShape }) {
   const editor = useEditor();
 
   const { w } = getUncroppedSize(shape.props, shape.props.crop);
@@ -229,7 +229,7 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: TLIm
       {showCropPreview && loadedSrc && (
         <div style={containerStyle}>
           <img
-            className="tl-image"
+            className="dr-image"
             style={{ ...getFlipStyle(shape), opacity: 0.1 }}
             crossOrigin={crossOrigin}
             src={loadedSrc}
@@ -248,11 +248,11 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: TLIm
           borderRadius: shape.props.crop?.isCircle ? '50%' : undefined,
         }}
       >
-        <div className="tl-image-container" style={containerStyle}>
+        <div className="dr-image-container" style={containerStyle}>
           {loadedSrc && (
             <img
               key={loadedSrc}
-              className="tl-image"
+              className="dr-image"
               style={getFlipStyle(shape)}
               crossOrigin={crossOrigin}
               src={loadedSrc}
@@ -264,7 +264,7 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: TLIm
           {nextSrc && (
             <img
               key={nextSrc}
-              className="tl-image"
+              className="dr-image"
               style={getFlipStyle(shape)}
               crossOrigin={crossOrigin}
               src={nextSrc}
