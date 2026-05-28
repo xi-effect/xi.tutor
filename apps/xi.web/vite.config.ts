@@ -1,12 +1,17 @@
-import { ConfigEnv, defineConfig, searchForWorkspaceRoot } from 'vite';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { ConfigEnv, defineConfig, mergeConfig, searchForWorkspaceRoot } from 'vite';
 import react from '@vitejs/plugin-react';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
+import { CALLS_RUNTIME_DEPS, callsLocalDevConfig } from './vite.calls-local';
+
+const appDir = path.dirname(fileURLToPath(import.meta.url));
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv) => {
-  return {
+  const config = {
     plugins: [
       tanstackRouter({ target: 'react', autoCodeSplitting: true }),
       react(),
@@ -40,32 +45,21 @@ export default defineConfig(({ mode }: ConfigEnv) => {
           ],
         },
 
-        // важно: чтобы новые версии SW активировались быстрее
         workbox: {
-          // workbox-build 7.x использует @rollup/plugin-terser в воркерах,
-          // которые при большом числе прекэш-чанков могут зависнуть (race condition).
-          // mode: 'development' пропускает terser — SW не минифицируется, но стабильно собирается.
           mode: 'development',
-
           skipWaiting: true,
           clientsClaim: true,
-
-          // Прекэш: assets + index.html для SPA fallback при офлайн/прямых переходах на маршруты
           globPatterns: ['**/*.{js,css,ico,png,svg,webmanifest}', '**/index.html'],
           maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
-
-          // SPA: при навигации на /signin, /classrooms и т.д. отдавать index.html (иначе 404)
           navigateFallback: '/index.html',
           navigateFallbackDenylist: [/^\/deployments\/.*/],
-
-          // навигации (index.html) — NetworkFirst, чтобы подтягивался свежий html
           runtimeCaching: [
             {
-              urlPattern: ({ request }) => request.mode === 'navigate',
+              urlPattern: ({ request }: { request: Request }) => request.mode === 'navigate',
               handler: 'NetworkFirst',
               options: {
                 cacheName: 'html',
-                networkTimeoutSeconds: 3, // чтобы офлайн/плохая сеть быстрее отдавали кеш
+                networkTimeoutSeconds: 3,
               },
             },
             {
@@ -84,20 +78,19 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       sourcemap: mode === 'debug',
       terserOptions: {
         compress: {
-          drop_console: true, // Временно отключено для отладки WebP конвертации
-          drop_debugger: true, // Удалит debugger
+          drop_console: true,
+          drop_debugger: true,
         },
       },
     },
-    ssr: {
-      // noExternal: ['pages.classrooms'],
-    },
     optimizeDeps: {
-      // exclude: ['pages.classrooms'],
       esbuildOptions: {
         target: 'es2020',
+        conditions:
+          mode === 'development'
+            ? ['development', 'import', 'module', 'browser', 'default']
+            : ['import', 'module', 'browser', 'default'],
       },
-      // Включаем критические зависимости для предварительной обработки
       include: [
         'react',
         'react-dom',
@@ -105,37 +98,24 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         'sonner',
         'i18next',
         'react-i18next',
-        'livekit-client',
-        '@livekit/components-react',
-        '@livekit/components-core',
+        ...CALLS_RUNTIME_DEPS,
       ],
-      // Принудительно предварительно обрабатываем React
-      force: true,
     },
     server: {
-      watch: {
-        usePolling: false, // Использовать опрос файловой системы для более надежного отслеживания изменений
-        // interval: 0, // Интервал проверки изменений в миллисекундах
-      },
       hmr: {
-        /** держим сокет живым дольше 10 с */
-        timeout: 30_000, // 🡅 можно 60 000, если часто бываете «в простое»
-        overlay: false, // Отключаем оверлей ошибок для увеличения производительности
+        timeout: 30_000,
+        overlay: false,
       },
       fs: {
-        allow: [
-          searchForWorkspaceRoot(process.cwd()), // весь workspace  [oai_citation_attribution:0‡GitHub](https://github.com/vitejs/vite/blob/main/docs/config/server-options.md?utm_source=chatgpt.com)
-          '../../packages', // точечное разрешение (необязательно, но наглядно)
-        ],
+        allow: [searchForWorkspaceRoot(process.cwd()), '../../packages'],
       },
     },
     resolve: {
-      alias: {
-        // импорт `@acme/ui` будет указывать прямо на исходники
-        // 'pages.classrooms': path.resolve(__dirname, '../../packages/pages.classrooms/index.ts'),
-      },
-      conditions: mode === 'development' ? ['development', 'import'] : ['import'],
-      // убедитесь, что symlink‑ы раскрываются ‑ это настройка по‑умолчанию
+      alias: {},
+      conditions:
+        mode === 'development'
+          ? ['development', 'import']
+          : ['import', 'module', 'browser', 'default'],
       preserveSymlinks: false,
       dedupe: [
         'react',
@@ -151,8 +131,22 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       ],
     },
     css: {
-      // Оптимизация CSS
       devSourcemap: false,
     },
   };
+
+  const callsLocal = mode === 'development' ? callsLocalDevConfig(appDir) : null;
+
+  if (!callsLocal) {
+    return config;
+  }
+
+  return mergeConfig(config, {
+    ...callsLocal,
+    optimizeDeps: {
+      ...config.optimizeDeps,
+      ...callsLocal.optimizeDeps,
+      include: config.optimizeDeps.include,
+    },
+  });
 });

@@ -16,8 +16,21 @@ const Navigation = lazy(() =>
 );
 
 function LayoutComponent() {
+  return (
+    <div className="relative flex min-h-svh flex-col overflow-hidden">
+      <Suspense fallback={<LoadingScreen />}>
+        <CallsShell>
+          <LayoutContent />
+        </CallsShell>
+      </Suspense>
+    </div>
+  );
+}
+
+function LayoutContent() {
   const router = useRouter();
   const updateStore = useCallStore((state) => state.updateStore);
+  const token = useCallStore((state) => state.token);
 
   useUmamiActivityHeartbeat();
 
@@ -33,19 +46,15 @@ function LayoutComponent() {
     }
   }, [router.state.location.pathname, router.state.location.search, updateStore]);
 
-  return (
-    <div className="relative flex min-h-svh flex-col overflow-hidden">
-      <Suspense fallback={<LoadingScreen />}>
-        <CallsShell>
-          <Navigation>
-            <CompactView>
-              <Outlet />
-            </CompactView>
-          </Navigation>
-        </CallsShell>
-      </Suspense>
-    </div>
+  const outlet = token ? (
+    <CompactView>
+      <Outlet />
+    </CompactView>
+  ) : (
+    <Outlet />
   );
+
+  return <Navigation>{outlet}</Navigation>;
 }
 
 const ProtectedLayout = () => {

@@ -12,7 +12,18 @@
 @source "../../../packages/modules.profile/src";
 @source "../../../packages/modules.navigation/src";
 @source "../../../packages/modules.board/src";
-@source "../../../packages/modules.calls";
+@source "../../../packages/modules.calls/src";
+/* linked @xipkg/calls-* из xi.calls — иначе Tailwind не видит className в UI */
+@source "../../../../xi.calls/packages/calls.ui/src";
+@source "../../../../xi.calls/packages/calls/src";
+@source "../../../../xi.calls/packages/calls.chat/src";
+@source "../../../../xi.calls/packages/calls.compactview/src";
+@source "../../../../xi.calls/packages/calls.risehand/src";
+@source "../../../../xi.calls/packages/calls.hooks/src";
+@source "../../../../xi.calls/packages/calls.providers/src";
+@source "../../../../xi.calls/packages/calls.ui/node_modules/@xipkg";
+@source "../../../../xi.calls/packages/calls/node_modules/@xipkg";
+@source "../../../../xi.calls/node_modules/@xipkg";
 @source "../../../packages/modules.calendar/src";
 @source "../../../packages/modules.editor/src";
 @source "../../../packages/common.ui/src";
