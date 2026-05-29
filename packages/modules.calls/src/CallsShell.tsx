@@ -18,6 +18,7 @@ import { useCallsDeps } from './useCallsDeps';
 import '@livekit/components-styles';
 import '@xipkg/calls-ui/video-security.css';
 import '@xipkg/calls-ui/driver.css';
+import '@xipkg/calls-ui/grid.css';
 
 type CallsShellPropsT = {
   children: ReactNode;

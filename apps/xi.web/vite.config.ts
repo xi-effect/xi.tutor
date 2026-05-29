@@ -5,12 +5,18 @@ import react from '@vitejs/plugin-react';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
-import { CALLS_RUNTIME_DEPS, callsLocalDevConfig } from './vite.calls-local';
+import { CALLS_RUNTIME_DEPS, callsLocalDevConfig, readCallsDepsMode } from './vite.calls-local';
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv) => {
+  const callsDepsMode = readCallsDepsMode(appDir);
+  const useCallsLink = mode === 'development' && callsDepsMode === 'link';
+
+  const importConditions = ['import', 'module', 'browser', 'default'] as const;
+  const resolveConditions = useCallsLink ? (['development', 'import'] as const) : importConditions;
+
   const config = {
     plugins: [
       tanstackRouter({ target: 'react', autoCodeSplitting: true }),
@@ -86,10 +92,9 @@ export default defineConfig(({ mode }: ConfigEnv) => {
     optimizeDeps: {
       esbuildOptions: {
         target: 'es2020',
-        conditions:
-          mode === 'development'
-            ? ['development', 'import', 'module', 'browser', 'default']
-            : ['import', 'module', 'browser', 'default'],
+        conditions: useCallsLink
+          ? (['development', 'import', 'module', 'browser', 'default'] as const)
+          : importConditions,
       },
       include: [
         'react',
@@ -98,7 +103,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         'sonner',
         'i18next',
         'react-i18next',
-        ...CALLS_RUNTIME_DEPS,
+        ...(useCallsLink ? CALLS_RUNTIME_DEPS : []),
       ],
     },
     server: {
@@ -112,10 +117,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
     },
     resolve: {
       alias: {},
-      conditions:
-        mode === 'development'
-          ? ['development', 'import']
-          : ['import', 'module', 'browser', 'default'],
+      conditions: resolveConditions,
       preserveSymlinks: false,
       dedupe: [
         'react',
@@ -135,7 +137,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
     },
   };
 
-  const callsLocal = mode === 'development' ? callsLocalDevConfig(appDir) : null;
+  const callsLocal = useCallsLink ? callsLocalDevConfig(appDir) : null;
 
   if (!callsLocal) {
     return config;

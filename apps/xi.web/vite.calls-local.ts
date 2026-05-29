@@ -3,8 +3,23 @@
  * Эталон: xi.calls/docs/migrations/xi-tutor-examples/vite.calls-local.ts
  */
 import path from 'node:path';
+import fs from 'node:fs';
 import type { UserConfig } from 'vite';
 import { searchForWorkspaceRoot } from 'vite';
+
+export type CallsDepsModeT = 'npm' | 'link';
+
+/** Читает режим из packages/modules.calls/.calls-deps-mode (по умолчанию npm) */
+export const readCallsDepsMode = (appDir: string): CallsDepsModeT => {
+  const modeFile = path.resolve(appDir, '../../packages/modules.calls/.calls-deps-mode');
+
+  try {
+    const mode = fs.readFileSync(modeFile, 'utf8').trim();
+    return mode === 'link' ? 'link' : 'npm';
+  } catch {
+    return 'npm';
+  }
+};
 
 export const CALLS_PACKAGES = [
   '@xipkg/calls',
