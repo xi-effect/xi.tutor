@@ -3189,54 +3189,93 @@ importers:
 
   packages/modules.calls:
     dependencies:
+      '@dnd-kit/core':
+        specifier: 6.3.1
+        version: 6.3.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      '@dnd-kit/modifiers':
+        specifier: 9.0.0
+        version: 9.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)
+      '@dnd-kit/utilities':
+        specifier: 3.2.2
+        version: 3.2.2(react@19.2.6)
+      '@livekit/components-core':
+        specifier: 0.12.9
+        version: 0.12.9(livekit-client@2.15.6(@types/dom-mediacapture-record@1.0.22))(tslib@2.8.1)
+      '@livekit/components-react':
+        specifier: 2.9.14
+        version: 2.9.14(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.15.6(@types/dom-mediacapture-record@1.0.22)))(livekit-client@2.15.6(@types/dom-mediacapture-record@1.0.22))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(tslib@2.8.1)
       '@livekit/components-styles':
         specifier: 1.1.6
         version: 1.1.6
+      '@livekit/krisp-noise-filter':
+        specifier: ^0.3.4
+        version: 0.3.4(livekit-client@2.15.6(@types/dom-mediacapture-record@1.0.22))
+      '@livekit/track-processors':
+        specifier: ^0.6.1
+        version: 0.6.1(@types/dom-mediacapture-transform@0.1.11)(livekit-client@2.15.6(@types/dom-mediacapture-record@1.0.22))
+      '@react-hook/latest':
+        specifier: 1.0.3
+        version: 1.0.3(react@19.2.6)
       '@tanstack/react-router':
         specifier: ^1.166.6
         version: 1.170.7(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@xipkg/calls':
-        specifier: ^0.0.3
-        version: 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/dom-mediacapture-transform@0.1.11)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(tslib@2.8.1)(use-sync-external-store@1.6.0(react@19.2.6))
+        specifier: link:../../../xi.calls/packages/calls
+        version: link:../../../xi.calls/packages/calls
       '@xipkg/calls-chat':
-        specifier: ^0.0.3
-        version: 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
+        specifier: link:../../../xi.calls/packages/calls.chat
+        version: link:../../../xi.calls/packages/calls.chat
       '@xipkg/calls-compactview':
-        specifier: ^0.0.3
-        version: 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
+        specifier: link:../../../xi.calls/packages/calls.compactview
+        version: link:../../../xi.calls/packages/calls.compactview
       '@xipkg/calls-config':
-        specifier: ^0.0.3
-        version: 0.0.3
+        specifier: link:../../../xi.calls/packages/calls.config
+        version: link:../../../xi.calls/packages/calls.config
       '@xipkg/calls-hooks':
-        specifier: ^0.0.3
-        version: 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
+        specifier: link:../../../xi.calls/packages/calls.hooks
+        version: link:../../../xi.calls/packages/calls.hooks
       '@xipkg/calls-providers':
-        specifier: ^0.0.3
-        version: 0.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
+        specifier: link:../../../xi.calls/packages/calls.providers
+        version: link:../../../xi.calls/packages/calls.providers
       '@xipkg/calls-risehand':
-        specifier: ^0.0.3
-        version: 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
+        specifier: link:../../../xi.calls/packages/calls.risehand
+        version: link:../../../xi.calls/packages/calls.risehand
       '@xipkg/calls-store':
-        specifier: ^0.0.3
-        version: 0.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
+        specifier: link:../../../xi.calls/packages/calls.store
+        version: link:../../../xi.calls/packages/calls.store
       '@xipkg/calls-types':
-        specifier: ^0.0.3
-        version: 0.0.3
+        specifier: link:../../../xi.calls/packages/calls.types
+        version: link:../../../xi.calls/packages/calls.types
       '@xipkg/calls-ui':
-        specifier: ^0.0.3
-        version: 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
+        specifier: link:../../../xi.calls/packages/calls.ui
+        version: link:../../../xi.calls/packages/calls.ui
       '@xipkg/calls-utils':
-        specifier: ^0.0.3
-        version: 0.0.3(react@19.2.6)
+        specifier: link:../../../xi.calls/packages/calls.utils
+        version: link:../../../xi.calls/packages/calls.utils
+      '@xipkg/switcher':
+        specifier: 3.0.13
+        version: 3.0.13(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       common.env:
         specifier: workspace:*
         version: link:../common.env
       common.services:
         specifier: workspace:*
         version: link:../common.services
+      driver.js:
+        specifier: ^1.3.6
+        version: 1.4.0
+      framer-motion:
+        specifier: 12.34.3
+        version: 12.34.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      livekit-client:
+        specifier: 2.15.6
+        version: 2.15.6(@types/dom-mediacapture-record@1.0.22)
       react:
         specifier: '19'
         version: 19.2.6
+      zustand:
+        specifier: 5.0.3
+        version: 5.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
     devDependencies:
       '@eslint/js':
         specifier: ^9.19.0
@@ -7961,10 +8000,6 @@ packages:
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
 
-  '@tanstack/history@1.121.34':
-    resolution: {integrity: sha512-YL8dGi5ZU+xvtav2boRlw4zrRghkY6hvdcmHhA0RGSJ/CBgzv+cbADW9eYJLx74XMZvIQ1pp6VMbrpXnnM5gHA==}
-    engines: {node: '>=12'}
-
   '@tanstack/history@1.162.0':
     resolution: {integrity: sha512-79pf/RkhteYZTRgcR4F9kbk84P2N8rugQJswxfIqovlbRiT3yI7eBE+5QorIrZaOKktsgzRlXh1l/du/xpl4iA==}
     engines: {node: '>=20.19'}
@@ -7998,25 +8033,12 @@ packages:
       '@tanstack/router-core':
         optional: true
 
-  '@tanstack/react-router@1.128.8':
-    resolution: {integrity: sha512-T6kjftzKDNpspobSUbkFogp6zssg/eVPCTP+XlZgeeaBWfVhdlSCFfnnjBxg0jp2OqLq7fb9YYBs2kzR7EPsmQ==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      react: '>=18.0.0 || >=19.0.0'
-      react-dom: '>=18.0.0 || >=19.0.0'
-
   '@tanstack/react-router@1.170.7':
     resolution: {integrity: sha512-4Q8M8Q9sGobhyt72yW+vxzUOSPfrCAHwjPOCb7+ocReQnFQ37t9Qh4RNG4+7zsFQ4tW9C8LpllRe49aK2RYy2Q==}
     engines: {node: '>=20.19'}
     peerDependencies:
       react: '>=18.0.0 || >=19.0.0'
       react-dom: '>=18.0.0 || >=19.0.0'
-
-  '@tanstack/react-store@0.7.7':
-    resolution: {integrity: sha512-qqT0ufegFRDGSof9D/VqaZgjNgp4tRPHZIJq2+QIHkMUtHjaJ0lYrrXjeIUJvjnTbgPfSD1XgOMEt0lmANn6Zg==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   '@tanstack/react-store@0.9.3':
     resolution: {integrity: sha512-y2iHd/N9OkoQbFJLUX1T9vbc2O9tjH0pQRgTcx1/Nz4IlwLvkgpuglXUx+mXt0g5ZDFrEeDnONPqkbfxXJKwRg==}
@@ -8036,10 +8058,6 @@ packages:
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-
-  '@tanstack/router-core@1.128.8':
-    resolution: {integrity: sha512-MA5iD9GokZLx1T0NDtIeNJDxQ4jodjji7em6mYvxDEpZQ01n/1mbQhqGoPgKgZMiQbUcrfzepYlVvGccoRsAXA==}
-    engines: {node: '>=12'}
 
   '@tanstack/router-core@1.171.5':
     resolution: {integrity: sha512-BfilbQqqWiQwJn68cD8wmk1ajEWIO3IlEA1zVuWslWbiVc23CDn+6ACO5tfPAcc96ED37hxela5ij3VBvAtusw==}
@@ -8083,9 +8101,6 @@ packages:
   '@tanstack/router-utils@1.162.1':
     resolution: {integrity: sha512-62layyTGmclHDQS/eidwKRfN1hhCKwViG7iEBcVmL0MXgcAB3OOucWCEcDDGd9Cu11H6b4QQ5oOo47MWIqwz0A==}
     engines: {node: '>=20.19'}
-
-  '@tanstack/store@0.7.7':
-    resolution: {integrity: sha512-xa6pTan1bcaqYDS9BDpSiS63qa6EoDkPN9RsRaxHuDdVDNntzq3xNwR5YKTU/V3SkSyC9T4YVOPh2zRQN0nhIQ==}
 
   '@tanstack/store@0.9.3':
     resolution: {integrity: sha512-8reSzl/qGWGGVKhBoxXPMWzATSbZLZFWhwBAFO9NAyp0TxzfBP0mIrGb8CP8KrQTmvzXlR/vFPPUrHTLBGyFyw==}
@@ -8679,11 +8694,6 @@ packages:
     peerDependencies:
       react: ^19
 
-  '@xipkg/avatar@3.1.0':
-    resolution: {integrity: sha512-jmweky9M0k8PoJp/a14PA2vSALfjIa2YyoSnS5Vc3+ZMwVoeD0D5ez72ikppe/Hs3E2GCaKvd8sdzGxIJA4Whw==}
-    peerDependencies:
-      react: ^19
-
   '@xipkg/avatar@3.3.0':
     resolution: {integrity: sha512-VsOEREYQ7dTg0Lq+7+G/NglEZs9R/RnwSv74OUAzpgdtUWC9tbZVkuOi1IdM7A95ozw0Wc94GvtnFOyi7X3OhA==}
     peerDependencies:
@@ -8713,57 +8723,6 @@ packages:
     resolution: {integrity: sha512-V/5jAngYdKFGWjVJF5zOi9AVnbhVuvm4o63LVKNqVHbBtqCMM3futgDDidLYLvpcao1yPNgkf/MXBWQzNT0y/g==}
     peerDependencies:
       react: ^19
-
-  '@xipkg/calls-chat@0.0.3':
-    resolution: {integrity: sha512-Pflk16gCGEDWlS3d0E8BoUMcj8Car5ubsPVx8pvyAe2tUKrzMz0EjBSiXDb+7ajbr5OEg17aY40/X2p2FpoqEQ==}
-    peerDependencies:
-      react: '19'
-
-  '@xipkg/calls-compactview@0.0.3':
-    resolution: {integrity: sha512-wRJRC1xH/JpndIoN5KKAoMtZvqUc991gznWx6zzvlIbr/Dv3zyf7f+Rk2+KSW4PKcBpkyeB5nk+NbR5//1SI5A==}
-    peerDependencies:
-      react: '19'
-
-  '@xipkg/calls-config@0.0.3':
-    resolution: {integrity: sha512-us3XaV1iMEEJPKeaBVu4vk6nM5EBxrDgsL8Fd82ks8pbPF3xyqSpsuM6w36FDvYu5ckum2wWO0A3Myss/7GecQ==}
-
-  '@xipkg/calls-hooks@0.0.3':
-    resolution: {integrity: sha512-/hDDW7JfF8d19YigtBuZJapXit3A8hrQbk6v3C1CMlpwdeqqW2CxbimizHjdOAdSKVhtVqJsOvQjqlNEAZPvjg==}
-    peerDependencies:
-      react: '19'
-
-  '@xipkg/calls-providers@0.0.3':
-    resolution: {integrity: sha512-Yo+UBvL4YmYlMLwyHS+nvSex09A0r4b/HxLgBYjIhdDycvVjy7G1JtadVUshief/ltQkwd/csCWBN0sNOkL8Gg==}
-    peerDependencies:
-      react: '19'
-
-  '@xipkg/calls-risehand@0.0.3':
-    resolution: {integrity: sha512-0qhxItYCsZoOLGprDltTAzRt+Ccik992X3TrNEZzA8TvCjclqEGmWKVB5rw9IT4FN4+XxkcfpIUL0k3NR+ieIA==}
-    peerDependencies:
-      react: '19'
-
-  '@xipkg/calls-store@0.0.3':
-    resolution: {integrity: sha512-D+7W6bwF8bjHKM/nsYT6ANOdLvskIWi8GjUMaA5/08fTRmsVO3090m092bePSw2WL+U7UUzq+ekdGthOd/iAyA==}
-    peerDependencies:
-      react: '19'
-
-  '@xipkg/calls-types@0.0.3':
-    resolution: {integrity: sha512-k4uwLZ0c2JAF9x1EyPbcnwTGe1cafAZ1tWLEbCNiDJ5qII6dD8/6v+KCCpgGxx/iCh/BouLlDPDRyBigJQNfsg==}
-
-  '@xipkg/calls-ui@0.0.3':
-    resolution: {integrity: sha512-Z2KoF6u8qMqApOOYXwpn9Dm5MZGmxdq8IvtcK0qSD67eMVDfxh/XskcIqYGiPTua6lgxu2j1dbn2jCSTRckSCA==}
-    peerDependencies:
-      react: '19'
-
-  '@xipkg/calls-utils@0.0.3':
-    resolution: {integrity: sha512-ycZAx7CR2FrxAj2yaaJUjjarwciivTwCB4jMdFtyVGE/C+N9Ttd53bY4Ht01KWWScGAbj1AiJ62elf1Guq4o1g==}
-    peerDependencies:
-      react: '19'
-
-  '@xipkg/calls@0.0.3':
-    resolution: {integrity: sha512-Fen/AmWRz443vWlQQD3Ryv/B1MFVLzMVqtKJtU14uihevkhk1v0iRj6henTTZlp2orC7xWRAfnA9KBAlUvlXgA==}
-    peerDependencies:
-      react: '19'
 
   '@xipkg/checkbox@4.0.14':
     resolution: {integrity: sha512-4etlz/Z3UmOS60cvD1iLN2fegtQB1hJQVMh9vCoyaj+X++vIcZ6gRHE9OMSlcMbsOygqnE2w1xaempwZYrRyXw==}
@@ -8898,11 +8857,6 @@ packages:
     peerDependencies:
       react: ^19
 
-  '@xipkg/sheet@2.0.12':
-    resolution: {integrity: sha512-gzEf6RDXtZTV6UJL7ckpjPvCY78I7bsmfGeN0NcELZeHjLM0pAWq4C665HDjnsvAi7RNQ3OtFoEKLSdQU7fb9g==}
-    peerDependencies:
-      react: ^19
-
   '@xipkg/sidebar@0.3.0':
     resolution: {integrity: sha512-S5R9g66zzKr8xpbNsxtiYcCIub6AtWDpj4vUBg/6lwT9XE8zIyR+k2t2PZ9szyzCvXiO13GsSW4E6Z4VNBAiGA==}
     peerDependencies:
@@ -8939,11 +8893,6 @@ packages:
   '@xipkg/tailwind@0.8.1':
     resolution: {integrity: sha512-DS6Z0m2fJsDjPyQMbIC9WHamGMP6k2QsVZZdNypAaIadWcKncStB1gKzCe14h4nv6kv2fdSJZmIjvLZjwu48ag==}
 
-  '@xipkg/textarea@1.1.0':
-    resolution: {integrity: sha512-StlNbNosP0c2mEz+dtEtVmi9zc0sjjZpR8u1kIFjI3PAlB/4EFgYemVRy+L4ujS4gD9Ut+zmsYPrUk+JwsP0LA==}
-    peerDependencies:
-      react: ^19
-
   '@xipkg/textarea@1.2.0':
     resolution: {integrity: sha512-Ih0DvTM0Wao1xwnGa6PdTSeqAoxiUdcwaEVURgNT3h4L3x86vCdi78VoZ+P/Y/tSYBf0MeFI60PzmninRdYJdw==}
     peerDependencies:
@@ -8961,11 +8910,6 @@ packages:
 
   '@xipkg/typescript@0.2.0':
     resolution: {integrity: sha512-GGAb21wy0l5wuWp7w00lykVNDr2dxPVBtiZ8nCuMHyKKPmsAZrbgyt1OUnn+7AyhnDqQEABS9+i+rsvGvVn/GA==}
-
-  '@xipkg/userprofile@4.0.14':
-    resolution: {integrity: sha512-vFcIFgYp+99xFP5hGSz3r2+pya8OVq6aph5+37oOYcVBTxshuHmKP7dRM4S6TWhq9BtbvbKUV7ZjbIOIZWnmiA==}
-    peerDependencies:
-      react: ^19
 
   '@xipkg/userprofile@4.1.0':
     resolution: {integrity: sha512-+TzLGqzhi9t7o+SiNs+Tma6E1MXC5MuZf0ygR7+E0JTKJDhf+//EWuJ6G4CDGDSmo/G5Y8gra7UbCLaRKdn8OA==}
@@ -9253,9 +9197,6 @@ packages:
 
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
-
-  cookie-es@1.2.3:
-    resolution: {integrity: sha512-lXVyvUvrNXblMqzIRrxHb57UUVmqsSWlxqt3XIjCkUP0wDAf6uicO6KMbEgYrMNtEvWgWHwe42CKxPu9MYAnWw==}
 
   cookie-es@3.1.1:
     resolution: {integrity: sha512-UaXxwISYJPTr9hwQxMFYZ7kNhSXboMXP+Z3TRX6f1/NyaGPfuNUZOWP1pUEb75B2HjfklIYLVRfWiFZJyC6Npg==}
@@ -11300,9 +11241,6 @@ packages:
 
   tiny-invariant@1.3.3:
     resolution: {integrity: sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==}
-
-  tiny-warning@1.0.3:
-    resolution: {integrity: sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==}
 
   tinybench@2.9.0:
     resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}
@@ -14428,8 +14366,6 @@ snapshots:
       - supports-color
       - typescript
 
-  '@tanstack/history@1.121.34': {}
-
   '@tanstack/history@1.162.0': {}
 
   '@tanstack/query-core@5.73.3': {}
@@ -14458,17 +14394,6 @@ snapshots:
     transitivePeerDependencies:
       - csstype
 
-  '@tanstack/react-router@1.128.8(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
-    dependencies:
-      '@tanstack/history': 1.121.34
-      '@tanstack/react-store': 0.7.7(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@tanstack/router-core': 1.128.8
-      isbot: 5.1.40
-      react: 19.2.6
-      react-dom: 19.2.6(react@19.2.6)
-      tiny-invariant: 1.3.3
-      tiny-warning: 1.0.3
-
   '@tanstack/react-router@1.170.7(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
       '@tanstack/history': 1.162.0
@@ -14477,13 +14402,6 @@ snapshots:
       isbot: 5.1.40
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
-
-  '@tanstack/react-store@0.7.7(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
-    dependencies:
-      '@tanstack/store': 0.7.7
-      react: 19.2.6
-      react-dom: 19.2.6(react@19.2.6)
-      use-sync-external-store: 1.6.0(react@19.2.6)
 
   '@tanstack/react-store@0.9.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
@@ -14503,16 +14421,6 @@ snapshots:
       '@tanstack/virtual-core': 3.13.9
       react: 19.2.6
       react-dom: 19.2.6(react@19.2.6)
-
-  '@tanstack/router-core@1.128.8':
-    dependencies:
-      '@tanstack/history': 1.121.34
-      '@tanstack/store': 0.7.7
-      cookie-es: 1.2.3
-      seroval: 1.5.4
-      seroval-plugins: 1.5.4(seroval@1.5.4)
-      tiny-invariant: 1.3.3
-      tiny-warning: 1.0.3
 
   '@tanstack/router-core@1.171.5':
     dependencies:
@@ -14576,8 +14484,6 @@ snapshots:
       tinyglobby: 0.2.16
     transitivePeerDependencies:
       - supports-color
-
-  '@tanstack/store@0.7.7': {}
 
   '@tanstack/store@0.9.3': {}
 
@@ -15181,17 +15087,6 @@ snapshots:
       class-variance-authority: 0.7.1
       react: 19.2.6
 
-  '@xipkg/avatar@3.1.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
-    dependencies:
-      '@radix-ui/react-avatar': 1.1.11(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/utils': 1.8.0(react@19.2.6)
-      class-variance-authority: 0.7.1
-      react: 19.2.6
-    transitivePeerDependencies:
-      - '@types/react'
-      - '@types/react-dom'
-      - react-dom
-
   '@xipkg/avatar@3.3.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
       '@radix-ui/react-avatar': 1.1.11(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -15247,196 +15142,6 @@ snapshots:
       react-day-picker: 9.14.0(react@19.2.6)
     transitivePeerDependencies:
       - '@types/react'
-
-  '@xipkg/calls-chat@0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))':
-    dependencies:
-      '@xipkg/button': 3.2.0(@types/react@19.2.15)(react@19.2.6)
-      '@xipkg/calls-config': 0.0.3
-      '@xipkg/calls-hooks': 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-providers': 0.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-store': 0.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-types': 0.0.3
-      '@xipkg/calls-ui': 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-utils': 0.0.3(react@19.2.6)
-      '@xipkg/icons': 2.7.2(react@19.2.6)
-      '@xipkg/scrollarea': 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/textarea': 1.1.0(react@19.2.6)
-      '@xipkg/userprofile': 4.0.14(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      react: 19.2.6
-      zustand: 5.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-    transitivePeerDependencies:
-      - '@emotion/is-prop-valid'
-      - '@types/dom-mediacapture-record'
-      - '@types/react'
-      - '@types/react-dom'
-      - immer
-      - react-dom
-      - use-sync-external-store
-
-  '@xipkg/calls-compactview@0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))':
-    dependencies:
-      '@xipkg/button': 4.1.0(@types/react@19.2.15)(react@19.2.6)
-      '@xipkg/calls-chat': 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-config': 0.0.3
-      '@xipkg/calls-hooks': 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-providers': 0.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-risehand': 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-store': 0.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-types': 0.0.3
-      '@xipkg/calls-ui': 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-utils': 0.0.3(react@19.2.6)
-      '@xipkg/icons': 3.0.15(react@19.2.6)
-      '@xipkg/scrollarea': 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/textarea': 1.1.0(react@19.2.6)
-      '@xipkg/userprofile': 4.0.14(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      react: 19.2.6
-    transitivePeerDependencies:
-      - '@emotion/is-prop-valid'
-      - '@types/dom-mediacapture-record'
-      - '@types/react'
-      - '@types/react-dom'
-      - immer
-      - react-dom
-      - use-sync-external-store
-
-  '@xipkg/calls-config@0.0.3': {}
-
-  '@xipkg/calls-hooks@0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))':
-    dependencies:
-      '@xipkg/calls-config': 0.0.3
-      '@xipkg/calls-providers': 0.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-store': 0.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-types': 0.0.3
-      '@xipkg/calls-utils': 0.0.3(react@19.2.6)
-      livekit-client: 2.15.6(@types/dom-mediacapture-record@1.0.22)
-      react: 19.2.6
-      zustand: 5.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-    transitivePeerDependencies:
-      - '@types/dom-mediacapture-record'
-      - '@types/react'
-      - immer
-      - use-sync-external-store
-
-  '@xipkg/calls-providers@0.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))':
-    dependencies:
-      '@xipkg/calls-store': 0.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-types': 0.0.3
-      react: 19.2.6
-    transitivePeerDependencies:
-      - '@types/react'
-      - immer
-      - use-sync-external-store
-
-  '@xipkg/calls-risehand@0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))':
-    dependencies:
-      '@xipkg/button': 3.2.0(@types/react@19.2.15)(react@19.2.6)
-      '@xipkg/calls-config': 0.0.3
-      '@xipkg/calls-providers': 0.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-store': 0.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-ui': 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-utils': 0.0.3(react@19.2.6)
-      '@xipkg/icons': 2.7.2(react@19.2.6)
-      react: 19.2.6
-    transitivePeerDependencies:
-      - '@emotion/is-prop-valid'
-      - '@types/dom-mediacapture-record'
-      - '@types/react'
-      - '@types/react-dom'
-      - immer
-      - react-dom
-      - use-sync-external-store
-
-  '@xipkg/calls-store@0.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))':
-    dependencies:
-      '@xipkg/calls-types': 0.0.3
-      react: 19.2.6
-      zustand: 5.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-    transitivePeerDependencies:
-      - '@types/react'
-      - immer
-      - use-sync-external-store
-
-  '@xipkg/calls-types@0.0.3': {}
-
-  '@xipkg/calls-ui@0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))':
-    dependencies:
-      '@xipkg/badge': 2.0.12(react@19.2.6)
-      '@xipkg/button': 4.1.0(@types/react@19.2.15)(react@19.2.6)
-      '@xipkg/calls-config': 0.0.3
-      '@xipkg/calls-hooks': 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-providers': 0.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-store': 0.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-types': 0.0.3
-      '@xipkg/calls-utils': 0.0.3(react@19.2.6)
-      '@xipkg/checkbox': 5.0.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/dropdown': 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/icons': 3.0.15(react@19.2.6)
-      '@xipkg/input': 2.2.9(react@19.2.6)
-      '@xipkg/label': 2.0.12(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/link': 2.0.12(react@19.2.6)
-      '@xipkg/modal': 4.3.1(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/scrollarea': 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/sheet': 2.0.12(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/slider': 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/switcher': 3.0.13(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      framer-motion: 12.34.3(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      react: 19.2.6
-    transitivePeerDependencies:
-      - '@emotion/is-prop-valid'
-      - '@types/dom-mediacapture-record'
-      - '@types/react'
-      - '@types/react-dom'
-      - immer
-      - react-dom
-      - use-sync-external-store
-
-  '@xipkg/calls-utils@0.0.3(react@19.2.6)':
-    dependencies:
-      react: 19.2.6
-
-  '@xipkg/calls@0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/dom-mediacapture-transform@0.1.11)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(tslib@2.8.1)(use-sync-external-store@1.6.0(react@19.2.6))':
-    dependencies:
-      '@dnd-kit/core': 6.3.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@dnd-kit/modifiers': 9.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.6(react@19.2.6))(react@19.2.6))(react@19.2.6)
-      '@dnd-kit/utilities': 3.2.2(react@19.2.6)
-      '@livekit/components-core': 0.12.9(livekit-client@2.15.6(@types/dom-mediacapture-record@1.0.22))(tslib@2.8.1)
-      '@livekit/components-react': 2.9.14(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.15.6(@types/dom-mediacapture-record@1.0.22)))(livekit-client@2.15.6(@types/dom-mediacapture-record@1.0.22))(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(tslib@2.8.1)
-      '@livekit/components-styles': 1.1.6
-      '@livekit/krisp-noise-filter': 0.3.4(livekit-client@2.15.6(@types/dom-mediacapture-record@1.0.22))
-      '@livekit/track-processors': 0.6.1(@types/dom-mediacapture-transform@0.1.11)(livekit-client@2.15.6(@types/dom-mediacapture-record@1.0.22))
-      '@react-hook/latest': 1.0.3(react@19.2.6)
-      '@tanstack/react-router': 1.128.8(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/alert': 1.1.0(react@19.2.6)
-      '@xipkg/avatar': 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/button': 4.1.0(@types/react@19.2.15)(react@19.2.6)
-      '@xipkg/calls-chat': 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-config': 0.0.3
-      '@xipkg/calls-hooks': 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-providers': 0.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-risehand': 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-store': 0.0.3(@types/react@19.2.15)(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-types': 0.0.3
-      '@xipkg/calls-ui': 0.0.3(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)(use-sync-external-store@1.6.0(react@19.2.6))
-      '@xipkg/calls-utils': 0.0.3(react@19.2.6)
-      '@xipkg/icons': 3.0.15(react@19.2.6)
-      '@xipkg/label': 2.0.12(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/scrollarea': 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/select': 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/toggle': 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/tooltip': 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      driver.js: 1.4.0
-      livekit-client: 2.15.6(@types/dom-mediacapture-record@1.0.22)
-      react: 19.2.6
-    transitivePeerDependencies:
-      - '@emotion/is-prop-valid'
-      - '@types/dom-mediacapture-record'
-      - '@types/dom-mediacapture-transform'
-      - '@types/react'
-      - '@types/react-dom'
-      - immer
-      - react-dom
-      - tslib
-      - use-sync-external-store
 
   '@xipkg/checkbox@4.0.14(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
@@ -15727,18 +15432,6 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/sheet@2.0.12(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
-    dependencies:
-      '@radix-ui/react-dialog': 1.1.15(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/icons': 2.7.2(react@19.2.6)
-      '@xipkg/utils': 1.8.0(react@19.2.6)
-      class-variance-authority: 0.7.1
-      react: 19.2.6
-    transitivePeerDependencies:
-      - '@types/react'
-      - '@types/react-dom'
-      - react-dom
-
   '@xipkg/sidebar@0.3.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
       '@xipkg/button': 3.2.0(@types/react@19.2.15)(react@19.2.6)
@@ -15809,12 +15502,6 @@ snapshots:
 
   '@xipkg/tailwind@0.8.1': {}
 
-  '@xipkg/textarea@1.1.0(react@19.2.6)':
-    dependencies:
-      '@xipkg/utils': 1.8.0(react@19.2.6)
-      class-variance-authority: 0.7.1
-      react: 19.2.6
-
   '@xipkg/textarea@1.2.0(react@19.2.6)':
     dependencies:
       '@xipkg/utils': 1.8.0(react@19.2.6)
@@ -15843,17 +15530,6 @@ snapshots:
       - react-dom
 
   '@xipkg/typescript@0.2.0': {}
-
-  '@xipkg/userprofile@4.0.14(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
-    dependencies:
-      '@xipkg/avatar': 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/utils': 1.8.0(react@19.2.6)
-      class-variance-authority: 0.7.1
-      react: 19.2.6
-    transitivePeerDependencies:
-      - '@types/react'
-      - '@types/react-dom'
-      - react-dom
 
   '@xipkg/userprofile@4.1.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)':
     dependencies:
@@ -16191,8 +15867,6 @@ snapshots:
       split2: 4.2.0
 
   convert-source-map@2.0.0: {}
-
-  cookie-es@1.2.3: {}
 
   cookie-es@3.1.1: {}
 
@@ -18342,8 +18016,6 @@ snapshots:
   through@2.3.8: {}
 
   tiny-invariant@1.3.3: {}
-
-  tiny-warning@1.0.3: {}
 
   tinybench@2.9.0: {}
 
