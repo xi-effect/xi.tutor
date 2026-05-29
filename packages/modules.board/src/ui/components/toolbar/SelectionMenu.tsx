@@ -1,11 +1,12 @@
 import { useCallback } from 'react';
-import { track, useEditor } from 'tldraw';
+import { track, useEditor } from '@ibodr/draw';
 import { Button } from '@xipkg/button';
 import { Trash, Copy, Locked, Unlocked } from '@xipkg/icons';
 import { MoreActionsMenu } from './MoreActionsMenu';
 import { ColorPicker } from './ColorPicker';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { isMac } from '../../../utils';
+import { BorderPicker } from '../../../shapes/geo';
 
 const modKey = isMac ? '⌘' : 'Ctrl';
 
@@ -16,11 +17,13 @@ export const SelectionMenu = track(function SelectionMenu() {
   const selectedShapes = editor.getSelectedShapes();
   const isLocked = selectedShapes.every((shape) => shape.isLocked);
   const isFrame = selectedShapes.length === 1 && selectedShapes[0].type === 'frame';
+  const isGeo = selectedShapes.some((shape) => shape.type === 'xi-geo');
 
   // --- Данные / вычисления (без ранних return) ---
   const selectedIds = editor.getSelectedShapeIds();
   const isSelect = editor.isIn('select');
   const isBrushing = editor.isIn('select.brushing');
+  const isEditingShape = editor.isIn('select.editing_shape');
   const screenBounds = editor.getSelectionRotatedScreenBounds();
 
   // --- Обработчики (хуки всегда вызываются) ---
@@ -38,7 +41,8 @@ export const SelectionMenu = track(function SelectionMenu() {
   // Скрываем меню в readonly режиме или если нет выделения
   if (isReadonly) return null;
 
-  const shouldShow = selectedIds.length > 0 && isSelect && !isBrushing && !!screenBounds;
+  const shouldShow =
+    selectedIds.length > 0 && isSelect && !isBrushing && !isEditingShape && !!screenBounds;
 
   if (!shouldShow) return null;
 
@@ -52,12 +56,16 @@ export const SelectionMenu = track(function SelectionMenu() {
 
   return (
     <div
-      className="border-gray-10 bg-gray-0 absolute z-30 flex gap-2 rounded-xl border p-1 shadow-md"
+      className="border-gray-10 bg-gray-0 pointer-events-auto absolute z-30 flex gap-2 rounded-xl border p-1 shadow-md"
       style={{
         left: centerX,
         top: topY,
         transform: 'translate(-50%, -100%)',
         transition: 'left 60ms linear, top 60ms linear',
+      }}
+      onPointerDown={(e) => {
+        editor.markEventAsHandled(e);
+        e.stopPropagation();
       }}
     >
       {isLocked ? (
@@ -105,6 +113,7 @@ export const SelectionMenu = track(function SelectionMenu() {
           >
             <Locked />
           </Button>
+          {isGeo && <BorderPicker />}
           <ColorPicker />
           <MoreActionsMenu />
         </>

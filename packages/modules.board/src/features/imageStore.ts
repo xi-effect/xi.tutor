@@ -1,11 +1,11 @@
 import { uploadImageRequest, uploadFileRequest } from 'common.services';
 import { getFileUrl } from 'common.api';
-import { TLAsset } from 'tldraw';
+import { DrAsset } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { resolveAssetUrl } from '../utils/resolveAssetUrl';
 import { registerToken } from '../utils/tokenRegistry';
 
-export type TLAssetContextT = {
+export type DrAssetContextT = {
   screenScale: number;
   steppedScreenScale: number;
   dpr: number;
@@ -20,13 +20,13 @@ export type MediaResponseT = {
   name: string;
 };
 
-export type TLAssetStoreT = {
+export type DrAssetStoreT = {
   upload(
-    asset: TLAsset,
+    asset: DrAsset,
     file: File,
     abortSignal?: AbortSignal,
   ): Promise<{ src: string; meta?: Record<string, unknown> }>;
-  resolve?(asset: TLAsset, ctx: TLAssetContextT): Promise<string | null> | string | null;
+  resolve?(asset: DrAsset, ctx: DrAssetContextT): Promise<string | null> | string | null;
 };
 
 // Форматы, которые принимает бэкенд POST .../file-kinds/image/files/ (конвертирует в webp сам)
@@ -76,7 +76,7 @@ export const myAssetStore = (token: string) => {
 
   return {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async upload(_asset: TLAsset, file: File, _abortSignal?: AbortSignal) {
+    async upload(_asset: DrAsset, file: File, _abortSignal?: AbortSignal) {
       if (!file.type.startsWith('image/')) {
         const fileId = await postUpload(file, token);
         return { src: fileId };
@@ -116,13 +116,21 @@ export const myAssetStore = (token: string) => {
     },
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async resolve(asset: TLAsset, _ctx: TLAssetContextT) {
+    async resolve(asset: DrAsset, _ctx: DrAssetContextT) {
       const src = asset.props.src;
       if (!src) return src;
 
       try {
         return await resolveAssetUrl(src, token);
       } catch (error) {
+        // ВАЖНО: возвращаем именно `src`, а не null. Внутри tldraw `useImageOrVideoAsset`
+        // есть guard `if (previousUrl.current === url) return`, из-за которого при `url === null`
+        // флаг `didAlreadyResolve` не выставляется, и встроенный 500мс debounce между
+        // ресолвами не активируется. Каждое движение камеры / culling-тик / ресайз shape тогда
+        // дёргает ресолв заново, что генерирует шторм 403-запросов (negative cache успевает
+        // истечь через 30 с — и всё начинается снова). Отдавая src, мы получаем максимум
+        // один лишний <img src> запрос на shape, после чего CustomImageShape ловит onError
+        // и показывает placeholder; повторных axios-запросов не будет из-за negative cache.
         console.error('[myAssetStore.resolve] Ошибка при загрузке изображения:', error);
         return src;
       }

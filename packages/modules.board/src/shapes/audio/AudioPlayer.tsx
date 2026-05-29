@@ -3,7 +3,7 @@ import { useYjsContext } from '../../providers/YjsProvider';
 import { useAudioLoad } from './hooks/useAudioLoad';
 import { useAudioPlayback } from './hooks/useAudioPlayback';
 import { useAudioTimecodes } from './hooks/useAudioTimecodes';
-import { useIsShapeInViewport } from './hooks/useIsShapeInViewport';
+import { useIsAudioControlsInteractive, useIsShapeInViewport } from './hooks';
 import {
   AudioPlayPauseButton,
   AudioWaveform,
@@ -29,6 +29,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
   const isTutor = user?.default_layout === 'tutor';
 
   const isInViewport = useIsShapeInViewport(shape.id);
+  const isControlsInteractive = useIsAudioControlsInteractive(shape.id);
   const isSyncActive = useIsSyncPlaybackActive(shape);
   const shouldLoad = isInViewport || isSyncActive;
 
@@ -76,6 +77,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
         <AudioPlayPauseButton
           isPlaying={playback.localIsPlaying}
           disabled={!playback.canControl}
+          isInteractive={isControlsInteractive}
           onPlayPause={playback.togglePlay}
         />
 
@@ -84,6 +86,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
             waveform={waveform}
             progress={playback.progress}
             canControl={playback.canControl}
+            isInteractive={isControlsInteractive}
             onSeek={playback.seekTo}
           />
 
@@ -96,6 +99,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
             isTutor={isTutor}
             canAddTimecode={isTutor || shape.props.studentsCanAddTimecodes}
             effectiveVolume={playback.effectiveVolume}
+            isInteractive={isControlsInteractive}
             onAddTimecode={() => addTimecode(playback.currentTime)}
             onVolumeChange={playback.onVolumeChange}
             onToggleMute={playback.toggleMute}
@@ -111,6 +115,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
           timecodes={visibleTimecodes}
           isTutor={isTutor}
           canSeekTimecodes={playback.canControl}
+          isInteractive={isControlsInteractive}
           onSeek={playback.seekToTime}
           onLabelChange={updateTimecodeLabel}
           onToggleVisibility={toggleTimecodeVisibility}

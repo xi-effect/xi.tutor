@@ -1,6 +1,7 @@
 import { EditorContent } from '@tiptap/react';
 import { EditorToolkit } from './EditorToolkit';
 import { useYjsContext } from '../../hooks/useYjsContext';
+
 import '../editor.css';
 
 export const TiptapEditor = () => {

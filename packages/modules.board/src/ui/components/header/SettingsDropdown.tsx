@@ -28,9 +28,9 @@ import { useDropdownActions } from './hooks/useDropdownActions';
 import { useEffect, useRef, useState } from 'react';
 import { useCurrentUser } from 'common.services';
 import { toast } from 'sonner';
-import { useEditor } from 'tldraw';
-import type { InputMode } from '../../../store/useTldrawStore';
-import { useTldrawStore } from '../../../store';
+import { useEditor } from '@ibodr/draw';
+import type { InputMode } from '../../../store/useDrawStore';
+import { useDrawStore } from '../../../store';
 import { HotkeysHelpModal } from '../shared/HotkeysHelp';
 
 type ActionPropsT = {
@@ -86,7 +86,7 @@ const SHAPE_CATEGORIES: { label: string; types: string[] }[] = [
   { label: 'Фигуры', types: ['geo'] },
   { label: 'Заметки', types: ['note'] },
   { label: 'Стрелки', types: ['arrow'] },
-  { label: 'Медиа', types: ['pdf', 'audio', 'video', 'embed', 'bookmark'] },
+  { label: 'Медиа', types: ['pdf', 'audio', 'video', 'embed', 'bookmark', 'file'] },
 ];
 
 const BOARD_ELEMENTS_LIMIT = 4000;
@@ -94,7 +94,7 @@ const BOARD_ELEMENTS_WARNING_THRESHOLD = 3000;
 
 export const SettingsDropdown = () => {
   const editor = useEditor();
-  const { inputMode, setInputMode } = useTldrawStore();
+  const { inputMode, setInputMode } = useDrawStore();
   const {
     isReadonly,
     saveCanvas,

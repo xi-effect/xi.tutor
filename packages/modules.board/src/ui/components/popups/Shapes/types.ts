@@ -1,7 +1,7 @@
-export type Geo = 'rectangle' | 'ellipse' | 'triangle' | 'diamond' | 'star' | 'rhombus';
-export type ShapeOptionT = {
-  name: string;
+import { TGeoShape } from '../../../../types';
+
+export type TShapeOption = {
+  name: TGeoShape;
   icon: React.ReactNode;
-  geo: Geo;
-  dash?: 'draw' | 'solid' | 'dashed' | 'dotted';
+  geo: TGeoShape;
 };

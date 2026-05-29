@@ -12,7 +12,7 @@ export const useConnectTg = () => {
   const status = data?.telegram?.connection?.status;
 
   const handleConnectTg = () => {
-    if (status === 'active') return;
+    if (status === 'active' || isPending) return;
 
     const telegramLinkTab = window.open('', '_blank');
 

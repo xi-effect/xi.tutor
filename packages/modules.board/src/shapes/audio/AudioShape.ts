@@ -1,4 +1,4 @@
-import { T, TLBaseShape } from 'tldraw';
+import { T, DrBaseShape } from '@ibodr/draw';
 
 export const AUDIO_SHAPE_WIDTH = 392;
 export const AUDIO_SHAPE_HEIGHT = 80;
@@ -27,10 +27,18 @@ export type AudioShapeProps = {
   studentsCanAddTimecodes: boolean;
   /** Показывать новые таймкоды репетитора сразу всем (по умолчанию true) */
   timecodesVisibleByDefault: boolean;
+  /** Разрешить ученикам управлять воспроизведением (play/pause, перемотка) */
+  studentsCanControlPlayback: boolean;
   timecodes: AudioTimecode[];
 };
 
-export type AudioShape = TLBaseShape<'audio', AudioShapeProps>;
+export type AudioShape = DrBaseShape<'audio', AudioShapeProps>;
+
+declare module '@ibodr/draw' {
+  export interface DrGlobalShapePropsMap {
+    audio: AudioShapeProps;
+  }
+}
 
 const timecodeValidator = T.object({
   id: T.string,
@@ -81,6 +89,7 @@ export const audioShapeProps = {
       return T.boolean.validate(value);
     },
   },
+  studentsCanControlPlayback: T.boolean.optional(),
   timecodes: timecodesValidator,
 };
 

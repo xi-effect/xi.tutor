@@ -1,4 +1,4 @@
-import { BaseBoxShapeUtil, HTMLContainer, TLResizeInfo, resizeBox } from 'tldraw';
+import { BaseBoxShapeUtil, HTMLContainer, DrResizeInfo, resizeBox } from '@ibodr/draw';
 import { PDF_MAX_SIZE, PDF_MIN_SIZE, PdfShape, pdfShapeProps } from './PdfShape';
 import { PdfViewer } from './PdfViewer';
 
@@ -31,7 +31,7 @@ export class PdfShapeUtil extends BaseBoxShapeUtil<PdfShape> {
     return true;
   }
 
-  override onResize(shape: PdfShape, info: TLResizeInfo<PdfShape>) {
+  override onResize(shape: PdfShape, info: DrResizeInfo<PdfShape>) {
     const aspectRatio = shape.props.w / shape.props.h;
     let minWidth = PDF_MIN_SIZE;
     let minHeight = PDF_MIN_SIZE;
@@ -59,7 +59,9 @@ export class PdfShapeUtil extends BaseBoxShapeUtil<PdfShape> {
     );
   }
 
-  override indicator(shape: PdfShape) {
-    return <rect width={shape.props.w} height={shape.props.h} rx={12} ry={12} />;
+  override getIndicatorPath(shape: PdfShape) {
+    const path = new Path2D();
+    path.rect(0, 0, shape.props.w, shape.props.h);
+    return path;
   }
 }

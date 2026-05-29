@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { Editor, TLShapeId } from 'tldraw';
+import { Editor, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { uploadFileRequest } from 'common.services';
 import {
@@ -74,7 +74,7 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
     return;
   }
 
-  const shapeId = `shape:${nanoid()}` as TLShapeId;
+  const shapeId = `shape:${nanoid()}` as DrShapeId;
   const duration = await getAudioDuration(file);
   const viewportCenter = editor.getViewportPageBounds().center;
 

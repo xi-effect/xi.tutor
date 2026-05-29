@@ -1,11 +1,11 @@
-import { useTldrawStyles } from '../../../../hooks';
-import { useTldrawStore } from '../../../../store';
+import { useDrawStyles } from '../../../../hooks';
+import { useDrawStore } from '../../../../store';
 import { PopupItemT } from '../../../../utils/navBarElements';
 
 export const ColorSet = ({ popupItems }: { popupItems?: PopupItemT[] }) => {
-  const { setStickerColor, stickerColor } = useTldrawStore();
+  const { setStickerColor, stickerColor } = useDrawStore();
 
-  const { setColor } = useTldrawStyles();
+  const { setColor } = useDrawStyles();
 
   const handleColorClick = (colorName: string) => {
     setColor(colorName);

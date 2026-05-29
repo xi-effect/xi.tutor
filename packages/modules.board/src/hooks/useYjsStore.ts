@@ -14,8 +14,8 @@ import { toast } from 'sonner';
 import {
   computed,
   createPresenceStateDerivation,
-  createTLStore,
-  defaultShapeUtils,
+  createDrStore,
+  createUserId,
   defaultUserPreferences,
   getUserPreferences,
   InstancePresenceRecordType,
@@ -23,35 +23,41 @@ import {
   react,
   SerializedSchema,
   setUserPreferences,
-  TLAnyShapeUtilConstructor,
-  TLInstancePresence,
-  TLRecord,
-  TLStore,
-  TLStoreWithStatus,
-} from 'tldraw';
+  UserRecordType,
+  DrAnyShapeUtilConstructor,
+  DrInstancePresence,
+  DrRecord,
+  DrStore,
+  DrStoreWithStatus,
+  type DrUser,
+} from '@ibodr/draw';
 import { YKeyValue } from 'y-utility/y-keyvalue';
 import * as Y from 'yjs';
 import { getFileUrl } from 'common.api';
 import { myAssetStore } from '../features/imageStore';
-import { PdfShapeUtil } from '../shapes/pdf';
-import { AudioShapeUtil } from '../shapes/audio';
+import { boardStoreShapeUtils } from '../shapes/boardShapeUtils';
 import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
 import { generateUserColor } from '../utils/userColor';
 import { extractFileIdFromUrl } from '../utils/resolveAssetUrl';
+import {
+  nextBoardSchemaVersion,
+  prepareLegacyYjsStoreSnapshot,
+  repairMigratedBoardStore,
+} from '../utils/migrateLegacyTldrawSnapshot';
 
 type UseYjsStoreArgs = Partial<{
   hostUrl: string;
   ydocId: string;
   storageToken: string;
-  shapeUtils: TLAnyShapeUtilConstructor[];
+  shapeUtils: DrAnyShapeUtilConstructor[];
   token: string; // токен для asset store
 }>;
 
 type ConnectionStatus = 'online' | 'offline';
 
 type StoreWithStatusExt = {
-  status: TLStoreWithStatus['status'];
-  store?: TLStore;
+  status: DrStoreWithStatus['status'];
+  store?: DrStore;
   error?: Error;
   connectionStatus?: ConnectionStatus;
 };
@@ -60,8 +66,8 @@ type StoreWithStatusExt = {
 export type CameraState = { x: number; y: number; z: number };
 
 export type ExtendedStoreStatus = {
-  store: TLStore;
-  status: TLStoreWithStatus['status'];
+  store: DrStore;
+  status: DrStoreWithStatus['status'];
   error?: Error;
   connectionStatus?: ConnectionStatus;
   undo: () => void;
@@ -87,22 +93,27 @@ export type ExtendedStoreStatus = {
 };
 
 type PendingChanges = {
-  added: Record<string, TLRecord>;
-  updated: Record<string, TLRecord>;
-  removed: Record<string, TLRecord>;
+  added: Record<string, DrRecord>;
+  updated: Record<string, DrRecord>;
+  removed: Record<string, DrRecord>;
 };
 
 /**
  * В tldraw тип changes иногда уезжает в unknown (зависит от версии/сборки),
  * поэтому описываем минимально нужную форму и приводим к ней.
  */
-type TLStoreChanges = {
-  added: Record<string, TLRecord>;
-  updated: Record<string, [TLRecord, TLRecord]>;
-  removed: Record<string, TLRecord>;
+type DrStoreChanges = {
+  added: Record<string, DrRecord>;
+  updated: Record<string, [DrRecord, DrRecord]>;
+  removed: Record<string, DrRecord>;
 };
 
 const FLUSH_MS = 50;
+
+/** В Yjs должны попадать только document-записи — session/instance ломают локальное выделение. */
+function isDocumentRecord(store: DrStore, record: DrRecord): boolean {
+  return store.scopedTypes.document.has(record.typeName);
+}
 
 /**
  * Throttle для awareness/presence (курсоры / presence).
@@ -120,7 +131,7 @@ type SharedEntry = {
   refs: number;
   provider: HocuspocusProvider;
   yDoc: Y.Doc;
-  yStore: YKeyValue<TLRecord>;
+  yStore: YKeyValue<DrRecord>;
   meta: Y.Map<SerializedSchema | string>;
   readonlyMap: Y.Map<boolean>;
   /** Камеры по userId — каждый пользователь хранит свою последнюю позицию камеры (синхронизируется с сервером) */
@@ -129,6 +140,8 @@ type SharedEntry = {
   pdfPagesMap: Y.Map<number>;
   /** Синхронное воспроизведение аудио: `${shapeId}:playing|time|ts` → number */
   audioSyncMap: Y.Map<number>;
+  /** Документ из Yjs уже загружен в store — повторный loadSnapshot сбрасывает выделение. */
+  yjsDocumentHydrated: boolean;
   releaseTimer: number | null;
 };
 
@@ -154,11 +167,10 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
   }
 
   const yDoc = new Y.Doc({ gc: true });
-  const yArr = yDoc.getArray<{ key: string; val: TLRecord }>(`tl_${ydocId}`);
-  const yStore = new YKeyValue<TLRecord>(yArr);
+  const yArr = yDoc.getArray<{ key: string; val: DrRecord }>(`tl_${ydocId}`);
+  const yStore = new YKeyValue<DrRecord>(yArr);
 
   const meta = yDoc.getMap<SerializedSchema | string>('meta');
-  meta.set('schemaVersion', BOARD_SCHEMA_VERSION);
 
   const readonlyMap = yDoc.getMap<boolean>('readonly');
   const userCamerasMap = yDoc.getMap<CameraState>('userCameras');
@@ -185,6 +197,7 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
     userCamerasMap,
     pdfPagesMap,
     audioSyncMap,
+    yjsDocumentHydrated: false,
     releaseTimer: null,
   };
 
@@ -234,12 +247,12 @@ export function useYjsStore({
   const currentUserRef = useRef(currentUser);
   currentUserRef.current = currentUser;
 
-  /** TLStore должен быть ОДИН и всегда один и тот же */
+  /** DrStore должен быть ОДИН и всегда один и тот же */
   const [store] = useState(() => {
     const assetStore = token ? myAssetStore(token) : undefined;
 
-    return createTLStore({
-      shapeUtils: [...defaultShapeUtils, PdfShapeUtil, AudioShapeUtil, ...shapeUtils],
+    return createDrStore({
+      shapeUtils: [...boardStoreShapeUtils, ...shapeUtils],
       ...(assetStore ? { assets: assetStore } : {}),
     });
   });
@@ -291,9 +304,15 @@ export function useYjsStore({
       pendingChangesRef.current = null;
 
       yDoc.transact(() => {
-        Object.values(pending.added).forEach((r) => yStore.set(r.id, r));
-        Object.values(pending.updated).forEach((r) => yStore.set(r.id, r));
-        Object.values(pending.removed).forEach((r) => yStore.delete(r.id));
+        Object.values(pending.added).forEach((r) => {
+          if (isDocumentRecord(store, r)) yStore.set(r.id, r);
+        });
+        Object.values(pending.updated).forEach((r) => {
+          if (isDocumentRecord(store, r)) yStore.set(r.id, r);
+        });
+        Object.values(pending.removed).forEach((r) => {
+          if (isDocumentRecord(store, r)) yStore.delete(r.id);
+        });
       }, 'user');
     };
 
@@ -341,23 +360,29 @@ export function useYjsStore({
     unsubs.push(() => provider.off('status', handleStatus as any));
 
     /**
-     * `synced` может прийти несколько раз (реконнект, повторный вызов при уже synced).
-     * Повторный полный init дублирует store.listen / awareness и накапливает «мертвые» instance_presence
-     * в Y.Doc — в шапке видно много одинаковых аватарок одного пользователя.
+     * `synced` может прийти несколько раз (реконнект). Слушатели вешаем один раз на mount
+     * effect'а; документ из Yjs гидрируем один раз на SharedEntry (повторный loadSnapshot
+     * сбрасывает локальное выделение).
      */
-    let syncedFullInitDone = false;
+    let syncListenersBound = false;
 
-    const cleanupStaleOwnPresenceRecords = (presenceId: TLInstancePresence['id']) => {
+    const cleanupStaleOwnPresenceRecords = (
+      presenceId: DrInstancePresence['id'],
+      drawUserId?: DrUser['id'],
+    ) => {
       const backendId = currentUserRef.current?.id;
-      if (backendId == null) return;
 
-      const bid = String(backendId);
       const all = store
         .allRecords()
-        .filter((r): r is TLInstancePresence => r.typeName === 'instance_presence');
+        .filter((r): r is DrInstancePresence => r.typeName === 'instance_presence');
 
       const stale = all.filter((p) => {
         if (p.id === presenceId) return false;
+        if (drawUserId && p.userId === drawUserId) return true;
+
+        if (backendId == null) return false;
+
+        const bid = String(backendId);
         const m = p.meta as Record<string, unknown> | undefined;
         if (!m || typeof m !== 'object') return false;
         const pbid = m.backendUserId;
@@ -375,17 +400,24 @@ export function useYjsStore({
       if (!state) return;
 
       const awarenessEarly = provider.awareness;
-      if (syncedFullInitDone) {
-        if (awarenessEarly) {
-          const yClientId = awarenessEarly.clientID.toString();
-          const presenceId = InstancePresenceRecordType.createId(yClientId);
-          setMyPresenceId(presenceId);
-          cleanupStaleOwnPresenceRecords(presenceId);
-        }
+      if (awarenessEarly) {
+        const yClientId = awarenessEarly.clientID.toString();
+        const drawUserId = createUserId(yClientId);
+        const presenceId = InstancePresenceRecordType.createId(yClientId);
+        setMyPresenceId(presenceId);
+        cleanupStaleOwnPresenceRecords(presenceId, drawUserId);
+      }
+
+      if (syncListenersBound) {
+        setStoreWithStatus((prev) => ({
+          ...prev,
+          status: 'synced-remote',
+          connectionStatus: 'online',
+        }));
         return;
       }
 
-      syncedFullInitDone = true;
+      syncListenersBound = true;
 
       /** Раньше таймер жил в Y.Map `timer` и попадал в персист документа; теперь только awareness — чистим наследие */
       yDoc.transact(() => {
@@ -404,22 +436,33 @@ export function useYjsStore({
             }
 
             const pending = pendingChangesRef.current;
-            const typedChanges = changes as unknown as TLStoreChanges;
+            const typedChanges = changes as unknown as DrStoreChanges;
 
             Object.values(typedChanges.added).forEach((r) => {
+              if (!isDocumentRecord(store, r)) return;
               pending.added[r.id] = r;
               delete pending.removed[r.id];
             });
 
             Object.values(typedChanges.updated).forEach(([, r]) => {
+              if (!isDocumentRecord(store, r)) return;
               pending.updated[r.id] = r;
             });
 
             Object.values(typedChanges.removed).forEach((r) => {
+              if (!isDocumentRecord(store, r)) return;
               delete pending.added[r.id];
               delete pending.updated[r.id];
               pending.removed[r.id] = r;
             });
+
+            if (
+              Object.keys(pending.added).length === 0 &&
+              Object.keys(pending.updated).length === 0 &&
+              Object.keys(pending.removed).length === 0
+            ) {
+              return;
+            }
 
             scheduleFlush();
           },
@@ -431,9 +474,9 @@ export function useYjsStore({
       const handleChange = (
         changes: Map<
           string,
-          | { action: 'delete'; oldValue: TLRecord }
-          | { action: 'update'; oldValue: TLRecord; newValue: TLRecord }
-          | { action: 'add'; newValue: TLRecord }
+          | { action: 'delete'; oldValue: DrRecord }
+          | { action: 'update'; oldValue: DrRecord; newValue: DrRecord }
+          | { action: 'add'; newValue: DrRecord }
         >,
         transaction: Y.Transaction,
       ) => {
@@ -444,15 +487,17 @@ export function useYjsStore({
          */
         if (transaction.origin === 'user') return;
 
-        const toRemove: TLRecord['id'][] = [];
-        const toPut: TLRecord[] = [];
+        const toRemove: DrRecord['id'][] = [];
+        const toPut: DrRecord[] = [];
 
         changes.forEach((change, id) => {
           if (change.action === 'delete') {
-            toRemove.push(id as TLRecord['id']);
+            if (isDocumentRecord(store, change.oldValue)) {
+              toRemove.push(id as DrRecord['id']);
+            }
           } else {
             const record = yStore.get(id);
-            if (record) toPut.push(record);
+            if (record && isDocumentRecord(store, record)) toPut.push(record);
           }
         });
 
@@ -478,38 +523,42 @@ export function useYjsStore({
 
       if (awareness) {
         const yClientId = awareness.clientID.toString();
+        const drawUserId = createUserId(yClientId);
         const userName =
           currentUserRef.current?.display_name ||
           currentUserRef.current?.username ||
           defaultUserPreferences.name;
         const userColor = generateUserColor(currentUserRef.current?.id?.toString() || yClientId);
 
-        setUserPreferences({ id: yClientId, name: userName, color: userColor });
+        setUserPreferences({ id: drawUserId, name: userName, color: userColor });
 
-        const userPreferences = computed<{ id: string; color: string; name: string }>(
-          'userPreferences',
-          () => {
-            const u = getUserPreferences();
-            return {
-              id: u.id,
-              color: u.color ?? userColor,
-              name: u.name ?? userName,
-            };
-          },
-        );
+        const $boardUser = computed<DrUser | null>('boardUser', () => {
+          const prefs = getUserPreferences();
+          const name =
+            currentUserRef.current?.display_name ||
+            currentUserRef.current?.username ||
+            prefs.name ||
+            defaultUserPreferences.name;
+          const color = generateUserColor(currentUserRef.current?.id?.toString() || yClientId);
+          return UserRecordType.create({
+            id: drawUserId,
+            name,
+            color,
+          });
+        });
 
         const presenceId = InstancePresenceRecordType.createId(yClientId);
         setMyPresenceId(presenceId);
-        const presenceDerivation = createPresenceStateDerivation(
-          userPreferences,
-          presenceId,
-        )(store);
+        cleanupStaleOwnPresenceRecords(presenceId, drawUserId);
+        const presenceDerivation = createPresenceStateDerivation($boardUser, {
+          instanceId: presenceId,
+        })(store);
 
         // ==== LOCAL presence batching (throttle + last-value-wins) ====
         let presenceTimer: number | null = null;
-        let pendingPresence: TLInstancePresence | null = null;
+        let pendingPresence: DrInstancePresence | null = null;
 
-        const enrichPresenceWithBackendId = (p: TLInstancePresence): TLInstancePresence => {
+        const enrichPresenceWithBackendId = (p: DrInstancePresence): DrInstancePresence => {
           const backendId = currentUserRef.current?.id;
           if (backendId == null) return p;
           return {
@@ -529,7 +578,7 @@ export function useYjsStore({
           pendingPresence = null;
         };
 
-        const schedulePresence = (next: TLInstancePresence | null | undefined) => {
+        const schedulePresence = (next: DrInstancePresence | null | undefined) => {
           if (!next) return;
 
           pendingPresence = next;
@@ -576,20 +625,20 @@ export function useYjsStore({
         });
 
         // ==== REMOTE presence batching (raf) ====
-        type PresenceState = { presence?: TLInstancePresence };
+        type PresenceState = { presence?: DrInstancePresence };
         type AwarenessChange = { added: number[]; updated: number[]; removed: number[] };
 
         let rafId: number | null = null;
 
         const pendingRemote = {
-          toPut: new Map<string, TLInstancePresence>(),
+          toPut: new Map<string, DrInstancePresence>(),
           toRemove: new Set<string>(),
         };
 
         const flushRemotePresence = () => {
           rafId = null;
 
-          const toRemove = Array.from(pendingRemote.toRemove) as TLInstancePresence['id'][];
+          const toRemove = Array.from(pendingRemote.toRemove) as DrInstancePresence['id'][];
           const toPut = Array.from(pendingRemote.toPut.values());
 
           pendingRemote.toPut.clear();
@@ -617,7 +666,11 @@ export function useYjsStore({
             const st = states.get(clientId);
             const remotePresence = st?.presence;
 
-            if (remotePresence && remotePresence.id !== presenceId) {
+            if (
+              remotePresence &&
+              remotePresence.id !== presenceId &&
+              remotePresence.userId !== drawUserId
+            ) {
               pendingRemote.toPut.set(remotePresence.id, remotePresence);
               pendingRemote.toRemove.delete(remotePresence.id);
             }
@@ -644,94 +697,132 @@ export function useYjsStore({
         });
       }
 
-      /** 5) initial seed / migrate */
+      /** 5) initial seed / migrate (один раз на комнату — повторный loadSnapshot сбрасывает выделение) */
+      if (!sharedEntry.yjsDocumentHydrated) {
+        sharedEntry.yjsDocumentHydrated = true;
 
-      // При дублировании доски бэкенд копирует бинарный Y.Doc, но данные внутри хранятся
-      // в массиве `tl_${sourceYdocId}`. Клиент обращается к `tl_${newYdocId}` — он пуст.
-      // Ищем данные в любом другом `tl_*` массиве и копируем в текущий.
-      if (yStore.yarray.length === 0) {
-        const currentKey = `tl_${ydocId}`;
+        // При дублировании доски бэкенд копирует бинарный Y.Doc, но данные внутри хранятся
+        // в массиве `tl_${sourceYdocId}`. Клиент обращается к `tl_${newYdocId}` — он пуст.
+        // Ищем данные в любом другом `tl_*` массиве и копируем в текущий.
+        if (yStore.yarray.length === 0) {
+          const currentKey = `tl_${ydocId}`;
 
-        for (const [key] of yDoc.share.entries()) {
-          if (key === currentKey || !key.startsWith('tl_')) continue;
+          for (const [key] of yDoc.share.entries()) {
+            if (key === currentKey || !key.startsWith('tl_')) continue;
 
-          const candidateArr = yDoc.getArray<{ key: string; val: TLRecord }>(key);
-          if (candidateArr.length === 0) continue;
+            const candidateArr = yDoc.getArray<{ key: string; val: DrRecord }>(key);
+            if (candidateArr.length === 0) continue;
+
+            yDoc.transact(() => {
+              for (const item of candidateArr.toJSON()) {
+                yStore.set(item.key, item.val);
+              }
+            }, 'duplicate-migration');
+            break;
+          }
+        }
+
+        if (yStore.yarray.length) {
+          const ourSchema = store.schema.serialize();
+          const theirSchema = meta.get('schema') as SerializedSchema | undefined;
+          const metaSchemaVersion = meta.get('schemaVersion');
+
+          if (!theirSchema) {
+            throw new Error('No schema found in the yjs doc');
+          }
+
+          const allYjsRecords = yStore.yarray.toJSON().map(({ val }) => val) as DrRecord[];
+          const legacySessionRecords = allYjsRecords.filter((r) => !isDocumentRecord(store, r));
+
+          if (legacySessionRecords.length > 0) {
+            yDoc.transact(() => {
+              for (const r of legacySessionRecords) yStore.delete(r.id);
+            }, 'init-cleanup-session');
+          }
+
+          const records = allYjsRecords.filter((r) => isDocumentRecord(store, r));
+          const storeSnapshot = Object.fromEntries(records.map((r) => [r.id, r]));
+
+          const prepared = prepareLegacyYjsStoreSnapshot({
+            schema: theirSchema,
+            store: storeSnapshot,
+            metaSchemaVersion,
+          });
+
+          if (prepared.wasLegacy) {
+            console.info(
+              '[modules.board] Migrating legacy tldraw Yjs room to draw schema (com.tldraw.* → com.draw.*)',
+            );
+          }
+
+          const migrationResult = store.schema.migrateStoreSnapshot({
+            schema: prepared.schema,
+            store: prepared.store,
+          });
+
+          if (migrationResult.type === 'error') {
+            console.warn('Schema updated, refresh.');
+            return;
+          }
+
+          let migratedStore = migrationResult.value as Record<string, DrRecord>;
+
+          migratedStore = repairMigratedBoardStore(migratedStore);
+
+          // Migrate `src` values:
+          // - Shapes (audio, pdf): full URL → bare file ID (our validators accept any string)
+          // - Assets (image): bare ID → full URL (tldraw's built-in validator requires a valid URL)
+          for (const record of Object.values(migratedStore) as DrRecord[]) {
+            const props = (record as any).props;
+            if (!props?.src || typeof props.src !== 'string') continue;
+
+            const isAsset = (record as any).typeName === 'asset';
+            if (isAsset) {
+              const src = props.src as string;
+              const isBareId =
+                src !== '' &&
+                !src.startsWith('http://') &&
+                !src.startsWith('https://') &&
+                !src.startsWith('data:') &&
+                !src.startsWith('blob:');
+              if (isBareId) {
+                props.src = getFileUrl(src);
+              }
+            } else {
+              const fileId = extractFileIdFromUrl(props.src);
+              if (fileId) {
+                props.src = fileId;
+              }
+            }
+          }
 
           yDoc.transact(() => {
-            for (const item of candidateArr.toJSON()) {
-              yStore.set(item.key, item.val);
+            for (const r of records) {
+              if (!migratedStore[r.id]) yStore.delete(r.id);
             }
-          }, 'duplicate-migration');
-          break;
-        }
-      }
 
-      if (yStore.yarray.length) {
-        const ourSchema = store.schema.serialize();
-        const theirSchema = meta.get('schema') as SerializedSchema | undefined;
-
-        if (!theirSchema) {
-          throw new Error('No schema found in the yjs doc');
-        }
-
-        const records = yStore.yarray.toJSON().map(({ val }) => val);
-
-        const migrationResult = store.schema.migrateStoreSnapshot({
-          schema: theirSchema,
-          store: Object.fromEntries(records.map((r) => [r.id, r])),
-        });
-
-        if (migrationResult.type === 'error') {
-          console.warn('Schema updated, refresh.');
-          return;
-        }
-
-        // Migrate `src` values:
-        // - Shapes (audio, pdf): full URL → bare file ID (our validators accept any string)
-        // - Assets (image): bare ID → full URL (tldraw's built-in validator requires a valid URL)
-        for (const record of Object.values(migrationResult.value) as TLRecord[]) {
-          const props = (record as any).props;
-          if (!props?.src || typeof props.src !== 'string') continue;
-
-          const isAsset = (record as any).typeName === 'asset';
-          if (isAsset) {
-            const src = props.src as string;
-            const isBareId =
-              src !== '' &&
-              !src.startsWith('http://') &&
-              !src.startsWith('https://') &&
-              !src.startsWith('data:') &&
-              !src.startsWith('blob:');
-            if (isBareId) {
-              props.src = getFileUrl(src);
+            for (const r of Object.values(migratedStore) as DrRecord[]) {
+              if (isDocumentRecord(store, r)) yStore.set(r.id, r);
             }
-          } else {
-            const fileId = extractFileIdFromUrl(props.src);
-            if (fileId) {
-              props.src = fileId;
+
+            meta.set('schema', ourSchema);
+            meta.set(
+              'schemaVersion',
+              nextBoardSchemaVersion(metaSchemaVersion, prepared.wasLegacy),
+            );
+          }, 'init');
+
+          loadSnapshot(store, { store: migratedStore, schema: ourSchema });
+        } else {
+          const docSnapshot = store.getStoreSnapshot();
+          yDoc.transact(() => {
+            for (const rec of Object.values(docSnapshot.store) as DrRecord[]) {
+              yStore.set(rec.id, rec);
             }
-          }
+            meta.set('schema', docSnapshot.schema);
+            meta.set('schemaVersion', BOARD_SCHEMA_VERSION);
+          }, 'init');
         }
-
-        yDoc.transact(() => {
-          for (const r of records) {
-            if (!migrationResult.value[r.id]) yStore.delete(r.id);
-          }
-
-          for (const r of Object.values(migrationResult.value) as TLRecord[]) {
-            yStore.set(r.id, r);
-          }
-
-          meta.set('schema', ourSchema);
-        }, 'init');
-
-        loadSnapshot(store, { store: migrationResult.value, schema: ourSchema });
-      } else {
-        yDoc.transact(() => {
-          for (const rec of store.allRecords()) yStore.set(rec.id, rec);
-          meta.set('schema', store.schema.serialize());
-        }, 'init');
       }
 
       /** 6) undo manager */

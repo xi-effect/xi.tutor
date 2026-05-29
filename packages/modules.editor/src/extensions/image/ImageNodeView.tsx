@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NodeViewWrapper, NodeViewProps } from '@tiptap/react';
 import {
   DropdownMenu,
@@ -9,84 +8,48 @@ import {
 } from '@xipkg/dropdown';
 import { Button } from '@xipkg/button';
 import { ArrowBottom, ArrowUp, Copy, Download, MoreVert, Trash } from '@xipkg/icons';
-import { useBlockMenuActions, useYjsContext } from '../../hooks';
+import { useBlockMenuActions, useProtectedImage, useYjsContext } from '../../hooks';
 import { cn } from '@xipkg/utils';
-import { useState, useEffect } from 'react';
-import { getAxiosInstance } from 'common.config';
+import { useMemo, useState } from 'react';
+import { ActiveBlockT } from '../../types';
 
-// Кеш blob URL для уже загруженных изображений (по исходному src)
-const blobUrlCache = new Map<string, string>();
-
-export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
+export const ImageNodeView = ({ node, selected, getPos }: NodeViewProps) => {
+  const [hovered, setHovered] = useState(false);
   const src = node.attrs.src;
+
   const { editor, storageToken, isReadOnly } = useYjsContext();
-  const { duplicate, remove, downloadImage, moveDown, moveUp } = useBlockMenuActions(editor);
-  const [imageSrc, setImageSrc] = useState<string>(src);
 
-  useEffect(() => {
-    const loadImageWithToken = async () => {
-      // Если нет src или токена — используем исходный src
-      if (!src || !storageToken) {
-        setImageSrc(src);
-        return;
-      }
+  const currentBlock = useMemo<ActiveBlockT | undefined>(() => {
+    if (typeof getPos !== 'function' || !editor) {
+      return;
+    }
 
-      // Пропускаем data: и blob: URL — они уже пригодны к отображению
-      if (src.startsWith('data:') || src.startsWith('blob:')) {
-        setImageSrc(src);
-        return;
-      }
+    try {
+      const currentPosition = getPos();
+      if (currentPosition == null) return;
+      return {
+        editor,
+        node,
+        pos: currentPosition,
+      };
+    } catch {
+      return;
+    }
+  }, [editor, getPos, node]);
 
-      // Проверяем кеш
-      const cached = blobUrlCache.get(src);
-      if (cached) {
-        setImageSrc(cached);
-        return;
-      }
+  const { duplicate, remove, downloadImage, moveDown, moveUp } = useBlockMenuActions(
+    editor,
+    currentBlock,
+  );
 
-      try {
-        // Загружаем изображение с заголовком токена через axios
-        const axiosInst = await getAxiosInstance();
-        const response = await axiosInst.get(src, {
-          responseType: 'blob',
-          headers: {
-            'x-storage-token': storageToken,
-          },
-        });
-
-        if (response.status !== 200) {
-          setImageSrc(src);
-          return;
-        }
-
-        // Создаем blob URL из загруженного изображения
-        const blob = response.data;
-        const blobUrl = URL.createObjectURL(blob);
-
-        // Сохраняем в кеш
-        blobUrlCache.set(src, blobUrl);
-
-        setImageSrc(blobUrl);
-      } catch (error) {
-        console.error('[ImageNodeView] Ошибка при загрузке изображения:', error);
-        // На любой ошибке используем исходный src
-        setImageSrc(src);
-      }
-    };
-
-    loadImageWithToken();
-  }, [src, storageToken]);
-
-  // Очистка blob URL при размонтировании компонента (если это последний компонент с этим src)
-  useEffect(() => {
-    return () => {
-      // Не очищаем blob URL сразу, так как он может использоваться другими компонентами
-      // Кеш управляется глобально, очистка будет выполнена при необходимости
-    };
-  }, []);
+  const imageSrc = useProtectedImage(src, storageToken);
 
   return (
-    <NodeViewWrapper className="group relative flex justify-center">
+    <NodeViewWrapper
+      className="group relative flex justify-center"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
       <img
         src={imageSrc}
         alt={node.attrs.alt || ''}
@@ -95,11 +58,10 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
           selected && 'outline-brand-80 outline-2 outline-offset-1',
         )}
       />
-
       <div
         className={cn(
           'absolute top-2 right-2 flex transition-opacity',
-          selected ? 'opacity-100' : 'pointer-events-none opacity-0',
+          hovered ? 'pointer-events-auto opacity-100' : 'opacity-0',
         )}
       >
         <DropdownMenu modal={false}>
@@ -116,7 +78,7 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
           >
             <DropdownMenuItem
               className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-              onSelect={() => downloadImage(src)}
+              onSelect={() => downloadImage(imageSrc)}
             >
               <Download size="sm" className="size-6" />
               <span className="text-sm">Скачать</span>
@@ -155,7 +117,7 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
 
                 <DropdownMenuItem
                   className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-                  onClick={remove}
+                  onSelect={remove}
                 >
                   <Trash size="sm" className="size-6" />
                   <span className="text-sm">Удалить</span>

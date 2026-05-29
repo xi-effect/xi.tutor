@@ -11,7 +11,7 @@ import { Eyeon, Podcast } from '@xipkg/icons';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import type { TLInstancePresence } from 'tldraw';
+import type { DrInstancePresence } from '@ibodr/draw';
 import { useCurrentUser } from 'common.services';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore } from '../../../store';
@@ -32,7 +32,7 @@ export const CollaboratorAvatars = () => {
   } = useFollowUserStore();
   const { data: currentUser } = useCurrentUser();
   const isTutor = currentUser?.default_layout === 'tutor';
-  const [allPresences, setAllPresences] = useState<TLInstancePresence[]>([]);
+  const [allPresences, setAllPresences] = useState<DrInstancePresence[]>([]);
   const [popoverOpen, setPopoverOpen] = useState(false);
 
   const followingRef = useRef(followingPresenceId);
@@ -46,12 +46,12 @@ export const CollaboratorAvatars = () => {
     }
     const update = () => {
       try {
-        const presences = store.query.records('instance_presence').get() as TLInstancePresence[];
+        const presences = store.query.records('instance_presence').get() as DrInstancePresence[];
         setAllPresences(presences);
       } catch {
         const fallback = store
           .allRecords()
-          .filter((r): r is TLInstancePresence => r.typeName === 'instance_presence');
+          .filter((r): r is DrInstancePresence => r.typeName === 'instance_presence');
         setAllPresences(fallback);
       }
     };
@@ -75,7 +75,7 @@ export const CollaboratorAvatars = () => {
 
       for (const [, state] of states) {
         if (state?.broadcastFollow === true) {
-          const presence = state.presence as TLInstancePresence | undefined;
+          const presence = state.presence as DrInstancePresence | undefined;
           if (presence?.id) {
             foundPresenceId = presence.id;
             break;
@@ -279,12 +279,12 @@ export const CollaboratorAvatars = () => {
  * В UI показываем одну карточку на реального пользователя.
  */
 function dedupeInstancePresences(
-  presences: TLInstancePresence[],
+  presences: DrInstancePresence[],
   myPresenceId: string | null,
   followingPresenceId: string | null,
-): TLInstancePresence[] {
-  const groups = new Map<string, TLInstancePresence[]>();
-  const withoutBackend: TLInstancePresence[] = [];
+): DrInstancePresence[] {
+  const groups = new Map<string, DrInstancePresence[]>();
+  const withoutBackend: DrInstancePresence[] = [];
 
   for (const p of presences) {
     const bid = getBackendUserIdString(p);
@@ -297,7 +297,7 @@ function dedupeInstancePresences(
     else groups.set(bid, [p]);
   }
 
-  const merged: TLInstancePresence[] = [];
+  const merged: DrInstancePresence[] = [];
 
   for (const group of groups.values()) {
     if (group.length === 1) {
@@ -311,10 +311,10 @@ function dedupeInstancePresences(
 }
 
 function pickBestPresenceDuplicate(
-  group: TLInstancePresence[],
+  group: DrInstancePresence[],
   myPresenceId: string | null,
   followingPresenceId: string | null,
-): TLInstancePresence {
+): DrInstancePresence {
   const sorted = [...group].sort((a, b) => {
     if (followingPresenceId) {
       if (a.id === followingPresenceId) return -1;
@@ -331,7 +331,7 @@ function pickBestPresenceDuplicate(
   return sorted[0];
 }
 
-function getBackendUserIdString(presence: TLInstancePresence): string | undefined {
+function getBackendUserIdString(presence: DrInstancePresence): string | undefined {
   const meta = presence.meta as Record<string, unknown> | undefined;
   if (!meta || typeof meta !== 'object') return undefined;
   const id = meta.backendUserId;
@@ -339,7 +339,7 @@ function getBackendUserIdString(presence: TLInstancePresence): string | undefine
   return typeof id === 'number' ? String(id) : typeof id === 'string' ? id : undefined;
 }
 
-function getAvatarUrlFromPresence(presence: TLInstancePresence): string | undefined {
+function getAvatarUrlFromPresence(presence: DrInstancePresence): string | undefined {
   const idStr = getBackendUserIdString(presence);
   if (!idStr) return undefined;
   return `${AVATAR_API_BASE}/${idStr}/avatar.webp`;

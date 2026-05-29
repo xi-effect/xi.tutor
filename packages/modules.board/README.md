@@ -1,121 +1,70 @@
 # Модуль Board
 
-Модуль для совместного редактирования досок с использованием TLDraw и Yjs.
+Модуль для совместного редактирования досок на **@ibodr/draw** (форк tldraw) и **Yjs**.
+
+> **Миграция в xi.tutor:** см. [`MIGRATION.md`](./MIGRATION.md)
 
 ## Особенности
 
-- **Совместное редактирование в реальном времени** с использованием Yjs и Hocuspocus
-- **Курсоры коллаборации** с отображением имен пользователей
-- **Интеграция с системой аутентификации** - автоматическое использование `display_name` из `useCurrentUser()`
-- **Уникальные цвета для каждого пользователя** - генерируются на основе ID пользователя
+- **Совместное редактирование** — Yjs + Hocuspocus
+- **Курсоры коллаборации** с именами пользователей
+- **Интеграция с `useCurrentUser()`** из `common.services`
+- **Кастомные фигуры** — PDF, audio, xi-geo, sticker
 
-## Использование
-
-### Базовое использование
+## Быстрый старт (xi.tutor)
 
 ```tsx
-import { TldrawBoard } from 'modules.board';
+import { DrawBoard } from 'modules.board';
 
 function App() {
-  return <TldrawBoard />;
-}
-```
-
-### Интеграция с пользовательскими данными
-
-Модуль автоматически интегрируется с `useCurrentUser()` из `common.services`:
-
-```tsx
-import { useYjsStore } from 'modules.board';
-import { useCurrentUser } from 'common.services';
-
-function CustomBoard() {
-  const { data: currentUser } = useCurrentUser();
-  const { store, status } = useYjsStore({
-    roomId: 'my-room',
-    hostUrl: 'wss://hocus.sovlium.ru',
-  });
-
-  // useYjsStore автоматически использует:
-  // - currentUser.display_name для отображения имени в курсоре
-  // - currentUser.username как fallback если display_name не задан
-  // - Генерирует уникальный цвет на основе currentUser.id
-
-  return <Tldraw store={store} />;
-}
-```
-
-### Курсоры коллаборации
-
-Компонент `CollaboratorCursor` автоматически отображает:
-
-- Иконку курсора с уникальным цветом пользователя
-- Имя пользователя (`display_name` или `username`)
-- Позицию курсора в реальном времени
-
-```tsx
-import { CollaboratorCursor } from 'modules.board';
-
-// Используется автоматически в TldrawCanvas
-<Tldraw
-  components={{
-    CollaboratorCursor: CollaboratorCursor,
-  }}
-/>;
-```
-
-## Конфигурация
-
-### Параметры useYjsStore
-
-```tsx
-const { store, status } = useYjsStore({
-  roomId: 'unique-room-id', // ID комнаты для совместного редактирования
-  hostUrl: 'wss://hocus.sovlium.ru', // URL Hocuspocus сервера
-  shapeUtils: [], // Дополнительные утилиты для фигур
-});
-```
-
-### Статусы подключения
-
-- `loading` - Загрузка и инициализация
-- `synced-remote` - Синхронизировано с удаленным сервером
-- `offline` - Отключено от сервера
-
-## Архитектура
-
-### Основные компоненты
-
-- `useYjsStore` - Хук для управления Yjs store и awareness
-- `TldrawCanvas` - Основной компонент доски
-- `CollaboratorCursor` - Компонент курсора коллаборации
-- `TldrawBoard` - Обертка с удалением водяных знаков
-
-### Интеграция с пользователями
-
-Модуль автоматически:
-
-1. Получает данные текущего пользователя через `useCurrentUser()`
-2. Использует `display_name` или `username` для отображения в курсоре
-3. Генерирует уникальный цвет на основе ID пользователя
-4. Синхронизирует presence через Yjs awareness
-
-### Цветовая схема
-
-Цвета генерируются детерминированно на основе ID пользователя:
-
-```tsx
-function generateUserColor(userId: string): string {
-  const hash = Array.from(userId).reduce((h, c) => c.charCodeAt(0) + ((h << 5) - h), 0);
-  const hue = Math.abs(hash) % 360;
-  return `hsl(${hue}, 70%, 60%)`;
+  return <DrawBoard />;
 }
 ```
 
 ## Зависимости
 
-- `tldraw` - Основная библиотека для редактирования
-- `yjs` - CRDT для синхронизации
-- `@hocuspocus/provider` - WebSocket провайдер
-- `common.services` - Для получения данных пользователя
-- `common.ui` - UI компоненты (LoadingScreen)
+| Пакет                              | Назначение                                      |
+| ---------------------------------- | ----------------------------------------------- |
+| `@ibodr/draw`                      | SDK редактора (npm: `@ibodr`, см. MIGRATION.md) |
+| `yjs`, `@hocuspocus/provider`      | CRDT-синхронизация                              |
+| `common.*`, `features.materials.*` | workspace-пакеты xi.tutor                       |
+| `@xipkg/*`                         | UI-кит                                          |
+
+## Публичный API
+
+```ts
+export { DrawBoard } from 'modules.board';
+export { useYjsStore, type CameraState } from 'modules.board';
+export { useHotkeys } from 'modules.board';
+export { CollaboratorCursor, type CollaboratorCursorProps } from 'modules.board';
+```
+
+## useYjsStore
+
+```tsx
+const { store, status } = useYjsStore({
+  roomId: 'unique-room-id',
+  hostUrl: 'wss://hocus.example.com',
+  shapeUtils: [],
+});
+```
+
+Статусы: `loading` | `synced-remote` | `offline`
+
+Автоматически берёт `display_name` / `username` из `useCurrentUser()`.
+
+## CSS
+
+Draw подключает стили внутри `DrawCanvas`:
+
+```ts
+import '@ibodr/draw/draw.css';
+```
+
+Кастомные переопределения — `src/ui/components/canvas/customstyles.css` (селекторы `.dr-*`).
+
+## Документация
+
+- [`MIGRATION.md`](./MIGRATION.md) — перенос в xi.tutor, breaking changes, чеклист
+- [`HOTKEYS.md`](./HOTKEYS.md) — горячие клавишi
+- [`PERFORMANCE.md`](./PERFORMANCE.md) — профилирование Yjs
