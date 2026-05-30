@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useEditor } from 'tldraw';
+import { useEditor } from '@ibodr/draw';
 import { useCurrentUser } from 'common.services';
 import * as pdfjsLib from 'pdfjs-dist';
 import type { RenderTask } from 'pdfjs-dist';
@@ -39,21 +39,29 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
   const [error, setError] = useState<string | null>(null);
   const [containerSize, setContainerSize] = useState<{ w: number; h: number }>({ w: 0, h: 0 });
 
-  // Учитываем реальный размер контейнера (в т.ч. после зума/ресайза), чтобы не рендерить в 0×0 и не получать мыло
+  // Учитываем реальный размер контейнера (в т.ч. после ресайза), округляем px — без лишних перерендеров
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
 
+    let raf = 0;
     const updateSize = () => {
-      const w = el.clientWidth;
-      const h = el.clientHeight;
-      setContainerSize((prev) => (prev.w === w && prev.h === h ? prev : { w, h }));
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const w = Math.round(el.clientWidth);
+        const h = Math.round(el.clientHeight);
+        if (w <= 0 || h <= 0) return;
+        setContainerSize((prev) => (prev.w === w && prev.h === h ? prev : { w, h }));
+      });
     };
 
     updateSize();
     const ro = new ResizeObserver(updateSize);
     ro.observe(el);
-    return () => ro.disconnect();
+    return () => {
+      cancelAnimationFrame(raf);
+      ro.disconnect();
+    };
   }, []);
 
   const { src, totalPages, currentPage: tutorPage, studentCanFlip } = shape.props;
@@ -95,9 +103,14 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
     if (!src || !token) return;
 
     const loadKey = `${src}-${displayPage}-${pagesVisible}-${containerSize.w}-${containerSize.h}`;
+    const isNewDocumentView =
+      loadKeyRef.current === null ||
+      !loadKeyRef.current.startsWith(`${src}-${displayPage}-${pagesVisible}-`);
     if (loadKeyRef.current !== loadKey) {
       loadKeyRef.current = loadKey;
-      hasRenderedOnceRef.current = false;
+      if (isNewDocumentView) {
+        hasRenderedOnceRef.current = false;
+      }
     }
 
     let cancelled = false;

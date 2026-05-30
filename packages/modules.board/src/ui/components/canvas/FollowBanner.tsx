@@ -1,6 +1,6 @@
 import { Button } from '@xipkg/button';
 import { Close, Eyeon, Podcast } from '@xipkg/icons';
-import type { TLInstancePresence, TLInstancePresenceID } from 'tldraw';
+import type { DrInstancePresence, DrInstancePresenceID } from '@ibodr/draw';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore } from '../../../store';
 
@@ -11,8 +11,8 @@ export const FollowBanner = () => {
 
   if (!followingPresenceId) return null;
 
-  const presence = store.get(followingPresenceId as TLInstancePresenceID) as
-    | TLInstancePresence
+  const presence = store.get(followingPresenceId as DrInstancePresenceID) as
+    | DrInstancePresence
     | undefined;
   const name = presence?.userName || 'Участник';
 

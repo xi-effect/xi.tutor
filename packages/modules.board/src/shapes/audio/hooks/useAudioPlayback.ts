@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useEditor } from 'tldraw';
+import { useEditor } from '@ibodr/draw';
 import { useCurrentUser } from 'common.services';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import type { AudioShape } from '../AudioShape';
@@ -20,8 +20,8 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
 
-  const { syncPlayback } = shape.props;
-  const canControl = !syncPlayback || isTutor;
+  const { syncPlayback, studentsCanControlPlayback } = shape.props;
+  const canControl = !syncPlayback || isTutor || studentsCanControlPlayback;
   const effectiveVolume = isMuted ? 0 : volume;
 
   latestRef.current = { syncPlayback, isTutor };
@@ -86,7 +86,7 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
 
   // Sync mode: observe audioSyncMap (students only)
   useEffect(() => {
-    if (!syncPlayback || isTutor || !audioSyncMap) return;
+    if (!syncPlayback || !audioSyncMap) return;
 
     const applySync = () => {
       const audio = audioRef.current;
@@ -118,7 +118,7 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
     applySync();
     audioSyncMap.observe(applySync);
     return () => audioSyncMap.unobserve(applySync);
-  }, [syncPlayback, isTutor, audioSyncMap, shape.id, blobUrl]);
+  }, [syncPlayback, audioSyncMap, shape.id, blobUrl]);
 
   // Progress animation loop
   useEffect(() => {
@@ -144,7 +144,7 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
       audio.pause();
       setLocalIsPlaying(false);
 
-      if (syncPlayback && isTutor && audioSyncMap) {
+      if (syncPlayback && audioSyncMap) {
         audioSyncMap.doc?.transact(() => {
           audioSyncMap.set(`${shape.id}:playing`, 0);
           audioSyncMap.set(`${shape.id}:time`, audio.currentTime);
@@ -155,7 +155,7 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
       audio.play().catch(() => {});
       setLocalIsPlaying(true);
 
-      if (syncPlayback && isTutor && audioSyncMap) {
+      if (syncPlayback && audioSyncMap) {
         audioSyncMap.doc?.transact(() => {
           audioSyncMap.set(`${shape.id}:playing`, 1);
           audioSyncMap.set(`${shape.id}:time`, audio.currentTime);
@@ -163,7 +163,7 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
         }, 'audio-sync');
       }
     }
-  }, [canControl, localIsPlaying, syncPlayback, isTutor, audioSyncMap, shape.id]);
+  }, [canControl, localIsPlaying, syncPlayback, audioSyncMap, shape.id]);
 
   const seekTo = useCallback(
     (e: React.PointerEvent<SVGSVGElement>) => {
@@ -177,14 +177,14 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
       audioRef.current.currentTime = time;
       setCurrentTime(time);
 
-      if (syncPlayback && isTutor && audioSyncMap) {
+      if (syncPlayback && audioSyncMap) {
         audioSyncMap.doc?.transact(() => {
           audioSyncMap.set(`${shape.id}:time`, time);
           audioSyncMap.set(`${shape.id}:ts`, Date.now());
         }, 'audio-sync');
       }
     },
-    [canControl, duration, syncPlayback, isTutor, audioSyncMap, shape.id],
+    [canControl, duration, syncPlayback, audioSyncMap, shape.id],
   );
 
   const seekToTime = useCallback(
@@ -193,14 +193,14 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
       audioRef.current.currentTime = time;
       setCurrentTime(time);
 
-      if (syncPlayback && isTutor && audioSyncMap) {
+      if (syncPlayback && audioSyncMap) {
         audioSyncMap.doc?.transact(() => {
           audioSyncMap.set(`${shape.id}:time`, time);
           audioSyncMap.set(`${shape.id}:ts`, Date.now());
         }, 'audio-sync');
       }
     },
-    [syncPlayback, isTutor, audioSyncMap, shape.id],
+    [syncPlayback, audioSyncMap, shape.id],
   );
 
   const toggleMute = useCallback(() => {

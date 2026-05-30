@@ -29,8 +29,8 @@ import { useDropdownActions } from './hooks/useDropdownActions';
 import { useEffect, useRef, useState } from 'react';
 import { useCurrentUser } from 'common.services';
 import { toast } from 'sonner';
-import { useEditor } from 'tldraw';
-import { useEraserSettingsStore, useTldrawStore } from '../../../store';
+import { useEditor } from '@ibodr/draw';
+import { useDrawStore, useEraserSettingsStore } from '../../../store';
 import { HotkeysHelpModal } from '../shared/HotkeysHelp';
 import { ERASER_CATEGORIES, INPUT_MODE_OPTIONS, SHAPE_CATEGORIES } from '../../../config';
 import { areAllEraserCategoriesEnabled } from '../../../utils/areAllEraserCategoriesEnabled';
@@ -80,7 +80,7 @@ const BOARD_ELEMENTS_WARNING_THRESHOLD = 3000;
 
 export const SettingsDropdown = () => {
   const editor = useEditor();
-  const { inputMode, setInputMode } = useTldrawStore();
+  const { inputMode, setInputMode } = useDrawStore();
   const {
     isReadonly,
     saveCanvas,

@@ -1,4 +1,4 @@
 export { useUIStore } from './useUIStore';
-export { useTldrawStore } from './useTldrawStore';
+export { useDrawStore } from './useDrawStore';
 export { useFollowUserStore } from './useFollowUserStore';
 export { useEraserSettingsStore } from './useEraserSettingsStore';

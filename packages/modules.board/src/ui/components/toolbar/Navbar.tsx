@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import {
   DropdownMenu,
@@ -7,19 +7,23 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { MenuDots } from '@xipkg/icons';
-import { track, useEditor } from 'tldraw';
+import { track, useEditor } from '@ibodr/draw';
 import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
 import { UndoRedo } from './UndoRedo';
-import { useTldrawStore } from '../../../store';
-import { useTldrawStyles, useHotkeys } from '../../../hooks';
-import { NavbarButton } from '../shared';
+import { useDrawStore } from '../../../store';
+import { useDrawStyles, useHotkeys } from '../../../hooks';
+import { NavbarButton, ToolPopup } from '../shared';
 import { ArrowsPopup, PenPopup, StickerPopup } from '../popups';
 import { ShapesPopup } from '../popups/Shapes';
 import { insertImage } from '../../../features/pickAndInsertImage';
 import { insertPdf } from '../../../features/pickAndInsertPdf';
 import { insertAudio, AUDIO_ACCEPT } from '../../../features/pickAndInsertAudio';
+import { insertFile, FILE_ACCEPT } from '../../../features/pickAndInsertFile';
+import { initFileDB, useRetryFileQueue } from 'common.services';
+import { EmojiPickerPopup } from '@xipkg/emojipicker';
+import { EmojiStyle } from '../../../shapes/shapeStyles';
 
-// Маппинг инструментов Kanva на Tldraw
+// Маппинг инструментов Kanva на Draw
 const toolMapping: Record<string, string> = {
   select: 'select',
   hand: 'hand',
@@ -30,7 +34,8 @@ const toolMapping: Record<string, string> = {
   eraser: 'eraser',
   sticker: 'note', // Используем note как аналог стикера
   frame: 'frame',
-  // asset: 'image', // Убираем image, так как его нет в Tldraw
+  emoji: 'emoji',
+  // asset: 'image', // Убираем image, так как его нет в Draw
 };
 
 export const Navbar = track(
@@ -47,10 +52,43 @@ export const Navbar = track(
     canRedo: boolean;
     token: string;
   }) => {
-    const { pencilColor, pencilThickness, pencilOpacity, stickerColor } = useTldrawStore();
-    const { resetToDefaults, setColor, setThickness, setOpacity } = useTldrawStyles();
+    const {
+      pencilColor,
+      pencilThickness,
+      pencilOpacity,
+      stickerColor,
+      recentEmojis,
+      addRecentEmoji,
+    } = useDrawStore();
+    const { resetToDefaults, setColor, setThickness, setOpacity } = useDrawStyles();
     const [activePopup, setActivePopup] = React.useState<string | null>(null);
     const editor = useEditor();
+    const { processQueue, isOnline, addToQueue } = useRetryFileQueue();
+
+    useEffect(() => {
+      if (!isOnline) return;
+
+      (async () => {
+        const fileQueue = await processQueue();
+
+        fileQueue?.forEach(({ fileId, shapeId }) => {
+          if (!editor.getShape(shapeId)) return;
+
+          editor.updateShape({
+            id: shapeId,
+            type: 'file',
+            props: {
+              src: fileId,
+              status: 'uploaded',
+            },
+          });
+        });
+      })();
+    }, [isOnline, processQueue, editor]);
+
+    useEffect(() => {
+      initFileDB();
+    }, []);
 
     // Добавляем горячие клавиши
     useHotkeys();
@@ -116,7 +154,8 @@ export const Navbar = track(
         eraser: 'eraser',
         note: 'sticker',
         frame: 'frame',
-        // image: 'asset', // Убираем, так как image не существует в Tldraw
+        emoji: 'emoji',
+        // image: 'asset', // Убираем, так как image не существует в Draw
       };
 
       return reverseMapping[currentToolId] || 'select';
@@ -152,6 +191,24 @@ export const Navbar = track(
             await insertAudio(editor, file, token);
           } catch (error) {
             console.error('Ошибка при загрузке аудио:', error);
+          }
+        }
+      };
+      input.click();
+    };
+
+    const handleInsertFile = () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = FILE_ACCEPT;
+      input.multiple = false;
+      input.onchange = async (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (file) {
+          try {
+            await insertFile(editor, file, token, addToQueue);
+          } catch (error) {
+            console.error('Ошибка при загрузке файла:', error);
           }
         }
       };
@@ -302,6 +359,33 @@ export const Navbar = track(
                     );
                   }
 
+                  if (item.action === 'emoji') {
+                    return wrap(
+                      <ToolPopup
+                        open={isPopupOpen('emoji')}
+                        onOpenChange={(open) => handlePopupToggle('emoji', open)}
+                        isCloseOnOutside
+                        content={
+                          <EmojiPickerPopup
+                            recentEmojis={recentEmojis}
+                            onEmojiSelect={(emoji) => {
+                              editor.setStyleForNextShapes(EmojiStyle, emoji);
+                              addRecentEmoji(emoji);
+                            }}
+                          />
+                        }
+                      >
+                        <NavbarButton
+                          icon={item.icon}
+                          title={item.title}
+                          isActive={isActive}
+                          className={mobileButtonClass}
+                          onClick={() => handleSelectTool(item.action)}
+                        />
+                      </ToolPopup>,
+                    );
+                  }
+
                   return wrap(
                     <TooltipProvider>
                       <Tooltip>
@@ -348,6 +432,9 @@ export const Navbar = track(
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={handleInsertAudio} className="rounded-lg px-3">
                         Загрузить аудио
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleInsertFile} className="rounded-lg px-3">
+                        Загрузить файл
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

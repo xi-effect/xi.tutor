@@ -4,9 +4,8 @@ import { LoadingScreen } from 'common.ui';
 import { Suspense, lazy } from 'react';
 import { z } from 'zod';
 
-// Используем новую версию доски на базе Tldraw с дополнительной оптимизацией
-const TldrawBoard = lazy(() =>
-  import('modules.board').then((module) => ({ default: module.TldrawBoard })),
+const DrawBoard = lazy(() =>
+  import('modules.board').then((module) => ({ default: module.DrawBoard })),
 );
 
 const paramsSchema = z.object({
@@ -41,7 +40,7 @@ function ClassroomsBoardPage() {
   return (
     <div className="h-full min-h-0">
       <Suspense fallback={<LoadingScreen />}>
-        <TldrawBoard />
+        <DrawBoard />
       </Suspense>
     </div>
   );

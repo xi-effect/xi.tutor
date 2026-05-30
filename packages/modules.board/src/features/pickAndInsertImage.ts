@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { Editor, TLAssetId, TLShapeId } from 'tldraw';
+import { Editor, DrAssetId, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { myAssetStore } from './imageStore';
 
@@ -52,8 +52,8 @@ export async function insertImage(
   bitmap.close();
 
   // 2️ Создаём shape + asset с временным data URL
-  const tempAssetId = `asset:${nanoid()}` as TLAssetId;
-  const shapeId = `shape:${nanoid()}` as TLShapeId;
+  const tempAssetId = `asset:${nanoid()}` as DrAssetId;
+  const shapeId = `shape:${nanoid()}` as DrShapeId;
 
   const fileAsDataUrl = await new Promise<string>((resolve, reject) => {
     const reader = new FileReader();

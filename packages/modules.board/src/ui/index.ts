@@ -1,1 +1,1 @@
-export { TldrawBoard } from './TldrawBoard';
+export { DrawBoard } from './DrawBoard';

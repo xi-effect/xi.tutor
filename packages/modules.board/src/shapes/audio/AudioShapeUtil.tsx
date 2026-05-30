@@ -1,4 +1,4 @@
-import { BaseBoxShapeUtil, HTMLContainer, TLResizeInfo, resizeBox } from 'tldraw';
+import { BaseBoxShapeUtil, HTMLContainer, DrResizeInfo, resizeBox } from '@ibodr/draw';
 import {
   AUDIO_MIN_WIDTH,
   AUDIO_SHAPE_HEIGHT,
@@ -24,6 +24,7 @@ export class AudioShapeUtil extends BaseBoxShapeUtil<AudioShape> {
       syncPlayback: false,
       studentsCanAddTimecodes: false,
       timecodesVisibleByDefault: true,
+      studentsCanControlPlayback: false,
       timecodes: [],
     };
   }
@@ -40,7 +41,7 @@ export class AudioShapeUtil extends BaseBoxShapeUtil<AudioShape> {
     return false;
   }
 
-  override onResize(shape: AudioShape, info: TLResizeInfo<AudioShape>) {
+  override onResize(shape: AudioShape, info: DrResizeInfo<AudioShape>) {
     const h = computeAudioShapeHeight(shape.props.timecodes.length);
     const next = resizeBox(shape, info, {
       minWidth: AUDIO_MIN_WIDTH,
@@ -66,7 +67,9 @@ export class AudioShapeUtil extends BaseBoxShapeUtil<AudioShape> {
     );
   }
 
-  override indicator(shape: AudioShape) {
-    return <rect width={shape.props.w} height={shape.props.h} rx={12} ry={12} />;
+  override getIndicatorPath(shape: AudioShape) {
+    const path = new Path2D();
+    path.rect(0, 0, shape.props.w, shape.props.h);
+    return path;
   }
 }
