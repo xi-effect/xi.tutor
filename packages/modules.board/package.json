@@ -7,7 +7,8 @@
 	},
 	"license": "MIT",
 	"scripts": {
-		"lint": "eslint ."
+		"lint": "eslint .",
+		"parse-ydoc": "node scripts/parse-board-ydoc.mjs"
 	},
 	"dependencies": {
 		"@hocuspocus/provider": "3.4.4",
