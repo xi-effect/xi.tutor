@@ -14,17 +14,12 @@
 @source "../../../packages/modules.board/src";
 @source "../../../packages/modules.calls/src";
 /* calls-tailwind-sources:start */
-/* link: исходники xi.calls — Tailwind не видит className без этих путей */
-@source "../../../../xi.calls/packages/calls.ui/src";
-@source "../../../../xi.calls/packages/calls/src";
-@source "../../../../xi.calls/packages/calls.chat/src";
-@source "../../../../xi.calls/packages/calls.compactview/src";
-@source "../../../../xi.calls/packages/calls.risehand/src";
-@source "../../../../xi.calls/packages/calls.hooks/src";
-@source "../../../../xi.calls/packages/calls.providers/src";
-@source "../../../../xi.calls/packages/calls.ui/node_modules/@xipkg";
-@source "../../../../xi.calls/packages/calls/node_modules/@xipkg";
-@source "../../../../xi.calls/node_modules/@xipkg";
+/* npm: className в dist/*.mjs — дополнительно к @source "../../../node_modules/@xipkg" */
+@source "../../../node_modules/@xipkg/calls-ui/dist";
+@source "../../../node_modules/@xipkg/calls/dist";
+@source "../../../node_modules/@xipkg/calls-chat/dist";
+@source "../../../node_modules/@xipkg/calls-compactview/dist";
+@source "../../../node_modules/@xipkg/calls-risehand/dist";
 /* calls-tailwind-sources:end */
 @source "../../../packages/modules.calendar/src";
 @source "../../../packages/modules.editor/src";
