@@ -24,6 +24,7 @@ import { UndoRedo } from '../toolbar/UndoRedo';
 import { extractFileIdFromUrl } from '../../../utils/resolveAssetUrl';
 import { XiGeoTool } from '../../../shapes/geo';
 import { EmojiTool } from '../../../shapes/emoji';
+import { isShapeErasable } from '../../../utils';
 
 export const DrawCanvas = ({
   token,
@@ -328,6 +329,16 @@ export const DrawCanvas = ({
                 if (mode === 'pen') return { ...next, isPenMode: true };
                 if (mode === 'mouse') return { ...next, isPenMode: false };
                 return next;
+              });
+
+              editor.sideEffects.registerBeforeDeleteHandler('shape', (shape) => {
+                if (editor.getCurrentToolId() !== 'eraser') {
+                  return;
+                }
+
+                if (!isShapeErasable(shape.type)) {
+                  return false;
+                }
               });
 
               const win = window as unknown as {
