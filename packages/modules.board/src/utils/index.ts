@@ -13,3 +13,11 @@ export {
   updateProfile,
 } from './yjsProfiling';
 export { BOARD_SCHEMA_VERSION } from './yjsConstants';
+export {
+  applyYjsBoardUpdate,
+  ensureYjsStorePopulated,
+  getYjsBoardDocInfo,
+  readYjsBoardRecords,
+  ydocIdFromBoardDumpFilename,
+  type YjsBoardDocInfo,
+} from './parseYjsBoardDoc';
