@@ -26,6 +26,55 @@ type NotificationActionFn = (payload: NotificationT['payload']) => string | null
  */
 type InvalidationKey = string | readonly [string, ...unknown[]];
 
+const getScheduleCacheInvalidationKeys = (
+  classroomId: number,
+  options?: { includeInstanceDetails?: boolean },
+): InvalidationKey[] => {
+  const keys: InvalidationKey[] = [
+    schedulerQueryKeys.tutorAllForClassroom(classroomId),
+    schedulerQueryKeys.studentAllForClassroom(classroomId),
+    schedulerQueryKeys.tutorScheduleAll(),
+    schedulerQueryKeys.studentScheduleAll(),
+  ];
+
+  if (options?.includeInstanceDetails) {
+    keys.push(
+      schedulerQueryKeys.tutorEventInstanceDetailsForClassroom(classroomId),
+      schedulerQueryKeys.studentEventInstanceDetailsForClassroom(classroomId),
+      schedulerQueryKeys.tutorRepeatedEventInstanceDetailsForClassroom(classroomId),
+      schedulerQueryKeys.studentRepeatedEventInstanceDetailsForClassroom(classroomId),
+    );
+  }
+
+  return keys;
+};
+
+const buildClassroomEventInstanceAction: NotificationActionFn = (payload) => {
+  const classroomId = payload.classroom_id;
+  const eventInstanceId =
+    'event_instance_id' in payload ? String(payload.event_instance_id).trim() : '';
+  if (typeof classroomId !== 'number' || !eventInstanceId) return null;
+  const q = new URLSearchParams({ tab: 'schedule', event_instance_id: eventInstanceId });
+  return `/classrooms/${classroomId}?${q.toString()}`;
+};
+
+const buildClassroomScheduleFocusAction: NotificationActionFn = (payload) => {
+  const classroomId = payload.classroom_id;
+  const focusedAt = 'focused_at' in payload ? String(payload.focused_at).trim() : '';
+  if (typeof classroomId !== 'number' || !focusedAt) return null;
+  const q = new URLSearchParams({ tab: 'schedule', focused_at: focusedAt });
+  return `/classrooms/${classroomId}?${q.toString()}`;
+};
+
+const scheduleOnNotify = (
+  payload: NotificationT['payload'],
+  options?: { includeInstanceDetails?: boolean },
+): InvalidationKey[] | null => {
+  const classroomId = payload.classroom_id;
+  if (typeof classroomId !== 'number') return null;
+  return getScheduleCacheInvalidationKeys(classroomId, options);
+};
+
 /**
  * Конфигурация уведомления
  */
@@ -66,132 +115,51 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
   },
 
   single_classroom_event_created_v1: {
-    title: 'Новое занятие',
-    description: () => 'Одноразовое занятие добавлено в расписание',
-    action: (payload) => {
-      const classroomId = payload.classroom_id;
-      const eventInstanceId =
-        'event_instance_id' in payload ? String(payload.event_instance_id).trim() : '';
-      if (typeof classroomId !== 'number' || !eventInstanceId) return null;
-      const q = new URLSearchParams({ tab: 'schedule', event_instance_id: eventInstanceId });
-      return `/classrooms/${classroomId}?${q.toString()}`;
-    },
+    title: 'Новое занятие в расписании',
+    description: () => 'Нажмите, чтобы узнать подробности',
+    action: buildClassroomEventInstanceAction,
     invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
-    onNotify: (payload) => {
-      const cid = payload.classroom_id;
-      if (typeof cid !== 'number') return null;
-      return [
-        schedulerQueryKeys.tutorAllForClassroom(cid),
-        schedulerQueryKeys.studentAllForClassroom(cid),
-      ];
-    },
+    onNotify: (payload) => scheduleOnNotify(payload, { includeInstanceDetails: true }),
   },
 
   classroom_event_instance_rescheduled_v1: {
     title: 'Занятие перенесено',
-    description: () => 'Время занятия в расписании изменено',
-    action: (payload) => {
-      const classroomId = payload.classroom_id;
-      const eventInstanceId =
-        'event_instance_id' in payload ? String(payload.event_instance_id).trim() : '';
-      if (typeof classroomId !== 'number' || !eventInstanceId) return null;
-      const q = new URLSearchParams({ tab: 'schedule', event_instance_id: eventInstanceId });
-      return `/classrooms/${classroomId}?${q.toString()}`;
-    },
+    description: () => 'Изменение касается только этого занятия. Нажмите, чтобы узнать подробности',
+    action: buildClassroomEventInstanceAction,
     invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
-    onNotify: (payload) => {
-      const cid = payload.classroom_id;
-      if (typeof cid !== 'number') return null;
-      return [
-        schedulerQueryKeys.tutorAllForClassroom(cid),
-        schedulerQueryKeys.studentAllForClassroom(cid),
-      ];
-    },
+    onNotify: (payload) => scheduleOnNotify(payload, { includeInstanceDetails: true }),
   },
 
   classroom_event_instance_cancelled_v1: {
     title: 'Занятие отменено',
-    description: () => 'Конкретное занятие убрано из расписания',
-    action: (payload) => {
-      const classroomId = payload.classroom_id;
-      const eventInstanceId =
-        'event_instance_id' in payload ? String(payload.event_instance_id).trim() : '';
-      if (typeof classroomId !== 'number' || !eventInstanceId) return null;
-      const q = new URLSearchParams({ tab: 'schedule', event_instance_id: eventInstanceId });
-      return `/classrooms/${classroomId}?${q.toString()}`;
-    },
+    description: () => 'Изменение касается только этого занятия. Нажмите, чтобы узнать подробности',
+    action: buildClassroomEventInstanceAction,
     invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
-    onNotify: (payload) => {
-      const cid = payload.classroom_id;
-      if (typeof cid !== 'number') return null;
-      return [
-        schedulerQueryKeys.tutorAllForClassroom(cid),
-        schedulerQueryKeys.studentAllForClassroom(cid),
-      ];
-    },
+    onNotify: (payload) => scheduleOnNotify(payload, { includeInstanceDetails: true }),
   },
 
   repeating_classroom_event_created_v1: {
-    title: 'Новая серия занятий',
-    description: () => 'В расписание добавлено повторяющееся занятие',
-    action: (payload) => {
-      const classroomId = payload.classroom_id;
-      const focusedAt = 'focused_at' in payload ? String(payload.focused_at).trim() : '';
-      if (typeof classroomId !== 'number' || !focusedAt) return null;
-      const q = new URLSearchParams({ tab: 'schedule', focused_at: focusedAt });
-      return `/classrooms/${classroomId}?${q.toString()}`;
-    },
+    title: 'В ваше расписание добавлены новые регулярные занятия',
+    description: () => 'Нажмите, чтобы узнать подробности',
+    action: buildClassroomScheduleFocusAction,
     invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
-    onNotify: (payload) => {
-      const cid = payload.classroom_id;
-      if (typeof cid !== 'number') return null;
-      return [
-        schedulerQueryKeys.tutorAllForClassroom(cid),
-        schedulerQueryKeys.studentAllForClassroom(cid),
-      ];
-    },
+    onNotify: (payload) => scheduleOnNotify(payload, { includeInstanceDetails: true }),
   },
 
   classroom_event_repetition_updated_v1: {
-    title: 'Повторение занятий обновлено',
-    description: () => 'Изменены правила повторения в расписании',
-    action: (payload) => {
-      const classroomId = payload.classroom_id;
-      const focusedAt = 'focused_at' in payload ? String(payload.focused_at).trim() : '';
-      if (typeof classroomId !== 'number' || !focusedAt) return null;
-      const q = new URLSearchParams({ tab: 'schedule', focused_at: focusedAt });
-      return `/classrooms/${classroomId}?${q.toString()}`;
-    },
+    title: 'Изменилось расписание регулярных занятий',
+    description: () => 'Изменения коснутся всех будущих занятий. Нажмите, чтобы узнать подробности',
+    action: buildClassroomScheduleFocusAction,
     invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
-    onNotify: (payload) => {
-      const cid = payload.classroom_id;
-      if (typeof cid !== 'number') return null;
-      return [
-        schedulerQueryKeys.tutorAllForClassroom(cid),
-        schedulerQueryKeys.studentAllForClassroom(cid),
-      ];
-    },
+    onNotify: (payload) => scheduleOnNotify(payload, { includeInstanceDetails: true }),
   },
 
   classroom_event_repetition_cancelled_v1: {
-    title: 'Повторение отменено',
-    description: () => 'Серия занятий больше не повторяется',
-    action: (payload) => {
-      const classroomId = payload.classroom_id;
-      const focusedAt = 'focused_at' in payload ? String(payload.focused_at).trim() : '';
-      if (typeof classroomId !== 'number' || !focusedAt) return null;
-      const q = new URLSearchParams({ tab: 'schedule', focused_at: focusedAt });
-      return `/classrooms/${classroomId}?${q.toString()}`;
-    },
+    title: 'Некоторые будущие занятия отменены',
+    description: () => 'Нажмите, чтобы узнать подробности и посмотреть обновлённое расписание',
+    action: buildClassroomScheduleFocusAction,
     invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
-    onNotify: (payload) => {
-      const cid = payload.classroom_id;
-      if (typeof cid !== 'number') return null;
-      return [
-        schedulerQueryKeys.tutorAllForClassroom(cid),
-        schedulerQueryKeys.studentAllForClassroom(cid),
-      ];
-    },
+    onNotify: (payload) => scheduleOnNotify(payload, { includeInstanceDetails: true }),
   },
 
   enrollment_created_v1: {

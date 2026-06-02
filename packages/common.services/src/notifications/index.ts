@@ -1,4 +1,11 @@
 export { NotificationsProvider, useNotificationsContext } from './NotificationsProvider';
+export {
+  navigateFromNotification,
+  openNotificationLinkWithRouter,
+  parseNotificationUrl,
+  buildNotificationHref,
+  registerNotificationNavigator,
+} from './notificationNavigation';
 export * from './notificationUtils';
 export { useChangeContactsVisibility } from './useChangeContactsVisibility';
 export { useSystemNotificationSettings } from './useSystemNotificationSettings';

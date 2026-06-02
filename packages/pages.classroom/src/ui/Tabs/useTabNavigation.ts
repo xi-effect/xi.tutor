@@ -22,13 +22,22 @@ export const useTabNavigation = ({
     : (search.tab ?? 'overview');
 
   const handleTabChange = (value: string) => {
-    const filteredSearch = search.call ? { call: search.call } : {};
     navigate({
       // @ts-ignore
-      search: {
-        // @ts-ignore
-        tab: normalizeMaterialTabs && value === 'materials' ? 'boards' : value,
-        ...filteredSearch,
+      search: (prev) => {
+        const prevSearch = prev as SearchParams;
+        const nextTab = normalizeMaterialTabs && value === 'materials' ? 'boards' : value;
+        const next: SearchParams = {
+          ...prevSearch,
+          tab: nextTab,
+        };
+
+        if (nextTab !== 'schedule') {
+          delete next.event_instance_id;
+          delete next.focused_at;
+        }
+
+        return next;
       },
     });
   };

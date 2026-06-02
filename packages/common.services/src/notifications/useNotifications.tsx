@@ -13,6 +13,7 @@ import {
   generateNotificationTitle,
   getNotificationInvalidationKeys,
 } from './notificationUtils';
+import { navigateFromNotification } from './notificationNavigation';
 import { shouldUseSystemNotifications, showSystemNotification } from './webNotifications';
 import { useGetUnreadCount } from './useGetUnreadCount';
 import { useMarkNotificationAsRead } from './useMarkNotificationAsRead';
@@ -83,17 +84,9 @@ export const useNotifications = () => {
     [],
   );
 
-  // Обработчик навигации по URL из уведомления
   const onNavigate = useCallback((url: string) => {
     try {
-      // Проверяем, является ли URL относительным путем или полным URL
-      if (url.startsWith('http://') || url.startsWith('https://')) {
-        // Внешняя ссылка - открываем в новой вкладке
-        window.open(url, '_blank', 'noopener,noreferrer');
-      } else {
-        // Внутренняя навигация - используем window.history.push
-        window.history.pushState({}, '', url);
-      }
+      navigateFromNotification(url);
     } catch (error) {
       console.error('Ошибка при навигации:', error);
     }
@@ -136,6 +129,8 @@ export const useNotifications = () => {
           keys.forEach((key) => {
             queryClient.invalidateQueries({
               queryKey: Array.isArray(key) ? [...key] : [key],
+              // Расписание часто не на экране — принудительно обновляем кеш в фоне
+              refetchType: 'all',
             });
           });
         }
