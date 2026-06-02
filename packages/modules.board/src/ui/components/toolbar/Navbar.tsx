@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import {
   DropdownMenu,
@@ -18,6 +18,8 @@ import { ShapesPopup } from '../popups/Shapes';
 import { insertImage } from '../../../features/pickAndInsertImage';
 import { insertPdf } from '../../../features/pickAndInsertPdf';
 import { insertAudio, AUDIO_ACCEPT } from '../../../features/pickAndInsertAudio';
+import { insertFile, FILE_ACCEPT } from '../../../features/pickAndInsertFile';
+import { initFileDB, useRetryFileQueue } from 'common.services';
 import { EmojiPickerPopup } from '@xipkg/emojipicker';
 import { EmojiStyle } from '../../../shapes/shapeStyles';
 
@@ -61,6 +63,32 @@ export const Navbar = track(
     const { resetToDefaults, setColor, setThickness, setOpacity } = useDrawStyles();
     const [activePopup, setActivePopup] = React.useState<string | null>(null);
     const editor = useEditor();
+    const { processQueue, isOnline, addToQueue } = useRetryFileQueue();
+
+    useEffect(() => {
+      if (!isOnline) return;
+
+      (async () => {
+        const fileQueue = await processQueue();
+
+        fileQueue?.forEach(({ fileId, shapeId }) => {
+          if (!editor.getShape(shapeId)) return;
+
+          editor.updateShape({
+            id: shapeId,
+            type: 'file',
+            props: {
+              src: fileId,
+              status: 'uploaded',
+            },
+          });
+        });
+      })();
+    }, [isOnline, processQueue, editor]);
+
+    useEffect(() => {
+      initFileDB();
+    }, []);
 
     // Добавляем горячие клавиши
     useHotkeys();
@@ -163,6 +191,24 @@ export const Navbar = track(
             await insertAudio(editor, file, token);
           } catch (error) {
             console.error('Ошибка при загрузке аудио:', error);
+          }
+        }
+      };
+      input.click();
+    };
+
+    const handleInsertFile = () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = FILE_ACCEPT;
+      input.multiple = false;
+      input.onchange = async (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (file) {
+          try {
+            await insertFile(editor, file, token, addToQueue);
+          } catch (error) {
+            console.error('Ошибка при загрузке файла:', error);
           }
         }
       };
@@ -386,6 +432,9 @@ export const Navbar = track(
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={handleInsertAudio} className="rounded-lg px-3">
                         Загрузить аудио
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={handleInsertFile} className="rounded-lg px-3">
+                        Загрузить файл
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

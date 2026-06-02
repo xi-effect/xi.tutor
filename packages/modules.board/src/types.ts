@@ -24,7 +24,8 @@ export type ToolType =
   | 'geo'
   | 'frame'
   | 'xi-geo'
-  | 'emoji';
+  | 'emoji'
+  | 'file';
 
 export type ElementType =
   | 'line'
@@ -40,7 +41,8 @@ export type ElementType =
   | 'geo'
   | 'frame'
   | 'xi-geo'
-  | 'emoji';
+  | 'emoji'
+  | 'file';
 
 export interface BoardElement {
   id: string;

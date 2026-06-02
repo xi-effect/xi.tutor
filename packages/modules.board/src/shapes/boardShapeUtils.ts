@@ -6,6 +6,7 @@ import { XiGeoShapeUtil } from './geo';
 import { CustomImageShapeUtil } from './image';
 import { StickerShapeUtil } from './sticker';
 import { EmojiShapeUtil } from './emoji';
+import { FileShapeUtil } from './file';
 
 /** Кастомные shape utils — для `<Draw shapeUtils={...}>` (Draw сам мержит с defaultShapeUtils). */
 export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
@@ -16,6 +17,7 @@ export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
   CustomImageShapeUtil,
   StickerShapeUtil,
   EmojiShapeUtil,
+  FileShapeUtil,
 ];
 
 function mergeShapeUtilsByType(

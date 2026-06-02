@@ -15,6 +15,10 @@ type DrawBoardProps = {
   isDemo?: boolean;
 };
 
+const localYdocDumpUrl = import.meta.env.VITE_BOARD_LOCAL_YDOC_URL as string | undefined;
+const localYdocDumpMode = import.meta.env.DEV && Boolean(localYdocDumpUrl);
+const localYdocStorageToken = import.meta.env.VITE_BOARD_LOCAL_STORAGE_TOKEN as string | undefined;
+
 export const DrawBoard = ({ isDemo = false }: DrawBoardProps) => {
   const { classroomId, boardId, materialId } = useParams({ strict: false });
 
@@ -43,16 +47,20 @@ export const DrawBoard = ({ isDemo = false }: DrawBoardProps) => {
     id: materialIdValue || '',
   });
 
-  if (isLoading) return <LoadingScreen />;
+  if (isLoading && !localYdocDumpMode) return <LoadingScreen />;
 
-  // В демо-режиме не проверяем наличие storageItem
-  if (!isDemo && (!storageItem?.ydoc_id || !storageItem?.storage_token)) {
+  // В демо-режиме и при локальном Y.Doc из БД не требуем storageItem с API
+  if (!isDemo && !localYdocDumpMode && (!storageItem?.ydoc_id || !storageItem?.storage_token)) {
     return <div>Material not found</div>;
   }
 
+  const canvasToken = isDemo
+    ? DEMO_STORAGE_TOKEN
+    : (localYdocStorageToken ?? storageItem?.storage_token ?? '');
+
   return (
     <YjsProvider storageItem={storageItem} isDemo={isDemo}>
-      <DrawCanvas token={isDemo ? DEMO_STORAGE_TOKEN : storageItem!.storage_token} />
+      <DrawCanvas token={canvasToken} />
     </YjsProvider>
   );
 };

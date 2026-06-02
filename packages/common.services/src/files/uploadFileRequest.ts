@@ -1,8 +1,5 @@
-import { useMutation } from '@tanstack/react-query';
 import { filesApiConfig, FilesQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
-import { handleError } from '..';
-import { toast } from 'sonner';
 
 export type UploadFileVars = { file: File; token?: string };
 
@@ -22,14 +19,9 @@ export async function uploadFileRequest({ file, token }: UploadFileVars): Promis
     },
   });
 
+  if (response.status === 422)
+    throw new Error('Неподдерживаемый формат файла. Пожалуйста, выберите другой файл.');
+
   if (response.status !== 201) throw new Error(`File upload failed: ${response.status}`);
   return response.data.id as string;
 }
-
-export const useUploadFile = () => {
-  return useMutation<string, Error, UploadFileVars>({
-    mutationFn: uploadFileRequest,
-    onSuccess: () => toast('Файл успешно загружен'),
-    onError: (err) => handleError(err, 'files'),
-  });
-};
