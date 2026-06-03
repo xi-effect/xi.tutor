@@ -15,7 +15,6 @@ import { callsSessionPort } from './callsSession';
 import { createCallsRuntimeConfig } from './createCallsRuntimeConfig';
 import { useCallsDeps } from './useCallsDeps';
 
-import '@livekit/components-styles';
 import '@xipkg/calls-ui/video-security.css';
 import '@xipkg/calls-ui/driver.css';
 import '@xipkg/calls-ui/grid.css';
