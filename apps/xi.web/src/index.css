@@ -13,6 +13,14 @@
 @source "../../../packages/modules.navigation/src";
 @source "../../../packages/modules.board/src";
 @source "../../../packages/modules.calls/src";
+/* calls-tailwind-sources:start */
+/* npm: className в dist/*.mjs — дополнительно к @source "../../../node_modules/@xipkg" */
+@source "../../../node_modules/@xipkg/calls-ui/dist";
+@source "../../../node_modules/@xipkg/calls/dist";
+@source "../../../node_modules/@xipkg/calls-chat/dist";
+@source "../../../node_modules/@xipkg/calls-compactview/dist";
+@source "../../../node_modules/@xipkg/calls-risehand/dist";
+/* calls-tailwind-sources:end */
 @source "../../../packages/modules.calendar/src";
 @source "../../../packages/modules.editor/src";
 @source "../../../packages/common.ui/src";

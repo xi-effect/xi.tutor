@@ -34,5 +34,5 @@ export const Route = createFileRoute('/(app)/_layout/call/$callId')({
 function CallPage() {
   // @ts-ignore
   // const { callId } = Route.useParams();
-  return <CallModule firstId="1" secondId="2" />;
+  return <CallModule />;
 }
