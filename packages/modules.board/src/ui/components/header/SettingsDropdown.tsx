@@ -1,6 +1,7 @@
 import { Button } from '@xipkg/button';
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
@@ -12,7 +13,7 @@ import {
 } from '@xipkg/dropdown';
 import {
   Check,
-  Cursor,
+  Eraser,
   File,
   InfoCircle,
   Locked,
@@ -29,9 +30,10 @@ import { useEffect, useRef, useState } from 'react';
 import { useCurrentUser } from 'common.services';
 import { toast } from 'sonner';
 import { useEditor } from '@ibodr/draw';
-import type { InputMode } from '../../../store/useDrawStore';
-import { useDrawStore } from '../../../store';
+import { useDrawStore, useEraserSettingsStore } from '../../../store';
 import { HotkeysHelpModal } from '../shared/HotkeysHelp';
+import { ERASER_CATEGORIES, INPUT_MODE_OPTIONS, SHAPE_CATEGORIES } from '../../../config';
+import { areAllEraserCategoriesEnabled } from '../../../utils/areAllEraserCategoriesEnabled';
 
 type ActionPropsT = {
   onClick: () => void;
@@ -73,22 +75,6 @@ const ClearBoardAction = ({ onClick }: ActionPropsT) => {
   );
 };
 
-const INPUT_MODE_OPTIONS: { value: InputMode; label: string; icon: React.ReactNode }[] = [
-  { value: 'auto', label: 'Авто (по устройству)', icon: null },
-  { value: 'pen', label: 'Перо', icon: <Pen /> },
-  { value: 'mouse', label: 'Мышь', icon: <Cursor /> },
-];
-
-const SHAPE_CATEGORIES: { label: string; types: string[] }[] = [
-  { label: 'Изображения', types: ['image'] },
-  { label: 'Текст', types: ['text'] },
-  { label: 'Рисунки', types: ['draw', 'highlight', 'line'] },
-  { label: 'Фигуры', types: ['geo'] },
-  { label: 'Заметки', types: ['note'] },
-  { label: 'Стрелки', types: ['arrow'] },
-  { label: 'Медиа', types: ['pdf', 'audio', 'video', 'embed', 'bookmark', 'file'] },
-];
-
 const BOARD_ELEMENTS_LIMIT = 4000;
 const BOARD_ELEMENTS_WARNING_THRESHOLD = 3000;
 
@@ -117,6 +103,10 @@ export const SettingsDropdown = () => {
   const progressPercent = Math.min((elementsCount / BOARD_ELEMENTS_LIMIT) * 100, 100);
   const isWarningZone = elementsCount >= BOARD_ELEMENTS_WARNING_THRESHOLD;
   const isLimitReached = elementsCount >= BOARD_ELEMENTS_LIMIT;
+
+  const { settings, toggleCategory, toggleAll } = useEraserSettingsStore();
+
+  const allChecked = areAllEraserCategoriesEnabled(settings);
 
   const handleOpenHotkeysHelp = (open: boolean) => {
     if (open) {
@@ -212,7 +202,7 @@ export const SettingsDropdown = () => {
               />
             </div>
           </div>
-          <DropdownMenuGroup>
+          <DropdownMenuGroup className="space-y-0.5">
             <DropdownMenuItem
               className="flex gap-2 p-1"
               onClick={() => handleOpenHotkeysHelp(true)}
@@ -346,6 +336,46 @@ export const SettingsDropdown = () => {
                     >
                       <span>{label}</span>
                     </DropdownMenuItem>
+                  ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            )}
+
+            {isTutor && !isReadonly && (
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className="flex gap-2 p-1">
+                  <Eraser />
+                  <span>Ластик</span>
+                </DropdownMenuSubTrigger>
+
+                <DropdownMenuSubContent className="z-100 w-[260px]">
+                  <p className="text-gray-60 px-3 py-2 text-xs">
+                    Выберите, какие элементы можно стирать ластиком
+                  </p>
+
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuCheckboxItem
+                    checked={allChecked}
+                    onCheckedChange={() => toggleAll()}
+                    onSelect={(e) => e.preventDefault()}
+                    className="py-1.5 pr-3 pl-8"
+                  >
+                    Все элементы
+                  </DropdownMenuCheckboxItem>
+
+                  <DropdownMenuSeparator />
+
+                  {ERASER_CATEGORIES.map(({ key, label }) => (
+                    <DropdownMenuCheckboxItem
+                      key={key}
+                      checked={settings[key]}
+                      onCheckedChange={() => toggleCategory(key)}
+                      onSelect={(e) => e.preventDefault()}
+                      className="py-1.5 pr-3 pl-8"
+                    >
+                      {label}
+                    </DropdownMenuCheckboxItem>
                   ))}
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
