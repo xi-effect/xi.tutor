@@ -201,6 +201,7 @@ export const ScheduleDateCarousel = ({
         className="text-gray-80 hover:bg-gray-10 flex h-[48px] w-[36px] min-w-[36px] items-center justify-center rounded-lg p-0"
         onClick={goPrev}
         disabled={carouselStartIndex === 0}
+        data-umami-event="schedule-date-carousel-prev"
       >
         <ArrowLeft className="fill-brand-80 h-5 w-5" />
       </Button>
@@ -229,6 +230,8 @@ export const ScheduleDateCarousel = ({
                 <button
                   type="button"
                   onClick={() => handleSelectDate(date)}
+                  data-umami-event="schedule-date-select"
+                  data-umami-event-is-today={isToday ? 'true' : 'false'}
                   className={cn(
                     styles.dayPillBase,
                     !isSelected && styles.dayPillDefaultHover,
@@ -275,6 +278,7 @@ export const ScheduleDateCarousel = ({
         className="text-gray-80 hover:bg-gray-10 flex h-[48px] w-[36px] min-w-[36px] shrink-0 items-center justify-center rounded-lg p-0"
         onClick={goNext}
         disabled={carouselStartIndex >= maxStartIndex}
+        data-umami-event="schedule-date-carousel-next"
       >
         <ArrowRight className="fill-brand-80 h-5 w-5" />
       </Button>

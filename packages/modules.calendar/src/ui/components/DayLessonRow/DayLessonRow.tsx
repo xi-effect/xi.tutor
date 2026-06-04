@@ -108,6 +108,7 @@ export const DayLessonRow = ({
               tabIndex={0}
               onClick={handleToggleDescription}
               onKeyDown={(e) => handleActivateKey(e, handleToggleDescription)}
+              data-umami-event="schedule-lesson-toggle-description"
               className={cn(
                 'flex min-h-0 w-full max-w-full min-w-0 flex-1 cursor-pointer flex-col justify-start gap-2 rounded-lg p-1 text-left text-gray-100 transition-[padding] duration-200 ease-linear',
                 'focus-visible:ring-brand-80 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
@@ -164,6 +165,7 @@ export const DayLessonRow = ({
                       size="s"
                       className="bg-gray-0/80 hover:bg-gray-10 h-[32px] w-[32px] min-w-[32px] p-0"
                       onClick={() => onReschedule?.(lesson)}
+                      data-umami-event="schedule-lesson-reschedule"
                     >
                       <CornerUpRight className="text-gray-60 h-5 w-5" />
                     </Button>
@@ -177,6 +179,7 @@ export const DayLessonRow = ({
                       size="s"
                       className="bg-gray-0/80 hover:bg-gray-10 h-[32px] w-[32px] min-w-[32px] p-0"
                       onClick={() => setChangeModalOpen(true)}
+                      data-umami-event="schedule-lesson-edit"
                     >
                       <Edit05 className="text-gray-60 h-5 w-5" />
                     </Button>
@@ -191,6 +194,7 @@ export const DayLessonRow = ({
                         size="s"
                         className="bg-gray-0/80 hover:bg-gray-10 h-[32px] w-[32px] min-w-[32px] p-0"
                         onClick={() => setCancelModalOpen(true)}
+                        data-umami-event="schedule-lesson-cancel-init"
                       >
                         <Trash className="fill-gray-60 h-5 w-5" />
                       </Button>

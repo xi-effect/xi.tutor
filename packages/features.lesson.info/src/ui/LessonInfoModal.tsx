@@ -179,6 +179,7 @@ export const LessonInfoModal = ({
                   onReschedule();
                   onOpenChange(false);
                 }}
+                data-umami-event="lesson-info-reschedule"
               >
                 Перенести
                 <Redo className="fill-gray-70 ml-1.5 h-4 w-4" />
@@ -190,6 +191,7 @@ export const LessonInfoModal = ({
                 variant="none"
                 className="bg-gray-5 text-gray-80 xs:w-12 flex h-12 min-h-12 w-full shrink-0 items-center justify-center p-0 hover:text-gray-100 max-sm:mx-auto"
                 onClick={onCancelClick}
+                data-umami-event="lesson-info-cancel-init"
               >
                 <span className="xs:sr-only block">Отменить</span>
                 <Trash className="fill-gray-60 xs:ml-0 ml-2 h-5 w-5" />
@@ -202,6 +204,7 @@ export const LessonInfoModal = ({
                 className="bg-gray-5 text-gray-80 xs:w-12 flex h-12 min-h-12 w-full shrink-0 items-center justify-center p-0 hover:text-gray-100 max-sm:mx-auto"
                 onClick={openEdit}
                 aria-label="Редактировать"
+                data-umami-event="lesson-info-edit"
               >
                 <span className="xs:sr-only block">Редактировать</span>
                 <Edit05 className="text-gray-60 xs:ml-0 ml-2 h-5 w-5" />

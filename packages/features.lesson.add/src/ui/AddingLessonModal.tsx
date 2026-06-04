@@ -99,6 +99,7 @@ export const AddingLessonModal = ({
                 variant="text"
                 type="reset"
                 disabled={isSubmitting}
+                data-umami-event="lesson-add-cancel"
               >
                 Отменить
               </Button>
@@ -110,6 +111,7 @@ export const AddingLessonModal = ({
                 size="m"
                 loading={isSubmitting}
                 disabled={isSubmitting}
+                data-umami-event="lesson-add-submit"
               >
                 Добавить
               </Button>

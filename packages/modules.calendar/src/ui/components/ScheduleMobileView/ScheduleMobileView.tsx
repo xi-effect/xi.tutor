@@ -91,6 +91,7 @@ export const ScheduleMobileView = ({
                 size="s"
                 className="flex w-full items-center justify-center gap-2"
                 onClick={() => handleAddLesson(selectedDate)}
+                data-umami-event="schedule-add-lesson-mobile"
               >
                 <Plus className="fill-gray-0 h-4 w-4 shrink-0" />
                 {t('add_lesson')}

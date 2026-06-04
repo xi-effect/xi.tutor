@@ -128,6 +128,7 @@ export const CancelLessonModal = ({
                 size="m"
                 onClick={handleCancelThisOccurrence}
                 disabled={isPending}
+                data-umami-event="lesson-cancel-this"
               >
                 Отменить это
               </Button>
@@ -137,6 +138,7 @@ export const CancelLessonModal = ({
                 size="m"
                 onClick={handleCancelThisAndFollowing}
                 disabled={isPending}
+                data-umami-event="lesson-cancel-following"
               >
                 Отменить это и все последующие
               </Button>
@@ -148,6 +150,7 @@ export const CancelLessonModal = ({
               size="m"
               onClick={handleCancelThisOccurrence}
               disabled={isPending}
+              data-umami-event="lesson-cancel-single"
             >
               Отменить занятие
             </Button>
@@ -158,6 +161,7 @@ export const CancelLessonModal = ({
             className="text-m-base w-full cursor-pointer font-semibold text-gray-100"
             onClick={handleClose}
             disabled={isPending}
+            data-umami-event="lesson-cancel-dismiss"
           >
             Закрыть
           </Button>

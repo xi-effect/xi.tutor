@@ -180,6 +180,7 @@ export const MovingLessonModal = ({
                 variant="text"
                 type="reset"
                 disabled={isSubmitting}
+                data-umami-event="lesson-move-cancel"
               >
                 Отменить
               </Button>
@@ -191,6 +192,7 @@ export const MovingLessonModal = ({
                 size="m"
                 loading={isSubmitting}
                 disabled={isSubmitting}
+                data-umami-event="lesson-move-submit"
               >
                 Перенести
               </Button>
