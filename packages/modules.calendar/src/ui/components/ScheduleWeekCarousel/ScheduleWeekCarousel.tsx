@@ -98,6 +98,8 @@ export const ScheduleWeekCarousel = ({
                     key={date.toISOString()}
                     type="button"
                     onClick={() => onSelectedDateChange(date)}
+                    data-umami-event="schedule-date-select"
+                    data-umami-event-source="mobile-week"
                     className={cn(styles.dayPillBase)}
                     style={{
                       backgroundColor: isSelected ? 'var(--xi-brand-80)' : 'transparent',

@@ -227,10 +227,17 @@ export const ChangeLessonModal = ({
                 size="m"
                 className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 h-11 flex-1 p-0 font-medium"
                 onClick={handleClose}
+                data-umami-event="lesson-change-cancel"
               >
                 Отменить
               </Button>
-              <Button type="submit" variant="primary" size="m" className="h-11 flex-1 p-0">
+              <Button
+                type="submit"
+                variant="primary"
+                size="m"
+                className="h-11 flex-1 p-0"
+                data-umami-event="lesson-change-save"
+              >
                 Сохранить
               </Button>
             </ModalFooter>

@@ -6,11 +6,7 @@ import {
   DefaultSizeStyle,
   STROKE_SIZES,
 } from '@ibodr/draw';
-import {
-  DEFAULT_PEN_COLOR,
-  DEFAULT_PEN_OPACITY,
-  DEFAULT_PEN_THICKNESS,
-} from '../ui/components/config';
+import { DEFAULT_PEN_COLOR, DEFAULT_PEN_OPACITY, DEFAULT_PEN_THICKNESS } from '../config';
 import { BorderColorStyle } from '../shapes/shapeStyles';
 import { useDrawStore } from '../store';
 import { TColor, TFill, ToolType } from '../types';

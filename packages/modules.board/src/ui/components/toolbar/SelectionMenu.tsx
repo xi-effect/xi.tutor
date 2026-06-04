@@ -7,6 +7,7 @@ import { ColorPicker } from './ColorPicker';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { isMac } from '../../../utils';
 import { BorderPicker } from '../../../shapes/geo';
+import { CoordinateAxesSettingsPicker } from '../../../shapes/coordinate-axes';
 
 const modKey = isMac ? '⌘' : 'Ctrl';
 
@@ -18,6 +19,8 @@ export const SelectionMenu = track(function SelectionMenu() {
   const isLocked = selectedShapes.every((shape) => shape.isLocked);
   const isFrame = selectedShapes.length === 1 && selectedShapes[0].type === 'frame';
   const isGeo = selectedShapes.some((shape) => shape.type === 'xi-geo');
+  const isCoordinateAxes =
+    selectedShapes.length === 1 && selectedShapes[0].type === 'coordinate-axes';
 
   // --- Данные / вычисления (без ранних return) ---
   const selectedIds = editor.getSelectedShapeIds();
@@ -114,6 +117,7 @@ export const SelectionMenu = track(function SelectionMenu() {
             <Locked />
           </Button>
           {isGeo && <BorderPicker />}
+          {isCoordinateAxes && <CoordinateAxesSettingsPicker />}
           <ColorPicker />
           <MoreActionsMenu />
         </>

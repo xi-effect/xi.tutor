@@ -125,6 +125,7 @@ export const LessonCard = memo<LessonCardProps>(
         onKeyDown={handleKeyDown}
         role={onClick ? 'button' : undefined}
         tabIndex={onClick ? 0 : undefined}
+        {...(onClick ? { 'data-umami-event': 'schedule-lesson-open' } : {})}
       >
         <div className="flex min-w-0 flex-col gap-2">
           {!hideClassroomAndSubject && subjectName != null ? (

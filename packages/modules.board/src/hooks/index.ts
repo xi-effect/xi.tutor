@@ -5,3 +5,4 @@ export { useHotkeys } from './useHotkeys';
 export { useLockedShapeSelection } from './useLockedShapeSelection';
 export { useDrawClipboard } from './useDrawClipboard';
 export { useOverlayRepaintOnSelection } from './useOverlayRepaintOnSelection';
+export { useEditOnTypeForLabels } from './useEditOnTypeForLabels';

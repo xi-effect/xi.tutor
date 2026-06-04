@@ -121,14 +121,14 @@ export async function insertImage(
 
       const { src } = await myAssetStore(token).upload(uploadAsset, file);
 
-      // Обновляем asset.src на настоящий URL после загрузки
+      // Контракт персиста: только storage file id — см. utils/storedFileSrc.ts
       editor.updateAssets([
         {
           id: tempAssetId,
           type: 'image',
           typeName: 'asset',
           props: {
-            src, // реальный URL с сервера
+            src,
             w,
             h,
             mimeType: file.type,
