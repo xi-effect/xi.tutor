@@ -39,7 +39,7 @@ export const BOARD_SHAPE_CATEGORIES: Record<string, ShapeCategoryT> = {
   shapes: {
     key: 'shapes',
     label: 'Фигуры',
-    types: ['geo', 'xi-geo'],
+    types: ['geo', 'xi-geo', 'coordinate-axes'],
   },
 
   stickers: {

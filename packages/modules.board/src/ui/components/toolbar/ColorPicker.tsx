@@ -32,7 +32,15 @@ const stickerColors =
 
 const sizes = ['xs', 's', 'm', 'l', 'xl'] as const;
 
-const supportedShapeTypes = new Set(['arrow', 'xi-geo', 'text', 'draw', 'note', 'frame']);
+const supportedShapeTypes = new Set([
+  'arrow',
+  'xi-geo',
+  'text',
+  'draw',
+  'note',
+  'frame',
+  'coordinate-axes',
+]);
 const drawShapeTypes = new Set(['draw']);
 
 export const ColorPicker = track(() => {
@@ -51,6 +59,11 @@ export const ColorPicker = track(() => {
 
   const isGeo = useMemo(
     () => selectedShapes.some((shape) => shape.type === 'xi-geo'),
+    [selectedShapes],
+  );
+
+  const isCoordinateAxes = useMemo(
+    () => selectedShapes.some((shape) => shape.type === 'coordinate-axes'),
     [selectedShapes],
   );
 
@@ -132,7 +145,7 @@ export const ColorPicker = track(() => {
     <Picker
       open={open}
       setOpen={setOpen}
-      triggerTitle="Стиль"
+      triggerTitle={isCoordinateAxes ? 'Цвет осей' : 'Стиль'}
       triggerChild={
         <div
           className={cn(
