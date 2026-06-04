@@ -33,12 +33,12 @@ import {
 } from '@ibodr/draw';
 import { YKeyValue } from 'y-utility/y-keyvalue';
 import * as Y from 'yjs';
-import { getFileUrl } from 'common.api';
+import { boardAssetUtils } from '../assets/boardAssetUtils';
 import { myAssetStore } from '../features/imageStore';
 import { boardStoreShapeUtils } from '../shapes/boardShapeUtils';
 import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
 import { generateUserColor } from '../utils/userColor';
-import { extractFileIdFromUrl } from '../utils/resolveAssetUrl';
+import { normalizeStoredFileSrc } from '../utils/storedFileSrc';
 import {
   nextBoardSchemaVersion,
   prepareLegacyYjsStoreSnapshot,
@@ -118,6 +118,17 @@ const FLUSH_MS = 50;
 /** В Yjs должны попадать только document-записи — session/instance ломают локальное выделение. */
 function isDocumentRecord(store: DrStore, record: DrRecord): boolean {
   return store.scopedTypes.document.has(record.typeName);
+}
+
+/** Нормализует props.src перед записью в Yjs — контракт в utils/storedFileSrc.ts */
+function normalizeRecordForYjsPersistence(record: DrRecord): DrRecord {
+  const props = (record as { props?: { src?: unknown } }).props;
+  if (!props?.src || typeof props.src !== 'string') return record;
+
+  const normalizedSrc = normalizeStoredFileSrc(props.src);
+  if (normalizedSrc === props.src) return record;
+
+  return { ...record, props: { ...props, src: normalizedSrc } } as DrRecord;
 }
 
 /**
@@ -269,6 +280,7 @@ export function useYjsStore({
 
     return createDrStore({
       shapeUtils: [...boardStoreShapeUtils, ...shapeUtils],
+      assetUtils: [...boardAssetUtils],
       ...(assetStore ? { assets: assetStore } : {}),
     });
   });
@@ -323,10 +335,10 @@ export function useYjsStore({
 
       yDoc.transact(() => {
         Object.values(pending.added).forEach((r) => {
-          if (isDocumentRecord(store, r)) yStore.set(r.id, r);
+          if (isDocumentRecord(store, r)) yStore.set(r.id, normalizeRecordForYjsPersistence(r));
         });
         Object.values(pending.updated).forEach((r) => {
-          if (isDocumentRecord(store, r)) yStore.set(r.id, r);
+          if (isDocumentRecord(store, r)) yStore.set(r.id, normalizeRecordForYjsPersistence(r));
         });
         Object.values(pending.removed).forEach((r) => {
           if (isDocumentRecord(store, r)) yStore.delete(r.id);
@@ -771,32 +783,14 @@ export function useYjsStore({
 
           migratedStore = repairMigratedBoardStore(migratedStore);
 
-          // Migrate `src` values:
-          // - Shapes (audio, pdf): full URL → bare file ID (our validators accept any string)
-          // - Assets (image): bare ID → full URL (tldraw's built-in validator requires a valid URL)
-          for (const record of Object.values(migratedStore) as DrRecord[]) {
-            const props = (record as any).props;
-            if (!props?.src || typeof props.src !== 'string') continue;
-
-            const isAsset = (record as any).typeName === 'asset';
-            if (isAsset) {
-              const src = props.src as string;
-              const isBareId =
-                src !== '' &&
-                !src.startsWith('http://') &&
-                !src.startsWith('https://') &&
-                !src.startsWith('data:') &&
-                !src.startsWith('blob:');
-              if (isBareId) {
-                props.src = getFileUrl(src);
-              }
-            } else {
-              const fileId = extractFileIdFromUrl(props.src);
-              if (fileId) {
-                props.src = fileId;
-              }
-            }
-          }
+          // Контракт персиста props.src — только storage file id (utils/storedFileSrc.ts).
+          // Записи из Yjs могут быть frozen — не мутируем in-place, клонируем.
+          migratedStore = Object.fromEntries(
+            Object.entries(migratedStore).map(([id, record]) => [
+              id,
+              normalizeRecordForYjsPersistence(record),
+            ]),
+          ) as Record<string, DrRecord>;
 
           yDoc.transact(() => {
             for (const r of records) {
