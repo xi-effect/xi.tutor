@@ -35,6 +35,7 @@ const toolMapping: Record<string, string> = {
   sticker: 'note', // Используем note как аналог стикера
   frame: 'frame',
   emoji: 'emoji',
+  'coordinate-axes': 'coordinate-axes',
   // asset: 'image', // Убираем image, так как его нет в Draw
 };
 
@@ -155,6 +156,7 @@ export const Navbar = track(
         note: 'sticker',
         frame: 'frame',
         emoji: 'emoji',
+        'coordinate-axes': 'coordinate-axes',
         // image: 'asset', // Убираем, так как image не существует в Draw
       };
 
@@ -213,6 +215,11 @@ export const Navbar = track(
         }
       };
       input.click();
+    };
+
+    const handleInsertCoordinateAxes = () => {
+      editor.selectNone();
+      editor.setCurrentTool('coordinate-axes');
     };
 
     const currentTool = getCurrentTool();
@@ -435,6 +442,12 @@ export const Navbar = track(
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={handleInsertFile} className="rounded-lg px-3">
                         Загрузить файл
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={handleInsertCoordinateAxes}
+                        className="rounded-lg px-3"
+                      >
+                        Оси координат
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

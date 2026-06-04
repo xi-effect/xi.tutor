@@ -24,6 +24,7 @@ import { UndoRedo } from '../toolbar/UndoRedo';
 import { extractFileIdFromUrl } from '../../../utils/resolveAssetUrl';
 import { XiGeoTool } from '../../../shapes/geo';
 import { EmojiTool } from '../../../shapes/emoji';
+import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
 import { isShapeErasable } from '../../../utils';
 
 export const DrawCanvas = ({
@@ -388,7 +389,7 @@ export const DrawCanvas = ({
               });
             }}
             store={store}
-            tools={[XiGeoTool, EmojiTool]}
+            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool]}
             shapeUtils={boardCustomShapeUtils}
             hideUi
             components={drawComponents}
