@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState, type SetStateAction } from 'react';
 import { track, useEditor } from '@ibodr/draw';
 import { Input } from '@xipkg/input';
 import { Slider } from '@xipkg/slider';
@@ -103,7 +103,8 @@ export const CoordinateAxesSettingsPicker = track(function CoordinateAxesSetting
   }, [editor, shape]);
 
   const handleOpenChange = useCallback(
-    (nextOpen: boolean) => {
+    (value: SetStateAction<boolean>) => {
+      const nextOpen = typeof value === 'function' ? value(open) : value;
       if (nextOpen && shape) {
         setEquationDraft(shape.props.equation);
         setEquationError(null);
