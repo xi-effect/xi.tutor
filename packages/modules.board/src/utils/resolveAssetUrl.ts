@@ -1,3 +1,7 @@
+/**
+ * Рантайм-резолв файлов для отображения на доске.
+ * Персист хранит только file id — контракт в ./storedFileSrc.ts.
+ */
 import { getAxiosInstance } from 'common.config';
 import { getFileUrl } from 'common.api';
 import { getRegisteredTokens, unregisterToken } from './tokenRegistry';
@@ -59,8 +63,8 @@ export function extractFileIdFromUrl(src: string): string | null {
 }
 
 /**
- * Resolves a file `src` (either a file ID or a full URL for backward compatibility)
- * into a blob URL. Fetches with x-storage-token and caches the result.
+ * Resolves a file `src` (storage file id, or legacy full URL) into a blob URL.
+ * Fetches with x-storage-token and caches the result.
  *
  * Optimisations:
  * - In-flight deduplication: concurrent calls for the same src share one request.

@@ -13,6 +13,7 @@ export {
   updateProfile,
 } from './yjsProfiling';
 export { BOARD_SCHEMA_VERSION } from './yjsConstants';
+export { normalizeStoredFileSrc, warnIfPersistingFullStorageUrl } from './storedFileSrc';
 export { isShapeErasable } from './isShapeErasable';
 export {
   applyYjsBoardUpdate,

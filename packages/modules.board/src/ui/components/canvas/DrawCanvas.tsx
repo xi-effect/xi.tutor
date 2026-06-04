@@ -21,7 +21,7 @@ import { DrawZoomPanel } from './DrawZoomPanel';
 import '@ibodr/draw/draw.css';
 import './customstyles.css';
 import { UndoRedo } from '../toolbar/UndoRedo';
-import { extractFileIdFromUrl } from '../../../utils/resolveAssetUrl';
+import { normalizeStoredFileSrc } from '../../../utils/storedFileSrc';
 import { XiGeoTool } from '../../../shapes/geo';
 import { EmojiTool } from '../../../shapes/emoji';
 import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
@@ -361,8 +361,7 @@ export const DrawCanvas = ({
                     | Record<string, unknown>
                     | undefined;
                   if (props?.src && typeof props.src === 'string') {
-                    const fileId = extractFileIdFromUrl(props.src);
-                    if (fileId) props.src = fileId;
+                    props.src = normalizeStoredFileSrc(props.src);
                   }
                   return rec;
                 });
