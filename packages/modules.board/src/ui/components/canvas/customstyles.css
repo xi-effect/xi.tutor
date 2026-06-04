@@ -22,10 +22,12 @@
 }
 
 /*
- * Text shape: компонент использует dr-text-shape-label__inner, а draw.css позиционирует
- * редактор только для .dr-text-label__inner — input попадает в поток документа ниже
- * превью и выглядит как «дубликат» с подсветкой выделения, без курсора.
+ * Текст на доске: draw.css позиционирует редактор по .dr-text-input, а компоненты
+ * отдают .tl-text-input — input попадает в поток ниже превью и выглядит как
+ * «дубликат»; на пустом стикере/фигуре курсор может обрезаться overflow родителя.
+ * Text shape использует dr-text-shape-label__inner; стикеры, фигуры и geo — dr-text-label__inner.
  */
+.dr-text-label[data-isediting='true'],
 .dr-text-shape-label[data-isediting='true'] {
   background-color: transparent;
   min-height: auto;
@@ -36,10 +38,12 @@
   display: none;
 }
 
+.dr-text-label__inner,
 .dr-text-shape-label__inner {
   position: relative;
 }
 
+.dr-text-label__inner > .dr-text.tl-text-content,
 .dr-text-shape-label__inner > .dr-text-shape.tl-text-content {
   position: relative;
   top: 0;
@@ -50,6 +54,8 @@
   max-width: 100%;
 }
 
+.dr-text-label__inner > .tl-text-input,
+.dr-text-label__inner > .dr-rich-text.tl-text-input,
 .dr-text-shape-label__inner > .tl-text-input,
 .dr-text-shape-label__inner > .dr-rich-text.tl-text-input {
   position: absolute;
@@ -58,12 +64,56 @@
   height: 100%;
   padding: inherit;
   margin: 0;
+  z-index: var(--dr-layer-text-editor);
+  pointer-events: all;
 }
 
+.dr-text-label__inner > .dr-rich-text.tl-text-input > .dr-rich-text {
+  width: 100%;
+  height: 100%;
+  min-height: inherit;
+}
+
+.dr-note__container > .dr-text-label {
+  width: 100%;
+  height: 100%;
+}
+
+.dr-text-label__inner > .tl-text-input {
+  caret-color: currentColor;
+}
+
+.dr-text-label__inner .ProseMirror,
 .dr-text-shape-label__inner .ProseMirror {
-  caret-color: var(--dr-color-text);
+  caret-color: currentColor;
   outline: none;
-  min-height: 1em;
+  min-height: 1lh;
+  width: 100%;
+}
+
+.dr-text-label__inner .ProseMirror p {
+  min-height: 1lh;
+}
+
+.dr-text-label[data-isediting='true'] .tl-text-input,
+.dr-text-wrapper[data-isediting='true'] .tl-text-input {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* Индикатор ввода на пустом выделенном стикере/фигуре (без режима editing_shape). */
+.dr-empty-label-caret__bar {
+  display: inline-block;
+  width: 1px;
+  height: 1em;
+  background-color: currentColor;
+  animation: dr-empty-caret-blink 1s step-end infinite;
+}
+
+@keyframes dr-empty-caret-blink {
+  50% {
+    opacity: 0;
+  }
 }
 
 /*

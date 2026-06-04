@@ -7,6 +7,7 @@ import {
   useLockedShapeSelection,
   useDrawClipboard,
   useOverlayRepaintOnSelection,
+  useEditOnTypeForLabels,
 } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore, useDrawStore } from '../../../store';
@@ -25,7 +26,7 @@ import { normalizeStoredFileSrc } from '../../../utils/storedFileSrc';
 import { XiGeoTool } from '../../../shapes/geo';
 import { EmojiTool } from '../../../shapes/emoji';
 import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
-import { isShapeErasable } from '../../../utils';
+import { isShapeErasable, isEditableTarget } from '../../../utils';
 
 export const DrawCanvas = ({
   token,
@@ -52,6 +53,7 @@ export const DrawCanvas = ({
   useLockedShapeSelection(editor);
   useDrawClipboard(editor, token);
   useOverlayRepaintOnSelection(editor);
+  useEditOnTypeForLabels(editor);
 
   // Viewport bounds должны совпадать с .dr-canvas — overlay выделения рисуется на canvas
   // внутри этого элемента; синхронизация по .dr-container смещает screenBounds.
@@ -92,7 +94,9 @@ export const DrawCanvas = ({
     };
   }, []);
 
-  useKeyPress('Backspace', () => {
+  useKeyPress('Backspace', (event) => {
+    if (isEditableTarget(event.target)) return;
+    if (editor?.getEditingShapeId()) return;
     if (selectedElementId) {
       selectElement(null);
     }

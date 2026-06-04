@@ -1,4 +1,9 @@
 export { isEditableTarget } from './isEditableTarget';
+export {
+  isEmptyLabelShape,
+  isEmptyLabelEditOnTypeContext,
+  shouldIgnoreBoardHotkeys,
+} from './boardKeyboard';
 export { isMac } from './getUserPlatform';
 export { writeClipboardHtmlAndText, readClipboardHtml, extractClipboardImages } from './clipboard';
 export { serializeDrawContent, deserializeDrawContent } from './drawContent';
