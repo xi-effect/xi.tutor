@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { startOfDay, startOfWeek } from 'date-fns';
+import { formatMonthLabel } from '../../../utils/calendarUtils';
 import { ScheduleWeekCarousel } from '../ScheduleWeekCarousel';
 import { ScheduleDaySwiper } from '../ScheduleDaySwiper';
 import { getWeeksRangeDays } from '../../../utils';
@@ -10,6 +11,10 @@ import type { ChangeLessonFormData } from 'features.lesson.change';
 import type { ICalendarEvent } from '../../types';
 
 const getInitialWeekStart = () => startOfWeek(new Date(), { weekStartsOn: 1 });
+
+/** ±2 года дней для свайпа по дням */
+const DAY_SWIPER_WEEKS_BEFORE = 104;
+const DAY_SWIPER_WEEKS_AFTER = 104;
 
 type ScheduleMobileViewProps = {
   onAddLessonClick?: (date?: Date) => void;
@@ -52,14 +57,24 @@ export const ScheduleMobileView = ({
     setSelectedDate(startOfDay(anchor));
   }, [mobileScheduleAnchorTs]);
 
-  const slideDays = useMemo(() => getWeeksRangeDays(weekStart, 26, 26), [weekStart]);
+  const slideDays = useMemo(
+    () => getWeeksRangeDays(weekStart, DAY_SWIPER_WEEKS_BEFORE, DAY_SWIPER_WEEKS_AFTER),
+    [weekStart],
+  );
+
+  const monthLabel = useMemo(() => formatMonthLabel(selectedDate), [selectedDate]);
 
   const handleWeekStartChange = useCallback((date: Date) => {
     setWeekStart(date);
   }, []);
 
   const handleSelectedDateChange = useCallback((date: Date) => {
-    setSelectedDate(date);
+    const normalizedDate = startOfDay(date);
+    setSelectedDate(normalizedDate);
+    setWeekStart((prev) => {
+      const nextWeekStart = startOfWeek(normalizedDate, { weekStartsOn: 1 });
+      return nextWeekStart.getTime() === prev.getTime() ? prev : nextWeekStart;
+    });
   }, []);
 
   const handleAddLesson = useCallback(
@@ -75,7 +90,7 @@ export const ScheduleMobileView = ({
         <div className="bg-gray-0 flex h-[184px] flex-col rounded-[20px] p-4">
           <div className="flex h-[32px] flex-row items-center justify-between gap-2">
             <span className="text-l-base font-medium text-gray-100">Расписание</span>
-            <span className="text-s-base text-gray-60">Март</span>
+            <span className="text-s-base text-gray-60">{monthLabel}</span>
           </div>
           <ScheduleWeekCarousel
             weekStart={weekStart}

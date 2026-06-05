@@ -25,6 +25,11 @@ export const timeToString = (time: Date) => {
 export const parseDateTime = (dateStr: string, timeStr: string) =>
   parse(`${dateStr} ${timeStr}`, 'dd.MM.yyyy HH:mm', new Date());
 
+export const formatMonthLabel = (date: Date): string => {
+  const raw = date.toLocaleDateString('ru-RU', { month: 'long' });
+  return raw.charAt(0).toUpperCase() + raw.slice(1);
+};
+
 export const getFullDateString = (date: Date) => {
   const weekDayName = date.toLocaleDateString('ru-RU', { weekday: 'short' });
   const monthName = date.toLocaleDateString('ru-RU', { month: 'long' });

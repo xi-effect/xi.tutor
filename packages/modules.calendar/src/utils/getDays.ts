@@ -75,3 +75,13 @@ export const getWeeksRangeDays = (
   }
   return days;
 };
+
+/** Начала недель вокруг текущей — для «бесконечной» карусели недель на мобилке */
+export const getWeekStartsRange = (weeksBefore: number, weeksAfter: number): Date[] => {
+  const anchor = startOfWeek(new Date(), { weekStartsOn: 1 });
+  const weeks: Date[] = [];
+  for (let w = -weeksBefore; w <= weeksAfter; w++) {
+    weeks.push(startOfWeek(addWeeks(anchor, w), { weekStartsOn: 1 }));
+  }
+  return weeks;
+};
