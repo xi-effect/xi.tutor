@@ -1,20 +1,16 @@
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { startOfDay } from 'date-fns';
 import { useNavigate, useParams } from '@tanstack/react-router';
-import type { DetailedEventInstanceDto } from 'common.api';
+import type { ICalendarEvent } from 'modules.calendar';
 import {
+  readInstanceStartsAt,
   useCurrentUser,
   useStudentEventInstanceDetails,
   useTutorEventInstanceDetails,
 } from 'common.services';
 
 import { useClassroomScheduleSearch } from './useClassroomScheduleSearch';
-
-function readInstanceStartsAt(details: DetailedEventInstanceDto | undefined): Date | undefined {
-  if (!details || !('starts_at' in details) || typeof details.starts_at !== 'string')
-    return undefined;
-  const d = new Date(details.starts_at);
-  return Number.isFinite(d.getTime()) ? d : undefined;
-}
+import { mapInstanceDetailsToCalendarEvent } from './schedulerMapping';
 
 export function parseScheduleAnchorFromSearch(search: {
   focused_at?: string;
@@ -30,211 +26,206 @@ export function parseScheduleAnchorFromSearch(search: {
   return Number.isFinite(d.getTime()) ? d : null;
 }
 
-type UseClassroomScheduleDeepLinkOptions = {
-  goToWeekStart: (date: Date) => void;
-};
-
 /**
- * Обработка `focused_at` и `event_instance_id` для вкладки «Расписание» кабинета.
+ * Диплинк расписания кабинета.
+ *
+ * Возвращает:
+ * - `pendingEventToOpen` — событие, которое надо открыть в модалке (из GET details)
+ * - `pendingAnchorDate` — дата для переключения недели календаря
+ * - `acknowledgePendingLessonOpen` — вызвать после открытия модалки
+ * - `mobileScheduleAnchorTs` — дата для синхронизации мобильного свайпера
  */
-export function useClassroomScheduleDeepLink({
-  goToWeekStart,
-}: UseClassroomScheduleDeepLinkOptions) {
+export function useClassroomScheduleDeepLink() {
   const navigate = useNavigate();
   const { classroomId: classroomIdParam } = useParams({
     from: '/(app)/_layout/classrooms/$classroomId/',
   });
 
   const search = useClassroomScheduleSearch();
-
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
+
   const layoutReady = !isUserLoading && user != null;
   const isTutorUser = user?.default_layout === 'tutor';
-
   const classroomId = Number(classroomIdParam);
   const isScheduleTab = (search.tab ?? 'overview') === 'schedule';
 
   const focusedAtRaw = search.focused_at;
   const urlEventInstanceId = search.event_instance_id;
+  const scheduleDlToken = search.schedule_dl;
 
-  const deeplinkInstanceIdRef = useRef<string | null>(null);
-  const deeplinkFocusedAtRef = useRef<string | null>(null);
+  // Сохраняем параметры в рефах — они переживают очистку URL
+  const instanceIdRef = useRef<string | null>(null);
+  const focusedAtRef = useRef<string | null>(null);
 
-  if (urlEventInstanceId != null) {
-    deeplinkInstanceIdRef.current = urlEventInstanceId;
-  }
-  if (focusedAtRaw != null) {
-    deeplinkFocusedAtRef.current = focusedAtRaw;
-  }
+  if (urlEventInstanceId != null) instanceIdRef.current = urlEventInstanceId;
+  if (focusedAtRaw != null) focusedAtRef.current = focusedAtRaw;
 
-  const activeEventInstanceId = urlEventInstanceId ?? deeplinkInstanceIdRef.current;
-  const activeFocusedAt = focusedAtRaw ?? deeplinkFocusedAtRef.current;
+  const activeInstanceId = urlEventInstanceId ?? instanceIdRef.current;
+  const activeFocusedAt = focusedAtRaw ?? focusedAtRef.current;
+  const hasDeeplink = activeInstanceId != null || activeFocusedAt != null;
 
-  const hasScheduleDeeplink = activeFocusedAt != null || activeEventInstanceId != null;
-
-  const [pendingOpenLessonInstanceId, setPendingOpenLessonInstanceId] = useState<string | null>(
-    null,
-  );
+  const [pendingEventToOpen, setPendingEventToOpen] = useState<ICalendarEvent | null>(null);
+  const [pendingAnchorDate, setPendingAnchorDate] = useState<Date | null>(null);
+  const [pendingAnchorToken, setPendingAnchorToken] = useState(0);
   const [mobileScheduleAnchorTs, setMobileScheduleAnchorTs] = useState<number | null>(null);
 
-  const lastFocusedAtRef = useRef<string | null>(null);
-  const lastInstanceFocusRef = useRef<string | null>(null);
+  const processedRef = useRef<string | null>(null);
   const stripScheduledRef = useRef(false);
-
-  const resetDeepLinkState = useCallback(() => {
-    setPendingOpenLessonInstanceId(null);
-    setMobileScheduleAnchorTs(null);
-    deeplinkInstanceIdRef.current = null;
-    deeplinkFocusedAtRef.current = null;
-    lastFocusedAtRef.current = null;
-    lastInstanceFocusRef.current = null;
-    stripScheduledRef.current = false;
-  }, []);
-
-  const acknowledgePendingLessonOpen = useCallback(() => {
-    setPendingOpenLessonInstanceId(null);
-    deeplinkInstanceIdRef.current = null;
-    lastInstanceFocusRef.current = null;
-    stripScheduledRef.current = false;
-  }, []);
-
   const prevClassroomIdRef = useRef<number | null>(null);
-  useEffect(() => {
-    if (prevClassroomIdRef.current === null) {
-      prevClassroomIdRef.current = classroomId;
-      return;
-    }
-    if (prevClassroomIdRef.current !== classroomId) {
-      prevClassroomIdRef.current = classroomId;
-      resetDeepLinkState();
-    }
-  }, [classroomId, resetDeepLinkState]);
+  const lastScheduleDlRef = useRef<string | null>(null);
 
+  // Новый клик по уведомлению (в т.ч. повторный на той же странице расписания)
   useEffect(() => {
-    if (urlEventInstanceId == null) return;
-    setPendingOpenLessonInstanceId(null);
-    lastInstanceFocusRef.current = null;
+    if (scheduleDlToken == null) return;
+    if (lastScheduleDlRef.current === scheduleDlToken) return;
+    lastScheduleDlRef.current = scheduleDlToken;
+    processedRef.current = null;
     stripScheduledRef.current = false;
-  }, [urlEventInstanceId]);
+  }, [scheduleDlToken]);
 
-  const stripDeeplinkParams = useCallback(() => {
+  const stripParams = useCallback(() => {
     navigate({
       to: '/classrooms/$classroomId',
       params: { classroomId: classroomIdParam },
       search: (prev: Record<string, unknown>) => {
-        const next: Record<string, unknown> = { ...prev };
+        const next = { ...prev };
         delete next.event_instance_id;
         delete next.focused_at;
+        delete next.schedule_dl;
         return next;
       },
       replace: true,
     });
   }, [navigate, classroomIdParam]);
 
-  const scheduleStripAfterCommit = useCallback(() => {
+  const scheduleStrip = useCallback(() => {
     if (stripScheduledRef.current) return;
     stripScheduledRef.current = true;
-    queueMicrotask(() => {
-      stripDeeplinkParams();
-    });
-  }, [stripDeeplinkParams]);
+    stripParams();
+  }, [stripParams]);
 
-  const focusScheduleAtDate = useCallback(
-    (d: Date) => {
-      // Сдвигаем неделю расписания на дату события; запрос расписания
-      // (Calendar) опирается на visibleDays и подхватит новую неделю.
-      goToWeekStart(d);
-      setMobileScheduleAnchorTs(d.getTime());
-    },
-    [goToWeekStart],
-  );
+  const resetAll = useCallback(() => {
+    setPendingEventToOpen(null);
+    setPendingAnchorDate(null);
+    setMobileScheduleAnchorTs(null);
+    instanceIdRef.current = null;
+    focusedAtRef.current = null;
+    processedRef.current = null;
+    stripScheduledRef.current = false;
+  }, []);
 
-  // Гарантируем вкладку «Расписание», если в URL есть диплинк
+  /** После открытия модалки — не трогаем pendingAnchorDate (его обрабатывает Calendar). */
+  const acknowledgeEventOpen = useCallback(() => {
+    if (!stripScheduledRef.current) {
+      stripScheduledRef.current = true;
+      stripParams();
+    }
+    setPendingEventToOpen(null);
+    instanceIdRef.current = null;
+    processedRef.current = null;
+    stripScheduledRef.current = false;
+  }, [stripParams]);
+
+  const acknowledgeAnchorNavigation = useCallback(() => {
+    setPendingAnchorDate(null);
+    focusedAtRef.current = null;
+  }, []);
+
+  // Сброс при смене кабинета
   useEffect(() => {
-    if (!hasScheduleDeeplink || isScheduleTab) return;
+    if (prevClassroomIdRef.current !== null && prevClassroomIdRef.current !== classroomId) {
+      resetAll();
+    }
+    prevClassroomIdRef.current = classroomId;
+  }, [classroomId, resetAll]);
 
+  // Переключаем на вкладку расписания
+  useEffect(() => {
+    if (!hasDeeplink || isScheduleTab) return;
     navigate({
       to: '/classrooms/$classroomId',
       params: { classroomId: classroomIdParam },
-      search: (prev: Record<string, unknown>) => ({
-        ...prev,
-        tab: 'schedule',
-      }),
+      search: (prev: Record<string, unknown>) => ({ ...prev, tab: 'schedule' }),
     });
-  }, [hasScheduleDeeplink, isScheduleTab, navigate, classroomIdParam]);
+  }, [hasDeeplink, isScheduleTab, navigate, classroomIdParam]);
 
-  // focused_at — переключаем неделю синхронно до отрисовки
-  useLayoutEffect(() => {
-    if (!hasScheduleDeeplink || !activeFocusedAt || activeEventInstanceId) return;
+  // focused_at: только переключение недели, без модалки
+  const lastFocusedAtRef = useRef<string | null>(null);
+  useEffect(() => {
+    if (!activeFocusedAt || activeInstanceId) return;
     if (lastFocusedAtRef.current === activeFocusedAt) return;
 
     const d = new Date(activeFocusedAt);
     if (!Number.isFinite(d.getTime())) {
-      scheduleStripAfterCommit();
+      scheduleStrip();
       return;
     }
 
     lastFocusedAtRef.current = activeFocusedAt;
-    focusScheduleAtDate(d);
-    scheduleStripAfterCommit();
-  }, [
-    hasScheduleDeeplink,
-    activeFocusedAt,
-    activeEventInstanceId,
-    focusScheduleAtDate,
-    scheduleStripAfterCommit,
-  ]);
+    setPendingAnchorDate(d);
+    setMobileScheduleAnchorTs(d.getTime());
+    setPendingAnchorToken((t) => t + 1);
+    scheduleStrip();
+  }, [activeFocusedAt, activeInstanceId, scheduleStrip]);
 
+  // event_instance_id: грузим детали и открываем модалку
   const tutorDetails = useTutorEventInstanceDetails({
     classroomId,
-    eventInstanceId: activeEventInstanceId ?? '',
-    enabled: activeEventInstanceId != null && classroomId > 0 && layoutReady && isTutorUser,
+    eventInstanceId: activeInstanceId ?? '',
+    enabled: activeInstanceId != null && classroomId > 0 && layoutReady && isTutorUser === true,
   });
 
   const studentDetails = useStudentEventInstanceDetails({
     classroomId,
-    eventInstanceId: activeEventInstanceId ?? '',
-    enabled: activeEventInstanceId != null && classroomId > 0 && layoutReady && !isTutorUser,
+    eventInstanceId: activeInstanceId ?? '',
+    enabled: activeInstanceId != null && classroomId > 0 && layoutReady && isTutorUser === false,
   });
 
-  const instanceDetailsQuery = isTutorUser ? tutorDetails : studentDetails;
-  const instanceDetailsLoaded = instanceDetailsQuery.isSuccess;
-  const instanceDetailsErrored = instanceDetailsQuery.isError;
-  const instanceDetailsData = instanceDetailsQuery.data;
+  const detailsQuery = isTutorUser ? tutorDetails : studentDetails;
 
-  useLayoutEffect(() => {
-    if (activeEventInstanceId == null || !layoutReady) return;
-    if (!instanceDetailsLoaded && !instanceDetailsErrored) return;
+  useEffect(() => {
+    const instanceId = urlEventInstanceId;
+    if (instanceId == null || !layoutReady) return;
+    if (processedRef.current === instanceId) return;
+    if (detailsQuery.isPending || detailsQuery.isFetching) return;
 
-    const focusKey = `${activeEventInstanceId}:${instanceDetailsLoaded ? 'ok' : 'err'}`;
-    if (lastInstanceFocusRef.current === focusKey) return;
-    lastInstanceFocusRef.current = focusKey;
+    if (detailsQuery.isSuccess && detailsQuery.data != null) {
+      const event = mapInstanceDetailsToCalendarEvent(detailsQuery.data, classroomId);
+      const startAt = readInstanceStartsAt(detailsQuery.data) ?? startOfDay(new Date(event.start));
 
-    if (instanceDetailsLoaded && instanceDetailsData != null) {
-      const startAt = readInstanceStartsAt(instanceDetailsData);
-      if (startAt != null) focusScheduleAtDate(startAt);
-      // Неделя сфокусирована по starts_at — карточку откроет грид расписания,
-      // как только инстанс появится в загруженных событиях (см. openLessonInstanceId).
-      setPendingOpenLessonInstanceId(activeEventInstanceId);
-      scheduleStripAfterCommit();
-      return;
+      setPendingEventToOpen(event);
+
+      if (Number.isFinite(startAt.getTime())) {
+        setPendingAnchorDate(startAt);
+        setMobileScheduleAnchorTs(startAt.getTime());
+        setPendingAnchorToken((t) => t + 1);
+      }
+
+      processedRef.current = instanceId;
+      // URL стрипается в acknowledge(), когда модалка уже открыта
+    } else if (detailsQuery.isError) {
+      processedRef.current = instanceId;
+      scheduleStrip();
     }
-
-    setPendingOpenLessonInstanceId(null);
-    scheduleStripAfterCommit();
   }, [
-    activeEventInstanceId,
+    urlEventInstanceId,
+    scheduleDlToken,
     layoutReady,
-    instanceDetailsLoaded,
-    instanceDetailsErrored,
-    instanceDetailsData,
-    focusScheduleAtDate,
-    scheduleStripAfterCommit,
+    classroomId,
+    detailsQuery.isPending,
+    detailsQuery.isFetching,
+    detailsQuery.isSuccess,
+    detailsQuery.isError,
+    detailsQuery.data,
+    scheduleStrip,
   ]);
 
   return {
-    pendingOpenLessonInstanceId,
-    acknowledgePendingLessonOpen,
+    pendingEventToOpen,
+    pendingAnchorDate,
+    pendingAnchorToken,
+    acknowledgePendingLessonOpen: acknowledgeEventOpen,
+    acknowledgeAnchorNavigation,
     mobileScheduleAnchorTs,
   };
 }

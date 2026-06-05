@@ -30,6 +30,7 @@ export {
 export {
   useSetEvents,
   useSetEventsLoading,
+  useAddEvent,
   useCalendarEvents,
   useEventsLoading,
 } from './src/store/eventsStore';

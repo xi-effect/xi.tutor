@@ -38,5 +38,12 @@ export const useCalendar = (options?: UseCalendarOptions) => {
     setWeekStart(startOfWeek(date, { weekStartsOn: 1 }));
   }, []);
 
-  return { weekDays, weekStart, goToPrev, goToNext, goToToday, goToWeekStart };
+  /** Переход к окну, начинающемуся с указанной даты (без округления до понедельника) */
+  const goToDay = useCallback((date: Date) => {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    setWeekStart(d);
+  }, []);
+
+  return { weekDays, weekStart, goToPrev, goToNext, goToToday, goToWeekStart, goToDay };
 };

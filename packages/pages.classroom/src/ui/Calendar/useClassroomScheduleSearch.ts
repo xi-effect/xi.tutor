@@ -5,6 +5,8 @@ export type ClassroomScheduleSearchParams = {
   tab?: string;
   focused_at?: string;
   event_instance_id?: string;
+  /** Служебный токен диплинка из уведомления (сбрасывается после обработки) */
+  schedule_dl?: string;
 };
 
 /**
@@ -38,6 +40,7 @@ export function useClassroomScheduleSearch(): ClassroomScheduleSearchParams {
       tab: read('tab'),
       focused_at: read('focused_at'),
       event_instance_id: read('event_instance_id'),
+      schedule_dl: read('schedule_dl'),
     };
   }, [routeSearch, location.href, location.search]);
 }

@@ -1,7 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   ScheduleMobileView,
+  useAddEvent,
   useIsMobile,
+  useLessonInfoModal,
   useSetEvents,
   useSetEventsLoading,
   useStudentClassroomSchedule,
@@ -27,6 +29,18 @@ function jsWeekdayToSeriesIndex(date: Date): number {
 
 function formatTimeHm(d: Date): string {
   return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
+const eventInstanceKey = (event: ICalendarEvent): string =>
+  event.scheduler?.eventInstanceId ?? event.id;
+
+/** Диплинк: событие из GET details может ещё не быть в списке расписания после invalidate */
+function upsertEventInList(events: ICalendarEvent[], extra: ICalendarEvent): ICalendarEvent[] {
+  const key = eventInstanceKey(extra);
+  const without = events.filter((e) => eventInstanceKey(e) !== key);
+  return [...without, extra].sort(
+    (a, b) => new Date(a.start).getTime() - new Date(b.start).getTime(),
+  );
 }
 
 function movingModalPropsFromEvent(event: ICalendarEvent, classroomId: number) {
@@ -76,15 +90,18 @@ function movingModalPropsFromEvent(event: ICalendarEvent, classroomId: number) {
 export const Calendar = () => {
   const isMobile = useIsMobile();
   const {
-    visibleDays,
+    weekDays,
     onAddLessonClick,
-    pendingOpenLessonInstanceId,
+    pendingEventToOpen,
+    pendingAnchorDate,
     acknowledgePendingLessonOpen,
     mobileScheduleAnchorTs,
   } = useClassroomSchedule();
 
   const [moveEvent, setMoveEvent] = useState<ICalendarEvent | null>(null);
+  const deepLinkEventRef = useRef<ICalendarEvent | null>(null);
   const setEvents = useSetEvents();
+  const addEvent = useAddEvent();
   const setEventsLoading = useSetEventsLoading();
 
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
@@ -92,7 +109,7 @@ export const Calendar = () => {
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  const scheduleRange = useMemo(() => getScheduleQueryRange(visibleDays), [visibleDays]);
+  const scheduleRange = useMemo(() => getScheduleQueryRange(weekDays), [weekDays]);
 
   const tutorQuery = useGetClassroom(numericClassroomId, isUserLoading || !isTutor);
   const studentQuery = useGetClassroomStudent(numericClassroomId, isUserLoading || isTutor);
@@ -116,24 +133,65 @@ export const Calendar = () => {
     setMoveEvent(event);
   };
 
+  const handleLessonSave = (event: ICalendarEvent, data: ChangeLessonFormData) => {
+    if (!isTutor) return;
+    const eventId = event.scheduler?.eventId;
+    if (eventId == null) return;
+
+    const description = data.description?.trim() ?? '';
+    updateClassroomEvent.mutate({
+      classroomId: numericClassroomId,
+      eventId,
+      body: {
+        name: data.title.trim(),
+        description: description === '' ? null : description,
+      },
+    });
+  };
+
+  const { openLessonInfo, lessonInfoModal } = useLessonInfoModal({
+    onReschedule: handleLessonReschedule,
+    onSaveLesson: isTutor ? handleLessonSave : undefined,
+  });
+
+  // Переключение недели — в ClassroomScheduleProvider (useLayoutEffect + goToDay)
+
+  // Показываем занятие в сетке и открываем модалку (данные из GET details)
+  useEffect(() => {
+    if (pendingEventToOpen == null) return;
+    deepLinkEventRef.current = pendingEventToOpen;
+    addEvent(pendingEventToOpen);
+    openLessonInfo(pendingEventToOpen);
+    acknowledgePendingLessonOpen();
+  }, [pendingEventToOpen, addEvent, openLessonInfo, acknowledgePendingLessonOpen]);
+
   useEffect(() => {
     setEventsLoading(scheduleQuery.isLoading || scheduleQuery.isFetching);
   }, [scheduleQuery.isFetching, scheduleQuery.isLoading, setEventsLoading]);
 
   useEffect(() => {
     if (scheduleQuery.data) {
-      setEvents(mapScheduleItemsToCalendarEvents(scheduleQuery.data));
+      let events = mapScheduleItemsToCalendarEvents(scheduleQuery.data);
+      const deepLink = deepLinkEventRef.current;
+      if (deepLink != null) {
+        const key = eventInstanceKey(deepLink);
+        if (events.some((e) => eventInstanceKey(e) === key)) {
+          deepLinkEventRef.current = null;
+        } else {
+          events = upsertEventInList(events, deepLink);
+        }
+      }
+      setEvents(events);
       return;
     }
-
     if (scheduleQuery.isError) {
-      setEvents([]);
+      setEvents(deepLinkEventRef.current != null ? [deepLinkEventRef.current] : []);
     }
   }, [scheduleQuery.data, scheduleQuery.isError, setEvents]);
 
   useEffect(() => () => setEvents([]), [setEvents]);
 
-  const hasPendingDeepLink = pendingOpenLessonInstanceId != null;
+  const hasPendingDeepLink = pendingEventToOpen != null || pendingAnchorDate != null;
   const isClassroomLoading =
     isUserLoading || (isTutor ? tutorQuery.isLoading : studentQuery.isLoading);
 
@@ -154,24 +212,9 @@ export const Calendar = () => {
     );
   }
 
-  const handleLessonSave = (event: ICalendarEvent, data: ChangeLessonFormData) => {
-    if (!isTutor) return;
-    const eventId = event.scheduler?.eventId;
-    if (eventId == null) return;
-
-    const description = data.description?.trim() ?? '';
-    updateClassroomEvent.mutate({
-      classroomId: numericClassroomId,
-      eventId,
-      body: {
-        name: data.title.trim(),
-        description: description === '' ? null : description,
-      },
-    });
-  };
-
   return (
     <>
+      {lessonInfoModal}
       {isMobile ? (
         <ScheduleMobileView
           key={numericClassroomId}
@@ -180,16 +223,12 @@ export const Calendar = () => {
           onSaveLesson={isTutor ? handleLessonSave : undefined}
           hideLessonCardClassroomAndSubject
           mobileScheduleAnchorTs={mobileScheduleAnchorTs}
-          openLessonInstanceId={pendingOpenLessonInstanceId}
-          onOpenLessonInstanceConsumed={acknowledgePendingLessonOpen}
         />
       ) : (
         <div className="flex h-full min-h-0 min-w-0 flex-col">
           <CalendarScheduleKanban
             onLessonReschedule={handleLessonReschedule}
             onSaveLesson={isTutor ? handleLessonSave : undefined}
-            openLessonInstanceId={pendingOpenLessonInstanceId}
-            onOpenLessonInstanceConsumed={acknowledgePendingLessonOpen}
           />
         </div>
       )}

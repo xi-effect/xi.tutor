@@ -16,13 +16,19 @@ const navigateToNotification = (
     search?: Record<string, string>;
   },
 ) => {
+  const nextSearch = { ...(options.search ?? {}) };
+  // Повторный клик по уведомлению на той же странице: без токена router не меняет search и диплинк не срабатывает
+  if (nextSearch.event_instance_id != null || nextSearch.focused_at != null) {
+    nextSearch.schedule_dl = String(Date.now());
+  }
+
   navigate({
     to: options.to as never,
     params: (options.params ?? {}) as never,
     search: (prev) =>
       ({
         ...(prev as Record<string, string | undefined>),
-        ...(options.search ?? {}),
+        ...nextSearch,
       }) as never,
   });
 };

@@ -16,7 +16,7 @@ type ScheduleMobileViewProps = {
   onLessonReschedule?: (event: ICalendarEvent) => void;
   onSaveLesson?: (event: ICalendarEvent, data: ChangeLessonFormData) => void;
   hideLessonCardClassroomAndSubject?: boolean;
-  /** Синхронизация недели с десктопным провайдером / диплинком (moment `getTime()`) */
+  /** Синхронизация дня с диплинком (moment `getTime()`) */
   mobileScheduleAnchorTs?: number | null;
   openLessonInstanceId?: string | null;
   onOpenLessonInstanceConsumed?: () => void;
@@ -56,7 +56,6 @@ export const ScheduleMobileView = ({
 
   const handleWeekStartChange = useCallback((date: Date) => {
     setWeekStart(date);
-    // selectedDate обновится через onSelectedDateChange из карусели
   }, []);
 
   const handleSelectedDateChange = useCallback((date: Date) => {

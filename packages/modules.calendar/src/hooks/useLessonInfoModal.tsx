@@ -11,6 +11,8 @@ import {
   useTutorEventInstanceDetails,
   useTutorRepeatedEventInstanceDetails,
 } from 'common.services';
+import { normalizeEventInstanceDetailsResponse } from 'common.services';
+import { formatLessonDate } from 'features.lesson.info';
 import type { ICalendarEvent } from '../ui/types';
 import { timeToString } from '../utils';
 import { useCalendarEvents } from '../store/eventsStore';
@@ -22,13 +24,29 @@ function safeTimeToString(primary: string | undefined | null, fallback: Date): s
     const d = new Date(primary);
     if (!isNaN(d.getTime())) return timeToString(d);
   }
-  return timeToString(new Date(fallback));
+  const fb = new Date(fallback);
+  if (!isNaN(fb.getTime())) return timeToString(fb);
+  return '';
+}
+
+function resolveLessonDate(
+  event: ICalendarEvent,
+  instanceDetails?: { starts_at?: string },
+): string | null {
+  const raw = instanceDetails?.starts_at;
+  if (raw != null && raw.length > 0) {
+    const d = new Date(raw);
+    if (Number.isFinite(d.getTime())) return formatLessonDate(d);
+  }
+  const d = new Date(event.start);
+  if (Number.isFinite(d.getTime())) return formatLessonDate(d);
+  return null;
 }
 
 function mapEventToLessonInfo(
   event: ICalendarEvent,
   instanceDetails?: {
-    name: string;
+    name?: string;
     description: string | null;
     starts_at: string;
     ends_at: string;
@@ -38,7 +56,8 @@ function mapEventToLessonInfo(
     ? null
     : safeTimeToString(instanceDetails?.starts_at, event.start);
   const endTime = event.isAllDay ? null : safeTimeToString(instanceDetails?.ends_at, event.end);
-  const lessonTitle = instanceDetails?.name ?? event.title;
+  const lessonDate = resolveLessonDate(event, instanceDetails);
+  const lessonTitle = instanceDetails?.name ?? event.title ?? '';
   const rawSubject = event.lessonInfo?.subject ?? '';
   const rawSubjectTrimmed = rawSubject.trim();
   /** Отдельная строка предмета из события — только если не дублирует название занятия (имя слота ≠ учебный предмет). */
@@ -49,7 +68,7 @@ function mapEventToLessonInfo(
   const rawDesc = instanceDetails?.description ?? event.lessonInfo?.description;
   const desc = rawDesc?.trim();
   const lessonDescription = desc != null && desc.length > 0 ? desc : undefined;
-  return { subject, lessonTitle, lessonDescription, startTime, endTime };
+  return { subject, lessonTitle, lessonDescription, startTime, endTime, lessonDate };
 }
 
 export type UseLessonInfoModalOptions = {
@@ -137,13 +156,15 @@ export const useLessonInfoModal = ({
     canFetchRepeatedInstanceDetails &&
     repeatedInstanceDetailsQuery.isPending;
 
-  const instanceDetails = isTutor
+  const rawInstanceDetails = isTutor
     ? isRepeatedVirtual
       ? tutorRepeatedInstanceDetailsQuery.data
       : tutorInstanceDetailsQuery.data
     : isRepeatedVirtual
       ? studentRepeatedInstanceDetailsQuery.data
       : studentInstanceDetailsQuery.data;
+
+  const instanceDetails = normalizeEventInstanceDetailsResponse(rawInstanceDetails);
 
   const resolvedScheduleAt = useMemo(() => {
     const raw = instanceDetails?.starts_at;
