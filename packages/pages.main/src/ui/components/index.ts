@@ -4,3 +4,4 @@ export { Materials } from './Materials';
 export { Payments } from './Payments';
 export { FirstLessonGuideBanner } from './FirstLessonGuideBanner';
 export { ActionButtons } from './ActionButtons';
+export { MobileMainActionButton } from './MobileMainActionButton';
