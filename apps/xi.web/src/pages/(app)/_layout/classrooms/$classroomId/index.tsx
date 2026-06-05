@@ -18,6 +18,8 @@ const searchSchema = z.object({
   focused_at: z.string().optional(),
   /** Persisted инстанс — открыть карточку занятия; дата недели берётся из ответа деталей (`starts_at`). */
   event_instance_id: z.string().optional(),
+  /** Служебный токен повторного диплинка из уведомления */
+  schedule_dl: z.string().optional(),
 });
 
 // @ts-ignore

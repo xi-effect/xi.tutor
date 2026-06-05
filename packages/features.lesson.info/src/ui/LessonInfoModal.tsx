@@ -44,6 +44,8 @@ export type LessonInfoModalProps = {
   classroomLoading?: boolean;
   startTime: string | null;
   endTime: string | null;
+  /** Дата занятия, например «13 июня, сб.» */
+  lessonDate?: string | null;
   onReschedule?: () => void;
   onEditLesson?: () => void;
   /**
@@ -72,6 +74,7 @@ export const LessonInfoModal = ({
   classroomLoading,
   startTime,
   endTime,
+  lessonDate,
   onReschedule,
   onEditLesson,
   changeLesson,
@@ -124,9 +127,14 @@ export const LessonInfoModal = ({
         >
           <ModalHeader>
             <ModalCloseButton />
-            <ModalTitle className="text-xl-base max-w-[calc(100%-56px)] font-semibold text-gray-100">
-              Информация о занятии
-            </ModalTitle>
+            <div className="flex max-w-[calc(100%-56px)] flex-col gap-0.5">
+              <ModalTitle className="text-xl-base font-semibold text-gray-100">
+                Информация о занятии
+              </ModalTitle>
+              {lessonDate != null && lessonDate.trim().length > 0 ? (
+                <p className="text-gray-60 text-sm font-normal">{lessonDate.trim()}</p>
+              ) : null}
+            </div>
           </ModalHeader>
 
           <ModalBody className="flex flex-col gap-4 px-6 pt-0 pb-4">

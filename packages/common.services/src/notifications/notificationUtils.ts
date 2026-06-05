@@ -65,7 +65,7 @@ export const generateNotificationAction = (notification: NotificationT): string 
  */
 export const getNotificationInvalidationKeys = (
   notification: NotificationT,
-): Array<string | [string, ...unknown[]]> => {
+): Array<string | readonly [string, ...unknown[]]> => {
   if (!notification?.payload) {
     return [];
   }

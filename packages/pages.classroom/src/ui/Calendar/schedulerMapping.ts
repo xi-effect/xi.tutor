@@ -1,3 +1,5 @@
+import type { GetEventInstanceDetailsResponseDto } from 'common.api';
+import { extractInstanceSlot } from 'common.services';
 import type { FormData as AddingLessonFormData } from 'features.lesson.add';
 import type {
   CreateClassroomEventRequestDto,
@@ -72,6 +74,69 @@ export const mapScheduleItemToCalendarEvent = (item: ScheduleItem): ICalendarEve
 
 export const mapScheduleItemsToCalendarEvents = (items: ScheduleItem[]): ICalendarEvent[] =>
   items.map(mapScheduleItemToCalendarEvent);
+
+/**
+ * Событие для модалки из реального ответа GET event-instances/{id}/.
+ *
+ * API возвращает вложенную структуру:
+ *   { event: { name, id, ... }, kind, persisted_event_instance: { id, starts_at, ... } }
+ */
+export const mapInstanceDetailsToCalendarEvent = (
+  details: GetEventInstanceDetailsResponseDto,
+  classroomId: number,
+): ICalendarEvent => {
+  const event = details.event;
+  const slot = extractInstanceSlot(details);
+
+  if (slot == null || event == null) {
+    const fallbackStart = new Date();
+    const fallbackEnd = new Date(fallbackStart.getTime() + 60 * 60 * 1000);
+    return {
+      id: 'unknown',
+      title: '',
+      start: fallbackStart,
+      end: fallbackEnd,
+      type: 'lesson',
+      lessonInfo: { studentName: '', lessonType: 'individual', classroomId },
+    };
+  }
+
+  let repetitionModeId: string | undefined;
+  let instanceIndex: number | null = null;
+
+  if (details.kind === 'repeated_virtual') {
+    repetitionModeId = details.repetition_mode_id;
+    instanceIndex = details.instance_index;
+  }
+
+  const { startsAt, endsAt, instanceId, cancelledAt } = slot;
+  const title = event.name ?? '';
+  const effectiveClassroomId = event.classroom_id ?? classroomId;
+
+  return {
+    id: instanceId ?? `${event.id}:${details.kind}:${instanceIndex ?? 'unknown'}`,
+    title,
+    start: new Date(startsAt),
+    end: new Date(endsAt),
+    type: 'lesson',
+    isCancelled: cancelledAt != null,
+    lessonInfo: {
+      studentName: title,
+      lessonType: 'individual',
+      description: event.description ?? undefined,
+      classroomId: effectiveClassroomId ?? undefined,
+    },
+    scheduler: {
+      eventId: event.id,
+      eventInstanceId: instanceId,
+      instanceKind: details.kind,
+      repetitionKind: details.kind !== 'sole' ? 'weekly' : null,
+      repetitionModeId,
+      instanceIndex: instanceIndex ?? undefined,
+      cancelledAt,
+    },
+  };
+};
 
 export const mapCalendarEventsToDayLessons = (events: ICalendarEvent[]): ScheduleLessonRow[] =>
   events.map((event) => ({
