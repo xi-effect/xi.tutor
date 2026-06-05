@@ -1,13 +1,17 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from '@tanstack/react-router';
 import { useMediaQuery } from '@xipkg/utils';
-import { formatNotificationCount, useNotificationsContext } from 'common.services';
+import {
+  formatNotificationCount,
+  registerNotificationNavigator,
+  useNotificationsContext,
+} from 'common.services';
 import type { CustomNotificationModalPayload } from 'common.services';
 import { NotificationsDropdown } from './NotificationsDropdown';
 import { NotificationsList } from './NotificationsList';
 import { NotificationsMobileDropdown } from './NotificationsMobileDropdown';
 import { CustomNotificationModal } from './CustomNotificationModal';
-import { openNotificationLink } from './notificationsNavigation';
+import { openNotificationLink, navigateToNotification } from './notificationsNavigation';
 import { useNotificationsInfiniteScroll } from '../../../hooks';
 
 export const Notifications = () => {
@@ -36,6 +40,12 @@ export const Notifications = () => {
   const handleNavigate = (url: string) => {
     openNotificationLink(url, navigate);
   };
+
+  // Toast/системные уведомления живут в NotificationsProvider вне RouterProvider — пробрасываем navigate сюда
+  useEffect(() => {
+    registerNotificationNavigator((options) => navigateToNotification(navigate, options));
+    return () => registerNotificationNavigator(null);
+  }, [navigate]);
 
   const handleToSettings = () => {
     navigate({ to: location.pathname, search: { profile: 'notifications' } });

@@ -459,6 +459,12 @@ export function useCancelEventInstance() {
     onSuccess: (_data, { classroomId }) => {
       invalidateClassroomSchedules(queryClient, classroomId);
       invalidateGlobalSchedules(queryClient);
+      queryClient.invalidateQueries({
+        queryKey: schedulerQueryKeys.tutorEventInstanceDetailsForClassroom(classroomId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: schedulerQueryKeys.studentEventInstanceDetailsForClassroom(classroomId),
+      });
     },
     onError: (err) => {
       handleError(err, 'scheduler');
