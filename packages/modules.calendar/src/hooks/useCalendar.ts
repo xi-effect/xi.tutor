@@ -7,12 +7,19 @@ const getInitialWeekStart = () => startOfWeek(new Date(), { weekStartsOn: 1 });
 type UseCalendarOptions = {
   /** Начальная неделя — например, из диплинка `focused_at` в URL кабинета */
   initialAnchorDate?: Date | null;
+  /** true — окно с даты занятия (goToDay), false — с понедельника недели */
+  initialAnchorUseDay?: boolean;
 };
 
 export const useCalendar = (options?: UseCalendarOptions) => {
   const [weekStart, setWeekStart] = useState<Date>(() => {
     const anchor = options?.initialAnchorDate;
     if (anchor != null && Number.isFinite(anchor.getTime())) {
+      if (options?.initialAnchorUseDay) {
+        const d = new Date(anchor);
+        d.setHours(0, 0, 0, 0);
+        return d;
+      }
       return startOfWeek(anchor, { weekStartsOn: 1 });
     }
     return getInitialWeekStart();

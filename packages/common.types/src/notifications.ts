@@ -33,8 +33,10 @@ export type ClassroomScheduleFocusNotificationKind =
 export type ClassroomScheduleFocusNotificationPayload = {
   kind: ClassroomScheduleFocusNotificationKind;
   classroom_id: number;
-  /** ISO-8601 или иной формат даты/времени от бэка — передаётся в диплинк `focused_at` */
-  focused_at: string;
+  /** ISO-8601 — диплинк `focused_at` (для отмены и серии) */
+  focused_at?: string;
+  /** Альтернативное имя поля времени от бэка */
+  starts_at?: string;
 };
 
 // Типы уведомлений (kind в payload)

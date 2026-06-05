@@ -89,3 +89,21 @@ export function readInstanceStartsAt(
   const d = new Date(slot.startsAt);
   return Number.isFinite(d.getTime()) ? d : undefined;
 }
+
+export function readInstanceIsCancelled(
+  details: GetEventInstanceDetailsResponseDto | Record<string, unknown>,
+): boolean {
+  const slot = extractInstanceSlot(details);
+  if (slot?.cancelledAt != null) return true;
+
+  const raw = details as Record<string, unknown>;
+  if (raw.is_cancelled === true) return true;
+
+  const topCancelled = raw.cancelled_at;
+  if (typeof topCancelled === 'string' && topCancelled.trim().length > 0) return true;
+
+  const status = raw.status;
+  if (typeof status === 'string' && /cancel/i.test(status)) return true;
+
+  return false;
+}

@@ -17,19 +17,31 @@ const navigateToNotification = (
   },
 ) => {
   const nextSearch = { ...(options.search ?? {}) };
-  // Повторный клик по уведомлению на той же странице: без токена router не меняет search и диплинк не срабатывает
-  if (nextSearch.event_instance_id != null || nextSearch.focused_at != null) {
-    nextSearch.schedule_dl = String(Date.now());
-  }
 
   navigate({
     to: options.to as never,
     params: (options.params ?? {}) as never,
-    search: (prev) =>
-      ({
+    search: (prev) => {
+      const merged: Record<string, string | undefined> = {
         ...(prev as Record<string, string | undefined>),
         ...nextSearch,
-      }) as never,
+      };
+
+      // Взаимоисключающие диплинки — иначе остаётся старый event_instance_id и открывается модалка
+      if (nextSearch.focused_at != null) {
+        delete merged.event_instance_id;
+      }
+      if (nextSearch.event_instance_id != null) {
+        delete merged.focused_at;
+      }
+
+      // Повторный клик на той же странице (только внутренний токен, сразу снимается после обработки)
+      if (merged.focused_at != null || merged.event_instance_id != null) {
+        merged.schedule_dl = String(Date.now());
+      }
+
+      return merged as never;
+    },
   });
 };
 

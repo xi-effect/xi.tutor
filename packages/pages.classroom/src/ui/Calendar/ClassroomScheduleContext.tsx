@@ -79,6 +79,7 @@ export const ClassroomScheduleProvider = ({
 
   const { weekDays, weekStart, goToPrev, goToNext, goToWeekStart, goToDay } = useCalendar({
     initialAnchorDate,
+    initialAnchorUseDay: initialAnchorDate != null && search.event_instance_id == null,
   });
   const [visibleCount, setVisibleCount] = useState(weekDays.length);
   const visibleDays = useMemo(() => weekDays.slice(0, visibleCount), [weekDays, visibleCount]);

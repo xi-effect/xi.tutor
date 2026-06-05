@@ -31,6 +31,7 @@ export {
   extractInstanceSlot,
   normalizeEventInstanceDetailsResponse,
   readInstanceStartsAt,
+  readInstanceIsCancelled,
 } from './model/instanceDetailsParsing';
 
 export {

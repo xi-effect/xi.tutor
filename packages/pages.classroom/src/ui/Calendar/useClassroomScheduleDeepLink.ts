@@ -1,12 +1,15 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { startOfDay } from 'date-fns';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import type { ICalendarEvent } from 'modules.calendar';
 import {
+  getStudentEventInstanceDetails,
+  getTutorEventInstanceDetails,
+  readInstanceIsCancelled,
   readInstanceStartsAt,
+  schedulerQueryKeys,
   useCurrentUser,
-  useStudentEventInstanceDetails,
-  useTutorEventInstanceDetails,
 } from 'common.services';
 
 import { useClassroomScheduleSearch } from './useClassroomScheduleSearch';
@@ -22,7 +25,7 @@ export function parseScheduleAnchorFromSearch(search: {
       : null;
   if (!focusedAt) return null;
 
-  const d = new Date(focusedAt);
+  const d = startOfDay(new Date(focusedAt));
   return Number.isFinite(d.getTime()) ? d : null;
 }
 
@@ -57,10 +60,16 @@ export function useClassroomScheduleDeepLink() {
   const instanceIdRef = useRef<string | null>(null);
   const focusedAtRef = useRef<string | null>(null);
 
-  if (urlEventInstanceId != null) instanceIdRef.current = urlEventInstanceId;
+  if (urlEventInstanceId != null) {
+    instanceIdRef.current = urlEventInstanceId;
+  } else if (focusedAtRaw != null) {
+    instanceIdRef.current = null;
+  }
   if (focusedAtRaw != null) focusedAtRef.current = focusedAtRaw;
 
-  const activeInstanceId = urlEventInstanceId ?? instanceIdRef.current;
+  const activeInstanceId =
+    urlEventInstanceId ??
+    (focusedAtRaw != null || focusedAtRef.current != null ? null : instanceIdRef.current);
   const activeFocusedAt = focusedAtRaw ?? focusedAtRef.current;
   const hasDeeplink = activeInstanceId != null || activeFocusedAt != null;
 
@@ -69,7 +78,9 @@ export function useClassroomScheduleDeepLink() {
   const [pendingAnchorToken, setPendingAnchorToken] = useState(0);
   const [mobileScheduleAnchorTs, setMobileScheduleAnchorTs] = useState<number | null>(null);
 
-  const processedRef = useRef<string | null>(null);
+  const lastProcessedInstanceDeeplinkRef = useRef<string | null>(null);
+  const lastFocusedAtRef = useRef<string | null>(null);
+  const queryClient = useQueryClient();
   const stripScheduledRef = useRef(false);
   const prevClassroomIdRef = useRef<number | null>(null);
   const lastScheduleDlRef = useRef<string | null>(null);
@@ -79,7 +90,9 @@ export function useClassroomScheduleDeepLink() {
     if (scheduleDlToken == null) return;
     if (lastScheduleDlRef.current === scheduleDlToken) return;
     lastScheduleDlRef.current = scheduleDlToken;
-    processedRef.current = null;
+    lastProcessedInstanceDeeplinkRef.current = null;
+    lastFocusedAtRef.current = null;
+    instanceIdRef.current = null;
     stripScheduledRef.current = false;
   }, [scheduleDlToken]);
 
@@ -110,7 +123,7 @@ export function useClassroomScheduleDeepLink() {
     setMobileScheduleAnchorTs(null);
     instanceIdRef.current = null;
     focusedAtRef.current = null;
-    processedRef.current = null;
+    lastProcessedInstanceDeeplinkRef.current = null;
     stripScheduledRef.current = false;
   }, []);
 
@@ -122,7 +135,7 @@ export function useClassroomScheduleDeepLink() {
     }
     setPendingEventToOpen(null);
     instanceIdRef.current = null;
-    processedRef.current = null;
+    lastProcessedInstanceDeeplinkRef.current = null;
     stripScheduledRef.current = false;
   }, [stripParams]);
 
@@ -149,74 +162,111 @@ export function useClassroomScheduleDeepLink() {
     });
   }, [hasDeeplink, isScheduleTab, navigate, classroomIdParam]);
 
-  // focused_at: только переключение недели, без модалки
-  const lastFocusedAtRef = useRef<string | null>(null);
-  useEffect(() => {
-    if (!activeFocusedAt || activeInstanceId) return;
-    if (lastFocusedAtRef.current === activeFocusedAt) return;
+  // focused_at: только дата в расписании (layout — до paint; без event_instance_id в URL)
+  useLayoutEffect(() => {
+    if (urlEventInstanceId != null || activeInstanceId != null) return;
 
-    const d = new Date(activeFocusedAt);
+    const focusedAt = focusedAtRaw ?? focusedAtRef.current;
+    if (!focusedAt) return;
+
+    const dedupeKey = scheduleDlToken != null ? `dl:${scheduleDlToken}` : `at:${focusedAt}`;
+    if (lastFocusedAtRef.current === dedupeKey) return;
+
+    const d = startOfDay(new Date(focusedAt));
     if (!Number.isFinite(d.getTime())) {
       scheduleStrip();
       return;
     }
 
-    lastFocusedAtRef.current = activeFocusedAt;
+    lastFocusedAtRef.current = dedupeKey;
+    focusedAtRef.current = focusedAt;
+    setPendingEventToOpen(null);
     setPendingAnchorDate(d);
     setMobileScheduleAnchorTs(d.getTime());
     setPendingAnchorToken((t) => t + 1);
     scheduleStrip();
-  }, [activeFocusedAt, activeInstanceId, scheduleStrip]);
+  }, [focusedAtRaw, urlEventInstanceId, activeInstanceId, scheduleDlToken, scheduleStrip]);
 
-  // event_instance_id: грузим детали и открываем модалку
-  const tutorDetails = useTutorEventInstanceDetails({
-    classroomId,
-    eventInstanceId: activeInstanceId ?? '',
-    enabled: activeInstanceId != null && classroomId > 0 && layoutReady && isTutorUser === true,
-  });
-
-  const studentDetails = useStudentEventInstanceDetails({
-    classroomId,
-    eventInstanceId: activeInstanceId ?? '',
-    enabled: activeInstanceId != null && classroomId > 0 && layoutReady && isTutorUser === false,
-  });
-
-  const detailsQuery = isTutorUser ? tutorDetails : studentDetails;
-
+  // event_instance_id: свежие детали с API (без устаревшего кэша) → дата; модалка только если не отменено
   useEffect(() => {
-    const instanceId = urlEventInstanceId;
-    if (instanceId == null || !layoutReady) return;
-    if (processedRef.current === instanceId) return;
-    if (detailsQuery.isPending || detailsQuery.isFetching) return;
+    const instanceId = urlEventInstanceId ?? instanceIdRef.current;
+    if (instanceId == null || !layoutReady || classroomId <= 0 || isTutorUser == null) return;
 
-    if (detailsQuery.isSuccess && detailsQuery.data != null) {
-      const event = mapInstanceDetailsToCalendarEvent(detailsQuery.data, classroomId);
-      const startAt = readInstanceStartsAt(detailsQuery.data) ?? startOfDay(new Date(event.start));
+    const deeplinkKey = scheduleDlToken ?? `inst:${instanceId}`;
+    if (lastProcessedInstanceDeeplinkRef.current === deeplinkKey) return;
 
-      setPendingEventToOpen(event);
+    let aborted = false;
 
-      if (Number.isFinite(startAt.getTime())) {
-        setPendingAnchorDate(startAt);
-        setMobileScheduleAnchorTs(startAt.getTime());
-        setPendingAnchorToken((t) => t + 1);
+    void (async () => {
+      const detailsKey = isTutorUser
+        ? schedulerQueryKeys.tutorEventInstanceDetails(classroomId, instanceId)
+        : schedulerQueryKeys.studentEventInstanceDetails(classroomId, instanceId);
+
+      await queryClient.invalidateQueries({ queryKey: detailsKey });
+      await queryClient.invalidateQueries({
+        queryKey: schedulerQueryKeys.tutorAllForClassroom(classroomId),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: schedulerQueryKeys.studentAllForClassroom(classroomId),
+      });
+      await queryClient.invalidateQueries({ queryKey: schedulerQueryKeys.tutorScheduleAll() });
+      await queryClient.invalidateQueries({ queryKey: schedulerQueryKeys.studentScheduleAll() });
+
+      try {
+        const data = await queryClient.fetchQuery({
+          queryKey: detailsKey,
+          queryFn: () =>
+            isTutorUser
+              ? getTutorEventInstanceDetails({ classroomId, eventInstanceId: instanceId })
+              : getStudentEventInstanceDetails({ classroomId, eventInstanceId: instanceId }),
+        });
+
+        if (aborted) return;
+
+        lastProcessedInstanceDeeplinkRef.current = deeplinkKey;
+
+        const startAt = readInstanceStartsAt(data);
+        const anchor =
+          startAt != null && Number.isFinite(startAt.getTime()) ? startOfDay(startAt) : null;
+
+        if (readInstanceIsCancelled(data)) {
+          setPendingEventToOpen(null);
+          if (anchor != null) {
+            setPendingAnchorDate(anchor);
+            setMobileScheduleAnchorTs(anchor.getTime());
+            setPendingAnchorToken((t) => t + 1);
+          }
+          scheduleStrip();
+          return;
+        }
+
+        const event = mapInstanceDetailsToCalendarEvent(data, classroomId);
+        const fallbackStart = anchor ?? startOfDay(new Date(event.start));
+
+        setPendingEventToOpen(event);
+        if (Number.isFinite(fallbackStart.getTime())) {
+          setPendingAnchorDate(fallbackStart);
+          setMobileScheduleAnchorTs(fallbackStart.getTime());
+          setPendingAnchorToken((t) => t + 1);
+        }
+      } catch {
+        if (!aborted) {
+          lastProcessedInstanceDeeplinkRef.current = deeplinkKey;
+          scheduleStrip();
+        }
       }
+    })();
 
-      processedRef.current = instanceId;
-      // URL стрипается в acknowledge(), когда модалка уже открыта
-    } else if (detailsQuery.isError) {
-      processedRef.current = instanceId;
-      scheduleStrip();
-    }
+    return () => {
+      aborted = true;
+    };
   }, [
     urlEventInstanceId,
     scheduleDlToken,
     layoutReady,
     classroomId,
-    detailsQuery.isPending,
-    detailsQuery.isFetching,
-    detailsQuery.isSuccess,
-    detailsQuery.isError,
-    detailsQuery.data,
+    isTutorUser,
+    queryClient,
     scheduleStrip,
   ]);
 
