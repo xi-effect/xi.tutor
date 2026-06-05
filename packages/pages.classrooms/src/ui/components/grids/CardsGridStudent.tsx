@@ -6,8 +6,8 @@ export const CardsGridStudent = () => {
   const parentRef = useRef<HTMLDivElement>(null);
 
   // Используем бесконечный запрос с реальным API для студента
-  const { items, isLoading, isError, isFetchingNextPage, hasNextPage } =
-    useInfiniteQueryStudent(parentRef);
+  const { items, isLoading, isError, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useInfiniteQueryStudent();
 
   return (
     <CardsGrid
@@ -16,6 +16,7 @@ export const CardsGridStudent = () => {
       isError={isError}
       isFetchingNextPage={isFetchingNextPage}
       hasNextPage={hasNextPage}
+      fetchNextPage={fetchNextPage}
       parentRef={parentRef}
       emptyText="Здесь будут ваши кабинеты"
       inviteText="Вас пока не пригласили ни в один кабинет"

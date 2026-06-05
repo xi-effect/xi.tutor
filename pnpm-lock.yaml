@@ -84,6 +84,18 @@ importers:
       common.utils:
         specifier: workspace:*
         version: link:../../packages/common.utils
+      features.group.add:
+        specifier: workspace:*
+        version: link:../../packages/features.group.add
+      features.invites:
+        specifier: workspace:*
+        version: link:../../packages/features.invites
+      features.invoice:
+        specifier: workspace:*
+        version: link:../../packages/features.invoice
+      features.materials.add:
+        specifier: workspace:*
+        version: link:../../packages/features.materials.add
       features.table:
         specifier: workspace:*
         version: link:../../packages/features.table
@@ -1512,9 +1524,18 @@ importers:
 
   packages/features.invites:
     dependencies:
+      '@tanstack/react-router':
+        specifier: ^1.166.6
+        version: 1.170.7(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
+      '@xipkg/actionbutton':
+        specifier: 1.0.0
+        version: 1.0.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@xipkg/button':
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.15)(react@19.2.6)
+      '@xipkg/drawer':
+        specifier: 0.1.0
+        version: 0.1.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@xipkg/icons':
         specifier: ^3.0.15
         version: 3.0.15(react@19.2.6)
@@ -1533,6 +1554,15 @@ importers:
       common.types:
         specifier: workspace:*
         version: link:../common.types
+      features.group.add:
+        specifier: workspace:*
+        version: link:../features.group.add
+      features.invoice:
+        specifier: workspace:*
+        version: link:../features.invoice
+      features.materials.add:
+        specifier: workspace:*
+        version: link:../features.materials.add
       features.table:
         specifier: workspace:*
         version: link:../features.table
@@ -4072,9 +4102,6 @@ importers:
       '@tanstack/react-virtual':
         specifier: 3.13.9
         version: 3.13.9(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
-      '@xipkg/actionbutton':
-        specifier: 1.0.0
-        version: 1.0.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
       '@xipkg/avatar':
         specifier: 3.3.0
         version: 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -4731,6 +4758,9 @@ importers:
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
+      features.invites:
+        specifier: workspace:*
+        version: link:../features.invites
       features.materials.add:
         specifier: workspace:*
         version: link:../features.materials.add
@@ -4943,6 +4973,9 @@ importers:
       features.charts:
         specifier: workspace:*
         version: link:../features.charts
+      features.invites:
+        specifier: workspace:*
+        version: link:../features.invites
       features.invoice:
         specifier: workspace:*
         version: link:../features.invoice

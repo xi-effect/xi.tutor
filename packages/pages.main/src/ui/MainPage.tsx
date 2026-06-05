@@ -1,12 +1,7 @@
 /* eslint-disable no-irregular-whitespace */
 import { useMemo, useState } from 'react';
-import {
-  Materials,
-  Payments,
-  Classrooms,
-  FirstLessonGuideBanner,
-  MobileMainActionButton,
-} from './components';
+import { Materials, Payments, Classrooms, FirstLessonGuideBanner } from './components';
+import { MobileTutorActionButton } from 'features.invites';
 import { DateTimeDisplay, OnboardingPopup } from 'common.ui';
 import { useCurrentUser } from 'common.services';
 import { useMediaQuery } from '@xipkg/utils';
@@ -192,7 +187,7 @@ export const MainPage = () => {
           </div>
         </div>
       </div>
-      {isTutor && <MobileMainActionButton />}
+      <MobileTutorActionButton variant="main" />
       <OnboardingPopup steps={steps} disabled={false} />
     </div>
   );

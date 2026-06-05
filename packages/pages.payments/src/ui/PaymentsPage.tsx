@@ -13,6 +13,7 @@ import {
 } from 'common.services';
 import { UserRoleT } from 'common.api';
 import { DateTimeDisplay } from 'common.ui';
+import { MobileTutorActionButton } from 'features.invites';
 
 export const PaymentsPage = () => {
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
@@ -232,6 +233,7 @@ export const PaymentsPage = () => {
       {isInvoiceModalOpen && (
         <InvoiceModal open={isInvoiceModalOpen} onOpenChange={setIsInvoiceModalOpen} />
       )}
+      <MobileTutorActionButton variant="payments" />
     </div>
   );
 };

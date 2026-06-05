@@ -28,6 +28,7 @@
     "common.services": "workspace:*",
     "common.ui": "workspace:*",
     "dayjs": "^1.11.13",
+    "features.invites": "workspace:*",
     "features.materials.add": "workspace:*",
     "features.materials.card": "workspace:*",
     "features.materials.duplicate": "workspace:*"
