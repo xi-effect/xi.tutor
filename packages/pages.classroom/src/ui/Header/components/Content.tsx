@@ -99,6 +99,7 @@ export const Content = ({ classroom }: ContentProps) => {
         </div>
         <div className="w-full sm:hidden">
           <StartLessonButton
+            className="gap-2"
             classroomId={classroom.id}
             variant="primary"
             onStart={handleStartCall}
@@ -107,7 +108,12 @@ export const Content = ({ classroom }: ContentProps) => {
       </div>
 
       <div className="ml-auto hidden h-full shrink-0 flex-col items-center justify-center gap-2 sm:flex">
-        <StartLessonButton classroomId={classroom.id} variant="primary" onStart={handleStartCall} />
+        <StartLessonButton
+          className="gap-2"
+          classroomId={classroom.id}
+          variant="primary"
+          onStart={handleStartCall}
+        />
       </div>
     </div>
   );

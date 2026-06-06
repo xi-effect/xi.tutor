@@ -50,7 +50,7 @@ export const TabsStudent = () => {
             )}
           </div>
 
-          <div className="bg-gray-0 xs:rounded-tl-2xl flex min-h-0 min-w-0 flex-1 flex-col rounded-none pt-0 pl-4">
+          <div className="bg-gray-0 xs:rounded-tl-2xl xs:pb-0 flex min-h-0 min-w-0 flex-1 flex-col rounded-none pt-0 pb-16 pl-4">
             <SharedTabsContent />
           </div>
         </Tabs.Root>

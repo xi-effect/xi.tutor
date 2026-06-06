@@ -234,7 +234,7 @@ export const TabsTutor = () => {
             )}
           </div>
 
-          <div className="bg-gray-0 xs:rounded-tl-2xl flex min-h-0 min-w-0 flex-1 flex-col rounded-none pt-0 pl-4">
+          <div className="bg-gray-0 xs:pb-0 xs:rounded-tl-2xl flex min-h-0 min-w-0 flex-1 flex-col rounded-none pt-0 pb-40 pl-4">
             <SharedTabsContent
               extraContent={
                 <Tabs.Content className="data-[state=inactive]:hidden" value="info">

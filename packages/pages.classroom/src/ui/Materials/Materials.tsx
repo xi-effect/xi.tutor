@@ -49,7 +49,7 @@ export const Materials = () => {
   }
 
   return (
-    <div className="flex flex-col pt-2">
+    <div className="xs:pr-0 flex min-h-[400px] flex-col pt-2 pr-3">
       <MaterialSection headerTitle="Доски" rowClassName="pb-4">
         {boardsData?.length ? (
           boardsData.map((board) => (

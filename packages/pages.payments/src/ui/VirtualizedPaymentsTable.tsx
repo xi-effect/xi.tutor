@@ -45,6 +45,7 @@ export type VirtualizedPaymentsTableProps<T> = {
   isError: boolean;
   currentUserRole: RoleT;
   onViewInvoice?: (payment: CommonRolePaymentT<UserRoleT>) => void;
+  className?: string;
 };
 
 export const VirtualizedPaymentsTable = ({
@@ -55,6 +56,7 @@ export const VirtualizedPaymentsTable = ({
   isFetchingNextPage = false,
   isError,
   currentUserRole,
+  className,
   onViewInvoice,
 }: VirtualizedPaymentsTableProps<RolePaymentT<UserRoleT>>) => {
   const isMobile = useMediaQuery('(max-width: 719px)');
@@ -166,7 +168,10 @@ export const VirtualizedPaymentsTable = ({
           </TableHeader>
         </Table>
 
-        <div ref={parentRef} className="h-[calc(100dvh-152px)] w-full overflow-y-auto">
+        <div
+          ref={parentRef}
+          className={cn('h-[calc(100dvh-152px)] w-full overflow-y-auto', className)}
+        >
           <div
             style={{
               height: `${rowVirtualizer.getTotalSize()}px`,
