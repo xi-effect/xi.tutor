@@ -4,7 +4,7 @@ import { Materials, Payments, Classrooms, FirstLessonGuideBanner } from './compo
 import { MobileTutorActionButton } from 'features.invites';
 import { DateTimeDisplay, OnboardingPopup } from 'common.ui';
 import { useCurrentUser } from 'common.services';
-import { useMediaQuery } from '@xipkg/utils';
+import { cn, useMediaQuery } from '@xipkg/utils';
 import { NearestLessonCard, useStudentSchedule, useTutorSchedule } from 'modules.calendar';
 import { MovingLessonModal } from 'features.lesson.move';
 import { Lessons } from './components/Lessons/Lessons';
@@ -143,16 +143,28 @@ export const MainPage = () => {
   ];
 
   return (
-    <div className="bg-gray-5 flex h-full min-h-0 flex-col">
+    <div
+      className={cn(
+        'bg-gray-5 flex flex-col',
+        isMobile
+          ? 'max-h-[calc(100dvh-64px)] overflow-y-auto overscroll-contain'
+          : 'h-full min-h-0',
+      )}
+    >
       {/* Шапка на всю ширину контентной области; не участвует в прокрутке ниже */}
       {!isMobile && (
         <div className="shrink-0 p-5">
           <DateTimeDisplay />
         </div>
       )}
-      {/* Ниже шапки — оставшаяся высота; справа один скролл по кабинетам / оплатам / материалам */}
-      <div className="flex min-h-0 flex-1 flex-col">
-        <div className="flex min-h-0 flex-1 flex-col items-start gap-4 p-5 sm:flex-row sm:py-0 sm:pr-0">
+      {/* На мобильных — одна прокрутка всей страницы; на десктопе — только правая колонка */}
+      <div className={cn('flex flex-col', !isMobile && 'min-h-0 flex-1')}>
+        <div
+          className={cn(
+            'flex flex-col items-start gap-4 p-5',
+            isMobile ? 'pb-12' : 'min-h-0 flex-1 sm:flex-row sm:py-0 sm:pr-0',
+          )}
+        >
           {!isMobile && (
             <div className="lg:bg-gray-5 flex shrink-0 flex-col pb-6 lg:sticky lg:top-0 lg:z-10 lg:self-start">
               <Lessons />
@@ -179,7 +191,12 @@ export const MainPage = () => {
               />
             </>
           )}
-          <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-5 self-stretch overscroll-contain pb-6 sm:overflow-y-auto">
+          <div
+            className={cn(
+              'flex w-full min-w-0 flex-col gap-5 self-stretch',
+              !isMobile && 'min-h-0 flex-1 overscroll-contain pb-6 sm:overflow-y-auto',
+            )}
+          >
             {!isMobile && isTutor && <FirstLessonGuideBanner />}
             <Classrooms />
             <Payments />
