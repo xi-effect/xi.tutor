@@ -42,11 +42,13 @@ export const CalendarModule = ({
 
   if (isMobile) {
     return (
-      <ScheduleMobileView
-        onAddLessonClick={onAddLessonClick}
-        onLessonReschedule={onLessonReschedule}
-        onSaveLesson={onSaveLesson}
-      />
+      <div className="flex h-[calc(100dvh-64px)] min-h-0 flex-col">
+        <ScheduleMobileView
+          onAddLessonClick={onAddLessonClick}
+          onLessonReschedule={onLessonReschedule}
+          onSaveLesson={onSaveLesson}
+        />
+      </div>
     );
   }
 

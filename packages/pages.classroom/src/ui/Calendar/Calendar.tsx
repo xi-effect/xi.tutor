@@ -216,14 +216,16 @@ export const Calendar = () => {
     <>
       {lessonInfoModal}
       {isMobile ? (
-        <ScheduleMobileView
-          key={numericClassroomId}
-          onAddLessonClick={onAddLessonClick}
-          onLessonReschedule={handleLessonReschedule}
-          onSaveLesson={isTutor ? handleLessonSave : undefined}
-          hideLessonCardClassroomAndSubject
-          mobileScheduleAnchorTs={mobileScheduleAnchorTs}
-        />
+        <div className="flex h-full min-h-0 min-w-0 flex-col">
+          <ScheduleMobileView
+            key={numericClassroomId}
+            onAddLessonClick={onAddLessonClick}
+            onLessonReschedule={handleLessonReschedule}
+            onSaveLesson={isTutor ? handleLessonSave : undefined}
+            hideLessonCardClassroomAndSubject
+            mobileScheduleAnchorTs={mobileScheduleAnchorTs}
+          />
+        </div>
       ) : (
         <div className="flex h-full min-h-0 min-w-0 flex-col">
           <CalendarScheduleKanban

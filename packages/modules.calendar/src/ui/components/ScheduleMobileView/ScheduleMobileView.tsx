@@ -5,6 +5,7 @@ import { formatMonthLabel } from '../../../utils/calendarUtils';
 import { ScheduleWeekCarousel } from '../ScheduleWeekCarousel';
 import { ScheduleDaySwiper } from '../ScheduleDaySwiper';
 import { getWeeksRangeDays } from '../../../utils';
+import { cn } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
 import { Plus } from '@xipkg/icons';
 import type { ChangeLessonFormData } from 'features.lesson.change';
@@ -85,8 +86,8 @@ export const ScheduleMobileView = ({
   );
 
   return (
-    <div className="bg-gray-5 xs:max-h-none xs:min-h-0 xs:overflow-visible relative flex min-h-[calc(100dvh-64px)] flex-1 flex-col overflow-hidden">
-      <div className="bg-gray-5 sticky top-0 z-10 px-4 pt-4 pb-3">
+    <div className={cn('bg-gray-5 flex h-full min-h-0 flex-col overflow-hidden')}>
+      <div className="bg-gray-5 shrink-0 px-4 pt-4 pb-3">
         <div className="bg-gray-0 flex h-[184px] flex-col rounded-[20px] p-4">
           <div className="flex h-[32px] flex-row items-center justify-between gap-2">
             <span className="text-l-base font-medium text-gray-100">Расписание</span>
@@ -114,7 +115,7 @@ export const ScheduleMobileView = ({
           ) : null}
         </div>
       </div>
-      <div className="flex min-h-0 flex-1 flex-col px-4 pb-4">
+      <div className={cn('flex min-h-0 flex-1 flex-col overflow-hidden px-4')}>
         <ScheduleDaySwiper
           days={slideDays}
           selectedDate={selectedDate}

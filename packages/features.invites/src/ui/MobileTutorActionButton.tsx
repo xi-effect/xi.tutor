@@ -18,7 +18,7 @@ const menuRowClassName = cn(
 
 export type MobileTutorActionButtonVariant = 'main' | 'classrooms' | 'materials' | 'payments';
 
-type ActionId = 'invite' | 'group' | 'board' | 'note' | 'invoice';
+type ActionId = 'invite' | 'group' | 'board' | 'note' | 'invoice' | 'template';
 
 type ActionCopy = {
   id: ActionId;
@@ -31,6 +31,8 @@ type ActionCopy = {
 
 type MobileTutorActionButtonProps = {
   variant: MobileTutorActionButtonVariant;
+  paymentsActiveTab?: string;
+  onCreateTemplate?: () => void;
 };
 
 const variantMeta: Record<MobileTutorActionButtonVariant, { actions: ActionCopy[] }> = {
@@ -91,19 +93,39 @@ const variantMeta: Record<MobileTutorActionButtonVariant, { actions: ActionCopy[
     ],
   },
   payments: {
-    actions: [
-      {
-        id: 'invoice',
-        label: 'Счёт на оплату',
-        description: 'Выставьте счёт ученику за проведённое занятие',
-        Icon: Add,
-        umamiEvent: 'create-invoice',
-      },
-    ],
+    actions: [],
   },
 };
 
-export const MobileTutorActionButton = ({ variant }: MobileTutorActionButtonProps) => {
+const paymentsInvoiceAction: ActionCopy = {
+  id: 'invoice',
+  label: 'Счёт на оплату',
+  description: 'Выставьте счёт ученику за проведённое занятие',
+  Icon: Add,
+  umamiEvent: 'create-invoice',
+};
+
+const paymentsTemplateAction: ActionCopy = {
+  id: 'template',
+  label: 'Тип оплаты',
+  description: 'Создайте шаблон для быстрого выставления счетов',
+  Icon: Add,
+  umamiEvent: 'create-template',
+};
+
+const getPaymentsActions = (activeTab?: string): ActionCopy[] => {
+  if (activeTab === 'templates') {
+    return [paymentsTemplateAction];
+  }
+
+  return [paymentsInvoiceAction];
+};
+
+export const MobileTutorActionButton = ({
+  variant,
+  paymentsActiveTab,
+  onCreateTemplate,
+}: MobileTutorActionButtonProps) => {
   const { data: user, isLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const { createMaterial } = useCreateMaterial();
@@ -115,7 +137,10 @@ export const MobileTutorActionButton = ({ variant }: MobileTutorActionButtonProp
   const [invoiceModalOpen, setInvoiceModalOpen] = useState(false);
 
   const eventPrefix = variant;
-  const meta = variantMeta[variant];
+  const meta =
+    variant === 'payments'
+      ? { actions: getPaymentsActions(paymentsActiveTab) }
+      : variantMeta[variant];
   const isInviteVariant = variant === 'main' || variant === 'classrooms';
 
   useEffect(() => {
@@ -142,6 +167,9 @@ export const MobileTutorActionButton = ({ variant }: MobileTutorActionButtonProp
         break;
       case 'invoice':
         setInvoiceModalOpen(true);
+        break;
+      case 'template':
+        onCreateTemplate?.();
         break;
     }
   };

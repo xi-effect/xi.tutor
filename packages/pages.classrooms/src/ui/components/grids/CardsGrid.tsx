@@ -88,7 +88,7 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
 
   if (isMobile) {
     return (
-      <div ref={parentRef} className="h-full min-h-0 w-full overflow-y-auto px-5 pb-6">
+      <div ref={parentRef} className="w-full px-5">
         <div className="grid grid-cols-1 gap-5">
           {items.map((item) => (
             <Card key={item.id} {...item} />

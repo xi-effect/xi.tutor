@@ -14,9 +14,11 @@ import {
 import { UserRoleT } from 'common.api';
 import { DateTimeDisplay } from 'common.ui';
 import { MobileTutorActionButton } from 'features.invites';
+import { ModalTemplate } from './Templates';
 
 export const PaymentsPage = () => {
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
   const [invoiceDetailsModalState, setInvoiceDetailsModalState] = useState<{
     isOpen: boolean;
     payment: RolePaymentT<'tutor'> | RolePaymentT<'student'> | null;
@@ -178,8 +180,8 @@ export const PaymentsPage = () => {
 
   return (
     <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pr-0">
-      <div className="flex h-screen flex-col pl-5">
-        <div className="flex flex-col gap-5 pt-5 pr-5">
+      <div className="xs:pl-5 flex h-screen flex-col pl-0">
+        <div className="xs:pl-0 flex flex-col gap-5 pt-5 pr-5 pl-5">
           <div className="flex h-8 items-center">
             <DateTimeDisplay />
           </div>
@@ -233,7 +235,14 @@ export const PaymentsPage = () => {
       {isInvoiceModalOpen && (
         <InvoiceModal open={isInvoiceModalOpen} onOpenChange={setIsInvoiceModalOpen} />
       )}
-      <MobileTutorActionButton variant="payments" />
+      <MobileTutorActionButton
+        variant="payments"
+        paymentsActiveTab={activeTab}
+        onCreateTemplate={() => setIsTemplateModalOpen(true)}
+      />
+      {isTemplateModalOpen && (
+        <ModalTemplate isOpen={isTemplateModalOpen} onClose={() => setIsTemplateModalOpen(false)} />
+      )}
     </div>
   );
 };
