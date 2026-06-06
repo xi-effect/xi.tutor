@@ -16,6 +16,7 @@ export {
   getDaysFrom,
   getWeeksNumbers,
   getWeeksRangeDays,
+  getWeekStartsRange,
 } from './getDays';
 export {
   mapScheduleItemToCalendarEvent,

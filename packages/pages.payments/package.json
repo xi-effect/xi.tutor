@@ -28,6 +28,7 @@
     "features.table": "workspace:*",
     "features.payment.approve": "workspace:*",
     "features.charts": "workspace:*",
+    "features.invites": "workspace:*",
     "features.invoice": "workspace:*",
     "features.invoice.card": "workspace:*",
     "react-hook-form": "^7.73.1",

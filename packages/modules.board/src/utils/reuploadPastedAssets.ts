@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+/**
+ * Re-upload вставленных файлов. После upload в props.src пишется только file id
+ * (контракт — ./storedFileSrc.ts), не getFileUrl().
+ */
 import type { DrContent, Editor, DrAssetId, DrShapeId } from '@ibodr/draw';
 import { uploadImageRequest, uploadFileRequest } from 'common.services';
-import { getFileUrl } from 'common.api';
 import { resolveAssetUrl, getCachedBlobUrl } from './resolveAssetUrl';
 import { getRegisteredTokens } from './tokenRegistry';
 
@@ -305,7 +308,8 @@ async function doResolveAndUpload(
     const fileId = isImage
       ? await uploadImageRequest({ file, token: destToken })
       : await uploadFileRequest({ file, token: destToken });
-    const newSrc = isImage ? getFileUrl(fileId) : fileId;
+    // Контракт персиста: только id — см. utils/storedFileSrc.ts
+    const newSrc = fileId;
 
     remapped.set(dedupKey, newSrc);
     return newSrc;

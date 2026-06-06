@@ -1,12 +1,12 @@
 import {
   HTMLContainer,
-  PlainTextLabel,
   SVGContainer,
   getColorValue,
   getFontFamily,
   useEditor,
   useValue,
 } from '@ibodr/draw';
+import { BoardPlainTextLabel } from '../labels/BoardPlainTextLabel';
 import { getFillColor, getSizeInPixels } from './geoUtils';
 import type { XiGeoShape, TXiGeoShapeProps } from './type';
 
@@ -22,6 +22,10 @@ export const XiGeoComponent: React.FC<TXiGeoComponent> = ({ shape }) => {
   const colorMode = useValue('colorMode', () => editor.getColorMode(), [editor]);
   const colors = theme.colors[colorMode];
   const isSelected = useValue('isSelected', () => editor.getOnlySelectedShapeId() === shape.id, [
+    editor,
+    shape.id,
+  ]);
+  const isEditing = useValue('isEditing', () => editor.getEditingShapeId() === shape.id, [
     editor,
     shape.id,
   ]);
@@ -59,13 +63,14 @@ export const XiGeoComponent: React.FC<TXiGeoComponent> = ({ shape }) => {
         )}
       </SVGContainer>
       <div
-        className="absolute z-10 overflow-hidden"
+        className="absolute z-10"
         style={{
           width: w * DEFAULT_SIZE_SCALE,
           height: h * DEFAULT_SIZE_SCALE,
+          overflow: isEditing ? 'visible' : 'hidden',
         }}
       >
-        <PlainTextLabel
+        <BoardPlainTextLabel
           type="xi-geo"
           shapeId={shape.id}
           fontFamily={getFontFamily(theme, font ?? 'draw')}

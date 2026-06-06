@@ -6,6 +6,7 @@ import {
   PaymentsQueryKey,
   StudentQueryKey,
 } from 'common.api';
+import { schedulerQueryKeys } from '../scheduler';
 
 const CUSTOM_NOTIFICATION_CONTENT_MAX_LENGTH = 80;
 
@@ -23,7 +24,92 @@ type NotificationActionFn = (payload: NotificationT['payload']) => string | null
 /**
  * Тип для ключей ревалидации кеша
  */
-type InvalidationKey = string | [string, ...unknown[]];
+type InvalidationKey = string | readonly [string, ...unknown[]];
+
+const getScheduleCacheInvalidationKeys = (
+  classroomId: number,
+  options?: { includeInstanceDetails?: boolean },
+): InvalidationKey[] => {
+  const keys: InvalidationKey[] = [
+    schedulerQueryKeys.tutorAllForClassroom(classroomId),
+    schedulerQueryKeys.studentAllForClassroom(classroomId),
+    schedulerQueryKeys.tutorScheduleAll(),
+    schedulerQueryKeys.studentScheduleAll(),
+  ];
+
+  if (options?.includeInstanceDetails) {
+    keys.push(
+      schedulerQueryKeys.tutorEventInstanceDetailsForClassroom(classroomId),
+      schedulerQueryKeys.studentEventInstanceDetailsForClassroom(classroomId),
+      schedulerQueryKeys.tutorRepeatedEventInstanceDetailsForClassroom(classroomId),
+      schedulerQueryKeys.studentRepeatedEventInstanceDetailsForClassroom(classroomId),
+    );
+  }
+
+  return keys;
+};
+
+const normalizeNotificationClassroomId = (payload: NotificationT['payload']): number | null => {
+  if (payload == null || typeof payload !== 'object') return null;
+  const id = (payload as { classroom_id?: unknown }).classroom_id;
+  if (typeof id === 'number' && Number.isFinite(id)) return id;
+  if (typeof id === 'string' && id.trim().length > 0) {
+    const parsed = Number(id);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+};
+
+const readIsoString = (value: unknown): string | null => {
+  if (typeof value === 'string' && value.trim().length > 0) return value.trim();
+  return null;
+};
+
+/** ISO-время занятия для диплинка `focused_at` (бэк может прислать разные имена полей). */
+export const readScheduleFocusIsoFromPayload = (payload: NotificationT['payload']): string => {
+  if (payload == null || typeof payload !== 'object') return '';
+  const record = payload as Record<string, unknown>;
+
+  for (const key of ['focused_at', 'starts_at', 'start_at', 'cancelled_at', 'instance_starts_at']) {
+    const direct = readIsoString(record[key]);
+    if (direct) return direct;
+  }
+
+  const nested = record.persisted_event_instance ?? record.event_instance ?? record.instance;
+  if (nested != null && typeof nested === 'object') {
+    const slot = nested as Record<string, unknown>;
+    const fromNested = readIsoString(slot.starts_at) ?? readIsoString(slot.start_at);
+    if (fromNested) return fromNested;
+  }
+
+  return '';
+};
+
+const buildClassroomEventInstanceAction: NotificationActionFn = (payload) => {
+  const classroomId = normalizeNotificationClassroomId(payload);
+  const eventInstanceId =
+    'event_instance_id' in payload ? String(payload.event_instance_id).trim() : '';
+  if (classroomId == null || !eventInstanceId) return null;
+  const q = new URLSearchParams({ tab: 'schedule', event_instance_id: eventInstanceId });
+  return `/classrooms/${classroomId}?${q.toString()}`;
+};
+
+const buildClassroomScheduleFocusAction: NotificationActionFn = (payload) => {
+  const classroomId = normalizeNotificationClassroomId(payload);
+  const focusedAt = readScheduleFocusIsoFromPayload(payload);
+  if (classroomId == null || !focusedAt) return null;
+  const q = new URLSearchParams({ tab: 'schedule', focused_at: focusedAt });
+  return `/classrooms/${classroomId}?${q.toString()}`;
+};
+
+const scheduleOnNotify = (
+  payload: NotificationT['payload'],
+  options?: { includeInstanceDetails?: boolean },
+): InvalidationKey[] | null => {
+  const classroomId = normalizeNotificationClassroomId(payload);
+  if (classroomId == null) return null;
+  return getScheduleCacheInvalidationKeys(classroomId, options);
+};
 
 /**
  * Конфигурация уведомления
@@ -56,16 +142,60 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
     },
     invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
     onNotify: (payload) => {
-      const classroomId = payload?.classroom_id.toString();
-
-      console.log('classroomId', classroomId);
-
-      if (classroomId) {
-        return [CallsQueryKey.GetParticipantsStudent, classroomId];
+      const classroomId = payload?.classroom_id;
+      if (typeof classroomId === 'number') {
+        return [[CallsQueryKey.GetParticipantsStudent, classroomId.toString()]];
       }
-
       return null;
     },
+  },
+
+  single_classroom_event_created_v1: {
+    title: 'Новое занятие в расписании',
+    description: () => 'Нажмите, чтобы узнать подробности',
+    action: buildClassroomEventInstanceAction,
+    invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
+    onNotify: (payload) => scheduleOnNotify(payload, { includeInstanceDetails: true }),
+  },
+
+  classroom_event_instance_rescheduled_v1: {
+    title: 'Занятие перенесено',
+    description: () => 'Изменение касается только этого занятия. Нажмите, чтобы узнать подробности',
+    action: buildClassroomEventInstanceAction,
+    invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
+    onNotify: (payload) => scheduleOnNotify(payload, { includeInstanceDetails: true }),
+  },
+
+  classroom_event_instance_cancelled_v1: {
+    title: 'Занятие отменено',
+    description: () => 'Изменение касается только этого занятия. Нажмите, чтобы узнать подробности',
+    action: buildClassroomEventInstanceAction,
+    invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
+    onNotify: (payload) => scheduleOnNotify(payload, { includeInstanceDetails: true }),
+  },
+
+  repeating_classroom_event_created_v1: {
+    title: 'В ваше расписание добавлены новые регулярные занятия',
+    description: () => 'Нажмите, чтобы узнать подробности',
+    action: buildClassroomScheduleFocusAction,
+    invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
+    onNotify: (payload) => scheduleOnNotify(payload, { includeInstanceDetails: true }),
+  },
+
+  classroom_event_repetition_updated_v1: {
+    title: 'Изменилось расписание регулярных занятий',
+    description: () => 'Изменения коснутся всех будущих занятий. Нажмите, чтобы узнать подробности',
+    action: buildClassroomScheduleFocusAction,
+    invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
+    onNotify: (payload) => scheduleOnNotify(payload, { includeInstanceDetails: true }),
+  },
+
+  classroom_event_repetition_cancelled_v1: {
+    title: 'Некоторые будущие занятия отменены',
+    description: () => 'Нажмите, чтобы узнать подробности и посмотреть обновлённое расписание',
+    action: buildClassroomScheduleFocusAction,
+    invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
+    onNotify: (payload) => scheduleOnNotify(payload, { includeInstanceDetails: true }),
   },
 
   enrollment_created_v1: {
@@ -82,7 +212,8 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
     title: 'Вы получили новый счёт',
     description: () => 'Пожалуйста, оплатите его',
     action: (payload) => {
-      const recipientInvoiceId = payload.recipient_invoice_id;
+      const recipientInvoiceId =
+        'recipient_invoice_id' in payload ? payload.recipient_invoice_id : undefined;
       return recipientInvoiceId
         ? `/payments?role=student&tab=invoices&recipient_invoice_id=${recipientInvoiceId}`
         : '/payments?role=student&tab=invoices';
@@ -95,7 +226,8 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
     title: 'Оплачен новый счёт',
     description: () => 'Подтвердите, что получили деньги',
     action: (payload) => {
-      const recipientInvoiceId = payload.recipient_invoice_id;
+      const recipientInvoiceId =
+        'recipient_invoice_id' in payload ? payload.recipient_invoice_id : undefined;
       return recipientInvoiceId
         ? `/payments?role=tutor&tab=invoices&recipient_invoice_id=${recipientInvoiceId}`
         : '/payments?role=tutor&tab=invoices';
@@ -124,10 +256,11 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
   },
   // Кастомное уведомление: без перехода на платформу, по клику открывается модалка
   custom_v1: {
-    title: (payload) => (payload?.header ? String(payload.header) : 'Уведомление'),
+    title: (payload) =>
+      'header' in payload && payload.header != null ? String(payload.header) : 'Уведомление',
     description: (payload) =>
       truncateText(
-        typeof payload?.content === 'string' ? payload.content : '',
+        'content' in payload && typeof payload.content === 'string' ? payload.content : '',
         CUSTOM_NOTIFICATION_CONTENT_MAX_LENGTH,
       ),
     action: () => null,

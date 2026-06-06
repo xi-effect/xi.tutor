@@ -80,8 +80,8 @@ export const NearestLessonCard = ({
           className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 h-[38px] min-h-[38px] flex-1 p-0"
           onClick={onReschedule}
         >
-          <Redo className="fill-gray-70 mr-1.5 h-4 w-4" />
           Перенести
+          <Redo className="fill-gray-70 ml-2 h-4 w-4" />
         </Button>
         {canCancelLesson ? (
           <Button
@@ -100,11 +100,11 @@ export const NearestLessonCard = ({
           type="button"
           variant="none"
           size="s"
-          className="text-m-base text-gray-70 inline-flex h-[36px] w-full cursor-pointer items-center gap-1 font-medium hover:text-gray-100"
+          className="text-m-base text-gray-70 inline-flex h-[36px] w-full cursor-pointer items-center gap-2 font-medium hover:text-gray-100"
           onClick={handleScheduleClick}
         >
           Расписание
-          <External className="h-4 w-4" />
+          <External className="fill-gray-60 h-4 w-4" />
         </Button>
       </div>
 

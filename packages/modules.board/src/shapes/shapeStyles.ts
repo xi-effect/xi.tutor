@@ -23,3 +23,22 @@ export const EmojiStyle = StyleProp.define('xi:emoji', {
   defaultValue: '😀',
   type: T.string,
 });
+
+export const PlotColorStyle = StyleProp.defineEnum('xi:plotColor', {
+  values: [
+    'black',
+    'white',
+    'blue',
+    'green',
+    'grey',
+    'light-blue',
+    'light-green',
+    'light-red',
+    'light-violet',
+    'orange',
+    'red',
+    'violet',
+    'yellow',
+  ],
+  defaultValue: 'blue',
+});

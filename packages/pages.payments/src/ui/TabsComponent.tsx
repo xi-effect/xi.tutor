@@ -55,7 +55,7 @@ export const TabsComponent = React.memo(
     }, [isTutor, activeTab, onTabChange]);
 
     return (
-      <div className="bg-gray-0 rounded-tl-2xl pl-4">
+      <div className="bg-gray-0 xs:rounded-tl-2xl rounded-none pl-4">
         <Tabs.Root value={activeTab} onValueChange={onTabChange}>
           <div className="h-full pt-0">
             <Tabs.Content value="invoices">

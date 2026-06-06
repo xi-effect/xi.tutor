@@ -1,5 +1,4 @@
 import { uploadImageRequest, uploadFileRequest } from 'common.services';
-import { getFileUrl } from 'common.api';
 import { DrAsset } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { resolveAssetUrl } from '../utils/resolveAssetUrl';
@@ -70,7 +69,10 @@ async function postUpload(file: File, token: string) {
     : await uploadFileRequest({ file, token });
 }
 
-/** Основной store — упрощенная версия */
+/**
+ * Asset store для @ibodr/draw: upload возвращает storage file id (не URL).
+ * Контракт персиста — utils/storedFileSrc.ts; URL собирается в resolve().
+ */
 export const myAssetStore = (token: string) => {
   registerToken(token);
 
@@ -110,9 +112,9 @@ export const myAssetStore = (token: string) => {
         if (objectUrl) URL.revokeObjectURL(objectUrl);
       }
 
+      // Контракт персиста: только id — см. utils/storedFileSrc.ts
       const fileId = await postUpload(file, token);
-      const src = getFileUrl(fileId);
-      return { src };
+      return { src: fileId };
     },
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

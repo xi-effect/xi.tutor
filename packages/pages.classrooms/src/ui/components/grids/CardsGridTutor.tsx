@@ -6,8 +6,8 @@ export const CardsGridTutor = () => {
   const parentRef = useRef<HTMLDivElement>(null);
 
   // Используем бесконечный запрос с реальным API для репетитора
-  const { items, isLoading, isError, isFetchingNextPage, hasNextPage } =
-    useInfiniteQuery(parentRef);
+  const { items, isLoading, isError, isFetchingNextPage, hasNextPage, fetchNextPage } =
+    useInfiniteQuery();
 
   return (
     <CardsGrid
@@ -16,6 +16,7 @@ export const CardsGridTutor = () => {
       isError={isError}
       isFetchingNextPage={isFetchingNextPage}
       hasNextPage={hasNextPage}
+      fetchNextPage={fetchNextPage}
       parentRef={parentRef}
       emptyText="Здесь будут ваши ученики и группы"
       inviteText="Пригласите кого-нибудь"

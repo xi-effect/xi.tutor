@@ -6,9 +6,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Add, FileSmall, WhiteBoard } from '@xipkg/icons';
+import { Add, ArrowRight, FileSmall, WhiteBoard } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { useNavigate } from '@tanstack/react-router';
 import { useCurrentUser, useGetMaterialsList } from 'common.services';
 import { MaterialsDuplicateProvider, useMaterialsDuplicate } from 'pages.materials';
 import { MaterialsDuplicate } from 'features.materials.duplicate';
@@ -16,6 +18,7 @@ import { MaterialsCard } from 'features.materials.card';
 import { useCreateMaterial } from 'features.materials.add';
 import { EmptyMaterials } from 'common.ui';
 import { useState, useMemo } from 'react';
+import { useMediaQuery } from '@xipkg/utils';
 import { SectionEmptyState, sectionEmptyStateIllustrationClass } from '../SectionEmptyState';
 
 const filters = [
@@ -27,11 +30,17 @@ const filters = [
 const MaterialsContent = () => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const isMobile = useMediaQuery('(max-width: 960px)');
 
   const { createMaterial } = useCreateMaterial();
   const { materialId, open, closeModal, openModal } = useMaterialsDuplicate();
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'note' | 'board'>('all');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleMore = () => {
+    navigate({ to: '/materials' });
+  };
 
   const handleCreateMaterial = (kind: 'note' | 'board') => {
     setDropdownOpen(false);
@@ -68,23 +77,24 @@ const MaterialsContent = () => {
 
   return (
     <>
-      <div className="bg-gray-0 flex w-full flex-col gap-4 rounded-2xl px-5 pt-4 pb-1 transition-all duration-200 ease-linear sm:w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)]">
+      <div className="bg-gray-0 xs:px-5 flex w-full flex-col gap-4 rounded-2xl pt-4 pr-2 pb-1 pl-5 transition-all duration-200 ease-linear sm:w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)]">
         {/* Header: title + tabs + add button */}
-        <div className="flex flex-row flex-wrap items-center gap-4">
+        <div className="flex flex-row items-center gap-2">
           <h2 className="text-l-base font-medium text-gray-100">Материалы</h2>
 
-          {/* Tabs (Brand) */}
-          <SwitcherAnimate
-            tabs={filters}
-            activeTab={selectedFilter}
-            onChange={(id) => setSelectedFilter(id as 'all' | 'note' | 'board')}
-            className="bg-gray-0 flex h-8 flex-row rounded-xl p-1"
-            tabClassName="h-[26px] rounded-[10px] px-3 py-1.5 text-s-base font-medium text-gray-80 data-[active=true]:text-gray-0"
-            indicatorClassName="rounded-[10px] bg-brand-80"
-          />
+          {!isMobile && (
+            <SwitcherAnimate
+              tabs={filters}
+              activeTab={selectedFilter}
+              onChange={(id) => setSelectedFilter(id as 'all' | 'note' | 'board')}
+              className="bg-gray-0 flex h-8 flex-row rounded-xl p-1"
+              tabClassName="h-[26px] rounded-[10px] px-3 py-1.5 text-s-base font-medium text-gray-80 data-[active=true]:text-gray-0"
+              indicatorClassName="rounded-[10px] bg-brand-80"
+            />
+          )}
 
-          {isTutor && (
-            <div className="ml-auto flex flex-row items-center gap-2">
+          <div className="ml-auto">
+            {isTutor && !isMobile ? (
               <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
                 <DropdownMenuTrigger asChild>
                   <Button
@@ -130,8 +140,22 @@ const MaterialsContent = () => {
                   </div>
                 </DropdownMenuContent>
               </DropdownMenu>
-            </div>
-          )}
+            ) : isMobile ? (
+              <Tooltip delayDuration={1000}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="none"
+                    className="mr-3 flex size-8 items-center justify-center rounded-[4px] p-0"
+                    onClick={handleMore}
+                    data-umami-event="materials-more"
+                  >
+                    <ArrowRight className="fill-gray-60 size-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>К материалам</TooltipContent>
+              </Tooltip>
+            ) : null}
+          </div>
         </div>
         {/* Cards row */}
         {isLoading ? (
@@ -160,8 +184,8 @@ const MaterialsContent = () => {
             minHeightClass="min-h-[160px]"
             illustration={<EmptyMaterials className={sectionEmptyStateIllustrationClass} />}
             actions={
-              <>
-                {isTutor && (
+              isTutor && !isMobile ? (
+                <>
                   <Button
                     type="button"
                     variant="none"
@@ -172,8 +196,6 @@ const MaterialsContent = () => {
                     Заметка
                     <Add className="fill-gray-80 ml-1 size-4 shrink-0" />
                   </Button>
-                )}
-                {isTutor && (
                   <Button
                     type="button"
                     variant="none"
@@ -184,8 +206,8 @@ const MaterialsContent = () => {
                     Доска
                     <Add className="fill-gray-80 ml-1 size-4 shrink-0" />
                   </Button>
-                )}
-              </>
+                </>
+              ) : undefined
             }
           />
         )}

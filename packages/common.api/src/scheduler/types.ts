@@ -129,10 +129,7 @@ export type EventInstanceTimeSlotInputDto = {
 };
 
 // ---------------------------------------------------------------------------
-// Detailed event-instance schemas
-// Используются ручками деталей (event-instances/{id}/, repetition-modes/{id}/instances/{index}/).
-// TODO: уточнить точный набор полей по OpenAPI; пока расширяем базовые DTO
-// опциональным `event` и `repetition_mode`, что соответствует семантике "detailed".
+// Detailed event-instance schemas (legacy — используются в глобальном расписании)
 // ---------------------------------------------------------------------------
 
 export type SoleEventInstanceDetailedDto = SoleEventInstanceDto & {
@@ -154,7 +151,48 @@ export type DetailedEventInstanceDto =
   | PersistedRepeatedEventInstanceDetailedDto
   | VirtualRepeatedEventInstanceDetailedDto;
 
-export type GetEventInstanceDetailsResponseDto = DetailedEventInstanceDto;
+// ---------------------------------------------------------------------------
+// GET event-instances/{id}/ — реальная структура ответа
+// Данные времени вложены в persisted_event_instance, имя занятия — в event.name
+// ---------------------------------------------------------------------------
+
+/** Слот времени конкретного экземпляра занятия (sole или persisted_repeated) */
+export type EventInstancePersistedSlotDto = {
+  id: string;
+  cancelled_at: string | null;
+  starts_at: string;
+  ends_at: string;
+};
+
+export type SoleEventInstanceDetailsResponseDto = {
+  kind: 'sole';
+  event: SchedulerEventDto;
+  persisted_event_instance: EventInstancePersistedSlotDto;
+};
+
+export type PersistedRepeatedEventInstanceDetailsResponseDto = {
+  kind: 'repeated_persisted';
+  event: SchedulerEventDto;
+  persisted_event_instance: EventInstancePersistedSlotDto;
+  repetition_mode?: RepetitionModeDto;
+};
+
+/** Для виртуальных повторов время может быть на верхнем уровне или в другой вложенной структуре.
+ *  Точная схема уточняется по OpenAPI; пока используем гибкий вариант. */
+export type VirtualRepeatedEventInstanceDetailsResponseDto = {
+  kind: 'repeated_virtual';
+  event: SchedulerEventDto;
+  starts_at: string;
+  ends_at: string;
+  instance_index: number;
+  repetition_mode_id: string;
+  repetition_mode?: RepetitionModeDto;
+};
+
+export type GetEventInstanceDetailsResponseDto =
+  | SoleEventInstanceDetailsResponseDto
+  | PersistedRepeatedEventInstanceDetailsResponseDto
+  | VirtualRepeatedEventInstanceDetailsResponseDto;
 
 // ---------------------------------------------------------------------------
 // Create classroom event response (теперь union по `kind`)

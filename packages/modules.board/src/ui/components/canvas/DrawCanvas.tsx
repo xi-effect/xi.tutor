@@ -7,6 +7,7 @@ import {
   useLockedShapeSelection,
   useDrawClipboard,
   useOverlayRepaintOnSelection,
+  useEditOnTypeForLabels,
 } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore, useDrawStore } from '../../../store';
@@ -21,9 +22,11 @@ import { DrawZoomPanel } from './DrawZoomPanel';
 import '@ibodr/draw/draw.css';
 import './customstyles.css';
 import { UndoRedo } from '../toolbar/UndoRedo';
-import { extractFileIdFromUrl } from '../../../utils/resolveAssetUrl';
+import { normalizeStoredFileSrc } from '../../../utils/storedFileSrc';
 import { XiGeoTool } from '../../../shapes/geo';
 import { EmojiTool } from '../../../shapes/emoji';
+import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
+import { isShapeErasable, isEditableTarget } from '../../../utils';
 
 export const DrawCanvas = ({
   token,
@@ -50,6 +53,7 @@ export const DrawCanvas = ({
   useLockedShapeSelection(editor);
   useDrawClipboard(editor, token);
   useOverlayRepaintOnSelection(editor);
+  useEditOnTypeForLabels(editor);
 
   // Viewport bounds должны совпадать с .dr-canvas — overlay выделения рисуется на canvas
   // внутри этого элемента; синхронизация по .dr-container смещает screenBounds.
@@ -90,7 +94,9 @@ export const DrawCanvas = ({
     };
   }, []);
 
-  useKeyPress('Backspace', () => {
+  useKeyPress('Backspace', (event) => {
+    if (isEditableTarget(event.target)) return;
+    if (editor?.getEditingShapeId()) return;
     if (selectedElementId) {
       selectElement(null);
     }
@@ -330,6 +336,16 @@ export const DrawCanvas = ({
                 return next;
               });
 
+              editor.sideEffects.registerBeforeDeleteHandler('shape', (shape) => {
+                if (editor.getCurrentToolId() !== 'eraser') {
+                  return;
+                }
+
+                if (!isShapeErasable(shape.type)) {
+                  return false;
+                }
+              });
+
               const win = window as unknown as {
                 getBoardSnapshot?: () => unknown;
                 showBoardImportOption?: () => void;
@@ -349,8 +365,7 @@ export const DrawCanvas = ({
                     | Record<string, unknown>
                     | undefined;
                   if (props?.src && typeof props.src === 'string') {
-                    const fileId = extractFileIdFromUrl(props.src);
-                    if (fileId) props.src = fileId;
+                    props.src = normalizeStoredFileSrc(props.src);
                   }
                   return rec;
                 });
@@ -377,7 +392,7 @@ export const DrawCanvas = ({
               });
             }}
             store={store}
-            tools={[XiGeoTool, EmojiTool]}
+            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool]}
             shapeUtils={boardCustomShapeUtils}
             hideUi
             components={drawComponents}

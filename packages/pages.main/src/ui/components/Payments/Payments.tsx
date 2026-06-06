@@ -13,6 +13,7 @@ import { InvoiceModal } from 'features.invoice';
 import { InvoiceCard } from 'features.invoice.card';
 import { EmptyPayments } from 'common.ui';
 import { useState } from 'react';
+import { useMediaQuery } from '@xipkg/utils';
 
 const PAYMENTS_PREVIEW_LIMIT = 10;
 
@@ -24,6 +25,7 @@ export const Payments = () => {
   const search = useSearch({ strict: false });
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const isMobile = useMediaQuery('(max-width: 960px)');
 
   const { data: tutorPayments, isLoading: isLoadingTutor } = useGetTutorPaymentsList({
     disabled: !isTutor,
@@ -64,7 +66,7 @@ export const Payments = () => {
       <div className="flex flex-row items-center gap-2">
         <h2 className="text-l-base font-medium text-gray-100">Оплата</h2>
         <div className="ml-auto">
-          {isTutor ? (
+          {isTutor && !isMobile ? (
             <Button
               variant="none"
               className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
@@ -81,6 +83,7 @@ export const Payments = () => {
                   variant="none"
                   className="flex size-8 items-center justify-center rounded-[4px] p-0"
                   onClick={handleMore}
+                  data-umami-event="payments-more"
                 >
                   <ArrowRight className="fill-gray-60 size-6" />
                 </Button>
@@ -127,16 +130,18 @@ export const Payments = () => {
                 Как работает оплата
                 <ArrowUpRight className="fill-gray-80 ml-1 size-4 shrink-0" />
               </Button>
-              <Button
-                type="button"
-                variant="none"
-                className={emptyActionButtonClass}
-                onClick={handleAdd}
-                data-umami-event="payments-empty-invoice"
-              >
-                Счет на оплату
-                <Add className="fill-gray-80 ml-1 size-4 shrink-0" />
-              </Button>
+              {!isMobile && (
+                <Button
+                  type="button"
+                  variant="none"
+                  className={emptyActionButtonClass}
+                  onClick={handleAdd}
+                  data-umami-event="payments-empty-invoice"
+                >
+                  Счет на оплату
+                  <Add className="fill-gray-80 ml-1 size-4 shrink-0" />
+                </Button>
+              )}
             </>
           }
         />

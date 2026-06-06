@@ -49,6 +49,7 @@ export const ScheduleEmptyState: FC<ScheduleEmptyStateProps> = ({
             size="s"
             className="text-brand-80 h-9 shrink-0 font-medium"
             onClick={onScheduleClick}
+            data-umami-event="schedule-empty-add-lesson-kanban"
           >
             {t('add_lesson')}
             <Plus className="fill-brand-80 ml-2 h-5 w-5" />

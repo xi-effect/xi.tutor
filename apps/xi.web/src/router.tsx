@@ -41,6 +41,7 @@ declare module '@tanstack/react-router' {
     read_notification_id?: string;
     /** Диплинк расписания кабинета — см. validateSearch маршрута кабинета */
     focused_at?: string;
+    schedule_dl?: string;
     event_instance_id?: string;
   }
 }

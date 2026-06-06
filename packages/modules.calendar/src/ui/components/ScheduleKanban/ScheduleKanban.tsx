@@ -169,6 +169,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
                     className="hover:text-primary-60 hover:bg-gray-5 flex h-[32px] w-[40px] shrink-0 items-center justify-center rounded-md p-0 text-gray-50 transition-colors"
                     aria-label={t('add_event')}
                     onClick={() => onAddLessonClick(day)}
+                    data-umami-event="schedule-add-lesson-column"
                   >
                     <Plus className="fill-gray-40 group-hover/day:fill-brand-80 h-5 w-5 transition-colors duration-300" />
                   </Button>

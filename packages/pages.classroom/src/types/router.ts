@@ -7,5 +7,6 @@ export interface SearchParams {
   call?: string;
   classroom?: string;
   focused_at?: string;
+  schedule_dl?: string;
   event_instance_id?: string;
 }

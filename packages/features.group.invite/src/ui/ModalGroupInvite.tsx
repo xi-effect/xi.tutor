@@ -36,7 +36,11 @@ type ModalGroupInviteProps = {
 
 export const ModalGroupInvite = ({ children, open, onOpenChange }: ModalGroupInviteProps) => {
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
-  const { data, isLoading } = useGroupInvite({ classroomId: classroomId });
+  const isModalOpen = open ?? false;
+  const { data, isLoading } = useGroupInvite({
+    classroomId: classroomId,
+    disabled: !isModalOpen,
+  });
   const { data: classroom } = useGetClassroom(Number(classroomId));
   const { mutate: resetInvite, isPending: isResettingInvite } = useResetGroupInvite({
     classroom_id: classroomId,

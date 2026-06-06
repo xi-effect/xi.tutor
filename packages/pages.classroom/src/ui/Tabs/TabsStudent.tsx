@@ -5,6 +5,7 @@ import { ClassroomScheduleProvider } from '../Calendar/ClassroomScheduleContext'
 import { CalendarScheduleToolbar } from '../Calendar/ClassroomScheduleParts';
 import { SharedTabsContent } from './SharedTabsContent';
 import { useTabNavigation } from './useTabNavigation';
+import { ClassroomMobileTabSwitcher } from './ClassroomMobileTabSwitcher';
 
 const tabs = [
   { id: 'overview', label: 'Сводка' },
@@ -24,22 +25,32 @@ export const TabsStudent = () => {
           value={currentTab}
           onValueChange={handleTabChange}
         >
-          <div className="bg-gray-0 mr-4 flex h-[56px] flex-row items-center gap-4 overflow-x-auto rounded-2xl px-2">
-            <SwitcherAnimate
-              tabs={tabs}
-              activeTab={currentTab}
-              onChange={handleTabChange}
-              className="bg-gray-0 flex flex-row gap-0 max-sm:w-full"
-              tabClassName="text-m-base font-medium text-gray-100"
-            />
-            {currentTab === 'schedule' && !isMobile && (
-              <div className="ml-auto flex shrink-0 items-center gap-2">
-                <CalendarScheduleToolbar />
-              </div>
+          <div className="bg-gray-0 mr-4 flex h-[56px] flex-row items-center gap-4 rounded-2xl px-2">
+            {isMobile ? (
+              <ClassroomMobileTabSwitcher
+                tabs={tabs}
+                activeTab={currentTab}
+                onChange={handleTabChange}
+              />
+            ) : (
+              <>
+                <SwitcherAnimate
+                  tabs={tabs}
+                  activeTab={currentTab}
+                  onChange={handleTabChange}
+                  className="bg-gray-0 flex flex-row gap-0"
+                  tabClassName="text-m-base font-medium text-gray-100"
+                />
+                {currentTab === 'schedule' && (
+                  <div className="ml-auto flex shrink-0 items-center gap-2">
+                    <CalendarScheduleToolbar />
+                  </div>
+                )}
+              </>
             )}
           </div>
 
-          <div className="bg-gray-0 flex min-h-0 min-w-0 flex-1 flex-col rounded-tl-2xl pt-0 pl-4">
+          <div className="bg-gray-0 xs:rounded-tl-2xl xs:pb-0 flex min-h-0 min-w-0 flex-1 flex-col rounded-none pt-0 pb-16 pl-4">
             <SharedTabsContent />
           </div>
         </Tabs.Root>

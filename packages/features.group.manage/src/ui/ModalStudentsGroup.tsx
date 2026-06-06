@@ -48,16 +48,18 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
     return cleanupBodyScrollLock;
   }, [open]);
 
+  const isModalOpen = open ?? false;
+
   const {
     data: allStudents,
     isLoading: isLoadingAllStudents,
     isError: isErrorAllStudents,
-  } = useStudentsList();
+  } = useStudentsList({ disabled: !isModalOpen });
   const {
     data: groupStudents,
     isLoading: isLoadingGroupStudents,
     isError: isErrorGroupStudents,
-  } = useGroupStudentsList(classroomId);
+  } = useGroupStudentsList(classroomId, { disabled: !isModalOpen });
 
   const [selectedStudents, setSelectedStudents] = useState<Set<number>>(new Set());
   const [isSaving, setIsSaving] = useState(false);
