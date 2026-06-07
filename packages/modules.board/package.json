@@ -34,6 +34,7 @@
 		"common.config": "workspace:*",
 		"common.env": "workspace:*",
 		"common.services": "workspace:*",
+		"common.theme": "workspace:*",
 		"common.types": "workspace:*",
 		"common.ui": "workspace:*",
 		"common.utils": "workspace:*",

@@ -2,10 +2,11 @@ import { Dispatch, SetStateAction } from 'react';
 import { ArrowLeft, Close } from '@xipkg/icons';
 import { ModalCloseButton } from '@xipkg/modal';
 import { useMediaQuery } from '@xipkg/utils';
+import { THEME_CUSTOMIZATION_ENABLED } from 'common.theme';
 
 const menuLabels = [
   'Личные данные',
-  // 'Персонализация',
+  ...(THEME_CUSTOMIZATION_ENABLED ? ['Персонализация'] : []),
   'Безопасность',
   'Уведомления',
   'Эффекты',

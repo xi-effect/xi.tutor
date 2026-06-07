@@ -2,6 +2,7 @@ import { track, useEditor } from '@ibodr/draw';
 import { Plus, Minus } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { useRef } from 'react';
+import { boardIconClass, boardPanelClass, boardTextClass } from '../../boardTheme';
 
 const ZOOM_ANIMATION = { animation: { duration: 200 } } as const;
 /** Задержка одиночного клика, чтобы не срабатывал вместе с double-click */
@@ -48,7 +49,7 @@ export const DrawZoomPanel = track(() => {
 
   return (
     <div className="absolute right-4 bottom-4 z-30">
-      <div className="bg-gray-0 border-gray-10 flex items-center justify-center gap-2 rounded-xl border p-1 lg:rounded-2xl">
+      <div className={`${boardPanelClass} flex items-center justify-center gap-2 p-1`}>
         <Button
           className="hover:bg-brand-0 pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
           variant="none"
@@ -57,7 +58,7 @@ export const DrawZoomPanel = track(() => {
           <Minus className="h-4 w-4 fill-gray-100 lg:h-6 lg:w-6" />
         </Button>
         <Button
-          className="h-6 w-6 min-w-[60px] items-center justify-center px-2 py-1 hover:bg-transparent focus:bg-transparent active:bg-transparent lg:h-8 lg:w-8"
+          className={`h-6 w-6 min-w-[60px] items-center justify-center px-2 py-1 ${boardTextClass} hover:bg-transparent focus:bg-transparent active:bg-transparent lg:h-8 lg:w-8`}
           variant="none"
           title="Клик — 100%. Двойной клик — показать все элементы"
           onClick={handleResetZoomClick}
@@ -70,7 +71,7 @@ export const DrawZoomPanel = track(() => {
           variant="none"
           onClick={handleZoomIn}
         >
-          <Plus className="h-4 w-4 lg:h-6 lg:w-6" />
+          <Plus className={`h-4 w-4 lg:h-6 lg:w-6 ${boardIconClass}`} />
         </Button>
       </div>
     </div>

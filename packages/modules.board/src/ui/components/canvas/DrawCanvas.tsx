@@ -1,5 +1,7 @@
 import { LoadingScreen } from 'common.ui';
+import { boardPanelClass } from '../../boardTheme';
 import { useKeyPress } from 'common.utils';
+import { useTheme } from 'common.theme';
 import { JSX } from 'react/jsx-runtime';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Editor, DrInstancePresence, Draw, DrawProps } from '@ibodr/draw';
@@ -35,6 +37,7 @@ export const DrawCanvas = ({
   const [editor, setEditor] = useState<Editor | null>(null);
 
   const { selectedElementId, selectElement, showDebugInfo } = useDrawStore();
+  const { theme } = useTheme();
   const [shapeCount, setShapeCount] = useState(0);
   const { store, status, undo, redo, canUndo, canRedo, isReadonly, getUserCamera, setUserCamera } =
     useYjsContext();
@@ -310,6 +313,12 @@ export const DrawCanvas = ({
     return unsub;
   }, [editor, showDebugInfo]);
 
+  useEffect(() => {
+    if (!editor) return;
+
+    editor.user.updateUserPreferences({ colorScheme: theme });
+  }, [editor, theme]);
+
   if (status === 'loading') return <LoadingScreen />;
 
   return (
@@ -318,6 +327,7 @@ export const DrawCanvas = ({
         {followingPresenceId && <FollowBanner />}
         <div className="absolute inset-0">
           <Draw
+            colorScheme={theme}
             onMount={(editor) => {
               setEditor(editor);
               editor.updateInstanceState({
@@ -406,7 +416,7 @@ export const DrawCanvas = ({
             {!isReadonly && (
               <Navbar undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} token={token} />
             )}
-            <div className="border-gray-10 bg-gray-0 absolute bottom-4 left-4 z-30 flex rounded-xl border p-1 sm:hidden">
+            <div className={`${boardPanelClass} absolute bottom-4 left-4 z-30 flex p-1 sm:hidden`}>
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
             <DrawZoomPanel />

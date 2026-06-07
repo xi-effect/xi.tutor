@@ -12,6 +12,7 @@ import {
   TText,
   Emotions,
 } from '@xipkg/icons';
+import { boardIconClass } from '../ui/boardTheme';
 
 export type NavbarElementT = {
   action: string;
@@ -28,12 +29,16 @@ export type PopupItemT = {
 };
 
 export const navBarElements: NavbarElementT[] = [
-  { action: 'select', title: 'Выбор', icon: <Cursor size="l" className="h-8 w-8" /> },
-  { action: 'hand', title: 'Рука', icon: <Hand /> },
+  {
+    action: 'select',
+    title: 'Выбор',
+    icon: <Cursor size="l" className={`h-8 w-8 ${boardIconClass}`} />,
+  },
+  { action: 'hand', title: 'Рука', icon: <Hand className={boardIconClass} /> },
   {
     action: 'pen',
     title: 'Перо',
-    icon: <Pen size="l" className="h-8 w-8" />,
+    icon: <Pen size="l" className={`h-8 w-8 ${boardIconClass}`} />,
     menuPopupContent: [
       {
         icon: <Pen className="fill-unset h-8 w-8" size="l" />,
@@ -45,7 +50,7 @@ export const navBarElements: NavbarElementT[] = [
   {
     action: 'sticker',
     title: 'Стикер',
-    icon: <Sticker />,
+    icon: <Sticker className={boardIconClass} />,
     menuPopupContent: [
       {
         icon: <Sticker className="fill-gray-60" />,
@@ -94,11 +99,19 @@ export const navBarElements: NavbarElementT[] = [
       },
     ],
   },
-  { action: 'text', title: 'Текст', icon: <TText /> },
-  { action: 'geo', title: 'Фигуры', icon: <Figures size="l" className="size-8" /> },
-  { action: 'arrow', title: 'Стрелка', icon: <Arrow size="l" className="size-8" /> },
-  { action: 'asset', title: 'Изображение', icon: <Image /> },
-  { action: 'eraser', title: 'Ластик', icon: <Eraser /> },
-  { action: 'frame', title: 'Фрейм', icon: <Transform /> },
-  { action: 'emoji', title: 'Эмодзи', icon: <Emotions /> },
+  { action: 'text', title: 'Текст', icon: <TText className={boardIconClass} /> },
+  {
+    action: 'geo',
+    title: 'Фигуры',
+    icon: <Figures size="l" className={`size-8 ${boardIconClass}`} />,
+  },
+  {
+    action: 'arrow',
+    title: 'Стрелка',
+    icon: <Arrow size="l" className={`size-8 ${boardIconClass}`} />,
+  },
+  { action: 'asset', title: 'Изображение', icon: <Image className={boardIconClass} /> },
+  { action: 'eraser', title: 'Ластик', icon: <Eraser className={boardIconClass} /> },
+  { action: 'frame', title: 'Фрейм', icon: <Transform className={boardIconClass} /> },
+  { action: 'emoji', title: 'Эмодзи', icon: <Emotions className={boardIconClass} /> },
 ];

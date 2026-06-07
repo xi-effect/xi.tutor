@@ -114,7 +114,7 @@ export const LessonCard = memo<LessonCardProps>(
         className={cn(
           'relative flex w-full flex-col rounded-2xl border p-5 transition-colors duration-300',
           'group-hover:bg-[rgb(15_15_17/0.02)]',
-          todayBorder ? 'border-brand-80 bg-white' : 'border-gray-10 bg-white',
+          todayBorder ? 'border-brand-80 bg-gray-0' : 'border-gray-10 bg-gray-0',
           event.type === 'rest' && 'bg-gray-5 dark:bg-gray-10',
           onClick && 'cursor-pointer',
         )}

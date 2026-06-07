@@ -15,6 +15,7 @@ import type { DrInstancePresence } from '@ibodr/draw';
 import { useCurrentUser } from 'common.services';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore } from '../../../store';
+import { boardMenuSurfaceClass } from '../../boardTheme';
 
 const AVATAR_API_BASE = 'https://api.sovlium.ru/files/users';
 const MAX_VISIBLE_AVATARS = 3;
@@ -193,7 +194,7 @@ export const CollaboratorAvatars = () => {
                     {isFollowed && (
                       <AvatarBadge
                         align="start"
-                        className="bg-brand-80 dark:bg-brand-60"
+                        className="bg-brand-80"
                         title="Отслеживается"
                         aria-hidden
                       />
@@ -206,7 +207,12 @@ export const CollaboratorAvatars = () => {
           </button>
         </PopoverTrigger>
       </div>
-      <PopoverContent align="end" side="bottom" sideOffset={12} className="z-100 w-64 p-2">
+      <PopoverContent
+        align="end"
+        side="bottom"
+        sideOffset={12}
+        className={cn(boardMenuSurfaceClass, 'z-100 w-64 rounded-xl p-2')}
+      >
         <div className="flex flex-col gap-1">
           {isTutor && (
             <Button

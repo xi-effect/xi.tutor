@@ -19,6 +19,7 @@ import {
   playBoardTimerWarnSound,
   unlockBoardTimerAudio,
 } from './boardTimerAudio';
+import { boardPanelClass } from '../../boardTheme';
 
 const MAX_DURATION_MS = 99 * 60 * 1000 + 59 * 1000;
 
@@ -66,7 +67,7 @@ const parseFieldValue = (value: string, max: number) => {
 
 const normalizeMaskInput = (value: string) => value.replace(/\D/g, '').slice(0, 2);
 const TIMER_VALUE_CLASS =
-  'text-[18px] lg:text-[24px] leading-[1] font-medium tabular-nums font-sans';
+  'text-gray-100 text-[18px] lg:text-[24px] leading-[1] font-medium tabular-nums font-sans';
 
 const PlayPauseIcon = ({ isPlaying }: { isPlaying: boolean }) => {
   if (isPlaying) {
@@ -405,7 +406,7 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
   return (
     <div
       ref={panelRef}
-      className="bg-gray-0 border-gray-10 pointer-events-auto rounded-xl border p-1 will-change-transform lg:rounded-2xl"
+      className={cn(boardPanelClass, 'pointer-events-auto p-1 will-change-transform')}
       onPointerDownCapture={() => unlockBoardTimerAudio()}
       onPointerEnter={handleDesktopTimerPanelEnter}
       onPointerLeave={handleDesktopTimerPanelLeave}
