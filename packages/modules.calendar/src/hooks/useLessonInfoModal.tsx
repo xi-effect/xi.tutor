@@ -14,7 +14,7 @@ import {
 import { normalizeEventInstanceDetailsResponse } from 'common.services';
 import { formatLessonDate } from 'features.lesson.info';
 import type { ICalendarEvent } from '../ui/types';
-import { timeToString } from '../utils';
+import { resolveSchedulerStartsAt, timeToString } from '../utils';
 import { useCalendarEvents } from '../store/eventsStore';
 import { useLessonClassroomPresentation } from './useLessonClassroomPresentation';
 import { StartLessonButton } from 'features.lesson.start';
@@ -208,16 +208,20 @@ export const useLessonInfoModal = ({
     resolvedEvent?.scheduler != null &&
     resolvedEvent.isCancelled !== true;
 
-  const schedulerMetaForCancel =
-    resolvedEvent?.scheduler != null
-      ? {
-          eventId: resolvedEvent.scheduler.eventId,
-          instanceKind: resolvedEvent.scheduler.instanceKind,
-          eventInstanceId: resolvedEvent.scheduler.eventInstanceId,
-          repetitionModeId: resolvedEvent.scheduler.repetitionModeId,
-          instanceIndex: resolvedEvent.scheduler.instanceIndex,
-        }
-      : null;
+  const schedulerMetaForCancel = useMemo(() => {
+    if (resolvedEvent?.scheduler == null) return null;
+    return {
+      eventId: resolvedEvent.scheduler.eventId,
+      startsAt: resolveSchedulerStartsAt(
+        instanceDetails?.starts_at ?? resolvedEvent.scheduler.startsAt,
+        resolvedEvent.start,
+      ),
+      instanceKind: resolvedEvent.scheduler.instanceKind,
+      eventInstanceId: resolvedEvent.scheduler.eventInstanceId,
+      repetitionModeId: resolvedEvent.scheduler.repetitionModeId,
+      instanceIndex: resolvedEvent.scheduler.instanceIndex,
+    };
+  }, [resolvedEvent, instanceDetails?.starts_at]);
 
   const lessonInfoModal =
     resolvedEvent != null ? (

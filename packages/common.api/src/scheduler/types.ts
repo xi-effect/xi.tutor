@@ -54,14 +54,13 @@ export type UpdateClassroomEventRequestDto = {
   description?: string | null;
 };
 
-/**
- * Тело ручки `POST .../events/{event_id}/cancellations/`.
- * TODO: уточнить точное имя поля по итоговой OpenAPI-схеме
- * `Body_cancel_repeating_event_after_timestamp_..._cancellations__post`.
- */
+/** Тело ручки `POST .../events/{event_id}/cancellations/`. */
 export type CancelRepeatingEventAfterTimestampInputDto = {
-  /** ISO date-time, после которого повторения серии должны быть отменены. */
-  cancel_after: string;
+  /**
+   * ISO date-time; API отменяет вхождения строго после этого момента.
+   * Для «это и все последующие» передают начало календарного дня вхождения.
+   */
+  starts_at: string;
 };
 
 type RepetitionModeBaseDto = {
