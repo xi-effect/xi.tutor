@@ -39,6 +39,8 @@ export {
   type OccurrenceCancelApiTarget,
 } from './model/occurrenceCancel';
 
+export { buildRepeatingCancellationStartsAt } from './model/repeatingCancellationStartsAt';
+
 export {
   getTutorClassroomSchedule,
   getStudentClassroomSchedule,

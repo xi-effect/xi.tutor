@@ -4,17 +4,20 @@ import { Button } from '@xipkg/button';
 import { toast } from 'sonner';
 import {
   buildOccurrenceCancellationParams,
+  buildRepeatingCancellationStartsAt,
   useCancelEventInstance,
   useCancelRepeatedVirtualInstance,
-  useDeleteClassroomEvent,
+  useCancelRepeatingEventAfterTimestamp,
 } from 'common.services';
 
 /**
- * Метаданные для отмены: POST по инстансу / виртуальному повтору + числовой event_id для
- * удаления серии из кабинета («это и все последующие»).
+ * Метаданные для отмены: POST по инстансу / виртуальному повтору + числовой event_id и
+ * starts_at для отмены серии с выбранного вхождения («это и все последующие»).
  */
 export type LessonSchedulerMetaForCancel = {
   eventId: number;
+  /** ISO date-time начала вхождения (для POST .../events/{event_id}/cancellations/). */
+  startsAt: string;
   instanceKind: 'sole' | 'repeated_virtual' | 'repeated_persisted';
   eventInstanceId?: string;
   repetitionModeId?: string;
@@ -41,9 +44,9 @@ export const CancelLessonModal = ({
 }: CancelLessonModalProps) => {
   const cancelInstance = useCancelEventInstance();
   const cancelVirtual = useCancelRepeatedVirtualInstance();
-  const deleteClassroomEvent = useDeleteClassroomEvent();
+  const cancelRepeatingAfter = useCancelRepeatingEventAfterTimestamp();
   const isPending =
-    cancelInstance.isPending || cancelVirtual.isPending || deleteClassroomEvent.isPending;
+    cancelInstance.isPending || cancelVirtual.isPending || cancelRepeatingAfter.isPending;
 
   const handleClose = () => {
     onOpenChange(false);
@@ -102,8 +105,23 @@ export const CancelLessonModal = ({
       toast.error('Не удалось определить занятие для отмены.');
       return;
     }
-    deleteClassroomEvent.mutate(
-      { classroomId, eventId: schedulerMeta.eventId },
+    if (schedulerMeta.startsAt.trim().length === 0) {
+      toast.error('Не удалось определить время занятия для отмены.');
+      return;
+    }
+
+    const cancellationStartsAt = buildRepeatingCancellationStartsAt(schedulerMeta.startsAt);
+    if (cancellationStartsAt == null) {
+      toast.error('Не удалось определить время занятия для отмены.');
+      return;
+    }
+
+    cancelRepeatingAfter.mutate(
+      {
+        classroomId,
+        eventId: schedulerMeta.eventId,
+        body: { starts_at: cancellationStartsAt },
+      },
       { onSuccess: finishSuccess },
     );
   };
