@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import type { CallsProviderDepsT } from '@xipkg/calls-providers';
 import type { StartCallDataT } from '@xipkg/calls-types';
 import {
-  useAddClassroomMaterials,
   useCreateTokenByStudent,
   useCreateTokenByTutor,
   useCurrentUser,
@@ -13,6 +12,7 @@ import {
   useUpdateParticipantMetadata,
 } from 'common.services';
 import { env } from 'common.env';
+import { useCallsAddClassroomMaterials } from './useCallsAddClassroomMaterials';
 
 type AccessTokenResponseT = string | { url: string };
 
@@ -35,7 +35,7 @@ export const useCallsDeps = (): CallsProviderDepsT => {
       },
       room: {
         useGetClassroom,
-        useAddClassroomMaterials,
+        useAddClassroomMaterials: useCallsAddClassroomMaterials,
         useGetClassroomMaterialsList,
       },
       callAuth: {
