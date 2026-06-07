@@ -7,6 +7,7 @@ import type {
   ScheduleItem,
   ScheduleLessonRow,
 } from 'modules.calendar';
+import { resolveSchedulerStartsAt } from 'modules.calendar';
 
 const MS_PER_SECOND = 1000;
 const WEEKDAY_TO_BIT = [1, 2, 4, 8, 16, 32, 64] as const;
@@ -56,6 +57,7 @@ export const mapScheduleItemToCalendarEvent = (item: ScheduleItem): ICalendarEve
   },
   scheduler: {
     eventId: item.eventId,
+    startsAt: item.startsAt,
     eventInstanceId: 'id' in item.eventInstance ? item.eventInstance.id : undefined,
     instanceKind: item.instanceKind,
     repetitionKind: item.repetitionKind,
@@ -128,6 +130,7 @@ export const mapInstanceDetailsToCalendarEvent = (
     },
     scheduler: {
       eventId: event.id,
+      startsAt,
       eventInstanceId: instanceId,
       instanceKind: details.kind,
       repetitionKind: details.kind !== 'sole' ? 'weekly' : null,
@@ -153,6 +156,7 @@ export const mapCalendarEventsToDayLessons = (events: ICalendarEvent[]): Schedul
     schedulerMeta: event.scheduler
       ? {
           eventId: event.scheduler.eventId,
+          startsAt: resolveSchedulerStartsAt(event.scheduler.startsAt, event.start),
           instanceKind: event.scheduler.instanceKind,
           eventInstanceId: event.scheduler.eventInstanceId,
           repetitionModeId: event.scheduler.repetitionModeId,

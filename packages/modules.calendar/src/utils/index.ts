@@ -8,6 +8,7 @@ export {
   formatDateRange,
   formatDateRangeDisplay,
   getLessonCardSkeletonCountForDay,
+  getWeekStartForVisibleWindow,
 } from './calendarUtils';
 export {
   getMonthDays,
@@ -30,3 +31,4 @@ export {
   weekdaysToBitmask,
 } from './bitmaskTimezone';
 export { toLocalISOString } from './dateTimezone';
+export { resolveSchedulerStartsAt } from './resolveSchedulerStartsAt';

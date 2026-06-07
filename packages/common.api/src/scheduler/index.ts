@@ -135,7 +135,7 @@ export const schedulerApiConfig = {
     method: HttpMethod.POST,
   },
 
-  /** Отмена повторяющегося события начиная с заданного времени (боди — cancel_after). */
+  /** Отмена повторяющегося события начиная с заданного времени (боди — starts_at). */
   [SchedulerQueryKey.CancelRepeatingEventAfterTimestamp]: {
     getUrl: (classroomId: string, eventId: string) =>
       `${classroomBase('tutor', classroomId)}/events/${eventId}/cancellations/`,

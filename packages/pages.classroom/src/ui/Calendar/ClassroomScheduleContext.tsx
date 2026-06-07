@@ -1,5 +1,6 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useLayoutEffect,
   useMemo,
@@ -76,13 +77,32 @@ export const ClassroomScheduleProvider = ({
   const search = useClassroomScheduleSearch();
 
   const initialAnchorDate = useMemo(() => parseScheduleAnchorFromSearch(search), [search]);
+  const hasInitialAnchor = initialAnchorDate != null;
 
-  const { weekDays, weekStart, goToPrev, goToNext, goToWeekStart, goToDay } = useCalendar({
+  const {
+    weekDays,
+    weekStart,
+    goToPrev,
+    goToNext,
+    goToWeekStart,
+    goToDay,
+    syncWeekStartForVisibleCount,
+  } = useCalendar({
     initialAnchorDate,
-    initialAnchorUseDay: initialAnchorDate != null && search.event_instance_id == null,
+    initialAnchorUseDay: hasInitialAnchor && search.event_instance_id == null,
   });
-  const [visibleCount, setVisibleCount] = useState(weekDays.length);
+  const [visibleCount, setVisibleCountState] = useState(weekDays.length);
+  const userHasNavigatedRef = useRef(hasInitialAnchor);
   const visibleDays = useMemo(() => weekDays.slice(0, visibleCount), [weekDays, visibleCount]);
+
+  const setVisibleCount = useCallback((count: number) => {
+    setVisibleCountState(count);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (userHasNavigatedRef.current) return;
+    syncWeekStartForVisibleCount(visibleCount);
+  }, [visibleCount, syncWeekStartForVisibleCount]);
 
   const deepLink = useClassroomScheduleDeepLink();
   const lastNavigatedAnchorTokenRef = useRef(0);
@@ -99,6 +119,7 @@ export const ClassroomScheduleProvider = ({
     if (anchor == null) return;
 
     lastNavigatedAnchorTokenRef.current = token;
+    userHasNavigatedRef.current = true;
     goToDay(anchor);
     deepLink.acknowledgeAnchorNavigation();
   }, [
@@ -109,15 +130,39 @@ export const ClassroomScheduleProvider = ({
     deepLink.acknowledgeAnchorNavigation,
   ]);
 
+  const goToPrevWithNav = useCallback(
+    (count: number) => {
+      userHasNavigatedRef.current = true;
+      goToPrev(count);
+    },
+    [goToPrev],
+  );
+
+  const goToNextWithNav = useCallback(
+    (count: number) => {
+      userHasNavigatedRef.current = true;
+      goToNext(count);
+    },
+    [goToNext],
+  );
+
+  const goToWeekStartWithNav = useCallback(
+    (date: Date) => {
+      userHasNavigatedRef.current = true;
+      goToWeekStart(date);
+    },
+    [goToWeekStart],
+  );
+
   const value = useMemo(
     () => ({
       weekDays,
       weekStart,
       visibleDays,
       setVisibleCount,
-      goToPrev,
-      goToNext,
-      goToWeekStart,
+      goToPrev: goToPrevWithNav,
+      goToNext: goToNextWithNav,
+      goToWeekStart: goToWeekStartWithNav,
       goToDay,
       onAddLessonClick,
       pendingEventToOpen: deepLink.pendingEventToOpen,
@@ -131,9 +176,9 @@ export const ClassroomScheduleProvider = ({
       weekDays,
       weekStart,
       visibleDays,
-      goToPrev,
-      goToNext,
-      goToWeekStart,
+      goToPrevWithNav,
+      goToNextWithNav,
+      goToWeekStartWithNav,
       goToDay,
       onAddLessonClick,
       deepLink.pendingEventToOpen,
