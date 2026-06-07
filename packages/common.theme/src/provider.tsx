@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { toast } from 'sonner';
 import { useUpdateProfile, useCurrentUser } from 'common.services';
 
+import { THEME_CUSTOMIZATION_ENABLED } from './config';
 import { ThemeContext } from './context';
+import { isTheme, resolveThemeAppearance } from './utils';
 
 import type { FC, PropsWithChildren } from 'react';
 import type { ThemeT, ThemeItemT } from './types';
@@ -14,74 +15,66 @@ const ALL_THEMES: ThemeItemT[] = [
   { label: 'Как в системе', value: 'system' },
 ];
 
-type ResolvedThemeT = 'light' | 'dark';
+const applyTheme = (preference: ThemeT) => {
+  const root = document.documentElement;
 
-const resolveTheme = (preference: ThemeT): ResolvedThemeT => {
-  if (preference === 'system') {
-    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-  return preference;
+  ALL_THEMES.forEach((t) => {
+    root.classList.remove(t.value);
+  });
+
+  root.classList.add(preference);
+  root.setAttribute('data-theme', resolveThemeAppearance(preference));
+  root.setAttribute('data-theme-preference', preference);
 };
 
 export const ThemeProvider: FC<PropsWithChildren> = ({ children }) => {
   const { data: user } = useCurrentUser();
   const { updateProfile } = useUpdateProfile();
 
-  const [theme, setThemeState] = useState<ThemeT>(user?.theme || DEFAULT_THEME);
-
-  const applyTheme = (preference: ThemeT) => {
-    const root = document.documentElement;
-    const resolved = resolveTheme(preference);
-
-    ALL_THEMES.forEach((t) => {
-      root.classList.remove(t.value);
-    });
-
-    root.classList.add(preference);
-    root.setAttribute('data-theme', resolved);
-    root.setAttribute('data-theme-preference', preference);
-  };
+  const [theme, setThemeState] = useState<ThemeT>(DEFAULT_THEME);
 
   useEffect(() => {
-    if (user?.theme) {
-      setThemeState(user.theme);
-    }
+    if (!THEME_CUSTOMIZATION_ENABLED || !isTheme(user?.theme)) return;
+
+    setThemeState((current) => (current === user.theme ? current : user.theme));
   }, [user?.theme]);
 
-  useEffect(() => {
-    applyTheme(theme);
-  }, [theme]);
+  const effectiveTheme = THEME_CUSTOMIZATION_ENABLED ? theme : DEFAULT_THEME;
 
   useEffect(() => {
-    if (theme !== 'system') return;
+    applyTheme(effectiveTheme);
+  }, [effectiveTheme]);
 
-    const media = window.matchMedia('(prefers-color-scheme: dark)');
+  useEffect(() => {
+    if (!THEME_CUSTOMIZATION_ENABLED || theme !== 'system') return;
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = () => applyTheme('system');
 
-    media.addEventListener('change', handleChange);
-    return () => media.removeEventListener('change', handleChange);
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme]);
 
   const setTheme = async (newTheme: ThemeT) => {
+    if (!THEME_CUSTOMIZATION_ENABLED) return;
+
+    const previousTheme = theme;
     setThemeState(newTheme);
 
     try {
-      const response = await updateProfile.mutateAsync({ theme: newTheme });
-      if (response.status === 200) {
-        toast('Тема успешно обновлена');
-      } else {
-        toast('Ошибка при обновлении темы');
-      }
+      await updateProfile.mutateAsync({ theme: newTheme });
     } catch (error) {
+      setThemeState(previousTheme);
       console.error('Ошибка при обновлении темы', error);
-      toast('Ошибка при обновлении темы');
     }
   };
 
   const value = {
-    theme,
+    theme: effectiveTheme,
     setTheme,
-    themes: ALL_THEMES,
+    themes: THEME_CUSTOMIZATION_ENABLED
+      ? ALL_THEMES
+      : ALL_THEMES.filter((t) => t.value === DEFAULT_THEME),
   };
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

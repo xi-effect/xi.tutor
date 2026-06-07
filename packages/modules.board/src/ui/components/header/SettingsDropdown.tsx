@@ -34,6 +34,7 @@ import { useDrawStore, useEraserSettingsStore } from '../../../store';
 import { HotkeysHelpModal } from '../shared/HotkeysHelp';
 import { ERASER_CATEGORIES, INPUT_MODE_OPTIONS, SHAPE_CATEGORIES } from '../../../config';
 import { areAllEraserCategoriesEnabled } from '../../../utils/areAllEraserCategoriesEnabled';
+import { boardMenuSurfaceClass } from '../../boardTheme';
 
 type ActionPropsT = {
   onClick: () => void;
@@ -177,13 +178,13 @@ export const SettingsDropdown = () => {
             className="hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
             data-umami-event="board-settings-menu"
           >
-            <MoreVert size="s" className="h-4 w-4 lg:h-6 lg:w-6" />
+            <MoreVert size="s" className="h-4 w-4 fill-gray-100 lg:h-6 lg:w-6" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           sideOffset={12}
           align="end"
-          className="z-100 flex w-[286px] flex-col gap-1 px-2 py-1"
+          className={cn(boardMenuSurfaceClass, 'z-100 flex w-[286px] flex-col gap-1 px-2 py-1')}
         >
           <div className="bg-brand-0/40 mb-1 rounded-lg px-2 py-2">
             <div className="mb-1 flex items-center justify-between text-xs">
@@ -217,7 +218,7 @@ export const SettingsDropdown = () => {
                   <Pen />
                   <span>Режим ввода</span>
                 </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent className="z-100 w-[250px]">
+                <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[250px]')}>
                   {INPUT_MODE_OPTIONS.map(({ value, label, icon }) => (
                     <DropdownMenuItem
                       key={value}
@@ -281,7 +282,7 @@ export const SettingsDropdown = () => {
                   <Locked />
                   <span>Заблокировать элементы</span>
                 </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent className="z-100 w-[250px]">
+                <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[250px]')}>
                   <p className="text-gray-60 px-3 py-2 text-xs">
                     Можно заблокировать все элементы на доске или выбрать конкретные категории
                   </p>
@@ -314,7 +315,7 @@ export const SettingsDropdown = () => {
                   <Unlocked />
                   <span>Разблокировать элементы</span>
                 </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent className="z-100 w-[250px]">
+                <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[250px]')}>
                   <p className="text-gray-60 px-3 py-2 text-xs">
                     Снимает блокировку, позволяя снова редактировать элементы на доске
                   </p>
@@ -348,7 +349,7 @@ export const SettingsDropdown = () => {
                   <span>Ластик</span>
                 </DropdownMenuSubTrigger>
 
-                <DropdownMenuSubContent className="z-100 w-[260px]">
+                <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[260px]')}>
                   <p className="text-gray-60 px-3 py-2 text-xs">
                     Выберите, какие элементы можно стирать ластиком
                   </p>

@@ -20,7 +20,7 @@ export const UndoRedo = ({
         className="bg-gray-0 hover:bg-brand-0 flex size-6 items-center justify-center rounded-[8px] lg:size-8"
         onClick={() => undo()}
       >
-        <Undo className={`${canUndo ? null : 'fill-gray-40'} h-5 w-5 lg:h-6 lg:w-6`} />
+        <Undo className={`h-5 w-5 lg:h-6 lg:w-6 ${canUndo ? 'fill-gray-100' : 'fill-gray-40'}`} />
       </button>
       <button
         aria-label="Redo"
@@ -29,7 +29,7 @@ export const UndoRedo = ({
         className="bg-gray-0 hover:bg-brand-0 flex size-6 items-center justify-center rounded-[8px] lg:size-8"
         onClick={() => redo()}
       >
-        <Redo className={`${canRedo ? null : 'fill-gray-40'} h-5 w-5 lg:h-6 lg:w-6`} />
+        <Redo className={`h-5 w-5 lg:h-6 lg:w-6 ${canRedo ? 'fill-gray-100' : 'fill-gray-40'}`} />
       </button>
     </div>
   );

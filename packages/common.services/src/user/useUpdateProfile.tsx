@@ -78,13 +78,18 @@ export const useUpdateProfile = () => {
         Object.keys(context.profileData).length === 1 &&
         'default_layout' in context.profileData;
 
+      const isOnlyThemeChange =
+        context?.profileData &&
+        Object.keys(context.profileData).length === 1 &&
+        'theme' in context.profileData;
+
       if (isOnlyRoleChange && context.profileData) {
-        // Показываем конкретное уведомление для смены роли
         const role = context.profileData.default_layout as RoleT;
         const roleText = role === 'tutor' ? 'Репетитор' : 'Ученик';
         toast.success(`Роль успешно изменена на ${roleText}`);
+      } else if (isOnlyThemeChange) {
+        toast.success('Тема успешно обновлена');
       } else {
-        // Показываем стандартное уведомление для других изменений профиля
         showSuccess('profile');
       }
     },

@@ -20,6 +20,7 @@ import { insertPdf } from '../../../features/pickAndInsertPdf';
 import { insertAudio, AUDIO_ACCEPT } from '../../../features/pickAndInsertAudio';
 import { insertFile, FILE_ACCEPT } from '../../../features/pickAndInsertFile';
 import { initFileDB, useRetryFileQueue } from 'common.services';
+import { boardIconClass, boardPanelClass } from '../../boardTheme';
 import { EmojiPickerPopup } from '@xipkg/emojipicker';
 import { EmojiStyle } from '../../../shapes/shapeStyles';
 
@@ -230,10 +231,10 @@ export const Navbar = track(
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute right-0 bottom-14 left-0 z-30 flex w-full items-center justify-center px-4 sm:bottom-4 sm:px-0">
           <div className="relative z-30 flex w-full max-w-full gap-7 sm:w-auto">
-            <div className="border-gray-10 bg-gray-0 absolute -left-[115px] z-30 hidden rounded-xl border p-1 sm:flex">
+            <div className={`${boardPanelClass} absolute -left-[115px] z-30 hidden p-1 sm:flex`}>
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
-            <div className="border-gray-10 bg-gray-0 mx-auto flex w-full max-w-full gap-10 rounded-xl border sm:w-auto">
+            <div className={`${boardPanelClass} mx-auto flex w-full max-w-full gap-10 sm:w-auto`}>
               <div className="flex w-full min-w-0 flex-1 gap-1 p-1 sm:w-auto sm:flex-initial">
                 {navBarElements.map((item: NavbarElementT) => {
                   const isActive = item.action === currentTool;
@@ -425,7 +426,7 @@ export const Navbar = track(
                         type="button"
                         className={`bg-gray-0 hover:bg-brand-0 pointer-events-auto flex h-6 w-6 flex-1 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${mobileButtonClass}`}
                       >
-                        <MenuDots className="rotate-90" />
+                        <MenuDots className={`rotate-90 ${boardIconClass}`} />
                       </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent

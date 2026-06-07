@@ -190,10 +190,10 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
         }}
       >
         <div
-          className="flex size-full animate-pulse items-center justify-center rounded bg-gray-200"
+          className="bg-gray-10 flex size-full animate-pulse items-center justify-center rounded"
           style={containerStyle}
         >
-          <div className="pointer-events-none text-gray-400">
+          <div className="text-gray-60 pointer-events-none">
             <ImagePlaceholderIcon />
           </div>
         </div>
@@ -212,10 +212,10 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
         }}
       >
         <div
-          className="flex size-full items-center justify-center rounded border border-dashed border-gray-300 bg-gray-100"
+          className="border-gray-20 bg-gray-5 flex size-full items-center justify-center rounded border border-dashed"
           style={containerStyle}
         >
-          <div className="pointer-events-none flex flex-col items-center gap-1.5 text-gray-400">
+          <div className="text-gray-60 pointer-events-none flex flex-col items-center gap-1.5">
             <BrokenImageIcon />
             <span className="text-[11px] select-none">Не удалось загрузить</span>
           </div>
@@ -276,8 +276,8 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
             />
           )}
           {!loadedSrc && !nextSrc && (
-            <div className="flex size-full animate-pulse items-center justify-center rounded bg-gray-200">
-              <div className="pointer-events-none text-gray-400">
+            <div className="bg-gray-10 flex size-full animate-pulse items-center justify-center rounded">
+              <div className="text-gray-60 pointer-events-none">
                 <ImagePlaceholderIcon />
               </div>
             </div>
@@ -285,7 +285,7 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
         </div>
         {'url' in shape.props && shape.props.url && (
           <a
-            className="pointer-events-auto absolute top-1 right-1 z-1 flex size-[22px] items-center justify-center rounded bg-white/85 text-xs text-gray-700 no-underline opacity-0 transition-opacity hover:opacity-100"
+            className="bg-gray-0/85 pointer-events-auto absolute top-1 right-1 z-1 flex size-[22px] items-center justify-center rounded text-xs text-gray-100 no-underline opacity-0 transition-opacity hover:opacity-100"
             href={shape.props.url}
             target="_blank"
             rel="noopener noreferrer"

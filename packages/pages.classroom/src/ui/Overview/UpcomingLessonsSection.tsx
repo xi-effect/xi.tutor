@@ -68,6 +68,7 @@ function toCancelMeta(item: ScheduleItem): LessonSchedulerMetaForCancel {
   const instanceIndex = 'instance_index' in instance ? instance.instance_index : undefined;
   return {
     eventId: item.eventId,
+    startsAt: item.startsAt,
     instanceKind: item.instanceKind,
     eventInstanceId,
     repetitionModeId,

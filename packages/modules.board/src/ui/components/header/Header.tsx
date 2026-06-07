@@ -22,6 +22,7 @@ import { CollaboratorAvatars } from './CollaboratorAvatars';
 import { SettingsDropdown } from './SettingsDropdown';
 import { unlockBoardTimerAudio } from './boardTimerAudio';
 import { TimerDropdown } from './TimerDropdown';
+import { boardIconClass, boardPanelClass, boardTextClass } from '../../boardTheme';
 
 export const Header = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -96,7 +97,9 @@ export const Header = () => {
   return (
     <>
       <div className="text-xl-base pointer-events-none absolute top-4 right-0 left-0 z-50 flex items-center justify-between px-4 pb-4 md:pl-8">
-        <div className="bg-gray-0 border-gray-10 pointer-events-auto flex items-center justify-center gap-2 rounded-xl border p-1 lg:rounded-2xl">
+        <div
+          className={`${boardPanelClass} pointer-events-auto flex items-center justify-center gap-2 p-1`}
+        >
           <Button
             variant="none"
             onClick={handleBack}
@@ -104,7 +107,7 @@ export const Header = () => {
             className="hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
             data-umami-event="board-back"
           >
-            <ArrowLeft size="s" className="h-4 w-4 lg:h-6 lg:w-6" />
+            <ArrowLeft size="s" className={`h-4 w-4 lg:h-6 lg:w-6 ${boardIconClass}`} />
           </Button>
           {isLoading ? (
             <Skeleton variant="text" className="h-6 w-24 lg:h-8" />
@@ -113,7 +116,9 @@ export const Header = () => {
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <h1 className="text-l-base xs:max-w-[150px] flex h-6 max-w-[100px] min-w-0 items-center pr-2 select-none md:max-w-[240px] lg:h-8">
+                    <h1
+                      className={`text-l-base xs:max-w-[150px] ${boardTextClass} flex h-6 max-w-[100px] min-w-0 items-center pr-2 select-none md:max-w-[240px] lg:h-8`}
+                    >
                       <span className="block min-w-0 truncate">{material?.name || 'Untitled'}</span>
                     </h1>
                   </TooltipTrigger>
@@ -130,7 +135,7 @@ export const Header = () => {
                   onClick={handleOpenModal}
                   data-umami-event="board-edit-name"
                 >
-                  <Edit size="s" className="h-4 w-4 lg:h-6 lg:w-6" />
+                  <Edit size="s" className={`h-4 w-4 lg:h-6 lg:w-6 ${boardIconClass}`} />
                 </Button>
               )}
             </div>
@@ -140,7 +145,9 @@ export const Header = () => {
           <div className="flex items-center gap-2">
             <TimerDropdown open={openTimer} setOpen={setOpenTimer} />
           </div>
-          <div className="bg-gray-0 border-gray-10 pointer-events-auto flex items-center justify-center gap-2 rounded-xl border p-1 pl-2 lg:rounded-2xl">
+          <div
+            className={`${boardPanelClass} pointer-events-auto flex items-center justify-center gap-2 p-1 pl-2`}
+          >
             {!isReadonly && <CollaboratorAvatars />}
             <Button
               variant="none"
@@ -156,7 +163,7 @@ export const Header = () => {
                 setOpenTimer((prev) => !prev);
               }}
             >
-              <AlarmClock size="s" className="h-4 w-4 lg:h-6 lg:w-6" />
+              <AlarmClock size="s" className={`h-4 w-4 lg:h-6 lg:w-6 ${boardIconClass}`} />
             </Button>
             <Button
               variant="none"
@@ -167,9 +174,9 @@ export const Header = () => {
               data-umami-event-state={focusMode ? 'exit' : 'enter'}
             >
               {focusMode ? (
-                <Minimize size="s" className="h-4 w-4 lg:h-6 lg:w-6" />
+                <Minimize size="s" className={`h-4 w-4 lg:h-6 lg:w-6 ${boardIconClass}`} />
               ) : (
-                <Maximize size="s" className="h-4 w-4 lg:h-6 lg:w-6" />
+                <Maximize size="s" className={`h-4 w-4 lg:h-6 lg:w-6 ${boardIconClass}`} />
               )}
             </Button>
             <SettingsDropdown />

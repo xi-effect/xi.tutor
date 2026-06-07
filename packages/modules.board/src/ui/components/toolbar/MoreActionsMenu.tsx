@@ -10,7 +10,9 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { MenuDots } from '@xipkg/icons';
+import { cn } from '@xipkg/utils';
 import { useEditor } from '@ibodr/draw';
+import { boardIconClass, boardMenuSurfaceClass } from '../../boardTheme';
 import { useCurrentUser } from 'common.services';
 import type { PdfShape } from '../../../shapes/pdf';
 import type { AudioShape } from '../../../shapes/audio';
@@ -105,14 +107,14 @@ export const MoreActionsMenu = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="none" size="s" className="hover:bg-brand-0 p-1">
-          <MenuDots className="rotate-90" />
+          <MenuDots className={`rotate-90 ${boardIconClass}`} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         side="top"
         align="end"
         sideOffset={8}
-        className="border-gray-10 bg-gray-0 flex w-auto flex-col gap-1 rounded-xl border p-1"
+        className={cn(boardMenuSurfaceClass, 'flex w-auto flex-col gap-1 rounded-xl p-1')}
       >
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className="rounded-lg px-3">

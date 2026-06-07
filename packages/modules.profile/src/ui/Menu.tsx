@@ -2,6 +2,7 @@ import { Account, Exit, Key, Palette, Notification, File, Music } from '@xipkg/i
 import { Dispatch, SetStateAction } from 'react';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useAuth } from 'common.auth';
+import { THEME_CUSTOMIZATION_ENABLED } from 'common.theme';
 
 type ItemT = {
   name: string;
@@ -13,10 +14,14 @@ const options: ItemT[] = [
     name: 'Личные данные',
     query: 'personalInfo',
   },
-  // {
-  //   name: 'Персонализация',
-  //   query: 'personalisation',
-  // },
+  ...(THEME_CUSTOMIZATION_ENABLED
+    ? [
+        {
+          name: 'Персонализация',
+          query: 'personalisation',
+        },
+      ]
+    : []),
   {
     name: 'Безопасность',
     query: 'security',

@@ -2995,6 +2995,9 @@ importers:
       common.services:
         specifier: workspace:*
         version: link:../common.services
+      common.theme:
+        specifier: workspace:*
+        version: link:../common.theme
       common.types:
         specifier: workspace:*
         version: link:../common.types

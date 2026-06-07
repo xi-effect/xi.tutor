@@ -33,7 +33,7 @@ export const Customization = () => {
           </div>
           <Select value={theme} onValueChange={(value: ThemeT) => setTheme(value)}>
             <SelectTrigger className="ml-0 w-[250px] sm:ml-auto dark:text-gray-100">
-              <SelectValue placeholder="Select theme" />
+              <SelectValue placeholder="Выберите тему" />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
