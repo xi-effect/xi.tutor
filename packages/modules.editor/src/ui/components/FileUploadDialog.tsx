@@ -35,6 +35,14 @@ export const ImageUploadModal = () => {
     closeModal();
   };
 
+  const handleFileError = (titleError: string, subtitleError?: string) => {
+    if (!titleError) return;
+
+    toast.error(titleError, {
+      ...(subtitleError && { description: subtitleError }),
+    });
+  };
+
   const handleAddLink = async () => {
     const trimmedLink = imageLink.trim();
 
@@ -75,7 +83,12 @@ export const ImageUploadModal = () => {
 
         <div className="mt-4">
           {mode === 'upload' ? (
-            <FileUploader onChange={handleInput} accept="image/*" size="large" />
+            <FileUploader
+              onChange={handleInput}
+              onFileError={handleFileError}
+              accept="image/*"
+              size="large"
+            />
           ) : (
             <div className="flex gap-2">
               <div className="w-full">
