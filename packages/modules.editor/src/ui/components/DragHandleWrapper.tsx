@@ -95,9 +95,9 @@ export const DragHandleWrapper = ({
             variant="none"
           >
             {menuOpen ? (
-              <Close size="sm" className="size-6" />
+              <Close size="sm" className="fill-gray-80 size-6" />
             ) : (
-              <Plus size="sm" className="size-6" />
+              <Plus size="sm" className="fill-gray-80 size-6" />
             )}
           </Button>
         </BlockMenu>
@@ -107,7 +107,7 @@ export const DragHandleWrapper = ({
           variant="none"
           title="Перетащить блок"
         >
-          <Move size="sm" className="size-6" />
+          <Move size="sm" className="fill-gray-80 size-6" />
         </Button>
       </div>
     </DragHandle>

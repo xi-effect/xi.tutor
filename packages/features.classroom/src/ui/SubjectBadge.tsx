@@ -1,5 +1,6 @@
 import { Badge } from '@xipkg/badge';
 import { cn } from '@xipkg/utils';
+import { categoryBadgeClass } from 'common.ui';
 import { useSubjectsById } from 'common.services';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 
@@ -21,7 +22,7 @@ export const SubjectBadge = ({
   const { data: subject } = useSubjectsById(subjectId);
 
   const badgeContent = (
-    <Badge size={size} className={cn('text-gray-80 bg-gray-10 border-none', className)}>
+    <Badge size={size} className={cn(categoryBadgeClass, className)}>
       <span className={textClassName}>{subject?.name}</span>
     </Badge>
   );

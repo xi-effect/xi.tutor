@@ -1,8 +1,16 @@
 import { useState, useEffect } from 'react';
-import { toast } from 'sonner';
 import { useUpdateProfile, useCurrentUser } from 'common.services';
 
+import { THEME_CUSTOMIZATION_ENABLED } from './config';
 import { ThemeContext } from './context';
+import {
+  isTheme,
+  readStoredThemePreference,
+  readThemeChosen,
+  resolveThemeAppearance,
+  writeStoredTheme,
+  writeThemeChosen,
+} from './utils';
 
 import type { FC, PropsWithChildren } from 'react';
 import type { ThemeT, ThemeItemT } from './types';
@@ -10,52 +18,80 @@ import type { ThemeT, ThemeItemT } from './types';
 const DEFAULT_THEME: ThemeT = 'light';
 const ALL_THEMES: ThemeItemT[] = [
   { label: 'Светлая', value: 'light' },
-  { label: 'Тёмная', value: 'dark' },
+  { label: 'Тёмная', value: 'dark', badge: 'beta' },
   { label: 'Как в системе', value: 'system' },
 ];
+
+const applyTheme = (preference: ThemeT) => {
+  const root = document.documentElement;
+
+  ALL_THEMES.forEach((t) => {
+    root.classList.remove(t.value);
+  });
+
+  root.classList.add(preference);
+  root.setAttribute('data-theme', resolveThemeAppearance(preference));
+  root.setAttribute('data-theme-preference', preference);
+};
 
 export const ThemeProvider: FC<PropsWithChildren> = ({ children }) => {
   const { data: user } = useCurrentUser();
   const { updateProfile } = useUpdateProfile();
 
-  const [theme, setThemeState] = useState<ThemeT>(user?.theme || DEFAULT_THEME);
-
-  const applyTheme = (newTheme: ThemeT) => {
-    const root = document.documentElement;
-
-    ALL_THEMES.forEach((t) => {
-      root.classList.remove(t.value);
-    });
-
-    root.classList.add(newTheme);
-
-    root.setAttribute('data-theme', newTheme);
-  };
+  const [theme, setThemeState] = useState<ThemeT>(
+    () => readStoredThemePreference() ?? DEFAULT_THEME,
+  );
 
   useEffect(() => {
-    applyTheme(theme);
+    if (!THEME_CUSTOMIZATION_ENABLED || !isTheme(user?.theme)) return;
+
+    const hasChosenLocally = readThemeChosen();
+    const shouldSyncFromProfile =
+      hasChosenLocally || user.theme === 'dark' || user.theme === 'system';
+
+    if (!shouldSyncFromProfile) return;
+
+    setThemeState((current) => (current === user.theme ? current : user.theme));
+  }, [user?.theme]);
+
+  const effectiveTheme = THEME_CUSTOMIZATION_ENABLED ? theme : DEFAULT_THEME;
+
+  useEffect(() => {
+    applyTheme(effectiveTheme);
+  }, [effectiveTheme]);
+
+  useEffect(() => {
+    if (!THEME_CUSTOMIZATION_ENABLED || theme !== 'system') return;
+
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = () => applyTheme('system');
+
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme]);
 
   const setTheme = async (newTheme: ThemeT) => {
+    if (!THEME_CUSTOMIZATION_ENABLED) return;
+
+    const previousTheme = theme;
     setThemeState(newTheme);
 
     try {
-      const response = await updateProfile.mutateAsync({ theme: newTheme });
-      if (response.status === 200) {
-        toast('Тема успешно обновлена');
-      } else {
-        toast('Ошибка при обновлении темы');
-      }
+      await updateProfile.mutateAsync({ theme: newTheme });
+      writeStoredTheme(newTheme);
+      writeThemeChosen(true);
     } catch (error) {
+      setThemeState(previousTheme);
       console.error('Ошибка при обновлении темы', error);
-      toast('Ошибка при обновлении темы');
     }
   };
 
   const value = {
-    theme,
+    theme: effectiveTheme,
     setTheme,
-    themes: ALL_THEMES,
+    themes: THEME_CUSTOMIZATION_ENABLED
+      ? ALL_THEMES
+      : ALL_THEMES.filter((t) => t.value === DEFAULT_THEME),
   };
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

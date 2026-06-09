@@ -1,5 +1,5 @@
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { RefObject, useCallback } from 'react';
+import { RefObject, useCallback, useLayoutEffect } from 'react';
 import { useResponsiveGrid } from '../../../hooks';
 
 interface IItem {
@@ -44,6 +44,10 @@ export const VirtualGridlList = <T extends IItem>({
     },
     [rowVirtualizer],
   );
+
+  useLayoutEffect(() => {
+    rowVirtualizer.measure();
+  }, [items.length, colCount, rowVirtualizer]);
 
   return (
     <div

@@ -2,6 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useMediaQuery } from '@xipkg/utils';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { Modal, ModalContent, ModalTitle } from '@xipkg/modal';
+import { THEME_CUSTOMIZATION_ENABLED } from 'common.theme';
 import { Header } from './Header';
 import { Menu } from './Menu';
 import { Content } from './Content';
@@ -28,6 +29,15 @@ export const UserSettings = ({
   useEffect(() => {
     setActiveQuery(profileType);
   }, [profileType]);
+
+  useEffect(() => {
+    if (THEME_CUSTOMIZATION_ENABLED || profileType !== 'personalisation') return;
+
+    navigate({
+      to: pathname,
+      search: { profile: 'personalInfo' },
+    });
+  }, [navigate, pathname, profileType]);
 
   const handleClose = useCallback(() => {
     setShowContent(false);

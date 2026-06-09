@@ -97,7 +97,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
         )}
 
         <ModalHeader className="border-gray-20 border-b" innerClassName="max-sm:p-4">
-          <ModalTitle className="max-[515px]:max-w-[215px] max-sm:text-xl dark:text-gray-100">
+          <ModalTitle className="text-gray-100 max-[515px]:max-w-[215px] max-sm:text-xl">
             Создание счета на оплату
           </ModalTitle>
           <ModalDescription className="sr-only">Создание счета на оплату</ModalDescription>

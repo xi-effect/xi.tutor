@@ -1,16 +1,18 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { isSameDay } from 'date-fns';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
-import { addWeeks, startOfWeek } from 'date-fns';
 import { cn } from '@xipkg/utils';
-import { getWeekDays } from '../../../utils';
+import { getWeekDays, getWeekStartsRange } from '../../../utils';
 
 import 'swiper/css';
 
 const DAY_NAMES = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
-const WEEK_SLIDES_COUNT = 5; // прошлая, текущая, следующая + буфер для плавности
-const INITIAL_SLIDE_INDEX = 2; // текущая неделя по центру
+/** ±5 лет — практически без «края» ленты недель */
+const WEEKS_PAST = 260;
+const WEEKS_FUTURE = 260;
+const SLIDE_TO_SPEED_MS = 280;
 
 const styles = {
   dayPillBase:
@@ -30,19 +32,19 @@ export const ScheduleWeekCarousel = ({
   onWeekStartChange,
   onSelectedDateChange,
 }: ScheduleWeekCarouselProps) => {
-  const weeks = useMemo(() => {
-    const base = addWeeks(weekStart, -INITIAL_SLIDE_INDEX);
-    return Array.from({ length: WEEK_SLIDES_COUNT }, (_, i) =>
-      startOfWeek(addWeeks(base, i), { weekStartsOn: 1 }),
-    );
-  }, [weekStart]);
+  const weeks = useMemo(() => getWeekStartsRange(WEEKS_PAST, WEEKS_FUTURE), []);
 
   const currentWeekIndex = useMemo(() => {
-    const ws = weekStart.getTime();
-    return Math.max(
-      0,
-      weeks.findIndex((w) => w.getTime() === ws),
-    );
+    const weekStartMs = weekStart.getTime();
+    const exactIndex = weeks.findIndex((week) => week.getTime() === weekStartMs);
+    if (exactIndex >= 0) return exactIndex;
+
+    return weeks.reduce((closestIndex, week, index) => {
+      const closestWeek = weeks[closestIndex];
+      const closestDistance = Math.abs(closestWeek.getTime() - weekStartMs);
+      const nextDistance = Math.abs(week.getTime() - weekStartMs);
+      return nextDistance < closestDistance ? index : closestIndex;
+    }, 0);
   }, [weeks, weekStart]);
 
   const swiperRef = useRef<SwiperType | null>(null);
@@ -56,21 +58,25 @@ export const ScheduleWeekCarousel = ({
   );
 
   useEffect(() => {
-    swiperRef.current?.slideTo(currentWeekIndex, 0);
+    const swiper = swiperRef.current;
+    if (!swiper || swiper.activeIndex === currentWeekIndex) return;
+    swiper.slideTo(currentWeekIndex, SLIDE_TO_SPEED_MS);
   }, [currentWeekIndex]);
 
   const handleSlideChange = useCallback(
     (swiper: SwiperType) => {
       const newWeekStart = weeks[swiper.activeIndex];
-      if (newWeekStart) {
-        onWeekStartChange(newWeekStart);
-        const newWeekEnd = newWeekStart.getTime() + 7 * 24 * 60 * 60 * 1000;
-        const dayInNewWeek =
-          selectedDate.getTime() >= newWeekStart.getTime() && selectedDate.getTime() < newWeekEnd
-            ? selectedDate
-            : newWeekStart;
-        onSelectedDateChange(dayInNewWeek);
-      }
+      if (!newWeekStart) return;
+
+      onWeekStartChange(newWeekStart);
+
+      const newWeekEnd = newWeekStart.getTime() + 7 * 24 * 60 * 60 * 1000;
+      const dayInNewWeek =
+        selectedDate.getTime() >= newWeekStart.getTime() && selectedDate.getTime() < newWeekEnd
+          ? selectedDate
+          : newWeekStart;
+
+      onSelectedDateChange(dayInNewWeek);
     },
     [weeks, selectedDate, onWeekStartChange, onSelectedDateChange],
   );
@@ -83,6 +89,7 @@ export const ScheduleWeekCarousel = ({
       onSwiper={handleSwiper}
       onSlideChange={handleSlideChange}
       initialSlide={currentWeekIndex}
+      resistanceRatio={0.85}
     >
       {weeks.map((start) => {
         const days = getWeekDays(start);
@@ -90,7 +97,7 @@ export const ScheduleWeekCarousel = ({
           <SwiperSlide key={start.toISOString()} className="py-6">
             <div className="grid grid-cols-7 gap-1 px-1">
               {days.map((date, i) => {
-                const isSelected = date.getTime() === selectedDate.getTime();
+                const isSelected = isSameDay(date, selectedDate);
                 const dayName = DAY_NAMES[i];
                 const dayNum = date.getDate();
                 return (
@@ -98,6 +105,8 @@ export const ScheduleWeekCarousel = ({
                     key={date.toISOString()}
                     type="button"
                     onClick={() => onSelectedDateChange(date)}
+                    data-umami-event="schedule-date-select"
+                    data-umami-event-source="mobile-week"
                     className={cn(styles.dayPillBase)}
                     style={{
                       backgroundColor: isSelected ? 'var(--xi-brand-80)' : 'transparent',

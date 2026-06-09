@@ -16,12 +16,11 @@ import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
 import { useMenuStore } from '../store';
 import { Notifications } from './Header/Notifications';
-import { Logo } from 'common.ui';
+import { Logo, useSupportModalStore } from 'common.ui';
 import { useMediaQuery } from '@xipkg/utils';
 import { DesktopUserMenu } from './Header/DesktopUserMenu';
 import { useAuth } from 'common.auth';
 import { getFooterMenuConfig, getTopMenuConfig } from './config/sidebarMenuConfig';
-import { SupportModal } from './SupportModal';
 
 const UserSettings = lazy(() =>
   import('modules.profile').then((module) => ({ default: module.UserSettings })),
@@ -31,7 +30,7 @@ export const SideBarItems = () => {
   const { t } = useTranslation('navigation');
   const { close, isDesktopOpen } = useMenuStore();
   const isMobile = useMediaQuery('(max-width: 960px)');
-  const [isSupportOpen, setIsSupportOpen] = useState(false);
+  const openSupportModal = useSupportModalStore((state) => state.open);
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -65,7 +64,7 @@ export const SideBarItems = () => {
     }
   };
 
-  const footerMenu = getFooterMenuConfig(handleOnboardingClick, () => setIsSupportOpen(true));
+  const footerMenu = getFooterMenuConfig(handleOnboardingClick, openSupportModal);
 
   const getIsActiveItem = (url: string) => {
     if (url === '/') {
@@ -225,7 +224,6 @@ export const SideBarItems = () => {
       <Suspense fallback={null}>
         <UserSettings open={open} setOpen={setOpen} />
       </Suspense>
-      <SupportModal open={isSupportOpen} onOpenChange={setIsSupportOpen} />
     </>
   );
 };

@@ -1,4 +1,6 @@
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
+import { switcherTabClass } from 'common.ui';
+import { cn } from '@xipkg/utils';
 import { MaterialsAdd } from 'features.materials.add';
 
 const tabs = [
@@ -13,21 +15,24 @@ interface HeaderProps {
 
 export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
   return (
-    <div className="flex flex-row items-center pb-4">
+    <div className="xs:flex-row xs:items-center flex flex-col items-start pb-4">
       <h1 className="text-2xl font-normal text-gray-100">Материалы</h1>
 
-      <div className="ml-4 flex h-[32px] flex-row items-center gap-2">
+      <div className="xs:mt-0 xs:ml-4 xs:w-auto mt-2 flex h-[32px] w-full flex-row items-center gap-2">
         <SwitcherAnimate
           tabs={tabs}
           activeTab={activeTab}
           onChange={onTabChange}
-          className="flex h-[32px] w-70 flex-row gap-4 rounded-lg"
-          tabClassName="text-m-base font-medium text-gray-100 h-[28px]"
+          className="xs:w-auto flex h-[32px] w-full flex-row gap-4 rounded-lg"
+          tabClassName={cn(
+            switcherTabClass,
+            'text-m-base h-[28px] flex-1 font-medium xs:flex-none xs:px-3',
+          )}
           indicatorClassName="rounded-md"
         />
       </div>
 
-      <div className="ml-auto flex items-center">
+      <div className="xs:flex ml-auto hidden items-center">
         <MaterialsAdd onlyDrafts />
       </div>
     </div>

@@ -78,8 +78,18 @@ export const NotificationItem = ({
     <>
       <NotificationAvatar
         kind={notification.payload.kind}
-        classroomId={notification.payload.classroom_id}
-        recipientInvoiceId={notification.payload.recipient_invoice_id}
+        classroomId={
+          'classroom_id' in notification.payload &&
+          typeof notification.payload.classroom_id === 'number'
+            ? notification.payload.classroom_id
+            : undefined
+        }
+        recipientInvoiceId={
+          'recipient_invoice_id' in notification.payload &&
+          typeof notification.payload.recipient_invoice_id === 'number'
+            ? notification.payload.recipient_invoice_id
+            : undefined
+        }
       />
 
       <div className="flex flex-1 flex-col gap-1">

@@ -1,6 +1,18 @@
-export { Call, CompactView, useModeSync, ModeSyncProvider } from './src';
-export { LiveKitProvider } from './src/providers/LiveKitProvider';
-export { RoomProvider } from './src/providers/RoomProvider';
-export { useCallStore } from './src/store/callStore';
-export { useStartCall } from './src/hooks';
-export { useUmamiActivityHeartbeat } from './src';
+export { Call } from '@xipkg/calls';
+export { CompactView } from '@xipkg/calls-compactview';
+export {
+  RoomProvider,
+  LiveKitProvider,
+  CallsProvider,
+  CallsRuntimeConfigProvider,
+  CallsNavigationProvider,
+  CallsSessionProvider,
+} from '@xipkg/calls-providers';
+export {
+  ModeSyncProvider,
+  useModeSync,
+  useStartCall,
+  useUmamiActivityHeartbeat,
+} from '@xipkg/calls-hooks';
+export { useCallStore } from '@xipkg/calls-store';
+export { CallsShell } from './src/CallsShell';

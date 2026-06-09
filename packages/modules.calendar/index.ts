@@ -27,7 +27,13 @@ export {
   DayLessonListMetaProvider,
   useDayLessonListMeta,
 } from './src/ui/contexts/DayLessonListMetaContext';
-export { useSetEvents, useSetEventsLoading } from './src/store/eventsStore';
+export {
+  useSetEvents,
+  useSetEventsLoading,
+  useAddEvent,
+  useCalendarEvents,
+  useEventsLoading,
+} from './src/store/eventsStore';
 export type { UseLessonInfoModalOptions } from './src/hooks/useLessonInfoModal';
 export type { UseChangeLessonModalOptions } from './src/hooks/useChangeLessonModal';
 export { calendarEn, calendarRu } from './src/locales';
@@ -47,6 +53,7 @@ export {
   weekdaysToBitmask,
 } from './src/utils/bitmaskTimezone';
 export { toLocalISOString } from './src/utils/dateTimezone';
+export { resolveSchedulerStartsAt } from './src/utils/resolveSchedulerStartsAt';
 export { findNearestLessonIndex } from './src/utils/findNearestLessonIndex';
 export { useScheduleLessonRowsForDay } from './src/hooks/useScheduleLessonRowsForDay';
 export {

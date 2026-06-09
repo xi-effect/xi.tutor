@@ -1,4 +1,6 @@
 import { Badge } from '@xipkg/badge';
+import { cn } from '@xipkg/utils';
+import { categoryBadgeClass } from 'common.ui';
 
 import { useSubjectsById } from 'common.services';
 
@@ -12,7 +14,10 @@ export const SubjectBadge = ({ subject_id }: SubjectBadgePropsT) => {
   return (
     <Badge
       size="m"
-      className="text-gray-60 bg-gray-10 text-s-base max-w-full min-w-0 rounded-lg border-none px-2 py-1 font-medium max-sm:flex max-sm:w-full max-sm:items-center max-sm:justify-center"
+      className={cn(
+        categoryBadgeClass,
+        'max-w-full min-w-0 max-sm:flex max-sm:w-full max-sm:items-center max-sm:justify-center',
+      )}
     >
       <span className="max-w-full min-w-0 truncate text-center">{subject?.name}</span>
     </Badge>

@@ -33,7 +33,7 @@ export const UpcomingLessonCard = ({
   return (
     <div
       className={cn(
-        'group/lesson-card flex min-h-[220px] w-full max-w-[min(100%,400px)] min-w-[300px] flex-col gap-2 rounded-2xl border bg-white p-5 sm:min-w-[320px]',
+        'group/lesson-card bg-gray-0 flex min-h-[220px] w-full max-w-[min(100%,400px)] min-w-[300px] flex-col gap-2 rounded-2xl border p-5 sm:min-w-[320px]',
         isNearest ? 'border-brand-80 border-2' : 'border-gray-10 border',
       )}
     >

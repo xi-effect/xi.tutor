@@ -4,14 +4,7 @@ import { LoadingScreen } from 'common.ui';
 import { Suspense, lazy, useEffect, useRef, useCallback } from 'react';
 
 // Импортируем провайдеры синхронно, так как они нужны везде
-import {
-  CompactView,
-  LiveKitProvider,
-  RoomProvider,
-  useCallStore,
-  ModeSyncProvider,
-  useUmamiActivityHeartbeat,
-} from 'modules.calls';
+import { CallsShell, CompactView, useCallStore, useUmamiActivityHeartbeat } from 'modules.calls';
 import { useCurrentUser, useUpdateProfile, useMarkNotificationAsRead } from 'common.services';
 import { OnboardingStageT } from 'common.api';
 import { onboardingStageToPath } from 'pages.welcome';
@@ -23,8 +16,21 @@ const Navigation = lazy(() =>
 );
 
 function LayoutComponent() {
+  return (
+    <div className="relative flex min-h-svh flex-col overflow-hidden">
+      <Suspense fallback={<LoadingScreen />}>
+        <CallsShell>
+          <LayoutContent />
+        </CallsShell>
+      </Suspense>
+    </div>
+  );
+}
+
+function LayoutContent() {
   const router = useRouter();
   const updateStore = useCallStore((state) => state.updateStore);
+  const token = useCallStore((state) => state.token);
 
   useUmamiActivityHeartbeat();
 
@@ -40,23 +46,15 @@ function LayoutComponent() {
     }
   }, [router.state.location.pathname, router.state.location.search, updateStore]);
 
-  return (
-    <div className="relative flex min-h-svh flex-col overflow-hidden">
-      <Suspense fallback={<LoadingScreen />}>
-        <Navigation>
-          <RoomProvider>
-            <LiveKitProvider>
-              <ModeSyncProvider>
-                <CompactView>
-                  <Outlet />
-                </CompactView>
-              </ModeSyncProvider>
-            </LiveKitProvider>
-          </RoomProvider>
-        </Navigation>
-      </Suspense>
-    </div>
+  const outlet = token ? (
+    <CompactView>
+      <Outlet />
+    </CompactView>
+  ) : (
+    <Outlet />
   );
+
+  return <Navigation>{outlet}</Navigation>;
 }
 
 const ProtectedLayout = () => {

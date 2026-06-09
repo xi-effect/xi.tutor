@@ -17,11 +17,14 @@ import { ModalInvitation } from 'features.invites';
 import { EmptyClassrooms } from 'common.ui';
 import { Classroom } from './Classroom';
 import { SectionEmptyState, sectionEmptyStateIllustrationClass } from '../SectionEmptyState';
-import { cn } from '@xipkg/utils';
+import { cn, useMediaQuery } from '@xipkg/utils';
+
+const emptyClassroomsIllustrationClass = cn(sectionEmptyStateIllustrationClass, '-translate-x-8');
 
 export const Classrooms = () => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const isMobile = useMediaQuery('(max-width: 960px)');
 
   const { data: tutorClassrooms, isLoading: isTutorLoading } = useFetchClassrooms(
     undefined,
@@ -76,7 +79,7 @@ export const Classrooms = () => {
       <div className="flex flex-row items-center gap-2">
         <h2 className="text-l-base font-medium text-gray-100">Кабинеты</h2>
         <div className="ml-auto">
-          {isTutor ? (
+          {isTutor && !isMobile ? (
             <>
               <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
                 <DropdownMenuTrigger asChild>
@@ -168,18 +171,20 @@ export const Classrooms = () => {
           title="У вас нет кабинетов"
           description="Вы можете создать кабинет для групповых или индивидуальных занятий"
           minHeightClass="min-h-[160px] sm:min-h-[180px]"
-          illustration={<EmptyClassrooms className={sectionEmptyStateIllustrationClass} />}
+          illustration={<EmptyClassrooms className={emptyClassroomsIllustrationClass} />}
           actions={
-            <Button
-              type="button"
-              variant="none"
-              className={inviteEmptyButtonClass}
-              onClick={() => setInviteModalOpen(true)}
-              data-umami-event="classrooms-empty-invite"
-            >
-              Пригласить ученика
-              <UserPlus className="text-brand-100 size-4 shrink-0" />
-            </Button>
+            !isMobile ? (
+              <Button
+                type="button"
+                variant="none"
+                className={inviteEmptyButtonClass}
+                onClick={() => setInviteModalOpen(true)}
+                data-umami-event="classrooms-empty-invite"
+              >
+                Пригласить ученика
+                <UserPlus className="text-brand-100 size-4 shrink-0" />
+              </Button>
+            ) : undefined
           }
         />
       ) : (
@@ -187,7 +192,7 @@ export const Classrooms = () => {
           title={emptyMessage}
           description="Ссылку-приглашение вам должен отправить ваш репетитор"
           minHeightClass="min-h-[160px]"
-          illustration={<EmptyClassrooms className={sectionEmptyStateIllustrationClass} />}
+          illustration={<EmptyClassrooms className={emptyClassroomsIllustrationClass} />}
         />
       )}
     </div>

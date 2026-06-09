@@ -33,17 +33,18 @@ import {
 } from '@ibodr/draw';
 import { YKeyValue } from 'y-utility/y-keyvalue';
 import * as Y from 'yjs';
-import { getFileUrl } from 'common.api';
+import { boardAssetUtils } from '../assets/boardAssetUtils';
 import { myAssetStore } from '../features/imageStore';
 import { boardStoreShapeUtils } from '../shapes/boardShapeUtils';
 import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
 import { generateUserColor } from '../utils/userColor';
-import { extractFileIdFromUrl } from '../utils/resolveAssetUrl';
+import { normalizeStoredFileSrc } from '../utils/storedFileSrc';
 import {
   nextBoardSchemaVersion,
   prepareLegacyYjsStoreSnapshot,
   repairMigratedBoardStore,
 } from '../utils/migrateLegacyTldrawSnapshot';
+import { ensureYjsStorePopulated } from '../utils/parseYjsBoardDoc';
 
 type UseYjsStoreArgs = Partial<{
   hostUrl: string;
@@ -51,6 +52,10 @@ type UseYjsStoreArgs = Partial<{
   storageToken: string;
   shapeUtils: DrAnyShapeUtilConstructor[];
   token: string; // токен для asset store
+  /** Бинарный Y.Doc из БД — применяется до подключения к Hocuspocus */
+  initialYjsUpdate?: Uint8Array;
+  /** Только локальный просмотр дампа: без WebSocket (DEV) */
+  localYjsPreview?: boolean;
 }>;
 
 type ConnectionStatus = 'online' | 'offline';
@@ -115,6 +120,17 @@ function isDocumentRecord(store: DrStore, record: DrRecord): boolean {
   return store.scopedTypes.document.has(record.typeName);
 }
 
+/** Нормализует props.src перед записью в Yjs — контракт в utils/storedFileSrc.ts */
+function normalizeRecordForYjsPersistence(record: DrRecord): DrRecord {
+  const props = (record as { props?: { src?: unknown } }).props;
+  if (!props?.src || typeof props.src !== 'string') return record;
+
+  const normalizedSrc = normalizeStoredFileSrc(props.src);
+  if (normalizedSrc === props.src) return record;
+
+  return { ...record, props: { ...props, src: normalizedSrc } } as DrRecord;
+}
+
 /**
  * Throttle для awareness/presence (курсоры / presence).
  * 80ms ≈ 12.5Hz — плавно, но без спама.
@@ -151,7 +167,12 @@ function makeKey(hostUrl: string, ydocId: string, storageToken: string) {
   return `${hostUrl}__${ydocId}__${storageToken}`;
 }
 
-function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string): SharedEntry {
+function getOrCreateShared(
+  hostUrl: string,
+  ydocId: string,
+  storageToken: string,
+  initialYjsUpdate?: Uint8Array,
+): SharedEntry {
   const key = makeKey(hostUrl, ydocId, storageToken);
   const existing = shared.get(key);
 
@@ -167,6 +188,10 @@ function getOrCreateShared(hostUrl: string, ydocId: string, storageToken: string
   }
 
   const yDoc = new Y.Doc({ gc: true });
+
+  if (initialYjsUpdate?.length) {
+    Y.applyUpdate(yDoc, initialYjsUpdate);
+  }
   const yArr = yDoc.getArray<{ key: string; val: DrRecord }>(`tl_${ydocId}`);
   const yStore = new YKeyValue<DrRecord>(yArr);
 
@@ -242,6 +267,8 @@ export function useYjsStore({
   hostUrl = import.meta.env.VITE_SERVER_URL_HOCUS ?? 'wss://hocus.sovlium.ru',
   shapeUtils = [],
   token,
+  initialYjsUpdate,
+  localYjsPreview = false,
 }: UseYjsStoreArgs): ExtendedStoreStatus {
   const { data: currentUser } = useCurrentUser();
   const currentUserRef = useRef(currentUser);
@@ -253,6 +280,7 @@ export function useYjsStore({
 
     return createDrStore({
       shapeUtils: [...boardStoreShapeUtils, ...shapeUtils],
+      assetUtils: [...boardAssetUtils],
       ...(assetStore ? { assets: assetStore } : {}),
     });
   });
@@ -278,8 +306,8 @@ export function useYjsStore({
   const flushTimeoutRef = useRef<number | null>(null);
 
   const sharedEntry = useMemo(() => {
-    return getOrCreateShared(hostUrl, ydocId, storageToken);
-  }, [hostUrl, ydocId, storageToken]);
+    return getOrCreateShared(hostUrl, ydocId, storageToken, initialYjsUpdate);
+  }, [hostUrl, ydocId, storageToken, initialYjsUpdate]);
 
   const { provider, yDoc, yStore, meta, readonlyMap, userCamerasMap, pdfPagesMap, audioSyncMap } =
     sharedEntry;
@@ -293,7 +321,9 @@ export function useYjsStore({
 
     // ВАЖНО: attach тут, а detach — ТОЛЬКО в releaseShared (когда refs = 0).
     // Иначе при 2 потребителях или StrictMode будет "чужой" cleanup ронять сокет.
-    provider.attach();
+    if (!localYjsPreview) {
+      provider.attach();
+    }
 
     const unsubs: Array<() => void> = [];
 
@@ -305,10 +335,10 @@ export function useYjsStore({
 
       yDoc.transact(() => {
         Object.values(pending.added).forEach((r) => {
-          if (isDocumentRecord(store, r)) yStore.set(r.id, r);
+          if (isDocumentRecord(store, r)) yStore.set(r.id, normalizeRecordForYjsPersistence(r));
         });
         Object.values(pending.updated).forEach((r) => {
-          if (isDocumentRecord(store, r)) yStore.set(r.id, r);
+          if (isDocumentRecord(store, r)) yStore.set(r.id, normalizeRecordForYjsPersistence(r));
         });
         Object.values(pending.removed).forEach((r) => {
           if (isDocumentRecord(store, r)) yStore.delete(r.id);
@@ -704,23 +734,7 @@ export function useYjsStore({
         // При дублировании доски бэкенд копирует бинарный Y.Doc, но данные внутри хранятся
         // в массиве `tl_${sourceYdocId}`. Клиент обращается к `tl_${newYdocId}` — он пуст.
         // Ищем данные в любом другом `tl_*` массиве и копируем в текущий.
-        if (yStore.yarray.length === 0) {
-          const currentKey = `tl_${ydocId}`;
-
-          for (const [key] of yDoc.share.entries()) {
-            if (key === currentKey || !key.startsWith('tl_')) continue;
-
-            const candidateArr = yDoc.getArray<{ key: string; val: DrRecord }>(key);
-            if (candidateArr.length === 0) continue;
-
-            yDoc.transact(() => {
-              for (const item of candidateArr.toJSON()) {
-                yStore.set(item.key, item.val);
-              }
-            }, 'duplicate-migration');
-            break;
-          }
-        }
+        ensureYjsStorePopulated(yDoc, ydocId, yStore);
 
         if (yStore.yarray.length) {
           const ourSchema = store.schema.serialize();
@@ -769,32 +783,14 @@ export function useYjsStore({
 
           migratedStore = repairMigratedBoardStore(migratedStore);
 
-          // Migrate `src` values:
-          // - Shapes (audio, pdf): full URL → bare file ID (our validators accept any string)
-          // - Assets (image): bare ID → full URL (tldraw's built-in validator requires a valid URL)
-          for (const record of Object.values(migratedStore) as DrRecord[]) {
-            const props = (record as any).props;
-            if (!props?.src || typeof props.src !== 'string') continue;
-
-            const isAsset = (record as any).typeName === 'asset';
-            if (isAsset) {
-              const src = props.src as string;
-              const isBareId =
-                src !== '' &&
-                !src.startsWith('http://') &&
-                !src.startsWith('https://') &&
-                !src.startsWith('data:') &&
-                !src.startsWith('blob:');
-              if (isBareId) {
-                props.src = getFileUrl(src);
-              }
-            } else {
-              const fileId = extractFileIdFromUrl(props.src);
-              if (fileId) {
-                props.src = fileId;
-              }
-            }
-          }
+          // Контракт персиста props.src — только storage file id (utils/storedFileSrc.ts).
+          // Записи из Yjs могут быть frozen — не мутируем in-place, клонируем.
+          migratedStore = Object.fromEntries(
+            Object.entries(migratedStore).map(([id, record]) => [
+              id,
+              normalizeRecordForYjsPersistence(record),
+            ]),
+          ) as Record<string, DrRecord>;
 
           yDoc.transact(() => {
             for (const r of records) {
@@ -861,10 +857,17 @@ export function useYjsStore({
     provider.on('synced', handleSynced as any);
     unsubs.push(() => provider.off('synced', handleSynced as any));
 
-    // При ремаунте (PiP / смена фокуса) провайдер может быть уже синхронизирован.
-    // Событие 'synced' вызывается только один раз, поэтому вручную запускаем инициализацию.
-    // Сразу выставляем synced-remote, чтобы до отрисовки не показывать LoadingScreen.
-    if (provider.synced) {
+    // Локальный дамп Y.Doc из БД — гидрация без Hocuspocus.
+    if (localYjsPreview) {
+      setStoreWithStatus((prev) => ({
+        ...prev,
+        status: 'synced-remote',
+        connectionStatus: 'offline',
+      }));
+      handleSynced({ state: true });
+    } else if (provider.synced) {
+      // При ремаунте (PiP / смена фокуса) провайдер может быть уже синхронизирован.
+      // Событие 'synced' вызывается только один раз, поэтому вручную запускаем инициализацию.
       setStoreWithStatus((prev) => ({
         ...prev,
         status: 'synced-remote',
@@ -890,7 +893,7 @@ export function useYjsStore({
       // detach/destroy делаем только когда refs упадет в 0 (releaseShared).
       releaseShared(sharedEntry);
     };
-  }, [provider, yDoc, yStore, meta, readonlyMap, store, sharedEntry]);
+  }, [provider, yDoc, yStore, meta, readonlyMap, store, sharedEntry, localYjsPreview, ydocId]);
 
   function undo() {
     const um = undoManagerRef.current;

@@ -21,7 +21,7 @@ export const ClassroomsEmptyState = ({
   description,
   withHelpLink = false,
 }: ClassroomsEmptyStateProps) => (
-  <div className="bg-gray-0 ml-4 box-border flex h-[calc(100dvh-120px)] w-full flex-col rounded-tl-2xl pt-2 pr-5 pb-4 pl-5">
+  <div className="bg-gray-0 ml-4 box-border flex h-full min-h-0 w-full flex-col rounded-tl-2xl pt-2 pr-5 pb-4 pl-5">
     <div
       className={cn(
         'flex min-h-0 flex-1 flex-col items-center justify-center gap-8 overflow-hidden',

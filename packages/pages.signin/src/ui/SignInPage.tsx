@@ -53,14 +53,14 @@ export const SignInPage = () => {
   };
 
   return (
-    <div className="xs:h-screen dark:bg-gray-0 flex h-[100dvh] w-screen flex-col flex-wrap content-center justify-center p-1">
-      <div className="xs:border xs:border-gray-10 xs:rounded-2xl dark:bg-gray-5 flex h-fit min-h-[600px] w-full max-w-[420px] p-8">
+    <div className="xs:h-screen bg-gray-0 flex h-[100dvh] w-screen flex-col flex-wrap content-center justify-center p-1">
+      <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex h-fit min-h-[600px] w-full max-w-[420px] bg-transparent p-8">
         <Form {...form}>
           <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex w-full flex-col gap-4">
             <div className="self-center">
               <Logo height={22} width={180} />
             </div>
-            <h1 className="flex justify-center text-2xl font-semibold dark:text-gray-100">
+            <h1 className="flex justify-center text-2xl font-semibold text-gray-100">
               {t('sign_in')}
             </h1>
 

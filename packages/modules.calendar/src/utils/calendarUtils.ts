@@ -1,4 +1,14 @@
-import { format, isBefore, isSameDay, startOfDay, parse } from 'date-fns';
+import { addDays, format, isBefore, isSameDay, startOfDay, parse } from 'date-fns';
+
+/**
+ * Начало окна из `visibleCount` дней, в котором `anchorDay` — последний видимый день.
+ * Нужно, когда на экран помещается меньше 7 колонок: иначе неделя с понедельника
+ * обрезается «слева» и сегодня (часто сб/вс) не попадает во вьюпорт.
+ */
+export const getWeekStartForVisibleWindow = (anchorDay: Date, visibleCount: number): Date => {
+  const count = Math.max(1, Math.min(7, visibleCount));
+  return addDays(startOfDay(anchorDay), -(count - 1));
+};
 
 export const isCurrentMonth = (date: Date, monthIndex: number) => {
   return date.getMonth() === monthIndex;
@@ -24,6 +34,11 @@ export const timeToString = (time: Date) => {
 
 export const parseDateTime = (dateStr: string, timeStr: string) =>
   parse(`${dateStr} ${timeStr}`, 'dd.MM.yyyy HH:mm', new Date());
+
+export const formatMonthLabel = (date: Date): string => {
+  const raw = date.toLocaleDateString('ru-RU', { month: 'long' });
+  return raw.charAt(0).toUpperCase() + raw.slice(1);
+};
 
 export const getFullDateString = (date: Date) => {
   const weekDayName = date.toLocaleDateString('ru-RU', { weekday: 'short' });

@@ -33,7 +33,7 @@ export function AudioInfoRow({
   onToggleMute,
 }: AudioInfoRowProps) {
   return (
-    <div className="flex items-center justify-between" style={{ fontSize: 10, color: '#6B7280' }}>
+    <div className="text-gray-60 flex items-center justify-between text-[10px]">
       <div className="flex items-center gap-1.5">
         {canAddTimecode && (
           <Button

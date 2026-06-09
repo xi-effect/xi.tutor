@@ -1,7 +1,7 @@
 import { DrShapeId, useEditor } from '@ibodr/draw';
 import { useEffect } from 'react';
 import { useDrawStore } from '../store';
-import { isEditableTarget } from '../utils';
+import { isEmptyLabelEditOnTypeContext, shouldIgnoreBoardHotkeys } from '../utils';
 import { useYjsContext } from '../providers/YjsProvider';
 import { useDrawStyles } from './useDrawStyles';
 
@@ -16,8 +16,10 @@ export const useHotkeys = () => {
     if (!editor) return;
 
     function handleKeyDown(event: KeyboardEvent) {
-      if (isEditableTarget(event.target)) return;
+      if (!editor) return;
+      if (shouldIgnoreBoardHotkeys(editor, event.target)) return;
 
+      const deferToLabelEditOnType = isEmptyLabelEditOnTypeContext(editor);
       const { code, ctrlKey, shiftKey, metaKey, altKey } = event;
       const modKey = ctrlKey || metaKey;
 
@@ -37,6 +39,7 @@ export const useHotkeys = () => {
 
       // Основные инструменты
       if (code === 'KeyV' && !modKey && !shiftKey && !altKey) {
+        if (deferToLabelEditOnType) return;
         event.preventDefault();
         resetToDefaults();
         editor.setCurrentTool('select');
@@ -45,6 +48,7 @@ export const useHotkeys = () => {
       }
 
       if (code === 'KeyH' && !modKey && !shiftKey && !altKey) {
+        if (deferToLabelEditOnType) return;
         event.preventDefault();
         resetToDefaults();
         editor.setCurrentTool('hand');
@@ -53,6 +57,7 @@ export const useHotkeys = () => {
       }
 
       if (code === 'KeyP' && !modKey && !shiftKey && !altKey) {
+        if (deferToLabelEditOnType) return;
         event.preventDefault();
         const { pencilColor, pencilThickness, pencilOpacity } = useDrawStore.getState();
         setColor(pencilColor);
@@ -64,6 +69,7 @@ export const useHotkeys = () => {
       }
 
       if (code === 'KeyT' && !modKey && !shiftKey && !altKey) {
+        if (deferToLabelEditOnType) return;
         event.preventDefault();
         resetToDefaults();
         editor.setCurrentTool('text');
@@ -72,6 +78,7 @@ export const useHotkeys = () => {
       }
 
       if (code === 'KeyG' && !modKey && !shiftKey && !altKey) {
+        if (deferToLabelEditOnType) return;
         event.preventDefault();
         editor.setCurrentTool('xi-geo');
         setSelectedTool('xi-geo');
@@ -81,6 +88,7 @@ export const useHotkeys = () => {
       }
 
       if (code === 'KeyA' && !modKey && !shiftKey && !altKey) {
+        if (deferToLabelEditOnType) return;
         event.preventDefault();
         resetToDefaults();
         editor.setCurrentTool('arrow');
@@ -89,6 +97,7 @@ export const useHotkeys = () => {
       }
 
       if (code === 'KeyE' && !modKey && !shiftKey && !altKey) {
+        if (deferToLabelEditOnType) return;
         event.preventDefault();
         resetToDefaults();
         editor.setCurrentTool('eraser');
@@ -97,6 +106,7 @@ export const useHotkeys = () => {
       }
 
       if (code === 'KeyF' && !modKey && !shiftKey && !altKey) {
+        if (deferToLabelEditOnType) return;
         event.preventDefault();
         resetToDefaults();
         editor.setCurrentTool('frame');

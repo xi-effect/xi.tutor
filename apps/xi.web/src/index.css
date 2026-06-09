@@ -13,6 +13,14 @@
 @source "../../../packages/modules.navigation/src";
 @source "../../../packages/modules.board/src";
 @source "../../../packages/modules.calls/src";
+/* calls-tailwind-sources:start */
+/* npm: className в dist/*.mjs — дополнительно к @source "../../../node_modules/@xipkg" */
+@source "../../../node_modules/@xipkg/calls-ui/dist";
+@source "../../../node_modules/@xipkg/calls/dist";
+@source "../../../node_modules/@xipkg/calls-chat/dist";
+@source "../../../node_modules/@xipkg/calls-compactview/dist";
+@source "../../../node_modules/@xipkg/calls-risehand/dist";
+/* calls-tailwind-sources:end */
 @source "../../../packages/modules.calendar/src";
 @source "../../../packages/modules.editor/src";
 @source "../../../packages/common.ui/src";
@@ -41,6 +49,7 @@
 @source "../../../packages/pages.email-confirm/src";
 @source "../../../packages/features.lesson.add/src";
 @source "../../../packages/features.lesson.move/src";
+@source "../../../packages/features.invites/src";
 @source "../../../packages/features.group.add/src";
 @source "../../../packages/features.group.manage/src";
 @source "../../../packages/features.group.invite/src";
@@ -92,3 +101,26 @@ html {
 }
 
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* Токены фона и скроллбара: в @xipkg/tailwind для [data-theme='dark'] пока нет bkgd */
+[data-theme='dark'] {
+  --xi-bkgd-main: #12131c;
+  --xi-bkgd-block: #1f1f1f;
+}
+
+@theme {
+  --color-bkgd-main: var(--xi-bkgd-main);
+  --color-bkgd-block: var(--xi-bkgd-block);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+[data-theme='dark'] * {
+  scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}

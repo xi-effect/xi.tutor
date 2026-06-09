@@ -1,4 +1,6 @@
-import { RefObject } from 'react';
+import { RefObject, useRef } from 'react';
+import { useMediaQuery } from '@xipkg/utils';
+import { useScrollPagination } from '../../../hooks';
 import { CardsGridSkeleton } from './CardsGridSkeleton';
 import { Card } from '../cards/Card';
 import { ClassroomPropsT } from '../../../types';
@@ -11,11 +13,33 @@ type TCardsGridProps = {
   isError: boolean;
   isFetchingNextPage: boolean;
   hasNextPage: boolean;
+  fetchNextPage: () => void;
   parentRef: RefObject<HTMLDivElement | null>;
   emptyText: string;
   inviteText: string;
   withHelpLink?: boolean;
 };
+
+const ListFooter = ({
+  isFetchingNextPage,
+  hasNextPage,
+  itemsCount,
+}: {
+  isFetchingNextPage: boolean;
+  hasNextPage: boolean;
+  itemsCount: number;
+}) => (
+  <>
+    {isFetchingNextPage && (
+      <div className="flex justify-center py-4">
+        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-gray-300" />
+      </div>
+    )}
+    {!hasNextPage && itemsCount > 0 && (
+      <div className="py-4 text-center text-gray-500">Все кабинеты загружены</div>
+    )}
+  </>
+);
 
 export const CardsGrid: React.FC<TCardsGridProps> = ({
   items,
@@ -23,11 +47,23 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
   isError,
   isFetchingNextPage,
   hasNextPage,
+  fetchNextPage,
   parentRef,
   emptyText,
   inviteText,
   withHelpLink = false,
 }) => {
+  const isMobile = useMediaQuery('(max-width: 960px)');
+  const sentinelRef = useRef<HTMLDivElement>(null);
+
+  useScrollPagination({
+    sentinelRef,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    itemsCount: items.length,
+  });
+
   if (isLoading) {
     return <CardsGridSkeleton count={12} />;
   }
@@ -50,8 +86,26 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
     );
   }
 
+  if (isMobile) {
+    return (
+      <div ref={parentRef} className="w-full px-5">
+        <div className="grid grid-cols-1 gap-5">
+          {items.map((item) => (
+            <Card key={item.id} {...item} />
+          ))}
+        </div>
+        <div ref={sentinelRef} className="h-px w-full" aria-hidden />
+        <ListFooter
+          isFetchingNextPage={isFetchingNextPage}
+          hasNextPage={hasNextPage}
+          itemsCount={items.length}
+        />
+      </div>
+    );
+  }
+
   return (
-    <div ref={parentRef} className="h-[calc(100vh-116px)] w-full overflow-auto pl-4">
+    <div ref={parentRef} className="h-full min-h-0 w-full overflow-auto pl-4">
       <VirtualGridlList
         items={items}
         parentRef={parentRef}
@@ -62,16 +116,12 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
         renderItem={(item) => <Card {...item} />}
       />
 
-      {/* Индикатор загрузки следующей страницы */}
-      {isFetchingNextPage && (
-        <div className="flex justify-center py-4">
-          <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-gray-300"></div>
-        </div>
-      )}
-      {/* Сообщение о конце списка */}
-      {!hasNextPage && items.length > 0 && (
-        <div className="py-4 text-center text-gray-500">Все кабинеты загружены</div>
-      )}
+      <div ref={sentinelRef} className="h-px w-full" aria-hidden />
+      <ListFooter
+        isFetchingNextPage={isFetchingNextPage}
+        hasNextPage={hasNextPage}
+        itemsCount={items.length}
+      />
     </div>
   );
 };

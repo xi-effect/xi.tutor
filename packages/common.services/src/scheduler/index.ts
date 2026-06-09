@@ -28,9 +28,18 @@ export {
 } from './model/adapters';
 
 export {
+  extractInstanceSlot,
+  normalizeEventInstanceDetailsResponse,
+  readInstanceStartsAt,
+  readInstanceIsCancelled,
+} from './model/instanceDetailsParsing';
+
+export {
   buildOccurrenceCancellationParams,
   type OccurrenceCancelApiTarget,
 } from './model/occurrenceCancel';
+
+export { buildRepeatingCancellationStartsAt } from './model/repeatingCancellationStartsAt';
 
 export {
   getTutorClassroomSchedule,

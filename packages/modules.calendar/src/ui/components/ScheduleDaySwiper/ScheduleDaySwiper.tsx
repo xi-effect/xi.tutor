@@ -100,10 +100,10 @@ export const ScheduleDaySwiper = ({
     <>
       <Swiper
         modules={[Virtual]}
-        className="min-h-0 w-full flex-1 [&_.swiper-wrapper]:min-h-[calc(100dvh-292px)]"
-        autoHeight
+        className="h-full min-h-0 w-full"
         touchEventsTarget="container"
         touchStartPreventDefault={false}
+        touchAngle={45}
         slidesPerView={1}
         spaceBetween={8}
         virtual={{
@@ -125,8 +125,8 @@ export const ScheduleDaySwiper = ({
               virtualIndex={dayIndex}
               className="box-border h-full min-h-0"
             >
-              <div className="flex h-full min-h-0 flex-col pb-4">
-                <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto">
+              <div className="flex h-full min-h-0 flex-col">
+                <div className="flex min-h-0 flex-1 touch-pan-y flex-col gap-3 overflow-y-auto overscroll-contain">
                   {eventsLoading ? (
                     Array.from({ length: getLessonCardSkeletonCountForDay(day) }, (_, i) => (
                       <LessonCardSkeleton

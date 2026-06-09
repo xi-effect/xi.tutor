@@ -40,7 +40,7 @@ export const DefaultCard = ({
             userId={userId}
             text={userData?.display_name || userData?.username || 'Имя не найдено'}
             src={getUserAvatarUrl(userId)}
-            classNameText="line-clamp-2 break-words"
+            classNameText="line-clamp-2 break-words text-gray-100"
             className="h-auto overflow-hidden"
           />
         )}

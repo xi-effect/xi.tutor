@@ -60,8 +60,8 @@ export const SignUpPage = () => {
   const isButtonDisabled = isPending;
 
   return (
-    <div className="xs:min-h-screen dark:bg-gray-0 flex min-h-dvh w-screen flex-col flex-wrap content-center justify-center p-1 py-4">
-      <div className="xs:border xs:border-gray-10 dark:bg-gray-5 xs:rounded-2xl flex min-h-[600px] w-full max-w-[420px] p-8">
+    <div className="xs:min-h-screen bg-gray-0 flex min-h-dvh w-screen flex-col flex-wrap content-center justify-center p-1 py-4">
+      <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex min-h-[600px] w-full max-w-[420px] bg-transparent p-8">
         <Form {...form}>
           <form
             onSubmit={handleSubmit(onSubmit)}
@@ -70,9 +70,7 @@ export const SignUpPage = () => {
             <div className="self-center">
               <Logo height={22} width={180} />
             </div>
-            <h1 className="self-center text-2xl font-semibold dark:text-gray-100">
-              {t('register')}
-            </h1>
+            <h1 className="self-center text-2xl font-semibold text-gray-100">{t('register')}</h1>
             <FormField
               control={control}
               name="username"

@@ -7,10 +7,11 @@ const _statusTextColorMap: Record<PaymentStatusT, string> = {
   wf_sender_confirmation: 'text-orange-80',
 };
 
+/** Синхронизировано с paymentStatusBadgeClasses в common.ui */
 const _statusBgColorMap: Record<PaymentStatusT, string> = {
-  complete: 'bg-green-0',
-  wf_receiver_confirmation: 'bg-brand-0',
-  wf_sender_confirmation: 'bg-orange-0',
+  complete: 'text-green-80 bg-green-0 dark:bg-[#ECF8EC] dark:text-[#2E842E]',
+  wf_receiver_confirmation: 'text-brand-80 bg-brand-0 dark:bg-[#F3F4FC] dark:text-[#4554C9]',
+  wf_sender_confirmation: 'text-orange-80 bg-orange-0 dark:bg-[#FBF3EE] dark:text-[#B85727]',
 };
 
 /**
@@ -28,10 +29,13 @@ export const getStatusColor = (
     return '';
   }
 
-  const text = _statusTextColorMap[status as PaymentStatusT];
-  const bg = _statusBgColorMap[status as PaymentStatusT];
+  const statusKey = status as PaymentStatusT;
 
-  return withBg ? `${text} ${bg}` : `${text} bg-transparent`;
+  if (withBg) {
+    return _statusBgColorMap[statusKey];
+  }
+
+  return `${_statusTextColorMap[statusKey]} bg-transparent`;
 };
 
 // Экспортируем через геттер, чтобы предотвратить использование как селектора Zustand

@@ -2,6 +2,12 @@ export type { UserData, ProfileData, RoleT } from './user';
 export type {
   NotificationsSettingsT,
   NotificationT,
+  NotificationPayload,
+  NotificationLegacyPayload,
+  ClassroomEventInstanceNotificationPayload,
+  ClassroomEventInstanceNotificationKind,
+  ClassroomScheduleFocusNotificationPayload,
+  ClassroomScheduleFocusNotificationKind,
   NotificationSocketEvents,
   NotificationsStateT,
   RecipientNotificationResponse,

@@ -1,4 +1,9 @@
 export { isEditableTarget } from './isEditableTarget';
+export {
+  isEmptyLabelShape,
+  isEmptyLabelEditOnTypeContext,
+  shouldIgnoreBoardHotkeys,
+} from './boardKeyboard';
 export { isMac } from './getUserPlatform';
 export { writeClipboardHtmlAndText, readClipboardHtml, extractClipboardImages } from './clipboard';
 export { serializeDrawContent, deserializeDrawContent } from './drawContent';
@@ -13,3 +18,13 @@ export {
   updateProfile,
 } from './yjsProfiling';
 export { BOARD_SCHEMA_VERSION } from './yjsConstants';
+export { normalizeStoredFileSrc, warnIfPersistingFullStorageUrl } from './storedFileSrc';
+export { isShapeErasable } from './isShapeErasable';
+export {
+  applyYjsBoardUpdate,
+  ensureYjsStorePopulated,
+  getYjsBoardDocInfo,
+  readYjsBoardRecords,
+  ydocIdFromBoardDumpFilename,
+  type YjsBoardDocInfo,
+} from './parseYjsBoardDoc';

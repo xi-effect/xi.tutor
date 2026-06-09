@@ -7,6 +7,7 @@ import {
   ModalHeader,
   ModalTitle,
 } from '@xipkg/modal';
+import { modalTitleClass } from 'common.ui';
 import { isMac } from '../../../utils';
 
 const PORTAL_Z = 9999;
@@ -74,12 +75,12 @@ const HotkeysHelpBody = () => (
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {items.map((item, index) => (
             <div key={index} className="bg-gray-5 flex items-center justify-between rounded-lg p-2">
-              <span className="text-sm text-gray-700">{item.description}</span>
+              <span className="text-gray-80 text-sm">{item.description}</span>
               <div className="flex gap-1">
                 {item.keys.map((key, keyIndex) => (
                   <div key={keyIndex} className="flex items-center gap-1">
-                    {keyIndex > 0 && <span className="text-gray-400">+</span>}
-                    <kbd className="rounded border border-gray-300 bg-white px-2 py-1 font-mono text-xs shadow-sm">
+                    {keyIndex > 0 && <span className="text-gray-60">+</span>}
+                    <kbd className="border-gray-20 bg-gray-0 rounded border px-2 py-1 font-mono text-xs text-gray-100 shadow-sm">
                       {key}
                     </kbd>
                   </div>
@@ -131,7 +132,7 @@ export const HotkeysHelpModal = ({ open, onOpenChange }: HotkeysHelpModalProps) 
       >
         <ModalHeader>
           <ModalCloseButton />
-          <ModalTitle>Горячие клавиши</ModalTitle>
+          <ModalTitle className={modalTitleClass}>Горячие клавиши</ModalTitle>
         </ModalHeader>
         <ModalBody style={{ maxHeight: 'calc(80dvh - 80px)', overflowY: 'auto', padding: 0 }}>
           <HotkeysHelpBody />

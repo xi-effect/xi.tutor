@@ -1,5 +1,7 @@
 import { LoadingScreen } from 'common.ui';
+import { boardPanelClass } from '../../boardTheme';
 import { useKeyPress } from 'common.utils';
+import { useTheme } from 'common.theme';
 import { JSX } from 'react/jsx-runtime';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Editor, DrInstancePresence, Draw, DrawProps } from '@ibodr/draw';
@@ -7,6 +9,7 @@ import {
   useLockedShapeSelection,
   useDrawClipboard,
   useOverlayRepaintOnSelection,
+  useEditOnTypeForLabels,
 } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore, useDrawStore } from '../../../store';
@@ -21,9 +24,11 @@ import { DrawZoomPanel } from './DrawZoomPanel';
 import '@ibodr/draw/draw.css';
 import './customstyles.css';
 import { UndoRedo } from '../toolbar/UndoRedo';
-import { extractFileIdFromUrl } from '../../../utils/resolveAssetUrl';
+import { normalizeStoredFileSrc } from '../../../utils/storedFileSrc';
 import { XiGeoTool } from '../../../shapes/geo';
 import { EmojiTool } from '../../../shapes/emoji';
+import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
+import { isShapeErasable, isEditableTarget } from '../../../utils';
 
 export const DrawCanvas = ({
   token,
@@ -32,6 +37,7 @@ export const DrawCanvas = ({
   const [editor, setEditor] = useState<Editor | null>(null);
 
   const { selectedElementId, selectElement, showDebugInfo } = useDrawStore();
+  const { theme } = useTheme();
   const [shapeCount, setShapeCount] = useState(0);
   const { store, status, undo, redo, canUndo, canRedo, isReadonly, getUserCamera, setUserCamera } =
     useYjsContext();
@@ -50,6 +56,7 @@ export const DrawCanvas = ({
   useLockedShapeSelection(editor);
   useDrawClipboard(editor, token);
   useOverlayRepaintOnSelection(editor);
+  useEditOnTypeForLabels(editor);
 
   // Viewport bounds должны совпадать с .dr-canvas — overlay выделения рисуется на canvas
   // внутри этого элемента; синхронизация по .dr-container смещает screenBounds.
@@ -90,7 +97,9 @@ export const DrawCanvas = ({
     };
   }, []);
 
-  useKeyPress('Backspace', () => {
+  useKeyPress('Backspace', (event) => {
+    if (isEditableTarget(event.target)) return;
+    if (editor?.getEditingShapeId()) return;
     if (selectedElementId) {
       selectElement(null);
     }
@@ -304,6 +313,12 @@ export const DrawCanvas = ({
     return unsub;
   }, [editor, showDebugInfo]);
 
+  useEffect(() => {
+    if (!editor) return;
+
+    editor.user.updateUserPreferences({ colorScheme: theme });
+  }, [editor, theme]);
+
   if (status === 'loading') return <LoadingScreen />;
 
   return (
@@ -312,6 +327,7 @@ export const DrawCanvas = ({
         {followingPresenceId && <FollowBanner />}
         <div className="absolute inset-0">
           <Draw
+            colorScheme={theme}
             onMount={(editor) => {
               setEditor(editor);
               editor.updateInstanceState({
@@ -328,6 +344,16 @@ export const DrawCanvas = ({
                 if (mode === 'pen') return { ...next, isPenMode: true };
                 if (mode === 'mouse') return { ...next, isPenMode: false };
                 return next;
+              });
+
+              editor.sideEffects.registerBeforeDeleteHandler('shape', (shape) => {
+                if (editor.getCurrentToolId() !== 'eraser') {
+                  return;
+                }
+
+                if (!isShapeErasable(shape.type)) {
+                  return false;
+                }
               });
 
               const win = window as unknown as {
@@ -349,8 +375,7 @@ export const DrawCanvas = ({
                     | Record<string, unknown>
                     | undefined;
                   if (props?.src && typeof props.src === 'string') {
-                    const fileId = extractFileIdFromUrl(props.src);
-                    if (fileId) props.src = fileId;
+                    props.src = normalizeStoredFileSrc(props.src);
                   }
                   return rec;
                 });
@@ -377,7 +402,7 @@ export const DrawCanvas = ({
               });
             }}
             store={store}
-            tools={[XiGeoTool, EmojiTool]}
+            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool]}
             shapeUtils={boardCustomShapeUtils}
             hideUi
             components={drawComponents}
@@ -391,7 +416,7 @@ export const DrawCanvas = ({
             {!isReadonly && (
               <Navbar undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} token={token} />
             )}
-            <div className="border-gray-10 bg-gray-0 absolute bottom-4 left-4 z-30 flex rounded-xl border p-1 sm:hidden">
+            <div className={`${boardPanelClass} absolute bottom-4 left-4 z-30 flex p-1 sm:hidden`}>
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
             <DrawZoomPanel />

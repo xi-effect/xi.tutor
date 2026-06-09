@@ -1,6 +1,7 @@
 import { Button } from '@xipkg/button';
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
@@ -12,7 +13,7 @@ import {
 } from '@xipkg/dropdown';
 import {
   Check,
-  Cursor,
+  Eraser,
   File,
   InfoCircle,
   Locked,
@@ -29,9 +30,15 @@ import { useEffect, useRef, useState } from 'react';
 import { useCurrentUser } from 'common.services';
 import { toast } from 'sonner';
 import { useEditor } from '@ibodr/draw';
-import type { InputMode } from '../../../store/useDrawStore';
-import { useDrawStore } from '../../../store';
+import { useDrawStore, useEraserSettingsStore } from '../../../store';
 import { HotkeysHelpModal } from '../shared/HotkeysHelp';
+import { ERASER_CATEGORIES, INPUT_MODE_OPTIONS, SHAPE_CATEGORIES } from '../../../config';
+import { areAllEraserCategoriesEnabled } from '../../../utils/areAllEraserCategoriesEnabled';
+import {
+  boardMenuCheckboxItemClass,
+  boardMenuItemClass,
+  boardMenuSurfaceClass,
+} from '../../boardTheme';
 
 type ActionPropsT = {
   onClick: () => void;
@@ -40,7 +47,7 @@ type ActionPropsT = {
 const BlockBoardAction = ({ onClick, isReadonly }: ActionPropsT & { isReadonly: boolean }) => {
   return (
     <DropdownMenuItem
-      className="flex gap-2 p-1"
+      className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
       onClick={onClick}
       data-umami-event="board-toggle-lock"
       data-umami-event-state={isReadonly ? 'resume' : 'pause'}
@@ -54,7 +61,7 @@ const BlockBoardAction = ({ onClick, isReadonly }: ActionPropsT & { isReadonly: 
 const DownloadBoardAction = ({ onClick }: ActionPropsT) => {
   return (
     <DropdownMenuItem
-      className="flex gap-2 p-1"
+      className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
       onClick={onClick}
       data-umami-event="board-download"
     >
@@ -66,28 +73,16 @@ const DownloadBoardAction = ({ onClick }: ActionPropsT) => {
 
 const ClearBoardAction = ({ onClick }: ActionPropsT) => {
   return (
-    <DropdownMenuItem className="flex gap-2 p-1" onClick={onClick} data-umami-event="board-clear">
+    <DropdownMenuItem
+      className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
+      onClick={onClick}
+      data-umami-event="board-clear"
+    >
       <Trash />
       <span>Очистить доску</span>
     </DropdownMenuItem>
   );
 };
-
-const INPUT_MODE_OPTIONS: { value: InputMode; label: string; icon: React.ReactNode }[] = [
-  { value: 'auto', label: 'Авто (по устройству)', icon: null },
-  { value: 'pen', label: 'Перо', icon: <Pen /> },
-  { value: 'mouse', label: 'Мышь', icon: <Cursor /> },
-];
-
-const SHAPE_CATEGORIES: { label: string; types: string[] }[] = [
-  { label: 'Изображения', types: ['image'] },
-  { label: 'Текст', types: ['text'] },
-  { label: 'Рисунки', types: ['draw', 'highlight', 'line'] },
-  { label: 'Фигуры', types: ['geo'] },
-  { label: 'Заметки', types: ['note'] },
-  { label: 'Стрелки', types: ['arrow'] },
-  { label: 'Медиа', types: ['pdf', 'audio', 'video', 'embed', 'bookmark'] },
-];
 
 const BOARD_ELEMENTS_LIMIT = 4000;
 const BOARD_ELEMENTS_WARNING_THRESHOLD = 3000;
@@ -117,6 +112,10 @@ export const SettingsDropdown = () => {
   const progressPercent = Math.min((elementsCount / BOARD_ELEMENTS_LIMIT) * 100, 100);
   const isWarningZone = elementsCount >= BOARD_ELEMENTS_WARNING_THRESHOLD;
   const isLimitReached = elementsCount >= BOARD_ELEMENTS_LIMIT;
+
+  const { settings, toggleCategory, toggleAll } = useEraserSettingsStore();
+
+  const allChecked = areAllEraserCategoriesEnabled(settings);
 
   const handleOpenHotkeysHelp = (open: boolean) => {
     if (open) {
@@ -187,18 +186,24 @@ export const SettingsDropdown = () => {
             className="hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
             data-umami-event="board-settings-menu"
           >
-            <MoreVert size="s" className="h-4 w-4 lg:h-6 lg:w-6" />
+            <MoreVert size="s" className="h-4 w-4 fill-gray-100 lg:h-6 lg:w-6" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
           sideOffset={12}
           align="end"
-          className="z-100 flex w-[286px] flex-col gap-1 px-2 py-1"
+          className={cn(boardMenuSurfaceClass, 'z-100 flex w-[286px] flex-col gap-1 px-2 py-1')}
         >
           <div className="bg-brand-0/40 mb-1 rounded-lg px-2 py-2">
             <div className="mb-1 flex items-center justify-between text-xs">
               <span className="text-gray-80">Заполнение доски</span>
-              <span className={cn('font-medium', isLimitReached && 'text-red-60')}>
+              <span
+                className={cn(
+                  'text-gray-80 font-medium',
+                  isWarningZone && !isLimitReached && 'text-orange-60',
+                  isLimitReached && 'text-red-60',
+                )}
+              >
                 {elementsCount} / {BOARD_ELEMENTS_LIMIT}
               </span>
             </div>
@@ -212,9 +217,9 @@ export const SettingsDropdown = () => {
               />
             </div>
           </div>
-          <DropdownMenuGroup>
+          <DropdownMenuGroup className="space-y-0.5">
             <DropdownMenuItem
-              className="flex gap-2 p-1"
+              className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
               onClick={() => handleOpenHotkeysHelp(true)}
               data-umami-event="board-hotkeys-help"
             >
@@ -223,15 +228,15 @@ export const SettingsDropdown = () => {
             </DropdownMenuItem>
             {editor && (
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger className="flex gap-2 p-1">
+                <DropdownMenuSubTrigger className={cn(boardMenuItemClass, 'flex gap-2 p-1')}>
                   <Pen />
                   <span>Режим ввода</span>
                 </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent className="z-100 w-[250px]">
+                <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[250px]')}>
                   {INPUT_MODE_OPTIONS.map(({ value, label, icon }) => (
                     <DropdownMenuItem
                       key={value}
-                      className="flex gap-2 p-1"
+                      className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
                       onClick={() => {
                         setInputMode(value);
                         if (value === 'pen') editor.updateInstanceState({ isPenMode: true });
@@ -253,7 +258,7 @@ export const SettingsDropdown = () => {
             <DownloadBoardAction onClick={saveCanvas} />
             {isTutor && !isReadonly && showImportOption && (
               <DropdownMenuItem
-                className="flex gap-2 p-1"
+                className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
                 onClick={() => importInputRef.current?.click()}
                 data-umami-event="board-import-json"
               >
@@ -287,17 +292,17 @@ export const SettingsDropdown = () => {
 
             {isTutor && !isReadonly && (
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger className="flex gap-2 p-1">
+                <DropdownMenuSubTrigger className={cn(boardMenuItemClass, 'flex gap-2 p-1')}>
                   <Locked />
                   <span>Заблокировать элементы</span>
                 </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent className="z-100 w-[250px]">
+                <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[250px]')}>
                   <p className="text-gray-60 px-3 py-2 text-xs">
                     Можно заблокировать все элементы на доске или выбрать конкретные категории
                   </p>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    className="flex gap-2 px-3 py-1.5"
+                    className={cn(boardMenuItemClass, 'flex gap-2 px-3 py-1.5')}
                     onClick={() => lockShapes()}
                     data-umami-event="board-lock-all"
                   >
@@ -306,7 +311,7 @@ export const SettingsDropdown = () => {
                   {SHAPE_CATEGORIES.map(({ label, types }) => (
                     <DropdownMenuItem
                       key={label}
-                      className="flex gap-2 px-3 py-1.5"
+                      className={cn(boardMenuItemClass, 'flex gap-2 px-3 py-1.5')}
                       onClick={() => lockShapes(types)}
                       data-umami-event="board-lock-category"
                       data-umami-event-category={label}
@@ -320,17 +325,17 @@ export const SettingsDropdown = () => {
 
             {isTutor && !isReadonly && (
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger className="flex gap-2 p-1">
+                <DropdownMenuSubTrigger className={cn(boardMenuItemClass, 'flex gap-2 p-1')}>
                   <Unlocked />
                   <span>Разблокировать элементы</span>
                 </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent className="z-100 w-[250px]">
+                <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[250px]')}>
                   <p className="text-gray-60 px-3 py-2 text-xs">
                     Снимает блокировку, позволяя снова редактировать элементы на доске
                   </p>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    className="flex gap-2 px-3 py-1.5"
+                    className={cn(boardMenuItemClass, 'flex gap-2 px-3 py-1.5')}
                     onClick={() => unlockShapes()}
                     data-umami-event="board-unlock-all"
                   >
@@ -339,13 +344,53 @@ export const SettingsDropdown = () => {
                   {SHAPE_CATEGORIES.map(({ label, types }) => (
                     <DropdownMenuItem
                       key={label}
-                      className="flex gap-2 px-3 py-1.5"
+                      className={cn(boardMenuItemClass, 'flex gap-2 px-3 py-1.5')}
                       onClick={() => unlockShapes(types)}
                       data-umami-event="board-unlock-category"
                       data-umami-event-category={label}
                     >
                       <span>{label}</span>
                     </DropdownMenuItem>
+                  ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+            )}
+
+            {isTutor && !isReadonly && (
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className={cn(boardMenuItemClass, 'flex gap-2 p-1')}>
+                  <Eraser />
+                  <span>Ластик</span>
+                </DropdownMenuSubTrigger>
+
+                <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[260px]')}>
+                  <p className="text-gray-60 px-3 py-2 text-xs">
+                    Выберите, какие элементы можно стирать ластиком
+                  </p>
+
+                  <DropdownMenuSeparator />
+
+                  <DropdownMenuCheckboxItem
+                    checked={allChecked}
+                    onCheckedChange={() => toggleAll()}
+                    onSelect={(e) => e.preventDefault()}
+                    className={cn(boardMenuCheckboxItemClass, 'py-1.5 pr-3 pl-8')}
+                  >
+                    Все элементы
+                  </DropdownMenuCheckboxItem>
+
+                  <DropdownMenuSeparator />
+
+                  {ERASER_CATEGORIES.map(({ key, label }) => (
+                    <DropdownMenuCheckboxItem
+                      key={key}
+                      checked={settings[key]}
+                      onCheckedChange={() => toggleCategory(key)}
+                      onSelect={(e) => e.preventDefault()}
+                      className={cn(boardMenuCheckboxItemClass, 'py-1.5 pr-3 pl-8')}
+                    >
+                      {label}
+                    </DropdownMenuCheckboxItem>
                   ))}
                 </DropdownMenuSubContent>
               </DropdownMenuSub>

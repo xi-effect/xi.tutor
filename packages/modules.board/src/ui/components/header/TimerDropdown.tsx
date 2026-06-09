@@ -19,6 +19,7 @@ import {
   playBoardTimerWarnSound,
   unlockBoardTimerAudio,
 } from './boardTimerAudio';
+import { boardIconClass, boardPanelClass } from '../../boardTheme';
 
 const MAX_DURATION_MS = 99 * 60 * 1000 + 59 * 1000;
 
@@ -66,7 +67,13 @@ const parseFieldValue = (value: string, max: number) => {
 
 const normalizeMaskInput = (value: string) => value.replace(/\D/g, '').slice(0, 2);
 const TIMER_VALUE_CLASS =
-  'text-[18px] lg:text-[24px] leading-[1] font-medium tabular-nums font-sans';
+  'text-gray-100 text-[18px] lg:text-[24px] leading-[1] font-medium tabular-nums font-sans';
+
+const TIMER_ICON_BUTTON_CLASS =
+  'hover:bg-brand-0 flex shrink-0 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:rounded-xl';
+
+const TIMER_ROUND_BUTTON_CLASS =
+  'hover:bg-brand-0 flex shrink-0 items-center justify-center rounded-full p-0 focus:bg-transparent';
 
 const PlayPauseIcon = ({ isPlaying }: { isPlaying: boolean }) => {
   if (isPlaying) {
@@ -405,7 +412,7 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
   return (
     <div
       ref={panelRef}
-      className="bg-gray-0 border-gray-10 pointer-events-auto rounded-xl border p-1 will-change-transform lg:rounded-2xl"
+      className={cn(boardPanelClass, 'pointer-events-auto p-1 will-change-transform')}
       onPointerDownCapture={() => unlockBoardTimerAudio()}
       onPointerEnter={handleDesktopTimerPanelEnter}
       onPointerLeave={handleDesktopTimerPanelLeave}
@@ -500,8 +507,11 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
                   <div className="flex items-center gap-1">
                     <Button
                       type="button"
-                      variant="outline"
-                      className="text-xs-base-size h-6 w-8 rounded-lg p-0 lg:h-8 lg:w-10 lg:rounded-xl"
+                      variant="none"
+                      className={cn(
+                        TIMER_ICON_BUTTON_CLASS,
+                        'text-xs-base-size h-6 w-8 text-gray-100 lg:h-8 lg:w-10',
+                      )}
                       onPointerDown={stopEvent}
                       onClick={(e) => onControlClick(e, () => shiftRunningBy(15_000))}
                     >
@@ -509,8 +519,11 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
                     </Button>
                     <Button
                       type="button"
-                      variant="outline"
-                      className="text-xs-base-size h-6 w-8 rounded-lg p-0 lg:h-8 lg:w-10 lg:rounded-xl"
+                      variant="none"
+                      className={cn(
+                        TIMER_ICON_BUTTON_CLASS,
+                        'text-xs-base-size h-6 w-8 text-gray-100 lg:h-8 lg:w-10',
+                      )}
                       onPointerDown={stopEvent}
                       onClick={(e) => onControlClick(e, () => shiftRunningBy(60_000))}
                     >
@@ -521,21 +534,21 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
                   <div className="flex items-center gap-1">
                     <Button
                       type="button"
-                      variant="outline"
-                      className="h-6 w-8 rounded-lg p-0 lg:h-8 lg:w-10 lg:rounded-xl"
+                      variant="none"
+                      className={cn(TIMER_ICON_BUTTON_CLASS, 'h-6 w-8 lg:h-8 lg:w-10')}
                       onPointerDown={stopEvent}
                       onClick={(e) => onControlClick(e, () => shiftPausedBy(30_000))}
                     >
-                      <Plus className="h-4 w-4" />
+                      <Plus className={cn('h-4 w-4', boardIconClass)} />
                     </Button>
                     <Button
                       type="button"
-                      variant="outline"
-                      className="h-6 w-8 rounded-lg p-0 lg:h-8 lg:w-10 lg:rounded-xl"
+                      variant="none"
+                      className={cn(TIMER_ICON_BUTTON_CLASS, 'h-6 w-8 lg:h-8 lg:w-10')}
                       onPointerDown={stopEvent}
                       onClick={(e) => onControlClick(e, () => shiftPausedBy(-30_000))}
                     >
-                      <Minus className="h-4 w-4" />
+                      <Minus className={cn('h-4 w-4', boardIconClass)} />
                     </Button>
                   </div>
                 )}
@@ -557,13 +570,13 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
                 <Button
                   type="button"
                   variant="none"
-                  className="bg-gray-5 hover:bg-gray-10 focus:bg-gray-10 active:bg-gray-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full p-0 lg:h-8 lg:w-8"
+                  className={cn(TIMER_ROUND_BUTTON_CLASS, 'h-6 w-6 lg:h-8 lg:w-8')}
                   onPointerDown={stopEvent}
                   onClick={(e) => onControlClick(e, handleReset)}
                   data-umami-event="board-timer-reset"
                   title="Сброс"
                 >
-                  <Redo className="h-4 w-4" />
+                  <Redo className={cn('h-4 w-4', boardIconClass)} />
                 </Button>
               </>
             )}
@@ -572,7 +585,7 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
             <Button
               type="button"
               variant="none"
-              className="bg-gray-5 hover:bg-gray-10 focus:bg-gray-10 active:bg-gray-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full p-0 lg:h-8 lg:w-8"
+              className={cn(TIMER_ROUND_BUTTON_CLASS, 'h-6 w-6 lg:h-8 lg:w-8')}
               onPointerDown={stopEvent}
               onClick={(e) =>
                 onControlClick(e, () => {
@@ -582,7 +595,7 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
               data-umami-event="board-timer-close"
               title="Закрыть таймер"
             >
-              <Close className="h-4 w-4" />
+              <Close className={cn('h-4 w-4', boardIconClass)} />
             </Button>
           </div>
         </div>

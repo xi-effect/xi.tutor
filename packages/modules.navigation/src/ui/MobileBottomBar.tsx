@@ -53,7 +53,7 @@ export const MobileBottomBar = () => {
   return (
     <>
       <nav className="bg-gray-0 fixed right-0 bottom-0 left-0 z-30 flex h-[64px] items-center px-4">
-        <div className="flex w-full items-center gap-1">
+        <div className="flex w-full items-center gap-0">
           <div className="flex shrink-0 items-center gap-1">
             <MobileUserMenu
               userId={user?.id ?? 0}
@@ -71,7 +71,7 @@ export const MobileBottomBar = () => {
               className="focus-visible:ring-brand-100 flex shrink-0 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
               data-umami-event="navigation-mobile-logo"
             >
-              <Logo width={138} height={40} />
+              <Logo width={96} height={28} />
             </LinkTanstack>
           </div>
 

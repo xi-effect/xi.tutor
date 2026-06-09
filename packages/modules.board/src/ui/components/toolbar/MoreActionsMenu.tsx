@@ -10,7 +10,9 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { MenuDots } from '@xipkg/icons';
+import { cn } from '@xipkg/utils';
 import { useEditor } from '@ibodr/draw';
+import { boardIconClass, boardMenuItemClass, boardMenuSurfaceClass } from '../../boardTheme';
 import { useCurrentUser } from 'common.services';
 import type { PdfShape } from '../../../shapes/pdf';
 import type { AudioShape } from '../../../shapes/audio';
@@ -28,7 +30,10 @@ function MenuItemWithShortcut({
   onClick: () => void;
 }) {
   return (
-    <DropdownMenuItem onClick={onClick} className="flex justify-between gap-8 rounded-lg px-3">
+    <DropdownMenuItem
+      onClick={onClick}
+      className={cn(boardMenuItemClass, 'flex justify-between gap-8 rounded-lg px-3')}
+    >
       <span>{label}</span>
       <span className="text-gray-60 text-xs">{shortcut}</span>
     </DropdownMenuItem>
@@ -66,7 +71,7 @@ export const MoreActionsMenu = () => {
     editor.updateShape<AudioShape>({
       id: selectedAudio.id,
       type: 'audio',
-      props: { syncPlayback: !selectedAudio.props.syncPlayback },
+      props: { syncPlayback: !selectedAudio.props.syncPlayback, studentsCanControlPlayback: false },
     });
   };
 
@@ -88,6 +93,15 @@ export const MoreActionsMenu = () => {
     });
   };
 
+  const handleToggleStudentsCanControlPlayback = () => {
+    if (!selectedAudio) return;
+    editor.updateShape<AudioShape>({
+      id: selectedAudio.id,
+      type: 'audio',
+      props: { studentsCanControlPlayback: !selectedAudio.props.studentsCanControlPlayback },
+    });
+  };
+
   const hasTutorItems = isTutor && (!!selectedPdf || !!selectedAudio);
 
   if (selectedIds.length === 0) return null;
@@ -96,23 +110,26 @@ export const MoreActionsMenu = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="none" size="s" className="hover:bg-brand-0 p-1">
-          <MenuDots className="rotate-90" />
+          <MenuDots className={`rotate-90 ${boardIconClass}`} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
         side="top"
         align="end"
         sideOffset={8}
-        className="border-gray-10 bg-gray-0 flex w-auto flex-col gap-1 rounded-xl border p-1"
+        className={cn(boardMenuSurfaceClass, 'flex w-auto flex-col gap-1 rounded-xl p-1')}
       >
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger className="rounded-lg px-3">
+          <DropdownMenuSubTrigger className={cn(boardMenuItemClass, 'rounded-lg px-3')}>
             Переупорядочить
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent
             sideOffset={12}
             alignOffset={-4}
-            className="border-gray-10 bg-gray-0 flex w-auto min-w-[220px] flex-col gap-1 rounded-xl border p-1"
+            className={cn(
+              boardMenuSurfaceClass,
+              'flex w-auto min-w-[220px] flex-col gap-1 rounded-xl p-1',
+            )}
           >
             <MenuItemWithShortcut
               label="На передний план"
@@ -141,20 +158,26 @@ export const MoreActionsMenu = () => {
           <>
             <DropdownMenuSeparator />
             {isTutor && selectedPdf && (
-              <DropdownMenuItem onClick={handleToggleStudentFlip} className="rounded-lg px-3">
+              <DropdownMenuItem
+                onClick={handleToggleStudentFlip}
+                className={cn(boardMenuItemClass, 'rounded-lg px-3')}
+              >
                 {selectedPdf.props.studentCanFlip ? 'Ограничить листание' : 'Разрешить листание'}
               </DropdownMenuItem>
             )}
             {isTutor && selectedAudio && (
               <>
-                <DropdownMenuItem onClick={handleToggleSyncPlayback} className="rounded-lg px-3">
+                <DropdownMenuItem
+                  onClick={handleToggleSyncPlayback}
+                  className={cn(boardMenuItemClass, 'rounded-lg px-3')}
+                >
                   {selectedAudio.props.syncPlayback
                     ? 'Локальное воспроизведение'
                     : 'Синхронное воспроизведение'}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleToggleStudentsCanAddTimecodes}
-                  className="rounded-lg px-3"
+                  className={cn(boardMenuItemClass, 'rounded-lg px-3')}
                 >
                   {selectedAudio.props.studentsCanAddTimecodes
                     ? 'Запретить ученикам добавлять таймкоды'
@@ -162,12 +185,22 @@ export const MoreActionsMenu = () => {
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleToggleTimecodesVisibleByDefault}
-                  className="rounded-lg px-3"
+                  className={cn(boardMenuItemClass, 'rounded-lg px-3')}
                 >
                   {selectedAudio.props.timecodesVisibleByDefault
                     ? 'Скрывать новые таймкоды от учеников'
                     : 'Показывать новые таймкоды всем'}
                 </DropdownMenuItem>
+                {selectedAudio.props.syncPlayback && (
+                  <DropdownMenuItem
+                    onClick={handleToggleStudentsCanControlPlayback}
+                    className={cn(boardMenuItemClass, 'rounded-lg px-3')}
+                  >
+                    {selectedAudio.props.studentsCanControlPlayback
+                      ? 'Запретить управление'
+                      : 'Разрешить управление'}
+                  </DropdownMenuItem>
+                )}
               </>
             )}
           </>
