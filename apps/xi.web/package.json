@@ -70,7 +70,7 @@
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@vitejs/plugin-react": "^4.3.4",
-    "@xipkg/tailwind": "0.8.1",
+    "@xipkg/tailwind": "0.8.6",
     "common.eslint": "workspace:*",
     "common.typescript": "workspace:*",
     "eslint": "^9.19.0",

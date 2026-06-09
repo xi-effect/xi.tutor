@@ -3,6 +3,7 @@ import { SwitcherAnimate } from '@xipkg/switcher-animate';
 
 import { type RoleT } from 'common.types';
 import { cn } from '@xipkg/utils';
+import { switcherTabClass } from 'common.ui';
 
 interface RoleSwitcherProps {
   value: RoleT;
@@ -32,10 +33,7 @@ export const RoleSwitcher = ({
       activeTab={value}
       onChange={(v) => onChange(v as RoleT)}
       className={cn('bg-gray-5 flex h-9 w-full flex-row rounded-lg p-1', className)}
-      tabClassName={cn(
-        'w-full text-m-base font-medium text-gray-100 data-[active=true]:text-gray-0',
-        tabClassName,
-      )}
+      tabClassName={cn(switcherTabClass, 'text-m-base w-full font-medium', tabClassName)}
       indicatorClassName={cn('w-full rounded-md bg-brand-100', indicatorClassName)}
     />
   );

@@ -13,6 +13,7 @@ import {
   ModalCloseButton,
 } from '@xipkg/modal';
 import { useUpdateIndividualClassroom } from 'common.services';
+import { modalTitleClass } from 'common.ui';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 
@@ -81,7 +82,7 @@ export const EditDescriptionModal = ({
       <ModalContent className="max-w-md" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton />
-          <ModalTitle>Редактировать описание</ModalTitle>
+          <ModalTitle className={modalTitleClass}>Редактировать описание</ModalTitle>
         </ModalHeader>
 
         <Form {...form}>

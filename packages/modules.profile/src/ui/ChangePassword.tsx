@@ -5,6 +5,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@xipkg/input';
 import { Button } from '@xipkg/button';
 import { Eyeoff, Eyeon } from '@xipkg/icons';
+import { modalTitleClass } from 'common.ui';
 import { useChangePassword } from '../hooks';
 
 type ChangePasswordModalT = {
@@ -25,11 +26,14 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
       <M.ModalContent aria-describedby={undefined}>
         {(stage === 'form' && (
           <>
-            <M.ModalCloseButton>
-              <Close className="fill-gray-80 sm:fill-gray-0" />
+            <M.ModalCloseButton
+              variant="full"
+              className="bg-gray-5 top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0 sm:right-4"
+            >
+              <Close className="fill-gray-80 h-5 w-5" />
             </M.ModalCloseButton>
             <M.ModalHeader>
-              <M.ModalTitle>Изменение пароля</M.ModalTitle>
+              <M.ModalTitle className={modalTitleClass}>Изменение пароля</M.ModalTitle>
             </M.ModalHeader>
             <Form {...form}>
               <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>

@@ -12,6 +12,33 @@
     </script>
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      (function () {
+        var themeKey = 'sovlium-theme';
+        var chosenKey = 'sovlium-theme-chosen';
+        var stored = null;
+        var chosen = false;
+
+        try {
+          stored = localStorage.getItem(themeKey);
+          chosen = localStorage.getItem(chosenKey) === '1';
+        } catch (e) {}
+
+        var preference =
+          chosen && (stored === 'light' || stored === 'dark' || stored === 'system')
+            ? stored
+            : 'light';
+        var resolved =
+          preference === 'dark' ||
+          (preference === 'system' &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches)
+            ? 'dark'
+            : 'light';
+
+        document.documentElement.setAttribute('data-theme', resolved);
+        document.documentElement.setAttribute('data-theme-preference', preference);
+      })();
+    </script>
     <meta name="robots" content="noindex, nofollow" />
     <!-- Название при добавлении PWA на экран «Домой» в iOS -->
     <meta name="apple-mobile-web-app-title" content="sovlium" />

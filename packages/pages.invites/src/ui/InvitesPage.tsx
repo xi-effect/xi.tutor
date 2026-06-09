@@ -10,7 +10,7 @@ export const InvitesPage = () => {
 
   if (isLoading) {
     return (
-      <section className="relative flex h-screen flex-col items-center justify-center">
+      <section className="bg-gray-0 relative flex h-screen flex-col items-center justify-center">
         <div className="absolute top-24">
           <Logo />
         </div>
@@ -22,7 +22,7 @@ export const InvitesPage = () => {
   }
 
   return (
-    <section className="flex h-screen flex-col items-center justify-center">
+    <section className="bg-gray-0 flex h-screen flex-col items-center justify-center">
       <div className="absolute top-24">
         <Logo />
       </div>

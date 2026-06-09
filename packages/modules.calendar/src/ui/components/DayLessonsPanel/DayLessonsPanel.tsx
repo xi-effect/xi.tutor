@@ -102,9 +102,9 @@ export const DayLessonsPanel = ({
     <DayLessonListMetaProvider>
       <div className="flex min-h-0 flex-1 flex-col gap-4">
         {scheduleHeadingTitle != null ? (
-          <div className="flex shrink-0 flex-row items-center gap-2 pr-3">
-            <div className="flex min-w-0 flex-1 flex-row items-baseline gap-3">
-              <h3 className="text-xl-base m-0 shrink-0 font-semibold text-gray-100">
+          <div className="flex h-8 shrink-0 flex-row items-center gap-2 pr-3">
+            <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
+              <h3 className="text-xl-base m-0 shrink-0 leading-none font-semibold text-gray-100">
                 {scheduleHeadingTitle}
               </h3>
               {monthLabelInToolbar ? (
@@ -169,7 +169,7 @@ export const DayLessonsPanel = ({
           ) : lessons.length === 0 ? (
             <div className="border-gray-10 bg-gray-0 dark:border-gray-70 mr-3 mb-3 flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center gap-5 rounded-xl border border-dashed px-4 py-8 pr-3">
               <EmptySchedule
-                className="h-auto w-full max-w-[400px] shrink-0 object-contain"
+                className="mb-4 h-auto w-full max-w-[220px] shrink-0 object-contain"
                 aria-hidden
               />
               <div className="flex max-w-md flex-col gap-2 text-center">

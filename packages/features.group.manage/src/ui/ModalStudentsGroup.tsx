@@ -144,7 +144,9 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
       <ModalContent aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
-          <ModalTitle className="dark:text-gray-100">Добавление ученика в группу</ModalTitle>
+          <ModalTitle className="max-w-[calc(100%-48px)] text-gray-100">
+            Добавление ученика в группу
+          </ModalTitle>
         </ModalHeader>
         <ModalBody className={cn('flex flex-col gap-4 px-2 pt-2')}>
           <ScrollArea className="h-[300px]">

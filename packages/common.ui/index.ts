@@ -13,7 +13,16 @@ export { ErrorPage } from './src/ErrorPage';
 export { OnboardingPopup } from './src/OnboardingPopup';
 export { NetworkIndicator } from './src/NetworkIndicator';
 export { SmallLogo } from './src/SmallLogo';
+export {
+  categoryBadgeClass,
+  educationStatusBadgeClasses,
+  materialAccessBadgeClasses,
+  paymentStatusBadgeClasses,
+} from './src/badgeClasses';
+export { modalTitleClass } from './src/modalTitleClass';
+export { switcherTabClass } from './src/switcherTabClass';
 export { useFocusModeStore } from './src/store/useFocusModeStore';
+export { useSupportModalStore } from './src/store/useSupportModalStore';
 export {
   useSoundEffectsStore,
   SOUND_DEFAULTS,

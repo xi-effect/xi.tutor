@@ -1,4 +1,6 @@
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
+import { switcherTabClass } from 'common.ui';
+import { cn } from '@xipkg/utils';
 import { MaterialsAdd } from 'features.materials.add';
 
 const tabs = [
@@ -21,8 +23,11 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
           tabs={tabs}
           activeTab={activeTab}
           onChange={onTabChange}
-          className="xs:w-70 flex h-[32px] w-full flex-row gap-4 rounded-lg"
-          tabClassName="text-m-base h-[28px] flex-1 font-medium text-gray-100 xs:flex-none"
+          className="xs:w-auto flex h-[32px] w-full flex-row gap-4 rounded-lg"
+          tabClassName={cn(
+            switcherTabClass,
+            'text-m-base h-[28px] flex-1 font-medium xs:flex-none xs:px-3',
+          )}
           indicatorClassName="rounded-md"
         />
       </div>

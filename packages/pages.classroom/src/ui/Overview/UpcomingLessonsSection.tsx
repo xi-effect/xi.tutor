@@ -196,7 +196,7 @@ export const UpcomingLessonsSection = () => {
           ) : lessons.length === 0 ? (
             <div className="border-gray-10 bg-gray-0 dark:border-gray-70 box-border flex min-h-[232px] w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-4 py-4">
               <EmptySchedule
-                className="max-h-[124px] w-full max-w-[320px] shrink-0 object-contain"
+                className="mb-4 max-h-[68px] w-full max-w-[176px] shrink-0 object-contain"
                 aria-hidden
               />
               <div className="flex max-w-[520px] flex-col gap-2 text-center">

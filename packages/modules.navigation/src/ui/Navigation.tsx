@@ -3,7 +3,8 @@ import { Drawer, DrawerContent } from '@xipkg/drawer';
 import { Sidebar, SidebarInset } from '@xipkg/sidebar';
 import { SideBarItems } from './SideBarItems';
 import { SidebarProvider } from '@xipkg/sidebar';
-import { useFocusModeStore } from 'common.ui';
+import { useFocusModeStore, useSupportModalStore } from 'common.ui';
+import { SupportModal } from './SupportModal';
 import { useMenuStore } from '../store';
 import { useEffect, useMemo } from 'react';
 import { MobileBottomBar } from './MobileBottomBar';
@@ -17,6 +18,8 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useMediaQuery('(max-width: 960px)');
   const { isOpen, open: openMenu, close } = useMenuStore();
   const focusMode = useFocusModeStore((s) => s.focusMode);
+  const isSupportOpen = useSupportModalStore((s) => s.isOpen);
+  const setSupportOpen = useSupportModalStore((s) => s.setOpen);
 
   // Мемоизируем children, чтобы они не пересоздавались при изменении isMobile
   const stableChildren = useMemo(() => children, [children]);
@@ -62,6 +65,8 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
 
       {/* Мобильная нижняя панель навигации (не в режиме фокуса) */}
       {isMobile && !focusMode && <MobileBottomBar />}
+
+      <SupportModal open={isSupportOpen} onOpenChange={setSupportOpen} />
     </>
   );
 };

@@ -16,9 +16,9 @@ import { MaterialsDuplicateProvider, useMaterialsDuplicate } from 'pages.materia
 import { MaterialsDuplicate } from 'features.materials.duplicate';
 import { MaterialsCard } from 'features.materials.card';
 import { useCreateMaterial } from 'features.materials.add';
-import { EmptyMaterials } from 'common.ui';
+import { EmptyMaterials, switcherTabClass } from 'common.ui';
 import { useState, useMemo } from 'react';
-import { useMediaQuery } from '@xipkg/utils';
+import { cn, useMediaQuery } from '@xipkg/utils';
 import { SectionEmptyState, sectionEmptyStateIllustrationClass } from '../SectionEmptyState';
 
 const filters = [
@@ -88,7 +88,10 @@ const MaterialsContent = () => {
               activeTab={selectedFilter}
               onChange={(id) => setSelectedFilter(id as 'all' | 'note' | 'board')}
               className="bg-gray-0 flex h-8 flex-row rounded-xl p-1"
-              tabClassName="h-[26px] rounded-[10px] px-3 py-1.5 text-s-base font-medium text-gray-80 data-[active=true]:text-gray-0"
+              tabClassName={cn(
+                switcherTabClass,
+                'text-s-base h-[26px] rounded-[10px] px-3 py-1.5 font-medium',
+              )}
               indicatorClassName="rounded-[10px] bg-brand-80"
             />
           )}

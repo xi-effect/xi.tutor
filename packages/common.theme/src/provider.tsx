@@ -3,7 +3,14 @@ import { useUpdateProfile, useCurrentUser } from 'common.services';
 
 import { THEME_CUSTOMIZATION_ENABLED } from './config';
 import { ThemeContext } from './context';
-import { isTheme, resolveThemeAppearance } from './utils';
+import {
+  isTheme,
+  readStoredThemePreference,
+  readThemeChosen,
+  resolveThemeAppearance,
+  writeStoredTheme,
+  writeThemeChosen,
+} from './utils';
 
 import type { FC, PropsWithChildren } from 'react';
 import type { ThemeT, ThemeItemT } from './types';
@@ -11,29 +18,38 @@ import type { ThemeT, ThemeItemT } from './types';
 const DEFAULT_THEME: ThemeT = 'light';
 const ALL_THEMES: ThemeItemT[] = [
   { label: 'Светлая', value: 'light' },
-  { label: 'Тёмная', value: 'dark' },
+  { label: 'Тёмная', value: 'dark', badge: 'beta' },
   { label: 'Как в системе', value: 'system' },
 ];
 
-const applyTheme = (newTheme: ThemeT) => {
+const applyTheme = (preference: ThemeT) => {
   const root = document.documentElement;
 
   ALL_THEMES.forEach((t) => {
     root.classList.remove(t.value);
   });
 
-  root.classList.add(newTheme);
-  root.setAttribute('data-theme', resolveThemeAppearance(newTheme));
+  root.classList.add(preference);
+  root.setAttribute('data-theme', resolveThemeAppearance(preference));
+  root.setAttribute('data-theme-preference', preference);
 };
 
 export const ThemeProvider: FC<PropsWithChildren> = ({ children }) => {
   const { data: user } = useCurrentUser();
   const { updateProfile } = useUpdateProfile();
 
-  const [theme, setThemeState] = useState<ThemeT>(DEFAULT_THEME);
+  const [theme, setThemeState] = useState<ThemeT>(
+    () => readStoredThemePreference() ?? DEFAULT_THEME,
+  );
 
   useEffect(() => {
     if (!THEME_CUSTOMIZATION_ENABLED || !isTheme(user?.theme)) return;
+
+    const hasChosenLocally = readThemeChosen();
+    const shouldSyncFromProfile =
+      hasChosenLocally || user.theme === 'dark' || user.theme === 'system';
+
+    if (!shouldSyncFromProfile) return;
 
     setThemeState((current) => (current === user.theme ? current : user.theme));
   }, [user?.theme]);
@@ -62,6 +78,8 @@ export const ThemeProvider: FC<PropsWithChildren> = ({ children }) => {
 
     try {
       await updateProfile.mutateAsync({ theme: newTheme });
+      writeStoredTheme(newTheme);
+      writeThemeChosen(true);
     } catch (error) {
       setThemeState(previousTheme);
       console.error('Ошибка при обновлении темы', error);

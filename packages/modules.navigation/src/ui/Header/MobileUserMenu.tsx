@@ -110,9 +110,9 @@ export const MobileUserMenu = ({
               type="button"
               aria-label={t('close')}
               onClick={() => setOpen(false)}
-              className="text-gray-80 hover:bg-gray-10 focus:bg-gray-10 size-10 shrink-0 rounded-lg transition-colors"
+              className="bg-gray-5 hover:bg-gray-10 focus:bg-gray-10 flex size-10 shrink-0 items-center justify-center rounded-lg transition-colors"
             >
-              <Close className="mx-auto size-5" />
+              <Close className="fill-gray-80 size-5" />
             </button>
           </div>
         </div>

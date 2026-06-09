@@ -1,5 +1,7 @@
 import { Button } from '@xipkg/button';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
+import { switcherTabClass } from 'common.ui';
+import { cn } from '@xipkg/utils';
 import { useCurrentUser } from 'common.services';
 import { Plus } from '@xipkg/icons';
 import { useMemo } from 'react';
@@ -33,7 +35,10 @@ export const Header = ({ onCreateInvoice, activeTab, onTabChange }: HeaderProps)
           activeTab={activeTab}
           onChange={onTabChange}
           className="xs:w-70 flex h-[32px] w-full flex-row gap-4 rounded-lg"
-          tabClassName="text-m-base h-[28px] flex-1 font-medium text-gray-100 xs:flex-none"
+          tabClassName={cn(
+            switcherTabClass,
+            'text-m-base h-[28px] flex-1 font-medium xs:flex-none',
+          )}
           indicatorClassName="rounded-md"
         />
       </div>

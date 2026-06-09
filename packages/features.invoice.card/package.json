@@ -18,8 +18,8 @@
     "common.api": "workspace:*",
     "common.utils": "workspace:*",
     "common.types": "workspace:*",
-    "@xipkg/icons": "^3.0.15",
-    "@xipkg/button": "4.0.0"
+    "@xipkg/icons": "3.0.20",
+    "@xipkg/button": "4.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
@@ -28,8 +28,8 @@
     "@types/node": "^20.3.1",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
-    "@xipkg/eslint": "3.2.0",
-    "@xipkg/tailwind": "0.8.1",
+    "@xipkg/eslint": "4.6.0",
+    "@xipkg/tailwind": "0.8.6",
     "@xipkg/typescript": "latest",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",

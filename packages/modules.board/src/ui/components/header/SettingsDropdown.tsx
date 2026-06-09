@@ -34,7 +34,11 @@ import { useDrawStore, useEraserSettingsStore } from '../../../store';
 import { HotkeysHelpModal } from '../shared/HotkeysHelp';
 import { ERASER_CATEGORIES, INPUT_MODE_OPTIONS, SHAPE_CATEGORIES } from '../../../config';
 import { areAllEraserCategoriesEnabled } from '../../../utils/areAllEraserCategoriesEnabled';
-import { boardMenuSurfaceClass } from '../../boardTheme';
+import {
+  boardMenuCheckboxItemClass,
+  boardMenuItemClass,
+  boardMenuSurfaceClass,
+} from '../../boardTheme';
 
 type ActionPropsT = {
   onClick: () => void;
@@ -43,7 +47,7 @@ type ActionPropsT = {
 const BlockBoardAction = ({ onClick, isReadonly }: ActionPropsT & { isReadonly: boolean }) => {
   return (
     <DropdownMenuItem
-      className="flex gap-2 p-1"
+      className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
       onClick={onClick}
       data-umami-event="board-toggle-lock"
       data-umami-event-state={isReadonly ? 'resume' : 'pause'}
@@ -57,7 +61,7 @@ const BlockBoardAction = ({ onClick, isReadonly }: ActionPropsT & { isReadonly: 
 const DownloadBoardAction = ({ onClick }: ActionPropsT) => {
   return (
     <DropdownMenuItem
-      className="flex gap-2 p-1"
+      className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
       onClick={onClick}
       data-umami-event="board-download"
     >
@@ -69,7 +73,11 @@ const DownloadBoardAction = ({ onClick }: ActionPropsT) => {
 
 const ClearBoardAction = ({ onClick }: ActionPropsT) => {
   return (
-    <DropdownMenuItem className="flex gap-2 p-1" onClick={onClick} data-umami-event="board-clear">
+    <DropdownMenuItem
+      className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
+      onClick={onClick}
+      data-umami-event="board-clear"
+    >
       <Trash />
       <span>Очистить доску</span>
     </DropdownMenuItem>
@@ -189,7 +197,13 @@ export const SettingsDropdown = () => {
           <div className="bg-brand-0/40 mb-1 rounded-lg px-2 py-2">
             <div className="mb-1 flex items-center justify-between text-xs">
               <span className="text-gray-80">Заполнение доски</span>
-              <span className={cn('font-medium', isLimitReached && 'text-red-60')}>
+              <span
+                className={cn(
+                  'text-gray-80 font-medium',
+                  isWarningZone && !isLimitReached && 'text-orange-60',
+                  isLimitReached && 'text-red-60',
+                )}
+              >
                 {elementsCount} / {BOARD_ELEMENTS_LIMIT}
               </span>
             </div>
@@ -205,7 +219,7 @@ export const SettingsDropdown = () => {
           </div>
           <DropdownMenuGroup className="space-y-0.5">
             <DropdownMenuItem
-              className="flex gap-2 p-1"
+              className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
               onClick={() => handleOpenHotkeysHelp(true)}
               data-umami-event="board-hotkeys-help"
             >
@@ -214,7 +228,7 @@ export const SettingsDropdown = () => {
             </DropdownMenuItem>
             {editor && (
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger className="flex gap-2 p-1">
+                <DropdownMenuSubTrigger className={cn(boardMenuItemClass, 'flex gap-2 p-1')}>
                   <Pen />
                   <span>Режим ввода</span>
                 </DropdownMenuSubTrigger>
@@ -222,7 +236,7 @@ export const SettingsDropdown = () => {
                   {INPUT_MODE_OPTIONS.map(({ value, label, icon }) => (
                     <DropdownMenuItem
                       key={value}
-                      className="flex gap-2 p-1"
+                      className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
                       onClick={() => {
                         setInputMode(value);
                         if (value === 'pen') editor.updateInstanceState({ isPenMode: true });
@@ -244,7 +258,7 @@ export const SettingsDropdown = () => {
             <DownloadBoardAction onClick={saveCanvas} />
             {isTutor && !isReadonly && showImportOption && (
               <DropdownMenuItem
-                className="flex gap-2 p-1"
+                className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
                 onClick={() => importInputRef.current?.click()}
                 data-umami-event="board-import-json"
               >
@@ -278,7 +292,7 @@ export const SettingsDropdown = () => {
 
             {isTutor && !isReadonly && (
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger className="flex gap-2 p-1">
+                <DropdownMenuSubTrigger className={cn(boardMenuItemClass, 'flex gap-2 p-1')}>
                   <Locked />
                   <span>Заблокировать элементы</span>
                 </DropdownMenuSubTrigger>
@@ -288,7 +302,7 @@ export const SettingsDropdown = () => {
                   </p>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    className="flex gap-2 px-3 py-1.5"
+                    className={cn(boardMenuItemClass, 'flex gap-2 px-3 py-1.5')}
                     onClick={() => lockShapes()}
                     data-umami-event="board-lock-all"
                   >
@@ -297,7 +311,7 @@ export const SettingsDropdown = () => {
                   {SHAPE_CATEGORIES.map(({ label, types }) => (
                     <DropdownMenuItem
                       key={label}
-                      className="flex gap-2 px-3 py-1.5"
+                      className={cn(boardMenuItemClass, 'flex gap-2 px-3 py-1.5')}
                       onClick={() => lockShapes(types)}
                       data-umami-event="board-lock-category"
                       data-umami-event-category={label}
@@ -311,7 +325,7 @@ export const SettingsDropdown = () => {
 
             {isTutor && !isReadonly && (
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger className="flex gap-2 p-1">
+                <DropdownMenuSubTrigger className={cn(boardMenuItemClass, 'flex gap-2 p-1')}>
                   <Unlocked />
                   <span>Разблокировать элементы</span>
                 </DropdownMenuSubTrigger>
@@ -321,7 +335,7 @@ export const SettingsDropdown = () => {
                   </p>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    className="flex gap-2 px-3 py-1.5"
+                    className={cn(boardMenuItemClass, 'flex gap-2 px-3 py-1.5')}
                     onClick={() => unlockShapes()}
                     data-umami-event="board-unlock-all"
                   >
@@ -330,7 +344,7 @@ export const SettingsDropdown = () => {
                   {SHAPE_CATEGORIES.map(({ label, types }) => (
                     <DropdownMenuItem
                       key={label}
-                      className="flex gap-2 px-3 py-1.5"
+                      className={cn(boardMenuItemClass, 'flex gap-2 px-3 py-1.5')}
                       onClick={() => unlockShapes(types)}
                       data-umami-event="board-unlock-category"
                       data-umami-event-category={label}
@@ -344,7 +358,7 @@ export const SettingsDropdown = () => {
 
             {isTutor && !isReadonly && (
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger className="flex gap-2 p-1">
+                <DropdownMenuSubTrigger className={cn(boardMenuItemClass, 'flex gap-2 p-1')}>
                   <Eraser />
                   <span>Ластик</span>
                 </DropdownMenuSubTrigger>
@@ -360,7 +374,7 @@ export const SettingsDropdown = () => {
                     checked={allChecked}
                     onCheckedChange={() => toggleAll()}
                     onSelect={(e) => e.preventDefault()}
-                    className="py-1.5 pr-3 pl-8"
+                    className={cn(boardMenuCheckboxItemClass, 'py-1.5 pr-3 pl-8')}
                   >
                     Все элементы
                   </DropdownMenuCheckboxItem>
@@ -373,7 +387,7 @@ export const SettingsDropdown = () => {
                       checked={settings[key]}
                       onCheckedChange={() => toggleCategory(key)}
                       onSelect={(e) => e.preventDefault()}
-                      className="py-1.5 pr-3 pl-8"
+                      className={cn(boardMenuCheckboxItemClass, 'py-1.5 pr-3 pl-8')}
                     >
                       {label}
                     </DropdownMenuCheckboxItem>

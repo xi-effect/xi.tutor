@@ -3,7 +3,6 @@ import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
 import { ControllerRenderProps } from 'react-hook-form';
 
 import { cn } from '@xipkg/utils';
-import { Button } from '@xipkg/button';
 import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from '@xipkg/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { useAutocompleteSubjects, useSubjectsById } from 'common.services';
@@ -44,22 +43,32 @@ export const Autocomplete = ({ field, disabled, containerRef }: AutocompleteProp
     !field.value, // Отключаем запрос если нет выбранного предмета
   );
 
+  const hasSelection = Boolean(field.value && field.value !== 0);
+  const triggerLabel = hasSelection
+    ? isLoadingSelected
+      ? 'Загрузка...'
+      : selectedSubject?.name || 'Предмет не найден'
+    : 'Выберите предмет...';
+
   return (
     <Popover open={open} onOpenChange={setOpen} modal={false}>
       <PopoverTrigger asChild>
-        <Button
-          variant="text"
+        <button
+          type="button"
           role="combobox"
           aria-expanded={open}
-          className="border-gray-30 bg-gray-0 h-[48px] w-full justify-between rounded-lg border-2 pl-3 hover:border-gray-50 hover:bg-transparent"
+          disabled={disabled}
+          className={cn(
+            'border-gray-30 bg-gray-0 flex h-12 w-full items-center justify-between rounded-lg border-2 px-3 text-left text-sm font-normal',
+            'focus-visible:border-gray-80 hover:border-gray-50 focus-visible:outline-none',
+            'disabled:bg-gray-10 disabled:text-gray-30 disabled:cursor-not-allowed',
+          )}
         >
-          {field.value && field.value !== 0
-            ? isLoadingSelected
-              ? 'Загрузка...'
-              : selectedSubject?.name || 'Предмет не найден'
-            : 'Выберите предмет...'}
-          <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0" />
-        </Button>
+          <span className={cn('truncate', hasSelection ? 'text-gray-100' : 'text-gray-40')}>
+            {triggerLabel}
+          </span>
+          <ChevronsUpDownIcon className="text-gray-80 ml-2 h-4 w-4 shrink-0" />
+        </button>
       </PopoverTrigger>
       {containerRef?.current && (
         <PopoverContent
@@ -72,7 +81,7 @@ export const Autocomplete = ({ field, disabled, containerRef }: AutocompleteProp
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <Command
-            className="w-[300px]"
+            className="[&_[data-slot=command-input-wrapper]_svg]:fill-gray-60 w-[300px]"
             shouldFilter={false}
             onPointerDown={(e) => e.stopPropagation()}
           >
@@ -80,20 +89,22 @@ export const Autocomplete = ({ field, disabled, containerRef }: AutocompleteProp
               placeholder="Поиск предмета..."
               value={search}
               onValueChange={setSearch}
+              className="text-gray-100"
             />
             <CommandList className="max-h-[200px] w-full overflow-y-auto">
               {isLoading ? (
-                <div className="py-6 text-center text-sm">Загрузка...</div>
+                <div className="text-gray-60 py-6 text-center text-sm">Загрузка...</div>
               ) : isError ? (
-                <div className="py-6 text-center text-sm text-red-500">Ошибка загрузки</div>
+                <div className="text-red-60 py-6 text-center text-sm">Ошибка загрузки</div>
               ) : !subjects || subjects.length === 0 ? (
-                <div className="py-6 text-center text-sm">Предметы не найдены</div>
+                <div className="text-gray-60 py-6 text-center text-sm">Предметы не найдены</div>
               ) : (
                 <CommandGroup>
                   {subjects.map((subject: SubjectSchema) => (
                     <CommandItem
                       key={subject.id}
                       value={subject.name}
+                      className="text-gray-100"
                       onSelect={() => {
                         if (disabled) return;
                         field.onChange(subject.id);
@@ -102,7 +113,7 @@ export const Autocomplete = ({ field, disabled, containerRef }: AutocompleteProp
                     >
                       <CheckIcon
                         className={cn(
-                          'mr-2 h-4 w-4',
+                          'text-gray-80 mr-2 h-4 w-4',
                           field.value === subject.id ? 'opacity-100' : 'opacity-0',
                         )}
                       />

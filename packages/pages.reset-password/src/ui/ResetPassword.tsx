@@ -26,7 +26,7 @@ export const ResetPassword = () => {
           <Logo height={22} width={180} />
         </div>
 
-        <h1 className="flex justify-center text-2xl font-semibold dark:text-gray-100">
+        <h1 className="flex justify-center text-2xl font-semibold text-gray-100">
           {isSubmitSuccessful ? t('emailSent') : t('title')}
         </h1>
 
@@ -40,7 +40,9 @@ export const ResetPassword = () => {
             name="email"
             render={({ field }) => (
               <FormItem className="flex flex-col gap-1 pt-4">
-                <FormLabel className="text-sm font-normal">{t('emailLabel')}</FormLabel>
+                <FormLabel className="text-sm font-normal text-gray-100">
+                  {t('emailLabel')}
+                </FormLabel>
                 <FormControl>
                   <Input
                     error={!!form.formState.errors.email}

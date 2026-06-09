@@ -20,7 +20,7 @@ export const StudentSelector = ({
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger
-        className="border-gray-10 m-0 w-full rounded-lg border"
+        className="border-gray-10 m-0 w-full rounded-lg border text-gray-100"
         size="s"
         before={before}
       >
