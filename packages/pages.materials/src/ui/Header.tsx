@@ -23,10 +23,10 @@ export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
           tabs={tabs}
           activeTab={activeTab}
           onChange={onTabChange}
-          className="xs:w-70 flex h-[32px] w-full flex-row gap-4 rounded-lg"
+          className="xs:w-auto flex h-[32px] w-full flex-row gap-4 rounded-lg"
           tabClassName={cn(
             switcherTabClass,
-            'text-m-base h-[28px] flex-1 font-medium xs:flex-none',
+            'text-m-base h-[28px] flex-1 font-medium xs:flex-none xs:px-3',
           )}
           indicatorClassName="rounded-md"
         />

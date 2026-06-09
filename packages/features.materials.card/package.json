@@ -19,6 +19,7 @@
     "@xipkg/utils": "^1.8.0",
     "common.services": "workspace:*",
     "common.types": "workspace:*",
+    "common.ui": "workspace:*",
     "features.materials.edit": "workspace:*",
     "dayjs": "^1.11.13"
   },

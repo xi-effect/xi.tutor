@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Modal, ModalContent, ModalTitle, ModalCloseButton, ModalBody } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
+import { Close } from '@xipkg/icons';
 import { DayLessonsPanel } from 'modules.calendar';
 import { MovingForm } from './components/MovingForm';
 import {
@@ -132,11 +133,16 @@ export const MovingLessonModal = ({
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
       <ModalContent
-        className="flex max-h-[min(100dvh,100%)] min-h-0 w-full max-w-[960px] min-w-0 flex-col overflow-hidden md:min-h-[min(740px,100dvh)]"
+        className="relative flex max-h-[min(100dvh,100%)] min-h-0 w-full max-w-[960px] min-w-0 flex-col md:min-h-[min(740px,100dvh)]"
         aria-describedby={undefined}
       >
         <ModalTitle className="sr-only">{formTitle}</ModalTitle>
-        <ModalCloseButton />
+        <ModalCloseButton
+          variant="full"
+          className="bg-gray-5 top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0"
+        >
+          <Close className="fill-gray-80 h-5 w-5" />
+        </ModalCloseButton>
         <ModalBody className="grid min-h-0 w-full min-w-0 flex-1 grid-cols-1 items-start gap-6 overflow-hidden md:grid-cols-2 md:gap-10">
           <div className="hidden min-h-0 min-w-0 flex-col overflow-hidden md:flex">
             <div className="flex min-h-0 min-w-0 flex-1 flex-col">
@@ -150,7 +156,7 @@ export const MovingLessonModal = ({
             </div>
           </div>
           <div className="flex h-full min-h-0 min-w-0 flex-col gap-5 overflow-hidden">
-            <div className="flex h-8 shrink-0 items-center pr-3">
+            <div className="flex h-8 shrink-0 items-center pr-12">
               <h3 className="text-xl-base m-0 leading-none font-semibold text-gray-100">
                 {formTitle}
               </h3>

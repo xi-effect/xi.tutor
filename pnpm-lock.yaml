@@ -1105,6 +1105,9 @@ importers:
       common.services:
         specifier: workspace:*
         version: link:../common.services
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
       react:
         specifier: '19'
         version: 19.2.6
@@ -2437,6 +2440,9 @@ importers:
       common.types:
         specifier: workspace:*
         version: link:../common.types
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13

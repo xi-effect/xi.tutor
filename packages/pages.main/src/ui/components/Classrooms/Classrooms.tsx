@@ -19,6 +19,8 @@ import { Classroom } from './Classroom';
 import { SectionEmptyState, sectionEmptyStateIllustrationClass } from '../SectionEmptyState';
 import { cn, useMediaQuery } from '@xipkg/utils';
 
+const emptyClassroomsIllustrationClass = cn(sectionEmptyStateIllustrationClass, '-translate-x-8');
+
 export const Classrooms = () => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -169,7 +171,7 @@ export const Classrooms = () => {
           title="У вас нет кабинетов"
           description="Вы можете создать кабинет для групповых или индивидуальных занятий"
           minHeightClass="min-h-[160px] sm:min-h-[180px]"
-          illustration={<EmptyClassrooms className={sectionEmptyStateIllustrationClass} />}
+          illustration={<EmptyClassrooms className={emptyClassroomsIllustrationClass} />}
           actions={
             !isMobile ? (
               <Button
@@ -190,7 +192,7 @@ export const Classrooms = () => {
           title={emptyMessage}
           description="Ссылку-приглашение вам должен отправить ваш репетитор"
           minHeightClass="min-h-[160px]"
-          illustration={<EmptyClassrooms className={sectionEmptyStateIllustrationClass} />}
+          illustration={<EmptyClassrooms className={emptyClassroomsIllustrationClass} />}
         />
       )}
     </div>

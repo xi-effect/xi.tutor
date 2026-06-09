@@ -55,7 +55,9 @@ export const DesktopUserMenu = ({
             classNameText="pl-1 text-left text-gray-100"
             classNameLabel="pl-1 text-left text-gray-60"
           />
-          <ChevronUp className="fill-gray-60 mr-3 ml-auto h-4 w-4 rotate-x-180 group-data-[state=open]:rotate-x-0" />
+          {!withOutText && (
+            <ChevronUp className="fill-gray-60 mr-3 ml-auto h-4 w-4 rotate-x-180 group-data-[state=open]:rotate-x-0" />
+          )}
         </Button>
       </DropdownMenuTrigger>
 

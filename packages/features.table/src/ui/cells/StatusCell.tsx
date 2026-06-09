@@ -8,7 +8,7 @@ export const StatusCell = ({ payment, isTutor = false }: ApprovePaymentPropsT) =
 
   return (
     <div className="flex flex-row items-center justify-between gap-4">
-      <StatusBadge status={payment.status} className="p-0" />
+      <StatusBadge status={payment.status} withBg />
       <PaymentApproveAction payment={payment} isTutor={isTutor} type="table" />
     </div>
   );

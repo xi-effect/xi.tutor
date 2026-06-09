@@ -12,7 +12,7 @@ type ContactsBadgePropsT = {
 const TelegramBadge = ({ title, link }: { title: string; link: string }) => {
   return (
     <Badge
-      className="bg-brand-0 text-s-base text-brand-80 flex max-w-full min-w-0 cursor-pointer flex-row items-center justify-center font-medium max-sm:w-full"
+      className="bg-brand-0 text-s-base text-brand-80 flex max-w-full min-w-0 cursor-pointer flex-row items-center justify-center rounded-lg border-none px-2 py-1 font-medium max-sm:w-full dark:bg-[#F3F4FC] dark:text-[#4554C9]"
       onClick={() => handleTelegramClick({ link })}
       variant="ghost"
       size="m"

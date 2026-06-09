@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "common.services": "workspace:*",
+    "common.ui": "workspace:*",
     "common.entities": "workspace:*",
     "@xipkg/badge": "2.0.17",
     "@xipkg/utils": "1.8.0",

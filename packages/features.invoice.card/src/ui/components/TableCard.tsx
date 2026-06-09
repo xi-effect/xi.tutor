@@ -25,20 +25,19 @@ export const TableCard = ({
         className,
       )}
     >
-      <div className="flex flex-row items-baseline gap-1">{formattedDate}</div>
+      <div className="text-s-base text-gray-60 flex flex-row items-baseline gap-1">
+        {formattedDate}
+      </div>
       <UserProfile
         text={userData?.display_name || userData?.username || 'Имя не найдено'}
         size="m"
         userId={userId}
-        classNameText="line-clamp-2 break-words"
+        classNameText="line-clamp-2 break-words text-gray-100"
         className="h-auto overflow-hidden"
       />
       <div className="mt-2 flex flex-row items-center gap-4">
-        <div className="flex flex-row items-baseline gap-0.5">
-          <span className="text-brand-100 text-m-base font-normal">{amount}</span>
-          <span className="text-brand-40 text-xs-base font-normal">₽</span>
-        </div>
-        <StatusBadge status={payment.status} />
+        <h3 className="text-m-base font-medium text-gray-100">{amount} ₽</h3>
+        <StatusBadge status={payment.status} withBg />
       </div>
       <div className="ml-auto flex items-center gap-2">
         <Button
@@ -48,7 +47,7 @@ export const TableCard = ({
           onClick={() => onViewInvoice?.(payment)}
           aria-label="Просмотреть информацию о счёте"
         >
-          <InfoCircle className="h-5 w-5" />
+          <InfoCircle className="fill-gray-60 h-5 w-5" />
         </Button>
         <PaymentApproveAction payment={payment} isTutor={currentUserRole === 'tutor'} />
       </div>

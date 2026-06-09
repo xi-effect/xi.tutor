@@ -14,7 +14,7 @@ export const WelcomePageLayout = ({ step, title, subtitle, children }: WelcomePa
   return (
     <ProtectedProvider>
       <div className="relative flex min-h-svh flex-col">
-        <div className="xs:h-screen flex h-[100dvh] w-screen flex-row content-center justify-center">
+        <div className="xs:h-screen bg-gray-0 flex h-[100dvh] w-screen flex-row content-center justify-center">
           <div className="flex h-full w-full content-center justify-center p-8">
             <div className="xs:p-8 flex h-full w-full max-w-[600px] flex-col">
               <div className="h-22">
