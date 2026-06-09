@@ -10,43 +10,59 @@ import { Button } from '@xipkg/button';
 import { ArrowBottom, ArrowUp, Copy, Download, MoreVert, Trash } from '@xipkg/icons';
 import { useBlockMenuActions, useProtectedImage, useYjsContext } from '../../hooks';
 import { cn } from '@xipkg/utils';
-import { useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ActiveBlockT } from '../../types';
+import { NodeSelection } from '@tiptap/pm/state';
 
-export const ImageNodeView = ({ node, selected, getPos }: NodeViewProps) => {
+export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
   const [hovered, setHovered] = useState(false);
   const src = node.attrs.src;
 
   const { editor, storageToken, isReadOnly } = useYjsContext();
 
-  const currentBlock = useMemo<ActiveBlockT | undefined>(() => {
-    if (typeof getPos !== 'function' || !editor) {
-      return;
-    }
-
+  const getActiveBlock = useCallback((): ActiveBlockT | undefined => {
+    if (typeof getPos !== 'function' || !editor) return;
     try {
-      const currentPosition = getPos();
-      if (currentPosition == null) return;
-      return {
-        editor,
-        node,
-        pos: currentPosition,
-      };
+      const pos = getPos();
+      if (pos == null || pos < 0) return;
+      // Верифицируем что нода на этой позиции — действительно image
+      const { doc } = editor.state;
+      if (pos >= doc.content.size) return;
+      const $pos = doc.resolve(pos);
+      const nodeAtPos = $pos.nodeAfter;
+
+      if (nodeAtPos?.type.name === 'image' && nodeAtPos.attrs.src === src) {
+        return { editor, node: nodeAtPos, pos };
+      }
+
+      let found: ActiveBlockT | undefined;
+      doc.descendants((n, p) => {
+        if (found) return false;
+        if (n.type.name === 'image' && n.attrs.src === src) {
+          found = { editor, node: n, pos: p };
+          return false;
+        }
+        return true;
+      });
+      return found;
     } catch {
       return;
     }
-  }, [editor, getPos, node]);
-
+  }, [editor, getPos, src]);
   const { duplicate, remove, downloadImage, moveDown, moveUp } = useBlockMenuActions(
     editor,
-    currentBlock,
+    getActiveBlock,
   );
+
+  const selected =
+    editor?.state.selection instanceof NodeSelection && editor.state.selection.from === getPos();
 
   const imageSrc = useProtectedImage(src, storageToken);
 
   return (
     <NodeViewWrapper
       className="group relative flex justify-center"
+      contentEditable={false}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -57,6 +73,7 @@ export const ImageNodeView = ({ node, selected, getPos }: NodeViewProps) => {
           'max-h-[600px] rounded-lg object-contain',
           selected && 'outline-brand-80 outline-2 outline-offset-1',
         )}
+        draggable={false}
       />
       <div
         className={cn(
@@ -91,7 +108,10 @@ export const ImageNodeView = ({ node, selected, getPos }: NodeViewProps) => {
 
                 <DropdownMenuItem
                   className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-                  onSelect={moveUp}
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    moveUp();
+                  }}
                 >
                   <ArrowUp size="sm" className="size-6" />
                   <span className="text-sm">Выше</span>
@@ -99,7 +119,10 @@ export const ImageNodeView = ({ node, selected, getPos }: NodeViewProps) => {
 
                 <DropdownMenuItem
                   className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-                  onSelect={moveDown}
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    moveDown();
+                  }}
                 >
                   <ArrowBottom size="sm" className="size-6" />
                   <span className="text-sm">Ниже</span>

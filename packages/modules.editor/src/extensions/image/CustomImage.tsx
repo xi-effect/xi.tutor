@@ -6,4 +6,7 @@ export const CustomImage = Image.extend({
   addNodeView() {
     return ReactNodeViewRenderer(ImageNodeView);
   },
+
+  selectable: true,
+  atom: true,
 });

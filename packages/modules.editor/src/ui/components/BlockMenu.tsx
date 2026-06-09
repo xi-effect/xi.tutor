@@ -18,8 +18,17 @@ type BlockMenuPropsT = {
   isReadOnly?: boolean;
   open: boolean;
   setOpen: (open: boolean) => void;
-  activeBlock?: ActiveBlockT;
+  getActiveBlock: () => ActiveBlockT | undefined;
 };
+
+// оборачивает действие так чтобы оно выполнилось ПОСЛЕ того как DropdownMenu закончит своё закрытие/анимацию.
+// Это исключает вызов view.dispatch() внутри React-рендера Radix.
+function deferAction(fn: () => void) {
+  return (e: Event) => {
+    e.preventDefault();
+    setTimeout(fn, 0);
+  };
+}
 
 export const BlockMenu = ({
   children,
@@ -27,12 +36,13 @@ export const BlockMenu = ({
   isReadOnly,
   open,
   setOpen,
-  activeBlock,
+  getActiveBlock,
 }: BlockMenuPropsT) => {
+  const isMac = navigator.platform.toUpperCase().includes('MAC');
   const { openModal } = useInterfaceStore();
   const { changeType, duplicate, remove, moveUp, moveDown } = useBlockMenuActions(
     editor,
-    activeBlock,
+    getActiveBlock,
   );
 
   // Блокируем меню если редактор в readonly режиме
@@ -50,6 +60,7 @@ export const BlockMenu = ({
         side="right"
         align="start"
         className="flex w-auto flex-col gap-1 space-y-1 p-2"
+        onCloseAutoFocus={(e) => e.preventDefault()}
       >
         <DropdownMenuItem
           className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
@@ -96,25 +107,37 @@ export const BlockMenu = ({
         <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={duplicate}>
           <Copy size="sm" className="size-6" />
           <span className="text-sm">Дублировать</span>
-          <span className="text-xxs-base ml-auto text-gray-50">Ctrl+D</span>
+          <span className="text-xxs-base ml-auto text-gray-50">
+            {isMac ? '⌘+⇧+D' : 'Ctrl+Shift+D'}
+          </span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={moveUp}>
+        <DropdownMenuItem
+          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+          onSelect={deferAction(moveUp)}
+        >
           <ArrowUp size="sm" className="size-6" />
           <span className="text-sm">Переместить вверх</span>
-          <span className="text-xxs-base ml-auto text-gray-50">⌘⇧↑</span>
+          <span className="text-xxs-base ml-auto text-gray-50">
+            {isMac ? '⌘+⇧+↑' : 'Ctrl+Shift+↑'}
+          </span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={moveDown}>
+        <DropdownMenuItem
+          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+          onSelect={deferAction(moveDown)}
+        >
           <ArrowBottom size="sm" className="size-6" />
           <span className="text-sm">Переместить вниз</span>
-          <span className="text-xxs-base ml-auto text-gray-50">⌘⇧↓</span>
+          <span className="text-xxs-base ml-auto text-gray-50">
+            {isMac ? '⌘+⇧+↓' : 'Ctrl+Shift+↓'}
+          </span>
         </DropdownMenuItem>
 
         <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={remove}>
           <Trash size="sm" className="size-6" />
           <span className="text-sm">Удалить</span>
-          <span className="text-xxs-base ml-auto text-gray-50">Del</span>
+          <span className="text-xxs-base ml-auto text-gray-50">{isMac ? '⌘+⌫' : 'Del'}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
