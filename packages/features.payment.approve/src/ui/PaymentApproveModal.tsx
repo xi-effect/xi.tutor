@@ -11,6 +11,7 @@ import {
   ModalDescription,
 } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
+import { Close } from '@xipkg/icons';
 import { Radio, RadioItem } from '@xipkg/radio';
 import { Form, FormField, FormItem, FormMessage } from '@xipkg/form';
 import { usePaymentApproveForm, useUserByPaymentDetails } from '../hooks';
@@ -99,14 +100,14 @@ const ApproveForm = ({
                     <div className="flex gap-2">
                       <p className="w-[78px]">
                         {item.price}
-                        <span className="text-gray-60 text-xs-base">₽</span>
+                        <span className="text-gray-60 text-xs-base-size">₽</span>
                       </p>
                       <p className="text-gray-60 w-[10px]">x</p>
                       <p className="w-[78px]">{item.quantity}</p>
                       <p className="text-gray-60 w-[10px]">=</p>
                       <p className="w-[78px]">
                         {parseFloat(item.price) * item.quantity}
-                        <span className="text-gray-60 text-xs-base">₽</span>
+                        <span className="text-gray-60 text-xs-base-size">₽</span>
                       </p>
                     </div>
                   </div>
@@ -130,9 +131,9 @@ const ApproveForm = ({
               <p className="w-[10px]"></p>
               <p className="w-[78px]"></p>
               <p className="w-[10px]"></p>
-              <p className="w-[78px]">
+              <p className="w-[78px] font-bold text-gray-100">
                 {data?.recipient_invoice?.total || paymentDetails.total}
-                <span className="text-gray-60 text-xs-base">₽</span>
+                <span className="text-gray-60 text-xs-base-size">₽</span>
               </p>
             </div>
           </div>
@@ -267,14 +268,14 @@ const AdvanceForm = ({
                       <div className="flex gap-2">
                         <p className="w-[78px]">
                           {item.price}
-                          <span className="text-gray-60 text-xs-base">₽</span>
+                          <span className="text-gray-60 text-xs-base-size">₽</span>
                         </p>
                         <p className="text-gray-60 w-[10px]">x</p>
                         <p className="w-[78px]">{item.quantity}</p>
                         <p className="text-gray-60 w-[10px]">=</p>
                         <p className="w-[78px]">
                           {parseFloat(item.price) * item.quantity}
-                          <span className="text-gray-60 text-xs-base">₽</span>
+                          <span className="text-gray-60 text-xs-base-size">₽</span>
                         </p>
                       </div>
                     </div>
@@ -298,9 +299,9 @@ const AdvanceForm = ({
                 <p className="w-[10px]"></p>
                 <p className="w-[78px]"></p>
                 <p className="w-[10px]"></p>
-                <p className="w-[78px]">
+                <p className="w-[78px] font-bold text-gray-100">
                   {data?.recipient_invoice?.total || paymentDetails.total}
-                  <span className="text-gray-60 text-xs-base">₽</span>
+                  <span className="text-gray-60 text-xs-base-size">₽</span>
                 </p>
               </div>
             </div>
@@ -380,7 +381,12 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
     <Modal open={open} onOpenChange={handleCloseModal}>
       <ModalContent className="max-w-150 min-w-85">
         <ModalHeader className="max-w-85 sm:max-w-150">
-          <ModalCloseButton />
+          <ModalCloseButton
+            variant="full"
+            className="bg-gray-5 top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0 sm:right-4"
+          >
+            <Close className="fill-gray-80 h-5 w-5" />
+          </ModalCloseButton>
           <ModalTitle className="m-0 pr-10 text-gray-100 sm:pr-0">
             Подтверждение оплаты по счёту
           </ModalTitle>

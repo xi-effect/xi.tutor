@@ -12,6 +12,9 @@ import { Editor } from '@tiptap/core';
 import { useInterfaceStore } from '../../store/interfaceStore';
 import { ActiveBlockT } from '../../types';
 
+const menuItemClass =
+  'text-gray-100 hover:bg-gray-5 focus:text-gray-100 fill-gray-80 [&_svg]:fill-gray-80 h-7 gap-2 rounded p-1 text-sm';
+
 type BlockMenuPropsT = {
   children: ReactNode;
   editor: Editor;
@@ -49,72 +52,57 @@ export const BlockMenu = ({
       <DropdownMenuContent
         side="right"
         align="start"
-        className="flex w-auto flex-col gap-1 space-y-1 p-2"
+        className="border-gray-10 bg-gray-0 flex w-auto flex-col gap-1 space-y-1 rounded-lg border p-2 text-gray-100"
       >
-        <DropdownMenuItem
-          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => changeType('paragraph')}
-        >
+        <DropdownMenuItem className={menuItemClass} onSelect={() => changeType('paragraph')}>
           <Text size="sm" className="size-6" />
-          <span className="text-sm">Текст</span>
+          <span>Текст</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => changeType('heading1')}
-        >
+        <DropdownMenuItem className={menuItemClass} onSelect={() => changeType('heading1')}>
           <H1 size="sm" className="size-6" />
-          <span className="text-sm">Заголовок 1</span>
+          <span>Заголовок 1</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => changeType('heading2')}
-        >
+        <DropdownMenuItem className={menuItemClass} onSelect={() => changeType('heading2')}>
           <H2 size="sm" className="size-6" />
-          <span className="text-sm">Заголовок 2</span>
+          <span>Заголовок 2</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => changeType('heading3')}
-        >
+        <DropdownMenuItem className={menuItemClass} onSelect={() => changeType('heading3')}>
           <H3 size="sm" className="size-6" />
-          <span className="text-sm">Заголовок 3</span>
+          <span>Заголовок 3</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => openModal('uploadImage')}
-        >
+        <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('uploadImage')}>
           <Image size="sm" className="size-6" />
-          <span className="text-sm">Изображение</span>
+          <span>Изображение</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={duplicate}>
+        <DropdownMenuItem className={menuItemClass} onSelect={duplicate}>
           <Copy size="sm" className="size-6" />
-          <span className="text-sm">Дублировать</span>
-          <span className="text-xxs-base ml-auto text-gray-50">Ctrl+D</span>
+          <span>Дублировать</span>
+          <span className="text-gray-60 ml-auto text-[10px] leading-[14px]">Ctrl+D</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={moveUp}>
+        <DropdownMenuItem className={menuItemClass} onSelect={moveUp}>
           <ArrowUp size="sm" className="size-6" />
-          <span className="text-sm">Переместить вверх</span>
-          <span className="text-xxs-base ml-auto text-gray-50">⌘⇧↑</span>
+          <span>Переместить вверх</span>
+          <span className="text-gray-60 ml-auto text-[10px] leading-[14px]">⌘⇧↑</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={moveDown}>
+        <DropdownMenuItem className={menuItemClass} onSelect={moveDown}>
           <ArrowBottom size="sm" className="size-6" />
-          <span className="text-sm">Переместить вниз</span>
-          <span className="text-xxs-base ml-auto text-gray-50">⌘⇧↓</span>
+          <span>Переместить вниз</span>
+          <span className="text-gray-60 ml-auto text-[10px] leading-[14px]">⌘⇧↓</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={remove}>
+        <DropdownMenuItem className={menuItemClass} onSelect={remove}>
           <Trash size="sm" className="size-6" />
-          <span className="text-sm">Удалить</span>
-          <span className="text-xxs-base ml-auto text-gray-50">Del</span>
+          <span>Удалить</span>
+          <span className="text-gray-60 ml-auto text-[10px] leading-[14px]">Del</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

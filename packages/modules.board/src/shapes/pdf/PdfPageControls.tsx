@@ -2,6 +2,8 @@ import { useCallback } from 'react';
 import { Button } from '@xipkg/button';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '@xipkg/select';
 import { ArrowLeft, ArrowRight, Image } from '@xipkg/icons';
+import { cn } from '@xipkg/utils';
+import { boardMenuSurfaceClass } from '../../ui/boardTheme';
 import { PDF_PAGES_VISIBLE_MAX } from './PdfShape';
 
 type PdfPageControlsProps = {
@@ -94,12 +96,16 @@ export const PdfPageControls = ({
           >
             {pagesVisible} стр.
           </SelectTrigger>
-          <SelectContent className="w-[120px]">
-            <span className="text-gray-80 px-2 text-xs"> Показывать </span>
+          <SelectContent className={cn(boardMenuSurfaceClass, 'w-[120px]')}>
+            <span className="text-gray-80 px-2 text-xs">Показывать</span>
             {Array.from({ length: PDF_PAGES_VISIBLE_MAX }, (_, i) => {
               const n = i + 1;
               return (
-                <SelectItem key={n} value={String(n)}>
+                <SelectItem
+                  key={n}
+                  value={String(n)}
+                  className="text-gray-80 focus:text-gray-100 data-highlighted:text-gray-100"
+                >
                   {n} стр.
                 </SelectItem>
               );

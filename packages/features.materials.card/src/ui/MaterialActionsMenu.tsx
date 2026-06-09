@@ -20,6 +20,11 @@ const options: { value: AccessModeT; label: string }[] = [
   { value: 'read_write', label: 'совместная работа' },
 ];
 
+/** text-xs-base нельзя вместе с text-gray-* — twMerge снимает цвет текста */
+const menuSurfaceClass = 'border-gray-10 bg-gray-0 border';
+const menuItemClass =
+  'text-gray-100 hover:bg-brand-0 hover:text-gray-100 focus:text-gray-100 min-h-7 h-auto items-start whitespace-normal rounded-lg px-2 py-1.5 text-sm leading-snug';
+
 export const MaterialActionsMenu = ({
   isClassroom,
   isTutor,
@@ -55,20 +60,20 @@ export const MaterialActionsMenu = ({
           size="icon"
           data-umami-event="material-actions-menu-open"
         >
-          <MoreVert className="h-4 w-4 dark:fill-gray-100" />
+          <MoreVert className="fill-gray-80 h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
         side="bottom"
         align="end"
-        className="border-gray-10 bg-gray-0 w-48 space-y-1 rounded-lg border p-2 font-normal"
+        className={cn(menuSurfaceClass, 'w-48 space-y-1 rounded-lg p-2 font-normal text-gray-100')}
         onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
       >
         {isClassroom && isTutor ? (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger
-              className="text-xs-base h-7 gap-2 rounded-lg"
+              className={cn(menuItemClass, 'gap-2')}
               onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
               data-umami-event="material-change-access-open"
             >
@@ -77,7 +82,7 @@ export const MaterialActionsMenu = ({
 
             <DropdownMenuSubContent
               sideOffset={16}
-              className="border-gray-10 bg-gray-0 space-y-1 rounded-lg border p-2 font-normal"
+              className={cn(menuSurfaceClass, 'space-y-1 rounded-lg p-2 font-normal text-gray-100')}
               onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
             >
               {options.map(({ value, label }) => (
@@ -87,23 +92,23 @@ export const MaterialActionsMenu = ({
                   onCheckedChange={() => handleChange(value)}
                   onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
                   className={cn(
-                    'text-xs-base h-7 rounded-lg',
+                    'h-auto min-h-7 cursor-pointer items-start rounded-lg py-1.5 text-sm leading-snug whitespace-normal',
                     studentAccessMode === value
-                      ? 'bg-brand-0 text-brand-100 cursor-pointer'
-                      : 'text-gray-80 cursor-pointer',
+                      ? 'bg-brand-0 text-brand-80'
+                      : 'text-gray-100 hover:text-gray-100 focus:text-gray-100',
                   )}
                   data-umami-event="material-access-mode-change"
                   data-umami-event-mode={value}
                   data-umami-event-from={studentAccessMode}
                 >
-                  <div className="text-xs-base w-full text-left">{label}</div>
+                  <div className="w-full text-left">{label}</div>
                 </DropdownMenuCheckboxItem>
               ))}
             </DropdownMenuSubContent>
           </DropdownMenuSub>
         ) : (
           <DropdownMenuItem
-            className="text-xs-base hover:text-brand-100 h-7 rounded-lg px-2"
+            className={menuItemClass}
             onClick={handleAction(onDuplicate)}
             data-umami-event="material-duplicate-to-classroom"
           >
@@ -111,7 +116,7 @@ export const MaterialActionsMenu = ({
           </DropdownMenuItem>
         )}
         <DropdownMenuItem
-          className="hover:bg-brand-0 hover:text-brand-100 text-xs-base h-7 w-full rounded-lg px-2"
+          className={cn(menuItemClass, 'w-full')}
           onClick={() => setModalOpen(true)}
           data-umami-event="material-edit"
         >
@@ -119,7 +124,7 @@ export const MaterialActionsMenu = ({
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          className="hover:bg-brand-0 hover:text-brand-100 text-xs-base h-7 w-full rounded-lg px-2"
+          className={cn(menuItemClass, 'w-full')}
           onClick={handleAction(isClassroom ? onDeleteFromClassroom : onDelete)}
           data-umami-event={isClassroom ? 'material-delete-from-classroom' : 'material-delete'}
         >

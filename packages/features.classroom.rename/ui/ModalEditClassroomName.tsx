@@ -78,7 +78,7 @@ export const ModalEditClassroomName = ({
       <ModalContent className="max-w-150" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton />
-          <ModalTitle className="max-w-[calc(100%-48px)]">Шаблон счёта</ModalTitle>
+          <ModalTitle className="max-w-[calc(100%-48px)] text-gray-100">Шаблон счёта</ModalTitle>
         </ModalHeader>
 
         <Form {...form}>

@@ -13,6 +13,8 @@ export { ErrorPage } from './src/ErrorPage';
 export { OnboardingPopup } from './src/OnboardingPopup';
 export { NetworkIndicator } from './src/NetworkIndicator';
 export { SmallLogo } from './src/SmallLogo';
+export { modalTitleClass } from './src/modalTitleClass';
+export { switcherTabClass } from './src/switcherTabClass';
 export { useFocusModeStore } from './src/store/useFocusModeStore';
 export {
   useSoundEffectsStore,

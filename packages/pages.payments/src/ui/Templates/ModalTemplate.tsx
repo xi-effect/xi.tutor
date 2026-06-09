@@ -87,7 +87,7 @@ export const ModalTemplate = ({ isOpen, type, onClose, name, price, id }: ModalT
       <ModalContent className="max-w-[600px]" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton />
-          <ModalTitle className="max-w-[calc(100%-56px)]">
+          <ModalTitle className="max-w-[calc(100%-56px)] text-gray-100">
             {type === 'edit' ? 'Редактирование' : 'Создание'} шаблона оплаты
           </ModalTitle>
         </ModalHeader>

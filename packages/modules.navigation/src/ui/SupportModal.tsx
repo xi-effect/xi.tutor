@@ -8,6 +8,7 @@ import {
 } from '@xipkg/modal';
 import { TelegramFilled, MailRounded, External, VK } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
+import { modalTitleClass } from 'common.ui';
 
 const CONTACTS = [
   {
@@ -52,7 +53,7 @@ export const SupportModal = ({ open, onOpenChange }: SupportModalProps) => {
       <ModalContent className="max-w-[480px]" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton />
-          <ModalTitle>{t('supportModal.title')}</ModalTitle>
+          <ModalTitle className={modalTitleClass}>{t('supportModal.title')}</ModalTitle>
         </ModalHeader>
         <ModalBody className="flex flex-col gap-3 pb-6">
           <p className="text-gray-60 text-s-base mb-1">{t('supportModal.description')}</p>

@@ -1,5 +1,7 @@
 import { Tabs } from '@xipkg/tabs';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
+import { switcherTabClass } from 'common.ui';
+import { cn } from '@xipkg/utils';
 
 import { ClassroomScheduleProvider } from '../Calendar/ClassroomScheduleContext';
 import { CalendarScheduleToolbar } from '../Calendar/ClassroomScheduleParts';
@@ -39,7 +41,7 @@ export const TabsStudent = () => {
                   activeTab={currentTab}
                   onChange={handleTabChange}
                   className="bg-gray-0 flex flex-row gap-0"
-                  tabClassName="text-m-base font-medium text-gray-100"
+                  tabClassName={cn(switcherTabClass, 'text-m-base font-medium')}
                 />
                 {currentTab === 'schedule' && (
                   <div className="ml-auto flex shrink-0 items-center gap-2">

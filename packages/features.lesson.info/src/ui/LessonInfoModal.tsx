@@ -128,7 +128,7 @@ export const LessonInfoModal = ({
           <ModalHeader>
             <ModalCloseButton />
             <div className="flex max-w-[calc(100%-56px)] flex-col gap-0.5">
-              <ModalTitle className="text-xl-base font-semibold text-gray-100">
+              <ModalTitle className="text-xl-base max-w-full font-semibold text-gray-100">
                 Информация о занятии
               </ModalTitle>
               {lessonDate != null && lessonDate.trim().length > 0 ? (

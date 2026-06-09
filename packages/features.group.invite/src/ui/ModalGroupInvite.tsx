@@ -88,7 +88,9 @@ export const ModalGroupInvite = ({ children, open, onOpenChange }: ModalGroupInv
       <ModalContent className="max-w-[600px]">
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
-          <ModalTitle className="dark:text-gray-100">Приглашение в группу</ModalTitle>
+          <ModalTitle className="max-w-[calc(100%-48px)] text-gray-100">
+            Приглашение в группу
+          </ModalTitle>
           <ModalDescription>
             Отправьте ссылку ученикам, чтобы пригласить их в группу
           </ModalDescription>

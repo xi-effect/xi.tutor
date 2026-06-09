@@ -12,6 +12,8 @@ import { AddingLessonModal } from 'features.lesson.add';
 import type { FormData as AddingLessonFormData } from 'features.lesson.add';
 import { MaterialsAdd } from 'features.materials.add';
 import { useGetClassroom, useAddClassroomMaterials, useDeleteClassroom } from 'common.services';
+import { switcherTabClass } from 'common.ui';
+import { cn } from '@xipkg/utils';
 import { useCreateClassroomEvent } from 'modules.calendar';
 import { ModalStudentsGroup } from 'features.group.manage';
 import { ModalGroupInvite } from 'features.group.invite';
@@ -220,7 +222,7 @@ export const TabsTutor = () => {
                   activeTab={currentTab}
                   onChange={handleTabChange}
                   className="bg-gray-0 flex flex-row gap-0"
-                  tabClassName="text-m-base font-medium text-gray-100 hover:bg-gray-5"
+                  tabClassName={cn(switcherTabClass, 'text-m-base font-medium')}
                 />
                 <TutorDesktopToolbar
                   currentTab={currentTab}

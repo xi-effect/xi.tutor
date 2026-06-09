@@ -102,9 +102,9 @@ export const DayLessonsPanel = ({
     <DayLessonListMetaProvider>
       <div className="flex min-h-0 flex-1 flex-col gap-4">
         {scheduleHeadingTitle != null ? (
-          <div className="flex shrink-0 flex-row items-center gap-2 pr-3">
-            <div className="flex min-w-0 flex-1 flex-row items-baseline gap-3">
-              <h3 className="text-xl-base m-0 shrink-0 font-semibold text-gray-100">
+          <div className="flex h-8 shrink-0 flex-row items-center gap-2 pr-3">
+            <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
+              <h3 className="text-xl-base m-0 shrink-0 leading-none font-semibold text-gray-100">
                 {scheduleHeadingTitle}
               </h3>
               {monthLabelInToolbar ? (

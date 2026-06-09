@@ -1,6 +1,26 @@
 /* Стили для Notion-like редактора.
    Все правила скоупятся через .xi-editor, чтобы не затрагивать
-   ProseMirror-инстансы других модулей (tldraw text shapes и т.д.). */
+   ProseMirror-инстансы других модулей (tldraw text shapes и т.д.).
+   Цвета через --xi-* — переключаются с data-theme на html. */
+
+/* Базовый цвет текста и отступ под ручку блока */
+.xi-editor .ProseMirror {
+  color: var(--xi-gray-100);
+  padding-left: 2.5rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.xi-editor .ProseMirror h1,
+.xi-editor .ProseMirror h2,
+.xi-editor .ProseMirror h3,
+.xi-editor .ProseMirror p,
+.xi-editor .ProseMirror li,
+.xi-editor .ProseMirror strong,
+.xi-editor .ProseMirror em {
+  color: inherit;
+}
 
 /* Стили для пустого редактора */
 .xi-editor .ProseMirror p.is-editor-empty:first-child::before {
@@ -106,7 +126,8 @@
 }
 
 .xi-editor .ProseMirror code {
-  background: var(--xi-gray-5);
+  background: var(--xi-gray-10);
+  color: var(--xi-gray-100);
   padding: 0.125rem 0.25rem;
   border-radius: 0.25rem;
   font-size: 0.875em;
@@ -159,14 +180,6 @@
   cursor: grabbing;
 }
 
-/* Место слева для ручки перетаскивания (Notion-style) */
-.xi-editor .ProseMirror {
-  padding-left: 2.5rem;
-  min-width: 0;
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
 /* Подсветка блока при перетаскивании */
 .xi-editor .ProseMirror .ProseMirror-selectednode,
 .xi-editor .ProseMirror .ProseMirror-selectednoderange {
@@ -203,7 +216,7 @@
 /* Стили для выделения текста */
 .xi-editor .ProseMirror .ProseMirror-selectednode {
   display: flex;
-  color: gray;
+  color: inherit;
 }
 
 /* --- Курсоры совместного редактирования (стиль доски / Notion) --- */

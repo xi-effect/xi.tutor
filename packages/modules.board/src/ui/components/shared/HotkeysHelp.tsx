@@ -7,6 +7,7 @@ import {
   ModalHeader,
   ModalTitle,
 } from '@xipkg/modal';
+import { modalTitleClass } from 'common.ui';
 import { isMac } from '../../../utils';
 
 const PORTAL_Z = 9999;
@@ -131,7 +132,7 @@ export const HotkeysHelpModal = ({ open, onOpenChange }: HotkeysHelpModalProps) 
       >
         <ModalHeader>
           <ModalCloseButton />
-          <ModalTitle>Горячие клавиши</ModalTitle>
+          <ModalTitle className={modalTitleClass}>Горячие клавиши</ModalTitle>
         </ModalHeader>
         <ModalBody style={{ maxHeight: 'calc(80dvh - 80px)', overflowY: 'auto', padding: 0 }}>
           <HotkeysHelpBody />

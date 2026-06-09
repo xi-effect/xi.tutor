@@ -56,7 +56,7 @@ export const AvatarEditor = ({
         </ModalCloseButton>
         <div className="rounded-4 max-h-[calc(100dvh-16px)] overflow-auto">
           <ModalHeader className="mb-6">
-            <ModalTitle className="xs:max-w-none max-w-[240px] leading-8">
+            <ModalTitle className="xs:max-w-none max-w-[240px] leading-8 text-gray-100">
               Изменение фотографии
             </ModalTitle>
           </ModalHeader>

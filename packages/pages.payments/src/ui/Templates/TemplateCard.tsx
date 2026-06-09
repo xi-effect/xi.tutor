@@ -29,10 +29,10 @@ export const TemplateCard = ({
   return (
     <div className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex cursor-pointer justify-between rounded-2xl border p-4">
       <div className="flex flex-1 flex-col gap-4 overflow-hidden">
-        <div className="text-l-base flex-1 truncate">{name}</div>
+        <div className="text-l-base flex-1 truncate text-gray-100">{name}</div>
 
         <div className="mt-auto flex flex-row items-center gap-1">
-          <span className="text-l-base truncate font-semibold">{price}</span>
+          <span className="text-l-base truncate font-semibold text-gray-100">{price}</span>
           <span className="text-s-base text-gray-60 pt-1">₽</span>
         </div>
       </div>
@@ -41,7 +41,7 @@ export const TemplateCard = ({
         <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
           <DropdownMenuTrigger asChild>
             <Button className="h-6 w-6" variant="none" size="icon">
-              <MoreVert className="h-4 w-4" />
+              <MoreVert className="fill-gray-80 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
 
@@ -50,8 +50,18 @@ export const TemplateCard = ({
             align="end"
             className="border-gray-10 bg-gray-0 border p-1"
           >
-            <DropdownMenuItem onClick={handleEditTemplate}>Редактировать</DropdownMenuItem>
-            <DropdownMenuItem onClick={handleDeleteTemplate(id)}>Удалить</DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-gray-80 hover:text-gray-100 focus:text-gray-100"
+              onClick={handleEditTemplate}
+            >
+              Редактировать
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-gray-80 hover:text-gray-100 focus:text-gray-100"
+              onClick={handleDeleteTemplate(id)}
+            >
+              Удалить
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

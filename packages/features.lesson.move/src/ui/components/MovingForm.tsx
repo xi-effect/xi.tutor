@@ -198,7 +198,7 @@ export const MovingForm: FC<MovingFormProps> = ({
                     onChange={(v) => field.onChange(v as 'single' | 'single_and_next')}
                     className={cn('bg-gray-5 flex h-8 max-w-md flex-row rounded-[10px] p-1')}
                     tabClassName={cn(
-                      'h-[26px] text-s-base font-medium text-gray-100 data-[active=true]:text-gray-0',
+                      'text-s-base h-[26px] font-medium data-[state=inactive]:text-gray-100 data-[state=inactive]:hover:text-gray-90 data-[state=active]:text-gray-0 data-[state=active]:hover:text-gray-10',
                     )}
                     indicatorClassName="rounded-lg bg-brand-100"
                   />

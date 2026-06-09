@@ -12,7 +12,7 @@ export const TiptapEditor = () => {
       <div className="flex w-full justify-center py-8">
         <div className="bg-gray-0 w-full max-w-5xl overflow-hidden rounded-lg">
           <div className="relative px-16 py-12">
-            <div className="text-center text-gray-500">Инициализация редактора...</div>
+            <div className="text-gray-60 text-center">Инициализация редактора...</div>
           </div>
         </div>
       </div>
@@ -21,7 +21,7 @@ export const TiptapEditor = () => {
 
   return (
     <div className="xi-editor relative p-4">
-      <EditorContent editor={editor} className="prose prose-gray max-w-none focus:outline-none" />
+      <EditorContent editor={editor} className="max-w-none focus:outline-none" />
       <EditorToolkit editor={editor} isReadOnly={isReadOnly} />
     </div>
   );

@@ -9,7 +9,6 @@ import {
 } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
 import { ScrollArea } from '@xipkg/scrollarea';
-import { Close } from '@xipkg/icons';
 import {
   useFetchClassrooms,
   useStudentById,
@@ -70,7 +69,7 @@ const ClassroomsList = ({
   if (isError) {
     return (
       <div className="flex items-center justify-center py-8">
-        <p className="text-red-500">Ошибка загрузки кабинетов</p>
+        <p className="text-red-60">Ошибка загрузки кабинетов</p>
       </div>
     );
   }
@@ -113,8 +112,8 @@ const ClassroomCard = ({ classroom, isSelected, onSelect }: ClassroomCardProps) 
   return (
     <div
       className={cn(
-        'hover:bg-gray-5 flex cursor-pointer items-center gap-3 rounded-2xl border p-4',
-        isSelected ? 'border-brand-100 bg-brand-0' : '',
+        'border-gray-10 hover:bg-gray-5 flex cursor-pointer items-center gap-3 rounded-2xl border p-4',
+        isSelected ? 'border-brand-80 bg-brand-0' : '',
       )}
       onClick={onSelect}
       data-umami-event="material-duplicate-select-classroom"
@@ -215,11 +214,11 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
   return (
     <Modal open={open} onOpenChange={handleClose}>
       <ModalContent className="w-full max-w-2xl max-sm:w-[calc(100vw-32px)]">
-        <ModalCloseButton className="right-2">
-          <Close className="fill-gray-80 sm:fill-gray-0" />
-        </ModalCloseButton>
+        <ModalCloseButton className="right-2" />
         <ModalHeader className="border-gray-20 border-b">
-          <ModalTitle>{getModalTitle()}</ModalTitle>
+          <ModalTitle className="max-w-[calc(100%-48px)] text-gray-100">
+            {getModalTitle()}
+          </ModalTitle>
           <ModalDescription>
             Выберите кабинет, в нём будет создана копия {getMaterialTypeLabel(false)}
           </ModalDescription>
@@ -236,20 +235,24 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
         </div>
         <ModalFooter className="border-gray-20 flex flex-col gap-4 border-t">
           <div className="w-full">
-            <p className="text-s-base text-gray-60 mb-1">Тип доступа к материалу в кабинете</p>
+            <p className="text-s-base text-gray-80 mb-1">Тип доступа к материалу в кабинете</p>
             <Select
               value={studentAccessMode}
               onValueChange={(value) => setStudentAccessMode(value as AccessModeT)}
             >
               <SelectTrigger
-                className="w-full"
+                className="w-full text-gray-100"
                 data-umami-event="material-duplicate-access-selector"
               >
-                <SelectValue placeholder="Выберите тип доступа к материалу в кабинете" />
+                <SelectValue
+                  placeholder="Выберите тип доступа к материалу в кабинете"
+                  className="data-placeholder:text-gray-40 text-gray-100"
+                />
               </SelectTrigger>
-              <SelectContent className="w-full">
+              <SelectContent className="border-gray-10 bg-gray-0 w-full">
                 <SelectItem
                   value="read_write"
+                  className="text-gray-100 focus:text-gray-100 data-highlighted:text-gray-100"
                   data-umami-event="material-duplicate-access-mode"
                   data-umami-event-mode="read_write"
                 >
@@ -257,6 +260,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
                 </SelectItem>
                 <SelectItem
                   value="read_only"
+                  className="text-gray-100 focus:text-gray-100 data-highlighted:text-gray-100"
                   data-umami-event="material-duplicate-access-mode"
                   data-umami-event-mode="read_only"
                 >
@@ -264,6 +268,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
                 </SelectItem>
                 <SelectItem
                   value="no_access"
+                  className="text-gray-100 focus:text-gray-100 data-highlighted:text-gray-100"
                   data-umami-event="material-duplicate-access-mode"
                   data-umami-event-mode="no_access"
                 >
@@ -277,16 +282,16 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
               size="m"
               onClick={handleConfirm}
               disabled={!selectedClassroomId || duplicateMaterial.isPending}
-              className="w-full sm:w-fit"
+              className="disabled:text-gray-60 w-full sm:w-fit"
               data-umami-event="material-duplicate-confirm"
             >
               {duplicateMaterial.isPending ? 'Дублирование...' : 'Дублировать'}
             </Button>
             <Button
               size="m"
-              variant="ghost"
+              variant="none"
               onClick={() => handleClose(false)}
-              className="w-full sm:w-fit"
+              className="bg-gray-5 hover:bg-gray-10 h-12 w-full text-gray-100 sm:w-fit"
               data-umami-event="material-duplicate-cancel"
             >
               Отменить

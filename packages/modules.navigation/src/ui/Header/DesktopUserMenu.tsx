@@ -52,10 +52,10 @@ export const DesktopUserMenu = ({
             userId={userId}
             size="40"
             withOutText={withOutText}
-            classNameText="text-s-base pl-1 text-left"
-            classNameLabel="text-xxs-base text-gray-60 pl-1 text-left"
+            classNameText="pl-1 text-left text-gray-100"
+            classNameLabel="pl-1 text-left text-gray-60"
           />
-          <ChevronUp className="mr-3 ml-auto h-4 w-4 rotate-x-180 text-gray-50 group-data-[state=open]:rotate-x-0" />
+          <ChevronUp className="fill-gray-60 mr-3 ml-auto h-4 w-4 rotate-x-180 group-data-[state=open]:rotate-x-0" />
         </Button>
       </DropdownMenuTrigger>
 

@@ -91,7 +91,9 @@ export const ModalInvitation = ({
       <ModalContent className="max-w-[600px]" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
-          <ModalTitle className="dark:text-gray-100">Индивидуальные приглашения</ModalTitle>
+          <ModalTitle className="max-w-[calc(100%-48px)] text-gray-100">
+            Индивидуальные приглашения
+          </ModalTitle>
         </ModalHeader>
 
         <ModalBody className="px-4 py-2">

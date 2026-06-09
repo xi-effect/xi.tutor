@@ -19,7 +19,10 @@ export const BubbleButton = ({ ariaLabel, type, isActive, children }: BubbleButt
     <Button
       onClick={toggleFormat}
       variant="none"
-      className={cn(`${isActive && 'bg-brand-0 [&_svg]:fill-brand-100'} h-6 w-6 rounded-[2px] p-1`)}
+      className={cn(
+        '[&_svg]:fill-gray-80 h-6 w-6 rounded-[2px] p-1',
+        isActive && 'bg-brand-0 [&_svg]:fill-brand-80',
+      )}
       aria-label={ariaLabel}
     >
       {children}

@@ -225,7 +225,7 @@ export const ChangeLessonModal = ({
                 type="button"
                 variant="none"
                 size="m"
-                className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 h-11 flex-1 p-0 font-medium"
+                className="bg-gray-5 hover:bg-gray-10 h-11 flex-1 p-0 font-medium text-gray-100"
                 onClick={handleClose}
                 data-umami-event="lesson-change-cancel"
               >
