@@ -6,7 +6,7 @@ export const ExtraShortcuts = Extension.create({
 
   addKeyboardShortcuts() {
     return {
-      'Mod-Shift-D': () => duplicateBlock(this.editor),
+      'Mod-Shift-C': () => duplicateBlock(this.editor),
       Delete: () => removeBlock(this.editor),
     };
   },

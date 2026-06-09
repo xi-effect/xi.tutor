@@ -110,7 +110,7 @@ export const getExtensions = (
       Collaboration.configure({
         document: ydoc,
         // Используем поле 'default' для хранения содержимого
-        // field: 'default'
+        // field: 'default',
       }),
       // Временно отключаем CollaborationCursor из-за проблем с provider.doc
       CollaborationCaret.configure({

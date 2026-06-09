@@ -21,12 +21,11 @@ function getSiblingInfo(parent: PMNode, currentIndex: number, direction: 'up' | 
 
 function getChildPos(parent: PMNode, parentStart: number, index: number): number {
   let pos = parentStart;
-  console.log('parent pos start', parentStart);
 
   for (let i = 0; i < index; i++) {
     pos += parent.child(i).nodeSize;
   }
-  console.log('pos', pos);
+
   return pos;
 }
 
@@ -67,8 +66,6 @@ export function moveBlock(
   if (!editor || !editor.isEditable) return false;
 
   const activeBlock = getCurrentBlock(editor, block);
-
-  console.log('active block moving', activeBlock);
 
   if (!activeBlock?.node) return false;
 
@@ -142,15 +139,10 @@ export function moveBlock(
     tr.scrollIntoView();
     view.dispatch(tr);
 
-    console.log('in mpve block', {
-      hasFocus: view.hasFocus(),
-      selection: view.state.selection.toJSON(),
-    });
-
     requestAnimationFrame(() => {
       view.focus();
     });
-    console.log('after dispatch', editor.state.selection instanceof NodeSelection);
+
     return true;
   } catch (err) {
     console.error('moveBlock error:', err);

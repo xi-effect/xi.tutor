@@ -96,7 +96,7 @@ export const BlockMenu = ({
           <Copy size="sm" className="size-6" />
           <span className="text-sm">Дублировать</span>
           <span className="text-xxs-base ml-auto text-gray-50">
-            {isMac ? '⌘+⇧+D' : 'Ctrl+Shift+D'}
+            {isMac ? '⌘+⇧+C' : 'Ctrl+Shift+C'}
           </span>
         </DropdownMenuItem>
 
