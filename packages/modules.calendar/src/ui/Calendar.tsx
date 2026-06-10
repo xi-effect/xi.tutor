@@ -25,20 +25,21 @@ export const CalendarModule = ({
 }: CalendarModuleProps) => {
   const isMobile = useIsMobile();
   const containerRef = useRef<HTMLDivElement>(null);
-  const { weekDays, weekStart, goToPrev, goToNext, goToWeekStart, setVisibleCount } =
+  const { weekDays, weekStart, goToPrev, goToNext, goToVisibleWindowForDate, setVisibleCount } =
     useCalendarSchedule();
   const { columnWidth, visibleCount, hasMeasured } = useKanbanColumns(
     containerRef,
     weekDays.length,
   );
+  const effectiveVisibleCount = Math.max(1, visibleCount);
   // До первого замера ResizeObserver передаём пустой массив дней, чтобы ScheduleKanban
   // не рендерил LessonCard (и не запускал useGetClassroom) до определения реального числа колонок.
   // useLayoutEffect в useKanbanColumns гарантирует, что hasMeasured=true до первого пейнта.
-  const visibleDays = hasMeasured ? weekDays.slice(0, visibleCount) : [];
+  const kanbanVisibleDays = hasMeasured ? weekDays.slice(0, effectiveVisibleCount) : [];
 
   useEffect(() => {
-    setVisibleCount(visibleCount);
-  }, [visibleCount, setVisibleCount]);
+    setVisibleCount(effectiveVisibleCount);
+  }, [effectiveVisibleCount, setVisibleCount]);
 
   if (isMobile) {
     return (
@@ -56,17 +57,17 @@ export const CalendarModule = ({
     <div className="bg-gray-5 flex h-full min-h-0 min-w-0 flex-1 flex-col pl-4">
       <CalendarHeader
         weekStart={weekStart}
-        visibleDays={visibleDays}
-        onPrev={() => goToPrev(visibleCount)}
-        onNext={() => goToNext(visibleCount)}
-        onWeekSelect={goToWeekStart}
+        visibleDayCount={effectiveVisibleCount}
+        onPrev={() => goToPrev(effectiveVisibleCount)}
+        onNext={() => goToNext(effectiveVisibleCount)}
+        onWeekSelect={(date, count) => goToVisibleWindowForDate(date, count)}
         onAddLessonClick={onAddLessonClick != null ? () => onAddLessonClick() : undefined}
         showDateTime={showDateTimeInHeader}
       />
       <div className="bg-gray-0 flex min-h-0 min-w-0 flex-1 flex-col rounded-tl-2xl pl-4">
         <div ref={containerRef} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
           <ScheduleKanban
-            visibleDays={visibleDays}
+            visibleDays={kanbanVisibleDays}
             columnWidth={columnWidth}
             onAddLessonClick={onAddLessonClick}
             onLessonReschedule={onLessonReschedule}

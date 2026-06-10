@@ -3,43 +3,41 @@ import { Button } from '@xipkg/button';
 import { DatePicker } from '@xipkg/datepicker';
 import { ArrowRight, Calendar, ArrowLeft, Plus } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
-import { addDays } from 'date-fns';
+import { addDays, startOfDay } from 'date-fns';
 import { DateTimeDisplay } from 'common.ui';
 import { formatDateRangeDisplay } from '../utils';
 
 export type CalendarWeekNavProps = {
-  /** Начало текущей недели */
+  /** Начало видимого окна расписания */
   weekStart: Date;
-  /** Видимые дни расписания (то же, что отображается в канбане) */
-  visibleDays: Date[];
+  /** Число видимых колонок канбана (1–7) */
+  visibleDayCount: number;
   onPrev: () => void;
   onNext: () => void;
-  /** Переход к выбранной в календаре неделе */
-  onWeekSelect: (date: Date) => void;
+  /** Переход к дате: выбранный день — по центру видимого окна */
+  onWeekSelect: (date: Date, visibleCount: number) => void;
 };
 
-/** Только блок «назад — диапазон дат — вперёд» (без даты/времени и без кнопки добавления) */
+/** Блок «назад — диапазон дат — вперёд» */
 export const CalendarWeekNav = ({
   weekStart,
-  visibleDays,
+  visibleDayCount,
   onPrev,
   onNext,
   onWeekSelect,
 }: CalendarWeekNavProps) => {
   const { t } = useTranslation('calendar');
 
-  const visibleCount = visibleDays.length;
-  const rangeEnd = visibleCount > 0 ? visibleDays[visibleCount - 1] : addDays(weekStart, 6);
-  const dateRangeLabel = visibleCount > 0 ? formatDateRangeDisplay(weekStart, visibleCount) : '';
+  const dayCount = Math.max(1, Math.min(7, visibleDayCount));
+  const rangeEnd = addDays(weekStart, dayCount - 1);
+  const dateRangeLabel = formatDateRangeDisplay(weekStart, dayCount);
 
   const handleRangeSelect = useCallback(
-    (range: { from?: Date; to?: Date } | undefined) => {
-      const date = range?.from ?? range?.to;
-      if (date) {
-        onWeekSelect(date);
-      }
+    (_range: { from?: Date; to?: Date } | undefined, triggerDate?: Date) => {
+      if (!triggerDate) return;
+      onWeekSelect(startOfDay(triggerDate), dayCount);
     },
-    [onWeekSelect],
+    [dayCount, onWeekSelect],
   );
 
   return (
@@ -60,6 +58,8 @@ export const CalendarWeekNav = ({
           mode: 'range',
           selected: { from: weekStart, to: rangeEnd },
           numberOfMonths: 2,
+          resetOnSelect: true,
+          required: true,
           onSelect: handleRangeSelect,
         }}
       >
@@ -88,23 +88,18 @@ export const CalendarWeekNav = ({
 };
 
 type CalendarHeaderProps = {
-  /** Начало текущей недели */
   weekStart: Date;
-  /** Видимые дни расписания (то же, что отображается в канбане) */
-  visibleDays: Date[];
+  visibleDayCount: number;
   onPrev: () => void;
   onNext: () => void;
-  /** Переход к выбранной в календаре неделе */
-  onWeekSelect: (date: Date) => void;
-  /** Открытие модалки добавления занятия; без колбэка кнопка не показывается */
+  onWeekSelect: (date: Date, visibleCount: number) => void;
   onAddLessonClick?: () => void;
-  /** Блок с текущими датой и временем слева в шапке (на вложенных экранах часто скрывают) */
   showDateTime?: boolean;
 };
 
 export const CalendarHeader = ({
   weekStart,
-  visibleDays,
+  visibleDayCount,
   onPrev,
   onNext,
   onWeekSelect,
@@ -116,7 +111,7 @@ export const CalendarHeader = ({
       {showDateTime ? <DateTimeDisplay /> : null}
       <CalendarWeekNav
         weekStart={weekStart}
-        visibleDays={visibleDays}
+        visibleDayCount={visibleDayCount}
         onPrev={onPrev}
         onNext={onNext}
         onWeekSelect={onWeekSelect}

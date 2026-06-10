@@ -62,8 +62,10 @@ function LessonCardClassroomLine({
 type LessonCardProps = {
   event: ICalendarEvent;
   isPast?: boolean;
-  /** День колонки — сегодня (рамка brand вместо hover) */
+  /** День колонки — сегодня (рамка brand-20 потолще) */
   isToday?: boolean;
+  /** Ближайшее / текущее занятие (рамка brand-80 потолще) */
+  isNearestLesson?: boolean;
   /** На всю ширину контейнера (для мобильного списка по дням) */
   fullWidth?: boolean;
   /** Скрыть строки предмета и кабинета/участника (например, в расписании внутри одного кабинета) */
@@ -73,7 +75,7 @@ type LessonCardProps = {
 };
 
 export const LessonCard = memo<LessonCardProps>(
-  ({ event, isToday, fullWidth, hideClassroomAndSubject = false, onClick }) => {
+  ({ event, isToday, isNearestLesson, fullWidth, hideClassroomAndSubject = false, onClick }) => {
     // const deleteEvent = useDeleteEvent();
 
     const { ref: cardRef, isInView } = useInView<HTMLDivElement>();
@@ -106,7 +108,8 @@ export const LessonCard = memo<LessonCardProps>(
       }
     };
 
-    const todayBorder = isToday && !event.isCancelled;
+    const nearestBorder = isNearestLesson && !event.isCancelled;
+    const todayBorder = isToday && !event.isCancelled && !nearestBorder;
 
     return (
       <div
@@ -114,7 +117,11 @@ export const LessonCard = memo<LessonCardProps>(
         className={cn(
           'relative flex w-full flex-col rounded-2xl border p-5 transition-colors duration-300',
           'group-hover:bg-[rgb(15_15_17/0.02)]',
-          todayBorder ? 'border-brand-80 bg-gray-0' : 'border-gray-10 bg-gray-0',
+          nearestBorder
+            ? 'border-brand-80 bg-gray-0 border-2'
+            : todayBorder
+              ? 'border-brand-20 bg-gray-0 border-2'
+              : 'border-gray-10 bg-gray-0 border',
           event.type === 'rest' && 'bg-gray-5 dark:bg-gray-10',
           onClick && 'cursor-pointer',
         )}

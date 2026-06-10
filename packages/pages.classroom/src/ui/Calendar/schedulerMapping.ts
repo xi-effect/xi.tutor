@@ -8,6 +8,7 @@ import type {
   ScheduleLessonRow,
 } from 'modules.calendar';
 import { resolveSchedulerStartsAt } from 'modules.calendar';
+import { startOfDay } from 'date-fns';
 
 const MS_PER_SECOND = 1000;
 const WEEKDAY_TO_BIT = [1, 2, 4, 8, 16, 32, 64] as const;
@@ -206,12 +207,13 @@ export const buildCreateClassroomEventRequest = (
 export const getScheduleQueryRange = (
   days: Date[],
 ): { happensAfter: string; happensBefore: string } => {
-  const firstDay = days[0] ?? new Date();
-  const lastDay = days[days.length - 1] ?? firstDay;
-  const happensAfter = new Date(firstDay);
+  const today = startOfDay(new Date());
+  const firstVisible = startOfDay(days[0] ?? today);
+  const lastVisible = startOfDay(days[days.length - 1] ?? firstVisible);
+  const happensAfter = new Date(Math.min(firstVisible.getTime(), today.getTime()));
   happensAfter.setHours(0, 0, 0, 0);
 
-  const happensBefore = new Date(lastDay);
+  const happensBefore = new Date(Math.max(lastVisible.getTime(), today.getTime()));
   happensBefore.setHours(23, 59, 59, 999);
 
   return {

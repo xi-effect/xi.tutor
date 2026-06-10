@@ -93,7 +93,7 @@ export const DayLessonRow = ({
       className={cn(
         'border-gray-10 relative flex min-h-[136px] shrink-0 flex-row items-stretch gap-4 overflow-hidden p-4 pb-3.5 transition-[padding] duration-200 ease-linear',
         showTutorIconColumn && 'group/day-lesson pr-14 lg:pr-4 lg:hover:pr-14',
-        isNearestLesson ? 'border-brand-80 rounded-2xl border' : 'border-b last:border-b-0',
+        isNearestLesson ? 'border-brand-80 rounded-2xl border-2' : 'border-b last:border-b-0',
       )}
     >
       <div className="flex shrink-0 flex-col">

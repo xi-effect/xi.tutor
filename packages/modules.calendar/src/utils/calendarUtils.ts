@@ -10,6 +10,16 @@ export const getWeekStartForVisibleWindow = (anchorDay: Date, visibleCount: numb
   return addDays(startOfDay(anchorDay), -(count - 1));
 };
 
+/**
+ * Начало окна из `visibleCount` дней, в котором `anchorDay` — по центру (насколько возможно).
+ * Для DatePicker: клик по 31 июля при 5 колонках → 29 июля … 2 августа.
+ */
+export const getWeekStartForCenteredDate = (anchorDay: Date, visibleCount: number): Date => {
+  const count = Math.max(1, Math.min(7, visibleCount));
+  const centerOffset = Math.floor((count - 1) / 2);
+  return addDays(startOfDay(anchorDay), -centerOffset);
+};
+
 export const isCurrentMonth = (date: Date, monthIndex: number) => {
   return date.getMonth() === monthIndex;
 };

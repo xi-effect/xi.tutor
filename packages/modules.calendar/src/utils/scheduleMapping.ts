@@ -2,6 +2,7 @@ import type { ScheduleItem } from 'common.services';
 import type { ICalendarEvent } from '../ui/types';
 import { toLocalISOString } from './dateTimezone';
 import { getScheduleItemRowKey } from './getScheduleItemRowKey';
+import { startOfDay } from 'date-fns';
 
 /**
  * Маппит ScheduleItem (из API расписания) → ICalendarEvent для отображения в календаре/виджетах.
@@ -44,15 +45,17 @@ export const mapScheduleItemsToCalendarEvents = (items: ScheduleItem[]): ICalend
 
 /**
  * Диапазон [startOfFirst, endOfLast + 1ms] в ISO для query params `happens_after` / `happens_before`.
+ * Всегда включает сегодня — нужно для корректного поиска ближайшего занятия вне видимого окна.
  */
 export const getScheduleQueryRange = (
   days: Date[],
 ): { happensAfter: string; happensBefore: string } => {
-  const firstDay = days[0] ?? new Date();
-  const lastDay = days[days.length - 1] ?? firstDay;
-  const happensAfter = new Date(firstDay);
+  const today = startOfDay(new Date());
+  const firstVisible = startOfDay(days[0] ?? today);
+  const lastVisible = startOfDay(days[days.length - 1] ?? firstVisible);
+  const happensAfter = new Date(Math.min(firstVisible.getTime(), today.getTime()));
   happensAfter.setHours(0, 0, 0, 0);
-  const happensBefore = new Date(lastDay);
+  const happensBefore = new Date(Math.max(lastVisible.getTime(), today.getTime()));
   happensBefore.setHours(23, 59, 59, 999);
   return {
     // Отправляем в timezone пользователя: бэкенд принимает timestamp с любым offset

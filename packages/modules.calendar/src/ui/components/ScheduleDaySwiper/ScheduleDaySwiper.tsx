@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { isSameDay, startOfDay } from 'date-fns';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
@@ -15,6 +15,7 @@ import {
 import { useLessonInfoModal } from '../../../hooks';
 import { useOpenLessonByInstanceWhenLoaded } from '../../../hooks/useOpenLessonByInstanceWhenLoaded';
 import { getLessonCardSkeletonCountForDay, isCurrentDay, isPastDay } from '../../../utils';
+import { findNearestVisibleCalendarEventId } from '../../../utils/findNearestLessonIndex';
 import type { ChangeLessonFormData } from 'features.lesson.change';
 import type { ICalendarEvent } from '../../types';
 
@@ -72,6 +73,11 @@ export const ScheduleDaySwiper = ({
     openLessonInfo,
     onConsumed: onOpenLessonInstanceConsumed,
   });
+
+  const nearestEventId = useMemo(() => {
+    const dayEvents = getEventsForDay(eventsByDate, selectedDate);
+    return findNearestVisibleCalendarEventId(allEvents, dayEvents, today);
+  }, [allEvents, eventsByDate, selectedDate, today]);
 
   const selectedIndex = days.findIndex((d) => isSameDay(d, selectedDate));
   const activeIndex = selectedIndex >= 0 ? selectedIndex : 0;
@@ -151,6 +157,7 @@ export const ScheduleDaySwiper = ({
                         event={event}
                         isPast={isPast}
                         isToday={isCurrentDay(day, todayStart)}
+                        isNearestLesson={event.id === nearestEventId}
                         fullWidth
                         hideClassroomAndSubject={hideLessonCardClassroomAndSubject}
                         onClick={() => openLessonInfo(event)}

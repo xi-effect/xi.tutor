@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useState } from 'react';
-import { addDays, startOfWeek } from 'date-fns';
-import { getDaysFrom, getWeekStartForVisibleWindow } from '../utils';
+import { addDays, startOfDay, startOfWeek } from 'date-fns';
+import { getDaysFrom, getWeekStartForCenteredDate, getWeekStartForVisibleWindow } from '../utils';
 
 const DEFAULT_VISIBLE_COUNT = 7;
 
@@ -62,6 +62,13 @@ export const useCalendar = (options?: UseCalendarOptions) => {
     setWeekStart(d);
   }, []);
 
+  /** Выбранная дата — по центру видимого окна (для DatePicker) */
+  const goToVisibleWindowForDate = useCallback((date: Date, visibleCount: number) => {
+    const day = startOfDay(date);
+    if (!Number.isFinite(day.getTime())) return;
+    setWeekStart(getWeekStartForCenteredDate(day, visibleCount));
+  }, []);
+
   return {
     weekDays,
     weekStart,
@@ -70,6 +77,7 @@ export const useCalendar = (options?: UseCalendarOptions) => {
     goToToday,
     goToWeekStart,
     goToDay,
+    goToVisibleWindowForDate,
     syncWeekStartForVisibleCount,
   };
 };

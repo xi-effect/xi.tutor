@@ -14,6 +14,7 @@ import {
 import { useLessonInfoModal } from '../../../hooks';
 import { useOpenLessonByInstanceWhenLoaded } from '../../../hooks/useOpenLessonByInstanceWhenLoaded';
 import { getLessonCardSkeletonCountForDay, isCurrentDay, isPastDay } from '../../../utils';
+import { findNearestVisibleCalendarEventId } from '../../../utils/findNearestLessonIndex';
 import type { ChangeLessonFormData } from 'features.lesson.change';
 import type { ICalendarEvent } from '../../types';
 import { cn } from '@xipkg/utils';
@@ -108,6 +109,10 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
   );
   const hasEvents = useMemo(() => eventsPerDay.map((e) => e.length > 0), [eventsPerDay]);
   const segments = useMemo(() => buildSegments(hasEvents), [hasEvents]);
+  const nearestEventId = useMemo(() => {
+    const visibleEvents = eventsPerDay.flat();
+    return findNearestVisibleCalendarEventId(allEvents, visibleEvents, today);
+  }, [allEvents, eventsPerDay, today]);
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
@@ -220,6 +225,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
                             event={event}
                             isPast={isPastDay(day, today)}
                             isToday={isCurrentDay(day, todayStart)}
+                            isNearestLesson={event.id === nearestEventId}
                             hideClassroomAndSubject={hideLessonCardClassroomAndSubject}
                             onClick={() => openLessonInfo(event)}
                           />

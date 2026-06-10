@@ -4,14 +4,15 @@ import type { ChangeLessonFormData, ICalendarEvent } from 'modules.calendar';
 import { useClassroomSchedule } from './ClassroomScheduleContext';
 
 export const CalendarScheduleToolbar = () => {
-  const { visibleDays, weekStart, goToPrev, goToNext, goToWeekStart } = useClassroomSchedule();
+  const { visibleDayCount, weekStart, goToPrev, goToNext, goToVisibleWindowForDate } =
+    useClassroomSchedule();
   return (
     <CalendarWeekNav
       weekStart={weekStart}
-      visibleDays={visibleDays}
-      onPrev={() => goToPrev(visibleDays.length)}
-      onNext={() => goToNext(visibleDays.length)}
-      onWeekSelect={goToWeekStart}
+      visibleDayCount={visibleDayCount}
+      onPrev={() => goToPrev(visibleDayCount)}
+      onNext={() => goToNext(visibleDayCount)}
+      onWeekSelect={goToVisibleWindowForDate}
     />
   );
 };

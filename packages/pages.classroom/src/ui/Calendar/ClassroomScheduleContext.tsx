@@ -21,10 +21,12 @@ type ClassroomScheduleContextValue = {
   weekDays: Date[];
   weekStart: Date;
   visibleDays: Date[];
+  visibleDayCount: number;
   setVisibleCount: (count: number) => void;
   goToPrev: (count: number) => void;
   goToNext: (count: number) => void;
   goToWeekStart: (date: Date) => void;
+  goToVisibleWindowForDate: (date: Date, visibleCount: number) => void;
   /** Переход к окну, начинающемуся с указанной даты — для диплинков (без округления до пн) */
   goToDay: (date: Date) => void;
   onAddLessonClick?: (date?: Date) => void;
@@ -86,6 +88,7 @@ export const ClassroomScheduleProvider = ({
     goToNext,
     goToWeekStart,
     goToDay,
+    goToVisibleWindowForDate,
     syncWeekStartForVisibleCount,
   } = useCalendar({
     initialAnchorDate,
@@ -154,15 +157,25 @@ export const ClassroomScheduleProvider = ({
     [goToWeekStart],
   );
 
+  const goToVisibleWindowForDateWithNav = useCallback(
+    (date: Date, visibleCount: number) => {
+      userHasNavigatedRef.current = true;
+      goToVisibleWindowForDate(date, visibleCount);
+    },
+    [goToVisibleWindowForDate],
+  );
+
   const value = useMemo(
     () => ({
       weekDays,
       weekStart,
       visibleDays,
+      visibleDayCount: visibleCount,
       setVisibleCount,
       goToPrev: goToPrevWithNav,
       goToNext: goToNextWithNav,
       goToWeekStart: goToWeekStartWithNav,
+      goToVisibleWindowForDate: goToVisibleWindowForDateWithNav,
       goToDay,
       onAddLessonClick,
       pendingEventToOpen: deepLink.pendingEventToOpen,
@@ -176,9 +189,11 @@ export const ClassroomScheduleProvider = ({
       weekDays,
       weekStart,
       visibleDays,
+      visibleCount,
       goToPrevWithNav,
       goToNextWithNav,
       goToWeekStartWithNav,
+      goToVisibleWindowForDateWithNav,
       goToDay,
       onAddLessonClick,
       deepLink.pendingEventToOpen,

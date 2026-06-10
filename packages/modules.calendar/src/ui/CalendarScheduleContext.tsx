@@ -15,11 +15,14 @@ type CalendarScheduleContextValue = {
   weekStart: Date;
   /** Срез weekDays по числу видимых колонок, вычисляется в CalendarModule через ResizeObserver. */
   visibleDays: Date[];
+  /** Число видимых колонок (из ResizeObserver канбана) */
+  visibleDayCount: number;
   /** Вызывается из CalendarModule при изменении числа видимых колонок. */
   setVisibleCount: (count: number) => void;
   goToPrev: (count: number) => void;
   goToNext: (count: number) => void;
   goToWeekStart: (date: Date) => void;
+  goToVisibleWindowForDate: (date: Date, visibleCount: number) => void;
 };
 
 const CalendarScheduleContext = createContext<CalendarScheduleContextValue | null>(null);
@@ -42,8 +45,15 @@ export const useCalendarSchedule = (): CalendarScheduleContextValue => {
  * страницам запрашивать данные только для отображаемого диапазона колонок.
  */
 export const CalendarScheduleProvider = ({ children }: { children: ReactNode }) => {
-  const { weekDays, weekStart, goToPrev, goToNext, goToWeekStart, syncWeekStartForVisibleCount } =
-    useCalendar();
+  const {
+    weekDays,
+    weekStart,
+    goToPrev,
+    goToNext,
+    goToWeekStart,
+    goToVisibleWindowForDate,
+    syncWeekStartForVisibleCount,
+  } = useCalendar();
   const [visibleCount, setVisibleCountState] = useState(weekDays.length);
   const userHasNavigatedRef = useRef(false);
   const visibleDays = useMemo(() => weekDays.slice(0, visibleCount), [weekDays, visibleCount]);
@@ -81,24 +91,36 @@ export const CalendarScheduleProvider = ({ children }: { children: ReactNode }) 
     [goToWeekStart],
   );
 
+  const goToVisibleWindowForDateWithNav = useCallback(
+    (date: Date, visibleCount: number) => {
+      userHasNavigatedRef.current = true;
+      goToVisibleWindowForDate(date, visibleCount);
+    },
+    [goToVisibleWindowForDate],
+  );
+
   const value = useMemo(
     () => ({
       weekDays,
       weekStart,
       visibleDays,
+      visibleDayCount: visibleCount,
       setVisibleCount,
       goToPrev: goToPrevWithNav,
       goToNext: goToNextWithNav,
       goToWeekStart: goToWeekStartWithNav,
+      goToVisibleWindowForDate: goToVisibleWindowForDateWithNav,
     }),
     [
       weekDays,
       weekStart,
       visibleDays,
+      visibleCount,
       setVisibleCount,
       goToPrevWithNav,
       goToNextWithNav,
       goToWeekStartWithNav,
+      goToVisibleWindowForDateWithNav,
     ],
   );
 
