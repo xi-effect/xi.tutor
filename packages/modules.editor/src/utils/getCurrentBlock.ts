@@ -7,9 +7,13 @@ export const getCurrentBlock = (
   activeBlock?: ActiveBlockT | null,
 ): ActiveBlockT | null => {
   if (!editor) return null;
+
+  const { state } = editor;
+
   if (activeBlock) return activeBlock;
 
-  const { selection } = editor.state;
+  // Fallback: берём из текущего selection
+  const { selection } = state;
 
   if (selection instanceof NodeSelection) {
     return {
@@ -20,16 +24,11 @@ export const getCurrentBlock = (
   }
 
   const $from = selection.$from;
-
-  for (let depth = $from.depth; depth >= 0; depth--) {
+  for (let depth = $from.depth; depth >= 1; depth--) {
     const node = $from.node(depth);
-
     if (node.isBlock) {
-      return {
-        editor,
-        node,
-        pos: depth > 0 ? $from.before(depth) : 0,
-      };
+      const blockPos = $from.start(depth) - 1;
+      return { editor, node, pos: blockPos };
     }
   }
 

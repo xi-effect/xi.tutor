@@ -26,90 +26,47 @@ const NODE_TYPES_MAP = {
   },
 };
 
-export const useBlockMenuActions = (editor: Editor | null, activeBlock?: ActiveBlockT) => {
-  const duplicate = () => {
-    if (!editor) return;
-    const currentBlock = getCurrentBlock(editor, activeBlock);
-    if (!currentBlock || !currentBlock.node) return;
-    const positionAfterActiveNode = currentBlock.pos + currentBlock.node.nodeSize;
-    const copiedNode = currentBlock.node.toJSON();
-
-    editor.chain().focus().insertContentAt(positionAfterActiveNode, copiedNode).run();
-  };
-
-  const remove = () => {
-    if (!editor || !editor.isEditable) return false;
-
-    const currentBlock = getCurrentBlock(editor, activeBlock);
-
-    if (!currentBlock || !currentBlock.node) return;
-
-    try {
-      const node = currentBlock.node;
-
-      if (!node) return;
-
-      editor
-        .chain()
-        .focus()
-        .deleteRange({
-          from: currentBlock.pos,
-          to: currentBlock.pos + node.nodeSize,
-        })
-        .run();
-    } catch (err) {
-      console.warn('Ошибка при удалении:', err);
-      return false;
-    }
-  };
-
-  const changeType = (type?: BlockTypeT) => {
-    if (!editor || !editor.isEditable || !type) return;
-    const currentBlock = getCurrentBlock(editor, activeBlock);
-
-    if (!currentBlock || !currentBlock.node) return;
-
-    const config = NODE_TYPES_MAP[type];
-
-    if (!config) return;
-
-    const nodeType = editor.schema.nodes[config.type];
-
-    if (!nodeType) return;
-
-    const currentType = currentBlock.node?.type.name || '';
-
-    if (!TEXT_BLOCKS.includes(currentType)) {
-      return;
-    }
-
-    editor.commands.command(({ tr, dispatch }) => {
-      tr.setNodeMarkup(currentBlock.pos, nodeType, config.attrs);
-
-      dispatch?.(tr);
-
-      return true;
-    });
-  };
-
+export const useBlockMenuActions = (
+  editor: Editor | null,
+  getActiveBlock?: () => ActiveBlockT | undefined,
+) => {
   const insertImage = (src: string, alt?: string) => {
     if (!editor || !editor.isEditable) return;
 
     const endPos = editor.state.doc.content.size;
-
     editor
       .chain()
       .focus()
       .insertContentAt(endPos, [
         {
           type: 'image',
-          attrs: {
-            src,
-            alt,
-          },
+          attrs: { src, alt },
         },
       ])
       .run();
+  };
+
+  const changeType = (type?: BlockTypeT) => {
+    if (!editor || !editor.isEditable || !type || !getActiveBlock) return;
+
+    const activeBlock = getActiveBlock();
+
+    if (!activeBlock || !activeBlock.node) return;
+
+    const config = NODE_TYPES_MAP[type];
+    if (!config) return;
+
+    const nodeType = editor.schema.nodes[config.type];
+    if (!nodeType) return;
+
+    const currentType = activeBlock.node?.type.name || '';
+    if (!TEXT_BLOCKS.includes(currentType)) return;
+
+    editor.commands.command(({ tr, dispatch }) => {
+      tr.setNodeMarkup(activeBlock.pos, nodeType, config.attrs);
+      dispatch?.(tr);
+      return true;
+    });
   };
 
   const downloadImage = (src: string) => {
@@ -120,8 +77,30 @@ export const useBlockMenuActions = (editor: Editor | null, activeBlock?: ActiveB
     link.click();
   };
 
-  const moveUp = () => moveBlock(editor, 'up', activeBlock);
-  const moveDown = () => moveBlock(editor, 'down', activeBlock);
+  // В момент вызова получаем свежую позицию
+  const moveUp = () => {
+    if (!getActiveBlock) return;
+    const activeBlock = getActiveBlock();
+    return moveBlock(editor, 'up', activeBlock);
+  };
+
+  const moveDown = () => {
+    if (!getActiveBlock) return;
+    const activeBlock = getActiveBlock();
+    return moveBlock(editor, 'down', activeBlock);
+  };
+
+  const duplicate = () => {
+    if (!getActiveBlock) return;
+    const activeBlock = getActiveBlock();
+    return duplicateBlock(editor, activeBlock);
+  };
+
+  const remove = () => {
+    if (!getActiveBlock) return;
+    const activeBlock = getActiveBlock();
+    return removeBlock(editor, activeBlock);
+  };
 
   return {
     duplicate,
@@ -133,3 +112,38 @@ export const useBlockMenuActions = (editor: Editor | null, activeBlock?: ActiveB
     moveUp,
   };
 };
+
+export function duplicateBlock(editor: Editor | null, activeBlock?: ActiveBlockT): boolean {
+  if (!editor) return false;
+
+  const currentBlock = getCurrentBlock(editor, activeBlock);
+  if (!currentBlock || !currentBlock.node) return false;
+
+  const positionAfterActiveNode = currentBlock.pos + currentBlock.node.nodeSize;
+  const copiedNode = currentBlock.node.toJSON();
+
+  editor.chain().focus().insertContentAt(positionAfterActiveNode, copiedNode).run();
+  return true;
+}
+
+export function removeBlock(editor: Editor | null, activeBlock?: ActiveBlockT): boolean {
+  if (!editor || !editor.isEditable) return false;
+
+  const currentBlock = getCurrentBlock(editor, activeBlock);
+  if (!currentBlock || !currentBlock.node) return false;
+
+  try {
+    editor
+      .chain()
+      .focus()
+      .deleteRange({
+        from: currentBlock.pos,
+        to: currentBlock.pos + currentBlock.node.nodeSize,
+      })
+      .run();
+    return true;
+  } catch (err) {
+    console.warn('Ошибка при удалении:', err);
+    return false;
+  }
+}
