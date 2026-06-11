@@ -10,6 +10,7 @@ import { TaskList, TaskItem } from '@tiptap/extension-list';
 import { UniqueID } from '@tiptap/extension-unique-id';
 import * as Y from 'yjs';
 import { CustomImage, MoveBlockKeyboard, NormalizeSelection } from '../extensions';
+import { ExtraShortcuts } from '../extensions/extra-keyboard-shortcuts';
 
 /** Курсор в стиле доски: вертикальная линия + шильдик с именем */
 function collaborationCaretRender(user: { name?: string; color?: string }): HTMLElement {
@@ -65,7 +66,7 @@ export const getExtensions = (
         color: '#3b82f6',
       },
     }),
-    CustomImage.configure({ inline: false }),
+    CustomImage,
     Underline,
     TextAlign.configure({
       types: ['heading', 'paragraph'],
@@ -92,6 +93,7 @@ export const getExtensions = (
     }),
     MoveBlockKeyboard,
     NormalizeSelection,
+    ExtraShortcuts,
   ];
 
   if (!provider || !ydoc) {
@@ -108,7 +110,7 @@ export const getExtensions = (
       Collaboration.configure({
         document: ydoc,
         // Используем поле 'default' для хранения содержимого
-        // field: 'default'
+        // field: 'default',
       }),
       // Временно отключаем CollaborationCursor из-за проблем с provider.doc
       CollaborationCaret.configure({

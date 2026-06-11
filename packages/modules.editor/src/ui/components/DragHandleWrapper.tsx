@@ -4,7 +4,7 @@ import { Move, Close, Plus } from '@xipkg/icons';
 import DragHandle from '@tiptap/extension-drag-handle-react';
 import { Button } from '@xipkg/button';
 import { BlockMenu } from './BlockMenu';
-import { useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { ActiveBlockT } from '../../types';
 
 type DragHandleWrapperPropsT = {
@@ -20,15 +20,54 @@ export const DragHandleWrapper = ({
   onDragEnd,
   isReadOnly,
 }: DragHandleWrapperPropsT) => {
-  const [activeBlock, setActiveBlock] = useState<ActiveBlockT>();
+  const activeBlockRef = useRef<{ pos: number; id: string | null } | null>(null);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const handleNodeChange = (data: ActiveBlockT) => {
-    if (menuOpen) return;
-    if (editor.isActive('image')) return;
+  const handleNodeChange = useCallback((data: ActiveBlockT) => {
+    if (!data?.node || data?.pos === null) return;
 
-    setActiveBlock(data);
-  };
+    const id = data.node.attrs?.['data-uid'] ?? data.node.attrs?.id ?? null;
+
+    activeBlockRef.current = { pos: data.pos, id };
+  }, []);
+
+  const getActiveBlock = useCallback((): ActiveBlockT | undefined => {
+    if (!activeBlockRef.current || !editor) return;
+
+    const { pos, id } = activeBlockRef.current;
+
+    try {
+      const { doc } = editor.state;
+
+      // Сначала пробуем найти по id (надёжно при Yjs-синке)
+      if (id) {
+        let found: ActiveBlockT | undefined;
+        doc.descendants((node, nodePos) => {
+          if (found) return false;
+          const nodeId = node.attrs?.['data-uid'] ?? node.attrs?.id;
+          if (nodeId === id && node.isBlock) {
+            found = { editor, node, pos: nodePos };
+            return false;
+          }
+          return true;
+        });
+        if (found) return found;
+      }
+
+      // Fallback: проверяем позицию
+      if (pos >= 0 && pos < doc.content.size) {
+        const node = doc.nodeAt(pos);
+
+        if (node?.isBlock) {
+          return { editor, node, pos };
+        }
+      }
+    } catch (error) {
+      console.warn('getActiveBlock error:', error);
+    }
+
+    return undefined;
+  }, [editor]);
 
   return (
     <DragHandle
@@ -49,7 +88,7 @@ export const DragHandleWrapper = ({
           isReadOnly={isReadOnly}
           open={menuOpen}
           setOpen={setMenuOpen}
-          activeBlock={activeBlock}
+          getActiveBlock={getActiveBlock}
         >
           <Button
             className="hover:bg-gray-5 active:bg-gray-5 group h-5 w-5 rounded p-0"
