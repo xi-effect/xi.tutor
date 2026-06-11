@@ -99,7 +99,7 @@ export const PersonalData = () => {
             </div>
           </div>
           <div className="mt-8">
-            <Button type="submit" size="l">
+            <Button type="submit" size="m">
               Сохранить
             </Button>
           </div>
