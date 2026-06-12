@@ -5,7 +5,12 @@ import react from '@vitejs/plugin-react';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import tailwindcss from '@tailwindcss/vite';
 import { VitePWA } from 'vite-plugin-pwa';
-import { CALLS_RUNTIME_DEPS, callsLocalDevConfig, readCallsDepsMode } from './vite.calls-local';
+import {
+  CALLS_PACKAGES,
+  CALLS_RUNTIME_DEPS,
+  callsLocalDevConfig,
+  readCallsDepsMode,
+} from './vite.calls-local';
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -14,8 +19,8 @@ export default defineConfig(({ mode }: ConfigEnv) => {
   const callsDepsMode = readCallsDepsMode(appDir);
   const useCallsLink = mode === 'development' && callsDepsMode === 'link';
 
-  const importConditions = ['import', 'module', 'browser', 'default'] as const;
-  const resolveConditions = useCallsLink ? (['development', 'import'] as const) : importConditions;
+  const importConditions: string[] = ['import', 'module', 'browser', 'default'];
+  const resolveConditions: string[] = useCallsLink ? ['development', 'import'] : importConditions;
 
   const config = {
     plugins: [
@@ -93,7 +98,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       esbuildOptions: {
         target: 'es2020',
         conditions: useCallsLink
-          ? (['development', 'import', 'module', 'browser', 'default'] as const)
+          ? ['development', 'import', 'module', 'browser', 'default']
           : importConditions,
       },
       include: [
@@ -130,6 +135,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         'livekit-client',
         '@livekit/components-react',
         '@livekit/components-core',
+        ...CALLS_PACKAGES,
       ],
     },
     css: {
