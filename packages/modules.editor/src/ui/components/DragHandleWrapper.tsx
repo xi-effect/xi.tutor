@@ -26,7 +26,7 @@ export const DragHandleWrapper = ({
   const handleNodeChange = useCallback((data: ActiveBlockT) => {
     if (!data?.node || data?.pos === null) return;
 
-    const id = data.node.attrs?.['data-uid'] ?? data.node.attrs?.id ?? null;
+    const id = data.node.attrs?.['id'] ?? data.node.attrs?.id ?? null;
 
     activeBlockRef.current = { pos: data.pos, id };
   }, []);
@@ -38,15 +38,17 @@ export const DragHandleWrapper = ({
 
     try {
       const { doc } = editor.state;
+      console.log('in wrapper', id);
 
       // Сначала пробуем найти по id (надёжно при Yjs-синке)
       if (id) {
         let found: ActiveBlockT | undefined;
         doc.descendants((node, nodePos) => {
           if (found) return false;
-          const nodeId = node.attrs?.['data-uid'] ?? node.attrs?.id;
+          const nodeId = node.attrs?.['id'] ?? node.attrs?.id;
           if (nodeId === id && node.isBlock) {
             found = { editor, node, pos: nodePos };
+            console.log(nodePos);
             return false;
           }
           return true;
