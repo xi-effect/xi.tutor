@@ -1,3 +1,5 @@
+import { cn } from '@xipkg/utils';
+
 /** Семантические классы UI доски — следуют data-theme на html через @xipkg/tailwind */
 export const boardPanelClass = 'bg-gray-0 border-gray-10 border rounded-xl lg:rounded-2xl';
 
@@ -13,6 +15,19 @@ export const boardMenuItemClass =
 /** CheckboxItem в @xipkg/dropdown рендерит lucide Check (stroke), не fill-иконки @xipkg/icons */
 export const boardMenuCheckboxItemClass =
   'text-gray-80 hover:text-gray-100 focus:text-gray-100 [&_svg]:fill-none [&_svg]:stroke-current';
+
+/**
+ * SubTrigger: слева fill-иконки @xipkg/icons, справа lucide ChevronRight (stroke).
+ * boardMenuItemClass с [&_svg]:fill ломает стрелку и сбивает выравнивание в тёмной теме.
+ */
+export const boardMenuSubTriggerClass = cn(
+  boardMenuItemClass,
+  'flex items-center gap-2 p-1',
+  '[&>svg:last-child]:!fill-none [&>svg:last-child]:shrink-0 [&>svg:last-child]:self-center [&>svg:last-child]:stroke-gray-80',
+  'hover:[&>svg:last-child]:!fill-none hover:[&>svg:last-child]:stroke-gray-100',
+  'focus:[&>svg:last-child]:!fill-none focus:[&>svg:last-child]:stroke-gray-100',
+  'data-[state=open]:[&>svg:last-child]:!fill-none data-[state=open]:[&>svg:last-child]:stroke-brand-80',
+);
 
 export const boardIconClass = 'fill-gray-100';
 

@@ -37,6 +37,7 @@ import { areAllEraserCategoriesEnabled } from '../../../utils/areAllEraserCatego
 import {
   boardMenuCheckboxItemClass,
   boardMenuItemClass,
+  boardMenuSubTriggerClass,
   boardMenuSurfaceClass,
 } from '../../boardTheme';
 
@@ -228,7 +229,7 @@ export const SettingsDropdown = () => {
             </DropdownMenuItem>
             {editor && (
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger className={cn(boardMenuItemClass, 'flex gap-2 p-1')}>
+                <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
                   <Pen />
                   <span>Режим ввода</span>
                 </DropdownMenuSubTrigger>
@@ -292,7 +293,7 @@ export const SettingsDropdown = () => {
 
             {isTutor && !isReadonly && (
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger className={cn(boardMenuItemClass, 'flex gap-2 p-1')}>
+                <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
                   <Locked />
                   <span>Заблокировать элементы</span>
                 </DropdownMenuSubTrigger>
@@ -325,7 +326,7 @@ export const SettingsDropdown = () => {
 
             {isTutor && !isReadonly && (
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger className={cn(boardMenuItemClass, 'flex gap-2 p-1')}>
+                <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
                   <Unlocked />
                   <span>Разблокировать элементы</span>
                 </DropdownMenuSubTrigger>
@@ -358,7 +359,7 @@ export const SettingsDropdown = () => {
 
             {isTutor && !isReadonly && (
               <DropdownMenuSub>
-                <DropdownMenuSubTrigger className={cn(boardMenuItemClass, 'flex gap-2 p-1')}>
+                <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
                   <Eraser />
                   <span>Ластик</span>
                 </DropdownMenuSubTrigger>
