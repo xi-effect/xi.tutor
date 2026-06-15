@@ -10,6 +10,17 @@ import { schedulerQueryKeys } from '../scheduler';
 
 const CUSTOM_NOTIFICATION_CONTENT_MAX_LENGTH = 80;
 
+const isDevEnv = (): boolean =>
+  (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') ||
+  (typeof import.meta !== 'undefined' &&
+    Boolean((import.meta as { env?: { DEV?: boolean } }).env?.DEV));
+
+const warnIncompleteNotificationPayload = (kind: string, reason: string): void => {
+  if (isDevEnv()) {
+    console.warn(`[notifications] incomplete payload for kind "${kind}": ${reason}`);
+  }
+};
+
 const truncateText = (text: string, maxLength: number): string => {
   if (typeof text !== 'string') return '';
   if (text.length <= maxLength) return text;
@@ -89,8 +100,61 @@ const buildClassroomEventInstanceAction: NotificationActionFn = (payload) => {
   const classroomId = normalizeNotificationClassroomId(payload);
   const eventInstanceId =
     'event_instance_id' in payload ? String(payload.event_instance_id).trim() : '';
-  if (classroomId == null || !eventInstanceId) return null;
+  if (classroomId == null) {
+    warnIncompleteNotificationPayload(payload.kind, 'missing classroom_id');
+    return null;
+  }
+  if (!eventInstanceId) {
+    warnIncompleteNotificationPayload(payload.kind, 'missing event_instance_id');
+    return null;
+  }
   const q = new URLSearchParams({ tab: 'schedule', event_instance_id: eventInstanceId });
+  return `/classrooms/${classroomId}?${q.toString()}`;
+};
+
+const readRepetitionModeId = (payload: NotificationT['payload']): string => {
+  if (payload == null || typeof payload !== 'object' || !('repetition_mode_id' in payload)) {
+    return '';
+  }
+  return String(payload.repetition_mode_id).trim();
+};
+
+const readInstanceIndex = (payload: NotificationT['payload']): number | null => {
+  if (payload == null || typeof payload !== 'object' || !('instance_index' in payload)) {
+    return null;
+  }
+  const value = payload.instance_index;
+  if (typeof value === 'number' && Number.isFinite(value)) return value;
+  if (typeof value === 'string' && value.trim().length > 0) {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
+};
+
+export const buildClassroomRepeatedEventInstanceAction: NotificationActionFn = (payload) => {
+  const classroomId = normalizeNotificationClassroomId(payload);
+  const repetitionModeId = readRepetitionModeId(payload);
+  const instanceIndex = readInstanceIndex(payload);
+
+  if (classroomId == null) {
+    warnIncompleteNotificationPayload(payload.kind, 'missing classroom_id');
+    return null;
+  }
+  if (!repetitionModeId) {
+    warnIncompleteNotificationPayload(payload.kind, 'missing repetition_mode_id');
+    return null;
+  }
+  if (instanceIndex == null) {
+    warnIncompleteNotificationPayload(payload.kind, 'missing instance_index');
+    return null;
+  }
+
+  const q = new URLSearchParams({
+    tab: 'schedule',
+    repetition_mode_id: repetitionModeId,
+    instance_index: String(instanceIndex),
+  });
   return `/classrooms/${classroomId}?${q.toString()}`;
 };
 
@@ -170,6 +234,22 @@ export const notificationConfigs: Record<string, NotificationConfig> = {
     title: 'Занятие отменено',
     description: () => 'Изменение касается только этого занятия. Нажмите, чтобы узнать подробности',
     action: buildClassroomEventInstanceAction,
+    invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
+    onNotify: (payload) => scheduleOnNotify(payload, { includeInstanceDetails: true }),
+  },
+
+  persisted_classroom_event_instance_reminder_v1: {
+    title: 'Занятие скоро начнётся',
+    description: () => 'Нажмите, чтобы узнать подробности',
+    action: buildClassroomEventInstanceAction,
+    invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
+    onNotify: (payload) => scheduleOnNotify(payload, { includeInstanceDetails: true }),
+  },
+
+  repeated_classroom_event_instance_reminder_v1: {
+    title: 'Занятие скоро начнётся',
+    description: () => 'Нажмите, чтобы узнать подробности',
+    action: buildClassroomRepeatedEventInstanceAction,
     invalidationKeys: [ClassroomsQueryKey.GetClassrooms, StudentQueryKey.Classrooms],
     onNotify: (payload) => scheduleOnNotify(payload, { includeInstanceDetails: true }),
   },

@@ -5,7 +5,9 @@ import { useNavigate, useParams } from '@tanstack/react-router';
 import type { ICalendarEvent } from 'modules.calendar';
 import {
   getStudentEventInstanceDetails,
+  getStudentRepeatedEventInstanceDetails,
   getTutorEventInstanceDetails,
+  getTutorRepeatedEventInstanceDetails,
   readInstanceIsCancelled,
   readInstanceStartsAt,
   schedulerQueryKeys,
@@ -18,6 +20,8 @@ import { mapInstanceDetailsToCalendarEvent } from './schedulerMapping';
 export function parseScheduleAnchorFromSearch(search: {
   focused_at?: string;
   event_instance_id?: string;
+  repetition_mode_id?: string;
+  instance_index?: string | number;
 }): Date | null {
   const focusedAt =
     typeof search.focused_at === 'string' && search.focused_at.trim().length > 0
@@ -54,24 +58,50 @@ export function useClassroomScheduleDeepLink() {
 
   const focusedAtRaw = search.focused_at;
   const urlEventInstanceId = search.event_instance_id;
+  const urlRepetitionModeId = search.repetition_mode_id;
+  const urlInstanceIndexRaw = search.instance_index;
+  const parsedInstanceIndex =
+    urlInstanceIndexRaw != null && String(urlInstanceIndexRaw).trim().length > 0
+      ? Number(urlInstanceIndexRaw)
+      : null;
+  const urlInstanceIndex =
+    parsedInstanceIndex != null && Number.isFinite(parsedInstanceIndex)
+      ? parsedInstanceIndex
+      : null;
   const scheduleDlToken = search.schedule_dl;
 
   // Сохраняем параметры в рефах — они переживают очистку URL
   const instanceIdRef = useRef<string | null>(null);
   const focusedAtRef = useRef<string | null>(null);
+  const repetitionModeIdRef = useRef<string | null>(null);
+  const instanceIndexRef = useRef<number | null>(null);
 
   if (urlEventInstanceId != null) {
     instanceIdRef.current = urlEventInstanceId;
-  } else if (focusedAtRaw != null) {
+  } else if (focusedAtRaw != null || urlRepetitionModeId != null) {
     instanceIdRef.current = null;
   }
   if (focusedAtRaw != null) focusedAtRef.current = focusedAtRaw;
+  if (urlRepetitionModeId != null) {
+    repetitionModeIdRef.current = urlRepetitionModeId;
+    instanceIdRef.current = null;
+    focusedAtRef.current = null;
+  }
+  if (urlInstanceIndex != null) instanceIndexRef.current = urlInstanceIndex;
 
   const activeInstanceId =
     urlEventInstanceId ??
-    (focusedAtRaw != null || focusedAtRef.current != null ? null : instanceIdRef.current);
+    (focusedAtRaw != null ||
+    focusedAtRef.current != null ||
+    urlRepetitionModeId != null ||
+    repetitionModeIdRef.current != null
+      ? null
+      : instanceIdRef.current);
   const activeFocusedAt = focusedAtRaw ?? focusedAtRef.current;
-  const hasDeeplink = activeInstanceId != null || activeFocusedAt != null;
+  const activeRepetitionModeId = urlRepetitionModeId ?? repetitionModeIdRef.current;
+  const activeInstanceIndex = urlInstanceIndex ?? instanceIndexRef.current;
+  const hasRepeatedDeeplink = activeRepetitionModeId != null && activeInstanceIndex != null;
+  const hasDeeplink = activeInstanceId != null || activeFocusedAt != null || hasRepeatedDeeplink;
 
   const [pendingEventToOpen, setPendingEventToOpen] = useState<ICalendarEvent | null>(null);
   const [pendingAnchorDate, setPendingAnchorDate] = useState<Date | null>(null);
@@ -79,6 +109,7 @@ export function useClassroomScheduleDeepLink() {
   const [mobileScheduleAnchorTs, setMobileScheduleAnchorTs] = useState<number | null>(null);
 
   const lastProcessedInstanceDeeplinkRef = useRef<string | null>(null);
+  const lastProcessedRepeatedDeeplinkRef = useRef<string | null>(null);
   const lastFocusedAtRef = useRef<string | null>(null);
   const queryClient = useQueryClient();
   const stripScheduledRef = useRef(false);
@@ -91,8 +122,11 @@ export function useClassroomScheduleDeepLink() {
     if (lastScheduleDlRef.current === scheduleDlToken) return;
     lastScheduleDlRef.current = scheduleDlToken;
     lastProcessedInstanceDeeplinkRef.current = null;
+    lastProcessedRepeatedDeeplinkRef.current = null;
     lastFocusedAtRef.current = null;
     instanceIdRef.current = null;
+    repetitionModeIdRef.current = null;
+    instanceIndexRef.current = null;
     stripScheduledRef.current = false;
   }, [scheduleDlToken]);
 
@@ -104,6 +138,8 @@ export function useClassroomScheduleDeepLink() {
         const next = { ...prev };
         delete next.event_instance_id;
         delete next.focused_at;
+        delete next.repetition_mode_id;
+        delete next.instance_index;
         delete next.schedule_dl;
         return next;
       },
@@ -123,7 +159,10 @@ export function useClassroomScheduleDeepLink() {
     setMobileScheduleAnchorTs(null);
     instanceIdRef.current = null;
     focusedAtRef.current = null;
+    repetitionModeIdRef.current = null;
+    instanceIndexRef.current = null;
     lastProcessedInstanceDeeplinkRef.current = null;
+    lastProcessedRepeatedDeeplinkRef.current = null;
     stripScheduledRef.current = false;
   }, []);
 
@@ -135,7 +174,10 @@ export function useClassroomScheduleDeepLink() {
     }
     setPendingEventToOpen(null);
     instanceIdRef.current = null;
+    repetitionModeIdRef.current = null;
+    instanceIndexRef.current = null;
     lastProcessedInstanceDeeplinkRef.current = null;
+    lastProcessedRepeatedDeeplinkRef.current = null;
     stripScheduledRef.current = false;
   }, [stripParams]);
 
@@ -162,9 +204,10 @@ export function useClassroomScheduleDeepLink() {
     });
   }, [hasDeeplink, isScheduleTab, navigate, classroomIdParam]);
 
-  // focused_at: только дата в расписании (layout — до paint; без event_instance_id в URL)
+  // focused_at: только дата в расписании (layout — до paint; без event_instance_id / repeated в URL)
   useLayoutEffect(() => {
     if (urlEventInstanceId != null || activeInstanceId != null) return;
+    if (urlRepetitionModeId != null || activeRepetitionModeId != null) return;
 
     const focusedAt = focusedAtRaw ?? focusedAtRef.current;
     if (!focusedAt) return;
@@ -185,10 +228,20 @@ export function useClassroomScheduleDeepLink() {
     setMobileScheduleAnchorTs(d.getTime());
     setPendingAnchorToken((t) => t + 1);
     scheduleStrip();
-  }, [focusedAtRaw, urlEventInstanceId, activeInstanceId, scheduleDlToken, scheduleStrip]);
+  }, [
+    focusedAtRaw,
+    urlEventInstanceId,
+    activeInstanceId,
+    urlRepetitionModeId,
+    activeRepetitionModeId,
+    scheduleDlToken,
+    scheduleStrip,
+  ]);
 
   // event_instance_id: свежие детали с API (без устаревшего кэша) → дата; модалка только если не отменено
   useEffect(() => {
+    if (urlRepetitionModeId != null || repetitionModeIdRef.current != null) return;
+
     const instanceId = urlEventInstanceId ?? instanceIdRef.current;
     if (instanceId == null || !layoutReady || classroomId <= 0 || isTutorUser == null) return;
 
@@ -262,6 +315,111 @@ export function useClassroomScheduleDeepLink() {
     };
   }, [
     urlEventInstanceId,
+    urlRepetitionModeId,
+    scheduleDlToken,
+    layoutReady,
+    classroomId,
+    isTutorUser,
+    queryClient,
+    scheduleStrip,
+  ]);
+
+  // repetition_mode_id + instance_index: детали виртуального инстанса серии
+  useEffect(() => {
+    const repetitionModeId = urlRepetitionModeId ?? repetitionModeIdRef.current;
+    const instanceIndex = urlInstanceIndex ?? instanceIndexRef.current;
+    if (repetitionModeId == null || instanceIndex == null || !layoutReady || classroomId <= 0) {
+      return;
+    }
+    if (isTutorUser == null) return;
+
+    const deeplinkKey = scheduleDlToken ?? `rep:${repetitionModeId}:${instanceIndex}`;
+    if (lastProcessedRepeatedDeeplinkRef.current === deeplinkKey) return;
+
+    let aborted = false;
+
+    void (async () => {
+      const detailsKey = isTutorUser
+        ? schedulerQueryKeys.tutorRepeatedEventInstanceDetails(
+            classroomId,
+            repetitionModeId,
+            instanceIndex,
+          )
+        : schedulerQueryKeys.studentRepeatedEventInstanceDetails(
+            classroomId,
+            repetitionModeId,
+            instanceIndex,
+          );
+
+      await queryClient.invalidateQueries({ queryKey: detailsKey });
+      await queryClient.invalidateQueries({
+        queryKey: schedulerQueryKeys.tutorAllForClassroom(classroomId),
+      });
+      await queryClient.invalidateQueries({
+        queryKey: schedulerQueryKeys.studentAllForClassroom(classroomId),
+      });
+      await queryClient.invalidateQueries({ queryKey: schedulerQueryKeys.tutorScheduleAll() });
+      await queryClient.invalidateQueries({ queryKey: schedulerQueryKeys.studentScheduleAll() });
+
+      try {
+        const data = await queryClient.fetchQuery({
+          queryKey: detailsKey,
+          queryFn: () =>
+            isTutorUser
+              ? getTutorRepeatedEventInstanceDetails({
+                  classroomId,
+                  repetitionModeId,
+                  instanceIndex,
+                })
+              : getStudentRepeatedEventInstanceDetails({
+                  classroomId,
+                  repetitionModeId,
+                  instanceIndex,
+                }),
+        });
+
+        if (aborted) return;
+
+        lastProcessedRepeatedDeeplinkRef.current = deeplinkKey;
+
+        const startAt = readInstanceStartsAt(data);
+        const anchor =
+          startAt != null && Number.isFinite(startAt.getTime()) ? startOfDay(startAt) : null;
+
+        if (readInstanceIsCancelled(data)) {
+          setPendingEventToOpen(null);
+          if (anchor != null) {
+            setPendingAnchorDate(anchor);
+            setMobileScheduleAnchorTs(anchor.getTime());
+            setPendingAnchorToken((t) => t + 1);
+          }
+          scheduleStrip();
+          return;
+        }
+
+        const event = mapInstanceDetailsToCalendarEvent(data, classroomId);
+        const fallbackStart = anchor ?? startOfDay(new Date(event.start));
+
+        setPendingEventToOpen(event);
+        if (Number.isFinite(fallbackStart.getTime())) {
+          setPendingAnchorDate(fallbackStart);
+          setMobileScheduleAnchorTs(fallbackStart.getTime());
+          setPendingAnchorToken((t) => t + 1);
+        }
+      } catch {
+        if (!aborted) {
+          lastProcessedRepeatedDeeplinkRef.current = deeplinkKey;
+          scheduleStrip();
+        }
+      }
+    })();
+
+    return () => {
+      aborted = true;
+    };
+  }, [
+    urlRepetitionModeId,
+    urlInstanceIndex,
     scheduleDlToken,
     layoutReady,
     classroomId,

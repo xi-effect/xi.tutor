@@ -43,5 +43,7 @@ declare module '@tanstack/react-router' {
     focused_at?: string;
     schedule_dl?: string;
     event_instance_id?: string;
+    repetition_mode_id?: string;
+    instance_index?: string;
   }
 }

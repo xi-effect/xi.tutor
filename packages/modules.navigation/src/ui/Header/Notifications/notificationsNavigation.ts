@@ -27,16 +27,28 @@ const navigateToNotification = (
         ...nextSearch,
       };
 
-      // Взаимоисключающие диплинки — иначе остаётся старый event_instance_id и открывается модалка
+      // Взаимоисключающие диплинки — иначе остаётся старый параметр и открывается не то занятие
       if (nextSearch.focused_at != null) {
         delete merged.event_instance_id;
+        delete merged.repetition_mode_id;
+        delete merged.instance_index;
       }
       if (nextSearch.event_instance_id != null) {
         delete merged.focused_at;
+        delete merged.repetition_mode_id;
+        delete merged.instance_index;
+      }
+      if (nextSearch.repetition_mode_id != null || nextSearch.instance_index != null) {
+        delete merged.focused_at;
+        delete merged.event_instance_id;
       }
 
       // Повторный клик на той же странице (только внутренний токен, сразу снимается после обработки)
-      if (merged.focused_at != null || merged.event_instance_id != null) {
+      if (
+        merged.focused_at != null ||
+        merged.event_instance_id != null ||
+        merged.repetition_mode_id != null
+      ) {
         merged.schedule_dl = String(Date.now());
       }
 
