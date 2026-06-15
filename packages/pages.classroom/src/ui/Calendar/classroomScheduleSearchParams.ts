@@ -1,6 +1,12 @@
 import type { ClassroomScheduleSearchParams } from './useClassroomScheduleSearch';
 
-const DEEPLINK_KEYS = ['focused_at', 'event_instance_id', 'schedule_dl'] as const;
+const DEEPLINK_KEYS = [
+  'focused_at',
+  'event_instance_id',
+  'repetition_mode_id',
+  'instance_index',
+  'schedule_dl',
+] as const;
 
 function readHrefParam(key: string): string | undefined {
   if (typeof window === 'undefined') return undefined;
@@ -37,6 +43,8 @@ export function mergeClassroomScheduleSearch(
     tab: read('tab'),
     focused_at: read('focused_at'),
     event_instance_id: read('event_instance_id'),
+    repetition_mode_id: read('repetition_mode_id'),
+    instance_index: read('instance_index'),
     schedule_dl: read('schedule_dl'),
   };
 }

@@ -92,7 +92,8 @@ export const ClassroomScheduleProvider = ({
     syncWeekStartForVisibleCount,
   } = useCalendar({
     initialAnchorDate,
-    initialAnchorUseDay: hasInitialAnchor && search.event_instance_id == null,
+    initialAnchorUseDay:
+      hasInitialAnchor && search.event_instance_id == null && search.repetition_mode_id == null,
   });
   const [visibleCount, setVisibleCountState] = useState(weekDays.length);
   const userHasNavigatedRef = useRef(hasInitialAnchor);

@@ -12,16 +12,28 @@ export type NotificationsSettingsT = {
   };
 };
 
-/** Инстанс занятия: одноразовое создание / перенос / отмена конкретного занятия */
+/** Инстанс занятия: одноразовое создание / перенос / отмена / напоминание о конкретном занятии */
 export type ClassroomEventInstanceNotificationKind =
   | 'single_classroom_event_created_v1'
   | 'classroom_event_instance_rescheduled_v1'
-  | 'classroom_event_instance_cancelled_v1';
+  | 'classroom_event_instance_cancelled_v1'
+  | 'persisted_classroom_event_instance_reminder_v1';
 
 export type ClassroomEventInstanceNotificationPayload = {
   kind: ClassroomEventInstanceNotificationKind;
   classroom_id: number;
   event_instance_id: string;
+};
+
+/** Повторяющийся виртуальный инстанс: напоминание о конкретном занятии серии */
+export type ClassroomRepeatedEventInstanceNotificationKind =
+  'repeated_classroom_event_instance_reminder_v1';
+
+export type ClassroomRepeatedEventInstanceNotificationPayload = {
+  kind: ClassroomRepeatedEventInstanceNotificationKind;
+  classroom_id: number;
+  repetition_mode_id: string;
+  instance_index: number;
 };
 
 /** Расписание / повторение: фокус на дате, без привязки к одному инстансу */
@@ -61,19 +73,23 @@ export type NotificationKind =
   | 'recipient_invoice_created_v1'
   | 'student_recipient_invoice_payment_confirmed_v1'
   | ClassroomEventInstanceNotificationKind
+  | ClassroomRepeatedEventInstanceNotificationKind
   | ClassroomScheduleFocusNotificationKind;
 
 /** Остальные payload с прежней гибкой формой полей */
 export type NotificationLegacyPayload = {
   kind: Exclude<
     NotificationKind,
-    ClassroomEventInstanceNotificationKind | ClassroomScheduleFocusNotificationKind
+    | ClassroomEventInstanceNotificationKind
+    | ClassroomRepeatedEventInstanceNotificationKind
+    | ClassroomScheduleFocusNotificationKind
   >;
   [key: string]: any;
 };
 
 export type NotificationPayload =
   | ClassroomEventInstanceNotificationPayload
+  | ClassroomRepeatedEventInstanceNotificationPayload
   | ClassroomScheduleFocusNotificationPayload
   | NotificationLegacyPayload;
 

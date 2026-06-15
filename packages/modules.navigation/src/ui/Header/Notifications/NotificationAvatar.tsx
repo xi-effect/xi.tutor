@@ -14,6 +14,8 @@ const CLASSROOM_SCHEDULE_NOTIFICATION_KINDS = new Set<NotificationKind>([
   'single_classroom_event_created_v1',
   'classroom_event_instance_rescheduled_v1',
   'classroom_event_instance_cancelled_v1',
+  'persisted_classroom_event_instance_reminder_v1',
+  'repeated_classroom_event_instance_reminder_v1',
   'repeating_classroom_event_created_v1',
   'classroom_event_repetition_updated_v1',
   'classroom_event_repetition_cancelled_v1',

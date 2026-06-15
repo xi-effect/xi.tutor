@@ -35,6 +35,9 @@ export const useTabNavigation = ({
         if (nextTab !== 'schedule') {
           delete next.event_instance_id;
           delete next.focused_at;
+          delete next.repetition_mode_id;
+          delete next.instance_index;
+          delete next.schedule_dl;
         }
 
         return next;

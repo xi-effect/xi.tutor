@@ -6,6 +6,8 @@ export type ClassroomScheduleSearchParams = {
   tab?: string;
   focused_at?: string;
   event_instance_id?: string;
+  repetition_mode_id?: string;
+  instance_index?: string;
   /** Служебный токен диплинка из уведомления (сбрасывается после обработки) */
   schedule_dl?: string;
 };

@@ -6,6 +6,8 @@ export type {
   NotificationLegacyPayload,
   ClassroomEventInstanceNotificationPayload,
   ClassroomEventInstanceNotificationKind,
+  ClassroomRepeatedEventInstanceNotificationPayload,
+  ClassroomRepeatedEventInstanceNotificationKind,
   ClassroomScheduleFocusNotificationPayload,
   ClassroomScheduleFocusNotificationKind,
   NotificationSocketEvents,
