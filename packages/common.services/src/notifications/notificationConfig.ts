@@ -6,17 +6,13 @@ import {
   PaymentsQueryKey,
   StudentQueryKey,
 } from 'common.api';
+import { env } from 'common.env';
 import { schedulerQueryKeys } from '../scheduler';
 
 const CUSTOM_NOTIFICATION_CONTENT_MAX_LENGTH = 80;
 
-const isDevEnv = (): boolean =>
-  (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') ||
-  (typeof import.meta !== 'undefined' &&
-    Boolean((import.meta as { env?: { DEV?: boolean } }).env?.DEV));
-
 const warnIncompleteNotificationPayload = (kind: string, reason: string): void => {
-  if (isDevEnv()) {
+  if (env.DEV) {
     console.warn(`[notifications] incomplete payload for kind "${kind}": ${reason}`);
   }
 };
