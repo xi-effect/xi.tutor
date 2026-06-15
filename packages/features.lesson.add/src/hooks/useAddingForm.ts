@@ -5,10 +5,12 @@ import { formSchema, type FormData, type FormInput } from '../model/formSchema';
 import { useFetchClassrooms, useCreateClassroomEvent } from 'common.services';
 import type { CreateClassroomEventRequestDto } from 'common.api';
 import { toLocalISOString } from 'modules.calendar';
+import type { ProductAnalyticsLessonType, ProductAnalyticsSource } from 'common.utils';
 
 type UseAddingFormOptions = {
   fixedClassroomId?: number;
   onSubmit?: (data: FormData) => void | Promise<void>;
+  analyticsSource?: ProductAnalyticsSource;
 };
 
 const getDefaultValues = (initialDate?: Date | null, fixedClassroomId?: number): FormInput => ({
@@ -97,9 +99,19 @@ const buildRequestBody = (data: FormData): CreateClassroomEventRequestDto => {
   };
 };
 
+const resolveLessonType = (
+  classrooms: Array<{ id: number; kind?: string }>,
+  classroomId: number,
+): ProductAnalyticsLessonType => {
+  const classroom = classrooms.find((item) => item.id === classroomId);
+  if (classroom?.kind === 'individual') return 'individual';
+  if (classroom?.kind === 'group') return 'group';
+  return 'unknown';
+};
+
 export const useAddingForm = (initialDate?: Date | null, options: UseAddingFormOptions = {}) => {
   const { data: classrooms, isLoading: isClassroomsLoading } = useFetchClassrooms();
-  const { fixedClassroomId, onSubmit: externalSubmit } = options;
+  const { fixedClassroomId, onSubmit: externalSubmit, analyticsSource = 'unknown' } = options;
   const createEvent = useCreateClassroomEvent();
 
   const form = useForm<FormInput, unknown, FormData>({
@@ -119,7 +131,16 @@ export const useAddingForm = (initialDate?: Date | null, options: UseAddingFormO
     const classroomId = Number(data.studentId);
     const body = buildRequestBody(data);
 
-    await createEvent.mutateAsync({ classroomId, body });
+    await createEvent.mutateAsync({
+      classroomId,
+      body,
+      analytics: {
+        source: analyticsSource,
+        lesson_type: resolveLessonType(classrooms ?? [], classroomId),
+        is_recurring: data.repeatMode !== 'none',
+        has_description: Boolean(data.description?.trim()),
+      },
+    });
     toast.success('Занятие добавлено');
   };
 

@@ -13,10 +13,15 @@
     "deps:link": "node scripts/switch-calls-deps.mjs link"
   },
   "dependencies": {
+    "@livekit/components-react": "2.9.14",
     "@livekit/components-styles": "1.1.6",
+    "@tanstack/react-query": "^5.73.3",
     "@tanstack/react-router": "^1.166.6",
+    "common.api": "workspace:*",
     "common.env": "workspace:*",
     "common.services": "workspace:*",
+    "common.utils": "workspace:*",
+    "livekit-client": "2.15.6",
     "@xipkg/calls": "^0.0.12",
     "@xipkg/calls-chat": "^0.0.12",
     "@xipkg/calls-compactview": "^0.0.12",

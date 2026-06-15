@@ -4,6 +4,17 @@ import { useNavigate } from '@tanstack/react-router';
 import { ClassroomsQueryKey, studentApiConfig, StudentQueryKey, UserQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { handleError, useCurrentUser, useUpdateProfile } from 'common.services';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  getProductAnalyticsRole,
+  trackProductEvent,
+  type ProductAnalyticsInviteKind,
+} from 'common.utils';
+
+type AcceptInviteVariables = {
+  code: string;
+  invite_kind: ProductAnalyticsInviteKind;
+};
 
 export const useAcceptInvite = () => {
   const queryClient = useQueryClient();
@@ -11,8 +22,8 @@ export const useAcceptInvite = () => {
   const { data: currentUser } = useCurrentUser();
   const { updateProfile } = useUpdateProfile();
 
-  return useMutation<ClassroomResponseT, Error, string>({
-    mutationFn: async (code: string) => {
+  return useMutation<ClassroomResponseT, Error, AcceptInviteVariables>({
+    mutationFn: async ({ code }) => {
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
@@ -28,13 +39,16 @@ export const useAcceptInvite = () => {
         throw err;
       }
     },
-    onSuccess: (classroomData) => {
+    onSuccess: (classroomData, variables) => {
       queryClient.invalidateQueries({ queryKey: [ClassroomsQueryKey.GetClassrooms] });
 
-      // Проверяем роль пользователя из кеша (на случай, если currentUser еще не обновился)
       const user = queryClient.getQueryData<typeof currentUser>([UserQueryKey.Home]) || currentUser;
 
-      // Если пользователь имеет роль tutor, принудительно обновляем на student
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.INVITE_ACCEPTED_SUCCESS, {
+        role: getProductAnalyticsRole(user?.default_layout),
+        invite_kind: variables.invite_kind,
+      });
+
       if (user?.default_layout === 'tutor') {
         updateProfile.mutate(
           { default_layout: 'student' },

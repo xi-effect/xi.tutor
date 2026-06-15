@@ -25,7 +25,8 @@
     "common.config": "workspace:*",
     "common.env": "workspace:*",
     "common.services": "workspace:*",
-    "common.types": "workspace:*"
+    "common.types": "workspace:*",
+    "common.utils": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

@@ -3,11 +3,20 @@ import { getAxiosInstance } from 'common.config';
 import { InvitationDataT } from 'common.types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError } from 'common.services';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  trackProductEvent,
+  type ProductAnalyticsSource,
+} from 'common.utils';
+
+type AddInvitationVariables = {
+  source?: ProductAnalyticsSource;
+};
 
 export const useAddInvitation = () => {
   const queryClient = useQueryClient();
 
-  const addInvitationMutation = useMutation({
+  const addInvitationMutation = useMutation<unknown, Error, AddInvitationVariables | void>({
     mutationFn: async () => {
       try {
         const axiosInst = await getAxiosInstance();
@@ -37,15 +46,26 @@ export const useAddInvitation = () => {
 
       handleError(err, 'addInvitation');
     },
-    onSuccess: (response) => {
-      if (response?.data) {
+    onSuccess: (response, variables) => {
+      const data =
+        response && typeof response === 'object' && 'data' in response
+          ? (response.data as InvitationDataT | undefined)
+          : undefined;
+
+      if (data) {
         queryClient.setQueryData<InvitationDataT[]>(
           [InvitationsQueryKey.AllInvitations],
           (old: InvitationDataT[] | undefined) => {
             if (!old) return old;
-            return [...old, response.data];
+            return [...old, data];
           },
         );
+
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITED_SUCCESS, {
+          role: 'tutor',
+          source: variables?.source ?? 'unknown',
+          invite_kind: 'student',
+        });
       }
     },
   });

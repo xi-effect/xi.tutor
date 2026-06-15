@@ -6,3 +6,4 @@ export { useLockedShapeSelection } from './useLockedShapeSelection';
 export { useDrawClipboard } from './useDrawClipboard';
 export { useOverlayRepaintOnSelection } from './useOverlayRepaintOnSelection';
 export { useEditOnTypeForLabels } from './useEditOnTypeForLabels';
+export { useProductBoardAnalytics } from './useProductBoardAnalytics';

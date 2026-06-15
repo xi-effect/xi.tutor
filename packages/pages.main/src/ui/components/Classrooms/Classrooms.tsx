@@ -132,7 +132,11 @@ export const Classrooms = () => {
                   </div>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <ModalInvitation open={inviteModalOpen} onOpenChange={setInviteModalOpen} />
+              <ModalInvitation
+                open={inviteModalOpen}
+                onOpenChange={setInviteModalOpen}
+                analyticsSource="main"
+              />
               <ModalAddGroup open={addGroupModalOpen} onOpenChange={setAddGroupModalOpen} />
             </>
           ) : (

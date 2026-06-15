@@ -10,6 +10,7 @@ import {
   useDrawClipboard,
   useOverlayRepaintOnSelection,
   useEditOnTypeForLabels,
+  useProductBoardAnalytics,
 } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore, useDrawStore } from '../../../store';
@@ -39,10 +40,26 @@ export const DrawCanvas = ({
   const { selectedElementId, selectElement, showDebugInfo } = useDrawStore();
   const { theme } = useTheme();
   const [shapeCount, setShapeCount] = useState(0);
-  const { store, status, undo, redo, canUndo, canRedo, isReadonly, getUserCamera, setUserCamera } =
-    useYjsContext();
+  const {
+    store,
+    status,
+    undo,
+    redo,
+    canUndo,
+    canRedo,
+    isReadonly,
+    getUserCamera,
+    setUserCamera,
+    provider,
+  } = useYjsContext();
   const { followingPresenceId } = useFollowUserStore();
   const appliedInitialCameraRef = useRef(false);
+
+  useProductBoardAnalytics({
+    editor,
+    awareness: provider.awareness ?? null,
+    enabled: status === 'synced-remote',
+  });
 
   const drawComponents = useMemo(
     () => ({

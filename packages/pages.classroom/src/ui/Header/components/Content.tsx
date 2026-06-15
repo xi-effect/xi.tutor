@@ -34,15 +34,17 @@ export const Content = ({ classroom }: ContentProps) => {
     url.searchParams.delete('goto');
     window.history.replaceState({}, '', url.toString());
     setTimeout(() => {
-      startCall({ classroom_id: classroom.id.toString() }).catch((error) => {
-        console.error('Ошибка при запуске звонка (goto=call):', error);
-      });
+      startCall({ classroom_id: classroom.id.toString() }, { source: 'classroom' }).catch(
+        (error) => {
+          console.error('Ошибка при запуске звонка (goto=call):', error);
+        },
+      );
     }, 100);
   }, [search, startCall, classroom.id]);
 
   const handleStartCall = useCallback(async () => {
     try {
-      await startCall({ classroom_id: classroom.id.toString() });
+      await startCall({ classroom_id: classroom.id.toString() }, { source: 'classroom' });
     } catch (error) {
       console.error('Ошибка при запуске звонка:', error);
     }

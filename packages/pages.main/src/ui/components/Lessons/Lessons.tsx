@@ -99,6 +99,7 @@ export const Lessons = () => {
           onOpenChange={setOpen}
           scheduleListSeedDate={selectedDate}
           initialDate={selectedDate}
+          analyticsSource="main"
         />
       ) : null}
       <div className="bg-gray-0 flex h-[calc(100vh-98px)] w-(--lessons-panel-width) flex-col gap-4 rounded-2xl px-5 pt-4 pr-2 pb-1">
