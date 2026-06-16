@@ -1,6 +1,11 @@
 import type { ReactNode } from 'react';
+import { Portal as TooltipPortal } from '@radix-ui/react-tooltip';
 import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@xipkg/select';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import type { ClassroomT } from 'common.api';
+
+const EMPTY_CLASSROOMS_TOOLTIP =
+  'У вас пока нет кабинетов. Создайте кабинет для групповых или индивидуальных занятий';
 
 type StudentSelectorProps = {
   value: string;
@@ -17,14 +22,23 @@ export const StudentSelector = ({
   isLoading,
   before,
 }: StudentSelectorProps) => {
-  return (
-    <Select value={value} onValueChange={onChange}>
+  const isEmpty = !isLoading && classrooms.length === 0;
+
+  const placeholder = isLoading
+    ? 'Загрузка...'
+    : isEmpty
+      ? 'Нет доступных кабинетов'
+      : 'Ученик или группа';
+
+  const selector = (
+    <Select value={value} onValueChange={onChange} disabled={isEmpty}>
       <SelectTrigger
         className="border-gray-10 m-0 w-full rounded-lg border text-gray-100"
         size="s"
         before={before}
+        disabled={isEmpty}
       >
-        <SelectValue placeholder={isLoading ? 'Загрузка...' : 'Ученик или группа'} />
+        <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent className="max-h-[300px] w-[var(--radix-select-trigger-width)] max-w-[var(--radix-select-trigger-width)]">
         {classrooms.map((classroom) => (
@@ -38,5 +52,22 @@ export const StudentSelector = ({
         ))}
       </SelectContent>
     </Select>
+  );
+
+  if (!isEmpty) {
+    return selector;
+  }
+
+  return (
+    <Tooltip delayDuration={500}>
+      <TooltipTrigger asChild>
+        <span className="block w-full">{selector}</span>
+      </TooltipTrigger>
+      <TooltipPortal>
+        <TooltipContent side="top" className="max-w-[280px]">
+          {EMPTY_CLASSROOMS_TOOLTIP}
+        </TooltipContent>
+      </TooltipPortal>
+    </Tooltip>
   );
 };

@@ -1,8 +1,5 @@
 import * as z from 'zod';
-import { timeToMinutes } from '../utils';
-
-/** Максимальная длительность занятия (минуты) */
-const MAX_LESSON_DURATION_MINUTES = 12 * 60;
+import { durationBetweenMinutes, MAX_LESSON_DURATION_MINUTES } from '../utils';
 
 // Валидация времени HH:MM (пустая строка допустима до отправки формы)
 const timeValidation = z.string().refine((time) => {
@@ -39,15 +36,14 @@ export const formSchema = z
     }
     if (data.startTime === '' || data.endTime === '') return;
 
-    const startM = timeToMinutes(data.startTime);
-    const endM = timeToMinutes(data.endTime);
-    if (endM <= startM) {
+    const durationMinutes = durationBetweenMinutes(data.startTime, data.endTime);
+    if (durationMinutes === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Время окончания должно быть позже начала',
         path: ['endTime'],
       });
-    } else if (endM - startM > MAX_LESSON_DURATION_MINUTES) {
+    } else if (durationMinutes > MAX_LESSON_DURATION_MINUTES) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Максимальная длительность занятия — 12 часов',

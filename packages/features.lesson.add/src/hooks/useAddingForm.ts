@@ -6,6 +6,7 @@ import { useFetchClassrooms, useCreateClassroomEvent } from 'common.services';
 import type { CreateClassroomEventRequestDto } from 'common.api';
 import { toLocalISOString } from 'modules.calendar';
 import type { ProductAnalyticsLessonType, ProductAnalyticsSource } from 'common.utils';
+import { durationBetweenMinutes } from '../utils';
 
 type UseAddingFormOptions = {
   fixedClassroomId?: number;
@@ -33,12 +34,9 @@ const buildStartsAt = (startDate: Date, startTime: string): string => {
   return toLocalISOString(d);
 };
 
-/** Разница между endTime и startTime в секундах */
-const buildDurationSeconds = (startTime: string, endTime: string): number => {
-  const [sh, sm] = startTime.split(':').map(Number);
-  const [eh, em] = endTime.split(':').map(Number);
-  return (eh * 60 + em - (sh * 60 + sm)) * 60;
-};
+/** Разница между endTime и startTime в секундах (с учётом перехода через полночь) */
+const buildDurationSeconds = (startTime: string, endTime: string): number =>
+  durationBetweenMinutes(startTime, endTime) * 60;
 
 /**
  * Биткарта недели: 0=Пн, 1=Вт, ..., 6=Вс → бит 0 = Пн, бит 1 = Вт, ...
