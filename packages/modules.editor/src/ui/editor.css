@@ -254,6 +254,26 @@
   border-radius: 2px;
 }
 
+/* Стилизация блока кода */
+.tiptap pre {
+  background: #1e1e1e;
+  color: #d4d4d4;
+  font-family:
+    'JetBrains Mono',
+    Courier New,
+    Courier,
+    monospace;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.tiptap pre code {
+  color: inherit;
+  padding: 0;
+  background: none;
+  font-size: 0.8rem;
+}
+
 /* Стили для мобильных устройств */
 @media (max-width: 768px) {
   .xi-editor .ProseMirror h1 {

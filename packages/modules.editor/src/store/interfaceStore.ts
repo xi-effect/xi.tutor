@@ -1,12 +1,14 @@
 import { create } from 'zustand';
 
+type ModalType = 'uploadImage' | 'insertCode' | null;
+
 type useInterfaceStoreT = {
   activeCellControls: string | null;
   isAddNewNode: string | null;
   setActiveCellControls: (newValue: string | null) => void;
   setIsAddNewNode: (newValue: string | null) => void;
-  activeModal: 'uploadImage' | null;
-  openModal: (modal: 'uploadImage') => void;
+  activeModal: ModalType;
+  openModal: (modal: ModalType) => void;
   closeModal: () => void;
 };
 

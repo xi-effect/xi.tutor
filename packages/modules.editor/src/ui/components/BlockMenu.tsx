@@ -5,7 +5,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Copy, H1, H2, H3, Text, Trash, Image, ArrowUp, ArrowBottom } from '@xipkg/icons';
+import { Copy, H1, H2, H3, Text, Trash, Image, ArrowUp, ArrowBottom, Code } from '@xipkg/icons';
 import { ReactNode } from 'react';
 import { useBlockMenuActions } from '../../hooks';
 import { Editor } from '@tiptap/core';
@@ -88,6 +88,10 @@ export const BlockMenu = ({
         <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('uploadImage')}>
           <Image size="sm" className="size-6" />
           <span>Изображение</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('insertCode')}>
+          <Code size="sm" className="size-6" />
+          <span>Вставить код</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
