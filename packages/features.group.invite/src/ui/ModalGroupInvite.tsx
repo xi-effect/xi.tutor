@@ -53,11 +53,14 @@ export const ModalGroupInvite = ({ children, open, onOpenChange }: ModalGroupInv
   };
 
   const handleResetInvite = () => {
-    resetInvite(undefined, {
-      onSuccess: () => {
-        toast.success('Ссылка сброшена');
+    resetInvite(
+      { source: 'classroom' },
+      {
+        onSuccess: () => {
+          toast.success('Ссылка сброшена');
+        },
       },
-    });
+    );
   };
 
   const cleanupBodyScrollLock = () => {

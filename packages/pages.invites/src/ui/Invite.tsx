@@ -27,7 +27,7 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
           navigate({ to: `/classrooms` });
         }
       } else {
-        mutate(inviteId); // первое принятие приглашения
+        mutate({ code: inviteId, invite_kind: 'group' });
       }
     }
 
@@ -35,7 +35,7 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
       if (invite.existing_classroom_id) {
         navigate({ to: `/classrooms/${invite.existing_classroom_id}` }); // Переход по старому приглашению в индивидуальный кабинет
       } else {
-        mutate(inviteId); // первое принятие приглашения
+        mutate({ code: inviteId, invite_kind: 'student' });
       }
     }
   };

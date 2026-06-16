@@ -14,6 +14,7 @@ import { useTanstackCallsNavigation } from './useTanstackCallsNavigation';
 import { callsSessionPort } from './callsSession';
 import { createCallsRuntimeConfig } from './createCallsRuntimeConfig';
 import { useCallsDeps } from './useCallsDeps';
+import { ProductCallAnalyticsTracker } from './productAnalytics/ProductCallAnalyticsTracker';
 
 import '@xipkg/calls-ui/video-security.css';
 import '@xipkg/calls-ui/driver.css';
@@ -60,6 +61,7 @@ const CallsShellProviders = ({ children }: CallsShellPropsT) => {
       <RoomProvider>
         <LiveKitProvider>
           <ModeSyncProvider>
+            <ProductCallAnalyticsTracker />
             <CallsShellInit />
             {children}
           </ModeSyncProvider>

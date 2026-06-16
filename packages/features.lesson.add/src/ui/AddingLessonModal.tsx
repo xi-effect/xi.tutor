@@ -7,6 +7,7 @@ import { DayLessonsPanel } from 'modules.calendar';
 import { AddingForm } from './components/AddingForm';
 import './AddingModal.css';
 import type { FormData } from '../model';
+import type { ProductAnalyticsSource } from 'common.utils';
 
 const getToday = () => {
   const d = new Date();
@@ -32,6 +33,7 @@ type AddingLessonModalProps = {
   initialDate?: Date | null;
   fixedClassroomId?: number;
   onSubmit?: (data: FormData) => void | Promise<void>;
+  analyticsSource?: ProductAnalyticsSource;
 };
 
 export const AddingLessonModal = ({
@@ -41,6 +43,7 @@ export const AddingLessonModal = ({
   initialDate = null,
   fixedClassroomId,
   onSubmit,
+  analyticsSource,
 }: AddingLessonModalProps) => {
   const [selectedDate, setSelectedDate] = useState(getToday);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -98,6 +101,7 @@ export const AddingLessonModal = ({
                 initialDate={initialDate}
                 fixedClassroomId={fixedClassroomId}
                 onSubmit={onSubmit}
+                analyticsSource={analyticsSource}
                 onSubmittingChange={handleSubmittingChange}
               />
             </div>

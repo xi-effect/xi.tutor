@@ -21,6 +21,7 @@ import { formatDurationBetweenRu } from '../../utils';
 import { useEffect, useMemo } from 'react';
 import type { FC, PropsWithChildren } from 'react';
 import type { FormData } from '../../model';
+import type { ProductAnalyticsSource } from 'common.utils';
 
 const WEEKDAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] as const;
 
@@ -30,6 +31,7 @@ interface AddingFormProps extends PropsWithChildren {
   initialDate?: Date | null;
   fixedClassroomId?: number;
   onSubmit?: (data: FormData) => void | Promise<void>;
+  analyticsSource?: ProductAnalyticsSource;
   /** Состояние отправки формы (для лоадера на кнопках в модалке) */
   onSubmittingChange?: (isSubmitting: boolean) => void;
 }
@@ -40,6 +42,7 @@ export const AddingForm: FC<AddingFormProps> = ({
   initialDate,
   fixedClassroomId,
   onSubmit: externalSubmit,
+  analyticsSource,
   onSubmittingChange,
 }) => {
   const {
@@ -50,7 +53,7 @@ export const AddingForm: FC<AddingFormProps> = ({
     onSubmit,
     classrooms,
     isClassroomsLoading,
-  } = useAddingForm(initialDate, { fixedClassroomId, onSubmit: externalSubmit });
+  } = useAddingForm(initialDate, { fixedClassroomId, onSubmit: externalSubmit, analyticsSource });
 
   const { isSubmitting } = useFormState({ control });
 

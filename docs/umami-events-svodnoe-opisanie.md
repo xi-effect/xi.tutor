@@ -510,3 +510,36 @@
 | Событие               | Способ вызова                                        | Описание                                                    |
 | --------------------- | ---------------------------------------------------- | ----------------------------------------------------------- |
 | `outbound-link-click` | `data-umami-event` — клик по ссылке в сообщении чата | Переход по внешней ссылке, свойства: `url`, `source` (chat) |
+
+---
+
+## Product / Outcome events
+
+Программные события продуктовой аналитики (`trackProductEvent` из `common.utils`). Отправляются только в Umami после успешного действия или при выполнении meaningful-условий. Не пишутся в основную БД.
+
+> Существующие события остаются историческими UI/clickstream-событиями.
+> Product/outcome events используются для расчёта активности, активации и retention.
+
+| Событие                   | Когда отправляется                                            | Зачем нужно                   | Payload                                                                    |
+| ------------------------- | ------------------------------------------------------------- | ----------------------------- | -------------------------------------------------------------------------- |
+| `student_invited_success` | После успешного создания приглашения                          | Активация репетитора          | `role`, `source`, `invite_kind`                                            |
+| `invite_accepted_success` | После успешного принятия приглашения                          | Активация ученика             | `role`, `invite_kind`                                                      |
+| `lesson_created_success`  | После успешного создания занятия                              | Создание учебного процесса    | `role`, `source`, `lesson_type`, `is_recurring`, `has_description`         |
+| `lesson_started`          | После успешного старта урока (получение call token)           | Начало занятия преподавателем | `role`, `source`, `lesson_type`                                            |
+| `lesson_joined`           | После успешного входа участника в урок (получение call token) | Участие в занятии             | `role`, `source`, `lesson_type`                                            |
+| `call_connected`          | После подключения к LiveKit room                              | Надёжность звонков            | `role`, `lesson_type`                                                      |
+| `call_connection_failed`  | При ошибке подключения к звонку                               | Диагностика проблем           | `role`, `reason`                                                           |
+| `lesson_duration_reached` | На порогах 5 / 15 / 30 / 45 минут в звонке                    | Реальная длительность занятий | `role`, `duration_min`, `lesson_type`, `used_board`, `used_screenshare`    |
+| `lesson_finished`         | При завершении урока после 5+ минут участия                   | Завершённые занятия           | `role`, `duration_bucket`, `lesson_type`, `used_board`, `used_screenshare` |
+| `board_opened`            | При открытии доски (после синхронизации)                      | Использование доски           | `role`, `source`                                                           |
+| `board_used_meaningfully` | При meaningful-использовании доски (один раз за открытие)     | Реальная ценность доски       | `role`, `source`, `trigger`                                                |
+
+### Метрики (расчёт в Umami / выгрузке)
+
+- **Active Tutor 7d** — `lesson_duration_reached`, `role=tutor`, `duration_min>=15` **или** (`lesson_created_success` + `student_invited_success`, оба `role=tutor`)
+- **Active Tutor 30d** — `lesson_duration_reached`, `role=tutor`, `duration_min>=15` минимум 2 раза
+- **Activated Tutor** — за всё время: `student_invited_success` + `lesson_created_success` + `lesson_duration_reached` с `duration_min>=15`
+- **Retained Tutor** — второе `lesson_duration_reached` с `duration_min>=15` в течение 14 дней после первого
+- **Active Student 30d** — `lesson_duration_reached`, `role=student`, `duration_min>=15`
+- **Board Usage Rate** — `board_used_meaningfully` / `lesson_duration_reached` (`duration_min>=15`, `role=tutor`)
+- **Call Failure Rate** — `call_connection_failed` / (`call_connected` + `call_connection_failed`)

@@ -27,7 +27,7 @@ export const ActionButtons = () => {
         </Button>
       </ModalAddGroup>
 
-      <ModalInvitation>
+      <ModalInvitation analyticsSource="main">
         <Button
           id="invite-student-button"
           size="m"

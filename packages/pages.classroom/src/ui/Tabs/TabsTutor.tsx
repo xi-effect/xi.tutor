@@ -197,6 +197,17 @@ export const TabsTutor = () => {
     await createClassroomEvent.mutateAsync({
       classroomId: Number(classroomId),
       body: buildCreateClassroomEventRequest(data),
+      analytics: {
+        source: 'classroom',
+        lesson_type:
+          classroom?.kind === 'group'
+            ? 'group'
+            : classroom?.kind === 'individual'
+              ? 'individual'
+              : 'unknown',
+        is_recurring: data.repeatMode !== 'none',
+        has_description: Boolean(data.description?.trim()),
+      },
     });
   };
 
@@ -252,6 +263,7 @@ export const TabsTutor = () => {
             initialDate={addLessonInitialDate}
             fixedClassroomId={Number(classroomId)}
             onSubmit={handleAddLessonSubmit}
+            analyticsSource="classroom"
           />
 
           {isInvoiceModalOpen && (

@@ -12,7 +12,7 @@ import {
   toLocalISOString,
 } from 'modules.calendar';
 import { createMovingFormSchema, type FormData, type FormInput } from '../model/formSchema';
-import { timeToMinutes } from '../utils/utils';
+import { durationBetweenMinutes } from '../utils/utils';
 import type { MovingRepetitionResolution } from './useMovingRepetitionResolution';
 
 const ALL_REPEAT_WEEKDAY_INDICES = [0, 1, 2, 3, 4, 5, 6] as const;
@@ -100,7 +100,7 @@ function buildStartsAt(startDate: Date, startTime: string): string {
 }
 
 function buildDurationSeconds(startTime: string, endTime: string): number {
-  return (timeToMinutes(endTime) - timeToMinutes(startTime)) * 60;
+  return durationBetweenMinutes(startTime, endTime) * 60;
 }
 
 /** 0=Пн … 6=Вс — все дни выбраны */

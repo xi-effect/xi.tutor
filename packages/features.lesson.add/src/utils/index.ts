@@ -24,6 +24,23 @@ export const timeToMinutes = (time: string): number => {
   return hours * 60 + minutes;
 };
 
+export const MINUTES_PER_DAY = 24 * 60;
+
+/** Максимальная длительность занятия (минуты) */
+export const MAX_LESSON_DURATION_MINUTES = 12 * 60;
+
+/**
+ * Длительность между startTime и endTime в минутах.
+ * Если endTime <= startTime, считаем, что окончание на следующий день.
+ */
+export const durationBetweenMinutes = (startTime: string, endTime: string): number => {
+  const startM = timeToMinutes(startTime);
+  const endM = timeToMinutes(endTime);
+  if (endM > startM) return endM - startM;
+  if (endM < startM) return MINUTES_PER_DAY - startM + endM;
+  return 0;
+};
+
 /** Минуты от полуночи в "HH:MM" */
 export const minutesToTime = (totalMinutes: number): string => {
   const h = Math.floor(totalMinutes / 60) % 24;
@@ -54,7 +71,7 @@ export const formatDurationBetweenRu = (startTime: string, endTime: string): str
     return '';
   }
 
-  const diff = timeToMinutes(endTime) - timeToMinutes(startTime);
+  const diff = durationBetweenMinutes(startTime, endTime);
   if (diff <= 0) return '';
 
   const hours = Math.floor(diff / 60);
