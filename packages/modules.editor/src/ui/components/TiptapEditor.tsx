@@ -7,14 +7,14 @@ import { TUser } from '../../types';
 import '../editor.css';
 
 type TTiptapEditor = {
-  setUsers: (users: TUser[]) => void;
+  setUsers?: (users: TUser[]) => void;
 };
 
 export const TiptapEditor = ({ setUsers }: TTiptapEditor) => {
   const { editor, isReadOnly, users } = useYjsContext();
 
   useEffect(() => {
-    setUsers(users);
+    setUsers?.(users);
   }, [setUsers, users]);
 
   if (!editor) {

@@ -11,21 +11,17 @@ import { StorageItemT } from 'common.types';
 import { LoadingScreen } from 'common.ui';
 import { TUser } from '../types';
 
-type TEditorWithoutData = {
-  setUsers: (users: TUser[]) => void;
-};
-
 type TEditorWithData = {
   storageItem: StorageItemT;
-  setUsers: (users: TUser[]) => void;
+  setUsers?: (users: TUser[]) => void;
 };
 
 type TEditor = {
   storageItem?: StorageItemT;
-  setUsers: (users: TUser[]) => void;
+  setUsers?: (users: TUser[]) => void;
 };
 
-const EditorWithoutData = ({ setUsers }: TEditorWithoutData) => {
+const EditorWithoutData = ({ setUsers }: TEditor) => {
   const { classroomId, noteId, materialId } = useParams({ strict: false });
 
   const { data: user } = useCurrentUser();
