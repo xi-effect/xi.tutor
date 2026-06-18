@@ -113,7 +113,7 @@ export const mapInstanceDetailsToCalendarEvent = (
   const effectiveClassroomId = event.classroom_id ?? classroomId;
 
   return {
-    id: instanceId ?? `${event.id}:${details.kind}:${instanceIndex ?? 'unknown'}`,
+    id: instanceId ?? `${event.id}:${details.kind}:${instanceIndex ?? 'unknown'}:${startsAt}`,
     title,
     start: new Date(startsAt),
     end: new Date(endsAt),
