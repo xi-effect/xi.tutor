@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { Avatar, AvatarGroup, AvatarGroupCount, AvatarImage } from '@xipkg/avatar';
 import { useParams, useRouter } from '@tanstack/react-router';
 import {
   useCurrentUser,
@@ -10,8 +11,16 @@ import { Skeleton } from 'common.ui';
 import { EditableTitle } from './EditableTitle';
 import { Button } from '@xipkg/button';
 import { ArrowLeft } from '@xipkg/icons';
+import { getAvatarUrlByUserId } from '../utils';
+import { TUser } from '../types';
 
-export const Header = () => {
+type THeaderProps = {
+  users: TUser[];
+};
+
+const MAX_VISIBLE_AVATARS = 3;
+
+export const Header = ({ users }: THeaderProps) => {
   const { classroomId, noteId, materialId } = useParams({ strict: false });
   const router = useRouter();
 
@@ -54,6 +63,9 @@ export const Header = () => {
     }
   };
 
+  const overflowCount = Math.max(0, users.length - MAX_VISIBLE_AVATARS);
+  const visibleUsers = users.slice(0, MAX_VISIBLE_AVATARS);
+
   return (
     <div className="bg-gray-0 border-gray-10 sticky top-0 z-50 flex h-[56px] min-h-[56px] w-full rounded-2xl border px-2">
       <div className="flex w-full items-center justify-between">
@@ -73,6 +85,17 @@ export const Header = () => {
               <EditableTitle title={material.name} materialId={materialIdValue} isTutor={isTutor} />
             )}
           </div>
+          <AvatarGroup>
+            {visibleUsers.map((user) => {
+              const avatarUrl = getAvatarUrlByUserId(user.id);
+              return (
+                <Avatar key={user.id} size="s">
+                  {avatarUrl && <AvatarImage src={avatarUrl} size="s" />}
+                </Avatar>
+              );
+            })}
+            {overflowCount > 0 && <AvatarGroupCount>+{overflowCount}</AvatarGroupCount>}
+          </AvatarGroup>
         </div>
       </div>
     </div>

@@ -1,11 +1,21 @@
+import { useEffect } from 'react';
 import { EditorContent } from '@tiptap/react';
 import { EditorToolkit } from './EditorToolkit';
 import { useYjsContext } from '../../hooks/useYjsContext';
+import { TUser } from '../../types';
 
 import '../editor.css';
 
-export const TiptapEditor = () => {
-  const { editor, isReadOnly } = useYjsContext();
+type TTiptapEditor = {
+  setUsers: (users: TUser[]) => void;
+};
+
+export const TiptapEditor = ({ setUsers }: TTiptapEditor) => {
+  const { editor, isReadOnly, users } = useYjsContext();
+
+  useEffect(() => {
+    setUsers(users);
+  }, [setUsers, users]);
 
   if (!editor) {
     return (

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { YjsProvider } from '../providers/YjsProvider';
 import { TiptapEditor } from './components/TiptapEditor';
 import { useParams } from '@tanstack/react-router';
@@ -10,8 +9,23 @@ import {
 } from 'common.services';
 import { StorageItemT } from 'common.types';
 import { LoadingScreen } from 'common.ui';
+import { TUser } from '../types';
 
-const EditorWithoutData = () => {
+type TEditorWithoutData = {
+  setUsers: (users: TUser[]) => void;
+};
+
+type TEditorWithData = {
+  storageItem: StorageItemT;
+  setUsers: (users: TUser[]) => void;
+};
+
+type TEditor = {
+  storageItem?: StorageItemT;
+  setUsers: (users: TUser[]) => void;
+};
+
+const EditorWithoutData = ({ setUsers }: TEditorWithoutData) => {
   const { classroomId, noteId, materialId } = useParams({ strict: false });
 
   const { data: user } = useCurrentUser();
@@ -56,25 +70,25 @@ const EditorWithoutData = () => {
     <div className="flex w-full justify-center pt-4 pb-8">
       <div className="w-full max-w-4xl pl-16">
         <YjsProvider key={storageItem?.ydoc_id} data={storageItem}>
-          <TiptapEditor />
+          <TiptapEditor setUsers={setUsers} />
         </YjsProvider>
       </div>
     </div>
   );
 };
 
-const EditorWithData = ({ storageItem }: { storageItem: StorageItemT }) => {
+const EditorWithData = ({ storageItem, setUsers }: TEditorWithData) => {
   return (
     <YjsProvider key={storageItem.ydoc_id} data={storageItem}>
-      <TiptapEditor />
+      <TiptapEditor setUsers={setUsers} />
     </YjsProvider>
   );
 };
 
-export const Editor = ({ storageItem }: { storageItem?: StorageItemT }) => {
+export const Editor = ({ storageItem, setUsers }: TEditor) => {
   if (storageItem) {
-    return <EditorWithData storageItem={storageItem} />;
+    return <EditorWithData storageItem={storageItem} setUsers={setUsers} />;
   }
 
-  return <EditorWithoutData />;
+  return <EditorWithoutData setUsers={setUsers} />;
 };

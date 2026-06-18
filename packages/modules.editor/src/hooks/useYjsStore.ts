@@ -13,6 +13,7 @@ import {
   type onAuthenticationFailedParameters,
 } from '@hocuspocus/provider';
 import { generateUserColor } from '../utils/userColor';
+import { TUser } from '../types';
 
 type UseYjsStoreArgs = {
   hostUrl: string;
@@ -30,6 +31,7 @@ export type UseCollaborativeTiptapReturn = {
   isReadOnly: boolean;
   storageToken: string;
   storageItem: StorageItemT;
+  users: TUser[];
 };
 
 export function useYjsStore({
@@ -60,6 +62,8 @@ export function useYjsStore({
     return { provider, ydoc };
   });
 
+  const [users, setUsers] = useState<TUser[]>([]);
+
   /* ==========================================================
    * 2. Readonly state
    * ========================================================== */
@@ -70,9 +74,10 @@ export function useYjsStore({
    * ========================================================== */
   const { data: currentUser } = useCurrentUser();
   const userData = useMemo(() => {
+    const id = currentUser?.id;
     const name = currentUser?.display_name || currentUser?.username || 'Участник';
     const idForColor = currentUser?.id?.toString() ?? 'anonymous';
-    return { name, color: generateUserColor(idForColor) };
+    return { id, name, color: generateUserColor(idForColor) };
   }, [currentUser?.id, currentUser?.display_name, currentUser?.username]);
 
   /* ==========================================================
@@ -131,6 +136,29 @@ export function useYjsStore({
     };
   }, [provider, userData]);
 
+  useEffect(() => {
+    const handleGetUserIds = () => {
+      if (!provider.awareness) return;
+
+      const awarenessUsers: TUser[] = [...provider.awareness.getStates()]
+        .map((arr) => ({ id: arr[1].user?.id, userName: arr[1].user.name }))
+        .filter((user) => user.id);
+      if (JSON.stringify(awarenessUsers) !== JSON.stringify(users)) {
+        setUsers(awarenessUsers);
+      }
+    };
+
+    if (provider.awareness) {
+      provider.awareness.on('change', handleGetUserIds);
+    }
+
+    return () => {
+      if (provider.awareness) {
+        provider.awareness.off('change', handleGetUserIds);
+      }
+    };
+  }, [provider.awareness, users]);
+
   /* ==========================================================
    * 6. Editor — extensions в deps: при загрузке currentUser
    *    userData обновляется, пересоздаём редактор с правильным именем/цветом для курсора.
@@ -180,7 +208,8 @@ export function useYjsStore({
       isReadOnly,
       storageToken,
       storageItem,
+      users,
     }),
-    [editor, undo, redo, canUndo, canRedo, isReadOnly, storageToken, storageItem],
+    [editor, undo, redo, canUndo, canRedo, isReadOnly, storageToken, storageItem, users],
   );
 }

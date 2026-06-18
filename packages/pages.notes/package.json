@@ -17,6 +17,7 @@
     "@xipkg/icons": "3.0.20",
     "@xipkg/form": "4.2.2",
     "@xipkg/input": "2.2.14",
+    "@xipkg/avatar": "3.3.0",
     "common.services": "workspace:*",
     "common.ui": "workspace:*",
     "modules.editor": "workspace:*"
