@@ -9,7 +9,7 @@ import { useMenuStore } from '../store';
 import { useEffect, useMemo } from 'react';
 import { MobileBottomBar } from './MobileBottomBar';
 import { MobileMenuDrawerContent } from './MobileMenuDrawerContent';
-import { DRAWER_CONTENT_ABOVE_BAR_CLASS } from './constants';
+import { DRAWER_CONTENT_ABOVE_BAR_CLASS, MOBILE_BOTTOM_BAR_HEIGHT } from './constants';
 
 const SIDEBAR_WIDTH_EXPANDED = '260px';
 const SIDEBAR_WIDTH_COLLAPSED = '72px';
@@ -29,8 +29,13 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
       ? 'w-full h-screen min-h-0 overflow-hidden'
       : 'h-screen min-h-0 overflow-hidden'
     : isMobile
-      ? 'w-full pb-[64px]'
+      ? `w-full pb-[${MOBILE_BOTTOM_BAR_HEIGHT}px]`
       : 'h-screen min-h-0 overflow-hidden';
+
+  const insetStyle =
+    isMobile && !focusMode
+      ? ({ '--calls-layout-bottom-offset': `${MOBILE_BOTTOM_BAR_HEIGHT}px` } as React.CSSProperties)
+      : undefined;
 
   // Используем один компонент, который условно рендерит нужную структуру
   // но children всегда остаются в одном месте с одним ключом
@@ -59,7 +64,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
 
       {/* Children всегда рендерятся в одном месте с одним ключом и одним типом элемента */}
       {/* Используем SidebarInset для обоих случаев, чтобы React сохранял состояние */}
-      <SidebarInset className={insetClassName} key="navigation-content">
+      <SidebarInset className={insetClassName} style={insetStyle} key="navigation-content">
         {stableChildren}
       </SidebarInset>
 
