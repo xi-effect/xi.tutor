@@ -115,7 +115,9 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
           audio.currentTime = targetTime;
         }
         if (audio.paused) {
-          audio.play().catch(() => {});
+          audio.play().catch(() => {
+            setLocalIsPlaying(false);
+          });
         }
         setLocalIsPlaying(true);
       } else {
