@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./warmup": "./src/warmup/index.ts"
   },
   "license": "MIT",
   "scripts": {

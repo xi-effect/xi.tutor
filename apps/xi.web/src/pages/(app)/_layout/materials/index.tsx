@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
+import { BoardRouteWarmup } from 'modules.board/warmup';
 import { MaterialsPage } from 'pages.materials';
 import { z } from 'zod';
 
@@ -8,7 +9,12 @@ const searchSchema = z.object({
 });
 
 const Materials = () => {
-  return <MaterialsPage />;
+  return (
+    <>
+      <BoardRouteWarmup />
+      <MaterialsPage />
+    </>
+  );
 };
 
 // @ts-ignore
