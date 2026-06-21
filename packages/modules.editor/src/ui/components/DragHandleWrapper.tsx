@@ -38,7 +38,6 @@ export const DragHandleWrapper = ({
 
     try {
       const { doc } = editor.state;
-      console.log('in wrapper', id);
 
       // Сначала пробуем найти по id (надёжно при Yjs-синке)
       if (id) {
@@ -48,7 +47,6 @@ export const DragHandleWrapper = ({
           const nodeId = node.attrs?.['id'] ?? node.attrs?.id;
           if (nodeId === id && node.isBlock) {
             found = { editor, node, pos: nodePos };
-            console.log(nodePos);
             return false;
           }
           return true;

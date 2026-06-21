@@ -57,8 +57,6 @@ export const useBlockMenuActions = (
     if (!editor || !editor.isEditable || !type || !activeBlock) return;
 
     const currentBlock = getCurrentBlock(editor, activeBlock);
-    console.log(activeBlock, currentBlock);
-    console.log(activeBlock?.node?.attrs['id']);
 
     if (!currentBlock?.node) return;
 
