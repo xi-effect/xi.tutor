@@ -40,12 +40,11 @@ export const useInfiniteQuery = () => {
       },
       initialPageParam: undefined as string | undefined,
       getNextPageParam: (lastPage) => {
-        if (!lastPage || lastPage.length === 0) {
+        if (!lastPage || lastPage.length < 25) {
           return undefined;
         }
 
-        const nextParam = lastPage[lastPage.length - 1].created_at;
-        return nextParam;
+        return lastPage[lastPage.length - 1].created_at;
       },
       staleTime: 5 * 60 * 1000, // 5 минут
       gcTime: 10 * 60 * 1000, // 10 минут
