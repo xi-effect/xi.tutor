@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useInterfaceStore } from '../../store/interfaceStore';
 import { useBlockMenuActions } from '../../hooks/useBlockMenuActions';
 import { Modal, ModalContent, ModalTitle } from '@xipkg/modal';
@@ -18,12 +18,23 @@ export const InsertCodeModal = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    e.stopPropagation();
 
-    insertCode(code, lang);
-
-    setCode('');
     closeModal();
+
+    setTimeout(() => {
+      insertCode(code, lang);
+      setCode('');
+    }, 0);
   };
+
+  useEffect(() => {
+    return () => {
+      setTimeout(() => {
+        document.body.style.pointerEvents = 'auto';
+      }, 50);
+    };
+  }, [isOpen]);
 
   const availableLanguages = Object.keys(common);
 
@@ -52,6 +63,7 @@ export const InsertCodeModal = () => {
               </Button>
             </div>
           </ModalTitle>
+
           <div className="flex items-center gap-2">
             <span className="text-xs text-gray-50">Выбрать язык:</span>
             <select

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Modal, ModalContent, ModalTitle } from '@xipkg/modal';
 import { FileUploader } from '@xipkg/fileuploader';
 import { useInterfaceStore } from '../../store/interfaceStore';
@@ -14,6 +14,7 @@ export const ImageUploadModal = () => {
   const { closeModal, activeModal } = useInterfaceStore();
   const [mode, setMode] = useState<'upload' | 'link'>('upload');
   const [imageLink, setImageLink] = useState('');
+  const isOpen = activeModal === 'uploadImage';
 
   const { editor, storageItem } = useYjsContext();
 
@@ -59,6 +60,14 @@ export const ImageUploadModal = () => {
 
     closeModal();
   };
+
+  useEffect(() => {
+    return () => {
+      setTimeout(() => {
+        document.body.style.pointerEvents = 'auto';
+      }, 50);
+    };
+  }, [isOpen]);
 
   return (
     <Modal open={activeModal === 'uploadImage'} onOpenChange={closeModal}>

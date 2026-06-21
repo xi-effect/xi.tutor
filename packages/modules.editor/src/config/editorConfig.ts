@@ -11,9 +11,8 @@ import { UniqueID } from '@tiptap/extension-unique-id';
 import * as Y from 'yjs';
 import { CustomImage, MoveBlockKeyboard, NormalizeSelection } from '../extensions';
 import { ExtraShortcuts } from '../extensions/extra-keyboard-shortcuts';
-import { common, createLowlight } from 'lowlight';
-import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
 import 'highlight.js/styles/tokyo-night-dark.css';
+import { CustomCodeNode } from '../extensions/code';
 
 /** Курсор в стиле доски: вертикальная линия + шильдик с именем */
 function collaborationCaretRender(user: { name?: string; color?: string }): HTMLElement {
@@ -41,8 +40,6 @@ function collaborationSelectionRender(user: { name?: string; color?: string }): 
     style: `background: color-mix(in srgb, ${color} 35%, transparent);`,
   };
 }
-
-const lowlight = createLowlight(common);
 
 export const getExtensions = (
   provider: HocuspocusProvider | undefined,
@@ -100,11 +97,7 @@ export const getExtensions = (
     MoveBlockKeyboard,
     NormalizeSelection,
     ExtraShortcuts,
-    CodeBlockLowlight.configure({
-      lowlight,
-      enableTabIndentation: true,
-      defaultLanguage: 'plaintext',
-    }),
+    CustomCodeNode,
   ];
 
   if (!provider || !ydoc) {
