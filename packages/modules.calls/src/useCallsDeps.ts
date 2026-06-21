@@ -13,6 +13,7 @@ import {
 } from 'common.services';
 import { env } from 'common.env';
 import { useCallsAddClassroomMaterials } from './useCallsAddClassroomMaterials';
+import { PRODUCT_ANALYTICS_EVENTS, getProductAnalyticsRole, trackProductEvent } from 'common.utils';
 
 type AccessTokenResponseT = string | { url: string };
 
@@ -39,10 +40,28 @@ export const useCallsDeps = (): CallsProviderDepsT => {
         useGetClassroomMaterialsList,
       },
       callAuth: {
-        createTokenByTutor: async (data: StartCallDataT) =>
-          extractToken(await createTokenByTutor.mutateAsync(data)),
-        createTokenByStudent: async (data: StartCallDataT) =>
-          extractToken(await createTokenByStudent.mutateAsync(data)),
+        createTokenByTutor: async (data: StartCallDataT) => {
+          try {
+            return extractToken(await createTokenByTutor.mutateAsync(data));
+          } catch (error) {
+            trackProductEvent(PRODUCT_ANALYTICS_EVENTS.CALL_CONNECTION_FAILED, {
+              role: getProductAnalyticsRole(user?.default_layout),
+              reason: 'token_error',
+            });
+            throw error;
+          }
+        },
+        createTokenByStudent: async (data: StartCallDataT) => {
+          try {
+            return extractToken(await createTokenByStudent.mutateAsync(data));
+          } catch (error) {
+            trackProductEvent(PRODUCT_ANALYTICS_EVENTS.CALL_CONNECTION_FAILED, {
+              role: getProductAnalyticsRole(user?.default_layout),
+              reason: 'token_error',
+            });
+            throw error;
+          }
+        },
         reactivateCall: async (data: StartCallDataT) => {
           await reactivateCall.mutateAsync(data);
         },

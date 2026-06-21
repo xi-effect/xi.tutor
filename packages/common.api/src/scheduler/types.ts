@@ -176,13 +176,22 @@ export type PersistedRepeatedEventInstanceDetailsResponseDto = {
   repetition_mode?: RepetitionModeDto;
 };
 
-/** Для виртуальных повторов время может быть на верхнем уровне или в другой вложенной структуре.
- *  Точная схема уточняется по OpenAPI; пока используем гибкий вариант. */
+/** Слот времени виртуального повторяющегося занятия (новый формат бэкенда). */
+export type VirtualEventInstanceSlotDto = {
+  starts_at: string;
+  ends_at: string;
+};
+
+/** Для виртуальных повторов время может быть вложено в virtual_event_instance (актуальный формат)
+ *  или на верхнем уровне (legacy-формат). */
 export type VirtualRepeatedEventInstanceDetailsResponseDto = {
   kind: 'repeated_virtual';
   event: SchedulerEventDto;
-  starts_at: string;
-  ends_at: string;
+  /** Актуальный формат: время занятия вложено в объект */
+  virtual_event_instance?: VirtualEventInstanceSlotDto;
+  /** Legacy: время на верхнем уровне — поддерживается для обратной совместимости */
+  starts_at?: string;
+  ends_at?: string;
   instance_index: number;
   repetition_mode_id: string;
   repetition_mode?: RepetitionModeDto;

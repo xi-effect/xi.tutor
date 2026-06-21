@@ -12,7 +12,12 @@ import {
 import { MenuDots } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { useEditor } from '@ibodr/draw';
-import { boardIconClass, boardMenuItemClass, boardMenuSurfaceClass } from '../../boardTheme';
+import {
+  boardIconClass,
+  boardMenuItemClass,
+  boardMenuSubTriggerClass,
+  boardMenuSurfaceClass,
+} from '../../boardTheme';
 import { useCurrentUser } from 'common.services';
 import type { PdfShape } from '../../../shapes/pdf';
 import type { AudioShape } from '../../../shapes/audio';
@@ -120,7 +125,7 @@ export const MoreActionsMenu = () => {
         className={cn(boardMenuSurfaceClass, 'flex w-auto flex-col gap-1 rounded-xl p-1')}
       >
         <DropdownMenuSub>
-          <DropdownMenuSubTrigger className={cn(boardMenuItemClass, 'rounded-lg px-3')}>
+          <DropdownMenuSubTrigger className={cn(boardMenuSubTriggerClass, 'rounded-lg px-3')}>
             Переупорядочить
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent

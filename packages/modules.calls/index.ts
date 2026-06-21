@@ -8,11 +8,7 @@ export {
   CallsNavigationProvider,
   CallsSessionProvider,
 } from '@xipkg/calls-providers';
-export {
-  ModeSyncProvider,
-  useModeSync,
-  useStartCall,
-  useUmamiActivityHeartbeat,
-} from '@xipkg/calls-hooks';
+export { ModeSyncProvider, useModeSync, useUmamiActivityHeartbeat } from '@xipkg/calls-hooks';
+export { useStartCall } from './src/productAnalytics/useStartCall';
 export { useCallStore } from '@xipkg/calls-store';
 export { CallsShell } from './src/CallsShell';

@@ -17,6 +17,19 @@ import { getAxiosInstance } from 'common.config';
 import { handleError } from '../../utils';
 import { mapScheduleResponseToScheduleItems } from './adapters';
 import type { ScheduleItem } from './types';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  trackProductEvent,
+  type ProductAnalyticsLessonType,
+  type ProductAnalyticsSource,
+} from 'common.utils';
+
+export type LessonCreatedAnalytics = {
+  source: ProductAnalyticsSource;
+  lesson_type: ProductAnalyticsLessonType;
+  is_recurring: boolean;
+  has_description: boolean;
+};
 
 export type GetClassroomScheduleParams = {
   classroomId: number;
@@ -27,6 +40,7 @@ export type GetClassroomScheduleParams = {
 export type CreateClassroomEventParams = {
   classroomId: number;
   body: CreateClassroomEventRequestDto;
+  analytics?: LessonCreatedAnalytics;
 };
 
 export type UpdateClassroomEventParams = {
@@ -411,9 +425,19 @@ export function useCreateClassroomEvent() {
 
   return useMutation<CreateClassroomEventResponseDto, Error, CreateClassroomEventParams>({
     mutationFn: createClassroomEvent,
-    onSuccess: (_data, { classroomId }) => {
+    onSuccess: (_data, { classroomId, analytics }) => {
       invalidateClassroomSchedules(queryClient, classroomId);
       invalidateGlobalSchedules(queryClient);
+
+      if (analytics) {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.LESSON_CREATED_SUCCESS, {
+          role: 'tutor',
+          source: analytics.source,
+          lesson_type: analytics.lesson_type,
+          is_recurring: analytics.is_recurring,
+          has_description: analytics.has_description,
+        });
+      }
     },
     onError: (err) => {
       handleError(err, 'scheduler');

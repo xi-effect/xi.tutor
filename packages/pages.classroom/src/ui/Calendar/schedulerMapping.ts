@@ -1,6 +1,7 @@
 import type { GetEventInstanceDetailsResponseDto } from 'common.api';
 import { extractInstanceSlot } from 'common.services';
 import type { FormData as AddingLessonFormData } from 'features.lesson.add';
+import { durationBetweenMinutes } from 'features.lesson.add';
 import type {
   CreateClassroomEventRequestDto,
   ICalendarEvent,
@@ -25,13 +26,8 @@ const combineDateAndTime = (date: Date, time: string): Date => {
   return result;
 };
 
-const durationBetweenToSeconds = (startTime: string, endTime: string): number => {
-  const [startHours, startMinutes] = parseTimeParts(startTime);
-  const [endHours, endMinutes] = parseTimeParts(endTime);
-  const startTotalMinutes = startHours * 60 + startMinutes;
-  const endTotalMinutes = endHours * 60 + endMinutes;
-  return (endTotalMinutes - startTotalMinutes) * 60;
-};
+const durationBetweenToSeconds = (startTime: string, endTime: string): number =>
+  durationBetweenMinutes(startTime, endTime) * 60;
 
 const getCalendarEventId = (item: ScheduleItem): string => {
   const instance = item.eventInstance;
@@ -117,7 +113,7 @@ export const mapInstanceDetailsToCalendarEvent = (
   const effectiveClassroomId = event.classroom_id ?? classroomId;
 
   return {
-    id: instanceId ?? `${event.id}:${details.kind}:${instanceIndex ?? 'unknown'}`,
+    id: instanceId ?? `${event.id}:${details.kind}:${instanceIndex ?? 'unknown'}:${startsAt}`,
     title,
     start: new Date(startsAt),
     end: new Date(endsAt),

@@ -17,6 +17,8 @@ import { useInvitationsList, useAddInvitation, useDeleteInvitation } from 'commo
 import { InvitationDataT } from 'common.types';
 import { env } from 'common.env';
 
+type InviteAnalyticsSource = 'main' | 'classrooms' | 'classroom' | 'unknown';
+
 const cleanupBodyScrollLock = () => {
   document.body.style.overflow = '';
   document.body.style.pointerEvents = '';
@@ -27,12 +29,14 @@ type ModalInvitationProps = {
   children?: React.ReactNode;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  analyticsSource?: InviteAnalyticsSource;
 };
 
 export const ModalInvitation = ({
   children,
   open: controlledOpen,
   onOpenChange,
+  analyticsSource = 'unknown',
 }: ModalInvitationProps) => {
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
@@ -63,8 +67,8 @@ export const ModalInvitation = ({
   };
 
   const handleAddInvitation = useCallback(() => {
-    addInvitationMutate();
-  }, [addInvitationMutate]);
+    addInvitationMutate({ source: analyticsSource });
+  }, [addInvitationMutate, analyticsSource]);
 
   const handleDeleteInvitation = (id: number) => () => {
     setDeletingId(id);
