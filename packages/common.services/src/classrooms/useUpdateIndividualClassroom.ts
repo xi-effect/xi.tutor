@@ -66,7 +66,7 @@ export const useUpdateIndividualClassroom = () => {
 
         return response.data;
       } catch (err) {
-        console.error('Ошибка при обновлении индивидуального класса:', err);
+        console.error('Ошибка при обновлении индивидуального кабинета:', err);
         throw err;
       }
     },
@@ -87,7 +87,7 @@ export const useUpdateIndividualClassroom = () => {
         ClassroomsQueryKey.GetClassrooms,
       ]);
 
-      // Оптимистично обновляем данные класса в списке
+      // Оптимистично обновляем данные кабинета в списке
       queryClient.setQueryData(
         [ClassroomsQueryKey.GetClassrooms],
         (old: ClassroomT[] | InfiniteQueryData | undefined) => {
@@ -116,7 +116,7 @@ export const useUpdateIndividualClassroom = () => {
         },
       );
 
-      // Оптимистично обновляем данные конкретного класса
+      // Оптимистично обновляем данные конкретного кабинета
       queryClient.setQueryData<ClassroomT>(
         [ClassroomsQueryKey.GetClassroom, classroomId],
         (old) => {
@@ -154,7 +154,7 @@ export const useUpdateIndividualClassroom = () => {
           updatedClassroom,
         );
 
-        // Обновляем класс в списке
+        // Обновляем кабинет в списке
         queryClient.setQueryData(
           [ClassroomsQueryKey.GetClassrooms],
           (old: ClassroomT[] | InfiniteQueryData | undefined) => {
@@ -185,7 +185,7 @@ export const useUpdateIndividualClassroom = () => {
       }
 
       // Показываем успешное уведомление
-      showSuccess('classroom', `Индивидуальный класс обновлен`);
+      showSuccess('classroom', `Индивидуальный кабинет обновлен`);
     },
   });
 
