@@ -19,6 +19,7 @@
     "@xipkg/form": "4.2.2",
     "@xipkg/input": "2.2.14",
     "@xipkg/popover": "^2.1.0",
+    "common.env": "workspace:*",
     "common.services": "workspace:*",
     "common.ui": "workspace:*",
     "modules.editor": "workspace:*"
