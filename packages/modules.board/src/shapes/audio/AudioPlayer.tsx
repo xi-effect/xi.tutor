@@ -77,7 +77,6 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
         <AudioPlayPauseButton
           isPlaying={playback.localIsPlaying}
           disabled={!playback.canControl}
-          isInteractive={isControlsInteractive}
           onPlayPause={playback.togglePlay}
         />
 

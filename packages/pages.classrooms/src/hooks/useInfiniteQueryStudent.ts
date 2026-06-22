@@ -40,13 +40,11 @@ export const useInfiniteQueryStudent = () => {
       },
       initialPageParam: undefined as string | undefined,
       getNextPageParam: (lastPage) => {
-        if (!lastPage || lastPage.length === 0) {
+        if (!lastPage || lastPage.length < 20) {
           return undefined;
         }
 
-        // Используем created_at для пагинации
-        const nextParam = lastPage[lastPage.length - 1].created_at;
-        return nextParam;
+        return lastPage[lastPage.length - 1].created_at;
       },
       staleTime: 5 * 60 * 1000, // 5 минут
       gcTime: 10 * 60 * 1000, // 10 минут

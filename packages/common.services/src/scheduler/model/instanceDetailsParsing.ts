@@ -32,6 +32,20 @@ export function extractInstanceSlot(
     };
   }
 
+  const virtualInstance = raw.virtual_event_instance as PersistedSlot | undefined;
+  if (
+    virtualInstance != null &&
+    typeof virtualInstance.starts_at === 'string' &&
+    typeof virtualInstance.ends_at === 'string'
+  ) {
+    return {
+      startsAt: virtualInstance.starts_at,
+      endsAt: virtualInstance.ends_at,
+      cancelledAt:
+        typeof virtualInstance.cancelled_at === 'string' ? virtualInstance.cancelled_at : null,
+    };
+  }
+
   if (typeof raw.starts_at === 'string' && typeof raw.ends_at === 'string') {
     return {
       startsAt: raw.starts_at,

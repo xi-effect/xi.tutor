@@ -12,7 +12,11 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const animFrameRef = useRef<number>(0);
-  const latestRef = useRef({ syncPlayback: shape.props.syncPlayback, isTutor });
+  const latestRef = useRef({
+    syncPlayback: shape.props.syncPlayback,
+    isTutor,
+    studentsCanControlPlayback: shape.props.studentsCanControlPlayback,
+  });
 
   const [localIsPlaying, setLocalIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -24,7 +28,7 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
   const canControl = !syncPlayback || isTutor || studentsCanControlPlayback;
   const effectiveVolume = isMuted ? 0 : volume;
 
-  latestRef.current = { syncPlayback, isTutor };
+  latestRef.current = { syncPlayback, isTutor, studentsCanControlPlayback };
 
   // Create audio element
   useEffect(() => {
@@ -84,13 +88,18 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
     }
   }, [effectiveVolume]);
 
-  // Sync mode: observe audioSyncMap (students only)
+  // Sync mode: observe audioSyncMap for non-controlling clients
   useEffect(() => {
     if (!syncPlayback || !audioSyncMap) return;
 
     const applySync = () => {
       const audio = audioRef.current;
       if (!audio || !audio.duration) return;
+
+      // Tutor controls their own playback directly; skip sync unless students
+      // are also allowed to control (in which case tutor follows students too).
+      const { isTutor: isTutorNow, studentsCanControlPlayback: studCanNow } = latestRef.current;
+      if (isTutorNow && !studCanNow) return;
 
       const playing = audioSyncMap.get(`${shape.id}:playing`) ?? 0;
       const time = audioSyncMap.get(`${shape.id}:time`) ?? 0;
@@ -100,11 +109,15 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
         const elapsed = (Date.now() - ts) / 1000;
         const targetTime = Math.min(time + elapsed, audio.duration);
 
-        if (Math.abs(audio.currentTime - targetTime) > 1.5) {
+        // Always seek when resuming from pause, or when continuous drift exceeds threshold.
+        // This prevents the student from replaying a section that the tutor already skipped past.
+        if (audio.paused || Math.abs(audio.currentTime - targetTime) > 0.3) {
           audio.currentTime = targetTime;
         }
         if (audio.paused) {
-          audio.play().catch(() => {});
+          audio.play().catch(() => {
+            setLocalIsPlaying(false);
+          });
         }
         setLocalIsPlaying(true);
       } else {
