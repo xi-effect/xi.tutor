@@ -9,19 +9,16 @@ import {
 } from 'common.services';
 import { StorageItemT } from 'common.types';
 import { LoadingScreen } from 'common.ui';
-import { TUser } from '../types';
 
 type TEditorWithData = {
   storageItem: StorageItemT;
-  setUsers?: (users: TUser[]) => void;
 };
 
 type TEditor = {
   storageItem?: StorageItemT;
-  setUsers?: (users: TUser[]) => void;
 };
 
-const EditorWithoutData = ({ setUsers }: TEditor) => {
+const EditorWithoutData = () => {
   const { classroomId, noteId, materialId } = useParams({ strict: false });
 
   const { data: user } = useCurrentUser();
@@ -66,25 +63,25 @@ const EditorWithoutData = ({ setUsers }: TEditor) => {
     <div className="flex w-full justify-center pt-4 pb-8">
       <div className="w-full max-w-4xl pl-16">
         <YjsProvider key={storageItem?.ydoc_id} data={storageItem}>
-          <TiptapEditor setUsers={setUsers} />
+          <TiptapEditor />
         </YjsProvider>
       </div>
     </div>
   );
 };
 
-const EditorWithData = ({ storageItem, setUsers }: TEditorWithData) => {
+const EditorWithData = ({ storageItem }: TEditorWithData) => {
   return (
     <YjsProvider key={storageItem.ydoc_id} data={storageItem}>
-      <TiptapEditor setUsers={setUsers} />
+      <TiptapEditor />
     </YjsProvider>
   );
 };
 
-export const Editor = ({ storageItem, setUsers }: TEditor) => {
+export const Editor = ({ storageItem }: TEditor) => {
   if (storageItem) {
-    return <EditorWithData storageItem={storageItem} setUsers={setUsers} />;
+    return <EditorWithData storageItem={storageItem} />;
   }
 
-  return <EditorWithoutData setUsers={setUsers} />;
+  return <EditorWithoutData />;
 };

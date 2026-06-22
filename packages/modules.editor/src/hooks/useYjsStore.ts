@@ -13,7 +13,8 @@ import {
   type onAuthenticationFailedParameters,
 } from '@hocuspocus/provider';
 import { generateUserColor } from '../utils/userColor';
-import { TUser } from '../types';
+import { useCollaborators } from './useCollaborators';
+import { TCollaborator } from '../types';
 
 type UseYjsStoreArgs = {
   hostUrl: string;
@@ -31,7 +32,6 @@ export type UseCollaborativeTiptapReturn = {
   isReadOnly: boolean;
   storageToken: string;
   storageItem: StorageItemT;
-  users: TUser[];
 };
 
 export function useYjsStore({
@@ -62,7 +62,8 @@ export function useYjsStore({
     return { provider, ydoc };
   });
 
-  const [users, setUsers] = useState<TUser[]>([]);
+  const { awareness } = provider;
+  const { setCollaboratorsIfChanged, reset } = useCollaborators();
 
   /* ==========================================================
    * 2. Readonly state
@@ -101,8 +102,8 @@ export function useYjsStore({
     }, 0);
 
     // Awareness
-    if (provider.awareness) {
-      provider.awareness.setLocalStateField('user', userData);
+    if (awareness) {
+      awareness.setLocalStateField('user', userData);
     }
 
     // Auth events
@@ -134,30 +135,26 @@ export function useYjsStore({
         // ignore
       }
     };
-  }, [provider, userData]);
+  }, [provider, awareness, userData]);
 
   useEffect(() => {
-    const handleGetUserIds = () => {
-      if (!provider.awareness) return;
+    if (!awareness) return;
 
-      const awarenessUsers: TUser[] = [...provider.awareness.getStates()]
+    const handleSyncUsersFromAwareness = () => {
+      const awarenessUsers: TCollaborator[] = [...awareness.getStates()]
         .map((arr) => ({ id: arr[1].user?.id, userName: arr[1].user.name }))
         .filter((user) => user.id);
-      if (JSON.stringify(awarenessUsers) !== JSON.stringify(users)) {
-        setUsers(awarenessUsers);
-      }
+      setCollaboratorsIfChanged(awarenessUsers);
     };
 
-    if (provider.awareness) {
-      provider.awareness.on('change', handleGetUserIds);
-    }
+    awareness.on('update', handleSyncUsersFromAwareness);
+    handleSyncUsersFromAwareness();
 
     return () => {
-      if (provider.awareness) {
-        provider.awareness.off('change', handleGetUserIds);
-      }
+      awareness.off('update', handleSyncUsersFromAwareness);
+      reset();
     };
-  }, [provider.awareness, users]);
+  }, [awareness, setCollaboratorsIfChanged, reset]);
 
   /* ==========================================================
    * 6. Editor — extensions в deps: при загрузке currentUser
@@ -208,8 +205,7 @@ export function useYjsStore({
       isReadOnly,
       storageToken,
       storageItem,
-      users,
     }),
-    [editor, undo, redo, canUndo, canRedo, isReadOnly, storageToken, storageItem, users],
+    [editor, undo, redo, canUndo, canRedo, isReadOnly, storageToken, storageItem],
   );
 }
