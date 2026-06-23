@@ -112,8 +112,7 @@
 
 /* Стили для кода */
 .xi-editor .ProseMirror pre {
-  background: var(--xi-gray-90);
-  color: var(--xi-gray-0);
+  background: var(--xi-gray-0);
   padding: 1rem;
   border-radius: 0.5rem;
   margin: 1rem 0;
@@ -123,20 +122,6 @@
 [data-theme='dark'] .xi-editor .ProseMirror pre {
   background: var(--xi-gray-10);
   color: var(--xi-gray-100);
-}
-
-.xi-editor .ProseMirror code {
-  background: var(--xi-gray-10);
-  color: var(--xi-gray-100);
-  padding: 0.125rem 0.25rem;
-  border-radius: 0.25rem;
-  font-size: 0.875em;
-}
-
-.xi-editor .ProseMirror pre code {
-  background: transparent;
-  padding: 0;
-  color: inherit;
 }
 
 /* Стили для ссылок */
@@ -255,9 +240,7 @@
 }
 
 /* Стилизация блока кода */
-.tiptap pre {
-  background: #1e1e1e;
-  color: #d4d4d4;
+.xi-editor .tiptap pre {
   font-family:
     'JetBrains Mono',
     Courier New,
@@ -265,13 +248,6 @@
     monospace;
   padding: 0.75rem 1rem;
   border-radius: 0.5rem;
-}
-
-.tiptap pre code {
-  color: inherit;
-  padding: 0;
-  background: none;
-  font-size: 0.8rem;
 }
 
 /* Стили для мобильных устройств */

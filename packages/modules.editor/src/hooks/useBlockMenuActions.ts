@@ -77,7 +77,7 @@ export const useBlockMenuActions = (
     link.click();
   };
 
-  const insertCode = (codeText: string, language: string = 'plaintext') => {
+  const insertCode = (codeText: string = '', language: string = 'plaintext') => {
     if (!editor || !editor.isEditable) return;
 
     const endPos = editor.state.doc.content.size;

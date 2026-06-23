@@ -9,18 +9,17 @@ import { Button } from '@xipkg/button';
 import { MoreVert, Copy, Trash } from '@xipkg/icons';
 import { useBlockMenuActions, useYjsContext } from '../../hooks';
 import { cn } from '@xipkg/utils';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { ActiveBlockT } from '../../types';
 import { common } from 'lowlight';
 import { toast } from 'sonner';
 
 export const CodeBlockNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) => {
-  const [hovered, setHovered] = useState(false);
   const currentLang = node.attrs.language || 'plaintext';
 
   const { editor, isReadOnly } = useYjsContext();
 
-  // Функция точного определения текущего блока для хука экшенов
+  // Функция точного определения текущего блока для хука
   const getActiveBlock = useCallback((): ActiveBlockT | undefined => {
     if (typeof getPos !== 'function' || !editor) return;
     try {
@@ -57,26 +56,16 @@ export const CodeBlockNodeView = ({ node, getPos, updateAttributes }: NodeViewPr
   const availableLanguages = Object.keys(common);
 
   return (
-    <NodeViewWrapper
-      className="group border-gray-10 bg-gray-0 relative my-4 rounded-xl border p-4 font-mono text-sm"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+    <NodeViewWrapper className="group relative">
       <div
         className={cn(
-          'absolute top-3 right-3 z-10 flex items-center gap-1 transition-opacity duration-200',
-          hovered ? 'opacity-100' : 'pointer-events-none opacity-0',
+          'pointer-events-none absolute top-2 right-2 z-10 flex items-center opacity-0 transition-opacity duration-200 group-hover:pointer-events-auto group-hover:opacity-100',
         )}
         contentEditable={false}
       >
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
-            <Button
-              size="s"
-              variant="none"
-              className="border-gray-10 h-6 rounded border px-2 text-xs text-gray-100 capitalize"
-              disabled={isReadOnly}
-            >
+            <Button size="s" variant="none" className="text-gray-80" disabled={isReadOnly}>
               {currentLang === 'plaintext' ? 'text' : currentLang}
             </Button>
           </DropdownMenuTrigger>
@@ -104,8 +93,8 @@ export const CodeBlockNodeView = ({ node, getPos, updateAttributes }: NodeViewPr
         </DropdownMenu>
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
-            <Button size="s" variant="none" className="h-6 rounded px-1.5 text-gray-100">
-              <MoreVert size="sm" className="size-4" />
+            <Button size="s" variant="none" className="text-gray-0">
+              <MoreVert size="sm" className="size-5" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -135,7 +124,7 @@ export const CodeBlockNodeView = ({ node, getPos, updateAttributes }: NodeViewPr
       </div>
 
       {/* Обязательный контейнер Tiptap для рендеринга редактируемого текста */}
-      <pre className="font-inherit m-0 bg-transparent p-0 text-inherit">
+      <pre>
         <NodeViewContent className="text-inherit" />
       </pre>
     </NodeViewWrapper>

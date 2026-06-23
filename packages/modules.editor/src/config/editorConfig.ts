@@ -11,7 +11,7 @@ import { UniqueID } from '@tiptap/extension-unique-id';
 import * as Y from 'yjs';
 import { CustomImage, MoveBlockKeyboard, NormalizeSelection } from '../extensions';
 import { ExtraShortcuts } from '../extensions/extra-keyboard-shortcuts';
-import 'highlight.js/styles/tokyo-night-dark.css';
+import 'highlight.js/styles/base16/atelier-cave-light.min.css';
 import { CustomCodeNode } from '../extensions/code';
 
 /** Курсор в стиле доски: вертикальная линия + шильдик с именем */

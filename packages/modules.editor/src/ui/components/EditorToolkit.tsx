@@ -4,7 +4,6 @@ import { DragHandleWrapper } from './DragHandleWrapper';
 import { Editor } from '@tiptap/core';
 import { ImageUploadModal } from './FileUploadDialog';
 import { normalizeSelectionAfterDrop } from '../../utils/normalizeSelectionAfterDrop';
-import { InsertCodeModal } from './CodeInsertDialog';
 
 type EditorToolkitProps = {
   editor: Editor;
@@ -56,7 +55,6 @@ export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly
       )}
       <BubbleMenuWrapper editor={editor} isReadOnly={isReadOnly} />
       <ImageUploadModal />
-      <InsertCodeModal />
     </>
   );
 };

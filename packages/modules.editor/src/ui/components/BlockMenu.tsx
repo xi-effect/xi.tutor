@@ -43,7 +43,7 @@ export const BlockMenu = ({
 }: BlockMenuPropsT) => {
   const isMac = navigator.platform.toUpperCase().includes('MAC');
   const { openModal } = useInterfaceStore();
-  const { changeType, duplicate, remove, moveUp, moveDown } = useBlockMenuActions(
+  const { changeType, duplicate, remove, moveUp, moveDown, insertCode } = useBlockMenuActions(
     editor,
     getActiveBlock,
   );
@@ -89,7 +89,7 @@ export const BlockMenu = ({
           <Image size="sm" className="size-6" />
           <span>Изображение</span>
         </DropdownMenuItem>
-        <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('insertCode')}>
+        <DropdownMenuItem className={menuItemClass} onSelect={() => insertCode('')}>
           <Code size="sm" className="size-6" />
           <span>Вставить код</span>
         </DropdownMenuItem>
