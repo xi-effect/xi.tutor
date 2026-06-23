@@ -18,7 +18,7 @@ import {
   DropdownMenuItem,
 } from '@xipkg/dropdown';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { env } from 'common.env';
@@ -34,20 +34,32 @@ type ModalGroupInviteProps = {
   onOpenChange?: (open: boolean) => void;
 };
 
-export const ModalGroupInvite = ({ children, open, onOpenChange }: ModalGroupInviteProps) => {
+export const ModalGroupInvite = ({
+  children,
+  open: controlledOpen,
+  onOpenChange,
+}: ModalGroupInviteProps) => {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? (value: boolean) => onOpenChange?.(value) : setInternalOpen;
+
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
-  const isModalOpen = open ?? false;
   const { data, isLoading } = useGroupInvite({
     classroomId: classroomId,
-    disabled: !isModalOpen,
+    disabled: !open,
   });
   const { data: classroom } = useGetClassroom(Number(classroomId));
   const { mutate: resetInvite, isPending: isResettingInvite } = useResetGroupInvite({
     classroom_id: classroomId,
   });
 
+  const inviteLink = data?.code ? `${env.VITE_APP_DOMAIN}/invite/${data.code}` : '';
+
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(`${env.VITE_APP_DOMAIN}/invite/${data?.code}`);
+    if (!inviteLink) return;
+
+    navigator.clipboard.writeText(inviteLink);
     toast.success('Ссылка скопирована');
     toast.info('Отправьте ссылку ученикам');
   };
@@ -70,7 +82,7 @@ export const ModalGroupInvite = ({ children, open, onOpenChange }: ModalGroupInv
   };
 
   const handleClose = () => {
-    onOpenChange?.(false);
+    setOpen(false);
     cleanupBodyScrollLock();
   };
 
@@ -83,7 +95,7 @@ export const ModalGroupInvite = ({ children, open, onOpenChange }: ModalGroupInv
     <Modal
       open={open}
       onOpenChange={(next) => {
-        if (typeof next === 'boolean') onOpenChange?.(next);
+        if (typeof next === 'boolean') setOpen(next);
         if (next === false) cleanupBodyScrollLock();
       }}
     >
@@ -115,7 +127,7 @@ export const ModalGroupInvite = ({ children, open, onOpenChange }: ModalGroupInv
                     className="w-full cursor-pointer"
                     type="text"
                     placeholder="Ссылка"
-                    value={`${env.VITE_APP_DOMAIN}/invite/${data?.code}`}
+                    value={inviteLink}
                     onClick={handleCopyLink}
                     readOnly
                     data-umami-event="group-invite-copy-link-input"
@@ -163,7 +175,11 @@ export const ModalGroupInvite = ({ children, open, onOpenChange }: ModalGroupInv
             )}
         </ModalBody>
         <ModalFooter className="flex gap-2">
-          <Button onClick={handleCopyLink} data-umami-event="group-invite-copy-link-button">
+          <Button
+            onClick={handleCopyLink}
+            disabled={!inviteLink}
+            data-umami-event="group-invite-copy-link-button"
+          >
             Копировать ссылку
           </Button>
         </ModalFooter>

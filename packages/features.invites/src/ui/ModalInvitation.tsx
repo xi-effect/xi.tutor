@@ -12,6 +12,7 @@ import {
 import { Table, TableHeader, TableRow, TableHead, TableCell, TableBody } from 'features.table';
 import { Button } from '@xipkg/button';
 import { Trash, Copy } from '@xipkg/icons';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { toast } from 'sonner';
 import { useInvitationsList, useAddInvitation, useDeleteInvitation } from 'common.services';
 import { InvitationDataT } from 'common.types';
@@ -101,10 +102,12 @@ export const ModalInvitation = ({
         </ModalHeader>
 
         <ModalBody className="px-4 py-2">
+          <p className="flex flex-wrap items-center gap-1.5 px-2 pb-2 text-left dark:text-gray-100">
+            <span>Скопируйте ссылку-приглашение</span>
+            <Copy size="sm" className="fill-gray-60 size-4 shrink-0" aria-hidden />
+            <span>и отправьте ученику</span>
+          </p>
           <Table>
-            <caption className="p-2 text-left dark:text-gray-100">
-              Скопируйте ссылку-приглашение и отправьте ученику
-            </caption>
             <TableHeader>
               <TableRow className="flex justify-between">
                 <TableHead className="text-gray-80 flex-1 text-sm">Ссылка</TableHead>
@@ -120,15 +123,24 @@ export const ModalInvitation = ({
                     className="hover:bg-gray-5 group flex max-h-[38px] flex-row items-center rounded-lg"
                   >
                     <TableCell className="flex max-w-[50%] flex-1 items-center gap-2 overflow-hidden">
-                      <span className="dark:text-gray-80">{invitation.code}</span>
-                      <div
-                        className="bg-gray-5 flex h-5 w-5 cursor-pointer items-center justify-center rounded-sm p-1"
-                        onClick={handleCopyLink(invitation.code)}
-                        data-umami-event="invite-copy-link"
-                        data-umami-event-invite-id={invitation.id}
-                      >
-                        <Copy className="dark:fill-gray-80" />
-                      </div>
+                      <span className="dark:text-gray-80 truncate">{invitation.code}</span>
+                      <Tooltip delayDuration={400}>
+                        <TooltipTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="none"
+                            size="s"
+                            className="bg-gray-5 hover:bg-gray-10 text-gray-60 hover:text-gray-80 size-7 shrink-0 rounded-md p-0"
+                            onClick={handleCopyLink(invitation.code)}
+                            aria-label="Копировать ссылку"
+                            data-umami-event="invite-copy-link"
+                            data-umami-event-invite-id={invitation.id}
+                          >
+                            <Copy size="sm" className="size-4 fill-current" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Копировать ссылку</TooltipContent>
+                      </Tooltip>
                     </TableCell>
                     <TableCell className="dark:text-gray-80 flex max-w-[50%] flex-1">
                       {invitation.usage_count}

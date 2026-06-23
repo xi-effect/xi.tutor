@@ -1,5 +1,6 @@
 import { invitationsApiConfig, InvitationsQueryKey } from 'common.api';
 import { useFetching } from 'common.config';
+import { InvitationDataT } from 'common.types';
 
 export const useGroupInvite = ({
   classroomId,
@@ -23,7 +24,7 @@ export const useGroupInvite = ({
   });
 
   return {
-    data,
+    data: data as InvitationDataT | null | undefined,
     isError,
     isLoading,
     ...rest,
