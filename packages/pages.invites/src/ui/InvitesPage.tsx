@@ -1,5 +1,6 @@
 import { Logo } from 'common.ui';
 import { useParams } from '@tanstack/react-router';
+import { useEffect } from 'react';
 import { Invite } from './Invite';
 import { ErrorInvite } from './ErrorInvite';
 import { useInvitePreview } from '../services';
@@ -7,6 +8,10 @@ import { useInvitePreview } from '../services';
 export const InvitesPage = () => {
   const { inviteId } = useParams({ strict: false }) as { inviteId: string };
   const { data, error, isLoading } = useInvitePreview(inviteId);
+
+  useEffect(() => {
+    localStorage.removeItem('invite.pending_code');
+  }, []);
 
   if (isLoading) {
     return (

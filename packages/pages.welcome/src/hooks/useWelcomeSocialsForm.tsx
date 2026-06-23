@@ -18,10 +18,18 @@ export const useWelcomeSocialsForm = () => {
       // Небольшая задержка для обновления данных пользователя
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      if (search.invite) {
+      const storedInviteId =
+        typeof window !== 'undefined' ? localStorage.getItem('invite.pending_code') : null;
+
+      const inviteId = storedInviteId || search.invite;
+
+      if (inviteId) {
+        if (storedInviteId) {
+          localStorage.removeItem('invite.pending_code');
+        }
         navigate({
           to: '/invite/$inviteId',
-          params: { inviteId: search.invite },
+          params: { inviteId },
         });
       } else {
         navigate({
