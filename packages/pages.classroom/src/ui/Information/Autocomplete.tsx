@@ -42,6 +42,13 @@ export const Autocomplete = ({ field, disabled }: AutocompleteProps) => {
     !field.value, // Отключаем запрос если нет выбранного предмета
   );
 
+  const hasSelection = Boolean(field.value);
+  const triggerLabel = hasSelection
+    ? isLoadingSelected
+      ? 'Загрузка...'
+      : selectedSubject?.name || 'Предмет не найден'
+    : 'Выберите предмет...';
+
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
@@ -50,34 +57,48 @@ export const Autocomplete = ({ field, disabled }: AutocompleteProps) => {
           role="combobox"
           aria-expanded={open}
           title={field.value && !isLoadingSelected ? selectedSubject?.name : undefined}
-          className="border-gray-30 bg-gray-0 h-[32px] w-full justify-between rounded-lg border-2 pr-4 pl-3 hover:border-gray-50 hover:bg-transparent"
+          className="border-gray-30 bg-gray-0 dark:text-gray-80 h-[32px] w-full justify-between rounded-lg border-2 pr-4 pl-3 hover:border-gray-50 hover:bg-transparent"
         >
-          <span className="truncate">
-            {field.value
-              ? isLoadingSelected
-                ? 'Загрузка...'
-                : selectedSubject?.name || 'Предмет не найден'
-              : 'Выберите предмет...'}
+          <span
+            className={cn(
+              'truncate',
+              hasSelection ? 'dark:text-gray-80 text-gray-100' : 'text-gray-40 dark:text-gray-60',
+            )}
+          >
+            {triggerLabel}
           </span>
-          <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0" />
+          <ChevronsUpDownIcon className="text-gray-80 dark:text-gray-60 ml-2 h-4 w-4 shrink-0" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-full border-none bg-transparent p-0">
-        <Command className="w-[300px]" shouldFilter={false}>
-          <CommandInput placeholder="Поиск предмета..." value={search} onValueChange={setSearch} />
+        <Command
+          className="[&_[data-slot=command-input-wrapper]_svg]:fill-gray-60 w-[300px]"
+          shouldFilter={false}
+        >
+          <CommandInput
+            placeholder="Поиск предмета..."
+            value={search}
+            onValueChange={setSearch}
+            className="dark:text-gray-80 text-gray-100"
+          />
           <CommandList className="w-full">
             {isLoading ? (
-              <div className="py-6 text-center text-sm">Загрузка...</div>
+              <div className="text-gray-60 dark:text-gray-60 py-6 text-center text-sm">
+                Загрузка...
+              </div>
             ) : isError ? (
               <div className="py-6 text-center text-sm text-red-500">Ошибка загрузки</div>
             ) : !subjects || subjects.length === 0 ? (
-              <div className="py-6 text-center text-sm">Предметы не найдены</div>
+              <div className="text-gray-60 dark:text-gray-80 py-6 text-center text-sm">
+                Предметы не найдены
+              </div>
             ) : (
               <CommandGroup>
                 {subjects.map((subject: SubjectSchema) => (
                   <CommandItem
                     key={subject.id}
                     value={subject.name}
+                    className="dark:text-gray-80 text-gray-100"
                     onSelect={() => {
                       if (disabled) return;
                       field.onChange(subject.id);
@@ -86,7 +107,7 @@ export const Autocomplete = ({ field, disabled }: AutocompleteProps) => {
                   >
                     <CheckIcon
                       className={cn(
-                        'mr-2 h-4 w-4',
+                        'text-gray-80 mr-2 h-4 w-4',
                         field.value === subject.id ? 'opacity-100' : 'opacity-0',
                       )}
                     />

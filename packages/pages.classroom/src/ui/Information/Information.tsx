@@ -206,7 +206,7 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
               name="subject"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel>Предмет</FormLabel>
+                  <FormLabel className="text-m-base dark:text-gray-100">Предмет</FormLabel>
                   <FormControl>
                     <Autocomplete
                       field={field}

@@ -25,11 +25,11 @@ export const NotificationsToggles = ({ type }: NotificationsTogglesPropsT) => {
         {type !== 'email' && (
           <div className="flex flex-row items-center justify-between p-3">
             <div className="flex flex-col gap-1">
-              <span className="font-inter text-m-base font-medium">
+              <span className="font-inter text-m-base font-medium dark:text-gray-100">
                 Отображать ник в {nameType} в профиле
               </span>
 
-              <span className="text-gray-80 font-inter text-s-base font-normal">
+              <span className="text-gray-80 dark:text-gray-80 font-inter text-s-base font-normal">
                 Другие участники увидят ваши контакты
               </span>
             </div>

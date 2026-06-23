@@ -20,7 +20,7 @@ export const InvitesPage = () => {
           <Logo />
         </div>
         <div className="flex w-full flex-col items-center gap-4 p-8 sm:w-[400px]">
-          <p>Загрузка приглашения...</p>
+          <p className="text-gray-80 dark:text-gray-80">Загрузка приглашения...</p>
         </div>
       </section>
     );

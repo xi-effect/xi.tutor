@@ -55,9 +55,9 @@ export const WelcomeUserAvatar = () => {
     <div className="mt-8 flex h-16 flex-row">
       <AvatarPreview userId={id} timestamp={avatarTimestamp} />
       <div className="ml-4 flex flex-col gap-2">
-        <p className="text-gray-90 w-full leading-[22px] font-medium">
+        <p className="text-gray-90 w-full leading-[22px] font-medium dark:text-gray-100">
           Аватар&nbsp;
-          <span className="text-gray-40 font-normal">(необязательно)</span>
+          <span className="text-gray-40 dark:text-gray-60 font-normal">(необязательно)</span>
         </p>
         <AvatarEditor
           file={file}

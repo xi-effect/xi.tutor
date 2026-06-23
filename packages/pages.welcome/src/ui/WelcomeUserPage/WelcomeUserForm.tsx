@@ -52,7 +52,7 @@ export const WelcomeUserForm = () => {
           defaultValue=""
           render={({ field }) => (
             <FormItem className="mt-8">
-              <FormLabel>{t('name')}</FormLabel>
+              <FormLabel className="dark:text-gray-100">{t('name')}</FormLabel>
               <FormControl>
                 <Input
                   className="mt-1"
@@ -66,8 +66,8 @@ export const WelcomeUserForm = () => {
             </FormItem>
           )}
         />
-        <FormLabel className="mt-6">{t('email')}</FormLabel>
-        <div className="bg-gray-10 mt-2 flex h-12 w-full flex-row items-start rounded-lg p-3 leading-[22px] text-gray-50">
+        <FormLabel className="mt-6 dark:text-gray-100">{t('email')}</FormLabel>
+        <div className="bg-gray-10 dark:text-gray-80 mt-2 flex h-12 w-full flex-row items-start rounded-lg p-3 leading-[22px] text-gray-50">
           {email}
         </div>
         <div className="mt-auto flex flex-row gap-6 pt-4">

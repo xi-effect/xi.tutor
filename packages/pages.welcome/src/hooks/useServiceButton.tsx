@@ -25,7 +25,9 @@ export function useServiceButton({
   }
 
   if (isPending) {
-    return <div className="text-gray-60 ml-auto py-1 sm:py-3">Формируем ссылку…</div>;
+    return (
+      <div className="text-gray-60 dark:text-gray-80 ml-auto py-1 sm:py-3">Формируем ссылку…</div>
+    );
   }
 
   if (link) {

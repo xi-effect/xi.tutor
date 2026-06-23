@@ -41,8 +41,10 @@ export const ErrorInvite = ({ error }: ErrorInviteProps) => {
 
   return (
     <div className="flex w-full flex-col gap-4 p-8 text-center sm:w-[400px]">
-      <h4 className="text-xl-base font-semibold">{getErrorMessage()}</h4>
-      <span>{getErrorDescription()}</span>
+      <h4 className="text-xl-base font-semibold text-gray-100 dark:text-gray-100">
+        {getErrorMessage()}
+      </h4>
+      <span className="text-gray-80 dark:text-gray-80">{getErrorDescription()}</span>
     </div>
   );
 };

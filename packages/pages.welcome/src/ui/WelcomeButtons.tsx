@@ -23,7 +23,7 @@ export const WelcomeButtons = ({
       <Button
         onClick={backButtonHandler}
         variant="none"
-        className="w-[98px]"
+        className="text-gray-80 dark:text-gray-80 w-[98px]"
         type="button"
         disabled={isLoading}
         data-umami-event="welcome-back-button"

@@ -43,8 +43,10 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
   return (
     <div className="flex w-full flex-col gap-8 p-2 sm:w-[500px]">
       <div className="text-center">
-        <h3 className="text-xl-base mb-2 font-semibold">{getInviteTitle()}</h3>
-        <span>
+        <h3 className="text-xl-base mb-2 font-semibold text-gray-100 dark:text-gray-100">
+          {getInviteTitle()}
+        </h3>
+        <span className="text-gray-80 dark:text-gray-80">
           {invite.kind === 'individual'
             ? 'Репетитор'
             : `в группу «${invite.classroom.name}» от репетитора`}
@@ -59,8 +61,10 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
           <AvatarFallback />
         </Avatar>
         <div className="flex flex-col items-center">
-          <p>{invite.tutor.display_name}</p>
-          <span className="text-s-base">{invite.tutor.username}</span>
+          <p className="text-gray-100 dark:text-gray-100">{invite.tutor.display_name}</p>
+          <span className="text-s-base text-gray-80 dark:text-gray-80">
+            {invite.tutor.username}
+          </span>
         </div>
       </div>
 
@@ -77,7 +81,7 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
         </Button>
         <Button
           onClick={() => navigate({ to: '/' })}
-          className="w-full rounded-xl"
+          className="text-gray-80 dark:text-gray-80 w-full rounded-xl"
           variant="none"
           disabled={isPending}
           data-umami-event="invite-decline"

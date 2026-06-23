@@ -26,7 +26,7 @@ export const WelcomeRoleButton = ({
       <div className="flex text-start">
         <span
           className={`z-10 text-xl leading-[28px] font-medium ${
-            active ? 'text-brand-100' : 'text-gray-80'
+            active ? 'text-brand-100' : 'text-gray-80 dark:text-gray-80'
           }`}
         >
           {text}
