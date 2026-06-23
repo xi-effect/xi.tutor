@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { useMemo } from 'react';
 import { useParams, useRouter } from '@tanstack/react-router';
 import {
   useCurrentUser,
@@ -10,9 +11,13 @@ import { Skeleton } from 'common.ui';
 import { EditableTitle } from './EditableTitle';
 import { Button } from '@xipkg/button';
 import { ArrowLeft } from '@xipkg/icons';
+import { useCollaborators } from 'modules.editor';
+import { CollaboratorAvatars } from './CollaboratorAvatars';
+import { getAvatarUrlByUserId } from '../utils';
 
 export const Header = () => {
   const { classroomId, noteId, materialId } = useParams({ strict: false });
+  const { collaborators } = useCollaborators();
   const router = useRouter();
 
   const { data: user } = useCurrentUser();
@@ -54,6 +59,16 @@ export const Header = () => {
     }
   };
 
+  const collaboratorsWithAvatars = useMemo(
+    () =>
+      collaborators.map((collaborator) => ({
+        ...collaborator,
+        avatarUrl: getAvatarUrlByUserId(collaborator.id),
+        initial: collaborator.userName.charAt(0).toUpperCase(),
+      })),
+    [collaborators],
+  );
+
   return (
     <div className="bg-gray-0 border-gray-10 sticky top-0 z-50 flex h-[56px] min-h-[56px] w-full rounded-2xl border px-2">
       <div className="flex w-full items-center justify-between">
@@ -73,6 +88,7 @@ export const Header = () => {
               <EditableTitle title={material.name} materialId={materialIdValue} isTutor={isTutor} />
             )}
           </div>
+          <CollaboratorAvatars collaborators={collaboratorsWithAvatars} currentUserId={user.id} />
         </div>
       </div>
     </div>

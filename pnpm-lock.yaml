@@ -4875,6 +4875,9 @@ importers:
       '@tanstack/react-router':
         specifier: ^1.166.6
         version: 1.170.15(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/avatar':
+        specifier: 3.3.0
+        version: 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
         specifier: 4.1.0
         version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
@@ -4887,9 +4890,15 @@ importers:
       '@xipkg/input':
         specifier: 2.2.14
         version: 2.2.14(react@19.2.7)
+      '@xipkg/popover':
+        specifier: ^2.1.0
+        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.7)
+      common.env:
+        specifier: workspace:*
+        version: link:../common.env
       common.services:
         specifier: workspace:*
         version: link:../common.services

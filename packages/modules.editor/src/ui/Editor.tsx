@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { YjsProvider } from '../providers/YjsProvider';
 import { TiptapEditor } from './components/TiptapEditor';
 import { useParams } from '@tanstack/react-router';
@@ -10,6 +9,14 @@ import {
 } from 'common.services';
 import { StorageItemT } from 'common.types';
 import { LoadingScreen } from 'common.ui';
+
+type TEditorWithData = {
+  storageItem: StorageItemT;
+};
+
+type TEditor = {
+  storageItem?: StorageItemT;
+};
 
 const EditorWithoutData = () => {
   const { classroomId, noteId, materialId } = useParams({ strict: false });
@@ -63,7 +70,7 @@ const EditorWithoutData = () => {
   );
 };
 
-const EditorWithData = ({ storageItem }: { storageItem: StorageItemT }) => {
+const EditorWithData = ({ storageItem }: TEditorWithData) => {
   return (
     <YjsProvider key={storageItem.ydoc_id} data={storageItem}>
       <TiptapEditor />
@@ -71,7 +78,7 @@ const EditorWithData = ({ storageItem }: { storageItem: StorageItemT }) => {
   );
 };
 
-export const Editor = ({ storageItem }: { storageItem?: StorageItemT }) => {
+export const Editor = ({ storageItem }: TEditor) => {
   if (storageItem) {
     return <EditorWithData storageItem={storageItem} />;
   }
