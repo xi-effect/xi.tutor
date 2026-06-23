@@ -43,7 +43,7 @@ export const BlockMenu = ({
 }: BlockMenuPropsT) => {
   const isMac = navigator.platform.toUpperCase().includes('MAC');
   const { openModal } = useInterfaceStore();
-  const { changeType, duplicate, remove, moveUp, moveDown, insertCode } = useBlockMenuActions(
+  const { insertBlock, duplicate, remove, moveUp, moveDown, insertCode } = useBlockMenuActions(
     editor,
     getActiveBlock,
   );
@@ -65,22 +65,22 @@ export const BlockMenu = ({
         onCloseAutoFocus={(e) => e.preventDefault()}
         className="border-gray-10 bg-gray-0 flex w-auto flex-col gap-1 space-y-1 rounded-lg border p-2 text-gray-100"
       >
-        <DropdownMenuItem className={menuItemClass} onSelect={() => changeType('paragraph')}>
+        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('paragraph')}>
           <Text size="sm" className="size-6" />
           <span>Текст</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className={menuItemClass} onSelect={() => changeType('heading1')}>
+        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('heading1')}>
           <H1 size="sm" className="size-6" />
           <span>Заголовок 1</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className={menuItemClass} onSelect={() => changeType('heading2')}>
+        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('heading2')}>
           <H2 size="sm" className="size-6" />
           <span>Заголовок 2</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className={menuItemClass} onSelect={() => changeType('heading3')}>
+        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('heading3')}>
           <H3 size="sm" className="size-6" />
           <span>Заголовок 3</span>
         </DropdownMenuItem>

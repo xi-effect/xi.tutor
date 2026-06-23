@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
+import { BoardRouteWarmup } from 'modules.board/warmup';
 import { lazy } from 'react';
 import { z } from 'zod';
 
@@ -38,6 +39,7 @@ export const Route = createFileRoute('/(app)/_layout/classrooms/$classroomId/')(
 function ClassroomPageComponent() {
   return (
     <>
+      <BoardRouteWarmup />
       <ClassroomPage />
     </>
   );

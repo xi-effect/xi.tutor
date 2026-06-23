@@ -21,6 +21,7 @@
     "common.env": "workspace:*",
     "common.services": "workspace:*",
     "common.utils": "workspace:*",
+    "modules.board": "workspace:*",
     "@xipkg/calls": "^0.1.4",
     "@xipkg/calls-chat": "^0.1.4",
     "@xipkg/calls-compactview": "^0.1.4",

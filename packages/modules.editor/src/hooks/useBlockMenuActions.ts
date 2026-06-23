@@ -33,17 +33,53 @@ export const useBlockMenuActions = (
   const insertImage = (src: string, alt?: string) => {
     if (!editor || !editor.isEditable) return;
 
-    const endPos = editor.state.doc.content.size;
+    const activeBlock = getCurrentBlock(editor);
+
+    if (!activeBlock?.node) return;
+
+    const insertPos = activeBlock.pos + activeBlock.node.nodeSize;
+
     editor
       .chain()
       .focus()
-      .insertContentAt(endPos, [
-        {
-          type: 'image',
-          attrs: { src, alt },
-        },
-      ])
+      .insertContentAt(insertPos, {
+        type: 'image',
+        attrs: { src, alt },
+      })
       .run();
+  };
+
+  const createBlock = (
+    editor: Editor | null,
+    type: BlockTypeT,
+    activeBlock: ActiveBlockT | undefined,
+  ) => {
+    if (!editor || !editor.isEditable || !type || !activeBlock) return;
+
+    const currentBlock = getCurrentBlock(editor, activeBlock);
+
+    if (!currentBlock?.node) return;
+
+    const config = NODE_TYPES_MAP[type];
+    if (!config) return;
+
+    const insertPos = currentBlock.pos + currentBlock.node.nodeSize;
+
+    const nodeType = editor.schema.nodes[config.type];
+    if (!nodeType) return;
+
+    const newNode = nodeType.createAndFill(config.attrs);
+    if (!newNode) return;
+
+    editor.chain().focus().insertContentAt(insertPos, newNode.toJSON()).run();
+  };
+
+  const downloadImage = (src: string) => {
+    const link = document.createElement('a');
+    link.setAttribute('target', '_blank');
+    link.href = src;
+    link.download = 'image.png';
+    link.click();
   };
 
   const changeType = (type?: BlockTypeT) => {
@@ -69,12 +105,11 @@ export const useBlockMenuActions = (
     });
   };
 
-  const downloadImage = (src: string) => {
-    const link = document.createElement('a');
-    link.setAttribute('target', '_blank');
-    link.href = src;
-    link.download = 'image.png';
-    link.click();
+  // В момент вызова получаем свежую позицию
+  const insertBlock = (type: BlockTypeT) => {
+    if (!getActiveBlock) return;
+    const activeBlock = getActiveBlock();
+    return createBlock(editor, type, activeBlock);
   };
 
   const insertCode = (codeText: string = '', language: string = 'plaintext') => {
@@ -127,6 +162,7 @@ export const useBlockMenuActions = (
     moveDown,
     moveUp,
     insertCode,
+    insertBlock,
   };
 };
 

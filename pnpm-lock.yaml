@@ -3305,6 +3305,9 @@ importers:
       common.utils:
         specifier: workspace:*
         version: link:../common.utils
+      modules.board:
+        specifier: workspace:*
+        version: link:../modules.board
       react:
         specifier: '19'
         version: 19.2.7
