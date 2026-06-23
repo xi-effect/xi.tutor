@@ -63,6 +63,14 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       !location.pathname.includes('/signup') &&
       !location.pathname.includes('/reset-password')
     ) {
+      if (location.pathname.startsWith('/invite/') && typeof window !== 'undefined') {
+        const segments = location.pathname.split('/');
+        const inviteId = segments[segments.length - 1];
+        if (inviteId) {
+          localStorage.setItem('invite.pending_code', inviteId);
+        }
+      }
+
       throw redirect({
         to: '/signin',
         search: {
