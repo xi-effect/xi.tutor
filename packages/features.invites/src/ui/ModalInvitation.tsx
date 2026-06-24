@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import {
   Modal,
   ModalTitle,
@@ -78,8 +78,11 @@ export const ModalInvitation = ({
     });
   };
 
-  useLayoutEffect(() => {
-    if (data?.length === 0) {
+  const hasAutoCreated = useRef(false);
+
+  useEffect(() => {
+    if (data?.length === 0 && !hasAutoCreated.current) {
+      hasAutoCreated.current = true;
       handleAddInvitation();
     }
   }, [data?.length, handleAddInvitation]);

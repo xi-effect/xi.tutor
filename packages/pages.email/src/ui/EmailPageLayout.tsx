@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { Logo } from 'common.ui';
+import { SupportFooter } from 'modules.navigation';
 
 export type EmailPageLayoutPropsT = {
   title: string;
@@ -20,6 +21,7 @@ export const EmailPageLayout = ({ title, children }: EmailPageLayoutPropsT) => {
           {children}
         </div>
       </div>
+      <SupportFooter />
     </div>
   );
 };

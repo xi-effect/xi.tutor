@@ -4330,9 +4330,15 @@ importers:
       common.types:
         specifier: workspace:*
         version: link:../common.types
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
       features.avatar.editor:
         specifier: workspace:*
         version: link:../features.avatar.editor
+      modules.navigation:
+        specifier: workspace:*
+        version: link:../modules.navigation
       react:
         specifier: '19'
         version: 19.2.7
@@ -4373,9 +4379,6 @@ importers:
       common.typescript:
         specifier: workspace:*
         version: link:../common.typescript
-      common.ui:
-        specifier: workspace:*
-        version: link:../common.ui
       common.utils:
         specifier: workspace:*
         version: link:../common.utils
@@ -4445,9 +4448,15 @@ importers:
       common.types:
         specifier: workspace:*
         version: link:../common.types
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
       features.avatar.editor:
         specifier: workspace:*
         version: link:../features.avatar.editor
+      modules.navigation:
+        specifier: workspace:*
+        version: link:../modules.navigation
       react:
         specifier: '19'
         version: 19.2.7
@@ -4488,9 +4497,6 @@ importers:
       common.typescript:
         specifier: workspace:*
         version: link:../common.typescript
-      common.ui:
-        specifier: workspace:*
-        version: link:../common.ui
       common.utils:
         specifier: workspace:*
         version: link:../common.utils
@@ -4548,6 +4554,9 @@ importers:
       common.utils:
         specifier: workspace:*
         version: link:../common.utils
+      modules.navigation:
+        specifier: workspace:*
+        version: link:../modules.navigation
       react:
         specifier: '19'
         version: 19.2.7
@@ -5474,12 +5483,18 @@ importers:
       common.types:
         specifier: workspace:*
         version: link:../common.types
+      common.ui:
+        specifier: workspace:*
+        version: link:../common.ui
       common.utils:
         specifier: workspace:*
         version: link:../common.utils
       features.avatar.editor:
         specifier: workspace:*
         version: link:../features.avatar.editor
+      modules.navigation:
+        specifier: workspace:*
+        version: link:../modules.navigation
       react:
         specifier: '19'
         version: 19.2.7
@@ -5520,9 +5535,6 @@ importers:
       common.typescript:
         specifier: workspace:*
         version: link:../common.typescript
-      common.ui:
-        specifier: workspace:*
-        version: link:../common.ui
       eslint:
         specifier: ^9.19.0
         version: 9.39.4(jiti@2.7.0)

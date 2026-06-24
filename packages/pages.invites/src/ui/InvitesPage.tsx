@@ -1,6 +1,7 @@
 import { Logo } from 'common.ui';
 import { useParams } from '@tanstack/react-router';
 import { useEffect } from 'react';
+import { SupportFooter } from 'modules.navigation';
 import { Invite } from './Invite';
 import { ErrorInvite } from './ErrorInvite';
 import { useInvitePreview } from '../services';
@@ -15,29 +16,35 @@ export const InvitesPage = () => {
 
   if (isLoading) {
     return (
-      <section className="bg-gray-0 relative flex h-screen flex-col items-center justify-center">
-        <div className="absolute top-24">
-          <Logo />
-        </div>
-        <div className="flex w-full flex-col items-center gap-4 p-8 sm:w-[400px]">
-          <p className="text-gray-80 dark:text-gray-80">Загрузка приглашения...</p>
-        </div>
-      </section>
+      <>
+        <section className="bg-gray-0 relative flex h-screen flex-col items-center justify-center">
+          <div className="absolute top-24">
+            <Logo />
+          </div>
+          <div className="flex w-full flex-col items-center gap-4 p-8 sm:w-[400px]">
+            <p className="text-gray-80 dark:text-gray-80">Загрузка приглашения...</p>
+          </div>
+        </section>
+        <SupportFooter />
+      </>
     );
   }
 
   return (
-    <section className="bg-gray-0 flex h-screen flex-col items-center justify-center">
-      <div className="absolute top-24">
-        <Logo />
-      </div>
-      {error ? (
-        <ErrorInvite error={error} />
-      ) : data ? (
-        <Invite invite={data} />
-      ) : (
-        <ErrorInvite error="Приглашение не найдено" />
-      )}
-    </section>
+    <>
+      <section className="bg-gray-0 flex h-screen flex-col items-center justify-center">
+        <div className="absolute top-24">
+          <Logo />
+        </div>
+        {error ? (
+          <ErrorInvite error={error} />
+        ) : data ? (
+          <Invite invite={data} />
+        ) : (
+          <ErrorInvite error="Приглашение не найдено" />
+        )}
+      </section>
+      <SupportFooter />
+    </>
   );
 };

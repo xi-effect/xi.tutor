@@ -4,7 +4,7 @@ import { createFileRoute } from '@tanstack/react-router';
 import { SignInPage } from 'pages.signin';
 
 // @ts-ignore
-export const Route = createFileRoute('/(auth)/signin/')({
+export const Route = createFileRoute('/(auth)/_layout/signin/')({
   head: () => ({
     meta: [
       {

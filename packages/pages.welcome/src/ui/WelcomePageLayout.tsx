@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { WelcomeSteps } from './WelcomeSteps';
 import { ProtectedProvider } from '../providers';
 import { Logo } from 'common.ui';
+import { SupportFooter } from 'modules.navigation';
 
 export type WelcomePageLayoutPropsT = {
   step: 1 | 2 | 3;
@@ -36,6 +37,7 @@ export const WelcomePageLayout = ({ step, title, subtitle, children }: WelcomePa
             </div>
           </div>
         </div>
+        <SupportFooter />
       </div>
     </ProtectedProvider>
   );

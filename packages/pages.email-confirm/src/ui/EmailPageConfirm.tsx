@@ -3,6 +3,7 @@ import { Button } from '@xipkg/button';
 import { useNavigate } from '@tanstack/react-router';
 import { useEmailChange } from 'common.services';
 import { useEffect, useRef } from 'react';
+import { SupportFooter } from 'modules.navigation';
 import { useConfirmEmailToken } from './useConfirmEmailToken';
 
 const Loading = () => {
@@ -87,6 +88,7 @@ export const EmailPageConfirm = () => {
           )}
         </div>
       </div>
+      <SupportFooter />
     </div>
   );
 };

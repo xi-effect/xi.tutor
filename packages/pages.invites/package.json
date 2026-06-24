@@ -21,6 +21,7 @@
     "common.config": "workspace:*",
     "common.services": "workspace:*",
     "common.utils": "workspace:*",
+    "modules.navigation": "workspace:*",
     "@tanstack/react-router": "^1.166.6"
   },
   "devDependencies": {

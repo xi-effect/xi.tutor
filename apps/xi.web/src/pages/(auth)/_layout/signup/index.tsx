@@ -7,7 +7,7 @@ const searchSchema = z.object({
   redirect: z.string().optional(),
 });
 
-export const Route = createFileRoute('/(auth)/signup/')({
+export const Route = createFileRoute('/(auth)/_layout/signup/')({
   head: () => ({
     meta: [
       {
