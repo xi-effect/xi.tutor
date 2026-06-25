@@ -67,6 +67,13 @@ export const useClassroomSchedule = () => {
   return ctx;
 };
 
+/**
+ * Безопасный вариант для компонентов, которые могут рендериться в момент
+ * монтирования/размонтирования провайдера (например, вне вкладки Расписания).
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export const useClassroomScheduleOptional = () => useContext(ClassroomScheduleContext);
+
 type ClassroomScheduleProviderProps = {
   children: ReactNode;
   onAddLessonClick?: (date?: Date) => void;

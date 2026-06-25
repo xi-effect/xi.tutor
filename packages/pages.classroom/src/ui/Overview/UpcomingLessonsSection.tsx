@@ -20,7 +20,7 @@ import {
   type SoleRescheduleTarget,
 } from 'features.lesson.move';
 import { CancelLessonModal, type LessonSchedulerMetaForCancel } from 'features.lesson.cancel';
-import { useClassroomSchedule } from '../Calendar/ClassroomScheduleContext';
+import { useClassroomScheduleOptional } from '../Calendar/ClassroomScheduleContext';
 import { UpcomingLessonCard } from './UpcomingLessonCard';
 import { UpcomingLessonCardSkeleton } from './UpcomingLessonCardSkeleton';
 
@@ -110,7 +110,8 @@ function getSoleTarget(item: ScheduleItem, classroomId: number): SoleRescheduleT
 export const UpcomingLessonsSection = () => {
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
-  const { onAddLessonClick } = useClassroomSchedule();
+  const scheduleCtx = useClassroomScheduleOptional();
+  const onAddLessonClick = scheduleCtx?.onAddLessonClick;
   const { classroomId: classroomIdParam } = useParams({
     from: '/(app)/_layout/classrooms/$classroomId/',
   });

@@ -22,7 +22,11 @@ export {
   useCancelLessonModal,
   useChangeLessonModal,
   useLessonInfoModal,
+  useScheduleViewMode,
+  type ScheduleViewMode,
+  SCHEDULE_VIEW_MODE_STORAGE_KEY,
 } from './src/hooks';
+export { COLUMN_MIN_WIDTH, KANBAN_SCROLL_INNER_PADDING_END_PX } from './src/hooks/useKanbanColumns';
 export {
   DayLessonListMetaProvider,
   useDayLessonListMeta,
