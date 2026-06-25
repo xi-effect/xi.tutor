@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
+import { LoadingScreen } from 'common.ui';
 import { BoardRouteWarmup } from 'modules.board/warmup';
-import { lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { z } from 'zod';
 
 const ClassroomPage = lazy(() =>
@@ -38,9 +39,9 @@ export const Route = createFileRoute('/(app)/_layout/classrooms/$classroomId/')(
 
 function ClassroomPageComponent() {
   return (
-    <>
+    <Suspense fallback={<LoadingScreen />}>
       <BoardRouteWarmup />
       <ClassroomPage />
-    </>
+    </Suspense>
   );
 }

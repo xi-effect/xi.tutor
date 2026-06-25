@@ -21,12 +21,6 @@ export const Route = createFileRoute('/(app)/_layout/classrooms/$classroomId/boa
         title: 'sovlium | Доска',
       },
     ],
-    links: [
-      {
-        rel: 'modulepreload',
-        href: '/src/modules/board/index.tsx',
-      },
-    ],
   }),
   component: ClassroomsBoardPage,
   // @ts-ignore

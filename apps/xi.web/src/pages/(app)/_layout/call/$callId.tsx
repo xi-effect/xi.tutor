@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
-import { lazy } from 'react';
+import { LoadingScreen } from 'common.ui';
+import { Suspense, lazy } from 'react';
 import { z } from 'zod';
 
 const CallModule = lazy(() => import('modules.calls').then((module) => ({ default: module.Call })));
@@ -34,5 +35,9 @@ export const Route = createFileRoute('/(app)/_layout/call/$callId')({
 function CallPage() {
   // @ts-ignore
   // const { callId } = Route.useParams();
-  return <CallModule />;
+  return (
+    <Suspense fallback={<LoadingScreen />}>
+      <CallModule />
+    </Suspense>
+  );
 }

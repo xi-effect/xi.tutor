@@ -25,12 +25,6 @@ export const Route = createFileRoute('/(app)/_layout/board/$boardId')({
         title: 'sovlium | Доска',
       },
     ],
-    links: [
-      {
-        rel: 'modulepreload',
-        href: '/src/modules/board/index.tsx',
-      },
-    ],
   }),
   component: BoardPage,
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),

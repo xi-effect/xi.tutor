@@ -20,12 +20,6 @@ export const Route = createFileRoute('/(app)/_layout/materials/$materialId/board
         title: 'sovlium | Доска',
       },
     ],
-    links: [
-      {
-        rel: 'modulepreload',
-        href: '/src/modules/board/index.tsx',
-      },
-    ],
   }),
   component: MaterialsBoardPage,
   // @ts-ignore

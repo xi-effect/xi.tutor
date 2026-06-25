@@ -23,7 +23,7 @@ export const Route = createFileRoute('/(common)/_layout/invite/$inviteId')({
 function InvitePage() {
   return (
     <Suspense fallback={<LoadingScreen />}>
-      <Invite />;
+      <Invite />
     </Suspense>
   );
 }
