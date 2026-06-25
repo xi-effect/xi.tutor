@@ -63,10 +63,23 @@ export const MobileUserMenu = ({
               }}
               data-umami-event="header-logout"
               data-umami-event-device="mobile"
+              className={cn(menuRowClassName, 'border-red-20 hover:bg-red-0')}
+            >
+              <Exit className="fill-red-80 size-6 shrink-0" />
+              <span className="text-m-base text-red-80 font-medium">{logoutText}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setOpen(false);
+                onOpenProfile();
+              }}
+              data-umami-event="header-profile-open"
+              data-umami-event-device="mobile"
               className={menuRowClassName}
             >
-              <Exit className="size-6 shrink-0 text-gray-100" />
-              <span className="text-m-base font-medium text-gray-100">{logoutText}</span>
+              <Account className="size-6 shrink-0 text-gray-100" />
+              <span className="text-m-base font-medium text-gray-100">{profileText}</span>
             </button>
             {!isInstalled && (
               <button
@@ -84,19 +97,6 @@ export const MobileUserMenu = ({
                 <span className="text-m-base font-medium text-gray-100">{t('installApp')}</span>
               </button>
             )}
-            <button
-              type="button"
-              onClick={() => {
-                setOpen(false);
-                onOpenProfile();
-              }}
-              data-umami-event="header-profile-open"
-              data-umami-event-device="mobile"
-              className={menuRowClassName}
-            >
-              <Account className="size-6 shrink-0 text-gray-100" />
-              <span className="text-m-base font-medium text-gray-100">{profileText}</span>
-            </button>
           </div>
 
           <div className="flex items-center justify-between gap-3">

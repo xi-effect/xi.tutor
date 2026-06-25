@@ -3,9 +3,11 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { UserProfile } from '@xipkg/userprofile';
+import { cn } from '@xipkg/utils';
 import { toast } from 'sonner';
 
 import { SelectRole } from './SelectRole';
@@ -22,6 +24,17 @@ interface DesktopUserMenuProps {
   profileText: string;
   logoutText: string;
 }
+
+const menuItemClassName = cn(
+  'text-gray-80 fill-gray-80 h-9 gap-2 rounded-lg px-2 text-sm font-medium',
+  'hover:bg-gray-5 hover:text-gray-100 hover:fill-gray-100 focus:bg-gray-5 focus:text-gray-100',
+);
+
+const logoutItemClassName = cn(
+  menuItemClassName,
+  'text-red-80 hover:bg-red-0 hover:text-red-100 focus:bg-red-0 focus:text-red-100',
+  '[&_svg]:fill-red-80 hover:[&_svg]:fill-red-100 focus:[&_svg]:fill-red-100',
+);
 
 export const DesktopUserMenu = ({
   withOutText,
@@ -62,45 +75,48 @@ export const DesktopUserMenu = ({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
-        className="flex w-[244px] flex-col gap-3 p-2"
+        className="flex w-[240px] flex-col gap-2 p-2"
         side="bottom"
+        sideOffset={8}
         align={isDesktopOpen ? 'center' : 'start'}
       >
-        <div className="h-9">
-          <SelectRole />
-        </div>
+        <SelectRole />
 
-        {!isInstalled && (
+        <div className="flex flex-col gap-0.5">
           <DropdownMenuItem
-            onClick={() => {
-              if (canInstall) void promptInstall();
-              else toast.info(installHint);
-            }}
-            className="text-gray-80 text-sm"
-            data-umami-event="header-pwa-install"
+            onSelect={onOpenProfile}
+            className={menuItemClassName}
+            data-umami-event="header-profile-open"
           >
-            <Download className="fill-gray-80 mr-2 h-5 w-5" />
-            Установить приложение
+            <Account className="size-5 shrink-0" />
+            {profileText}
           </DropdownMenuItem>
-        )}
 
-        <DropdownMenuItem
-          onSelect={onOpenProfile}
-          className="text-gray-80 text-sm"
-          data-umami-event="header-profile-open"
-        >
-          <Account className="fill-gray-80 mr-2 h-5 w-5" />
-          {profileText}
-        </DropdownMenuItem>
+          {!isInstalled && (
+            <DropdownMenuItem
+              onClick={() => {
+                if (canInstall) void promptInstall();
+                else toast.info(installHint);
+              }}
+              className={menuItemClassName}
+              data-umami-event="header-pwa-install"
+            >
+              <Download className="size-5 shrink-0" />
+              Установить приложение
+            </DropdownMenuItem>
+          )}
 
-        <DropdownMenuItem
-          onSelect={onLogout}
-          className="text-gray-80 text-sm"
-          data-umami-event="header-logout"
-        >
-          <Exit className="fill-gray-80 mr-2 h-5 w-5" />
-          {logoutText}
-        </DropdownMenuItem>
+          <DropdownMenuSeparator className="mx-0 my-1" />
+
+          <DropdownMenuItem
+            onSelect={onLogout}
+            className={logoutItemClassName}
+            data-umami-event="header-logout"
+          >
+            <Exit className="fill-red-80 size-5 shrink-0" />
+            {logoutText}
+          </DropdownMenuItem>
+        </div>
       </DropdownMenuContent>
     </DropdownMenu>
   );
