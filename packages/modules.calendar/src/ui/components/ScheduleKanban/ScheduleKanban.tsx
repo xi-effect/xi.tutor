@@ -37,6 +37,8 @@ type ScheduleKanbanProps = {
   openLessonInstanceId?: string | null;
   /** Сообщить странице, что диплинк обработан (событие найдено или нет) */
   onOpenLessonInstanceConsumed?: () => void;
+  /** Разрешить горизонтальный overflow (для режима 7 дней с прокруткой на уровне родителя) */
+  allowHorizontalOverflow?: boolean;
 };
 
 const getEventsForDay = (
@@ -83,6 +85,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
   hideLessonCardClassroomAndSubject = false,
   openLessonInstanceId,
   onOpenLessonInstanceConsumed,
+  allowHorizontalOverflow = false,
 }) => {
   const { t } = useTranslation('calendar');
   const eventsByDate = useEventsByDate();
@@ -135,7 +138,12 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
     n > 0 ? `repeat(${n}, minmax(${Math.max(columnWidth, 0)}px, 1fr))` : '1fr';
 
   return (
-    <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+    <div
+      className={cn(
+        'flex h-full min-h-0 flex-1 flex-col',
+        allowHorizontalOverflow ? 'overflow-y-hidden' : 'min-w-0 overflow-hidden',
+      )}
+    >
       {/* Заголовки дней — без скролла */}
       <div
         className="grid shrink-0 gap-x-7 pr-3"
@@ -190,7 +198,10 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
       {/* Один общий вертикальный скролл для всех колонок */}
       <div
         ref={scrollAreaRef}
-        className="flex min-h-0 flex-1 [scrollbar-gutter:stable] flex-col overflow-x-hidden overflow-y-auto pr-3"
+        className={cn(
+          'flex min-h-0 flex-1 [scrollbar-gutter:stable] flex-col overflow-y-auto pr-3',
+          allowHorizontalOverflow ? 'overflow-x-visible' : 'overflow-x-hidden',
+        )}
       >
         <div className="box-border flex min-h-full min-w-0 flex-1 flex-col">
           <div className="grid flex-1 items-stretch gap-x-7 pb-4" style={{ gridTemplateColumns }}>
