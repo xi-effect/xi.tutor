@@ -1,3 +1,31 @@
+// Форматы, которые принимает бэкенд POST .../file-kinds/image/files/ (конвертирует в webp сам)
+export const ALLOWED_IMAGE_MIME_TYPES = new Set([
+  'image/jpeg',
+  'image/jpx',
+  'image/png',
+  'image/gif',
+  'image/webp',
+  'image/tiff',
+  'image/bmp',
+  'image/x-icon',
+  'image/avif',
+]);
+
+/**
+ * Допустимые MIME-типы для аудио (whitelist).
+ * Должно совпадать с AUDIO_ACCEPT в pickAndInsertAudio.
+ */
+export const ALLOWED_AUDIO_MIME_TYPES = new Set([
+  'audio/mpeg',
+  'audio/ogg',
+  'audio/wav',
+  'audio/aac',
+  'audio/mp4',
+  'audio/webm',
+  'audio/flac',
+  'audio/x-m4a',
+]);
+
 /**
  * Допустимые MIME-типы для файлов (whitelist).
  * Должно совпадать с FILE_ACCEPT в pickAndInsertFile.
@@ -21,3 +49,9 @@ export const ALLOWED_FILE_MIME_TYPES = new Set([
   'application/vnd.oasis.opendocument.spreadsheet', // .ods
   'application/vnd.oasis.opendocument.text', // .odt
 ]);
+
+export const ALL_ALLOWED_TYPES = [
+  ...ALLOWED_IMAGE_MIME_TYPES,
+  ...ALLOWED_FILE_MIME_TYPES,
+  ...ALLOWED_AUDIO_MIME_TYPES,
+];

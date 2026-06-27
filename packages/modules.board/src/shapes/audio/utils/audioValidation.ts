@@ -1,19 +1,5 @@
 import { fileTypeFromBuffer } from 'file-type';
-
-/**
- * Допустимые MIME-типы для аудио (whitelist).
- * Должно совпадать с AUDIO_ACCEPT в pickAndInsertAudio.
- */
-export const ALLOWED_AUDIO_MIME_TYPES = new Set([
-  'audio/mpeg',
-  'audio/ogg',
-  'audio/wav',
-  'audio/aac',
-  'audio/mp4',
-  'audio/webm',
-  'audio/flac',
-  'audio/x-m4a',
-]);
+import { ALLOWED_AUDIO_MIME_TYPES } from '../../../constants/AllowedMimeTypes';
 
 /** Минимальный размер буфера для надёжного определения типа (file-type рекомендует ~4100 байт). */
 const DETECT_BUFFER_LENGTH = 4100;

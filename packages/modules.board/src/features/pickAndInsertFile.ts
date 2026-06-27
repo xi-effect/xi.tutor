@@ -2,10 +2,11 @@ import { Editor, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { uploadFileRequest } from 'common.services';
 import { nanoid } from 'nanoid';
-import { ALLOWED_FILE_MIME_TYPES, FileShape } from '../shapes/file';
+import { FileShape } from '../shapes/file';
 import { FILE_SHAPE_HEIGHT, FILE_SHAPE_WIDTH } from '../shapes/file/FileShape';
 import { saveFileToDB } from 'common.services';
 import { type RetryRequest } from 'common.services';
+import { ALLOWED_FILE_MIME_TYPES } from '../constants/AllowedMimeTypes';
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
 const MAX_FILE_SHAPES = 20;

@@ -3,6 +3,8 @@ import { DrAsset } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { resolveAssetUrl } from '../utils/resolveAssetUrl';
 import { registerToken } from '../utils/tokenRegistry';
+import { checkAssetType } from '../utils/uploadAsset';
+import { ALLOWED_IMAGE_MIME_TYPES } from '../constants/AllowedMimeTypes';
 
 export type DrAssetContextT = {
   screenScale: number;
@@ -27,19 +29,6 @@ export type DrAssetStoreT = {
   ): Promise<{ src: string; meta?: Record<string, unknown> }>;
   resolve?(asset: DrAsset, ctx: DrAssetContextT): Promise<string | null> | string | null;
 };
-
-// Форматы, которые принимает бэкенд POST .../file-kinds/image/files/ (конвертирует в webp сам)
-const ALLOWED_IMAGE_MIME_TYPES = new Set([
-  'image/jpeg',
-  'image/jpx',
-  'image/png',
-  'image/gif',
-  'image/webp',
-  'image/tiff',
-  'image/bmp',
-  'image/x-icon',
-  'image/avif',
-]);
 
 const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
 const MAX_IMAGE_SIDE = 4096; // макс. сторона в пикселях
@@ -79,9 +68,19 @@ export const myAssetStore = (token: string) => {
   return {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async upload(_asset: DrAsset, file: File, _abortSignal?: AbortSignal) {
+      const assetType = checkAssetType(file) || 'file';
+      console.log(assetType);
+
       if (!file.type.startsWith('image/')) {
         const fileId = await postUpload(file, token);
-        return { src: fileId };
+        return {
+          src: fileId,
+          meta: {
+            customType: assetType,
+            fileName: file.name,
+            fileSize: file.size,
+          },
+        };
       }
 
       // Проверка формата (бэкенд принимает только эти типы)
@@ -114,7 +113,14 @@ export const myAssetStore = (token: string) => {
 
       // Контракт персиста: только id — см. utils/storedFileSrc.ts
       const fileId = await postUpload(file, token);
-      return { src: fileId };
+      return {
+        src: fileId,
+        meta: {
+          customType: assetType,
+          fileName: file.name,
+          fileSize: file.size,
+        },
+      };
     },
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

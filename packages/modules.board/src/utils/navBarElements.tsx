@@ -11,6 +11,7 @@ import {
   Transform,
   TText,
   Emotions,
+  // FilePlus,
 } from '@xipkg/icons';
 import { boardIconClass } from '../ui/boardTheme';
 
@@ -110,7 +111,8 @@ export const navBarElements: NavbarElementT[] = [
     title: 'Стрелка',
     icon: <Arrow size="l" className={`size-8 ${boardIconClass}`} />,
   },
-  { action: 'asset', title: 'Изображение', icon: <Image className={boardIconClass} /> },
+  // { action: 'asset', title: 'Изображение', icon: <Image className={boardIconClass} /> },
+  { action: 'asset', title: 'Загрузить файл', icon: <Image className={boardIconClass} /> },
   { action: 'eraser', title: 'Ластик', icon: <Eraser className={boardIconClass} /> },
   { action: 'frame', title: 'Фрейм', icon: <Transform className={boardIconClass} /> },
   { action: 'emoji', title: 'Эмодзи', icon: <Emotions className={boardIconClass} /> },
