@@ -5,13 +5,13 @@ import {
   Eraser,
   Figures,
   Hand,
-  Image,
+  // Image,
   Pen,
   Sticker,
   Transform,
   TText,
   Emotions,
-  // FilePlus,
+  FilePlus,
 } from '@xipkg/icons';
 import { boardIconClass } from '../ui/boardTheme';
 
@@ -112,7 +112,7 @@ export const navBarElements: NavbarElementT[] = [
     icon: <Arrow size="l" className={`size-8 ${boardIconClass}`} />,
   },
   // { action: 'asset', title: 'Изображение', icon: <Image className={boardIconClass} /> },
-  { action: 'asset', title: 'Загрузить файл', icon: <Image className={boardIconClass} /> },
+  { action: 'asset', title: 'Загрузить файл', icon: <FilePlus className={boardIconClass} /> },
   { action: 'eraser', title: 'Ластик', icon: <Eraser className={boardIconClass} /> },
   { action: 'frame', title: 'Фрейм', icon: <Transform className={boardIconClass} /> },
   { action: 'emoji', title: 'Эмодзи', icon: <Emotions className={boardIconClass} /> },

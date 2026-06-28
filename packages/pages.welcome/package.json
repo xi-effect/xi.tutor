@@ -15,7 +15,7 @@
     "@xipkg/button": "4.1.0",
     "@xipkg/fileuploader": "5.0.0",
     "@xipkg/form": "4.2.2",
-    "@xipkg/icons": "3.0.20",
+    "@xipkg/icons": "3.0.22",
     "@xipkg/input": "2.2.14",
     "@xipkg/modal": "4.5.5",
     "@xipkg/utils": "1.8.0",
@@ -27,8 +27,8 @@
     "common.types": "workspace:*",
     "common.ui": "workspace:*",
     "common.utils": "workspace:*",
-    "modules.navigation": "workspace:*",
     "features.avatar.editor": "workspace:*",
+    "modules.navigation": "workspace:*",
     "react-hook-form": "^7.73.1",
     "zod": "^4.3.6"
   },
