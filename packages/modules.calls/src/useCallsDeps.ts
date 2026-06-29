@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { AxiosError } from 'axios';
 import type { CallsProviderDepsT } from '@xipkg/calls-providers';
 import type { StartCallDataT } from '@xipkg/calls-types';
 import {
@@ -43,11 +44,14 @@ export const useCallsDeps = (): CallsProviderDepsT => {
         createTokenByTutor: async (data: StartCallDataT) => {
           try {
             return extractToken(await createTokenByTutor.mutateAsync(data));
-          } catch (error) {
-            trackProductEvent(PRODUCT_ANALYTICS_EVENTS.CALL_CONNECTION_FAILED, {
-              role: getProductAnalyticsRole(user?.default_layout),
-              reason: 'token_error',
-            });
+          } catch (error: unknown) {
+            // 409 — не финальная ошибка: useStartCall сделает reactivateCall + retry
+            if (!(error instanceof AxiosError && error.response?.status === 409)) {
+              trackProductEvent(PRODUCT_ANALYTICS_EVENTS.CALL_CONNECTION_FAILED, {
+                role: getProductAnalyticsRole(user?.default_layout),
+                reason: 'token_error',
+              });
+            }
             throw error;
           }
         },
