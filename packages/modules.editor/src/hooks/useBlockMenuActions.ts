@@ -112,6 +112,23 @@ export const useBlockMenuActions = (
     return createBlock(editor, type, activeBlock);
   };
 
+  const insertCode = (codeText: string = '', language: string = 'plaintext') => {
+    if (!editor || !editor.isEditable) return;
+
+    const endPos = editor.state.doc.content.size;
+    editor
+      .chain()
+      .focus()
+      .insertContentAt(endPos, {
+        type: 'codeBlock',
+        attrs: { language: language || 'plaintext' },
+        content: codeText ? [{ type: 'text', text: codeText }] : [],
+      })
+      .run();
+    return;
+  };
+
+  // В момент вызова получаем свежую позицию
   const moveUp = () => {
     if (!getActiveBlock) return;
     const activeBlock = getActiveBlock();
@@ -144,6 +161,7 @@ export const useBlockMenuActions = (
     downloadImage,
     moveDown,
     moveUp,
+    insertCode,
     insertBlock,
   };
 };

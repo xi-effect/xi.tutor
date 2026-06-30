@@ -10,12 +10,11 @@ import { Button } from '@xipkg/button';
 import { ArrowBottom, ArrowUp, Copy, Download, MoreVert, Trash } from '@xipkg/icons';
 import { useBlockMenuActions, useProtectedImage, useYjsContext } from '../../hooks';
 import { cn } from '@xipkg/utils';
-import { useCallback, useState } from 'react';
+import { useCallback } from 'react';
 import { ActiveBlockT } from '../../types';
 import { NodeSelection } from '@tiptap/pm/state';
 
 export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
-  const [hovered, setHovered] = useState(false);
   const src = node.attrs.src;
 
   const { editor, storageToken, isReadOnly } = useYjsContext();
@@ -60,12 +59,7 @@ export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
   const imageSrc = useProtectedImage(src, storageToken);
 
   return (
-    <NodeViewWrapper
-      className="group relative flex justify-center"
-      contentEditable={false}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+    <NodeViewWrapper className="group relative flex justify-center" contentEditable={false}>
       <img
         src={imageSrc}
         alt={node.attrs.alt || ''}
@@ -77,8 +71,7 @@ export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
       />
       <div
         className={cn(
-          'absolute top-2 right-2 flex transition-opacity',
-          hovered ? 'pointer-events-auto opacity-100' : 'opacity-0',
+          'absolute top-2 right-2 flex opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100',
         )}
       >
         <DropdownMenu modal={false}>

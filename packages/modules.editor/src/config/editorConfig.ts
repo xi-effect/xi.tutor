@@ -11,6 +11,8 @@ import { UniqueID } from '@tiptap/extension-unique-id';
 import * as Y from 'yjs';
 import { CustomImage, MoveBlockKeyboard, NormalizeSelection } from '../extensions';
 import { ExtraShortcuts } from '../extensions/extra-keyboard-shortcuts';
+import 'highlight.js/styles/base16/atelier-cave-light.min.css';
+import { CustomCodeNode } from '../extensions/code';
 
 /** Курсор в стиле доски: вертикальная линия + шильдик с именем */
 function collaborationCaretRender(user: { name?: string; color?: string }): HTMLElement {
@@ -65,6 +67,7 @@ export const getExtensions = (
         width: 2,
         color: '#3b82f6',
       },
+      codeBlock: false,
     }),
     CustomImage,
     Underline,
@@ -94,6 +97,7 @@ export const getExtensions = (
     MoveBlockKeyboard,
     NormalizeSelection,
     ExtraShortcuts,
+    CustomCodeNode,
   ];
 
   if (!provider || !ydoc) {

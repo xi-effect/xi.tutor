@@ -82,7 +82,7 @@ export const DragHandleWrapper = ({
       nested
       onNodeChange={handleNodeChange}
     >
-      <div className="mr-1 flex items-center gap-2">
+      <div className="pointer-events-auto mr-1 flex items-center gap-2">
         <BlockMenu
           editor={editor}
           isReadOnly={isReadOnly}
