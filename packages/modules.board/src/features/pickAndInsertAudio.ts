@@ -8,7 +8,7 @@ import {
   type AudioShape,
   checkAudioMagicBytes,
 } from '../shapes/audio';
-import { ALLOWED_AUDIO_MIME_TYPES } from '../constants/AllowedMimeTypes';
+import { ALLOWED_AUDIO_MIME_TYPES } from '../constants/mimeTypes';
 
 const MAX_AUDIO_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
 const MAX_AUDIO_SHAPES = 20;

@@ -4,7 +4,7 @@ import { toast } from 'sonner';
 import { resolveAssetUrl } from '../utils/resolveAssetUrl';
 import { registerToken } from '../utils/tokenRegistry';
 import { checkAssetType } from '../utils/uploadAsset';
-import { ALLOWED_IMAGE_MIME_TYPES } from '../constants/AllowedMimeTypes';
+import { ALLOWED_IMAGE_MIME_TYPES } from '../constants/mimeTypes';
 
 export type DrAssetContextT = {
   screenScale: number;
@@ -53,6 +53,7 @@ async function probeImage(file: File): Promise<{ w: number; h: number; objectUrl
 /** POST через сервисные функции запросов (без хуков) */
 async function postUpload(file: File, token: string) {
   const isImage = file.type.startsWith('image/');
+
   return isImage
     ? await uploadImageRequest({ file, token })
     : await uploadFileRequest({ file, token });
@@ -69,7 +70,6 @@ export const myAssetStore = (token: string) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async upload(_asset: DrAsset, file: File, _abortSignal?: AbortSignal) {
       const assetType = checkAssetType(file) || 'file';
-      console.log(assetType);
 
       if (!file.type.startsWith('image/')) {
         const fileId = await postUpload(file, token);
@@ -126,6 +126,7 @@ export const myAssetStore = (token: string) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async resolve(asset: DrAsset, _ctx: DrAssetContextT) {
       const src = asset.props.src;
+
       if (!src) return src;
 
       try {

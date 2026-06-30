@@ -1,5 +1,5 @@
 import { fileTypeFromBuffer } from 'file-type';
-import { ALLOWED_AUDIO_MIME_TYPES } from '../../../constants/AllowedMimeTypes';
+import { ALLOWED_AUDIO_MIME_TYPES } from '../../../constants/mimeTypes';
 
 /** Минимальный размер буфера для надёжного определения типа (file-type рекомендует ~4100 байт). */
 const DETECT_BUFFER_LENGTH = 4100;

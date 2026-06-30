@@ -7,7 +7,8 @@ import {
   ALLOWED_AUDIO_MIME_TYPES,
   ALLOWED_FILE_MIME_TYPES,
   ALLOWED_IMAGE_MIME_TYPES,
-} from '../constants/AllowedMimeTypes';
+} from '../constants/mimeTypes';
+import { toast } from 'sonner';
 
 export type AssetType = 'img' | 'pdf' | 'file' | 'audio';
 
@@ -41,6 +42,10 @@ export function insertAsset(
       insertPdf(editor, file, token);
       break;
     default:
-      return;
+      toast.error('Неподдерживаемый формат файла', {
+        description: `Файл «${file.name}» нельзя загрузить на доску.`,
+        duration: 5000,
+      });
+      break;
   }
 }

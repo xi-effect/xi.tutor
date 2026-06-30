@@ -24,7 +24,7 @@ import { boardIconClass, boardPanelClass } from '../../boardTheme';
 import { EmojiPickerPopup } from '@xipkg/emojipicker';
 import { EmojiStyle } from '../../../shapes/shapeStyles';
 import { insertAsset } from '../../../utils/uploadAsset';
-import { ALL_ALLOWED_TYPES } from '../../../constants/AllowedMimeTypes';
+import { ALL_ALLOWED_TYPES } from '../../../constants/mimeTypes';
 
 // Маппинг инструментов Kanva на Draw
 const toolMapping: Record<string, string> = {
