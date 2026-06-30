@@ -1,23 +1,42 @@
 import {
+  DrRichText,
   HTMLContainer,
+  RichTextArea,
+  RichTextLabel,
   SVGContainer,
   getColorValue,
   getFontFamily,
+  renderPlaintextFromRichText,
+  toRichText,
   useEditor,
   useValue,
 } from '@ibodr/draw';
-import { BoardPlainTextLabel } from '../labels/BoardPlainTextLabel';
 import { getFillColor, getSizeInPixels } from './geoUtils';
-import type { XiGeoShape, TXiGeoShapeProps } from './type';
+import type { XiGeoShape, XiGeoShapeProps } from './type';
+import { useState } from 'react';
 
 type TXiGeoComponent = {
   shape: XiGeoShape;
+};
+
+type TRichTextChangeData = {
+  richText: DrRichText;
 };
 
 const DEFAULT_SIZE_SCALE = 0.6;
 
 export const XiGeoComponent: React.FC<TXiGeoComponent> = ({ shape }) => {
   const editor = useEditor();
+  const { borderColor, color, fill, size, text, w, h, labelColor, font, richText } =
+    shape.props as XiGeoShapeProps;
+
+  // Проверяем есть ли контент в richText, если он есть, значит фигуру ранее использовали с richText
+  // если контент в richText пустой, то используем тtext для обратной совместимости со старыми фигурами
+  const fallbackRichText = renderPlaintextFromRichText(editor, richText)
+    ? richText
+    : toRichText(text);
+
+  const [currentRichText, setCurrentRichText] = useState<DrRichText>(fallbackRichText);
   const theme = useValue('theme', () => editor.getCurrentTheme(), [editor]);
   const colorMode = useValue('colorMode', () => editor.getColorMode(), [editor]);
   const colors = theme.colors[colorMode];
@@ -30,9 +49,6 @@ export const XiGeoComponent: React.FC<TXiGeoComponent> = ({ shape }) => {
     shape.id,
   ]);
 
-  const { borderColor, color, fill, size, text, w, h, labelColor, font, align, verticalAlign } =
-    shape.props as TXiGeoShapeProps;
-
   const geometry = editor.getShapeGeometry(shape);
   const pathData = geometry.getSvgPathData(false);
   const fillColor = getFillColor(colors, fill, color);
@@ -40,8 +56,19 @@ export const XiGeoComponent: React.FC<TXiGeoComponent> = ({ shape }) => {
   const strokeColor = getColorValue(colors, borderColor, 'fill');
   const textColor = getColorValue(colors, labelColor, 'solid');
 
-  const textAlign = align === 'middle' ? 'center' : align === 'end' ? 'end' : 'start';
-  const vAlign = verticalAlign === 'middle' ? 'middle' : verticalAlign === 'end' ? 'end' : 'start';
+  // Устанавливаем текст в фигуру;
+  const handleRichTextChange = ({ richText }: TRichTextChangeData) => {
+    editor.updateShape({
+      id: shape.id,
+      type: shape.type,
+      props: {
+        ...shape.props,
+        richText,
+        text: '', // для обратной совместимости со старыми фигурами
+      },
+    });
+    setCurrentRichText(richText);
+  };
 
   return (
     <HTMLContainer
@@ -67,21 +94,41 @@ export const XiGeoComponent: React.FC<TXiGeoComponent> = ({ shape }) => {
         style={{
           width: w * DEFAULT_SIZE_SCALE,
           height: h * DEFAULT_SIZE_SCALE,
-          overflow: isEditing ? 'visible' : 'hidden',
+          pointerEvents: isEditing ? 'auto' : 'none',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          textAlign: 'center',
         }}
       >
-        <BoardPlainTextLabel
-          type="xi-geo"
-          shapeId={shape.id}
-          fontFamily={getFontFamily(theme, font ?? 'draw')}
-          fontSize={theme.fontSize}
-          lineHeight={theme.lineHeight}
-          textAlign={textAlign}
-          verticalAlign={vAlign}
-          isSelected={isSelected}
-          labelColor={textColor}
-          text={text}
-        />
+        {isEditing ? (
+          <RichTextArea
+            shapeId={shape.id}
+            handleChange={handleRichTextChange}
+            handleBlur={() => {}}
+            handlePaste={() => {}}
+            handleDoubleClick={() => {}}
+            handleFocus={() => {}}
+            handleInputPointerDown={() => {}}
+            handleKeyDown={() => {}}
+            isEditing
+            richText={currentRichText}
+          />
+        ) : (
+          <RichTextLabel
+            richText={currentRichText}
+            type="xi-geo"
+            shapeId={shape.id}
+            fontSize={theme.fontSize}
+            fontFamily={getFontFamily(theme, font ?? 'draw')}
+            lineHeight={theme.lineHeight}
+            textAlign="center"
+            verticalAlign="middle"
+            isSelected={isSelected}
+            labelColor={textColor}
+            hasCustomTabBehavior
+          />
+        )}
       </div>
     </HTMLContainer>
   );
