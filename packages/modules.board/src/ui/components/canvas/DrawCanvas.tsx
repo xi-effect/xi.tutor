@@ -30,6 +30,7 @@ import { XiGeoTool } from '../../../shapes/geo';
 import { EmojiTool } from '../../../shapes/emoji';
 import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
 import { isShapeErasable, isEditableTarget } from '../../../utils';
+import { XiRichTextToolbar } from '../../../shapes/text/XiRichTextToolbar';
 
 export const DrawCanvas = ({
   token,
@@ -66,6 +67,7 @@ export const DrawCanvas = ({
       ...hiddenComponents,
       InFrontOfTheCanvas: SelectionOverlay,
       CollaboratorCursor,
+      RichTextToolbar: XiRichTextToolbar,
     }),
     [],
   );
@@ -421,7 +423,6 @@ export const DrawCanvas = ({
             store={store}
             tools={[XiGeoTool, EmojiTool, CoordinateAxesTool]}
             shapeUtils={boardCustomShapeUtils}
-            hideUi
             components={drawComponents}
             collaboratorCursorLayout={{
               badgeOffset: { x: 2, y: 4 },
