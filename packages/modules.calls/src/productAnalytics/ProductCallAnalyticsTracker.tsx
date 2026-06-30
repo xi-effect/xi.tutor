@@ -88,13 +88,16 @@ export const ProductCallAnalyticsTracker = () => {
         state.duration5Reached = true;
       }
 
-      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.LESSON_DURATION_REACHED, {
-        role,
-        duration_min: threshold,
-        lesson_type: lessonType,
-        used_board: state.usedBoard,
-        used_screenshare: state.usedScreenshare,
-      });
+      if (role === 'tutor') {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.LESSON_DURATION_REACHED, {
+          role,
+          duration_min: threshold,
+          lesson_type: lessonType,
+          used_board: state.usedBoard,
+          used_screenshare: state.usedScreenshare,
+          students_count: room.remoteParticipants.size,
+        });
+      }
     }
   };
 
