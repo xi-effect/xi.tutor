@@ -19,10 +19,6 @@ export const ALLOWED_AUDIO_MIME_TYPES = new Set([
   'audio/mpeg',
   'audio/ogg',
   'audio/wav',
-  'audio/aac',
-  'audio/mp4',
-  'audio/webm',
-  'audio/flac',
   'audio/x-m4a',
 ]);
 

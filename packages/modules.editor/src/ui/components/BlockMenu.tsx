@@ -5,7 +5,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Copy, H1, H2, H3, Text, Trash, Image, ArrowUp, ArrowBottom } from '@xipkg/icons';
+import { Copy, H1, H2, H3, Text, Trash, Image, ArrowUp, ArrowBottom, Code } from '@xipkg/icons';
 import { ReactNode } from 'react';
 import { useBlockMenuActions } from '../../hooks';
 import { Editor } from '@tiptap/core';
@@ -43,7 +43,7 @@ export const BlockMenu = ({
 }: BlockMenuPropsT) => {
   const isMac = navigator.platform.toUpperCase().includes('MAC');
   const { openModal } = useInterfaceStore();
-  const { insertBlock, duplicate, remove, moveUp, moveDown } = useBlockMenuActions(
+  const { insertBlock, duplicate, remove, moveUp, moveDown, insertCode } = useBlockMenuActions(
     editor,
     getActiveBlock,
   );
@@ -56,7 +56,7 @@ export const BlockMenu = ({
   }
 
   return (
-    <DropdownMenu open={open} onOpenChange={setOpen}>
+    <DropdownMenu open={open} onOpenChange={setOpen} modal={false}>
       <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
 
       <DropdownMenuContent
@@ -88,6 +88,10 @@ export const BlockMenu = ({
         <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('uploadImage')}>
           <Image size="sm" className="size-6" />
           <span>Изображение</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem className={menuItemClass} onSelect={() => insertCode('')}>
+          <Code size="sm" className="size-6" />
+          <span>Вставить код</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />

@@ -15,10 +15,6 @@ import { useDrawStyles, useHotkeys } from '../../../hooks';
 import { NavbarButton, ToolPopup } from '../shared';
 import { ArrowsPopup, PenPopup, StickerPopup } from '../popups';
 import { ShapesPopup } from '../popups/Shapes';
-// import { insertImage } from '../../../features/pickAndInsertImage';
-// import { insertPdf } from '../../../features/pickAndInsertPdf';
-// import { insertAudio, AUDIO_ACCEPT } from '../../../features/pickAndInsertAudio';
-// import { insertFile, FILE_ACCEPT } from '../../../features/pickAndInsertFile';
 import { initFileDB, useRetryFileQueue } from 'common.services';
 import { boardIconClass, boardPanelClass } from '../../boardTheme';
 import { EmojiPickerPopup } from '@xipkg/emojipicker';
@@ -39,8 +35,6 @@ const toolMapping: Record<string, string> = {
   frame: 'frame',
   emoji: 'emoji',
   'coordinate-axes': 'coordinate-axes',
-  // asset: 'upload-file'
-  // asset: 'image', // Убираем image, так как его нет в Draw
 };
 
 export const Navbar = track(
