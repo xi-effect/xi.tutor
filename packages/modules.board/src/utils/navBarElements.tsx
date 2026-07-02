@@ -112,7 +112,7 @@ export const navBarElements: NavbarElementT[] = [
   },
   {
     action: 'asset',
-    title: 'Загрузить файл. Фото: до 1 МБ. PDF, аудио, видео: до 5 МБ.',
+    title: 'Загрузить файл. Фото: до 1 МБ. PDF, аудио и прочие файлы: до 5 МБ.',
     icon: <FilePlus className={boardIconClass} />,
   },
   { action: 'eraser', title: 'Ластик', icon: <Eraser className={boardIconClass} /> },
