@@ -30,6 +30,8 @@ import { XiGeoTool } from '../../../shapes/geo';
 import { EmojiTool } from '../../../shapes/emoji';
 import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
 import { isShapeErasable, isEditableTarget } from '../../../utils';
+import { insertAsset } from '../../../utils/uploadAsset';
+import { useRetryFileQueue } from 'common.services';
 
 export const DrawCanvas = ({
   token,
@@ -74,6 +76,7 @@ export const DrawCanvas = ({
   useDrawClipboard(editor, token);
   useOverlayRepaintOnSelection(editor);
   useEditOnTypeForLabels(editor);
+  const { addToQueue } = useRetryFileQueue();
 
   // Viewport bounds должны совпадать с .dr-canvas — overlay выделения рисуется на canvas
   // внутри этого элемента; синхронизация по .dr-container смещает screenBounds.
@@ -370,6 +373,12 @@ export const DrawCanvas = ({
 
                 if (!isShapeErasable(shape.type)) {
                   return false;
+                }
+              });
+
+              editor.registerExternalContentHandler('files', async ({ files }) => {
+                for (const file of files) {
+                  insertAsset(editor, file, token, addToQueue);
                 }
               });
 

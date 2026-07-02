@@ -14,7 +14,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@xipkg/button": "4.1.0",
     "@xipkg/form": "4.2.2",
-    "@xipkg/icons": "3.0.20",
+    "@xipkg/icons": "3.0.22",
     "@xipkg/input": "2.2.14",
     "@xipkg/modal": "4.5.5",
     "@xipkg/textarea": "1.2.0",
