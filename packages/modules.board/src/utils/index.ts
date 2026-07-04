@@ -5,7 +5,7 @@ export {
   shouldIgnoreBoardHotkeys,
 } from './boardKeyboard';
 export { isMac } from './getUserPlatform';
-export { writeClipboardHtmlAndText, readClipboardHtml, extractClipboardImages } from './clipboard';
+export { writeClipboardHtmlAndText, readClipboardHtml } from './clipboard';
 export { serializeDrawContent, deserializeDrawContent } from './drawContent';
 export { maskId, maskToken, maskUrl } from './maskSensitiveData';
 export { generateUserColor } from './userColor';

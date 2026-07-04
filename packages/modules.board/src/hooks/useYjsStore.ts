@@ -36,6 +36,7 @@ import * as Y from 'yjs';
 import { boardAssetUtils } from '../assets/boardAssetUtils';
 import { myAssetStore } from '../features/imageStore';
 import { boardStoreShapeUtils } from '../shapes/boardShapeUtils';
+import { commentCustomRecords } from '../comments/commentRecords';
 import { BOARD_SCHEMA_VERSION } from '../utils/yjsConstants';
 import { generateUserColor } from '../utils/userColor';
 import { normalizeStoredFileSrc } from '../utils/storedFileSrc';
@@ -91,6 +92,8 @@ export type ExtendedStoreStatus = {
   pdfPagesMap: Y.Map<number>;
   /** Y.Map для синхронного воспроизведения аудио: `${shapeId}:playing|time|ts` → number */
   audioSyncMap: Y.Map<number>;
+  /** Y.Map отметок прочтения тредов комментариев: ключ `${threadId}:${userId}` → timestamp */
+  commentReadsMap: Y.Map<number>;
   /** Hocuspocus-провайдер (awareness — эфемерное состояние, не в персисте Y.Doc) */
   provider: HocuspocusProvider;
   /** Токен для доступа к файлам */
@@ -156,6 +159,8 @@ type SharedEntry = {
   pdfPagesMap: Y.Map<number>;
   /** Синхронное воспроизведение аудио: `${shapeId}:playing|time|ts` → number */
   audioSyncMap: Y.Map<number>;
+  /** Отметки прочтения тредов комментариев: ключ `${threadId}:${userId}` → timestamp последнего прочтения */
+  commentReadsMap: Y.Map<number>;
   /** Документ из Yjs уже загружен в store — повторный loadSnapshot сбрасывает выделение. */
   yjsDocumentHydrated: boolean;
   releaseTimer: number | null;
@@ -201,6 +206,7 @@ function getOrCreateShared(
   const userCamerasMap = yDoc.getMap<CameraState>('userCameras');
   const pdfPagesMap = yDoc.getMap<number>('pdfPages');
   const audioSyncMap = yDoc.getMap<number>('audioSync');
+  const commentReadsMap = yDoc.getMap<number>('commentReads');
 
   const provider = new HocuspocusProvider({
     url: hostUrl,
@@ -222,6 +228,7 @@ function getOrCreateShared(
     userCamerasMap,
     pdfPagesMap,
     audioSyncMap,
+    commentReadsMap,
     yjsDocumentHydrated: false,
     releaseTimer: null,
   };
@@ -281,6 +288,7 @@ export function useYjsStore({
     return createDrStore({
       shapeUtils: [...boardStoreShapeUtils, ...shapeUtils],
       assetUtils: [...boardAssetUtils],
+      records: commentCustomRecords,
       ...(assetStore ? { assets: assetStore } : {}),
     });
   });
@@ -309,8 +317,17 @@ export function useYjsStore({
     return getOrCreateShared(hostUrl, ydocId, storageToken, initialYjsUpdate);
   }, [hostUrl, ydocId, storageToken, initialYjsUpdate]);
 
-  const { provider, yDoc, yStore, meta, readonlyMap, userCamerasMap, pdfPagesMap, audioSyncMap } =
-    sharedEntry;
+  const {
+    provider,
+    yDoc,
+    yStore,
+    meta,
+    readonlyMap,
+    userCamerasMap,
+    pdfPagesMap,
+    audioSyncMap,
+    commentReadsMap,
+  } = sharedEntry;
 
   // useLayoutEffect: при ремаунте (PiP и т.д.) обновляем статус до отрисовки, чтобы не мигал LoadingScreen.
   useLayoutEffect(() => {
@@ -976,6 +993,7 @@ export function useYjsStore({
 
     pdfPagesMap,
     audioSyncMap,
+    commentReadsMap,
     provider,
     token: token ?? '',
   };

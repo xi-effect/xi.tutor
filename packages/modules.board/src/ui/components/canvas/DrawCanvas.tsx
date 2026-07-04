@@ -19,7 +19,7 @@ import { hiddenComponents } from '../../../utils/customConfig';
 import { Header } from '../header';
 import { Navbar } from '../toolbar';
 import { CollaboratorCursor } from './CollaboratorCursor';
-import { SelectionOverlay } from './SelectionOverlay';
+import { CanvasOverlays } from './CanvasOverlays';
 import { FollowBanner } from './FollowBanner';
 import { DrawZoomPanel } from './DrawZoomPanel';
 import '@ibodr/draw/draw.css';
@@ -66,7 +66,7 @@ export const DrawCanvas = ({
   const drawComponents = useMemo(
     () => ({
       ...hiddenComponents,
-      InFrontOfTheCanvas: SelectionOverlay,
+      InFrontOfTheCanvas: CanvasOverlays,
       CollaboratorCursor,
     }),
     [],
@@ -442,7 +442,7 @@ export const DrawCanvas = ({
             {!isReadonly && (
               <Navbar undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} token={token} />
             )}
-            <div className={`${boardPanelClass} absolute bottom-4 left-4 z-30 flex p-1 sm:hidden`}>
+            <div className={`${boardPanelClass} absolute bottom-4 left-4 z-260 flex p-1 sm:hidden`}>
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
             <DrawZoomPanel />

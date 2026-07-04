@@ -47,6 +47,19 @@ export const navBarElements: NavbarElementT[] = [
       },
     ],
   },
+  { action: 'eraser', title: 'Ластик', icon: <Eraser className={boardIconClass} /> },
+  { action: 'text', title: 'Текст', icon: <TText className={boardIconClass} /> },
+  {
+    action: 'geo',
+    title: 'Фигуры',
+    icon: <Figures size="l" className={`size-8 ${boardIconClass}`} />,
+  },
+  {
+    action: 'arrow',
+    title: 'Стрелка',
+    icon: <Arrow size="l" className={`size-8 ${boardIconClass}`} />,
+  },
+  { action: 'frame', title: 'Фрейм', icon: <Transform className={boardIconClass} /> },
   {
     action: 'sticker',
     title: 'Стикер',
@@ -99,23 +112,10 @@ export const navBarElements: NavbarElementT[] = [
       },
     ],
   },
-  { action: 'text', title: 'Текст', icon: <TText className={boardIconClass} /> },
-  {
-    action: 'geo',
-    title: 'Фигуры',
-    icon: <Figures size="l" className={`size-8 ${boardIconClass}`} />,
-  },
-  {
-    action: 'arrow',
-    title: 'Стрелка',
-    icon: <Arrow size="l" className={`size-8 ${boardIconClass}`} />,
-  },
+  { action: 'emoji', title: 'Эмодзи', icon: <Emotions className={boardIconClass} /> },
   {
     action: 'asset',
     title: 'Загрузить файл. Фото: до 1 МБ. PDF, аудио и прочие файлы: до 5 МБ.',
     icon: <FilePlus className={boardIconClass} />,
   },
-  { action: 'eraser', title: 'Ластик', icon: <Eraser className={boardIconClass} /> },
-  { action: 'frame', title: 'Фрейм', icon: <Transform className={boardIconClass} /> },
-  { action: 'emoji', title: 'Эмодзи', icon: <Emotions className={boardIconClass} /> },
 ];

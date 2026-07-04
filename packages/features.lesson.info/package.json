@@ -13,7 +13,7 @@
   "dependencies": {
     "@xipkg/avatar": "3.3.0",
     "@xipkg/button": "4.1.0",
-    "@xipkg/icons": "3.0.22",
+    "@xipkg/icons": "3.0.23",
     "@xipkg/modal": "4.5.5",
     "@xipkg/tooltip": "2.1.0",
     "@xipkg/userprofile": "4.1.0",

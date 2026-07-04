@@ -8,7 +8,9 @@ import {
 } from '@xipkg/dropdown';
 import { MenuDots } from '@xipkg/icons';
 import { track, useEditor } from '@ibodr/draw';
+import { cn } from '@xipkg/utils';
 import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
+import { CommentPlaceButton, useCommentsUiStore } from '../../../comments';
 import { UndoRedo } from './UndoRedo';
 import { useDrawStore } from '../../../store';
 import { useDrawStyles, useHotkeys } from '../../../hooks';
@@ -16,7 +18,7 @@ import { NavbarButton, ToolPopup } from '../shared';
 import { ArrowsPopup, PenPopup, StickerPopup } from '../popups';
 import { ShapesPopup } from '../popups/Shapes';
 import { initFileDB, useRetryFileQueue } from 'common.services';
-import { boardIconClass, boardPanelClass } from '../../boardTheme';
+import { boardIconClass, boardMenuItemClass, boardPanelClass } from '../../boardTheme';
 import { EmojiPickerPopup } from '@xipkg/emojipicker';
 import { EmojiStyle } from '../../../shapes/shapeStyles';
 import { insertAsset } from '../../../utils/uploadAsset';
@@ -63,6 +65,7 @@ export const Navbar = track(
     const [activePopup, setActivePopup] = React.useState<string | null>(null);
     const editor = useEditor();
     const { processQueue, isOnline, addToQueue } = useRetryFileQueue();
+    const setPlacingComment = useCommentsUiStore((s) => s.setPlacing);
 
     useEffect(() => {
       if (!isOnline) return;
@@ -104,6 +107,7 @@ export const Navbar = track(
     const handleSelectTool = (toolName: string) => {
       editor.selectNone();
       setActivePopup(null);
+      setPlacingComment(false);
 
       if (toolName === 'pen') {
         setColor(pencilColor);
@@ -171,9 +175,9 @@ export const Navbar = track(
 
     return (
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute right-0 bottom-14 left-0 z-30 flex w-full items-center justify-center px-4 sm:bottom-4 sm:px-0">
-          <div className="relative z-30 flex w-full max-w-full gap-7 sm:w-auto">
-            <div className={`${boardPanelClass} absolute -left-[115px] z-30 hidden p-1 sm:flex`}>
+        <div className="absolute right-0 bottom-14 left-0 z-260 flex w-full items-center justify-center px-4 sm:bottom-4 sm:px-0">
+          <div className="relative z-260 flex w-full max-w-full gap-7 sm:w-auto">
+            <div className={`${boardPanelClass} absolute -left-[115px] z-260 hidden p-1 sm:flex`}>
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
             <div className={`${boardPanelClass} mx-auto flex w-full max-w-full gap-10 sm:w-auto`}>
@@ -362,6 +366,9 @@ export const Navbar = track(
                   );
                 })}
                 <div className="flex min-h-12 min-w-0 flex-1 sm:min-h-0 sm:flex-initial">
+                  <CommentPlaceButton className={mobileButtonClass} />
+                </div>
+                <div className="flex min-h-12 min-w-0 flex-1 sm:min-h-0 sm:flex-initial">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button
@@ -379,9 +386,9 @@ export const Navbar = track(
                     >
                       <DropdownMenuItem
                         onClick={handleInsertCoordinateAxes}
-                        className="rounded-lg px-3"
+                        className={cn(boardMenuItemClass, 'flex gap-2 px-3')}
                       >
-                        Оси координат
+                        <span>Оси координат</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

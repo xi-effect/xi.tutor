@@ -14,6 +14,8 @@ import {
 import {
   Check,
   Eraser,
+  Eyeoff,
+  Eyeon,
   File,
   InfoCircle,
   Locked,
@@ -30,6 +32,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useCurrentUser } from 'common.services';
 import { toast } from 'sonner';
 import { useEditor } from '@ibodr/draw';
+import { useCommentsUiStore } from '../../../comments';
 import { useDrawStore, useEraserSettingsStore } from '../../../store';
 import { HotkeysHelpModal } from '../shared/HotkeysHelp';
 import { ERASER_CATEGORIES, INPUT_MODE_OPTIONS, SHAPE_CATEGORIES } from '../../../config';
@@ -55,6 +58,23 @@ const BlockBoardAction = ({ onClick, isReadonly }: ActionPropsT & { isReadonly: 
     >
       {isReadonly ? <ShieldOff /> : <Shield />}
       <span>{isReadonly ? 'Возобновить работу с доской' : 'Приостановить работу с доской'}</span>
+    </DropdownMenuItem>
+  );
+};
+
+const ToggleCommentsVisibilityAction = ({
+  visible,
+  onClick,
+}: ActionPropsT & { visible: boolean }) => {
+  return (
+    <DropdownMenuItem
+      className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
+      onClick={onClick}
+      data-umami-event="board-comments-toggle-visibility"
+      data-umami-event-state={visible ? 'hide' : 'show'}
+    >
+      {visible ? <Eyeoff /> : <Eyeon />}
+      <span>{visible ? 'Скрыть комментарии' : 'Показать комментарии'}</span>
     </DropdownMenuItem>
   );
 };
@@ -102,6 +122,8 @@ export const SettingsDropdown = () => {
   } = useDropdownActions();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const commentsVisible = useCommentsUiStore((s) => s.commentsVisible);
+  const setCommentsVisible = useCommentsUiStore((s) => s.setCommentsVisible);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [hotkeysOpen, setHotkeysOpen] = useState(false);
   const [showImportOption, setShowImportOption] = useState(false);
@@ -227,6 +249,10 @@ export const SettingsDropdown = () => {
               <InfoCircle />
               <span>Горячие клавиши</span>
             </DropdownMenuItem>
+            <ToggleCommentsVisibilityAction
+              visible={commentsVisible}
+              onClick={() => setCommentsVisible(!commentsVisible)}
+            />
             {editor && (
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>

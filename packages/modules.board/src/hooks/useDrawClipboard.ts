@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect } from 'react';
 import { Editor, react, DrAssetId, DrShapeId } from '@ibodr/draw';
-import { insertImage } from '../features/pickAndInsertImage';
-import {
-  deserializeDrawContent,
-  extractClipboardImages,
-  readClipboardHtml,
-  serializeDrawContent,
-} from '../utils';
+import { deserializeDrawContent, readClipboardHtml, serializeDrawContent } from '../utils';
 import {
   preparePastedContent,
   uploadPastedAssetsInBackground,
@@ -193,15 +187,21 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
       event.preventDefault();
       event.stopPropagation();
 
-      const imageFiles = extractClipboardImages(event);
-      if (imageFiles.length > 0 && token) {
+      // Файлы из системного буфера (картинки-скриншоты, PDF, аудио, документы
+      // и т.д., скопированные из Finder/Explorer или "Copy image"). Идёт через
+      // тот же 'files'-хендлер, что и drag-and-drop (см. DrawCanvas.tsx),
+      // поэтому типы/размеры/тосты об ошибках обрабатываются одинаково.
+      const pastedFiles = Array.from(event.clipboardData?.files ?? []);
+      if (pastedFiles.length > 0 && token) {
         if (!editor!.getIsFocused()) editor!.focus();
-        for (const file of imageFiles) {
-          try {
-            await insertImage(editor!, file, token);
-          } catch (error) {
-            console.error('Failed to paste image:', error);
-          }
+        try {
+          await editor!.putExternalContent({
+            type: 'files',
+            files: pastedFiles,
+            point: editor!.inputs.currentPagePoint,
+          });
+        } catch (error) {
+          console.error('Failed to paste files:', error);
         }
         return;
       }
@@ -214,7 +214,24 @@ export function useDrawClipboard(editor: Editor | null, token?: string) {
       }
 
       const content = deserializeDrawContent(html);
-      if (!content) return;
+      if (!content) {
+        // Не наш внутренний формат — если это простой текст (в т.ч. скопированный
+        // из другого приложения), создаём текстовый элемент на доске.
+        const text = event.clipboardData?.getData('text/plain') || '';
+        if (text.trim()) {
+          try {
+            await editor!.putExternalContent({
+              type: 'text',
+              text,
+              html: html || undefined,
+              point: editor!.inputs.currentPagePoint,
+            });
+          } catch (error) {
+            console.error('Failed to paste text:', error);
+          }
+        }
+        return;
+      }
 
       // 1) Синхронная подготовка: same-board restore + сбор задач на upload.
       //    Тяжёлые ввод/вывод-операции сюда не лезут.
