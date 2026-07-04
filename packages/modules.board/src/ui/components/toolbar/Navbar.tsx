@@ -15,14 +15,12 @@ import { useDrawStyles, useHotkeys } from '../../../hooks';
 import { NavbarButton, ToolPopup } from '../shared';
 import { ArrowsPopup, PenPopup, StickerPopup } from '../popups';
 import { ShapesPopup } from '../popups/Shapes';
-import { insertImage } from '../../../features/pickAndInsertImage';
-import { insertPdf } from '../../../features/pickAndInsertPdf';
-import { insertAudio, AUDIO_ACCEPT } from '../../../features/pickAndInsertAudio';
-import { insertFile, FILE_ACCEPT } from '../../../features/pickAndInsertFile';
 import { initFileDB, useRetryFileQueue } from 'common.services';
 import { boardIconClass, boardPanelClass } from '../../boardTheme';
 import { EmojiPickerPopup } from '@xipkg/emojipicker';
 import { EmojiStyle } from '../../../shapes/shapeStyles';
+import { insertAsset } from '../../../utils/uploadAsset';
+import { ALL_ALLOWED_TYPES } from '../../../constants/mimeTypes';
 
 // Маппинг инструментов Kanva на Draw
 const toolMapping: Record<string, string> = {
@@ -37,7 +35,6 @@ const toolMapping: Record<string, string> = {
   frame: 'frame',
   emoji: 'emoji',
   'coordinate-axes': 'coordinate-axes',
-  // asset: 'image', // Убираем image, так как его нет в Draw
 };
 
 export const Navbar = track(
@@ -119,17 +116,16 @@ export const Navbar = track(
       if (toolName === 'asset') {
         const input = document.createElement('input');
         input.type = 'file';
-        input.accept =
-          'image/jpeg,image/jpx,image/png,image/gif,image/webp,image/tiff,image/bmp,image/x-icon,image/avif';
+        input.accept = ALL_ALLOWED_TYPES.toString();
         input.multiple = false;
 
         input.onchange = async (e) => {
           const file = (e.target as HTMLInputElement).files?.[0];
           if (file) {
             try {
-              await insertImage(editor, file, token);
+              insertAsset(editor, file, token, addToQueue);
             } catch (error) {
-              console.error('Ошибка при загрузке изображения:', error);
+              console.error('Ошибка при загрузке файла:', error);
             }
           }
         };
@@ -162,60 +158,6 @@ export const Navbar = track(
       };
 
       return reverseMapping[currentToolId] || 'select';
-    };
-
-    const handleInsertPdf = () => {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'application/pdf';
-      input.multiple = false;
-      input.onchange = async (e) => {
-        const file = (e.target as HTMLInputElement).files?.[0];
-        if (file) {
-          try {
-            await insertPdf(editor, file, token);
-          } catch (error) {
-            console.error('Ошибка при загрузке PDF:', error);
-          }
-        }
-      };
-      input.click();
-    };
-
-    const handleInsertAudio = () => {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = AUDIO_ACCEPT;
-      input.multiple = false;
-      input.onchange = async (e) => {
-        const file = (e.target as HTMLInputElement).files?.[0];
-        if (file) {
-          try {
-            await insertAudio(editor, file, token);
-          } catch (error) {
-            console.error('Ошибка при загрузке аудио:', error);
-          }
-        }
-      };
-      input.click();
-    };
-
-    const handleInsertFile = () => {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = FILE_ACCEPT;
-      input.multiple = false;
-      input.onchange = async (e) => {
-        const file = (e.target as HTMLInputElement).files?.[0];
-        if (file) {
-          try {
-            await insertFile(editor, file, token, addToQueue);
-          } catch (error) {
-            console.error('Ошибка при загрузке файла:', error);
-          }
-        }
-      };
-      input.click();
     };
 
     const handleInsertCoordinateAxes = () => {
@@ -435,15 +377,6 @@ export const Navbar = track(
                       sideOffset={8}
                       className="border-gray-10 bg-gray-0 w-[180px] rounded-xl border p-1"
                     >
-                      <DropdownMenuItem onClick={handleInsertPdf} className="rounded-lg px-3">
-                        Загрузить PDF
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleInsertAudio} className="rounded-lg px-3">
-                        Загрузить аудио
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleInsertFile} className="rounded-lg px-3">
-                        Загрузить файл
-                      </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={handleInsertCoordinateAxes}
                         className="rounded-lg px-3"

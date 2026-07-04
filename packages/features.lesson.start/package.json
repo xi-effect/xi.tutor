@@ -12,7 +12,7 @@
   "dependencies": {
     "@tanstack/react-router": "^1.166.6",
     "@xipkg/button": "4.1.0",
-    "@xipkg/icons": "3.0.20",
+    "@xipkg/icons": "3.0.22",
     "@xipkg/tooltip": "2.1.0",
     "@xipkg/utils": "1.8.0",
     "common.services": "workspace:*",

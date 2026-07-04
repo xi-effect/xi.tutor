@@ -11,15 +11,15 @@
     "lint": "eslint \"**/*.{ts,tsx}\""
   },
   "dependencies": {
-    "common.api": "workspace:*",
-    "common.services": "workspace:*",
-    "features.lesson.change": "workspace:*",
     "@xipkg/avatar": "3.3.0",
     "@xipkg/button": "4.1.0",
-    "@xipkg/icons": "3.0.20",
+    "@xipkg/icons": "3.0.22",
     "@xipkg/modal": "4.5.5",
     "@xipkg/tooltip": "2.1.0",
-    "@xipkg/userprofile": "4.1.0"
+    "@xipkg/userprofile": "4.1.0",
+    "common.api": "workspace:*",
+    "common.services": "workspace:*",
+    "features.lesson.change": "workspace:*"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
