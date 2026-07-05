@@ -11,6 +11,7 @@ import {
   useOverlayRepaintOnSelection,
   useEditOnTypeForLabels,
   useProductBoardAnalytics,
+  useBoardDeepLinkFocus,
 } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore, useDrawStore } from '../../../store';
@@ -32,6 +33,8 @@ import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
 import { isShapeErasable, isEditableTarget } from '../../../utils';
 import { insertAsset } from '../../../utils/uploadAsset';
 import { useRetryFileQueue } from 'common.services';
+import { useSearch } from '@tanstack/react-router';
+import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
 
 export const DrawCanvas = ({
   token,
@@ -56,6 +59,8 @@ export const DrawCanvas = ({
   } = useYjsContext();
   const { followingPresenceId } = useFollowUserStore();
   const appliedInitialCameraRef = useRef(false);
+  const search = useSearch({ strict: false }) as BoardDeepLinkSearch;
+  const hasDeepLink = hasBoardDeepLinkSearch(search);
 
   useProductBoardAnalytics({
     editor,
@@ -76,6 +81,7 @@ export const DrawCanvas = ({
   useDrawClipboard(editor, token);
   useOverlayRepaintOnSelection(editor);
   useEditOnTypeForLabels(editor);
+  useBoardDeepLinkFocus({ editor, ready: status === 'synced-remote' });
   const { addToQueue } = useRetryFileQueue();
 
   // Viewport bounds должны совпадать с .dr-canvas — overlay выделения рисуется на canvas
@@ -204,15 +210,17 @@ export const DrawCanvas = ({
     }
   }, [editor, isReadonly]);
 
-  // Восстановление камеры пользователя при открытии доски (один раз после синка)
+  // Восстановление камеры пользователя при открытии доски (один раз после синка).
+  // При переходе по deep link камера выставляется в useBoardDeepLinkFocus.
   useEffect(() => {
-    if (!editor || status !== 'synced-remote' || appliedInitialCameraRef.current) return;
+    if (!editor || status !== 'synced-remote' || appliedInitialCameraRef.current || hasDeepLink)
+      return;
     const saved = getUserCamera();
     if (saved) {
       editor.setCamera(saved);
       appliedInitialCameraRef.current = true;
     }
-  }, [editor, status]);
+  }, [editor, status, hasDeepLink, getUserCamera]);
 
   // Сохранение камеры при уходе: с вкладки, закрытии страницы или уходе с доски в приложении (без таймера — не дёргаем Document changed)
   useEffect(() => {

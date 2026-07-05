@@ -12,6 +12,12 @@ const paramsSchema = z.object({
   materialId: z.string(),
 });
 
+const searchSchema = z.object({
+  shape: z.string().optional(),
+  comment: z.string().optional(),
+  call: z.string().optional(),
+});
+
 // @ts-ignore
 export const Route = createFileRoute('/(app)/_layout/materials/$materialId/board/')({
   head: () => ({
@@ -24,6 +30,7 @@ export const Route = createFileRoute('/(app)/_layout/materials/$materialId/board
   component: MaterialsBoardPage,
   // @ts-ignore
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
+  validateSearch: (search: Record<string, unknown>) => searchSchema.parse(search),
   // beforeLoad: ({ context, location }) => {
   //   console.log('Board', context, location);
   // },

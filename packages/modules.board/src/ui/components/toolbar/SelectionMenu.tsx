@@ -84,6 +84,7 @@ export const SelectionMenu = track(function SelectionMenu() {
           >
             <Unlocked />
           </Button>
+          <MoreActionsMenu />
         </>
       ) : (
         <>

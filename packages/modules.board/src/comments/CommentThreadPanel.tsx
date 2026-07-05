@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { track, useEditor } from '@ibodr/draw';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { Button } from '@xipkg/button';
-import { Check, Close, Trash } from '@xipkg/icons';
+import { Check, Close, Trash, Link } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { getCommentAuthorAvatarUrl } from './commentAvatar';
 import { CommentMessageInput } from './CommentMessageInput';
@@ -15,6 +15,7 @@ import {
 } from './commentQueries';
 import { useCommentAuthor } from './useCommentAuthor';
 import { useMarkCommentThreadRead } from './useCommentReads';
+import { useCopyBoardDeepLink } from '../hooks/useBoardDeepLinkFocus';
 import type { DrCommentMessage, DrCommentThread } from './commentRecords';
 import type { RecordId } from '@ibodr/draw';
 
@@ -42,6 +43,7 @@ export const CommentThreadPanel = track(function CommentThreadPanel({
   const editor = useEditor();
   const author = useCommentAuthor();
   const markRead = useMarkCommentThreadRead();
+  const copyDeepLink = useCopyBoardDeepLink({ commentId: threadId });
 
   const thread = editor.store.get(threadId as never) as DrCommentThread | undefined;
   const messages = getThreadMessages(editor.store, threadId);
@@ -84,6 +86,15 @@ export const CommentThreadPanel = track(function CommentThreadPanel({
         <div className="flex items-center justify-between">
           <span className="text-gray-60 text-xs">{thread.resolved ? 'Решено' : 'Комментарий'}</span>
           <div className="flex items-center gap-0.5">
+            <Button
+              variant="none"
+              className="hover:bg-brand-0 flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent"
+              title="Скопировать ссылку"
+              onClick={() => void copyDeepLink()}
+              data-umami-event="board-copy-comment-link"
+            >
+              <Link className="fill-gray-60 size-4" />
+            </Button>
             <Button
               variant="none"
               className={cn(
