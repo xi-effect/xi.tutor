@@ -2959,10 +2959,10 @@ importers:
         specifier: ^5.2.2
         version: 5.4.0(react-hook-form@7.79.0(react@19.2.7))
       '@ibodr/draw':
-        specifier: ^0.1.10
-        version: 0.1.10(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^0.1.9
+        version: 0.1.10(@floating-ui/dom@1.7.6)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@ibodr/schema':
-        specifier: ^0.1.10
+        specifier: ^0.1.9
         version: 0.1.10(react@19.2.7)
       '@tanstack/react-router':
         specifier: ^1.166.6
@@ -12843,10 +12843,10 @@ snapshots:
 
   '@humanwhocodes/retry@0.4.3': {}
 
-  '@ibodr/draw@0.1.10(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@ibodr/draw@0.1.10(@floating-ui/dom@1.7.6)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
-      '@ibodr/driver': 0.1.10(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@ibodr/editor': 0.1.10(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@ibodr/driver': 0.1.10(@floating-ui/dom@1.7.6)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@ibodr/editor': 0.1.10(@floating-ui/dom@1.7.6)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@ibodr/store': 0.1.10(react@19.2.7)
       '@tiptap/core': 3.23.6(@tiptap/pm@3.23.6)
       '@tiptap/extension-code': 3.23.6(@tiptap/core@3.23.6(@tiptap/pm@3.23.6))
@@ -12864,9 +12864,9 @@ snapshots:
       - '@types/react'
       - '@types/react-dom'
 
-  '@ibodr/driver@0.1.10(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@ibodr/driver@0.1.10(@floating-ui/dom@1.7.6)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
-      '@ibodr/editor': 0.1.10(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@ibodr/editor': 0.1.10(@floating-ui/dom@1.7.6)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@ibodr/utils': 0.1.10
     transitivePeerDependencies:
       - '@floating-ui/dom'
@@ -12875,7 +12875,7 @@ snapshots:
       - react
       - react-dom
 
-  '@ibodr/editor@0.1.10(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@ibodr/editor@0.1.10(@floating-ui/dom@1.7.6)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@ibodr/schema': 0.1.10(react@19.2.7)
       '@ibodr/state': 0.1.10
