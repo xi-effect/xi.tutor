@@ -14,8 +14,8 @@
   "dependencies": {
     "@hocuspocus/provider": "3.4.4",
     "@hookform/resolvers": "^5.2.2",
-    "@ibodr/draw": "^0.1.9",
-    "@ibodr/schema": "^0.1.9",
+    "@ibodr/draw": "^0.1.11",
+    "@ibodr/schema": "^0.1.11",
     "@tanstack/react-router": "^1.166.6",
     "@xipkg/avatar": "3.3.0",
     "@xipkg/button": "4.1.0",

@@ -1,4 +1,9 @@
 export { useThrottle } from './useThrottle';
+export {
+  useBoardBackground,
+  useBoardBackgroundState,
+  useBoardBackgroundSync,
+} from './useBoardBackground';
 export { useYjsStore } from './useYjsStore';
 export { useDrawStyles } from './useDrawStyles';
 export { useHotkeys } from './useHotkeys';
