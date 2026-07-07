@@ -8,12 +8,14 @@ import { useYjsContext } from '../../../providers/YjsProvider';
 import { isMac } from '../../../utils';
 import { BorderPicker } from '../../../shapes/geo';
 import { CoordinateAxesSettingsPicker } from '../../../shapes/coordinate-axes';
+import { useKanbanUiStore } from '../../../shapes/kanban/kanbanUiStore';
 
 const modKey = isMac ? '⌘' : 'Ctrl';
 
 export const SelectionMenu = track(function SelectionMenu() {
   const editor = useEditor();
   const { isReadonly } = useYjsContext();
+  const isKanbanCardModalOpen = useKanbanUiStore((state) => state.isCardModalOpen);
 
   const selectedShapes = editor.getSelectedShapes();
   const isLocked = selectedShapes.every((shape) => shape.isLocked);
@@ -45,7 +47,12 @@ export const SelectionMenu = track(function SelectionMenu() {
   if (isReadonly) return null;
 
   const shouldShow =
-    selectedIds.length > 0 && isSelect && !isBrushing && !isEditingShape && !!screenBounds;
+    selectedIds.length > 0 &&
+    isSelect &&
+    !isBrushing &&
+    !isEditingShape &&
+    !isKanbanCardModalOpen &&
+    !!screenBounds;
 
   if (!shouldShow) return null;
 

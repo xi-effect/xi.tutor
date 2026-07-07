@@ -8,6 +8,7 @@ import { StickerShapeUtil } from './sticker';
 import { EmojiShapeUtil } from './emoji';
 import { FileShapeUtil } from './file';
 import { CoordinateAxesShapeUtil } from './coordinate-axes';
+import { KanbanShapeUtil } from './kanban';
 
 /** Кастомные shape utils — для `<Draw shapeUtils={...}>` (Draw сам мержит с defaultShapeUtils). */
 export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
@@ -20,6 +21,7 @@ export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
   EmojiShapeUtil,
   FileShapeUtil,
   CoordinateAxesShapeUtil,
+  KanbanShapeUtil,
 ];
 
 function mergeShapeUtilsByType(

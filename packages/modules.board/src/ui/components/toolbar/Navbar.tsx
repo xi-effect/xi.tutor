@@ -37,6 +37,7 @@ const toolMapping: Record<string, string> = {
   frame: 'frame',
   emoji: 'emoji',
   'coordinate-axes': 'coordinate-axes',
+  kanban: 'kanban',
 };
 
 export const Navbar = track(
@@ -158,6 +159,7 @@ export const Navbar = track(
         frame: 'frame',
         emoji: 'emoji',
         'coordinate-axes': 'coordinate-axes',
+        kanban: 'kanban',
         // image: 'asset', // Убираем, так как image не существует в Draw
       };
 
@@ -167,6 +169,11 @@ export const Navbar = track(
     const handleInsertCoordinateAxes = () => {
       editor.selectNone();
       editor.setCurrentTool('coordinate-axes');
+    };
+
+    const handleInsertKanban = () => {
+      editor.selectNone();
+      editor.setCurrentTool('kanban');
     };
 
     const currentTool = getCurrentTool();
@@ -389,6 +396,12 @@ export const Navbar = track(
                         className={cn(boardMenuItemClass, 'flex gap-2 px-3')}
                       >
                         <span>Оси координат</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        onClick={handleInsertKanban}
+                        className={cn(boardMenuItemClass, 'flex gap-2 px-3')}
+                      >
+                        <span>Kanban-доска</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

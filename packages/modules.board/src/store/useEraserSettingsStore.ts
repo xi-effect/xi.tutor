@@ -15,6 +15,7 @@ const DEFAULT_ERASER_SETTINGS: EraserSettingsT = {
   frames: true,
   arrows: true,
   lines: true,
+  widgets: true,
 };
 
 type StoreT = {

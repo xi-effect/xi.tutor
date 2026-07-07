@@ -150,6 +150,12 @@ export const BOARD_SHAPE_CATEGORIES: Record<string, ShapeCategoryT> = {
     label: 'Медиа',
     types: ['pdf', 'audio', 'video', 'embed', 'bookmark'],
   },
+
+  widgets: {
+    key: 'widgets',
+    label: 'Виджеты',
+    types: ['kanban', 'coordinate-axes'],
+  },
 };
 
 export const SHAPE_CATEGORIES: ShapeCategoryT[] = [
@@ -160,6 +166,7 @@ export const SHAPE_CATEGORIES: ShapeCategoryT[] = [
   BOARD_SHAPE_CATEGORIES.notes,
   BOARD_SHAPE_CATEGORIES.arrows,
   BOARD_SHAPE_CATEGORIES.media,
+  BOARD_SHAPE_CATEGORIES.widgets,
 ];
 
 export const ERASER_CATEGORIES: ShapeCategoryT[] = [
@@ -171,4 +178,5 @@ export const ERASER_CATEGORIES: ShapeCategoryT[] = [
   BOARD_SHAPE_CATEGORIES.frames,
   BOARD_SHAPE_CATEGORIES.arrows,
   BOARD_SHAPE_CATEGORIES.lines,
+  BOARD_SHAPE_CATEGORIES.widgets,
 ];

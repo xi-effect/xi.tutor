@@ -31,6 +31,7 @@ import { normalizeStoredFileSrc } from '../../../utils/storedFileSrc';
 import { XiGeoTool } from '../../../shapes/geo';
 import { EmojiTool } from '../../../shapes/emoji';
 import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
+import { KanbanTool } from '../../../shapes/kanban';
 import { isShapeErasable, isEditableTarget } from '../../../utils';
 import { insertAsset } from '../../../utils/uploadAsset';
 import { useRetryFileQueue } from 'common.services';
@@ -438,7 +439,7 @@ export const DrawCanvas = ({
               });
             }}
             store={store}
-            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool]}
+            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool, KanbanTool]}
             shapeUtils={boardCustomShapeUtils}
             hideUi
             components={drawComponents}
