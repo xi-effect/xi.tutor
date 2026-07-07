@@ -46,7 +46,10 @@ export const Route = createFileRoute('/(app)/_layout/board/$boardId')({
 
 function BoardPage() {
   return (
-    <div className="h-full min-h-0">
+    <div
+      className="min-h-0"
+      style={{ height: 'calc(100dvh - var(--calls-layout-bottom-offset, 0px))' }}
+    >
       <Suspense fallback={<LoadingScreen />}>
         <DrawBoard />
       </Suspense>

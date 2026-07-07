@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Button } from '@xipkg/button';
-import { Drawer, DrawerContent, DrawerTrigger } from '@xipkg/drawer';
+import { Drawer, DrawerTrigger } from '@xipkg/drawer';
 import { UserProfile } from '@xipkg/userprofile';
 import { useTranslation } from 'react-i18next';
 
 import { DRAWER_CONTENT_ABOVE_BAR_CLASS } from '../constants';
+import { NavigationDrawerContent } from '../NavigationDrawerContent';
 import { DrawerRoleSelector } from './DrawerRoleSelector';
 import { Account, Exit, Download, Close } from '@xipkg/icons';
 import { toast } from 'sonner';
@@ -50,7 +51,7 @@ export const MobileUserMenu = ({
           <UserProfile id="userprofile" userId={userId} size="40" withOutText />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className={DRAWER_CONTENT_ABOVE_BAR_CLASS}>
+      <NavigationDrawerContent className={DRAWER_CONTENT_ABOVE_BAR_CLASS}>
         <div className="dark:bg-gray-0 flex flex-col gap-5">
           <DrawerRoleSelector compact />
 
@@ -116,7 +117,7 @@ export const MobileUserMenu = ({
             </button>
           </div>
         </div>
-      </DrawerContent>
+      </NavigationDrawerContent>
     </Drawer>
   );
 };
