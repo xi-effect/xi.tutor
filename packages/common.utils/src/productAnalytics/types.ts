@@ -16,10 +16,7 @@ export type ProductAnalyticsLessonType = 'individual' | 'group' | 'unknown';
 export type ProductAnalyticsInviteKind = 'student' | 'group' | 'unknown';
 
 export type ProductAnalyticsCallFailureReason =
-  | 'token_error'
-  | 'connection_error'
-  | 'permission_error'
-  | 'unknown';
+  'token_error' | 'connection_error' | 'permission_error' | 'unknown';
 
 export type ProductAnalyticsDurationBucket = '5-15' | '15-30' | '30-45' | '45+';
 
