@@ -12,6 +12,7 @@ import {
   useEditOnTypeForLabels,
   useProductBoardAnalytics,
   useBoardDeepLinkFocus,
+  useBoardBackgroundSync,
 } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore, useDrawStore } from '../../../store';
@@ -83,6 +84,7 @@ export const DrawCanvas = ({
   useOverlayRepaintOnSelection(editor);
   useEditOnTypeForLabels(editor);
   useBoardDeepLinkFocus({ editor, ready: status === 'synced-remote' });
+  useBoardBackgroundSync(editor);
   const { addToQueue } = useRetryFileQueue();
 
   // Viewport bounds должны совпадать с .dr-canvas — overlay выделения рисуется на canvas
@@ -407,8 +409,7 @@ export const DrawCanvas = ({
                         : raw.props,
                   } as typeof r;
                   const props = (rec as unknown as Record<string, unknown>).props as
-                    | Record<string, unknown>
-                    | undefined;
+                    Record<string, unknown> | undefined;
                   if (props?.src && typeof props.src === 'string') {
                     props.src = normalizeStoredFileSrc(props.src);
                   }

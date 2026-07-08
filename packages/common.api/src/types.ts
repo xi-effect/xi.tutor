@@ -104,5 +104,4 @@ export interface GroupClassroomTutorResponseSchema {
 }
 
 export type ClassroomTutorResponseSchema =
-  | IndividualClassroomTutorResponseSchema
-  | GroupClassroomTutorResponseSchema;
+  IndividualClassroomTutorResponseSchema | GroupClassroomTutorResponseSchema;

@@ -1,5 +1,5 @@
 import { useMediaQuery } from '@xipkg/utils';
-import { Drawer, DrawerContent } from '@xipkg/drawer';
+import { Drawer } from '@xipkg/drawer';
 import { Sidebar, SidebarInset } from '@xipkg/sidebar';
 import { SideBarItems } from './SideBarItems';
 import { SidebarProvider } from '@xipkg/sidebar';
@@ -9,6 +9,7 @@ import { useMenuStore } from '../store';
 import { useEffect, useMemo } from 'react';
 import { MobileBottomBar } from './MobileBottomBar';
 import { MobileMenuDrawerContent } from './MobileMenuDrawerContent';
+import { NavigationDrawerContent } from './NavigationDrawerContent';
 import { DRAWER_CONTENT_ABOVE_BAR_CLASS, MOBILE_BOTTOM_BAR_HEIGHT } from './constants';
 
 const SIDEBAR_WIDTH_EXPANDED = '260px';
@@ -45,9 +46,9 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Мобильное меню по бургеру — список навигации (не перекрывает нижнюю панель) */}
       {isMobile && !focusMode && (
         <Drawer open={isOpen} onOpenChange={(open) => (open ? openMenu() : close())} modal>
-          <DrawerContent className={DRAWER_CONTENT_ABOVE_BAR_CLASS}>
+          <NavigationDrawerContent className={DRAWER_CONTENT_ABOVE_BAR_CLASS}>
             <MobileMenuDrawerContent onClose={close} />
-          </DrawerContent>
+          </NavigationDrawerContent>
         </Drawer>
       )}
 
