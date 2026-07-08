@@ -29,6 +29,7 @@ import { UndoRedo } from '../toolbar/UndoRedo';
 import { normalizeStoredFileSrc } from '../../../utils/storedFileSrc';
 import { XiGeoTool } from '../../../shapes/geo';
 import { EmojiTool } from '../../../shapes/emoji';
+import { EmojiStickerTool } from '../../../shapes/emojiSticker';
 import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
 import { isShapeErasable, isEditableTarget } from '../../../utils';
 import { insertAsset } from '../../../utils/uploadAsset';
@@ -436,7 +437,7 @@ export const DrawCanvas = ({
               });
             }}
             store={store}
-            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool]}
+            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool, EmojiStickerTool]}
             shapeUtils={boardCustomShapeUtils}
             hideUi
             components={drawComponents}

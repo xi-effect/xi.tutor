@@ -20,9 +20,10 @@ import { ShapesPopup } from '../popups/Shapes';
 import { initFileDB, useRetryFileQueue } from 'common.services';
 import { boardIconClass, boardMenuItemClass, boardPanelClass } from '../../boardTheme';
 import { EmojiPickerPopup } from '@xipkg/emojipicker';
-import { EmojiStyle } from '../../../shapes/shapeStyles';
+import { EmojiStickerStyle, EmojiStyle } from '../../../shapes/shapeStyles';
 import { insertAsset } from '../../../utils/uploadAsset';
 import { ALL_ALLOWED_TYPES } from '../../../constants/mimeTypes';
+import { stickers } from '../../../config';
 
 // Маппинг инструментов Kanva на Draw
 const toolMapping: Record<string, string> = {
@@ -36,6 +37,7 @@ const toolMapping: Record<string, string> = {
   sticker: 'note', // Используем note как аналог стикера
   frame: 'frame',
   emoji: 'emoji',
+  'emoji-sticker': 'emoji-sticker',
   'coordinate-axes': 'coordinate-axes',
 };
 
@@ -157,6 +159,7 @@ export const Navbar = track(
         note: 'sticker',
         frame: 'frame',
         emoji: 'emoji',
+        'emoji-sticker': 'emoji-sticker',
         'coordinate-axes': 'coordinate-axes',
         // image: 'asset', // Убираем, так как image не существует в Draw
       };
@@ -325,6 +328,12 @@ export const Navbar = track(
                             onEmojiSelect={(emoji) => {
                               editor.setStyleForNextShapes(EmojiStyle, emoji);
                               addRecentEmoji(emoji);
+                            }}
+                            stickers={stickers}
+                            onStickerSelect={(sticker) => {
+                              editor.setStyleForNextShapes(EmojiStickerStyle, sticker.src);
+                              editor.setCurrentTool('emoji-sticker');
+                              setActivePopup(null);
                             }}
                           />
                         }

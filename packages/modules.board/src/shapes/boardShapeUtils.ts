@@ -8,6 +8,7 @@ import { StickerShapeUtil } from './sticker';
 import { EmojiShapeUtil } from './emoji';
 import { FileShapeUtil } from './file';
 import { CoordinateAxesShapeUtil } from './coordinate-axes';
+import { EmojiStickerShapeUtil } from './emojiSticker';
 
 /** Кастомные shape utils — для `<Draw shapeUtils={...}>` (Draw сам мержит с defaultShapeUtils). */
 export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
@@ -18,6 +19,7 @@ export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
   CustomImageShapeUtil,
   StickerShapeUtil,
   EmojiShapeUtil,
+  EmojiStickerShapeUtil,
   FileShapeUtil,
   CoordinateAxesShapeUtil,
 ];
