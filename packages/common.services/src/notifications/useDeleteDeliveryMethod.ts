@@ -1,37 +1,32 @@
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { AxiosError } from 'axios';
-import { toast } from 'sonner';
 import { NotificationsQueryKey, UserQueryKey, notificationsApiConfig } from 'common.api';
+import { DeliveryMethodKind } from 'common.types';
 
-export const useCreateTgConnection = () => {
+type DeletableDeliveryMethodKind = Extract<DeliveryMethodKind, 'telegram' | 'vk'>;
+
+export const useDeleteDeliveryMethod = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (deliveryMethodKind: DeletableDeliveryMethodKind) => {
       const axiosInst = await getAxiosInstance();
       const response = await axiosInst({
-        method: notificationsApiConfig.CreateTgConnection.method,
-        url: notificationsApiConfig.CreateTgConnection.getUrl(),
+        method: notificationsApiConfig.DeleteDeliveryMethod.method,
+        url: notificationsApiConfig.DeleteDeliveryMethod.getUrl(deliveryMethodKind),
         headers: {
           'Content-Type': 'application/json',
         },
       });
 
-      return response.data as string;
+      return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [NotificationsQueryKey.DeliveryMethods] });
       queryClient.invalidateQueries({ queryKey: [UserQueryKey.Home] });
     },
     onError: (error) => {
-      if (error instanceof AxiosError && error.response?.status === 409) {
-        queryClient.invalidateQueries({ queryKey: [NotificationsQueryKey.DeliveryMethods] });
-        toast.error('Telegram уже подключён');
-        return;
-      }
-
-      console.error('Ошибка при подключении к Telegram:', error);
+      console.error('Ошибка при отключении способа доставки:', error);
     },
   });
 };

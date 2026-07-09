@@ -1,15 +1,15 @@
 import {
   useCreateTgConnection,
-  useDeleteTgConnection,
+  useDeleteDeliveryMethod,
   useGetNotificationsStatus,
 } from 'common.services';
 
 export const useConnectTg = () => {
   const { mutate: createConnection, isPending } = useCreateTgConnection();
-  const { mutate: deleteConnection } = useDeleteTgConnection();
+  const { mutate: deleteConnection } = useDeleteDeliveryMethod();
   const { data } = useGetNotificationsStatus();
 
-  const status = data?.telegram?.connection?.status;
+  const status = data?.telegram?.delivery_method.status;
 
   const handleConnectTg = () => {
     if (status === 'active' || isPending) return;
@@ -28,7 +28,7 @@ export const useConnectTg = () => {
     };
 
     if (status === 'blocked' || status === 'replaced') {
-      deleteConnection(undefined, {
+      deleteConnection('telegram', {
         onSuccess: connect,
       });
     } else {

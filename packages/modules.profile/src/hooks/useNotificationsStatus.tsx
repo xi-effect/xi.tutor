@@ -9,12 +9,13 @@ export function useNotificationsStatus() {
   const { handleConnectTg } = useConnectTg();
   const { handleDisconnectTg } = useDisconnectTg();
 
-  const status = data?.telegram?.connection.status;
+  const telegram = data?.telegram;
+  const status = telegram?.delivery_method.status;
 
   const isTgConnectionActive = status === 'active';
   const isTgConnectionBlocked = status === 'blocked';
   const isTgConnectionReplaced = status === 'replaced';
-  const isNotConnected = !data?.telegram;
+  const isNotConnected = telegram === null || telegram === undefined;
 
   const tgConnectionStatus = [
     {
@@ -24,7 +25,7 @@ export function useNotificationsStatus() {
     },
     {
       condition: isTgConnectionActive,
-      text: data?.telegram?.contact?.title,
+      text: telegram?.related_contact?.title,
       color: 'text-gray-80',
     },
     {

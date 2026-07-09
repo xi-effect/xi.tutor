@@ -2,10 +2,8 @@ import { env } from 'common.env';
 import { HttpMethod } from './config';
 
 enum NotificationsQueryKey {
-  // API для настроек
-  NotificationsSettings = 'NotificationsSettings',
+  DeliveryMethods = 'DeliveryMethods',
   ContactsVisibility = 'ContactsVisibility',
-  GetContacts = 'GetContacts',
 
   // API для уведомлений (новый контракт)
   SearchNotifications = 'SearchNotifications',
@@ -13,11 +11,11 @@ enum NotificationsQueryKey {
   MarkAsRead = 'MarkAsRead',
 }
 
+const deliveryMethodsBaseUrl = `${env.VITE_SERVER_URL_BACKEND}/api/protected/notification-service/users/current/delivery-methods`;
+
 const notificationsApiConfig = {
-  // API для настроек
-  [NotificationsQueryKey.NotificationsSettings]: {
-    getUrl: () =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/notification-service/users/current/notification-settings/`,
+  [NotificationsQueryKey.DeliveryMethods]: {
+    getUrl: () => `${deliveryMethodsBaseUrl}/`,
     method: HttpMethod.GET,
   },
   [NotificationsQueryKey.ContactsVisibility]: {
@@ -25,10 +23,28 @@ const notificationsApiConfig = {
       `${env.VITE_SERVER_URL_BACKEND}/api/protected/notification-service/users/current/contacts/personal-telegram/visibility/`,
     method: HttpMethod.PUT,
   },
-  [NotificationsQueryKey.GetContacts]: {
-    getUrl: () =>
-      `${env.VITE_SERVER_URL_BACKEND}/api/protected/notification-service/users/current/contacts/`,
-    method: HttpMethod.GET,
+  CreateTgConnection: {
+    getUrl: () => `${deliveryMethodsBaseUrl}/telegram/connection-requests/`,
+    method: HttpMethod.POST,
+  },
+  CreateVkConnection: {
+    getUrl: () => `${deliveryMethodsBaseUrl}/vk/connection-requests/`,
+    method: HttpMethod.POST,
+  },
+  DeleteDeliveryMethod: {
+    getUrl: (deliveryMethodKind: 'telegram' | 'vk') =>
+      `${deliveryMethodsBaseUrl}/${deliveryMethodKind}/`,
+    method: HttpMethod.DELETE,
+  },
+  EnableNotificationGroup: {
+    getUrl: (deliveryMethodKind: string, notificationGroupKind: string) =>
+      `${deliveryMethodsBaseUrl}/${deliveryMethodKind}/enabled-notification-groups/${notificationGroupKind}/`,
+    method: HttpMethod.PUT,
+  },
+  DisableNotificationGroup: {
+    getUrl: (deliveryMethodKind: string, notificationGroupKind: string) =>
+      `${deliveryMethodsBaseUrl}/${deliveryMethodKind}/enabled-notification-groups/${notificationGroupKind}/`,
+    method: HttpMethod.DELETE,
   },
 
   // API для уведомлений (новый контракт)

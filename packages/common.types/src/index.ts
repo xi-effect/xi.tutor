@@ -1,6 +1,12 @@
 export type { UserData, ProfileData, RoleT } from './user';
 export type {
   NotificationsSettingsT,
+  DeliveryMethodsResponse,
+  DeliveryMethodEnriched,
+  DeliveryMethodKind,
+  DeliveryMethodStatus,
+  NotificationGroupKind,
+  VKConnectionStartResponse,
   NotificationT,
   NotificationPayload,
   NotificationLegacyPayload,
