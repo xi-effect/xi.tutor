@@ -39,6 +39,26 @@ export const BOARD_BACKGROUND_COLOR_VALUES: Record<BoardBackgroundColorId, strin
   blue: 'hsl(210, 55%, 96%)',
 };
 
+/** Тёмные варианты фона доски — те же id, что в Yjs, но с тоном под dr-theme__dark. */
+export const BOARD_BACKGROUND_COLOR_VALUES_DARK: Record<BoardBackgroundColorId, string> = {
+  white: 'hsl(240, 5%, 6.5%)',
+  gray: 'hsl(0, 0%, 10%)',
+  cream: 'hsl(48, 20%, 9%)',
+  green: 'hsl(120, 15%, 9%)',
+  blue: 'hsl(210, 20%, 9%)',
+};
+
+export type BoardColorAppearance = 'light' | 'dark';
+
+export function getBoardBackgroundColorValue(
+  color: BoardBackgroundColorId,
+  appearance: BoardColorAppearance,
+): string {
+  return appearance === 'dark'
+    ? BOARD_BACKGROUND_COLOR_VALUES_DARK[color]
+    : BOARD_BACKGROUND_COLOR_VALUES[color];
+}
+
 const BOARD_BACKGROUND_TYPE_SET = new Set<DrBoardBackgroundType>(
   BOARD_BACKGROUND_TYPE_OPTIONS.map(({ value }) => value),
 );
