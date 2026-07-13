@@ -22,10 +22,7 @@ export const NewPassword = ({ token }: { token: string }) => {
 
   return (
     <Form<FormDataPassword> {...form}>
-      <form
-        onSubmit={syncAutofillAndSubmit(onSubmit)}
-        className="flex h-full w-full flex-col space-y-4"
-      >
+      <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex flex-1 flex-col space-y-4">
         <div className="self-center">
           <Logo height={22} width={180} />
         </div>
@@ -92,7 +89,7 @@ export const NewPassword = ({ token }: { token: string }) => {
           )}
         />
 
-        <div className="flex h-full w-full items-end justify-between">
+        <div className="mt-auto flex w-full items-end justify-between">
           <div className="flex h-14 items-center">
             <LinkTanstack
               id="to-signup-link"

@@ -53,10 +53,10 @@ export const SignInPage = () => {
   };
 
   return (
-    <div className="xs:h-screen bg-gray-0 flex h-[100dvh] w-screen flex-col flex-wrap content-center justify-center p-1">
-      <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex h-fit min-h-[600px] w-full max-w-[420px] bg-transparent p-8">
+    <div className="flex w-full flex-1 flex-col items-center justify-center p-1 py-4">
+      <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex min-h-[600px] w-full max-w-[420px] flex-col bg-transparent p-8">
         <Form {...form}>
-          <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex w-full flex-col gap-4">
+          <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex flex-1 flex-col gap-4">
             <div className="self-center">
               <Logo height={22} width={180} />
             </div>
@@ -123,7 +123,7 @@ export const SignInPage = () => {
               {t('forgot_password')}
             </LinkTanstack>
 
-            <div className="flex h-full w-full items-end justify-between">
+            <div className="mt-auto flex w-full items-end justify-between">
               <div className="flex h-[48px] items-center">
                 <LinkTanstack
                   id="to-signup-link"
