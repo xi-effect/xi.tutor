@@ -30,7 +30,7 @@ import { XiGeoTool } from '../../../shapes/geo';
 import { EmojiTool } from '../../../shapes/emoji';
 import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
 import { isShapeErasable, isEditableTarget } from '../../../utils';
-import { XiRichTextToolbar } from '../../../shapes/text/XiRichTextToolbar';
+import { TextEditorToolbarWithContext } from '../../../shapes/text/TextEditorToolbarWithContext';
 
 export const DrawCanvas = ({
   token,
@@ -67,7 +67,7 @@ export const DrawCanvas = ({
       ...hiddenComponents,
       InFrontOfTheCanvas: SelectionOverlay,
       CollaboratorCursor,
-      RichTextToolbar: XiRichTextToolbar,
+      RichTextToolbar: TextEditorToolbarWithContext,
     }),
     [],
   );

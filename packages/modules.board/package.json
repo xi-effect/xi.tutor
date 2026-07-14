@@ -16,6 +16,8 @@
     "@hookform/resolvers": "^5.2.2",
     "@ibodr/draw": "^0.1.9",
     "@tanstack/react-router": "^1.166.6",
+    "@tiptap/core": "^3.27.1",
+    "@tiptap/react": "^3.27.1",
     "@xipkg/avatar": "3.3.0",
     "@xipkg/button": "4.1.0",
     "@xipkg/checkbox": "5.0.5",

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import {
   DrRichText,
   HTMLContainer,
@@ -13,7 +14,6 @@ import {
 } from '@ibodr/draw';
 import { getFillColor, getSizeInPixels } from './geoUtils';
 import type { XiGeoShape, XiGeoShapeProps } from './type';
-import { useState } from 'react';
 
 type TXiGeoComponent = {
   shape: XiGeoShape;
@@ -31,7 +31,7 @@ export const XiGeoComponent: React.FC<TXiGeoComponent> = ({ shape }) => {
     shape.props as XiGeoShapeProps;
 
   // Проверяем есть ли контент в richText, если он есть, значит фигуру ранее использовали с richText
-  // если контент в richText пустой, то используем тtext для обратной совместимости со старыми фигурами
+  // если контент в richText пустой, то используем text для обратной совместимости со старыми фигурами
   const fallbackRichText = renderPlaintextFromRichText(editor, richText)
     ? richText
     : toRichText(text);
@@ -56,8 +56,12 @@ export const XiGeoComponent: React.FC<TXiGeoComponent> = ({ shape }) => {
   const strokeColor = getColorValue(colors, borderColor, 'fill');
   const textColor = getColorValue(colors, labelColor, 'solid');
 
+  useEffect(() => {
+    setCurrentRichText(richText);
+  }, [richText]);
+
   // Устанавливаем текст в фигуру;
-  const handleRichTextChange = ({ richText }: TRichTextChangeData) => {
+  const changeRichTextHandle = ({ richText }: TRichTextChangeData) => {
     editor.updateShape({
       id: shape.id,
       type: shape.type,
@@ -94,7 +98,7 @@ export const XiGeoComponent: React.FC<TXiGeoComponent> = ({ shape }) => {
         style={{
           width: w * DEFAULT_SIZE_SCALE,
           height: h * DEFAULT_SIZE_SCALE,
-          pointerEvents: isEditing ? 'auto' : 'none',
+          pointerEvents: 'auto',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
@@ -104,7 +108,7 @@ export const XiGeoComponent: React.FC<TXiGeoComponent> = ({ shape }) => {
         {isEditing ? (
           <RichTextArea
             shapeId={shape.id}
-            handleChange={handleRichTextChange}
+            handleChange={changeRichTextHandle}
             handleBlur={() => {}}
             handlePaste={() => {}}
             handleDoubleClick={() => {}}
