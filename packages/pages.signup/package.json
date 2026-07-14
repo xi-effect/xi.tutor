@@ -11,25 +11,24 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
-    "common.config": "workspace:*",
-    "common.env": "workspace:*",
-    "common.types": "workspace:*",
-    "common.auth": "workspace:*",
-    "common.ui": "workspace:*",
+    "@hookform/resolvers": "^5.2.2",
     "@xipkg/button": "4.1.0",
-    "@xipkg/form": "4.2.2",
     "@xipkg/checkbox": "5.0.5",
-    "@xipkg/icons": "3.0.20",
+    "@xipkg/form": "4.2.2",
+    "@xipkg/icons": "3.0.23",
     "@xipkg/input": "2.2.14",
     "@xipkg/link": "2.0.12",
     "@xipkg/utils": "1.8.0",
-    "zod": "^4.3.6",
+    "common.auth": "workspace:*",
+    "common.config": "workspace:*",
+    "common.env": "workspace:*",
+    "common.types": "workspace:*",
+    "common.ui": "workspace:*",
     "react-hook-form": "^7.73.1",
-    "@hookform/resolvers": "^5.2.2"
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
-    "common.typescript": "workspace:*",
     "@types/node": "^20.3.1",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
@@ -37,6 +36,7 @@
     "@xipkg/tailwind": "0.8.6",
     "@xipkg/typescript": "latest",
     "common.eslint": "workspace:*",
+    "common.typescript": "workspace:*",
     "eslint": "^9.19.0",
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
@@ -45,9 +45,9 @@
     "typescript-eslint": "^8.22.0"
   },
   "peerDependencies": {
+    "@hookform/resolvers": "^5.2.2",
     "react": "19",
-    "react-hook-form": "^7.73.1",
-    "@hookform/resolvers": "^5.2.2"
+    "react-hook-form": "^7.73.1"
   },
   "description": "form for signin",
   "author": "xi.effect"

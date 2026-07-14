@@ -21,7 +21,7 @@ export const ResetPassword = () => {
 
   return (
     <Form<FormDataEmail> {...form}>
-      <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex w-full flex-col gap-4">
+      <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex flex-1 flex-col gap-4">
         <div className="self-center">
           <Logo height={22} width={180} />
         </div>
@@ -61,7 +61,7 @@ export const ResetPassword = () => {
           />
         )}
 
-        <div className="flex h-full w-full items-end justify-between">
+        <div className="mt-auto flex w-full items-end justify-between">
           <div className="flex h-[48px] items-center">
             {isSubmitSuccessful ? (
               <Link

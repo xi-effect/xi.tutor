@@ -13,8 +13,12 @@ import {
 } from '@xipkg/dropdown';
 import {
   Check,
+  ColorPicker as ColorPickerIcon,
   Eraser,
+  Eyeoff,
+  Eyeon,
   File,
+  Grid,
   InfoCircle,
   Locked,
   MoreVert,
@@ -26,15 +30,27 @@ import {
 } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { useDropdownActions } from './hooks/useDropdownActions';
+import { useBoardBackgroundState } from '../../../hooks/useBoardBackground';
 import { useEffect, useRef, useState } from 'react';
 import { useCurrentUser } from 'common.services';
 import { toast } from 'sonner';
 import { useEditor } from '@ibodr/draw';
+import { useCommentsUiStore } from '../../../comments';
 import { useDrawStore, useEraserSettingsStore } from '../../../store';
 import { HotkeysHelpModal } from '../shared/HotkeysHelp';
-import { ERASER_CATEGORIES, INPUT_MODE_OPTIONS, SHAPE_CATEGORIES } from '../../../config';
+import {
+  ERASER_CATEGORIES,
+  INPUT_MODE_OPTIONS,
+  SHAPE_CATEGORIES,
+  BOARD_BACKGROUND_COLOR_OPTIONS,
+  BOARD_BACKGROUND_TYPE_OPTIONS,
+  getBoardBackgroundColorLabel,
+  getBoardBackgroundTypeLabel,
+  normalizeBoardBackgroundType,
+} from '../../../config';
 import { areAllEraserCategoriesEnabled } from '../../../utils/areAllEraserCategoriesEnabled';
 import {
+  boardIconClass,
   boardMenuCheckboxItemClass,
   boardMenuItemClass,
   boardMenuSubTriggerClass,
@@ -55,6 +71,23 @@ const BlockBoardAction = ({ onClick, isReadonly }: ActionPropsT & { isReadonly: 
     >
       {isReadonly ? <ShieldOff /> : <Shield />}
       <span>{isReadonly ? 'Возобновить работу с доской' : 'Приостановить работу с доской'}</span>
+    </DropdownMenuItem>
+  );
+};
+
+const ToggleCommentsVisibilityAction = ({
+  visible,
+  onClick,
+}: ActionPropsT & { visible: boolean }) => {
+  return (
+    <DropdownMenuItem
+      className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
+      onClick={onClick}
+      data-umami-event="board-comments-toggle-visibility"
+      data-umami-event-state={visible ? 'hide' : 'show'}
+    >
+      {visible ? <Eyeoff /> : <Eyeon />}
+      <span>{visible ? 'Скрыть комментарии' : 'Показать комментарии'}</span>
     </DropdownMenuItem>
   );
 };
@@ -102,6 +135,8 @@ export const SettingsDropdown = () => {
   } = useDropdownActions();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const commentsVisible = useCommentsUiStore((s) => s.commentsVisible);
+  const setCommentsVisible = useCommentsUiStore((s) => s.setCommentsVisible);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [hotkeysOpen, setHotkeysOpen] = useState(false);
   const [showImportOption, setShowImportOption] = useState(false);
@@ -115,6 +150,7 @@ export const SettingsDropdown = () => {
   const isLimitReached = elementsCount >= BOARD_ELEMENTS_LIMIT;
 
   const { settings, toggleCategory, toggleAll } = useEraserSettingsStore();
+  const { background, setBackgroundType, setBackgroundColor } = useBoardBackgroundState();
 
   const allChecked = areAllEraserCategoriesEnabled(settings);
 
@@ -187,7 +223,7 @@ export const SettingsDropdown = () => {
             className="hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
             data-umami-event="board-settings-menu"
           >
-            <MoreVert size="s" className="h-4 w-4 fill-gray-100 lg:h-6 lg:w-6" />
+            <MoreVert size="s" className={cn('h-4 w-4 lg:h-6 lg:w-6', boardIconClass)} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
@@ -227,6 +263,10 @@ export const SettingsDropdown = () => {
               <InfoCircle />
               <span>Горячие клавиши</span>
             </DropdownMenuItem>
+            <ToggleCommentsVisibilityAction
+              visible={commentsVisible}
+              onClick={() => setCommentsVisible(!commentsVisible)}
+            />
             {editor && (
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
@@ -257,6 +297,56 @@ export const SettingsDropdown = () => {
               </DropdownMenuSub>
             )}
             <DownloadBoardAction onClick={saveCanvas} />
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
+                <Grid className="shrink-0" />
+                <span className="min-w-0 flex-1 truncate">Тип фона</span>
+                <span className="text-gray-60 max-w-[88px] shrink-0 truncate text-right text-xs">
+                  {getBoardBackgroundTypeLabel(background.type)}
+                </span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[286px]')}>
+                {BOARD_BACKGROUND_TYPE_OPTIONS.map(({ value, label }) => (
+                  <DropdownMenuItem
+                    key={value}
+                    className={cn(boardMenuItemClass, 'flex min-w-0 items-center gap-2 p-1')}
+                    onClick={() => setBackgroundType(value)}
+                    data-umami-event="board-background-type"
+                    data-umami-event-type={value}
+                  >
+                    <span className="flex w-5 shrink-0 items-center justify-center">
+                      {normalizeBoardBackgroundType(background.type) === value ? <Check /> : null}
+                    </span>
+                    <span className="min-w-0 flex-1 leading-snug">{label}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
+                <ColorPickerIcon className="shrink-0" />
+                <span className="min-w-0 flex-1 truncate">Цвет фона</span>
+                <span className="text-gray-60 max-w-[88px] shrink-0 truncate text-right text-xs">
+                  {getBoardBackgroundColorLabel(background.color)}
+                </span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[286px]')}>
+                {BOARD_BACKGROUND_COLOR_OPTIONS.map(({ value, label }) => (
+                  <DropdownMenuItem
+                    key={value}
+                    className={cn(boardMenuItemClass, 'flex min-w-0 items-center gap-2 p-1')}
+                    onClick={() => setBackgroundColor(value)}
+                    data-umami-event="board-background-color"
+                    data-umami-event-color={value}
+                  >
+                    <span className="flex w-5 shrink-0 items-center justify-center">
+                      {background.color === value ? <Check /> : null}
+                    </span>
+                    <span className="min-w-0 flex-1 truncate">{label}</span>
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuSubContent>
+            </DropdownMenuSub>
             {isTutor && !isReadonly && showImportOption && (
               <DropdownMenuItem
                 className={cn(boardMenuItemClass, 'flex gap-2 p-1')}

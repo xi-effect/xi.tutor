@@ -3,6 +3,8 @@ import { Editor, DrAssetId, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { myAssetStore } from './imageStore';
 
+const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
+
 const DECODE_ERROR_MESSAGE =
   'Не удалось прочитать изображение. Возможные причины: повреждённый файл, неподдерживаемый формат в этом браузере или вставка из буфера обмена (попробуйте вставить картинку по ссылке через кнопку «Изображение»).';
 
@@ -27,6 +29,12 @@ export async function insertImage(
   if (!file.size) {
     toast.error('Файл пустой', { description: 'Выберите изображение с ненулевым размером.' });
     return;
+  }
+
+  if (file.size > MAX_IMAGE_SIZE_BYTES) {
+    const message = `Размер изображения не должен превышать 1 MiB (сейчас ${(file.size / 1024 / 1024).toFixed(2)} MiB).`;
+    toast.error('Не удалось загрузить изображение', { description: message, duration: 5000 });
+    throw new Error(message);
   }
 
   let bitmap: ImageBitmap;

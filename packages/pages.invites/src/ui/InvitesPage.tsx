@@ -1,7 +1,7 @@
 import { Logo } from 'common.ui';
 import { useParams } from '@tanstack/react-router';
 import { useEffect } from 'react';
-import { SupportFooter } from 'modules.navigation';
+import { SupportPageShell } from 'modules.navigation';
 import { Invite } from './Invite';
 import { ErrorInvite } from './ErrorInvite';
 import { useInvitePreview } from '../services';
@@ -16,8 +16,8 @@ export const InvitesPage = () => {
 
   if (isLoading) {
     return (
-      <>
-        <section className="bg-gray-0 relative flex h-screen flex-col items-center justify-center">
+      <SupportPageShell>
+        <section className="relative flex flex-1 flex-col items-center justify-center py-24">
           <div className="absolute top-24">
             <Logo />
           </div>
@@ -25,14 +25,13 @@ export const InvitesPage = () => {
             <p className="text-gray-80 dark:text-gray-80">Загрузка приглашения...</p>
           </div>
         </section>
-        <SupportFooter />
-      </>
+      </SupportPageShell>
     );
   }
 
   return (
-    <>
-      <section className="bg-gray-0 flex h-screen flex-col items-center justify-center">
+    <SupportPageShell>
+      <section className="relative flex flex-1 flex-col items-center justify-center py-24">
         <div className="absolute top-24">
           <Logo />
         </div>
@@ -44,7 +43,6 @@ export const InvitesPage = () => {
           <ErrorInvite error="Приглашение не найдено" />
         )}
       </section>
-      <SupportFooter />
-    </>
+    </SupportPageShell>
   );
 };

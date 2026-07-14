@@ -74,7 +74,7 @@ export const PieCardChart = ({
                 stroke="none"
                 fontSize={12}
                 position="inside"
-                formatter={(value: number) => `${value}%`}
+                formatter={(value) => `${value}%`}
                 {...labelListProps}
               />
             </Pie>

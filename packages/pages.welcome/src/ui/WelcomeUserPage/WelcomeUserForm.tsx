@@ -45,7 +45,7 @@ export const WelcomeUserForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex h-full w-full flex-col">
+      <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex w-full flex-1 flex-col">
         <FormField
           control={control}
           name="displayName"

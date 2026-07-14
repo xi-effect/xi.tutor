@@ -9,7 +9,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { MenuDots } from '@xipkg/icons';
+import { MenuDots, Link } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { useEditor } from '@ibodr/draw';
 import {
@@ -19,6 +19,7 @@ import {
   boardMenuSurfaceClass,
 } from '../../boardTheme';
 import { useCurrentUser } from 'common.services';
+import { useCopyBoardDeepLink } from '../../../hooks';
 import type { PdfShape } from '../../../shapes/pdf';
 import type { AudioShape } from '../../../shapes/audio';
 import { isMac } from '../../../utils';
@@ -61,6 +62,8 @@ export const MoreActionsMenu = () => {
     selectedShapes.length === 1 && selectedShapes[0].type === 'audio'
       ? (selectedShapes[0] as AudioShape)
       : null;
+
+  const copyDeepLink = useCopyBoardDeepLink({ shapeIds: selectedIds.map(String) });
 
   const handleToggleStudentFlip = () => {
     if (!selectedPdf) return;
@@ -124,6 +127,15 @@ export const MoreActionsMenu = () => {
         sideOffset={8}
         className={cn(boardMenuSurfaceClass, 'flex w-auto flex-col gap-1 rounded-xl p-1')}
       >
+        <DropdownMenuItem
+          onClick={() => void copyDeepLink()}
+          className={cn(boardMenuItemClass, 'rounded-lg px-3')}
+          data-umami-event="board-copy-shape-link"
+        >
+          <Link className={`mr-2 size-4 ${boardIconClass}`} />
+          Скопировать ссылку
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className={cn(boardMenuSubTriggerClass, 'rounded-lg px-3')}>
             Переупорядочить

@@ -3,7 +3,7 @@ import { Button } from '@xipkg/button';
 import { useNavigate } from '@tanstack/react-router';
 import { useEmailChange } from 'common.services';
 import { useEffect, useRef } from 'react';
-import { SupportFooter } from 'modules.navigation';
+import { SupportPageShell } from 'modules.navigation';
 import { useConfirmEmailToken } from './useConfirmEmailToken';
 
 const Loading = () => {
@@ -53,42 +53,43 @@ export const EmailPageConfirm = () => {
   const hasError = emailChange.isError || !!emailChange.error;
 
   return (
-    <div className="xs:h-screen bg-gray-0 flex h-dvh w-screen flex-col flex-wrap content-center justify-center p-1">
-      <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex min-h-[348px] w-full max-w-[420px] bg-transparent">
-        <div className="xs:p-8 flex h-full w-full flex-col items-center">
-          <div className="h-8">
-            <Logo height={32} width={108} />
+    <SupportPageShell>
+      <div className="flex w-full flex-1 flex-col items-center justify-center p-1 py-4">
+        <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex min-h-[348px] w-full max-w-[420px] bg-transparent">
+          <div className="xs:p-8 flex w-full flex-col items-center p-4">
+            <div className="h-8">
+              <Logo height={32} width={108} />
+            </div>
+            {isLoading && (
+              <div className="mt-4 flex items-center justify-center py-8">
+                <Loading />
+              </div>
+            )}
+            {isSuccess && !isLoading && (
+              <div
+                id="title"
+                className="text-l-base mt-4 flex items-center justify-center py-8 font-semibold text-gray-100"
+              >
+                Почта подтверждена
+              </div>
+            )}
+            {hasError && !isLoading && (
+              <div id="title" className="text-l-base mt-4 font-semibold text-gray-100">
+                Ошибка при подтверждении почты
+              </div>
+            )}
+            {isSuccess && !isLoading && (
+              <Button
+                size="m"
+                className="h-[48px] w-full rounded-xl"
+                onClick={() => navigate({ to: '/' })}
+              >
+                Вернуться в приложение
+              </Button>
+            )}
           </div>
-          {isLoading && (
-            <div className="mt-4 flex h-full items-center justify-center">
-              <Loading />
-            </div>
-          )}
-          {isSuccess && !isLoading && (
-            <div
-              id="title"
-              className="text-l-base mt-4 flex flex-1 items-center justify-center font-semibold text-gray-100"
-            >
-              Почта подтверждена
-            </div>
-          )}
-          {hasError && !isLoading && (
-            <div id="title" className="text-l-base mt-4 font-semibold text-gray-100">
-              Ошибка при подтверждении почты
-            </div>
-          )}
-          {isSuccess && !isLoading && (
-            <Button
-              size="m"
-              className="h-[48px] w-full rounded-xl"
-              onClick={() => navigate({ to: '/' })}
-            >
-              Вернуться в приложение
-            </Button>
-          )}
         </div>
       </div>
-      <SupportFooter />
-    </div>
+    </SupportPageShell>
   );
 };

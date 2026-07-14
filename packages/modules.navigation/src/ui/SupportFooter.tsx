@@ -8,7 +8,7 @@ export const SupportFooter = () => {
 
   return (
     <>
-      <div className="fixed inset-x-0 bottom-6 z-10 flex justify-center pb-[env(safe-area-inset-bottom)]">
+      <div className="flex shrink-0 justify-center py-6 pb-[max(1.5rem,env(safe-area-inset-bottom))]">
         <AuthSupportLink />
       </div>
       <SupportModal open={isSupportOpen} onOpenChange={setSupportOpen} />

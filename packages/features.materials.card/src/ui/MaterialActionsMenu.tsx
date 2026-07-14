@@ -23,7 +23,7 @@ const options: { value: AccessModeT; label: string }[] = [
 /** text-xs-base нельзя вместе с text-gray-* — twMerge снимает цвет текста */
 const menuSurfaceClass = 'border-gray-10 bg-gray-0 border';
 const menuItemClass =
-  'text-gray-100 hover:bg-brand-0 hover:text-gray-100 focus:text-gray-100 min-h-7 h-auto items-start whitespace-normal rounded-lg px-2 py-1.5 text-sm leading-snug';
+  'text-gray-100 hover:bg-brand-0 hover:text-gray-100 focus:text-gray-100 min-h-7 h-auto items-start whitespace-nowrap rounded-lg px-2 py-1.5 text-sm leading-snug';
 
 export const MaterialActionsMenu = ({
   isClassroom,
@@ -67,7 +67,7 @@ export const MaterialActionsMenu = ({
       <DropdownMenuContent
         side="bottom"
         align="end"
-        className={cn(menuSurfaceClass, 'w-48 space-y-1 rounded-lg p-2 font-normal text-gray-100')}
+        className={cn(menuSurfaceClass, 'w-56 space-y-1 rounded-lg p-2 font-normal text-gray-100')}
         onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
       >
         {isClassroom && isTutor ? (

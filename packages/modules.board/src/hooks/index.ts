@@ -1,4 +1,9 @@
 export { useThrottle } from './useThrottle';
+export {
+  useBoardBackground,
+  useBoardBackgroundState,
+  useBoardBackgroundSync,
+} from './useBoardBackground';
 export { useYjsStore } from './useYjsStore';
 export { useDrawStyles } from './useDrawStyles';
 export { useHotkeys } from './useHotkeys';
@@ -7,3 +12,4 @@ export { useDrawClipboard } from './useDrawClipboard';
 export { useOverlayRepaintOnSelection } from './useOverlayRepaintOnSelection';
 export { useEditOnTypeForLabels } from './useEditOnTypeForLabels';
 export { useProductBoardAnalytics } from './useProductBoardAnalytics';
+export { useBoardDeepLinkFocus, useCopyBoardDeepLink } from './useBoardDeepLinkFocus';

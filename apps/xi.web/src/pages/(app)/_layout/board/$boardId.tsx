@@ -17,6 +17,14 @@ const paramsSchema = z.object({
   boardId: z.string(),
 });
 
+const searchSchema = z.object({
+  /** Deep link: id фигуры (или несколько через запятую) — фокус камеры и выделение. */
+  shape: z.string().optional(),
+  /** Deep link: id треда комментария — фокус камеры и открытие попапа. */
+  comment: z.string().optional(),
+  call: z.string().optional(),
+});
+
 // @ts-ignore
 export const Route = createFileRoute('/(app)/_layout/board/$boardId')({
   head: () => ({
@@ -28,6 +36,7 @@ export const Route = createFileRoute('/(app)/_layout/board/$boardId')({
   }),
   component: BoardPage,
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
+  validateSearch: (search: Record<string, unknown>) => searchSchema.parse(search),
   beforeLoad: () => {
     // console.log('DrawBoard', context, location);
     // Предзагружаем модуль доски
@@ -37,7 +46,10 @@ export const Route = createFileRoute('/(app)/_layout/board/$boardId')({
 
 function BoardPage() {
   return (
-    <div className="h-full min-h-0">
+    <div
+      className="min-h-0"
+      style={{ height: 'calc(100dvh - var(--calls-layout-bottom-offset, 0px))' }}
+    >
       <Suspense fallback={<LoadingScreen />}>
         <DrawBoard />
       </Suspense>

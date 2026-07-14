@@ -11,10 +11,11 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
+    "@tanstack/react-router": "^1.166.6",
     "@xipkg/actionbutton": "1.0.0",
     "@xipkg/button": "4.1.0",
     "@xipkg/drawer": "0.1.0",
-    "@xipkg/icons": "3.0.20",
+    "@xipkg/icons": "3.0.23",
     "@xipkg/modal": "4.5.5",
     "@xipkg/tooltip": "^2.1.0",
     "@xipkg/utils": "^1.8.0",
@@ -25,7 +26,6 @@
     "features.invoice": "workspace:*",
     "features.materials.add": "workspace:*",
     "features.table": "workspace:*",
-    "@tanstack/react-router": "^1.166.6",
     "sonner": "^2.0.7"
   },
   "devDependencies": {

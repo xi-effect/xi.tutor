@@ -60,13 +60,10 @@ export const SignUpPage = () => {
   const isButtonDisabled = isPending;
 
   return (
-    <div className="xs:min-h-screen bg-gray-0 flex min-h-dvh w-screen flex-col flex-wrap content-center justify-center p-1 py-4">
-      <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex min-h-[600px] w-full max-w-[420px] bg-transparent p-8">
+    <div className="flex w-full flex-1 flex-col items-center justify-center p-1 py-4">
+      <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex min-h-[600px] w-full max-w-[420px] flex-col bg-transparent p-8">
         <Form {...form}>
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="flex w-full flex-1 flex-col justify-items-start space-y-4"
-          >
+          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-1 flex-col space-y-4">
             <div className="self-center">
               <Logo height={22} width={180} />
             </div>
@@ -186,7 +183,7 @@ export const SignUpPage = () => {
                 </FormItem>
               )}
             />
-            <div className="flex w-full flex-1 items-end justify-between">
+            <div className="mt-auto flex w-full items-end justify-between">
               <div className="flex h-[48px] items-center">
                 <LinkTanstack
                   size="l"

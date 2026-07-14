@@ -8,21 +8,22 @@ import {
 } from '@xipkg/dropdown';
 import { MenuDots } from '@xipkg/icons';
 import { track, useEditor } from '@ibodr/draw';
+import { cn } from '@xipkg/utils';
 import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
+import { CommentPlaceButton, useCommentsUiStore } from '../../../comments';
 import { UndoRedo } from './UndoRedo';
 import { useDrawStore } from '../../../store';
 import { useDrawStyles, useHotkeys } from '../../../hooks';
 import { NavbarButton, ToolPopup } from '../shared';
 import { ArrowsPopup, PenPopup, StickerPopup } from '../popups';
 import { ShapesPopup } from '../popups/Shapes';
-import { insertImage } from '../../../features/pickAndInsertImage';
-import { insertPdf } from '../../../features/pickAndInsertPdf';
-import { insertAudio, AUDIO_ACCEPT } from '../../../features/pickAndInsertAudio';
-import { insertFile, FILE_ACCEPT } from '../../../features/pickAndInsertFile';
 import { initFileDB, useRetryFileQueue } from 'common.services';
-import { boardIconClass, boardPanelClass } from '../../boardTheme';
+import { boardIconClass, boardMenuItemClass, boardPanelClass } from '../../boardTheme';
 import { EmojiPickerPopup } from '@xipkg/emojipicker';
-import { EmojiStyle } from '../../../shapes/shapeStyles';
+import { EmojiStickerStyle, EmojiStyle } from '../../../shapes/shapeStyles';
+import { insertAsset } from '../../../utils/uploadAsset';
+import { ALL_ALLOWED_TYPES } from '../../../constants/mimeTypes';
+import { stickers } from '../../../config';
 
 // Маппинг инструментов Kanva на Draw
 const toolMapping: Record<string, string> = {
@@ -36,8 +37,8 @@ const toolMapping: Record<string, string> = {
   sticker: 'note', // Используем note как аналог стикера
   frame: 'frame',
   emoji: 'emoji',
+  'emoji-sticker': 'emoji-sticker',
   'coordinate-axes': 'coordinate-axes',
-  // asset: 'image', // Убираем image, так как его нет в Draw
 };
 
 export const Navbar = track(
@@ -66,6 +67,7 @@ export const Navbar = track(
     const [activePopup, setActivePopup] = React.useState<string | null>(null);
     const editor = useEditor();
     const { processQueue, isOnline, addToQueue } = useRetryFileQueue();
+    const setPlacingComment = useCommentsUiStore((s) => s.setPlacing);
 
     useEffect(() => {
       if (!isOnline) return;
@@ -107,6 +109,7 @@ export const Navbar = track(
     const handleSelectTool = (toolName: string) => {
       editor.selectNone();
       setActivePopup(null);
+      setPlacingComment(false);
 
       if (toolName === 'pen') {
         setColor(pencilColor);
@@ -119,17 +122,16 @@ export const Navbar = track(
       if (toolName === 'asset') {
         const input = document.createElement('input');
         input.type = 'file';
-        input.accept =
-          'image/jpeg,image/jpx,image/png,image/gif,image/webp,image/tiff,image/bmp,image/x-icon,image/avif';
+        input.accept = ALL_ALLOWED_TYPES.toString();
         input.multiple = false;
 
         input.onchange = async (e) => {
           const file = (e.target as HTMLInputElement).files?.[0];
           if (file) {
             try {
-              await insertImage(editor, file, token);
+              insertAsset(editor, file, token, addToQueue);
             } catch (error) {
-              console.error('Ошибка при загрузке изображения:', error);
+              console.error('Ошибка при загрузке файла:', error);
             }
           }
         };
@@ -157,65 +159,12 @@ export const Navbar = track(
         note: 'sticker',
         frame: 'frame',
         emoji: 'emoji',
+        'emoji-sticker': 'emoji-sticker',
         'coordinate-axes': 'coordinate-axes',
         // image: 'asset', // Убираем, так как image не существует в Draw
       };
 
       return reverseMapping[currentToolId] || 'select';
-    };
-
-    const handleInsertPdf = () => {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'application/pdf';
-      input.multiple = false;
-      input.onchange = async (e) => {
-        const file = (e.target as HTMLInputElement).files?.[0];
-        if (file) {
-          try {
-            await insertPdf(editor, file, token);
-          } catch (error) {
-            console.error('Ошибка при загрузке PDF:', error);
-          }
-        }
-      };
-      input.click();
-    };
-
-    const handleInsertAudio = () => {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = AUDIO_ACCEPT;
-      input.multiple = false;
-      input.onchange = async (e) => {
-        const file = (e.target as HTMLInputElement).files?.[0];
-        if (file) {
-          try {
-            await insertAudio(editor, file, token);
-          } catch (error) {
-            console.error('Ошибка при загрузке аудио:', error);
-          }
-        }
-      };
-      input.click();
-    };
-
-    const handleInsertFile = () => {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = FILE_ACCEPT;
-      input.multiple = false;
-      input.onchange = async (e) => {
-        const file = (e.target as HTMLInputElement).files?.[0];
-        if (file) {
-          try {
-            await insertFile(editor, file, token, addToQueue);
-          } catch (error) {
-            console.error('Ошибка при загрузке файла:', error);
-          }
-        }
-      };
-      input.click();
     };
 
     const handleInsertCoordinateAxes = () => {
@@ -229,9 +178,9 @@ export const Navbar = track(
 
     return (
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute right-0 bottom-14 left-0 z-30 flex w-full items-center justify-center px-4 sm:bottom-4 sm:px-0">
-          <div className="relative z-30 flex w-full max-w-full gap-7 sm:w-auto">
-            <div className={`${boardPanelClass} absolute -left-[115px] z-30 hidden p-1 sm:flex`}>
+        <div className="absolute right-0 bottom-14 left-0 z-260 flex w-full items-center justify-center px-4 sm:bottom-4 sm:px-0">
+          <div className="relative z-260 flex w-full max-w-full gap-7 sm:w-auto">
+            <div className={`${boardPanelClass} absolute -left-[115px] z-260 hidden p-1 sm:flex`}>
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
             <div className={`${boardPanelClass} mx-auto flex w-full max-w-full gap-10 sm:w-auto`}>
@@ -380,6 +329,12 @@ export const Navbar = track(
                               editor.setStyleForNextShapes(EmojiStyle, emoji);
                               addRecentEmoji(emoji);
                             }}
+                            stickers={stickers}
+                            onStickerSelect={(sticker) => {
+                              editor.setStyleForNextShapes(EmojiStickerStyle, sticker.src);
+                              editor.setCurrentTool('emoji-sticker');
+                              setActivePopup(null);
+                            }}
                           />
                         }
                       >
@@ -420,6 +375,9 @@ export const Navbar = track(
                   );
                 })}
                 <div className="flex min-h-12 min-w-0 flex-1 sm:min-h-0 sm:flex-initial">
+                  <CommentPlaceButton className={mobileButtonClass} />
+                </div>
+                <div className="flex min-h-12 min-w-0 flex-1 sm:min-h-0 sm:flex-initial">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <button
@@ -435,20 +393,11 @@ export const Navbar = track(
                       sideOffset={8}
                       className="border-gray-10 bg-gray-0 w-[180px] rounded-xl border p-1"
                     >
-                      <DropdownMenuItem onClick={handleInsertPdf} className="rounded-lg px-3">
-                        Загрузить PDF
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleInsertAudio} className="rounded-lg px-3">
-                        Загрузить аудио
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleInsertFile} className="rounded-lg px-3">
-                        Загрузить файл
-                      </DropdownMenuItem>
                       <DropdownMenuItem
                         onClick={handleInsertCoordinateAxes}
-                        className="rounded-lg px-3"
+                        className={cn(boardMenuItemClass, 'flex gap-2 px-3')}
                       >
-                        Оси координат
+                        <span>Оси координат</span>
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>

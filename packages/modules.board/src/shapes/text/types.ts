@@ -2,13 +2,7 @@ import { ReactNode } from 'react';
 import { DrRichText, Editor } from '@ibodr/draw';
 
 export type MarkFormatT =
-  | 'bold'
-  | 'italic'
-  | 'strike'
-  | 'underline'
-  | 'highlight'
-  | 'link'
-  | 'bulletList';
+  'bold' | 'italic' | 'strike' | 'underline' | 'highlight' | 'link' | 'bulletList';
 
 export type ActiveFormatesMapT = Record<MarkFormatT, boolean>;
 

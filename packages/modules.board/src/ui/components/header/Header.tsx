@@ -18,6 +18,7 @@ import { useFocusModeStore } from 'common.ui';
 import { useEffect, useState } from 'react';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { stopEvent } from '../../../shapes/audio/constants';
+import { CommentsFeedButton } from '../../../comments';
 import { CollaboratorAvatars } from './CollaboratorAvatars';
 import { SettingsDropdown } from './SettingsDropdown';
 import { unlockBoardTimerAudio } from './boardTimerAudio';
@@ -96,7 +97,7 @@ export const Header = () => {
 
   return (
     <>
-      <div className="text-xl-base pointer-events-none absolute top-4 right-0 left-0 z-50 flex items-center justify-between px-4 pb-4 md:pl-8">
+      <div className="text-xl-base pointer-events-none absolute top-4 right-0 left-0 z-260 flex items-center justify-between px-4 pb-4 md:pl-8">
         <div
           className={`${boardPanelClass} pointer-events-auto flex items-center justify-center gap-2 p-1`}
         >
@@ -149,6 +150,7 @@ export const Header = () => {
             className={`${boardPanelClass} pointer-events-auto flex items-center justify-center gap-2 p-1 pl-2`}
           >
             {!isReadonly && <CollaboratorAvatars />}
+            <CommentsFeedButton />
             <Button
               variant="none"
               className={cn(

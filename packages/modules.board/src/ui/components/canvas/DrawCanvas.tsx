@@ -11,6 +11,8 @@ import {
   useOverlayRepaintOnSelection,
   useEditOnTypeForLabels,
   useProductBoardAnalytics,
+  useBoardDeepLinkFocus,
+  useBoardBackgroundSync,
 } from '../../../hooks';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore, useDrawStore } from '../../../store';
@@ -19,7 +21,7 @@ import { hiddenComponents } from '../../../utils/customConfig';
 import { Header } from '../header';
 import { Navbar } from '../toolbar';
 import { CollaboratorCursor } from './CollaboratorCursor';
-import { SelectionOverlay } from './SelectionOverlay';
+import { CanvasOverlays } from './CanvasOverlays';
 import { FollowBanner } from './FollowBanner';
 import { DrawZoomPanel } from './DrawZoomPanel';
 import '@ibodr/draw/draw.css';
@@ -28,9 +30,14 @@ import { UndoRedo } from '../toolbar/UndoRedo';
 import { normalizeStoredFileSrc } from '../../../utils/storedFileSrc';
 import { XiGeoTool } from '../../../shapes/geo';
 import { EmojiTool } from '../../../shapes/emoji';
+import { EmojiStickerTool } from '../../../shapes/emojiSticker';
 import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
 import { isShapeErasable, isEditableTarget } from '../../../utils';
 import { TextEditorToolbarWithContext } from '../../../shapes/text/TextEditorToolbarWithContext';
+import { insertAsset } from '../../../utils/uploadAsset';
+import { useRetryFileQueue } from 'common.services';
+import { useSearch } from '@tanstack/react-router';
+import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
 
 export const DrawCanvas = ({
   token,
@@ -55,6 +62,8 @@ export const DrawCanvas = ({
   } = useYjsContext();
   const { followingPresenceId } = useFollowUserStore();
   const appliedInitialCameraRef = useRef(false);
+  const search = useSearch({ strict: false }) as BoardDeepLinkSearch;
+  const hasDeepLink = hasBoardDeepLinkSearch(search);
 
   useProductBoardAnalytics({
     editor,
@@ -65,7 +74,7 @@ export const DrawCanvas = ({
   const drawComponents = useMemo(
     () => ({
       ...hiddenComponents,
-      InFrontOfTheCanvas: SelectionOverlay,
+      InFrontOfTheCanvas: CanvasOverlays,
       CollaboratorCursor,
       RichTextToolbar: TextEditorToolbarWithContext,
     }),
@@ -76,6 +85,9 @@ export const DrawCanvas = ({
   useDrawClipboard(editor, token);
   useOverlayRepaintOnSelection(editor);
   useEditOnTypeForLabels(editor);
+  useBoardDeepLinkFocus({ editor, ready: status === 'synced-remote' });
+  useBoardBackgroundSync(editor);
+  const { addToQueue } = useRetryFileQueue();
 
   // Viewport bounds должны совпадать с .dr-canvas — overlay выделения рисуется на canvas
   // внутри этого элемента; синхронизация по .dr-container смещает screenBounds.
@@ -203,15 +215,17 @@ export const DrawCanvas = ({
     }
   }, [editor, isReadonly]);
 
-  // Восстановление камеры пользователя при открытии доски (один раз после синка)
+  // Восстановление камеры пользователя при открытии доски (один раз после синка).
+  // При переходе по deep link камера выставляется в useBoardDeepLinkFocus.
   useEffect(() => {
-    if (!editor || status !== 'synced-remote' || appliedInitialCameraRef.current) return;
+    if (!editor || status !== 'synced-remote' || appliedInitialCameraRef.current || hasDeepLink)
+      return;
     const saved = getUserCamera();
     if (saved) {
       editor.setCamera(saved);
       appliedInitialCameraRef.current = true;
     }
-  }, [editor, status]);
+  }, [editor, status, hasDeepLink, getUserCamera]);
 
   // Сохранение камеры при уходе: с вкладки, закрытии страницы или уходе с доски в приложении (без таймера — не дёргаем Document changed)
   useEffect(() => {
@@ -375,6 +389,12 @@ export const DrawCanvas = ({
                 }
               });
 
+              editor.registerExternalContentHandler('files', async ({ files }) => {
+                for (const file of files) {
+                  insertAsset(editor, file, token, addToQueue);
+                }
+              });
+
               const win = window as unknown as {
                 getBoardSnapshot?: () => unknown;
                 showBoardImportOption?: () => void;
@@ -391,8 +411,7 @@ export const DrawCanvas = ({
                         : raw.props,
                   } as typeof r;
                   const props = (rec as unknown as Record<string, unknown>).props as
-                    | Record<string, unknown>
-                    | undefined;
+                    Record<string, unknown> | undefined;
                   if (props?.src && typeof props.src === 'string') {
                     props.src = normalizeStoredFileSrc(props.src);
                   }
@@ -421,7 +440,7 @@ export const DrawCanvas = ({
               });
             }}
             store={store}
-            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool]}
+            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool, EmojiStickerTool]}
             shapeUtils={boardCustomShapeUtils}
             components={drawComponents}
             collaboratorCursorLayout={{
@@ -434,7 +453,7 @@ export const DrawCanvas = ({
             {!isReadonly && (
               <Navbar undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} token={token} />
             )}
-            <div className={`${boardPanelClass} absolute bottom-4 left-4 z-30 flex p-1 sm:hidden`}>
+            <div className={`${boardPanelClass} absolute bottom-4 left-4 z-260 flex p-1 sm:hidden`}>
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
             <DrawZoomPanel />

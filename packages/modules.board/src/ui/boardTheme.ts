@@ -29,6 +29,20 @@ export const boardMenuSubTriggerClass = cn(
   'data-[state=open]:[&>svg:last-child]:!fill-none data-[state=open]:[&>svg:last-child]:stroke-brand-80',
 );
 
-export const boardIconClass = 'fill-gray-100';
+/**
+ * Иконки @xipkg/icons в тулбаре доски.
+ * Svg по умолчанию theme=default → text-gray-80; часть path рисуется через currentColor,
+ * часть — с захардкоженным fill. Выравниваем всё в text/fill gray-100.
+ */
+export const boardIconClass = 'text-gray-100! [&_path]:fill-current!';
 
 export const boardTextClass = 'text-gray-100';
+
+/**
+ * Строка в попапе доски. Нативный <button> без фона в тёмной теме даёт светлый buttonface,
+ * а текст уже из семантической палитры — получается «белая плашка» с бледным текстом.
+ */
+export const boardPopoverListItemClass = cn(
+  boardMenuItemClass,
+  'bg-transparent hover:bg-gray-5 rounded-lg transition-colors',
+);
