@@ -35,13 +35,15 @@ export function applyBoardBackgroundToEditor(
   background: BoardBackgroundState,
   appearance: BoardColorAppearance = 'light',
 ) {
+  const type = normalizeBoardBackgroundType(background.type);
+
+  // При backgroundType === 'none' draw показывает DefaultGrid, если isGridMode включён.
   editor.updateInstanceState({
-    backgroundType: normalizeBoardBackgroundType(background.type),
+    backgroundType: type,
+    isGridMode: type !== 'none',
   });
-  editor
-    .getContainer()
-    .style.setProperty(
-      '--dr-color-background',
-      getBoardBackgroundColorValue(background.color, appearance),
-    );
+
+  const backgroundColor = getBoardBackgroundColorValue(background.color, appearance);
+
+  editor.getContainer().style.setProperty('--dr-color-background', backgroundColor);
 }
