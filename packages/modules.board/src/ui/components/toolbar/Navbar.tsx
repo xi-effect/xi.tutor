@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import {
   DropdownMenu,
@@ -13,11 +13,11 @@ import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
 import { CommentPlaceButton, useCommentsUiStore } from '../../../comments';
 import { UndoRedo } from './UndoRedo';
 import { NavbarMobileSwiper } from './NavbarMobileSwiper';
+import { ToolbarOptionsPanel } from './ToolbarOptionsPanel';
+import { useCloseToolbarPanel } from './useCloseToolbarPanel';
 import { useDrawStore } from '../../../store';
 import { useDrawStyles, useHotkeys } from '../../../hooks';
-import { NavbarButton, ToolPopup } from '../shared';
-import { ArrowsPopup, PenPopup, StickerPopup } from '../popups';
-import { ShapesPopup } from '../popups/Shapes';
+import { NavbarButton } from '../shared';
 import { initFileDB, useRetryFileQueue } from 'common.services';
 import {
   boardDropdownZClass,
@@ -25,13 +25,11 @@ import {
   boardPanelClass,
   boardToolbarIconClass,
 } from '../../boardTheme';
-import { EmojiPickerPopup } from '@xipkg/emojipicker';
 import { EmojiStickerStyle, EmojiStyle } from '../../../shapes/shapeStyles';
 import { insertAsset } from '../../../utils/uploadAsset';
 import { ALL_ALLOWED_TYPES } from '../../../constants/mimeTypes';
 import { stickers } from '../../../config';
 
-// Маппинг инструментов Kanva на Draw
 const toolMapping: Record<string, string> = {
   select: 'select',
   hand: 'hand',
@@ -40,7 +38,7 @@ const toolMapping: Record<string, string> = {
   geo: 'xi-geo',
   arrow: 'arrow',
   eraser: 'eraser',
-  sticker: 'note', // Используем note как аналог стикера
+  sticker: 'note',
   frame: 'frame',
   emoji: 'emoji',
   'emoji-sticker': 'emoji-sticker',
@@ -50,7 +48,6 @@ const toolMapping: Record<string, string> = {
 const MORE_MENU_ACTION = 'more-menu';
 const COMMENT_ACTION = 'comment';
 
-/** Инструменты тулбара с попапом настроек */
 const toolPopupIdByAction: Record<string, string> = {
   pen: 'pen',
   geo: 'shapes',
@@ -88,6 +85,17 @@ export const Navbar = track(
     const setPlacingComment = useCommentsUiStore((s) => s.setPlacing);
     const isPlacingComment = useCommentsUiStore((s) => s.isPlacing);
 
+    const stickerPopupItems = navBarElements.find(
+      (item) => item.action === 'sticker',
+    )?.menuPopupContent;
+
+    const closeToolbarPanel = useCallback(() => {
+      if (activePopup && activePopup !== 'pen') resetToDefaults();
+      setActivePopup(null);
+    }, [activePopup, resetToDefaults]);
+
+    useCloseToolbarPanel(activePopup, closeToolbarPanel);
+
     useEffect(() => {
       if (!isOnline) return;
 
@@ -113,24 +121,25 @@ export const Navbar = track(
       initFileDB();
     }, []);
 
-    // Добавляем горячие клавиши
     useHotkeys();
-
-    const isPopupOpen = (popup: string) => activePopup === popup;
-    const handlePopupToggle = (popup: string, open: boolean) => {
-      setActivePopup(open ? popup : null);
-
-      if (!open && popup !== 'pen') {
-        resetToDefaults();
-      }
-    };
 
     const handleSelectTool = (toolName: string) => {
       editor.selectNone();
       setPlacingComment(false);
 
       const popupId = toolPopupIdByAction[toolName] ?? null;
-      setActivePopup(popupId);
+
+      if (popupId) {
+        if (activePopup === popupId) {
+          if (popupId !== 'pen') resetToDefaults();
+          setActivePopup(null);
+        } else {
+          setActivePopup(popupId);
+        }
+      } else {
+        if (activePopup && activePopup !== 'pen') resetToDefaults();
+        setActivePopup(null);
+      }
 
       if (toolName === 'pen') {
         setColor(pencilColor);
@@ -192,152 +201,48 @@ export const Navbar = track(
     const handleInsertCoordinateAxes = () => {
       editor.selectNone();
       editor.setCurrentTool('coordinate-axes');
+      setActivePopup(null);
     };
 
     const currentTool = getCurrentTool();
 
-    const renderNavbarButton = (item: NavbarElementT, isActive: boolean) => (
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <NavbarButton
-              icon={item.icon}
-              title={item.title}
-              isActive={isActive}
-              onClick={() => handleSelectTool(item.action)}
-            />
-          </TooltipTrigger>
-          <TooltipContent>
-            <p>{item.title}</p>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-    );
-
     const renderToolbarItem = (item: NavbarElementT) => {
       const isActive = item.action === currentTool;
 
-      if (item.action === 'pen') {
+      if (
+        item.action === 'select' ||
+        item.action === 'hand' ||
+        item.action === 'eraser' ||
+        item.action === 'text' ||
+        item.action === 'asset'
+      ) {
         return (
-          <PenPopup
-            open={isPopupOpen('pen')}
-            onOpenChange={(open) => {
-              if (open) {
-                setColor(pencilColor);
-                setThickness(pencilThickness);
-                setOpacity(pencilOpacity);
-              }
-              handlePopupToggle('pen', open);
-            }}
-          >
-            <NavbarButton
-              icon={item.icon}
-              title={item.title}
-              isActive={isActive}
-              onClick={() => handleSelectTool(item.action)}
-            />
-          </PenPopup>
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <NavbarButton
+                  icon={item.icon}
+                  title={item.title}
+                  isActive={isActive}
+                  onClick={() => handleSelectTool(item.action)}
+                />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{item.title}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         );
       }
 
-      if (item.action === 'geo') {
-        return (
-          <ShapesPopup
-            open={isPopupOpen('shapes')}
-            onOpenChange={(open) => handlePopupToggle('shapes', open)}
-          >
-            <NavbarButton
-              icon={item.icon}
-              title={item.title}
-              isActive={isActive}
-              onClick={() => handleSelectTool(item.action)}
-            />
-          </ShapesPopup>
-        );
-      }
-
-      if (item.action === 'sticker') {
-        return (
-          <StickerPopup
-            open={isPopupOpen('sticker')}
-            onOpenChange={(open) => {
-              if (open) {
-                setColor(stickerColor);
-              }
-              handlePopupToggle('sticker', open);
-            }}
-            popupItems={item.menuPopupContent}
-          >
-            <NavbarButton
-              icon={item.icon}
-              title={item.title}
-              isActive={isActive}
-              onClick={() => handleSelectTool(item.action)}
-            />
-          </StickerPopup>
-        );
-      }
-
-      if (item.action === 'arrow') {
-        return (
-          <ArrowsPopup
-            open={isPopupOpen('arrow')}
-            onOpenChange={(open) => handlePopupToggle('arrow', open)}
-          >
-            <NavbarButton
-              icon={item.icon}
-              title={item.title}
-              isActive={isActive}
-              onClick={() => handleSelectTool(item.action)}
-            />
-          </ArrowsPopup>
-        );
-      }
-
-      if (item.action === 'emoji') {
-        return (
-          <ToolPopup
-            open={isPopupOpen('emoji')}
-            onOpenChange={(open) => handlePopupToggle('emoji', open)}
-            isCloseOnOutside
-            content={
-              <EmojiPickerPopup
-                recentEmojis={recentEmojis}
-                onEmojiSelect={(emoji) => {
-                  editor.setStyleForNextShapes(EmojiStyle, emoji);
-                  addRecentEmoji(emoji);
-                }}
-                stickers={stickers}
-                onStickerSelect={(sticker) => {
-                  editor.setStyleForNextShapes(EmojiStickerStyle, sticker.src);
-                  editor.setCurrentTool('emoji-sticker');
-                  setActivePopup(null);
-                }}
-              />
-            }
-          >
-            <NavbarButton
-              icon={item.icon}
-              title={item.title}
-              isActive={isActive}
-              onClick={() => handleSelectTool(item.action)}
-            />
-          </ToolPopup>
-        );
-      }
-
-      if (item.action === 'frame') {
-        return (
-          <NavbarButton
-            icon={item.icon}
-            title={item.title}
-            isActive={isActive}
-            onClick={() => handleSelectTool(item.action)}
-          />
-        );
-      }
-
-      return renderNavbarButton(item, isActive);
+      return (
+        <NavbarButton
+          icon={item.icon}
+          title={item.title}
+          isActive={isActive}
+          onClick={() => handleSelectTool(item.action)}
+        />
+      );
     };
 
     const toolbarSlides = [
@@ -396,7 +301,25 @@ export const Navbar = track(
             <div className={`${boardPanelClass} absolute -left-[115px] z-260 hidden p-1 sm:flex`}>
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
-            <div className={`${boardPanelClass} mx-auto w-full max-w-full sm:w-auto`}>
+            <div
+              data-board-toolbar-ui
+              className={`${boardPanelClass} relative mx-auto w-full max-w-full sm:w-auto`}
+            >
+              <ToolbarOptionsPanel
+                activePopup={activePopup}
+                stickerPopupItems={stickerPopupItems}
+                recentEmojis={recentEmojis}
+                stickers={stickers}
+                onEmojiSelect={(emoji) => {
+                  editor.setStyleForNextShapes(EmojiStyle, emoji);
+                  addRecentEmoji(emoji);
+                }}
+                onEmojiStickerSelect={(sticker) => {
+                  editor.setStyleForNextShapes(EmojiStickerStyle, sticker.src);
+                  editor.setCurrentTool('emoji-sticker');
+                  setActivePopup(null);
+                }}
+              />
               <div className="hidden items-center gap-1 p-1 sm:flex">
                 {toolbarSlides.map(({ key, node }) => (
                   <div key={key} className="shrink-0">
