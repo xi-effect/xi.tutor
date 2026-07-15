@@ -30,12 +30,18 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
       ? 'w-full h-screen min-h-0 overflow-hidden'
       : 'h-screen min-h-0 overflow-hidden'
     : isMobile
-      ? `w-full pb-[${MOBILE_BOTTOM_BAR_HEIGHT}px]`
+      ? 'w-full'
       : 'h-screen min-h-0 overflow-hidden';
 
+  // paddingBottom через style: динамический `pb-[${n}px]` Tailwind JIT не генерирует.
+  // --calls-layout-bottom-offset читают Call / доски / PreJoin, чтобы не залезать под
+  // fixed MobileBottomBar.
   const insetStyle =
     isMobile && !focusMode
-      ? ({ '--calls-layout-bottom-offset': `${MOBILE_BOTTOM_BAR_HEIGHT}px` } as React.CSSProperties)
+      ? ({
+          paddingBottom: MOBILE_BOTTOM_BAR_HEIGHT,
+          '--calls-layout-bottom-offset': `${MOBILE_BOTTOM_BAR_HEIGHT}px`,
+        } as React.CSSProperties)
       : undefined;
 
   // Используем один компонент, который условно рендерит нужную структуру

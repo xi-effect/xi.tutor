@@ -452,7 +452,9 @@ export const DrawCanvas = ({
             {!isReadonly && (
               <Navbar undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} token={token} />
             )}
-            <div className={`${boardPanelClass} absolute bottom-4 left-4 z-260 flex p-1 sm:hidden`}>
+            <div
+              className={`${boardPanelClass} absolute bottom-20 left-4 z-260 flex p-1 sm:hidden`}
+            >
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
             <DrawZoomPanel />

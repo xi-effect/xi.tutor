@@ -12,13 +12,19 @@ import { cn } from '@xipkg/utils';
 import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
 import { CommentPlaceButton, useCommentsUiStore } from '../../../comments';
 import { UndoRedo } from './UndoRedo';
+import { NavbarMobileSwiper } from './NavbarMobileSwiper';
 import { useDrawStore } from '../../../store';
 import { useDrawStyles, useHotkeys } from '../../../hooks';
 import { NavbarButton, ToolPopup } from '../shared';
 import { ArrowsPopup, PenPopup, StickerPopup } from '../popups';
 import { ShapesPopup } from '../popups/Shapes';
 import { initFileDB, useRetryFileQueue } from 'common.services';
-import { boardIconClass, boardMenuItemClass, boardPanelClass } from '../../boardTheme';
+import {
+  boardDropdownZClass,
+  boardMenuItemClass,
+  boardPanelClass,
+  boardToolbarIconClass,
+} from '../../boardTheme';
 import { EmojiPickerPopup } from '@xipkg/emojipicker';
 import { EmojiStickerStyle, EmojiStyle } from '../../../shapes/shapeStyles';
 import { insertAsset } from '../../../utils/uploadAsset';
@@ -39,6 +45,18 @@ const toolMapping: Record<string, string> = {
   emoji: 'emoji',
   'emoji-sticker': 'emoji-sticker',
   'coordinate-axes': 'coordinate-axes',
+};
+
+const MORE_MENU_ACTION = 'more-menu';
+const COMMENT_ACTION = 'comment';
+
+/** Инструменты тулбара с попапом настроек */
+const toolPopupIdByAction: Record<string, string> = {
+  pen: 'pen',
+  geo: 'shapes',
+  sticker: 'sticker',
+  arrow: 'arrow',
+  emoji: 'emoji',
 };
 
 export const Navbar = track(
@@ -68,6 +86,7 @@ export const Navbar = track(
     const editor = useEditor();
     const { processQueue, isOnline, addToQueue } = useRetryFileQueue();
     const setPlacingComment = useCommentsUiStore((s) => s.setPlacing);
+    const isPlacingComment = useCommentsUiStore((s) => s.isPlacing);
 
     useEffect(() => {
       if (!isOnline) return;
@@ -108,14 +127,18 @@ export const Navbar = track(
 
     const handleSelectTool = (toolName: string) => {
       editor.selectNone();
-      setActivePopup(null);
       setPlacingComment(false);
+
+      const popupId = toolPopupIdByAction[toolName] ?? null;
+      setActivePopup(popupId);
 
       if (toolName === 'pen') {
         setColor(pencilColor);
         setThickness(pencilThickness);
         setOpacity(pencilOpacity);
-      } else {
+      } else if (toolName === 'sticker') {
+        setColor(stickerColor);
+      } else if (!popupId) {
         resetToDefaults();
       }
 
@@ -161,7 +184,6 @@ export const Navbar = track(
         emoji: 'emoji',
         'emoji-sticker': 'emoji-sticker',
         'coordinate-axes': 'coordinate-axes',
-        // image: 'asset', // Убираем, так как image не существует в Draw
       };
 
       return reverseMapping[currentToolId] || 'select';
@@ -174,234 +196,216 @@ export const Navbar = track(
 
     const currentTool = getCurrentTool();
 
-    const mobileButtonClass = 'max-sm:flex-1 max-sm:min-h-12 max-sm:min-w-0 max-sm:h-full';
+    const renderNavbarButton = (item: NavbarElementT, isActive: boolean) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <NavbarButton
+              icon={item.icon}
+              title={item.title}
+              isActive={isActive}
+              onClick={() => handleSelectTool(item.action)}
+            />
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{item.title}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+
+    const renderToolbarItem = (item: NavbarElementT) => {
+      const isActive = item.action === currentTool;
+
+      if (item.action === 'pen') {
+        return (
+          <PenPopup
+            open={isPopupOpen('pen')}
+            onOpenChange={(open) => {
+              if (open) {
+                setColor(pencilColor);
+                setThickness(pencilThickness);
+                setOpacity(pencilOpacity);
+              }
+              handlePopupToggle('pen', open);
+            }}
+          >
+            <NavbarButton
+              icon={item.icon}
+              title={item.title}
+              isActive={isActive}
+              onClick={() => handleSelectTool(item.action)}
+            />
+          </PenPopup>
+        );
+      }
+
+      if (item.action === 'geo') {
+        return (
+          <ShapesPopup
+            open={isPopupOpen('shapes')}
+            onOpenChange={(open) => handlePopupToggle('shapes', open)}
+          >
+            <NavbarButton
+              icon={item.icon}
+              title={item.title}
+              isActive={isActive}
+              onClick={() => handleSelectTool(item.action)}
+            />
+          </ShapesPopup>
+        );
+      }
+
+      if (item.action === 'sticker') {
+        return (
+          <StickerPopup
+            open={isPopupOpen('sticker')}
+            onOpenChange={(open) => {
+              if (open) {
+                setColor(stickerColor);
+              }
+              handlePopupToggle('sticker', open);
+            }}
+            popupItems={item.menuPopupContent}
+          >
+            <NavbarButton
+              icon={item.icon}
+              title={item.title}
+              isActive={isActive}
+              onClick={() => handleSelectTool(item.action)}
+            />
+          </StickerPopup>
+        );
+      }
+
+      if (item.action === 'arrow') {
+        return (
+          <ArrowsPopup
+            open={isPopupOpen('arrow')}
+            onOpenChange={(open) => handlePopupToggle('arrow', open)}
+          >
+            <NavbarButton
+              icon={item.icon}
+              title={item.title}
+              isActive={isActive}
+              onClick={() => handleSelectTool(item.action)}
+            />
+          </ArrowsPopup>
+        );
+      }
+
+      if (item.action === 'emoji') {
+        return (
+          <ToolPopup
+            open={isPopupOpen('emoji')}
+            onOpenChange={(open) => handlePopupToggle('emoji', open)}
+            isCloseOnOutside
+            content={
+              <EmojiPickerPopup
+                recentEmojis={recentEmojis}
+                onEmojiSelect={(emoji) => {
+                  editor.setStyleForNextShapes(EmojiStyle, emoji);
+                  addRecentEmoji(emoji);
+                }}
+                stickers={stickers}
+                onStickerSelect={(sticker) => {
+                  editor.setStyleForNextShapes(EmojiStickerStyle, sticker.src);
+                  editor.setCurrentTool('emoji-sticker');
+                  setActivePopup(null);
+                }}
+              />
+            }
+          >
+            <NavbarButton
+              icon={item.icon}
+              title={item.title}
+              isActive={isActive}
+              onClick={() => handleSelectTool(item.action)}
+            />
+          </ToolPopup>
+        );
+      }
+
+      if (item.action === 'frame') {
+        return (
+          <NavbarButton
+            icon={item.icon}
+            title={item.title}
+            isActive={isActive}
+            onClick={() => handleSelectTool(item.action)}
+          />
+        );
+      }
+
+      return renderNavbarButton(item, isActive);
+    };
+
+    const toolbarSlides = [
+      ...navBarElements.map((item) => ({
+        key: item.action,
+        node: renderToolbarItem(item),
+      })),
+      {
+        key: COMMENT_ACTION,
+        node: <CommentPlaceButton />,
+      },
+      {
+        key: MORE_MENU_ACTION,
+        node: (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <NavbarButton
+                icon={<MenuDots className={cn('rotate-90', boardToolbarIconClass)} />}
+                isActive={false}
+              />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              side="top"
+              align="end"
+              sideOffset={8}
+              className={cn(
+                boardDropdownZClass,
+                'border-gray-10 bg-gray-0 w-[180px] rounded-xl border p-1',
+              )}
+            >
+              <DropdownMenuItem
+                onClick={handleInsertCoordinateAxes}
+                className={cn(boardMenuItemClass, 'flex gap-2 px-3')}
+              >
+                <span>Оси координат</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ),
+      },
+    ];
+
+    const activeSlideIndex = (() => {
+      if (isPlacingComment) {
+        return toolbarSlides.findIndex((slide) => slide.key === COMMENT_ACTION);
+      }
+
+      const toolIndex = toolbarSlides.findIndex((slide) => slide.key === currentTool);
+      return toolIndex >= 0 ? toolIndex : 0;
+    })();
 
     return (
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute right-0 bottom-14 left-0 z-260 flex w-full items-center justify-center px-4 sm:bottom-4 sm:px-0">
-          <div className="relative z-260 flex w-full max-w-full gap-7 sm:w-auto">
+        <div className="absolute right-0 bottom-4 left-0 z-260 flex w-full items-center justify-center px-4 sm:px-0">
+          <div className="relative z-260 flex w-full max-w-full sm:w-auto">
             <div className={`${boardPanelClass} absolute -left-[115px] z-260 hidden p-1 sm:flex`}>
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
-            <div className={`${boardPanelClass} mx-auto flex w-full max-w-full gap-10 sm:w-auto`}>
-              <div className="flex w-full min-w-0 flex-1 gap-1 p-1 sm:w-auto sm:flex-initial">
-                {navBarElements.map((item: NavbarElementT) => {
-                  const isActive = item.action === currentTool;
-                  const wrap = (node: React.ReactNode) => (
-                    <div
-                      key={item.action}
-                      className="flex min-h-12 min-w-0 flex-1 sm:min-h-0 sm:flex-initial"
-                    >
-                      {node}
-                    </div>
-                  );
-
-                  if (item.action === 'pen') {
-                    return wrap(
-                      <PenPopup
-                        open={isPopupOpen('pen')}
-                        onOpenChange={(open) => {
-                          if (open) {
-                            setColor(pencilColor);
-                            setThickness(pencilThickness);
-                            setOpacity(pencilOpacity);
-                          }
-                          handlePopupToggle('pen', open);
-                        }}
-                      >
-                        <NavbarButton
-                          icon={item.icon}
-                          title={item.title}
-                          isActive={isActive}
-                          className={mobileButtonClass}
-                          onClick={() => handleSelectTool(item.action)}
-                        />
-                      </PenPopup>,
-                    );
-                  }
-
-                  if (item.action === 'geo') {
-                    return wrap(
-                      <ShapesPopup
-                        open={isPopupOpen('shapes')}
-                        onOpenChange={(open) => handlePopupToggle('shapes', open)}
-                      >
-                        <NavbarButton
-                          icon={item.icon}
-                          title={item.title}
-                          isActive={isActive}
-                          className={mobileButtonClass}
-                          onClick={() => handleSelectTool(item.action)}
-                        />
-                      </ShapesPopup>,
-                    );
-                  }
-
-                  if (item.action === 'sticker') {
-                    return wrap(
-                      <StickerPopup
-                        open={isPopupOpen('sticker')}
-                        onOpenChange={(open) => {
-                          if (open) {
-                            setColor(stickerColor);
-                          }
-                          handlePopupToggle('sticker', open);
-                        }}
-                        popupItems={item.menuPopupContent}
-                      >
-                        <NavbarButton
-                          icon={item.icon}
-                          title={item.title}
-                          isActive={isActive}
-                          className={mobileButtonClass}
-                          onClick={() => handleSelectTool(item.action)}
-                        />
-                      </StickerPopup>,
-                    );
-                  }
-
-                  if (item.action === 'asset') {
-                    return wrap(
-                      <TooltipProvider>
-                        <Tooltip>
-                          <div className="pointer-events-auto flex h-full min-h-0 w-full min-w-0 sm:block sm:h-auto sm:w-auto">
-                            <TooltipTrigger
-                              className="flex h-full w-full rounded-lg sm:h-6 sm:w-6 lg:h-8 lg:w-8"
-                              asChild
-                            >
-                              <button
-                                type="button"
-                                className={`pointer-events-auto flex h-6 w-6 flex-1 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${mobileButtonClass} ${isActive ? 'bg-brand-0' : 'bg-gray-0'}`}
-                                data-isactive={isActive}
-                                onClick={() => handleSelectTool(item.action)}
-                              >
-                                {item.icon ? item.icon : item.title}
-                              </button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{item.title}</p>
-                            </TooltipContent>
-                          </div>
-                        </Tooltip>
-                      </TooltipProvider>,
-                    );
-                  }
-
-                  if (item.action === 'arrow') {
-                    return wrap(
-                      <ArrowsPopup
-                        open={isPopupOpen('arrow')}
-                        onOpenChange={(open) => handlePopupToggle('arrow', open)}
-                      >
-                        <NavbarButton
-                          icon={item.icon}
-                          title={item.title}
-                          isActive={isActive}
-                          className={mobileButtonClass}
-                          onClick={() => handleSelectTool(item.action)}
-                        />
-                      </ArrowsPopup>,
-                    );
-                  }
-
-                  if (item.action === 'frame') {
-                    return wrap(
-                      <NavbarButton
-                        icon={item.icon}
-                        title={item.title}
-                        isActive={isActive}
-                        className={mobileButtonClass}
-                        onClick={() => handleSelectTool(item.action)}
-                      />,
-                    );
-                  }
-
-                  if (item.action === 'emoji') {
-                    return wrap(
-                      <ToolPopup
-                        open={isPopupOpen('emoji')}
-                        onOpenChange={(open) => handlePopupToggle('emoji', open)}
-                        isCloseOnOutside
-                        content={
-                          <EmojiPickerPopup
-                            recentEmojis={recentEmojis}
-                            onEmojiSelect={(emoji) => {
-                              editor.setStyleForNextShapes(EmojiStyle, emoji);
-                              addRecentEmoji(emoji);
-                            }}
-                            stickers={stickers}
-                            onStickerSelect={(sticker) => {
-                              editor.setStyleForNextShapes(EmojiStickerStyle, sticker.src);
-                              editor.setCurrentTool('emoji-sticker');
-                              setActivePopup(null);
-                            }}
-                          />
-                        }
-                      >
-                        <NavbarButton
-                          icon={item.icon}
-                          title={item.title}
-                          isActive={isActive}
-                          className={mobileButtonClass}
-                          onClick={() => handleSelectTool(item.action)}
-                        />
-                      </ToolPopup>,
-                    );
-                  }
-
-                  return wrap(
-                    <TooltipProvider>
-                      <Tooltip>
-                        <div className="pointer-events-auto flex h-full min-h-0 w-full min-w-0 sm:block sm:h-auto sm:w-auto">
-                          <TooltipTrigger
-                            className="flex h-full w-full rounded-lg sm:h-6 sm:w-6 lg:h-8 lg:w-8"
-                            asChild
-                          >
-                            <button
-                              type="button"
-                              className={`pointer-events-auto flex h-6 w-6 flex-1 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${mobileButtonClass} ${isActive ? 'bg-brand-0' : 'bg-gray-0'}`}
-                              data-isactive={isActive}
-                              onClick={() => handleSelectTool(item.action)}
-                            >
-                              {item.icon ? item.icon : item.title}
-                            </button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{item.title}</p>
-                          </TooltipContent>
-                        </div>
-                      </Tooltip>
-                    </TooltipProvider>,
-                  );
-                })}
-                <div className="flex min-h-12 min-w-0 flex-1 sm:min-h-0 sm:flex-initial">
-                  <CommentPlaceButton className={mobileButtonClass} />
-                </div>
-                <div className="flex min-h-12 min-w-0 flex-1 sm:min-h-0 sm:flex-initial">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button
-                        type="button"
-                        className={`bg-gray-0 hover:bg-brand-0 pointer-events-auto flex h-6 w-6 flex-1 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${mobileButtonClass}`}
-                      >
-                        <MenuDots className={`rotate-90 ${boardIconClass}`} />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      side="top"
-                      align="end"
-                      sideOffset={8}
-                      className="border-gray-10 bg-gray-0 w-[180px] rounded-xl border p-1"
-                    >
-                      <DropdownMenuItem
-                        onClick={handleInsertCoordinateAxes}
-                        className={cn(boardMenuItemClass, 'flex gap-2 px-3')}
-                      >
-                        <span>Оси координат</span>
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+            <div className={`${boardPanelClass} mx-auto w-full max-w-full sm:w-auto`}>
+              <div className="hidden items-center gap-1 p-1 sm:flex">
+                {toolbarSlides.map(({ key, node }) => (
+                  <div key={key} className="shrink-0">
+                    {node}
+                  </div>
+                ))}
+              </div>
+              <div className="p-1 sm:hidden">
+                <NavbarMobileSwiper activeIndex={activeSlideIndex} slides={toolbarSlides} />
               </div>
             </div>
           </div>
