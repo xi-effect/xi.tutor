@@ -4,10 +4,9 @@ import { useUpdateProfile, useCurrentUser } from 'common.services';
 import { THEME_CUSTOMIZATION_ENABLED } from './config';
 import { ThemeContext } from './context';
 import {
-  isTheme,
+  normalizeTheme,
   readStoredThemePreference,
   readThemeChosen,
-  resolveThemeAppearance,
   writeStoredTheme,
   writeThemeChosen,
 } from './utils';
@@ -19,18 +18,19 @@ const DEFAULT_THEME: ThemeT = 'light';
 const ALL_THEMES: ThemeItemT[] = [
   { label: 'Светлая', value: 'light' },
   { label: 'Тёмная', value: 'dark', badge: 'beta' },
-  { label: 'Как в системе', value: 'system' },
 ];
+
+const THEME_CLASSES = ['light', 'dark', 'system'] as const;
 
 const applyTheme = (preference: ThemeT) => {
   const root = document.documentElement;
 
-  ALL_THEMES.forEach((t) => {
-    root.classList.remove(t.value);
+  THEME_CLASSES.forEach((value) => {
+    root.classList.remove(value);
   });
 
   root.classList.add(preference);
-  root.setAttribute('data-theme', resolveThemeAppearance(preference));
+  root.setAttribute('data-theme', preference);
   root.setAttribute('data-theme-preference', preference);
 };
 
@@ -43,15 +43,17 @@ export const ThemeProvider: FC<PropsWithChildren> = ({ children }) => {
   );
 
   useEffect(() => {
-    if (!THEME_CUSTOMIZATION_ENABLED || !isTheme(user?.theme)) return;
+    if (!THEME_CUSTOMIZATION_ENABLED) return;
+
+    const profileTheme = normalizeTheme(user?.theme);
+    if (!profileTheme) return;
 
     const hasChosenLocally = readThemeChosen();
-    const shouldSyncFromProfile =
-      hasChosenLocally || user.theme === 'dark' || user.theme === 'system';
+    const shouldSyncFromProfile = hasChosenLocally || profileTheme === 'dark';
 
     if (!shouldSyncFromProfile) return;
 
-    setThemeState((current) => (current === user.theme ? current : user.theme));
+    setThemeState((current) => (current === profileTheme ? current : profileTheme));
   }, [user?.theme]);
 
   const effectiveTheme = THEME_CUSTOMIZATION_ENABLED ? theme : DEFAULT_THEME;
@@ -59,16 +61,6 @@ export const ThemeProvider: FC<PropsWithChildren> = ({ children }) => {
   useEffect(() => {
     applyTheme(effectiveTheme);
   }, [effectiveTheme]);
-
-  useEffect(() => {
-    if (!THEME_CUSTOMIZATION_ENABLED || theme !== 'system') return;
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = () => applyTheme('system');
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, [theme]);
 
   const setTheme = async (newTheme: ThemeT) => {
     if (!THEME_CUSTOMIZATION_ENABLED) return;
