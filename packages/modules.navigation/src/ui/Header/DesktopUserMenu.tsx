@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 
 import { SelectRole } from './SelectRole';
 import { useCurrentUser } from 'common.services';
-import { Account, ChevronUp, Download, Exit } from '@xipkg/icons';
+import { ChevronUp, Download, Exit, Settings } from '@xipkg/icons';
 import { usePWAInstall } from 'common.services';
 import { useMenuStore } from '../../store/useMenuStore';
 
@@ -88,7 +88,7 @@ export const DesktopUserMenu = ({
             className={menuItemClassName}
             data-umami-event="header-profile-open"
           >
-            <Account className="size-5 shrink-0" />
+            <Settings className="size-5 shrink-0" />
             {profileText}
           </DropdownMenuItem>
 
