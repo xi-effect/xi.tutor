@@ -1,3 +1,5 @@
+import { cn } from '@xipkg/utils';
+
 type NavbarButtonPropsT = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   isActive: boolean;
   icon?: React.ReactNode;
@@ -14,7 +16,12 @@ export const NavbarButton = ({
   <button
     type="button"
     data-isactive={isActive}
-    className={`hover:bg-brand-0 pointer-events-auto flex h-6 w-6 min-w-0 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${isActive ? 'bg-brand-0' : 'bg-gray-0'} ${className ?? ''}`}
+    className={cn(
+      'pointer-events-auto flex shrink-0 items-center justify-center rounded-lg transition-colors',
+      'size-12 sm:size-6 lg:size-8',
+      isActive ? 'bg-brand-0' : 'bg-gray-0 hover:bg-brand-0',
+      className,
+    )}
     {...props}
   >
     {icon ?? title}

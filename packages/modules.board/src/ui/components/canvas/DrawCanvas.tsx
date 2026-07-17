@@ -379,14 +379,13 @@ export const DrawCanvas = ({
                 return next;
               });
 
-              editor.sideEffects.registerBeforeDeleteHandler('shape', (shape) => {
-                if (editor.getCurrentToolId() !== 'eraser') {
-                  return;
-                }
-
-                if (!isShapeErasable(shape.type)) {
-                  return false;
-                }
+              // Фильтр категорий ластика — только для локального стирания.
+              // Remote-удаления из Yjs/Hocuspocus нельзя блокировать: иначе у ученика
+              // останутся фигуры, которые репетитор уже стёр.
+              editor.sideEffects.registerBeforeDeleteHandler('shape', (shape, source) => {
+                if (source !== 'user') return;
+                if (editor.getCurrentToolId() !== 'eraser') return;
+                if (!isShapeErasable(shape.type)) return false;
               });
 
               editor.registerExternalContentHandler('files', async ({ files }) => {
@@ -453,7 +452,9 @@ export const DrawCanvas = ({
             {!isReadonly && (
               <Navbar undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} token={token} />
             )}
-            <div className={`${boardPanelClass} absolute bottom-4 left-4 z-260 flex p-1 sm:hidden`}>
+            <div
+              className={`${boardPanelClass} absolute bottom-20 left-4 z-260 flex p-1 sm:hidden`}
+            >
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
             <DrawZoomPanel />

@@ -28,17 +28,11 @@
         } catch (e) {}
 
         var preference =
-          chosen && (stored === 'light' || stored === 'dark' || stored === 'system')
+          chosen && (stored === 'light' || stored === 'dark')
             ? stored
             : 'light';
-        var resolved =
-          preference === 'dark' ||
-          (preference === 'system' &&
-            window.matchMedia('(prefers-color-scheme: dark)').matches)
-            ? 'dark'
-            : 'light';
 
-        document.documentElement.setAttribute('data-theme', resolved);
+        document.documentElement.setAttribute('data-theme', preference);
         document.documentElement.setAttribute('data-theme-preference', preference);
       })();
     </script>

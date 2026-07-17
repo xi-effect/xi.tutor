@@ -11,6 +11,7 @@ export const BOARD_BACKGROUND_TYPE_OPTIONS: {
   value: DrBoardBackgroundType;
   label: string;
 }[] = [
+  { value: 'none', label: 'Без фона' },
   { value: 'dots', label: 'Точки' },
   { value: 'grid', label: 'Сетка' },
   { value: 'hex-grid', label: 'Гексагональная сетка' },
@@ -78,7 +79,6 @@ export function isBoardBackgroundColorId(value: unknown): value is BoardBackgrou
 }
 
 export function normalizeBoardBackgroundType(type: unknown): DrBoardBackgroundType {
-  if (type === 'none' || type === 'dots') return 'dots';
   if (isBoardBackgroundType(type)) return type;
   return DEFAULT_BOARD_BACKGROUND_TYPE;
 }
