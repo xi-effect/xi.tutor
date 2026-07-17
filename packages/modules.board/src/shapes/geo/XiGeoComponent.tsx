@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import {
   DrRichText,
   HTMLContainer,
@@ -7,7 +6,6 @@ import {
   SVGContainer,
   getColorValue,
   getFontFamily,
-  renderPlaintextFromRichText,
   toRichText,
   useEditor,
   useValue,
@@ -15,28 +13,36 @@ import {
 import { getFillColor, getSizeInPixels } from './geoUtils';
 import type { XiGeoShape, XiGeoShapeProps } from './type';
 
-type TXiGeoComponent = {
+type XiGeoComponentT = {
   shape: XiGeoShape;
 };
 
-type TRichTextChangeData = {
+type RichTextChangeDataT = {
   richText: DrRichText;
 };
 
 const DEFAULT_SIZE_SCALE = 0.6;
 
-export const XiGeoComponent: React.FC<TXiGeoComponent> = ({ shape }) => {
+export const XiGeoComponent: React.FC<XiGeoComponentT> = ({ shape }) => {
   const editor = useEditor();
   const { borderColor, color, fill, size, text, w, h, labelColor, font, richText } =
     shape.props as XiGeoShapeProps;
 
-  // Проверяем есть ли контент в richText, если он есть, значит фигуру ранее использовали с richText
-  // если контент в richText пустой, то используем text для обратной совместимости со старыми фигурами
-  const fallbackRichText = renderPlaintextFromRichText(editor, richText)
-    ? richText
-    : toRichText(text);
+  // Логика для обратной совместимости со старыми фигурами
+  // Проверяем есть ли контент в text, если он есть, значит фигуру ранее не использовали с richText,
+  // если контент в text есть, то ставим text в richText, а text удаляем.
+  if (text) {
+    editor.updateShape({
+      id: shape.id,
+      type: shape.type,
+      props: {
+        ...shape.props,
+        richText: toRichText(text),
+        text: '', // для обратной совместимости со старыми фигурами
+      },
+    });
+  }
 
-  const [currentRichText, setCurrentRichText] = useState<DrRichText>(fallbackRichText);
   const theme = useValue('theme', () => editor.getCurrentTheme(), [editor]);
   const colorMode = useValue('colorMode', () => editor.getColorMode(), [editor]);
   const colors = theme.colors[colorMode];
@@ -56,22 +62,16 @@ export const XiGeoComponent: React.FC<TXiGeoComponent> = ({ shape }) => {
   const strokeColor = getColorValue(colors, borderColor, 'fill');
   const textColor = getColorValue(colors, labelColor, 'solid');
 
-  useEffect(() => {
-    setCurrentRichText(richText);
-  }, [richText]);
-
   // Устанавливаем текст в фигуру;
-  const changeRichTextHandle = ({ richText }: TRichTextChangeData) => {
+  const changeRichTextHandle = ({ richText }: RichTextChangeDataT) => {
     editor.updateShape({
       id: shape.id,
       type: shape.type,
       props: {
         ...shape.props,
         richText,
-        text: '', // для обратной совместимости со старыми фигурами
       },
     });
-    setCurrentRichText(richText);
   };
 
   return (
@@ -116,11 +116,11 @@ export const XiGeoComponent: React.FC<TXiGeoComponent> = ({ shape }) => {
             handleInputPointerDown={() => {}}
             handleKeyDown={() => {}}
             isEditing
-            richText={currentRichText}
+            richText={richText}
           />
         ) : (
           <RichTextLabel
-            richText={currentRichText}
+            richText={richText}
             type="xi-geo"
             shapeId={shape.id}
             fontSize={theme.fontSize}
