@@ -14,6 +14,7 @@ import { InvoiceCard } from 'features.invoice.card';
 import { EmptyPayments } from 'common.ui';
 import { useState } from 'react';
 import { useMediaQuery } from '@xipkg/utils';
+import { useCallStore } from 'modules.calls';
 
 const PAYMENTS_PREVIEW_LIMIT = 10;
 
@@ -26,6 +27,7 @@ export const Payments = () => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const isMobile = useMediaQuery('(max-width: 960px)');
+  const isStarted = useCallStore((state) => state.isStarted);
 
   const { data: tutorPayments, isLoading: isLoadingTutor } = useGetTutorPaymentsList({
     disabled: !isTutor,
@@ -40,7 +42,7 @@ export const Payments = () => {
   const [invoiceModalOpen, setInvoiceModalOpen] = useState(false);
 
   const handleMore = () => {
-    const filteredSearch = search.call ? { call: search.call } : {};
+    const filteredSearch = isStarted && search.call ? { call: search.call } : {};
     navigate({
       to: '/payments',
       search: (prev: Record<string, unknown>) => ({

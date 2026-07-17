@@ -47,7 +47,7 @@ export const MobileMenuDrawerContent = ({ onClose }: { onClose: () => void }) =>
   };
 
   const handleClick = (url: string) => {
-    const filteredSearch = search.call ? { call: search.call } : {};
+    const filteredSearch = isStarted && search.call ? { call: search.call } : {};
     if (isStarted && mode === 'full') {
       navigate({
         to: url,
