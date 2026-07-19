@@ -2,6 +2,11 @@ import { Button } from '@xipkg/button';
 import { EmailPageLayout } from './EmailPageLayout';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useEmailConfirmation } from 'common.services';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  inferEmailConfirmationSource,
+  trackProductEvent,
+} from 'common.utils';
 import { useEmailToken } from './useEmailToken';
 
 const Loading = () => {
@@ -23,8 +28,15 @@ export const EmailPageSuccess = () => {
   const search = useSearch({ strict: false });
   const emailToken = useEmailToken();
   const { isLoading, isSuccess, isError, isAlreadyConfirmed } = useEmailConfirmation(emailToken);
+  const source = inferEmailConfirmationSource({
+    hasToken: Boolean(emailToken && emailToken !== 'confirm'),
+  });
 
   const handleConfirm = () => {
+    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.EMAIL_CONFIRMATION_CONTINUE_CLICKED, {
+      already_confirmed: isAlreadyConfirmed,
+      source,
+    });
     navigate({ to: '/welcome/user', search: { ...search } });
   };
 

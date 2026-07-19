@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useSearch } from '@tanstack/react-router';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
@@ -19,9 +20,22 @@ import { Eyeoff, Eyeon } from '@xipkg/icons';
 import { useFormSchema, type FormData } from '../model';
 import { useSignupForm } from '../hooks';
 import { LinkTanstack, Logo } from 'common.ui';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  getOrCreateActivationFlowId,
+  inferSignupEntryPoint,
+  mapSignupValidationErrors,
+  trackOnce,
+  trackProductEvent,
+} from 'common.utils';
 
 export const SignUpPage = () => {
   const { t } = useTranslation('signup');
+  const search = useSearch({ strict: false }) as {
+    redirect?: string;
+    invite?: string;
+    from?: string;
+  };
 
   const formSchema = useFormSchema();
   const { onSignupForm, isPending } = useSignupForm();
@@ -38,8 +52,34 @@ export const SignUpPage = () => {
 
   const isConsentInvalid = isSubmitted && !!errors.consent;
 
+  const entryPoint = inferSignupEntryPoint(search);
+  const hasInvite = Boolean(search.invite) || entryPoint === 'invite';
+
+  useEffect(() => {
+    const activationFlowId = getOrCreateActivationFlowId();
+
+    trackOnce('auth_signup_viewed', () => {
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNUP_VIEWED, {
+        activation_flow_id: activationFlowId,
+        entry_point: entryPoint,
+        has_invite: hasInvite,
+      });
+    });
+  }, [entryPoint, hasInvite]);
+
   const onSubmit = (data: FormData) => {
     onSignupForm(data);
+  };
+
+  const onInvalid = (fieldErrors: typeof errors) => {
+    const { reason, field } = mapSignupValidationErrors(fieldErrors);
+    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNUP_VALIDATION_FAILED, {
+      activation_flow_id: getOrCreateActivationFlowId(),
+      reason,
+      field,
+      entry_point: entryPoint,
+      has_invite: hasInvite,
+    });
   };
 
   const [isPasswordShow, setIsPasswordShow] = useState(false);
@@ -63,7 +103,10 @@ export const SignUpPage = () => {
     <div className="flex w-full flex-1 flex-col items-center justify-center p-1 py-4">
       <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex min-h-[600px] w-full max-w-[420px] flex-col bg-transparent p-8">
         <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)} className="flex flex-1 flex-col space-y-4">
+          <form
+            onSubmit={handleSubmit(onSubmit, onInvalid)}
+            className="flex flex-1 flex-col space-y-4"
+          >
             <div className="self-center">
               <Logo height={22} width={180} />
             </div>

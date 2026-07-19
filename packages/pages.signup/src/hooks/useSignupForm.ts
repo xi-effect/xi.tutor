@@ -3,6 +3,18 @@ import { useNavigate, useSearch } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
 import { useAuth } from 'common.auth';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  createAttemptId,
+  getHttpStatusGroup,
+  getOrCreateActivationFlowId,
+  inferSignupEntryPoint,
+  mapSignupError,
+  measureDurationMs,
+  nextSignupAttemptNumber,
+  nowMs,
+  trackProductEvent,
+} from 'common.utils';
 
 import { FormData } from '../model/formSchema';
 
@@ -18,15 +30,44 @@ export const useSignupForm = () => {
   const { mutate, isPending } = signup;
 
   const navigate = useNavigate();
-  const search = useSearch({ strict: false }) as { redirect?: string };
+  const search = useSearch({ strict: false }) as {
+    redirect?: string;
+    invite?: string;
+    from?: string;
+  };
 
   const onSignupForm = (data: FormData) => {
     if (isPending) {
       return;
     }
 
+    const activationFlowId = getOrCreateActivationFlowId();
+    const entryPoint = inferSignupEntryPoint(search);
+    const hasInvite = Boolean(search.invite) || entryPoint === 'invite';
+    const attemptId = createAttemptId();
+    const attemptNumber = nextSignupAttemptNumber();
+    const startedAt = nowMs();
+
+    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNUP_SUBMIT, {
+      activation_flow_id: activationFlowId,
+      attempt_id: attemptId,
+      entry_point: entryPoint,
+      attempt_number: attemptNumber,
+      has_invite: hasInvite,
+    });
+
     mutate(data, {
       onSuccess: () => {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNUP_SUCCEEDED, {
+          activation_flow_id: activationFlowId,
+          attempt_id: attemptId,
+          entry_point: entryPoint,
+          duration_ms: measureDurationMs(startedAt),
+          confirmation_required: true,
+          attempt_number: attemptNumber,
+          has_invite: hasInvite,
+        });
+
         // Сохраняем предыдущий путь для страницы подтверждения email
         if (typeof window !== 'undefined') {
           sessionStorage.setItem('previousPath', '/signup');
@@ -45,18 +86,29 @@ export const useSignupForm = () => {
         });
       },
 
-      onError: (error: AxiosError | Error) => {
+      onError: (err: AxiosError | Error) => {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNUP_FAILED, {
+          activation_flow_id: activationFlowId,
+          attempt_id: attemptId,
+          reason: mapSignupError(err),
+          duration_ms: measureDurationMs(startedAt),
+          http_status_group: getHttpStatusGroup(err),
+          entry_point: entryPoint,
+          attempt_number: attemptNumber,
+          has_invite: hasInvite,
+        });
+
         let customError = '';
 
-        if (error instanceof AxiosError) {
-          const errorDetail: string = error.response?.data?.detail;
+        if (err instanceof AxiosError) {
+          const errorDetail: string = err.response?.data?.detail;
           customError = errorMap[errorDetail] || 'Неизвестная ошибка Axios';
 
           if (!errorMap[errorDetail]) {
-            console.error('Неизвестная ошибка Axios:', error);
+            console.error('Неизвестная ошибка Axios:', err);
           }
         } else {
-          console.error('Неизвестная ошибка:', error);
+          console.error('Неизвестная ошибка:', err);
           customError = 'Неизвестная ошибка';
         }
 

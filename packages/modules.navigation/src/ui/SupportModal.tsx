@@ -9,6 +9,11 @@ import {
 import { TelegramFilled, MailRounded, External, VK } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
 import { modalTitleClass } from 'common.ui';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  inferActivationHelpScreen,
+  trackProductEvent,
+} from 'common.utils';
 
 const CONTACTS = [
   {
@@ -19,6 +24,7 @@ const CONTACTS = [
     colorClass: 'bg-brand-0 text-brand-80',
     iconClass: 'fill-brand-80',
     umamiEvent: 'support-telegram',
+    channel: 'telegram' as const,
   },
   {
     titleKey: 'supportModal.vk',
@@ -28,6 +34,7 @@ const CONTACTS = [
     colorClass: 'bg-blue-100/10 text-blue-600',
     iconClass: 'text-blue-600',
     umamiEvent: 'support-vk',
+    channel: 'vk' as const,
   },
   {
     titleKey: 'supportModal.email',
@@ -37,6 +44,7 @@ const CONTACTS = [
     colorClass: 'bg-gray-5 text-gray-80',
     iconClass: 'fill-gray-80',
     umamiEvent: 'support-email',
+    channel: 'email' as const,
   },
 ] as const;
 
@@ -47,6 +55,17 @@ type SupportModalProps = {
 
 export const SupportModal = ({ open, onOpenChange }: SupportModalProps) => {
   const { t } = useTranslation('navigation');
+
+  const trackSupportContact = (channel: 'telegram' | 'vk' | 'email') => {
+    const screen = inferActivationHelpScreen();
+    if (screen === 'signup' || screen === 'email_confirmation' || screen === 'onboarding') {
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.ACTIVATION_SUPPORT_CONTACTED, {
+        screen,
+        reason: 'contact_support',
+        channel,
+      });
+    }
+  };
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
@@ -65,6 +84,7 @@ export const SupportModal = ({ open, onOpenChange }: SupportModalProps) => {
               target="_blank"
               rel="noopener noreferrer"
               data-umami-event={contact.umamiEvent}
+              onClick={() => trackSupportContact(contact.channel)}
               className="border-gray-10 hover:bg-gray-5 flex items-center gap-4 rounded-xl border p-4 transition-colors"
             >
               <div

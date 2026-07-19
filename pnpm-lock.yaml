@@ -1574,6 +1574,9 @@ importers:
       common.types:
         specifier: workspace:*
         version: link:../common.types
+      common.utils:
+        specifier: workspace:*
+        version: link:../common.utils
       features.group.add:
         specifier: workspace:*
         version: link:../features.group.add
@@ -3722,6 +3725,9 @@ importers:
       common.ui:
         specifier: workspace:*
         version: link:../common.ui
+      common.utils:
+        specifier: workspace:*
+        version: link:../common.utils
       features.table:
         specifier: workspace:*
         version: link:../features.table
@@ -5398,6 +5404,9 @@ importers:
       common.ui:
         specifier: workspace:*
         version: link:../common.ui
+      common.utils:
+        specifier: workspace:*
+        version: link:../common.utils
       react:
         specifier: '19'
         version: 19.2.7

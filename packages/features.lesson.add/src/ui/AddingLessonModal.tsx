@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Modal, ModalContent, ModalTitle, ModalCloseButton, ModalBody } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
 import { Close } from '@xipkg/icons';
@@ -7,7 +7,11 @@ import { DayLessonsPanel } from 'modules.calendar';
 import { AddingForm } from './components/AddingForm';
 import './AddingModal.css';
 import type { FormData } from '../model';
-import type { ProductAnalyticsSource } from 'common.utils';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  trackProductEvent,
+  type ProductAnalyticsSource,
+} from 'common.utils';
 
 const getToday = () => {
   const d = new Date();
@@ -47,6 +51,7 @@ export const AddingLessonModal = ({
 }: AddingLessonModalProps) => {
   const [selectedDate, setSelectedDate] = useState(getToday);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const lessonCreateViewedForOpenRef = useRef(false);
   const handleSubmittingChange = useCallback((submitting: boolean) => {
     setIsSubmitting(submitting);
   }, []);
@@ -54,11 +59,18 @@ export const AddingLessonModal = ({
   useEffect(() => {
     if (!open) {
       setIsSubmitting(false);
+      lessonCreateViewedForOpenRef.current = false;
       return;
     }
     const seed = scheduleListSeedDate ?? initialDate;
     setSelectedDate(seed != null ? normalizeCalendarDay(seed) : getToday());
-  }, [open, scheduleListSeedDate, initialDate]);
+
+    if (lessonCreateViewedForOpenRef.current) return;
+    lessonCreateViewedForOpenRef.current = true;
+    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.LESSON_CREATE_VIEWED, {
+      source: analyticsSource ?? 'unknown',
+    });
+  }, [open, scheduleListSeedDate, initialDate, analyticsSource]);
 
   const handleCloseModal = () => {
     onOpenChange(false);
