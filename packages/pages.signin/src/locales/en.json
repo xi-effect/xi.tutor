@@ -14,8 +14,8 @@
   },
   "validation": {
     "required": "This field is required",
-    "minLength": "Min length is {{length}}",
-    "maxLength": "Max length is {{length}}",
+    "minLength": "Minimum {{length}} characters",
+    "maxLength": "Maximum {{length}} characters",
     "wrong_format": "Incorrect data format",
     "no_symbols": "Use only Latin alphabet, lowercase, numbers or symbols: '_' or '.'",
     "symbols_one": "{{count}} symbol",

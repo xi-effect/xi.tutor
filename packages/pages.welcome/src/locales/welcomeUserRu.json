@@ -5,8 +5,8 @@
   "continue_button": "Продолжить",
   "validation": {
     "required": "Обязательное поле",
-    "minLength": "Минимальная длина - ",
-    "maxLength": "Максимальная длина - ",
+    "minLength": "Минимум ",
+    "maxLength": "Максимум ",
     "symbols_one": "{{count}} символ",
     "symbols_few": "{{count}} символа",
     "symbols_many": "{{count}} символов",

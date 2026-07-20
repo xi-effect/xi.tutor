@@ -5,8 +5,8 @@
   "continue_button": "Continue",
   "validation": {
     "required": "This field is required",
-    "minLength": "Min length is ",
-    "maxLength": "Max length is ",
+    "minLength": "Minimum ",
+    "maxLength": "Maximum ",
     "symbols_one": "{{count}} symbol",
     "symbols_other": "{{count}} symbols"
   }

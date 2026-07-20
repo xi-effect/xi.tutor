@@ -33,6 +33,8 @@ type DayLessonsPanelProps = {
   scheduleHeadingTitle?: string;
   /** Подзаголовок «Занятия на день» (вариант без главного заголовка) */
   subtitle?: boolean;
+  /** Пустое состояние для репетитора (иначе — для ученика) */
+  isTutorEmptyState?: boolean;
   onSaveLesson?: (lesson: ScheduleLessonRow, data: ChangeLessonFormData) => void;
   onReschedule?: (lesson: ScheduleLessonRow) => void;
 };
@@ -51,6 +53,7 @@ export const DayLessonsPanel = ({
   showLessonActions = false,
   scheduleHeadingTitle,
   subtitle = false,
+  isTutorEmptyState = false,
   onSaveLesson,
   onReschedule,
 }: DayLessonsPanelProps) => {
@@ -177,7 +180,9 @@ export const DayLessonsPanel = ({
                   На выбранную дату нет занятий
                 </p>
                 <p className="text-s-base text-gray-60 dark:text-gray-50">
-                  Здесь отображаются занятия, которые назначил преподаватель
+                  {isTutorEmptyState
+                    ? 'Добавляйте, переносите и отменяйте занятия'
+                    : 'Здесь отображаются занятия, которые назначил репетитор'}
                 </p>
               </div>
             </div>

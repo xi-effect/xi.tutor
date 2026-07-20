@@ -22,14 +22,14 @@ export const useFormSchemaPassword = () => {
             error: t('validation.required'),
           })
           .min(passwordMinLength, {
-            message: t('validation.minLength') + passwordMinLength,
+            message: t('validation.minLength', { length: passwordMinLength }),
           }),
         confirmPassword: z
           .string({
             error: t('validation.required'),
           })
           .min(passwordMinLength, {
-            message: t('validation.minLength') + passwordMinLength,
+            message: t('validation.minLength', { length: passwordMinLength }),
           }),
       })
       .refine((data) => data.password === data.confirmPassword, {

@@ -19,7 +19,7 @@
   "student": "Student",
   "classrooms": "Classrooms",
   "hints": "Hints",
-  "roleChanged": "Role successfully changed to {{role}}",
+  "roleChanged": "You are now a {{role}}",
   "wiki": "Knowledge base",
   "menu": "Menu",
   "supportModal": {

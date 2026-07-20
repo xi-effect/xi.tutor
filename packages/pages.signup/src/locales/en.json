@@ -7,8 +7,8 @@
   "sign_in": "Sign In",
   "validation": {
     "required": "This field is required",
-    "minLength": "Min length is ",
-    "maxLength": "Max length is ",
+    "minLength": "Minimum ",
+    "maxLength": "Maximum ",
     "wrong_format": "Incorrect data format",
     "no_symbols": "Use only Latin alphabet, lowercase, numbers or symbols: '_' or '.'",
     "symbols_one": "{{count}} symbol",

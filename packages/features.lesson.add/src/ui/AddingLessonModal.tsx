@@ -98,6 +98,7 @@ export const AddingLessonModal = ({
                 onSelectedDateChange={setSelectedDate}
                 fetchEnabled={open}
                 showLessonActions={false}
+                isTutorEmptyState
               />
             </div>
           </div>

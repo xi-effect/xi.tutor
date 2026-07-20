@@ -31,10 +31,10 @@ export const useFormSchema = () => {
           message: getTranslation('validation.required', undefined, 'This field is required'),
         })
         .min(usernameMinLength, {
-          message: `${getTranslation('validation.minLength', undefined, 'Min length is ')}${getTranslation('validation.symbols', { count: usernameMinLength }, `${usernameMinLength} symbols`)}`,
+          message: `${getTranslation('validation.minLength', undefined, 'Minimum ')}${getTranslation('validation.symbols', { count: usernameMinLength }, `${usernameMinLength} symbols`)}`,
         })
         .max(usernameMaxLength, {
-          message: `${getTranslation('validation.maxLength', undefined, 'Max length is ')}${getTranslation('validation.symbols', { count: usernameMaxLength }, `${usernameMaxLength} symbols`)}`,
+          message: `${getTranslation('validation.maxLength', undefined, 'Maximum ')}${getTranslation('validation.symbols', { count: usernameMaxLength }, `${usernameMaxLength} symbols`)}`,
         })
         .regex(/^[a-z0-9_.]+$/, {
           message: getTranslation(
@@ -55,7 +55,7 @@ export const useFormSchema = () => {
           error: getTranslation('validation.required', undefined, 'This field is required'),
         })
         .min(passwordMinLength, {
-          message: `${getTranslation('validation.minLength', undefined, 'Min length is ')}${getTranslation('validation.symbols', { count: passwordMinLength }, `${passwordMinLength} symbols`)}`,
+          message: `${getTranslation('validation.minLength', undefined, 'Minimum ')}${getTranslation('validation.symbols', { count: passwordMinLength }, `${passwordMinLength} symbols`)}`,
         }),
       consent: z.boolean().refine((value) => !!value, {
         message: '',
