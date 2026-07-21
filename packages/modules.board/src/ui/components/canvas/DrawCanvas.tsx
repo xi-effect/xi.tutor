@@ -388,7 +388,11 @@ export const DrawCanvas = ({
 
               editor.registerExternalContentHandler('files', async ({ files }) => {
                 for (const file of files) {
-                  insertAsset(editor, file, token, addToQueue);
+                  try {
+                    insertAsset(editor, file, token, addToQueue);
+                  } catch (error) {
+                    console.error('Ошибка при загрузке файла:', error);
+                  }
                 }
               });
 

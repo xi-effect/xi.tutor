@@ -9,6 +9,7 @@ import {
   checkAudioMagicBytes,
 } from '../shapes/audio';
 import { ALLOWED_AUDIO_MIME_TYPES } from '../constants/mimeTypes';
+import { resolveShapeCoordinates } from '../utils';
 
 const MAX_AUDIO_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
 const MAX_AUDIO_SHAPES = 20;
@@ -76,14 +77,14 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
 
   const shapeId = `shape:${nanoid()}` as DrShapeId;
   const duration = await getAudioDuration(file);
-  const viewportCenter = editor.getViewportPageBounds().center;
+  const coordinates = resolveShapeCoordinates(editor, AUDIO_SHAPE_WIDTH, AUDIO_SHAPE_HEIGHT);
 
   editor.createShapes<AudioShape>([
     {
       id: shapeId,
       type: 'audio',
-      x: viewportCenter.x - AUDIO_SHAPE_WIDTH / 2,
-      y: viewportCenter.y - AUDIO_SHAPE_HEIGHT / 2,
+      x: coordinates.x,
+      y: coordinates.y,
       props: {
         src: '',
         fileName: file.name,
@@ -98,6 +99,11 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
       },
     },
   ]);
+
+  editor.setSelectedShapes([shapeId]);
+  Promise.resolve().then(() => {
+    editor.zoomToSelection({ animation: { duration: 200 } });
+  });
 
   (async () => {
     try {
