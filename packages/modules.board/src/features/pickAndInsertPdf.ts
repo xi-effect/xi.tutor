@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import { uploadFileRequest } from 'common.services';
 import * as pdfjsLib from 'pdfjs-dist';
 import { PDF_MAX_SIZE, PDF_MIN_SIZE, type PdfShape } from '../shapes/pdf';
+import { resolveShapeCoordinates } from '../utils';
 
 const MAX_PDF_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
 const MAX_PDF_SHAPES = 50;
@@ -75,14 +76,14 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
     pageHeight = Math.round(pageHeight * scale);
   }
 
-  const viewportCenter = editor.getViewportPageBounds().center;
+  const coordinates = resolveShapeCoordinates(editor, pageWidth, pageHeight);
 
   editor.createShapes<PdfShape>([
     {
       id: shapeId,
       type: 'pdf',
-      x: viewportCenter.x - pageWidth / 2,
-      y: viewportCenter.y - pageHeight / 2,
+      x: coordinates.x,
+      y: coordinates.y,
       props: {
         src: '',
         fileName: file.name,
@@ -95,6 +96,11 @@ export async function insertPdf(editor: Editor, file: File, token: string) {
       },
     },
   ]);
+
+  editor.setSelectedShapes([shapeId]);
+  Promise.resolve().then(() => {
+    editor.zoomToSelection({ animation: { duration: 200 } });
+  });
 
   // Upload in background
   (async () => {

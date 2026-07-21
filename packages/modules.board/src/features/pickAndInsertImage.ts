@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid';
 import { Editor, DrAssetId, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { myAssetStore } from './imageStore';
+import { resolveShapeCoordinates } from '../utils';
 
 const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
 
@@ -72,10 +73,7 @@ export async function insertImage(
 
   const position = placement
     ? { x: placement.x, y: placement.y }
-    : (() => {
-        const center = editor.getViewportPageBounds().center;
-        return { x: center.x - w / 2, y: center.y - h / 2 };
-      })();
+    : resolveShapeCoordinates(editor, w, h);
   const shapeW = placement ? placement.w : w;
   const shapeH = placement ? placement.h : h;
 
@@ -109,6 +107,11 @@ export async function insertImage(
       },
     },
   ]);
+
+  editor.setSelectedShapes([shapeId]);
+  Promise.resolve().then(() => {
+    editor.zoomToSelection({ animation: { duration: 200 } });
+  });
 
   (async () => {
     try {
