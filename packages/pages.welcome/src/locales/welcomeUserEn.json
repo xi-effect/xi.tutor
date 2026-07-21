@@ -1,6 +1,7 @@
 {
   "title": "Let's get to know each other",
   "name": "What is your name?",
+  "name_hint": "Use your real name so others know how to address you",
   "email": "Email",
   "continue_button": "Continue",
   "validation": {
