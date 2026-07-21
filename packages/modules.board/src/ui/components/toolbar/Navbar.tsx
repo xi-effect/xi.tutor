@@ -155,15 +155,17 @@ export const Navbar = track(
         const input = document.createElement('input');
         input.type = 'file';
         input.accept = ALL_ALLOWED_TYPES.toString();
-        input.multiple = false;
+        input.multiple = true;
 
         input.onchange = async (e) => {
-          const file = (e.target as HTMLInputElement).files?.[0];
-          if (file) {
-            try {
-              insertAsset(editor, file, token, addToQueue);
-            } catch (error) {
-              console.error('Ошибка при загрузке файла:', error);
+          const files = (e.target as HTMLInputElement).files;
+          if (files) {
+            for (const file of files) {
+              try {
+                insertAsset(editor, file, token, addToQueue);
+              } catch (error) {
+                console.error('Ошибка при загрузке файла:', error);
+              }
             }
           }
         };
