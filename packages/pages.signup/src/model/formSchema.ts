@@ -58,7 +58,11 @@ export const useFormSchema = () => {
           message: `${getTranslation('validation.minLength', undefined, 'Minimum ')}${getTranslation('validation.symbols', { count: passwordMinLength }, `${passwordMinLength} symbols`)}`,
         }),
       consent: z.boolean().refine((value) => !!value, {
-        message: '',
+        message: getTranslation(
+          'consent.required',
+          undefined,
+          'Please accept the terms to continue',
+        ),
       }),
     });
   }, [t]);
@@ -66,11 +70,4 @@ export const useFormSchema = () => {
   return formSchema;
 };
 
-export type FormData = z.infer<
-  z.ZodObject<{
-    username: z.ZodString;
-    email: z.ZodString;
-    password: z.ZodString;
-    consent: z.ZodLiteral<boolean>;
-  }>
->;
+export type FormData = z.infer<ReturnType<typeof useFormSchema>>;

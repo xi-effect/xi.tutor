@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { AxiosError } from 'axios';
+import { useTranslation } from 'react-i18next';
+import type { UseFormSetError } from 'react-hook-form';
 import { useAuth } from 'common.auth';
 import {
   PRODUCT_ANALYTICS_EVENTS,
@@ -18,12 +20,8 @@ import {
 
 import { FormData } from '../model/formSchema';
 
-const errorMap: Record<string, string> = {
-  'Username already in use': 'Такое имя пользователя уже занято',
-  'Email already in use': 'Аккаунт с такой почтой уже зарегистрирован',
-};
-
 export const useSignupForm = () => {
+  const { t } = useTranslation('signup');
   const [error, setError] = useState<string | null>(null);
 
   const { signup } = useAuth();
@@ -36,7 +34,7 @@ export const useSignupForm = () => {
     from?: string;
   };
 
-  const onSignupForm = (data: FormData) => {
+  const onSignupForm = (data: FormData, setFormError: UseFormSetError<FormData>) => {
     if (isPending) {
       return;
     }
@@ -98,22 +96,35 @@ export const useSignupForm = () => {
           has_invite: hasInvite,
         });
 
-        let customError = '';
+        const failureReason = mapSignupError(err);
 
-        if (err instanceof AxiosError) {
-          const errorDetail: string = err.response?.data?.detail;
-          customError = errorMap[errorDetail] || 'Неизвестная ошибка Axios';
-
-          if (!errorMap[errorDetail]) {
-            console.error('Неизвестная ошибка Axios:', err);
-          }
-        } else {
-          console.error('Неизвестная ошибка:', err);
-          customError = 'Неизвестная ошибка';
+        if (failureReason === 'username_exists') {
+          const message = t('errors.username_exists');
+          setFormError('username', { message });
+          toast(message);
+          setError(message);
+          return;
         }
 
-        toast(customError);
-        setError(customError);
+        if (failureReason === 'email_exists') {
+          const message = t('errors.email_exists');
+          setFormError('email', { message });
+          toast(message);
+          setError(message);
+          return;
+        }
+
+        if (err instanceof AxiosError && !err.response) {
+          console.error('Сетевая ошибка при регистрации:', err);
+        } else if (!(err instanceof AxiosError)) {
+          console.error('Неизвестная ошибка:', err);
+        } else if (!err.response?.data?.detail) {
+          console.error('Неизвестная ошибка Axios:', err);
+        }
+
+        const message = t('errors.unknown');
+        toast(message);
+        setError(message);
       },
     });
   };
