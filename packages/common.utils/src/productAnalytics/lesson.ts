@@ -1,6 +1,6 @@
 import type { ProductAnalyticsDurationBucket } from './types';
 
-const DURATION_THRESHOLDS_MIN = [5, 15, 30, 45] as const;
+const DURATION_THRESHOLDS_MIN = [5, 15, 30, 45, 60] as const;
 
 export type LessonDurationThresholdMin = (typeof DURATION_THRESHOLDS_MIN)[number];
 

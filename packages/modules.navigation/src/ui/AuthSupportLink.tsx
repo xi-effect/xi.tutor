@@ -1,15 +1,31 @@
 import { MessageHeartCircle } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
 import { useSupportModalStore } from 'common.ui';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  inferActivationHelpScreen,
+  trackProductEvent,
+} from 'common.utils';
 
 export const AuthSupportLink = () => {
   const { t } = useTranslation('navigation');
   const openSupportModal = useSupportModalStore((state) => state.open);
 
+  const handleOpenSupport = () => {
+    const screen = inferActivationHelpScreen();
+    if (screen === 'signup' || screen === 'email_confirmation' || screen === 'onboarding') {
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.ACTIVATION_HELP_OPENED, {
+        screen,
+        reason: 'need_help',
+      });
+    }
+    openSupportModal();
+  };
+
   return (
     <button
       type="button"
-      onClick={openSupportModal}
+      onClick={handleOpenSupport}
       className="hover:bg-gray-5 dark:hover:bg-gray-10 focus-visible:bg-gray-5 dark:focus-visible:bg-gray-10 flex items-center gap-2 rounded-lg bg-transparent px-3 py-2 focus-visible:outline-none"
       data-umami-event="navigation-support"
     >

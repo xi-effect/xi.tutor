@@ -7,12 +7,14 @@ import { ClassroomsQueryKey, type ClassroomTutorResponseSchema } from 'common.ap
 import { useCurrentUser } from 'common.services';
 import {
   PRODUCT_ANALYTICS_EVENTS,
+  createAttemptId,
   getProductAnalyticsRole,
   inferProductAnalyticsSourceFromPathname,
   trackProductEvent,
   type ProductAnalyticsLessonType,
   type ProductAnalyticsSource,
 } from 'common.utils';
+import { beginNewConnectAttempt, getCallSessionAnalyticsState } from './callSessionState';
 
 type StartCallOptions = {
   source?: ProductAnalyticsSource;
@@ -45,26 +47,44 @@ export const useStartCall = () => {
   const startCall = useCallback(
     async (data: StartCallDataT, options?: StartCallOptions) => {
       const role = getProductAnalyticsRole(user?.default_layout);
+      const actorRole = role === 'student' ? 'student' : 'tutor';
       const source =
         options?.source ?? inferProductAnalyticsSourceFromPathname(navigation.pathname);
       const lessonType = readLessonTypeFromCache(queryClient, data.classroom_id);
+      const lessonId = String(data.classroom_id);
+
+      const state = getCallSessionAnalyticsState();
+      state.lessonId = lessonId;
+
+      const attemptId = createAttemptId();
+      beginNewConnectAttempt(attemptId);
 
       await startCallBase(data);
 
       if (role === 'tutor') {
-        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.LESSON_STARTED, {
-          role: 'tutor',
-          source,
-          lesson_type: lessonType,
-        });
+        if (!state.lessonStartedSent) {
+          state.lessonStartedSent = true;
+          trackProductEvent(PRODUCT_ANALYTICS_EVENTS.LESSON_STARTED, {
+            lesson_id: lessonId,
+            actor_role: actorRole,
+            role: 'tutor',
+            source,
+            lesson_type: lessonType,
+          });
+        }
         return;
       }
 
-      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.LESSON_JOINED, {
-        role,
-        source,
-        lesson_type: lessonType,
-      });
+      if (!state.lessonJoinedSent) {
+        state.lessonJoinedSent = true;
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.LESSON_JOINED, {
+          lesson_id: lessonId,
+          actor_role: actorRole,
+          role,
+          source,
+          lesson_type: lessonType,
+        });
+      }
     },
     [navigation.pathname, queryClient, startCallBase, user?.default_layout],
   );

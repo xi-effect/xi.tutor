@@ -22,6 +22,7 @@
     "common.env": "workspace:*",
     "common.services": "workspace:*",
     "common.types": "workspace:*",
+    "common.utils": "workspace:*",
     "features.group.add": "workspace:*",
     "features.invoice": "workspace:*",
     "features.materials.add": "workspace:*",

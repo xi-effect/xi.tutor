@@ -14,7 +14,13 @@ import {
 } from 'common.services';
 import { env } from 'common.env';
 import { useCallsAddClassroomMaterials } from './useCallsAddClassroomMaterials';
-import { PRODUCT_ANALYTICS_EVENTS, getProductAnalyticsRole, trackProductEvent } from 'common.utils';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  createAttemptId,
+  getProductAnalyticsRole,
+  trackProductEvent,
+} from 'common.utils';
+import { getCallSessionAnalyticsState } from './productAnalytics/callSessionState';
 
 type AccessTokenResponseT = string | { url: string };
 
@@ -47,10 +53,19 @@ export const useCallsDeps = (): CallsProviderDepsT => {
           } catch (error: unknown) {
             // 409 — не финальная ошибка: useStartCall сделает reactivateCall + retry
             if (!(error instanceof AxiosError && error.response?.status === 409)) {
+              const state = getCallSessionAnalyticsState();
+              const role = getProductAnalyticsRole(user?.default_layout);
+              const attemptId = state.currentAttemptId ?? createAttemptId();
               trackProductEvent(PRODUCT_ANALYTICS_EVENTS.CALL_CONNECTION_FAILED, {
-                role: getProductAnalyticsRole(user?.default_layout),
+                lesson_id: state.lessonId ?? String(data.classroom_id),
+                attempt_id: attemptId,
+                actor_role: role === 'student' ? 'student' : 'tutor',
+                role,
+                attempt_number: state.attemptNumber || 1,
                 reason: 'token_error',
+                retry_available: true,
               });
+              state.hadConnectionFailure = true;
             }
             throw error;
           }
@@ -59,10 +74,19 @@ export const useCallsDeps = (): CallsProviderDepsT => {
           try {
             return extractToken(await createTokenByStudent.mutateAsync(data));
           } catch (error) {
+            const state = getCallSessionAnalyticsState();
+            const role = getProductAnalyticsRole(user?.default_layout);
+            const attemptId = state.currentAttemptId ?? createAttemptId();
             trackProductEvent(PRODUCT_ANALYTICS_EVENTS.CALL_CONNECTION_FAILED, {
-              role: getProductAnalyticsRole(user?.default_layout),
+              lesson_id: state.lessonId ?? String(data.classroom_id),
+              attempt_id: attemptId,
+              actor_role: role === 'student' ? 'student' : 'tutor',
+              role,
+              attempt_number: state.attemptNumber || 1,
               reason: 'token_error',
+              retry_available: true,
             });
+            state.hadConnectionFailure = true;
             throw error;
           }
         },

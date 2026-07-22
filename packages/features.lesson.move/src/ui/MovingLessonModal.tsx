@@ -152,6 +152,7 @@ export const MovingLessonModal = ({
                 onSelectedDateChange={setSelectedDate}
                 fetchEnabled={open}
                 showLessonActions={false}
+                isTutorEmptyState
               />
             </div>
           </div>

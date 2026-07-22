@@ -1,6 +1,7 @@
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,12 +20,12 @@ export const WelcomeUserForm = () => {
   const { t } = useTranslation('welcomeUser');
   const formSchema = useWelcomeUserFormSchema();
 
-  const { email, display_name } = useWelcomeContext();
+  const { email } = useWelcomeContext();
 
   const form = useForm<WelcomeUserFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      displayName: display_name || '',
+      displayName: '',
     },
   });
 
@@ -38,7 +39,7 @@ export const WelcomeUserForm = () => {
   const { onWelcomeUserForm, isLoading } = useWelcomeUserForm();
 
   const onSubmit = ({ displayName }: WelcomeUserFormData) => {
-    onWelcomeUserForm(displayName);
+    onWelcomeUserForm(displayName.trim());
   };
 
   const [displayName] = watch(['displayName']);
@@ -49,7 +50,6 @@ export const WelcomeUserForm = () => {
         <FormField
           control={control}
           name="displayName"
-          defaultValue=""
           render={({ field }) => (
             <FormItem className="mt-8">
               <FormLabel className="dark:text-gray-100">{t('name')}</FormLabel>
@@ -57,11 +57,14 @@ export const WelcomeUserForm = () => {
                 <Input
                   className="mt-1"
                   error={!!errors?.displayName}
-                  autoComplete="off"
+                  autoComplete="name"
                   type="text"
                   {...field}
                 />
               </FormControl>
+              <FormDescription className="text-gray-60 pt-0 text-xs">
+                {t('name_hint')}
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -71,7 +74,11 @@ export const WelcomeUserForm = () => {
           {email}
         </div>
         <div className="mt-auto flex flex-row gap-6 pt-4">
-          <Button type="submit" className="w-full" disabled={!displayName?.length || isLoading}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={!displayName?.trim().length || isLoading}
+          >
             {t('continue_button')}
           </Button>
         </div>

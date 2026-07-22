@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 const schema = z.object({
   email: z.string({ error: 'Обязательное поле' }).email({ message: 'Некорректный формат данных' }),
   password: z.string({ error: 'Обязательное поле' }).min(6, {
-    message: 'Минимальная длина пароля - 6 символов',
+    message: 'Минимум 6 символов',
   }),
 });
 

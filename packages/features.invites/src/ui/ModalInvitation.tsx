@@ -17,8 +17,9 @@ import { toast } from 'sonner';
 import { useInvitationsList, useAddInvitation, useDeleteInvitation } from 'common.services';
 import { InvitationDataT } from 'common.types';
 import { env } from 'common.env';
+import { PRODUCT_ANALYTICS_EVENTS, trackProductEvent } from 'common.utils';
 
-type InviteAnalyticsSource = 'main' | 'classrooms' | 'classroom' | 'unknown';
+type InviteAnalyticsSource = 'main' | 'classrooms' | 'classroom' | 'students' | 'unknown';
 
 const cleanupBodyScrollLock = () => {
   document.body.style.overflow = '';
@@ -54,6 +55,20 @@ export const ModalInvitation = ({
     return cleanupBodyScrollLock;
   }, [open]);
 
+  const inviteViewedForOpenRef = useRef(false);
+
+  useEffect(() => {
+    if (!open) {
+      inviteViewedForOpenRef.current = false;
+      return;
+    }
+    if (inviteViewedForOpenRef.current) return;
+    inviteViewedForOpenRef.current = true;
+    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_VIEWED, {
+      source: analyticsSource,
+    });
+  }, [open, analyticsSource]);
+
   const { data } = useInvitationsList();
 
   const { isPending: isAdding, mutate: addInvitationMutate } = useAddInvitation();
@@ -61,8 +76,12 @@ export const ModalInvitation = ({
 
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  const handleCopyLink = (link: InvitationDataT['code']) => () => {
+  const handleCopyLink = (link: InvitationDataT['code'], inviteId?: number) => () => {
     navigator.clipboard.writeText(`${env.VITE_APP_DOMAIN}/invite/${link}`);
+    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_LINK_COPIED, {
+      invite_id: inviteId != null ? String(inviteId) : undefined,
+      source: analyticsSource,
+    });
     toast.success('Ссылка скопирована');
     toast.info('Отправьте ссылку ученику');
   };
@@ -134,7 +153,7 @@ export const ModalInvitation = ({
                             variant="none"
                             size="s"
                             className="bg-gray-5 hover:bg-gray-10 text-gray-60 hover:text-gray-80 size-7 shrink-0 rounded-md p-0"
-                            onClick={handleCopyLink(invitation.code)}
+                            onClick={handleCopyLink(invitation.code, invitation.id)}
                             aria-label="Копировать ссылку"
                             data-umami-event="invite-copy-link"
                             data-umami-event-invite-id={invitation.id}

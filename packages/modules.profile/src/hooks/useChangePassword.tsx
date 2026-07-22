@@ -9,7 +9,7 @@ import { useUpdatePassword } from '../services/useUpdatePassword';
 const schema = z
   .object({
     currentPassword: z.string({ error: 'Обязательное поле' }),
-    newPassword: z.string().min(6, { message: 'Пароль должен содержать минимум 6 символов' }),
+    newPassword: z.string().min(6, { message: 'Минимум 6 символов' }),
     confirmPassword: z.string().min(1, { message: 'Обязательное поле' }),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
@@ -54,7 +54,7 @@ export const useChangePassword = () => {
         new_password: newPassword,
       });
 
-      toast('Пароль успешно изменен');
+      toast('Пароль изменён');
       setStage('success');
     } catch (error: any) {
       if (error?.response?.data?.detail === 'Wrong password') {

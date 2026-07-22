@@ -4,6 +4,15 @@ import { Button } from '@xipkg/button';
 import { useCurrentUser, useEmailConfirmationRequest } from 'common.services';
 import { Alert, AlertIcon, AlertContainer, AlertDescription } from '@xipkg/alert';
 import { InfoCircle } from '@xipkg/icons';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  getOnboardingStepMeta,
+  inferEmailConfirmationSource,
+  markOnboardingStartedAt,
+  resolveOnboardingAnalyticsRole,
+  trackOnce,
+  trackProductEvent,
+} from 'common.utils';
 
 const formatTime = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);
@@ -26,6 +35,35 @@ export const EmailPageConfirm = () => {
   const { data: user } = useCurrentUser();
   const email = user?.email || 'вашу почту';
   const { emailConfirmationRequest, isLoading } = useEmailConfirmationRequest();
+  const source = inferEmailConfirmationSource();
+
+  useEffect(() => {
+    const userRole = resolveOnboardingAnalyticsRole(user?.default_layout);
+    const stepMeta = getOnboardingStepMeta('email_confirmation');
+
+    trackOnce('email_confirmation_viewed', () => {
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.EMAIL_CONFIRMATION_VIEWED, {
+        source,
+        onboarding_stage: user?.onboarding_stage ?? 'email-confirmation',
+      });
+    });
+
+    trackOnce('onboarding_started', () => {
+      markOnboardingStartedAt();
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.ONBOARDING_STARTED, {
+        user_role: userRole,
+        onboarding_stage: user?.onboarding_stage ?? 'email-confirmation',
+      });
+    });
+
+    trackOnce('onboarding_step_viewed:email_confirmation', () => {
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.ONBOARDING_STEP_VIEWED, {
+        ...stepMeta,
+        user_role: userRole,
+        onboarding_stage: user?.onboarding_stage ?? 'email-confirmation',
+      });
+    });
+  }, [source, user?.default_layout, user?.onboarding_stage]);
 
   // Вычисляем оставшееся время на основе данных с бэкенда
   const timeRemaining = useMemo(() => {
@@ -57,13 +95,24 @@ export const EmailPageConfirm = () => {
   }, [displayTimeRemaining]);
 
   const handleConfirm = () => {
-    if (displayTimeRemaining > 0 || isLoading) return;
+    if (isLoading) return;
+
+    // Кнопка кликабельна и при cooldown — чтобы зафиксировать blocked-попытки
+    if (displayTimeRemaining > 0) {
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.EMAIL_CONFIRMATION_RESEND_BLOCKED, {
+        reason: 'cooldown',
+        cooldown_seconds_left: displayTimeRemaining,
+        source,
+      });
+      return;
+    }
+
     emailConfirmationRequest.mutate();
   };
 
-  const isButtonDisabled = displayTimeRemaining > 0 || isLoading;
-  const buttonText = displayTimeRemaining > 0 ? 'Отправить ещё раз' : 'Получить новую ссылку';
-  const showHint = displayTimeRemaining === 0 && !isLoading;
+  const isOnCooldown = displayTimeRemaining > 0;
+  const buttonText = isOnCooldown ? 'Отправить ещё раз' : 'Получить новую ссылку';
+  const showHint = !isOnCooldown && !isLoading;
 
   return (
     <EmailPageLayout title="Подтвердите почту">
@@ -75,9 +124,10 @@ export const EmailPageConfirm = () => {
       </div>
       <Button
         size="m"
-        className="mt-16 h-[48px] w-full rounded-xl"
+        className={`mt-16 h-[48px] w-full rounded-xl${isOnCooldown ? 'opacity-60' : ''}`}
         onClick={handleConfirm}
-        disabled={isButtonDisabled}
+        disabled={isLoading}
+        aria-disabled={isOnCooldown || isLoading}
         data-umami-event="email-confirm-button-resend"
       >
         {buttonText}
