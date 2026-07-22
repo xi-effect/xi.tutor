@@ -5,7 +5,7 @@ import { CardsGridSkeleton } from './CardsGridSkeleton';
 import { Card } from '../cards/Card';
 import { ClassroomPropsT } from '../../../types';
 import { ClassroomsEmptyState } from './ClassroomsEmptyState';
-import { VirtualGridlList } from './VirtualGridlList';
+import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 
 type TCardsGridProps = {
   items: ClassroomPropsT[];
@@ -86,37 +86,20 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
     );
   }
 
-  if (isMobile) {
-    return (
-      <div ref={parentRef} className="w-full px-5">
-        <div className="grid grid-cols-1 gap-5">
-          {items.map((item) => (
-            <Card key={item.id} {...item} />
-          ))}
-        </div>
-        <div ref={sentinelRef} className="h-px w-full" aria-hidden />
-        <ListFooter
-          isFetchingNextPage={isFetchingNextPage}
-          hasNextPage={hasNextPage}
-          itemsCount={items.length}
-        />
-      </div>
-    );
-  }
-
   return (
-    <div ref={parentRef} className="h-full min-h-0 w-full overflow-auto pl-4">
-      <VirtualGridlList
+    <div ref={parentRef}>
+      <GridVirtualizer
         items={items}
         parentRef={parentRef}
         gap={20}
-        defaultRowHeight={145}
+        defaultRowHeight={126}
         minItemWidth={320}
         maxColumns={4}
+        isSingleColumn={isMobile}
         renderItem={(item) => <Card {...item} />}
       />
 
-      <div ref={sentinelRef} className="h-px w-full" aria-hidden />
+      <div ref={sentinelRef} className="h-px" aria-hidden />
       <ListFooter
         isFetchingNextPage={isFetchingNextPage}
         hasNextPage={hasNextPage}

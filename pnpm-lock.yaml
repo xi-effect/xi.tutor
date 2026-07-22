@@ -4185,6 +4185,9 @@ importers:
       '@xipkg/dropdown':
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/gridvirtualizer':
+        specifier: 1.0.2
+        version: 1.0.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
         specifier: 3.0.23
         version: 3.0.23(react@19.2.7)
@@ -4808,6 +4811,9 @@ importers:
       '@xipkg/file':
         specifier: 2.0.12
         version: 2.0.12(react@19.2.7)
+      '@xipkg/gridvirtualizer':
+        specifier: 1.0.2
+        version: 1.0.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
         specifier: 3.0.23
         version: 3.0.23(react@19.2.7)
@@ -5017,6 +5023,9 @@ importers:
       '@xipkg/form':
         specifier: 4.2.2
         version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/gridvirtualizer':
+        specifier: 1.0.2
+        version: 1.0.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
         specifier: 3.0.23
         version: 3.0.23(react@19.2.7)
@@ -8945,6 +8954,11 @@ packages:
 
   '@xipkg/form@4.2.2':
     resolution: {integrity: sha512-0WDkNdvTR1NZ2Y2cIo+BPAl0gL6iTT1hsiahsUQw9eaAAasn+9r+wk2a7xTAz7li8knWkdMTPZJ1shHhXgBm7g==}
+    peerDependencies:
+      react: ^19
+
+  '@xipkg/gridvirtualizer@1.0.2':
+    resolution: {integrity: sha512-+yOxPWEL6AxRixGe7Ndf0uXHoYGConwHdiVsMET5MTTYDBSzB2hAT+E7Ws9bj0486seoUalpBq0w/tckSabDxw==}
     peerDependencies:
       react: ^19
 
@@ -15511,6 +15525,13 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
       - '@types/react-dom'
+      - react-dom
+
+  '@xipkg/gridvirtualizer@1.0.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+    dependencies:
+      '@tanstack/react-virtual': 3.13.9(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      react: 19.2.7
+    transitivePeerDependencies:
       - react-dom
 
   '@xipkg/icons@2.7.2(react@19.2.7)':

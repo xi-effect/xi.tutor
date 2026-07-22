@@ -27,7 +27,7 @@ export const TemplateCard = ({
   };
 
   return (
-    <div className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex cursor-pointer justify-between rounded-2xl border p-4">
+    <div className="hover:border-brand-80 border-gray-20 bg-gray-0 flex cursor-pointer justify-between rounded-2xl border p-4">
       <div className="flex flex-1 flex-col gap-4 overflow-hidden">
         <div className="text-l-base flex-1 truncate text-gray-100">{name}</div>
 

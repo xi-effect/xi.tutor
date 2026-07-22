@@ -15,7 +15,7 @@ interface HeaderProps {
 
 export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
   return (
-    <div className="xs:flex-row xs:items-center flex flex-col items-start pb-4">
+    <div className="xs:flex-row xs:items-center flex flex-col items-start">
       <h1 className="text-2xl font-normal text-gray-100">Материалы</h1>
 
       <div className="xs:mt-0 xs:ml-4 xs:w-auto mt-2 flex h-[32px] w-full flex-row items-center gap-2">

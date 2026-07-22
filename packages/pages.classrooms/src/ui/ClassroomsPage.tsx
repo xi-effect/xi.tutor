@@ -12,28 +12,30 @@ export const ClassroomsPage = () => {
   return (
     <div
       className={cn(
-        'bg-gray-5 flex flex-col',
-        isMobile
-          ? 'max-h-[calc(100dvh-64px)] overflow-y-auto overscroll-contain pb-24'
-          : 'h-full min-h-0 flex-1',
+        'bg-gray-5 flex h-full flex-col gap-5',
+        isMobile && 'max-h-[calc(100dvh-64px)]',
       )}
     >
-      <div className="flex shrink-0 flex-col gap-5 px-5 pt-5">
-        <div className="flex h-8 items-center">
-          <DateTimeDisplay />
-        </div>
-        <div className="flex flex-row items-center pb-4">
+      <div className="flex flex-col gap-5 px-5 pt-5">
+        <DateTimeDisplay />
+        <div className="space-between flex items-center">
           <h1 className="text-2xl font-normal text-gray-100">Кабинеты</h1>
 
-          <div className="mr-2 ml-auto flex items-center">
-            {isTutor && <LinkListStudents src="#" />}
-          </div>
-
-          {isTutor && <ButtonsHeader />}
+          {isTutor && (
+            <div className="ml-auto flex items-center gap-2">
+              <LinkListStudents src="#" />
+              <ButtonsHeader />
+            </div>
+          )}
         </div>
       </div>
 
-      <div className={cn(!isMobile && 'min-h-0 flex-1')}>
+      <div
+        className={cn(
+          'min-h-0 flex-1 overflow-auto pr-4 pl-5',
+          isMobile && 'h-[calc(100dvh-168px)]',
+        )}
+      >
         <CardsGridSimple />
       </div>
 

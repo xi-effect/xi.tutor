@@ -10,6 +10,7 @@ import {
   useMaterialsDuplicate,
 } from '../provider/MaterialsDuplicateContext';
 import { MaterialsDuplicate } from 'features.materials.duplicate';
+import { cn, useMediaQuery } from '@xipkg/utils';
 
 const getTabFromUrl = (): 'notes' | 'boards' => {
   if (typeof window === 'undefined') {
@@ -22,6 +23,8 @@ const getTabFromUrl = (): 'notes' | 'boards' => {
 
 const MaterialsPageContent = () => {
   const [activeTab, setActiveTab] = useState<'notes' | 'boards'>(() => getTabFromUrl());
+  const isMobile = useMediaQuery('(max-width: 960px)');
+
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const { materialId, open, closeModal } = useMaterialsDuplicate();
@@ -64,14 +67,23 @@ const MaterialsPageContent = () => {
 
   return (
     <>
-      <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pr-0">
-        <div className="flex min-h-0 flex-1 flex-col">
-          <div className="flex shrink-0 flex-col gap-5 px-5 pt-5">
-            <div className="flex h-8 items-center">
-              <DateTimeDisplay />
-            </div>
-            <Header activeTab={activeTab} onTabChange={handleTabChange} />
-          </div>
+      <div
+        className={cn(
+          'bg-gray-5 flex h-full flex-col gap-5',
+          isMobile && 'max-h-[calc(100dvh-64px)]',
+        )}
+      >
+        <div className="flex flex-col gap-5 px-5 pt-5">
+          <DateTimeDisplay />
+          <Header activeTab={activeTab} onTabChange={handleTabChange} />
+        </div>
+
+        <div
+          className={cn(
+            'min-h-0 flex-1 overflow-auto pr-4 pl-5',
+            isMobile && 'h-[calc(100dvh-168px)]',
+          )}
+        >
           <TabsComponent activeTab={activeTab} />
         </div>
       </div>
