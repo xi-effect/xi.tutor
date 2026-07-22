@@ -18,7 +18,7 @@
     "@xipkg/dropdown": "3.0.12",
     "@xipkg/icons": "3.0.23",
     "@xipkg/input": "2.2.14",
-    "@xipkg/gridvirtualizer": "1.0.0",
+    "@xipkg/gridvirtualizer": "1.0.2",
     "@xipkg/link": "^2.0.12",
     "@xipkg/modal": "4.5.5",
     "@xipkg/scrollarea": "2.2.0",

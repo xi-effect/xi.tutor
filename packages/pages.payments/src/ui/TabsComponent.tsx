@@ -55,31 +55,27 @@ export const TabsComponent = React.memo(
     }, [isTutor, activeTab, onTabChange]);
 
     return (
-      <div className="bg-gray-0 xs:rounded-tl-2xl rounded-none pl-4">
-        <Tabs.Root value={activeTab} onValueChange={onTabChange}>
-          <div className="h-full pt-0">
-            <Tabs.Content value="invoices">
-              <VirtualizedPaymentsTable
-                data={items}
-                columns={defaultColumns}
-                isLoading={isLoading}
-                isFetchingNextPage={isFetchingNextPage}
-                parentRef={parentRef}
-                isError={isError}
-                currentUserRole={currentUserRole}
-                onViewInvoice={onViewInvoice}
-              />
-            </Tabs.Content>
+      <Tabs.Root value={activeTab} onValueChange={onTabChange}>
+        <Tabs.Content value="invoices">
+          <VirtualizedPaymentsTable
+            data={items}
+            columns={defaultColumns}
+            isLoading={isLoading}
+            isFetchingNextPage={isFetchingNextPage}
+            parentRef={parentRef}
+            isError={isError}
+            currentUserRole={currentUserRole}
+            onViewInvoice={onViewInvoice}
+          />
+        </Tabs.Content>
 
-            {/* Скрываем контент последней вкладки для студентов */}
-            {isTutor && (
-              <Tabs.Content value="templates">
-                <TemplatesGrid />
-              </Tabs.Content>
-            )}
-          </div>
-        </Tabs.Root>
-      </div>
+        {/* Скрываем контент последней вкладки для студентов */}
+        {isTutor && (
+          <Tabs.Content value="templates">
+            <TemplatesGrid />
+          </Tabs.Content>
+        )}
+      </Tabs.Root>
     );
   },
 );

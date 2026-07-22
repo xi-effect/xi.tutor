@@ -4180,8 +4180,8 @@ importers:
         specifier: 3.0.12
         version: 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/gridvirtualizer':
-        specifier: 1.0.0
-        version: 1.0.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 1.0.2
+        version: 1.0.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
         specifier: 3.0.23
         version: 3.0.23(react@19.2.7)
@@ -4806,8 +4806,8 @@ importers:
         specifier: 2.0.12
         version: 2.0.12(react@19.2.7)
       '@xipkg/gridvirtualizer':
-        specifier: 1.0.0
-        version: 1.0.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 1.0.2
+        version: 1.0.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
         specifier: 3.0.23
         version: 3.0.23(react@19.2.7)
@@ -5017,6 +5017,9 @@ importers:
       '@xipkg/form':
         specifier: 4.2.2
         version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/gridvirtualizer':
+        specifier: 1.0.2
+        version: 1.0.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
         specifier: 3.0.23
         version: 3.0.23(react@19.2.7)
@@ -8945,8 +8948,8 @@ packages:
     peerDependencies:
       react: ^19
 
-  '@xipkg/gridvirtualizer@1.0.0':
-    resolution: {integrity: sha512-ieNl6ZrfRmAqe2sDlN6LdlG8utujBMEgqL8h2R3gay4LRQzfQ/Thkc1XXb17nlhYr4rtrp2Fzd/tNbvJQeG2oQ==}
+  '@xipkg/gridvirtualizer@1.0.2':
+    resolution: {integrity: sha512-+yOxPWEL6AxRixGe7Ndf0uXHoYGConwHdiVsMET5MTTYDBSzB2hAT+E7Ws9bj0486seoUalpBq0w/tckSabDxw==}
     peerDependencies:
       react: ^19
 
@@ -15515,7 +15518,7 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/gridvirtualizer@1.0.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/gridvirtualizer@1.0.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@tanstack/react-virtual': 3.13.9(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7

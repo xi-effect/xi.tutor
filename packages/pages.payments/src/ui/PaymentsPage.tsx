@@ -15,6 +15,7 @@ import { UserRoleT } from 'common.api';
 import { DateTimeDisplay } from 'common.ui';
 import { MobileTutorActionButton } from 'features.invites';
 import { ModalTemplate } from './Templates';
+import { cn, useMediaQuery } from '@xipkg/utils';
 
 export const PaymentsPage = () => {
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
@@ -28,6 +29,7 @@ export const PaymentsPage = () => {
     payment: RolePaymentT<'tutor'> | RolePaymentT<'student'> | null;
   }>({ isOpen: false, payment: null });
   const processedInvoiceIdRef = useRef<number | null>(null);
+  const isMobile = useMediaQuery('(max-width: 960px)');
 
   const navigate = useNavigate();
   const search = useSearch({ strict: false }) as {
@@ -179,26 +181,21 @@ export const PaymentsPage = () => {
   );
 
   return (
-    <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pr-0">
-      <div className="xs:pl-5 flex h-screen flex-col pl-0">
-        <div className="xs:pl-0 flex flex-col gap-5 pt-5 pr-5 pl-5">
-          <div className="flex h-8 items-center">
-            <DateTimeDisplay />
-          </div>
-          <Header
-            onCreateInvoice={onOpenInvoiceModal}
-            activeTab={activeTab}
-            onTabChange={onTabChange}
-          />
-        </div>
-        <TabsComponent
-          onApprovePayment={onOpenPaymentApproveModal}
+    <div className={cn('bg-gray-5 flex h-full flex-col', isMobile && 'max-h-[calc(100dvh-64px)]')}>
+      <div className="flex flex-col gap-5 px-5 pt-5">
+        <DateTimeDisplay />
+        <Header
+          onCreateInvoice={onOpenInvoiceModal}
           activeTab={activeTab}
           onTabChange={onTabChange}
-          onViewInvoice={onOpenInvoiceDetailsModal}
         />
       </div>
-
+      <TabsComponent
+        onApprovePayment={onOpenPaymentApproveModal}
+        activeTab={activeTab}
+        onTabChange={onTabChange}
+        onViewInvoice={onOpenInvoiceDetailsModal}
+      />
       {invoiceDetailsModalState.isOpen && invoiceDetailsModalState.payment && (
         <PaymentInvoiceDetailsModal
           open={invoiceDetailsModalState.isOpen}

@@ -16,7 +16,7 @@ export const Notes = () => {
   const notFoundItems = !items.length && !isLoading && !isError;
 
   return (
-    <div ref={parentRef} className="min-h-0 flex-1 overflow-auto px-4">
+    <div ref={parentRef}>
       {notFoundItems ? (
         <MaterialsTabEmptyState
           title="Пока нет заметок"
@@ -32,12 +32,7 @@ export const Notes = () => {
           maxColumns={4}
           isSingleColumn={isMobile}
           renderItem={(material) => (
-            <MaterialsCard
-              key={material.id}
-              {...material}
-              onDuplicate={openModal}
-              className="w-full min-w-auto"
-            />
+            <MaterialsCard {...material} onDuplicate={openModal} className="w-full min-w-auto" />
           )}
         />
       )}

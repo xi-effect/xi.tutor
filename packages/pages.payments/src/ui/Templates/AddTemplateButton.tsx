@@ -13,10 +13,10 @@ export const AddTemplateButton = () => {
     <>
       <div
         onClick={handleAddTemplate}
-        className="hover:bg-gray-5 border-gray-30 bg-gray-0 flex min-h-[97px] cursor-pointer flex-row items-center justify-between rounded-2xl border p-4 max-[960px]:hidden"
+        className="group hover:border-brand-80 border-gray-20 bg-gray-0 flex min-h-[106px] cursor-pointer items-center justify-between rounded-2xl border p-4 max-[960px]:hidden"
       >
         <span className="text-l-base text-gray-80">Создать</span>
-        <Add className="fill-gray-80" />
+        <Add className="fill-gray-80 group-hover:fill-brand-80" />
       </div>
       <ModalTemplate isOpen={modalOpen} onClose={() => setModalOpen(false)} />
     </>

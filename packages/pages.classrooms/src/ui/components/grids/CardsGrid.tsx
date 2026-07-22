@@ -87,7 +87,7 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
   }
 
   return (
-    <div ref={parentRef} className="h-full min-h-0 w-full overflow-auto px-4">
+    <div ref={parentRef}>
       <GridVirtualizer
         items={items}
         parentRef={parentRef}
@@ -99,7 +99,7 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
         renderItem={(item) => <Card {...item} />}
       />
 
-      <div ref={sentinelRef} className="h-px w-full" aria-hidden />
+      <div ref={sentinelRef} className="h-px" aria-hidden />
       <ListFooter
         isFetchingNextPage={isFetchingNextPage}
         hasNextPage={hasNextPage}
