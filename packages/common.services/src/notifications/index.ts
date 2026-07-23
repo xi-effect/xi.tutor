@@ -11,6 +11,7 @@ export { useChangeContactsVisibility } from './useChangeContactsVisibility';
 export { useSystemNotificationSettings } from './useSystemNotificationSettings';
 export * from './webNotifications';
 export { useCreateTgConnection } from './useCreateTgConnection';
+export { useTgConnection } from './useTgConnection';
 export { useDeleteDeliveryMethod } from './useDeleteDeliveryMethod';
 export { useGetDeliveryMethods, useGetNotificationsStatus } from './useGetDeliveryMethods';
 export { useCreateVkConnection } from './useCreateVkConnection';
@@ -20,7 +21,7 @@ export {
   loadVkOpenApi,
   renderVkAllowMessagesWidget,
   clearVkAllowMessagesWidget,
-  VK_ALLOW_MESSAGES_WIDGET_ELEMENT_ID,
+  VK_ALLOW_MESSAGES_WIDGET_HEIGHT,
 } from './vkOpenApi';
 export { NOTIFICATION_GROUP_LABELS, NOTIFICATION_GROUP_ORDER } from './notificationGroupLabels';
 export { useGetUnreadCount } from './useGetUnreadCount';

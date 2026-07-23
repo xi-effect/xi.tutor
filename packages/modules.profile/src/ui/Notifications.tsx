@@ -4,7 +4,7 @@ import { TelegramFilled, MailRounded, Notification, VK, Trash } from '@xipkg/ico
 import { Toggle } from '@xipkg/toggle';
 import { Button } from '@xipkg/button';
 import { useMediaQuery } from '@xipkg/utils';
-import { VkAllowMessagesWidget } from 'common.ui';
+import { VkConnectButton } from 'common.ui';
 
 import { NotificationsToggles } from './NotificationsToggles';
 import { useNotificationsStatus } from '../hooks';
@@ -24,20 +24,108 @@ export const Notifications = () => {
   const { isSupported, permission, enabled, setEnabled, requestPermission } =
     useSystemNotificationSettings();
 
-  const { handleConnectTg, tgConnectionStatus, isTgConnectionActive, tgActionButton } =
-    useNotificationsStatus();
+  const { tgConnectionStatus, isTgConnectionActive, tgActionButton } = useNotificationsStatus();
 
   const {
-    isConnected: isVkConnected,
+    vk: vkDeliveryMethod,
+    isActive: isVkConnectionActive,
+    isBlocked: isVkConnectionBlocked,
+    isReplaced: isVkConnectionReplaced,
+    isNotConnected: isVkNotConnected,
     isPending: isVkPending,
+    isWidgetReady: isVkWidgetReady,
+    isAwaitingConfirmation: isVkAwaitingConfirmation,
     connectionData: vkConnectionData,
     handleConnect: handleConnectVk,
-    handleCheckConnection: handleCheckVkConnection,
+    handleWidgetInteraction: handleVkWidgetInteraction,
   } = useVkConnection();
   const { handleDisconnectVk } = useDisconnectVk();
 
   const isEmailConnected = deliveryMethods?.email !== null && deliveryMethods?.email !== undefined;
-  const isVkConnectionActive = deliveryMethods?.vk?.delivery_method.status === 'active';
+
+  const vkConnectionStatus = [
+    {
+      condition: isVkNotConnected && !isVkAwaitingConfirmation,
+      text: 'Не подключен',
+      color: 'text-gray-80',
+    },
+    {
+      condition: isVkAwaitingConfirmation,
+      text: 'Ожидаем подтверждение во ВКонтакте…',
+      color: 'text-gray-80',
+    },
+    {
+      condition: isVkConnectionActive,
+      text: vkDeliveryMethod?.related_contact?.title || 'Подключен',
+      color: 'text-gray-80',
+    },
+    {
+      condition: isVkConnectionBlocked,
+      text: 'Разрешите сообщения от сообщества ВКонтакте или удалите привязку и подключите заново',
+      color: 'text-red-80',
+    },
+    {
+      condition: isVkConnectionReplaced,
+      text: 'Удалите текущую привязку и подключите заново',
+      color: 'text-orange-60',
+    },
+  ];
+
+  const vkActionButton = () => {
+    if (isVkConnectionActive) {
+      return (
+        <Button
+          variant="none"
+          type="button"
+          onClick={handleDisconnectVk}
+          className="ml-auto shrink-0 bg-transparent"
+        >
+          <Trash className="fill-gray-80 pointer" />
+          <span className="sr-only">Удалить</span>
+        </Button>
+      );
+    }
+
+    if (isVkConnectionBlocked) {
+      return (
+        <VkConnectButton
+          label={isVkAwaitingConfirmation ? 'Ожидаем…' : 'Разблокировать'}
+          isPreparing={isVkPending && !isVkWidgetReady}
+          isAwaitingConfirmation={isVkAwaitingConfirmation}
+          groupId={vkConnectionData?.group_id}
+          connectionKey={vkConnectionData?.key}
+          onFallbackClick={handleConnectVk}
+          onWidgetInteraction={handleVkWidgetInteraction}
+        />
+      );
+    }
+
+    if (isVkConnectionReplaced) {
+      return (
+        <VkConnectButton
+          label={isVkAwaitingConfirmation ? 'Ожидаем…' : 'Подключить заново'}
+          isPreparing={isVkPending && !isVkWidgetReady}
+          isAwaitingConfirmation={isVkAwaitingConfirmation}
+          groupId={vkConnectionData?.group_id}
+          connectionKey={vkConnectionData?.key}
+          onFallbackClick={handleConnectVk}
+          onWidgetInteraction={handleVkWidgetInteraction}
+        />
+      );
+    }
+
+    return (
+      <VkConnectButton
+        label={isVkAwaitingConfirmation ? 'Ожидаем…' : 'Подключить'}
+        isPreparing={isVkPending && !isVkWidgetReady}
+        isAwaitingConfirmation={isVkAwaitingConfirmation}
+        groupId={vkConnectionData?.group_id}
+        connectionKey={vkConnectionData?.key}
+        onFallbackClick={handleConnectVk}
+        onWidgetInteraction={handleVkWidgetInteraction}
+      />
+    );
+  };
 
   const [requestingPermission, setRequestingPermission] = useState(false);
   const handleRequestPermission = async () => {
@@ -50,15 +138,19 @@ export const Notifications = () => {
   };
 
   return (
-    <>
-      {!isMobile && <h1 className="mb-4 text-3xl font-semibold dark:text-gray-100">Уведомления</h1>}
+    <div className="w-full min-w-0">
+      {!isMobile && (
+        <h1 className="bg-gray-0 sticky top-0 z-10 mb-4 pb-2 text-3xl font-semibold dark:text-gray-100">
+          Уведомления
+        </h1>
+      )}
 
-      <div className="flex flex-col gap-4">
+      <div className="flex w-full min-w-0 flex-col gap-4">
         {isSupported && (
-          <div className="border-gray-30 flex w-full flex-col gap-2 rounded-2xl border p-1">
+          <div className="border-gray-30 bg-gray-0 flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
             <div className="hover:bg-gray-5 flex flex-row items-center gap-4 rounded-xl bg-transparent p-3">
-              <Notification className="fill-brand-80 h-8 w-8" />
-              <div className="flex flex-1 flex-col gap-1">
+              <Notification className="fill-brand-80 h-8 w-8 shrink-0" />
+              <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <span className="w-fit font-semibold dark:text-gray-100">
                   Системные уведомления
                 </span>
@@ -69,20 +161,21 @@ export const Notifications = () => {
               </div>
             </div>
             <div className="flex flex-col gap-2 px-3 pb-3">
-              <div className="flex flex-row items-center justify-between p-2">
-                <span className="font-inter text-m-base font-medium dark:text-gray-100">
+              <div className="flex flex-row items-center justify-between gap-4 p-2">
+                <span className="font-inter text-m-base min-w-0 flex-1 font-medium dark:text-gray-100">
                   Показывать системные уведомления
                 </span>
                 <Toggle
                   checked={enabled}
                   size="l"
+                  className="shrink-0"
                   onCheckedChange={setEnabled}
                   disabled={permission !== 'granted'}
                 />
               </div>
               {permission !== 'granted' && (
                 <div className="flex flex-row items-center justify-between gap-2 p-2">
-                  <span className="text-gray-80 dark:text-gray-80 font-inter text-s-base">
+                  <span className="text-gray-80 dark:text-gray-80 font-inter text-s-base min-w-0">
                     {permission === 'denied'
                       ? 'Разрешение отклонено. Разрешите уведомления в настройках браузера.'
                       : 'Выдайте разрешение, чтобы получать уведомления в другой вкладке или когда окно свёрнуто.'}
@@ -90,6 +183,7 @@ export const Notifications = () => {
                   {permission !== 'denied' && (
                     <Button
                       size="s"
+                      className="shrink-0"
                       onClick={handleRequestPermission}
                       disabled={requestingPermission}
                     >
@@ -123,97 +217,55 @@ export const Notifications = () => {
           </div>
         )}
 
-        <div className="border-gray-30 flex w-full flex-col gap-2 rounded-2xl border p-1">
-          <div
-            onClick={() => handleConnectTg()}
-            className="hover:bg-gray-5 flex cursor-pointer flex-row items-center gap-4 rounded-xl bg-transparent p-2"
-          >
-            <div className="mt-2 flex-1 sm:mt-0 sm:flex-0">
-              <TelegramFilled size="lg" className="fill-brand-80 h-8 w-8" />
+        <div className="border-gray-30 bg-gray-0 flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
+          <div className="hover:bg-gray-5 flex flex-row items-center gap-4 rounded-xl bg-transparent p-2">
+            <TelegramFilled className="fill-brand-80 size-8 shrink-0" />
+
+            <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
+              <span className="w-fit leading-5 font-semibold dark:text-gray-100">Telegram</span>
+              {tgConnectionStatus
+                .filter(({ condition }) => condition)
+                .map(({ text, color }) => (
+                  <span key={text} className={`${color} text-xs-base sm:text-s-base leading-4`}>
+                    {text || user?.username}
+                  </span>
+                ))}
             </div>
 
-            <div className="flex w-full flex-col items-center gap-1 sm:flex-row">
-              <div className="items-star flex flex-col gap-1">
-                <span className="w-fit font-semibold dark:text-gray-100">Telegram</span>
-                {tgConnectionStatus
-                  .filter(({ condition }) => condition)
-                  .map(({ text, color }) => (
-                    <span key={text} className={`${color} text-xs-base sm:text-s-base`}>
-                      {text || user?.username}
-                    </span>
-                  ))}
-              </div>
-            </div>
-            {tgActionButton()}
+            <div className="flex h-8 shrink-0 items-center">{tgActionButton()}</div>
           </div>
 
           {isTgConnectionActive && <NotificationsToggles deliveryMethodKind="telegram" />}
         </div>
 
-        <div className="border-gray-30 flex w-full flex-col gap-2 rounded-2xl border p-1">
+        <div className="border-gray-30 bg-gray-0 flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
           <div className="hover:bg-gray-5 flex flex-row items-center gap-4 rounded-xl bg-transparent p-2">
-            <VK className="fill-brand-80 h-8 w-8" />
+            <VK className="size-8 shrink-0 !text-[#0077FF]" />
 
-            <div className="flex w-full flex-col gap-1 sm:flex-row sm:items-center">
-              <div className="flex flex-col gap-1">
-                <span className="w-fit font-semibold dark:text-gray-100">ВКонтакте</span>
-                {isVkConnected ? (
-                  <span className="text-gray-80 text-xs-base sm:text-s-base">
-                    {deliveryMethods?.vk?.related_contact?.title}
+            <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
+              <span className="w-fit leading-5 font-semibold dark:text-gray-100">ВКонтакте</span>
+              {vkConnectionStatus
+                .filter(({ condition }) => condition)
+                .map(({ text, color }) => (
+                  <span key={text} className={`${color} text-xs-base sm:text-s-base leading-4`}>
+                    {text}
                   </span>
-                ) : (
-                  <span className="text-gray-80 text-xs-base sm:text-s-base">Не подключен</span>
-                )}
-              </div>
-
-              {isVkConnectionActive ? (
-                <Button
-                  variant="none"
-                  type="button"
-                  onClick={handleDisconnectVk}
-                  className="ml-auto bg-transparent"
-                >
-                  <Trash className="fill-gray-80 pointer" />
-                  <span className="sr-only">Удалить</span>
-                </Button>
-              ) : vkConnectionData ? null : isVkPending ? (
-                <span className="text-gray-60 dark:text-gray-80 ml-auto py-1 sm:py-3">
-                  Формируем ключ…
-                </span>
-              ) : (
-                <Button
-                  variant="none"
-                  className="text-brand-100 ml-auto h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
-                  onClick={handleConnectVk}
-                >
-                  Подключить
-                </Button>
-              )}
+                ))}
             </div>
+
+            <div className="flex h-8 shrink-0 items-center">{vkActionButton()}</div>
           </div>
-
-          {vkConnectionData && !isVkConnected && (
-            <div className="flex flex-col gap-3 px-3 pb-3">
-              <VkAllowMessagesWidget
-                communityId={vkConnectionData.community_id}
-                connectionKey={vkConnectionData.key}
-              />
-              <Button size="s" className="self-start" onClick={handleCheckVkConnection}>
-                Проверить подключение
-              </Button>
-            </div>
-          )}
 
           {isVkConnectionActive && <NotificationsToggles deliveryMethodKind="vk" />}
         </div>
 
-        <div className="border-gray-30 flex w-full flex-col gap-2 rounded-2xl border p-1">
-          <div className="hover:bg-gray-5 flex h-[66px] cursor-pointer flex-row items-center gap-4 rounded-xl bg-transparent p-3">
-            <MailRounded className="fill-brand-80" />
+        <div className="border-gray-30 bg-gray-0 flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
+          <div className="hover:bg-gray-5 flex flex-row items-center gap-4 rounded-xl bg-transparent p-3">
+            <MailRounded className="fill-brand-80 shrink-0" />
 
-            <div className="items-star flex flex-col">
+            <div className="flex min-w-0 flex-1 flex-col">
               <span className="w-fit font-semibold dark:text-gray-100">Электронная почта</span>
-              <span className="text-gray-80 dark:text-gray-80 font-inter text-xs font-normal">
+              <span className="text-gray-80 dark:text-gray-80 font-inter truncate text-xs font-normal">
                 {user?.email ||
                   deliveryMethods?.email?.related_contact?.title ||
                   'example@example.com'}
@@ -224,6 +276,6 @@ export const Notifications = () => {
           {isEmailConnected && <NotificationsToggles deliveryMethodKind="email" />}
         </div>
       </div>
-    </>
+    </div>
   );
 };

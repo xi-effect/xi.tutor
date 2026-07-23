@@ -15,7 +15,10 @@ export type DeliveryMethodEnriched = {
     title: string;
     is_public: boolean;
   } | null;
-  enabled_notification_groups: NotificationGroupKind[];
+  /** Актуальный контракт на проде */
+  enabled_notification_categories?: NotificationGroupKind[];
+  /** @deprecated старое имя из черновика OpenAPI */
+  enabled_notification_groups?: NotificationGroupKind[];
 };
 
 export type DeliveryMethodsResponse = {
@@ -24,8 +27,10 @@ export type DeliveryMethodsResponse = {
   vk: DeliveryMethodEnriched | null;
 };
 
+/** Ответ POST .../delivery-methods/vk/connection-requests/ */
 export type VKConnectionStartResponse = {
-  community_id: number;
+  /** ID сообщества VK для виджета AllowMessagesFromCommunity */
+  group_id: number;
   key: string;
 };
 

@@ -16,6 +16,9 @@ declare global {
 }
 
 let loadPromise: Promise<void> | null = null;
+let renderQueue: Promise<void> = Promise.resolve();
+
+export const VK_ALLOW_MESSAGES_WIDGET_HEIGHT = 30;
 
 export function loadVkOpenApi(): Promise<void> {
   if (typeof window !== 'undefined' && window.VK?.Widgets) {
@@ -54,31 +57,36 @@ export function loadVkOpenApi(): Promise<void> {
   return loadPromise;
 }
 
-export const VK_ALLOW_MESSAGES_WIDGET_ELEMENT_ID = 'vk_allow_messages_from_community';
-
 export async function renderVkAllowMessagesWidget({
+  elementId,
   communityId,
   connectionKey,
 }: {
+  elementId: string;
   communityId: number;
   connectionKey: string;
 }) {
-  await loadVkOpenApi();
+  const run = async () => {
+    await loadVkOpenApi();
 
-  const container = document.getElementById(VK_ALLOW_MESSAGES_WIDGET_ELEMENT_ID);
-  if (!container) return;
+    const container = document.getElementById(elementId);
+    if (!container) return;
 
-  container.innerHTML = '';
+    container.innerHTML = '';
 
-  window.VK?.Widgets?.AllowMessagesFromCommunity(
-    VK_ALLOW_MESSAGES_WIDGET_ELEMENT_ID,
-    { height: 30, key: connectionKey },
-    communityId,
-  );
+    window.VK?.Widgets?.AllowMessagesFromCommunity(
+      elementId,
+      { height: VK_ALLOW_MESSAGES_WIDGET_HEIGHT, key: connectionKey },
+      communityId,
+    );
+  };
+
+  renderQueue = renderQueue.then(run, run);
+  await renderQueue;
 }
 
-export function clearVkAllowMessagesWidget() {
-  const container = document.getElementById(VK_ALLOW_MESSAGES_WIDGET_ELEMENT_ID);
+export function clearVkAllowMessagesWidget(elementId: string) {
+  const container = document.getElementById(elementId);
   if (container) {
     container.innerHTML = '';
   }

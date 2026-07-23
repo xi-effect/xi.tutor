@@ -3,7 +3,7 @@ import {
   NOTIFICATION_GROUP_LABELS,
   NOTIFICATION_GROUP_ORDER,
   useChangeContactsVisibility,
-  useGetNotificationsStatus,
+  useGetDeliveryMethods,
   useToggleNotificationGroup,
 } from 'common.services';
 import { DeliveryMethodKind, NotificationGroupKind } from 'common.types';
@@ -13,13 +13,16 @@ type NotificationsTogglesPropsT = {
 };
 
 export const NotificationsToggles = ({ deliveryMethodKind }: NotificationsTogglesPropsT) => {
-  const { data } = useGetNotificationsStatus();
+  const { data } = useGetDeliveryMethods();
   const { mutate: toggleGroup, isPending, variables } = useToggleNotificationGroup();
   const { mutate: changeVisibility, isPending: isVisibilityPending } =
     useChangeContactsVisibility();
 
   const deliveryMethod = data?.[deliveryMethodKind];
-  const enabledGroups = deliveryMethod?.enabled_notification_groups ?? [];
+  const enabledGroups =
+    deliveryMethod?.enabled_notification_categories ??
+    deliveryMethod?.enabled_notification_groups ??
+    [];
 
   const handleToggleGroup = (notificationGroupKind: NotificationGroupKind, checked: boolean) => {
     toggleGroup({
@@ -35,10 +38,10 @@ export const NotificationsToggles = ({ deliveryMethodKind }: NotificationsToggle
     variables?.notificationGroupKind === notificationGroupKind;
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex w-full min-w-0 flex-col gap-1 px-1 pb-1">
       {deliveryMethodKind === 'telegram' && deliveryMethod?.related_contact && (
-        <div className="flex flex-row items-center justify-between p-3">
-          <div className="flex flex-col gap-1">
+        <div className="flex w-full min-w-0 flex-row items-center justify-between gap-4 p-3">
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
             <span className="font-inter text-m-base font-medium dark:text-gray-100">
               Отображать ник в Telegram в профиле
             </span>
@@ -49,6 +52,7 @@ export const NotificationsToggles = ({ deliveryMethodKind }: NotificationsToggle
           <Toggle
             checked={deliveryMethod.related_contact.is_public}
             size="l"
+            className="shrink-0"
             onCheckedChange={(checked) => changeVisibility(checked)}
             disabled={isVisibilityPending}
           />
@@ -62,9 +66,9 @@ export const NotificationsToggles = ({ deliveryMethodKind }: NotificationsToggle
         return (
           <div
             key={notificationGroupKind}
-            className="flex flex-row items-center justify-between p-3"
+            className="flex w-full min-w-0 flex-row items-center justify-between gap-4 p-3"
           >
-            <div className="flex flex-col gap-1">
+            <div className="flex min-w-0 flex-1 flex-col gap-1">
               <span className="font-inter text-m-base font-medium dark:text-gray-100">{title}</span>
               <span className="text-gray-80 dark:text-gray-80 font-inter text-s-base font-normal">
                 {description}
@@ -73,6 +77,7 @@ export const NotificationsToggles = ({ deliveryMethodKind }: NotificationsToggle
             <Toggle
               checked={isEnabled}
               size="l"
+              className="shrink-0"
               onCheckedChange={(checked) => handleToggleGroup(notificationGroupKind, checked)}
               disabled={isGroupPending(notificationGroupKind)}
             />

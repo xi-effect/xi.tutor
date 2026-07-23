@@ -38,12 +38,12 @@ const notificationsApiConfig = {
   },
   EnableNotificationGroup: {
     getUrl: (deliveryMethodKind: string, notificationGroupKind: string) =>
-      `${deliveryMethodsBaseUrl}/${deliveryMethodKind}/enabled-notification-groups/${notificationGroupKind}/`,
+      `${deliveryMethodsBaseUrl}/${deliveryMethodKind}/enabled-notification-categories/${notificationGroupKind}/`,
     method: HttpMethod.PUT,
   },
   DisableNotificationGroup: {
     getUrl: (deliveryMethodKind: string, notificationGroupKind: string) =>
-      `${deliveryMethodsBaseUrl}/${deliveryMethodKind}/enabled-notification-groups/${notificationGroupKind}/`,
+      `${deliveryMethodsBaseUrl}/${deliveryMethodKind}/enabled-notification-categories/${notificationGroupKind}/`,
     method: HttpMethod.DELETE,
   },
 

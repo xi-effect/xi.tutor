@@ -161,7 +161,7 @@ export const SideBarItems = () => {
             </SidebarTrigger>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex w-full min-w-0 items-center">
             <DesktopUserMenu
               withOutText={isCollapsed}
               userId={user?.id || 0}
