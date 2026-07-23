@@ -1,74 +1,89 @@
 import { Toggle } from '@xipkg/toggle';
-import { useChangeContactsVisibility, useGetNotificationsStatus } from 'common.services';
-
-type TypesMessengersT = 'telegram' | 'whatsapp' | 'email';
+import {
+  NOTIFICATION_GROUP_LABELS,
+  NOTIFICATION_GROUP_ORDER,
+  useChangeContactsVisibility,
+  useGetDeliveryMethods,
+  useToggleNotificationGroup,
+} from 'common.services';
+import { DeliveryMethodKind, NotificationGroupKind } from 'common.types';
 
 type NotificationsTogglesPropsT = {
-  type: TypesMessengersT;
+  deliveryMethodKind: DeliveryMethodKind;
 };
 
-const typeMap: Record<string, string> = {
-  telegram: 'Telegram',
-  whatsapp: 'Whatsapp',
-  email: 'Email',
-};
+export const NotificationsToggles = ({ deliveryMethodKind }: NotificationsTogglesPropsT) => {
+  const { data } = useGetDeliveryMethods();
+  const { mutate: toggleGroup, isPending, variables } = useToggleNotificationGroup();
+  const { mutate: changeVisibility, isPending: isVisibilityPending } =
+    useChangeContactsVisibility();
 
-export const NotificationsToggles = ({ type }: NotificationsTogglesPropsT) => {
-  const nameType = typeMap[type] || 'Email';
+  const deliveryMethod = data?.[deliveryMethodKind];
+  const enabledGroups =
+    deliveryMethod?.enabled_notification_categories ??
+    deliveryMethod?.enabled_notification_groups ??
+    [];
 
-  const { data } = useGetNotificationsStatus();
-  const { mutate, isPending } = useChangeContactsVisibility();
+  const handleToggleGroup = (notificationGroupKind: NotificationGroupKind, checked: boolean) => {
+    toggleGroup({
+      deliveryMethodKind,
+      notificationGroupKind,
+      enabled: checked,
+    });
+  };
+
+  const isGroupPending = (notificationGroupKind: NotificationGroupKind) =>
+    isPending &&
+    variables?.deliveryMethodKind === deliveryMethodKind &&
+    variables?.notificationGroupKind === notificationGroupKind;
 
   return (
-    <>
-      <div className="flex flex-col gap-2">
-        {type !== 'email' && (
-          <div className="flex flex-row items-center justify-between p-3">
-            <div className="flex flex-col gap-1">
-              <span className="font-inter text-m-base font-medium dark:text-gray-100">
-                Отображать ник в {nameType} в профиле
-              </span>
+    <div className="flex w-full min-w-0 flex-col gap-1 px-1 pb-1">
+      {deliveryMethodKind === 'telegram' && deliveryMethod?.related_contact && (
+        <div className="flex w-full min-w-0 flex-row items-center justify-between gap-4 p-3">
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <span className="font-inter text-m-base font-medium dark:text-gray-100">
+              Отображать ник в Telegram в профиле
+            </span>
+            <span className="text-gray-80 dark:text-gray-80 font-inter text-s-base font-normal">
+              Другие участники увидят ваши контакты
+            </span>
+          </div>
+          <Toggle
+            checked={deliveryMethod.related_contact.is_public}
+            size="l"
+            className="shrink-0"
+            onCheckedChange={(checked) => changeVisibility(checked)}
+            disabled={isVisibilityPending}
+          />
+        </div>
+      )}
 
+      {NOTIFICATION_GROUP_ORDER.map((notificationGroupKind) => {
+        const { title, description } = NOTIFICATION_GROUP_LABELS[notificationGroupKind];
+        const isEnabled = enabledGroups.includes(notificationGroupKind);
+
+        return (
+          <div
+            key={notificationGroupKind}
+            className="flex w-full min-w-0 flex-row items-center justify-between gap-4 p-3"
+          >
+            <div className="flex min-w-0 flex-1 flex-col gap-1">
+              <span className="font-inter text-m-base font-medium dark:text-gray-100">{title}</span>
               <span className="text-gray-80 dark:text-gray-80 font-inter text-s-base font-normal">
-                Другие участники увидят ваши контакты
+                {description}
               </span>
             </div>
-
             <Toggle
-              checked={data?.telegram.contact.is_public}
+              checked={isEnabled}
               size="l"
-              onCheckedChange={(checked) => mutate(checked)}
-              disabled={isPending}
+              className="shrink-0"
+              onCheckedChange={(checked) => handleToggleGroup(notificationGroupKind, checked)}
+              disabled={isGroupPending(notificationGroupKind)}
             />
           </div>
-        )}
-
-        {/* <div className="flex flex-row items-center justify-between p-3">
-          <div className="flex flex-col gap-1">
-            <span className="font-inter text-m-base font-medium dark:text-gray-100">
-              Начало занятия
-            </span>
-
-            <span className="text-gray-80 dark:text-gray-80 font-inter text-s-base font-normal">
-              Позволяет участникам просматривать все категории
-            </span>
-          </div>
-
-          <Toggle size="l" className="dark:[&>span]:bg-gray-100" />
-        </div> */}
-
-        {/* <div className="flex flex-row items-center justify-between p-3">
-          <div className="flex flex-col gap-1">
-            <span className="font-inter text-m-base font-medium dark:text-gray-100">Оплата</span>
-
-            <span className="text-gray-80 font-inter text-s-base font-normal">
-              Позволяет участникам редактировать права ролей, которые ниже их самой роли
-            </span>
-          </div>
-
-          <Toggle size="l" className="dark:[&>span]:bg-gray-100" />
-        </div> */}
-      </div>
-    </>
+        );
+      })}
+    </div>
   );
 };

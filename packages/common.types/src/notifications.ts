@@ -1,16 +1,41 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export type NotificationsSettingsT = {
-  telegram: {
-    connection: {
-      status: 'active' | 'blocked' | 'replaced';
-    };
-    contact: {
-      link: string;
-      title: string;
-      is_public: boolean;
-    };
+
+export type NotificationGroupKind = 'classrooms' | 'invoices' | 'events' | 'event_reminders';
+
+export type DeliveryMethodKind = 'email' | 'telegram' | 'vk';
+
+export type DeliveryMethodStatus = 'active' | 'blocked' | 'replaced';
+
+export type DeliveryMethodEnriched = {
+  delivery_method: {
+    status: DeliveryMethodStatus;
   };
+  related_contact: {
+    link: string;
+    title: string;
+    is_public: boolean;
+  } | null;
+  /** Актуальный контракт на проде */
+  enabled_notification_categories?: NotificationGroupKind[];
+  /** @deprecated старое имя из черновика OpenAPI */
+  enabled_notification_groups?: NotificationGroupKind[];
 };
+
+export type DeliveryMethodsResponse = {
+  email: DeliveryMethodEnriched | null;
+  telegram: DeliveryMethodEnriched | null;
+  vk: DeliveryMethodEnriched | null;
+};
+
+/** Ответ POST .../delivery-methods/vk/connection-requests/ */
+export type VKConnectionStartResponse = {
+  /** ID сообщества VK для виджета AllowMessagesFromCommunity */
+  group_id: number;
+  key: string;
+};
+
+/** @deprecated Используйте DeliveryMethodsResponse */
+export type NotificationsSettingsT = DeliveryMethodsResponse;
 
 /** Инстанс занятия: одноразовое создание / перенос / отмена / напоминание о конкретном занятии */
 export type ClassroomEventInstanceNotificationKind =

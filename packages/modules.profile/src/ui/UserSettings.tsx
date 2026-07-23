@@ -41,18 +41,15 @@ export const UserSettings = ({
 
   const handleClose = useCallback(() => {
     setShowContent(false);
-    // Просто удаляем параметр из URL, а модалка закроется автоматически через useEffect
     navigate({
       to: pathname,
       search: {},
     });
   }, [navigate, pathname]);
 
-  // Обработчик для управления открытием/закрытием модалки
   const handleOpenChange = useCallback(
     (openState: boolean) => {
       if (!openState) {
-        // Если модалку нужно закрыть, удаляем параметр из URL
         navigate({
           to: pathname,
           search: {},
@@ -84,46 +81,50 @@ export const UserSettings = ({
           document.body.style.pointerEvents = '';
         }}
         variant={isDesktop ? 'default' : 'full'}
-        className={isDesktop ? 'h-[90vh] max-w-[1132px] p-4 lg:p-6' : 'p-4 lg:p-6'}
+        className={
+          isDesktop
+            ? '!flex h-[90vh] max-h-[90vh] max-w-[1132px] flex-col overflow-hidden p-4 lg:p-6'
+            : '!flex max-h-dvh flex-col overflow-hidden p-4 lg:p-6'
+        }
         aria-describedby={undefined}
       >
         <ModalTitle className="hidden"> Настройки пользователя </ModalTitle>
-        <div className="flex w-full items-center justify-center">
-          <div className="flex h-full min-h-full w-full max-w-[1132px] flex-col">
-            <Header
-              activeItem={activeContent}
-              showContent={showContent}
-              setShowContent={memoizedSetShowContent}
-              handleClose={handleClose}
-            />
-            <div
-              className={
-                isDesktop ? 'flex h-full flex-row gap-8' : 'mt-4 flex h-full flex-row gap-8'
-              }
-            >
-              {isMobile ? (
-                <div className="flex-1">
-                  {showContent ? (
-                    <Content activeQuery={activeQuery} />
-                  ) : (
+        <div className="bg-gray-0 flex min-h-0 w-full flex-1 flex-col">
+          <Header
+            activeItem={activeContent}
+            showContent={showContent}
+            setShowContent={memoizedSetShowContent}
+            handleClose={handleClose}
+          />
+          <div className={`flex min-h-0 flex-1 flex-row gap-8 ${isDesktop ? '' : 'mt-4'}`}>
+            {isMobile ? (
+              <div className="bg-gray-0 min-h-0 min-w-0 flex-1 overflow-hidden">
+                {showContent ? (
+                  <Content activeQuery={activeQuery} />
+                ) : (
+                  <div className="h-full min-h-0 overflow-y-auto overscroll-contain pr-4">
                     <Menu
                       setActiveQuery={memoizedSetActiveQuery}
                       setActiveContent={memoizedSetActiveContent}
                       setShowContent={memoizedSetShowContent}
                     />
-                  )}
-                </div>
-              ) : (
-                <>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <div className="shrink-0 self-start">
                   <Menu
                     setActiveQuery={memoizedSetActiveQuery}
                     setActiveContent={memoizedSetActiveContent}
                     setShowContent={memoizedSetShowContent}
                   />
+                </div>
+                <div className="bg-gray-0 min-h-0 min-w-0 flex-1 overflow-hidden">
                   <Content activeQuery={activeQuery} />
-                </>
-              )}
-            </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </ModalContent>

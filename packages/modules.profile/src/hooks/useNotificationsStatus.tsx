@@ -1,30 +1,35 @@
-import { useGetNotificationsStatus } from 'common.services';
-import { useConnectTg, useDisconnectTg } from '../services';
+import { useTgConnection } from 'common.services';
+import { useDisconnectTg } from '../services';
 import { Button } from '@xipkg/button';
-import { ChevronRight, Trash } from '@xipkg/icons';
+import { Trash } from '@xipkg/icons';
 
 export function useNotificationsStatus() {
-  const { data } = useGetNotificationsStatus();
-
-  const { handleConnectTg } = useConnectTg();
+  const {
+    telegram,
+    isActive: isTgConnectionActive,
+    isBlocked: isTgConnectionBlocked,
+    isReplaced: isTgConnectionReplaced,
+    isNotConnected,
+    isPending: isTgPending,
+    isAwaitingConfirmation: isTgAwaitingConfirmation,
+    handleConnect: handleConnectTg,
+  } = useTgConnection();
   const { handleDisconnectTg } = useDisconnectTg();
-
-  const status = data?.telegram?.connection.status;
-
-  const isTgConnectionActive = status === 'active';
-  const isTgConnectionBlocked = status === 'blocked';
-  const isTgConnectionReplaced = status === 'replaced';
-  const isNotConnected = !data?.telegram;
 
   const tgConnectionStatus = [
     {
-      condition: isNotConnected,
+      condition: isNotConnected && !isTgAwaitingConfirmation,
       text: 'Не подключен',
       color: 'text-gray-80',
     },
     {
+      condition: isTgAwaitingConfirmation,
+      text: 'Ожидаем подтверждение в Telegram…',
+      color: 'text-gray-80',
+    },
+    {
       condition: isTgConnectionActive,
-      text: data?.telegram?.contact?.title,
+      text: telegram?.related_contact?.title,
       color: 'text-gray-80',
     },
     {
@@ -38,6 +43,8 @@ export function useNotificationsStatus() {
       color: 'text-orange-60',
     },
   ];
+
+  const connectButtonClassName = 'text-s-base text-brand-100 h-8 px-2 py-0';
 
   const tgActionButton = () => {
     if (isTgConnectionActive) {
@@ -58,10 +65,15 @@ export function useNotificationsStatus() {
       return (
         <Button
           variant="none"
-          className="text-brand-100 ml-auto h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
+          className={connectButtonClassName}
           onClick={handleConnectTg}
+          disabled={isTgPending}
         >
-          Разблокировать
+          {isTgAwaitingConfirmation
+            ? 'Ожидаем…'
+            : isTgPending
+              ? 'Формируем ссылку…'
+              : 'Разблокировать'}
         </Button>
       );
     }
@@ -70,19 +82,32 @@ export function useNotificationsStatus() {
       return (
         <Button
           variant="none"
-          className="text-brand-100 ml-auto h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
+          className={connectButtonClassName}
           onClick={handleConnectTg}
+          disabled={isTgPending}
         >
-          Подключить заново
+          {isTgAwaitingConfirmation
+            ? 'Ожидаем…'
+            : isTgPending
+              ? 'Формируем ссылку…'
+              : 'Подключить заново'}
         </Button>
       );
     }
 
-    return <ChevronRight className="fill-gray-80 ml-auto" />;
+    return (
+      <Button
+        variant="none"
+        className={connectButtonClassName}
+        onClick={handleConnectTg}
+        disabled={isTgPending}
+      >
+        {isTgAwaitingConfirmation ? 'Ожидаем…' : isTgPending ? 'Формируем ссылку…' : 'Подключить'}
+      </Button>
+    );
   };
 
   return {
-    data,
     isTgConnectionActive,
     isTgConnectionBlocked,
     isTgConnectionReplaced,

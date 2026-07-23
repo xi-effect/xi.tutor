@@ -5,16 +5,20 @@ interface UseServiceButtonProps {
   service: string;
   isConnected?: boolean;
   isPending?: boolean;
+  isAwaitingConfirmation?: boolean;
   link?: string | null;
   createConnection?: () => void;
+  openLink?: () => void;
 }
 
 export function useServiceButton({
   service,
   isConnected = false,
   isPending = false,
+  isAwaitingConfirmation = false,
   link = null,
   createConnection,
+  openLink,
 }: UseServiceButtonProps) {
   if (isConnected) {
     return (
@@ -24,23 +28,31 @@ export function useServiceButton({
     );
   }
 
-  if (isPending) {
+  if (isPending && !link) {
     return (
-      <div className="text-gray-60 dark:text-gray-80 ml-auto py-1 sm:py-3">Формируем ссылку…</div>
+      <div className="text-gray-60 dark:text-gray-80 ml-auto inline-flex h-8 items-center">
+        Формируем ссылку…
+      </div>
     );
   }
 
-  if (link) {
+  if (isAwaitingConfirmation || link) {
     return (
       <Button
         variant="none"
-        className="text-s-base text-brand-100 ml-auto h-8 px-4 py-1.5 sm:h-12"
-        onClick={() => window.open(link, '_blank')}
+        className="text-s-base text-brand-100 ml-auto h-8 px-2 py-0"
+        onClick={() => {
+          if (openLink) {
+            openLink();
+            return;
+          }
+          if (link) window.open(link, '_blank');
+        }}
         data-umami-event="service-external-link"
         data-umami-event-service={service}
-        data-umami-event-url={link}
+        data-umami-event-url={link ?? undefined}
       >
-        Перейти в {service}
+        {isAwaitingConfirmation ? 'Ожидаем…' : `Перейти в ${service}`}
       </Button>
     );
   }
@@ -48,7 +60,7 @@ export function useServiceButton({
   return (
     <Button
       variant="none"
-      className="text-s-base text-brand-100 ml-auto h-8 px-4 py-1.5 sm:h-12"
+      className="text-s-base text-brand-100 ml-auto h-8 px-2 py-0"
       onClick={createConnection}
       data-umami-event="service-connect"
       data-umami-event-service={service}

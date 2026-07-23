@@ -11,6 +11,8 @@ export { Skeleton } from './src/Skeleton';
 export { LinkTanstack } from './src/LinkTanstack';
 export { ErrorPage } from './src/ErrorPage';
 export { OnboardingPopup } from './src/OnboardingPopup';
+export { VkAllowMessagesWidget } from './src/VkAllowMessagesWidget';
+export { VkConnectButton } from './src/VkConnectButton';
 export { NetworkIndicator } from './src/NetworkIndicator';
 export { SmallLogo } from './src/SmallLogo';
 export {
