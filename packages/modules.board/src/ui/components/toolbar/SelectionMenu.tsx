@@ -8,8 +8,10 @@ import { useYjsContext } from '../../../providers/YjsProvider';
 import { isMac } from '../../../utils';
 import { BorderPicker } from '../../../shapes/geo';
 import { CoordinateAxesSettingsPicker } from '../../../shapes/coordinate-axes';
+import { TextEditorToolbar } from '../../../shapes/text';
 
 const modKey = isMac ? '⌘' : 'Ctrl';
+const shapesWithRichTextSet = new Set(['note', 'text', 'arrow', 'xi-geo']);
 
 export const SelectionMenu = track(function SelectionMenu() {
   const editor = useEditor();
@@ -19,6 +21,7 @@ export const SelectionMenu = track(function SelectionMenu() {
   const isLocked = selectedShapes.every((shape) => shape.isLocked);
   const isFrame = selectedShapes.length === 1 && selectedShapes[0].type === 'frame';
   const isGeo = selectedShapes.some((shape) => shape.type === 'xi-geo');
+  const isRichText = selectedShapes.some((shape) => shapesWithRichTextSet.has(shape.type));
   const isCoordinateAxes =
     selectedShapes.length === 1 && selectedShapes[0].type === 'coordinate-axes';
 
@@ -120,6 +123,7 @@ export const SelectionMenu = track(function SelectionMenu() {
           {isGeo && <BorderPicker />}
           {isCoordinateAxes && <CoordinateAxesSettingsPicker />}
           <ColorPicker />
+          {isRichText && <TextEditorToolbar editor={editor} />}
           <MoreActionsMenu />
         </>
       )}
