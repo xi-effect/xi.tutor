@@ -79,7 +79,7 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
 
   return (
     <div
-      className={`border-gray-80 flex h-[120px] w-full items-center rounded-2xl border p-6 ${className}`}
+      className={`border-border-strong flex h-[120px] w-full items-center rounded-2xl border p-6 ${className}`}
     >
       <AvatarEditor
         file={file}
@@ -103,9 +103,9 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
             />
             <AvatarFallback
               size="xl"
-              className="bg-gray-5 flex h-[64px] w-[64px] place-items-center justify-center rounded-[36px]"
+              className="bg-background-page flex h-[64px] w-[64px] place-items-center justify-center rounded-[36px]"
             >
-              <Camera className="fill-gray-60" />
+              <Camera className="fill-icon-secondary" />
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
@@ -121,10 +121,10 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
         </DropdownMenuContent>
       </DropdownMenu>
       <div className="ml-4 flex flex-col justify-center gap-0.5">
-        <span className="text-2xl leading-[32px] font-semibold dark:text-gray-100">
+        <span className="dark:text-text-primary text-2xl leading-[32px] font-semibold">
           {user?.display_name}
         </span>
-        <span className="text-gray-80 dark:text-gray-80 text-[16px] leading-[22px]">
+        <span className="text-text-primary dark:text-text-primary text-[16px] leading-[22px]">
           {user?.username}
         </span>
       </div>

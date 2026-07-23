@@ -56,7 +56,7 @@ function ChangeLessonModalClassroomLine({
         <TooltipTrigger asChild>
           <span
             ref={labelRef}
-            className="text-xs-base-size min-w-0 flex-1 truncate text-left leading-normal text-gray-100"
+            className="text-xs-base-size text-text-primary min-w-0 flex-1 truncate text-left leading-normal"
           >
             {classroomName}
           </span>
@@ -74,7 +74,7 @@ export type ChangeLessonModalProps = {
   onOpenChange: (open: boolean) => void;
   /** Как у LessonCard: скрыть строки предмета и кабинета (расписание внутри одного кабинета). */
   hideClassroomAndSubject?: boolean;
-  /** Название предмета из API кабинета — строка `text-gray-40 text-xs`, как на LessonCard */
+  /** Название предмета из API кабинета — строка `text-text-disabled text-xs`, как на LessonCard */
   subjectName?: string | null;
   /** Подпись строки кабинета / участника */
   classroomName: string;
@@ -147,7 +147,7 @@ export const ChangeLessonModal = ({
       <ModalContent className="relative w-full max-w-[480px]" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton />
-          <ModalTitle className="text-xl-base max-w-[calc(100%-56px)] font-semibold text-gray-100">
+          <ModalTitle className="text-xl-base text-text-primary max-w-[calc(100%-56px)] font-semibold">
             Изменить занятие
           </ModalTitle>
         </ModalHeader>
@@ -158,7 +158,7 @@ export const ChangeLessonModal = ({
               {!hideClassroomAndSubject ? (
                 <div className="flex min-w-0 flex-col gap-2">
                   {subjectName != null ? (
-                    <span className="text-gray-40 text-xs">{subjectName}</span>
+                    <span className="text-text-disabled text-xs">{subjectName}</span>
                   ) : null}
 
                   <ChangeLessonModalClassroomLine
@@ -169,7 +169,7 @@ export const ChangeLessonModal = ({
               ) : null}
 
               <div className="flex flex-col gap-3 pt-2">
-                <span className="text-sm font-medium text-gray-100">О занятии</span>
+                <span className="text-text-primary text-sm font-medium">О занятии</span>
 
                 <FormField
                   control={control}
@@ -208,8 +208,8 @@ export const ChangeLessonModal = ({
                           hideCounter
                           aria-invalid={!!errors.description}
                           className={cn(
-                            'border-gray-10 placeholder:text-gray-40 min-h-[88px] resize-y rounded-lg border px-3 py-2 text-sm text-gray-100',
-                            errors.description && 'border-red-60',
+                            'border-border-default placeholder:text-text-disabled text-text-primary min-h-[88px] resize-y rounded-lg border px-3 py-2 text-sm',
+                            errors.description && 'border-border-error',
                           )}
                         />
                       </FormControl>
@@ -225,7 +225,7 @@ export const ChangeLessonModal = ({
                 type="button"
                 variant="none"
                 size="m"
-                className="bg-gray-5 hover:bg-gray-10 h-11 flex-1 p-0 font-medium text-gray-100"
+                className="bg-background-page hover:bg-background-subtle text-text-primary h-11 flex-1 p-0 font-medium"
                 onClick={handleClose}
                 data-umami-event="lesson-change-cancel"
               >

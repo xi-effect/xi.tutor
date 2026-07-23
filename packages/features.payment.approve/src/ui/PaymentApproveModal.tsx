@@ -79,13 +79,13 @@ const ApproveForm = ({
           </div>
         )}
         <div className="flex flex-row gap-2">
-          <span className="text-m-base dark:text-gray-100">Тип оплаты:</span>
-          <span className="text-gray-80 text-m mr-8 ml-auto">
+          <span className="text-m-base dark:text-text-primary">Тип оплаты:</span>
+          <span className="text-text-primary text-m mr-8 ml-auto">
             {mapPaymentType[data?.recipient_invoice?.payment_type]}
           </span>
         </div>
         <div className="flex-col-4 grid gap-2 font-normal">
-          <div className="text-gray-60 col-span-1 flex flex-row gap-4 text-sm">
+          <div className="text-text-secondary col-span-1 flex flex-row gap-4 text-sm">
             <p className="w-[250px]">Занятия</p>
             <p className="w-[84px]">Стоимость</p>
             <p className="w-[84px]">Количество</p>
@@ -95,45 +95,47 @@ const ApproveForm = ({
             <>
               {data.invoice_items && data.invoice_items.length > 0 ? (
                 data.invoice_items.map((item: InvoiceItemT, index: number) => (
-                  <div key={index} className="text-gray-80 flex gap-4 text-base">
+                  <div key={index} className="text-text-primary flex gap-4 text-base">
                     <p className="w-[250px]">{item.name}</p>
                     <div className="flex gap-2">
                       <p className="w-[78px]">
                         {item.price}
-                        <span className="text-gray-60 text-xs-base-size">₽</span>
+                        <span className="text-text-secondary text-xs-base-size">₽</span>
                       </p>
-                      <p className="text-gray-60 w-[10px]">x</p>
+                      <p className="text-text-secondary w-[10px]">x</p>
                       <p className="w-[78px]">{item.quantity}</p>
-                      <p className="text-gray-60 w-[10px]">=</p>
+                      <p className="text-text-secondary w-[10px]">=</p>
                       <p className="w-[78px]">
                         {parseFloat(item.price) * item.quantity}
-                        <span className="text-gray-60 text-xs-base-size">₽</span>
+                        <span className="text-text-secondary text-xs-base-size">₽</span>
                       </p>
                     </div>
                   </div>
                 ))
               ) : (
-                <div className="text-gray-60 text-sm">
+                <div className="text-text-secondary text-sm">
                   Детальная информация о занятиях недоступна
                 </div>
               )}
             </>
           ) : isLoadingInvoice ? (
-            <div className="text-gray-60 text-sm">Загрузка детальной информации...</div>
+            <div className="text-text-secondary text-sm">Загрузка детальной информации...</div>
           ) : (
-            <div className="text-gray-60 text-sm">Детальная информация о занятиях недоступна</div>
+            <div className="text-text-secondary text-sm">
+              Детальная информация о занятиях недоступна
+            </div>
           )}
 
           <div className="flex gap-4 text-sm">
-            <p className="w-[250px] font-bold text-gray-100">Итого:</p>
+            <p className="text-text-primary w-[250px] font-bold">Итого:</p>
             <div className="flex gap-2">
               <p className="w-[78px]"></p>
               <p className="w-[10px]"></p>
               <p className="w-[78px]"></p>
               <p className="w-[10px]"></p>
-              <p className="w-[78px] font-bold text-gray-100">
+              <p className="text-text-primary w-[78px] font-bold">
                 {data?.recipient_invoice?.total || paymentDetails.total}
-                <span className="text-gray-60 text-xs-base-size">₽</span>
+                <span className="text-text-secondary text-xs-base-size">₽</span>
               </p>
             </div>
           </div>
@@ -214,7 +216,7 @@ const AdvanceForm = ({
             </div>
           )}
           <div className="flex flex-col gap-2">
-            <span className="text-m-base dark:text-gray-100">Тип оплаты</span>
+            <span className="text-m-base dark:text-text-primary">Тип оплаты</span>
             <FormField
               control={form.control}
               name="typePayment"
@@ -230,9 +232,9 @@ const AdvanceForm = ({
                       <RadioItem
                         value="transfer"
                         id="transfer"
-                        className="data-[state=checked]:bg-brand-100 data-[state=checked]:border-brand-100 text-gray-0 dark:bg-gray-10 border-gray-30 h-6 w-6 [&>span>svg]:h-3 [&>span>svg]:w-3"
+                        className="data-[state=checked]:bg-action-primary-background-pressed data-[state=checked]:border-border-focus text-text-on-accent dark:bg-background-subtle border-border-control h-6 w-6 [&>span>svg]:h-3 [&>span>svg]:w-3"
                       />
-                      <label htmlFor="transfer" className="text-gray-100">
+                      <label htmlFor="transfer" className="text-text-primary">
                         Перевод
                       </label>
                     </div>
@@ -240,9 +242,9 @@ const AdvanceForm = ({
                       <RadioItem
                         value="cash"
                         id="cash"
-                        className="data-[state=checked]:border-brand-100 data-[state=checked]:bg-brand-100 text-gray-0 border-gray-30 dark:bg-gray-10 h-6 w-6 [&_span_svg]:h-3 [&_span_svg]:w-3"
+                        className="data-[state=checked]:border-border-focus data-[state=checked]:bg-action-primary-background-pressed text-text-on-accent border-border-control dark:bg-background-subtle h-6 w-6 [&_span_svg]:h-3 [&_span_svg]:w-3"
                       />
-                      <label htmlFor="cash" className="text-gray-100">
+                      <label htmlFor="cash" className="text-text-primary">
                         Наличные
                       </label>
                     </div>
@@ -253,7 +255,7 @@ const AdvanceForm = ({
             />
           </div>
           <div className="flex-col-4 grid gap-2 font-normal">
-            <div className="text-gray-60 col-span-1 flex flex-row gap-4 text-sm">
+            <div className="text-text-secondary col-span-1 flex flex-row gap-4 text-sm">
               <p className="w-[250px]">Занятия</p>
               <p className="w-[84px]">Стоимость</p>
               <p className="w-[84px]">Количество</p>
@@ -263,45 +265,47 @@ const AdvanceForm = ({
               <>
                 {data.invoice_items && data.invoice_items.length > 0 ? (
                   data.invoice_items.map((item: InvoiceItemT, index: number) => (
-                    <div key={index} className="text-gray-80 flex gap-4 text-base">
+                    <div key={index} className="text-text-primary flex gap-4 text-base">
                       <p className="w-[250px]">{item.name}</p>
                       <div className="flex gap-2">
                         <p className="w-[78px]">
                           {item.price}
-                          <span className="text-gray-60 text-xs-base-size">₽</span>
+                          <span className="text-text-secondary text-xs-base-size">₽</span>
                         </p>
-                        <p className="text-gray-60 w-[10px]">x</p>
+                        <p className="text-text-secondary w-[10px]">x</p>
                         <p className="w-[78px]">{item.quantity}</p>
-                        <p className="text-gray-60 w-[10px]">=</p>
+                        <p className="text-text-secondary w-[10px]">=</p>
                         <p className="w-[78px]">
                           {parseFloat(item.price) * item.quantity}
-                          <span className="text-gray-60 text-xs-base-size">₽</span>
+                          <span className="text-text-secondary text-xs-base-size">₽</span>
                         </p>
                       </div>
                     </div>
                   ))
                 ) : (
-                  <div className="text-gray-60 text-sm">
+                  <div className="text-text-secondary text-sm">
                     Детальная информация о занятиях недоступна
                   </div>
                 )}
               </>
             ) : isLoadingInvoice ? (
-              <div className="text-gray-60 text-sm">Загрузка детальной информации...</div>
+              <div className="text-text-secondary text-sm">Загрузка детальной информации...</div>
             ) : (
-              <div className="text-gray-60 text-sm">Детальная информация о занятиях недоступна</div>
+              <div className="text-text-secondary text-sm">
+                Детальная информация о занятиях недоступна
+              </div>
             )}
 
             <div className="flex gap-4 text-sm">
-              <p className="w-[250px] font-bold text-gray-100">Итого:</p>
+              <p className="text-text-primary w-[250px] font-bold">Итого:</p>
               <div className="flex gap-2">
                 <p className="w-[78px]"></p>
                 <p className="w-[10px]"></p>
                 <p className="w-[78px]"></p>
                 <p className="w-[10px]"></p>
-                <p className="w-[78px] font-bold text-gray-100">
+                <p className="text-text-primary w-[78px] font-bold">
                   {data?.recipient_invoice?.total || paymentDetails.total}
-                  <span className="text-gray-60 text-xs-base-size">₽</span>
+                  <span className="text-text-secondary text-xs-base-size">₽</span>
                 </p>
               </div>
             </div>
@@ -383,11 +387,11 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
         <ModalHeader className="max-w-85 sm:max-w-150">
           <ModalCloseButton
             variant="full"
-            className="bg-gray-5 top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0 sm:right-4"
+            className="bg-background-page top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0 sm:right-4"
           >
-            <Close className="fill-gray-80 h-5 w-5" />
+            <Close className="fill-icon-primary h-5 w-5" />
           </ModalCloseButton>
-          <ModalTitle className="m-0 pr-10 text-gray-100 sm:pr-0">
+          <ModalTitle className="text-text-primary m-0 pr-10 sm:pr-0">
             Подтверждение оплаты по счёту
           </ModalTitle>
           <ModalDescription className="sr-only">

@@ -10,14 +10,18 @@ type LessonCardSkeletonProps = {
 };
 
 export const LessonCardSkeleton = memo<LessonCardSkeletonProps>(({ isToday, fullWidth }) => {
-  const barThin = 'bg-gray-20 dark:bg-gray-30 animate-pulse rounded-lg';
-  const barBlock = 'bg-gray-20 dark:bg-gray-30 animate-pulse rounded-xl';
+  const barThin =
+    'bg-action-secondary-background-pressed dark:bg-background-subtle animate-pulse rounded-lg';
+  const barBlock =
+    'bg-action-secondary-background-pressed dark:bg-background-subtle animate-pulse rounded-xl';
 
   return (
     <div
       className={cn(
         'relative flex min-h-[188px] w-full flex-col rounded-2xl border p-6',
-        isToday ? 'border-brand-20 bg-gray-0 border-2' : 'border-gray-10 bg-gray-0 border',
+        isToday
+          ? 'border-border-selected bg-background-surface border-2'
+          : 'border-border-default bg-background-surface border',
       )}
       style={fullWidth ? { width: '100%' } : { minWidth: CARD_MIN_WIDTH, maxWidth: CARD_MAX_WIDTH }}
       aria-hidden

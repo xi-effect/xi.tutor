@@ -91,23 +91,23 @@ export const DragHandleWrapper = ({
           getActiveBlock={getActiveBlock}
         >
           <Button
-            className="hover:bg-gray-5 active:bg-gray-5 group h-5 w-5 rounded p-0"
+            className="hover:bg-background-page active:bg-background-page group h-5 w-5 rounded p-0"
             variant="none"
           >
             {menuOpen ? (
-              <Close size="sm" className="fill-gray-80 size-6" />
+              <Close size="sm" className="fill-icon-primary size-6" />
             ) : (
-              <Plus size="sm" className="fill-gray-80 size-6" />
+              <Plus size="sm" className="fill-icon-primary size-6" />
             )}
           </Button>
         </BlockMenu>
 
         <Button
-          className="hover:bg-gray-5 active:bg-gray-5 group h-5 w-5 cursor-grab rounded p-0 active:cursor-grabbing"
+          className="hover:bg-background-page active:bg-background-page group h-5 w-5 cursor-grab rounded p-0 active:cursor-grabbing"
           variant="none"
           title="Перетащить блок"
         >
-          <Move size="sm" className="fill-gray-80 size-6" />
+          <Move size="sm" className="fill-icon-primary size-6" />
         </Button>
       </div>
     </DragHandle>

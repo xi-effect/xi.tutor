@@ -38,7 +38,7 @@ export const createPaymentColumns = <Role extends RoleT>({
             <Button
               variant="ghost"
               size="s"
-              className="text-gray-60 hover:text-brand-100 h-8 w-8 rounded-full border-none bg-transparent p-0 shadow-none hover:border-transparent hover:bg-transparent focus-visible:ring-0"
+              className="text-text-secondary hover:text-text-link h-8 w-8 rounded-full border-none bg-transparent p-0 shadow-none hover:border-transparent hover:bg-transparent focus-visible:ring-0"
               onClick={() => onViewInvoice(row.original)}
               aria-label="Просмотреть информацию о счёте"
             >

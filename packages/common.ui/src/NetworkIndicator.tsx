@@ -20,30 +20,30 @@ export const NetworkIndicator: React.FC<NetworkIndicatorProps> = ({
   const getStatusInfo = () => {
     if (!isOnline) {
       return {
-        icon: <CrossCircle className="h-4 w-4 text-red-500" />,
+        icon: <CrossCircle className="text-text-danger h-4 w-4" />,
         text: 'Нет соединения',
-        bgColor: 'bg-red-50',
-        textColor: 'text-red-700',
-        borderColor: 'border-red-200',
+        bgColor: 'bg-status-error-accent',
+        textColor: 'text-text-danger',
+        borderColor: 'border-border-error',
       };
     }
 
     if (isReconnecting) {
       return {
-        icon: <Close className="h-4 w-4 text-yellow-500" />,
+        icon: <Close className="text-status-warning-text h-4 w-4" />,
         text: 'Проверка соединения...',
-        bgColor: 'bg-yellow-50',
-        textColor: 'text-yellow-700',
-        borderColor: 'border-yellow-200',
+        bgColor: 'bg-status-warning-background',
+        textColor: 'text-status-warning-text',
+        borderColor: 'border-status-warning-accent',
       };
     }
 
     return {
-      icon: <Check className="h-4 w-4 text-green-500" />,
+      icon: <Check className="text-status-success-text h-4 w-4" />,
       text: 'Подключено',
-      bgColor: 'bg-green-50',
-      textColor: 'text-green-700',
-      borderColor: 'border-green-200',
+      bgColor: 'bg-status-success-accent',
+      textColor: 'text-status-success-text',
+      borderColor: 'border-status-success-accent',
     };
   };
 

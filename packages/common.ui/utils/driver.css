@@ -1,7 +1,7 @@
 .my-custom-popover-class {
   border-radius: 16px;
   padding: 16px;
-  background-color: var(--xi-gray-0);
+  background-color: var(--xi-background-surface);
   max-width: 400px;
 }
 
@@ -10,12 +10,12 @@
   padding: 5px 16px;
   border-radius: 6px;
   text-shadow: none;
-  color: var(--xi-gray-0);
-  background-color: var(--xi-brand-80);
+  color: var(--xi-text-on-accent);
+  background-color: var(--xi-action-primary-background-default);
 }
 
 .my-custom-popover-class .driver-popover-next-btn:hover {
-  background-color: var(--xi-brand-100);
+  background-color: var(--xi-action-primary-background-pressed);
 }
 
 .my-custom-popover-class .driver-popover-navigation-btns {
@@ -29,13 +29,13 @@
 .my-custom-popover-class .driver-popover-prev-btn {
   border-radius: 6px;
   padding: 4px 16px;
-  background-color: var(--xi-gray-0);
-  border-color: var(--xi-gray-30);
-  color: var(--xi-gray-100);
+  background-color: var(--xi-background-surface);
+  border-color: var(--xi-border-default);
+  color: var(--xi-text-primary);
 }
 
 .my-custom-popover-class .driver-popover-prev-btn:hover {
-  background-color: var(--xi-gray-5);
+  background-color: var(--xi-background-page);
 }
 
 .my-custom-popover-class .driver-popover-close-btn {
@@ -50,7 +50,7 @@
 
 .my-custom-popover-class .driver-popover-title {
   width: calc(100% - 30px);
-  color: var(--xi-gray-100);
+  color: var(--xi-text-primary);
   font-size: 20px;
   line-height: 28px;
 }
@@ -60,17 +60,17 @@
 }
 
 .my-custom-popover-class .driver-popover-description {
-  color: var(--xi-gray-80);
+  color: var(--xi-text-primary);
   margin-top: 8px;
 }
 
 .my-custom-popover-class .driver-popover-progress-text {
-  color: var(--xi-gray-60);
+  color: var(--xi-text-secondary);
   font-size: 12px;
 }
 
 .my-custom-popover-class .driver-popover-arrow {
-  border: 5px solid var(--xi-gray-0);
+  border: 5px solid var(--xi-background-surface);
   border-left-color: transparent;
   border-bottom-color: transparent;
   border-top-color: transparent;

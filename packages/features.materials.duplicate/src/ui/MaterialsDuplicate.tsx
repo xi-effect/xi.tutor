@@ -61,7 +61,7 @@ const ClassroomsList = ({
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <p className="text-gray-60">Загрузка кабинетов...</p>
+        <p className="text-text-secondary">Загрузка кабинетов...</p>
       </div>
     );
   }
@@ -69,7 +69,7 @@ const ClassroomsList = ({
   if (isError) {
     return (
       <div className="flex items-center justify-center py-8">
-        <p className="text-red-60">Ошибка загрузки кабинетов</p>
+        <p className="text-text-danger">Ошибка загрузки кабинетов</p>
       </div>
     );
   }
@@ -77,8 +77,8 @@ const ClassroomsList = ({
   if (!classrooms || classrooms.length === 0) {
     return (
       <div className="flex h-[300px] w-full flex-col items-center justify-center gap-2">
-        <p className="text-m-base text-gray-60 w-full text-center">Здесь пока пусто</p>
-        <p className="text-m-base text-gray-60 w-full text-center">
+        <p className="text-m-base text-text-secondary w-full text-center">Здесь пока пусто</p>
+        <p className="text-m-base text-text-secondary w-full text-center">
           Создайте кабинеты, пригласив учеников на платформу
         </p>
       </div>
@@ -112,8 +112,8 @@ const ClassroomCard = ({ classroom, isSelected, onSelect }: ClassroomCardProps) 
   return (
     <div
       className={cn(
-        'border-gray-10 hover:bg-gray-5 flex cursor-pointer items-center gap-3 rounded-2xl border p-4',
-        isSelected ? 'border-brand-80 bg-brand-0' : '',
+        'border-border-default hover:bg-background-page flex cursor-pointer items-center gap-3 rounded-2xl border p-4',
+        isSelected ? 'border-border-focus bg-status-info-background' : '',
       )}
       onClick={onSelect}
       data-umami-event="material-duplicate-select-classroom"
@@ -134,11 +134,11 @@ const ClassroomCard = ({ classroom, isSelected, onSelect }: ClassroomCardProps) 
           )}
         </Avatar>
       ) : (
-        <div className="bg-brand-80 text-gray-0 flex h-10 min-h-10 w-10 min-w-10 items-center justify-center rounded-full text-sm font-medium">
+        <div className="bg-action-primary-background-default text-text-on-accent flex h-10 min-h-10 w-10 min-w-10 items-center justify-center rounded-full text-sm font-medium">
           {classroom.name[0]?.toUpperCase() || ''}
         </div>
       )}
-      <h3 className="text-m-base line-clamp-2 flex-1 text-gray-100">{classroom.name}</h3>
+      <h3 className="text-m-base text-text-primary line-clamp-2 flex-1">{classroom.name}</h3>
     </div>
   );
 };
@@ -215,8 +215,8 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
     <Modal open={open} onOpenChange={handleClose}>
       <ModalContent className="w-full max-w-2xl max-sm:w-[calc(100vw-32px)]">
         <ModalCloseButton className="right-2" />
-        <ModalHeader className="border-gray-20 border-b">
-          <ModalTitle className="max-w-[calc(100%-48px)] text-gray-100">
+        <ModalHeader className="border-border-default border-b">
+          <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
             {getModalTitle()}
           </ModalTitle>
           <ModalDescription>
@@ -233,26 +233,26 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
             onClassroomSelect={handleClassroomSelect}
           />
         </div>
-        <ModalFooter className="border-gray-20 flex flex-col gap-4 border-t">
+        <ModalFooter className="border-border-default flex flex-col gap-4 border-t">
           <div className="w-full">
-            <p className="text-s-base text-gray-80 mb-1">Тип доступа к материалу в кабинете</p>
+            <p className="text-s-base text-text-primary mb-1">Тип доступа к материалу в кабинете</p>
             <Select
               value={studentAccessMode}
               onValueChange={(value) => setStudentAccessMode(value as AccessModeT)}
             >
               <SelectTrigger
-                className="w-full text-gray-100"
+                className="text-text-primary w-full"
                 data-umami-event="material-duplicate-access-selector"
               >
                 <SelectValue
                   placeholder="Выберите тип доступа к материалу в кабинете"
-                  className="data-placeholder:text-gray-40 text-gray-100"
+                  className="data-placeholder:text-text-disabled text-text-primary"
                 />
               </SelectTrigger>
-              <SelectContent className="border-gray-10 bg-gray-0 w-full">
+              <SelectContent className="border-border-default bg-background-surface w-full">
                 <SelectItem
                   value="read_write"
-                  className="text-gray-100 focus:text-gray-100 data-highlighted:text-gray-100"
+                  className="text-text-primary focus:text-text-primary data-highlighted:text-text-primary"
                   data-umami-event="material-duplicate-access-mode"
                   data-umami-event-mode="read_write"
                 >
@@ -260,7 +260,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
                 </SelectItem>
                 <SelectItem
                   value="read_only"
-                  className="text-gray-100 focus:text-gray-100 data-highlighted:text-gray-100"
+                  className="text-text-primary focus:text-text-primary data-highlighted:text-text-primary"
                   data-umami-event="material-duplicate-access-mode"
                   data-umami-event-mode="read_only"
                 >
@@ -268,7 +268,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
                 </SelectItem>
                 <SelectItem
                   value="no_access"
-                  className="text-gray-100 focus:text-gray-100 data-highlighted:text-gray-100"
+                  className="text-text-primary focus:text-text-primary data-highlighted:text-text-primary"
                   data-umami-event="material-duplicate-access-mode"
                   data-umami-event-mode="no_access"
                 >
@@ -282,7 +282,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
               size="m"
               onClick={handleConfirm}
               disabled={!selectedClassroomId || duplicateMaterial.isPending}
-              className="disabled:text-gray-60 w-full sm:w-fit"
+              className="disabled:text-text-secondary w-full sm:w-fit"
               data-umami-event="material-duplicate-confirm"
             >
               {duplicateMaterial.isPending ? 'Дублирование...' : 'Дублировать'}
@@ -291,7 +291,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
               size="m"
               variant="none"
               onClick={() => handleClose(false)}
-              className="bg-gray-5 hover:bg-gray-10 h-12 w-full text-gray-100 sm:w-fit"
+              className="bg-background-page hover:bg-background-subtle text-text-primary h-12 w-full sm:w-fit"
               data-umami-event="material-duplicate-cancel"
             >
               Отменить

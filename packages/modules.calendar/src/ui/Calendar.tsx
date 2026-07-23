@@ -94,7 +94,7 @@ export const CalendarModule = ({
   }
 
   return (
-    <div className="bg-gray-5 flex h-full min-h-0 min-w-0 flex-1 flex-col pl-4">
+    <div className="bg-background-page flex h-full min-h-0 min-w-0 flex-1 flex-col pl-4">
       <CalendarHeader
         weekStart={weekStart}
         visibleDayCount={effectiveVisibleCount}
@@ -106,7 +106,7 @@ export const CalendarModule = ({
         onAddLessonClick={onAddLessonClick != null ? () => onAddLessonClick() : undefined}
         showDateTime={showDateTimeInHeader}
       />
-      <div className="bg-gray-0 flex min-h-0 min-w-0 flex-1 flex-col rounded-tl-2xl pl-4">
+      <div className="bg-background-surface flex min-h-0 min-w-0 flex-1 flex-col rounded-tl-2xl pl-4">
         <div
           ref={containerRef}
           className={

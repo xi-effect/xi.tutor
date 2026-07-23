@@ -108,13 +108,13 @@ export const AddingForm: FC<AddingFormProps> = ({
           name="title"
           render={({ field }) => (
             <FormItem className="flex flex-col gap-0">
-              <FormLabel className="text-[14px] font-normal text-gray-100">Название</FormLabel>
+              <FormLabel className="text-text-primary text-[14px] font-normal">Название</FormLabel>
               <FormControl>
                 <Input
                   {...field}
                   variant="s"
                   placeholder="Математика"
-                  className="border-gray-10 rounded-lg border"
+                  className="border-border-default rounded-lg border"
                 />
               </FormControl>
               <FormMessage />
@@ -127,7 +127,7 @@ export const AddingForm: FC<AddingFormProps> = ({
           name="description"
           render={({ field }) => (
             <FormItem className="flex flex-col gap-0">
-              <FormLabel className="text-[14px] font-normal text-gray-100">Описание</FormLabel>
+              <FormLabel className="text-text-primary text-[14px] font-normal">Описание</FormLabel>
               <FormControl>
                 <Textarea
                   value={field.value}
@@ -139,7 +139,7 @@ export const AddingForm: FC<AddingFormProps> = ({
                   maxLength={4000}
                   maxRows={5}
                   hideCounter
-                  className="border-gray-10 placeholder:text-gray-40 min-h-[88px] resize-y rounded-lg border px-3 py-2 text-sm text-gray-100"
+                  className="border-border-default placeholder:text-text-disabled text-text-primary min-h-[88px] resize-y rounded-lg border px-3 py-2 text-sm"
                 />
               </FormControl>
               <FormMessage />
@@ -152,22 +152,22 @@ export const AddingForm: FC<AddingFormProps> = ({
           name="studentId"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel className="text-[14px] font-normal text-gray-100">Кабинет</FormLabel>
+              <FormLabel className="text-text-primary text-[14px] font-normal">Кабинет</FormLabel>
               <FormControl>
                 {fixedClassroomId != null ? (
                   <Input
                     value={fixedClassroom?.name ?? 'Текущий кабинет'}
                     disabled
                     variant="s"
-                    className="border-gray-10 rounded-lg border"
-                    before={<Account className="fill-gray-80 h-4 w-4" />}
+                    className="border-border-default rounded-lg border"
+                    before={<Account className="fill-icon-primary h-4 w-4" />}
                   />
                 ) : (
                   <StudentSelector
                     {...field}
                     classrooms={classrooms}
                     isLoading={isClassroomsLoading}
-                    before={<Account className="fill-gray-80 h-4 w-4" />}
+                    before={<Account className="fill-icon-primary h-4 w-4" />}
                   />
                 )}
               </FormControl>
@@ -182,7 +182,7 @@ export const AddingForm: FC<AddingFormProps> = ({
             name="startDate"
             render={({ field }) => (
               <FormItem className="flex w-full flex-col">
-                <FormLabel className="text-[14px] font-normal text-gray-100">Дата</FormLabel>
+                <FormLabel className="text-text-primary text-[14px] font-normal">Дата</FormLabel>
                 <FormControl>
                   <InputDate {...field} />
                 </FormControl>
@@ -195,8 +195,10 @@ export const AddingForm: FC<AddingFormProps> = ({
 
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <FormLabel className="text-[14px] font-normal text-gray-100">Время</FormLabel>
-            {durationLabel ? <span className="text-gray-60 text-sm">{durationLabel}</span> : null}
+            <FormLabel className="text-text-primary text-[14px] font-normal">Время</FormLabel>
+            {durationLabel ? (
+              <span className="text-text-secondary text-sm">{durationLabel}</span>
+            ) : null}
           </div>
           <div className="flex w-full flex-row gap-2">
             <FormField
@@ -209,8 +211,8 @@ export const AddingForm: FC<AddingFormProps> = ({
                       {...field}
                       ref={maskRefStartTime}
                       placeholder="17:40 Начало"
-                      className="border-gray-10 rounded-lg border"
-                      after={<Clock className="fill-brand-80 h-4 w-4" />}
+                      className="border-border-default rounded-lg border"
+                      after={<Clock className="fill-icon-brand h-4 w-4" />}
                       variant="s"
                     />
                   </FormControl>
@@ -228,8 +230,8 @@ export const AddingForm: FC<AddingFormProps> = ({
                       {...field}
                       ref={maskRefEndTime}
                       placeholder="19:00 Конец"
-                      className="border-gray-10 rounded-lg border"
-                      after={<Clock className="fill-brand-80 h-4 w-4" />}
+                      className="border-border-default rounded-lg border"
+                      after={<Clock className="fill-icon-brand h-4 w-4" />}
                       variant="s"
                     />
                   </FormControl>
@@ -254,7 +256,10 @@ export const AddingForm: FC<AddingFormProps> = ({
                     size="s"
                   />
                 </FormControl>
-                <FormLabel htmlFor="repeat-mode" className="text-[14px] font-normal text-gray-100">
+                <FormLabel
+                  htmlFor="repeat-mode"
+                  className="text-text-primary text-[14px] font-normal"
+                >
                   Повторение
                 </FormLabel>
               </div>
@@ -269,7 +274,7 @@ export const AddingForm: FC<AddingFormProps> = ({
             name="repeatDays"
             render={({ field }) => (
               <FormItem className="flex flex-col gap-2">
-                <FormLabel className="text-[14px] font-normal text-gray-100">
+                <FormLabel className="text-text-primary text-[14px] font-normal">
                   Повторять занятие каждую неделю в выбранные дни:
                 </FormLabel>
                 <FormControl>
@@ -289,11 +294,15 @@ export const AddingForm: FC<AddingFormProps> = ({
                           }}
                           className={cn(
                             'flex h-[48px] min-w-[36px] shrink-0 items-center justify-center rounded-lg px-3 text-center text-sm font-medium transition-colors',
-                            !isSelected && 'hover:bg-gray-10 hover:text-gray-80',
+                            !isSelected && 'hover:bg-background-subtle hover:text-text-primary',
                           )}
                           style={{
-                            backgroundColor: isSelected ? 'var(--xi-brand-80)' : 'transparent',
-                            color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-60)',
+                            backgroundColor: isSelected
+                              ? 'var(--xi-action-primary-background-default)'
+                              : 'transparent',
+                            color: isSelected
+                              ? 'var(--xi-text-on-accent)'
+                              : 'var(--xi-text-secondary)',
                           }}
                         >
                           {label}

@@ -6,6 +6,80 @@
 
 @import '@xipkg/tailwind/index.css';
 
+/*
+ * @xipkg/tailwind определяет override семантических токенов только для
+ * [data-theme='dark'], но не для [data-theme='light']. Из-за этого проп
+ * `theme="light"` у компонентов вроде @xipkg/sidebar (нужен, чтобы держать
+ * элемент светлым независимо от темы страницы) не работает, если сам
+ * элемент лежит внутри дерева с [data-theme='dark'] на предке (тёмная тема
+ * пока beta и не все страницы её поддерживают) — CSS-переменные наследуются
+ * от тёмного предка. Явно переобъявляем светлые значения, чтобы
+ * [data-theme='light'] можно было использовать как «выход» из тёмной темы
+ * для отдельных поддеревьев.
+ */
+[data-theme='light'] {
+  --xi-background-page: var(--xi-gray-5);
+  --xi-background-surface: var(--xi-gray-0);
+  --xi-background-subtle: var(--xi-gray-10);
+  --xi-background-elevated: var(--xi-gray-0);
+  --xi-background-canvas: var(--xi-gray-0);
+  --xi-background-overlay: rgb(17 19 24 / 0.48);
+
+  --xi-text-primary: var(--xi-gray-90);
+  --xi-text-secondary: var(--xi-gray-60);
+  --xi-text-muted: var(--xi-gray-50);
+  --xi-text-disabled: var(--xi-gray-40);
+  --xi-text-on-accent: var(--xi-gray-0);
+  --xi-text-link: var(--xi-brand-100);
+  --xi-text-danger: var(--xi-red-100);
+
+  --xi-icon-primary: var(--xi-gray-70);
+  --xi-icon-secondary: var(--xi-gray-50);
+  --xi-icon-disabled: var(--xi-gray-40);
+  --xi-icon-brand: var(--xi-brand-80);
+  --xi-icon-danger: var(--xi-red-80);
+
+  --xi-border-default: var(--xi-gray-20);
+  --xi-border-control: var(--xi-gray-50);
+  --xi-border-strong: var(--xi-gray-60);
+  --xi-border-focus: var(--xi-brand-80);
+  --xi-border-selected: var(--xi-brand-80);
+  --xi-border-error: var(--xi-red-80);
+
+  --xi-action-primary-background-default: var(--xi-brand-80);
+  --xi-action-primary-background-hover: var(--xi-brand-90);
+  --xi-action-primary-background-pressed: var(--xi-brand-100);
+  --xi-action-primary-background-disabled: var(--xi-brand-20);
+  --xi-action-primary-text: var(--xi-gray-0);
+  --xi-action-primary-text-disabled: var(--xi-gray-50);
+
+  --xi-action-secondary-background-default: var(--xi-gray-0);
+  --xi-action-secondary-background-hover: var(--xi-gray-10);
+  --xi-action-secondary-background-pressed: var(--xi-gray-20);
+  --xi-action-secondary-text: var(--xi-gray-90);
+  --xi-action-secondary-border: var(--xi-gray-20);
+
+  --xi-selection-background: var(--xi-brand-10);
+  --xi-selection-border: var(--xi-brand-80);
+  --xi-selection-icon: var(--xi-brand-80);
+
+  --xi-status-error-background: var(--xi-red-0);
+  --xi-status-error-accent: var(--xi-red-80);
+  --xi-status-error-text: var(--xi-red-100);
+  --xi-status-success-background: var(--xi-green-0);
+  --xi-status-success-accent: var(--xi-green-100);
+  --xi-status-success-text: var(--xi-green-100);
+  --xi-status-warning-background: var(--xi-yellow-20);
+  --xi-status-warning-accent: var(--xi-yellow-60);
+  --xi-status-warning-text: var(--xi-gray-90);
+  --xi-status-info-background: var(--xi-brand-0);
+  --xi-status-info-accent: var(--xi-brand-80);
+  --xi-status-info-text: var(--xi-brand-100);
+
+  --xi-bkgd-main: var(--xi-background-page);
+  --xi-bkgd-block: var(--xi-background-surface);
+}
+
 @source "../src";
 @source "../node_modules/@xipkg";
 
@@ -59,7 +133,6 @@
 @source "../../../packages/features.lesson.info/src";
 @source "../../../packages/features.lesson.change/src";
 
-
 @source "../../../node_modules/@xipkg";
 
 /* app.css или globals.css */
@@ -100,18 +173,10 @@ html {
   scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
 }
 
-@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
-
-/* Токены фона и скроллбара: в @xipkg/tailwind для [data-theme='dark'] пока нет bkgd */
-[data-theme='dark'] {
-  --xi-bkgd-main: #12131c;
-  --xi-bkgd-block: #1f1f1f;
-}
-
-@theme {
-  --color-bkgd-main: var(--xi-bkgd-main);
-  --color-bkgd-block: var(--xi-bkgd-block);
-}
+/* @xipkg/tailwind@1.0.0 уже определяет @custom-variant dark и токены
+   --xi-bkgd-main/--xi-bkgd-block (как legacy-алиасы к --xi-background-page/
+   --xi-background-surface) для обеих тем, поэтому локальные переопределения
+   больше не нужны. */
 
 [data-theme='dark'] ::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.2);

@@ -168,13 +168,13 @@ export const CollaboratorAvatars = () => {
         {isBroadcasting && (
           <button
             type="button"
-            className="bg-brand-0 hover:bg-brand-20/40 pointer-events-auto flex h-6 w-6 items-center justify-center rounded-full transition-colors lg:h-7 lg:w-7"
+            className="bg-status-info-background hover:bg-action-primary-background-disabled/40 pointer-events-auto flex h-6 w-6 items-center justify-center rounded-full transition-colors lg:h-7 lg:w-7"
             onClick={toggleBroadcast}
             title="Выключить режим презентации"
             data-umami-event="board-broadcast-follow"
             data-umami-event-state="stop"
           >
-            <Podcast className="text-brand-80 size-4 shrink-0" />
+            <Podcast className="text-text-link size-4 shrink-0" />
           </button>
         )}
         <PopoverTrigger asChild>
@@ -194,7 +194,7 @@ export const CollaboratorAvatars = () => {
                     {isFollowed && (
                       <AvatarBadge
                         align="start"
-                        className="bg-brand-80"
+                        className="bg-action-primary-background-default"
                         title="Отслеживается"
                         aria-hidden
                       />
@@ -220,19 +220,23 @@ export const CollaboratorAvatars = () => {
               size="s"
               className={cn(
                 'flex w-full items-center justify-start gap-2',
-                isBroadcasting && 'bg-brand-0 text-brand-80 hover:bg-brand-0/80',
+                isBroadcasting &&
+                  'bg-status-info-background text-text-link hover:bg-status-info-background/80',
               )}
               onClick={toggleBroadcast}
               data-umami-event="board-broadcast-follow"
               data-umami-event-state={isBroadcasting ? 'stop' : 'start'}
             >
               <Podcast
-                className={cn('size-4 shrink-0', isBroadcasting ? 'text-brand-80' : 'text-gray-80')}
+                className={cn(
+                  'size-4 shrink-0',
+                  isBroadcasting ? 'text-text-link' : 'text-text-primary',
+                )}
               />
               {isBroadcasting ? 'Выключить презентацию' : 'Режим презентации'}
             </Button>
           )}
-          <p className="text-gray-60 px-2 py-1 text-xs">Участники на доске</p>
+          <p className="text-text-secondary px-2 py-1 text-xs">Участники на доске</p>
           {sortedPresences.map((presence) => {
             const isMe = presence.id === myPresenceId;
             const isFollowed = followingPresenceId === presence.id;
@@ -243,19 +247,21 @@ export const CollaboratorAvatars = () => {
             return (
               <div
                 key={presence.id}
-                className="hover:bg-gray-5 flex items-center gap-2 rounded-lg px-2 py-1.5"
+                className="hover:bg-background-page flex items-center gap-2 rounded-lg px-2 py-1.5"
               >
                 <Avatar size="s">
                   {avatarUrl && <AvatarImage src={avatarUrl} alt={isMe ? 'Вы' : name} size="s" />}
                   <AvatarFallback size="s">{initial}</AvatarFallback>
                 </Avatar>
-                <span className="flex-1 truncate text-sm text-gray-100">{isMe ? 'Вы' : name}</span>
+                <span className="text-text-primary flex-1 truncate text-sm">
+                  {isMe ? 'Вы' : name}
+                </span>
                 {!isMe && (
                   <button
                     type="button"
                     className={cn(
                       'group flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors',
-                      isFollowed ? 'bg-brand-0' : 'hover:bg-gray-5',
+                      isFollowed ? 'bg-status-info-background' : 'hover:bg-background-page',
                       isBroadcastActive && 'pointer-events-none opacity-40',
                     )}
                     onClick={() => setFollowingPresenceId(isFollowed ? null : presence.id)}
@@ -265,9 +271,9 @@ export const CollaboratorAvatars = () => {
                     data-umami-event-state={isFollowed ? 'stop' : 'start'}
                   >
                     {isFollowed ? (
-                      <Eyeon className="fill-brand-80 size-4 shrink-0" />
+                      <Eyeon className="fill-icon-brand size-4 shrink-0" />
                     ) : (
-                      <Eyeon className="fill-gray-40 group-hover:fill-gray-80 size-4 shrink-0" />
+                      <Eyeon className="fill-icon-disabled group-hover:fill-icon-primary size-4 shrink-0" />
                     )}
                   </button>
                 )}

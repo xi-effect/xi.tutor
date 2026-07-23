@@ -42,7 +42,7 @@ export const PaymentsList = () => {
   if (!payments || payments.length === 0) {
     return (
       <div className="flex h-[148px] w-full flex-row items-center justify-center gap-8">
-        <p className="text-m-base text-gray-60">Здесь пока пусто</p>
+        <p className="text-m-base text-text-secondary">Здесь пока пусто</p>
       </div>
     );
   }

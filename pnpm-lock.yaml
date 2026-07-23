@@ -10,17 +10,18 @@ overrides:
   '@tiptap/react': 3.23.6
   '@tiptap/starter-kit': 3.23.6
   '@tiptap/extensions': 3.23.6
-  '@xipkg/calls': ^0.1.8
-  '@xipkg/calls-chat': ^0.1.8
-  '@xipkg/calls-compactview': ^0.1.8
-  '@xipkg/calls-config': ^0.1.8
-  '@xipkg/calls-hooks': ^0.1.8
-  '@xipkg/calls-providers': ^0.1.8
-  '@xipkg/calls-risehand': ^0.1.8
-  '@xipkg/calls-store': ^0.1.8
-  '@xipkg/calls-types': ^0.1.8
-  '@xipkg/calls-ui': ^0.1.8
-  '@xipkg/calls-utils': ^0.1.8
+  '@xipkg/calls': ^0.1.10
+  '@xipkg/calls-chat': ^0.1.10
+  '@xipkg/calls-compactview': ^0.1.10
+  '@xipkg/calls-config': ^0.1.10
+  '@xipkg/calls-hooks': ^0.1.10
+  '@xipkg/calls-providers': ^0.1.10
+  '@xipkg/calls-risehand': ^0.1.10
+  '@xipkg/calls-store': ^0.1.10
+  '@xipkg/calls-types': ^0.1.10
+  '@xipkg/calls-ui': ^0.1.10
+  '@xipkg/calls-utils': ^0.1.10
+  '@xipkg/label': 2.1.0
 
 importers:
 
@@ -63,8 +64,8 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       common.api:
         specifier: workspace:*
         version: link:../../packages/common.api
@@ -203,7 +204,7 @@ importers:
         version: 5.73.3(@tanstack/react-query@5.73.3(react@19.2.7))(react@19.2.7)
       '@tanstack/react-router-devtools':
         specifier: ^1.166.6
-        version: 1.167.0(@tanstack/react-router@1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@tanstack/router-core@1.171.14)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 1.167.0(@tanstack/react-router@1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@tanstack/router-core@1.171.15)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@tanstack/router-plugin':
         specifier: ^1.166.6
         version: 1.168.19(@tanstack/react-router@1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(esbuild@0.25.12)(rollup@4.62.2)(vite@6.4.3(@types/node@20.19.43)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0))
@@ -217,8 +218,8 @@ importers:
         specifier: ^4.3.4
         version: 4.7.0(vite@6.4.3(@types/node@20.19.43)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.48.0))
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       common.eslint:
         specifier: workspace:*
         version: link:../../packages/common.eslint
@@ -810,14 +811,14 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/link':
-        specifier: 2.0.12
-        version: 2.0.12(react@19.2.7)
+        specifier: 2.1.0
+        version: 2.1.0(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -947,14 +948,14 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/slider':
-        specifier: 2.2.0
-        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -1011,8 +1012,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -1069,8 +1070,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -1102,11 +1103,11 @@ importers:
   packages/features.classroom:
     dependencies:
       '@xipkg/badge':
-        specifier: 2.0.17
-        version: 2.0.17(react@19.2.7)
-      '@xipkg/tooltip':
         specifier: 2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        version: 2.1.0(react@19.2.7)
+      '@xipkg/tooltip':
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -1139,8 +1140,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -1178,17 +1179,17 @@ importers:
         specifier: ^5.0.0
         version: 5.73.3(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       common.services:
         specifier: workspace:*
         version: link:../common.services
@@ -1218,8 +1219,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -1257,23 +1258,23 @@ importers:
         specifier: ^5.0.0
         version: 5.73.3(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/command':
-        specifier: ^1.0.0
-        version: 1.0.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^1.1.0
+        version: 1.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/popover':
-        specifier: ^2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^4.0.0
+        version: 4.0.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.7)
@@ -1315,8 +1316,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -1354,26 +1355,26 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/scrollarea':
+        specifier: ^2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/tooltip':
         specifier: ^2.2.0
         version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/tooltip':
-        specifier: ^2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/userprofile':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.7)
@@ -1415,8 +1416,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -1454,26 +1455,26 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/scrollarea':
+        specifier: ^2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/tooltip':
         specifier: ^2.2.0
         version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/tooltip':
-        specifier: ^2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/userprofile':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.7)
@@ -1509,8 +1510,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -1545,23 +1546,23 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/actionbutton':
-        specifier: 1.0.0
-        version: 1.0.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 1.1.0
+        version: 1.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/drawer':
-        specifier: 0.1.0
-        version: 0.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 0.2.0
+        version: 0.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/tooltip':
-        specifier: ^2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^2.2.0
+        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.7)
@@ -1612,8 +1613,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -1651,23 +1652,23 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/select':
-        specifier: 2.2.5
-        version: 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -1712,8 +1713,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -1751,11 +1752,11 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       common.api:
         specifier: workspace:*
         version: link:../common.api
@@ -1791,8 +1792,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -1830,41 +1831,41 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/datepicker':
-        specifier: 2.3.0
-        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.4.0
+        version: 2.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/inputmask':
         specifier: 2.3.0
         version: 2.3.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/select':
-        specifier: 2.2.5
-        version: 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/switcher':
-        specifier: ^4.0.0
-        version: 4.0.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/textarea':
-        specifier: 1.2.0
-        version: 1.2.0(react@19.2.7)
-      '@xipkg/toggle':
         specifier: ^4.1.0
         version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/textarea':
+        specifier: 1.3.0
+        version: 1.3.0(react@19.2.7)
+      '@xipkg/toggle':
+        specifier: ^4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/tooltip':
-        specifier: 2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -1915,8 +1916,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -1948,11 +1949,11 @@ importers:
   packages/features.lesson.cancel:
     dependencies:
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       common.services:
         specifier: workspace:*
         version: link:../common.services
@@ -1979,8 +1980,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -2015,29 +2016,29 @@ importers:
         specifier: ^5.2.2
         version: 5.4.0(react-hook-form@7.81.0(react@19.2.7))
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/textarea':
-        specifier: 1.2.0
-        version: 1.2.0(react@19.2.7)
+        specifier: 1.3.0
+        version: 1.3.0(react@19.2.7)
       '@xipkg/tooltip':
-        specifier: 2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/userprofile':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -2067,8 +2068,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -2100,23 +2101,23 @@ importers:
   packages/features.lesson.info:
     dependencies:
       '@xipkg/avatar':
-        specifier: 3.3.0
-        version: 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.4.0
+        version: 3.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/tooltip':
-        specifier: 2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/userprofile':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       common.api:
         specifier: workspace:*
         version: link:../common.api
@@ -2146,8 +2147,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -2188,35 +2189,35 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/datepicker':
-        specifier: 2.3.0
-        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.4.0
+        version: 2.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/inputmask':
         specifier: 2.3.0
         version: 2.3.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/select':
-        specifier: 2.2.5
-        version: 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/switcher-animate':
-        specifier: 1.0.6
-        version: 1.0.6(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 1.1.0
+        version: 1.1.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/userprofile':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -2267,8 +2268,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -2303,14 +2304,14 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/tooltip':
-        specifier: 2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -2340,8 +2341,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -2373,14 +2374,14 @@ importers:
   packages/features.materials.add:
     dependencies:
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/dropdown':
-        specifier: ^3.0.12
-        version: 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^3.1.0
+        version: 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.7)
@@ -2404,8 +2405,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -2443,17 +2444,17 @@ importers:
         specifier: 5.73.3
         version: 5.73.3(react@19.2.7)
       '@xipkg/badge':
-        specifier: 2.0.17
-        version: 2.0.17(react@19.2.7)
+        specifier: 2.1.0
+        version: 2.1.0(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/dropdown':
-        specifier: ^3.0.12
-        version: 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^3.1.0
+        version: 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.7)
@@ -2492,8 +2493,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -2525,29 +2526,29 @@ importers:
   packages/features.materials.duplicate:
     dependencies:
       '@xipkg/avatar':
-        specifier: 3.3.0
-        version: 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.4.0
+        version: 3.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/checkbox':
-        specifier: 5.0.5
-        version: 5.0.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 5.1.0
+        version: 5.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/dropdown':
-        specifier: ^3.0.12
-        version: 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^3.1.0
+        version: 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/scrollarea':
-        specifier: ^2.2.0
-        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/select':
-        specifier: ^2.2.5
-        version: 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.7)
@@ -2571,8 +2572,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -2613,17 +2614,17 @@ importers:
         specifier: 5.73.3
         version: 5.73.3(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       common.types:
         specifier: workspace:*
         version: link:../common.types
@@ -2647,8 +2648,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -2686,17 +2687,17 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/radio':
-        specifier: 2.0.12
-        version: 2.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.1.0
+        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       common.api:
         specifier: workspace:*
         version: link:../common.api
@@ -2732,8 +2733,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -2768,26 +2769,26 @@ importers:
         specifier: ^5.73.3
         version: 5.73.3(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/scrollarea':
+        specifier: ^2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/tooltip':
         specifier: ^2.2.0
         version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/tooltip':
-        specifier: ^2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/userprofile':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.7)
@@ -2823,8 +2824,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -2859,26 +2860,26 @@ importers:
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/checkbox':
-        specifier: 5.0.5
-        version: 5.0.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 5.1.0
+        version: 5.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/dropdown':
-        specifier: ^3.0.12
-        version: 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^3.1.0
+        version: 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/tooltip':
-        specifier: ^2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^2.2.0
+        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/userprofile':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.7)
@@ -2923,8 +2924,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -2974,47 +2975,47 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/avatar':
-        specifier: 3.3.0
-        version: 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.4.0
+        version: 3.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/checkbox':
-        specifier: 5.0.5
-        version: 5.0.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 5.1.0
+        version: 5.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/dropdown':
-        specifier: 3.0.12
-        version: 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/emojipicker':
-        specifier: 1.2.2
-        version: 1.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 1.3.0
+        version: 1.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/popover':
-        specifier: ^2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^4.0.0
+        version: 4.0.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/select':
-        specifier: ^2.2.5
-        version: 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/slider':
-        specifier: 2.2.0
-        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/textarea':
-        specifier: 1.2.0
-        version: 1.2.0(react@19.2.7)
+        specifier: 1.3.0
+        version: 1.3.0(react@19.2.7)
       '@xipkg/tooltip':
-        specifier: ^2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^2.2.0
+        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.7)
@@ -3104,8 +3105,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       common.eslint:
         specifier: workspace:*
         version: link:../common.eslint
@@ -3137,35 +3138,35 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/calendar':
-        specifier: 2.3.5
-        version: 2.3.5(@types/react@19.2.17)(react@19.2.7)
+        specifier: 2.4.0
+        version: 2.4.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/datepicker':
-        specifier: 2.3.0
-        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.4.0
+        version: 2.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/inputmask':
         specifier: 2.3.0
         version: 2.3.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/scrollarea':
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/select':
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/toggle':
+        specifier: ^4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/tooltip':
         specifier: 2.2.0
         version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/select':
-        specifier: 2.2.5
-        version: 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/toggle':
-        specifier: ^4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/tooltip':
-        specifier: 2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/userprofile':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -3231,8 +3232,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -3265,7 +3266,7 @@ importers:
     dependencies:
       '@livekit/components-react':
         specifier: 2.9.14
-        version: 2.9.14(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22)))(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tslib@2.8.1)
+        version: 2.9.14(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22)))(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tslib@2.8.1)
       '@livekit/components-styles':
         specifier: 1.1.6
         version: 1.1.6
@@ -3276,38 +3277,38 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/calls':
-        specifier: ^0.1.8
-        version: 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/dom-mediacapture-transform@0.1.11)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tslib@2.8.1)(use-sync-external-store@1.6.0(react@19.2.7))
+        specifier: ^0.1.10
+        version: 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/dom-mediacapture-transform@0.1.11)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tslib@2.8.1)(use-sync-external-store@1.6.0(react@19.2.7))
       '@xipkg/calls-chat':
-        specifier: ^0.1.8
-        version: 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+        specifier: ^0.1.10
+        version: 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
       '@xipkg/calls-compactview':
-        specifier: ^0.1.8
-        version: 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+        specifier: ^0.1.10
+        version: 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
       '@xipkg/calls-config':
-        specifier: ^0.1.8
-        version: 0.1.8
+        specifier: ^0.1.10
+        version: 0.1.10
       '@xipkg/calls-hooks':
-        specifier: ^0.1.8
-        version: 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+        specifier: ^0.1.10
+        version: 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
       '@xipkg/calls-providers':
-        specifier: ^0.1.8
-        version: 0.1.8(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+        specifier: ^0.1.10
+        version: 0.1.10(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
       '@xipkg/calls-risehand':
-        specifier: ^0.1.8
-        version: 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+        specifier: ^0.1.10
+        version: 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
       '@xipkg/calls-store':
-        specifier: ^0.1.8
-        version: 0.1.8(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+        specifier: ^0.1.10
+        version: 0.1.10(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
       '@xipkg/calls-types':
-        specifier: ^0.1.8
-        version: 0.1.8
+        specifier: ^0.1.10
+        version: 0.1.10
       '@xipkg/calls-ui':
-        specifier: ^0.1.8
-        version: 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+        specifier: ^0.1.10
+        version: 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
       '@xipkg/calls-utils':
-        specifier: ^0.1.8
-        version: 0.1.8(react@19.2.7)
+        specifier: ^0.1.10
+        version: 0.1.10(react@19.2.7)
       common.api:
         specifier: workspace:*
         version: link:../common.api
@@ -3343,8 +3344,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -3442,29 +3443,29 @@ importers:
         specifier: ^3.0.0
         version: 3.0.6(prosemirror-model@1.25.10)(prosemirror-state@1.4.4)(prosemirror-view@1.42.0)(y-protocols@1.0.7(yjs@13.6.31))(yjs@13.6.31)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/dropdown':
-        specifier: ^3.0.12
-        version: 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^3.1.0
+        version: 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/file':
-        specifier: ^2.0.12
-        version: 2.0.12(react@19.2.7)
+        specifier: ^4.0.0
+        version: 4.0.0(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/popover':
-        specifier: ^2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^4.0.0
+        version: 4.0.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/select':
-        specifier: ^2.2.5
-        version: 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/tabs':
-        specifier: ^2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^2.2.0
+        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.7)
@@ -3536,8 +3537,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -3572,23 +3573,23 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/dropdown':
-        specifier: 3.0.12
-        version: 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/link':
-        specifier: 2.0.12
-        version: 2.0.12(react@19.2.7)
+        specifier: 2.1.0
+        version: 2.1.0(react@19.2.7)
       '@xipkg/scrollarea':
-        specifier: 2.2.0
-        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/userprofile':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -3633,8 +3634,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -3669,41 +3670,41 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/avatar':
-        specifier: 3.3.0
-        version: 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.4.0
+        version: 3.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/drawer':
-        specifier: 0.1.0
-        version: 0.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 0.2.0
+        version: 0.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/dropdown':
-        specifier: 3.0.12
-        version: 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/link':
-        specifier: 2.0.12
-        version: 2.0.12(react@19.2.7)
+        specifier: 2.1.0
+        version: 2.1.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/radio':
-        specifier: 2.0.12
-        version: 2.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.1.0
+        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/scrollarea':
-        specifier: 2.2.0
-        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/sidebar':
-        specifier: 0.3.0
-        version: 0.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 0.5.0
+        version: 0.5.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/switcher-animate':
-        specifier: 1.0.6
-        version: 1.0.6(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 1.1.0
+        version: 1.1.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/userprofile':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -3778,8 +3779,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -3811,35 +3812,35 @@ importers:
   packages/modules.profile:
     dependencies:
       '@xipkg/avatar':
-        specifier: 3.3.0
-        version: 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.4.0
+        version: 3.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/badge':
-        specifier: 2.0.17
-        version: 2.0.17(react@19.2.7)
+        specifier: 2.1.0
+        version: 2.1.0(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/dropdown':
-        specifier: 3.0.12
-        version: 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/select':
-        specifier: 2.2.5
-        version: 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/slider':
-        specifier: 2.2.0
-        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/toggle':
-        specifier: ^4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/userprofile':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -3896,8 +3897,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -3960,8 +3961,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -3993,53 +3994,53 @@ importers:
   packages/pages.classroom:
     dependencies:
       '@xipkg/actionbutton':
-        specifier: 1.0.0
-        version: 1.0.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 1.1.0
+        version: 1.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/badge':
-        specifier: 2.0.17
-        version: 2.0.17(react@19.2.7)
+        specifier: 2.1.0
+        version: 2.1.0(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/command':
-        specifier: 1.0.0
-        version: 1.0.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 1.1.0
+        version: 1.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/drawer':
-        specifier: 0.1.0
-        version: 0.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 0.2.0
+        version: 0.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/dropdown':
-        specifier: 3.0.12
-        version: 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/link':
-        specifier: ^2.0.12
-        version: 2.0.12(react@19.2.7)
+        specifier: ^2.1.0
+        version: 2.1.0(react@19.2.7)
       '@xipkg/scrollarea':
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/select':
+        specifier: ^2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/switcher-animate':
+        specifier: 1.1.0
+        version: 1.1.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/tabs':
         specifier: 2.2.0
         version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/select':
-        specifier: ^2.2.5
-        version: 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/switcher-animate':
-        specifier: 1.0.6
-        version: 1.0.6(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/tabs':
-        specifier: 2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/tooltip':
-        specifier: 2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/userprofile':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       common.api:
         specifier: workspace:*
         version: link:../common.api
@@ -4138,8 +4139,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -4174,44 +4175,44 @@ importers:
         specifier: 3.13.9
         version: 3.13.9(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/avatar':
-        specifier: 3.3.0
-        version: 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.4.0
+        version: 3.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/badge':
-        specifier: 2.0.17
-        version: 2.0.17(react@19.2.7)
+        specifier: 2.1.0
+        version: 2.1.0(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/dropdown':
-        specifier: 3.0.12
-        version: 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/link':
-        specifier: ^2.0.12
-        version: 2.0.12(react@19.2.7)
+        specifier: ^2.1.0
+        version: 2.1.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/scrollarea':
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/select':
+        specifier: ^2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/switcher-animate':
+        specifier: 1.1.0
+        version: 1.1.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/tooltip':
         specifier: 2.2.0
         version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/select':
-        specifier: ^2.2.5
-        version: 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/switcher-animate':
-        specifier: 1.0.6
-        version: 1.0.6(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/tooltip':
-        specifier: 2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/userprofile':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -4265,8 +4266,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -4310,29 +4311,29 @@ importers:
         specifier: ^5.2.2
         version: 5.4.0(react-hook-form@7.81.0(react@19.2.7))
       '@xipkg/alert':
-        specifier: 1.1.0
-        version: 1.1.0(react@19.2.7)
+        specifier: 1.2.0
+        version: 1.2.0(react@19.2.7)
       '@xipkg/avatar':
-        specifier: 3.3.0
-        version: 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.4.0
+        version: 3.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/fileuploader':
-        specifier: 5.0.0
-        version: 5.0.0(react@19.2.7)
+        specifier: 5.1.0
+        version: 5.1.0(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -4389,8 +4390,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -4431,26 +4432,26 @@ importers:
         specifier: ^5.2.2
         version: 5.4.0(react-hook-form@7.81.0(react@19.2.7))
       '@xipkg/avatar':
-        specifier: 3.3.0
-        version: 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.4.0
+        version: 3.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/fileuploader':
-        specifier: 5.0.0
-        version: 5.0.0(react@19.2.7)
+        specifier: 5.1.0
+        version: 5.1.0(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -4507,8 +4508,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -4552,11 +4553,11 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/avatar':
-        specifier: 3.3.0
-        version: 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.4.0
+        version: 3.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -4601,8 +4602,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -4637,32 +4638,32 @@ importers:
         specifier: ^5.2.2
         version: 5.4.0(react-hook-form@7.81.0(react@19.2.7))
       '@xipkg/alert':
-        specifier: 1.1.0
-        version: 1.1.0(react@19.2.7)
+        specifier: 1.2.0
+        version: 1.2.0(react@19.2.7)
       '@xipkg/avatar':
-        specifier: 3.3.0
-        version: 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.4.0
+        version: 3.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/badge':
-        specifier: 2.0.17
-        version: 2.0.17(react@19.2.7)
+        specifier: 2.1.0
+        version: 2.1.0(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/scrollarea':
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/switcher-animate':
+        specifier: 1.1.0
+        version: 1.1.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/tooltip':
         specifier: 2.2.0
         version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/switcher-animate':
-        specifier: 1.0.6
-        version: 1.0.6(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/tooltip':
-        specifier: 2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/userprofile':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -4758,8 +4759,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -4800,29 +4801,29 @@ importers:
         specifier: 3.13.9
         version: 3.13.9(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/dropdown':
-        specifier: 3.0.12
-        version: 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/file':
-        specifier: 2.0.12
-        version: 2.0.12(react@19.2.7)
+        specifier: 4.0.0
+        version: 4.0.0(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/scrollarea':
-        specifier: 2.2.0
-        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/switcher-animate':
-        specifier: 1.0.6
-        version: 1.0.6(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 1.1.0
+        version: 1.1.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/tabs':
-        specifier: ^2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^2.2.0
+        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/userprofile':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -4873,8 +4874,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -4909,23 +4910,23 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/avatar':
-        specifier: 3.3.0
-        version: 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.4.0
+        version: 3.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/popover':
-        specifier: ^2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^4.0.0
+        version: 4.0.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: ^1.8.0
         version: 1.8.0(react@19.2.7)
@@ -4961,8 +4962,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -5000,44 +5001,44 @@ importers:
         specifier: 3.13.9
         version: 3.13.9(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/alert':
-        specifier: 1.1.0
-        version: 1.1.0(react@19.2.7)
+        specifier: 1.2.0
+        version: 1.2.0(react@19.2.7)
       '@xipkg/avatar':
-        specifier: 3.3.0
-        version: 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.4.0
+        version: 3.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/dropdown':
-        specifier: 3.0.12
-        version: 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/fileuploader':
-        specifier: 5.0.0
-        version: 5.0.0(react@19.2.7)
+        specifier: 5.1.0
+        version: 5.1.0(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/scrollarea':
-        specifier: 2.2.0
-        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/switcher-animate':
-        specifier: 1.0.6
-        version: 1.0.6(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 1.1.0
+        version: 1.1.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/tabs':
-        specifier: ^2.1.0
-        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^2.2.0
+        version: 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/userprofile':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.2.0
+        version: 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -5106,8 +5107,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -5151,20 +5152,20 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/link':
-        specifier: 2.0.12
-        version: 2.0.12(react@19.2.7)
+        specifier: 2.1.0
+        version: 2.1.0(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -5224,8 +5225,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -5263,20 +5264,20 @@ importers:
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/link':
-        specifier: 2.0.12
-        version: 2.0.12(react@19.2.7)
+        specifier: 2.1.0
+        version: 2.1.0(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -5333,8 +5334,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -5369,23 +5370,23 @@ importers:
         specifier: ^5.2.2
         version: 5.4.0(react-hook-form@7.81.0(react@19.2.7))
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/checkbox':
-        specifier: 5.0.5
-        version: 5.0.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 5.1.0
+        version: 5.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/link':
-        specifier: 2.0.12
-        version: 2.0.12(react@19.2.7)
+        specifier: 2.1.0
+        version: 2.1.0(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -5433,8 +5434,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -5469,26 +5470,26 @@ importers:
         specifier: ^5.2.2
         version: 5.4.0(react-hook-form@7.81.0(react@19.2.7))
       '@xipkg/avatar':
-        specifier: 3.3.0
-        version: 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 3.4.0
+        version: 3.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/button':
-        specifier: 4.1.0
-        version: 4.1.0(@types/react@19.2.17)(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/fileuploader':
-        specifier: 5.0.0
-        version: 5.0.0(react@19.2.7)
+        specifier: 5.1.0
+        version: 5.1.0(react@19.2.7)
       '@xipkg/form':
-        specifier: 4.2.2
-        version: 4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.3.0
+        version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons':
-        specifier: 3.0.23
-        version: 3.0.23(react@19.2.7)
+        specifier: 3.1.0
+        version: 3.1.0(react@19.2.7)
       '@xipkg/input':
-        specifier: 2.2.14
-        version: 2.2.14(react@19.2.7)
+        specifier: 2.3.0
+        version: 2.3.0(react@19.2.7)
       '@xipkg/modal':
-        specifier: 4.5.5
-        version: 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 4.6.0
+        version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils':
         specifier: 1.8.0
         version: 1.8.0(react@19.2.7)
@@ -5548,8 +5549,8 @@ importers:
         specifier: 4.6.0
         version: 4.6.0(jiti@2.7.0)(turbo@2.10.4)
       '@xipkg/tailwind':
-        specifier: 0.8.6
-        version: 0.8.6
+        specifier: 1.0.0
+        version: 1.0.0
       '@xipkg/typescript':
         specifier: latest
         version: 0.2.0
@@ -6542,6 +6543,13 @@ packages:
       livekit-client: ^2.17.2
       tslib: ^2.6.2
 
+  '@livekit/components-core@0.12.14':
+    resolution: {integrity: sha512-6OKP/1Ok2fCZewDLKd3SzaTb7KvfZl/6hjggI+TgUdhp0Y7HBg3+tHA7YmhZRc0BO8wIyVy4VgTPn7qkLHt2nQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      livekit-client: ^2.20.1
+      tslib: ^2.6.2
+
   '@livekit/components-core@0.12.9':
     resolution: {integrity: sha512-bwrZsHf6GaHIO+lLyA6Yps1STTX9YIeL3ixwt+Ufi88OgkNYdp41Ug8oeVDlf7tzdxa+r3Xkfaj/qvIG84Yo6A==}
     engines: {node: '>=18'}
@@ -6562,12 +6570,12 @@ packages:
       '@livekit/krisp-noise-filter':
         optional: true
 
-  '@livekit/components-react@2.9.21':
-    resolution: {integrity: sha512-6hU9VucJJL+gAhilNGe4MBCDCZVk64qyjP9Ck86krvOIdVU76WeWksddg1MYUP10AlUwwrfD7davz41pJTcMJw==}
+  '@livekit/components-react@2.9.23':
+    resolution: {integrity: sha512-clO+0g/u3YBpuOvnAjUSAJBH/o7w+RpUAseswjiSML9rHrXlTUhwBNm8LPk+qN5GOU3A6lzsNnFYVpUHUBVOkg==}
     engines: {node: '>=18'}
     peerDependencies:
-      '@livekit/krisp-noise-filter': ^0.2.12 || ^0.3.0
-      livekit-client: ^2.18.2
+      '@livekit/krisp-noise-filter': ^0.2.12 || ^0.3.0 || ^0.4.0
+      livekit-client: ^2.20.1
       react: '>=18'
       react-dom: '>=18'
       tslib: ^2.6.2
@@ -6591,8 +6599,8 @@ packages:
   '@livekit/mutex@1.1.1':
     resolution: {integrity: sha512-EsshAucklmpuUAfkABPxJNhzj9v2sG7JuzFDL4ML1oJQSV14sqrpTYnsaOudMAw9yOaW53NU3QQTlUQoRs4czw==}
 
-  '@livekit/protocol@1.45.8':
-    resolution: {integrity: sha512-Q+l57E7w/xxOBFVWzdX5rkAZO7ffyF+rlDzNUYq2SU114+5aTyCq+PK4unaEVDNd4952Af7wteKr3sOgasGuaA==}
+  '@livekit/protocol@1.50.4':
+    resolution: {integrity: sha512-L1uggNQAqyY21smQY8AllyOYbcv9Me9TaxwuLytL1R8ck9nbYPmQLNwEDi3pOFGAMa5F8I2nUi2Jc59W5awxlA==}
 
   '@livekit/track-processors@0.7.2':
     resolution: {integrity: sha512-lzARBKTbBwqycdR/SwTu6//N0l20BzfDd7grxCXl07676SwRApNtZAK1GJjL1m3dCM3KBqH1aVxjMpNcbOw5uQ==}
@@ -8220,10 +8228,6 @@ packages:
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
 
-  '@tanstack/history@1.121.34':
-    resolution: {integrity: sha512-YL8dGi5ZU+xvtav2boRlw4zrRghkY6hvdcmHhA0RGSJ/CBgzv+cbADW9eYJLx74XMZvIQ1pp6VMbrpXnnM5gHA==}
-    engines: {node: '>=12'}
-
   '@tanstack/history@1.162.0':
     resolution: {integrity: sha512-79pf/RkhteYZTRgcR4F9kbk84P2N8rugQJswxfIqovlbRiT3yI7eBE+5QorIrZaOKktsgzRlXh1l/du/xpl4iA==}
     engines: {node: '>=20.19'}
@@ -8257,13 +8261,6 @@ packages:
       '@tanstack/router-core':
         optional: true
 
-  '@tanstack/react-router@1.128.8':
-    resolution: {integrity: sha512-T6kjftzKDNpspobSUbkFogp6zssg/eVPCTP+XlZgeeaBWfVhdlSCFfnnjBxg0jp2OqLq7fb9YYBs2kzR7EPsmQ==}
-    engines: {node: '>=12'}
-    peerDependencies:
-      react: '>=18.0.0 || >=19.0.0'
-      react-dom: '>=18.0.0 || >=19.0.0'
-
   '@tanstack/react-router@1.170.17':
     resolution: {integrity: sha512-ppLkjCfSMaeug9rmFRYzOd4TIqWV+yTE7tzIny7alJsSnM7w4lzEZm6eqCehG0SPetpZ0R3K+UnanSmBgOAVcQ==}
     engines: {node: '>=20.19'}
@@ -8271,11 +8268,12 @@ packages:
       react: '>=18.0.0 || >=19.0.0'
       react-dom: '>=18.0.0 || >=19.0.0'
 
-  '@tanstack/react-store@0.7.7':
-    resolution: {integrity: sha512-qqT0ufegFRDGSof9D/VqaZgjNgp4tRPHZIJq2+QIHkMUtHjaJ0lYrrXjeIUJvjnTbgPfSD1XgOMEt0lmANn6Zg==}
+  '@tanstack/react-router@1.170.18':
+    resolution: {integrity: sha512-wpbGYZEp/fmz1q4bn7BD8VZ+/VZ7GBqSJv5V969pU+chP8y7dquWDmKTFMohvUegb9lg12m1uPVvD6kB2wORvQ==}
+    engines: {node: '>=20.19'}
     peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react: '>=18.0.0 || >=19.0.0'
+      react-dom: '>=18.0.0 || >=19.0.0'
 
   '@tanstack/react-store@0.9.3':
     resolution: {integrity: sha512-y2iHd/N9OkoQbFJLUX1T9vbc2O9tjH0pQRgTcx1/Nz4IlwLvkgpuglXUx+mXt0g5ZDFrEeDnONPqkbfxXJKwRg==}
@@ -8296,12 +8294,12 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
-  '@tanstack/router-core@1.128.8':
-    resolution: {integrity: sha512-MA5iD9GokZLx1T0NDtIeNJDxQ4jodjji7em6mYvxDEpZQ01n/1mbQhqGoPgKgZMiQbUcrfzepYlVvGccoRsAXA==}
-    engines: {node: '>=12'}
-
   '@tanstack/router-core@1.171.14':
     resolution: {integrity: sha512-Mo3hwx0qB0cJsVYGDjG0+Ouf7VV74h/vsoDMGztdlyzDanp4gBA2s7IVvm6hFrmQM6GpD9F0Z7SqD7OldfLE7g==}
+    engines: {node: '>=20.19'}
+
+  '@tanstack/router-core@1.171.15':
+    resolution: {integrity: sha512-IILCDcLaItMZQ2jEmCABHY1Nhjjn5XUvwpQp3e4Nmu+vfg0BgYFuu/QASz2SwE2ZNbVMrvt8X/wxa+Gg5aErxA==}
     engines: {node: '>=20.19'}
 
   '@tanstack/router-devtools-core@1.168.0':
@@ -8342,9 +8340,6 @@ packages:
   '@tanstack/router-utils@1.162.2':
     resolution: {integrity: sha512-hTWqJtqIFFdvuCl8WXNyrodp2L9zo2G37xKRrcVmVRWpAB2h+U1LuRAfS4tsFTiWOIoE/B+WDVFB8JpoEdw6jQ==}
     engines: {node: '>=20.19'}
-
-  '@tanstack/store@0.7.7':
-    resolution: {integrity: sha512-xa6pTan1bcaqYDS9BDpSiS63qa6EoDkPN9RsRaxHuDdVDNntzq3xNwR5YKTU/V3SkSyC9T4YVOPh2zRQN0nhIQ==}
 
   '@tanstack/store@0.9.3':
     resolution: {integrity: sha512-8reSzl/qGWGGVKhBoxXPMWzATSbZLZFWhwBAFO9NAyp0TxzfBP0mIrGb8CP8KrQTmvzXlR/vFPPUrHTLBGyFyw==}
@@ -8814,23 +8809,23 @@ packages:
   '@vitest/utils@3.2.7':
     resolution: {integrity: sha512-x6BDOd7dyo3PFLY3I9/HJ25X/6OurhGXk2/B9gOZNPF7XDVjeBK4k01lQE5uvDpbuheErh91qYuE1E2OEjK3Rw==}
 
-  '@xipkg/actionbutton@1.0.0':
-    resolution: {integrity: sha512-a4xw+HR+gfX5Z21xQ+GEXwM3T0zlBGxrfDc6VOrvvs4E/gaWGkQ9sek5oihywlBo5K2yrPW06mPuw6TdMqlKRg==}
+  '@xipkg/actionbutton@1.1.0':
+    resolution: {integrity: sha512-/eM0UBSL7dtRkzQn4O09JNW5aax8EriCVNEaFFX6JFFqjjzCIFYZU+bThPCPaksJrOLEWudQG5jB4kzkkRaSHQ==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/alert@1.1.0':
-    resolution: {integrity: sha512-WGxGlMdcyTtX293ehTErFtNrapHhaWJfqvHztmCl2gAXn6zR/ztoft1FH5+sshr8Wl26Sfdp04V8xoCRYkpG0w==}
+  '@xipkg/alert@1.2.0':
+    resolution: {integrity: sha512-I6gfgf+4/SdvxpMiPUV3Ld4OJ0QCPKT9GeMb2nRnYfqTX0QYLWm2Xis/BetB+zoMIWSzWh5v2F6Xy+ANCswzBQ==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/avatar@3.3.0':
-    resolution: {integrity: sha512-VsOEREYQ7dTg0Lq+7+G/NglEZs9R/RnwSv74OUAzpgdtUWC9tbZVkuOi1IdM7A95ozw0Wc94GvtnFOyi7X3OhA==}
+  '@xipkg/avatar@3.4.0':
+    resolution: {integrity: sha512-k44ZY25jSgU6RasUDGinscR4yHLH6bs/3Th4jXPrHh2SCqU9oTxJ9AcK51HqvoXmGP5W07leIawhb39o14erdA==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/badge@2.0.17':
-    resolution: {integrity: sha512-hcTmoFrzNN0/JUUwpLToDiv4WDSJucotYK3GZ0MDAx+51m/Ncwch4/LG8/mDO4wuTHfFm8glstCg/xXupAZ1cQ==}
+  '@xipkg/badge@2.1.0':
+    resolution: {integrity: sha512-T3BwY0rJMuDzMPdATOSQdHMcy6OMZ1HC4OErfBD6wMIYAJ+JeaBy1zE2SgSjGjl+ichJKcHrroewgDytQTKcyg==}
     peerDependencies:
       react: ^19
 
@@ -8839,112 +8834,112 @@ packages:
     peerDependencies:
       react: ^19
 
-  '@xipkg/button@4.1.0':
-    resolution: {integrity: sha512-otriuOCa9OFmfxIjN5XswQWSQygDLScrtXSG+oLvekcSGJJJuR4EE8zggfyTlAK6VZMa9orNsR7yAI4MCcPkww==}
+  '@xipkg/button@4.3.0':
+    resolution: {integrity: sha512-GdQ09/hwfR0DqxOkGGnZ1lymPkLap4nowtS1WypcFSnIGOkMsFIyjA8oXG5o4SjKsw3oauucMUCUKmwGzajOzg==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/calendar@2.3.5':
-    resolution: {integrity: sha512-VynoQ5+cJVrL4oqbdh7keGvALW+y0ckL21aDpSRzZtAy4e89bU1C8np/QBKblznb13nedfZV0G/S7/lvsFwStQ==}
+  '@xipkg/calendar@2.4.0':
+    resolution: {integrity: sha512-IYVthVeIFSVp3C9JfcgFuAigbA0NnZZ2j5qxIxwUsSUhwPDHLFQyQsDnRdEo5HFMOiBlKSn6V8K7yHxnpyNMXw==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/calls-chat@0.1.8':
-    resolution: {integrity: sha512-2qsxnuH9NwmUDa8e85TfhBqwzJ0SNxGoIEmQ6LRA3ZbiB5zUHXNmSf8RHhhEzeUX/ck8CkrDr72w4baB+wBdXQ==}
+  '@xipkg/calls-chat@0.1.10':
+    resolution: {integrity: sha512-//+t0JGR3ah8p+CJtnM3UrXw4y8STHKmp2RwJhedsKQrvZPjoW2rfGyytDBaY0OZoMsSu4mflUMoGXpyiAJI6w==}
     peerDependencies:
-      react: '19'
+      react: ^19.2.8
 
-  '@xipkg/calls-compactview@0.1.8':
-    resolution: {integrity: sha512-I4HOlcBgyzvW9zmFO/4dUOyhDz6dLYuPtsfeuddIuw/8gBSUtozyLGQQbC7wTUCHHypR0wHQWCDfr0ZaqtKcsw==}
+  '@xipkg/calls-compactview@0.1.10':
+    resolution: {integrity: sha512-/US5cJ/hSTb+++bB1pfOSAjvAp9+MaPL95p8veX8p/GXhaS3VGomm+jT/6TFhMtNCg8M/UeNGlBq5Iwjrw+giQ==}
     peerDependencies:
-      react: '19'
+      react: ^19.2.8
 
-  '@xipkg/calls-config@0.1.8':
-    resolution: {integrity: sha512-z77uJ5JE7vYR0tedirUUJFlFgrre2FXn8sQgDJ+UdWx3k2bqoKf8mk7TX7VH6HNsLEMd0FME9ql6V1cmRhl4DQ==}
+  '@xipkg/calls-config@0.1.10':
+    resolution: {integrity: sha512-CIJeIStax7IWlysvGaDhMS88x5QkTdtzFdM15C3C9JoQSm+1yX4AuEFTTVRd5zHp4/hkFV/cLn1vnLddPT+CRw==}
 
-  '@xipkg/calls-hooks@0.1.8':
-    resolution: {integrity: sha512-n8RA/n1HMlVTlWDcZB511xZAyE7uVRo4KMhGCtMMQBe7J0eMsF+Y4ewJDtgTXBHimVjoid8UDCjwP1PgD3XoOg==}
+  '@xipkg/calls-hooks@0.1.10':
+    resolution: {integrity: sha512-nX76xEDRiKBWf0IbBCdBYLv0yI9/8ALrtObBu0VywkDt47sIy3p4+snahJqlnmRHdXV6QYYggCfpQS2xtNrbXg==}
     peerDependencies:
-      react: '19'
+      react: ^19.2.8
 
-  '@xipkg/calls-providers@0.1.8':
-    resolution: {integrity: sha512-eBYhv0l625oUY5Bo0AmGeQUAetOnJIX+RN/M6ownTYP3AosFqxM/sil8RiSvp8QT9pK3TLZplfGnSQ6P/zyLkA==}
+  '@xipkg/calls-providers@0.1.10':
+    resolution: {integrity: sha512-Yoktqof8x4qXnvpzC4NT5jj/GV3epzZ6J3kJ9raVNkeJRjvPJHe5cCG0VFKKk1hFvIVev5xlWDV1hI68C8GkoA==}
     peerDependencies:
-      react: '19'
+      react: ^19.2.8
 
-  '@xipkg/calls-risehand@0.1.8':
-    resolution: {integrity: sha512-azJpXOvZbc436rEAa/AseGKcra+Lb9AS149HEnyWpjfxDdfQfSWXTBXhXgrdKGp2LjzQFOIyDqbkb1trzWP3Hw==}
+  '@xipkg/calls-risehand@0.1.10':
+    resolution: {integrity: sha512-TbWn1GgQNEr6ypvFW8XKB9wLfmEhiDb4lcMoCTGe3429o7OlVDrzjrVG3bD+eQZ5RSTOyJbyImTq+kqR1mjdSw==}
     peerDependencies:
-      react: '19'
+      react: ^19.2.8
 
-  '@xipkg/calls-store@0.1.8':
-    resolution: {integrity: sha512-brllvdf0vO6n2aieyjHOfruDNBt8VWOQpYNItyU0HRfRuyP+B0YSf1aZ2Lq19bDB0G/oR6b/2VWacdifFiNb9w==}
+  '@xipkg/calls-store@0.1.10':
+    resolution: {integrity: sha512-k+pxIMFwNSw9LQWFJQsATUoT8D4snZBrW81UrIdRIxNMAT4xcp7iXSY1Hlo18yn31RJYNshiESAjWmy7HINPAQ==}
     peerDependencies:
-      react: '19'
+      react: ^19.2.8
 
-  '@xipkg/calls-types@0.1.8':
-    resolution: {integrity: sha512-q3d5PJTITSaMAQRJsyCK3nWdlzd9hrJ1J79k0SwDDNDzXVdhY+LqI2qd40WE1JXVW4vk1L9/G1Gy1A2tIk1kXw==}
+  '@xipkg/calls-types@0.1.10':
+    resolution: {integrity: sha512-5MwleidjlM6FsnJyjx+9CHTbfAedvxlOfw+Y3VIKSO9Bcesh1KvD83HIDRV6UeeNDuYhbgiMhCFwslQGfR77sw==}
 
-  '@xipkg/calls-ui@0.1.8':
-    resolution: {integrity: sha512-T3RrSO49tF1qpi0wQZJjMgRRKuiemAugwpMcvLBkSkFbxdEjWA4k9GNqUOWvih+DwWBgaxRfzmQcB263NVQtBA==}
+  '@xipkg/calls-ui@0.1.10':
+    resolution: {integrity: sha512-JN6xyDlk1Inac/AsLn4z88ztXmHuPDOyibAiogRD/XmVZMt3wXQWaGlA51cJruOrcIxpW55aRugNdo7n5HYjRw==}
     peerDependencies:
-      react: '19'
+      react: ^19.2.8
 
-  '@xipkg/calls-utils@0.1.8':
-    resolution: {integrity: sha512-dEhN2HeY3vA7/261rBNPK2yswootExn6zXNSX2APUXD8291EnAYWCS/+Nfqd8nVL9Hp0AB0FgSEvBZv4NT2Yhw==}
+  '@xipkg/calls-utils@0.1.10':
+    resolution: {integrity: sha512-4f08ggRcUiYDXUdjnCQ4uF/V0q6rGDxeO2I58OlA3YTS0JODf2Vh77HOZ9fpvTV3c/6Qypmdrd/hKn5nt7QTwQ==}
     peerDependencies:
-      react: '19'
+      react: ^19.2.8
 
-  '@xipkg/calls@0.1.8':
-    resolution: {integrity: sha512-udgPzchrGVcQvyZzp9cMyTYqAlU94taP5Rz/iLXmKa7E/WrES6hxVIPZtAzGKUi6mn75UtytmvX/FvZczLI7cQ==}
+  '@xipkg/calls@0.1.10':
+    resolution: {integrity: sha512-i5KcRK0VAbOfvK1CmdAC82uAd1Fv8NIIWUflvfUgq4SXx+9ougdnqi/ZbvKxqCdVEjj5XDIOPNxTABmOGYd89A==}
     peerDependencies:
-      react: '19'
+      react: ^19.2.8
 
-  '@xipkg/checkbox@5.0.5':
-    resolution: {integrity: sha512-9SGULnpZ8rxaMo+W6UqaoGLDOGJWMYpfSyJ0kw1r1B3vq6Ivmt4f75gPVucpA4kIfIpVtnq2ASFP86DcR2g0sw==}
-    peerDependencies:
-      react: ^19
-
-  '@xipkg/command@1.0.0':
-    resolution: {integrity: sha512-cpqPfRUXNgyEUExUsgNQNSmmWJcyjoaAcEX+k6D6LMhXdE3uDGk22FnYZe4nxsbs2bjfOIrtEwNP4V/phVlSgw==}
+  '@xipkg/checkbox@5.1.0':
+    resolution: {integrity: sha512-q3l0XHf7VJ33qhBHFVkmmLQgSnlt9S2yrCDeWfcBdmiVRyhlEdsHFlJ3XeFumhYj4N3/h3GROo0vnGKv785BiA==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/datepicker@2.3.0':
-    resolution: {integrity: sha512-N2H5GuH3oCLLroddkOb5gcu3cVoEta66Is95wh2czdLdJGe5hRliwMDcbQIwAZ4Q5V5+J+6VHPDXbvOxlotOCA==}
+  '@xipkg/command@1.1.0':
+    resolution: {integrity: sha512-FMSxsu9AVXBjBLp8q0m/2n6sJPyHRToiOWvw/yTLaN3tLYX68grllBg9Q2y8g803I4v3MVp+c/7XbnLnDfPHtw==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/drawer@0.1.0':
-    resolution: {integrity: sha512-Wi1PPe7FRLqlyRVBfLEHwZu0rZoa6UoagBiW45B3PbctO37ha1WFF67CgKkn5qe3m3Mxc0KEg/59WVcGHIr+VQ==}
+  '@xipkg/datepicker@2.4.0':
+    resolution: {integrity: sha512-53/SlQg3GpuI2vMk2RR/aObvYWP8bnFKXNFMpLi7g5yBKFDyft1FxX19mojx2rXhmQLEwaBFJ3r8nANmID+e/g==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/dropdown@3.0.12':
-    resolution: {integrity: sha512-HboZ94Tq78zzicRxihR5G+ZC69RxYlRHByA3Hh9gV7p3QcssAXRXBJUPVOY/95nSPEHPzpQ3WOJDNDoUUgbDSw==}
+  '@xipkg/drawer@0.2.0':
+    resolution: {integrity: sha512-xxb+iQgLBNYSUURd0lYb+rILnNA6kkb0jcB4LcHCtnnTsgo9pH/kMJX4rx1ASEQPWGK0BXmoP57fwhIwvPRRSA==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/emojipicker@1.2.2':
-    resolution: {integrity: sha512-uKE0cTyZvM5IuZisdheSwx7z9DSpayLzXTUyQ/pwUBwMmm+vaYs2/Evrdm5Wd/mq70Ijy2JP+AzVTtoA59vZIA==}
+  '@xipkg/dropdown@3.1.0':
+    resolution: {integrity: sha512-25IDUtYBWFtvn3+dkzVNIbHV0Bg0goGbD16hodftJCF4YV49rfyZCMvVXntzvq86Hry7oiXLoEFZY5mmnskDdA==}
+    peerDependencies:
+      react: ^19
+
+  '@xipkg/emojipicker@1.3.0':
+    resolution: {integrity: sha512-xLHGmtrOC3VoHg+4B7hK4qR6WSEDY38pKFIrifh874bJSU2DgAf2BJc04J53IpB4CVpfeFXpEsKMr2xzfeboww==}
     peerDependencies:
       react: ^19
 
   '@xipkg/eslint@4.6.0':
     resolution: {integrity: sha512-Uk9vsFiVAEPb16Ndx8RtgzHH1Xuc5bAXTEGEHvh85o8Q5O5ennu7kDlzy34aBO56bmXMYoxotET/5wKeYxl/4Q==}
 
-  '@xipkg/file@2.0.12':
-    resolution: {integrity: sha512-EKjWNq9Wk/VpkTDhTK8AaCtCAPu2Wa75LCGwGeXEtqFItc+owwLYxsu4lUFpXQQJF/v9YFJyGgClQ4Iv6PLfdQ==}
+  '@xipkg/file@4.0.0':
+    resolution: {integrity: sha512-Ee8Fq2NmgBN5JGcZAGzOs5jWMt3nAoNFNMBOgJ/HXyHjuxl0uiYFELKBx6zLky/eFYDkMeFXWABCNDRxzE4yuw==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/fileuploader@5.0.0':
-    resolution: {integrity: sha512-OAjYjZUwu5D60ZyJDhd02FQBso/RFTwr4VDn9jtEvPUPba+52ihEaer6sxGb23IQuHnRVXiiQEGO6o3QV9GIWQ==}
+  '@xipkg/fileuploader@5.1.0':
+    resolution: {integrity: sha512-rvY669saR5HZpMCXVxii5OGJ0FoYgLPIiRgbA0PPjy2B6b0+9A9MiyxR6sEml1jYrUSkNPwhIsnbPHgxKVUjug==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/form@4.2.2':
-    resolution: {integrity: sha512-0WDkNdvTR1NZ2Y2cIo+BPAl0gL6iTT1hsiahsUQw9eaAAasn+9r+wk2a7xTAz7li8knWkdMTPZJ1shHhXgBm7g==}
+  '@xipkg/form@4.3.0':
+    resolution: {integrity: sha512-PkIZMUtHhhv5CPO6vdt5hB1y9hyRwdgbgJaeUd7nfxi1P29wgece4CBt4RWTtCK4bMw/6bQ5oOVwNl5igKozRw==}
     peerDependencies:
       react: ^19
 
@@ -8953,13 +8948,13 @@ packages:
     peerDependencies:
       react: ^19
 
-  '@xipkg/icons@3.0.23':
-    resolution: {integrity: sha512-Qn5hP1xOs5SnqUCuFKVJh7CUKclF6+nv3GqsfgUwBx+cIwdQLN3+a+HozxYR5rZ4sJPTBiCK0zuow7ciy9jTVg==}
+  '@xipkg/icons@3.1.0':
+    resolution: {integrity: sha512-tKiTa+JF0EmafL3oyMmC/T6oYL4HWWsmCuSRD8Zao7Aer9D2Ewb7H0STwWfDDvTjDsLQpH/YfjNMKMr6jQK1FQ==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/input@2.2.14':
-    resolution: {integrity: sha512-ycqQyGBb+VG6J7LpvgVc9QpotyUgdfC5wkV+JwJ6//KUY0tigZuTYmSYuhaDdMdU9HNIiRlHx1AclSCTVr1/Iw==}
+  '@xipkg/input@2.3.0':
+    resolution: {integrity: sha512-yl6XjEcexXCEE4TW7QAfIIKk8GqTWuaB7cRJ89ngrXx26QVJqRNdtMYo4d5Cq1+hVaZ/x7a3bMSSIOgHZWt/jw==}
     peerDependencies:
       react: ^19
 
@@ -8968,23 +8963,18 @@ packages:
     peerDependencies:
       react: ^19
 
-  '@xipkg/label@2.0.12':
-    resolution: {integrity: sha512-OEPSfNHGPz31Kyyc0MMCz/gu3ZrHDQhicaL9bjjXWmS7vbhI+4KMNtrTUH92xiqh9I2qOkdqCiW9K/xLnhJabw==}
+  '@xipkg/label@2.1.0':
+    resolution: {integrity: sha512-WmENVA83KqsgThMmLunGyeqD+gD9ZZwlFgkDUcLj7KYZ7jVAM1HTIG0wxmh4feZC1U0TPNUxvn1cfjNpeyZQBQ==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/link@2.0.12':
-    resolution: {integrity: sha512-Qhj7Bd0km6HrMEbSNveqwZYFs66xKb9pIElAIh/9RYsJ/duBsAZg7mE5V0vSD4ImuHaqZ03NEIIKooJoiQyO2w==}
+  '@xipkg/link@2.1.0':
+    resolution: {integrity: sha512-vFs0Sd0MxzZY+V31MqSnygksvF593HBmFERFJdwCDy2VdBVxhNs3ediY0Q3jNMavLyv8hl+0ReVzB4j7Fu2Reg==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/modal@4.5.5':
-    resolution: {integrity: sha512-TtlbYTkuTXeHKvXMsnzg9tZlsJ2f3fwo1bxAKDkib5DZZu3xh56Vk4GBFEDh7/wOFBgz6lpCpRz+tBTNPB2aMw==}
-    peerDependencies:
-      react: ^19
-
-  '@xipkg/popover@2.1.0':
-    resolution: {integrity: sha512-obxz1AuLlfEwiscaWmTsNmugld+7X9ql+OQkBMHCmKSR0vnyvidvYCG6fOfAnx2NCFc/5lL9KIBwCWcrClJQhg==}
+  '@xipkg/modal@4.6.0':
+    resolution: {integrity: sha512-HajJOhbpUBpD1e/Aphu1JoKkzt2bkoq0PmovXvwhll/maZEcK16cBCns+WNtX98do9eGdmRPqYftlRQKQP2MtA==}
     peerDependencies:
       react: ^19
 
@@ -8993,18 +8983,23 @@ packages:
     peerDependencies:
       react: ^19
 
-  '@xipkg/radio@2.0.12':
-    resolution: {integrity: sha512-qC9/lxQdha1I3EbxtZoU0HJ9vOma3xcEkcyg9mrRyAND6VC2ZXsgAsjUkdOls6rK0brihgxLuPYn9VO+ACzyEQ==}
+  '@xipkg/popover@4.0.0':
+    resolution: {integrity: sha512-2ie5HC2k6Uqy9vM8xWx/pt1e8urpWDdKyEU5asT51i7ErNObHize8aMhyh1C6XAK/pjVVrOHVUOupCYXPKduuw==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/scrollarea@2.2.0':
-    resolution: {integrity: sha512-cK9ayhFXsLr8+bVwxEN+uGf14teuRj3jcFAQ16fqefJMAa/BUNlFnQ4lozofO2KRj3oYr/8YSWzuqsprvZzmSQ==}
+  '@xipkg/radio@2.1.0':
+    resolution: {integrity: sha512-rr78mBjbX2i48o8Zl4p9kjy3msrLGY0wFT2BA6ZK+pszatWHBAd/P7JqM4XMfbtnlOCwdXnnSCwP50/pbtYX0A==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/select@2.2.5':
-    resolution: {integrity: sha512-GedCccfAtrn4c4B7xBU9eZoLDQE1SCPnNKP1enPr+pKesUiMj3pwgP/k52KuMgqXY3YhNZMP+8f18LSwOmVNLA==}
+  '@xipkg/scrollarea@2.3.0':
+    resolution: {integrity: sha512-kJxcWR/Ips52b7X0h32+6rHM+4lV1lYpruJt6jJWDcTTNshtVfFZKiXDZ3oij6tRw/vQAvWprRBmgN9CWZcEeA==}
+    peerDependencies:
+      react: ^19
+
+  '@xipkg/select@2.3.0':
+    resolution: {integrity: sha512-8cl6ZwBcchOcBhP9Xn3v7NboCndqtc3skiXOG3HJve3rh5HQwvQGDWri9WYJPcAnv2j63iBU9ziclyGdvd1ylA==}
     peerDependencies:
       react: ^19
 
@@ -9013,59 +9008,59 @@ packages:
     peerDependencies:
       react: ^19
 
-  '@xipkg/sheet@2.0.12':
-    resolution: {integrity: sha512-gzEf6RDXtZTV6UJL7ckpjPvCY78I7bsmfGeN0NcELZeHjLM0pAWq4C665HDjnsvAi7RNQ3OtFoEKLSdQU7fb9g==}
+  '@xipkg/sheet@2.1.0':
+    resolution: {integrity: sha512-L2pN+gmkjm51Zn+mK8wERtitgo8QbCfFuWERQSIMbuZ3SXeB1EK6J7KcXiAH7No7FD8+tPTYdNqTQA9o5rbtPw==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/sidebar@0.3.0':
-    resolution: {integrity: sha512-S5R9g66zzKr8xpbNsxtiYcCIub6AtWDpj4vUBg/6lwT9XE8zIyR+k2t2PZ9szyzCvXiO13GsSW4E6Z4VNBAiGA==}
+  '@xipkg/sidebar@0.5.0':
+    resolution: {integrity: sha512-i+ejRUY+PdbbypCUfESo+DLv6fDQyXfhRqdD1Pd/d0pooE9bLjHD7Is5fR2hOtyrwNRGhF0TLP3QE39e/ElO/g==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/slider@2.2.0':
-    resolution: {integrity: sha512-hBnYKlP2tjMHgIUWd7lkUyOJtXVETIp44Jv/H9FWF5KCFv9nQj+c1huxHZwnnufth9ewyJgJArn5/+dhF3arDA==}
+  '@xipkg/slider@2.3.0':
+    resolution: {integrity: sha512-/IhX/NVIwPBN9BwBJuVE3VP8zUndcqhiP+Z7GwizUNeQpztBH3OKC+FhzJGIWZuDPXB9p9M8UuRQNY3XRE0wmQ==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/switcher-animate@1.0.6':
-    resolution: {integrity: sha512-VYmfylGvbu4AcriewaO8I7iGIneMtJgXBppBFCpfKK7kqGNmMIBalft6eF7jG2KgBkEuV33gkFmqIs+/fu+AtQ==}
+  '@xipkg/switcher-animate@1.1.0':
+    resolution: {integrity: sha512-hI5N54I5UHukwlHkOm0rvRYslM6O59M6WQWmW416GiV7NpkIUSgsdIjMmade8J6PcooL0CY+kIWykimM6C6yrQ==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/switcher@4.0.0':
-    resolution: {integrity: sha512-p812yEhjnjQbG8Z6c9ZA8CKEsNlnJZl5Rr53i+ovfVDsnpcpjHUaH6fdK5XPKyBEa0FBgorQ1ZoY4f3yE1Vhrw==}
+  '@xipkg/switcher@4.1.0':
+    resolution: {integrity: sha512-OKCJYPbRvqrlOOzp9aAgQZT8ApRwvCH2aTBjmDPG3SFWsC2zzqi4yzQMA9hLcLlHDkI9YB1/ppYu3g0YhsIj/w==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/tabs@2.1.0':
-    resolution: {integrity: sha512-3codMhssRYZBPzlYBDM5FQCerV0Z+yi96tSB6qVUNP78JxpSE2FvwNlbayjgbnMWCkEYx4pd7HjXfeso2jfEuQ==}
+  '@xipkg/tabs@2.2.0':
+    resolution: {integrity: sha512-sKBXazr7TAUPe/Zz7oTEoeaiSr3wFR1uuh6TpVC9yHfqvxZYO+Kf4Fi0JRJZNDmvBuyC87vhOlx+3Yi9HCHEsA==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/tailwind@0.8.6':
-    resolution: {integrity: sha512-RyFVnJ3Nzt7YUIlyr5iIw3A9j5D0rlL2cIQc0/rnFziL1z0VUK7JPR+YRip9HYDi0466RNsBugQMCF8u+VFbqg==}
+  '@xipkg/tailwind@1.0.0':
+    resolution: {integrity: sha512-TemsD+7JR4kRg5a3+q+9qZrbk5tr9XVFr7ib6+N0uPSOJUz7n9Vc+ptpwWmIZRCjp6LDYGaeyaeCq57S4oBs4A==}
 
-  '@xipkg/textarea@1.2.0':
-    resolution: {integrity: sha512-Ih0DvTM0Wao1xwnGa6PdTSeqAoxiUdcwaEVURgNT3h4L3x86vCdi78VoZ+P/Y/tSYBf0MeFI60PzmninRdYJdw==}
+  '@xipkg/textarea@1.3.0':
+    resolution: {integrity: sha512-rWZP04gGQGi88TZjXXpOJu641DGlZ0HtWOSyrhEZLbHQueQfyeaUQkyKu+xStedlYa95WflHARnjCjTmiU7ctg==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/toggle@4.1.0':
-    resolution: {integrity: sha512-un0sBccZPbHf0sE2mgN7ifjMizBcE5hvm1y/eTg0+bMY8v7e8qat2R1FuCDn41KZD6qBmQV5Sj/P9lSsM0gL6Q==}
+  '@xipkg/toggle@4.2.0':
+    resolution: {integrity: sha512-agEGBB9kybPAKTPTdgOIFDpcoKwRZQFOWKQvTodYcUDFm6HIcPc9Bjmf+XJC8KSKXN2ydUrTVWFBMlR5UC1BhA==}
     peerDependencies:
       react: ^19
 
-  '@xipkg/tooltip@2.1.0':
-    resolution: {integrity: sha512-BJf8frre4htuS9wXJXt+lvluTAml30b14liy3npfgYSvwTNn2Y4bgqaswUtUo64OXQ8qVWUxXoe2D58wUEKyXQ==}
+  '@xipkg/tooltip@2.2.0':
+    resolution: {integrity: sha512-CGw6BbIwpHmlBNpzch6Y5f215CoBkATA/zkjSDOItGmBZ9Xo7mSe+yn3LmVJsEQdfC3eaXi0qJFx3NOIueLDQA==}
     peerDependencies:
       react: ^19
 
   '@xipkg/typescript@0.2.0':
     resolution: {integrity: sha512-GGAb21wy0l5wuWp7w00lykVNDr2dxPVBtiZ8nCuMHyKKPmsAZrbgyt1OUnn+7AyhnDqQEABS9+i+rsvGvVn/GA==}
 
-  '@xipkg/userprofile@4.1.0':
-    resolution: {integrity: sha512-+TzLGqzhi9t7o+SiNs+Tma6E1MXC5MuZf0ygR7+E0JTKJDhf+//EWuJ6G4CDGDSmo/G5Y8gra7UbCLaRKdn8OA==}
+  '@xipkg/userprofile@4.2.0':
+    resolution: {integrity: sha512-5EMou00qiFOF6KQCHxFq4LVkzpTxcy9dzU/qQPRYTKxRsOU0pmB8F2EuSkc9V1JkY6A94qfukMeiw4UwP9cZHA==}
     peerDependencies:
       react: ^19
 
@@ -9320,9 +9315,6 @@ packages:
   convert-source-map@2.0.0:
     resolution: {integrity: sha512-Kvp459HrV2FEJ1CAsi1Ku+MY3kasH19TFykTz2xWmMeq6bk2NU3XXvfJ+Q61m0xktWwt+1HSYf3JZsTms3aRJg==}
 
-  cookie-es@1.2.3:
-    resolution: {integrity: sha512-lXVyvUvrNXblMqzIRrxHb57UUVmqsSWlxqt3XIjCkUP0wDAf6uicO6KMbEgYrMNtEvWgWHwe42CKxPu9MYAnWw==}
-
   cookie-es@3.1.1:
     resolution: {integrity: sha512-UaXxwISYJPTr9hwQxMFYZ7kNhSXboMXP+Z3TRX6f1/NyaGPfuNUZOWP1pUEb75B2HjfklIYLVRfWiFZJyC6Npg==}
 
@@ -9496,6 +9488,9 @@ packages:
 
   driver.js@1.6.0:
     resolution: {integrity: sha512-gryo9QS7AZhz8J0bmdf42dwaTzcd1BgSJLnaSM7cPJbu8bTW8wIEuiGDy4MoCvB4Sr8wA9g5o2G9EFNVYZGeVQ==}
+
+  driver.js@1.8.0:
+    resolution: {integrity: sha512-+8/IO7h1v14IzWh2GP60N7T3PFZweXwdn5e5POuxRSBoCYUojsBxzqawPeXh3YZIibRy7EehYNEyxe7slwwtdg==}
 
   dunder-proto@1.0.1:
     resolution: {integrity: sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==}
@@ -9781,20 +9776,6 @@ packages:
   fractional-indexing@3.4.0:
     resolution: {integrity: sha512-8J3glhz2rrpKG6KmI7wmJo3zH1VjeOpN+vTJSw1fOyO+Viqq3zX6/5NGh6oaZB2qIAYdOYuu5Dz9xp4faOO0Pg==}
     engines: {node: ^14.13.1 || >=16.0.0}
-
-  framer-motion@12.34.3:
-    resolution: {integrity: sha512-v81ecyZKYO/DfpTwHivqkxSUBzvceOpoI+wLfgCgoUIKxlFKEXdg0oR9imxwXumT4SFy8vRk9xzJ5l3/Du/55Q==}
-    peerDependencies:
-      '@emotion/is-prop-valid': '*'
-      react: ^18.0.0 || ^19.0.0
-      react-dom: ^18.0.0 || ^19.0.0
-    peerDependenciesMeta:
-      '@emotion/is-prop-valid':
-        optional: true
-      react:
-        optional: true
-      react-dom:
-        optional: true
 
   framer-motion@12.42.2:
     resolution: {integrity: sha512-5XY9luDiu0oHfHBjpDthFMh0ES+122w6p/papSJBweMkO8Sn+PW2QaEgRblQBpWFnuvZS5qvarpt/hO2pjGmnw==}
@@ -10335,8 +10316,8 @@ packages:
   linkifyjs@4.3.3:
     resolution: {integrity: sha512-P8aEP5U/D1/IlTY2OeYsErdwh9bGuLE30NcXtKEjgdHcahveQoQwM2yZNsioQHsWFz0P7KKudisbrzCgR0sDHg==}
 
-  livekit-client@2.19.1:
-    resolution: {integrity: sha512-knwEuozt3d7optuUMvw+0PGrV/68GWXrTdAefezOM51Dk8QLb28qOm73UMSSQET58gUqelxqU1afchd2YyPKnQ==}
+  livekit-client@2.21.0:
+    resolution: {integrity: sha512-RBUhPkV/sl1nzl8lokVlK5uATPwn0AlsudCBZXissw/kDl9yz8ac4pNJ43iPpMVoHOeBYH/BZ3vUC1adqa/zFQ==}
     peerDependencies:
       '@types/dom-mediacapture-record': ^1
 
@@ -11215,9 +11196,6 @@ packages:
   tiny-invariant@1.3.3:
     resolution: {integrity: sha512-+FbBPE1o9QAYvviau/qC5SE3caw21q3xkvWKBtja5vgqOWIHHJ3ioaq1VPfn/Szqctz2bU/oYeKd9/z5BL+PVg==}
 
-  tiny-warning@1.0.3:
-    resolution: {integrity: sha512-lBN9zLN/oAf68o3zNXYrdCt1kP8WsiGW8Oo2ka41b2IM5JL/S1CTyX1rW0mb/zSuJun0ZUrDxx4sqvYS2FWzPA==}
-
   tinybench@2.9.0:
     resolution: {integrity: sha512-0+DUvqWMValLmha6lr4kD8iAMK1HzV0/aKnCtWb9v9641TnP/MFb7Pc2bxoxQjTXAErryXVgUOfv2YqNllqGeg==}
 
@@ -11539,8 +11517,8 @@ packages:
   webpfy@1.0.9:
     resolution: {integrity: sha512-5k6+y+v/hK4+svBenkqSXS3jruw6Kl+/3PQ6LdENJ7ZCH8xa4TAyjYxemmxjh96Kzoo4LuUKwfuZSyS/tky8NA==}
 
-  webrtc-adapter@9.0.5:
-    resolution: {integrity: sha512-U9vjByy/sK2OMXu5mmfuZFKTMIUQe34c0JXRO+oDrxJTsntdYT2iIFwYMOV7HhMTuktcZLGf2W1N/OcSf9ssWg==}
+  webrtc-adapter@9.0.6:
+    resolution: {integrity: sha512-CHbl2ZQbxx164IgWRgzJno4hWtM4tFbRam1QfI3Yxhs3w/DvqluVxVWeXs3oL5/fbGkSNLKo0Ty5MgUWceNhog==}
     engines: {node: '>=6.0.0', npm: '>=3.10.0'}
 
   webworkify@1.5.0:
@@ -12899,68 +12877,76 @@ snapshots:
 
   '@lifeomic/attempt@3.1.0': {}
 
-  '@livekit/components-core@0.12.13(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))(tslib@2.8.1)':
+  '@livekit/components-core@0.12.13(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22))(tslib@2.8.1)':
     dependencies:
       '@floating-ui/dom': 1.7.4
-      livekit-client: 2.19.1(@types/dom-mediacapture-record@1.0.22)
+      livekit-client: 2.21.0(@types/dom-mediacapture-record@1.0.22)
       loglevel: 1.9.1
       rxjs: 7.8.2
       tslib: 2.8.1
 
-  '@livekit/components-core@0.12.9(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))(tslib@2.8.1)':
+  '@livekit/components-core@0.12.14(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22))(tslib@2.8.1)':
+    dependencies:
+      '@floating-ui/dom': 1.7.6
+      livekit-client: 2.21.0(@types/dom-mediacapture-record@1.0.22)
+      loglevel: 1.9.1
+      rxjs: 7.8.2
+      tslib: 2.8.1
+
+  '@livekit/components-core@0.12.9(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22))(tslib@2.8.1)':
     dependencies:
       '@floating-ui/dom': 1.6.13
-      livekit-client: 2.19.1(@types/dom-mediacapture-record@1.0.22)
+      livekit-client: 2.21.0(@types/dom-mediacapture-record@1.0.22)
       loglevel: 1.9.1
       rxjs: 7.8.2
       tslib: 2.8.1
 
-  '@livekit/components-react@2.9.14(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22)))(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tslib@2.8.1)':
+  '@livekit/components-react@2.9.14(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22)))(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tslib@2.8.1)':
     dependencies:
-      '@livekit/components-core': 0.12.9(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))(tslib@2.8.1)
+      '@livekit/components-core': 0.12.9(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22))(tslib@2.8.1)
       clsx: 2.1.1
-      livekit-client: 2.19.1(@types/dom-mediacapture-record@1.0.22)
+      livekit-client: 2.21.0(@types/dom-mediacapture-record@1.0.22)
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
       tslib: 2.8.1
       usehooks-ts: 3.1.1(react@19.2.7)
     optionalDependencies:
-      '@livekit/krisp-noise-filter': 0.3.4(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))
+      '@livekit/krisp-noise-filter': 0.3.4(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22))
 
-  '@livekit/components-react@2.9.21(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22)))(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tslib@2.8.1)':
+  '@livekit/components-react@2.9.23(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22)))(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tslib@2.8.1)':
     dependencies:
-      '@livekit/components-core': 0.12.13(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))(tslib@2.8.1)
+      '@livekit/components-core': 0.12.14(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22))(tslib@2.8.1)
       clsx: 2.1.1
       events: 3.3.0
       jose: 6.2.3
-      livekit-client: 2.19.1(@types/dom-mediacapture-record@1.0.22)
+      livekit-client: 2.21.0(@types/dom-mediacapture-record@1.0.22)
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
       tslib: 2.8.1
       usehooks-ts: 3.1.1(react@19.2.7)
     optionalDependencies:
-      '@livekit/krisp-noise-filter': 0.3.4(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))
+      '@livekit/krisp-noise-filter': 0.3.4(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22))
 
   '@livekit/components-styles@1.1.6': {}
 
   '@livekit/components-styles@1.2.0': {}
 
-  '@livekit/krisp-noise-filter@0.3.4(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))':
+  '@livekit/krisp-noise-filter@0.3.4(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22))':
     dependencies:
       '@livekit/mutex': 1.1.1
-      livekit-client: 2.19.1(@types/dom-mediacapture-record@1.0.22)
+      livekit-client: 2.21.0(@types/dom-mediacapture-record@1.0.22)
 
   '@livekit/mutex@1.1.1': {}
 
-  '@livekit/protocol@1.45.8':
+  '@livekit/protocol@1.50.4':
     dependencies:
       '@bufbuild/protobuf': 1.10.1
 
-  '@livekit/track-processors@0.7.2(@types/dom-mediacapture-transform@0.1.11)(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))':
+  '@livekit/track-processors@0.7.2(@types/dom-mediacapture-transform@0.1.11)(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22))':
     dependencies:
       '@mediapipe/tasks-vision': 0.10.14
       '@types/dom-mediacapture-transform': 0.1.11
-      livekit-client: 2.19.1(@types/dom-mediacapture-record@1.0.22)
+      livekit-client: 2.21.0(@types/dom-mediacapture-record@1.0.22)
 
   '@maskito/core@5.0.0': {}
 
@@ -14453,8 +14439,6 @@ snapshots:
       - supports-color
       - typescript
 
-  '@tanstack/history@1.121.34': {}
-
   '@tanstack/history@1.162.0': {}
 
   '@tanstack/query-core@5.73.3': {}
@@ -14472,27 +14456,16 @@ snapshots:
       '@tanstack/query-core': 5.73.3
       react: 19.2.7
 
-  '@tanstack/react-router-devtools@1.167.0(@tanstack/react-router@1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@tanstack/router-core@1.171.14)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@tanstack/react-router-devtools@1.167.0(@tanstack/react-router@1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(@tanstack/router-core@1.171.15)(csstype@3.2.3)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@tanstack/react-router': 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@tanstack/router-devtools-core': 1.168.0(@tanstack/router-core@1.171.14)(csstype@3.2.3)
+      '@tanstack/router-devtools-core': 1.168.0(@tanstack/router-core@1.171.15)(csstype@3.2.3)
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
     optionalDependencies:
-      '@tanstack/router-core': 1.171.14
+      '@tanstack/router-core': 1.171.15
     transitivePeerDependencies:
       - csstype
-
-  '@tanstack/react-router@1.128.8(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
-    dependencies:
-      '@tanstack/history': 1.121.34
-      '@tanstack/react-store': 0.7.7(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@tanstack/router-core': 1.128.8
-      isbot: 5.2.0
-      react: 19.2.7
-      react-dom: 19.2.7(react@19.2.7)
-      tiny-invariant: 1.3.3
-      tiny-warning: 1.0.3
 
   '@tanstack/react-router@1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
@@ -14503,12 +14476,14 @@ snapshots:
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
 
-  '@tanstack/react-store@0.7.7(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@tanstack/react-router@1.170.18(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
-      '@tanstack/store': 0.7.7
+      '@tanstack/history': 1.162.0
+      '@tanstack/react-store': 0.9.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@tanstack/router-core': 1.171.15
+      isbot: 5.2.0
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
-      use-sync-external-store: 1.6.0(react@19.2.7)
 
   '@tanstack/react-store@0.9.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
@@ -14529,16 +14504,6 @@ snapshots:
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
 
-  '@tanstack/router-core@1.128.8':
-    dependencies:
-      '@tanstack/history': 1.121.34
-      '@tanstack/store': 0.7.7
-      cookie-es: 1.2.3
-      seroval: 1.5.4
-      seroval-plugins: 1.5.4(seroval@1.5.4)
-      tiny-invariant: 1.3.3
-      tiny-warning: 1.0.3
-
   '@tanstack/router-core@1.171.14':
     dependencies:
       '@tanstack/history': 1.162.0
@@ -14546,9 +14511,16 @@ snapshots:
       seroval: 1.5.4
       seroval-plugins: 1.5.4(seroval@1.5.4)
 
-  '@tanstack/router-devtools-core@1.168.0(@tanstack/router-core@1.171.14)(csstype@3.2.3)':
+  '@tanstack/router-core@1.171.15':
     dependencies:
-      '@tanstack/router-core': 1.171.14
+      '@tanstack/history': 1.162.0
+      cookie-es: 3.1.1
+      seroval: 1.5.4
+      seroval-plugins: 1.5.4(seroval@1.5.4)
+
+  '@tanstack/router-devtools-core@1.168.0(@tanstack/router-core@1.171.15)(csstype@3.2.3)':
+    dependencies:
+      '@tanstack/router-core': 1.171.15
       clsx: 2.1.1
       goober: 2.1.19(csstype@3.2.3)
     optionalDependencies:
@@ -14603,8 +14575,6 @@ snapshots:
       tinyglobby: 0.2.17
     transitivePeerDependencies:
       - supports-color
-
-  '@tanstack/store@0.7.7': {}
 
   '@tanstack/store@0.9.3': {}
 
@@ -15123,10 +15093,10 @@ snapshots:
       loupe: 3.2.1
       tinyrainbow: 2.0.0
 
-  '@xipkg/actionbutton@1.0.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/actionbutton@1.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@xipkg/button': 3.2.0(@types/react@19.2.17)(react@19.2.7)
-      '@xipkg/dropdown': 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/dropdown': 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons': 2.7.2(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
       class-variance-authority: 0.7.1
@@ -15136,14 +15106,14 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/alert@1.1.0(react@19.2.7)':
+  '@xipkg/alert@1.2.0(react@19.2.7)':
     dependencies:
       '@xipkg/icons': 2.7.2(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
       class-variance-authority: 0.7.1
       react: 19.2.7
 
-  '@xipkg/avatar@3.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/avatar@3.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@radix-ui/react-avatar': 1.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
@@ -15154,7 +15124,7 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/badge@2.0.17(react@19.2.7)':
+  '@xipkg/badge@2.1.0(react@19.2.7)':
     dependencies:
       '@xipkg/utils': 1.8.0(react@19.2.7)
       class-variance-authority: 0.7.1
@@ -15169,7 +15139,7 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@xipkg/button@4.1.0(@types/react@19.2.17)(react@19.2.7)':
+  '@xipkg/button@4.3.0(@types/react@19.2.17)(react@19.2.7)':
     dependencies:
       '@radix-ui/react-slot': 1.3.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
@@ -15178,11 +15148,11 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@xipkg/calendar@2.3.5(@types/react@19.2.17)(react@19.2.7)':
+  '@xipkg/calendar@2.4.0(@types/react@19.2.17)(react@19.2.7)':
     dependencies:
       '@radix-ui/react-slot': 1.3.0(@types/react@19.2.17)(react@19.2.7)
-      '@xipkg/button': 4.1.0(@types/react@19.2.17)(react@19.2.7)
-      '@xipkg/icons': 3.0.23(react@19.2.7)
+      '@xipkg/button': 4.3.0(@types/react@19.2.17)(react@19.2.7)
+      '@xipkg/icons': 3.1.0(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
       class-variance-authority: 0.7.1
       react: 19.2.7
@@ -15190,23 +15160,23 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
 
-  '@xipkg/calls-chat@0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))':
+  '@xipkg/calls-chat@0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))':
     dependencies:
-      '@xipkg/button': 4.1.0(@types/react@19.2.17)(react@19.2.7)
-      '@xipkg/calls-config': 0.1.8
-      '@xipkg/calls-hooks': 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-providers': 0.1.8(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-store': 0.1.8(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-types': 0.1.8
-      '@xipkg/calls-ui': 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-utils': 0.1.8(react@19.2.7)
-      '@xipkg/icons': 3.0.23(react@19.2.7)
-      '@xipkg/scrollarea': 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/textarea': 1.2.0(react@19.2.7)
-      '@xipkg/userprofile': 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/button': 4.3.0(@types/react@19.2.17)(react@19.2.7)
+      '@xipkg/calls-config': 0.1.10
+      '@xipkg/calls-hooks': 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-providers': 0.1.10(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-store': 0.1.10(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-types': 0.1.10
+      '@xipkg/calls-ui': 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-utils': 0.1.10(react@19.2.7)
+      '@xipkg/icons': 3.1.0(react@19.2.7)
+      '@xipkg/scrollarea': 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/textarea': 1.3.0(react@19.2.7)
+      '@xipkg/userprofile': 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
       react: 19.2.7
-      zustand: 5.0.3(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      zustand: 5.0.14(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
     transitivePeerDependencies:
       - '@emotion/is-prop-valid'
       - '@types/dom-mediacapture-record'
@@ -15216,70 +15186,22 @@ snapshots:
       - react-dom
       - use-sync-external-store
 
-  '@xipkg/calls-compactview@0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))':
+  '@xipkg/calls-compactview@0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))':
     dependencies:
-      '@xipkg/button': 4.1.0(@types/react@19.2.17)(react@19.2.7)
-      '@xipkg/calls-chat': 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-config': 0.1.8
-      '@xipkg/calls-hooks': 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-providers': 0.1.8(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-risehand': 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-store': 0.1.8(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-types': 0.1.8
-      '@xipkg/calls-ui': 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-utils': 0.1.8(react@19.2.7)
-      '@xipkg/icons': 3.0.23(react@19.2.7)
-      '@xipkg/scrollarea': 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/textarea': 1.2.0(react@19.2.7)
-      '@xipkg/userprofile': 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/utils': 1.8.0(react@19.2.7)
-      react: 19.2.7
-    transitivePeerDependencies:
-      - '@emotion/is-prop-valid'
-      - '@types/dom-mediacapture-record'
-      - '@types/react'
-      - '@types/react-dom'
-      - immer
-      - react-dom
-      - use-sync-external-store
-
-  '@xipkg/calls-config@0.1.8': {}
-
-  '@xipkg/calls-hooks@0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))':
-    dependencies:
-      '@xipkg/calls-config': 0.1.8
-      '@xipkg/calls-providers': 0.1.8(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-store': 0.1.8(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-types': 0.1.8
-      '@xipkg/calls-utils': 0.1.8(react@19.2.7)
-      livekit-client: 2.19.1(@types/dom-mediacapture-record@1.0.22)
-      react: 19.2.7
-      zustand: 5.0.3(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-    transitivePeerDependencies:
-      - '@types/dom-mediacapture-record'
-      - '@types/react'
-      - immer
-      - use-sync-external-store
-
-  '@xipkg/calls-providers@0.1.8(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))':
-    dependencies:
-      '@xipkg/calls-store': 0.1.8(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-types': 0.1.8
-      react: 19.2.7
-    transitivePeerDependencies:
-      - '@types/react'
-      - immer
-      - use-sync-external-store
-
-  '@xipkg/calls-risehand@0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))':
-    dependencies:
-      '@xipkg/button': 4.1.0(@types/react@19.2.17)(react@19.2.7)
-      '@xipkg/calls-config': 0.1.8
-      '@xipkg/calls-providers': 0.1.8(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-store': 0.1.8(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-ui': 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-utils': 0.1.8(react@19.2.7)
-      '@xipkg/icons': 3.0.23(react@19.2.7)
+      '@xipkg/button': 4.3.0(@types/react@19.2.17)(react@19.2.7)
+      '@xipkg/calls-chat': 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-config': 0.1.10
+      '@xipkg/calls-hooks': 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-providers': 0.1.10(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-risehand': 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-store': 0.1.10(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-types': 0.1.10
+      '@xipkg/calls-ui': 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-utils': 0.1.10(react@19.2.7)
+      '@xipkg/icons': 3.1.0(react@19.2.7)
+      '@xipkg/scrollarea': 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/textarea': 1.3.0(react@19.2.7)
+      '@xipkg/userprofile': 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
       react: 19.2.7
     transitivePeerDependencies:
@@ -15291,41 +15213,44 @@ snapshots:
       - react-dom
       - use-sync-external-store
 
-  '@xipkg/calls-store@0.1.8(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))':
+  '@xipkg/calls-config@0.1.10': {}
+
+  '@xipkg/calls-hooks@0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))':
     dependencies:
-      '@xipkg/calls-types': 0.1.8
+      '@xipkg/calls-config': 0.1.10
+      '@xipkg/calls-providers': 0.1.10(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-store': 0.1.10(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-types': 0.1.10
+      '@xipkg/calls-utils': 0.1.10(react@19.2.7)
+      livekit-client: 2.21.0(@types/dom-mediacapture-record@1.0.22)
       react: 19.2.7
-      zustand: 5.0.3(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      zustand: 5.0.14(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+    transitivePeerDependencies:
+      - '@types/dom-mediacapture-record'
+      - '@types/react'
+      - immer
+      - use-sync-external-store
+
+  '@xipkg/calls-providers@0.1.10(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))':
+    dependencies:
+      '@xipkg/calls-store': 0.1.10(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-types': 0.1.10
+      react: 19.2.7
     transitivePeerDependencies:
       - '@types/react'
       - immer
       - use-sync-external-store
 
-  '@xipkg/calls-types@0.1.8': {}
-
-  '@xipkg/calls-ui@0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))':
+  '@xipkg/calls-risehand@0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))':
     dependencies:
-      '@xipkg/badge': 2.0.17(react@19.2.7)
-      '@xipkg/button': 4.1.0(@types/react@19.2.17)(react@19.2.7)
-      '@xipkg/calls-config': 0.1.8
-      '@xipkg/calls-hooks': 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-providers': 0.1.8(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-store': 0.1.8(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-types': 0.1.8
-      '@xipkg/calls-utils': 0.1.8(react@19.2.7)
-      '@xipkg/checkbox': 5.0.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/dropdown': 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/icons': 3.0.23(react@19.2.7)
-      '@xipkg/input': 2.2.14(react@19.2.7)
-      '@xipkg/label': 2.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/link': 2.0.12(react@19.2.7)
-      '@xipkg/modal': 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/scrollarea': 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/sheet': 2.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/slider': 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/toggle': 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/button': 4.3.0(@types/react@19.2.17)(react@19.2.7)
+      '@xipkg/calls-config': 0.1.10
+      '@xipkg/calls-providers': 0.1.10(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-store': 0.1.10(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-ui': 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-utils': 0.1.10(react@19.2.7)
+      '@xipkg/icons': 3.1.0(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
-      framer-motion: 12.34.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
     transitivePeerDependencies:
       - '@emotion/is-prop-valid'
@@ -15336,43 +15261,88 @@ snapshots:
       - react-dom
       - use-sync-external-store
 
-  '@xipkg/calls-utils@0.1.8(react@19.2.7)':
+  '@xipkg/calls-store@0.1.10(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))':
+    dependencies:
+      '@xipkg/calls-types': 0.1.10
+      react: 19.2.7
+      zustand: 5.0.14(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+    transitivePeerDependencies:
+      - '@types/react'
+      - immer
+      - use-sync-external-store
+
+  '@xipkg/calls-types@0.1.10': {}
+
+  '@xipkg/calls-ui@0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))':
+    dependencies:
+      '@xipkg/badge': 2.1.0(react@19.2.7)
+      '@xipkg/button': 4.3.0(@types/react@19.2.17)(react@19.2.7)
+      '@xipkg/calls-config': 0.1.10
+      '@xipkg/calls-hooks': 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-providers': 0.1.10(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-store': 0.1.10(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-types': 0.1.10
+      '@xipkg/calls-utils': 0.1.10(react@19.2.7)
+      '@xipkg/checkbox': 5.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/dropdown': 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/icons': 3.1.0(react@19.2.7)
+      '@xipkg/input': 2.3.0(react@19.2.7)
+      '@xipkg/label': 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/link': 2.1.0(react@19.2.7)
+      '@xipkg/modal': 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/scrollarea': 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/sheet': 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/slider': 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/toggle': 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/utils': 1.8.0(react@19.2.7)
+      framer-motion: 12.42.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      react: 19.2.7
+    transitivePeerDependencies:
+      - '@emotion/is-prop-valid'
+      - '@types/dom-mediacapture-record'
+      - '@types/react'
+      - '@types/react-dom'
+      - immer
+      - react-dom
+      - use-sync-external-store
+
+  '@xipkg/calls-utils@0.1.10(react@19.2.7)':
     dependencies:
       react: 19.2.7
 
-  '@xipkg/calls@0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/dom-mediacapture-transform@0.1.11)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tslib@2.8.1)(use-sync-external-store@1.6.0(react@19.2.7))':
+  '@xipkg/calls@0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/dom-mediacapture-transform@0.1.11)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tslib@2.8.1)(use-sync-external-store@1.6.0(react@19.2.7))':
     dependencies:
       '@dnd-kit/core': 6.3.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@dnd-kit/modifiers': 9.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react@19.2.7)
       '@dnd-kit/utilities': 3.2.2(react@19.2.7)
-      '@livekit/components-core': 0.12.13(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))(tslib@2.8.1)
-      '@livekit/components-react': 2.9.21(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22)))(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tslib@2.8.1)
+      '@livekit/components-core': 0.12.13(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22))(tslib@2.8.1)
+      '@livekit/components-react': 2.9.23(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22)))(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tslib@2.8.1)
       '@livekit/components-styles': 1.2.0
-      '@livekit/krisp-noise-filter': 0.3.4(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))
-      '@livekit/track-processors': 0.7.2(@types/dom-mediacapture-transform@0.1.11)(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))
+      '@livekit/krisp-noise-filter': 0.3.4(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22))
+      '@livekit/track-processors': 0.7.2(@types/dom-mediacapture-transform@0.1.11)(livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22))
       '@react-hook/latest': 1.0.3(react@19.2.7)
-      '@tanstack/react-router': 1.128.8(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/alert': 1.1.0(react@19.2.7)
-      '@xipkg/avatar': 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/button': 4.1.0(@types/react@19.2.17)(react@19.2.7)
-      '@xipkg/calls-chat': 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-config': 0.1.8
-      '@xipkg/calls-hooks': 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-providers': 0.1.8(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-risehand': 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-store': 0.1.8(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-types': 0.1.8
-      '@xipkg/calls-ui': 0.1.8(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
-      '@xipkg/calls-utils': 0.1.8(react@19.2.7)
-      '@xipkg/icons': 3.0.23(react@19.2.7)
-      '@xipkg/label': 2.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/scrollarea': 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/select': 2.2.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/toggle': 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/tooltip': 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@tanstack/react-router': 1.170.18(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/alert': 1.2.0(react@19.2.7)
+      '@xipkg/avatar': 3.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/button': 4.3.0(@types/react@19.2.17)(react@19.2.7)
+      '@xipkg/calls-chat': 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-config': 0.1.10
+      '@xipkg/calls-hooks': 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-providers': 0.1.10(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-risehand': 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-store': 0.1.10(@types/react@19.2.17)(immer@11.1.11)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-types': 0.1.10
+      '@xipkg/calls-ui': 0.1.10(@types/dom-mediacapture-record@1.0.22)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(immer@11.1.11)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
+      '@xipkg/calls-utils': 0.1.10(react@19.2.7)
+      '@xipkg/icons': 3.1.0(react@19.2.7)
+      '@xipkg/label': 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/scrollarea': 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/select': 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/toggle': 4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/tooltip': 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
-      driver.js: 1.6.0
-      livekit-client: 2.19.1(@types/dom-mediacapture-record@1.0.22)
+      driver.js: 1.8.0
+      livekit-client: 2.21.0(@types/dom-mediacapture-record@1.0.22)
       react: 19.2.7
     transitivePeerDependencies:
       - '@emotion/is-prop-valid'
@@ -15385,7 +15355,7 @@ snapshots:
       - tslib
       - use-sync-external-store
 
-  '@xipkg/checkbox@5.0.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/checkbox@5.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@radix-ui/react-checkbox': 1.3.7(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
@@ -15397,10 +15367,10 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/command@1.0.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/command@1.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@xipkg/icons': 2.7.2(react@19.2.7)
-      '@xipkg/modal': 4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/modal': 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
       cmdk: 1.1.1(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       react: 19.2.7
@@ -15409,12 +15379,12 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/datepicker@2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/datepicker@2.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@radix-ui/react-slot': 1.3.0(@types/react@19.2.17)(react@19.2.7)
-      '@xipkg/button': 4.1.0(@types/react@19.2.17)(react@19.2.7)
-      '@xipkg/calendar': 2.3.5(@types/react@19.2.17)(react@19.2.7)
-      '@xipkg/icons': 3.0.23(react@19.2.7)
+      '@xipkg/button': 4.3.0(@types/react@19.2.17)(react@19.2.7)
+      '@xipkg/calendar': 2.4.0(@types/react@19.2.17)(react@19.2.7)
+      '@xipkg/icons': 3.1.0(react@19.2.7)
       '@xipkg/popover': 3.0.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
       class-variance-authority: 0.7.1
@@ -15426,7 +15396,7 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/drawer@0.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/drawer@0.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@xipkg/utils': 1.8.0(react@19.2.7)
       react: 19.2.7
@@ -15436,7 +15406,7 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/dropdown@3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/dropdown@3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@radix-ui/react-dropdown-menu': 2.1.20(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
@@ -15448,15 +15418,15 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/emojipicker@1.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/emojipicker@1.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
-      '@xipkg/button': 4.1.0(@types/react@19.2.17)(react@19.2.7)
-      '@xipkg/dropdown': 3.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/button': 4.3.0(@types/react@19.2.17)(react@19.2.7)
+      '@xipkg/dropdown': 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons': 2.7.2(react@19.2.7)
-      '@xipkg/input': 2.2.14(react@19.2.7)
-      '@xipkg/switcher-animate': 1.0.6(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/tabs': 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/tooltip': 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/input': 2.3.0(react@19.2.7)
+      '@xipkg/switcher-animate': 1.1.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/tabs': 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/tooltip': 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
       class-variance-authority: 0.7.1
       emoji-mart: 5.6.0
@@ -15485,25 +15455,25 @@ snapshots:
       - supports-color
       - turbo
 
-  '@xipkg/file@2.0.12(react@19.2.7)':
+  '@xipkg/file@4.0.0(react@19.2.7)':
     dependencies:
       '@xipkg/icons': 2.7.2(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
       react: 19.2.7
 
-  '@xipkg/fileuploader@5.0.0(react@19.2.7)':
+  '@xipkg/fileuploader@5.1.0(react@19.2.7)':
     dependencies:
       '@xipkg/icons': 2.7.2(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
       class-variance-authority: 0.7.1
       react: 19.2.7
 
-  '@xipkg/form@4.2.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/form@4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@hookform/resolvers': 5.2.2(react-hook-form@7.73.1(react@19.2.7))
       '@radix-ui/react-label': 2.1.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@radix-ui/react-slot': 1.1.2(@types/react@19.2.17)(react@19.2.7)
-      '@xipkg/label': 2.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/label': 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
       react: 19.2.7
       react-hook-form: 7.73.1(react@19.2.7)
@@ -15520,14 +15490,14 @@ snapshots:
       lucide-react: 0.485.0(react@19.2.7)
       react: 19.2.7
 
-  '@xipkg/icons@3.0.23(react@19.2.7)':
+  '@xipkg/icons@3.1.0(react@19.2.7)':
     dependencies:
       '@xipkg/utils': 1.8.0(react@19.2.7)
       class-variance-authority: 0.7.1
       lucide-react: 0.485.0(react@19.2.7)
       react: 19.2.7
 
-  '@xipkg/input@2.2.14(react@19.2.7)':
+  '@xipkg/input@2.3.0(react@19.2.7)':
     dependencies:
       '@xipkg/utils': 1.8.0(react@19.2.7)
       class-variance-authority: 0.7.1
@@ -15543,7 +15513,7 @@ snapshots:
     transitivePeerDependencies:
       - react-dom
 
-  '@xipkg/label@2.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/label@2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@radix-ui/react-label': 2.1.11(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
@@ -15554,28 +15524,17 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/link@2.0.12(react@19.2.7)':
+  '@xipkg/link@2.1.0(react@19.2.7)':
     dependencies:
       '@xipkg/utils': 1.8.0(react@19.2.7)
       class-variance-authority: 0.7.1
       react: 19.2.7
 
-  '@xipkg/modal@4.5.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/modal@4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@radix-ui/react-dialog': 1.1.15(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/icons': 3.0.23(react@19.2.7)
+      '@xipkg/icons': 3.1.0(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
-      react: 19.2.7
-    transitivePeerDependencies:
-      - '@types/react'
-      - '@types/react-dom'
-      - react-dom
-
-  '@xipkg/popover@2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
-    dependencies:
-      '@radix-ui/react-popover': 1.1.19(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/utils': 1.8.0(react@19.2.7)
-      class-variance-authority: 0.7.1
       react: 19.2.7
     transitivePeerDependencies:
       - '@types/react'
@@ -15593,7 +15552,18 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/radio@2.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/popover@4.0.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+    dependencies:
+      '@radix-ui/react-popover': 1.1.19(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/utils': 1.8.0(react@19.2.7)
+      class-variance-authority: 0.7.1
+      react: 19.2.7
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
+      - react-dom
+
+  '@xipkg/radio@2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@radix-ui/react-radio-group': 1.4.3(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
@@ -15604,7 +15574,7 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/scrollarea@2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/scrollarea@2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@radix-ui/react-scroll-area': 1.2.14(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
@@ -15615,7 +15585,7 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/select@2.2.5(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/select@2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@radix-ui/react-select': 2.3.3(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons': 2.7.2(react@19.2.7)
@@ -15638,7 +15608,7 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/sheet@2.0.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/sheet@2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@radix-ui/react-dialog': 1.1.19(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/icons': 2.7.2(react@19.2.7)
@@ -15650,12 +15620,12 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/sidebar@0.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/sidebar@0.5.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@xipkg/button': 3.2.0(@types/react@19.2.17)(react@19.2.7)
       '@xipkg/icons': 2.7.2(react@19.2.7)
       '@xipkg/sheet': 1.0.6(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@xipkg/tooltip': 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/tooltip': 2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
       class-variance-authority: 0.7.1
       react: 19.2.7
@@ -15664,7 +15634,7 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/slider@2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/slider@2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@radix-ui/react-slider': 1.4.3(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
@@ -15675,7 +15645,7 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/switcher-animate@1.0.6(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/switcher-animate@1.1.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@xipkg/utils': 1.8.0(react@19.2.7)
       motion: 12.42.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -15684,7 +15654,7 @@ snapshots:
       - '@emotion/is-prop-valid'
       - react-dom
 
-  '@xipkg/switcher@4.0.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/switcher@4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@radix-ui/react-tabs': 1.1.11(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
@@ -15695,7 +15665,7 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/tabs@2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/tabs@2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@radix-ui/react-tabs': 1.1.11(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
@@ -15706,15 +15676,15 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/tailwind@0.8.6': {}
+  '@xipkg/tailwind@1.0.0': {}
 
-  '@xipkg/textarea@1.2.0(react@19.2.7)':
+  '@xipkg/textarea@1.3.0(react@19.2.7)':
     dependencies:
       '@xipkg/utils': 1.8.0(react@19.2.7)
       class-variance-authority: 0.7.1
       react: 19.2.7
 
-  '@xipkg/toggle@4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/toggle@4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@radix-ui/react-switch': 1.3.3(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
@@ -15725,7 +15695,7 @@ snapshots:
       - '@types/react-dom'
       - react-dom
 
-  '@xipkg/tooltip@2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/tooltip@2.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       '@radix-ui/react-tooltip': 1.2.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
@@ -15737,9 +15707,9 @@ snapshots:
 
   '@xipkg/typescript@0.2.0': {}
 
-  '@xipkg/userprofile@4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@xipkg/userprofile@4.2.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
-      '@xipkg/avatar': 3.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/avatar': 3.4.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/utils': 1.8.0(react@19.2.7)
       class-variance-authority: 0.7.1
       react: 19.2.7
@@ -16044,8 +16014,6 @@ snapshots:
 
   convert-source-map@2.0.0: {}
 
-  cookie-es@1.2.3: {}
-
   cookie-es@3.1.1: {}
 
   core-js-compat@3.49.0:
@@ -16197,6 +16165,8 @@ snapshots:
   dotenv@16.0.3: {}
 
   driver.js@1.6.0: {}
+
+  driver.js@1.8.0: {}
 
   dunder-proto@1.0.1:
     dependencies:
@@ -16601,15 +16571,6 @@ snapshots:
       mime-types: 2.1.35
 
   fractional-indexing@3.4.0: {}
-
-  framer-motion@12.34.3(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
-    dependencies:
-      motion-dom: 12.42.2
-      motion-utils: 12.39.0
-      tslib: 2.8.1
-    optionalDependencies:
-      react: 19.2.7
-      react-dom: 19.2.7(react@19.2.7)
 
   framer-motion@12.42.2(react-dom@19.2.7(react@19.2.7))(react@19.2.7):
     dependencies:
@@ -17084,10 +17045,10 @@ snapshots:
 
   linkifyjs@4.3.3: {}
 
-  livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22):
+  livekit-client@2.21.0(@types/dom-mediacapture-record@1.0.22):
     dependencies:
       '@livekit/mutex': 1.1.1
-      '@livekit/protocol': 1.45.8
+      '@livekit/protocol': 1.50.4
       '@types/dom-mediacapture-record': 1.0.22
       events: 3.3.0
       jose: 6.2.3
@@ -17095,7 +17056,7 @@ snapshots:
       sdp-transform: 2.15.0
       tslib: 2.8.1
       typed-emitter: 2.1.0
-      webrtc-adapter: 9.0.5
+      webrtc-adapter: 9.0.6
 
   locate-path@6.0.0:
     dependencies:
@@ -18001,8 +17962,6 @@ snapshots:
 
   tiny-invariant@1.3.3: {}
 
-  tiny-warning@1.0.3: {}
-
   tinybench@2.9.0: {}
 
   tinyexec@0.3.2: {}
@@ -18307,7 +18266,7 @@ snapshots:
 
   webpfy@1.0.9: {}
 
-  webrtc-adapter@9.0.5:
+  webrtc-adapter@9.0.6:
     dependencies:
       sdp: 3.2.2
 

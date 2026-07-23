@@ -99,7 +99,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
     <div data-umami-event="material-card-open" data-umami-event-type={student_id}>
       <div
         onClick={handleClick}
-        className="hover:border-brand-80 border-gray-20 bg-gray-0 relative flex cursor-pointer justify-between rounded-2xl border p-4 transition-all duration-200 ease-linear"
+        className="hover:border-border-focus border-border-default bg-background-surface relative flex cursor-pointer justify-between rounded-2xl border p-4 transition-all duration-200 ease-linear"
       >
         <div className="flex max-w-full flex-col gap-4">
           <div className="mr-8 flex w-auto max-w-[calc(100%-32px)] items-center gap-2">
@@ -119,14 +119,14 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
               <UserAvatar kind={kind} student_id={student_id?.toString() ?? ''} />
             )}
             {kind === 'group' && (
-              <div className="bg-brand-80 text-gray-0 flex size-12 shrink-0 items-center justify-center rounded-full">
+              <div className="bg-action-primary-background-default text-text-on-accent flex size-12 shrink-0 items-center justify-center rounded-full">
                 {name?.[0].toUpperCase() ?? ''}
               </div>
             )}
             <Tooltip delayDuration={2000}>
               <TooltipTrigger asChild>
                 <div className="flex h-full w-full flex-row items-center justify-center gap-2">
-                  <h3 className="text-s-base line-clamp-2 w-full text-left font-medium text-gray-100">
+                  <h3 className="text-s-base text-text-primary line-clamp-2 w-full text-left font-medium">
                     {name}
                   </h3>
                 </div>
@@ -141,14 +141,14 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
               <DropdownMenuTrigger asChild>
                 <Button className="h-6 w-6 rounded-md" variant="none" size="icon">
-                  <MoreVert className="h-4 w-4 dark:fill-gray-100" />
+                  <MoreVert className="dark:fill-icon-primary h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
 
               <DropdownMenuContent
                 side="bottom"
                 align="end"
-                className="border-gray-10 bg-gray-0 border p-1"
+                className="border-border-default bg-background-surface border p-1"
               >
                 {kind === 'group' && (
                   <DropdownMenuItem onClick={handleOpenEditModal} data-umami-event="material-edit">

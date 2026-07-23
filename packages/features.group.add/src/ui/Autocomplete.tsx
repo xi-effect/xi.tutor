@@ -59,15 +59,17 @@ export const Autocomplete = ({ field, disabled, containerRef }: AutocompleteProp
           aria-expanded={open}
           disabled={disabled}
           className={cn(
-            'border-gray-30 bg-gray-0 flex h-12 w-full items-center justify-between rounded-lg border-2 px-3 text-left text-sm font-normal',
-            'focus-visible:border-gray-80 hover:border-gray-50 focus-visible:outline-none',
-            'disabled:bg-gray-10 disabled:text-gray-30 disabled:cursor-not-allowed',
+            'border-border-control bg-background-surface flex h-12 w-full items-center justify-between rounded-lg border-2 px-3 text-left text-sm font-normal',
+            'focus-visible:border-border-strong hover:border-border-control focus-visible:outline-none',
+            'disabled:bg-background-subtle disabled:text-text-disabled disabled:cursor-not-allowed',
           )}
         >
-          <span className={cn('truncate', hasSelection ? 'text-gray-100' : 'text-gray-40')}>
+          <span
+            className={cn('truncate', hasSelection ? 'text-text-primary' : 'text-text-disabled')}
+          >
             {triggerLabel}
           </span>
-          <ChevronsUpDownIcon className="text-gray-80 ml-2 h-4 w-4 shrink-0" />
+          <ChevronsUpDownIcon className="text-text-primary ml-2 h-4 w-4 shrink-0" />
         </button>
       </PopoverTrigger>
       {containerRef?.current && (
@@ -81,7 +83,7 @@ export const Autocomplete = ({ field, disabled, containerRef }: AutocompleteProp
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <Command
-            className="[&_[data-slot=command-input-wrapper]_svg]:fill-gray-60 w-[300px]"
+            className="[&_[data-slot=command-input-wrapper]_svg]:fill-icon-secondary w-[300px]"
             shouldFilter={false}
             onPointerDown={(e) => e.stopPropagation()}
           >
@@ -89,22 +91,24 @@ export const Autocomplete = ({ field, disabled, containerRef }: AutocompleteProp
               placeholder="Поиск предмета..."
               value={search}
               onValueChange={setSearch}
-              className="text-gray-100"
+              className="text-text-primary"
             />
             <CommandList className="max-h-[200px] w-full overflow-y-auto">
               {isLoading ? (
-                <div className="text-gray-60 py-6 text-center text-sm">Загрузка...</div>
+                <div className="text-text-secondary py-6 text-center text-sm">Загрузка...</div>
               ) : isError ? (
-                <div className="text-red-60 py-6 text-center text-sm">Ошибка загрузки</div>
+                <div className="text-text-danger py-6 text-center text-sm">Ошибка загрузки</div>
               ) : !subjects || subjects.length === 0 ? (
-                <div className="text-gray-60 py-6 text-center text-sm">Предметы не найдены</div>
+                <div className="text-text-secondary py-6 text-center text-sm">
+                  Предметы не найдены
+                </div>
               ) : (
                 <CommandGroup>
                   {subjects.map((subject: SubjectSchema) => (
                     <CommandItem
                       key={subject.id}
                       value={subject.name}
-                      className="text-gray-100"
+                      className="text-text-primary"
                       onSelect={() => {
                         if (disabled) return;
                         field.onChange(subject.id);
@@ -113,7 +117,7 @@ export const Autocomplete = ({ field, disabled, containerRef }: AutocompleteProp
                     >
                       <CheckIcon
                         className={cn(
-                          'text-gray-80 mr-2 h-4 w-4',
+                          'text-text-primary mr-2 h-4 w-4',
                           field.value === subject.id ? 'opacity-100' : 'opacity-0',
                         )}
                       />

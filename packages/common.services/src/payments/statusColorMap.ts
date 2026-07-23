@@ -2,16 +2,16 @@ import { PaymentStatusT } from 'common.types';
 
 // Приватная константа - не экспортируется напрямую, чтобы избежать использования как селектора Zustand
 const _statusTextColorMap: Record<PaymentStatusT, string> = {
-  complete: 'text-green-80',
-  wf_receiver_confirmation: 'text-brand-80',
-  wf_sender_confirmation: 'text-orange-80',
+  complete: 'text-status-success-text',
+  wf_receiver_confirmation: 'text-text-link',
+  wf_sender_confirmation: 'text-tag-orange-accent',
 };
 
 /** Синхронизировано с paymentStatusBadgeClasses в common.ui */
 const _statusBgColorMap: Record<PaymentStatusT, string> = {
-  complete: 'text-green-80 bg-green-0 dark:bg-[#ECF8EC] dark:text-[#2E842E]',
-  wf_receiver_confirmation: 'text-brand-80 bg-brand-0 dark:bg-[#F3F4FC] dark:text-[#4554C9]',
-  wf_sender_confirmation: 'text-orange-80 bg-orange-0 dark:bg-[#FBF3EE] dark:text-[#B85727]',
+  complete: 'text-status-success-text bg-status-success-background',
+  wf_receiver_confirmation: 'text-text-link bg-status-info-background',
+  wf_sender_confirmation: 'text-tag-orange-accent bg-tag-orange-background',
 };
 
 /**

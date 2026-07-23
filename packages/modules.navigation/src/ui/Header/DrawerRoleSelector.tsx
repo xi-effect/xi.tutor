@@ -45,13 +45,13 @@ export const DrawerRoleSelector = ({ compact = false }: DrawerRoleSelectorProps)
 
   return (
     <div className={compact ? 'w-full' : 'w-full p-2'}>
-      {!compact && <div className="mb-2 text-base font-medium text-gray-50">{t('role')}</div>}
+      {!compact && <div className="text-text-muted mb-2 text-base font-medium">{t('role')}</div>}
       <RoleSwitcher
         value={currentRole}
         onChange={handleRoleChange}
         className={
           compact
-            ? 'bg-gray-5 mx-auto flex h-[48px] w-full shrink-0 flex-row rounded-lg p-1'
+            ? 'bg-background-page mx-auto flex h-[48px] w-full shrink-0 flex-row rounded-lg p-1'
             : undefined
         }
         tabClassName={compact ? 'h-[42px] w-full' : undefined}

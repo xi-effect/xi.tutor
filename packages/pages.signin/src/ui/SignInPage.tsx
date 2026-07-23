@@ -54,18 +54,18 @@ export const SignInPage = () => {
 
   return (
     <div className="flex w-full flex-1 flex-col items-center justify-center p-1 py-4">
-      <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex min-h-[600px] w-full max-w-[420px] flex-col bg-transparent p-8">
+      <div className="xs:border xs:border-border-default xs:rounded-2xl flex min-h-[600px] w-full max-w-[420px] flex-col bg-transparent p-8">
         <Form {...form}>
           <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex flex-1 flex-col gap-4">
             <div className="self-center">
               <Logo height={22} width={180} />
             </div>
-            <h1 className="flex justify-center text-2xl font-semibold text-gray-100">
+            <h1 className="text-text-primary flex justify-center text-2xl font-semibold">
               {t('sign_in')}
             </h1>
 
             {isInviteRedirect && (
-              <div className="text-brand-100 bg-brand-0 rounded-2xl p-4 text-center text-sm whitespace-pre-line">
+              <div className="text-text-link bg-status-info-background rounded-2xl p-4 text-center text-sm whitespace-pre-line">
                 {t('invite_message')}
               </div>
             )}
@@ -98,9 +98,9 @@ export const SignInPage = () => {
                       afterClassName="cursor-pointer"
                       after={
                         isPasswordShow ? (
-                          <Eyeoff className="fill-gray-60" />
+                          <Eyeoff className="fill-icon-secondary" />
                         ) : (
-                          <Eyeon className="fill-gray-60" />
+                          <Eyeon className="fill-icon-secondary" />
                         )
                       }
                       afterProps={{

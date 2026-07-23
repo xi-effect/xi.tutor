@@ -44,8 +44,8 @@ const Timer = ({ getTitle, onTimerEnd, durationSecs }: TimerProps) => {
   });
 
   return (
-    <div className="bg-red-0 flex items-center gap-4 rounded-lg p-4 text-red-100">
-      <Clock className="fill-red-100" />
+    <div className="bg-status-error-background text-text-danger flex items-center gap-4 rounded-lg p-4">
+      <Clock className="fill-icon-danger" />
       <p className="font-semibold">{getTitle(formatTime(leftSecs))}</p>
     </div>
   );
@@ -80,9 +80,9 @@ export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT)
           <>
             <M.ModalCloseButton
               variant="full"
-              className="bg-gray-5 top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0 sm:right-4"
+              className="bg-background-page top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0 sm:right-4"
             >
-              <Close className="fill-gray-80 h-5 w-5" />
+              <Close className="fill-icon-primary h-5 w-5" />
             </M.ModalCloseButton>
             <M.ModalHeader>
               <M.ModalTitle className={modalTitleClass}>Изменение электронной почты</M.ModalTitle>
@@ -149,7 +149,7 @@ export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT)
           (stage.type === 'success' && (
             <div className="space-y-8 p-8">
               <M.ModalTitle className="hidden">Изменение электронной почты</M.ModalTitle>
-              <p className="text-center text-2xl font-semibold text-gray-100">
+              <p className="text-text-primary text-center text-2xl font-semibold">
                 На адрес {stage.email} отправлено письмо с подтверждением
               </p>
               <Button onClick={() => setStage({ type: 'form', email: '' })} className="mt-4 w-full">

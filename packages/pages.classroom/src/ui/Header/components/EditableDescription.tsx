@@ -30,7 +30,7 @@ export const EditableDescription = ({
   return (
     <>
       <div className={cn('group relative flex items-center gap-2', className)}>
-        <div className="text-m-base text-gray-60 line-clamp-3 h-auto max-w-[400px] truncate font-medium text-wrap">
+        <div className="text-m-base text-text-secondary line-clamp-3 h-auto max-w-[400px] truncate font-medium text-wrap">
           {description || 'Описание не указано'}
         </div>
 
@@ -42,7 +42,7 @@ export const EditableDescription = ({
             className="h-6 w-6 p-0 opacity-0 transition-opacity group-hover:opacity-100"
             title="Редактировать описание"
           >
-            <Edit className="fill-gray-60 h-4 w-4" />
+            <Edit className="fill-icon-secondary h-4 w-4" />
           </Button>
         )}
       </div>

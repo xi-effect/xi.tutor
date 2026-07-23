@@ -118,22 +118,22 @@ export const ModalInvitation = ({
       <ModalContent className="max-w-[600px]" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
-          <ModalTitle className="max-w-[calc(100%-48px)] text-gray-100">
+          <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
             Индивидуальные приглашения
           </ModalTitle>
         </ModalHeader>
 
         <ModalBody className="px-4 py-2">
-          <p className="flex flex-wrap items-center gap-1.5 px-2 pb-2 text-left dark:text-gray-100">
+          <p className="dark:text-text-primary flex flex-wrap items-center gap-1.5 px-2 pb-2 text-left">
             <span>Скопируйте ссылку-приглашение</span>
-            <Copy size="sm" className="fill-gray-60 size-4 shrink-0" aria-hidden />
+            <Copy size="sm" className="fill-icon-secondary size-4 shrink-0" aria-hidden />
             <span>и отправьте ученику</span>
           </p>
           <Table>
             <TableHeader>
               <TableRow className="flex justify-between">
-                <TableHead className="text-gray-80 flex-1 text-sm">Ссылка</TableHead>
-                <TableHead className="text-gray-80 flex-1 text-sm">Использований</TableHead>
+                <TableHead className="text-text-primary flex-1 text-sm">Ссылка</TableHead>
+                <TableHead className="text-text-primary flex-1 text-sm">Использований</TableHead>
                 <TableHead className="w-8" />
               </TableRow>
             </TableHeader>
@@ -142,17 +142,17 @@ export const ModalInvitation = ({
                 data.map((invitation: InvitationDataT) => (
                   <TableRow
                     key={invitation.id}
-                    className="hover:bg-gray-5 group flex max-h-[38px] flex-row items-center rounded-lg"
+                    className="hover:bg-background-page group flex max-h-[38px] flex-row items-center rounded-lg"
                   >
                     <TableCell className="flex max-w-[50%] flex-1 items-center gap-2 overflow-hidden">
-                      <span className="dark:text-gray-80 truncate">{invitation.code}</span>
+                      <span className="dark:text-text-primary truncate">{invitation.code}</span>
                       <Tooltip delayDuration={400}>
                         <TooltipTrigger asChild>
                           <Button
                             type="button"
                             variant="none"
                             size="s"
-                            className="bg-gray-5 hover:bg-gray-10 text-gray-60 hover:text-gray-80 size-7 shrink-0 rounded-md p-0"
+                            className="bg-background-page hover:bg-background-subtle text-text-secondary hover:text-text-primary size-7 shrink-0 rounded-md p-0"
                             onClick={handleCopyLink(invitation.code, invitation.id)}
                             aria-label="Копировать ссылку"
                             data-umami-event="invite-copy-link"
@@ -164,7 +164,7 @@ export const ModalInvitation = ({
                         <TooltipContent>Копировать ссылку</TooltipContent>
                       </Tooltip>
                     </TableCell>
-                    <TableCell className="dark:text-gray-80 flex max-w-[50%] flex-1">
+                    <TableCell className="dark:text-text-primary flex max-w-[50%] flex-1">
                       {invitation.usage_count}
                     </TableCell>
                     <TableCell
@@ -175,12 +175,12 @@ export const ModalInvitation = ({
                     >
                       {isDeleting && deletingId === invitation.id ? (
                         <div
-                          className="text-brand-80 size-4 animate-spin rounded-full border-[2px] border-current border-t-transparent"
+                          className="text-text-link size-4 animate-spin rounded-full border-[2px] border-current border-t-transparent"
                           role="status"
                           aria-label="loading"
                         />
                       ) : (
-                        <Trash size="sm" className="fill-gray-60 h-6 w-6 group-hover:flex" />
+                        <Trash size="sm" className="fill-icon-secondary h-6 w-6 group-hover:flex" />
                       )}
                     </TableCell>
                   </TableRow>

@@ -14,7 +14,7 @@ export const TemplatesPage = () => {
           size="s"
           className="fixed right-4 bottom-4 z-50 flex h-12 w-12 items-center justify-center rounded-xl"
         >
-          <Plus className="fill-brand-0" />
+          <Plus className="fill-action-primary-text" />
         </Button>
       </div>
     </div>

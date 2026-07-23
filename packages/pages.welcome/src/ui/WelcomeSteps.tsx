@@ -1,8 +1,8 @@
 import { type WelcomePageLayoutPropsT } from './WelcomePageLayout';
 
 const colors = {
-  active: 'bg-brand-80',
-  default: 'bg-gray-10',
+  active: 'bg-action-primary-background-default',
+  default: 'bg-background-subtle',
 };
 
 export const WelcomeSteps = ({ step }: Pick<WelcomePageLayoutPropsT, 'step'>) => {

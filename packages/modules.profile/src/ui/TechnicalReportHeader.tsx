@@ -4,8 +4,8 @@ import { InfoCircle } from '@xipkg/icons';
 export const TechnicalReportHeader = () => {
   return (
     <div className="flex flex-col gap-4 rounded-2xl">
-      <h2 className="text-xl font-semibold dark:text-gray-100">Что это такое?</h2>
-      <p className="text-gray-80 dark:text-gray-80 text-sm">
+      <h2 className="dark:text-text-primary text-xl font-semibold">Что это такое?</h2>
+      <p className="text-text-primary dark:text-text-primary text-sm">
         На этой странице собрана техническая информация о вашем браузере и устройстве. Эта
         информация помогает команде поддержки Sovlium быстрее находить и исправлять проблемы.
       </p>
@@ -16,7 +16,7 @@ export const TechnicalReportHeader = () => {
         <AlertContainer>
           <AlertTitle className="text-base">Важная информация о конфиденциальности:</AlertTitle>
           <AlertDescription>
-            <ul className="text-gray-80 dark:text-gray-80 list-inside list-disc space-y-1 text-xs">
+            <ul className="text-text-primary dark:text-text-primary list-inside list-disc space-y-1 text-xs">
               <li>Отчёт содержит техническую информацию о вашем браузере и устройстве</li>
               <li>Передавайте отчёт только официальной поддержке Sovlium</li>
               <li>

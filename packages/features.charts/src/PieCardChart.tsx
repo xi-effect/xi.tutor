@@ -43,7 +43,7 @@ export const PieCardChart = ({
   return (
     <div className="flex flex-col rounded-lg">
       <div className="flex space-y-1 p-4">
-        <div className="text-primary-100 text-xl font-semibold tracking-tight dark:text-gray-100">
+        <div className="text-primary-100 dark:text-text-primary text-xl font-semibold tracking-tight">
           {pieCardTitle}
         </div>
       </div>
@@ -70,7 +70,9 @@ export const PieCardChart = ({
             >
               <LabelList
                 dataKey="visitors"
-                className={(cn(labelListProps?.className), 'fill-gray-0 text-gray-60')}
+                className={
+                  (cn(labelListProps?.className), 'fill-action-primary-text text-text-secondary')
+                }
                 stroke="none"
                 fontSize={12}
                 position="inside"
@@ -93,7 +95,7 @@ export const PieCardChart = ({
                     style={{ backgroundColor: 'color' in config ? config.color : undefined }}
                   />
                 </div>
-                <span className="dark:text-gray-100">{config.label}</span>
+                <span className="dark:text-text-primary">{config.label}</span>
               </div>
             ))}
         </div>

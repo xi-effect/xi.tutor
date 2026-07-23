@@ -19,7 +19,7 @@ export function AudioPlayPauseButton({
       size="s"
       disabled={disabled}
       title={disabled ? 'Управление у репетитора' : undefined}
-      className="bg-brand-80 hover:bg-brand-100 focus:bg-brand-100 active:bg-brand-100 disabled:bg-gray-40 flex h-10 w-10 shrink-0 items-center justify-center rounded-full p-0 disabled:cursor-not-allowed"
+      className="bg-action-primary-background-default hover:bg-action-primary-background-pressed focus:bg-action-primary-background-pressed active:bg-action-primary-background-pressed disabled:bg-background-subtle flex h-10 w-10 shrink-0 items-center justify-center rounded-full p-0 disabled:cursor-not-allowed"
       style={{ pointerEvents: 'all' }}
       data-audio-control=""
       onPointerDown={stopEvent}

@@ -144,7 +144,7 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
       <ModalContent aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
-          <ModalTitle className="max-w-[calc(100%-48px)] text-gray-100">
+          <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
             Добавление ученика в группу
           </ModalTitle>
         </ModalHeader>
@@ -153,17 +153,17 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
             <div className="flex flex-col">
               {isLoading && (
                 <div className="flex h-20 items-center justify-center">
-                  <span className="text-gray-60">Загрузка...</span>
+                  <span className="text-text-secondary">Загрузка...</span>
                 </div>
               )}
               {isError && (
                 <div className="flex h-20 items-center justify-center">
-                  <span className="text-red-500">Ошибка загрузки данных</span>
+                  <span className="text-text-danger">Ошибка загрузки данных</span>
                 </div>
               )}
               {!isLoading && !isError && allStudents?.length === 0 && (
                 <div className="flex h-20 items-center justify-center">
-                  <span className="text-gray-60">{'У вас пока нет студентов'}</span>
+                  <span className="text-text-secondary">{'У вас пока нет студентов'}</span>
                 </div>
               )}
               {!isLoading &&
@@ -171,7 +171,7 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
                 allStudents?.map((student: TutorStudentSchemaMarshal) => (
                   <div
                     key={student.tutorship.student_id}
-                    className="group hover:bg-gray-5 flex h-[48px] cursor-pointer flex-row items-center gap-2 rounded-2xl px-4"
+                    className="group hover:bg-background-page flex h-[48px] cursor-pointer flex-row items-center gap-2 rounded-2xl px-4"
                     onClick={() => handleStudentToggle(student.tutorship.student_id)}
                     data-umami-event="group-student-toggle"
                     data-umami-event-student-id={student.tutorship.student_id}

@@ -27,7 +27,7 @@ export const NewPassword = ({ token }: { token: string }) => {
           <Logo height={22} width={180} />
         </div>
 
-        <h1 className="self-center text-2xl font-semibold text-gray-100">{t('title')}</h1>
+        <h1 className="text-text-primary self-center text-2xl font-semibold">{t('title')}</h1>
 
         <FormField
           control={form.control}
@@ -44,9 +44,9 @@ export const NewPassword = ({ token }: { token: string }) => {
                   afterClassName="cursor-pointer"
                   after={
                     isPasswordShowFirst ? (
-                      <Eyeoff className="fill-gray-60" />
+                      <Eyeoff className="fill-icon-secondary" />
                     ) : (
-                      <Eyeon className="fill-gray-60" />
+                      <Eyeon className="fill-icon-secondary" />
                     )
                   }
                   afterProps={{
@@ -74,9 +74,9 @@ export const NewPassword = ({ token }: { token: string }) => {
                   afterClassName="cursor-pointer"
                   after={
                     isPasswordShowSecond ? (
-                      <Eyeoff className="fill-gray-60" />
+                      <Eyeoff className="fill-icon-secondary" />
                     ) : (
-                      <Eyeon className="fill-gray-60" />
+                      <Eyeon className="fill-icon-secondary" />
                     )
                   }
                   afterProps={{
@@ -107,7 +107,7 @@ export const NewPassword = ({ token }: { token: string }) => {
             variant="primary"
             type="submit"
             loading={form.formState.isSubmitting}
-            className="bg-brand-80 rounded-xl px-6 py-3"
+            className="bg-action-primary-background-default rounded-xl px-6 py-3"
             data-umami-event="auth-new-password-save"
           >
             {t('save')}

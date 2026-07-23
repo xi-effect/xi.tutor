@@ -10,7 +10,7 @@ import { ModalGroupInvite } from 'features.group.invite';
 const DRAWER_TITLE = 'Выберите действие';
 
 const menuRowClassName = cn(
-  'border-gray-10 bg-gray-0 hover:bg-gray-5 flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors',
+  'border-border-default bg-background-surface hover:bg-background-page flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors',
 );
 
 type ContentKind = 'note' | 'board';
@@ -234,12 +234,12 @@ export const ClassroomMobileActionButton = ({
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} modal>
         <DrawerContent className="max-h-screen w-full">
           <div className="flex flex-col gap-4 pb-8">
-            <DrawerTitle className="text-m-base font-medium text-gray-100">
+            <DrawerTitle className="text-m-base text-text-primary font-medium">
               {DRAWER_TITLE}
             </DrawerTitle>
             <DrawerDescription className="sr-only">{DRAWER_TITLE}</DrawerDescription>
 
-            <div className="dark:bg-gray-0 flex flex-col gap-3">
+            <div className="dark:bg-background-surface flex flex-col gap-3">
               {actions.map(
                 ({
                   id,
@@ -261,27 +261,27 @@ export const ClassroomMobileActionButton = ({
                     data-umami-event-access-mode={umamiAccessMode}
                     className={cn(
                       menuRowClassName,
-                      destructive && 'border-red-20 hover:bg-red-20/30',
+                      destructive && 'border-border-error hover:bg-status-error-background/30',
                       disabled && 'pointer-events-none opacity-50',
                     )}
                   >
                     <Icon
                       className={cn(
                         'size-6 shrink-0',
-                        destructive ? 'text-red-60' : 'text-gray-100',
+                        destructive ? 'text-text-danger' : 'text-text-primary',
                       )}
                     />
                     <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-left">
                       <span
                         className={cn(
                           'text-m-base font-medium',
-                          destructive ? 'text-red-60' : 'text-gray-100',
+                          destructive ? 'text-text-danger' : 'text-text-primary',
                         )}
                       >
                         {label}
                       </span>
                       {description && (
-                        <span className="text-s-base text-gray-60">{description}</span>
+                        <span className="text-s-base text-text-secondary">{description}</span>
                       )}
                     </span>
                   </button>

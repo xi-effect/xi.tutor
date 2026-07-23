@@ -44,17 +44,18 @@
       "@tiptap/react": "3.23.6",
       "@tiptap/starter-kit": "3.23.6",
       "@tiptap/extensions": "3.23.6",
-      "@xipkg/calls": "^0.1.8",
-      "@xipkg/calls-chat": "^0.1.8",
-      "@xipkg/calls-compactview": "^0.1.8",
-      "@xipkg/calls-config": "^0.1.8",
-      "@xipkg/calls-hooks": "^0.1.8",
-      "@xipkg/calls-providers": "^0.1.8",
-      "@xipkg/calls-risehand": "^0.1.8",
-      "@xipkg/calls-store": "^0.1.8",
-      "@xipkg/calls-types": "^0.1.8",
-      "@xipkg/calls-ui": "^0.1.8",
-      "@xipkg/calls-utils": "^0.1.8"
+      "@xipkg/calls": "^0.1.10",
+      "@xipkg/calls-chat": "^0.1.10",
+      "@xipkg/calls-compactview": "^0.1.10",
+      "@xipkg/calls-config": "^0.1.10",
+      "@xipkg/calls-hooks": "^0.1.10",
+      "@xipkg/calls-providers": "^0.1.10",
+      "@xipkg/calls-risehand": "^0.1.10",
+      "@xipkg/calls-store": "^0.1.10",
+      "@xipkg/calls-types": "^0.1.10",
+      "@xipkg/calls-ui": "^0.1.10",
+      "@xipkg/calls-utils": "^0.1.10",
+      "@xipkg/label": "2.1.0"
     }
   }
 }

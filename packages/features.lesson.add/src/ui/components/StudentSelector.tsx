@@ -33,7 +33,7 @@ export const StudentSelector = ({
   const selector = (
     <Select value={value} onValueChange={onChange} disabled={isEmpty}>
       <SelectTrigger
-        className="border-gray-10 m-0 w-full rounded-lg border text-gray-100"
+        className="border-border-default text-text-primary m-0 w-full rounded-lg border"
         size="s"
         before={before}
         disabled={isEmpty}
@@ -45,7 +45,7 @@ export const StudentSelector = ({
           <SelectItem
             key={classroom.id}
             value={classroom.id.toString()}
-            className="max-w-full min-w-0 truncate dark:text-gray-100"
+            className="dark:text-text-primary max-w-full min-w-0 truncate"
           >
             {classroom.name}
           </SelectItem>

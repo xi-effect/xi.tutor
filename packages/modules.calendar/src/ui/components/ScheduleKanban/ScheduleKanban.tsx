@@ -164,14 +164,14 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
               <div className="flex shrink-0 items-center justify-between gap-1 py-4">
                 <span
                   className={cn(
-                    'group-hover/day:text-brand-80 group-hover/day:bg-brand-0 text-gray-40 bg-gray-5 flex h-[32px] w-[38px] items-center justify-center rounded-[10px] text-[14px] font-semibold transition-colors duration-300',
+                    'group-hover/day:text-text-link group-hover/day:bg-status-info-background text-text-disabled bg-background-page flex h-[32px] w-[38px] items-center justify-center rounded-[10px] text-[14px] font-semibold transition-colors duration-300',
                   )}
                 >
                   {dateNum}
                 </span>
                 <span
                   className={cn(
-                    'text-s-base text-gray-60 group-hover/day:text-gray-90 font-medium transition-colors duration-300',
+                    'text-s-base text-text-secondary group-hover/day:text-text-primary font-medium transition-colors duration-300',
                   )}
                 >
                   {dayName}
@@ -179,12 +179,12 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
                 {onAddLessonClick ? (
                   <Button
                     variant="none"
-                    className="hover:text-primary-60 hover:bg-gray-5 flex h-[32px] w-[40px] shrink-0 items-center justify-center rounded-md p-0 text-gray-50 transition-colors"
+                    className="hover:text-primary-60 hover:bg-background-page text-text-muted flex h-[32px] w-[40px] shrink-0 items-center justify-center rounded-md p-0 transition-colors"
                     aria-label={t('add_event')}
                     onClick={() => onAddLessonClick(day)}
                     data-umami-event="schedule-add-lesson-column"
                   >
-                    <Plus className="fill-gray-40 group-hover/day:fill-brand-80 h-5 w-5 transition-colors duration-300" />
+                    <Plus className="fill-icon-disabled group-hover/day:fill-icon-brand h-5 w-5 transition-colors duration-300" />
                   </Button>
                 ) : (
                   <span className="h-[32px] w-[40px] shrink-0" aria-hidden />

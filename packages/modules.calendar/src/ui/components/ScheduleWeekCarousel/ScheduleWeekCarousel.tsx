@@ -109,14 +109,16 @@ export const ScheduleWeekCarousel = ({
                     data-umami-event-source="mobile-week"
                     className={cn(styles.dayPillBase)}
                     style={{
-                      backgroundColor: isSelected ? 'var(--xi-brand-80)' : 'transparent',
-                      color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-60)',
+                      backgroundColor: isSelected
+                        ? 'var(--xi-action-primary-background-default)'
+                        : 'transparent',
+                      color: isSelected ? 'var(--xi-text-on-accent)' : 'var(--xi-text-secondary)',
                     }}
                   >
                     <span
                       className="text-xxs-base-size leading-[14px]"
                       style={{
-                        color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-50)',
+                        color: isSelected ? 'var(--xi-text-on-accent)' : 'var(--xi-text-muted)',
                       }}
                     >
                       {dayName}
@@ -124,7 +126,7 @@ export const ScheduleWeekCarousel = ({
                     <span
                       className="text-[14px] leading-5 font-medium"
                       style={{
-                        color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-70)',
+                        color: isSelected ? 'var(--xi-text-on-accent)' : 'var(--xi-text-secondary)',
                       }}
                     >
                       {dayNum}

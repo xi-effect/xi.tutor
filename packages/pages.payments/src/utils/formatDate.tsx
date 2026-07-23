@@ -10,8 +10,8 @@ dayjs.locale('ru');
 export const formatDate = (dateStr: string) => {
   const date = dayjs(dateStr);
 
-  const classnameFirstLine = 'text-gray-100 font-normal text-s-base';
-  const classnameSecondLine = 'text-gray-60 font-normal text-xs-base';
+  const classnameFirstLine = 'text-text-primary font-normal text-s-base';
+  const classnameSecondLine = 'text-text-secondary font-normal text-xs-base';
 
   const formattedTime = <p className={classnameSecondLine}>{date.format('HH:mm')}</p>;
 

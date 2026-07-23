@@ -65,17 +65,17 @@ export const CodeBlockNodeView = ({ node, getPos, updateAttributes }: NodeViewPr
       >
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
-            <Button size="s" variant="none" className="text-gray-80" disabled={isReadOnly}>
+            <Button size="s" variant="none" className="text-text-primary" disabled={isReadOnly}>
               {currentLang === 'plaintext' ? 'text' : currentLang}
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             side="bottom"
             align="end"
-            className="border-gray-10 flex max-h-[240px] w-[150px] flex-col space-y-1 overflow-y-auto rounded-xl border p-1 text-gray-100"
+            className="border-border-default text-text-primary flex max-h-[240px] w-[150px] flex-col space-y-1 overflow-y-auto rounded-xl border p-1"
           >
             <DropdownMenuItem
-              className="hover:bg-gray-5 h-7 rounded px-2 text-xs"
+              className="hover:bg-background-page h-7 rounded px-2 text-xs"
               onSelect={() => handleLanguageChange('plaintext')}
             >
               Plain text
@@ -83,7 +83,7 @@ export const CodeBlockNodeView = ({ node, getPos, updateAttributes }: NodeViewPr
             {availableLanguages.map((lang) => (
               <DropdownMenuItem
                 key={lang}
-                className="hover:bg-gray-5 h-7 rounded px-2 text-xs capitalize"
+                className="hover:bg-background-page h-7 rounded px-2 text-xs capitalize"
                 onSelect={() => handleLanguageChange(lang)}
               >
                 {lang}
@@ -93,17 +93,17 @@ export const CodeBlockNodeView = ({ node, getPos, updateAttributes }: NodeViewPr
         </DropdownMenu>
         <DropdownMenu modal={false}>
           <DropdownMenuTrigger asChild>
-            <Button size="s" variant="none" className="text-gray-0">
+            <Button size="s" variant="none" className="text-text-on-accent">
               <MoreVert size="sm" className="size-5" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             side="bottom"
             align="end"
-            className="border-gray-10 flex w-[160px] flex-col space-y-1 rounded-xl border p-2"
+            className="border-border-default flex w-[160px] flex-col space-y-1 rounded-xl border p-2"
           >
             <DropdownMenuItem
-              className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+              className="hover:bg-background-page h-7 gap-2 rounded p-1"
               onSelect={handleCopyCode}
             >
               <Copy size="sm" className="size-4" />
@@ -112,10 +112,10 @@ export const CodeBlockNodeView = ({ node, getPos, updateAttributes }: NodeViewPr
 
             {!isReadOnly && (
               <DropdownMenuItem
-                className="hover:bg-gray-5 h-7 gap-2 rounded p-1 text-red-500"
+                className="hover:bg-background-page text-text-danger h-7 gap-2 rounded p-1"
                 onSelect={remove}
               >
-                <Trash size="sm" className="size-4 text-red-500" />
+                <Trash size="sm" className="text-text-danger size-4" />
                 <span className="text-xs">Удалить блок</span>
               </DropdownMenuItem>
             )}

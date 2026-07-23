@@ -40,7 +40,7 @@ export const MaterialsList = () => {
   if (isError) {
     return (
       <div className="flex h-24 w-full items-center justify-center">
-        <p className="text-gray-50">Ошибка загрузки материалов</p>
+        <p className="text-text-muted">Ошибка загрузки материалов</p>
       </div>
     );
   }
@@ -49,7 +49,7 @@ export const MaterialsList = () => {
   if (!materials || materials.length === 0) {
     return (
       <div className="flex h-24 w-full items-center justify-center">
-        <p className="text-gray-50">Нет материалов</p>
+        <p className="text-text-muted">Нет материалов</p>
       </div>
     );
   }

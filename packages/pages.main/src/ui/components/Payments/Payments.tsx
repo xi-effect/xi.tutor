@@ -61,22 +61,22 @@ export const Payments = () => {
   };
 
   const emptyActionButtonClass =
-    'bg-gray-5 hover:bg-gray-10 text-xs-base h-8 rounded-lg px-4 font-medium text-gray-80';
+    'bg-background-page hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
 
   return (
-    <div className="bg-gray-0 flex w-full flex-col gap-4 rounded-2xl px-5 pt-4 pb-1 transition-all duration-200 ease-linear sm:w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)]">
+    <div className="bg-background-surface flex w-full flex-col gap-4 rounded-2xl px-5 pt-4 pb-1 transition-all duration-200 ease-linear sm:w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)]">
       <div className="flex flex-row items-center gap-2">
-        <h2 className="text-l-base font-medium text-gray-100">Оплата</h2>
+        <h2 className="text-l-base text-text-primary font-medium">Оплата</h2>
         <div className="ml-auto">
           {isTutor && !isMobile ? (
             <Button
               variant="none"
-              className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
+              className="bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
               onClick={handleAdd}
               data-umami-event="create-invoice-button"
               id="create-invoice-button"
             >
-              <Add className="fill-brand-80 size-6" />
+              <Add className="fill-icon-brand size-6" />
             </Button>
           ) : (
             <Tooltip delayDuration={1000}>
@@ -87,7 +87,7 @@ export const Payments = () => {
                   onClick={handleMore}
                   data-umami-event="payments-more"
                 >
-                  <ArrowRight className="fill-gray-60 size-6" />
+                  <ArrowRight className="fill-icon-secondary size-6" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>К оплатам</TooltipContent>
@@ -99,7 +99,7 @@ export const Payments = () => {
 
       {isLoading ? (
         <div className="flex h-[152px] w-full items-center justify-center">
-          <p className="text-m-base text-gray-60">Загрузка...</p>
+          <p className="text-m-base text-text-secondary">Загрузка...</p>
         </div>
       ) : previewList.length > 0 ? (
         <ScrollArea className="w-full" scrollBarProps={{ orientation: 'horizontal' }}>
@@ -130,7 +130,7 @@ export const Payments = () => {
                 data-umami-event="payments-empty-help"
               >
                 Как работает оплата
-                <ArrowUpRight className="fill-gray-80 ml-1 size-4 shrink-0" />
+                <ArrowUpRight className="fill-icon-primary ml-1 size-4 shrink-0" />
               </Button>
               {!isMobile && (
                 <Button
@@ -141,7 +141,7 @@ export const Payments = () => {
                   data-umami-event="payments-empty-invoice"
                 >
                   Счет на оплату
-                  <Add className="fill-gray-80 ml-1 size-4 shrink-0" />
+                  <Add className="fill-icon-primary ml-1 size-4 shrink-0" />
                 </Button>
               )}
             </>
@@ -162,7 +162,7 @@ export const Payments = () => {
               data-umami-event="payments-empty-more"
             >
               Подробнее о финансах
-              <ArrowUpRight className="fill-gray-80 ml-1 size-4 shrink-0" />
+              <ArrowUpRight className="fill-icon-primary ml-1 size-4 shrink-0" />
             </Button>
           }
         />

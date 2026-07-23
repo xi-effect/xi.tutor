@@ -234,7 +234,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
         customCloseButton.className = 'driver-popover-close-btn';
 
         const root = createRoot(customCloseButton);
-        root.render(<Close size="s" className="fill-gray-60 h-4 w-4" />);
+        root.render(<Close size="s" className="fill-icon-secondary h-4 w-4" />);
 
         defaultCloseButton.replaceWith(customCloseButton);
         customCloseButton.addEventListener('click', () => {
@@ -307,23 +307,23 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
   }
 
   return (
-    <div className="bg-gray-0 border-gray-10 fixed bottom-0 left-72 z-100 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col items-start gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
+    <div className="bg-background-surface border-border-default fixed bottom-0 left-72 z-100 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col items-start gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
       <Button
         variant="none"
         size="s"
-        className="hover:bg-gray-0 bg-gray-0 absolute top-1 right-1 hover:cursor-pointer"
+        className="hover:bg-background-surface bg-background-surface absolute top-1 right-1 hover:cursor-pointer"
         onClick={hideMenuForSession}
       >
-        <Close className="fill-gray-60 h-4 w-4" />
+        <Close className="fill-icon-secondary h-4 w-4" />
       </Button>
       <div className="flex flex-col gap-2">
         <div className="h-8">
-          <span className="text-xl font-semibold text-gray-100">
+          <span className="text-text-primary text-xl font-semibold">
             Добро пожаловать в Sovlium! 😊
           </span>
         </div>
         <div className="h-10">
-          <span className="text-gray-80 text-sm font-normal tracking-tight">
+          <span className="text-text-primary text-sm font-normal tracking-tight">
             {isTutor ? (
               <>
                 Хотите узнать о возможностях платформы?
@@ -345,7 +345,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
           size="s"
           className={cn(
             buttonClassName,
-            'bg-brand-80 text-gray-0',
+            'bg-action-primary-background-default text-text-on-accent',
             isTutor ? 'max-w-[153px]' : 'max-w-[177px]',
           )}
         >
@@ -359,7 +359,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
           size="s"
           className={cn(
             buttonClassName,
-            'hover:bg-gray-5 border-gray-30 border',
+            'hover:bg-background-page border-border-control border',
             isTutor ? 'max-w-[153px]' : 'max-w-[78px]',
           )}
         >

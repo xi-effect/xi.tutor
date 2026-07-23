@@ -15,16 +15,18 @@ export function NavigationDrawerContent({
 }: NavigationDrawerContentProps) {
   return (
     <DrawerPrimitive.Portal>
-      <DrawerPrimitive.Overlay className={cn('fixed inset-0 bg-gray-100/40', NAV_DRAWER_Z_CLASS)} />
+      <DrawerPrimitive.Overlay
+        className={cn('bg-background-canvas/40 fixed inset-0', NAV_DRAWER_Z_CLASS)}
+      />
       <DrawerPrimitive.Content
         className={cn(
-          'bg-gray-0 fixed inset-x-0 bottom-0 flex h-auto flex-col gap-4 rounded-t-4xl p-4 pt-0',
+          'bg-background-surface fixed inset-x-0 bottom-0 flex h-auto flex-col gap-4 rounded-t-4xl p-4 pt-0',
           NAV_DRAWER_Z_CLASS,
           className,
         )}
         {...props}
       >
-        <div className="bg-gray-20 mx-auto mt-2 h-1 w-[80px] rounded-full" />
+        <div className="bg-action-secondary-background-pressed mx-auto mt-2 h-1 w-[80px] rounded-full" />
         {children}
       </DrawerPrimitive.Content>
     </DrawerPrimitive.Portal>

@@ -91,14 +91,14 @@ export const DayLessonRow = ({
     <div
       ref={rowRef}
       className={cn(
-        'border-gray-10 relative flex min-h-[136px] shrink-0 flex-row items-stretch gap-4 overflow-hidden p-4 pb-3.5 transition-[padding] duration-200 ease-linear',
+        'border-border-default relative flex min-h-[136px] shrink-0 flex-row items-stretch gap-4 overflow-hidden p-4 pb-3.5 transition-[padding] duration-200 ease-linear',
         showTutorIconColumn && 'group/day-lesson pr-14 lg:pr-4 lg:hover:pr-14',
-        isNearestLesson ? 'border-brand-80 rounded-2xl border-2' : 'border-b last:border-b-0',
+        isNearestLesson ? 'border-border-focus rounded-2xl border-2' : 'border-b last:border-b-0',
       )}
     >
       <div className="flex shrink-0 flex-col">
-        <span className="text-xl-base font-normal text-gray-100">{lesson.startTime}</span>
-        <span className="text-m-base text-gray-60">{lesson.endTime}</span>
+        <span className="text-xl-base text-text-primary font-normal">{lesson.startTime}</span>
+        <span className="text-m-base text-text-secondary">{lesson.endTime}</span>
       </div>
       <div className="flex h-full min-h-0 w-full min-w-0 flex-1 flex-col">
         <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col">
@@ -110,8 +110,8 @@ export const DayLessonRow = ({
               onKeyDown={(e) => handleActivateKey(e, handleToggleDescription)}
               data-umami-event="schedule-lesson-toggle-description"
               className={cn(
-                'flex min-h-0 w-full max-w-full min-w-0 flex-1 cursor-pointer flex-col justify-start gap-2 rounded-lg p-1 text-left text-gray-100 transition-[padding] duration-200 ease-linear',
-                'focus-visible:ring-brand-80 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+                'text-text-primary flex min-h-0 w-full max-w-full min-w-0 flex-1 cursor-pointer flex-col justify-start gap-2 rounded-lg p-1 text-left transition-[padding] duration-200 ease-linear',
+                'focus-visible:ring-border-focus focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
                 // overflow только для блока с метой+аватаром; иначе ломаем line-clamp и режем по середине строки
                 !showLessonDescription && 'overflow-hidden',
                 showTutorIconColumn && ['pr-4 lg:pr-0', gHover.pr4],
@@ -119,7 +119,7 @@ export const DayLessonRow = ({
             >
               {showLessonDescription ? (
                 <div className="min-h-0 w-full max-w-full min-w-0 shrink text-left">
-                  <p className="text-s-base text-gray-80 m-0 line-clamp-3 max-h-15 min-h-0 w-full min-w-0 leading-5 wrap-break-word text-ellipsis">
+                  <p className="text-s-base text-text-primary m-0 line-clamp-3 max-h-15 min-h-0 w-full min-w-0 leading-5 wrap-break-word text-ellipsis">
                     {descriptionText != null && descriptionText.length > 0
                       ? descriptionText
                       : 'Описание не указано.'}
@@ -128,7 +128,9 @@ export const DayLessonRow = ({
               ) : (
                 <>
                   {subjectName != null ? (
-                    <span className="text-xs-base text-gray-60 font-medium">{subjectName}</span>
+                    <span className="text-xs-base text-text-secondary font-medium">
+                      {subjectName}
+                    </span>
                   ) : null}
                   <div className="flex w-full max-w-full min-w-0 flex-row items-center gap-2 overflow-hidden">
                     <UserProfile
@@ -139,7 +141,7 @@ export const DayLessonRow = ({
                     />
                   </div>
                   {lesson.subject.trim() !== '' ? (
-                    <p className="text-s-base text-gray-90 line-clamp-2 leading-snug font-semibold">
+                    <p className="text-s-base text-text-primary line-clamp-2 leading-snug font-semibold">
                       {lesson.subject}
                     </p>
                   ) : null}
@@ -163,11 +165,11 @@ export const DayLessonRow = ({
                     <Button
                       variant="none"
                       size="s"
-                      className="bg-gray-0/80 hover:bg-gray-10 h-[32px] w-[32px] min-w-[32px] p-0"
+                      className="bg-background-surface/80 hover:bg-background-subtle h-[32px] w-[32px] min-w-[32px] p-0"
                       onClick={() => onReschedule?.(lesson)}
                       data-umami-event="schedule-lesson-reschedule"
                     >
-                      <CornerUpRight className="text-gray-60 h-5 w-5" />
+                      <CornerUpRight className="text-text-secondary h-5 w-5" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>Перенести занятие</TooltipContent>
@@ -177,11 +179,11 @@ export const DayLessonRow = ({
                     <Button
                       variant="none"
                       size="s"
-                      className="bg-gray-0/80 hover:bg-gray-10 h-[32px] w-[32px] min-w-[32px] p-0"
+                      className="bg-background-surface/80 hover:bg-background-subtle h-[32px] w-[32px] min-w-[32px] p-0"
                       onClick={() => setChangeModalOpen(true)}
                       data-umami-event="schedule-lesson-edit"
                     >
-                      <Edit05 className="text-gray-60 h-5 w-5" />
+                      <Edit05 className="text-text-secondary h-5 w-5" />
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>Редактировать занятие</TooltipContent>
@@ -192,11 +194,11 @@ export const DayLessonRow = ({
                       <Button
                         variant="none"
                         size="s"
-                        className="bg-gray-0/80 hover:bg-gray-10 h-[32px] w-[32px] min-w-[32px] p-0"
+                        className="bg-background-surface/80 hover:bg-background-subtle h-[32px] w-[32px] min-w-[32px] p-0"
                         onClick={() => setCancelModalOpen(true)}
                         data-umami-event="schedule-lesson-cancel-init"
                       >
-                        <Trash className="fill-gray-60 h-5 w-5" />
+                        <Trash className="fill-icon-secondary h-5 w-5" />
                       </Button>
                     </TooltipTrigger>
                     <TooltipContent>Отменить занятие</TooltipContent>

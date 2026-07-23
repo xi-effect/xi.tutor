@@ -41,7 +41,7 @@ function MenuItemWithShortcut({
       className={cn(boardMenuItemClass, 'flex justify-between gap-8 rounded-lg px-3')}
     >
       <span>{label}</span>
-      <span className="text-gray-60 text-xs">{shortcut}</span>
+      <span className="text-text-secondary text-xs">{shortcut}</span>
     </DropdownMenuItem>
   );
 }
@@ -117,7 +117,7 @@ export const MoreActionsMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="none" size="s" className="hover:bg-brand-0 p-1">
+        <Button variant="none" size="s" className="hover:bg-status-info-background p-1">
           <MenuDots className={`rotate-90 ${boardIconClass}`} />
         </Button>
       </DropdownMenuTrigger>

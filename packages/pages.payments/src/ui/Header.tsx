@@ -27,7 +27,7 @@ export const Header = ({ onCreateInvoice, activeTab, onTabChange }: HeaderProps)
 
   return (
     <div className="xs:flex-row xs:items-center flex flex-col items-start pb-4">
-      <h1 className="text-2xl font-normal text-gray-100">Контроль оплат</h1>
+      <h1 className="text-text-primary text-2xl font-normal">Контроль оплат</h1>
 
       <div className="xs:mt-0 xs:ml-4 xs:w-auto mt-2 flex h-[32px] w-full flex-row items-center gap-2">
         <SwitcherAnimate
@@ -49,11 +49,11 @@ export const Header = ({ onCreateInvoice, activeTab, onTabChange }: HeaderProps)
         <div className="xs:flex ml-auto hidden flex-row items-center gap-2">
           <Button
             size="s"
-            className="text-s-base text-gray-0 xs:px-4 rounded-lg px-2 py-2 font-medium"
+            className="text-s-base text-text-on-accent xs:px-4 rounded-lg px-2 py-2 font-medium"
             onClick={onCreateInvoice}
           >
             <span className="xs:flex hidden">Создать счёт на оплату</span>
-            <Plus size="sm" className="fill-brand-0 xs:hidden flex" />
+            <Plus size="sm" className="fill-action-primary-text xs:hidden flex" />
           </Button>
         </div>
       )}

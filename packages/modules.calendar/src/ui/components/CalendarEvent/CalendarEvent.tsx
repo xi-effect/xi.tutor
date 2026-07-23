@@ -17,7 +17,7 @@ export const CalendarEvent = memo<CalendarEventProps>(({ event, isPast }) => {
   return (
     <div
       className={cn(
-        'group hover:bg-gray-5 text-gray-80 flex max-w-min cursor-pointer gap-1 rounded-sm',
+        'group hover:bg-background-page text-text-primary flex max-w-min cursor-pointer gap-1 rounded-sm',
         isPast && 'opacity-60',
       )}
       onClick={() => handleOpenForm(event)}
@@ -25,16 +25,16 @@ export const CalendarEvent = memo<CalendarEventProps>(({ event, isPast }) => {
       <div
         className={cn(
           'xs:block hidden w-1 min-w-1 rounded-[2px]',
-          event.type === 'rest' && 'bg-green-80',
-          event.type === 'lesson' && 'bg-brand-80',
-          event.isCancelled && 'bg-red-80',
+          event.type === 'rest' && 'bg-status-success-accent',
+          event.type === 'lesson' && 'bg-action-primary-background-default',
+          event.isCancelled && 'bg-status-error-accent',
         )}
       />
       <div
         className={cn(
-          event.type === 'lesson' && 'group-hover:text-brand-80',
-          event.type === 'rest' && 'group-hover:text-green-80',
-          event.isCancelled && 'group-hover:text-red-80',
+          event.type === 'lesson' && 'group-hover:text-text-link',
+          event.type === 'rest' && 'group-hover:text-status-success-text',
+          event.isCancelled && 'group-hover:text-text-danger',
         )}
       >
         <span className="mr-1 text-xs">{!event.isAllDay && timeToString(event.start)}</span>

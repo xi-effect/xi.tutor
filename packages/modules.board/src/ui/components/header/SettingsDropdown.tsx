@@ -220,7 +220,7 @@ export const SettingsDropdown = () => {
         <DropdownMenuTrigger asChild>
           <Button
             variant="none"
-            className="hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
+            className="hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
             data-umami-event="board-settings-menu"
           >
             <MoreVert size="s" className={cn('h-4 w-4 lg:h-6 lg:w-6', boardIconClass)} />
@@ -231,24 +231,28 @@ export const SettingsDropdown = () => {
           align="end"
           className={cn(boardMenuSurfaceClass, 'z-100 flex w-[286px] flex-col gap-1 px-2 py-1')}
         >
-          <div className="bg-brand-0/40 mb-1 rounded-lg px-2 py-2">
+          <div className="bg-status-info-background/40 mb-1 rounded-lg px-2 py-2">
             <div className="mb-1 flex items-center justify-between text-xs">
-              <span className="text-gray-80">Заполнение доски</span>
+              <span className="text-text-primary">Заполнение доски</span>
               <span
                 className={cn(
-                  'text-gray-80 font-medium',
-                  isWarningZone && !isLimitReached && 'text-orange-60',
-                  isLimitReached && 'text-red-60',
+                  'text-text-primary font-medium',
+                  isWarningZone && !isLimitReached && 'text-tag-orange-accent',
+                  isLimitReached && 'text-text-danger',
                 )}
               >
                 {elementsCount} / {BOARD_ELEMENTS_LIMIT}
               </span>
             </div>
-            <div className="bg-gray-10 h-2 w-full overflow-hidden rounded-full">
+            <div className="bg-background-subtle h-2 w-full overflow-hidden rounded-full">
               <div
                 className={cn(
                   'h-full rounded-full transition-all',
-                  isLimitReached ? 'bg-red-60' : isWarningZone ? 'bg-orange-60' : 'bg-brand-60',
+                  isLimitReached
+                    ? 'bg-status-error-accent'
+                    : isWarningZone
+                      ? 'bg-tag-orange-accent'
+                      : 'bg-action-primary-background-default',
                 )}
                 style={{ width: `${progressPercent}%` }}
               />
@@ -301,7 +305,7 @@ export const SettingsDropdown = () => {
               <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
                 <Grid className="shrink-0" />
                 <span className="min-w-0 flex-1 truncate">Тип фона</span>
-                <span className="text-gray-60 max-w-[88px] shrink-0 truncate text-right text-xs">
+                <span className="text-text-secondary max-w-[88px] shrink-0 truncate text-right text-xs">
                   {getBoardBackgroundTypeLabel(background.type)}
                 </span>
               </DropdownMenuSubTrigger>
@@ -326,7 +330,7 @@ export const SettingsDropdown = () => {
               <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
                 <ColorPickerIcon className="shrink-0" />
                 <span className="min-w-0 flex-1 truncate">Цвет фона</span>
-                <span className="text-gray-60 max-w-[88px] shrink-0 truncate text-right text-xs">
+                <span className="text-text-secondary max-w-[88px] shrink-0 truncate text-right text-xs">
                   {getBoardBackgroundColorLabel(background.color)}
                 </span>
               </DropdownMenuSubTrigger>
@@ -370,7 +374,7 @@ export const SettingsDropdown = () => {
             />
 
             {/* <DropdownMenuItem
-              className={cn('flex h-auto gap-2 p-1', showDebugInfo && 'bg-brand-0')}
+              className={cn('flex h-auto gap-2 p-1', showDebugInfo && 'bg-status-info-background')}
               onClick={() => setShowDebugInfo(!showDebugInfo)}
               data-umami-event="board-toggle-debug-info"
             >
@@ -388,7 +392,7 @@ export const SettingsDropdown = () => {
                   <span>Заблокировать элементы</span>
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[250px]')}>
-                  <p className="text-gray-60 px-3 py-2 text-xs">
+                  <p className="text-text-secondary px-3 py-2 text-xs">
                     Можно заблокировать все элементы на доске или выбрать конкретные категории
                   </p>
                   <DropdownMenuSeparator />
@@ -421,7 +425,7 @@ export const SettingsDropdown = () => {
                   <span>Разблокировать элементы</span>
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[250px]')}>
-                  <p className="text-gray-60 px-3 py-2 text-xs">
+                  <p className="text-text-secondary px-3 py-2 text-xs">
                     Снимает блокировку, позволяя снова редактировать элементы на доске
                   </p>
                   <DropdownMenuSeparator />
@@ -455,7 +459,7 @@ export const SettingsDropdown = () => {
                 </DropdownMenuSubTrigger>
 
                 <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[260px]')}>
-                  <p className="text-gray-60 px-3 py-2 text-xs">
+                  <p className="text-text-secondary px-3 py-2 text-xs">
                     Выберите, какие элементы можно стирать ластиком
                   </p>
 

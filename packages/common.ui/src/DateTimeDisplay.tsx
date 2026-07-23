@@ -32,10 +32,10 @@ export const DateTimeDisplay = () => {
 
   return (
     <div className="flex flex-row items-center justify-start gap-3">
-      <div className="text-xl-base text-gray-90 font-normal dark:text-gray-100">
+      <div className="text-xl-base text-text-primary dark:text-text-primary font-normal">
         {currentDateTime.time}
       </div>
-      <div className="text-m-base text-gray-90 font-normal dark:text-gray-100">
+      <div className="text-m-base text-text-primary dark:text-text-primary font-normal">
         {currentDateTime.date}
       </div>
     </div>

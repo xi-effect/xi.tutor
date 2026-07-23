@@ -228,7 +228,7 @@ export const StartLessonButton = ({
       size={size}
       variant={variant}
       className={cn(
-        variant === 'ghost' && 'text-brand-80 group hover:text-brand-100 h-[32px] w-full',
+        variant === 'ghost' && 'text-text-link group hover:text-text-link h-[32px] w-full',
         variant === 'primary' && 'group w-full pr-2 pl-2',
         isDisabled && 'cursor-not-allowed',
         className,
@@ -242,8 +242,8 @@ export const StartLessonButton = ({
         <Conference
           size="sm"
           className={cn(
-            'group-hover:fill-gray-0 fill-brand-0 mr-1.5',
-            isDisabled && 'fill-gray-40',
+            'group-hover:fill-action-primary-text fill-action-primary-text mr-1.5',
+            isDisabled && 'fill-icon-disabled',
           )}
         />
       )}
@@ -251,8 +251,8 @@ export const StartLessonButton = ({
       {variant === 'ghost' && (
         <Conference
           className={cn(
-            'group-hover:fill-brand-100 fill-brand-80 ml-2',
-            isDisabled && 'fill-gray-40',
+            'group-hover:fill-icon-brand fill-icon-brand ml-2',
+            isDisabled && 'fill-icon-disabled',
           )}
         />
       )}

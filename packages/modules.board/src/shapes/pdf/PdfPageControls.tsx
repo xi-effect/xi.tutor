@@ -45,11 +45,11 @@ export const PdfPageControls = ({
 
   return (
     <div
-      className="bg-gray-0 border-gray-10 pointer-events-auto flex shrink-0 items-center gap-2 rounded-b-xl border-t px-3 py-1.5 select-none"
+      className="bg-background-surface border-border-default pointer-events-auto flex shrink-0 items-center gap-2 rounded-b-xl border-t px-3 py-1.5 select-none"
       onPointerDown={(e) => e.stopPropagation()}
     >
       {fileName && (
-        <span className="text-gray-60 min-w-0 flex-1 overflow-hidden text-xs text-ellipsis whitespace-nowrap">
+        <span className="text-text-secondary min-w-0 flex-1 overflow-hidden text-xs text-ellipsis whitespace-nowrap">
           {fileName}
         </span>
       )}
@@ -59,19 +59,19 @@ export const PdfPageControls = ({
           <Button
             variant="none"
             size="s"
-            className="hover:bg-brand-0 h-6 w-6 shrink-0 rounded-lg p-0 disabled:opacity-30 disabled:hover:bg-transparent"
+            className="hover:bg-status-info-background h-6 w-6 shrink-0 rounded-lg p-0 disabled:opacity-30 disabled:hover:bg-transparent"
             disabled={disabled || currentPage <= 1}
             onPointerDown={goPrev}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
-          <span className="text-gray-80 shrink-0 text-center text-xs tabular-nums">
+          <span className="text-text-primary shrink-0 text-center text-xs tabular-nums">
             {currentPage} / {totalPages}
           </span>
           <Button
             variant="none"
             size="s"
-            className="hover:bg-brand-0 h-6 w-6 shrink-0 rounded-lg p-0 disabled:opacity-30 disabled:hover:bg-transparent"
+            className="hover:bg-status-info-background h-6 w-6 shrink-0 rounded-lg p-0 disabled:opacity-30 disabled:hover:bg-transparent"
             disabled={disabled || currentPage >= totalPages}
             onPointerDown={goNext}
           >
@@ -90,21 +90,21 @@ export const PdfPageControls = ({
           }}
         >
           <SelectTrigger
-            className="text-gray-80 border-gray-10 h-6 w-20 shrink-0 text-xs"
+            className="text-text-primary border-border-default h-6 w-20 shrink-0 text-xs"
             size="s"
             onPointerDown={(e) => e.stopPropagation()}
           >
             {pagesVisible} стр.
           </SelectTrigger>
           <SelectContent className={cn(boardMenuSurfaceClass, 'w-[120px]')}>
-            <span className="text-gray-80 px-2 text-xs">Показывать</span>
+            <span className="text-text-primary px-2 text-xs">Показывать</span>
             {Array.from({ length: PDF_PAGES_VISIBLE_MAX }, (_, i) => {
               const n = i + 1;
               return (
                 <SelectItem
                   key={n}
                   value={String(n)}
-                  className="text-gray-80 focus:text-gray-100 data-highlighted:text-gray-100"
+                  className="text-text-primary focus:text-text-primary data-highlighted:text-text-primary"
                 >
                   {n} стр.
                 </SelectItem>
@@ -117,7 +117,7 @@ export const PdfPageControls = ({
         <Button
           variant="none"
           size="s"
-          className="hover:bg-brand-0 h-6 w-6 shrink-0 rounded-lg p-0"
+          className="hover:bg-status-info-background h-6 w-6 shrink-0 rounded-lg p-0"
           onPointerDown={(e) => {
             e.stopPropagation();
             onExtractPage();

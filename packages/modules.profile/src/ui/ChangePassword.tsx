@@ -28,9 +28,9 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
           <>
             <M.ModalCloseButton
               variant="full"
-              className="bg-gray-5 top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0 sm:right-4"
+              className="bg-background-page top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0 sm:right-4"
             >
-              <Close className="fill-gray-80 h-5 w-5" />
+              <Close className="fill-icon-primary h-5 w-5" />
             </M.ModalCloseButton>
             <M.ModalHeader>
               <M.ModalTitle className={modalTitleClass}>Изменение пароля</M.ModalTitle>
@@ -53,9 +53,9 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
                             afterClassName="cursor-pointer"
                             after={
                               isPasswordShow.currentPassword ? (
-                                <Eyeoff className="fill-gray-60" />
+                                <Eyeoff className="fill-icon-secondary" />
                               ) : (
-                                <Eyeon className="fill-gray-60" />
+                                <Eyeon className="fill-icon-secondary" />
                               )
                             }
                             afterProps={{
@@ -82,9 +82,9 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
                             afterClassName="cursor-pointer"
                             after={
                               isPasswordShow.newPassword ? (
-                                <Eyeoff className="fill-gray-60" />
+                                <Eyeoff className="fill-icon-secondary" />
                               ) : (
-                                <Eyeon className="fill-gray-60" />
+                                <Eyeon className="fill-icon-secondary" />
                               )
                             }
                             afterProps={{
@@ -111,9 +111,9 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
                             afterClassName="cursor-pointer"
                             after={
                               isPasswordShow.confirmPassword ? (
-                                <Eyeoff className="fill-gray-60" />
+                                <Eyeoff className="fill-icon-secondary" />
                               ) : (
-                                <Eyeon className="fill-gray-60" />
+                                <Eyeon className="fill-icon-secondary" />
                               )
                             }
                             afterProps={{
@@ -126,7 +126,7 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
                     )}
                   />
                 </div>
-                <div className="border-gray-20 flex justify-start gap-4 border-t p-6 px-5 py-5">
+                <div className="border-border-default flex justify-start gap-4 border-t p-6 px-5 py-5">
                   <Button type="submit" disabled={isLoading}>
                     Изменить
                   </Button>
@@ -139,8 +139,8 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
           </>
         )) ||
           (stage === 'success' && (
-            <div className="border-gray-20 space-y-8 border-t p-8">
-              <p className="text-center text-2xl font-semibold text-gray-100">Пароль изменён</p>
+            <div className="border-border-default space-y-8 border-t p-8">
+              <p className="text-text-primary text-center text-2xl font-semibold">Пароль изменён</p>
               <Button
                 onClick={() => {
                   onOpenChange(false);

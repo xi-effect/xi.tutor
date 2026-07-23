@@ -17,7 +17,7 @@ export const IndividualUser = ({ userId }: { userId: number }) => {
         size="l"
         withOutText
       />
-      <div className="text-xl-base min-w-0 truncate font-semibold text-gray-100">
+      <div className="text-xl-base text-text-primary min-w-0 truncate font-semibold">
         {user?.display_name ?? user?.username}
       </div>
     </div>

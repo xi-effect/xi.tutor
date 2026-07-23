@@ -46,19 +46,19 @@ export const NearestLessonCard = ({
   };
 
   return (
-    <div className="border-brand-80 bg-gray-0 relative flex w-full flex-col gap-4 rounded-2xl border-2 p-5">
+    <div className="border-border-focus bg-background-surface relative flex w-full flex-col gap-4 rounded-2xl border-2 p-5">
       <div className="flex flex-row items-start justify-between gap-2">
-        <h3 className="text-l-base font-medium text-gray-100">Ближайшее занятие</h3>
+        <h3 className="text-l-base text-text-primary font-medium">Ближайшее занятие</h3>
       </div>
 
       <div className="flex flex-row items-start gap-4">
         <div className="flex shrink-0 flex-col">
-          <span className="text-xl-base font-normal text-gray-100">{lesson.startTime}</span>
-          <span className="text-m-base text-gray-60">{lesson.endTime}</span>
+          <span className="text-xl-base text-text-primary font-normal">{lesson.startTime}</span>
+          <span className="text-m-base text-text-secondary">{lesson.endTime}</span>
         </div>
         <div className="flex min-w-0 flex-1 flex-col gap-2">
           {subjectName != null ? (
-            <span className="text-xs-base text-gray-60 font-medium">{subjectName}</span>
+            <span className="text-xs-base text-text-secondary font-medium">{subjectName}</span>
           ) : null}
           <UserProfile userId={avatarUserId ?? lesson.studentId} text={classroomName} size="m" />
         </div>
@@ -70,27 +70,27 @@ export const NearestLessonCard = ({
             classroomId={lesson.classroomId}
             scheduledAt={lesson.startAt}
             scheduledEndsAt={getScheduleLessonEndAt(lesson) ?? undefined}
-            className="bg-brand-0 hover:bg-brand-20/50 h-[38px] flex-1 p-0"
+            className="bg-status-info-background hover:bg-action-primary-background-disabled/50 h-[38px] flex-1 p-0"
           />
         )}
         <Button
           type="button"
           variant="none"
           size="s"
-          className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 h-[38px] min-h-[38px] flex-1 p-0"
+          className="bg-background-page text-text-secondary hover:bg-background-subtle hover:text-text-primary h-[38px] min-h-[38px] flex-1 p-0"
           onClick={onReschedule}
         >
           Перенести
-          <Redo className="fill-gray-70 ml-2 h-4 w-4" />
+          <Redo className="fill-icon-primary ml-2 h-4 w-4" />
         </Button>
         {canCancelLesson ? (
           <Button
             variant="none"
             size="s"
-            className="bg-gray-5 absolute top-16 right-5 h-[38px] w-[38px] min-w-[38px] p-0"
+            className="bg-background-page absolute top-16 right-5 h-[38px] w-[38px] min-w-[38px] p-0"
             onClick={() => setCancelModalOpen(true)}
           >
-            <Trash className="fill-gray-60 h-5 w-5" />
+            <Trash className="fill-icon-secondary h-5 w-5" />
           </Button>
         ) : null}
       </div>
@@ -100,11 +100,11 @@ export const NearestLessonCard = ({
           type="button"
           variant="none"
           size="s"
-          className="text-m-base text-gray-70 inline-flex h-[36px] w-full cursor-pointer items-center gap-2 font-medium hover:text-gray-100"
+          className="text-m-base text-text-secondary hover:text-text-primary inline-flex h-[36px] w-full cursor-pointer items-center gap-2 font-medium"
           onClick={handleScheduleClick}
         >
           Расписание
-          <External className="fill-gray-60 h-4 w-4" />
+          <External className="fill-icon-secondary h-4 w-4" />
         </Button>
       </div>
 

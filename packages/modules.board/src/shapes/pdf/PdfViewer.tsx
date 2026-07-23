@@ -326,8 +326,8 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
 
   if (error) {
     return (
-      <div className="text-gray-40 flex h-full w-full flex-col items-center justify-center gap-2">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" className="text-gray-30">
+      <div className="text-text-disabled flex h-full w-full flex-col items-center justify-center gap-2">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" className="text-text-disabled">
           <path
             d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6z"
             stroke="currentColor"
@@ -352,7 +352,7 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
     <div className="flex h-full w-full flex-col">
       <div ref={containerRef} className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
         {loading && (
-          <div className="text-gray-40 absolute inset-0 z-5 flex items-center justify-center text-sm">
+          <div className="text-text-disabled absolute inset-0 z-5 flex items-center justify-center text-sm">
             Загрузка...
           </div>
         )}

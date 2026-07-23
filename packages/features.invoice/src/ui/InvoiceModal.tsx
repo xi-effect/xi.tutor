@@ -87,17 +87,17 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
       <ModalContent className="max-w-[800px] max-sm:w-fit md:w-[800px]">
         {!isTablet ? (
           <ModalCloseButton className="" onClick={handleCloseModal}>
-            <Close className="fill-gray-80 sm:fill-gray-0 dark:fill-gray-100" />
+            <Close className="fill-icon-primary sm:fill-action-primary-text dark:fill-icon-primary" />
           </ModalCloseButton>
         ) : (
           <Close
-            className="fill-gray-80 sm:fill-gray-0 absolute top-6 right-6 cursor-pointer dark:fill-gray-100"
+            className="fill-icon-primary sm:fill-action-primary-text dark:fill-icon-primary absolute top-6 right-6 cursor-pointer"
             onClick={handleCloseModal}
           />
         )}
 
-        <ModalHeader className="border-gray-20 border-b" innerClassName="max-sm:p-4">
-          <ModalTitle className="text-gray-100 max-[515px]:max-w-[215px] max-sm:text-xl">
+        <ModalHeader className="border-border-default border-b" innerClassName="max-sm:p-4">
+          <ModalTitle className="text-text-primary max-[515px]:max-w-[215px] max-sm:text-xl">
             Создание счета на оплату
           </ModalTitle>
           <ModalDescription className="sr-only">Создание счета на оплату</ModalDescription>
@@ -108,8 +108,8 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
             className="flex flex-col gap-6 p-6 max-sm:p-4"
           >
             <div>
-              <p className="text-gray-100 max-sm:text-base">Вы создаёте и отправляете счёт.</p>
-              <p className="text-gray-100">
+              <p className="text-text-primary max-sm:text-base">Вы создаёте и отправляете счёт.</p>
+              <p className="text-text-primary">
                 Ученик оплачивает счёт напрямую вам — переводом или наличными.
               </p>
             </div>
@@ -140,7 +140,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
             {/* TODO: подумать над тем, чтобы сделать один компонент */}
             {!isMobile && items.length > 0 && (
               <div>
-                <div className="text-gray-60 grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2 text-sm">
+                <div className="text-text-secondary grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2 text-sm">
                   <span>Занятия</span>
                   <span>Стоимость</span>
                   <div className="w-[12px]" />
@@ -160,11 +160,11 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                   ))}
                   <div className="grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2">
                     <div />
-                    <span className="text-right dark:text-gray-100">Итого:</span>
+                    <span className="dark:text-text-primary text-right">Итого:</span>
                     <div className="w-[12px]" />
-                    <span className="text-right dark:text-gray-100">{totalLessons}</span>
+                    <span className="dark:text-text-primary text-right">{totalLessons}</span>
                     <div className="w-[12px]" />
-                    <span className="text-right dark:text-gray-100">{totalInvoicePrice} ₽</span>
+                    <span className="dark:text-text-primary text-right">{totalInvoicePrice} ₽</span>
                     <div className="ml-2 h-[24px] w-[24px]" />
                   </div>
                 </div>
@@ -173,7 +173,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
 
             {isMobile && items.length > 0 && (
               <div>
-                <div className="text-gray-60 grid grid-cols-3 items-center gap-2 text-sm">
+                <div className="text-text-secondary grid grid-cols-3 items-center gap-2 text-sm">
                   <span>Стоимость</span>
                   <span>Количество</span>
                   <span>Сумма</span>
@@ -183,16 +183,16 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                     <SubjectRowMobile key={index} control={control} index={index} />
                   ))}
                   <div className="grid grid-cols-3 items-center gap-2">
-                    <span className="text-right dark:text-gray-100">Итого:</span>
-                    <span className="text-center dark:text-gray-100">{totalLessons}</span>
-                    <span className="text-right dark:text-gray-100">{totalInvoicePrice} ₽</span>
+                    <span className="dark:text-text-primary text-right">Итого:</span>
+                    <span className="dark:text-text-primary text-center">{totalLessons}</span>
+                    <span className="dark:text-text-primary text-right">{totalInvoicePrice} ₽</span>
                   </div>
                 </div>
               </div>
             )}
             <CommentField control={control} />
             <ModalFooter
-              className={`border-gray-20 flex gap-2 border-t px-0 pt-6 pb-0 ${isMobile ? 'flex-col' : ''}`}
+              className={`border-border-default flex gap-2 border-t px-0 pt-6 pb-0 ${isMobile ? 'flex-col' : ''}`}
             >
               <Button
                 disabled={classrooms && classrooms.length === 0}

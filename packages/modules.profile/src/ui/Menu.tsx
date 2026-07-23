@@ -58,8 +58,10 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
 
   // Рендерим соответствующую иконку в зависимости от индекса элемента
   const renderIcon = () => {
-    const iconClasses = `transition-colors ease-in dark:fill-gray-80 ${
-      item.query === profileType ? 'fill-brand-80 dark:fill-brand-80' : 'group-hover:fill-brand-80'
+    const iconClasses = `transition-colors ease-in dark:fill-icon-primary ${
+      item.query === profileType
+        ? 'fill-icon-brand dark:fill-icon-brand'
+        : 'group-hover:fill-icon-brand'
     }`;
 
     switch (item.query) {
@@ -94,8 +96,8 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
       onClick={() => handleClick()}
       className={`${
         isActive
-          ? 'bg-brand-0 text-brand-80'
-          : 'text-gray-90 hover:bg-brand-0 hover:text-brand-80 bg-transparent'
+          ? 'bg-status-info-background text-text-link'
+          : 'text-text-primary hover:bg-status-info-background hover:text-text-link bg-transparent'
       } group flex h-[40px] w-full flex-row items-center rounded-lg p-2 transition-colors ease-in hover:cursor-pointer`}
       key={index.toString()}
     >
@@ -135,10 +137,10 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
       <button
         type="button"
         onClick={() => handleExit()}
-        className="text-gray-60 dark:text-gray-80 hover:bg-red-0 group mt-10 flex h-[40px] w-full flex-row items-center rounded-lg bg-transparent p-2 transition-colors ease-in hover:cursor-pointer hover:text-red-100"
+        className="text-text-secondary dark:text-text-primary hover:bg-status-error-background group hover:text-text-danger mt-10 flex h-[40px] w-full flex-row items-center rounded-lg bg-transparent p-2 transition-colors ease-in hover:cursor-pointer"
         data-umami-event="profile-logout"
       >
-        <Exit className="dark:fill-gray-80 transition-colors ease-in group-hover:fill-red-100" />
+        <Exit className="dark:fill-icon-primary group-hover:fill-icon-danger transition-colors ease-in" />
         <span className="pl-2 text-[14px] font-normal">Выйти</span>
       </button>
     </div>

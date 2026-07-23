@@ -32,11 +32,11 @@ const ListFooter = ({
   <>
     {isFetchingNextPage && (
       <div className="flex justify-center py-4">
-        <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-gray-300" />
+        <div className="border-border-strong h-8 w-8 animate-spin rounded-full border-b-2" />
       </div>
     )}
     {!hasNextPage && itemsCount > 0 && (
-      <div className="py-4 text-center text-gray-500">Все кабинеты загружены</div>
+      <div className="text-text-primary py-4 text-center">Все кабинеты загружены</div>
     )}
   </>
 );
@@ -71,7 +71,7 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
   if (isError) {
     return (
       <div className="flex h-64 items-center justify-center">
-        <p className="text-red-500">Ошибка загрузки кабинетов</p>
+        <p className="text-text-danger">Ошибка загрузки кабинетов</p>
       </div>
     );
   }

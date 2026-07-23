@@ -26,22 +26,22 @@ export const RepeatBlock: FC<RepeatBlockProps> = ({ value, onChange }) => {
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger
-        className="no-arrow text-gray-80 w-fit border-none"
+        className="no-arrow text-text-primary w-fit border-none"
         size="s"
-        before={<Redo className="fill-gray-80 h-4 w-4" />}
+        before={<Redo className="fill-icon-primary h-4 w-4" />}
       >
         <SelectValue placeholder={t('event_form.repeat')} />
       </SelectTrigger>
       <SelectContent>
         <SelectGroup>
-          <SelectItem value={repeatVariants[0].value} className="text-gray-80">
+          <SelectItem value={repeatVariants[0].value} className="text-text-primary">
             {repeatVariants[0].label}
           </SelectItem>
         </SelectGroup>
         <SelectSeparator />
         <SelectGroup>
           {repeatVariants.slice(1).map((variant) => (
-            <SelectItem key={variant.value} value={variant.value} className="text-gray-80">
+            <SelectItem key={variant.value} value={variant.value} className="text-text-primary">
               {variant.label}
             </SelectItem>
           ))}

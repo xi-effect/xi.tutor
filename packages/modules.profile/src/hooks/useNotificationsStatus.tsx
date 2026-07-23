@@ -20,22 +20,22 @@ export function useNotificationsStatus() {
     {
       condition: isNotConnected,
       text: 'Не подключен',
-      color: 'text-gray-80',
+      color: 'text-text-primary',
     },
     {
       condition: isTgConnectionActive,
       text: data?.telegram?.contact?.title,
-      color: 'text-gray-80',
+      color: 'text-text-primary',
     },
     {
       condition: isTgConnectionBlocked,
       text: 'Разблокируйте бота в Telegram или удалите привязку и подключите заново',
-      color: 'text-red-80',
+      color: 'text-text-danger',
     },
     {
       condition: isTgConnectionReplaced,
       text: 'Удалите текущую привязку и подключите заново',
-      color: 'text-orange-60',
+      color: 'text-tag-orange-accent',
     },
   ];
 
@@ -48,7 +48,7 @@ export function useNotificationsStatus() {
           onClick={handleDisconnectTg}
           className="ml-auto bg-transparent"
         >
-          <Trash className="fill-gray-80 pointer" />
+          <Trash className="fill-icon-primary pointer" />
           <span className="sr-only">Удалить</span>
         </Button>
       );
@@ -58,7 +58,7 @@ export function useNotificationsStatus() {
       return (
         <Button
           variant="none"
-          className="text-brand-100 ml-auto h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
+          className="text-text-link ml-auto h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
           onClick={handleConnectTg}
         >
           Разблокировать
@@ -70,7 +70,7 @@ export function useNotificationsStatus() {
       return (
         <Button
           variant="none"
-          className="text-brand-100 ml-auto h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
+          className="text-text-link ml-auto h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
           onClick={handleConnectTg}
         >
           Подключить заново
@@ -78,7 +78,7 @@ export function useNotificationsStatus() {
       );
     }
 
-    return <ChevronRight className="fill-gray-80 ml-auto" />;
+    return <ChevronRight className="fill-icon-primary ml-auto" />;
   };
 
   return {

@@ -49,7 +49,7 @@ export function AudioWaveform({
             width={`${barW * (1 - gapRatio)}%`}
             height={barHeight}
             rx={1.5}
-            className={played ? 'fill-brand-80' : 'fill-gray-40'}
+            className={played ? 'fill-icon-brand' : 'fill-icon-disabled'}
           />
         );
       })}

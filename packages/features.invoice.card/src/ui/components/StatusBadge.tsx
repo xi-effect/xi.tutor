@@ -5,9 +5,9 @@ import { Badge } from '@xipkg/badge';
 import { Card, Check, Clock } from '@xipkg/icons';
 
 const statusIcons: Record<PaymentStatusT, React.ReactNode> = {
-  wf_receiver_confirmation: <Clock className="fill-brand-80 size-4 shrink-0 dark:fill-[#4554C9]" />,
-  wf_sender_confirmation: <Card className="fill-orange-80 size-4 shrink-0 dark:fill-[#B85727]" />,
-  complete: <Check className="fill-green-80 size-4 shrink-0 dark:fill-[#2E842E]" />,
+  wf_receiver_confirmation: <Clock className="fill-icon-brand size-4 shrink-0" />,
+  wf_sender_confirmation: <Card className="fill-tag-orange-accent size-4 shrink-0" />,
+  complete: <Check className="fill-status-success-text size-4 shrink-0" />,
 };
 
 const baseClassName = 'rounded-lg border-none px-2 py-1 text-s-base font-medium shrink-0 w-fit';

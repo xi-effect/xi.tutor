@@ -35,17 +35,17 @@ export const CollaboratorAvatars = ({ collaborators, currentUserId }: TCollabora
         className="z-100 w-64 rounded-xl p-2"
       >
         <div className="flex flex-col gap-1">
-          <p className="text-gray-60 px-2 py-1 text-xs">Участники в заметке</p>
+          <p className="text-text-secondary px-2 py-1 text-xs">Участники в заметке</p>
           {collaborators.map((collaborator) => (
             <div
               key={collaborator.id}
-              className="hover:bg-gray-5 flex items-center gap-2 rounded-lg px-2 py-1.5"
+              className="hover:bg-background-page flex items-center gap-2 rounded-lg px-2 py-1.5"
             >
               <Avatar size="s">
                 {collaborator.avatarUrl && <AvatarImage src={collaborator.avatarUrl} size="s" />}
                 <AvatarFallback size="s">{collaborator.initial}</AvatarFallback>
               </Avatar>
-              <span className="flex-1 truncate text-sm text-gray-100">
+              <span className="text-text-primary flex-1 truncate text-sm">
                 {collaborator.id === currentUserId ? 'Вы' : collaborator.userName}
               </span>
             </div>

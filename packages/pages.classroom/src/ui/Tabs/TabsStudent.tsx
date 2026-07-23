@@ -27,7 +27,7 @@ export const TabsStudent = () => {
           value={currentTab}
           onValueChange={handleTabChange}
         >
-          <div className="bg-gray-0 mr-4 flex h-[56px] flex-row items-center gap-4 rounded-2xl px-2">
+          <div className="bg-background-surface mr-4 flex h-[56px] flex-row items-center gap-4 rounded-2xl px-2">
             {isMobile ? (
               <ClassroomMobileTabSwitcher
                 tabs={tabs}
@@ -40,7 +40,7 @@ export const TabsStudent = () => {
                   tabs={tabs}
                   activeTab={currentTab}
                   onChange={handleTabChange}
-                  className="bg-gray-0 flex flex-row gap-0"
+                  className="bg-background-surface flex flex-row gap-0"
                   tabClassName={cn(switcherTabClass, 'text-m-base font-medium')}
                 />
                 {currentTab === 'schedule' && (
@@ -52,7 +52,7 @@ export const TabsStudent = () => {
             )}
           </div>
 
-          <div className="bg-gray-0 xs:rounded-tl-2xl xs:pb-0 flex min-h-0 min-w-0 flex-1 flex-col rounded-none pt-0 pb-16 pl-4">
+          <div className="bg-background-surface xs:rounded-tl-2xl xs:pb-0 flex min-h-0 min-w-0 flex-1 flex-col rounded-none pt-0 pb-16 pl-4">
             <SharedTabsContent />
           </div>
         </Tabs.Root>

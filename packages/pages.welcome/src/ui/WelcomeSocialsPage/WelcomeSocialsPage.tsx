@@ -62,8 +62,8 @@ export const WelcomeSocialsPage = () => {
     >
       <div className="mt-6 flex flex-col gap-2">
         <SocialItem>
-          <TelegramFilled className="fill-brand-100 h-8 w-8" />
-          <span className="font-semibold text-gray-100 dark:text-gray-100">Telegram</span>
+          <TelegramFilled className="fill-icon-brand h-8 w-8" />
+          <span className="text-text-primary dark:text-text-primary font-semibold">Telegram</span>
           {tgButton}
         </SocialItem>
       </div>

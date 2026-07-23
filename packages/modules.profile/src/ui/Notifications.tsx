@@ -34,18 +34,20 @@ export const Notifications = () => {
 
   return (
     <>
-      {!isMobile && <h1 className="mb-4 text-3xl font-semibold dark:text-gray-100">Уведомления</h1>}
+      {!isMobile && (
+        <h1 className="dark:text-text-primary mb-4 text-3xl font-semibold">Уведомления</h1>
+      )}
 
       <div className="flex flex-col gap-4">
         {isSupported && (
-          <div className="border-gray-30 flex w-full flex-col gap-2 rounded-2xl border p-1">
-            <div className="hover:bg-gray-5 flex flex-row items-center gap-4 rounded-xl bg-transparent p-3">
-              <Notification className="fill-brand-80 h-8 w-8" />
+          <div className="border-border-control flex w-full flex-col gap-2 rounded-2xl border p-1">
+            <div className="hover:bg-background-page flex flex-row items-center gap-4 rounded-xl bg-transparent p-3">
+              <Notification className="fill-icon-brand h-8 w-8" />
               <div className="flex flex-1 flex-col gap-1">
-                <span className="w-fit font-semibold dark:text-gray-100">
+                <span className="dark:text-text-primary w-fit font-semibold">
                   Системные уведомления
                 </span>
-                <span className="text-gray-80 dark:text-gray-80 font-inter text-xs font-normal">
+                <span className="text-text-primary dark:text-text-primary font-inter text-xs font-normal">
                   Всплывающие уведомления ОС при новых событиях — в другой вкладке или когда
                   приложение свёрнуто.
                 </span>
@@ -53,7 +55,7 @@ export const Notifications = () => {
             </div>
             <div className="flex flex-col gap-2 px-3 pb-3">
               <div className="flex flex-row items-center justify-between p-2">
-                <span className="font-inter text-m-base font-medium dark:text-gray-100">
+                <span className="font-inter text-m-base dark:text-text-primary font-medium">
                   Показывать системные уведомления
                 </span>
                 <Toggle
@@ -65,7 +67,7 @@ export const Notifications = () => {
               </div>
               {permission !== 'granted' && (
                 <div className="flex flex-row items-center justify-between gap-2 p-2">
-                  <span className="text-gray-80 dark:text-gray-80 font-inter text-s-base">
+                  <span className="text-text-primary dark:text-text-primary font-inter text-s-base">
                     {permission === 'denied'
                       ? 'Разрешение отклонено. Разрешите уведомления в настройках браузера.'
                       : 'Выдайте разрешение, чтобы получать уведомления в другой вкладке или когда окно свёрнуто.'}
@@ -83,7 +85,7 @@ export const Notifications = () => {
               )}
               {permission === 'granted' && (
                 <div className="flex flex-row flex-wrap items-center gap-2 px-2">
-                  <span className="text-gray-80 dark:text-gray-80 font-inter text-s-base">
+                  <span className="text-text-primary dark:text-text-primary font-inter text-s-base">
                     Разрешение выдано
                   </span>
                   <Button
@@ -107,18 +109,18 @@ export const Notifications = () => {
           </div>
         )}
 
-        <div className="border-gray-30 flex w-full flex-col gap-2 rounded-2xl border p-1">
+        <div className="border-border-control flex w-full flex-col gap-2 rounded-2xl border p-1">
           <div
             onClick={() => handleConnectTg()}
-            className="hover:bg-gray-5 flex cursor-pointer flex-row items-center gap-4 rounded-xl bg-transparent p-2"
+            className="hover:bg-background-page flex cursor-pointer flex-row items-center gap-4 rounded-xl bg-transparent p-2"
           >
             <div className="mt-2 flex-1 sm:mt-0 sm:flex-0">
-              <TelegramFilled size="lg" className="fill-brand-80 h-8 w-8" />
+              <TelegramFilled size="lg" className="fill-icon-brand h-8 w-8" />
             </div>
 
             <div className="flex w-full flex-col items-center gap-1 sm:flex-row">
               <div className="items-star flex flex-col gap-1">
-                <span className="w-fit font-semibold dark:text-gray-100">Telegram</span>
+                <span className="dark:text-text-primary w-fit font-semibold">Telegram</span>
                 {tgConnectionStatus
                   .filter(({ condition }) => condition)
                   .map(({ text, color }) => (
@@ -133,13 +135,13 @@ export const Notifications = () => {
 
           {isTgConnectionActive && <NotificationsToggles type="telegram" />}
         </div>
-        <div className="border-gray-30 flex w-full flex-col gap-2 rounded-2xl border p-1">
-          <div className="hover:bg-gray-5 flex h-[66px] cursor-pointer flex-row items-center gap-4 rounded-xl bg-transparent p-3">
-            <MailRounded className="fill-brand-80" />
+        <div className="border-border-control flex w-full flex-col gap-2 rounded-2xl border p-1">
+          <div className="hover:bg-background-page flex h-[66px] cursor-pointer flex-row items-center gap-4 rounded-xl bg-transparent p-3">
+            <MailRounded className="fill-icon-brand" />
 
             <div className="items-star flex flex-col">
-              <span className="w-fit font-semibold dark:text-gray-100">Электронная почта</span>
-              <span className="text-gray-80 dark:text-gray-80 font-inter text-xs font-normal">
+              <span className="dark:text-text-primary w-fit font-semibold">Электронная почта</span>
+              <span className="text-text-primary dark:text-text-primary font-inter text-xs font-normal">
                 {user?.email || 'example@example.com'}
               </span>
             </div>

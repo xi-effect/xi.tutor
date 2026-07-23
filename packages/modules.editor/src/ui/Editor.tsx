@@ -55,7 +55,7 @@ const EditorWithoutData = () => {
   if (storageItemError)
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="text-red-60 text-lg">Ошибка загрузки: {storageItemError.message}</div>
+        <div className="text-text-danger text-lg">Ошибка загрузки: {storageItemError.message}</div>
       </div>
     );
 

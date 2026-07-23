@@ -62,9 +62,11 @@ const SoundItem = ({
   return (
     <div className="space-y-2.5 py-4">
       <div className="flex items-center justify-between">
-        <span className="text-gray-80 text-sm">{label}</span>
+        <span className="text-text-primary text-sm">{label}</span>
         <div className="flex items-center gap-3">
-          <span className="text-gray-60 text-sm tabular-nums">{Math.round(volume * 100)}%</span>
+          <span className="text-text-secondary text-sm tabular-nums">
+            {Math.round(volume * 100)}%
+          </span>
           {disableable && <Toggle checked={isEnabled} size="s" onCheckedChange={handleToggle} />}
         </div>
       </div>
@@ -99,10 +101,10 @@ type CategoryProps = {
 };
 
 const Category = ({ icon, title, children }: CategoryProps) => (
-  <div className="border-gray-30 rounded-2xl border p-4">
+  <div className="border-border-control rounded-2xl border p-4">
     <div className="mb-4 flex items-center gap-2">
       {icon}
-      <span className="text-base font-semibold dark:text-gray-100">{title}</span>
+      <span className="dark:text-text-primary text-base font-semibold">{title}</span>
     </div>
     <div className="flex flex-col">{children}</div>
   </div>
@@ -121,10 +123,13 @@ export const Effects = () => {
 
   return (
     <>
-      {!isMobile && <h1 className="mb-4 text-3xl font-semibold dark:text-gray-100">Эффекты</h1>}
+      {!isMobile && <h1 className="dark:text-text-primary mb-4 text-3xl font-semibold">Эффекты</h1>}
 
       <div className="flex flex-col gap-4">
-        <Category icon={<Conference className="fill-brand-80 h-5 w-5" />} title="Видеоконференции">
+        <Category
+          icon={<Conference className="fill-icon-brand h-5 w-5" />}
+          title="Видеоконференции"
+        >
           <SoundItem
             label="Новое сообщение в чате"
             soundKey="chatMessage"
@@ -151,7 +156,7 @@ export const Effects = () => {
           />
         </Category>
 
-        <Category icon={<WhiteBoard className="fill-brand-80 h-5 w-5" />} title="Доска">
+        <Category icon={<WhiteBoard className="fill-icon-brand h-5 w-5" />} title="Доска">
           <SoundItem
             label="Окончание таймера"
             soundKey="boardTimerEnd"

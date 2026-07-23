@@ -63,7 +63,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
         <Sidebar
           id="sidebar"
           collapsible="icon"
-          className="dark:bg-gray-0 absolute w-full md:w-(--sidebar-width)"
+          className="bg-background-page border-r-border-default absolute w-full border-r md:w-(--sidebar-width)"
         >
           <SideBarItems />
         </Sidebar>

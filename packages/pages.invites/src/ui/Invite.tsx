@@ -51,10 +51,10 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
   return (
     <div className="flex w-full flex-col gap-8 p-2 sm:w-[500px]">
       <div className="text-center">
-        <h3 className="text-xl-base mb-2 font-semibold text-gray-100 dark:text-gray-100">
+        <h3 className="text-xl-base text-text-primary dark:text-text-primary mb-2 font-semibold">
           {getInviteTitle()}
         </h3>
-        <span className="text-gray-80 dark:text-gray-80">
+        <span className="text-text-primary dark:text-text-primary">
           {invite.kind === 'individual'
             ? 'Репетитор'
             : `в группу «${invite.classroom.name}» от репетитора`}
@@ -69,8 +69,8 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
           <AvatarFallback />
         </Avatar>
         <div className="flex flex-col items-center">
-          <p className="text-gray-100 dark:text-gray-100">{invite.tutor.display_name}</p>
-          <span className="text-s-base text-gray-80 dark:text-gray-80">
+          <p className="text-text-primary dark:text-text-primary">{invite.tutor.display_name}</p>
+          <span className="text-s-base text-text-primary dark:text-text-primary">
             {invite.tutor.username}
           </span>
         </div>
@@ -89,7 +89,7 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
         </Button>
         <Button
           onClick={() => navigate({ to: '/' })}
-          className="text-gray-80 dark:text-gray-80 w-full rounded-xl"
+          className="text-text-primary dark:text-text-primary w-full rounded-xl"
           variant="none"
           disabled={isPending}
           data-umami-event="invite-decline"

@@ -61,7 +61,7 @@ export const MobileMenuDrawerContent = ({ onClose }: { onClose: () => void }) =>
   };
 
   return (
-    <div className="dark:bg-gray-0 flex flex-col gap-5 rounded-t-2xl">
+    <div className="dark:bg-background-surface flex flex-col gap-5 rounded-t-2xl">
       <div className="flex flex-col gap-3">
         {menuItems.map((item) => {
           const isActive = getIsActive(item.url);
@@ -76,17 +76,20 @@ export const MobileMenuDrawerContent = ({ onClose }: { onClose: () => void }) =>
               className={cn(
                 menuRowClassName,
                 isActive
-                  ? 'bg-brand-0 text-brand-80 border-transparent'
-                  : 'border-gray-10 bg-gray-0 hover:bg-gray-5 border text-gray-100',
+                  ? 'bg-status-info-background text-text-link border-transparent'
+                  : 'border-border-default bg-background-surface hover:bg-background-page text-text-primary border',
               )}
             >
               <Icon
-                className={cn('size-6 shrink-0', isActive ? 'fill-brand-80' : 'fill-gray-60')}
+                className={cn(
+                  'size-6 shrink-0',
+                  isActive ? 'fill-icon-brand' : 'fill-icon-secondary',
+                )}
               />
               <span
                 className={cn(
                   'text-m-base font-medium',
-                  isActive ? 'text-brand-100' : 'text-gray-100',
+                  isActive ? 'text-text-link' : 'text-text-primary',
                 )}
               >
                 {t(item.titleKey)}
@@ -97,7 +100,7 @@ export const MobileMenuDrawerContent = ({ onClose }: { onClose: () => void }) =>
       </div>
 
       <div className="flex items-center justify-between gap-3">
-        <span className="text-m-base font-medium text-gray-100">{t('menu')}</span>
+        <span className="text-m-base text-text-primary font-medium">{t('menu')}</span>
         <button
           type="button"
           onClick={() => {
@@ -105,9 +108,9 @@ export const MobileMenuDrawerContent = ({ onClose }: { onClose: () => void }) =>
             onClose();
           }}
           aria-label={t('close')}
-          className="bg-gray-5 hover:bg-gray-10 focus:bg-gray-10 flex size-10 shrink-0 items-center justify-center rounded-lg transition-colors"
+          className="bg-background-page hover:bg-background-subtle focus:bg-background-subtle flex size-10 shrink-0 items-center justify-center rounded-lg transition-colors"
         >
-          <Close className="fill-gray-80 size-5" />
+          <Close className="fill-icon-primary size-5" />
         </button>
       </div>
     </div>

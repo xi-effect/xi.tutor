@@ -2,7 +2,7 @@
 import { useMemo, useState } from 'react';
 import { Materials, Payments, Classrooms, FirstLessonGuideBanner } from './components';
 import { MobileTutorActionButton } from 'features.invites';
-import { DateTimeDisplay, OnboardingPopup } from 'common.ui';
+import { OnboardingPopup } from 'common.ui';
 import { useCurrentUser } from 'common.services';
 import { cn, useMediaQuery } from '@xipkg/utils';
 import { NearestLessonCard, useStudentSchedule, useTutorSchedule } from 'modules.calendar';
@@ -145,35 +145,29 @@ export const MainPage = () => {
   return (
     <div
       className={cn(
-        'bg-gray-5 flex flex-col',
+        'bg-background-page flex flex-col',
         isMobile
           ? 'max-h-[calc(100dvh-64px)] overflow-y-auto overscroll-contain'
           : 'h-full min-h-0',
       )}
     >
-      {/* Шапка на всю ширину контентной области; не участвует в прокрутке ниже */}
-      {!isMobile && (
-        <div className="shrink-0 p-5">
-          <DateTimeDisplay />
-        </div>
-      )}
       {/* На мобильных — одна прокрутка всей страницы; на десктопе — только правая колонка */}
       <div className={cn('flex flex-col', !isMobile && 'min-h-0 flex-1')}>
         <div
           className={cn(
             'flex flex-col items-start gap-4 p-5',
-            isMobile ? 'pb-12' : 'min-h-0 flex-1 sm:flex-row sm:py-0 sm:pr-0',
+            isMobile ? 'pb-12' : 'min-h-0 flex-1 sm:flex-row sm:pt-5 sm:pr-0 sm:pb-0',
           )}
         >
           {!isMobile && (
-            <div className="lg:bg-gray-5 flex shrink-0 flex-col pb-6 lg:sticky lg:top-0 lg:z-10 lg:self-start">
+            <div className="lg:bg-background-page flex shrink-0 flex-col pb-6 lg:sticky lg:top-0 lg:z-10 lg:self-start">
               <Lessons />
             </div>
           )}
           {isMobile && !isNearestLoading && nearestLesson == null && (
-            <div className="border-gray-10 bg-gray-0 flex w-full flex-col items-center gap-2 rounded-2xl border border-dashed px-4 py-6 text-center">
-              <p className="text-m-base font-semibold text-gray-100">Занятий нет</p>
-              <p className="text-s-base text-gray-60">
+            <div className="border-border-default bg-background-surface flex w-full flex-col items-center gap-2 rounded-2xl border border-dashed px-4 py-6 text-center">
+              <p className="text-m-base text-text-primary font-semibold">Занятий нет</p>
+              <p className="text-s-base text-text-secondary">
                 В ближайшие {NEAREST_LESSON_DAYS} дней занятий не запланировано
               </p>
             </div>

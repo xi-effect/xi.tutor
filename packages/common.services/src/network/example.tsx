@@ -8,7 +8,7 @@ const NetworkStatusExample = () => {
   if (isOnline && !isReconnecting) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 rounded-lg bg-gray-800 px-3 py-2 text-white">
+    <div className="bg-background-canvas fixed bottom-4 left-4 rounded-lg px-3 py-2 text-white">
       {!isOnline && <span>🔴 Нет соединения</span>}
       {isReconnecting && <span>🟡 Проверка соединения...</span>}
     </div>

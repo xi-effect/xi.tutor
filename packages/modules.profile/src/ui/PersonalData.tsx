@@ -58,13 +58,13 @@ export const PersonalData = () => {
   return (
     <>
       {!isMobile && (
-        <span className="text-3xl font-semibold dark:text-gray-100">Личные данные</span>
+        <span className="dark:text-text-primary text-3xl font-semibold">Личные данные</span>
       )}
       <UserPreview className="mt-4" />
       <Form {...form}>
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="border-gray-80 mt-8 flex w-full flex-col rounded-2xl border p-6"
+          className="border-border-strong mt-8 flex w-full flex-col rounded-2xl border p-6"
         >
           <div className="flex w-full flex-col gap-8 md:flex-row">
             <div className="w-full">

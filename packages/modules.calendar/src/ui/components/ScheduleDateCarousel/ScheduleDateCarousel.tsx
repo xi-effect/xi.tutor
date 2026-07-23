@@ -18,7 +18,7 @@ const SLIDE_TO_SPEED_MS = 320;
 const styles = {
   dayPillBase:
     'flex h-[48px] w-[36px] min-w-[36px] shrink-0 flex-col items-center justify-center rounded-lg text-center',
-  dayPillDefaultHover: 'hover:bg-gray-10 hover:text-gray-80',
+  dayPillDefaultHover: 'hover:bg-background-subtle hover:text-text-primary',
 } as const;
 
 /** ~±2 года — практически без «края» ленты; при необходимости можно поднять */
@@ -198,12 +198,12 @@ export const ScheduleDateCarousel = ({
     <div className={cn('flex w-full flex-row items-center justify-center gap-2', className)}>
       <Button
         variant="none"
-        className="text-gray-80 hover:bg-gray-10 flex h-[48px] w-[36px] min-w-[36px] items-center justify-center rounded-lg p-0"
+        className="text-text-primary hover:bg-background-subtle flex h-[48px] w-[36px] min-w-[36px] items-center justify-center rounded-lg p-0"
         onClick={goPrev}
         disabled={carouselStartIndex === 0}
         data-umami-event="schedule-date-carousel-prev"
       >
-        <ArrowLeft className="fill-brand-80 h-5 w-5" />
+        <ArrowLeft className="fill-icon-brand h-5 w-5" />
       </Button>
 
       <div className="min-h-[48px] min-w-0 flex-1 overflow-hidden">
@@ -235,23 +235,23 @@ export const ScheduleDateCarousel = ({
                   className={cn(
                     styles.dayPillBase,
                     !isSelected && styles.dayPillDefaultHover,
-                    !isSelected && isToday && 'bg-brand-20/50',
+                    !isSelected && isToday && 'bg-action-primary-background-disabled/50',
                   )}
                   style={{
                     minWidth: DAY_PILL_MIN_WIDTH,
                     backgroundColor: isSelected
-                      ? 'var(--xi-brand-80)'
+                      ? 'var(--xi-action-primary-background-default)'
                       : isToday
                         ? undefined
                         : 'transparent',
-                    color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-60)',
+                    color: isSelected ? 'var(--xi-text-on-accent)' : 'var(--xi-text-secondary)',
                   }}
                 >
                   <span
                     style={{
                       fontSize: '10px',
                       lineHeight: '14px',
-                      color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-50)',
+                      color: isSelected ? 'var(--xi-text-on-accent)' : 'var(--xi-text-muted)',
                     }}
                   >
                     {dayName}
@@ -261,7 +261,7 @@ export const ScheduleDateCarousel = ({
                       fontSize: '14px',
                       lineHeight: '20px',
                       fontWeight: 500,
-                      color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-70)',
+                      color: isSelected ? 'var(--xi-text-on-accent)' : 'var(--xi-text-secondary)',
                     }}
                   >
                     {dayNum}
@@ -275,12 +275,12 @@ export const ScheduleDateCarousel = ({
 
       <Button
         variant="none"
-        className="text-gray-80 hover:bg-gray-10 flex h-[48px] w-[36px] min-w-[36px] shrink-0 items-center justify-center rounded-lg p-0"
+        className="text-text-primary hover:bg-background-subtle flex h-[48px] w-[36px] min-w-[36px] shrink-0 items-center justify-center rounded-lg p-0"
         onClick={goNext}
         disabled={carouselStartIndex >= maxStartIndex}
         data-umami-event="schedule-date-carousel-next"
       >
-        <ArrowRight className="fill-brand-80 h-5 w-5" />
+        <ArrowRight className="fill-icon-brand h-5 w-5" />
       </Button>
     </div>
   );

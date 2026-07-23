@@ -272,7 +272,7 @@ export const Navbar = track(
               sideOffset={8}
               className={cn(
                 boardDropdownZClass,
-                'border-gray-10 bg-gray-0 w-[180px] rounded-xl border p-1',
+                'border-border-default bg-background-surface w-[180px] rounded-xl border p-1',
               )}
             >
               <DropdownMenuItem

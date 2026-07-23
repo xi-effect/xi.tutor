@@ -52,11 +52,11 @@ export const AvatarEditor = ({
     <Modal open={open} onOpenChange={(value) => onOpenChange(value)}>
       <ModalContent className="z-50 sm:max-w-[600px]" aria-describedby={undefined}>
         <ModalCloseButton>
-          <Close className="fill-gray-80 sm:fill-gray-0" />
+          <Close className="fill-icon-primary sm:fill-action-primary-text" />
         </ModalCloseButton>
         <div className="rounded-4 max-h-[calc(100dvh-16px)] overflow-auto">
           <ModalHeader className="mb-6">
-            <ModalTitle className="xs:max-w-none max-w-[240px] leading-8 text-gray-100">
+            <ModalTitle className="xs:max-w-none text-text-primary max-w-[240px] leading-8">
               Изменение фотографии
             </ModalTitle>
           </ModalHeader>

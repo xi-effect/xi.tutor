@@ -166,20 +166,20 @@ export const MovingForm: FC<MovingFormProps> = ({
             className="row-start-1 self-center"
           />
           <div className="row-start-1 flex min-w-0 flex-wrap items-center justify-between gap-x-2 gap-y-1">
-            <span className="text-md-base leading-snug font-medium text-gray-100">
+            <span className="text-md-base text-text-primary leading-snug font-medium">
               {classroomName}
             </span>
             {subjectName ? (
-              <span className="bg-gray-10 text-gray-80 shrink-0 rounded-full px-2.5 py-1 text-xs leading-none font-medium">
+              <span className="bg-background-subtle text-text-primary shrink-0 rounded-full px-2.5 py-1 text-xs leading-none font-medium">
                 {subjectName}
               </span>
             ) : null}
           </div>
-          <p className="col-span-2 row-start-2 mt-5 text-base leading-snug font-semibold text-gray-100">
+          <p className="text-text-primary col-span-2 row-start-2 mt-5 text-base leading-snug font-semibold">
             {lessonTitle}
           </p>
           {lessonDescription ? (
-            <p className="text-gray-60 col-span-2 row-start-3 mt-1 text-sm leading-normal">
+            <p className="text-text-secondary col-span-2 row-start-3 mt-1 text-sm leading-normal">
               {lessonDescription}
             </p>
           ) : null}
@@ -196,11 +196,11 @@ export const MovingForm: FC<MovingFormProps> = ({
                     tabs={MOVE_MODE_TABS}
                     activeTab={field.value ?? 'single'}
                     onChange={(v) => field.onChange(v as 'single' | 'single_and_next')}
-                    className="bg-gray-5 flex h-8 max-w-md flex-row rounded-[10px] p-1"
+                    className="bg-background-page flex h-8 max-w-md flex-row rounded-[10px] p-1"
                     tabClassName={cn(
-                      'text-s-base h-[26px] font-medium data-[state=inactive]:text-gray-100 data-[state=inactive]:hover:text-gray-90 data-[state=active]:text-gray-0 data-[state=active]:hover:text-gray-10',
+                      'text-s-base h-[26px] font-medium data-[state=inactive]:text-text-primary data-[state=inactive]:hover:text-text-primary data-[state=active]:text-text-on-accent data-[state=active]:hover:text-text-on-accent',
                     )}
-                    indicatorClassName="rounded-lg bg-brand-80"
+                    indicatorClassName="rounded-lg bg-action-primary-background-default"
                   />
                 </FormControl>
                 <FormMessage />
@@ -210,7 +210,7 @@ export const MovingForm: FC<MovingFormProps> = ({
         )}
 
         <div className="flex flex-col gap-2">
-          <FormLabel className="text-[14px] font-normal text-gray-100">
+          <FormLabel className="text-text-primary text-[14px] font-normal">
             {showDateArrow ? 'Дата' : 'Дата начала повторений'}
           </FormLabel>
           {showDateArrow ? (
@@ -222,8 +222,8 @@ export const MovingForm: FC<MovingFormProps> = ({
                     readOnly
                     disabled
                     variant="s"
-                    className="border-gray-10 rounded-lg border"
-                    after={<ArrowRight className="fill-brand-80 h-4 w-4" />}
+                    className="border-border-default rounded-lg border"
+                    after={<ArrowRight className="fill-icon-brand h-4 w-4" />}
                   />
                 </FormControl>
               </FormItem>
@@ -258,8 +258,10 @@ export const MovingForm: FC<MovingFormProps> = ({
 
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <FormLabel className="text-[14px] font-normal text-gray-100">Время</FormLabel>
-            {durationLabel ? <span className="text-gray-60 text-sm">{durationLabel}</span> : null}
+            <FormLabel className="text-text-primary text-[14px] font-normal">Время</FormLabel>
+            {durationLabel ? (
+              <span className="text-text-secondary text-sm">{durationLabel}</span>
+            ) : null}
           </div>
           <div className="flex w-full flex-row gap-2">
             <FormField
@@ -272,8 +274,8 @@ export const MovingForm: FC<MovingFormProps> = ({
                       {...field}
                       ref={maskRefStartTime}
                       placeholder="17:40 Начало"
-                      className="border-gray-10 rounded-lg border"
-                      after={<Clock className="fill-brand-80 h-4 w-4" />}
+                      className="border-border-default rounded-lg border"
+                      after={<Clock className="fill-icon-brand h-4 w-4" />}
                       variant="s"
                     />
                   </FormControl>
@@ -291,8 +293,8 @@ export const MovingForm: FC<MovingFormProps> = ({
                       {...field}
                       ref={maskRefEndTime}
                       placeholder="19:00 Конец"
-                      className="border-gray-10 rounded-lg border"
-                      after={<Clock className="fill-brand-80 h-4 w-4" />}
+                      className="border-border-default rounded-lg border"
+                      after={<Clock className="fill-icon-brand h-4 w-4" />}
                       variant="s"
                     />
                   </FormControl>
@@ -310,7 +312,7 @@ export const MovingForm: FC<MovingFormProps> = ({
             render={({ field }) => (
               <FormItem className="flex flex-col gap-2">
                 <div className="flex flex-wrap items-center gap-1.5">
-                  <FormLabel className="text-[14px] font-normal text-gray-100">
+                  <FormLabel className="text-text-primary text-[14px] font-normal">
                     Повторения
                   </FormLabel>
                 </div>
@@ -331,11 +333,15 @@ export const MovingForm: FC<MovingFormProps> = ({
                           }}
                           className={cn(
                             'flex h-11 min-w-[36px] shrink-0 items-center justify-center rounded-lg px-3 text-center text-sm font-medium transition-colors',
-                            !isSelected && 'hover:bg-gray-10 hover:text-gray-80',
+                            !isSelected && 'hover:bg-background-subtle hover:text-text-primary',
                           )}
                           style={{
-                            backgroundColor: isSelected ? 'var(--xi-brand-80)' : 'transparent',
-                            color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-60)',
+                            backgroundColor: isSelected
+                              ? 'var(--xi-action-primary-background-default)'
+                              : 'transparent',
+                            color: isSelected
+                              ? 'var(--xi-text-on-accent)'
+                              : 'var(--xi-text-secondary)',
                           }}
                         >
                           {label}

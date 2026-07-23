@@ -17,19 +17,23 @@ export const UndoRedo = ({
         aria-label="Undo"
         disabled={!canUndo}
         type="button"
-        className="bg-gray-0 hover:bg-brand-0 flex size-6 items-center justify-center rounded-[8px] lg:size-8"
+        className="bg-background-surface hover:bg-status-info-background flex size-6 items-center justify-center rounded-[8px] lg:size-8"
         onClick={() => undo()}
       >
-        <Undo className={`h-5 w-5 lg:h-6 lg:w-6 ${canUndo ? 'fill-gray-100' : 'fill-gray-40'}`} />
+        <Undo
+          className={`h-5 w-5 lg:h-6 lg:w-6 ${canUndo ? 'fill-icon-primary' : 'fill-icon-disabled'}`}
+        />
       </button>
       <button
         aria-label="Redo"
         disabled={!canRedo}
         type="button"
-        className="bg-gray-0 hover:bg-brand-0 flex size-6 items-center justify-center rounded-[8px] lg:size-8"
+        className="bg-background-surface hover:bg-status-info-background flex size-6 items-center justify-center rounded-[8px] lg:size-8"
         onClick={() => redo()}
       >
-        <Redo className={`h-5 w-5 lg:h-6 lg:w-6 ${canRedo ? 'fill-gray-100' : 'fill-gray-40'}`} />
+        <Redo
+          className={`h-5 w-5 lg:h-6 lg:w-6 ${canRedo ? 'fill-icon-primary' : 'fill-icon-disabled'}`}
+        />
       </button>
     </div>
   );

@@ -55,7 +55,7 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
                 min={0}
                 step={0.01}
                 variant="s"
-                after={<span className="text-gray-60">₽</span>}
+                after={<span className="text-text-secondary">₽</span>}
                 onChange={(e) => {
                   const rawValue = e.target.value.replace(',', '.');
 
@@ -82,7 +82,7 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
         )}
       />
 
-      <span className="text-gray-60">x</span>
+      <span className="text-text-secondary">x</span>
 
       <FormField
         control={control}
@@ -107,7 +107,7 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
         )}
       />
 
-      <span className="text-gray-60">=</span>
+      <span className="text-text-secondary">=</span>
 
       <FormItem>
         <FormControl>
@@ -117,7 +117,7 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
             value={totalPrice}
             placeholder="Сумма"
             variant="s"
-            after={<span className="text-gray-60">₽</span>}
+            after={<span className="text-text-secondary">₽</span>}
             readOnly
           />
         </FormControl>
@@ -128,7 +128,7 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
         variant="none"
         onClick={onRemove}
       >
-        <Close size="s" className="fill-gray-40 h-6 w-6" />
+        <Close size="s" className="fill-icon-disabled h-6 w-6" />
       </Button>
     </div>
   );

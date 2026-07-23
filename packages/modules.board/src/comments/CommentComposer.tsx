@@ -46,7 +46,7 @@ export const CommentComposer = ({
           onCancel={onCancel}
         />
       </div>
-      <div className="border-brand-80 bg-gray-0 flex size-8 items-center justify-center rounded-full border-2 shadow-md">
+      <div className="border-border-focus bg-background-surface flex size-8 items-center justify-center rounded-full border-2 shadow-md">
         <Avatar size="s">
           <AvatarImage
             src={getCommentAuthorAvatarUrl(authorId)}

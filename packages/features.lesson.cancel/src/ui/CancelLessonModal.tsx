@@ -133,8 +133,8 @@ export const CancelLessonModal = ({
       <ModalContent className="w-full max-w-[480px]" aria-describedby={undefined}>
         <ModalTitle className="sr-only">Отменить занятие?</ModalTitle>
         <ModalBody className="flex flex-col items-center gap-4 p-6">
-          <h3 className="text-xl-base font-semibold text-gray-100">Отменить занятие?</h3>
-          <p className="text-m-base text-gray-60 text-center">
+          <h3 className="text-xl-base text-text-primary font-semibold">Отменить занятие?</h3>
+          <p className="text-m-base text-text-secondary text-center">
             Занятие нельзя будет восстановить после отмены
           </p>
 
@@ -176,7 +176,7 @@ export const CancelLessonModal = ({
           <Button
             variant="none"
             size="m"
-            className="text-m-base w-full cursor-pointer font-semibold text-gray-100"
+            className="text-m-base text-text-primary w-full cursor-pointer font-semibold"
             onClick={handleClose}
             disabled={isPending}
             data-umami-event="lesson-cancel-dismiss"

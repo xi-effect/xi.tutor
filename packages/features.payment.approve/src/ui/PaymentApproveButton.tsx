@@ -24,7 +24,7 @@ export const PaymentApproveButton = ({
             <Button
               variant="none"
               size="s"
-              className="bg-gray-5 text-gray-70 hover:bg-gray-10/80 flex-1 rounded-lg"
+              className="bg-background-page text-text-secondary hover:bg-background-subtle/80 flex-1 rounded-lg"
               onClick={onApprovePayment}
               data-umami-event="payment-approve-sender"
               data-umami-event-role={isTutor ? 'tutor' : 'student'}
@@ -49,7 +49,7 @@ export const PaymentApproveButton = ({
             <Button
               variant="none"
               size="s"
-              className="bg-brand-0 hover:bg-brand-0/80 flex-1 rounded-lg"
+              className="bg-status-info-background hover:bg-status-info-background/80 flex-1 rounded-lg"
               onClick={() => receiverConfirmationMutation(id?.toString() ?? '')}
               loading={isPending}
               disabled={isPending}

@@ -41,10 +41,10 @@ export const Header = ({ activeItem, showContent, setShowContent, handleClose }:
         onClick={() => handleClose()}
         variant="full"
         className={cn(
-          'bg-gray-5 top-0 right-0 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0 sm:right-0',
+          'bg-background-page top-0 right-0 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0 sm:right-0',
         )}
       >
-        <Close className="fill-gray-80 h-5 w-5" />
+        <Close className="fill-icon-primary h-5 w-5" />
       </ModalCloseButton>
     </div>
   );

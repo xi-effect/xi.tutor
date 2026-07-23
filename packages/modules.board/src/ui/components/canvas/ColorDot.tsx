@@ -13,7 +13,7 @@ export const ColorDot = ({ colorClass, isSelected, onClick }: ColorDotProps) => 
     className={cn(
       'h-6 w-6 shrink-0 cursor-pointer rounded-full transition-all',
       colorClass,
-      isSelected ? 'ring-2 ring-gray-100 ring-offset-1' : 'hover:scale-110',
+      isSelected ? 'ring-border-strong ring-2 ring-offset-1' : 'hover:scale-110',
     )}
     aria-label={`Color ${colorClass}`}
   />

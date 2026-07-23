@@ -69,7 +69,7 @@ export const ModalEditMaterialName = ({
       <ModalContent className="max-w-[600px]" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton />
-          <ModalTitle className="max-w-[calc(100%-48px)] text-gray-100">
+          <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
             Переименование {content_kind === 'note' ? 'заметки' : 'доски'}
           </ModalTitle>
         </ModalHeader>

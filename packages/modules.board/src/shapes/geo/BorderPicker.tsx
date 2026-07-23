@@ -58,12 +58,12 @@ export const BorderPicker = () => {
                   minStepsBetweenThumbs={1}
                 />
               </div>
-              <span className="text-gray-80 w-5 shrink-0 text-xs">
+              <span className="text-text-primary w-5 shrink-0 text-xs">
                 {currentBorderThickness.toUpperCase()}
               </span>
             </div>
           </div>
-          <div className="bg-gray-10 hidden h-8 w-px shrink-0 sm:block" />
+          <div className="bg-background-subtle hidden h-8 w-px shrink-0 sm:block" />
           <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
             <div className="flex flex-wrap items-center gap-1.5">
               {colorOptions &&

@@ -27,7 +27,7 @@ type AllLessonsProps = {
 };
 
 const scheduleEmptyActionButtonClass =
-  'bg-gray-5 hover:bg-gray-10 text-xs-base h-8 rounded-lg px-4 font-medium text-gray-80';
+  'bg-background-page hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
 
 export const AllLessons = ({
   lessons,
@@ -52,38 +52,38 @@ export const AllLessons = ({
               <div
                 key={i}
                 className={cn(
-                  'border-gray-10 relative flex min-h-[136px] shrink-0 flex-row gap-4 p-4',
+                  'border-border-default relative flex min-h-[136px] shrink-0 flex-row gap-4 p-4',
                   i < SKELETON_COUNT - 1 && 'border-b',
                 )}
               >
                 <div className="flex shrink-0 flex-col gap-2 pt-1">
-                  <div className="bg-gray-10 h-5 w-14 animate-pulse rounded" />
-                  <div className="bg-gray-10 h-4 w-10 animate-pulse rounded" />
+                  <div className="bg-background-subtle h-5 w-14 animate-pulse rounded" />
+                  <div className="bg-background-subtle h-4 w-10 animate-pulse rounded" />
                 </div>
                 <div className="flex flex-1 flex-col gap-3 pt-1">
-                  <div className="bg-gray-10 h-3 w-16 animate-pulse rounded" />
-                  <div className="bg-gray-10 h-6 w-32 animate-pulse rounded" />
+                  <div className="bg-background-subtle h-3 w-16 animate-pulse rounded" />
+                  <div className="bg-background-subtle h-6 w-32 animate-pulse rounded" />
                 </div>
                 <div className="absolute top-2 right-2 flex flex-1 flex-col gap-2 pt-1">
-                  <div className="bg-gray-10 h-8 w-8 animate-pulse rounded" />
-                  <div className="bg-gray-10 h-8 w-8 animate-pulse rounded" />
-                  <div className="bg-gray-10 h-8 w-8 animate-pulse rounded" />
+                  <div className="bg-background-subtle h-8 w-8 animate-pulse rounded" />
+                  <div className="bg-background-subtle h-8 w-8 animate-pulse rounded" />
+                  <div className="bg-background-subtle h-8 w-8 animate-pulse rounded" />
                 </div>
-                <div className="bg-gray-10 absolute right-12 bottom-3 h-8 w-[280px] animate-pulse rounded" />
+                <div className="bg-background-subtle absolute right-12 bottom-3 h-8 w-[280px] animate-pulse rounded" />
               </div>
             ))}
           </div>
         ) : lessons.length === 0 ? (
-          <div className="border-gray-10 bg-gray-0 dark:border-gray-70 mr-3 mb-3 flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center gap-5 rounded-xl border border-dashed px-4 py-8 pr-3">
+          <div className="border-border-default bg-background-surface dark:border-border-strong mr-3 mb-3 flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center gap-5 rounded-xl border border-dashed px-4 py-8 pr-3">
             <EmptySchedule
               className="mb-4 h-auto w-full max-w-[220px] shrink-0 object-contain"
               aria-hidden
             />
             <div className="flex max-w-md flex-col gap-2 text-center">
-              <p className="text-m-base font-semibold text-gray-100">
+              <p className="text-m-base text-text-primary font-semibold">
                 На выбранную дату нет занятий
               </p>
-              <p className="text-s-base text-gray-60 dark:text-gray-50">
+              <p className="text-s-base text-text-secondary dark:text-text-muted">
                 {onAddLesson
                   ? 'Добавляйте, переносите и отменяйте занятия'
                   : 'Здесь отображаются занятия, которые назначил репетитор'}
@@ -99,7 +99,7 @@ export const AllLessons = ({
                 id="schedule-empty-add-lesson"
               >
                 Назначить занятие
-                <Add className="fill-gray-80 ml-1 size-4 shrink-0" />
+                <Add className="fill-icon-primary ml-1 size-4 shrink-0" />
               </Button>
             ) : null}
           </div>

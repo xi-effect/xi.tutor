@@ -27,13 +27,13 @@ export const CustomNotificationModal = ({
         aria-describedby={undefined}
       >
         <ModalHeader>
-          <ModalTitle className="text-m-base max-w-[calc(100%-48px)] font-semibold text-gray-100">
+          <ModalTitle className="text-m-base text-text-primary max-w-[calc(100%-48px)] font-semibold">
             {payload?.header}
           </ModalTitle>
           <ModalCloseButton />
         </ModalHeader>
 
-        <ModalBody className="text-xs-base text-gray-80 flex-1 overflow-y-auto">
+        <ModalBody className="text-xs-base text-text-primary flex-1 overflow-y-auto">
           {payload?.content}
         </ModalBody>
 

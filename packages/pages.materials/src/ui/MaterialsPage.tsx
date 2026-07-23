@@ -4,7 +4,7 @@ import { Header } from './Header';
 import { MobileTutorActionButton } from 'features.invites';
 import { TabsComponent } from './TabsComponent';
 import { useCurrentUser } from 'common.services';
-import { DateTimeDisplay, ErrorPage } from 'common.ui';
+import { ErrorPage } from 'common.ui';
 import {
   MaterialsDuplicateProvider,
   useMaterialsDuplicate,
@@ -64,12 +64,9 @@ const MaterialsPageContent = () => {
 
   return (
     <>
-      <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pr-0">
+      <div className="bg-background-page flex h-screen flex-col justify-between gap-6 pr-0">
         <div className="flex min-h-0 flex-1 flex-col">
-          <div className="flex shrink-0 flex-col gap-5 px-5 pt-5">
-            <div className="flex h-8 items-center">
-              <DateTimeDisplay />
-            </div>
+          <div className="flex shrink-0 flex-col px-5 pt-5">
             <Header activeTab={activeTab} onTabChange={handleTabChange} />
           </div>
           <TabsComponent activeTab={activeTab} />

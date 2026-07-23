@@ -28,7 +28,7 @@ export function AudioTimecodeRow({
 }: AudioTimecodeRowProps) {
   return (
     <div
-      className="border-gray-10 group flex max-h-[96px] min-h-7 items-start gap-0 p-1"
+      className="border-border-default group flex max-h-[96px] min-h-7 items-start gap-0 p-1"
       style={{ fontSize: 10, pointerEvents: isInteractive ? 'all' : 'none' }}
       data-audio-control=""
     >
@@ -37,7 +37,7 @@ export function AudioTimecodeRow({
         variant="none"
         disabled={!canSeek}
         title={!canSeek ? 'Управление у репетитора' : undefined}
-        className="text-gray-80 hover:text-brand-100 disabled:hover:text-gray-80 flex h-full w-12 shrink-0 items-start justify-center rounded-md p-2 pt-1 font-medium tabular-nums disabled:cursor-default disabled:opacity-70"
+        className="text-text-primary hover:text-text-link disabled:hover:text-text-primary flex h-full w-12 shrink-0 items-start justify-center rounded-md p-2 pt-1 font-medium tabular-nums disabled:cursor-default disabled:opacity-70"
         style={{ pointerEvents: isInteractive ? 'all' : 'none', fontSize: 10 }}
         data-audio-control=""
         onPointerDown={isInteractive ? stopEvent : undefined}
@@ -60,7 +60,7 @@ export function AudioTimecodeRow({
           maxLength={150}
           maxRows={3}
           hideCounter
-          className="text-gray-80 placeholder:text-gray-40 flex-1 resize-none border-none bg-transparent p-1 shadow-none outline-none"
+          className="text-text-primary placeholder:text-text-disabled flex-1 resize-none border-none bg-transparent p-1 shadow-none outline-none"
           style={{
             pointerEvents: isInteractive ? 'all' : 'none',
             fontSize: 10,
@@ -73,7 +73,7 @@ export function AudioTimecodeRow({
         />
       ) : (
         <span
-          className="text-gray-80 min-w-0 flex-1 p-1 wrap-break-word whitespace-pre-wrap"
+          className="text-text-primary min-w-0 flex-1 p-1 wrap-break-word whitespace-pre-wrap"
           style={{
             lineHeight: 1.35,
             maxHeight: 'calc(3 * 1.35em)',
@@ -99,27 +99,27 @@ export function AudioTimecodeRow({
             <Button
               type="button"
               variant="none"
-              className="hover:text-gray-80 h-5 min-w-5 p-0 text-gray-50"
+              className="hover:text-text-primary text-text-muted h-5 min-w-5 p-0"
               title={tc.visibleToAll ? 'Скрыть от учеников' : 'Показать ученикам'}
               onPointerDown={isInteractive ? stopEvent : undefined}
               onClick={isInteractive ? () => onToggleVisibility(tc.id) : undefined}
             >
               {tc.visibleToAll ? (
-                <Eyeon className="fill-gray-80 h-3 w-3" />
+                <Eyeon className="fill-icon-primary h-3 w-3" />
               ) : (
-                <Eyeoff className="fill-gray-80 h-3 w-3" />
+                <Eyeoff className="fill-icon-primary h-3 w-3" />
               )}
             </Button>
           )}
           <Button
             type="button"
             variant="none"
-            className="group hover:text-red-60 h-5 min-w-5 p-0 text-gray-50"
+            className="group hover:text-text-danger text-text-muted h-5 min-w-5 p-0"
             title={tc.createdByStudent ? 'Удалить' : undefined}
             onPointerDown={isInteractive ? stopEvent : undefined}
             onClick={isInteractive ? () => onRemove(tc.id) : undefined}
           >
-            <Trash className="fill-gray-80 group-hover:fill-red-60 h-3 w-3" />
+            <Trash className="fill-icon-primary group-hover:fill-icon-danger h-3 w-3" />
           </Button>
         </div>
       )}

@@ -25,8 +25,8 @@ export const FillTypePicker = () => {
         variant="none"
         size="s"
         className={cn(
-          currentFillType === 'none' ? 'bg-gray-10' : 'bg-transparent!',
-          'hover:bg-brand-0 p-1',
+          currentFillType === 'none' ? 'bg-background-subtle' : 'bg-transparent!',
+          'hover:bg-status-info-background p-1',
         )}
         onClick={() => handleFillType('none')}
         title="Без заливки"
@@ -44,8 +44,8 @@ export const FillTypePicker = () => {
         size="s"
         data-active={true}
         className={cn(
-          currentFillType === 'semi' ? 'bg-gray-10' : 'bg-transparent!',
-          'hover:bg-brand-0 p-1',
+          currentFillType === 'semi' ? 'bg-background-subtle' : 'bg-transparent!',
+          'hover:bg-status-info-background p-1',
         )}
         onClick={() => handleFillType('semi')}
         title="Полупрозрачная"
@@ -56,8 +56,8 @@ export const FillTypePicker = () => {
         variant="none"
         size="s"
         className={cn(
-          currentFillType === 'solid' ? 'bg-gray-10' : 'bg-transparent!',
-          'hover:bg-brand-0 p-1',
+          currentFillType === 'solid' ? 'bg-background-subtle' : 'bg-transparent!',
+          'hover:bg-status-info-background p-1',
         )}
         onClick={() => handleFillType('solid')}
         title="Сплошная"

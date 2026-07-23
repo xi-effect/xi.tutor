@@ -21,7 +21,7 @@ const InformationNoteCreate = ({ classroom }: { classroom: ClassroomT }) => {
     <Button
       onClick={handleCreateNote}
       variant="none"
-      className="text-gray-40 dark:text-gray-60 m-6 h-auto min-h-[128px] w-full text-left text-base font-normal whitespace-normal"
+      className="text-text-disabled dark:text-text-secondary m-6 h-auto min-h-[128px] w-full text-left text-base font-normal whitespace-normal"
     >
       Это место для заметок к кабинету. Можно вести план занятий,
       <br />

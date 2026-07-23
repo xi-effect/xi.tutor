@@ -38,7 +38,7 @@ export const BubbleMenuWrapper = ({ editor, isReadOnly }: BubbleMenuProps) => {
   return (
     <BubbleMenu
       editor={editor}
-      className="border-gray-10 bg-gray-0 flex gap-1 rounded-lg border p-2 shadow-lg"
+      className="border-border-default bg-background-surface flex gap-1 rounded-lg border p-2 shadow-lg"
       shouldShow={({ state }) => isValidTextSelectionForBubbleMenu(state)}
       options={{
         placement: 'top',

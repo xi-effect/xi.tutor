@@ -33,7 +33,7 @@ import { RolePaymentT as CommonRolePaymentT } from 'common.types';
 const PAYMENTS_HELP_URL = 'https://support.sovlium.ru/payments';
 
 const emptyPaymentsHelpLinkClass =
-  'bg-gray-5 hover:bg-gray-10 text-xs-base h-8 rounded-lg px-4 font-medium text-gray-80';
+  'bg-background-page hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
 
 export type VirtualizedPaymentsTableProps<T> = {
   parentRef: RefObject<HTMLDivElement | null>;
@@ -95,10 +95,10 @@ export const VirtualizedPaymentsTable = ({
           )}
         >
           <div className="flex max-w-md flex-col gap-2 text-center">
-            <p className="text-l-base font-semibold text-gray-100">
+            <p className="text-l-base text-text-primary font-semibold">
               {isTutor ? 'Пока нет выставленных счетов' : 'Пока нет счетов'}
             </p>
-            <p className="text-s-base text-gray-60 dark:text-gray-50">
+            <p className="text-s-base text-text-secondary dark:text-text-muted">
               {isTutor
                 ? 'Создайте счёт на оплату — он появится в этом списке.'
                 : 'Когда репетитор выставит счёт, он отобразится здесь.'}
@@ -113,7 +113,7 @@ export const VirtualizedPaymentsTable = ({
                   data-umami-event="payments-page-empty-help"
                 >
                   Подробнее о том, как работают оплаты
-                  <ArrowUpRight className="fill-gray-80 ml-1 size-4 shrink-0" />
+                  <ArrowUpRight className="fill-icon-primary ml-1 size-4 shrink-0" />
                 </Button>
               </div>
             ) : null}
@@ -157,7 +157,7 @@ export const VirtualizedPaymentsTable = ({
                 {headerGroup.headers.map((header) => (
                   <TableHead style={{ width: header.getSize() }} key={header.id}>
                     <div className="flex h-8 items-center gap-1 justify-self-start">
-                      <div className="text-gray-60 text-m-base font-medium">
+                      <div className="text-text-secondary text-m-base font-medium">
                         {flexRender(header.column.columnDef.header, header.getContext())}
                       </div>
                     </div>
@@ -195,7 +195,7 @@ export const VirtualizedPaymentsTable = ({
                 >
                   <Table className="table-fixed px-2">
                     <TableBody>
-                      <TableRow className="group hover:shadow-[0_0_0_1px_var(--xi-gray-30)]">
+                      <TableRow className="group hover:shadow-[0_0_0_1px_var(--xi-border-default)]">
                         {row.getVisibleCells().map((cell) => (
                           <TableCell key={cell.id} style={{ width: cell.column.getSize() }}>
                             {flexRender(cell.column.columnDef.cell, cell.getContext())}

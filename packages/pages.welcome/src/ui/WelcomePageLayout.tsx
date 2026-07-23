@@ -24,12 +24,12 @@ export const WelcomePageLayout = ({ step, title, subtitle, children }: WelcomePa
               <WelcomeSteps step={step} />
               <div
                 id="title"
-                className="mt-8 text-2xl leading-[32px] font-semibold text-gray-100 dark:text-gray-100"
+                className="text-text-primary dark:text-text-primary mt-8 text-2xl leading-[32px] font-semibold"
               >
                 {title}
               </div>
               {subtitle && (
-                <div className="mt-8 leading-[22px] text-gray-100 dark:text-gray-100">
+                <div className="text-text-primary dark:text-text-primary mt-8 leading-[22px]">
                   {subtitle}
                 </div>
               )}

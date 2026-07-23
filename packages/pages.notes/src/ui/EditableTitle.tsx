@@ -80,7 +80,7 @@ export const EditableTitle = ({
                     onBlur={handleBlur}
                     onKeyDown={handleKeyDown}
                     className={cn(
-                      'h-7 w-full border-none bg-transparent p-0 text-[16px] text-gray-100 shadow-none sm:h-9 sm:text-[28px]',
+                      'text-text-primary h-7 w-full border-none bg-transparent p-0 text-[16px] shadow-none sm:h-9 sm:text-[28px]',
                       className,
                     )}
                     autoFocus
@@ -89,7 +89,7 @@ export const EditableTitle = ({
                   />
                 </FormControl>
                 {fieldState.error && (
-                  <p className="text-red-80 mt-1 text-sm">{fieldState.error.message}</p>
+                  <p className="text-text-danger mt-1 text-sm">{fieldState.error.message}</p>
                 )}
               </FormItem>
             )}
@@ -102,7 +102,7 @@ export const EditableTitle = ({
   return (
     <h3
       className={cn(
-        'text-[16px] font-semibold break-all text-gray-100 select-none sm:text-[28px]',
+        'text-text-primary text-[16px] font-semibold break-all select-none sm:text-[28px]',
         isTutor && 'cursor-pointer',
         className,
       )}

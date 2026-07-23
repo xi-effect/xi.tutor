@@ -13,13 +13,13 @@ export const ColorSet = ({ popupItems }: { popupItems?: PopupItemT[] }) => {
   };
 
   return (
-    <div className="border-gray-10 bg-gray-0 flex gap-2 rounded-xl border p-1">
+    <div className="border-border-default bg-background-surface flex gap-2 rounded-xl border p-1">
       {popupItems?.map((item) => {
         const isActive = item.color === stickerColor;
         return (
           <div
             key={item.color}
-            className={`flex rounded-lg p-1 ${isActive ? 'border-brand-60 border' : 'border border-transparent'}`}
+            className={`flex rounded-lg p-1 ${isActive ? 'border-border-focus border' : 'border border-transparent'}`}
           >
             <button
               type="button"

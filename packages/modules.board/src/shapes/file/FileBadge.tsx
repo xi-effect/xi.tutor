@@ -11,7 +11,7 @@ type FileBadgeProps = {
 };
 
 const fileBadgeSurfaceClass =
-  'border-gray-10 bg-gray-0 flex h-full w-full items-center gap-2 rounded-xl border py-2 pr-[14px] pl-3 shadow-md transition';
+  'border-border-default bg-background-surface flex h-full w-full items-center gap-2 rounded-xl border py-2 pr-[14px] pl-3 shadow-md transition';
 
 export const FileBadge = ({ shape }: FileBadgeProps) => {
   const { src: fileId, fileName, fileSize: size, status } = shape.props;
@@ -34,7 +34,7 @@ export const FileBadge = ({ shape }: FileBadgeProps) => {
   if (status === 'offline') {
     return (
       <div className={fileBadgeSurfaceClass} style={{ pointerEvents: 'none' }}>
-        <div className="text-gray-40 flex h-full w-full items-center justify-center">
+        <div className="text-text-disabled flex h-full w-full items-center justify-center">
           <span className="text-xs">{'Отсутствует соединение'}</span>
         </div>
       </div>
@@ -44,7 +44,7 @@ export const FileBadge = ({ shape }: FileBadgeProps) => {
   if (status === 'loading' || !fileId) {
     return (
       <div className={fileBadgeSurfaceClass} style={{ pointerEvents: 'none' }}>
-        <div className="text-gray-40 flex h-full w-full items-center justify-center">
+        <div className="text-text-disabled flex h-full w-full items-center justify-center">
           <span className="text-xs">{'Загрузка...'}</span>
         </div>
       </div>
@@ -58,12 +58,12 @@ export const FileBadge = ({ shape }: FileBadgeProps) => {
         onPointerDown={handleIconClick}
         style={{ pointerEvents: 'all' }}
       >
-        {status === 'uploaded' && <Download className="text-gray-60 h-full w-full" />}
+        {status === 'uploaded' && <Download className="text-text-secondary h-full w-full" />}
       </div>
 
       <div className="flex grow flex-col overflow-hidden text-left">
-        <p className="truncate leading-[22px] font-medium text-gray-100">{fileName}</p>
-        <p className="text-gray-80 mt-0.5 text-sm leading-[20px]">{formatBytesSize(size)}</p>
+        <p className="text-text-primary truncate leading-[22px] font-medium">{fileName}</p>
+        <p className="text-text-primary mt-0.5 text-sm leading-[20px]">{formatBytesSize(size)}</p>
       </div>
     </div>
   );

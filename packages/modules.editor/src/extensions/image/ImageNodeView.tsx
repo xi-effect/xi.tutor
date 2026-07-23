@@ -65,7 +65,7 @@ export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
         alt={node.attrs.alt || ''}
         className={cn(
           'max-h-[600px] rounded-lg object-contain',
-          selected && 'outline-brand-80 outline-2 outline-offset-1',
+          selected && 'outline-border-focus outline-2 outline-offset-1',
         )}
         draggable={false}
       />
@@ -87,7 +87,7 @@ export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
             className="flex w-[200px] flex-col space-y-1 p-2"
           >
             <DropdownMenuItem
-              className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+              className="hover:bg-background-page h-7 gap-2 rounded p-1"
               onSelect={() => downloadImage(imageSrc)}
             >
               <Download size="sm" className="size-6" />
@@ -100,7 +100,7 @@ export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem
-                  className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+                  className="hover:bg-background-page h-7 gap-2 rounded p-1"
                   onSelect={(e) => {
                     e.preventDefault();
                     moveUp();
@@ -111,7 +111,7 @@ export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
-                  className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+                  className="hover:bg-background-page h-7 gap-2 rounded p-1"
                   onSelect={(e) => {
                     e.preventDefault();
                     moveDown();
@@ -124,7 +124,7 @@ export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem
-                  className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+                  className="hover:bg-background-page h-7 gap-2 rounded p-1"
                   onSelect={duplicate}
                 >
                   <Copy size="sm" className="size-6" />
@@ -132,7 +132,7 @@ export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
-                  className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+                  className="hover:bg-background-page h-7 gap-2 rounded p-1"
                   onSelect={remove}
                 >
                   <Trash size="sm" className="size-6" />

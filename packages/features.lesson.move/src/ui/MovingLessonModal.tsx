@@ -139,9 +139,9 @@ export const MovingLessonModal = ({
         <ModalTitle className="sr-only">{formTitle}</ModalTitle>
         <ModalCloseButton
           variant="full"
-          className="bg-gray-5 top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0"
+          className="bg-background-page top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0"
         >
-          <Close className="fill-gray-80 h-5 w-5" />
+          <Close className="fill-icon-primary h-5 w-5" />
         </ModalCloseButton>
         <ModalBody className="grid min-h-0 w-full min-w-0 flex-1 grid-cols-1 items-start gap-6 overflow-hidden md:grid-cols-2 md:gap-10">
           <div className="hidden min-h-0 min-w-0 flex-col overflow-hidden md:flex">
@@ -158,7 +158,7 @@ export const MovingLessonModal = ({
           </div>
           <div className="flex h-full min-h-0 min-w-0 flex-col gap-5 overflow-hidden">
             <div className="flex h-8 shrink-0 items-center pr-12">
-              <h3 className="text-xl-base m-0 leading-none font-semibold text-gray-100">
+              <h3 className="text-xl-base text-text-primary m-0 leading-none font-semibold">
                 {formTitle}
               </h3>
             </div>
@@ -185,7 +185,7 @@ export const MovingLessonModal = ({
             </div>
             <div className="flex w-full min-w-0 shrink-0 flex-row gap-2">
               <Button
-                className="bg-gray-5 hover:bg-gray-10 h-11 min-w-0 flex-1 font-medium text-gray-100"
+                className="bg-background-page hover:bg-background-subtle text-text-primary h-11 min-w-0 flex-1 font-medium"
                 form="moving-lesson-form"
                 size="m"
                 variant="none"

@@ -51,7 +51,7 @@ export class PdfShapeUtil extends BaseBoxShapeUtil<PdfShape> {
   override component(shape: PdfShape) {
     return (
       <HTMLContainer
-        className="bg-gray-5 border-gray-10 overflow-hidden rounded-xl border shadow-md"
+        className="bg-background-page border-border-default overflow-hidden rounded-xl border shadow-md"
         style={{ width: shape.props.w, height: shape.props.h }}
       >
         <PdfViewer shape={shape} />

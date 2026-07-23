@@ -13,7 +13,7 @@ import { useCurrentUser, usePWAInstall } from 'common.services';
 import { cn } from '@xipkg/utils';
 
 const menuRowClassName = cn(
-  'border-gray-10 flex w-full items-center gap-3 rounded-xl border bg-gray-0 px-4 h-[48px] text-left transition-colors',
+  'border-border-default flex w-full items-center gap-3 rounded-xl border bg-background-surface px-4 h-[48px] text-left transition-colors',
 );
 
 interface MobileUserMenuProps {
@@ -44,7 +44,7 @@ export const MobileUserMenu = ({
       <DrawerTrigger asChild>
         <Button
           variant="none"
-          className="text-gray-80 hover:bg-gray-10 focus:bg-gray-10 size-10 shrink-0 overflow-hidden rounded-xl p-0"
+          className="text-text-primary hover:bg-background-subtle focus:bg-background-subtle size-10 shrink-0 overflow-hidden rounded-xl p-0"
           data-umami-event="header-user-menu-open"
           data-umami-event-device="mobile"
         >
@@ -52,7 +52,7 @@ export const MobileUserMenu = ({
         </Button>
       </DrawerTrigger>
       <NavigationDrawerContent className={DRAWER_CONTENT_ABOVE_BAR_CLASS}>
-        <div className="dark:bg-gray-0 flex flex-col gap-5">
+        <div className="dark:bg-background-surface flex flex-col gap-5">
           <DrawerRoleSelector compact />
 
           <div className="flex flex-col gap-3">
@@ -64,10 +64,13 @@ export const MobileUserMenu = ({
               }}
               data-umami-event="header-logout"
               data-umami-event-device="mobile"
-              className={cn(menuRowClassName, 'border-red-20 hover:bg-red-0')}
+              className={cn(
+                menuRowClassName,
+                'border-border-error hover:bg-status-error-background',
+              )}
             >
-              <Exit className="fill-red-80 size-6 shrink-0" />
-              <span className="text-m-base text-red-80 font-medium">{logoutText}</span>
+              <Exit className="fill-icon-danger size-6 shrink-0" />
+              <span className="text-m-base text-text-danger font-medium">{logoutText}</span>
             </button>
             <button
               type="button"
@@ -79,8 +82,8 @@ export const MobileUserMenu = ({
               data-umami-event-device="mobile"
               className={menuRowClassName}
             >
-              <Settings className="size-6 shrink-0 text-gray-100" />
-              <span className="text-m-base font-medium text-gray-100">{profileText}</span>
+              <Settings className="text-text-primary size-6 shrink-0" />
+              <span className="text-m-base text-text-primary font-medium">{profileText}</span>
             </button>
             {!isInstalled && (
               <button
@@ -94,8 +97,8 @@ export const MobileUserMenu = ({
                 data-umami-event-device="mobile"
                 className={menuRowClassName}
               >
-                <Download className="size-6 shrink-0 text-gray-100" />
-                <span className="text-m-base font-medium text-gray-100">{t('installApp')}</span>
+                <Download className="text-text-primary size-6 shrink-0" />
+                <span className="text-m-base text-text-primary font-medium">{t('installApp')}</span>
               </button>
             )}
           </div>
@@ -105,15 +108,17 @@ export const MobileUserMenu = ({
               <div className="size-10 shrink-0 overflow-hidden rounded-lg">
                 <UserProfile id="userprofile-footer" userId={userId} size="40" withOutText />
               </div>
-              <span className="text-m-base truncate font-medium text-gray-100">{displayName}</span>
+              <span className="text-m-base text-text-primary truncate font-medium">
+                {displayName}
+              </span>
             </div>
             <button
               type="button"
               aria-label={t('close')}
               onClick={() => setOpen(false)}
-              className="bg-gray-5 hover:bg-gray-10 focus:bg-gray-10 flex size-10 shrink-0 items-center justify-center rounded-lg transition-colors"
+              className="bg-background-page hover:bg-background-subtle focus:bg-background-subtle flex size-10 shrink-0 items-center justify-center rounded-lg transition-colors"
             >
-              <Close className="fill-gray-80 size-5" />
+              <Close className="fill-icon-primary size-5" />
             </button>
           </div>
         </div>

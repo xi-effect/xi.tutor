@@ -51,11 +51,11 @@ export const DrawZoomPanel = track(() => {
     <div className="absolute right-4 bottom-20 z-260 sm:bottom-4">
       <div className={`${boardPanelClass} flex items-center justify-center gap-2 p-1`}>
         <Button
-          className="hover:bg-brand-0 pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
+          className="hover:bg-status-info-background pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
           variant="none"
           onClick={handleZoomOut}
         >
-          <Minus className="h-4 w-4 fill-gray-100 lg:h-6 lg:w-6" />
+          <Minus className="fill-icon-primary h-4 w-4 lg:h-6 lg:w-6" />
         </Button>
         <Button
           className={`h-6 w-6 min-w-[60px] items-center justify-center px-2 py-1 ${boardTextClass} hover:bg-transparent focus:bg-transparent active:bg-transparent lg:h-8 lg:w-8`}
@@ -67,7 +67,7 @@ export const DrawZoomPanel = track(() => {
           {zoomPercent < 1 ? '< 1%' : `${zoomPercent}%`}
         </Button>
         <Button
-          className="hover:bg-brand-0 pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
+          className="hover:bg-status-info-background pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
           variant="none"
           onClick={handleZoomIn}
         >

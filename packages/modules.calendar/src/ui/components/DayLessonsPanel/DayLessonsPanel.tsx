@@ -92,11 +92,11 @@ export const DayLessonsPanel = ({
     <Button
       variant="none"
       type="button"
-      className="text-gray-60 hover:bg-gray-10 flex h-8 items-center gap-1 rounded-lg px-2.5"
+      className="text-text-secondary hover:bg-background-subtle flex h-8 items-center gap-1 rounded-lg px-2.5"
       onClick={handleGoToToday}
       data-umami-event="modal-schedule-go-to-today"
     >
-      <Undo className="fill-gray-60 size-4 shrink-0" />
+      <Undo className="fill-icon-secondary size-4 shrink-0" />
       <span className="text-s-base 2xl:text-m-base font-normal">К сегодня</span>
     </Button>
   );
@@ -107,11 +107,11 @@ export const DayLessonsPanel = ({
         {scheduleHeadingTitle != null ? (
           <div className="flex h-8 shrink-0 flex-row items-center gap-2 pr-3">
             <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
-              <h3 className="text-xl-base m-0 shrink-0 leading-none font-semibold text-gray-100">
+              <h3 className="text-xl-base text-text-primary m-0 shrink-0 leading-none font-semibold">
                 {scheduleHeadingTitle}
               </h3>
               {monthLabelInToolbar ? (
-                <span className="text-m-base 2xl:text-l-base text-gray-60 truncate font-normal">
+                <span className="text-m-base 2xl:text-l-base text-text-secondary truncate font-normal">
                   {monthLabelInToolbar}
                 </span>
               ) : null}
@@ -129,7 +129,7 @@ export const DayLessonsPanel = ({
         ) : null}
 
         {subtitle ? (
-          <h3 className="text-l-base shrink-0 font-semibold text-gray-100">Занятия на день</h3>
+          <h3 className="text-l-base text-text-primary shrink-0 font-semibold">Занятия на день</h3>
         ) : null}
 
         <ScheduleDateCarousel
@@ -148,38 +148,38 @@ export const DayLessonsPanel = ({
                 <div
                   key={i}
                   className={cn(
-                    'border-gray-10 relative flex min-h-[136px] shrink-0 flex-row gap-4 p-4',
+                    'border-border-default relative flex min-h-[136px] shrink-0 flex-row gap-4 p-4',
                     i < SKELETON_COUNT - 1 && 'border-b',
                   )}
                 >
                   <div className="flex shrink-0 flex-col gap-2 pt-1">
-                    <div className="bg-gray-10 h-5 w-14 animate-pulse rounded" />
-                    <div className="bg-gray-10 h-4 w-10 animate-pulse rounded" />
+                    <div className="bg-background-subtle h-5 w-14 animate-pulse rounded" />
+                    <div className="bg-background-subtle h-4 w-10 animate-pulse rounded" />
                   </div>
                   <div className="flex flex-1 flex-col gap-3 pt-1">
-                    <div className="bg-gray-10 h-3 w-16 animate-pulse rounded" />
-                    <div className="bg-gray-10 h-6 w-32 animate-pulse rounded" />
+                    <div className="bg-background-subtle h-3 w-16 animate-pulse rounded" />
+                    <div className="bg-background-subtle h-6 w-32 animate-pulse rounded" />
                   </div>
                   <div className="absolute top-2 right-2 flex flex-1 flex-col gap-2 pt-1">
-                    <div className="bg-gray-10 h-8 w-8 animate-pulse rounded" />
-                    <div className="bg-gray-10 h-8 w-8 animate-pulse rounded" />
-                    <div className="bg-gray-10 h-8 w-8 animate-pulse rounded" />
+                    <div className="bg-background-subtle h-8 w-8 animate-pulse rounded" />
+                    <div className="bg-background-subtle h-8 w-8 animate-pulse rounded" />
+                    <div className="bg-background-subtle h-8 w-8 animate-pulse rounded" />
                   </div>
-                  <div className="bg-gray-10 absolute right-12 bottom-3 h-8 w-[280px] animate-pulse rounded" />
+                  <div className="bg-background-subtle absolute right-12 bottom-3 h-8 w-[280px] animate-pulse rounded" />
                 </div>
               ))}
             </div>
           ) : lessons.length === 0 ? (
-            <div className="border-gray-10 bg-gray-0 dark:border-gray-70 mr-3 mb-3 flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center gap-5 rounded-xl border border-dashed px-4 py-8 pr-3">
+            <div className="border-border-default bg-background-surface dark:border-border-strong mr-3 mb-3 flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center gap-5 rounded-xl border border-dashed px-4 py-8 pr-3">
               <EmptySchedule
                 className="mb-4 h-auto w-full max-w-[220px] shrink-0 object-contain"
                 aria-hidden
               />
               <div className="flex max-w-md flex-col gap-2 text-center">
-                <p className="text-m-base font-semibold text-gray-100">
+                <p className="text-m-base text-text-primary font-semibold">
                   На выбранную дату нет занятий
                 </p>
-                <p className="text-s-base text-gray-60 dark:text-gray-50">
+                <p className="text-s-base text-text-secondary dark:text-text-muted">
                   {isTutorEmptyState
                     ? 'Добавляйте, переносите и отменяйте занятия'
                     : 'Здесь отображаются занятия, которые назначил репетитор'}

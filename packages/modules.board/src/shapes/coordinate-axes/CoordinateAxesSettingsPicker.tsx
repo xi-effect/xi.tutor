@@ -37,7 +37,7 @@ function NumberField({
 
   return (
     <label className="flex flex-col gap-1">
-      <span className="text-gray-60 text-xs">{label}</span>
+      <span className="text-text-secondary text-xs">{label}</span>
       <Input
         value={local}
         onChange={(e) => {
@@ -144,7 +144,7 @@ export const CoordinateAxesSettingsPicker = track(function CoordinateAxesSetting
       triggerChild={
         <span
           data-coordinate-axes-trigger
-          className="text-brand-80 px-1 text-xs font-semibold tracking-tight"
+          className="text-text-link px-1 text-xs font-semibold tracking-tight"
         >
           f(x)
         </span>
@@ -152,7 +152,7 @@ export const CoordinateAxesSettingsPicker = track(function CoordinateAxesSetting
       popoverChild={
         <div data-coordinate-axes-popover className="flex w-[280px] flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <span className="text-gray-80 text-sm font-medium">Уравнение y =</span>
+            <span className="text-text-primary text-sm font-medium">Уравнение y =</span>
             <Input
               value={equationDraft}
               onChange={(e) => {
@@ -168,14 +168,14 @@ export const CoordinateAxesSettingsPicker = track(function CoordinateAxesSetting
               placeholder="sin(x), x^2, 2*x+1"
               className="h-9"
             />
-            {equationError && <span className="text-red-80 text-xs">{equationError}</span>}
-            <span className="text-gray-60 text-xs">
+            {equationError && <span className="text-text-danger text-xs">{equationError}</span>}
+            <span className="text-text-secondary text-xs">
               sin, cos, tan, sqrt, abs, ln, log, exp, pi, e
             </span>
           </div>
 
           <div className="flex flex-col gap-2">
-            <span className="text-gray-80 text-sm font-medium">Цвет функции</span>
+            <span className="text-text-primary text-sm font-medium">Цвет функции</span>
             <div className="flex flex-wrap items-center gap-1.5">
               {colorOptions.map(({ name, class: colorClass }) => (
                 <ColorDot
@@ -214,8 +214,8 @@ export const CoordinateAxesSettingsPicker = track(function CoordinateAxesSetting
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <span className="text-gray-60 text-xs">Делений по X</span>
-                <span className="text-gray-80 text-xs">{shape.props.xDivisions}</span>
+                <span className="text-text-secondary text-xs">Делений по X</span>
+                <span className="text-text-primary text-xs">{shape.props.xDivisions}</span>
               </div>
               <Slider
                 value={[shape.props.xDivisions]}
@@ -227,8 +227,8 @@ export const CoordinateAxesSettingsPicker = track(function CoordinateAxesSetting
             </div>
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <span className="text-gray-60 text-xs">Делений по Y</span>
-                <span className="text-gray-80 text-xs">{shape.props.yDivisions}</span>
+                <span className="text-text-secondary text-xs">Делений по Y</span>
+                <span className="text-text-primary text-xs">{shape.props.yDivisions}</span>
               </div>
               <Slider
                 value={[shape.props.yDivisions]}
@@ -241,7 +241,7 @@ export const CoordinateAxesSettingsPicker = track(function CoordinateAxesSetting
           </div>
 
           <label className="flex cursor-pointer items-center justify-between gap-3">
-            <span className="text-gray-80 text-sm">Подписи</span>
+            <span className="text-text-primary text-sm">Подписи</span>
             <Checkbox
               checked={shape.props.showLabels}
               onCheckedChange={(checked) => updateProps({ showLabels: checked === true })}

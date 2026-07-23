@@ -67,7 +67,12 @@ export const CommentMessageInput = ({
           type="button"
           disabled={!value.trim()}
         >
-          <Send className={cn('mr-1 size-4', value.trim() ? 'text-brand-0' : 'text-gray-30')} />
+          <Send
+            className={cn(
+              'mr-1 size-4',
+              value.trim() ? 'text-text-on-accent' : 'text-text-disabled',
+            )}
+          />
           {submitLabel}
         </Button>
       </div>

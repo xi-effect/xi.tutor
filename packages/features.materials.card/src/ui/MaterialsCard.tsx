@@ -73,7 +73,7 @@ export const MaterialsCard = ({
         <div
           onClick={handleCardClick}
           className={cn(
-            'group hover:bg-gray-5 border-gray-10 bg-gray-0 box-border flex min-h-[100px] min-w-[394px] flex-1 cursor-pointer flex-row items-start gap-4 rounded-2xl border p-4',
+            'group hover:bg-background-page border-border-default bg-background-surface box-border flex min-h-[100px] min-w-[394px] flex-1 cursor-pointer flex-row items-start gap-4 rounded-2xl border p-4',
             className,
           )}
           data-umami-event="material-card-open"
@@ -83,13 +83,15 @@ export const MaterialsCard = ({
             <div className="size-6 shrink-0 [&>svg]:size-6">{cardIcon[content_kind]}</div>
           )}
           <div className="flex min-w-0 flex-1 flex-col gap-2 overflow-hidden">
-            <p className="truncate text-base leading-[22px] font-medium text-gray-100">{name}</p>
-            <span className="text-gray-60 text-sm leading-5 font-normal">
+            <p className="text-text-primary truncate text-base leading-[22px] font-medium">
+              {name}
+            </p>
+            <span className="text-text-secondary text-sm leading-5 font-normal">
               Изменено: {isLoading ? '...' : updated_at ? formatToShortDate(updated_at) : ''}
             </span>
           </div>
           {menu && (
-            <div className="bg-gray-0 flex size-8 shrink-0 items-center justify-center rounded-lg">
+            <div className="bg-background-surface flex size-8 shrink-0 items-center justify-center rounded-lg">
               {menu}
             </div>
           )}
@@ -112,7 +114,7 @@ export const MaterialsCard = ({
     <div
       onClick={handleCardClick}
       className={cn(
-        'group hover:border-brand-80 border-gray-20 bg-gray-0 flex w-full shrink-0 cursor-pointer justify-between rounded-2xl border p-4 transition-all duration-200 ease-linear',
+        'group hover:border-border-focus border-border-default bg-background-surface flex w-full shrink-0 cursor-pointer justify-between rounded-2xl border p-4 transition-all duration-200 ease-linear',
         className,
       )}
       data-umami-event="material-card-open"
@@ -132,11 +134,11 @@ export const MaterialsCard = ({
             </Badge>
           )}
 
-          <div className="text-l-base line-clamp-2 flex w-full items-center gap-2 font-medium text-gray-100">
+          <div className="text-l-base text-text-primary line-clamp-2 flex w-full items-center gap-2 font-medium">
             {hasIcon && cardIcon[content_kind]}
             <p className="truncate">{name}</p>
           </div>
-          <div className="text-s-base text-gray-60 mt-2 font-normal">
+          <div className="text-s-base text-text-secondary mt-2 font-normal">
             Обновлено: {isLoading ? '...' : updated_at ? formatToShortDate(updated_at) : ''}
           </div>
         </div>

@@ -144,7 +144,7 @@ export const SideBarItems = () => {
 
   return (
     <>
-      <SidebarContent className="overflow-visible group-data-[collapsible=icon]:overflow-visible">
+      <SidebarContent className="bg-background-page overflow-visible group-data-[collapsible=icon]:overflow-visible">
         {/* Верхняя секция: триггер, логотип (только при открытом сайдбаре), профиль */}
         <div className="flex flex-col gap-4 pt-5">
           <div className="flex w-full items-center justify-between">
@@ -156,8 +156,8 @@ export const SideBarItems = () => {
                 <Logo width={135} height={40} />
               </div>
             </div>
-            <SidebarTrigger className="group hover:bg-gray-5 focus:bg-gray-10 active:bg-gray-10 ml-auto h-10 min-h-10 w-10 min-w-10 shrink-0 rounded-lg">
-              <LayoutLeft className="text-gray-60 group-hover:text-gray-80 group-focus:text-gray-80 group-active:text-gray-80 h-5 w-5" />
+            <SidebarTrigger className="group hover:bg-background-page focus:bg-background-subtle active:bg-background-subtle ml-auto h-10 min-h-10 w-10 min-w-10 shrink-0 rounded-lg">
+              <LayoutLeft className="text-text-secondary group-hover:text-text-primary group-focus:text-text-primary group-active:text-text-primary h-5 w-5" />
             </SidebarTrigger>
           </div>
 
@@ -185,7 +185,7 @@ export const SideBarItems = () => {
                       data-umami-event-url={item.url}
                       className="group gap-5 rounded-lg!"
                     >
-                      <item.icon className="h-6 w-6 text-gray-50" />
+                      <item.icon className="text-text-muted h-6 w-6" />
                       <span className="text-s-base group-data-[active=true]:font-medium">
                         {t(item.titleKey)}
                       </span>
@@ -199,7 +199,7 @@ export const SideBarItems = () => {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="gap-2">
-        <SidebarMenu>
+        <SidebarMenu className="bg-background-page">
           {footerMenu.map((item) => (
             <SidebarMenuItem key={item.titleKey} className="cursor-pointer">
               <SidebarMenuButton
@@ -207,12 +207,12 @@ export const SideBarItems = () => {
                 variant="none"
                 onClick={item.onClick}
                 type="button"
-                className="bg-gray-0 hover:bg-gray-5 focus:bg-gray-10 active:bg-gray-10 gap-5 rounded-lg!"
+                className="bg-background-page hover:bg-background-surface focus:bg-background-subtle active:bg-background-subtle gap-5 rounded-lg!"
                 title={t(item.titleKey)}
                 data-umami-event={`navigation-${item.titleKey}`}
               >
-                <item.icon className="h-6 w-6 fill-gray-50 text-gray-50" />
-                <div className="h-[24px] text-base font-medium whitespace-nowrap text-gray-50">
+                <item.icon className="fill-icon-secondary text-text-muted h-6 w-6" />
+                <div className="text-text-muted h-[24px] text-base font-medium whitespace-nowrap">
                   {t(item.titleKey)}
                 </div>
               </SidebarMenuButton>

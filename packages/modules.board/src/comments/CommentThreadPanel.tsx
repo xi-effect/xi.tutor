@@ -84,45 +84,53 @@ export const CommentThreadPanel = track(function CommentThreadPanel({
     >
       {showHeader && (
         <div className="flex items-center justify-between">
-          <span className="text-gray-60 text-xs">{thread.resolved ? 'Решено' : 'Комментарий'}</span>
+          <span className="text-text-secondary text-xs">
+            {thread.resolved ? 'Решено' : 'Комментарий'}
+          </span>
           <div className="flex items-center gap-0.5">
             <Button
               variant="none"
-              className="hover:bg-brand-0 flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent"
+              className="hover:bg-status-info-background flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent"
               title="Скопировать ссылку"
               onClick={() => void copyDeepLink()}
               data-umami-event="board-copy-comment-link"
             >
-              <Link className="fill-gray-60 size-4" />
+              <Link className="fill-icon-secondary size-4" />
             </Button>
             <Button
               variant="none"
               className={cn(
-                'hover:bg-brand-0 flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent',
-                thread.resolved && 'bg-green-0 hover:bg-green-0',
+                'hover:bg-status-info-background flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent',
+                thread.resolved &&
+                  'bg-status-success-background hover:bg-status-success-background',
               )}
               title={thread.resolved ? 'Открыть заново' : 'Отметить решённым'}
               onClick={handleToggleResolved}
             >
-              <Check className={cn('size-4', thread.resolved ? 'fill-green-80' : 'fill-gray-60')} />
+              <Check
+                className={cn(
+                  'size-4',
+                  thread.resolved ? 'fill-status-success-text' : 'fill-icon-secondary',
+                )}
+              />
             </Button>
             {isOwnThread && (
               <Button
                 variant="none"
-                className="hover:bg-brand-0 flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent"
+                className="hover:bg-status-info-background flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent"
                 title="Удалить комментарий"
                 onClick={handleDelete}
               >
-                <Trash className="fill-gray-60 size-4" />
+                <Trash className="fill-icon-secondary size-4" />
               </Button>
             )}
             <Button
               variant="none"
-              className="hover:bg-brand-0 flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent"
+              className="hover:bg-status-info-background flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent"
               title="Закрыть"
               onClick={onClose}
             >
-              <Close className="fill-gray-60 size-4" />
+              <Close className="fill-icon-secondary size-4" />
             </Button>
           </div>
         </div>
@@ -147,24 +155,24 @@ export const CommentThreadPanel = track(function CommentThreadPanel({
               </Avatar>
               <div className="min-w-0 flex-1">
                 <div className="flex items-baseline gap-2">
-                  <span className="truncate text-sm font-medium text-gray-100">
+                  <span className="text-text-primary truncate text-sm font-medium">
                     {message.authorName}
                   </span>
-                  <span className="text-gray-40 shrink-0 text-xs">
+                  <span className="text-text-disabled shrink-0 text-xs">
                     {formatMessageTime(message.createdAt)}
                   </span>
                   {isOwnMessage && (
                     <button
                       type="button"
-                      className="hover:bg-brand-0 ml-auto shrink-0 rounded p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
+                      className="hover:bg-status-info-background ml-auto shrink-0 rounded p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
                       title="Удалить сообщение"
                       onClick={() => handleDeleteMessage(message.id)}
                     >
-                      <Trash className="fill-gray-40 size-3.5" />
+                      <Trash className="fill-icon-disabled size-3.5" />
                     </button>
                   )}
                 </div>
-                <p className="text-sm wrap-break-word whitespace-pre-wrap text-gray-100">
+                <p className="text-text-primary text-sm wrap-break-word whitespace-pre-wrap">
                   {message.text}
                 </p>
               </div>

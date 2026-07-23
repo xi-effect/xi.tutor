@@ -24,7 +24,7 @@ export const Filters = ({ className }: { className?: string }) => {
   return (
     <div className={`flex flex-row items-center gap-5 ${className || ''}`}>
       <div className="flex flex-row items-center gap-2">
-        <span className="text-gray-60 text-m-base">Статус:</span>
+        <span className="text-text-secondary text-m-base">Статус:</span>
 
         <Select
           value={status}
@@ -48,7 +48,7 @@ export const Filters = ({ className }: { className?: string }) => {
       </div>
 
       <div className="flex flex-row items-center gap-2">
-        <span className="text-gray-60 text-m-base">Тип занятия:</span>
+        <span className="text-text-secondary text-m-base">Тип занятия:</span>
 
         <Select
           value={type}
@@ -70,7 +70,7 @@ export const Filters = ({ className }: { className?: string }) => {
       </div>
 
       <div className="flex flex-row items-center gap-2">
-        <span className="text-gray-60 text-m-base">Предмет:</span>
+        <span className="text-text-secondary text-m-base">Предмет:</span>
 
         <Select
           value={subject}

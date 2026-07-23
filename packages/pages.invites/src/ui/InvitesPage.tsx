@@ -37,7 +37,7 @@ export const InvitesPage = () => {
             <Logo />
           </div>
           <div className="flex w-full flex-col items-center gap-4 p-8 sm:w-[400px]">
-            <p className="text-gray-80 dark:text-gray-80">Загрузка приглашения...</p>
+            <p className="text-text-primary dark:text-text-primary">Загрузка приглашения...</p>
           </div>
         </section>
       </SupportPageShell>

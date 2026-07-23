@@ -47,7 +47,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
   if (error) {
     return (
       <div
-        className="bg-gray-0 border-gray-10 overflow-hidden rounded-xl border shadow-md"
+        className="bg-background-surface border-border-default overflow-hidden rounded-xl border shadow-md"
         style={{ width: shape.props.w, height: AUDIO_SHAPE_HEIGHT }}
       >
         <AudioPlayerError message={error} />
@@ -58,10 +58,10 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
   if (status === 'idle' || status === 'loading' || !shape.props.src) {
     return (
       <div
-        className="bg-gray-0 border-gray-10 overflow-hidden rounded-xl border shadow-md"
+        className="bg-background-surface border-border-default overflow-hidden rounded-xl border shadow-md"
         style={{ pointerEvents: 'none', width: shape.props.w, height: AUDIO_SHAPE_HEIGHT }}
       >
-        <div className="text-gray-40 flex h-full w-full items-center justify-center">
+        <div className="text-text-disabled flex h-full w-full items-center justify-center">
           <span className="text-xs">{status === 'idle' ? 'Аудио' : 'Загрузка...'}</span>
         </div>
       </div>
@@ -70,7 +70,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
 
   return (
     <div
-      className="bg-gray-0 border-gray-10 overflow-hidden rounded-xl border shadow-md"
+      className="bg-background-surface border-border-default overflow-hidden rounded-xl border shadow-md"
       style={{ pointerEvents: 'none', width: shape.props.w, height: cardHeight }}
     >
       <div className="flex h-[80px] shrink-0 items-center gap-3 px-3">

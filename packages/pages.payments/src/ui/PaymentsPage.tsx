@@ -12,7 +12,6 @@ import {
   useGetRecipientInvoiceByStudent,
 } from 'common.services';
 import { UserRoleT } from 'common.api';
-import { DateTimeDisplay } from 'common.ui';
 import { MobileTutorActionButton } from 'features.invites';
 import { ModalTemplate } from './Templates';
 
@@ -179,12 +178,9 @@ export const PaymentsPage = () => {
   );
 
   return (
-    <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pr-0">
+    <div className="bg-background-page flex h-screen flex-col justify-between gap-6 pr-0">
       <div className="xs:pl-5 flex h-screen flex-col pl-0">
-        <div className="xs:pl-0 flex flex-col gap-5 pt-5 pr-5 pl-5">
-          <div className="flex h-8 items-center">
-            <DateTimeDisplay />
-          </div>
+        <div className="xs:pl-0 flex flex-col pt-5 pr-5 pl-5">
           <Header
             onCreateInvoice={onOpenInvoiceModal}
             activeTab={activeTab}

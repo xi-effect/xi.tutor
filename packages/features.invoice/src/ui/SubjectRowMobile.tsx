@@ -51,7 +51,7 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
           />
         </div>
         <Button className="ml-2 h-6 w-6 p-0" variant="none" onClick={() => remove(index)}>
-          <Close size="s" className="fill-gray-40 h-6 w-6" />
+          <Close size="s" className="fill-icon-disabled h-6 w-6" />
         </Button>
       </div>
 
@@ -71,7 +71,7 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
                     min={DEFAULT_VALUE}
                     step={0.01}
                     variant="s"
-                    after={<span className="text-gray-60">₽</span>}
+                    after={<span className="text-text-secondary">₽</span>}
                     onChange={(e) => {
                       const rawValue = e.target.value.replace(',', '.');
 
@@ -99,7 +99,7 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
           />
         </div>
 
-        <span className="text-gray-60 shrink-0 text-sm">x</span>
+        <span className="text-text-secondary shrink-0 text-sm">x</span>
 
         <div className="min-w-[50px] flex-1">
           <FormField
@@ -126,7 +126,7 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
           />
         </div>
 
-        <span className="text-gray-60 shrink-0 text-sm">=</span>
+        <span className="text-text-secondary shrink-0 text-sm">=</span>
 
         <div className="min-w-[90px] flex-1">
           <FormItem>
@@ -137,7 +137,7 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
                 value={totalPrice}
                 placeholder="Сумма"
                 variant="s"
-                after={<span className="text-gray-60">₽</span>}
+                after={<span className="text-text-secondary">₽</span>}
                 readOnly
               />
             </FormControl>

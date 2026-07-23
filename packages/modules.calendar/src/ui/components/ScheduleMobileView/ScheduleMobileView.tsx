@@ -86,12 +86,12 @@ export const ScheduleMobileView = ({
   );
 
   return (
-    <div className={cn('bg-gray-5 flex h-full min-h-0 flex-col overflow-hidden')}>
-      <div className="bg-gray-5 shrink-0 px-4 pt-4 pb-3">
-        <div className="bg-gray-0 flex h-[184px] flex-col rounded-[20px] p-4">
+    <div className={cn('bg-background-page flex h-full min-h-0 flex-col overflow-hidden')}>
+      <div className="bg-background-page shrink-0 px-4 pt-4 pb-3">
+        <div className="bg-background-surface flex h-[184px] flex-col rounded-[20px] p-4">
           <div className="flex h-[32px] flex-row items-center justify-between gap-2">
-            <span className="text-l-base font-medium text-gray-100">Расписание</span>
-            <span className="text-s-base text-gray-60">{monthLabel}</span>
+            <span className="text-l-base text-text-primary font-medium">Расписание</span>
+            <span className="text-s-base text-text-secondary">{monthLabel}</span>
           </div>
           <ScheduleWeekCarousel
             weekStart={weekStart}
@@ -108,7 +108,7 @@ export const ScheduleMobileView = ({
                 onClick={() => handleAddLesson(selectedDate)}
                 data-umami-event="schedule-add-lesson-mobile"
               >
-                <Plus className="fill-gray-0 h-4 w-4 shrink-0" />
+                <Plus className="fill-action-primary-text h-4 w-4 shrink-0" />
                 {t('add_lesson')}
               </Button>
             </div>

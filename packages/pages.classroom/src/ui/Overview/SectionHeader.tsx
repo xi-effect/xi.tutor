@@ -26,13 +26,13 @@ export const SectionHeader = ({ title, tabLink: tabLink }: SectionHeaderProps) =
 
   return (
     <div className="flex flex-row items-center justify-start gap-2">
-      <h2 className="text-xl-base text-gray-100 first-letter:uppercase">{title}</h2>
+      <h2 className="text-xl-base text-text-primary first-letter:uppercase">{title}</h2>
       <Button
         variant="none"
         className="flex size-8 items-center justify-center rounded-[4px] p-0"
         onClick={() => handleTabChange(tabLink)}
       >
-        <ArrowRight className="fill-gray-60 size-6" />
+        <ArrowRight className="fill-icon-secondary size-6" />
       </Button>
     </div>
   );

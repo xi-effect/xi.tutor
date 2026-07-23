@@ -13,7 +13,7 @@ import { ModalInvitation } from './ModalInvitation';
 const DRAWER_TITLE = 'Выберите действие';
 
 const menuRowClassName = cn(
-  'border-gray-10 bg-gray-0 hover:bg-gray-5 flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors',
+  'border-border-default bg-background-surface hover:bg-background-page flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors',
 );
 
 export type MobileTutorActionButtonVariant = 'main' | 'classrooms' | 'materials' | 'payments';
@@ -190,12 +190,12 @@ export const MobileTutorActionButton = ({
       <Drawer open={drawerOpen} onOpenChange={setDrawerOpen} modal>
         <DrawerContent className="max-h-screen w-full">
           <div className="flex flex-col gap-4 pb-8">
-            <DrawerTitle className="text-m-base font-medium text-gray-100">
+            <DrawerTitle className="text-m-base text-text-primary font-medium">
               {DRAWER_TITLE}
             </DrawerTitle>
             <DrawerDescription className="sr-only">{DRAWER_TITLE}</DrawerDescription>
 
-            <div className="dark:bg-gray-0 flex flex-col gap-3">
+            <div className="dark:bg-background-surface flex flex-col gap-3">
               {meta.actions.map(({ id, label, description, Icon, umamiEvent, onboardingId }) => (
                 <button
                   key={id}
@@ -205,10 +205,10 @@ export const MobileTutorActionButton = ({
                   data-umami-event={`${eventPrefix}-${umamiEvent}`}
                   className={menuRowClassName}
                 >
-                  <Icon className="size-6 shrink-0 text-gray-100" />
+                  <Icon className="text-text-primary size-6 shrink-0" />
                   <span className="flex min-w-0 flex-1 flex-col gap-0.5 text-left">
-                    <span className="text-m-base font-medium text-gray-100">{label}</span>
-                    <span className="text-s-base text-gray-60">{description}</span>
+                    <span className="text-m-base text-text-primary font-medium">{label}</span>
+                    <span className="text-s-base text-text-secondary">{description}</span>
                   </span>
                 </button>
               ))}

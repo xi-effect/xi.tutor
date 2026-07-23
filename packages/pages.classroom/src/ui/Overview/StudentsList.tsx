@@ -40,7 +40,7 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
   if (students.length === 0) {
     return (
       <div className="flex flex-col items-center gap-4 pt-5">
-        <h2 className="text-lg font-semibold text-gray-100">Добавьте ученика в группу</h2>
+        <h2 className="text-text-primary text-lg font-semibold">Добавьте ученика в группу</h2>
         <ModalStudentsGroup>
           <Button size="m" variant="ghost">
             Добавить ученика
@@ -63,7 +63,7 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
     <div className="flex flex-row gap-8 pb-4">
       {students.map(({ user_id, display_name }: GroupStudentsListSchema) => (
         <div
-          className="border-gray-60 relative flex min-h-30 min-w-[350px] items-center justify-between rounded-2xl border p-4"
+          className="border-border-strong relative flex min-h-30 min-w-[350px] items-center justify-between rounded-2xl border p-4"
           key={user_id}
         >
           <div className="flex flex-col gap-2">
@@ -74,7 +74,7 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
                 src={`https://api.sovlium.ru/files/users/${user_id}/avatar.webp`}
                 size="l"
               />
-              <h3 className="text-m-base font-medium text-gray-100">{display_name}</h3>
+              <h3 className="text-m-base text-text-primary font-medium">{display_name}</h3>
             </div>
             <ContactsBadge userId={user_id} />
           </div>
@@ -82,13 +82,13 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button className="h-8 w-8 rounded-md" variant="none" size="icon">
-                  <MoreVert className="h-4 w-4 dark:fill-gray-100" />
+                  <MoreVert className="dark:fill-icon-primary h-4 w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent
                 side="bottom"
                 align="end"
-                className="border-gray-10 bg-gray-0 border p-1"
+                className="border-border-default bg-background-surface border p-1"
               >
                 <DropdownMenuItem
                   onClick={() => {

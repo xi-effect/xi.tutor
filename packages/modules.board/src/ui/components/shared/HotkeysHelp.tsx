@@ -71,16 +71,19 @@ const HotkeysHelpBody = () => (
   <div className="space-y-6 p-6">
     {Object.entries(groupedHotkeys).map(([category, items]) => (
       <div key={category}>
-        <h3 className="mb-3 text-lg font-semibold text-gray-100">{category}</h3>
+        <h3 className="text-text-primary mb-3 text-lg font-semibold">{category}</h3>
         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {items.map((item, index) => (
-            <div key={index} className="bg-gray-5 flex items-center justify-between rounded-lg p-2">
-              <span className="text-gray-80 text-sm">{item.description}</span>
+            <div
+              key={index}
+              className="bg-background-page flex items-center justify-between rounded-lg p-2"
+            >
+              <span className="text-text-primary text-sm">{item.description}</span>
               <div className="flex gap-1">
                 {item.keys.map((key, keyIndex) => (
                   <div key={keyIndex} className="flex items-center gap-1">
-                    {keyIndex > 0 && <span className="text-gray-60">+</span>}
-                    <kbd className="border-gray-20 bg-gray-0 rounded border px-2 py-1 font-mono text-xs text-gray-100 shadow-sm">
+                    {keyIndex > 0 && <span className="text-text-secondary">+</span>}
+                    <kbd className="border-border-default bg-background-surface text-text-primary rounded border px-2 py-1 font-mono text-xs shadow-sm">
                       {key}
                     </kbd>
                   </div>

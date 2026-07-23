@@ -80,17 +80,17 @@ export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps)
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="bg-gray-0 group text-s-base hover:text-gray-0 hover:bg-brand-80 data-[state=open]:text-gray-0 data-[state=open]:bg-brand-80 border-gray-30 flex h-8 w-[160px] flex-row items-center justify-between gap-[6px] rounded-lg border px-4 font-medium text-gray-100 transition-colors duration-200 hover:border-gray-50 max-[550px]:hidden"
+        className="bg-background-surface group text-s-base hover:text-text-on-accent hover:bg-action-primary-background-default data-[state=open]:text-text-on-accent data-[state=open]:bg-action-primary-background-default border-border-control text-text-primary hover:border-border-control flex h-8 w-[160px] flex-row items-center justify-between gap-[6px] rounded-lg border px-4 font-medium transition-colors duration-200 max-[550px]:hidden"
         data-umami-event="material-create-board-menu-open"
       >
         <span>Создать доску</span>
-        <ChevronSmallBottom className="group-hover:fill-gray-0 group-data-[state=open]:fill-gray-0 h-[16px] w-[16px] fill-gray-100 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+        <ChevronSmallBottom className="group-hover:fill-action-primary-text group-data-[state=open]:fill-action-primary-text fill-icon-primary h-[16px] w-[16px] transition-transform duration-200 group-data-[state=open]:rotate-180" />
       </DropdownMenuTrigger>
 
-      <DropdownMenuContent className="border-gray-10 text-s-base w-[160px] border p-1 font-normal">
+      <DropdownMenuContent className="border-border-default text-s-base w-[160px] border p-1 font-normal">
         <DropdownMenuItem
           onClick={() => handleCreateBoardWithAccess('read_write')}
-          className="hover:bg-brand-0 hover:text-brand-100 py-6 hover:rounded-lg"
+          className="hover:bg-status-info-background hover:text-text-link py-6 hover:rounded-lg"
           disabled={addClassroomMaterials.isPending}
           data-umami-event="material-create-board"
           data-umami-event-access-mode="read_write"
@@ -100,7 +100,7 @@ export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps)
 
         <DropdownMenuItem
           onClick={() => handleCreateBoardWithAccess('read_only')}
-          className="hover:bg-brand-0 hover:text-brand-100 hover:rounded-lg"
+          className="hover:bg-status-info-background hover:text-text-link hover:rounded-lg"
           disabled={addClassroomMaterials.isPending}
           data-umami-event="material-create-board"
           data-umami-event-access-mode="read_only"
@@ -110,7 +110,7 @@ export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps)
 
         <DropdownMenuItem
           onClick={() => handleCreateBoardWithAccess('no_access')}
-          className="hover:bg-brand-0 hover:text-brand-100 hover:rounded-lg"
+          className="hover:bg-status-info-background hover:text-text-link hover:rounded-lg"
           disabled={addClassroomMaterials.isPending}
           data-umami-event="material-create-board"
           data-umami-event-access-mode="no_access"

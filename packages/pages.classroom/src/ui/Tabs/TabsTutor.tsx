@@ -95,12 +95,12 @@ const TutorDesktopToolbar = ({
         <Button
           type="button"
           variant="none"
-          className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
+          className="bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
           onClick={onAddLessonClick}
           data-umami-event="classroom-add-lesson"
           aria-label="Добавить занятие"
         >
-          <Add className="fill-brand-80 size-6" />
+          <Add className="fill-icon-brand size-6" />
         </Button>
       </div>
     );
@@ -115,7 +115,7 @@ const TutorDesktopToolbar = ({
         data-umami-event="classroom-create-invoice"
       >
         <span className="hidden sm:flex">Создать счёт на оплату</span>
-        <Plus size="sm" className="fill-brand-0 flex sm:hidden" />
+        <Plus size="sm" className="fill-action-primary-text flex sm:hidden" />
       </Button>
     );
   }
@@ -125,7 +125,7 @@ const TutorDesktopToolbar = ({
       <Button
         size="s"
         variant="text"
-        className="bg-red-20/50 text-red-60 hover:bg-red-20/80 hover:text-red-60 ml-auto rounded-lg"
+        className="bg-status-error-background/50 text-text-danger hover:bg-status-error-background/80 hover:text-text-danger ml-auto rounded-lg"
         onClick={onDeleteClassroom}
         disabled={isDeletingClassroom}
         data-umami-event="classroom-delete"
@@ -219,7 +219,7 @@ export const TabsTutor = () => {
           value={currentTab}
           onValueChange={handleTabChange}
         >
-          <div className="bg-gray-0 xs:ml-0 mr-4 ml-4 flex h-[56px] flex-row items-center gap-4 rounded-2xl px-2">
+          <div className="bg-background-surface xs:ml-0 mr-4 ml-4 flex h-[56px] flex-row items-center gap-4 rounded-2xl px-2">
             {isMobile ? (
               <ClassroomMobileTabSwitcher
                 tabs={tabs}
@@ -232,7 +232,7 @@ export const TabsTutor = () => {
                   tabs={tabs}
                   activeTab={currentTab}
                   onChange={handleTabChange}
-                  className="bg-gray-0 flex flex-row gap-0"
+                  className="bg-background-surface flex flex-row gap-0"
                   tabClassName={cn(switcherTabClass, 'text-m-base font-medium')}
                 />
                 <TutorDesktopToolbar
@@ -247,7 +247,7 @@ export const TabsTutor = () => {
             )}
           </div>
 
-          <div className="bg-gray-0 xs:pb-0 xs:rounded-tl-2xl flex min-h-0 min-w-0 flex-1 flex-col rounded-none pt-0 pb-40 pl-4">
+          <div className="bg-background-surface xs:pb-0 xs:rounded-tl-2xl flex min-h-0 min-w-0 flex-1 flex-col rounded-none pt-0 pb-40 pl-4">
             <SharedTabsContent
               extraContent={
                 <Tabs.Content className="data-[state=inactive]:hidden" value="info">

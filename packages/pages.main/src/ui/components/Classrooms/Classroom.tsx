@@ -64,17 +64,17 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   };
 
   return (
-    <div className="border-gray-30 relative flex min-h-[140px] w-[240px] flex-col items-start justify-start gap-3 rounded-2xl border bg-transparent px-5 py-4 xl:w-[280px]">
+    <div className="border-border-control relative flex min-h-[140px] w-[240px] flex-col items-start justify-start gap-3 rounded-2xl border bg-transparent px-5 py-4 xl:w-[280px]">
       <Tooltip delayDuration={1000}>
         <TooltipTrigger asChild>
           <Button
             onClick={handleClick}
-            className="group hover:bg-brand-0 absolute top-2 right-4 h-8 w-10 rounded-md bg-transparent p-0"
+            className="group hover:bg-status-info-background absolute top-2 right-4 h-8 w-10 rounded-md bg-transparent p-0"
             variant="icon"
             data-umami-event="classroom-open"
             data-umami-event-classroom-id={classroom.id}
           >
-            <Account className="fill-gray-60 group-hover:fill-brand-100 h-5 w-5" />
+            <Account className="fill-icon-secondary group-hover:fill-icon-brand h-5 w-5" />
           </Button>
         </TooltipTrigger>
         <TooltipContent>Перейти в кабинет</TooltipContent>
@@ -98,7 +98,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         )}
 
         {classroom.kind === 'group' && (
-          <div className="bg-brand-80 text-gray-0 flex h-8 min-h-8 w-8 min-w-8 items-center justify-center rounded-3xl">
+          <div className="bg-action-primary-background-default text-text-on-accent flex h-8 min-h-8 w-8 min-w-8 items-center justify-center rounded-3xl">
             {classroom.name?.[0].toUpperCase() ?? ''}
           </div>
         )}
@@ -106,7 +106,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
             <div className="flex h-8 w-full flex-row items-center justify-start gap-2">
-              <h3 className="text-s-base line-clamp-2 text-left font-medium text-gray-100">
+              <h3 className="text-s-base text-text-primary line-clamp-2 text-left font-medium">
                 {classroom.name}
               </h3>
             </div>

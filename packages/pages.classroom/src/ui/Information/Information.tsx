@@ -180,17 +180,19 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
               name="status"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel className="text-m-base dark:text-gray-100">Статус занятий</FormLabel>
+                  <FormLabel className="text-m-base dark:text-text-primary">
+                    Статус занятий
+                  </FormLabel>
                   <FormControl>
                     <Select
                       value={field.value}
                       onValueChange={field.onChange}
                       disabled={isUpdating}
                     >
-                      <SelectTrigger className="dark:text-gray-80 h-[32px] w-full">
+                      <SelectTrigger className="dark:text-text-primary h-[32px] w-full">
                         <SelectValue className="w-full" placeholder="Статус занятий" />
                       </SelectTrigger>
-                      <SelectContent className="dark:text-gray-80 w-full">
+                      <SelectContent className="dark:text-text-primary w-full">
                         <SelectItem value="active">Учится</SelectItem>
                         <SelectItem value="paused">На паузе</SelectItem>
                         <SelectItem value="finished">Обучение завершено</SelectItem>
@@ -206,7 +208,7 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
               name="subject"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel className="text-m-base dark:text-gray-100">Предмет</FormLabel>
+                  <FormLabel className="text-m-base dark:text-text-primary">Предмет</FormLabel>
                   <FormControl>
                     <Autocomplete
                       field={field}

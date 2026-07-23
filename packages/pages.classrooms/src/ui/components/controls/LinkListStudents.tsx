@@ -13,7 +13,7 @@ export const LinkListStudents = ({ className }: LinkListStudentsT) => {
       <Button
         size="s"
         variant="ghost"
-        className={cn('rounded-lg px-4 py-2 font-medium text-gray-100', className)}
+        className={cn('text-text-primary rounded-lg px-4 py-2 font-medium', className)}
       >
         Список учеников
       </Button>

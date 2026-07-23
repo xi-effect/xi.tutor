@@ -25,17 +25,17 @@ export const ClassroomSelector = ({ control }: ClassroomSelectorProps) => {
       defaultValue=""
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="text-gray-100">Кабинет</FormLabel>
+          <FormLabel className="text-text-primary">Кабинет</FormLabel>
           <FormControl>
             <Select
               disabled={isLoading || isDisabled}
               value={field.value}
               onValueChange={(value) => field.onChange(value)}
             >
-              <SelectTrigger className="mt-1 mb-0 w-full text-gray-100">
+              <SelectTrigger className="text-text-primary mt-1 mb-0 w-full">
                 <SelectValue
                   placeholder={getPlaceholder()}
-                  className="data-placeholder:text-gray-40 text-gray-100"
+                  className="data-placeholder:text-text-disabled text-text-primary"
                 />
               </SelectTrigger>
               <SelectContent className="w-full">
@@ -43,7 +43,7 @@ export const ClassroomSelector = ({ control }: ClassroomSelectorProps) => {
                   <SelectItem
                     key={classroom.id}
                     value={classroom.id.toString()}
-                    className="text-gray-100"
+                    className="text-text-primary"
                   >
                     {classroom.name}
                   </SelectItem>

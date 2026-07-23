@@ -13,7 +13,7 @@ const Loading = () => {
   return (
     <div className="flex justify-center">
       <div
-        className="text-brand-80 inline-block size-6 animate-spin rounded-full border-[3px] border-current border-t-transparent"
+        className="text-text-link inline-block size-6 animate-spin rounded-full border-[3px] border-current border-t-transparent"
         role="status"
         aria-label="loading"
       >
@@ -51,19 +51,19 @@ export const EmailPageSuccess = () => {
       )}
       {isSuccess && !isLoading && (
         <div className="mt-8 flex flex-col items-center gap-1">
-          <span className="text-m-base w-full text-center text-gray-100">Успешных уроков!</span>
+          <span className="text-m-base text-text-primary w-full text-center">Успешных уроков!</span>
         </div>
       )}
       {isAlreadyConfirmed && !isLoading && (
         <div className="mt-8 flex flex-col items-center gap-1">
-          <span className="text-m-base w-full text-center text-gray-100">
+          <span className="text-m-base text-text-primary w-full text-center">
             Почта уже подтверждена
           </span>
         </div>
       )}
       {isError && !isLoading && (
         <div className="mt-8 flex flex-col items-center gap-1">
-          <span className="text-m-base w-full text-center text-gray-100">
+          <span className="text-m-base text-text-primary w-full text-center">
             Ошибка при подтверждении почты
           </span>
         </div>

@@ -6,7 +6,7 @@ import { EmptyClassrooms } from 'common.ui';
 const CLASSROOMS_HELP_URL = 'https://support.sovlium.ru/classrooms';
 
 const emptyClassroomsHelpLinkClass =
-  'bg-gray-5 hover:bg-gray-10 text-xs-base h-8 rounded-lg px-4 font-medium text-gray-80';
+  'bg-background-page hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
 
 type ClassroomsEmptyStateProps = {
   title: string;
@@ -21,7 +21,7 @@ export const ClassroomsEmptyState = ({
   description,
   withHelpLink = false,
 }: ClassroomsEmptyStateProps) => (
-  <div className="bg-gray-0 ml-4 box-border flex h-full min-h-0 w-full flex-col rounded-tl-2xl pt-2 pr-5 pb-4 pl-5">
+  <div className="bg-background-surface ml-4 box-border flex h-full min-h-0 w-full flex-col rounded-tl-2xl pt-2 pr-5 pb-4 pl-5">
     <div
       className={cn(
         'flex min-h-0 flex-1 flex-col items-center justify-center gap-8 overflow-hidden',
@@ -29,8 +29,8 @@ export const ClassroomsEmptyState = ({
       )}
     >
       <div className="flex max-w-md flex-col gap-2 text-center">
-        <p className="text-l-base font-semibold text-gray-100">{title}</p>
-        <p className="text-s-base text-gray-60 dark:text-gray-50">{description}</p>
+        <p className="text-l-base text-text-primary font-semibold">{title}</p>
+        <p className="text-s-base text-text-secondary dark:text-text-muted">{description}</p>
         {withHelpLink ? (
           <div className="mt-4 flex justify-center">
             <Button
@@ -41,7 +41,7 @@ export const ClassroomsEmptyState = ({
               data-umami-event="classrooms-page-empty-help"
             >
               Подробнее о работе с кабинетами
-              <ArrowUpRight className="fill-gray-80 ml-1 size-4 shrink-0" />
+              <ArrowUpRight className="fill-icon-primary ml-1 size-4 shrink-0" />
             </Button>
           </div>
         ) : null}

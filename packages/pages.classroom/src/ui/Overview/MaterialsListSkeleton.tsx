@@ -8,7 +8,10 @@ type MaterialsListSkeletonPropsT = {
 // skeleton that copies materials card
 export const MaterialsListSkeleton = ({ className }: MaterialsListSkeletonPropsT) => (
   <div
-    className={cn('border-gray-30 bg-gray-0 flex flex-col gap-2 rounded-2xl border p-4', className)}
+    className={cn(
+      'border-border-control bg-background-surface flex flex-col gap-2 rounded-2xl border p-4',
+      className,
+    )}
   >
     <div className="flex flex-row items-center justify-between">
       <Skeleton variant="rectangular" className="h-7 min-h-7 w-40 max-w-40 shrink-0 rounded-full" />

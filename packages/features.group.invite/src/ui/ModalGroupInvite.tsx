@@ -103,7 +103,7 @@ export const ModalGroupInvite = ({
       <ModalContent className="max-w-[600px]">
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
-          <ModalTitle className="max-w-[calc(100%-48px)] text-gray-100">
+          <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
             Приглашение в группу
           </ModalTitle>
           <ModalDescription>
@@ -115,7 +115,7 @@ export const ModalGroupInvite = ({
             <div className="flex w-full items-center justify-center">
               {isLoading || isResettingInvite ? (
                 <div
-                  className="text-brand-80 inline-block size-6 animate-spin rounded-full border-[3px] border-current border-t-transparent"
+                  className="text-text-link inline-block size-6 animate-spin rounded-full border-[3px] border-current border-t-transparent"
                   role="status"
                   aria-label="loading"
                 >
@@ -144,13 +144,13 @@ export const ModalGroupInvite = ({
                     size="icon"
                     data-umami-event="group-invite-menu-open"
                   >
-                    <MoreVert className="h-6 w-6 fill-gray-100" />
+                    <MoreVert className="fill-icon-primary h-6 w-6" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   side="bottom"
                   align="end"
-                  className="border-gray-10 bg-gray-0 border p-1"
+                  className="border-border-default bg-background-surface border p-1"
                 >
                   <DropdownMenuItem
                     onClick={handleResetInvite}
@@ -169,7 +169,7 @@ export const ModalGroupInvite = ({
             classroom.kind === 'group' &&
             classroom?.enrollments_count !== undefined &&
             !isLoading && (
-              <div className="text-xs-base flex flex-col gap-2 text-green-100">
+              <div className="text-xs-base text-status-success-text flex flex-col gap-2">
                 Cтудентов в кабинете: {classroom?.enrollments_count} из 15
               </div>
             )}

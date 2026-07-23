@@ -8,7 +8,7 @@ export const ChartsPage = () => {
       <div className="w-full pt-2 pr-4">
         <Alert className="w-full" variant="brand">
           <AlertIcon>
-            <InfoCircle className="fill-brand-100" />
+            <InfoCircle className="fill-icon-brand" />
           </AlertIcon>
           <AlertContainer className="h-full">
             <AlertTitle>Начало работы с аналитикой</AlertTitle>

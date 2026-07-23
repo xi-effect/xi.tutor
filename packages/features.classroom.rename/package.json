@@ -13,10 +13,10 @@
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@tanstack/react-query": "^5.0.0",
-    "@xipkg/button": "4.1.0",
-    "@xipkg/form": "4.2.2",
-    "@xipkg/input": "2.2.14",
-    "@xipkg/modal": "4.5.5",
+    "@xipkg/button": "4.3.0",
+    "@xipkg/form": "4.3.0",
+    "@xipkg/input": "2.3.0",
+    "@xipkg/modal": "4.6.0",
     "common.services": "workspace:*",
     "react-hook-form": "^7.73.1",
     "zod": "^4.3.6"
@@ -27,7 +27,7 @@
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
     "@xipkg/eslint": "4.6.0",
-    "@xipkg/tailwind": "0.8.6",
+    "@xipkg/tailwind": "1.0.0",
     "@xipkg/typescript": "latest",
     "common.eslint": "workspace:*",
     "common.typescript": "workspace:*",

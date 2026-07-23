@@ -57,13 +57,13 @@ export const CommentsFeedButton = track(function CommentsFeedButton() {
         <Button
           variant="none"
           data-comment-ui
-          className="hover:bg-brand-0 relative flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
+          className="hover:bg-status-info-background relative flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
           title="Комментарии"
           data-umami-event="board-comments-feed"
         >
           <Inbox size="s" className={cn('h-4 w-4 lg:h-6 lg:w-6', boardIconClass)} />
           {unreadCount > 0 && (
-            <span className="bg-brand-80 border-gray-0 absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full border-2 px-0.5 text-[9px] leading-none font-medium text-white">
+            <span className="bg-action-primary-background-default border-border-default absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full border-2 px-0.5 text-[9px] leading-none font-medium text-white">
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
@@ -76,9 +76,9 @@ export const CommentsFeedButton = track(function CommentsFeedButton() {
         data-comment-ui
         className={cn(boardMenuSurfaceClass, 'z-100 w-80 rounded-xl p-2')}
       >
-        <p className="text-gray-60 px-2 py-1 text-xs">Комментарии на доске</p>
+        <p className="text-text-secondary px-2 py-1 text-xs">Комментарии на доске</p>
         {sorted.length === 0 ? (
-          <p className="text-gray-40 px-2 py-6 text-center text-sm">Пока нет комментариев</p>
+          <p className="text-text-disabled px-2 py-6 text-center text-sm">Пока нет комментариев</p>
         ) : (
           <div className="flex max-h-96 flex-col gap-0.5 overflow-y-auto">
             {sorted.map(({ thread, messages }) => {
@@ -109,8 +109,12 @@ export const CommentsFeedButton = track(function CommentsFeedButton() {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
                       <span className="truncate text-sm font-medium">{authorName}</span>
-                      {thread.resolved && <Check className="text-green-80 size-3 shrink-0" />}
-                      {unread && <span className="bg-brand-80 size-1.5 shrink-0 rounded-full" />}
+                      {thread.resolved && (
+                        <Check className="text-status-success-text size-3 shrink-0" />
+                      )}
+                      {unread && (
+                        <span className="bg-action-primary-background-default size-1.5 shrink-0 rounded-full" />
+                      )}
                     </div>
                     <p className="truncate text-xs opacity-80">{lastMessage?.text}</p>
                   </div>

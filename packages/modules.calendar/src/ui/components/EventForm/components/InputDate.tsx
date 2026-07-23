@@ -35,8 +35,8 @@ export const InputDate = memo<InputDateProps>(({ value, name, onChange }) => {
         value={getFullDateString(date)}
         placeholder="Введите дату"
         variant="s"
-        className="cursor-pointer border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
-        before={<Calendar className="fill-gray-80 h-4 w-4" />}
+        className="hover:border-border-strong focus:border-border-strong cursor-pointer border border-transparent outline-none"
+        before={<Calendar className="fill-icon-primary h-4 w-4" />}
       />
     </DatePicker>
   );

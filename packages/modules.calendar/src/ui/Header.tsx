@@ -45,12 +45,12 @@ export const CalendarWeekNav = ({
       <Button
         type="button"
         variant="text"
-        className="bg-gray-0 border-gray-10 dark:border-gray-70 flex h-8 w-[60px] flex-none items-center justify-center rounded-l-lg rounded-r-none border border-r-0 p-0 dark:text-gray-100"
+        className="bg-background-surface border-border-default dark:border-border-strong dark:text-text-primary flex h-8 w-[60px] flex-none items-center justify-center rounded-l-lg rounded-r-none border border-r-0 p-0"
         onClick={onPrev}
         aria-label={t('prev_week')}
         data-umami-event="schedule-prev-week"
       >
-        <ArrowLeft className="fill-gray-80 dark:fill-gray-90 h-5 w-5" />
+        <ArrowLeft className="fill-icon-primary dark:fill-icon-primary h-5 w-5" />
       </Button>
 
       <DatePicker
@@ -65,23 +65,23 @@ export const CalendarWeekNav = ({
       >
         <button
           type="button"
-          className="bg-gray-0 border-gray-10 dark:border-gray-70 flex h-8 flex-none flex-row items-center justify-center gap-3 border px-5 py-2 text-center font-medium dark:bg-transparent dark:text-gray-100"
+          className="bg-background-surface border-border-default dark:border-border-strong dark:text-text-primary flex h-8 flex-none flex-row items-center justify-center gap-3 border px-5 py-2 text-center font-medium dark:bg-transparent"
           data-umami-event="schedule-week-picker"
         >
-          <span className="text-xs-base text-gray-80 w-full">{dateRangeLabel}</span>
-          <Calendar className="fill-brand-80 dark:fill-brand-80 h-5 w-5 flex-none" />
+          <span className="text-xs-base text-text-primary w-full">{dateRangeLabel}</span>
+          <Calendar className="fill-icon-brand dark:fill-icon-brand h-5 w-5 flex-none" />
         </button>
       </DatePicker>
 
       <Button
         type="button"
         variant="text"
-        className="bg-gray-0 border-gray-10 dark:border-gray-70 flex h-8 w-[60px] flex-none items-center justify-center rounded-l-none rounded-r-lg border border-l-0 p-0 dark:text-gray-100"
+        className="bg-background-surface border-border-default dark:border-border-strong dark:text-text-primary flex h-8 w-[60px] flex-none items-center justify-center rounded-l-none rounded-r-lg border border-l-0 p-0"
         onClick={onNext}
         aria-label={t('next_week')}
         data-umami-event="schedule-next-week"
       >
-        <ArrowRight className="fill-gray-80 dark:fill-gray-90 h-5 w-5" />
+        <ArrowRight className="fill-icon-primary dark:fill-icon-primary h-5 w-5" />
       </Button>
     </div>
   );
@@ -120,14 +120,14 @@ export const CalendarHeader = ({
         <div>
           <Button
             type="button"
-            variant="ghost"
+            variant="primary"
             size="s"
-            className="text-s-base text-brand-80 h-[32px] font-medium"
+            className="h-[32px] font-medium"
             onClick={() => onAddLessonClick()}
             data-umami-event="schedule-add-lesson"
           >
             Добавить занятие
-            <Plus className="fill-brand-80 ml-3 h-5 w-5" />
+            <Plus className="fill-text-on-accent ml-3 h-5 w-5" />
           </Button>
         </div>
       ) : null}

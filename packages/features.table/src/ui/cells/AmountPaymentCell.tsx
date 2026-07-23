@@ -7,8 +7,8 @@ type AmountPropsT = {
 export const AmountPaymentCell = ({ total }: AmountPropsT) => {
   return (
     <>
-      <span className="text-brand-100 text-m-base font-normal">{total} </span>
-      <span className="text-brand-40 text-xs-base font-normal">₽</span>
+      <span className="text-text-link text-m-base font-normal">{total} </span>
+      <span className="text-text-link text-xs-base font-normal">₽</span>
     </>
   );
 };

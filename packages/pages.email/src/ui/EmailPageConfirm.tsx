@@ -117,10 +117,10 @@ export const EmailPageConfirm = () => {
   return (
     <EmailPageLayout title="Подтвердите почту">
       <div className="mt-8 flex flex-col items-center gap-1">
-        <span className="text-m-base w-full text-center text-gray-100">
+        <span className="text-m-base text-text-primary w-full text-center">
           Перейдите по ссылке — отправили её на
         </span>
-        <span className="text-m-base w-full text-center text-gray-100">{email}</span>
+        <span className="text-m-base text-text-primary w-full text-center">{email}</span>
       </div>
       <Button
         size="m"
@@ -133,19 +133,19 @@ export const EmailPageConfirm = () => {
         {buttonText}
       </Button>
       {displayTimeRemaining > 0 && (
-        <span className="text-xxs-base text-gray-60 mt-1 w-full text-center">
+        <span className="text-xxs-base text-text-secondary mt-1 w-full text-center">
           Следующее письмо можно отправить через {formatTime(displayTimeRemaining)}
         </span>
       )}
       {showHint && (
-        <span className="text-xxs-base text-gray-60 mt-1 w-full text-center">
+        <span className="text-xxs-base text-text-secondary mt-1 w-full text-center">
           Если письмо не пришло, проверьте адрес и нажмите на эту кнопку
         </span>
       )}
       <div className="mt-8">
         <Alert className="h-full w-full" variant="brand">
           <AlertIcon>
-            <InfoCircle className="fill-brand-100" />
+            <InfoCircle className="fill-icon-brand" />
           </AlertIcon>
           <AlertContainer className="h-full">
             <AlertDescription>

@@ -1,20 +1,21 @@
 import { cn } from '@xipkg/utils';
 
 /** Семантические классы UI доски — следуют data-theme на html через @xipkg/tailwind */
-export const boardPanelClass = 'bg-gray-0 border-gray-10 border rounded-xl lg:rounded-2xl';
+export const boardPanelClass =
+  'bg-background-surface border-border-default border rounded-xl lg:rounded-2xl';
 
-export const boardMenuSurfaceClass = 'border-gray-10 bg-gray-0 border';
+export const boardMenuSurfaceClass = 'border-border-default bg-background-surface border';
 
 /**
  * Пункты выпадающих меню доски.
  * У @xipkg/dropdown SubTrigger и CheckboxItem не задают базовый цвет — только hover/focus.
  */
 export const boardMenuItemClass =
-  'text-gray-80 fill-gray-80 [&_svg]:fill-gray-80 hover:text-gray-100 hover:fill-gray-100 hover:[&_svg]:fill-gray-100 focus:text-gray-100 focus:fill-gray-100 focus:[&_svg]:fill-gray-100 data-[state=open]:bg-brand-0 data-[state=open]:text-brand-80 data-[state=open]:[&_svg]:fill-brand-80';
+  'text-text-primary fill-icon-primary [&_svg]:fill-icon-primary hover:text-text-primary hover:fill-icon-primary hover:[&_svg]:fill-icon-primary focus:text-text-primary focus:fill-icon-primary focus:[&_svg]:fill-icon-primary data-[state=open]:bg-status-info-background data-[state=open]:text-text-link data-[state=open]:[&_svg]:fill-icon-brand';
 
 /** CheckboxItem в @xipkg/dropdown рендерит lucide Check (stroke), не fill-иконки @xipkg/icons */
 export const boardMenuCheckboxItemClass =
-  'text-gray-80 hover:text-gray-100 focus:text-gray-100 [&_svg]:fill-none [&_svg]:stroke-current';
+  'text-text-primary hover:text-text-primary focus:text-text-primary [&_svg]:fill-none [&_svg]:stroke-current';
 
 /**
  * SubTrigger: слева fill-иконки @xipkg/icons, справа lucide ChevronRight (stroke).
@@ -23,18 +24,18 @@ export const boardMenuCheckboxItemClass =
 export const boardMenuSubTriggerClass = cn(
   boardMenuItemClass,
   'flex items-center gap-2 p-1',
-  '[&>svg:last-child]:!fill-none [&>svg:last-child]:shrink-0 [&>svg:last-child]:self-center [&>svg:last-child]:stroke-gray-80',
-  'hover:[&>svg:last-child]:!fill-none hover:[&>svg:last-child]:stroke-gray-100',
-  'focus:[&>svg:last-child]:!fill-none focus:[&>svg:last-child]:stroke-gray-100',
-  'data-[state=open]:[&>svg:last-child]:!fill-none data-[state=open]:[&>svg:last-child]:stroke-brand-80',
+  '[&>svg:last-child]:!fill-none [&>svg:last-child]:shrink-0 [&>svg:last-child]:self-center [&>svg:last-child]:stroke-icon-primary',
+  'hover:[&>svg:last-child]:!fill-none hover:[&>svg:last-child]:stroke-icon-primary',
+  'focus:[&>svg:last-child]:!fill-none focus:[&>svg:last-child]:stroke-icon-primary',
+  'data-[state=open]:[&>svg:last-child]:!fill-none data-[state=open]:[&>svg:last-child]:stroke-icon-brand',
 );
 
 /**
  * Иконки @xipkg/icons в тулбаре доски.
- * Svg по умолчанию theme=default → text-gray-80; часть path рисуется через currentColor,
+ * Svg по умолчанию theme=default → text-text-primary; часть path рисуется через currentColor,
  * часть — с захардкоженным fill. Выравниваем всё в text/fill gray-100.
  */
-export const boardIconClass = 'text-gray-100! [&_path]:fill-current!';
+export const boardIconClass = 'text-text-primary! [&_path]:fill-current!';
 
 /** Единый размер иконок в нижнем тулбаре доски */
 export const boardToolbarIconClass = cn(boardIconClass, 'size-7! shrink-0 sm:size-6!');
@@ -45,7 +46,7 @@ export const boardToolbarIconCompactClass = cn(
   'scale-[0.8] sm:scale-[0.82]',
 );
 
-export const boardTextClass = 'text-gray-100';
+export const boardTextClass = 'text-text-primary';
 
 /** z-index выпадающих меню и попапов поверх панелей доски (тулбар/зум — z-260) */
 export const boardDropdownZClass = 'z-270';
@@ -56,5 +57,5 @@ export const boardDropdownZClass = 'z-270';
  */
 export const boardPopoverListItemClass = cn(
   boardMenuItemClass,
-  'bg-transparent hover:bg-gray-5 rounded-lg transition-colors',
+  'bg-transparent hover:bg-background-page rounded-lg transition-colors',
 );

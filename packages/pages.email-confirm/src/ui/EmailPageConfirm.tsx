@@ -10,7 +10,7 @@ const Loading = () => {
   return (
     <div className="flex justify-center">
       <div
-        className="text-brand-80 inline-block size-6 animate-spin rounded-full border-[3px] border-current border-t-transparent"
+        className="text-text-link inline-block size-6 animate-spin rounded-full border-[3px] border-current border-t-transparent"
         role="status"
         aria-label="loading"
       >
@@ -55,7 +55,7 @@ export const EmailPageConfirm = () => {
   return (
     <SupportPageShell>
       <div className="flex w-full flex-1 flex-col items-center justify-center p-1 py-4">
-        <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex min-h-[348px] w-full max-w-[420px] bg-transparent">
+        <div className="xs:border xs:border-border-default xs:rounded-2xl flex min-h-[348px] w-full max-w-[420px] bg-transparent">
           <div className="xs:p-8 flex w-full flex-col items-center p-4">
             <div className="h-8">
               <Logo height={32} width={108} />
@@ -68,13 +68,13 @@ export const EmailPageConfirm = () => {
             {isSuccess && !isLoading && (
               <div
                 id="title"
-                className="text-l-base mt-4 flex items-center justify-center py-8 font-semibold text-gray-100"
+                className="text-l-base text-text-primary mt-4 flex items-center justify-center py-8 font-semibold"
               >
                 Почта подтверждена
               </div>
             )}
             {hasError && !isLoading && (
-              <div id="title" className="text-l-base mt-4 font-semibold text-gray-100">
+              <div id="title" className="text-l-base text-text-primary mt-4 font-semibold">
                 Ошибка при подтверждении почты
               </div>
             )}

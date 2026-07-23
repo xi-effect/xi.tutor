@@ -34,7 +34,7 @@ export const DataTable = <TData,>({ data, columns }: DataTableProps<TData>) => {
             {headerGroup.headers.map((header) => (
               <TableHead key={header.id} style={{ width: header.getSize() }}>
                 <div className="flex h-8 items-center gap-1 justify-self-start">
-                  <div className="text-gray-60 text-m-base font-medium">
+                  <div className="text-text-secondary text-m-base font-medium">
                     {flexRender(header.column.columnDef.header, header.getContext())}
                   </div>
 
@@ -50,7 +50,7 @@ export const DataTable = <TData,>({ data, columns }: DataTableProps<TData>) => {
 
       <TableBody>
         {table.getFilteredRowModel().rows.map((row) => (
-          <TableRow className="hover:shadow-[0_0_0_1px_var(--xi-gray-30)]" key={row.id}>
+          <TableRow className="hover:shadow-[0_0_0_1px_var(--xi-border-default)]" key={row.id}>
             {row.getVisibleCells().map((cell) => (
               <TableCell key={cell.id} style={{ width: cell.column.getSize() }}>
                 {flexRender(cell.column.columnDef.cell, cell.getContext())}

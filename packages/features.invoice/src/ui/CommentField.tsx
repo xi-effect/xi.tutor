@@ -17,9 +17,9 @@ export const CommentField = ({ control }: CommentFieldProps) => {
       defaultValue={null}
       render={({ field: formField }) => (
         <FormItem>
-          <FormLabel className="text-gray-100">
+          <FormLabel className="text-text-primary">
             {isMobile ? 'Комментарий' : 'Комментарий для ученика'}{' '}
-            <span className="text-gray-60 text-xs-base">не обязательно</span>
+            <span className="text-text-secondary text-xs-base">не обязательно</span>
           </FormLabel>
           <FormControl className="my-2">
             <Input placeholder="например, оплата занятий за сентябрь" {...formField} />

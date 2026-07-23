@@ -32,7 +32,7 @@ export const LessonBlock: FC<LessonBlockProps> = ({ form }) => {
   };
 
   return (
-    <div className="border-gray-10 w-full border-t border-b py-2">
+    <div className="border-border-default w-full border-t border-b py-2">
       <h3 className="mb-2 text-sm">{t('event_form.class')}</h3>
 
       <FormField
@@ -43,9 +43,9 @@ export const LessonBlock: FC<LessonBlockProps> = ({ form }) => {
             <FormControl>
               <Select value={field.value} onValueChange={onChangeStudent}>
                 <SelectTrigger
-                  before={<Account className="fill-gray-80 h-4 w-4" />}
+                  before={<Account className="fill-icon-primary h-4 w-4" />}
                   size="s"
-                  className="mb-2 w-full border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
+                  className="hover:border-border-strong focus:border-border-strong mb-2 w-full border border-transparent outline-none"
                 >
                   <SelectValue placeholder={t('event_form.student')} />
                 </SelectTrigger>
@@ -75,8 +75,8 @@ export const LessonBlock: FC<LessonBlockProps> = ({ form }) => {
                 {...field}
                 value={field.value}
                 placeholder={t('event_form.subject')}
-                className="mb-2 w-full border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
-                before={<Updates className="fill-gray-80 h-4 w-4" />}
+                className="hover:border-border-strong focus:border-border-strong mb-2 w-full border border-transparent outline-none"
+                before={<Updates className="fill-icon-primary h-4 w-4" />}
                 variant="s"
               />
             </FormControl>
@@ -93,9 +93,9 @@ export const LessonBlock: FC<LessonBlockProps> = ({ form }) => {
             <FormControl>
               <Select value={field.value} onValueChange={field.onChange}>
                 <SelectTrigger
-                  before={<Payments className="fill-gray-80 h-4 w-4" />}
+                  before={<Payments className="fill-icon-primary h-4 w-4" />}
                   size="s"
-                  className="mb-2 w-full border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
+                  className="hover:border-border-strong focus:border-border-strong mb-2 w-full border border-transparent outline-none"
                 >
                   <SelectValue placeholder="Тип занятия" />
                 </SelectTrigger>
@@ -121,8 +121,8 @@ export const LessonBlock: FC<LessonBlockProps> = ({ form }) => {
               <Input
                 {...field}
                 placeholder={t('event_form.description')}
-                className="w-full border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
-                before={<Hint className="fill-gray-80 h-4 w-4" />}
+                className="hover:border-border-strong focus:border-border-strong w-full border border-transparent outline-none"
+                before={<Hint className="fill-icon-primary h-4 w-4" />}
                 variant="s"
               />
             </FormControl>

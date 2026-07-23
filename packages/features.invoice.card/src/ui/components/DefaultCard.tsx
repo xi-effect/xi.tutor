@@ -20,7 +20,7 @@ export const DefaultCard = ({
   return (
     <div
       className={cn(
-        'border-gray-30 hover:border-brand-80 flex min-h-[130px] w-[260px] min-w-[260px] flex-1 flex-col items-start justify-start gap-4 rounded-2xl border px-5 py-4 transition-all duration-200 ease-linear xl:w-[280px] xl:min-w-[280px]',
+        'border-border-control hover:border-border-focus flex min-h-[130px] w-[260px] min-w-[260px] flex-1 flex-col items-start justify-start gap-4 rounded-2xl border px-5 py-4 transition-all duration-200 ease-linear xl:w-[280px] xl:min-w-[280px]',
         className,
       )}
     >
@@ -40,15 +40,15 @@ export const DefaultCard = ({
             userId={userId}
             text={userData?.display_name || userData?.username || 'Имя не найдено'}
             src={getUserAvatarUrl(userId)}
-            classNameText="line-clamp-2 break-words text-gray-100"
+            classNameText="line-clamp-2 break-words text-text-primary"
             className="h-auto overflow-hidden"
           />
         )}
         <div className="flex flex-row items-baseline gap-0.5">
-          <h3 className="text-m-base font-medium text-gray-100">{amount} ₽</h3>
+          <h3 className="text-m-base text-text-primary font-medium">{amount} ₽</h3>
         </div>
       </div>
-      <div className="text-s-base text-gray-80 mt-auto flex w-full flex-col gap-1 font-medium">
+      <div className="text-s-base text-text-primary mt-auto flex w-full flex-col gap-1 font-medium">
         <PaymentApproveAction payment={payment} isTutor={currentUserRole === 'tutor'} />
       </div>
     </div>

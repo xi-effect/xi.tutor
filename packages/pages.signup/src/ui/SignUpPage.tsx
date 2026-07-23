@@ -35,7 +35,7 @@ import {
 } from 'common.utils';
 
 const successInputClassName =
-  'border-green-80 hover:border-green-80 active:border-green-80 focus:border-green-80 dark:border-green-40 dark:hover:border-green-40 dark:active:border-green-40 dark:focus:border-green-40';
+  'border-status-success-accent hover:border-status-success-accent active:border-status-success-accent focus:border-status-success-accent dark:border-status-success-accent dark:hover:border-status-success-accent dark:active:border-status-success-accent dark:focus:border-status-success-accent';
 
 const isFieldSuccess = (isTouched: boolean, hasError: boolean, schema: ZodType, value: unknown) =>
   isTouched && !hasError && schema.safeParse(value).success;
@@ -149,13 +149,15 @@ export const SignUpPage = () => {
 
   const linkBaseClass = 'xs:text-xxs-base text-[8px]';
   const linkErrorClass = isConsentInvalid
-    ? 'text-red-80 dark:text-red-40 decoration-red-40 hover:text-red-80 hover:decoration-red-80'
-    : 'text-gray-60';
-  const consentTextClass = isConsentInvalid ? 'text-red-80 dark:text-red-40' : 'text-gray-60';
+    ? 'text-text-danger dark:text-text-danger decoration-text-danger hover:text-text-danger hover:decoration-text-danger'
+    : 'text-text-secondary';
+  const consentTextClass = isConsentInvalid
+    ? 'text-text-danger dark:text-text-danger'
+    : 'text-text-secondary';
 
   return (
     <div className="flex w-full flex-1 flex-col items-center justify-center p-1 py-4">
-      <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex min-h-[600px] w-full max-w-[420px] flex-col bg-transparent p-8">
+      <div className="xs:border xs:border-border-default xs:rounded-2xl flex min-h-[600px] w-full max-w-[420px] flex-col bg-transparent p-8">
         <Form {...form}>
           <form
             onSubmit={handleFormSubmit}
@@ -165,7 +167,9 @@ export const SignUpPage = () => {
             <div className="self-center">
               <Logo height={22} width={180} />
             </div>
-            <h1 className="self-center text-2xl font-semibold text-gray-100">{t('register')}</h1>
+            <h1 className="text-text-primary self-center text-2xl font-semibold">
+              {t('register')}
+            </h1>
             <FormField
               control={control}
               name="username"
@@ -192,7 +196,7 @@ export const SignUpPage = () => {
                         className={cn(isSuccess && successInputClassName)}
                         after={
                           isSuccess ? (
-                            <Check className="fill-green-80 dark:fill-green-40 size-5" />
+                            <Check className="fill-status-success-text dark:fill-status-success-text size-5" />
                           ) : undefined
                         }
                         afterClassName={isSuccess ? 'pointer-events-none' : undefined}
@@ -202,7 +206,7 @@ export const SignUpPage = () => {
                         }}
                       />
                     </FormControl>
-                    <FormDescription className="text-gray-60 pt-0 text-xs">
+                    <FormDescription className="text-text-secondary pt-0 text-xs">
                       {t('username_hint')}
                     </FormDescription>
                     <FormMessage className="pt-0" />
@@ -233,7 +237,7 @@ export const SignUpPage = () => {
                         className={cn(isSuccess && successInputClassName)}
                         after={
                           isSuccess ? (
-                            <Check className="fill-green-80 dark:fill-green-40 size-5" />
+                            <Check className="fill-status-success-text dark:fill-status-success-text size-5" />
                           ) : undefined
                         }
                         afterClassName={isSuccess ? 'pointer-events-none' : undefined}
@@ -269,7 +273,7 @@ export const SignUpPage = () => {
                         after={
                           <span className="flex items-center gap-1.5">
                             {isSuccess && (
-                              <Check className="fill-green-80 dark:fill-green-40 pointer-events-none size-5" />
+                              <Check className="fill-status-success-text dark:fill-status-success-text pointer-events-none size-5" />
                             )}
                             <button
                               type="button"
@@ -279,9 +283,9 @@ export const SignUpPage = () => {
                               aria-label={isPasswordShow ? 'Hide password' : 'Show password'}
                             >
                               {isPasswordShow ? (
-                                <Eyeoff className="fill-gray-60" />
+                                <Eyeoff className="fill-icon-secondary" />
                               ) : (
-                                <Eyeon className="fill-gray-60" />
+                                <Eyeon className="fill-icon-secondary" />
                               )}
                             </button>
                           </span>

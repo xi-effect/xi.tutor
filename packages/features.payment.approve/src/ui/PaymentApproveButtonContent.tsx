@@ -3,12 +3,12 @@ import { Check } from '@xipkg/icons';
 
 export const PaymentApproveButtonContent = ({ type }: { type: InvoiceCardTypeT }) => {
   if (type === 'default')
-    return <span className="text-s-base text-gray-70 font-medium">Подтвердить</span>;
+    return <span className="text-s-base text-text-secondary font-medium">Подтвердить</span>;
 
   return (
     <>
-      <span className="text-s-base text-brand-100 hidden font-medium md:block">Подтвердить</span>
-      <Check className="fill-brand-100 block md:hidden" />
+      <span className="text-s-base text-text-link hidden font-medium md:block">Подтвердить</span>
+      <Check className="fill-icon-brand block md:hidden" />
     </>
   );
 };

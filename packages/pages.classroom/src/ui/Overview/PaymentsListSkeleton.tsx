@@ -9,7 +9,7 @@ type PaymentsListSkeletonPropsT = {
 export const PaymentsListSkeleton = ({ className }: PaymentsListSkeletonPropsT) => (
   <div
     className={cn(
-      'border-gray-30 flex min-h-[130px] flex-col gap-4 rounded-2xl border p-4',
+      'border-border-control flex min-h-[130px] flex-col gap-4 rounded-2xl border p-4',
       className,
     )}
   >

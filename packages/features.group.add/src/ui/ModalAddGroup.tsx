@@ -125,7 +125,7 @@ export const ModalAddGroup = ({
       >
         <ModalHeader>
           <ModalCloseButton onClick={closeModal} />
-          <ModalTitle className="m-0 max-w-[calc(100%-48px)] pr-10 leading-8 text-gray-100">
+          <ModalTitle className="text-text-primary m-0 max-w-[calc(100%-48px)] pr-10 leading-8">
             Создание группы
           </ModalTitle>
           <ModalDescription className="sr-only">
@@ -141,7 +141,7 @@ export const ModalAddGroup = ({
                 name="name"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel htmlFor={field.name} className="m-0 text-gray-100">
+                    <FormLabel htmlFor={field.name} className="text-text-primary m-0">
                       Название
                     </FormLabel>
                     <FormControl>
@@ -162,7 +162,7 @@ export const ModalAddGroup = ({
                 name="subject"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel htmlFor={field.name} className="m-0 text-gray-100">
+                    <FormLabel htmlFor={field.name} className="text-text-primary m-0">
                       Предмет
                     </FormLabel>
                     <FormControl>
@@ -187,7 +187,7 @@ export const ModalAddGroup = ({
               <Button
                 variant="none"
                 type="button"
-                className="bg-gray-5 hover:bg-gray-10 text-gray-100"
+                className="bg-background-page hover:bg-background-subtle text-text-primary"
                 onClick={() => {
                   handleButtonClick();
                   closeModal();

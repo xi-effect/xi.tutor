@@ -18,7 +18,7 @@ export const ButtonsHeader = () => {
       <ModalInvitation analyticsSource="classrooms">
         <Button
           size="s"
-          className="text-s-base text-gray-0 rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
+          className="text-s-base text-text-on-accent rounded-lg px-4 py-2 font-medium max-[550px]:hidden"
           data-umami-event="classrooms-invite-student"
         >
           Пригласить

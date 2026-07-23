@@ -30,7 +30,10 @@ export const EventForm = () => {
 
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit(onSubmit)} className="border-gray-10 w-full border-l px-2">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="border-border-default w-full border-l px-2"
+      >
         <div className="mb-2 flex w-full items-center justify-between gap-2">
           <FormField
             control={control}
@@ -42,7 +45,7 @@ export const EventForm = () => {
                     value={field.value}
                     onValueChange={(value: EventType) => handleTypeChange(value)}
                   >
-                    <SelectTrigger className="text-gray-80 border-none" size="s">
+                    <SelectTrigger className="text-text-primary border-none" size="s">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -69,7 +72,7 @@ export const EventForm = () => {
               <FormControl>
                 <Input
                   {...field}
-                  className="border border-transparent outline-none hover:border-gray-100 focus:border-gray-100"
+                  className="hover:border-border-strong focus:border-border-strong border border-transparent outline-none"
                   placeholder={t('event_form.enter_title')}
                 />
               </FormControl>
@@ -91,7 +94,7 @@ export const EventForm = () => {
 
         {selectedType === 'lesson' && <LessonBlock form={form} />}
 
-        <div className="border-gray-10 border-t border-b py-2">
+        <div className="border-border-default border-t border-b py-2">
           <DateBlock form={form} />
 
           <div className="flex w-full justify-between gap-4 pt-2">

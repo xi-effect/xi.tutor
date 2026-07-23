@@ -19,10 +19,10 @@ export const ActionButtons = () => {
           id="create-group-button"
           variant="none"
           size="m"
-          className="bg-gray-0 text-s-base text-gray-90 w-full rounded-xl border-none font-medium"
+          className="bg-background-surface text-s-base text-text-primary w-full rounded-xl border-none font-medium"
           data-umami-event="main-create-group"
         >
-          <Group className="fill-gray-90 mr-3" />
+          <Group className="fill-icon-primary mr-3" />
           Создать группу
         </Button>
       </ModalAddGroup>
@@ -35,7 +35,7 @@ export const ActionButtons = () => {
           className="w-full rounded-xl font-medium"
           data-umami-event="main-invite-student"
         >
-          <UserPlus className="fill-gray-0 text-gray-0 mr-3" />
+          <UserPlus className="fill-action-primary-text text-text-on-accent mr-3" />
           Добавить ученика
         </Button>
       </ModalInvitation>

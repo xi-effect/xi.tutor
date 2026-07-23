@@ -3,5 +3,5 @@ type SubjectPropsT = {
 };
 
 export const SubjectCell = ({ subject }: SubjectPropsT) => {
-  return <p className="text-gray-80 text-m-base font-normal">{subject}</p>;
+  return <p className="text-text-primary text-m-base font-normal">{subject}</p>;
 };

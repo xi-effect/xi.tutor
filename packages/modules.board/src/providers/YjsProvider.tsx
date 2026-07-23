@@ -130,7 +130,7 @@ export const YjsProvider = ({ children, storageItem, isDemo = false }: YjsProvid
 
   if (localDumpError) {
     return (
-      <div className="flex h-full w-full items-center justify-center p-6 text-center text-sm text-red-600">
+      <div className="text-text-danger flex h-full w-full items-center justify-center p-6 text-center text-sm">
         {localDumpError.message}
       </div>
     );

@@ -57,7 +57,7 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
         {!isDelete && (
           <ModalHeader>
             <ModalCloseButton />
-            <ModalTitle className="max-w-[calc(100%-48px)] text-gray-100">
+            <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
               Список учеников
             </ModalTitle>
           </ModalHeader>
@@ -68,7 +68,7 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
               <div className="flex flex-col gap-2 px-2">
                 <Input
                   placeholder="Поиск"
-                  before={<Search className="fill-gray-60" />}
+                  before={<Search className="fill-icon-secondary" />}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -77,17 +77,17 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
                 <div className="flex flex-col">
                   {isLoading && (
                     <div className="flex h-20 items-center justify-center">
-                      <span className="text-gray-60">Загрузка...</span>
+                      <span className="text-text-secondary">Загрузка...</span>
                     </div>
                   )}
                   {isError && (
                     <div className="flex h-20 items-center justify-center">
-                      <span className="text-red-500">Ошибка загрузки данных</span>
+                      <span className="text-text-danger">Ошибка загрузки данных</span>
                     </div>
                   )}
                   {!isLoading && !isError && filteredStudents.length === 0 && (
                     <div className="flex h-20 items-center justify-center">
-                      <span className="text-gray-60">
+                      <span className="text-text-secondary">
                         {searchQuery ? 'Студенты не найдены' : 'У вас пока нет студентов'}
                       </span>
                     </div>
@@ -97,7 +97,7 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
                     filteredStudents.map((student: TutorStudentSchemaMarshal) => (
                       <div
                         key={student.tutorship.student_id}
-                        className="group hover:bg-gray-5 flex h-[48px] flex-row items-center gap-2 rounded-2xl px-4"
+                        className="group hover:bg-background-page flex h-[48px] flex-row items-center gap-2 rounded-2xl px-4"
                       >
                         <UserProfile
                           text={student.user.display_name || student.user.username}
@@ -107,13 +107,13 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
                           <TooltipTrigger asChild>
                             <Button
                               onClick={() => handleDeleteMode(student.tutorship.student_id)}
-                              className="bg-gray-5 hover:bg-gray-0 ml-auto size-8 rounded-lg p-0"
+                              className="bg-background-page hover:bg-background-surface ml-auto size-8 rounded-lg p-0"
                               variant="none"
                               size="s"
                               data-umami-event="student-delete-init"
                               data-umami-event-student-id={student.tutorship.student_id}
                             >
-                              <Trash className="size-4 fill-gray-100" />
+                              <Trash className="fill-icon-primary size-4" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
@@ -128,10 +128,10 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
           )}
           {isDelete && (
             <>
-              <span className="text-xl-base text self-center font-semibold text-gray-100">
+              <span className="text-xl-base text text-text-primary self-center font-semibold">
                 Удалить ученика?
               </span>
-              <span className="text-l-base text-gray-60 w-[300px] self-center text-center">
+              <span className="text-l-base text-text-secondary w-[300px] self-center text-center">
                 Если решите возобновить занятия, ученика придется приглашать заново
               </span>
               <div className="mt-3 flex flex-col gap-2">
