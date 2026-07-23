@@ -2,12 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
 type SoundKey =
-  | 'chatMessage'
-  | 'handRaise'
-  | 'userJoin'
-  | 'userLeft'
-  | 'boardTimerEnd'
-  | 'boardTimerWarn';
+  'chatMessage' | 'handRaise' | 'userJoin' | 'userLeft' | 'boardTimerEnd' | 'boardTimerWarn';
 
 interface SoundEffectsState {
   chatMessageVolume: number;

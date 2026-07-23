@@ -135,7 +135,7 @@ export const AddingForm: FC<AddingFormProps> = ({
                   onBlur={field.onBlur}
                   name={field.name}
                   ref={field.ref}
-                  placeholder="Тема урока, план, комментарий…"
+                  placeholder="Тема, план, комментарий…"
                   maxLength={4000}
                   maxRows={5}
                   hideCounter
@@ -195,7 +195,7 @@ export const AddingForm: FC<AddingFormProps> = ({
 
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <FormLabel className="text-[14px] font-normal text-gray-100">Время урока</FormLabel>
+            <FormLabel className="text-[14px] font-normal text-gray-100">Время</FormLabel>
             {durationLabel ? <span className="text-gray-60 text-sm">{durationLabel}</span> : null}
           </div>
           <div className="flex w-full flex-row gap-2">

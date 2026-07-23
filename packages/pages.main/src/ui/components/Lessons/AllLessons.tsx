@@ -86,7 +86,7 @@ export const AllLessons = ({
               <p className="text-s-base text-gray-60 dark:text-gray-50">
                 {onAddLesson
                   ? 'Добавляйте, переносите и отменяйте занятия'
-                  : 'Здесь отображаются занятия, которые назначил преподаватель'}
+                  : 'Здесь отображаются занятия, которые назначил репетитор'}
               </p>
             </div>
             {onAddLesson ? (

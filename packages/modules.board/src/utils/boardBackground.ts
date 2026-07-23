@@ -1,12 +1,13 @@
 import type { DrBoardBackgroundType, Editor } from '@ibodr/draw';
 import * as Y from 'yjs';
 import {
-  BOARD_BACKGROUND_COLOR_VALUES,
   DEFAULT_BOARD_BACKGROUND_COLOR,
   DEFAULT_BOARD_BACKGROUND_TYPE,
+  getBoardBackgroundColorValue,
   isBoardBackgroundColorId,
   normalizeBoardBackgroundType,
   type BoardBackgroundColorId,
+  type BoardColorAppearance,
 } from '../config';
 
 export type BoardBackgroundState = {
@@ -29,11 +30,20 @@ export function parseBoardBackgroundFromYMap(map: Y.Map<string>): BoardBackgroun
   };
 }
 
-export function applyBoardBackgroundToEditor(editor: Editor, background: BoardBackgroundState) {
+export function applyBoardBackgroundToEditor(
+  editor: Editor,
+  background: BoardBackgroundState,
+  appearance: BoardColorAppearance = 'light',
+) {
+  const type = normalizeBoardBackgroundType(background.type);
+
+  // При backgroundType === 'none' draw показывает DefaultGrid, если isGridMode включён.
   editor.updateInstanceState({
-    backgroundType: normalizeBoardBackgroundType(background.type),
+    backgroundType: type,
+    isGridMode: type !== 'none',
   });
-  editor
-    .getContainer()
-    .style.setProperty('--dr-color-background', BOARD_BACKGROUND_COLOR_VALUES[background.color]);
+
+  const backgroundColor = getBoardBackgroundColorValue(background.color, appearance);
+
+  editor.getContainer().style.setProperty('--dr-color-background', backgroundColor);
 }

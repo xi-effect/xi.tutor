@@ -258,7 +258,7 @@ export const MovingForm: FC<MovingFormProps> = ({
 
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <FormLabel className="text-[14px] font-normal text-gray-100">Время урока</FormLabel>
+            <FormLabel className="text-[14px] font-normal text-gray-100">Время</FormLabel>
             {durationLabel ? <span className="text-gray-60 text-sm">{durationLabel}</span> : null}
           </div>
           <div className="flex w-full flex-row gap-2">

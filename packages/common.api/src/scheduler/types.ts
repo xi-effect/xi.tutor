@@ -118,9 +118,7 @@ export type VirtualRepeatedEventInstanceDto = EventInstanceBaseDto & {
 };
 
 export type EventInstanceDto =
-  | SoleEventInstanceDto
-  | PersistedRepeatedEventInstanceDto
-  | VirtualRepeatedEventInstanceDto;
+  SoleEventInstanceDto | PersistedRepeatedEventInstanceDto | VirtualRepeatedEventInstanceDto;
 
 export type EventInstanceTimeSlotInputDto = {
   starts_at: string;
@@ -219,8 +217,7 @@ export type CreateRepeatingEventResponseDto = {
 };
 
 export type CreateClassroomEventResponseDto =
-  | CreateSingleEventResponseDto
-  | CreateRepeatingEventResponseDto;
+  CreateSingleEventResponseDto | CreateRepeatingEventResponseDto;
 
 /** Ответ POST …/events/{event_id}/last-repetition-mode/ */
 export type CreateLastRepetitionModeResponseDto = RepetitionModeDto;

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { SocialItem } from './SocialItem';
 import { TelegramFilled, VK } from '@xipkg/icons';
 import { useServiceButton, useWelcomeSocialsForm } from '../../hooks';
+import { useOnboardingAnalytics } from '../../hooks/useOnboardingAnalytics';
 import { useState } from 'react';
 import { Button } from '@xipkg/button';
 import { Check } from '@xipkg/icons';
@@ -11,6 +12,7 @@ import { useCreateTgConnection, useGetNotificationsStatus, useVkConnection } fro
 
 export const WelcomeSocialsPage = () => {
   const { t } = useTranslation('welcomeSocials');
+  useOnboardingAnalytics({ step: 'notifications' });
 
   const { onBackwards, onForwards, isLoading } = useWelcomeSocialsForm();
 

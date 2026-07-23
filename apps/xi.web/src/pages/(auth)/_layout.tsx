@@ -1,12 +1,11 @@
 import { Outlet, createFileRoute } from '@tanstack/react-router';
-import { SupportFooter } from 'modules.navigation';
+import { SupportPageShell } from 'modules.navigation';
 
 function AuthLayout() {
   return (
-    <>
+    <SupportPageShell>
       <Outlet />
-      <SupportFooter />
-    </>
+    </SupportPageShell>
   );
 }
 

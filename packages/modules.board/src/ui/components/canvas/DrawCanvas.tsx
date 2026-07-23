@@ -30,6 +30,7 @@ import { UndoRedo } from '../toolbar/UndoRedo';
 import { normalizeStoredFileSrc } from '../../../utils/storedFileSrc';
 import { XiGeoTool } from '../../../shapes/geo';
 import { EmojiTool } from '../../../shapes/emoji';
+import { EmojiStickerTool } from '../../../shapes/emojiSticker';
 import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
 import { isShapeErasable, isEditableTarget } from '../../../utils';
 import { insertAsset } from '../../../utils/uploadAsset';
@@ -376,19 +377,22 @@ export const DrawCanvas = ({
                 return next;
               });
 
-              editor.sideEffects.registerBeforeDeleteHandler('shape', (shape) => {
-                if (editor.getCurrentToolId() !== 'eraser') {
-                  return;
-                }
-
-                if (!isShapeErasable(shape.type)) {
-                  return false;
-                }
+              // Фильтр категорий ластика — только для локального стирания.
+              // Remote-удаления из Yjs/Hocuspocus нельзя блокировать: иначе у ученика
+              // останутся фигуры, которые репетитор уже стёр.
+              editor.sideEffects.registerBeforeDeleteHandler('shape', (shape, source) => {
+                if (source !== 'user') return;
+                if (editor.getCurrentToolId() !== 'eraser') return;
+                if (!isShapeErasable(shape.type)) return false;
               });
 
               editor.registerExternalContentHandler('files', async ({ files }) => {
                 for (const file of files) {
-                  insertAsset(editor, file, token, addToQueue);
+                  try {
+                    insertAsset(editor, file, token, addToQueue);
+                  } catch (error) {
+                    console.error('Ошибка при загрузке файла:', error);
+                  }
                 }
               });
 
@@ -408,8 +412,7 @@ export const DrawCanvas = ({
                         : raw.props,
                   } as typeof r;
                   const props = (rec as unknown as Record<string, unknown>).props as
-                    | Record<string, unknown>
-                    | undefined;
+                    Record<string, unknown> | undefined;
                   if (props?.src && typeof props.src === 'string') {
                     props.src = normalizeStoredFileSrc(props.src);
                   }
@@ -438,7 +441,7 @@ export const DrawCanvas = ({
               });
             }}
             store={store}
-            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool]}
+            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool, EmojiStickerTool]}
             shapeUtils={boardCustomShapeUtils}
             hideUi
             components={drawComponents}
@@ -452,7 +455,9 @@ export const DrawCanvas = ({
             {!isReadonly && (
               <Navbar undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} token={token} />
             )}
-            <div className={`${boardPanelClass} absolute bottom-4 left-4 z-260 flex p-1 sm:hidden`}>
+            <div
+              className={`${boardPanelClass} absolute bottom-20 left-4 z-260 flex p-1 sm:hidden`}
+            >
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
             <DrawZoomPanel />

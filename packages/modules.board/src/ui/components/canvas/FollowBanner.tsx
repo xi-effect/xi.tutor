@@ -12,8 +12,7 @@ export const FollowBanner = () => {
   if (!followingPresenceId) return null;
 
   const presence = store.get(followingPresenceId as DrInstancePresenceID) as
-    | DrInstancePresence
-    | undefined;
+    DrInstancePresence | undefined;
   const name = presence?.userName || 'Участник';
 
   const isBroadcastForced =

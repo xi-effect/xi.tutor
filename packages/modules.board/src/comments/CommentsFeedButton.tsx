@@ -5,7 +5,7 @@ import { Button } from '@xipkg/button';
 import { Check, Inbox } from '@xipkg/icons';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
-import { boardIconClass, boardMenuSurfaceClass } from '../ui/boardTheme';
+import { boardIconClass, boardMenuSurfaceClass, boardPopoverListItemClass } from '../ui/boardTheme';
 import { getCommentAuthorAvatarUrl } from './commentAvatar';
 import {
   getAllCommentThreads,
@@ -61,7 +61,7 @@ export const CommentsFeedButton = track(function CommentsFeedButton() {
           title="Комментарии"
           data-umami-event="board-comments-feed"
         >
-          <Inbox className={cn('h-4 w-4 lg:h-6 lg:w-6', boardIconClass)} />
+          <Inbox size="s" className={cn('h-4 w-4 lg:h-6 lg:w-6', boardIconClass)} />
           {unreadCount > 0 && (
             <span className="bg-brand-80 border-gray-0 absolute -top-1 -right-1 flex h-4 min-w-4 items-center justify-center rounded-full border-2 px-0.5 text-[9px] leading-none font-medium text-white">
               {unreadCount > 9 ? '9+' : unreadCount}
@@ -91,7 +91,10 @@ export const CommentsFeedButton = track(function CommentsFeedButton() {
                 <button
                   key={thread.id}
                   type="button"
-                  className="hover:bg-gray-5 flex items-start gap-2 rounded-lg px-2 py-2 text-left"
+                  className={cn(
+                    boardPopoverListItemClass,
+                    'flex items-start gap-2 px-2 py-2 text-left',
+                  )}
                   onClick={() => handleSelect(thread)}
                 >
                   <Avatar size="s">
@@ -105,13 +108,11 @@ export const CommentsFeedButton = track(function CommentsFeedButton() {
                   </Avatar>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
-                      <span className="truncate text-sm font-medium text-gray-100">
-                        {authorName}
-                      </span>
+                      <span className="truncate text-sm font-medium">{authorName}</span>
                       {thread.resolved && <Check className="text-green-80 size-3 shrink-0" />}
                       {unread && <span className="bg-brand-80 size-1.5 shrink-0 rounded-full" />}
                     </div>
-                    <p className="text-gray-60 truncate text-xs">{lastMessage?.text}</p>
+                    <p className="truncate text-xs opacity-80">{lastMessage?.text}</p>
                   </div>
                 </button>
               );

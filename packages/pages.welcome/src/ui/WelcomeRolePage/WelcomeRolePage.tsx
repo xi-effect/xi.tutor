@@ -4,10 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { WelcomePageLayout, WelcomeButtons } from '../../ui';
 
 import { useWelcomeRoleForm } from '../../hooks';
+import { useOnboardingAnalytics } from '../../hooks/useOnboardingAnalytics';
 import { RoleButtonT } from '../../types/WelcomeRoleButtonT';
 
 export const WelcomeRolePage = () => {
   const { t } = useTranslation('welcomeRole');
+  useOnboardingAnalytics({ step: 'role_selection' });
   const firstButton = useRef<HTMLButtonElement>(null);
   const secondButton = useRef<HTMLButtonElement>(null);
 

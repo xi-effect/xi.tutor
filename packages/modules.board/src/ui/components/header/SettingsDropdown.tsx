@@ -50,6 +50,7 @@ import {
 } from '../../../config';
 import { areAllEraserCategoriesEnabled } from '../../../utils/areAllEraserCategoriesEnabled';
 import {
+  boardIconClass,
   boardMenuCheckboxItemClass,
   boardMenuItemClass,
   boardMenuSubTriggerClass,
@@ -222,7 +223,7 @@ export const SettingsDropdown = () => {
             className="hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
             data-umami-event="board-settings-menu"
           >
-            <MoreVert size="s" className="h-4 w-4 fill-gray-100 lg:h-6 lg:w-6" />
+            <MoreVert size="s" className={cn('h-4 w-4 lg:h-6 lg:w-6', boardIconClass)} />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent

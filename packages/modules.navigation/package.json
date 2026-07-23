@@ -31,6 +31,7 @@
     "common.sockets": "workspace:*",
     "common.types": "workspace:*",
     "common.ui": "workspace:*",
+    "common.utils": "workspace:*",
     "features.table": "workspace:*",
     "i18next": "24.2.2",
     "modules.calls": "workspace:*",

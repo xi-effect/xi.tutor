@@ -7,6 +7,7 @@ import { FILE_SHAPE_HEIGHT, FILE_SHAPE_WIDTH } from '../shapes/file/FileShape';
 import { saveFileToDB } from 'common.services';
 import { type RetryRequest } from 'common.services';
 import { ALLOWED_FILE_MIME_TYPES } from '../constants/mimeTypes';
+import { resolveShapeCoordinates } from '../utils';
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
 const MAX_FILE_SHAPES = 20;
@@ -29,14 +30,14 @@ export async function insertFile(
   }
 
   const shapeId = `shape:${nanoid()}` as DrShapeId;
-  const viewportCenter = editor.getViewportPageBounds().center;
+  const coordinates = resolveShapeCoordinates(editor, FILE_SHAPE_WIDTH, FILE_SHAPE_HEIGHT);
 
   editor.createShapes<FileShape>([
     {
       id: shapeId,
       type: 'file',
-      x: viewportCenter.x - FILE_SHAPE_WIDTH / 2,
-      y: viewportCenter.y - FILE_SHAPE_HEIGHT / 2,
+      x: coordinates.x,
+      y: coordinates.y,
       props: {
         src: '',
         fileName: file.name,
@@ -47,6 +48,11 @@ export async function insertFile(
       },
     },
   ]);
+
+  editor.setSelectedShapes([shapeId]);
+  Promise.resolve().then(() => {
+    editor.zoomToSelection({ animation: { duration: 200 } });
+  });
 
   await saveFileToDB(shapeId, { file, token });
 

@@ -7,7 +7,7 @@ const colors = {
 
 export const WelcomeSteps = ({ step }: Pick<WelcomePageLayoutPropsT, 'step'>) => {
   return (
-    <div className="mt-16 flex w-full flex-row items-start justify-between gap-4">
+    <div className="xs:mt-16 mt-1 flex w-full flex-row items-start justify-between gap-4">
       {[1, 2, 3].map((item) => (
         <div
           key={item}

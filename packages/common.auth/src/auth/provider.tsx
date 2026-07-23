@@ -4,7 +4,13 @@ import { getAxiosInstance } from 'common.config';
 import { userApiConfig, UserQueryKey } from 'common.api';
 import { LoadingScreen } from 'common.ui';
 import { useSignup, useSignout, useNetworkAuthIntegration } from 'common.services';
-import { trackUmamiSession } from 'common.utils';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  getProductAnalyticsRole,
+  trackOnce,
+  trackProductEvent,
+  trackUmamiSession,
+} from 'common.utils';
 import { AuthContext } from './context';
 import { SignupData } from 'common.types';
 
@@ -110,6 +116,30 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       // Идентифицируем до того, как форма сделает navigate — чтобы properties записались в текущую сессию
       if (refetched.data) {
         await trackUmamiSession(refetched.data, 'signup');
+
+        // Один раз на пользователя (клиентский once + localStorage; backend-флага пока нет)
+        const storageKey = `auth_first_authenticated_session:${refetched.data.id}`;
+        let alreadySent = false;
+        try {
+          alreadySent = localStorage.getItem(storageKey) === '1';
+        } catch {
+          alreadySent = false;
+        }
+
+        if (!alreadySent) {
+          const role = getProductAnalyticsRole(refetched.data.default_layout);
+          trackOnce(storageKey, () => {
+            trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_FIRST_AUTHENTICATED_SESSION, {
+              user_role: role === 'student' ? 'student' : 'tutor',
+              source: 'signup',
+            });
+          });
+          try {
+            localStorage.setItem(storageKey, '1');
+          } catch {
+            // ignore
+          }
+        }
       }
       return result;
     },

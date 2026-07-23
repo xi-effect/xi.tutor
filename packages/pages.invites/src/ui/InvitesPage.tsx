@@ -1,7 +1,9 @@
 import { Logo } from 'common.ui';
 import { useParams } from '@tanstack/react-router';
 import { useEffect } from 'react';
-import { SupportFooter } from 'modules.navigation';
+import { SupportPageShell } from 'modules.navigation';
+import { useCurrentUser } from 'common.services';
+import { PRODUCT_ANALYTICS_EVENTS, trackOnce, trackProductEvent } from 'common.utils';
 import { Invite } from './Invite';
 import { ErrorInvite } from './ErrorInvite';
 import { useInvitePreview } from '../services';
@@ -9,15 +11,28 @@ import { useInvitePreview } from '../services';
 export const InvitesPage = () => {
   const { inviteId } = useParams({ strict: false }) as { inviteId: string };
   const { data, error, isLoading } = useInvitePreview(inviteId);
+  const { data: user } = useCurrentUser();
 
   useEffect(() => {
     localStorage.removeItem('invite.pending_code');
   }, []);
 
+  useEffect(() => {
+    if (!data || !inviteId) return;
+
+    trackOnce(`student_invite_opened:${inviteId}`, () => {
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_OPENED, {
+        invite_id: inviteId,
+        tutor_id: String(data.tutor.user_id),
+        student_authenticated: Boolean(user?.id),
+      });
+    });
+  }, [data, inviteId, user?.id]);
+
   if (isLoading) {
     return (
-      <>
-        <section className="bg-gray-0 relative flex h-screen flex-col items-center justify-center">
+      <SupportPageShell>
+        <section className="relative flex flex-1 flex-col items-center justify-center py-24">
           <div className="absolute top-24">
             <Logo />
           </div>
@@ -25,14 +40,13 @@ export const InvitesPage = () => {
             <p className="text-gray-80 dark:text-gray-80">Загрузка приглашения...</p>
           </div>
         </section>
-        <SupportFooter />
-      </>
+      </SupportPageShell>
     );
   }
 
   return (
-    <>
-      <section className="bg-gray-0 flex h-screen flex-col items-center justify-center">
+    <SupportPageShell>
+      <section className="relative flex flex-1 flex-col items-center justify-center py-24">
         <div className="absolute top-24">
           <Logo />
         </div>
@@ -44,7 +58,6 @@ export const InvitesPage = () => {
           <ErrorInvite error="Приглашение не найдено" />
         )}
       </section>
-      <SupportFooter />
-    </>
+    </SupportPageShell>
   );
 };

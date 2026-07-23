@@ -23,7 +23,20 @@ const options: { value: AccessModeT; label: string }[] = [
 /** text-xs-base нельзя вместе с text-gray-* — twMerge снимает цвет текста */
 const menuSurfaceClass = 'border-gray-10 bg-gray-0 border';
 const menuItemClass =
-  'text-gray-100 hover:bg-brand-0 hover:text-gray-100 focus:text-gray-100 min-h-7 h-auto items-start whitespace-nowrap rounded-lg px-2 py-1.5 text-sm leading-snug';
+  'text-gray-100 hover:bg-brand-0 hover:text-gray-100 focus:text-gray-100 h-8 items-center whitespace-nowrap rounded-lg px-2 py-0 text-sm leading-none';
+
+/**
+ * SubTrigger из @xipkg/dropdown сам рисует lucide ChevronRight (stroke).
+ * Нельзя наследовать items-start / leading-snug — стрелка уезжает по вертикали.
+ * Пиним chevron абсолютом по центру строки.
+ */
+const menuSubTriggerClass = cn(
+  'relative flex h-8 items-center rounded-lg px-2 pr-8 text-sm leading-none text-gray-100',
+  'hover:bg-brand-0 hover:text-gray-100 focus:bg-brand-0 focus:text-gray-100 data-[state=open]:bg-brand-0 data-[state=open]:text-brand-80',
+  '[&>svg:last-child]:pointer-events-none [&>svg:last-child]:absolute [&>svg:last-child]:top-1/2 [&>svg:last-child]:right-2',
+  '[&>svg:last-child]:size-4 [&>svg:last-child]:!m-0 [&>svg:last-child]:-translate-y-1/2',
+  '[&>svg:last-child]:!fill-none [&>svg:last-child]:shrink-0 [&>svg:last-child]:stroke-current',
+);
 
 export const MaterialActionsMenu = ({
   isClassroom,
@@ -73,7 +86,7 @@ export const MaterialActionsMenu = ({
         {isClassroom && isTutor ? (
           <DropdownMenuSub>
             <DropdownMenuSubTrigger
-              className={cn(menuItemClass, 'gap-2')}
+              className={menuSubTriggerClass}
               onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
               data-umami-event="material-change-access-open"
             >
@@ -81,7 +94,8 @@ export const MaterialActionsMenu = ({
             </DropdownMenuSubTrigger>
 
             <DropdownMenuSubContent
-              sideOffset={16}
+              sideOffset={8}
+              alignOffset={-4}
               className={cn(menuSurfaceClass, 'space-y-1 rounded-lg p-2 font-normal text-gray-100')}
               onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
             >
@@ -92,7 +106,7 @@ export const MaterialActionsMenu = ({
                   onCheckedChange={() => handleChange(value)}
                   onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
                   className={cn(
-                    'h-auto min-h-7 cursor-pointer items-start rounded-lg py-1.5 text-sm leading-snug whitespace-normal',
+                    'h-8 cursor-pointer items-center rounded-lg py-0 text-sm leading-none',
                     studentAccessMode === value
                       ? 'bg-brand-0 text-brand-80'
                       : 'text-gray-100 hover:text-gray-100 focus:text-gray-100',
@@ -101,7 +115,7 @@ export const MaterialActionsMenu = ({
                   data-umami-event-mode={value}
                   data-umami-event-from={studentAccessMode}
                 >
-                  <div className="w-full text-left">{label}</div>
+                  {label}
                 </DropdownMenuCheckboxItem>
               ))}
             </DropdownMenuSubContent>

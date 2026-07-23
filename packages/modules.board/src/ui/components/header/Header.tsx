@@ -97,10 +97,8 @@ export const Header = () => {
 
   return (
     <>
-      <div className="text-xl-base pointer-events-none absolute top-4 right-0 left-0 z-260 flex items-center justify-between px-4 pb-4 md:pl-8">
-        <div
-          className={`${boardPanelClass} pointer-events-auto flex items-center justify-center gap-2 p-1`}
-        >
+      <div className="pointer-events-none absolute top-4 right-0 left-0 z-260 flex items-start justify-between px-4 pb-4 md:pl-8">
+        <div className={`${boardPanelClass} pointer-events-auto flex items-center gap-2 p-1`}>
           <Button
             variant="none"
             onClick={handleBack}
@@ -142,7 +140,7 @@ export const Header = () => {
             </div>
           )}
         </div>
-        <div className="flex w-[172px] flex-col-reverse items-end gap-2 sm:w-auto sm:flex-row md:items-center">
+        <div className="flex w-[172px] flex-col-reverse items-end gap-2 sm:w-auto sm:flex-row sm:items-center">
           <div className="flex items-center gap-2">
             <TimerDropdown open={openTimer} setOpen={setOpenTimer} />
           </div>

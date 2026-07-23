@@ -1,4 +1,4 @@
-export type ThemeT = 'light' | 'dark' | 'system';
+export type ThemeT = 'light' | 'dark';
 export type ThemeItemT = {
   label: string;
   value: ThemeT;

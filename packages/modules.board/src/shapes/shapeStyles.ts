@@ -42,3 +42,7 @@ export const PlotColorStyle = StyleProp.defineEnum('xi:plotColor', {
   ],
   defaultValue: 'blue',
 });
+
+export const EmojiStickerStyle = StyleProp.define<string>('xi:emojiSticker', {
+  defaultValue: '',
+});

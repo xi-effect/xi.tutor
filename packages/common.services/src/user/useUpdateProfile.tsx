@@ -85,8 +85,8 @@ export const useUpdateProfile = () => {
 
       if (isOnlyRoleChange && context.profileData) {
         const role = context.profileData.default_layout as RoleT;
-        const roleText = role === 'tutor' ? 'Репетитор' : 'Ученик';
-        toast.success(`Роль успешно изменена на ${roleText}`);
+        const roleText = role === 'tutor' ? 'репетитор' : 'ученик';
+        toast.success(`Теперь вы ${roleText}`);
       } else if (isOnlyThemeChange) {
         toast.success('Тема успешно обновлена');
       } else {

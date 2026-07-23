@@ -285,8 +285,7 @@ class Parser {
 }
 
 export type EquationEvaluationResult =
-  | { ok: true; evaluate: (x: number) => number }
-  | { ok: false; error: string };
+  { ok: true; evaluate: (x: number) => number } | { ok: false; error: string };
 
 export function evaluateEquation(expression: string): EquationEvaluationResult {
   const trimmed = expression.trim();

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { DRAWER_CONTENT_ABOVE_BAR_CLASS } from '../constants';
 import { NavigationDrawerContent } from '../NavigationDrawerContent';
 import { DrawerRoleSelector } from './DrawerRoleSelector';
-import { Account, Exit, Download, Close } from '@xipkg/icons';
+import { Close, Download, Exit, Settings } from '@xipkg/icons';
 import { toast } from 'sonner';
 import { useCurrentUser, usePWAInstall } from 'common.services';
 import { cn } from '@xipkg/utils';
@@ -79,7 +79,7 @@ export const MobileUserMenu = ({
               data-umami-event-device="mobile"
               className={menuRowClassName}
             >
-              <Account className="size-6 shrink-0 text-gray-100" />
+              <Settings className="size-6 shrink-0 text-gray-100" />
               <span className="text-m-base font-medium text-gray-100">{profileText}</span>
             </button>
             {!isInstalled && (

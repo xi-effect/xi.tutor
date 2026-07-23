@@ -29,6 +29,32 @@ export const boardMenuSubTriggerClass = cn(
   'data-[state=open]:[&>svg:last-child]:!fill-none data-[state=open]:[&>svg:last-child]:stroke-brand-80',
 );
 
-export const boardIconClass = 'fill-gray-100';
+/**
+ * Иконки @xipkg/icons в тулбаре доски.
+ * Svg по умолчанию theme=default → text-gray-80; часть path рисуется через currentColor,
+ * часть — с захардкоженным fill. Выравниваем всё в text/fill gray-100.
+ */
+export const boardIconClass = 'text-gray-100! [&_path]:fill-current!';
+
+/** Единый размер иконок в нижнем тулбаре доски */
+export const boardToolbarIconClass = cn(boardIconClass, 'size-7! shrink-0 sm:size-6!');
+
+/** Иконки с плотным глифом (текст, стикер) — визуально крупнее при том же box-size */
+export const boardToolbarIconCompactClass = cn(
+  boardToolbarIconClass,
+  'scale-[0.8] sm:scale-[0.82]',
+);
 
 export const boardTextClass = 'text-gray-100';
+
+/** z-index выпадающих меню и попапов поверх панелей доски (тулбар/зум — z-260) */
+export const boardDropdownZClass = 'z-270';
+
+/**
+ * Строка в попапе доски. Нативный <button> без фона в тёмной теме даёт светлый buttonface,
+ * а текст уже из семантической палитры — получается «белая плашка» с бледным текстом.
+ */
+export const boardPopoverListItemClass = cn(
+  boardMenuItemClass,
+  'bg-transparent hover:bg-gray-5 rounded-lg transition-colors',
+);

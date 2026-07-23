@@ -48,7 +48,7 @@ export const DrawZoomPanel = track(() => {
   };
 
   return (
-    <div className="absolute right-4 bottom-4 z-260">
+    <div className="absolute right-4 bottom-20 z-260 sm:bottom-4">
       <div className={`${boardPanelClass} flex items-center justify-center gap-2 p-1`}>
         <Button
           className="hover:bg-brand-0 pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"

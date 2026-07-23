@@ -11,8 +11,8 @@ export const NewPasswordPage = () => {
   }
 
   return (
-    <div className="xs:h-screen bg-gray-0 flex h-dvh w-screen flex-col flex-wrap content-center justify-center p-1">
-      <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex h-[600px] w-full max-w-[420px] bg-transparent p-8">
+    <div className="flex w-full flex-1 flex-col items-center justify-center p-1 py-4">
+      <div className="xs:border xs:border-gray-10 xs:rounded-2xl flex h-[600px] w-full max-w-[420px] flex-col bg-transparent p-8">
         <NewPassword token={decodedToken} />
       </div>
     </div>
