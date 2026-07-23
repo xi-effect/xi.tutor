@@ -3665,6 +3665,9 @@ importers:
 
   packages/modules.navigation:
     dependencies:
+      '@radix-ui/react-tooltip':
+        specifier: ^1.1.8
+        version: 1.2.12(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@tanstack/react-router':
         specifier: ^1.166.6
         version: 1.170.17(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -3701,6 +3704,9 @@ importers:
       '@xipkg/switcher-animate':
         specifier: 1.0.6
         version: 1.0.6(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@xipkg/tooltip':
+        specifier: 2.1.0
+        version: 2.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@xipkg/userprofile':
         specifier: 4.1.0
         version: 4.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
