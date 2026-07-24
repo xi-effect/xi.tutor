@@ -1,0 +1,13 @@
+{
+  "title": "Group invitation",
+  "description": "Send the link to students to invite them to the group",
+  "linkPlaceholder": "Link",
+  "resetLink": "Reset link",
+  "copyLink": "Copy link",
+  "studentsCount": "Students in classroom: {{count}} of 15",
+  "toast": {
+    "linkCopied": "Link copied",
+    "sendToStudents": "Send the link to students",
+    "linkReset": "Link reset"
+  }
+}

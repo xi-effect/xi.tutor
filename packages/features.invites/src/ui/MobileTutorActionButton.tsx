@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { ActionButton } from '@xipkg/actionbutton';
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@xipkg/drawer';
@@ -8,9 +8,8 @@ import { useCurrentUser } from 'common.services';
 import { ModalAddGroup } from 'features.group.add';
 import { InvoiceModal } from 'features.invoice';
 import { useCreateMaterial } from 'features.materials.add';
+import { useTranslation } from 'react-i18next';
 import { ModalInvitation } from './ModalInvitation';
-
-const DRAWER_TITLE = 'Выберите действие';
 
 const menuRowClassName = cn(
   'border-border-default bg-background-surface hover:bg-background-page flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors',
@@ -35,97 +34,12 @@ type MobileTutorActionButtonProps = {
   onCreateTemplate?: () => void;
 };
 
-const variantMeta: Record<MobileTutorActionButtonVariant, { actions: ActionCopy[] }> = {
-  main: {
-    actions: [
-      {
-        id: 'invite',
-        label: 'Пригласить ученика',
-        description: 'Отправьте персональную ссылку-приглашение',
-        Icon: UserPlus,
-        umamiEvent: 'invite-student',
-        onboardingId: 'invite-student-button',
-      },
-      {
-        id: 'group',
-        label: 'Создать группу',
-        description: 'Создайте учебную группу и пригласите учеников',
-        Icon: Group,
-        umamiEvent: 'create-group',
-        onboardingId: 'create-group-button',
-      },
-    ],
-  },
-  classrooms: {
-    actions: [
-      {
-        id: 'invite',
-        label: 'Пригласить ученика',
-        description: 'Отправьте персональную ссылку-приглашение',
-        Icon: UserPlus,
-        umamiEvent: 'invite-student',
-      },
-      {
-        id: 'group',
-        label: 'Создать группу',
-        description: 'Создайте учебную группу и пригласите учеников',
-        Icon: Group,
-        umamiEvent: 'create-group',
-      },
-    ],
-  },
-  materials: {
-    actions: [
-      {
-        id: 'board',
-        label: 'Интерактивная доска',
-        description: 'Создайте доску для совместных занятий',
-        Icon: WhiteBoard,
-        umamiEvent: 'add-board',
-      },
-      {
-        id: 'note',
-        label: 'Заметка',
-        description: 'Создайте заметку с текстом и материалами',
-        Icon: FileSmall,
-        umamiEvent: 'add-note',
-      },
-    ],
-  },
-  payments: {
-    actions: [],
-  },
-};
-
-const paymentsInvoiceAction: ActionCopy = {
-  id: 'invoice',
-  label: 'Счёт на оплату',
-  description: 'Выставьте счёт ученику за проведённое занятие',
-  Icon: Add,
-  umamiEvent: 'create-invoice',
-};
-
-const paymentsTemplateAction: ActionCopy = {
-  id: 'template',
-  label: 'Тип оплаты',
-  description: 'Создайте шаблон для быстрого выставления счетов',
-  Icon: Add,
-  umamiEvent: 'create-template',
-};
-
-const getPaymentsActions = (activeTab?: string): ActionCopy[] => {
-  if (activeTab === 'templates') {
-    return [paymentsTemplateAction];
-  }
-
-  return [paymentsInvoiceAction];
-};
-
 export const MobileTutorActionButton = ({
   variant,
   paymentsActiveTab,
   onCreateTemplate,
 }: MobileTutorActionButtonProps) => {
+  const { t } = useTranslation('invitesModal');
   const { data: user, isLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const { createMaterial } = useCreateMaterial();
@@ -137,11 +51,77 @@ export const MobileTutorActionButton = ({
   const [invoiceModalOpen, setInvoiceModalOpen] = useState(false);
 
   const eventPrefix = variant;
-  const meta =
-    variant === 'payments'
-      ? { actions: getPaymentsActions(paymentsActiveTab) }
-      : variantMeta[variant];
   const isInviteVariant = variant === 'main' || variant === 'classrooms';
+  const drawerTitle = t('drawer.title');
+
+  const actions = useMemo(() => {
+    const inviteActions: ActionCopy[] = [
+      {
+        id: 'invite',
+        label: t('actions.invite.label'),
+        description: t('actions.invite.description'),
+        Icon: UserPlus,
+        umamiEvent: 'invite-student',
+        onboardingId: variant === 'main' ? 'invite-student-button' : undefined,
+      },
+      {
+        id: 'group',
+        label: t('actions.group.label'),
+        description: t('actions.group.description'),
+        Icon: Group,
+        umamiEvent: 'create-group',
+        onboardingId: variant === 'main' ? 'create-group-button' : undefined,
+      },
+    ];
+
+    if (variant === 'main' || variant === 'classrooms') {
+      return inviteActions;
+    }
+
+    if (variant === 'materials') {
+      const materialsActions: ActionCopy[] = [
+        {
+          id: 'board',
+          label: t('actions.board.label'),
+          description: t('actions.board.description'),
+          Icon: WhiteBoard,
+          umamiEvent: 'add-board',
+        },
+        {
+          id: 'note',
+          label: t('actions.note.label'),
+          description: t('actions.note.description'),
+          Icon: FileSmall,
+          umamiEvent: 'add-note',
+        },
+      ];
+      return materialsActions;
+    }
+
+    if (paymentsActiveTab === 'templates') {
+      const templateActions: ActionCopy[] = [
+        {
+          id: 'template',
+          label: t('actions.template.label'),
+          description: t('actions.template.description'),
+          Icon: Add,
+          umamiEvent: 'create-template',
+        },
+      ];
+      return templateActions;
+    }
+
+    const invoiceActions: ActionCopy[] = [
+      {
+        id: 'invoice',
+        label: t('actions.invoice.label'),
+        description: t('actions.invoice.description'),
+        Icon: Add,
+        umamiEvent: 'create-invoice',
+      },
+    ];
+    return invoiceActions;
+  }, [paymentsActiveTab, t, variant]);
 
   useEffect(() => {
     setMounted(true);
@@ -191,12 +171,12 @@ export const MobileTutorActionButton = ({
         <DrawerContent className="max-h-screen w-full">
           <div className="flex flex-col gap-4 pb-8">
             <DrawerTitle className="text-m-base text-text-primary font-medium">
-              {DRAWER_TITLE}
+              {drawerTitle}
             </DrawerTitle>
-            <DrawerDescription className="sr-only">{DRAWER_TITLE}</DrawerDescription>
+            <DrawerDescription className="sr-only">{drawerTitle}</DrawerDescription>
 
             <div className="dark:bg-background-surface flex flex-col gap-3">
-              {meta.actions.map(({ id, label, description, Icon, umamiEvent, onboardingId }) => (
+              {actions.map(({ id, label, description, Icon, umamiEvent, onboardingId }) => (
                 <button
                   key={id}
                   type="button"

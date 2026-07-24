@@ -7,6 +7,7 @@ import {
   inferEmailConfirmationSource,
   trackProductEvent,
 } from 'common.utils';
+import { useTranslation } from 'react-i18next';
 import { useEmailToken } from './useEmailToken';
 
 const Loading = () => {
@@ -24,6 +25,7 @@ const Loading = () => {
 };
 
 export const EmailPageSuccess = () => {
+  const { t } = useTranslation('email');
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
   const emailToken = useEmailToken();
@@ -43,7 +45,7 @@ export const EmailPageSuccess = () => {
   const shouldShowButton = (isSuccess || isAlreadyConfirmed) && !isLoading;
 
   return (
-    <EmailPageLayout title={isLoading ? 'Идёт подтверждение почты' : 'Вы подтвердили почту'}>
+    <EmailPageLayout title={isLoading ? t('success.confirmingTitle') : t('success.confirmedTitle')}>
       {isLoading && (
         <div className="mt-4 flex h-full items-center justify-center">
           <Loading />
@@ -51,26 +53,28 @@ export const EmailPageSuccess = () => {
       )}
       {isSuccess && !isLoading && (
         <div className="mt-8 flex flex-col items-center gap-1">
-          <span className="text-m-base text-text-primary w-full text-center">Успешных уроков!</span>
+          <span className="text-m-base text-text-primary w-full text-center">
+            {t('success.successMessage')}
+          </span>
         </div>
       )}
       {isAlreadyConfirmed && !isLoading && (
         <div className="mt-8 flex flex-col items-center gap-1">
           <span className="text-m-base text-text-primary w-full text-center">
-            Почта уже подтверждена
+            {t('success.alreadyConfirmed')}
           </span>
         </div>
       )}
       {isError && !isLoading && (
         <div className="mt-8 flex flex-col items-center gap-1">
           <span className="text-m-base text-text-primary w-full text-center">
-            Ошибка при подтверждении почты
+            {t('success.error')}
           </span>
         </div>
       )}
       {shouldShowButton && (
         <Button size="m" className="mt-16 h-[48px] w-full rounded-xl" onClick={handleConfirm}>
-          Продолжить
+          {t('success.continue')}
         </Button>
       )}
     </EmailPageLayout>

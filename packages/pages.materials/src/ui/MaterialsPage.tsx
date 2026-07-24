@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Header } from './Header';
 import { MobileTutorActionButton } from 'features.invites';
@@ -21,6 +22,7 @@ const getTabFromUrl = (): 'notes' | 'boards' => {
 };
 
 const MaterialsPageContent = () => {
+  const { t } = useTranslation('materials');
   const [activeTab, setActiveTab] = useState<'notes' | 'boards'>(() => getTabFromUrl());
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -55,9 +57,9 @@ const MaterialsPageContent = () => {
     return (
       <ErrorPage
         withLogo={false}
-        title="Ошибка"
+        title={t('error.title')}
         errorCode={403}
-        text="Вы не имеете доступа к этой странице"
+        text={t('error.noAccess')}
       />
     );
   }

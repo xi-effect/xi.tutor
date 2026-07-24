@@ -3,8 +3,10 @@ import { Close, Eyeon, Podcast } from '@xipkg/icons';
 import type { DrInstancePresence, DrInstancePresenceID } from '@ibodr/draw';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore } from '../../../store';
+import { useTranslation } from 'react-i18next';
 
 export const FollowBanner = () => {
+  const { t } = useTranslation('board');
   const { store } = useYjsContext();
   const { followingPresenceId, setFollowingPresenceId, broadcasterPresenceId } =
     useFollowUserStore();
@@ -13,7 +15,7 @@ export const FollowBanner = () => {
 
   const presence = store.get(followingPresenceId as DrInstancePresenceID) as
     DrInstancePresence | undefined;
-  const name = presence?.userName || 'Участник';
+  const name = presence?.userName || t('collaborators.participant');
 
   const isBroadcastForced =
     !!broadcasterPresenceId && followingPresenceId === broadcasterPresenceId;
@@ -31,7 +33,7 @@ export const FollowBanner = () => {
           <Eyeon className="fill-icon-primary size-5 shrink-0" />
         )}
         <span className="text-text-primary text-sm font-medium">
-          {isBroadcastForced ? `Презентация · ${name}` : `Следуем за ${name}`}
+          {isBroadcastForced ? t('follow.presentation', { name }) : t('follow.following', { name })}
         </span>
         {!isBroadcastForced && (
           <Button
@@ -39,7 +41,7 @@ export const FollowBanner = () => {
             variant="none"
             className="hover:bg-background-subtle h-8 w-8 shrink-0 rounded-full p-0"
             onClick={() => setFollowingPresenceId(null)}
-            title="Отключить следование"
+            title={t('follow.stopFollowing')}
             data-umami-event="board-follow-user-stop"
           >
             <Close className="size-4" />

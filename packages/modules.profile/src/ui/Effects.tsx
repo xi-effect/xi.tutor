@@ -4,6 +4,7 @@ import { Slider } from '@xipkg/slider';
 import { Toggle } from '@xipkg/toggle';
 import { useMediaQuery } from '@xipkg/utils';
 import { useSoundEffectsStore, SOUND_DEFAULTS, type SoundKey } from 'common.ui';
+import { useTranslation } from 'react-i18next';
 
 type SoundItemProps = {
   label: string;
@@ -111,6 +112,7 @@ const Category = ({ icon, title, children }: CategoryProps) => (
 );
 
 export const Effects = () => {
+  const { t } = useTranslation('profile');
   const isMobile = useMediaQuery('(max-width: 719px)');
 
   const chatMessageVolume = useSoundEffectsStore((s) => s.chatMessageVolume);
@@ -123,42 +125,47 @@ export const Effects = () => {
 
   return (
     <>
-      {!isMobile && <h1 className="dark:text-text-primary mb-4 text-3xl font-semibold">Эффекты</h1>}
+      {!isMobile && (
+        <h1 className="dark:text-text-primary mb-4 text-3xl font-semibold">{t('effects.title')}</h1>
+      )}
 
       <div className="flex flex-col gap-4">
         <Category
           icon={<Conference className="fill-icon-brand h-5 w-5" />}
-          title="Видеоконференции"
+          title={t('effects.videoConferences')}
         >
           <SoundItem
-            label="Новое сообщение в чате"
+            label={t('effects.chatMessage')}
             soundKey="chatMessage"
             volume={chatMessageVolume}
             onVolumeChange={setSoundVolume}
           />
           <SoundItem
-            label="Поднятие руки"
+            label={t('effects.handRaise')}
             soundKey="handRaise"
             volume={handRaiseVolume}
             onVolumeChange={setSoundVolume}
           />
           <SoundItem
-            label="Подключение участника"
+            label={t('effects.userJoin')}
             soundKey="userJoin"
             volume={userJoinVolume}
             onVolumeChange={setSoundVolume}
           />
           <SoundItem
-            label="Отключение участника"
+            label={t('effects.userLeft')}
             soundKey="userLeft"
             volume={userLeftVolume}
             onVolumeChange={setSoundVolume}
           />
         </Category>
 
-        <Category icon={<WhiteBoard className="fill-icon-brand h-5 w-5" />} title="Доска">
+        <Category
+          icon={<WhiteBoard className="fill-icon-brand h-5 w-5" />}
+          title={t('effects.board')}
+        >
           <SoundItem
-            label="Окончание таймера"
+            label={t('effects.boardTimerEnd')}
             soundKey="boardTimerEnd"
             volume={boardTimerEndVolume}
             onVolumeChange={setSoundVolume}
@@ -166,7 +173,7 @@ export const Effects = () => {
             restrictedMinPercent={20}
           />
           <SoundItem
-            label="Предупреждение таймера"
+            label={t('effects.boardTimerWarn')}
             soundKey="boardTimerWarn"
             volume={boardTimerWarnVolume}
             onVolumeChange={setSoundVolume}

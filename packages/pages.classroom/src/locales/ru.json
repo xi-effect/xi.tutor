@@ -1,0 +1,111 @@
+{
+  "tabs": {
+    "overview": "Сводка",
+    "materials": "Материалы",
+    "schedule": "Расписание",
+    "payments": "Оплаты",
+    "info": "Информация",
+    "section": "Раздел",
+    "drawerTitle": "Раздел кабинета"
+  },
+  "actions": {
+    "selectAction": "Выберите действие",
+    "addStudent": "Добавить ученика",
+    "addStudentDescription": "Добавьте ученика в учебную группу",
+    "inviteToGroup": "Пригласить в группу",
+    "inviteToGroupDescription": "Отправьте ссылку-приглашение в группу",
+    "createInvoice": "Создать счёт на оплату",
+    "createInvoiceDescription": "Выставьте счёт ученику за проведённое занятие",
+    "deleteClassroom": "Удалить кабинет",
+    "deleteClassroomDescription": "Кабинет и все связанные данные будут удалены",
+    "deleting": "Удаление...",
+    "addLesson": "Добавить занятие",
+    "reschedule": "Перенести",
+    "rescheduleLesson": "Перенести занятие",
+    "editLesson": "Редактировать занятие",
+    "deleteLesson": "Удалить занятие",
+    "retry": "Попробовать снова",
+    "save": "Сохранить",
+    "saving": "Сохранение...",
+    "cancel": "Отмена",
+    "backToClassrooms": "К списку кабинетов",
+    "editDescription": "Редактировать описание",
+    "deleteFromGroup": "Удалить из группы"
+  },
+  "materials": {
+    "boards": "Доски",
+    "notes": "Заметки",
+    "noBoards": "Нет учебных досок",
+    "noNotes": "Нет заметок",
+    "noMaterials": "Нет материалов",
+    "loadError": "Ошибка загрузки материалов",
+    "noteCollaborative": "Заметка: Совместная работа",
+    "noteTutorOnly": "Заметка: Только репетитор",
+    "noteDrafts": "Заметка: Черновики",
+    "boardCollaborative": "Доска: Совместная работа",
+    "boardTutorOnly": "Доска: Только репетитор",
+    "boardDrafts": "Доска: Черновики"
+  },
+  "overview": {
+    "materials": "Материалы",
+    "payments": "Оплаты",
+    "students": "Ученики",
+    "upcomingLessons": "Ближайшие занятия",
+    "noLessonsTitle": "В ближайшие 7 дней занятий нет",
+    "noLessonsDescription": "Когда уроки появятся в расписании кабинета, они отобразятся здесь",
+    "paymentsEmpty": "Здесь пока пусто",
+    "addStudentTitle": "Добавьте ученика в группу",
+    "studentDeleted": "Студент удален из группы",
+    "studentDeleteError": "Не удалось удалить студента",
+    "studentsLoadError": "Не удалось загрузить список учеников"
+  },
+  "errors": {
+    "loadData": "Ошибка загрузки данных",
+    "classroomInfo": "Не удалось загрузить информацию о кабинете",
+    "classroomMaterials": "Не удалось загрузить материалы кабинета",
+    "classroomPayments": "Не удалось загрузить платежи кабинета",
+    "classroomCalendar": "Не удалось загрузить календарь кабинета",
+    "classroomNotFound": "Кабинет не найден",
+    "loadFailed": "Ошибка загрузки"
+  },
+  "header": {
+    "noDescription": "Описание не указано"
+  },
+  "descriptionModal": {
+    "title": "Редактировать описание",
+    "label": "Описание кабинета",
+    "placeholder": "Введите описание кабинета...",
+    "tooLong": "Описание слишком длинное"
+  },
+  "information": {
+    "lessonStatus": "Статус занятий",
+    "subject": "Предмет",
+    "statusActive": "Учится",
+    "statusPaused": "На паузе",
+    "statusFinished": "Обучение завершено",
+    "notePlaceholder": "Это место для заметок к кабинету. Можно вести план занятий,\nхранить контакты родителей ученика. Нажмите, чтобы начать редактировать"
+  },
+  "autocomplete": {
+    "loading": "Загрузка...",
+    "notFound": "Предмет не найден",
+    "select": "Выберите предмет...",
+    "search": "Поиск предмета...",
+    "empty": "Предметы не найдены"
+  },
+  "filters": {
+    "status": "Статус:",
+    "lessonType": "Тип занятия:",
+    "subject": "Предмет:",
+    "any": "Любой",
+    "active": "Активен",
+    "paused": "На паузе",
+    "locked": "Заблокирован",
+    "finished": "Завершен",
+    "individual": "Индивидуальное",
+    "group": "Групповое",
+    "math": "Математика",
+    "computerScience": "Информатика",
+    "foreignLanguages": "Иностранные языки",
+    "other": "Другое"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "start": "Start lesson",
+  "returnToConference": "Return to conference",
+  "join": "Join",
+  "tooltip": {
+    "beforeStart": "The button becomes active 5 minutes before the lesson starts",
+    "timesLoading": "Confirming lesson time…",
+    "lessonEnded": "Cannot start the lesson: more than 5 minutes have passed since the slot ended"
+  }
+}

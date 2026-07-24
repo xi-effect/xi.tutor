@@ -8,7 +8,7 @@ import { useState } from 'react';
 import { useCreateTgConnection, useGetNotificationsStatus } from 'common.services';
 
 export const WelcomeSocialsPage = () => {
-  const { t } = useTranslation('welcomeSocials');
+  const { t } = useTranslation(['welcomeSocials', 'welcome']);
   useOnboardingAnalytics({ step: 'notifications' });
 
   const { onBackwards, onForwards, isLoading } = useWelcomeSocialsForm();
@@ -68,7 +68,7 @@ export const WelcomeSocialsPage = () => {
         </SocialItem>
       </div>
       <WelcomeButtons
-        customText="Начать работу"
+        customText={t('buttons.start_button', { ns: 'welcome' })}
         backButtonHandler={onBackwards}
         continueButtonHandler={onForwards}
         isLoading={isLoading}

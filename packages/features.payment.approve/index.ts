@@ -4,3 +4,4 @@ export {
   PaymentApproveAction,
   type ApprovePaymentPropsT,
 } from './src';
+export { paymentApproveEn, paymentApproveRu } from './src/locales';

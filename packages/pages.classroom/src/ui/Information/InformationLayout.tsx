@@ -1,9 +1,11 @@
 import { useParams } from '@tanstack/react-router';
 import { useGetClassroom } from 'common.services';
+import { useTranslation } from 'react-i18next';
 import { Information } from './Information';
 import { ClassroomT } from 'common.api';
 
 export const InformationLayout = () => {
+  const { t } = useTranslation('classroom');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
 
@@ -27,8 +29,8 @@ export const InformationLayout = () => {
   if (isError || !classroom) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 p-8">
-        <h2 className="text-text-primary text-xl font-medium">Ошибка загрузки данных</h2>
-        <p className="text-text-primary">Не удалось загрузить информацию о кабинете</p>
+        <h2 className="text-text-primary text-xl font-medium">{t('errors.loadData')}</h2>
+        <p className="text-text-primary">{t('errors.classroomInfo')}</p>
       </div>
     );
   }

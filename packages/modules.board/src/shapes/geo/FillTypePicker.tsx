@@ -5,8 +5,10 @@ import { useDrawStore } from '../../store';
 import { useXiGeoStyles } from './useXiGeoStyles';
 import { TFill } from '../../types';
 import { cn } from '@xipkg/utils';
+import { useTranslation } from 'react-i18next';
 
 export const FillTypePicker = () => {
+  const { t } = useTranslation('board');
   const { setGeoFillType } = useDrawStore();
   const { setSelectedShapesFillType } = useDrawStyles();
   const { bgCurrentColorClass, borderCurrentColorClass, currentFillType } = useXiGeoStyles();
@@ -29,7 +31,7 @@ export const FillTypePicker = () => {
           'hover:bg-status-info-background p-1',
         )}
         onClick={() => handleFillType('none')}
-        title="Без заливки"
+        title={t('geo.noFill')}
       >
         <div
           className={cn('h-5 w-5 rounded-full border-2', borderCurrentColorClass)}
@@ -48,7 +50,7 @@ export const FillTypePicker = () => {
           'hover:bg-status-info-background p-1',
         )}
         onClick={() => handleFillType('semi')}
-        title="Полупрозрачная"
+        title={t('geo.semiTransparent')}
       >
         <div className={cn('h-5 w-5 rounded-full opacity-25', bgCurrentColorClass)} />
       </Button>
@@ -60,7 +62,7 @@ export const FillTypePicker = () => {
           'hover:bg-status-info-background p-1',
         )}
         onClick={() => handleFillType('solid')}
-        title="Сплошная"
+        title={t('geo.solid')}
       >
         <div className={cn('h-5 w-5 rounded-full', bgCurrentColorClass)} />
       </Button>

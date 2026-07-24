@@ -4,11 +4,13 @@ import { PaymentInvoiceDetailsModal, VirtualizedPaymentsTable } from 'pages.paym
 import { useScreenSize } from 'common.utils';
 import { useParams } from '@tanstack/react-router';
 import { useGetClassroom, useCurrentUser } from 'common.services';
+import { useTranslation } from 'react-i18next';
 import { LoadingState } from './LoadingState';
 import { RolePaymentT } from 'common.types';
 import { UserRoleT } from 'common.api';
 
 export const Payments = () => {
+  const { t } = useTranslation('classroom');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom } = useGetClassroom(Number(classroomId));
   const screenSize = useScreenSize();
@@ -52,8 +54,8 @@ export const Payments = () => {
   if (isError || !classroom) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 p-8">
-        <h2 className="text-text-primary text-xl font-medium">Ошибка загрузки данных</h2>
-        <p className="text-text-primary">Не удалось загрузить платежи кабинета</p>
+        <h2 className="text-text-primary text-xl font-medium">{t('errors.loadData')}</h2>
+        <p className="text-text-primary">{t('errors.classroomPayments')}</p>
       </div>
     );
   }

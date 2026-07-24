@@ -1,9 +1,10 @@
-const DEFAULT_LOCALE = 'ru-RU';
+import type { TFunction } from 'i18next';
+import { getDateLocale } from 'common.ui';
 
 export const getFullDateString = (
   date: Date,
   format: 'short' | 'long' = 'short',
-  locale: string = DEFAULT_LOCALE,
+  locale: string = getDateLocale(),
 ) => {
   const weekDayName = date.toLocaleDateString(locale, { weekday: format });
   const dayAndMonth = date.toLocaleDateString(locale, { day: 'numeric', month: 'long' });
@@ -12,7 +13,7 @@ export const getFullDateString = (
 };
 
 /** Формат как в макете: "6 февраля, вс" */
-export const getShortDateString = (date: Date, locale: string = DEFAULT_LOCALE): string => {
+export const getShortDateString = (date: Date, locale: string = getDateLocale()): string => {
   const dayAndMonth = date.toLocaleDateString(locale, { day: 'numeric', month: 'long' });
   const weekDayShort = date.toLocaleDateString(locale, { weekday: 'short' });
   return `${dayAndMonth}, ${weekDayShort}`;
@@ -56,17 +57,8 @@ export const addDurationToTime = (startTime: string, duration: string): string =
   return minutesToTime(startMin + durationMin);
 };
 
-const pluralRu = (n: number, one: string, few: string, many: string): string => {
-  const mod100 = n % 100;
-  const mod10 = n % 10;
-  if (mod100 >= 11 && mod100 <= 14) return many;
-  if (mod10 === 1) return one;
-  if (mod10 >= 2 && mod10 <= 4) return few;
-  return many;
-};
-
 /** Длительность между двумя временами в формате макета: «1 час 20 минут». Пустая строка, если посчитать нельзя. */
-export const formatDurationBetweenRu = (startTime: string, endTime: string): string => {
+export const formatDurationBetween = (startTime: string, endTime: string, t: TFunction): string => {
   if (!/^\d{1,2}:\d{2}$/.test(startTime) || !/^\d{1,2}:\d{2}$/.test(endTime)) {
     return '';
   }
@@ -79,10 +71,10 @@ export const formatDurationBetweenRu = (startTime: string, endTime: string): str
   const parts: string[] = [];
 
   if (hours > 0) {
-    parts.push(`${hours} ${pluralRu(hours, 'час', 'часа', 'часов')}`);
+    parts.push(t('hours', { count: hours }));
   }
   if (minutes > 0) {
-    parts.push(`${minutes} ${pluralRu(minutes, 'минута', 'минуты', 'минут')}`);
+    parts.push(t('minutes', { count: minutes }));
   }
 
   return parts.length ? parts.join(' ') : '';

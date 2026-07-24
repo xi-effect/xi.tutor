@@ -1,0 +1,26 @@
+{
+  "title": "Create group",
+  "description": "Modal for creating a new group",
+  "fields": {
+    "name": "Name",
+    "subject": "Subject"
+  },
+  "actions": {
+    "create": "Create",
+    "creating": "Creating...",
+    "cancel": "Cancel"
+  },
+  "autocomplete": {
+    "placeholder": "Select a subject...",
+    "search": "Search subjects...",
+    "loading": "Loading...",
+    "notFound": "Subject not found",
+    "loadError": "Failed to load",
+    "empty": "No subjects found"
+  },
+  "validation": {
+    "nameRequired": "Enter a name",
+    "nameMax": "Name must not exceed 100 characters",
+    "subjectRequired": "Select a subject"
+  }
+}

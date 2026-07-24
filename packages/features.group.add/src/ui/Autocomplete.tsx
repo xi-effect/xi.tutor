@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
 import { ControllerRenderProps } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 import { cn } from '@xipkg/utils';
 import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from '@xipkg/command';
@@ -16,6 +17,7 @@ type AutocompleteProps = {
 };
 
 export const Autocomplete = ({ field, disabled, containerRef }: AutocompleteProps) => {
+  const { t } = useTranslation('groupAdd');
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState('');
 
@@ -46,9 +48,9 @@ export const Autocomplete = ({ field, disabled, containerRef }: AutocompleteProp
   const hasSelection = Boolean(field.value && field.value !== 0);
   const triggerLabel = hasSelection
     ? isLoadingSelected
-      ? 'Загрузка...'
-      : selectedSubject?.name || 'Предмет не найден'
-    : 'Выберите предмет...';
+      ? t('autocomplete.loading')
+      : selectedSubject?.name || t('autocomplete.notFound')
+    : t('autocomplete.placeholder');
 
   return (
     <Popover open={open} onOpenChange={setOpen} modal={false}>
@@ -88,19 +90,23 @@ export const Autocomplete = ({ field, disabled, containerRef }: AutocompleteProp
             onPointerDown={(e) => e.stopPropagation()}
           >
             <CommandInput
-              placeholder="Поиск предмета..."
+              placeholder={t('autocomplete.search')}
               value={search}
               onValueChange={setSearch}
               className="text-text-primary"
             />
             <CommandList className="max-h-[200px] w-full overflow-y-auto">
               {isLoading ? (
-                <div className="text-text-secondary py-6 text-center text-sm">Загрузка...</div>
+                <div className="text-text-secondary py-6 text-center text-sm">
+                  {t('autocomplete.loading')}
+                </div>
               ) : isError ? (
-                <div className="text-text-danger py-6 text-center text-sm">Ошибка загрузки</div>
+                <div className="text-text-danger py-6 text-center text-sm">
+                  {t('autocomplete.loadError')}
+                </div>
               ) : !subjects || subjects.length === 0 ? (
                 <div className="text-text-secondary py-6 text-center text-sm">
-                  Предметы не найдены
+                  {t('autocomplete.empty')}
                 </div>
               ) : (
                 <CommandGroup>

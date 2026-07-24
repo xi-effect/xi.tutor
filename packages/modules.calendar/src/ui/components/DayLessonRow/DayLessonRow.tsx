@@ -1,4 +1,5 @@
 import { useMemo, type KeyboardEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
 import { CornerUpRight, Edit05, Trash } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
@@ -57,6 +58,7 @@ export const DayLessonRow = ({
   onReschedule,
   onSaveLesson,
 }: DayLessonRowProps) => {
+  const { t } = useTranslation('calendar');
   const { ref: rowRef, isInView } = useInView<HTMLDivElement>();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -122,7 +124,7 @@ export const DayLessonRow = ({
                   <p className="text-s-base text-text-primary m-0 line-clamp-3 max-h-15 min-h-0 w-full min-w-0 leading-5 wrap-break-word text-ellipsis">
                     {descriptionText != null && descriptionText.length > 0
                       ? descriptionText
-                      : 'Описание не указано.'}
+                      : t('no_description')}
                   </p>
                 </div>
               ) : (
@@ -172,7 +174,7 @@ export const DayLessonRow = ({
                       <CornerUpRight className="text-text-secondary h-5 w-5" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Перенести занятие</TooltipContent>
+                  <TooltipContent>{t('reschedule_lesson')}</TooltipContent>
                 </Tooltip>
                 <Tooltip delayDuration={TOOLTIP_OPEN_DELAY_MS}>
                   <TooltipTrigger asChild>
@@ -186,7 +188,7 @@ export const DayLessonRow = ({
                       <Edit05 className="text-text-secondary h-5 w-5" />
                     </Button>
                   </TooltipTrigger>
-                  <TooltipContent>Редактировать занятие</TooltipContent>
+                  <TooltipContent>{t('edit_lesson')}</TooltipContent>
                 </Tooltip>
                 {canCancelLesson ? (
                   <Tooltip delayDuration={TOOLTIP_OPEN_DELAY_MS}>
@@ -201,7 +203,7 @@ export const DayLessonRow = ({
                         <Trash className="fill-icon-secondary h-5 w-5" />
                       </Button>
                     </TooltipTrigger>
-                    <TooltipContent>Отменить занятие</TooltipContent>
+                    <TooltipContent>{t('cancel_lesson')}</TooltipContent>
                   </Tooltip>
                 ) : null}
               </div>

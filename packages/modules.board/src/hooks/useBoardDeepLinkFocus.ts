@@ -11,6 +11,7 @@ import {
   focusBoardShapes,
   parseShapeIdsFromSearch,
 } from '../utils/boardDeepLink';
+import i18n from 'i18next';
 
 type UseBoardDeepLinkFocusArgs = {
   editor: Editor | null;
@@ -46,10 +47,10 @@ export function useBoardDeepLinkFocus({ editor, ready = true }: UseBoardDeepLink
 
     if (commentId) {
       handled = focusBoardComment(editor, commentId, { openThread, setCommentsVisible });
-      if (!handled) toast.error('Комментарий не найден');
+      if (!handled) toast.error(i18n.t('comments.notFound', { ns: 'board' }));
     } else if (shapeIds.length) {
       handled = focusBoardShapes(editor, shapeIds);
-      if (!handled) toast.error('Элемент не найден');
+      if (!handled) toast.error(i18n.t('toast.elementNotFound', { ns: 'board' }));
     }
 
     if (handled) appliedKeyRef.current = key;

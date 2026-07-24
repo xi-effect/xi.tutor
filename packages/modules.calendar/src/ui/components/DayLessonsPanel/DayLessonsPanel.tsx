@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
 import { Undo } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
@@ -57,6 +58,7 @@ export const DayLessonsPanel = ({
   onSaveLesson,
   onReschedule,
 }: DayLessonsPanelProps) => {
+  const { t } = useTranslation('calendar');
   const [visibleMonthInfo, setVisibleMonthInfo] = useState<DominantVisibleMonthInfo | null>(null);
   const [alignCarouselNonce, setAlignCarouselNonce] = useState(0);
   const [isTodayVisibleInCarousel, setIsTodayVisibleInCarousel] = useState(true);
@@ -97,7 +99,7 @@ export const DayLessonsPanel = ({
       data-umami-event="modal-schedule-go-to-today"
     >
       <Undo className="fill-icon-secondary size-4 shrink-0" />
-      <span className="text-s-base 2xl:text-m-base font-normal">К сегодня</span>
+      <span className="text-s-base 2xl:text-m-base font-normal">{t('go_to_today')}</span>
     </Button>
   );
 
@@ -129,7 +131,9 @@ export const DayLessonsPanel = ({
         ) : null}
 
         {subtitle ? (
-          <h3 className="text-l-base text-text-primary shrink-0 font-semibold">Занятия на день</h3>
+          <h3 className="text-l-base text-text-primary shrink-0 font-semibold">
+            {t('lessons_for_day')}
+          </h3>
         ) : null}
 
         <ScheduleDateCarousel
@@ -177,12 +181,10 @@ export const DayLessonsPanel = ({
               />
               <div className="flex max-w-md flex-col gap-2 text-center">
                 <p className="text-m-base text-text-primary font-semibold">
-                  На выбранную дату нет занятий
+                  {t('no_lessons_on_date')}
                 </p>
                 <p className="text-s-base text-text-secondary dark:text-text-muted">
-                  {isTutorEmptyState
-                    ? 'Добавляйте, переносите и отменяйте занятия'
-                    : 'Здесь отображаются занятия, которые назначил репетитор'}
+                  {isTutorEmptyState ? t('empty_day_tutor_hint') : t('empty_day_student_hint')}
                 </p>
               </div>
             </div>

@@ -1,33 +1,34 @@
+import type { TFunction } from 'i18next';
 import * as z from 'zod';
 import { durationBetweenMinutes, MAX_LESSON_DURATION_MINUTES } from '../utils/utils';
 
-const timeValidation = z.string().refine((time) => {
-  if (time === '') return true;
-  const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
-  return timeRegex.test(time);
-}, 'Неверный формат времени');
+export const createMovingFormSchema = (lessonKind: 'one-off' | 'recurring', t: TFunction) => {
+  const timeValidation = z.string().refine((time) => {
+    if (time === '') return true;
+    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    return timeRegex.test(time);
+  }, t('validation.invalidTime'));
 
-const movingFormBase = z.object({
-  startDate: z.date({ error: 'Укажите дату' }),
-  startTime: timeValidation,
-  endTime: timeValidation,
-  moveMode: z.enum(['single', 'single_and_next']).optional(),
-  repeatWeekdays: z.array(z.number().min(0).max(6)).default([]),
-});
+  const movingFormBase = z.object({
+    startDate: z.date({ error: t('validation.dateRequired') }),
+    startTime: timeValidation,
+    endTime: timeValidation,
+    moveMode: z.enum(['single', 'single_and_next']).optional(),
+    repeatWeekdays: z.array(z.number().min(0).max(6)).default([]),
+  });
 
-export const createMovingFormSchema = (lessonKind: 'one-off' | 'recurring') =>
-  movingFormBase.superRefine((data, ctx) => {
+  return movingFormBase.superRefine((data, ctx) => {
     if (data.startTime === '') {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Укажите время начала',
+        message: t('validation.startTimeRequired'),
         path: ['startTime'],
       });
     }
     if (data.endTime === '') {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Укажите время окончания',
+        message: t('validation.endTimeRequired'),
         path: ['endTime'],
       });
     }
@@ -36,13 +37,13 @@ export const createMovingFormSchema = (lessonKind: 'one-off' | 'recurring') =>
       if (durationMinutes === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Время окончания должно быть позже начала',
+          message: t('validation.endAfterStart'),
           path: ['endTime'],
         });
       } else if (durationMinutes > MAX_LESSON_DURATION_MINUTES) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: 'Максимальная длительность занятия — 12 часов',
+          message: t('validation.maxDuration'),
           path: ['endTime'],
         });
       }
@@ -54,11 +55,13 @@ export const createMovingFormSchema = (lessonKind: 'one-off' | 'recurring') =>
     ) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'Выберите хотя бы один день',
+        message: t('validation.repeatDaysRequired'),
         path: ['repeatWeekdays'],
       });
     }
   });
+};
 
-export type FormInput = z.input<typeof movingFormBase>;
-export type FormData = z.output<typeof movingFormBase>;
+type MovingFormSchema = ReturnType<typeof createMovingFormSchema>;
+export type FormInput = z.input<MovingFormSchema>;
+export type FormData = z.output<MovingFormSchema>;

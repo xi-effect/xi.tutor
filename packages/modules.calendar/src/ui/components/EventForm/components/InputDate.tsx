@@ -1,4 +1,5 @@
 import { memo, useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { DatePicker } from '@xipkg/datepicker';
 import { Calendar } from '@xipkg/icons';
@@ -12,6 +13,7 @@ type InputDateProps = {
 };
 
 export const InputDate = memo<InputDateProps>(({ value, name, onChange }) => {
+  const { t } = useTranslation('calendar');
   const [date, setDate] = useState<Date>(convertStringToDate(value || ''));
 
   const handleSelectDate = useCallback(
@@ -33,7 +35,7 @@ export const InputDate = memo<InputDateProps>(({ value, name, onChange }) => {
       <Input
         name={name}
         value={getFullDateString(date)}
-        placeholder="Введите дату"
+        placeholder={t('event_form.enter_date')}
         variant="s"
         className="hover:border-border-strong focus:border-border-strong cursor-pointer border border-transparent outline-none"
         before={<Calendar className="fill-icon-primary h-4 w-4" />}

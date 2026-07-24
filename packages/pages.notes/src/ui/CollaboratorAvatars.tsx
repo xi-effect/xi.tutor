@@ -1,5 +1,6 @@
 import { Avatar, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage } from '@xipkg/avatar';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
+import { useTranslation } from 'react-i18next';
 import { TCollaborator } from '../types';
 
 type TCollaboratorAvatars = {
@@ -10,6 +11,7 @@ type TCollaboratorAvatars = {
 const MAX_VISIBLE_AVATARS = 3;
 
 export const CollaboratorAvatars = ({ collaborators, currentUserId }: TCollaboratorAvatars) => {
+  const { t } = useTranslation('notes');
   const overflowCount = Math.max(0, collaborators.length - MAX_VISIBLE_AVATARS);
   const visibleCollaborators = collaborators.slice(0, MAX_VISIBLE_AVATARS);
 
@@ -35,7 +37,7 @@ export const CollaboratorAvatars = ({ collaborators, currentUserId }: TCollabora
         className="z-100 w-64 rounded-xl p-2"
       >
         <div className="flex flex-col gap-1">
-          <p className="text-text-secondary px-2 py-1 text-xs">Участники в заметке</p>
+          <p className="text-text-secondary px-2 py-1 text-xs">{t('collaborators')}</p>
           {collaborators.map((collaborator) => (
             <div
               key={collaborator.id}
@@ -46,7 +48,7 @@ export const CollaboratorAvatars = ({ collaborators, currentUserId }: TCollabora
                 <AvatarFallback size="s">{collaborator.initial}</AvatarFallback>
               </Avatar>
               <span className="text-text-primary flex-1 truncate text-sm">
-                {collaborator.id === currentUserId ? 'Вы' : collaborator.userName}
+                {collaborator.id === currentUserId ? t('you') : collaborator.userName}
               </span>
             </div>
           ))}

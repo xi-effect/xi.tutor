@@ -1,0 +1,45 @@
+{
+  "title": "Add lesson",
+  "schedule": "Schedule",
+  "cancel": "Cancel",
+  "submit": "Add",
+  "form": {
+    "name": "Title",
+    "namePlaceholder": "Mathematics",
+    "description": "Description",
+    "descriptionPlaceholder": "Topic, plan, comment…",
+    "classroom": "Classroom",
+    "currentClassroom": "Current classroom",
+    "date": "Date",
+    "time": "Time",
+    "startPlaceholder": "17:40 Start",
+    "endPlaceholder": "19:00 End",
+    "repeat": "Repeat",
+    "repeatHint": "Repeat the lesson every week on the selected days:"
+  },
+  "weekdays_short": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
+  "studentSelector": {
+    "loading": "Loading...",
+    "empty": "No classrooms available",
+    "placeholder": "Student or group",
+    "emptyTooltip": "You don’t have any classrooms yet. Create a classroom for group or individual lessons"
+  },
+  "toast": {
+    "success": "Lesson added"
+  },
+  "validation": {
+    "invalidTime": "Invalid time format",
+    "titleRequired": "Enter a title",
+    "studentRequired": "Select a student or group",
+    "dateRequired": "Select a date",
+    "startTimeRequired": "Enter a start time",
+    "endTimeRequired": "Enter an end time",
+    "endAfterStart": "End time must be later than start time",
+    "maxDuration": "Maximum lesson duration is 12 hours",
+    "repeatDaysRequired": "Select at least one day of the week"
+  },
+  "hours_one": "{{count}} hour",
+  "hours_other": "{{count}} hours",
+  "minutes_one": "{{count}} minute",
+  "minutes_other": "{{count}} minutes"
+}

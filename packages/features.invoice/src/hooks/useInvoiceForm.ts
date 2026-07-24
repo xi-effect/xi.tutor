@@ -2,12 +2,13 @@ import { useEffect } from 'react';
 import { useForm, useFieldArray } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLocation } from '@tanstack/react-router';
-import { formSchema, type FormData, type FormInput } from '../model';
+import { useFormSchema, type FormData, type FormInput } from '../model';
 import { useCreateInvoice } from './useCreateInvoice';
 import { generateRandomId } from '../utils';
 
 export const useInvoiceForm = () => {
   const createInvoiceMutation = useCreateInvoice();
+  const formSchema = useFormSchema();
 
   // Получаем classroomId из URL опционально через useLocation
   // Это безопаснее, чем useParams, так как не требует наличия параметров в маршруте

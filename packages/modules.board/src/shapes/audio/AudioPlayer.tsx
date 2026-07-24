@@ -13,6 +13,7 @@ import {
 } from './components';
 import { AUDIO_SHAPE_HEIGHT, computeAudioShapeHeight } from './AudioShape';
 import type { AudioShape } from './AudioShape';
+import { useTranslation } from 'react-i18next';
 
 function useIsSyncPlaybackActive(shape: AudioShape): boolean {
   const { audioSyncMap } = useYjsContext();
@@ -25,6 +26,7 @@ type AudioPlayerProps = {
 };
 
 export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
+  const { t } = useTranslation('board');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
@@ -62,7 +64,9 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
         style={{ pointerEvents: 'none', width: shape.props.w, height: AUDIO_SHAPE_HEIGHT }}
       >
         <div className="text-text-disabled flex h-full w-full items-center justify-center">
-          <span className="text-xs">{status === 'idle' ? 'Аудио' : 'Загрузка...'}</span>
+          <span className="text-xs">
+            {status === 'idle' ? t('audio.label') : t('audio.loading')}
+          </span>
         </div>
       </div>
     );

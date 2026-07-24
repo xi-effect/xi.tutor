@@ -1,6 +1,7 @@
 import { FC, useLayoutEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { startOfDay } from 'date-fns';
+import { getDateLocale } from 'common.ui';
 import { Plus } from '@xipkg/icons';
 import { LessonCard } from './LessonCard';
 import { LessonCardSkeleton } from './LessonCardSkeleton';
@@ -51,8 +52,8 @@ const getEventsForDay = (
 };
 
 /** Полное название дня недели с заглавной (например, «Понедельник») */
-const getDayNameRu = (date: Date): string => {
-  const name = date.toLocaleDateString('ru-RU', { weekday: 'long' });
+const getDayName = (date: Date): string => {
+  const name = date.toLocaleDateString(getDateLocale(), { weekday: 'long' });
   return name.charAt(0).toUpperCase() + name.slice(1);
 };
 
@@ -153,7 +154,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
       >
         {visibleDays.map((day, colIndex) => {
           const dateNum = day.getDate();
-          const dayName = getDayNameRu(day);
+          const dayName = getDayName(day);
 
           return (
             <div

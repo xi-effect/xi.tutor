@@ -3,6 +3,7 @@ import { Trash } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useDeleteRecipientInvoice } from 'common.services';
 import { TutorPaymentT } from 'common.types';
+import { useTranslation } from 'react-i18next';
 
 type ActionsCellProps = {
   invoiceId: TutorPaymentT['id'];
@@ -10,10 +11,11 @@ type ActionsCellProps = {
 };
 
 export const ActionsCell = ({ invoiceId, classroomId }: ActionsCellProps) => {
+  const { t } = useTranslation('paymentsTable');
   const { mutate: deleteInvoice, isPending } = useDeleteRecipientInvoice(classroomId?.toString());
 
   const handleDelete = () => {
-    if (confirm('Вы уверены, что хотите удалить выставленный счет?')) {
+    if (confirm(t('deleteConfirm'))) {
       deleteInvoice(invoiceId.toString());
     }
   };
@@ -40,7 +42,7 @@ export const ActionsCell = ({ invoiceId, classroomId }: ActionsCellProps) => {
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom">
-            <p>Удалить выставленный счет</p>
+            <p>{t('deleteTooltip')}</p>
           </TooltipContent>
         </Tooltip>
       </div>

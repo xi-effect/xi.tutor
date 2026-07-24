@@ -5,6 +5,7 @@ import { resolveAssetUrl } from '../utils/resolveAssetUrl';
 import { registerToken } from '../utils/tokenRegistry';
 import { checkAssetType } from '../utils/uploadAsset';
 import { ALLOWED_IMAGE_MIME_TYPES } from '../constants/mimeTypes';
+import i18n from 'i18next';
 
 export type DrAssetContextT = {
   screenScale: number;
@@ -43,7 +44,7 @@ async function probeImage(file: File): Promise<{ w: number; h: number; objectUrl
     img.onload = () => resolve();
     img.onerror = () => {
       URL.revokeObjectURL(objectUrl);
-      reject(new Error(`Не удалось декодировать изображение: ${file.name}`));
+      reject(new Error(i18n.t('toast.imageDecodeFailed', { ns: 'board', name: file.name })));
     };
     img.src = objectUrl;
   });
@@ -85,15 +86,24 @@ export const myAssetStore = (token: string) => {
 
       // Проверка формата (бэкенд принимает только эти типы)
       if (!ALLOWED_IMAGE_MIME_TYPES.has(file.type)) {
-        const message = `Неподдерживаемый формат изображения (${file.type}). Допустимы: JPEG, PNG, WebP, GIF, TIFF, BMP, ICO, AVIF, JPX.`;
-        toast.error('Не удалось загрузить изображение', { description: message, duration: 5000 });
+        const message = i18n.t('toast.imageUnsupportedFormat', { ns: 'board', type: file.type });
+        toast.error(i18n.t('toast.imageUploadFailed', { ns: 'board' }), {
+          description: message,
+          duration: 5000,
+        });
         throw new Error(message);
       }
 
       // Проверка размера по оригиналу (макс. 1 MiB)
       if (file.size > MAX_IMAGE_SIZE_BYTES) {
-        const message = `Размер изображения не должен превышать 1 MiB (сейчас ${(file.size / 1024 / 1024).toFixed(2)} MiB).`;
-        toast.error('Не удалось загрузить изображение', { description: message, duration: 5000 });
+        const message = i18n.t('toast.imageSizeDesc', {
+          ns: 'board',
+          size: (file.size / 1024 / 1024).toFixed(2),
+        });
+        toast.error(i18n.t('toast.imageUploadFailed', { ns: 'board' }), {
+          description: message,
+          duration: 5000,
+        });
         throw new Error(message);
       }
 
@@ -103,8 +113,16 @@ export const myAssetStore = (token: string) => {
         const { w, h, objectUrl: url } = await probeImage(file);
         objectUrl = url;
         if (w > MAX_IMAGE_SIDE || h > MAX_IMAGE_SIDE) {
-          const message = `Размер изображения не должен превышать ${MAX_IMAGE_SIDE}×${MAX_IMAGE_SIDE}px (сейчас ${w}×${h}px).`;
-          toast.error('Не удалось загрузить изображение', { description: message, duration: 5000 });
+          const message = i18n.t('toast.imageSideDesc', {
+            ns: 'board',
+            max: MAX_IMAGE_SIDE,
+            width: w,
+            height: h,
+          });
+          toast.error(i18n.t('toast.imageUploadFailed', { ns: 'board' }), {
+            description: message,
+            duration: 5000,
+          });
           throw new Error(message);
         }
       } finally {

@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { cn } from '@xipkg/utils';
 import type { NotificationT } from 'common.types';
 import type { CustomNotificationModalPayload } from 'common.services';
@@ -25,6 +26,8 @@ export const NotificationsList = ({
   onOpenCustomModal: (payload: CustomNotificationModalPayload) => void;
   scrollAreaRef: React.RefObject<HTMLDivElement | null>;
 }) => {
+  const { t } = useTranslation('navigation');
+
   return (
     <div
       ref={scrollAreaRef}
@@ -52,7 +55,7 @@ export const NotificationsList = ({
 
           {(isLoading || isFetchingNextPage) && (
             <div className="flex justify-center p-4">
-              <span className="text-text-primary text-xs-base">Загрузка...</span>
+              <span className="text-text-primary text-xs-base">{t('notificationsLoading')}</span>
             </div>
           )}
         </>
@@ -63,7 +66,9 @@ export const NotificationsList = ({
             isMobile ? 'h-[200px]' : 'h-[300px]',
           )}
         >
-          <span className="text-text-primary text-s-base font-normal">Уведомлений нет</span>
+          <span className="text-text-primary text-s-base font-normal">
+            {t('notificationsEmpty')}
+          </span>
         </div>
       )}
     </div>

@@ -15,9 +15,9 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { UserProfile } from '@xipkg/userprofile';
 import { cn } from '@xipkg/utils';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import type { z } from 'zod';
-import { changeLessonFormSchema, type ChangeLessonFormData } from '../model';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { createChangeLessonFormSchema, type ChangeLessonFormData } from '../model';
 
 /** Как строка кабинета в {@link LessonCard} ScheduleKanban: аватар + подпись с truncate и Tooltip при обрезке. */
 function ChangeLessonModalClassroomLine({
@@ -98,12 +98,15 @@ export const ChangeLessonModal = ({
   defaultDescription = '',
   onSave,
 }: ChangeLessonModalProps) => {
+  const { t } = useTranslation('lessonChange');
+  const changeLessonFormSchema = useMemo(() => createChangeLessonFormSchema(t), [t]);
+
   const initialValues: ChangeLessonFormData = {
     title: defaultTitle,
     description: defaultDescription,
   };
 
-  const form = useForm<z.input<typeof changeLessonFormSchema>>({
+  const form = useForm<ChangeLessonFormData>({
     resolver: zodResolver(changeLessonFormSchema),
     defaultValues: initialValues,
   });
@@ -148,7 +151,7 @@ export const ChangeLessonModal = ({
         <ModalHeader>
           <ModalCloseButton />
           <ModalTitle className="text-xl-base text-text-primary max-w-[calc(100%-56px)] font-semibold">
-            Изменить занятие
+            {t('title')}
           </ModalTitle>
         </ModalHeader>
 
@@ -169,7 +172,7 @@ export const ChangeLessonModal = ({
               ) : null}
 
               <div className="flex flex-col gap-3 pt-2">
-                <span className="text-text-primary text-sm font-medium">О занятии</span>
+                <span className="text-text-primary text-sm font-medium">{t('aboutLesson')}</span>
 
                 <FormField
                   control={control}
@@ -203,7 +206,7 @@ export const ChangeLessonModal = ({
                           name={field.name}
                           ref={field.ref}
                           id="change-lesson-description"
-                          placeholder="Добавить описание"
+                          placeholder={t('descriptionPlaceholder')}
                           maxRows={6}
                           hideCounter
                           aria-invalid={!!errors.description}
@@ -229,7 +232,7 @@ export const ChangeLessonModal = ({
                 onClick={handleClose}
                 data-umami-event="lesson-change-cancel"
               >
-                Отменить
+                {t('cancel')}
               </Button>
               <Button
                 type="submit"
@@ -238,7 +241,7 @@ export const ChangeLessonModal = ({
                 className="h-11 flex-1 p-0"
                 data-umami-event="lesson-change-save"
               >
-                Сохранить
+                {t('save')}
               </Button>
             </ModalFooter>
           </form>

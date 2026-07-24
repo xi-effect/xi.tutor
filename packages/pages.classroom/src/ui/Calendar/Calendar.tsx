@@ -18,6 +18,7 @@ import {
   type RepeatedVirtualRescheduleTarget,
   type SoleRescheduleTarget,
 } from 'features.lesson.move';
+import { useTranslation } from 'react-i18next';
 import { useClassroomSchedule } from './ClassroomScheduleContext';
 import { CalendarScheduleKanban } from './ClassroomScheduleParts';
 import { getScheduleQueryRange, mapScheduleItemsToCalendarEvents } from './schedulerMapping';
@@ -88,6 +89,7 @@ function movingModalPropsFromEvent(event: ICalendarEvent, classroomId: number) {
 }
 
 export const Calendar = () => {
+  const { t } = useTranslation('classroom');
   const isMobile = useIsMobile();
   const {
     weekDays,
@@ -206,8 +208,8 @@ export const Calendar = () => {
   if (isError || (!classroom && !hasPendingDeepLink)) {
     return (
       <div className="flex flex-col items-center justify-center gap-4 p-8">
-        <h2 className="text-text-primary text-xl font-medium">Ошибка загрузки данных</h2>
-        <p className="text-text-primary">Не удалось загрузить календарь кабинета</p>
+        <h2 className="text-text-primary text-xl font-medium">{t('errors.loadData')}</h2>
+        <p className="text-text-primary">{t('errors.classroomCalendar')}</p>
       </div>
     );
   }

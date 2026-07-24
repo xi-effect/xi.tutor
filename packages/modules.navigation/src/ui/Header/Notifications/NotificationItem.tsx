@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Check } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { DropdownMenuItem } from '@xipkg/dropdown';
@@ -32,6 +33,8 @@ export const NotificationItem = ({
   onOpenCustomModal: (payload: CustomNotificationModalPayload) => void;
   asDropdownItem?: boolean;
 }) => {
+  const { t } = useTranslation('navigation');
+
   // Обработчик клика по уведомлению - переход на целевую страницу или открытие модалки
   const handleClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -123,7 +126,7 @@ export const NotificationItem = ({
               </Button>
             </TooltipTrigger>
             <TooltipContent side="left">
-              <p>Отметить как прочитанное</p>
+              <p>{t('markAsRead')}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

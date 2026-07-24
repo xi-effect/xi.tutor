@@ -6,6 +6,7 @@ import { SubjectBadge } from './SubjectBadge';
 import { useEffect, useCallback, useRef } from 'react';
 import { useStartCall } from 'modules.calls';
 import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 import { StatusBadge } from '../../StatusBadge';
 import { ContactsBadge } from './ContactsBadge';
 import { useCurrentUser } from 'common.services';
@@ -16,6 +17,7 @@ interface ContentProps {
 }
 
 export const Content = ({ classroom }: ContentProps) => {
+  const { t } = useTranslation('classroom');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const navigate = useNavigate();
@@ -67,7 +69,7 @@ export const Content = ({ classroom }: ContentProps) => {
             type="button"
             onClick={() => navigate({ to: '/classrooms' })}
             className="text-text-primary hover:bg-background-page flex h-10 w-10 shrink-0 items-center justify-center rounded-xl p-0"
-            aria-label="К списку кабинетов"
+            aria-label={t('actions.backToClassrooms')}
             data-umami-event="classroom-back-to-classrooms"
           >
             <ArrowLeft size="s" className="h-5 w-5" />

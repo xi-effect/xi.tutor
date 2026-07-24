@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./locales": "./src/locales/index.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -21,7 +22,9 @@
     "common.types": "workspace:*",
     "common.ui": "workspace:*",
     "dayjs": "^1.11.13",
-    "features.materials.edit": "workspace:*"
+    "features.materials.edit": "workspace:*",
+    "i18next": "24.2.2",
+    "react-i18next": "15.4.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

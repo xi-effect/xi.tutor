@@ -1,14 +1,16 @@
 import dayjs from 'dayjs';
+import 'dayjs/locale/en';
 import 'dayjs/locale/ru';
 import isToday from 'dayjs/plugin/isToday';
 import isYesterday from 'dayjs/plugin/isYesterday';
+import i18n from 'i18next';
+import { getAppLanguage } from 'common.ui';
 
 dayjs.extend(isToday);
 dayjs.extend(isYesterday);
-dayjs.locale('ru');
 
 export const formatDate = (dateStr: string) => {
-  const date = dayjs(dateStr);
+  const date = dayjs(dateStr).locale(getAppLanguage());
 
   const classnameFirstLine = 'text-text-primary font-normal text-s-base';
   const classnameSecondLine = 'text-text-secondary font-normal text-xs-base';
@@ -18,7 +20,7 @@ export const formatDate = (dateStr: string) => {
   if (date.isToday()) {
     return (
       <>
-        <p className={classnameFirstLine}>Сегодня</p>
+        <p className={classnameFirstLine}>{i18n.t('date.today', { ns: 'payments' })}</p>
         {formattedTime}
       </>
     );
@@ -27,7 +29,7 @@ export const formatDate = (dateStr: string) => {
   if (date.isYesterday()) {
     return (
       <>
-        <p className={classnameFirstLine}>Вчера</p>
+        <p className={classnameFirstLine}>{i18n.t('date.yesterday', { ns: 'payments' })}</p>
         {formattedTime}
       </>
     );

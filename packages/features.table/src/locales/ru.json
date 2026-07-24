@@ -1,0 +1,31 @@
+{
+  "columns": {
+    "date": "Дата",
+    "student": "Ученик",
+    "tutor": "Репетитор",
+    "amount": "Сумма",
+    "paymentType": "Тип оплаты",
+    "status": "Статус"
+  },
+  "viewInvoiceAria": "Просмотреть информацию о счёте",
+  "nameNotFound": "Имя не найдено",
+  "deleteConfirm": "Вы уверены, что хотите удалить выставленный счет?",
+  "deleteTooltip": "Удалить выставленный счет",
+  "date": {
+    "today": "Сегодня",
+    "yesterday": "Вчера"
+  },
+  "paymentType": {
+    "cash": "наличные",
+    "transfer": "перевод"
+  },
+  "status": {
+    "complete": "оплачен",
+    "wf_receiver_confirmation": "ожидает подтверждения",
+    "wf_sender_confirmation": "ждет оплаты"
+  },
+  "filter": {
+    "from": "От",
+    "to": "До"
+  }
+}

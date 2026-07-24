@@ -1,0 +1,8 @@
+{
+  "title": "Информация о занятии",
+  "reschedule": "Перенести",
+  "cancel": "Отменить",
+  "edit": "Редактировать",
+  "classroomLoading": "Загрузка кабинета…",
+  "classroomNumber": "Кабинет №{{id}}"
+}

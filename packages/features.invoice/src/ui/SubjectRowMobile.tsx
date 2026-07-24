@@ -2,6 +2,7 @@ import { Button } from '@xipkg/button';
 import { FormControl, FormField, FormItem, useFieldArray, useFormContext } from '@xipkg/form';
 import { Close } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
+import { useTranslation } from 'react-i18next';
 import { roundMoney } from '../model';
 
 type SubjectRowPropsT = {
@@ -14,6 +15,7 @@ const DEFAULT_VALUE = 0;
 const MIN_VALUE = 1;
 
 export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
+  const { t } = useTranslation('invoice');
   const { watch } = useFormContext();
   const items = watch('items');
 
@@ -39,7 +41,7 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
                 <FormControl>
                   <Input
                     {...formField}
-                    placeholder="Название"
+                    placeholder={t('placeholders.name')}
                     variant="s"
                     onChange={(e) => {
                       formField.onChange(e.target.value);
@@ -67,7 +69,7 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
                   <Input
                     {...formField}
                     type="number"
-                    placeholder="Стоимость"
+                    placeholder={t('placeholders.price')}
                     min={DEFAULT_VALUE}
                     step={0.01}
                     variant="s"
@@ -112,7 +114,7 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
                   <Input
                     {...formField}
                     type="number"
-                    placeholder="Кол-во"
+                    placeholder={t('placeholders.quantityShort')}
                     min={MIN_VALUE}
                     variant="s"
                     onChange={(e) => {
@@ -135,7 +137,7 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
                 className="pointer-events-none"
                 type="number"
                 value={totalPrice}
-                placeholder="Сумма"
+                placeholder={t('placeholders.sum')}
                 variant="s"
                 after={<span className="text-text-secondary">₽</span>}
                 readOnly

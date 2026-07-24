@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./locales": "./src/locales/index.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -31,7 +32,9 @@
     "features.invites": "workspace:*",
     "features.materials.add": "workspace:*",
     "features.materials.card": "workspace:*",
-    "features.materials.duplicate": "workspace:*"
+    "features.materials.duplicate": "workspace:*",
+    "i18next": "24.2.2",
+    "react-i18next": "15.4.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

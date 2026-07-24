@@ -3,8 +3,10 @@ import { ModalInvitation } from 'features.invites';
 import { ModalAddGroup } from 'features.group.add';
 import { useCurrentUser } from 'common.services';
 import { Group, UserPlus } from '@xipkg/icons';
+import { useTranslation } from 'react-i18next';
 
 export const ActionButtons = () => {
+  const { t } = useTranslation('main');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
@@ -23,7 +25,7 @@ export const ActionButtons = () => {
           data-umami-event="main-create-group"
         >
           <Group className="fill-icon-primary mr-3" />
-          Создать группу
+          {t('actionButtons.createGroup')}
         </Button>
       </ModalAddGroup>
 
@@ -36,7 +38,7 @@ export const ActionButtons = () => {
           data-umami-event="main-invite-student"
         >
           <UserPlus className="fill-action-primary-text text-text-on-accent mr-3" />
-          Добавить ученика
+          {t('actionButtons.addStudent')}
         </Button>
       </ModalInvitation>
     </div>

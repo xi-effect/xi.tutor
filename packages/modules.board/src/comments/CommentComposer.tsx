@@ -3,6 +3,7 @@ import { cn } from '@xipkg/utils';
 import { boardMenuSurfaceClass } from '../ui/boardTheme';
 import { getCommentAuthorAvatarUrl } from './commentAvatar';
 import { CommentMessageInput } from './CommentMessageInput';
+import { useTranslation } from 'react-i18next';
 
 type CommentComposerProps = {
   left: number;
@@ -26,6 +27,7 @@ export const CommentComposer = ({
   onSubmit,
   onCancel,
 }: CommentComposerProps) => {
+  const { t } = useTranslation('board');
   return (
     <div
       className="pointer-events-none absolute z-100"
@@ -39,8 +41,8 @@ export const CommentComposer = ({
         )}
       >
         <CommentMessageInput
-          placeholder="Написать комментарий..."
-          submitLabel="Отправить"
+          placeholder={t('comments.writePlaceholder')}
+          submitLabel={t('comments.send')}
           autoFocus
           onSubmit={onSubmit}
           onCancel={onCancel}

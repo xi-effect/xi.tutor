@@ -7,10 +7,12 @@ import { Slider } from '@xipkg/slider';
 import { cn } from '@xipkg/utils';
 import { TColor } from '../../types';
 import { useXiGeoStyles } from './useXiGeoStyles';
+import { useTranslation } from 'react-i18next';
 
 const sizes = ['s', 'm', 'l', 'xl'] as const;
 
 export const BorderPicker = () => {
+  const { t } = useTranslation('board');
   const [open, setOpen] = useState(false);
   const { setSelectedShapesBorderColor, setSelectedShapesThickness } = useDrawStyles();
   const { setGeoBorderColor, setGeoBorderThickness } = useDrawStore();
@@ -40,7 +42,7 @@ export const BorderPicker = () => {
     <Picker
       open={open}
       setOpen={setOpen}
-      triggerTitle="Цвет обводки"
+      triggerTitle={t('geo.borderColor')}
       triggerChild={
         <div className={cn('h-5 w-5 rounded-full border-3', borderCurrentColorClass)} />
       }

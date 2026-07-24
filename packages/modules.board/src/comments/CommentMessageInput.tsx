@@ -4,6 +4,7 @@ import { Textarea } from '@xipkg/textarea';
 import { Send } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { stopEvent } from '../shapes/audio/constants';
+import { useTranslation } from 'react-i18next';
 
 type CommentMessageInputProps = {
   placeholder: string;
@@ -20,6 +21,7 @@ export const CommentMessageInput = ({
   onSubmit,
   onCancel,
 }: CommentMessageInputProps) => {
+  const { t } = useTranslation('board');
   const [value, setValue] = useState('');
 
   const handleSubmit = () => {
@@ -57,7 +59,7 @@ export const CommentMessageInput = ({
       <div className="flex justify-end gap-2">
         {onCancel && (
           <Button variant="ghost" size="s" onClick={onCancel} type="button">
-            Отмена
+            {t('comments.cancel')}
           </Button>
         )}
         <Button

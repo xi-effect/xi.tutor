@@ -1,1 +1,1 @@
-export { changeLessonFormSchema, type ChangeLessonFormData } from './formSchema';
+export { createChangeLessonFormSchema, type ChangeLessonFormData } from './formSchema';

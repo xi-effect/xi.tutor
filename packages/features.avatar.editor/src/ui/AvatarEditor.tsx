@@ -12,6 +12,7 @@ import { Close, Minus, Plus } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { Slider } from '@xipkg/slider';
 import Cropper from 'react-easy-crop';
+import { useTranslation } from 'react-i18next';
 import { useCrop, useZoom, useImageProcessing } from '../hooks';
 
 type AvatarEditorT = {
@@ -33,6 +34,7 @@ export const AvatarEditor = ({
   onBase64Return,
   communityId,
 }: AvatarEditorT) => {
+  const { t } = useTranslation('avatarEditor');
   const { crop, croppedAreaPixels, onCropChange, onCropComplete } = useCrop();
   const { zoom, onZoomChange, increaseZoom, decreaseZoom, MAX_ZOOM, MIN_ZOOM, ZOOM_STEP } =
     useZoom();
@@ -57,7 +59,7 @@ export const AvatarEditor = ({
         <div className="rounded-4 max-h-[calc(100dvh-16px)] overflow-auto">
           <ModalHeader className="mb-6">
             <ModalTitle className="xs:max-w-none text-text-primary max-w-[240px] leading-8">
-              Изменение фотографии
+              {t('title')}
             </ModalTitle>
           </ModalHeader>
           <div className="relative mx-auto h-[300px] w-[calc(100%-48px)]">
@@ -90,7 +92,7 @@ export const AvatarEditor = ({
           </div>
           <div className="flex h-[60px] w-full items-center justify-center gap-2 px-6 pt-4 pb-6">
             <Button
-              aria-label="Минус"
+              aria-label={t('zoomOut')}
               type="button"
               variant="none"
               className="m-0 h-8 w-8 bg-transparent p-1"
@@ -108,7 +110,7 @@ export const AvatarEditor = ({
               onValueChange={(v: number[]) => onZoomChange(v[0])}
             />
             <Button
-              aria-label="Плюс"
+              aria-label={t('zoomIn')}
               type="button"
               variant="none"
               className="m-0 h-8 w-8 bg-transparent p-1"
@@ -119,14 +121,14 @@ export const AvatarEditor = ({
           </div>
           <ModalFooter className="flex flex-col gap-4 sm:flex-row sm:items-start">
             <Button onClick={() => showCroppedImage()} className="w-full sm:w-[126px]">
-              Сохранить
+              {t('save')}
             </Button>
             <Button
               onClick={() => onOpenChange(false)}
               className="w-full sm:w-[126px]"
               variant="ghost"
             >
-              Отменить
+              {t('cancel')}
             </Button>
           </ModalFooter>
         </div>

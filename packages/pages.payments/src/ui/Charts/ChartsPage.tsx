@@ -1,8 +1,11 @@
 import { Alert, AlertContainer, AlertTitle, AlertIcon, AlertDescription } from '@xipkg/alert';
 import { InfoCircle } from '@xipkg/icons';
 import { PaymentControl as PaymentsCharts } from 'features.charts';
+import { useTranslation } from 'react-i18next';
 
 export const ChartsPage = () => {
+  const { t } = useTranslation('payments');
+
   return (
     <div className="flex flex-col gap-2">
       <div className="w-full pt-2 pr-4">
@@ -11,11 +14,8 @@ export const ChartsPage = () => {
             <InfoCircle className="fill-icon-brand" />
           </AlertIcon>
           <AlertContainer className="h-full">
-            <AlertTitle>Начало работы с аналитикой</AlertTitle>
-            <AlertDescription>
-              На этой странице вы можете просматривать аналитику по оплате и доходам. Прежде чем
-              данные начнут отображаться, должно пройти некоторое время.
-            </AlertDescription>
+            <AlertTitle>{t('charts.title')}</AlertTitle>
+            <AlertDescription>{t('charts.description')}</AlertDescription>
           </AlertContainer>
         </Alert>
       </div>

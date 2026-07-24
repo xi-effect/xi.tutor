@@ -1,11 +1,13 @@
 import { Button } from '@xipkg/button';
 import { Clock, CornerUpRight, Edit05, Trash } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
+import { getDateLocale } from 'common.ui';
 import {
   getScheduleLessonEndAt,
   type ScheduleLessonRow,
   StartLessonButton,
 } from 'modules.calendar';
+import { useTranslation } from 'react-i18next';
 import { formatUpcomingDate } from './formatUpcomingDate';
 
 type UpcomingLessonCardProps = {
@@ -27,7 +29,10 @@ export const UpcomingLessonCard = ({
   onDelete,
   showActions = true,
 }: UpcomingLessonCardProps) => {
-  const dateLabel = lesson.startAt ? formatUpcomingDate(lesson.startAt) : '—';
+  const { t, i18n } = useTranslation('classroom');
+  const dateLabel = lesson.startAt
+    ? formatUpcomingDate(lesson.startAt, getDateLocale(i18n.language))
+    : '—';
   const endAt = getScheduleLessonEndAt(lesson, lesson.startAt) ?? undefined;
 
   return (
@@ -49,8 +54,8 @@ export const UpcomingLessonCard = ({
               size="s"
               className="text-text-secondary hover:text-text-primary h-6 w-6 p-0"
               onClick={onReschedule}
-              title="Перенести"
-              aria-label="Перенести занятие"
+              title={t('actions.reschedule')}
+              aria-label={t('actions.rescheduleLesson')}
             >
               <CornerUpRight className="text-text-secondary h-4 w-4" />
             </Button>
@@ -60,7 +65,7 @@ export const UpcomingLessonCard = ({
               size="s"
               className="text-text-secondary hover:text-text-primary h-6 w-6 p-0"
               onClick={onEdit}
-              aria-label="Редактировать занятие"
+              aria-label={t('actions.editLesson')}
             >
               <Edit05 className="text-text-secondary h-4 w-4" />
             </Button>
@@ -70,7 +75,7 @@ export const UpcomingLessonCard = ({
               size="s"
               className="text-text-secondary hover:text-text-primary h-6 w-6 p-0"
               onClick={onDelete}
-              aria-label="Удалить занятие"
+              aria-label={t('actions.deleteLesson')}
             >
               <Trash className="fill-icon-secondary h-4 w-4" />
             </Button>

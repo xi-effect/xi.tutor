@@ -1,5 +1,6 @@
 import type { GetEventInstanceDetailsResponseDto } from 'common.api';
 import { extractInstanceSlot } from 'common.services';
+import { getDateLocale } from 'common.ui';
 import type { FormData as AddingLessonFormData } from 'features.lesson.add';
 import { durationBetweenMinutes } from 'features.lesson.add';
 import type {
@@ -143,8 +144,14 @@ export const mapCalendarEventsToDayLessons = (events: ICalendarEvent[]): Schedul
     id: event.scheduler?.eventId ?? Number(event.id),
     classroomId: event.lessonInfo?.classroomId,
     startAt: event.start,
-    startTime: event.start.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
-    endTime: event.end.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+    startTime: event.start.toLocaleTimeString(getDateLocale(), {
+      hour: '2-digit',
+      minute: '2-digit',
+    }),
+    endTime: event.end.toLocaleTimeString(getDateLocale(), {
+      hour: '2-digit',
+      minute: '2-digit',
+    }),
     subject: event.lessonInfo?.subject ?? event.title,
     description: event.lessonInfo?.description,
     studentName: event.lessonInfo?.studentName ?? event.title,

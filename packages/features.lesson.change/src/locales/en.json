@@ -1,0 +1,10 @@
+{
+  "title": "Edit lesson",
+  "aboutLesson": "About the lesson",
+  "descriptionPlaceholder": "Add a description",
+  "cancel": "Cancel",
+  "save": "Save",
+  "validation": {
+    "titleRequired": "Enter a title"
+  }
+}

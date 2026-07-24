@@ -15,6 +15,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useCurrentUser, useDeleteClassroom, useUserByRole } from 'common.services';
 import { StatusBadge, SubjectBadge } from 'features.classroom';
 import { ModalEditClassroomName } from 'features.classroom.rename';
+import { useTranslation } from 'react-i18next';
 import { ClassroomPropsT } from '../../../types';
 
 type UserAvatarPropsT = {
@@ -55,6 +56,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
   subject_id,
   deleted = false,
 }) => {
+  const { t } = useTranslation('classrooms');
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
   const { deleteClassroom, isDeleting } = useDeleteClassroom();
@@ -156,7 +158,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
               >
                 {kind === 'group' && (
                   <DropdownMenuItem onClick={handleOpenEditModal} data-umami-event="classroom-edit">
-                    Переименовать
+                    {t('rename')}
                   </DropdownMenuItem>
                 )}
 
@@ -165,7 +167,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
                   disabled={isDeleting}
                   className={isDeleting ? 'cursor-not-allowed opacity-50' : ''}
                 >
-                  {isDeleting ? 'Удаление...' : 'Удалить'}
+                  {isDeleting ? t('deleting') : t('delete')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

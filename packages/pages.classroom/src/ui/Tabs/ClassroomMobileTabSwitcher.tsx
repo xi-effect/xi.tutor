@@ -3,8 +3,7 @@ import { Button } from '@xipkg/button';
 import { Drawer, DrawerContent, DrawerDescription, DrawerTitle } from '@xipkg/drawer';
 import { ChevronSmallBottom } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
-
-const DRAWER_TITLE = 'Раздел кабинета';
+import { useTranslation } from 'react-i18next';
 
 const menuRowClassName = cn(
   'border-border-default bg-background-surface hover:bg-background-page flex w-full items-center rounded-xl border px-4 py-3 text-left transition-colors',
@@ -26,8 +25,10 @@ export const ClassroomMobileTabSwitcher = ({
   activeTab,
   onChange,
 }: ClassroomMobileTabSwitcherProps) => {
+  const { t } = useTranslation('classroom');
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const activeLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? 'Раздел';
+  const drawerTitle = t('tabs.drawerTitle');
+  const activeLabel = tabs.find((tab) => tab.id === activeTab)?.label ?? t('tabs.section');
 
   const handleSelect = (tabId: string) => {
     onChange(tabId);
@@ -61,9 +62,9 @@ export const ClassroomMobileTabSwitcher = ({
         <DrawerContent className="max-h-screen w-full">
           <div className="flex flex-col gap-4 pb-8">
             <DrawerTitle className="text-m-base text-text-primary font-medium">
-              {DRAWER_TITLE}
+              {drawerTitle}
             </DrawerTitle>
-            <DrawerDescription className="sr-only">{DRAWER_TITLE}</DrawerDescription>
+            <DrawerDescription className="sr-only">{drawerTitle}</DrawerDescription>
 
             <div className="dark:bg-background-surface flex flex-col gap-3">
               {tabs.map((tab) => {

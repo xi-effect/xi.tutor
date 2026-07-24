@@ -8,10 +8,12 @@ import { useYjsContext } from '../../../providers/YjsProvider';
 import { isMac } from '../../../utils';
 import { BorderPicker } from '../../../shapes/geo';
 import { CoordinateAxesSettingsPicker } from '../../../shapes/coordinate-axes';
+import { useTranslation } from 'react-i18next';
 
 const modKey = isMac ? '⌘' : 'Ctrl';
 
 export const SelectionMenu = track(function SelectionMenu() {
+  const { t } = useTranslation('board');
   const editor = useEditor();
   const { isReadonly } = useYjsContext();
 
@@ -80,7 +82,7 @@ export const SelectionMenu = track(function SelectionMenu() {
             onClick={() => {
               editor.toggleLock(selectedIds);
             }}
-            title={`Разблокировать (${modKey}+L)`}
+            title={t('toolbar.unlock', { modKey })}
           >
             <Unlocked />
           </Button>
@@ -93,7 +95,7 @@ export const SelectionMenu = track(function SelectionMenu() {
             size="s"
             className="hover:bg-status-info-background p-1"
             onClick={handleDuplicate}
-            title="Дублировать (Ctrl+D)"
+            title={t('toolbar.duplicate')}
           >
             <Copy />
           </Button>
@@ -102,7 +104,7 @@ export const SelectionMenu = track(function SelectionMenu() {
             size="s"
             className="hover:bg-status-info-background p-1"
             onClick={handleDelete}
-            title="Удалить (Del)"
+            title={t('toolbar.delete')}
           >
             <Trash />
           </Button>
@@ -113,7 +115,7 @@ export const SelectionMenu = track(function SelectionMenu() {
             onClick={() => {
               editor.toggleLock(selectedIds);
             }}
-            title={`Заблокировать (${modKey}+L)`}
+            title={t('toolbar.lock', { modKey })}
           >
             <Locked />
           </Button>

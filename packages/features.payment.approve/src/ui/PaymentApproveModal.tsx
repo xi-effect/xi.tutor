@@ -26,11 +26,7 @@ import {
   usePaymentReceiverConfirmation,
   useGetRecipientInvoiceByTutor,
 } from 'common.services';
-
-const mapPaymentType: Record<string, string> = {
-  cash: 'наличные',
-  transfer: 'перевод',
-};
+import { useTranslation } from 'react-i18next';
 
 type ApproveFormPropsT = {
   recipientInvoiceId: number;
@@ -53,12 +49,18 @@ const ApproveForm = ({
   data,
   isLoadingInvoice,
 }: ApproveFormPropsT) => {
+  const { t } = useTranslation('paymentApprove');
   const { mutate: receiverConfirmationMutation, isPending } = usePaymentReceiverConfirmation({
     classroomId: paymentDetails.classroom_id?.toString(),
     onSuccess: () => {
       handleCloseModal();
     },
   });
+
+  const mapPaymentType: Record<string, string> = {
+    cash: t('paymentType.cashLower'),
+    transfer: t('paymentType.transferLower'),
+  };
 
   return (
     <>
@@ -67,8 +69,8 @@ const ApproveForm = ({
           <div className="col-span-1 flex flex-col">{formatDate(paymentDetails.created_at)}</div>
           <UserProfile
             userId={userData?.id ?? 0}
-            text={userData?.display_name ?? userData?.username ?? 'Загрузка...'}
-            label={isTutor ? 'Ученик' : 'Репетитор'}
+            text={userData?.display_name ?? userData?.username ?? t('loading')}
+            label={isTutor ? t('roles.student') : t('roles.tutor')}
             src={`https://api.sovlium.ru/files/users/${userId}/avatar.webp`}
             className="col-span-2 sm:col-span-1"
           />
@@ -79,17 +81,17 @@ const ApproveForm = ({
           </div>
         )}
         <div className="flex flex-row gap-2">
-          <span className="text-m-base dark:text-text-primary">Тип оплаты:</span>
+          <span className="text-m-base dark:text-text-primary">{t('paymentType.labelColon')}</span>
           <span className="text-text-primary text-m mr-8 ml-auto">
             {mapPaymentType[data?.recipient_invoice?.payment_type]}
           </span>
         </div>
         <div className="flex-col-4 grid gap-2 font-normal">
           <div className="text-text-secondary col-span-1 flex flex-row gap-4 text-sm">
-            <p className="w-[250px]">Занятия</p>
-            <p className="w-[84px]">Стоимость</p>
-            <p className="w-[84px]">Количество</p>
-            <p className="w-[84px]">Сумма</p>
+            <p className="w-[250px]">{t('table.lessons')}</p>
+            <p className="w-[84px]">{t('table.price')}</p>
+            <p className="w-[84px]">{t('table.quantity')}</p>
+            <p className="w-[84px]">{t('table.sum')}</p>
           </div>
           {data ? (
             <>
@@ -113,21 +115,17 @@ const ApproveForm = ({
                   </div>
                 ))
               ) : (
-                <div className="text-text-secondary text-sm">
-                  Детальная информация о занятиях недоступна
-                </div>
+                <div className="text-text-secondary text-sm">{t('table.detailsUnavailable')}</div>
               )}
             </>
           ) : isLoadingInvoice ? (
-            <div className="text-text-secondary text-sm">Загрузка детальной информации...</div>
+            <div className="text-text-secondary text-sm">{t('table.detailsLoading')}</div>
           ) : (
-            <div className="text-text-secondary text-sm">
-              Детальная информация о занятиях недоступна
-            </div>
+            <div className="text-text-secondary text-sm">{t('table.detailsUnavailable')}</div>
           )}
 
           <div className="flex gap-4 text-sm">
-            <p className="text-text-primary w-[250px] font-bold">Итого:</p>
+            <p className="text-text-primary w-[250px] font-bold">{t('table.total')}</p>
             <div className="flex gap-2">
               <p className="w-[78px]"></p>
               <p className="w-[10px]"></p>
@@ -149,7 +147,7 @@ const ApproveForm = ({
           disabled={isPending}
           data-umami-event="payment-receiver-confirm"
         >
-          {isPending ? 'Подтверждение...' : 'Подтвердить'}
+          {isPending ? t('actions.confirming') : t('actions.confirm')}
         </Button>
         <Button
           variant="ghost"
@@ -157,7 +155,7 @@ const ApproveForm = ({
           onClick={() => handleCloseModal()}
           disabled={isPending}
         >
-          Отменить
+          {t('actions.cancel')}
         </Button>
       </ModalFooter>
     </>
@@ -185,6 +183,7 @@ const AdvanceForm = ({
   data,
   isLoadingInvoice,
 }: AdvanceFormPropsT) => {
+  const { t } = useTranslation('paymentApprove');
   const { form, handleSubmit, onSubmit, isLoading } = usePaymentApproveForm(
     recipientInvoiceId,
     isTutor,
@@ -204,8 +203,8 @@ const AdvanceForm = ({
             <div className="col-span-1 flex flex-col">{formatDate(paymentDetails.created_at)}</div>
             <UserProfile
               userId={userData?.id ?? 0}
-              text={userData?.display_name ?? userData?.username ?? 'Загрузка...'}
-              label={isTutor ? 'Ученик' : 'Репетитор'}
+              text={userData?.display_name ?? userData?.username ?? t('loading')}
+              label={isTutor ? t('roles.student') : t('roles.tutor')}
               src={`https://api.sovlium.ru/files/users/${userId}/avatar.webp`}
               className="col-span-2 sm:col-span-1"
             />
@@ -216,7 +215,7 @@ const AdvanceForm = ({
             </div>
           )}
           <div className="flex flex-col gap-2">
-            <span className="text-m-base dark:text-text-primary">Тип оплаты</span>
+            <span className="text-m-base dark:text-text-primary">{t('paymentType.label')}</span>
             <FormField
               control={form.control}
               name="typePayment"
@@ -235,7 +234,7 @@ const AdvanceForm = ({
                         className="data-[state=checked]:bg-action-primary-background-pressed data-[state=checked]:border-border-focus text-text-on-accent dark:bg-background-subtle border-border-control h-6 w-6 [&>span>svg]:h-3 [&>span>svg]:w-3"
                       />
                       <label htmlFor="transfer" className="text-text-primary">
-                        Перевод
+                        {t('paymentType.transfer')}
                       </label>
                     </div>
                     <div className="flex items-center gap-2">
@@ -245,7 +244,7 @@ const AdvanceForm = ({
                         className="data-[state=checked]:border-border-focus data-[state=checked]:bg-action-primary-background-pressed text-text-on-accent border-border-control dark:bg-background-subtle h-6 w-6 [&_span_svg]:h-3 [&_span_svg]:w-3"
                       />
                       <label htmlFor="cash" className="text-text-primary">
-                        Наличные
+                        {t('paymentType.cash')}
                       </label>
                     </div>
                   </Radio>
@@ -256,10 +255,10 @@ const AdvanceForm = ({
           </div>
           <div className="flex-col-4 grid gap-2 font-normal">
             <div className="text-text-secondary col-span-1 flex flex-row gap-4 text-sm">
-              <p className="w-[250px]">Занятия</p>
-              <p className="w-[84px]">Стоимость</p>
-              <p className="w-[84px]">Количество</p>
-              <p className="w-[84px]">Сумма</p>
+              <p className="w-[250px]">{t('table.lessons')}</p>
+              <p className="w-[84px]">{t('table.price')}</p>
+              <p className="w-[84px]">{t('table.quantity')}</p>
+              <p className="w-[84px]">{t('table.sum')}</p>
             </div>
             {data ? (
               <>
@@ -283,21 +282,17 @@ const AdvanceForm = ({
                     </div>
                   ))
                 ) : (
-                  <div className="text-text-secondary text-sm">
-                    Детальная информация о занятиях недоступна
-                  </div>
+                  <div className="text-text-secondary text-sm">{t('table.detailsUnavailable')}</div>
                 )}
               </>
             ) : isLoadingInvoice ? (
-              <div className="text-text-secondary text-sm">Загрузка детальной информации...</div>
+              <div className="text-text-secondary text-sm">{t('table.detailsLoading')}</div>
             ) : (
-              <div className="text-text-secondary text-sm">
-                Детальная информация о занятиях недоступна
-              </div>
+              <div className="text-text-secondary text-sm">{t('table.detailsUnavailable')}</div>
             )}
 
             <div className="flex gap-4 text-sm">
-              <p className="text-text-primary w-[250px] font-bold">Итого:</p>
+              <p className="text-text-primary w-[250px] font-bold">{t('table.total')}</p>
               <div className="flex gap-2">
                 <p className="w-[78px]"></p>
                 <p className="w-[10px]"></p>
@@ -319,7 +314,7 @@ const AdvanceForm = ({
             data-umami-event="payment-sender-confirm"
             data-umami-event-role={isTutor ? 'tutor' : 'student'}
           >
-            {isLoading ? 'Подтверждение...' : 'Подтвердить'}
+            {isLoading ? t('actions.confirming') : t('actions.confirm')}
           </Button>
           <Button
             variant="ghost"
@@ -327,7 +322,7 @@ const AdvanceForm = ({
             onClick={() => handleCloseModal()}
             disabled={isLoading}
           >
-            Отменить
+            {t('actions.cancel')}
           </Button>
         </ModalFooter>
       </form>
@@ -348,6 +343,7 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
   paymentDetails,
   recipientInvoiceId,
 }) => {
+  const { t } = useTranslation('paymentApprove');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
@@ -392,11 +388,9 @@ export const PaymentApproveModal: FC<PaymentApproveModalPropsT> = ({
             <Close className="fill-icon-primary h-5 w-5" />
           </ModalCloseButton>
           <ModalTitle className="text-text-primary m-0 pr-10 sm:pr-0">
-            Подтверждение оплаты по счёту
+            {t('modal.title')}
           </ModalTitle>
-          <ModalDescription className="sr-only">
-            Укажите детали платежа и подтвердите получение перевода или просмотрите условия счёта.
-          </ModalDescription>
+          <ModalDescription className="sr-only">{t('modal.description')}</ModalDescription>
         </ModalHeader>
         {data && data.recipient_invoice.status !== 'wf_receiver_confirmation' && (
           <AdvanceForm

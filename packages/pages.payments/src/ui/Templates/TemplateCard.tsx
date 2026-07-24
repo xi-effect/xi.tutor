@@ -8,9 +8,11 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
+import { getDateLocale } from 'common.ui';
+import { useTranslation } from 'react-i18next';
 import { ModalTemplate } from './ModalTemplate';
 
-const formatPrice = (price: number) => `${price.toLocaleString('ru-RU')} ₽`;
+const formatPrice = (price: number) => `${price.toLocaleString(getDateLocale())} ₽`;
 
 export const TemplateCard = ({
   name,
@@ -20,6 +22,7 @@ export const TemplateCard = ({
 }: TemplateT & {
   handleDeleteTemplate: (id: number) => () => void;
 }) => {
+  const { t } = useTranslation('payments');
   const [menuOpen, setMenuOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -64,13 +67,13 @@ export const TemplateCard = ({
                   className="text-text-primary hover:text-text-primary focus:text-text-primary"
                   onClick={handleEditTemplate}
                 >
-                  Редактировать
+                  {t('templateCard.edit')}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="text-text-primary hover:text-text-primary focus:text-text-primary"
                   onClick={handleDeleteTemplate(id)}
                 >
-                  Удалить
+                  {t('templateCard.delete')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

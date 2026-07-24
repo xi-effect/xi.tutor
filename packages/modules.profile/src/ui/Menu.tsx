@@ -1,44 +1,14 @@
 import { Account, Exit, Key, Palette, Notification, File, Music } from '@xipkg/icons';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useMemo } from 'react';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useAuth } from 'common.auth';
 import { THEME_CUSTOMIZATION_ENABLED } from 'common.theme';
+import { useTranslation } from 'react-i18next';
 
 type ItemT = {
   name: string;
   query: string;
 };
-
-const options: ItemT[] = [
-  {
-    name: 'Личные данные',
-    query: 'personalInfo',
-  },
-  ...(THEME_CUSTOMIZATION_ENABLED
-    ? [
-        {
-          name: 'Персонализация',
-          query: 'personalisation',
-        },
-      ]
-    : []),
-  {
-    name: 'Безопасность',
-    query: 'security',
-  },
-  {
-    name: 'Уведомления',
-    query: 'notifications',
-  },
-  {
-    name: 'Эффекты',
-    query: 'effects',
-  },
-  {
-    name: 'Отчёт',
-    query: 'report',
-  },
-];
 
 type ItemPropsT = {
   index: number;
@@ -114,8 +84,43 @@ type MenuPropsT = {
 };
 
 export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuPropsT) => {
+  const { t } = useTranslation('profile');
   const { logout } = useAuth();
   const navigate = useNavigate();
+
+  const options: ItemT[] = useMemo(
+    () => [
+      {
+        name: t('menu.personalInfo'),
+        query: 'personalInfo',
+      },
+      ...(THEME_CUSTOMIZATION_ENABLED
+        ? [
+            {
+              name: t('menu.personalisation'),
+              query: 'personalisation',
+            },
+          ]
+        : []),
+      {
+        name: t('menu.security'),
+        query: 'security',
+      },
+      {
+        name: t('menu.notifications'),
+        query: 'notifications',
+      },
+      {
+        name: t('menu.effects'),
+        query: 'effects',
+      },
+      {
+        name: t('menu.report'),
+        query: 'report',
+      },
+    ],
+    [t],
+  );
 
   const handleMenuItem = (index: number, query: string) => {
     setActiveQuery(query);
@@ -132,7 +137,7 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
   return (
     <div className="flex w-full flex-col gap-1 sm:w-[220px]">
       {options.map((item, index) => (
-        <Item item={item} index={index} key={index} onMenuItemChange={handleMenuItem} />
+        <Item item={item} index={index} key={item.query} onMenuItemChange={handleMenuItem} />
       ))}
       <button
         type="button"
@@ -141,7 +146,7 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
         data-umami-event="profile-logout"
       >
         <Exit className="dark:fill-icon-primary group-hover:fill-icon-danger transition-colors ease-in" />
-        <span className="pl-2 text-[14px] font-normal">Выйти</span>
+        <span className="pl-2 text-[14px] font-normal">{t('menu.logout')}</span>
       </button>
     </div>
   );

@@ -1,3 +1,4 @@
+import { getDateLocale } from 'common.ui';
 import { getCookies, getLocalStorageData, getSessionStorageData } from './technicalInfo/storage';
 import { getBrowserInfo } from './technicalInfo/browser';
 import { checkVideoSupport, checkAudioSupport, checkWebRTCSupport } from './technicalInfo/media';
@@ -9,6 +10,7 @@ import {
   type ScreenShareDiagnostics,
   type ScreenShareDiagnosticsParams,
 } from './technicalInfo/screenShareDiagnostics';
+import { tProfile } from './tProfile';
 
 export type ReportSection = {
   title?: string;
@@ -24,7 +26,7 @@ function diagnosticsToSections(d: ScreenShareDiagnostics): ReportSection[] {
 
   // Только то, чего нет в остальных секциях: PWA, iframe, iPad-под-Mac, Service Worker, причины Screen Share
   sections.push({
-    title: 'PWA и контекст',
+    title: tProfile('report.sections.pwa'),
     data: {
       displayMode: d.displayMode,
       isStandalone: d.isStandalone,
@@ -37,7 +39,7 @@ function diagnosticsToSections(d: ScreenShareDiagnostics): ReportSection[] {
   });
 
   sections.push({
-    title: 'Service Worker',
+    title: tProfile('report.sections.serviceWorker'),
     data: {
       hasServiceWorker: d.hasServiceWorker,
       hasSWController: d.hasSWController,
@@ -46,7 +48,7 @@ function diagnosticsToSections(d: ScreenShareDiagnostics): ReportSection[] {
 
   const avail = d.screenShareAvailability;
   sections.push({
-    title: 'Причины недоступности Screen Share',
+    title: tProfile('report.sections.screenShareUnavailable'),
     data: {
       canAttempt: avail.canAttempt,
       reasons: avail.reasons.join(', ') || '—',
@@ -59,7 +61,7 @@ function diagnosticsToSections(d: ScreenShareDiagnostics): ReportSection[] {
     if (d.app.version != null) appData.version = d.app.version;
     if (d.app.gitSha != null) appData.gitSha = d.app.gitSha;
     if (Object.keys(appData).length > 0) {
-      sections.push({ title: 'Приложение', data: appData });
+      sections.push({ title: tProfile('report.sections.app'), data: appData });
     }
   }
 
@@ -70,6 +72,7 @@ export const collectTechnicalInfo = async (
   options?: CollectTechnicalInfoOptions,
 ): Promise<ReportSection[]> => {
   const sections: ReportSection[] = [];
+  const dateLocale = getDateLocale();
 
   const now = new Date();
   const timezoneOffset = -now.getTimezoneOffset();
@@ -88,68 +91,71 @@ export const collectTechnicalInfo = async (
   const { ipv4, ipv6 } = await getIPAddresses();
 
   sections.push({
-    title: 'Основная информация',
+    title: tProfile('report.sections.main'),
     data: {
-      Домен: window.location.origin,
+      [tProfile('report.labels.domain')]: window.location.origin,
       href: window.location.href,
       secure: window.isSecureContext,
-      Дата: now.toLocaleDateString('ru-RU'),
-      Время: now.toLocaleTimeString('ru-RU'),
-      'Часовой пояс': timezoneString,
-      'IPv4-адрес': ipv4,
-      'IPv6-адрес': ipv6,
-      Браузер: `${browserName} ${browserVersion} (${browserEngine} ${browserEngineVersion})`,
-      'Операционная система': osFamily,
+      [tProfile('report.labels.date')]: now.toLocaleDateString(dateLocale),
+      [tProfile('report.labels.time')]: now.toLocaleTimeString(dateLocale),
+      [tProfile('report.labels.timezone')]: timezoneString,
+      [tProfile('report.labels.ipv4')]: ipv4,
+      [tProfile('report.labels.ipv6')]: ipv6,
+      [tProfile('report.labels.browser')]:
+        `${browserName} ${browserVersion} (${browserEngine} ${browserEngineVersion})`,
+      [tProfile('report.labels.os')]: osFamily,
     },
   });
 
   sections.push({
-    title: 'Информация об экране',
+    title: tProfile('report.sections.screen'),
     data: {
-      'Разрешение экрана': `${screen.width}x${screen.height}`,
-      'Глубина цвета': `${screen.colorDepth} бит`,
+      [tProfile('report.labels.screenResolution')]: `${screen.width}x${screen.height}`,
+      [tProfile('report.labels.colorDepth')]: tProfile('report.labels.colorDepthValue', {
+        depth: screen.colorDepth,
+      }),
     },
   });
 
   const cookies = getCookies();
   if (Object.keys(cookies).length > 0) {
     sections.push({
-      title: 'Cookie браузера',
+      title: tProfile('report.sections.cookies'),
       data: cookies,
     });
   } else {
     sections.push({
-      title: 'Cookie браузера',
-      data: { 'нет cookies': 'отсутствуют' },
+      title: tProfile('report.sections.cookies'),
+      data: { [tProfile('report.labels.noCookies')]: tProfile('report.labels.absent') },
     });
   }
 
   sections.push({
-    title: 'Информация о браузере',
+    title: tProfile('report.sections.browser'),
     data: browserInfo,
   });
 
   const permissions = await getPermissions();
   sections.push({
-    title: 'Разрешения',
+    title: tProfile('report.sections.permissions'),
     data: permissions,
   });
 
   const videoSupport = checkVideoSupport();
   sections.push({
-    title: 'Поддержка видео',
+    title: tProfile('report.sections.video'),
     data: videoSupport,
   });
 
   const audioSupport = checkAudioSupport();
   sections.push({
-    title: 'Поддержка аудио',
+    title: tProfile('report.sections.audio'),
     data: audioSupport,
   });
 
   const webrtcSupport = checkWebRTCSupport();
   sections.push({
-    title: 'WebRTC',
+    title: tProfile('report.sections.webrtc'),
     data: webrtcSupport,
   });
 
@@ -162,30 +168,32 @@ export const collectTechnicalInfo = async (
 
   const localStorageData = getLocalStorageData();
   sections.push({
-    title: 'localStorage',
+    title: tProfile('report.sections.localStorage'),
     data:
-      Object.keys(localStorageData).length > 0 ? localStorageData : { 'нет данных': 'отсутствуют' },
+      Object.keys(localStorageData).length > 0
+        ? localStorageData
+        : { [tProfile('report.labels.noData')]: tProfile('report.labels.absent') },
   });
 
   const sessionStorageData = getSessionStorageData();
   sections.push({
-    title: 'sessionStorage',
+    title: tProfile('report.sections.sessionStorage'),
     data:
       Object.keys(sessionStorageData).length > 0
         ? sessionStorageData
-        : { 'нет данных': 'отсутствуют' },
+        : { [tProfile('report.labels.noData')]: tProfile('report.labels.absent') },
   });
 
   const networkInfo = getNetworkInfo();
   sections.push({
-    title: 'Дополнительная информация',
+    title: tProfile('report.sections.additional'),
     data: networkInfo,
   });
 
   const performanceMemory = getPerformanceMemory();
   if (Object.keys(performanceMemory).length > 0) {
     sections.push({
-      title: 'Память',
+      title: tProfile('report.sections.memory'),
       data: performanceMemory,
     });
   }

@@ -11,7 +11,7 @@ import {
 import { Button } from '@xipkg/button';
 import { ModalTemplatePropsT } from '../../types';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { formSchema, FormData } from '../../model';
+import { useFormSchema, FormData } from '../../model';
 import * as z from 'zod';
 import {
   Form,
@@ -24,8 +24,11 @@ import {
 } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { useAddTemplate, useUpdateTemplate } from 'common.services';
+import { useTranslation } from 'react-i18next';
 
 export const ModalTemplate = ({ isOpen, type, onClose, name, price, id }: ModalTemplatePropsT) => {
+  const { t } = useTranslation('payments');
+  const formSchema = useFormSchema();
   const initialValues = useMemo(() => ({ name: name || '', price: price || '' }), [name, price]);
 
   const form = useForm<z.input<typeof formSchema>>({
@@ -88,7 +91,7 @@ export const ModalTemplate = ({ isOpen, type, onClose, name, price, id }: ModalT
         <ModalHeader>
           <ModalCloseButton />
           <ModalTitle className="text-text-primary max-w-[calc(100%-56px)]">
-            {type === 'edit' ? 'Редактирование' : 'Создание'} шаблона оплаты
+            {type === 'edit' ? t('templateModal.editTitle') : t('templateModal.createTitle')}
           </ModalTitle>
         </ModalHeader>
 
@@ -105,7 +108,7 @@ export const ModalTemplate = ({ isOpen, type, onClose, name, price, id }: ModalT
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="name">Название</FormLabel>
+                    <FormLabel htmlFor="name">{t('templateModal.name')}</FormLabel>
                     <FormControl>
                       <Input
                         error={!!errors?.name}
@@ -127,7 +130,7 @@ export const ModalTemplate = ({ isOpen, type, onClose, name, price, id }: ModalT
                     field.value === undefined || field.value === null ? '' : String(field.value);
                   return (
                     <FormItem className="pt-4">
-                      <FormLabel htmlFor="price">Стоимость</FormLabel>
+                      <FormLabel htmlFor="price">{t('templateModal.price')}</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <Input
@@ -157,10 +160,10 @@ export const ModalTemplate = ({ isOpen, type, onClose, name, price, id }: ModalT
                 className="gap-2"
                 type="submit"
               >
-                {type === 'edit' ? 'Сохранить' : 'Создать'}
+                {type === 'edit' ? t('templateModal.save') : t('templateModal.create')}
               </Button>
               <Button variant="ghost" onClick={onClose} type="button">
-                Отменить
+                {t('templateModal.cancel')}
               </Button>
             </ModalFooter>
           </form>

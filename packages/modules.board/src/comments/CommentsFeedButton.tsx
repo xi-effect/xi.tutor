@@ -16,9 +16,11 @@ import { useCommentsUiStore } from './commentsUiStore';
 import { useCloseOnOutsideClick } from './useCloseOnOutsideClick';
 import { useCommentUnreadChecker } from './useCommentReads';
 import type { DrCommentThread } from './commentRecords';
+import { useTranslation } from 'react-i18next';
 
 /** Кнопка в шапке доски + выпадающая лента всех комментариев (прочитанных и непрочитанных). */
 export const CommentsFeedButton = track(function CommentsFeedButton() {
+  const { t } = useTranslation('board');
   const editor = useEditor();
   const [open, setOpen] = useState(false);
   const openThread = useCommentsUiStore((s) => s.openThread);
@@ -58,7 +60,7 @@ export const CommentsFeedButton = track(function CommentsFeedButton() {
           variant="none"
           data-comment-ui
           className="hover:bg-status-info-background relative flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
-          title="Комментарии"
+          title={t('comments.title')}
           data-umami-event="board-comments-feed"
         >
           <Inbox size="s" className={cn('h-4 w-4 lg:h-6 lg:w-6', boardIconClass)} />
@@ -76,9 +78,9 @@ export const CommentsFeedButton = track(function CommentsFeedButton() {
         data-comment-ui
         className={cn(boardMenuSurfaceClass, 'z-100 w-80 rounded-xl p-2')}
       >
-        <p className="text-text-secondary px-2 py-1 text-xs">Комментарии на доске</p>
+        <p className="text-text-secondary px-2 py-1 text-xs">{t('comments.onBoard')}</p>
         {sorted.length === 0 ? (
-          <p className="text-text-disabled px-2 py-6 text-center text-sm">Пока нет комментариев</p>
+          <p className="text-text-disabled px-2 py-6 text-center text-sm">{t('comments.empty')}</p>
         ) : (
           <div className="flex max-h-96 flex-col gap-0.5 overflow-y-auto">
             {sorted.map(({ thread, messages }) => {

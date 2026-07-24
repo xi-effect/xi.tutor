@@ -1,0 +1,9 @@
+{
+  "nameNotFound": "Имя не найдено",
+  "viewInvoiceAria": "Просмотреть информацию о счёте",
+  "status": {
+    "complete": "оплачен",
+    "wf_receiver_confirmation": "ожидает подтверждения",
+    "wf_sender_confirmation": "ждет оплаты"
+  }
+}

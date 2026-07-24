@@ -9,6 +9,7 @@ import {
 import { Control, useFieldArray } from '@xipkg/form';
 import { useMediaQuery } from '@xipkg/utils';
 import { useTemplatesList } from 'common.services';
+import { useTranslation } from 'react-i18next';
 import { generateRandomId } from '../utils';
 import type { FormData, FormInput } from '../model';
 
@@ -17,6 +18,7 @@ type TemplateSelectorProps = {
 };
 
 export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
+  const { t } = useTranslation('invoice');
   const isMobile = useMediaQuery('(max-width: 500px)');
 
   const { data: templates, isLoading, isError } = useTemplatesList();
@@ -44,7 +46,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
         type="button"
         disabled
       >
-        Загрузка шаблонов...
+        {t('template.loading')}
       </Button>
     );
   }
@@ -58,7 +60,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
         type="button"
         disabled
       >
-        Нет доступных шаблонов
+        {t('template.empty')}
       </Button>
     );
   }
@@ -67,7 +69,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button className="h-[32px]" variant="ghost" size="s" type="button">
-          Добавить занятие из шаблона
+          {t('template.addFromTemplate')}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className={`${isMobile ? 'w-[300px]' : 'w-[400px]'} p-2`}>

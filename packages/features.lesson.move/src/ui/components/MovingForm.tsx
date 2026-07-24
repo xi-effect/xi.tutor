@@ -15,6 +15,7 @@ import { useMaskInput } from '@xipkg/inputmask';
 import { ArrowRight, Clock } from '@xipkg/icons';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { cn } from '@xipkg/utils';
+import { useTranslation } from 'react-i18next';
 import { useLessonClassroomPresentation } from 'modules.calendar';
 import {
   useMovingForm,
@@ -23,15 +24,8 @@ import {
   type MovingRepetitionResolution,
 } from '../../hooks';
 import type { FormData } from '../../model';
-import { formatDurationBetweenRu, getShortDateString } from '../../utils/utils';
+import { formatDurationBetween, getShortDateString } from '../../utils/utils';
 import { InputDate } from './InputDate';
-
-const WEEKDAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] as const;
-
-const MOVE_MODE_TABS = [
-  { id: 'single', label: 'Это занятие' },
-  { id: 'single_and_next', label: 'Это и следующие' },
-];
 
 export type MovingFormProps = PropsWithChildren<{
   onClose: () => void;
@@ -86,6 +80,7 @@ export const MovingForm: FC<MovingFormProps> = ({
   onSubmit: externalSubmit,
   onSubmittingChange,
 }) => {
+  const { t } = useTranslation('lessonMove');
   const { form, control, handleSubmit, handleClearForm, onSubmit } = useMovingForm(
     lessonKind,
     initialDate,
@@ -95,6 +90,14 @@ export const MovingForm: FC<MovingFormProps> = ({
   );
 
   const { isSubmitting } = useFormState({ control });
+  const weekdayLabels = useMemo(() => t('weekdays_short').split(','), [t]);
+  const moveModeTabs = useMemo(
+    () => [
+      { id: 'single', label: t('moveMode.single') },
+      { id: 'single_and_next', label: t('moveMode.singleAndNext') },
+    ],
+    [t],
+  );
 
   useEffect(() => {
     onSubmittingChange?.(isSubmitting);
@@ -126,8 +129,8 @@ export const MovingForm: FC<MovingFormProps> = ({
   const sourceDate = initialDate ?? startDate;
 
   const durationLabel = useMemo(
-    () => formatDurationBetweenRu(startTime, endTime),
-    [startTime, endTime],
+    () => formatDurationBetween(startTime, endTime, t),
+    [startTime, endTime, t],
   );
 
   const showSwitcher = lessonKind === 'recurring';
@@ -193,7 +196,7 @@ export const MovingForm: FC<MovingFormProps> = ({
               <FormItem className="flex flex-col gap-2">
                 <FormControl>
                   <SwitcherAnimate
-                    tabs={MOVE_MODE_TABS}
+                    tabs={moveModeTabs}
                     activeTab={field.value ?? 'single'}
                     onChange={(v) => field.onChange(v as 'single' | 'single_and_next')}
                     className="bg-background-page flex h-8 max-w-md flex-row rounded-[10px] p-1"
@@ -211,7 +214,7 @@ export const MovingForm: FC<MovingFormProps> = ({
 
         <div className="flex flex-col gap-2">
           <FormLabel className="text-text-primary text-[14px] font-normal">
-            {showDateArrow ? 'Дата' : 'Дата начала повторений'}
+            {showDateArrow ? t('form.date') : t('form.repetitionStartDate')}
           </FormLabel>
           {showDateArrow ? (
             <div className="flex w-full flex-row gap-2">
@@ -258,7 +261,9 @@ export const MovingForm: FC<MovingFormProps> = ({
 
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <FormLabel className="text-text-primary text-[14px] font-normal">Время</FormLabel>
+            <FormLabel className="text-text-primary text-[14px] font-normal">
+              {t('form.time')}
+            </FormLabel>
             {durationLabel ? (
               <span className="text-text-secondary text-sm">{durationLabel}</span>
             ) : null}
@@ -273,7 +278,7 @@ export const MovingForm: FC<MovingFormProps> = ({
                     <Input
                       {...field}
                       ref={maskRefStartTime}
-                      placeholder="17:40 Начало"
+                      placeholder={t('form.startPlaceholder')}
                       className="border-border-default rounded-lg border"
                       after={<Clock className="fill-icon-brand h-4 w-4" />}
                       variant="s"
@@ -292,7 +297,7 @@ export const MovingForm: FC<MovingFormProps> = ({
                     <Input
                       {...field}
                       ref={maskRefEndTime}
-                      placeholder="19:00 Конец"
+                      placeholder={t('form.endPlaceholder')}
                       className="border-border-default rounded-lg border"
                       after={<Clock className="fill-icon-brand h-4 w-4" />}
                       variant="s"
@@ -313,12 +318,12 @@ export const MovingForm: FC<MovingFormProps> = ({
               <FormItem className="flex flex-col gap-2">
                 <div className="flex flex-wrap items-center gap-1.5">
                   <FormLabel className="text-text-primary text-[14px] font-normal">
-                    Повторения
+                    {t('form.repetitions')}
                   </FormLabel>
                 </div>
                 <FormControl>
                   <div className="flex flex-row flex-wrap gap-2">
-                    {WEEKDAY_LABELS.map((label, index) => {
+                    {weekdayLabels.map((label, index) => {
                       const value = field.value ?? [];
                       const isSelected = value.includes(index);
                       return (

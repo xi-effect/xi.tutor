@@ -13,17 +13,16 @@ import { useMaskInput } from '@xipkg/inputmask';
 import { Clock, Account } from '@xipkg/icons';
 import { Toggle } from '@xipkg/toggle';
 import { cn } from '@xipkg/utils';
+import { useTranslation } from 'react-i18next';
 import { useAddingForm } from '../../hooks';
 import { InputDate } from './InputDate';
 import { StudentSelector } from './StudentSelector';
-import { formatDurationBetweenRu } from '../../utils';
+import { formatDurationBetween } from '../../utils';
 
 import { useEffect, useMemo } from 'react';
 import type { FC, PropsWithChildren } from 'react';
 import type { FormData } from '../../model';
 import type { ProductAnalyticsSource } from 'common.utils';
-
-const WEEKDAY_LABELS = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'] as const;
 
 interface AddingFormProps extends PropsWithChildren {
   onClose: () => void;
@@ -45,6 +44,7 @@ export const AddingForm: FC<AddingFormProps> = ({
   analyticsSource,
   onSubmittingChange,
 }) => {
+  const { t } = useTranslation('lessonAdd');
   const {
     form,
     control,
@@ -56,6 +56,7 @@ export const AddingForm: FC<AddingFormProps> = ({
   } = useAddingForm(initialDate, { fixedClassroomId, onSubmit: externalSubmit, analyticsSource });
 
   const { isSubmitting } = useFormState({ control });
+  const weekdayLabels = useMemo(() => t('weekdays_short').split(','), [t]);
 
   useEffect(() => {
     onSubmittingChange?.(isSubmitting);
@@ -81,8 +82,8 @@ export const AddingForm: FC<AddingFormProps> = ({
   const repeatMode = form.watch('repeatMode');
   const fixedClassroom = classrooms.find((classroom) => classroom.id === fixedClassroomId);
   const durationLabel = useMemo(
-    () => formatDurationBetweenRu(startTime, endTime),
-    [startTime, endTime],
+    () => formatDurationBetween(startTime, endTime, t),
+    [startTime, endTime, t],
   );
 
   const handleReset = () => {
@@ -108,12 +109,14 @@ export const AddingForm: FC<AddingFormProps> = ({
           name="title"
           render={({ field }) => (
             <FormItem className="flex flex-col gap-0">
-              <FormLabel className="text-text-primary text-[14px] font-normal">Название</FormLabel>
+              <FormLabel className="text-text-primary text-[14px] font-normal">
+                {t('form.name')}
+              </FormLabel>
               <FormControl>
                 <Input
                   {...field}
                   variant="s"
-                  placeholder="Математика"
+                  placeholder={t('form.namePlaceholder')}
                   className="border-border-default rounded-lg border"
                 />
               </FormControl>
@@ -127,7 +130,9 @@ export const AddingForm: FC<AddingFormProps> = ({
           name="description"
           render={({ field }) => (
             <FormItem className="flex flex-col gap-0">
-              <FormLabel className="text-text-primary text-[14px] font-normal">Описание</FormLabel>
+              <FormLabel className="text-text-primary text-[14px] font-normal">
+                {t('form.description')}
+              </FormLabel>
               <FormControl>
                 <Textarea
                   value={field.value}
@@ -135,7 +140,7 @@ export const AddingForm: FC<AddingFormProps> = ({
                   onBlur={field.onBlur}
                   name={field.name}
                   ref={field.ref}
-                  placeholder="Тема, план, комментарий…"
+                  placeholder={t('form.descriptionPlaceholder')}
                   maxLength={4000}
                   maxRows={5}
                   hideCounter
@@ -152,11 +157,13 @@ export const AddingForm: FC<AddingFormProps> = ({
           name="studentId"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel className="text-text-primary text-[14px] font-normal">Кабинет</FormLabel>
+              <FormLabel className="text-text-primary text-[14px] font-normal">
+                {t('form.classroom')}
+              </FormLabel>
               <FormControl>
                 {fixedClassroomId != null ? (
                   <Input
-                    value={fixedClassroom?.name ?? 'Текущий кабинет'}
+                    value={fixedClassroom?.name ?? t('form.currentClassroom')}
                     disabled
                     variant="s"
                     className="border-border-default rounded-lg border"
@@ -182,7 +189,9 @@ export const AddingForm: FC<AddingFormProps> = ({
             name="startDate"
             render={({ field }) => (
               <FormItem className="flex w-full flex-col">
-                <FormLabel className="text-text-primary text-[14px] font-normal">Дата</FormLabel>
+                <FormLabel className="text-text-primary text-[14px] font-normal">
+                  {t('form.date')}
+                </FormLabel>
                 <FormControl>
                   <InputDate {...field} />
                 </FormControl>
@@ -195,7 +204,9 @@ export const AddingForm: FC<AddingFormProps> = ({
 
         <div className="flex flex-col gap-2">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <FormLabel className="text-text-primary text-[14px] font-normal">Время</FormLabel>
+            <FormLabel className="text-text-primary text-[14px] font-normal">
+              {t('form.time')}
+            </FormLabel>
             {durationLabel ? (
               <span className="text-text-secondary text-sm">{durationLabel}</span>
             ) : null}
@@ -210,7 +221,7 @@ export const AddingForm: FC<AddingFormProps> = ({
                     <Input
                       {...field}
                       ref={maskRefStartTime}
-                      placeholder="17:40 Начало"
+                      placeholder={t('form.startPlaceholder')}
                       className="border-border-default rounded-lg border"
                       after={<Clock className="fill-icon-brand h-4 w-4" />}
                       variant="s"
@@ -229,7 +240,7 @@ export const AddingForm: FC<AddingFormProps> = ({
                     <Input
                       {...field}
                       ref={maskRefEndTime}
-                      placeholder="19:00 Конец"
+                      placeholder={t('form.endPlaceholder')}
                       className="border-border-default rounded-lg border"
                       after={<Clock className="fill-icon-brand h-4 w-4" />}
                       variant="s"
@@ -260,7 +271,7 @@ export const AddingForm: FC<AddingFormProps> = ({
                   htmlFor="repeat-mode"
                   className="text-text-primary text-[14px] font-normal"
                 >
-                  Повторение
+                  {t('form.repeat')}
                 </FormLabel>
               </div>
               <FormMessage />
@@ -275,11 +286,11 @@ export const AddingForm: FC<AddingFormProps> = ({
             render={({ field }) => (
               <FormItem className="flex flex-col gap-2">
                 <FormLabel className="text-text-primary text-[14px] font-normal">
-                  Повторять занятие каждую неделю в выбранные дни:
+                  {t('form.repeatHint')}
                 </FormLabel>
                 <FormControl>
                   <div className="flex flex-row flex-wrap gap-2">
-                    {WEEKDAY_LABELS.map((label, index) => {
+                    {weekdayLabels.map((label, index) => {
                       const value = field.value ?? [];
                       const isSelected = value.includes(index);
                       return (

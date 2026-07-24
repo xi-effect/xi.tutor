@@ -1,5 +1,6 @@
 import { toast } from 'sonner';
 import Resizer from 'react-image-file-resizer';
+import { useTranslation } from 'react-i18next';
 import { getCroppedImg } from '../utils';
 import { CropArea } from './useCrop';
 import { env } from 'common.env';
@@ -19,6 +20,8 @@ export const useImageProcessing = ({
   setDate,
   onBase64Return,
 }: ImageProcessingProps) => {
+  const { t } = useTranslation('avatarEditor');
+
   // Бэкенд PUT .../users/current/avatar/ принимает любые форматы и сам делает 128×128 и webp
   const resizeFile = (file: File, type: 'blob' | 'base64') =>
     new Promise((resolve) => {
@@ -63,7 +66,7 @@ export const useImageProcessing = ({
       });
 
       if (response.status === 204) {
-        toast('Аватарка успешно загружена');
+        toast(t('toastSuccess'));
         onOpenChange(false);
         if (setDate) setDate(new Date());
       }

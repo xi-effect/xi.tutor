@@ -29,6 +29,7 @@ import { EmojiStickerStyle, EmojiStyle } from '../../../shapes/shapeStyles';
 import { insertAsset } from '../../../utils/uploadAsset';
 import { ALL_ALLOWED_TYPES } from '../../../constants/mimeTypes';
 import { stickers } from '../../../config';
+import { useTranslation } from 'react-i18next';
 
 const toolMapping: Record<string, string> = {
   select: 'select',
@@ -70,6 +71,7 @@ export const Navbar = track(
     canRedo: boolean;
     token: string;
   }) => {
+    const { t } = useTranslation('board');
     const {
       pencilColor,
       pencilThickness,
@@ -279,7 +281,7 @@ export const Navbar = track(
                 onClick={handleInsertCoordinateAxes}
                 className={cn(boardMenuItemClass, 'flex gap-2 px-3')}
               >
-                <span>Оси координат</span>
+                <span>{t('navbar.coordinateAxes')}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

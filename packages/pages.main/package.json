@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./locales": "./src/locales/index.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -40,11 +41,13 @@
     "features.materials.add": "workspace:*",
     "features.materials.card": "workspace:*",
     "features.materials.duplicate": "workspace:*",
+    "i18next": "24.2.2",
     "modules.calendar": "workspace:*",
     "modules.calls": "workspace:*",
     "pages.classrooms": "workspace:*",
     "pages.materials": "workspace:*",
     "react-hook-form": "^7.73.1",
+    "react-i18next": "15.4.1",
     "zod": "^4.3.6"
   },
   "devDependencies": {

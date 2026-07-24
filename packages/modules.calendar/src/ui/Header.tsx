@@ -106,11 +106,13 @@ export const CalendarHeader = ({
   onAddLessonClick,
   showTitle = true,
 }: CalendarHeaderProps) => {
+  const { t } = useTranslation('calendar');
+
   return (
     <header className="flex w-full flex-col gap-4 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center">
       {showTitle ? (
         <h1 className="font-playfair text-text-primary pb-2 text-3xl font-medium sm:justify-self-start sm:text-5xl">
-          Расписание
+          {t('schedule')}
         </h1>
       ) : (
         <div />
@@ -136,7 +138,7 @@ export const CalendarHeader = ({
             data-umami-event="schedule-add-lesson"
           >
             <Plus className="fill-text-on-accent size-4 shrink-0" />
-            Добавить занятие
+            {t('add_lesson')}
           </Button>
         </div>
       ) : (

@@ -1,0 +1,9 @@
+{
+  "nameNotFound": "Name not found",
+  "viewInvoiceAria": "View invoice details",
+  "status": {
+    "complete": "paid",
+    "wf_receiver_confirmation": "awaiting confirmation",
+    "wf_sender_confirmation": "awaiting payment"
+  }
+}

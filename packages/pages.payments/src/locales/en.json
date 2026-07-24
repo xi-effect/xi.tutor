@@ -1,0 +1,76 @@
+{
+  "title": "Payment control",
+  "tabs": {
+    "invoices": "Payment journal",
+    "templates": "Payment types"
+  },
+  "actions": {
+    "createTemplate": "Create payment type",
+    "createInvoice": "Create invoice"
+  },
+  "empty": {
+    "tutorTitle": "No invoices yet",
+    "studentTitle": "No invoices yet",
+    "tutorDescription": "Create an invoice — it will appear in this list.",
+    "studentDescription": "When a tutor issues an invoice, it will appear here.",
+    "helpLink": "Learn more about how payments work"
+  },
+  "loader": "Loading...",
+  "date": {
+    "today": "Today",
+    "yesterday": "Yesterday"
+  },
+  "charts": {
+    "title": "Getting started with analytics",
+    "description": "On this page you can view payment and income analytics. It may take some time before data starts appearing."
+  },
+  "templateCard": {
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "templateModal": {
+    "editTitle": "Edit payment template",
+    "createTitle": "Create payment template",
+    "name": "Name",
+    "price": "Price",
+    "save": "Save",
+    "create": "Create",
+    "cancel": "Cancel"
+  },
+  "validation": {
+    "nameRequired": "Enter a name",
+    "nameMax": "Name must not exceed 100 characters",
+    "priceNumber": "Enter a number",
+    "pricePositive": "Price must be greater than zero",
+    "priceMax": "Price must not exceed 100000",
+    "priceDecimals": "Maximum of 2 decimal places allowed"
+  },
+  "invoiceModal": {
+    "closeAria": "Close modal",
+    "title": "Invoice details",
+    "description": "Invoice details, payment status, and line items.",
+    "createdAt": "Issue date",
+    "status": "Status",
+    "userFallback": "User",
+    "student": "Student",
+    "tutor": "Tutor",
+    "paymentType": "Payment type",
+    "paymentTypeCash": "Cash",
+    "paymentTypeTransfer": "Transfer",
+    "paymentTypeUnknown": "Not specified",
+    "amount": "Amount",
+    "comment": "Invoice comment",
+    "commentEmpty": "No comment provided.",
+    "detailsTitle": "Invoice details",
+    "detailsEmpty": "No invoice details available.",
+    "detailsLoading": "Loading invoice details...",
+    "item": "Item",
+    "price": "Price",
+    "quantity": "Quantity",
+    "sum": "Total",
+    "loadErrorTitle": "Failed to load invoice",
+    "loadErrorDescription": "Try refreshing the data. If the error persists, check your connection and try again later.",
+    "refresh": "Refresh",
+    "close": "Close"
+  }
+}

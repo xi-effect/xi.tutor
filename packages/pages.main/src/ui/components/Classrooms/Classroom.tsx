@@ -7,6 +7,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { useCurrentUser, useUserByRole } from 'common.services';
 import { SubjectBadge } from 'features.classroom';
 import { StartLessonButton } from 'features.lesson.start';
+import { useTranslation } from 'react-i18next';
 
 type UserAvatarPropsT = {
   classroom: IndividualClassroomT;
@@ -45,6 +46,7 @@ type ClassroomProps = {
 };
 
 export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
+  const { t } = useTranslation('main');
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
 
@@ -77,7 +79,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
             <Account className="fill-icon-secondary group-hover:fill-icon-brand h-5 w-5" />
           </Button>
         </TooltipTrigger>
-        <TooltipContent>Перейти в кабинет</TooltipContent>
+        <TooltipContent>{t('classrooms.openClassroom')}</TooltipContent>
       </Tooltip>
 
       <div className="flex h-4 w-full flex-row items-center">

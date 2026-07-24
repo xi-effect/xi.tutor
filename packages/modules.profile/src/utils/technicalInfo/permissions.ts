@@ -1,3 +1,5 @@
+import { tProfile } from '../tProfile';
+
 export const getPermissions = async (): Promise<Record<string, string>> => {
   const permissions: Record<string, string> = {};
   const permissionNames: (PermissionName | string)[] = [
@@ -16,9 +18,12 @@ export const getPermissions = async (): Promise<Record<string, string>> => {
     'payment-handler',
   ];
 
+  const unsupported = tProfile('report.values.unsupported');
+  const undefinedValue = tProfile('report.values.undefined');
+
   if (!navigator.permissions || typeof navigator.permissions.query !== 'function') {
     permissionNames.forEach((name) => {
-      permissions[name] = 'не поддерживается';
+      permissions[name] = unsupported;
     });
     return permissions;
   }
@@ -28,9 +33,9 @@ export const getPermissions = async (): Promise<Record<string, string>> => {
       const result = await navigator.permissions
         .query({ name: name as PermissionName })
         .catch(() => null);
-      permissions[name] = result?.state || 'не определен';
+      permissions[name] = result?.state || undefinedValue;
     } catch {
-      permissions[name] = 'не определен';
+      permissions[name] = undefinedValue;
     }
   }
 

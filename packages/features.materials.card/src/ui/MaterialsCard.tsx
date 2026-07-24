@@ -1,11 +1,6 @@
 import { useState } from 'react';
 import { useParams } from '@tanstack/react-router';
-import {
-  accessModeLabels,
-  accessModeStyles,
-  formatToShortDate,
-  formatUpdatedLabel,
-} from '../utils';
+import { accessModeStyles, formatToShortDate, formatUpdatedLabel } from '../utils';
 import { cn } from '@xipkg/utils';
 import { Badge } from '@xipkg/badge';
 import { MaterialActionsMenu } from './MaterialActionsMenu';
@@ -14,6 +9,7 @@ import { cardIcon } from './CardIcon';
 import { AccessModeT, MaterialPropsT } from 'common.types';
 import { useCurrentUser } from 'common.services';
 import { ModalEditMaterialName } from 'features.materials.edit';
+import { useTranslation } from 'react-i18next';
 
 type MaterialsCardProps = MaterialPropsT & {
   layout?: 'default' | 'compact' | 'gallery';
@@ -31,6 +27,7 @@ export const MaterialsCard = ({
   className,
   layout = 'default',
 }: MaterialsCardProps) => {
+  const { t } = useTranslation('materialsCard');
   const { classroomId } = useParams({ strict: false });
 
   const isClassroom = !!classroomId;
@@ -105,7 +102,9 @@ export const MaterialsCard = ({
               {name}
             </p>
             <span className="text-text-secondary text-sm leading-5 font-normal">
-              Изменено: {isLoading ? '...' : updated_at ? formatToShortDate(updated_at) : ''}
+              {t('changed', {
+                date: isLoading ? '...' : updated_at ? formatToShortDate(updated_at) : '',
+              })}
             </span>
           </div>
           {menu && (
@@ -142,7 +141,7 @@ export const MaterialsCard = ({
           </div>
 
           <div className="flex w-full flex-col items-start gap-1 overflow-hidden">
-            {student_access_mode && accessModeLabels[student_access_mode] && (
+            {student_access_mode && (
               <Badge
                 variant="default"
                 className={cn(
@@ -150,7 +149,7 @@ export const MaterialsCard = ({
                   accessModeStyles[student_access_mode],
                 )}
               >
-                {accessModeLabels[student_access_mode]}
+                {t(`accessMode.${student_access_mode}`)}
               </Badge>
             )}
 
@@ -158,7 +157,7 @@ export const MaterialsCard = ({
               {name}
             </p>
             <p className="text-text-secondary w-full text-sm leading-5 font-normal">
-              Обновлено {updatedLabel}
+              {t('updatedGallery', { date: updatedLabel })}
             </p>
           </div>
         </div>
@@ -179,7 +178,7 @@ export const MaterialsCard = ({
     >
       <div className="flex flex-col gap-1 overflow-hidden">
         <div className="flex h-full flex-col justify-between gap-2">
-          {student_access_mode && accessModeLabels[student_access_mode] && (
+          {student_access_mode && (
             <Badge
               variant="default"
               className={cn(
@@ -187,7 +186,7 @@ export const MaterialsCard = ({
                 accessModeStyles[student_access_mode],
               )}
             >
-              {accessModeLabels[student_access_mode]}
+              {t(`accessMode.${student_access_mode}`)}
             </Badge>
           )}
 
@@ -196,7 +195,9 @@ export const MaterialsCard = ({
             <p className="truncate">{name}</p>
           </div>
           <div className="text-s-base text-text-secondary mt-2 font-normal">
-            Обновлено: {isLoading ? '...' : updated_at ? formatToShortDate(updated_at) : ''}
+            {t('updated', {
+              date: isLoading ? '...' : updated_at ? formatToShortDate(updated_at) : '',
+            })}
           </div>
         </div>
       </div>

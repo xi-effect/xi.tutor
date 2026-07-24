@@ -1,17 +1,16 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useForm } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { Form, FormControl, FormField, FormItem } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { cn } from '@xipkg/utils';
+import { useTranslation } from 'react-i18next';
 import { useMaterialUpdate } from '../hooks';
 
-const titleSchema = z.object({
-  name: z.string().min(1, 'Название не может быть пустым').max(100, 'Название слишком длинное'),
-});
-
-type TitleFormDataT = z.infer<typeof titleSchema>;
+type TitleFormDataT = {
+  name: string;
+};
 
 type EditableTitlePropsT = {
   title: string;
@@ -26,8 +25,17 @@ export const EditableTitle = ({
   className,
   isTutor = false,
 }: EditableTitlePropsT) => {
+  const { t } = useTranslation('notes');
   const [isEditing, setIsEditing] = useState(false);
   const { update, isPending } = useMaterialUpdate();
+
+  const titleSchema = useMemo(
+    () =>
+      z.object({
+        name: z.string().min(1, t('validation.required')).max(100, t('validation.max')),
+      }),
+    [t],
+  );
 
   const form = useForm<TitleFormDataT>({
     resolver: zodResolver(titleSchema),
@@ -84,7 +92,7 @@ export const EditableTitle = ({
                       className,
                     )}
                     autoFocus
-                    placeholder="Введите название"
+                    placeholder={t('titlePlaceholder')}
                     disabled={isPending}
                   />
                 </FormControl>

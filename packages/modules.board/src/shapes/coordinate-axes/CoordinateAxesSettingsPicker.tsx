@@ -8,6 +8,7 @@ import { colorOptions } from '../../utils/customConfig';
 import type { CoordinateAxesShape } from './CoordinateAxesShape';
 import type { TColor } from '../../types';
 import { commitEquationForShape } from './utils/commitEquationForShape';
+import { useTranslation } from 'react-i18next';
 
 function isEquationDirty(shape: CoordinateAxesShape, draft: string): boolean {
   return draft.trim() !== shape.props.equation.trim();
@@ -54,6 +55,7 @@ function NumberField({
 }
 
 export const CoordinateAxesSettingsPicker = track(function CoordinateAxesSettingsPicker() {
+  const { t } = useTranslation('board');
   const editor = useEditor();
   const [open, setOpen] = useState(false);
 
@@ -140,7 +142,7 @@ export const CoordinateAxesSettingsPicker = track(function CoordinateAxesSetting
     <Picker
       open={open}
       setOpen={handleOpenChange}
-      triggerTitle="Настройки осей"
+      triggerTitle={t('axes.settings')}
       triggerChild={
         <span
           data-coordinate-axes-trigger
@@ -152,7 +154,7 @@ export const CoordinateAxesSettingsPicker = track(function CoordinateAxesSetting
       popoverChild={
         <div data-coordinate-axes-popover className="flex w-[280px] flex-col gap-4">
           <div className="flex flex-col gap-2">
-            <span className="text-text-primary text-sm font-medium">Уравнение y =</span>
+            <span className="text-text-primary text-sm font-medium">{t('axes.equation')}</span>
             <Input
               value={equationDraft}
               onChange={(e) => {
@@ -175,7 +177,7 @@ export const CoordinateAxesSettingsPicker = track(function CoordinateAxesSetting
           </div>
 
           <div className="flex flex-col gap-2">
-            <span className="text-text-primary text-sm font-medium">Цвет функции</span>
+            <span className="text-text-primary text-sm font-medium">{t('axes.functionColor')}</span>
             <div className="flex flex-wrap items-center gap-1.5">
               {colorOptions.map(({ name, class: colorClass }) => (
                 <ColorDot
@@ -214,7 +216,7 @@ export const CoordinateAxesSettingsPicker = track(function CoordinateAxesSetting
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <span className="text-text-secondary text-xs">Делений по X</span>
+                <span className="text-text-secondary text-xs">{t('axes.divisionsX')}</span>
                 <span className="text-text-primary text-xs">{shape.props.xDivisions}</span>
               </div>
               <Slider
@@ -227,7 +229,7 @@ export const CoordinateAxesSettingsPicker = track(function CoordinateAxesSetting
             </div>
             <div className="flex flex-col gap-2">
               <div className="flex items-center justify-between">
-                <span className="text-text-secondary text-xs">Делений по Y</span>
+                <span className="text-text-secondary text-xs">{t('axes.divisionsY')}</span>
                 <span className="text-text-primary text-xs">{shape.props.yDivisions}</span>
               </div>
               <Slider
@@ -241,7 +243,7 @@ export const CoordinateAxesSettingsPicker = track(function CoordinateAxesSetting
           </div>
 
           <label className="flex cursor-pointer items-center justify-between gap-3">
-            <span className="text-text-primary text-sm">Подписи</span>
+            <span className="text-text-primary text-sm">{t('axes.labels')}</span>
             <Checkbox
               checked={shape.props.showLabels}
               onCheckedChange={(checked) => updateProps({ showLabels: checked === true })}

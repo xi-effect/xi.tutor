@@ -1,11 +1,8 @@
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { cn } from '@xipkg/utils';
 import { MaterialsAdd } from 'features.materials.add';
-
-const tabs = [
-  { id: 'boards', label: 'Доски' },
-  { id: 'notes', label: 'Заметки' },
-];
+import { useTranslation } from 'react-i18next';
+import { useMemo } from 'react';
 
 interface HeaderProps {
   activeTab: 'notes' | 'boards';
@@ -13,11 +10,21 @@ interface HeaderProps {
 }
 
 export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
+  const { t } = useTranslation('materials');
+
+  const tabs = useMemo(
+    () => [
+      { id: 'boards', label: t('tabs.boards') },
+      { id: 'notes', label: t('tabs.notes') },
+    ],
+    [t],
+  );
+
   return (
     <div className="inline-flex w-full flex-col justify-between gap-4 sm:flex-row sm:items-center">
       <div className="flex flex-col items-start justify-start gap-4 sm:flex-row sm:items-center sm:gap-10">
         <h1 className="font-playfair text-text-primary pb-2 text-3xl font-medium sm:text-5xl">
-          Материалы
+          {t('title')}
         </h1>
 
         <SwitcherAnimate

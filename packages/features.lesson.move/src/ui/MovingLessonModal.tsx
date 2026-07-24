@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Modal, ModalContent, ModalTitle, ModalCloseButton, ModalBody } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
 import { Close } from '@xipkg/icons';
+import { useTranslation } from 'react-i18next';
 import { DayLessonsPanel } from 'modules.calendar';
 import { MovingForm } from './components/MovingForm';
 import {
@@ -67,8 +68,6 @@ export type MovingLessonModalProps = {
   onSubmit?: (data: FormData) => void | Promise<void>;
 };
 
-const DEFAULT_LESSON_TITLE = 'Изучаем что-то';
-
 export const MovingLessonModal = ({
   open,
   onOpenChange,
@@ -81,7 +80,7 @@ export const MovingLessonModal = ({
   classroomId,
   teacherId,
   fallbackName,
-  lessonTitle = DEFAULT_LESSON_TITLE,
+  lessonTitle,
   lessonDescription,
   seriesWeekdayIndex = 0,
   weeklyBitmask,
@@ -90,6 +89,7 @@ export const MovingLessonModal = ({
   soleTarget,
   onSubmit,
 }: MovingLessonModalProps) => {
+  const { t } = useTranslation('lessonMove');
   const [selectedDate, setSelectedDate] = useState(getToday);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const handleSubmittingChange = useCallback((submitting: boolean) => {
@@ -128,7 +128,8 @@ export const MovingLessonModal = ({
     onOpenChange(false);
   };
 
-  const formTitle = 'Перенести занятие';
+  const formTitle = t('title');
+  const resolvedLessonTitle = lessonTitle ?? t('defaultLessonTitle');
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
@@ -147,7 +148,7 @@ export const MovingLessonModal = ({
           <div className="hidden min-h-0 min-w-0 flex-col overflow-hidden md:flex">
             <div className="flex min-h-0 min-w-0 flex-1 flex-col">
               <DayLessonsPanel
-                scheduleHeadingTitle="Расписание"
+                scheduleHeadingTitle={t('schedule')}
                 selectedDate={selectedDate}
                 onSelectedDateChange={setSelectedDate}
                 fetchEnabled={open}
@@ -173,7 +174,7 @@ export const MovingLessonModal = ({
                 classroomId={classroomId}
                 teacherId={teacherId}
                 fallbackName={fallbackName}
-                lessonTitle={lessonTitle}
+                lessonTitle={resolvedLessonTitle}
                 lessonDescription={lessonDescription}
                 seriesWeekdayIndex={seriesWeekdayIndex}
                 movingRepetition={formMovingRepetition}
@@ -193,7 +194,7 @@ export const MovingLessonModal = ({
                 disabled={isSubmitting}
                 data-umami-event="lesson-move-cancel"
               >
-                Отменить
+                {t('cancel')}
               </Button>
               <Button
                 className="h-11 min-w-0 flex-1"
@@ -205,7 +206,7 @@ export const MovingLessonModal = ({
                 disabled={isSubmitting}
                 data-umami-event="lesson-move-submit"
               >
-                Перенести
+                {t('submit')}
               </Button>
             </div>
           </div>

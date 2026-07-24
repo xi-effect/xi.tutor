@@ -9,6 +9,7 @@ import { FillTypePicker } from '../../../shapes/geo';
 import { useDrawStore } from '../../../store';
 import { Picker } from '../popups';
 import { cn } from '@xipkg/utils';
+import { useTranslation } from 'react-i18next';
 
 const stickerColorMap: Record<string, string> = {
   grey: 'bg-gray-60',
@@ -44,6 +45,7 @@ const supportedShapeTypes = new Set([
 const drawShapeTypes = new Set(['draw']);
 
 export const ColorPicker = track(() => {
+  const { t } = useTranslation('board');
   const [open, setOpen] = useState(false);
   const editor = useEditor();
   const { setSelectedShapesColor, setSelectedShapesThickness, setSelectedShapesOpacity } =
@@ -145,7 +147,7 @@ export const ColorPicker = track(() => {
     <Picker
       open={open}
       setOpen={setOpen}
-      triggerTitle={isCoordinateAxes ? 'Цвет осей' : 'Стиль'}
+      triggerTitle={isCoordinateAxes ? t('toolbar.axisColor') : t('toolbar.style')}
       triggerChild={
         <div
           className={cn(

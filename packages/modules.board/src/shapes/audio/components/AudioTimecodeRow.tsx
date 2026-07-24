@@ -4,6 +4,7 @@ import { Trash, Eyeon, Eyeoff } from '@xipkg/icons';
 import { stopEvent } from '../constants';
 import { formatTime } from '../utils';
 import type { AudioTimecode } from '../AudioShape';
+import { useTranslation } from 'react-i18next';
 
 type AudioTimecodeRowProps = {
   timecode: AudioTimecode;
@@ -26,6 +27,7 @@ export function AudioTimecodeRow({
   onToggleVisibility,
   onRemove,
 }: AudioTimecodeRowProps) {
+  const { t } = useTranslation('board');
   return (
     <div
       className="border-border-default group flex max-h-[96px] min-h-7 items-start gap-0 p-1"
@@ -36,7 +38,7 @@ export function AudioTimecodeRow({
         type="button"
         variant="none"
         disabled={!canSeek}
-        title={!canSeek ? 'Управление у репетитора' : undefined}
+        title={!canSeek ? t('audio.tutorControls') : undefined}
         className="text-text-primary hover:text-text-link disabled:hover:text-text-primary flex h-full w-12 shrink-0 items-start justify-center rounded-md p-2 pt-1 font-medium tabular-nums disabled:cursor-default disabled:opacity-70"
         style={{ pointerEvents: isInteractive ? 'all' : 'none', fontSize: 10 }}
         data-audio-control=""
@@ -56,7 +58,7 @@ export function AudioTimecodeRow({
       {isTutor || tc.createdByStudent ? (
         <Textarea
           value={tc.label}
-          placeholder="Описание..."
+          placeholder={t('audio.descriptionPlaceholder')}
           maxLength={150}
           maxRows={3}
           hideCounter
@@ -100,7 +102,7 @@ export function AudioTimecodeRow({
               type="button"
               variant="none"
               className="hover:text-text-primary text-text-muted h-5 min-w-5 p-0"
-              title={tc.visibleToAll ? 'Скрыть от учеников' : 'Показать ученикам'}
+              title={tc.visibleToAll ? t('audio.hideFromStudents') : t('audio.showToStudents')}
               onPointerDown={isInteractive ? stopEvent : undefined}
               onClick={isInteractive ? () => onToggleVisibility(tc.id) : undefined}
             >
@@ -115,7 +117,7 @@ export function AudioTimecodeRow({
             type="button"
             variant="none"
             className="group hover:text-text-danger text-text-muted h-5 min-w-5 p-0"
-            title={tc.createdByStudent ? 'Удалить' : undefined}
+            title={tc.createdByStudent ? t('audio.delete') : undefined}
             onPointerDown={isInteractive ? stopEvent : undefined}
             onClick={isInteractive ? () => onRemove(tc.id) : undefined}
           >

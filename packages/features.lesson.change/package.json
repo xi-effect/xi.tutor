@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./locales": "./src/locales/index.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -21,7 +22,9 @@
     "@xipkg/tooltip": "2.2.0",
     "@xipkg/userprofile": "4.2.0",
     "@xipkg/utils": "1.8.0",
+    "i18next": "24.2.2",
     "react-hook-form": "^7.73.1",
+    "react-i18next": "15.4.1",
     "zod": "^4.3.6"
   },
   "devDependencies": {

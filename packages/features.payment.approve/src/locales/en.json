@@ -1,0 +1,45 @@
+{
+  "modal": {
+    "title": "Confirm invoice payment",
+    "description": "Enter payment details and confirm receipt of the transfer, or review the invoice terms."
+  },
+  "roles": {
+    "student": "Student",
+    "tutor": "Tutor"
+  },
+  "loading": "Loading...",
+  "paymentType": {
+    "label": "Payment type",
+    "labelColon": "Payment type:",
+    "cash": "Cash",
+    "cashLower": "cash",
+    "transfer": "Transfer",
+    "transferLower": "transfer"
+  },
+  "table": {
+    "lessons": "Lessons",
+    "price": "Price",
+    "quantity": "Quantity",
+    "sum": "Total",
+    "total": "Total:",
+    "detailsUnavailable": "Lesson details are unavailable",
+    "detailsLoading": "Loading details..."
+  },
+  "actions": {
+    "confirm": "Confirm",
+    "confirming": "Confirming...",
+    "cancel": "Cancel"
+  },
+  "tooltips": {
+    "tutorSender": "If the invoice is already paid, you can confirm without waiting for the student",
+    "studentSender": "Confirm the invoice payment so the tutor knows about it",
+    "receiver": "The student paid the invoice — confirm receipt of funds"
+  },
+  "date": {
+    "today": "Today",
+    "yesterday": "Yesterday"
+  },
+  "validation": {
+    "paymentTypeRequired": "Select a payment type"
+  }
+}

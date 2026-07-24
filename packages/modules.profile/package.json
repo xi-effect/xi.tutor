@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./locales": "./src/locales/index.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -32,6 +33,8 @@
     "common.ui": "workspace:*",
     "dayjs": "1.11.13",
     "features.avatar.editor": "workspace:*",
+    "i18next": "24.2.2",
+    "react-i18next": "15.4.1",
     "sonner": "^2.0.7"
   },
   "devDependencies": {

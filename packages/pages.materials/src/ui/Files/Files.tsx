@@ -1,10 +1,12 @@
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from './Card';
 import { useResponsiveGrid, useInfiniteQuery, useVirtualGrid } from '../../hooks';
 import { MaterialsTabEmptyState } from '../MaterialsTabEmptyState';
 import { GridList } from '../GridList';
 
 export const Files = () => {
+  const { t } = useTranslation('materials');
   const parentRef = useRef<HTMLDivElement>(null);
 
   const { colCount, rowHeight, GAP } = useResponsiveGrid(parentRef, true);
@@ -17,8 +19,8 @@ export const Files = () => {
     <div ref={parentRef} className="h-[calc(100vh-158px)] overflow-auto">
       {notFoundItems ? (
         <MaterialsTabEmptyState
-          title="Пока нет файлов"
-          description="Загруженные файлы появятся в этом списке."
+          title={t('empty.filesTitle')}
+          description={t('empty.filesDescription')}
         />
       ) : (
         <GridList

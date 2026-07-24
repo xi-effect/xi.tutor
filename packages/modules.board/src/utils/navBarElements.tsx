@@ -12,6 +12,7 @@ import {
   Emotions,
   FilePlus,
 } from '@xipkg/icons';
+import i18n from 'i18next';
 import { boardToolbarIconClass, boardToolbarIconCompactClass } from '../ui/boardTheme';
 
 export type NavbarElementT = {
@@ -28,16 +29,28 @@ export type PopupItemT = {
   color: string;
 };
 
+const t = (key: string) => String(i18n.t(key, { ns: 'board' }));
+
 export const navBarElements: NavbarElementT[] = [
   {
     action: 'select',
-    title: 'Выбор',
+    get title() {
+      return t('navbar.select');
+    },
     icon: <Cursor className={boardToolbarIconClass} />,
   },
-  { action: 'hand', title: 'Рука', icon: <Hand className={boardToolbarIconClass} /> },
+  {
+    action: 'hand',
+    get title() {
+      return t('navbar.hand');
+    },
+    icon: <Hand className={boardToolbarIconClass} />,
+  },
   {
     action: 'pen',
-    title: 'Перо',
+    get title() {
+      return t('navbar.pen');
+    },
     icon: <Pen className={boardToolbarIconClass} />,
     menuPopupContent: [
       {
@@ -47,22 +60,46 @@ export const navBarElements: NavbarElementT[] = [
       },
     ],
   },
-  { action: 'eraser', title: 'Ластик', icon: <Eraser className={boardToolbarIconClass} /> },
-  { action: 'text', title: 'Текст', icon: <TText className={boardToolbarIconCompactClass} /> },
+  {
+    action: 'eraser',
+    get title() {
+      return t('navbar.eraser');
+    },
+    icon: <Eraser className={boardToolbarIconClass} />,
+  },
+  {
+    action: 'text',
+    get title() {
+      return t('navbar.text');
+    },
+    icon: <TText className={boardToolbarIconCompactClass} />,
+  },
   {
     action: 'geo',
-    title: 'Фигуры',
+    get title() {
+      return t('navbar.shapes');
+    },
     icon: <Figures className={boardToolbarIconClass} />,
   },
   {
     action: 'arrow',
-    title: 'Стрелка',
+    get title() {
+      return t('navbar.arrow');
+    },
     icon: <Arrow className={boardToolbarIconClass} />,
   },
-  { action: 'frame', title: 'Фрейм', icon: <Transform className={boardToolbarIconClass} /> },
+  {
+    action: 'frame',
+    get title() {
+      return t('navbar.frame');
+    },
+    icon: <Transform className={boardToolbarIconClass} />,
+  },
   {
     action: 'sticker',
-    title: 'Стикер',
+    get title() {
+      return t('navbar.sticker');
+    },
     icon: <Sticker className={boardToolbarIconCompactClass} />,
     menuPopupContent: [
       {
@@ -112,10 +149,18 @@ export const navBarElements: NavbarElementT[] = [
       },
     ],
   },
-  { action: 'emoji', title: 'Эмодзи', icon: <Emotions className={boardToolbarIconClass} /> },
+  {
+    action: 'emoji',
+    get title() {
+      return t('navbar.emoji');
+    },
+    icon: <Emotions className={boardToolbarIconClass} />,
+  },
   {
     action: 'asset',
-    title: 'Загрузить файл. Фото: до 1 МБ. PDF, аудио и прочие файлы: до 5 МБ.',
+    get title() {
+      return t('navbar.uploadFile');
+    },
     icon: <FilePlus className={boardToolbarIconClass} />,
   },
 ];

@@ -4,11 +4,13 @@ import { useEffect } from 'react';
 import { SupportPageShell } from 'modules.navigation';
 import { useCurrentUser } from 'common.services';
 import { PRODUCT_ANALYTICS_EVENTS, trackOnce, trackProductEvent } from 'common.utils';
+import { useTranslation } from 'react-i18next';
 import { Invite } from './Invite';
 import { ErrorInvite } from './ErrorInvite';
 import { useInvitePreview } from '../services';
 
 export const InvitesPage = () => {
+  const { t } = useTranslation('invites');
   const { inviteId } = useParams({ strict: false }) as { inviteId: string };
   const { data, error, isLoading } = useInvitePreview(inviteId);
   const { data: user } = useCurrentUser();
@@ -37,7 +39,7 @@ export const InvitesPage = () => {
             <Logo />
           </div>
           <div className="flex w-full flex-col items-center gap-4 p-8 sm:w-[400px]">
-            <p className="text-text-primary dark:text-text-primary">Загрузка приглашения...</p>
+            <p className="text-text-primary dark:text-text-primary">{t('loading')}</p>
           </div>
         </section>
       </SupportPageShell>
@@ -55,7 +57,7 @@ export const InvitesPage = () => {
         ) : data ? (
           <Invite invite={data} />
         ) : (
-          <ErrorInvite error="Приглашение не найдено" />
+          <ErrorInvite error={t('notFound')} />
         )}
       </section>
     </SupportPageShell>

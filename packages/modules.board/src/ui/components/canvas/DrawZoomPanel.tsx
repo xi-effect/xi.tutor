@@ -3,12 +3,14 @@ import { Plus, Minus } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { useRef } from 'react';
 import { boardIconClass, boardPanelClass, boardTextClass } from '../../boardTheme';
+import { useTranslation } from 'react-i18next';
 
 const ZOOM_ANIMATION = { animation: { duration: 200 } } as const;
 /** Задержка одиночного клика, чтобы не срабатывал вместе с double-click */
 const SINGLE_CLICK_DELAY_MS = 250;
 
 export const DrawZoomPanel = track(() => {
+  const { t } = useTranslation('board');
   const editor = useEditor();
   const resetZoomClickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -60,7 +62,7 @@ export const DrawZoomPanel = track(() => {
         <Button
           className={`h-6 w-6 min-w-[60px] items-center justify-center px-2 py-1 ${boardTextClass} hover:bg-transparent focus:bg-transparent active:bg-transparent lg:h-8 lg:w-8`}
           variant="none"
-          title="Клик — 100%. Двойной клик — показать все элементы"
+          title={t('zoom.clickHint')}
           onClick={handleResetZoomClick}
           onDoubleClick={handleZoomToFitDoubleClick}
         >

@@ -8,6 +8,7 @@ import {
 import { ChevronSmallBottom, Plus } from '@xipkg/icons';
 import { useAddMaterials, useAddClassroomMaterials } from 'common.services';
 import { useParams, useNavigate } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 
 interface BoardProps {
   onCreate?: () => void;
@@ -18,6 +19,7 @@ interface BoardProps {
 type StudentAccessMode = 'no_access' | 'read_only' | 'read_write';
 
 export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps) => {
+  const { t } = useTranslation('materialsAdd');
   const { classroomId: paramsClassroomId } = useParams({ strict: false });
   const navigate = useNavigate();
   const { addMaterials } = useAddMaterials();
@@ -72,7 +74,7 @@ export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps)
         data-umami-event="material-create-board-draft"
       >
         <Plus className="fill-text-on-accent size-4 shrink-0" />
-        {addMaterials.isPending ? 'Создание...' : 'Создать доску'}
+        {addMaterials.isPending ? t('board.creating') : t('board.create')}
       </Button>
     );
   }
@@ -83,7 +85,7 @@ export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps)
         className="bg-background-surface group text-s-base hover:text-text-on-accent hover:bg-action-primary-background-default data-[state=open]:text-text-on-accent data-[state=open]:bg-action-primary-background-default border-border-control text-text-primary hover:border-border-control flex h-8 w-[160px] flex-row items-center justify-between gap-[6px] rounded-lg border px-4 font-medium transition-colors duration-200 max-[550px]:hidden"
         data-umami-event="material-create-board-menu-open"
       >
-        <span>Создать доску</span>
+        <span>{t('board.create')}</span>
         <ChevronSmallBottom className="group-hover:fill-action-primary-text group-data-[state=open]:fill-action-primary-text fill-icon-primary h-[16px] w-[16px] transition-transform duration-200 group-data-[state=open]:rotate-180" />
       </DropdownMenuTrigger>
 
@@ -95,7 +97,7 @@ export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps)
           data-umami-event="material-create-board"
           data-umami-event-access-mode="read_write"
         >
-          Совместная работа
+          {t('board.collaborative')}
         </DropdownMenuItem>
 
         <DropdownMenuItem
@@ -105,7 +107,7 @@ export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps)
           data-umami-event="material-create-board"
           data-umami-event-access-mode="read_only"
         >
-          Только репетитор
+          {t('board.tutorOnly')}
         </DropdownMenuItem>
 
         <DropdownMenuItem
@@ -115,7 +117,7 @@ export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps)
           data-umami-event="material-create-board"
           data-umami-event-access-mode="no_access"
         >
-          Черновики
+          {t('board.drafts')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

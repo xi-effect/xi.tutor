@@ -6,9 +6,11 @@ import {
   useGetClassroom,
 } from 'common.services';
 import { InvoiceCard } from 'features.invoice.card';
+import { useTranslation } from 'react-i18next';
 import { PaymentsListSkeleton } from './PaymentsListSkeleton';
 
 export const PaymentsList = () => {
+  const { t } = useTranslation('classroom');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
@@ -42,7 +44,7 @@ export const PaymentsList = () => {
   if (!payments || payments.length === 0) {
     return (
       <div className="flex h-[148px] w-full flex-row items-center justify-center gap-8">
-        <p className="text-m-base text-text-secondary">Здесь пока пусто</p>
+        <p className="text-m-base text-text-secondary">{t('overview.paymentsEmpty')}</p>
       </div>
     );
   }

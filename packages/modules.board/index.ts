@@ -5,3 +5,4 @@ export {
   CollaboratorCursor,
   type CollaboratorCursorProps,
 } from './src/ui/components/canvas/CollaboratorCursor';
+export { boardEn, boardRu } from './src/locales';

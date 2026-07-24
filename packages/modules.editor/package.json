@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./src/index.ts"
+    ".": "./src/index.ts",
+    "./locales": "./src/locales/index.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -47,7 +48,9 @@
     "common.services": "workspace:*",
     "common.types": "workspace:*",
     "common.ui": "workspace:*",
+    "i18next": "24.2.2",
     "lowlight": "^3.3.0",
+    "react-i18next": "15.4.1",
     "nanoid": "5.1.5",
     "prismjs": "^1.30.0",
     "randomcolor": "0.6.2",

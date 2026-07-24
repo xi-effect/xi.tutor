@@ -1,0 +1,34 @@
+{
+  "title": "Classrooms",
+  "createGroup": "Create group",
+  "invite": "Invite",
+  "studentsList": "Students list",
+  "rename": "Rename",
+  "delete": "Delete",
+  "deleting": "Deleting...",
+  "allLoaded": "All classrooms loaded",
+  "loadError": "Failed to load classrooms",
+  "empty": {
+    "tutorTitle": "Your students and groups will appear here",
+    "tutorDescription": "Invite someone",
+    "studentTitle": "Your classrooms will appear here",
+    "studentDescription": "You haven't been invited to any classroom yet",
+    "helpLink": "Learn more about classrooms"
+  },
+  "filters": {
+    "status": "Status:",
+    "lessonType": "Lesson type:",
+    "subject": "Subject:",
+    "any": "Any",
+    "active": "Active",
+    "paused": "Paused",
+    "locked": "Locked",
+    "finished": "Finished",
+    "individual": "Individual",
+    "group": "Group",
+    "math": "Mathematics",
+    "computerScience": "Computer science",
+    "foreignLanguages": "Foreign languages",
+    "other": "Other"
+  }
+}

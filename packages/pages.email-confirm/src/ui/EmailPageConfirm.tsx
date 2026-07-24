@@ -4,6 +4,7 @@ import { useNavigate } from '@tanstack/react-router';
 import { useEmailChange } from 'common.services';
 import { useEffect, useRef } from 'react';
 import { SupportPageShell } from 'modules.navigation';
+import { useTranslation } from 'react-i18next';
 import { useConfirmEmailToken } from './useConfirmEmailToken';
 
 const Loading = () => {
@@ -21,6 +22,7 @@ const Loading = () => {
 };
 
 export const EmailPageConfirm = () => {
+  const { t } = useTranslation('emailConfirm');
   const navigate = useNavigate();
   const emailToken = useConfirmEmailToken();
   const { emailChange } = useEmailChange();
@@ -70,12 +72,12 @@ export const EmailPageConfirm = () => {
                 id="title"
                 className="text-l-base text-text-primary mt-4 flex items-center justify-center py-8 font-semibold"
               >
-                Почта подтверждена
+                {t('success')}
               </div>
             )}
             {hasError && !isLoading && (
               <div id="title" className="text-l-base text-text-primary mt-4 font-semibold">
-                Ошибка при подтверждении почты
+                {t('error')}
               </div>
             )}
             {isSuccess && !isLoading && (
@@ -84,7 +86,7 @@ export const EmailPageConfirm = () => {
                 className="h-[48px] w-full rounded-xl"
                 onClick={() => navigate({ to: '/' })}
               >
-                Вернуться в приложение
+                {t('backToApp')}
               </Button>
             )}
           </div>

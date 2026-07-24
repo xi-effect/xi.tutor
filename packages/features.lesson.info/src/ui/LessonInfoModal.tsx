@@ -13,6 +13,7 @@ import type { ClassroomTutorResponseSchema } from 'common.api';
 import { Button } from '@xipkg/button';
 import { Clock, Edit05, Redo, Trash } from '@xipkg/icons';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LessonInfoClassroomBlock } from './LessonInfoClassroomBlock';
 import { useCurrentUser } from 'common.services';
 
@@ -81,6 +82,7 @@ export const LessonInfoModal = ({
   onCancelClick,
   startLessonSlot,
 }: LessonInfoModalProps) => {
+  const { t } = useTranslation('lessonInfo');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
@@ -129,7 +131,7 @@ export const LessonInfoModal = ({
             <ModalCloseButton />
             <div className="flex max-w-[calc(100%-56px)] flex-col gap-0.5">
               <ModalTitle className="text-xl-base text-text-primary max-w-full font-semibold">
-                Информация о занятии
+                {t('title')}
               </ModalTitle>
               {lessonDate != null && lessonDate.trim().length > 0 ? (
                 <p className="text-text-secondary text-sm font-normal">{lessonDate.trim()}</p>
@@ -194,7 +196,7 @@ export const LessonInfoModal = ({
                 }}
                 data-umami-event="lesson-info-reschedule"
               >
-                Перенести
+                {t('reschedule')}
                 <Redo className="fill-icon-primary ml-1.5 h-4 w-4" />
               </Button>
             )}
@@ -206,7 +208,7 @@ export const LessonInfoModal = ({
                 onClick={onCancelClick}
                 data-umami-event="lesson-info-cancel-init"
               >
-                <span className="xs:sr-only block">Отменить</span>
+                <span className="xs:sr-only block">{t('cancel')}</span>
                 <Trash className="fill-icon-secondary xs:ml-0 ml-2 h-5 w-5" />
               </Button>
             ) : null}
@@ -216,10 +218,10 @@ export const LessonInfoModal = ({
                 variant="none"
                 className="bg-background-page text-text-primary xs:w-12 hover:text-text-primary flex h-12 min-h-12 w-full shrink-0 items-center justify-center p-0 max-sm:mx-auto"
                 onClick={openEdit}
-                aria-label="Редактировать"
+                aria-label={t('edit')}
                 data-umami-event="lesson-info-edit"
               >
-                <span className="xs:sr-only block">Редактировать</span>
+                <span className="xs:sr-only block">{t('edit')}</span>
                 <Edit05 className="text-text-secondary xs:ml-0 ml-2 h-5 w-5" />
               </Button>
             ) : null}

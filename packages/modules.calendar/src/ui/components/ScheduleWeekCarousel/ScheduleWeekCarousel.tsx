@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { isSameDay } from 'date-fns';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
@@ -6,8 +7,6 @@ import { cn } from '@xipkg/utils';
 import { getWeekDays, getWeekStartsRange } from '../../../utils';
 
 import 'swiper/css';
-
-const DAY_NAMES = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'];
 
 /** ±5 лет — практически без «края» ленты недель */
 const WEEKS_PAST = 260;
@@ -32,6 +31,8 @@ export const ScheduleWeekCarousel = ({
   onWeekStartChange,
   onSelectedDateChange,
 }: ScheduleWeekCarouselProps) => {
+  const { t, i18n } = useTranslation('calendar');
+  const dayNames = useMemo(() => t('week_days').split(','), [t, i18n.language]);
   const weeks = useMemo(() => getWeekStartsRange(WEEKS_PAST, WEEKS_FUTURE), []);
 
   const currentWeekIndex = useMemo(() => {
@@ -98,7 +99,7 @@ export const ScheduleWeekCarousel = ({
             <div className="grid grid-cols-7 gap-1 px-1">
               {days.map((date, i) => {
                 const isSelected = isSameDay(date, selectedDate);
-                const dayName = DAY_NAMES[i];
+                const dayName = dayNames[i];
                 const dayNum = date.getDate();
                 return (
                   <button

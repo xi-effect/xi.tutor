@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNetworkStatus } from 'common.utils';
 import { Close, Check, CrossCircle } from '@xipkg/icons';
+import { useTranslation } from 'react-i18next';
 
 interface NetworkIndicatorProps {
   showText?: boolean;
@@ -11,6 +12,7 @@ export const NetworkIndicator: React.FC<NetworkIndicatorProps> = ({
   showText = false,
   className = '',
 }) => {
+  const { t } = useTranslation('commonUi');
   const { isOnline, isReconnecting } = useNetworkStatus();
 
   if (isOnline && !isReconnecting) {
@@ -21,7 +23,7 @@ export const NetworkIndicator: React.FC<NetworkIndicatorProps> = ({
     if (!isOnline) {
       return {
         icon: <CrossCircle className="text-text-danger h-4 w-4" />,
-        text: 'Нет соединения',
+        text: t('network.offline'),
         bgColor: 'bg-status-error-accent',
         textColor: 'text-text-danger',
         borderColor: 'border-border-error',
@@ -31,7 +33,7 @@ export const NetworkIndicator: React.FC<NetworkIndicatorProps> = ({
     if (isReconnecting) {
       return {
         icon: <Close className="text-status-warning-text h-4 w-4" />,
-        text: 'Проверка соединения...',
+        text: t('network.reconnecting'),
         bgColor: 'bg-status-warning-background',
         textColor: 'text-status-warning-text',
         borderColor: 'border-status-warning-accent',
@@ -40,7 +42,7 @@ export const NetworkIndicator: React.FC<NetworkIndicatorProps> = ({
 
     return {
       icon: <Check className="text-status-success-text h-4 w-4" />,
-      text: 'Подключено',
+      text: t('network.connected'),
       bgColor: 'bg-status-success-accent',
       textColor: 'text-status-success-text',
       borderColor: 'border-status-success-accent',

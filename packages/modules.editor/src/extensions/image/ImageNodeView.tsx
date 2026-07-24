@@ -8,6 +8,7 @@ import {
 } from '@xipkg/dropdown';
 import { Button } from '@xipkg/button';
 import { ArrowBottom, ArrowUp, Copy, Download, MoreVert, Trash } from '@xipkg/icons';
+import { useTranslation } from 'react-i18next';
 import { useBlockMenuActions, useProtectedImage, useYjsContext } from '../../hooks';
 import { cn } from '@xipkg/utils';
 import { useCallback } from 'react';
@@ -15,6 +16,7 @@ import { ActiveBlockT } from '../../types';
 import { NodeSelection } from '@tiptap/pm/state';
 
 export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
+  const { t } = useTranslation('editor');
   const src = node.attrs.src;
 
   const { editor, storageToken, isReadOnly } = useYjsContext();
@@ -91,7 +93,7 @@ export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
               onSelect={() => downloadImage(imageSrc)}
             >
               <Download size="sm" className="size-6" />
-              <span className="text-sm">Скачать</span>
+              <span className="text-sm">{t('image.download')}</span>
             </DropdownMenuItem>
 
             {/* Остальные действия доступны только если редактор не в readonly режиме */}
@@ -107,7 +109,7 @@ export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
                   }}
                 >
                   <ArrowUp size="sm" className="size-6" />
-                  <span className="text-sm">Выше</span>
+                  <span className="text-sm">{t('image.moveUp')}</span>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
@@ -118,7 +120,7 @@ export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
                   }}
                 >
                   <ArrowBottom size="sm" className="size-6" />
-                  <span className="text-sm">Ниже</span>
+                  <span className="text-sm">{t('image.moveDown')}</span>
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
@@ -128,7 +130,7 @@ export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
                   onSelect={duplicate}
                 >
                   <Copy size="sm" className="size-6" />
-                  <span className="text-sm">Дублировать</span>
+                  <span className="text-sm">{t('image.duplicate')}</span>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
@@ -136,7 +138,7 @@ export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
                   onSelect={remove}
                 >
                   <Trash size="sm" className="size-6" />
-                  <span className="text-sm">Удалить</span>
+                  <span className="text-sm">{t('image.delete')}</span>
                 </DropdownMenuItem>
               </>
             )}

@@ -1,7 +1,8 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useForm } from '@xipkg/form';
-import { eventFormSchema, type EventFormData, type EventFormInput } from '../model';
+import { createEventFormSchema, type EventFormData, type EventFormInput } from '../model';
 import { formatDate, parseDateTime } from '../utils/calendarUtils';
 import { useCloseForm, useDefaultValues } from '../store/formEventStore';
 import { useAddEvent } from '../store/eventsStore';
@@ -65,9 +66,11 @@ export const useDateFields = (
 };
 
 export const useEventForm = () => {
+  const { t } = useTranslation('calendar');
   const addEvent = useAddEvent();
   const handleCloseForm = useCloseForm();
   const defaultFormValues = useDefaultValues();
+  const eventFormSchema = useMemo(() => createEventFormSchema(t), [t]);
 
   const form = useForm<EventFormInput, unknown, EventFormData>({
     resolver: zodResolver(eventFormSchema),

@@ -6,6 +6,7 @@ import { useCurrentUser, useUserByRole } from 'common.services';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import type { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const avatarSize = 'm';
 
@@ -52,11 +53,14 @@ export const LessonInfoClassroomBlock: FC<LessonInfoClassroomBlockProps> = ({
   classroom,
   classroomLoading,
 }) => {
+  const { t } = useTranslation('lessonInfo');
+  const classroomNumberLabel = (id: number) => t('classroomNumber', { id });
+
   if (classroomLoading) {
     return (
       <>
         <div className="flex min-h-0 w-full flex-row items-center">
-          <span className="text-text-disabled text-xs-base">Загрузка кабинета…</span>
+          <span className="text-text-disabled text-xs-base">{t('classroomLoading')}</span>
         </div>
         <div className="flex flex-row gap-2">
           <Avatar size={avatarSize}>
@@ -78,17 +82,18 @@ export const LessonInfoClassroomBlock: FC<LessonInfoClassroomBlockProps> = ({
           <TooltipTrigger asChild>
             <div className="flex h-8 min-w-0 flex-1 flex-row items-center">
               <h3 className="text-s-base text-text-primary line-clamp-2 text-left font-medium">
-                Кабинет №{classroomId}
+                {classroomNumberLabel(classroomId)}
               </h3>
             </div>
           </TooltipTrigger>
-          <TooltipContent>Кабинет №{classroomId}</TooltipContent>
+          <TooltipContent>{classroomNumberLabel(classroomId)}</TooltipContent>
         </Tooltip>
       </div>
     );
   }
 
   const heading = classroomHeadingText(classroom);
+  const fallbackHeading = classroomNumberLabel(classroom.id);
 
   return (
     <>
@@ -105,11 +110,11 @@ export const LessonInfoClassroomBlock: FC<LessonInfoClassroomBlockProps> = ({
           <TooltipTrigger asChild>
             <div className="flex h-8 min-w-0 flex-1 flex-row items-center justify-start gap-2">
               <h3 className="text-s-base text-text-primary line-clamp-2 min-w-0 text-left font-medium">
-                {heading || `Кабинет №${classroom.id}`}
+                {heading || fallbackHeading}
               </h3>
             </div>
           </TooltipTrigger>
-          <TooltipContent>{heading || `Кабинет №${classroom.id}`}</TooltipContent>
+          <TooltipContent>{heading || fallbackHeading}</TooltipContent>
         </Tooltip>
       </div>
     </>

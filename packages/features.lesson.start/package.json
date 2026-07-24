@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./locales": "./src/locales/index.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -16,7 +17,9 @@
     "@xipkg/tooltip": "2.2.0",
     "@xipkg/utils": "1.8.0",
     "common.services": "workspace:*",
-    "modules.calls": "workspace:*"
+    "i18next": "24.2.2",
+    "modules.calls": "workspace:*",
+    "react-i18next": "15.4.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",

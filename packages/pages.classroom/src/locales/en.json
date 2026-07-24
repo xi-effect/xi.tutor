@@ -1,0 +1,111 @@
+{
+  "tabs": {
+    "overview": "Overview",
+    "materials": "Materials",
+    "schedule": "Schedule",
+    "payments": "Payments",
+    "info": "Information",
+    "section": "Section",
+    "drawerTitle": "Classroom section"
+  },
+  "actions": {
+    "selectAction": "Choose an action",
+    "addStudent": "Add student",
+    "addStudentDescription": "Add a student to the study group",
+    "inviteToGroup": "Invite to group",
+    "inviteToGroupDescription": "Send a group invite link",
+    "createInvoice": "Create invoice",
+    "createInvoiceDescription": "Issue an invoice for a completed lesson",
+    "deleteClassroom": "Delete classroom",
+    "deleteClassroomDescription": "The classroom and all related data will be deleted",
+    "deleting": "Deleting...",
+    "addLesson": "Add lesson",
+    "reschedule": "Reschedule",
+    "rescheduleLesson": "Reschedule lesson",
+    "editLesson": "Edit lesson",
+    "deleteLesson": "Delete lesson",
+    "retry": "Try again",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "backToClassrooms": "Back to classrooms",
+    "editDescription": "Edit description",
+    "deleteFromGroup": "Remove from group"
+  },
+  "materials": {
+    "boards": "Boards",
+    "notes": "Notes",
+    "noBoards": "No study boards",
+    "noNotes": "No notes",
+    "noMaterials": "No materials",
+    "loadError": "Failed to load materials",
+    "noteCollaborative": "Note: Collaborative",
+    "noteTutorOnly": "Note: Tutor only",
+    "noteDrafts": "Note: Drafts",
+    "boardCollaborative": "Board: Collaborative",
+    "boardTutorOnly": "Board: Tutor only",
+    "boardDrafts": "Board: Drafts"
+  },
+  "overview": {
+    "materials": "Materials",
+    "payments": "Payments",
+    "students": "Students",
+    "upcomingLessons": "Upcoming lessons",
+    "noLessonsTitle": "No lessons in the next 7 days",
+    "noLessonsDescription": "When lessons appear in the classroom schedule, they will show up here",
+    "paymentsEmpty": "Nothing here yet",
+    "addStudentTitle": "Add a student to the group",
+    "studentDeleted": "Student removed from the group",
+    "studentDeleteError": "Failed to remove student",
+    "studentsLoadError": "Failed to load students list"
+  },
+  "errors": {
+    "loadData": "Failed to load data",
+    "classroomInfo": "Failed to load classroom information",
+    "classroomMaterials": "Failed to load classroom materials",
+    "classroomPayments": "Failed to load classroom payments",
+    "classroomCalendar": "Failed to load classroom calendar",
+    "classroomNotFound": "Classroom not found",
+    "loadFailed": "Load error"
+  },
+  "header": {
+    "noDescription": "No description"
+  },
+  "descriptionModal": {
+    "title": "Edit description",
+    "label": "Classroom description",
+    "placeholder": "Enter classroom description...",
+    "tooLong": "Description is too long"
+  },
+  "information": {
+    "lessonStatus": "Lesson status",
+    "subject": "Subject",
+    "statusActive": "Studying",
+    "statusPaused": "Paused",
+    "statusFinished": "Completed",
+    "notePlaceholder": "This is a place for classroom notes. You can keep a lesson plan,\nparent contacts, and more. Tap to start editing"
+  },
+  "autocomplete": {
+    "loading": "Loading...",
+    "notFound": "Subject not found",
+    "select": "Select a subject...",
+    "search": "Search subjects...",
+    "empty": "No subjects found"
+  },
+  "filters": {
+    "status": "Status:",
+    "lessonType": "Lesson type:",
+    "subject": "Subject:",
+    "any": "Any",
+    "active": "Active",
+    "paused": "Paused",
+    "locked": "Locked",
+    "finished": "Finished",
+    "individual": "Individual",
+    "group": "Group",
+    "math": "Mathematics",
+    "computerScience": "Computer science",
+    "foreignLanguages": "Foreign languages",
+    "other": "Other"
+  }
+}

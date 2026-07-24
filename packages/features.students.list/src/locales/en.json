@@ -1,0 +1,18 @@
+{
+  "title": "Students list",
+  "search": "Search",
+  "loading": "Loading...",
+  "loadError": "Failed to load data",
+  "empty": "You don’t have any students yet",
+  "notFound": "No students found",
+  "deleteTooltip": "Remove student from your space",
+  "deleteConfirm": {
+    "title": "Remove student?",
+    "description": "If you resume lessons later, you will need to invite the student again"
+  },
+  "actions": {
+    "delete": "Remove",
+    "deleting": "Removing...",
+    "cancel": "Cancel"
+  }
+}

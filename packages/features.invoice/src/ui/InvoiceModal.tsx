@@ -12,21 +12,22 @@ import {
   ModalTitle,
 } from '@xipkg/modal';
 import { useMediaQuery } from '@xipkg/utils';
+import { useFetchClassrooms } from 'common.services';
+import { useTranslation } from 'react-i18next';
+import { useInvoiceForm } from '../hooks';
+import { roundMoney, type FormData } from '../model';
+import { generateRandomId } from '../utils';
+import { ClassroomSelector } from './ClassroomSelector';
+import { CommentField } from './CommentField';
+import { SubjectRow } from './SubjectRow';
+import { SubjectRowMobile } from './SubjectRowMobile';
+import { TemplateSelector } from './TemplateSelector';
 
 const cleanupBodyScrollLock = () => {
   document.body.style.overflow = '';
   document.body.style.pointerEvents = '';
   document.body.removeAttribute('data-scroll-locked');
 };
-import { useFetchClassrooms } from 'common.services';
-import { useInvoiceForm } from '../hooks';
-import { roundMoney, type FormData } from '../model';
-import { ClassroomSelector } from './ClassroomSelector';
-import { CommentField } from './CommentField';
-import { SubjectRow } from './SubjectRow';
-import { SubjectRowMobile } from './SubjectRowMobile';
-import { TemplateSelector } from './TemplateSelector';
-import { generateRandomId } from '../utils';
 
 type InvoiceModalProps = {
   open: boolean;
@@ -34,6 +35,7 @@ type InvoiceModalProps = {
 };
 
 export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
+  const { t } = useTranslation('invoice');
   const isMobile = useMediaQuery('(max-width: 500px)');
   const isTablet = useMediaQuery('(max-width: 719px)');
 
@@ -98,9 +100,9 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
 
         <ModalHeader className="border-border-default border-b" innerClassName="max-sm:p-4">
           <ModalTitle className="text-text-primary max-[515px]:max-w-[215px] max-sm:text-xl">
-            Создание счета на оплату
+            {t('modal.title')}
           </ModalTitle>
-          <ModalDescription className="sr-only">Создание счета на оплату</ModalDescription>
+          <ModalDescription className="sr-only">{t('modal.description')}</ModalDescription>
         </ModalHeader>
         <Form {...form}>
           <form
@@ -108,10 +110,8 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
             className="flex flex-col gap-6 p-6 max-sm:p-4"
           >
             <div>
-              <p className="text-text-primary max-sm:text-base">Вы создаёте и отправляете счёт.</p>
-              <p className="text-text-primary">
-                Ученик оплачивает счёт напрямую вам — переводом или наличными.
-              </p>
+              <p className="text-text-primary max-sm:text-base">{t('modal.intro1')}</p>
+              <p className="text-text-primary">{t('modal.intro2')}</p>
             </div>
 
             <ClassroomSelector control={control} />
@@ -131,7 +131,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                   });
                 }}
               >
-                {isMobile ? 'Добавить строку' : 'Добавить занятие'}
+                {isMobile ? t('modal.addRow') : t('modal.addLesson')}
               </Button>
 
               <TemplateSelector control={control} />
@@ -141,12 +141,12 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
             {!isMobile && items.length > 0 && (
               <div>
                 <div className="text-text-secondary grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2 text-sm">
-                  <span>Занятия</span>
-                  <span>Стоимость</span>
+                  <span>{t('modal.lessons')}</span>
+                  <span>{t('modal.price')}</span>
                   <div className="w-[12px]" />
-                  <span>Количество</span>
+                  <span>{t('modal.quantity')}</span>
                   <div className="w-[12px]" />
-                  <span>Сумма</span>
+                  <span>{t('modal.sum')}</span>
                   <div className="ml-2 h-[24px] w-[24px]" />
                 </div>
                 <div className="my-2">
@@ -160,7 +160,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                   ))}
                   <div className="grid grid-cols-[2fr_1fr_auto_1fr_auto_1fr_auto] items-center gap-2">
                     <div />
-                    <span className="dark:text-text-primary text-right">Итого:</span>
+                    <span className="dark:text-text-primary text-right">{t('modal.total')}</span>
                     <div className="w-[12px]" />
                     <span className="dark:text-text-primary text-right">{totalLessons}</span>
                     <div className="w-[12px]" />
@@ -174,16 +174,16 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
             {isMobile && items.length > 0 && (
               <div>
                 <div className="text-text-secondary grid grid-cols-3 items-center gap-2 text-sm">
-                  <span>Стоимость</span>
-                  <span>Количество</span>
-                  <span>Сумма</span>
+                  <span>{t('modal.price')}</span>
+                  <span>{t('modal.quantity')}</span>
+                  <span>{t('modal.sum')}</span>
                 </div>
                 <div className="my-2 flex flex-col gap-3">
                   {items.map((_, index) => (
                     <SubjectRowMobile key={index} control={control} index={index} />
                   ))}
                   <div className="grid grid-cols-3 items-center gap-2">
-                    <span className="dark:text-text-primary text-right">Итого:</span>
+                    <span className="dark:text-text-primary text-right">{t('modal.total')}</span>
                     <span className="dark:text-text-primary text-center">{totalLessons}</span>
                     <span className="dark:text-text-primary text-right">{totalInvoicePrice} ₽</span>
                   </div>
@@ -201,7 +201,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                 size="m"
                 data-umami-event="invoice-create"
               >
-                Создать
+                {t('modal.create')}
               </Button>
               <Button
                 className={`${isMobile ? 'w-full' : 'w-[128px]'} rounded-2xl`}
@@ -209,7 +209,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
                 variant="ghost"
                 onClick={handleCloseModal}
               >
-                Отменить
+                {t('modal.cancel')}
               </Button>
             </ModalFooter>
           </form>

@@ -1,10 +1,12 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { Button } from '@xipkg/button';
+import { useTranslation } from 'react-i18next';
 import { InviteT } from '../types';
 import { useAcceptInvite } from '../services';
 
 export const Invite = ({ invite }: { invite: InviteT }) => {
+  const { t } = useTranslation('invites');
   const navigate = useNavigate();
   const { inviteId } = useParams({ strict: false }) as { inviteId: string };
   const { mutate, isPending } = useAcceptInvite();
@@ -13,10 +15,10 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
     (invite.kind === 'individual' && invite.existing_classroom_id) ||
     (invite.kind === 'group' && invite.has_already_joined);
 
-  const getInviteTitle = () =>
-    isInviteAccepted ? 'Приглашение принято' : 'Вы получили приглашение';
+  const getInviteTitle = () => (isInviteAccepted ? t('title.accepted') : t('title.received'));
 
-  const getAcceptButtonText = () => (isInviteAccepted ? 'Перейти в кабинет' : 'Принять');
+  const getAcceptButtonText = () =>
+    isInviteAccepted ? t('actions.goToClassroom') : t('actions.accept');
 
   const acceptInvite = () => {
     if (invite.kind === 'group') {
@@ -56,8 +58,8 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
         </h3>
         <span className="text-text-primary dark:text-text-primary">
           {invite.kind === 'individual'
-            ? 'Репетитор'
-            : `в группу «${invite.classroom.name}» от репетитора`}
+            ? t('subtitle.tutor')
+            : t('subtitle.groupFromTutor', { name: invite.classroom.name })}
         </span>
       </div>
       <div className="flex flex-col items-center gap-2">
@@ -95,7 +97,7 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
           data-umami-event="invite-decline"
           data-umami-event-kind={invite.kind}
         >
-          Отказаться
+          {t('actions.decline')}
         </Button>
       </div>
     </div>

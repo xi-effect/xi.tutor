@@ -1,0 +1,8 @@
+{
+  "title": "Lesson details",
+  "reschedule": "Reschedule",
+  "cancel": "Cancel",
+  "edit": "Edit",
+  "classroomLoading": "Loading classroom…",
+  "classroomNumber": "Classroom №{{id}}"
+}

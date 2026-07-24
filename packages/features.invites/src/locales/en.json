@@ -1,0 +1,45 @@
+{
+  "drawer": {
+    "title": "Choose an action"
+  },
+  "actions": {
+    "invite": {
+      "label": "Invite a student",
+      "description": "Send a personal invitation link"
+    },
+    "group": {
+      "label": "Create a group",
+      "description": "Create a study group and invite students"
+    },
+    "board": {
+      "label": "Interactive board",
+      "description": "Create a board for collaborative lessons"
+    },
+    "note": {
+      "label": "Note",
+      "description": "Create a note with text and materials"
+    },
+    "invoice": {
+      "label": "Payment invoice",
+      "description": "Issue an invoice to a student for a completed lesson"
+    },
+    "template": {
+      "label": "Payment type",
+      "description": "Create a template for quick invoicing"
+    }
+  },
+  "modal": {
+    "title": "Individual invitations",
+    "copyHintBefore": "Copy the invitation link",
+    "copyHintAfter": "and send it to the student",
+    "link": "Link",
+    "usageCount": "Uses",
+    "copyLink": "Copy link",
+    "maxInvites": "Maximum of 10 invitations",
+    "createInvite": "Create a new invitation"
+  },
+  "toast": {
+    "linkCopied": "Link copied",
+    "sendToStudent": "Send the link to the student"
+  }
+}

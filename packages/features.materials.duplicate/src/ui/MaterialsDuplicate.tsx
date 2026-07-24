@@ -19,6 +19,7 @@ import { useState } from 'react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@xipkg/select';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { cn } from '@xipkg/utils';
+import { useTranslation } from 'react-i18next';
 
 type AccessModeT = 'no_access' | 'read_only' | 'read_write';
 
@@ -58,10 +59,12 @@ const ClassroomsList = ({
   selectedClassroomId,
   onClassroomSelect,
 }: ClassroomsListProps) => {
+  const { t } = useTranslation('materialsDuplicate');
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <p className="text-text-secondary">Загрузка кабинетов...</p>
+        <p className="text-text-secondary">{t('loading')}</p>
       </div>
     );
   }
@@ -69,7 +72,7 @@ const ClassroomsList = ({
   if (isError) {
     return (
       <div className="flex items-center justify-center py-8">
-        <p className="text-text-danger">Ошибка загрузки кабинетов</p>
+        <p className="text-text-danger">{t('error')}</p>
       </div>
     );
   }
@@ -77,9 +80,9 @@ const ClassroomsList = ({
   if (!classrooms || classrooms.length === 0) {
     return (
       <div className="flex h-[300px] w-full flex-col items-center justify-center gap-2">
-        <p className="text-m-base text-text-secondary w-full text-center">Здесь пока пусто</p>
+        <p className="text-m-base text-text-secondary w-full text-center">{t('emptyTitle')}</p>
         <p className="text-m-base text-text-secondary w-full text-center">
-          Создайте кабинеты, пригласив учеников на платформу
+          {t('emptyDescription')}
         </p>
       </div>
     );
@@ -144,6 +147,7 @@ const ClassroomCard = ({ classroom, isSelected, onSelect }: ClassroomCardProps) 
 };
 
 export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: MaterialsDuplicateProps) => {
+  const { t } = useTranslation('materialsDuplicate');
   const [selectedClassroomId, setSelectedClassroomId] = useState<number | null>(null);
   const [studentAccessMode, setStudentAccessMode] = useState<AccessModeT>('read_write');
 
@@ -166,21 +170,16 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
     limit: 100,
   });
 
-  const getMaterialTypeLabel = (isTitle: boolean) => {
-    if (!material) return 'материал';
-
-    if (isTitle) {
-      return material.content_kind === 'board' ? 'доску' : 'заметку';
-    }
-
-    return material.content_kind === 'board' ? 'доски' : 'заметки';
+  const getMaterialTypeLabel = () => {
+    if (!material) return t('type.material');
+    return material.content_kind === 'board' ? t('type.board') : t('type.note');
   };
 
   const getModalTitle = () => {
     if (isMaterialLoading || !material) {
-      return 'Дублировать материал';
+      return t('title');
     }
-    return `Дублировать ${getMaterialTypeLabel(true)}`;
+    return material.content_kind === 'board' ? t('titleBoard') : t('titleNote');
   };
 
   const handleConfirm = () => {
@@ -219,9 +218,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
           <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
             {getModalTitle()}
           </ModalTitle>
-          <ModalDescription>
-            Выберите кабинет, в нём будет создана копия {getMaterialTypeLabel(false)}
-          </ModalDescription>
+          <ModalDescription>{t('description', { type: getMaterialTypeLabel() })}</ModalDescription>
         </ModalHeader>
 
         <div className="min-h-[300px] py-4 pr-2 pl-6 max-sm:min-h-[240px] max-sm:py-3 max-sm:pr-3 max-sm:pl-3">
@@ -235,7 +232,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
         </div>
         <ModalFooter className="border-border-default flex flex-col gap-4 border-t">
           <div className="w-full">
-            <p className="text-s-base text-text-primary mb-1">Тип доступа к материалу в кабинете</p>
+            <p className="text-s-base text-text-primary mb-1">{t('accessLabel')}</p>
             <Select
               value={studentAccessMode}
               onValueChange={(value) => setStudentAccessMode(value as AccessModeT)}
@@ -245,7 +242,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
                 data-umami-event="material-duplicate-access-selector"
               >
                 <SelectValue
-                  placeholder="Выберите тип доступа к материалу в кабинете"
+                  placeholder={t('accessPlaceholder')}
                   className="data-placeholder:text-text-disabled text-text-primary"
                 />
               </SelectTrigger>
@@ -256,7 +253,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
                   data-umami-event="material-duplicate-access-mode"
                   data-umami-event-mode="read_write"
                 >
-                  Совместная работа
+                  {t('access.read_write')}
                 </SelectItem>
                 <SelectItem
                   value="read_only"
@@ -264,7 +261,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
                   data-umami-event="material-duplicate-access-mode"
                   data-umami-event-mode="read_only"
                 >
-                  Только репетитор
+                  {t('access.read_only')}
                 </SelectItem>
                 <SelectItem
                   value="no_access"
@@ -272,7 +269,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
                   data-umami-event="material-duplicate-access-mode"
                   data-umami-event-mode="no_access"
                 >
-                  Черновик
+                  {t('access.no_access')}
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -285,7 +282,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
               className="disabled:text-text-secondary w-full sm:w-fit"
               data-umami-event="material-duplicate-confirm"
             >
-              {duplicateMaterial.isPending ? 'Дублирование...' : 'Дублировать'}
+              {duplicateMaterial.isPending ? t('confirming') : t('confirm')}
             </Button>
             <Button
               size="m"
@@ -294,7 +291,7 @@ export const MaterialsDuplicate = ({ materialId, open, onOpenChange }: Materials
               className="bg-background-page hover:bg-background-subtle text-text-primary h-12 w-full sm:w-fit"
               data-umami-event="material-duplicate-cancel"
             >
-              Отменить
+              {t('cancel')}
             </Button>
           </div>
         </ModalFooter>

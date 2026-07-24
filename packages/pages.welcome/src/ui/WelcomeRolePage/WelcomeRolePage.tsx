@@ -24,18 +24,18 @@ export const WelcomeRolePage = () => {
         ref: firstButton,
         tab: 0,
         top: 0,
-        text: 'Репетитор',
+        text: t('role.tutor'),
         value: 'tutor',
       },
       {
         ref: secondButton,
         tab: 1,
         top: getHeight(firstButton),
-        text: 'Ученик',
+        text: t('role.student'),
         value: 'student',
       },
     ],
-    [],
+    [t],
   );
 
   const [activeButton, setActiveButton] = useState(buttons[0]);

@@ -1,17 +1,9 @@
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useMemo } from 'react';
 import { ArrowLeft, Close } from '@xipkg/icons';
 import { ModalCloseButton } from '@xipkg/modal';
 import { cn, useMediaQuery } from '@xipkg/utils';
 import { THEME_CUSTOMIZATION_ENABLED } from 'common.theme';
-
-const menuLabels = [
-  'Личные данные',
-  ...(THEME_CUSTOMIZATION_ENABLED ? ['Персонализация'] : []),
-  'Безопасность',
-  'Уведомления',
-  'Эффекты',
-  'Отчёт',
-];
+import { useTranslation } from 'react-i18next';
 
 type HeaderPropsT = {
   activeItem: number | 'menu';
@@ -21,7 +13,20 @@ type HeaderPropsT = {
 };
 
 export const Header = ({ activeItem, showContent, setShowContent, handleClose }: HeaderPropsT) => {
+  const { t } = useTranslation('profile');
   const isMobile = useMediaQuery('(max-width: 719px)');
+
+  const menuLabels = useMemo(
+    () => [
+      t('menu.personalInfo'),
+      ...(THEME_CUSTOMIZATION_ENABLED ? [t('menu.personalisation')] : []),
+      t('menu.security'),
+      t('menu.notifications'),
+      t('menu.effects'),
+      t('menu.report'),
+    ],
+    [t],
+  );
 
   return (
     <div className="relative flex h-[40px] w-full items-center justify-start">

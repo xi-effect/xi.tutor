@@ -3,6 +3,7 @@ import { Button } from '@xipkg/button';
 import { Plus } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import type { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type AssignLessonButtonProps = {
   className?: string;
@@ -10,6 +11,7 @@ type AssignLessonButtonProps = {
 };
 
 export const AssignLessonButton: FC<AssignLessonButtonProps> = ({ className, onButtonClick }) => {
+  const { t } = useTranslation('main');
   const { data: user } = useCurrentUser();
 
   const isTutor = user?.default_layout === 'tutor';
@@ -23,7 +25,7 @@ export const AssignLessonButton: FC<AssignLessonButtonProps> = ({ className, onB
             className="text-s-base text-text-on-accent hidden rounded-lg px-4 sm:flex"
             onClick={onButtonClick}
           >
-            Назначить занятие
+            {t('assignLesson.button')}
           </Button>
           <Button
             size="s"

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FileUploader } from '@xipkg/fileuploader';
 import { toast } from 'sonner';
 import { AvatarEditor } from 'features.avatar.editor';
@@ -7,6 +8,7 @@ import { readFile } from '../../utils';
 import { useWelcomeContext } from '../../hooks';
 
 export const WelcomeUserAvatar = () => {
+  const { t } = useTranslation('welcomeUser');
   const [isAvatarEditorOpen, setIsAvatarEditorOpen] = React.useState(false);
   const [file, setFile] = React.useState<string | ArrayBuffer | null>();
   const [avatarTimestamp, setAvatarTimestamp] = React.useState<number>(Date.now());
@@ -27,12 +29,12 @@ export const WelcomeUserAvatar = () => {
     const file = files[0];
     const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
     if (!allowedTypes.includes(file.type)) {
-      handleError('Этот формат не поддерживается', 'Загрузите фото в (png, jpeg, webp)');
+      handleError(t('avatar_format_error'), t('avatar_format_hint'));
       return;
     }
 
     if (file.size > 1 * 1024 * 1024) {
-      handleError('Файл слишком большой', 'Выберите фото до 1 Мб');
+      handleError(t('avatar_size_error'), t('avatar_size_hint'));
       return;
     }
 
@@ -56,9 +58,9 @@ export const WelcomeUserAvatar = () => {
       <AvatarPreview userId={id} timestamp={avatarTimestamp} />
       <div className="ml-4 flex flex-col gap-2">
         <p className="text-text-primary dark:text-text-primary w-full leading-[22px] font-medium">
-          Аватар&nbsp;
+          {t('avatar')}&nbsp;
           <span className="text-text-disabled dark:text-text-secondary font-normal">
-            (необязательно)
+            {t('avatar_optional')}
           </span>
         </p>
         <AvatarEditor

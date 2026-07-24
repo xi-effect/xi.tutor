@@ -10,3 +10,4 @@ export { checkImageUrl } from './utils/checkImageUrl';
 export { getCurrentBlock } from './utils/getCurrentBlock';
 
 export * from './const/codeEditorLanguages';
+export { editorEn, editorRu } from './locales';

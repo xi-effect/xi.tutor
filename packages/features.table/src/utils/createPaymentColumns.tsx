@@ -1,6 +1,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@xipkg/button';
 import { InfoCircle } from '@xipkg/icons';
+import i18n from 'i18next';
 import { RolePaymentT, RoleT, StudentPaymentT, TutorPaymentT } from '../types';
 import {
   DateCell,
@@ -29,6 +30,8 @@ export const createPaymentColumns = <Role extends RoleT>({
   isTutor,
   screenSize,
 }: ColumnArgsT<Role>): ColumnDef<RolePaymentT<Role>>[] => {
+  const t = (key: string) => i18n.t(key, { ns: 'paymentsTable' });
+
   const baseColumns: (ColumnDef<RolePaymentT<Role>> | false)[] = [
     onViewInvoice
       ? {
@@ -40,7 +43,7 @@ export const createPaymentColumns = <Role extends RoleT>({
               size="s"
               className="text-text-secondary hover:text-text-link h-8 w-8 rounded-full border-none bg-transparent p-0 shadow-none hover:border-transparent hover:bg-transparent focus-visible:ring-0"
               onClick={() => onViewInvoice(row.original)}
-              aria-label="Просмотреть информацию о счёте"
+              aria-label={t('viewInvoiceAria')}
             >
               <InfoCircle className="h-5 w-5" />
             </Button>
@@ -51,7 +54,7 @@ export const createPaymentColumns = <Role extends RoleT>({
       : false,
     {
       accessorKey: 'created_at',
-      header: 'Дата',
+      header: t('columns.date'),
       cell: ({ row }) => <DateCell date={row.original.created_at} />,
       size: 96,
       filterFn: (row, columnId, value) => {
@@ -67,7 +70,7 @@ export const createPaymentColumns = <Role extends RoleT>({
 
   const RoleColumn: ColumnDef<RolePaymentT<Role>> | false = {
     accessorKey: usersRole === 'student' ? 'student_id' : 'tutor_id',
-    header: usersRole === 'student' ? 'Ученик' : 'Репетитор',
+    header: usersRole === 'student' ? t('columns.student') : t('columns.tutor'),
     cell: ({ row }) => {
       const original = row.original as StudentPaymentT | TutorPaymentT;
       return (
@@ -102,7 +105,7 @@ export const createPaymentColumns = <Role extends RoleT>({
     // },
     {
       accessorKey: 'total',
-      header: 'Сумма',
+      header: t('columns.amount'),
       cell: ({ row }) => <AmountPaymentCell total={row.original.total} />,
       size: 100,
       filterFn: (row, columnId, value) => {
@@ -114,7 +117,7 @@ export const createPaymentColumns = <Role extends RoleT>({
     },
     screenSize === 'desktop' && {
       accessorKey: 'payment_type',
-      header: 'Тип оплаты',
+      header: t('columns.paymentType'),
       cell: ({ row }) => <TypePaymentCell paymentType={row.original.payment_type} />,
       size: 100,
       filterFn: (row, columnId, value) => value.includes(row.getValue(columnId)),
@@ -122,7 +125,7 @@ export const createPaymentColumns = <Role extends RoleT>({
     },
     {
       accessorKey: 'status',
-      header: 'Статус',
+      header: t('columns.status'),
       cell: ({ row }) => (
         <StatusCell
           payment={row.original}

@@ -1,5 +1,6 @@
 import { ChevronUp } from '@xipkg/icons';
 import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
+import { useTranslation } from 'react-i18next';
 
 import { type ChartConfig, ChartContainer } from './Chart';
 import { cn } from '@xipkg/utils';
@@ -42,15 +43,17 @@ export const BarCardChart = ({
   xAxisProps,
   barProps,
 }: ChartBarT) => {
+  const { t } = useTranslation('charts');
+
   return (
     <div className="rounded-lg">
       <div className="flex justify-between space-y-1.5 p-4">
         <div className="text-primary-100 dark:text-text-primary text-xl font-semibold tracking-tight">
-          Доход
+          {t('income')}
         </div>
         <div className="text-muted-foreground flex items-center text-xs">
-          <span className="text-text-secondary">Предмет: </span>
-          <span className={'dark:text-text-primary mr-1'}> Любой</span>
+          <span className="text-text-secondary">{t('subject')} </span>
+          <span className={'dark:text-text-primary mr-1'}> {t('any')}</span>
           <ChevronUp size={'sm'} className="dark:fill-icon-primary h-6 w-6" />
         </div>
       </div>

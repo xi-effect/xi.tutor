@@ -4,7 +4,8 @@
   "type": "module",
   "exports": {
     ".": "./index.ts",
-    "./warmup": "./src/warmup/index.ts"
+    "./warmup": "./src/warmup/index.ts",
+    "./locales": "./src/locales/index.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -44,10 +45,12 @@
     "features.materials.card": "workspace:*",
     "features.materials.edit": "workspace:*",
     "file-type": "^19.0.0",
+    "i18next": "24.2.2",
     "nanoid": "^5.1.5",
     "pdfjs-dist": "^4.10.38",
     "pica": "9.0.1",
     "react-hook-form": "^7.73.1",
+    "react-i18next": "15.4.1",
     "sonner": "^2.0.7",
     "swiper": "^12.1.3",
     "y-utility": "0.1.4",

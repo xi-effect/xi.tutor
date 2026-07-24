@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { startOfDay, startOfWeek } from 'date-fns';
+import { getDateLocale } from 'common.ui';
 import { formatMonthLabel } from '../../../utils/calendarUtils';
 import { ScheduleWeekCarousel } from '../ScheduleWeekCarousel';
 import { ScheduleDaySwiper } from '../ScheduleDaySwiper';
@@ -38,7 +39,7 @@ export const ScheduleMobileView = ({
   openLessonInstanceId,
   onOpenLessonInstanceConsumed,
 }: ScheduleMobileViewProps) => {
-  const { t } = useTranslation('calendar');
+  const { t, i18n } = useTranslation('calendar');
   const [weekStart, setWeekStart] = useState<Date>(getInitialWeekStart);
   const [selectedDate, setSelectedDate] = useState<Date>(() => {
     const today = new Date();
@@ -63,7 +64,10 @@ export const ScheduleMobileView = ({
     [weekStart],
   );
 
-  const monthLabel = useMemo(() => formatMonthLabel(selectedDate), [selectedDate]);
+  const monthLabel = useMemo(
+    () => formatMonthLabel(selectedDate, getDateLocale(i18n.language)),
+    [selectedDate, i18n.language],
+  );
 
   const handleWeekStartChange = useCallback((date: Date) => {
     setWeekStart(date);
@@ -90,7 +94,9 @@ export const ScheduleMobileView = ({
       <div className="bg-background-page shrink-0 px-5 pt-5 pb-3">
         <div className="bg-background-surface flex h-[184px] flex-col rounded-[20px] p-4">
           <div className="flex h-[32px] flex-row items-center justify-between gap-2">
-            <span className="font-playfair text-text-primary text-2xl font-medium">Расписание</span>
+            <span className="font-playfair text-text-primary text-2xl font-medium">
+              {t('schedule')}
+            </span>
             <span className="text-s-base text-text-secondary">{monthLabel}</span>
           </div>
           <ScheduleWeekCarousel

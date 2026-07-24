@@ -10,15 +10,13 @@ import {
   useGetParticipantsByTutor,
 } from 'common.services';
 import { useCallStore } from 'modules.calls';
+import { useTranslation } from 'react-i18next';
 
 const FIVE_MINUTES_MS = 5 * 60 * 1000;
 // setTimeout хранит задержку в 32-битном знаковом целом.
 // При превышении ~24.8 дней таймер срабатывает немедленно → canStartNow ложно становится true.
 const MAX_SAFE_TIMEOUT_MS = 2_147_483_647;
 const TOOLTIP_OPEN_DELAY_MS = 1000;
-const SCHEDULE_TOOLTIP = 'Кнопка станет активной за 5 минут до начала занятия';
-const SCHEDULE_TIMES_LOADING_TOOLTIP = 'Уточняем время занятия…';
-const LESSON_ENDED_TOOLTIP = 'Нельзя начать занятие: прошло более 5 минут после окончания слота';
 
 function isWithinStartWindow(startAt: Date): boolean {
   return startAt.getTime() - Date.now() <= FIVE_MINUTES_MS;
@@ -26,12 +24,6 @@ function isWithinStartWindow(startAt: Date): boolean {
 
 function isFiniteDate(d: Date): boolean {
   return Number.isFinite(d.getTime());
-}
-
-function getLabel(isTutor: boolean, isConferenceNotActiveTutor: boolean, isCallActive: boolean) {
-  if (isTutor && isConferenceNotActiveTutor) return 'Начать занятие';
-  if (isCallActive) return 'Вернуться в конференцию';
-  return 'Присоединиться';
 }
 
 export type StartLessonButtonProps = {
@@ -72,6 +64,7 @@ export const StartLessonButton = ({
   onStart,
   scheduleTimesLoading = false,
 }: StartLessonButtonProps) => {
+  const { t } = useTranslation('lessonStart');
   const navigate = useNavigate();
   const search = useSearch({ strict: false }) as { call?: string };
   const params = useParams({ strict: false }) as {
@@ -221,7 +214,12 @@ export const StartLessonButton = ({
     ((scheduleTimesLoading && isTutor) || isTimeRestricted || isTooLateForTutorToStart);
   const isDisabled = scheduleLocksTutor || isDisabledStudent;
 
-  const label = getLabel(isTutor, isConferenceNotActiveTutor, isCallActive);
+  const label =
+    isTutor && isConferenceNotActiveTutor
+      ? t('start')
+      : isCallActive
+        ? t('returnToConference')
+        : t('join');
 
   const button = (
     <Button
@@ -261,11 +259,11 @@ export const StartLessonButton = ({
 
   const tooltipText =
     !isCallActive && isTooLateForTutorToStart
-      ? LESSON_ENDED_TOOLTIP
+      ? t('tooltip.lessonEnded')
       : !isCallActive && scheduleTimesLoading && isTutor
-        ? SCHEDULE_TIMES_LOADING_TOOLTIP
+        ? t('tooltip.timesLoading')
         : !isCallActive && isTimeRestricted
-          ? SCHEDULE_TOOLTIP
+          ? t('tooltip.beforeStart')
           : null;
 
   if (tooltipText) {

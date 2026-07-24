@@ -22,6 +22,7 @@ import { Button } from '@xipkg/button';
 import { ArrowUpRight } from '@xipkg/icons';
 import { useMediaQuery, cn } from '@xipkg/utils';
 import { RefObject } from 'react';
+import { useTranslation } from 'react-i18next';
 import { EmptyPaymentsFull } from 'common.ui';
 import { CardsList } from './Mobile';
 import { useResponsiveGrid, useVirtualCards } from '../hooks';
@@ -63,6 +64,7 @@ export const VirtualizedPaymentsTable = ({
   className,
   onViewInvoice,
 }: VirtualizedPaymentsTableProps<RolePaymentT<UserRoleT>>) => {
+  const { t } = useTranslation('payments');
   const isMobile = useMediaQuery('(max-width: 719px)');
 
   const table = useReactTable({
@@ -105,12 +107,10 @@ export const VirtualizedPaymentsTable = ({
         >
           <div className="flex max-w-md flex-col gap-2 text-center">
             <p className="text-l-base text-text-primary font-semibold">
-              {isTutor ? 'Пока нет выставленных счетов' : 'Пока нет счетов'}
+              {isTutor ? t('empty.tutorTitle') : t('empty.studentTitle')}
             </p>
             <p className="text-s-base text-text-secondary dark:text-text-muted">
-              {isTutor
-                ? 'Создайте счёт на оплату — он появится в этом списке.'
-                : 'Когда репетитор выставит счёт, он отобразится здесь.'}
+              {isTutor ? t('empty.tutorDescription') : t('empty.studentDescription')}
             </p>
             {isTutor ? (
               <div className="mt-4 flex justify-center">
@@ -121,7 +121,7 @@ export const VirtualizedPaymentsTable = ({
                   onClick={() => window.open(PAYMENTS_HELP_URL, '_blank', 'noopener,noreferrer')}
                   data-umami-event="payments-page-empty-help"
                 >
-                  Подробнее о том, как работают оплаты
+                  {t('empty.helpLink')}
                   <ArrowUpRight className="fill-icon-primary ml-1 size-4 shrink-0" />
                 </Button>
               </div>

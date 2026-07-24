@@ -7,6 +7,7 @@ import {
 } from '@xipkg/dropdown';
 import { Copy, H1, H2, H3, Text, Trash, Image, ArrowUp, ArrowBottom, Code } from '@xipkg/icons';
 import { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useBlockMenuActions } from '../../hooks';
 import { Editor } from '@tiptap/core';
 import { useInterfaceStore } from '../../store/interfaceStore';
@@ -41,6 +42,7 @@ export const BlockMenu = ({
   setOpen,
   getActiveBlock,
 }: BlockMenuPropsT) => {
+  const { t } = useTranslation('editor');
   const isMac = navigator.platform.toUpperCase().includes('MAC');
   const { openModal } = useInterfaceStore();
   const { insertBlock, duplicate, remove, moveUp, moveDown, insertCode } = useBlockMenuActions(
@@ -67,38 +69,38 @@ export const BlockMenu = ({
       >
         <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('paragraph')}>
           <Text size="sm" className="size-6" />
-          <span>Текст</span>
+          <span>{t('blockMenu.text')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('heading1')}>
           <H1 size="sm" className="size-6" />
-          <span>Заголовок 1</span>
+          <span>{t('blockMenu.heading1')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('heading2')}>
           <H2 size="sm" className="size-6" />
-          <span>Заголовок 2</span>
+          <span>{t('blockMenu.heading2')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('heading3')}>
           <H3 size="sm" className="size-6" />
-          <span>Заголовок 3</span>
+          <span>{t('blockMenu.heading3')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('uploadImage')}>
           <Image size="sm" className="size-6" />
-          <span>Изображение</span>
+          <span>{t('blockMenu.image')}</span>
         </DropdownMenuItem>
         <DropdownMenuItem className={menuItemClass} onSelect={() => insertCode('')}>
           <Code size="sm" className="size-6" />
-          <span>Вставить код</span>
+          <span>{t('blockMenu.insertCode')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
         <DropdownMenuItem className={menuItemClass} onSelect={duplicate}>
           <Copy size="sm" className="size-6" />
-          <span className="text-sm">Дублировать</span>
+          <span className="text-sm">{t('blockMenu.duplicate')}</span>
           <span className="text-xxs-base text-text-muted ml-auto">
             {isMac ? '⌘+⇧+C' : 'Ctrl+Shift+C'}
           </span>
@@ -109,7 +111,7 @@ export const BlockMenu = ({
           onSelect={deferAction(moveUp)}
         >
           <ArrowUp size="sm" className="size-6" />
-          <span className="text-sm">Переместить вверх</span>
+          <span className="text-sm">{t('blockMenu.moveUp')}</span>
           <span className="text-xxs-base text-text-muted ml-auto">
             {isMac ? '⌘+⇧+↑' : 'Ctrl+Shift+↑'}
           </span>
@@ -120,7 +122,7 @@ export const BlockMenu = ({
           onSelect={deferAction(moveDown)}
         >
           <ArrowBottom size="sm" className="size-6" />
-          <span className="text-sm">Переместить вниз</span>
+          <span className="text-sm">{t('blockMenu.moveDown')}</span>
           <span className="text-xxs-base text-text-muted ml-auto">
             {isMac ? '⌘+⇧+↓' : 'Ctrl+Shift+↓'}
           </span>
@@ -128,7 +130,7 @@ export const BlockMenu = ({
 
         <DropdownMenuItem className={menuItemClass} onSelect={remove}>
           <Trash size="sm" className="size-6" />
-          <span className="text-sm">Удалить</span>
+          <span className="text-sm">{t('blockMenu.delete')}</span>
           <span className="text-xxs-base text-text-muted ml-auto">{isMac ? '⌘+⌫' : 'Del'}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>

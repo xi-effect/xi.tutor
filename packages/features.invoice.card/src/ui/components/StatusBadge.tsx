@@ -1,8 +1,9 @@
 import { getStatusColor } from 'common.services';
-import { PaymentStatusT, mapPaymentStatus } from 'common.types';
+import { PaymentStatusT } from 'common.types';
 import { cn } from '@xipkg/utils';
 import { Badge } from '@xipkg/badge';
 import { Card, Check, Clock } from '@xipkg/icons';
+import { useTranslation } from 'react-i18next';
 
 const statusIcons: Record<PaymentStatusT, React.ReactNode> = {
   wf_receiver_confirmation: <Clock className="fill-icon-brand size-4 shrink-0" />,
@@ -19,7 +20,8 @@ type StatusBadgePropsT = {
 };
 
 export const StatusBadge = ({ status, withBg = true, className }: StatusBadgePropsT) => {
-  const statusText = mapPaymentStatus[status];
+  const { t } = useTranslation('invoiceCard');
+  const statusText = t(`status.${status}`);
 
   return (
     <Badge

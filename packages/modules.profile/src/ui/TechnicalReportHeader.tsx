@@ -1,28 +1,25 @@
 import { Alert, AlertContainer, AlertDescription, AlertIcon, AlertTitle } from '@xipkg/alert';
 import { InfoCircle } from '@xipkg/icons';
+import { useTranslation } from 'react-i18next';
 
 export const TechnicalReportHeader = () => {
+  const { t } = useTranslation('profile');
+
   return (
     <div className="flex flex-col gap-4 rounded-2xl">
-      <h2 className="dark:text-text-primary text-xl font-semibold">Что это такое?</h2>
-      <p className="text-text-primary dark:text-text-primary text-sm">
-        На этой странице собрана техническая информация о вашем браузере и устройстве. Эта
-        информация помогает команде поддержки Sovlium быстрее находить и исправлять проблемы.
-      </p>
+      <h2 className="dark:text-text-primary text-xl font-semibold">{t('report.whatIsThis')}</h2>
+      <p className="text-text-primary dark:text-text-primary text-sm">{t('report.description')}</p>
       <Alert variant="brand" className="w-full max-w-full">
         <AlertIcon className="hidden md:block">
           <InfoCircle />
         </AlertIcon>
         <AlertContainer>
-          <AlertTitle className="text-base">Важная информация о конфиденциальности:</AlertTitle>
+          <AlertTitle className="text-base">{t('report.privacyTitle')}</AlertTitle>
           <AlertDescription>
             <ul className="text-text-primary dark:text-text-primary list-inside list-disc space-y-1 text-xs">
-              <li>Отчёт содержит техническую информацию о вашем браузере и устройстве</li>
-              <li>Передавайте отчёт только официальной поддержке Sovlium</li>
-              <li>
-                Используя эту функцию, вы соглашаетесь на сбор и передачу технической информации в
-                службу поддержки
-              </li>
+              <li>{t('report.privacyItem1')}</li>
+              <li>{t('report.privacyItem2')}</li>
+              <li>{t('report.privacyItem3')}</li>
             </ul>
           </AlertDescription>
         </AlertContainer>

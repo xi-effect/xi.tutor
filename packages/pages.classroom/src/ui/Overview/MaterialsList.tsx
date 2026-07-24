@@ -6,9 +6,11 @@ import {
 } from 'common.services';
 import { ClassroomMaterialsT } from 'common.types';
 import { MaterialsCard } from 'features.materials.card';
+import { useTranslation } from 'react-i18next';
 import { MaterialsListSkeleton } from './MaterialsListSkeleton';
 
 export const MaterialsList = () => {
+  const { t } = useTranslation('classroom');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
 
   const { data: user } = useCurrentUser();
@@ -40,7 +42,7 @@ export const MaterialsList = () => {
   if (isError) {
     return (
       <div className="flex h-24 w-full items-center justify-center">
-        <p className="text-text-muted">Ошибка загрузки материалов</p>
+        <p className="text-text-muted">{t('materials.loadError')}</p>
       </div>
     );
   }
@@ -49,7 +51,7 @@ export const MaterialsList = () => {
   if (!materials || materials.length === 0) {
     return (
       <div className="flex h-24 w-full items-center justify-center">
-        <p className="text-text-muted">Нет материалов</p>
+        <p className="text-text-muted">{t('materials.noMaterials')}</p>
       </div>
     );
   }

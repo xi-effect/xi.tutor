@@ -10,6 +10,7 @@ import {
   useUpdateGroupClassroom,
   useUpdateIndividualClassroom,
 } from 'common.services';
+import { useTranslation } from 'react-i18next';
 import { Autocomplete } from './Autocomplete';
 import { useParams } from '@tanstack/react-router';
 import { InformationNote } from './InformationNote';
@@ -19,6 +20,7 @@ interface FormData {
 }
 
 export const Information = ({ classroom }: { classroom: ClassroomT }) => {
+  const { t } = useTranslation('classroom');
   const { classroomId = '' } = useParams({ strict: false });
 
   const { data: note } = useGetNoteStorageItem({
@@ -181,7 +183,7 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
               render={({ field }) => (
                 <FormItem className="flex flex-col">
                   <FormLabel className="text-m-base dark:text-text-primary">
-                    Статус занятий
+                    {t('information.lessonStatus')}
                   </FormLabel>
                   <FormControl>
                     <Select
@@ -190,12 +192,15 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
                       disabled={isUpdating}
                     >
                       <SelectTrigger className="dark:text-text-primary h-[32px] w-full">
-                        <SelectValue className="w-full" placeholder="Статус занятий" />
+                        <SelectValue
+                          className="w-full"
+                          placeholder={t('information.lessonStatus')}
+                        />
                       </SelectTrigger>
                       <SelectContent className="dark:text-text-primary w-full">
-                        <SelectItem value="active">Учится</SelectItem>
-                        <SelectItem value="paused">На паузе</SelectItem>
-                        <SelectItem value="finished">Обучение завершено</SelectItem>
+                        <SelectItem value="active">{t('information.statusActive')}</SelectItem>
+                        <SelectItem value="paused">{t('information.statusPaused')}</SelectItem>
+                        <SelectItem value="finished">{t('information.statusFinished')}</SelectItem>
                       </SelectContent>
                     </Select>
                   </FormControl>
@@ -208,7 +213,9 @@ export const Information = ({ classroom }: { classroom: ClassroomT }) => {
               name="subject"
               render={({ field }) => (
                 <FormItem className="flex flex-col">
-                  <FormLabel className="text-m-base dark:text-text-primary">Предмет</FormLabel>
+                  <FormLabel className="text-m-base dark:text-text-primary">
+                    {t('information.subject')}
+                  </FormLabel>
                   <FormControl>
                     <Autocomplete
                       field={field}

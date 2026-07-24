@@ -6,8 +6,7 @@ import { Add, FileSmall, Group, Trash, UserPlus, WhiteBoard } from '@xipkg/icons
 import { cn } from '@xipkg/utils';
 import { ModalStudentsGroup } from 'features.group.manage';
 import { ModalGroupInvite } from 'features.group.invite';
-
-const DRAWER_TITLE = 'Выберите действие';
+import { useTranslation } from 'react-i18next';
 
 const menuRowClassName = cn(
   'border-border-default bg-background-surface hover:bg-background-page flex w-full items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors',
@@ -45,49 +44,55 @@ type ClassroomMobileActionButtonProps = {
 const materialActionsConfig: {
   contentKind: ContentKind;
   accessMode: StudentAccessMode;
-  label: string;
+  labelKey:
+    | 'materials.noteCollaborative'
+    | 'materials.noteTutorOnly'
+    | 'materials.noteDrafts'
+    | 'materials.boardCollaborative'
+    | 'materials.boardTutorOnly'
+    | 'materials.boardDrafts';
   Icon: React.ComponentType<{ className?: string }>;
   umamiEvent: string;
 }[] = [
   {
     contentKind: 'note',
     accessMode: 'read_write',
-    label: 'Заметка: Совместная работа',
+    labelKey: 'materials.noteCollaborative',
     Icon: FileSmall,
     umamiEvent: 'material-create-note',
   },
   {
     contentKind: 'note',
     accessMode: 'read_only',
-    label: 'Заметка: Только репетитор',
+    labelKey: 'materials.noteTutorOnly',
     Icon: FileSmall,
     umamiEvent: 'material-create-note',
   },
   {
     contentKind: 'note',
     accessMode: 'no_access',
-    label: 'Заметка: Черновики',
+    labelKey: 'materials.noteDrafts',
     Icon: FileSmall,
     umamiEvent: 'material-create-note',
   },
   {
     contentKind: 'board',
     accessMode: 'read_write',
-    label: 'Доска: Совместная работа',
+    labelKey: 'materials.boardCollaborative',
     Icon: WhiteBoard,
     umamiEvent: 'material-create-board',
   },
   {
     contentKind: 'board',
     accessMode: 'read_only',
-    label: 'Доска: Только репетитор',
+    labelKey: 'materials.boardTutorOnly',
     Icon: WhiteBoard,
     umamiEvent: 'material-create-board',
   },
   {
     contentKind: 'board',
     accessMode: 'no_access',
-    label: 'Доска: Черновики',
+    labelKey: 'materials.boardDrafts',
     Icon: WhiteBoard,
     umamiEvent: 'material-create-board',
   },
@@ -106,8 +111,10 @@ export const ClassroomMobileActionButton = ({
   onStudentsModalChange,
   onGroupInviteModalChange,
 }: ClassroomMobileActionButtonProps) => {
+  const { t } = useTranslation('classroom');
   const [mounted, setMounted] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const drawerTitle = t('actions.selectAction');
 
   useEffect(() => {
     setMounted(true);
@@ -120,8 +127,8 @@ export const ClassroomMobileActionButton = ({
       return [
         {
           id: 'add-student',
-          label: 'Добавить ученика',
-          description: 'Добавьте ученика в учебную группу',
+          label: t('actions.addStudent'),
+          description: t('actions.addStudentDescription'),
           Icon: UserPlus,
           umamiEvent: 'classroom-add-student',
           onClick: () => {
@@ -131,8 +138,8 @@ export const ClassroomMobileActionButton = ({
         },
         {
           id: 'invite-to-group',
-          label: 'Пригласить в группу',
-          description: 'Отправьте ссылку-приглашение в группу',
+          label: t('actions.inviteToGroup'),
+          description: t('actions.inviteToGroupDescription'),
           Icon: Group,
           umamiEvent: 'classroom-invite-to-group',
           onClick: () => {
@@ -144,26 +151,28 @@ export const ClassroomMobileActionButton = ({
     }
 
     if (currentTab === 'materials') {
-      return materialActionsConfig.map(({ contentKind, accessMode, label, Icon, umamiEvent }) => ({
-        id: `${contentKind}-${accessMode}`,
-        label,
-        Icon,
-        umamiEvent,
-        umamiAccessMode: accessMode,
-        disabled: isPendingAddMaterial,
-        onClick: () => {
-          closeDrawer();
-          onAddMaterial(contentKind, accessMode);
-        },
-      }));
+      return materialActionsConfig.map(
+        ({ contentKind, accessMode, labelKey, Icon, umamiEvent }) => ({
+          id: `${contentKind}-${accessMode}`,
+          label: t(labelKey),
+          Icon,
+          umamiEvent,
+          umamiAccessMode: accessMode,
+          disabled: isPendingAddMaterial,
+          onClick: () => {
+            closeDrawer();
+            onAddMaterial(contentKind, accessMode);
+          },
+        }),
+      );
     }
 
     if (currentTab === 'payments') {
       return [
         {
           id: 'create-invoice',
-          label: 'Создать счёт на оплату',
-          description: 'Выставьте счёт ученику за проведённое занятие',
+          label: t('actions.createInvoice'),
+          description: t('actions.createInvoiceDescription'),
           Icon: Add,
           umamiEvent: 'classroom-create-invoice',
           onClick: () => {
@@ -178,8 +187,8 @@ export const ClassroomMobileActionButton = ({
       return [
         {
           id: 'delete-classroom',
-          label: isDeletingClassroom ? 'Удаление...' : 'Удалить кабинет',
-          description: 'Кабинет и все связанные данные будут удалены',
+          label: isDeletingClassroom ? t('actions.deleting') : t('actions.deleteClassroom'),
+          description: t('actions.deleteClassroomDescription'),
           Icon: Trash,
           umamiEvent: 'classroom-delete',
           disabled: isDeletingClassroom,
@@ -203,6 +212,7 @@ export const ClassroomMobileActionButton = ({
     onGroupInviteModalChange,
     onOpenInvoiceModal,
     onStudentsModalChange,
+    t,
   ]);
 
   const isGroupClassroom = classroomKind === 'group';
@@ -235,9 +245,9 @@ export const ClassroomMobileActionButton = ({
         <DrawerContent className="max-h-screen w-full">
           <div className="flex flex-col gap-4 pb-8">
             <DrawerTitle className="text-m-base text-text-primary font-medium">
-              {DRAWER_TITLE}
+              {drawerTitle}
             </DrawerTitle>
-            <DrawerDescription className="sr-only">{DRAWER_TITLE}</DrawerDescription>
+            <DrawerDescription className="sr-only">{drawerTitle}</DrawerDescription>
 
             <div className="dark:bg-background-surface flex flex-col gap-3">
               {actions.map(

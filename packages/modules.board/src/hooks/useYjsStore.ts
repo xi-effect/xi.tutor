@@ -49,6 +49,7 @@ import { ensureYjsStorePopulated } from '../utils/parseYjsBoardDoc';
 import type { BoardBackgroundColorId } from '../config';
 import { parseBoardBackgroundFromYMap, type BoardBackgroundState } from '../utils/boardBackground';
 import type { DrBoardBackgroundType } from '@ibodr/draw';
+import i18n from 'i18next';
 
 type UseYjsStoreArgs = Partial<{
   hostUrl: string;
@@ -401,7 +402,7 @@ export function useYjsStore({
       });
 
       if (reason === 'permission-denied') {
-        toast('Ошибка доступа к серверу совместного редактирования');
+        toast(i18n.t('toast.collabAccessError', { ns: 'board' }));
       }
     };
 
@@ -973,7 +974,9 @@ export function useYjsStore({
       readonlyMap.set('isReadonly', newReadonly);
     }, 'readonly-toggle');
 
-    toast.success(newReadonly ? 'Доска заблокирована!' : 'Доска разблокирована!');
+    toast.success(
+      i18n.t(newReadonly ? 'toast.boardLocked' : 'toast.boardUnlocked', { ns: 'board' }),
+    );
   }
 
   function getUserCamera(): CameraState | undefined {

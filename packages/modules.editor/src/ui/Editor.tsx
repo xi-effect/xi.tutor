@@ -1,6 +1,7 @@
 import { YjsProvider } from '../providers/YjsProvider';
 import { TiptapEditor } from './components/TiptapEditor';
 import { useParams } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 import {
   useCurrentUser,
   useGetClassroomStorageItem,
@@ -19,6 +20,7 @@ type TEditor = {
 };
 
 const EditorWithoutData = () => {
+  const { t } = useTranslation('editor');
   const { classroomId, noteId, materialId } = useParams({ strict: false });
 
   const { data: user } = useCurrentUser();
@@ -55,7 +57,9 @@ const EditorWithoutData = () => {
   if (storageItemError)
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="text-text-danger text-lg">Ошибка загрузки: {storageItemError.message}</div>
+        <div className="text-text-danger text-lg">
+          {t('status.loadError', { message: storageItemError.message })}
+        </div>
       </div>
     );
 

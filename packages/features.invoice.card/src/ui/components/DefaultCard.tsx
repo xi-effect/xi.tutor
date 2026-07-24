@@ -5,6 +5,7 @@ import { StatusBadge } from '../components';
 import { CardContentT } from '../../types';
 import { cn } from '@xipkg/utils';
 import { PaymentApproveAction } from 'features.payment.approve';
+import { useTranslation } from 'react-i18next';
 
 export const DefaultCard = ({
   type,
@@ -15,6 +16,7 @@ export const DefaultCard = ({
   currentUserRole,
   withoutPaymentType = false,
 }: CardContentT) => {
+  const { t } = useTranslation('invoiceCard');
   const amount = parseFloat(payment.total);
 
   return (
@@ -38,7 +40,7 @@ export const DefaultCard = ({
           <UserProfile
             size="m"
             userId={userId}
-            text={userData?.display_name || userData?.username || 'Имя не найдено'}
+            text={userData?.display_name || userData?.username || t('nameNotFound')}
             src={getUserAvatarUrl(userId)}
             classNameText="line-clamp-2 break-words text-text-primary"
             className="h-auto overflow-hidden"

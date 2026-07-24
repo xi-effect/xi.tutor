@@ -18,6 +18,8 @@ import { useMarkCommentThreadRead } from './useCommentReads';
 import { useCopyBoardDeepLink } from '../hooks/useBoardDeepLinkFocus';
 import type { DrCommentMessage, DrCommentThread } from './commentRecords';
 import type { RecordId } from '@ibodr/draw';
+import { useTranslation } from 'react-i18next';
+import { getDateLocale } from 'common.ui';
 
 type CommentThreadPanelProps = {
   threadId: RecordId<DrCommentThread>;
@@ -27,7 +29,7 @@ type CommentThreadPanelProps = {
 };
 
 function formatMessageTime(ts: number): string {
-  return new Date(ts).toLocaleString('ru-RU', {
+  return new Date(ts).toLocaleString(getDateLocale(), {
     day: '2-digit',
     month: '2-digit',
     hour: '2-digit',
@@ -40,6 +42,7 @@ export const CommentThreadPanel = track(function CommentThreadPanel({
   onClose,
   showHeader = true,
 }: CommentThreadPanelProps) {
+  const { t } = useTranslation('board');
   const editor = useEditor();
   const author = useCommentAuthor();
   const markRead = useMarkCommentThreadRead();
@@ -85,13 +88,13 @@ export const CommentThreadPanel = track(function CommentThreadPanel({
       {showHeader && (
         <div className="flex items-center justify-between">
           <span className="text-text-secondary text-xs">
-            {thread.resolved ? 'Решено' : 'Комментарий'}
+            {thread.resolved ? t('comments.resolved') : t('comments.comment')}
           </span>
           <div className="flex items-center gap-0.5">
             <Button
               variant="none"
               className="hover:bg-status-info-background flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent"
-              title="Скопировать ссылку"
+              title={t('comments.copyLink')}
               onClick={() => void copyDeepLink()}
               data-umami-event="board-copy-comment-link"
             >
@@ -104,7 +107,7 @@ export const CommentThreadPanel = track(function CommentThreadPanel({
                 thread.resolved &&
                   'bg-status-success-background hover:bg-status-success-background',
               )}
-              title={thread.resolved ? 'Открыть заново' : 'Отметить решённым'}
+              title={thread.resolved ? t('comments.reopen') : t('comments.markResolved')}
               onClick={handleToggleResolved}
             >
               <Check
@@ -118,7 +121,7 @@ export const CommentThreadPanel = track(function CommentThreadPanel({
               <Button
                 variant="none"
                 className="hover:bg-status-info-background flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent"
-                title="Удалить комментарий"
+                title={t('comments.deleteComment')}
                 onClick={handleDelete}
               >
                 <Trash className="fill-icon-secondary size-4" />
@@ -127,7 +130,7 @@ export const CommentThreadPanel = track(function CommentThreadPanel({
             <Button
               variant="none"
               className="hover:bg-status-info-background flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent"
-              title="Закрыть"
+              title={t('comments.close')}
               onClick={onClose}
             >
               <Close className="fill-icon-secondary size-4" />
@@ -165,7 +168,7 @@ export const CommentThreadPanel = track(function CommentThreadPanel({
                     <button
                       type="button"
                       className="hover:bg-status-info-background ml-auto shrink-0 rounded p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
-                      title="Удалить сообщение"
+                      title={t('comments.deleteMessage')}
                       onClick={() => handleDeleteMessage(message.id)}
                     >
                       <Trash className="fill-icon-disabled size-3.5" />
@@ -182,8 +185,8 @@ export const CommentThreadPanel = track(function CommentThreadPanel({
       </div>
 
       <CommentMessageInput
-        placeholder="Ответить..."
-        submitLabel="Ответить"
+        placeholder={t('comments.replyPlaceholder')}
+        submitLabel={t('comments.reply')}
         onSubmit={handleReply}
       />
     </div>

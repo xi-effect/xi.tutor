@@ -10,6 +10,8 @@ import { pdfDocCache } from './pdfDocCache';
 import { PdfPageControls } from './PdfPageControls';
 import type { PdfShape } from './PdfShape';
 import { PDF_PAGES_VISIBLE_MAX, PDF_PAGES_VISIBLE_MIN } from './PdfShape';
+import { useTranslation } from 'react-i18next';
+import i18n from 'i18next';
 
 // Используем CDN для worker файла, чтобы избежать проблем с бандлингом в продакшене
 pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
@@ -22,6 +24,7 @@ type PdfViewerProps = {
 };
 
 export const PdfViewer = ({ shape }: PdfViewerProps) => {
+  const { t } = useTranslation('board');
   const editor = useEditor();
   const { data: user } = useCurrentUser();
   const { pdfPagesMap, token, isReadonly } = useYjsContext();
@@ -187,7 +190,7 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
         if (cancelled) return;
         if ((err as { name?: string })?.name === 'RenderingCancelledException') return;
         console.error('[PdfViewer] render error:', err);
-        setError('Не удалось отобразить PDF');
+        setError(i18n.t('pdf.renderError', { ns: 'board' }));
         setLoading(false);
       }
     };
@@ -353,7 +356,7 @@ export const PdfViewer = ({ shape }: PdfViewerProps) => {
       <div ref={containerRef} className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
         {loading && (
           <div className="text-text-disabled absolute inset-0 z-5 flex items-center justify-center text-sm">
-            Загрузка...
+            {t('pdf.loading')}
           </div>
         )}
         {Array.from({ length: pagesVisible }, (_, i) => {

@@ -6,6 +6,7 @@ import '../utils/driver.css';
 import { createRoot } from 'react-dom/client';
 import { useCurrentUser, useOnboardingTransition } from 'common.services';
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@xipkg/utils';
 import {
   PRODUCT_ANALYTICS_EVENTS,
@@ -55,6 +56,7 @@ function isDestroyedOnLastTourStep(step: DriveStep | undefined, validSteps: Driv
 }
 
 export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopupT) => {
+  const { t } = useTranslation('commonUi');
   const { data: user, isLoading } = useCurrentUser();
   const [isHidden, setIsHidden] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -241,10 +243,10 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
           driverObj.destroy();
         });
       },
-      nextBtnText: 'Продолжить',
-      prevBtnText: 'Назад',
-      doneBtnText: 'Закрыть',
-      progressText: '{{current}} из {{total}}',
+      nextBtnText: t('onboarding.next'),
+      prevBtnText: t('onboarding.prev'),
+      doneBtnText: t('onboarding.done'),
+      progressText: t('onboarding.progress'),
       onDestroyed: (_element, step) => {
         if (isTransitioning) return;
 
@@ -282,7 +284,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
       },
     });
     driverObj.drive();
-  }, [steps, user, isTransitioning, transitionStage]);
+  }, [steps, user, isTransitioning, transitionStage, t]);
 
   useEffect(() => {
     if (shouldShowForCompleted) {
@@ -318,20 +320,18 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
       </Button>
       <div className="flex flex-col gap-2">
         <div className="h-8">
-          <span className="text-text-primary text-xl font-semibold">
-            Добро пожаловать в Sovlium! 😊
-          </span>
+          <span className="text-text-primary text-xl font-semibold">{t('onboarding.welcome')}</span>
         </div>
         <div className="h-10">
           <span className="text-text-primary text-sm font-normal tracking-tight">
             {isTutor ? (
               <>
-                Хотите узнать о возможностях платформы?
+                {t('onboarding.tutorDescriptionLine1')}
                 <br />
-                Вы сможете вернуться к обучению в любой момент
+                {t('onboarding.tutorDescriptionLine2')}
               </>
             ) : (
-              <>Подсказать, как всё устроено?</>
+              <>{t('onboarding.studentDescription')}</>
             )}
           </span>
         </div>
@@ -349,7 +349,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
             isTutor ? 'max-w-[153px]' : 'max-w-[177px]',
           )}
         >
-          {isTutor ? 'Пройти обучение' : 'Смотреть подсказки'}
+          {isTutor ? t('onboarding.startTourTutor') : t('onboarding.startTourStudent')}
         </Button>
         <Button
           variant="none"
@@ -363,7 +363,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
             isTutor ? 'max-w-[153px]' : 'max-w-[78px]',
           )}
         >
-          {isTutor ? 'Вернуться позже' : 'Позже'}
+          {isTutor ? t('onboarding.laterTutor') : t('onboarding.laterStudent')}
         </Button>
       </div>
     </div>

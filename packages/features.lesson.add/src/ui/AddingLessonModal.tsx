@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { Modal, ModalContent, ModalTitle, ModalCloseButton, ModalBody } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
 import { Close } from '@xipkg/icons';
+import { useTranslation } from 'react-i18next';
 
 import { DayLessonsPanel } from 'modules.calendar';
 import { AddingForm } from './components/AddingForm';
@@ -49,6 +50,7 @@ export const AddingLessonModal = ({
   onSubmit,
   analyticsSource,
 }: AddingLessonModalProps) => {
+  const { t } = useTranslation('lessonAdd');
   const [selectedDate, setSelectedDate] = useState(getToday);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const lessonCreateViewedForOpenRef = useRef(false);
@@ -82,7 +84,7 @@ export const AddingLessonModal = ({
         className="relative flex max-h-[min(100dvh,100%)] min-h-0 w-full max-w-[960px] min-w-0 flex-col md:min-h-[min(740px,100dvh)]"
         aria-describedby={undefined}
       >
-        <ModalTitle className="sr-only">Добавить занятие</ModalTitle>
+        <ModalTitle className="sr-only">{t('title')}</ModalTitle>
         <ModalCloseButton
           variant="full"
           className="bg-background-page top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0"
@@ -93,7 +95,7 @@ export const AddingLessonModal = ({
           <div className="hidden min-h-0 min-w-0 flex-col overflow-hidden md:flex">
             <div className="flex min-h-0 min-w-0 flex-1 flex-col">
               <DayLessonsPanel
-                scheduleHeadingTitle="Расписание"
+                scheduleHeadingTitle={t('schedule')}
                 selectedDate={selectedDate}
                 onSelectedDateChange={setSelectedDate}
                 fetchEnabled={open}
@@ -105,7 +107,7 @@ export const AddingLessonModal = ({
           <div className="flex h-full min-h-0 min-w-0 flex-col gap-5 overflow-hidden">
             <div className="flex h-8 shrink-0 items-center pr-12">
               <h3 className="text-xl-base text-text-primary m-0 leading-none font-semibold">
-                Добавить занятие
+                {t('title')}
               </h3>
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto">
@@ -128,7 +130,7 @@ export const AddingLessonModal = ({
                 disabled={isSubmitting}
                 data-umami-event="lesson-add-cancel"
               >
-                Отменить
+                {t('cancel')}
               </Button>
               <Button
                 className="h-11 min-w-0 flex-1"
@@ -140,7 +142,7 @@ export const AddingLessonModal = ({
                 disabled={isSubmitting}
                 data-umami-event="lesson-add-submit"
               >
-                Добавить
+                {t('submit')}
               </Button>
             </div>
           </div>

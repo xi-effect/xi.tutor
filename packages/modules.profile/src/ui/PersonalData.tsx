@@ -16,15 +16,22 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Input } from '@xipkg/input';
 import { UserPreview } from './UserPreview';
 import { useCurrentUser, useUpdateProfile } from 'common.services';
-
-const FormSchema = z.object({
-  username: z.string({ error: 'Обязательное поле' }),
-  displayName: z.string({ error: 'Обязательное поле' }),
-});
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export const PersonalData = () => {
+  const { t } = useTranslation('profile');
   const { data: user } = useCurrentUser();
   const { updateProfile } = useUpdateProfile();
+
+  const FormSchema = useMemo(
+    () =>
+      z.object({
+        username: z.string({ error: t('validation.required') }),
+        displayName: z.string({ error: t('validation.required') }),
+      }),
+    [t],
+  );
 
   const isMobile = useMediaQuery('(max-width: 719px)');
   const form = useForm<z.infer<typeof FormSchema>>({
@@ -58,7 +65,9 @@ export const PersonalData = () => {
   return (
     <>
       {!isMobile && (
-        <span className="dark:text-text-primary text-3xl font-semibold">Личные данные</span>
+        <span className="dark:text-text-primary text-3xl font-semibold">
+          {t('personalData.title')}
+        </span>
       )}
       <UserPreview className="mt-4" />
       <Form {...form}>
@@ -73,7 +82,7 @@ export const PersonalData = () => {
                 name="displayName"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Отображаемое имя</FormLabel>
+                    <FormLabel>{t('personalData.displayName')}</FormLabel>
                     <FormControl className="mt-2">
                       <Input error={!!errors?.displayName} type="text" {...field} />
                     </FormControl>
@@ -88,7 +97,7 @@ export const PersonalData = () => {
                 name="username"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Имя пользователя</FormLabel>
+                    <FormLabel>{t('personalData.username')}</FormLabel>
                     <FormControl className="mt-2">
                       <Input error={!!errors?.username} type="text" {...field} />
                     </FormControl>
@@ -100,7 +109,7 @@ export const PersonalData = () => {
           </div>
           <div className="mt-8">
             <Button type="submit" size="m">
-              Сохранить
+              {t('personalData.save')}
             </Button>
           </div>
         </form>

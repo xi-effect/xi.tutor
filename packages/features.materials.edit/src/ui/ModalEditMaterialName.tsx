@@ -21,8 +21,8 @@ import {
 } from '@xipkg/modal';
 import { ModalEditMaterialNamePropsT } from 'common.types';
 import { useEffect, useMemo } from 'react';
-import * as z from 'zod';
-import { FormData, formSchema } from '../model';
+import { useTranslation } from 'react-i18next';
+import { FormData, useFormSchema } from '../model';
 
 export const ModalEditMaterialName = ({
   isClassroom,
@@ -33,9 +33,11 @@ export const ModalEditMaterialName = ({
   onClose,
   handleUpdateName,
 }: ModalEditMaterialNamePropsT) => {
+  const { t } = useTranslation('materialsEdit');
+  const formSchema = useFormSchema();
   const initialValues = useMemo(() => ({ name: name || '' }), [name]);
 
-  const form = useForm<z.input<typeof formSchema>>({
+  const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues,
   });
@@ -70,7 +72,7 @@ export const ModalEditMaterialName = ({
         <ModalHeader>
           <ModalCloseButton />
           <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
-            Переименование {content_kind === 'note' ? 'заметки' : 'доски'}
+            {content_kind === 'note' ? t('titleNote') : t('titleBoard')}
           </ModalTitle>
         </ModalHeader>
 
@@ -82,7 +84,7 @@ export const ModalEditMaterialName = ({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="name">Название</FormLabel>
+                    <FormLabel htmlFor="name">{t('nameLabel')}</FormLabel>
                     <FormControl>
                       <Input
                         error={!!errors?.name}
@@ -106,7 +108,7 @@ export const ModalEditMaterialName = ({
                 data-umami-event="material-edit-save"
                 data-umami-event-type={content_kind}
               >
-                Сохранить
+                {t('save')}
               </Button>
               <Button
                 variant="ghost"
@@ -114,7 +116,7 @@ export const ModalEditMaterialName = ({
                 type="button"
                 data-umami-event="material-edit-cancel"
               >
-                Отменить
+                {t('cancel')}
               </Button>
             </ModalFooter>
           </form>

@@ -1,6 +1,7 @@
 import { Cursor } from '@xipkg/icons';
 import type { DrCollaboratorCursorProps } from '@ibodr/draw';
 import { CollaboratorCursorBadge } from '@ibodr/draw';
+import { useTranslation } from 'react-i18next';
 
 export type CollaboratorCursorProps = DrCollaboratorCursorProps;
 
@@ -11,6 +12,7 @@ export function CollaboratorCursor({
   scale,
   layout,
 }: DrCollaboratorCursorProps) {
+  const { t } = useTranslation('board');
   const badgeOffset = layout?.badgeOffset ?? { x: 2, y: 4 };
   const iconOffset = layout?.iconOffset ?? { x: -12, y: -12 };
 
@@ -40,7 +42,7 @@ export function CollaboratorCursor({
 
       <CollaboratorCursorBadge
         color={color}
-        name={name ?? 'Пользователь'}
+        name={name ?? t('comments.user')}
         badgeOffset={badgeOffset}
       />
     </div>

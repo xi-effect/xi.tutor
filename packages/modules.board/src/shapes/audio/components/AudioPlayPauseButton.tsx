@@ -1,5 +1,6 @@
 import { Button } from '@xipkg/button';
 import { stopEvent } from '../constants';
+import { useTranslation } from 'react-i18next';
 
 type AudioPlayPauseButtonProps = {
   isPlaying: boolean;
@@ -12,13 +13,14 @@ export function AudioPlayPauseButton({
   disabled,
   onPlayPause,
 }: AudioPlayPauseButtonProps) {
+  const { t } = useTranslation('board');
   return (
     <Button
       type="button"
       variant="none"
       size="s"
       disabled={disabled}
-      title={disabled ? 'Управление у репетитора' : undefined}
+      title={disabled ? t('audio.tutorControls') : undefined}
       className="bg-action-primary-background-default hover:bg-action-primary-background-pressed focus:bg-action-primary-background-pressed active:bg-action-primary-background-pressed disabled:bg-background-subtle flex h-10 w-10 shrink-0 items-center justify-center rounded-full p-0 disabled:cursor-not-allowed"
       style={{ pointerEvents: 'all' }}
       data-audio-control=""

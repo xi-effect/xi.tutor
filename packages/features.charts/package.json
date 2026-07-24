@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./locales": "./src/locales/index.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -12,6 +13,8 @@
   },
   "dependencies": {
     "@xipkg/utils": "^1.8.0",
+    "i18next": "24.2.2",
+    "react-i18next": "15.4.1",
     "recharts": "^3.9.2"
   },
   "devDependencies": {

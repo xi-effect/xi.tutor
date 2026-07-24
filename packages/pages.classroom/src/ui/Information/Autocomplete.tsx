@@ -13,6 +13,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
 import { SubjectSchema } from 'common.api';
 import { useAutocompleteSubjects, useSubjectsById } from 'common.services';
+import { useTranslation } from 'react-i18next';
 
 type SubjectField = { value: number | null; onChange: (value: number | null) => void };
 
@@ -22,6 +23,7 @@ type AutocompleteProps = {
 };
 
 export const Autocomplete = ({ field, disabled }: AutocompleteProps) => {
+  const { t } = useTranslation('classroom');
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState('');
 
@@ -45,9 +47,9 @@ export const Autocomplete = ({ field, disabled }: AutocompleteProps) => {
   const hasSelection = Boolean(field.value);
   const triggerLabel = hasSelection
     ? isLoadingSelected
-      ? 'Загрузка...'
-      : selectedSubject?.name || 'Предмет не найден'
-    : 'Выберите предмет...';
+      ? t('autocomplete.loading')
+      : selectedSubject?.name || t('autocomplete.notFound')
+    : t('autocomplete.select');
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -78,7 +80,7 @@ export const Autocomplete = ({ field, disabled }: AutocompleteProps) => {
           shouldFilter={false}
         >
           <CommandInput
-            placeholder="Поиск предмета..."
+            placeholder={t('autocomplete.search')}
             value={search}
             onValueChange={setSearch}
             className="dark:text-text-primary text-text-primary"
@@ -86,13 +88,15 @@ export const Autocomplete = ({ field, disabled }: AutocompleteProps) => {
           <CommandList className="w-full">
             {isLoading ? (
               <div className="text-text-secondary dark:text-text-secondary py-6 text-center text-sm">
-                Загрузка...
+                {t('autocomplete.loading')}
               </div>
             ) : isError ? (
-              <div className="text-text-danger py-6 text-center text-sm">Ошибка загрузки</div>
+              <div className="text-text-danger py-6 text-center text-sm">
+                {t('errors.loadFailed')}
+              </div>
             ) : !subjects || subjects.length === 0 ? (
               <div className="text-text-secondary dark:text-text-primary py-6 text-center text-sm">
-                Предметы не найдены
+                {t('autocomplete.empty')}
               </div>
             ) : (
               <CommandGroup>

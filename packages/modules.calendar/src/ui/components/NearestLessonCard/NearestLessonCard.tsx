@@ -1,4 +1,5 @@
 import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
 import { External, Redo, Trash } from '@xipkg/icons';
 import { UserProfile } from '@xipkg/userprofile';
@@ -20,6 +21,7 @@ export const NearestLessonCard = ({
   onReschedule,
   onScheduleNavigate,
 }: NearestLessonCardProps) => {
+  const { t } = useTranslation('calendar');
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
   const canCancelLesson = lesson.schedulerMeta != null && lesson.classroomId != null;
@@ -48,7 +50,7 @@ export const NearestLessonCard = ({
   return (
     <div className="border-border-focus bg-background-surface relative flex w-full flex-col gap-4 rounded-2xl border-2 p-5">
       <div className="flex flex-row items-start justify-between gap-2">
-        <h3 className="text-l-base text-text-primary font-medium">Ближайшее занятие</h3>
+        <h3 className="text-l-base text-text-primary font-medium">{t('nearest_lesson')}</h3>
       </div>
 
       <div className="flex flex-row items-start gap-4">
@@ -80,7 +82,7 @@ export const NearestLessonCard = ({
           className="bg-background-page text-text-secondary hover:bg-background-subtle hover:text-text-primary h-[38px] min-h-[38px] flex-1 p-0"
           onClick={onReschedule}
         >
-          Перенести
+          {t('reschedule')}
           <Redo className="fill-icon-primary ml-2 h-4 w-4" />
         </Button>
         {canCancelLesson ? (
@@ -103,7 +105,7 @@ export const NearestLessonCard = ({
           className="text-m-base text-text-secondary hover:text-text-primary inline-flex h-[36px] w-full cursor-pointer items-center gap-2 font-medium"
           onClick={handleScheduleClick}
         >
-          Расписание
+          {t('schedule')}
           <External className="fill-icon-secondary h-4 w-4" />
         </Button>
       </div>

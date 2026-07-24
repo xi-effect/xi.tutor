@@ -1,14 +1,17 @@
 import { AxiosError } from 'axios';
+import { useTranslation } from 'react-i18next';
 
 interface ErrorInviteProps {
   error: AxiosError | Error | string;
 }
 
 export const ErrorInvite = ({ error }: ErrorInviteProps) => {
+  const { t } = useTranslation('invites');
+
   const getErrorMessage = () => {
     // Проверяем AxiosError с статусом 409
     if (error instanceof AxiosError && error.response?.status === 409) {
-      return 'Преподаватель не может принять собственное приглашение';
+      return t('error.selfInviteTitle');
     }
 
     // Проверяем строковую ошибку
@@ -18,25 +21,25 @@ export const ErrorInvite = ({ error }: ErrorInviteProps) => {
 
     // Проверяем обычную Error с сообщением 'Target is the source'
     if (error instanceof Error && error.message === 'Target is the source') {
-      return 'Преподаватель не может принять собственное приглашение';
+      return t('error.selfInviteTitle');
     }
 
     // Возвращаем сообщение ошибки или дефолтное
-    return error instanceof Error ? error.message : 'Приглашение недействительно';
+    return error instanceof Error ? error.message : t('error.invalid');
   };
 
   const getErrorDescription = () => {
     // Проверяем обычную Error с сообщением 'Target is the source'
     if (error instanceof Error && error.message === 'Target is the source') {
-      return 'Вы не можете присоединиться к собственному кабинету';
+      return t('error.selfInviteDescription');
     }
 
     // Проверяем AxiosError с статусом 409
     if (error instanceof AxiosError && error.response?.status === 409) {
-      return 'Отправьте ссылку приглашения ученику';
+      return t('error.selfInviteHint');
     }
 
-    return 'Обратитесь к репетитору за новым приглашением';
+    return t('error.askTutor');
   };
 
   return (

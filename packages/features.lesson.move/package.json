@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./locales": "./src/locales/index.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -30,7 +31,9 @@
     "common.env": "workspace:*",
     "common.services": "workspace:*",
     "common.types": "workspace:*",
+    "common.ui": "workspace:*",
     "common.utils": "workspace:*",
+    "i18next": "24.2.2",
     "modules.calendar": "workspace:*",
     "react-i18next": "15.4.1",
     "sonner": "^1.4.0"

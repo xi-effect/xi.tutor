@@ -8,6 +8,7 @@ import {
 import { ChevronSmallBottom, Plus } from '@xipkg/icons';
 import { useAddMaterials, useAddClassroomMaterials } from 'common.services';
 import { useParams, useNavigate } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 
 interface NoteProps {
   onlyDrafts?: boolean;
@@ -18,6 +19,7 @@ interface NoteProps {
 type StudentAccessMode = 'no_access' | 'read_only' | 'read_write';
 
 export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) => {
+  const { t } = useTranslation('materialsAdd');
   const { classroomId: paramsClassroomId } = useParams({ strict: false });
   const navigate = useNavigate();
   const { addMaterials } = useAddMaterials();
@@ -72,7 +74,7 @@ export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) =
         data-umami-event="material-create-note-draft"
       >
         <Plus className="fill-text-on-accent size-4 shrink-0" />
-        {addMaterials.isPending ? 'Создание...' : 'Создать заметку'}
+        {addMaterials.isPending ? t('note.creating') : t('note.create')}
       </Button>
     );
   }
@@ -83,7 +85,7 @@ export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) =
         className="group bg-background-surface text-s-base hover:text-text-on-accent hover:bg-action-primary-background-default data-[state=open]:text-text-on-accent data-[state=open]:bg-action-primary-background-default border-border-control text-text-primary hover:border-border-control flex h-8 w-[160px] flex-row items-center justify-between gap-2 rounded-lg border px-2 font-medium transition-colors duration-200 max-[550px]:hidden"
         data-umami-event="material-create-note-menu-open"
       >
-        <span>Создать заметку</span>
+        <span>{t('note.create')}</span>
 
         <ChevronSmallBottom className="group-hover:fill-action-primary-text group-data-[state=open]:fill-action-primary-text fill-icon-primary h-[16px] w-[16px] transition-transform duration-200 group-data-[state=open]:rotate-180" />
       </DropdownMenuTrigger>
@@ -96,7 +98,7 @@ export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) =
           data-umami-event="material-create-note"
           data-umami-event-access-mode="read_write"
         >
-          Совместная работа
+          {t('note.collaborative')}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => handleCreateNoteWithAccess('read_only')}
@@ -105,7 +107,7 @@ export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) =
           data-umami-event="material-create-note"
           data-umami-event-access-mode="read_only"
         >
-          Только репетитор
+          {t('note.tutorOnly')}
         </DropdownMenuItem>
         <DropdownMenuItem
           onClick={() => handleCreateNoteWithAccess('no_access')}
@@ -114,7 +116,7 @@ export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) =
           data-umami-event="material-create-note"
           data-umami-event-access-mode="no_access"
         >
-          Черновики
+          {t('note.drafts')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

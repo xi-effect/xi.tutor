@@ -11,6 +11,7 @@ import { toast } from 'sonner';
 import { useEditor } from '@ibodr/draw';
 import type { DrRecord } from '@ibodr/draw';
 import { useYjsContext } from '../../../../providers/YjsProvider';
+import { useTranslation } from 'react-i18next';
 
 type BoardSnapshotJson = {
   records?: DrRecord[];
@@ -18,6 +19,7 @@ type BoardSnapshotJson = {
 };
 
 export const useDropdownActions = () => {
+  const { t } = useTranslation('board');
   const editor = useEditor();
   const { classroomId, boardId, materialId } = useParams({ strict: false });
 
@@ -55,13 +57,13 @@ export const useDropdownActions = () => {
     if (!editor) return;
 
     try {
-      toast.info('Начинаем экспорт доски...');
+      toast.info(t('toast.exportStarted'));
 
       // Получаем все ID фигур на текущей странице
       const shapeIds = editor.getCurrentPageShapeIds();
 
       if (shapeIds.size === 0) {
-        toast.error('На доске нет элементов для экспорта');
+        toast.error(t('toast.exportNoElements'));
         return;
       }
 
@@ -84,12 +86,12 @@ export const useDropdownActions = () => {
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      toast.success('Доска успешно экспортирована!');
+      toast.success(t('toast.exportSuccess'));
     } catch (error) {
       console.error('Ошибка при экспорте доски:', error);
-      toast.error('Ошибка при экспорте доски');
+      toast.error(t('toast.exportError'));
     }
-  }, [editor, data?.name]);
+  }, [editor, data?.name, t]);
 
   const lockShapes = useCallback(
     (types?: string[]) => {
@@ -101,7 +103,7 @@ export const useDropdownActions = () => {
         : allShapes.filter((shape) => !shape.isLocked);
 
       if (unlockedShapes.length === 0) {
-        toast.info('Нет незаблокированных элементов');
+        toast.info(t('toast.noUnlockedElements'));
         return;
       }
 
@@ -109,9 +111,9 @@ export const useDropdownActions = () => {
         unlockedShapes.map((shape) => ({ id: shape.id, type: shape.type, isLocked: true })),
       );
 
-      toast.success(`Заблокировано элементов: ${unlockedShapes.length}`);
+      toast.success(t('toast.lockedCount', { count: unlockedShapes.length }));
     },
-    [editor],
+    [editor, t],
   );
 
   const unlockShapes = useCallback(
@@ -124,7 +126,7 @@ export const useDropdownActions = () => {
         : allShapes.filter((shape) => shape.isLocked);
 
       if (lockedShapes.length === 0) {
-        toast.info('Нет заблокированных элементов');
+        toast.info(t('toast.noLockedElements'));
         return;
       }
 
@@ -132,9 +134,9 @@ export const useDropdownActions = () => {
         lockedShapes.map((shape) => ({ id: shape.id, type: shape.type, isLocked: false })),
       );
 
-      toast.success(`Разблокировано элементов: ${lockedShapes.length}`);
+      toast.success(t('toast.unlockedCount', { count: lockedShapes.length }));
     },
-    [editor],
+    [editor, t],
   );
 
   const clearBoard = () => {
@@ -145,16 +147,16 @@ export const useDropdownActions = () => {
       const shapeIds = editor.getCurrentPageShapeIds();
 
       if (shapeIds.size === 0) {
-        toast.info('Доска уже пуста');
+        toast.info(t('toast.boardAlreadyEmpty'));
         return;
       }
 
       // Удаляем все фигуры
       editor.deleteShapes([...shapeIds]);
-      toast.success('Доска очищена!');
+      toast.success(t('toast.boardCleared'));
     } catch (error) {
       console.error('Ошибка при очистке доски:', error);
-      toast.error('Ошибка при очистке доски');
+      toast.error(t('toast.clearError'));
     }
   };
 
@@ -170,7 +172,7 @@ export const useDropdownActions = () => {
           : (data.records ?? (data.byId ? Object.values(data.byId) : []));
 
         if (records.length === 0) {
-          toast.error('В файле нет записей для импорта');
+          toast.error(t('toast.importNoRecords'));
           return;
         }
 
@@ -179,19 +181,19 @@ export const useDropdownActions = () => {
         );
 
         if (toPut.length === 0) {
-          toast.error('В файле нет фигур или ассетов для импорта');
+          toast.error(t('toast.importNoShapes'));
           return;
         }
 
         editor.store.put(toPut);
-        toast.success(`Импортировано записей: ${toPut.length}`);
+        toast.success(t('toast.importSuccess', { count: toPut.length }));
       } catch (err) {
         console.error('Ошибка импорта доски из JSON:', err);
-        const msg = err instanceof Error ? err.message : 'Неверный формат JSON';
-        toast.error('Ошибка импорта', { description: msg, duration: 5000 });
+        const msg = err instanceof Error ? err.message : t('toast.importInvalidJson');
+        toast.error(t('toast.importError'), { description: msg, duration: 5000 });
       }
     },
-    [editor],
+    [editor, t],
   );
 
   // Обработка событий от горячих клавиш

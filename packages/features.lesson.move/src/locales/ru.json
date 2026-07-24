@@ -1,0 +1,44 @@
+{
+  "title": "Перенести занятие",
+  "schedule": "Расписание",
+  "cancel": "Отменить",
+  "submit": "Перенести",
+  "defaultLessonTitle": "Изучаем что-то",
+  "moveMode": {
+    "single": "Это занятие",
+    "singleAndNext": "Это и следующие"
+  },
+  "form": {
+    "date": "Дата",
+    "repetitionStartDate": "Дата начала повторений",
+    "time": "Время",
+    "startPlaceholder": "17:40 Начало",
+    "endPlaceholder": "19:00 Конец",
+    "repetitions": "Повторения"
+  },
+  "weekdays_short": "Пн,Вт,Ср,Чт,Пт,Сб,Вс",
+  "studentSelector": {
+    "loading": "Загрузка...",
+    "placeholder": "Ученик или группа"
+  },
+  "toast": {
+    "success": "Занятие перенесено"
+  },
+  "validation": {
+    "invalidTime": "Неверный формат времени",
+    "dateRequired": "Укажите дату",
+    "startTimeRequired": "Укажите время начала",
+    "endTimeRequired": "Укажите время окончания",
+    "endAfterStart": "Время окончания должно быть позже начала",
+    "maxDuration": "Максимальная длительность занятия — 12 часов",
+    "repeatDaysRequired": "Выберите хотя бы один день"
+  },
+  "hours_one": "{{count}} час",
+  "hours_few": "{{count}} часа",
+  "hours_many": "{{count}} часов",
+  "hours_other": "{{count}} часов",
+  "minutes_one": "{{count}} минута",
+  "minutes_few": "{{count}} минуты",
+  "minutes_many": "{{count}} минут",
+  "minutes_other": "{{count}} минут"
+}

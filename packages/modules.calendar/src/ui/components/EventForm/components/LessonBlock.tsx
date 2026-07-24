@@ -97,7 +97,7 @@ export const LessonBlock: FC<LessonBlockProps> = ({ form }) => {
                   size="s"
                   className="hover:border-border-strong focus:border-border-strong mb-2 w-full border border-transparent outline-none"
                 >
-                  <SelectValue placeholder="Тип занятия" />
+                  <SelectValue placeholder={t('event_form.lesson_type')} />
                 </SelectTrigger>
                 <SelectContent className="w-full max-w-[300px]">
                   <SelectGroup>

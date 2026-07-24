@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   useRescheduleRepeatedVirtualInstance,
@@ -118,6 +119,7 @@ export const useMovingForm = (
   initialEndTime?: string | null,
   options: UseMovingFormOptions = {},
 ) => {
+  const { t } = useTranslation('lessonMove');
   const {
     onSubmit: externalSubmit,
     schedulerTarget,
@@ -125,7 +127,7 @@ export const useMovingForm = (
     movingRepetition: repetitionOption,
   } = options;
   const movingRepetition = repetitionOption ?? defaultMovingRepetition;
-  const schema = useMemo(() => createMovingFormSchema(lessonKind), [lessonKind]);
+  const schema = useMemo(() => createMovingFormSchema(lessonKind, t), [lessonKind, t]);
   const reschedule = useRescheduleRepeatedVirtualInstance();
   const rescheduleSole = useRescheduleSoleEventInstance();
   const createLastRepetitionMode = useCreateLastRepetitionMode();
@@ -194,7 +196,7 @@ export const useMovingForm = (
           body: timeSlotBody,
         });
       }
-      toast.success('Занятие перенесено');
+      toast.success(t('toast.success'));
       return;
     }
 
@@ -204,11 +206,11 @@ export const useMovingForm = (
         eventInstanceId: soleTarget.eventInstanceId,
         body: timeSlotBody,
       });
-      toast.success('Занятие перенесено');
+      toast.success(t('toast.success'));
       return;
     }
 
-    toast.success('Занятие перенесено');
+    toast.success(t('toast.success'));
   };
 
   const handleClearForm = () => {

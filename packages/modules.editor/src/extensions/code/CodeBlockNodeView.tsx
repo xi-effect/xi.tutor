@@ -7,6 +7,7 @@ import {
 } from '@xipkg/dropdown';
 import { Button } from '@xipkg/button';
 import { MoreVert, Copy, Trash } from '@xipkg/icons';
+import { useTranslation } from 'react-i18next';
 import { useBlockMenuActions, useYjsContext } from '../../hooks';
 import { cn } from '@xipkg/utils';
 import { useCallback } from 'react';
@@ -15,6 +16,7 @@ import { common } from 'lowlight';
 import { toast } from 'sonner';
 
 export const CodeBlockNodeView = ({ node, getPos, updateAttributes }: NodeViewProps) => {
+  const { t } = useTranslation('editor');
   const currentLang = node.attrs.language || 'plaintext';
 
   const { editor, isReadOnly } = useYjsContext();
@@ -45,7 +47,7 @@ export const CodeBlockNodeView = ({ node, getPos, updateAttributes }: NodeViewPr
   const handleCopyCode = () => {
     const codeText = node.textContent;
     navigator.clipboard.writeText(codeText);
-    toast.success('Код скопирован в буфер обмена');
+    toast.success(t('codeBlock.copied'));
   };
 
   // Изменение языка через встроенный метод Tiptap `updateAttributes`
@@ -107,7 +109,7 @@ export const CodeBlockNodeView = ({ node, getPos, updateAttributes }: NodeViewPr
               onSelect={handleCopyCode}
             >
               <Copy size="sm" className="size-4" />
-              <span className="text-xs">Копировать</span>
+              <span className="text-xs">{t('codeBlock.copy')}</span>
             </DropdownMenuItem>
 
             {!isReadOnly && (
@@ -116,7 +118,7 @@ export const CodeBlockNodeView = ({ node, getPos, updateAttributes }: NodeViewPr
                 onSelect={remove}
               >
                 <Trash size="sm" className="text-text-danger size-4" />
-                <span className="text-xs">Удалить блок</span>
+                <span className="text-xs">{t('codeBlock.deleteBlock')}</span>
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>

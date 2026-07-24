@@ -6,6 +6,7 @@ import { Input } from '@xipkg/input';
 import { Button } from '@xipkg/button';
 import { Eyeoff, Eyeon } from '@xipkg/icons';
 import { modalTitleClass } from 'common.ui';
+import { useTranslation } from 'react-i18next';
 import { useChangePassword } from '../hooks';
 
 type ChangePasswordModalT = {
@@ -15,6 +16,7 @@ type ChangePasswordModalT = {
 };
 
 export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordModalT) => {
+  const { t } = useTranslation('profile');
   const { form, stage, setStage, isPasswordShow, changePasswordShow, onSubmit, isLoading } =
     useChangePassword();
 
@@ -33,7 +35,7 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
               <Close className="fill-icon-primary h-5 w-5" />
             </M.ModalCloseButton>
             <M.ModalHeader>
-              <M.ModalTitle className={modalTitleClass}>Изменение пароля</M.ModalTitle>
+              <M.ModalTitle className={modalTitleClass}>{t('changePassword.title')}</M.ModalTitle>
             </M.ModalHeader>
             <Form {...form}>
               <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
@@ -43,7 +45,7 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
                     name="currentPassword"
                     render={({ field, fieldState: { error } }) => (
                       <FormItem>
-                        <FormLabel>Текущий пароль</FormLabel>
+                        <FormLabel>{t('changePassword.currentPassword')}</FormLabel>
                         <FormControl className="mt-2">
                           <Input
                             {...field}
@@ -72,7 +74,7 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
                     name="newPassword"
                     render={({ field, fieldState: { error } }) => (
                       <FormItem>
-                        <FormLabel>Новый пароль</FormLabel>
+                        <FormLabel>{t('changePassword.newPassword')}</FormLabel>
                         <FormControl className="mt-2">
                           <Input
                             {...field}
@@ -101,7 +103,7 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
                     name="confirmPassword"
                     render={({ field, fieldState: { error } }) => (
                       <FormItem>
-                        <FormLabel>Подтвердите пароль</FormLabel>
+                        <FormLabel>{t('changePassword.confirmPassword')}</FormLabel>
                         <FormControl className="mt-2">
                           <Input
                             {...field}
@@ -128,10 +130,10 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
                 </div>
                 <div className="border-border-default flex justify-start gap-4 border-t p-6 px-5 py-5">
                   <Button type="submit" disabled={isLoading}>
-                    Изменить
+                    {t('changePassword.change')}
                   </Button>
                   <Button onClick={() => onOpenChange(false)} variant="ghost">
-                    Отменить
+                    {t('changePassword.cancel')}
                   </Button>
                 </div>
               </form>
@@ -140,7 +142,9 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
         )) ||
           (stage === 'success' && (
             <div className="border-border-default space-y-8 border-t p-8">
-              <p className="text-text-primary text-center text-2xl font-semibold">Пароль изменён</p>
+              <p className="text-text-primary text-center text-2xl font-semibold">
+                {t('changePassword.success')}
+              </p>
               <Button
                 onClick={() => {
                   onOpenChange(false);
@@ -148,7 +152,7 @@ export const ChangePassword = ({ open, onOpenChange, children }: ChangePasswordM
                 }}
                 className="mt-4 w-full"
               >
-                Продолжить
+                {t('changePassword.continue')}
               </Button>
             </div>
           ))}

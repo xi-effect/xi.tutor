@@ -49,6 +49,7 @@ import {
   normalizeBoardBackgroundType,
 } from '../../../config';
 import { areAllEraserCategoriesEnabled } from '../../../utils/areAllEraserCategoriesEnabled';
+import { useTranslation } from 'react-i18next';
 import {
   boardIconClass,
   boardMenuCheckboxItemClass,
@@ -62,6 +63,7 @@ type ActionPropsT = {
 };
 
 const BlockBoardAction = ({ onClick, isReadonly }: ActionPropsT & { isReadonly: boolean }) => {
+  const { t } = useTranslation('board');
   return (
     <DropdownMenuItem
       className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
@@ -70,7 +72,7 @@ const BlockBoardAction = ({ onClick, isReadonly }: ActionPropsT & { isReadonly: 
       data-umami-event-state={isReadonly ? 'resume' : 'pause'}
     >
       {isReadonly ? <ShieldOff /> : <Shield />}
-      <span>{isReadonly ? 'Возобновить работу с доской' : 'Приостановить работу с доской'}</span>
+      <span>{isReadonly ? t('settings.resumeBoard') : t('settings.pauseBoard')}</span>
     </DropdownMenuItem>
   );
 };
@@ -79,6 +81,7 @@ const ToggleCommentsVisibilityAction = ({
   visible,
   onClick,
 }: ActionPropsT & { visible: boolean }) => {
+  const { t } = useTranslation('board');
   return (
     <DropdownMenuItem
       className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
@@ -87,12 +90,13 @@ const ToggleCommentsVisibilityAction = ({
       data-umami-event-state={visible ? 'hide' : 'show'}
     >
       {visible ? <Eyeoff /> : <Eyeon />}
-      <span>{visible ? 'Скрыть комментарии' : 'Показать комментарии'}</span>
+      <span>{visible ? t('settings.hideComments') : t('settings.showComments')}</span>
     </DropdownMenuItem>
   );
 };
 
 const DownloadBoardAction = ({ onClick }: ActionPropsT) => {
+  const { t } = useTranslation('board');
   return (
     <DropdownMenuItem
       className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
@@ -100,12 +104,13 @@ const DownloadBoardAction = ({ onClick }: ActionPropsT) => {
       data-umami-event="board-download"
     >
       <File />
-      <span>Скачать</span>
+      <span>{t('settings.download')}</span>
     </DropdownMenuItem>
   );
 };
 
 const ClearBoardAction = ({ onClick }: ActionPropsT) => {
+  const { t } = useTranslation('board');
   return (
     <DropdownMenuItem
       className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
@@ -113,7 +118,7 @@ const ClearBoardAction = ({ onClick }: ActionPropsT) => {
       data-umami-event="board-clear"
     >
       <Trash />
-      <span>Очистить доску</span>
+      <span>{t('settings.clearBoard')}</span>
     </DropdownMenuItem>
   );
 };
@@ -122,6 +127,7 @@ const BOARD_ELEMENTS_LIMIT = 4000;
 const BOARD_ELEMENTS_WARNING_THRESHOLD = 3000;
 
 export const SettingsDropdown = () => {
+  const { t } = useTranslation('board');
   const editor = useEditor();
   const { inputMode, setInputMode } = useDrawStore();
   const {
@@ -188,8 +194,8 @@ export const SettingsDropdown = () => {
   useEffect(() => {
     if (elementsCount >= BOARD_ELEMENTS_LIMIT) {
       if (!shownLimitToastRef.current) {
-        toast.error('Место на доске закончилось', {
-          description: `Достигнут лимит в ${BOARD_ELEMENTS_LIMIT} элементов.`,
+        toast.error(t('settings.limitReachedTitle'), {
+          description: t('settings.limitReachedDesc', { limit: BOARD_ELEMENTS_LIMIT }),
           duration: 6000,
         });
         shownLimitToastRef.current = true;
@@ -200,8 +206,11 @@ export const SettingsDropdown = () => {
 
     if (elementsCount >= BOARD_ELEMENTS_WARNING_THRESHOLD) {
       if (!shownWarningToastRef.current) {
-        toast.info('Доска почти заполнена', {
-          description: `На доске уже ${elementsCount} элементов из ${BOARD_ELEMENTS_LIMIT}.`,
+        toast.info(t('settings.almostFullTitle'), {
+          description: t('settings.almostFullDesc', {
+            count: elementsCount,
+            limit: BOARD_ELEMENTS_LIMIT,
+          }),
           duration: 6000,
         });
         shownWarningToastRef.current = true;
@@ -212,7 +221,7 @@ export const SettingsDropdown = () => {
 
     shownWarningToastRef.current = false;
     shownLimitToastRef.current = false;
-  }, [elementsCount]);
+  }, [elementsCount, t]);
 
   return (
     <>
@@ -233,7 +242,7 @@ export const SettingsDropdown = () => {
         >
           <div className="bg-status-info-background/40 mb-1 rounded-lg px-2 py-2">
             <div className="mb-1 flex items-center justify-between text-xs">
-              <span className="text-text-primary">Заполнение доски</span>
+              <span className="text-text-primary">{t('settings.boardFill')}</span>
               <span
                 className={cn(
                   'text-text-primary font-medium',
@@ -265,7 +274,7 @@ export const SettingsDropdown = () => {
               data-umami-event="board-hotkeys-help"
             >
               <InfoCircle />
-              <span>Горячие клавиши</span>
+              <span>{t('settings.hotkeys')}</span>
             </DropdownMenuItem>
             <ToggleCommentsVisibilityAction
               visible={commentsVisible}
@@ -275,7 +284,7 @@ export const SettingsDropdown = () => {
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
                   <Pen />
-                  <span>Режим ввода</span>
+                  <span>{t('settings.inputMode')}</span>
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[250px]')}>
                   {INPUT_MODE_OPTIONS.map(({ value, label, icon }) => (
@@ -304,7 +313,7 @@ export const SettingsDropdown = () => {
             <DropdownMenuSub>
               <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
                 <Grid className="shrink-0" />
-                <span className="min-w-0 flex-1 truncate">Тип фона</span>
+                <span className="min-w-0 flex-1 truncate">{t('settings.backgroundType')}</span>
                 <span className="text-text-secondary max-w-[88px] shrink-0 truncate text-right text-xs">
                   {getBoardBackgroundTypeLabel(background.type)}
                 </span>
@@ -329,7 +338,7 @@ export const SettingsDropdown = () => {
             <DropdownMenuSub>
               <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
                 <ColorPickerIcon className="shrink-0" />
-                <span className="min-w-0 flex-1 truncate">Цвет фона</span>
+                <span className="min-w-0 flex-1 truncate">{t('settings.backgroundColor')}</span>
                 <span className="text-text-secondary max-w-[88px] shrink-0 truncate text-right text-xs">
                   {getBoardBackgroundColorLabel(background.color)}
                 </span>
@@ -358,7 +367,7 @@ export const SettingsDropdown = () => {
                 data-umami-event="board-import-json"
               >
                 <File />
-                <span>Импорт из JSON</span>
+                <span>{t('settings.importJson')}</span>
               </DropdownMenuItem>
             )}
             <input
@@ -389,19 +398,17 @@ export const SettingsDropdown = () => {
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
                   <Locked />
-                  <span>Заблокировать элементы</span>
+                  <span>{t('settings.lockElements')}</span>
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[250px]')}>
-                  <p className="text-text-secondary px-3 py-2 text-xs">
-                    Можно заблокировать все элементы на доске или выбрать конкретные категории
-                  </p>
+                  <p className="text-text-secondary px-3 py-2 text-xs">{t('settings.lockHint')}</p>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     className={cn(boardMenuItemClass, 'flex gap-2 px-3 py-1.5')}
                     onClick={() => lockShapes()}
                     data-umami-event="board-lock-all"
                   >
-                    <span>Все элементы</span>
+                    <span>{t('settings.allElements')}</span>
                   </DropdownMenuItem>
                   {SHAPE_CATEGORIES.map(({ label, types }) => (
                     <DropdownMenuItem
@@ -422,11 +429,11 @@ export const SettingsDropdown = () => {
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
                   <Unlocked />
-                  <span>Разблокировать элементы</span>
+                  <span>{t('settings.unlockElements')}</span>
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[250px]')}>
                   <p className="text-text-secondary px-3 py-2 text-xs">
-                    Снимает блокировку, позволяя снова редактировать элементы на доске
+                    {t('settings.unlockHint')}
                   </p>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
@@ -434,7 +441,7 @@ export const SettingsDropdown = () => {
                     onClick={() => unlockShapes()}
                     data-umami-event="board-unlock-all"
                   >
-                    <span>Все элементы</span>
+                    <span>{t('settings.allElements')}</span>
                   </DropdownMenuItem>
                   {SHAPE_CATEGORIES.map(({ label, types }) => (
                     <DropdownMenuItem
@@ -455,12 +462,12 @@ export const SettingsDropdown = () => {
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
                   <Eraser />
-                  <span>Ластик</span>
+                  <span>{t('settings.eraser')}</span>
                 </DropdownMenuSubTrigger>
 
                 <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[260px]')}>
                   <p className="text-text-secondary px-3 py-2 text-xs">
-                    Выберите, какие элементы можно стирать ластиком
+                    {t('settings.eraserHint')}
                   </p>
 
                   <DropdownMenuSeparator />
@@ -471,7 +478,7 @@ export const SettingsDropdown = () => {
                     onSelect={(e) => e.preventDefault()}
                     className={cn(boardMenuCheckboxItemClass, 'py-1.5 pr-3 pl-8')}
                   >
-                    Все элементы
+                    {t('settings.allElements')}
                   </DropdownMenuCheckboxItem>
 
                   <DropdownMenuSeparator />

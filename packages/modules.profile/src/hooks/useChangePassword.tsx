@@ -1,25 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from '@xipkg/form';
 import * as z from 'zod';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { useUpdatePassword } from '../services/useUpdatePassword';
 
-const schema = z
-  .object({
-    currentPassword: z.string({ error: 'Обязательное поле' }),
-    newPassword: z.string().min(6, { message: 'Минимум 6 символов' }),
-    confirmPassword: z.string().min(1, { message: 'Обязательное поле' }),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: 'Пароли не совпадают',
-    path: ['confirmPassword'],
-  });
-
-export type ChangePasswordFormValues = z.infer<typeof schema>;
+export type ChangePasswordFormValues = {
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+};
 
 export const useChangePassword = () => {
+  const { t } = useTranslation('profile');
   const [stage, setStage] = useState<'form' | 'success'>('form');
   const [isPasswordShow, setIsPasswordShow] = useState({
     currentPassword: false,
@@ -28,6 +23,21 @@ export const useChangePassword = () => {
   });
 
   const { updatePassword } = useUpdatePassword();
+
+  const schema = useMemo(
+    () =>
+      z
+        .object({
+          currentPassword: z.string({ error: t('validation.required') }),
+          newPassword: z.string().min(6, { message: t('validation.minLength', { count: 6 }) }),
+          confirmPassword: z.string().min(1, { message: t('validation.required') }),
+        })
+        .refine((data) => data.newPassword === data.confirmPassword, {
+          message: t('validation.passwordsMismatch'),
+          path: ['confirmPassword'],
+        }),
+    [t],
+  );
 
   const form = useForm<ChangePasswordFormValues>({
     resolver: zodResolver(schema),
@@ -54,16 +64,16 @@ export const useChangePassword = () => {
         new_password: newPassword,
       });
 
-      toast('Пароль изменён');
+      toast(t('changePassword.toastSuccess'));
       setStage('success');
     } catch (error: any) {
       if (error?.response?.data?.detail === 'Wrong password') {
         form.setError('currentPassword', {
           type: 'manual',
-          message: 'Неверный пароль',
+          message: t('changePassword.wrongPassword'),
         });
       } else {
-        toast('Произошла ошибка');
+        toast(t('changePassword.error'));
       }
     }
   };

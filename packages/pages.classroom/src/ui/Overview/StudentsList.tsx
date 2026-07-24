@@ -12,6 +12,7 @@ import { ErrorState } from './ErrorState';
 import { GroupStudentsListSchema } from 'common.types';
 import { useGroupStudentsList } from 'common.services';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 import { ContactsBadge } from '../Header/components/ContactsBadge';
 import { StudentsListSkeleton } from './StudentsListSkeleon';
 
@@ -20,6 +21,7 @@ type StudentsListPropsT = {
 };
 
 export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
+  const { t } = useTranslation('classroom');
   const { data: students, isLoading, isError, refetch } = useGroupStudentsList(classroomId);
   const deleteStudentMutation = useDeleteStudentFromGroup({ classroom_id: classroomId });
 
@@ -34,16 +36,16 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
   }
 
   if (isError || !students) {
-    return <ErrorState message="Не удалось загрузить список учеников" onRetry={refetch} />;
+    return <ErrorState message={t('overview.studentsLoadError')} onRetry={refetch} />;
   }
 
   if (students.length === 0) {
     return (
       <div className="flex flex-col items-center gap-4 pt-5">
-        <h2 className="text-text-primary text-lg font-semibold">Добавьте ученика в группу</h2>
+        <h2 className="text-text-primary text-lg font-semibold">{t('overview.addStudentTitle')}</h2>
         <ModalStudentsGroup>
           <Button size="m" variant="ghost">
-            Добавить ученика
+            {t('actions.addStudent')}
           </Button>
         </ModalStudentsGroup>
       </div>
@@ -53,9 +55,9 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
   const handleDeleteStudent = async (userId: number) => {
     try {
       await deleteStudentMutation.mutateAsync(userId);
-      toast.success('Студент удален из группы');
+      toast.success(t('overview.studentDeleted'));
     } catch {
-      toast.error('Не удалось удалить студента');
+      toast.error(t('overview.studentDeleteError'));
     }
   };
 
@@ -95,7 +97,7 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
                     handleDeleteStudent(user_id);
                   }}
                 >
-                  Удалить из группы
+                  {t('actions.deleteFromGroup')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

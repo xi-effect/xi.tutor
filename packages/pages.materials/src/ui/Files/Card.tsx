@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '@xipkg/button';
 import { MoreVert } from '@xipkg/icons';
@@ -14,6 +15,8 @@ import {
 import { MaterialPropsT } from '../../types';
 
 export const Card: React.FC<MaterialPropsT> = ({ name }) => {
+  const { t } = useTranslation('materials');
+
   return (
     <div className="hover:bg-background-page border-border-control bg-background-surface relative flex h-[96px] cursor-pointer justify-between rounded-2xl border p-0">
       <File
@@ -35,8 +38,8 @@ export const Card: React.FC<MaterialPropsT> = ({ name }) => {
             align="end"
             className="border-border-default bg-background-surface border p-1"
           >
-            <DropdownMenuItem>Копировать</DropdownMenuItem>
-            <DropdownMenuItem>Удалить</DropdownMenuItem>
+            <DropdownMenuItem>{t('fileCard.copy')}</DropdownMenuItem>
+            <DropdownMenuItem>{t('fileCard.delete')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

@@ -7,10 +7,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@xipkg/select';
+import { useTranslation } from 'react-i18next';
 
 import { StatusEducationT, TypeEducationT, SubjectT } from '../types';
 
 export const Filters = ({ className }: { className?: string }) => {
+  const { t } = useTranslation('classroom');
   const [status, setStatus] = useState<StatusEducationT | 'all'>('all');
   const [type, setType] = useState<TypeEducationT | 'all'>('all');
   const [subject, setSubject] = useState<SubjectT | 'all'>('all');
@@ -24,7 +26,7 @@ export const Filters = ({ className }: { className?: string }) => {
   return (
     <div className={`flex flex-row items-center gap-5 ${className || ''}`}>
       <div className="flex flex-row items-center gap-2">
-        <span className="text-text-secondary text-m-base">Статус:</span>
+        <span className="text-text-secondary text-m-base">{t('filters.status')}</span>
 
         <Select
           value={status}
@@ -37,18 +39,18 @@ export const Filters = ({ className }: { className?: string }) => {
 
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="all">Любой</SelectItem>
-              <SelectItem value="active">Активен</SelectItem>
-              <SelectItem value="paused">На паузе</SelectItem>
-              <SelectItem value="locked">Заблокирован</SelectItem>
-              <SelectItem value="finished">Завершен</SelectItem>
+              <SelectItem value="all">{t('filters.any')}</SelectItem>
+              <SelectItem value="active">{t('filters.active')}</SelectItem>
+              <SelectItem value="paused">{t('filters.paused')}</SelectItem>
+              <SelectItem value="locked">{t('filters.locked')}</SelectItem>
+              <SelectItem value="finished">{t('filters.finished')}</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
       </div>
 
       <div className="flex flex-row items-center gap-2">
-        <span className="text-text-secondary text-m-base">Тип занятия:</span>
+        <span className="text-text-secondary text-m-base">{t('filters.lessonType')}</span>
 
         <Select
           value={type}
@@ -61,16 +63,16 @@ export const Filters = ({ className }: { className?: string }) => {
 
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="all">Любой</SelectItem>
-              <SelectItem value="individual">Индивидуальное</SelectItem>
-              <SelectItem value="group">Групповое</SelectItem>
+              <SelectItem value="all">{t('filters.any')}</SelectItem>
+              <SelectItem value="individual">{t('filters.individual')}</SelectItem>
+              <SelectItem value="group">{t('filters.group')}</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
       </div>
 
       <div className="flex flex-row items-center gap-2">
-        <span className="text-text-secondary text-m-base">Предмет:</span>
+        <span className="text-text-secondary text-m-base">{t('filters.subject')}</span>
 
         <Select
           value={subject}
@@ -83,11 +85,11 @@ export const Filters = ({ className }: { className?: string }) => {
 
           <SelectContent>
             <SelectGroup>
-              <SelectItem value="all">Любой</SelectItem>
-              <SelectItem value="math">Математика</SelectItem>
-              <SelectItem value="computer_science">Информатика</SelectItem>
-              <SelectItem value="foreign_languages">Иностранные языки</SelectItem>
-              <SelectItem value="other">Другое</SelectItem>
+              <SelectItem value="all">{t('filters.any')}</SelectItem>
+              <SelectItem value="math">{t('filters.math')}</SelectItem>
+              <SelectItem value="computer_science">{t('filters.computerScience')}</SelectItem>
+              <SelectItem value="foreign_languages">{t('filters.foreignLanguages')}</SelectItem>
+              <SelectItem value="other">{t('filters.other')}</SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>

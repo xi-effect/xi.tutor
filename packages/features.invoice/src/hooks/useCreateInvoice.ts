@@ -2,6 +2,7 @@ import { paymentsApiConfig, PaymentsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError, showSuccess } from 'common.services';
+import i18n from 'i18next';
 
 export interface CreateInvoicePayload {
   invoice: {
@@ -63,7 +64,7 @@ export const useCreateInvoice = () => {
         }
       }
 
-      showSuccess('addInvoiceTemplate', 'Счёт успешно создан');
+      showSuccess('addInvoiceTemplate', i18n.t('toast.created', { ns: 'invoice' }));
     },
   });
 

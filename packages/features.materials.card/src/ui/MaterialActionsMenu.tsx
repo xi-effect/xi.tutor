@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { AccessModeT, MaterialActionsMenuPropsT } from 'common.types';
 import {
   DropdownMenu,
@@ -13,12 +13,7 @@ import {
 import { Button } from '@xipkg/button';
 import { MoreVert } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
-
-const options: { value: AccessModeT; label: string }[] = [
-  { value: 'read_only', label: 'только репетитор' },
-  { value: 'no_access', label: 'черновик' },
-  { value: 'read_write', label: 'совместная работа' },
-];
+import { useTranslation } from 'react-i18next';
 
 /** text-xs-base нельзя вместе с text-gray-* — twMerge снимает цвет текста */
 const menuSurfaceClass = 'border-border-default bg-background-surface border';
@@ -48,7 +43,17 @@ export const MaterialActionsMenu = ({
   onDuplicate,
   setModalOpen,
 }: MaterialActionsMenuPropsT) => {
+  const { t } = useTranslation('materialsCard');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const options = useMemo(
+    () =>
+      (['read_only', 'no_access', 'read_write'] as AccessModeT[]).map((value) => ({
+        value,
+        label: t(`accessMode.${value}`),
+      })),
+    [t],
+  );
 
   const handleAction = (action: () => void) => (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -93,7 +98,7 @@ export const MaterialActionsMenu = ({
               onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
               data-umami-event="material-change-access-open"
             >
-              Поменять доступ
+              {t('menu.changeAccess')}
             </DropdownMenuSubTrigger>
 
             <DropdownMenuSubContent
@@ -132,7 +137,7 @@ export const MaterialActionsMenu = ({
             onClick={handleAction(onDuplicate)}
             data-umami-event="material-duplicate-to-classroom"
           >
-            Дублировать в кабинет
+            {t('menu.duplicateToClassroom')}
           </DropdownMenuItem>
         )}
         <DropdownMenuItem
@@ -140,7 +145,7 @@ export const MaterialActionsMenu = ({
           onClick={() => setModalOpen(true)}
           data-umami-event="material-edit"
         >
-          Редактировать
+          {t('menu.edit')}
         </DropdownMenuItem>
 
         <DropdownMenuItem
@@ -148,7 +153,7 @@ export const MaterialActionsMenu = ({
           onClick={handleAction(isClassroom ? onDeleteFromClassroom : onDelete)}
           data-umami-event={isClassroom ? 'material-delete-from-classroom' : 'material-delete'}
         >
-          Удалить
+          {t('menu.delete')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

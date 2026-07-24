@@ -6,6 +6,7 @@ import { StatusBadge } from '../components';
 import { CardContentT } from '../../types';
 import { cn } from '@xipkg/utils';
 import { PaymentApproveAction } from 'features.payment.approve';
+import { useTranslation } from 'react-i18next';
 
 export const TableCard = ({
   userData,
@@ -15,6 +16,7 @@ export const TableCard = ({
   currentUserRole,
   onViewInvoice,
 }: CardContentT) => {
+  const { t } = useTranslation('invoiceCard');
   const formattedDate = formatPaymentDate(payment.created_at);
   const amount = parseFloat(payment.total);
 
@@ -29,7 +31,7 @@ export const TableCard = ({
         {formattedDate}
       </div>
       <UserProfile
-        text={userData?.display_name || userData?.username || 'Имя не найдено'}
+        text={userData?.display_name || userData?.username || t('nameNotFound')}
         size="m"
         userId={userId}
         classNameText="line-clamp-2 break-words text-text-primary"
@@ -45,7 +47,7 @@ export const TableCard = ({
           size="s"
           className="text-text-secondary hover:text-text-link h-8 w-8 rounded-full border-none bg-transparent p-0 shadow-none hover:border-transparent hover:bg-transparent focus-visible:ring-0"
           onClick={() => onViewInvoice?.(payment)}
-          aria-label="Просмотреть информацию о счёте"
+          aria-label={t('viewInvoiceAria')}
         >
           <InfoCircle className="fill-icon-secondary h-5 w-5" />
         </Button>

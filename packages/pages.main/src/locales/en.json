@@ -1,0 +1,94 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "add": "Add"
+  },
+  "nearestLessons": {
+    "emptyTitle": "No lessons",
+    "emptyDescription": "No lessons scheduled in the next {{days}} days"
+  },
+  "onboarding": {
+    "sidebar": "Use the left panel to open Home, Classrooms, Materials, or Payment control",
+    "userProfileTutor": "In settings you can change your email and password, connect messengers for notifications, and configure your equipment for video calls with students",
+    "userProfileStudent": "In settings you can change your email and password, connect messengers for notifications, and configure video calls",
+    "classrooms": "A classroom is a virtual space for learning. There you will find materials, the schedule, and payment information",
+    "inviteLinksStudent": "Follow invitation links from tutors to add new classrooms",
+    "inviteStudent": "Send an invitation link to a student",
+    "createGroup": "Or create a group and invite students with a shared link.<br />If you schedule a group lesson, every student in the group will get a notification. Group materials are available to all members",
+    "materials": "Store online boards and notes in Materials",
+    "payments": "Payment control helps you track all finances on the platform: upcoming, completed, and overdue payments",
+    "createInvoice": "To get paid for a lesson, issue an invoice to the student.<br />If the student does not pay, you will not need to remind them: they will receive an automatic overdue payment notification",
+    "hintsTutor": "If you need help, click here to review the tips again, or contact support.<br />Good luck!<br />The sovlium team",
+    "hintsStudent": "If you need help, review the tips again or contact support.<br />Happy learning!<br />The sovlium team"
+  },
+  "materials": {
+    "title": "Materials",
+    "filterAll": "All",
+    "filterNotes": "Notes",
+    "filterBoards": "Boards",
+    "addBoard": "Board",
+    "addNote": "Note",
+    "toMaterials": "To materials",
+    "emptyNotesTitle": "You have no notes",
+    "emptyNotesDescription": "Add a note to make lessons more convenient",
+    "emptyBoardsTitle": "You have no boards",
+    "emptyBoardsDescription": "Add an interactive board for lessons",
+    "emptyTitle": "You have no materials",
+    "emptyDescription": "Add interactive boards and notes to make lessons more convenient",
+    "note": "Note",
+    "board": "Board"
+  },
+  "classrooms": {
+    "title": "Classrooms",
+    "addStudent": "Student",
+    "addGroup": "Study group",
+    "toClassrooms": "To classrooms",
+    "emptyNotFound": "Nothing found",
+    "emptyInvite": "Invite students — individually or to a group",
+    "emptyStudent": "Follow an invitation link to start learning with a tutor",
+    "emptyTitle": "You have no classrooms",
+    "emptyDescription": "You can create a classroom for group or individual lessons",
+    "inviteStudent": "Invite a student",
+    "studentEmptyDescription": "Your tutor should send you an invitation link",
+    "openClassroom": "Open classroom"
+  },
+  "payments": {
+    "title": "Payments",
+    "toPayments": "To payments",
+    "emptyTitle": "You have no payments",
+    "emptyTutorDescription": "You can issue an invoice or read more in the knowledge base",
+    "emptyStudentDescription": "Invoices from tutors will appear here after they are issued",
+    "howItWorks": "How payments work",
+    "createInvoice": "Invoice",
+    "moreAboutFinance": "More about finances"
+  },
+  "sidebar": {
+    "title": "Today's schedule",
+    "toSchedule": "To schedule",
+    "empty": "Plan work and rest",
+    "openSchedule": "Open schedule",
+    "mockStudentName": "Student name",
+    "mockDescription": "Description (generated automatically)"
+  },
+  "lessons": {
+    "title": "Schedule",
+    "goToToday": "Today",
+    "emptyTitle": "No lessons on the selected date",
+    "emptyTutorDescription": "Add, reschedule, and cancel lessons",
+    "emptyStudentDescription": "Lessons scheduled by your tutor appear here",
+    "assignLesson": "Schedule a lesson"
+  },
+  "firstLessonGuide": {
+    "title": "How to start your first lesson?",
+    "description": "We prepared a guide on taking the first steps on the platform and starting your first lesson",
+    "read": "Read",
+    "closeAria": "Close tip"
+  },
+  "actionButtons": {
+    "createGroup": "Create group",
+    "addStudent": "Add student"
+  },
+  "assignLesson": {
+    "button": "Schedule a lesson"
+  }
+}

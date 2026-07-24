@@ -1,18 +1,11 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useForm } from '@xipkg/form';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import * as z from 'zod';
 import { useUpdateEmail } from '../services/useUpdateEmail';
 import { zodResolver } from '@hookform/resolvers/zod';
-
-// Схема валидации для формы изменения почты
-const schema = z.object({
-  email: z.string({ error: 'Обязательное поле' }).email({ message: 'Некорректный формат данных' }),
-  password: z.string({ error: 'Обязательное поле' }).min(6, {
-    message: 'Минимум 6 символов',
-  }),
-});
+import { useTranslation } from 'react-i18next';
 
 export type FormDataT = {
   email: string;
@@ -25,6 +18,7 @@ export interface IEmailModalStage {
 }
 
 export const useChangeEmail = () => {
+  const { t } = useTranslation('profile');
   const [isPasswordShow, setIsPasswordShow] = useState(false);
   const [timer, setTimer] = useState(false);
   const [stage, setStage] = useState<IEmailModalStage>({
@@ -33,6 +27,19 @@ export const useChangeEmail = () => {
   });
 
   const { updateEmail } = useUpdateEmail();
+
+  const schema = useMemo(
+    () =>
+      z.object({
+        email: z
+          .string({ error: t('validation.required') })
+          .email({ message: t('validation.emailFormat') }),
+        password: z.string({ error: t('validation.required') }).min(6, {
+          message: t('validation.minLength', { count: 6 }),
+        }),
+      }),
+    [t],
+  );
 
   const form = useForm<FormDataT>({
     resolver: zodResolver(schema),
@@ -60,7 +67,7 @@ export const useChangeEmail = () => {
 
       if (response.status === 200) {
         setStage({ type: 'success', email: data.email });
-        toast('Вы успешно изменили почту!');
+        toast(t('changeEmail.toastSuccess'));
       }
     } catch (error: any) {
       // Обработка ошибок от API
@@ -75,7 +82,7 @@ export const useChangeEmail = () => {
           setError('password', { message: errors.password });
         }
       } else {
-        toast.error('Произошла ошибка при смене почты');
+        toast.error(t('changeEmail.toastError'));
       }
     }
   };

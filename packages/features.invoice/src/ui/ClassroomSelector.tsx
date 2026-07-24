@@ -1,6 +1,7 @@
 import { FormControl, FormField, FormItem, FormLabel } from '@xipkg/form';
 import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@xipkg/select';
 import { useFetchClassrooms } from 'common.services';
+import { useTranslation } from 'react-i18next';
 
 type ClassroomSelectorProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -8,14 +9,15 @@ type ClassroomSelectorProps = {
 };
 
 export const ClassroomSelector = ({ control }: ClassroomSelectorProps) => {
+  const { t } = useTranslation('invoice');
   const { data: classrooms, isLoading } = useFetchClassrooms();
 
   const isDisabled = !classrooms || classrooms.length === 0;
 
   const getPlaceholder = () => {
-    if (isLoading) return 'Загрузка...';
-    if (isDisabled) return 'Кабинеты не найдены';
-    return 'Выберите кабинет';
+    if (isLoading) return t('classroom.loading');
+    if (isDisabled) return t('classroom.notFound');
+    return t('classroom.placeholder');
   };
 
   return (
@@ -25,7 +27,7 @@ export const ClassroomSelector = ({ control }: ClassroomSelectorProps) => {
       defaultValue=""
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="text-text-primary">Кабинет</FormLabel>
+          <FormLabel className="text-text-primary">{t('classroom.label')}</FormLabel>
           <FormControl>
             <Select
               disabled={isLoading || isDisabled}

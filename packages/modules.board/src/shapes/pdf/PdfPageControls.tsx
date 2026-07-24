@@ -5,6 +5,7 @@ import { ArrowLeft, ArrowRight, Image } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { boardMenuSurfaceClass } from '../../ui/boardTheme';
 import { PDF_PAGES_VISIBLE_MAX } from './PdfShape';
+import { useTranslation } from 'react-i18next';
 
 type PdfPageControlsProps = {
   fileName: string;
@@ -27,6 +28,7 @@ export const PdfPageControls = ({
   pagesVisible = 1,
   onPagesVisibleChange,
 }: PdfPageControlsProps) => {
+  const { t } = useTranslation('board');
   const goPrev = useCallback(
     (e: React.PointerEvent) => {
       e.stopPropagation();
@@ -94,10 +96,10 @@ export const PdfPageControls = ({
             size="s"
             onPointerDown={(e) => e.stopPropagation()}
           >
-            {pagesVisible} стр.
+            {t('pdf.pagesShort', { count: pagesVisible })}
           </SelectTrigger>
           <SelectContent className={cn(boardMenuSurfaceClass, 'w-[120px]')}>
-            <span className="text-text-primary px-2 text-xs">Показывать</span>
+            <span className="text-text-primary px-2 text-xs">{t('pdf.show')}</span>
             {Array.from({ length: PDF_PAGES_VISIBLE_MAX }, (_, i) => {
               const n = i + 1;
               return (
@@ -106,7 +108,7 @@ export const PdfPageControls = ({
                   value={String(n)}
                   className="text-text-primary focus:text-text-primary data-highlighted:text-text-primary"
                 >
-                  {n} стр.
+                  {t('pdf.pagesShort', { count: n })}
                 </SelectItem>
               );
             })}
@@ -122,7 +124,7 @@ export const PdfPageControls = ({
             e.stopPropagation();
             onExtractPage();
           }}
-          title="Извлечь страницу как изображение"
+          title={t('pdf.extractPage')}
         >
           <Image className="h-4 w-4" />
         </Button>

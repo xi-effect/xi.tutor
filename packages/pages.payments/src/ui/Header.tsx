@@ -4,11 +4,7 @@ import { cn } from '@xipkg/utils';
 import { useCurrentUser } from 'common.services';
 import { Plus } from '@xipkg/icons';
 import { useMemo } from 'react';
-
-const baseTabs = [
-  { id: 'invoices', label: 'Журнал оплат' },
-  { id: 'templates', label: 'Типы оплат' },
-];
+import { useTranslation } from 'react-i18next';
 
 interface HeaderProps {
   onCreateInvoice: () => void;
@@ -23,22 +19,27 @@ export const Header = ({
   activeTab,
   onTabChange,
 }: HeaderProps) => {
+  const { t } = useTranslation('payments');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
-  const tabs = useMemo(
-    () => (isTutor ? baseTabs : baseTabs.filter((t) => t.id !== 'templates')),
-    [isTutor],
-  );
+
+  const tabs = useMemo(() => {
+    const baseTabs = [
+      { id: 'invoices', label: t('tabs.invoices') },
+      { id: 'templates', label: t('tabs.templates') },
+    ];
+    return isTutor ? baseTabs : baseTabs.filter((tab) => tab.id !== 'templates');
+  }, [isTutor, t]);
 
   const isTemplatesTab = activeTab === 'templates';
-  const actionLabel = isTemplatesTab ? 'Создать тип оплаты' : 'Создать счёт на оплату';
+  const actionLabel = isTemplatesTab ? t('actions.createTemplate') : t('actions.createInvoice');
   const onActionClick = isTemplatesTab ? onCreateTemplate : onCreateInvoice;
 
   return (
     <div className="inline-flex w-full flex-col justify-between gap-4 sm:flex-row sm:items-center">
       <div className="flex flex-col items-start justify-start gap-4 sm:flex-row sm:items-center sm:gap-10">
         <h1 className="font-playfair text-text-primary pb-2 text-3xl font-medium sm:text-5xl">
-          Контроль оплат
+          {t('title')}
         </h1>
 
         {tabs.length > 1 && (

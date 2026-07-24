@@ -1,0 +1,9 @@
+{
+  "titlePlaceholder": "Enter a title",
+  "validation": {
+    "required": "Title cannot be empty",
+    "max": "Title is too long"
+  },
+  "collaborators": "Participants in the note",
+  "you": "You"
+}

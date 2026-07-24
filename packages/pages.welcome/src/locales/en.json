@@ -2,6 +2,7 @@
   "buttons": {
     "back_button": "Back",
     "continue_button": "Continue",
-    "next_button": "Next"
+    "next_button": "Next",
+    "start_button": "Get started"
   }
 }

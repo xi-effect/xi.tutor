@@ -1,6 +1,7 @@
 import { Button } from '@xipkg/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { usePaymentReceiverConfirmation } from 'common.services';
+import { useTranslation } from 'react-i18next';
 import { PaymentApproveButtonPropsT } from '../types';
 import { PaymentApproveButtonContent } from './PaymentApproveButtonContent';
 
@@ -12,6 +13,7 @@ export const PaymentApproveButton = ({
   id,
   classroomId,
 }: PaymentApproveButtonPropsT) => {
+  const { t } = useTranslation('paymentApprove');
   const { mutate: receiverConfirmationMutation, isPending } = usePaymentReceiverConfirmation({
     classroomId: classroomId?.toString(),
   });
@@ -33,9 +35,7 @@ export const PaymentApproveButton = ({
             </Button>
           </TooltipTrigger>
           <TooltipContent side="right" align="center" className="z-99999!">
-            {isTutor
-              ? 'Если счёт уже оплачен, можно подтвердить, не дожидаясь подтвержения ученика'
-              : 'Подтвердите оплату счета, чтобы репетитор знал об этом'}
+            {isTutor ? t('tooltips.tutorSender') : t('tooltips.studentSender')}
           </TooltipContent>
         </Tooltip>
       </div>
@@ -59,7 +59,7 @@ export const PaymentApproveButton = ({
             </Button>
           </TooltipTrigger>
           <TooltipContent side="right" align="center" className="z-99999!">
-            Ученик оплатил счет, подтвердите получение средств
+            {t('tooltips.receiver')}
           </TooltipContent>
         </Tooltip>
       </div>

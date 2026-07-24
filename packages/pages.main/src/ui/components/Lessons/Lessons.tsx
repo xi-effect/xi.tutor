@@ -3,6 +3,7 @@ import { Add, Undo } from '@xipkg/icons';
 import { AddingLessonModal } from 'features.lesson.add';
 import { MovingLessonModal } from 'features.lesson.move';
 import { useCallback, useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { AllLessons } from './AllLessons';
 import {
   getCalendarDayQueryRange,
@@ -26,6 +27,7 @@ const getToday = () => {
 };
 
 export const Lessons = () => {
+  const { t } = useTranslation('main');
   const [open, setOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(getToday);
   const [visibleMonthInfo, setVisibleMonthInfo] = useState<DominantVisibleMonthInfo | null>(null);
@@ -107,7 +109,7 @@ export const Lessons = () => {
         <div className="flex flex-row items-center gap-2 pr-3">
           <div className="flex min-w-0 flex-1 flex-row items-baseline gap-3">
             <h2 className="text-l-base 2xl:text-xl-base text-text-primary m-0 shrink-0 font-medium">
-              Расписание
+              {t('lessons.title')}
             </h2>
             {monthLabelInHeader ? (
               <span className="text-m-base 2xl:text-l-base text-text-secondary truncate font-normal">
@@ -126,7 +128,9 @@ export const Lessons = () => {
                 id="schedule-go-to-today"
               >
                 <Undo className="fill-icon-secondary size-4 shrink-0" />
-                <span className="text-s-base 2xl:text-m-base font-normal">К сегодня</span>
+                <span className="text-s-base 2xl:text-m-base font-normal">
+                  {t('lessons.goToToday')}
+                </span>
               </Button>
             ) : null}
             {isTutor ? (

@@ -1,0 +1,20 @@
+{
+  "changed": "Changed: {{date}}",
+  "updated": "Updated: {{date}}",
+  "updatedGallery": "Updated {{date}}",
+  "date": {
+    "today": "today",
+    "yesterday": "yesterday"
+  },
+  "accessMode": {
+    "read_write": "collaborative",
+    "read_only": "tutor only",
+    "no_access": "draft"
+  },
+  "menu": {
+    "changeAccess": "Change access",
+    "duplicateToClassroom": "Duplicate to classroom",
+    "edit": "Edit",
+    "delete": "Delete"
+  }
+}

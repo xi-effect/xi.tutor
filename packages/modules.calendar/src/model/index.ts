@@ -1,5 +1,5 @@
 export {
-  eventFormSchema,
+  createEventFormSchema,
   type EventFormData,
   type EventFormInput,
   type LessonFields,

@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./locales": "./src/locales/index.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -14,6 +15,8 @@
     "@xipkg/button": "4.3.0",
     "@xipkg/modal": "4.6.0",
     "common.services": "workspace:*",
+    "i18next": "24.2.2",
+    "react-i18next": "15.4.1",
     "sonner": "^2.0.7"
   },
   "devDependencies": {

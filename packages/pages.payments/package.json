@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./locales": "./src/locales/index.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -39,7 +40,9 @@
     "features.invoice.card": "workspace:*",
     "features.payment.approve": "workspace:*",
     "features.table": "workspace:*",
+    "i18next": "24.2.2",
     "react-hook-form": "^7.73.1",
+    "react-i18next": "15.4.1",
     "zod": "^4.3.6"
   },
   "devDependencies": {

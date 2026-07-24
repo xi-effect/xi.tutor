@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
 import { Add } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
@@ -38,6 +39,7 @@ export const AllLessons = ({
   onSaveLesson,
   onAddLesson,
 }: AllLessonsProps) => {
+  const { t } = useTranslation('main');
   const nearestIndex = useMemo(
     () => findNearestLessonIndex(lessons, new Date(), dayDate),
     [lessons, dayDate],
@@ -81,12 +83,12 @@ export const AllLessons = ({
             />
             <div className="flex max-w-md flex-col gap-2 text-center">
               <p className="text-m-base text-text-primary font-semibold">
-                На выбранную дату нет занятий
+                {t('lessons.emptyTitle')}
               </p>
               <p className="text-s-base text-text-secondary dark:text-text-muted">
                 {onAddLesson
-                  ? 'Добавляйте, переносите и отменяйте занятия'
-                  : 'Здесь отображаются занятия, которые назначил репетитор'}
+                  ? t('lessons.emptyTutorDescription')
+                  : t('lessons.emptyStudentDescription')}
               </p>
             </div>
             {onAddLesson ? (
@@ -98,7 +100,7 @@ export const AllLessons = ({
                 data-umami-event="schedule-empty-add-lesson"
                 id="schedule-empty-add-lesson"
               >
-                Назначить занятие
+                {t('lessons.assignLesson')}
                 <Add className="fill-icon-primary ml-1 size-4 shrink-0" />
               </Button>
             ) : null}

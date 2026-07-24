@@ -18,6 +18,7 @@ import { useInvitationsList, useAddInvitation, useDeleteInvitation } from 'commo
 import { InvitationDataT } from 'common.types';
 import { env } from 'common.env';
 import { PRODUCT_ANALYTICS_EVENTS, trackProductEvent } from 'common.utils';
+import { useTranslation } from 'react-i18next';
 
 type InviteAnalyticsSource = 'main' | 'classrooms' | 'classroom' | 'students' | 'unknown';
 
@@ -40,6 +41,7 @@ export const ModalInvitation = ({
   onOpenChange,
   analyticsSource = 'unknown',
 }: ModalInvitationProps) => {
+  const { t } = useTranslation('invitesModal');
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
@@ -82,8 +84,8 @@ export const ModalInvitation = ({
       invite_id: inviteId != null ? String(inviteId) : undefined,
       source: analyticsSource,
     });
-    toast.success('Ссылка скопирована');
-    toast.info('Отправьте ссылку ученику');
+    toast.success(t('toast.linkCopied'));
+    toast.info(t('toast.sendToStudent'));
   };
 
   const handleAddInvitation = useCallback(() => {
@@ -119,21 +121,25 @@ export const ModalInvitation = ({
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
           <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
-            Индивидуальные приглашения
+            {t('modal.title')}
           </ModalTitle>
         </ModalHeader>
 
         <ModalBody className="px-4 py-2">
           <p className="dark:text-text-primary flex flex-wrap items-center gap-1.5 px-2 pb-2 text-left">
-            <span>Скопируйте ссылку-приглашение</span>
+            <span>{t('modal.copyHintBefore')}</span>
             <Copy size="sm" className="fill-icon-secondary size-4 shrink-0" aria-hidden />
-            <span>и отправьте ученику</span>
+            <span>{t('modal.copyHintAfter')}</span>
           </p>
           <Table>
             <TableHeader>
               <TableRow className="flex justify-between">
-                <TableHead className="text-text-primary flex-1 text-sm">Ссылка</TableHead>
-                <TableHead className="text-text-primary flex-1 text-sm">Использований</TableHead>
+                <TableHead className="text-text-primary flex-1 text-sm">
+                  {t('modal.link')}
+                </TableHead>
+                <TableHead className="text-text-primary flex-1 text-sm">
+                  {t('modal.usageCount')}
+                </TableHead>
                 <TableHead className="w-8" />
               </TableRow>
             </TableHeader>
@@ -154,14 +160,14 @@ export const ModalInvitation = ({
                             size="s"
                             className="bg-background-page hover:bg-background-subtle text-text-secondary hover:text-text-primary size-7 shrink-0 rounded-md p-0"
                             onClick={handleCopyLink(invitation.code, invitation.id)}
-                            aria-label="Копировать ссылку"
+                            aria-label={t('modal.copyLink')}
                             data-umami-event="invite-copy-link"
                             data-umami-event-invite-id={invitation.id}
                           >
                             <Copy size="sm" className="size-4 fill-current" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Копировать ссылку</TooltipContent>
+                        <TooltipContent>{t('modal.copyLink')}</TooltipContent>
                       </Tooltip>
                     </TableCell>
                     <TableCell className="dark:text-text-primary flex max-w-[50%] flex-1">
@@ -191,7 +197,7 @@ export const ModalInvitation = ({
 
         <ModalFooter>
           {data?.length > 9 ? (
-            <Button variant="none">Максимум 10 приглашений</Button>
+            <Button variant="none">{t('modal.maxInvites')}</Button>
           ) : (
             <Button
               onClick={handleAddInvitation}
@@ -200,7 +206,7 @@ export const ModalInvitation = ({
               data-umami-event="invite-create"
               loading={isAdding && data?.length > 0}
             >
-              Создать новое приглашение
+              {t('modal.createInvite')}
             </Button>
           )}
         </ModalFooter>

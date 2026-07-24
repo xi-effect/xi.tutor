@@ -1,6 +1,7 @@
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { useMediaQuery } from '@xipkg/utils';
+import { useTranslation } from 'react-i18next';
 
 type CommentFieldProps = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -8,6 +9,7 @@ type CommentFieldProps = {
 };
 
 export const CommentField = ({ control }: CommentFieldProps) => {
+  const { t } = useTranslation('invoice');
   const isMobile = useMediaQuery('(max-width: 500px)');
 
   return (
@@ -18,11 +20,11 @@ export const CommentField = ({ control }: CommentFieldProps) => {
       render={({ field: formField }) => (
         <FormItem>
           <FormLabel className="text-text-primary">
-            {isMobile ? 'Комментарий' : 'Комментарий для ученика'}{' '}
-            <span className="text-text-secondary text-xs-base">не обязательно</span>
+            {isMobile ? t('comment.labelMobile') : t('comment.label')}{' '}
+            <span className="text-text-secondary text-xs-base">{t('comment.optional')}</span>
           </FormLabel>
           <FormControl className="my-2">
-            <Input placeholder="например, оплата занятий за сентябрь" {...formField} />
+            <Input placeholder={t('comment.placeholder')} {...formField} />
           </FormControl>
           <FormMessage />
         </FormItem>

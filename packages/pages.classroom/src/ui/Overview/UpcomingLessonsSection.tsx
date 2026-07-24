@@ -20,6 +20,7 @@ import {
   type SoleRescheduleTarget,
 } from 'features.lesson.move';
 import { CancelLessonModal, type LessonSchedulerMetaForCancel } from 'features.lesson.cancel';
+import { useTranslation } from 'react-i18next';
 import { useClassroomScheduleOptional } from '../Calendar/ClassroomScheduleContext';
 import { UpcomingLessonCard } from './UpcomingLessonCard';
 import { UpcomingLessonCardSkeleton } from './UpcomingLessonCardSkeleton';
@@ -108,6 +109,7 @@ function getSoleTarget(item: ScheduleItem, classroomId: number): SoleRescheduleT
 }
 
 export const UpcomingLessonsSection = () => {
+  const { t } = useTranslation('classroom');
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const scheduleCtx = useClassroomScheduleOptional();
@@ -167,7 +169,7 @@ export const UpcomingLessonsSection = () => {
       <div className="flex flex-col gap-4">
         <div className="flex flex-row items-center justify-between gap-2 pr-0 sm:pr-0">
           <h2 className="text-xl-base text-text-primary first-letter:uppercase">
-            Ближайшие занятия
+            {t('overview.upcomingLessons')}
           </h2>
           <div className="flex items-center gap-1">
             {isTutor ? (
@@ -176,7 +178,7 @@ export const UpcomingLessonsSection = () => {
                 variant="none"
                 className="bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
                 onClick={() => onAddLessonClick?.()}
-                aria-label="Добавить занятие"
+                aria-label={t('actions.addLesson')}
               >
                 <Add className="fill-icon-brand size-6" />
               </Button>
@@ -204,10 +206,10 @@ export const UpcomingLessonsSection = () => {
               />
               <div className="flex max-w-[520px] flex-col gap-2 text-center">
                 <p className="text-m-base text-text-primary font-semibold">
-                  В ближайшие 7 дней занятий нет
+                  {t('overview.noLessonsTitle')}
                 </p>
                 <p className="text-s-base text-text-secondary dark:text-text-muted">
-                  Когда уроки появятся в расписании кабинета, они отобразятся здесь
+                  {t('overview.noLessonsDescription')}
                 </p>
               </div>
             </div>

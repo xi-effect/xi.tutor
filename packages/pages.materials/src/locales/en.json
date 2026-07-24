@@ -1,0 +1,24 @@
+{
+  "title": "Materials",
+  "tabs": {
+    "boards": "Boards",
+    "notes": "Notes"
+  },
+  "empty": {
+    "boardsTitle": "No boards yet",
+    "boardsDescription": "Create a board — it will appear in this list.",
+    "notesTitle": "No notes yet",
+    "notesDescription": "Create a note — it will appear in this list.",
+    "filesTitle": "No files yet",
+    "filesDescription": "Uploaded files will appear in this list.",
+    "helpLink": "Learn more about working with materials"
+  },
+  "error": {
+    "title": "Error",
+    "noAccess": "You do not have access to this page"
+  },
+  "fileCard": {
+    "copy": "Copy",
+    "delete": "Delete"
+  }
+}

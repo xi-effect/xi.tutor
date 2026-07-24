@@ -2,8 +2,10 @@ import { MobileTutorActionButton } from 'features.invites';
 import { ButtonsHeader, LinkListStudents, CardsGridSimple } from './components';
 import { useCurrentUser } from 'common.services';
 import { cn, useMediaQuery } from '@xipkg/utils';
+import { useTranslation } from 'react-i18next';
 
 export const ClassroomsPage = () => {
+  const { t } = useTranslation('classrooms');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const isMobile = useMediaQuery('(max-width: 960px)');
@@ -20,7 +22,7 @@ export const ClassroomsPage = () => {
       <div className="shrink-0 px-5 pt-5 sm:px-10 sm:pt-10">
         <div className="inline-flex w-full flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <h1 className="font-playfair text-text-primary pb-2 text-3xl font-medium sm:text-5xl">
-            Кабинеты
+            {t('title')}
           </h1>
 
           {isTutor && (

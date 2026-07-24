@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { formSchema, type FormData, type FormInput } from '../model/formSchema';
+import { createFormSchema, type FormData, type FormInput } from '../model/formSchema';
 import { useFetchClassrooms, useCreateClassroomEvent } from 'common.services';
 import type { CreateClassroomEventRequestDto } from 'common.api';
 import { toLocalISOString } from 'modules.calendar';
@@ -108,9 +110,11 @@ const resolveLessonType = (
 };
 
 export const useAddingForm = (initialDate?: Date | null, options: UseAddingFormOptions = {}) => {
+  const { t } = useTranslation('lessonAdd');
   const { data: classrooms, isLoading: isClassroomsLoading } = useFetchClassrooms();
   const { fixedClassroomId, onSubmit: externalSubmit, analyticsSource = 'unknown' } = options;
   const createEvent = useCreateClassroomEvent();
+  const formSchema = useMemo(() => createFormSchema(t), [t]);
 
   const form = useForm<FormInput, unknown, FormData>({
     resolver: zodResolver(formSchema),
@@ -139,7 +143,7 @@ export const useAddingForm = (initialDate?: Date | null, options: UseAddingFormO
         has_description: Boolean(data.description?.trim()),
       },
     });
-    toast.success('Занятие добавлено');
+    toast.success(t('toast.success'));
   };
 
   const handleClearForm = () => {

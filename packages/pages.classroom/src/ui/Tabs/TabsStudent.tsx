@@ -1,7 +1,9 @@
+import { useMemo } from 'react';
 import { Tabs } from '@xipkg/tabs';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { switcherTabClass } from 'common.ui';
 import { cn } from '@xipkg/utils';
+import { useTranslation } from 'react-i18next';
 
 import { ClassroomScheduleProvider } from '../Calendar/ClassroomScheduleContext';
 import { CalendarScheduleToolbar } from '../Calendar/ClassroomScheduleParts';
@@ -9,15 +11,19 @@ import { SharedTabsContent } from './SharedTabsContent';
 import { useTabNavigation } from './useTabNavigation';
 import { ClassroomMobileTabSwitcher } from './ClassroomMobileTabSwitcher';
 
-const tabs = [
-  { id: 'overview', label: 'Сводка' },
-  { id: 'materials', label: 'Материалы' },
-  { id: 'schedule', label: 'Расписание' },
-  { id: 'payments', label: 'Оплаты' },
-];
-
 export const TabsStudent = () => {
+  const { t } = useTranslation('classroom');
   const { isMobile, currentTab, handleTabChange } = useTabNavigation();
+
+  const tabs = useMemo(
+    () => [
+      { id: 'overview', label: t('tabs.overview') },
+      { id: 'materials', label: t('tabs.materials') },
+      { id: 'schedule', label: t('tabs.schedule') },
+      { id: 'payments', label: t('tabs.payments') },
+    ],
+    [t],
+  );
 
   return (
     <ClassroomScheduleProvider>

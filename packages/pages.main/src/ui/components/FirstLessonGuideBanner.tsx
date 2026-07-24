@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
 import { ArrowUpRight, Close } from '@xipkg/icons';
 
@@ -10,6 +11,7 @@ const FIRST_LESSON_GUIDE_URL =
 export const FIRST_LESSON_GUIDE_BANNER_STORAGE_KEY = 'sovlium.main.firstLessonGuideBannerDismissed';
 
 export const FirstLessonGuideBanner = () => {
+  const { t } = useTranslation('main');
   const [dismissed, setDismissed] = useState(() => {
     if (typeof window === 'undefined') return false;
     try {
@@ -38,10 +40,10 @@ export const FirstLessonGuideBanner = () => {
     <div className="bg-action-primary-background-pressed mr-3 flex h-[92px] max-w-full shrink-0 items-center justify-between gap-4 overflow-hidden rounded-2xl px-5">
       <div className="min-w-0 flex-1 pr-2">
         <div className="text-text-on-accent text-m-base leading-tight font-semibold">
-          Как начать первое занятие?
+          {t('firstLessonGuide.title')}
         </div>
         <p className="text-text-on-accent/85 text-s-base mt-0.5 line-clamp-2 leading-snug">
-          Подготовили гайд о том, как сделать первые шаги на платформе и начать первое занятие
+          {t('firstLessonGuide.description')}
         </p>
       </div>
       <div className="flex shrink-0 items-center gap-2">
@@ -52,7 +54,7 @@ export const FirstLessonGuideBanner = () => {
           onClick={handleRead}
           data-umami-event="main-first-lesson-guide-read"
         >
-          Читать
+          {t('firstLessonGuide.read')}
           <ArrowUpRight className="fill-icon-brand size-4 shrink-0" />
         </Button>
         <Button
@@ -60,7 +62,7 @@ export const FirstLessonGuideBanner = () => {
           variant="none"
           className="hover:bg-background-surface/10 flex size-10 items-center justify-center rounded-xl p-0"
           onClick={handleDismiss}
-          aria-label="Закрыть подсказку"
+          aria-label={t('firstLessonGuide.closeAria')}
           data-umami-event="main-first-lesson-guide-dismiss"
         >
           <Close className="fill-action-primary-text size-5 shrink-0" />
