@@ -75,7 +75,6 @@ export const VirtualGridlList = <T extends IItem>({
               width: '100%',
               display: 'grid',
               gap,
-              paddingRight: gap,
               paddingBottom: gap,
               gridTemplateColumns: `repeat(${colCount}, minmax(${minItemWidth}px,1fr)`,
               transform: `translateY(${virtualItem.start}px)`,

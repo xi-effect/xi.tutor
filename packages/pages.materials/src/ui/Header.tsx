@@ -1,5 +1,4 @@
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
-import { switcherTabClass } from 'common.ui';
 import { cn } from '@xipkg/utils';
 import { MaterialsAdd } from 'features.materials.add';
 
@@ -9,31 +8,34 @@ const tabs = [
 ];
 
 interface HeaderProps {
-  activeTab: string;
+  activeTab: 'notes' | 'boards';
   onTabChange: (tabId: string) => void;
 }
 
 export const Header = ({ activeTab, onTabChange }: HeaderProps) => {
   return (
-    <div className="xs:flex-row xs:items-center flex flex-col items-start pb-4">
-      <h1 className="text-text-primary text-2xl font-normal">Материалы</h1>
+    <div className="inline-flex w-full flex-col justify-between gap-4 sm:flex-row sm:items-center">
+      <div className="flex flex-col items-start justify-start gap-4 sm:flex-row sm:items-center sm:gap-10">
+        <h1 className="font-playfair text-text-primary pb-2 text-3xl font-medium sm:text-5xl">
+          Материалы
+        </h1>
 
-      <div className="xs:mt-0 xs:ml-4 xs:w-auto mt-2 flex h-[32px] w-full flex-row items-center gap-2">
         <SwitcherAnimate
           tabs={tabs}
           activeTab={activeTab}
           onChange={onTabChange}
-          className="xs:w-auto flex h-[32px] w-full flex-row gap-4 rounded-lg"
+          className="bg-background-subtle !h-auto w-full justify-start gap-0.5 rounded-[10px] p-1 sm:w-auto"
           tabClassName={cn(
-            switcherTabClass,
-            'text-m-base h-[28px] flex-1 font-medium xs:flex-none xs:px-3',
+            '!h-auto flex-1 items-start justify-start rounded-lg px-4 py-1.5 text-base leading-5 font-medium sm:flex-none',
+            'data-[state=inactive]:text-text-secondary data-[state=inactive]:hover:text-text-secondary',
+            'data-[state=active]:text-text-primary data-[state=active]:hover:text-text-primary',
           )}
-          indicatorClassName="rounded-md"
+          indicatorClassName="rounded-lg bg-background-surface shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
         />
       </div>
 
-      <div className="xs:flex ml-auto hidden items-center">
-        <MaterialsAdd onlyDrafts />
+      <div className="hidden items-center justify-start sm:flex">
+        <MaterialsAdd onlyDrafts kind={activeTab === 'boards' ? 'board' : 'note'} />
       </div>
     </div>
   );

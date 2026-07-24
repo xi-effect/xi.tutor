@@ -1,6 +1,11 @@
 import { useState } from 'react';
 import { useParams } from '@tanstack/react-router';
-import { accessModeLabels, accessModeStyles, formatToShortDate } from '../utils';
+import {
+  accessModeLabels,
+  accessModeStyles,
+  formatToShortDate,
+  formatUpdatedLabel,
+} from '../utils';
 import { cn } from '@xipkg/utils';
 import { Badge } from '@xipkg/badge';
 import { MaterialActionsMenu } from './MaterialActionsMenu';
@@ -11,7 +16,7 @@ import { useCurrentUser } from 'common.services';
 import { ModalEditMaterialName } from 'features.materials.edit';
 
 type MaterialsCardProps = MaterialPropsT & {
-  layout?: 'default' | 'compact';
+  layout?: 'default' | 'compact' | 'gallery';
 };
 
 export const MaterialsCard = ({
@@ -67,6 +72,19 @@ export const MaterialsCard = ({
     />
   );
 
+  const editModal = (
+    <ModalEditMaterialName
+      isClassroom={isClassroom}
+      isOpen={modalOpen}
+      content_kind={content_kind}
+      name={name}
+      onClose={() => {
+        setModalOpen(false);
+      }}
+      handleUpdateName={handleUpdateName}
+    />
+  );
+
   if (layout === 'compact') {
     return (
       <>
@@ -96,16 +114,55 @@ export const MaterialsCard = ({
             </div>
           )}
         </div>
-        <ModalEditMaterialName
-          isClassroom={isClassroom}
-          isOpen={modalOpen}
-          content_kind={content_kind}
-          name={name}
-          onClose={() => {
-            setModalOpen(false);
-          }}
-          handleUpdateName={handleUpdateName}
-        />
+        {editModal}
+      </>
+    );
+  }
+
+  if (layout === 'gallery') {
+    const updatedLabel = isLoading ? '...' : updated_at ? formatUpdatedLabel(updated_at) : '';
+
+    return (
+      <>
+        <div
+          onClick={handleCardClick}
+          className={cn(
+            'group bg-background-surface flex h-40 w-full shrink-0 cursor-pointer flex-col justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]',
+            className,
+          )}
+          data-umami-event="material-card-open"
+          data-umami-event-type={content_kind}
+        >
+          <div className="flex w-full items-start justify-between">
+            <div className="bg-status-info-background [&>svg]:fill-icon-brand flex size-10 shrink-0 items-center justify-center rounded-[10px]">
+              {cardIcon[content_kind]}
+            </div>
+
+            {isTutor && <div className="flex size-8 items-center justify-center">{menu}</div>}
+          </div>
+
+          <div className="flex w-full flex-col items-start gap-1 overflow-hidden">
+            {student_access_mode && accessModeLabels[student_access_mode] && (
+              <Badge
+                variant="default"
+                className={cn(
+                  'text-s-base px-2 py-1 font-medium',
+                  accessModeStyles[student_access_mode],
+                )}
+              >
+                {accessModeLabels[student_access_mode]}
+              </Badge>
+            )}
+
+            <p className="text-text-primary line-clamp-2 w-full text-base leading-5 font-medium">
+              {name}
+            </p>
+            <p className="text-text-secondary w-full text-sm leading-5 font-normal">
+              Обновлено {updatedLabel}
+            </p>
+          </div>
+        </div>
+        {editModal}
       </>
     );
   }
@@ -148,16 +205,7 @@ export const MaterialsCard = ({
         <div className="flex h-6 w-6 items-center justify-center rounded-full">{menu}</div>
       )}
 
-      <ModalEditMaterialName
-        isClassroom={isClassroom}
-        isOpen={modalOpen}
-        content_kind={content_kind}
-        name={name}
-        onClose={() => {
-          setModalOpen(false);
-        }}
-        handleUpdateName={handleUpdateName}
-      />
+      {editModal}
     </div>
   );
 };

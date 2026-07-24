@@ -32,7 +32,10 @@ export const CardsList = <Role extends RoleT>({
   onViewInvoice,
 }: CardsListPropsT<Role>) => {
   return (
-    <div className="h-[calc(100dvh-154px)] w-full overflow-y-auto pr-2 pl-px" ref={parentRef}>
+    <div
+      className="h-[calc(100dvh-200px)] w-full overflow-y-auto px-5 pb-5 sm:px-10 sm:pb-10"
+      ref={parentRef}
+    >
       <div
         style={{
           height: `${rowVirtualizer.getTotalSize()}px`,
@@ -75,7 +78,6 @@ export const CardsList = <Role extends RoleT>({
         })}
       </div>
 
-      {/* Индикатор загрузки */}
       <Loader isLoading={isLoading} isFetchingNextPage={isFetchingNextPage} />
     </div>
   );

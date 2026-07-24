@@ -87,10 +87,10 @@ export const ScheduleMobileView = ({
 
   return (
     <div className={cn('bg-background-page flex h-full min-h-0 flex-col overflow-hidden')}>
-      <div className="bg-background-page shrink-0 px-4 pt-4 pb-3">
+      <div className="bg-background-page shrink-0 px-5 pt-5 pb-3">
         <div className="bg-background-surface flex h-[184px] flex-col rounded-[20px] p-4">
           <div className="flex h-[32px] flex-row items-center justify-between gap-2">
-            <span className="text-l-base text-text-primary font-medium">Расписание</span>
+            <span className="font-playfair text-text-primary text-2xl font-medium">Расписание</span>
             <span className="text-s-base text-text-secondary">{monthLabel}</span>
           </div>
           <ScheduleWeekCarousel

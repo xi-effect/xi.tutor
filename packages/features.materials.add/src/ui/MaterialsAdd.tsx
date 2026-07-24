@@ -1,22 +1,23 @@
 import { useCreateMaterial } from '../hooks/useCreateMaterial';
 import { Note, Board } from './components';
 
-export const MaterialsAdd = ({ onlyDrafts = false }: { onlyDrafts?: boolean }) => {
+type MaterialsAddProps = {
+  onlyDrafts?: boolean;
+  kind?: 'note' | 'board';
+};
+
+export const MaterialsAdd = ({ onlyDrafts = false, kind }: MaterialsAddProps) => {
   const { createMaterial } = useCreateMaterial();
 
   return (
-    <div className="ml-auto flex flex-row items-center gap-2">
-      {/* {isTutor && (
-        <File
-          onUpload={() => {
-            console.log('file');
-          }}
-        />
-      )} */}
+    <div className="flex flex-row items-center gap-2">
+      {(!kind || kind === 'note') && (
+        <Note onlyDrafts={onlyDrafts} onCreate={() => createMaterial('note')} />
+      )}
 
-      <Note onlyDrafts={onlyDrafts} onCreate={() => createMaterial('note')} />
-
-      <Board onlyDrafts={onlyDrafts} onCreate={() => createMaterial('board')} />
+      {(!kind || kind === 'board') && (
+        <Board onlyDrafts={onlyDrafts} onCreate={() => createMaterial('board')} />
+      )}
     </div>
   );
 };

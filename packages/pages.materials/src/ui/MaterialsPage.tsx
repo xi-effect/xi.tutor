@@ -64,11 +64,12 @@ const MaterialsPageContent = () => {
 
   return (
     <>
-      <div className="bg-background-page flex h-screen flex-col justify-between gap-6 pr-0">
-        <div className="flex min-h-0 flex-1 flex-col">
-          <div className="flex shrink-0 flex-col px-5 pt-5">
-            <Header activeTab={activeTab} onTabChange={handleTabChange} />
-          </div>
+      <div className="bg-background-page flex h-screen flex-col">
+        <div className="shrink-0 px-5 pt-5 sm:px-10 sm:pt-10">
+          <Header activeTab={activeTab} onTabChange={handleTabChange} />
+        </div>
+
+        <div className="mt-6 min-h-0 flex-1 sm:mt-10">
           <TabsComponent activeTab={activeTab} />
         </div>
       </div>

@@ -88,7 +88,7 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
 
   if (isMobile) {
     return (
-      <div ref={parentRef} className="w-full px-5">
+      <div ref={parentRef} className="w-full px-5 pb-5 sm:px-10 sm:pb-10">
         <div className="grid grid-cols-1 gap-5">
           {items.map((item) => (
             <Card key={item.id} {...item} />
@@ -105,14 +105,17 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
   }
 
   return (
-    <div ref={parentRef} className="h-full min-h-0 w-full overflow-auto pl-4">
+    <div
+      ref={parentRef}
+      className="h-full min-h-0 w-full overflow-auto px-5 pb-5 sm:px-10 sm:pb-10"
+    >
       <VirtualGridlList
         items={items}
         parentRef={parentRef}
         gap={20}
-        defaultRowHeight={145}
-        minItemWidth={320}
-        maxColumns={4}
+        defaultRowHeight={180}
+        minItemWidth={256}
+        maxColumns={3}
         renderItem={(item) => <Card {...item} />}
       />
 

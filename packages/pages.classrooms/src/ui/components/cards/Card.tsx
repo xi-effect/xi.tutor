@@ -96,10 +96,10 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
   const isTutor = user?.default_layout === 'tutor';
 
   return (
-    <div data-umami-event="material-card-open" data-umami-event-type={student_id}>
+    <div data-umami-event="classroom-card-open" data-umami-event-type={student_id}>
       <div
         onClick={handleClick}
-        className="hover:border-border-focus border-border-default bg-background-surface relative flex cursor-pointer justify-between rounded-2xl border p-4 transition-all duration-200 ease-linear"
+        className="group bg-background-surface relative flex h-40 w-full cursor-pointer justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]"
       >
         <div className="flex max-w-full flex-col gap-4">
           <div className="mr-8 flex w-auto max-w-[calc(100%-32px)] items-center gap-2">
@@ -137,11 +137,15 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
         </div>
 
         {isTutor && (
-          <div className="absolute top-4 right-4 flex h-6 w-6 items-center justify-center">
+          <div className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center">
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
               <DropdownMenuTrigger asChild>
-                <Button className="h-6 w-6 rounded-md" variant="none" size="icon">
-                  <MoreVert className="dark:fill-icon-primary h-4 w-4" />
+                <Button
+                  className="hover:bg-background-subtle h-8 min-h-8 w-8 min-w-8 rounded-lg p-0"
+                  variant="none"
+                  size="icon"
+                >
+                  <MoreVert className="fill-icon-secondary dark:fill-icon-primary h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
 
@@ -151,7 +155,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
                 className="border-border-default bg-background-surface border p-1"
               >
                 {kind === 'group' && (
-                  <DropdownMenuItem onClick={handleOpenEditModal} data-umami-event="material-edit">
+                  <DropdownMenuItem onClick={handleOpenEditModal} data-umami-event="classroom-edit">
                     Переименовать
                   </DropdownMenuItem>
                 )}

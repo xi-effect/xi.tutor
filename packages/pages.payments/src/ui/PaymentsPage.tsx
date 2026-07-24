@@ -178,15 +178,17 @@ export const PaymentsPage = () => {
   );
 
   return (
-    <div className="bg-background-page flex h-screen flex-col justify-between gap-6 pr-0">
-      <div className="xs:pl-5 flex h-screen flex-col pl-0">
-        <div className="xs:pl-0 flex flex-col pt-5 pr-5 pl-5">
-          <Header
-            onCreateInvoice={onOpenInvoiceModal}
-            activeTab={activeTab}
-            onTabChange={onTabChange}
-          />
-        </div>
+    <div className="bg-background-page flex h-screen flex-col">
+      <div className="shrink-0 px-5 pt-5 sm:px-10 sm:pt-10">
+        <Header
+          onCreateInvoice={onOpenInvoiceModal}
+          onCreateTemplate={() => setIsTemplateModalOpen(true)}
+          activeTab={activeTab}
+          onTabChange={onTabChange}
+        />
+      </div>
+
+      <div className="mt-6 min-h-0 flex-1 sm:mt-10">
         <TabsComponent
           onApprovePayment={onOpenPaymentApproveModal}
           activeTab={activeTab}

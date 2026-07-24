@@ -1,15 +1,16 @@
 import { useEffect, useState, RefObject } from 'react';
 
-const ITEM_WIDTH = 280;
-const GAP = 16;
-const MAX_COLUMNS = 4;
+/** Минимальная ширина карточки — от неё считаем, сколько колонок влезает */
+const ITEM_WIDTH = 256;
+const GAP = 20;
+const MAX_COLUMNS = 3;
 
 export const useResponsiveGrid = (
   parentRef: RefObject<HTMLDivElement | null>,
   isFiles: boolean = false,
 ) => {
   const [colCount, setColCount] = useState(1);
-  const [rowHeight, setRowHeight] = useState(isFiles ? 112 : 114);
+  const [rowHeight, setRowHeight] = useState(isFiles ? 112 : 180);
 
   // Измеряем высоту карточки
   useEffect(() => {
@@ -22,9 +23,9 @@ export const useResponsiveGrid = (
     });
     ro.observe(cardElement);
     return () => ro.disconnect();
-  }, []);
+  }, [parentRef]);
 
-  // Вычисляем количество колонок
+  // Вычисляем количество колонок по доступной ширине
   useEffect(() => {
     const el = parentRef.current;
     if (!el) return;
@@ -38,7 +39,7 @@ export const useResponsiveGrid = (
     });
     ro.observe(el);
     return () => ro.disconnect();
-  }, []);
+  }, [parentRef]);
 
   return { colCount, rowHeight, GAP };
 };

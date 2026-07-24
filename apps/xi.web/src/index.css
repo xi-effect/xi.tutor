@@ -1,10 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
 
 @layer theme, base, components, utilities;
 @import 'tailwindcss/theme.css' layer(theme);
 @import 'tailwindcss/utilities.css' layer(utilities);
 
 @import '@xipkg/tailwind/index.css';
+
+/* Display-шрифт для заголовков и отдельных акцентов (не глобально) */
+@theme {
+  --font-playfair: 'Playfair Display', ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+}
 
 /*
  * @xipkg/tailwind определяет override семантических токенов только для

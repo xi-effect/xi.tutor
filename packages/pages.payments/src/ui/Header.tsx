@@ -1,6 +1,5 @@
 import { Button } from '@xipkg/button';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
-import { switcherTabClass } from 'common.ui';
 import { cn } from '@xipkg/utils';
 import { useCurrentUser } from 'common.services';
 import { Plus } from '@xipkg/icons';
@@ -13,11 +12,17 @@ const baseTabs = [
 
 interface HeaderProps {
   onCreateInvoice: () => void;
+  onCreateTemplate: () => void;
   activeTab: string;
   onTabChange: (tabId: string) => void;
 }
 
-export const Header = ({ onCreateInvoice, activeTab, onTabChange }: HeaderProps) => {
+export const Header = ({
+  onCreateInvoice,
+  onCreateTemplate,
+  activeTab,
+  onTabChange,
+}: HeaderProps) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const tabs = useMemo(
@@ -25,35 +30,43 @@ export const Header = ({ onCreateInvoice, activeTab, onTabChange }: HeaderProps)
     [isTutor],
   );
 
-  return (
-    <div className="xs:flex-row xs:items-center flex flex-col items-start pb-4">
-      <h1 className="text-text-primary text-2xl font-normal">Контроль оплат</h1>
+  const isTemplatesTab = activeTab === 'templates';
+  const actionLabel = isTemplatesTab ? 'Создать тип оплаты' : 'Создать счёт на оплату';
+  const onActionClick = isTemplatesTab ? onCreateTemplate : onCreateInvoice;
 
-      <div className="xs:mt-0 xs:ml-4 xs:w-auto mt-2 flex h-[32px] w-full flex-row items-center gap-2">
-        <SwitcherAnimate
-          tabs={tabs}
-          activeTab={activeTab}
-          onChange={onTabChange}
-          className={cn(
-            'flex h-[32px] w-full flex-row gap-4 rounded-lg',
-            tabs.length > 1 ? 'xs:w-70' : 'xs:w-auto',
-          )}
-          tabClassName={cn(
-            switcherTabClass,
-            'text-m-base h-[28px] flex-1 font-medium xs:flex-none xs:px-3',
-          )}
-          indicatorClassName="rounded-md"
-        />
+  return (
+    <div className="inline-flex w-full flex-col justify-between gap-4 sm:flex-row sm:items-center">
+      <div className="flex flex-col items-start justify-start gap-4 sm:flex-row sm:items-center sm:gap-10">
+        <h1 className="font-playfair text-text-primary pb-2 text-3xl font-medium sm:text-5xl">
+          Контроль оплат
+        </h1>
+
+        {tabs.length > 1 && (
+          <SwitcherAnimate
+            tabs={tabs}
+            activeTab={activeTab}
+            onChange={onTabChange}
+            className="bg-background-subtle !h-auto w-full justify-start gap-0.5 rounded-[10px] p-1 sm:w-auto"
+            tabClassName={cn(
+              '!h-auto flex-1 items-start justify-start rounded-lg px-4 py-1.5 text-base leading-5 font-medium sm:flex-none',
+              'data-[state=inactive]:text-text-secondary data-[state=inactive]:hover:text-text-secondary',
+              'data-[state=active]:text-text-primary data-[state=active]:hover:text-text-primary',
+            )}
+            indicatorClassName="rounded-lg bg-background-surface shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+          />
+        )}
       </div>
-      {user?.default_layout === 'tutor' && (
-        <div className="xs:flex ml-auto hidden flex-row items-center gap-2">
+
+      {isTutor && (
+        <div className="hidden items-center justify-start sm:flex">
           <Button
-            size="s"
-            className="text-s-base text-text-on-accent xs:px-4 rounded-lg px-2 py-2 font-medium"
-            onClick={onCreateInvoice}
+            variant="primary"
+            className="!h-auto gap-2 rounded-[10px] px-5 py-3 text-base leading-5 font-medium"
+            onClick={onActionClick}
+            data-umami-event={isTemplatesTab ? 'payment-template-create' : 'payment-invoice-create'}
           >
-            <span className="xs:flex hidden">Создать счёт на оплату</span>
-            <Plus size="sm" className="fill-action-primary-text xs:hidden flex" />
+            <Plus className="fill-text-on-accent size-4 shrink-0" />
+            {actionLabel}
           </Button>
         </div>
       )}

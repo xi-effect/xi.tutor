@@ -5,7 +5,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from '@xipkg/dropdown';
-import { ChevronSmallBottom } from '@xipkg/icons';
+import { ChevronSmallBottom, Plus } from '@xipkg/icons';
 import { useAddMaterials, useAddClassroomMaterials } from 'common.services';
 import { useParams, useNavigate } from '@tanstack/react-router';
 
@@ -66,12 +66,12 @@ export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps)
     return (
       <Button
         onClick={handleCreateBoardDraft}
-        size="s"
-        variant="ghost"
-        className="max-sm:hidden"
+        variant="primary"
+        className="!h-auto gap-2 rounded-[10px] px-5 py-3 text-base leading-5 font-medium max-sm:hidden"
         disabled={addMaterials.isPending}
         data-umami-event="material-create-board-draft"
       >
+        <Plus className="fill-text-on-accent size-4 shrink-0" />
         {addMaterials.isPending ? 'Создание...' : 'Создать доску'}
       </Button>
     );

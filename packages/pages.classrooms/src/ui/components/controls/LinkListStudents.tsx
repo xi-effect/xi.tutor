@@ -11,9 +11,11 @@ export const LinkListStudents = ({ className }: LinkListStudentsT) => {
   return (
     <ModalStudentsList>
       <Button
-        size="s"
         variant="ghost"
-        className={cn('text-text-primary rounded-lg px-4 py-2 font-medium', className)}
+        className={cn(
+          'text-text-primary !h-auto rounded-[10px] px-5 py-3 text-base leading-5 font-medium',
+          className,
+        )}
       >
         Список учеников
       </Button>

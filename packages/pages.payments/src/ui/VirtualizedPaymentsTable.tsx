@@ -35,6 +35,10 @@ const PAYMENTS_HELP_URL = 'https://support.sovlium.ru/payments';
 const emptyPaymentsHelpLinkClass =
   'bg-background-page hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
 
+/** Высота под новую шапку (Playfair + pt/mt-10) */
+const TABLE_SHELL_HEIGHT = 'h-[calc(100dvh-140px)]';
+const TABLE_BODY_HEIGHT = 'h-[calc(100dvh-204px)]';
+
 export type VirtualizedPaymentsTableProps<T> = {
   parentRef: RefObject<HTMLDivElement | null>;
   data: T[];
@@ -74,7 +78,7 @@ export const VirtualizedPaymentsTable = ({
   const rowVirtualizer = useVirtualizer({
     count: rows.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 60, // Примерная высота строки
+    estimateSize: () => 60,
     overscan: 5,
   });
 
@@ -87,7 +91,12 @@ export const VirtualizedPaymentsTable = ({
 
   if (notFoundItems) {
     return (
-      <div className="box-border flex h-[calc(100dvh-88px)] w-full flex-col px-4 pt-2 pr-5 pb-4">
+      <div
+        className={cn(
+          'box-border flex w-full flex-col px-5 pb-5 sm:px-10 sm:pb-10',
+          TABLE_SHELL_HEIGHT,
+        )}
+      >
         <div
           className={cn(
             'flex min-h-0 flex-1 flex-col items-center justify-center gap-8 overflow-hidden',
@@ -147,7 +156,7 @@ export const VirtualizedPaymentsTable = ({
     <ScrollArea
       scrollBarProps={{ orientation: 'horizontal' }}
       type="always"
-      className="h-[calc(100dvh-88px)] w-full overflow-x-auto overflow-y-hidden"
+      className={cn('w-full overflow-x-auto overflow-y-hidden px-5 sm:px-10', TABLE_SHELL_HEIGHT)}
     >
       <div>
         <Table className="table-fixed px-2">
@@ -168,10 +177,7 @@ export const VirtualizedPaymentsTable = ({
           </TableHeader>
         </Table>
 
-        <div
-          ref={parentRef}
-          className={cn('h-[calc(100dvh-152px)] w-full overflow-y-auto', className)}
-        >
+        <div ref={parentRef} className={cn('w-full overflow-y-auto', TABLE_BODY_HEIGHT, className)}>
           <div
             style={{
               height: `${rowVirtualizer.getTotalSize()}px`,
@@ -209,7 +215,6 @@ export const VirtualizedPaymentsTable = ({
             })}
           </div>
 
-          {/* Индикатор загрузки */}
           <Loader isLoading={isLoading} isFetchingNextPage={isFetchingNextPage} />
         </div>
       </div>

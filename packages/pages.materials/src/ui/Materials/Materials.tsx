@@ -17,7 +17,7 @@ export const Materials = () => {
   const notFoundItems = !items.length && !isLoading && !isError;
 
   return (
-    <div ref={parentRef} className="min-h-0 flex-1 overflow-auto pl-4">
+    <div ref={parentRef} className="h-full overflow-y-auto px-5 pb-5 sm:px-10 sm:pb-10">
       {notFoundItems ? (
         <MaterialsTabEmptyState
           title="Пока нет досок"
@@ -31,7 +31,12 @@ export const Materials = () => {
           items={items}
           renderItem={(material) => (
             <div key={material.id} className="card-item">
-              <MaterialsCard {...material} onDuplicate={openModal} className="w-full min-w-auto" />
+              <MaterialsCard
+                {...material}
+                layout="gallery"
+                onDuplicate={openModal}
+                className="w-full"
+              />
             </div>
           )}
         />

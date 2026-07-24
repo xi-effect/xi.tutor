@@ -4,7 +4,6 @@ import { DatePicker } from '@xipkg/datepicker';
 import { ArrowRight, Calendar, ArrowLeft, Plus } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
 import { addDays, startOfDay } from 'date-fns';
-import { DateTimeDisplay } from 'common.ui';
 import { formatDateRangeDisplay } from '../utils';
 
 export type CalendarWeekNavProps = {
@@ -94,7 +93,8 @@ type CalendarHeaderProps = {
   onNext: () => void;
   onWeekSelect: (date: Date, visibleCount: number) => void;
   onAddLessonClick?: () => void;
-  showDateTime?: boolean;
+  /** Показывать заголовок страницы «Расписание» (отдельная страница календаря) */
+  showTitle?: boolean;
 };
 
 export const CalendarHeader = ({
@@ -104,33 +104,44 @@ export const CalendarHeader = ({
   onNext,
   onWeekSelect,
   onAddLessonClick,
-  showDateTime = true,
+  showTitle = true,
 }: CalendarHeaderProps) => {
   return (
-    <header className="flex flex-wrap items-center justify-between gap-3 pt-5 pr-5 pb-5 pl-1">
-      {showDateTime ? <DateTimeDisplay /> : null}
-      <CalendarWeekNav
-        weekStart={weekStart}
-        visibleDayCount={visibleDayCount}
-        onPrev={onPrev}
-        onNext={onNext}
-        onWeekSelect={onWeekSelect}
-      />
+    <header className="flex w-full flex-col gap-4 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+      {showTitle ? (
+        <h1 className="font-playfair text-text-primary pb-2 text-3xl font-medium sm:justify-self-start sm:text-5xl">
+          Расписание
+        </h1>
+      ) : (
+        <div />
+      )}
+
+      <div className="sm:justify-self-center">
+        <CalendarWeekNav
+          weekStart={weekStart}
+          visibleDayCount={visibleDayCount}
+          onPrev={onPrev}
+          onNext={onNext}
+          onWeekSelect={onWeekSelect}
+        />
+      </div>
+
       {onAddLessonClick ? (
-        <div>
+        <div className="flex items-center sm:justify-self-end">
           <Button
             type="button"
             variant="primary"
-            size="s"
-            className="h-[32px] font-medium"
+            className="!h-auto gap-2 rounded-[10px] px-5 py-3 text-base leading-5 font-medium"
             onClick={() => onAddLessonClick()}
             data-umami-event="schedule-add-lesson"
           >
+            <Plus className="fill-text-on-accent size-4 shrink-0" />
             Добавить занятие
-            <Plus className="fill-text-on-accent ml-3 h-5 w-5" />
           </Button>
         </div>
-      ) : null}
+      ) : (
+        <div />
+      )}
     </header>
   );
 };

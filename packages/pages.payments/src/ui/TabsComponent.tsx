@@ -41,43 +41,41 @@ export const TabsComponent = React.memo(
       [screenSize, onApprovePayment, onViewInvoice, isTutor],
     );
 
-    // Отслеживаем изменения роли пользователя
     useEffect(() => {
       const prevIsTutor = prevIsTutorRef.current;
       const currentIsTutor = isTutor;
-      // Если роль изменилась с tutor на student и мы находимся на вкладке templates
       if (prevIsTutor && !currentIsTutor && activeTab === 'templates') {
         onTabChange('invoices');
       }
 
-      // Обновляем предыдущее значение
       prevIsTutorRef.current = currentIsTutor;
     }, [isTutor, activeTab, onTabChange]);
 
     return (
-      <div className="bg-background-surface xs:rounded-tl-2xl rounded-none pl-4">
-        <Tabs.Root value={activeTab} onValueChange={onTabChange}>
-          <div className="h-full pt-0">
-            <Tabs.Content value="invoices">
-              <VirtualizedPaymentsTable
-                data={items}
-                columns={defaultColumns}
-                isLoading={isLoading}
-                isFetchingNextPage={isFetchingNextPage}
-                parentRef={parentRef}
-                isError={isError}
-                currentUserRole={currentUserRole}
-                onViewInvoice={onViewInvoice}
-              />
-            </Tabs.Content>
+      <div className="h-full min-h-0">
+        <Tabs.Root
+          value={activeTab}
+          onValueChange={onTabChange}
+          className="flex h-full min-h-0 flex-col"
+        >
+          <Tabs.Content value="invoices" className="min-h-0 flex-1">
+            <VirtualizedPaymentsTable
+              data={items}
+              columns={defaultColumns}
+              isLoading={isLoading}
+              isFetchingNextPage={isFetchingNextPage}
+              parentRef={parentRef}
+              isError={isError}
+              currentUserRole={currentUserRole}
+              onViewInvoice={onViewInvoice}
+            />
+          </Tabs.Content>
 
-            {/* Скрываем контент последней вкладки для студентов */}
-            {isTutor && (
-              <Tabs.Content value="templates">
-                <TemplatesGrid />
-              </Tabs.Content>
-            )}
-          </div>
+          {isTutor && (
+            <Tabs.Content value="templates" className="min-h-0 flex-1">
+              <TemplatesGrid />
+            </Tabs.Content>
+          )}
         </Tabs.Root>
       </div>
     );
