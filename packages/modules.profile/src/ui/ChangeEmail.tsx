@@ -7,6 +7,7 @@ import { Clock } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
 import { Eyeoff, Eyeon } from '@xipkg/icons';
 import { modalTitleClass } from 'common.ui';
+import { useTranslation } from 'react-i18next';
 import { useChangeEmail } from '../hooks';
 
 interface TimerProps {
@@ -44,8 +45,8 @@ const Timer = ({ getTitle, onTimerEnd, durationSecs }: TimerProps) => {
   });
 
   return (
-    <div className="bg-red-0 flex items-center gap-4 rounded-lg p-4 text-red-100">
-      <Clock className="fill-red-100" />
+    <div className="bg-status-error-background text-text-danger flex items-center gap-4 rounded-lg p-4">
+      <Clock className="fill-icon-danger" />
       <p className="font-semibold">{getTitle(formatTime(leftSecs))}</p>
     </div>
   );
@@ -58,6 +59,7 @@ type ChangeEmailModalT = {
 };
 
 export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT) => {
+  const { t } = useTranslation('profile');
   const {
     form,
     isPasswordShow,
@@ -80,12 +82,12 @@ export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT)
           <>
             <M.ModalCloseButton
               variant="full"
-              className="bg-gray-5 top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0 sm:right-4"
+              className="bg-background-page top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0 sm:right-4"
             >
-              <Close className="fill-gray-80 h-5 w-5" />
+              <Close className="fill-icon-primary h-5 w-5" />
             </M.ModalCloseButton>
             <M.ModalHeader>
-              <M.ModalTitle className={modalTitleClass}>Изменение электронной почты</M.ModalTitle>
+              <M.ModalTitle className={modalTitleClass}>{t('changeEmail.title')}</M.ModalTitle>
             </M.ModalHeader>
             <Form {...form}>
               <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
@@ -93,7 +95,7 @@ export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT)
                   {timer && (
                     <Timer
                       durationSecs={10 * 60}
-                      getTitle={(t) => `Отправить повторно можно через ${t}`}
+                      getTitle={(time) => t('changeEmail.resendTimer', { time })}
                       onTimerEnd={() => setTimer(false)}
                     />
                   )}
@@ -102,7 +104,7 @@ export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT)
                     name="email"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Новый адрес электронной почты</FormLabel>
+                        <FormLabel>{t('changeEmail.newEmail')}</FormLabel>
                         <FormControl className="mt-2">
                           <Input {...field} error={!!errors.email} autoComplete="on" />
                         </FormControl>
@@ -115,7 +117,7 @@ export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT)
                     name="password"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Пароль</FormLabel>
+                        <FormLabel>{t('changeEmail.password')}</FormLabel>
                         <FormControl className="mt-2">
                           <Input
                             {...field}
@@ -136,10 +138,10 @@ export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT)
                 </div>
                 <M.ModalFooter className="flex justify-start gap-4 px-5 py-5">
                   <Button disabled={timer} className="disabled:cursor-not-allowed" type="submit">
-                    Изменить
+                    {t('changeEmail.change')}
                   </Button>
                   <Button onClick={() => onOpenChange(false)} type="button" variant="ghost">
-                    Отменить
+                    {t('changeEmail.cancel')}
                   </Button>
                 </M.ModalFooter>
               </form>
@@ -148,12 +150,12 @@ export const ChangeEmail = ({ open, onOpenChange, children }: ChangeEmailModalT)
         )) ||
           (stage.type === 'success' && (
             <div className="space-y-8 p-8">
-              <M.ModalTitle className="hidden">Изменение электронной почты</M.ModalTitle>
-              <p className="text-center text-2xl font-semibold text-gray-100">
-                На адрес {stage.email} отправлено письмо с подтверждением
+              <M.ModalTitle className="hidden">{t('changeEmail.title')}</M.ModalTitle>
+              <p className="text-text-primary text-center text-2xl font-semibold">
+                {t('changeEmail.successMessage', { email: stage.email })}
               </p>
               <Button onClick={() => setStage({ type: 'form', email: '' })} className="mt-4 w-full">
-                Продолжить
+                {t('changeEmail.continue')}
               </Button>
             </div>
           ))}

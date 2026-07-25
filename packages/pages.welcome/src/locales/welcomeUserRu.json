@@ -4,6 +4,12 @@
   "name_hint": "Укажите настоящее имя — так другим будет удобнее к вам обращаться",
   "email": "Электронная почта",
   "continue_button": "Продолжить",
+  "avatar": "Аватар",
+  "avatar_optional": "(необязательно)",
+  "avatar_format_error": "Этот формат не поддерживается",
+  "avatar_format_hint": "Загрузите фото в (png, jpeg, webp)",
+  "avatar_size_error": "Файл слишком большой",
+  "avatar_size_hint": "Выберите фото до 1 Мб",
   "validation": {
     "required": "Обязательное поле",
     "minLength": "Минимум ",

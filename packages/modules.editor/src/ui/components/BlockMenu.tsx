@@ -7,13 +7,14 @@ import {
 } from '@xipkg/dropdown';
 import { Copy, H1, H2, H3, Text, Trash, Image, ArrowUp, ArrowBottom, Code } from '@xipkg/icons';
 import { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useBlockMenuActions } from '../../hooks';
 import { Editor } from '@tiptap/core';
 import { useInterfaceStore } from '../../store/interfaceStore';
 import { ActiveBlockT } from '../../types';
 
 const menuItemClass =
-  'text-gray-100 hover:bg-gray-5 focus:text-gray-100 fill-gray-80 [&_svg]:fill-gray-80 h-7 gap-2 rounded p-1 text-sm';
+  'text-text-primary hover:bg-background-page focus:text-text-primary fill-icon-primary [&_svg]:fill-icon-primary h-7 gap-2 rounded p-1 text-sm';
 
 type BlockMenuPropsT = {
   children: ReactNode;
@@ -41,6 +42,7 @@ export const BlockMenu = ({
   setOpen,
   getActiveBlock,
 }: BlockMenuPropsT) => {
+  const { t } = useTranslation('editor');
   const isMac = navigator.platform.toUpperCase().includes('MAC');
   const { openModal } = useInterfaceStore();
   const { insertBlock, duplicate, remove, moveUp, moveDown, insertCode } = useBlockMenuActions(
@@ -63,73 +65,73 @@ export const BlockMenu = ({
         side="right"
         align="start"
         onCloseAutoFocus={(e) => e.preventDefault()}
-        className="border-gray-10 bg-gray-0 flex w-auto flex-col gap-1 space-y-1 rounded-lg border p-2 text-gray-100"
+        className="border-border-default bg-background-surface text-text-primary flex w-auto flex-col gap-1 space-y-1 rounded-lg border p-2"
       >
         <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('paragraph')}>
           <Text size="sm" className="size-6" />
-          <span>Текст</span>
+          <span>{t('blockMenu.text')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('heading1')}>
           <H1 size="sm" className="size-6" />
-          <span>Заголовок 1</span>
+          <span>{t('blockMenu.heading1')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('heading2')}>
           <H2 size="sm" className="size-6" />
-          <span>Заголовок 2</span>
+          <span>{t('blockMenu.heading2')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('heading3')}>
           <H3 size="sm" className="size-6" />
-          <span>Заголовок 3</span>
+          <span>{t('blockMenu.heading3')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('uploadImage')}>
           <Image size="sm" className="size-6" />
-          <span>Изображение</span>
+          <span>{t('blockMenu.image')}</span>
         </DropdownMenuItem>
         <DropdownMenuItem className={menuItemClass} onSelect={() => insertCode('')}>
           <Code size="sm" className="size-6" />
-          <span>Вставить код</span>
+          <span>{t('blockMenu.insertCode')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
         <DropdownMenuItem className={menuItemClass} onSelect={duplicate}>
           <Copy size="sm" className="size-6" />
-          <span className="text-sm">Дублировать</span>
-          <span className="text-xxs-base ml-auto text-gray-50">
+          <span className="text-sm">{t('blockMenu.duplicate')}</span>
+          <span className="text-xxs-base text-text-muted ml-auto">
             {isMac ? '⌘+⇧+C' : 'Ctrl+Shift+C'}
           </span>
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+          className="hover:bg-background-page h-7 gap-2 rounded p-1"
           onSelect={deferAction(moveUp)}
         >
           <ArrowUp size="sm" className="size-6" />
-          <span className="text-sm">Переместить вверх</span>
-          <span className="text-xxs-base ml-auto text-gray-50">
+          <span className="text-sm">{t('blockMenu.moveUp')}</span>
+          <span className="text-xxs-base text-text-muted ml-auto">
             {isMac ? '⌘+⇧+↑' : 'Ctrl+Shift+↑'}
           </span>
         </DropdownMenuItem>
 
         <DropdownMenuItem
-          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+          className="hover:bg-background-page h-7 gap-2 rounded p-1"
           onSelect={deferAction(moveDown)}
         >
           <ArrowBottom size="sm" className="size-6" />
-          <span className="text-sm">Переместить вниз</span>
-          <span className="text-xxs-base ml-auto text-gray-50">
+          <span className="text-sm">{t('blockMenu.moveDown')}</span>
+          <span className="text-xxs-base text-text-muted ml-auto">
             {isMac ? '⌘+⇧+↓' : 'Ctrl+Shift+↓'}
           </span>
         </DropdownMenuItem>
 
         <DropdownMenuItem className={menuItemClass} onSelect={remove}>
           <Trash size="sm" className="size-6" />
-          <span className="text-sm">Удалить</span>
-          <span className="text-xxs-base ml-auto text-gray-50">{isMac ? '⌘+⌫' : 'Del'}</span>
+          <span className="text-sm">{t('blockMenu.delete')}</span>
+          <span className="text-xxs-base text-text-muted ml-auto">{isMac ? '⌘+⌫' : 'Del'}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

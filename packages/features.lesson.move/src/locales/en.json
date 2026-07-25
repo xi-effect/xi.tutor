@@ -1,0 +1,40 @@
+{
+  "title": "Reschedule lesson",
+  "schedule": "Schedule",
+  "cancel": "Cancel",
+  "submit": "Reschedule",
+  "defaultLessonTitle": "Learning something",
+  "moveMode": {
+    "single": "This lesson",
+    "singleAndNext": "This and following"
+  },
+  "form": {
+    "date": "Date",
+    "repetitionStartDate": "Repetition start date",
+    "time": "Time",
+    "startPlaceholder": "17:40 Start",
+    "endPlaceholder": "19:00 End",
+    "repetitions": "Repetitions"
+  },
+  "weekdays_short": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
+  "studentSelector": {
+    "loading": "Loading...",
+    "placeholder": "Student or group"
+  },
+  "toast": {
+    "success": "Lesson rescheduled"
+  },
+  "validation": {
+    "invalidTime": "Invalid time format",
+    "dateRequired": "Select a date",
+    "startTimeRequired": "Enter a start time",
+    "endTimeRequired": "Enter an end time",
+    "endAfterStart": "End time must be later than start time",
+    "maxDuration": "Maximum lesson duration is 12 hours",
+    "repeatDaysRequired": "Select at least one day"
+  },
+  "hours_one": "{{count}} hour",
+  "hours_other": "{{count}} hours",
+  "minutes_one": "{{count}} minute",
+  "minutes_other": "{{count}} minutes"
+}

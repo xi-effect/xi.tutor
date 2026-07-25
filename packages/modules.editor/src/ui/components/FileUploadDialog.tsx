@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Modal, ModalContent, ModalTitle } from '@xipkg/modal';
 import { FileUploader } from '@xipkg/fileuploader';
+import { useTranslation } from 'react-i18next';
 import { useInterfaceStore } from '../../store/interfaceStore';
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
@@ -11,6 +12,7 @@ import { toast } from 'sonner';
 import { checkImageUrl } from '../../utils/checkImageUrl';
 
 export const ImageUploadModal = () => {
+  const { t } = useTranslation('editor');
   const { closeModal, activeModal } = useInterfaceStore();
   const [mode, setMode] = useState<'upload' | 'link'>('upload');
   const [imageLink, setImageLink] = useState('');
@@ -51,7 +53,7 @@ export const ImageUploadModal = () => {
     const isValidImage = await checkImageUrl(trimmedLink);
 
     if (!isValidImage) {
-      toast.error('Некорректная ссылка на изображение');
+      toast.error(t('upload.invalidLink'));
       return;
     }
 
@@ -69,7 +71,7 @@ export const ImageUploadModal = () => {
             className="h-[26px] px-3 text-[14px]"
             onClick={() => setMode('upload')}
           >
-            Загрузить
+            {t('upload.upload')}
           </Button>
 
           <Button
@@ -77,7 +79,7 @@ export const ImageUploadModal = () => {
             className="h-[26px] px-3 text-[14px]"
             onClick={() => setMode('link')}
           >
-            Вставить ссылку
+            {t('upload.insertLink')}
           </Button>
         </ModalTitle>
 
@@ -94,7 +96,7 @@ export const ImageUploadModal = () => {
               <div className="w-full">
                 <Input
                   variant="s"
-                  placeholder="Вставьте ссылку на изображение"
+                  placeholder={t('upload.linkPlaceholder')}
                   className="border"
                   name="fileLink"
                   value={imageLink}
@@ -102,7 +104,7 @@ export const ImageUploadModal = () => {
                 />
               </div>
               <Button size="s" onClick={handleAddLink}>
-                Добавить
+                {t('upload.add')}
               </Button>
             </div>
           )}

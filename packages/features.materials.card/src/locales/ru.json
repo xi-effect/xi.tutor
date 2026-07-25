@@ -1,0 +1,20 @@
+{
+  "changed": "Изменено: {{date}}",
+  "updated": "Обновлено: {{date}}",
+  "updatedGallery": "Обновлено {{date}}",
+  "date": {
+    "today": "сегодня",
+    "yesterday": "вчера"
+  },
+  "accessMode": {
+    "read_write": "совместная работа",
+    "read_only": "только репетитор",
+    "no_access": "черновик"
+  },
+  "menu": {
+    "changeAccess": "Поменять доступ",
+    "duplicateToClassroom": "Дублировать в кабинет",
+    "edit": "Редактировать",
+    "delete": "Удалить"
+  }
+}

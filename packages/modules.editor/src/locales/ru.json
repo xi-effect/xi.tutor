@@ -1,0 +1,50 @@
+{
+  "blockMenu": {
+    "text": "Текст",
+    "heading1": "Заголовок 1",
+    "heading2": "Заголовок 2",
+    "heading3": "Заголовок 3",
+    "image": "Изображение",
+    "insertCode": "Вставить код",
+    "duplicate": "Дублировать",
+    "moveUp": "Переместить вверх",
+    "moveDown": "Переместить вниз",
+    "delete": "Удалить"
+  },
+  "bubbleMenu": {
+    "bold": "Жирный",
+    "italic": "Курсив",
+    "underline": "Подчеркивание",
+    "strike": "Зачеркивание",
+    "link": "Ссылка"
+  },
+  "image": {
+    "download": "Скачать",
+    "moveUp": "Выше",
+    "moveDown": "Ниже",
+    "duplicate": "Дублировать",
+    "delete": "Удалить"
+  },
+  "upload": {
+    "upload": "Загрузить",
+    "insertLink": "Вставить ссылку",
+    "linkPlaceholder": "Вставьте ссылку на изображение",
+    "add": "Добавить",
+    "invalidLink": "Некорректная ссылка на изображение"
+  },
+  "codeBlock": {
+    "copy": "Копировать",
+    "deleteBlock": "Удалить блок",
+    "copied": "Код скопирован в буфер обмена"
+  },
+  "dragHandle": {
+    "dragBlock": "Перетащить блок"
+  },
+  "status": {
+    "initializing": "Инициализация редактора...",
+    "loadError": "Ошибка загрузки: {{message}}",
+    "placeholder": "Начните писать здесь…",
+    "participant": "Участник",
+    "accessError": "Ошибка доступа к серверу совместного редактирования"
+  }
+}

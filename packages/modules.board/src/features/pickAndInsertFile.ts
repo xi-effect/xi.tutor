@@ -8,6 +8,7 @@ import { saveFileToDB } from 'common.services';
 import { type RetryRequest } from 'common.services';
 import { ALLOWED_FILE_MIME_TYPES } from '../constants/mimeTypes';
 import { resolveShapeCoordinates } from '../utils';
+import i18n from 'i18next';
 
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
 const MAX_FILE_SHAPES = 20;
@@ -78,7 +79,7 @@ export async function insertFile(
       },
     });
 
-    toast.success('Файл успешно загружен', { duration: 5000 });
+    toast.success(i18n.t('toast.fileUploadSuccess', { ns: 'board' }), { duration: 5000 });
   } catch (err) {
     if (!editor.getShape(shapeId)) return;
     const isOffline = !navigator.onLine;
@@ -101,26 +102,32 @@ export async function insertFile(
     console.error('[insertFile] Upload failed:', err);
 
     const msg = isOffline
-      ? 'Нет подключения к сети, загрузки продолжится при подключении'
+      ? i18n.t('toast.offlineUpload', { ns: 'board' })
       : err instanceof Error
         ? err.message
-        : 'Не удалось загрузить файл';
-    toast.error('Ошибка загрузки файла', { description: msg, duration: 5000 });
+        : i18n.t('toast.fileUploadFailed', { ns: 'board' });
+    toast.error(i18n.t('toast.fileUploadError', { ns: 'board' }), {
+      description: msg,
+      duration: 5000,
+    });
   }
 }
 
 function validateFile(editor: Editor, file: File) {
   if (!ALLOWED_FILE_MIME_TYPES.has(file.type)) {
     return {
-      title: 'Неподдерживаемый формат',
-      description: 'Выберите другой файл с одним из следующих расширений: doc, xls, ppt, pdf',
+      title: i18n.t('toast.unsupportedFormat', { ns: 'board' }),
+      description: i18n.t('toast.fileFormatDesc', { ns: 'board' }),
     };
   }
 
   if (file.size > MAX_FILE_SIZE_BYTES) {
     return {
-      title: 'Файл слишком большой',
-      description: `Размер файла не должен превышать 5 MiB (сейчас ${(file.size / 1024 / 1024).toFixed(2)} MiB).`,
+      title: i18n.t('toast.fileTooLarge', { ns: 'board' }),
+      description: i18n.t('toast.fileSizeDesc', {
+        ns: 'board',
+        size: (file.size / 1024 / 1024).toFixed(2),
+      }),
     };
   }
 
@@ -128,8 +135,8 @@ function validateFile(editor: Editor, file: File) {
 
   if (count >= MAX_FILE_SHAPES) {
     return {
-      title: 'Лимит файлов',
-      description: `На доске может быть не более ${MAX_FILE_SHAPES} файлов.`,
+      title: i18n.t('toast.fileLimitTitle', { ns: 'board' }),
+      description: i18n.t('toast.fileLimitDesc', { ns: 'board', max: MAX_FILE_SHAPES }),
     };
   }
 

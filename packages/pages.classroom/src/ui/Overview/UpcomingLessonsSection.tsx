@@ -20,6 +20,7 @@ import {
   type SoleRescheduleTarget,
 } from 'features.lesson.move';
 import { CancelLessonModal, type LessonSchedulerMetaForCancel } from 'features.lesson.cancel';
+import { useTranslation } from 'react-i18next';
 import { useClassroomScheduleOptional } from '../Calendar/ClassroomScheduleContext';
 import { UpcomingLessonCard } from './UpcomingLessonCard';
 import { UpcomingLessonCardSkeleton } from './UpcomingLessonCardSkeleton';
@@ -108,6 +109,7 @@ function getSoleTarget(item: ScheduleItem, classroomId: number): SoleRescheduleT
 }
 
 export const UpcomingLessonsSection = () => {
+  const { t } = useTranslation('classroom');
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const scheduleCtx = useClassroomScheduleOptional();
@@ -166,17 +168,19 @@ export const UpcomingLessonsSection = () => {
     <>
       <div className="flex flex-col gap-4">
         <div className="flex flex-row items-center justify-between gap-2 pr-0 sm:pr-0">
-          <h2 className="text-xl-base text-gray-100 first-letter:uppercase">Ближайшие занятия</h2>
+          <h2 className="text-xl-base text-text-primary first-letter:uppercase">
+            {t('overview.upcomingLessons')}
+          </h2>
           <div className="flex items-center gap-1">
             {isTutor ? (
               <Button
                 type="button"
                 variant="none"
-                className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
+                className="bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
                 onClick={() => onAddLessonClick?.()}
-                aria-label="Добавить занятие"
+                aria-label={t('actions.addLesson')}
               >
-                <Add className="fill-brand-80 size-6" />
+                <Add className="fill-icon-brand size-6" />
               </Button>
             ) : null}
           </div>
@@ -195,17 +199,17 @@ export const UpcomingLessonsSection = () => {
               </div>
             </ScrollArea>
           ) : lessons.length === 0 ? (
-            <div className="border-gray-10 bg-gray-0 dark:border-gray-70 box-border flex min-h-[232px] w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-4 py-4">
+            <div className="border-border-default bg-background-surface dark:border-border-strong box-border flex min-h-[232px] w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-4 py-4">
               <EmptySchedule
                 className="mb-4 max-h-[68px] w-full max-w-[176px] shrink-0 object-contain"
                 aria-hidden
               />
               <div className="flex max-w-[520px] flex-col gap-2 text-center">
-                <p className="text-m-base font-semibold text-gray-100">
-                  В ближайшие 7 дней занятий нет
+                <p className="text-m-base text-text-primary font-semibold">
+                  {t('overview.noLessonsTitle')}
                 </p>
-                <p className="text-s-base text-gray-60 dark:text-gray-50">
-                  Когда уроки появятся в расписании кабинета, они отобразятся здесь
+                <p className="text-s-base text-text-secondary dark:text-text-muted">
+                  {t('overview.noLessonsDescription')}
                 </p>
               </div>
             </div>

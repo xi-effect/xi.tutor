@@ -1,4 +1,5 @@
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useResponsiveGrid, useInfiniteQuery, useVirtualGrid } from '../../hooks';
 import { MaterialsTabEmptyState } from '../MaterialsTabEmptyState';
 import { GridList } from '../GridList';
@@ -6,6 +7,7 @@ import { MaterialsCard } from 'features.materials.card';
 import { useMaterialsDuplicate } from '../../provider';
 
 export const Materials = () => {
+  const { t } = useTranslation('materials');
   const parentRef = useRef<HTMLDivElement>(null);
 
   const { colCount, rowHeight, GAP } = useResponsiveGrid(parentRef);
@@ -17,11 +19,11 @@ export const Materials = () => {
   const notFoundItems = !items.length && !isLoading && !isError;
 
   return (
-    <div ref={parentRef} className="min-h-0 flex-1 overflow-auto pl-4">
+    <div ref={parentRef} className="h-full overflow-y-auto px-5 pb-5 sm:px-10 sm:pb-10">
       {notFoundItems ? (
         <MaterialsTabEmptyState
-          title="Пока нет досок"
-          description="Создайте доску — она появится в этом списке."
+          title={t('empty.boardsTitle')}
+          description={t('empty.boardsDescription')}
         />
       ) : (
         <GridList
@@ -31,7 +33,12 @@ export const Materials = () => {
           items={items}
           renderItem={(material) => (
             <div key={material.id} className="card-item">
-              <MaterialsCard {...material} onDuplicate={openModal} className="w-full min-w-auto" />
+              <MaterialsCard
+                {...material}
+                layout="gallery"
+                onDuplicate={openModal}
+                className="w-full"
+              />
             </div>
           )}
         />

@@ -52,7 +52,7 @@ export const WelcomeUserForm = () => {
           name="displayName"
           render={({ field }) => (
             <FormItem className="mt-8">
-              <FormLabel className="dark:text-gray-100">{t('name')}</FormLabel>
+              <FormLabel className="dark:text-text-primary">{t('name')}</FormLabel>
               <FormControl>
                 <Input
                   className="mt-1"
@@ -62,15 +62,15 @@ export const WelcomeUserForm = () => {
                   {...field}
                 />
               </FormControl>
-              <FormDescription className="text-gray-60 pt-0 text-xs">
+              <FormDescription className="text-text-secondary pt-0 text-xs">
                 {t('name_hint')}
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormLabel className="mt-6 dark:text-gray-100">{t('email')}</FormLabel>
-        <div className="bg-gray-10 dark:text-gray-80 mt-2 flex h-12 w-full flex-row items-start rounded-lg p-3 leading-[22px] text-gray-50">
+        <FormLabel className="dark:text-text-primary mt-6">{t('email')}</FormLabel>
+        <div className="bg-background-subtle dark:text-text-primary text-text-muted mt-2 flex h-12 w-full flex-row items-start rounded-lg p-3 leading-[22px]">
           {email}
         </div>
         <div className="mt-auto flex flex-row gap-6 pt-4">

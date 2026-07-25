@@ -3,11 +3,11 @@ import { Editor, DrAssetId, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { myAssetStore } from './imageStore';
 import { resolveShapeCoordinates } from '../utils';
+import i18n from 'i18next';
 
 const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
 
-const DECODE_ERROR_MESSAGE =
-  'Не удалось прочитать изображение. Возможные причины: повреждённый файл, неподдерживаемый формат в этом браузере или вставка из буфера обмена (попробуйте вставить картинку по ссылке через кнопку «Изображение»).';
+const getDecodeErrorMessage = () => i18n.t('toast.imageReadFailed', { ns: 'board' });
 
 export type InsertImagePlacement = {
   /** Позиция и размер на доске (в координатах страницы). Если не задано — по центру вьюпорта с натуральными размерами. */
@@ -28,13 +28,21 @@ export async function insertImage(
   placement?: InsertImagePlacement,
 ) {
   if (!file.size) {
-    toast.error('Файл пустой', { description: 'Выберите изображение с ненулевым размером.' });
+    toast.error(i18n.t('toast.fileEmpty', { ns: 'board' }), {
+      description: i18n.t('toast.fileEmptyDesc', { ns: 'board' }),
+    });
     return;
   }
 
   if (file.size > MAX_IMAGE_SIZE_BYTES) {
-    const message = `Размер изображения не должен превышать 1 MiB (сейчас ${(file.size / 1024 / 1024).toFixed(2)} MiB).`;
-    toast.error('Не удалось загрузить изображение', { description: message, duration: 5000 });
+    const message = i18n.t('toast.imageSizeDesc', {
+      ns: 'board',
+      size: (file.size / 1024 / 1024).toFixed(2),
+    });
+    toast.error(i18n.t('toast.imageUploadFailed', { ns: 'board' }), {
+      description: message,
+      duration: 5000,
+    });
     throw new Error(message);
   }
 
@@ -46,11 +54,11 @@ export async function insertImage(
       err instanceof Error &&
       (err.name === 'EncodingError' || err.message.includes('cannot be decoded'));
     const message = isDecodeError
-      ? DECODE_ERROR_MESSAGE
+      ? getDecodeErrorMessage()
       : err instanceof Error
         ? err.message
-        : 'Неизвестная ошибка';
-    toast.error('Ошибка при открытии изображения', {
+        : i18n.t('toast.unknownError', { ns: 'board' });
+    toast.error(i18n.t('toast.imageOpenError', { ns: 'board' }), {
       description: message,
       duration: 5000,
     });
@@ -151,8 +159,9 @@ export async function insertImage(
       ]);
     } catch (err) {
       console.error('Image upload failed:', err);
-      const errorMessage = err instanceof Error ? err.message : 'Не удалось загрузить изображение';
-      toast.error('Ошибка загрузки изображения', {
+      const errorMessage =
+        err instanceof Error ? err.message : i18n.t('toast.imageUploadFailed', { ns: 'board' });
+      toast.error(i18n.t('toast.imageUploadError', { ns: 'board' }), {
         description: errorMessage,
         duration: 5000,
       });

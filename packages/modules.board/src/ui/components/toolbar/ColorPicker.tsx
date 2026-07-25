@@ -9,6 +9,7 @@ import { FillTypePicker } from '../../../shapes/geo';
 import { useDrawStore } from '../../../store';
 import { Picker } from '../popups';
 import { cn } from '@xipkg/utils';
+import { useTranslation } from 'react-i18next';
 
 const stickerColorMap: Record<string, string> = {
   grey: 'bg-gray-60',
@@ -44,6 +45,7 @@ const supportedShapeTypes = new Set([
 const drawShapeTypes = new Set(['draw']);
 
 export const ColorPicker = track(() => {
+  const { t } = useTranslation('board');
   const [open, setOpen] = useState(false);
   const editor = useEditor();
   const { setSelectedShapesColor, setSelectedShapesThickness, setSelectedShapesOpacity } =
@@ -145,7 +147,7 @@ export const ColorPicker = track(() => {
     <Picker
       open={open}
       setOpen={setOpen}
-      triggerTitle={isCoordinateAxes ? 'Цвет осей' : 'Стиль'}
+      triggerTitle={isCoordinateAxes ? t('toolbar.axisColor') : t('toolbar.style')}
       triggerChild={
         <div
           className={cn(
@@ -171,12 +173,12 @@ export const ColorPicker = track(() => {
                       minStepsBetweenThumbs={1}
                     />
                   </div>
-                  <span className="text-gray-80 w-5 shrink-0 text-xs">
+                  <span className="text-text-primary w-5 shrink-0 text-xs">
                     {(currentThickness || 'm').toUpperCase()}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="border-green-80 w-20 shrink-0 sm:w-24">
+                  <div className="w-20 shrink-0 sm:w-24">
                     <Slider
                       onValueChange={handleOpacity}
                       value={[currentOpacity]}
@@ -185,10 +187,10 @@ export const ColorPicker = track(() => {
                       step={10}
                     />
                   </div>
-                  <span className="text-gray-80 w-5 shrink-0 text-xs">{currentOpacity}</span>
+                  <span className="text-text-primary w-5 shrink-0 text-xs">{currentOpacity}</span>
                 </div>
               </div>
-              <div className="bg-gray-10 hidden h-8 w-px shrink-0 sm:block" />
+              <div className="bg-border-default hidden h-8 w-px shrink-0 sm:block" />
             </>
           )}
 
@@ -196,7 +198,7 @@ export const ColorPicker = track(() => {
           {isGeo && (
             <>
               <FillTypePicker />
-              <div className="bg-gray-10 hidden h-8 w-px shrink-0 sm:block" />
+              <div className="bg-border-default hidden h-8 w-px shrink-0 sm:block" />
             </>
           )}
 

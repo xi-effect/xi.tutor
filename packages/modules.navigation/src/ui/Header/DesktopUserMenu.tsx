@@ -12,6 +12,7 @@ import { Portal as TooltipPortal } from '@radix-ui/react-tooltip';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import { cn } from '@xipkg/utils';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 import { SelectRole } from './SelectRole';
 import { useCurrentUser } from 'common.services';
@@ -29,14 +30,14 @@ interface DesktopUserMenuProps {
 }
 
 const menuItemClassName = cn(
-  'text-gray-80 fill-gray-80 h-9 gap-2 rounded-lg px-2 text-sm font-medium',
-  'hover:bg-gray-5 hover:text-gray-100 hover:fill-gray-100 focus:bg-gray-5 focus:text-gray-100',
+  'text-text-primary fill-icon-primary h-9 gap-2 rounded-lg px-2 text-sm font-medium',
+  'hover:bg-background-page hover:text-text-primary hover:fill-icon-primary focus:bg-background-page focus:text-text-primary',
 );
 
 const logoutItemClassName = cn(
   menuItemClassName,
-  'text-red-80 hover:bg-red-0 hover:text-red-100 focus:bg-red-0 focus:text-red-100',
-  '[&_svg]:fill-red-80 hover:[&_svg]:fill-red-100 focus:[&_svg]:fill-red-100',
+  'text-text-danger hover:bg-status-error-background hover:text-text-danger focus:bg-status-error-background focus:text-text-danger',
+  '[&_svg]:fill-icon-danger hover:[&_svg]:fill-icon-danger focus:[&_svg]:fill-icon-danger',
 );
 
 export const DesktopUserMenu = ({
@@ -47,6 +48,7 @@ export const DesktopUserMenu = ({
   profileText,
   logoutText,
 }: DesktopUserMenuProps) => {
+  const { t } = useTranslation('navigation');
   const { isDesktopOpen } = useMenuStore();
 
   const { data: user } = useCurrentUser();
@@ -76,11 +78,11 @@ export const DesktopUserMenu = ({
         size="40"
         withOutText={withOutText}
         className="min-w-0 flex-1 overflow-hidden"
-        classNameText="block w-full pl-1 text-left text-gray-100"
-        classNameLabel="block w-full pl-1 text-left text-gray-60"
+        classNameText="block w-full pl-1 text-left text-text-primary"
+        classNameLabel="block w-full pl-1 text-left text-text-secondary"
       />
       {!withOutText && (
-        <ChevronUp className="fill-gray-60 mr-1 ml-1 h-4 w-4 shrink-0 rotate-x-180 group-data-[state=open]:rotate-x-0" />
+        <ChevronUp className="fill-icon-secondary mr-1 ml-1 h-4 w-4 shrink-0 rotate-x-180 group-data-[state=open]:rotate-x-0" />
       )}
     </Button>
   );
@@ -122,7 +124,9 @@ export const DesktopUserMenu = ({
                   {displayName ? (
                     <span className="font-medium wrap-break-word">{displayName}</span>
                   ) : null}
-                  {username ? <span className="text-gray-40 break-all">{username}</span> : null}
+                  {username ? (
+                    <span className="text-text-secondary break-all">{username}</span>
+                  ) : null}
                 </div>
               </TooltipContent>
             </TooltipPortal>
@@ -160,7 +164,7 @@ export const DesktopUserMenu = ({
               data-umami-event="header-pwa-install"
             >
               <Download className="size-5 shrink-0" />
-              Установить приложение
+              {t('installApp')}
             </DropdownMenuItem>
           )}
 
@@ -171,7 +175,7 @@ export const DesktopUserMenu = ({
             className={logoutItemClassName}
             data-umami-event="header-logout"
           >
-            <Exit className="fill-red-80 size-5 shrink-0" />
+            <Exit className="fill-icon-danger size-5 shrink-0" />
             {logoutText}
           </DropdownMenuItem>
         </div>

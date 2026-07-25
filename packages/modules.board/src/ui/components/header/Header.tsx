@@ -103,7 +103,7 @@ export const Header = () => {
             variant="none"
             onClick={handleBack}
             type="button"
-            className="hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
+            className="hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
             data-umami-event="board-back"
           >
             <ArrowLeft size="s" className={`h-4 w-4 lg:h-6 lg:w-6 ${boardIconClass}`} />
@@ -130,7 +130,7 @@ export const Header = () => {
                 <Button
                   type="button"
                   variant="none"
-                  className="hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
+                  className="hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
                   onClick={handleOpenModal}
                   data-umami-event="board-edit-name"
                 >
@@ -152,8 +152,9 @@ export const Header = () => {
             <Button
               variant="none"
               className={cn(
-                'hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl',
-                openTimer && 'bg-brand-20/40 focus:bg-brand-20/40',
+                'hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl',
+                openTimer &&
+                  'bg-action-primary-background-disabled/40 focus:bg-action-primary-background-disabled/40',
               )}
               data-umami-event="board-timer-menu"
               onPointerDown={stopEvent}
@@ -169,7 +170,7 @@ export const Header = () => {
               variant="none"
               onClick={toggleFocusMode}
               type="button"
-              className="hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
+              className="hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
               data-umami-event="board-toggle-focus-mode"
               data-umami-event-state={focusMode ? 'exit' : 'enter'}
             >

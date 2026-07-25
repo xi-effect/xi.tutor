@@ -5,6 +5,7 @@ import { Toggle } from '@xipkg/toggle';
 import { Button } from '@xipkg/button';
 import { useMediaQuery } from '@xipkg/utils';
 import { VkConnectButton } from 'common.ui';
+import { useTranslation } from 'react-i18next';
 
 import { NotificationsToggles } from './NotificationsToggles';
 import { useNotificationsStatus } from '../hooks';
@@ -18,6 +19,7 @@ import {
 } from 'common.services';
 
 export const Notifications = () => {
+  const { t } = useTranslation('profile');
   const isMobile = useMediaQuery('(max-width: 719px)');
   const { data: user } = useCurrentUser();
   const { data: deliveryMethods } = useGetDeliveryMethods();
@@ -46,28 +48,28 @@ export const Notifications = () => {
   const vkConnectionStatus = [
     {
       condition: isVkNotConnected && !isVkAwaitingConfirmation,
-      text: 'Не подключен',
-      color: 'text-gray-80',
+      text: t('notifications.notConnected'),
+      color: 'text-text-primary',
     },
     {
       condition: isVkAwaitingConfirmation,
-      text: 'Ожидаем подтверждение во ВКонтакте…',
-      color: 'text-gray-80',
+      text: t('notifications.awaitingConfirmationVk'),
+      color: 'text-text-primary',
     },
     {
       condition: isVkConnectionActive,
-      text: vkDeliveryMethod?.related_contact?.title || 'Подключен',
-      color: 'text-gray-80',
+      text: vkDeliveryMethod?.related_contact?.title || t('notifications.connected'),
+      color: 'text-text-primary',
     },
     {
       condition: isVkConnectionBlocked,
-      text: 'Разрешите сообщения от сообщества ВКонтакте или удалите привязку и подключите заново',
-      color: 'text-red-80',
+      text: t('notifications.blockedVk'),
+      color: 'text-text-danger',
     },
     {
       condition: isVkConnectionReplaced,
-      text: 'Удалите текущую привязку и подключите заново',
-      color: 'text-orange-60',
+      text: t('notifications.replaced'),
+      color: 'text-tag-orange-accent',
     },
   ];
 
@@ -80,8 +82,8 @@ export const Notifications = () => {
           onClick={handleDisconnectVk}
           className="ml-auto shrink-0 bg-transparent"
         >
-          <Trash className="fill-gray-80 pointer" />
-          <span className="sr-only">Удалить</span>
+          <Trash className="fill-icon-primary pointer" />
+          <span className="sr-only">{t('notifications.delete')}</span>
         </Button>
       );
     }
@@ -89,7 +91,9 @@ export const Notifications = () => {
     if (isVkConnectionBlocked) {
       return (
         <VkConnectButton
-          label={isVkAwaitingConfirmation ? 'Ожидаем…' : 'Разблокировать'}
+          label={
+            isVkAwaitingConfirmation ? t('notifications.awaiting') : t('notifications.unblock')
+          }
           isPreparing={isVkPending && !isVkWidgetReady}
           isAwaitingConfirmation={isVkAwaitingConfirmation}
           groupId={vkConnectionData?.group_id}
@@ -103,7 +107,9 @@ export const Notifications = () => {
     if (isVkConnectionReplaced) {
       return (
         <VkConnectButton
-          label={isVkAwaitingConfirmation ? 'Ожидаем…' : 'Подключить заново'}
+          label={
+            isVkAwaitingConfirmation ? t('notifications.awaiting') : t('notifications.reconnect')
+          }
           isPreparing={isVkPending && !isVkWidgetReady}
           isAwaitingConfirmation={isVkAwaitingConfirmation}
           groupId={vkConnectionData?.group_id}
@@ -116,7 +122,7 @@ export const Notifications = () => {
 
     return (
       <VkConnectButton
-        label={isVkAwaitingConfirmation ? 'Ожидаем…' : 'Подключить'}
+        label={isVkAwaitingConfirmation ? t('notifications.awaiting') : t('notifications.connect')}
         isPreparing={isVkPending && !isVkWidgetReady}
         isAwaitingConfirmation={isVkAwaitingConfirmation}
         groupId={vkConnectionData?.group_id}
@@ -140,30 +146,29 @@ export const Notifications = () => {
   return (
     <div className="w-full min-w-0">
       {!isMobile && (
-        <h1 className="bg-gray-0 sticky top-0 z-10 mb-4 pb-2 text-3xl font-semibold dark:text-gray-100">
-          Уведомления
+        <h1 className="bg-gray-0 dark:text-text-primary sticky top-0 z-10 mb-4 pb-2 text-3xl font-semibold">
+          {t('notifications.title')}
         </h1>
       )}
 
       <div className="flex w-full min-w-0 flex-col gap-4">
         {isSupported && (
-          <div className="border-gray-30 bg-gray-0 flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
-            <div className="hover:bg-gray-5 flex flex-row items-center gap-4 rounded-xl bg-transparent p-3">
-              <Notification className="fill-brand-80 h-8 w-8 shrink-0" />
+          <div className="border-border-control bg-gray-0 flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
+            <div className="hover:bg-background-page flex flex-row items-center gap-4 rounded-xl bg-transparent p-3">
+              <Notification className="fill-icon-brand h-8 w-8 shrink-0" />
               <div className="flex min-w-0 flex-1 flex-col gap-1">
-                <span className="w-fit font-semibold dark:text-gray-100">
-                  Системные уведомления
+                <span className="dark:text-text-primary w-fit font-semibold">
+                  {t('notifications.systemTitle')}
                 </span>
-                <span className="text-gray-80 dark:text-gray-80 font-inter text-xs font-normal">
-                  Всплывающие уведомления ОС при новых событиях — в другой вкладке или когда
-                  приложение свёрнуто.
+                <span className="text-text-primary dark:text-text-primary font-inter text-xs font-normal">
+                  {t('notifications.systemDescription')}
                 </span>
               </div>
             </div>
             <div className="flex flex-col gap-2 px-3 pb-3">
               <div className="flex flex-row items-center justify-between gap-4 p-2">
-                <span className="font-inter text-m-base min-w-0 flex-1 font-medium dark:text-gray-100">
-                  Показывать системные уведомления
+                <span className="font-inter text-m-base dark:text-text-primary min-w-0 flex-1 font-medium">
+                  {t('notifications.showSystem')}
                 </span>
                 <Toggle
                   checked={enabled}
@@ -175,10 +180,10 @@ export const Notifications = () => {
               </div>
               {permission !== 'granted' && (
                 <div className="flex flex-row items-center justify-between gap-2 p-2">
-                  <span className="text-gray-80 dark:text-gray-80 font-inter text-s-base min-w-0">
+                  <span className="text-text-primary dark:text-text-primary font-inter text-s-base min-w-0">
                     {permission === 'denied'
-                      ? 'Разрешение отклонено. Разрешите уведомления в настройках браузера.'
-                      : 'Выдайте разрешение, чтобы получать уведомления в другой вкладке или когда окно свёрнуто.'}
+                      ? t('notifications.permissionDenied')
+                      : t('notifications.permissionNeeded')}
                   </span>
                   {permission !== 'denied' && (
                     <Button
@@ -187,15 +192,17 @@ export const Notifications = () => {
                       onClick={handleRequestPermission}
                       disabled={requestingPermission}
                     >
-                      {requestingPermission ? 'Запрос…' : 'Разрешить уведомления'}
+                      {requestingPermission
+                        ? t('notifications.requesting')
+                        : t('notifications.allow')}
                     </Button>
                   )}
                 </div>
               )}
               {permission === 'granted' && (
                 <div className="flex flex-row flex-wrap items-center gap-2 px-2">
-                  <span className="text-gray-80 dark:text-gray-80 font-inter text-s-base">
-                    Разрешение выдано
+                  <span className="text-text-primary dark:text-text-primary font-inter text-s-base">
+                    {t('notifications.permissionGranted')}
                   </span>
                   <Button
                     size="s"
@@ -203,13 +210,11 @@ export const Notifications = () => {
                     onClick={() => {
                       const ok = showTestSystemNotification();
                       if (!ok) {
-                        toast.error(
-                          'Не удалось показать: нет разрешения или браузер не поддерживает. См. консоль (F12).',
-                        );
+                        toast.error(t('notifications.testFailed'));
                       }
                     }}
                   >
-                    Проверить уведомление
+                    {t('notifications.test')}
                   </Button>
                 </div>
               )}
@@ -217,12 +222,14 @@ export const Notifications = () => {
           </div>
         )}
 
-        <div className="border-gray-30 bg-gray-0 flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
-          <div className="hover:bg-gray-5 flex flex-row items-center gap-4 rounded-xl bg-transparent p-2">
-            <TelegramFilled className="fill-brand-80 size-8 shrink-0" />
+        <div className="border-border-control bg-gray-0 flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
+          <div className="hover:bg-background-page flex flex-row items-center gap-4 rounded-xl bg-transparent p-2">
+            <TelegramFilled className="fill-icon-brand size-8 shrink-0" />
 
             <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
-              <span className="w-fit leading-5 font-semibold dark:text-gray-100">Telegram</span>
+              <span className="dark:text-text-primary w-fit leading-5 font-semibold">
+                {t('notifications.telegram')}
+              </span>
               {tgConnectionStatus
                 .filter(({ condition }) => condition)
                 .map(({ text, color }) => (
@@ -238,12 +245,14 @@ export const Notifications = () => {
           {isTgConnectionActive && <NotificationsToggles deliveryMethodKind="telegram" />}
         </div>
 
-        <div className="border-gray-30 bg-gray-0 flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
-          <div className="hover:bg-gray-5 flex flex-row items-center gap-4 rounded-xl bg-transparent p-2">
+        <div className="border-border-control bg-gray-0 flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
+          <div className="hover:bg-background-page flex flex-row items-center gap-4 rounded-xl bg-transparent p-2">
             <VK className="size-8 shrink-0 !text-[#0077FF]" />
 
             <div className="flex min-w-0 flex-1 flex-col justify-center gap-0.5">
-              <span className="w-fit leading-5 font-semibold dark:text-gray-100">ВКонтакте</span>
+              <span className="dark:text-text-primary w-fit leading-5 font-semibold">
+                {t('notifications.vk')}
+              </span>
               {vkConnectionStatus
                 .filter(({ condition }) => condition)
                 .map(({ text, color }) => (
@@ -259,13 +268,15 @@ export const Notifications = () => {
           {isVkConnectionActive && <NotificationsToggles deliveryMethodKind="vk" />}
         </div>
 
-        <div className="border-gray-30 bg-gray-0 flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
-          <div className="hover:bg-gray-5 flex flex-row items-center gap-4 rounded-xl bg-transparent p-3">
-            <MailRounded className="fill-brand-80 shrink-0" />
+        <div className="border-border-control bg-gray-0 flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
+          <div className="hover:bg-background-page flex flex-row items-center gap-4 rounded-xl bg-transparent p-3">
+            <MailRounded className="fill-icon-brand shrink-0" />
 
             <div className="flex min-w-0 flex-1 flex-col">
-              <span className="w-fit font-semibold dark:text-gray-100">Электронная почта</span>
-              <span className="text-gray-80 dark:text-gray-80 font-inter truncate text-xs font-normal">
+              <span className="dark:text-text-primary w-fit font-semibold">
+                {t('notifications.email')}
+              </span>
+              <span className="text-text-primary dark:text-text-primary font-inter truncate text-xs font-normal">
                 {user?.email ||
                   deliveryMethods?.email?.related_contact?.title ||
                   'example@example.com'}

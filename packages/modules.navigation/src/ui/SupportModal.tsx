@@ -21,8 +21,8 @@ const CONTACTS = [
     descriptionKey: 'supportModal.telegramDesc',
     href: 'https://t.me/sovlium_support_bot',
     icon: TelegramFilled,
-    colorClass: 'bg-brand-0 text-brand-80',
-    iconClass: 'fill-brand-80',
+    colorClass: 'bg-status-info-background text-text-link',
+    iconClass: 'fill-icon-brand',
     umamiEvent: 'support-telegram',
     channel: 'telegram' as const,
   },
@@ -41,8 +41,8 @@ const CONTACTS = [
     descriptionKey: 'supportModal.emailDesc',
     href: 'mailto:support@sovlium.ru',
     icon: MailRounded,
-    colorClass: 'bg-gray-5 text-gray-80',
-    iconClass: 'fill-gray-80',
+    colorClass: 'bg-background-page text-text-primary',
+    iconClass: 'fill-icon-primary',
     umamiEvent: 'support-email',
     channel: 'email' as const,
   },
@@ -75,7 +75,7 @@ export const SupportModal = ({ open, onOpenChange }: SupportModalProps) => {
           <ModalTitle className={modalTitleClass}>{t('supportModal.title')}</ModalTitle>
         </ModalHeader>
         <ModalBody className="flex flex-col gap-3 pb-6">
-          <p className="text-gray-60 text-s-base mb-1">{t('supportModal.description')}</p>
+          <p className="text-text-secondary text-s-base mb-1">{t('supportModal.description')}</p>
 
           {CONTACTS.map((contact) => (
             <a
@@ -85,7 +85,7 @@ export const SupportModal = ({ open, onOpenChange }: SupportModalProps) => {
               rel="noopener noreferrer"
               data-umami-event={contact.umamiEvent}
               onClick={() => trackSupportContact(contact.channel)}
-              className="border-gray-10 hover:bg-gray-5 flex items-center gap-4 rounded-xl border p-4 transition-colors"
+              className="border-border-default hover:bg-background-page flex items-center gap-4 rounded-xl border p-4 transition-colors"
             >
               <div
                 className={`flex size-10 shrink-0 items-center justify-center rounded-lg ${contact.colorClass}`}
@@ -93,19 +93,21 @@ export const SupportModal = ({ open, onOpenChange }: SupportModalProps) => {
                 <contact.icon className={`size-5 ${contact.iconClass}`} />
               </div>
               <div className="flex-1">
-                <div className="text-m-base font-medium text-gray-100">{t(contact.titleKey)}</div>
-                <div className="text-s-base text-gray-60">{t(contact.descriptionKey)}</div>
+                <div className="text-m-base text-text-primary font-medium">
+                  {t(contact.titleKey)}
+                </div>
+                <div className="text-s-base text-text-secondary">{t(contact.descriptionKey)}</div>
               </div>
-              <External className="text-gray-30 size-5 shrink-0" />
+              <External className="text-text-disabled size-5 shrink-0" />
             </a>
           ))}
 
-          <p className="text-gray-40 text-xs-base mt-2 text-center">
+          <p className="text-text-disabled text-xs-base mt-2 text-center">
             {t('supportModal.responseTime')}
           </p>
 
-          <div className="border-gray-10 mt-3 border-t pt-4">
-            <p className="text-s-base text-gray-60 mb-3 text-center font-medium">
+          <div className="border-border-default mt-3 border-t pt-4">
+            <p className="text-s-base text-text-secondary mb-3 text-center font-medium">
               {t('supportModal.socials')}
             </p>
             <div className="flex gap-3">
@@ -114,20 +116,22 @@ export const SupportModal = ({ open, onOpenChange }: SupportModalProps) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 data-umami-event="support-social-telegram"
-                className="border-gray-10 hover:bg-gray-5 flex flex-1 items-center justify-center gap-2.5 rounded-lg border px-3 py-2 transition-colors"
+                className="border-border-default hover:bg-background-page flex flex-1 items-center justify-center gap-2.5 rounded-lg border px-3 py-2 transition-colors"
               >
-                <TelegramFilled className="fill-gray-60 size-4 shrink-0" />
-                <span className="text-s-base text-gray-80">{t('supportModal.socialTelegram')}</span>
+                <TelegramFilled className="fill-icon-secondary size-4 shrink-0" />
+                <span className="text-s-base text-text-primary">
+                  {t('supportModal.socialTelegram')}
+                </span>
               </a>
               <a
                 href="https://vk.com/sovlium"
                 target="_blank"
                 rel="noopener noreferrer"
                 data-umami-event="support-social-vk"
-                className="border-gray-10 hover:bg-gray-5 flex flex-1 items-center justify-center gap-2.5 rounded-lg border px-3 py-2 transition-colors"
+                className="border-border-default hover:bg-background-page flex flex-1 items-center justify-center gap-2.5 rounded-lg border px-3 py-2 transition-colors"
               >
-                <VK className="fill-gray-60 size-4 shrink-0" />
-                <span className="text-s-base text-gray-80">{t('supportModal.socialVk')}</span>
+                <VK className="fill-icon-secondary size-4 shrink-0" />
+                <span className="text-s-base text-text-primary">{t('supportModal.socialVk')}</span>
               </a>
             </div>
           </div>

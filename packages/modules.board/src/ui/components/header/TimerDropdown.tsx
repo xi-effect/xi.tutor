@@ -20,6 +20,7 @@ import {
   unlockBoardTimerAudio,
 } from './boardTimerAudio';
 import { boardIconClass, boardPanelClass } from '../../boardTheme';
+import { useTranslation } from 'react-i18next';
 
 const MAX_DURATION_MS = 99 * 60 * 1000 + 59 * 1000;
 
@@ -67,13 +68,13 @@ const parseFieldValue = (value: string, max: number) => {
 
 const normalizeMaskInput = (value: string) => value.replace(/\D/g, '').slice(0, 2);
 const TIMER_VALUE_CLASS =
-  'text-gray-100 text-[18px] lg:text-[24px] leading-[1] font-medium tabular-nums font-sans';
+  'text-text-primary text-[18px] lg:text-[24px] leading-[1] font-medium tabular-nums font-sans';
 
 const TIMER_ICON_BUTTON_CLASS =
-  'hover:bg-brand-0 flex shrink-0 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:rounded-xl';
+  'hover:bg-status-info-background flex shrink-0 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:rounded-xl';
 
 const TIMER_ROUND_BUTTON_CLASS =
-  'hover:bg-brand-0 flex shrink-0 items-center justify-center rounded-full p-0 focus:bg-transparent';
+  'hover:bg-status-info-background flex shrink-0 items-center justify-center rounded-full p-0 focus:bg-transparent';
 
 const PlayPauseIcon = ({ isPlaying }: { isPlaying: boolean }) => {
   if (isPlaying) {
@@ -98,6 +99,7 @@ type TimerDropdownProps = {
 };
 
 export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
+  const { t } = useTranslation('board');
   const { snapshot, updateTimer } = useBoardTimer();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -510,24 +512,24 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
                       variant="none"
                       className={cn(
                         TIMER_ICON_BUTTON_CLASS,
-                        'text-xs-base-size h-6 w-8 text-gray-100 lg:h-8 lg:w-10',
+                        'text-xs-base-size text-text-primary h-6 w-8 lg:h-8 lg:w-10',
                       )}
                       onPointerDown={stopEvent}
                       onClick={(e) => onControlClick(e, () => shiftRunningBy(15_000))}
                     >
-                      +15с
+                      {t('timer.add15s')}
                     </Button>
                     <Button
                       type="button"
                       variant="none"
                       className={cn(
                         TIMER_ICON_BUTTON_CLASS,
-                        'text-xs-base-size h-6 w-8 text-gray-100 lg:h-8 lg:w-10',
+                        'text-xs-base-size text-text-primary h-6 w-8 lg:h-8 lg:w-10',
                       )}
                       onPointerDown={stopEvent}
                       onClick={(e) => onControlClick(e, () => shiftRunningBy(60_000))}
                     >
-                      +1м
+                      {t('timer.add1m')}
                     </Button>
                   </div>
                 ) : (
@@ -553,17 +555,17 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
                   </div>
                 )}
 
-                <div className="bg-gray-10 h-6 w-px shrink-0 lg:h-8" />
+                <div className="bg-background-subtle h-6 w-px shrink-0 lg:h-8" />
 
                 <Button
                   type="button"
                   variant="none"
-                  className="bg-brand-80 hover:bg-brand-100 focus:bg-brand-100 active:bg-brand-100 disabled:bg-gray-40 flex h-6 w-6 shrink-0 items-center justify-center rounded-full p-0 lg:h-8 lg:w-8"
+                  className="bg-action-primary-background-default hover:bg-action-primary-background-pressed focus:bg-action-primary-background-pressed active:bg-action-primary-background-pressed disabled:bg-background-subtle flex h-6 w-6 shrink-0 items-center justify-center rounded-full p-0 lg:h-8 lg:w-8"
                   onPointerDown={stopEvent}
                   onClick={(e) => onControlClick(e, snapshot.isRunning ? handlePause : handlePlay)}
                   disabled={!snapshot.isRunning && snapshot.remainingMs <= 0}
                   data-umami-event={snapshot.isRunning ? 'board-timer-pause' : 'board-timer-play'}
-                  title={snapshot.isRunning ? 'Пауза' : 'Старт'}
+                  title={snapshot.isRunning ? t('timer.pause') : t('timer.start')}
                 >
                   <PlayPauseIcon isPlaying={snapshot.isRunning} />
                 </Button>
@@ -574,14 +576,14 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
                   onPointerDown={stopEvent}
                   onClick={(e) => onControlClick(e, handleReset)}
                   data-umami-event="board-timer-reset"
-                  title="Сброс"
+                  title={t('timer.reset')}
                 >
                   <Redo className={cn('h-4 w-4', boardIconClass)} />
                 </Button>
               </>
             )}
 
-            <div className="bg-gray-10 h-6 w-px shrink-0 lg:h-8" />
+            <div className="bg-background-subtle h-6 w-px shrink-0 lg:h-8" />
             <Button
               type="button"
               variant="none"
@@ -593,7 +595,7 @@ export const TimerDropdown = ({ open, setOpen }: TimerDropdownProps) => {
                 })
               }
               data-umami-event="board-timer-close"
-              title="Закрыть таймер"
+              title={t('timer.close')}
             >
               <Close className={cn('h-4 w-4', boardIconClass)} />
             </Button>

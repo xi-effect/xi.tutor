@@ -6,6 +6,7 @@ import '../utils/driver.css';
 import { createRoot } from 'react-dom/client';
 import { useCurrentUser, useOnboardingTransition } from 'common.services';
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@xipkg/utils';
 import {
   PRODUCT_ANALYTICS_EVENTS,
@@ -55,6 +56,7 @@ function isDestroyedOnLastTourStep(step: DriveStep | undefined, validSteps: Driv
 }
 
 export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopupT) => {
+  const { t } = useTranslation('commonUi');
   const { data: user, isLoading } = useCurrentUser();
   const [isHidden, setIsHidden] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -234,17 +236,17 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
         customCloseButton.className = 'driver-popover-close-btn';
 
         const root = createRoot(customCloseButton);
-        root.render(<Close size="s" className="fill-gray-60 h-4 w-4" />);
+        root.render(<Close size="s" className="fill-icon-secondary h-4 w-4" />);
 
         defaultCloseButton.replaceWith(customCloseButton);
         customCloseButton.addEventListener('click', () => {
           driverObj.destroy();
         });
       },
-      nextBtnText: 'Продолжить',
-      prevBtnText: 'Назад',
-      doneBtnText: 'Закрыть',
-      progressText: '{{current}} из {{total}}',
+      nextBtnText: t('onboarding.next'),
+      prevBtnText: t('onboarding.prev'),
+      doneBtnText: t('onboarding.done'),
+      progressText: t('onboarding.progress'),
       onDestroyed: (_element, step) => {
         if (isTransitioning) return;
 
@@ -282,7 +284,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
       },
     });
     driverObj.drive();
-  }, [steps, user, isTransitioning, transitionStage]);
+  }, [steps, user, isTransitioning, transitionStage, t]);
 
   useEffect(() => {
     if (shouldShowForCompleted) {
@@ -307,31 +309,29 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
   }
 
   return (
-    <div className="bg-gray-0 border-gray-10 fixed bottom-0 left-72 z-100 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col items-start gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
+    <div className="bg-background-surface border-border-default fixed bottom-0 left-72 z-100 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col items-start gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
       <Button
         variant="none"
         size="s"
-        className="hover:bg-gray-0 bg-gray-0 absolute top-1 right-1 hover:cursor-pointer"
+        className="hover:bg-background-surface bg-background-surface absolute top-1 right-1 hover:cursor-pointer"
         onClick={hideMenuForSession}
       >
-        <Close className="fill-gray-60 h-4 w-4" />
+        <Close className="fill-icon-secondary h-4 w-4" />
       </Button>
       <div className="flex flex-col gap-2">
         <div className="h-8">
-          <span className="text-xl font-semibold text-gray-100">
-            Добро пожаловать в Sovlium! 😊
-          </span>
+          <span className="text-text-primary text-xl font-semibold">{t('onboarding.welcome')}</span>
         </div>
         <div className="h-10">
-          <span className="text-gray-80 text-sm font-normal tracking-tight">
+          <span className="text-text-primary text-sm font-normal tracking-tight">
             {isTutor ? (
               <>
-                Хотите узнать о возможностях платформы?
+                {t('onboarding.tutorDescriptionLine1')}
                 <br />
-                Вы сможете вернуться к обучению в любой момент
+                {t('onboarding.tutorDescriptionLine2')}
               </>
             ) : (
-              <>Подсказать, как всё устроено?</>
+              <>{t('onboarding.studentDescription')}</>
             )}
           </span>
         </div>
@@ -345,11 +345,11 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
           size="s"
           className={cn(
             buttonClassName,
-            'bg-brand-80 text-gray-0',
+            'bg-action-primary-background-default text-text-on-accent',
             isTutor ? 'max-w-[153px]' : 'max-w-[177px]',
           )}
         >
-          {isTutor ? 'Пройти обучение' : 'Смотреть подсказки'}
+          {isTutor ? t('onboarding.startTourTutor') : t('onboarding.startTourStudent')}
         </Button>
         <Button
           variant="none"
@@ -359,11 +359,11 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
           size="s"
           className={cn(
             buttonClassName,
-            'hover:bg-gray-5 border-gray-30 border',
+            'hover:bg-background-page border-border-control border',
             isTutor ? 'max-w-[153px]' : 'max-w-[78px]',
           )}
         >
-          {isTutor ? 'Вернуться позже' : 'Позже'}
+          {isTutor ? t('onboarding.laterTutor') : t('onboarding.laterStudent')}
         </Button>
       </div>
     </div>

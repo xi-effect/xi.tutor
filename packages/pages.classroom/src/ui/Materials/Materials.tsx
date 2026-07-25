@@ -6,12 +6,14 @@ import {
   useGetClassroomMaterialsListStudent,
 } from 'common.services';
 import { MaterialsCard } from 'features.materials.card';
+import { useTranslation } from 'react-i18next';
 import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
 import { MaterialSection } from './components/MaterialSection';
 import { LoadingState } from './components/LoadingState';
 
 export const Materials = () => {
+  const { t } = useTranslation('classroom');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
   const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
 
@@ -50,7 +52,7 @@ export const Materials = () => {
 
   return (
     <div className="xs:pr-0 flex min-h-[400px] flex-col pt-2 pr-3">
-      <MaterialSection headerTitle="Доски" rowClassName="pb-4">
+      <MaterialSection headerTitle={t('materials.boards')} rowClassName="pb-4">
         {boardsData?.length ? (
           boardsData.map((board) => (
             <MaterialsCard
@@ -61,10 +63,10 @@ export const Materials = () => {
             />
           ))
         ) : (
-          <EmptyDataState title="Нет учебных досок" />
+          <EmptyDataState title={t('materials.noBoards')} />
         )}
       </MaterialSection>
-      <MaterialSection headerTitle="Заметки">
+      <MaterialSection headerTitle={t('materials.notes')}>
         {notesData?.length ? (
           notesData.map((note) => (
             <MaterialsCard
@@ -75,7 +77,7 @@ export const Materials = () => {
             />
           ))
         ) : (
-          <EmptyDataState title="Нет заметок" />
+          <EmptyDataState title={t('materials.noNotes')} />
         )}
       </MaterialSection>
     </div>

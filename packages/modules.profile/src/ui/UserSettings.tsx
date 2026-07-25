@@ -3,6 +3,7 @@ import { useMediaQuery } from '@xipkg/utils';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { Modal, ModalContent, ModalTitle } from '@xipkg/modal';
 import { THEME_CUSTOMIZATION_ENABLED } from 'common.theme';
+import { useTranslation } from 'react-i18next';
 import { Header } from './Header';
 import { Menu } from './Menu';
 import { Content } from './Content';
@@ -14,6 +15,7 @@ export const UserSettings = ({
   open: boolean;
   setOpen: (open: boolean) => void;
 }) => {
+  const { t } = useTranslation('profile');
   const isMobile = useMediaQuery('(max-width: 719px)');
   const isDesktop = useMediaQuery('(min-width: 1024px)');
   const [activeContent, setActiveContent] = React.useState<number>(0);
@@ -88,7 +90,7 @@ export const UserSettings = ({
         }
         aria-describedby={undefined}
       >
-        <ModalTitle className="hidden"> Настройки пользователя </ModalTitle>
+        <ModalTitle className="hidden">{t('settingsTitle')}</ModalTitle>
         <div className="bg-gray-0 flex min-h-0 w-full flex-1 flex-col">
           <Header
             activeItem={activeContent}

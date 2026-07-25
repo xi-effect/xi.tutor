@@ -3,7 +3,6 @@ import { TemplateCard } from './TemplateCard';
 import { useTemplatesList } from 'common.services';
 import { TemplateT } from 'common.types';
 import { useDeleteTemplate } from 'common.services';
-import { AddTemplateButton } from './AddTemplateButton';
 
 export const TemplatesGrid = () => {
   const { data } = useTemplatesList();
@@ -14,15 +13,13 @@ export const TemplatesGrid = () => {
   };
 
   return (
-    <ScrollArea className="h-[calc(100vh-72px)] w-full p-4 pl-0">
-      <ul className="max-xs:gap-4 grid grid-cols-1 gap-8 min-[550px]:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {data &&
-          data.map((template: TemplateT) => (
-            <li key={template.id}>
-              <TemplateCard {...template} handleDeleteTemplate={handleDeleteTemplate} />
-            </li>
-          ))}
-        <AddTemplateButton />
+    <ScrollArea className="h-[calc(100dvh-140px)] w-full px-5 pb-5 sm:px-10 sm:pb-10">
+      <ul className="grid grid-cols-1 gap-5 min-[550px]:grid-cols-2 md:grid-cols-3">
+        {data?.map((template: TemplateT) => (
+          <li key={template.id} className="min-w-0">
+            <TemplateCard {...template} handleDeleteTemplate={handleDeleteTemplate} />
+          </li>
+        ))}
       </ul>
     </ScrollArea>
   );

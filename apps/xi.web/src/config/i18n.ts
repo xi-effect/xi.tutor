@@ -1,9 +1,19 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import HttpBackend from 'i18next-http-backend';
-import LocalStorageBackend from 'i18next-localstorage-backend';
+import { readStoredLanguage, syncLanguageSideEffects, type AppLanguage } from 'common.ui/language';
 
-// Динамические импорты переводов для уменьшения размера основного бандла
+// Re-export language helpers for app usage (lightweight entry, no UI)
+export {
+  setAppLanguage,
+  getAppLanguage,
+  getDateLocale,
+  type AppLanguage,
+} from 'common.ui/language';
+
+/**
+ * Загружаем только JSON-локали через `package/locales`,
+ * чтобы не тянуть UI-граф пакетов в критический путь старта.
+ */
 const loadTranslations = async () => {
   const [
     { signinEn, signinRu },
@@ -23,13 +33,83 @@ const loadTranslations = async () => {
       welcomeSocialsRu,
     },
     { calendarEn, calendarRu },
+    { commonUiEn, commonUiRu },
+    { profileEn, profileRu },
+    { mainEn, mainRu },
+    { classroomEn, classroomRu },
+    { classroomsEn, classroomsRu },
+    { materialsEn, materialsRu },
+    { paymentsEn, paymentsRu },
+    { boardEn, boardRu },
+    { editorEn, editorRu },
+    { lessonAddEn, lessonAddRu },
+    { lessonMoveEn, lessonMoveRu },
+    { lessonCancelEn, lessonCancelRu },
+    { lessonInfoEn, lessonInfoRu },
+    { lessonChangeEn, lessonChangeRu },
+    { lessonStartEn, lessonStartRu },
+    { invoiceEn, invoiceRu },
+    { invoiceCardEn, invoiceCardRu },
+    { paymentApproveEn, paymentApproveRu },
+    { paymentsTableEn, paymentsTableRu },
+    { chartsEn, chartsRu },
+    { invitesEn, invitesRu },
+    { invitesModalEn, invitesModalRu },
+    { groupAddEn, groupAddRu },
+    { groupManageEn, groupManageRu },
+    { groupInviteEn, groupInviteRu },
+    { studentsListEn, studentsListRu },
+    { classroomRenameEn, classroomRenameRu },
+    { materialsAddEn, materialsAddRu },
+    { materialsCardEn, materialsCardRu },
+    { materialsEditEn, materialsEditRu },
+    { materialsDuplicateEn, materialsDuplicateRu },
+    { avatarEditorEn, avatarEditorRu },
+    { notesEn, notesRu },
+    { emailEn, emailRu },
+    { emailConfirmEn, emailConfirmRu },
   ] = await Promise.all([
-    import('pages.signin'),
-    import('pages.signup'),
-    import('pages.reset-password'),
-    import('modules.navigation'),
-    import('pages.welcome'),
-    import('modules.calendar'),
+    import('pages.signin/locales'),
+    import('pages.signup/locales'),
+    import('pages.reset-password/locales'),
+    import('modules.navigation/locales'),
+    import('pages.welcome/locales'),
+    import('modules.calendar/locales'),
+    import('common.ui/locales'),
+    import('modules.profile/locales'),
+    import('pages.main/locales'),
+    import('pages.classroom/locales'),
+    import('pages.classrooms/locales'),
+    import('pages.materials/locales'),
+    import('pages.payments/locales'),
+    import('modules.board/locales'),
+    import('modules.editor/locales'),
+    import('features.lesson.add/locales'),
+    import('features.lesson.move/locales'),
+    import('features.lesson.cancel/locales'),
+    import('features.lesson.info/locales'),
+    import('features.lesson.change/locales'),
+    import('features.lesson.start/locales'),
+    import('features.invoice/locales'),
+    import('features.invoice.card/locales'),
+    import('features.payment.approve/locales'),
+    import('features.table/locales'),
+    import('features.charts/locales'),
+    import('pages.invites/locales'),
+    import('features.invites/locales'),
+    import('features.group.add/locales'),
+    import('features.group.manage/locales'),
+    import('features.group.invite/locales'),
+    import('features.students.list/locales'),
+    import('features.classroom.rename/locales'),
+    import('features.materials.add/locales'),
+    import('features.materials.card/locales'),
+    import('features.materials.edit/locales'),
+    import('features.materials.duplicate/locales'),
+    import('features.avatar.editor/locales'),
+    import('pages.notes/locales'),
+    import('pages.email/locales'),
+    import('pages.email-confirm/locales'),
   ]);
 
   return {
@@ -53,60 +133,157 @@ const loadTranslations = async () => {
     welcomeSocialsRu,
     calendarEn,
     calendarRu,
+    commonUiEn,
+    commonUiRu,
+    profileEn,
+    profileRu,
+    mainEn,
+    mainRu,
+    classroomEn,
+    classroomRu,
+    classroomsEn,
+    classroomsRu,
+    materialsEn,
+    materialsRu,
+    paymentsEn,
+    paymentsRu,
+    boardEn,
+    boardRu,
+    editorEn,
+    editorRu,
+    lessonAddEn,
+    lessonAddRu,
+    lessonMoveEn,
+    lessonMoveRu,
+    lessonCancelEn,
+    lessonCancelRu,
+    lessonInfoEn,
+    lessonInfoRu,
+    lessonChangeEn,
+    lessonChangeRu,
+    lessonStartEn,
+    lessonStartRu,
+    invoiceEn,
+    invoiceRu,
+    invoiceCardEn,
+    invoiceCardRu,
+    paymentApproveEn,
+    paymentApproveRu,
+    paymentsTableEn,
+    paymentsTableRu,
+    chartsEn,
+    chartsRu,
+    invitesEn,
+    invitesRu,
+    invitesModalEn,
+    invitesModalRu,
+    groupAddEn,
+    groupAddRu,
+    groupManageEn,
+    groupManageRu,
+    groupInviteEn,
+    groupInviteRu,
+    studentsListEn,
+    studentsListRu,
+    classroomRenameEn,
+    classroomRenameRu,
+    materialsAddEn,
+    materialsAddRu,
+    materialsCardEn,
+    materialsCardRu,
+    materialsEditEn,
+    materialsEditRu,
+    materialsDuplicateEn,
+    materialsDuplicateRu,
+    avatarEditorEn,
+    avatarEditorRu,
+    notesEn,
+    notesRu,
+    emailEn,
+    emailRu,
+    emailConfirmEn,
+    emailConfirmRu,
   };
 };
 
-// Инициализация i18n с динамической загрузкой переводов
+type Translations = Awaited<ReturnType<typeof loadTranslations>>;
+
+const toResources = (t: Translations, lang: 'en' | 'ru') => {
+  const s = lang === 'en' ? 'En' : 'Ru';
+
+  return {
+    signin: t[`signin${s}`],
+    signup: t[`signup${s}`],
+    resetPassword: t[`resetPassword${s}`],
+    navigation: t[`navigation${s}`],
+    welcomeUser: t[`welcomeUser${s}`],
+    welcomeRole: t[`welcomeRole${s}`],
+    welcomeAbout: t[`welcomeAbout${s}`],
+    welcomeSocials: t[`welcomeSocials${s}`],
+    welcome: t[`welcome${s}`],
+    calendar: t[`calendar${s}`],
+    commonUi: t[`commonUi${s}`],
+    profile: t[`profile${s}`],
+    main: t[`main${s}`],
+    classroom: t[`classroom${s}`],
+    classrooms: t[`classrooms${s}`],
+    materials: t[`materials${s}`],
+    payments: t[`payments${s}`],
+    board: t[`board${s}`],
+    editor: t[`editor${s}`],
+    lessonAdd: t[`lessonAdd${s}`],
+    lessonMove: t[`lessonMove${s}`],
+    lessonCancel: t[`lessonCancel${s}`],
+    lessonInfo: t[`lessonInfo${s}`],
+    lessonChange: t[`lessonChange${s}`],
+    lessonStart: t[`lessonStart${s}`],
+    invoice: t[`invoice${s}`],
+    invoiceCard: t[`invoiceCard${s}`],
+    paymentApprove: t[`paymentApprove${s}`],
+    paymentsTable: t[`paymentsTable${s}`],
+    charts: t[`charts${s}`],
+    invites: t[`invites${s}`],
+    invitesModal: t[`invitesModal${s}`],
+    groupAdd: t[`groupAdd${s}`],
+    groupManage: t[`groupManage${s}`],
+    groupInvite: t[`groupInvite${s}`],
+    studentsList: t[`studentsList${s}`],
+    classroomRename: t[`classroomRename${s}`],
+    materialsAdd: t[`materialsAdd${s}`],
+    materialsCard: t[`materialsCard${s}`],
+    materialsEdit: t[`materialsEdit${s}`],
+    materialsDuplicate: t[`materialsDuplicate${s}`],
+    avatarEditor: t[`avatarEditor${s}`],
+    notes: t[`notes${s}`],
+    email: t[`email${s}`],
+    emailConfirm: t[`emailConfirm${s}`],
+  };
+};
+
 const initI18n = async () => {
   const translations = await loadTranslations();
+  const storedLanguage: AppLanguage = readStoredLanguage() ?? 'ru';
 
   const resources = {
-    en: {
-      signin: translations.signinEn,
-      signup: translations.signupEn,
-      resetPassword: translations.resetPasswordEn,
-      navigation: translations.navigationEn,
-      welcomeUser: translations.welcomeUserEn,
-      welcomeRole: translations.welcomeRoleEn,
-      welcomeAbout: translations.welcomeAboutEn,
-      welcomeSocials: translations.welcomeSocialsEn,
-      welcome: translations.welcomeEn,
-      calendar: translations.calendarEn,
-    },
-    ru: {
-      signin: translations.signinRu,
-      signup: translations.signupRu,
-      resetPassword: translations.resetPasswordRu,
-      navigation: translations.navigationRu,
-      welcomeUser: translations.welcomeUserRu,
-      welcomeRole: translations.welcomeRoleRu,
-      welcomeAbout: translations.welcomeAboutRu,
-      welcomeSocials: translations.welcomeSocialsRu,
-      welcome: translations.welcomeRu,
-      calendar: translations.calendarRu,
-    },
+    en: toResources(translations, 'en'),
+    ru: toResources(translations, 'ru'),
   };
 
   await i18n.use(initReactI18next).init({
     resources,
+    lng: storedLanguage,
     fallbackLng: 'ru',
     debug: import.meta.env.DEV,
     interpolation: { escapeValue: false },
-    backend: {
-      backends: [LocalStorageBackend, HttpBackend],
-      backendOptions: [
-        {
-          expirationTime: 7 * 24 * 60 * 60 * 1000, // 7 days
-        },
-        {
-          loadPath: '/locales/{{lng}}/{{ns}}.json',
-        },
-      ],
-    },
+  });
+
+  syncLanguageSideEffects(storedLanguage);
+
+  i18n.on('languageChanged', (lng) => {
+    syncLanguageSideEffects(lng);
   });
 };
 
-// Экспортируем промис инициализации для ожидания перед рендерингом
 export const i18nInitPromise = initI18n();
 
 export default i18n;

@@ -1,0 +1,51 @@
+{
+  "modal": {
+    "title": "Create invoice",
+    "description": "Create invoice",
+    "intro1": "You are creating and sending an invoice.",
+    "intro2": "The student pays you directly — by transfer or in cash.",
+    "addRow": "Add row",
+    "addLesson": "Add lesson",
+    "lessons": "Lessons",
+    "price": "Price",
+    "quantity": "Quantity",
+    "sum": "Total",
+    "total": "Total:",
+    "create": "Create",
+    "cancel": "Cancel"
+  },
+  "classroom": {
+    "label": "Classroom",
+    "loading": "Loading...",
+    "notFound": "No classrooms found",
+    "placeholder": "Select a classroom"
+  },
+  "template": {
+    "loading": "Loading templates...",
+    "empty": "No templates available",
+    "addFromTemplate": "Add lesson from template"
+  },
+  "comment": {
+    "labelMobile": "Comment",
+    "label": "Comment for the student",
+    "optional": "optional",
+    "placeholder": "e.g. payment for September lessons"
+  },
+  "placeholders": {
+    "name": "Name",
+    "price": "Price",
+    "quantity": "Quantity",
+    "quantityShort": "Qty",
+    "sum": "Total"
+  },
+  "validation": {
+    "classroomRequired": "Select a classroom",
+    "subjectNameRequired": "Subject name is required",
+    "priceNegative": "Price cannot be negative",
+    "quantityMin": "Quantity cannot be less than 1",
+    "itemsMin": "Add at least one item"
+  },
+  "toast": {
+    "created": "Invoice created successfully"
+  }
+}

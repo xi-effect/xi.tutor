@@ -1,0 +1,31 @@
+{
+  "onboarding": {
+    "welcome": "Welcome to Sovlium! 😊",
+    "tutorDescriptionLine1": "Want to learn about the platform?",
+    "tutorDescriptionLine2": "You can return to the tour at any time",
+    "studentDescription": "Want a quick overview of how things work?",
+    "startTourTutor": "Take the tour",
+    "startTourStudent": "Show hints",
+    "laterTutor": "Come back later",
+    "laterStudent": "Later",
+    "next": "Continue",
+    "prev": "Back",
+    "done": "Close",
+    "progress": "{{current}} of {{total}}"
+  },
+  "errorPage": {
+    "ifErrorRepeats": "If the error persists — write",
+    "aboutIt": "to us about it",
+    "in": "in",
+    "telegramChat": "Telegram chat",
+    "or": "or",
+    "email": "by email",
+    "return": "Go back",
+    "toHome": "to the home page"
+  },
+  "network": {
+    "offline": "No connection",
+    "reconnecting": "Checking connection...",
+    "connected": "Connected"
+  }
+}

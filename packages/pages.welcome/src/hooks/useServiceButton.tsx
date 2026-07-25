@@ -23,14 +23,14 @@ export function useServiceButton({
   if (isConnected) {
     return (
       <div className="ml-auto p-1 sm:p-3">
-        <Check className="fill-brand-100" />
+        <Check className="fill-icon-brand" />
       </div>
     );
   }
 
   if (isPending && !link) {
     return (
-      <div className="text-gray-60 dark:text-gray-80 ml-auto inline-flex h-8 items-center">
+      <div className="text-text-secondary dark:text-text-primary ml-auto inline-flex h-8 items-center">
         Формируем ссылку…
       </div>
     );
@@ -40,7 +40,7 @@ export function useServiceButton({
     return (
       <Button
         variant="none"
-        className="text-s-base text-brand-100 ml-auto h-8 px-2 py-0"
+        className="text-s-base text-text-link ml-auto h-8 px-2 py-0"
         onClick={() => {
           if (openLink) {
             openLink();
@@ -60,7 +60,7 @@ export function useServiceButton({
   return (
     <Button
       variant="none"
-      className="text-s-base text-brand-100 ml-auto h-8 px-2 py-0"
+      className="text-s-base text-text-link ml-auto h-8 px-2 py-0"
       onClick={createConnection}
       data-umami-event="service-connect"
       data-umami-event-service={service}

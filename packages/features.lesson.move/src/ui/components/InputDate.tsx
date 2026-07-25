@@ -5,7 +5,7 @@ import { Calendar } from '@xipkg/icons';
 import { getShortDateString } from '../../utils/utils';
 
 const DATE_PICKER_POPOVER_CLASS =
-  'dark:bg-gray-0 border-gray-10 min-w-[280px] rounded-lg border p-0 shadow-lg';
+  'dark:bg-background-surface border-border-default min-w-[280px] rounded-lg border p-0 shadow-lg';
 
 type InputDateProps = {
   value?: Date;
@@ -40,10 +40,10 @@ export const InputDate = memo<InputDateProps>(({ value, onChange }) => {
         type="button"
         variant="text"
         size="s"
-        className="border-gray-10 hover:bg-gray-5 w-full cursor-pointer justify-start gap-2 rounded-lg border bg-transparent px-3 py-2 text-left text-sm font-normal text-gray-100 normal-case"
+        className="border-border-default hover:bg-background-page text-text-primary w-full cursor-pointer justify-start gap-2 rounded-lg border bg-transparent px-3 py-2 text-left text-sm font-normal normal-case"
       >
         {getShortDateString(date)}
-        <Calendar className="fill-brand-80 ml-auto h-4 w-4 shrink-0" />
+        <Calendar className="fill-icon-brand ml-auto h-4 w-4 shrink-0" />
       </Button>
     </DatePicker>
   );

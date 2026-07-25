@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Tabs } from '@xipkg/tabs';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { useNavigate, useParams } from '@tanstack/react-router';
@@ -18,6 +18,7 @@ import { useCreateClassroomEvent } from 'modules.calendar';
 import { ModalStudentsGroup } from 'features.group.manage';
 import { ModalGroupInvite } from 'features.group.invite';
 import { InvoiceModal } from 'features.invoice';
+import { useTranslation } from 'react-i18next';
 
 import { SharedTabsContent } from './SharedTabsContent';
 import { useTabNavigation } from './useTabNavigation';
@@ -29,16 +30,6 @@ import { ClassroomMobileTabSwitcher } from './ClassroomMobileTabSwitcher';
 
 type ContentKind = 'note' | 'board';
 type StudentAccessMode = 'no_access' | 'read_only' | 'read_write';
-
-// --- Конфигурация табов ---
-
-const tabs = [
-  { id: 'overview', label: 'Сводка' },
-  { id: 'materials', label: 'Материалы' },
-  { id: 'schedule', label: 'Расписание' },
-  { id: 'payments', label: 'Оплаты' },
-  { id: 'info', label: 'Информация' },
-];
 
 // --- TutorDesktopToolbar ---
 
@@ -59,6 +50,8 @@ const TutorDesktopToolbar = ({
   onDeleteClassroom,
   isDeletingClassroom,
 }: TutorDesktopToolbarProps) => {
+  const { t } = useTranslation('classroom');
+
   if (currentTab === 'overview' && classroomKind === 'group') {
     return (
       <>
@@ -69,7 +62,7 @@ const TutorDesktopToolbar = ({
             className="ml-auto rounded-lg"
             data-umami-event="classroom-add-student"
           >
-            Добавить ученика
+            {t('actions.addStudent')}
           </Button>
         </ModalStudentsGroup>
         <ModalGroupInvite>
@@ -79,7 +72,7 @@ const TutorDesktopToolbar = ({
             className="ml-1 rounded-lg"
             data-umami-event="classroom-invite-to-group"
           >
-            Пригласить в группу
+            {t('actions.inviteToGroup')}
           </Button>
         </ModalGroupInvite>
       </>
@@ -95,12 +88,12 @@ const TutorDesktopToolbar = ({
         <Button
           type="button"
           variant="none"
-          className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
+          className="bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
           onClick={onAddLessonClick}
           data-umami-event="classroom-add-lesson"
-          aria-label="Добавить занятие"
+          aria-label={t('actions.addLesson')}
         >
-          <Add className="fill-brand-80 size-6" />
+          <Add className="fill-icon-brand size-6" />
         </Button>
       </div>
     );
@@ -114,8 +107,8 @@ const TutorDesktopToolbar = ({
         onClick={onOpenInvoiceModal}
         data-umami-event="classroom-create-invoice"
       >
-        <span className="hidden sm:flex">Создать счёт на оплату</span>
-        <Plus size="sm" className="fill-brand-0 flex sm:hidden" />
+        <span className="hidden sm:flex">{t('actions.createInvoice')}</span>
+        <Plus size="sm" className="fill-action-primary-text flex sm:hidden" />
       </Button>
     );
   }
@@ -125,12 +118,12 @@ const TutorDesktopToolbar = ({
       <Button
         size="s"
         variant="text"
-        className="bg-red-20/50 text-red-60 hover:bg-red-20/80 hover:text-red-60 ml-auto rounded-lg"
+        className="bg-status-error-background/50 text-text-danger hover:bg-status-error-background/80 hover:text-text-danger ml-auto rounded-lg"
         onClick={onDeleteClassroom}
         disabled={isDeletingClassroom}
         data-umami-event="classroom-delete"
       >
-        {isDeletingClassroom ? 'Удаление...' : 'Удалить кабинет'}
+        {isDeletingClassroom ? t('actions.deleting') : t('actions.deleteClassroom')}
       </Button>
     );
   }
@@ -141,10 +134,22 @@ const TutorDesktopToolbar = ({
 // --- TabsTutor ---
 
 export const TabsTutor = () => {
+  const { t } = useTranslation('classroom');
   const { isMobile, currentTab, handleTabChange } = useTabNavigation({
     normalizeMaterialTabs: true,
   });
   const navigate = useNavigate();
+
+  const tabs = useMemo(
+    () => [
+      { id: 'overview', label: t('tabs.overview') },
+      { id: 'materials', label: t('tabs.materials') },
+      { id: 'schedule', label: t('tabs.schedule') },
+      { id: 'payments', label: t('tabs.payments') },
+      { id: 'info', label: t('tabs.info') },
+    ],
+    [t],
+  );
 
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [isStudentsModalOpen, setIsStudentsModalOpen] = useState(false);
@@ -219,7 +224,7 @@ export const TabsTutor = () => {
           value={currentTab}
           onValueChange={handleTabChange}
         >
-          <div className="bg-gray-0 xs:ml-0 mr-4 ml-4 flex h-[56px] flex-row items-center gap-4 rounded-2xl px-2">
+          <div className="bg-background-surface xs:ml-0 mr-4 ml-4 flex h-[56px] flex-row items-center gap-4 rounded-2xl px-2">
             {isMobile ? (
               <ClassroomMobileTabSwitcher
                 tabs={tabs}
@@ -232,7 +237,7 @@ export const TabsTutor = () => {
                   tabs={tabs}
                   activeTab={currentTab}
                   onChange={handleTabChange}
-                  className="bg-gray-0 flex flex-row gap-0"
+                  className="bg-background-surface flex flex-row gap-0"
                   tabClassName={cn(switcherTabClass, 'text-m-base font-medium')}
                 />
                 <TutorDesktopToolbar
@@ -247,7 +252,7 @@ export const TabsTutor = () => {
             )}
           </div>
 
-          <div className="bg-gray-0 xs:pb-0 xs:rounded-tl-2xl flex min-h-0 min-w-0 flex-1 flex-col rounded-none pt-0 pb-40 pl-4">
+          <div className="bg-background-surface xs:pb-0 xs:rounded-tl-2xl flex min-h-0 min-w-0 flex-1 flex-col rounded-none pt-0 pb-40 pl-4">
             <SharedTabsContent
               extraContent={
                 <Tabs.Content className="data-[state=inactive]:hidden" value="info">

@@ -1,0 +1,10 @@
+{
+  "title": "Изменить занятие",
+  "aboutLesson": "О занятии",
+  "descriptionPlaceholder": "Добавить описание",
+  "cancel": "Отменить",
+  "save": "Сохранить",
+  "validation": {
+    "titleRequired": "Введите название"
+  }
+}

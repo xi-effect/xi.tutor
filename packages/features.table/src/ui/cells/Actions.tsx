@@ -3,6 +3,7 @@ import { Trash } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useDeleteRecipientInvoice } from 'common.services';
 import { TutorPaymentT } from 'common.types';
+import { useTranslation } from 'react-i18next';
 
 type ActionsCellProps = {
   invoiceId: TutorPaymentT['id'];
@@ -10,10 +11,11 @@ type ActionsCellProps = {
 };
 
 export const ActionsCell = ({ invoiceId, classroomId }: ActionsCellProps) => {
+  const { t } = useTranslation('paymentsTable');
   const { mutate: deleteInvoice, isPending } = useDeleteRecipientInvoice(classroomId?.toString());
 
   const handleDelete = () => {
-    if (confirm('Вы уверены, что хотите удалить выставленный счет?')) {
+    if (confirm(t('deleteConfirm'))) {
       deleteInvoice(invoiceId.toString());
     }
   };
@@ -22,7 +24,7 @@ export const ActionsCell = ({ invoiceId, classroomId }: ActionsCellProps) => {
     <div className="invisible flex flex-row items-center justify-end group-hover:visible">
       <div className="flex flex-row items-center justify-between gap-2">
         {/* <Button className="size-8 rounded-lg p-0" variant="none" size="s">
-          <Edit className="size-4 fill-gray-100" />
+          <Edit className="size-4 fill-icon-primary" />
         </Button> */}
 
         <Tooltip delayDuration={1000}>
@@ -36,11 +38,11 @@ export const ActionsCell = ({ invoiceId, classroomId }: ActionsCellProps) => {
               data-umami-event="invoice-delete"
               data-umami-event-invoice-id={invoiceId}
             >
-              <Trash className="size-4 fill-gray-100" />
+              <Trash className="fill-icon-primary size-4" />
             </Button>
           </TooltipTrigger>
           <TooltipContent side="bottom">
-            <p>Удалить выставленный счет</p>
+            <p>{t('deleteTooltip')}</p>
           </TooltipContent>
         </Tooltip>
       </div>

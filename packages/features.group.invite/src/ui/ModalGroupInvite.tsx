@@ -24,6 +24,7 @@ import { toast } from 'sonner';
 import { env } from 'common.env';
 import { Input } from '@xipkg/input';
 import { MoreVert } from '@xipkg/icons';
+import { useTranslation } from 'react-i18next';
 import { useGroupInvite } from '../services/useGroupInvite';
 import { useGetClassroom } from 'common.services';
 import { useResetGroupInvite } from '../services/useResetGroupInvite';
@@ -39,6 +40,7 @@ export const ModalGroupInvite = ({
   open: controlledOpen,
   onOpenChange,
 }: ModalGroupInviteProps) => {
+  const { t } = useTranslation('groupInvite');
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
@@ -60,8 +62,8 @@ export const ModalGroupInvite = ({
     if (!inviteLink) return;
 
     navigator.clipboard.writeText(inviteLink);
-    toast.success('Ссылка скопирована');
-    toast.info('Отправьте ссылку ученикам');
+    toast.success(t('toast.linkCopied'));
+    toast.info(t('toast.sendToStudents'));
   };
 
   const handleResetInvite = () => {
@@ -69,7 +71,7 @@ export const ModalGroupInvite = ({
       { source: 'classroom' },
       {
         onSuccess: () => {
-          toast.success('Ссылка сброшена');
+          toast.success(t('toast.linkReset'));
         },
       },
     );
@@ -103,19 +105,17 @@ export const ModalGroupInvite = ({
       <ModalContent className="max-w-[600px]">
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
-          <ModalTitle className="max-w-[calc(100%-48px)] text-gray-100">
-            Приглашение в группу
+          <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
+            {t('title')}
           </ModalTitle>
-          <ModalDescription>
-            Отправьте ссылку ученикам, чтобы пригласить их в группу
-          </ModalDescription>
+          <ModalDescription>{t('description')}</ModalDescription>
         </ModalHeader>
         <ModalBody className="flex w-full flex-col gap-2 p-6">
           <div className="flex w-full flex-row items-center justify-center gap-2">
             <div className="flex w-full items-center justify-center">
               {isLoading || isResettingInvite ? (
                 <div
-                  className="text-brand-80 inline-block size-6 animate-spin rounded-full border-[3px] border-current border-t-transparent"
+                  className="text-text-link inline-block size-6 animate-spin rounded-full border-[3px] border-current border-t-transparent"
                   role="status"
                   aria-label="loading"
                 >
@@ -126,7 +126,7 @@ export const ModalGroupInvite = ({
                   <Input
                     className="w-full cursor-pointer"
                     type="text"
-                    placeholder="Ссылка"
+                    placeholder={t('linkPlaceholder')}
                     value={inviteLink}
                     onClick={handleCopyLink}
                     readOnly
@@ -144,19 +144,19 @@ export const ModalGroupInvite = ({
                     size="icon"
                     data-umami-event="group-invite-menu-open"
                   >
-                    <MoreVert className="h-6 w-6 fill-gray-100" />
+                    <MoreVert className="fill-icon-primary h-6 w-6" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   side="bottom"
                   align="end"
-                  className="border-gray-10 bg-gray-0 border p-1"
+                  className="border-border-default bg-background-surface border p-1"
                 >
                   <DropdownMenuItem
                     onClick={handleResetInvite}
                     data-umami-event="group-invite-reset"
                   >
-                    Сбросить ссылку
+                    {t('resetLink')}
                   </DropdownMenuItem>
                   {/* <DropdownMenuItem>
                     Деактивировать ссылку
@@ -169,8 +169,8 @@ export const ModalGroupInvite = ({
             classroom.kind === 'group' &&
             classroom?.enrollments_count !== undefined &&
             !isLoading && (
-              <div className="text-xs-base flex flex-col gap-2 text-green-100">
-                Cтудентов в кабинете: {classroom?.enrollments_count} из 15
+              <div className="text-xs-base text-status-success-text flex flex-col gap-2">
+                {t('studentsCount', { count: classroom?.enrollments_count })}
               </div>
             )}
         </ModalBody>
@@ -180,7 +180,7 @@ export const ModalGroupInvite = ({
             disabled={!inviteLink}
             data-umami-event="group-invite-copy-link-button"
           >
-            Копировать ссылку
+            {t('copyLink')}
           </Button>
         </ModalFooter>
       </ModalContent>

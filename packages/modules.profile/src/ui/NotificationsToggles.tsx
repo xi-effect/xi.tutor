@@ -7,12 +7,14 @@ import {
   useToggleNotificationGroup,
 } from 'common.services';
 import { DeliveryMethodKind, NotificationGroupKind } from 'common.types';
+import { useTranslation } from 'react-i18next';
 
 type NotificationsTogglesPropsT = {
   deliveryMethodKind: DeliveryMethodKind;
 };
 
 export const NotificationsToggles = ({ deliveryMethodKind }: NotificationsTogglesPropsT) => {
+  const { t } = useTranslation('profile');
   const { data } = useGetDeliveryMethods();
   const { mutate: toggleGroup, isPending, variables } = useToggleNotificationGroup();
   const { mutate: changeVisibility, isPending: isVisibilityPending } =
@@ -42,11 +44,11 @@ export const NotificationsToggles = ({ deliveryMethodKind }: NotificationsToggle
       {deliveryMethodKind === 'telegram' && deliveryMethod?.related_contact && (
         <div className="flex w-full min-w-0 flex-row items-center justify-between gap-4 p-3">
           <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <span className="font-inter text-m-base font-medium dark:text-gray-100">
-              Отображать ник в Telegram в профиле
+            <span className="font-inter text-m-base dark:text-text-primary font-medium">
+              {t('notifications.showNickname', { messenger: 'Telegram' })}
             </span>
-            <span className="text-gray-80 dark:text-gray-80 font-inter text-s-base font-normal">
-              Другие участники увидят ваши контакты
+            <span className="text-text-primary dark:text-text-primary font-inter text-s-base font-normal">
+              {t('notifications.showNicknameHint')}
             </span>
           </div>
           <Toggle
@@ -69,8 +71,10 @@ export const NotificationsToggles = ({ deliveryMethodKind }: NotificationsToggle
             className="flex w-full min-w-0 flex-row items-center justify-between gap-4 p-3"
           >
             <div className="flex min-w-0 flex-1 flex-col gap-1">
-              <span className="font-inter text-m-base font-medium dark:text-gray-100">{title}</span>
-              <span className="text-gray-80 dark:text-gray-80 font-inter text-s-base font-normal">
+              <span className="font-inter text-m-base dark:text-text-primary font-medium">
+                {title}
+              </span>
+              <span className="text-text-primary dark:text-text-primary font-inter text-s-base font-normal">
                 {description}
               </span>
             </div>

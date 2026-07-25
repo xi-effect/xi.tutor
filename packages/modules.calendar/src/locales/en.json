@@ -1,13 +1,25 @@
 {
   "change_view": "Change view",
   "today": "Today",
+  "go_to_today": "Today",
   "prev_week": "Previous week",
   "next_week": "Next week",
+  "schedule": "Schedule",
   "week_days": "Mon,Tue,Wed,Thu,Fri,Sat,Sun",
   "months": "January,February,March,April,May,June,July,August,September,October,November,December",
   "add_event": "Create an event",
   "schedule_empty_day": "No lessons on this day",
   "schedule_empty_selected_days": "No lessons on the selected days",
+  "no_lessons_on_date": "No lessons on the selected date",
+  "empty_day_tutor_hint": "Add, reschedule, and cancel lessons",
+  "empty_day_student_hint": "Lessons scheduled by your tutor appear here",
+  "lessons_for_day": "Lessons for the day",
+  "nearest_lesson": "Upcoming lesson",
+  "reschedule": "Reschedule",
+  "no_description": "No description.",
+  "reschedule_lesson": "Reschedule lesson",
+  "edit_lesson": "Edit lesson",
+  "cancel_lesson": "Cancel lesson",
   "add_lesson": "Add lesson",
   "pick_time": "Or set aside time on your calendar",
   "event_form": {
@@ -16,6 +28,7 @@
     "cancel": "Cancel",
     "save": "Save",
     "enter_title": "Enter title",
+    "enter_date": "Enter date",
     "time": "Time",
     "all_day": "All day",
     "repeat": "Repeat",
@@ -24,6 +37,7 @@
     "class": "Class",
     "student": "Student or group",
     "subject": "Subject",
+    "lesson_type": "Lesson type",
     "lesson_group": "Group lesson",
     "lesson_individual": "Individual lesson",
     "description": "Description",
@@ -37,7 +51,26 @@
   "event_menu": {
     "cut": "Cut",
     "copy": "Copy",
-    "duble": "Duble",
+    "duble": "Duplicate",
     "remove": "Remove"
+  },
+  "repeat_settings": {
+    "dont_repeat": "Don't repeat",
+    "every_day": "Every day",
+    "every_work_day": "Every weekday",
+    "every_week": "Every week",
+    "every_2_weeks": "Every two weeks",
+    "every_month": "Every month"
+  },
+  "validation": {
+    "invalidTime": "Invalid time format",
+    "titleRequired": "Enter event title",
+    "typeRequired": "Select event type",
+    "dateRequired": "Enter date",
+    "dateFormat": "Date format: dd.mm.yyyy",
+    "studentRequired": "Select a student",
+    "subjectRequired": "Enter subject name",
+    "lessonTypeRequired": "Select lesson type",
+    "endAfterStart": "Start time cannot be later than end time"
   }
 }

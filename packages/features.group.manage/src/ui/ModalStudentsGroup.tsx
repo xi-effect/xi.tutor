@@ -22,6 +22,7 @@ import { useAddStudentFromGroup, useDeleteStudentFromGroup } from '../services';
 import { useGroupStudentsList } from 'common.services';
 import { useParams } from '@tanstack/react-router';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 type ModalStudentsGroupProps = {
   children?: React.ReactNode;
@@ -36,6 +37,7 @@ const cleanupBodyScrollLock = () => {
 };
 
 export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStudentsGroupProps) => {
+  const { t } = useTranslation('groupManage');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
 
   const handleClose = () => {
@@ -125,7 +127,7 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
       console.error('Ошибка при сохранении изменений:', error);
     } finally {
       setIsSaving(false);
-      toast.success('Изменения сохранены');
+      toast.success(t('toast.saved'));
     }
   };
 
@@ -144,8 +146,8 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
       <ModalContent aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
-          <ModalTitle className="max-w-[calc(100%-48px)] text-gray-100">
-            Добавление ученика в группу
+          <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
+            {t('title')}
           </ModalTitle>
         </ModalHeader>
         <ModalBody className={cn('flex flex-col gap-4 px-2 pt-2')}>
@@ -153,17 +155,17 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
             <div className="flex flex-col">
               {isLoading && (
                 <div className="flex h-20 items-center justify-center">
-                  <span className="text-gray-60">Загрузка...</span>
+                  <span className="text-text-secondary">{t('loading')}</span>
                 </div>
               )}
               {isError && (
                 <div className="flex h-20 items-center justify-center">
-                  <span className="text-red-500">Ошибка загрузки данных</span>
+                  <span className="text-text-danger">{t('loadError')}</span>
                 </div>
               )}
               {!isLoading && !isError && allStudents?.length === 0 && (
                 <div className="flex h-20 items-center justify-center">
-                  <span className="text-gray-60">{'У вас пока нет студентов'}</span>
+                  <span className="text-text-secondary">{t('empty')}</span>
                 </div>
               )}
               {!isLoading &&
@@ -171,7 +173,7 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
                 allStudents?.map((student: TutorStudentSchemaMarshal) => (
                   <div
                     key={student.tutorship.student_id}
-                    className="group hover:bg-gray-5 flex h-[48px] cursor-pointer flex-row items-center gap-2 rounded-2xl px-4"
+                    className="group hover:bg-background-page flex h-[48px] cursor-pointer flex-row items-center gap-2 rounded-2xl px-4"
                     onClick={() => handleStudentToggle(student.tutorship.student_id)}
                     data-umami-event="group-student-toggle"
                     data-umami-event-student-id={student.tutorship.student_id}
@@ -192,7 +194,7 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
             disabled={isSaving || addStudentMutation.isPending || deleteStudentMutation.isPending}
             data-umami-event="group-students-save"
           >
-            {isSaving ? 'Сохранение...' : 'Сохранить'}
+            {isSaving ? t('actions.saving') : t('actions.save')}
           </Button>
           <Button
             variant="outline"
@@ -207,7 +209,7 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
             }}
             data-umami-event="group-students-cancel"
           >
-            Отмена
+            {t('actions.cancel')}
           </Button>
         </ModalFooter>
       </ModalContent>

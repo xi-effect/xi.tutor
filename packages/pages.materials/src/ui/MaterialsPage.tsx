@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Header } from './Header';
 import { MobileTutorActionButton } from 'features.invites';
 import { TabsComponent } from './TabsComponent';
 import { useCurrentUser } from 'common.services';
-import { DateTimeDisplay, ErrorPage } from 'common.ui';
+import { ErrorPage } from 'common.ui';
 import {
   MaterialsDuplicateProvider,
   useMaterialsDuplicate,
@@ -21,6 +22,7 @@ const getTabFromUrl = (): 'notes' | 'boards' => {
 };
 
 const MaterialsPageContent = () => {
+  const { t } = useTranslation('materials');
   const [activeTab, setActiveTab] = useState<'notes' | 'boards'>(() => getTabFromUrl());
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -55,23 +57,21 @@ const MaterialsPageContent = () => {
     return (
       <ErrorPage
         withLogo={false}
-        title="Ошибка"
+        title={t('error.title')}
         errorCode={403}
-        text="Вы не имеете доступа к этой странице"
+        text={t('error.noAccess')}
       />
     );
   }
 
   return (
     <>
-      <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pr-0">
-        <div className="flex min-h-0 flex-1 flex-col">
-          <div className="flex shrink-0 flex-col gap-5 px-5 pt-5">
-            <div className="flex h-8 items-center">
-              <DateTimeDisplay />
-            </div>
-            <Header activeTab={activeTab} onTabChange={handleTabChange} />
-          </div>
+      <div className="bg-background-page flex h-screen flex-col">
+        <div className="shrink-0 px-5 pt-5 sm:px-10 sm:pt-10">
+          <Header activeTab={activeTab} onTabChange={handleTabChange} />
+        </div>
+
+        <div className="mt-6 min-h-0 flex-1 sm:mt-10">
           <TabsComponent activeTab={activeTab} />
         </div>
       </div>

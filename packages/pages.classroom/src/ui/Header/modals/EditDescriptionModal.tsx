@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useForm } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { Button } from '@xipkg/button';
@@ -15,13 +15,12 @@ import {
 import { useUpdateIndividualClassroom } from 'common.services';
 import { modalTitleClass } from 'common.ui';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
 
-const descriptionSchema = z.object({
-  description: z.string().max(500, 'Описание слишком длинное'),
-});
-
-type DescriptionFormData = z.infer<typeof descriptionSchema>;
+type DescriptionFormData = {
+  description: string;
+};
 
 interface EditDescriptionModalProps {
   isOpen: boolean;
@@ -36,7 +35,16 @@ export const EditDescriptionModal = ({
   description,
   classroomId,
 }: EditDescriptionModalProps) => {
+  const { t } = useTranslation('classroom');
   const { updateIndividualClassroom, isUpdating } = useUpdateIndividualClassroom();
+
+  const descriptionSchema = useMemo(
+    () =>
+      z.object({
+        description: z.string().max(500, t('descriptionModal.tooLong')),
+      }),
+    [t],
+  );
 
   const form = useForm<DescriptionFormData>({
     resolver: zodResolver(descriptionSchema),
@@ -82,7 +90,7 @@ export const EditDescriptionModal = ({
       <ModalContent className="max-w-md" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton />
-          <ModalTitle className={modalTitleClass}>Редактировать описание</ModalTitle>
+          <ModalTitle className={modalTitleClass}>{t('descriptionModal.title')}</ModalTitle>
         </ModalHeader>
 
         <Form {...form}>
@@ -93,13 +101,13 @@ export const EditDescriptionModal = ({
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="description">Описание кабинета</FormLabel>
+                    <FormLabel htmlFor="description">{t('descriptionModal.label')}</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
                         className="mt-1"
                         id="description"
-                        placeholder="Введите описание кабинета..."
+                        placeholder={t('descriptionModal.placeholder')}
                         disabled={isUpdating}
                         autoComplete="off"
                       />
@@ -116,10 +124,10 @@ export const EditDescriptionModal = ({
                 type="submit"
                 disabled={isUpdating}
               >
-                {isUpdating ? 'Сохранение...' : 'Сохранить'}
+                {isUpdating ? t('actions.saving') : t('actions.save')}
               </Button>
               <Button variant="ghost" onClick={onClose} type="button" disabled={isUpdating}>
-                Отмена
+                {t('actions.cancel')}
               </Button>
             </ModalFooter>
           </form>

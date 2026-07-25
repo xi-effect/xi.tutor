@@ -8,7 +8,7 @@ import { VkConnectButton } from 'common.ui';
 import { useTgConnection, useVkConnection } from 'common.services';
 
 export const WelcomeSocialsPage = () => {
-  const { t } = useTranslation('welcomeSocials');
+  const { t } = useTranslation(['welcomeSocials', 'welcome']);
   useOnboardingAnalytics({ step: 'notifications' });
 
   const { onBackwards, onForwards, isLoading } = useWelcomeSocialsForm();
@@ -87,8 +87,8 @@ export const WelcomeSocialsPage = () => {
     >
       <div className="mt-6 flex flex-col gap-2">
         <SocialItem>
-          <TelegramFilled className="fill-brand-100 h-8 w-8" />
-          <span className="font-semibold text-gray-100 dark:text-gray-100">Telegram</span>
+          <TelegramFilled className="fill-icon-brand h-8 w-8" />
+          <span className="text-text-primary dark:text-text-primary font-semibold">Telegram</span>
           {tgButton}
         </SocialItem>
         <SocialItem>
@@ -98,7 +98,7 @@ export const WelcomeSocialsPage = () => {
         </SocialItem>
       </div>
       <WelcomeButtons
-        customText="Начать работу"
+        customText={t('buttons.start_button', { ns: 'welcome' })}
         backButtonHandler={onBackwards}
         continueButtonHandler={onForwards}
         isLoading={isLoading}

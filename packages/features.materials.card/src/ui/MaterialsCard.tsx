@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams } from '@tanstack/react-router';
-import { accessModeLabels, accessModeStyles, formatToShortDate } from '../utils';
+import { accessModeStyles, formatToShortDate, formatUpdatedLabel } from '../utils';
 import { cn } from '@xipkg/utils';
 import { Badge } from '@xipkg/badge';
 import { MaterialActionsMenu } from './MaterialActionsMenu';
@@ -9,9 +9,10 @@ import { cardIcon } from './CardIcon';
 import { AccessModeT, MaterialPropsT } from 'common.types';
 import { useCurrentUser } from 'common.services';
 import { ModalEditMaterialName } from 'features.materials.edit';
+import { useTranslation } from 'react-i18next';
 
 type MaterialsCardProps = MaterialPropsT & {
-  layout?: 'default' | 'compact';
+  layout?: 'default' | 'compact' | 'gallery';
 };
 
 export const MaterialsCard = ({
@@ -26,6 +27,7 @@ export const MaterialsCard = ({
   className,
   layout = 'default',
 }: MaterialsCardProps) => {
+  const { t } = useTranslation('materialsCard');
   const { classroomId } = useParams({ strict: false });
 
   const isClassroom = !!classroomId;
@@ -67,13 +69,26 @@ export const MaterialsCard = ({
     />
   );
 
+  const editModal = (
+    <ModalEditMaterialName
+      isClassroom={isClassroom}
+      isOpen={modalOpen}
+      content_kind={content_kind}
+      name={name}
+      onClose={() => {
+        setModalOpen(false);
+      }}
+      handleUpdateName={handleUpdateName}
+    />
+  );
+
   if (layout === 'compact') {
     return (
       <>
         <div
           onClick={handleCardClick}
           className={cn(
-            'group hover:bg-gray-5 border-gray-10 bg-gray-0 box-border flex min-h-[100px] min-w-[394px] flex-1 cursor-pointer flex-row items-start gap-4 rounded-2xl border p-4',
+            'group hover:bg-background-page border-border-default bg-background-surface box-border flex min-h-[100px] min-w-[394px] flex-1 cursor-pointer flex-row items-start gap-4 rounded-2xl border p-4',
             className,
           )}
           data-umami-event="material-card-open"
@@ -83,27 +98,70 @@ export const MaterialsCard = ({
             <div className="size-6 shrink-0 [&>svg]:size-6">{cardIcon[content_kind]}</div>
           )}
           <div className="flex min-w-0 flex-1 flex-col gap-2 overflow-hidden">
-            <p className="truncate text-base leading-[22px] font-medium text-gray-100">{name}</p>
-            <span className="text-gray-60 text-sm leading-5 font-normal">
-              Изменено: {isLoading ? '...' : updated_at ? formatToShortDate(updated_at) : ''}
+            <p className="text-text-primary truncate text-base leading-[22px] font-medium">
+              {name}
+            </p>
+            <span className="text-text-secondary text-sm leading-5 font-normal">
+              {t('changed', {
+                date: isLoading ? '...' : updated_at ? formatToShortDate(updated_at) : '',
+              })}
             </span>
           </div>
           {menu && (
-            <div className="bg-gray-0 flex size-8 shrink-0 items-center justify-center rounded-lg">
+            <div className="bg-background-surface flex size-8 shrink-0 items-center justify-center rounded-lg">
               {menu}
             </div>
           )}
         </div>
-        <ModalEditMaterialName
-          isClassroom={isClassroom}
-          isOpen={modalOpen}
-          content_kind={content_kind}
-          name={name}
-          onClose={() => {
-            setModalOpen(false);
-          }}
-          handleUpdateName={handleUpdateName}
-        />
+        {editModal}
+      </>
+    );
+  }
+
+  if (layout === 'gallery') {
+    const updatedLabel = isLoading ? '...' : updated_at ? formatUpdatedLabel(updated_at) : '';
+
+    return (
+      <>
+        <div
+          onClick={handleCardClick}
+          className={cn(
+            'group bg-background-surface flex h-40 w-full shrink-0 cursor-pointer flex-col justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]',
+            className,
+          )}
+          data-umami-event="material-card-open"
+          data-umami-event-type={content_kind}
+        >
+          <div className="flex w-full items-start justify-between">
+            <div className="bg-status-info-background [&>svg]:fill-icon-brand flex size-10 shrink-0 items-center justify-center rounded-[10px]">
+              {cardIcon[content_kind]}
+            </div>
+
+            {isTutor && <div className="flex size-8 items-center justify-center">{menu}</div>}
+          </div>
+
+          <div className="flex w-full flex-col items-start gap-1 overflow-hidden">
+            {student_access_mode && (
+              <Badge
+                variant="default"
+                className={cn(
+                  'text-s-base px-2 py-1 font-medium',
+                  accessModeStyles[student_access_mode],
+                )}
+              >
+                {t(`accessMode.${student_access_mode}`)}
+              </Badge>
+            )}
+
+            <p className="text-text-primary line-clamp-2 w-full text-base leading-5 font-medium">
+              {name}
+            </p>
+            <p className="text-text-secondary w-full text-sm leading-5 font-normal">
+              {t('updatedGallery', { date: updatedLabel })}
+            </p>
+          </div>
+        </div>
+        {editModal}
       </>
     );
   }
@@ -112,7 +170,7 @@ export const MaterialsCard = ({
     <div
       onClick={handleCardClick}
       className={cn(
-        'group hover:border-brand-80 border-gray-20 bg-gray-0 flex w-full shrink-0 cursor-pointer justify-between rounded-2xl border p-4 transition-all duration-200 ease-linear',
+        'group hover:border-border-focus border-border-default bg-background-surface flex w-full shrink-0 cursor-pointer justify-between rounded-2xl border p-4 transition-all duration-200 ease-linear',
         className,
       )}
       data-umami-event="material-card-open"
@@ -120,7 +178,7 @@ export const MaterialsCard = ({
     >
       <div className="flex flex-col gap-1 overflow-hidden">
         <div className="flex h-full flex-col justify-between gap-2">
-          {student_access_mode && accessModeLabels[student_access_mode] && (
+          {student_access_mode && (
             <Badge
               variant="default"
               className={cn(
@@ -128,16 +186,18 @@ export const MaterialsCard = ({
                 accessModeStyles[student_access_mode],
               )}
             >
-              {accessModeLabels[student_access_mode]}
+              {t(`accessMode.${student_access_mode}`)}
             </Badge>
           )}
 
-          <div className="text-l-base line-clamp-2 flex w-full items-center gap-2 font-medium text-gray-100">
+          <div className="text-l-base text-text-primary line-clamp-2 flex w-full items-center gap-2 font-medium">
             {hasIcon && cardIcon[content_kind]}
             <p className="truncate">{name}</p>
           </div>
-          <div className="text-s-base text-gray-60 mt-2 font-normal">
-            Обновлено: {isLoading ? '...' : updated_at ? formatToShortDate(updated_at) : ''}
+          <div className="text-s-base text-text-secondary mt-2 font-normal">
+            {t('updated', {
+              date: isLoading ? '...' : updated_at ? formatToShortDate(updated_at) : '',
+            })}
           </div>
         </div>
       </div>
@@ -146,16 +206,7 @@ export const MaterialsCard = ({
         <div className="flex h-6 w-6 items-center justify-center rounded-full">{menu}</div>
       )}
 
-      <ModalEditMaterialName
-        isClassroom={isClassroom}
-        isOpen={modalOpen}
-        content_kind={content_kind}
-        name={name}
-        onClose={() => {
-          setModalOpen(false);
-        }}
-        handleUpdateName={handleUpdateName}
-      />
+      {editModal}
     </div>
   );
 };

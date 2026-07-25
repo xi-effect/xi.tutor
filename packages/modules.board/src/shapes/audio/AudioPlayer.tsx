@@ -13,6 +13,7 @@ import {
 } from './components';
 import { AUDIO_SHAPE_HEIGHT, computeAudioShapeHeight } from './AudioShape';
 import type { AudioShape } from './AudioShape';
+import { useTranslation } from 'react-i18next';
 
 function useIsSyncPlaybackActive(shape: AudioShape): boolean {
   const { audioSyncMap } = useYjsContext();
@@ -25,6 +26,7 @@ type AudioPlayerProps = {
 };
 
 export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
+  const { t } = useTranslation('board');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
@@ -47,7 +49,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
   if (error) {
     return (
       <div
-        className="bg-gray-0 border-gray-10 overflow-hidden rounded-xl border shadow-md"
+        className="bg-background-surface border-border-default overflow-hidden rounded-xl border shadow-md"
         style={{ width: shape.props.w, height: AUDIO_SHAPE_HEIGHT }}
       >
         <AudioPlayerError message={error} />
@@ -58,11 +60,13 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
   if (status === 'idle' || status === 'loading' || !shape.props.src) {
     return (
       <div
-        className="bg-gray-0 border-gray-10 overflow-hidden rounded-xl border shadow-md"
+        className="bg-background-surface border-border-default overflow-hidden rounded-xl border shadow-md"
         style={{ pointerEvents: 'none', width: shape.props.w, height: AUDIO_SHAPE_HEIGHT }}
       >
-        <div className="text-gray-40 flex h-full w-full items-center justify-center">
-          <span className="text-xs">{status === 'idle' ? 'Аудио' : 'Загрузка...'}</span>
+        <div className="text-text-disabled flex h-full w-full items-center justify-center">
+          <span className="text-xs">
+            {status === 'idle' ? t('audio.label') : t('audio.loading')}
+          </span>
         </div>
       </div>
     );
@@ -70,7 +74,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
 
   return (
     <div
-      className="bg-gray-0 border-gray-10 overflow-hidden rounded-xl border shadow-md"
+      className="bg-background-surface border-border-default overflow-hidden rounded-xl border shadow-md"
       style={{ pointerEvents: 'none', width: shape.props.w, height: cardHeight }}
     >
       <div className="flex h-[80px] shrink-0 items-center gap-3 px-3">

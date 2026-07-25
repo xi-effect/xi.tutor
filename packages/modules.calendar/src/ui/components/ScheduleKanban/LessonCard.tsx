@@ -46,7 +46,7 @@ function LessonCardClassroomLine({
         <TooltipTrigger asChild>
           <span
             ref={labelRef}
-            className="text-xs-base-size min-w-0 flex-1 truncate text-left leading-normal text-gray-100"
+            className="text-xs-base-size text-text-primary min-w-0 flex-1 truncate text-left leading-normal"
           >
             {classroomName}
           </span>
@@ -116,13 +116,13 @@ export const LessonCard = memo<LessonCardProps>(
         ref={cardRef}
         className={cn(
           'relative flex w-full flex-col rounded-2xl border p-5 transition-colors duration-300',
-          'group-hover:bg-[rgb(15_15_17/0.02)]',
+          'group-hover:bg-background-subtle',
           nearestBorder
-            ? 'border-brand-80 bg-gray-0 border-2'
+            ? 'border-border-focus bg-background-surface border-2'
             : todayBorder
-              ? 'border-brand-20 bg-gray-0 border-2'
-              : 'border-gray-10 bg-gray-0 border',
-          event.type === 'rest' && 'bg-gray-5 dark:bg-gray-10',
+              ? 'border-border-selected bg-background-surface border-2'
+              : 'border-border-default bg-background-surface border',
+          event.type === 'rest' && 'bg-background-page dark:bg-background-subtle',
           onClick && 'cursor-pointer',
         )}
         style={
@@ -136,7 +136,7 @@ export const LessonCard = memo<LessonCardProps>(
       >
         <div className="flex min-w-0 flex-col gap-2">
           {!hideClassroomAndSubject && subjectName != null ? (
-            <span className="text-gray-40 text-xs">{subjectName}</span>
+            <span className="text-text-disabled text-xs">{subjectName}</span>
           ) : null}
 
           {!hideClassroomAndSubject ? (
@@ -148,14 +148,14 @@ export const LessonCard = memo<LessonCardProps>(
 
           <p
             className={cn(
-              'text-gray-90 line-clamp-2 text-[14px] leading-snug font-semibold',
+              'text-text-primary line-clamp-2 text-[14px] leading-snug font-semibold',
               hideClassroomAndSubject ? 'mt-0' : 'mt-2',
             )}
           >
             {primaryHeading}
           </p>
           {showDescriptionBelow ? (
-            <p className="text-gray-70 mt-1 line-clamp-2 text-xs leading-snug wrap-break-word">
+            <p className="text-text-secondary mt-1 line-clamp-2 text-xs leading-snug wrap-break-word">
               {lessonDescription}
             </p>
           ) : null}
@@ -163,13 +163,16 @@ export const LessonCard = memo<LessonCardProps>(
           {startTime != null && endTime != null && (
             <div className="mt-2 flex w-full items-center gap-2">
               <div className="flex items-center gap-1">
-                <Clock className="fill-gray-40 h-4 w-4 shrink-0" />
-                <span className="text-gray-90 text-[14px]">{startTime}</span>
+                <Clock className="fill-icon-disabled h-4 w-4 shrink-0" />
+                <span className="text-text-primary text-[14px]">{startTime}</span>
               </div>
-              <span className="bg-gray-30 dark:bg-gray-60 h-px flex-1 shrink-0" aria-hidden />
-              <div className="text-gray-90 flex items-center gap-1 text-sm dark:text-gray-100">
-                <Clock className="fill-gray-40 h-4 w-4 shrink-0" />
-                <span className="text-gray-90 text-xs-base-size">{endTime}</span>
+              <span
+                className="bg-background-subtle dark:bg-background-subtle h-px flex-1 shrink-0"
+                aria-hidden
+              />
+              <div className="text-text-primary dark:text-text-primary flex items-center gap-1 text-sm">
+                <Clock className="fill-icon-disabled h-4 w-4 shrink-0" />
+                <span className="text-text-primary text-xs-base-size">{endTime}</span>
               </div>
             </div>
           )}

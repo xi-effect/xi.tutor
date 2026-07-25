@@ -1,16 +1,19 @@
+import { tProfile } from '../tProfile';
+
 export const getIPAddresses = async (): Promise<{ ipv4: string; ipv6: string }> => {
+  const undefinedValue = tProfile('report.values.undefined');
   try {
     const ipResponse = await fetch('https://api.ipify.org?format=json').catch(() => null);
     const ipData = ipResponse ? await ipResponse.json().catch(() => null) : null;
-    const ipv4 = ipData?.ip || 'не определен';
+    const ipv4 = ipData?.ip || undefinedValue;
 
     const ipv6Response = await fetch('https://api64.ipify.org?format=json').catch(() => null);
     const ipv6Data = ipv6Response ? await ipv6Response.json().catch(() => null) : null;
-    const ipv6 = ipv6Data?.ip && ipv6Data.ip !== ipv4 ? ipv6Data.ip : 'не определен';
+    const ipv6 = ipv6Data?.ip && ipv6Data.ip !== ipv4 ? ipv6Data.ip : undefinedValue;
 
     return { ipv4, ipv6 };
   } catch {
-    return { ipv4: 'не определен', ipv6: 'не определен' };
+    return { ipv4: undefinedValue, ipv6: undefinedValue };
   }
 };
 
@@ -29,32 +32,44 @@ export const getNetworkInfo = (): Record<string, string> => {
     deviceMemory?: number;
   };
 
+  const yes = tProfile('report.values.yes');
+  const no = tProfile('report.values.no');
+  const undefinedValue = tProfile('report.values.undefined');
+  const undefinedFem = tProfile('report.values.undefinedFem');
+  const undefinedNeut = tProfile('report.values.undefinedNeut');
+  const unsupported = tProfile('report.values.unsupported');
+
   const networkInfo: Record<string, string> = {
-    'Язык браузера': navigator.language,
-    'Языки браузера': navigator.languages?.join(', ') || '',
-    'Поддержка cookies': navigator.cookieEnabled ? 'да' : 'нет',
-    'Онлайн статус': navigator.onLine ? 'да' : 'нет',
-    'Количество ядер CPU': String(navigator.hardwareConcurrency || 'не определено'),
-    'Память устройства': navigatorInfo.deviceMemory
+    [tProfile('report.labels.browserLanguage')]: navigator.language,
+    [tProfile('report.labels.browserLanguages')]: navigator.languages?.join(', ') || '',
+    [tProfile('report.labels.cookiesSupport')]: navigator.cookieEnabled ? yes : no,
+    [tProfile('report.labels.onlineStatus')]: navigator.onLine ? yes : no,
+    [tProfile('report.labels.cpuCores')]: String(navigator.hardwareConcurrency || undefinedNeut),
+    [tProfile('report.labels.deviceMemory')]: navigatorInfo.deviceMemory
       ? `${navigatorInfo.deviceMemory} GB`
-      : 'не определено',
-    'Максимальные точки касания': String(navigator.maxTouchPoints || 0),
+      : undefinedNeut,
+    [tProfile('report.labels.maxTouchPoints')]: String(navigator.maxTouchPoints || 0),
   };
 
   const connection =
     navigatorInfo.connection || navigatorInfo.mozConnection || navigatorInfo.webkitConnection;
 
   if (connection) {
-    networkInfo['Тип соединения'] = connection.effectiveType || 'не определен';
-    networkInfo['Скорость загрузки'] = connection.downlink
+    networkInfo[tProfile('report.labels.connectionType')] =
+      connection.effectiveType || undefinedValue;
+    networkInfo[tProfile('report.labels.downloadSpeed')] = connection.downlink
       ? `${connection.downlink} Mbps`
-      : 'не определена';
-    networkInfo['RTT (latency)'] = connection.rtt ? `${connection.rtt} ms` : 'не определен';
-    networkInfo['Режим экономии данных'] = connection.saveData ? 'включен' : 'выключен';
+      : undefinedFem;
+    networkInfo[tProfile('report.labels.rtt')] = connection.rtt
+      ? `${connection.rtt} ms`
+      : undefinedValue;
+    networkInfo[tProfile('report.labels.dataSaver')] = connection.saveData
+      ? tProfile('report.values.enabled')
+      : tProfile('report.values.disabled');
   } else {
-    networkInfo['Тип соединения'] = 'не поддерживается';
-    networkInfo['Скорость загрузки'] = 'не поддерживается';
-    networkInfo['RTT (latency)'] = 'не поддерживается';
+    networkInfo[tProfile('report.labels.connectionType')] = unsupported;
+    networkInfo[tProfile('report.labels.downloadSpeed')] = unsupported;
+    networkInfo[tProfile('report.labels.rtt')] = unsupported;
   }
 
   return networkInfo;
@@ -75,16 +90,18 @@ export const getPerformanceMemory = (): Record<string, string> => {
 
   if (memory) {
     const formatBytes = (bytes?: number): string => {
-      if (bytes === undefined) return 'не определено';
+      if (bytes === undefined) return tProfile('report.values.undefinedNeut');
       const mb = bytes / (1024 * 1024);
       return `${mb.toFixed(2)} MB`;
     };
 
-    memoryInfo['Лимит JS Heap'] = formatBytes(memory.jsHeapSizeLimit);
-    memoryInfo['Общий размер JS Heap'] = formatBytes(memory.totalJSHeapSize);
-    memoryInfo['Используемый JS Heap'] = formatBytes(memory.usedJSHeapSize);
+    memoryInfo[tProfile('report.labels.jsHeapLimit')] = formatBytes(memory.jsHeapSizeLimit);
+    memoryInfo[tProfile('report.labels.jsHeapTotal')] = formatBytes(memory.totalJSHeapSize);
+    memoryInfo[tProfile('report.labels.jsHeapUsed')] = formatBytes(memory.usedJSHeapSize);
   } else {
-    memoryInfo['Информация о памяти'] = 'не поддерживается (только Chrome/Edge)';
+    memoryInfo[tProfile('report.labels.memoryInfo')] = tProfile(
+      'report.values.unsupportedChromeOnly',
+    );
   }
 
   return memoryInfo;

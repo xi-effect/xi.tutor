@@ -1,0 +1,14 @@
+{
+  "title": "Invoice template",
+  "fields": {
+    "name": "Name"
+  },
+  "actions": {
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "validation": {
+    "nameRequired": "Enter a name",
+    "nameMax": "Name must not exceed 100 characters"
+  }
+}
