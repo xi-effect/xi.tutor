@@ -30,12 +30,33 @@ export function VkAllowMessagesWidget({
   useEffect(() => {
     let cancelled = false;
     let observer: MutationObserver | null = null;
+    const timeoutIds: number[] = [];
 
-    const markReady = () => {
-      // iframe есть в DOM, но VK ещё инициализирует кнопку — чуть ждём
-      window.setTimeout(() => {
-        if (!cancelled) onReadyRef.current?.();
-      }, 350);
+    const setTimeoutTracked = (fn: () => void, ms: number) => {
+      const id = window.setTimeout(fn, ms);
+      timeoutIds.push(id);
+      return id;
+    };
+
+    // Появление iframe в DOM ещё не значит, что VK успел загрузить и
+    // инициализировать содержимое внутри — ждём именно события load,
+    // а не фиксированную задержку (на медленной сети её может не хватить,
+    // и первый клик по «пустому» iframe будет незамеченным).
+    const scheduleReady = (iframe: HTMLIFrameElement | null) => {
+      let settled = false;
+      const fire = () => {
+        if (settled || cancelled) return;
+        settled = true;
+        onReadyRef.current?.();
+      };
+
+      if (iframe) {
+        iframe.addEventListener('load', () => setTimeoutTracked(fire, 150), { once: true });
+      }
+
+      // Подстраховка: если load не сработает (блокировщики, кэш и т.п.),
+      // не оставляем кнопку навечно в состоянии «Загрузка…»
+      setTimeoutTracked(fire, 2500);
     };
 
     renderVkAllowMessagesWidget({ elementId, communityId, connectionKey })
@@ -46,16 +67,18 @@ export function VkAllowMessagesWidget({
         }
 
         const container = document.getElementById(elementId);
-        if (container?.querySelector('iframe')) {
-          markReady();
+        const existingIframe = container?.querySelector('iframe') ?? null;
+        if (existingIframe) {
+          scheduleReady(existingIframe);
           return;
         }
 
         // iframe появляется чуть позже AllowMessagesFromCommunity
         observer = new MutationObserver(() => {
-          if (container?.querySelector('iframe')) {
+          const iframe = container?.querySelector('iframe');
+          if (iframe) {
             observer?.disconnect();
-            markReady();
+            scheduleReady(iframe);
           }
         });
 
@@ -63,7 +86,7 @@ export function VkAllowMessagesWidget({
           observer.observe(container, { childList: true, subtree: true });
         }
 
-        window.setTimeout(() => observer?.disconnect(), 5000);
+        setTimeoutTracked(() => observer?.disconnect(), 5000);
       })
       .catch((error) => {
         if (!cancelled) {
@@ -74,6 +97,7 @@ export function VkAllowMessagesWidget({
     return () => {
       cancelled = true;
       observer?.disconnect();
+      timeoutIds.forEach((id) => window.clearTimeout(id));
       clearVkAllowMessagesWidget(elementId);
     };
   }, [communityId, connectionKey, elementId]);
