@@ -80,8 +80,6 @@ export const TextEditorToolbar = ({ editor }: { editor: Editor }) => {
 
   const setLinkToRichTextHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      e.preventDefault();
-
       toggleFormatHandler('link');
       setOpen(false);
       setLink('');
