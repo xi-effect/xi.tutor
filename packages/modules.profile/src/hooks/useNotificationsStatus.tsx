@@ -1,32 +1,37 @@
-import { useGetNotificationsStatus } from 'common.services';
-import { useConnectTg, useDisconnectTg } from '../services';
+import { useTgConnection } from 'common.services';
+import { useDisconnectTg } from '../services';
 import { Button } from '@xipkg/button';
-import { ChevronRight, Trash } from '@xipkg/icons';
+import { Trash } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
 
 export function useNotificationsStatus() {
   const { t } = useTranslation('profile');
-  const { data } = useGetNotificationsStatus();
-
-  const { handleConnectTg } = useConnectTg();
+  const {
+    telegram,
+    isActive: isTgConnectionActive,
+    isBlocked: isTgConnectionBlocked,
+    isReplaced: isTgConnectionReplaced,
+    isNotConnected,
+    isPending: isTgPending,
+    isAwaitingConfirmation: isTgAwaitingConfirmation,
+    handleConnect: handleConnectTg,
+  } = useTgConnection();
   const { handleDisconnectTg } = useDisconnectTg();
-
-  const status = data?.telegram?.connection.status;
-
-  const isTgConnectionActive = status === 'active';
-  const isTgConnectionBlocked = status === 'blocked';
-  const isTgConnectionReplaced = status === 'replaced';
-  const isNotConnected = !data?.telegram;
 
   const tgConnectionStatus = [
     {
-      condition: isNotConnected,
+      condition: isNotConnected && !isTgAwaitingConfirmation,
       text: t('notifications.notConnected'),
       color: 'text-text-primary',
     },
     {
+      condition: isTgAwaitingConfirmation,
+      text: t('notifications.awaitingConfirmationTg'),
+      color: 'text-text-primary',
+    },
+    {
       condition: isTgConnectionActive,
-      text: data?.telegram?.contact?.title,
+      text: telegram?.related_contact?.title,
       color: 'text-text-primary',
     },
     {
@@ -40,6 +45,15 @@ export function useNotificationsStatus() {
       color: 'text-tag-orange-accent',
     },
   ];
+
+  const connectButtonClassName =
+    'text-s-base text-text-link h-11 min-w-[11rem] justify-end px-3 py-0';
+
+  const connectButtonLabel = (idleLabel: string) => {
+    if (isTgAwaitingConfirmation) return t('notifications.awaiting');
+    if (isTgPending) return t('notifications.formingLink');
+    return idleLabel;
+  };
 
   const tgActionButton = () => {
     if (isTgConnectionActive) {
@@ -60,10 +74,11 @@ export function useNotificationsStatus() {
       return (
         <Button
           variant="none"
-          className="text-text-link ml-auto h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
+          className={connectButtonClassName}
           onClick={handleConnectTg}
+          disabled={isTgPending}
         >
-          {t('notifications.unblock')}
+          {connectButtonLabel(t('notifications.unblock'))}
         </Button>
       );
     }
@@ -72,19 +87,28 @@ export function useNotificationsStatus() {
       return (
         <Button
           variant="none"
-          className="text-text-link ml-auto h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
+          className={connectButtonClassName}
           onClick={handleConnectTg}
+          disabled={isTgPending}
         >
-          {t('notifications.reconnect')}
+          {connectButtonLabel(t('notifications.reconnect'))}
         </Button>
       );
     }
 
-    return <ChevronRight className="fill-icon-primary ml-auto" />;
+    return (
+      <Button
+        variant="none"
+        className={connectButtonClassName}
+        onClick={handleConnectTg}
+        disabled={isTgPending}
+      >
+        {connectButtonLabel(t('notifications.connect'))}
+      </Button>
+    );
   };
 
   return {
-    data,
     isTgConnectionActive,
     isTgConnectionBlocked,
     isTgConnectionReplaced,
