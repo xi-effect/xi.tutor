@@ -13,6 +13,8 @@ import {
   trackProductEvent,
 } from 'common.utils';
 
+// Тест
+
 export const useEmailConfirmationRequest = () => {
   const queryClient = useQueryClient();
 

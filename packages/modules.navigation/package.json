@@ -12,6 +12,7 @@
     "dev": "tsc --watch"
   },
   "dependencies": {
+    "@radix-ui/react-tooltip": "^1.1.8",
     "@tanstack/react-router": "^1.166.6",
     "@xipkg/avatar": "3.4.0",
     "@xipkg/button": "4.3.0",
