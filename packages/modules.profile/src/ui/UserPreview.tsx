@@ -12,6 +12,7 @@ import { AvatarEditor } from 'features.avatar.editor';
 import { useCurrentUser } from 'common.services';
 import { env } from 'common.env';
 import { getAxiosInstance } from 'common.config';
+import { useTranslation } from 'react-i18next';
 
 const readFile = (file: File) =>
   new Promise((resolve) => {
@@ -25,6 +26,7 @@ type UserPreviewPropsT = {
 };
 
 export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
+  const { t } = useTranslation('profile');
   const { data: user } = useCurrentUser();
 
   const [isAvatarOpen, setIsAvatarOpen] = React.useState(false);
@@ -44,9 +46,9 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
     });
 
     if (response.status === 204) {
-      toast('Аватарка удалена. Скоро она исчезнет с сайта');
+      toast(t('userPreview.avatarDeleted'));
     } else {
-      toast('Ошибка при удалении аватарки');
+      toast(t('userPreview.avatarDeleteError'));
     }
   };
 
@@ -56,12 +58,12 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
     const file = event.target.files[0];
 
     if (!file.type.startsWith('image/')) {
-      toast('Пожалуйста, загрузите изображение');
+      toast(t('userPreview.uploadImage'));
       return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      toast('Файл слишком большой');
+      toast(t('userPreview.fileTooLarge'));
       return;
     }
 
@@ -79,7 +81,7 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
 
   return (
     <div
-      className={`border-gray-80 flex h-[120px] w-full items-center rounded-2xl border p-6 ${className}`}
+      className={`border-border-strong flex h-[120px] w-full items-center rounded-2xl border p-6 ${className}`}
     >
       <AvatarEditor
         file={file}
@@ -103,28 +105,28 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
             />
             <AvatarFallback
               size="xl"
-              className="bg-gray-5 flex h-[64px] w-[64px] place-items-center justify-center rounded-[36px]"
+              className="bg-background-page flex h-[64px] w-[64px] place-items-center justify-center rounded-[36px]"
             >
-              <Camera className="fill-gray-60" />
+              <Camera className="fill-icon-secondary" />
             </AvatarFallback>
           </Avatar>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-[220px]">
           <DropdownMenuItem onClick={handleMenuEditClick}>
             <Edit className="mr-2 h-5 w-5" />
-            <span className="text-[14px]">Изменить миниатюру</span>
+            <span className="text-[14px]">{t('userPreview.editThumbnail')}</span>
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleDeleteAvatar}>
             <Trash className="mr-2 h-5 w-5" />
-            <span className="text-[14px]">Удалить</span>
+            <span className="text-[14px]">{t('userPreview.delete')}</span>
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <div className="ml-4 flex flex-col justify-center gap-0.5">
-        <span className="text-2xl leading-[32px] font-semibold dark:text-gray-100">
+        <span className="dark:text-text-primary text-2xl leading-[32px] font-semibold">
           {user?.display_name}
         </span>
-        <span className="text-gray-80 dark:text-gray-80 text-[16px] leading-[22px]">
+        <span className="text-text-primary dark:text-text-primary text-[16px] leading-[22px]">
           {user?.username}
         </span>
       </div>

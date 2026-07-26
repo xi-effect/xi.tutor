@@ -4,6 +4,7 @@ import { StorageItemT } from 'common.types';
 import { LoadingScreen } from 'common.ui';
 import { DEMO_STORAGE_TOKEN, DEMO_YDOC_ID } from '../utils/yjsConstants';
 import { ydocIdFromBoardDumpFilename } from '../utils/parseYjsBoardDoc';
+import i18n from 'i18next';
 
 type YjsContextType = ExtendedStoreStatus | null;
 
@@ -57,7 +58,13 @@ export const YjsProvider = ({ children, storageItem, isDemo = false }: YjsProvid
       try {
         const res = await fetch(localDumpUrl);
         if (!res.ok) {
-          throw new Error(`Не удалось загрузить Y.Doc: ${res.status} ${res.statusText}`);
+          throw new Error(
+            i18n.t('provider.ydocLoadFailed', {
+              ns: 'board',
+              status: res.status,
+              statusText: res.statusText,
+            }),
+          );
         }
 
         const buf = await res.arrayBuffer();
@@ -68,9 +75,7 @@ export const YjsProvider = ({ children, storageItem, isDemo = false }: YjsProvid
           '';
 
         if (!ydocId) {
-          throw new Error(
-            'Задайте VITE_BOARD_LOCAL_YDOC_ID или имя файла board-{uuid} в URL дампа',
-          );
+          throw new Error(i18n.t('provider.localYdocRequired', { ns: 'board' }));
         }
 
         if (!cancelled) {
@@ -130,7 +135,7 @@ export const YjsProvider = ({ children, storageItem, isDemo = false }: YjsProvid
 
   if (localDumpError) {
     return (
-      <div className="flex h-full w-full items-center justify-center p-6 text-center text-sm text-red-600">
+      <div className="text-text-danger flex h-full w-full items-center justify-center p-6 text-center text-sm">
         {localDumpError.message}
       </div>
     );

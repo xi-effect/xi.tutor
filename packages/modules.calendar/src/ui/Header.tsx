@@ -4,7 +4,6 @@ import { DatePicker } from '@xipkg/datepicker';
 import { ArrowRight, Calendar, ArrowLeft, Plus } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
 import { addDays, startOfDay } from 'date-fns';
-import { DateTimeDisplay } from 'common.ui';
 import { formatDateRangeDisplay } from '../utils';
 
 export type CalendarWeekNavProps = {
@@ -45,12 +44,12 @@ export const CalendarWeekNav = ({
       <Button
         type="button"
         variant="text"
-        className="bg-gray-0 border-gray-10 dark:border-gray-70 flex h-8 w-[60px] flex-none items-center justify-center rounded-l-lg rounded-r-none border border-r-0 p-0 dark:text-gray-100"
+        className="bg-background-surface border-border-default dark:border-border-strong dark:text-text-primary flex h-8 w-[60px] flex-none items-center justify-center rounded-l-lg rounded-r-none border border-r-0 p-0"
         onClick={onPrev}
         aria-label={t('prev_week')}
         data-umami-event="schedule-prev-week"
       >
-        <ArrowLeft className="fill-gray-80 dark:fill-gray-90 h-5 w-5" />
+        <ArrowLeft className="fill-icon-primary dark:fill-icon-primary h-5 w-5" />
       </Button>
 
       <DatePicker
@@ -65,23 +64,23 @@ export const CalendarWeekNav = ({
       >
         <button
           type="button"
-          className="bg-gray-0 border-gray-10 dark:border-gray-70 flex h-8 flex-none flex-row items-center justify-center gap-3 border px-5 py-2 text-center font-medium dark:bg-transparent dark:text-gray-100"
+          className="bg-background-surface border-border-default dark:border-border-strong dark:text-text-primary flex h-8 flex-none flex-row items-center justify-center gap-3 border px-5 py-2 text-center font-medium dark:bg-transparent"
           data-umami-event="schedule-week-picker"
         >
-          <span className="text-xs-base text-gray-80 w-full">{dateRangeLabel}</span>
-          <Calendar className="fill-brand-80 dark:fill-brand-80 h-5 w-5 flex-none" />
+          <span className="text-xs-base text-text-primary w-full">{dateRangeLabel}</span>
+          <Calendar className="fill-icon-brand dark:fill-icon-brand h-5 w-5 flex-none" />
         </button>
       </DatePicker>
 
       <Button
         type="button"
         variant="text"
-        className="bg-gray-0 border-gray-10 dark:border-gray-70 flex h-8 w-[60px] flex-none items-center justify-center rounded-l-none rounded-r-lg border border-l-0 p-0 dark:text-gray-100"
+        className="bg-background-surface border-border-default dark:border-border-strong dark:text-text-primary flex h-8 w-[60px] flex-none items-center justify-center rounded-l-none rounded-r-lg border border-l-0 p-0"
         onClick={onNext}
         aria-label={t('next_week')}
         data-umami-event="schedule-next-week"
       >
-        <ArrowRight className="fill-gray-80 dark:fill-gray-90 h-5 w-5" />
+        <ArrowRight className="fill-icon-primary dark:fill-icon-primary h-5 w-5" />
       </Button>
     </div>
   );
@@ -94,7 +93,8 @@ type CalendarHeaderProps = {
   onNext: () => void;
   onWeekSelect: (date: Date, visibleCount: number) => void;
   onAddLessonClick?: () => void;
-  showDateTime?: boolean;
+  /** Показывать заголовок страницы «Расписание» (отдельная страница календаря) */
+  showTitle?: boolean;
 };
 
 export const CalendarHeader = ({
@@ -104,33 +104,46 @@ export const CalendarHeader = ({
   onNext,
   onWeekSelect,
   onAddLessonClick,
-  showDateTime = true,
+  showTitle = true,
 }: CalendarHeaderProps) => {
+  const { t } = useTranslation('calendar');
+
   return (
-    <header className="flex flex-wrap items-center justify-between gap-3 pt-5 pr-5 pb-5 pl-1">
-      {showDateTime ? <DateTimeDisplay /> : null}
-      <CalendarWeekNav
-        weekStart={weekStart}
-        visibleDayCount={visibleDayCount}
-        onPrev={onPrev}
-        onNext={onNext}
-        onWeekSelect={onWeekSelect}
-      />
+    <header className="flex w-full flex-col gap-4 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+      {showTitle ? (
+        <h1 className="font-playfair text-text-primary pb-2 text-3xl font-medium sm:justify-self-start sm:text-5xl">
+          {t('schedule')}
+        </h1>
+      ) : (
+        <div />
+      )}
+
+      <div className="sm:justify-self-center">
+        <CalendarWeekNav
+          weekStart={weekStart}
+          visibleDayCount={visibleDayCount}
+          onPrev={onPrev}
+          onNext={onNext}
+          onWeekSelect={onWeekSelect}
+        />
+      </div>
+
       {onAddLessonClick ? (
-        <div>
+        <div className="flex items-center sm:justify-self-end">
           <Button
             type="button"
-            variant="ghost"
-            size="s"
-            className="text-s-base text-brand-80 h-[32px] font-medium"
+            variant="primary"
+            className="!h-auto gap-2 rounded-[10px] px-5 py-3 text-base leading-5 font-medium"
             onClick={() => onAddLessonClick()}
             data-umami-event="schedule-add-lesson"
           >
-            Добавить занятие
-            <Plus className="fill-brand-80 ml-3 h-5 w-5" />
+            <Plus className="fill-text-on-accent size-4 shrink-0" />
+            {t('add_lesson')}
           </Button>
         </div>
-      ) : null}
+      ) : (
+        <div />
+      )}
     </header>
   );
 };

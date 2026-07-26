@@ -243,7 +243,7 @@ export const useLessonInfoModal = ({
                 scheduledAt={resolvedScheduleAt}
                 scheduledEndsAt={resolvedScheduleEndsAt}
                 scheduleTimesLoading={scheduleTimesLoading}
-                className="text-brand-100 bg-brand-0 hover:bg-brand-20/50 h-12 min-h-12"
+                className="text-text-link bg-status-info-background hover:bg-action-primary-background-disabled/50 h-12 min-h-12"
               />
             ) : undefined
           }

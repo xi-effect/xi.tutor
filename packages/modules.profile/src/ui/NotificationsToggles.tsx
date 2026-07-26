@@ -1,5 +1,6 @@
 import { Toggle } from '@xipkg/toggle';
 import { useChangeContactsVisibility, useGetNotificationsStatus } from 'common.services';
+import { useTranslation } from 'react-i18next';
 
 type TypesMessengersT = 'telegram' | 'whatsapp' | 'email';
 
@@ -7,13 +8,15 @@ type NotificationsTogglesPropsT = {
   type: TypesMessengersT;
 };
 
-const typeMap: Record<string, string> = {
-  telegram: 'Telegram',
-  whatsapp: 'Whatsapp',
-  email: 'Email',
-};
-
 export const NotificationsToggles = ({ type }: NotificationsTogglesPropsT) => {
+  const { t } = useTranslation('profile');
+
+  const typeMap: Record<string, string> = {
+    telegram: 'Telegram',
+    whatsapp: 'Whatsapp',
+    email: 'Email',
+  };
+
   const nameType = typeMap[type] || 'Email';
 
   const { data } = useGetNotificationsStatus();
@@ -25,12 +28,12 @@ export const NotificationsToggles = ({ type }: NotificationsTogglesPropsT) => {
         {type !== 'email' && (
           <div className="flex flex-row items-center justify-between p-3">
             <div className="flex flex-col gap-1">
-              <span className="font-inter text-m-base font-medium dark:text-gray-100">
-                Отображать ник в {nameType} в профиле
+              <span className="font-inter text-m-base dark:text-text-primary font-medium">
+                {t('notifications.showNickname', { messenger: nameType })}
               </span>
 
-              <span className="text-gray-80 dark:text-gray-80 font-inter text-s-base font-normal">
-                Другие участники увидят ваши контакты
+              <span className="text-text-primary dark:text-text-primary font-inter text-s-base font-normal">
+                {t('notifications.showNicknameHint')}
               </span>
             </div>
 
@@ -42,32 +45,6 @@ export const NotificationsToggles = ({ type }: NotificationsTogglesPropsT) => {
             />
           </div>
         )}
-
-        {/* <div className="flex flex-row items-center justify-between p-3">
-          <div className="flex flex-col gap-1">
-            <span className="font-inter text-m-base font-medium dark:text-gray-100">
-              Начало занятия
-            </span>
-
-            <span className="text-gray-80 dark:text-gray-80 font-inter text-s-base font-normal">
-              Позволяет участникам просматривать все категории
-            </span>
-          </div>
-
-          <Toggle size="l" className="dark:[&>span]:bg-gray-100" />
-        </div> */}
-
-        {/* <div className="flex flex-row items-center justify-between p-3">
-          <div className="flex flex-col gap-1">
-            <span className="font-inter text-m-base font-medium dark:text-gray-100">Оплата</span>
-
-            <span className="text-gray-80 font-inter text-s-base font-normal">
-              Позволяет участникам редактировать права ролей, которые ниже их самой роли
-            </span>
-          </div>
-
-          <Toggle size="l" className="dark:[&>span]:bg-gray-100" />
-        </div> */}
       </div>
     </>
   );

@@ -16,12 +16,14 @@ import { useCurrentUser } from 'common.services';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore } from '../../../store';
 import { boardMenuSurfaceClass } from '../../boardTheme';
+import { useTranslation } from 'react-i18next';
 
 const AVATAR_API_BASE = 'https://api.sovlium.ru/files/users';
 const MAX_VISIBLE_AVATARS = 3;
 const MAX_VISIBLE_AVATARS_BROADCASTING = 1;
 
 export const CollaboratorAvatars = () => {
+  const { t } = useTranslation('board');
   const { store, myPresenceId, status, provider } = useYjsContext();
   const {
     followingPresenceId,
@@ -168,13 +170,13 @@ export const CollaboratorAvatars = () => {
         {isBroadcasting && (
           <button
             type="button"
-            className="bg-brand-0 hover:bg-brand-20/40 pointer-events-auto flex h-6 w-6 items-center justify-center rounded-full transition-colors lg:h-7 lg:w-7"
+            className="bg-status-info-background hover:bg-action-primary-background-disabled/40 pointer-events-auto flex h-6 w-6 items-center justify-center rounded-full transition-colors lg:h-7 lg:w-7"
             onClick={toggleBroadcast}
-            title="Выключить режим презентации"
+            title={t('collaborators.turnOffPresentationMode')}
             data-umami-event="board-broadcast-follow"
             data-umami-event-state="stop"
           >
-            <Podcast className="text-brand-80 size-4 shrink-0" />
+            <Podcast className="text-text-link size-4 shrink-0" />
           </button>
         )}
         <PopoverTrigger asChild>
@@ -183,19 +185,25 @@ export const CollaboratorAvatars = () => {
               {visiblePresences.map((presence) => {
                 const isMe = presence.id === myPresenceId;
                 const isFollowed = followingPresenceId === presence.id;
-                const name = presence.userName || 'Участник';
+                const name = presence.userName || t('collaborators.participant');
                 const initial = name.charAt(0).toUpperCase();
                 const avatarUrl = isMe ? myAvatarUrl : getAvatarUrlFromPresence(presence);
 
                 return (
                   <Avatar key={presence.id} size="s">
-                    {avatarUrl && <AvatarImage src={avatarUrl} alt={isMe ? 'Вы' : name} size="s" />}
+                    {avatarUrl && (
+                      <AvatarImage
+                        src={avatarUrl}
+                        alt={isMe ? t('collaborators.you') : name}
+                        size="s"
+                      />
+                    )}
                     <AvatarFallback size="s">{initial}</AvatarFallback>
                     {isFollowed && (
                       <AvatarBadge
                         align="start"
-                        className="bg-brand-80"
-                        title="Отслеживается"
+                        className="bg-action-primary-background-default"
+                        title={t('collaborators.following')}
                         aria-hidden
                       />
                     )}
@@ -220,54 +228,74 @@ export const CollaboratorAvatars = () => {
               size="s"
               className={cn(
                 'flex w-full items-center justify-start gap-2',
-                isBroadcasting && 'bg-brand-0 text-brand-80 hover:bg-brand-0/80',
+                isBroadcasting &&
+                  'bg-status-info-background text-text-link hover:bg-status-info-background/80',
               )}
               onClick={toggleBroadcast}
               data-umami-event="board-broadcast-follow"
               data-umami-event-state={isBroadcasting ? 'stop' : 'start'}
             >
               <Podcast
-                className={cn('size-4 shrink-0', isBroadcasting ? 'text-brand-80' : 'text-gray-80')}
+                className={cn(
+                  'size-4 shrink-0',
+                  isBroadcasting ? 'text-text-link' : 'text-text-primary',
+                )}
               />
-              {isBroadcasting ? 'Выключить презентацию' : 'Режим презентации'}
+              {isBroadcasting
+                ? t('collaborators.turnOffPresentation')
+                : t('collaborators.presentationMode')}
             </Button>
           )}
-          <p className="text-gray-60 px-2 py-1 text-xs">Участники на доске</p>
+          <p className="text-text-secondary px-2 py-1 text-xs">
+            {t('collaborators.participantsOnBoard')}
+          </p>
           {sortedPresences.map((presence) => {
             const isMe = presence.id === myPresenceId;
             const isFollowed = followingPresenceId === presence.id;
-            const name = presence.userName || 'Участник';
+            const name = presence.userName || t('collaborators.participant');
             const initial = name.charAt(0).toUpperCase();
             const avatarUrl = isMe ? myAvatarUrl : getAvatarUrlFromPresence(presence);
 
             return (
               <div
                 key={presence.id}
-                className="hover:bg-gray-5 flex items-center gap-2 rounded-lg px-2 py-1.5"
+                className="hover:bg-background-page flex items-center gap-2 rounded-lg px-2 py-1.5"
               >
                 <Avatar size="s">
-                  {avatarUrl && <AvatarImage src={avatarUrl} alt={isMe ? 'Вы' : name} size="s" />}
+                  {avatarUrl && (
+                    <AvatarImage
+                      src={avatarUrl}
+                      alt={isMe ? t('collaborators.you') : name}
+                      size="s"
+                    />
+                  )}
                   <AvatarFallback size="s">{initial}</AvatarFallback>
                 </Avatar>
-                <span className="flex-1 truncate text-sm text-gray-100">{isMe ? 'Вы' : name}</span>
+                <span className="text-text-primary flex-1 truncate text-sm">
+                  {isMe ? t('collaborators.you') : name}
+                </span>
                 {!isMe && (
                   <button
                     type="button"
                     className={cn(
                       'group flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors',
-                      isFollowed ? 'bg-brand-0' : 'hover:bg-gray-5',
+                      isFollowed ? 'bg-status-info-background' : 'hover:bg-background-page',
                       isBroadcastActive && 'pointer-events-none opacity-40',
                     )}
                     onClick={() => setFollowingPresenceId(isFollowed ? null : presence.id)}
-                    title={isFollowed ? 'Прекратить отслеживание' : `Следить за ${name}`}
+                    title={
+                      isFollowed
+                        ? t('collaborators.stopFollowing')
+                        : t('collaborators.followUser', { name })
+                    }
                     disabled={isBroadcastActive}
                     data-umami-event="board-follow-user"
                     data-umami-event-state={isFollowed ? 'stop' : 'start'}
                   >
                     {isFollowed ? (
-                      <Eyeon className="fill-brand-80 size-4 shrink-0" />
+                      <Eyeon className="fill-icon-brand size-4 shrink-0" />
                     ) : (
-                      <Eyeon className="fill-gray-40 group-hover:fill-gray-80 size-4 shrink-0" />
+                      <Eyeon className="fill-icon-disabled group-hover:fill-icon-primary size-4 shrink-0" />
                     )}
                   </button>
                 )}

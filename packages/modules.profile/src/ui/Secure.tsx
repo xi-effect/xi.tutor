@@ -1,4 +1,3 @@
-/* eslint-disable no-irregular-whitespace */
 import { ChevronRight, Key, Mail } from '@xipkg/icons';
 import { useMediaQuery } from '@xipkg/utils';
 import { useCurrentUser } from 'common.services';
@@ -7,8 +6,10 @@ import { getRelativeTime } from '../utils/getRelativeTime';
 import { useState } from 'react';
 import { ChangePassword } from './ChangePassword';
 import { ChangeEmail } from './ChangeEmail';
+import { useTranslation } from 'react-i18next';
 
 export const Secure = () => {
+  const { t } = useTranslation('profile');
   const { data: user } = useCurrentUser();
 
   const isMobile = useMediaQuery('(max-width: 719px)');
@@ -19,13 +20,19 @@ export const Secure = () => {
   return (
     <>
       {!isMobile && (
-        <h1 className="mb-4 text-3xl font-semibold dark:text-gray-100">Безопасность</h1>
+        <h1 className="dark:text-text-primary mb-4 text-3xl font-semibold">
+          {t('security.title')}
+        </h1>
       )}
       <div className="flex flex-col gap-6 sm:gap-8">
-        <div className="border-gray-80 flex w-full flex-col rounded-2xl border p-1">
+        <div className="border-border-strong flex w-full flex-col rounded-2xl border p-1">
           <div className="flex w-full flex-col p-3">
-            <span className="text-xl font-semibold dark:text-gray-100">Данные аккаунта</span>
-            <span className="dark:text-gray-80 text-sm font-normal">Видны только вам</span>
+            <span className="dark:text-text-primary text-xl font-semibold">
+              {t('security.accountData')}
+            </span>
+            <span className="dark:text-text-primary text-sm font-normal">
+              {t('security.visibleOnlyToYou')}
+            </span>
           </div>
           <ChangePassword
             open={isChangePasswordModalOpen}
@@ -33,27 +40,35 @@ export const Secure = () => {
           >
             <button
               type="button"
-              className="hover:bg-gray-5 flex h-[66px] flex-row items-center gap-4 rounded-xl bg-transparent p-3"
+              className="hover:bg-background-page flex h-[66px] flex-row items-center gap-4 rounded-xl bg-transparent p-3"
             >
-              <Key className="fill-brand-80" />
+              <Key className="fill-icon-brand" />
               <div className="items-star flex flex-col">
-                <span className="w-fit font-semibold dark:text-gray-100">Пароль</span>
-                <span className="dark:text-gray-80 text-xs font-normal">{`Обновлён ${getRelativeTime(user?.password_last_changed_at)}`}</span>
+                <span className="dark:text-text-primary w-fit font-semibold">
+                  {t('security.password')}
+                </span>
+                <span className="dark:text-text-primary text-xs font-normal">
+                  {t('security.passwordUpdated', {
+                    time: getRelativeTime(user?.password_last_changed_at),
+                  })}
+                </span>
               </div>
-              <ChevronRight className="fill-gray-80 ml-auto" />
+              <ChevronRight className="fill-icon-primary ml-auto" />
             </button>
           </ChangePassword>
           <ChangeEmail open={isChangeEmailModalOpen} onOpenChange={setIsChangeEmailModalOpen}>
             <button
               type="button"
-              className="hover:bg-gray-5 flex h-[66px] flex-row items-center gap-4 rounded-xl bg-transparent p-3"
+              className="hover:bg-background-page flex h-[66px] flex-row items-center gap-4 rounded-xl bg-transparent p-3"
             >
-              <Mail className="fill-brand-80" />
+              <Mail className="fill-icon-brand" />
               <div className="items-star flex flex-col">
-                <span className="w-fit font-semibold dark:text-gray-100">Почта</span>
-                <span className="dark:text-gray-80 text-xs font-normal">{user?.email}</span>
+                <span className="dark:text-text-primary w-fit font-semibold">
+                  {t('security.email')}
+                </span>
+                <span className="dark:text-text-primary text-xs font-normal">{user?.email}</span>
               </div>
-              <ChevronRight className="fill-gray-80 ml-auto" />
+              <ChevronRight className="fill-icon-primary ml-auto" />
             </button>
           </ChangeEmail>
         </div>

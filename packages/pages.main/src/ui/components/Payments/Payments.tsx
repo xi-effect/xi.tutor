@@ -13,7 +13,9 @@ import { InvoiceModal } from 'features.invoice';
 import { InvoiceCard } from 'features.invoice.card';
 import { EmptyPayments } from 'common.ui';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useMediaQuery } from '@xipkg/utils';
+import { useCallStore } from 'modules.calls';
 
 const PAYMENTS_PREVIEW_LIMIT = 10;
 
@@ -21,11 +23,13 @@ const PAYMENTS_PREVIEW_LIMIT = 10;
 const PAYMENTS_HELP_URL = 'https://support.sovlium.ru/payments';
 
 export const Payments = () => {
+  const { t } = useTranslation('main');
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const isMobile = useMediaQuery('(max-width: 960px)');
+  const isStarted = useCallStore((state) => state.isStarted);
 
   const { data: tutorPayments, isLoading: isLoadingTutor } = useGetTutorPaymentsList({
     disabled: !isTutor,
@@ -40,7 +44,7 @@ export const Payments = () => {
   const [invoiceModalOpen, setInvoiceModalOpen] = useState(false);
 
   const handleMore = () => {
-    const filteredSearch = search.call ? { call: search.call } : {};
+    const filteredSearch = isStarted && search.call ? { call: search.call } : {};
     navigate({
       to: '/payments',
       search: (prev: Record<string, unknown>) => ({
@@ -59,22 +63,22 @@ export const Payments = () => {
   };
 
   const emptyActionButtonClass =
-    'bg-gray-5 hover:bg-gray-10 text-xs-base h-8 rounded-lg px-4 font-medium text-gray-80';
+    'bg-background-page hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
 
   return (
-    <div className="bg-gray-0 flex w-full flex-col gap-4 rounded-2xl px-5 pt-4 pb-1 transition-all duration-200 ease-linear sm:w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)]">
+    <div className="bg-background-surface flex w-full flex-col gap-4 rounded-2xl px-5 pt-4 pb-1 transition-all duration-200 ease-linear sm:w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)]">
       <div className="flex flex-row items-center gap-2">
-        <h2 className="text-l-base font-medium text-gray-100">Оплата</h2>
+        <h2 className="text-l-base text-text-primary font-medium">{t('payments.title')}</h2>
         <div className="ml-auto">
           {isTutor && !isMobile ? (
             <Button
               variant="none"
-              className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
+              className="bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
               onClick={handleAdd}
               data-umami-event="create-invoice-button"
               id="create-invoice-button"
             >
-              <Add className="fill-brand-80 size-6" />
+              <Add className="fill-icon-brand size-6" />
             </Button>
           ) : (
             <Tooltip delayDuration={1000}>
@@ -85,10 +89,10 @@ export const Payments = () => {
                   onClick={handleMore}
                   data-umami-event="payments-more"
                 >
-                  <ArrowRight className="fill-gray-60 size-6" />
+                  <ArrowRight className="fill-icon-secondary size-6" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>К оплатам</TooltipContent>
+              <TooltipContent>{t('payments.toPayments')}</TooltipContent>
             </Tooltip>
           )}
         </div>
@@ -97,7 +101,7 @@ export const Payments = () => {
 
       {isLoading ? (
         <div className="flex h-[152px] w-full items-center justify-center">
-          <p className="text-m-base text-gray-60">Загрузка...</p>
+          <p className="text-m-base text-text-secondary">{t('common.loading')}</p>
         </div>
       ) : previewList.length > 0 ? (
         <ScrollArea className="w-full" scrollBarProps={{ orientation: 'horizontal' }}>
@@ -114,8 +118,8 @@ export const Payments = () => {
         </ScrollArea>
       ) : isTutor ? (
         <SectionEmptyState
-          title="У вас нет платежей"
-          description="Вы можете выставить счет на оплату или почитать подробнее в базе знаний"
+          title={t('payments.emptyTitle')}
+          description={t('payments.emptyTutorDescription')}
           minHeightClass="min-h-[160px]"
           illustration={<EmptyPayments className={sectionEmptyStateIllustrationClass} />}
           actions={
@@ -127,8 +131,8 @@ export const Payments = () => {
                 onClick={openPaymentsHelp}
                 data-umami-event="payments-empty-help"
               >
-                Как работает оплата
-                <ArrowUpRight className="fill-gray-80 ml-1 size-4 shrink-0" />
+                {t('payments.howItWorks')}
+                <ArrowUpRight className="fill-icon-primary ml-1 size-4 shrink-0" />
               </Button>
               {!isMobile && (
                 <Button
@@ -138,8 +142,8 @@ export const Payments = () => {
                   onClick={handleAdd}
                   data-umami-event="payments-empty-invoice"
                 >
-                  Счет на оплату
-                  <Add className="fill-gray-80 ml-1 size-4 shrink-0" />
+                  {t('payments.createInvoice')}
+                  <Add className="fill-icon-primary ml-1 size-4 shrink-0" />
                 </Button>
               )}
             </>
@@ -147,8 +151,8 @@ export const Payments = () => {
         />
       ) : (
         <SectionEmptyState
-          title="У вас нет платежей"
-          description="Счета от репетиторов появятся здесь после выставления"
+          title={t('payments.emptyTitle')}
+          description={t('payments.emptyStudentDescription')}
           minHeightClass="min-h-[160px]"
           illustration={<EmptyPayments className={sectionEmptyStateIllustrationClass} />}
           actions={
@@ -159,8 +163,8 @@ export const Payments = () => {
               onClick={handleMore}
               data-umami-event="payments-empty-more"
             >
-              Подробнее о финансах
-              <ArrowUpRight className="fill-gray-80 ml-1 size-4 shrink-0" />
+              {t('payments.moreAboutFinance')}
+              <ArrowUpRight className="fill-icon-primary ml-1 size-4 shrink-0" />
             </Button>
           }
         />

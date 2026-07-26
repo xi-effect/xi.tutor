@@ -2,6 +2,9 @@
   "profileDrawerTitle": "Profile",
   "installApp": "Install app",
   "notifications": "Notifications",
+  "notificationsEmpty": "No notifications",
+  "notificationsLoading": "Loading...",
+  "markAsRead": "Mark as read",
   "notificationSettings": "Notification settings",
   "home": "Home",
   "calendar": "Calendar",
@@ -19,7 +22,7 @@
   "student": "Student",
   "classrooms": "Classrooms",
   "hints": "Hints",
-  "roleChanged": "Role successfully changed to {{role}}",
+  "roleChanged": "You are now a {{role}}",
   "wiki": "Knowledge base",
   "menu": "Menu",
   "supportModal": {

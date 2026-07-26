@@ -1,13 +1,14 @@
 import { Button } from '@xipkg/button';
 import { ArrowLeft, ArrowRight } from '@xipkg/icons';
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { getDateLocale } from 'common.ui';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
 import { cn } from '@xipkg/utils';
 
 import 'swiper/css';
 
-const DAY_NAMES = ['Вс', 'Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
 const SCROLL_STEP = 3;
 /** Во вьюпорте всегда ровно одна неделя — 7 дней */
 const DAYS_VISIBLE = 7;
@@ -18,7 +19,7 @@ const SLIDE_TO_SPEED_MS = 320;
 const styles = {
   dayPillBase:
     'flex h-[48px] w-[36px] min-w-[36px] shrink-0 flex-col items-center justify-center rounded-lg text-center',
-  dayPillDefaultHover: 'hover:bg-gray-10 hover:text-gray-80',
+  dayPillDefaultHover: 'hover:bg-background-subtle hover:text-text-primary',
 } as const;
 
 /** ~±2 года — практически без «края» ленты; при необходимости можно поднять */
@@ -42,6 +43,7 @@ const getDominantVisibleMonthInfo = (
   dates: Date[],
   startIndex: number,
   visibleCount: number,
+  locale: string = getDateLocale(),
 ): { label: string; year: number; monthIndex: number } | null => {
   if (dates.length === 0 || visibleCount <= 0) return null;
   const end = Math.min(startIndex + visibleCount, dates.length);
@@ -76,7 +78,7 @@ const getDominantVisibleMonthInfo = (
   const year = Number(yearStr);
   const monthIndex = Number(monthStr);
   const d = new Date(year, monthIndex, 1);
-  const raw = d.toLocaleDateString('ru-RU', { month: 'long' });
+  const raw = d.toLocaleDateString(locale, { month: 'long' });
   const label = raw.charAt(0).toUpperCase() + raw.slice(1);
   return { label, year, monthIndex };
 };
@@ -106,7 +108,14 @@ export const ScheduleDateCarousel = ({
   onDominantVisibleMonthChange,
   onTodayVisibleInViewportChange,
 }: ScheduleDateCarouselProps) => {
+  const { t, i18n } = useTranslation('calendar');
   const swiperRef = useRef<SwiperType | null>(null);
+
+  /** week_days — Пн…Вс; для getDay() нужен порядок Вс…Сб */
+  const dayNames = useMemo(() => {
+    const monFirst = t('week_days').split(',');
+    return [monFirst[6], ...monFirst.slice(0, 6)];
+  }, [t, i18n.language]);
 
   const dates = useMemo(() => getDatesRange(DATE_RANGE_PAST, DATE_RANGE_FUTURE), []);
   const selectedIndex = useMemo(
@@ -182,8 +191,14 @@ export const ScheduleDateCarousel = ({
   }, [todayIndex, carouselStartIndex]);
 
   const dominantVisibleMonthInfo = useMemo(
-    () => getDominantVisibleMonthInfo(dates, carouselStartIndex, DAYS_VISIBLE),
-    [dates, carouselStartIndex],
+    () =>
+      getDominantVisibleMonthInfo(
+        dates,
+        carouselStartIndex,
+        DAYS_VISIBLE,
+        getDateLocale(i18n.language),
+      ),
+    [dates, carouselStartIndex, i18n.language],
   );
 
   useLayoutEffect(() => {
@@ -198,12 +213,12 @@ export const ScheduleDateCarousel = ({
     <div className={cn('flex w-full flex-row items-center justify-center gap-2', className)}>
       <Button
         variant="none"
-        className="text-gray-80 hover:bg-gray-10 flex h-[48px] w-[36px] min-w-[36px] items-center justify-center rounded-lg p-0"
+        className="text-text-primary hover:bg-background-subtle flex h-[48px] w-[36px] min-w-[36px] items-center justify-center rounded-lg p-0"
         onClick={goPrev}
         disabled={carouselStartIndex === 0}
         data-umami-event="schedule-date-carousel-prev"
       >
-        <ArrowLeft className="fill-brand-80 h-5 w-5" />
+        <ArrowLeft className="fill-icon-brand h-5 w-5" />
       </Button>
 
       <div className="min-h-[48px] min-w-0 flex-1 overflow-hidden">
@@ -220,7 +235,7 @@ export const ScheduleDateCarousel = ({
           {dates.map((date) => {
             const isSelected = date.getTime() === selectedDate.getTime();
             const isToday = date.getTime() === todayStartMs;
-            const dayName = DAY_NAMES[date.getDay()];
+            const dayName = dayNames[date.getDay()];
             const dayNum = date.getDate();
             return (
               <SwiperSlide
@@ -235,23 +250,23 @@ export const ScheduleDateCarousel = ({
                   className={cn(
                     styles.dayPillBase,
                     !isSelected && styles.dayPillDefaultHover,
-                    !isSelected && isToday && 'bg-brand-20/50',
+                    !isSelected && isToday && 'bg-action-primary-background-disabled/50',
                   )}
                   style={{
                     minWidth: DAY_PILL_MIN_WIDTH,
                     backgroundColor: isSelected
-                      ? 'var(--xi-brand-80)'
+                      ? 'var(--xi-action-primary-background-default)'
                       : isToday
                         ? undefined
                         : 'transparent',
-                    color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-60)',
+                    color: isSelected ? 'var(--xi-text-on-accent)' : 'var(--xi-text-secondary)',
                   }}
                 >
                   <span
                     style={{
                       fontSize: '10px',
                       lineHeight: '14px',
-                      color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-50)',
+                      color: isSelected ? 'var(--xi-text-on-accent)' : 'var(--xi-text-muted)',
                     }}
                   >
                     {dayName}
@@ -261,7 +276,7 @@ export const ScheduleDateCarousel = ({
                       fontSize: '14px',
                       lineHeight: '20px',
                       fontWeight: 500,
-                      color: isSelected ? 'var(--xi-gray-0)' : 'var(--xi-gray-70)',
+                      color: isSelected ? 'var(--xi-text-on-accent)' : 'var(--xi-text-secondary)',
                     }}
                   >
                     {dayNum}
@@ -275,12 +290,12 @@ export const ScheduleDateCarousel = ({
 
       <Button
         variant="none"
-        className="text-gray-80 hover:bg-gray-10 flex h-[48px] w-[36px] min-w-[36px] shrink-0 items-center justify-center rounded-lg p-0"
+        className="text-text-primary hover:bg-background-subtle flex h-[48px] w-[36px] min-w-[36px] shrink-0 items-center justify-center rounded-lg p-0"
         onClick={goNext}
         disabled={carouselStartIndex >= maxStartIndex}
         data-umami-event="schedule-date-carousel-next"
       >
-        <ArrowRight className="fill-brand-80 h-5 w-5" />
+        <ArrowRight className="fill-icon-brand h-5 w-5" />
       </Button>
     </div>
   );

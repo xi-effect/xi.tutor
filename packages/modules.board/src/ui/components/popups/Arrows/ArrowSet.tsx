@@ -18,7 +18,7 @@ export const ArrowSet = () => {
   };
 
   return (
-    <div className="border-gray-10 bg-gray-0 flex w-full gap-2 rounded-xl border p-1 shadow-none">
+    <div className="border-border-default bg-background-surface flex w-full gap-2 rounded-xl border p-1 shadow-none">
       {arrowVariants.map((item) => {
         const isActive = item.name === activeShape;
         return (
@@ -26,7 +26,7 @@ export const ArrowSet = () => {
             key={item.name}
             className={cn(
               'flex rounded-lg border p-1',
-              isActive ? 'border-brand-60' : 'border-transparent',
+              isActive ? 'border-border-focus' : 'border-transparent',
             )}
           >
             <button

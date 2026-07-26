@@ -6,7 +6,19 @@ import '../utils/driver.css';
 import { createRoot } from 'react-dom/client';
 import { useCurrentUser, useOnboardingTransition } from 'common.services';
 import { useState, useEffect, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import { cn } from '@xipkg/utils';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  getOnboardingStepMeta,
+  resolveOnboardingAnalyticsRole,
+  trackOnce,
+  trackOnboardingCompleted,
+  trackOnboardingStepCompleted,
+  trackOnboardingStepFailed,
+  trackOnboardingStepSkipped,
+  trackProductEvent,
+} from 'common.utils';
 
 type OnboardingPopupT = {
   disabled?: boolean;
@@ -19,7 +31,7 @@ const buttonClassName =
 const SESSION_STORAGE_KEY = 'onboarding_menu_hidden';
 const SHOW_FOR_COMPLETED_KEY = 'show_onboarding_for_completed';
 
-function trackOnboardingTourComplete(layout: string | undefined) {
+function trackOnboardingTourCompleteLegacy(layout: string | undefined) {
   if (typeof window === 'undefined') {
     return;
   }
@@ -44,11 +56,27 @@ function isDestroyedOnLastTourStep(step: DriveStep | undefined, validSteps: Driv
 }
 
 export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopupT) => {
+  const { t } = useTranslation('commonUi');
   const { data: user, isLoading } = useCurrentUser();
   const [isHidden, setIsHidden] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [showForCompleted, setShowForCompleted] = useState(false);
   const { transitionStage } = useOnboardingTransition('completed', 'forwards');
+
+  useEffect(() => {
+    if (user?.onboarding_stage !== 'training') return;
+
+    const userRole = resolveOnboardingAnalyticsRole(user?.default_layout);
+    const stepMeta = getOnboardingStepMeta('training');
+
+    trackOnce('onboarding_step_viewed:training', () => {
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.ONBOARDING_STEP_VIEWED, {
+        ...stepMeta,
+        user_role: userRole,
+        onboarding_stage: user.onboarding_stage,
+      });
+    });
+  }, [user?.onboarding_stage, user?.default_layout]);
 
   useEffect(() => {
     const checkSessionStorage = () => {
@@ -72,7 +100,6 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
     };
   }, []);
 
-  // Функция для скрытия меню
   const hideMenuForSession = () => {
     sessionStorage.setItem(SESSION_STORAGE_KEY, 'true');
     sessionStorage.removeItem(SHOW_FOR_COMPLETED_KEY);
@@ -80,6 +107,29 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
     setShowForCompleted(false);
   };
 
+  const finishOnboardingAnalytics = (
+    completionPath: 'tour_done' | 'skipped' | 'auto_no_steps',
+    skipReason?: 'later' | 'dismiss' | 'no_steps',
+  ) => {
+    const userRole = resolveOnboardingAnalyticsRole(user?.default_layout);
+
+    if (completionPath === 'tour_done') {
+      trackOnboardingStepCompleted('training', userRole, 'training');
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.ACTIVATION_TUTORIAL_COMPLETED, {
+        screen: 'onboarding',
+        reason: 'unknown',
+      });
+    } else if (skipReason) {
+      trackOnboardingStepSkipped('training', userRole, skipReason, 'training');
+    }
+
+    trackOnboardingCompleted(userRole, {
+      onboardingStage: 'completed',
+      completionPath,
+    });
+  };
+
+  /** «Позже» — пропускает тур, но завершает онбординг на backend. */
   const completeOnboarding = () => {
     hideMenuForSession();
 
@@ -91,11 +141,18 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
 
     transitionStage.mutate(undefined, {
       onSuccess: () => {
+        finishOnboardingAnalytics('skipped', 'later');
         sessionStorage.removeItem(SESSION_STORAGE_KEY);
         setIsTransitioning(false);
       },
       onError: (error) => {
         console.error('Ошибка при завершении онбординга:', error);
+        trackOnboardingStepFailed(
+          'training',
+          resolveOnboardingAnalyticsRole(user?.default_layout),
+          error,
+          'training',
+        );
         setIsTransitioning(false);
       },
     });
@@ -106,10 +163,15 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
   const shouldShowForTraining = user?.onboarding_stage === 'training';
 
   const driverAction = useCallback(() => {
-    // Скрываем меню при начале обучения
     hideMenuForSession();
 
-    // Фильтруем шаги, оставляя только те, элементы которых существуют на странице и у которых есть описание
+    const userRole = resolveOnboardingAnalyticsRole(user?.default_layout);
+
+    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.ACTIVATION_TUTORIAL_STARTED, {
+      screen: 'onboarding',
+      reason: 'unknown',
+    });
+
     const validSteps = steps.filter((step) => {
       if (!step.popover?.description || step.popover.description.trim() === '') {
         return false;
@@ -119,7 +181,6 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
         const element = document.querySelector(step.element);
         return element !== null;
       }
-      // Если element не строка (например, функция или HTMLElement), оставляем шаг
       return true;
     });
 
@@ -132,10 +193,8 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
 
     if (missingElements.length > 0) {
       console.warn('Некоторые элементы для обучения не найдены:', missingElements);
-      // Можно показать уведомление пользователю или пропустить обучение
     }
 
-    // Если нет валидных шагов, пропускаем обучение
     if (validSteps.length === 0) {
       console.warn('Нет валидных шагов для обучения, автоматически завершаем онбординг');
 
@@ -150,6 +209,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
 
       transitionStage.mutate(undefined, {
         onSuccess: () => {
+          finishOnboardingAnalytics('auto_no_steps', 'no_steps');
           sessionStorage.removeItem(SESSION_STORAGE_KEY);
           sessionStorage.removeItem(SHOW_FOR_COMPLETED_KEY);
           setShowForCompleted(false);
@@ -157,6 +217,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
         },
         onError: (error) => {
           console.error('Ошибка при завершении онбординга:', error);
+          trackOnboardingStepFailed('training', userRole, error, 'training');
           setIsTransitioning(false);
         },
       });
@@ -174,21 +235,19 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
         const customCloseButton = document.createElement('button');
         customCloseButton.className = 'driver-popover-close-btn';
 
-        // Создаем корень для рендеринга компонента
         const root = createRoot(customCloseButton);
-        root.render(<Close size="s" className="fill-gray-60 h-4 w-4" />);
+        root.render(<Close size="s" className="fill-icon-secondary h-4 w-4" />);
 
         defaultCloseButton.replaceWith(customCloseButton);
         customCloseButton.addEventListener('click', () => {
           driverObj.destroy();
         });
       },
-      nextBtnText: 'Продолжить',
-      prevBtnText: 'Назад',
-      doneBtnText: 'Закрыть',
-      progressText: '{{current}} из {{total}}',
+      nextBtnText: t('onboarding.next'),
+      prevBtnText: t('onboarding.prev'),
+      doneBtnText: t('onboarding.done'),
+      progressText: t('onboarding.progress'),
       onDestroyed: (_element, step) => {
-        // Защита от повторных вызовов
         if (isTransitioning) return;
 
         if (user?.onboarding_stage === 'completed') {
@@ -202,28 +261,30 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
 
         setIsTransitioning(true);
 
-        // Обновляем статус онбординга на 'completed' при завершении
         transitionStage.mutate(undefined, {
           onSuccess: () => {
-            // Очищаем sessionStorage при успешном завершении онбординга
             sessionStorage.removeItem(SESSION_STORAGE_KEY);
             sessionStorage.removeItem(SHOW_FOR_COMPLETED_KEY);
             setShowForCompleted(false);
             setIsTransitioning(false);
+
             if (passedAllSteps) {
-              trackOnboardingTourComplete(user?.default_layout);
+              finishOnboardingAnalytics('tour_done');
+              trackOnboardingTourCompleteLegacy(user?.default_layout);
+            } else {
+              finishOnboardingAnalytics('skipped', 'dismiss');
             }
           },
           onError: (error) => {
             console.error('Ошибка при завершении онбординга:', error);
+            trackOnboardingStepFailed('training', userRole, error, 'training');
             setIsTransitioning(false);
-            // Можно показать уведомление пользователю
           },
         });
       },
     });
     driverObj.drive();
-  }, [steps, user, isTransitioning, transitionStage]);
+  }, [steps, user, isTransitioning, transitionStage, t]);
 
   useEffect(() => {
     if (shouldShowForCompleted) {
@@ -231,12 +292,10 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
     }
   }, [shouldShowForCompleted, driverAction]);
 
-  // Если данные пользователя загружаются, не показываем меню
   if (isLoading) {
     return null;
   }
 
-  // Если пользователь не найден, не показываем меню
   if (!user) {
     return null;
   }
@@ -245,37 +304,34 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
     return null;
   }
 
-  // Для пользователей с 'completed' не показываем меню, только запускаем обучение
   if (shouldShowForCompleted) {
     return null;
   }
 
   return (
-    <div className="bg-gray-0 border-gray-10 fixed bottom-0 left-72 z-100 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col items-start gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
+    <div className="bg-background-surface border-border-default fixed bottom-0 left-72 z-100 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col items-start gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
       <Button
         variant="none"
         size="s"
-        className="hover:bg-gray-0 bg-gray-0 absolute top-1 right-1 hover:cursor-pointer"
+        className="hover:bg-background-surface bg-background-surface absolute top-1 right-1 hover:cursor-pointer"
         onClick={hideMenuForSession}
       >
-        <Close className="fill-gray-60 h-4 w-4" />
+        <Close className="fill-icon-secondary h-4 w-4" />
       </Button>
       <div className="flex flex-col gap-2">
         <div className="h-8">
-          <span className="text-xl font-semibold text-gray-100">
-            Добро пожаловать в Sovlium! 😊
-          </span>
+          <span className="text-text-primary text-xl font-semibold">{t('onboarding.welcome')}</span>
         </div>
         <div className="h-10">
-          <span className="text-gray-80 text-sm font-normal tracking-tight">
+          <span className="text-text-primary text-sm font-normal tracking-tight">
             {isTutor ? (
               <>
-                Хотите узнать о возможностях платформы?
+                {t('onboarding.tutorDescriptionLine1')}
                 <br />
-                Вы сможете вернуться к обучению в любой момент
+                {t('onboarding.tutorDescriptionLine2')}
               </>
             ) : (
-              <>Подсказать, как всё устроено?</>
+              <>{t('onboarding.studentDescription')}</>
             )}
           </span>
         </div>
@@ -289,11 +345,11 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
           size="s"
           className={cn(
             buttonClassName,
-            'bg-brand-80 text-gray-0',
+            'bg-action-primary-background-default text-text-on-accent',
             isTutor ? 'max-w-[153px]' : 'max-w-[177px]',
           )}
         >
-          {isTutor ? 'Пройти обучение' : 'Смотреть подсказки'}
+          {isTutor ? t('onboarding.startTourTutor') : t('onboarding.startTourStudent')}
         </Button>
         <Button
           variant="none"
@@ -303,11 +359,11 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
           size="s"
           className={cn(
             buttonClassName,
-            'hover:bg-gray-5 border-gray-30 border',
+            'hover:bg-background-page border-border-control border',
             isTutor ? 'max-w-[153px]' : 'max-w-[78px]',
           )}
         >
-          {isTutor ? 'Вернуться позже' : 'Позже'}
+          {isTutor ? t('onboarding.laterTutor') : t('onboarding.laterStudent')}
         </Button>
       </div>
     </div>

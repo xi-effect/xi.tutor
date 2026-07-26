@@ -2,6 +2,7 @@ import { Button } from '@xipkg/button';
 import { FormControl, FormField, FormItem, useFormContext } from '@xipkg/form';
 import { Close } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
+import { useTranslation } from 'react-i18next';
 import { roundMoney } from '../model';
 
 type SubjectRowPropsT = {
@@ -12,6 +13,7 @@ type SubjectRowPropsT = {
 };
 
 export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
+  const { t } = useTranslation('invoice');
   const { watch } = useFormContext();
   const items = watch('items');
 
@@ -30,7 +32,7 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
             <FormControl>
               <Input
                 {...formField}
-                placeholder="Название"
+                placeholder={t('placeholders.name')}
                 variant="s"
                 onChange={(e) => {
                   formField.onChange(e.target.value);
@@ -51,11 +53,11 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
               <Input
                 {...formField}
                 type="number"
-                placeholder="Стоимость"
+                placeholder={t('placeholders.price')}
                 min={0}
                 step={0.01}
                 variant="s"
-                after={<span className="text-gray-60">₽</span>}
+                after={<span className="text-text-secondary">₽</span>}
                 onChange={(e) => {
                   const rawValue = e.target.value.replace(',', '.');
 
@@ -82,7 +84,7 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
         )}
       />
 
-      <span className="text-gray-60">x</span>
+      <span className="text-text-secondary">x</span>
 
       <FormField
         control={control}
@@ -94,7 +96,7 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
               <Input
                 {...formField}
                 type="number"
-                placeholder="Количество"
+                placeholder={t('placeholders.quantity')}
                 min={1}
                 variant="s"
                 onChange={(e) => {
@@ -107,7 +109,7 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
         )}
       />
 
-      <span className="text-gray-60">=</span>
+      <span className="text-text-secondary">=</span>
 
       <FormItem>
         <FormControl>
@@ -115,9 +117,9 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
             className="pointer-events-none"
             type="number"
             value={totalPrice}
-            placeholder="Сумма"
+            placeholder={t('placeholders.sum')}
             variant="s"
-            after={<span className="text-gray-60">₽</span>}
+            after={<span className="text-text-secondary">₽</span>}
             readOnly
           />
         </FormControl>
@@ -128,7 +130,7 @@ export const SubjectRow = ({ control, index, onRemove }: SubjectRowPropsT) => {
         variant="none"
         onClick={onRemove}
       >
-        <Close size="s" className="fill-gray-40 h-6 w-6" />
+        <Close size="s" className="fill-icon-disabled h-6 w-6" />
       </Button>
     </div>
   );

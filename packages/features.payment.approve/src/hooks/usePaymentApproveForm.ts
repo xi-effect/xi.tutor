@@ -1,6 +1,6 @@
 import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { paymentFormSchema, PaymentFormData } from '../model';
+import { usePaymentFormSchema, PaymentFormData } from '../model';
 import { usePaymentSenderConfirmation } from 'common.services';
 import { usePaymentUnilateralConfirmation } from 'common.services';
 
@@ -9,6 +9,8 @@ export const usePaymentApproveForm = (
   isTutor: boolean = false,
   classroomId?: string,
 ) => {
+  const paymentFormSchema = usePaymentFormSchema();
+
   const form = useForm<PaymentFormData>({
     resolver: zodResolver(paymentFormSchema),
     defaultValues: {

@@ -1,3 +1,15 @@
+export {
+  LANGUAGE_STORAGE_KEY,
+  isAppLanguage,
+  readStoredLanguage,
+  normalizeAppLanguage,
+  getAppLanguage,
+  getDateLocale,
+  syncLanguageSideEffects,
+  setAppLanguage,
+  type AppLanguage,
+} from './src/i18n/language';
+export { commonUiEn, commonUiRu } from './src/locales';
 export { EmptyClassrooms } from './src/empty/EmptyClassrooms';
 export { EmptyMaterials } from './src/empty/EmptyMaterials';
 export { EmptyMaterialsFull } from './src/empty/EmptyMaterialsFull';

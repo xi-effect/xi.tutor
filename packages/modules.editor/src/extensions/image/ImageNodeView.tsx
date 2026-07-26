@@ -8,6 +8,7 @@ import {
 } from '@xipkg/dropdown';
 import { Button } from '@xipkg/button';
 import { ArrowBottom, ArrowUp, Copy, Download, MoreVert, Trash } from '@xipkg/icons';
+import { useTranslation } from 'react-i18next';
 import { useBlockMenuActions, useProtectedImage, useYjsContext } from '../../hooks';
 import { cn } from '@xipkg/utils';
 import { useCallback } from 'react';
@@ -15,6 +16,7 @@ import { ActiveBlockT } from '../../types';
 import { NodeSelection } from '@tiptap/pm/state';
 
 export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
+  const { t } = useTranslation('editor');
   const src = node.attrs.src;
 
   const { editor, storageToken, isReadOnly } = useYjsContext();
@@ -65,7 +67,7 @@ export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
         alt={node.attrs.alt || ''}
         className={cn(
           'max-h-[600px] rounded-lg object-contain',
-          selected && 'outline-brand-80 outline-2 outline-offset-1',
+          selected && 'outline-border-focus outline-2 outline-offset-1',
         )}
         draggable={false}
       />
@@ -87,11 +89,11 @@ export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
             className="flex w-[200px] flex-col space-y-1 p-2"
           >
             <DropdownMenuItem
-              className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+              className="hover:bg-background-page h-7 gap-2 rounded p-1"
               onSelect={() => downloadImage(imageSrc)}
             >
               <Download size="sm" className="size-6" />
-              <span className="text-sm">Скачать</span>
+              <span className="text-sm">{t('image.download')}</span>
             </DropdownMenuItem>
 
             {/* Остальные действия доступны только если редактор не в readonly режиме */}
@@ -100,43 +102,43 @@ export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem
-                  className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+                  className="hover:bg-background-page h-7 gap-2 rounded p-1"
                   onSelect={(e) => {
                     e.preventDefault();
                     moveUp();
                   }}
                 >
                   <ArrowUp size="sm" className="size-6" />
-                  <span className="text-sm">Выше</span>
+                  <span className="text-sm">{t('image.moveUp')}</span>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
-                  className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+                  className="hover:bg-background-page h-7 gap-2 rounded p-1"
                   onSelect={(e) => {
                     e.preventDefault();
                     moveDown();
                   }}
                 >
                   <ArrowBottom size="sm" className="size-6" />
-                  <span className="text-sm">Ниже</span>
+                  <span className="text-sm">{t('image.moveDown')}</span>
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem
-                  className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+                  className="hover:bg-background-page h-7 gap-2 rounded p-1"
                   onSelect={duplicate}
                 >
                   <Copy size="sm" className="size-6" />
-                  <span className="text-sm">Дублировать</span>
+                  <span className="text-sm">{t('image.duplicate')}</span>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
-                  className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+                  className="hover:bg-background-page h-7 gap-2 rounded p-1"
                   onSelect={remove}
                 >
                   <Trash size="sm" className="size-6" />
-                  <span className="text-sm">Удалить</span>
+                  <span className="text-sm">{t('image.delete')}</span>
                 </DropdownMenuItem>
               </>
             )}

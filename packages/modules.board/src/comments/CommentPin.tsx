@@ -101,8 +101,10 @@ export const CommentPin = track(function CommentPin({ thread, left, top }: Comme
             'pointer-events-auto absolute flex size-8 touch-none items-center justify-center rounded-full border-2 shadow-md select-none hover:z-10',
             !dragPos && 'transition-transform hover:scale-110',
             dragPos ? 'z-20 cursor-grabbing' : 'cursor-grab',
-            thread.resolved ? 'border-gray-30 bg-gray-20 opacity-70' : 'border-brand-80 bg-gray-0',
-            'focus-visible:ring-brand-60 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
+            thread.resolved
+              ? 'border-border-control bg-action-secondary-background-pressed opacity-70'
+              : 'border-border-focus bg-background-surface',
+            'focus-visible:ring-border-focus focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
           )}
           style={{ left: pos.left, top: pos.top, transform: 'translate(-50%, -100%)' }}
           onPointerDown={handlePointerDown}
@@ -124,10 +126,10 @@ export const CommentPin = track(function CommentPin({ thread, left, top }: Comme
             <AvatarFallback size="s">{lastAuthorName.charAt(0).toUpperCase()}</AvatarFallback>
           </Avatar>
           {isUnread && (
-            <span className="border-gray-0 bg-brand-80 absolute -top-0.5 -right-0.5 size-2.5 rounded-full border-2" />
+            <span className="border-border-default bg-action-primary-background-default absolute -top-0.5 -right-0.5 size-2.5 rounded-full border-2" />
           )}
           {thread.resolved && (
-            <span className="bg-green-80 absolute -right-1 -bottom-1 flex size-4 items-center justify-center rounded-full">
+            <span className="bg-status-success-accent absolute -right-1 -bottom-1 flex size-4 items-center justify-center rounded-full">
               <Check className="size-2.5 fill-white" />
             </span>
           )}

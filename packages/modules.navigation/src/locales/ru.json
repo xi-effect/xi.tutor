@@ -2,6 +2,9 @@
   "profileDrawerTitle": "Профиль",
   "installApp": "Установить приложение",
   "notifications": "Уведомления",
+  "notificationsEmpty": "Уведомлений нет",
+  "notificationsLoading": "Загрузка...",
+  "markAsRead": "Отметить как прочитанное",
   "notificationSettings": "Настройки уведомлений",
   "home": "Главная",
   "calendar": "Календарь",
@@ -19,7 +22,7 @@
   "student": "Ученик",
   "classrooms": "Кабинеты",
   "hints": "Подсказки",
-  "roleChanged": "Роль успешно изменена на {{role}}",
+  "roleChanged": "Теперь вы {{role}}",
   "wiki": "База знаний",
   "menu": "Меню",
   "supportModal": {

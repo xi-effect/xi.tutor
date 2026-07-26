@@ -2,6 +2,7 @@
   "buttons": {
     "back_button": "Назад",
     "continue_button": "Продолжить",
-    "next_button": "Пропустить"
+    "next_button": "Пропустить",
+    "start_button": "Начать работу"
   }
 }

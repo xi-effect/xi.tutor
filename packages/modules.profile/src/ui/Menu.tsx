@@ -1,44 +1,14 @@
 import { Account, Exit, Key, Palette, Notification, File, Music } from '@xipkg/icons';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useMemo } from 'react';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useAuth } from 'common.auth';
 import { THEME_CUSTOMIZATION_ENABLED } from 'common.theme';
+import { useTranslation } from 'react-i18next';
 
 type ItemT = {
   name: string;
   query: string;
 };
-
-const options: ItemT[] = [
-  {
-    name: 'Личные данные',
-    query: 'personalInfo',
-  },
-  ...(THEME_CUSTOMIZATION_ENABLED
-    ? [
-        {
-          name: 'Персонализация',
-          query: 'personalisation',
-        },
-      ]
-    : []),
-  {
-    name: 'Безопасность',
-    query: 'security',
-  },
-  {
-    name: 'Уведомления',
-    query: 'notifications',
-  },
-  {
-    name: 'Эффекты',
-    query: 'effects',
-  },
-  {
-    name: 'Отчёт',
-    query: 'report',
-  },
-];
 
 type ItemPropsT = {
   index: number;
@@ -58,8 +28,10 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
 
   // Рендерим соответствующую иконку в зависимости от индекса элемента
   const renderIcon = () => {
-    const iconClasses = `transition-colors ease-in dark:fill-gray-80 ${
-      item.query === profileType ? 'fill-brand-80 dark:fill-brand-80' : 'group-hover:fill-brand-80'
+    const iconClasses = `transition-colors ease-in dark:fill-icon-primary ${
+      item.query === profileType
+        ? 'fill-icon-brand dark:fill-icon-brand'
+        : 'group-hover:fill-icon-brand'
     }`;
 
     switch (item.query) {
@@ -94,8 +66,8 @@ const Item = ({ index, item, onMenuItemChange }: ItemPropsT) => {
       onClick={() => handleClick()}
       className={`${
         isActive
-          ? 'bg-brand-0 text-brand-80'
-          : 'text-gray-90 hover:bg-brand-0 hover:text-brand-80 bg-transparent'
+          ? 'bg-status-info-background text-text-link'
+          : 'text-text-primary hover:bg-status-info-background hover:text-text-link bg-transparent'
       } group flex h-[40px] w-full flex-row items-center rounded-lg p-2 transition-colors ease-in hover:cursor-pointer`}
       key={index.toString()}
     >
@@ -112,8 +84,43 @@ type MenuPropsT = {
 };
 
 export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuPropsT) => {
+  const { t } = useTranslation('profile');
   const { logout } = useAuth();
   const navigate = useNavigate();
+
+  const options: ItemT[] = useMemo(
+    () => [
+      {
+        name: t('menu.personalInfo'),
+        query: 'personalInfo',
+      },
+      ...(THEME_CUSTOMIZATION_ENABLED
+        ? [
+            {
+              name: t('menu.personalisation'),
+              query: 'personalisation',
+            },
+          ]
+        : []),
+      {
+        name: t('menu.security'),
+        query: 'security',
+      },
+      {
+        name: t('menu.notifications'),
+        query: 'notifications',
+      },
+      {
+        name: t('menu.effects'),
+        query: 'effects',
+      },
+      {
+        name: t('menu.report'),
+        query: 'report',
+      },
+    ],
+    [t],
+  );
 
   const handleMenuItem = (index: number, query: string) => {
     setActiveQuery(query);
@@ -130,16 +137,16 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
   return (
     <div className="flex w-full flex-col gap-1 sm:w-[220px]">
       {options.map((item, index) => (
-        <Item item={item} index={index} key={index} onMenuItemChange={handleMenuItem} />
+        <Item item={item} index={index} key={item.query} onMenuItemChange={handleMenuItem} />
       ))}
       <button
         type="button"
         onClick={() => handleExit()}
-        className="text-gray-60 dark:text-gray-80 hover:bg-red-0 group mt-10 flex h-[40px] w-full flex-row items-center rounded-lg bg-transparent p-2 transition-colors ease-in hover:cursor-pointer hover:text-red-100"
+        className="text-text-secondary dark:text-text-primary hover:bg-status-error-background group hover:text-text-danger mt-10 flex h-[40px] w-full flex-row items-center rounded-lg bg-transparent p-2 transition-colors ease-in hover:cursor-pointer"
         data-umami-event="profile-logout"
       >
-        <Exit className="dark:fill-gray-80 transition-colors ease-in group-hover:fill-red-100" />
-        <span className="pl-2 text-[14px] font-normal">Выйти</span>
+        <Exit className="dark:fill-icon-primary group-hover:fill-icon-danger transition-colors ease-in" />
+        <span className="pl-2 text-[14px] font-normal">{t('menu.logout')}</span>
       </button>
     </div>
   );

@@ -9,6 +9,7 @@ import {
   ALLOWED_IMAGE_MIME_TYPES,
 } from '../constants/mimeTypes';
 import { toast } from 'sonner';
+import i18n from 'i18next';
 
 export type AssetType = 'img' | 'pdf' | 'file' | 'audio';
 
@@ -42,8 +43,8 @@ export function insertAsset(
       insertPdf(editor, file, token);
       break;
     default:
-      toast.error('Неподдерживаемый формат файла', {
-        description: `Файл «${file.name}» нельзя загрузить на доску.`,
+      toast.error(i18n.t('toast.unsupportedFileFormat', { ns: 'board' }), {
+        description: i18n.t('toast.fileCannotUpload', { ns: 'board', name: file.name }),
         duration: 5000,
       });
       break;

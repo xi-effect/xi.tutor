@@ -1,14 +1,28 @@
 {
-  "sign_up": "Sign Up",
+  "register": "Sign Up",
   "username": "Username",
+  "username_hint": "Lowercase Latin letters, numbers, “_” or “.”",
   "email": "Email",
   "password": "Password",
-  "register": "Sign Up",
+  "sign_up": "Create account",
+  "sign_up_loading": "Creating account…",
   "sign_in": "Sign In",
+  "consent": {
+    "prefix": "I accept the",
+    "terms": "terms of use",
+    "conjunction": "and",
+    "privacy": "privacy policy",
+    "required": "Please accept the terms to continue"
+  },
+  "errors": {
+    "username_exists": "This username is already taken",
+    "email_exists": "An account with this email already exists",
+    "unknown": "Could not create account. Please try again"
+  },
   "validation": {
     "required": "This field is required",
-    "minLength": "Min length is ",
-    "maxLength": "Max length is ",
+    "minLength": "Minimum ",
+    "maxLength": "Maximum ",
     "wrong_format": "Incorrect data format",
     "no_symbols": "Use only Latin alphabet, lowercase, numbers or symbols: '_' or '.'",
     "symbols_one": "{{count}} symbol",

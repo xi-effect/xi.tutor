@@ -37,3 +37,5 @@ export {
   ydocIdFromBoardDumpFilename,
   type YjsBoardDocInfo,
 } from './parseYjsBoardDoc';
+
+export { resolveShapeCoordinates } from './resolveShapeCoordinates';

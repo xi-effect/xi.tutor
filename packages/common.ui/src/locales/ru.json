@@ -1,0 +1,31 @@
+{
+  "onboarding": {
+    "welcome": "Добро пожаловать в Sovlium! 😊",
+    "tutorDescriptionLine1": "Хотите узнать о возможностях платформы?",
+    "tutorDescriptionLine2": "Вы сможете вернуться к обучению в любой момент",
+    "studentDescription": "Подсказать, как всё устроено?",
+    "startTourTutor": "Пройти обучение",
+    "startTourStudent": "Смотреть подсказки",
+    "laterTutor": "Вернуться позже",
+    "laterStudent": "Позже",
+    "next": "Продолжить",
+    "prev": "Назад",
+    "done": "Закрыть",
+    "progress": "{{current}} из {{total}}"
+  },
+  "errorPage": {
+    "ifErrorRepeats": "Если ошибка повторяется — напишите",
+    "aboutIt": "нам об этом",
+    "in": "в",
+    "telegramChat": "чат Telegram",
+    "or": "или",
+    "email": "на электронную почту",
+    "return": "Вернитесь",
+    "toHome": "на главную"
+  },
+  "network": {
+    "offline": "Нет соединения",
+    "reconnecting": "Проверка соединения...",
+    "connected": "Подключено"
+  }
+}

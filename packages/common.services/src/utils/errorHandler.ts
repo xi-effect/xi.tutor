@@ -146,7 +146,7 @@ const successMessages: Record<ErrorType, string> = {
   profile: 'Профиль успешно обновлен',
   email: 'Email успешно обновлен. Проверьте почту для подтверждения.',
   password: 'Пароль успешно обновлен',
-  resetPassword: 'Пароль успешно сброшен',
+  resetPassword: 'Пароль изменён',
   materials: 'Материал успешно создан',
   role: 'Роль пользователя успешно обновлена',
   addInvitation: 'Новое приглашение добавлено',

@@ -26,14 +26,14 @@ interface DesktopUserMenuProps {
 }
 
 const menuItemClassName = cn(
-  'text-gray-80 fill-gray-80 h-9 gap-2 rounded-lg px-2 text-sm font-medium',
-  'hover:bg-gray-5 hover:text-gray-100 hover:fill-gray-100 focus:bg-gray-5 focus:text-gray-100',
+  'text-text-primary fill-icon-primary h-9 gap-2 rounded-lg px-2 text-sm font-medium',
+  'hover:bg-background-page hover:text-text-primary hover:fill-icon-primary focus:bg-background-page focus:text-text-primary',
 );
 
 const logoutItemClassName = cn(
   menuItemClassName,
-  'text-red-80 hover:bg-red-0 hover:text-red-100 focus:bg-red-0 focus:text-red-100',
-  '[&_svg]:fill-red-80 hover:[&_svg]:fill-red-100 focus:[&_svg]:fill-red-100',
+  'text-text-danger hover:bg-status-error-background hover:text-text-danger focus:bg-status-error-background focus:text-text-danger',
+  '[&_svg]:fill-icon-danger hover:[&_svg]:fill-icon-danger focus:[&_svg]:fill-icon-danger',
 );
 
 export const DesktopUserMenu = ({
@@ -65,11 +65,11 @@ export const DesktopUserMenu = ({
             userId={userId}
             size="40"
             withOutText={withOutText}
-            classNameText="pl-1 text-left text-gray-100"
-            classNameLabel="pl-1 text-left text-gray-60"
+            classNameText="pl-1 text-left text-text-primary"
+            classNameLabel="pl-1 text-left text-text-secondary"
           />
           {!withOutText && (
-            <ChevronUp className="fill-gray-60 mr-3 ml-auto h-4 w-4 rotate-x-180 group-data-[state=open]:rotate-x-0" />
+            <ChevronUp className="fill-icon-secondary mr-3 ml-auto h-4 w-4 rotate-x-180 group-data-[state=open]:rotate-x-0" />
           )}
         </Button>
       </DropdownMenuTrigger>
@@ -113,7 +113,7 @@ export const DesktopUserMenu = ({
             className={logoutItemClassName}
             data-umami-event="header-logout"
           >
-            <Exit className="fill-red-80 size-5 shrink-0" />
+            <Exit className="fill-icon-danger size-5 shrink-0" />
             {logoutText}
           </DropdownMenuItem>
         </div>

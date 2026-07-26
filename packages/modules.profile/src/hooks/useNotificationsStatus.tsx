@@ -2,8 +2,10 @@ import { useGetNotificationsStatus } from 'common.services';
 import { useConnectTg, useDisconnectTg } from '../services';
 import { Button } from '@xipkg/button';
 import { ChevronRight, Trash } from '@xipkg/icons';
+import { useTranslation } from 'react-i18next';
 
 export function useNotificationsStatus() {
+  const { t } = useTranslation('profile');
   const { data } = useGetNotificationsStatus();
 
   const { handleConnectTg } = useConnectTg();
@@ -19,23 +21,23 @@ export function useNotificationsStatus() {
   const tgConnectionStatus = [
     {
       condition: isNotConnected,
-      text: 'Не подключен',
-      color: 'text-gray-80',
+      text: t('notifications.notConnected'),
+      color: 'text-text-primary',
     },
     {
       condition: isTgConnectionActive,
       text: data?.telegram?.contact?.title,
-      color: 'text-gray-80',
+      color: 'text-text-primary',
     },
     {
       condition: isTgConnectionBlocked,
-      text: 'Разблокируйте бота в Telegram или удалите привязку и подключите заново',
-      color: 'text-red-80',
+      text: t('notifications.blocked'),
+      color: 'text-text-danger',
     },
     {
       condition: isTgConnectionReplaced,
-      text: 'Удалите текущую привязку и подключите заново',
-      color: 'text-orange-60',
+      text: t('notifications.replaced'),
+      color: 'text-tag-orange-accent',
     },
   ];
 
@@ -48,8 +50,8 @@ export function useNotificationsStatus() {
           onClick={handleDisconnectTg}
           className="ml-auto bg-transparent"
         >
-          <Trash className="fill-gray-80 pointer" />
-          <span className="sr-only">Удалить</span>
+          <Trash className="fill-icon-primary pointer" />
+          <span className="sr-only">{t('notifications.delete')}</span>
         </Button>
       );
     }
@@ -58,10 +60,10 @@ export function useNotificationsStatus() {
       return (
         <Button
           variant="none"
-          className="text-brand-100 ml-auto h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
+          className="text-text-link ml-auto h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
           onClick={handleConnectTg}
         >
-          Разблокировать
+          {t('notifications.unblock')}
         </Button>
       );
     }
@@ -70,15 +72,15 @@ export function useNotificationsStatus() {
       return (
         <Button
           variant="none"
-          className="text-brand-100 ml-auto h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
+          className="text-text-link ml-auto h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
           onClick={handleConnectTg}
         >
-          Подключить заново
+          {t('notifications.reconnect')}
         </Button>
       );
     }
 
-    return <ChevronRight className="fill-gray-80 ml-auto" />;
+    return <ChevronRight className="fill-icon-primary ml-auto" />;
   };
 
   return {

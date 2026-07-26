@@ -35,11 +35,15 @@ export const useTanstackCallsNavigation: UseCallsNavigationHookT = () => {
           search: { call: classroomId },
         });
       },
-      navigateToClassroomOverview: (classroomId) => {
+      navigateToClassroomOverview: (classroomId, options) => {
+        const search: Record<string, string | undefined> = { tab: 'overview' };
+        if (options?.backgroundCall) {
+          search.call = classroomId;
+        }
         navigate({
           to: '/classrooms/$classroomId',
           params: { classroomId },
-          search: { tab: 'overview', call: classroomId },
+          search,
         });
       },
       navigateToClassroomBoard: (classroomId, boardId, options) => {

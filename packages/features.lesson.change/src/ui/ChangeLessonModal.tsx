@@ -15,9 +15,9 @@ import {
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { UserProfile } from '@xipkg/userprofile';
 import { cn } from '@xipkg/utils';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import type { z } from 'zod';
-import { changeLessonFormSchema, type ChangeLessonFormData } from '../model';
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { createChangeLessonFormSchema, type ChangeLessonFormData } from '../model';
 
 /** Как строка кабинета в {@link LessonCard} ScheduleKanban: аватар + подпись с truncate и Tooltip при обрезке. */
 function ChangeLessonModalClassroomLine({
@@ -56,7 +56,7 @@ function ChangeLessonModalClassroomLine({
         <TooltipTrigger asChild>
           <span
             ref={labelRef}
-            className="text-xs-base-size min-w-0 flex-1 truncate text-left leading-normal text-gray-100"
+            className="text-xs-base-size text-text-primary min-w-0 flex-1 truncate text-left leading-normal"
           >
             {classroomName}
           </span>
@@ -74,7 +74,7 @@ export type ChangeLessonModalProps = {
   onOpenChange: (open: boolean) => void;
   /** Как у LessonCard: скрыть строки предмета и кабинета (расписание внутри одного кабинета). */
   hideClassroomAndSubject?: boolean;
-  /** Название предмета из API кабинета — строка `text-gray-40 text-xs`, как на LessonCard */
+  /** Название предмета из API кабинета — строка `text-text-disabled text-xs`, как на LessonCard */
   subjectName?: string | null;
   /** Подпись строки кабинета / участника */
   classroomName: string;
@@ -98,12 +98,15 @@ export const ChangeLessonModal = ({
   defaultDescription = '',
   onSave,
 }: ChangeLessonModalProps) => {
+  const { t } = useTranslation('lessonChange');
+  const changeLessonFormSchema = useMemo(() => createChangeLessonFormSchema(t), [t]);
+
   const initialValues: ChangeLessonFormData = {
     title: defaultTitle,
     description: defaultDescription,
   };
 
-  const form = useForm<z.input<typeof changeLessonFormSchema>>({
+  const form = useForm<ChangeLessonFormData>({
     resolver: zodResolver(changeLessonFormSchema),
     defaultValues: initialValues,
   });
@@ -147,8 +150,8 @@ export const ChangeLessonModal = ({
       <ModalContent className="relative w-full max-w-[480px]" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton />
-          <ModalTitle className="text-xl-base max-w-[calc(100%-56px)] font-semibold text-gray-100">
-            Изменить занятие
+          <ModalTitle className="text-xl-base text-text-primary max-w-[calc(100%-56px)] font-semibold">
+            {t('title')}
           </ModalTitle>
         </ModalHeader>
 
@@ -158,7 +161,7 @@ export const ChangeLessonModal = ({
               {!hideClassroomAndSubject ? (
                 <div className="flex min-w-0 flex-col gap-2">
                   {subjectName != null ? (
-                    <span className="text-gray-40 text-xs">{subjectName}</span>
+                    <span className="text-text-disabled text-xs">{subjectName}</span>
                   ) : null}
 
                   <ChangeLessonModalClassroomLine
@@ -169,7 +172,7 @@ export const ChangeLessonModal = ({
               ) : null}
 
               <div className="flex flex-col gap-3 pt-2">
-                <span className="text-sm font-medium text-gray-100">О занятии</span>
+                <span className="text-text-primary text-sm font-medium">{t('aboutLesson')}</span>
 
                 <FormField
                   control={control}
@@ -203,13 +206,13 @@ export const ChangeLessonModal = ({
                           name={field.name}
                           ref={field.ref}
                           id="change-lesson-description"
-                          placeholder="Добавить описание"
+                          placeholder={t('descriptionPlaceholder')}
                           maxRows={6}
                           hideCounter
                           aria-invalid={!!errors.description}
                           className={cn(
-                            'border-gray-10 placeholder:text-gray-40 min-h-[88px] resize-y rounded-lg border px-3 py-2 text-sm text-gray-100',
-                            errors.description && 'border-red-60',
+                            'border-border-default placeholder:text-text-disabled text-text-primary min-h-[88px] resize-y rounded-lg border px-3 py-2 text-sm',
+                            errors.description && 'border-border-error',
                           )}
                         />
                       </FormControl>
@@ -225,11 +228,11 @@ export const ChangeLessonModal = ({
                 type="button"
                 variant="none"
                 size="m"
-                className="bg-gray-5 hover:bg-gray-10 h-11 flex-1 p-0 font-medium text-gray-100"
+                className="bg-background-page hover:bg-background-subtle text-text-primary h-11 flex-1 p-0 font-medium"
                 onClick={handleClose}
                 data-umami-event="lesson-change-cancel"
               >
-                Отменить
+                {t('cancel')}
               </Button>
               <Button
                 type="submit"
@@ -238,7 +241,7 @@ export const ChangeLessonModal = ({
                 className="h-11 flex-1 p-0"
                 data-umami-event="lesson-change-save"
               >
-                Сохранить
+                {t('save')}
               </Button>
             </ModalFooter>
           </form>

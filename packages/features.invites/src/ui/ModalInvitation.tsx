@@ -17,8 +17,10 @@ import { toast } from 'sonner';
 import { useInvitationsList, useAddInvitation, useDeleteInvitation } from 'common.services';
 import { InvitationDataT } from 'common.types';
 import { env } from 'common.env';
+import { PRODUCT_ANALYTICS_EVENTS, trackProductEvent } from 'common.utils';
+import { useTranslation } from 'react-i18next';
 
-type InviteAnalyticsSource = 'main' | 'classrooms' | 'classroom' | 'unknown';
+type InviteAnalyticsSource = 'main' | 'classrooms' | 'classroom' | 'students' | 'unknown';
 
 const cleanupBodyScrollLock = () => {
   document.body.style.overflow = '';
@@ -39,6 +41,7 @@ export const ModalInvitation = ({
   onOpenChange,
   analyticsSource = 'unknown',
 }: ModalInvitationProps) => {
+  const { t } = useTranslation('invitesModal');
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
   const open = isControlled ? controlledOpen : internalOpen;
@@ -54,6 +57,20 @@ export const ModalInvitation = ({
     return cleanupBodyScrollLock;
   }, [open]);
 
+  const inviteViewedForOpenRef = useRef(false);
+
+  useEffect(() => {
+    if (!open) {
+      inviteViewedForOpenRef.current = false;
+      return;
+    }
+    if (inviteViewedForOpenRef.current) return;
+    inviteViewedForOpenRef.current = true;
+    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_VIEWED, {
+      source: analyticsSource,
+    });
+  }, [open, analyticsSource]);
+
   const { data } = useInvitationsList();
 
   const { isPending: isAdding, mutate: addInvitationMutate } = useAddInvitation();
@@ -61,10 +78,14 @@ export const ModalInvitation = ({
 
   const [deletingId, setDeletingId] = useState<number | null>(null);
 
-  const handleCopyLink = (link: InvitationDataT['code']) => () => {
+  const handleCopyLink = (link: InvitationDataT['code'], inviteId?: number) => () => {
     navigator.clipboard.writeText(`${env.VITE_APP_DOMAIN}/invite/${link}`);
-    toast.success('Ссылка скопирована');
-    toast.info('Отправьте ссылку ученику');
+    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_LINK_COPIED, {
+      invite_id: inviteId != null ? String(inviteId) : undefined,
+      source: analyticsSource,
+    });
+    toast.success(t('toast.linkCopied'));
+    toast.info(t('toast.sendToStudent'));
   };
 
   const handleAddInvitation = useCallback(() => {
@@ -99,22 +120,26 @@ export const ModalInvitation = ({
       <ModalContent className="max-w-[600px]" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
-          <ModalTitle className="max-w-[calc(100%-48px)] text-gray-100">
-            Индивидуальные приглашения
+          <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
+            {t('modal.title')}
           </ModalTitle>
         </ModalHeader>
 
         <ModalBody className="px-4 py-2">
-          <p className="flex flex-wrap items-center gap-1.5 px-2 pb-2 text-left dark:text-gray-100">
-            <span>Скопируйте ссылку-приглашение</span>
-            <Copy size="sm" className="fill-gray-60 size-4 shrink-0" aria-hidden />
-            <span>и отправьте ученику</span>
+          <p className="dark:text-text-primary flex flex-wrap items-center gap-1.5 px-2 pb-2 text-left">
+            <span>{t('modal.copyHintBefore')}</span>
+            <Copy size="sm" className="fill-icon-secondary size-4 shrink-0" aria-hidden />
+            <span>{t('modal.copyHintAfter')}</span>
           </p>
           <Table>
             <TableHeader>
               <TableRow className="flex justify-between">
-                <TableHead className="text-gray-80 flex-1 text-sm">Ссылка</TableHead>
-                <TableHead className="text-gray-80 flex-1 text-sm">Использований</TableHead>
+                <TableHead className="text-text-primary flex-1 text-sm">
+                  {t('modal.link')}
+                </TableHead>
+                <TableHead className="text-text-primary flex-1 text-sm">
+                  {t('modal.usageCount')}
+                </TableHead>
                 <TableHead className="w-8" />
               </TableRow>
             </TableHeader>
@@ -123,29 +148,29 @@ export const ModalInvitation = ({
                 data.map((invitation: InvitationDataT) => (
                   <TableRow
                     key={invitation.id}
-                    className="hover:bg-gray-5 group flex max-h-[38px] flex-row items-center rounded-lg"
+                    className="hover:bg-background-page group flex max-h-[38px] flex-row items-center rounded-lg"
                   >
                     <TableCell className="flex max-w-[50%] flex-1 items-center gap-2 overflow-hidden">
-                      <span className="dark:text-gray-80 truncate">{invitation.code}</span>
+                      <span className="dark:text-text-primary truncate">{invitation.code}</span>
                       <Tooltip delayDuration={400}>
                         <TooltipTrigger asChild>
                           <Button
                             type="button"
                             variant="none"
                             size="s"
-                            className="bg-gray-5 hover:bg-gray-10 text-gray-60 hover:text-gray-80 size-7 shrink-0 rounded-md p-0"
-                            onClick={handleCopyLink(invitation.code)}
-                            aria-label="Копировать ссылку"
+                            className="bg-background-page hover:bg-background-subtle text-text-secondary hover:text-text-primary size-7 shrink-0 rounded-md p-0"
+                            onClick={handleCopyLink(invitation.code, invitation.id)}
+                            aria-label={t('modal.copyLink')}
                             data-umami-event="invite-copy-link"
                             data-umami-event-invite-id={invitation.id}
                           >
                             <Copy size="sm" className="size-4 fill-current" />
                           </Button>
                         </TooltipTrigger>
-                        <TooltipContent>Копировать ссылку</TooltipContent>
+                        <TooltipContent>{t('modal.copyLink')}</TooltipContent>
                       </Tooltip>
                     </TableCell>
-                    <TableCell className="dark:text-gray-80 flex max-w-[50%] flex-1">
+                    <TableCell className="dark:text-text-primary flex max-w-[50%] flex-1">
                       {invitation.usage_count}
                     </TableCell>
                     <TableCell
@@ -156,12 +181,12 @@ export const ModalInvitation = ({
                     >
                       {isDeleting && deletingId === invitation.id ? (
                         <div
-                          className="text-brand-80 size-4 animate-spin rounded-full border-[2px] border-current border-t-transparent"
+                          className="text-text-link size-4 animate-spin rounded-full border-[2px] border-current border-t-transparent"
                           role="status"
                           aria-label="loading"
                         />
                       ) : (
-                        <Trash size="sm" className="fill-gray-60 h-6 w-6 group-hover:flex" />
+                        <Trash size="sm" className="fill-icon-secondary h-6 w-6 group-hover:flex" />
                       )}
                     </TableCell>
                   </TableRow>
@@ -172,7 +197,7 @@ export const ModalInvitation = ({
 
         <ModalFooter>
           {data?.length > 9 ? (
-            <Button variant="none">Максимум 10 приглашений</Button>
+            <Button variant="none">{t('modal.maxInvites')}</Button>
           ) : (
             <Button
               onClick={handleAddInvitation}
@@ -181,7 +206,7 @@ export const ModalInvitation = ({
               data-umami-event="invite-create"
               loading={isAdding && data?.length > 0}
             >
-              Создать новое приглашение
+              {t('modal.createInvite')}
             </Button>
           )}
         </ModalFooter>

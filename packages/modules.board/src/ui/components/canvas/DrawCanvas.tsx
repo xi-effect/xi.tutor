@@ -38,11 +38,13 @@ import { insertAsset } from '../../../utils/uploadAsset';
 import { useRetryFileQueue } from 'common.services';
 import { useSearch } from '@tanstack/react-router';
 import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
+import { useTranslation } from 'react-i18next';
 
 export const DrawCanvas = ({
   token,
   ...props
 }: JSX.IntrinsicAttributes & DrawProps & { token: string }) => {
+  const { t } = useTranslation('board');
   const [editor, setEditor] = useState<Editor | null>(null);
 
   const { selectedElementId, selectElement, showDebugInfo } = useDrawStore();
@@ -390,7 +392,11 @@ export const DrawCanvas = ({
 
               editor.registerExternalContentHandler('files', async ({ files }) => {
                 for (const file of files) {
-                  insertAsset(editor, file, token, addToQueue);
+                  try {
+                    insertAsset(editor, file, token, addToQueue);
+                  } catch (error) {
+                    console.error('Ошибка при загрузке файла:', error);
+                  }
                 }
               });
 
@@ -463,8 +469,8 @@ export const DrawCanvas = ({
                 className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/70 px-2 py-1 font-mono text-xs text-white"
                 aria-live="polite"
               >
-                <div className="font-sans font-medium">Отладочная информация</div>
-                Элементов на доске: {shapeCount}
+                <div className="font-sans font-medium">{t('debug.title')}</div>
+                {t('debug.elementsCount', { count: shapeCount })}
               </div>
             )}
           </Draw>

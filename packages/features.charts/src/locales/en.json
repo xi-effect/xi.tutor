@@ -1,0 +1,25 @@
+{
+  "income": "Income",
+  "subject": "Subject:",
+  "any": "Any",
+  "subjects": "Subjects",
+  "months": {
+    "april": "April",
+    "may": "May",
+    "june": "June",
+    "july": "July",
+    "august": "August",
+    "september": "September",
+    "october": "October",
+    "november": "November",
+    "december": "December",
+    "january": "January",
+    "february": "February",
+    "march": "March"
+  },
+  "languages": {
+    "english": "English",
+    "spanish": "Spanish",
+    "italian": "Italian"
+  }
+}

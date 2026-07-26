@@ -1,0 +1,13 @@
+{
+  "title": "Cancel lesson?",
+  "description": "The lesson cannot be restored after cancellation",
+  "cancelThis": "Cancel this",
+  "cancelThisAndFollowing": "Cancel this and all following",
+  "cancelLesson": "Cancel lesson",
+  "close": "Close",
+  "errors": {
+    "classroomUnknown": "Could not determine the classroom for cancelling the lesson.",
+    "lessonUnknown": "Could not determine the lesson to cancel.",
+    "timeUnknown": "Could not determine the lesson time for cancellation."
+  }
+}

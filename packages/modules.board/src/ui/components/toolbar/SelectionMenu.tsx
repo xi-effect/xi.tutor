@@ -9,11 +9,13 @@ import { isMac } from '../../../utils';
 import { BorderPicker } from '../../../shapes/geo';
 import { CoordinateAxesSettingsPicker } from '../../../shapes/coordinate-axes';
 import { TextEditorToolbar } from '../../../shapes/text';
+import { useTranslation } from 'react-i18next';
 
 const modKey = isMac ? '⌘' : 'Ctrl';
 const shapesWithRichTextSet = new Set(['note', 'text', 'arrow', 'xi-geo']);
 
 export const SelectionMenu = track(function SelectionMenu() {
+  const { t } = useTranslation('board');
   const editor = useEditor();
   const { isReadonly } = useYjsContext();
 
@@ -62,7 +64,7 @@ export const SelectionMenu = track(function SelectionMenu() {
 
   return (
     <div
-      className="border-gray-10 bg-gray-0 pointer-events-auto absolute z-30 flex gap-2 rounded-xl border p-1 shadow-md"
+      className="border-border-default bg-background-surface pointer-events-auto absolute z-30 flex gap-2 rounded-xl border p-1 shadow-md"
       style={{
         left: centerX,
         top: topY,
@@ -79,11 +81,11 @@ export const SelectionMenu = track(function SelectionMenu() {
           <Button
             variant="none"
             size="s"
-            className="hover:bg-brand-0 p-1"
+            className="hover:bg-status-info-background p-1"
             onClick={() => {
               editor.toggleLock(selectedIds);
             }}
-            title={`Разблокировать (${modKey}+L)`}
+            title={t('toolbar.unlock', { modKey })}
           >
             <Unlocked />
           </Button>
@@ -94,29 +96,29 @@ export const SelectionMenu = track(function SelectionMenu() {
           <Button
             variant="none"
             size="s"
-            className="hover:bg-brand-0 p-1"
+            className="hover:bg-status-info-background p-1"
             onClick={handleDuplicate}
-            title="Дублировать (Ctrl+D)"
+            title={t('toolbar.duplicate')}
           >
             <Copy />
           </Button>
           <Button
             variant="none"
             size="s"
-            className="hover:bg-brand-0 p-1"
+            className="hover:bg-status-info-background p-1"
             onClick={handleDelete}
-            title="Удалить (Del)"
+            title={t('toolbar.delete')}
           >
             <Trash />
           </Button>
           <Button
             variant="none"
             size="s"
-            className="hover:bg-brand-0 p-1"
+            className="hover:bg-status-info-background p-1"
             onClick={() => {
               editor.toggleLock(selectedIds);
             }}
-            title={`Заблокировать (${modKey}+L)`}
+            title={t('toolbar.lock', { modKey })}
           >
             <Locked />
           </Button>

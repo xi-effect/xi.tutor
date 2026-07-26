@@ -1,18 +1,21 @@
 import { Button } from '@xipkg/button';
+import { useTranslation } from 'react-i18next';
 
 interface FileProps {
   onUpload: () => void;
 }
 
 export const File = ({ onUpload }: FileProps) => {
+  const { t } = useTranslation('materialsAdd');
+
   return (
     <Button
       onClick={onUpload}
       size="s"
       variant="none"
-      className="text-s-base rounded-lg px-4 py-2 font-medium text-gray-100 max-sm:hidden"
+      className="text-s-base text-text-primary rounded-lg px-4 py-2 font-medium max-sm:hidden"
     >
-      Загрузить файл
+      {t('file.upload')}
     </Button>
   );
 };

@@ -1,74 +1,72 @@
+import type { TFunction } from 'i18next';
 import * as z from 'zod';
-
-// Валидация времени
-const timeValidation = z.string().refine((time) => {
-  const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
-  return timeRegex.test(time);
-}, 'Неверный формат времени');
 
 const timeToMinutes = (time: string) => {
   const [hours, minutes] = time.split(':').map(Number);
   return hours * 60 + minutes;
 };
 
-// Базовые поля для всех типов событий
-const baseFields = z.object({
-  title: z.string().min(1, 'Введите название события'),
-  type: z.enum(['lesson', 'rest'], {
-    error: 'Выберите тип события',
-  }),
-});
+export const createEventFormSchema = (t: TFunction) => {
+  const timeValidation = z.string().refine((time) => {
+    const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+    return timeRegex.test(time);
+  }, t('validation.invalidTime'));
 
-const timeFields = z.object({
-  startTime: timeValidation,
-  endTime: timeValidation,
-  isAllDay: z.boolean().default(false),
-  startDate: z
-    .string()
-    .min(1, 'Укажите дату')
-    .regex(/^\d{2}\.\d{2}\.\d{4}$/, 'Формат даты: дд.мм.гггг'),
-  endDate: z
-    .string()
-    .regex(/^\d{2}\.\d{2}\.\d{4}$/, 'Формат даты: дд.мм.гггг')
-    .optional(),
-  shouldRepeat: z
-    .enum([
-      'dont_repeat',
-      'every_day',
-      'every_work_day',
-      'every_week',
-      'every_2_weeks',
-      'every_month',
-    ])
-    .default('dont_repeat'),
-});
+  const baseFields = z.object({
+    title: z.string().min(1, t('validation.titleRequired')),
+    type: z.enum(['lesson', 'rest'], {
+      error: t('validation.typeRequired'),
+    }),
+  });
 
-const lessonFields = z.object({
-  type: z.literal('lesson'),
-  studentId: z.string().min(1, 'Выберите студента'),
-  subjectName: z.string().min(1, 'Введите название предмета'),
-  lessonType: z.enum(['group', 'individual'], {
-    error: 'Выберите тип занятия',
-  }),
-  description: z.string().optional(),
-});
+  const timeFields = z.object({
+    startTime: timeValidation,
+    endTime: timeValidation,
+    isAllDay: z.boolean().default(false),
+    startDate: z
+      .string()
+      .min(1, t('validation.dateRequired'))
+      .regex(/^\d{2}\.\d{2}\.\d{4}$/, t('validation.dateFormat')),
+    endDate: z
+      .string()
+      .regex(/^\d{2}\.\d{2}\.\d{4}$/, t('validation.dateFormat'))
+      .optional(),
+    shouldRepeat: z
+      .enum([
+        'dont_repeat',
+        'every_day',
+        'every_work_day',
+        'every_week',
+        'every_2_weeks',
+        'every_month',
+      ])
+      .default('dont_repeat'),
+  });
 
-const restEventSchema = z.object({
-  ...baseFields.shape,
-  ...timeFields.shape,
-  type: z.literal('rest'),
-});
+  const lessonFields = z.object({
+    type: z.literal('lesson'),
+    studentId: z.string().min(1, t('validation.studentRequired')),
+    subjectName: z.string().min(1, t('validation.subjectRequired')),
+    lessonType: z.enum(['group', 'individual'], {
+      error: t('validation.lessonTypeRequired'),
+    }),
+    description: z.string().optional(),
+  });
 
-const lessonEventSchema = z.object({
-  ...baseFields.shape,
-  ...lessonFields.shape,
-  ...timeFields.shape,
-  type: z.literal('lesson'),
-});
+  const restEventSchema = z.object({
+    ...baseFields.shape,
+    ...timeFields.shape,
+    type: z.literal('rest'),
+  });
 
-export const eventFormSchema = z
-  .discriminatedUnion('type', [lessonEventSchema, restEventSchema])
-  .refine(
+  const lessonEventSchema = z.object({
+    ...baseFields.shape,
+    ...lessonFields.shape,
+    ...timeFields.shape,
+    type: z.literal('lesson'),
+  });
+
+  return z.discriminatedUnion('type', [lessonEventSchema, restEventSchema]).refine(
     (data) => {
       if (data.startTime && data.endTime) {
         const startMinutes = timeToMinutes(data.startTime);
@@ -78,12 +76,27 @@ export const eventFormSchema = z
       return true;
     },
     {
-      message: 'Время начала не может быть позже времени окончания',
+      message: t('validation.endAfterStart'),
       path: ['startTime'],
     },
   );
+};
 
-export type EventFormInput = z.input<typeof eventFormSchema>;
-export type EventFormData = z.output<typeof eventFormSchema>;
-export type LessonFields = z.infer<typeof lessonFields>;
-export type TimeFields = z.infer<typeof timeFields>;
+export type EventFormInput = z.input<ReturnType<typeof createEventFormSchema>>;
+export type EventFormData = z.output<ReturnType<typeof createEventFormSchema>>;
+export type LessonFields = {
+  type: 'lesson';
+  studentId: string;
+  subjectName: string;
+  lessonType: 'group' | 'individual';
+  description?: string;
+};
+export type TimeFields = {
+  startTime: string;
+  endTime: string;
+  isAllDay: boolean;
+  startDate: string;
+  endDate?: string;
+  shouldRepeat:
+    'dont_repeat' | 'every_day' | 'every_work_day' | 'every_week' | 'every_2_weeks' | 'every_month';
+};

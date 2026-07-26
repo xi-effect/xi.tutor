@@ -1,0 +1,20 @@
+{
+  "confirm": {
+    "title": "Confirm your email",
+    "instruction": "Follow the link — we sent it to",
+    "yourEmail": "your email",
+    "resend": "Send again",
+    "getNewLink": "Get a new link",
+    "cooldown": "You can send the next email in {{time}}",
+    "hint": "If the email didn't arrive, check the address and press this button",
+    "spamAlert": "If the email takes too long to arrive, check the Spam folder in your inbox"
+  },
+  "success": {
+    "confirmingTitle": "Confirming email",
+    "confirmedTitle": "Email confirmed",
+    "successMessage": "Happy teaching!",
+    "alreadyConfirmed": "Email is already confirmed",
+    "error": "Error confirming email",
+    "continue": "Continue"
+  }
+}
