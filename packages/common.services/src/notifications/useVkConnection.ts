@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
+import { NotificationsQueryKey } from 'common.api';
 import { useCreateVkConnection } from './useCreateVkConnection';
 import { useDeleteDeliveryMethod } from './useDeleteDeliveryMethod';
 import { useGetDeliveryMethods } from './useGetDeliveryMethods';
 import { DeliveryMethodsResponse, VKConnectionStartResponse } from 'common.types';
 
-const POLL_INTERVAL_MS = 3000;
+const POLL_INTERVAL_MS = 2000;
 const POLL_TIMEOUT_MS = 90_000;
 
 function isVkConnectedIn(data: DeliveryMethodsResponse | undefined | null) {
@@ -12,14 +14,16 @@ function isVkConnectedIn(data: DeliveryMethodsResponse | undefined | null) {
 }
 
 export function useVkConnection() {
+  const queryClient = useQueryClient();
   const [connectionData, setConnectionData] = useState<VKConnectionStartResponse | null>(null);
   const [hasPrefetchAttempted, setHasPrefetchAttempted] = useState(false);
   const [hasUserStartedConnection, setHasUserStartedConnection] = useState(false);
+
   const pollStartedAtRef = useRef<number | null>(null);
   const isPollingRef = useRef(false);
   const wasActiveRef = useRef(false);
 
-  const { data, refetch, isFetched } = useGetDeliveryMethods();
+  const { data, isFetched } = useGetDeliveryMethods();
   const { mutate: createConnection, isPending: isCreatePending } = useCreateVkConnection();
   const { mutate: deleteConnection, isPending: isDeletePending } = useDeleteDeliveryMethod();
 
@@ -40,22 +44,29 @@ export function useVkConnection() {
     pollStartedAtRef.current = null;
   }, []);
 
-  /** Сброс только ожидания — ключ/виджет оставляем, чтобы можно было нажать ещё раз */
-  const cancelAwaiting = useCallback(() => {
+  const rotateKey = useCallback(() => {
+    setConnectionData(null);
     setHasUserStartedConnection(false);
     pollStartedAtRef.current = null;
+    setHasPrefetchAttempted(false);
   }, []);
 
   const syncDeliveryMethods = useCallback(async () => {
-    const result = await refetch();
+    await queryClient.invalidateQueries({
+      queryKey: [NotificationsQueryKey.DeliveryMethods],
+    });
 
-    if (isVkConnectedIn(result.data)) {
+    const fresh = queryClient.getQueryData<DeliveryMethodsResponse>([
+      NotificationsQueryKey.DeliveryMethods,
+    ]);
+
+    if (isVkConnectedIn(fresh)) {
       finishWaiting();
       return true;
     }
 
     return false;
-  }, [finishWaiting, refetch]);
+  }, [finishWaiting, queryClient]);
 
   const prepareConnection = useCallback(() => {
     if (isActive || isCreatePending || connectionData) return;
@@ -67,7 +78,6 @@ export function useVkConnection() {
     });
   }, [connectionData, createConnection, isActive, isCreatePending]);
 
-  // После успешного подключения ключ одноразовый — сразу выбрасываем
   useEffect(() => {
     if (isActive) {
       wasActiveRef.current = true;
@@ -77,16 +87,13 @@ export function useVkConnection() {
     }
   }, [connectionData, finishWaiting, hasUserStartedConnection, isActive]);
 
-  // После удаления привязки нужен новый ключ (prefetch снова)
   useEffect(() => {
     if (!wasActiveRef.current || !isNotConnected || isActive) return;
 
     wasActiveRef.current = false;
-    finishWaiting();
-    setHasPrefetchAttempted(false);
-  }, [finishWaiting, isActive, isNotConnected]);
+    rotateKey();
+  }, [isActive, isNotConnected, rotateKey]);
 
-  // Ключ заранее, чтобы клик по «Подключить» сразу попал в скрытый виджет
   useEffect(() => {
     if (!isFetched || hasPrefetchAttempted || isActive || !isNotConnected) return;
 
@@ -94,20 +101,19 @@ export function useVkConnection() {
     prepareConnection();
   }, [hasPrefetchAttempted, isActive, isFetched, isNotConnected, prepareConnection]);
 
-  // Поллим только после реального взаимодействия с виджетом VK
+  // Поллинг статуса, пока ждём подтверждение
   useEffect(() => {
     if (!isAwaitingConfirmation) return;
 
-    pollStartedAtRef.current = Date.now();
+    if (!pollStartedAtRef.current) {
+      pollStartedAtRef.current = Date.now();
+    }
+
     isPollingRef.current = false;
-    let timedOut = false;
 
     const poll = async () => {
-      if (timedOut) return;
-
       if (pollStartedAtRef.current && Date.now() - pollStartedAtRef.current > POLL_TIMEOUT_MS) {
-        timedOut = true;
-        cancelAwaiting();
+        rotateKey();
         return;
       }
 
@@ -126,21 +132,25 @@ export function useVkConnection() {
       void poll();
     }, POLL_INTERVAL_MS);
 
+    const onFocus = () => {
+      void poll();
+    };
+
     const onVisible = () => {
       if (document.visibilityState === 'visible') {
         void poll();
       }
     };
 
-    window.addEventListener('focus', onVisible);
+    window.addEventListener('focus', onFocus);
     document.addEventListener('visibilitychange', onVisible);
 
     return () => {
       window.clearInterval(intervalId);
-      window.removeEventListener('focus', onVisible);
+      window.removeEventListener('focus', onFocus);
       document.removeEventListener('visibilitychange', onVisible);
     };
-  }, [cancelAwaiting, isAwaitingConfirmation, syncDeliveryMethods]);
+  }, [isAwaitingConfirmation, rotateKey, syncDeliveryMethods]);
 
   const handleConnect = useCallback(() => {
     if (isActive || isPending) return;
@@ -148,9 +158,8 @@ export function useVkConnection() {
     if (isBlocked || isReplaced) {
       deleteConnection('vk', {
         onSuccess: () => {
-          finishWaiting();
-          setHasPrefetchAttempted(false);
           wasActiveRef.current = false;
+          rotateKey();
           createConnection(undefined, {
             onSuccess: (response) => {
               setHasPrefetchAttempted(true);
@@ -166,17 +175,21 @@ export function useVkConnection() {
   }, [
     createConnection,
     deleteConnection,
-    finishWaiting,
     isActive,
     isBlocked,
     isPending,
     isReplaced,
     prepareConnection,
+    rotateKey,
   ]);
 
   const handleWidgetInteraction = useCallback(() => {
+    if (!pollStartedAtRef.current) {
+      pollStartedAtRef.current = Date.now();
+    }
     setHasUserStartedConnection(true);
-  }, []);
+    void syncDeliveryMethods();
+  }, [syncDeliveryMethods]);
 
   const resetConnection = useCallback(() => {
     finishWaiting();

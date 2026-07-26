@@ -26,7 +26,6 @@ export const WelcomeSocialsPage = () => {
     isActive: isVkActive,
     isPending: isVkPending,
     isWidgetReady: isVkWidgetReady,
-    isAwaitingConfirmation: isVkAwaitingConfirmation,
     connectionData: vkConnectionData,
     handleConnect: handleConnectVk,
     handleWidgetInteraction: handleVkWidgetInteraction,
@@ -53,9 +52,8 @@ export const WelcomeSocialsPage = () => {
 
     return (
       <VkConnectButton
-        label={isVkAwaitingConfirmation ? 'Ожидаем…' : 'Подключить'}
+        label="Подключить"
         isPreparing={isVkPending && !isVkWidgetReady}
-        isAwaitingConfirmation={isVkAwaitingConfirmation}
         groupId={vkConnectionData?.group_id}
         connectionKey={vkConnectionData?.key}
         onFallbackClick={handleConnectVk}

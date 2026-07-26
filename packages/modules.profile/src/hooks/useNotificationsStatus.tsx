@@ -46,7 +46,8 @@ export function useNotificationsStatus() {
     },
   ];
 
-  const connectButtonClassName = 'text-s-base text-text-link h-8 px-2 py-0';
+  const connectButtonClassName =
+    'text-s-base text-text-link h-11 min-w-[11rem] justify-end px-3 py-0';
 
   const connectButtonLabel = (idleLabel: string) => {
     if (isTgAwaitingConfirmation) return t('notifications.awaiting');

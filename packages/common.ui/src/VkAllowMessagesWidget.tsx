@@ -32,7 +32,10 @@ export function VkAllowMessagesWidget({
     let observer: MutationObserver | null = null;
 
     const markReady = () => {
-      if (!cancelled) onReadyRef.current?.();
+      // iframe есть в DOM, но VK ещё инициализирует кнопку — чуть ждём
+      window.setTimeout(() => {
+        if (!cancelled) onReadyRef.current?.();
+      }, 350);
     };
 
     renderVkAllowMessagesWidget({ elementId, communityId, connectionKey })

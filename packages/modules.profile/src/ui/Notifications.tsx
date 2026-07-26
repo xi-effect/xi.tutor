@@ -91,11 +91,8 @@ export const Notifications = () => {
     if (isVkConnectionBlocked) {
       return (
         <VkConnectButton
-          label={
-            isVkAwaitingConfirmation ? t('notifications.awaiting') : t('notifications.unblock')
-          }
+          label={t('notifications.unblock')}
           isPreparing={isVkPending && !isVkWidgetReady}
-          isAwaitingConfirmation={isVkAwaitingConfirmation}
           groupId={vkConnectionData?.group_id}
           connectionKey={vkConnectionData?.key}
           onFallbackClick={handleConnectVk}
@@ -107,11 +104,8 @@ export const Notifications = () => {
     if (isVkConnectionReplaced) {
       return (
         <VkConnectButton
-          label={
-            isVkAwaitingConfirmation ? t('notifications.awaiting') : t('notifications.reconnect')
-          }
+          label={t('notifications.reconnect')}
           isPreparing={isVkPending && !isVkWidgetReady}
-          isAwaitingConfirmation={isVkAwaitingConfirmation}
           groupId={vkConnectionData?.group_id}
           connectionKey={vkConnectionData?.key}
           onFallbackClick={handleConnectVk}
@@ -122,9 +116,8 @@ export const Notifications = () => {
 
     return (
       <VkConnectButton
-        label={isVkAwaitingConfirmation ? t('notifications.awaiting') : t('notifications.connect')}
+        label={t('notifications.connect')}
         isPreparing={isVkPending && !isVkWidgetReady}
-        isAwaitingConfirmation={isVkAwaitingConfirmation}
         groupId={vkConnectionData?.group_id}
         connectionKey={vkConnectionData?.key}
         onFallbackClick={handleConnectVk}
@@ -239,7 +232,7 @@ export const Notifications = () => {
                 ))}
             </div>
 
-            <div className="flex h-8 shrink-0 items-center">{tgActionButton()}</div>
+            <div className="flex h-11 shrink-0 items-center">{tgActionButton()}</div>
           </div>
 
           {isTgConnectionActive && <NotificationsToggles deliveryMethodKind="telegram" />}
@@ -262,7 +255,7 @@ export const Notifications = () => {
                 ))}
             </div>
 
-            <div className="flex h-8 shrink-0 items-center">{vkActionButton()}</div>
+            <div className="flex h-11 shrink-0 items-center">{vkActionButton()}</div>
           </div>
 
           {isVkConnectionActive && <NotificationsToggles deliveryMethodKind="vk" />}
