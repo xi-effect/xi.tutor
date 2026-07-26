@@ -6,8 +6,9 @@ import { useDeleteDeliveryMethod } from './useDeleteDeliveryMethod';
 import { useGetDeliveryMethods } from './useGetDeliveryMethods';
 import { DeliveryMethodsResponse, VKConnectionStartResponse } from 'common.types';
 
-const POLL_INTERVAL_MS = 2000;
-const POLL_TIMEOUT_MS = 90_000;
+const POLL_INTERVAL_MS = 3000;
+/** Ключ VK одноразовый и, вероятно, протухает — после этого времени берём новый, если ещё не active */
+const KEY_ROTATE_TIMEOUT_MS = 5 * 60_000;
 
 function isVkConnectedIn(data: DeliveryMethodsResponse | undefined | null) {
   return data?.vk?.delivery_method?.status === 'active';
@@ -19,7 +20,7 @@ export function useVkConnection() {
   const [hasPrefetchAttempted, setHasPrefetchAttempted] = useState(false);
   const [hasUserStartedConnection, setHasUserStartedConnection] = useState(false);
 
-  const pollStartedAtRef = useRef<number | null>(null);
+  const connectionStartedAtRef = useRef<number | null>(null);
   const isPollingRef = useRef(false);
   const wasActiveRef = useRef(false);
 
@@ -34,20 +35,22 @@ export function useVkConnection() {
   const isBlocked = status === 'blocked';
   const isReplaced = status === 'replaced';
   const isNotConnected = vk === null || vk === undefined;
+  /** Ключ получен и виджет можно показывать пользователю */
   const isWidgetReady = Boolean(connectionData) && !isActive;
+  /** Косметика для текста — не влияет на то, работает ли синхронизация статуса */
   const isAwaitingConfirmation = isWidgetReady && hasUserStartedConnection;
   const isPending = isCreatePending || isDeletePending;
 
   const finishWaiting = useCallback(() => {
     setConnectionData(null);
     setHasUserStartedConnection(false);
-    pollStartedAtRef.current = null;
+    connectionStartedAtRef.current = null;
   }, []);
 
   const rotateKey = useCallback(() => {
     setConnectionData(null);
     setHasUserStartedConnection(false);
-    pollStartedAtRef.current = null;
+    connectionStartedAtRef.current = null;
     setHasPrefetchAttempted(false);
   }, []);
 
@@ -73,6 +76,7 @@ export function useVkConnection() {
 
     createConnection(undefined, {
       onSuccess: (response) => {
+        connectionStartedAtRef.current = Date.now();
         setConnectionData(response);
       },
     });
@@ -87,6 +91,7 @@ export function useVkConnection() {
     }
   }, [connectionData, finishWaiting, hasUserStartedConnection, isActive]);
 
+  // После удаления привязки нужен новый ключ
   useEffect(() => {
     if (!wasActiveRef.current || !isNotConnected || isActive) return;
 
@@ -94,6 +99,7 @@ export function useVkConnection() {
     rotateKey();
   }, [isActive, isNotConnected, rotateKey]);
 
+  // Ключ заранее, чтобы клик по «Подключить» сразу попал в готовый виджет
   useEffect(() => {
     if (!isFetched || hasPrefetchAttempted || isActive || !isNotConnected) return;
 
@@ -101,18 +107,24 @@ export function useVkConnection() {
     prepareConnection();
   }, [hasPrefetchAttempted, isActive, isFetched, isNotConnected, prepareConnection]);
 
-  // Поллинг статуса, пока ждём подтверждение
+  /**
+   * Клик внутри iframe VK кросс-домена и не всегда даёт надёжный сигнал наружу
+   * (может не открыть диалог, если пользователь уже разрешил вход в VK).
+   * Поэтому статус синхронизируем сами, пока виджет показан и не active —
+   * это не зависит от того, поймали ли мы момент клика.
+   */
   useEffect(() => {
-    if (!isAwaitingConfirmation) return;
+    if (!isWidgetReady) return;
 
-    if (!pollStartedAtRef.current) {
-      pollStartedAtRef.current = Date.now();
-    }
+    let stopped = false;
 
-    isPollingRef.current = false;
+    const tick = async () => {
+      if (stopped || document.visibilityState !== 'visible') return;
 
-    const poll = async () => {
-      if (pollStartedAtRef.current && Date.now() - pollStartedAtRef.current > POLL_TIMEOUT_MS) {
+      if (
+        connectionStartedAtRef.current &&
+        Date.now() - connectionStartedAtRef.current > KEY_ROTATE_TIMEOUT_MS
+      ) {
         rotateKey();
         return;
       }
@@ -126,31 +138,26 @@ export function useVkConnection() {
       }
     };
 
-    void poll();
+    void tick();
 
     const intervalId = window.setInterval(() => {
-      void poll();
+      void tick();
     }, POLL_INTERVAL_MS);
 
-    const onFocus = () => {
-      void poll();
-    };
-
     const onVisible = () => {
-      if (document.visibilityState === 'visible') {
-        void poll();
-      }
+      if (document.visibilityState === 'visible') void tick();
     };
 
-    window.addEventListener('focus', onFocus);
+    window.addEventListener('focus', onVisible);
     document.addEventListener('visibilitychange', onVisible);
 
     return () => {
+      stopped = true;
       window.clearInterval(intervalId);
-      window.removeEventListener('focus', onFocus);
+      window.removeEventListener('focus', onVisible);
       document.removeEventListener('visibilitychange', onVisible);
     };
-  }, [isAwaitingConfirmation, rotateKey, syncDeliveryMethods]);
+  }, [isWidgetReady, rotateKey, syncDeliveryMethods]);
 
   const handleConnect = useCallback(() => {
     if (isActive || isPending) return;
@@ -162,6 +169,7 @@ export function useVkConnection() {
           rotateKey();
           createConnection(undefined, {
             onSuccess: (response) => {
+              connectionStartedAtRef.current = Date.now();
               setHasPrefetchAttempted(true);
               setConnectionData(response);
             },
@@ -183,10 +191,8 @@ export function useVkConnection() {
     rotateKey,
   ]);
 
+  /** Косметический сигнал для текста «Ожидаем…» — реальная синхронизация идёт фоновым поллингом */
   const handleWidgetInteraction = useCallback(() => {
-    if (!pollStartedAtRef.current) {
-      pollStartedAtRef.current = Date.now();
-    }
     setHasUserStartedConnection(true);
     void syncDeliveryMethods();
   }, [syncDeliveryMethods]);

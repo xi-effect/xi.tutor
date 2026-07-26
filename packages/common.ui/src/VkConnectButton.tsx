@@ -19,8 +19,10 @@ type VkConnectButtonProps = {
 /**
  * Стилизованная кнопка + невидимый виджет VK сверху.
  *
- * Клик внутри iframe НЕ всплывает в родителя — onMouseDown на обёртке бесполезен.
- * Ловим взаимодействие через focusin на iframe и blur окна (открылся диалог VK).
+ * Клик внутри кросс-доменного iframe не гарантирует всплытие события наружу,
+ * поэтому onWidgetInteraction — лишь косметический сигнал для текста «Ожидаем…».
+ * Реальное обновление статуса подключения не зависит от того, поймали мы клик или нет
+ * (см. фоновый поллинг в useVkConnection).
  */
 export function VkConnectButton({
   label,
@@ -35,7 +37,6 @@ export function VkConnectButton({
   'data-umami-event-service': umamiService,
 }: VkConnectButtonProps) {
   const rootRef = useRef<HTMLDivElement>(null);
-  const pointerOverRef = useRef(false);
   const interactionSentRef = useRef(false);
   const [isWidgetReady, setIsWidgetReady] = useState(false);
 
@@ -66,25 +67,13 @@ export function VkConnectButton({
     const onFocusIn = (event: FocusEvent) => {
       if (!(event.target instanceof HTMLIFrameElement)) return;
       if (!root?.contains(event.target)) return;
-      // Клик по iframe уже произошёл — можно включать поллинг
-      window.setTimeout(() => notifyInteraction(), 200);
-    };
-
-    const onWindowBlur = () => {
-      window.setTimeout(() => {
-        // Реальный уход в popup/диалог VK, не просто фокус на iframe
-        if (!document.hasFocus() && pointerOverRef.current) {
-          notifyInteraction();
-        }
-      }, 150);
+      notifyInteraction();
     };
 
     document.addEventListener('focusin', onFocusIn);
-    window.addEventListener('blur', onWindowBlur);
 
     return () => {
       document.removeEventListener('focusin', onFocusIn);
-      window.removeEventListener('blur', onWindowBlur);
     };
   }, [notifyInteraction, showWidgetOverlay]);
 
@@ -92,12 +81,6 @@ export function VkConnectButton({
     <div
       ref={rootRef}
       className={`relative ml-auto inline-flex h-11 min-w-[11rem] shrink-0 items-center justify-end ${className ?? ''}`}
-      onPointerEnter={() => {
-        pointerOverRef.current = true;
-      }}
-      onPointerLeave={() => {
-        pointerOverRef.current = false;
-      }}
     >
       {showPreparing ? (
         <span className="text-gray-60 dark:text-gray-80 inline-flex h-11 items-center px-3">
