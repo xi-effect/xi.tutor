@@ -61,7 +61,7 @@ export const Content = ({ classroom }: ContentProps) => {
   };
 
   return (
-    <div className="xs:pl-0 flex flex-row items-start gap-4 pt-4 pr-5 pb-5 pl-5">
+    <div className="flex flex-row items-start gap-4 px-5 pt-5 pb-4 sm:px-10 sm:pt-10">
       <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <div className="flex w-full min-w-0 flex-row items-center gap-2 sm:w-auto sm:gap-3">
           <Button
@@ -103,9 +103,10 @@ export const Content = ({ classroom }: ContentProps) => {
         </div>
         <div className="w-full sm:hidden">
           <StartLessonButton
-            className="gap-2"
+            className="h-11 gap-2 px-4 text-base"
             classroomId={classroom.id}
             variant="primary"
+            size="m"
             onStart={handleStartCall}
           />
         </div>
@@ -113,9 +114,10 @@ export const Content = ({ classroom }: ContentProps) => {
 
       <div className="ml-auto hidden h-full shrink-0 flex-col items-center justify-center gap-2 sm:flex">
         <StartLessonButton
-          className="gap-2"
+          className="h-11 gap-2 px-4 text-base"
           classroomId={classroom.id}
           variant="primary"
+          size="m"
           onStart={handleStartCall}
         />
       </div>

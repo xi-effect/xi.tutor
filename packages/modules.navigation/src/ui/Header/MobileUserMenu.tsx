@@ -33,7 +33,7 @@ export const MobileUserMenu = ({
 }: MobileUserMenuProps) => {
   const { t } = useTranslation('navigation');
   const { data: user } = useCurrentUser();
-  const { canInstall, promptInstall, isInstalled, installHint } = usePWAInstall();
+  const { canInstall, promptInstall, isInstalled, installHintKey } = usePWAInstall();
 
   const displayName = user?.display_name?.trim() || user?.username || '';
 
@@ -91,7 +91,7 @@ export const MobileUserMenu = ({
                 onClick={() => {
                   setOpen(false);
                   if (canInstall) void promptInstall();
-                  else toast.info(installHint);
+                  else toast.info(t(`installHints.${installHintKey}`));
                 }}
                 data-umami-event="header-pwa-install"
                 data-umami-event-device="mobile"

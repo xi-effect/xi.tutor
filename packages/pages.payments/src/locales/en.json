@@ -13,6 +13,8 @@
     "studentTitle": "No invoices yet",
     "tutorDescription": "Create an invoice — it will appear in this list.",
     "studentDescription": "When a tutor issues an invoice, it will appear here.",
+    "templatesTitle": "No payment types yet",
+    "templatesDescription": "Create a payment type — it will appear in this list.",
     "helpLink": "Learn more about how payments work"
   },
   "loader": "Loading...",

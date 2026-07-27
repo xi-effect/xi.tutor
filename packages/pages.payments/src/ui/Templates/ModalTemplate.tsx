@@ -156,9 +156,10 @@ export const ModalTemplate = ({ isOpen, type, onClose, name, price, id }: ModalT
 
             <ModalFooter className="flex flex-row items-center gap-2">
               <Button
-                variant={isAdding || isUpdating ? 'ghost-spinner' : 'default'}
+                variant="primary"
                 className="gap-2"
                 type="submit"
+                loading={isAdding || isUpdating}
               >
                 {type === 'edit' ? t('templateModal.save') : t('templateModal.create')}
               </Button>

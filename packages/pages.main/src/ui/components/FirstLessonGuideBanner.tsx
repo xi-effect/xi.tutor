@@ -37,7 +37,7 @@ export const FirstLessonGuideBanner = () => {
   };
 
   return (
-    <div className="bg-action-primary-background-pressed mr-3 flex h-[92px] max-w-full shrink-0 items-center justify-between gap-4 overflow-hidden rounded-2xl px-5">
+    <div className="bg-action-primary-background-pressed flex h-[92px] max-w-full shrink-0 items-center justify-between gap-4 overflow-hidden rounded-2xl px-5">
       <div className="min-w-0 flex-1 pr-2">
         <div className="text-text-on-accent text-m-base leading-tight font-semibold">
           {t('firstLessonGuide.title')}

@@ -151,12 +151,12 @@ export const MainPage = () => {
       <div className={cn('flex flex-col', !isMobile && 'min-h-0 flex-1')}>
         <div
           className={cn(
-            'flex flex-col items-start gap-4 p-5',
-            isMobile ? 'pb-12' : 'min-h-0 flex-1 sm:flex-row sm:pt-5 sm:pr-0 sm:pb-0',
+            'flex flex-col items-start gap-4 pt-5 pr-0 pl-5',
+            isMobile ? 'pb-12' : 'min-h-0 flex-1 gap-6 pb-0 sm:flex-row sm:gap-8 sm:pt-10 sm:pl-10',
           )}
         >
           {!isMobile && (
-            <div className="lg:bg-background-page flex shrink-0 flex-col pb-6 lg:sticky lg:top-0 lg:z-10 lg:self-start">
+            <div className="lg:bg-background-page flex shrink-0 flex-col lg:sticky lg:top-0 lg:z-10 lg:self-start">
               <Lessons />
             </div>
           )}
@@ -186,7 +186,8 @@ export const MainPage = () => {
           <div
             className={cn(
               'flex w-full min-w-0 flex-col gap-5 self-stretch',
-              !isMobile && 'min-h-0 flex-1 overscroll-contain pb-6 sm:overflow-y-auto',
+              !isMobile &&
+                'min-h-0 flex-1 overflow-x-hidden overscroll-contain pr-3 pb-6 sm:overflow-y-auto sm:pb-10',
             )}
           >
             {!isMobile && isTutor && <FirstLessonGuideBanner />}

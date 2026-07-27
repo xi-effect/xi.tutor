@@ -52,7 +52,7 @@ export const DesktopUserMenu = ({
   const { isDesktopOpen } = useMenuStore();
 
   const { data: user } = useCurrentUser();
-  const { canInstall, promptInstall, isInstalled, installHint } = usePWAInstall();
+  const { canInstall, promptInstall, isInstalled, installHintKey } = usePWAInstall();
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [tooltipOpen, setTooltipOpen] = useState(false);
@@ -66,8 +66,11 @@ export const DesktopUserMenu = ({
   const triggerButton = (
     <Button
       variant="none"
-      className="group flex w-full min-w-0 justify-start rounded-lg hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
-      size="icon"
+      size="s"
+      className={cn(
+        'group flex h-10 w-full min-w-0 items-center justify-start overflow-visible rounded-lg !p-0',
+        'hover:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0',
+      )}
       data-umami-event="header-user-menu-open"
     >
       <UserProfile
@@ -77,7 +80,10 @@ export const DesktopUserMenu = ({
         userId={userId}
         size="40"
         withOutText={withOutText}
-        className="min-w-0 flex-1 overflow-hidden"
+        className={cn(
+          'min-w-0 overflow-visible',
+          withOutText ? 'w-10 shrink-0' : 'flex-1 overflow-hidden',
+        )}
         classNameText="block w-full pl-1 text-left text-text-primary"
         classNameLabel="block w-full pl-1 text-left text-text-secondary"
       />
@@ -158,7 +164,7 @@ export const DesktopUserMenu = ({
             <DropdownMenuItem
               onClick={() => {
                 if (canInstall) void promptInstall();
-                else toast.info(installHint);
+                else toast.info(t(`installHints.${installHintKey}`));
               }}
               className={menuItemClassName}
               data-umami-event="header-pwa-install"

@@ -61,7 +61,7 @@ export const Payments = () => {
   }
 
   return (
-    <div className="flex flex-col max-sm:pl-4">
+    <div className="flex flex-col">
       {invoiceDetailsModalState.isOpen && invoiceDetailsModalState.payment && (
         <PaymentInvoiceDetailsModal
           open={invoiceDetailsModalState.isOpen}

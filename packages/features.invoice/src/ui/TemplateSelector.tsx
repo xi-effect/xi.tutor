@@ -39,13 +39,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
 
   if (isLoading) {
     return (
-      <Button
-        className="bg-status-info-background hover:bg-status-info-background text-text-link hover:text-text-link h-[32px]"
-        variant="none"
-        size="s"
-        type="button"
-        disabled
-      >
+      <Button className="h-[32px]" variant="primary" size="s" type="button" disabled>
         {t('template.loading')}
       </Button>
     );
@@ -53,13 +47,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
 
   if (isError || !templates || templates.length === 0) {
     return (
-      <Button
-        className="bg-status-info-background hover:bg-status-info-background text-text-link hover:text-text-link h-[32px]"
-        variant="none"
-        size="s"
-        type="button"
-        disabled
-      >
+      <Button className="h-[32px]" variant="primary" size="s" type="button" disabled>
         {t('template.empty')}
       </Button>
     );
@@ -68,7 +56,7 @@ export const TemplateSelector = ({ control }: TemplateSelectorProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button className="h-[32px]" variant="ghost" size="s" type="button">
+        <Button className="h-[32px]" variant="primary" size="s" type="button">
           {t('template.addFromTemplate')}
         </Button>
       </DropdownMenuTrigger>
