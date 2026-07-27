@@ -61,6 +61,9 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
             ? t('subtitle.tutor')
             : t('subtitle.groupFromTutor', { name: invite.classroom.name })}
         </span>
+        <p className="text-text-secondary dark:text-text-secondary mt-2 text-sm">
+          {t('subtitle.platformDescription')}
+        </p>
       </div>
       <div className="flex flex-col items-center gap-2">
         <Avatar size="xl">
@@ -76,6 +79,9 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
             {invite.tutor.username}
           </span>
         </div>
+        <p className="text-text-secondary dark:text-text-secondary text-xs">
+          {t('subtitle.freeForStudent')}
+        </p>
       </div>
 
       <div className="flex flex-col justify-center gap-2">

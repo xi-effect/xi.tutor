@@ -10,17 +10,17 @@ import {
   measureDurationMs,
   nowMs,
   trackProductEvent,
-  type ProductAnalyticsSource,
+  type InviteAnalyticsSource,
 } from 'common.utils';
 
 type AddInvitationVariables = {
-  source?: ProductAnalyticsSource;
+  source?: InviteAnalyticsSource;
 };
 
 type AddInvitationContext = {
   attemptId: string;
   startedAt: number;
-  source: ProductAnalyticsSource | string;
+  source: InviteAnalyticsSource | string;
 };
 
 export const useAddInvitation = () => {
@@ -112,6 +112,10 @@ export const useAddInvitation = () => {
           is_first_invite: isFirstInvite,
         });
       }
+
+      // Гарантируем свежий список после создания (помимо оптимистичного append),
+      // на случай расхождения с ответом backend.
+      queryClient.invalidateQueries({ queryKey: [InvitationsQueryKey.AllInvitations] });
     },
   });
 

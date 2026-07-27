@@ -34,11 +34,21 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   STUDENT_INVITE_LINK_COPIED: 'student_invite_link_copied',
   STUDENT_INVITE_SHARED: 'student_invite_shared',
 
+  // Student invite v2 (tutor) — invite_flow_version: 2
+  STUDENT_INVITE_MODAL_VIEWED: 'student_invite_modal_viewed',
+  STUDENT_INVITE_MESSAGE_COPIED: 'student_invite_message_copied',
+  STUDENT_INVITE_NEW_LINK_CREATED: 'student_invite_new_link_created',
+
   // Student invite (student)
   STUDENT_INVITE_OPENED: 'student_invite_opened',
   STUDENT_INVITE_ACCEPT_SUBMIT: 'student_invite_accept_submit',
   INVITE_ACCEPTED_SUCCESS: 'invite_accepted_success',
   STUDENT_INVITE_ACCEPT_FAILED: 'student_invite_accept_failed',
+
+  // Student invite v2 (student) — invite_flow_version: 2
+  STUDENT_INVITE_PAGE_VIEWED: 'student_invite_page_viewed',
+  STUDENT_INVITE_SIGNUP_CLICKED: 'student_invite_signup_clicked',
+  STUDENT_INVITE_LOGIN_CLICKED: 'student_invite_login_clicked',
 
   // Lesson create
   LESSON_CREATE_VIEWED: 'lesson_create_viewed',

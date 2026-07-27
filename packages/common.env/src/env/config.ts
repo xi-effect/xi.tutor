@@ -50,6 +50,12 @@ const env = {
     'https://hocus.sovlium.ru',
   ),
   VITE_APP_DOMAIN: asString(import.meta.env.VITE_APP_DOMAIN, 'https://app.sovlium.ru'),
+  /** Временный откат к старой модалке приглашений (таблица со списком ссылок) вместо
+   * нового сценария «одна актуальная ссылка + готовое сообщение». По умолчанию выключено. */
+  VITE_LEGACY_INVITES_MODAL_ENABLED: asBoolean(
+    import.meta.env.VITE_LEGACY_INVITES_MODAL_ENABLED,
+    false,
+  ),
   VITE_DEVTOOLS_ENABLED: asBoolean(import.meta.env.VITE_REACT_QUERY_DEVTOOLS_ENABLED, false),
   VITE_ENABLE_X_TESTING: asBoolean(import.meta.env.VITE_ENABLE_X_TESTING, false),
   VITE_ENABLE_PERFORMANCE_PROFILING: asBoolean(

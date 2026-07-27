@@ -23,6 +23,14 @@ export type ProductAnalyticsSource =
 
 export type SignupEntryPoint = 'landing' | 'invite' | 'login' | 'direct' | 'unknown';
 
+/**
+ * Источник открытия сценария приглашения ученика. Надмножество значений, которые
+ * реально используются в проекте (`main`, `classrooms`) и значений из ТЗ v2
+ * (`onboarding`, `students`, `classroom`), чтобы не ломать текущие вызовы.
+ */
+export type InviteAnalyticsSource =
+  'main' | 'classrooms' | 'classroom' | 'students' | 'onboarding' | 'unknown';
+
 export type ProductAnalyticsLessonType = 'individual' | 'group' | 'unknown';
 
 export type ProductAnalyticsInviteKind = 'student' | 'group' | 'unknown';

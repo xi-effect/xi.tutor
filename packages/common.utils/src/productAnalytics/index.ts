@@ -22,6 +22,7 @@ export {
 export { createAttemptId, measureDurationMs, nowMs } from './attemptId';
 export { nextSignupAttemptNumber, nextEmailResendAttemptNumber } from './attemptCounters';
 export { trackOnce, resetTrackOnceKeys } from './once';
+export { createInviteTrackingId, getInviteTrackingId } from './inviteTracking';
 export { inferActivationHelpScreen } from './inferActivationHelpScreen';
 export {
   mapSignupError,
@@ -55,6 +56,7 @@ export type {
   ProductAnalyticsRole,
   ProductAnalyticsActorRole,
   ProductAnalyticsSource,
+  InviteAnalyticsSource,
   ProductAnalyticsLessonType,
   ProductAnalyticsInviteKind,
   ProductAnalyticsCallFailureReason,
