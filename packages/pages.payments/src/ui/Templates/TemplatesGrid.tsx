@@ -1,7 +1,8 @@
-import { ScrollArea } from '@xipkg/scrollarea';
+import { useRef } from 'react';
+import { GridVirtualizer } from '@xipkg/gridvirtualizer';
+import { cn, useMediaQuery } from '@xipkg/utils';
 import { Button } from '@xipkg/button';
 import { ArrowUpRight } from '@xipkg/icons';
-import { cn } from '@xipkg/utils';
 import { EmptyPaymentsFull } from 'common.ui';
 import { TemplateCard } from './TemplateCard';
 import { useTemplatesList, useDeleteTemplate } from 'common.services';
@@ -17,6 +18,8 @@ const emptyTemplatesHelpLinkClass =
 const SHELL_HEIGHT = 'h-[calc(100dvh-140px)]';
 
 export const TemplatesGrid = () => {
+  const parentRef = useRef<HTMLDivElement>(null);
+  const isMobile = useMediaQuery('(max-width: 960px)');
   const { t } = useTranslation('payments');
   const { data, isLoading, isError } = useTemplatesList();
   const { mutate: deleteTemplateMutation } = useDeleteTemplate();
@@ -76,14 +79,27 @@ export const TemplatesGrid = () => {
   }
 
   return (
-    <ScrollArea className={cn('w-full px-5 pb-5 sm:px-10 sm:pb-10', SHELL_HEIGHT)}>
-      <ul className="grid grid-cols-1 gap-5 min-[550px]:grid-cols-2 md:grid-cols-3">
-        {templates.map((template: TemplateT) => (
-          <li key={template.id} className="min-w-0">
-            <TemplateCard {...template} handleDeleteTemplate={handleDeleteTemplate} />
-          </li>
-        ))}
-      </ul>
-    </ScrollArea>
+    <div
+      className={cn(
+        'min-h-0 flex-1 overflow-auto pr-5',
+        isMobile && 'h-[calc(100dvh-204px)]',
+        !isMobile && 'h-[calc(100dvh-190px)]',
+      )}
+    >
+      <div ref={parentRef}>
+        <GridVirtualizer
+          parentRef={parentRef}
+          items={templates}
+          defaultRowHeight={160}
+          minItemWidth={300}
+          gap={20}
+          maxColumns={4}
+          isSingleColumn={isMobile}
+          renderItem={(item: TemplateT) => (
+            <TemplateCard {...item} handleDeleteTemplate={handleDeleteTemplate} />
+          )}
+        />
+      </div>
+    </div>
   );
 };

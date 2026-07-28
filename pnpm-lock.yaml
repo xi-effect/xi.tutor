@@ -4423,6 +4423,9 @@ importers:
       '@xipkg/dropdown':
         specifier: 3.1.0
         version: 3.1.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@xipkg/gridvirtualizer':
+        specifier: 1.0.2
+        version: 1.0.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/icons':
         specifier: 3.1.0
         version: 3.1.0(react@19.2.8)
@@ -5076,12 +5079,12 @@ importers:
       '@xipkg/file':
         specifier: 4.0.0
         version: 4.0.0(react@19.2.8)
+      '@xipkg/gridvirtualizer':
+        specifier: 1.0.2
+        version: 1.0.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/icons':
         specifier: 3.1.0
         version: 3.1.0(react@19.2.8)
-      '@xipkg/scrollarea':
-        specifier: 2.3.0
-        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/switcher-animate':
         specifier: 1.1.0
         version: 1.1.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -5297,6 +5300,9 @@ importers:
       '@xipkg/form':
         specifier: 4.3.0
         version: 4.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@xipkg/gridvirtualizer':
+        specifier: 1.0.2
+        version: 1.0.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/icons':
         specifier: 3.1.0
         version: 3.1.0(react@19.2.8)
@@ -5306,9 +5312,6 @@ importers:
       '@xipkg/modal':
         specifier: 4.6.0
         version: 4.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@xipkg/scrollarea':
-        specifier: 2.3.0
-        version: 2.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/switcher-animate':
         specifier: 1.1.0
         version: 1.1.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -9284,6 +9287,11 @@ packages:
 
   '@xipkg/form@4.3.0':
     resolution: {integrity: sha512-PkIZMUtHhhv5CPO6vdt5hB1y9hyRwdgbgJaeUd7nfxi1P29wgece4CBt4RWTtCK4bMw/6bQ5oOVwNl5igKozRw==}
+    peerDependencies:
+      react: ^19
+
+  '@xipkg/gridvirtualizer@1.0.2':
+    resolution: {integrity: sha512-+yOxPWEL6AxRixGe7Ndf0uXHoYGConwHdiVsMET5MTTYDBSzB2hAT+E7Ws9bj0486seoUalpBq0w/tckSabDxw==}
     peerDependencies:
       react: ^19
 
@@ -15777,6 +15785,13 @@ snapshots:
     transitivePeerDependencies:
       - '@types/react'
       - '@types/react-dom'
+      - react-dom
+
+  '@xipkg/gridvirtualizer@1.0.2(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+    dependencies:
+      '@tanstack/react-virtual': 3.13.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      react: 19.2.8
+    transitivePeerDependencies:
       - react-dom
 
   '@xipkg/icons@2.7.2(react@19.2.8)':

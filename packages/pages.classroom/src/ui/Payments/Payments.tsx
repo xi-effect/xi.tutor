@@ -77,7 +77,6 @@ export const Payments = () => {
         />
       )}
       <VirtualizedPaymentsTable
-        className="h-[calc(100dvh-252px)]"
         data={items}
         columns={defaultColumns}
         isLoading={isLoading}

@@ -1,44 +1,45 @@
 import { useRef } from 'react';
+import { useInfiniteQuery } from '../../hooks';
 import { useTranslation } from 'react-i18next';
-import { useResponsiveGrid, useInfiniteQuery, useVirtualGrid } from '../../hooks';
 import { MaterialsTabEmptyState } from '../MaterialsTabEmptyState';
-import { GridList } from '../GridList';
 import { MaterialsCard } from 'features.materials.card';
 import { useMaterialsDuplicate } from '../../provider';
+import { GridVirtualizer } from '@xipkg/gridvirtualizer';
+import { useMediaQuery } from '@xipkg/utils';
 
 export const Notes = () => {
   const { t } = useTranslation('materials');
   const parentRef = useRef<HTMLDivElement>(null);
+  const isMobile = useMediaQuery('(max-width: 960px)');
 
-  const { colCount, rowHeight, GAP } = useResponsiveGrid(parentRef);
   const { items, isError, isLoading } = useInfiniteQuery(parentRef, 'note');
-  const rowVirtualizer = useVirtualGrid(parentRef, items, colCount, rowHeight);
   const { openModal } = useMaterialsDuplicate();
 
   const notFoundItems = !items.length && !isLoading && !isError;
 
   return (
-    <div ref={parentRef} className="h-full overflow-y-auto px-5 pb-5 sm:px-10 sm:pb-10">
+    <div ref={parentRef}>
       {notFoundItems ? (
         <MaterialsTabEmptyState
           title={t('empty.notesTitle')}
           description={t('empty.notesDescription')}
         />
       ) : (
-        <GridList
-          rowVirtualizer={rowVirtualizer}
-          colCount={colCount}
-          gap={GAP}
+        <GridVirtualizer
+          parentRef={parentRef}
           items={items}
+          defaultRowHeight={160}
+          minItemWidth={300}
+          gap={20}
+          maxColumns={4}
+          isSingleColumn={isMobile}
           renderItem={(material) => (
-            <div key={material.id} className="card-item">
-              <MaterialsCard
-                {...material}
-                layout="gallery"
-                onDuplicate={openModal}
-                className="w-full"
-              />
-            </div>
+            <MaterialsCard
+              {...material}
+              onDuplicate={openModal}
+              layout="gallery"
+              className="w-full"
+            />
           )}
         />
       )}

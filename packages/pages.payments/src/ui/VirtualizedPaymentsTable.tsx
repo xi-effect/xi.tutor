@@ -4,7 +4,6 @@ import {
   TableRow,
   TableHead,
   TableCell,
-  TableBody,
   RolePaymentT,
   RoleT,
 } from 'features.table';
@@ -15,20 +14,19 @@ import {
   getSortedRowModel,
   flexRender,
   ColumnDef,
+  Row,
 } from '@tanstack/react-table';
-import { useVirtualizer } from '@tanstack/react-virtual';
-import { ScrollArea } from '@xipkg/scrollarea';
 import { Button } from '@xipkg/button';
 import { ArrowUpRight } from '@xipkg/icons';
 import { useMediaQuery, cn } from '@xipkg/utils';
 import { RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyPaymentsFull } from 'common.ui';
-import { CardsList } from './Mobile';
-import { useResponsiveGrid, useVirtualCards } from '../hooks';
 import { Loader } from './Loader';
 import { UserRoleT } from '../../../common.api/src/types';
 import { RolePaymentT as CommonRolePaymentT } from 'common.types';
+import { GridVirtualizer } from '@xipkg/gridvirtualizer';
+import { InvoiceCard } from 'features.invoice.card';
 
 /** База знаний — как в блоке «Оплата» на главной */
 const PAYMENTS_HELP_URL = 'https://support.sovlium.ru/payments';
@@ -38,7 +36,6 @@ const emptyPaymentsHelpLinkClass =
 
 /** Высота под новую шапку (Playfair + pt/mt-10) */
 const TABLE_SHELL_HEIGHT = 'h-[calc(100dvh-140px)]';
-const TABLE_BODY_HEIGHT = 'h-[calc(100dvh-204px)]';
 
 export type VirtualizedPaymentsTableProps<T> = {
   parentRef: RefObject<HTMLDivElement | null>;
@@ -50,7 +47,6 @@ export type VirtualizedPaymentsTableProps<T> = {
   isError: boolean;
   currentUserRole: RoleT;
   onViewInvoice?: (payment: CommonRolePaymentT<UserRoleT>) => void;
-  className?: string;
 };
 
 export const VirtualizedPaymentsTable = ({
@@ -61,7 +57,6 @@ export const VirtualizedPaymentsTable = ({
   isFetchingNextPage = false,
   isError,
   currentUserRole,
-  className,
   onViewInvoice,
 }: VirtualizedPaymentsTableProps<RolePaymentT<UserRoleT>>) => {
   const { t } = useTranslation('payments');
@@ -74,19 +69,6 @@ export const VirtualizedPaymentsTable = ({
     getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
   });
-
-  const { rows } = table.getFilteredRowModel();
-
-  const rowVirtualizer = useVirtualizer({
-    count: rows.length,
-    getScrollElement: () => parentRef.current,
-    estimateSize: () => 60,
-    overscan: 5,
-  });
-
-  const { colCount } = useResponsiveGrid(parentRef);
-
-  const { virtualizer, measureCard } = useVirtualCards(parentRef, data, 300);
 
   const notFoundItems = !data.length && !isLoading && !isError && !isFetchingNextPage;
   const isTutor = currentUserRole === 'tutor';
@@ -137,87 +119,76 @@ export const VirtualizedPaymentsTable = ({
 
   if (isMobile) {
     return (
-      <CardsList
-        data={data}
-        rowVirtualizer={virtualizer}
-        measureCard={measureCard}
-        parentRef={parentRef}
-        colCount={colCount}
-        gap={12}
-        isLoading={isLoading}
-        isFetchingNextPage={isFetchingNextPage}
-        currentUserRole={currentUserRole}
-        onViewInvoice={onViewInvoice}
-      />
-    );
-  }
-
-  return (
-    <ScrollArea
-      scrollBarProps={{ orientation: 'horizontal' }}
-      type="always"
-      className={cn('w-full overflow-x-auto overflow-y-hidden px-5 sm:px-10', TABLE_SHELL_HEIGHT)}
-    >
-      <div>
-        <Table className="table-fixed px-2">
-          <TableHeader className="sticky top-0 bg-transparent">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
-                  <TableHead style={{ width: header.getSize() }} key={header.id}>
-                    <div className="flex h-8 items-center gap-1 justify-self-start">
-                      <div className="text-text-secondary text-m-base font-medium">
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-                      </div>
-                    </div>
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-        </Table>
-
-        <div ref={parentRef} className={cn('w-full overflow-y-auto', TABLE_BODY_HEIGHT, className)}>
-          <div
-            style={{
-              height: `${rowVirtualizer.getTotalSize()}px`,
-              width: '100%',
-              position: 'relative',
-            }}
-          >
-            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-              const row = rows[virtualRow.index];
-              return (
-                <div
-                  key={row.id}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: `${virtualRow.size}px`,
-                    transform: `translateY(${virtualRow.start}px)`,
-                  }}
-                >
-                  <Table className="table-fixed px-2">
-                    <TableBody>
-                      <TableRow className="group hover:shadow-[0_0_0_1px_var(--xi-border-default)]">
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id} style={{ width: cell.column.getSize() }}>
-                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    </TableBody>
-                  </Table>
-                </div>
-              );
-            })}
-          </div>
+      <div className="h-[calc(100dvh-200px)] min-h-0 flex-1 overflow-auto pr-5">
+        <div ref={parentRef}>
+          <GridVirtualizer
+            parentRef={parentRef}
+            items={data}
+            gap={12}
+            isSingleColumn
+            defaultRowHeight={100}
+            renderItem={(item) => (
+              <InvoiceCard
+                payment={item}
+                variant="table"
+                currentUserRole={currentUserRole}
+                onViewInvoice={onViewInvoice}
+              />
+            )}
+          />
 
           <Loader isLoading={isLoading} isFetchingNextPage={isFetchingNextPage} />
         </div>
       </div>
-    </ScrollArea>
+    );
+  }
+
+  const { rows } = table.getFilteredRowModel();
+
+  return (
+    <>
+      <Table className="xs:rounded-tl-2xl table-fixed rounded-none px-2">
+        <TableHeader>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHead style={{ width: header.getSize() }} key={header.id}>
+                  <div className="flex h-8 items-center gap-1 justify-self-start">
+                    <div className="text-gray-60 text-m-base font-medium">
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                    </div>
+                  </div>
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+      </Table>
+
+      <div className="h-[calc(100dvh-224px)] flex-1 overflow-auto">
+        <div ref={parentRef}>
+          <GridVirtualizer<Row<RolePaymentT<UserRoleT>>>
+            parentRef={parentRef}
+            items={rows}
+            isSingleColumn
+            defaultRowHeight={50}
+            renderItem={(item) => (
+              <Table className="table-fixed pr-5 pl-1">
+                <TableRow className="group hover:shadow-[0_0_0_1px_var(--xi-gray-30)]">
+                  {item.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} style={{ width: cell.column.getSize() }}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </Table>
+            )}
+          />
+
+          {/* Индикатор загрузки */}
+          <Loader isLoading={isLoading} isFetchingNextPage={isFetchingNextPage} />
+        </div>
+      </div>
+    </>
   );
 };
