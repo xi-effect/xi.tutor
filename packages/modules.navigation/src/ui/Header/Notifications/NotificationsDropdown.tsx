@@ -39,10 +39,10 @@ export const NotificationsDropdown = ({
               <Notification className="text-text-muted h-6 w-6" />
               {hasUnread && (
                 <span
-                  className="absolute -top-0.5 -right-0.5 flex h-[10px] w-[10px] items-center justify-center rounded-full bg-[var(--xi-pink-20)]"
+                  className="bg-tag-pink-background absolute -top-0.5 -right-0.5 flex h-[10px] w-[10px] items-center justify-center rounded-full"
                   aria-hidden
                 >
-                  <span className="size-[6px] shrink-0 rounded-full bg-[var(--xi-pink-60)]" />
+                  <span className="bg-tag-pink-accent size-[6px] shrink-0 rounded-full" />
                 </span>
               )}
             </span>

@@ -23,7 +23,12 @@ import { CollaboratorAvatars } from './CollaboratorAvatars';
 import { SettingsDropdown } from './SettingsDropdown';
 import { unlockBoardTimerAudio } from './boardTimerAudio';
 import { TimerDropdown } from './TimerDropdown';
-import { boardIconClass, boardPanelClass, boardTextClass } from '../../boardTheme';
+import {
+  boardChromeZClass,
+  boardIconClass,
+  boardPanelClass,
+  boardTextClass,
+} from '../../boardTheme';
 
 export const Header = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -97,7 +102,12 @@ export const Header = () => {
 
   return (
     <>
-      <div className="pointer-events-none absolute top-4 right-0 left-0 z-260 flex items-start justify-between px-4 pb-4 md:pl-8">
+      <div
+        className={cn(
+          'pointer-events-none absolute top-4 right-0 left-0 flex items-start justify-between px-4 pb-4 md:pl-8',
+          boardChromeZClass,
+        )}
+      >
         <div className={`${boardPanelClass} pointer-events-auto flex items-center gap-2 p-1`}>
           <Button
             variant="none"

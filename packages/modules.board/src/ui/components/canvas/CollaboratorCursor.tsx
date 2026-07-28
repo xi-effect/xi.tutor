@@ -28,6 +28,7 @@ export function CollaboratorCursor({
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'flex-start',
+        // Локальный слой внутри canvas overlays; наружу не выходит из-за z-0 на обёртке доски
         zIndex: 1100,
       }}
     >

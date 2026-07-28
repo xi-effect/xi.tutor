@@ -2,7 +2,12 @@ import { track, useEditor } from '@ibodr/draw';
 import { Plus, Minus } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { useRef } from 'react';
-import { boardIconClass, boardPanelClass, boardTextClass } from '../../boardTheme';
+import {
+  boardChromeZClass,
+  boardIconClass,
+  boardPanelClass,
+  boardTextClass,
+} from '../../boardTheme';
 import { useTranslation } from 'react-i18next';
 
 const ZOOM_ANIMATION = { animation: { duration: 200 } } as const;
@@ -50,7 +55,7 @@ export const DrawZoomPanel = track(() => {
   };
 
   return (
-    <div className="absolute right-4 bottom-20 z-260 sm:bottom-4">
+    <div className={`absolute right-4 bottom-20 ${boardChromeZClass} sm:bottom-4`}>
       <div className={`${boardPanelClass} flex items-center justify-center gap-2 p-1`}>
         <Button
           className="hover:bg-status-info-background pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"

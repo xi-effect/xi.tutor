@@ -3,6 +3,7 @@ import { Close, Eyeon, Podcast } from '@xipkg/icons';
 import type { DrInstancePresence, DrInstancePresenceID } from '@ibodr/draw';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore } from '../../../store';
+import { boardChromeZClass } from '../../boardTheme';
 import { useTranslation } from 'react-i18next';
 
 export const FollowBanner = () => {
@@ -22,7 +23,7 @@ export const FollowBanner = () => {
 
   return (
     <div
-      className="pointer-events-auto absolute top-1 left-1/2 z-100 -translate-x-1/2"
+      className={`pointer-events-auto absolute top-1 left-1/2 ${boardChromeZClass} -translate-x-1/2`}
       role="status"
       aria-live="polite"
     >

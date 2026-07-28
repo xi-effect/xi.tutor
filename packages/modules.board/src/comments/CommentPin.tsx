@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { Check } from '@xipkg/icons';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
-import { boardMenuSurfaceClass } from '../ui/boardTheme';
+import { boardDropdownZClass, boardMenuSurfaceClass } from '../ui/boardTheme';
 import { getCommentAuthorAvatarUrl } from './commentAvatar';
 import { getThreadMessages, moveCommentThreadTo } from './commentQueries';
 import { useCommentsUiStore } from './commentsUiStore';
@@ -140,7 +140,7 @@ export const CommentPin = track(function CommentPin({ thread, left, top }: Comme
         side="top"
         sideOffset={10}
         data-comment-ui
-        className={cn(boardMenuSurfaceClass, 'z-100 w-auto rounded-xl p-3')}
+        className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-auto rounded-xl p-3')}
       >
         <CommentThreadPanel threadId={thread.id} onClose={() => openThread(null)} />
       </PopoverContent>
