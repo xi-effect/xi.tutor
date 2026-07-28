@@ -1,8 +1,18 @@
 import * as z from 'zod';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
-export const formSchema = z.object({
-  name: z.string().min(1, 'Укажите название').max(100, 'Название не должно превышать 100 символов'),
-  subject: z.number({ error: 'Выберите предмет' }).nullable(),
-});
+export const useFormSchema = () => {
+  const { t } = useTranslation('groupAdd');
 
-export type FormData = z.infer<typeof formSchema>;
+  return useMemo(
+    () =>
+      z.object({
+        name: z.string().min(1, t('validation.nameRequired')).max(100, t('validation.nameMax')),
+        subject: z.number({ error: t('validation.subjectRequired') }).nullable(),
+      }),
+    [t],
+  );
+};
+
+export type FormData = z.infer<ReturnType<typeof useFormSchema>>;

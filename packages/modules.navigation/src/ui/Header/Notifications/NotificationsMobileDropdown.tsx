@@ -50,11 +50,11 @@ export const NotificationsMobileDropdown = ({
         <Button
           ref={triggerRef}
           variant="none"
-          className="text-gray-80 hover:bg-gray-10 focus:bg-gray-10 size-10 shrink-0 rounded-xl"
+          className="text-text-primary hover:bg-background-subtle focus:bg-background-subtle size-10 shrink-0 rounded-xl"
           aria-label={t('notifications')}
         >
           <span className="relative inline-flex size-6 shrink-0 items-center justify-center">
-            <Notification className="fill-gray-80 size-6" size="s" />
+            <Notification className="fill-icon-primary size-6" size="s" />
             {hasUnread && (
               <span
                 className="absolute -top-0.5 -right-0.5 flex h-[10px] w-[10px] items-center justify-center rounded-full bg-[var(--xi-pink-20)]"
@@ -75,12 +75,12 @@ export const NotificationsMobileDropdown = ({
         collisionPadding={16}
         className="flex w-[calc(100vw-32px)] max-w-[480px] flex-col gap-1 rounded-[20px] border-2 px-1 py-1"
       >
-        <DropdownMenuLabel className="text-s-base flex min-h-[48px] flex-row flex-wrap items-center gap-2 p-3 font-semibold text-gray-100">
+        <DropdownMenuLabel className="text-s-base text-text-primary flex min-h-[48px] flex-row flex-wrap items-center gap-2 p-3 font-semibold">
           <span className="min-w-0 shrink">{t('notifications')}</span>
           {hasUnread && <NotificationBadge count={countLabel} variant="sidebar" />}
           <div className="ml-auto flex shrink-0 items-center gap-1">
             <Button onClick={onOpenSettings} variant="none" className="h-[32px] w-[32px] p-1">
-              <Settings className="fill-gray-80 size-6" size="s" />
+              <Settings className="fill-icon-primary size-6" size="s" />
             </Button>
           </div>
         </DropdownMenuLabel>

@@ -1,0 +1,50 @@
+{
+  "blockMenu": {
+    "text": "Text",
+    "heading1": "Heading 1",
+    "heading2": "Heading 2",
+    "heading3": "Heading 3",
+    "image": "Image",
+    "insertCode": "Insert code",
+    "duplicate": "Duplicate",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "delete": "Delete"
+  },
+  "bubbleMenu": {
+    "bold": "Bold",
+    "italic": "Italic",
+    "underline": "Underline",
+    "strike": "Strikethrough",
+    "link": "Link"
+  },
+  "image": {
+    "download": "Download",
+    "moveUp": "Move up",
+    "moveDown": "Move down",
+    "duplicate": "Duplicate",
+    "delete": "Delete"
+  },
+  "upload": {
+    "upload": "Upload",
+    "insertLink": "Insert link",
+    "linkPlaceholder": "Paste image URL",
+    "add": "Add",
+    "invalidLink": "Invalid image URL"
+  },
+  "codeBlock": {
+    "copy": "Copy",
+    "deleteBlock": "Delete block",
+    "copied": "Code copied to clipboard"
+  },
+  "dragHandle": {
+    "dragBlock": "Drag block"
+  },
+  "status": {
+    "initializing": "Initializing editor...",
+    "loadError": "Load error: {{message}}",
+    "placeholder": "Start typing here…",
+    "participant": "Participant",
+    "accessError": "Access error to the collaborative editing server"
+  }
+}

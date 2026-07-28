@@ -20,6 +20,7 @@ import { Button } from '@xipkg/button';
 import { ArrowUpRight } from '@xipkg/icons';
 import { useMediaQuery, cn } from '@xipkg/utils';
 import { RefObject } from 'react';
+import { useTranslation } from 'react-i18next';
 import { EmptyPaymentsFull } from 'common.ui';
 import { Loader } from './Loader';
 import { UserRoleT } from '../../../common.api/src/types';
@@ -31,7 +32,10 @@ import { InvoiceCard } from 'features.invoice.card';
 const PAYMENTS_HELP_URL = 'https://support.sovlium.ru/payments';
 
 const emptyPaymentsHelpLinkClass =
-  'bg-gray-5 hover:bg-gray-10 text-xs-base h-8 rounded-lg px-4 font-medium text-gray-80';
+  'bg-background-page hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
+
+/** Высота под новую шапку (Playfair + pt/mt-10) */
+const TABLE_SHELL_HEIGHT = 'h-[calc(100dvh-140px)]';
 
 export type VirtualizedPaymentsTableProps<T> = {
   parentRef: RefObject<HTMLDivElement | null>;
@@ -55,6 +59,7 @@ export const VirtualizedPaymentsTable = ({
   currentUserRole,
   onViewInvoice,
 }: VirtualizedPaymentsTableProps<RolePaymentT<UserRoleT>>) => {
+  const { t } = useTranslation('payments');
   const isMobile = useMediaQuery('(max-width: 719px)');
 
   const table = useReactTable({
@@ -70,7 +75,12 @@ export const VirtualizedPaymentsTable = ({
 
   if (notFoundItems) {
     return (
-      <div className="box-border flex h-[calc(100dvh-88px)] w-full flex-col px-4 pt-2 pr-5 pb-4">
+      <div
+        className={cn(
+          'box-border flex w-full flex-col px-5 pb-5 sm:px-10 sm:pb-10',
+          TABLE_SHELL_HEIGHT,
+        )}
+      >
         <div
           className={cn(
             'flex min-h-0 flex-1 flex-col items-center justify-center gap-8 overflow-hidden',
@@ -78,13 +88,11 @@ export const VirtualizedPaymentsTable = ({
           )}
         >
           <div className="flex max-w-md flex-col gap-2 text-center">
-            <p className="text-l-base font-semibold text-gray-100">
-              {isTutor ? 'Пока нет выставленных счетов' : 'Пока нет счетов'}
+            <p className="text-l-base text-text-primary font-semibold">
+              {isTutor ? t('empty.tutorTitle') : t('empty.studentTitle')}
             </p>
-            <p className="text-s-base text-gray-60 dark:text-gray-50">
-              {isTutor
-                ? 'Создайте счёт на оплату — он появится в этом списке.'
-                : 'Когда репетитор выставит счёт, он отобразится здесь.'}
+            <p className="text-s-base text-text-secondary dark:text-text-muted">
+              {isTutor ? t('empty.tutorDescription') : t('empty.studentDescription')}
             </p>
             {isTutor ? (
               <div className="mt-4 flex justify-center">
@@ -95,8 +103,8 @@ export const VirtualizedPaymentsTable = ({
                   onClick={() => window.open(PAYMENTS_HELP_URL, '_blank', 'noopener,noreferrer')}
                   data-umami-event="payments-page-empty-help"
                 >
-                  Подробнее о том, как работают оплаты
-                  <ArrowUpRight className="fill-gray-80 ml-1 size-4 shrink-0" />
+                  {t('empty.helpLink')}
+                  <ArrowUpRight className="fill-icon-primary ml-1 size-4 shrink-0" />
                 </Button>
               </div>
             ) : null}
@@ -111,27 +119,24 @@ export const VirtualizedPaymentsTable = ({
 
   if (isMobile) {
     return (
-      <div className="h-[calc(100dvh-224px)] min-h-0 flex-1 overflow-auto">
-        <div ref={parentRef} className="bg-gray-5 w-full pr-4 pl-5">
+      <div className="h-[calc(100dvh-200px)] min-h-0 flex-1 overflow-auto pr-5">
+        <div ref={parentRef}>
           <GridVirtualizer
             parentRef={parentRef}
             items={data}
             gap={12}
             isSingleColumn
             defaultRowHeight={100}
-            renderItem={(item) => {
-              return (
-                <InvoiceCard
-                  payment={item}
-                  currentUserRole={currentUserRole}
-                  variant="table"
-                  onViewInvoice={onViewInvoice}
-                />
-              );
-            }}
+            renderItem={(item) => (
+              <InvoiceCard
+                payment={item}
+                variant="table"
+                currentUserRole={currentUserRole}
+                onViewInvoice={onViewInvoice}
+              />
+            )}
           />
 
-          {/* Индикатор загрузки */}
           <Loader isLoading={isLoading} isFetchingNextPage={isFetchingNextPage} />
         </div>
       </div>
@@ -141,8 +146,8 @@ export const VirtualizedPaymentsTable = ({
   const { rows } = table.getFilteredRowModel();
 
   return (
-    <div className="pl-5">
-      <Table className="xs:rounded-tl-2xl bg-gray-0 table-fixed rounded-none">
+    <>
+      <Table className="xs:rounded-tl-2xl table-fixed rounded-none px-2">
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -160,7 +165,7 @@ export const VirtualizedPaymentsTable = ({
         </TableHeader>
       </Table>
 
-      <div className="bg-gray-0 h-[calc(100dvh-184px)] min-h-0 flex-1 overflow-auto px-2">
+      <div className="h-[calc(100dvh-224px)] flex-1 overflow-auto">
         <div ref={parentRef}>
           <GridVirtualizer<Row<RolePaymentT<UserRoleT>>>
             parentRef={parentRef}
@@ -168,7 +173,7 @@ export const VirtualizedPaymentsTable = ({
             isSingleColumn
             defaultRowHeight={50}
             renderItem={(item) => (
-              <Table className="table-fixed px-2">
+              <Table className="table-fixed pr-5 pl-1">
                 <TableRow className="group hover:shadow-[0_0_0_1px_var(--xi-gray-30)]">
                   {item.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id} style={{ width: cell.column.getSize() }}>
@@ -184,6 +189,6 @@ export const VirtualizedPaymentsTable = ({
           <Loader isLoading={isLoading} isFetchingNextPage={isFetchingNextPage} />
         </div>
       </div>
-    </div>
+    </>
   );
 };

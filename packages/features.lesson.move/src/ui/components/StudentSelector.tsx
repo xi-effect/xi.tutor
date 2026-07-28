@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@xipkg/select';
+import { useTranslation } from 'react-i18next';
 import type { ClassroomT } from 'common.api';
 
 type StudentSelectorProps = {
@@ -17,21 +18,25 @@ export const StudentSelector = ({
   isLoading,
   before,
 }: StudentSelectorProps) => {
+  const { t } = useTranslation('lessonMove');
+
   return (
     <Select value={value} onValueChange={onChange}>
       <SelectTrigger
-        className="border-gray-10 m-0 w-full rounded-lg border text-gray-100"
+        className="border-border-default text-text-primary m-0 w-full rounded-lg border"
         size="s"
         before={before}
       >
-        <SelectValue placeholder={isLoading ? 'Загрузка...' : 'Ученик или группа'} />
+        <SelectValue
+          placeholder={isLoading ? t('studentSelector.loading') : t('studentSelector.placeholder')}
+        />
       </SelectTrigger>
       <SelectContent className="max-h-[300px] w-[var(--radix-select-trigger-width)] max-w-[var(--radix-select-trigger-width)]">
         {classrooms.map((classroom) => (
           <SelectItem
             key={classroom.id}
             value={classroom.id.toString()}
-            className="max-w-full min-w-0 truncate dark:text-gray-100"
+            className="dark:text-text-primary max-w-full min-w-0 truncate"
           >
             {classroom.name}
           </SelectItem>

@@ -38,7 +38,7 @@ export const SelectRole = () => {
     <RoleSwitcher
       value={currentRole}
       onChange={handleChange}
-      className="bg-gray-5 flex h-9 flex-row rounded-lg p-1"
+      className="bg-background-page flex h-9 flex-row rounded-lg p-1"
     />
   );
 };

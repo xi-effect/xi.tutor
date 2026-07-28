@@ -13,6 +13,7 @@ import {
   trackOnce,
   trackProductEvent,
 } from 'common.utils';
+import { useTranslation } from 'react-i18next';
 
 const formatTime = (seconds: number): string => {
   const minutes = Math.floor(seconds / 60);
@@ -32,8 +33,9 @@ const calculateTimeRemaining = (allowedAt: string | null | undefined): number =>
 };
 
 export const EmailPageConfirm = () => {
+  const { t } = useTranslation('email');
   const { data: user } = useCurrentUser();
-  const email = user?.email || 'вашу почту';
+  const email = user?.email || t('confirm.yourEmail');
   const { emailConfirmationRequest, isLoading } = useEmailConfirmationRequest();
   const source = inferEmailConfirmationSource();
 
@@ -111,16 +113,16 @@ export const EmailPageConfirm = () => {
   };
 
   const isOnCooldown = displayTimeRemaining > 0;
-  const buttonText = isOnCooldown ? 'Отправить ещё раз' : 'Получить новую ссылку';
+  const buttonText = isOnCooldown ? t('confirm.resend') : t('confirm.getNewLink');
   const showHint = !isOnCooldown && !isLoading;
 
   return (
-    <EmailPageLayout title="Подтвердите почту">
+    <EmailPageLayout title={t('confirm.title')}>
       <div className="mt-8 flex flex-col items-center gap-1">
-        <span className="text-m-base w-full text-center text-gray-100">
-          Перейдите по ссылке — отправили её на
+        <span className="text-m-base text-text-primary w-full text-center">
+          {t('confirm.instruction')}
         </span>
-        <span className="text-m-base w-full text-center text-gray-100">{email}</span>
+        <span className="text-m-base text-text-primary w-full text-center">{email}</span>
       </div>
       <Button
         size="m"
@@ -133,24 +135,22 @@ export const EmailPageConfirm = () => {
         {buttonText}
       </Button>
       {displayTimeRemaining > 0 && (
-        <span className="text-xxs-base text-gray-60 mt-1 w-full text-center">
-          Следующее письмо можно отправить через {formatTime(displayTimeRemaining)}
+        <span className="text-xxs-base text-text-secondary mt-1 w-full text-center">
+          {t('confirm.cooldown', { time: formatTime(displayTimeRemaining) })}
         </span>
       )}
       {showHint && (
-        <span className="text-xxs-base text-gray-60 mt-1 w-full text-center">
-          Если письмо не пришло, проверьте адрес и нажмите на эту кнопку
+        <span className="text-xxs-base text-text-secondary mt-1 w-full text-center">
+          {t('confirm.hint')}
         </span>
       )}
       <div className="mt-8">
         <Alert className="h-full w-full" variant="brand">
           <AlertIcon>
-            <InfoCircle className="fill-brand-100" />
+            <InfoCircle className="fill-icon-brand" />
           </AlertIcon>
           <AlertContainer className="h-full">
-            <AlertDescription>
-              Если письмо долго не приходит, проверьте папку «Спам» в вашей почте
-            </AlertDescription>
+            <AlertDescription>{t('confirm.spamAlert')}</AlertDescription>
           </AlertContainer>
         </Alert>
       </div>

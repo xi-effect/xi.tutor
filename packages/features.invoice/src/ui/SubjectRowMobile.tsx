@@ -2,6 +2,7 @@ import { Button } from '@xipkg/button';
 import { FormControl, FormField, FormItem, useFieldArray, useFormContext } from '@xipkg/form';
 import { Close } from '@xipkg/icons';
 import { Input } from '@xipkg/input';
+import { useTranslation } from 'react-i18next';
 import { roundMoney } from '../model';
 
 type SubjectRowPropsT = {
@@ -14,6 +15,7 @@ const DEFAULT_VALUE = 0;
 const MIN_VALUE = 1;
 
 export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
+  const { t } = useTranslation('invoice');
   const { watch } = useFormContext();
   const items = watch('items');
 
@@ -39,7 +41,7 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
                 <FormControl>
                   <Input
                     {...formField}
-                    placeholder="Название"
+                    placeholder={t('placeholders.name')}
                     variant="s"
                     onChange={(e) => {
                       formField.onChange(e.target.value);
@@ -51,7 +53,7 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
           />
         </div>
         <Button className="ml-2 h-6 w-6 p-0" variant="none" onClick={() => remove(index)}>
-          <Close size="s" className="fill-gray-40 h-6 w-6" />
+          <Close size="s" className="fill-icon-disabled h-6 w-6" />
         </Button>
       </div>
 
@@ -67,11 +69,11 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
                   <Input
                     {...formField}
                     type="number"
-                    placeholder="Стоимость"
+                    placeholder={t('placeholders.price')}
                     min={DEFAULT_VALUE}
                     step={0.01}
                     variant="s"
-                    after={<span className="text-gray-60">₽</span>}
+                    after={<span className="text-text-secondary">₽</span>}
                     onChange={(e) => {
                       const rawValue = e.target.value.replace(',', '.');
 
@@ -99,7 +101,7 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
           />
         </div>
 
-        <span className="text-gray-60 shrink-0 text-sm">x</span>
+        <span className="text-text-secondary shrink-0 text-sm">x</span>
 
         <div className="min-w-[50px] flex-1">
           <FormField
@@ -112,7 +114,7 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
                   <Input
                     {...formField}
                     type="number"
-                    placeholder="Кол-во"
+                    placeholder={t('placeholders.quantityShort')}
                     min={MIN_VALUE}
                     variant="s"
                     onChange={(e) => {
@@ -126,7 +128,7 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
           />
         </div>
 
-        <span className="text-gray-60 shrink-0 text-sm">=</span>
+        <span className="text-text-secondary shrink-0 text-sm">=</span>
 
         <div className="min-w-[90px] flex-1">
           <FormItem>
@@ -135,9 +137,9 @@ export const SubjectRowMobile = ({ control, index }: SubjectRowPropsT) => {
                 className="pointer-events-none"
                 type="number"
                 value={totalPrice}
-                placeholder="Сумма"
+                placeholder={t('placeholders.sum')}
                 variant="s"
-                after={<span className="text-gray-60">₽</span>}
+                after={<span className="text-text-secondary">₽</span>}
                 readOnly
               />
             </FormControl>

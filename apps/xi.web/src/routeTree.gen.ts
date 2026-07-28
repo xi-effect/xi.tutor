@@ -9,43 +9,43 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './pages/__root'
-import { Route as commonLayoutRouteImport } from './pages/(common)/_layout'
-import { Route as authLayoutRouteImport } from './pages/(auth)/_layout'
 import { Route as appLayoutRouteImport } from './pages/(app)/_layout'
+import { Route as authLayoutRouteImport } from './pages/(auth)/_layout'
+import { Route as commonLayoutRouteImport } from './pages/(common)/_layout'
 import { Route as appLayoutIndexRouteImport } from './pages/(app)/_layout/index'
 import { Route as DeploymentsDeploymentIdEnableRouteImport } from './pages/deployments/$deploymentId.enable'
-import { Route as commonWelcomeUserIndexRouteImport } from './pages/(common)/welcome/user/index'
-import { Route as commonWelcomeSocialsIndexRouteImport } from './pages/(common)/welcome/socials/index'
-import { Route as commonWelcomeRoleIndexRouteImport } from './pages/(common)/welcome/role/index'
-import { Route as commonWelcomeEmailIndexRouteImport } from './pages/(common)/welcome/email/index'
-import { Route as commonLayoutConfirmEmailIndexRouteImport } from './pages/(common)/_layout/confirm-email/index'
-import { Route as authLayoutSignupIndexRouteImport } from './pages/(auth)/_layout/signup/index'
-import { Route as authLayoutSigninIndexRouteImport } from './pages/(auth)/_layout/signin/index'
-import { Route as authLayoutResetPasswordIndexRouteImport } from './pages/(auth)/_layout/reset-password/index'
-import { Route as appLayoutScheduleIndexRouteImport } from './pages/(app)/_layout/schedule/index'
-import { Route as appLayoutPaymentsIndexRouteImport } from './pages/(app)/_layout/payments/index'
-import { Route as appLayoutMaterialsIndexRouteImport } from './pages/(app)/_layout/materials/index'
-import { Route as appLayoutClassroomsIndexRouteImport } from './pages/(app)/_layout/classrooms/index'
-import { Route as appLayoutCallIndexRouteImport } from './pages/(app)/_layout/call/index'
-import { Route as commonLayoutInviteInviteIdRouteImport } from './pages/(common)/_layout/invite/$inviteId'
-import { Route as appLayoutCallCallIdRouteImport } from './pages/(app)/_layout/call/$callId'
 import { Route as appLayoutBoardBoardIdRouteImport } from './pages/(app)/_layout/board/$boardId'
+import { Route as appLayoutCallIndexRouteImport } from './pages/(app)/_layout/call/index'
+import { Route as appLayoutCallCallIdRouteImport } from './pages/(app)/_layout/call/$callId'
+import { Route as appLayoutClassroomsIndexRouteImport } from './pages/(app)/_layout/classrooms/index'
+import { Route as appLayoutMaterialsIndexRouteImport } from './pages/(app)/_layout/materials/index'
+import { Route as appLayoutPaymentsIndexRouteImport } from './pages/(app)/_layout/payments/index'
+import { Route as appLayoutScheduleIndexRouteImport } from './pages/(app)/_layout/schedule/index'
+import { Route as authLayoutResetPasswordIndexRouteImport } from './pages/(auth)/_layout/reset-password/index'
+import { Route as authLayoutSigninIndexRouteImport } from './pages/(auth)/_layout/signin/index'
+import { Route as authLayoutSignupIndexRouteImport } from './pages/(auth)/_layout/signup/index'
+import { Route as commonLayoutConfirmEmailIndexRouteImport } from './pages/(common)/_layout/confirm-email/index'
+import { Route as commonLayoutInviteInviteIdRouteImport } from './pages/(common)/_layout/invite/$inviteId'
+import { Route as commonWelcomeEmailIndexRouteImport } from './pages/(common)/welcome/email/index'
+import { Route as commonWelcomeRoleIndexRouteImport } from './pages/(common)/welcome/role/index'
+import { Route as commonWelcomeSocialsIndexRouteImport } from './pages/(common)/welcome/socials/index'
+import { Route as commonWelcomeUserIndexRouteImport } from './pages/(common)/welcome/user/index'
 import { Route as appLayoutClassroomsClassroomIdIndexRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/index'
-import { Route as appLayoutMaterialsMaterialIdNoteIndexRouteImport } from './pages/(app)/_layout/materials/$materialId/note/index'
-import { Route as appLayoutMaterialsMaterialIdBoardIndexRouteImport } from './pages/(app)/_layout/materials/$materialId/board/index'
-import { Route as appLayoutClassroomsClassroomIdNotesNoteIdRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/notes/$noteId'
 import { Route as appLayoutClassroomsClassroomIdBoardsBoardIdRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/boards/$boardId'
+import { Route as appLayoutClassroomsClassroomIdNotesNoteIdRouteImport } from './pages/(app)/_layout/classrooms/$classroomId/notes/$noteId'
+import { Route as appLayoutMaterialsMaterialIdBoardIndexRouteImport } from './pages/(app)/_layout/materials/$materialId/board/index'
+import { Route as appLayoutMaterialsMaterialIdNoteIndexRouteImport } from './pages/(app)/_layout/materials/$materialId/note/index'
 
-const commonLayoutRoute = commonLayoutRouteImport.update({
-  id: '/(common)/_layout',
+const appLayoutRoute = appLayoutRouteImport.update({
+  id: '/(app)/_layout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const authLayoutRoute = authLayoutRouteImport.update({
   id: '/(auth)/_layout',
   getParentRoute: () => rootRouteImport,
 } as any)
-const appLayoutRoute = appLayoutRouteImport.update({
-  id: '/(app)/_layout',
+const commonLayoutRoute = commonLayoutRouteImport.update({
+  id: '/(common)/_layout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const appLayoutIndexRoute = appLayoutIndexRouteImport.update({
@@ -59,62 +59,19 @@ const DeploymentsDeploymentIdEnableRoute =
     path: '/deployments/$deploymentId/enable',
     getParentRoute: () => rootRouteImport,
   } as any)
-const commonWelcomeUserIndexRoute = commonWelcomeUserIndexRouteImport.update({
-  id: '/(common)/welcome/user/',
-  path: '/welcome/user/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const commonWelcomeSocialsIndexRoute =
-  commonWelcomeSocialsIndexRouteImport.update({
-    id: '/(common)/welcome/socials/',
-    path: '/welcome/socials/',
-    getParentRoute: () => rootRouteImport,
-  } as any)
-const commonWelcomeRoleIndexRoute = commonWelcomeRoleIndexRouteImport.update({
-  id: '/(common)/welcome/role/',
-  path: '/welcome/role/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const commonWelcomeEmailIndexRoute = commonWelcomeEmailIndexRouteImport.update({
-  id: '/(common)/welcome/email/',
-  path: '/welcome/email/',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const commonLayoutConfirmEmailIndexRoute =
-  commonLayoutConfirmEmailIndexRouteImport.update({
-    id: '/confirm-email/',
-    path: '/confirm-email/',
-    getParentRoute: () => commonLayoutRoute,
-  } as any)
-const authLayoutSignupIndexRoute = authLayoutSignupIndexRouteImport.update({
-  id: '/signup/',
-  path: '/signup/',
-  getParentRoute: () => authLayoutRoute,
-} as any)
-const authLayoutSigninIndexRoute = authLayoutSigninIndexRouteImport.update({
-  id: '/signin/',
-  path: '/signin/',
-  getParentRoute: () => authLayoutRoute,
-} as any)
-const authLayoutResetPasswordIndexRoute =
-  authLayoutResetPasswordIndexRouteImport.update({
-    id: '/reset-password/',
-    path: '/reset-password/',
-    getParentRoute: () => authLayoutRoute,
-  } as any)
-const appLayoutScheduleIndexRoute = appLayoutScheduleIndexRouteImport.update({
-  id: '/schedule/',
-  path: '/schedule/',
+const appLayoutBoardBoardIdRoute = appLayoutBoardBoardIdRouteImport.update({
+  id: '/board/$boardId',
+  path: '/board/$boardId',
   getParentRoute: () => appLayoutRoute,
 } as any)
-const appLayoutPaymentsIndexRoute = appLayoutPaymentsIndexRouteImport.update({
-  id: '/payments/',
-  path: '/payments/',
+const appLayoutCallIndexRoute = appLayoutCallIndexRouteImport.update({
+  id: '/call/',
+  path: '/call/',
   getParentRoute: () => appLayoutRoute,
 } as any)
-const appLayoutMaterialsIndexRoute = appLayoutMaterialsIndexRouteImport.update({
-  id: '/materials/',
-  path: '/materials/',
+const appLayoutCallCallIdRoute = appLayoutCallCallIdRouteImport.update({
+  id: '/call/$callId',
+  path: '/call/$callId',
   getParentRoute: () => appLayoutRoute,
 } as any)
 const appLayoutClassroomsIndexRoute =
@@ -123,26 +80,69 @@ const appLayoutClassroomsIndexRoute =
     path: '/classrooms/',
     getParentRoute: () => appLayoutRoute,
   } as any)
-const appLayoutCallIndexRoute = appLayoutCallIndexRouteImport.update({
-  id: '/call/',
-  path: '/call/',
+const appLayoutMaterialsIndexRoute = appLayoutMaterialsIndexRouteImport.update({
+  id: '/materials/',
+  path: '/materials/',
   getParentRoute: () => appLayoutRoute,
 } as any)
+const appLayoutPaymentsIndexRoute = appLayoutPaymentsIndexRouteImport.update({
+  id: '/payments/',
+  path: '/payments/',
+  getParentRoute: () => appLayoutRoute,
+} as any)
+const appLayoutScheduleIndexRoute = appLayoutScheduleIndexRouteImport.update({
+  id: '/schedule/',
+  path: '/schedule/',
+  getParentRoute: () => appLayoutRoute,
+} as any)
+const authLayoutResetPasswordIndexRoute =
+  authLayoutResetPasswordIndexRouteImport.update({
+    id: '/reset-password/',
+    path: '/reset-password/',
+    getParentRoute: () => authLayoutRoute,
+  } as any)
+const authLayoutSigninIndexRoute = authLayoutSigninIndexRouteImport.update({
+  id: '/signin/',
+  path: '/signin/',
+  getParentRoute: () => authLayoutRoute,
+} as any)
+const authLayoutSignupIndexRoute = authLayoutSignupIndexRouteImport.update({
+  id: '/signup/',
+  path: '/signup/',
+  getParentRoute: () => authLayoutRoute,
+} as any)
+const commonLayoutConfirmEmailIndexRoute =
+  commonLayoutConfirmEmailIndexRouteImport.update({
+    id: '/confirm-email/',
+    path: '/confirm-email/',
+    getParentRoute: () => commonLayoutRoute,
+  } as any)
 const commonLayoutInviteInviteIdRoute =
   commonLayoutInviteInviteIdRouteImport.update({
     id: '/invite/$inviteId',
     path: '/invite/$inviteId',
     getParentRoute: () => commonLayoutRoute,
   } as any)
-const appLayoutCallCallIdRoute = appLayoutCallCallIdRouteImport.update({
-  id: '/call/$callId',
-  path: '/call/$callId',
-  getParentRoute: () => appLayoutRoute,
+const commonWelcomeEmailIndexRoute = commonWelcomeEmailIndexRouteImport.update({
+  id: '/(common)/welcome/email/',
+  path: '/welcome/email/',
+  getParentRoute: () => rootRouteImport,
 } as any)
-const appLayoutBoardBoardIdRoute = appLayoutBoardBoardIdRouteImport.update({
-  id: '/board/$boardId',
-  path: '/board/$boardId',
-  getParentRoute: () => appLayoutRoute,
+const commonWelcomeRoleIndexRoute = commonWelcomeRoleIndexRouteImport.update({
+  id: '/(common)/welcome/role/',
+  path: '/welcome/role/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const commonWelcomeSocialsIndexRoute =
+  commonWelcomeSocialsIndexRouteImport.update({
+    id: '/(common)/welcome/socials/',
+    path: '/welcome/socials/',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const commonWelcomeUserIndexRoute = commonWelcomeUserIndexRouteImport.update({
+  id: '/(common)/welcome/user/',
+  path: '/welcome/user/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const appLayoutClassroomsClassroomIdIndexRoute =
   appLayoutClassroomsClassroomIdIndexRouteImport.update({
@@ -150,16 +150,10 @@ const appLayoutClassroomsClassroomIdIndexRoute =
     path: '/classrooms/$classroomId/',
     getParentRoute: () => appLayoutRoute,
   } as any)
-const appLayoutMaterialsMaterialIdNoteIndexRoute =
-  appLayoutMaterialsMaterialIdNoteIndexRouteImport.update({
-    id: '/materials/$materialId/note/',
-    path: '/materials/$materialId/note/',
-    getParentRoute: () => appLayoutRoute,
-  } as any)
-const appLayoutMaterialsMaterialIdBoardIndexRoute =
-  appLayoutMaterialsMaterialIdBoardIndexRouteImport.update({
-    id: '/materials/$materialId/board/',
-    path: '/materials/$materialId/board/',
+const appLayoutClassroomsClassroomIdBoardsBoardIdRoute =
+  appLayoutClassroomsClassroomIdBoardsBoardIdRouteImport.update({
+    id: '/classrooms/$classroomId/boards/$boardId',
+    path: '/classrooms/$classroomId/boards/$boardId',
     getParentRoute: () => appLayoutRoute,
   } as any)
 const appLayoutClassroomsClassroomIdNotesNoteIdRoute =
@@ -168,10 +162,16 @@ const appLayoutClassroomsClassroomIdNotesNoteIdRoute =
     path: '/classrooms/$classroomId/notes/$noteId',
     getParentRoute: () => appLayoutRoute,
   } as any)
-const appLayoutClassroomsClassroomIdBoardsBoardIdRoute =
-  appLayoutClassroomsClassroomIdBoardsBoardIdRouteImport.update({
-    id: '/classrooms/$classroomId/boards/$boardId',
-    path: '/classrooms/$classroomId/boards/$boardId',
+const appLayoutMaterialsMaterialIdBoardIndexRoute =
+  appLayoutMaterialsMaterialIdBoardIndexRouteImport.update({
+    id: '/materials/$materialId/board/',
+    path: '/materials/$materialId/board/',
+    getParentRoute: () => appLayoutRoute,
+  } as any)
+const appLayoutMaterialsMaterialIdNoteIndexRoute =
+  appLayoutMaterialsMaterialIdNoteIndexRouteImport.update({
+    id: '/materials/$materialId/note/',
+    path: '/materials/$materialId/note/',
     getParentRoute: () => appLayoutRoute,
   } as any)
 
@@ -348,11 +348,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/(common)/_layout': {
-      id: '/(common)/_layout'
+    '/(app)/_layout': {
+      id: '/(app)/_layout'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof commonLayoutRouteImport
+      preLoaderRoute: typeof appLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(auth)/_layout': {
@@ -362,11 +362,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof authLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(app)/_layout': {
-      id: '/(app)/_layout'
+    '/(common)/_layout': {
+      id: '/(common)/_layout'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof appLayoutRouteImport
+      preLoaderRoute: typeof commonLayoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/(app)/_layout/': {
@@ -383,88 +383,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DeploymentsDeploymentIdEnableRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/(common)/welcome/user/': {
-      id: '/(common)/welcome/user/'
-      path: '/welcome/user'
-      fullPath: '/welcome/user/'
-      preLoaderRoute: typeof commonWelcomeUserIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(common)/welcome/socials/': {
-      id: '/(common)/welcome/socials/'
-      path: '/welcome/socials'
-      fullPath: '/welcome/socials/'
-      preLoaderRoute: typeof commonWelcomeSocialsIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(common)/welcome/role/': {
-      id: '/(common)/welcome/role/'
-      path: '/welcome/role'
-      fullPath: '/welcome/role/'
-      preLoaderRoute: typeof commonWelcomeRoleIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(common)/welcome/email/': {
-      id: '/(common)/welcome/email/'
-      path: '/welcome/email'
-      fullPath: '/welcome/email/'
-      preLoaderRoute: typeof commonWelcomeEmailIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/(common)/_layout/confirm-email/': {
-      id: '/(common)/_layout/confirm-email/'
-      path: '/confirm-email'
-      fullPath: '/confirm-email/'
-      preLoaderRoute: typeof commonLayoutConfirmEmailIndexRouteImport
-      parentRoute: typeof commonLayoutRoute
-    }
-    '/(auth)/_layout/signup/': {
-      id: '/(auth)/_layout/signup/'
-      path: '/signup'
-      fullPath: '/signup/'
-      preLoaderRoute: typeof authLayoutSignupIndexRouteImport
-      parentRoute: typeof authLayoutRoute
-    }
-    '/(auth)/_layout/signin/': {
-      id: '/(auth)/_layout/signin/'
-      path: '/signin'
-      fullPath: '/signin/'
-      preLoaderRoute: typeof authLayoutSigninIndexRouteImport
-      parentRoute: typeof authLayoutRoute
-    }
-    '/(auth)/_layout/reset-password/': {
-      id: '/(auth)/_layout/reset-password/'
-      path: '/reset-password'
-      fullPath: '/reset-password/'
-      preLoaderRoute: typeof authLayoutResetPasswordIndexRouteImport
-      parentRoute: typeof authLayoutRoute
-    }
-    '/(app)/_layout/schedule/': {
-      id: '/(app)/_layout/schedule/'
-      path: '/schedule'
-      fullPath: '/schedule/'
-      preLoaderRoute: typeof appLayoutScheduleIndexRouteImport
-      parentRoute: typeof appLayoutRoute
-    }
-    '/(app)/_layout/payments/': {
-      id: '/(app)/_layout/payments/'
-      path: '/payments'
-      fullPath: '/payments/'
-      preLoaderRoute: typeof appLayoutPaymentsIndexRouteImport
-      parentRoute: typeof appLayoutRoute
-    }
-    '/(app)/_layout/materials/': {
-      id: '/(app)/_layout/materials/'
-      path: '/materials'
-      fullPath: '/materials/'
-      preLoaderRoute: typeof appLayoutMaterialsIndexRouteImport
-      parentRoute: typeof appLayoutRoute
-    }
-    '/(app)/_layout/classrooms/': {
-      id: '/(app)/_layout/classrooms/'
-      path: '/classrooms'
-      fullPath: '/classrooms/'
-      preLoaderRoute: typeof appLayoutClassroomsIndexRouteImport
+    '/(app)/_layout/board/$boardId': {
+      id: '/(app)/_layout/board/$boardId'
+      path: '/board/$boardId'
+      fullPath: '/board/$boardId'
+      preLoaderRoute: typeof appLayoutBoardBoardIdRouteImport
       parentRoute: typeof appLayoutRoute
     }
     '/(app)/_layout/call/': {
@@ -474,13 +397,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutCallIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
-    '/(common)/_layout/invite/$inviteId': {
-      id: '/(common)/_layout/invite/$inviteId'
-      path: '/invite/$inviteId'
-      fullPath: '/invite/$inviteId'
-      preLoaderRoute: typeof commonLayoutInviteInviteIdRouteImport
-      parentRoute: typeof commonLayoutRoute
-    }
     '/(app)/_layout/call/$callId': {
       id: '/(app)/_layout/call/$callId'
       path: '/call/$callId'
@@ -488,12 +404,96 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutCallCallIdRouteImport
       parentRoute: typeof appLayoutRoute
     }
-    '/(app)/_layout/board/$boardId': {
-      id: '/(app)/_layout/board/$boardId'
-      path: '/board/$boardId'
-      fullPath: '/board/$boardId'
-      preLoaderRoute: typeof appLayoutBoardBoardIdRouteImport
+    '/(app)/_layout/classrooms/': {
+      id: '/(app)/_layout/classrooms/'
+      path: '/classrooms'
+      fullPath: '/classrooms/'
+      preLoaderRoute: typeof appLayoutClassroomsIndexRouteImport
       parentRoute: typeof appLayoutRoute
+    }
+    '/(app)/_layout/materials/': {
+      id: '/(app)/_layout/materials/'
+      path: '/materials'
+      fullPath: '/materials/'
+      preLoaderRoute: typeof appLayoutMaterialsIndexRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
+    '/(app)/_layout/payments/': {
+      id: '/(app)/_layout/payments/'
+      path: '/payments'
+      fullPath: '/payments/'
+      preLoaderRoute: typeof appLayoutPaymentsIndexRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
+    '/(app)/_layout/schedule/': {
+      id: '/(app)/_layout/schedule/'
+      path: '/schedule'
+      fullPath: '/schedule/'
+      preLoaderRoute: typeof appLayoutScheduleIndexRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
+    '/(auth)/_layout/reset-password/': {
+      id: '/(auth)/_layout/reset-password/'
+      path: '/reset-password'
+      fullPath: '/reset-password/'
+      preLoaderRoute: typeof authLayoutResetPasswordIndexRouteImport
+      parentRoute: typeof authLayoutRoute
+    }
+    '/(auth)/_layout/signin/': {
+      id: '/(auth)/_layout/signin/'
+      path: '/signin'
+      fullPath: '/signin/'
+      preLoaderRoute: typeof authLayoutSigninIndexRouteImport
+      parentRoute: typeof authLayoutRoute
+    }
+    '/(auth)/_layout/signup/': {
+      id: '/(auth)/_layout/signup/'
+      path: '/signup'
+      fullPath: '/signup/'
+      preLoaderRoute: typeof authLayoutSignupIndexRouteImport
+      parentRoute: typeof authLayoutRoute
+    }
+    '/(common)/_layout/confirm-email/': {
+      id: '/(common)/_layout/confirm-email/'
+      path: '/confirm-email'
+      fullPath: '/confirm-email/'
+      preLoaderRoute: typeof commonLayoutConfirmEmailIndexRouteImport
+      parentRoute: typeof commonLayoutRoute
+    }
+    '/(common)/_layout/invite/$inviteId': {
+      id: '/(common)/_layout/invite/$inviteId'
+      path: '/invite/$inviteId'
+      fullPath: '/invite/$inviteId'
+      preLoaderRoute: typeof commonLayoutInviteInviteIdRouteImport
+      parentRoute: typeof commonLayoutRoute
+    }
+    '/(common)/welcome/email/': {
+      id: '/(common)/welcome/email/'
+      path: '/welcome/email'
+      fullPath: '/welcome/email/'
+      preLoaderRoute: typeof commonWelcomeEmailIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(common)/welcome/role/': {
+      id: '/(common)/welcome/role/'
+      path: '/welcome/role'
+      fullPath: '/welcome/role/'
+      preLoaderRoute: typeof commonWelcomeRoleIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(common)/welcome/socials/': {
+      id: '/(common)/welcome/socials/'
+      path: '/welcome/socials'
+      fullPath: '/welcome/socials/'
+      preLoaderRoute: typeof commonWelcomeSocialsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/(common)/welcome/user/': {
+      id: '/(common)/welcome/user/'
+      path: '/welcome/user'
+      fullPath: '/welcome/user/'
+      preLoaderRoute: typeof commonWelcomeUserIndexRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/(app)/_layout/classrooms/$classroomId/': {
       id: '/(app)/_layout/classrooms/$classroomId/'
@@ -502,18 +502,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutClassroomsClassroomIdIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
-    '/(app)/_layout/materials/$materialId/note/': {
-      id: '/(app)/_layout/materials/$materialId/note/'
-      path: '/materials/$materialId/note'
-      fullPath: '/materials/$materialId/note/'
-      preLoaderRoute: typeof appLayoutMaterialsMaterialIdNoteIndexRouteImport
-      parentRoute: typeof appLayoutRoute
-    }
-    '/(app)/_layout/materials/$materialId/board/': {
-      id: '/(app)/_layout/materials/$materialId/board/'
-      path: '/materials/$materialId/board'
-      fullPath: '/materials/$materialId/board/'
-      preLoaderRoute: typeof appLayoutMaterialsMaterialIdBoardIndexRouteImport
+    '/(app)/_layout/classrooms/$classroomId/boards/$boardId': {
+      id: '/(app)/_layout/classrooms/$classroomId/boards/$boardId'
+      path: '/classrooms/$classroomId/boards/$boardId'
+      fullPath: '/classrooms/$classroomId/boards/$boardId'
+      preLoaderRoute: typeof appLayoutClassroomsClassroomIdBoardsBoardIdRouteImport
       parentRoute: typeof appLayoutRoute
     }
     '/(app)/_layout/classrooms/$classroomId/notes/$noteId': {
@@ -523,11 +516,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof appLayoutClassroomsClassroomIdNotesNoteIdRouteImport
       parentRoute: typeof appLayoutRoute
     }
-    '/(app)/_layout/classrooms/$classroomId/boards/$boardId': {
-      id: '/(app)/_layout/classrooms/$classroomId/boards/$boardId'
-      path: '/classrooms/$classroomId/boards/$boardId'
-      fullPath: '/classrooms/$classroomId/boards/$boardId'
-      preLoaderRoute: typeof appLayoutClassroomsClassroomIdBoardsBoardIdRouteImport
+    '/(app)/_layout/materials/$materialId/board/': {
+      id: '/(app)/_layout/materials/$materialId/board/'
+      path: '/materials/$materialId/board'
+      fullPath: '/materials/$materialId/board/'
+      preLoaderRoute: typeof appLayoutMaterialsMaterialIdBoardIndexRouteImport
+      parentRoute: typeof appLayoutRoute
+    }
+    '/(app)/_layout/materials/$materialId/note/': {
+      id: '/(app)/_layout/materials/$materialId/note/'
+      path: '/materials/$materialId/note'
+      fullPath: '/materials/$materialId/note/'
+      preLoaderRoute: typeof appLayoutMaterialsMaterialIdNoteIndexRouteImport
       parentRoute: typeof appLayoutRoute
     }
   }

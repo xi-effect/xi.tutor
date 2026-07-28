@@ -2,6 +2,24 @@ import type { NotificationT } from 'common.types';
 import { notificationConfigs } from './notificationConfig';
 
 /**
+ * Mirrors common.ui getDateLocale without importing common.ui
+ * (circular: common.ui → common.services).
+ */
+const getDateLocale = (): string => {
+  try {
+    const stored = localStorage.getItem('xi_language');
+    if (typeof stored === 'string' && stored.startsWith('en')) return 'en-US';
+    if (typeof stored === 'string' && stored.startsWith('ru')) return 'ru-RU';
+  } catch {
+    // ignore
+  }
+  if (typeof document !== 'undefined' && document.documentElement.lang.startsWith('en')) {
+    return 'en-US';
+  }
+  return 'ru-RU';
+};
+
+/**
  * Генерирует заголовок уведомления на основе kind и payload
  */
 export const generateNotificationTitle = (notification: NotificationT): string => {
@@ -112,7 +130,7 @@ export const formatNotificationDate = (dateString: string): string => {
   } else if (Math.abs(diffInDays) < 7) {
     return `${Math.abs(diffInDays)} дн. назад`;
   } else {
-    return date.toLocaleDateString('ru-RU', {
+    return date.toLocaleDateString(getDateLocale(), {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
@@ -125,7 +143,7 @@ export const formatNotificationDate = (dateString: string): string => {
  */
 export const formatFullNotificationDate = (dateString: string): string => {
   const date = new Date(dateString);
-  return date.toLocaleString('ru-RU', {
+  return date.toLocaleString(getDateLocale(), {
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',

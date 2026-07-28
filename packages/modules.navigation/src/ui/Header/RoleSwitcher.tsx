@@ -32,9 +32,12 @@ export const RoleSwitcher = ({
       tabs={tabs}
       activeTab={value}
       onChange={(v) => onChange(v as RoleT)}
-      className={cn('bg-gray-5 flex h-9 w-full flex-row rounded-lg p-1', className)}
+      className={cn('bg-background-page flex h-9 w-full flex-row rounded-lg p-1', className)}
       tabClassName={cn(switcherTabClass, 'text-m-base w-full font-medium', tabClassName)}
-      indicatorClassName={cn('w-full rounded-md bg-brand-100', indicatorClassName)}
+      indicatorClassName={cn(
+        'w-full rounded-md bg-action-primary-background-pressed',
+        indicatorClassName,
+      )}
     />
   );
 };

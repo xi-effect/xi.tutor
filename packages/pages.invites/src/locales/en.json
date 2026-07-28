@@ -1,0 +1,24 @@
+{
+  "loading": "Loading invitation...",
+  "notFound": "Invitation not found",
+  "title": {
+    "accepted": "Invitation accepted",
+    "received": "You have received an invitation"
+  },
+  "subtitle": {
+    "tutor": "Tutor",
+    "groupFromTutor": "to the group “{{name}}” from the tutor"
+  },
+  "actions": {
+    "accept": "Accept",
+    "goToClassroom": "Go to classroom",
+    "decline": "Decline"
+  },
+  "error": {
+    "selfInviteTitle": "A teacher cannot accept their own invitation",
+    "selfInviteDescription": "You cannot join your own classroom",
+    "selfInviteHint": "Send the invitation link to a student",
+    "invalid": "Invitation is invalid",
+    "askTutor": "Ask the tutor for a new invitation"
+  }
+}

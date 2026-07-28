@@ -1,6 +1,7 @@
 import { Button } from '@xipkg/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { usePaymentReceiverConfirmation } from 'common.services';
+import { useTranslation } from 'react-i18next';
 import { PaymentApproveButtonPropsT } from '../types';
 import { PaymentApproveButtonContent } from './PaymentApproveButtonContent';
 
@@ -12,6 +13,7 @@ export const PaymentApproveButton = ({
   id,
   classroomId,
 }: PaymentApproveButtonPropsT) => {
+  const { t } = useTranslation('paymentApprove');
   const { mutate: receiverConfirmationMutation, isPending } = usePaymentReceiverConfirmation({
     classroomId: classroomId?.toString(),
   });
@@ -24,7 +26,7 @@ export const PaymentApproveButton = ({
             <Button
               variant="none"
               size="s"
-              className="bg-gray-5 text-gray-70 hover:bg-gray-10/80 flex-1 rounded-lg"
+              className="bg-background-page text-text-secondary hover:bg-background-subtle/80 flex-1 rounded-lg"
               onClick={onApprovePayment}
               data-umami-event="payment-approve-sender"
               data-umami-event-role={isTutor ? 'tutor' : 'student'}
@@ -33,9 +35,7 @@ export const PaymentApproveButton = ({
             </Button>
           </TooltipTrigger>
           <TooltipContent side="right" align="center" className="z-99999!">
-            {isTutor
-              ? 'Если счёт уже оплачен, можно подтвердить, не дожидаясь подтвержения ученика'
-              : 'Подтвердите оплату счета, чтобы репетитор знал об этом'}
+            {isTutor ? t('tooltips.tutorSender') : t('tooltips.studentSender')}
           </TooltipContent>
         </Tooltip>
       </div>
@@ -49,7 +49,7 @@ export const PaymentApproveButton = ({
             <Button
               variant="none"
               size="s"
-              className="bg-brand-0 hover:bg-brand-0/80 flex-1 rounded-lg"
+              className="bg-status-info-background hover:bg-status-info-background/80 flex-1 rounded-lg"
               onClick={() => receiverConfirmationMutation(id?.toString() ?? '')}
               loading={isPending}
               disabled={isPending}
@@ -59,7 +59,7 @@ export const PaymentApproveButton = ({
             </Button>
           </TooltipTrigger>
           <TooltipContent side="right" align="center" className="z-99999!">
-            Ученик оплатил счет, подтвердите получение средств
+            {t('tooltips.receiver')}
           </TooltipContent>
         </Tooltip>
       </div>

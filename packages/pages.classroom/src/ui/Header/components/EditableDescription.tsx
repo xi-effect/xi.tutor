@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Edit } from '@xipkg/icons';
 import { useCurrentUser } from 'common.services';
 import { cn } from '@xipkg/utils';
+import { useTranslation } from 'react-i18next';
 import { EditDescriptionModal } from '../modals/EditDescriptionModal';
 import { Button } from '@xipkg/button';
 
@@ -16,6 +17,7 @@ export const EditableDescription = ({
   classroomId,
   className,
 }: EditableDescriptionProps) => {
+  const { t } = useTranslation('classroom');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const { data: user } = useCurrentUser();
 
@@ -30,8 +32,8 @@ export const EditableDescription = ({
   return (
     <>
       <div className={cn('group relative flex items-center gap-2', className)}>
-        <div className="text-m-base text-gray-60 line-clamp-3 h-auto max-w-[400px] truncate font-medium text-wrap">
-          {description || 'Описание не указано'}
+        <div className="text-m-base text-text-secondary line-clamp-3 h-auto max-w-[400px] truncate font-medium text-wrap">
+          {description || t('header.noDescription')}
         </div>
 
         {isTutor && (
@@ -40,9 +42,9 @@ export const EditableDescription = ({
             size="s"
             onClick={handleEditClick}
             className="h-6 w-6 p-0 opacity-0 transition-opacity group-hover:opacity-100"
-            title="Редактировать описание"
+            title={t('actions.editDescription')}
           >
-            <Edit className="fill-gray-60 h-4 w-4" />
+            <Edit className="fill-icon-secondary h-4 w-4" />
           </Button>
         )}
       </div>

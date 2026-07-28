@@ -19,7 +19,12 @@ export const Picker: React.FC<TPicker> = ({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="none" size="s" className="hover:bg-brand-0 p-1" title={triggerTitle}>
+        <Button
+          variant="none"
+          size="s"
+          className="hover:bg-status-info-background p-1"
+          title={triggerTitle}
+        >
           {triggerChild}
         </Button>
       </PopoverTrigger>
@@ -27,7 +32,7 @@ export const Picker: React.FC<TPicker> = ({
         side="top"
         align="center"
         sideOffset={8}
-        className="border-gray-10 bg-gray-0 w-auto rounded-xl border p-3 shadow-md"
+        className="border-border-default bg-background-surface w-auto rounded-xl border p-3 shadow-md"
       >
         {popoverChild}
       </PopoverContent>

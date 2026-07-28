@@ -5,7 +5,7 @@
 
 /* Базовый цвет текста и отступ под ручку блока */
 .xi-editor .ProseMirror {
-  color: var(--xi-gray-100);
+  color: var(--xi-text-primary);
   padding-left: 2.5rem;
   min-width: 0;
   overflow-wrap: anywhere;
@@ -26,7 +26,7 @@
 .xi-editor .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;
-  color: var(--xi-gray-40);
+  color: var(--xi-text-disabled);
   pointer-events: none;
   height: 0;
 }
@@ -103,11 +103,11 @@
 
 /* Стили для цитат */
 .xi-editor .ProseMirror blockquote {
-  border-left: 4px solid var(--xi-gray-20);
+  border-left: 4px solid var(--xi-border-default);
   padding-left: 1rem;
   margin: 1rem 0;
   font-style: italic;
-  color: var(--xi-gray-60);
+  color: var(--xi-text-secondary);
 }
 
 /* Стили для кода */

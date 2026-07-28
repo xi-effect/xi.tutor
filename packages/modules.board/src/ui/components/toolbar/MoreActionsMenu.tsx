@@ -23,6 +23,7 @@ import { useCopyBoardDeepLink } from '../../../hooks';
 import type { PdfShape } from '../../../shapes/pdf';
 import type { AudioShape } from '../../../shapes/audio';
 import { isMac } from '../../../utils';
+import { useTranslation } from 'react-i18next';
 
 const altKey = isMac ? '⌥' : 'Alt';
 
@@ -41,12 +42,13 @@ function MenuItemWithShortcut({
       className={cn(boardMenuItemClass, 'flex justify-between gap-8 rounded-lg px-3')}
     >
       <span>{label}</span>
-      <span className="text-gray-60 text-xs">{shortcut}</span>
+      <span className="text-text-secondary text-xs">{shortcut}</span>
     </DropdownMenuItem>
   );
 }
 
 export const MoreActionsMenu = () => {
+  const { t } = useTranslation('board');
   const editor = useEditor();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -117,7 +119,7 @@ export const MoreActionsMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="none" size="s" className="hover:bg-brand-0 p-1">
+        <Button variant="none" size="s" className="hover:bg-status-info-background p-1">
           <MenuDots className={`rotate-90 ${boardIconClass}`} />
         </Button>
       </DropdownMenuTrigger>
@@ -133,12 +135,12 @@ export const MoreActionsMenu = () => {
           data-umami-event="board-copy-shape-link"
         >
           <Link className={`mr-2 size-4 ${boardIconClass}`} />
-          Скопировать ссылку
+          {t('toolbar.copyLink')}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className={cn(boardMenuSubTriggerClass, 'rounded-lg px-3')}>
-            Переупорядочить
+            {t('toolbar.reorder')}
           </DropdownMenuSubTrigger>
           <DropdownMenuSubContent
             sideOffset={12}
@@ -149,22 +151,22 @@ export const MoreActionsMenu = () => {
             )}
           >
             <MenuItemWithShortcut
-              label="На передний план"
+              label={t('toolbar.bringToFront')}
               shortcut="]"
               onClick={() => editor.bringToFront(selectedIds)}
             />
             <MenuItemWithShortcut
-              label="Переместить вперед"
+              label={t('toolbar.bringForward')}
               shortcut={`${altKey} ]`}
               onClick={() => editor.bringForward(selectedIds)}
             />
             <MenuItemWithShortcut
-              label="Переместить назад"
+              label={t('toolbar.sendBackward')}
               shortcut={`${altKey} [`}
               onClick={() => editor.sendBackward(selectedIds)}
             />
             <MenuItemWithShortcut
-              label="На задний план"
+              label={t('toolbar.sendToBack')}
               shortcut="["
               onClick={() => editor.sendToBack(selectedIds)}
             />
@@ -179,7 +181,9 @@ export const MoreActionsMenu = () => {
                 onClick={handleToggleStudentFlip}
                 className={cn(boardMenuItemClass, 'rounded-lg px-3')}
               >
-                {selectedPdf.props.studentCanFlip ? 'Ограничить листание' : 'Разрешить листание'}
+                {selectedPdf.props.studentCanFlip
+                  ? t('toolbar.restrictFlip')
+                  : t('toolbar.allowFlip')}
               </DropdownMenuItem>
             )}
             {isTutor && selectedAudio && (
@@ -189,24 +193,24 @@ export const MoreActionsMenu = () => {
                   className={cn(boardMenuItemClass, 'rounded-lg px-3')}
                 >
                   {selectedAudio.props.syncPlayback
-                    ? 'Локальное воспроизведение'
-                    : 'Синхронное воспроизведение'}
+                    ? t('toolbar.localPlayback')
+                    : t('toolbar.syncPlayback')}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleToggleStudentsCanAddTimecodes}
                   className={cn(boardMenuItemClass, 'rounded-lg px-3')}
                 >
                   {selectedAudio.props.studentsCanAddTimecodes
-                    ? 'Запретить ученикам добавлять таймкоды'
-                    : 'Разрешить ученикам добавлять таймкоды'}
+                    ? t('toolbar.forbidStudentTimecodes')
+                    : t('toolbar.allowStudentTimecodes')}
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={handleToggleTimecodesVisibleByDefault}
                   className={cn(boardMenuItemClass, 'rounded-lg px-3')}
                 >
                   {selectedAudio.props.timecodesVisibleByDefault
-                    ? 'Скрывать новые таймкоды от учеников'
-                    : 'Показывать новые таймкоды всем'}
+                    ? t('toolbar.hideNewTimecodes')
+                    : t('toolbar.showNewTimecodes')}
                 </DropdownMenuItem>
                 {selectedAudio.props.syncPlayback && (
                   <DropdownMenuItem
@@ -214,8 +218,8 @@ export const MoreActionsMenu = () => {
                     className={cn(boardMenuItemClass, 'rounded-lg px-3')}
                   >
                     {selectedAudio.props.studentsCanControlPlayback
-                      ? 'Запретить управление'
-                      : 'Разрешить управление'}
+                      ? t('toolbar.forbidControl')
+                      : t('toolbar.allowControl')}
                   </DropdownMenuItem>
                 )}
               </>

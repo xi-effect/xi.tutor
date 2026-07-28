@@ -2,10 +2,8 @@ import type { ReactNode } from 'react';
 import { Portal as TooltipPortal } from '@radix-ui/react-tooltip';
 import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@xipkg/select';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { useTranslation } from 'react-i18next';
 import type { ClassroomT } from 'common.api';
-
-const EMPTY_CLASSROOMS_TOOLTIP =
-  'У вас пока нет кабинетов. Создайте кабинет для групповых или индивидуальных занятий';
 
 type StudentSelectorProps = {
   value: string;
@@ -22,18 +20,19 @@ export const StudentSelector = ({
   isLoading,
   before,
 }: StudentSelectorProps) => {
+  const { t } = useTranslation('lessonAdd');
   const isEmpty = !isLoading && classrooms.length === 0;
 
   const placeholder = isLoading
-    ? 'Загрузка...'
+    ? t('studentSelector.loading')
     : isEmpty
-      ? 'Нет доступных кабинетов'
-      : 'Ученик или группа';
+      ? t('studentSelector.empty')
+      : t('studentSelector.placeholder');
 
   const selector = (
     <Select value={value} onValueChange={onChange} disabled={isEmpty}>
       <SelectTrigger
-        className="border-gray-10 m-0 w-full rounded-lg border text-gray-100"
+        className="border-border-default text-text-primary m-0 w-full rounded-lg border"
         size="s"
         before={before}
         disabled={isEmpty}
@@ -45,7 +44,7 @@ export const StudentSelector = ({
           <SelectItem
             key={classroom.id}
             value={classroom.id.toString()}
-            className="max-w-full min-w-0 truncate dark:text-gray-100"
+            className="dark:text-text-primary max-w-full min-w-0 truncate"
           >
             {classroom.name}
           </SelectItem>
@@ -65,7 +64,7 @@ export const StudentSelector = ({
       </TooltipTrigger>
       <TooltipPortal>
         <TooltipContent side="top" className="max-w-[280px]">
-          {EMPTY_CLASSROOMS_TOOLTIP}
+          {t('studentSelector.emptyTooltip')}
         </TooltipContent>
       </TooltipPortal>
     </Tooltip>

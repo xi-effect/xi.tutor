@@ -1,2 +1,2 @@
-export { formatToShortDate } from './formatDate';
-export { accessModeLabels, accessModeStyles } from './materialAccessMode';
+export { formatToShortDate, formatUpdatedLabel } from './formatDate';
+export { accessModeStyles } from './materialAccessMode';

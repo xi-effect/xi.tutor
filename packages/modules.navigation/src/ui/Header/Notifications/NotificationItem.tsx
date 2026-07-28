@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { Check } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { DropdownMenuItem } from '@xipkg/dropdown';
@@ -32,6 +33,8 @@ export const NotificationItem = ({
   onOpenCustomModal: (payload: CustomNotificationModalPayload) => void;
   asDropdownItem?: boolean;
 }) => {
+  const { t } = useTranslation('navigation');
+
   // Обработчик клика по уведомлению - переход на целевую страницу или открытие модалки
   const handleClick = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -70,7 +73,9 @@ export const NotificationItem = ({
 
   const className = cn(
     `flex h-full items-start gap-2 rounded-[16px] p-3 ${
-      !notification.is_read ? 'bg-brand-0 hover:bg-brand-0' : 'bg-gray-0 hover:bg-gray-5'
+      !notification.is_read
+        ? 'bg-status-info-background hover:bg-status-info-background'
+        : 'bg-background-surface hover:bg-background-page'
     }`,
   );
 
@@ -93,12 +98,12 @@ export const NotificationItem = ({
       />
 
       <div className="flex flex-1 flex-col gap-1">
-        <span className="text-s-base font-medium text-gray-100">{title}</span>
-        <span className="text-gray-80 text-xs-base font-normal">{description}</span>
+        <span className="text-s-base text-text-primary font-medium">{title}</span>
+        <span className="text-text-primary text-xs-base font-normal">{description}</span>
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger className="w-fit" asChild>
-              <span className="text-gray-80 text-xxs-base font-normal">{relativeTime}</span>
+              <span className="text-text-primary text-xxs-base font-normal">{relativeTime}</span>
             </TooltipTrigger>
             <TooltipContent side="bottom">
               <p>{fullTime}</p>
@@ -114,14 +119,14 @@ export const NotificationItem = ({
               <Button
                 variant="none"
                 size="sm"
-                className="group/button bg-gray-0 hover:bg-brand-80 h-6 w-6 rounded-sm p-0 opacity-0 transition-opacity group-hover:opacity-100"
+                className="group/button bg-background-surface hover:bg-action-primary-background-default h-6 w-6 rounded-sm p-0 opacity-0 transition-opacity group-hover:opacity-100"
                 onClick={handleMarkAsRead}
               >
-                <Check className="group-hover/button:fill-gray-0 h-3 w-3 fill-gray-100" />
+                <Check className="group-hover/button:fill-action-primary-text fill-icon-primary h-3 w-3" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="left">
-              <p>Отметить как прочитанное</p>
+              <p>{t('markAsRead')}</p>
             </TooltipContent>
           </Tooltip>
         </TooltipProvider>

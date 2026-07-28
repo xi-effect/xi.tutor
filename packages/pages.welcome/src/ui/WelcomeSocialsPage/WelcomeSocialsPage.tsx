@@ -1,45 +1,68 @@
 import { WelcomePageLayout, WelcomeButtons } from '../../ui';
 import { useTranslation } from 'react-i18next';
 import { SocialItem } from './SocialItem';
-import { TelegramFilled } from '@xipkg/icons';
+import { TelegramFilled, VK, Check } from '@xipkg/icons';
 import { useServiceButton, useWelcomeSocialsForm } from '../../hooks';
 import { useOnboardingAnalytics } from '../../hooks/useOnboardingAnalytics';
-import { useState } from 'react';
-import { useCreateTgConnection, useGetNotificationsStatus } from 'common.services';
+import { VkConnectButton } from 'common.ui';
+import { useTgConnection, useVkConnection } from 'common.services';
 
 export const WelcomeSocialsPage = () => {
-  const { t } = useTranslation('welcomeSocials');
+  const { t } = useTranslation(['welcomeSocials', 'welcome']);
   useOnboardingAnalytics({ step: 'notifications' });
 
   const { onBackwards, onForwards, isLoading } = useWelcomeSocialsForm();
 
-  const [tgLink, setTgLink] = useState<string | null>(null);
+  const {
+    isActive: isTgActive,
+    isPending: isTgPending,
+    isAwaitingConfirmation: isTgAwaitingConfirmation,
+    link: tgLink,
+    handleConnect: handleConnectTg,
+    handleOpenLink: handleOpenTgLink,
+  } = useTgConnection();
 
-  const { data } = useGetNotificationsStatus();
-  const { mutate, isPending } = useCreateTgConnection();
-
-  const handleCreateTgConnection = () => {
-    if (data?.telegram) return;
-
-    mutate(undefined, {
-      onSuccess: (link: string) => {
-        if (link) setTgLink(link);
-      },
-    });
-  };
+  const {
+    isActive: isVkActive,
+    isPending: isVkPending,
+    isWidgetReady: isVkWidgetReady,
+    connectionData: vkConnectionData,
+    handleConnect: handleConnectVk,
+    handleWidgetInteraction: handleVkWidgetInteraction,
+  } = useVkConnection();
 
   const tgButton = useServiceButton({
     service: 'telegram',
-    createConnection: handleCreateTgConnection,
+    createConnection: handleConnectTg,
+    openLink: handleOpenTgLink,
     link: tgLink,
-    isPending,
-    isConnected: !!data?.telegram,
+    isPending: isTgPending,
+    isAwaitingConfirmation: isTgAwaitingConfirmation,
+    isConnected: isTgActive,
   });
 
-  // const vkButton = useServiceButton({
-  //   service: 'ВКонтакте',
-  //   isConnected: false,
-  // });
+  const vkAction = () => {
+    if (isVkActive) {
+      return (
+        <div className="ml-auto p-1 sm:p-3">
+          <Check className="fill-brand-100" />
+        </div>
+      );
+    }
+
+    return (
+      <VkConnectButton
+        label="Подключить"
+        isPreparing={isVkPending && !isVkWidgetReady}
+        groupId={vkConnectionData?.group_id}
+        connectionKey={vkConnectionData?.key}
+        onFallbackClick={handleConnectVk}
+        onWidgetInteraction={handleVkWidgetInteraction}
+        data-umami-event="service-connect"
+        data-umami-event-service="vk"
+      />
+    );
+  };
 
   return (
     <WelcomePageLayout
@@ -62,13 +85,18 @@ export const WelcomeSocialsPage = () => {
     >
       <div className="mt-6 flex flex-col gap-2">
         <SocialItem>
-          <TelegramFilled className="fill-brand-100 h-8 w-8" />
-          <span className="font-semibold text-gray-100 dark:text-gray-100">Telegram</span>
+          <TelegramFilled className="fill-icon-brand h-8 w-8" />
+          <span className="text-text-primary dark:text-text-primary font-semibold">Telegram</span>
           {tgButton}
+        </SocialItem>
+        <SocialItem>
+          <VK className="h-8 w-8 !text-[#0077FF]" />
+          <span className="font-semibold text-gray-100 dark:text-gray-100">Вконтакте</span>
+          {vkAction()}
         </SocialItem>
       </div>
       <WelcomeButtons
-        customText="Начать работу"
+        customText={t('buttons.start_button', { ns: 'welcome' })}
         backButtonHandler={onBackwards}
         continueButtonHandler={onForwards}
         isLoading={isLoading}

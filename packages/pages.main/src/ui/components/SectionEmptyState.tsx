@@ -28,7 +28,7 @@ export const SectionEmptyState: FC<SectionEmptyStateProps> = ({
 }) => (
   <div
     className={cn(
-      'border-gray-10 bg-gray-0 dark:border-gray-70 mb-3 flex w-full rounded-xl border border-dashed',
+      'border-border-default bg-background-surface dark:border-border-strong mb-3 flex w-full rounded-xl border border-dashed',
       minHeightClass,
       illustration ? 'flex-col overflow-hidden' : 'flex-col items-center justify-center gap-5',
       className,
@@ -39,9 +39,11 @@ export const SectionEmptyState: FC<SectionEmptyStateProps> = ({
         {/* flex-1: забирает всё свободное место; колонка картинки — узкая по факту макс. ширины иллюстрации, а не ~40% строки */}
         <div className="flex min-w-0 flex-1 flex-col justify-center gap-5 px-4 py-5 sm:px-6 sm:py-6">
           <div className="flex min-w-0 flex-col gap-2 text-left">
-            <p className="text-m-base font-semibold text-gray-100">{title}</p>
+            <p className="text-m-base text-text-primary font-semibold">{title}</p>
             {description ? (
-              <p className="text-s-base text-gray-60 min-w-0 dark:text-gray-50">{description}</p>
+              <p className="text-s-base text-text-secondary dark:text-text-muted min-w-0">
+                {description}
+              </p>
             ) : null}
           </div>
           {actions ? (
@@ -62,9 +64,9 @@ export const SectionEmptyState: FC<SectionEmptyStateProps> = ({
     ) : (
       <>
         <div className="flex flex-col items-center gap-2 text-center">
-          <p className="text-m-base font-semibold text-gray-100">{title}</p>
+          <p className="text-m-base text-text-primary font-semibold">{title}</p>
           {description ? (
-            <p className="text-s-base text-gray-60 dark:text-gray-50">{description}</p>
+            <p className="text-s-base text-text-secondary dark:text-text-muted">{description}</p>
           ) : null}
         </div>
         {actions ? (

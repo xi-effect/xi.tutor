@@ -1,0 +1,49 @@
+{
+  "title": "Добавить занятие",
+  "schedule": "Расписание",
+  "cancel": "Отменить",
+  "submit": "Добавить",
+  "form": {
+    "name": "Название",
+    "namePlaceholder": "Математика",
+    "description": "Описание",
+    "descriptionPlaceholder": "Тема, план, комментарий…",
+    "classroom": "Кабинет",
+    "currentClassroom": "Текущий кабинет",
+    "date": "Дата",
+    "time": "Время",
+    "startPlaceholder": "17:40 Начало",
+    "endPlaceholder": "19:00 Конец",
+    "repeat": "Повторение",
+    "repeatHint": "Повторять занятие каждую неделю в выбранные дни:"
+  },
+  "weekdays_short": "Пн,Вт,Ср,Чт,Пт,Сб,Вс",
+  "studentSelector": {
+    "loading": "Загрузка...",
+    "empty": "Нет доступных кабинетов",
+    "placeholder": "Ученик или группа",
+    "emptyTooltip": "У вас пока нет кабинетов. Создайте кабинет для групповых или индивидуальных занятий"
+  },
+  "toast": {
+    "success": "Занятие добавлено"
+  },
+  "validation": {
+    "invalidTime": "Неверный формат времени",
+    "titleRequired": "Введите название",
+    "studentRequired": "Выберите ученика или группу",
+    "dateRequired": "Укажите дату",
+    "startTimeRequired": "Укажите время начала",
+    "endTimeRequired": "Укажите время окончания",
+    "endAfterStart": "Время окончания должно быть позже начала",
+    "maxDuration": "Максимальная длительность занятия — 12 часов",
+    "repeatDaysRequired": "Выберите хотя бы один день недели"
+  },
+  "hours_one": "{{count}} час",
+  "hours_few": "{{count}} часа",
+  "hours_many": "{{count}} часов",
+  "hours_other": "{{count}} часов",
+  "minutes_one": "{{count}} минута",
+  "minutes_few": "{{count}} минуты",
+  "minutes_many": "{{count}} минут",
+  "minutes_other": "{{count}} минут"
+}

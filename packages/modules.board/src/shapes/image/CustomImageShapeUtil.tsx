@@ -11,6 +11,7 @@ import {
   Editor,
 } from '@ibodr/draw';
 import { memo, useCallback, useEffect, useState } from 'react';
+import i18n from 'i18next';
 
 export class CustomImageShapeUtil extends DrawImageShapeUtil {
   override component(shape: DrImageShape) {
@@ -190,10 +191,10 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
         }}
       >
         <div
-          className="bg-gray-10 flex size-full animate-pulse items-center justify-center rounded"
+          className="bg-background-subtle flex size-full animate-pulse items-center justify-center rounded"
           style={containerStyle}
         >
-          <div className="text-gray-60 pointer-events-none">
+          <div className="text-text-secondary pointer-events-none">
             <ImagePlaceholderIcon />
           </div>
         </div>
@@ -212,12 +213,14 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
         }}
       >
         <div
-          className="border-gray-20 bg-gray-5 flex size-full items-center justify-center rounded border border-dashed"
+          className="border-border-default bg-background-page flex size-full items-center justify-center rounded border border-dashed"
           style={containerStyle}
         >
-          <div className="text-gray-60 pointer-events-none flex flex-col items-center gap-1.5">
+          <div className="text-text-secondary pointer-events-none flex flex-col items-center gap-1.5">
             <BrokenImageIcon />
-            <span className="text-[11px] select-none">Не удалось загрузить</span>
+            <span className="text-[11px] select-none">
+              {i18n.t('file.loadFailed', { ns: 'board' })}
+            </span>
           </div>
         </div>
       </HTMLContainer>
@@ -276,8 +279,8 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
             />
           )}
           {!loadedSrc && !nextSrc && (
-            <div className="bg-gray-10 flex size-full animate-pulse items-center justify-center rounded">
-              <div className="text-gray-60 pointer-events-none">
+            <div className="bg-background-subtle flex size-full animate-pulse items-center justify-center rounded">
+              <div className="text-text-secondary pointer-events-none">
                 <ImagePlaceholderIcon />
               </div>
             </div>
@@ -285,7 +288,7 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
         </div>
         {'url' in shape.props && shape.props.url && (
           <a
-            className="bg-gray-0/85 pointer-events-auto absolute top-1 right-1 z-1 flex size-[22px] items-center justify-center rounded text-xs text-gray-100 no-underline opacity-0 transition-opacity hover:opacity-100"
+            className="bg-background-surface/85 text-text-primary pointer-events-auto absolute top-1 right-1 z-1 flex size-[22px] items-center justify-center rounded text-xs no-underline opacity-0 transition-opacity hover:opacity-100"
             href={shape.props.url}
             target="_blank"
             rel="noopener noreferrer"

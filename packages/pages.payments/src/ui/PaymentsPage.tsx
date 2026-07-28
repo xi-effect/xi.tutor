@@ -12,7 +12,6 @@ import {
   useGetRecipientInvoiceByStudent,
 } from 'common.services';
 import { UserRoleT } from 'common.api';
-import { DateTimeDisplay } from 'common.ui';
 import { MobileTutorActionButton } from 'features.invites';
 import { ModalTemplate } from './Templates';
 import { cn, useMediaQuery } from '@xipkg/utils';
@@ -181,21 +180,30 @@ export const PaymentsPage = () => {
   );
 
   return (
-    <div className={cn('bg-gray-5 flex h-full flex-col', isMobile && 'max-h-[calc(100dvh-64px)]')}>
-      <div className="flex flex-col gap-5 px-5 pt-5">
-        <DateTimeDisplay />
+    <div
+      className={cn(
+        'bg-background-page flex flex-col gap-4',
+        isMobile ? 'max-h-[calc(100dvh-64px)]' : 'h-screen',
+      )}
+    >
+      <div className="flex w-full shrink-0 items-start justify-between px-5 pt-4 sm:flex-row sm:px-8 sm:pt-8 md:px-10 md:pt-10">
         <Header
           onCreateInvoice={onOpenInvoiceModal}
+          onCreateTemplate={() => setIsTemplateModalOpen(true)}
           activeTab={activeTab}
           onTabChange={onTabChange}
         />
       </div>
-      <TabsComponent
-        onApprovePayment={onOpenPaymentApproveModal}
-        activeTab={activeTab}
-        onTabChange={onTabChange}
-        onViewInvoice={onOpenInvoiceDetailsModal}
-      />
+
+      <div className={cn('h-full pb-5 pl-5 sm:mt-10 sm:pl-8 md:pl-10', !isMobile && 'flex-1')}>
+        <TabsComponent
+          onApprovePayment={onOpenPaymentApproveModal}
+          activeTab={activeTab}
+          onTabChange={onTabChange}
+          onViewInvoice={onOpenInvoiceDetailsModal}
+        />
+      </div>
+
       {invoiceDetailsModalState.isOpen && invoiceDetailsModalState.payment && (
         <PaymentInvoiceDetailsModal
           open={invoiceDetailsModalState.isOpen}

@@ -20,6 +20,7 @@ import {
 import { mapPaymentStatus, RolePaymentT } from 'common.types';
 import { UserRoleT } from 'common.api';
 import { getUserAvatarUrl } from 'common.utils';
+import { useTranslation } from 'react-i18next';
 import { formatDate } from '../utils';
 
 type InvoiceItemT = {
@@ -51,33 +52,30 @@ type PaymentInvoiceDetailsModalPropsT = {
   currentUserRole: UserRoleT;
 };
 
-const mapPaymentType: Record<'cash' | 'transfer', string> = {
-  cash: 'Наличные',
-  transfer: 'Перевод',
-};
-
 const getItemTotal = (price: string, quantity: number) => Number(price) * quantity;
 
 const InvoiceItemsTable = ({ items }: { items: InvoiceItemT[] }) => {
+  const { t } = useTranslation('payments');
+
   if (!items.length) {
-    return <p className="text-gray-60 text-sm">Подробности по счёту отсутствуют.</p>;
+    return <p className="text-text-secondary text-sm">{t('invoiceModal.detailsEmpty')}</p>;
   }
 
   return (
     <>
       <div className="hidden overflow-x-auto md:block">
         <div className="min-w-[560px]">
-          <div className="text-gray-60 grid grid-cols-[minmax(200px,1fr)_100px_100px_120px] gap-4 border-b pb-3 text-sm">
-            <p>Позиция</p>
-            <p>Цена</p>
-            <p>Количество</p>
-            <p>Сумма</p>
+          <div className="text-text-secondary grid grid-cols-[minmax(200px,1fr)_100px_100px_120px] gap-4 border-b pb-3 text-sm">
+            <p>{t('invoiceModal.item')}</p>
+            <p>{t('invoiceModal.price')}</p>
+            <p>{t('invoiceModal.quantity')}</p>
+            <p>{t('invoiceModal.sum')}</p>
           </div>
           <div className="divide-y">
             {items.map((item, index) => (
               <div
                 key={`${item.name}-${index}`}
-                className="text-gray-80 grid grid-cols-[minmax(200px,1fr)_100px_100px_120px] gap-4 py-3 text-sm"
+                className="text-text-primary grid grid-cols-[minmax(200px,1fr)_100px_100px_120px] gap-4 py-3 text-sm"
               >
                 <p className="break-words">{item.name}</p>
                 <p>{item.price} ₽</p>
@@ -93,21 +91,21 @@ const InvoiceItemsTable = ({ items }: { items: InvoiceItemT[] }) => {
         {items.map((item, index) => (
           <div
             key={`${item.name}-${index}`}
-            className="border-gray-20 bg-gray-0 flex flex-col gap-2 rounded-2xl border p-3"
+            className="border-border-default bg-background-surface flex flex-col gap-2 rounded-2xl border p-3"
           >
-            <p className="text-m-base text-gray-100">{item.name}</p>
+            <p className="text-m-base text-text-primary">{item.name}</p>
             <div className="grid grid-cols-2 gap-2 text-sm">
               <div>
-                <p className="text-gray-60">Цена</p>
-                <p className="text-gray-80">{item.price} ₽</p>
+                <p className="text-text-secondary">{t('invoiceModal.price')}</p>
+                <p className="text-text-primary">{item.price} ₽</p>
               </div>
               <div>
-                <p className="text-gray-60">Количество</p>
-                <p className="text-gray-80">{item.quantity}</p>
+                <p className="text-text-secondary">{t('invoiceModal.quantity')}</p>
+                <p className="text-text-primary">{item.quantity}</p>
               </div>
               <div className="col-span-2">
-                <p className="text-gray-60">Сумма</p>
-                <p className="text-gray-100">{getItemTotal(item.price, item.quantity)} ₽</p>
+                <p className="text-text-secondary">{t('invoiceModal.sum')}</p>
+                <p className="text-text-primary">{getItemTotal(item.price, item.quantity)} ₽</p>
               </div>
             </div>
           </div>
@@ -124,6 +122,7 @@ export const PaymentInvoiceDetailsModal: FC<PaymentInvoiceDetailsModalPropsT> = 
   recipientInvoiceId,
   currentUserRole,
 }) => {
+  const { t } = useTranslation('payments');
   const isTutor = currentUserRole === 'tutor';
   const {
     data: dataByTutor,
@@ -159,6 +158,11 @@ export const PaymentInvoiceDetailsModal: FC<PaymentInvoiceDetailsModalPropsT> = 
   const paymentStatus = data?.recipient_invoice.status || paymentDetails.status;
   const totalAmount = data?.recipient_invoice.total || paymentDetails.total;
 
+  const mapPaymentType: Record<'cash' | 'transfer', string> = {
+    cash: t('invoiceModal.paymentTypeCash'),
+    transfer: t('invoiceModal.paymentTypeTransfer'),
+  };
+
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
       <ModalContent className="relative flex max-h-[90dvh] w-[calc(100vw-32px)] max-w-[960px] flex-col overflow-y-auto max-sm:max-h-[calc(100dvh-32px)] sm:overflow-hidden">
@@ -168,39 +172,37 @@ export const PaymentInvoiceDetailsModal: FC<PaymentInvoiceDetailsModalPropsT> = 
           size="icon"
           className="absolute top-4 right-4 z-10 h-8 w-8 rounded-full p-0 sm:top-6 sm:right-6"
           onClick={() => onOpenChange(false)}
-          aria-label="Закрыть модальное окно"
+          aria-label={t('invoiceModal.closeAria')}
         >
-          <Close className="fill-gray-80 h-5 w-5" />
+          <Close className="fill-icon-primary h-5 w-5" />
         </Button>
 
         <ModalHeader className="border-0 p-4 sm:p-6">
-          <ModalTitle className="m-0 pr-10 text-gray-100">
-            Информация о выставленном счёте
-          </ModalTitle>
-          <ModalDescription className="sr-only">
-            Детали выставленного счёта, статус оплаты и позиции.
-          </ModalDescription>
+          <ModalTitle className="text-text-primary m-0 pr-10">{t('invoiceModal.title')}</ModalTitle>
+          <ModalDescription className="sr-only">{t('invoiceModal.description')}</ModalDescription>
         </ModalHeader>
 
         <ModalBody className="flex flex-1 flex-col gap-6 p-4 max-sm:overflow-visible sm:overflow-y-auto sm:p-6">
           <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-            <div className="border-gray-20 flex flex-col gap-4 rounded-2xl border p-4">
+            <div className="border-border-default flex flex-col gap-4 rounded-2xl border p-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="flex flex-col gap-1">
-                  <span className="text-gray-60 text-sm">Дата выставления</span>
+                  <span className="text-text-secondary text-sm">{t('invoiceModal.createdAt')}</span>
                   <div>{formatDate(data?.invoice.created_at || paymentDetails.created_at)}</div>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-gray-60 text-sm">Статус</span>
-                  <span className="text-m-base text-gray-100">
+                  <span className="text-text-secondary text-sm">{t('invoiceModal.status')}</span>
+                  <span className="text-m-base text-text-primary">
                     {mapPaymentStatus[paymentStatus] || paymentStatus}
                   </span>
                 </div>
                 <div className="sm:col-span-2">
                   <UserProfile
                     userId={userId}
-                    text={userData?.display_name || userData?.username || 'Пользователь'}
-                    label={isTutor ? 'Ученик' : 'Репетитор'}
+                    text={
+                      userData?.display_name || userData?.username || t('invoiceModal.userFallback')
+                    }
+                    label={isTutor ? t('invoiceModal.student') : t('invoiceModal.tutor')}
                     src={getUserAvatarUrl(userId)}
                     className="h-auto"
                   />
@@ -208,48 +210,51 @@ export const PaymentInvoiceDetailsModal: FC<PaymentInvoiceDetailsModalPropsT> = 
               </div>
             </div>
 
-            <div className="border-gray-20 flex flex-col gap-4 rounded-2xl border p-4">
+            <div className="border-border-default flex flex-col gap-4 rounded-2xl border p-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="flex flex-col gap-1">
-                  <span className="text-gray-60 text-sm">Тип оплаты</span>
-                  <span className="text-m-base text-gray-100">
-                    {paymentType ? mapPaymentType[paymentType] : 'Не указан'}
+                  <span className="text-text-secondary text-sm">
+                    {t('invoiceModal.paymentType')}
+                  </span>
+                  <span className="text-m-base text-text-primary">
+                    {paymentType
+                      ? mapPaymentType[paymentType]
+                      : t('invoiceModal.paymentTypeUnknown')}
                   </span>
                 </div>
                 <div className="flex flex-col gap-1">
-                  <span className="text-gray-60 text-sm">Сумма</span>
-                  <span className="text-brand-100 text-h6 font-medium">{totalAmount} ₽</span>
+                  <span className="text-text-secondary text-sm">{t('invoiceModal.amount')}</span>
+                  <span className="text-text-link text-h6 font-medium">{totalAmount} ₽</span>
                 </div>
                 <div className="flex flex-col gap-1 sm:col-span-2">
-                  <span className="text-gray-60 text-sm">Комментарий к счёту</span>
-                  <p className="text-gray-80 text-sm whitespace-pre-wrap">
-                    {invoiceComment || 'Комментарий не указан.'}
+                  <span className="text-text-secondary text-sm">{t('invoiceModal.comment')}</span>
+                  <p className="text-text-primary text-sm whitespace-pre-wrap">
+                    {invoiceComment || t('invoiceModal.commentEmpty')}
                   </p>
                 </div>
               </div>
             </div>
           </div>
 
-          <section className="border-gray-20 flex flex-col gap-4 rounded-2xl border p-4">
+          <section className="border-border-default flex flex-col gap-4 rounded-2xl border p-4">
             <div className="flex items-center justify-between gap-2">
-              <h3 className="text-m-base font-medium text-gray-100">Подробности счёта</h3>
+              <h3 className="text-m-base text-text-primary font-medium">
+                {t('invoiceModal.detailsTitle')}
+              </h3>
             </div>
 
             {isLoadingInvoice && (
-              <p className="text-gray-60 text-sm">Загружаем подробности по счёту...</p>
+              <p className="text-text-secondary text-sm">{t('invoiceModal.detailsLoading')}</p>
             )}
 
             {!isLoadingInvoice && isErrorInvoice && (
               <Alert variant="brand">
                 <AlertIcon>
-                  <InfoCircle className="fill-brand-100" />
+                  <InfoCircle className="fill-icon-brand" />
                 </AlertIcon>
                 <AlertContainer>
-                  <AlertTitle>Не удалось загрузить счёт</AlertTitle>
-                  <AlertDescription>
-                    Попробуйте обновить данные. Если ошибка повторится, проверьте соединение и
-                    повторите позже.
-                  </AlertDescription>
+                  <AlertTitle>{t('invoiceModal.loadErrorTitle')}</AlertTitle>
+                  <AlertDescription>{t('invoiceModal.loadErrorDescription')}</AlertDescription>
                 </AlertContainer>
               </Alert>
             )}
@@ -263,12 +268,12 @@ export const PaymentInvoiceDetailsModal: FC<PaymentInvoiceDetailsModalPropsT> = 
         <ModalFooter className="flex w-full justify-end gap-4 border-0 p-4 sm:p-6">
           {isErrorInvoice && (
             <Button variant="secondary" className="w-31.75" onClick={() => refetchInvoice()}>
-              Обновить
+              {t('invoiceModal.refresh')}
             </Button>
           )}
 
           <Button className="w-31.75" variant="secondary" onClick={() => onOpenChange(false)}>
-            Закрыть
+            {t('invoiceModal.close')}
           </Button>
         </ModalFooter>
       </ModalContent>

@@ -25,7 +25,7 @@ export function AudioTimecodesList({
   if (timecodes.length === 0) return null;
 
   return (
-    <div className="border-gray-10 flex flex-col border-t" style={{ pointerEvents: 'none' }}>
+    <div className="border-border-default flex flex-col border-t" style={{ pointerEvents: 'none' }}>
       {timecodes.map((tc) => (
         <AudioTimecodeRow
           key={tc.id}

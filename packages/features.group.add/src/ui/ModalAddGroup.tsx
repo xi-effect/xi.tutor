@@ -21,10 +21,11 @@ import {
 } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { Button } from '@xipkg/button';
+import { useTranslation } from 'react-i18next';
 import { Autocomplete } from './Autocomplete';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { formSchema } from '../model';
+import { useFormSchema } from '../model';
 import { useCreateGroup } from '../services';
 
 const initialValues = { name: '', subject: null };
@@ -46,6 +47,7 @@ export const ModalAddGroup = ({
   open: controlledOpen,
   onOpenChange,
 }: ModalAddGroupProps) => {
+  const { t } = useTranslation('groupAdd');
   const [internalOpen, setInternalOpen] = useState(false);
   const isControlled = controlledOpen !== undefined;
   const isOpen = isControlled ? controlledOpen : internalOpen;
@@ -54,6 +56,7 @@ export const ModalAddGroup = ({
   const modalContentRef = useRef<HTMLDivElement | null>(null);
   const { mutate: createGroup, isPending } = useCreateGroup();
 
+  const formSchema = useFormSchema();
   type FormValues = z.infer<typeof formSchema>;
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -125,12 +128,10 @@ export const ModalAddGroup = ({
       >
         <ModalHeader>
           <ModalCloseButton onClick={closeModal} />
-          <ModalTitle className="m-0 max-w-[calc(100%-48px)] pr-10 leading-8 text-gray-100">
-            Создание группы
+          <ModalTitle className="text-text-primary m-0 max-w-[calc(100%-48px)] pr-10 leading-8">
+            {t('title')}
           </ModalTitle>
-          <ModalDescription className="sr-only">
-            Модальное окно для создания новой группы
-          </ModalDescription>
+          <ModalDescription className="sr-only">{t('description')}</ModalDescription>
         </ModalHeader>
 
         <Form {...form}>
@@ -141,8 +142,8 @@ export const ModalAddGroup = ({
                 name="name"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel htmlFor={field.name} className="m-0 text-gray-100">
-                      Название
+                    <FormLabel htmlFor={field.name} className="text-text-primary m-0">
+                      {t('fields.name')}
                     </FormLabel>
                     <FormControl>
                       <Input
@@ -162,8 +163,8 @@ export const ModalAddGroup = ({
                 name="subject"
                 render={({ field }) => (
                   <FormItem className="flex flex-col gap-2">
-                    <FormLabel htmlFor={field.name} className="m-0 text-gray-100">
-                      Предмет
+                    <FormLabel htmlFor={field.name} className="text-text-primary m-0">
+                      {t('fields.subject')}
                     </FormLabel>
                     <FormControl>
                       <Autocomplete field={field} containerRef={modalContentRef} />
@@ -182,19 +183,19 @@ export const ModalAddGroup = ({
                 disabled={isPending}
                 data-umami-event="group-create"
               >
-                {isPending ? 'Создание...' : 'Создать'}
+                {isPending ? t('actions.creating') : t('actions.create')}
               </Button>
               <Button
                 variant="none"
                 type="button"
-                className="bg-gray-5 hover:bg-gray-10 text-gray-100"
+                className="bg-background-page hover:bg-background-subtle text-text-primary"
                 onClick={() => {
                   handleButtonClick();
                   closeModal();
                 }}
                 data-umami-event="group-create-cancel"
               >
-                Отменить
+                {t('actions.cancel')}
               </Button>
             </ModalFooter>
           </form>

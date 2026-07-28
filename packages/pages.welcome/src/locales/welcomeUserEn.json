@@ -4,6 +4,12 @@
   "name_hint": "Use your real name so others know how to address you",
   "email": "Email",
   "continue_button": "Continue",
+  "avatar": "Avatar",
+  "avatar_optional": "(optional)",
+  "avatar_format_error": "This format is not supported",
+  "avatar_format_hint": "Upload a photo in (png, jpeg, webp)",
+  "avatar_size_error": "File is too large",
+  "avatar_size_hint": "Choose a photo up to 1 MB",
   "validation": {
     "required": "This field is required",
     "minLength": "Minimum ",

@@ -1,0 +1,25 @@
+{
+  "title": "Duplicate material",
+  "titleBoard": "Duplicate board",
+  "titleNote": "Duplicate note",
+  "description": "Choose a classroom where a copy of the {{type}} will be created",
+  "type": {
+    "material": "material",
+    "board": "board",
+    "note": "note"
+  },
+  "loading": "Loading classrooms...",
+  "error": "Failed to load classrooms",
+  "emptyTitle": "Nothing here yet",
+  "emptyDescription": "Create classrooms by inviting students to the platform",
+  "accessLabel": "Access type for the material in the classroom",
+  "accessPlaceholder": "Select access type for the material in the classroom",
+  "access": {
+    "read_write": "Collaborative",
+    "read_only": "Tutor only",
+    "no_access": "Draft"
+  },
+  "confirm": "Duplicate",
+  "confirming": "Duplicating...",
+  "cancel": "Cancel"
+}

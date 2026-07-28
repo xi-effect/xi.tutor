@@ -1,4 +1,5 @@
 import { addDays, format, isBefore, isSameDay, startOfDay, parse } from 'date-fns';
+import { getDateLocale } from 'common.ui';
 
 /**
  * Начало окна из `visibleCount` дней, в котором `anchorDay` — последний видимый день.
@@ -45,14 +46,14 @@ export const timeToString = (time: Date) => {
 export const parseDateTime = (dateStr: string, timeStr: string) =>
   parse(`${dateStr} ${timeStr}`, 'dd.MM.yyyy HH:mm', new Date());
 
-export const formatMonthLabel = (date: Date): string => {
-  const raw = date.toLocaleDateString('ru-RU', { month: 'long' });
+export const formatMonthLabel = (date: Date, locale: string = getDateLocale()): string => {
+  const raw = date.toLocaleDateString(locale, { month: 'long' });
   return raw.charAt(0).toUpperCase() + raw.slice(1);
 };
 
-export const getFullDateString = (date: Date) => {
-  const weekDayName = date.toLocaleDateString('ru-RU', { weekday: 'short' });
-  const monthName = date.toLocaleDateString('ru-RU', { month: 'long' });
+export const getFullDateString = (date: Date, locale: string = getDateLocale()) => {
+  const weekDayName = date.toLocaleDateString(locale, { weekday: 'short' });
+  const monthName = date.toLocaleDateString(locale, { month: 'long' });
 
   return `${weekDayName} ${date.getDate()} ${monthName}`;
 };
@@ -68,9 +69,9 @@ export const formatDate = (date: Date) => {
   return `${dd}.${mm}.${yyyy}`;
 };
 
-const formatRuDatePart = (date: Date, withYear: boolean): string => {
+const formatLocalizedDatePart = (date: Date, withYear: boolean, locale: string): string => {
   const s = date.toLocaleDateString(
-    'ru-RU',
+    locale,
     withYear
       ? { day: 'numeric', month: 'long', year: 'numeric' }
       : { day: 'numeric', month: 'long' },
@@ -79,29 +80,37 @@ const formatRuDatePart = (date: Date, withYear: boolean): string => {
 };
 
 /** Диапазон для кнопки DatePicker: «2 марта — 8 марта»; при смене года — «30 декабря 2025 — 3 января 2026» */
-export const formatDateRangeDisplay = (weekStart: Date, dayCount: number): string => {
+export const formatDateRangeDisplay = (
+  weekStart: Date,
+  dayCount: number,
+  locale: string = getDateLocale(),
+): string => {
   const days = Math.max(1, Math.min(7, dayCount));
   const end = new Date(weekStart);
   end.setDate(end.getDate() + days - 1);
   const crossesYear = weekStart.getFullYear() !== end.getFullYear();
-  const startLabel = formatRuDatePart(weekStart, crossesYear);
-  const endLabel = formatRuDatePart(end, crossesYear);
+  const startLabel = formatLocalizedDatePart(weekStart, crossesYear, locale);
+  const endLabel = formatLocalizedDatePart(end, crossesYear, locale);
   return `${startLabel} — ${endLabel}`;
 };
 
-export const formatWeekRange = (weekStart: Date): string => {
-  return formatDateRange(weekStart, 7);
+export const formatWeekRange = (weekStart: Date, locale: string = getDateLocale()): string => {
+  return formatDateRange(weekStart, 7, locale);
 };
 
 /** Диапазон дат от weekStart на dayCount дней (для заголовка при видимых столбцах канбана) */
-export const formatDateRange = (weekStart: Date, dayCount: number): string => {
+export const formatDateRange = (
+  weekStart: Date,
+  dayCount: number,
+  locale: string = getDateLocale(),
+): string => {
   const days = Math.max(1, Math.min(7, dayCount));
   const end = new Date(weekStart);
   end.setDate(end.getDate() + days - 1);
   const d1 = weekStart.getDate();
   const d2 = end.getDate();
-  const m1 = weekStart.toLocaleDateString('ru-RU', { month: 'long' });
-  const m2 = end.toLocaleDateString('ru-RU', { month: 'long' });
+  const m1 = weekStart.toLocaleDateString(locale, { month: 'long' });
+  const m2 = end.toLocaleDateString(locale, { month: 'long' });
   const y = weekStart.getFullYear();
   if (m1 === m2) {
     return `${d1} - ${d2} ${m1} ${y}`;

@@ -1,5 +1,6 @@
 import { useRef } from 'react';
 import { useInfiniteQuery } from '../../hooks';
+import { useTranslation } from 'react-i18next';
 import { MaterialsTabEmptyState } from '../MaterialsTabEmptyState';
 import { MaterialsCard } from 'features.materials.card';
 import { useMaterialsDuplicate } from '../../provider';
@@ -7,6 +8,7 @@ import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 import { useMediaQuery } from '@xipkg/utils';
 
 export const Materials = () => {
+  const { t } = useTranslation('materials');
   const parentRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery('(max-width: 960px)');
 
@@ -19,20 +21,25 @@ export const Materials = () => {
     <div ref={parentRef}>
       {notFoundItems ? (
         <MaterialsTabEmptyState
-          title="Пока нет досок"
-          description="Создайте доску — она появится в этом списке."
+          title={t('empty.boardsTitle')}
+          description={t('empty.boardsDescription')}
         />
       ) : (
         <GridVirtualizer
           parentRef={parentRef}
           items={items}
-          defaultRowHeight={100}
+          defaultRowHeight={160}
           minItemWidth={300}
           gap={20}
           maxColumns={4}
           isSingleColumn={isMobile}
           renderItem={(material) => (
-            <MaterialsCard {...material} onDuplicate={openModal} className="w-full min-w-auto" />
+            <MaterialsCard
+              {...material}
+              onDuplicate={openModal}
+              layout="gallery"
+              className="w-full"
+            />
           )}
         />
       )}

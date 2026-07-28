@@ -10,6 +10,7 @@ import {
 } from '../shapes/audio';
 import { ALLOWED_AUDIO_MIME_TYPES } from '../constants/mimeTypes';
 import { resolveShapeCoordinates } from '../utils';
+import i18n from 'i18next';
 
 const MAX_AUDIO_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
 const MAX_AUDIO_SHAPES = 20;
@@ -41,8 +42,8 @@ async function getAudioDuration(file: File): Promise<number> {
 
 export async function insertAudio(editor: Editor, file: File, token: string) {
   if (!ALLOWED_AUDIO_MIME_TYPES.has(file.type)) {
-    toast.error('Неподдерживаемый формат', {
-      description: 'Выберите аудиофайл (MP3, OGG, WAV, AAC, FLAC и др.).',
+    toast.error(i18n.t('toast.unsupportedFormat', { ns: 'board' }), {
+      description: i18n.t('toast.audioFormatDesc', { ns: 'board' }),
       duration: 5000,
     });
     return;
@@ -50,16 +51,19 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
 
   const signatureValid = await checkAudioMagicBytes(file);
   if (!signatureValid) {
-    toast.error('Неверный формат файла', {
-      description: 'Содержимое файла не соответствует заявленному типу аудио.',
+    toast.error(i18n.t('toast.audioInvalidFormat', { ns: 'board' }), {
+      description: i18n.t('toast.audioInvalidFormatDesc', { ns: 'board' }),
       duration: 5000,
     });
     return;
   }
 
   if (file.size > MAX_AUDIO_SIZE_BYTES) {
-    toast.error('Файл слишком большой', {
-      description: `Размер аудио не должен превышать 5 MiB (сейчас ${(file.size / 1024 / 1024).toFixed(2)} MiB).`,
+    toast.error(i18n.t('toast.fileTooLarge', { ns: 'board' }), {
+      description: i18n.t('toast.audioSizeDesc', {
+        ns: 'board',
+        size: (file.size / 1024 / 1024).toFixed(2),
+      }),
       duration: 5000,
     });
     return;
@@ -68,8 +72,8 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
   const existingCount = editor.getCurrentPageShapes().filter((s) => s.type === 'audio').length;
 
   if (existingCount >= MAX_AUDIO_SHAPES) {
-    toast.error('Лимит аудиофайлов', {
-      description: `На доске может быть не более ${MAX_AUDIO_SHAPES} аудиообъектов.`,
+    toast.error(i18n.t('toast.audioLimitTitle', { ns: 'board' }), {
+      description: i18n.t('toast.audioLimitDesc', { ns: 'board', max: MAX_AUDIO_SHAPES }),
       duration: 5000,
     });
     return;
@@ -116,8 +120,12 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
       });
     } catch (err) {
       console.error('[insertAudio] Upload failed:', err);
-      const msg = err instanceof Error ? err.message : 'Не удалось загрузить аудио';
-      toast.error('Ошибка загрузки аудио', { description: msg, duration: 5000 });
+      const msg =
+        err instanceof Error ? err.message : i18n.t('toast.audioUploadFailed', { ns: 'board' });
+      toast.error(i18n.t('toast.audioUploadError', { ns: 'board' }), {
+        description: msg,
+        duration: 5000,
+      });
       editor.deleteShapes([shapeId]);
     }
   })();

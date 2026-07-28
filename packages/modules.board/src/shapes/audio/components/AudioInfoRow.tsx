@@ -3,6 +3,7 @@ import { Button } from '@xipkg/button';
 import { SoundTwo, Plus } from '@xipkg/icons';
 import { stopEvent } from '../constants';
 import { formatTime, formatFileSize } from '../utils';
+import { useTranslation } from 'react-i18next';
 
 type AudioInfoRowProps = {
   currentTime: number;
@@ -32,14 +33,15 @@ export function AudioInfoRow({
   onVolumeChange,
   onToggleMute,
 }: AudioInfoRowProps) {
+  const { t } = useTranslation('board');
   return (
-    <div className="text-gray-60 flex items-center justify-between text-[10px]">
+    <div className="text-text-secondary flex items-center justify-between text-[10px]">
       <div className="flex items-center gap-1.5">
         {canAddTimecode && (
           <Button
             type="button"
             variant="none"
-            className="hover:text-gray-80 flex h-5 min-w-5 items-center justify-center p-0 text-gray-50"
+            className="hover:text-text-primary text-text-muted flex h-5 min-w-5 items-center justify-center p-0"
             style={{ pointerEvents: isInteractive ? 'all' : 'none' }}
             data-audio-control=""
             onPointerDown={isInteractive ? stopEvent : undefined}
@@ -86,7 +88,7 @@ export function AudioInfoRow({
             type="button"
             variant="none"
             size="s"
-            className="text-gray-60 hover:text-gray-80 flex h-5 min-w-5 shrink-0 items-center justify-center p-0"
+            className="text-text-secondary hover:text-text-primary flex h-5 min-w-5 shrink-0 items-center justify-center p-0"
             onClick={onToggleMute}
           >
             <SoundTwo
@@ -96,7 +98,7 @@ export function AudioInfoRow({
           </Button>
         </div>
 
-        {syncPlayback && <span className="text-xxs-base">Вместе</span>}
+        {syncPlayback && <span className="text-xxs-base">{t('audio.together')}</span>}
       </div>
     </div>
   );

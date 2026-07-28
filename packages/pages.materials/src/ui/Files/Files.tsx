@@ -1,10 +1,12 @@
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from './Card';
 import { useInfiniteQuery } from '../../hooks';
 import { MaterialsTabEmptyState } from '../MaterialsTabEmptyState';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 
 export const Files = () => {
+  const { t } = useTranslation('materials');
   const parentRef = useRef<HTMLDivElement>(null);
 
   const { items, isLoading, isError } = useInfiniteQuery(parentRef, 'note');
@@ -15,8 +17,8 @@ export const Files = () => {
     <div ref={parentRef} className="h-[calc(100vh-158px)] overflow-auto">
       {notFoundItems ? (
         <MaterialsTabEmptyState
-          title="Пока нет файлов"
-          description="Загруженные файлы появятся в этом списке."
+          title={t('empty.filesTitle')}
+          description={t('empty.filesDescription')}
         />
       ) : (
         <GridVirtualizer

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { AccessModeT, MaterialActionsMenuPropsT } from 'common.types';
 import {
   DropdownMenu,
@@ -13,17 +13,12 @@ import {
 import { Button } from '@xipkg/button';
 import { MoreVert } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
-
-const options: { value: AccessModeT; label: string }[] = [
-  { value: 'read_only', label: 'только репетитор' },
-  { value: 'no_access', label: 'черновик' },
-  { value: 'read_write', label: 'совместная работа' },
-];
+import { useTranslation } from 'react-i18next';
 
 /** text-xs-base нельзя вместе с text-gray-* — twMerge снимает цвет текста */
-const menuSurfaceClass = 'border-gray-10 bg-gray-0 border';
+const menuSurfaceClass = 'border-border-default bg-background-surface border';
 const menuItemClass =
-  'text-gray-100 hover:bg-brand-0 hover:text-gray-100 focus:text-gray-100 h-8 items-center whitespace-nowrap rounded-lg px-2 py-0 text-sm leading-none';
+  'text-text-primary hover:bg-status-info-background hover:text-text-primary focus:text-text-primary h-8 items-center whitespace-nowrap rounded-lg px-2 py-0 text-sm leading-none';
 
 /**
  * SubTrigger из @xipkg/dropdown сам рисует lucide ChevronRight (stroke).
@@ -31,8 +26,8 @@ const menuItemClass =
  * Пиним chevron абсолютом по центру строки.
  */
 const menuSubTriggerClass = cn(
-  'relative flex h-8 items-center rounded-lg px-2 pr-8 text-sm leading-none text-gray-100',
-  'hover:bg-brand-0 hover:text-gray-100 focus:bg-brand-0 focus:text-gray-100 data-[state=open]:bg-brand-0 data-[state=open]:text-brand-80',
+  'relative flex h-8 items-center rounded-lg px-2 pr-8 text-sm leading-none text-text-primary',
+  'hover:bg-status-info-background hover:text-text-primary focus:bg-status-info-background focus:text-text-primary data-[state=open]:bg-status-info-background data-[state=open]:text-text-link',
   '[&>svg:last-child]:pointer-events-none [&>svg:last-child]:absolute [&>svg:last-child]:top-1/2 [&>svg:last-child]:right-2',
   '[&>svg:last-child]:size-4 [&>svg:last-child]:!m-0 [&>svg:last-child]:-translate-y-1/2',
   '[&>svg:last-child]:!fill-none [&>svg:last-child]:shrink-0 [&>svg:last-child]:stroke-current',
@@ -48,7 +43,17 @@ export const MaterialActionsMenu = ({
   onDuplicate,
   setModalOpen,
 }: MaterialActionsMenuPropsT) => {
+  const { t } = useTranslation('materialsCard');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const options = useMemo(
+    () =>
+      (['read_only', 'no_access', 'read_write'] as AccessModeT[]).map((value) => ({
+        value,
+        label: t(`accessMode.${value}`),
+      })),
+    [t],
+  );
 
   const handleAction = (action: () => void) => (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -68,19 +73,22 @@ export const MaterialActionsMenu = ({
       <DropdownMenuTrigger asChild>
         <Button
           onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
-          className="group-hover:bg-gray-0 h-8 min-h-8 w-8 min-w-8 rounded-sm"
+          className="group-hover:bg-background-surface h-8 min-h-8 w-8 min-w-8 rounded-sm"
           variant="none"
           size="icon"
           data-umami-event="material-actions-menu-open"
         >
-          <MoreVert className="fill-gray-80 h-4 w-4" />
+          <MoreVert className="fill-icon-primary h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
         side="bottom"
         align="end"
-        className={cn(menuSurfaceClass, 'w-56 space-y-1 rounded-lg p-2 font-normal text-gray-100')}
+        className={cn(
+          menuSurfaceClass,
+          'text-text-primary w-56 space-y-1 rounded-lg p-2 font-normal',
+        )}
         onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
       >
         {isClassroom && isTutor ? (
@@ -90,13 +98,16 @@ export const MaterialActionsMenu = ({
               onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
               data-umami-event="material-change-access-open"
             >
-              Поменять доступ
+              {t('menu.changeAccess')}
             </DropdownMenuSubTrigger>
 
             <DropdownMenuSubContent
               sideOffset={8}
               alignOffset={-4}
-              className={cn(menuSurfaceClass, 'space-y-1 rounded-lg p-2 font-normal text-gray-100')}
+              className={cn(
+                menuSurfaceClass,
+                'text-text-primary space-y-1 rounded-lg p-2 font-normal',
+              )}
               onClick={(e: React.MouseEvent<HTMLDivElement>) => e.stopPropagation()}
             >
               {options.map(({ value, label }) => (
@@ -108,8 +119,8 @@ export const MaterialActionsMenu = ({
                   className={cn(
                     'h-8 cursor-pointer items-center rounded-lg py-0 text-sm leading-none',
                     studentAccessMode === value
-                      ? 'bg-brand-0 text-brand-80'
-                      : 'text-gray-100 hover:text-gray-100 focus:text-gray-100',
+                      ? 'bg-status-info-background text-text-link'
+                      : 'text-text-primary hover:text-text-primary focus:text-text-primary',
                   )}
                   data-umami-event="material-access-mode-change"
                   data-umami-event-mode={value}
@@ -126,7 +137,7 @@ export const MaterialActionsMenu = ({
             onClick={handleAction(onDuplicate)}
             data-umami-event="material-duplicate-to-classroom"
           >
-            Дублировать в кабинет
+            {t('menu.duplicateToClassroom')}
           </DropdownMenuItem>
         )}
         <DropdownMenuItem
@@ -134,7 +145,7 @@ export const MaterialActionsMenu = ({
           onClick={() => setModalOpen(true)}
           data-umami-event="material-edit"
         >
-          Редактировать
+          {t('menu.edit')}
         </DropdownMenuItem>
 
         <DropdownMenuItem
@@ -142,7 +153,7 @@ export const MaterialActionsMenu = ({
           onClick={handleAction(isClassroom ? onDeleteFromClassroom : onDelete)}
           data-umami-event={isClassroom ? 'material-delete-from-classroom' : 'material-delete'}
         >
-          Удалить
+          {t('menu.delete')}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

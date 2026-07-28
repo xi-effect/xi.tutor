@@ -2,7 +2,6 @@ import { useRef } from 'react';
 import { TemplateCard } from './TemplateCard';
 import { useTemplatesList } from 'common.services';
 import { useDeleteTemplate } from 'common.services';
-import { AddTemplateButton } from './AddTemplateButton';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 import { cn, useMediaQuery } from '@xipkg/utils';
 import { TemplateT } from 'common.types';
@@ -19,9 +18,11 @@ export const TemplatesGrid = () => {
   };
 
   if (isLoading) {
-    <div className="flex h-64 items-center justify-center">
-      <div className="text-red-500">Загрузка...</div>
-    </div>;
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <div className="text-red-500">Загрузка...</div>
+      </div>
+    );
   }
 
   if (isError) {
@@ -32,34 +33,26 @@ export const TemplatesGrid = () => {
     );
   }
 
-  const itemsWithButton = !items
-    ? [{ id: 0, name: 'createTemplateButton' }]
-    : [...items, { id: 0, name: 'createTemplateButton' }];
-
   return (
     <div
       className={cn(
-        'min-h-0 flex-1 overflow-auto pr-4 pl-5',
-        isMobile && 'h-[calc(100dvh-224px)]',
-        !isMobile && 'h-[calc(100dvh-120px)]',
+        'min-h-0 flex-1 overflow-auto pr-5',
+        isMobile && 'h-[calc(100dvh-204px)]',
+        !isMobile && 'h-[calc(100dvh-190px)]',
       )}
     >
       <div ref={parentRef}>
         <GridVirtualizer
           parentRef={parentRef}
-          items={itemsWithButton}
-          defaultRowHeight={100}
+          items={items ?? []}
+          defaultRowHeight={160}
           minItemWidth={300}
           gap={20}
           maxColumns={4}
           isSingleColumn={isMobile}
-          renderItem={(item: TemplateT) =>
-            item.id === 0 ? (
-              <AddTemplateButton />
-            ) : (
-              <TemplateCard {...item} handleDeleteTemplate={handleDeleteTemplate} />
-            )
-          }
+          renderItem={(item: TemplateT) => (
+            <TemplateCard {...item} handleDeleteTemplate={handleDeleteTemplate} />
+          )}
         />
 
         {!items?.length && (
