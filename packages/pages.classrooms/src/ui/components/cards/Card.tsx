@@ -103,7 +103,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
         onClick={handleClick}
         className="group bg-background-surface relative flex h-40 w-full cursor-pointer justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]"
       >
-        <div className="flex max-w-full flex-col gap-4">
+        <div className="flex h-full max-w-full flex-col justify-between">
           <div className="mr-8 flex w-auto max-w-[calc(100%-32px)] items-center gap-2">
             <StatusBadge status={status} kind={kind} deleted={deleted} />
 
@@ -116,7 +116,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
               />
             )}
           </div>
-          <div className="flex flex-row gap-2">
+          <div className="flex flex-row items-center gap-2">
             {kind === 'individual' && (
               <UserAvatar kind={kind} student_id={student_id?.toString() ?? ''} />
             )}
@@ -139,11 +139,11 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
         </div>
 
         {isTutor && (
-          <div className="absolute top-3 right-3 flex h-8 w-8 items-center justify-center">
+          <div className="absolute top-5 right-5 flex h-7 w-7 items-center justify-center">
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
               <DropdownMenuTrigger asChild>
                 <Button
-                  className="hover:bg-background-subtle h-8 min-h-8 w-8 min-w-8 rounded-lg p-0"
+                  className="hover:bg-background-subtle h-7 min-h-7 w-7 min-w-7 rounded-lg p-0"
                   variant="none"
                   size="icon"
                 >

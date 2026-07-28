@@ -1,6 +1,6 @@
 export const Skeleton = () => {
   return (
-    <div className="flex flex-row items-center pl-4">
+    <div className="flex flex-row items-center px-5 pt-5 sm:px-10 sm:pt-10">
       <div className="flex flex-col items-start gap-1">
         {/* UserProfile скелетон - точно как в реальном компоненте */}
         <div className="flex items-center gap-3">

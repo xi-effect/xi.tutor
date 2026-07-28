@@ -117,10 +117,10 @@
   "report": {
     "title": "Report",
     "whatIsThis": "What is this?",
-    "description": "This page collects technical information about your browser and device. It helps the Sovlium support team find and fix issues faster.",
+    "description": "This page collects technical information about your browser and device. It helps the sovlium support team find and fix issues faster.",
     "privacyTitle": "Important privacy information:",
     "privacyItem1": "The report contains technical information about your browser and device",
-    "privacyItem2": "Share the report only with official Sovlium support",
+    "privacyItem2": "Share the report only with official sovlium support",
     "privacyItem3": "By using this feature, you agree to collect and share technical information with support",
     "technicalInfo": "Technical information",
     "copy": "Copy",

@@ -104,7 +104,7 @@ export const Lessons = () => {
           analyticsSource="main"
         />
       ) : null}
-      <div className="bg-background-surface flex h-[calc(100vh-98px)] w-(--lessons-panel-width) flex-col gap-4 rounded-2xl px-5 pt-4 pr-2 pb-1">
+      <div className="bg-background-surface flex h-[calc(100vh-80px)] w-(--lessons-panel-width) flex-col gap-4 rounded-2xl px-5 pt-4 pr-2 pb-1">
         {/* Заголовок */}
         <div className="flex flex-row items-center gap-2 pr-3">
           <div className="flex min-w-0 flex-1 flex-row items-baseline gap-3">

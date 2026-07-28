@@ -82,7 +82,7 @@ const MaterialsContent = () => {
 
   return (
     <>
-      <div className="bg-background-surface xs:px-5 flex w-full flex-col gap-4 rounded-2xl pt-4 pr-2 pb-1 pl-5 transition-all duration-200 ease-linear sm:w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)]">
+      <div className="bg-background-surface xs:px-5 flex w-full min-w-0 flex-col gap-4 rounded-2xl pt-4 pr-2 pb-1 pl-5 transition-all duration-200 ease-linear">
         {/* Header: title + tabs + add button */}
         <div className="flex flex-row items-center gap-2">
           <h2 className="text-l-base text-text-primary font-medium">{t('materials.title')}</h2>

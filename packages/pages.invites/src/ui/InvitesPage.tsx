@@ -3,7 +3,12 @@ import { useParams } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { SupportPageShell } from 'modules.navigation';
 import { useCurrentUser } from 'common.services';
-import { PRODUCT_ANALYTICS_EVENTS, trackOnce, trackProductEvent } from 'common.utils';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  getInviteTrackingId,
+  trackOnce,
+  trackProductEvent,
+} from 'common.utils';
 import { useTranslation } from 'react-i18next';
 import { Invite } from './Invite';
 import { ErrorInvite } from './ErrorInvite';
@@ -19,14 +24,33 @@ export const InvitesPage = () => {
     localStorage.removeItem('invite.pending_code');
   }, []);
 
+  // Открытие страницы, не дожидаясь ответа preview-запроса (в отличие от
+  // student_invite_opened ниже) — часть новой воронки v2, см. ТЗ п.11.
+  useEffect(() => {
+    if (!inviteId) return;
+
+    trackOnce(`student_invite_page_viewed:${inviteId}`, () => {
+      void getInviteTrackingId(inviteId).then((invite_tracking_id) => {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_PAGE_VIEWED, {
+          invite_flow_version: 2,
+          invite_tracking_id,
+        });
+      });
+    });
+  }, [inviteId]);
+
   useEffect(() => {
     if (!data || !inviteId) return;
 
     trackOnce(`student_invite_opened:${inviteId}`, () => {
-      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_OPENED, {
-        invite_id: inviteId,
-        tutor_id: String(data.tutor.user_id),
-        student_authenticated: Boolean(user?.id),
+      void getInviteTrackingId(inviteId).then((invite_tracking_id) => {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_OPENED, {
+          invite_id: inviteId,
+          tutor_id: String(data.tutor.user_id),
+          student_authenticated: Boolean(user?.id),
+          invite_flow_version: 2,
+          invite_tracking_id,
+        });
       });
     });
   }, [data, inviteId, user?.id]);

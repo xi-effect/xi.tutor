@@ -156,12 +156,16 @@ export const SideBarItems = () => {
                 <Logo width={135} height={40} />
               </div>
             </div>
-            <SidebarTrigger className="group hover:bg-background-page focus:bg-background-subtle active:bg-background-subtle ml-auto h-10 min-h-10 w-10 min-w-10 shrink-0 rounded-lg">
+            <SidebarTrigger
+              className={`group hover:bg-background-page focus:bg-background-subtle active:bg-background-subtle ml-auto h-10 min-h-10 w-10 min-w-10 shrink-0 rounded-lg ${
+                isCollapsed ? '' : '-mr-2'
+              }`}
+            >
               <LayoutLeft className="text-text-secondary group-hover:text-text-primary group-focus:text-text-primary group-active:text-text-primary h-5 w-5" />
             </SidebarTrigger>
           </div>
 
-          <div className="flex w-full min-w-0 items-center">
+          <div className="flex w-full min-w-0 items-center overflow-visible">
             <DesktopUserMenu
               withOutText={isCollapsed}
               userId={user?.id || 0}

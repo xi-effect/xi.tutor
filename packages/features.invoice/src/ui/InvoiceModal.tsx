@@ -119,7 +119,7 @@ export const InvoiceModal = ({ open, onOpenChange }: InvoiceModalProps) => {
             <div className={`flex gap-2 ${isMobile ? 'flex-col' : 'flex-row'}`}>
               <Button
                 className={`h-[32px] ${isMobile ? 'w-full' : 'w-fit'}`}
-                variant="ghost"
+                variant="primary"
                 size="s"
                 type="button"
                 onClick={() => {

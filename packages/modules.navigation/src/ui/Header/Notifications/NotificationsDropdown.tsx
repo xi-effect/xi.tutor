@@ -36,7 +36,7 @@ export const NotificationsDropdown = ({
         <SidebarMenuItem>
           <SidebarMenuButton className="relative flex h-10 w-full items-center gap-5 rounded-lg p-2 focus-visible:ring-0 focus-visible:ring-offset-0">
             <span className="relative inline-flex size-6 shrink-0 items-center justify-center">
-              <Notification className="fill-icon-primary size-6" size="s" />
+              <Notification className="text-text-muted h-6 w-6" />
               {hasUnread && (
                 <span
                   className="absolute -top-0.5 -right-0.5 flex h-[10px] w-[10px] items-center justify-center rounded-full bg-[var(--xi-pink-20)]"

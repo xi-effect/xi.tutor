@@ -40,17 +40,22 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
   const { t } = useTranslation('groupManage');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
 
-  const handleClose = () => {
-    onOpenChange?.(false);
-    cleanupBodyScrollLock();
+  const isControlled = open !== undefined;
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const isModalOpen = isControlled ? Boolean(open) : uncontrolledOpen;
+
+  const setModalOpen = (next: boolean) => {
+    if (!isControlled) setUncontrolledOpen(next);
+    onOpenChange?.(next);
+    if (!next) cleanupBodyScrollLock();
   };
 
-  useEffect(() => {
-    if (open === false) cleanupBodyScrollLock();
-    return cleanupBodyScrollLock;
-  }, [open]);
+  const handleClose = () => setModalOpen(false);
 
-  const isModalOpen = open ?? false;
+  useEffect(() => {
+    if (!isModalOpen) cleanupBodyScrollLock();
+    return cleanupBodyScrollLock;
+  }, [isModalOpen]);
 
   const {
     data: allStudents,
@@ -133,15 +138,11 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
 
   const isLoading = isLoadingAllStudents || isLoadingGroupStudents;
   const isError = isErrorAllStudents || isErrorGroupStudents;
+  const students = allStudents ?? [];
+  const isEmpty = !isLoading && !isError && students.length === 0;
 
   return (
-    <Modal
-      open={open}
-      onOpenChange={(next) => {
-        if (typeof next === 'boolean') onOpenChange?.(next);
-        if (next === false) cleanupBodyScrollLock();
-      }}
-    >
+    <Modal open={isModalOpen} onOpenChange={setModalOpen}>
       {children && <ModalTrigger asChild>{children}</ModalTrigger>}
       <ModalContent aria-describedby={undefined}>
         <ModalHeader>
@@ -152,25 +153,33 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
         </ModalHeader>
         <ModalBody className={cn('flex flex-col gap-4 px-2 pt-2')}>
           <ScrollArea className="h-[300px]">
-            <div className="flex flex-col">
+            <div className="flex h-full min-h-[300px] flex-col">
               {isLoading && (
-                <div className="flex h-20 items-center justify-center">
+                <div className="flex min-h-[300px] items-center justify-center">
                   <span className="text-text-secondary">{t('loading')}</span>
                 </div>
               )}
               {isError && (
-                <div className="flex h-20 items-center justify-center">
+                <div className="flex min-h-[300px] items-center justify-center">
                   <span className="text-text-danger">{t('loadError')}</span>
                 </div>
               )}
-              {!isLoading && !isError && allStudents?.length === 0 && (
-                <div className="flex h-20 items-center justify-center">
-                  <span className="text-text-secondary">{t('empty')}</span>
+              {isEmpty && (
+                <div
+                  className={cn(
+                    'border-border-default bg-background-surface dark:border-border-strong',
+                    'mx-2 flex min-h-[280px] flex-1 flex-col items-center justify-center gap-2 rounded-xl border border-dashed px-6 py-8 text-center',
+                  )}
+                >
+                  <p className="text-m-base text-text-primary font-semibold">{t('empty.title')}</p>
+                  <p className="text-s-base text-text-secondary dark:text-text-muted max-w-sm">
+                    {t('empty.description')}
+                  </p>
                 </div>
               )}
               {!isLoading &&
                 !isError &&
-                allStudents?.map((student: TutorStudentSchemaMarshal) => (
+                students.map((student: TutorStudentSchemaMarshal) => (
                   <div
                     key={student.tutorship.student_id}
                     className="group hover:bg-background-page flex h-[48px] cursor-pointer flex-row items-center gap-2 rounded-2xl px-4"
@@ -191,7 +200,9 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
         <ModalFooter className="flex gap-2">
           <Button
             onClick={handleSave}
-            disabled={isSaving || addStudentMutation.isPending || deleteStudentMutation.isPending}
+            disabled={
+              isEmpty || isSaving || addStudentMutation.isPending || deleteStudentMutation.isPending
+            }
             data-umami-event="group-students-save"
           >
             {isSaving ? t('actions.saving') : t('actions.save')}
@@ -199,6 +210,10 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
           <Button
             variant="outline"
             onClick={() => {
+              if (isEmpty) {
+                handleClose();
+                return;
+              }
               // Сброс к исходному состоянию
               if (groupStudents && Array.isArray(groupStudents)) {
                 const groupStudentIds = new Set(
