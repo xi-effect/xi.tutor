@@ -1,92 +1,191 @@
-.my-custom-popover-class {
-  border-radius: 16px;
-  padding: 16px;
+.driver-popover.my-custom-popover-class {
+  border-radius: 20px;
+  padding: 24px;
   background-color: var(--xi-background-surface);
   max-width: 400px;
+  border: 1px solid var(--xi-border-default);
+  box-shadow:
+    0px 16px 16px 0px rgba(16, 16, 16, 0.08),
+    0px 24px 32px 0px rgba(16, 16, 16, 0.08);
+  color: var(--xi-text-primary);
 }
 
-.my-custom-popover-class .driver-popover-next-btn {
-  border-color: transparent;
-  padding: 5px 16px;
-  border-radius: 6px;
+.driver-popover.my-custom-popover-class .driver-popover-next-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 12px;
   text-shadow: none;
-  color: var(--xi-text-on-accent);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  color: var(--xi-action-primary-text);
   background-color: var(--xi-action-primary-background-default);
 }
 
-.my-custom-popover-class .driver-popover-next-btn:hover {
-  background-color: var(--xi-action-primary-background-pressed);
+.driver-popover.my-custom-popover-class .driver-popover-next-btn:hover {
+  background-color: var(--xi-action-primary-background-hover);
 }
 
-.my-custom-popover-class .driver-popover-navigation-btns {
+.driver-popover.my-custom-popover-class .driver-popover-navigation-btns {
   flex-grow: 0;
+  gap: 8px;
 }
 
-.my-custom-popover-class .driver-popover-navigation-btns button+button {
-  margin-left: 16px;
+.driver-popover.my-custom-popover-class .driver-popover-navigation-btns button + button {
+  margin-left: 0;
 }
 
-.my-custom-popover-class .driver-popover-prev-btn {
-  border-radius: 6px;
-  padding: 4px 16px;
-  background-color: var(--xi-background-surface);
-  border-color: var(--xi-border-default);
+.driver-popover.my-custom-popover-class .driver-popover-prev-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 12px;
+  text-shadow: none;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  background-color: transparent;
+  color: var(--xi-text-secondary);
+}
+
+.driver-popover.my-custom-popover-class .driver-popover-prev-btn:hover {
+  background-color: transparent;
   color: var(--xi-text-primary);
 }
 
-.my-custom-popover-class .driver-popover-prev-btn:hover {
-  background-color: var(--xi-background-page);
-}
-
-.my-custom-popover-class .driver-popover-close-btn {
-  top: 8px;
-  right: 8px;
+.driver-popover.my-custom-popover-class .driver-popover-close-btn {
+  top: 16px;
+  right: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 24px;
-  height: 24px;
+  width: 32px;
+  height: 32px;
+  padding: 4px;
+  border-radius: 24px;
+  color: var(--xi-icon-secondary);
 }
 
-.my-custom-popover-class .driver-popover-title {
-  width: calc(100% - 30px);
+.driver-popover.my-custom-popover-class .driver-popover-close-btn:hover,
+.driver-popover.my-custom-popover-class .driver-popover-close-btn:focus {
+  color: var(--xi-icon-primary);
+}
+
+.driver-popover.my-custom-popover-class .driver-popover-title {
+  width: auto;
+  max-width: 100%;
+  padding-right: 32px;
+  box-sizing: border-box;
   color: var(--xi-text-primary);
-  font-size: 20px;
-  line-height: 28px;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 24px;
 }
 
-.my-custom-popover-class .driver-popover-title[style*='block']+.driver-popover-description {
+.driver-popover.my-custom-popover-class
+  .driver-popover-title[style*='block']
+  + .driver-popover-description {
   margin-top: 8px;
 }
 
-.my-custom-popover-class .driver-popover-description {
+.driver-popover.my-custom-popover-class .driver-popover-description {
+  max-width: 100%;
+  padding-right: 32px;
+  box-sizing: border-box;
   color: var(--xi-text-primary);
-  margin-top: 8px;
+  margin-top: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
 }
 
-.my-custom-popover-class .driver-popover-progress-text {
+.driver-popover.my-custom-popover-class .driver-popover-progress-text {
   color: var(--xi-text-secondary);
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  flex-shrink: 0;
 }
 
-.my-custom-popover-class .driver-popover-arrow {
+.driver-popover.my-custom-popover-class .driver-popover-arrow {
   border: 5px solid var(--xi-background-surface);
   border-left-color: transparent;
   border-bottom-color: transparent;
   border-top-color: transparent;
 }
 
-.my-custom-popover-class .driver-popover-footer {
-  margin-top: 24px;
+.driver-popover.my-custom-popover-class .driver-popover-footer {
+  margin-top: 20px;
   flex-direction: row-reverse;
   justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 
-.my-custom-popover-class .driver-popover-footer button {
+.driver-popover.my-custom-popover-class .driver-popover-footer button {
   text-shadow: none;
-  font-size: 14px;
+}
+
+.driver-popover.my-custom-popover-class .driver-popover-footer .driver-popover-btn-disabled {
+  opacity: 0.5;
 }
 
 .driver-popover-arrow {
   display: none;
+}
+
+/* Явные токены для тёмной темы: popover монтируется в body, driver.js задаёт #fff */
+[data-theme='dark'] .driver-popover.my-custom-popover-class {
+  background-color: var(--xi-gray-90);
+  border-color: var(--xi-gray-70);
+  color: var(--xi-gray-0);
+  box-shadow:
+    0px 16px 16px 0px rgba(0, 0, 0, 0.24),
+    0px 24px 32px 0px rgba(0, 0, 0, 0.32);
+}
+
+[data-theme='dark'] .driver-popover.my-custom-popover-class .driver-popover-title,
+[data-theme='dark'] .driver-popover.my-custom-popover-class .driver-popover-description {
+  color: var(--xi-gray-0);
+}
+
+[data-theme='dark'] .driver-popover.my-custom-popover-class .driver-popover-progress-text,
+[data-theme='dark'] .driver-popover.my-custom-popover-class .driver-popover-prev-btn {
+  color: var(--xi-gray-40);
+}
+
+[data-theme='dark'] .driver-popover.my-custom-popover-class .driver-popover-prev-btn:hover {
+  color: var(--xi-gray-0);
+}
+
+[data-theme='dark'] .driver-popover.my-custom-popover-class .driver-popover-close-btn {
+  color: var(--xi-gray-40);
+}
+
+[data-theme='dark'] .driver-popover.my-custom-popover-class .driver-popover-close-btn:hover,
+[data-theme='dark'] .driver-popover.my-custom-popover-class .driver-popover-close-btn:focus {
+  color: var(--xi-gray-20);
+}
+
+[data-theme='dark'] .driver-popover.my-custom-popover-class .driver-popover-next-btn {
+  color: var(--xi-gray-100);
+  background-color: var(--xi-brand-60);
+}
+
+[data-theme='dark'] .driver-popover.my-custom-popover-class .driver-popover-next-btn:hover {
+  background-color: var(--xi-brand-40);
+}
+
+[data-theme='dark'] .driver-popover.my-custom-popover-class .driver-popover-arrow {
+  border-color: var(--xi-gray-90);
+  border-left-color: transparent;
+  border-bottom-color: transparent;
+  border-top-color: transparent;
 }

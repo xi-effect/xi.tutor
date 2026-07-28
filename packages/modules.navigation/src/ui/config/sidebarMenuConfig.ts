@@ -14,13 +14,13 @@ type TopMenuItem = {
   id: string;
   titleKey: 'home' | 'schedule' | 'classrooms' | 'materials' | 'payments';
   url: '/' | '/schedule' | '/classrooms' | '/materials' | '/payments';
-  icon: ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string; theme?: string }>;
 };
 
 type FooterMenuItem = {
   titleKey: 'support' | 'wiki' | 'hints';
   onClick: () => void;
-  icon: ComponentType<{ className?: string }>;
+  icon: ComponentType<{ className?: string; theme?: string }>;
 };
 
 export const getTopMenuConfig = (isTutor: boolean): TopMenuItem[] => {

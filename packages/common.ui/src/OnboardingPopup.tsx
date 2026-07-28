@@ -7,7 +7,6 @@ import { createRoot } from 'react-dom/client';
 import { useCurrentUser, useOnboardingTransition } from 'common.services';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { cn } from '@xipkg/utils';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   getOnboardingStepMeta,
@@ -24,9 +23,6 @@ type OnboardingPopupT = {
   disabled?: boolean;
   steps?: DriveStep[];
 };
-
-const buttonClassName =
-  'flex h-[32px] items-center justify-center rounded-lg text-sm font-medium hover:cursor-pointer';
 
 const SESSION_STORAGE_KEY = 'onboarding_menu_hidden';
 const SHOW_FOR_COMPLETED_KEY = 'show_onboarding_for_completed';
@@ -236,7 +232,7 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
         customCloseButton.className = 'driver-popover-close-btn';
 
         const root = createRoot(customCloseButton);
-        root.render(<Close size="s" className="fill-icon-secondary h-4 w-4" />);
+        root.render(<Close className="fill-icon-secondary h-5 w-5" />);
 
         defaultCloseButton.replaceWith(customCloseButton);
         customCloseButton.addEventListener('click', () => {
@@ -309,62 +305,53 @@ export const OnboardingPopup = ({ disabled = false, steps = [] }: OnboardingPopu
   }
 
   return (
-    <div className="bg-background-surface border-border-default fixed bottom-0 left-72 z-100 mb-6 flex w-[calc(100vw-2rem)] max-w-[400px] -translate-x-1/2 transform flex-col items-start gap-6 rounded-2xl border-2 p-4 shadow-2xl sm:w-[400px]">
-      <Button
-        variant="none"
-        size="s"
-        className="hover:bg-background-surface bg-background-surface absolute top-1 right-1 hover:cursor-pointer"
-        onClick={hideMenuForSession}
-      >
-        <Close className="fill-icon-secondary h-4 w-4" />
-      </Button>
-      <div className="flex flex-col gap-2">
-        <div className="h-8">
-          <span className="text-text-primary text-xl font-semibold">{t('onboarding.welcome')}</span>
-        </div>
-        <div className="h-10">
-          <span className="text-text-primary text-sm font-normal tracking-tight">
-            {isTutor ? (
-              <>
-                {t('onboarding.tutorDescriptionLine1')}
-                <br />
-                {t('onboarding.tutorDescriptionLine2')}
-              </>
-            ) : (
-              <>{t('onboarding.studentDescription')}</>
-            )}
-          </span>
-        </div>
-      </div>
-      <div className="flex flex-row-reverse gap-4">
-        <Button
-          variant="brand"
-          type="button"
-          disabled={disabled}
-          onClick={() => driverAction()}
-          size="s"
-          className={cn(
-            buttonClassName,
-            'bg-action-primary-background-default text-text-on-accent',
-            isTutor ? 'max-w-[153px]' : 'max-w-[177px]',
-          )}
-        >
-          {isTutor ? t('onboarding.startTourTutor') : t('onboarding.startTourStudent')}
-        </Button>
+    <div className="bg-background-overlay fixed inset-0 z-100 flex items-center justify-center p-4">
+      <div className="bg-background-surface border-border-default relative flex w-full max-w-[500px] flex-col items-center gap-6 rounded-[20px] border p-8 shadow-[0px_16px_16px_0px_rgba(16,16,16,0.08),0px_24px_32px_0px_rgba(16,16,16,0.08)]">
         <Button
           variant="none"
-          type="button"
-          disabled={undefined}
-          onClick={completeOnboarding}
           size="s"
-          className={cn(
-            buttonClassName,
-            'hover:bg-background-page border-border-control border',
-            isTutor ? 'max-w-[153px]' : 'max-w-[78px]',
-          )}
+          className="absolute top-6 right-4 rounded-3xl p-2 hover:cursor-pointer"
+          onClick={hideMenuForSession}
         >
-          {isTutor ? t('onboarding.laterTutor') : t('onboarding.laterStudent')}
+          <Close className="fill-icon-secondary h-6 w-6" />
         </Button>
+
+        <div className="relative h-40 w-full max-w-96 overflow-hidden rounded-xl">
+          <img
+            src="/ui/onbording/OnbordingStartModal.svg"
+            alt=""
+            className="absolute top-[-9px] left-1/2 h-[173px] w-[299px] -translate-x-1/2"
+          />
+        </div>
+
+        <div className="flex w-full flex-col items-start gap-2">
+          <h2 className="text-text-primary w-full text-3xl leading-9 font-semibold whitespace-nowrap">
+            {t('onboarding.welcome')}
+          </h2>
+          <p className="text-text-secondary w-full text-base leading-5 font-normal">
+            {isTutor ? t('onboarding.tutorDescription') : t('onboarding.studentDescription')}
+          </p>
+        </div>
+
+        <div className="flex w-full items-center justify-end gap-3">
+          <Button
+            variant="none"
+            type="button"
+            onClick={completeOnboarding}
+            className="text-text-secondary hover:text-text-primary h-12 rounded-xl px-6 text-base font-medium hover:cursor-pointer"
+          >
+            {isTutor ? t('onboarding.laterTutor') : t('onboarding.laterStudent')}
+          </Button>
+          <Button
+            variant="brand"
+            type="button"
+            disabled={disabled}
+            onClick={() => driverAction()}
+            className="bg-action-primary-background-default text-text-on-accent hover:bg-action-primary-background-hover h-12 rounded-xl px-6 text-base font-medium hover:cursor-pointer"
+          >
+            {isTutor ? t('onboarding.startTourTutor') : t('onboarding.startTourStudent')}
+          </Button>
+        </div>
       </div>
     </div>
   );

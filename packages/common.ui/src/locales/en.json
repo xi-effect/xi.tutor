@@ -1,12 +1,11 @@
 {
   "onboarding": {
-    "welcome": "Welcome to sovlium! 😊",
-    "tutorDescriptionLine1": "Want to learn about the platform?",
-    "tutorDescriptionLine2": "You can return to the tour at any time",
+    "welcome": "Welcome to\u00A0sovlium!",
+    "tutorDescription": "In 2 minutes we'll show how to create a classroom, invite a student, and schedule the first lesson",
     "studentDescription": "Want a quick overview of how things work?",
-    "startTourTutor": "Take the tour",
+    "startTourTutor": "Get started",
     "startTourStudent": "Show hints",
-    "laterTutor": "Come back later",
+    "laterTutor": "Later",
     "laterStudent": "Later",
     "next": "Continue",
     "prev": "Back",
