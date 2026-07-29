@@ -1,5 +1,5 @@
 import { LoadingScreen } from 'common.ui';
-import { boardPanelClass } from '../../boardTheme';
+import { boardChromeZClass, boardPanelClass } from '../../boardTheme';
 import { useKeyPress } from 'common.utils';
 import { useTheme } from 'common.theme';
 import { JSX } from 'react/jsx-runtime';
@@ -37,11 +37,13 @@ import { insertAsset } from '../../../utils/uploadAsset';
 import { useRetryFileQueue } from 'common.services';
 import { useSearch } from '@tanstack/react-router';
 import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
+import { useTranslation } from 'react-i18next';
 
 export const DrawCanvas = ({
   token,
   ...props
 }: JSX.IntrinsicAttributes & DrawProps & { token: string }) => {
+  const { t } = useTranslation('board');
   const [editor, setEditor] = useState<Editor | null>(null);
 
   const { selectedElementId, selectElement, showDebugInfo } = useDrawStore();
@@ -354,7 +356,8 @@ export const DrawCanvas = ({
 
   return (
     <div id="whiteboard-container" className="flex h-full w-full flex-col">
-      <div className="relative flex-1 overflow-hidden">
+      {/* z-0: stacking context — внутренние z-index draw/UI не выше @xipkg/modal (z-50) */}
+      <div className="relative z-0 flex-1 overflow-hidden">
         {followingPresenceId && <FollowBanner />}
         <div className="absolute inset-0">
           <Draw
@@ -377,19 +380,22 @@ export const DrawCanvas = ({
                 return next;
               });
 
-              editor.sideEffects.registerBeforeDeleteHandler('shape', (shape) => {
-                if (editor.getCurrentToolId() !== 'eraser') {
-                  return;
-                }
-
-                if (!isShapeErasable(shape.type)) {
-                  return false;
-                }
+              // Фильтр категорий ластика — только для локального стирания.
+              // Remote-удаления из Yjs/Hocuspocus нельзя блокировать: иначе у ученика
+              // останутся фигуры, которые репетитор уже стёр.
+              editor.sideEffects.registerBeforeDeleteHandler('shape', (shape, source) => {
+                if (source !== 'user') return;
+                if (editor.getCurrentToolId() !== 'eraser') return;
+                if (!isShapeErasable(shape.type)) return false;
               });
 
               editor.registerExternalContentHandler('files', async ({ files }) => {
                 for (const file of files) {
-                  insertAsset(editor, file, token, addToQueue);
+                  try {
+                    insertAsset(editor, file, token, addToQueue);
+                  } catch (error) {
+                    console.error('Ошибка при загрузке файла:', error);
+                  }
                 }
               });
 
@@ -452,7 +458,9 @@ export const DrawCanvas = ({
             {!isReadonly && (
               <Navbar undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} token={token} />
             )}
-            <div className={`${boardPanelClass} absolute bottom-4 left-4 z-260 flex p-1 sm:hidden`}>
+            <div
+              className={`${boardPanelClass} absolute bottom-20 left-4 ${boardChromeZClass} flex p-1 sm:hidden`}
+            >
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
             <DrawZoomPanel />
@@ -461,8 +469,8 @@ export const DrawCanvas = ({
                 className="pointer-events-none absolute bottom-3 left-3 rounded-md bg-black/70 px-2 py-1 font-mono text-xs text-white"
                 aria-live="polite"
               >
-                <div className="font-sans font-medium">Отладочная информация</div>
-                Элементов на доске: {shapeCount}
+                <div className="font-sans font-medium">{t('debug.title')}</div>
+                {t('debug.elementsCount', { count: shapeCount })}
               </div>
             )}
           </Draw>

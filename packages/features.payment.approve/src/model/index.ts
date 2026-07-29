@@ -1,1 +1,1 @@
-export { paymentFormSchema, type PaymentFormData } from './paymentFormSchema';
+export { usePaymentFormSchema, type PaymentFormData } from './paymentFormSchema';

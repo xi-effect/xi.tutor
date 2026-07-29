@@ -23,7 +23,12 @@ import { CollaboratorAvatars } from './CollaboratorAvatars';
 import { SettingsDropdown } from './SettingsDropdown';
 import { unlockBoardTimerAudio } from './boardTimerAudio';
 import { TimerDropdown } from './TimerDropdown';
-import { boardIconClass, boardPanelClass, boardTextClass } from '../../boardTheme';
+import {
+  boardChromeZClass,
+  boardIconClass,
+  boardPanelClass,
+  boardTextClass,
+} from '../../boardTheme';
 
 export const Header = () => {
   const [openModal, setOpenModal] = useState(false);
@@ -97,15 +102,18 @@ export const Header = () => {
 
   return (
     <>
-      <div className="text-xl-base pointer-events-none absolute top-4 right-0 left-0 z-260 flex items-center justify-between px-4 pb-4 md:pl-8">
-        <div
-          className={`${boardPanelClass} pointer-events-auto flex items-center justify-center gap-2 p-1`}
-        >
+      <div
+        className={cn(
+          'pointer-events-none absolute top-4 right-0 left-0 flex items-start justify-between px-4 pb-4 md:pl-8',
+          boardChromeZClass,
+        )}
+      >
+        <div className={`${boardPanelClass} pointer-events-auto flex items-center gap-2 p-1`}>
           <Button
             variant="none"
             onClick={handleBack}
             type="button"
-            className="hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
+            className="hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
             data-umami-event="board-back"
           >
             <ArrowLeft size="s" className={`h-4 w-4 lg:h-6 lg:w-6 ${boardIconClass}`} />
@@ -132,7 +140,7 @@ export const Header = () => {
                 <Button
                   type="button"
                   variant="none"
-                  className="hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
+                  className="hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
                   onClick={handleOpenModal}
                   data-umami-event="board-edit-name"
                 >
@@ -142,7 +150,7 @@ export const Header = () => {
             </div>
           )}
         </div>
-        <div className="flex w-[172px] flex-col-reverse items-end gap-2 sm:w-auto sm:flex-row md:items-center">
+        <div className="flex w-[172px] flex-col-reverse items-end gap-2 sm:w-auto sm:flex-row sm:items-center">
           <div className="flex items-center gap-2">
             <TimerDropdown open={openTimer} setOpen={setOpenTimer} />
           </div>
@@ -154,8 +162,9 @@ export const Header = () => {
             <Button
               variant="none"
               className={cn(
-                'hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl',
-                openTimer && 'bg-brand-20/40 focus:bg-brand-20/40',
+                'hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl',
+                openTimer &&
+                  'bg-action-primary-background-disabled/40 focus:bg-action-primary-background-disabled/40',
               )}
               data-umami-event="board-timer-menu"
               onPointerDown={stopEvent}
@@ -171,7 +180,7 @@ export const Header = () => {
               variant="none"
               onClick={toggleFocusMode}
               type="button"
-              className="hover:bg-brand-0 flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
+              className="hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
               data-umami-event="board-toggle-focus-mode"
               data-umami-event-state={focusMode ? 'exit' : 'enter'}
             >

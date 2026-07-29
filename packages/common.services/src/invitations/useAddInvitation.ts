@@ -5,18 +5,33 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError } from 'common.services';
 import {
   PRODUCT_ANALYTICS_EVENTS,
+  createAttemptId,
+  mapInviteError,
+  measureDurationMs,
+  nowMs,
   trackProductEvent,
-  type ProductAnalyticsSource,
+  type InviteAnalyticsSource,
 } from 'common.utils';
 
 type AddInvitationVariables = {
-  source?: ProductAnalyticsSource;
+  source?: InviteAnalyticsSource;
+};
+
+type AddInvitationContext = {
+  attemptId: string;
+  startedAt: number;
+  source: InviteAnalyticsSource | string;
 };
 
 export const useAddInvitation = () => {
   const queryClient = useQueryClient();
 
-  const addInvitationMutation = useMutation<unknown, Error, AddInvitationVariables | void>({
+  const addInvitationMutation = useMutation<
+    { data?: InvitationDataT },
+    Error,
+    AddInvitationVariables | void,
+    AddInvitationContext
+  >({
     mutationFn: async () => {
       try {
         const axiosInst = await getAxiosInstance();
@@ -33,7 +48,28 @@ export const useAddInvitation = () => {
         throw err;
       }
     },
-    onError: (err) => {
+    onMutate: (variables) => {
+      const attemptId = createAttemptId();
+      const startedAt = nowMs();
+      const source = variables?.source ?? 'unknown';
+
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_SUBMIT, {
+        attempt_id: attemptId,
+        source,
+      });
+
+      return { attemptId, startedAt, source };
+    },
+    onError: (err, _variables, context) => {
+      if (context) {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_FAILED, {
+          attempt_id: context.attemptId,
+          source: context.source,
+          reason: mapInviteError(err),
+          duration_ms: measureDurationMs(context.startedAt),
+        });
+      }
+
       const previousInvitations = queryClient.getQueryData<InvitationDataT[]>([
         InvitationsQueryKey.AllInvitations,
       ]);
@@ -46,13 +82,18 @@ export const useAddInvitation = () => {
 
       handleError(err, 'addInvitation');
     },
-    onSuccess: (response, variables) => {
+    onSuccess: (response, _variables, context) => {
       const data =
         response && typeof response === 'object' && 'data' in response
           ? (response.data as InvitationDataT | undefined)
           : undefined;
 
       if (data) {
+        const previous = queryClient.getQueryData<InvitationDataT[]>([
+          InvitationsQueryKey.AllInvitations,
+        ]);
+        const isFirstInvite = !previous || previous.length === 0;
+
         queryClient.setQueryData<InvitationDataT[]>(
           [InvitationsQueryKey.AllInvitations],
           (old: InvitationDataT[] | undefined) => {
@@ -63,10 +104,18 @@ export const useAddInvitation = () => {
 
         trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITED_SUCCESS, {
           role: 'tutor',
-          source: variables?.source ?? 'unknown',
+          source: context?.source ?? 'unknown',
           invite_kind: 'student',
+          attempt_id: context?.attemptId,
+          invite_id: String(data.id),
+          duration_ms: context ? measureDurationMs(context.startedAt) : undefined,
+          is_first_invite: isFirstInvite,
         });
       }
+
+      // Гарантируем свежий список после создания (помимо оптимистичного append),
+      // на случай расхождения с ответом backend.
+      queryClient.invalidateQueries({ queryKey: [InvitationsQueryKey.AllInvitations] });
     },
   });
 

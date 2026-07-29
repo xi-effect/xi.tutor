@@ -6,6 +6,7 @@ import { SubjectBadge } from './SubjectBadge';
 import { useEffect, useCallback, useRef } from 'react';
 import { useStartCall } from 'modules.calls';
 import { useNavigate, useSearch } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 import { StatusBadge } from '../../StatusBadge';
 import { ContactsBadge } from './ContactsBadge';
 import { useCurrentUser } from 'common.services';
@@ -16,6 +17,7 @@ interface ContentProps {
 }
 
 export const Content = ({ classroom }: ContentProps) => {
+  const { t } = useTranslation('classroom');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const navigate = useNavigate();
@@ -59,15 +61,15 @@ export const Content = ({ classroom }: ContentProps) => {
   };
 
   return (
-    <div className="xs:pl-0 flex flex-row items-start gap-4 pt-4 pr-5 pb-5 pl-5">
+    <div className="flex flex-row items-start gap-4 px-5 pt-5 pb-4 sm:px-10 sm:pt-10">
       <div className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
         <div className="flex w-full min-w-0 flex-row items-center gap-2 sm:w-auto sm:gap-3">
           <Button
             variant="none"
             type="button"
             onClick={() => navigate({ to: '/classrooms' })}
-            className="text-gray-80 hover:bg-gray-5 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl p-0"
-            aria-label="К списку кабинетов"
+            className="text-text-primary hover:bg-background-page flex h-10 w-10 shrink-0 items-center justify-center rounded-xl p-0"
+            aria-label={t('actions.backToClassrooms')}
             data-umami-event="classroom-back-to-classrooms"
           >
             <ArrowLeft size="s" className="h-5 w-5" />
@@ -77,10 +79,10 @@ export const Content = ({ classroom }: ContentProps) => {
               <IndividualUser userId={classroom.student_id ?? classroom.tutor_id ?? 0} />
             ) : (
               <div className="flex w-full max-w-[min(100%,300px)] min-w-0 flex-row items-center gap-2 sm:w-fit sm:max-w-[300px] sm:shrink">
-                <div className="bg-brand-80 text-gray-0 flex h-12 w-12 shrink-0 items-center justify-center rounded-[24px]">
+                <div className="bg-action-primary-background-default text-text-on-accent flex h-12 w-12 shrink-0 items-center justify-center rounded-[24px]">
                   {getDisplayName()?.[0].toUpperCase() ?? ''}
                 </div>
-                <div className="text-xl-base min-w-0 truncate font-semibold text-gray-100">
+                <div className="text-xl-base text-text-primary min-w-0 truncate font-semibold">
                   {getDisplayName()}
                 </div>
               </div>
@@ -101,9 +103,10 @@ export const Content = ({ classroom }: ContentProps) => {
         </div>
         <div className="w-full sm:hidden">
           <StartLessonButton
-            className="gap-2"
+            className="h-11 gap-2 px-4 text-base"
             classroomId={classroom.id}
             variant="primary"
+            size="m"
             onStart={handleStartCall}
           />
         </div>
@@ -111,9 +114,10 @@ export const Content = ({ classroom }: ContentProps) => {
 
       <div className="ml-auto hidden h-full shrink-0 flex-col items-center justify-center gap-2 sm:flex">
         <StartLessonButton
-          className="gap-2"
+          className="h-11 gap-2 px-4 text-base"
           classroomId={classroom.id}
           variant="primary"
+          size="m"
           onStart={handleStartCall}
         />
       </div>

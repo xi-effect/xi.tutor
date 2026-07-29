@@ -12,7 +12,8 @@ import {
   Emotions,
   FilePlus,
 } from '@xipkg/icons';
-import { boardIconClass } from '../ui/boardTheme';
+import i18n from 'i18next';
+import { boardToolbarIconClass, boardToolbarIconCompactClass } from '../ui/boardTheme';
 
 export type NavbarElementT = {
   action: string;
@@ -28,42 +29,78 @@ export type PopupItemT = {
   color: string;
 };
 
+const t = (key: string) => String(i18n.t(key, { ns: 'board' }));
+
 export const navBarElements: NavbarElementT[] = [
   {
     action: 'select',
-    title: 'Выбор',
-    icon: <Cursor size="l" className={`h-8 w-8 ${boardIconClass}`} />,
+    get title() {
+      return t('navbar.select');
+    },
+    icon: <Cursor className={boardToolbarIconClass} />,
   },
-  { action: 'hand', title: 'Рука', icon: <Hand className={boardIconClass} /> },
+  {
+    action: 'hand',
+    get title() {
+      return t('navbar.hand');
+    },
+    icon: <Hand className={boardToolbarIconClass} />,
+  },
   {
     action: 'pen',
-    title: 'Перо',
-    icon: <Pen size="l" className={`h-8 w-8 ${boardIconClass}`} />,
+    get title() {
+      return t('navbar.pen');
+    },
+    icon: <Pen className={boardToolbarIconClass} />,
     menuPopupContent: [
       {
-        icon: <Pen className="fill-unset h-8 w-8" size="l" />,
+        icon: <Pen className="fill-unset h-8 w-8" size="lg" />,
         action: 'open-style',
         color: 'blue',
       },
     ],
   },
-  { action: 'eraser', title: 'Ластик', icon: <Eraser className={boardIconClass} /> },
-  { action: 'text', title: 'Текст', icon: <TText className={boardIconClass} /> },
+  {
+    action: 'eraser',
+    get title() {
+      return t('navbar.eraser');
+    },
+    icon: <Eraser className={boardToolbarIconClass} />,
+  },
+  {
+    action: 'text',
+    get title() {
+      return t('navbar.text');
+    },
+    icon: <TText className={boardToolbarIconCompactClass} />,
+  },
   {
     action: 'geo',
-    title: 'Фигуры',
-    icon: <Figures size="l" className={`size-8 ${boardIconClass}`} />,
+    get title() {
+      return t('navbar.shapes');
+    },
+    icon: <Figures className={boardToolbarIconClass} />,
   },
   {
     action: 'arrow',
-    title: 'Стрелка',
-    icon: <Arrow size="l" className={`size-8 ${boardIconClass}`} />,
+    get title() {
+      return t('navbar.arrow');
+    },
+    icon: <Arrow className={boardToolbarIconClass} />,
   },
-  { action: 'frame', title: 'Фрейм', icon: <Transform className={boardIconClass} /> },
+  {
+    action: 'frame',
+    get title() {
+      return t('navbar.frame');
+    },
+    icon: <Transform className={boardToolbarIconClass} />,
+  },
   {
     action: 'sticker',
-    title: 'Стикер',
-    icon: <Sticker className={boardIconClass} />,
+    get title() {
+      return t('navbar.sticker');
+    },
+    icon: <Sticker className={boardToolbarIconCompactClass} />,
     menuPopupContent: [
       {
         icon: <Sticker className="fill-gray-60" />,
@@ -112,10 +149,18 @@ export const navBarElements: NavbarElementT[] = [
       },
     ],
   },
-  { action: 'emoji', title: 'Эмодзи', icon: <Emotions className={boardIconClass} /> },
+  {
+    action: 'emoji',
+    get title() {
+      return t('navbar.emoji');
+    },
+    icon: <Emotions className={boardToolbarIconClass} />,
+  },
   {
     action: 'asset',
-    title: 'Загрузить файл. Фото: до 1 МБ. PDF, аудио и прочие файлы: до 5 МБ.',
-    icon: <FilePlus className={boardIconClass} />,
+    get title() {
+      return t('navbar.uploadFile');
+    },
+    icon: <FilePlus className={boardToolbarIconClass} />,
   },
 ];

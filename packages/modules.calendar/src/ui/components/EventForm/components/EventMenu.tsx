@@ -33,15 +33,15 @@ export const EventMenu = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="bg-gray-0 flex h-8 w-8 items-center justify-center text-sm">
-        <MenuDots className="fill-gray-80 rotate-90" />
+      <DropdownMenuTrigger className="bg-background-surface flex h-8 w-8 items-center justify-center text-sm">
+        <MenuDots className="fill-icon-primary rotate-90" />
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuItem>{t('event_menu.cut')}</DropdownMenuItem>
         <DropdownMenuItem onClick={handleCopyEvent}>{t('event_menu.copy')}</DropdownMenuItem>
         <DropdownMenuItem>{t('event_menu.duble')}</DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="text-red-80" onClick={handleRemoveEvent}>
+        <DropdownMenuItem className="text-text-danger" onClick={handleRemoveEvent}>
           {t('event_menu.remove')}
         </DropdownMenuItem>
       </DropdownMenuContent>

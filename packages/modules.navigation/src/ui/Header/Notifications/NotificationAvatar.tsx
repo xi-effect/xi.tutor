@@ -140,7 +140,7 @@ export const NotificationAvatar = ({ classroomId, recipientInvoiceId, kind }: Us
     return (
       <div
         className={cn(
-          'bg-brand-10 flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full',
+          'bg-selection-background flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full',
         )}
         aria-hidden
       >

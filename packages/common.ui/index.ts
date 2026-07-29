@@ -1,3 +1,15 @@
+export {
+  LANGUAGE_STORAGE_KEY,
+  isAppLanguage,
+  readStoredLanguage,
+  normalizeAppLanguage,
+  getAppLanguage,
+  getDateLocale,
+  syncLanguageSideEffects,
+  setAppLanguage,
+  type AppLanguage,
+} from './src/i18n/language';
+export { commonUiEn, commonUiRu } from './src/locales';
 export { EmptyClassrooms } from './src/empty/EmptyClassrooms';
 export { EmptyMaterials } from './src/empty/EmptyMaterials';
 export { EmptyMaterialsFull } from './src/empty/EmptyMaterialsFull';
@@ -11,6 +23,8 @@ export { Skeleton } from './src/Skeleton';
 export { LinkTanstack } from './src/LinkTanstack';
 export { ErrorPage } from './src/ErrorPage';
 export { OnboardingPopup } from './src/OnboardingPopup';
+export { VkAllowMessagesWidget } from './src/VkAllowMessagesWidget';
+export { VkConnectButton } from './src/VkConnectButton';
 export { NetworkIndicator } from './src/NetworkIndicator';
 export { SmallLogo } from './src/SmallLogo';
 export {

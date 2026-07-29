@@ -1,5 +1,6 @@
 import type { Editor, DrShapeId } from '@ibodr/draw';
 import { evaluateEquation } from './evaluateEquation';
+import i18n from 'i18next';
 
 export function commitEquationForShape(
   editor: Editor,
@@ -8,7 +9,7 @@ export function commitEquationForShape(
 ): { ok: true } | { ok: false; error: string } {
   const shape = editor.getShape(shapeId);
   if (!shape || !editor.isShapeOfType(shape, 'coordinate-axes')) {
-    return { ok: false, error: 'Фигура не найдена' };
+    return { ok: false, error: i18n.t('equation.shapeNotFound', { ns: 'board' }) };
   }
 
   const trimmed = equationDraft.trim();

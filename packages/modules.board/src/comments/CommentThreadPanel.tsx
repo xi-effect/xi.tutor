@@ -18,6 +18,8 @@ import { useMarkCommentThreadRead } from './useCommentReads';
 import { useCopyBoardDeepLink } from '../hooks/useBoardDeepLinkFocus';
 import type { DrCommentMessage, DrCommentThread } from './commentRecords';
 import type { RecordId } from '@ibodr/draw';
+import { useTranslation } from 'react-i18next';
+import { getDateLocale } from 'common.ui';
 
 type CommentThreadPanelProps = {
   threadId: RecordId<DrCommentThread>;
@@ -27,7 +29,7 @@ type CommentThreadPanelProps = {
 };
 
 function formatMessageTime(ts: number): string {
-  return new Date(ts).toLocaleString('ru-RU', {
+  return new Date(ts).toLocaleString(getDateLocale(), {
     day: '2-digit',
     month: '2-digit',
     hour: '2-digit',
@@ -40,6 +42,7 @@ export const CommentThreadPanel = track(function CommentThreadPanel({
   onClose,
   showHeader = true,
 }: CommentThreadPanelProps) {
+  const { t } = useTranslation('board');
   const editor = useEditor();
   const author = useCommentAuthor();
   const markRead = useMarkCommentThreadRead();
@@ -84,45 +87,53 @@ export const CommentThreadPanel = track(function CommentThreadPanel({
     >
       {showHeader && (
         <div className="flex items-center justify-between">
-          <span className="text-gray-60 text-xs">{thread.resolved ? 'Решено' : 'Комментарий'}</span>
+          <span className="text-text-secondary text-xs">
+            {thread.resolved ? t('comments.resolved') : t('comments.comment')}
+          </span>
           <div className="flex items-center gap-0.5">
             <Button
               variant="none"
-              className="hover:bg-brand-0 flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent"
-              title="Скопировать ссылку"
+              className="hover:bg-status-info-background flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent"
+              title={t('comments.copyLink')}
               onClick={() => void copyDeepLink()}
               data-umami-event="board-copy-comment-link"
             >
-              <Link className="fill-gray-60 size-4" />
+              <Link className="fill-icon-secondary size-4" />
             </Button>
             <Button
               variant="none"
               className={cn(
-                'hover:bg-brand-0 flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent',
-                thread.resolved && 'bg-green-0 hover:bg-green-0',
+                'hover:bg-status-info-background flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent',
+                thread.resolved &&
+                  'bg-status-success-background hover:bg-status-success-background',
               )}
-              title={thread.resolved ? 'Открыть заново' : 'Отметить решённым'}
+              title={thread.resolved ? t('comments.reopen') : t('comments.markResolved')}
               onClick={handleToggleResolved}
             >
-              <Check className={cn('size-4', thread.resolved ? 'fill-green-80' : 'fill-gray-60')} />
+              <Check
+                className={cn(
+                  'size-4',
+                  thread.resolved ? 'fill-status-success-text' : 'fill-icon-secondary',
+                )}
+              />
             </Button>
             {isOwnThread && (
               <Button
                 variant="none"
-                className="hover:bg-brand-0 flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent"
-                title="Удалить комментарий"
+                className="hover:bg-status-info-background flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent"
+                title={t('comments.deleteComment')}
                 onClick={handleDelete}
               >
-                <Trash className="fill-gray-60 size-4" />
+                <Trash className="fill-icon-secondary size-4" />
               </Button>
             )}
             <Button
               variant="none"
-              className="hover:bg-brand-0 flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent"
-              title="Закрыть"
+              className="hover:bg-status-info-background flex h-7 w-7 items-center justify-center rounded-lg p-0 focus:bg-transparent"
+              title={t('comments.close')}
               onClick={onClose}
             >
-              <Close className="fill-gray-60 size-4" />
+              <Close className="fill-icon-secondary size-4" />
             </Button>
           </div>
         </div>
@@ -147,24 +158,24 @@ export const CommentThreadPanel = track(function CommentThreadPanel({
               </Avatar>
               <div className="min-w-0 flex-1">
                 <div className="flex items-baseline gap-2">
-                  <span className="truncate text-sm font-medium text-gray-100">
+                  <span className="text-text-primary truncate text-sm font-medium">
                     {message.authorName}
                   </span>
-                  <span className="text-gray-40 shrink-0 text-xs">
+                  <span className="text-text-disabled shrink-0 text-xs">
                     {formatMessageTime(message.createdAt)}
                   </span>
                   {isOwnMessage && (
                     <button
                       type="button"
-                      className="hover:bg-brand-0 ml-auto shrink-0 rounded p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
-                      title="Удалить сообщение"
+                      className="hover:bg-status-info-background ml-auto shrink-0 rounded p-0.5 opacity-0 transition-opacity group-hover:opacity-100"
+                      title={t('comments.deleteMessage')}
                       onClick={() => handleDeleteMessage(message.id)}
                     >
-                      <Trash className="fill-gray-40 size-3.5" />
+                      <Trash className="fill-icon-disabled size-3.5" />
                     </button>
                   )}
                 </div>
-                <p className="text-sm wrap-break-word whitespace-pre-wrap text-gray-100">
+                <p className="text-text-primary text-sm wrap-break-word whitespace-pre-wrap">
                   {message.text}
                 </p>
               </div>
@@ -174,8 +185,8 @@ export const CommentThreadPanel = track(function CommentThreadPanel({
       </div>
 
       <CommentMessageInput
-        placeholder="Ответить..."
-        submitLabel="Ответить"
+        placeholder={t('comments.replyPlaceholder')}
+        submitLabel={t('comments.reply')}
         onSubmit={handleReply}
       />
     </div>

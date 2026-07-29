@@ -1,0 +1,17 @@
+{
+  "title": "Add student to group",
+  "loading": "Loading...",
+  "loadError": "Failed to load data",
+  "empty": {
+    "title": "No students yet",
+    "description": "You don’t have any students to add to the group yet. Invite a student to the service — they will appear in this list afterward."
+  },
+  "actions": {
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel"
+  },
+  "toast": {
+    "saved": "Changes saved"
+  }
+}

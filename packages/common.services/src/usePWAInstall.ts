@@ -12,14 +12,24 @@ interface NavigatorWithInstall extends Navigator {
   install?: () => Promise<void>;
 }
 
+export type PwaInstallHintKey =
+  | 'generic'
+  | 'ios'
+  | 'androidChrome'
+  | 'android'
+  | 'desktopChrome'
+  | 'safari'
+  | 'firefox'
+  | 'fallback';
+
 const hasInstallAPI = (): boolean =>
   typeof navigator !== 'undefined' &&
   typeof (navigator as NavigatorWithInstall).install === 'function';
 
-/** Определение платформы/браузера для подсказки по установке PWA */
-function getPlatformInstallHint(): string {
+/** Определение платформы/браузера для ключа подсказки по установке PWA */
+function getPlatformInstallHintKey(): PwaInstallHintKey {
   if (typeof navigator === 'undefined') {
-    return 'Откройте сайт в поддерживаемом браузере (Chrome, Edge, Safari) и используйте меню для установки приложения.';
+    return 'generic';
   }
   const ua = navigator.userAgent;
   const isIOS =
@@ -32,25 +42,24 @@ function getPlatformInstallHint(): string {
   const isFirefox = /Firefox/.test(ua);
 
   if (isIOS) {
-    return 'Нажмите кнопку «Поделиться» (□↑) внизу экрана, затем выберите «На экран „Домой“».';
+    return 'ios';
   }
   if (isAndroid) {
     if (isChrome || isEdge) {
-      return 'Откройте меню браузера (⋮) → «Установить приложение» или «Добавить на главный экран».';
+      return 'androidChrome';
     }
-    return 'Откройте меню браузера и найдите пункт «Добавить на главный экран» или «Установить приложение».';
+    return 'android';
   }
-  // Desktop
   if (isChrome || isEdge) {
-    return 'Нажмите на иконку установки в адресной строке справа или откройте меню (⋮) → «Установить sovlium».';
+    return 'desktopChrome';
   }
   if (isSafari) {
-    return 'В меню «Файл» выберите «Добавить на Dock» (macOS) или используйте «Поделиться» → «На экран „Домой“» на iPad.';
+    return 'safari';
   }
   if (isFirefox) {
-    return 'В меню браузера (≡) выберите «Установить» или «Установить sovlium», если пункт доступен.';
+    return 'firefox';
   }
-  return 'Используйте меню браузера для установки приложения или откройте сайт в Chrome/Edge и обновите страницу.';
+  return 'fallback';
 }
 
 export interface UsePWAInstallReturn {
@@ -60,8 +69,8 @@ export interface UsePWAInstallReturn {
   promptInstall: () => Promise<void>;
   /** Приложение уже запущено как установленное PWA */
   isInstalled: boolean;
-  /** Подсказка для установки PWA под текущую платформу/браузер (для toast при !canInstall) */
-  installHint: string;
+  /** Ключ подсказки для toast при !canInstall — переводится в UI через i18n */
+  installHintKey: PwaInstallHintKey;
 }
 
 export const usePWAInstall = (): UsePWAInstallReturn => {
@@ -115,7 +124,7 @@ export const usePWAInstall = (): UsePWAInstallReturn => {
       : null;
   const hasPrompt = Boolean(installEvent ?? win?.__beforeInstallPrompt);
   const canInstall = (hasPrompt || hasInstallAPI()) && !installed;
-  const installHint = getPlatformInstallHint();
+  const installHintKey = getPlatformInstallHintKey();
 
-  return { canInstall, promptInstall, isInstalled: installed, installHint };
+  return { canInstall, promptInstall, isInstalled: installed, installHintKey };
 };

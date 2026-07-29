@@ -10,15 +10,13 @@ import {
   useGetParticipantsByTutor,
 } from 'common.services';
 import { useCallStore } from 'modules.calls';
+import { useTranslation } from 'react-i18next';
 
 const FIVE_MINUTES_MS = 5 * 60 * 1000;
 // setTimeout хранит задержку в 32-битном знаковом целом.
 // При превышении ~24.8 дней таймер срабатывает немедленно → canStartNow ложно становится true.
 const MAX_SAFE_TIMEOUT_MS = 2_147_483_647;
 const TOOLTIP_OPEN_DELAY_MS = 1000;
-const SCHEDULE_TOOLTIP = 'Кнопка станет активной за 5 минут до начала занятия';
-const SCHEDULE_TIMES_LOADING_TOOLTIP = 'Уточняем время занятия…';
-const LESSON_ENDED_TOOLTIP = 'Нельзя начать занятие: прошло более 5 минут после окончания слота';
 
 function isWithinStartWindow(startAt: Date): boolean {
   return startAt.getTime() - Date.now() <= FIVE_MINUTES_MS;
@@ -26,12 +24,6 @@ function isWithinStartWindow(startAt: Date): boolean {
 
 function isFiniteDate(d: Date): boolean {
   return Number.isFinite(d.getTime());
-}
-
-function getLabel(isTutor: boolean, isConferenceNotActiveTutor: boolean, isCallActive: boolean) {
-  if (isTutor && isConferenceNotActiveTutor) return 'Начать занятие';
-  if (isCallActive) return 'Вернуться в конференцию';
-  return 'Присоединиться';
 }
 
 export type StartLessonButtonProps = {
@@ -72,6 +64,7 @@ export const StartLessonButton = ({
   onStart,
   scheduleTimesLoading = false,
 }: StartLessonButtonProps) => {
+  const { t } = useTranslation('lessonStart');
   const navigate = useNavigate();
   const search = useSearch({ strict: false }) as { call?: string };
   const params = useParams({ strict: false }) as {
@@ -221,14 +214,19 @@ export const StartLessonButton = ({
     ((scheduleTimesLoading && isTutor) || isTimeRestricted || isTooLateForTutorToStart);
   const isDisabled = scheduleLocksTutor || isDisabledStudent;
 
-  const label = getLabel(isTutor, isConferenceNotActiveTutor, isCallActive);
+  const label =
+    isTutor && isConferenceNotActiveTutor
+      ? t('start')
+      : isCallActive
+        ? t('returnToConference')
+        : t('join');
 
   const button = (
     <Button
       size={size}
       variant={variant}
       className={cn(
-        variant === 'ghost' && 'text-brand-80 group hover:text-brand-100 h-[32px] w-full',
+        variant === 'ghost' && 'text-text-link group hover:text-text-link h-[32px] w-full',
         variant === 'primary' && 'group w-full pr-2 pl-2',
         isDisabled && 'cursor-not-allowed',
         className,
@@ -240,10 +238,11 @@ export const StartLessonButton = ({
     >
       {variant === 'primary' && (
         <Conference
-          size="sm"
+          size={size === 'm' ? 'm' : 'sm'}
           className={cn(
-            'group-hover:fill-gray-0 fill-brand-0 mr-1.5',
-            isDisabled && 'fill-gray-40',
+            'group-hover:fill-action-primary-text fill-action-primary-text mr-1.5',
+            size === 'm' && 'size-5',
+            isDisabled && 'fill-icon-disabled',
           )}
         />
       )}
@@ -251,8 +250,8 @@ export const StartLessonButton = ({
       {variant === 'ghost' && (
         <Conference
           className={cn(
-            'group-hover:fill-brand-100 fill-brand-80 ml-2',
-            isDisabled && 'fill-gray-40',
+            'group-hover:fill-icon-brand fill-icon-brand ml-2',
+            isDisabled && 'fill-icon-disabled',
           )}
         />
       )}
@@ -261,11 +260,11 @@ export const StartLessonButton = ({
 
   const tooltipText =
     !isCallActive && isTooLateForTutorToStart
-      ? LESSON_ENDED_TOOLTIP
+      ? t('tooltip.lessonEnded')
       : !isCallActive && scheduleTimesLoading && isTutor
-        ? SCHEDULE_TIMES_LOADING_TOOLTIP
+        ? t('tooltip.timesLoading')
         : !isCallActive && isTimeRestricted
-          ? SCHEDULE_TOOLTIP
+          ? t('tooltip.beforeStart')
           : null;
 
   if (tooltipText) {

@@ -12,9 +12,9 @@ import {
   useGetRecipientInvoiceByStudent,
 } from 'common.services';
 import { UserRoleT } from 'common.api';
-import { DateTimeDisplay } from 'common.ui';
 import { MobileTutorActionButton } from 'features.invites';
 import { ModalTemplate } from './Templates';
+import { cn, useMediaQuery } from '@xipkg/utils';
 
 export const PaymentsPage = () => {
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
@@ -28,6 +28,7 @@ export const PaymentsPage = () => {
     payment: RolePaymentT<'tutor'> | RolePaymentT<'student'> | null;
   }>({ isOpen: false, payment: null });
   const processedInvoiceIdRef = useRef<number | null>(null);
+  const isMobile = useMediaQuery('(max-width: 960px)');
 
   const navigate = useNavigate();
   const search = useSearch({ strict: false }) as {
@@ -179,18 +180,22 @@ export const PaymentsPage = () => {
   );
 
   return (
-    <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pr-0">
-      <div className="xs:pl-5 flex h-screen flex-col pl-0">
-        <div className="xs:pl-0 flex flex-col gap-5 pt-5 pr-5 pl-5">
-          <div className="flex h-8 items-center">
-            <DateTimeDisplay />
-          </div>
-          <Header
-            onCreateInvoice={onOpenInvoiceModal}
-            activeTab={activeTab}
-            onTabChange={onTabChange}
-          />
-        </div>
+    <div
+      className={cn(
+        'bg-background-page flex flex-col gap-4',
+        isMobile ? 'max-h-[calc(100dvh-64px)]' : 'h-screen',
+      )}
+    >
+      <div className="flex w-full shrink-0 items-start justify-between px-5 pt-4 sm:flex-row sm:px-8 sm:pt-8 md:px-10 md:pt-10">
+        <Header
+          onCreateInvoice={onOpenInvoiceModal}
+          onCreateTemplate={() => setIsTemplateModalOpen(true)}
+          activeTab={activeTab}
+          onTabChange={onTabChange}
+        />
+      </div>
+
+      <div className={cn('h-full pb-5 pl-5 sm:mt-10 sm:pl-8 md:pl-10', !isMobile && 'flex-1')}>
         <TabsComponent
           onApprovePayment={onOpenPaymentApproveModal}
           activeTab={activeTab}

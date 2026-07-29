@@ -1,1 +1,1 @@
-export { formSchema, type FormData, type FormInput } from './formSchema';
+export { createFormSchema, type FormData, type FormInput } from './formSchema';

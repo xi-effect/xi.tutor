@@ -1,5 +1,5 @@
 import { Chat } from '@xipkg/icons';
-import { boardIconClass } from '../ui/boardTheme';
+import { boardToolbarIconClass } from '../ui/boardTheme';
 import { NavbarButton } from '../ui/components/shared';
 import { useCommentsUiStore } from './commentsUiStore';
 
@@ -20,7 +20,7 @@ export const CommentPlaceButton = ({ className }: CommentPlaceButtonProps) => {
 
   return (
     <NavbarButton
-      icon={<Chat className={boardIconClass} />}
+      icon={<Chat className={boardToolbarIconClass} />}
       isActive={isPlacing}
       className={className}
       data-umami-event="board-comment-place"

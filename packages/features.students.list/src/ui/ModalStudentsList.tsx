@@ -15,11 +15,13 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { UserProfile } from '@xipkg/userprofile';
 import { cn } from '@xipkg/utils';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useDeleteStudent } from '../services';
 import { useStudentsList } from 'common.services';
 import { TutorStudentSchemaMarshal } from 'common.types';
 
 export const ModalStudentsList = ({ children }: { children: React.ReactNode }) => {
+  const { t } = useTranslation('studentsList');
   const [isDelete, setIsDelete] = useState(false);
   const [selectedStudent, setSelectedStudent] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -57,8 +59,8 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
         {!isDelete && (
           <ModalHeader>
             <ModalCloseButton />
-            <ModalTitle className="max-w-[calc(100%-48px)] text-gray-100">
-              Список учеников
+            <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
+              {t('title')}
             </ModalTitle>
           </ModalHeader>
         )}
@@ -67,8 +69,8 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
             <>
               <div className="flex flex-col gap-2 px-2">
                 <Input
-                  placeholder="Поиск"
-                  before={<Search className="fill-gray-60" />}
+                  placeholder={t('search')}
+                  before={<Search className="fill-icon-secondary" />}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
@@ -77,18 +79,18 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
                 <div className="flex flex-col">
                   {isLoading && (
                     <div className="flex h-20 items-center justify-center">
-                      <span className="text-gray-60">Загрузка...</span>
+                      <span className="text-text-secondary">{t('loading')}</span>
                     </div>
                   )}
                   {isError && (
                     <div className="flex h-20 items-center justify-center">
-                      <span className="text-red-500">Ошибка загрузки данных</span>
+                      <span className="text-text-danger">{t('loadError')}</span>
                     </div>
                   )}
                   {!isLoading && !isError && filteredStudents.length === 0 && (
                     <div className="flex h-20 items-center justify-center">
-                      <span className="text-gray-60">
-                        {searchQuery ? 'Студенты не найдены' : 'У вас пока нет студентов'}
+                      <span className="text-text-secondary">
+                        {searchQuery ? t('notFound') : t('empty')}
                       </span>
                     </div>
                   )}
@@ -97,7 +99,7 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
                     filteredStudents.map((student: TutorStudentSchemaMarshal) => (
                       <div
                         key={student.tutorship.student_id}
-                        className="group hover:bg-gray-5 flex h-[48px] flex-row items-center gap-2 rounded-2xl px-4"
+                        className="group hover:bg-background-page flex h-[48px] flex-row items-center gap-2 rounded-2xl px-4"
                       >
                         <UserProfile
                           text={student.user.display_name || student.user.username}
@@ -107,17 +109,17 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
                           <TooltipTrigger asChild>
                             <Button
                               onClick={() => handleDeleteMode(student.tutorship.student_id)}
-                              className="bg-gray-5 hover:bg-gray-0 ml-auto size-8 rounded-lg p-0"
+                              className="bg-background-page hover:bg-background-surface ml-auto size-8 rounded-lg p-0"
                               variant="none"
                               size="s"
                               data-umami-event="student-delete-init"
                               data-umami-event-student-id={student.tutorship.student_id}
                             >
-                              <Trash className="size-4 fill-gray-100" />
+                              <Trash className="fill-icon-primary size-4" />
                             </Button>
                           </TooltipTrigger>
                           <TooltipContent>
-                            <span>Удалить ученика из вашего пространства</span>
+                            <span>{t('deleteTooltip')}</span>
                           </TooltipContent>
                         </Tooltip>
                       </div>
@@ -128,11 +130,11 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
           )}
           {isDelete && (
             <>
-              <span className="text-xl-base text self-center font-semibold text-gray-100">
-                Удалить ученика?
+              <span className="text-xl-base text text-text-primary self-center font-semibold">
+                {t('deleteConfirm.title')}
               </span>
-              <span className="text-l-base text-gray-60 w-[300px] self-center text-center">
-                Если решите возобновить занятия, ученика придется приглашать заново
+              <span className="text-l-base text-text-secondary w-[300px] self-center text-center">
+                {t('deleteConfirm.description')}
               </span>
               <div className="mt-3 flex flex-col gap-2">
                 <Button
@@ -144,7 +146,7 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
                   data-umami-event="student-delete-confirm"
                   data-umami-event-student-id={selectedStudent}
                 >
-                  {isDeleting ? 'Удаление...' : 'Удалить'}
+                  {isDeleting ? t('actions.deleting') : t('actions.delete')}
                 </Button>
                 <Button
                   onClick={() => setIsDelete(false)}
@@ -154,7 +156,7 @@ export const ModalStudentsList = ({ children }: { children: React.ReactNode }) =
                   disabled={isDeleting}
                   data-umami-event="student-delete-cancel"
                 >
-                  Отмена
+                  {t('actions.cancel')}
                 </Button>
               </div>
             </>

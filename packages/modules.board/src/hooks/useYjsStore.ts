@@ -49,6 +49,7 @@ import { ensureYjsStorePopulated } from '../utils/parseYjsBoardDoc';
 import type { BoardBackgroundColorId } from '../config';
 import { parseBoardBackgroundFromYMap, type BoardBackgroundState } from '../utils/boardBackground';
 import type { DrBoardBackgroundType } from '@ibodr/draw';
+import i18n from 'i18next';
 
 type UseYjsStoreArgs = Partial<{
   hostUrl: string;
@@ -123,6 +124,12 @@ type DrStoreChanges = {
   updated: Record<string, [DrRecord, DrRecord]>;
   removed: Record<string, DrRecord>;
 };
+
+/** YKeyValue.delete снимает только первое вхождение ключа — чистим все дубликаты. */
+function deleteYjsRecordFully(yStore: YKeyValue<DrRecord>, id: string) {
+  let guard = 0;
+  while (yStore.has(id) && guard++ < 32) yStore.delete(id);
+}
 
 const FLUSH_MS = 50;
 
@@ -371,7 +378,8 @@ export function useYjsStore({
           if (isDocumentRecord(store, r)) yStore.set(r.id, normalizeRecordForYjsPersistence(r));
         });
         Object.values(pending.removed).forEach((r) => {
-          if (isDocumentRecord(store, r)) yStore.delete(r.id);
+          if (!isDocumentRecord(store, r)) return;
+          deleteYjsRecordFully(yStore, r.id);
         });
       }, 'user');
     };
@@ -394,7 +402,7 @@ export function useYjsStore({
       });
 
       if (reason === 'permission-denied') {
-        toast('Ошибка доступа к серверу совместного редактирования');
+        toast(i18n.t('toast.collabAccessError', { ns: 'board' }));
       }
     };
 
@@ -780,7 +788,7 @@ export function useYjsStore({
 
           if (legacySessionRecords.length > 0) {
             yDoc.transact(() => {
-              for (const r of legacySessionRecords) yStore.delete(r.id);
+              for (const r of legacySessionRecords) deleteYjsRecordFully(yStore, r.id);
             }, 'init-cleanup-session');
           }
 
@@ -824,7 +832,7 @@ export function useYjsStore({
 
           yDoc.transact(() => {
             for (const r of records) {
-              if (!migratedStore[r.id]) yStore.delete(r.id);
+              if (!migratedStore[r.id]) deleteYjsRecordFully(yStore, r.id);
             }
 
             for (const r of Object.values(migratedStore) as DrRecord[]) {
@@ -907,12 +915,13 @@ export function useYjsStore({
     }
 
     return () => {
+      // Сначала дописываем pending в Y.Doc — иначе локальные удаления (ластик)
+      // остаются только в store и не уходят в Hocuspocus.
       if (flushTimeoutRef.current != null) {
         clearTimeout(flushTimeoutRef.current);
         flushTimeoutRef.current = null;
       }
-
-      pendingChangesRef.current = null;
+      flushPendingChanges();
 
       unsubs.forEach((fn) => fn());
 
@@ -965,7 +974,9 @@ export function useYjsStore({
       readonlyMap.set('isReadonly', newReadonly);
     }, 'readonly-toggle');
 
-    toast.success(newReadonly ? 'Доска заблокирована!' : 'Доска разблокирована!');
+    toast.success(
+      i18n.t(newReadonly ? 'toast.boardLocked' : 'toast.boardUnlocked', { ns: 'board' }),
+    );
   }
 
   function getUserCamera(): CameraState | undefined {

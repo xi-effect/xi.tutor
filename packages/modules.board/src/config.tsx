@@ -1,35 +1,103 @@
 import type { DrBoardBackgroundType } from '@ibodr/draw';
 import type { InputMode } from './store/useDrawStore';
 import { Cursor, Pen } from '@xipkg/icons';
+import i18n from 'i18next';
 
 export const DEFAULT_BOARD_BACKGROUND_TYPE: DrBoardBackgroundType = 'dots';
 export const DEFAULT_BOARD_BACKGROUND_COLOR = 'white' as const;
 
 export type BoardBackgroundColorId = 'white' | 'gray' | 'cream' | 'green' | 'blue';
 
+const t = (key: string) => String(i18n.t(key, { ns: 'board' }));
+
 export const BOARD_BACKGROUND_TYPE_OPTIONS: {
   value: DrBoardBackgroundType;
   label: string;
 }[] = [
-  { value: 'none', label: 'Без фона' },
-  { value: 'dots', label: 'Точки' },
-  { value: 'grid', label: 'Сетка' },
-  { value: 'hex-grid', label: 'Гексагональная сетка' },
-  { value: 'lined', label: 'Тетрадь в линию' },
-  { value: 'double-line', label: 'Двойная линия' },
-  { value: 'double-line-slash', label: 'Двойная линия с косой чертой' },
-  { value: 'checkered', label: 'Тетрадь в клетку' },
+  {
+    value: 'none',
+    get label() {
+      return t('background.none');
+    },
+  },
+  {
+    value: 'dots',
+    get label() {
+      return t('background.dots');
+    },
+  },
+  {
+    value: 'grid',
+    get label() {
+      return t('background.grid');
+    },
+  },
+  {
+    value: 'hex-grid',
+    get label() {
+      return t('background.hexGrid');
+    },
+  },
+  {
+    value: 'lined',
+    get label() {
+      return t('background.lined');
+    },
+  },
+  {
+    value: 'double-line',
+    get label() {
+      return t('background.doubleLine');
+    },
+  },
+  {
+    value: 'double-line-slash',
+    get label() {
+      return t('background.doubleLineSlash');
+    },
+  },
+  {
+    value: 'checkered',
+    get label() {
+      return t('background.checkered');
+    },
+  },
 ];
 
 export const BOARD_BACKGROUND_COLOR_OPTIONS: {
   value: BoardBackgroundColorId;
   label: string;
 }[] = [
-  { value: 'white', label: 'Белый' },
-  { value: 'gray', label: 'Серый' },
-  { value: 'cream', label: 'Кремовый' },
-  { value: 'green', label: 'Зелёный' },
-  { value: 'blue', label: 'Голубой' },
+  {
+    value: 'white',
+    get label() {
+      return t('background.white');
+    },
+  },
+  {
+    value: 'gray',
+    get label() {
+      return t('background.gray');
+    },
+  },
+  {
+    value: 'cream',
+    get label() {
+      return t('background.cream');
+    },
+  },
+  {
+    value: 'green',
+    get label() {
+      return t('background.green');
+    },
+  },
+  {
+    value: 'blue',
+    get label() {
+      return t('background.blue');
+    },
+  },
 ];
 
 export const BOARD_BACKGROUND_COLOR_VALUES: Record<BoardBackgroundColorId, string> = {
@@ -105,69 +173,107 @@ export const DEFAULT_PEN_THICKNESS = 'm';
 export const DEFAULT_PEN_OPACITY = 1;
 
 export const INPUT_MODE_OPTIONS: { value: InputMode; label: string; icon: React.ReactNode }[] = [
-  { value: 'auto', label: 'Авто (по устройству)', icon: null },
-  { value: 'pen', label: 'Перо', icon: <Pen /> },
-  { value: 'mouse', label: 'Мышь', icon: <Cursor /> },
+  {
+    value: 'auto',
+    get label() {
+      return t('inputMode.auto');
+    },
+    icon: null,
+  },
+  {
+    value: 'pen',
+    get label() {
+      return t('inputMode.pen');
+    },
+    icon: <Pen />,
+  },
+  {
+    value: 'mouse',
+    get label() {
+      return t('inputMode.mouse');
+    },
+    icon: <Cursor />,
+  },
 ];
 
 export const BOARD_SHAPE_CATEGORIES: Record<string, ShapeCategoryT> = {
   images: {
     key: 'images',
-    label: 'Изображения',
+    get label() {
+      return t('categories.images');
+    },
     types: ['image'],
   },
 
   text: {
     key: 'text',
-    label: 'Текст',
+    get label() {
+      return t('categories.text');
+    },
     types: ['text'],
   },
 
   drawings: {
     key: 'drawings',
-    label: 'Рисунки',
+    get label() {
+      return t('categories.drawings');
+    },
     types: ['draw', 'highlight'],
   },
 
   shapes: {
     key: 'shapes',
-    label: 'Фигуры',
+    get label() {
+      return t('categories.shapes');
+    },
     types: ['geo', 'xi-geo', 'coordinate-axes'],
   },
 
   stickers: {
     key: 'stickers',
-    label: 'Стикеры',
+    get label() {
+      return t('categories.stickers');
+    },
     types: ['note'],
   },
 
   frames: {
     key: 'frames',
-    label: 'Фреймы',
+    get label() {
+      return t('categories.frames');
+    },
     types: ['frame'],
   },
 
   arrows: {
     key: 'arrows',
-    label: 'Стрелки',
+    get label() {
+      return t('categories.arrows');
+    },
     types: ['arrow'],
   },
 
   lines: {
     key: 'lines',
-    label: 'Линии',
+    get label() {
+      return t('categories.lines');
+    },
     types: ['line'],
   },
 
   notes: {
     key: 'notes',
-    label: 'Заметки',
+    get label() {
+      return t('categories.notes');
+    },
     types: ['note'],
   },
 
   media: {
     key: 'media',
-    label: 'Медиа',
+    get label() {
+      return t('categories.media');
+    },
     types: ['pdf', 'audio', 'video', 'embed', 'bookmark'],
   },
 };

@@ -1,26 +1,33 @@
 import * as z from 'zod';
+import { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 
-export const formSchema = z.object({
-  name: z
-    .string()
-    .nonempty('Укажите название')
-    .max(100, 'Название не должно превышать 100 символов'),
-  price: z.preprocess(
-    (val) => {
-      if (typeof val === 'string' && val.trim() === '') return undefined;
-      return Number(val);
-    },
-    z
-      .number({ error: 'Введите число' })
-      .positive('Стоимость должна быть больше нуля')
-      .lt(100000, 'Стоимость не должна превышать 100000')
-      .refine(
-        (val) => {
-          return /^\d+(\.\d{1,2})?$/.test(val.toString());
-        },
-        { message: 'Допустимы максимум 2 знака после запятой' },
-      ),
-  ),
-});
+export const useFormSchema = () => {
+  const { t } = useTranslation('payments');
 
-export type FormData = z.infer<typeof formSchema>;
+  return useMemo(
+    () =>
+      z.object({
+        name: z.string().nonempty(t('validation.nameRequired')).max(100, t('validation.nameMax')),
+        price: z.preprocess(
+          (val) => {
+            if (typeof val === 'string' && val.trim() === '') return undefined;
+            return Number(val);
+          },
+          z
+            .number({ error: t('validation.priceNumber') })
+            .positive(t('validation.pricePositive'))
+            .lt(100000, t('validation.priceMax'))
+            .refine(
+              (val) => {
+                return /^\d+(\.\d{1,2})?$/.test(val.toString());
+              },
+              { message: t('validation.priceDecimals') },
+            ),
+        ),
+      }),
+    [t],
+  );
+};
+
+export type FormData = z.infer<ReturnType<typeof useFormSchema>>;

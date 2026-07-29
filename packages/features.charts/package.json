@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "type": "module",
   "exports": {
-    ".": "./index.ts"
+    ".": "./index.ts",
+    "./locales": "./src/locales/index.ts"
   },
   "license": "MIT",
   "scripts": {
@@ -12,6 +13,8 @@
   },
   "dependencies": {
     "@xipkg/utils": "^1.8.0",
+    "i18next": "24.2.2",
+    "react-i18next": "15.4.1",
     "recharts": "^3.9.2"
   },
   "devDependencies": {
@@ -20,7 +23,7 @@
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
     "@xipkg/eslint": "4.6.0",
-    "@xipkg/tailwind": "0.8.6",
+    "@xipkg/tailwind": "1.0.0",
     "@xipkg/typescript": "latest",
     "common.eslint": "workspace:*",
     "common.typescript": "workspace:*",

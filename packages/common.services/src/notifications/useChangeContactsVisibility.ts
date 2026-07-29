@@ -28,7 +28,7 @@ export const useChangeContactsVisibility = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [NotificationsQueryKey.NotificationsSettings],
+        queryKey: [NotificationsQueryKey.DeliveryMethods],
       });
     },
   });

@@ -1,43 +1,59 @@
-import { useGetNotificationsStatus } from 'common.services';
-import { useConnectTg, useDisconnectTg } from '../services';
+import { useTgConnection } from 'common.services';
+import { useDisconnectTg } from '../services';
 import { Button } from '@xipkg/button';
-import { ChevronRight, Trash } from '@xipkg/icons';
+import { Trash } from '@xipkg/icons';
+import { useTranslation } from 'react-i18next';
 
 export function useNotificationsStatus() {
-  const { data } = useGetNotificationsStatus();
-
-  const { handleConnectTg } = useConnectTg();
+  const { t } = useTranslation('profile');
+  const {
+    telegram,
+    isActive: isTgConnectionActive,
+    isBlocked: isTgConnectionBlocked,
+    isReplaced: isTgConnectionReplaced,
+    isNotConnected,
+    isPending: isTgPending,
+    isAwaitingConfirmation: isTgAwaitingConfirmation,
+    handleConnect: handleConnectTg,
+  } = useTgConnection();
   const { handleDisconnectTg } = useDisconnectTg();
-
-  const status = data?.telegram?.connection.status;
-
-  const isTgConnectionActive = status === 'active';
-  const isTgConnectionBlocked = status === 'blocked';
-  const isTgConnectionReplaced = status === 'replaced';
-  const isNotConnected = !data?.telegram;
 
   const tgConnectionStatus = [
     {
-      condition: isNotConnected,
-      text: 'Не подключен',
-      color: 'text-gray-80',
+      condition: isNotConnected && !isTgAwaitingConfirmation,
+      text: t('notifications.notConnected'),
+      color: 'text-text-primary',
+    },
+    {
+      condition: isTgAwaitingConfirmation,
+      text: t('notifications.awaitingConfirmationTg'),
+      color: 'text-text-primary',
     },
     {
       condition: isTgConnectionActive,
-      text: data?.telegram?.contact?.title,
-      color: 'text-gray-80',
+      text: telegram?.related_contact?.title,
+      color: 'text-text-primary',
     },
     {
       condition: isTgConnectionBlocked,
-      text: 'Разблокируйте бота в Telegram или удалите привязку и подключите заново',
-      color: 'text-red-80',
+      text: t('notifications.blocked'),
+      color: 'text-text-danger',
     },
     {
       condition: isTgConnectionReplaced,
-      text: 'Удалите текущую привязку и подключите заново',
-      color: 'text-orange-60',
+      text: t('notifications.replaced'),
+      color: 'text-tag-orange-accent',
     },
   ];
+
+  const connectButtonClassName =
+    'text-s-base text-text-link h-11 min-w-[11rem] justify-end px-3 py-0';
+
+  const connectButtonLabel = (idleLabel: string) => {
+    if (isTgAwaitingConfirmation) return t('notifications.awaiting');
+    if (isTgPending) return t('notifications.formingLink');
+    return idleLabel;
+  };
 
   const tgActionButton = () => {
     if (isTgConnectionActive) {
@@ -48,8 +64,8 @@ export function useNotificationsStatus() {
           onClick={handleDisconnectTg}
           className="ml-auto bg-transparent"
         >
-          <Trash className="fill-gray-80 pointer" />
-          <span className="sr-only">Удалить</span>
+          <Trash className="fill-icon-primary pointer" />
+          <span className="sr-only">{t('notifications.delete')}</span>
         </Button>
       );
     }
@@ -58,10 +74,11 @@ export function useNotificationsStatus() {
       return (
         <Button
           variant="none"
-          className="text-brand-100 ml-auto h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
+          className={connectButtonClassName}
           onClick={handleConnectTg}
+          disabled={isTgPending}
         >
-          Разблокировать
+          {connectButtonLabel(t('notifications.unblock'))}
         </Button>
       );
     }
@@ -70,19 +87,28 @@ export function useNotificationsStatus() {
       return (
         <Button
           variant="none"
-          className="text-brand-100 ml-auto h-8 p-0 py-1.5 sm:px-4 xl:px-6 xl:py-3"
+          className={connectButtonClassName}
           onClick={handleConnectTg}
+          disabled={isTgPending}
         >
-          Подключить заново
+          {connectButtonLabel(t('notifications.reconnect'))}
         </Button>
       );
     }
 
-    return <ChevronRight className="fill-gray-80 ml-auto" />;
+    return (
+      <Button
+        variant="none"
+        className={connectButtonClassName}
+        onClick={handleConnectTg}
+        disabled={isTgPending}
+      >
+        {connectButtonLabel(t('notifications.connect'))}
+      </Button>
+    );
   };
 
   return {
-    data,
     isTgConnectionActive,
     isTgConnectionBlocked,
     isTgConnectionReplaced,

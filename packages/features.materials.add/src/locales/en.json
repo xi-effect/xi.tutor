@@ -1,0 +1,19 @@
+{
+  "note": {
+    "create": "Create note",
+    "creating": "Creating...",
+    "collaborative": "Collaborative",
+    "tutorOnly": "Tutor only",
+    "drafts": "Drafts"
+  },
+  "board": {
+    "create": "Create board",
+    "creating": "Creating...",
+    "collaborative": "Collaborative",
+    "tutorOnly": "Tutor only",
+    "drafts": "Drafts"
+  },
+  "file": {
+    "upload": "Upload file"
+  }
+}

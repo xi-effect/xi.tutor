@@ -3,6 +3,7 @@ import { useYjsContext } from '../../../providers/YjsProvider';
 import { resolveAssetUrl } from '../../../utils/resolveAssetUrl';
 import { audioWaveformCache } from '../audioWaveformCache';
 import type { AudioShape } from '../AudioShape';
+import i18n from 'i18next';
 
 export type AudioLoadStatus = 'idle' | 'loading' | 'ready' | 'error';
 
@@ -35,7 +36,7 @@ export function useAudioLoad(shape: AudioShape, shouldLoad: boolean) {
       } catch (err) {
         console.error('[AudioPlayer] Load failed:', err);
         if (!cancelled) {
-          setError('Не удалось загрузить аудио');
+          setError(i18n.t('audio.loadError', { ns: 'board' }));
           setStatus('error');
         }
       }

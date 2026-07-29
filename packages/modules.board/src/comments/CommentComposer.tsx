@@ -1,8 +1,9 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { cn } from '@xipkg/utils';
-import { boardMenuSurfaceClass } from '../ui/boardTheme';
+import { boardChromeZClass, boardMenuSurfaceClass } from '../ui/boardTheme';
 import { getCommentAuthorAvatarUrl } from './commentAvatar';
 import { CommentMessageInput } from './CommentMessageInput';
+import { useTranslation } from 'react-i18next';
 
 type CommentComposerProps = {
   left: number;
@@ -26,9 +27,10 @@ export const CommentComposer = ({
   onSubmit,
   onCancel,
 }: CommentComposerProps) => {
+  const { t } = useTranslation('board');
   return (
     <div
-      className="pointer-events-none absolute z-100"
+      className={`pointer-events-none absolute ${boardChromeZClass}`}
       data-comment-ui
       style={{ left, top, transform: 'translate(-50%, -100%)' }}
     >
@@ -39,14 +41,14 @@ export const CommentComposer = ({
         )}
       >
         <CommentMessageInput
-          placeholder="Написать комментарий..."
-          submitLabel="Отправить"
+          placeholder={t('comments.writePlaceholder')}
+          submitLabel={t('comments.send')}
           autoFocus
           onSubmit={onSubmit}
           onCancel={onCancel}
         />
       </div>
-      <div className="border-brand-80 bg-gray-0 flex size-8 items-center justify-center rounded-full border-2 shadow-md">
+      <div className="border-border-focus bg-background-surface flex size-8 items-center justify-center rounded-full border-2 shadow-md">
         <Avatar size="s">
           <AvatarImage
             src={getCommentAuthorAvatarUrl(authorId)}

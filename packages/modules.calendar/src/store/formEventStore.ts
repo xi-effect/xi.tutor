@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { getDateLocale } from 'common.ui';
 import { EventFormData } from '../model';
 import { ICalendarEvent } from '../ui/types';
 import { formatDate } from '../utils/calendarUtils';
@@ -43,11 +44,11 @@ const useFormEventStore = create<FormEventStore>((set) => ({
     const defaultValues: EventFormData = {
       title: calendarEvent.title,
       type: calendarEvent.type || 'rest',
-      startTime: calendarEvent.start.toLocaleTimeString('ru-RU', {
+      startTime: calendarEvent.start.toLocaleTimeString(getDateLocale(), {
         hour: '2-digit',
         minute: '2-digit',
       }),
-      endTime: calendarEvent.end.toLocaleTimeString('ru-RU', {
+      endTime: calendarEvent.end.toLocaleTimeString(getDateLocale(), {
         hour: '2-digit',
         minute: '2-digit',
       }),

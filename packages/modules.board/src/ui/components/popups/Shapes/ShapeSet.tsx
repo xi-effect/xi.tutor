@@ -21,13 +21,13 @@ export const ShapeSet = () => {
   };
 
   return (
-    <div className="border-gray-10 bg-gray-0 flex w-full gap-2 rounded-xl border p-1 shadow-none">
+    <div className="border-border-default bg-background-surface flex w-full gap-2 rounded-xl border p-1 shadow-none">
       {shapes.map((item) => {
         const isActive = item.name === activeShape;
         return (
           <div
             key={item.name}
-            className={`flex rounded-lg p-1 ${isActive ? 'border-brand-60 border' : 'border border-transparent'}`}
+            className={`flex rounded-lg p-1 ${isActive ? 'border-border-focus border' : 'border border-transparent'}`}
           >
             <button
               type="button"

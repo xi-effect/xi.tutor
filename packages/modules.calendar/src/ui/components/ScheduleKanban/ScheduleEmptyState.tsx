@@ -30,7 +30,7 @@ export const ScheduleEmptyState: FC<ScheduleEmptyStateProps> = ({
   return (
     <div
       className={cn(
-        'border-gray-10 bg-gray-0 dark:border-gray-70 dark:bg-gray-5 flex min-w-0 flex-col rounded-xl border border-dashed',
+        'border-border-default bg-background-surface dark:border-border-strong dark:bg-background-page flex min-w-0 flex-col rounded-xl border border-dashed',
         fillColumn ? 'h-full min-h-[120px] w-full' : 'min-h-[120px]',
         className,
       )}
@@ -41,18 +41,20 @@ export const ScheduleEmptyState: FC<ScheduleEmptyStateProps> = ({
           fillColumn && 'min-h-0 flex-1',
         )}
       >
-        <p className="text-s-base text-gray-60 text-center dark:text-gray-50">{t(messageKey)}</p>
+        <p className="text-s-base text-text-secondary dark:text-text-muted text-center">
+          {t(messageKey)}
+        </p>
         {onScheduleClick ? (
           <Button
             type="button"
             variant="ghost"
             size="s"
-            className="text-brand-80 h-9 shrink-0 font-medium"
+            className="text-text-link h-9 shrink-0 font-medium"
             onClick={onScheduleClick}
             data-umami-event="schedule-empty-add-lesson-kanban"
           >
             {t('add_lesson')}
-            <Plus className="fill-brand-80 ml-2 h-5 w-5" />
+            <Plus className="fill-icon-brand ml-2 h-5 w-5" />
           </Button>
         ) : null}
       </div>

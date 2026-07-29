@@ -2,13 +2,20 @@ import { track, useEditor } from '@ibodr/draw';
 import { Plus, Minus } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 import { useRef } from 'react';
-import { boardIconClass, boardPanelClass, boardTextClass } from '../../boardTheme';
+import {
+  boardChromeZClass,
+  boardIconClass,
+  boardPanelClass,
+  boardTextClass,
+} from '../../boardTheme';
+import { useTranslation } from 'react-i18next';
 
 const ZOOM_ANIMATION = { animation: { duration: 200 } } as const;
 /** Задержка одиночного клика, чтобы не срабатывал вместе с double-click */
 const SINGLE_CLICK_DELAY_MS = 250;
 
 export const DrawZoomPanel = track(() => {
+  const { t } = useTranslation('board');
   const editor = useEditor();
   const resetZoomClickTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -48,26 +55,26 @@ export const DrawZoomPanel = track(() => {
   };
 
   return (
-    <div className="absolute right-4 bottom-4 z-260">
+    <div className={`absolute right-4 bottom-20 ${boardChromeZClass} sm:bottom-4`}>
       <div className={`${boardPanelClass} flex items-center justify-center gap-2 p-1`}>
         <Button
-          className="hover:bg-brand-0 pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
+          className="hover:bg-status-info-background pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
           variant="none"
           onClick={handleZoomOut}
         >
-          <Minus className="h-4 w-4 fill-gray-100 lg:h-6 lg:w-6" />
+          <Minus className="fill-icon-primary h-4 w-4 lg:h-6 lg:w-6" />
         </Button>
         <Button
           className={`h-6 w-6 min-w-[60px] items-center justify-center px-2 py-1 ${boardTextClass} hover:bg-transparent focus:bg-transparent active:bg-transparent lg:h-8 lg:w-8`}
           variant="none"
-          title="Клик — 100%. Двойной клик — показать все элементы"
+          title={t('zoom.clickHint')}
           onClick={handleResetZoomClick}
           onDoubleClick={handleZoomToFitDoubleClick}
         >
           {zoomPercent < 1 ? '< 1%' : `${zoomPercent}%`}
         </Button>
         <Button
-          className="hover:bg-brand-0 pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
+          className="hover:bg-status-info-background pointer-events-auto flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
           variant="none"
           onClick={handleZoomIn}
         >

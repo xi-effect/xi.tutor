@@ -9,7 +9,12 @@ type SupportPageShellProps = {
 
 export const SupportPageShell = ({ children, className }: SupportPageShellProps) => {
   return (
-    <div className={cn('bg-gray-0 h-dvh w-full overflow-y-auto overscroll-contain', className)}>
+    <div
+      className={cn(
+        'bg-background-surface h-dvh w-full overflow-y-auto overscroll-contain',
+        className,
+      )}
+    >
       <div className="flex min-h-dvh flex-col">
         {children}
         <SupportFooter />

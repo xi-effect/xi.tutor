@@ -1,8 +1,10 @@
 import { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useInfiniteQuery } from '../../../hooks';
 import { CardsGrid } from './CardsGrid';
 
 export const CardsGridTutor = () => {
+  const { t } = useTranslation('classrooms');
   const parentRef = useRef<HTMLDivElement>(null);
 
   // Используем бесконечный запрос с реальным API для репетитора
@@ -18,8 +20,8 @@ export const CardsGridTutor = () => {
       hasNextPage={hasNextPage}
       fetchNextPage={fetchNextPage}
       parentRef={parentRef}
-      emptyText="Здесь будут ваши ученики и группы"
-      inviteText="Пригласите кого-нибудь"
+      emptyText={t('empty.tutorTitle')}
+      inviteText={t('empty.tutorDescription')}
       withHelpLink
     />
   );

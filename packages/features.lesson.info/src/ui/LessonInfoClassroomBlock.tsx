@@ -6,6 +6,7 @@ import { useCurrentUser, useUserByRole } from 'common.services';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import type { FC } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const avatarSize = 'm';
 
@@ -52,17 +53,20 @@ export const LessonInfoClassroomBlock: FC<LessonInfoClassroomBlockProps> = ({
   classroom,
   classroomLoading,
 }) => {
+  const { t } = useTranslation('lessonInfo');
+  const classroomNumberLabel = (id: number) => t('classroomNumber', { id });
+
   if (classroomLoading) {
     return (
       <>
         <div className="flex min-h-0 w-full flex-row items-center">
-          <span className="text-gray-40 text-xs-base">Загрузка кабинета…</span>
+          <span className="text-text-disabled text-xs-base">{t('classroomLoading')}</span>
         </div>
         <div className="flex flex-row gap-2">
           <Avatar size={avatarSize}>
             <AvatarFallback size={avatarSize} loading />
           </Avatar>
-          <div className="bg-gray-10 h-8 min-h-8 flex-1 animate-pulse rounded-lg" />
+          <div className="bg-background-subtle h-8 min-h-8 flex-1 animate-pulse rounded-lg" />
         </div>
       </>
     );
@@ -71,24 +75,25 @@ export const LessonInfoClassroomBlock: FC<LessonInfoClassroomBlockProps> = ({
   if (!classroom) {
     return (
       <div className="flex flex-row gap-2">
-        <div className="bg-brand-80 text-gray-0 flex h-8 min-h-8 w-8 min-w-8 items-center justify-center rounded-3xl text-sm font-medium">
+        <div className="bg-action-primary-background-default text-text-on-accent flex h-8 min-h-8 w-8 min-w-8 items-center justify-center rounded-3xl text-sm font-medium">
           №
         </div>
         <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
             <div className="flex h-8 min-w-0 flex-1 flex-row items-center">
-              <h3 className="text-s-base line-clamp-2 text-left font-medium text-gray-100">
-                Кабинет №{classroomId}
+              <h3 className="text-s-base text-text-primary line-clamp-2 text-left font-medium">
+                {classroomNumberLabel(classroomId)}
               </h3>
             </div>
           </TooltipTrigger>
-          <TooltipContent>Кабинет №{classroomId}</TooltipContent>
+          <TooltipContent>{classroomNumberLabel(classroomId)}</TooltipContent>
         </Tooltip>
       </div>
     );
   }
 
   const heading = classroomHeadingText(classroom);
+  const fallbackHeading = classroomNumberLabel(classroom.id);
 
   return (
     <>
@@ -96,7 +101,7 @@ export const LessonInfoClassroomBlock: FC<LessonInfoClassroomBlockProps> = ({
         {classroom.kind === 'individual' ? (
           <LessonInfoUserAvatar classroom={classroom} isLoading={false} />
         ) : (
-          <div className="bg-brand-80 text-gray-0 flex h-8 min-h-8 w-8 min-w-8 shrink-0 items-center justify-center rounded-3xl">
+          <div className="bg-action-primary-background-default text-text-on-accent flex h-8 min-h-8 w-8 min-w-8 shrink-0 items-center justify-center rounded-3xl">
             {(heading[0] ?? classroom.name?.[0] ?? classroom.title?.[0] ?? '').toUpperCase()}
           </div>
         )}
@@ -104,12 +109,12 @@ export const LessonInfoClassroomBlock: FC<LessonInfoClassroomBlockProps> = ({
         <Tooltip delayDuration={1000}>
           <TooltipTrigger asChild>
             <div className="flex h-8 min-w-0 flex-1 flex-row items-center justify-start gap-2">
-              <h3 className="text-s-base line-clamp-2 min-w-0 text-left font-medium text-gray-100">
-                {heading || `Кабинет №${classroom.id}`}
+              <h3 className="text-s-base text-text-primary line-clamp-2 min-w-0 text-left font-medium">
+                {heading || fallbackHeading}
               </h3>
             </div>
           </TooltipTrigger>
-          <TooltipContent>{heading || `Кабинет №${classroom.id}`}</TooltipContent>
+          <TooltipContent>{heading || fallbackHeading}</TooltipContent>
         </Tooltip>
       </div>
     </>

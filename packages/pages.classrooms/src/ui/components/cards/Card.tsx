@@ -15,6 +15,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useCurrentUser, useDeleteClassroom, useUserByRole } from 'common.services';
 import { StatusBadge, SubjectBadge } from 'features.classroom';
 import { ModalEditClassroomName } from 'features.classroom.rename';
+import { useTranslation } from 'react-i18next';
 import { ClassroomPropsT } from '../../../types';
 
 type UserAvatarPropsT = {
@@ -55,6 +56,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
   subject_id,
   deleted = false,
 }) => {
+  const { t } = useTranslation('classrooms');
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
   const { deleteClassroom, isDeleting } = useDeleteClassroom();
@@ -96,12 +98,12 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
   const isTutor = user?.default_layout === 'tutor';
 
   return (
-    <div data-umami-event="material-card-open" data-umami-event-type={student_id}>
+    <div data-umami-event="classroom-card-open" data-umami-event-type={student_id}>
       <div
         onClick={handleClick}
-        className="hover:border-brand-80 border-gray-20 bg-gray-0 relative flex cursor-pointer justify-between rounded-2xl border p-4 transition-all duration-200 ease-linear"
+        className="group bg-background-surface relative flex h-40 w-full cursor-pointer justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]"
       >
-        <div className="flex max-w-full flex-col gap-4">
+        <div className="flex h-full max-w-full flex-col justify-between">
           <div className="mr-8 flex w-auto max-w-[calc(100%-32px)] items-center gap-2">
             <StatusBadge status={status} kind={kind} deleted={deleted} />
 
@@ -114,19 +116,19 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
               />
             )}
           </div>
-          <div className="flex flex-row gap-2">
+          <div className="flex flex-row items-center gap-2">
             {kind === 'individual' && (
               <UserAvatar kind={kind} student_id={student_id?.toString() ?? ''} />
             )}
             {kind === 'group' && (
-              <div className="bg-brand-80 text-gray-0 flex size-12 shrink-0 items-center justify-center rounded-full">
+              <div className="bg-action-primary-background-default text-text-on-accent flex size-12 shrink-0 items-center justify-center rounded-full">
                 {name?.[0].toUpperCase() ?? ''}
               </div>
             )}
             <Tooltip delayDuration={2000}>
               <TooltipTrigger asChild>
                 <div className="flex h-full w-full flex-row items-center justify-center gap-2">
-                  <h3 className="text-s-base line-clamp-2 w-full text-left font-medium text-gray-100">
+                  <h3 className="text-s-base text-text-primary line-clamp-2 w-full text-left font-medium">
                     {name}
                   </h3>
                 </div>
@@ -137,22 +139,26 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
         </div>
 
         {isTutor && (
-          <div className="absolute top-4 right-4 flex h-6 w-6 items-center justify-center">
+          <div className="absolute top-5 right-5 flex h-7 w-7 items-center justify-center">
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
               <DropdownMenuTrigger asChild>
-                <Button className="h-6 w-6 rounded-md" variant="none" size="icon">
-                  <MoreVert className="h-4 w-4 dark:fill-gray-100" />
+                <Button
+                  className="hover:bg-background-subtle h-7 min-h-7 w-7 min-w-7 rounded-lg p-0"
+                  variant="none"
+                  size="icon"
+                >
+                  <MoreVert className="fill-icon-secondary dark:fill-icon-primary h-5 w-5" />
                 </Button>
               </DropdownMenuTrigger>
 
               <DropdownMenuContent
                 side="bottom"
                 align="end"
-                className="border-gray-10 bg-gray-0 border p-1"
+                className="border-border-default bg-background-surface border p-1"
               >
                 {kind === 'group' && (
-                  <DropdownMenuItem onClick={handleOpenEditModal} data-umami-event="material-edit">
-                    Переименовать
+                  <DropdownMenuItem onClick={handleOpenEditModal} data-umami-event="classroom-edit">
+                    {t('rename')}
                   </DropdownMenuItem>
                 )}
 
@@ -161,7 +167,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
                   disabled={isDeleting}
                   className={isDeleting ? 'cursor-not-allowed opacity-50' : ''}
                 >
-                  {isDeleting ? 'Удаление...' : 'Удалить'}
+                  {isDeleting ? t('deleting') : t('delete')}
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>

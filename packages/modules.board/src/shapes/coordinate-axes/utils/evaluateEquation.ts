@@ -1,3 +1,5 @@
+import i18n from 'i18next';
+
 type Token =
   | { type: 'number'; value: number }
   | { type: 'identifier'; name: string }
@@ -48,7 +50,7 @@ function tokenize(expression: string): Token[] {
       }
       const value = Number(numStr);
       if (Number.isNaN(value)) {
-        throw new Error('Некорректное число');
+        throw new Error(i18n.t('equation.invalidNumber', { ns: 'board' }));
       }
       tokens.push({ type: 'number', value });
       continue;
@@ -65,7 +67,7 @@ function tokenize(expression: string): Token[] {
       continue;
     }
 
-    throw new Error(`Недопустимый символ: ${char}`);
+    throw new Error(i18n.t('equation.invalidChar', { ns: 'board', char }));
   }
 
   return tokens;
@@ -112,7 +114,7 @@ class Parser {
   parse(): (x: number) => number {
     const expr = this.parseExpression();
     if (this.peek()) {
-      throw new Error('Лишние символы в выражении');
+      throw new Error(i18n.t('equation.extraChars', { ns: 'board' }));
     }
     return expr;
   }
@@ -124,7 +126,7 @@ class Parser {
   private consume(): Token {
     const token = this.tokens[this.index];
     if (!token) {
-      throw new Error('Неожиданный конец выражения');
+      throw new Error(i18n.t('equation.unexpectedEnd', { ns: 'board' }));
     }
     this.index += 1;
     return token;
@@ -201,7 +203,7 @@ class Parser {
     const token = this.peek();
 
     if (!token) {
-      throw new Error('Неожиданный конец выражения');
+      throw new Error(i18n.t('equation.unexpectedEnd', { ns: 'board' }));
     }
 
     if (token.type === 'number') {
@@ -227,12 +229,12 @@ class Parser {
 
       if (FUNCTIONS.has(token.name)) {
         if (this.peek()?.type !== 'lparen') {
-          throw new Error(`Ожидалась скобка после ${token.name}`);
+          throw new Error(i18n.t('equation.expectedParenAfter', { ns: 'board', name: token.name }));
         }
         this.consume();
         const arg = this.parseExpression();
         if (this.peek()?.type !== 'rparen') {
-          throw new Error('Ожидалась закрывающая скобка');
+          throw new Error(i18n.t('equation.expectedClosingParen', { ns: 'board' }));
         }
         this.consume();
 
@@ -263,24 +265,24 @@ class Parser {
           case 'exp':
             return (x) => Math.exp(arg(x));
           default:
-            throw new Error(`Неизвестная функция: ${token.name}`);
+            throw new Error(i18n.t('equation.unknownFunction', { ns: 'board', name: token.name }));
         }
       }
 
-      throw new Error(`Неизвестный идентификатор: ${token.name}`);
+      throw new Error(i18n.t('equation.unknownIdentifier', { ns: 'board', name: token.name }));
     }
 
     if (token.type === 'lparen') {
       this.consume();
       const expr = this.parseExpression();
       if (this.peek()?.type !== 'rparen') {
-        throw new Error('Ожидалась закрывающая скобка');
+        throw new Error(i18n.t('equation.expectedClosingParen', { ns: 'board' }));
       }
       this.consume();
       return expr;
     }
 
-    throw new Error('Некорректное выражение');
+    throw new Error(i18n.t('equation.invalidExpression', { ns: 'board' }));
   }
 }
 
@@ -290,11 +292,11 @@ export type EquationEvaluationResult =
 export function evaluateEquation(expression: string): EquationEvaluationResult {
   const trimmed = expression.trim();
   if (!trimmed) {
-    return { ok: false, error: 'Пустое выражение' };
+    return { ok: false, error: i18n.t('equation.emptyExpression', { ns: 'board' }) };
   }
 
   if (!ALLOWED_CHARS.test(trimmed)) {
-    return { ok: false, error: 'Выражение содержит недопустимые символы' };
+    return { ok: false, error: i18n.t('equation.invalidChars', { ns: 'board' }) };
   }
 
   try {
@@ -302,13 +304,16 @@ export function evaluateEquation(expression: string): EquationEvaluationResult {
     const evaluate = new Parser(tokens).parse();
     const test = evaluate(0);
     if (typeof test !== 'number') {
-      return { ok: false, error: 'Не удалось вычислить выражение' };
+      return { ok: false, error: i18n.t('equation.evalFailed', { ns: 'board' }) };
     }
     return { ok: true, evaluate };
   } catch (error) {
     return {
       ok: false,
-      error: error instanceof Error ? error.message : 'Ошибка в выражении',
+      error:
+        error instanceof Error
+          ? error.message
+          : i18n.t('equation.expressionError', { ns: 'board' }),
     };
   }
 }

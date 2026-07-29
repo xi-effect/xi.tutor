@@ -11,6 +11,8 @@
       });
     </script>
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
@@ -19,27 +21,28 @@
       (function () {
         var themeKey = 'sovlium-theme';
         var chosenKey = 'sovlium-theme-chosen';
+        var languageKey = 'xi_language';
         var stored = null;
         var chosen = false;
+        var language = 'ru';
 
         try {
           stored = localStorage.getItem(themeKey);
           chosen = localStorage.getItem(chosenKey) === '1';
+          var storedLanguage = localStorage.getItem(languageKey);
+          if (storedLanguage === 'en' || storedLanguage === 'ru') {
+            language = storedLanguage;
+          }
         } catch (e) {}
 
         var preference =
-          chosen && (stored === 'light' || stored === 'dark' || stored === 'system')
+          chosen && (stored === 'light' || stored === 'dark')
             ? stored
             : 'light';
-        var resolved =
-          preference === 'dark' ||
-          (preference === 'system' &&
-            window.matchMedia('(prefers-color-scheme: dark)').matches)
-            ? 'dark'
-            : 'light';
 
-        document.documentElement.setAttribute('data-theme', resolved);
+        document.documentElement.setAttribute('data-theme', preference);
         document.documentElement.setAttribute('data-theme-preference', preference);
+        document.documentElement.lang = language;
       })();
     </script>
     <meta name="robots" content="noindex, nofollow" />

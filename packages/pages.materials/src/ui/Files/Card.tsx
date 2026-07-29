@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 import { Button } from '@xipkg/button';
 import { MoreVert } from '@xipkg/icons';
@@ -14,8 +15,10 @@ import {
 import { MaterialPropsT } from '../../types';
 
 export const Card: React.FC<MaterialPropsT> = ({ name }) => {
+  const { t } = useTranslation('materials');
+
   return (
-    <div className="hover:bg-gray-5 border-gray-30 bg-gray-0 relative flex h-[96px] cursor-pointer justify-between rounded-2xl border p-0">
+    <div className="hover:bg-background-page border-border-control bg-background-surface relative flex h-[96px] cursor-pointer justify-between rounded-2xl border p-0">
       <File
         className="m-0 flex h-full w-[calc(100%-36px)] border-none bg-transparent p-0 hover:bg-transparent"
         name={name}
@@ -23,7 +26,7 @@ export const Card: React.FC<MaterialPropsT> = ({ name }) => {
         url="https://www.google.com"
       />
 
-      <div className="absolute top-4 right-4 flex h-6 w-6 items-center justify-center rounded-full bg-gray-100">
+      <div className="bg-background-canvas absolute top-4 right-4 flex h-6 w-6 items-center justify-center rounded-full">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="h-6 w-6" variant="none" size="icon">
@@ -33,10 +36,10 @@ export const Card: React.FC<MaterialPropsT> = ({ name }) => {
           <DropdownMenuContent
             side="bottom"
             align="end"
-            className="border-gray-10 bg-gray-0 border p-1"
+            className="border-border-default bg-background-surface border p-1"
           >
-            <DropdownMenuItem>Копировать</DropdownMenuItem>
-            <DropdownMenuItem>Удалить</DropdownMenuItem>
+            <DropdownMenuItem>{t('fileCard.copy')}</DropdownMenuItem>
+            <DropdownMenuItem>{t('fileCard.delete')}</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
