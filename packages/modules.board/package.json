@@ -46,6 +46,7 @@
     "nanoid": "^5.1.5",
     "pdfjs-dist": "^4.10.38",
     "pica": "9.0.1",
+    "pptx-preview": "^1.0.7",
     "react-hook-form": "^7.73.1",
     "sonner": "^2.0.7",
     "y-utility": "0.1.4",
