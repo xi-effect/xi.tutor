@@ -46,7 +46,7 @@
     "title": "Invite a student",
     "description": "Copy the ready-made message or the link and send it to the student.",
     "message": {
-      "template": "Hello!\n\nI'm inviting you to sovlium — a platform where we'll have lessons, work on an interactive whiteboard and share learning materials.\n\nFollow the link, sign up and accept the invitation:\n{{url}}\n\nUsing sovlium is free for students."
+      "template": "Join sovlium — the platform for online lessons!\n\nTo accept the invitation, follow the link and sign up:\n\n{{url}}"
     },
     "or": "or",
     "actions": {
