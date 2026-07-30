@@ -11,7 +11,7 @@ import {
 } from '@xipkg/dropdown';
 import { MenuDots, Link } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
-import { useEditor } from '@ibodr/draw';
+import { exportAs, useEditor } from '@ibodr/draw';
 import {
   boardIconClass,
   boardMenuItemClass,
@@ -23,7 +23,9 @@ import { useCopyBoardDeepLink } from '../../../hooks';
 import type { PdfShape } from '../../../shapes/pdf';
 import type { AudioShape } from '../../../shapes/audio';
 import { isMac } from '../../../utils';
+import { PNG_EXPORT_PIXEL_RATIO } from '../../../utils/shapeSvgExport';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 
 const altKey = isMac ? '⌥' : 'Alt';
 
@@ -112,6 +114,23 @@ export const MoreActionsMenu = () => {
     });
   };
 
+  const handleExportSelection = async (format: 'png' | 'svg') => {
+    if (selectedIds.length === 0) return;
+
+    try {
+      await exportAs(editor, [...selectedIds], {
+        format,
+        background: true,
+        padding: 16,
+        ...(format === 'png' ? { scale: 1, pixelRatio: PNG_EXPORT_PIXEL_RATIO } : {}),
+      });
+      toast.success(t('toast.selectionExportSuccess'));
+    } catch (error) {
+      console.error('Ошибка при экспорте выделенных элементов:', error);
+      toast.error(t('toast.selectionExportError'));
+    }
+  };
+
   const hasTutorItems = isTutor && (!!selectedPdf || !!selectedAudio);
 
   if (selectedIds.length === 0) return null;
@@ -138,6 +157,36 @@ export const MoreActionsMenu = () => {
           {t('toolbar.copyLink')}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
+        <DropdownMenuSub>
+          <DropdownMenuSubTrigger className={cn(boardMenuSubTriggerClass, 'rounded-lg px-3')}>
+            {t('toolbar.downloadAs')}
+          </DropdownMenuSubTrigger>
+          <DropdownMenuSubContent
+            sideOffset={12}
+            alignOffset={-4}
+            className={cn(
+              boardMenuSurfaceClass,
+              'flex w-auto min-w-40 flex-col gap-1 rounded-xl p-1',
+            )}
+          >
+            <DropdownMenuItem
+              onClick={() => void handleExportSelection('png')}
+              className={cn(boardMenuItemClass, 'rounded-lg px-3')}
+              data-umami-event="board-export-selection"
+              data-umami-event-format="png"
+            >
+              {t('toolbar.downloadPng')}
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => void handleExportSelection('svg')}
+              className={cn(boardMenuItemClass, 'rounded-lg px-3')}
+              data-umami-event="board-export-selection"
+              data-umami-event-format="svg"
+            >
+              {t('toolbar.downloadSvg')}
+            </DropdownMenuItem>
+          </DropdownMenuSubContent>
+        </DropdownMenuSub>
         <DropdownMenuSub>
           <DropdownMenuSubTrigger className={cn(boardMenuSubTriggerClass, 'rounded-lg px-3')}>
             {t('toolbar.reorder')}

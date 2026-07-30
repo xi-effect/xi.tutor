@@ -7,6 +7,8 @@ import {
   fileShapeProps,
 } from './FileShape';
 import { FileBadge } from './FileBadge';
+import { formatFileSize } from '../audio/utils/format';
+import { SVG_CARD, truncateForSvg } from '../../utils/shapeSvgExport';
 
 export class FileShapeUtil extends BaseBoxShapeUtil<FileShape> {
   static override type = 'file' as const;
@@ -58,6 +60,71 @@ export class FileShapeUtil extends BaseBoxShapeUtil<FileShape> {
       >
         <FileBadge shape={shape} />
       </HTMLContainer>
+    );
+  }
+
+  override toSvg(shape: FileShape) {
+    const { w, h, fileName, fileSize, status } = shape.props;
+    const name = truncateForSvg(fileName || 'file', Math.max(12, Math.floor(w / 11)));
+    const sizeLabel =
+      status === 'uploaded' && fileSize > 0
+        ? formatFileSize(fileSize)
+        : status === 'loading'
+          ? '…'
+          : '';
+
+    return (
+      <g>
+        <rect
+          width={w}
+          height={h}
+          rx={12}
+          ry={12}
+          fill={SVG_CARD.bg}
+          stroke={SVG_CARD.border}
+          strokeWidth={1}
+        />
+        <path
+          d="M12 3v12m0 0l-4-4m4 4l4-4"
+          transform="translate(18, 28)"
+          fill="none"
+          stroke={SVG_CARD.icon}
+          strokeWidth={2.5}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <rect
+          x={20}
+          y={24}
+          width={28}
+          height={32}
+          rx={4}
+          fill="none"
+          stroke={SVG_CARD.icon}
+          strokeWidth={2}
+        />
+        <text
+          x={56}
+          y={h / 2 - 4}
+          fill={SVG_CARD.text}
+          fontSize={14}
+          fontFamily="system-ui, sans-serif"
+          fontWeight={500}
+        >
+          {name}
+        </text>
+        {sizeLabel && (
+          <text
+            x={56}
+            y={h / 2 + 16}
+            fill={SVG_CARD.muted}
+            fontSize={12}
+            fontFamily="system-ui, sans-serif"
+          >
+            {sizeLabel}
+          </text>
+        )}
+      </g>
     );
   }
 
