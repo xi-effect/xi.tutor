@@ -16,7 +16,7 @@ import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
 import { useMenuStore } from '../store';
 import { Notifications } from './Header/Notifications';
-import { Logo, useSupportModalStore } from 'common.ui';
+import { ConfirmDialog, Logo, useSupportModalStore } from 'common.ui';
 import { useMediaQuery } from '@xipkg/utils';
 import { DesktopUserMenu } from './Header/DesktopUserMenu';
 import { useAuth } from 'common.auth';
@@ -136,6 +136,8 @@ export const SideBarItems = () => {
     setOpen(true);
   };
 
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
+
   const handleLogout = () => {
     logout();
     // TODO: переделать, сделать редирект только по 200
@@ -170,7 +172,7 @@ export const SideBarItems = () => {
               withOutText={isCollapsed}
               userId={user?.id || 0}
               onOpenProfile={handleOpenProfile}
-              onLogout={handleLogout}
+              onLogout={() => setLogoutConfirmOpen(true)}
               profileText={t('profile')}
               logoutText={t('logout')}
             />
@@ -228,6 +230,16 @@ export const SideBarItems = () => {
       <Suspense fallback={null}>
         <UserSettings open={open} setOpen={setOpen} />
       </Suspense>
+
+      <ConfirmDialog
+        open={logoutConfirmOpen}
+        onOpenChange={setLogoutConfirmOpen}
+        title={t('logoutConfirmTitle')}
+        description={t('logoutConfirmDescription')}
+        confirmLabel={t('logoutConfirmAction')}
+        cancelLabel={t('logoutConfirmCancel')}
+        onConfirm={handleLogout}
+      />
     </>
   );
 };

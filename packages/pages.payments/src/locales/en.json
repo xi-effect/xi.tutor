@@ -28,7 +28,12 @@
   },
   "templateCard": {
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "deleteConfirmTitle": "Delete template?",
+    "deleteConfirmDescription": "Template «{{name}}» will be deleted permanently",
+    "deleteConfirmCancel": "Cancel",
+    "deleteConfirmAction": "Delete",
+    "deleting": "Deleting..."
   },
   "templateModal": {
     "editTitle": "Edit payment template",

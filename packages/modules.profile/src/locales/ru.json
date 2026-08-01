@@ -7,7 +7,11 @@
     "notifications": "Уведомления",
     "effects": "Эффекты",
     "report": "Отчёт",
-    "logout": "Выйти"
+    "logout": "Выйти",
+    "logoutConfirmTitle": "Выйти из аккаунта?",
+    "logoutConfirmDescription": "Вы выйдете из аккаунта и вернётесь на экран входа",
+    "logoutConfirmCancel": "Отменить",
+    "logoutConfirmAction": "Выйти"
   },
   "personalData": {
     "title": "Личные данные",

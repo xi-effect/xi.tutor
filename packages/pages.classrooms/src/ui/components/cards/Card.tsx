@@ -13,6 +13,7 @@ import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useCurrentUser, useDeleteClassroom, useUserByRole } from 'common.services';
+import { ConfirmDialog } from 'common.ui';
 import { StatusBadge, SubjectBadge } from 'features.classroom';
 import { ModalEditClassroomName } from 'features.classroom.rename';
 import { useTranslation } from 'react-i18next';
@@ -63,6 +64,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
 
   const [openEditModal, setOpenEditModal] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const handleClick = () => {
     // Сохраняем параметр call при переходе в кабинет
@@ -78,9 +80,14 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
     });
   };
 
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Предотвращаем переход на страницу класса
-    deleteClassroom({ classroomId: id });
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setDropdownOpen(false);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    deleteClassroom({ classroomId: id }, { onSuccess: () => setDeleteConfirmOpen(false) });
   };
 
   const handleOpenEditModal = (e: React.MouseEvent) => {
@@ -162,13 +169,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
                   </DropdownMenuItem>
                 )}
 
-                <DropdownMenuItem
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  className={isDeleting ? 'cursor-not-allowed opacity-50' : ''}
-                >
-                  {isDeleting ? t('deleting') : t('delete')}
-                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handleDeleteClick}>{t('delete')}</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -180,6 +181,17 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
         open={openEditModal}
         classroomId={id}
         onClose={handleCloseEditModal}
+      />
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        title={t('deleteConfirm.title')}
+        description={t('deleteConfirm.description', { name })}
+        confirmLabel={isDeleting ? t('deleting') : t('deleteConfirm.confirm')}
+        cancelLabel={t('deleteConfirm.cancel')}
+        onConfirm={handleConfirmDelete}
+        isPending={isDeleting}
       />
     </div>
   );
