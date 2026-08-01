@@ -39,7 +39,7 @@ const ListFooter = ({
           <div className="border-border-strong h-8 w-8 animate-spin rounded-full border-b-2" />
         </div>
       )}
-      {!hasNextPage && itemsCount > 0 && (
+      {!hasNextPage && itemsCount >= 20 && (
         <div className="text-text-primary py-4 text-center">{t('allLoaded')}</div>
       )}
     </>
