@@ -1,163 +1,139 @@
-import { useEffect, useRef, useState } from 'react';
-import { init } from 'pptx-preview';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { PowerPointViewerHandle, SlideCanvas, useViewerBuildingBlocks } from 'pptx-react-viewer';
+
+import { useTranslation } from 'react-i18next';
 
 import { useYjsContext } from '../../providers/YjsProvider';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
+
 import type { PresentationShape } from './PresentationShape';
 import { PresentationControls } from './PresentationControls';
-import { CONTROLS_HEIGHT } from './consts';
 
-type PPTXPreviewerT = ReturnType<typeof init>;
-
-export function PresentationViewer({ shape }: { shape: PresentationShape }) {
+export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
   const { token } = useYjsContext();
+  const { t } = useTranslation('board');
 
-  const [loading, setLoading] = useState(true);
-  const [isResizing, setIsResizing] = useState(false);
+  const [fetching, setFetching] = useState(false);
+  const [content, setContent] = useState<Uint8Array | null>(null);
   const [currentSlide, setCurrentSlide] = useState(1);
-
-  const containerRef = useRef<HTMLDivElement>(null);
-  const previewerRef = useRef<PPTXPreviewerT | null>(null);
-  const bufferRef = useRef<ArrayBuffer | null>(null);
-  const resizeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-
   const [totalSlides, setTotalSlides] = useState(0);
 
-  const { src, w, h } = shape.props;
+  const slideNodeRef = useRef<HTMLDivElement | null>(null);
+  const handle = useRef<PowerPointViewerHandle | null>(null);
 
-  const createPresentation = async (width: number, height: number) => {
-    if (!containerRef.current || !bufferRef.current) return;
+  const { canvasProps, loading, error } = useViewerBuildingBlocks({
+    content,
+    canEdit: false,
+    handle,
 
-    try {
-      if (containerRef.current) {
-        containerRef.current.innerHTML = '';
-      }
+    onActiveSlideChange(index) {
+      setCurrentSlide(index + 1);
+    },
+    onSlideCountChange(count) {
+      setTotalSlides(count);
+    },
+  });
 
-      const slideHeight = height - CONTROLS_HEIGHT;
-
-      const previewer = init(containerRef.current!, {
-        mode: 'slide',
-        width: width,
-        height: slideHeight,
-      });
-
-      previewerRef.current = previewer;
-
-      await previewer.preview(bufferRef.current);
-
-      setTotalSlides(previewer.slideCount);
-
-      containerRef.current
-        ?.querySelectorAll('.pptx-preview-wrapper-next, .pptx-preview-wrapper-pagination')
-        .forEach((el) => el.remove());
-
-      previewer.renderSingleSlide(currentSlide - 1);
-
-      setLoading(false);
-      setIsResizing(false);
-    } catch (err) {
-      console.error('[PresentationViewer] error:', err);
-      setLoading(false);
-      setIsResizing(false);
-    }
-  };
+  const isLoading = fetching || loading;
 
   useEffect(() => {
-    if (!src || !token || !containerRef.current) return;
+    if (!shape.props.src || !token) return;
 
-    let isMounted = true;
+    let cancelled = false;
 
-    async function load() {
-      try {
-        setLoading(true);
-        const url = await resolveAssetUrl(src, token);
-        const response = await fetch(url);
-        const buffer = await response.arrayBuffer();
-        bufferRef.current = buffer;
+    setFetching(true);
 
-        await createPresentation(w, h);
-      } catch (err) {
-        if (isMounted) {
-          setLoading(false);
-          console.error('[PresentationViewer]', err);
-        }
+    (async () => {
+      const url = await resolveAssetUrl(shape.props.src, token);
+      const res = await fetch(url);
+
+      if (!res.ok) {
+        throw new Error(`Failed to fetch pptx (${res.status})`);
       }
-    }
 
-    load();
+      const buffer = await res.arrayBuffer();
+
+      if (!cancelled) {
+        setContent(new Uint8Array(buffer));
+        setFetching(false);
+      }
+    })().catch((err) => {
+      console.error(err);
+
+      if (!cancelled) {
+        setFetching(false);
+      }
+    });
 
     return () => {
-      isMounted = false;
-      previewerRef.current?.destroy();
-      previewerRef.current = null;
-
-      if (resizeTimeoutRef.current) {
-        clearTimeout(resizeTimeoutRef.current);
-      }
+      cancelled = true;
     };
-  }, [src, token]);
+  }, [shape.props.src, token]);
 
-  useEffect(() => {
-    if (!previewerRef.current || loading || !bufferRef.current) return;
+  const slideScale = useMemo(() => {
+    const baseWidth = 1280;
+    const baseHeight = 720;
 
-    setIsResizing(true);
+    return Math.min(shape.props.w / baseWidth, shape.props.h / baseHeight);
+  }, [shape.props.w, shape.props.h]);
 
-    if (resizeTimeoutRef.current) {
-      clearTimeout(resizeTimeoutRef.current);
-    }
-
-    resizeTimeoutRef.current = setTimeout(() => {
-      createPresentation(w, h);
-    }, 300);
-
-    return () => {
-      if (resizeTimeoutRef.current) {
-        clearTimeout(resizeTimeoutRef.current);
-      }
-    };
-  }, [w, h]);
-
-  useEffect(() => {
-    if (previewerRef.current && totalSlides > 0 && !loading && !isResizing) {
-      previewerRef.current.renderSingleSlide(currentSlide - 1);
-    }
-  }, [currentSlide, totalSlides, loading, isResizing]);
-
-  const nextSlide = () => {
-    if (!previewerRef.current || currentSlide >= totalSlides || loading || isResizing) return;
-
-    previewerRef.current.renderNextSlide();
-    setCurrentSlide((v) => v + 1);
+  const handlePageChange = (page: number) => {
+    handle.current?.goTo(page - 1);
   };
 
-  const prevSlide = () => {
-    if (!previewerRef.current || currentSlide <= 1 || loading || isResizing) return;
-
-    previewerRef.current.renderPreSlide();
-    setCurrentSlide((v) => v - 1);
-  };
+  if (error) {
+    return <div className="flex h-full items-center justify-center">{String(error)}</div>;
+  }
 
   return (
     <div className="flex h-full w-full flex-col">
-      <div className="relative flex-1" style={{ minHeight: 0 }}>
-        <div ref={containerRef} className="h-full w-full" />
-        {(loading || isResizing) && (
-          <div className="text-gray-40 bg-gray-0 absolute inset-0 z-5 flex items-center justify-center text-sm">
-            Загрузка...
+      <div className="relative flex-1 overflow-hidden">
+        {isLoading && (
+          <div className="text-text-disabled absolute inset-0 z-10 flex items-center justify-center text-sm">
+            {t('presentation.loading')}
+          </div>
+        )}
+
+        {content && (
+          <div
+            className="absolute inset-0 overflow-hidden"
+            style={{ opacity: isLoading ? 0.3 : 1 }}
+          >
+            <div
+              style={{
+                width: Math.max(320, shape.props.w),
+                height: Math.max(180, shape.props.h),
+                position: 'relative',
+              }}
+            >
+              <div
+                ref={slideNodeRef}
+                style={{
+                  width: 1280,
+                  height: 720,
+                  position: 'absolute',
+                  left: '50%',
+                  top: '50%',
+                  transform: `translate(-50%, -50%) scale(${slideScale})`,
+                  transformOrigin: 'center center',
+                }}
+              >
+                <SlideCanvas {...canvasProps} mode="preview" />
+              </div>
+            </div>
           </div>
         )}
       </div>
 
-      {totalSlides > 0 && !loading && !isResizing && (
-        <div className="shrink-0 py-2">
-          <PresentationControls
-            current={currentSlide}
-            total={totalSlides}
-            onNext={nextSlide}
-            onPrev={prevSlide}
-          />
-        </div>
+      {!!totalSlides && (
+        <PresentationControls
+          fileName={shape.props.fileName ?? ''}
+          currentPage={currentSlide}
+          totalPages={totalSlides}
+          disabled={isLoading}
+          onPageChange={handlePageChange}
+        />
       )}
     </div>
   );
-}
+};

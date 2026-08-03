@@ -3,10 +3,9 @@ import { Editor, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { uploadFileRequest } from 'common.services';
 
-import { init } from 'pptx-preview';
 import { PresentationShape } from '../shapes/presentation';
 
-const MAX_PRESENTATION_SIZE_BYTES = 20 * 1024 * 1024;
+const MAX_PRESENTATION_SIZE_BYTES = 5 * 1024 * 1024;
 const MAX_PRESENTATION_SHAPES = 20;
 
 const DEFAULT_WIDTH = 800;
@@ -22,13 +21,15 @@ export async function insertPresentation(editor: Editor, file: File, token: stri
 
   if (file.size > MAX_PRESENTATION_SIZE_BYTES) {
     toast.error('Файл слишком большой', {
-      description: 'Размер презентации не должен превышать 20 MiB',
+      description: 'Размер презентации не должен превышать 5 MiB',
     });
 
     return;
   }
 
-  const count = editor.getCurrentPageShapes().filter((s) => s.type === 'presentation').length;
+  const count = editor
+    .getCurrentPageShapes()
+    .filter((shape) => shape.type === 'presentation').length;
 
   if (count >= MAX_PRESENTATION_SHAPES) {
     toast.error('Лимит презентаций', {
@@ -40,31 +41,8 @@ export async function insertPresentation(editor: Editor, file: File, token: stri
 
   const shapeId = `shape:${nanoid()}` as DrShapeId;
 
-  let totalSlides = 1;
-
   const width = DEFAULT_WIDTH;
-
   const height = Math.round((DEFAULT_WIDTH * 9) / 16);
-
-  const buffer = await file.arrayBuffer();
-
-  try {
-    const div = document.createElement('div');
-
-    const previewer = init(div, {
-      mode: 'slide',
-      width,
-      height,
-    });
-
-    await previewer.preview(buffer);
-
-    totalSlides = previewer.slideCount;
-
-    previewer.destroy();
-  } catch (err) {
-    console.error('[insertPresentation] preview failed', err);
-  }
 
   const viewportCenter = editor.getViewportPageBounds().center;
 
@@ -77,7 +55,7 @@ export async function insertPresentation(editor: Editor, file: File, token: stri
       props: {
         src: '',
         fileName: file.name,
-        totalSlides,
+        totalSlides: 0,
         currentSlide: 1,
         w: width,
         h: height,
@@ -86,28 +64,24 @@ export async function insertPresentation(editor: Editor, file: File, token: stri
     },
   ]);
 
-  (async () => {
-    try {
-      const serverUrl = await uploadFileRequest({
-        file,
-        token,
-      });
+  try {
+    const serverUrl = await uploadFileRequest({
+      file,
+      token,
+    });
 
-      console.log('[insertPresentation] uploaded url:', serverUrl);
+    editor.updateShape<PresentationShape>({
+      id: shapeId,
+      type: 'presentation',
+      props: {
+        src: serverUrl,
+      },
+    });
+  } catch (err) {
+    console.error('[insertPresentation] upload failed', err);
 
-      editor.updateShape<PresentationShape>({
-        id: shapeId,
-        type: 'presentation',
-        props: {
-          src: serverUrl,
-        },
-      });
-    } catch (err) {
-      console.error('[insertPresentation] upload failed', err);
+    toast.error('Ошибка загрузки презентации');
 
-      toast.error('Ошибка загрузки презентации');
-
-      editor.deleteShapes([shapeId]);
-    }
-  })();
+    editor.deleteShapes([shapeId]);
+  }
 }

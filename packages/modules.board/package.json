@@ -49,7 +49,7 @@
     "nanoid": "^5.1.5",
     "pdfjs-dist": "^4.10.38",
     "pica": "9.0.1",
-    "pptx-preview": "^1.0.7",
+    "pptx-react-viewer": "2.13.0",
     "react-hook-form": "^7.73.1",
     "react-i18next": "15.4.1",
     "sonner": "^2.0.7",
