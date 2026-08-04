@@ -22,10 +22,10 @@ export const TemplatesGrid = () => {
   const isMobile = useMediaQuery('(max-width: 960px)');
   const { t } = useTranslation('payments');
   const { data, isLoading, isError } = useTemplatesList();
-  const { mutate: deleteTemplateMutation } = useDeleteTemplate();
+  const { mutate: deleteTemplateMutation, isPending: isDeletingTemplate } = useDeleteTemplate();
 
-  const handleDeleteTemplate = (id: number) => () => {
-    deleteTemplateMutation(id);
+  const handleDeleteTemplate = (id: number, onSuccess?: () => void) => {
+    deleteTemplateMutation(id, { onSuccess });
   };
 
   const templates = data ?? [];
@@ -96,7 +96,11 @@ export const TemplatesGrid = () => {
           maxColumns={4}
           isSingleColumn={isMobile}
           renderItem={(item: TemplateT) => (
-            <TemplateCard {...item} handleDeleteTemplate={handleDeleteTemplate} />
+            <TemplateCard
+              {...item}
+              handleDeleteTemplate={handleDeleteTemplate}
+              isDeleting={isDeletingTemplate}
+            />
           )}
         />
       </div>

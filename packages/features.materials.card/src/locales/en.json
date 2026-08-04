@@ -16,5 +16,17 @@
     "duplicateToClassroom": "Duplicate to classroom",
     "edit": "Edit",
     "delete": "Delete"
+  },
+  "deleteConfirm": {
+    "noteTitle": "Delete note?",
+    "boardTitle": "Delete board?",
+    "noteDescription": "Note «{{name}}» will be deleted permanently",
+    "boardDescription": "Board «{{name}}» will be deleted permanently",
+    "fromClassroomTitle": "Remove from classroom?",
+    "fromClassroomNoteDescription": "Note «{{name}}» will be removed from the classroom",
+    "fromClassroomBoardDescription": "Board «{{name}}» will be removed from the classroom",
+    "cancel": "Cancel",
+    "confirm": "Delete",
+    "deleting": "Deleting..."
   }
 }

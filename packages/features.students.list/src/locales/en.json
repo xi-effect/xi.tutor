@@ -8,7 +8,7 @@
   "deleteTooltip": "Remove student from your space",
   "deleteConfirm": {
     "title": "Remove student?",
-    "description": "If you resume lessons later, you will need to invite the student again"
+    "description": "Student «{{name}}» will be removed. If you resume lessons later, you will need to invite the student again"
   },
   "actions": {
     "delete": "Remove",

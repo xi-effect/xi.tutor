@@ -8,7 +8,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { getDateLocale } from 'common.ui';
+import { ConfirmDialog, getDateLocale } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { ModalTemplate } from './ModalTemplate';
 
@@ -19,16 +19,28 @@ export const TemplateCard = ({
   price,
   id,
   handleDeleteTemplate,
+  isDeleting = false,
 }: TemplateT & {
-  handleDeleteTemplate: (id: number) => () => void;
+  handleDeleteTemplate: (id: number, onSuccess?: () => void) => void;
+  isDeleting?: boolean;
 }) => {
   const { t } = useTranslation('payments');
   const [menuOpen, setMenuOpen] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const handleEditTemplate = () => {
     setMenuOpen(false);
     setModalOpen(true);
+  };
+
+  const handleDeleteClick = () => {
+    setMenuOpen(false);
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    handleDeleteTemplate(id, () => setDeleteConfirmOpen(false));
   };
 
   return (
@@ -71,7 +83,7 @@ export const TemplateCard = ({
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   className="text-text-primary hover:text-text-primary focus:text-text-primary"
-                  onClick={handleDeleteTemplate(id)}
+                  onClick={handleDeleteClick}
                 >
                   {t('templateCard.delete')}
                 </DropdownMenuItem>
@@ -97,6 +109,19 @@ export const TemplateCard = ({
         price={price}
         id={id}
         onClose={() => setModalOpen(false)}
+      />
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        title={t('templateCard.deleteConfirmTitle')}
+        description={t('templateCard.deleteConfirmDescription', { name })}
+        confirmLabel={
+          isDeleting ? t('templateCard.deleting') : t('templateCard.deleteConfirmAction')
+        }
+        cancelLabel={t('templateCard.deleteConfirmCancel')}
+        onConfirm={handleConfirmDelete}
+        isPending={isDeleting}
       />
     </>
   );

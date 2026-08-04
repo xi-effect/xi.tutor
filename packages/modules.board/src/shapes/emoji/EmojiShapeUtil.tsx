@@ -71,6 +71,24 @@ export class EmojiShapeUtil extends BaseBoxShapeUtil<EmojiShape> {
     );
   }
 
+  override toSvg(shape: EmojiShape) {
+    const { w, h, emoji } = shape.props;
+    const fontSize = Math.min(w, h) * EMOJI_BOX_SIZE;
+
+    return (
+      <text
+        x={w / 2}
+        y={h / 2}
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize={fontSize}
+        fontFamily="Apple Color Emoji, Twemoji Mozilla, Noto Color Emoji, Android Emoji, sans-serif"
+      >
+        {emoji}
+      </text>
+    );
+  }
+
   override getIndicatorPath(shape: EmojiShape) {
     const path = new Path2D();
     path.rect(0, 0, shape.props.w, shape.props.h);

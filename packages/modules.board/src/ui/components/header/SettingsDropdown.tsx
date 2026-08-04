@@ -50,6 +50,7 @@ import {
 } from '../../../config';
 import { areAllEraserCategoriesEnabled } from '../../../utils/areAllEraserCategoriesEnabled';
 import { useTranslation } from 'react-i18next';
+import { ConfirmDialog } from 'common.ui';
 import {
   boardIconClass,
   boardDropdownZClass,
@@ -147,6 +148,7 @@ export const SettingsDropdown = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [hotkeysOpen, setHotkeysOpen] = useState(false);
   const [showImportOption, setShowImportOption] = useState(false);
+  const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
   const [elementsCount, setElementsCount] = useState(0);
   const importInputRef = useRef<HTMLInputElement>(null);
   const shownWarningToastRef = useRef(false);
@@ -403,7 +405,14 @@ export const SettingsDropdown = () => {
               {showDebugInfo && <Check className="ml-auto" />}
             </DropdownMenuItem> */}
 
-            {isTutor && !isReadonly && <ClearBoardAction onClick={clearBoard} />}
+            {isTutor && !isReadonly && (
+              <ClearBoardAction
+                onClick={() => {
+                  setDropdownOpen(false);
+                  setClearConfirmOpen(true);
+                }}
+              />
+            )}
 
             {isTutor && !isReadonly && (
               <DropdownMenuSub>
@@ -520,6 +529,19 @@ export const SettingsDropdown = () => {
         </DropdownMenuContent>
       </DropdownMenu>
       <HotkeysHelpModal open={hotkeysOpen} onOpenChange={handleOpenHotkeysHelp} />
+
+      <ConfirmDialog
+        open={clearConfirmOpen}
+        onOpenChange={setClearConfirmOpen}
+        title={t('settings.clearBoardConfirmTitle')}
+        description={t('settings.clearBoardConfirmDescription')}
+        confirmLabel={t('settings.clearBoardConfirmAction')}
+        cancelLabel={t('settings.clearBoardConfirmCancel')}
+        onConfirm={() => {
+          clearBoard();
+          setClearConfirmOpen(false);
+        }}
+      />
     </>
   );
 };

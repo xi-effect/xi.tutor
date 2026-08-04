@@ -12,7 +12,7 @@ import { AddingLessonModal } from 'features.lesson.add';
 import type { FormData as AddingLessonFormData } from 'features.lesson.add';
 import { MaterialsAdd } from 'features.materials.add';
 import { useGetClassroom, useAddClassroomMaterials, useDeleteClassroom } from 'common.services';
-import { switcherTabClass } from 'common.ui';
+import { ConfirmDialog, switcherTabClass } from 'common.ui';
 import { cn } from '@xipkg/utils';
 import { useCreateClassroomEvent } from 'modules.calendar';
 import { ModalStudentsGroup } from 'features.group.manage';
@@ -162,6 +162,7 @@ export const TabsTutor = () => {
   const [isGroupInviteModalOpen, setIsGroupInviteModalOpen] = useState(false);
   const [addLessonOpen, setAddLessonOpen] = useState(false);
   const [addLessonInitialDate, setAddLessonInitialDate] = useState<Date | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const handleAddLessonClick = useCallback((date?: Date) => {
     setAddLessonInitialDate(date ?? null);
@@ -174,11 +175,20 @@ export const TabsTutor = () => {
   const { deleteClassroom, isDeleting: isDeletingClassroom } = useDeleteClassroom();
   const createClassroomEvent = useCreateClassroomEvent();
 
-  const handleDeleteClassroom = () => {
+  const handleDeleteClassroomClick = () => {
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDeleteClassroom = () => {
     if (!classroomId) return;
     deleteClassroom(
       { classroomId: Number(classroomId) },
-      { onSuccess: () => navigate({ to: '/classrooms' }) },
+      {
+        onSuccess: () => {
+          setDeleteConfirmOpen(false);
+          navigate({ to: '/classrooms' });
+        },
+      },
     );
   };
 
@@ -251,7 +261,7 @@ export const TabsTutor = () => {
                   classroomKind={classroom?.kind}
                   onAddLessonClick={() => handleAddLessonClick()}
                   onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
-                  onDeleteClassroom={handleDeleteClassroom}
+                  onDeleteClassroom={handleDeleteClassroomClick}
                   isDeletingClassroom={isDeletingClassroom}
                 />
               </>
@@ -291,12 +301,27 @@ export const TabsTutor = () => {
               isGroupInviteModalOpen={isGroupInviteModalOpen}
               onAddMaterial={handleAddMaterial}
               onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
-              onDeleteClassroom={handleDeleteClassroom}
+              onDeleteClassroom={handleDeleteClassroomClick}
               onStudentsModalChange={setIsStudentsModalOpen}
               onGroupInviteModalChange={setIsGroupInviteModalOpen}
             />
           )}
         </Tabs.Root>
+
+        <ConfirmDialog
+          open={deleteConfirmOpen}
+          onOpenChange={setDeleteConfirmOpen}
+          title={t('actions.deleteClassroomConfirmTitle')}
+          description={t('actions.deleteClassroomConfirmDescription', {
+            name: classroom?.name ?? '',
+          })}
+          confirmLabel={
+            isDeletingClassroom ? t('actions.deleting') : t('actions.deleteClassroomConfirmAction')
+          }
+          cancelLabel={t('actions.deleteClassroomConfirmCancel')}
+          onConfirm={handleConfirmDeleteClassroom}
+          isPending={isDeletingClassroom}
+        />
       </div>
     </ClassroomScheduleProvider>
   );

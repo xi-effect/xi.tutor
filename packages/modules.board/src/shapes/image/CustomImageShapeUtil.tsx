@@ -12,11 +12,120 @@ import {
 } from '@ibodr/draw';
 import { memo, useCallback, useEffect, useState } from 'react';
 import i18n from 'i18next';
+import {
+  blobOrUrlToDataUrl,
+  getBoardStorageToken,
+  getSvgExportRasterScale,
+  resolveSrcForSvgExport,
+} from '../../utils/shapeSvgExport';
 
 export class CustomImageShapeUtil extends DrawImageShapeUtil {
   override component(shape: DrImageShape) {
     return <CustomImageShape shape={shape} />;
   }
+
+  override async toSvg(
+    shape: DrImageShape,
+    ctx: {
+      resolveAssetUrl: (assetId: DrAssetId, width: number) => Promise<string | null>;
+      scale?: number;
+      pixelRatio?: number | null;
+    },
+  ) {
+    const props = shape.props;
+    if (!props.assetId) return null;
+
+    const asset = this.editor.getAsset(props.assetId);
+    if (!asset) return null;
+
+    const rasterScale = getSvgExportRasterScale(ctx);
+    const { w } = getUncroppedSize(shape.props, props.crop);
+    let sourceUrl: string | null = null;
+
+    try {
+      // Просим ассет шире, чтобы в PNG не апскейлить размытую копию.
+      const resolved = await ctx.resolveAssetUrl(asset.id, w * rasterScale);
+      if (resolved?.startsWith('data:')) {
+        sourceUrl = resolved;
+      } else if (resolved) {
+        sourceUrl = (await blobOrUrlToDataUrl(resolved)) ?? resolved;
+      }
+    } catch (error) {
+      console.error('[CustomImageShapeUtil.toSvg] resolveAssetUrl failed:', error);
+    }
+
+    if (!sourceUrl && 'src' in asset.props && asset.props.src) {
+      sourceUrl = await resolveSrcForSvgExport(String(asset.props.src), getBoardStorageToken());
+    }
+
+    if (!sourceUrl) return null;
+
+    const exported = await rasterizeImageShapeForExport(shape, sourceUrl, rasterScale);
+    if (!exported) return null;
+
+    return <image href={exported} width={props.w} height={props.h} aria-label={props.altText} />;
+  }
+}
+
+/** Рисует image-шейп (с crop/circle/flip) в PNG data:URL — без foreignObject и SafeId. */
+function rasterizeImageShapeForExport(
+  shape: DrImageShape,
+  src: string,
+  rasterScale = 1,
+): Promise<string | null> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const { w: outW, h: outH } = shape.props;
+        const crop = shape.props.crop;
+        const dpr = Math.max(1, rasterScale);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(outW * dpr));
+        canvas.height = Math.max(1, Math.round(outH * dpr));
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(null);
+          return;
+        }
+
+        ctx.scale(dpr, dpr);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
+        ctx.save();
+        if (crop?.isCircle) {
+          ctx.beginPath();
+          ctx.ellipse(outW / 2, outH / 2, outW / 2, outH / 2, 0, 0, Math.PI * 2);
+          ctx.clip();
+        }
+
+        const { flipX, flipY } = shape.props;
+        if (flipX || flipY) {
+          ctx.translate(flipX ? outW : 0, flipY ? outH : 0);
+          ctx.scale(flipX ? -1 : 1, flipY ? -1 : 1);
+        }
+
+        if (crop) {
+          const sx = crop.topLeft.x * img.naturalWidth;
+          const sy = crop.topLeft.y * img.naturalHeight;
+          const sw = (crop.bottomRight.x - crop.topLeft.x) * img.naturalWidth;
+          const sh = (crop.bottomRight.y - crop.topLeft.y) * img.naturalHeight;
+          ctx.drawImage(img, sx, sy, sw, sh, 0, 0, outW, outH);
+        } else {
+          ctx.drawImage(img, 0, 0, outW, outH);
+        }
+
+        ctx.restore();
+        resolve(canvas.toDataURL('image/png'));
+      } catch {
+        resolve(null);
+      }
+    };
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
 }
 
 function getCroppedContainerStyle(shape: DrImageShape) {

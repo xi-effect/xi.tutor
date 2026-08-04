@@ -1,8 +1,7 @@
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
-import { Logo } from 'common.ui';
-import { LinkTanstack } from 'common.ui';
+import { ConfirmDialog, Logo, LinkTanstack } from 'common.ui';
 import { useAuth } from 'common.auth';
 import { useCurrentUser } from 'common.services';
 import { useMenuStore } from '../store';
@@ -28,6 +27,7 @@ export const MobileBottomBar = () => {
   const { open: openMenu } = useMenuStore();
 
   const [open, setOpen] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
   useEffect(() => {
     const profileParam = search.profile;
@@ -58,7 +58,7 @@ export const MobileBottomBar = () => {
             <MobileUserMenu
               userId={user?.id ?? 0}
               onOpenProfile={handleOpenProfile}
-              onLogout={handleLogout}
+              onLogout={() => setLogoutConfirmOpen(true)}
               profileText={t('profile')}
               logoutText={t('logout')}
             />
@@ -93,6 +93,16 @@ export const MobileBottomBar = () => {
       <Suspense fallback={null}>
         <UserSettings open={open} setOpen={setOpen} />
       </Suspense>
+
+      <ConfirmDialog
+        open={logoutConfirmOpen}
+        onOpenChange={setLogoutConfirmOpen}
+        title={t('logoutConfirmTitle')}
+        description={t('logoutConfirmDescription')}
+        confirmLabel={t('logoutConfirmAction')}
+        cancelLabel={t('logoutConfirmCancel')}
+        onConfirm={handleLogout}
+      />
     </>
   );
 };

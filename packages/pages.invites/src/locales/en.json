@@ -17,9 +17,9 @@
     "decline": "Decline"
   },
   "error": {
-    "selfInviteTitle": "A teacher cannot accept their own invitation",
+    "selfInviteTitle": "Send the invite link to a student",
     "selfInviteDescription": "You cannot join your own classroom",
-    "selfInviteHint": "Send the invitation link to a student",
+    "selfInviteHint": "A tutor cannot accept their own invitation",
     "invalid": "Invitation is invalid",
     "askTutor": "Ask the tutor for a new invitation"
   }

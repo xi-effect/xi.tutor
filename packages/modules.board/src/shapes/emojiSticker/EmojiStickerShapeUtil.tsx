@@ -2,6 +2,7 @@ import { BaseBoxShapeUtil, HTMLContainer, Rectangle2d, T } from '@ibodr/draw';
 
 import { EmojiStickerShape } from './EmojiStickerShape';
 import { EmojiStickerStyle } from '../shapeStyles';
+import { resolveSrcForSvgExport } from '../../utils/shapeSvgExport';
 
 export class EmojiStickerShapeUtil extends BaseBoxShapeUtil<EmojiStickerShape> {
   static override type = 'emoji-sticker' as const;
@@ -52,6 +53,16 @@ export class EmojiStickerShapeUtil extends BaseBoxShapeUtil<EmojiStickerShape> {
         />
       </HTMLContainer>
     );
+  }
+
+  override async toSvg(shape: EmojiStickerShape) {
+    const { src, w, h } = shape.props;
+    if (!src) return null;
+
+    const dataUrl = await resolveSrcForSvgExport(src);
+    if (!dataUrl) return null;
+
+    return <image href={dataUrl} width={w} height={h} preserveAspectRatio="xMidYMid meet" />;
   }
 
   override getIndicatorPath(shape: EmojiStickerShape) {

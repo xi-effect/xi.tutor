@@ -7,6 +7,7 @@ import {
   coordinateAxesShapeProps,
 } from './CoordinateAxesShape';
 import { CoordinateAxesComponent } from './CoordinateAxesComponent';
+import { buildCoordinateAxesSvgProps, CoordinateAxesSvgContent } from './CoordinateAxesSvgContent';
 
 export class CoordinateAxesShapeUtil extends BaseBoxShapeUtil<CoordinateAxesShape> {
   static override type = 'coordinate-axes' as const;
@@ -51,6 +52,11 @@ export class CoordinateAxesShapeUtil extends BaseBoxShapeUtil<CoordinateAxesShap
 
   override component(shape: CoordinateAxesShape) {
     return <CoordinateAxesComponent shape={shape} />;
+  }
+
+  override toSvg(shape: CoordinateAxesShape) {
+    const props = buildCoordinateAxesSvgProps(shape, this.editor);
+    return <CoordinateAxesSvgContent {...props} />;
   }
 
   override getIndicatorPath(shape: CoordinateAxesShape) {

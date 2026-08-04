@@ -115,7 +115,7 @@ export const ModalEditClassroomName = ({
               <Button
                 className="gap-2"
                 type="submit"
-                data-umami-event="material-edit-save"
+                data-umami-event="classroom-rename-save"
                 data-umami-event-type={name}
                 disabled={isUpdating}
               >
@@ -124,7 +124,7 @@ export const ModalEditClassroomName = ({
               <Button
                 variant="ghost"
                 type="button"
-                data-umami-event="material-edit-cancel"
+                data-umami-event="classroom-rename-cancel"
                 disabled={isUpdating}
                 onClick={onClose}
               >

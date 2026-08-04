@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { UserProfile } from '@xipkg/userprofile';
 import {
   DropdownMenu,
@@ -8,6 +9,7 @@ import {
 import { Button } from '@xipkg/button';
 import { MoreVert } from '@xipkg/icons';
 import { ModalStudentsGroup, useDeleteStudentFromGroup } from 'features.group.manage';
+import { ConfirmDialog } from 'common.ui';
 import { ErrorState } from './ErrorState';
 import { GroupStudentsListSchema } from 'common.types';
 import { useGroupStudentsList } from 'common.services';
@@ -24,6 +26,10 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
   const { t } = useTranslation('classroom');
   const { data: students, isLoading, isError, refetch } = useGroupStudentsList(classroomId);
   const deleteStudentMutation = useDeleteStudentFromGroup({ classroom_id: classroomId });
+  const [studentToDelete, setStudentToDelete] = useState<{
+    userId: number;
+    name: string;
+  } | null>(null);
 
   if (isLoading) {
     return (
@@ -52,58 +58,82 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
     );
   }
 
-  const handleDeleteStudent = async (userId: number) => {
+  const handleConfirmDeleteStudent = async () => {
+    if (!studentToDelete) return;
+
     try {
-      await deleteStudentMutation.mutateAsync(userId);
+      await deleteStudentMutation.mutateAsync(studentToDelete.userId);
       toast.success(t('overview.studentDeleted'));
+      setStudentToDelete(null);
     } catch {
       toast.error(t('overview.studentDeleteError'));
     }
   };
 
   return (
-    <div className="flex flex-row gap-8 pb-4">
-      {students.map(({ user_id, display_name }: GroupStudentsListSchema) => (
-        <div
-          className="border-border-strong relative flex min-h-30 min-w-[350px] items-center justify-between rounded-2xl border p-4"
-          key={user_id}
-        >
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2">
-              <UserProfile
-                userId={user_id}
-                withOutText
-                src={`https://api.sovlium.ru/files/users/${user_id}/avatar.webp`}
-                size="l"
-              />
-              <h3 className="text-m-base text-text-primary font-medium">{display_name}</h3>
+    <>
+      <div className="flex flex-row gap-8 pb-4">
+        {students.map(({ user_id, display_name }: GroupStudentsListSchema) => (
+          <div
+            className="border-border-strong relative flex min-h-30 min-w-[350px] items-center justify-between rounded-2xl border p-4"
+            key={user_id}
+          >
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <UserProfile
+                  userId={user_id}
+                  withOutText
+                  src={`https://api.sovlium.ru/files/users/${user_id}/avatar.webp`}
+                  size="l"
+                />
+                <h3 className="text-m-base text-text-primary font-medium">{display_name}</h3>
+              </div>
+              <ContactsBadge userId={user_id} />
             </div>
-            <ContactsBadge userId={user_id} />
-          </div>
-          <div className="absolute top-4 right-4 flex h-8 w-8 rounded-full">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button className="h-8 w-8 rounded-md" variant="none" size="icon">
-                  <MoreVert className="dark:fill-icon-primary h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                side="bottom"
-                align="end"
-                className="border-border-default bg-background-surface border p-1"
-              >
-                <DropdownMenuItem
-                  onClick={() => {
-                    handleDeleteStudent(user_id);
-                  }}
+            <div className="absolute top-4 right-4 flex h-8 w-8 rounded-full">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button className="h-8 w-8 rounded-md" variant="none" size="icon">
+                    <MoreVert className="dark:fill-icon-primary h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent
+                  side="bottom"
+                  align="end"
+                  className="border-border-default bg-background-surface border p-1"
                 >
-                  {t('actions.deleteFromGroup')}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setStudentToDelete({ userId: user_id, name: display_name ?? '' });
+                    }}
+                  >
+                    {t('actions.deleteFromGroup')}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+
+      <ConfirmDialog
+        open={studentToDelete != null}
+        onOpenChange={(open) => {
+          if (!open) setStudentToDelete(null);
+        }}
+        title={t('actions.deleteStudentConfirmTitle')}
+        description={t('actions.deleteStudentConfirmDescription', {
+          name: studentToDelete?.name ?? '',
+        })}
+        confirmLabel={
+          deleteStudentMutation.isPending
+            ? t('actions.deleting')
+            : t('actions.deleteStudentConfirmAction')
+        }
+        cancelLabel={t('actions.deleteStudentConfirmCancel')}
+        onConfirm={handleConfirmDeleteStudent}
+        isPending={deleteStudentMutation.isPending}
+      />
+    </>
   );
 };

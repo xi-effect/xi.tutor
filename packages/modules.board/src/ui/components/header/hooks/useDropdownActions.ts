@@ -12,6 +12,7 @@ import { useEditor } from '@ibodr/draw';
 import type { DrRecord } from '@ibodr/draw';
 import { useYjsContext } from '../../../../providers/YjsProvider';
 import { useTranslation } from 'react-i18next';
+import { PNG_EXPORT_PIXEL_RATIO } from '../../../../utils/shapeSvgExport';
 
 type BoardSnapshotJson = {
   records?: DrRecord[];
@@ -71,7 +72,8 @@ export const useDropdownActions = () => {
       const { blob } = await editor.toImage([...shapeIds], {
         format: 'png',
         background: true,
-        scale: 2,
+        scale: 1,
+        pixelRatio: PNG_EXPORT_PIXEL_RATIO,
         padding: 20,
       });
 

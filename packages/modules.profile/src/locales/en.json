@@ -7,7 +7,11 @@
     "notifications": "Notifications",
     "effects": "Effects",
     "report": "Report",
-    "logout": "Log out"
+    "logout": "Log out",
+    "logoutConfirmTitle": "Sign out?",
+    "logoutConfirmDescription": "You will be signed out and returned to the login screen",
+    "logoutConfirmCancel": "Cancel",
+    "logoutConfirmAction": "Sign out"
   },
   "personalData": {
     "title": "Personal data",

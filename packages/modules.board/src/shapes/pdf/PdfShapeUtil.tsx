@@ -1,6 +1,12 @@
 import { BaseBoxShapeUtil, HTMLContainer, DrResizeInfo, resizeBox } from '@ibodr/draw';
 import { PDF_MAX_SIZE, PDF_MIN_SIZE, PdfShape, pdfShapeProps } from './PdfShape';
 import { PdfViewer } from './PdfViewer';
+import { renderPdfShapeToDataUrl } from './renderPdfShapeToDataUrl';
+import {
+  getBoardStorageToken,
+  getSvgExportRasterScale,
+  SVG_CARD,
+} from '../../utils/shapeSvgExport';
 
 export class PdfShapeUtil extends BaseBoxShapeUtil<PdfShape> {
   static override type = 'pdf' as const;
@@ -56,6 +62,71 @@ export class PdfShapeUtil extends BaseBoxShapeUtil<PdfShape> {
       >
         <PdfViewer shape={shape} />
       </HTMLContainer>
+    );
+  }
+
+  override async toSvg(shape: PdfShape, ctx: { scale?: number; pixelRatio?: number | null }) {
+    const { w, h, src, currentPage, pagesVisible, fileName } = shape.props;
+    const token = getBoardStorageToken();
+    const rasterScale = getSvgExportRasterScale(ctx);
+
+    let dataUrl: string | null = null;
+    if (src && token) {
+      try {
+        dataUrl = await renderPdfShapeToDataUrl({
+          src,
+          token,
+          startPage: Math.max(1, currentPage || 1),
+          pagesVisible: Math.max(1, pagesVisible || 1),
+          width: w,
+          height: h,
+          qualityScale: rasterScale,
+        });
+      } catch (error) {
+        console.error('[PdfShapeUtil.toSvg] render failed:', error);
+      }
+    }
+
+    if (dataUrl) {
+      return (
+        <g>
+          <rect
+            width={w}
+            height={h}
+            rx={12}
+            ry={12}
+            fill={SVG_CARD.bg}
+            stroke={SVG_CARD.border}
+            strokeWidth={1}
+          />
+          <image href={dataUrl} width={w} height={h} preserveAspectRatio="xMidYMid meet" />
+        </g>
+      );
+    }
+
+    return (
+      <g>
+        <rect
+          width={w}
+          height={h}
+          rx={12}
+          ry={12}
+          fill={SVG_CARD.bg}
+          stroke={SVG_CARD.border}
+          strokeWidth={1}
+        />
+        <text
+          x={w / 2}
+          y={h / 2}
+          textAnchor="middle"
+          dominantBaseline="middle"
+          fill={SVG_CARD.muted}
+          fontSize={14}
+          fontFamily="system-ui, sans-serif"
+        >
+          {fileName || 'PDF'}
+        </text>
+      </g>
     );
   }
 

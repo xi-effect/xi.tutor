@@ -33,6 +33,7 @@ export {
   materialAccessBadgeClasses,
   paymentStatusBadgeClasses,
 } from './src/badgeClasses';
+export { ConfirmDialog, type ConfirmDialogProps } from './src/ConfirmDialog';
 export { modalTitleClass } from './src/modalTitleClass';
 export { switcherTabClass } from './src/switcherTabClass';
 export { useFocusModeStore } from './src/store/useFocusModeStore';

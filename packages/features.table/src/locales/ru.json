@@ -10,6 +10,11 @@
   "viewInvoiceAria": "Просмотреть информацию о счёте",
   "nameNotFound": "Имя не найдено",
   "deleteConfirm": "Вы уверены, что хотите удалить выставленный счет?",
+  "deleteConfirmTitle": "Удалить счёт?",
+  "deleteConfirmDescription": "Выставленный счёт будет удалён без возможности восстановления",
+  "deleteConfirmCancel": "Отменить",
+  "deleteConfirmAction": "Удалить",
+  "deleting": "Удаление...",
   "deleteTooltip": "Удалить выставленный счет",
   "date": {
     "today": "Сегодня",

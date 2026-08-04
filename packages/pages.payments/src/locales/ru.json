@@ -28,7 +28,12 @@
   },
   "templateCard": {
     "edit": "Редактировать",
-    "delete": "Удалить"
+    "delete": "Удалить",
+    "deleteConfirmTitle": "Удалить шаблон?",
+    "deleteConfirmDescription": "Шаблон «{{name}}» будет удалён без возможности восстановления",
+    "deleteConfirmCancel": "Отменить",
+    "deleteConfirmAction": "Удалить",
+    "deleting": "Удаление..."
   },
   "templateModal": {
     "editTitle": "Редактирование шаблона оплаты",
