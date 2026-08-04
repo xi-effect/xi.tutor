@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { PowerPointViewerHandle, SlideCanvas, useViewerBuildingBlocks } from 'pptx-react-viewer';
-
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { PPTXViewer } from 'pptxviewjs';
 
 import { useYjsContext } from '../../providers/YjsProvider';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
@@ -13,72 +12,128 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
   const { token } = useYjsContext();
   const { t } = useTranslation('board');
 
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const viewerRef = useRef<PPTXViewer | null>(null);
+
   const [fetching, setFetching] = useState(false);
-  const [content, setContent] = useState<Uint8Array | null>(null);
   const [currentSlide, setCurrentSlide] = useState(1);
   const [totalSlides, setTotalSlides] = useState(0);
+  const [error, setError] = useState<Error | null>(null);
 
-  const slideNodeRef = useRef<HTMLDivElement | null>(null);
-  const handle = useRef<PowerPointViewerHandle | null>(null);
+  const isLoading = fetching;
 
-  const { canvasProps, loading, error } = useViewerBuildingBlocks({
-    content,
-    canEdit: false,
-    handle,
+  const resizeCanvas = useCallback(async () => {
+    const canvas = canvasRef.current;
+    const container = containerRef.current;
+    const viewer = viewerRef.current;
 
-    onActiveSlideChange(index) {
-      setCurrentSlide(index + 1);
-    },
-    onSlideCountChange(count) {
-      setTotalSlides(count);
-    },
-  });
+    if (!canvas || !container || !viewer) {
+      return;
+    }
 
-  const isLoading = fetching || loading;
+    const width = container.clientWidth;
+    const height = container.clientHeight;
+
+    canvas.width = Math.floor(width * window.devicePixelRatio);
+    canvas.height = Math.floor(height * window.devicePixelRatio);
+
+    await viewer.render(canvas, {
+      quality: 'high',
+    });
+
+    canvas.style.width = `${width}px`;
+    canvas.style.height = `${height}px`;
+  }, []);
 
   useEffect(() => {
-    if (!shape.props.src || !token) return;
+    if (!containerRef.current) return;
+
+    const observer = new ResizeObserver(() => {
+      resizeCanvas();
+    });
+
+    observer.observe(containerRef.current);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [resizeCanvas]);
+
+  useEffect(() => {
+    if (!canvasRef.current || !shape.props.src || !token) {
+      return;
+    }
 
     let cancelled = false;
 
-    setFetching(true);
+    async function load() {
+      try {
+        setFetching(true);
+        setError(null);
 
-    (async () => {
-      const url = await resolveAssetUrl(shape.props.src, token);
-      const res = await fetch(url);
+        const url = await resolveAssetUrl(shape.props.src, token);
 
-      if (!res.ok) {
-        throw new Error(`Failed to fetch pptx (${res.status})`);
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          throw new Error(`Failed to fetch pptx (${response.status})`);
+        }
+
+        const buffer = await response.arrayBuffer();
+
+        if (cancelled) {
+          return;
+        }
+
+        const viewer = new PPTXViewer({
+          canvas: canvasRef.current,
+        });
+
+        viewerRef.current = viewer;
+
+        await viewer.loadFile(buffer);
+
+        if (cancelled) {
+          return;
+        }
+
+        setTotalSlides(viewer.getSlideCount());
+
+        resizeCanvas();
+      } catch (err) {
+        console.error(err);
+
+        if (!cancelled) {
+          setError(err as Error);
+        }
+      } finally {
+        if (!cancelled) {
+          setFetching(false);
+        }
       }
+    }
 
-      const buffer = await res.arrayBuffer();
-
-      if (!cancelled) {
-        setContent(new Uint8Array(buffer));
-        setFetching(false);
-      }
-    })().catch((err) => {
-      console.error(err);
-
-      if (!cancelled) {
-        setFetching(false);
-      }
-    });
+    load();
 
     return () => {
       cancelled = true;
+
+      viewerRef.current?.destroy();
+      viewerRef.current = null;
     };
-  }, [shape.props.src, token]);
+  }, [shape.props.src, token, resizeCanvas]);
 
-  const slideScale = useMemo(() => {
-    const baseWidth = 1280;
-    const baseHeight = 720;
+  const handlePageChange = async (page: number) => {
+    const viewer = viewerRef.current;
 
-    return Math.min(shape.props.w / baseWidth, shape.props.h / baseHeight);
-  }, [shape.props.w, shape.props.h]);
+    if (!viewer) {
+      return;
+    }
 
-  const handlePageChange = (page: number) => {
-    handle.current?.goTo(page - 1);
+    await viewer.goToSlide(page - 1, canvasRef.current);
+
+    setCurrentSlide(page);
   };
 
   if (error) {
@@ -87,42 +142,20 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
 
   return (
     <div className="flex h-full w-full flex-col">
-      <div className="relative flex-1 overflow-hidden">
+      <div ref={containerRef} className="relative flex-1 overflow-hidden">
         {isLoading && (
           <div className="text-text-disabled absolute inset-0 z-10 flex items-center justify-center text-sm">
             {t('presentation.loading')}
           </div>
         )}
 
-        {content && (
-          <div
-            className="absolute inset-0 overflow-hidden"
-            style={{ opacity: isLoading ? 0.3 : 1 }}
-          >
-            <div
-              style={{
-                width: Math.max(320, shape.props.w),
-                height: Math.max(180, shape.props.h),
-                position: 'relative',
-              }}
-            >
-              <div
-                ref={slideNodeRef}
-                style={{
-                  width: 1280,
-                  height: 720,
-                  position: 'absolute',
-                  left: '50%',
-                  top: '50%',
-                  transform: `translate(-50%, -50%) scale(${slideScale})`,
-                  transformOrigin: 'center center',
-                }}
-              >
-                <SlideCanvas {...canvasProps} mode="preview" />
-              </div>
-            </div>
-          </div>
-        )}
+        <canvas
+          ref={canvasRef}
+          className="block"
+          style={{
+            opacity: isLoading ? 0.3 : 1,
+          }}
+        />
       </div>
 
       {!!totalSlides && (
