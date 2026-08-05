@@ -6,7 +6,7 @@ import { useInterfaceStore } from '../../store/interfaceStore';
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
 import { optimizeImage } from '../../utils/optimizeImage';
-import { useUploadImage } from 'common.services';
+import { isFileNameTooLong, MAX_FILENAME_LENGTH, useUploadImage } from 'common.services';
 import { useBlockMenuActions, useYjsContext } from '../../hooks';
 import { toast } from 'sonner';
 import { checkImageUrl } from '../../utils/checkImageUrl';
@@ -26,6 +26,14 @@ export const ImageUploadModal = () => {
   const handleInput = async (files: File[]) => {
     if (!files) return;
     const file = files[0];
+
+    if (isFileNameTooLong(file.name)) {
+      toast.error(t('upload.fileNameTooLong'), {
+        description: t('upload.fileNameTooLongDesc', { max: MAX_FILENAME_LENGTH }),
+      });
+      return;
+    }
+
     const optimizedImage = await optimizeImage(file);
 
     const uploadedId = await uploadImage({

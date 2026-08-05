@@ -3,10 +3,13 @@ import { filesApiConfig, FilesQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { handleError } from '..';
 import { toast } from 'sonner';
+import { assertValidFileName } from './validateFileName';
 
 export type UploadImageVars = { file: File; token?: string };
 
 export async function uploadImageRequest({ file, token }: UploadImageVars): Promise<string> {
+  assertValidFileName(file);
+
   const axiosInst = await getAxiosInstance();
   const { getUrl, method } = filesApiConfig[FilesQueryKey.UploadImage];
   const formData = new FormData();

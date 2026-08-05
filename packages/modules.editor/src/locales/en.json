@@ -30,7 +30,9 @@
     "insertLink": "Insert link",
     "linkPlaceholder": "Paste image URL",
     "add": "Add",
-    "invalidLink": "Invalid image URL"
+    "invalidLink": "Invalid image URL",
+    "fileNameTooLong": "File name is too long",
+    "fileNameTooLongDesc": "File name must be at most {{max}} characters."
   },
   "codeBlock": {
     "copy": "Copy",

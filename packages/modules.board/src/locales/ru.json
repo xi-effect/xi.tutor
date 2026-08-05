@@ -251,6 +251,8 @@
     "unsupportedFileFormat": "Неподдерживаемый формат файла",
     "fileCannotUpload": "Файл «{{name}}» нельзя загрузить на доску.",
     "fileTooLarge": "Файл слишком большой",
+    "fileNameTooLong": "Название файла слишком длинное",
+    "fileNameTooLongDesc": "Максимум {{max}} символов в названии файла.",
     "fileEmpty": "Файл пустой",
     "fileEmptyDesc": "Выберите изображение с ненулевым размером.",
     "fileUploadSuccess": "Файл успешно загружен",

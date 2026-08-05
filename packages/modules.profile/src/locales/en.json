@@ -25,7 +25,8 @@
     "avatarDeleted": "Avatar deleted. It will disappear from the site shortly",
     "avatarDeleteError": "Failed to delete avatar",
     "uploadImage": "Please upload an image",
-    "fileTooLarge": "File is too large"
+    "fileTooLarge": "File is too large",
+    "fileNameTooLong": "File name is too long. Maximum {{max}} characters."
   },
   "customization": {
     "title": "Customization",

@@ -196,6 +196,8 @@ export const handleError = (error: unknown, type: ErrorType): void => {
 
     // Общая ошибка для типа операции
     toast.error(`Произошла ошибка при ${getOperationName(type)}`);
+  } else if (error instanceof Error && error.message) {
+    toast.error(error.message);
   } else {
     toast.error('Произошла неизвестная ошибка');
   }
