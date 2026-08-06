@@ -1,0 +1,3 @@
+export const CONTROLS_HEIGHT = 48;
+export const PRESENTATION_MIN_SIZE = 320;
+export const PRESENTATION_MAX_SIZE = 1920;

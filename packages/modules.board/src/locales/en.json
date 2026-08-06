@@ -201,6 +201,9 @@
     "renderError": "Failed to display PDF",
     "loading": "Loading..."
   },
+  "presentation": {
+    "loading": "Loading..."
+  },
   "audio": {
     "label": "Audio",
     "loading": "Loading...",

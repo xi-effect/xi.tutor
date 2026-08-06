@@ -9,10 +9,12 @@ import { EmojiShapeUtil } from './emoji';
 import { FileShapeUtil } from './file';
 import { CoordinateAxesShapeUtil } from './coordinate-axes';
 import { EmojiStickerShapeUtil } from './emojiSticker';
+import { PresentationShapeUtil } from './presentation';
 
 /** Кастомные shape utils — для `<Draw shapeUtils={...}>` (Draw сам мержит с defaultShapeUtils). */
 export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
   PdfShapeUtil,
+  PresentationShapeUtil,
   AudioShapeUtil,
   FrameShapeUtil,
   XiGeoShapeUtil,
