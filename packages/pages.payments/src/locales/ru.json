@@ -13,6 +13,8 @@
     "studentTitle": "Пока нет счетов",
     "tutorDescription": "Создайте счёт на оплату — он появится в этом списке.",
     "studentDescription": "Когда репетитор выставит счёт, он отобразится здесь.",
+    "templatesTitle": "Пока нет типов оплаты",
+    "templatesDescription": "Создайте тип оплаты — он появится в этом списке.",
     "helpLink": "Подробнее о том, как работают оплаты"
   },
   "loader": "Загрузка...",
@@ -26,7 +28,12 @@
   },
   "templateCard": {
     "edit": "Редактировать",
-    "delete": "Удалить"
+    "delete": "Удалить",
+    "deleteConfirmTitle": "Удалить шаблон?",
+    "deleteConfirmDescription": "Шаблон «{{name}}» будет удалён без возможности восстановления",
+    "deleteConfirmCancel": "Отменить",
+    "deleteConfirmAction": "Удалить",
+    "deleting": "Удаление..."
   },
   "templateModal": {
     "editTitle": "Редактирование шаблона оплаты",

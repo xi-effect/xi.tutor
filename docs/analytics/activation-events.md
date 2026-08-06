@@ -244,7 +244,7 @@
   "activation_flow_id": "uuid",
   "attempt_id": "uuid",
   "invite_id": "123",
-  "source": "main | classrooms | classroom | students | unknown",
+  "source": "main | classrooms | classroom | students | onboarding | unknown",
   "is_first_invite": true,
   "duration_ms": 400,
   "event_version": 1
@@ -254,6 +254,30 @@
 `is_first_invite` — по данным кэша списка приглашений (не localStorage).
 
 **Источник:** `packages/features.invites`, `packages/common.services/src/invitations/useAddInvitation.ts`
+
+#### Новая форма приглашения v2 (репетитор) — `invite_flow_version: 2`
+
+Полный контракт версии 2, формулы конверсии и правило хеширования токена: [`invite-flow-v2.md`](./invite-flow-v2.md).
+
+| Событие                           | Когда                                                                                                                            |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| `student_invite_modal_viewed`     | Открыта новая модалка (вместе с `student_invite_viewed`, сохраняем)                                                              |
+| `student_invite_message_copied`   | Успешное копирование готового сообщения со ссылкой (единственное действие в модалке)                                             |
+| `student_invite_new_link_created` | Подтверждено обновление ссылки (иконка рядом с кнопкой «Скопировать сообщение»): старая ссылка удаляется, новая создаётся взамен |
+
+```json
+{
+  "invite_flow_version": 2,
+  "source": "main | classrooms | classroom | students | onboarding | unknown",
+  "invite_id": "123",
+  "invite_tracking_id": "sha256-hex-or-absent",
+  "event_version": 1
+}
+```
+
+Аналитика **не отправляется** при неуспешном копировании (см. раздел «Ошибка копирования» в ТЗ). `invite_tracking_id` отсутствует в свойствах, если не удалось посчитать хеш (Web Crypto недоступен) — ключ не отправляется, а не отправляется с `null`.
+
+**Источник:** `packages/features.invites/src/ui/ModalInvitationV2.tsx`, `packages/features.invites/src/services/useCurrentInvite.ts`
 
 ---
 
@@ -272,6 +296,8 @@
   "tutor_id": "42",
   "attempt_id": "uuid",
   "student_authenticated": true,
+  "invite_flow_version": 2,
+  "invite_tracking_id": "sha256-hex-or-absent",
   "event_version": 1
 }
 ```
@@ -279,6 +305,26 @@
 Не передавать имя ученика, email, текст приглашения, полную ссылку.
 
 **Источник:** `packages/pages.invites`
+
+#### Новая форма приглашения v2 (ученик) — `invite_flow_version: 2`
+
+| Событие                         | Когда                                                                   |
+| ------------------------------- | ----------------------------------------------------------------------- |
+| `student_invite_page_viewed`    | Страница `/invite/$inviteId` отрендерена, до ответа preview-запроса     |
+| `student_invite_signup_clicked` | Клик «Зарегистрироваться» на `SignInPage` при переходе по инвайт-ссылке |
+| `student_invite_login_clicked`  | Сабмит формы входа на `SignInPage` при переходе по инвайт-ссылке        |
+
+```json
+{
+  "invite_flow_version": 2,
+  "invite_tracking_id": "sha256-hex-or-absent",
+  "event_version": 1
+}
+```
+
+`student_invite_signup_clicked` / `student_invite_login_clicked` фиксируются не на самой странице приглашения, а на `packages/pages.signin/src/ui/SignInPage.tsx` (там уже есть флаг `isInviteRedirect`) — root-guard (`apps/xi.web/src/pages/__root.tsx`) редиректит неавторизованных на `/signin` раньше, чем рендерится страница приглашения, поэтому реальная точка выбора «зарегистрироваться / войти» находится там. У этих двух событий нет надёжного `invite_tracking_id` (страница входа не хранит код приглашения в query) — поле не передаётся.
+
+**Источник:** `packages/pages.invites`, `packages/pages.signin/src/ui/SignInPage.tsx`
 
 ---
 
@@ -420,16 +466,17 @@
 
 ## P1 — дополнительные (частично / запланировано)
 
-| Событие                                                                                    | Статус                                     |
-| ------------------------------------------------------------------------------------------ | ------------------------------------------ |
-| `email_confirmation_resend_*`                                                              | реализовано                                |
-| `student_invite_link_copied`                                                               | реализовано                                |
-| `onboarding_step_skipped` / `failed` / `back`                                              | реализовано                                |
-| `activation_help_opened` / `activation_support_contacted`                                  | реализовано на auth/support                |
-| `activation_tutorial_started` / `completed`                                                | реализовано в OnboardingPopup              |
-| `media_device_unavailable` / `media_permission_help_opened` / `media_permission_requested` | константы есть                             |
-| `lesson_opened`                                                                            | константа есть, точка вызова не подключена |
-| `student_invite_shared`                                                                    | константа есть                             |
+| Событие                                                                                                    | Статус                                                                                                                                 |
+| ---------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `email_confirmation_resend_*`                                                                              | реализовано                                                                                                                            |
+| `student_invite_link_copied`                                                                               | реализовано                                                                                                                            |
+| `onboarding_step_skipped` / `failed` / `back`                                                              | реализовано                                                                                                                            |
+| `activation_help_opened` / `activation_support_contacted`                                                  | реализовано на auth/support                                                                                                            |
+| `activation_tutorial_started` / `completed`                                                                | реализовано в OnboardingPopup                                                                                                          |
+| `media_device_unavailable` / `media_permission_help_opened` / `media_permission_requested`                 | константы есть                                                                                                                         |
+| `lesson_opened`                                                                                            | константа есть, точка вызова не подключена                                                                                             |
+| `student_invite_shared`                                                                                    | константа есть, не используется (в v2 кнопки «Отправить»/Web Share нет — единственное действие с сообщением — «Скопировать сообщение») |
+| Форма приглашений v2 (`student_invite_modal_viewed` и др., см. [`invite-flow-v2.md`](./invite-flow-v2.md)) | реализовано                                                                                                                            |
 
 ---
 
@@ -456,12 +503,13 @@ auth_signup_viewed
 
 Ключи склейки:
 
-| Ключ                 | Назначение                       |
-| -------------------- | -------------------------------- |
-| `activation_flow_id` | До и после регистрации           |
-| `attempt_id`         | Одна сетевая попытка             |
-| `invite_id`          | Создание ↔ принятие приглашения  |
-| `lesson_id`          | Создание ↔ звонок ↔ длительность |
+| Ключ                 | Назначение                                                                                                                     |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `activation_flow_id` | До и после регистрации                                                                                                         |
+| `attempt_id`         | Одна сетевая попытка                                                                                                           |
+| `invite_id`          | Создание ↔ принятие приглашения                                                                                                |
+| `invite_tracking_id` | Копирование/шеринг у репетитора ↔ открытие/принятие у ученика (v2, хеш токена, см. [`invite-flow-v2.md`](./invite-flow-v2.md)) |
+| `lesson_id`          | Создание ↔ звонок ↔ длительность                                                                                               |
 
 ---
 
@@ -470,6 +518,6 @@ auth_signup_viewed
 - ввод каждого символа / `field_changed`
 - email, пароль, ФИО, телефон
 - названия занятий / кабинетов, комментарии
-- токены, invite URL, stack trace, произвольный текст ошибки
+- токены, invite URL, stack trace, произвольный текст ошибки (вместо сырого токена приглашения — `invite_tracking_id`, хеш SHA-256, см. [`invite-flow-v2.md`](./invite-flow-v2.md))
 - содержимое доски и чатов
 - отдельное событие `tutor_activated`

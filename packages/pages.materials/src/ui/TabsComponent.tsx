@@ -6,5 +6,5 @@ type TabsComponentProps = {
 };
 
 export const TabsComponent = ({ activeTab }: TabsComponentProps) => {
-  return <div className="h-full min-h-0">{activeTab === 'boards' ? <Materials /> : <Notes />}</div>;
+  return <div>{activeTab === 'boards' ? <Materials /> : <Notes />}</div>;
 };

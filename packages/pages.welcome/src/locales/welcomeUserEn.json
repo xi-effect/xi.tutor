@@ -10,6 +10,8 @@
   "avatar_format_hint": "Upload a photo in (png, jpeg, webp)",
   "avatar_size_error": "File is too large",
   "avatar_size_hint": "Choose a photo up to 1 MB",
+  "avatar_name_error": "File name is too long",
+  "avatar_name_hint": "File name must be at most {{max}} characters",
   "validation": {
     "required": "This field is required",
     "minLength": "Minimum ",

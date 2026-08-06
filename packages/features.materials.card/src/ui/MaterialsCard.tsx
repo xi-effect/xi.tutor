@@ -8,6 +8,7 @@ import { useMaterialActions, useNavigateToMaterial } from '../hooks';
 import { cardIcon } from './CardIcon';
 import { AccessModeT, MaterialPropsT } from 'common.types';
 import { useCurrentUser } from 'common.services';
+import { ConfirmDialog } from 'common.ui';
 import { ModalEditMaterialName } from 'features.materials.edit';
 import { useTranslation } from 'react-i18next';
 
@@ -37,13 +38,19 @@ export const MaterialsCard = ({
 
   const { navigateToMaterial } = useNavigateToMaterial();
 
-  const { handleDelete, handleDeleteFromClassroom, handleUpdateAccessMode, handleUpdateName } =
-    useMaterialActions(id, content_kind, name, classroomId);
+  const {
+    handleDelete,
+    handleDeleteFromClassroom,
+    handleUpdateAccessMode,
+    handleUpdateName,
+    isDeleting,
+  } = useMaterialActions(id, content_kind, name, classroomId);
 
   const [modalOpen, setModalOpen] = useState(false);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const handleCardClick = () => {
-    if (modalOpen) return;
+    if (modalOpen || deleteConfirmOpen) return;
     navigateToMaterial(id, content_kind);
   };
 
@@ -56,13 +63,39 @@ export const MaterialsCard = ({
     handleUpdateAccessMode(newMode, student_access_mode);
   };
 
+  const handleDeleteClick = () => {
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (isClassroom) {
+      handleDeleteFromClassroom({ onSuccess: () => setDeleteConfirmOpen(false) });
+      return;
+    }
+    handleDelete({ onSuccess: () => setDeleteConfirmOpen(false) });
+  };
+
+  const deleteTitle = isClassroom
+    ? t('deleteConfirm.fromClassroomTitle')
+    : content_kind === 'board'
+      ? t('deleteConfirm.boardTitle')
+      : t('deleteConfirm.noteTitle');
+
+  const deleteDescription = isClassroom
+    ? content_kind === 'board'
+      ? t('deleteConfirm.fromClassroomBoardDescription', { name })
+      : t('deleteConfirm.fromClassroomNoteDescription', { name })
+    : content_kind === 'board'
+      ? t('deleteConfirm.boardDescription', { name })
+      : t('deleteConfirm.noteDescription', { name });
+
   const menu = isTutor && (
     <MaterialActionsMenu
       isClassroom={isClassroom}
       isTutor={isTutor}
       studentAccessMode={student_access_mode}
-      onDelete={handleDelete}
-      onDeleteFromClassroom={handleDeleteFromClassroom}
+      onDelete={handleDeleteClick}
+      onDeleteFromClassroom={handleDeleteClick}
       onUpdateAccessMode={handleAccessModeUpdate}
       onDuplicate={handleDuplicate}
       setModalOpen={setModalOpen}
@@ -79,6 +112,19 @@ export const MaterialsCard = ({
         setModalOpen(false);
       }}
       handleUpdateName={handleUpdateName}
+    />
+  );
+
+  const deleteConfirmModal = (
+    <ConfirmDialog
+      open={deleteConfirmOpen}
+      onOpenChange={setDeleteConfirmOpen}
+      title={deleteTitle}
+      description={deleteDescription}
+      confirmLabel={isDeleting ? t('deleteConfirm.deleting') : t('deleteConfirm.confirm')}
+      cancelLabel={t('deleteConfirm.cancel')}
+      onConfirm={handleConfirmDelete}
+      isPending={isDeleting}
     />
   );
 
@@ -114,6 +160,7 @@ export const MaterialsCard = ({
           )}
         </div>
         {editModal}
+        {deleteConfirmModal}
       </>
     );
   }
@@ -162,6 +209,7 @@ export const MaterialsCard = ({
           </div>
         </div>
         {editModal}
+        {deleteConfirmModal}
       </>
     );
   }
@@ -207,6 +255,7 @@ export const MaterialsCard = ({
       )}
 
       {editModal}
+      {deleteConfirmModal}
     </div>
   );
 };

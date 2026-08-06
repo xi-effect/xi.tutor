@@ -6,6 +6,12 @@
   "rename": "Rename",
   "delete": "Delete",
   "deleting": "Deleting...",
+  "deleteConfirm": {
+    "title": "Delete classroom?",
+    "description": "Classroom «{{name}}» will be deleted permanently",
+    "cancel": "Cancel",
+    "confirm": "Delete"
+  },
   "allLoaded": "All classrooms loaded",
   "loadError": "Failed to load classrooms",
   "empty": {

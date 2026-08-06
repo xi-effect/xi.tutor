@@ -12,7 +12,7 @@ import { AddingLessonModal } from 'features.lesson.add';
 import type { FormData as AddingLessonFormData } from 'features.lesson.add';
 import { MaterialsAdd } from 'features.materials.add';
 import { useGetClassroom, useAddClassroomMaterials, useDeleteClassroom } from 'common.services';
-import { switcherTabClass } from 'common.ui';
+import { ConfirmDialog, switcherTabClass } from 'common.ui';
 import { cn } from '@xipkg/utils';
 import { useCreateClassroomEvent } from 'modules.calendar';
 import { ModalStudentsGroup } from 'features.group.manage';
@@ -79,7 +79,13 @@ const TutorDesktopToolbar = ({
     );
   }
 
-  if (currentTab === 'materials') return <MaterialsAdd />;
+  if (currentTab === 'materials') {
+    return (
+      <div className="ml-auto flex shrink-0 items-center gap-2">
+        <MaterialsAdd />
+      </div>
+    );
+  }
 
   if (currentTab === 'schedule') {
     return (
@@ -156,6 +162,7 @@ export const TabsTutor = () => {
   const [isGroupInviteModalOpen, setIsGroupInviteModalOpen] = useState(false);
   const [addLessonOpen, setAddLessonOpen] = useState(false);
   const [addLessonInitialDate, setAddLessonInitialDate] = useState<Date | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const handleAddLessonClick = useCallback((date?: Date) => {
     setAddLessonInitialDate(date ?? null);
@@ -168,11 +175,20 @@ export const TabsTutor = () => {
   const { deleteClassroom, isDeleting: isDeletingClassroom } = useDeleteClassroom();
   const createClassroomEvent = useCreateClassroomEvent();
 
-  const handleDeleteClassroom = () => {
+  const handleDeleteClassroomClick = () => {
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDeleteClassroom = () => {
     if (!classroomId) return;
     deleteClassroom(
       { classroomId: Number(classroomId) },
-      { onSuccess: () => navigate({ to: '/classrooms' }) },
+      {
+        onSuccess: () => {
+          setDeleteConfirmOpen(false);
+          navigate({ to: '/classrooms' });
+        },
+      },
     );
   };
 
@@ -224,7 +240,7 @@ export const TabsTutor = () => {
           value={currentTab}
           onValueChange={handleTabChange}
         >
-          <div className="bg-background-surface xs:ml-0 mr-4 ml-4 flex h-[56px] flex-row items-center gap-4 rounded-2xl px-2">
+          <div className="bg-background-surface mx-5 flex h-[56px] flex-row items-center gap-4 rounded-2xl px-2 sm:mx-10">
             {isMobile ? (
               <ClassroomMobileTabSwitcher
                 tabs={tabs}
@@ -245,14 +261,14 @@ export const TabsTutor = () => {
                   classroomKind={classroom?.kind}
                   onAddLessonClick={() => handleAddLessonClick()}
                   onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
-                  onDeleteClassroom={handleDeleteClassroom}
+                  onDeleteClassroom={handleDeleteClassroomClick}
                   isDeletingClassroom={isDeletingClassroom}
                 />
               </>
             )}
           </div>
 
-          <div className="bg-background-surface xs:pb-0 xs:rounded-tl-2xl flex min-h-0 min-w-0 flex-1 flex-col rounded-none pt-0 pb-40 pl-4">
+          <div className="bg-background-surface mb-5 ml-5 flex min-h-0 min-w-0 flex-1 flex-col rounded-l-2xl pt-0 pb-40 pl-5 sm:mb-10 sm:ml-10 sm:pb-10 sm:pl-4">
             <SharedTabsContent
               extraContent={
                 <Tabs.Content className="data-[state=inactive]:hidden" value="info">
@@ -285,12 +301,27 @@ export const TabsTutor = () => {
               isGroupInviteModalOpen={isGroupInviteModalOpen}
               onAddMaterial={handleAddMaterial}
               onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
-              onDeleteClassroom={handleDeleteClassroom}
+              onDeleteClassroom={handleDeleteClassroomClick}
               onStudentsModalChange={setIsStudentsModalOpen}
               onGroupInviteModalChange={setIsGroupInviteModalOpen}
             />
           )}
         </Tabs.Root>
+
+        <ConfirmDialog
+          open={deleteConfirmOpen}
+          onOpenChange={setDeleteConfirmOpen}
+          title={t('actions.deleteClassroomConfirmTitle')}
+          description={t('actions.deleteClassroomConfirmDescription', {
+            name: classroom?.name ?? '',
+          })}
+          confirmLabel={
+            isDeletingClassroom ? t('actions.deleting') : t('actions.deleteClassroomConfirmAction')
+          }
+          cancelLabel={t('actions.deleteClassroomConfirmCancel')}
+          onConfirm={handleConfirmDeleteClassroom}
+          isPending={isDeletingClassroom}
+        />
       </div>
     </ClassroomScheduleProvider>
   );

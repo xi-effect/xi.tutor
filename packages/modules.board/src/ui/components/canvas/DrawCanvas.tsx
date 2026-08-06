@@ -1,5 +1,5 @@
 import { LoadingScreen } from 'common.ui';
-import { boardPanelClass } from '../../boardTheme';
+import { boardChromeZClass, boardPanelClass } from '../../boardTheme';
 import { useKeyPress } from 'common.utils';
 import { useTheme } from 'common.theme';
 import { JSX } from 'react/jsx-runtime';
@@ -358,7 +358,8 @@ export const DrawCanvas = ({
 
   return (
     <div id="whiteboard-container" className="flex h-full w-full flex-col">
-      <div className="relative flex-1 overflow-hidden">
+      {/* z-0: stacking context — внутренние z-index draw/UI не выше @xipkg/modal (z-50) */}
+      <div className="relative z-0 flex-1 overflow-hidden">
         {followingPresenceId && <FollowBanner />}
         <div className="absolute inset-0">
           <Draw
@@ -459,7 +460,7 @@ export const DrawCanvas = ({
               <Navbar undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} token={token} />
             )}
             <div
-              className={`${boardPanelClass} absolute bottom-20 left-4 z-260 flex p-1 sm:hidden`}
+              className={`${boardPanelClass} absolute bottom-20 left-4 ${boardChromeZClass} flex p-1 sm:hidden`}
             >
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>

@@ -139,14 +139,14 @@ export const Notifications = () => {
   return (
     <div className="w-full min-w-0">
       {!isMobile && (
-        <h1 className="bg-gray-0 dark:text-text-primary sticky top-0 z-10 mb-4 pb-2 text-3xl font-semibold">
+        <h1 className="bg-background-surface dark:text-text-primary sticky top-0 z-10 mb-4 pb-2 text-3xl font-semibold">
           {t('notifications.title')}
         </h1>
       )}
 
       <div className="flex w-full min-w-0 flex-col gap-4">
         {isSupported && (
-          <div className="border-border-control bg-gray-0 flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
+          <div className="border-border-control bg-background-surface flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
             <div className="hover:bg-background-page flex flex-row items-center gap-4 rounded-xl bg-transparent p-3">
               <Notification className="fill-icon-brand h-8 w-8 shrink-0" />
               <div className="flex min-w-0 flex-1 flex-col gap-1">
@@ -215,7 +215,7 @@ export const Notifications = () => {
           </div>
         )}
 
-        <div className="border-border-control bg-gray-0 flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
+        <div className="border-border-control bg-background-surface flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
           <div className="hover:bg-background-page flex flex-row items-center gap-4 rounded-xl bg-transparent p-2">
             <TelegramFilled className="fill-icon-brand size-8 shrink-0" />
 
@@ -238,7 +238,7 @@ export const Notifications = () => {
           {isTgConnectionActive && <NotificationsToggles deliveryMethodKind="telegram" />}
         </div>
 
-        <div className="border-border-control bg-gray-0 flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
+        <div className="border-border-control bg-background-surface flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
           <div className="hover:bg-background-page flex flex-row items-center gap-4 rounded-xl bg-transparent p-2">
             <VK className="size-8 shrink-0 !text-[#0077FF]" />
 
@@ -261,7 +261,7 @@ export const Notifications = () => {
           {isVkConnectionActive && <NotificationsToggles deliveryMethodKind="vk" />}
         </div>
 
-        <div className="border-border-control bg-gray-0 flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
+        <div className="border-border-control bg-background-surface flex w-full min-w-0 shrink-0 flex-col gap-2 rounded-2xl border p-1">
           <div className="hover:bg-background-page flex flex-row items-center gap-4 rounded-xl bg-transparent p-3">
             <MailRounded className="fill-icon-brand shrink-0" />
 

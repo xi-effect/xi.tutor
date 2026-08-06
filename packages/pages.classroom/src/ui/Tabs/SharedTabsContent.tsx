@@ -12,7 +12,7 @@ interface SharedTabsContentProps {
 export const SharedTabsContent = ({ extraContent }: SharedTabsContentProps) => (
   <>
     <Tabs.Content
-      className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain pr-4 outline-none data-[state=inactive]:hidden"
+      className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain pr-5 outline-none data-[state=inactive]:hidden sm:pr-10"
       value="overview"
     >
       <Overview />

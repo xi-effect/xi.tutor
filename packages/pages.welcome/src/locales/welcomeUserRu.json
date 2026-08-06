@@ -10,6 +10,8 @@
   "avatar_format_hint": "Загрузите фото в (png, jpeg, webp)",
   "avatar_size_error": "Файл слишком большой",
   "avatar_size_hint": "Выберите фото до 1 Мб",
+  "avatar_name_error": "Название файла слишком длинное",
+  "avatar_name_hint": "Максимум {{max}} символов в названии файла",
   "validation": {
     "required": "Обязательное поле",
     "minLength": "Минимум ",

@@ -13,6 +13,8 @@
     "studentTitle": "No invoices yet",
     "tutorDescription": "Create an invoice — it will appear in this list.",
     "studentDescription": "When a tutor issues an invoice, it will appear here.",
+    "templatesTitle": "No payment types yet",
+    "templatesDescription": "Create a payment type — it will appear in this list.",
     "helpLink": "Learn more about how payments work"
   },
   "loader": "Loading...",
@@ -26,7 +28,12 @@
   },
   "templateCard": {
     "edit": "Edit",
-    "delete": "Delete"
+    "delete": "Delete",
+    "deleteConfirmTitle": "Delete template?",
+    "deleteConfirmDescription": "Template «{{name}}» will be deleted permanently",
+    "deleteConfirmCancel": "Cancel",
+    "deleteConfirmAction": "Delete",
+    "deleting": "Deleting..."
   },
   "templateModal": {
     "editTitle": "Edit payment template",

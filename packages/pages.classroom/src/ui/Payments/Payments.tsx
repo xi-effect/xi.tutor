@@ -61,7 +61,7 @@ export const Payments = () => {
   }
 
   return (
-    <div className="flex flex-col max-sm:pl-4">
+    <div className="flex flex-col">
       {invoiceDetailsModalState.isOpen && invoiceDetailsModalState.payment && (
         <PaymentInvoiceDetailsModal
           open={invoiceDetailsModalState.isOpen}
@@ -77,7 +77,6 @@ export const Payments = () => {
         />
       )}
       <VirtualizedPaymentsTable
-        className="h-[calc(100dvh-252px)]"
         data={items}
         columns={defaultColumns}
         isLoading={isLoading}

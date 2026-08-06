@@ -238,9 +238,10 @@ export const StartLessonButton = ({
     >
       {variant === 'primary' && (
         <Conference
-          size="sm"
+          size={size === 'm' ? 'm' : 'sm'}
           className={cn(
             'group-hover:fill-action-primary-text fill-action-primary-text mr-1.5',
+            size === 'm' && 'size-5',
             isDisabled && 'fill-icon-disabled',
           )}
         />

@@ -11,6 +11,7 @@ import {
   useMaterialsDuplicate,
 } from '../provider/MaterialsDuplicateContext';
 import { MaterialsDuplicate } from 'features.materials.duplicate';
+import { cn, useMediaQuery } from '@xipkg/utils';
 
 const getTabFromUrl = (): 'notes' | 'boards' => {
   if (typeof window === 'undefined') {
@@ -24,6 +25,8 @@ const getTabFromUrl = (): 'notes' | 'boards' => {
 const MaterialsPageContent = () => {
   const { t } = useTranslation('materials');
   const [activeTab, setActiveTab] = useState<'notes' | 'boards'>(() => getTabFromUrl());
+  const isMobile = useMediaQuery('(max-width: 960px)');
+
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const { materialId, open, closeModal } = useMaterialsDuplicate();
@@ -66,12 +69,22 @@ const MaterialsPageContent = () => {
 
   return (
     <>
-      <div className="bg-background-page flex h-screen flex-col">
-        <div className="shrink-0 px-5 pt-5 sm:px-10 sm:pt-10">
+      <div
+        className={cn(
+          'bg-background-page flex flex-col gap-4',
+          isMobile ? 'max-h-[calc(100dvh-64px)]' : 'h-screen',
+        )}
+      >
+        <div className="flex w-full shrink-0 items-start justify-between px-5 pt-4 sm:flex-row sm:px-8 sm:pt-8 md:px-10 md:pt-10">
           <Header activeTab={activeTab} onTabChange={handleTabChange} />
         </div>
 
-        <div className="mt-6 min-h-0 flex-1 sm:mt-10">
+        <div
+          className={cn(
+            'h-full overflow-y-auto px-5 pb-5 sm:mt-10 sm:pr-5 sm:pl-8 md:pr-8 md:pl-10',
+            !isMobile && 'flex-1',
+          )}
+        >
           <TabsComponent activeTab={activeTab} />
         </div>
       </div>

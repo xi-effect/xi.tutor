@@ -50,8 +50,10 @@ import {
 } from '../../../config';
 import { areAllEraserCategoriesEnabled } from '../../../utils/areAllEraserCategoriesEnabled';
 import { useTranslation } from 'react-i18next';
+import { ConfirmDialog } from 'common.ui';
 import {
   boardIconClass,
+  boardDropdownZClass,
   boardMenuCheckboxItemClass,
   boardMenuItemClass,
   boardMenuSubTriggerClass,
@@ -146,6 +148,7 @@ export const SettingsDropdown = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [hotkeysOpen, setHotkeysOpen] = useState(false);
   const [showImportOption, setShowImportOption] = useState(false);
+  const [clearConfirmOpen, setClearConfirmOpen] = useState(false);
   const [elementsCount, setElementsCount] = useState(0);
   const importInputRef = useRef<HTMLInputElement>(null);
   const shownWarningToastRef = useRef(false);
@@ -238,7 +241,11 @@ export const SettingsDropdown = () => {
         <DropdownMenuContent
           sideOffset={12}
           align="end"
-          className={cn(boardMenuSurfaceClass, 'z-100 flex w-[286px] flex-col gap-1 px-2 py-1')}
+          className={cn(
+            boardMenuSurfaceClass,
+            boardDropdownZClass,
+            'flex w-[286px] flex-col gap-1 px-2 py-1',
+          )}
         >
           <div className="bg-status-info-background/40 mb-1 rounded-lg px-2 py-2">
             <div className="mb-1 flex items-center justify-between text-xs">
@@ -286,7 +293,9 @@ export const SettingsDropdown = () => {
                   <Pen />
                   <span>{t('settings.inputMode')}</span>
                 </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[250px]')}>
+                <DropdownMenuSubContent
+                  className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[250px]')}
+                >
                   {INPUT_MODE_OPTIONS.map(({ value, label, icon }) => (
                     <DropdownMenuItem
                       key={value}
@@ -318,7 +327,9 @@ export const SettingsDropdown = () => {
                   {getBoardBackgroundTypeLabel(background.type)}
                 </span>
               </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[286px]')}>
+              <DropdownMenuSubContent
+                className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[286px]')}
+              >
                 {BOARD_BACKGROUND_TYPE_OPTIONS.map(({ value, label }) => (
                   <DropdownMenuItem
                     key={value}
@@ -343,7 +354,9 @@ export const SettingsDropdown = () => {
                   {getBoardBackgroundColorLabel(background.color)}
                 </span>
               </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[286px]')}>
+              <DropdownMenuSubContent
+                className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[286px]')}
+              >
                 {BOARD_BACKGROUND_COLOR_OPTIONS.map(({ value, label }) => (
                   <DropdownMenuItem
                     key={value}
@@ -392,7 +405,14 @@ export const SettingsDropdown = () => {
               {showDebugInfo && <Check className="ml-auto" />}
             </DropdownMenuItem> */}
 
-            {isTutor && !isReadonly && <ClearBoardAction onClick={clearBoard} />}
+            {isTutor && !isReadonly && (
+              <ClearBoardAction
+                onClick={() => {
+                  setDropdownOpen(false);
+                  setClearConfirmOpen(true);
+                }}
+              />
+            )}
 
             {isTutor && !isReadonly && (
               <DropdownMenuSub>
@@ -400,7 +420,9 @@ export const SettingsDropdown = () => {
                   <Locked />
                   <span>{t('settings.lockElements')}</span>
                 </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[250px]')}>
+                <DropdownMenuSubContent
+                  className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[250px]')}
+                >
                   <p className="text-text-secondary px-3 py-2 text-xs">{t('settings.lockHint')}</p>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
@@ -431,7 +453,9 @@ export const SettingsDropdown = () => {
                   <Unlocked />
                   <span>{t('settings.unlockElements')}</span>
                 </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[250px]')}>
+                <DropdownMenuSubContent
+                  className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[250px]')}
+                >
                   <p className="text-text-secondary px-3 py-2 text-xs">
                     {t('settings.unlockHint')}
                   </p>
@@ -465,7 +489,9 @@ export const SettingsDropdown = () => {
                   <span>{t('settings.eraser')}</span>
                 </DropdownMenuSubTrigger>
 
-                <DropdownMenuSubContent className={cn(boardMenuSurfaceClass, 'z-100 w-[260px]')}>
+                <DropdownMenuSubContent
+                  className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[260px]')}
+                >
                   <p className="text-text-secondary px-3 py-2 text-xs">
                     {t('settings.eraserHint')}
                   </p>
@@ -503,6 +529,19 @@ export const SettingsDropdown = () => {
         </DropdownMenuContent>
       </DropdownMenu>
       <HotkeysHelpModal open={hotkeysOpen} onOpenChange={handleOpenHotkeysHelp} />
+
+      <ConfirmDialog
+        open={clearConfirmOpen}
+        onOpenChange={setClearConfirmOpen}
+        title={t('settings.clearBoardConfirmTitle')}
+        description={t('settings.clearBoardConfirmDescription')}
+        confirmLabel={t('settings.clearBoardConfirmAction')}
+        cancelLabel={t('settings.clearBoardConfirmCancel')}
+        onConfirm={() => {
+          clearBoard();
+          setClearConfirmOpen(false);
+        }}
+      />
     </>
   );
 };

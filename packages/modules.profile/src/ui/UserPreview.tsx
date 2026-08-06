@@ -9,7 +9,7 @@ import {
 import { toast } from 'sonner';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { AvatarEditor } from 'features.avatar.editor';
-import { useCurrentUser } from 'common.services';
+import { isFileNameTooLong, MAX_FILENAME_LENGTH, useCurrentUser } from 'common.services';
 import { env } from 'common.env';
 import { getAxiosInstance } from 'common.config';
 import { useTranslation } from 'react-i18next';
@@ -64,6 +64,11 @@ export const UserPreview = ({ className = '' }: UserPreviewPropsT) => {
 
     if (file.size > 5 * 1024 * 1024) {
       toast(t('userPreview.fileTooLarge'));
+      return;
+    }
+
+    if (isFileNameTooLong(file.name)) {
+      toast(t('userPreview.fileNameTooLong', { max: MAX_FILENAME_LENGTH }));
       return;
     }
 

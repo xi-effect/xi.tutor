@@ -48,8 +48,16 @@ export const boardToolbarIconCompactClass = cn(
 
 export const boardTextClass = 'text-text-primary';
 
-/** z-index выпадающих меню и попапов поверх панелей доски (тулбар/зум — z-260) */
-export const boardDropdownZClass = 'z-270';
+/**
+ * Слои UI доски относительно приложения:
+ * mobile bottom bar z-30 < chrome z-40 < portaled menus z-[45] < @xipkg/modal z-50.
+ * Канвас дополнительно изолирован через z-0 на обёртке, чтобы внутренние
+ * overlay draw (курсоры ~1100) не пробивали модалки.
+ */
+export const boardChromeZClass = 'z-40';
+
+/** z-index выпадающих меню/попапов доски (часто portal в body) — выше chrome, ниже modal */
+export const boardDropdownZClass = 'z-[45]';
 
 /**
  * Строка в попапе доски. Нативный <button> без фона в тёмной теме даёт светлый buttonface,

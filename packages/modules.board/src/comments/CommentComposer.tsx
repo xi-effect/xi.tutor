@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { cn } from '@xipkg/utils';
-import { boardMenuSurfaceClass } from '../ui/boardTheme';
+import { boardChromeZClass, boardMenuSurfaceClass } from '../ui/boardTheme';
 import { getCommentAuthorAvatarUrl } from './commentAvatar';
 import { CommentMessageInput } from './CommentMessageInput';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +30,7 @@ export const CommentComposer = ({
   const { t } = useTranslation('board');
   return (
     <div
-      className="pointer-events-none absolute z-100"
+      className={`pointer-events-none absolute ${boardChromeZClass}`}
       data-comment-ui
       style={{ left, top, transform: 'translate(-50%, -100%)' }}
     >

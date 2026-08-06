@@ -14,6 +14,7 @@ import {
 import { UserRoleT } from 'common.api';
 import { MobileTutorActionButton } from 'features.invites';
 import { ModalTemplate } from './Templates';
+import { cn, useMediaQuery } from '@xipkg/utils';
 
 export const PaymentsPage = () => {
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
@@ -27,6 +28,7 @@ export const PaymentsPage = () => {
     payment: RolePaymentT<'tutor'> | RolePaymentT<'student'> | null;
   }>({ isOpen: false, payment: null });
   const processedInvoiceIdRef = useRef<number | null>(null);
+  const isMobile = useMediaQuery('(max-width: 960px)');
 
   const navigate = useNavigate();
   const search = useSearch({ strict: false }) as {
@@ -178,8 +180,13 @@ export const PaymentsPage = () => {
   );
 
   return (
-    <div className="bg-background-page flex h-screen flex-col">
-      <div className="shrink-0 px-5 pt-5 sm:px-10 sm:pt-10">
+    <div
+      className={cn(
+        'bg-background-page flex flex-col gap-4',
+        isMobile ? 'max-h-[calc(100dvh-64px)]' : 'h-screen',
+      )}
+    >
+      <div className="flex w-full shrink-0 items-start justify-between px-5 pt-4 sm:flex-row sm:px-8 sm:pt-8 md:px-10 md:pt-10">
         <Header
           onCreateInvoice={onOpenInvoiceModal}
           onCreateTemplate={() => setIsTemplateModalOpen(true)}
@@ -188,7 +195,7 @@ export const PaymentsPage = () => {
         />
       </div>
 
-      <div className="mt-6 min-h-0 flex-1 sm:mt-10">
+      <div className={cn('h-full pb-5 pl-5 sm:mt-10 sm:pl-8 md:pl-10', !isMobile && 'flex-1')}>
         <TabsComponent
           onApprovePayment={onOpenPaymentApproveModal}
           activeTab={activeTab}

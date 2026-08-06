@@ -41,5 +41,38 @@
   "toast": {
     "linkCopied": "Link copied",
     "sendToStudent": "Send the link to the student"
+  },
+  "inviteModalV2": {
+    "title": "Invite a student",
+    "description": "Copy the ready-made message or the link and send it to the student.",
+    "message": {
+      "template": "Join sovlium — the platform for online lessons!\n\nTo accept the invitation, follow the link and sign up:\n\n{{url}}"
+    },
+    "or": "or",
+    "actions": {
+      "copy": "Copy",
+      "copyMessage": "Copy message",
+      "copyLink": "Copy link",
+      "refreshLink": "Refresh link"
+    },
+    "confirm": {
+      "title": "Refresh the link?",
+      "description": "The current link will stop working and a new one will be created instead. If you already sent it to a student, they won't be able to use it anymore.",
+      "confirm": "Refresh",
+      "cancel": "Cancel"
+    },
+    "toast": {
+      "messageCopied": "Message copied",
+      "linkCopied": "Link copied",
+      "copyFailed": "Couldn't copy automatically. Select the text and copy it manually."
+    },
+    "errors": {
+      "listError": "Couldn't load the invitation",
+      "createError": "Couldn't create a link. Please try again.",
+      "retry": "Retry"
+    },
+    "limit": {
+      "reached": "Invitation limit reached (10). Contact support to get a new link."
+    }
   }
 }

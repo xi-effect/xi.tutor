@@ -7,6 +7,7 @@ import type {
   EmailConfirmationFailureReason,
   EmailConfirmationSource,
   HttpStatusGroup,
+  InviteAnalyticsSource,
   InviteFailureReason,
   LessonCreateFailureReason,
   LessonDurationThreshold,
@@ -31,6 +32,16 @@ import type {
 type BaseProps = CommonActivationProperties;
 
 type EventName = (typeof PRODUCT_ANALYTICS_EVENTS)[keyof typeof PRODUCT_ANALYTICS_EVENTS];
+
+/**
+ * Общие свойства для новой формы приглашений (см. ТЗ п.11). `invite_tracking_id` —
+ * хеш токена приглашения (SHA-256), позволяющий связать события репетитора и ученика
+ * без передачи сырого токена в Umami (см. `inviteTracking.ts`).
+ */
+type InviteFlowV2Props = BaseProps & {
+  invite_flow_version: 2;
+  invite_tracking_id?: string;
+};
 
 export type ProductAnalyticsEventMap = {
   auth_signup_viewed: BaseProps & {
@@ -182,10 +193,26 @@ export type ProductAnalyticsEventMap = {
   student_invite_link_copied: BaseProps & {
     invite_id?: string;
     source: string;
+    invite_flow_version?: number;
+    invite_tracking_id?: string;
   };
   student_invite_shared: BaseProps & {
     invite_id?: string;
     source: string;
+  };
+
+  // Новая форма приглашения (репетитор) — invite_flow_version: 2, см. ТЗ п.11
+  student_invite_modal_viewed: InviteFlowV2Props & {
+    source: InviteAnalyticsSource;
+  };
+  student_invite_message_copied: InviteFlowV2Props & {
+    invite_id?: string;
+    source: InviteAnalyticsSource;
+  };
+  student_invite_new_link_created: InviteFlowV2Props & {
+    invite_id?: string;
+    previous_invite_id?: string;
+    source: InviteAnalyticsSource;
   };
 
   student_invite_opened: {
@@ -193,6 +220,8 @@ export type ProductAnalyticsEventMap = {
     invite_id: string;
     tutor_id?: string;
     student_authenticated: boolean;
+    invite_flow_version?: number;
+    invite_tracking_id?: string;
   };
   student_invite_accept_submit: {
     event_version?: number;
@@ -200,6 +229,8 @@ export type ProductAnalyticsEventMap = {
     tutor_id?: string;
     attempt_id: string;
     student_authenticated: boolean;
+    invite_flow_version?: number;
+    invite_tracking_id?: string;
   };
   invite_accepted_success: {
     event_version?: number;
@@ -209,6 +240,8 @@ export type ProductAnalyticsEventMap = {
     student_authenticated?: boolean;
     role?: ProductAnalyticsRole;
     invite_kind?: ProductAnalyticsInviteKind;
+    invite_flow_version?: number;
+    invite_tracking_id?: string;
   };
   student_invite_accept_failed: {
     event_version?: number;
@@ -218,6 +251,17 @@ export type ProductAnalyticsEventMap = {
     student_authenticated: boolean;
     reason: InviteFailureReason;
     duration_ms: number;
+    invite_flow_version?: number;
+    invite_tracking_id?: string;
+  };
+
+  // Новая форма приглашения (страница ученика) — invite_flow_version: 2, см. ТЗ п.11
+  student_invite_page_viewed: InviteFlowV2Props;
+  student_invite_signup_clicked: InviteFlowV2Props & {
+    source: InviteAnalyticsSource;
+  };
+  student_invite_login_clicked: InviteFlowV2Props & {
+    source: InviteAnalyticsSource;
   };
 
   lesson_create_viewed: BaseProps & {

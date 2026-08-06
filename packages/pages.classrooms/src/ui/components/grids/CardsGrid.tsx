@@ -6,7 +6,7 @@ import { CardsGridSkeleton } from './CardsGridSkeleton';
 import { Card } from '../cards/Card';
 import { ClassroomPropsT } from '../../../types';
 import { ClassroomsEmptyState } from './ClassroomsEmptyState';
-import { VirtualGridlList } from './VirtualGridlList';
+import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 
 type TCardsGridProps = {
   items: ClassroomPropsT[];
@@ -39,7 +39,7 @@ const ListFooter = ({
           <div className="border-border-strong h-8 w-8 animate-spin rounded-full border-b-2" />
         </div>
       )}
-      {!hasNextPage && itemsCount > 0 && (
+      {!hasNextPage && itemsCount >= 20 && (
         <div className="text-text-primary py-4 text-center">{t('allLoaded')}</div>
       )}
     </>
@@ -92,40 +92,20 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
     );
   }
 
-  if (isMobile) {
-    return (
-      <div ref={parentRef} className="w-full px-5 pb-5 sm:px-10 sm:pb-10">
-        <div className="grid grid-cols-1 gap-5">
-          {items.map((item) => (
-            <Card key={item.id} {...item} />
-          ))}
-        </div>
-        <div ref={sentinelRef} className="h-px w-full" aria-hidden />
-        <ListFooter
-          isFetchingNextPage={isFetchingNextPage}
-          hasNextPage={hasNextPage}
-          itemsCount={items.length}
-        />
-      </div>
-    );
-  }
-
   return (
-    <div
-      ref={parentRef}
-      className="h-full min-h-0 w-full overflow-auto px-5 pb-5 sm:px-10 sm:pb-10"
-    >
-      <VirtualGridlList
+    <div ref={parentRef}>
+      <GridVirtualizer
         items={items}
         parentRef={parentRef}
         gap={20}
-        defaultRowHeight={180}
-        minItemWidth={256}
-        maxColumns={3}
+        defaultRowHeight={160}
+        minItemWidth={300}
+        maxColumns={4}
+        isSingleColumn={isMobile}
         renderItem={(item) => <Card {...item} />}
       />
 
-      <div ref={sentinelRef} className="h-px w-full" aria-hidden />
+      <div ref={sentinelRef} className="h-px" aria-hidden />
       <ListFooter
         isFetchingNextPage={isFetchingNextPage}
         hasNextPage={hasNextPage}

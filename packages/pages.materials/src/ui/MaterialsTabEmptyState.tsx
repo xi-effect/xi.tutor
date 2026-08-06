@@ -20,7 +20,7 @@ export const MaterialsTabEmptyState = ({ title, description }: MaterialsTabEmpty
   const { t } = useTranslation('materials');
 
   return (
-    <div className="bg-background-surface box-border flex h-[calc(100dvh-120px)] w-full flex-col rounded-tl-2xl pt-2 pr-5 pb-4">
+    <div className="box-border flex h-[calc(100dvh-120px)] w-full flex-col">
       <div
         className={cn(
           'flex min-h-0 flex-1 flex-col items-center justify-center gap-8 overflow-hidden',

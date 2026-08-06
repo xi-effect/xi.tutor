@@ -20,6 +20,7 @@ import { useDrawStyles, useHotkeys } from '../../../hooks';
 import { NavbarButton } from '../shared';
 import { initFileDB, useRetryFileQueue } from 'common.services';
 import {
+  boardChromeZClass,
   boardDropdownZClass,
   boardMenuItemClass,
   boardPanelClass,
@@ -300,9 +301,20 @@ export const Navbar = track(
 
     return (
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute right-0 bottom-4 left-0 z-260 flex w-full items-center justify-center px-4 sm:px-0">
-          <div className="relative z-260 flex w-full max-w-full sm:w-auto">
-            <div className={`${boardPanelClass} absolute -left-[115px] z-260 hidden p-1 sm:flex`}>
+        <div
+          className={cn(
+            'absolute right-0 bottom-4 left-0 flex w-full items-center justify-center px-4 sm:px-0',
+            boardChromeZClass,
+          )}
+        >
+          <div className={cn('relative flex w-full max-w-full sm:w-auto', boardChromeZClass)}>
+            <div
+              className={cn(
+                boardPanelClass,
+                'absolute -left-[115px] hidden p-1 sm:flex',
+                boardChromeZClass,
+              )}
+            >
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
             <div

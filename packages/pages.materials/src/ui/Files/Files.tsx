@@ -1,17 +1,15 @@
 import { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card } from './Card';
-import { useResponsiveGrid, useInfiniteQuery, useVirtualGrid } from '../../hooks';
+import { useInfiniteQuery } from '../../hooks';
 import { MaterialsTabEmptyState } from '../MaterialsTabEmptyState';
-import { GridList } from '../GridList';
+import { GridVirtualizer } from '@xipkg/gridvirtualizer';
 
 export const Files = () => {
   const { t } = useTranslation('materials');
   const parentRef = useRef<HTMLDivElement>(null);
 
-  const { colCount, rowHeight, GAP } = useResponsiveGrid(parentRef, true);
   const { items, isLoading, isError } = useInfiniteQuery(parentRef, 'note');
-  const rowVirtualizer = useVirtualGrid(parentRef, items, colCount, rowHeight);
 
   const notFoundItems = !items.length && !isLoading && !isError;
 
@@ -23,16 +21,14 @@ export const Files = () => {
           description={t('empty.filesDescription')}
         />
       ) : (
-        <GridList
-          rowVirtualizer={rowVirtualizer}
-          colCount={colCount}
-          gap={GAP}
+        <GridVirtualizer
+          parentRef={parentRef}
           items={items}
-          renderItem={(material) => (
-            <div key={material.id} className="card-item">
-              <Card {...material} />
-            </div>
-          )}
+          defaultRowHeight={100}
+          minItemWidth={300}
+          gap={20}
+          maxColumns={4}
+          renderItem={(material) => <Card {...material} />}
         />
       )}
     </div>

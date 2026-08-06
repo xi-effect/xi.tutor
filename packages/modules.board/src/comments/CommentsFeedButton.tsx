@@ -5,7 +5,12 @@ import { Button } from '@xipkg/button';
 import { Check, Inbox } from '@xipkg/icons';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { cn } from '@xipkg/utils';
-import { boardIconClass, boardMenuSurfaceClass, boardPopoverListItemClass } from '../ui/boardTheme';
+import {
+  boardDropdownZClass,
+  boardIconClass,
+  boardMenuSurfaceClass,
+  boardPopoverListItemClass,
+} from '../ui/boardTheme';
 import { getCommentAuthorAvatarUrl } from './commentAvatar';
 import {
   getAllCommentThreads,
@@ -76,7 +81,7 @@ export const CommentsFeedButton = track(function CommentsFeedButton() {
         side="bottom"
         sideOffset={12}
         data-comment-ui
-        className={cn(boardMenuSurfaceClass, 'z-100 w-80 rounded-xl p-2')}
+        className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-80 rounded-xl p-2')}
       >
         <p className="text-text-secondary px-2 py-1 text-xs">{t('comments.onBoard')}</p>
         {sorted.length === 0 ? (

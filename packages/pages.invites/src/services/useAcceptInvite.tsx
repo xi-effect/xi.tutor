@@ -7,6 +7,7 @@ import { handleError, useCurrentUser, useUpdateProfile } from 'common.services';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   createAttemptId,
+  getInviteTrackingId,
   getProductAnalyticsRole,
   mapInviteError,
   measureDurationMs,
@@ -54,11 +55,15 @@ export const useAcceptInvite = () => {
       const startedAt = nowMs();
       const studentAuthenticated = Boolean(currentUser?.id);
 
-      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_ACCEPT_SUBMIT, {
-        invite_id: variables.code,
-        tutor_id: variables.tutor_id,
-        attempt_id: attemptId,
-        student_authenticated: studentAuthenticated,
+      void getInviteTrackingId(variables.code).then((invite_tracking_id) => {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_ACCEPT_SUBMIT, {
+          invite_id: variables.code,
+          tutor_id: variables.tutor_id,
+          attempt_id: attemptId,
+          student_authenticated: studentAuthenticated,
+          invite_flow_version: 2,
+          invite_tracking_id,
+        });
       });
 
       return { attemptId, startedAt };
@@ -68,13 +73,17 @@ export const useAcceptInvite = () => {
 
       const user = queryClient.getQueryData<typeof currentUser>([UserQueryKey.Home]) || currentUser;
 
-      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.INVITE_ACCEPTED_SUCCESS, {
-        role: getProductAnalyticsRole(user?.default_layout),
-        invite_kind: variables.invite_kind,
-        invite_id: variables.code,
-        tutor_id: variables.tutor_id,
-        attempt_id: context?.attemptId,
-        student_authenticated: Boolean(user?.id),
+      void getInviteTrackingId(variables.code).then((invite_tracking_id) => {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.INVITE_ACCEPTED_SUCCESS, {
+          role: getProductAnalyticsRole(user?.default_layout),
+          invite_kind: variables.invite_kind,
+          invite_id: variables.code,
+          tutor_id: variables.tutor_id,
+          attempt_id: context?.attemptId,
+          student_authenticated: Boolean(user?.id),
+          invite_flow_version: 2,
+          invite_tracking_id,
+        });
       });
 
       if (user?.default_layout === 'tutor') {
@@ -99,13 +108,17 @@ export const useAcceptInvite = () => {
       console.error('Ошибка:', error.message);
 
       if (context) {
-        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_ACCEPT_FAILED, {
-          invite_id: variables.code,
-          tutor_id: variables.tutor_id,
-          attempt_id: context.attemptId,
-          student_authenticated: Boolean(currentUser?.id),
-          reason: mapInviteError(error),
-          duration_ms: measureDurationMs(context.startedAt),
+        void getInviteTrackingId(variables.code).then((invite_tracking_id) => {
+          trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_ACCEPT_FAILED, {
+            invite_id: variables.code,
+            tutor_id: variables.tutor_id,
+            attempt_id: context.attemptId,
+            student_authenticated: Boolean(currentUser?.id),
+            reason: mapInviteError(error),
+            duration_ms: measureDurationMs(context.startedAt),
+            invite_flow_version: 2,
+            invite_tracking_id,
+          });
         });
       }
 

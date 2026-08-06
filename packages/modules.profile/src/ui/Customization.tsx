@@ -33,7 +33,7 @@ const ThemeOptionLabel = ({ item, label }: { item: ThemeItemT; label: string }) 
     {item.badge && (
       <Badge
         variant="default"
-        className="bg-action-primary-background-pressed dark:bg-icon-brand inline-flex h-4 items-center rounded-full px-1.5 py-0 text-[8px] leading-none font-semibold text-white uppercase"
+        className="bg-action-primary-background-default text-action-primary-text inline-flex h-4 items-center rounded-full px-1.5 py-0 text-[8px] leading-none font-semibold uppercase"
       >
         {item.badge}
       </Badge>

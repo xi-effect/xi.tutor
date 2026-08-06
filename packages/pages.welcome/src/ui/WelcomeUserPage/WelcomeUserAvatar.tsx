@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { FileUploader } from '@xipkg/fileuploader';
 import { toast } from 'sonner';
 import { AvatarEditor } from 'features.avatar.editor';
+import { isFileNameTooLong, MAX_FILENAME_LENGTH } from 'common.services';
 import { AvatarPreview } from './AvatarPreview';
 import { readFile } from '../../utils';
 import { useWelcomeContext } from '../../hooks';
@@ -35,6 +36,11 @@ export const WelcomeUserAvatar = () => {
 
     if (file.size > 1 * 1024 * 1024) {
       handleError(t('avatar_size_error'), t('avatar_size_hint'));
+      return;
+    }
+
+    if (isFileNameTooLong(file.name)) {
+      handleError(t('avatar_name_error'), t('avatar_name_hint', { max: MAX_FILENAME_LENGTH }));
       return;
     }
 

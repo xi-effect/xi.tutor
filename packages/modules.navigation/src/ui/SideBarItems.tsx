@@ -16,7 +16,7 @@ import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
 import { useMenuStore } from '../store';
 import { Notifications } from './Header/Notifications';
-import { Logo, useSupportModalStore } from 'common.ui';
+import { ConfirmDialog, Logo, useSupportModalStore } from 'common.ui';
 import { useMediaQuery } from '@xipkg/utils';
 import { DesktopUserMenu } from './Header/DesktopUserMenu';
 import { useAuth } from 'common.auth';
@@ -136,6 +136,8 @@ export const SideBarItems = () => {
     setOpen(true);
   };
 
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
+
   const handleLogout = () => {
     logout();
     // TODO: переделать, сделать редирект только по 200
@@ -156,17 +158,21 @@ export const SideBarItems = () => {
                 <Logo width={135} height={40} />
               </div>
             </div>
-            <SidebarTrigger className="group hover:bg-background-page focus:bg-background-subtle active:bg-background-subtle ml-auto h-10 min-h-10 w-10 min-w-10 shrink-0 rounded-lg">
+            <SidebarTrigger
+              className={`group hover:bg-background-page focus:bg-background-subtle active:bg-background-subtle ml-auto h-10 min-h-10 w-10 min-w-10 shrink-0 rounded-lg ${
+                isCollapsed ? '' : '-mr-2'
+              }`}
+            >
               <LayoutLeft className="text-text-secondary group-hover:text-text-primary group-focus:text-text-primary group-active:text-text-primary h-5 w-5" />
             </SidebarTrigger>
           </div>
 
-          <div className="flex w-full min-w-0 items-center">
+          <div className="flex w-full min-w-0 items-center overflow-visible">
             <DesktopUserMenu
               withOutText={isCollapsed}
               userId={user?.id || 0}
               onOpenProfile={handleOpenProfile}
-              onLogout={handleLogout}
+              onLogout={() => setLogoutConfirmOpen(true)}
               profileText={t('profile')}
               logoutText={t('logout')}
             />
@@ -211,7 +217,7 @@ export const SideBarItems = () => {
                 title={t(item.titleKey)}
                 data-umami-event={`navigation-${item.titleKey}`}
               >
-                <item.icon className="fill-icon-secondary text-text-muted h-6 w-6" />
+                <item.icon theme="muted" className="size-6" />
                 <div className="text-text-muted h-[24px] text-base font-medium whitespace-nowrap">
                   {t(item.titleKey)}
                 </div>
@@ -224,6 +230,16 @@ export const SideBarItems = () => {
       <Suspense fallback={null}>
         <UserSettings open={open} setOpen={setOpen} />
       </Suspense>
+
+      <ConfirmDialog
+        open={logoutConfirmOpen}
+        onOpenChange={setLogoutConfirmOpen}
+        title={t('logoutConfirmTitle')}
+        description={t('logoutConfirmDescription')}
+        confirmLabel={t('logoutConfirmAction')}
+        cancelLabel={t('logoutConfirmCancel')}
+        onConfirm={handleLogout}
+      />
     </>
   );
 };

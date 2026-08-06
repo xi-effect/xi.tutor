@@ -16,5 +16,17 @@
     "duplicateToClassroom": "Дублировать в кабинет",
     "edit": "Редактировать",
     "delete": "Удалить"
+  },
+  "deleteConfirm": {
+    "noteTitle": "Удалить заметку?",
+    "boardTitle": "Удалить доску?",
+    "noteDescription": "Заметка «{{name}}» будет удалена без возможности восстановления",
+    "boardDescription": "Доска «{{name}}» будет удалена без возможности восстановления",
+    "fromClassroomTitle": "Удалить из кабинета?",
+    "fromClassroomNoteDescription": "Заметка «{{name}}» будет удалена из кабинета",
+    "fromClassroomBoardDescription": "Доска «{{name}}» будет удалена из кабинета",
+    "cancel": "Отменить",
+    "confirm": "Удалить",
+    "deleting": "Удаление..."
   }
 }

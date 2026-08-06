@@ -1,9 +1,12 @@
 import { filesApiConfig, FilesQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
+import { assertValidFileName } from './validateFileName';
 
 export type UploadFileVars = { file: File; token?: string };
 
 export async function uploadFileRequest({ file, token }: UploadFileVars): Promise<string> {
+  assertValidFileName(file);
+
   const axiosInst = await getAxiosInstance();
   const { getUrl, method } = filesApiConfig[FilesQueryKey.UploadAttachment];
   const formData = new FormData();

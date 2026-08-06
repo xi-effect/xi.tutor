@@ -33,7 +33,7 @@ export const TabsStudent = () => {
           value={currentTab}
           onValueChange={handleTabChange}
         >
-          <div className="bg-background-surface mr-4 flex h-[56px] flex-row items-center gap-4 rounded-2xl px-2">
+          <div className="bg-background-surface mx-5 flex h-[56px] flex-row items-center gap-4 rounded-2xl px-2 sm:mx-10">
             {isMobile ? (
               <ClassroomMobileTabSwitcher
                 tabs={tabs}
@@ -58,7 +58,7 @@ export const TabsStudent = () => {
             )}
           </div>
 
-          <div className="bg-background-surface xs:rounded-tl-2xl xs:pb-0 flex min-h-0 min-w-0 flex-1 flex-col rounded-none pt-0 pb-16 pl-4">
+          <div className="bg-background-surface mb-5 ml-5 flex min-h-0 min-w-0 flex-1 flex-col rounded-l-2xl pt-0 pb-16 pl-5 sm:mb-10 sm:ml-10 sm:pb-10 sm:pl-10">
             <SharedTabsContent />
           </div>
         </Tabs.Root>

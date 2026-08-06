@@ -91,7 +91,7 @@ export const UserSettings = ({
         aria-describedby={undefined}
       >
         <ModalTitle className="hidden">{t('settingsTitle')}</ModalTitle>
-        <div className="bg-gray-0 flex min-h-0 w-full flex-1 flex-col">
+        <div className="bg-background-surface flex min-h-0 w-full flex-1 flex-col">
           <Header
             activeItem={activeContent}
             showContent={showContent}
@@ -100,7 +100,7 @@ export const UserSettings = ({
           />
           <div className={`flex min-h-0 flex-1 flex-row gap-8 ${isDesktop ? '' : 'mt-4'}`}>
             {isMobile ? (
-              <div className="bg-gray-0 min-h-0 min-w-0 flex-1 overflow-hidden">
+              <div className="bg-background-surface min-h-0 min-w-0 flex-1 overflow-hidden">
                 {showContent ? (
                   <Content activeQuery={activeQuery} />
                 ) : (
@@ -122,7 +122,7 @@ export const UserSettings = ({
                     setShowContent={memoizedSetShowContent}
                   />
                 </div>
-                <div className="bg-gray-0 min-h-0 min-w-0 flex-1 overflow-hidden">
+                <div className="bg-background-surface min-h-0 min-w-0 flex-1 overflow-hidden">
                   <Content activeQuery={activeQuery} />
                 </div>
               </>

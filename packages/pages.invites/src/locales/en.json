@@ -3,11 +3,13 @@
   "notFound": "Invitation not found",
   "title": {
     "accepted": "Invitation accepted",
-    "received": "You have received an invitation"
+    "received": "You've been invited to sovlium"
   },
   "subtitle": {
     "tutor": "Tutor",
-    "groupFromTutor": "to the group “{{name}}” from the tutor"
+    "groupFromTutor": "to the group “{{name}}” from the tutor",
+    "platformDescription": "sovlium is a platform for online lessons. Here you can join lessons, work on a shared whiteboard and get materials from your tutor.",
+    "freeForStudent": "Using sovlium is free for students."
   },
   "actions": {
     "accept": "Accept",
@@ -15,9 +17,9 @@
     "decline": "Decline"
   },
   "error": {
-    "selfInviteTitle": "A teacher cannot accept their own invitation",
+    "selfInviteTitle": "Send the invite link to a student",
     "selfInviteDescription": "You cannot join your own classroom",
-    "selfInviteHint": "Send the invitation link to a student",
+    "selfInviteHint": "A tutor cannot accept their own invitation",
     "invalid": "Invitation is invalid",
     "askTutor": "Ask the tutor for a new invitation"
   }

@@ -5,8 +5,7 @@ import { NAV_DRAWER_Z_CLASS } from './constants';
 type NavigationDrawerContentProps = React.ComponentProps<typeof DrawerPrimitive.Content>;
 
 /**
- * Drawer с z-index выше UI доски (z-260).
- * @xipkg/drawer использует z-50 — на странице доски тулбар перекрывает меню.
+ * Drawer на уровне @xipkg/modal (z-50). UI доски изолирован в z-0 и не перекрывает меню.
  */
 export function NavigationDrawerContent({
   className,

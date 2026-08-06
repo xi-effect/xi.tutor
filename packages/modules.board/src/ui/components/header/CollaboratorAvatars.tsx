@@ -15,7 +15,7 @@ import type { DrInstancePresence } from '@ibodr/draw';
 import { useCurrentUser } from 'common.services';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore } from '../../../store';
-import { boardMenuSurfaceClass } from '../../boardTheme';
+import { boardDropdownZClass, boardMenuSurfaceClass } from '../../boardTheme';
 import { useTranslation } from 'react-i18next';
 
 const AVATAR_API_BASE = 'https://api.sovlium.ru/files/users';
@@ -219,7 +219,7 @@ export const CollaboratorAvatars = () => {
         align="end"
         side="bottom"
         sideOffset={12}
-        className={cn(boardMenuSurfaceClass, 'z-100 w-64 rounded-xl p-2')}
+        className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-64 rounded-xl p-2')}
       >
         <div className="flex flex-col gap-1">
           {isTutor && (

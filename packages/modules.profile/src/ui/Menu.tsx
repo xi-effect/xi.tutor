@@ -1,8 +1,9 @@
 import { Account, Exit, Key, Palette, Notification, File, Music } from '@xipkg/icons';
-import { Dispatch, SetStateAction, useMemo } from 'react';
+import { Dispatch, SetStateAction, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useAuth } from 'common.auth';
 import { THEME_CUSTOMIZATION_ENABLED } from 'common.theme';
+import { ConfirmDialog } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 
 type ItemT = {
@@ -128,6 +129,8 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
     setShowContent(true);
   };
 
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
+
   const handleExit = async () => {
     logout();
     // TODO: переделать, сделать редирект только по 200
@@ -141,13 +144,23 @@ export const Menu = ({ setActiveContent, setActiveQuery, setShowContent }: MenuP
       ))}
       <button
         type="button"
-        onClick={() => handleExit()}
+        onClick={() => setLogoutConfirmOpen(true)}
         className="text-text-secondary dark:text-text-primary hover:bg-status-error-background group hover:text-text-danger mt-10 flex h-[40px] w-full flex-row items-center rounded-lg bg-transparent p-2 transition-colors ease-in hover:cursor-pointer"
         data-umami-event="profile-logout"
       >
         <Exit className="dark:fill-icon-primary group-hover:fill-icon-danger transition-colors ease-in" />
         <span className="pl-2 text-[14px] font-normal">{t('menu.logout')}</span>
       </button>
+
+      <ConfirmDialog
+        open={logoutConfirmOpen}
+        onOpenChange={setLogoutConfirmOpen}
+        title={t('menu.logoutConfirmTitle')}
+        description={t('menu.logoutConfirmDescription')}
+        confirmLabel={t('menu.logoutConfirmAction')}
+        cancelLabel={t('menu.logoutConfirmCancel')}
+        onConfirm={handleExit}
+      />
     </div>
   );
 };
