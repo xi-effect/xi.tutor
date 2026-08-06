@@ -9,6 +9,8 @@ import { EmojiShapeUtil } from './emoji';
 import { FileShapeUtil } from './file';
 import { CoordinateAxesShapeUtil } from './coordinate-axes';
 import { EmojiStickerShapeUtil } from './emojiSticker';
+import { TextShapeUtil } from './text';
+import { ArrowShapeUtil } from './arrow';
 
 /** Кастомные shape utils — для `<Draw shapeUtils={...}>` (Draw сам мержит с defaultShapeUtils). */
 export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
@@ -22,6 +24,8 @@ export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
   EmojiStickerShapeUtil,
   FileShapeUtil,
   CoordinateAxesShapeUtil,
+  TextShapeUtil,
+  ArrowShapeUtil,
 ];
 
 function mergeShapeUtilsByType(

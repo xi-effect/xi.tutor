@@ -141,6 +141,7 @@ export const StickerShapeComponent = ({ util, shape }: StickerShapeComponentProp
             padding={dv.labelPadding}
             hasCustomTabBehavior
             showTextOutline={false}
+            openLinksOnClick={false}
             style={labelStyle}
           />
         )}

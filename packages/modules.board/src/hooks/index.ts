@@ -13,4 +13,3 @@ export { useOverlayRepaintOnSelection } from './useOverlayRepaintOnSelection';
 export { useEditOnTypeForLabels } from './useEditOnTypeForLabels';
 export { useProductBoardAnalytics } from './useProductBoardAnalytics';
 export { useBoardDeepLinkFocus, useCopyBoardDeepLink } from './useBoardDeepLinkFocus';
-export { useLinkHoverPreview } from './useLinkHoverPreview';
