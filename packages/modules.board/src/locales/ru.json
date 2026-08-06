@@ -201,6 +201,9 @@
     "renderError": "Не удалось отобразить PDF",
     "loading": "Загрузка..."
   },
+  "presentation": {
+    "loading": "Загрузка..."
+  },
   "audio": {
     "label": "Аудио",
     "loading": "Загрузка...",

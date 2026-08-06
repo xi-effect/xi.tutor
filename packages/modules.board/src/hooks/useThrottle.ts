@@ -5,7 +5,7 @@ export const useThrottle = <Args extends unknown[]>(
   delay: number,
 ): ((...args: Args) => void) => {
   const lastCall = useRef(0);
-  const lastCallTimer = useRef<number | null>(null);
+  const lastCallTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   return useCallback(
     (...args: Args) => {

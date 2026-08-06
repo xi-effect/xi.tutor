@@ -1,5 +1,5 @@
 import { Editor } from '@ibodr/draw';
-import { insertAudio, insertPdf } from '../features';
+import { insertAudio, insertPdf, insertPresentation } from '../features';
 import { insertFile } from '../features/pickAndInsertFile';
 import { isFileNameTooLong, MAX_FILENAME_LENGTH, type RetryRequest } from 'common.services';
 import { insertImage } from '../features/pickAndInsertImage';
@@ -11,12 +11,13 @@ import {
 import { toast } from 'sonner';
 import i18n from 'i18next';
 
-export type AssetType = 'img' | 'pdf' | 'file' | 'audio';
+export type AssetType = 'img' | 'pdf' | 'file' | 'audio' | 'presentation';
 
 export function checkAssetType(asset: File): AssetType | null {
   if (ALLOWED_IMAGE_MIME_TYPES.has(asset.type)) return 'img';
   if (ALLOWED_AUDIO_MIME_TYPES.has(asset.type)) return 'audio';
   if (asset.type === 'application/pdf') return 'pdf';
+  if (asset.name.toLowerCase().endsWith('.pptx')) return 'presentation';
   if (ALLOWED_FILE_MIME_TYPES.has(asset.type)) return 'file';
 
   return null;
@@ -52,6 +53,9 @@ export function insertAsset(
       break;
     case 'pdf':
       insertPdf(editor, file, token);
+      break;
+    case 'presentation':
+      insertPresentation(editor, file, token);
       break;
     default:
       toast.error(i18n.t('toast.unsupportedFileFormat', { ns: 'board' }), {
