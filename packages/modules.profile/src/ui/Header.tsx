@@ -22,6 +22,7 @@ export const Header = ({ activeItem, showContent, setShowContent, handleClose }:
       ...(THEME_CUSTOMIZATION_ENABLED ? [t('menu.personalisation')] : []),
       t('menu.security'),
       t('menu.notifications'),
+      t('menu.soundAndVideo'),
       t('menu.effects'),
       t('menu.report'),
     ],
