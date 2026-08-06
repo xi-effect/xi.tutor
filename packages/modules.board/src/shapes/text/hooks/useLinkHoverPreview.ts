@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Editor } from '@ibodr/draw';
 
 export type LinkHoverPreviewT = {
@@ -25,58 +25,81 @@ export const LINK_HOVER_PREVIEW_ATTR = 'data-link-hover-preview';
  * целиком. Если точка не попала ни в один client rect (пограничный случай), берём общий bbox.
  */
 const getLinkLineRect = (link: HTMLAnchorElement, x: number, y: number): DOMRect => {
-  const rects = link.getClientRects();
-  for (let i = 0; i < rects.length; i += 1) {
-    const rect = rects[i];
-    if (x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom) {
-      return rect;
-    }
-  }
-  return link.getBoundingClientRect();
+  const rects = Array.from(link.getClientRects());
+  const targetRect = rects.find(
+    (rect) => x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom,
+  );
+  return targetRect ?? link.getBoundingClientRect();
 };
 
+/**
+ * Отслеживает ссылку (`<a>`), над которой сейчас находится курсор, внутри richText
+ * у фигур на доске — для рендера всплывающего превью с адресом ссылки.
+ *
+ * @description Слушает `pointermove`/`pointerleave` на контейнере редактора и на каждый кадр
+ * (через `requestAnimationFrame`) ищет ссылку под курсором с помощью `elementsFromPoint`.
+ * Позиция превью пересчитывается по конкретной строке ссылки(`getLinkLineRect`),
+ * чтобы корректно следовать за курсором при переносе текста на несколько строк.
+ * Но обновление состояния пропускается, если значения не изменились (борьба с дрожанием
+ * от пересоздания DOM-узла ссылки канвасом). Скрытие превью откладывается на `CLOSE_DELAY_MS`,
+ * чтобы дать курсору время добраться до самого превью и кликнуть по ссылке в нём; наведение на
+ * само превью (маркер `LINK_HOVER_PREVIEW_ATTR`) не двигает превью и не запускает закрытие.
+ *
+ * @param {Editor | null} editor - Экземпляр редактора доски или null
+ * @returns {LinkHoverPreviewT | null} Данные для рендера превью (ссылка, позиция, масштаб)
+ * или null, если курсор не наведён на ссылку
+ */
 export const useLinkHoverPreview = (editor: Editor | null): LinkHoverPreviewT | null => {
   const [hover, setHover] = useState<LinkHoverPreviewT | null>(null);
   const closeTimerRef = useRef<number | null>(null);
+  const rafIdRef = useRef<number>(0);
 
-  useEffect(() => {
-    if (!editor) return;
+  const cancelPendingFrame = useCallback(() => {
+    if (rafIdRef.current) {
+      cancelAnimationFrame(rafIdRef.current);
+      rafIdRef.current = 0;
+    }
+  }, []);
 
-    const container = editor.getContainer();
-    let rafId = 0;
+  const clearCloseTimer = useCallback(() => {
+    if (closeTimerRef.current !== null) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+  }, []);
 
-    const cancelPendingFrame = () => {
-      if (rafId) {
-        cancelAnimationFrame(rafId);
-        rafId = 0;
-      }
-    };
+  const scheduleClose = useCallback(() => {
+    clearCloseTimer();
+    closeTimerRef.current = window.setTimeout(() => {
+      closeTimerRef.current = null;
+      setHover(null);
+    }, CLOSE_DELAY_MS);
+  }, [clearCloseTimer]);
 
-    const clearCloseTimer = () => {
-      if (closeTimerRef.current != null) {
-        clearTimeout(closeTimerRef.current);
-        closeTimerRef.current = null;
-      }
-    };
+  const pointerMoveHandler = useCallback(
+    (e: PointerEvent) => {
+      if (rafIdRef.current) return;
 
-    const scheduleClose = () => {
-      clearCloseTimer();
-      closeTimerRef.current = window.setTimeout(() => {
-        closeTimerRef.current = null;
-        setHover(null);
-      }, CLOSE_DELAY_MS);
-    };
+      rafIdRef.current = requestAnimationFrame(() => {
+        rafIdRef.current = 0;
 
-    const pointerMoveHandler = (e: PointerEvent) => {
-      if (rafId) return;
+        const containerWindow = editor?.getContainerWindow();
+        if (!containerWindow) {
+          scheduleClose();
+          return;
+        }
 
-      const { document } = editor.getContainerWindow();
+        const { document } = containerWindow;
+        const stack = Array.from(document.elementsFromPoint(e.clientX, e.clientY));
 
-      rafId = requestAnimationFrame(() => {
-        rafId = 0;
+        if (stack.some((el) => el.closest(`[${LINK_HOVER_PREVIEW_ATTR}]`))) {
+          clearCloseTimer();
+          return;
+        }
 
-        const stack = document.elementsFromPoint(e.clientX, e.clientY);
-        const link = stack.map((el) => el.closest('a')).find((el) => el != null);
+        const link = stack
+          .find((el): el is HTMLAnchorElement => el.closest('a') !== null)
+          ?.closest('a');
 
         if (link) {
           clearCloseTimer();
@@ -87,8 +110,10 @@ export const useLinkHoverPreview = (editor: Editor | null): LinkHoverPreviewT | 
           // Пересчитываем на каждый кадр (не только при смене href) — иначе превью не
           // следует за курсором внутри одной ссылки, перенесённой на несколько строк.
           const rect = getLinkLineRect(link, e.clientX, e.clientY);
+
           // Центр строки ссылки — превью встаёт по центру текста, а не по точке курсора.
           const x = rect.left + rect.width / 2;
+
           // Растёт вместе с увеличенной/уменьшенной фигурой — иначе превью выглядит
           // непропорционально мелким на крупном тексте.
           const scale = Math.min(
@@ -101,7 +126,7 @@ export const useLinkHoverPreview = (editor: Editor | null): LinkHoverPreviewT | 
             // значениям (не по ссылке на объект), чтобы не плодить лишние ре-рендеры/дрожание
             // из-за суб-пиксельных отличий, когда курсор фактически стоит на месте.
             current &&
-            current.href === href &&
+            Object.is(current.href, href) &&
             Math.round(current.x) === Math.round(x) &&
             Math.round(current.y) === Math.round(rect.bottom)
               ? current
@@ -110,32 +135,34 @@ export const useLinkHoverPreview = (editor: Editor | null): LinkHoverPreviewT | 
           return;
         }
 
-        const isOverPreview = stack.some((el) => el.closest(`[${LINK_HOVER_PREVIEW_ATTR}]`));
-        if (isOverPreview) {
-          clearCloseTimer();
-          return;
-        }
-
         scheduleClose();
       });
-    };
+    },
+    [editor, clearCloseTimer, scheduleClose],
+  );
 
-    const pointerLeaveHandler = () => {
-      cancelPendingFrame();
-      clearCloseTimer();
-      setHover(null);
-    };
+  const pointerLeaveHandler = useCallback(() => {
+    cancelPendingFrame();
+    clearCloseTimer();
+    setHover(null);
+  }, [cancelPendingFrame, clearCloseTimer]);
 
-    container.addEventListener('pointermove', pointerMoveHandler);
-    container.addEventListener('pointerleave', pointerLeaveHandler);
+  useEffect(() => {
+    if (!editor) return;
+
+    const container = editor.getContainer();
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    container.addEventListener('pointermove', pointerMoveHandler, { signal });
+    container.addEventListener('pointerleave', pointerLeaveHandler, { signal });
 
     return () => {
+      controller.abort();
       cancelPendingFrame();
       clearCloseTimer();
-      container.removeEventListener('pointermove', pointerMoveHandler);
-      container.removeEventListener('pointerleave', pointerLeaveHandler);
     };
-  }, [editor]);
+  }, [editor, pointerMoveHandler, pointerLeaveHandler, cancelPendingFrame, clearCloseTimer]);
 
   return hover;
 };
