@@ -7,7 +7,7 @@ export type LinkHoverPreviewT = {
   y: number;
   scale: number;
 };
-
+// TEST
 /** Задержка перед закрытием превью — даёт время довести курсор от ссылки до самого превью. */
 const CLOSE_DELAY_MS = 250;
 
