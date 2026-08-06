@@ -3,7 +3,6 @@ import { cn } from '@xipkg/utils';
 import { boardMenuSurfaceClass } from '../../ui/boardTheme';
 import { LINK_HOVER_PREVIEW_ATTR, useLinkHoverPreview } from './hooks';
 
-/** Насколько превью заходит на нижний край наведённого текста. */
 const TEXT_OVERLAP_PX = 2;
 
 export const LinkHoverPreview = () => {
