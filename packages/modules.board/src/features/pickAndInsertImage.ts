@@ -68,16 +68,10 @@ export async function insertImage(
   const { width: w, height: h } = bitmap;
   bitmap.close();
 
-  // 2️ Создаём shape + asset с временным data URL
+  // Создаём shape + asset с временным blob URL (без FileReader)
   const tempAssetId = `asset:${nanoid()}` as DrAssetId;
   const shapeId = `shape:${nanoid()}` as DrShapeId;
-
-  const fileAsDataUrl = await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
+  const previewUrl = URL.createObjectURL(file);
 
   const position = placement
     ? { x: placement.x, y: placement.y }
@@ -91,7 +85,7 @@ export async function insertImage(
       type: 'image',
       typeName: 'asset',
       props: {
-        src: fileAsDataUrl, // локальный preview
+        src: previewUrl, // локальный preview
         w,
         h,
         mimeType: file.type,
@@ -167,6 +161,9 @@ export async function insertImage(
       });
       editor.deleteShapes([shapeId]);
       editor.deleteAssets([tempAssetId]);
+    } finally {
+      // Откладываем revoke: на успехе img должен успеть перейти на новый src
+      setTimeout(() => URL.revokeObjectURL(previewUrl), 0);
     }
   })();
 }
