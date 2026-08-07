@@ -5,6 +5,7 @@
     "personalisation": "Персонализация",
     "security": "Безопасность",
     "notifications": "Уведомления",
+    "soundAndVideo": "Звук и видео",
     "effects": "Эффекты",
     "report": "Отчёт",
     "logout": "Выйти",
@@ -107,6 +108,9 @@
     "reconnect": "Подключить заново",
     "showNickname": "Отображать ник в {{messenger}} в профиле",
     "showNicknameHint": "Другие участники увидят ваши контакты"
+  },
+  "soundAndVideo": {
+    "title": "Звук и видео"
   },
   "effects": {
     "title": "Эффекты",

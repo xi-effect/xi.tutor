@@ -4,6 +4,7 @@
  */
 import { getAxiosInstance } from 'common.config';
 import { getFileUrl } from 'common.api';
+import { blobToDataUrl } from './blobToDataUrl';
 import { getRegisteredTokens, unregisterToken } from './tokenRegistry';
 
 function getAxiosStatus(err: unknown): number | undefined {
@@ -163,12 +164,7 @@ async function blobUrlToDataUrl(blobUrl: string): Promise<string> {
   const response = await fetch(blobUrl);
   if (!response.ok) throw new Error(`fetch(blobUrl) failed: ${response.status}`);
   const blob = await response.blob();
-  return await new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = () => reject(reader.error ?? new Error('FileReader failed'));
-    reader.readAsDataURL(blob);
-  });
+  return blobToDataUrl(blob);
 }
 
 /** Кэш data:URL для src — отдельный от blobUrlCache, потому что data:URL не зависит

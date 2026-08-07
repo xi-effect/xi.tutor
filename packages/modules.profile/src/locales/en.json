@@ -5,6 +5,7 @@
     "personalisation": "Customization",
     "security": "Security",
     "notifications": "Notifications",
+    "soundAndVideo": "Sound and video",
     "effects": "Effects",
     "report": "Report",
     "logout": "Log out",
@@ -107,6 +108,9 @@
     "reconnect": "Reconnect",
     "showNickname": "Show {{messenger}} nickname in profile",
     "showNicknameHint": "Other participants will see your contacts"
+  },
+  "soundAndVideo": {
+    "title": "Sound and video"
   },
   "effects": {
     "title": "Effects",

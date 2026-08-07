@@ -1,3 +1,4 @@
+import { blobToDataUrl } from './blobToDataUrl';
 import { getRegisteredTokens } from './tokenRegistry';
 import { resolveAssetAsDataUrl } from './resolveAssetUrl';
 
@@ -27,12 +28,7 @@ export async function blobOrUrlToDataUrl(url: string): Promise<string | null> {
     const response = await fetch(url);
     if (!response.ok) return null;
     const blob = await response.blob();
-    return await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = () => reject(reader.error ?? new Error('FileReader failed'));
-      reader.readAsDataURL(blob);
-    });
+    return await blobToDataUrl(blob);
   } catch {
     return null;
   }

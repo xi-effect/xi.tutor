@@ -3,6 +3,7 @@ import { Customization } from './Customization';
 import { Secure } from './Secure';
 import { PersonalData } from './PersonalData';
 import { Notifications } from './Notifications';
+import { SoundAndVideo } from './SoundAndVideo';
 import { Effects } from './Effects';
 import { TechnicalReport } from './TechnicalReport';
 
@@ -15,6 +16,7 @@ const componentMap: ComponentMapT = {
   personalisation: <Customization />,
   security: <Secure />,
   notifications: <Notifications />,
+  soundAndVideo: <SoundAndVideo />,
   effects: <Effects />,
   report: <TechnicalReport />,
 };
