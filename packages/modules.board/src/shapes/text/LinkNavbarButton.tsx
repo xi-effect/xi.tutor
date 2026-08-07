@@ -5,8 +5,8 @@ import { Input } from '@xipkg/input';
 
 type LinkNavbarButtonT = {
   open: boolean;
-  setOpen: (value: boolean) => void;
   link: string;
+  setOpen: (value: boolean) => void;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   onClick: (e: React.MouseEvent<HTMLElement>) => void;
