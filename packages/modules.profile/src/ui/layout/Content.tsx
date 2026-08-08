@@ -1,11 +1,11 @@
 import { ReactElement } from 'react';
-import { Customization } from './Customization';
-import { Secure } from './Secure';
-import { PersonalData } from './PersonalData';
-import { Notifications } from './Notifications';
-import { SoundAndVideo } from './SoundAndVideo';
-import { Effects } from './Effects';
-import { TechnicalReport } from './TechnicalReport';
+import { Customization } from '../customization';
+import { Secure } from '../security';
+import { PersonalData } from '../personal-data';
+import { Notifications } from '../notifications';
+import { SoundAndVideo } from '../sound-and-video';
+import { Effects } from '../effects';
+import { TechnicalReport } from '../report';
 
 type ComponentMapT = {
   [key: string]: ReactElement;

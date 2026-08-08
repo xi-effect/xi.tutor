@@ -1,13 +1,17 @@
-import { useCallback, useRef } from 'react';
-import { Conference, WhiteBoard } from '@xipkg/icons';
+import { type ReactNode, useCallback, useRef } from 'react';
+import { Button } from '@xipkg/button';
+import { Conference, HelpCircle, SoundOn, WhiteBoard } from '@xipkg/icons';
 import { Slider } from '@xipkg/slider';
 import { Toggle } from '@xipkg/toggle';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useMediaQuery } from '@xipkg/utils';
 import { useSoundEffectsStore, SOUND_DEFAULTS, type SoundKey } from 'common.ui';
 import { useTranslation } from 'react-i18next';
+import { playSoundPreview } from './playSoundPreview';
 
 type SoundItemProps = {
   label: string;
+  hint: string;
   soundKey: SoundKey;
   volume: number;
   onVolumeChange: (key: SoundKey, volume: number) => void;
@@ -19,6 +23,7 @@ type SoundItemProps = {
 
 const SoundItem = ({
   label,
+  hint,
   soundKey,
   volume,
   onVolumeChange,
@@ -26,6 +31,7 @@ const SoundItem = ({
   disableable = true,
   restrictedMinPercent,
 }: SoundItemProps) => {
+  const { t } = useTranslation('profile');
   const savedVolumeRef = useRef<number>(SOUND_DEFAULTS[soundKey]);
 
   const isEnabled = volume > 0;
@@ -60,11 +66,43 @@ const SoundItem = ({
     [soundKey, volume, onVolumeChange, disableable],
   );
 
+  const handlePreview = useCallback(() => {
+    playSoundPreview(soundKey, volume);
+  }, [soundKey, volume]);
+
   return (
     <div className="space-y-2.5 py-4">
-      <div className="flex items-center justify-between">
-        <span className="text-text-primary text-sm">{label}</span>
-        <div className="flex items-center gap-3">
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-1">
+          <span className="text-text-primary text-sm">{label}</span>
+          <Button
+            type="button"
+            variant="ghost"
+            size="s"
+            className="text-text-secondary hover:text-text-primary size-7 shrink-0 rounded-lg p-0"
+            onClick={handlePreview}
+            aria-label={t('effects.playPreview')}
+          >
+            <SoundOn className="fill-icon-secondary size-4" />
+          </Button>
+          <Tooltip delayDuration={300}>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="s"
+                className="text-text-secondary hover:text-text-primary size-7 shrink-0 rounded-lg bg-transparent p-0 shadow-none hover:bg-transparent focus-visible:ring-0"
+                aria-label={hint}
+              >
+                <HelpCircle className="fill-icon-secondary size-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top" className="max-w-xs">
+              <p>{hint}</p>
+            </TooltipContent>
+          </Tooltip>
+        </div>
+        <div className="flex shrink-0 items-center gap-3">
           <span className="text-text-secondary text-sm tabular-nums">
             {Math.round(volume * 100)}%
           </span>
@@ -96,9 +134,9 @@ const SoundItem = ({
 };
 
 type CategoryProps = {
-  icon: React.ReactNode;
+  icon: ReactNode;
   title: string;
-  children: React.ReactNode;
+  children: ReactNode;
 };
 
 const Category = ({ icon, title, children }: CategoryProps) => (
@@ -136,24 +174,28 @@ export const Effects = () => {
         >
           <SoundItem
             label={t('effects.chatMessage')}
+            hint={t('effects.chatMessageHint')}
             soundKey="chatMessage"
             volume={chatMessageVolume}
             onVolumeChange={setSoundVolume}
           />
           <SoundItem
             label={t('effects.handRaise')}
+            hint={t('effects.handRaiseHint')}
             soundKey="handRaise"
             volume={handRaiseVolume}
             onVolumeChange={setSoundVolume}
           />
           <SoundItem
             label={t('effects.userJoin')}
+            hint={t('effects.userJoinHint')}
             soundKey="userJoin"
             volume={userJoinVolume}
             onVolumeChange={setSoundVolume}
           />
           <SoundItem
             label={t('effects.userLeft')}
+            hint={t('effects.userLeftHint')}
             soundKey="userLeft"
             volume={userLeftVolume}
             onVolumeChange={setSoundVolume}
@@ -166,6 +208,7 @@ export const Effects = () => {
         >
           <SoundItem
             label={t('effects.boardTimerEnd')}
+            hint={t('effects.boardTimerEndHint')}
             soundKey="boardTimerEnd"
             volume={boardTimerEndVolume}
             onVolumeChange={setSoundVolume}
@@ -174,6 +217,7 @@ export const Effects = () => {
           />
           <SoundItem
             label={t('effects.boardTimerWarn')}
+            hint={t('effects.boardTimerWarnHint')}
             soundKey="boardTimerWarn"
             volume={boardTimerWarnVolume}
             onVolumeChange={setSoundVolume}

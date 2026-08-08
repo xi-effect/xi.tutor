@@ -7,7 +7,7 @@ import { Button } from '@xipkg/button';
 import { Eyeoff, Eyeon } from '@xipkg/icons';
 import { modalTitleClass } from 'common.ui';
 import { useTranslation } from 'react-i18next';
-import { useChangePassword } from '../hooks';
+import { useChangePassword } from '../../hooks';
 
 type ChangePasswordModalT = {
   open: boolean;
