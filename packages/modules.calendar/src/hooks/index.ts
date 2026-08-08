@@ -13,3 +13,8 @@ export {
   findCalendarEventByInstanceId,
   useOpenLessonByInstanceWhenLoaded,
 } from './useOpenLessonByInstanceWhenLoaded';
+export {
+  useScheduleViewMode,
+  type ScheduleViewMode,
+  SCHEDULE_VIEW_MODE_STORAGE_KEY,
+} from './useScheduleViewMode';

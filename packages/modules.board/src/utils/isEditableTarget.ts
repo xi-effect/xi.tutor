@@ -1,7 +1,15 @@
 export const isEditableTarget = (target: EventTarget | null): boolean => {
-  return (
+  if (!(target instanceof HTMLElement)) return false;
+
+  if (
     target instanceof HTMLInputElement ||
     target instanceof HTMLTextAreaElement ||
-    (target instanceof HTMLElement && target.isContentEditable)
+    target.isContentEditable
+  ) {
+    return true;
+  }
+
+  return !!target.closest(
+    '.ProseMirror, .tl-text-input, [contenteditable]:not([contenteditable="false"])',
   );
 };

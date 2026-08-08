@@ -12,16 +12,21 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useNavigate } from '@tanstack/react-router';
 import { useCurrentUser, useFetchClassrooms, useFetchClassroomsByStudent } from 'common.services';
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ModalAddGroup } from 'features.group.add';
 import { ModalInvitation } from 'features.invites';
 import { EmptyClassrooms } from 'common.ui';
 import { Classroom } from './Classroom';
 import { SectionEmptyState, sectionEmptyStateIllustrationClass } from '../SectionEmptyState';
-import { cn } from '@xipkg/utils';
+import { cn, useMediaQuery } from '@xipkg/utils';
+
+const emptyClassroomsIllustrationClass = cn(sectionEmptyStateIllustrationClass, '-translate-x-8');
 
 export const Classrooms = () => {
+  const { t } = useTranslation('main');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const isMobile = useMediaQuery('(max-width: 960px)');
 
   const { data: tutorClassrooms, isLoading: isTutorLoading } = useFetchClassrooms(
     undefined,
@@ -60,76 +65,80 @@ export const Classrooms = () => {
 
   const emptyMessage = isTutor
     ? selectedSubject !== 'all'
-      ? 'Ничего не найдено'
-      : 'Пригласите учеников — индивидуально или в группу'
-    : 'Перейдите по ссылке-приглашению, чтобы начать заниматься с репетитором';
+      ? t('classrooms.emptyNotFound')
+      : t('classrooms.emptyInvite')
+    : t('classrooms.emptyStudent');
 
   const inviteEmptyButtonClass =
-    'bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 text-xs-base flex h-8 items-center gap-2 rounded-lg border-transparent px-4 font-medium text-brand-100';
+    'bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 text-xs-base flex h-8 items-center gap-2 rounded-lg border-transparent px-4 font-medium text-text-link';
 
   return (
     <div
       className={cn(
-        'bg-gray-0 flex w-full flex-col gap-4 rounded-2xl px-5 pt-4 pb-1 transition-all duration-200 ease-linear sm:w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)]',
+        'bg-background-surface flex w-full min-w-0 flex-col gap-4 rounded-2xl px-5 pt-4 pb-1 transition-all duration-200 ease-linear',
       )}
     >
       <div className="flex flex-row items-center gap-2">
-        <h2 className="text-l-base font-medium text-gray-100">Кабинеты</h2>
+        <h2 className="text-l-base text-text-primary font-medium">{t('classrooms.title')}</h2>
         <div className="ml-auto">
-          {isTutor ? (
+          {isTutor && !isMobile ? (
             <>
               <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="none"
-                    className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
+                    className="bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
                     data-umami-event="invite-student-button"
                     id="invite-student-button"
                   >
-                    <Add className="fill-brand-80 size-6" />
+                    <Add className="fill-icon-brand size-6" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
                   side="bottom"
-                  className="border-gray-10 bg-gray-0 flex w-[320px] flex-col gap-2.5 rounded-2xl border px-6 py-5 shadow-lg"
+                  className="border-border-default bg-background-surface flex w-[320px] flex-col gap-2.5 rounded-2xl border px-6 py-5 shadow-lg"
                 >
-                  <DropdownMenuLabel className="text-m-base p-0 font-medium text-gray-100">
-                    Добавить
+                  <DropdownMenuLabel className="text-m-base text-text-primary p-0 font-medium">
+                    {t('common.add')}
                   </DropdownMenuLabel>
                   <div className="flex flex-col gap-3">
                     <DropdownMenuItem
-                      className="border-gray-10 bg-gray-0 focus:bg-gray-0 data-highlighted:bg-gray-5 flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
+                      className="border-border-default bg-background-surface focus:bg-background-surface data-highlighted:bg-background-page flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
                       onSelect={() => {
                         setDropdownOpen(false);
                         setInviteModalOpen(true);
                       }}
                       data-umami-event="classrooms-add-student"
                     >
-                      <UserPlus className="fill-gray-80 size-4 shrink-0" />
-                      <span className="text-s-base text-gray-80 flex-1 text-left font-medium">
-                        Ученика
+                      <UserPlus className="fill-icon-primary size-4 shrink-0" />
+                      <span className="text-s-base text-text-primary flex-1 text-left font-medium">
+                        {t('classrooms.addStudent')}
                       </span>
-                      <Add className="fill-brand-80 size-4 shrink-0" />
+                      <Add className="fill-icon-brand size-4 shrink-0" />
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      className="border-gray-10 bg-gray-0 focus:bg-gray-0 data-highlighted:bg-gray-5 flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
+                      className="border-border-default bg-background-surface focus:bg-background-surface data-highlighted:bg-background-page flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
                       onSelect={() => {
                         setDropdownOpen(false);
                         setAddGroupModalOpen(true);
                       }}
                       data-umami-event="classrooms-add-group"
                     >
-                      <Group className="fill-gray-80 size-4 shrink-0" />
-                      <span className="text-s-base text-gray-80 flex-1 text-left font-medium">
-                        Учебную группу
+                      <Group className="fill-icon-primary size-4 shrink-0" />
+                      <span className="text-s-base text-text-primary flex-1 text-left font-medium">
+                        {t('classrooms.addGroup')}
                       </span>
-                      <Add className="fill-brand-80 size-4 shrink-0" />
+                      <Add className="fill-icon-brand size-4 shrink-0" />
                     </DropdownMenuItem>
                   </div>
                 </DropdownMenuContent>
               </DropdownMenu>
-              <ModalInvitation open={inviteModalOpen} onOpenChange={setInviteModalOpen} />
+              <ModalInvitation
+                open={inviteModalOpen}
+                onOpenChange={setInviteModalOpen}
+                analyticsSource="main"
+              />
               <ModalAddGroup open={addGroupModalOpen} onOpenChange={setAddGroupModalOpen} />
             </>
           ) : (
@@ -140,10 +149,10 @@ export const Classrooms = () => {
                   className="flex size-8 items-center justify-center rounded-[4px] p-0"
                   onClick={handleMore}
                 >
-                  <ArrowRight className="fill-gray-60 size-6" />
+                  <ArrowRight className="fill-icon-secondary size-6" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent>К кабинетам</TooltipContent>
+              <TooltipContent>{t('classrooms.toClassrooms')}</TooltipContent>
             </Tooltip>
           )}
         </div>
@@ -151,7 +160,7 @@ export const Classrooms = () => {
 
       {isLoading ? (
         <div className={'flex h-[152px] w-full flex-row items-center justify-center'}>
-          <p className="text-m-base text-gray-60">Загрузка...</p>
+          <p className="text-m-base text-text-secondary">{t('common.loading')}</p>
         </div>
       ) : filteredClassrooms && filteredClassrooms.length > 0 ? (
         <ScrollArea className="w-full" scrollBarProps={{ orientation: 'horizontal' }}>
@@ -165,29 +174,31 @@ export const Classrooms = () => {
         </ScrollArea>
       ) : isTutor && selectedSubject === 'all' ? (
         <SectionEmptyState
-          title="У вас нет кабинетов"
-          description="Вы можете создать кабинет для групповых или индивидуальных занятий"
+          title={t('classrooms.emptyTitle')}
+          description={t('classrooms.emptyDescription')}
           minHeightClass="min-h-[160px] sm:min-h-[180px]"
-          illustration={<EmptyClassrooms className={sectionEmptyStateIllustrationClass} />}
+          illustration={<EmptyClassrooms className={emptyClassroomsIllustrationClass} />}
           actions={
-            <Button
-              type="button"
-              variant="none"
-              className={inviteEmptyButtonClass}
-              onClick={() => setInviteModalOpen(true)}
-              data-umami-event="classrooms-empty-invite"
-            >
-              Пригласить ученика
-              <UserPlus className="text-brand-100 size-4 shrink-0" />
-            </Button>
+            !isMobile ? (
+              <Button
+                type="button"
+                variant="none"
+                className={inviteEmptyButtonClass}
+                onClick={() => setInviteModalOpen(true)}
+                data-umami-event="classrooms-empty-invite"
+              >
+                {t('classrooms.inviteStudent')}
+                <UserPlus className="text-text-link size-4 shrink-0" />
+              </Button>
+            ) : undefined
           }
         />
       ) : (
         <SectionEmptyState
           title={emptyMessage}
-          description="Ссылку-приглашение вам должен отправить ваш репетитор"
+          description={t('classrooms.studentEmptyDescription')}
           minHeightClass="min-h-[160px]"
-          illustration={<EmptyClassrooms className={sectionEmptyStateIllustrationClass} />}
+          illustration={<EmptyClassrooms className={emptyClassroomsIllustrationClass} />}
         />
       )}
     </div>

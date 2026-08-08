@@ -66,7 +66,7 @@ export const useUpdateGroupClassroom = () => {
 
         return response.data;
       } catch (err) {
-        console.error('Ошибка при обновлении группового класса:', err);
+        console.error('Ошибка при обновлении группового кабинета:', err);
         throw err;
       }
     },
@@ -87,7 +87,7 @@ export const useUpdateGroupClassroom = () => {
         ClassroomsQueryKey.GetClassrooms,
       ]);
 
-      // Оптимистично обновляем данные класса в списке
+      // Оптимистично обновляем данные кабинета в списке
       queryClient.setQueryData(
         [ClassroomsQueryKey.GetClassrooms],
         (old: ClassroomT[] | InfiniteQueryData | undefined) => {
@@ -116,7 +116,7 @@ export const useUpdateGroupClassroom = () => {
         },
       );
 
-      // Оптимистично обновляем данные конкретного класса
+      // Оптимистично обновляем данные конкретного кабинета
       queryClient.setQueryData<ClassroomT>(
         [ClassroomsQueryKey.GetClassroom, classroomId],
         (old) => {
@@ -154,7 +154,7 @@ export const useUpdateGroupClassroom = () => {
           updatedClassroom,
         );
 
-        // Обновляем класс в списке
+        // Обновляем кабинет в списке
         queryClient.setQueryData(
           [ClassroomsQueryKey.GetClassrooms],
           (old: ClassroomT[] | InfiniteQueryData | undefined) => {
@@ -185,7 +185,7 @@ export const useUpdateGroupClassroom = () => {
       }
 
       // Показываем успешное уведомление
-      showSuccess('classroom', `Групповой класс обновлен`);
+      showSuccess('classroom', `Групповой кабинет обновлен`);
     },
   });
 

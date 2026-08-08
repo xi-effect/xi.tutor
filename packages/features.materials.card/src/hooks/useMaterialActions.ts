@@ -17,23 +17,29 @@ export const useMaterialActions = (
   const { updateClassroomMaterial } = useUpdateClassroomMaterial();
   const { updateMaterial } = useUpdateMaterial();
 
-  const handleDelete = () => {
-    deleteMaterials.mutate({
-      id: id.toString(),
-      content_kind: contentKind as 'note' | 'board',
-      name,
-    });
+  const handleDelete = (options?: { onSuccess?: () => void }) => {
+    deleteMaterials.mutate(
+      {
+        id: id.toString(),
+        content_kind: contentKind as 'note' | 'board',
+        name,
+      },
+      { onSuccess: options?.onSuccess },
+    );
   };
 
-  const handleDeleteFromClassroom = () => {
+  const handleDeleteFromClassroom = (options?: { onSuccess?: () => void }) => {
     if (!classroomId) return;
 
-    deleteClassroomMaterials.mutate({
-      classroomId,
-      id: id.toString(),
-      content_kind: contentKind as 'note' | 'board',
-      name,
-    });
+    deleteClassroomMaterials.mutate(
+      {
+        classroomId,
+        id: id.toString(),
+        content_kind: contentKind as 'note' | 'board',
+        name,
+      },
+      { onSuccess: options?.onSuccess },
+    );
   };
 
   const handleUpdateAccessMode = (newAccessMode: AccessModeT, currentMode?: AccessModeT) => {
@@ -85,5 +91,6 @@ export const useMaterialActions = (
     handleDeleteFromClassroom,
     handleUpdateAccessMode,
     handleUpdateName,
+    isDeleting: deleteMaterials.isPending || deleteClassroomMaterials.isPending,
   };
 };

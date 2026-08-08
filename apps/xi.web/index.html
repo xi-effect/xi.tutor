@@ -11,7 +11,40 @@
       });
     </script>
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <script>
+      (function () {
+        var themeKey = 'sovlium-theme';
+        var chosenKey = 'sovlium-theme-chosen';
+        var languageKey = 'xi_language';
+        var stored = null;
+        var chosen = false;
+        var language = 'ru';
+
+        try {
+          stored = localStorage.getItem(themeKey);
+          chosen = localStorage.getItem(chosenKey) === '1';
+          var storedLanguage = localStorage.getItem(languageKey);
+          if (storedLanguage === 'en' || storedLanguage === 'ru') {
+            language = storedLanguage;
+          }
+        } catch (e) {}
+
+        var preference =
+          chosen && (stored === 'light' || stored === 'dark')
+            ? stored
+            : 'light';
+
+        document.documentElement.setAttribute('data-theme', preference);
+        document.documentElement.setAttribute('data-theme-preference', preference);
+        document.documentElement.lang = language;
+      })();
+    </script>
     <meta name="robots" content="noindex, nofollow" />
     <!-- Название при добавлении PWA на экран «Домой» в iOS -->
     <meta name="apple-mobile-web-app-title" content="sovlium" />
@@ -19,7 +52,7 @@
     <title>sovlium</title>
     <script defer src="https://umami.sovlium.ru/script.js" data-website-id="5ae7f92f-b9ff-4533-9346-2e621d354220"></script>
   </head>
-  <body>
+  <body class="overflow-hidden">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     <!-- Yandex.Metrika counter -->

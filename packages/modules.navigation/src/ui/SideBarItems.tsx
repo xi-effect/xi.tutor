@@ -16,12 +16,11 @@ import { useCurrentUser } from 'common.services';
 import { useCallStore } from 'modules.calls';
 import { useMenuStore } from '../store';
 import { Notifications } from './Header/Notifications';
-import { Logo } from 'common.ui';
+import { ConfirmDialog, Logo, useSupportModalStore } from 'common.ui';
 import { useMediaQuery } from '@xipkg/utils';
 import { DesktopUserMenu } from './Header/DesktopUserMenu';
 import { useAuth } from 'common.auth';
 import { getFooterMenuConfig, getTopMenuConfig } from './config/sidebarMenuConfig';
-import { SupportModal } from './SupportModal';
 
 const UserSettings = lazy(() =>
   import('modules.profile').then((module) => ({ default: module.UserSettings })),
@@ -31,7 +30,7 @@ export const SideBarItems = () => {
   const { t } = useTranslation('navigation');
   const { close, isDesktopOpen } = useMenuStore();
   const isMobile = useMediaQuery('(max-width: 960px)');
-  const [isSupportOpen, setIsSupportOpen] = useState(false);
+  const openSupportModal = useSupportModalStore((state) => state.open);
 
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -65,7 +64,7 @@ export const SideBarItems = () => {
     }
   };
 
-  const footerMenu = getFooterMenuConfig(handleOnboardingClick, () => setIsSupportOpen(true));
+  const footerMenu = getFooterMenuConfig(handleOnboardingClick, openSupportModal);
 
   const getIsActiveItem = (url: string) => {
     if (url === '/') {
@@ -88,7 +87,7 @@ export const SideBarItems = () => {
 
   const handleClick = (url: string) => {
     // Сохраняем только параметр call при переходе
-    const filteredSearch = search.call ? { call: search.call } : {};
+    const filteredSearch = isStarted && search.call ? { call: search.call } : {};
     const materialsTabSearch = url === '/materials' ? { tab: 'boards' } : {};
 
     if (isStarted && mode === 'full') {
@@ -137,6 +136,8 @@ export const SideBarItems = () => {
     setOpen(true);
   };
 
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
+
   const handleLogout = () => {
     logout();
     // TODO: переделать, сделать редирект только по 200
@@ -145,7 +146,7 @@ export const SideBarItems = () => {
 
   return (
     <>
-      <SidebarContent className="overflow-visible group-data-[collapsible=icon]:overflow-visible">
+      <SidebarContent className="bg-background-page overflow-visible group-data-[collapsible=icon]:overflow-visible">
         {/* Верхняя секция: триггер, логотип (только при открытом сайдбаре), профиль */}
         <div className="flex flex-col gap-4 pt-5">
           <div className="flex w-full items-center justify-between">
@@ -157,17 +158,21 @@ export const SideBarItems = () => {
                 <Logo width={135} height={40} />
               </div>
             </div>
-            <SidebarTrigger className="group hover:bg-gray-5 focus:bg-gray-10 active:bg-gray-10 ml-auto h-10 min-h-10 w-10 min-w-10 shrink-0 rounded-lg">
-              <LayoutLeft className="text-gray-60 group-hover:text-gray-80 group-focus:text-gray-80 group-active:text-gray-80 h-5 w-5" />
+            <SidebarTrigger
+              className={`group hover:bg-background-page focus:bg-background-subtle active:bg-background-subtle ml-auto h-10 min-h-10 w-10 min-w-10 shrink-0 rounded-lg ${
+                isCollapsed ? '' : '-mr-2'
+              }`}
+            >
+              <LayoutLeft className="text-text-secondary group-hover:text-text-primary group-focus:text-text-primary group-active:text-text-primary h-5 w-5" />
             </SidebarTrigger>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex w-full min-w-0 items-center overflow-visible">
             <DesktopUserMenu
               withOutText={isCollapsed}
               userId={user?.id || 0}
               onOpenProfile={handleOpenProfile}
-              onLogout={handleLogout}
+              onLogout={() => setLogoutConfirmOpen(true)}
               profileText={t('profile')}
               logoutText={t('logout')}
             />
@@ -186,7 +191,7 @@ export const SideBarItems = () => {
                       data-umami-event-url={item.url}
                       className="group gap-5 rounded-lg!"
                     >
-                      <item.icon className="h-6 w-6 text-gray-50" />
+                      <item.icon className="text-text-muted h-6 w-6" />
                       <span className="text-s-base group-data-[active=true]:font-medium">
                         {t(item.titleKey)}
                       </span>
@@ -200,7 +205,7 @@ export const SideBarItems = () => {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter className="gap-2">
-        <SidebarMenu>
+        <SidebarMenu className="bg-background-page">
           {footerMenu.map((item) => (
             <SidebarMenuItem key={item.titleKey} className="cursor-pointer">
               <SidebarMenuButton
@@ -208,12 +213,12 @@ export const SideBarItems = () => {
                 variant="none"
                 onClick={item.onClick}
                 type="button"
-                className="bg-gray-0 hover:bg-gray-5 focus:bg-gray-10 active:bg-gray-10 gap-5 rounded-lg!"
+                className="bg-background-page hover:bg-background-surface focus:bg-background-subtle active:bg-background-subtle gap-5 rounded-lg!"
                 title={t(item.titleKey)}
                 data-umami-event={`navigation-${item.titleKey}`}
               >
-                <item.icon className="h-6 w-6 fill-gray-50 text-gray-50" />
-                <div className="h-[24px] text-base font-medium whitespace-nowrap text-gray-50">
+                <item.icon theme="muted" className="size-6" />
+                <div className="text-text-muted h-[24px] text-base font-medium whitespace-nowrap">
                   {t(item.titleKey)}
                 </div>
               </SidebarMenuButton>
@@ -225,7 +230,16 @@ export const SideBarItems = () => {
       <Suspense fallback={null}>
         <UserSettings open={open} setOpen={setOpen} />
       </Suspense>
-      <SupportModal open={isSupportOpen} onOpenChange={setIsSupportOpen} />
+
+      <ConfirmDialog
+        open={logoutConfirmOpen}
+        onOpenChange={setLogoutConfirmOpen}
+        title={t('logoutConfirmTitle')}
+        description={t('logoutConfirmDescription')}
+        confirmLabel={t('logoutConfirmAction')}
+        cancelLabel={t('logoutConfirmCancel')}
+        onConfirm={handleLogout}
+      />
     </>
   );
 };

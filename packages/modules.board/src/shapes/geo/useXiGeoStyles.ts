@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { useEditor } from 'tldraw';
-import { TShareShape } from './type';
+import { useEditor } from '@ibodr/draw';
+import type { XiGeoShape } from './type';
 import {
   borderColorOptions,
   colorOptions,
@@ -12,7 +12,10 @@ import {
 export const useXiGeoStyles = () => {
   const editor = useEditor();
   const selectedShapes = editor.getSelectedShapes();
-  const shapeProps = useMemo(() => (selectedShapes[0] as TShareShape).props, [selectedShapes]);
+  const shapeProps = useMemo(() => {
+    const shape = selectedShapes[0];
+    return shape?.type === 'xi-geo' ? (shape as XiGeoShape).props : undefined;
+  }, [selectedShapes]);
 
   const bgCurrentColorClass = useMemo((): string => {
     try {

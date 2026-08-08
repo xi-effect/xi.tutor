@@ -5,103 +5,133 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Copy, H1, H2, H3, Text, Trash, Image, ArrowUp, ArrowBottom } from '@xipkg/icons';
-import { ReactNode, useState } from 'react';
-import { useBlockMenuActions, useYjsContext } from '../../hooks';
+import { Copy, H1, H2, H3, Text, Trash, Image, ArrowUp, ArrowBottom, Code } from '@xipkg/icons';
+import { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useBlockMenuActions } from '../../hooks';
+import { Editor } from '@tiptap/core';
 import { useInterfaceStore } from '../../store/interfaceStore';
+import { ActiveBlockT } from '../../types';
+
+const menuItemClass =
+  'text-text-primary hover:bg-background-page focus:text-text-primary fill-icon-primary [&_svg]:fill-icon-primary h-7 gap-2 rounded p-1 text-sm';
 
 type BlockMenuPropsT = {
-  children: (props: { open: boolean }) => ReactNode;
+  children: ReactNode;
+  editor: Editor;
+  isReadOnly?: boolean;
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  getActiveBlock: () => ActiveBlockT | undefined;
 };
 
-export const BlockMenu = ({ children }: BlockMenuPropsT) => {
-  const [open, setOpen] = useState(false);
-  const { editor, isReadOnly } = useYjsContext();
-  const { openModal } = useInterfaceStore();
+// оборачивает действие так чтобы оно выполнилось ПОСЛЕ того как DropdownMenu закончит своё закрытие/анимацию.
+// Это исключает вызов view.dispatch() внутри React-рендера Radix.
+function deferAction(fn: () => void) {
+  return (e: Event) => {
+    e.preventDefault();
+    setTimeout(fn, 0);
+  };
+}
 
-  const { changeType, duplicate, remove, moveUp, moveDown } = useBlockMenuActions(editor);
+export const BlockMenu = ({
+  children,
+  editor,
+  isReadOnly,
+  open,
+  setOpen,
+  getActiveBlock,
+}: BlockMenuPropsT) => {
+  const { t } = useTranslation('editor');
+  const isMac = navigator.platform.toUpperCase().includes('MAC');
+  const { openModal } = useInterfaceStore();
+  const { insertBlock, duplicate, remove, moveUp, moveDown, insertCode } = useBlockMenuActions(
+    editor,
+    getActiveBlock,
+  );
 
   // Блокируем меню если редактор в readonly режиме
   const shouldShow = editor && !isReadOnly && editor.isEditable !== false;
 
   if (!shouldShow) {
-    // Возвращаем children без DropdownMenu, чтобы не ломать структуру
-    return <>{children({ open: false })}</>;
+    return null;
   }
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen} modal={false}>
-      <DropdownMenuTrigger asChild>{children({ open })}</DropdownMenuTrigger>
+      <DropdownMenuTrigger asChild>{children}</DropdownMenuTrigger>
 
       <DropdownMenuContent
         side="right"
         align="start"
-        className="flex w-[200px] flex-col space-y-1 p-2"
+        onCloseAutoFocus={(e) => e.preventDefault()}
+        className="border-border-default bg-background-surface text-text-primary flex w-auto flex-col gap-1 space-y-1 rounded-lg border p-2"
       >
-        <DropdownMenuItem
-          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => changeType('paragraph')}
-        >
+        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('paragraph')}>
           <Text size="sm" className="size-6" />
-          <span className="text-sm">Текст</span>
+          <span>{t('blockMenu.text')}</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => changeType('heading1')}
-        >
+        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('heading1')}>
           <H1 size="sm" className="size-6" />
-          <span className="text-sm">Заголовок 1</span>
+          <span>{t('blockMenu.heading1')}</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => changeType('heading2')}
-        >
+        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('heading2')}>
           <H2 size="sm" className="size-6" />
-          <span className="text-sm">Заголовок 2</span>
+          <span>{t('blockMenu.heading2')}</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => changeType('heading3')}
-        >
+        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('heading3')}>
           <H3 size="sm" className="size-6" />
-          <span className="text-sm">Заголовок 3</span>
+          <span>{t('blockMenu.heading3')}</span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem
-          className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-          onSelect={() => openModal('uploadImage')}
-        >
+        <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('uploadImage')}>
           <Image size="sm" className="size-6" />
-          <span className="text-sm">Изображение</span>
+          <span>{t('blockMenu.image')}</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem className={menuItemClass} onSelect={() => insertCode('')}>
+          <Code size="sm" className="size-6" />
+          <span>{t('blockMenu.insertCode')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={duplicate}>
+        <DropdownMenuItem className={menuItemClass} onSelect={duplicate}>
           <Copy size="sm" className="size-6" />
-          <span className="text-sm">Дублировать</span>
-          <span className="text-xxs-base ml-auto text-gray-50">Ctrl+D</span>
+          <span className="text-sm">{t('blockMenu.duplicate')}</span>
+          <span className="text-xxs-base text-text-muted ml-auto">
+            {isMac ? '⌘+⇧+C' : 'Ctrl+Shift+C'}
+          </span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={moveUp}>
+        <DropdownMenuItem
+          className="hover:bg-background-page h-7 gap-2 rounded p-1"
+          onSelect={deferAction(moveUp)}
+        >
           <ArrowUp size="sm" className="size-6" />
-          <span className="text-sm">Переместить вверх</span>
-          <span className="text-xxs-base ml-auto text-gray-50">⌘⇧↑</span>
+          <span className="text-sm">{t('blockMenu.moveUp')}</span>
+          <span className="text-xxs-base text-text-muted ml-auto">
+            {isMac ? '⌘+⇧+↑' : 'Ctrl+Shift+↑'}
+          </span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={moveDown}>
+        <DropdownMenuItem
+          className="hover:bg-background-page h-7 gap-2 rounded p-1"
+          onSelect={deferAction(moveDown)}
+        >
           <ArrowBottom size="sm" className="size-6" />
-          <span className="text-sm">Переместить вниз</span>
-          <span className="text-xxs-base ml-auto text-gray-50">⌘⇧↓</span>
+          <span className="text-sm">{t('blockMenu.moveDown')}</span>
+          <span className="text-xxs-base text-text-muted ml-auto">
+            {isMac ? '⌘+⇧+↓' : 'Ctrl+Shift+↓'}
+          </span>
         </DropdownMenuItem>
 
-        <DropdownMenuItem className="hover:bg-gray-5 h-7 gap-2 rounded p-1" onSelect={remove}>
+        <DropdownMenuItem className={menuItemClass} onSelect={remove}>
           <Trash size="sm" className="size-6" />
-          <span className="text-sm">Удалить</span>
-          <span className="text-xxs-base ml-auto text-gray-50">Del</span>
+          <span className="text-sm">{t('blockMenu.delete')}</span>
+          <span className="text-xxs-base text-text-muted ml-auto">{isMac ? '⌘+⌫' : 'Del'}</span>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

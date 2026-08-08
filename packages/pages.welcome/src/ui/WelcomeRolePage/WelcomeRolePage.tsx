@@ -4,10 +4,12 @@ import { useTranslation } from 'react-i18next';
 import { WelcomePageLayout, WelcomeButtons } from '../../ui';
 
 import { useWelcomeRoleForm } from '../../hooks';
+import { useOnboardingAnalytics } from '../../hooks/useOnboardingAnalytics';
 import { RoleButtonT } from '../../types/WelcomeRoleButtonT';
 
 export const WelcomeRolePage = () => {
   const { t } = useTranslation('welcomeRole');
+  useOnboardingAnalytics({ step: 'role_selection' });
   const firstButton = useRef<HTMLButtonElement>(null);
   const secondButton = useRef<HTMLButtonElement>(null);
 
@@ -22,18 +24,18 @@ export const WelcomeRolePage = () => {
         ref: firstButton,
         tab: 0,
         top: 0,
-        text: 'Репетитор',
+        text: t('role.tutor'),
         value: 'tutor',
       },
       {
         ref: secondButton,
         tab: 1,
         top: getHeight(firstButton),
-        text: 'Ученик',
+        text: t('role.student'),
         value: 'student',
       },
     ],
-    [],
+    [t],
   );
 
   const [activeButton, setActiveButton] = useState(buttons[0]);
@@ -48,10 +50,10 @@ export const WelcomeRolePage = () => {
 
   return (
     <WelcomePageLayout step={2} title={t('title')} subtitle={t('subtitle')}>
-      <div className="border-gray-30 bg-gray-0 relative mt-6 flex w-full flex-col items-start rounded-2xl border">
+      <div className="border-border-control bg-background-surface relative mt-6 flex w-full flex-col items-start rounded-2xl border">
         <div
           style={{ height: getHeight(activeButton.ref) || '60px', top: activeButton.top }}
-          className="border-brand-100 bg-brand-0 absolute ml-0 flex w-full cursor-pointer flex-row items-start justify-start gap-2 rounded-2xl border border-solid p-4 transition-all duration-300 ease-in"
+          className="border-border-focus bg-status-info-background absolute ml-0 flex w-full cursor-pointer flex-row items-start justify-start gap-2 rounded-2xl border border-solid p-4 transition-all duration-300 ease-in"
         />
         <ul className="flex w-full flex-col">
           {buttons.map((button, index) => (

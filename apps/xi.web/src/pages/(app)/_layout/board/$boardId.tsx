@@ -4,9 +4,8 @@ import { LoadingScreen } from 'common.ui';
 import { Suspense, lazy } from 'react';
 import { z } from 'zod';
 
-// Используем новую версию доски на базе Tldraw с дополнительной оптимизацией
-const TldrawBoard = lazy(() =>
-  import('modules.board').then((module) => ({ default: module.TldrawBoard })),
+const DrawBoard = lazy(() =>
+  import('modules.board').then((module) => ({ default: module.DrawBoard })),
 );
 
 // Предзагружаем модуль доски при создании роута
@@ -18,6 +17,14 @@ const paramsSchema = z.object({
   boardId: z.string(),
 });
 
+const searchSchema = z.object({
+  /** Deep link: id фигуры (или несколько через запятую) — фокус камеры и выделение. */
+  shape: z.string().optional(),
+  /** Deep link: id треда комментария — фокус камеры и открытие попапа. */
+  comment: z.string().optional(),
+  call: z.string().optional(),
+});
+
 // @ts-ignore
 export const Route = createFileRoute('/(app)/_layout/board/$boardId')({
   head: () => ({
@@ -26,17 +33,12 @@ export const Route = createFileRoute('/(app)/_layout/board/$boardId')({
         title: 'sovlium | Доска',
       },
     ],
-    links: [
-      {
-        rel: 'modulepreload',
-        href: '/src/modules/board/index.tsx',
-      },
-    ],
   }),
   component: BoardPage,
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
+  validateSearch: (search: Record<string, unknown>) => searchSchema.parse(search),
   beforeLoad: () => {
-    // console.log('TldrawBoard', context, location);
+    // console.log('DrawBoard', context, location);
     // Предзагружаем модуль доски
     preloadBoard();
   },
@@ -44,9 +46,12 @@ export const Route = createFileRoute('/(app)/_layout/board/$boardId')({
 
 function BoardPage() {
   return (
-    <div className="h-full min-h-0">
+    <div
+      className="min-h-0"
+      style={{ height: 'calc(100dvh - var(--calls-layout-bottom-offset, 0px))' }}
+    >
       <Suspense fallback={<LoadingScreen />}>
-        <TldrawBoard />
+        <DrawBoard />
       </Suspense>
     </div>
   );

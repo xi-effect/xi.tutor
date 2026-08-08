@@ -1,11 +1,14 @@
+import { useTranslation } from 'react-i18next';
 import { MaterialsListSkeleton } from '../../Overview/MaterialsListSkeleton';
 import { MaterialHeader } from './MaterialHeader';
 
 export const LoadingState = () => {
+  const { t } = useTranslation('classroom');
+
   return (
     <div>
       <div className="flex flex-col gap-4 p-4">
-        <MaterialHeader title="Доски" />
+        <MaterialHeader title={t('materials.boards')} />
         <div className="flex flex-row gap-8 pb-4">
           {Array.from({ length: 3 }).map((_, i) => (
             <MaterialsListSkeleton
@@ -16,7 +19,7 @@ export const LoadingState = () => {
         </div>
       </div>
       <div className="flex flex-col gap-4 p-4">
-        <MaterialHeader title="Заметки" />
+        <MaterialHeader title={t('materials.notes')} />
         <div className="flex flex-row gap-8 pb-4">
           {Array.from({ length: 3 }).map((_, i) => (
             <MaterialsListSkeleton

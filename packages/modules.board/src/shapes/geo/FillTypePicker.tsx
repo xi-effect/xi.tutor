@@ -1,14 +1,16 @@
 import { useCallback } from 'react';
 import { Button } from '@xipkg/button';
-import { useTldrawStyles } from '../../hooks';
-import { useTldrawStore } from '../../store';
+import { useDrawStyles } from '../../hooks';
+import { useDrawStore } from '../../store';
 import { useXiGeoStyles } from './useXiGeoStyles';
 import { TFill } from '../../types';
 import { cn } from '@xipkg/utils';
+import { useTranslation } from 'react-i18next';
 
 export const FillTypePicker = () => {
-  const { setGeoFillType } = useTldrawStore();
-  const { setSelectedShapesFillType } = useTldrawStyles();
+  const { t } = useTranslation('board');
+  const { setGeoFillType } = useDrawStore();
+  const { setSelectedShapesFillType } = useDrawStyles();
   const { bgCurrentColorClass, borderCurrentColorClass, currentFillType } = useXiGeoStyles();
 
   const handleFillType = useCallback(
@@ -25,11 +27,11 @@ export const FillTypePicker = () => {
         variant="none"
         size="s"
         className={cn(
-          currentFillType === 'none' ? 'bg-gray-10' : 'bg-transparent!',
-          'hover:bg-brand-0 p-1',
+          currentFillType === 'none' ? 'bg-background-subtle' : 'bg-transparent!',
+          'hover:bg-status-info-background p-1',
         )}
         onClick={() => handleFillType('none')}
-        title="Без заливки"
+        title={t('geo.noFill')}
       >
         <div
           className={cn('h-5 w-5 rounded-full border-2', borderCurrentColorClass)}
@@ -44,11 +46,11 @@ export const FillTypePicker = () => {
         size="s"
         data-active={true}
         className={cn(
-          currentFillType === 'semi' ? 'bg-gray-10' : 'bg-transparent!',
-          'hover:bg-brand-0 p-1',
+          currentFillType === 'semi' ? 'bg-background-subtle' : 'bg-transparent!',
+          'hover:bg-status-info-background p-1',
         )}
         onClick={() => handleFillType('semi')}
-        title="Полупрозрачная"
+        title={t('geo.semiTransparent')}
       >
         <div className={cn('h-5 w-5 rounded-full opacity-25', bgCurrentColorClass)} />
       </Button>
@@ -56,11 +58,11 @@ export const FillTypePicker = () => {
         variant="none"
         size="s"
         className={cn(
-          currentFillType === 'solid' ? 'bg-gray-10' : 'bg-transparent!',
-          'hover:bg-brand-0 p-1',
+          currentFillType === 'solid' ? 'bg-background-subtle' : 'bg-transparent!',
+          'hover:bg-status-info-background p-1',
         )}
         onClick={() => handleFillType('solid')}
-        title="Сплошная"
+        title={t('geo.solid')}
       >
         <div className={cn('h-5 w-5 rounded-full', bgCurrentColorClass)} />
       </Button>

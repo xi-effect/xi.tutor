@@ -1,1 +1,1 @@
-export { UserSettings } from './UserSettings';
+export { UserSettings } from './layout';

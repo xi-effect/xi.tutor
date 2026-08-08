@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
 import {
   DropdownMenu,
@@ -7,19 +7,31 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { MenuDots } from '@xipkg/icons';
-import { track, useEditor } from 'tldraw';
+import { track, useEditor } from '@ibodr/draw';
+import { cn } from '@xipkg/utils';
 import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
+import { CommentPlaceButton, useCommentsUiStore } from '../../../comments';
 import { UndoRedo } from './UndoRedo';
-import { useTldrawStore } from '../../../store';
-import { useTldrawStyles, useHotkeys } from '../../../hooks';
+import { NavbarMobileSwiper } from './NavbarMobileSwiper';
+import { ToolbarOptionsPanel } from './ToolbarOptionsPanel';
+import { useCloseToolbarPanel } from './useCloseToolbarPanel';
+import { useDrawStore } from '../../../store';
+import { useDrawStyles, useHotkeys } from '../../../hooks';
 import { NavbarButton } from '../shared';
-import { ArrowsPopup, PenPopup, StickerPopup } from '../popups';
-import { ShapesPopup } from '../popups/Shapes';
-import { insertImage } from '../../../features/pickAndInsertImage';
-import { insertPdf } from '../../../features/pickAndInsertPdf';
-import { insertAudio, AUDIO_ACCEPT } from '../../../features/pickAndInsertAudio';
+import { initFileDB, useRetryFileQueue } from 'common.services';
+import {
+  boardChromeZClass,
+  boardDropdownZClass,
+  boardMenuItemClass,
+  boardPanelClass,
+  boardToolbarIconClass,
+} from '../../boardTheme';
+import { EmojiStickerStyle, EmojiStyle } from '../../../shapes/shapeStyles';
+import { insertAsset } from '../../../utils/uploadAsset';
+import { ALL_ALLOWED_TYPES } from '../../../constants/mimeTypes';
+import { stickers } from '../../../config';
+import { useTranslation } from 'react-i18next';
 
-// Маппинг инструментов Kanva на Tldraw
 const toolMapping: Record<string, string> = {
   select: 'select',
   hand: 'hand',
@@ -28,9 +40,22 @@ const toolMapping: Record<string, string> = {
   geo: 'xi-geo',
   arrow: 'arrow',
   eraser: 'eraser',
-  sticker: 'note', // Используем note как аналог стикера
+  sticker: 'note',
   frame: 'frame',
-  // asset: 'image', // Убираем image, так как его нет в Tldraw
+  emoji: 'emoji',
+  'emoji-sticker': 'emoji-sticker',
+  'coordinate-axes': 'coordinate-axes',
+};
+
+const MORE_MENU_ACTION = 'more-menu';
+const COMMENT_ACTION = 'comment';
+
+const toolPopupIdByAction: Record<string, string> = {
+  pen: 'pen',
+  geo: 'shapes',
+  sticker: 'sticker',
+  arrow: 'arrow',
+  emoji: 'emoji',
 };
 
 export const Navbar = track(
@@ -47,49 +72,103 @@ export const Navbar = track(
     canRedo: boolean;
     token: string;
   }) => {
-    const { pencilColor, pencilThickness, pencilOpacity, stickerColor } = useTldrawStore();
-    const { resetToDefaults, setColor, setThickness, setOpacity } = useTldrawStyles();
+    const { t } = useTranslation('board');
+    const {
+      pencilColor,
+      pencilThickness,
+      pencilOpacity,
+      stickerColor,
+      recentEmojis,
+      addRecentEmoji,
+    } = useDrawStore();
+    const { resetToDefaults, setColor, setThickness, setOpacity } = useDrawStyles();
     const [activePopup, setActivePopup] = React.useState<string | null>(null);
     const editor = useEditor();
+    const { processQueue, isOnline, addToQueue } = useRetryFileQueue();
+    const setPlacingComment = useCommentsUiStore((s) => s.setPlacing);
+    const isPlacingComment = useCommentsUiStore((s) => s.isPlacing);
 
-    // Добавляем горячие клавиши
+    const stickerPopupItems = navBarElements.find(
+      (item) => item.action === 'sticker',
+    )?.menuPopupContent;
+
+    const closeToolbarPanel = useCallback(() => {
+      if (activePopup && activePopup !== 'pen') resetToDefaults();
+      setActivePopup(null);
+    }, [activePopup, resetToDefaults]);
+
+    useCloseToolbarPanel(activePopup, closeToolbarPanel);
+
+    useEffect(() => {
+      if (!isOnline) return;
+
+      (async () => {
+        const fileQueue = await processQueue();
+
+        fileQueue?.forEach(({ fileId, shapeId }) => {
+          if (!editor.getShape(shapeId)) return;
+
+          editor.updateShape({
+            id: shapeId,
+            type: 'file',
+            props: {
+              src: fileId,
+              status: 'uploaded',
+            },
+          });
+        });
+      })();
+    }, [isOnline, processQueue, editor]);
+
+    useEffect(() => {
+      initFileDB();
+    }, []);
+
     useHotkeys();
-
-    const isPopupOpen = (popup: string) => activePopup === popup;
-    const handlePopupToggle = (popup: string, open: boolean) => {
-      setActivePopup(open ? popup : null);
-
-      if (!open && popup !== 'pen') {
-        resetToDefaults();
-      }
-    };
 
     const handleSelectTool = (toolName: string) => {
       editor.selectNone();
-      setActivePopup(null);
+      setPlacingComment(false);
+
+      const popupId = toolPopupIdByAction[toolName] ?? null;
+
+      if (popupId) {
+        if (activePopup === popupId) {
+          if (popupId !== 'pen') resetToDefaults();
+          setActivePopup(null);
+        } else {
+          setActivePopup(popupId);
+        }
+      } else {
+        if (activePopup && activePopup !== 'pen') resetToDefaults();
+        setActivePopup(null);
+      }
 
       if (toolName === 'pen') {
         setColor(pencilColor);
         setThickness(pencilThickness);
         setOpacity(pencilOpacity);
-      } else {
+      } else if (toolName === 'sticker') {
+        setColor(stickerColor);
+      } else if (!popupId) {
         resetToDefaults();
       }
 
       if (toolName === 'asset') {
         const input = document.createElement('input');
         input.type = 'file';
-        input.accept =
-          'image/jpeg,image/jpx,image/png,image/gif,image/webp,image/tiff,image/bmp,image/x-icon,image/avif';
-        input.multiple = false;
+        input.accept = ALL_ALLOWED_TYPES.toString();
+        input.multiple = true;
 
         input.onchange = async (e) => {
-          const file = (e.target as HTMLInputElement).files?.[0];
-          if (file) {
-            try {
-              await insertImage(editor, file, token);
-            } catch (error) {
-              console.error('Ошибка при загрузке изображения:', error);
+          const files = (e.target as HTMLInputElement).files;
+          if (files) {
+            for (const file of files) {
+              try {
+                insertAsset(editor, file, token, addToQueue);
+              } catch (error) {
+                console.error('Ошибка при загрузке файла:', error);
+              }
             }
           }
         };
@@ -116,242 +195,156 @@ export const Navbar = track(
         eraser: 'eraser',
         note: 'sticker',
         frame: 'frame',
-        // image: 'asset', // Убираем, так как image не существует в Tldraw
+        emoji: 'emoji',
+        'emoji-sticker': 'emoji-sticker',
+        'coordinate-axes': 'coordinate-axes',
       };
 
       return reverseMapping[currentToolId] || 'select';
     };
 
-    const handleInsertPdf = () => {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = 'application/pdf';
-      input.multiple = false;
-      input.onchange = async (e) => {
-        const file = (e.target as HTMLInputElement).files?.[0];
-        if (file) {
-          try {
-            await insertPdf(editor, file, token);
-          } catch (error) {
-            console.error('Ошибка при загрузке PDF:', error);
-          }
-        }
-      };
-      input.click();
-    };
-
-    const handleInsertAudio = () => {
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.accept = AUDIO_ACCEPT;
-      input.multiple = false;
-      input.onchange = async (e) => {
-        const file = (e.target as HTMLInputElement).files?.[0];
-        if (file) {
-          try {
-            await insertAudio(editor, file, token);
-          } catch (error) {
-            console.error('Ошибка при загрузке аудио:', error);
-          }
-        }
-      };
-      input.click();
+    const handleInsertCoordinateAxes = () => {
+      editor.selectNone();
+      editor.setCurrentTool('coordinate-axes');
+      setActivePopup(null);
     };
 
     const currentTool = getCurrentTool();
 
-    const mobileButtonClass = 'max-sm:flex-1 max-sm:min-h-12 max-sm:min-w-0 max-sm:h-full';
+    const renderToolbarItem = (item: NavbarElementT) => {
+      const isActive = item.action === currentTool;
+
+      if (
+        item.action === 'select' ||
+        item.action === 'hand' ||
+        item.action === 'eraser' ||
+        item.action === 'text' ||
+        item.action === 'asset'
+      ) {
+        return (
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <NavbarButton
+                  icon={item.icon}
+                  title={item.title}
+                  isActive={isActive}
+                  onClick={() => handleSelectTool(item.action)}
+                />
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{item.title}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        );
+      }
+
+      return (
+        <NavbarButton
+          icon={item.icon}
+          title={item.title}
+          isActive={isActive}
+          onClick={() => handleSelectTool(item.action)}
+        />
+      );
+    };
+
+    const toolbarSlides = [
+      ...navBarElements.map((item) => ({
+        key: item.action,
+        node: renderToolbarItem(item),
+      })),
+      {
+        key: COMMENT_ACTION,
+        node: <CommentPlaceButton />,
+      },
+      {
+        key: MORE_MENU_ACTION,
+        node: (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <NavbarButton
+                icon={<MenuDots className={cn('rotate-90', boardToolbarIconClass)} />}
+                isActive={false}
+              />
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              side="top"
+              align="end"
+              sideOffset={8}
+              className={cn(
+                boardDropdownZClass,
+                'border-border-default bg-background-surface w-[180px] rounded-xl border p-1',
+              )}
+            >
+              <DropdownMenuItem
+                onClick={handleInsertCoordinateAxes}
+                className={cn(boardMenuItemClass, 'flex gap-2 px-3')}
+              >
+                <span>{t('navbar.coordinateAxes')}</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ),
+      },
+    ];
+
+    const activeSlideIndex = (() => {
+      if (isPlacingComment) {
+        return toolbarSlides.findIndex((slide) => slide.key === COMMENT_ACTION);
+      }
+
+      const toolIndex = toolbarSlides.findIndex((slide) => slide.key === currentTool);
+      return toolIndex >= 0 ? toolIndex : 0;
+    })();
 
     return (
       <div className="pointer-events-none absolute inset-0">
-        <div className="absolute right-0 bottom-14 left-0 z-30 flex w-full items-center justify-center px-4 sm:bottom-4 sm:px-0">
-          <div className="relative z-30 flex w-full max-w-full gap-7 sm:w-auto">
-            <div className="border-gray-10 bg-gray-0 absolute -left-[115px] z-30 hidden rounded-xl border p-1 sm:flex">
+        <div
+          className={cn(
+            'absolute right-0 bottom-4 left-0 flex w-full items-center justify-center px-4 sm:px-0',
+            boardChromeZClass,
+          )}
+        >
+          <div className={cn('relative flex w-full max-w-full sm:w-auto', boardChromeZClass)}>
+            <div
+              className={cn(
+                boardPanelClass,
+                'absolute -left-[115px] hidden p-1 sm:flex',
+                boardChromeZClass,
+              )}
+            >
               <UndoRedo undo={undo} redo={redo} canUndo={canUndo} canRedo={canRedo} />
             </div>
-            <div className="border-gray-10 bg-gray-0 mx-auto flex w-full max-w-full gap-10 rounded-xl border sm:w-auto">
-              <div className="flex w-full min-w-0 flex-1 gap-1 p-1 sm:w-auto sm:flex-initial">
-                {navBarElements.map((item: NavbarElementT) => {
-                  const isActive = item.action === currentTool;
-                  const wrap = (node: React.ReactNode) => (
-                    <div
-                      key={item.action}
-                      className="flex min-h-12 min-w-0 flex-1 sm:min-h-0 sm:flex-initial"
-                    >
-                      {node}
-                    </div>
-                  );
-
-                  if (item.action === 'pen') {
-                    return wrap(
-                      <PenPopup
-                        open={isPopupOpen('pen')}
-                        onOpenChange={(open) => {
-                          if (open) {
-                            setColor(pencilColor);
-                            setThickness(pencilThickness);
-                            setOpacity(pencilOpacity);
-                          }
-                          handlePopupToggle('pen', open);
-                        }}
-                      >
-                        <NavbarButton
-                          icon={item.icon}
-                          title={item.title}
-                          isActive={isActive}
-                          className={mobileButtonClass}
-                          onClick={() => handleSelectTool(item.action)}
-                        />
-                      </PenPopup>,
-                    );
-                  }
-
-                  if (item.action === 'geo') {
-                    return wrap(
-                      <ShapesPopup
-                        open={isPopupOpen('shapes')}
-                        onOpenChange={(open) => handlePopupToggle('shapes', open)}
-                      >
-                        <NavbarButton
-                          icon={item.icon}
-                          title={item.title}
-                          isActive={isActive}
-                          className={mobileButtonClass}
-                          onClick={() => handleSelectTool(item.action)}
-                        />
-                      </ShapesPopup>,
-                    );
-                  }
-
-                  if (item.action === 'sticker') {
-                    return wrap(
-                      <StickerPopup
-                        open={isPopupOpen('sticker')}
-                        onOpenChange={(open) => {
-                          if (open) {
-                            setColor(stickerColor);
-                          }
-                          handlePopupToggle('sticker', open);
-                        }}
-                        popupItems={item.menuPopupContent}
-                      >
-                        <NavbarButton
-                          icon={item.icon}
-                          title={item.title}
-                          isActive={isActive}
-                          className={mobileButtonClass}
-                          onClick={() => handleSelectTool(item.action)}
-                        />
-                      </StickerPopup>,
-                    );
-                  }
-
-                  if (item.action === 'asset') {
-                    return wrap(
-                      <TooltipProvider>
-                        <Tooltip>
-                          <div className="pointer-events-auto flex h-full min-h-0 w-full min-w-0 sm:block sm:h-auto sm:w-auto">
-                            <TooltipTrigger
-                              className="flex h-full w-full rounded-lg sm:h-6 sm:w-6 lg:h-8 lg:w-8"
-                              asChild
-                            >
-                              <button
-                                type="button"
-                                className={`pointer-events-auto flex h-6 w-6 flex-1 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${mobileButtonClass} ${isActive ? 'bg-brand-0' : 'bg-gray-0'}`}
-                                data-isactive={isActive}
-                                onClick={() => handleSelectTool(item.action)}
-                              >
-                                {item.icon ? item.icon : item.title}
-                              </button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                              <p>{item.title}</p>
-                            </TooltipContent>
-                          </div>
-                        </Tooltip>
-                      </TooltipProvider>,
-                    );
-                  }
-
-                  if (item.action === 'arrow') {
-                    return wrap(
-                      <ArrowsPopup
-                        open={isPopupOpen('arrow')}
-                        onOpenChange={(open) => handlePopupToggle('arrow', open)}
-                      >
-                        <NavbarButton
-                          icon={item.icon}
-                          title={item.title}
-                          isActive={isActive}
-                          className={mobileButtonClass}
-                          onClick={() => handleSelectTool(item.action)}
-                        />
-                      </ArrowsPopup>,
-                    );
-                  }
-
-                  if (item.action === 'frame') {
-                    return wrap(
-                      <NavbarButton
-                        icon={item.icon}
-                        title={item.title}
-                        isActive={isActive}
-                        className={mobileButtonClass}
-                        onClick={() => handleSelectTool(item.action)}
-                      />,
-                    );
-                  }
-
-                  return wrap(
-                    <TooltipProvider>
-                      <Tooltip>
-                        <div className="pointer-events-auto flex h-full min-h-0 w-full min-w-0 sm:block sm:h-auto sm:w-auto">
-                          <TooltipTrigger
-                            className="flex h-full w-full rounded-lg sm:h-6 sm:w-6 lg:h-8 lg:w-8"
-                            asChild
-                          >
-                            <button
-                              type="button"
-                              className={`pointer-events-auto flex h-6 w-6 flex-1 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${mobileButtonClass} ${isActive ? 'bg-brand-0' : 'bg-gray-0'}`}
-                              data-isactive={isActive}
-                              onClick={() => handleSelectTool(item.action)}
-                            >
-                              {item.icon ? item.icon : item.title}
-                            </button>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>{item.title}</p>
-                          </TooltipContent>
-                        </div>
-                      </Tooltip>
-                    </TooltipProvider>,
-                  );
-                })}
-                <div className="flex min-h-12 min-w-0 flex-1 sm:min-h-0 sm:flex-initial">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <button
-                        type="button"
-                        className={`bg-gray-0 hover:bg-brand-0 pointer-events-auto flex h-6 w-6 flex-1 items-center justify-center rounded-lg lg:h-8 lg:w-8 ${mobileButtonClass}`}
-                      >
-                        <MenuDots className="rotate-90" />
-                      </button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent
-                      side="top"
-                      align="end"
-                      sideOffset={8}
-                      className="border-gray-10 bg-gray-0 w-[180px] rounded-xl border p-1"
-                    >
-                      <DropdownMenuItem onClick={handleInsertPdf} className="rounded-lg px-3">
-                        Загрузить PDF
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={handleInsertAudio} className="rounded-lg px-3">
-                        Загрузить аудио
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </div>
+            <div
+              data-board-toolbar-ui
+              className={`${boardPanelClass} relative mx-auto w-full max-w-full sm:w-auto`}
+            >
+              <ToolbarOptionsPanel
+                activePopup={activePopup}
+                stickerPopupItems={stickerPopupItems}
+                recentEmojis={recentEmojis}
+                stickers={stickers}
+                onEmojiSelect={(emoji) => {
+                  editor.setStyleForNextShapes(EmojiStyle, emoji);
+                  addRecentEmoji(emoji);
+                }}
+                onEmojiStickerSelect={(sticker) => {
+                  editor.setStyleForNextShapes(EmojiStickerStyle, sticker.src);
+                  editor.setCurrentTool('emoji-sticker');
+                  setActivePopup(null);
+                }}
+              />
+              <div className="hidden items-center gap-1 p-1 sm:flex">
+                {toolbarSlides.map(({ key, node }) => (
+                  <div key={key} className="shrink-0">
+                    {node}
+                  </div>
+                ))}
+              </div>
+              <div className="p-1 sm:hidden">
+                <NavbarMobileSwiper activeIndex={activeSlideIndex} slides={toolbarSlides} />
               </div>
             </div>
           </div>

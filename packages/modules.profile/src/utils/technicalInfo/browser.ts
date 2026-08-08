@@ -1,9 +1,13 @@
+import { tProfile } from '../tProfile';
+
 export const getBrowserInfo = () => {
   const ua = navigator.userAgent;
   const info: Record<string, string | boolean> = {};
+  const unknown = tProfile('report.values.unknown');
+  const unknownBrowser = tProfile('report.values.unknownBrowser');
 
-  let browserName = 'Неизвестный';
-  let browserVersion = 'Неизвестно';
+  let browserName = unknownBrowser;
+  let browserVersion = unknown;
   let browserBase = '';
   let browserBaseVersion = '';
   let browserEngine = '';
@@ -12,39 +16,39 @@ export const getBrowserInfo = () => {
   if (ua.includes('Chrome') && !ua.includes('Edg')) {
     browserName = 'Chrome';
     const match = ua.match(/Chrome\/(\d+\.\d+\.\d+\.\d+)/) || ua.match(/Chrome\/(\d+)/);
-    browserVersion = match ? match[1] : 'Неизвестно';
+    browserVersion = match ? match[1] : unknown;
     browserBase = 'Chromium';
     browserBaseVersion = browserVersion;
     browserEngine = 'WebKit';
     const webkitMatch = ua.match(/AppleWebKit\/(\d+\.\d+)/);
-    browserEngineVersion = webkitMatch ? webkitMatch[1] : 'Неизвестно';
+    browserEngineVersion = webkitMatch ? webkitMatch[1] : unknown;
   } else if (ua.includes('Firefox')) {
     browserName = 'Firefox';
     const match = ua.match(/Firefox\/(\d+\.\d+)/) || ua.match(/Firefox\/(\d+)/);
-    browserVersion = match ? match[1] : 'Неизвестно';
+    browserVersion = match ? match[1] : unknown;
     browserBase = 'Firefox';
     browserBaseVersion = browserVersion;
     browserEngine = 'Gecko';
     const geckoMatch = ua.match(/rv:(\d+\.\d+)/);
-    browserEngineVersion = geckoMatch ? geckoMatch[1] : 'Неизвестно';
+    browserEngineVersion = geckoMatch ? geckoMatch[1] : unknown;
   } else if (ua.includes('Safari') && !ua.includes('Chrome')) {
     browserName = 'Safari';
     const match = ua.match(/Version\/(\d+\.\d+)/) || ua.match(/Version\/(\d+)/);
-    browserVersion = match ? match[1] : 'Неизвестно';
+    browserVersion = match ? match[1] : unknown;
     browserBase = 'WebKit';
     browserBaseVersion = browserVersion;
     browserEngine = 'WebKit';
     const webkitMatch = ua.match(/AppleWebKit\/(\d+\.\d+)/);
-    browserEngineVersion = webkitMatch ? webkitMatch[1] : 'Неизвестно';
+    browserEngineVersion = webkitMatch ? webkitMatch[1] : unknown;
   } else if (ua.includes('Edg')) {
     browserName = 'Edge';
     const match = ua.match(/Edg\/(\d+\.\d+\.\d+\.\d+)/) || ua.match(/Edg\/(\d+)/);
-    browserVersion = match ? match[1] : 'Неизвестно';
+    browserVersion = match ? match[1] : unknown;
     browserBase = 'Chromium';
     browserBaseVersion = browserVersion;
     browserEngine = 'WebKit';
     const webkitMatch = ua.match(/AppleWebKit\/(\d+\.\d+)/);
-    browserEngineVersion = webkitMatch ? webkitMatch[1] : 'Неизвестно';
+    browserEngineVersion = webkitMatch ? webkitMatch[1] : unknown;
   }
 
   info.BrowserBase = browserBase;
@@ -73,7 +77,7 @@ export const getBrowserInfo = () => {
     if (uaLower.includes('android')) return 'Android';
     if (uaLower.includes('iphone') || uaLower.includes('ipad')) return 'iOS';
 
-    return 'Неизвестно';
+    return unknown;
   };
   info.OSFamily = getOSFamily();
   info.SVGSupport = 'SVGSVGElement' in window ? 'true' : 'false';
@@ -104,7 +108,7 @@ export const getBrowserInfo = () => {
     if (ua.includes('Firefox')) return 'Mozilla';
     if (ua.includes('Safari') && !ua.includes('Chrome')) return 'Apple Computer, Inc.';
     if (ua.includes('Edg')) return 'Microsoft Corporation';
-    return 'Неизвестно';
+    return unknown;
   };
   info.vendor = getVendor();
 

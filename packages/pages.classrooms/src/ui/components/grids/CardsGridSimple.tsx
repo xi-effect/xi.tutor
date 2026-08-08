@@ -1,12 +1,16 @@
 import { useCurrentUser } from 'common.services';
 import { CardsGridTutor } from './CardsGridTutor';
 import { CardsGridStudent } from './CardsGridStudent';
+import { CardsGridSkeleton } from './CardsGridSkeleton';
 
 export const CardsGridSimple = () => {
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  // Условно рендерим нужный компонент в зависимости от роли
+  if (isLoading) {
+    return <CardsGridSkeleton count={6} />;
+  }
+
   if (isTutor) {
     return <CardsGridTutor />;
   }

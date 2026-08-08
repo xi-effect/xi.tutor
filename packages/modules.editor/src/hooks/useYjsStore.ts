@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useCallback, useState } from 'react';
 import * as Y from 'yjs';
 import { useEditor, Editor } from '@tiptap/react';
+import i18n from 'i18next';
 import { getExtensions } from '../config/editorConfig';
 import { editorProps } from '../config/editorProps';
 import { toast } from 'sonner';
@@ -13,6 +14,8 @@ import {
   type onAuthenticationFailedParameters,
 } from '@hocuspocus/provider';
 import { generateUserColor } from '../utils/userColor';
+import { useCollaborators } from './useCollaborators';
+import { TCollaborator } from '../types';
 
 type UseYjsStoreArgs = {
   hostUrl: string;
@@ -60,6 +63,9 @@ export function useYjsStore({
     return { provider, ydoc };
   });
 
+  const { awareness } = provider;
+  const { setCollaboratorsIfChanged, reset } = useCollaborators();
+
   /* ==========================================================
    * 2. Readonly state
    * ========================================================== */
@@ -70,9 +76,13 @@ export function useYjsStore({
    * ========================================================== */
   const { data: currentUser } = useCurrentUser();
   const userData = useMemo(() => {
-    const name = currentUser?.display_name || currentUser?.username || 'Участник';
+    const id = currentUser?.id;
+    const name =
+      currentUser?.display_name ||
+      currentUser?.username ||
+      i18n.t('status.participant', { ns: 'editor' });
     const idForColor = currentUser?.id?.toString() ?? 'anonymous';
-    return { name, color: generateUserColor(idForColor) };
+    return { id, name, color: generateUserColor(idForColor) };
   }, [currentUser?.id, currentUser?.display_name, currentUser?.username]);
 
   /* ==========================================================
@@ -96,14 +106,14 @@ export function useYjsStore({
     }, 0);
 
     // Awareness
-    if (provider.awareness) {
-      provider.awareness.setLocalStateField('user', userData);
+    if (awareness) {
+      awareness.setLocalStateField('user', userData);
     }
 
     // Auth events
     const handleAuthFailed = ({ reason }: onAuthenticationFailedParameters) => {
       if (reason === 'permission-denied') {
-        toast('Ошибка доступа к серверу совместного редактирования');
+        toast(i18n.t('status.accessError', { ns: 'editor' }));
         console.error('hocuspocus: permission-denied');
       }
     };
@@ -129,7 +139,26 @@ export function useYjsStore({
         // ignore
       }
     };
-  }, [provider, userData]);
+  }, [provider, awareness, userData]);
+
+  useEffect(() => {
+    if (!awareness) return;
+
+    const handleSyncUsersFromAwareness = () => {
+      const awarenessUsers: TCollaborator[] = [...awareness.getStates()]
+        .map((arr) => ({ id: arr[1].user?.id, userName: arr[1].user.name }))
+        .filter((user) => user.id);
+      setCollaboratorsIfChanged(awarenessUsers);
+    };
+
+    awareness.on('update', handleSyncUsersFromAwareness);
+    handleSyncUsersFromAwareness();
+
+    return () => {
+      awareness.off('update', handleSyncUsersFromAwareness);
+      reset();
+    };
+  }, [awareness, setCollaboratorsIfChanged, reset]);
 
   /* ==========================================================
    * 6. Editor — extensions в deps: при загрузке currentUser

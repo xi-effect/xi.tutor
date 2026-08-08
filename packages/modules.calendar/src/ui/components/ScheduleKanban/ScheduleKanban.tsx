@@ -1,6 +1,7 @@
 import { FC, useLayoutEffect, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { startOfDay } from 'date-fns';
+import { getDateLocale } from 'common.ui';
 import { Plus } from '@xipkg/icons';
 import { LessonCard } from './LessonCard';
 import { LessonCardSkeleton } from './LessonCardSkeleton';
@@ -14,6 +15,7 @@ import {
 import { useLessonInfoModal } from '../../../hooks';
 import { useOpenLessonByInstanceWhenLoaded } from '../../../hooks/useOpenLessonByInstanceWhenLoaded';
 import { getLessonCardSkeletonCountForDay, isCurrentDay, isPastDay } from '../../../utils';
+import { findNearestVisibleCalendarEventId } from '../../../utils/findNearestLessonIndex';
 import type { ChangeLessonFormData } from 'features.lesson.change';
 import type { ICalendarEvent } from '../../types';
 import { cn } from '@xipkg/utils';
@@ -36,6 +38,8 @@ type ScheduleKanbanProps = {
   openLessonInstanceId?: string | null;
   /** Сообщить странице, что диплинк обработан (событие найдено или нет) */
   onOpenLessonInstanceConsumed?: () => void;
+  /** Разрешить горизонтальный overflow (для режима 7 дней с прокруткой на уровне родителя) */
+  allowHorizontalOverflow?: boolean;
 };
 
 const getEventsForDay = (
@@ -48,8 +52,8 @@ const getEventsForDay = (
 };
 
 /** Полное название дня недели с заглавной (например, «Понедельник») */
-const getDayNameRu = (date: Date): string => {
-  const name = date.toLocaleDateString('ru-RU', { weekday: 'long' });
+const getDayName = (date: Date): string => {
+  const name = date.toLocaleDateString(getDateLocale(), { weekday: 'long' });
   return name.charAt(0).toUpperCase() + name.slice(1);
 };
 
@@ -82,6 +86,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
   hideLessonCardClassroomAndSubject = false,
   openLessonInstanceId,
   onOpenLessonInstanceConsumed,
+  allowHorizontalOverflow = false,
 }) => {
   const { t } = useTranslation('calendar');
   const eventsByDate = useEventsByDate();
@@ -108,6 +113,10 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
   );
   const hasEvents = useMemo(() => eventsPerDay.map((e) => e.length > 0), [eventsPerDay]);
   const segments = useMemo(() => buildSegments(hasEvents), [hasEvents]);
+  const nearestEventId = useMemo(() => {
+    const visibleEvents = eventsPerDay.flat();
+    return findNearestVisibleCalendarEventId(allEvents, visibleEvents, today);
+  }, [allEvents, eventsPerDay, today]);
 
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
@@ -130,7 +139,12 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
     n > 0 ? `repeat(${n}, minmax(${Math.max(columnWidth, 0)}px, 1fr))` : '1fr';
 
   return (
-    <div className="flex h-full min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+    <div
+      className={cn(
+        'flex h-full min-h-0 flex-1 flex-col',
+        allowHorizontalOverflow ? 'overflow-y-hidden' : 'min-w-0 overflow-hidden',
+      )}
+    >
       {/* Заголовки дней — без скролла */}
       <div
         className="grid shrink-0 gap-x-7 pr-3"
@@ -140,7 +154,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
       >
         {visibleDays.map((day, colIndex) => {
           const dateNum = day.getDate();
-          const dayName = getDayNameRu(day);
+          const dayName = getDayName(day);
 
           return (
             <div
@@ -151,14 +165,14 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
               <div className="flex shrink-0 items-center justify-between gap-1 py-4">
                 <span
                   className={cn(
-                    'group-hover/day:text-brand-80 group-hover/day:bg-brand-0 text-gray-40 bg-gray-5 flex h-[32px] w-[38px] items-center justify-center rounded-[10px] text-[14px] font-semibold transition-colors duration-300',
+                    'group-hover/day:text-text-link group-hover/day:bg-status-info-background text-text-disabled bg-background-page flex h-[32px] w-[38px] items-center justify-center rounded-[10px] text-[14px] font-semibold transition-colors duration-300',
                   )}
                 >
                   {dateNum}
                 </span>
                 <span
                   className={cn(
-                    'text-s-base text-gray-60 group-hover/day:text-gray-90 font-medium transition-colors duration-300',
+                    'text-s-base text-text-secondary group-hover/day:text-text-primary font-medium transition-colors duration-300',
                   )}
                 >
                   {dayName}
@@ -166,11 +180,12 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
                 {onAddLessonClick ? (
                   <Button
                     variant="none"
-                    className="hover:text-primary-60 hover:bg-gray-5 flex h-[32px] w-[40px] shrink-0 items-center justify-center rounded-md p-0 text-gray-50 transition-colors"
+                    className="hover:text-primary-60 hover:bg-background-page text-text-muted flex h-[32px] w-[40px] shrink-0 items-center justify-center rounded-md p-0 transition-colors"
                     aria-label={t('add_event')}
                     onClick={() => onAddLessonClick(day)}
+                    data-umami-event="schedule-add-lesson-column"
                   >
-                    <Plus className="fill-gray-40 group-hover/day:fill-brand-80 h-5 w-5 transition-colors duration-300" />
+                    <Plus className="fill-icon-disabled group-hover/day:fill-icon-brand h-5 w-5 transition-colors duration-300" />
                   </Button>
                 ) : (
                   <span className="h-[32px] w-[40px] shrink-0" aria-hidden />
@@ -184,7 +199,10 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
       {/* Один общий вертикальный скролл для всех колонок */}
       <div
         ref={scrollAreaRef}
-        className="flex min-h-0 flex-1 flex-col overflow-x-hidden overflow-y-auto pr-3 [scrollbar-gutter:stable]"
+        className={cn(
+          'flex min-h-0 flex-1 [scrollbar-gutter:stable] flex-col overflow-y-auto pr-3',
+          allowHorizontalOverflow ? 'overflow-x-visible' : 'overflow-x-hidden',
+        )}
       >
         <div className="box-border flex min-h-full min-w-0 flex-1 flex-col">
           <div className="grid flex-1 items-stretch gap-x-7 pb-4" style={{ gridTemplateColumns }}>
@@ -219,6 +237,7 @@ export const ScheduleKanban: FC<ScheduleKanbanProps> = ({
                             event={event}
                             isPast={isPastDay(day, today)}
                             isToday={isCurrentDay(day, todayStart)}
+                            isNearestLesson={event.id === nearestEventId}
                             hideClassroomAndSubject={hideLessonCardClassroomAndSubject}
                             onClick={() => openLessonInfo(event)}
                           />

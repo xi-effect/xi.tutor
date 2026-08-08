@@ -6,32 +6,46 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Add, FileSmall, WhiteBoard } from '@xipkg/icons';
+import { Add, ArrowRight, FileSmall, WhiteBoard } from '@xipkg/icons';
 import { ScrollArea } from '@xipkg/scrollarea';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
+import { useNavigate } from '@tanstack/react-router';
 import { useCurrentUser, useGetMaterialsList } from 'common.services';
 import { MaterialsDuplicateProvider, useMaterialsDuplicate } from 'pages.materials';
 import { MaterialsDuplicate } from 'features.materials.duplicate';
 import { MaterialsCard } from 'features.materials.card';
 import { useCreateMaterial } from 'features.materials.add';
-import { EmptyMaterials } from 'common.ui';
+import { EmptyMaterials, switcherTabClass } from 'common.ui';
 import { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { cn, useMediaQuery } from '@xipkg/utils';
 import { SectionEmptyState, sectionEmptyStateIllustrationClass } from '../SectionEmptyState';
 
-const filters = [
-  { id: 'all' as const, label: 'Все' },
-  { id: 'note' as const, label: 'Заметки' },
-  { id: 'board' as const, label: 'Доски' },
-];
-
 const MaterialsContent = () => {
+  const { t } = useTranslation('main');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const isMobile = useMediaQuery('(max-width: 960px)');
 
   const { createMaterial } = useCreateMaterial();
   const { materialId, open, closeModal, openModal } = useMaterialsDuplicate();
   const [selectedFilter, setSelectedFilter] = useState<'all' | 'note' | 'board'>('all');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const filters = useMemo(
+    () => [
+      { id: 'all' as const, label: t('materials.filterAll') },
+      { id: 'note' as const, label: t('materials.filterNotes') },
+      { id: 'board' as const, label: t('materials.filterBoards') },
+    ],
+    [t],
+  );
+
+  const handleMore = () => {
+    navigate({ to: '/materials' });
+  };
 
   const handleCreateMaterial = (kind: 'note' | 'board') => {
     setDropdownOpen(false);
@@ -47,96 +61,114 @@ const MaterialsContent = () => {
   const emptyCopy = useMemo(() => {
     if (selectedFilter === 'note') {
       return {
-        title: 'У вас нет заметок',
-        description: 'Добавьте заметку, чтобы проводить уроки было удобнее',
+        title: t('materials.emptyNotesTitle'),
+        description: t('materials.emptyNotesDescription'),
       };
     }
     if (selectedFilter === 'board') {
       return {
-        title: 'У вас нет досок',
-        description: 'Добавьте интерактивную доску для уроков',
+        title: t('materials.emptyBoardsTitle'),
+        description: t('materials.emptyBoardsDescription'),
       };
     }
     return {
-      title: 'У вас нет материалов',
-      description: 'Добавляйте интерактивные доски и заметки, чтобы проводить уроки было удобнее',
+      title: t('materials.emptyTitle'),
+      description: t('materials.emptyDescription'),
     };
-  }, [selectedFilter]);
+  }, [selectedFilter, t]);
 
   const emptyActionButtonClass =
-    'bg-gray-5 hover:bg-gray-10 text-xs-base h-8 rounded-lg px-4 font-medium text-gray-80';
+    'bg-background-page hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
 
   return (
     <>
-      <div className="bg-gray-0 flex w-full flex-col gap-4 rounded-2xl px-5 pt-4 pb-1 transition-all duration-200 ease-linear sm:w-[calc(100vw-var(--sidebar-width)-var(--lessons-panel-width)-48px)]">
+      <div className="bg-background-surface xs:px-5 flex w-full min-w-0 flex-col gap-4 rounded-2xl pt-4 pr-2 pb-1 pl-5 transition-all duration-200 ease-linear">
         {/* Header: title + tabs + add button */}
-        <div className="flex flex-row flex-wrap items-center gap-4">
-          <h2 className="text-l-base font-medium text-gray-100">Материалы</h2>
+        <div className="flex flex-row items-center gap-2">
+          <h2 className="text-l-base text-text-primary font-medium">{t('materials.title')}</h2>
 
-          {/* Tabs (Brand) */}
-          <SwitcherAnimate
-            tabs={filters}
-            activeTab={selectedFilter}
-            onChange={(id) => setSelectedFilter(id as 'all' | 'note' | 'board')}
-            className="bg-gray-0 flex h-8 flex-row rounded-xl p-1"
-            tabClassName="h-[26px] rounded-[10px] px-3 py-1.5 text-s-base font-medium text-gray-80 data-[active=true]:text-gray-0"
-            indicatorClassName="rounded-[10px] bg-brand-80"
-          />
+          {!isMobile && (
+            <SwitcherAnimate
+              tabs={filters}
+              activeTab={selectedFilter}
+              onChange={(id) => setSelectedFilter(id as 'all' | 'note' | 'board')}
+              className="bg-background-surface flex h-8 flex-row rounded-xl p-1"
+              tabClassName={cn(
+                switcherTabClass,
+                'text-s-base h-[26px] rounded-[10px] px-3 py-1.5 font-medium',
+              )}
+              indicatorClassName="rounded-[10px] bg-action-primary-background-default"
+            />
+          )}
 
-          {isTutor && (
-            <div className="ml-auto flex flex-row items-center gap-2">
+          <div className="ml-auto">
+            {isTutor && !isMobile ? (
               <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
                 <DropdownMenuTrigger asChild>
                   <Button
                     variant="none"
-                    className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
+                    className="bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
                     data-umami-event="materials-add-button"
                     id="materials-add-button"
                   >
-                    <Add className="fill-brand-80 size-6" />
+                    <Add className="fill-icon-brand size-6" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   align="end"
                   side="bottom"
-                  className="border-gray-10 bg-gray-0 flex w-[320px] flex-col gap-2.5 rounded-2xl border px-6 py-5 shadow-lg"
+                  className="border-border-default bg-background-surface flex w-[320px] flex-col gap-2.5 rounded-2xl border px-6 py-5 shadow-lg"
                 >
-                  <DropdownMenuLabel className="text-m-base p-0 font-medium text-gray-100">
-                    Добавить
+                  <DropdownMenuLabel className="text-m-base text-text-primary p-0 font-medium">
+                    {t('common.add')}
                   </DropdownMenuLabel>
                   <div className="flex flex-col gap-3">
                     <DropdownMenuItem
-                      className="border-gray-10 bg-gray-0 focus:bg-gray-0 data-highlighted:bg-gray-5 flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
+                      className="border-border-default bg-background-surface focus:bg-background-surface data-highlighted:bg-background-page flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
                       onSelect={() => handleCreateMaterial('board')}
                       data-umami-event="materials-add-board"
                     >
-                      <WhiteBoard className="fill-gray-80 size-4 shrink-0" />
-                      <span className="text-s-base text-gray-80 flex-1 text-left font-medium">
-                        Доску
+                      <WhiteBoard className="fill-icon-primary size-4 shrink-0" />
+                      <span className="text-s-base text-text-primary flex-1 text-left font-medium">
+                        {t('materials.addBoard')}
                       </span>
-                      <Add className="fill-brand-80 size-4 shrink-0" />
+                      <Add className="fill-icon-brand size-4 shrink-0" />
                     </DropdownMenuItem>
                     <DropdownMenuItem
-                      className="border-gray-10 bg-gray-0 focus:bg-gray-0 data-highlighted:bg-gray-5 flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
+                      className="border-border-default bg-background-surface focus:bg-background-surface data-highlighted:bg-background-page flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
                       onSelect={() => handleCreateMaterial('note')}
                       data-umami-event="materials-add-note"
                     >
-                      <FileSmall className="fill-gray-80 size-4 shrink-0" />
-                      <span className="text-s-base text-gray-80 flex-1 text-left font-medium">
-                        Заметку
+                      <FileSmall className="fill-icon-primary size-4 shrink-0" />
+                      <span className="text-s-base text-text-primary flex-1 text-left font-medium">
+                        {t('materials.addNote')}
                       </span>
-                      <Add className="fill-brand-80 size-4 shrink-0" />
+                      <Add className="fill-icon-brand size-4 shrink-0" />
                     </DropdownMenuItem>
                   </div>
                 </DropdownMenuContent>
               </DropdownMenu>
-            </div>
-          )}
+            ) : isMobile ? (
+              <Tooltip delayDuration={1000}>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="none"
+                    className="mr-3 flex size-8 items-center justify-center rounded-[4px] p-0"
+                    onClick={handleMore}
+                    data-umami-event="materials-more"
+                  >
+                    <ArrowRight className="fill-icon-secondary size-6" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{t('materials.toMaterials')}</TooltipContent>
+              </Tooltip>
+            ) : null}
+          </div>
         </div>
         {/* Cards row */}
         {isLoading ? (
           <div className="flex h-[300px] w-full flex-row items-center justify-center">
-            <p className="text-m-base text-gray-60">Загрузка...</p>
+            <p className="text-m-base text-text-secondary">{t('common.loading')}</p>
           </div>
         ) : filteredMaterials.length > 0 ? (
           <ScrollArea className="h-[300px] w-full">
@@ -160,8 +192,8 @@ const MaterialsContent = () => {
             minHeightClass="min-h-[160px]"
             illustration={<EmptyMaterials className={sectionEmptyStateIllustrationClass} />}
             actions={
-              <>
-                {isTutor && (
+              isTutor && !isMobile ? (
+                <>
                   <Button
                     type="button"
                     variant="none"
@@ -169,11 +201,9 @@ const MaterialsContent = () => {
                     onClick={() => handleCreateMaterial('note')}
                     data-umami-event="materials-empty-add-note"
                   >
-                    Заметка
-                    <Add className="fill-gray-80 ml-1 size-4 shrink-0" />
+                    {t('materials.note')}
+                    <Add className="fill-icon-primary ml-1 size-4 shrink-0" />
                   </Button>
-                )}
-                {isTutor && (
                   <Button
                     type="button"
                     variant="none"
@@ -181,11 +211,11 @@ const MaterialsContent = () => {
                     onClick={() => handleCreateMaterial('board')}
                     data-umami-event="materials-empty-add-board"
                   >
-                    Доска
-                    <Add className="fill-gray-80 ml-1 size-4 shrink-0" />
+                    {t('materials.board')}
+                    <Add className="fill-icon-primary ml-1 size-4 shrink-0" />
                   </Button>
-                )}
-              </>
+                </>
+              ) : undefined
             }
           />
         )}

@@ -13,6 +13,7 @@ import type { ClassroomTutorResponseSchema } from 'common.api';
 import { Button } from '@xipkg/button';
 import { Clock, Edit05, Redo, Trash } from '@xipkg/icons';
 import type { ReactNode } from 'react';
+import { useTranslation } from 'react-i18next';
 import { LessonInfoClassroomBlock } from './LessonInfoClassroomBlock';
 import { useCurrentUser } from 'common.services';
 
@@ -44,6 +45,8 @@ export type LessonInfoModalProps = {
   classroomLoading?: boolean;
   startTime: string | null;
   endTime: string | null;
+  /** Дата занятия, например «13 июня, сб.» */
+  lessonDate?: string | null;
   onReschedule?: () => void;
   onEditLesson?: () => void;
   /**
@@ -72,12 +75,14 @@ export const LessonInfoModal = ({
   classroomLoading,
   startTime,
   endTime,
+  lessonDate,
   onReschedule,
   onEditLesson,
   changeLesson,
   onCancelClick,
   startLessonSlot,
 }: LessonInfoModalProps) => {
+  const { t } = useTranslation('lessonInfo');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
@@ -124,15 +129,20 @@ export const LessonInfoModal = ({
         >
           <ModalHeader>
             <ModalCloseButton />
-            <ModalTitle className="text-xl-base max-w-[calc(100%-56px)] font-semibold text-gray-100">
-              Информация о занятии
-            </ModalTitle>
+            <div className="flex max-w-[calc(100%-56px)] flex-col gap-0.5">
+              <ModalTitle className="text-xl-base text-text-primary max-w-full font-semibold">
+                {t('title')}
+              </ModalTitle>
+              {lessonDate != null && lessonDate.trim().length > 0 ? (
+                <p className="text-text-secondary text-sm font-normal">{lessonDate.trim()}</p>
+              ) : null}
+            </div>
           </ModalHeader>
 
           <ModalBody className="flex flex-col gap-4 px-6 pt-0 pb-4">
-            <div className="border-gray-10 flex flex-col gap-2 rounded-2xl border bg-white p-5">
+            <div className="border-border-default bg-background-surface flex flex-col gap-2 rounded-2xl border p-5">
               {subjectHeadingLabel ? (
-                <span className="text-gray-40 text-xs">{subjectHeadingLabel}</span>
+                <span className="text-text-disabled text-xs">{subjectHeadingLabel}</span>
               ) : null}
 
               {showClassroomBlock ? (
@@ -143,24 +153,29 @@ export const LessonInfoModal = ({
                 />
               ) : null}
 
-              <p className="text-gray-90 mt-2 text-[14px] leading-snug font-semibold">
+              <p className="text-text-primary mt-2 text-[14px] leading-snug font-semibold">
                 {lessonTitle}
               </p>
 
               {lessonDescription != null && lessonDescription.trim().length > 0 ? (
-                <p className="text-gray-60 text-sm leading-snug">{lessonDescription.trim()}</p>
+                <p className="text-text-secondary text-sm leading-snug">
+                  {lessonDescription.trim()}
+                </p>
               ) : null}
 
               {startTime != null && endTime != null && (
                 <div className="mt-2 flex w-full items-center gap-2">
                   <div className="flex items-center gap-1">
-                    <Clock className="fill-gray-40 h-4 w-4 shrink-0" />
-                    <span className="text-gray-90 text-[14px]">{startTime}</span>
+                    <Clock className="fill-icon-disabled h-4 w-4 shrink-0" />
+                    <span className="text-text-primary text-[14px]">{startTime}</span>
                   </div>
-                  <span className="bg-gray-30 dark:bg-gray-60 h-px flex-1 shrink-0" aria-hidden />
-                  <div className="text-gray-90 flex items-center gap-1 text-sm dark:text-gray-100">
-                    <Clock className="fill-gray-40 h-4 w-4 shrink-0" />
-                    <span className="text-gray-90 text-xs-base-size">{endTime}</span>
+                  <span
+                    className="bg-background-subtle dark:bg-background-subtle h-px flex-1 shrink-0"
+                    aria-hidden
+                  />
+                  <div className="text-text-primary dark:text-text-primary flex items-center gap-1 text-sm">
+                    <Clock className="fill-icon-disabled h-4 w-4 shrink-0" />
+                    <span className="text-text-primary text-xs-base-size">{endTime}</span>
                   </div>
                 </div>
               )}
@@ -173,38 +188,41 @@ export const LessonInfoModal = ({
               <Button
                 type="button"
                 variant="none"
-                className="bg-gray-5 text-gray-70 hover:bg-gray-10 hover:text-gray-80 h-12 min-h-12 flex-1"
+                className="bg-background-page text-text-secondary hover:bg-background-subtle hover:text-text-primary h-12 min-h-12 flex-1"
                 onClick={() => {
                   if (onReschedule == null) return;
                   onReschedule();
                   onOpenChange(false);
                 }}
+                data-umami-event="lesson-info-reschedule"
               >
-                Перенести
-                <Redo className="fill-gray-70 ml-1.5 h-4 w-4" />
+                {t('reschedule')}
+                <Redo className="fill-icon-primary ml-1.5 h-4 w-4" />
               </Button>
             )}
             {onCancelClick != null ? (
               <Button
                 type="button"
                 variant="none"
-                className="bg-gray-5 text-gray-80 xs:w-12 flex h-12 min-h-12 w-full shrink-0 items-center justify-center p-0 hover:text-gray-100 max-sm:mx-auto"
+                className="bg-background-page text-text-primary xs:w-12 hover:text-text-primary flex h-12 min-h-12 w-full shrink-0 items-center justify-center p-0 max-sm:mx-auto"
                 onClick={onCancelClick}
+                data-umami-event="lesson-info-cancel-init"
               >
-                <span className="xs:sr-only block">Отменить</span>
-                <Trash className="fill-gray-60 xs:ml-0 ml-2 h-5 w-5" />
+                <span className="xs:sr-only block">{t('cancel')}</span>
+                <Trash className="fill-icon-secondary xs:ml-0 ml-2 h-5 w-5" />
               </Button>
             ) : null}
             {isTutor ? (
               <Button
                 type="button"
                 variant="none"
-                className="bg-gray-5 text-gray-80 xs:w-12 flex h-12 min-h-12 w-full shrink-0 items-center justify-center p-0 hover:text-gray-100 max-sm:mx-auto"
+                className="bg-background-page text-text-primary xs:w-12 hover:text-text-primary flex h-12 min-h-12 w-full shrink-0 items-center justify-center p-0 max-sm:mx-auto"
                 onClick={openEdit}
-                aria-label="Редактировать"
+                aria-label={t('edit')}
+                data-umami-event="lesson-info-edit"
               >
-                <span className="xs:sr-only block">Редактировать</span>
-                <Edit05 className="text-gray-60 xs:ml-0 ml-2 h-5 w-5" />
+                <span className="xs:sr-only block">{t('edit')}</span>
+                <Edit05 className="text-text-secondary xs:ml-0 ml-2 h-5 w-5" />
               </Button>
             ) : null}
           </ModalFooter>

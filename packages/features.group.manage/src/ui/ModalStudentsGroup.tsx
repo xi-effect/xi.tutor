@@ -22,6 +22,7 @@ import { useAddStudentFromGroup, useDeleteStudentFromGroup } from '../services';
 import { useGroupStudentsList } from 'common.services';
 import { useParams } from '@tanstack/react-router';
 import { toast } from 'sonner';
+import { useTranslation } from 'react-i18next';
 
 type ModalStudentsGroupProps = {
   children?: React.ReactNode;
@@ -36,28 +37,36 @@ const cleanupBodyScrollLock = () => {
 };
 
 export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStudentsGroupProps) => {
+  const { t } = useTranslation('groupManage');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
 
-  const handleClose = () => {
-    onOpenChange?.(false);
-    cleanupBodyScrollLock();
+  const isControlled = open !== undefined;
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const isModalOpen = isControlled ? Boolean(open) : uncontrolledOpen;
+
+  const setModalOpen = (next: boolean) => {
+    if (!isControlled) setUncontrolledOpen(next);
+    onOpenChange?.(next);
+    if (!next) cleanupBodyScrollLock();
   };
 
+  const handleClose = () => setModalOpen(false);
+
   useEffect(() => {
-    if (open === false) cleanupBodyScrollLock();
+    if (!isModalOpen) cleanupBodyScrollLock();
     return cleanupBodyScrollLock;
-  }, [open]);
+  }, [isModalOpen]);
 
   const {
     data: allStudents,
     isLoading: isLoadingAllStudents,
     isError: isErrorAllStudents,
-  } = useStudentsList();
+  } = useStudentsList({ disabled: !isModalOpen });
   const {
     data: groupStudents,
     isLoading: isLoadingGroupStudents,
     isError: isErrorGroupStudents,
-  } = useGroupStudentsList(classroomId);
+  } = useGroupStudentsList(classroomId, { disabled: !isModalOpen });
 
   const [selectedStudents, setSelectedStudents] = useState<Set<number>>(new Set());
   const [isSaving, setIsSaving] = useState(false);
@@ -123,51 +132,57 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
       console.error('Ошибка при сохранении изменений:', error);
     } finally {
       setIsSaving(false);
-      toast.success('Изменения сохранены');
+      toast.success(t('toast.saved'));
     }
   };
 
   const isLoading = isLoadingAllStudents || isLoadingGroupStudents;
   const isError = isErrorAllStudents || isErrorGroupStudents;
+  const students = allStudents ?? [];
+  const isEmpty = !isLoading && !isError && students.length === 0;
 
   return (
-    <Modal
-      open={open}
-      onOpenChange={(next) => {
-        if (typeof next === 'boolean') onOpenChange?.(next);
-        if (next === false) cleanupBodyScrollLock();
-      }}
-    >
+    <Modal open={isModalOpen} onOpenChange={setModalOpen}>
       {children && <ModalTrigger asChild>{children}</ModalTrigger>}
       <ModalContent aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
-          <ModalTitle className="dark:text-gray-100">Добавление ученика в группу</ModalTitle>
+          <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
+            {t('title')}
+          </ModalTitle>
         </ModalHeader>
         <ModalBody className={cn('flex flex-col gap-4 px-2 pt-2')}>
           <ScrollArea className="h-[300px]">
-            <div className="flex flex-col">
+            <div className="flex h-full min-h-[300px] flex-col">
               {isLoading && (
-                <div className="flex h-20 items-center justify-center">
-                  <span className="text-gray-60">Загрузка...</span>
+                <div className="flex min-h-[300px] items-center justify-center">
+                  <span className="text-text-secondary">{t('loading')}</span>
                 </div>
               )}
               {isError && (
-                <div className="flex h-20 items-center justify-center">
-                  <span className="text-red-500">Ошибка загрузки данных</span>
+                <div className="flex min-h-[300px] items-center justify-center">
+                  <span className="text-text-danger">{t('loadError')}</span>
                 </div>
               )}
-              {!isLoading && !isError && allStudents?.length === 0 && (
-                <div className="flex h-20 items-center justify-center">
-                  <span className="text-gray-60">{'У вас пока нет студентов'}</span>
+              {isEmpty && (
+                <div
+                  className={cn(
+                    'border-border-default bg-background-surface dark:border-border-strong',
+                    'mx-2 flex min-h-[280px] flex-1 flex-col items-center justify-center gap-2 rounded-xl border border-dashed px-6 py-8 text-center',
+                  )}
+                >
+                  <p className="text-m-base text-text-primary font-semibold">{t('empty.title')}</p>
+                  <p className="text-s-base text-text-secondary dark:text-text-muted max-w-sm">
+                    {t('empty.description')}
+                  </p>
                 </div>
               )}
               {!isLoading &&
                 !isError &&
-                allStudents?.map((student: TutorStudentSchemaMarshal) => (
+                students.map((student: TutorStudentSchemaMarshal) => (
                   <div
                     key={student.tutorship.student_id}
-                    className="group hover:bg-gray-5 flex h-[48px] cursor-pointer flex-row items-center gap-2 rounded-2xl px-4"
+                    className="group hover:bg-background-page flex h-[48px] cursor-pointer flex-row items-center gap-2 rounded-2xl px-4"
                     onClick={() => handleStudentToggle(student.tutorship.student_id)}
                     data-umami-event="group-student-toggle"
                     data-umami-event-student-id={student.tutorship.student_id}
@@ -185,14 +200,20 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
         <ModalFooter className="flex gap-2">
           <Button
             onClick={handleSave}
-            disabled={isSaving || addStudentMutation.isPending || deleteStudentMutation.isPending}
+            disabled={
+              isEmpty || isSaving || addStudentMutation.isPending || deleteStudentMutation.isPending
+            }
             data-umami-event="group-students-save"
           >
-            {isSaving ? 'Сохранение...' : 'Сохранить'}
+            {isSaving ? t('actions.saving') : t('actions.save')}
           </Button>
           <Button
             variant="outline"
             onClick={() => {
+              if (isEmpty) {
+                handleClose();
+                return;
+              }
               // Сброс к исходному состоянию
               if (groupStudents && Array.isArray(groupStudents)) {
                 const groupStudentIds = new Set(
@@ -203,7 +224,7 @@ export const ModalStudentsGroup = ({ children, open, onOpenChange }: ModalStuden
             }}
             data-umami-event="group-students-cancel"
           >
-            Отмена
+            {t('actions.cancel')}
           </Button>
         </ModalFooter>
       </ModalContent>

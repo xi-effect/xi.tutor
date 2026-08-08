@@ -1,20 +1,24 @@
 import { useCallback } from 'react';
 import { Modal, ModalContent, ModalTitle, ModalBody } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   buildOccurrenceCancellationParams,
+  buildRepeatingCancellationStartsAt,
   useCancelEventInstance,
   useCancelRepeatedVirtualInstance,
-  useDeleteClassroomEvent,
+  useCancelRepeatingEventAfterTimestamp,
 } from 'common.services';
 
 /**
- * Метаданные для отмены: POST по инстансу / виртуальному повтору + числовой event_id для
- * удаления серии из кабинета («это и все последующие»).
+ * Метаданные для отмены: POST по инстансу / виртуальному повтору + числовой event_id и
+ * starts_at для отмены серии с выбранного вхождения («это и все последующие»).
  */
 export type LessonSchedulerMetaForCancel = {
   eventId: number;
+  /** ISO date-time начала вхождения (для POST .../events/{event_id}/cancellations/). */
+  startsAt: string;
   instanceKind: 'sole' | 'repeated_virtual' | 'repeated_persisted';
   eventInstanceId?: string;
   repetitionModeId?: string;
@@ -39,11 +43,12 @@ export const CancelLessonModal = ({
   schedulerMeta,
   onSuccess,
 }: CancelLessonModalProps) => {
+  const { t } = useTranslation('lessonCancel');
   const cancelInstance = useCancelEventInstance();
   const cancelVirtual = useCancelRepeatedVirtualInstance();
-  const deleteClassroomEvent = useDeleteClassroomEvent();
+  const cancelRepeatingAfter = useCancelRepeatingEventAfterTimestamp();
   const isPending =
-    cancelInstance.isPending || cancelVirtual.isPending || deleteClassroomEvent.isPending;
+    cancelInstance.isPending || cancelVirtual.isPending || cancelRepeatingAfter.isPending;
 
   const handleClose = () => {
     onOpenChange(false);
@@ -56,11 +61,11 @@ export const CancelLessonModal = ({
 
   const handleCancelThisOccurrence = () => {
     if (classroomId == null || classroomId <= 0) {
-      toast.error('Не удалось определить кабинет для отмены занятия.');
+      toast.error(t('errors.classroomUnknown'));
       return;
     }
     if (schedulerMeta == null) {
-      toast.error('Не удалось определить занятие для отмены.');
+      toast.error(t('errors.lessonUnknown'));
       return;
     }
 
@@ -72,7 +77,7 @@ export const CancelLessonModal = ({
     });
 
     if (target == null) {
-      toast.error('Не удалось определить занятие для отмены.');
+      toast.error(t('errors.lessonUnknown'));
       return;
     }
 
@@ -95,15 +100,30 @@ export const CancelLessonModal = ({
 
   const handleCancelThisAndFollowing = () => {
     if (classroomId == null || classroomId <= 0) {
-      toast.error('Не удалось определить кабинет для отмены занятия.');
+      toast.error(t('errors.classroomUnknown'));
       return;
     }
     if (schedulerMeta == null) {
-      toast.error('Не удалось определить занятие для отмены.');
+      toast.error(t('errors.lessonUnknown'));
       return;
     }
-    deleteClassroomEvent.mutate(
-      { classroomId, eventId: schedulerMeta.eventId },
+    if (schedulerMeta.startsAt.trim().length === 0) {
+      toast.error(t('errors.timeUnknown'));
+      return;
+    }
+
+    const cancellationStartsAt = buildRepeatingCancellationStartsAt(schedulerMeta.startsAt);
+    if (cancellationStartsAt == null) {
+      toast.error(t('errors.timeUnknown'));
+      return;
+    }
+
+    cancelRepeatingAfter.mutate(
+      {
+        classroomId,
+        eventId: schedulerMeta.eventId,
+        body: { starts_at: cancellationStartsAt },
+      },
       { onSuccess: finishSuccess },
     );
   };
@@ -113,12 +133,10 @@ export const CancelLessonModal = ({
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
       <ModalContent className="w-full max-w-[480px]" aria-describedby={undefined}>
-        <ModalTitle className="sr-only">Отменить занятие?</ModalTitle>
+        <ModalTitle className="sr-only">{t('title')}</ModalTitle>
         <ModalBody className="flex flex-col items-center gap-4 p-6">
-          <h3 className="text-xl-base font-semibold text-gray-100">Отменить занятие?</h3>
-          <p className="text-m-base text-gray-60 text-center">
-            Занятие нельзя будет восстановить после отмены
-          </p>
+          <h3 className="text-xl-base text-text-primary font-semibold">{t('title')}</h3>
+          <p className="text-m-base text-text-secondary text-center">{t('description')}</p>
 
           {isRecurring ? (
             <>
@@ -128,8 +146,9 @@ export const CancelLessonModal = ({
                 size="m"
                 onClick={handleCancelThisOccurrence}
                 disabled={isPending}
+                data-umami-event="lesson-cancel-this"
               >
-                Отменить это
+                {t('cancelThis')}
               </Button>
               <Button
                 className="w-full"
@@ -137,8 +156,9 @@ export const CancelLessonModal = ({
                 size="m"
                 onClick={handleCancelThisAndFollowing}
                 disabled={isPending}
+                data-umami-event="lesson-cancel-following"
               >
-                Отменить это и все последующие
+                {t('cancelThisAndFollowing')}
               </Button>
             </>
           ) : (
@@ -148,18 +168,20 @@ export const CancelLessonModal = ({
               size="m"
               onClick={handleCancelThisOccurrence}
               disabled={isPending}
+              data-umami-event="lesson-cancel-single"
             >
-              Отменить занятие
+              {t('cancelLesson')}
             </Button>
           )}
           <Button
             variant="none"
             size="m"
-            className="text-m-base w-full cursor-pointer font-semibold text-gray-100"
+            className="text-m-base text-text-primary w-full cursor-pointer font-semibold"
             onClick={handleClose}
             disabled={isPending}
+            data-umami-event="lesson-cancel-dismiss"
           >
-            Закрыть
+            {t('close')}
           </Button>
         </ModalBody>
       </ModalContent>

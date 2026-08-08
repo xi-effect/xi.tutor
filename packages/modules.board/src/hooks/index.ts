@@ -1,7 +1,15 @@
 export { useThrottle } from './useThrottle';
+export {
+  useBoardBackground,
+  useBoardBackgroundState,
+  useBoardBackgroundSync,
+} from './useBoardBackground';
 export { useYjsStore } from './useYjsStore';
-export { useRemoveMark } from './useRemoveMark';
-export { useTldrawStyles } from './useTldrawStyles';
+export { useDrawStyles } from './useDrawStyles';
 export { useHotkeys } from './useHotkeys';
 export { useLockedShapeSelection } from './useLockedShapeSelection';
-export { useTldrawClipboard } from './useTldrawClipboard';
+export { useDrawClipboard } from './useDrawClipboard';
+export { useOverlayRepaintOnSelection } from './useOverlayRepaintOnSelection';
+export { useEditOnTypeForLabels } from './useEditOnTypeForLabels';
+export { useProductBoardAnalytics } from './useProductBoardAnalytics';
+export { useBoardDeepLinkFocus, useCopyBoardDeepLink } from './useBoardDeepLinkFocus';

@@ -136,6 +136,7 @@ const statusMessages: Record<number, string> = {
   401: 'Необходима авторизация',
   403: 'Недостаточно прав',
   404: 'Ресурс не найден',
+  413: 'Слишком большой файл',
   422: 'Ошибка валидации данных',
   500: 'Внутренняя ошибка сервера',
 };
@@ -145,7 +146,7 @@ const successMessages: Record<ErrorType, string> = {
   profile: 'Профиль успешно обновлен',
   email: 'Email успешно обновлен. Проверьте почту для подтверждения.',
   password: 'Пароль успешно обновлен',
-  resetPassword: 'Пароль успешно сброшен',
+  resetPassword: 'Пароль изменён',
   materials: 'Материал успешно создан',
   role: 'Роль пользователя успешно обновлена',
   addInvitation: 'Новое приглашение добавлено',
@@ -195,6 +196,8 @@ export const handleError = (error: unknown, type: ErrorType): void => {
 
     // Общая ошибка для типа операции
     toast.error(`Произошла ошибка при ${getOperationName(type)}`);
+  } else if (error instanceof Error && error.message) {
+    toast.error(error.message);
   } else {
     toast.error('Произошла неизвестная ошибка');
   }

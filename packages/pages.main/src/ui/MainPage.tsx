@@ -1,9 +1,11 @@
 /* eslint-disable no-irregular-whitespace */
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Materials, Payments, Classrooms, FirstLessonGuideBanner } from './components';
-import { DateTimeDisplay, OnboardingPopup } from 'common.ui';
+import { MobileTutorActionButton } from 'features.invites';
+import { OnboardingPopup } from 'common.ui';
 import { useCurrentUser } from 'common.services';
-import { useMediaQuery } from '@xipkg/utils';
+import { cn, useMediaQuery } from '@xipkg/utils';
 import { NearestLessonCard, useStudentSchedule, useTutorSchedule } from 'modules.calendar';
 import { MovingLessonModal } from 'features.lesson.move';
 import { Lessons } from './components/Lessons/Lessons';
@@ -25,6 +27,7 @@ const getNearestLessonRange = () => {
 };
 
 export const MainPage = () => {
+  const { t } = useTranslation('main');
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
@@ -53,115 +56,117 @@ export const MainPage = () => {
     return upcoming[0] ? scheduleItemToLessonRow(upcoming[0]) : null;
   }, [scheduleQuery.data]);
 
-  const steps = [
-    {
-      element: '#sidebar',
-      popover: {
-        description: `Используйте панель слева, чтобы открыть Главную страницу, Кабинеты, Материалы или Контроль оплат`,
+  const steps = useMemo(
+    () => [
+      {
+        element: '#sidebar',
+        popover: {
+          description: t('onboarding.sidebar'),
+        },
       },
-    },
-    {
-      element: '#userprofile',
-      popover: {
-        description: `${
-          isTutor
-            ? 'В настройках можно поменять почту и пароль, подключить мессенджеры для получения уведомлений и настроить ваше оборудование для проведения видеозвонков с учениками'
-            : 'В настройках можно поменять почту и пароль, подключить мессенджеры для уведомлений и настроить видеозвонки'
-        }`,
+      {
+        element: '#userprofile',
+        popover: {
+          description: isTutor
+            ? t('onboarding.userProfileTutor')
+            : t('onboarding.userProfileStudent'),
+        },
+        side: 'bottom' as const,
+        align: 'end' as const,
       },
-      side: 'bottom' as const,
-      align: 'end' as const,
-    },
-    {
-      element: '#classrooms-menu-item',
-      popover: {
-        description: `Кабинет — виртуальное пространство для учёбы. В кабинете вы найдёте материалы, расписание и информацию об оплатах`,
+      {
+        element: '#classrooms-menu-item',
+        popover: {
+          description: t('onboarding.classrooms'),
+        },
       },
-    },
-    {
-      element: '#userprofile',
-      popover: {
-        description: `${isTutor ? '' : 'Переходите по ссылкам-приглашениям от репетиторов, чтобы добавлять новые кабинеты'}`,
+      {
+        element: '#userprofile',
+        popover: {
+          description: isTutor ? '' : t('onboarding.inviteLinksStudent'),
+        },
+        side: 'bottom' as const,
+        align: 'end' as const,
       },
-      side: 'bottom' as const,
-      align: 'end' as const,
-    },
-    {
-      element: '#invite-student-button',
-      popover: {
-        description: 'Отправьте ученику ссылку-приглашение',
+      {
+        element: '#invite-student-button',
+        popover: {
+          description: t('onboarding.inviteStudent'),
+        },
+        side: 'bottom' as const,
+        align: 'end' as const,
       },
-      side: 'bottom' as const,
-      align: 'end' as const,
-    },
-    {
-      element: '#create-group-button',
-      popover: {
-        description: `Или создайте группу и приглашайте учеников по общей ссылке.<br />
-Если вы назначите групповое занятие, каждый ученик группы получит уведомление.
-Материалы группы доступны всем её участникам`,
+      {
+        element: '#create-group-button',
+        popover: {
+          description: t('onboarding.createGroup'),
+        },
+        side: 'bottom' as const,
+        align: 'end' as const,
       },
-      side: 'bottom' as const,
-      align: 'end' as const,
-    },
-    {
-      element: '#materials-menu-item',
-      popover: {
-        description: `Храните онлайн-доски и заметки в Материалах`,
+      {
+        element: '#materials-menu-item',
+        popover: {
+          description: t('onboarding.materials'),
+        },
+        side: 'right' as const,
+        align: 'start' as const,
       },
-      side: 'right' as const,
-      align: 'start' as const,
-    },
-    {
-      element: '#payments-menu-item',
-      popover: {
-        description: `Контроль оплат поможет вам отслеживать все финансы внутри платформы: предстоящие, совершённые и просроченные платежи`,
+      {
+        element: '#payments-menu-item',
+        popover: {
+          description: t('onboarding.payments'),
+        },
       },
-    },
-    {
-      element: '#create-invoice-button',
-      popover: {
-        description: `Чтобы получить оплату за занятие, выставите ученику счёт.<br />
-Если ученик не оплатит счет, вам не придется напоминать ему об этом: он получит автоматическое уведомление о просроченном платеже`,
+      {
+        element: '#create-invoice-button',
+        popover: {
+          description: t('onboarding.createInvoice'),
+        },
+        side: 'bottom' as const,
+        align: 'end' as const,
       },
-      side: 'bottom' as const,
-      align: 'end' as const,
-    },
-    {
-      element: '#hints-button',
-      popover: {
-        description: `${
-          isTutor
-            ? 'Если нужна помощь, нажмите сюда, чтобы посмотреть подсказки заново, или напишите в поддержку.<br />Желаем удачи!<br />Команда sovlium'
-            : 'Если нужна помощь, посмотрите подсказки заново или напишите в поддержку.<br />Отличной учёбы!<br />Команда sovlium'
-        }`,
+      {
+        element: '#hints-button',
+        popover: {
+          description: isTutor ? t('onboarding.hintsTutor') : t('onboarding.hintsStudent'),
+        },
+        side: 'right' as const,
+        align: 'end' as const,
       },
-      side: 'right' as const,
-      align: 'end' as const,
-    },
-  ];
+    ],
+    [isTutor, t],
+  );
 
   return (
-    <div className="bg-gray-5 flex h-full min-h-0 flex-col">
-      {/* Шапка на всю ширину контентной области; не участвует в прокрутке ниже */}
-      {!isMobile && (
-        <div className="shrink-0 p-5">
-          <DateTimeDisplay />
-        </div>
+    <div
+      className={cn(
+        'bg-background-page flex flex-col',
+        isMobile
+          ? 'max-h-[calc(100dvh-64px)] overflow-y-auto overscroll-contain'
+          : 'h-full min-h-0',
       )}
-      {/* Ниже шапки — оставшаяся высота; справа один скролл по кабинетам / оплатам / материалам */}
-      <div className="flex min-h-0 flex-1 flex-col">
-        <div className="flex min-h-0 flex-1 flex-col items-start gap-4 p-5 sm:flex-row sm:py-0 sm:pr-0">
+    >
+      {/* На мобильных — одна прокрутка всей страницы; на десктопе — только правая колонка */}
+      <div className={cn('flex flex-col', !isMobile && 'min-h-0 flex-1')}>
+        <div
+          className={cn(
+            'flex flex-col items-start gap-4 pt-5 pr-0 pl-5',
+            isMobile ? 'pb-12' : 'min-h-0 flex-1 gap-6 pb-0 sm:flex-row sm:gap-8 sm:pt-10 sm:pl-10',
+          )}
+        >
           {!isMobile && (
-            <div className="lg:bg-gray-5 flex shrink-0 flex-col pb-6 lg:sticky lg:top-0 lg:z-10 lg:self-start">
+            <div className="lg:bg-background-page flex shrink-0 flex-col lg:sticky lg:top-0 lg:z-10 lg:self-start">
               <Lessons />
             </div>
           )}
           {isMobile && !isNearestLoading && nearestLesson == null && (
-            <div className="border-gray-10 bg-gray-0 flex w-full flex-col items-center gap-2 rounded-2xl border border-dashed px-4 py-6 text-center">
-              <p className="text-m-base font-semibold text-gray-100">Занятий нет</p>
-              <p className="text-s-base text-gray-60">
-                В ближайшие {NEAREST_LESSON_DAYS} дней занятий не запланировано
+            <div className="border-border-default bg-background-surface flex w-full flex-col items-center gap-2 rounded-2xl border border-dashed px-4 py-6 text-center">
+              <p className="text-m-base text-text-primary font-semibold">
+                {t('nearestLessons.emptyTitle')}
+              </p>
+              <p className="text-s-base text-text-secondary">
+                {t('nearestLessons.emptyDescription', { days: NEAREST_LESSON_DAYS })}
               </p>
             </div>
           )}
@@ -178,7 +183,13 @@ export const MainPage = () => {
               />
             </>
           )}
-          <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col gap-5 self-stretch overscroll-contain pb-6 sm:overflow-y-auto">
+          <div
+            className={cn(
+              'flex w-full min-w-0 flex-col gap-5 self-stretch',
+              !isMobile &&
+                'min-h-0 flex-1 overflow-x-hidden overscroll-contain pr-3 pb-6 sm:overflow-y-auto sm:pb-10',
+            )}
+          >
             {!isMobile && isTutor && <FirstLessonGuideBanner />}
             <Classrooms />
             <Payments />
@@ -186,6 +197,7 @@ export const MainPage = () => {
           </div>
         </div>
       </div>
+      <MobileTutorActionButton variant="main" />
       <OnboardingPopup steps={steps} disabled={false} />
     </div>
   );

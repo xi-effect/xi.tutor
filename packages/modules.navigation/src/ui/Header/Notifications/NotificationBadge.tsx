@@ -11,9 +11,9 @@ interface NotificationBadgeProps {
 }
 
 const pillClassName =
-  'text-xxs-base-size items-center justify-center bg-(--xi-pink-20) font-medium leading-none tabular-nums text-(--xi-pink-60)';
+  'text-xxs-base-size items-center justify-center bg-tag-pink-background font-medium leading-none tabular-nums text-tag-pink-accent';
 
-/** Счётчик непрочитанных в бейдже `--xi-pink-20` / `--xi-pink-60` */
+/** Счётчик непрочитанных: tag-pink токены (адаптируются к data-theme) */
 export const NotificationBadge = ({
   count,
   className,
@@ -27,7 +27,7 @@ export const NotificationBadge = ({
       <div
         className={cn(
           pillClassName,
-          'inline-flex w-fit min-w-6 shrink-0 rounded-lg bg-(--xi-pink-20) px-2 text-[12px] text-(--xi-pink-60)',
+          'inline-flex w-fit min-w-6 shrink-0 rounded-lg px-2 text-[12px]',
           className,
         )}
         style={{ height: 24, minHeight: 24, boxSizing: 'border-box' }}

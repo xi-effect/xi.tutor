@@ -1,17 +1,10 @@
-import { useDeleteTgConnection } from 'common.services';
-import { useQueryClient } from '@tanstack/react-query';
-import { NotificationsQueryKey } from 'common.api';
+import { useDeleteDeliveryMethod } from 'common.services';
 
 export const useDisconnectTg = () => {
-  const { mutate } = useDeleteTgConnection();
-  const queryClient = useQueryClient();
+  const { mutate } = useDeleteDeliveryMethod();
 
   const handleDisconnectTg = () => {
-    mutate(undefined, {
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: [NotificationsQueryKey.NotificationsSettings] });
-      },
-    });
+    mutate('telegram');
   };
 
   return { handleDisconnectTg };

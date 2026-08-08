@@ -37,13 +37,3 @@ export async function readClipboardHtml(): Promise<string> {
   }
   return '';
 }
-
-export function extractClipboardImages(event: ClipboardEvent): File[] {
-  const clipboardData = event.clipboardData;
-  if (!clipboardData) return [];
-  const items = Array.from(clipboardData.items);
-  return items
-    .filter((item) => item.type.startsWith('image/'))
-    .map((item) => item.getAsFile())
-    .filter((f): f is File => !!f);
-}

@@ -22,12 +22,22 @@ export {
   useCancelLessonModal,
   useChangeLessonModal,
   useLessonInfoModal,
+  useScheduleViewMode,
+  type ScheduleViewMode,
+  SCHEDULE_VIEW_MODE_STORAGE_KEY,
 } from './src/hooks';
+export { COLUMN_MIN_WIDTH, KANBAN_SCROLL_INNER_PADDING_END_PX } from './src/hooks/useKanbanColumns';
 export {
   DayLessonListMetaProvider,
   useDayLessonListMeta,
 } from './src/ui/contexts/DayLessonListMetaContext';
-export { useSetEvents, useSetEventsLoading } from './src/store/eventsStore';
+export {
+  useSetEvents,
+  useSetEventsLoading,
+  useAddEvent,
+  useCalendarEvents,
+  useEventsLoading,
+} from './src/store/eventsStore';
 export type { UseLessonInfoModalOptions } from './src/hooks/useLessonInfoModal';
 export type { UseChangeLessonModalOptions } from './src/hooks/useChangeLessonModal';
 export { calendarEn, calendarRu } from './src/locales';
@@ -47,6 +57,7 @@ export {
   weekdaysToBitmask,
 } from './src/utils/bitmaskTimezone';
 export { toLocalISOString } from './src/utils/dateTimezone';
+export { resolveSchedulerStartsAt } from './src/utils/resolveSchedulerStartsAt';
 export { findNearestLessonIndex } from './src/utils/findNearestLessonIndex';
 export { useScheduleLessonRowsForDay } from './src/hooks/useScheduleLessonRowsForDay';
 export {

@@ -1,7 +1,7 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { YjsProvider } from '../providers/YjsProvider';
 import { TiptapEditor } from './components/TiptapEditor';
 import { useParams } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 import {
   useCurrentUser,
   useGetClassroomStorageItem,
@@ -11,7 +11,16 @@ import {
 import { StorageItemT } from 'common.types';
 import { LoadingScreen } from 'common.ui';
 
+type TEditorWithData = {
+  storageItem: StorageItemT;
+};
+
+type TEditor = {
+  storageItem?: StorageItemT;
+};
+
 const EditorWithoutData = () => {
+  const { t } = useTranslation('editor');
   const { classroomId, noteId, materialId } = useParams({ strict: false });
 
   const { data: user } = useCurrentUser();
@@ -48,7 +57,9 @@ const EditorWithoutData = () => {
   if (storageItemError)
     return (
       <div className="flex min-h-screen items-center justify-center">
-        <div className="text-lg text-red-500">Ошибка загрузки: {storageItemError.message}</div>
+        <div className="text-text-danger text-lg">
+          {t('status.loadError', { message: storageItemError.message })}
+        </div>
       </div>
     );
 
@@ -63,7 +74,7 @@ const EditorWithoutData = () => {
   );
 };
 
-const EditorWithData = ({ storageItem }: { storageItem: StorageItemT }) => {
+const EditorWithData = ({ storageItem }: TEditorWithData) => {
   return (
     <YjsProvider key={storageItem.ydoc_id} data={storageItem}>
       <TiptapEditor />
@@ -71,7 +82,7 @@ const EditorWithData = ({ storageItem }: { storageItem: StorageItemT }) => {
   );
 };
 
-export const Editor = ({ storageItem }: { storageItem?: StorageItemT }) => {
+export const Editor = ({ storageItem }: TEditor) => {
   if (storageItem) {
     return <EditorWithData storageItem={storageItem} />;
   }

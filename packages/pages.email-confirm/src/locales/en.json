@@ -1,0 +1,5 @@
+{
+  "success": "Email confirmed",
+  "error": "Error confirming email",
+  "backToApp": "Back to the app"
+}

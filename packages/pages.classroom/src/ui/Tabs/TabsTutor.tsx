@@ -1,10 +1,9 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { Tabs } from '@xipkg/tabs';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { Add, Plus } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
-import { ActionButton } from '@xipkg/actionbutton';
 
 import { InformationLayout } from '../Information';
 import { ClassroomScheduleProvider } from '../Calendar/ClassroomScheduleContext';
@@ -13,29 +12,24 @@ import { AddingLessonModal } from 'features.lesson.add';
 import type { FormData as AddingLessonFormData } from 'features.lesson.add';
 import { MaterialsAdd } from 'features.materials.add';
 import { useGetClassroom, useAddClassroomMaterials, useDeleteClassroom } from 'common.services';
+import { ConfirmDialog, switcherTabClass } from 'common.ui';
+import { cn } from '@xipkg/utils';
 import { useCreateClassroomEvent } from 'modules.calendar';
 import { ModalStudentsGroup } from 'features.group.manage';
 import { ModalGroupInvite } from 'features.group.invite';
 import { InvoiceModal } from 'features.invoice';
+import { useTranslation } from 'react-i18next';
 
 import { SharedTabsContent } from './SharedTabsContent';
 import { useTabNavigation } from './useTabNavigation';
 import { buildCreateClassroomEventRequest } from '../Calendar/schedulerMapping';
+import { ClassroomMobileActionButton } from './ClassroomMobileActionButton';
+import { ClassroomMobileTabSwitcher } from './ClassroomMobileTabSwitcher';
 
 // --- Типы ---
 
 type ContentKind = 'note' | 'board';
 type StudentAccessMode = 'no_access' | 'read_only' | 'read_write';
-
-// --- Конфигурация табов ---
-
-const tabs = [
-  { id: 'overview', label: 'Сводка' },
-  { id: 'materials', label: 'Материалы' },
-  { id: 'schedule', label: 'Расписание' },
-  { id: 'payments', label: 'Оплаты' },
-  { id: 'info', label: 'Информация' },
-];
 
 // --- TutorDesktopToolbar ---
 
@@ -56,6 +50,8 @@ const TutorDesktopToolbar = ({
   onDeleteClassroom,
   isDeletingClassroom,
 }: TutorDesktopToolbarProps) => {
+  const { t } = useTranslation('classroom');
+
   if (currentTab === 'overview' && classroomKind === 'group') {
     return (
       <>
@@ -66,7 +62,7 @@ const TutorDesktopToolbar = ({
             className="ml-auto rounded-lg"
             data-umami-event="classroom-add-student"
           >
-            Добавить ученика
+            {t('actions.addStudent')}
           </Button>
         </ModalStudentsGroup>
         <ModalGroupInvite>
@@ -76,14 +72,20 @@ const TutorDesktopToolbar = ({
             className="ml-1 rounded-lg"
             data-umami-event="classroom-invite-to-group"
           >
-            Пригласить в группу
+            {t('actions.inviteToGroup')}
           </Button>
         </ModalGroupInvite>
       </>
     );
   }
 
-  if (currentTab === 'materials') return <MaterialsAdd />;
+  if (currentTab === 'materials') {
+    return (
+      <div className="ml-auto flex shrink-0 items-center gap-2">
+        <MaterialsAdd />
+      </div>
+    );
+  }
 
   if (currentTab === 'schedule') {
     return (
@@ -92,12 +94,12 @@ const TutorDesktopToolbar = ({
         <Button
           type="button"
           variant="none"
-          className="bg-brand-0 hover:bg-brand-20/50 active:bg-brand-20/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
+          className="bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
           onClick={onAddLessonClick}
           data-umami-event="classroom-add-lesson"
-          aria-label="Добавить занятие"
+          aria-label={t('actions.addLesson')}
         >
-          <Add className="fill-brand-80 size-6" />
+          <Add className="fill-icon-brand size-6" />
         </Button>
       </div>
     );
@@ -111,8 +113,8 @@ const TutorDesktopToolbar = ({
         onClick={onOpenInvoiceModal}
         data-umami-event="classroom-create-invoice"
       >
-        <span className="hidden sm:flex">Создать счёт на оплату</span>
-        <Plus size="sm" className="fill-brand-0 flex sm:hidden" />
+        <span className="hidden sm:flex">{t('actions.createInvoice')}</span>
+        <Plus size="sm" className="fill-action-primary-text flex sm:hidden" />
       </Button>
     );
   }
@@ -122,12 +124,12 @@ const TutorDesktopToolbar = ({
       <Button
         size="s"
         variant="text"
-        className="bg-red-20/50 text-red-60 hover:bg-red-20/80 hover:text-red-60 ml-auto rounded-lg"
+        className="bg-status-error-background/50 text-text-danger hover:bg-status-error-background/80 hover:text-text-danger ml-auto rounded-lg"
         onClick={onDeleteClassroom}
         disabled={isDeletingClassroom}
         data-umami-event="classroom-delete"
       >
-        {isDeletingClassroom ? 'Удаление...' : 'Удалить кабинет'}
+        {isDeletingClassroom ? t('actions.deleting') : t('actions.deleteClassroom')}
       </Button>
     );
   }
@@ -135,158 +137,32 @@ const TutorDesktopToolbar = ({
   return null;
 };
 
-// --- TutorMobileActions ---
-
-interface TutorMobileActionsProps {
-  currentTab: string;
-  classroomKind: string | undefined;
-  isPendingAddMaterial: boolean;
-  isDeletingClassroom: boolean;
-  isStudentsModalOpen: boolean;
-  isGroupInviteModalOpen: boolean;
-  onAddMaterial: (contentKind: ContentKind, studentAccessMode: StudentAccessMode) => void;
-  onOpenInvoiceModal: () => void;
-  onDeleteClassroom: () => void;
-  onStudentsModalChange: (open: boolean) => void;
-  onGroupInviteModalChange: (open: boolean) => void;
-}
-
-const TutorMobileActions = ({
-  currentTab,
-  classroomKind,
-  isPendingAddMaterial,
-  isDeletingClassroom,
-  isStudentsModalOpen,
-  isGroupInviteModalOpen,
-  onAddMaterial,
-  onOpenInvoiceModal,
-  onDeleteClassroom,
-  onStudentsModalChange,
-  onGroupInviteModalChange,
-}: TutorMobileActionsProps) => (
-  <>
-    <ActionButton
-      classname="fixed bottom-5 right-4 z-50 h-[64px] w-[64px] rounded-2xl"
-      dropdownContentProps={{ className: 'w-auto py-2' }}
-    >
-      {({ MenuItem }) => (
-        <>
-          {currentTab === 'overview' && classroomKind === 'group' && (
-            <>
-              <MenuItem
-                className="h-[48px] rounded-xl px-4 text-[22px]"
-                data-umami-event="classroom-add-student"
-                onClick={() => onStudentsModalChange(true)}
-              >
-                Добавить ученика
-              </MenuItem>
-              <MenuItem
-                className="h-[48px] rounded-xl px-4 text-[22px]"
-                data-umami-event="classroom-invite-to-group"
-                onClick={() => onGroupInviteModalChange(true)}
-              >
-                Пригласить в группу
-              </MenuItem>
-            </>
-          )}
-          {currentTab === 'materials' && (
-            <>
-              <MenuItem
-                className="h-[48px] rounded-xl px-4 text-[22px]"
-                onClick={() => onAddMaterial('note', 'read_write')}
-                disabled={isPendingAddMaterial}
-                data-umami-event="material-create-note"
-                data-umami-event-access-mode="read_write"
-              >
-                Заметка: Совместная работа
-              </MenuItem>
-              <MenuItem
-                className="h-[48px] rounded-xl px-4 text-[22px]"
-                onClick={() => onAddMaterial('note', 'read_only')}
-                disabled={isPendingAddMaterial}
-                data-umami-event="material-create-note"
-                data-umami-event-access-mode="read_only"
-              >
-                Заметка: Только репетитор
-              </MenuItem>
-              <MenuItem
-                className="h-[48px] rounded-xl px-4 text-[22px]"
-                onClick={() => onAddMaterial('note', 'no_access')}
-                disabled={isPendingAddMaterial}
-                data-umami-event="material-create-note"
-                data-umami-event-access-mode="no_access"
-              >
-                Заметка: Черновики
-              </MenuItem>
-              <MenuItem
-                className="h-[48px] rounded-xl px-4 text-[22px]"
-                onClick={() => onAddMaterial('board', 'read_write')}
-                disabled={isPendingAddMaterial}
-                data-umami-event="material-create-board"
-                data-umami-event-access-mode="read_write"
-              >
-                Доска: Совместная работа
-              </MenuItem>
-              <MenuItem
-                className="h-[48px] rounded-xl px-4 text-[22px]"
-                onClick={() => onAddMaterial('board', 'read_only')}
-                disabled={isPendingAddMaterial}
-                data-umami-event="material-create-board"
-                data-umami-event-access-mode="read_only"
-              >
-                Доска: Только репетитор
-              </MenuItem>
-              <MenuItem
-                className="h-[48px] rounded-xl px-4 text-[22px]"
-                onClick={() => onAddMaterial('board', 'no_access')}
-                disabled={isPendingAddMaterial}
-                data-umami-event="material-create-board"
-                data-umami-event-access-mode="no_access"
-              >
-                Доска: Черновики
-              </MenuItem>
-            </>
-          )}
-          {currentTab === 'payments' && (
-            <MenuItem
-              className="h-[48px] w-full rounded-xl px-4 text-[22px]"
-              onClick={onOpenInvoiceModal}
-              data-umami-event="classroom-create-invoice"
-            >
-              Создать счёт на оплату
-            </MenuItem>
-          )}
-          {currentTab === 'info' && (
-            <MenuItem
-              className="text-red-60 h-[48px] w-full rounded-xl px-4 text-[22px]"
-              onClick={onDeleteClassroom}
-              disabled={isDeletingClassroom}
-              data-umami-event="classroom-delete"
-            >
-              {isDeletingClassroom ? 'Удаление...' : 'Удалить кабинет'}
-            </MenuItem>
-          )}
-        </>
-      )}
-    </ActionButton>
-    <ModalStudentsGroup open={isStudentsModalOpen} onOpenChange={onStudentsModalChange} />
-    <ModalGroupInvite open={isGroupInviteModalOpen} onOpenChange={onGroupInviteModalChange} />
-  </>
-);
-
 // --- TabsTutor ---
 
 export const TabsTutor = () => {
+  const { t } = useTranslation('classroom');
   const { isMobile, currentTab, handleTabChange } = useTabNavigation({
     normalizeMaterialTabs: true,
   });
   const navigate = useNavigate();
+
+  const tabs = useMemo(
+    () => [
+      { id: 'overview', label: t('tabs.overview') },
+      { id: 'materials', label: t('tabs.materials') },
+      { id: 'schedule', label: t('tabs.schedule') },
+      { id: 'payments', label: t('tabs.payments') },
+      { id: 'info', label: t('tabs.info') },
+    ],
+    [t],
+  );
 
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [isStudentsModalOpen, setIsStudentsModalOpen] = useState(false);
   const [isGroupInviteModalOpen, setIsGroupInviteModalOpen] = useState(false);
   const [addLessonOpen, setAddLessonOpen] = useState(false);
   const [addLessonInitialDate, setAddLessonInitialDate] = useState<Date | null>(null);
+  const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
   const handleAddLessonClick = useCallback((date?: Date) => {
     setAddLessonInitialDate(date ?? null);
@@ -299,11 +175,20 @@ export const TabsTutor = () => {
   const { deleteClassroom, isDeleting: isDeletingClassroom } = useDeleteClassroom();
   const createClassroomEvent = useCreateClassroomEvent();
 
-  const handleDeleteClassroom = () => {
+  const handleDeleteClassroomClick = () => {
+    setDeleteConfirmOpen(true);
+  };
+
+  const handleConfirmDeleteClassroom = () => {
     if (!classroomId) return;
     deleteClassroom(
       { classroomId: Number(classroomId) },
-      { onSuccess: () => navigate({ to: '/classrooms' }) },
+      {
+        onSuccess: () => {
+          setDeleteConfirmOpen(false);
+          navigate({ to: '/classrooms' });
+        },
+      },
     );
   };
 
@@ -333,6 +218,17 @@ export const TabsTutor = () => {
     await createClassroomEvent.mutateAsync({
       classroomId: Number(classroomId),
       body: buildCreateClassroomEventRequest(data),
+      analytics: {
+        source: 'classroom',
+        lesson_type:
+          classroom?.kind === 'group'
+            ? 'group'
+            : classroom?.kind === 'individual'
+              ? 'individual'
+              : 'unknown',
+        is_recurring: data.repeatMode !== 'none',
+        has_description: Boolean(data.description?.trim()),
+      },
     });
   };
 
@@ -344,27 +240,35 @@ export const TabsTutor = () => {
           value={currentTab}
           onValueChange={handleTabChange}
         >
-          <div className="bg-gray-0 mr-4 flex h-[56px] flex-row items-center gap-4 overflow-x-auto rounded-2xl px-2">
-            <SwitcherAnimate
-              tabs={tabs}
-              activeTab={currentTab}
-              onChange={handleTabChange}
-              className="bg-gray-0 flex flex-row gap-0 max-sm:w-full"
-              tabClassName="text-m-base font-medium text-gray-100 hover:bg-gray-5"
-            />
-            {!isMobile && (
-              <TutorDesktopToolbar
-                currentTab={currentTab}
-                classroomKind={classroom?.kind}
-                onAddLessonClick={() => handleAddLessonClick()}
-                onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
-                onDeleteClassroom={handleDeleteClassroom}
-                isDeletingClassroom={isDeletingClassroom}
+          <div className="bg-background-surface mx-5 flex h-[56px] flex-row items-center gap-4 rounded-2xl px-2 sm:mx-10">
+            {isMobile ? (
+              <ClassroomMobileTabSwitcher
+                tabs={tabs}
+                activeTab={currentTab}
+                onChange={handleTabChange}
               />
+            ) : (
+              <>
+                <SwitcherAnimate
+                  tabs={tabs}
+                  activeTab={currentTab}
+                  onChange={handleTabChange}
+                  className="bg-background-surface flex flex-row gap-0"
+                  tabClassName={cn(switcherTabClass, 'text-m-base font-medium')}
+                />
+                <TutorDesktopToolbar
+                  currentTab={currentTab}
+                  classroomKind={classroom?.kind}
+                  onAddLessonClick={() => handleAddLessonClick()}
+                  onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
+                  onDeleteClassroom={handleDeleteClassroomClick}
+                  isDeletingClassroom={isDeletingClassroom}
+                />
+              </>
             )}
           </div>
 
-          <div className="bg-gray-0 flex min-h-0 min-w-0 flex-1 flex-col rounded-tl-2xl pt-0 pl-4">
+          <div className="bg-background-surface mb-5 ml-5 flex min-h-0 min-w-0 flex-1 flex-col rounded-l-2xl pt-0 pb-40 pl-5 sm:mb-10 sm:ml-10 sm:pb-10 sm:pl-4">
             <SharedTabsContent
               extraContent={
                 <Tabs.Content className="data-[state=inactive]:hidden" value="info">
@@ -380,6 +284,7 @@ export const TabsTutor = () => {
             initialDate={addLessonInitialDate}
             fixedClassroomId={Number(classroomId)}
             onSubmit={handleAddLessonSubmit}
+            analyticsSource="classroom"
           />
 
           {isInvoiceModalOpen && (
@@ -387,7 +292,7 @@ export const TabsTutor = () => {
           )}
 
           {isMobile && (
-            <TutorMobileActions
+            <ClassroomMobileActionButton
               currentTab={currentTab}
               classroomKind={classroom?.kind}
               isPendingAddMaterial={addClassroomMaterials.isPending}
@@ -396,12 +301,27 @@ export const TabsTutor = () => {
               isGroupInviteModalOpen={isGroupInviteModalOpen}
               onAddMaterial={handleAddMaterial}
               onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
-              onDeleteClassroom={handleDeleteClassroom}
+              onDeleteClassroom={handleDeleteClassroomClick}
               onStudentsModalChange={setIsStudentsModalOpen}
               onGroupInviteModalChange={setIsGroupInviteModalOpen}
             />
           )}
         </Tabs.Root>
+
+        <ConfirmDialog
+          open={deleteConfirmOpen}
+          onOpenChange={setDeleteConfirmOpen}
+          title={t('actions.deleteClassroomConfirmTitle')}
+          description={t('actions.deleteClassroomConfirmDescription', {
+            name: classroom?.name ?? '',
+          })}
+          confirmLabel={
+            isDeletingClassroom ? t('actions.deleting') : t('actions.deleteClassroomConfirmAction')
+          }
+          cancelLabel={t('actions.deleteClassroomConfirmCancel')}
+          onConfirm={handleConfirmDeleteClassroom}
+          isPending={isDeletingClassroom}
+        />
       </div>
     </ClassroomScheduleProvider>
   );

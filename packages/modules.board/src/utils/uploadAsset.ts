@@ -1,0 +1,67 @@
+import { Editor } from '@ibodr/draw';
+import { insertAudio, insertPdf, insertPresentation } from '../features';
+import { insertFile } from '../features/pickAndInsertFile';
+import { isFileNameTooLong, MAX_FILENAME_LENGTH, type RetryRequest } from 'common.services';
+import { insertImage } from '../features/pickAndInsertImage';
+import {
+  ALLOWED_AUDIO_MIME_TYPES,
+  ALLOWED_FILE_MIME_TYPES,
+  ALLOWED_IMAGE_MIME_TYPES,
+} from '../constants/mimeTypes';
+import { toast } from 'sonner';
+import i18n from 'i18next';
+
+export type AssetType = 'img' | 'pdf' | 'file' | 'audio' | 'presentation';
+
+export function checkAssetType(asset: File): AssetType | null {
+  if (ALLOWED_IMAGE_MIME_TYPES.has(asset.type)) return 'img';
+  if (ALLOWED_AUDIO_MIME_TYPES.has(asset.type)) return 'audio';
+  if (asset.type === 'application/pdf') return 'pdf';
+  if (asset.name.toLowerCase().endsWith('.pptx')) return 'presentation';
+  if (ALLOWED_FILE_MIME_TYPES.has(asset.type)) return 'file';
+
+  return null;
+}
+
+export function insertAsset(
+  editor: Editor,
+  file: File,
+  token: string,
+  addToQueue: (request: Omit<RetryRequest, 'id' | 'timestamp'>) => void,
+) {
+  if (isFileNameTooLong(file.name)) {
+    toast.error(i18n.t('toast.fileNameTooLong', { ns: 'board' }), {
+      description: i18n.t('toast.fileNameTooLongDesc', {
+        ns: 'board',
+        max: MAX_FILENAME_LENGTH,
+      }),
+      duration: 5000,
+    });
+    return;
+  }
+
+  const type = checkAssetType(file);
+  switch (type) {
+    case 'audio':
+      insertAudio(editor, file, token);
+      break;
+    case 'file':
+      insertFile(editor, file, token, addToQueue);
+      break;
+    case 'img':
+      insertImage(editor, file, token);
+      break;
+    case 'pdf':
+      insertPdf(editor, file, token);
+      break;
+    case 'presentation':
+      insertPresentation(editor, file, token);
+      break;
+    default:
+      toast.error(i18n.t('toast.unsupportedFileFormat', { ns: 'board' }), {
+        description: i18n.t('toast.fileCannotUpload', { ns: 'board', name: file.name }),
+        duration: 5000,
+      });
+      break;
+  }
+}

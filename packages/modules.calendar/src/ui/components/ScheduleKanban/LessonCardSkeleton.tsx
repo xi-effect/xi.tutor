@@ -3,21 +3,25 @@ import { cn } from '@xipkg/utils';
 import { CARD_MIN_WIDTH, CARD_MAX_WIDTH } from '../../../hooks/useKanbanColumns';
 
 type LessonCardSkeletonProps = {
-  /** День колонки — сегодня (рамка brand, как у LessonCard) */
+  /** День колонки — сегодня (рамка brand-20 потолще, как у LessonCard) */
   isToday?: boolean;
   /** На всю ширину контейнера (мобильный список) */
   fullWidth?: boolean;
 };
 
 export const LessonCardSkeleton = memo<LessonCardSkeletonProps>(({ isToday, fullWidth }) => {
-  const barThin = 'bg-gray-20 dark:bg-gray-30 animate-pulse rounded-lg';
-  const barBlock = 'bg-gray-20 dark:bg-gray-30 animate-pulse rounded-xl';
+  const barThin =
+    'bg-action-secondary-background-pressed dark:bg-background-subtle animate-pulse rounded-lg';
+  const barBlock =
+    'bg-action-secondary-background-pressed dark:bg-background-subtle animate-pulse rounded-xl';
 
   return (
     <div
       className={cn(
         'relative flex min-h-[188px] w-full flex-col rounded-2xl border p-6',
-        isToday ? 'border-brand-80 bg-white' : 'border-gray-10 bg-white',
+        isToday
+          ? 'border-border-selected bg-background-surface border-2'
+          : 'border-border-default bg-background-surface border',
       )}
       style={fullWidth ? { width: '100%' } : { minWidth: CARD_MIN_WIDTH, maxWidth: CARD_MAX_WIDTH }}
       aria-hidden

@@ -1,5 +1,6 @@
 import type { ScheduleItem } from 'common.services';
 import type { ScheduleLessonRow } from '../ui/types';
+import { resolveSchedulerStartsAt } from './resolveSchedulerStartsAt';
 
 const formatTime = (d: Date): string =>
   `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
@@ -31,6 +32,7 @@ export const mapScheduleItemToLessonRow = (item: ScheduleItem): ScheduleLessonRo
     weeklyBitmask,
     schedulerMeta: {
       eventId: item.eventId,
+      startsAt: resolveSchedulerStartsAt(item.startsAt, start),
       instanceKind: item.instanceKind,
       eventInstanceId,
       repetitionModeId,

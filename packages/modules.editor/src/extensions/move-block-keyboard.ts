@@ -5,6 +5,7 @@ import { moveBlock } from '../utils/moveBlock';
  * Расширение: горячие клавиши для перемещения блока вверх/вниз.
  * Mod+Shift+ArrowUp / Mod+Shift+ArrowDown
  */
+
 export const MoveBlockKeyboard = Extension.create({
   name: 'moveBlockKeyboard',
 

@@ -1,11 +1,20 @@
 import { invitationsApiConfig, InvitationsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  trackProductEvent,
+  type ProductAnalyticsSource,
+} from 'common.utils';
+
+type ResetGroupInviteVariables = {
+  source?: ProductAnalyticsSource;
+};
 
 export const useResetGroupInvite = ({ classroom_id }: { classroom_id: string }) => {
   const queryClient = useQueryClient();
 
-  const resetGroupInviteMutation = useMutation({
+  const resetGroupInviteMutation = useMutation<unknown, Error, ResetGroupInviteVariables | void>({
     mutationFn: async () => {
       try {
         const axiosInst = await getAxiosInstance();
@@ -22,9 +31,15 @@ export const useResetGroupInvite = ({ classroom_id }: { classroom_id: string }) 
         throw err;
       }
     },
-    onSettled: () => {
+    onSuccess: (_response, variables) => {
       queryClient.invalidateQueries({
         queryKey: [InvitationsQueryKey.AddGroupInvitation, classroom_id],
+      });
+
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITED_SUCCESS, {
+        role: 'tutor',
+        source: variables?.source ?? 'classroom',
+        invite_kind: 'group',
       });
     },
   });

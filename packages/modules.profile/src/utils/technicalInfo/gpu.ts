@@ -1,5 +1,9 @@
+import { tProfile } from '../tProfile';
+
 export const getGPUInfo = () => {
   const info: Record<string, string> = {};
+  const undefinedValue = tProfile('report.values.undefined');
+
   try {
     const canvas = document.createElement('canvas');
     // Поддержка различных префиксов для Safari и старых браузеров
@@ -18,19 +22,19 @@ export const getGPUInfo = () => {
       if (debugInfo) {
         const vendor = gl.getParameter(debugInfo.UNMASKED_VENDOR_WEBGL);
         const renderer = gl.getParameter(debugInfo.UNMASKED_RENDERER_WEBGL);
-        info['GPU Vendor'] = String(vendor || 'не определен');
-        info['GPU Renderer'] = String(renderer || 'не определен');
+        info['GPU Vendor'] = String(vendor || undefinedValue);
+        info['GPU Renderer'] = String(renderer || undefinedValue);
       } else {
-        info['GPU Vendor'] = 'не определен';
-        info['GPU Renderer'] = 'не определен';
+        info['GPU Vendor'] = undefinedValue;
+        info['GPU Renderer'] = undefinedValue;
       }
     } else {
-      info['GPU Vendor'] = 'не определен';
-      info['GPU Renderer'] = 'не определен';
+      info['GPU Vendor'] = undefinedValue;
+      info['GPU Renderer'] = undefinedValue;
     }
   } catch {
-    info['GPU Vendor'] = 'не определен';
-    info['GPU Renderer'] = 'не определен';
+    info['GPU Vendor'] = undefinedValue;
+    info['GPU Renderer'] = undefinedValue;
   }
   return info;
 };

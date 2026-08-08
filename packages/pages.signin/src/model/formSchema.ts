@@ -39,14 +39,14 @@ export const useFormSchema = () => {
           message: getTranslation(
             'validation.minLength',
             { length: passwordMinLength },
-            `Min length is ${passwordMinLength}`,
+            `Minimum ${passwordMinLength} characters`,
           ),
         })
         .max(passwordMaxLength, {
           message: getTranslation(
             'validation.maxLength',
             { length: passwordMaxLength },
-            `Max length is ${passwordMaxLength}`,
+            `Maximum ${passwordMaxLength} characters`,
           ),
         }),
     });

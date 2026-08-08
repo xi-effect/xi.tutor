@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { isSameDay, startOfDay } from 'date-fns';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import type { Swiper as SwiperType } from 'swiper';
@@ -15,6 +15,7 @@ import {
 import { useLessonInfoModal } from '../../../hooks';
 import { useOpenLessonByInstanceWhenLoaded } from '../../../hooks/useOpenLessonByInstanceWhenLoaded';
 import { getLessonCardSkeletonCountForDay, isCurrentDay, isPastDay } from '../../../utils';
+import { findNearestVisibleCalendarEventId } from '../../../utils/findNearestLessonIndex';
 import type { ChangeLessonFormData } from 'features.lesson.change';
 import type { ICalendarEvent } from '../../types';
 
@@ -73,6 +74,11 @@ export const ScheduleDaySwiper = ({
     onConsumed: onOpenLessonInstanceConsumed,
   });
 
+  const nearestEventId = useMemo(() => {
+    const dayEvents = getEventsForDay(eventsByDate, selectedDate);
+    return findNearestVisibleCalendarEventId(allEvents, dayEvents, today);
+  }, [allEvents, eventsByDate, selectedDate, today]);
+
   const selectedIndex = days.findIndex((d) => isSameDay(d, selectedDate));
   const activeIndex = selectedIndex >= 0 ? selectedIndex : 0;
 
@@ -100,10 +106,10 @@ export const ScheduleDaySwiper = ({
     <>
       <Swiper
         modules={[Virtual]}
-        className="min-h-0 w-full flex-1 [&_.swiper-wrapper]:min-h-[calc(100dvh-292px)]"
-        autoHeight
+        className="h-full min-h-0 w-full"
         touchEventsTarget="container"
         touchStartPreventDefault={false}
+        touchAngle={45}
         slidesPerView={1}
         spaceBetween={8}
         virtual={{
@@ -125,8 +131,8 @@ export const ScheduleDaySwiper = ({
               virtualIndex={dayIndex}
               className="box-border h-full min-h-0"
             >
-              <div className="flex h-full min-h-0 flex-col pb-4">
-                <div className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto">
+              <div className="flex h-full min-h-0 flex-col">
+                <div className="flex min-h-0 flex-1 touch-pan-y flex-col gap-3 overflow-y-auto overscroll-contain">
                   {eventsLoading ? (
                     Array.from({ length: getLessonCardSkeletonCountForDay(day) }, (_, i) => (
                       <LessonCardSkeleton
@@ -151,6 +157,7 @@ export const ScheduleDaySwiper = ({
                         event={event}
                         isPast={isPast}
                         isToday={isCurrentDay(day, todayStart)}
+                        isNearestLesson={event.id === nearestEventId}
                         fullWidth
                         hideClassroomAndSubject={hideLessonCardClassroomAndSubject}
                         onClick={() => openLessonInfo(event)}

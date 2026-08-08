@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
+import { useMemo } from 'react';
 import { useParams, useRouter } from '@tanstack/react-router';
 import {
   useCurrentUser,
@@ -10,9 +11,13 @@ import { Skeleton } from 'common.ui';
 import { EditableTitle } from './EditableTitle';
 import { Button } from '@xipkg/button';
 import { ArrowLeft } from '@xipkg/icons';
+import { useCollaborators } from 'modules.editor';
+import { CollaboratorAvatars } from './CollaboratorAvatars';
+import { getAvatarUrlByUserId } from '../utils';
 
 export const Header = () => {
   const { classroomId, noteId, materialId } = useParams({ strict: false });
+  const { collaborators } = useCollaborators();
   const router = useRouter();
 
   const { data: user } = useCurrentUser();
@@ -54,8 +59,18 @@ export const Header = () => {
     }
   };
 
+  const collaboratorsWithAvatars = useMemo(
+    () =>
+      collaborators.map((collaborator) => ({
+        ...collaborator,
+        avatarUrl: getAvatarUrlByUserId(collaborator.id),
+        initial: collaborator.userName.charAt(0).toUpperCase(),
+      })),
+    [collaborators],
+  );
+
   return (
-    <div className="bg-gray-0 border-gray-10 sticky top-0 z-50 flex h-[56px] min-h-[56px] w-full rounded-2xl border px-2">
+    <div className="bg-background-surface border-border-default sticky top-0 z-50 flex h-[56px] min-h-[56px] w-full rounded-2xl border px-2">
       <div className="flex w-full items-center justify-between">
         <div className="relative flex w-full items-center justify-center gap-2">
           <Button
@@ -64,7 +79,7 @@ export const Header = () => {
             type="button"
             className="absolute top-0 left-0 h-10 w-10 p-2"
           >
-            <ArrowLeft size="s" className="size-6" />
+            <ArrowLeft size="s" className="fill-icon-primary size-6" />
           </Button>
           <div className="w-full max-w-4xl pl-29">
             {isLoading ? (
@@ -73,6 +88,7 @@ export const Header = () => {
               <EditableTitle title={material.name} materialId={materialIdValue} isTutor={isTutor} />
             )}
           </div>
+          <CollaboratorAvatars collaborators={collaboratorsWithAvatars} currentUserId={user.id} />
         </div>
       </div>
     </div>

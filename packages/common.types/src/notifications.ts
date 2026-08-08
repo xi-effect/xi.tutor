@@ -1,15 +1,79 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export type NotificationsSettingsT = {
-  telegram: {
-    connection: {
-      status: 'active' | 'blocked' | 'replaced';
-    };
-    contact: {
-      link: string;
-      title: string;
-      is_public: boolean;
-    };
+
+export type NotificationGroupKind = 'classrooms' | 'invoices' | 'events' | 'event_reminders';
+
+export type DeliveryMethodKind = 'email' | 'telegram' | 'vk';
+
+export type DeliveryMethodStatus = 'active' | 'blocked' | 'replaced';
+
+export type DeliveryMethodEnriched = {
+  delivery_method: {
+    status: DeliveryMethodStatus;
   };
+  related_contact: {
+    link: string;
+    title: string;
+    is_public: boolean;
+  } | null;
+  /** Актуальный контракт на проде */
+  enabled_notification_categories?: NotificationGroupKind[];
+  /** @deprecated старое имя из черновика OpenAPI */
+  enabled_notification_groups?: NotificationGroupKind[];
+};
+
+export type DeliveryMethodsResponse = {
+  email: DeliveryMethodEnriched | null;
+  telegram: DeliveryMethodEnriched | null;
+  vk: DeliveryMethodEnriched | null;
+};
+
+/** Ответ POST .../delivery-methods/vk/connection-requests/ */
+export type VKConnectionStartResponse = {
+  /** ID сообщества VK для виджета AllowMessagesFromCommunity */
+  group_id: number;
+  key: string;
+};
+
+/** @deprecated Используйте DeliveryMethodsResponse */
+export type NotificationsSettingsT = DeliveryMethodsResponse;
+
+/** Инстанс занятия: одноразовое создание / перенос / отмена / напоминание о конкретном занятии */
+export type ClassroomEventInstanceNotificationKind =
+  | 'single_classroom_event_created_v1'
+  | 'classroom_event_instance_rescheduled_v1'
+  | 'classroom_event_instance_cancelled_v1'
+  | 'persisted_classroom_event_instance_reminder_v1';
+
+export type ClassroomEventInstanceNotificationPayload = {
+  kind: ClassroomEventInstanceNotificationKind;
+  classroom_id: number;
+  event_instance_id: string;
+};
+
+/** Повторяющийся виртуальный инстанс: напоминание о конкретном занятии серии */
+export type ClassroomRepeatedEventInstanceNotificationKind =
+  'repeated_classroom_event_instance_reminder_v1';
+
+export type ClassroomRepeatedEventInstanceNotificationPayload = {
+  kind: ClassroomRepeatedEventInstanceNotificationKind;
+  classroom_id: number;
+  repetition_mode_id: string;
+  instance_index: number;
+};
+
+/** Расписание / повторение: фокус на дате, без привязки к одному инстансу */
+export type ClassroomScheduleFocusNotificationKind =
+  | 'repeating_classroom_event_created_v1'
+  | 'classroom_event_repetition_updated_v1'
+  | 'classroom_event_repetition_cancelled_v1';
+
+export type ClassroomScheduleFocusNotificationPayload = {
+  kind: ClassroomScheduleFocusNotificationKind;
+  classroom_id: number;
+  /** ISO-8601 — диплинк `focused_at` (для отмены и серии) */
+  focused_at?: string;
+  /** Альтернативное имя поля времени от бэка */
+  starts_at?: string;
 };
 
 // Типы уведомлений (kind в payload)
@@ -32,17 +96,34 @@ export type NotificationKind =
   | 'enrollment_created_v1'
   | 'classroom_conference_started_v1'
   | 'recipient_invoice_created_v1'
-  | 'student_recipient_invoice_payment_confirmed_v1';
+  | 'student_recipient_invoice_payment_confirmed_v1'
+  | ClassroomEventInstanceNotificationKind
+  | ClassroomRepeatedEventInstanceNotificationKind
+  | ClassroomScheduleFocusNotificationKind;
+
+/** Остальные payload с прежней гибкой формой полей */
+export type NotificationLegacyPayload = {
+  kind: Exclude<
+    NotificationKind,
+    | ClassroomEventInstanceNotificationKind
+    | ClassroomRepeatedEventInstanceNotificationKind
+    | ClassroomScheduleFocusNotificationKind
+  >;
+  [key: string]: any;
+};
+
+export type NotificationPayload =
+  | ClassroomEventInstanceNotificationPayload
+  | ClassroomRepeatedEventInstanceNotificationPayload
+  | ClassroomScheduleFocusNotificationPayload
+  | NotificationLegacyPayload;
 
 // Структура уведомления (новый контракт)
 export type NotificationT = {
   id: string;
   actor_user_id: number | null;
   is_read: boolean;
-  payload: {
-    kind: NotificationKind;
-    [key: string]: any; // Дополнительные атрибуты в зависимости от kind
-  };
+  payload: NotificationPayload;
   created_at: string;
   updated_at: string;
 };
@@ -79,10 +160,7 @@ export type RecipientNotificationResponse = {
     id: string;
     created_at: string;
     updated_at?: string;
-    payload: {
-      kind: string;
-      [key: string]: any;
-    };
+    payload: NotificationPayload;
     actor_user_id?: number | null;
   };
 };

@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
-import { lazy } from 'react';
+import { LoadingScreen } from 'common.ui';
+import { BoardRouteWarmup } from 'modules.board/warmup';
+import { Suspense, lazy } from 'react';
 import { z } from 'zod';
 
 const ClassroomPage = lazy(() =>
@@ -18,6 +20,11 @@ const searchSchema = z.object({
   focused_at: z.string().optional(),
   /** Persisted инстанс — открыть карточку занятия; дата недели берётся из ответа деталей (`starts_at`). */
   event_instance_id: z.string().optional(),
+  /** Повторяющийся виртуальный инстанс — открыть карточку занятия серии */
+  repetition_mode_id: z.string().optional(),
+  instance_index: z.coerce.number().optional(),
+  /** Служебный токен повторного диплинка из уведомления */
+  schedule_dl: z.string().optional(),
 });
 
 // @ts-ignore
@@ -32,8 +39,9 @@ export const Route = createFileRoute('/(app)/_layout/classrooms/$classroomId/')(
 
 function ClassroomPageComponent() {
   return (
-    <>
+    <Suspense fallback={<LoadingScreen />}>
+      <BoardRouteWarmup />
       <ClassroomPage />
-    </>
+    </Suspense>
   );
 }

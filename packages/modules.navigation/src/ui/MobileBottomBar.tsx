@@ -1,8 +1,7 @@
 import { useLocation, useNavigate, useSearch } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@xipkg/button';
-import { Logo } from 'common.ui';
-import { LinkTanstack } from 'common.ui';
+import { ConfirmDialog, Logo, LinkTanstack } from 'common.ui';
 import { useAuth } from 'common.auth';
 import { useCurrentUser } from 'common.services';
 import { useMenuStore } from '../store';
@@ -28,6 +27,7 @@ export const MobileBottomBar = () => {
   const { open: openMenu } = useMenuStore();
 
   const [open, setOpen] = useState(false);
+  const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
   useEffect(() => {
     const profileParam = search.profile;
@@ -52,13 +52,13 @@ export const MobileBottomBar = () => {
 
   return (
     <>
-      <nav className="bg-gray-0 fixed right-0 bottom-0 left-0 z-30 flex h-[64px] items-center px-4">
-        <div className="flex w-full items-center gap-1">
+      <nav className="bg-background-surface fixed right-0 bottom-0 left-0 z-30 flex h-[64px] items-center px-4">
+        <div className="flex w-full items-center gap-0">
           <div className="flex shrink-0 items-center gap-1">
             <MobileUserMenu
               userId={user?.id ?? 0}
               onOpenProfile={handleOpenProfile}
-              onLogout={handleLogout}
+              onLogout={() => setLogoutConfirmOpen(true)}
               profileText={t('profile')}
               logoutText={t('logout')}
             />
@@ -68,10 +68,10 @@ export const MobileBottomBar = () => {
           <div className="flex min-w-0 flex-1 justify-end">
             <LinkTanstack
               to="/"
-              className="focus-visible:ring-brand-100 flex shrink-0 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
+              className="focus-visible:ring-border-focus flex shrink-0 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2"
               data-umami-event="navigation-mobile-logo"
             >
-              <Logo width={138} height={40} />
+              <Logo width={96} height={28} />
             </LinkTanstack>
           </div>
 
@@ -79,7 +79,7 @@ export const MobileBottomBar = () => {
             <Button
               variant="none"
               size="icon"
-              className="text-gray-80 hover:bg-gray-10 focus:bg-gray-10 size-10 shrink-0 rounded-xl"
+              className="text-text-primary hover:bg-background-subtle focus:bg-background-subtle size-10 shrink-0 rounded-xl"
               onClick={() => openMenu()}
               aria-label={t('menu')}
               data-umami-event="navigation-mobile-menu"
@@ -93,6 +93,16 @@ export const MobileBottomBar = () => {
       <Suspense fallback={null}>
         <UserSettings open={open} setOpen={setOpen} />
       </Suspense>
+
+      <ConfirmDialog
+        open={logoutConfirmOpen}
+        onOpenChange={setLogoutConfirmOpen}
+        title={t('logoutConfirmTitle')}
+        description={t('logoutConfirmDescription')}
+        confirmLabel={t('logoutConfirmAction')}
+        cancelLabel={t('logoutConfirmCancel')}
+        onConfirm={handleLogout}
+      />
     </>
   );
 };

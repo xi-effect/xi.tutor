@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { CheckIcon, ChevronsUpDownIcon } from 'lucide-react';
 import { ControllerRenderProps } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 
 import { cn } from '@xipkg/utils';
-import { Button } from '@xipkg/button';
 import { Command, CommandGroup, CommandInput, CommandItem, CommandList } from '@xipkg/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@xipkg/popover';
 import { useAutocompleteSubjects, useSubjectsById } from 'common.services';
@@ -17,6 +17,7 @@ type AutocompleteProps = {
 };
 
 export const Autocomplete = ({ field, disabled, containerRef }: AutocompleteProps) => {
+  const { t } = useTranslation('groupAdd');
   const [open, setOpen] = React.useState(false);
   const [search, setSearch] = React.useState('');
 
@@ -44,22 +45,34 @@ export const Autocomplete = ({ field, disabled, containerRef }: AutocompleteProp
     !field.value, // Отключаем запрос если нет выбранного предмета
   );
 
+  const hasSelection = Boolean(field.value && field.value !== 0);
+  const triggerLabel = hasSelection
+    ? isLoadingSelected
+      ? t('autocomplete.loading')
+      : selectedSubject?.name || t('autocomplete.notFound')
+    : t('autocomplete.placeholder');
+
   return (
     <Popover open={open} onOpenChange={setOpen} modal={false}>
       <PopoverTrigger asChild>
-        <Button
-          variant="text"
+        <button
+          type="button"
           role="combobox"
           aria-expanded={open}
-          className="border-gray-30 bg-gray-0 h-[48px] w-full justify-between rounded-lg border-2 pl-3 hover:border-gray-50 hover:bg-transparent"
+          disabled={disabled}
+          className={cn(
+            'border-border-control bg-background-surface flex h-12 w-full items-center justify-between rounded-lg border-2 px-3 text-left text-sm font-normal',
+            'focus-visible:border-border-strong hover:border-border-control focus-visible:outline-none',
+            'disabled:bg-background-subtle disabled:text-text-disabled disabled:cursor-not-allowed',
+          )}
         >
-          {field.value && field.value !== 0
-            ? isLoadingSelected
-              ? 'Загрузка...'
-              : selectedSubject?.name || 'Предмет не найден'
-            : 'Выберите предмет...'}
-          <ChevronsUpDownIcon className="ml-2 h-4 w-4 shrink-0" />
-        </Button>
+          <span
+            className={cn('truncate', hasSelection ? 'text-text-primary' : 'text-text-disabled')}
+          >
+            {triggerLabel}
+          </span>
+          <ChevronsUpDownIcon className="text-text-primary ml-2 h-4 w-4 shrink-0" />
+        </button>
       </PopoverTrigger>
       {containerRef?.current && (
         <PopoverContent
@@ -72,28 +85,36 @@ export const Autocomplete = ({ field, disabled, containerRef }: AutocompleteProp
           onOpenAutoFocus={(e) => e.preventDefault()}
         >
           <Command
-            className="w-[300px]"
+            className="[&_[data-slot=command-input-wrapper]_svg]:fill-icon-secondary w-[300px]"
             shouldFilter={false}
             onPointerDown={(e) => e.stopPropagation()}
           >
             <CommandInput
-              placeholder="Поиск предмета..."
+              placeholder={t('autocomplete.search')}
               value={search}
               onValueChange={setSearch}
+              className="text-text-primary"
             />
             <CommandList className="max-h-[200px] w-full overflow-y-auto">
               {isLoading ? (
-                <div className="py-6 text-center text-sm">Загрузка...</div>
+                <div className="text-text-secondary py-6 text-center text-sm">
+                  {t('autocomplete.loading')}
+                </div>
               ) : isError ? (
-                <div className="py-6 text-center text-sm text-red-500">Ошибка загрузки</div>
+                <div className="text-text-danger py-6 text-center text-sm">
+                  {t('autocomplete.loadError')}
+                </div>
               ) : !subjects || subjects.length === 0 ? (
-                <div className="py-6 text-center text-sm">Предметы не найдены</div>
+                <div className="text-text-secondary py-6 text-center text-sm">
+                  {t('autocomplete.empty')}
+                </div>
               ) : (
                 <CommandGroup>
                   {subjects.map((subject: SubjectSchema) => (
                     <CommandItem
                       key={subject.id}
                       value={subject.name}
+                      className="text-text-primary"
                       onSelect={() => {
                         if (disabled) return;
                         field.onChange(subject.id);
@@ -102,7 +123,7 @@ export const Autocomplete = ({ field, disabled, containerRef }: AutocompleteProp
                     >
                       <CheckIcon
                         className={cn(
-                          'mr-2 h-4 w-4',
+                          'text-text-primary mr-2 h-4 w-4',
                           field.value === subject.id ? 'opacity-100' : 'opacity-0',
                         )}
                       />

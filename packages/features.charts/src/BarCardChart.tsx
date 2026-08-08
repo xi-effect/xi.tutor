@@ -1,5 +1,6 @@
 import { ChevronUp } from '@xipkg/icons';
 import { Bar, BarChart, CartesianGrid, XAxis } from 'recharts';
+import { useTranslation } from 'react-i18next';
 
 import { type ChartConfig, ChartContainer } from './Chart';
 import { cn } from '@xipkg/utils';
@@ -42,16 +43,18 @@ export const BarCardChart = ({
   xAxisProps,
   barProps,
 }: ChartBarT) => {
+  const { t } = useTranslation('charts');
+
   return (
     <div className="rounded-lg">
       <div className="flex justify-between space-y-1.5 p-4">
-        <div className="text-primary-100 text-xl font-semibold tracking-tight dark:text-gray-100">
-          Доход
+        <div className="text-primary-100 dark:text-text-primary text-xl font-semibold tracking-tight">
+          {t('income')}
         </div>
         <div className="text-muted-foreground flex items-center text-xs">
-          <span className="text-gray-60">Предмет: </span>
-          <span className={'mr-1 dark:text-gray-100'}> Любой</span>
-          <ChevronUp size={'sm'} className="h-6 w-6 dark:fill-gray-100" />
+          <span className="text-text-secondary">{t('subject')} </span>
+          <span className={'dark:text-text-primary mr-1'}> {t('any')}</span>
+          <ChevronUp size={'sm'} className="dark:fill-icon-primary h-6 w-6" />
         </div>
       </div>
       <div className="p-4 pt-0">
@@ -64,12 +67,12 @@ export const BarCardChart = ({
             accessibilityLayer
             data={chartData}
             {...barChartProps}
-            className={cn(barChartProps?.className, 'dark:text-gray-100')}
+            className={cn(barChartProps?.className, 'dark:text-text-primary')}
           >
             <CartesianGrid
               vertical={false}
               {...cartesianGridProps}
-              className={cn(cartesianGridProps?.className, 'dark:text-gray-100')}
+              className={cn(cartesianGridProps?.className, 'dark:text-text-primary')}
             />
             <XAxis
               dataKey="month"
@@ -84,7 +87,7 @@ export const BarCardChart = ({
               fill={fillBar}
               radius={4}
               barSize={24}
-              className={cn(barProps?.className, 'dark:text-gray-100')}
+              className={cn(barProps?.className, 'dark:text-text-primary')}
               {...barProps}
             />
           </BarChart>

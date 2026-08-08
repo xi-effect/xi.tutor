@@ -3,6 +3,7 @@ import { Button } from '@xipkg/button';
 import { SoundTwo, Plus } from '@xipkg/icons';
 import { stopEvent } from '../constants';
 import { formatTime, formatFileSize } from '../utils';
+import { useTranslation } from 'react-i18next';
 
 type AudioInfoRowProps = {
   currentTime: number;
@@ -13,6 +14,7 @@ type AudioInfoRowProps = {
   isTutor: boolean;
   canAddTimecode: boolean;
   effectiveVolume: number;
+  isInteractive: boolean;
   onAddTimecode: () => void;
   onVolumeChange: (value: number[]) => void;
   onToggleMute: () => void;
@@ -26,24 +28,31 @@ export function AudioInfoRow({
   syncPlayback,
   canAddTimecode,
   effectiveVolume,
+  isInteractive,
   onAddTimecode,
   onVolumeChange,
   onToggleMute,
 }: AudioInfoRowProps) {
+  const { t } = useTranslation('board');
   return (
-    <div className="flex items-center justify-between" style={{ fontSize: 10, color: '#6B7280' }}>
+    <div className="text-text-secondary flex items-center justify-between text-[10px]">
       <div className="flex items-center gap-1.5">
         {canAddTimecode && (
           <Button
             type="button"
             variant="none"
-            className="hover:text-gray-80 flex h-5 min-w-5 items-center justify-center p-0 text-gray-50"
-            style={{ pointerEvents: 'all' }}
-            onPointerDown={stopEvent}
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddTimecode();
-            }}
+            className="hover:text-text-primary text-text-muted flex h-5 min-w-5 items-center justify-center p-0"
+            style={{ pointerEvents: isInteractive ? 'all' : 'none' }}
+            data-audio-control=""
+            onPointerDown={isInteractive ? stopEvent : undefined}
+            onClick={
+              isInteractive
+                ? (e) => {
+                    e.stopPropagation();
+                    onAddTimecode();
+                  }
+                : undefined
+            }
           >
             <Plus className="h-3.5 w-3.5" />
           </Button>
@@ -58,11 +67,12 @@ export function AudioInfoRow({
       <div className="flex items-center gap-1.5">
         <div
           className="group flex items-center gap-1.5"
-          style={{ pointerEvents: 'all' }}
-          onPointerDown={stopEvent}
-          onPointerMove={stopEvent}
-          onPointerUp={stopEvent}
-          onClick={stopEvent}
+          style={{ pointerEvents: isInteractive ? 'all' : 'none' }}
+          data-audio-control=""
+          onPointerDown={isInteractive ? stopEvent : undefined}
+          onPointerMove={isInteractive ? stopEvent : undefined}
+          onPointerUp={isInteractive ? stopEvent : undefined}
+          onClick={isInteractive ? stopEvent : undefined}
         >
           <div className="flex min-h-6 max-w-0 min-w-0 items-center overflow-hidden opacity-0 transition-[max-width,opacity] duration-150 group-hover:max-w-[80px] group-hover:opacity-100">
             <Slider
@@ -78,7 +88,7 @@ export function AudioInfoRow({
             type="button"
             variant="none"
             size="s"
-            className="text-gray-60 hover:text-gray-80 flex h-5 min-w-5 shrink-0 items-center justify-center p-0"
+            className="text-text-secondary hover:text-text-primary flex h-5 min-w-5 shrink-0 items-center justify-center p-0"
             onClick={onToggleMute}
           >
             <SoundTwo
@@ -88,7 +98,7 @@ export function AudioInfoRow({
           </Button>
         </div>
 
-        {syncPlayback && <span className="text-xxs-base">Вместе</span>}
+        {syncPlayback && <span className="text-xxs-base">{t('audio.together')}</span>}
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -19,12 +20,12 @@ export const WelcomeUserForm = () => {
   const { t } = useTranslation('welcomeUser');
   const formSchema = useWelcomeUserFormSchema();
 
-  const { email, display_name } = useWelcomeContext();
+  const { email } = useWelcomeContext();
 
   const form = useForm<WelcomeUserFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      displayName: display_name || '',
+      displayName: '',
     },
   });
 
@@ -38,40 +39,46 @@ export const WelcomeUserForm = () => {
   const { onWelcomeUserForm, isLoading } = useWelcomeUserForm();
 
   const onSubmit = ({ displayName }: WelcomeUserFormData) => {
-    onWelcomeUserForm(displayName);
+    onWelcomeUserForm(displayName.trim());
   };
 
   const [displayName] = watch(['displayName']);
 
   return (
     <Form {...form}>
-      <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex h-full w-full flex-col">
+      <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex w-full flex-1 flex-col">
         <FormField
           control={control}
           name="displayName"
-          defaultValue=""
           render={({ field }) => (
             <FormItem className="mt-8">
-              <FormLabel>{t('name')}</FormLabel>
+              <FormLabel className="dark:text-text-primary">{t('name')}</FormLabel>
               <FormControl>
                 <Input
                   className="mt-1"
                   error={!!errors?.displayName}
-                  autoComplete="off"
+                  autoComplete="name"
                   type="text"
                   {...field}
                 />
               </FormControl>
+              <FormDescription className="text-text-secondary pt-0 text-xs">
+                {t('name_hint')}
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormLabel className="mt-6">{t('email')}</FormLabel>
-        <div className="bg-gray-10 mt-2 flex h-12 w-full flex-row items-start rounded-lg p-3 leading-[22px] text-gray-50">
+        <FormLabel className="dark:text-text-primary mt-6">{t('email')}</FormLabel>
+        <div className="bg-background-subtle dark:text-text-primary text-text-muted mt-2 flex h-12 w-full flex-row items-start rounded-lg p-3 leading-[22px]">
           {email}
         </div>
         <div className="mt-auto flex flex-row gap-6 pt-4">
-          <Button type="submit" className="w-full" disabled={!displayName?.length || isLoading}>
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={!displayName?.trim().length || isLoading}
+          >
             {t('continue_button')}
           </Button>
         </div>

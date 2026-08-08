@@ -1,0 +1,32 @@
+{
+  "changed": "Changed: {{date}}",
+  "updated": "Updated: {{date}}",
+  "updatedGallery": "Updated {{date}}",
+  "date": {
+    "today": "today",
+    "yesterday": "yesterday"
+  },
+  "accessMode": {
+    "read_write": "collaborative",
+    "read_only": "tutor only",
+    "no_access": "draft"
+  },
+  "menu": {
+    "changeAccess": "Change access",
+    "duplicateToClassroom": "Duplicate to classroom",
+    "edit": "Edit",
+    "delete": "Delete"
+  },
+  "deleteConfirm": {
+    "noteTitle": "Delete note?",
+    "boardTitle": "Delete board?",
+    "noteDescription": "Note «{{name}}» will be deleted permanently",
+    "boardDescription": "Board «{{name}}» will be deleted permanently",
+    "fromClassroomTitle": "Remove from classroom?",
+    "fromClassroomNoteDescription": "Note «{{name}}» will be removed from the classroom",
+    "fromClassroomBoardDescription": "Board «{{name}}» will be removed from the classroom",
+    "cancel": "Cancel",
+    "confirm": "Delete",
+    "deleting": "Deleting..."
+  }
+}

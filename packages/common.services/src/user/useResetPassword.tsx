@@ -2,7 +2,7 @@ import { userApiConfig, UserQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { UserData } from 'common.types';
-import { handleError, showSuccess } from 'common.services';
+import { handleError } from 'common.services';
 
 export type ResetPasswordData = {
   token: string;
@@ -67,9 +67,6 @@ export const useResetPasswordConfirm = () => {
       if (response?.data) {
         queryClient.setQueryData<UserData>([UserQueryKey.Home], response.data);
       }
-
-      // Показываем успешное уведомление
-      showSuccess('resetPassword');
     },
     onSettled: () => {
       // Для сброса пароля через публичный эндпоинт может потребоваться синхронизация

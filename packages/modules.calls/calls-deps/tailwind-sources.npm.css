@@ -1,0 +1,6 @@
+/* npm: className в dist/*.mjs — дополнительно к @source "../../../node_modules/@xipkg" */
+@source "../../../node_modules/@xipkg/calls-ui/dist";
+@source "../../../node_modules/@xipkg/calls/dist";
+@source "../../../node_modules/@xipkg/calls-chat/dist";
+@source "../../../node_modules/@xipkg/calls-compactview/dist";
+@source "../../../node_modules/@xipkg/calls-risehand/dist";

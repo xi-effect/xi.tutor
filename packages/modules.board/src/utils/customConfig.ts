@@ -4,7 +4,7 @@ import { TColor } from '../types';
 
 /*
 This is necessary because if we set hiddenUi to the
-Tldraw components, all keyboard shortcuts will be hidden as well,
+Draw components, all keyboard shortcuts will be hidden as well,
 and you'll have to add them by handling keydown events,
 which is very time-consuming and not optimized.
 */
@@ -78,8 +78,8 @@ shift: !
  alt: ?
 
 */
-// const overrides: TLUiOverrides = {
-//   actions(_editor, actions): TLUiActionsContextType {
+// const overrides: DrUiOverrides = {
+//   actions(_editor, actions): DrUiActionsContextType {
 //     const newActions = {
 //       ...actions,
 //       'toggle-grid': { ...actions['toggle-grid'], kbd: 'x' },
@@ -88,7 +88,7 @@ shift: !
 
 //     return newActions;
 //   },
-//   tools(_editor, tools): TLUiToolsContextType {
+//   tools(_editor, tools): DrUiToolsContextType {
 //     const newTools = { ...tools, draw: { ...tools.draw, kbd: 'p' } };
 //     return newTools;
 //   },

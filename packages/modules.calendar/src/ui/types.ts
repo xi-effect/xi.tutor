@@ -28,6 +28,8 @@ export type ILessonInfo = {
 
 export type ISchedulerEventMeta = {
   eventId: number;
+  /** ISO `starts_at` вхождения из API расписания (для отмены серии и т.п.) */
+  startsAt?: string;
   /** UUID persisted-инстанса (sole / repeated_persisted); у repeated_virtual нет */
   eventInstanceId?: string;
   instanceKind: 'sole' | 'repeated_virtual' | 'repeated_persisted';

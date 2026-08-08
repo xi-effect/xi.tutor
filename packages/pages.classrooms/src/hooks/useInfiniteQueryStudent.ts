@@ -1,5 +1,4 @@
 import { useInfiniteQuery as useTanStackInfiniteQuery } from '@tanstack/react-query';
-import { RefObject } from 'react';
 import { ClassroomPropsT } from '../types';
 import { getAxiosInstance } from 'common.config';
 import { studentApiConfig, StudentQueryKey, ClassroomT } from 'common.api';
@@ -17,7 +16,7 @@ const adaptClassroom = (classroom: ClassroomT): ClassroomPropsT => ({
   subject_id: classroom.subject_id,
 });
 
-export const useInfiniteQueryStudent = (parentRef: RefObject<HTMLDivElement | null>) => {
+export const useInfiniteQueryStudent = () => {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, error } =
     useTanStackInfiniteQuery({
       queryKey: [StudentQueryKey.Classrooms],
@@ -41,39 +40,15 @@ export const useInfiniteQueryStudent = (parentRef: RefObject<HTMLDivElement | nu
       },
       initialPageParam: undefined as string | undefined,
       getNextPageParam: (lastPage) => {
-        if (!lastPage || lastPage.length === 0) {
+        if (!lastPage || lastPage.length < 20) {
           return undefined;
         }
 
-        // Используем created_at для пагинации
-        const nextParam = lastPage[lastPage.length - 1].created_at;
-        return nextParam;
+        return lastPage[lastPage.length - 1].created_at;
       },
       staleTime: 5 * 60 * 1000, // 5 минут
       gcTime: 10 * 60 * 1000, // 10 минут
     });
-
-  // Обработчик скролла для автоматической загрузки следующей страницы
-  React.useEffect(() => {
-    const handleScroll = () => {
-      if (!parentRef.current || isFetchingNextPage || !hasNextPage) {
-        return;
-      }
-
-      const { scrollTop, scrollHeight, clientHeight } = parentRef.current;
-      const distanceToBottom = scrollHeight - scrollTop - clientHeight;
-
-      if (distanceToBottom < 100) {
-        fetchNextPage();
-      }
-    };
-
-    const el = parentRef.current;
-    if (!el) return;
-
-    el.addEventListener('scroll', handleScroll);
-    return () => el.removeEventListener('scroll', handleScroll);
-  }, [parentRef, fetchNextPage, isFetchingNextPage, hasNextPage]);
 
   // Объединяем все страницы в один массив и адаптируем типы
   const items: ClassroomPropsT[] = React.useMemo(() => {
@@ -92,5 +67,6 @@ export const useInfiniteQueryStudent = (parentRef: RefObject<HTMLDivElement | nu
     error,
     isFetchingNextPage,
     hasNextPage,
+    fetchNextPage,
   };
 };

@@ -5,6 +5,7 @@ type AudioTimecodesListProps = {
   timecodes: AudioTimecode[];
   isTutor: boolean;
   canSeekTimecodes: boolean;
+  isInteractive: boolean;
   onSeek: (time: number) => void;
   onLabelChange: (tcId: string, label: string) => void;
   onToggleVisibility: (tcId: string) => void;
@@ -15,6 +16,7 @@ export function AudioTimecodesList({
   timecodes,
   isTutor,
   canSeekTimecodes,
+  isInteractive,
   onSeek,
   onLabelChange,
   onToggleVisibility,
@@ -23,13 +25,14 @@ export function AudioTimecodesList({
   if (timecodes.length === 0) return null;
 
   return (
-    <div className="border-gray-10 flex flex-col border-t" style={{ pointerEvents: 'none' }}>
+    <div className="border-border-default flex flex-col border-t" style={{ pointerEvents: 'none' }}>
       {timecodes.map((tc) => (
         <AudioTimecodeRow
           key={tc.id}
           timecode={tc}
           isTutor={isTutor}
           canSeek={canSeekTimecodes}
+          isInteractive={isInteractive}
           onSeek={onSeek}
           onLabelChange={onLabelChange}
           onToggleVisibility={onToggleVisibility}

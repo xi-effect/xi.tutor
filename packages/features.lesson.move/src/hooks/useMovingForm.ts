@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import {
   useRescheduleRepeatedVirtualInstance,
@@ -12,7 +13,7 @@ import {
   toLocalISOString,
 } from 'modules.calendar';
 import { createMovingFormSchema, type FormData, type FormInput } from '../model/formSchema';
-import { timeToMinutes } from '../utils/utils';
+import { durationBetweenMinutes } from '../utils/utils';
 import type { MovingRepetitionResolution } from './useMovingRepetitionResolution';
 
 const ALL_REPEAT_WEEKDAY_INDICES = [0, 1, 2, 3, 4, 5, 6] as const;
@@ -100,7 +101,7 @@ function buildStartsAt(startDate: Date, startTime: string): string {
 }
 
 function buildDurationSeconds(startTime: string, endTime: string): number {
-  return (timeToMinutes(endTime) - timeToMinutes(startTime)) * 60;
+  return durationBetweenMinutes(startTime, endTime) * 60;
 }
 
 /** 0=Пн … 6=Вс — все дни выбраны */
@@ -118,6 +119,7 @@ export const useMovingForm = (
   initialEndTime?: string | null,
   options: UseMovingFormOptions = {},
 ) => {
+  const { t } = useTranslation('lessonMove');
   const {
     onSubmit: externalSubmit,
     schedulerTarget,
@@ -125,7 +127,7 @@ export const useMovingForm = (
     movingRepetition: repetitionOption,
   } = options;
   const movingRepetition = repetitionOption ?? defaultMovingRepetition;
-  const schema = useMemo(() => createMovingFormSchema(lessonKind), [lessonKind]);
+  const schema = useMemo(() => createMovingFormSchema(lessonKind, t), [lessonKind, t]);
   const reschedule = useRescheduleRepeatedVirtualInstance();
   const rescheduleSole = useRescheduleSoleEventInstance();
   const createLastRepetitionMode = useCreateLastRepetitionMode();
@@ -194,7 +196,7 @@ export const useMovingForm = (
           body: timeSlotBody,
         });
       }
-      toast.success('Занятие перенесено');
+      toast.success(t('toast.success'));
       return;
     }
 
@@ -204,11 +206,11 @@ export const useMovingForm = (
         eventInstanceId: soleTarget.eventInstanceId,
         body: timeSlotBody,
       });
-      toast.success('Занятие перенесено');
+      toast.success(t('toast.success'));
       return;
     }
 
-    toast.success('Занятие перенесено');
+    toast.success(t('toast.success'));
   };
 
   const handleClearForm = () => {

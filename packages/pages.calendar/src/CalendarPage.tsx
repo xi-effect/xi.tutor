@@ -145,6 +145,7 @@ const CalendarPageContent = () => {
           open={addingModalOpen}
           onOpenChange={setAddingModalOpen}
           initialDate={initialDate}
+          analyticsSource="schedule"
         />
       ) : null}
       <CalendarModule

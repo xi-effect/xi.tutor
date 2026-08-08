@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Modal, ModalContent, ModalTitle, ModalCloseButton, ModalBody } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
+import { Close } from '@xipkg/icons';
+import { useTranslation } from 'react-i18next';
 import { DayLessonsPanel } from 'modules.calendar';
 import { MovingForm } from './components/MovingForm';
 import {
@@ -66,8 +68,6 @@ export type MovingLessonModalProps = {
   onSubmit?: (data: FormData) => void | Promise<void>;
 };
 
-const DEFAULT_LESSON_TITLE = 'Изучаем что-то';
-
 export const MovingLessonModal = ({
   open,
   onOpenChange,
@@ -80,7 +80,7 @@ export const MovingLessonModal = ({
   classroomId,
   teacherId,
   fallbackName,
-  lessonTitle = DEFAULT_LESSON_TITLE,
+  lessonTitle,
   lessonDescription,
   seriesWeekdayIndex = 0,
   weeklyBitmask,
@@ -89,6 +89,7 @@ export const MovingLessonModal = ({
   soleTarget,
   onSubmit,
 }: MovingLessonModalProps) => {
+  const { t } = useTranslation('lessonMove');
   const [selectedDate, setSelectedDate] = useState(getToday);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const handleSubmittingChange = useCallback((submitting: boolean) => {
@@ -127,30 +128,41 @@ export const MovingLessonModal = ({
     onOpenChange(false);
   };
 
-  const formTitle = 'Перенести занятие';
+  const formTitle = t('title');
+  const resolvedLessonTitle = lessonTitle ?? t('defaultLessonTitle');
 
   return (
     <Modal open={open} onOpenChange={onOpenChange}>
       <ModalContent
-        className="flex max-h-[min(100dvh,100%)] min-h-0 w-full max-w-[960px] min-w-0 flex-col overflow-hidden md:min-h-[min(740px,100dvh)]"
+        className="relative flex max-h-[min(100dvh,100%)] min-h-0 w-full max-w-[960px] min-w-0 flex-col md:min-h-[min(740px,100dvh)]"
         aria-describedby={undefined}
       >
         <ModalTitle className="sr-only">{formTitle}</ModalTitle>
-        <ModalCloseButton />
-        <ModalBody className="grid min-h-0 w-full min-w-0 flex-1 grid-cols-1 gap-6 overflow-hidden md:grid-cols-2 md:gap-10">
+        <ModalCloseButton
+          variant="full"
+          className="bg-background-page top-4 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full px-0 pt-0"
+        >
+          <Close className="fill-icon-primary h-5 w-5" />
+        </ModalCloseButton>
+        <ModalBody className="grid min-h-0 w-full min-w-0 flex-1 grid-cols-1 items-start gap-6 overflow-hidden md:grid-cols-2 md:gap-10">
           <div className="hidden min-h-0 min-w-0 flex-col overflow-hidden md:flex">
             <div className="flex min-h-0 min-w-0 flex-1 flex-col">
               <DayLessonsPanel
-                scheduleHeadingTitle="Расписание"
+                scheduleHeadingTitle={t('schedule')}
                 selectedDate={selectedDate}
                 onSelectedDateChange={setSelectedDate}
                 fetchEnabled={open}
                 showLessonActions={false}
+                isTutorEmptyState
               />
             </div>
           </div>
           <div className="flex h-full min-h-0 min-w-0 flex-col gap-5 overflow-hidden">
-            <h3 className="text-xl-base shrink-0 font-semibold text-gray-100">{formTitle}</h3>
+            <div className="flex h-8 shrink-0 items-center pr-12">
+              <h3 className="text-xl-base text-text-primary m-0 leading-none font-semibold">
+                {formTitle}
+              </h3>
+            </div>
             <div className="min-h-0 flex-1 overflow-y-auto">
               <MovingForm
                 key={formKey ?? lessonKind}
@@ -162,7 +174,7 @@ export const MovingLessonModal = ({
                 classroomId={classroomId}
                 teacherId={teacherId}
                 fallbackName={fallbackName}
-                lessonTitle={lessonTitle}
+                lessonTitle={resolvedLessonTitle}
                 lessonDescription={lessonDescription}
                 seriesWeekdayIndex={seriesWeekdayIndex}
                 movingRepetition={formMovingRepetition}
@@ -174,25 +186,27 @@ export const MovingLessonModal = ({
             </div>
             <div className="flex w-full min-w-0 shrink-0 flex-row gap-2">
               <Button
-                className="min-w-0 flex-1"
+                className="bg-background-page hover:bg-background-subtle text-text-primary h-11 min-w-0 flex-1 font-medium"
                 form="moving-lesson-form"
                 size="m"
-                variant="text"
+                variant="none"
                 type="reset"
                 disabled={isSubmitting}
+                data-umami-event="lesson-move-cancel"
               >
-                Отменить
+                {t('cancel')}
               </Button>
               <Button
-                className="min-w-0 flex-1"
+                className="h-11 min-w-0 flex-1"
                 form="moving-lesson-form"
                 variant="primary"
                 type="submit"
                 size="m"
                 loading={isSubmitting}
                 disabled={isSubmitting}
+                data-umami-event="lesson-move-submit"
               >
-                Перенести
+                {t('submit')}
               </Button>
             </div>
           </div>

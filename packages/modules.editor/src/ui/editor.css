@@ -1,12 +1,32 @@
 /* Стили для Notion-like редактора.
    Все правила скоупятся через .xi-editor, чтобы не затрагивать
-   ProseMirror-инстансы других модулей (tldraw text shapes и т.д.). */
+   ProseMirror-инстансы других модулей (tldraw text shapes и т.д.).
+   Цвета через --xi-* — переключаются с data-theme на html. */
+
+/* Базовый цвет текста и отступ под ручку блока */
+.xi-editor .ProseMirror {
+  color: var(--xi-text-primary);
+  padding-left: 2.5rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.xi-editor .ProseMirror h1,
+.xi-editor .ProseMirror h2,
+.xi-editor .ProseMirror h3,
+.xi-editor .ProseMirror p,
+.xi-editor .ProseMirror li,
+.xi-editor .ProseMirror strong,
+.xi-editor .ProseMirror em {
+  color: inherit;
+}
 
 /* Стили для пустого редактора */
 .xi-editor .ProseMirror p.is-editor-empty:first-child::before {
   content: attr(data-placeholder);
   float: left;
-  color: #9ca3af;
+  color: var(--xi-text-disabled);
   pointer-events: none;
   height: 0;
 }
@@ -37,6 +57,11 @@
 .xi-editor .ProseMirror p {
   margin: 0.5rem 0;
   line-height: 1.6;
+}
+
+/* Стили для img */
+.xi-editor .node-image {
+  display: flex;
 }
 
 /* Стили для списков */
@@ -78,50 +103,41 @@
 
 /* Стили для цитат */
 .xi-editor .ProseMirror blockquote {
-  border-left: 4px solid #d1d5db;
+  border-left: 4px solid var(--xi-border-default);
   padding-left: 1rem;
   margin: 1rem 0;
   font-style: italic;
-  color: #6b7280;
+  color: var(--xi-text-secondary);
 }
 
 /* Стили для кода */
 .xi-editor .ProseMirror pre {
-  background: #1f2937;
-  color: #f9fafb;
+  background: var(--xi-gray-0);
   padding: 1rem;
   border-radius: 0.5rem;
   margin: 1rem 0;
   overflow-x: auto;
 }
 
-.xi-editor .ProseMirror code {
-  background: #f3f4f6;
-  padding: 0.125rem 0.25rem;
-  border-radius: 0.25rem;
-  font-size: 0.875em;
-}
-
-.xi-editor .ProseMirror pre code {
-  background: transparent;
-  padding: 0;
-  color: inherit;
+[data-theme='dark'] .xi-editor .ProseMirror pre {
+  background: var(--xi-gray-10);
+  color: var(--xi-gray-100);
 }
 
 /* Стили для ссылок */
 .xi-editor .ProseMirror a {
-  color: #3b82f6;
+  color: var(--xi-brand-80);
   text-decoration: underline;
   cursor: pointer;
 }
 
 .xi-editor .ProseMirror a:hover {
-  color: #1d4ed8;
+  color: var(--xi-brand-100);
 }
 
 /* Стили для выделения */
 .xi-editor .ProseMirror mark {
-  background-color: #fef3c7;
+  background-color: var(--xi-yellow-20);
   padding: 0.125rem 0.25rem;
   border-radius: 0.25rem;
 }
@@ -138,20 +154,15 @@
   cursor: grab;
   border-radius: 0.25rem;
 }
+
+.ProseMirror:hover + div .drag-handle,
 .xi-editor .drag-handle:hover,
 .xi-editor .drag-handle[data-dragging='true'] {
   opacity: 1;
 }
+
 .xi-editor .drag-handle:active {
   cursor: grabbing;
-}
-
-/* Место слева для ручки перетаскивания (Notion-style) */
-.xi-editor .ProseMirror {
-  padding-left: 2.5rem;
-  min-width: 0;
-  overflow-wrap: anywhere;
-  word-break: break-word;
 }
 
 /* Подсветка блока при перетаскивании */
@@ -182,15 +193,15 @@
   left: 0;
   right: 0;
   height: 2px;
-  background: #3b82f6;
+  background: var(--xi-brand-80);
   border-radius: 1px;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--xi-brand-80) 20%, transparent);
 }
 
 /* Стили для выделения текста */
 .xi-editor .ProseMirror .ProseMirror-selectednode {
   display: flex;
-  justify-content: center;
+  color: inherit;
 }
 
 /* --- Курсоры совместного редактирования (стиль доски / Notion) --- */
@@ -226,6 +237,17 @@
 /* Выделение текста другого участника — полупрозрачный фон в стиле Notion */
 .xi-editor .ProseMirror .collaboration-carets__selection {
   border-radius: 2px;
+}
+
+/* Стилизация блока кода */
+.xi-editor .tiptap pre {
+  font-family:
+    'JetBrains Mono',
+    Courier New,
+    Courier,
+    monospace;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
 }
 
 /* Стили для мобильных устройств */

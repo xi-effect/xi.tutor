@@ -1,19 +1,21 @@
 import { useCallback, useState } from 'react';
 import { ColorDot, Picker } from '../../ui/components';
 import { colorOptions } from '../../utils/customConfig';
-import { useTldrawStyles } from '../../hooks';
-import { useTldrawStore } from '../../store';
+import { useDrawStyles } from '../../hooks';
+import { useDrawStore } from '../../store';
 import { Slider } from '@xipkg/slider';
 import { cn } from '@xipkg/utils';
 import { TColor } from '../../types';
 import { useXiGeoStyles } from './useXiGeoStyles';
+import { useTranslation } from 'react-i18next';
 
 const sizes = ['s', 'm', 'l', 'xl'] as const;
 
 export const BorderPicker = () => {
+  const { t } = useTranslation('board');
   const [open, setOpen] = useState(false);
-  const { setSelectedShapesBorderColor, setSelectedShapesThickness } = useTldrawStyles();
-  const { setGeoBorderColor, setGeoBorderThickness } = useTldrawStore();
+  const { setSelectedShapesBorderColor, setSelectedShapesThickness } = useDrawStyles();
+  const { setGeoBorderColor, setGeoBorderThickness } = useDrawStore();
   const { currentBorderColorOption, borderCurrentColorClass, currentBorderThickness } =
     useXiGeoStyles();
 
@@ -40,7 +42,7 @@ export const BorderPicker = () => {
     <Picker
       open={open}
       setOpen={setOpen}
-      triggerTitle="Цвет обводки"
+      triggerTitle={t('geo.borderColor')}
       triggerChild={
         <div className={cn('h-5 w-5 rounded-full border-3', borderCurrentColorClass)} />
       }
@@ -58,12 +60,12 @@ export const BorderPicker = () => {
                   minStepsBetweenThumbs={1}
                 />
               </div>
-              <span className="text-gray-80 w-5 shrink-0 text-xs">
+              <span className="text-text-primary w-5 shrink-0 text-xs">
                 {currentBorderThickness.toUpperCase()}
               </span>
             </div>
           </div>
-          <div className="bg-gray-10 hidden h-8 w-px shrink-0 sm:block" />
+          <div className="bg-background-subtle hidden h-8 w-px shrink-0 sm:block" />
           <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
             <div className="flex flex-wrap items-center gap-1.5">
               {colorOptions &&

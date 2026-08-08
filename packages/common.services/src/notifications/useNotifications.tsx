@@ -13,6 +13,7 @@ import {
   generateNotificationTitle,
   getNotificationInvalidationKeys,
 } from './notificationUtils';
+import { navigateFromNotification } from './notificationNavigation';
 import { shouldUseSystemNotifications, showSystemNotification } from './webNotifications';
 import { useGetUnreadCount } from './useGetUnreadCount';
 import { useMarkNotificationAsRead } from './useMarkNotificationAsRead';
@@ -83,17 +84,9 @@ export const useNotifications = () => {
     [],
   );
 
-  // Обработчик навигации по URL из уведомления
   const onNavigate = useCallback((url: string) => {
     try {
-      // Проверяем, является ли URL относительным путем или полным URL
-      if (url.startsWith('http://') || url.startsWith('https://')) {
-        // Внешняя ссылка - открываем в новой вкладке
-        window.open(url, '_blank', 'noopener,noreferrer');
-      } else {
-        // Внутренняя навигация - используем window.history.push
-        window.history.pushState({}, '', url);
-      }
+      navigateFromNotification(url);
     } catch (error) {
       console.error('Ошибка при навигации:', error);
     }
@@ -117,7 +110,7 @@ export const useNotifications = () => {
       // Ревалидируем кеш связанных данных на основе конфига уведомления
       const invalidationKeys = getNotificationInvalidationKeys(notification);
       invalidationKeys.forEach((key) => {
-        queryClient.invalidateQueries({ queryKey: Array.isArray(key) ? key : [key] });
+        queryClient.invalidateQueries({ queryKey: Array.isArray(key) ? [...key] : [key] });
       });
 
       // Обновляем счетчик непрочитанных с сервера (синхронизация)
@@ -131,11 +124,16 @@ export const useNotifications = () => {
       const config = notificationConfigs[kind];
 
       if (config?.onNotify) {
-        const invalidationKey = config.onNotify(notification.payload);
-
-        if (!invalidationKey) return;
-
-        queryClient.invalidateQueries({ queryKey: invalidationKey });
+        const keys = config.onNotify(notification.payload);
+        if (keys?.length) {
+          keys.forEach((key) => {
+            queryClient.invalidateQueries({
+              queryKey: Array.isArray(key) ? [...key] : [key],
+              // Расписание часто не на экране — принудительно обновляем кеш в фоне
+              refetchType: 'all',
+            });
+          });
+        }
       }
 
       const url = config ? generateNotificationAction(notification) : null;
@@ -239,7 +237,7 @@ export const useNotifications = () => {
         if (notification) {
           const invalidationKeys = getNotificationInvalidationKeys(notification);
           invalidationKeys.forEach((key) => {
-            queryClient.invalidateQueries({ queryKey: Array.isArray(key) ? key : [key] });
+            queryClient.invalidateQueries({ queryKey: Array.isArray(key) ? [...key] : [key] });
           });
         }
 

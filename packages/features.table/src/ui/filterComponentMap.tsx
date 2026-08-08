@@ -8,8 +8,14 @@ import {
   CheckboxFilter,
 } from '../filters';
 
-import { FilterColumnId, PaymentStatusT, RolePaymentT, mapPaymentType, RoleT } from '../types';
-import { mapPaymentStatus } from 'common.types';
+import {
+  FilterColumnId,
+  PaymentStatusT,
+  RolePaymentT,
+  getPaymentTypeLabels,
+  getPaymentStatusLabels,
+  RoleT,
+} from '../types';
 import { UserRoleT } from 'common.api';
 
 export const getFilterComponentMap = <TData,>(
@@ -26,7 +32,7 @@ export const getFilterComponentMap = <TData,>(
   status: () => (
     <CheckboxFilter
       column={column}
-      options={Object.entries(mapPaymentStatus).map(([value, label]) => ({
+      options={Object.entries(getPaymentStatusLabels()).map(([value, label]) => ({
         value: value as PaymentStatusT,
         label,
       }))}
@@ -35,7 +41,7 @@ export const getFilterComponentMap = <TData,>(
   payment_type: () => (
     <CheckboxFilter
       column={column}
-      options={Object.entries(mapPaymentType).map(([value, label]) => ({
+      options={Object.entries(getPaymentTypeLabels()).map(([value, label]) => ({
         value: value as RolePaymentT<UserRoleT>['payment_type'],
         label,
       }))}

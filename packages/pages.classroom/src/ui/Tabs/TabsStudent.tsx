@@ -1,20 +1,29 @@
+import { useMemo } from 'react';
 import { Tabs } from '@xipkg/tabs';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
+import { switcherTabClass } from 'common.ui';
+import { cn } from '@xipkg/utils';
+import { useTranslation } from 'react-i18next';
 
 import { ClassroomScheduleProvider } from '../Calendar/ClassroomScheduleContext';
 import { CalendarScheduleToolbar } from '../Calendar/ClassroomScheduleParts';
 import { SharedTabsContent } from './SharedTabsContent';
 import { useTabNavigation } from './useTabNavigation';
-
-const tabs = [
-  { id: 'overview', label: 'Сводка' },
-  { id: 'materials', label: 'Материалы' },
-  { id: 'schedule', label: 'Расписание' },
-  { id: 'payments', label: 'Оплаты' },
-];
+import { ClassroomMobileTabSwitcher } from './ClassroomMobileTabSwitcher';
 
 export const TabsStudent = () => {
+  const { t } = useTranslation('classroom');
   const { isMobile, currentTab, handleTabChange } = useTabNavigation();
+
+  const tabs = useMemo(
+    () => [
+      { id: 'overview', label: t('tabs.overview') },
+      { id: 'materials', label: t('tabs.materials') },
+      { id: 'schedule', label: t('tabs.schedule') },
+      { id: 'payments', label: t('tabs.payments') },
+    ],
+    [t],
+  );
 
   return (
     <ClassroomScheduleProvider>
@@ -24,22 +33,32 @@ export const TabsStudent = () => {
           value={currentTab}
           onValueChange={handleTabChange}
         >
-          <div className="bg-gray-0 mr-4 flex h-[56px] flex-row items-center gap-4 overflow-x-auto rounded-2xl px-2">
-            <SwitcherAnimate
-              tabs={tabs}
-              activeTab={currentTab}
-              onChange={handleTabChange}
-              className="bg-gray-0 flex flex-row gap-0 max-sm:w-full"
-              tabClassName="text-m-base font-medium text-gray-100"
-            />
-            {currentTab === 'schedule' && !isMobile && (
-              <div className="ml-auto flex shrink-0 items-center gap-2">
-                <CalendarScheduleToolbar />
-              </div>
+          <div className="bg-background-surface mx-5 flex h-[56px] flex-row items-center gap-4 rounded-2xl px-2 sm:mx-10">
+            {isMobile ? (
+              <ClassroomMobileTabSwitcher
+                tabs={tabs}
+                activeTab={currentTab}
+                onChange={handleTabChange}
+              />
+            ) : (
+              <>
+                <SwitcherAnimate
+                  tabs={tabs}
+                  activeTab={currentTab}
+                  onChange={handleTabChange}
+                  className="bg-background-surface flex flex-row gap-0"
+                  tabClassName={cn(switcherTabClass, 'text-m-base font-medium')}
+                />
+                {currentTab === 'schedule' && (
+                  <div className="ml-auto flex shrink-0 items-center gap-2">
+                    <CalendarScheduleToolbar />
+                  </div>
+                )}
+              </>
             )}
           </div>
 
-          <div className="bg-gray-0 flex min-h-0 min-w-0 flex-1 flex-col rounded-tl-2xl pt-0 pl-4">
+          <div className="bg-background-surface mb-5 ml-5 flex min-h-0 min-w-0 flex-1 flex-col rounded-l-2xl pt-0 pb-16 pl-5 sm:mb-10 sm:ml-10 sm:pb-10 sm:pl-10">
             <SharedTabsContent />
           </div>
         </Tabs.Root>

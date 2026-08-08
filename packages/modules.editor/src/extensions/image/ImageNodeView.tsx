@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NodeViewWrapper, NodeViewProps } from '@tiptap/react';
 import {
   DropdownMenu,
@@ -9,97 +8,72 @@ import {
 } from '@xipkg/dropdown';
 import { Button } from '@xipkg/button';
 import { ArrowBottom, ArrowUp, Copy, Download, MoreVert, Trash } from '@xipkg/icons';
-import { useBlockMenuActions, useYjsContext } from '../../hooks';
+import { useTranslation } from 'react-i18next';
+import { useBlockMenuActions, useProtectedImage, useYjsContext } from '../../hooks';
 import { cn } from '@xipkg/utils';
-import { useState, useEffect } from 'react';
-import { getAxiosInstance } from 'common.config';
+import { useCallback } from 'react';
+import { ActiveBlockT } from '../../types';
+import { NodeSelection } from '@tiptap/pm/state';
 
-// Кеш blob URL для уже загруженных изображений (по исходному src)
-const blobUrlCache = new Map<string, string>();
-
-export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
+export const ImageNodeView = ({ node, getPos }: NodeViewProps) => {
+  const { t } = useTranslation('editor');
   const src = node.attrs.src;
+
   const { editor, storageToken, isReadOnly } = useYjsContext();
-  const { duplicate, remove, downloadImage, moveDown, moveUp } = useBlockMenuActions(editor);
-  const [imageSrc, setImageSrc] = useState<string>(src);
 
-  useEffect(() => {
-    const loadImageWithToken = async () => {
-      // Если нет src или токена — используем исходный src
-      if (!src || !storageToken) {
-        setImageSrc(src);
-        return;
+  const getActiveBlock = useCallback((): ActiveBlockT | undefined => {
+    if (typeof getPos !== 'function' || !editor) return;
+    try {
+      const pos = getPos();
+      if (pos == null || pos < 0) return;
+      // Верифицируем что нода на этой позиции — действительно image
+      const { doc } = editor.state;
+      if (pos >= doc.content.size) return;
+      const $pos = doc.resolve(pos);
+      const nodeAtPos = $pos.nodeAfter;
+
+      if (nodeAtPos?.type.name === 'image' && nodeAtPos.attrs.src === src) {
+        return { editor, node: nodeAtPos, pos };
       }
 
-      // Пропускаем data: и blob: URL — они уже пригодны к отображению
-      if (src.startsWith('data:') || src.startsWith('blob:')) {
-        setImageSrc(src);
-        return;
-      }
-
-      // Проверяем кеш
-      const cached = blobUrlCache.get(src);
-      if (cached) {
-        setImageSrc(cached);
-        return;
-      }
-
-      try {
-        // Загружаем изображение с заголовком токена через axios
-        const axiosInst = await getAxiosInstance();
-        const response = await axiosInst.get(src, {
-          responseType: 'blob',
-          headers: {
-            'x-storage-token': storageToken,
-          },
-        });
-
-        if (response.status !== 200) {
-          setImageSrc(src);
-          return;
+      let found: ActiveBlockT | undefined;
+      doc.descendants((n, p) => {
+        if (found) return false;
+        if (n.type.name === 'image' && n.attrs.src === src) {
+          found = { editor, node: n, pos: p };
+          return false;
         }
+        return true;
+      });
+      return found;
+    } catch {
+      return;
+    }
+  }, [editor, getPos, src]);
+  const { duplicate, remove, downloadImage, moveDown, moveUp } = useBlockMenuActions(
+    editor,
+    getActiveBlock,
+  );
 
-        // Создаем blob URL из загруженного изображения
-        const blob = response.data;
-        const blobUrl = URL.createObjectURL(blob);
+  const selected =
+    editor?.state.selection instanceof NodeSelection && editor.state.selection.from === getPos();
 
-        // Сохраняем в кеш
-        blobUrlCache.set(src, blobUrl);
-
-        setImageSrc(blobUrl);
-      } catch (error) {
-        console.error('[ImageNodeView] Ошибка при загрузке изображения:', error);
-        // На любой ошибке используем исходный src
-        setImageSrc(src);
-      }
-    };
-
-    loadImageWithToken();
-  }, [src, storageToken]);
-
-  // Очистка blob URL при размонтировании компонента (если это последний компонент с этим src)
-  useEffect(() => {
-    return () => {
-      // Не очищаем blob URL сразу, так как он может использоваться другими компонентами
-      // Кеш управляется глобально, очистка будет выполнена при необходимости
-    };
-  }, []);
+  const imageSrc = useProtectedImage(src, storageToken);
 
   return (
-    <NodeViewWrapper className="group relative flex justify-center">
+    <NodeViewWrapper className="group relative flex justify-center" contentEditable={false}>
       <img
         src={imageSrc}
         alt={node.attrs.alt || ''}
         className={cn(
           'max-h-[600px] rounded-lg object-contain',
-          selected && 'outline-brand-80 outline-2 outline-offset-1',
+          selected && 'outline-border-focus outline-2 outline-offset-1',
         )}
+        draggable={false}
       />
-
       <div
         className={cn(
-          'absolute top-2 right-2 flex transition-opacity',
-          selected ? 'opacity-100' : 'pointer-events-none opacity-0',
+          'absolute top-2 right-2 flex opacity-0 transition-opacity group-hover:pointer-events-auto group-hover:opacity-100',
         )}
       >
         <DropdownMenu modal={false}>
@@ -115,11 +89,11 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
             className="flex w-[200px] flex-col space-y-1 p-2"
           >
             <DropdownMenuItem
-              className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-              onSelect={() => downloadImage(src)}
+              className="hover:bg-background-page h-7 gap-2 rounded p-1"
+              onSelect={() => downloadImage(imageSrc)}
             >
               <Download size="sm" className="size-6" />
-              <span className="text-sm">Скачать</span>
+              <span className="text-sm">{t('image.download')}</span>
             </DropdownMenuItem>
 
             {/* Остальные действия доступны только если редактор не в readonly режиме */}
@@ -128,37 +102,43 @@ export const ImageNodeView = ({ node, selected }: NodeViewProps) => {
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem
-                  className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-                  onSelect={moveUp}
+                  className="hover:bg-background-page h-7 gap-2 rounded p-1"
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    moveUp();
+                  }}
                 >
                   <ArrowUp size="sm" className="size-6" />
-                  <span className="text-sm">Выше</span>
+                  <span className="text-sm">{t('image.moveUp')}</span>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
-                  className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-                  onSelect={moveDown}
+                  className="hover:bg-background-page h-7 gap-2 rounded p-1"
+                  onSelect={(e) => {
+                    e.preventDefault();
+                    moveDown();
+                  }}
                 >
                   <ArrowBottom size="sm" className="size-6" />
-                  <span className="text-sm">Ниже</span>
+                  <span className="text-sm">{t('image.moveDown')}</span>
                 </DropdownMenuItem>
 
                 <DropdownMenuSeparator />
 
                 <DropdownMenuItem
-                  className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
+                  className="hover:bg-background-page h-7 gap-2 rounded p-1"
                   onSelect={duplicate}
                 >
                   <Copy size="sm" className="size-6" />
-                  <span className="text-sm">Дублировать</span>
+                  <span className="text-sm">{t('image.duplicate')}</span>
                 </DropdownMenuItem>
 
                 <DropdownMenuItem
-                  className="hover:bg-gray-5 h-7 gap-2 rounded p-1"
-                  onClick={remove}
+                  className="hover:bg-background-page h-7 gap-2 rounded p-1"
+                  onSelect={remove}
                 >
                   <Trash size="sm" className="size-6" />
-                  <span className="text-sm">Удалить</span>
+                  <span className="text-sm">{t('image.delete')}</span>
                 </DropdownMenuItem>
               </>
             )}

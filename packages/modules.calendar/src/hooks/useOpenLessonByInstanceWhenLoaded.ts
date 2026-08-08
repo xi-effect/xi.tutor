@@ -34,7 +34,9 @@ export function useOpenLessonByInstanceWhenLoaded(options: {
     if (eventsLoading) return;
 
     const found = findCalendarEventByInstanceId(events, normalized);
-    if (found) openRef.current(found);
+    if (!found) return;
+
+    openRef.current(found);
     onConsumedRef.current?.();
   }, [normalized, events, eventsLoading]);
 }

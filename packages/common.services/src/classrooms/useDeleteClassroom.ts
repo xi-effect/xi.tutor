@@ -24,7 +24,7 @@ export const useDeleteClassroom = () => {
 
         return response.data;
       } catch (err) {
-        console.error('Ошибка при удалении класса:', err);
+        console.error('Ошибка при удалении кабинета:', err);
         throw err;
       }
     },
@@ -37,7 +37,7 @@ export const useDeleteClassroom = () => {
       queryClient.invalidateQueries({ queryKey: [ClassroomsQueryKey.GetClassrooms] });
 
       // Показываем успешное уведомление
-      showSuccess('classroom', 'Класс успешно удален');
+      showSuccess('classroom', 'Кабинет успешно удален');
     },
   });
 

@@ -4,10 +4,22 @@ import {
   useGetRecipientInvoiceByStudent,
   useGetRecipientInvoiceByTutor,
   useStudentById,
+  useCurrentUser,
 } from 'common.services';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
-import { NotificationKind } from 'common.types';
+import type { NotificationKind } from 'common.types';
 import { cn } from '@xipkg/utils';
+
+const CLASSROOM_SCHEDULE_NOTIFICATION_KINDS = new Set<NotificationKind>([
+  'single_classroom_event_created_v1',
+  'classroom_event_instance_rescheduled_v1',
+  'classroom_event_instance_cancelled_v1',
+  'persisted_classroom_event_instance_reminder_v1',
+  'repeated_classroom_event_instance_reminder_v1',
+  'repeating_classroom_event_created_v1',
+  'classroom_event_repetition_updated_v1',
+  'classroom_event_repetition_cancelled_v1',
+]);
 
 const RecipientInvoiceAvatarByTutor = ({ recipientInvoiceId }: { recipientInvoiceId: number }) => {
   const { data: recipientInvoiceDataTutor } = useGetRecipientInvoiceByTutor(recipientInvoiceId);
@@ -92,6 +104,18 @@ type UserAvatarPropsT = {
 };
 
 export const NotificationAvatar = ({ classroomId, recipientInvoiceId, kind }: UserAvatarPropsT) => {
+  const { data: user } = useCurrentUser();
+
+  if (CLASSROOM_SCHEDULE_NOTIFICATION_KINDS.has(kind)) {
+    if (!classroomId) return null;
+    const isTutor = user?.default_layout === 'tutor';
+    return isTutor ? (
+      <ClassroomAvatarByTutor classroomId={classroomId} />
+    ) : (
+      <ClassroomAvatarByStudent classroomId={classroomId} />
+    );
+  }
+
   if (kind === 'classroom_conference_started_v1' || kind === 'enrollment_created_v1') {
     if (!classroomId) return null;
     return <ClassroomAvatarByStudent classroomId={classroomId} />;
@@ -116,7 +140,7 @@ export const NotificationAvatar = ({ classroomId, recipientInvoiceId, kind }: Us
     return (
       <div
         className={cn(
-          'bg-brand-10 flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full',
+          'bg-selection-background flex size-12 shrink-0 items-center justify-center overflow-hidden rounded-full',
         )}
         aria-hidden
       >

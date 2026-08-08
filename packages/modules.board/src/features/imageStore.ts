@@ -1,11 +1,13 @@
 import { uploadImageRequest, uploadFileRequest } from 'common.services';
-import { getFileUrl } from 'common.api';
-import { TLAsset } from 'tldraw';
+import { DrAsset } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { resolveAssetUrl } from '../utils/resolveAssetUrl';
 import { registerToken } from '../utils/tokenRegistry';
+import { checkAssetType } from '../utils/uploadAsset';
+import { ALLOWED_IMAGE_MIME_TYPES } from '../constants/mimeTypes';
+import i18n from 'i18next';
 
-export type TLAssetContextT = {
+export type DrAssetContextT = {
   screenScale: number;
   steppedScreenScale: number;
   dpr: number;
@@ -20,27 +22,14 @@ export type MediaResponseT = {
   name: string;
 };
 
-export type TLAssetStoreT = {
+export type DrAssetStoreT = {
   upload(
-    asset: TLAsset,
+    asset: DrAsset,
     file: File,
     abortSignal?: AbortSignal,
   ): Promise<{ src: string; meta?: Record<string, unknown> }>;
-  resolve?(asset: TLAsset, ctx: TLAssetContextT): Promise<string | null> | string | null;
+  resolve?(asset: DrAsset, ctx: DrAssetContextT): Promise<string | null> | string | null;
 };
-
-// Форматы, которые принимает бэкенд POST .../file-kinds/image/files/ (конвертирует в webp сам)
-const ALLOWED_IMAGE_MIME_TYPES = new Set([
-  'image/jpeg',
-  'image/jpx',
-  'image/png',
-  'image/gif',
-  'image/webp',
-  'image/tiff',
-  'image/bmp',
-  'image/x-icon',
-  'image/avif',
-]);
 
 const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
 const MAX_IMAGE_SIDE = 4096; // макс. сторона в пикселях
@@ -55,7 +44,7 @@ async function probeImage(file: File): Promise<{ w: number; h: number; objectUrl
     img.onload = () => resolve();
     img.onerror = () => {
       URL.revokeObjectURL(objectUrl);
-      reject(new Error(`Не удалось декодировать изображение: ${file.name}`));
+      reject(new Error(i18n.t('toast.imageDecodeFailed', { ns: 'board', name: file.name })));
     };
     img.src = objectUrl;
   });
@@ -65,34 +54,56 @@ async function probeImage(file: File): Promise<{ w: number; h: number; objectUrl
 /** POST через сервисные функции запросов (без хуков) */
 async function postUpload(file: File, token: string) {
   const isImage = file.type.startsWith('image/');
+
   return isImage
     ? await uploadImageRequest({ file, token })
     : await uploadFileRequest({ file, token });
 }
 
-/** Основной store — упрощенная версия */
+/**
+ * Asset store для @ibodr/draw: upload возвращает storage file id (не URL).
+ * Контракт персиста — utils/storedFileSrc.ts; URL собирается в resolve().
+ */
 export const myAssetStore = (token: string) => {
   registerToken(token);
 
   return {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async upload(_asset: TLAsset, file: File, _abortSignal?: AbortSignal) {
+    async upload(_asset: DrAsset, file: File, _abortSignal?: AbortSignal) {
+      const assetType = checkAssetType(file) || 'file';
+
       if (!file.type.startsWith('image/')) {
         const fileId = await postUpload(file, token);
-        return { src: fileId };
+        return {
+          src: fileId,
+          meta: {
+            customType: assetType,
+            fileName: file.name,
+            fileSize: file.size,
+          },
+        };
       }
 
       // Проверка формата (бэкенд принимает только эти типы)
       if (!ALLOWED_IMAGE_MIME_TYPES.has(file.type)) {
-        const message = `Неподдерживаемый формат изображения (${file.type}). Допустимы: JPEG, PNG, WebP, GIF, TIFF, BMP, ICO, AVIF, JPX.`;
-        toast.error('Не удалось загрузить изображение', { description: message, duration: 5000 });
+        const message = i18n.t('toast.imageUnsupportedFormat', { ns: 'board', type: file.type });
+        toast.error(i18n.t('toast.imageUploadFailed', { ns: 'board' }), {
+          description: message,
+          duration: 5000,
+        });
         throw new Error(message);
       }
 
       // Проверка размера по оригиналу (макс. 1 MiB)
       if (file.size > MAX_IMAGE_SIZE_BYTES) {
-        const message = `Размер изображения не должен превышать 1 MiB (сейчас ${(file.size / 1024 / 1024).toFixed(2)} MiB).`;
-        toast.error('Не удалось загрузить изображение', { description: message, duration: 5000 });
+        const message = i18n.t('toast.imageSizeDesc', {
+          ns: 'board',
+          size: (file.size / 1024 / 1024).toFixed(2),
+        });
+        toast.error(i18n.t('toast.imageUploadFailed', { ns: 'board' }), {
+          description: message,
+          duration: 5000,
+        });
         throw new Error(message);
       }
 
@@ -102,27 +113,51 @@ export const myAssetStore = (token: string) => {
         const { w, h, objectUrl: url } = await probeImage(file);
         objectUrl = url;
         if (w > MAX_IMAGE_SIDE || h > MAX_IMAGE_SIDE) {
-          const message = `Размер изображения не должен превышать ${MAX_IMAGE_SIDE}×${MAX_IMAGE_SIDE}px (сейчас ${w}×${h}px).`;
-          toast.error('Не удалось загрузить изображение', { description: message, duration: 5000 });
+          const message = i18n.t('toast.imageSideDesc', {
+            ns: 'board',
+            max: MAX_IMAGE_SIDE,
+            width: w,
+            height: h,
+          });
+          toast.error(i18n.t('toast.imageUploadFailed', { ns: 'board' }), {
+            description: message,
+            duration: 5000,
+          });
           throw new Error(message);
         }
       } finally {
         if (objectUrl) URL.revokeObjectURL(objectUrl);
       }
 
+      // Контракт персиста: только id — см. utils/storedFileSrc.ts
       const fileId = await postUpload(file, token);
-      const src = getFileUrl(fileId);
-      return { src };
+      return {
+        src: fileId,
+        meta: {
+          customType: assetType,
+          fileName: file.name,
+          fileSize: file.size,
+        },
+      };
     },
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async resolve(asset: TLAsset, _ctx: TLAssetContextT) {
+    async resolve(asset: DrAsset, _ctx: DrAssetContextT) {
       const src = asset.props.src;
+
       if (!src) return src;
 
       try {
         return await resolveAssetUrl(src, token);
       } catch (error) {
+        // ВАЖНО: возвращаем именно `src`, а не null. Внутри tldraw `useImageOrVideoAsset`
+        // есть guard `if (previousUrl.current === url) return`, из-за которого при `url === null`
+        // флаг `didAlreadyResolve` не выставляется, и встроенный 500мс debounce между
+        // ресолвами не активируется. Каждое движение камеры / culling-тик / ресайз shape тогда
+        // дёргает ресолв заново, что генерирует шторм 403-запросов (negative cache успевает
+        // истечь через 30 с — и всё начинается снова). Отдавая src, мы получаем максимум
+        // один лишний <img src> запрос на shape, после чего CustomImageShape ловит onError
+        // и показывает placeholder; повторных axios-запросов не будет из-за negative cache.
         console.error('[myAssetStore.resolve] Ошибка при загрузке изображения:', error);
         return src;
       }

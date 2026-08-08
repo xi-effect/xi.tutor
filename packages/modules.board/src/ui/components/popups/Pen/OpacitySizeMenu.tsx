@@ -1,9 +1,9 @@
 import { Slider } from '@xipkg/slider';
-import { useTldrawStore } from '../../../../store/useTldrawStore';
-import { useTldrawStyles } from '../../../../hooks/useTldrawStyles';
+import { useDrawStore } from '../../../../store/useDrawStore';
+import { useDrawStyles } from '../../../../hooks/useDrawStyles';
 import { colorOptions } from '../../../../utils/customConfig';
 import { cn } from '@xipkg/utils';
-import type { PenPreset, PenThickness } from '../../../../store/useTldrawStore';
+import type { PenPreset, PenThickness } from '../../../../store/useDrawStore';
 import { ColorDot } from '../../canvas';
 
 const sizes = ['xs', 's', 'm', 'l', 'xl'] as const;
@@ -35,7 +35,9 @@ const PresetButton = ({ preset, isActive, onClick }: PresetButtonProps) => {
       onClick={onClick}
       className={cn(
         'flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all',
-        isActive ? 'ring-brand-80 ring-2 ring-offset-1' : 'hover:ring-gray-30 hover:ring-1',
+        isActive
+          ? 'ring-border-focus ring-2 ring-offset-1'
+          : 'hover:ring-border-control hover:ring-1',
       )}
       aria-label="Preset"
     >
@@ -62,9 +64,9 @@ export const OpacitySizeMenu = () => {
     penPresets,
     activePresetIndex,
     setActivePreset,
-  } = useTldrawStore();
+  } = useDrawStore();
 
-  const { setColor, setThickness, setOpacity } = useTldrawStyles();
+  const { setColor, setThickness, setOpacity } = useDrawStyles();
 
   const handleSize = (value: number[]) => {
     const size = sizes[value[0] - 1];
@@ -94,7 +96,7 @@ export const OpacitySizeMenu = () => {
   const getSizeIndex = (size: string) => sizes.indexOf(size as (typeof sizes)[number]) + 1;
 
   return (
-    <div className="border-gray-10 bg-gray-0 w-full rounded-xl border shadow-none">
+    <div className="border-border-default bg-background-surface w-full rounded-xl border shadow-none">
       <div className="flex w-full flex-col items-stretch gap-3 p-3 sm:flex-row sm:items-center">
         {/* Пресеты */}
         <div className="flex shrink-0 items-center gap-1.5">
@@ -108,7 +110,7 @@ export const OpacitySizeMenu = () => {
           ))}
         </div>
 
-        <div className="bg-gray-10 hidden h-8 w-px shrink-0 sm:block" />
+        <div className="bg-border-default hidden h-8 w-px shrink-0 sm:block" />
 
         {/* Слайдеры */}
         <div className="flex min-w-0 flex-col gap-3">
@@ -123,7 +125,7 @@ export const OpacitySizeMenu = () => {
                 minStepsBetweenThumbs={1}
               />
             </div>
-            <span className="text-gray-80 w-5 shrink-0 text-xs">
+            <span className="text-text-primary w-5 shrink-0 text-xs">
               {pencilThickness.toUpperCase()}
             </span>
           </div>
@@ -137,11 +139,11 @@ export const OpacitySizeMenu = () => {
                 step={10}
               />
             </div>
-            <span className="text-gray-80 w-5 shrink-0 text-xs">{pencilOpacity}</span>
+            <span className="text-text-primary w-5 shrink-0 text-xs">{pencilOpacity}</span>
           </div>
         </div>
 
-        <div className="bg-gray-10 hidden h-8 w-px shrink-0 sm:block" />
+        <div className="bg-border-default hidden h-8 w-px shrink-0 sm:block" />
 
         {/* Цвета */}
         <div className="flex flex-wrap items-center gap-1.5">

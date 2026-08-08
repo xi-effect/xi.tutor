@@ -59,7 +59,7 @@ export const useUpdateClassroomStatus = () => {
 
         return response.data;
       } catch (err) {
-        console.error('Ошибка при обновлении статуса класса:', err);
+        console.error('Ошибка при обновлении статуса кабинета:', err);
         throw err;
       }
     },
@@ -80,7 +80,7 @@ export const useUpdateClassroomStatus = () => {
         ClassroomsQueryKey.GetClassrooms,
       ]);
 
-      // Оптимистично обновляем данные класса в списке
+      // Оптимистично обновляем данные кабинета в списке
       queryClient.setQueryData(
         [ClassroomsQueryKey.GetClassrooms],
         (old: ClassroomT[] | InfiniteQueryData | undefined) => {
@@ -109,7 +109,7 @@ export const useUpdateClassroomStatus = () => {
         },
       );
 
-      // Оптимистично обновляем данные конкретного класса
+      // Оптимистично обновляем данные конкретного кабинета
       queryClient.setQueryData<ClassroomT>(
         [ClassroomsQueryKey.GetClassroom, classroomId],
         (old) => {
@@ -147,7 +147,7 @@ export const useUpdateClassroomStatus = () => {
           updatedClassroom,
         );
 
-        // Обновляем класс в списке
+        // Обновляем кабинет в списке
         queryClient.setQueryData(
           [ClassroomsQueryKey.GetClassrooms],
           (old: ClassroomT[] | InfiniteQueryData | undefined) => {
@@ -178,7 +178,7 @@ export const useUpdateClassroomStatus = () => {
       }
 
       // Показываем успешное уведомление
-      showSuccess('classroom', `Статус класса обновлен`);
+      showSuccess('classroom', `Статус кабинета обновлен`);
     },
   });
 

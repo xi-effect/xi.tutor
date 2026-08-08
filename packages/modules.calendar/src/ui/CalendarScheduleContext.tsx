@@ -1,4 +1,13 @@
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 import { useCalendar } from '../hooks';
 
 type CalendarScheduleContextValue = {
@@ -6,11 +15,14 @@ type CalendarScheduleContextValue = {
   weekStart: Date;
   /** Срез weekDays по числу видимых колонок, вычисляется в CalendarModule через ResizeObserver. */
   visibleDays: Date[];
+  /** Число видимых колонок (из ResizeObserver канбана) */
+  visibleDayCount: number;
   /** Вызывается из CalendarModule при изменении числа видимых колонок. */
   setVisibleCount: (count: number) => void;
   goToPrev: (count: number) => void;
   goToNext: (count: number) => void;
   goToWeekStart: (date: Date) => void;
+  goToVisibleWindowForDate: (date: Date, visibleCount: number) => void;
 };
 
 const CalendarScheduleContext = createContext<CalendarScheduleContextValue | null>(null);
@@ -33,21 +45,83 @@ export const useCalendarSchedule = (): CalendarScheduleContextValue => {
  * страницам запрашивать данные только для отображаемого диапазона колонок.
  */
 export const CalendarScheduleProvider = ({ children }: { children: ReactNode }) => {
-  const { weekDays, weekStart, goToPrev, goToNext, goToWeekStart } = useCalendar();
-  const [visibleCount, setVisibleCount] = useState(weekDays.length);
+  const {
+    weekDays,
+    weekStart,
+    goToPrev,
+    goToNext,
+    goToWeekStart,
+    goToVisibleWindowForDate,
+    syncWeekStartForVisibleCount,
+  } = useCalendar();
+  const [visibleCount, setVisibleCountState] = useState(weekDays.length);
+  const userHasNavigatedRef = useRef(false);
   const visibleDays = useMemo(() => weekDays.slice(0, visibleCount), [weekDays, visibleCount]);
+
+  const setVisibleCount = useCallback((count: number) => {
+    setVisibleCountState(count);
+  }, []);
+
+  useLayoutEffect(() => {
+    if (userHasNavigatedRef.current) return;
+    syncWeekStartForVisibleCount(visibleCount);
+  }, [visibleCount, syncWeekStartForVisibleCount]);
+
+  const goToPrevWithNav = useCallback(
+    (count: number) => {
+      userHasNavigatedRef.current = true;
+      goToPrev(count);
+    },
+    [goToPrev],
+  );
+
+  const goToNextWithNav = useCallback(
+    (count: number) => {
+      userHasNavigatedRef.current = true;
+      goToNext(count);
+    },
+    [goToNext],
+  );
+
+  const goToWeekStartWithNav = useCallback(
+    (date: Date) => {
+      userHasNavigatedRef.current = true;
+      goToWeekStart(date);
+    },
+    [goToWeekStart],
+  );
+
+  const goToVisibleWindowForDateWithNav = useCallback(
+    (date: Date, visibleCount: number) => {
+      userHasNavigatedRef.current = true;
+      goToVisibleWindowForDate(date, visibleCount);
+    },
+    [goToVisibleWindowForDate],
+  );
 
   const value = useMemo(
     () => ({
       weekDays,
       weekStart,
       visibleDays,
+      visibleDayCount: visibleCount,
       setVisibleCount,
-      goToPrev,
-      goToNext,
-      goToWeekStart,
+      goToPrev: goToPrevWithNav,
+      goToNext: goToNextWithNav,
+      goToWeekStart: goToWeekStartWithNav,
+      goToVisibleWindowForDate: goToVisibleWindowForDateWithNav,
     }),
-    [weekDays, weekStart, visibleDays, goToPrev, goToNext, goToWeekStart],
+    [
+      weekDays,
+      weekStart,
+      visibleDays,
+      visibleCount,
+      setVisibleCount,
+      goToPrevWithNav,
+      goToNextWithNav,
+      goToWeekStartWithNav,
+      goToVisibleWindowForDateWithNav,
+    ],
   );
 
   return (

@@ -1,136 +1,157 @@
 import { Editor } from '@tiptap/react';
-import { BlockTypeT } from '../types';
-import { NodeSelection, TextSelection } from '@tiptap/pm/state';
+import { ActiveBlockT, BlockTypeT } from '../types';
 import { moveBlock } from '../utils/moveBlock';
+import { getCurrentBlock } from '../utils/getCurrentBlock';
 
-export const useBlockMenuActions = (editor: Editor | null) => {
-  const duplicate = () => {
-    if (!editor || !editor.isEditable) return false;
+const TEXT_BLOCKS = ['paragraph', 'heading'];
+const NODE_TYPES_MAP = {
+  paragraph: {
+    type: 'paragraph',
+    attrs: {},
+  },
 
-    try {
-      const { state } = editor;
-      const { selection } = state;
-      const chain = editor.chain().focus();
+  heading1: {
+    type: 'heading',
+    attrs: { level: 1 },
+  },
 
-      if (selection instanceof NodeSelection) {
-        const selectedNode = selection.node;
-        const insertPos = selection.to;
+  heading2: {
+    type: 'heading',
+    attrs: { level: 2 },
+  },
 
-        chain.insertContentAt(insertPos, selectedNode.toJSON()).run();
-        return true;
-      }
+  heading3: {
+    type: 'heading',
+    attrs: { level: 3 },
+  },
+};
 
-      const $anchor = selection.$anchor;
-
-      for (let depth = 1; depth <= $anchor.depth; depth++) {
-        const node = $anchor.node(depth);
-
-        if (node.type.name === 'doc' || !node.type.spec.group) {
-          continue;
-        }
-
-        const nodeStart = $anchor.start(depth);
-        const insertPos = Math.min(nodeStart + node.nodeSize, state.doc.content.size);
-
-        chain.insertContentAt(insertPos, node.toJSON()).run();
-        return true;
-      }
-
-      return false;
-    } catch {
-      return false;
-    }
-  };
-
-  const deleteNodeAtPosition = (editor: Editor, pos: number, nodeSize: number): boolean => {
-    const chain = editor.chain().focus();
-
-    let success = chain.deleteRange({ from: pos, to: pos + nodeSize }).run();
-    if (success) return true;
-
-    success = chain.setNodeSelection(pos).deleteSelection().run();
-    return success;
-  };
-
-  const remove = () => {
-    if (!editor || !editor.isEditable) return false;
-
-    try {
-      const { state } = editor;
-      const { selection } = state;
-
-      if (selection instanceof NodeSelection) {
-        const pos = selection.from;
-        const node = selection.node;
-        if (!node) return false;
-        return deleteNodeAtPosition(editor, pos, node.nodeSize);
-      }
-
-      const $pos = selection.$anchor;
-
-      for (let depth = $pos.depth; depth >= 0; depth--) {
-        const node = $pos.node(depth);
-        const pos = $pos.before(depth);
-
-        if (!node) continue;
-
-        if (node.isBlock || node.type.name === 'image') {
-          return deleteNodeAtPosition(editor, pos, node.nodeSize);
-        }
-      }
-
-      if (selection instanceof TextSelection && !selection.empty) {
-        return editor.chain().focus().deleteSelection().run();
-      }
-
-      return false;
-    } catch (err) {
-      console.warn('Ошибка при удалении:', err);
-      return false;
-    }
-  };
-
-  const changeType = (type: BlockTypeT) => {
-    if (!editor || !editor.isEditable) return;
-
-    const changeTypeMap: Record<string, () => void> = {
-      paragraph: () => editor.chain().focus().setParagraph().run(),
-      heading1: () => editor.chain().focus().toggleHeading({ level: 1 }).run(),
-      heading2: () => editor.chain().focus().toggleHeading({ level: 2 }).run(),
-      heading3: () => editor.chain().focus().toggleHeading({ level: 3 }).run(),
-    };
-
-    changeTypeMap[type]?.();
-  };
-
+export const useBlockMenuActions = (
+  editor: Editor | null,
+  getActiveBlock?: () => ActiveBlockT | undefined,
+) => {
   const insertImage = (src: string, alt?: string) => {
     if (!editor || !editor.isEditable) return;
 
-    const { state } = editor;
-    const { selection } = state;
+    const activeBlock = getCurrentBlock(editor);
 
-    if (selection instanceof NodeSelection) {
-      const posAfter = selection.to;
-      editor
-        .chain()
-        .focus()
-        .insertContentAt(posAfter, { type: 'image', attrs: { src, alt } })
-        .run();
-      return;
-    }
+    if (!activeBlock?.node) return;
 
-    editor.chain().focus().insertContent({ type: 'image', attrs: { src, alt } }).run();
+    const insertPos = activeBlock.pos + activeBlock.node.nodeSize;
+
+    editor
+      .chain()
+      .focus()
+      .insertContentAt(insertPos, {
+        type: 'image',
+        attrs: { src, alt },
+      })
+      .run();
+  };
+
+  const createBlock = (
+    editor: Editor | null,
+    type: BlockTypeT,
+    activeBlock: ActiveBlockT | undefined,
+  ) => {
+    if (!editor || !editor.isEditable || !type || !activeBlock) return;
+
+    const currentBlock = getCurrentBlock(editor, activeBlock);
+
+    if (!currentBlock?.node) return;
+
+    const config = NODE_TYPES_MAP[type];
+    if (!config) return;
+
+    const insertPos = currentBlock.pos + currentBlock.node.nodeSize;
+
+    const nodeType = editor.schema.nodes[config.type];
+    if (!nodeType) return;
+
+    const newNode = nodeType.createAndFill(config.attrs);
+    if (!newNode) return;
+
+    editor.chain().focus().insertContentAt(insertPos, newNode.toJSON()).run();
   };
 
   const downloadImage = (src: string) => {
     const link = document.createElement('a');
+    link.setAttribute('target', '_blank');
     link.href = src;
     link.download = 'image.png';
     link.click();
   };
 
-  const moveUp = () => moveBlock(editor, 'up');
-  const moveDown = () => moveBlock(editor, 'down');
+  const changeType = (type?: BlockTypeT) => {
+    if (!editor || !editor.isEditable || !type || !getActiveBlock) return;
+
+    const activeBlock = getActiveBlock();
+
+    if (!activeBlock || !activeBlock.node) return;
+
+    const config = NODE_TYPES_MAP[type];
+    if (!config) return;
+
+    const nodeType = editor.schema.nodes[config.type];
+    if (!nodeType) return;
+
+    const currentType = activeBlock.node?.type.name || '';
+    if (!TEXT_BLOCKS.includes(currentType)) return;
+
+    editor.commands.command(({ tr, dispatch }) => {
+      tr.setNodeMarkup(activeBlock.pos, nodeType, config.attrs);
+      dispatch?.(tr);
+      return true;
+    });
+  };
+
+  // В момент вызова получаем свежую позицию
+  const insertBlock = (type: BlockTypeT) => {
+    if (!getActiveBlock) return;
+    const activeBlock = getActiveBlock();
+    return createBlock(editor, type, activeBlock);
+  };
+
+  const insertCode = (codeText: string = '', language: string = 'plaintext') => {
+    if (!editor || !editor.isEditable) return;
+
+    const endPos = editor.state.doc.content.size;
+    editor
+      .chain()
+      .focus()
+      .insertContentAt(endPos, {
+        type: 'codeBlock',
+        attrs: { language: language || 'plaintext' },
+        content: codeText ? [{ type: 'text', text: codeText }] : [],
+      })
+      .run();
+    return;
+  };
+
+  // В момент вызова получаем свежую позицию
+  const moveUp = () => {
+    if (!getActiveBlock) return;
+    const activeBlock = getActiveBlock();
+    return moveBlock(editor, 'up', activeBlock);
+  };
+
+  const moveDown = () => {
+    if (!getActiveBlock) return;
+    const activeBlock = getActiveBlock();
+    return moveBlock(editor, 'down', activeBlock);
+  };
+
+  const duplicate = () => {
+    if (!getActiveBlock) return;
+    const activeBlock = getActiveBlock();
+    return duplicateBlock(editor, activeBlock);
+  };
+
+  const remove = () => {
+    if (!getActiveBlock) return;
+    const activeBlock = getActiveBlock();
+    return removeBlock(editor, activeBlock);
+  };
 
   return {
     duplicate,
@@ -140,5 +161,42 @@ export const useBlockMenuActions = (editor: Editor | null) => {
     downloadImage,
     moveDown,
     moveUp,
+    insertCode,
+    insertBlock,
   };
 };
+
+export function duplicateBlock(editor: Editor | null, activeBlock?: ActiveBlockT): boolean {
+  if (!editor) return false;
+
+  const currentBlock = getCurrentBlock(editor, activeBlock);
+  if (!currentBlock || !currentBlock.node) return false;
+
+  const positionAfterActiveNode = currentBlock.pos + currentBlock.node.nodeSize;
+  const copiedNode = currentBlock.node.toJSON();
+
+  editor.chain().focus().insertContentAt(positionAfterActiveNode, copiedNode).run();
+  return true;
+}
+
+export function removeBlock(editor: Editor | null, activeBlock?: ActiveBlockT): boolean {
+  if (!editor || !editor.isEditable) return false;
+
+  const currentBlock = getCurrentBlock(editor, activeBlock);
+  if (!currentBlock || !currentBlock.node) return false;
+
+  try {
+    editor
+      .chain()
+      .focus()
+      .deleteRange({
+        from: currentBlock.pos,
+        to: currentBlock.pos + currentBlock.node.nodeSize,
+      })
+      .run();
+    return true;
+  } catch (err) {
+    console.warn('Ошибка при удалении:', err);
+    return false;
+  }
+}

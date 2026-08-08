@@ -21,17 +21,17 @@ export const ResetPassword = () => {
 
   return (
     <Form<FormDataEmail> {...form}>
-      <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex w-full flex-col gap-4">
+      <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex flex-1 flex-col gap-4">
         <div className="self-center">
           <Logo height={22} width={180} />
         </div>
 
-        <h1 className="flex justify-center text-2xl font-semibold dark:text-gray-100">
+        <h1 className="text-text-primary flex justify-center text-2xl font-semibold">
           {isSubmitSuccessful ? t('emailSent') : t('title')}
         </h1>
 
         {isSubmitSuccessful ? (
-          <div className="xs:w-[80%] m-auto w-full pt-4 text-center text-sm font-normal text-gray-100">
+          <div className="xs:w-[80%] text-text-primary m-auto w-full pt-4 text-center text-sm font-normal">
             {t('sentTo')} {submittedEmail}
           </div>
         ) : (
@@ -40,7 +40,9 @@ export const ResetPassword = () => {
             name="email"
             render={({ field }) => (
               <FormItem className="flex flex-col gap-1 pt-4">
-                <FormLabel className="text-sm font-normal">{t('emailLabel')}</FormLabel>
+                <FormLabel className="text-text-primary text-sm font-normal">
+                  {t('emailLabel')}
+                </FormLabel>
                 <FormControl>
                   <Input
                     error={!!form.formState.errors.email}
@@ -53,13 +55,13 @@ export const ResetPassword = () => {
                     }}
                   />
                 </FormControl>
-                <FormMessage className="text-red-80 pt-0 text-sm font-normal" />
+                <FormMessage className="text-text-danger pt-0 text-sm font-normal" />
               </FormItem>
             )}
           />
         )}
 
-        <div className="flex h-full w-full items-end justify-between">
+        <div className="mt-auto flex w-full items-end justify-between">
           <div className="flex h-[48px] items-center">
             {isSubmitSuccessful ? (
               <Link

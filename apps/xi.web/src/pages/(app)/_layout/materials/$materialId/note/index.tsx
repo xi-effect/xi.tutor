@@ -19,12 +19,6 @@ export const Route = createFileRoute('/(app)/_layout/materials/$materialId/note/
         title: 'sovlium | Доска',
       },
     ],
-    links: [
-      {
-        rel: 'modulepreload',
-        href: '/src/modules/board/index.tsx',
-      },
-    ],
   }),
   component: MaterialsNotesPage,
   // @ts-ignore

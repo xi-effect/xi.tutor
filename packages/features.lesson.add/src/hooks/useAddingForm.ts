@@ -1,14 +1,19 @@
+import { useMemo } from 'react';
 import { useForm } from '@xipkg/form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { formSchema, type FormData, type FormInput } from '../model/formSchema';
+import { createFormSchema, type FormData, type FormInput } from '../model/formSchema';
 import { useFetchClassrooms, useCreateClassroomEvent } from 'common.services';
 import type { CreateClassroomEventRequestDto } from 'common.api';
 import { toLocalISOString } from 'modules.calendar';
+import type { ProductAnalyticsLessonType, ProductAnalyticsSource } from 'common.utils';
+import { durationBetweenMinutes } from '../utils';
 
 type UseAddingFormOptions = {
   fixedClassroomId?: number;
   onSubmit?: (data: FormData) => void | Promise<void>;
+  analyticsSource?: ProductAnalyticsSource;
 };
 
 const getDefaultValues = (initialDate?: Date | null, fixedClassroomId?: number): FormInput => ({
@@ -31,12 +36,9 @@ const buildStartsAt = (startDate: Date, startTime: string): string => {
   return toLocalISOString(d);
 };
 
-/** Разница между endTime и startTime в секундах */
-const buildDurationSeconds = (startTime: string, endTime: string): number => {
-  const [sh, sm] = startTime.split(':').map(Number);
-  const [eh, em] = endTime.split(':').map(Number);
-  return (eh * 60 + em - (sh * 60 + sm)) * 60;
-};
+/** Разница между endTime и startTime в секундах (с учётом перехода через полночь) */
+const buildDurationSeconds = (startTime: string, endTime: string): number =>
+  durationBetweenMinutes(startTime, endTime) * 60;
 
 /**
  * Биткарта недели: 0=Пн, 1=Вт, ..., 6=Вс → бит 0 = Пн, бит 1 = Вт, ...
@@ -97,10 +99,22 @@ const buildRequestBody = (data: FormData): CreateClassroomEventRequestDto => {
   };
 };
 
+const resolveLessonType = (
+  classrooms: Array<{ id: number; kind?: string }>,
+  classroomId: number,
+): ProductAnalyticsLessonType => {
+  const classroom = classrooms.find((item) => item.id === classroomId);
+  if (classroom?.kind === 'individual') return 'individual';
+  if (classroom?.kind === 'group') return 'group';
+  return 'unknown';
+};
+
 export const useAddingForm = (initialDate?: Date | null, options: UseAddingFormOptions = {}) => {
+  const { t } = useTranslation('lessonAdd');
   const { data: classrooms, isLoading: isClassroomsLoading } = useFetchClassrooms();
-  const { fixedClassroomId, onSubmit: externalSubmit } = options;
+  const { fixedClassroomId, onSubmit: externalSubmit, analyticsSource = 'unknown' } = options;
   const createEvent = useCreateClassroomEvent();
+  const formSchema = useMemo(() => createFormSchema(t), [t]);
 
   const form = useForm<FormInput, unknown, FormData>({
     resolver: zodResolver(formSchema),
@@ -119,8 +133,17 @@ export const useAddingForm = (initialDate?: Date | null, options: UseAddingFormO
     const classroomId = Number(data.studentId);
     const body = buildRequestBody(data);
 
-    await createEvent.mutateAsync({ classroomId, body });
-    toast.success('Занятие добавлено');
+    await createEvent.mutateAsync({
+      classroomId,
+      body,
+      analytics: {
+        source: analyticsSource,
+        lesson_type: resolveLessonType(classrooms ?? [], classroomId),
+        is_recurring: data.repeatMode !== 'none',
+        has_description: Boolean(data.description?.trim()),
+      },
+    });
+    toast.success(t('toast.success'));
   };
 
   const handleClearForm = () => {

@@ -4,6 +4,28 @@ import { useNavigate } from '@tanstack/react-router';
 import { ClassroomsQueryKey, studentApiConfig, StudentQueryKey, UserQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { handleError, useCurrentUser, useUpdateProfile } from 'common.services';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  createAttemptId,
+  getInviteTrackingId,
+  getProductAnalyticsRole,
+  mapInviteError,
+  measureDurationMs,
+  nowMs,
+  trackProductEvent,
+  type ProductAnalyticsInviteKind,
+} from 'common.utils';
+
+type AcceptInviteVariables = {
+  code: string;
+  invite_kind: ProductAnalyticsInviteKind;
+  tutor_id?: string;
+};
+
+type AcceptInviteContext = {
+  attemptId: string;
+  startedAt: number;
+};
 
 export const useAcceptInvite = () => {
   const queryClient = useQueryClient();
@@ -11,8 +33,8 @@ export const useAcceptInvite = () => {
   const { data: currentUser } = useCurrentUser();
   const { updateProfile } = useUpdateProfile();
 
-  return useMutation<ClassroomResponseT, Error, string>({
-    mutationFn: async (code: string) => {
+  return useMutation<ClassroomResponseT, Error, AcceptInviteVariables, AcceptInviteContext>({
+    mutationFn: async ({ code }) => {
       try {
         const axiosInst = await getAxiosInstance();
         const response = await axiosInst({
@@ -28,13 +50,42 @@ export const useAcceptInvite = () => {
         throw err;
       }
     },
-    onSuccess: (classroomData) => {
+    onMutate: (variables) => {
+      const attemptId = createAttemptId();
+      const startedAt = nowMs();
+      const studentAuthenticated = Boolean(currentUser?.id);
+
+      void getInviteTrackingId(variables.code).then((invite_tracking_id) => {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_ACCEPT_SUBMIT, {
+          invite_id: variables.code,
+          tutor_id: variables.tutor_id,
+          attempt_id: attemptId,
+          student_authenticated: studentAuthenticated,
+          invite_flow_version: 2,
+          invite_tracking_id,
+        });
+      });
+
+      return { attemptId, startedAt };
+    },
+    onSuccess: (classroomData, variables, context) => {
       queryClient.invalidateQueries({ queryKey: [ClassroomsQueryKey.GetClassrooms] });
 
-      // Проверяем роль пользователя из кеша (на случай, если currentUser еще не обновился)
       const user = queryClient.getQueryData<typeof currentUser>([UserQueryKey.Home]) || currentUser;
 
-      // Если пользователь имеет роль tutor, принудительно обновляем на student
+      void getInviteTrackingId(variables.code).then((invite_tracking_id) => {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.INVITE_ACCEPTED_SUCCESS, {
+          role: getProductAnalyticsRole(user?.default_layout),
+          invite_kind: variables.invite_kind,
+          invite_id: variables.code,
+          tutor_id: variables.tutor_id,
+          attempt_id: context?.attemptId,
+          student_authenticated: Boolean(user?.id),
+          invite_flow_version: 2,
+          invite_tracking_id,
+        });
+      });
+
       if (user?.default_layout === 'tutor') {
         updateProfile.mutate(
           { default_layout: 'student' },
@@ -53,8 +104,24 @@ export const useAcceptInvite = () => {
         navigate({ to: `/classrooms/${classroomData.id}` });
       }
     },
-    onError: (error) => {
+    onError: (error, variables, context) => {
       console.error('Ошибка:', error.message);
+
+      if (context) {
+        void getInviteTrackingId(variables.code).then((invite_tracking_id) => {
+          trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_ACCEPT_FAILED, {
+            invite_id: variables.code,
+            tutor_id: variables.tutor_id,
+            attempt_id: context.attemptId,
+            student_authenticated: Boolean(currentUser?.id),
+            reason: mapInviteError(error),
+            duration_ms: measureDurationMs(context.startedAt),
+            invite_flow_version: 2,
+            invite_tracking_id,
+          });
+        });
+      }
+
       handleError(error, 'acceptInvite');
     },
   });

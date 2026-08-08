@@ -1,14 +1,18 @@
 import { useState } from 'react';
 import { Modal, ModalContent, ModalTitle } from '@xipkg/modal';
 import { FileUploader } from '@xipkg/fileuploader';
+import { useTranslation } from 'react-i18next';
 import { useInterfaceStore } from '../../store/interfaceStore';
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
 import { optimizeImage } from '../../utils/optimizeImage';
-import { useUploadImage } from 'common.services';
+import { isFileNameTooLong, MAX_FILENAME_LENGTH, useUploadImage } from 'common.services';
 import { useBlockMenuActions, useYjsContext } from '../../hooks';
+import { toast } from 'sonner';
+import { checkImageUrl } from '../../utils/checkImageUrl';
 
 export const ImageUploadModal = () => {
+  const { t } = useTranslation('editor');
   const { closeModal, activeModal } = useInterfaceStore();
   const [mode, setMode] = useState<'upload' | 'link'>('upload');
   const [imageLink, setImageLink] = useState('');
@@ -22,24 +26,47 @@ export const ImageUploadModal = () => {
   const handleInput = async (files: File[]) => {
     if (!files) return;
     const file = files[0];
-    const optimizedImage = await optimizeImage(file);
-    try {
-      const uploadedUrl = await uploadImage({
-        file: optimizedImage,
-        token: storageItem.storage_token,
+
+    if (isFileNameTooLong(file.name)) {
+      toast.error(t('upload.fileNameTooLong'), {
+        description: t('upload.fileNameTooLongDesc', { max: MAX_FILENAME_LENGTH }),
       });
-
-      insertImage(uploadedUrl);
-
-      closeModal();
-    } catch (err) {
-      console.error('Ошибка при загрузке изображения:', err);
+      return;
     }
+
+    const optimizedImage = await optimizeImage(file);
+
+    const uploadedId = await uploadImage({
+      file: optimizedImage,
+      token: storageItem.storage_token,
+    });
+
+    insertImage(uploadedId);
+    closeModal();
   };
 
-  const handleAddLink = () => {
-    if (!imageLink.trim()) return;
-    insertImage(imageLink.trim());
+  const handleFileError = (titleError: string, subtitleError?: string) => {
+    if (!titleError) return;
+
+    toast.error(titleError, {
+      ...(subtitleError && { description: subtitleError }),
+    });
+  };
+
+  const handleAddLink = async () => {
+    const trimmedLink = imageLink.trim();
+
+    if (!trimmedLink) return;
+
+    const isValidImage = await checkImageUrl(trimmedLink);
+
+    if (!isValidImage) {
+      toast.error(t('upload.invalidLink'));
+      return;
+    }
+
+    insertImage(trimmedLink);
+
     closeModal();
   };
 
@@ -52,7 +79,7 @@ export const ImageUploadModal = () => {
             className="h-[26px] px-3 text-[14px]"
             onClick={() => setMode('upload')}
           >
-            Загрузить
+            {t('upload.upload')}
           </Button>
 
           <Button
@@ -60,19 +87,24 @@ export const ImageUploadModal = () => {
             className="h-[26px] px-3 text-[14px]"
             onClick={() => setMode('link')}
           >
-            Вставить ссылку
+            {t('upload.insertLink')}
           </Button>
         </ModalTitle>
 
         <div className="mt-4">
           {mode === 'upload' ? (
-            <FileUploader onChange={handleInput} accept="image/*" size="large" />
+            <FileUploader
+              onChange={handleInput}
+              onFileError={handleFileError}
+              accept="image/*"
+              size="large"
+            />
           ) : (
             <div className="flex gap-2">
               <div className="w-full">
                 <Input
                   variant="s"
-                  placeholder="Вставьте ссылку на изображение"
+                  placeholder={t('upload.linkPlaceholder')}
                   className="border"
                   name="fileLink"
                   value={imageLink}
@@ -80,7 +112,7 @@ export const ImageUploadModal = () => {
                 />
               </div>
               <Button size="s" onClick={handleAddLink}>
-                Добавить
+                {t('upload.add')}
               </Button>
             </div>
           )}

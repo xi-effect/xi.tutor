@@ -2,13 +2,19 @@ import { Button } from '@xipkg/button';
 import { EmailPageLayout } from './EmailPageLayout';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 import { useEmailConfirmation } from 'common.services';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  inferEmailConfirmationSource,
+  trackProductEvent,
+} from 'common.utils';
+import { useTranslation } from 'react-i18next';
 import { useEmailToken } from './useEmailToken';
 
 const Loading = () => {
   return (
     <div className="flex justify-center">
       <div
-        className="text-brand-80 inline-block size-6 animate-spin rounded-full border-[3px] border-current border-t-transparent"
+        className="text-text-link inline-block size-6 animate-spin rounded-full border-[3px] border-current border-t-transparent"
         role="status"
         aria-label="loading"
       >
@@ -19,19 +25,27 @@ const Loading = () => {
 };
 
 export const EmailPageSuccess = () => {
+  const { t } = useTranslation('email');
   const navigate = useNavigate();
   const search = useSearch({ strict: false });
   const emailToken = useEmailToken();
   const { isLoading, isSuccess, isError, isAlreadyConfirmed } = useEmailConfirmation(emailToken);
+  const source = inferEmailConfirmationSource({
+    hasToken: Boolean(emailToken && emailToken !== 'confirm'),
+  });
 
   const handleConfirm = () => {
+    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.EMAIL_CONFIRMATION_CONTINUE_CLICKED, {
+      already_confirmed: isAlreadyConfirmed,
+      source,
+    });
     navigate({ to: '/welcome/user', search: { ...search } });
   };
 
   const shouldShowButton = (isSuccess || isAlreadyConfirmed) && !isLoading;
 
   return (
-    <EmailPageLayout title={isLoading ? 'Идёт подтверждение почты' : 'Вы подтвердили почту'}>
+    <EmailPageLayout title={isLoading ? t('success.confirmingTitle') : t('success.confirmedTitle')}>
       {isLoading && (
         <div className="mt-4 flex h-full items-center justify-center">
           <Loading />
@@ -39,26 +53,28 @@ export const EmailPageSuccess = () => {
       )}
       {isSuccess && !isLoading && (
         <div className="mt-8 flex flex-col items-center gap-1">
-          <span className="text-m-base w-full text-center text-gray-100">Успешных уроков!</span>
+          <span className="text-m-base text-text-primary w-full text-center">
+            {t('success.successMessage')}
+          </span>
         </div>
       )}
       {isAlreadyConfirmed && !isLoading && (
         <div className="mt-8 flex flex-col items-center gap-1">
-          <span className="text-m-base w-full text-center text-gray-100">
-            Почта уже подтверждена
+          <span className="text-m-base text-text-primary w-full text-center">
+            {t('success.alreadyConfirmed')}
           </span>
         </div>
       )}
       {isError && !isLoading && (
         <div className="mt-8 flex flex-col items-center gap-1">
-          <span className="text-m-base w-full text-center text-gray-100">
-            Ошибка при подтверждении почты
+          <span className="text-m-base text-text-primary w-full text-center">
+            {t('success.error')}
           </span>
         </div>
       )}
       {shouldShowButton && (
         <Button size="m" className="mt-16 h-[48px] w-full rounded-xl" onClick={handleConfirm}>
-          Продолжить
+          {t('success.continue')}
         </Button>
       )}
     </EmailPageLayout>

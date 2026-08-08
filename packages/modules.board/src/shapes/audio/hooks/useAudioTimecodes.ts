@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { nanoid } from 'nanoid';
-import { useEditor } from 'tldraw';
+import { useEditor } from '@ibodr/draw';
 import { computeAudioShapeHeight } from '../AudioShape';
 import type { AudioShape, AudioTimecode } from '../AudioShape';
 

@@ -18,12 +18,13 @@ import {
   DropdownMenuItem,
 } from '@xipkg/dropdown';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from '@tanstack/react-router';
 import { toast } from 'sonner';
 import { env } from 'common.env';
 import { Input } from '@xipkg/input';
 import { MoreVert } from '@xipkg/icons';
+import { useTranslation } from 'react-i18next';
 import { useGroupInvite } from '../services/useGroupInvite';
 import { useGetClassroom } from 'common.services';
 import { useResetGroupInvite } from '../services/useResetGroupInvite';
@@ -34,26 +35,46 @@ type ModalGroupInviteProps = {
   onOpenChange?: (open: boolean) => void;
 };
 
-export const ModalGroupInvite = ({ children, open, onOpenChange }: ModalGroupInviteProps) => {
+export const ModalGroupInvite = ({
+  children,
+  open: controlledOpen,
+  onOpenChange,
+}: ModalGroupInviteProps) => {
+  const { t } = useTranslation('groupInvite');
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const open = isControlled ? controlledOpen : internalOpen;
+  const setOpen = isControlled ? (value: boolean) => onOpenChange?.(value) : setInternalOpen;
+
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
-  const { data, isLoading } = useGroupInvite({ classroomId: classroomId });
+  const { data, isLoading } = useGroupInvite({
+    classroomId: classroomId,
+    disabled: !open,
+  });
   const { data: classroom } = useGetClassroom(Number(classroomId));
   const { mutate: resetInvite, isPending: isResettingInvite } = useResetGroupInvite({
     classroom_id: classroomId,
   });
 
+  const inviteLink = data?.code ? `${env.VITE_APP_DOMAIN}/invite/${data.code}` : '';
+
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(`${env.VITE_APP_DOMAIN}/invite/${data?.code}`);
-    toast.success('Ссылка скопирована');
-    toast.info('Отправьте ссылку ученикам');
+    if (!inviteLink) return;
+
+    navigator.clipboard.writeText(inviteLink);
+    toast.success(t('toast.linkCopied'));
+    toast.info(t('toast.sendToStudents'));
   };
 
   const handleResetInvite = () => {
-    resetInvite(undefined, {
-      onSuccess: () => {
-        toast.success('Ссылка сброшена');
+    resetInvite(
+      { source: 'classroom' },
+      {
+        onSuccess: () => {
+          toast.success(t('toast.linkReset'));
+        },
       },
-    });
+    );
   };
 
   const cleanupBodyScrollLock = () => {
@@ -63,7 +84,7 @@ export const ModalGroupInvite = ({ children, open, onOpenChange }: ModalGroupInv
   };
 
   const handleClose = () => {
-    onOpenChange?.(false);
+    setOpen(false);
     cleanupBodyScrollLock();
   };
 
@@ -76,7 +97,7 @@ export const ModalGroupInvite = ({ children, open, onOpenChange }: ModalGroupInv
     <Modal
       open={open}
       onOpenChange={(next) => {
-        if (typeof next === 'boolean') onOpenChange?.(next);
+        if (typeof next === 'boolean') setOpen(next);
         if (next === false) cleanupBodyScrollLock();
       }}
     >
@@ -84,17 +105,17 @@ export const ModalGroupInvite = ({ children, open, onOpenChange }: ModalGroupInv
       <ModalContent className="max-w-[600px]">
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
-          <ModalTitle className="dark:text-gray-100">Приглашение в группу</ModalTitle>
-          <ModalDescription>
-            Отправьте ссылку ученикам, чтобы пригласить их в группу
-          </ModalDescription>
+          <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
+            {t('title')}
+          </ModalTitle>
+          <ModalDescription>{t('description')}</ModalDescription>
         </ModalHeader>
         <ModalBody className="flex w-full flex-col gap-2 p-6">
           <div className="flex w-full flex-row items-center justify-center gap-2">
             <div className="flex w-full items-center justify-center">
               {isLoading || isResettingInvite ? (
                 <div
-                  className="text-brand-80 inline-block size-6 animate-spin rounded-full border-[3px] border-current border-t-transparent"
+                  className="text-text-link inline-block size-6 animate-spin rounded-full border-[3px] border-current border-t-transparent"
                   role="status"
                   aria-label="loading"
                 >
@@ -105,8 +126,8 @@ export const ModalGroupInvite = ({ children, open, onOpenChange }: ModalGroupInv
                   <Input
                     className="w-full cursor-pointer"
                     type="text"
-                    placeholder="Ссылка"
-                    value={`${env.VITE_APP_DOMAIN}/invite/${data?.code}`}
+                    placeholder={t('linkPlaceholder')}
+                    value={inviteLink}
                     onClick={handleCopyLink}
                     readOnly
                     data-umami-event="group-invite-copy-link-input"
@@ -123,19 +144,19 @@ export const ModalGroupInvite = ({ children, open, onOpenChange }: ModalGroupInv
                     size="icon"
                     data-umami-event="group-invite-menu-open"
                   >
-                    <MoreVert className="h-6 w-6 fill-gray-100" />
+                    <MoreVert className="fill-icon-primary h-6 w-6" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent
                   side="bottom"
                   align="end"
-                  className="border-gray-10 bg-gray-0 border p-1"
+                  className="border-border-default bg-background-surface border p-1"
                 >
                   <DropdownMenuItem
                     onClick={handleResetInvite}
                     data-umami-event="group-invite-reset"
                   >
-                    Сбросить ссылку
+                    {t('resetLink')}
                   </DropdownMenuItem>
                   {/* <DropdownMenuItem>
                     Деактивировать ссылку
@@ -148,14 +169,18 @@ export const ModalGroupInvite = ({ children, open, onOpenChange }: ModalGroupInv
             classroom.kind === 'group' &&
             classroom?.enrollments_count !== undefined &&
             !isLoading && (
-              <div className="text-xs-base flex flex-col gap-2 text-green-100">
-                Cтудентов в кабинете: {classroom?.enrollments_count} из 15
+              <div className="text-xs-base text-status-success-text flex flex-col gap-2">
+                {t('studentsCount', { count: classroom?.enrollments_count })}
               </div>
             )}
         </ModalBody>
         <ModalFooter className="flex gap-2">
-          <Button onClick={handleCopyLink} data-umami-event="group-invite-copy-link-button">
-            Копировать ссылку
+          <Button
+            onClick={handleCopyLink}
+            disabled={!inviteLink}
+            data-umami-event="group-invite-copy-link-button"
+          >
+            {t('copyLink')}
           </Button>
         </ModalFooter>
       </ModalContent>

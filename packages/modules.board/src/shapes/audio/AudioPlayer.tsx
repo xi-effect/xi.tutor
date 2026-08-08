@@ -3,7 +3,7 @@ import { useYjsContext } from '../../providers/YjsProvider';
 import { useAudioLoad } from './hooks/useAudioLoad';
 import { useAudioPlayback } from './hooks/useAudioPlayback';
 import { useAudioTimecodes } from './hooks/useAudioTimecodes';
-import { useIsShapeInViewport } from './hooks/useIsShapeInViewport';
+import { useIsAudioControlsInteractive, useIsShapeInViewport } from './hooks';
 import {
   AudioPlayPauseButton,
   AudioWaveform,
@@ -13,6 +13,7 @@ import {
 } from './components';
 import { AUDIO_SHAPE_HEIGHT, computeAudioShapeHeight } from './AudioShape';
 import type { AudioShape } from './AudioShape';
+import { useTranslation } from 'react-i18next';
 
 function useIsSyncPlaybackActive(shape: AudioShape): boolean {
   const { audioSyncMap } = useYjsContext();
@@ -25,10 +26,12 @@ type AudioPlayerProps = {
 };
 
 export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
+  const { t } = useTranslation('board');
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
   const isInViewport = useIsShapeInViewport(shape.id);
+  const isControlsInteractive = useIsAudioControlsInteractive(shape.id);
   const isSyncActive = useIsSyncPlaybackActive(shape);
   const shouldLoad = isInViewport || isSyncActive;
 
@@ -46,7 +49,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
   if (error) {
     return (
       <div
-        className="bg-gray-0 border-gray-10 overflow-hidden rounded-xl border shadow-md"
+        className="bg-background-surface border-border-default overflow-hidden rounded-xl border shadow-md"
         style={{ width: shape.props.w, height: AUDIO_SHAPE_HEIGHT }}
       >
         <AudioPlayerError message={error} />
@@ -57,11 +60,13 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
   if (status === 'idle' || status === 'loading' || !shape.props.src) {
     return (
       <div
-        className="bg-gray-0 border-gray-10 overflow-hidden rounded-xl border shadow-md"
+        className="bg-background-surface border-border-default overflow-hidden rounded-xl border shadow-md"
         style={{ pointerEvents: 'none', width: shape.props.w, height: AUDIO_SHAPE_HEIGHT }}
       >
-        <div className="text-gray-40 flex h-full w-full items-center justify-center">
-          <span className="text-xs">{status === 'idle' ? 'Аудио' : 'Загрузка...'}</span>
+        <div className="text-text-disabled flex h-full w-full items-center justify-center">
+          <span className="text-xs">
+            {status === 'idle' ? t('audio.label') : t('audio.loading')}
+          </span>
         </div>
       </div>
     );
@@ -69,7 +74,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
 
   return (
     <div
-      className="bg-gray-0 border-gray-10 overflow-hidden rounded-xl border shadow-md"
+      className="bg-background-surface border-border-default overflow-hidden rounded-xl border shadow-md"
       style={{ pointerEvents: 'none', width: shape.props.w, height: cardHeight }}
     >
       <div className="flex h-[80px] shrink-0 items-center gap-3 px-3">
@@ -84,6 +89,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
             waveform={waveform}
             progress={playback.progress}
             canControl={playback.canControl}
+            isInteractive={isControlsInteractive}
             onSeek={playback.seekTo}
           />
 
@@ -96,6 +102,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
             isTutor={isTutor}
             canAddTimecode={isTutor || shape.props.studentsCanAddTimecodes}
             effectiveVolume={playback.effectiveVolume}
+            isInteractive={isControlsInteractive}
             onAddTimecode={() => addTimecode(playback.currentTime)}
             onVolumeChange={playback.onVolumeChange}
             onToggleMute={playback.toggleMute}
@@ -111,6 +118,7 @@ export const AudioPlayer = ({ shape }: AudioPlayerProps) => {
           timecodes={visibleTimecodes}
           isTutor={isTutor}
           canSeekTimecodes={playback.canControl}
+          isInteractive={isControlsInteractive}
           onSeek={playback.seekToTime}
           onLabelChange={updateTimecodeLabel}
           onToggleVisibility={toggleTimecodeVisibility}

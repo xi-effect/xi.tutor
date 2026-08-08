@@ -11,7 +11,6 @@ type EditorToolkitProps = {
 };
 
 export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly }) => {
-  const [isDragging, setIsDragging] = useState(false);
   const [hasMountedDragHandle, setHasMountedDragHandle] = useState(false);
   const initialFixDone = React.useRef(false);
 
@@ -20,13 +19,8 @@ export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly
     // Так BubbleMenu не читает невалидный selection и не триггерит предупреждение.
     setTimeout(() => {
       normalizeSelectionAfterDrop(editor);
-      setIsDragging(false);
     }, 0);
   }, [editor]);
-
-  const handleDragStart = useCallback(() => {
-    setIsDragging(true);
-  }, []);
 
   // Проверяем, можно ли показывать тулбар
   const canShowToolbar = !isReadOnly && editor.isEditable !== false;
@@ -56,16 +50,10 @@ export const EditorToolkit: React.FC<EditorToolkitProps> = ({ editor, isReadOnly
             pointerEvents: canShowToolbar ? 'auto' : 'none',
           }}
         >
-          <DragHandleWrapper
-            editor={editor}
-            onDragStart={handleDragStart}
-            onDragEnd={handleDragEnd}
-            isReadOnly={isReadOnly}
-          />
+          <DragHandleWrapper editor={editor} onDragEnd={handleDragEnd} isReadOnly={isReadOnly} />
         </div>
       )}
-
-      {!isDragging && <BubbleMenuWrapper editor={editor} isReadOnly={isReadOnly} />}
+      <BubbleMenuWrapper editor={editor} isReadOnly={isReadOnly} />
       <ImageUploadModal />
     </>
   );

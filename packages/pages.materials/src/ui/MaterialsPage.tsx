@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react';
-import { Button } from '@xipkg/button';
-import { Plus } from '@xipkg/icons';
+import { useTranslation } from 'react-i18next';
 
 import { Header } from './Header';
+import { MobileTutorActionButton } from 'features.invites';
 import { TabsComponent } from './TabsComponent';
-import { useAddMaterials, useCurrentUser } from 'common.services';
-import { DateTimeDisplay, ErrorPage } from 'common.ui';
+import { useCurrentUser } from 'common.services';
+import { ErrorPage } from 'common.ui';
 import {
   MaterialsDuplicateProvider,
   useMaterialsDuplicate,
 } from '../provider/MaterialsDuplicateContext';
 import { MaterialsDuplicate } from 'features.materials.duplicate';
+import { cn, useMediaQuery } from '@xipkg/utils';
 
 const getTabFromUrl = (): 'notes' | 'boards' => {
   if (typeof window === 'undefined') {
@@ -22,8 +23,10 @@ const getTabFromUrl = (): 'notes' | 'boards' => {
 };
 
 const MaterialsPageContent = () => {
+  const { t } = useTranslation('materials');
   const [activeTab, setActiveTab] = useState<'notes' | 'boards'>(() => getTabFromUrl());
-  const { addMaterials } = useAddMaterials();
+  const isMobile = useMediaQuery('(max-width: 960px)');
+
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const { materialId, open, closeModal } = useMaterialsDuplicate();
@@ -53,75 +56,40 @@ const MaterialsPageContent = () => {
     setActiveTab(tabId);
   };
 
-  const navigateToMaterial = (id: string | number, contentKind: string) => {
-    if (typeof window === 'undefined') {
-      return;
-    }
-
-    window.location.assign(`/materials/${id}/${contentKind}`);
-  };
-
   if (!isTutor) {
     return (
       <ErrorPage
         withLogo={false}
-        title="Ошибка"
+        title={t('error.title')}
         errorCode={403}
-        text="Вы не имеете доступа к этой странице"
+        text={t('error.noAccess')}
       />
     );
   }
 
-  const handleCreate = () => {
-    const tab =
-      typeof window === 'undefined' ? null : new URLSearchParams(window.location.search).get('tab');
-    const currentTab = tab === 'notes' || tab === 'boards' ? tab : 'boards';
-
-    if (currentTab === 'notes') {
-      addMaterials.mutate(
-        { content_kind: 'note' },
-        {
-          onSuccess: (response) => {
-            navigateToMaterial(response.data.id, response.data.content_kind);
-          },
-        },
-      );
-    } else if (currentTab === 'boards') {
-      addMaterials.mutate(
-        { content_kind: 'board' },
-        {
-          onSuccess: (response) => {
-            navigateToMaterial(response.data.id, response.data.content_kind);
-          },
-        },
-      );
-    }
-  };
-
   return (
     <>
-      <div className="bg-gray-5 flex h-screen flex-col justify-between gap-6 pr-0">
-        <div className="flex min-h-0 flex-1 flex-col">
-          <div className="flex shrink-0 flex-col gap-5 px-5 pt-5">
-            <div className="flex h-8 items-center">
-              <DateTimeDisplay />
-            </div>
-            <Header activeTab={activeTab} onTabChange={handleTabChange} />
-          </div>
-          <TabsComponent activeTab={activeTab} />
+      <div
+        className={cn(
+          'bg-background-page flex flex-col gap-4',
+          isMobile ? 'max-h-[calc(100dvh-64px)]' : 'h-screen',
+        )}
+      >
+        <div className="flex w-full shrink-0 items-start justify-between px-5 pt-4 sm:flex-row sm:px-8 sm:pt-8 md:px-10 md:pt-10">
+          <Header activeTab={activeTab} onTabChange={handleTabChange} />
         </div>
 
-        <div className="xs:hidden flex flex-row items-center justify-end">
-          <Button
-            size="small"
-            className="fixed right-4 bottom-4 z-50 flex h-12 w-12 items-center justify-center rounded-xl"
-            data-umami-event="materials-create-material"
-            onClick={handleCreate}
-          >
-            <Plus className="fill-brand-0" />
-          </Button>
+        <div
+          className={cn(
+            'h-full overflow-y-auto px-5 pb-5 sm:mt-10 sm:pr-5 sm:pl-8 md:pr-8 md:pl-10',
+            !isMobile && 'flex-1',
+          )}
+        >
+          <TabsComponent activeTab={activeTab} />
         </div>
       </div>
+
+      <MobileTutorActionButton variant="materials" />
 
       {materialId !== null && (
         <MaterialsDuplicate

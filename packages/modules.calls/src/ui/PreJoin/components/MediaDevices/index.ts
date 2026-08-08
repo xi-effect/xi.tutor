@@ -1,1 +1,0 @@
-export { MediaDevices } from './MediaDevices';

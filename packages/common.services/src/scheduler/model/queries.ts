@@ -17,6 +17,26 @@ import { getAxiosInstance } from 'common.config';
 import { handleError } from '../../utils';
 import { mapScheduleResponseToScheduleItems } from './adapters';
 import type { ScheduleItem } from './types';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  createAttemptId,
+  mapLessonCreateError,
+  measureDurationMs,
+  nowMs,
+  trackProductEvent,
+  type ProductAnalyticsLessonType,
+  type ProductAnalyticsSource,
+} from 'common.utils';
+
+export type LessonCreatedAnalytics = {
+  source: ProductAnalyticsSource;
+  lesson_type: ProductAnalyticsLessonType;
+  is_recurring: boolean;
+  has_description: boolean;
+  attempt_id?: string;
+  started_at?: number;
+  students_count?: number;
+};
 
 export type GetClassroomScheduleParams = {
   classroomId: number;
@@ -27,6 +47,7 @@ export type GetClassroomScheduleParams = {
 export type CreateClassroomEventParams = {
   classroomId: number;
   body: CreateClassroomEventRequestDto;
+  analytics?: LessonCreatedAnalytics;
 };
 
 export type UpdateClassroomEventParams = {
@@ -409,13 +430,61 @@ export function useStudentClassroomSchedule({
 export function useCreateClassroomEvent() {
   const queryClient = useQueryClient();
 
-  return useMutation<CreateClassroomEventResponseDto, Error, CreateClassroomEventParams>({
+  return useMutation<
+    CreateClassroomEventResponseDto,
+    Error,
+    CreateClassroomEventParams,
+    { attemptId: string; startedAt: number; source: string }
+  >({
     mutationFn: createClassroomEvent,
-    onSuccess: (_data, { classroomId }) => {
+    onMutate: (variables) => {
+      const attemptId = variables.analytics?.attempt_id ?? createAttemptId();
+      const startedAt = variables.analytics?.started_at ?? nowMs();
+      const source = variables.analytics?.source ?? 'unknown';
+
+      if (variables.analytics) {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.LESSON_CREATE_SUBMIT, {
+          attempt_id: attemptId,
+          source,
+          lesson_type: variables.analytics.lesson_type,
+          is_recurring: variables.analytics.is_recurring,
+        });
+      }
+
+      return { attemptId, startedAt, source };
+    },
+    onSuccess: (data, { classroomId, analytics }, context) => {
       invalidateClassroomSchedules(queryClient, classroomId);
       invalidateGlobalSchedules(queryClient);
+
+      if (analytics) {
+        const eventId =
+          data && typeof data === 'object' && 'event' in data && data.event && 'id' in data.event
+            ? String((data.event as { id: string | number }).id)
+            : undefined;
+
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.LESSON_CREATED_SUCCESS, {
+          role: 'tutor',
+          source: analytics.source,
+          lesson_type: analytics.lesson_type,
+          is_recurring: analytics.is_recurring,
+          has_description: analytics.has_description,
+          attempt_id: context?.attemptId ?? analytics.attempt_id,
+          lesson_id: eventId,
+          students_count: analytics.students_count ?? 1,
+          duration_ms: context ? measureDurationMs(context.startedAt) : undefined,
+        });
+      }
     },
-    onError: (err) => {
+    onError: (err, variables, context) => {
+      if (variables.analytics && context) {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.LESSON_CREATE_FAILED, {
+          attempt_id: context.attemptId,
+          source: context.source,
+          reason: mapLessonCreateError(err),
+          duration_ms: measureDurationMs(context.startedAt),
+        });
+      }
       handleError(err, 'scheduler');
     },
   });
@@ -459,6 +528,12 @@ export function useCancelEventInstance() {
     onSuccess: (_data, { classroomId }) => {
       invalidateClassroomSchedules(queryClient, classroomId);
       invalidateGlobalSchedules(queryClient);
+      queryClient.invalidateQueries({
+        queryKey: schedulerQueryKeys.tutorEventInstanceDetailsForClassroom(classroomId),
+      });
+      queryClient.invalidateQueries({
+        queryKey: schedulerQueryKeys.studentEventInstanceDetailsForClassroom(classroomId),
+      });
     },
     onError: (err) => {
       handleError(err, 'scheduler');

@@ -1,18 +1,19 @@
 import { useState } from 'react';
 import { Button } from '@xipkg/button';
-import { Drawer, DrawerContent, DrawerTrigger } from '@xipkg/drawer';
+import { Drawer, DrawerTrigger } from '@xipkg/drawer';
 import { UserProfile } from '@xipkg/userprofile';
 import { useTranslation } from 'react-i18next';
 
 import { DRAWER_CONTENT_ABOVE_BAR_CLASS } from '../constants';
+import { NavigationDrawerContent } from '../NavigationDrawerContent';
 import { DrawerRoleSelector } from './DrawerRoleSelector';
-import { Account, Exit, Download, Close } from '@xipkg/icons';
+import { Close, Download, Exit, Settings } from '@xipkg/icons';
 import { toast } from 'sonner';
 import { useCurrentUser, usePWAInstall } from 'common.services';
 import { cn } from '@xipkg/utils';
 
 const menuRowClassName = cn(
-  'border-gray-10 flex w-full items-center gap-3 rounded-xl border bg-gray-0 px-4 h-[48px] text-left transition-colors',
+  'border-border-default flex w-full items-center gap-3 rounded-xl border bg-background-surface px-4 h-[48px] text-left transition-colors',
 );
 
 interface MobileUserMenuProps {
@@ -32,7 +33,7 @@ export const MobileUserMenu = ({
 }: MobileUserMenuProps) => {
   const { t } = useTranslation('navigation');
   const { data: user } = useCurrentUser();
-  const { canInstall, promptInstall, isInstalled, installHint } = usePWAInstall();
+  const { canInstall, promptInstall, isInstalled, installHintKey } = usePWAInstall();
 
   const displayName = user?.display_name?.trim() || user?.username || '';
 
@@ -43,15 +44,15 @@ export const MobileUserMenu = ({
       <DrawerTrigger asChild>
         <Button
           variant="none"
-          className="text-gray-80 hover:bg-gray-10 focus:bg-gray-10 size-10 shrink-0 overflow-hidden rounded-xl p-0"
+          className="text-text-primary hover:bg-background-subtle focus:bg-background-subtle size-10 shrink-0 overflow-hidden rounded-xl p-0"
           data-umami-event="header-user-menu-open"
           data-umami-event-device="mobile"
         >
           <UserProfile id="userprofile" userId={userId} size="40" withOutText />
         </Button>
       </DrawerTrigger>
-      <DrawerContent className={DRAWER_CONTENT_ABOVE_BAR_CLASS}>
-        <div className="dark:bg-gray-0 flex flex-col gap-5">
+      <NavigationDrawerContent className={DRAWER_CONTENT_ABOVE_BAR_CLASS}>
+        <div className="dark:bg-background-surface flex flex-col gap-5">
           <DrawerRoleSelector compact />
 
           <div className="flex flex-col gap-3">
@@ -63,27 +64,14 @@ export const MobileUserMenu = ({
               }}
               data-umami-event="header-logout"
               data-umami-event-device="mobile"
-              className={menuRowClassName}
+              className={cn(
+                menuRowClassName,
+                'border-border-error hover:bg-status-error-background',
+              )}
             >
-              <Exit className="size-6 shrink-0 text-gray-100" />
-              <span className="text-m-base font-medium text-gray-100">{logoutText}</span>
+              <Exit className="fill-icon-danger size-6 shrink-0" />
+              <span className="text-m-base text-text-danger font-medium">{logoutText}</span>
             </button>
-            {!isInstalled && (
-              <button
-                type="button"
-                onClick={() => {
-                  setOpen(false);
-                  if (canInstall) void promptInstall();
-                  else toast.info(installHint);
-                }}
-                data-umami-event="header-pwa-install"
-                data-umami-event-device="mobile"
-                className={menuRowClassName}
-              >
-                <Download className="size-6 shrink-0 text-gray-100" />
-                <span className="text-m-base font-medium text-gray-100">{t('installApp')}</span>
-              </button>
-            )}
             <button
               type="button"
               onClick={() => {
@@ -94,9 +82,25 @@ export const MobileUserMenu = ({
               data-umami-event-device="mobile"
               className={menuRowClassName}
             >
-              <Account className="size-6 shrink-0 text-gray-100" />
-              <span className="text-m-base font-medium text-gray-100">{profileText}</span>
+              <Settings className="text-text-primary size-6 shrink-0" />
+              <span className="text-m-base text-text-primary font-medium">{profileText}</span>
             </button>
+            {!isInstalled && (
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  if (canInstall) void promptInstall();
+                  else toast.info(t(`installHints.${installHintKey}`));
+                }}
+                data-umami-event="header-pwa-install"
+                data-umami-event-device="mobile"
+                className={menuRowClassName}
+              >
+                <Download className="text-text-primary size-6 shrink-0" />
+                <span className="text-m-base text-text-primary font-medium">{t('installApp')}</span>
+              </button>
+            )}
           </div>
 
           <div className="flex items-center justify-between gap-3">
@@ -104,19 +108,21 @@ export const MobileUserMenu = ({
               <div className="size-10 shrink-0 overflow-hidden rounded-lg">
                 <UserProfile id="userprofile-footer" userId={userId} size="40" withOutText />
               </div>
-              <span className="text-m-base truncate font-medium text-gray-100">{displayName}</span>
+              <span className="text-m-base text-text-primary truncate font-medium">
+                {displayName}
+              </span>
             </div>
             <button
               type="button"
               aria-label={t('close')}
               onClick={() => setOpen(false)}
-              className="text-gray-80 hover:bg-gray-10 focus:bg-gray-10 size-10 shrink-0 rounded-lg transition-colors"
+              className="bg-background-page hover:bg-background-subtle focus:bg-background-subtle flex size-10 shrink-0 items-center justify-center rounded-lg transition-colors"
             >
-              <Close className="mx-auto size-5" />
+              <Close className="fill-icon-primary size-5" />
             </button>
           </div>
         </div>
-      </DrawerContent>
+      </NavigationDrawerContent>
     </Drawer>
   );
 };

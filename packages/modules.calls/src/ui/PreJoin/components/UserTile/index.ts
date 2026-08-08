@@ -1,1 +1,0 @@
-export { UserTile } from './UserTile';

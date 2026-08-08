@@ -1,14 +1,16 @@
 import { useMediaQuery } from '@xipkg/utils';
-import { Drawer, DrawerContent } from '@xipkg/drawer';
+import { Drawer } from '@xipkg/drawer';
 import { Sidebar, SidebarInset } from '@xipkg/sidebar';
 import { SideBarItems } from './SideBarItems';
 import { SidebarProvider } from '@xipkg/sidebar';
-import { useFocusModeStore } from 'common.ui';
+import { useFocusModeStore, useSupportModalStore } from 'common.ui';
+import { SupportModal } from './SupportModal';
 import { useMenuStore } from '../store';
 import { useEffect, useMemo } from 'react';
 import { MobileBottomBar } from './MobileBottomBar';
 import { MobileMenuDrawerContent } from './MobileMenuDrawerContent';
-import { DRAWER_CONTENT_ABOVE_BAR_CLASS } from './constants';
+import { NavigationDrawerContent } from './NavigationDrawerContent';
+import { DRAWER_CONTENT_ABOVE_BAR_CLASS, MOBILE_BOTTOM_BAR_HEIGHT } from './constants';
 
 const SIDEBAR_WIDTH_EXPANDED = '260px';
 const SIDEBAR_WIDTH_COLLAPSED = '72px';
@@ -17,6 +19,8 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
   const isMobile = useMediaQuery('(max-width: 960px)');
   const { isOpen, open: openMenu, close } = useMenuStore();
   const focusMode = useFocusModeStore((s) => s.focusMode);
+  const isSupportOpen = useSupportModalStore((s) => s.isOpen);
+  const setSupportOpen = useSupportModalStore((s) => s.setOpen);
 
   // Мемоизируем children, чтобы они не пересоздавались при изменении isMobile
   const stableChildren = useMemo(() => children, [children]);
@@ -26,8 +30,19 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
       ? 'w-full h-screen min-h-0 overflow-hidden'
       : 'h-screen min-h-0 overflow-hidden'
     : isMobile
-      ? 'w-full pb-[64px]'
+      ? 'w-full'
       : 'h-screen min-h-0 overflow-hidden';
+
+  // paddingBottom через style: динамический `pb-[${n}px]` Tailwind JIT не генерирует.
+  // --calls-layout-bottom-offset читают Call / доски / PreJoin, чтобы не залезать под
+  // fixed MobileBottomBar.
+  const insetStyle =
+    isMobile && !focusMode
+      ? ({
+          paddingBottom: MOBILE_BOTTOM_BAR_HEIGHT,
+          '--calls-layout-bottom-offset': `${MOBILE_BOTTOM_BAR_HEIGHT}px`,
+        } as React.CSSProperties)
+      : undefined;
 
   // Используем один компонент, который условно рендерит нужную структуру
   // но children всегда остаются в одном месте с одним ключом
@@ -37,9 +52,9 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
       {/* Мобильное меню по бургеру — список навигации (не перекрывает нижнюю панель) */}
       {isMobile && !focusMode && (
         <Drawer open={isOpen} onOpenChange={(open) => (open ? openMenu() : close())} modal>
-          <DrawerContent className={DRAWER_CONTENT_ABOVE_BAR_CLASS}>
+          <NavigationDrawerContent className={DRAWER_CONTENT_ABOVE_BAR_CLASS}>
             <MobileMenuDrawerContent onClose={close} />
-          </DrawerContent>
+          </NavigationDrawerContent>
         </Drawer>
       )}
 
@@ -48,7 +63,7 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
         <Sidebar
           id="sidebar"
           collapsible="icon"
-          className="dark:bg-gray-0 absolute w-full md:w-(--sidebar-width)"
+          className="bg-background-page border-r-border-default absolute w-full border-r md:w-(--sidebar-width)"
         >
           <SideBarItems />
         </Sidebar>
@@ -56,12 +71,14 @@ const NavigationLayout = ({ children }: { children: React.ReactNode }) => {
 
       {/* Children всегда рендерятся в одном месте с одним ключом и одним типом элемента */}
       {/* Используем SidebarInset для обоих случаев, чтобы React сохранял состояние */}
-      <SidebarInset className={insetClassName} key="navigation-content">
+      <SidebarInset className={insetClassName} style={insetStyle} key="navigation-content">
         {stableChildren}
       </SidebarInset>
 
       {/* Мобильная нижняя панель навигации (не в режиме фокуса) */}
       {isMobile && !focusMode && <MobileBottomBar />}
+
+      <SupportModal open={isSupportOpen} onOpenChange={setSupportOpen} />
     </>
   );
 };

@@ -1,10 +1,12 @@
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { Button } from '@xipkg/button';
+import { useTranslation } from 'react-i18next';
 import { InviteT } from '../types';
 import { useAcceptInvite } from '../services';
 
 export const Invite = ({ invite }: { invite: InviteT }) => {
+  const { t } = useTranslation('invites');
   const navigate = useNavigate();
   const { inviteId } = useParams({ strict: false }) as { inviteId: string };
   const { mutate, isPending } = useAcceptInvite();
@@ -13,10 +15,10 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
     (invite.kind === 'individual' && invite.existing_classroom_id) ||
     (invite.kind === 'group' && invite.has_already_joined);
 
-  const getInviteTitle = () =>
-    isInviteAccepted ? 'Приглашение принято' : 'Вы получили приглашение';
+  const getInviteTitle = () => (isInviteAccepted ? t('title.accepted') : t('title.received'));
 
-  const getAcceptButtonText = () => (isInviteAccepted ? 'Перейти в кабинет' : 'Принять');
+  const getAcceptButtonText = () =>
+    isInviteAccepted ? t('actions.goToClassroom') : t('actions.accept');
 
   const acceptInvite = () => {
     if (invite.kind === 'group') {
@@ -27,7 +29,11 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
           navigate({ to: `/classrooms` });
         }
       } else {
-        mutate(inviteId); // первое принятие приглашения
+        mutate({
+          code: inviteId,
+          invite_kind: 'group',
+          tutor_id: String(invite.tutor.user_id),
+        });
       }
     }
 
@@ -35,7 +41,11 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
       if (invite.existing_classroom_id) {
         navigate({ to: `/classrooms/${invite.existing_classroom_id}` }); // Переход по старому приглашению в индивидуальный кабинет
       } else {
-        mutate(inviteId); // первое принятие приглашения
+        mutate({
+          code: inviteId,
+          invite_kind: 'student',
+          tutor_id: String(invite.tutor.user_id),
+        });
       }
     }
   };
@@ -43,12 +53,17 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
   return (
     <div className="flex w-full flex-col gap-8 p-2 sm:w-[500px]">
       <div className="text-center">
-        <h3 className="text-xl-base mb-2 font-semibold">{getInviteTitle()}</h3>
-        <span>
+        <h3 className="text-xl-base text-text-primary dark:text-text-primary mb-2 font-semibold">
+          {getInviteTitle()}
+        </h3>
+        <span className="text-text-primary dark:text-text-primary">
           {invite.kind === 'individual'
-            ? 'Репетитор'
-            : `в группу «${invite.classroom.name}» от репетитора`}
+            ? t('subtitle.tutor')
+            : t('subtitle.groupFromTutor', { name: invite.classroom.name })}
         </span>
+        <p className="text-text-secondary dark:text-text-secondary mt-2 text-sm">
+          {t('subtitle.platformDescription')}
+        </p>
       </div>
       <div className="flex flex-col items-center gap-2">
         <Avatar size="xl">
@@ -59,9 +74,14 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
           <AvatarFallback />
         </Avatar>
         <div className="flex flex-col items-center">
-          <p>{invite.tutor.display_name}</p>
-          <span className="text-s-base">{invite.tutor.username}</span>
+          <p className="text-text-primary dark:text-text-primary">{invite.tutor.display_name}</p>
+          <span className="text-s-base text-text-primary dark:text-text-primary">
+            {invite.tutor.username}
+          </span>
         </div>
+        <p className="text-text-secondary dark:text-text-secondary text-xs">
+          {t('subtitle.freeForStudent')}
+        </p>
       </div>
 
       <div className="flex flex-col justify-center gap-2">
@@ -77,13 +97,13 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
         </Button>
         <Button
           onClick={() => navigate({ to: '/' })}
-          className="w-full rounded-xl"
+          className="text-text-primary dark:text-text-primary w-full rounded-xl"
           variant="none"
           disabled={isPending}
           data-umami-event="invite-decline"
           data-umami-event-kind={invite.kind}
         >
-          Отказаться
+          {t('actions.decline')}
         </Button>
       </div>
     </div>

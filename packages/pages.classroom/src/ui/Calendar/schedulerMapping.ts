@@ -1,10 +1,16 @@
+import type { GetEventInstanceDetailsResponseDto } from 'common.api';
+import { extractInstanceSlot } from 'common.services';
+import { getDateLocale } from 'common.ui';
 import type { FormData as AddingLessonFormData } from 'features.lesson.add';
+import { durationBetweenMinutes } from 'features.lesson.add';
 import type {
   CreateClassroomEventRequestDto,
   ICalendarEvent,
   ScheduleItem,
   ScheduleLessonRow,
 } from 'modules.calendar';
+import { resolveSchedulerStartsAt } from 'modules.calendar';
+import { startOfDay } from 'date-fns';
 
 const MS_PER_SECOND = 1000;
 const WEEKDAY_TO_BIT = [1, 2, 4, 8, 16, 32, 64] as const;
@@ -21,13 +27,8 @@ const combineDateAndTime = (date: Date, time: string): Date => {
   return result;
 };
 
-const durationBetweenToSeconds = (startTime: string, endTime: string): number => {
-  const [startHours, startMinutes] = parseTimeParts(startTime);
-  const [endHours, endMinutes] = parseTimeParts(endTime);
-  const startTotalMinutes = startHours * 60 + startMinutes;
-  const endTotalMinutes = endHours * 60 + endMinutes;
-  return (endTotalMinutes - startTotalMinutes) * 60;
-};
+const durationBetweenToSeconds = (startTime: string, endTime: string): number =>
+  durationBetweenMinutes(startTime, endTime) * 60;
 
 const getCalendarEventId = (item: ScheduleItem): string => {
   const instance = item.eventInstance;
@@ -54,6 +55,7 @@ export const mapScheduleItemToCalendarEvent = (item: ScheduleItem): ICalendarEve
   },
   scheduler: {
     eventId: item.eventId,
+    startsAt: item.startsAt,
     eventInstanceId: 'id' in item.eventInstance ? item.eventInstance.id : undefined,
     instanceKind: item.instanceKind,
     repetitionKind: item.repetitionKind,
@@ -73,13 +75,83 @@ export const mapScheduleItemToCalendarEvent = (item: ScheduleItem): ICalendarEve
 export const mapScheduleItemsToCalendarEvents = (items: ScheduleItem[]): ICalendarEvent[] =>
   items.map(mapScheduleItemToCalendarEvent);
 
+/**
+ * Событие для модалки из реального ответа GET event-instances/{id}/.
+ *
+ * API возвращает вложенную структуру:
+ *   { event: { name, id, ... }, kind, persisted_event_instance: { id, starts_at, ... } }
+ */
+export const mapInstanceDetailsToCalendarEvent = (
+  details: GetEventInstanceDetailsResponseDto,
+  classroomId: number,
+): ICalendarEvent => {
+  const event = details.event;
+  const slot = extractInstanceSlot(details);
+
+  if (slot == null || event == null) {
+    const fallbackStart = new Date();
+    const fallbackEnd = new Date(fallbackStart.getTime() + 60 * 60 * 1000);
+    return {
+      id: 'unknown',
+      title: '',
+      start: fallbackStart,
+      end: fallbackEnd,
+      type: 'lesson',
+      lessonInfo: { studentName: '', lessonType: 'individual', classroomId },
+    };
+  }
+
+  let repetitionModeId: string | undefined;
+  let instanceIndex: number | null = null;
+
+  if (details.kind === 'repeated_virtual') {
+    repetitionModeId = details.repetition_mode_id;
+    instanceIndex = details.instance_index;
+  }
+
+  const { startsAt, endsAt, instanceId, cancelledAt } = slot;
+  const title = event.name ?? '';
+  const effectiveClassroomId = event.classroom_id ?? classroomId;
+
+  return {
+    id: instanceId ?? `${event.id}:${details.kind}:${instanceIndex ?? 'unknown'}:${startsAt}`,
+    title,
+    start: new Date(startsAt),
+    end: new Date(endsAt),
+    type: 'lesson',
+    isCancelled: cancelledAt != null,
+    lessonInfo: {
+      studentName: title,
+      lessonType: 'individual',
+      description: event.description ?? undefined,
+      classroomId: effectiveClassroomId ?? undefined,
+    },
+    scheduler: {
+      eventId: event.id,
+      startsAt,
+      eventInstanceId: instanceId,
+      instanceKind: details.kind,
+      repetitionKind: details.kind !== 'sole' ? 'weekly' : null,
+      repetitionModeId,
+      instanceIndex: instanceIndex ?? undefined,
+      cancelledAt,
+    },
+  };
+};
+
 export const mapCalendarEventsToDayLessons = (events: ICalendarEvent[]): ScheduleLessonRow[] =>
   events.map((event) => ({
     id: event.scheduler?.eventId ?? Number(event.id),
     classroomId: event.lessonInfo?.classroomId,
     startAt: event.start,
-    startTime: event.start.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
-    endTime: event.end.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+    startTime: event.start.toLocaleTimeString(getDateLocale(), {
+      hour: '2-digit',
+      minute: '2-digit',
+    }),
+    endTime: event.end.toLocaleTimeString(getDateLocale(), {
+      hour: '2-digit',
+      minute: '2-digit',
+    }),
     subject: event.lessonInfo?.subject ?? event.title,
     description: event.lessonInfo?.description,
     studentName: event.lessonInfo?.studentName ?? event.title,
@@ -88,6 +160,7 @@ export const mapCalendarEventsToDayLessons = (events: ICalendarEvent[]): Schedul
     schedulerMeta: event.scheduler
       ? {
           eventId: event.scheduler.eventId,
+          startsAt: resolveSchedulerStartsAt(event.scheduler.startsAt, event.start),
           instanceKind: event.scheduler.instanceKind,
           eventInstanceId: event.scheduler.eventInstanceId,
           repetitionModeId: event.scheduler.repetitionModeId,
@@ -137,12 +210,13 @@ export const buildCreateClassroomEventRequest = (
 export const getScheduleQueryRange = (
   days: Date[],
 ): { happensAfter: string; happensBefore: string } => {
-  const firstDay = days[0] ?? new Date();
-  const lastDay = days[days.length - 1] ?? firstDay;
-  const happensAfter = new Date(firstDay);
+  const today = startOfDay(new Date());
+  const firstVisible = startOfDay(days[0] ?? today);
+  const lastVisible = startOfDay(days[days.length - 1] ?? firstVisible);
+  const happensAfter = new Date(Math.min(firstVisible.getTime(), today.getTime()));
   happensAfter.setHours(0, 0, 0, 0);
 
-  const happensBefore = new Date(lastDay);
+  const happensBefore = new Date(Math.max(lastVisible.getTime(), today.getTime()));
   happensBefore.setHours(23, 59, 59, 999);
 
   return {

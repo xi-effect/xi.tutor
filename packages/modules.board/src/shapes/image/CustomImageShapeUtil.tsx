@@ -1,24 +1,134 @@
 import {
-  ImageShapeUtil as TldrawImageShapeUtil,
-  TLImageShape,
+  ImageShapeUtil as DrawImageShapeUtil,
+  DrImageShape,
   HTMLContainer,
   useEditor,
   useImageOrVideoAsset,
   getUncroppedSize,
   usePrefersReducedMotion,
   useValue,
-  TLAssetId,
+  DrAssetId,
   Editor,
-} from 'tldraw';
+} from '@ibodr/draw';
 import { memo, useCallback, useEffect, useState } from 'react';
+import i18n from 'i18next';
+import {
+  blobOrUrlToDataUrl,
+  getBoardStorageToken,
+  getSvgExportRasterScale,
+  resolveSrcForSvgExport,
+} from '../../utils/shapeSvgExport';
 
-export class CustomImageShapeUtil extends TldrawImageShapeUtil {
-  override component(shape: TLImageShape) {
+export class CustomImageShapeUtil extends DrawImageShapeUtil {
+  override component(shape: DrImageShape) {
     return <CustomImageShape shape={shape} />;
+  }
+
+  override async toSvg(
+    shape: DrImageShape,
+    ctx: {
+      resolveAssetUrl: (assetId: DrAssetId, width: number) => Promise<string | null>;
+      scale?: number;
+      pixelRatio?: number | null;
+    },
+  ) {
+    const props = shape.props;
+    if (!props.assetId) return null;
+
+    const asset = this.editor.getAsset(props.assetId);
+    if (!asset) return null;
+
+    const rasterScale = getSvgExportRasterScale(ctx);
+    const { w } = getUncroppedSize(shape.props, props.crop);
+    let sourceUrl: string | null = null;
+
+    try {
+      // Просим ассет шире, чтобы в PNG не апскейлить размытую копию.
+      const resolved = await ctx.resolveAssetUrl(asset.id, w * rasterScale);
+      if (resolved?.startsWith('data:')) {
+        sourceUrl = resolved;
+      } else if (resolved) {
+        sourceUrl = (await blobOrUrlToDataUrl(resolved)) ?? resolved;
+      }
+    } catch (error) {
+      console.error('[CustomImageShapeUtil.toSvg] resolveAssetUrl failed:', error);
+    }
+
+    if (!sourceUrl && 'src' in asset.props && asset.props.src) {
+      sourceUrl = await resolveSrcForSvgExport(String(asset.props.src), getBoardStorageToken());
+    }
+
+    if (!sourceUrl) return null;
+
+    const exported = await rasterizeImageShapeForExport(shape, sourceUrl, rasterScale);
+    if (!exported) return null;
+
+    return <image href={exported} width={props.w} height={props.h} aria-label={props.altText} />;
   }
 }
 
-function getCroppedContainerStyle(shape: TLImageShape) {
+/** Рисует image-шейп (с crop/circle/flip) в PNG data:URL — без foreignObject и SafeId. */
+function rasterizeImageShapeForExport(
+  shape: DrImageShape,
+  src: string,
+  rasterScale = 1,
+): Promise<string | null> {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = () => {
+      try {
+        const { w: outW, h: outH } = shape.props;
+        const crop = shape.props.crop;
+        const dpr = Math.max(1, rasterScale);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(outW * dpr));
+        canvas.height = Math.max(1, Math.round(outH * dpr));
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          resolve(null);
+          return;
+        }
+
+        ctx.scale(dpr, dpr);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
+        ctx.save();
+        if (crop?.isCircle) {
+          ctx.beginPath();
+          ctx.ellipse(outW / 2, outH / 2, outW / 2, outH / 2, 0, 0, Math.PI * 2);
+          ctx.clip();
+        }
+
+        const { flipX, flipY } = shape.props;
+        if (flipX || flipY) {
+          ctx.translate(flipX ? outW : 0, flipY ? outH : 0);
+          ctx.scale(flipX ? -1 : 1, flipY ? -1 : 1);
+        }
+
+        if (crop) {
+          const sx = crop.topLeft.x * img.naturalWidth;
+          const sy = crop.topLeft.y * img.naturalHeight;
+          const sw = (crop.bottomRight.x - crop.topLeft.x) * img.naturalWidth;
+          const sh = (crop.bottomRight.y - crop.topLeft.y) * img.naturalHeight;
+          ctx.drawImage(img, sx, sy, sw, sh, 0, 0, outW, outH);
+        } else {
+          ctx.drawImage(img, 0, 0, outW, outH);
+        }
+
+        ctx.restore();
+        resolve(canvas.toDataURL('image/png'));
+      } catch {
+        resolve(null);
+      }
+    };
+    img.onerror = () => resolve(null);
+    img.src = src;
+  });
+}
+
+function getCroppedContainerStyle(shape: DrImageShape) {
   const crop = shape.props.crop;
   const topLeft = crop?.topLeft;
   if (!topLeft) {
@@ -32,7 +142,7 @@ function getCroppedContainerStyle(shape: TLImageShape) {
   };
 }
 
-function getFlipStyle(shape: TLImageShape) {
+function getFlipStyle(shape: DrImageShape) {
   const { flipX, flipY } = shape.props;
   if (!flipX && !flipY) return undefined;
   return {
@@ -41,7 +151,7 @@ function getFlipStyle(shape: TLImageShape) {
   };
 }
 
-function getIsAnimated(editor: Editor, assetId: TLAssetId) {
+function getIsAnimated(editor: Editor, assetId: DrAssetId) {
   const asset = editor.getAsset(assetId);
   if (!asset) return false;
   return (
@@ -117,7 +227,7 @@ function ImagePlaceholderIcon() {
   );
 }
 
-const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: TLImageShape }) {
+const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrImageShape }) {
   const editor = useEditor();
 
   const { w } = getUncroppedSize(shape.props, shape.props.crop);
@@ -190,10 +300,10 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: TLIm
         }}
       >
         <div
-          className="flex size-full animate-pulse items-center justify-center rounded bg-gray-200"
+          className="bg-background-subtle flex size-full animate-pulse items-center justify-center rounded"
           style={containerStyle}
         >
-          <div className="pointer-events-none text-gray-400">
+          <div className="text-text-secondary pointer-events-none">
             <ImagePlaceholderIcon />
           </div>
         </div>
@@ -212,12 +322,14 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: TLIm
         }}
       >
         <div
-          className="flex size-full items-center justify-center rounded border border-dashed border-gray-300 bg-gray-100"
+          className="border-border-default bg-background-page flex size-full items-center justify-center rounded border border-dashed"
           style={containerStyle}
         >
-          <div className="pointer-events-none flex flex-col items-center gap-1.5 text-gray-400">
+          <div className="text-text-secondary pointer-events-none flex flex-col items-center gap-1.5">
             <BrokenImageIcon />
-            <span className="text-[11px] select-none">Не удалось загрузить</span>
+            <span className="text-[11px] select-none">
+              {i18n.t('file.loadFailed', { ns: 'board' })}
+            </span>
           </div>
         </div>
       </HTMLContainer>
@@ -229,7 +341,7 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: TLIm
       {showCropPreview && loadedSrc && (
         <div style={containerStyle}>
           <img
-            className="tl-image"
+            className="dr-image"
             style={{ ...getFlipStyle(shape), opacity: 0.1 }}
             crossOrigin={crossOrigin}
             src={loadedSrc}
@@ -248,11 +360,11 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: TLIm
           borderRadius: shape.props.crop?.isCircle ? '50%' : undefined,
         }}
       >
-        <div className="tl-image-container" style={containerStyle}>
+        <div className="dr-image-container" style={containerStyle}>
           {loadedSrc && (
             <img
               key={loadedSrc}
-              className="tl-image"
+              className="dr-image"
               style={getFlipStyle(shape)}
               crossOrigin={crossOrigin}
               src={loadedSrc}
@@ -264,7 +376,7 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: TLIm
           {nextSrc && (
             <img
               key={nextSrc}
-              className="tl-image"
+              className="dr-image"
               style={getFlipStyle(shape)}
               crossOrigin={crossOrigin}
               src={nextSrc}
@@ -276,8 +388,8 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: TLIm
             />
           )}
           {!loadedSrc && !nextSrc && (
-            <div className="flex size-full animate-pulse items-center justify-center rounded bg-gray-200">
-              <div className="pointer-events-none text-gray-400">
+            <div className="bg-background-subtle flex size-full animate-pulse items-center justify-center rounded">
+              <div className="text-text-secondary pointer-events-none">
                 <ImagePlaceholderIcon />
               </div>
             </div>
@@ -285,7 +397,7 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: TLIm
         </div>
         {'url' in shape.props && shape.props.url && (
           <a
-            className="pointer-events-auto absolute top-1 right-1 z-1 flex size-[22px] items-center justify-center rounded bg-white/85 text-xs text-gray-700 no-underline opacity-0 transition-opacity hover:opacity-100"
+            className="bg-background-surface/85 text-text-primary pointer-events-auto absolute top-1 right-1 z-1 flex size-[22px] items-center justify-center rounded text-xs no-underline opacity-0 transition-opacity hover:opacity-100"
             href={shape.props.url}
             target="_blank"
             rel="noopener noreferrer"

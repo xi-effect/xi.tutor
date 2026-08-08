@@ -8,13 +8,17 @@ import { Underline } from '@tiptap/extension-underline';
 import { TextAlign } from '@tiptap/extension-text-align';
 import { TaskList, TaskItem } from '@tiptap/extension-list';
 import { UniqueID } from '@tiptap/extension-unique-id';
+import i18n from 'i18next';
 import * as Y from 'yjs';
 import { CustomImage, MoveBlockKeyboard, NormalizeSelection } from '../extensions';
+import { ExtraShortcuts } from '../extensions/extra-keyboard-shortcuts';
+import 'highlight.js/styles/base16/atelier-cave-light.min.css';
+import { CustomCodeNode } from '../extensions/code';
 
 /** Курсор в стиле доски: вертикальная линия + шильдик с именем */
 function collaborationCaretRender(user: { name?: string; color?: string }): HTMLElement {
   const color = user.color ?? '#6b7280';
-  const name = user.name ?? 'Участник';
+  const name = user.name ?? i18n.t('status.participant', { ns: 'editor' });
 
   const cursor = document.createElement('span');
   cursor.classList.add('collaboration-carets__caret', 'collaboration-cursor--board-style');
@@ -41,7 +45,10 @@ function collaborationSelectionRender(user: { name?: string; color?: string }): 
 export const getExtensions = (
   provider: HocuspocusProvider | undefined,
   ydoc: Y.Doc | undefined,
-  userData: { name: string; color: string } = { name: 'Участник', color: '#6b7280' },
+  userData: { name: string; color: string } = {
+    name: i18n.t('status.participant', { ns: 'editor' }),
+    color: '#6b7280',
+  },
 ) => {
   const base = [
     StarterKit.configure({
@@ -56,6 +63,7 @@ export const getExtensions = (
       // Отключаем undoRedo — Collaboration приносит свою реализацию,
       // конфликт двух history-плагинов вызывает infinite update loop
       undoRedo: false,
+
       // Отключаем некоторые расширения, которые будем настраивать отдельно
       horizontalRule: false,
       underline: false, // подключаем Underline отдельно ниже — иначе дубликат имени
@@ -63,8 +71,9 @@ export const getExtensions = (
         width: 2,
         color: '#3b82f6',
       },
+      codeBlock: false,
     }),
-    CustomImage.configure({ inline: false }),
+    CustomImage,
     Underline,
     TextAlign.configure({
       types: ['heading', 'paragraph'],
@@ -85,12 +94,14 @@ export const getExtensions = (
       ],
     }),
     Placeholder.configure({
-      placeholder: 'Начните писать здесь…',
+      placeholder: i18n.t('status.placeholder', { ns: 'editor' }),
       emptyEditorClass: 'is-editor-empty',
       showOnlyWhenEditable: true,
     }),
     MoveBlockKeyboard,
     NormalizeSelection,
+    ExtraShortcuts,
+    CustomCodeNode,
   ];
 
   if (!provider || !ydoc) {
@@ -107,7 +118,7 @@ export const getExtensions = (
       Collaboration.configure({
         document: ydoc,
         // Используем поле 'default' для хранения содержимого
-        // field: 'default'
+        // field: 'default',
       }),
       // Временно отключаем CollaborationCursor из-за проблем с provider.doc
       CollaborationCaret.configure({

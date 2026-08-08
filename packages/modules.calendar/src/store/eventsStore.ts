@@ -94,6 +94,8 @@ export const useSetEventsLoading = () => useEventsStore((s) => s.setEventsLoadin
 
 export const useSetEvents = () => useEventsStore((s) => s.setEvents);
 
+export const useAddEvent = () => useEventsStore((s) => s.addEvent);
+
 export const useEventsByDate = (): Record<string, ICalendarEvent[]> => {
   const allEvents = useEventsStore((state) => state.events);
 
@@ -121,10 +123,6 @@ export const useEventsByDate = (): Record<string, ICalendarEvent[]> => {
 
 export const useEventById = () => {
   return useEventsStore((state) => state.getEventById);
-};
-
-export const useAddEvent = () => {
-  return useEventsStore((state) => state.addEvent);
 };
 
 export const useUpdateEvent = () => {

@@ -20,8 +20,9 @@ import {
   ModalTitle,
 } from '@xipkg/modal';
 import { useUpdateGroupClassroom } from 'common.services';
+import { useTranslation } from 'react-i18next';
 import { z } from 'zod';
-import { FormData, formSchema } from '../model';
+import { FormData, useFormSchema } from '../model';
 import { type ModalEditClassroomPropsT } from '../types';
 
 export const ModalEditClassroomName = ({
@@ -30,11 +31,13 @@ export const ModalEditClassroomName = ({
   classroomId,
   onClose,
 }: ModalEditClassroomPropsT) => {
+  const { t } = useTranslation('classroomRename');
   const initialValues = { name: name ?? '' };
 
   // Mutations
   const { updateGroupClassroom, isUpdating } = useUpdateGroupClassroom();
 
+  const formSchema = useFormSchema();
   const form = useForm<z.input<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: initialValues,
@@ -78,7 +81,9 @@ export const ModalEditClassroomName = ({
       <ModalContent className="max-w-150" aria-describedby={undefined}>
         <ModalHeader>
           <ModalCloseButton />
-          <ModalTitle className="max-w-[calc(100%-48px)]">Шаблон счёта</ModalTitle>
+          <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
+            {t('title')}
+          </ModalTitle>
         </ModalHeader>
 
         <Form {...form}>
@@ -89,7 +94,7 @@ export const ModalEditClassroomName = ({
                 name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel htmlFor="name">Название</FormLabel>
+                    <FormLabel htmlFor="name">{t('fields.name')}</FormLabel>
                     <FormControl>
                       <Input
                         error={!!errors?.name}
@@ -110,20 +115,20 @@ export const ModalEditClassroomName = ({
               <Button
                 className="gap-2"
                 type="submit"
-                data-umami-event="material-edit-save"
+                data-umami-event="classroom-rename-save"
                 data-umami-event-type={name}
                 disabled={isUpdating}
               >
-                Сохранить
+                {t('actions.save')}
               </Button>
               <Button
                 variant="ghost"
                 type="button"
-                data-umami-event="material-edit-cancel"
+                data-umami-event="classroom-rename-cancel"
                 disabled={isUpdating}
                 onClick={onClose}
               >
-                Отменить
+                {t('actions.cancel')}
               </Button>
             </ModalFooter>
           </form>

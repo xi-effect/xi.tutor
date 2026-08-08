@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { useEditor } from 'tldraw';
+import { useEditor } from '@ibodr/draw';
 import { useCurrentUser } from 'common.services';
 import { useYjsContext } from '../../../providers/YjsProvider';
 import type { AudioShape } from '../AudioShape';
@@ -12,7 +12,11 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const animFrameRef = useRef<number>(0);
-  const latestRef = useRef({ syncPlayback: shape.props.syncPlayback, isTutor });
+  const latestRef = useRef({
+    syncPlayback: shape.props.syncPlayback,
+    isTutor,
+    studentsCanControlPlayback: shape.props.studentsCanControlPlayback,
+  });
 
   const [localIsPlaying, setLocalIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -20,11 +24,11 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
   const [volume, setVolume] = useState(1);
   const [isMuted, setIsMuted] = useState(false);
 
-  const { syncPlayback } = shape.props;
-  const canControl = !syncPlayback || isTutor;
+  const { syncPlayback, studentsCanControlPlayback } = shape.props;
+  const canControl = !syncPlayback || isTutor || studentsCanControlPlayback;
   const effectiveVolume = isMuted ? 0 : volume;
 
-  latestRef.current = { syncPlayback, isTutor };
+  latestRef.current = { syncPlayback, isTutor, studentsCanControlPlayback };
 
   // Create audio element
   useEffect(() => {
@@ -84,13 +88,18 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
     }
   }, [effectiveVolume]);
 
-  // Sync mode: observe audioSyncMap (students only)
+  // Sync mode: observe audioSyncMap for non-controlling clients
   useEffect(() => {
-    if (!syncPlayback || isTutor || !audioSyncMap) return;
+    if (!syncPlayback || !audioSyncMap) return;
 
     const applySync = () => {
       const audio = audioRef.current;
       if (!audio || !audio.duration) return;
+
+      // Tutor controls their own playback directly; skip sync unless students
+      // are also allowed to control (in which case tutor follows students too).
+      const { isTutor: isTutorNow, studentsCanControlPlayback: studCanNow } = latestRef.current;
+      if (isTutorNow && !studCanNow) return;
 
       const playing = audioSyncMap.get(`${shape.id}:playing`) ?? 0;
       const time = audioSyncMap.get(`${shape.id}:time`) ?? 0;
@@ -100,11 +109,15 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
         const elapsed = (Date.now() - ts) / 1000;
         const targetTime = Math.min(time + elapsed, audio.duration);
 
-        if (Math.abs(audio.currentTime - targetTime) > 1.5) {
+        // Always seek when resuming from pause, or when continuous drift exceeds threshold.
+        // This prevents the student from replaying a section that the tutor already skipped past.
+        if (audio.paused || Math.abs(audio.currentTime - targetTime) > 0.3) {
           audio.currentTime = targetTime;
         }
         if (audio.paused) {
-          audio.play().catch(() => {});
+          audio.play().catch(() => {
+            setLocalIsPlaying(false);
+          });
         }
         setLocalIsPlaying(true);
       } else {
@@ -118,7 +131,7 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
     applySync();
     audioSyncMap.observe(applySync);
     return () => audioSyncMap.unobserve(applySync);
-  }, [syncPlayback, isTutor, audioSyncMap, shape.id, blobUrl]);
+  }, [syncPlayback, audioSyncMap, shape.id, blobUrl]);
 
   // Progress animation loop
   useEffect(() => {
@@ -144,7 +157,7 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
       audio.pause();
       setLocalIsPlaying(false);
 
-      if (syncPlayback && isTutor && audioSyncMap) {
+      if (syncPlayback && audioSyncMap) {
         audioSyncMap.doc?.transact(() => {
           audioSyncMap.set(`${shape.id}:playing`, 0);
           audioSyncMap.set(`${shape.id}:time`, audio.currentTime);
@@ -155,7 +168,7 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
       audio.play().catch(() => {});
       setLocalIsPlaying(true);
 
-      if (syncPlayback && isTutor && audioSyncMap) {
+      if (syncPlayback && audioSyncMap) {
         audioSyncMap.doc?.transact(() => {
           audioSyncMap.set(`${shape.id}:playing`, 1);
           audioSyncMap.set(`${shape.id}:time`, audio.currentTime);
@@ -163,7 +176,7 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
         }, 'audio-sync');
       }
     }
-  }, [canControl, localIsPlaying, syncPlayback, isTutor, audioSyncMap, shape.id]);
+  }, [canControl, localIsPlaying, syncPlayback, audioSyncMap, shape.id]);
 
   const seekTo = useCallback(
     (e: React.PointerEvent<SVGSVGElement>) => {
@@ -177,14 +190,14 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
       audioRef.current.currentTime = time;
       setCurrentTime(time);
 
-      if (syncPlayback && isTutor && audioSyncMap) {
+      if (syncPlayback && audioSyncMap) {
         audioSyncMap.doc?.transact(() => {
           audioSyncMap.set(`${shape.id}:time`, time);
           audioSyncMap.set(`${shape.id}:ts`, Date.now());
         }, 'audio-sync');
       }
     },
-    [canControl, duration, syncPlayback, isTutor, audioSyncMap, shape.id],
+    [canControl, duration, syncPlayback, audioSyncMap, shape.id],
   );
 
   const seekToTime = useCallback(
@@ -193,14 +206,14 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
       audioRef.current.currentTime = time;
       setCurrentTime(time);
 
-      if (syncPlayback && isTutor && audioSyncMap) {
+      if (syncPlayback && audioSyncMap) {
         audioSyncMap.doc?.transact(() => {
           audioSyncMap.set(`${shape.id}:time`, time);
           audioSyncMap.set(`${shape.id}:ts`, Date.now());
         }, 'audio-sync');
       }
     },
-    [syncPlayback, isTutor, audioSyncMap, shape.id],
+    [syncPlayback, audioSyncMap, shape.id],
   );
 
   const toggleMute = useCallback(() => {

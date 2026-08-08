@@ -9,24 +9,19 @@ import {
   GeoShapeGeoStyle,
   GeoShapeUtil,
   T,
-  TLGeoShape,
-  TLPropsMigrations,
-} from 'tldraw';
+  DrGeoShape,
+} from '@ibodr/draw';
 import { BorderColorStyle } from '../shapeStyles';
-import { TColor } from '../../types';
 import { XiGeoComponent } from './XiGeoComponent';
+import type { XiGeoShape } from './type';
+import { xiGeoShapeMigrations } from './xiGeoShapeMigrations';
 
-declare module 'tldraw' {
-  export interface TLGlobalShapePropsMap {
-    'xi-geo': {
-      borderColor: TColor;
-    };
-  }
-}
-
+// GeoShapeUtil типизирован как type 'geo'; runtime использует 'xi-geo'.
+// @ts-expect-error кастомный geo-подтип с расширенными props
 export class XiGeoShapeUtil extends GeoShapeUtil {
-  static override type = 'xi-geo' as 'geo';
-  static override migrations: TLPropsMigrations;
+  static override type = 'xi-geo' as const;
+
+  static override migrations = xiGeoShapeMigrations;
 
   static override props = {
     geo: GeoShapeGeoStyle,
@@ -57,7 +52,7 @@ export class XiGeoShapeUtil extends GeoShapeUtil {
     };
   }
 
-  override component(shape: TLGeoShape) {
-    return <XiGeoComponent shape={shape} />;
+  override component(shape: DrGeoShape) {
+    return <XiGeoComponent shape={shape as unknown as XiGeoShape} />;
   }
 }
