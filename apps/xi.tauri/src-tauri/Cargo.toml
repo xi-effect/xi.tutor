@@ -24,6 +24,9 @@ tauri = { version = "2", features = ["protocol-asset"] }
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
 log = "0.4"
+# Used by the remote-shell splash to health-check / fetch native-compat.json
+# without depending on WebView CORS (local origin → *.sovlium.ru).
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "json"] }
 
 # Cross-platform plugins.
 tauri-plugin-log = "2"

@@ -51,3 +51,98 @@ pub fn app_info(app: AppHandle) -> AppInfo {
 pub fn log_message(message: String) {
     log::info!(target: "frontend", "{}", message);
 }
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+pub struct HttpProbeResult {
+    ok: bool,
+    status: Option<u16>,
+    /// Response body when `include_body` was true and the status was 2xx.
+    body: Option<String>,
+    error: Option<String>,
+}
+
+/// Server-side HTTP GET used by the remote splash. Avoids WebView CORS when the
+/// document is still on `tauri://` / localhost. Only `https://*.sovlium.ru`
+/// (and localhost in debug) are allowed — prevents SSRF via invoke.
+#[tauri::command]
+pub async fn http_probe(
+    url: String,
+    timeout_ms: Option<u64>,
+    include_body: Option<bool>,
+) -> HttpProbeResult {
+    let parsed = match url.parse::<tauri::Url>() {
+        Ok(u) => u,
+        Err(err) => {
+            return HttpProbeResult {
+                ok: false,
+                status: None,
+                body: None,
+                error: Some(format!("invalid url: {err}")),
+            };
+        }
+    };
+
+    if !crate::navigation::is_navigation_allowed(&parsed) {
+        return HttpProbeResult {
+            ok: false,
+            status: None,
+            body: None,
+            error: Some("url is outside the Sovlium allowlist".into()),
+        };
+    }
+
+    let timeout = std::time::Duration::from_millis(timeout_ms.unwrap_or(5_000).max(500));
+    let want_body = include_body.unwrap_or(false);
+
+    let client = match reqwest::Client::builder().timeout(timeout).build() {
+        Ok(c) => c,
+        Err(err) => {
+            return HttpProbeResult {
+                ok: false,
+                status: None,
+                body: None,
+                error: Some(format!("http client error: {err}")),
+            };
+        }
+    };
+
+    match client.get(parsed).send().await {
+        Ok(response) => {
+            let status = response.status().as_u16();
+            let ok = response.status().is_success()
+                || response.status().is_redirection();
+            let body = if want_body && response.status().is_success() {
+                match response.text().await {
+                    Ok(text) => Some(text),
+                    Err(err) => {
+                        return HttpProbeResult {
+                            ok: false,
+                            status: Some(status),
+                            body: None,
+                            error: Some(format!("body read error: {err}")),
+                        };
+                    }
+                }
+            } else {
+                None
+            };
+            HttpProbeResult {
+                ok,
+                status: Some(status),
+                body,
+                error: if ok {
+                    None
+                } else {
+                    Some(format!("HTTP {status}"))
+                },
+            }
+        }
+        Err(err) => HttpProbeResult {
+            ok: false,
+            status: None,
+            body: None,
+            error: Some(err.to_string()),
+        },
+    }
+}

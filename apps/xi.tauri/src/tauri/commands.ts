@@ -18,6 +18,13 @@ export interface AppInfo {
   isDebug: boolean;
 }
 
+export interface HttpProbeResult {
+  ok: boolean;
+  status?: number | null;
+  body?: string | null;
+  error?: string | null;
+}
+
 /** Returns metadata about the running native shell. Web fallback returns a
  *  best-effort stub so that calling code doesn't have to branch. */
 export async function getAppInfo(): Promise<AppInfo> {
@@ -37,4 +44,47 @@ export async function getAppInfo(): Promise<AppInfo> {
 export async function logFromRust(message: string): Promise<void> {
   if (detectPlatform() === 'web') return;
   await invoke('log_message', { message });
+}
+
+/**
+ * Server-side HTTP GET (no WebView CORS). Used by the remote splash to probe
+ * `*.sovlium.ru` while the document is still on `tauri://` / localhost.
+ */
+export async function httpProbe(
+  url: string,
+  opts: { timeoutMs?: number; includeBody?: boolean } = {},
+): Promise<HttpProbeResult> {
+  if (detectPlatform() === 'web') {
+    // Browser preview: best-effort CORS fetch.
+    try {
+      const controller = new AbortController();
+      const timer = window.setTimeout(() => controller.abort(), opts.timeoutMs ?? 5_000);
+      try {
+        const response = await fetch(url, {
+          method: 'GET',
+          cache: 'no-store',
+          signal: controller.signal,
+        });
+        const body = opts.includeBody && response.ok ? await response.text() : null;
+        return {
+          ok: response.ok || (response.status >= 300 && response.status < 400),
+          status: response.status,
+          body,
+        };
+      } finally {
+        window.clearTimeout(timer);
+      }
+    } catch (err) {
+      return {
+        ok: false,
+        error: err instanceof Error ? err.message : String(err),
+      };
+    }
+  }
+
+  return invoke<HttpProbeResult>('http_probe', {
+    url,
+    timeoutMs: opts.timeoutMs ?? null,
+    includeBody: opts.includeBody ?? null,
+  });
 }

@@ -16,6 +16,7 @@ import { createCallsRuntimeConfig } from './createCallsRuntimeConfig';
 import { useCallsDeps } from './useCallsDeps';
 import { ProductCallAnalyticsTracker } from './productAnalytics/ProductCallAnalyticsTracker';
 import { BoardCallStorageWarmup } from './boardWarmup/BoardCallStorageWarmup';
+import { NativeShareOverlayBridge } from './useNativeShareOverlay';
 
 import '@xipkg/calls-ui/video-security.css';
 import '@xipkg/calls-ui/driver.css';
@@ -63,6 +64,7 @@ const CallsShellProviders = ({ children }: CallsShellPropsT) => {
         <LiveKitProvider>
           <ModeSyncProvider>
             <ProductCallAnalyticsTracker />
+            <NativeShareOverlayBridge />
             <BoardCallStorageWarmup />
             <CallsShellInit />
             {children}

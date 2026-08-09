@@ -5,7 +5,7 @@
 
 use tauri::App;
 
-pub fn setup(_app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
+pub fn setup(app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     // Place for: deep-link registration, custom URI scheme handling, tray icon
     // setup on desktop, window decoration tweaks, theme bridging, etc.
     //
@@ -13,10 +13,21 @@ pub fn setup(_app: &mut App) -> Result<(), Box<dyn std::error::Error>> {
     // example `setup/deep_links.rs`) and be invoked conditionally:
     //
     //   #[cfg(desktop)]
-    //   self::deep_links::register(_app)?;
+    //   self::deep_links::register(app)?;
     //
     // Keeping the dispatcher this small makes it trivial to spot platform
     // forks during code review.
 
+    // Debug / `tauri build --debug` only: open Web Inspector so auth/CORS
+    // issues in the bundled app are visible without hunting for a shortcut.
+    #[cfg(debug_assertions)]
+    {
+        use tauri::Manager;
+        if let Some(window) = app.get_webview_window("main") {
+            window.open_devtools();
+        }
+    }
+
+    let _ = app;
     Ok(())
 }

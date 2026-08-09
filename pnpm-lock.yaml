@@ -233,8 +233,8 @@ importers:
         specifier: ^4.3.4
         version: 4.7.0(vite@6.4.3(@types/node@20.19.43)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.49.2))
       '@xipkg/tailwind':
-        specifier: 0.8.1
-        version: 0.8.1
+        specifier: 1.0.0
+        version: 1.0.0
       common.eslint:
         specifier: workspace:*
         version: link:../../packages/common.eslint
@@ -3709,6 +3709,9 @@ importers:
 
   packages/modules.calls:
     dependencies:
+      '@livekit/components-react':
+        specifier: ^2.9.21
+        version: 2.9.21(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22)))(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tslib@2.8.1)
       '@livekit/components-styles':
         specifier: 1.1.6
         version: 1.1.6
@@ -3718,6 +3721,9 @@ importers:
       '@tanstack/react-router':
         specifier: ^1.166.6
         version: 1.170.22(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@tauri-apps/api':
+        specifier: ^2.0.0
+        version: 2.11.1
       '@xipkg/calls':
         specifier: ^0.1.24
         version: 0.1.24(@types/dom-mediacapture-record@1.0.22)(@types/dom-mediacapture-transform@0.1.12)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(i18next@24.2.2(typescript@5.7.3))(immer@11.1.16)(react-dom@19.2.8(react@19.2.8))(react-i18next@15.4.1(i18next@24.2.2(typescript@5.7.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(tslib@2.8.1)(use-sync-external-store@1.6.0(react@19.2.8))
@@ -9749,9 +9755,6 @@ packages:
     resolution: {integrity: sha512-sKBXazr7TAUPe/Zz7oTEoeaiSr3wFR1uuh6TpVC9yHfqvxZYO+Kf4Fi0JRJZNDmvBuyC87vhOlx+3Yi9HCHEsA==}
     peerDependencies:
       react: ^19
-
-  '@xipkg/tailwind@0.8.1':
-    resolution: {integrity: sha512-DS6Z0m2fJsDjPyQMbIC9WHamGMP6k2QsVZZdNypAaIadWcKncStB1gKzCe14h4nv6kv2fdSJZmIjvLZjwu48ag==}
 
   '@xipkg/tailwind@1.0.0':
     resolution: {integrity: sha512-TemsD+7JR4kRg5a3+q+9qZrbk5tr9XVFr7ib6+N0uPSOJUz7n9Vc+ptpwWmIZRCjp6LDYGaeyaeCq57S4oBs4A==}
@@ -16596,8 +16599,6 @@ snapshots:
       - '@types/react'
       - '@types/react-dom'
       - react-dom
-
-  '@xipkg/tailwind@0.8.1': {}
 
   '@xipkg/tailwind@1.0.0': {}
 

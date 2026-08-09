@@ -13,10 +13,10 @@
 /* Tauri-specific overlays. Keep this minimal; share visual rules through
  * shared packages (common.theme / common.ui) whenever possible. */
 @layer base {
-  /* Native shells should never show a default browser caret outline inside
-     non-focusable surfaces. */
+  /* Keep the shell opaque so the native window never shows through gaps
+     before/without page-level background utilities. */
   html,
   body {
-    background-color: transparent;
+    background-color: var(--xi-background-page, #f7f8fa);
   }
 }

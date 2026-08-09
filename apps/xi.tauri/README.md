@@ -16,6 +16,7 @@ apps/xi.tauri/
 │   ├── main.tsx            — bootstrap (i18n + bugsink из xi.web, platform-init, режим remote)
 │   ├── App.tsx             — рендер AppProviders из web/providers
 │   ├── env.ts              — Tauri-специфичные env-переменные
+│   ├── remote/             — splash → health/compat → navigate на *.sovlium.ru
 │   ├── platform/
 │   │   ├── index.ts        — detect + init по платформе
 │   │   ├── types.ts        — контракт PlatformModule
@@ -38,12 +39,15 @@ apps/xi.tauri/
     ├── capabilities/
     │   ├── default.json    — базовый ACL (все платформы)
     │   ├── desktop.json    — updater + process (только Windows/macOS/Linux)
+    │   ├── remote.json     — IPC для remote UI на app/desktop.sovlium.ru
     │   └── mobile.json     — пустой, заготовка под iOS/Android
     ├── icons/README.md     — как сгенерировать иконки через `pnpm tauri icon`
     └── src/
         ├── main.rs
         ├── lib.rs          — Builder, плагины, single-instance, generate_handler!
-        ├── commands/mod.rs — app_info, log_message
+        ├── navigation.rs   — allowlist top-level navigations (*.sovlium.ru)
+        ├── share_overlay.rs — Zoom-like always-on-top share control bar
+        ├── commands/mod.rs — app_info, log_message, http_probe
         └── setup/mod.rs    — placeholder под deep-links, tray и т.п.
 ```
 
@@ -54,6 +58,11 @@ apps/xi.tauri/
   `config/bugsink`, страницы и провайдеры без изменений в самом `xi.web`. То же
   для Tailwind: `src/index.css` импортирует `../../xi.web/src/index.css`, и все
   `@source`-декларации Tailwind v4 продолжают работать.
+- **Remote UI в production.** Desktop-сборки по умолчанию открывают
+  `https://app.sovlium.ru` (fallback `desktop.sovlium.ru`) после локального splash,
+  health-check и `native-compat.json`. Origin same-site с `api.sovlium.ru` —
+  session cookie и Socket.IO работают как в браузере. Локальный `frontendDist`
+  остаётся для `tauri:dev` и для `VITE_TAURI_REMOTE_MODE=false`.
 - **Платформенный слой явный.** Любая логика, специфичная для desktop или
   mobile, проходит через `src/platform/*`. Никаких `if (window.__TAURI__)` по
   коду — только через `detectPlatform()` / `getPlatform()`.
@@ -115,39 +124,84 @@ bash -x apps/xi.tauri/src-tauri/target/release/bundle/dmg/bundle_dmg.sh
 
 ## Режимы запуска
 
-| Режим             | Когда использовать                           | Как включить                        |
-| ----------------- | -------------------------------------------- | ----------------------------------- |
-| local (по умолч.) | Production desktop и mobile сборки           | Ничего не делать                    |
-| remote            | QA канарейка против live-домена              | `VITE_TAURI_REMOTE_URL=https://...` |
-| dev               | Разработка с HMR через Tauri host            | `pnpm tauri:dev`                    |
-| dev:remote        | Native shell + удалённый URL для отладки CSP | `pnpm --filter xi.tauri dev:remote` |
+| Режим            | Когда использовать                          | Как включить                                                      |
+| ---------------- | ------------------------------------------- | ----------------------------------------------------------------- |
+| remote (prod)    | Production desktop: UI с `*.sovlium.ru`     | `VITE_TAURI_REMOTE_MODE=true` в `.env` (обязательно для release)  |
+| local            | Dev HMR, отладка shell без remote           | `pnpm tauri:dev` (`dev:frontend` форсит `REMOTE_MODE=false`)      |
+| dev:remote       | Проверить splash → navigate против live app | `pnpm --filter xi.tauri dev:remote`                               |
+| local production | Собрать `.app` с зашитым `frontendDist`     | `VITE_TAURI_REMOTE_MODE=false` в `.env`, затем `pnpm tauri:build` |
+
+### Remote UI (почему так)
+
+WKWebView на `tauri://localhost` не сохраняет third-party cookie `Domain=sovlium.ru`
+(даже с `SameSite=None`). Поэтому production-shell открывает remote UI на
+`https://app.sovlium.ru` (fallback `https://desktop.sovlium.ru`):
+
+1. Локальный splash + preconnect.
+2. Budget на desktop updater (пока документ ещё локальный).
+3. Health-check primary → fallback.
+4. `GET /native-compat.json` (`minShellVersion`); при слишком старой оболочке —
+   экран «обновите приложение». Health/compat идут через Rust `http_probe`
+   (без CORS WebView).
+5. `location.replace` на remote origin.
+6. Rust allowlist: top-level navigation только на `*.sovlium.ru` (+ local schemes);
+   остальной http(s) открывается в системном браузере.
+7. Capability `remote-ui` разрешает IPC с remote origin.
+8. В WebView выставляется `__SOVLIUM_NATIVE__`; Яндекс.Метрика не инициализируется.
+
+Файл совместимости лежит в `apps/xi.web/public/native-compat.json` и должен
+деплоиться вместе с web. Пока `minShellVersion` = `0.0.0` (ворота открыты).
+
+### Камера и микрофон (macOS)
+
+Для `getUserMedia` / LiveKit в **production** `.app` нужны:
+
+- `src-tauri/Info.plist` — `NSCameraUsageDescription` / `NSMicrophoneUsageDescription`
+  (иначе TCC не показывает диалог);
+- `src-tauri/Entitlements.plist` — `device.camera` + `device.audio-input`
+  (Hardened Runtime), подключён через `tauri.macos.conf.json` → `bundle.macOS.entitlements`.
+
+После пересборки macOS может один раз спросить доступ. Если диалога нет —
+проверьте **Системные настройки → Конфиденциальность → Камера / Микрофон** для Sovlium.
+
+### Оверлей демонстрации экрана (Zoom-like)
+
+При старте screen share в desktop-shell показывается always-on-top панель
+(`share-overlay.html`): «Демонстрация экрана», **В звонок**, **Остановить**.
+
+- Capture по-прежнему через LiveKit / `getDisplayMedia`.
+- Мост: `modules.calls` → `NativeShareOverlayBridge` → IPC `share_overlay_*`.
+- Stop с панели эмитит `share-overlay-stop` → `setScreenShareEnabled(false)`.
+- Нужен `NSScreenCaptureUsageDescription` в `Info.plist` (Screen Recording).
 
 ## Self-updater (Windows / macOS)
 
-### Локальная сборка без ключей
+### pubkey обязателен, артефакты — нет
 
-По умолчанию в `tauri.conf.json`:
+Плагин `updater` при старте **требует** `plugins.updater.pubkey` в `tauri.conf.json`
+(без него приложение падает с `missing field pubkey`). Публичный ключ уже
+прописан в конфиге.
 
-- `bundle.createUpdaterArtifacts` выключен (`false`);
-- поле `plugins.updater.pubkey` отсутствует.
+При этом `bundle.createUpdaterArtifacts` по умолчанию выключен (`false`), поэтому
+`pnpm tauri:build` **не** требует `TAURI_SIGNING_PRIVATE_KEY` — установщик
+собирается, но `.sig` для канала обновлений не создаётся.
 
-Так можно собирать установщик командой `pnpm tauri:build` **без** переменной окружения `TAURI_SIGNING_PRIVATE_KEY`. Плагин updater в приложении остаётся включённым (эндпоинты заданы), но подписанные артефакты для канала обновлений не создаются, пока вы не включите их осознанно.
+Когда нужно выпускать подписанные обновления: поставьте
+`bundle.createUpdaterArtifacts: true` и задайте `TAURI_SIGNING_PRIVATE_KEY`
+(и при необходимости пароль) в CI или локально.
 
-Когда появится пара ключей `tauri signer generate`: добавьте **публичный** ключ в `plugins.updater.pubkey`, поставьте `bundle.createUpdaterArtifacts: true`, задайте `TAURI_SIGNING_PRIVATE_KEY` в CI или локально — тогда билд начнёт выдавать `.sig` и обновления станут проверяемыми.
-
-### Однократная настройка ключей
+### Однократная настройка / ротация ключей
 
 ```bash
-# Создаёт пару ключей: ~/.tauri/sovlium.key и sovlium.key.pub
-pnpm --filter xi.tauri tauri signer generate -w ~/.tauri/sovlium.key
+# Создаёт пару ключей (приватный файл не коммитить)
+pnpm --filter xi.tauri tauri signer generate -w apps/xi.tauri/src-tauri/.keys/sovlium.key
 ```
 
 - Публичный ключ копируется в `src-tauri/tauri.conf.json -> plugins.updater.pubkey`.
-- Включите `bundle.createUpdaterArtifacts: true` в том же файле (или отдельным merge-конфигом для релиза).
 - Приватный ключ кладётся в GitHub Secrets как `TAURI_SIGNING_PRIVATE_KEY`
   (его пароль — в `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`).
 - **Приватный ключ никогда не должен попадать в репозиторий.** `.gitignore`
-  репо явно исключает `*.tauri.key`, `*.key`, `*.pem`.
+  исключает `.keys/`, `*.key`, `*.pem`.
 
 ### Endpoint
 

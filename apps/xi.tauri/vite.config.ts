@@ -41,6 +41,12 @@ const esbuildTarget =
 
 const webSrc = path.resolve(__dirname, '../xi.web/src');
 
+// @xipkg/calls-* package.json exports a `development` condition that points to
+// source `index.ts`. That file exists only when packages are linked from xi.calls;
+// the npm tarball ships `dist/` only. Vite 6 prefers `development` in dev mode,
+// so we must exclude it unless we intentionally link local sources (same as xi.web).
+const importConditions: string[] = ['import', 'module', 'browser', 'default'];
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }: ConfigEnv) => {
   return {
@@ -76,10 +82,17 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       outDir: 'build',
       sourcemap: mode === 'debug' || mode === 'development',
       emptyOutDir: true,
+      rollupOptions: {
+        input: {
+          main: path.resolve(__dirname, 'index.html'),
+          'share-overlay': path.resolve(__dirname, 'share-overlay.html'),
+        },
+      },
     },
     optimizeDeps: {
       esbuildOptions: {
         target: 'es2020',
+        conditions: importConditions,
       },
       include: [
         'react',
@@ -177,6 +190,7 @@ export default defineConfig(({ mode }: ConfigEnv) => {
         // Use as: `import { AppProviders } from 'web/providers';`
         web: webSrc,
       },
+      conditions: importConditions,
       preserveSymlinks: false,
       dedupe: [
         'react',

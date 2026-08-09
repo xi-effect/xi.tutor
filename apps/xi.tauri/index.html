@@ -7,8 +7,37 @@
     <meta name="apple-mobile-web-app-title" content="Sovlium" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <title>Sovlium</title>
+    <script>
+      (function () {
+        var themeKey = 'sovlium-theme';
+        var chosenKey = 'sovlium-theme-chosen';
+        var languageKey = 'xi_language';
+        var stored = null;
+        var chosen = false;
+        var language = 'ru';
+
+        try {
+          stored = localStorage.getItem(themeKey);
+          chosen = localStorage.getItem(chosenKey) === '1';
+          var storedLanguage = localStorage.getItem(languageKey);
+          if (storedLanguage === 'en' || storedLanguage === 'ru') {
+            language = storedLanguage;
+          }
+        } catch (e) {}
+
+        var preference =
+          chosen && (stored === 'light' || stored === 'dark') ? stored : 'light';
+
+        document.documentElement.setAttribute('data-theme', preference);
+        document.documentElement.setAttribute('data-theme-preference', preference);
+        document.documentElement.classList.add(preference);
+        document.documentElement.lang = language;
+      })();
+    </script>
     <style>
       :root {
         /* Force light color-scheme so WKWebView/WebView2 doesn't apply the
@@ -21,7 +50,9 @@
       #root {
         height: 100%;
         margin: 0;
-        background: transparent;
+        /* Match web: opaque page background. Transparent here made the native
+           window chrome show through and looked like missing styles. */
+        background: #f7f8fa;
       }
       /* Avoid native overscroll glow on mobile WebViews. */
       html,
@@ -42,7 +73,7 @@
       }
     </style>
   </head>
-  <body>
+  <body class="overflow-hidden">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

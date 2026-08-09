@@ -1,8 +1,17 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
-  "identifier": "default",
-  "description": "Permissions granted to the main window on every platform. Keep this surface minimal — anything that touches the user's filesystem, shell or external network from Rust must be added explicitly.",
+  "identifier": "remote-ui",
+  "description": "Allow the remote Sovlium UI (*.sovlium.ru) to use the same IPC surface as the local shell after navigation.",
+  "platforms": ["macOS", "windows", "linux"],
   "windows": ["main"],
+  "remote": {
+    "urls": [
+      "https://app.sovlium.ru",
+      "https://app.sovlium.ru/*",
+      "https://desktop.sovlium.ru",
+      "https://desktop.sovlium.ru/*"
+    ]
+  },
   "permissions": [
     "core:default",
     "core:event:allow-listen",
@@ -16,11 +25,12 @@
     "core:window:allow-show",
     "core:window:allow-hide",
     "core:window:allow-start-dragging",
-    "core:webview:allow-internal-toggle-devtools",
     "dialog:default",
     "notification:default",
     "os:default",
     "log:default",
-    "deep-link:default"
+    "deep-link:default",
+    "updater:default",
+    "process:default"
   ]
 }

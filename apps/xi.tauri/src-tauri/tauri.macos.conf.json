@@ -4,7 +4,7 @@
     "targets": ["app"],
     "macOS": {
       "minimumSystemVersion": "11.0",
-      "entitlements": null,
+      "entitlements": "./Entitlements.plist",
       "exceptionDomain": null,
       "frameworks": [],
       "providerShortName": null,

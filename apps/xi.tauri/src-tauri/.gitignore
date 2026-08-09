@@ -8,6 +8,7 @@
 .tauri/
 
 # Local secrets used by the bundler. NEVER commit these.
+.keys/
 *.key
 *.pem
 *.p12
