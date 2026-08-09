@@ -21,9 +21,11 @@ export function useClassroomScheduleSearch(): ClassroomScheduleSearchParams {
   const routeSearch = useSearch({
     from: '/(app)/_layout/classrooms/$classroomId/',
   }) as ClassroomScheduleSearchParams;
+  // router search может отставать от href — зависимость заставляет пересчитать merge
+  const locationSearch = typeof window !== 'undefined' ? window.location.search : '';
 
-  return useMemo(
-    () => mergeClassroomScheduleSearch(routeSearch),
-    [routeSearch, typeof window !== 'undefined' ? window.location.search : ''],
-  );
+  return useMemo(() => {
+    void locationSearch;
+    return mergeClassroomScheduleSearch(routeSearch);
+  }, [routeSearch, locationSearch]);
 }

@@ -16,7 +16,9 @@ const makeLesson = (overrides: Partial<ScheduleLessonRow> = {}): ScheduleLessonR
   ...overrides,
 });
 
-const makeEvent = (overrides: Partial<ICalendarEvent> & Pick<ICalendarEvent, 'id'>): ICalendarEvent => ({
+const makeEvent = (
+  overrides: Partial<ICalendarEvent> & Pick<ICalendarEvent, 'id'>,
+): ICalendarEvent => ({
   title: 'Занятие',
   start: new Date('2026-04-21T10:00:00'),
   end: new Date('2026-04-21T11:00:00'),

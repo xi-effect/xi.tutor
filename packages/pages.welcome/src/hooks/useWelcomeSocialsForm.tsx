@@ -6,6 +6,7 @@ import {
   trackOnboardingStepCompleted,
   trackOnboardingStepFailed,
 } from 'common.utils';
+import { resolvePostOnboardingNavigation } from './postOnboardingNavigation';
 
 export const useWelcomeSocialsForm = () => {
   const navigate = useNavigate();
@@ -31,20 +32,19 @@ export const useWelcomeSocialsForm = () => {
       const storedInviteId =
         typeof window !== 'undefined' ? localStorage.getItem('invite.pending_code') : null;
 
-      const inviteId = storedInviteId || search.invite;
+      const target = resolvePostOnboardingNavigation(search.invite, storedInviteId);
 
-      if (inviteId) {
-        if (storedInviteId) {
-          localStorage.removeItem('invite.pending_code');
-        }
+      if (target.clearStoredInvite && typeof window !== 'undefined') {
+        localStorage.removeItem('invite.pending_code');
+      }
+
+      if (target.to === '/invite/$inviteId') {
         navigate({
-          to: '/invite/$inviteId',
-          params: { inviteId },
+          to: target.to,
+          params: target.params,
         });
       } else {
-        navigate({
-          to: '/',
-        });
+        navigate({ to: target.to });
       }
     } catch (error) {
       console.error('Error in onForwards:', error);

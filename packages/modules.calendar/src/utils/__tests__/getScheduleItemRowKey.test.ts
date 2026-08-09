@@ -58,8 +58,6 @@ describe('getScheduleItemRowKey', () => {
       },
     } as ScheduleItem;
 
-    expect(getScheduleItemRowKey(item)).toBe(
-      '10:repeated_virtual:2:2026-04-21T10:00:00Z',
-    );
+    expect(getScheduleItemRowKey(item)).toBe('10:repeated_virtual:2:2026-04-21T10:00:00Z');
   });
 });

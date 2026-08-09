@@ -11,6 +11,7 @@
     "preview": "pnpm --filter xi.web preview",
     "lint": "turbo run lint",
     "test": "turbo run test",
+    "test:e2e": "pnpm --filter xi.web test:e2e",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "format-check": "prettier --check \"**/*.{ts,tsx,md}\"",
     "prepare": "husky",

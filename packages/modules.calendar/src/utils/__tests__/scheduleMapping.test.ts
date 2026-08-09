@@ -1,9 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ScheduleItem } from 'common.services';
-import {
-  getScheduleQueryRange,
-  mapScheduleItemToCalendarEvent,
-} from '../scheduleMapping';
+import { getScheduleQueryRange, mapScheduleItemToCalendarEvent } from '../scheduleMapping';
 import { toLocalISOString } from '../dateTimezone';
 
 const makeSoleItem = (overrides: Partial<ScheduleItem> = {}): ScheduleItem =>
