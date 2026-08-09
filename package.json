@@ -10,6 +10,7 @@
     "dev:all": "turbo run dev --concurrency 30",
     "preview": "pnpm --filter xi.web preview",
     "lint": "turbo run lint",
+    "test": "turbo run test",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "format-check": "prettier --check \"**/*.{ts,tsx,md}\"",
     "prepare": "husky",
