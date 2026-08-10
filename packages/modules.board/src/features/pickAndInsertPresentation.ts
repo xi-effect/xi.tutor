@@ -9,7 +9,7 @@ import i18n from 'i18next';
 const MAX_PRESENTATION_SIZE_BYTES = 5 * 1024 * 1024;
 const MAX_PRESENTATION_SHAPES = 20;
 
-const DEFAULT_WIDTH = 1280;
+const DEFAULT_WIDTH = 720;
 
 export async function insertPresentation(editor: Editor, file: File, token: string) {
   if (!file.name.toLowerCase().endsWith('.pptx')) {

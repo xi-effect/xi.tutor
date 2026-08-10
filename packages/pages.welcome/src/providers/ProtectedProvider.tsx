@@ -4,8 +4,7 @@ import { useAuth } from 'common.auth';
 import { WelcomeContext } from '../model/WelcomeContext';
 import { useCurrentUser } from 'common.services';
 import { LoadingScreen } from 'common.ui';
-import { onboardingStageToPath } from '../utils';
-import { OnboardingStageT } from '../../../common.api/src/types';
+import { resolveWelcomeGuardAction } from './welcomeGuardLogic';
 
 type ProtectedProviderPropsT = {
   children: React.ReactNode;
@@ -26,33 +25,17 @@ export const ProtectedProvider = ({ children }: ProtectedProviderPropsT) => {
   useEffect(() => {
     if (!user || isAuthenticated === null) return;
 
-    // Проверяем, находимся ли мы в welcome-процессе
-    const isInWelcomeProcess = pathname.startsWith('/welcome');
+    const hasInvite =
+      Boolean(search) && typeof search === 'object' && 'invite' in search && Boolean(search.invite);
 
-    // Если onboarding завершен или в стадии training, и мы на welcome-странице - редиректим на главную
-    if (
-      (onboarding_stage === 'completed' || onboarding_stage === 'training') &&
-      isInWelcomeProcess
-    ) {
-      router.navigate({ to: '/', search: { ...search } });
-      return;
-    }
+    const action = resolveWelcomeGuardAction({
+      onboardingStage: onboarding_stage,
+      pathname,
+      hasInvite,
+    });
 
-    if (onboarding_stage === 'completed') return;
-
-    // Проверяем, есть ли invite параметр в search
-    const hasInvite = search && typeof search === 'object' && 'invite' in search && search.invite;
-
-    // Если есть invite и мы на invite-странице, не редиректим
-    if (hasInvite && pathname.startsWith('/invite/')) return;
-
-    const expectedPath = onboardingStageToPath[onboarding_stage as OnboardingStageT];
-
-    if (!expectedPath) return;
-
-    // Редиректим если мы не на правильном пути (даже если мы уже в welcome-процессе)
-    if (pathname !== expectedPath) {
-      router.navigate({ to: expectedPath, search: { ...search } });
+    if (action.type === 'navigate') {
+      router.navigate({ to: action.to, search: { ...search } });
     }
   }, [user, pathname, isAuthenticated, router, onboarding_stage, search]);
 

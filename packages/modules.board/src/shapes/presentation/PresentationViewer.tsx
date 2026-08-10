@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PPTXViewer } from 'pptxviewjs';
+import type { PPTXViewer } from 'pptxviewjs';
 
 import { useYjsContext } from '../../providers/YjsProvider';
+import { loadPptxViewer } from '../../utils/loadPptxViewer';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
 
 import type { PresentationShape } from './PresentationShape';
@@ -85,6 +86,12 @@ export const PresentationViewer = ({ shape }: { shape: PresentationShape }) => {
         }
 
         const buffer = await response.arrayBuffer();
+
+        if (cancelled) {
+          return;
+        }
+
+        const { PPTXViewer } = await loadPptxViewer();
 
         if (cancelled) {
           return;

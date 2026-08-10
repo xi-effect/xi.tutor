@@ -20,7 +20,8 @@ import { EmptyMaterials, switcherTabClass } from 'common.ui';
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { cn, useMediaQuery } from '@xipkg/utils';
-import { SectionEmptyState, sectionEmptyStateIllustrationClass } from '../SectionEmptyState';
+import { SectionEmptyState } from '../SectionEmptyState';
+import { sectionEmptyStateIllustrationClass } from '../sectionEmptyStateIllustrationClass';
 
 const MaterialsContent = () => {
   const { t } = useTranslation('main');

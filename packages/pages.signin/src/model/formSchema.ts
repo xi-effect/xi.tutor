@@ -5,54 +5,54 @@ import { useMemo } from 'react';
 const passwordMinLength = 6;
 const passwordMaxLength = 64;
 
-export const useFormSchema = () => {
-  const { t } = useTranslation('signin');
+type Translate = (key: string, params?: Record<string, unknown>) => unknown;
 
-  const formSchema = useMemo(() => {
-    // Безопасное получение переводов с fallback значениями
-    const getTranslation = (
-      key: string,
-      params?: Record<string, unknown>,
-      fallback?: string,
-    ): string => {
-      const translation = t(key, params);
-      // Проверяем, что перевод - это строка и не пустая, иначе используем fallback
-      if (typeof translation === 'string' && translation.length > 0) {
-        return translation;
-      }
-      return fallback || key;
-    };
+/** Чистая zod-схема входа — удобно тестировать без React/i18n. */
+export const createFormSchema = (t: Translate) => {
+  const getTranslation = (
+    key: string,
+    params?: Record<string, unknown>,
+    fallback?: string,
+  ): string => {
+    const translation = t(key, params);
+    if (typeof translation === 'string' && translation.length > 0) {
+      return translation;
+    }
+    return fallback || key;
+  };
 
-    return z.object({
-      email: z
-        .string({
-          error: getTranslation('validation.required', undefined, 'This field is required'),
-        })
-        .email({
-          message: getTranslation('validation.wrong_format', undefined, 'Incorrect data format'),
-        }),
-      password: z
-        .string({
-          error: getTranslation('validation.required', undefined, 'This field is required'),
-        })
-        .min(passwordMinLength, {
-          message: getTranslation(
-            'validation.minLength',
-            { length: passwordMinLength },
-            `Minimum ${passwordMinLength} characters`,
-          ),
-        })
-        .max(passwordMaxLength, {
-          message: getTranslation(
-            'validation.maxLength',
-            { length: passwordMaxLength },
-            `Maximum ${passwordMaxLength} characters`,
-          ),
-        }),
-    });
-  }, [t]);
-
-  return formSchema;
+  return z.object({
+    email: z
+      .string({
+        error: getTranslation('validation.required', undefined, 'This field is required'),
+      })
+      .email({
+        message: getTranslation('validation.wrong_format', undefined, 'Incorrect data format'),
+      }),
+    password: z
+      .string({
+        error: getTranslation('validation.required', undefined, 'This field is required'),
+      })
+      .min(passwordMinLength, {
+        message: getTranslation(
+          'validation.minLength',
+          { length: passwordMinLength },
+          `Minimum ${passwordMinLength} characters`,
+        ),
+      })
+      .max(passwordMaxLength, {
+        message: getTranslation(
+          'validation.maxLength',
+          { length: passwordMaxLength },
+          `Maximum ${passwordMaxLength} characters`,
+        ),
+      }),
+  });
 };
 
-export type FormData = z.infer<ReturnType<typeof useFormSchema>>;
+export const useFormSchema = () => {
+  const { t } = useTranslation('signin');
+  return useMemo(() => createFormSchema(t), [t]);
+};
+
+export type FormData = z.infer<ReturnType<typeof createFormSchema>>;

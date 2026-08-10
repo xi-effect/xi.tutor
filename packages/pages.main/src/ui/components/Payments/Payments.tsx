@@ -2,7 +2,8 @@ import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Button } from '@xipkg/button';
 import { Add, ArrowRight, ArrowUpRight } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
-import { SectionEmptyState, sectionEmptyStateIllustrationClass } from '../SectionEmptyState';
+import { SectionEmptyState } from '../SectionEmptyState';
+import { sectionEmptyStateIllustrationClass } from '../sectionEmptyStateIllustrationClass';
 import { ScrollArea } from '@xipkg/scrollarea';
 import {
   useCurrentUser,

@@ -1,7 +1,7 @@
 import { Editor } from '@ibodr/draw';
 import { insertAudio, insertPdf, insertPresentation } from '../features';
 import { insertFile } from '../features/pickAndInsertFile';
-import { RetryRequest } from 'common.services';
+import { isFileNameTooLong, MAX_FILENAME_LENGTH, type RetryRequest } from 'common.services';
 import { insertImage } from '../features/pickAndInsertImage';
 import {
   ALLOWED_AUDIO_MIME_TYPES,
@@ -29,6 +29,17 @@ export function insertAsset(
   token: string,
   addToQueue: (request: Omit<RetryRequest, 'id' | 'timestamp'>) => void,
 ) {
+  if (isFileNameTooLong(file.name)) {
+    toast.error(i18n.t('toast.fileNameTooLong', { ns: 'board' }), {
+      description: i18n.t('toast.fileNameTooLongDesc', {
+        ns: 'board',
+        max: MAX_FILENAME_LENGTH,
+      }),
+      duration: 5000,
+    });
+    return;
+  }
+
   const type = checkAssetType(file);
   switch (type) {
     case 'audio':

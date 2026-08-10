@@ -14,23 +14,7 @@ import {
   trackProductEvent,
 } from 'common.utils';
 import { useTranslation } from 'react-i18next';
-
-const formatTime = (seconds: number): string => {
-  const minutes = Math.floor(seconds / 60);
-  const remainingSeconds = seconds % 60;
-  return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
-};
-
-// Вычисляет оставшееся время до разрешенной повторной отправки
-const calculateTimeRemaining = (allowedAt: string | null | undefined): number => {
-  if (!allowedAt) return 0;
-
-  const allowedDate = new Date(allowedAt);
-  const now = new Date();
-  const diffInSeconds = Math.floor((allowedDate.getTime() - now.getTime()) / 1000);
-
-  return Math.max(0, diffInSeconds);
-};
+import { calculateResendTimeRemaining, formatResendCooldown } from '../utils/resendCooldown';
 
 export const EmailPageConfirm = () => {
   const { t } = useTranslation('email');
@@ -69,7 +53,7 @@ export const EmailPageConfirm = () => {
 
   // Вычисляем оставшееся время на основе данных с бэкенда
   const timeRemaining = useMemo(() => {
-    return calculateTimeRemaining(user?.email_confirmation_resend_allowed_at);
+    return calculateResendTimeRemaining(user?.email_confirmation_resend_allowed_at);
   }, [user?.email_confirmation_resend_allowed_at]);
 
   // Локальное состояние для отображения таймера (обновляется каждую секунду)
@@ -136,7 +120,7 @@ export const EmailPageConfirm = () => {
       </Button>
       {displayTimeRemaining > 0 && (
         <span className="text-xxs-base text-text-secondary mt-1 w-full text-center">
-          {t('confirm.cooldown', { time: formatTime(displayTimeRemaining) })}
+          {t('confirm.cooldown', { time: formatResendCooldown(displayTimeRemaining) })}
         </span>
       )}
       {showHint && (

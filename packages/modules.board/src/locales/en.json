@@ -255,6 +255,8 @@
     "unsupportedFileFormat": "Unsupported file format",
     "fileCannotUpload": "File “{{name}}” cannot be uploaded to the board.",
     "fileTooLarge": "File is too large",
+    "fileNameTooLong": "File name is too long",
+    "fileNameTooLongDesc": "File name must be at most {{max}} characters.",
     "fileEmpty": "Empty file",
     "fileEmptyDesc": "Choose an image with a non-zero size.",
     "fileUploadSuccess": "File uploaded successfully",

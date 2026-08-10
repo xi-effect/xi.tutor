@@ -35,10 +35,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v7
 
       - name: Filter paths
-        uses: dorny/paths-filter@v2
+        uses: dorny/paths-filter@v4
         id: path_filter
         with:
           filters: .github/files.yml
@@ -52,13 +52,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v7
 
       - name: Install pnpm (version from package.json)
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
 
       - name: Setup NodeJS
-        uses: actions/setup-node@v4.3.0
+        uses: actions/setup-node@v7
         with:
           node-version-file: package.json
           registry-url: https://registry.npmjs.org
@@ -74,6 +74,10 @@ jobs:
       - name: Run linter
         if: success() || (failure() && (steps.install.conclusion == 'success'))
         run: pnpm run lint
+
+      - name: Run unit tests
+        if: success() || (failure() && (steps.install.conclusion == 'success'))
+        run: pnpm run test
 
   build_xi_web:
     needs:

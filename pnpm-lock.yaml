@@ -10,17 +10,17 @@ overrides:
   '@tiptap/react': 3.23.6
   '@tiptap/starter-kit': 3.23.6
   '@tiptap/extensions': 3.23.6
-  '@xipkg/calls': ^0.1.15
-  '@xipkg/calls-chat': ^0.1.15
-  '@xipkg/calls-compactview': ^0.1.15
-  '@xipkg/calls-config': ^0.1.15
-  '@xipkg/calls-hooks': ^0.1.15
-  '@xipkg/calls-providers': ^0.1.15
-  '@xipkg/calls-risehand': ^0.1.15
-  '@xipkg/calls-store': ^0.1.15
-  '@xipkg/calls-types': ^0.1.15
-  '@xipkg/calls-ui': ^0.1.15
-  '@xipkg/calls-utils': ^0.1.15
+  '@xipkg/calls': ^0.1.24
+  '@xipkg/calls-chat': ^0.1.24
+  '@xipkg/calls-compactview': ^0.1.24
+  '@xipkg/calls-config': ^0.1.24
+  '@xipkg/calls-hooks': ^0.1.24
+  '@xipkg/calls-providers': ^0.1.24
+  '@xipkg/calls-risehand': ^0.1.24
+  '@xipkg/calls-store': ^0.1.24
+  '@xipkg/calls-types': ^0.1.24
+  '@xipkg/calls-ui': ^0.1.24
+  '@xipkg/calls-utils': ^0.1.24
   '@xipkg/label': 2.1.0
 
 importers:
@@ -247,6 +247,9 @@ importers:
       '@eslint/js':
         specifier: ^9.19.0
         version: 9.39.5
+      '@playwright/test':
+        specifier: ^1.51.0
+        version: 1.62.1
       '@tanstack/eslint-plugin-query':
         specifier: 5.66.1
         version: 5.66.1(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
@@ -1004,6 +1007,9 @@ importers:
       typescript-eslint:
         specifier: ^8.22.0
         version: 8.66.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
+      vitest:
+        specifier: ^3.1.1
+        version: 3.2.7(@types/node@20.19.43)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.49.2)
 
   packages/features.avatar.editor:
     dependencies:
@@ -2074,6 +2080,9 @@ importers:
       typescript-eslint:
         specifier: ^8.22.0
         version: 8.66.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
+      vitest:
+        specifier: ^3.1.1
+        version: 3.2.7(@types/node@20.19.43)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.49.2)
 
   packages/features.lesson.cancel:
     dependencies:
@@ -2453,6 +2462,9 @@ importers:
       typescript-eslint:
         specifier: ^8.22.0
         version: 8.66.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
+      vitest:
+        specifier: ^3.1.1
+        version: 3.2.7(@types/node@20.19.43)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.49.2)
 
   packages/features.lesson.start:
     dependencies:
@@ -3492,12 +3504,12 @@ importers:
       typescript-eslint:
         specifier: ^8.22.0
         version: 8.66.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
+      vitest:
+        specifier: ^3.1.1
+        version: 3.2.7(@types/node@20.19.43)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.49.2)
 
   packages/modules.calls:
     dependencies:
-      '@livekit/components-react':
-        specifier: 2.9.14
-        version: 2.9.14(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22)))(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tslib@2.8.1)
       '@livekit/components-styles':
         specifier: 1.1.6
         version: 1.1.6
@@ -3508,37 +3520,37 @@ importers:
         specifier: ^1.166.6
         version: 1.170.25(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/calls':
-        specifier: ^0.1.15
+        specifier: ^0.1.24
         version: 0.1.24(@types/dom-mediacapture-record@1.0.22)(@types/dom-mediacapture-transform@0.1.12)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(i18next@24.2.2(typescript@5.7.3))(immer@11.1.16)(react-dom@19.2.8(react@19.2.8))(react-i18next@15.4.1(i18next@24.2.2(typescript@5.7.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(tslib@2.8.1)(use-sync-external-store@1.6.0(react@19.2.8))
       '@xipkg/calls-chat':
-        specifier: ^0.1.15
+        specifier: ^0.1.24
         version: 0.1.24(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22)))(@types/dom-mediacapture-record@1.0.22)(@types/dom-mediacapture-transform@0.1.12)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(i18next@24.2.2(typescript@5.7.3))(immer@11.1.16)(react-dom@19.2.8(react@19.2.8))(react-i18next@15.4.1(i18next@24.2.2(typescript@5.7.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(tslib@2.8.1)(use-sync-external-store@1.6.0(react@19.2.8))
       '@xipkg/calls-compactview':
-        specifier: ^0.1.15
+        specifier: ^0.1.24
         version: 0.1.24(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22)))(@types/dom-mediacapture-record@1.0.22)(@types/dom-mediacapture-transform@0.1.12)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(i18next@24.2.2(typescript@5.7.3))(immer@11.1.16)(react-dom@19.2.8(react@19.2.8))(react-i18next@15.4.1(i18next@24.2.2(typescript@5.7.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(tslib@2.8.1)(use-sync-external-store@1.6.0(react@19.2.8))
       '@xipkg/calls-config':
-        specifier: ^0.1.15
+        specifier: ^0.1.24
         version: 0.1.24
       '@xipkg/calls-hooks':
-        specifier: ^0.1.15
+        specifier: ^0.1.24
         version: 0.1.24(@types/dom-mediacapture-record@1.0.22)(@types/react@19.2.18)(i18next@24.2.2(typescript@5.7.3))(immer@11.1.16)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8))
       '@xipkg/calls-providers':
-        specifier: ^0.1.15
+        specifier: ^0.1.24
         version: 0.1.24(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8))
       '@xipkg/calls-risehand':
-        specifier: ^0.1.15
+        specifier: ^0.1.24
         version: 0.1.24(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22)))(@types/dom-mediacapture-record@1.0.22)(@types/dom-mediacapture-transform@0.1.12)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(i18next@24.2.2(typescript@5.7.3))(immer@11.1.16)(react-dom@19.2.8(react@19.2.8))(react-i18next@15.4.1(i18next@24.2.2(typescript@5.7.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(tslib@2.8.1)(use-sync-external-store@1.6.0(react@19.2.8))
       '@xipkg/calls-store':
-        specifier: ^0.1.15
+        specifier: ^0.1.24
         version: 0.1.24(@types/react@19.2.18)(immer@11.1.16)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8))
       '@xipkg/calls-types':
-        specifier: ^0.1.15
+        specifier: ^0.1.24
         version: 0.1.24
       '@xipkg/calls-ui':
-        specifier: ^0.1.15
+        specifier: ^0.1.24
         version: 0.1.24(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22)))(@types/dom-mediacapture-record@1.0.22)(@types/dom-mediacapture-transform@0.1.12)(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(i18next@24.2.2(typescript@5.7.3))(immer@11.1.16)(react-dom@19.2.8(react@19.2.8))(react-i18next@15.4.1(i18next@24.2.2(typescript@5.7.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)(tslib@2.8.1)(use-sync-external-store@1.6.0(react@19.2.8))
       '@xipkg/calls-utils':
-        specifier: ^0.1.15
+        specifier: ^0.1.24
         version: 0.1.24(react@19.2.8)
       common.api:
         specifier: workspace:*
@@ -4078,6 +4090,9 @@ importers:
       '@xipkg/toggle':
         specifier: ^4.2.0
         version: 4.2.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@xipkg/tooltip':
+        specifier: 2.2.0
+        version: 2.2.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/userprofile':
         specifier: 4.2.0
         version: 4.2.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -4117,6 +4132,9 @@ importers:
       i18next:
         specifier: 24.2.2
         version: 24.2.2(typescript@5.7.3)
+      modules.calls:
+        specifier: workspace:*
+        version: link:../modules.calls
       react:
         specifier: '19'
         version: 19.2.8
@@ -4692,6 +4710,9 @@ importers:
       typescript-eslint:
         specifier: ^8.22.0
         version: 8.66.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
+      vitest:
+        specifier: ^3.1.1
+        version: 3.2.7(@types/node@20.19.43)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.49.2)
 
   packages/pages.email-confirm:
     dependencies:
@@ -5666,6 +5687,9 @@ importers:
       typescript-eslint:
         specifier: ^8.22.0
         version: 8.66.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
+      vitest:
+        specifier: ^3.1.1
+        version: 3.2.7(@types/node@20.19.43)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.49.2)
 
   packages/pages.signup:
     dependencies:
@@ -5766,6 +5790,9 @@ importers:
       typescript-eslint:
         specifier: ^8.22.0
         version: 8.66.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
+      vitest:
+        specifier: ^3.1.1
+        version: 3.2.7(@types/node@20.19.43)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.49.2)
 
   packages/pages.welcome:
     dependencies:
@@ -5884,6 +5911,9 @@ importers:
       typescript-eslint:
         specifier: ^8.22.0
         version: 8.66.0(eslint@9.39.5(jiti@2.7.0))(typescript@5.7.3)
+      vitest:
+        specifier: ^3.1.1
+        version: 3.2.7(@types/node@20.19.43)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.49.2)
 
 packages:
 
@@ -6715,9 +6745,6 @@ packages:
   '@floating-ui/core@1.8.0':
     resolution: {integrity: sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ==}
 
-  '@floating-ui/dom@1.6.13':
-    resolution: {integrity: sha512-umqzocjDgNRGTuO7Q8CU32dkHkECqI8ZdMZ5Swb6QAM0t5rnlrN3lGo1hdpscRd3WS8T6DKYK4ephgIH9iRh3w==}
-
   '@floating-ui/dom@1.7.4':
     resolution: {integrity: sha512-OOchDgh4F2CchOX94cRVqhvy7b3AFb+/rQXyswmzmGakRfkMgoWVjfnLWkRirfLEfuD4ysVW16eXzwt3jHIzKA==}
 
@@ -6925,26 +6952,6 @@ packages:
       livekit-client: ^2.17.2
       tslib: ^2.6.2
 
-  '@livekit/components-core@0.12.9':
-    resolution: {integrity: sha512-bwrZsHf6GaHIO+lLyA6Yps1STTX9YIeL3ixwt+Ufi88OgkNYdp41Ug8oeVDlf7tzdxa+r3Xkfaj/qvIG84Yo6A==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      livekit-client: ^2.13.3
-      tslib: ^2.6.2
-
-  '@livekit/components-react@2.9.14':
-    resolution: {integrity: sha512-fQ3t4PdcM+AORo62FWmJcfqWe7ODwVaU4nsqxse+fp6L5a+0K2uMD7yQ2jrutXIaUQigU/opzTUxPcpdk9+0ow==}
-    engines: {node: '>=18'}
-    peerDependencies:
-      '@livekit/krisp-noise-filter': ^0.2.12 || ^0.3.0
-      livekit-client: ^2.13.3
-      react: '>=18'
-      react-dom: '>=18'
-      tslib: ^2.6.2
-    peerDependenciesMeta:
-      '@livekit/krisp-noise-filter':
-        optional: true
-
   '@livekit/components-react@2.9.21':
     resolution: {integrity: sha512-6hU9VucJJL+gAhilNGe4MBCDCZVk64qyjP9Ck86krvOIdVU76WeWksddg1MYUP10AlUwwrfD7davz41pJTcMJw==}
     engines: {node: '>=18'}
@@ -7082,6 +7089,11 @@ packages:
     cpu: [x64]
     os: [linux]
     libc: [glibc]
+
+  '@playwright/test@1.62.1':
+    resolution: {integrity: sha512-DTcUc8qii+cpHvtOwggMtBRMjKZHXYWdw8syRYu2vtzuq4Wxphqq4NfCs5Zt44L6mA8rfDfj+PHnxFc/FeK6mQ==}
+    engines: {node: '>=20'}
+    hasBin: true
 
   '@radix-ui/number@1.1.3':
     resolution: {integrity: sha512-Road2bidD0uu/1BGDOWNdPI06g0lIRy6IF9GZcIrDK2KGItfor8IQwQa+yM2ERgHM1MmHxaxpTzk0/Jp42lNfA==}
@@ -10227,6 +10239,11 @@ packages:
     resolution: {integrity: sha512-hcg3ZmepS30/7BSFqRvoo3DOMQu7IjqxO5nCDt+zM9XWjb33Wg7ziNT+Qvqbuc3+gWpzO02JubVyk2G4Zvo1OQ==}
     engines: {node: '>=10'}
 
+  fsevents@2.3.2:
+    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
+
   fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -11048,6 +11065,16 @@ packages:
   picomatch@4.0.5:
     resolution: {integrity: sha512-RvwwcruNjI1ncT5xRakeyS9Lf8lcItv34KD+aif+VH9kduAyfYBipGh12274xtenIPZ119/R9BdTBa8gAwSh0A==}
     engines: {node: '>=12'}
+
+  playwright-core@1.62.1:
+    resolution: {integrity: sha512-wPYSwEBJY9GHraISXqyqtx0na0LpO3XEX7jNDhntbex7tzUS7kLnZsOlFruFJB4Hi/rhDMjXGqHewDZ68nYZVw==}
+    engines: {node: '>=20'}
+    hasBin: true
+
+  playwright@1.62.1:
+    resolution: {integrity: sha512-0M+L3LAD8/nm554LOla9Ayx0j0tmFZ0FBcoQ7F1VuVHpM/XpiC8RcDzBQB8W5+hA8L22THxELzeF+2WcUzvcLg==}
+    engines: {node: '>=20'}
+    hasBin: true
 
   possible-typed-array-names@1.1.0:
     resolution: {integrity: sha512-/+5VFTchJDoVj3bhoqi6UeymcD00DAwb1nJwamzPvHEszJ4FpF6SNNbUbOS8yI56qHzdV8eK0qEfOSiodkTdxg==}
@@ -13135,11 +13162,6 @@ snapshots:
     dependencies:
       '@floating-ui/utils': 0.2.12
 
-  '@floating-ui/dom@1.6.13':
-    dependencies:
-      '@floating-ui/core': 1.7.0
-      '@floating-ui/utils': 0.2.12
-
   '@floating-ui/dom@1.7.4':
     dependencies:
       '@floating-ui/core': 1.8.0
@@ -13342,26 +13364,6 @@ snapshots:
       rxjs: 7.8.2
       tslib: 2.8.1
 
-  '@livekit/components-core@0.12.9(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))(tslib@2.8.1)':
-    dependencies:
-      '@floating-ui/dom': 1.6.13
-      livekit-client: 2.19.1(@types/dom-mediacapture-record@1.0.22)
-      loglevel: 1.9.1
-      rxjs: 7.8.2
-      tslib: 2.8.1
-
-  '@livekit/components-react@2.9.14(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22)))(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tslib@2.8.1)':
-    dependencies:
-      '@livekit/components-core': 0.12.9(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))(tslib@2.8.1)
-      clsx: 2.1.1
-      livekit-client: 2.19.1(@types/dom-mediacapture-record@1.0.22)
-      react: 19.2.8
-      react-dom: 19.2.8(react@19.2.8)
-      tslib: 2.8.1
-      usehooks-ts: 3.1.1(react@19.2.8)
-    optionalDependencies:
-      '@livekit/krisp-noise-filter': 0.3.4(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))
-
   '@livekit/components-react@2.9.21(@livekit/krisp-noise-filter@0.3.4(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22)))(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(tslib@2.8.1)':
     dependencies:
       '@livekit/components-core': 0.12.13(livekit-client@2.19.1(@types/dom-mediacapture-record@1.0.22))(tslib@2.8.1)
@@ -13461,6 +13463,10 @@ snapshots:
 
   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
     optional: true
+
+  '@playwright/test@1.62.1':
+    dependencies:
+      playwright: 1.62.1
 
   '@radix-ui/number@1.1.3': {}
 
@@ -16038,7 +16044,7 @@ snapshots:
 
   '@xipkg/label@2.1.0(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@radix-ui/react-label': 2.1.2(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@radix-ui/react-label': 2.1.15(@types/react-dom@19.2.4(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@xipkg/utils': 1.8.0(react@19.2.8)
       class-variance-authority: 0.7.1
       react: 19.2.8
@@ -17132,6 +17138,9 @@ snapshots:
       jsonfile: 6.2.1
       universalify: 2.0.1
 
+  fsevents@2.3.2:
+    optional: true
+
   fsevents@2.3.3:
     optional: true
 
@@ -17861,6 +17870,14 @@ snapshots:
   picocolors@1.1.1: {}
 
   picomatch@4.0.5: {}
+
+  playwright-core@1.62.1: {}
+
+  playwright@1.62.1:
+    dependencies:
+      playwright-core: 1.62.1
+    optionalDependencies:
+      fsevents: 2.3.2
 
   possible-typed-array-names@1.1.0: {}
 

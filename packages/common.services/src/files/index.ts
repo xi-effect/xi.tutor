@@ -9,3 +9,9 @@ export {
   getAllFileKeys,
   initFileDB,
 } from './fileStorage';
+export {
+  MAX_FILENAME_LENGTH,
+  FILE_NAME_TOO_LONG_MESSAGE,
+  isFileNameTooLong,
+  assertValidFileName,
+} from './validateFileName';
