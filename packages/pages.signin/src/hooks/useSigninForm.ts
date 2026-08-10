@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
-import { AxiosError } from 'axios';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 
 import { useSignin, useCurrentUser } from 'common.services';
@@ -10,8 +9,7 @@ import { trackUmamiSession } from 'common.utils';
 
 import { FormData } from '../model/formSchema';
 import { UseFormSetError } from 'react-hook-form';
-
-type ErrorDetail = 'User not found' | 'Wrong password' | string;
+import { completeSigninSuccess, handleSigninError } from './signinFormLogic';
 
 type SignInResponse = {
   status: number;
@@ -45,47 +43,15 @@ export const useSigninForm = () => {
         // Здесь можно обработать тему
       }
 
-      await login();
-
-      // Идентифицируем пользователя в Umami до навигации, чтобы properties записались
-      // в текущую сессию (страница логина), а не в «новую» после перехода
-      const result = await refetchUser();
-      if (result.data) {
-        await trackUmamiSession(result.data, 'signin');
-      }
-
-      navigate({ to: search.redirect || '/' });
+      await completeSigninSuccess({
+        login,
+        refetchUser,
+        trackUmamiSession,
+        navigate,
+        redirect: search.redirect,
+      });
     } catch (error) {
-      if (error instanceof AxiosError) {
-        const status = error.response?.status;
-        const detail: ErrorDetail = error.response?.data?.detail;
-
-        if (status === 401) {
-          if (detail === 'User not found') {
-            const message = t('errors.not_found_account');
-            setError('email', { message });
-            toast(message);
-            return;
-          }
-
-          if (detail === 'Wrong password') {
-            const message = t('errors.not_found_password');
-            setError('password', { message });
-            toast(message);
-            return;
-          }
-
-          toast(t('errors.error_signin'));
-          return;
-        }
-
-        if (status === 422) {
-          toast(t('errors.validation_error'));
-          return;
-        }
-      }
-
-      toast(t('errors.error_signin'));
+      handleSigninError(error, { t, setError, toast });
     } finally {
       setIsPending(false);
     }

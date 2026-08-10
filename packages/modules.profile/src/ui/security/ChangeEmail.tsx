@@ -8,7 +8,7 @@ import { Input } from '@xipkg/input';
 import { Eyeoff, Eyeon } from '@xipkg/icons';
 import { modalTitleClass } from 'common.ui';
 import { useTranslation } from 'react-i18next';
-import { useChangeEmail } from '../hooks';
+import { useChangeEmail } from '../../hooks';
 
 interface TimerProps {
   durationSecs: number;

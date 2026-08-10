@@ -116,12 +116,19 @@
     "title": "Effects",
     "videoConferences": "Video conferences",
     "chatMessage": "New chat message",
+    "chatMessageHint": "Plays when a new message appears in the video conference chat",
     "handRaise": "Hand raise",
+    "handRaiseHint": "Plays when a participant raises their hand in the video conference",
     "userJoin": "Participant joined",
+    "userJoinHint": "Plays when a participant joins the video conference",
     "userLeft": "Participant left",
+    "userLeftHint": "Plays when a participant leaves the video conference",
     "board": "Whiteboard",
     "boardTimerEnd": "Timer ended",
-    "boardTimerWarn": "Timer warning"
+    "boardTimerEndHint": "Plays when the whiteboard timer reaches zero",
+    "boardTimerWarn": "Timer warning",
+    "boardTimerWarnHint": "Plays when 45 seconds remain on the whiteboard timer",
+    "playPreview": "Preview sound"
   },
   "report": {
     "title": "Report",

@@ -2,7 +2,7 @@ import { ChevronRight, Key, Mail } from '@xipkg/icons';
 import { useMediaQuery } from '@xipkg/utils';
 import { useCurrentUser } from 'common.services';
 
-import { getRelativeTime } from '../utils/getRelativeTime';
+import { getRelativeTime } from '../../utils/getRelativeTime';
 import { useState } from 'react';
 import { ChangePassword } from './ChangePassword';
 import { ChangeEmail } from './ChangeEmail';

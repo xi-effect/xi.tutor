@@ -133,13 +133,7 @@ export const ClassroomScheduleProvider = ({
     userHasNavigatedRef.current = true;
     goToDay(anchor);
     deepLink.acknowledgeAnchorNavigation();
-  }, [
-    deepLink.pendingAnchorDate,
-    deepLink.pendingEventToOpen,
-    deepLink.pendingAnchorToken,
-    goToDay,
-    deepLink.acknowledgeAnchorNavigation,
-  ]);
+  }, [deepLink, goToDay]);
 
   const goToPrevWithNav = useCallback(
     (count: number) => {
@@ -198,6 +192,7 @@ export const ClassroomScheduleProvider = ({
       weekStart,
       visibleDays,
       visibleCount,
+      setVisibleCount,
       goToPrevWithNav,
       goToNextWithNav,
       goToWeekStartWithNav,

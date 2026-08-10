@@ -1,0 +1,1 @@
+export { SoundAndVideo } from './SoundAndVideo';

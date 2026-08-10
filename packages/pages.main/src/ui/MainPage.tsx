@@ -1,4 +1,3 @@
-/* eslint-disable no-irregular-whitespace */
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Materials, Payments, Classrooms, FirstLessonGuideBanner } from './components';

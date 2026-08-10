@@ -70,6 +70,7 @@ export {
   type OnboardingStepName,
   type OnboardingStepFailReason,
   type OnboardingSkipReason,
+  type OnboardingAnalyticsRole,
   type LessonFinishReason,
   type UmamiEventPayload,
 } from './src/productAnalytics';

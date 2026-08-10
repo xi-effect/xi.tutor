@@ -6,6 +6,7 @@ import {
   trackOnboardingStepCompleted,
   trackOnboardingStepFailed,
 } from 'common.utils';
+import { runWelcomeUserSubmit } from './welcomeUserSubmitLogic';
 
 export const useWelcomeUserForm = () => {
   const navigate = useNavigate();
@@ -19,20 +20,19 @@ export const useWelcomeUserForm = () => {
   const onWelcomeUserForm = async (displayName: string) => {
     const userRole = resolveOnboardingAnalyticsRole(user?.default_layout);
 
-    try {
-      await updateProfile.mutateAsync({ display_name: displayName });
-    } catch (error) {
-      trackOnboardingStepFailed('profile', userRole, error, user?.onboarding_stage);
-      return;
-    }
-
-    try {
-      await transitionStage.mutateAsync();
-      trackOnboardingStepCompleted('profile', userRole, user?.onboarding_stage);
-      navigate({ to: '/welcome/role', search: { ...search } });
-    } catch (error) {
-      trackOnboardingStepFailed('profile', userRole, error, user?.onboarding_stage);
-    }
+    await runWelcomeUserSubmit({
+      displayName,
+      userRole,
+      onboardingStage: user?.onboarding_stage ?? undefined,
+      updateProfile: (payload) => updateProfile.mutateAsync(payload),
+      transitionForward: () => transitionStage.mutateAsync(),
+      trackFailed: trackOnboardingStepFailed,
+      trackCompleted: trackOnboardingStepCompleted,
+      navigateToRole: (nextSearch) => {
+        navigate({ to: '/welcome/role', search: nextSearch });
+      },
+      search: { ...(search as Record<string, unknown>) },
+    });
   };
 
   return { onWelcomeUserForm, isLoading };

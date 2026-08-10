@@ -19,6 +19,11 @@ import {
 } from 'common.utils';
 
 import { FormData } from '../model/formSchema';
+import {
+  applySignupSuccessSideEffects,
+  getSignupSuccessNavigation,
+  handleSignupError,
+} from './signupFormLogic';
 
 export const useSignupForm = () => {
   const { t } = useTranslation('signup');
@@ -66,22 +71,18 @@ export const useSignupForm = () => {
           has_invite: hasInvite,
         });
 
-        // Сохраняем предыдущий путь для страницы подтверждения email
-        if (typeof window !== 'undefined') {
-          sessionStorage.setItem('previousPath', '/signup');
-        }
-
-        // Отправляем цель в Яндекс.Метрику
-        if (typeof window !== 'undefined' && window.ym) {
-          window.ym(103653512, 'reachGoal', 'registration_complete');
-        }
-
-        navigate({
-          to: '/welcome/email',
-          search: {
-            ...search,
-          },
+        applySignupSuccessSideEffects({
+          setPreviousPath:
+            typeof window !== 'undefined'
+              ? (path) => sessionStorage.setItem('previousPath', path)
+              : undefined,
+          reachRegistrationGoal:
+            typeof window !== 'undefined' && window.ym
+              ? () => window.ym?.(103653512, 'reachGoal', 'registration_complete')
+              : undefined,
         });
+
+        navigate(getSignupSuccessNavigation(search));
       },
 
       onError: (err: AxiosError | Error) => {
@@ -96,35 +97,7 @@ export const useSignupForm = () => {
           has_invite: hasInvite,
         });
 
-        const failureReason = mapSignupError(err);
-
-        if (failureReason === 'username_exists') {
-          const message = t('errors.username_exists');
-          setFormError('username', { message });
-          toast(message);
-          setError(message);
-          return;
-        }
-
-        if (failureReason === 'email_exists') {
-          const message = t('errors.email_exists');
-          setFormError('email', { message });
-          toast(message);
-          setError(message);
-          return;
-        }
-
-        if (err instanceof AxiosError && !err.response) {
-          console.error('Сетевая ошибка при регистрации:', err);
-        } else if (!(err instanceof AxiosError)) {
-          console.error('Неизвестная ошибка:', err);
-        } else if (!err.response?.data?.detail) {
-          console.error('Неизвестная ошибка Axios:', err);
-        }
-
-        const message = t('errors.unknown');
-        toast(message);
-        setError(message);
+        handleSignupError(err, { t, setFormError, toast, setError });
       },
     });
   };

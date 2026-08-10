@@ -138,6 +138,8 @@ const ProtectedLayout = () => {
         },
       },
     );
+    // Один раз на mount: role из URL — намеренно без deps, иначе повторные mutate
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Обработка параметра read_notification_id из URL

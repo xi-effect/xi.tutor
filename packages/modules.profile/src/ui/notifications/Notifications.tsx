@@ -8,8 +8,8 @@ import { VkConnectButton } from 'common.ui';
 import { useTranslation } from 'react-i18next';
 
 import { NotificationsToggles } from './NotificationsToggles';
-import { useNotificationsStatus } from '../hooks';
-import { useDisconnectVk } from '../services';
+import { useNotificationsStatus } from '../../hooks';
+import { useDisconnectVk } from '../../services';
 import {
   useCurrentUser,
   useGetDeliveryMethods,

@@ -75,6 +75,10 @@ jobs:
         if: success() || (failure() && (steps.install.conclusion == 'success'))
         run: pnpm run lint
 
+      - name: Run unit tests
+        if: success() || (failure() && (steps.install.conclusion == 'success'))
+        run: pnpm run test
+
   build_xi_web:
     needs:
       - analyze_files

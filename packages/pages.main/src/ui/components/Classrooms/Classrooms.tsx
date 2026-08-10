@@ -17,7 +17,8 @@ import { ModalAddGroup } from 'features.group.add';
 import { ModalInvitation } from 'features.invites';
 import { EmptyClassrooms } from 'common.ui';
 import { Classroom } from './Classroom';
-import { SectionEmptyState, sectionEmptyStateIllustrationClass } from '../SectionEmptyState';
+import { SectionEmptyState } from '../SectionEmptyState';
+import { sectionEmptyStateIllustrationClass } from '../sectionEmptyStateIllustrationClass';
 import { cn, useMediaQuery } from '@xipkg/utils';
 
 const emptyClassroomsIllustrationClass = cn(sectionEmptyStateIllustrationClass, '-translate-x-8');
