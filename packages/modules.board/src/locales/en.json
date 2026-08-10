@@ -202,7 +202,8 @@
     "loading": "Loading..."
   },
   "presentation": {
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "extractPage": "Extract slide as image"
   },
   "audio": {
     "label": "Audio",
@@ -270,6 +271,12 @@
     "pdfLimitDesc": "The board can have at most {{max}} PDF objects.",
     "pdfUploadFailed": "Failed to upload PDF",
     "pdfUploadError": "PDF upload error",
+    "presentationFormatDesc": "Choose a presentation file (PPT, PPTX).",
+    "presentationSizeDesc": "Presentation size must not exceed 5 MiB (currently {{size}} MiB).",
+    "presentationLimitTitle": "Presentation limit",
+    "presentationLimitDesc": "The board can have at most {{max}} presentations.",
+    "presentationUploadFailed": "Failed to upload presentation",
+    "presentationUploadError": "Presentation upload error",
     "audioFormatDesc": "Choose an audio file (MP3, OGG, WAV, AAC, FLAC, etc.).",
     "audioInvalidFormat": "Invalid file format",
     "audioInvalidFormatDesc": "File contents do not match the declared audio type.",
