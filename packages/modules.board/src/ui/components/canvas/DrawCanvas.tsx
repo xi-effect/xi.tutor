@@ -33,6 +33,7 @@ import { EmojiTool } from '../../../shapes/emoji';
 import { EmojiStickerTool } from '../../../shapes/emojiSticker';
 import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
 import { isShapeErasable, isEditableTarget } from '../../../utils';
+import { TextEditorToolbarWithContext } from '../../../shapes/text/TextEditorToolbarWithContext';
 import { insertAsset } from '../../../utils/uploadAsset';
 import { useRetryFileQueue } from 'common.services';
 import { useSearch } from '@tanstack/react-router';
@@ -77,6 +78,7 @@ export const DrawCanvas = ({
       ...hiddenComponents,
       InFrontOfTheCanvas: CanvasOverlays,
       CollaboratorCursor,
+      RichTextToolbar: TextEditorToolbarWithContext,
     }),
     [],
   );
@@ -446,7 +448,6 @@ export const DrawCanvas = ({
             store={store}
             tools={[XiGeoTool, EmojiTool, CoordinateAxesTool, EmojiStickerTool]}
             shapeUtils={boardCustomShapeUtils}
-            hideUi
             components={drawComponents}
             collaboratorCursorLayout={{
               badgeOffset: { x: 2, y: 4 },
