@@ -6,6 +6,7 @@ import { useCurrentUser } from 'common.services';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   getInviteTrackingId,
+  shouldTrackInvitePageViewed,
   trackOnce,
   trackProductEvent,
 } from 'common.utils';
@@ -26,8 +27,10 @@ export const InvitesPage = () => {
 
   // Открытие страницы, не дожидаясь ответа preview-запроса (в отличие от
   // student_invite_opened ниже) — часть новой воронки v2, см. ТЗ п.11.
+  // Для unauth invite → signin page_viewed уже мог уйти на SignInPage — дедуп по session.
   useEffect(() => {
     if (!inviteId) return;
+    if (!shouldTrackInvitePageViewed(inviteId)) return;
 
     trackOnce(`student_invite_page_viewed:${inviteId}`, () => {
       void getInviteTrackingId(inviteId).then((invite_tracking_id) => {

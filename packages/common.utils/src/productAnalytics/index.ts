@@ -15,6 +15,13 @@ export { inferProductAnalyticsSourceFromPathname } from './inferSource';
 export { inferSignupEntryPoint } from './inferSignupEntryPoint';
 export { inferEmailConfirmationSource } from './inferEmailConfirmationSource';
 export {
+  getPendingInviteCode,
+  inferSigninSource,
+  shouldTrackInvitePageViewed,
+  shouldTrackInviteLoginClicked,
+  getInviteTrackingIdFromContext,
+} from './inferSigninSource';
+export {
   getOrCreateActivationFlowId,
   getActivationFlowId,
   resetActivationFlowId,
@@ -27,6 +34,7 @@ export { inferActivationHelpScreen } from './inferActivationHelpScreen';
 export {
   mapSignupError,
   mapSignupValidationErrors,
+  mapSigninError,
   mapEmailConfirmationError,
   mapInviteError,
   mapLessonCreateError,
@@ -44,6 +52,7 @@ export {
   resolveOnboardingAnalyticsRole,
   markOnboardingStartedAt,
   getOnboardingDurationMs,
+  trackOnboardingStarted,
   trackOnboardingStepCompleted,
   trackOnboardingStepSkipped,
   trackOnboardingStepFailed,
@@ -64,7 +73,10 @@ export type {
   ProductAnalyticsBoardTrigger,
   SignupEntryPoint,
   SignupFailureReason,
+  SignupValidationFailedField,
   SignupValidationFailureReason,
+  SigninAnalyticsSource,
+  SigninFailureReason,
   EmailConfirmationFailureReason,
   EmailConfirmationSource,
   ActivationHelpReason,

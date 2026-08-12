@@ -5,7 +5,8 @@ export type CallSessionAnalyticsState = {
   connectAttemptStartedAt: number | null;
   currentAttemptId: string | null;
   attemptNumber: number;
-  hadConnectionFailure: boolean;
+  /** attempt_id, для которых уже был call_connection_failed */
+  failedAttemptIds: Set<string>;
   sentDurationThresholds: Set<LessonDurationThresholdMin>;
   duration5Reached: boolean;
   usedBoard: boolean;
@@ -18,6 +19,8 @@ export type CallSessionAnalyticsState = {
   prejoinViewedSent: boolean;
   mediaPermissionGrantedSent: boolean;
   mediaPermissionDeniedSent: boolean;
+  /** Комната уже была connected в текущей сессии звонка → source=lesson */
+  inLessonMediaContext: boolean;
   lessonId: string | null;
 };
 
@@ -26,7 +29,7 @@ export const createCallSessionAnalyticsState = (): CallSessionAnalyticsState => 
   connectAttemptStartedAt: null,
   currentAttemptId: null,
   attemptNumber: 0,
-  hadConnectionFailure: false,
+  failedAttemptIds: new Set(),
   sentDurationThresholds: new Set(),
   duration5Reached: false,
   usedBoard: false,
@@ -39,6 +42,7 @@ export const createCallSessionAnalyticsState = (): CallSessionAnalyticsState => 
   prejoinViewedSent: false,
   mediaPermissionGrantedSent: false,
   mediaPermissionDeniedSent: false,
+  inLessonMediaContext: false,
   lessonId: null,
 });
 
@@ -59,4 +63,18 @@ export const beginNewConnectAttempt = (attemptId: string): CallSessionAnalyticsS
   callSessionState.callConnectedSent = false;
   callSessionState.callConnectAttemptedSentForAttempt = null;
   return callSessionState;
+};
+
+/** Пометить, что для attempt_id уже был call_connection_failed. */
+export const markConnectAttemptFailed = (attemptId: string): void => {
+  callSessionState.failedAttemptIds.add(attemptId);
+  if (!callSessionState.currentAttemptId) {
+    callSessionState.currentAttemptId = attemptId;
+  }
+};
+
+/** recovered_after_failure для конкретного attempt_id. */
+export const wasRecoveredAfterFailure = (attemptId: string | null | undefined): boolean => {
+  if (!attemptId) return false;
+  return callSessionState.failedAttemptIds.has(attemptId);
 };

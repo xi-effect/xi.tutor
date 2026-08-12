@@ -9,7 +9,9 @@ import {
   PRODUCT_ANALYTICS_EVENTS,
   createAttemptId,
   getHttpStatusGroup,
+  getInviteTrackingIdFromContext,
   getOrCreateActivationFlowId,
+  getPendingInviteCode,
   inferSignupEntryPoint,
   mapSignupError,
   measureDurationMs,
@@ -28,6 +30,7 @@ import {
 export const useSignupForm = () => {
   const { t } = useTranslation('signup');
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { signup } = useAuth();
   const { mutate, isPending } = signup;
@@ -39,17 +42,27 @@ export const useSignupForm = () => {
     from?: string;
   };
 
-  const onSignupForm = (data: FormData, setFormError: UseFormSetError<FormData>) => {
-    if (isPending) {
+  const onSignupForm = async (data: FormData, setFormError: UseFormSetError<FormData>) => {
+    if (isPending || isSubmitting) {
       return;
     }
 
     const activationFlowId = getOrCreateActivationFlowId();
     const entryPoint = inferSignupEntryPoint(search);
-    const hasInvite = Boolean(search.invite) || entryPoint === 'invite';
+    const hasInvite =
+      Boolean(search.invite) || entryPoint === 'invite' || Boolean(getPendingInviteCode(search));
     const attemptId = createAttemptId();
     const attemptNumber = nextSignupAttemptNumber();
     const startedAt = nowMs();
+
+    setIsSubmitting(true);
+
+    let invite_tracking_id: string | undefined;
+    try {
+      invite_tracking_id = await getInviteTrackingIdFromContext(search);
+    } catch {
+      invite_tracking_id = undefined;
+    }
 
     trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNUP_SUBMIT, {
       activation_flow_id: activationFlowId,
@@ -57,10 +70,12 @@ export const useSignupForm = () => {
       entry_point: entryPoint,
       attempt_number: attemptNumber,
       has_invite: hasInvite,
+      invite_tracking_id,
     });
 
     mutate(data, {
       onSuccess: () => {
+        setIsSubmitting(false);
         trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNUP_SUCCEEDED, {
           activation_flow_id: activationFlowId,
           attempt_id: attemptId,
@@ -69,6 +84,7 @@ export const useSignupForm = () => {
           confirmation_required: true,
           attempt_number: attemptNumber,
           has_invite: hasInvite,
+          invite_tracking_id,
         });
 
         applySignupSuccessSideEffects({
@@ -86,6 +102,7 @@ export const useSignupForm = () => {
       },
 
       onError: (err: AxiosError | Error) => {
+        setIsSubmitting(false);
         trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNUP_FAILED, {
           activation_flow_id: activationFlowId,
           attempt_id: attemptId,
@@ -95,6 +112,7 @@ export const useSignupForm = () => {
           entry_point: entryPoint,
           attempt_number: attemptNumber,
           has_invite: hasInvite,
+          invite_tracking_id,
         });
 
         handleSignupError(err, { t, setFormError, toast, setError });
@@ -102,5 +120,5 @@ export const useSignupForm = () => {
     });
   };
 
-  return { onSignupForm, isPending, error };
+  return { onSignupForm, isPending: isPending || isSubmitting, error };
 };

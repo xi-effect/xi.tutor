@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSearch } from '@tanstack/react-router';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -17,7 +17,6 @@ import {
   FormLabel,
   FormMessage,
   useForm,
-  useWatch,
 } from '@xipkg/form';
 import { Check, Eyeoff, Eyeon } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
@@ -27,7 +26,9 @@ import { useSignupForm } from '../hooks';
 import { LinkTanstack, Logo } from 'common.ui';
 import {
   PRODUCT_ANALYTICS_EVENTS,
+  getInviteTrackingIdFromContext,
   getOrCreateActivationFlowId,
+  getPendingInviteCode,
   inferSignupEntryPoint,
   mapSignupValidationErrors,
   trackOnce,
@@ -70,29 +71,30 @@ export const SignUpPage = () => {
     formState: { errors, isSubmitted, touchedFields },
   } = form;
 
-  const watchedValues = useWatch({ control });
-  const isFormValid = useMemo(
-    () => formSchema.safeParse(watchedValues).success,
-    [formSchema, watchedValues],
-  );
-  const isSubmitDisabled = isPending || !isFormValid;
+  // Кнопку не блокируем по клиентской валидности: иначе невалидный submit
+  // не доходит до onInvalid и auth_signup_validation_failed не уходит.
+  const isSubmitDisabled = isPending;
 
   const isConsentInvalid = !!errors.consent && (isSubmitted || Boolean(touchedFields.consent));
 
   const entryPoint = inferSignupEntryPoint(search);
-  const hasInvite = Boolean(search.invite) || entryPoint === 'invite';
+  const hasInvite =
+    Boolean(search.invite) || entryPoint === 'invite' || Boolean(getPendingInviteCode(search));
 
   useEffect(() => {
     const activationFlowId = getOrCreateActivationFlowId();
 
     trackOnce('auth_signup_viewed', () => {
-      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNUP_VIEWED, {
-        activation_flow_id: activationFlowId,
-        entry_point: entryPoint,
-        has_invite: hasInvite,
+      void getInviteTrackingIdFromContext(search).then((invite_tracking_id) => {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNUP_VIEWED, {
+          activation_flow_id: activationFlowId,
+          entry_point: entryPoint,
+          has_invite: hasInvite,
+          invite_tracking_id,
+        });
       });
     });
-  }, [entryPoint, hasInvite]);
+  }, [entryPoint, hasInvite, search.redirect, search.invite, search.from]);
 
   const onSubmit = (data: FormData) => {
     onSignupForm(
@@ -106,13 +108,15 @@ export const SignUpPage = () => {
   };
 
   const onInvalid = (fieldErrors: typeof errors) => {
-    const { reason, field } = mapSignupValidationErrors(fieldErrors);
-    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNUP_VALIDATION_FAILED, {
-      activation_flow_id: getOrCreateActivationFlowId(),
-      reason,
-      field,
-      entry_point: entryPoint,
-      has_invite: hasInvite,
+    const { failed_fields } = mapSignupValidationErrors(fieldErrors);
+    void getInviteTrackingIdFromContext(search).then((invite_tracking_id) => {
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNUP_VALIDATION_FAILED, {
+        activation_flow_id: getOrCreateActivationFlowId(),
+        failed_fields,
+        entry_point: entryPoint,
+        has_invite: hasInvite,
+        invite_tracking_id,
+      });
     });
 
     const firstInvalidField = (['username', 'email', 'password', 'consent'] as const).find(
