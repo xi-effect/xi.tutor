@@ -45,6 +45,7 @@ const toolMapping: Record<string, string> = {
   emoji: 'emoji',
   'emoji-sticker': 'emoji-sticker',
   'coordinate-axes': 'coordinate-axes',
+  'flip-card': 'flip-card',
 };
 
 const MORE_MENU_ACTION = 'more-menu';
@@ -198,6 +199,7 @@ export const Navbar = track(
         emoji: 'emoji',
         'emoji-sticker': 'emoji-sticker',
         'coordinate-axes': 'coordinate-axes',
+        'flip-card': 'flip-card',
       };
 
       return reverseMapping[currentToolId] || 'select';
@@ -206,6 +208,12 @@ export const Navbar = track(
     const handleInsertCoordinateAxes = () => {
       editor.selectNone();
       editor.setCurrentTool('coordinate-axes');
+      setActivePopup(null);
+    };
+
+    const handleInsertFlipCard = () => {
+      editor.selectNone();
+      editor.setCurrentTool('flip-card');
       setActivePopup(null);
     };
 
@@ -283,6 +291,13 @@ export const Navbar = track(
                 className={cn(boardMenuItemClass, 'flex gap-2 px-3')}
               >
                 <span>{t('navbar.coordinateAxes')}</span>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem
+                onClick={handleInsertFlipCard}
+                className={cn(boardMenuItemClass, 'flex gap-2 px-3')}
+              >
+                <span>{t('navbar.flipCard')}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

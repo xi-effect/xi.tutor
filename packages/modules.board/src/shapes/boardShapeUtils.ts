@@ -10,6 +10,7 @@ import { FileShapeUtil } from './file';
 import { CoordinateAxesShapeUtil } from './coordinate-axes';
 import { EmojiStickerShapeUtil } from './emojiSticker';
 import { PresentationShapeUtil } from './presentation';
+import { FlipCardShapeUtil } from './flipCard';
 
 /** Кастомные shape utils — для `<Draw shapeUtils={...}>` (Draw сам мержит с defaultShapeUtils). */
 export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
@@ -24,6 +25,7 @@ export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
   EmojiStickerShapeUtil,
   FileShapeUtil,
   CoordinateAxesShapeUtil,
+  FlipCardShapeUtil,
 ];
 
 function mergeShapeUtilsByType(
