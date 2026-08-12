@@ -28,6 +28,7 @@ export const hiddenComponents: Required<any> = {
   DebugMenu: null,
   SharePanel: null,
   MenuPanel: null,
+  ImageToolbar: null,
   TopPanel: null,
 };
 

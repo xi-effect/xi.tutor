@@ -9,6 +9,8 @@ import { EmojiShapeUtil } from './emoji';
 import { FileShapeUtil } from './file';
 import { CoordinateAxesShapeUtil } from './coordinate-axes';
 import { EmojiStickerShapeUtil } from './emojiSticker';
+import { TextShapeUtil } from './text';
+import { ArrowShapeUtil } from './arrow';
 import { PresentationShapeUtil } from './presentation';
 import { FlipCardShapeUtil } from './flipCard';
 
@@ -25,7 +27,12 @@ export const boardCustomShapeUtils: DrAnyShapeUtilConstructor[] = [
   EmojiStickerShapeUtil,
   FileShapeUtil,
   CoordinateAxesShapeUtil,
+<<<<<<< HEAD
   FlipCardShapeUtil,
+=======
+  TextShapeUtil,
+  ArrowShapeUtil,
+>>>>>>> main
 ];
 
 function mergeShapeUtilsByType(

@@ -79,6 +79,7 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   // Board (existing)
   BOARD_OPENED: 'board_opened',
   BOARD_USED_MEANINGFULLY: 'board_used_meaningfully',
+  BOARD_MIRO_PASTE: 'board_miro_paste',
 
   // Activation help (P1)
   ACTIVATION_HELP_OPENED: 'activation_help_opened',

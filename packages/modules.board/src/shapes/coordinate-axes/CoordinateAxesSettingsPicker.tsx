@@ -6,7 +6,7 @@ import { Checkbox } from '@xipkg/checkbox';
 import { Picker, ColorDot } from '../../ui/components';
 import { colorOptions } from '../../utils/customConfig';
 import type { CoordinateAxesShape } from './CoordinateAxesShape';
-import type { TColor } from '../../types';
+import { PlotColorStyle } from '../shapeStyles';
 import { commitEquationForShape } from './utils/commitEquationForShape';
 import { useTranslation } from 'react-i18next';
 
@@ -184,7 +184,9 @@ export const CoordinateAxesSettingsPicker = track(function CoordinateAxesSetting
                   key={name}
                   colorClass={colorClass}
                   isSelected={shape.props.plotColor === name}
-                  onClick={() => updateProps({ plotColor: name as TColor })}
+                  onClick={() =>
+                    updateProps({ plotColor: name as typeof PlotColorStyle.defaultValue })
+                  }
                 />
               ))}
             </div>

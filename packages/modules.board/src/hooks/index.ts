@@ -12,4 +12,5 @@ export { useDrawClipboard } from './useDrawClipboard';
 export { useOverlayRepaintOnSelection } from './useOverlayRepaintOnSelection';
 export { useEditOnTypeForLabels } from './useEditOnTypeForLabels';
 export { useProductBoardAnalytics } from './useProductBoardAnalytics';
+export { useMiroPasteNotice } from './useMiroPasteNotice';
 export { useBoardDeepLinkFocus, useCopyBoardDeepLink } from './useBoardDeepLinkFocus';
