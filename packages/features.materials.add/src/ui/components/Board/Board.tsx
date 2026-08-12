@@ -69,7 +69,7 @@ export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps)
       <Button
         onClick={handleCreateBoardDraft}
         variant="primary"
-        className="!h-auto gap-2 rounded-[10px] px-5 py-3 text-base leading-5 font-medium max-sm:hidden"
+        className="text-text-on-accent !h-8 gap-2 rounded-[10px] px-4 font-medium max-sm:hidden"
         disabled={addMaterials.isPending}
         data-umami-event="material-create-board-draft"
       >
@@ -82,7 +82,7 @@ export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps)
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="group bg-background-subtle text-text-primary data-[state=open]:bg-background-surface hover:bg-background-surface flex !h-auto w-auto flex-row items-center justify-between gap-2 rounded-[10px] px-5 py-3 text-base leading-5 font-medium transition-colors duration-200 max-sm:hidden"
+        className="group bg-background-subtle text-text-primary data-[state=open]:bg-background-surface hover:bg-background-surface flex !h-8 w-auto flex-row items-center justify-between gap-2 rounded-[10px] px-4 font-medium transition-colors duration-200 max-sm:hidden"
         data-umami-event="material-create-board-menu-open"
       >
         <span>{t('board.create')}</span>

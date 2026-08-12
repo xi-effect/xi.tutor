@@ -71,7 +71,7 @@ export const TemplatesGrid = () => {
             </div>
           </div>
           <div className="flex w-full shrink-0 justify-center px-2" aria-hidden>
-            <EmptyPaymentsFull className="h-auto max-h-[min(42vh,360px)] w-full max-w-[min(92vw,420px)] object-contain sm:max-h-[min(48vh,400px)]" />
+            <EmptyPaymentsFull className="h-auto max-h-[200px] w-auto max-w-[240px] object-contain" />
           </div>
         </div>
       </div>

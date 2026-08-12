@@ -20,7 +20,7 @@ import {
 } from 'features.lesson.move';
 import { CancelLessonModal, type LessonSchedulerMetaForCancel } from 'features.lesson.cancel';
 import { useTranslation } from 'react-i18next';
-import { useClassroomScheduleOptional } from '../Calendar/scheduleContext';
+import { useClassroomScheduleOptional } from '../Calendar/useClassroomSchedule';
 import { UpcomingLessonCard } from './UpcomingLessonCard';
 import { UpcomingLessonCardSkeleton } from './UpcomingLessonCardSkeleton';
 import { SectionHeader } from './SectionHeader';

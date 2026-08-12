@@ -19,7 +19,7 @@ import {
   type SoleRescheduleTarget,
 } from 'features.lesson.move';
 import { useTranslation } from 'react-i18next';
-import { useClassroomSchedule } from './scheduleContext';
+import { useClassroomSchedule } from './useClassroomSchedule';
 import { CalendarScheduleKanban } from './ClassroomScheduleParts';
 import { getScheduleQueryRange, mapScheduleItemsToCalendarEvents } from './schedulerMapping';
 

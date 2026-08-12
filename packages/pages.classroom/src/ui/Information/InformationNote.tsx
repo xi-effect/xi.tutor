@@ -7,7 +7,11 @@ import { Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const InformationNoteContent = ({ note }: { note: StorageItemT }) => {
-  return <Editor storageItem={note} />;
+  return (
+    <div className="w-full min-w-0 pl-12 [&_.xi-editor]:px-0 [&_.xi-editor]:py-2">
+      <Editor storageItem={note} />
+    </div>
+  );
 };
 
 const InformationNoteCreate = ({ classroom }: { classroom: ClassroomT }) => {
@@ -26,7 +30,7 @@ const InformationNoteCreate = ({ classroom }: { classroom: ClassroomT }) => {
     <Button
       onClick={handleCreateNote}
       variant="none"
-      className="text-text-disabled dark:text-text-secondary m-6 h-auto min-h-[128px] w-full text-left text-base font-normal whitespace-normal"
+      className="text-text-disabled dark:text-text-secondary h-auto min-h-[128px] w-full py-2 text-left text-base font-normal whitespace-normal"
     >
       {notePlaceholder.split('\n').map((line, index) => (
         <Fragment key={index}>

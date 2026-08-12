@@ -1,4 +1,12 @@
-import { useParams } from '@tanstack/react-router';
+import { useMemo } from 'react';
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
+import { SwitcherAnimate } from '@xipkg/switcher-animate';
+import { cn, useMediaQuery } from '@xipkg/utils';
+import {
+  pageSwitcherIndicatorClass,
+  pageSwitcherTabClass,
+  pageSwitcherTrackClass,
+} from 'common.ui';
 import {
   useCurrentUser,
   useGetClassroom,
@@ -9,14 +17,34 @@ import { MaterialsCard } from 'features.materials.card';
 import { useTranslation } from 'react-i18next';
 import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
-import { MaterialSection } from './components/MaterialSection';
 import { LoadingState } from './components/LoadingState';
-import { WidgetCardsCarousel, widgetCardSlotClass } from '../WidgetCardsCarousel';
+import { sectionTitleClass } from '../sectionTitleClass';
+
+type MaterialTypeTab = 'boards' | 'notes';
 
 export const Materials = () => {
   const { t } = useTranslation('classroom');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
-  const { data: classroom, isLoading, isError } = useGetClassroom(Number(classroomId));
+  const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
+  const navigate = useNavigate();
+  const isMobile = useMediaQuery('(max-width: 960px)');
+
+  const activeTab: MaterialTypeTab = search.tab === 'notes' ? 'notes' : 'boards';
+  const contentType = activeTab === 'notes' ? 'note' : 'board';
+
+  const typeTabs = useMemo(
+    () => [
+      { id: 'boards', label: t('materials.boards') },
+      { id: 'notes', label: t('materials.notes') },
+    ],
+    [t],
+  );
+
+  const {
+    data: classroom,
+    isLoading: isClassroomLoading,
+    isError: isClassroomError,
+  } = useGetClassroom(Number(classroomId));
 
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -24,67 +52,71 @@ export const Materials = () => {
   const getList = isTutor ? useGetClassroomMaterialsList : useGetClassroomMaterialsListStudent;
 
   const {
-    data: boardsData,
-    isLoading: isBoardsLoading,
-    isError: isBoardsError,
+    data: materials,
+    isLoading: isMaterialsLoading,
+    isError: isMaterialsError,
   } = getList({
     classroomId: classroomId || '',
-    content_type: 'board',
+    content_type: contentType,
     disabled: !classroomId,
   });
 
-  const {
-    data: notesData,
-    isLoading: isNotesLoading,
-    isError: isNotesError,
-  } = getList({
-    classroomId: classroomId || '',
-    content_type: 'note',
-    disabled: !classroomId,
-  });
-
-  if (isLoading || isBoardsLoading || isNotesLoading) {
-    return <LoadingState />;
-  }
-
-  if (isError || isBoardsError || isNotesError || !classroom) {
-    return <ErrorState />;
-  }
+  const handleTypeChange = (tabId: string) => {
+    if (tabId !== 'boards' && tabId !== 'notes') return;
+    navigate({
+      to: '/classrooms/$classroomId',
+      params: { classroomId },
+      search: (prev) => ({
+        ...prev,
+        tab: tabId,
+      }),
+    });
+  };
 
   return (
-    <div className="flex min-h-[400px] flex-col gap-8 pt-2">
-      <MaterialSection headerTitle={t('materials.boards')}>
-        {boardsData?.length ? (
-          <WidgetCardsCarousel>
-            {boardsData.map((board) => (
-              <div key={board.id} className={widgetCardSlotClass}>
-                <MaterialsCard {...board} layout="gallery" className="h-full w-full" />
-              </div>
-            ))}
-          </WidgetCardsCarousel>
-        ) : (
-          <EmptyDataState
-            title={t('materials.noBoards')}
-            description={t('materials.noBoardsDescription')}
-          />
-        )}
-      </MaterialSection>
-      <MaterialSection headerTitle={t('materials.notes')}>
-        {notesData?.length ? (
-          <WidgetCardsCarousel>
-            {notesData.map((note) => (
-              <div key={note.id} className={widgetCardSlotClass}>
-                <MaterialsCard {...note} layout="gallery" className="h-full w-full" />
-              </div>
-            ))}
-          </WidgetCardsCarousel>
-        ) : (
-          <EmptyDataState
-            title={t('materials.noNotes')}
-            description={t('materials.noNotesDescription')}
-          />
-        )}
-      </MaterialSection>
+    <div className="flex min-h-0 flex-1 flex-col gap-4 pt-2">
+      <div className="flex min-w-0 flex-row flex-wrap items-center gap-3 sm:gap-4">
+        <h2 className={sectionTitleClass}>{t('tabs.materials')}</h2>
+        <SwitcherAnimate
+          tabs={typeTabs}
+          activeTab={activeTab}
+          onChange={handleTypeChange}
+          className={cn(pageSwitcherTrackClass, 'w-auto')}
+          tabClassName={pageSwitcherTabClass}
+          indicatorClassName={pageSwitcherIndicatorClass}
+        />
+      </div>
+
+      {isClassroomError || isMaterialsError || (!isClassroomLoading && !classroom) ? (
+        <ErrorState />
+      ) : isClassroomLoading || isMaterialsLoading ? (
+        <LoadingState />
+      ) : !materials?.length ? (
+        <EmptyDataState
+          title={activeTab === 'boards' ? t('materials.noBoards') : t('materials.noNotes')}
+          description={
+            activeTab === 'boards'
+              ? t('materials.noBoardsDescription')
+              : t('materials.noNotesDescription')
+          }
+        />
+      ) : (
+        <div
+          className={cn(
+            'grid gap-5 pb-4',
+            isMobile ? 'grid-cols-1' : 'grid-cols-[repeat(auto-fill,minmax(300px,1fr))]',
+          )}
+        >
+          {materials.map((material) => (
+            <MaterialsCard
+              key={material.id}
+              {...material}
+              layout="gallery"
+              className="h-40 w-full"
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
