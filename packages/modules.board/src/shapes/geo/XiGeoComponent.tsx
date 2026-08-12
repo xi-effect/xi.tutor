@@ -131,7 +131,6 @@ export const XiGeoComponent: React.FC<XiGeoComponentT> = ({ shape }) => {
             isSelected={isSelected}
             labelColor={textColor}
             hasCustomTabBehavior
-            openLinksOnClick={false}
           />
         )}
       </div>

@@ -11,6 +11,7 @@ import {
   useOverlayRepaintOnSelection,
   useEditOnTypeForLabels,
   useProductBoardAnalytics,
+  useMiroPasteNotice,
   useBoardDeepLinkFocus,
   useBoardBackgroundSync,
 } from '../../../hooks';
@@ -71,6 +72,10 @@ export const DrawCanvas = ({
     editor,
     awareness: provider.awareness ?? null,
     enabled: status === 'synced-remote',
+  });
+  useMiroPasteNotice({
+    editor,
+    enabled: status === 'synced-remote' && !isReadonly,
   });
 
   const drawComponents = useMemo(

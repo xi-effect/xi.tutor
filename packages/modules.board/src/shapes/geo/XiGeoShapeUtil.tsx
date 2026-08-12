@@ -3,6 +3,7 @@ import {
   DefaultDashStyle,
   DefaultFillStyle,
   DefaultFontStyle,
+  DefaultLabelColorStyle,
   DefaultSizeStyle,
   DefaultTextAlignStyle,
   DefaultVerticalAlignStyle,
@@ -29,7 +30,8 @@ export class XiGeoShapeUtil extends GeoShapeUtil {
     h: T.number,
     richText: T.any,
     color: DefaultColorStyle,
-    labelColor: T.literalEnum(DefaultColorStyle.defaultValue),
+    // Must accept the full palette (and hex) — boards already store non-black labels.
+    labelColor: DefaultLabelColorStyle,
     fill: DefaultFillStyle,
     dash: DefaultDashStyle,
     size: DefaultSizeStyle,
