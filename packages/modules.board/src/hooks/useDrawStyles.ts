@@ -32,7 +32,10 @@ export const useDrawStyles = () => {
 
       if (toolName === 'xi-geo') {
         editor.setStyleForNextShapes(DefaultFillStyle, geoFillType);
-        editor.setStyleForNextShapes(BorderColorStyle, geoBorderColor);
+        editor.setStyleForNextShapes(
+          BorderColorStyle,
+          geoBorderColor as typeof BorderColorStyle.defaultValue,
+        );
         editor.setStyleForNextShapes(DefaultColorStyle, geoColor);
         editor.setStyleForNextShapes(DefaultSizeStyle, geoBorderThickness);
       }
@@ -127,7 +130,10 @@ export const useDrawStyles = () => {
     (colorName: TColor) => {
       if (!editor) return;
 
-      editor.setStyleForSelectedShapes(BorderColorStyle, colorName);
+      editor.setStyleForSelectedShapes(
+        BorderColorStyle,
+        colorName as typeof BorderColorStyle.defaultValue,
+      );
     },
     [editor],
   );

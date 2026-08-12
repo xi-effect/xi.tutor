@@ -427,6 +427,14 @@ export type ProductAnalyticsEventMap = {
     role?: ProductAnalyticsRole;
     trigger?: ProductAnalyticsBoardTrigger;
   };
+  board_miro_paste: {
+    event_version?: number;
+    role?: ProductAnalyticsRole;
+    source?: string;
+    shape_count?: number;
+    widget_types?: string;
+    miro_host?: string;
+  };
 
   activation_help_opened: BaseProps & {
     screen: ActivationHelpScreen;

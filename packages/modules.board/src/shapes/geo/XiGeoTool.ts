@@ -26,10 +26,11 @@ export class XiGeoTool extends StateNode {
   private startPoint: VecLike | null = null;
 
   override onPointerDown() {
+    const currentPagePoint = this.editor.inputs.getCurrentPagePoint();
     this.currentShapeId = createShapeId();
     this.startPoint = {
-      x: this.editor.inputs.currentPagePoint.x,
-      y: this.editor.inputs.currentPagePoint.y,
+      x: currentPagePoint.x,
+      y: currentPagePoint.y,
     };
 
     const geo = this.editor.getStyleForNextShape(GeoShapeGeoStyle);
@@ -58,7 +59,7 @@ export class XiGeoTool extends StateNode {
   override onPointerMove() {
     if (!this.currentShapeId || !this.startPoint) return;
 
-    const currentPoint = this.editor.inputs.currentPagePoint;
+    const currentPoint = this.editor.inputs.getCurrentPagePoint();
     const width = Math.abs(currentPoint.x - this.startPoint.x);
     const height = Math.abs(currentPoint.y - this.startPoint.y);
 
@@ -80,7 +81,7 @@ export class XiGeoTool extends StateNode {
   override onPointerUp() {
     if (!this.currentShapeId || !this.startPoint) return;
 
-    const currentPoint = this.editor.inputs.currentPagePoint;
+    const currentPoint = this.editor.inputs.getCurrentPagePoint();
     const dragW = Math.abs(currentPoint.x - this.startPoint.x);
     const dragH = Math.abs(currentPoint.y - this.startPoint.y);
 

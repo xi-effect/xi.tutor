@@ -1,5 +1,4 @@
 import {
-  DefaultColorStyle,
   DefaultDashStyle,
   DefaultFillStyle,
   DefaultFontStyle,
@@ -7,6 +6,7 @@ import {
   DefaultTextAlignStyle,
   DefaultVerticalAlignStyle,
   GeoShapeGeoStyle,
+  type DrDefaultColorStyle,
 } from '@ibodr/draw';
 
 // types/index.ts
@@ -82,7 +82,8 @@ export interface ToolbarElement extends BoardElement {
 }
 
 export type TGeoShape = (typeof GeoShapeGeoStyle)['defaultValue'];
-export type TColor = (typeof DefaultColorStyle)['defaultValue'];
+/** Named theme colors only (not CSS hex — those are for imports like Miro). */
+export type TColor = DrDefaultColorStyle;
 export type TSize = (typeof DefaultSizeStyle)['defaultValue'];
 export type TFill = (typeof DefaultFillStyle)['defaultValue'];
 export type TDash = (typeof DefaultDashStyle)['defaultValue'];
