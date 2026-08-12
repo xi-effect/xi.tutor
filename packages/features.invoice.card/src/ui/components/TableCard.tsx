@@ -38,7 +38,9 @@ export const TableCard = ({
         className="h-auto overflow-hidden"
       />
       <div className="mt-2 flex flex-row items-center gap-4">
-        <h3 className="text-m-base text-text-primary font-medium">{amount} ₽</h3>
+        <h3 className="text-m-base text-text-primary shrink-0 font-medium whitespace-nowrap tabular-nums">
+          {amount}&nbsp;₽
+        </h3>
         <StatusBadge status={payment.status} withBg />
       </div>
       <div className="ml-auto flex items-center gap-2">
