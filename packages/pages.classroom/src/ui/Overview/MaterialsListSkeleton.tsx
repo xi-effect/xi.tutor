@@ -9,7 +9,7 @@ type MaterialsListSkeletonPropsT = {
 export const MaterialsListSkeleton = ({ className }: MaterialsListSkeletonPropsT) => (
   <div
     className={cn(
-      'border-border-control bg-background-surface flex flex-col gap-2 rounded-2xl border p-4',
+      'bg-background-surface flex flex-col gap-2 rounded-2xl p-4 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]',
       className,
     )}
   >

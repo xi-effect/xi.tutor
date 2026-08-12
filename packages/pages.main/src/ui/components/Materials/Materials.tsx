@@ -7,7 +7,6 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { Add, ArrowRight, FileSmall, WhiteBoard } from '@xipkg/icons';
-import { ScrollArea } from '@xipkg/scrollarea';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useNavigate } from '@tanstack/react-router';
@@ -16,12 +15,20 @@ import { MaterialsDuplicateProvider, useMaterialsDuplicate } from 'pages.materia
 import { MaterialsDuplicate } from 'features.materials.duplicate';
 import { MaterialsCard } from 'features.materials.card';
 import { useCreateMaterial } from 'features.materials.add';
-import { EmptyMaterials, switcherTabClass } from 'common.ui';
+import {
+  EmptyMaterials,
+  pageSwitcherIndicatorClass,
+  pageSwitcherTabClass,
+  pageSwitcherTrackClass,
+} from 'common.ui';
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { cn, useMediaQuery } from '@xipkg/utils';
+import { useMediaQuery } from '@xipkg/utils';
 import { SectionEmptyState } from '../SectionEmptyState';
 import { sectionEmptyStateIllustrationClass } from '../sectionEmptyStateIllustrationClass';
+import { WidgetHeader } from '../WidgetHeader';
+import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
+import { WidgetCardsCarousel, widgetCardSlotClass } from '../WidgetCardsCarousel';
 
 const MaterialsContent = () => {
   const { t } = useTranslation('main');
@@ -79,113 +86,107 @@ const MaterialsContent = () => {
   }, [selectedFilter, t]);
 
   const emptyActionButtonClass =
-    'bg-background-page hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
+    'bg-background-surface hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
+
+  const headerActions =
+    isTutor && !isMobile ? (
+      <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="primary"
+            className="flex size-10 items-center justify-center rounded-[10px] p-0"
+            data-umami-event="materials-add-button"
+            id="materials-add-button"
+          >
+            <Add className="fill-text-on-accent size-6" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent
+          align="end"
+          side="bottom"
+          className="border-border-default bg-background-surface flex w-[320px] flex-col gap-2.5 rounded-2xl border px-6 py-5 shadow-lg"
+        >
+          <DropdownMenuLabel className="text-m-base text-text-primary p-0 font-medium">
+            {t('common.add')}
+          </DropdownMenuLabel>
+          <div className="flex flex-col gap-3">
+            <DropdownMenuItem
+              className="border-border-default bg-background-surface focus:bg-background-surface data-highlighted:bg-background-page flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
+              onSelect={() => handleCreateMaterial('board')}
+              data-umami-event="materials-add-board"
+            >
+              <WhiteBoard className="fill-icon-primary size-4 shrink-0" />
+              <span className="text-s-base text-text-primary flex-1 text-left font-medium">
+                {t('materials.addBoard')}
+              </span>
+              <Add className="fill-icon-brand size-4 shrink-0" />
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="border-border-default bg-background-surface focus:bg-background-surface data-highlighted:bg-background-page flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
+              onSelect={() => handleCreateMaterial('note')}
+              data-umami-event="materials-add-note"
+            >
+              <FileSmall className="fill-icon-primary size-4 shrink-0" />
+              <span className="text-s-base text-text-primary flex-1 text-left font-medium">
+                {t('materials.addNote')}
+              </span>
+              <Add className="fill-icon-brand size-4 shrink-0" />
+            </DropdownMenuItem>
+          </div>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    ) : isMobile ? (
+      <Tooltip delayDuration={1000}>
+        <TooltipTrigger asChild>
+          <Button
+            variant="none"
+            className="hover:bg-background-subtle flex size-8 items-center justify-center rounded-lg p-0"
+            onClick={handleMore}
+            data-umami-event="materials-more"
+          >
+            <ArrowRight className="fill-icon-secondary size-5" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>{t('materials.toMaterials')}</TooltipContent>
+      </Tooltip>
+    ) : null;
 
   return (
     <>
-      <div className="bg-background-surface xs:px-5 flex w-full min-w-0 flex-col gap-4 rounded-2xl pt-4 pr-2 pb-1 pl-5 transition-all duration-200 ease-linear">
-        {/* Header: title + tabs + add button */}
-        <div className="flex flex-row items-center gap-2">
-          <h2 className="text-l-base text-text-primary font-medium">{t('materials.title')}</h2>
-
-          {!isMobile && (
-            <SwitcherAnimate
-              tabs={filters}
-              activeTab={selectedFilter}
-              onChange={(id) => setSelectedFilter(id as 'all' | 'note' | 'board')}
-              className="bg-background-surface flex h-8 flex-row rounded-xl p-1"
-              tabClassName={cn(
-                switcherTabClass,
-                'text-s-base h-[26px] rounded-[10px] px-3 py-1.5 font-medium',
-              )}
-              indicatorClassName="rounded-[10px] bg-action-primary-background-default"
-            />
-          )}
-
-          <div className="ml-auto">
-            {isTutor && !isMobile ? (
-              <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="none"
-                    className="bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
-                    data-umami-event="materials-add-button"
-                    id="materials-add-button"
-                  >
-                    <Add className="fill-icon-brand size-6" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  side="bottom"
-                  className="border-border-default bg-background-surface flex w-[320px] flex-col gap-2.5 rounded-2xl border px-6 py-5 shadow-lg"
-                >
-                  <DropdownMenuLabel className="text-m-base text-text-primary p-0 font-medium">
-                    {t('common.add')}
-                  </DropdownMenuLabel>
-                  <div className="flex flex-col gap-3">
-                    <DropdownMenuItem
-                      className="border-border-default bg-background-surface focus:bg-background-surface data-highlighted:bg-background-page flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
-                      onSelect={() => handleCreateMaterial('board')}
-                      data-umami-event="materials-add-board"
-                    >
-                      <WhiteBoard className="fill-icon-primary size-4 shrink-0" />
-                      <span className="text-s-base text-text-primary flex-1 text-left font-medium">
-                        {t('materials.addBoard')}
-                      </span>
-                      <Add className="fill-icon-brand size-4 shrink-0" />
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="border-border-default bg-background-surface focus:bg-background-surface data-highlighted:bg-background-page flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
-                      onSelect={() => handleCreateMaterial('note')}
-                      data-umami-event="materials-add-note"
-                    >
-                      <FileSmall className="fill-icon-primary size-4 shrink-0" />
-                      <span className="text-s-base text-text-primary flex-1 text-left font-medium">
-                        {t('materials.addNote')}
-                      </span>
-                      <Add className="fill-icon-brand size-4 shrink-0" />
-                    </DropdownMenuItem>
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
-            ) : isMobile ? (
-              <Tooltip delayDuration={1000}>
-                <TooltipTrigger asChild>
-                  <Button
-                    variant="none"
-                    className="mr-3 flex size-8 items-center justify-center rounded-[4px] p-0"
-                    onClick={handleMore}
-                    data-umami-event="materials-more"
-                  >
-                    <ArrowRight className="fill-icon-secondary size-6" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>{t('materials.toMaterials')}</TooltipContent>
-              </Tooltip>
-            ) : null}
-          </div>
+      <div className="flex w-full min-w-0 flex-col gap-4">
+        <div className={galleryShadowHeaderInsetClass}>
+          <WidgetHeader title={t('materials.title')} actions={headerActions}>
+            {!isMobile && (
+              <SwitcherAnimate
+                tabs={filters}
+                activeTab={selectedFilter}
+                onChange={(id) => setSelectedFilter(id as 'all' | 'note' | 'board')}
+                className={pageSwitcherTrackClass}
+                tabClassName={pageSwitcherTabClass}
+                indicatorClassName={pageSwitcherIndicatorClass}
+              />
+            )}
+          </WidgetHeader>
         </div>
-        {/* Cards row */}
+
         {isLoading ? (
-          <div className="flex h-[300px] w-full flex-row items-center justify-center">
+          <div className="flex h-[160px] w-full flex-row items-center justify-center">
             <p className="text-m-base text-text-secondary">{t('common.loading')}</p>
           </div>
         ) : filteredMaterials.length > 0 ? (
-          <ScrollArea className="h-[300px] w-full">
-            <div className="flex flex-row flex-wrap content-start gap-3 pr-3">
-              {filteredMaterials.map((material) => (
+          <WidgetCardsCarousel>
+            {filteredMaterials.map((material) => (
+              <div key={material.id} className={widgetCardSlotClass}>
                 <MaterialsCard
-                  key={material.id}
                   onDuplicate={openModal}
-                  className="w-full flex-1 sm:w-auto sm:min-w-[394px]"
-                  hasIcon
+                  layout="gallery"
+                  className="h-full w-full"
                   {...material}
                   isLoading={isLoading}
                 />
-              ))}
-            </div>
-          </ScrollArea>
+              </div>
+            ))}
+          </WidgetCardsCarousel>
         ) : (
           <SectionEmptyState
             title={emptyCopy.title}

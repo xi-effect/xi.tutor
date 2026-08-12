@@ -27,14 +27,10 @@ type ClassroomScheduleContextValue = {
   goToNext: (count: number) => void;
   goToWeekStart: (date: Date) => void;
   goToVisibleWindowForDate: (date: Date, visibleCount: number) => void;
-  /** Переход к окну, начинающемуся с указанной даты — для диплинков (без округления до пн) */
   goToDay: (date: Date) => void;
   onAddLessonClick?: (date?: Date) => void;
-  /** Событие из API — открыть в модалке немедленно */
   pendingEventToOpen: ICalendarEvent | null;
-  /** Дата занятия — переключить неделю */
   pendingAnchorDate: Date | null;
-  /** Меняется при каждом диплинке — чтобы goToDay сработал повторно */
   pendingAnchorToken: number;
   acknowledgePendingLessonOpen: () => void;
   acknowledgeAnchorNavigation: () => void;

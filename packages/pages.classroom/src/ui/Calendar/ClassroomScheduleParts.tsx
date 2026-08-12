@@ -9,7 +9,7 @@ import {
   useScheduleViewMode,
 } from 'modules.calendar';
 import type { ChangeLessonFormData, ICalendarEvent } from 'modules.calendar';
-import { useClassroomSchedule } from './ClassroomScheduleContext';
+import { useClassroomSchedule } from './scheduleContext';
 
 const COLUMN_GAP = 28;
 const FULL_WEEK_DAYS = 7;

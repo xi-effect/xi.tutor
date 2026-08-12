@@ -5,10 +5,9 @@ type SectionEmptyStateProps = {
   title: string;
   description?: string;
   actions?: ReactNode;
-  /** Иллюстрация справа (например из common.ui); включаёт горизонтальную вёрстку с текстом слева */
+  /** Иллюстрация справа (например из common.ui); включает горизонтальную вёрстку с текстом слева */
   illustration?: ReactNode;
   className?: string;
-  /** Высота области с пунктиром (по умолчанию под карточки главной) */
   minHeightClass?: string;
 };
 

@@ -11,6 +11,7 @@ import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
 import { MaterialSection } from './components/MaterialSection';
 import { LoadingState } from './components/LoadingState';
+import { WidgetCardsCarousel, widgetCardSlotClass } from '../WidgetCardsCarousel';
 
 export const Materials = () => {
   const { t } = useTranslation('classroom');
@@ -51,33 +52,37 @@ export const Materials = () => {
   }
 
   return (
-    <div className="xs:pr-0 flex min-h-[400px] flex-col pt-2 pr-3">
-      <MaterialSection headerTitle={t('materials.boards')} rowClassName="pb-4">
+    <div className="flex min-h-[400px] flex-col gap-8 pt-2">
+      <MaterialSection headerTitle={t('materials.boards')}>
         {boardsData?.length ? (
-          boardsData.map((board) => (
-            <MaterialsCard
-              key={board.id}
-              {...board}
-              hasIcon
-              className="w-full max-w-[430px] min-w-[300px]"
-            />
-          ))
+          <WidgetCardsCarousel>
+            {boardsData.map((board) => (
+              <div key={board.id} className={widgetCardSlotClass}>
+                <MaterialsCard {...board} layout="gallery" className="h-full w-full" />
+              </div>
+            ))}
+          </WidgetCardsCarousel>
         ) : (
-          <EmptyDataState title={t('materials.noBoards')} />
+          <EmptyDataState
+            title={t('materials.noBoards')}
+            description={t('materials.noBoardsDescription')}
+          />
         )}
       </MaterialSection>
       <MaterialSection headerTitle={t('materials.notes')}>
         {notesData?.length ? (
-          notesData.map((note) => (
-            <MaterialsCard
-              key={note.id}
-              {...note}
-              hasIcon
-              className="w-full max-w-[430px] min-w-[300px]"
-            />
-          ))
+          <WidgetCardsCarousel>
+            {notesData.map((note) => (
+              <div key={note.id} className={widgetCardSlotClass}>
+                <MaterialsCard {...note} layout="gallery" className="h-full w-full" />
+              </div>
+            ))}
+          </WidgetCardsCarousel>
         ) : (
-          <EmptyDataState title={t('materials.noNotes')} />
+          <EmptyDataState
+            title={t('materials.noNotes')}
+            description={t('materials.noNotesDescription')}
+          />
         )}
       </MaterialSection>
     </div>

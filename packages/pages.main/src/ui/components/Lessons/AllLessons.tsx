@@ -7,6 +7,7 @@ import { EmptySchedule } from 'common.ui';
 import { DayLessonListMetaProvider, DayLessonRow, findNearestLessonIndex } from 'modules.calendar';
 import type { ChangeLessonFormData, ScheduleLessonRow } from 'modules.calendar';
 import { cn } from '@xipkg/utils';
+import { galleryShadowPadClass } from '../galleryShadowClass';
 
 const SKELETON_COUNT = 4;
 
@@ -30,6 +31,9 @@ type AllLessonsProps = {
 const scheduleEmptyActionButtonClass =
   'bg-background-page hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
 
+const lessonCardSkeletonClass =
+  'bg-background-surface relative flex min-h-[136px] shrink-0 flex-row gap-4 rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]';
+
 export const AllLessons = ({
   lessons,
   dayDate,
@@ -49,15 +53,9 @@ export const AllLessons = ({
     <DayLessonListMetaProvider>
       <div className="flex min-h-0 min-w-0 flex-1 flex-col">
         {isLoading ? (
-          <div className="flex flex-col pr-3">
+          <div className={cn('mr-2 flex flex-col gap-3 pr-0', galleryShadowPadClass)}>
             {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-              <div
-                key={i}
-                className={cn(
-                  'border-border-default relative flex min-h-[136px] shrink-0 flex-row gap-4 p-4',
-                  i < SKELETON_COUNT - 1 && 'border-b',
-                )}
-              >
+              <div key={i} className={lessonCardSkeletonClass}>
                 <div className="flex shrink-0 flex-col gap-2 pt-1">
                   <div className="bg-background-subtle h-5 w-14 animate-pulse rounded" />
                   <div className="bg-background-subtle h-4 w-10 animate-pulse rounded" />
@@ -76,7 +74,12 @@ export const AllLessons = ({
             ))}
           </div>
         ) : lessons.length === 0 ? (
-          <div className="border-border-default bg-background-surface dark:border-border-strong mr-3 mb-3 flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center gap-5 rounded-xl border border-dashed px-4 py-8 pr-3">
+          <div
+            className={cn(
+              'bg-background-surface mr-2 mb-3 flex min-h-0 min-w-0 flex-1 flex-col items-center justify-center gap-5 rounded-2xl px-4 py-8',
+              'shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]',
+            )}
+          >
             <EmptySchedule
               className="mb-4 h-auto w-full max-w-[220px] shrink-0 object-contain"
               aria-hidden
@@ -106,13 +109,14 @@ export const AllLessons = ({
             ) : null}
           </div>
         ) : (
-          <ScrollArea className="min-h-0 w-full flex-1">
-            <div className="flex flex-col pr-3">
+          <ScrollArea className="h-auto max-h-full min-h-0 w-full">
+            <div className={cn('mr-2 flex flex-col gap-3 pr-0 pb-2', galleryShadowPadClass)}>
               {lessons.map((lesson, index) => (
                 <DayLessonRow
                   key={lesson.id}
                   lesson={lesson}
                   lessonDay={dayDate}
+                  variant="card"
                   showActions={showLessonActions}
                   isNearestLesson={nearestIndex >= 0 && index === nearestIndex}
                   onReschedule={onReschedule}

@@ -11,7 +11,7 @@ interface UseTabNavigationOptions {
 export const useTabNavigation = ({
   normalizeMaterialTabs = false,
 }: UseTabNavigationOptions = {}) => {
-  const isMobile = useMedia('(max-width: 720px)');
+  const isMobile = useMedia('(max-width: 960px)');
   const search: SearchParams = useSearch({ strict: false });
   const navigate = useNavigate();
 

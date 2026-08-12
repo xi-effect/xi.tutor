@@ -36,6 +36,11 @@ export {
 export { ConfirmDialog, type ConfirmDialogProps } from './src/ConfirmDialog';
 export { modalTitleClass } from './src/modalTitleClass';
 export { switcherTabClass } from './src/switcherTabClass';
+export {
+  pageSwitcherTrackClass,
+  pageSwitcherTabClass,
+  pageSwitcherIndicatorClass,
+} from './src/pageSwitcherClass';
 export { useFocusModeStore } from './src/store/useFocusModeStore';
 export { useSupportModalStore } from './src/store/useSupportModalStore';
 export {
