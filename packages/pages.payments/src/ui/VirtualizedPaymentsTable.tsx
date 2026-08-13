@@ -76,7 +76,7 @@ export const VirtualizedPaymentsTable = ({
   const isTutor = currentUserRole === 'tutor';
 
   if (isLoading && !data.length) {
-    return <PaymentsTableSkeleton />;
+    return <PaymentsTableSkeleton isMobile={isMobile} />;
   }
 
   if (notFoundItems) {
@@ -125,13 +125,13 @@ export const VirtualizedPaymentsTable = ({
 
   if (isMobile) {
     return (
-      <div ref={parentRef} className="h-[calc(100dvh-200px)] min-h-0 flex-1 overflow-auto pr-5">
+      <div ref={parentRef} className="h-[calc(100dvh-200px)] min-h-0 flex-1 overflow-auto py-1 pr-5">
         <GridVirtualizer
           parentRef={parentRef}
           items={data}
-          gap={12}
+          gap={20}
           isSingleColumn
-          defaultRowHeight={100}
+          defaultRowHeight={160}
           renderItem={(item) => (
             <InvoiceCard
               payment={item}

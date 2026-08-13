@@ -23,7 +23,7 @@ export const TableCard = ({
   return (
     <div
       className={cn(
-        'border-border-control bg-background-surface relative flex min-h-[112px] cursor-pointer flex-col justify-between gap-2 rounded-2xl border p-4',
+        'bg-background-surface relative flex min-h-35 cursor-pointer flex-col justify-between gap-2 rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]',
         className,
       )}
     >

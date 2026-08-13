@@ -12,6 +12,8 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 
+import { cardMenuButtonClass, cardMenuIconClass, cardMenuPositionClass } from 'common.ui';
+
 import { MaterialPropsT } from '../../types';
 
 export const Card: React.FC<MaterialPropsT> = ({ name }) => {
@@ -26,11 +28,11 @@ export const Card: React.FC<MaterialPropsT> = ({ name }) => {
         url="https://www.google.com"
       />
 
-      <div className="bg-background-canvas absolute top-4 right-4 flex h-6 w-6 items-center justify-center rounded-full">
+      <div className={cardMenuPositionClass}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="h-6 w-6" variant="none" size="icon">
-              <MoreVert className="h-4 w-4" />
+            <Button className={cardMenuButtonClass} variant="none" size="icon">
+              <MoreVert className={cardMenuIconClass} />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent

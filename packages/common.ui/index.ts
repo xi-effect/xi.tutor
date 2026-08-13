@@ -43,6 +43,7 @@ export {
   pageSwitcherTabClass,
   pageSwitcherIndicatorClass,
 } from './src/pageSwitcherClass';
+export { cardMenuButtonClass, cardMenuIconClass, cardMenuPositionClass } from './src/cardMenuClass';
 export { useFocusModeStore } from './src/store/useFocusModeStore';
 export { useSupportModalStore } from './src/store/useSupportModalStore';
 export {

@@ -8,7 +8,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { ConfirmDialog, getDateLocale } from 'common.ui';
+import {
+  ConfirmDialog,
+  cardMenuButtonClass,
+  cardMenuIconClass,
+  cardMenuPositionClass,
+  getDateLocale,
+} from 'common.ui';
 import { useTranslation } from 'react-i18next';
 import { ModalTemplate } from './ModalTemplate';
 
@@ -47,49 +53,49 @@ export const TemplateCard = ({
     <>
       <div
         onClick={handleEditTemplate}
-        className="group bg-background-surface flex h-40 w-full cursor-pointer flex-col justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]"
+        className="group bg-background-surface relative flex h-40 w-full cursor-pointer flex-col justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]"
         data-umami-event="payment-template-card-open"
       >
-        <div className="flex w-full items-start justify-between">
+        <div className="flex w-full items-start">
           <div className="bg-status-info-background flex size-10 shrink-0 items-center justify-center rounded-[10px]">
             <Payments className="fill-icon-brand size-6" />
           </div>
+        </div>
 
-          <div className="flex size-8 items-center justify-center">
-            <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
-                  className="hover:bg-background-subtle h-8 min-h-8 w-8 min-w-8 rounded-lg p-0"
-                  variant="none"
-                  size="icon"
-                  data-umami-event="payment-template-menu-open"
-                >
-                  <MoreVert className="fill-icon-secondary h-5 w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-
-              <DropdownMenuContent
-                side="bottom"
-                align="end"
-                className="border-border-default bg-background-surface border p-1"
-                onClick={(e: React.MouseEvent) => e.stopPropagation()}
+        <div className={cardMenuPositionClass}>
+          <DropdownMenu open={menuOpen} onOpenChange={setMenuOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                onClick={(e: React.MouseEvent<HTMLButtonElement>) => e.stopPropagation()}
+                className={cardMenuButtonClass}
+                variant="none"
+                size="icon"
+                data-umami-event="payment-template-menu-open"
               >
-                <DropdownMenuItem
-                  className="text-text-primary hover:text-text-primary focus:text-text-primary"
-                  onClick={handleEditTemplate}
-                >
-                  {t('templateCard.edit')}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="text-text-primary hover:text-text-primary focus:text-text-primary"
-                  onClick={handleDeleteClick}
-                >
-                  {t('templateCard.delete')}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+                <MoreVert className={cardMenuIconClass} />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent
+              side="bottom"
+              align="end"
+              className="border-border-default bg-background-surface border p-1"
+              onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            >
+              <DropdownMenuItem
+                className="text-text-primary hover:text-text-primary focus:text-text-primary"
+                onClick={handleEditTemplate}
+              >
+                {t('templateCard.edit')}
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="text-text-primary hover:text-text-primary focus:text-text-primary"
+                onClick={handleDeleteClick}
+              >
+                {t('templateCard.delete')}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         <div className="flex w-full flex-col items-start gap-1 overflow-hidden">
