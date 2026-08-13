@@ -33,8 +33,30 @@ export const TemplatesGrid = () => {
 
   if (isLoading) {
     return (
-      <div className={cn('flex w-full items-center justify-center', SHELL_HEIGHT)}>
-        <p className="text-text-secondary">{t('loader')}</p>
+      <div
+        className={cn(
+          'min-h-0 flex-1 overflow-auto pr-5',
+          isMobile && 'h-[calc(100dvh-204px)]',
+          !isMobile && 'h-[calc(100dvh-190px)]',
+        )}
+      >
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div
+              key={i}
+              className="bg-background-surface flex h-40 w-full flex-col justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]"
+            >
+              <div className="flex w-full items-start justify-between">
+                <div className="bg-background-subtle size-10 animate-pulse rounded-[10px]" />
+                <div className="bg-background-subtle size-8 animate-pulse rounded-lg" />
+              </div>
+              <div className="flex flex-col gap-1">
+                <div className="bg-background-subtle h-5 w-3/4 animate-pulse rounded" />
+                <div className="bg-background-subtle h-4 w-20 animate-pulse rounded" />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
@@ -71,7 +93,7 @@ export const TemplatesGrid = () => {
             </div>
           </div>
           <div className="flex w-full shrink-0 justify-center px-2" aria-hidden>
-            <EmptyPaymentsFull className="h-auto max-h-[min(42vh,360px)] w-full max-w-[min(92vw,420px)] object-contain sm:max-h-[min(48vh,400px)]" />
+            <EmptyPaymentsFull className="h-auto max-h-[200px] w-auto max-w-[240px] object-contain" />
           </div>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { Logo } from 'common.ui';
+import { Logo, NotFoundPage, isNotFoundHttpError } from 'common.ui';
 import { useParams } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { SupportPageShell } from 'modules.navigation';
@@ -6,6 +6,7 @@ import { useCurrentUser } from 'common.services';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   getInviteTrackingId,
+  shouldTrackInvitePageViewed,
   trackOnce,
   trackProductEvent,
 } from 'common.utils';
@@ -26,8 +27,10 @@ export const InvitesPage = () => {
 
   // Открытие страницы, не дожидаясь ответа preview-запроса (в отличие от
   // student_invite_opened ниже) — часть новой воронки v2, см. ТЗ п.11.
+  // Для unauth invite → signin page_viewed уже мог уйти на SignInPage — дедуп по session.
   useEffect(() => {
     if (!inviteId) return;
+    if (!shouldTrackInvitePageViewed(inviteId)) return;
 
     trackOnce(`student_invite_page_viewed:${inviteId}`, () => {
       void getInviteTrackingId(inviteId).then((invite_tracking_id) => {
@@ -70,19 +73,21 @@ export const InvitesPage = () => {
     );
   }
 
+  if (error && isNotFoundHttpError(error)) {
+    return <NotFoundPage />;
+  }
+
+  if (!error && !data) {
+    return <NotFoundPage />;
+  }
+
   return (
     <SupportPageShell>
       <section className="relative flex flex-1 flex-col items-center justify-center py-24">
         <div className="absolute top-24">
           <Logo />
         </div>
-        {error ? (
-          <ErrorInvite error={error} />
-        ) : data ? (
-          <Invite invite={data} />
-        ) : (
-          <ErrorInvite error={t('notFound')} />
-        )}
+        {error ? <ErrorInvite error={error} /> : data ? <Invite invite={data} /> : <NotFoundPage />}
       </section>
     </SupportPageShell>
   );

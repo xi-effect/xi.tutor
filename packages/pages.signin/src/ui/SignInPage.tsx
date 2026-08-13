@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@xipkg/button';
 import { Input } from '@xipkg/input';
@@ -19,6 +19,12 @@ import type { UseFormSetError } from 'react-hook-form';
 import { LinkTanstack, Logo } from 'common.ui';
 import {
   PRODUCT_ANALYTICS_EVENTS,
+  getInviteTrackingId,
+  getOrCreateActivationFlowId,
+  getPendingInviteCode,
+  shouldTrackInviteLoginClicked,
+  shouldTrackInvitePageViewed,
+  trackOnce,
   trackProductEvent,
   useGetUrlWithParams,
   useSyncAutofillOnSubmit,
@@ -35,7 +41,8 @@ export const SignInPage = () => {
   const getUrlWithParams = useGetUrlWithParams();
 
   const search = useSearch({ strict: false }) as { redirect?: string };
-  const isInviteRedirect = search.redirect?.includes('/invite');
+  const inviteCode = getPendingInviteCode(search);
+  const isInviteRedirect = Boolean(inviteCode) || Boolean(search.redirect?.includes('/invite'));
 
   const form = useForm<FormData>({
     resolver: zodResolver(formSchema),
@@ -53,22 +60,54 @@ export const SignInPage = () => {
   const [isPasswordShow, setIsPasswordShow] = useState(false);
   const changePasswordShow = () => setIsPasswordShow((prev) => !prev);
 
+  // Unauth invite → /signin: фиксируем page_viewed + login_clicked один раз на вкладку.
+  // Outcome входа — auth_signin_*; login_clicked здесь = вход в login-ветку invite-flow.
+  useEffect(() => {
+    if (!inviteCode) return;
+
+    const activationFlowId = getOrCreateActivationFlowId();
+
+    void getInviteTrackingId(inviteCode).then((invite_tracking_id) => {
+      if (shouldTrackInvitePageViewed(inviteCode)) {
+        trackOnce(`student_invite_page_viewed:${inviteCode}`, () => {
+          trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_PAGE_VIEWED, {
+            invite_flow_version: 2,
+            invite_tracking_id,
+            activation_flow_id: activationFlowId,
+          });
+        });
+      }
+
+      if (shouldTrackInviteLoginClicked(inviteCode)) {
+        trackOnce(`student_invite_login_clicked:${inviteCode}`, () => {
+          trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_LOGIN_CLICKED, {
+            invite_flow_version: 2,
+            invite_tracking_id,
+            source: 'invite',
+            activation_flow_id: activationFlowId,
+          });
+        });
+      }
+    });
+  }, [inviteCode]);
+
   const onSubmit = (data: FormData) => {
-    if (isInviteRedirect) {
-      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_LOGIN_CLICKED, {
-        invite_flow_version: 2,
-        source: 'unknown',
-      });
-    }
     onSigninForm(data, form.setError as UseFormSetError<FormData>);
   };
 
   const handleSignupLinkClick = () => {
     if (!isInviteRedirect) return;
-    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_SIGNUP_CLICKED, {
-      invite_flow_version: 2,
-      source: 'unknown',
-    });
+
+    void (async () => {
+      const invite_tracking_id = inviteCode ? await getInviteTrackingId(inviteCode) : undefined;
+
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_SIGNUP_CLICKED, {
+        invite_flow_version: 2,
+        invite_tracking_id,
+        source: 'invite',
+        activation_flow_id: getOrCreateActivationFlowId(),
+      });
+    })();
   };
 
   return (

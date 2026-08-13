@@ -51,9 +51,9 @@ export type PaymentApprovalFunctionT = {
 };
 
 export const mapPaymentStatus = {
-  complete: 'оплачен',
-  wf_receiver_confirmation: 'ожидает подтверждения',
-  wf_sender_confirmation: 'ждет оплаты',
+  complete: 'Оплачен',
+  wf_receiver_confirmation: 'Ожидает подтверждения',
+  wf_sender_confirmation: 'Ждет оплаты',
 } as const;
 
 export type InvoiceCardTypeT = 'default' | 'table';

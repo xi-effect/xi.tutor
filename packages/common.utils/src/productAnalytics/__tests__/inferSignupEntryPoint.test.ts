@@ -18,11 +18,26 @@ describe('inferSignupEntryPoint', () => {
     });
     vi.stubGlobal('document', { referrer: '' });
     vi.stubGlobal('sessionStorage', { getItem: () => null });
+    vi.stubGlobal('localStorage', { getItem: () => null });
 
     expect(inferSignupEntryPoint({ invite: 'abc' })).toBe('invite');
     expect(inferSignupEntryPoint({ from: 'invite' })).toBe('invite');
+    expect(inferSignupEntryPoint({ redirect: '/invite/xyz' })).toBe('invite');
     expect(inferSignupEntryPoint({ from: 'login' })).toBe('login');
     expect(inferSignupEntryPoint({ redirect: '/signin' })).toBe('login');
+  });
+
+  it('читает invite.pending_code из localStorage', () => {
+    vi.stubGlobal('window', {
+      location: { origin: 'https://app.sovlium.ru' },
+    });
+    vi.stubGlobal('document', { referrer: '' });
+    vi.stubGlobal('sessionStorage', { getItem: () => null });
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => (key === 'invite.pending_code' ? 'code-1' : null),
+    });
+
+    expect(inferSignupEntryPoint()).toBe('invite');
   });
 
   it('читает previousPath из sessionStorage', () => {

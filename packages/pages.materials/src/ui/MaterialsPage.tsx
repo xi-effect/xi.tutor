@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { Header } from './Header';
 import { MobileTutorActionButton } from 'features.invites';
 import { TabsComponent } from './TabsComponent';
 import { useCurrentUser } from 'common.services';
-import { ErrorPage } from 'common.ui';
+import { NotFoundPage } from 'common.ui';
 import {
   MaterialsDuplicateProvider,
   useMaterialsDuplicate,
@@ -23,7 +22,6 @@ const getTabFromUrl = (): 'notes' | 'boards' => {
 };
 
 const MaterialsPageContent = () => {
-  const { t } = useTranslation('materials');
   const [activeTab, setActiveTab] = useState<'notes' | 'boards'>(() => getTabFromUrl());
   const isMobile = useMediaQuery('(max-width: 960px)');
 
@@ -57,14 +55,7 @@ const MaterialsPageContent = () => {
   };
 
   if (!isTutor) {
-    return (
-      <ErrorPage
-        withLogo={false}
-        title={t('error.title')}
-        errorCode={403}
-        text={t('error.noAccess')}
-      />
-    );
+    return <NotFoundPage withLogo={false} />;
   }
 
   return (

@@ -19,6 +19,10 @@ import type {
 } from 'modules.calendar';
 import { useCurrentUser } from 'common.services';
 import { movingPropsFromLessonRow, scheduleItemToLessonRow } from './scheduleHelpers';
+import { WidgetHeader, widgetTitleClass } from '../WidgetHeader';
+import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
+import { cn } from '@xipkg/utils';
+import { FORCE_MAIN_LISTS_LOADING } from '../../forceListsLoading';
 
 const getToday = () => {
   const d = new Date();
@@ -81,8 +85,11 @@ export const Lessons = () => {
 
   const monthLabelInHeader = useMemo(() => {
     if (!visibleMonthInfo) return null;
-    const t = getToday();
-    if (visibleMonthInfo.year === t.getFullYear() && visibleMonthInfo.monthIndex === t.getMonth()) {
+    const today = getToday();
+    if (
+      visibleMonthInfo.year === today.getFullYear() &&
+      visibleMonthInfo.monthIndex === today.getMonth()
+    ) {
       return null;
     }
     return visibleMonthInfo.label;
@@ -92,6 +99,46 @@ export const Lessons = () => {
     setSelectedDate(getToday());
     setAlignCarouselNonce((n) => n + 1);
   };
+
+  const headerTitle = (
+    <div className="flex min-w-0 flex-1 flex-row items-baseline gap-3">
+      <h2 className={widgetTitleClass}>{t('lessons.title')}</h2>
+      {monthLabelInHeader ? (
+        <span className="text-m-base text-text-secondary truncate font-normal">
+          {monthLabelInHeader}
+        </span>
+      ) : null}
+    </div>
+  );
+
+  const headerActions = (
+    <>
+      {!isTodayVisibleInCarousel ? (
+        <Button
+          variant="none"
+          type="button"
+          className="text-text-secondary hover:bg-background-subtle flex h-8 items-center gap-1 rounded-lg px-2.5"
+          onClick={handleGoToToday}
+          data-umami-event="schedule-go-to-today"
+          id="schedule-go-to-today"
+        >
+          <Undo className="fill-icon-secondary size-4 shrink-0" />
+          <span className="text-s-base font-normal">{t('lessons.goToToday')}</span>
+        </Button>
+      ) : null}
+      {isTutor ? (
+        <Button
+          variant="primary"
+          className="flex size-10 items-center justify-center rounded-[10px] p-0"
+          onClick={() => setOpen(true)}
+          data-umami-event="add-lesson-button"
+          id="add-lesson-button"
+        >
+          <Add className="fill-text-on-accent size-6" />
+        </Button>
+      ) : null}
+    </>
+  );
 
   return (
     <>
@@ -104,65 +151,26 @@ export const Lessons = () => {
           analyticsSource="main"
         />
       ) : null}
-      <div className="bg-background-surface flex h-[calc(100vh-80px)] w-(--lessons-panel-width) flex-col gap-4 rounded-2xl px-5 pt-4 pr-2 pb-1">
-        {/* Заголовок */}
-        <div className="flex flex-row items-center gap-2 pr-3">
-          <div className="flex min-w-0 flex-1 flex-row items-baseline gap-3">
-            <h2 className="text-l-base 2xl:text-xl-base text-text-primary m-0 shrink-0 font-medium">
-              {t('lessons.title')}
-            </h2>
-            {monthLabelInHeader ? (
-              <span className="text-m-base 2xl:text-l-base text-text-secondary truncate font-normal">
-                {monthLabelInHeader}
-              </span>
-            ) : null}
-          </div>
-          <div className="ml-auto flex shrink-0 flex-row items-center gap-2">
-            {!isTodayVisibleInCarousel ? (
-              <Button
-                variant="none"
-                type="button"
-                className="text-text-secondary hover:bg-background-subtle flex h-8 items-center gap-1 rounded-lg px-2.5"
-                onClick={handleGoToToday}
-                data-umami-event="schedule-go-to-today"
-                id="schedule-go-to-today"
-              >
-                <Undo className="fill-icon-secondary size-4 shrink-0" />
-                <span className="text-s-base 2xl:text-m-base font-normal">
-                  {t('lessons.goToToday')}
-                </span>
-              </Button>
-            ) : null}
-            {isTutor ? (
-              <Button
-                variant="none"
-                className="bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
-                onClick={() => setOpen(true)}
-                data-umami-event="add-lesson-button"
-                id="add-lesson-button"
-              >
-                <Add className="fill-icon-brand size-6" />
-              </Button>
-            ) : null}
-          </div>
+      <div className="flex h-[calc(100vh-40px)] w-(--lessons-panel-width) flex-col gap-4">
+        {/* mr-2: дорожка под скроллбар, без лишнего зазора до карточек */}
+        <div className={cn('mr-2 flex shrink-0 flex-col gap-3', galleryShadowHeaderInsetClass)}>
+          <WidgetHeader title={headerTitle} actions={headerActions} />
+          <ScheduleDateCarousel
+            selectedDate={selectedDate}
+            onSelectedDateChange={setSelectedDate}
+            alignCarouselNonce={alignCarouselNonce}
+            onDominantVisibleMonthChange={setVisibleMonthInfo}
+            onTodayVisibleInViewportChange={setIsTodayVisibleInCarousel}
+          />
         </div>
 
-        {/* Карусель дат */}
-        <ScheduleDateCarousel
-          className="pr-3"
-          selectedDate={selectedDate}
-          onSelectedDateChange={setSelectedDate}
-          alignCarouselNonce={alignCarouselNonce}
-          onDominantVisibleMonthChange={setVisibleMonthInfo}
-          onTodayVisibleInViewportChange={setIsTodayVisibleInCarousel}
-        />
-
-        {/* Список занятий на выбранный день — flex-1 + min-h-0, чтобы список / пустое состояние занимали оставшуюся высоту карточки */}
         <div className="flex min-h-0 min-w-0 flex-1 flex-col">
           <AllLessons
             dayDate={selectedDate}
             lessons={lessonsForSelectedDay}
-            isLoading={scheduleQuery.isLoading || scheduleQuery.isFetching}
+            isLoading={
+              FORCE_MAIN_LISTS_LOADING || scheduleQuery.isLoading || scheduleQuery.isFetching
+            }
             onReschedule={handleReschedule}
             onSaveLesson={isTutor ? handleSaveLesson : undefined}
             onAddLesson={isTutor ? () => setOpen(true) : undefined}

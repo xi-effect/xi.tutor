@@ -2,7 +2,9 @@ import { nanoid } from 'nanoid';
 import { Editor, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { uploadFileRequest } from 'common.services';
+import { fileTypeFromBuffer } from 'file-type';
 import * as pdfjsLib from 'pdfjs-dist';
+import { getFileExtension, isPdfMime } from '../constants/mimeTypes';
 import { PDF_MAX_SIZE, PDF_MIN_SIZE, type PdfShape } from '../shapes/pdf';
 import { resolveShapeCoordinates } from '../utils';
 import i18n from 'i18next';
@@ -10,15 +12,40 @@ import i18n from 'i18next';
 const MAX_PDF_SIZE_BYTES = 5 * 1024 * 1024; // 5 MiB
 const MAX_PDF_SHAPES = 50;
 const DEFAULT_PDF_WIDTH = 400;
+const PDF_MIME = 'application/pdf';
+const DETECT_BUFFER_LENGTH = 4100;
+
+function isPdfFile(file: File): boolean {
+  return isPdfMime(file.type) || getFileExtension(file.name) === 'pdf';
+}
+
+async function sniffIsPdf(file: File): Promise<boolean> {
+  try {
+    const buffer = await file.slice(0, DETECT_BUFFER_LENGTH).arrayBuffer();
+    const detected = await fileTypeFromBuffer(buffer);
+    return isPdfMime(detected?.mime);
+  } catch {
+    return false;
+  }
+}
+
+/** Бэкенд отвергает пустой type / octet-stream (415), типично для Android-пикеров. */
+function withPdfMimeType(file: File): File {
+  const name = getFileExtension(file.name) === 'pdf' ? file.name : `${file.name || 'document'}.pdf`;
+  if (file.type === PDF_MIME && name === file.name) return file;
+  return new File([file], name, { type: PDF_MIME, lastModified: file.lastModified });
+}
 
 export async function insertPdf(editor: Editor, file: File, token: string) {
-  if (file.type !== 'application/pdf') {
+  if (!isPdfFile(file) && !(await sniffIsPdf(file))) {
     toast.error(i18n.t('toast.unsupportedFormat', { ns: 'board' }), {
       description: i18n.t('toast.pdfFormatDesc', { ns: 'board' }),
       duration: 5000,
     });
     return;
   }
+
+  file = withPdfMimeType(file);
 
   if (file.size > MAX_PDF_SIZE_BYTES) {
     toast.error(i18n.t('toast.fileTooLarge', { ns: 'board' }), {

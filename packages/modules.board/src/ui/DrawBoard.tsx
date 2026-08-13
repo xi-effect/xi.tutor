@@ -8,7 +8,7 @@ import {
   useGetStorageItem,
 } from 'common.services';
 import { DEMO_STORAGE_TOKEN } from '../utils/yjsConstants';
-import { LoadingScreen } from 'common.ui';
+import { LoadingScreen, NotFoundPage } from 'common.ui';
 
 type DrawBoardProps = {
   /** Если true — используются тестовые значения ydocId и storageToken */
@@ -42,7 +42,11 @@ export const DrawBoard = ({ isDemo = false }: DrawBoardProps) => {
     throw new Error('boardId or materialId must be provided');
   }
 
-  const { data: storageItem, isLoading } = getStorageItem({
+  const {
+    data: storageItem,
+    isLoading,
+    isError,
+  } = getStorageItem({
     classroomId: classroomId || '',
     id: materialIdValue || '',
   });
@@ -50,8 +54,12 @@ export const DrawBoard = ({ isDemo = false }: DrawBoardProps) => {
   if (isLoading && !localYdocDumpMode) return <LoadingScreen />;
 
   // В демо-режиме и при локальном Y.Doc из БД не требуем storageItem с API
-  if (!isDemo && !localYdocDumpMode && (!storageItem?.ydoc_id || !storageItem?.storage_token)) {
-    return <div>Material not found</div>;
+  if (
+    !isDemo &&
+    !localYdocDumpMode &&
+    (isError || !storageItem?.ydoc_id || !storageItem?.storage_token)
+  ) {
+    return <NotFoundPage withLogo={false} />;
   }
 
   const canvasToken = isDemo

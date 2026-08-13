@@ -1,6 +1,10 @@
 import { Button } from '@xipkg/button';
 import { SwitcherAnimate } from '@xipkg/switcher-animate';
-import { cn } from '@xipkg/utils';
+import {
+  pageSwitcherIndicatorClass,
+  pageSwitcherTabClass,
+  pageSwitcherTrackClass,
+} from 'common.ui';
 import { useCurrentUser } from 'common.services';
 import { Plus } from '@xipkg/icons';
 import { useMemo } from 'react';
@@ -47,13 +51,9 @@ export const Header = ({
             tabs={tabs}
             activeTab={activeTab}
             onChange={onTabChange}
-            className="bg-background-subtle !h-auto w-full justify-start gap-0.5 rounded-[10px] p-1 sm:w-auto"
-            tabClassName={cn(
-              '!h-auto flex-1 items-start justify-start rounded-lg px-4 py-1.5 text-base leading-5 font-medium sm:flex-none',
-              'data-[state=inactive]:text-text-secondary data-[state=inactive]:hover:text-text-secondary',
-              'data-[state=active]:text-text-primary data-[state=active]:hover:text-text-primary',
-            )}
-            indicatorClassName="rounded-lg bg-background-surface shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]"
+            className={pageSwitcherTrackClass}
+            tabClassName={pageSwitcherTabClass}
+            indicatorClassName={pageSwitcherIndicatorClass}
           />
         )}
       </div>

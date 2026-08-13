@@ -36,6 +36,7 @@ function mergeShapeUtilsByType(
 ): DrAnyShapeUtilConstructor[] {
   const byType = new Map(defaults.map((util) => [util.type, util]));
   for (const util of overrides) {
+    if (!util?.type) continue;
     byType.set(util.type, util);
   }
   return Array.from(byType.values());

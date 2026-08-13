@@ -9,7 +9,7 @@ import {
 import { Button } from '@xipkg/button';
 import { MoreVert } from '@xipkg/icons';
 import { ModalStudentsGroup, useDeleteStudentFromGroup } from 'features.group.manage';
-import { ConfirmDialog } from 'common.ui';
+import { ConfirmDialog, EmptyClassrooms } from 'common.ui';
 import { ErrorState } from './ErrorState';
 import { GroupStudentsListSchema } from 'common.types';
 import { useGroupStudentsList } from 'common.services';
@@ -17,6 +17,11 @@ import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { ContactsBadge } from '../Header/components/ContactsBadge';
 import { StudentsListSkeleton } from './StudentsListSkeleon';
+import { SectionEmptyState } from '../SectionEmptyState';
+import { sectionEmptyStateIllustrationClass } from '../sectionEmptyStateIllustrationClass';
+import { WidgetCardsCarousel, widgetCardSlotClass } from '../WidgetCardsCarousel';
+import { emptyInviteButtonClass } from '../galleryShadowClass';
+import { cn } from '@xipkg/utils';
 
 type StudentsListPropsT = {
   classroomId: string;
@@ -33,11 +38,13 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-row gap-8 pb-4">
+      <WidgetCardsCarousel>
         {Array.from({ length: 3 }).map((_, i) => (
-          <StudentsListSkeleton key={i} className="h-30 w-[350px] min-w-[350px]" />
+          <div key={i} className={widgetCardSlotClass}>
+            <StudentsListSkeleton className="h-32 w-full" />
+          </div>
         ))}
-      </div>
+      </WidgetCardsCarousel>
     );
   }
 
@@ -47,14 +54,19 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
 
   if (students.length === 0) {
     return (
-      <div className="flex flex-col items-center gap-4 pt-5">
-        <h2 className="text-text-primary text-lg font-semibold">{t('overview.addStudentTitle')}</h2>
-        <ModalStudentsGroup>
-          <Button size="m" variant="ghost">
-            {t('actions.addStudent')}
-          </Button>
-        </ModalStudentsGroup>
-      </div>
+      <SectionEmptyState
+        title={t('overview.addStudentTitle')}
+        description={t('overview.studentsEmptyDescription')}
+        minHeightClass="min-h-[160px]"
+        illustration={<EmptyClassrooms className={sectionEmptyStateIllustrationClass} />}
+        actions={
+          <ModalStudentsGroup>
+            <Button type="button" variant="none" className={emptyInviteButtonClass}>
+              {t('actions.addStudent')}
+            </Button>
+          </ModalStudentsGroup>
+        }
+      />
     );
   }
 
@@ -72,49 +84,53 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
 
   return (
     <>
-      <div className="flex flex-row gap-8 pb-4">
+      <WidgetCardsCarousel>
         {students.map(({ user_id, display_name }: GroupStudentsListSchema) => (
-          <div
-            className="border-border-strong relative flex min-h-30 min-w-[350px] items-center justify-between rounded-2xl border p-4"
-            key={user_id}
-          >
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2">
+          <div key={user_id} className={widgetCardSlotClass}>
+            <div
+              className={cn(
+                'bg-background-surface relative flex h-full min-h-[120px] w-full flex-col justify-between rounded-2xl p-5',
+                'shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]',
+              )}
+            >
+              <div className="flex items-center gap-2 pr-8">
                 <UserProfile
                   userId={user_id}
                   withOutText
                   src={`https://api.sovlium.ru/files/users/${user_id}/avatar.webp`}
                   size="l"
                 />
-                <h3 className="text-m-base text-text-primary font-medium">{display_name}</h3>
+                <h3 className="text-m-base text-text-primary line-clamp-1 font-medium">
+                  {display_name}
+                </h3>
               </div>
               <ContactsBadge userId={user_id} />
-            </div>
-            <div className="absolute top-4 right-4 flex h-8 w-8 rounded-full">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button className="h-8 w-8 rounded-md" variant="none" size="icon">
-                    <MoreVert className="dark:fill-icon-primary h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  side="bottom"
-                  align="end"
-                  className="border-border-default bg-background-surface border p-1"
-                >
-                  <DropdownMenuItem
-                    onClick={() => {
-                      setStudentToDelete({ userId: user_id, name: display_name ?? '' });
-                    }}
+              <div className="absolute top-4 right-4 flex h-8 w-8 rounded-full">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button className="h-8 w-8 rounded-md" variant="none" size="icon">
+                      <MoreVert className="dark:fill-icon-primary h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    side="bottom"
+                    align="end"
+                    className="border-border-default bg-background-surface border p-1"
                   >
-                    {t('actions.deleteFromGroup')}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                    <DropdownMenuItem
+                      onClick={() => {
+                        setStudentToDelete({ userId: user_id, name: display_name ?? '' });
+                      }}
+                    >
+                      {t('actions.deleteFromGroup')}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             </div>
           </div>
         ))}
-      </div>
+      </WidgetCardsCarousel>
 
       <ConfirmDialog
         open={studentToDelete != null}

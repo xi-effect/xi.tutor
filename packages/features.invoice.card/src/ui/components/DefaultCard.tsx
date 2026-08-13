@@ -43,12 +43,12 @@ export const DefaultCard = ({
             text={userData?.display_name || userData?.username || t('nameNotFound')}
             src={getUserAvatarUrl(userId)}
             classNameText="line-clamp-2 break-words text-text-primary"
-            className="h-auto overflow-hidden"
+            className="h-auto min-w-0 overflow-hidden"
           />
         )}
-        <div className="flex flex-row items-baseline gap-0.5">
-          <h3 className="text-m-base text-text-primary font-medium">{amount} ₽</h3>
-        </div>
+        <h3 className="text-m-base text-text-primary shrink-0 font-medium whitespace-nowrap tabular-nums">
+          {amount}&nbsp;₽
+        </h3>
       </div>
       <div className="text-s-base text-text-primary mt-auto flex w-full flex-col gap-1 font-medium">
         <PaymentApproveAction payment={payment} isTutor={currentUserRole === 'tutor'} />

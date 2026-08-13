@@ -37,8 +37,8 @@ export const FirstLessonGuideBanner = () => {
   };
 
   return (
-    <div className="bg-action-primary-background-pressed flex h-[92px] max-w-full shrink-0 items-center justify-between gap-4 overflow-hidden rounded-2xl px-5">
-      <div className="min-w-0 flex-1 pr-2">
+    <div className="bg-action-primary-background-pressed mx-2 flex h-[92px] max-w-full shrink-0 items-center justify-between gap-4 rounded-2xl px-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]">
+      <div className="min-w-0 flex-1 overflow-hidden pr-2">
         <div className="text-text-on-accent text-m-base leading-tight font-semibold">
           {t('firstLessonGuide.title')}
         </div>
@@ -50,7 +50,7 @@ export const FirstLessonGuideBanner = () => {
         <Button
           type="button"
           variant="none"
-          className="bg-background-surface text-text-link hover:bg-background-surface/90 flex h-8 w-[114px] items-center justify-center gap-2 rounded-lg text-[12px] font-medium"
+          className="bg-background-surface text-text-link hover:bg-background-surface/90 flex h-auto items-center justify-center gap-2 rounded-[10px] px-4 py-2 text-sm leading-5 font-medium"
           onClick={handleRead}
           data-umami-event="main-first-lesson-guide-read"
         >

@@ -9,6 +9,7 @@ import {
 } from 'modules.calendar';
 import { useTranslation } from 'react-i18next';
 import { formatUpcomingDate } from './formatUpcomingDate';
+import { startLessonCardButtonClass } from '../galleryShadowClass';
 
 type UpcomingLessonCardProps = {
   lesson: ScheduleLessonRow;
@@ -38,8 +39,8 @@ export const UpcomingLessonCard = ({
   return (
     <div
       className={cn(
-        'group/lesson-card bg-background-surface flex min-h-[220px] w-full max-w-[min(100%,400px)] min-w-[300px] flex-col gap-2 rounded-2xl border p-5 sm:min-w-[320px]',
-        isNearest ? 'border-border-focus border-2' : 'border-border-default border',
+        'group/lesson-card bg-background-surface flex min-h-[220px] w-full max-w-[min(100%,400px)] min-w-[300px] flex-col gap-2 rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)] sm:min-w-[320px]',
+        isNearest && 'ring-border-focus ring-2',
       )}
     >
       <div className="relative flex h-4 w-full min-w-0 items-start justify-between gap-2">
@@ -109,10 +110,9 @@ export const UpcomingLessonCard = ({
           scheduledAt={lesson.startAt}
           scheduledEndsAt={endAt}
           className={cn(
-            'h-8 w-full border-0! p-0 shadow-none!',
-            isNearest
-              ? 'bg-status-info-background hover:bg-action-primary-background-disabled/50 text-text-link'
-              : 'hover:text-text-secondary text-text-muted bg-transparent!',
+            'h-8 w-full border-0! shadow-none!',
+            startLessonCardButtonClass,
+            !isNearest && 'text-text-link',
           )}
         />
       </div>

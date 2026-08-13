@@ -5,8 +5,10 @@
 
 /* Базовый цвет текста и отступ под ручку блока */
 .xi-editor .ProseMirror {
+  --editor-gutter: 2.5rem;
+  --editor-marker: 1.25rem;
   color: var(--xi-text-primary);
-  padding-left: 2.5rem;
+  padding-left: var(--editor-gutter);
   min-width: 0;
   overflow-wrap: anywhere;
   word-break: break-word;
@@ -64,41 +66,92 @@
   display: flex;
 }
 
-/* Стили для списков */
-.xi-editor .ProseMirror ul,
-.xi-editor .ProseMirror ol {
-  padding-left: 1.5rem;
+/* Списки: маркер в фиксированной колонке, текст на одной линии с абзацами */
+.xi-editor .ProseMirror ul:not([data-type='taskList']),
+.xi-editor .ProseMirror ol,
+.xi-editor .ProseMirror ul[data-type='taskList'] {
+  padding-left: 0;
   margin: 0.5rem 0;
+  list-style: none;
 }
 
-.xi-editor .ProseMirror li {
+.xi-editor .ProseMirror ul:not([data-type='taskList']) > li,
+.xi-editor .ProseMirror ol > li {
+  position: relative;
+  padding-left: var(--editor-marker);
   margin: 0.25rem 0;
 }
 
-/* Стили для задач */
-.xi-editor .ProseMirror ul[data-type='taskList'] {
-  list-style: none;
-  padding-left: 0;
+.xi-editor .ProseMirror ul:not([data-type='taskList']) > li::before,
+.xi-editor .ProseMirror ol > li::before {
+  position: absolute;
+  left: 0;
+  width: var(--editor-marker);
+  box-sizing: border-box;
+  text-align: left;
+  line-height: 1.6;
 }
 
-.xi-editor .ProseMirror ul[data-type='taskList'] li {
+.xi-editor .ProseMirror ul:not([data-type='taskList']) > li::before {
+  content: '•';
+}
+
+.xi-editor .ProseMirror ol {
+  counter-reset: editor-ol;
+}
+
+.xi-editor .ProseMirror ol > li {
+  counter-increment: editor-ol;
+}
+
+.xi-editor .ProseMirror ol > li::before {
+  content: counter(editor-ol) '.';
+}
+
+.xi-editor .ProseMirror li ul,
+.xi-editor .ProseMirror li ol {
+  margin: 0;
+}
+
+.xi-editor .ProseMirror li p {
+  margin: 0;
+}
+
+/* Чекбокс занимает ту же колонку, что точка и номер */
+.xi-editor .ProseMirror ul[data-type='taskList'] > li {
   display: flex;
   align-items: flex-start;
   margin: 0.25rem 0;
 }
 
-.xi-editor .ProseMirror ul[data-type='taskList'] li > label {
-  flex: 0 0 auto;
-  margin-right: 0.5rem;
+.xi-editor .ProseMirror ul[data-type='taskList'] > li > label {
+  box-sizing: border-box;
+  display: flex;
+  flex: 0 0 var(--editor-marker);
+  width: var(--editor-marker);
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 0.2rem;
+  margin: 0;
   user-select: none;
 }
 
-.xi-editor .ProseMirror ul[data-type='taskList'] li > div {
+.xi-editor .ProseMirror ul[data-type='taskList'] > li > div {
   flex: 1 1 auto;
+  min-width: 0;
 }
 
 .xi-editor .ProseMirror ul[data-type='taskList'] input[type='checkbox'] {
   cursor: pointer;
+  width: 1rem;
+  height: 1rem;
+  margin: 0;
+  accent-color: var(--xi-brand-80);
+}
+
+.xi-editor .ProseMirror ul[data-type='taskList'] li[data-checked='true'] > div {
+  color: var(--xi-text-muted);
+  text-decoration: line-through;
 }
 
 /* Стили для цитат */

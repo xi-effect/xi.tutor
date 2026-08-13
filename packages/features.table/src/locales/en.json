@@ -25,9 +25,9 @@
     "transfer": "transfer"
   },
   "status": {
-    "complete": "paid",
-    "wf_receiver_confirmation": "awaiting confirmation",
-    "wf_sender_confirmation": "awaiting payment"
+    "complete": "Paid",
+    "wf_receiver_confirmation": "Awaiting confirmation",
+    "wf_sender_confirmation": "Awaiting payment"
   },
   "filter": {
     "from": "From",

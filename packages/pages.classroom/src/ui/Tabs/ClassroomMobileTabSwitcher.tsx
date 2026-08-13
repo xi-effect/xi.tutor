@@ -42,8 +42,8 @@ export const ClassroomMobileTabSwitcher = ({
         variant="ghost"
         onClick={() => setDrawerOpen(true)}
         className={cn(
-          'border-border-selected bg-status-info-background hover:border-border-focus hover:bg-action-primary-background-disabled/40 active:bg-action-primary-background-disabled/60 flex h-11 w-full min-w-0 items-center justify-between gap-3 rounded-2xl border px-4 shadow-[0_2px_10px_rgba(59,130,246,0.12)] transition-all active:scale-[0.99]',
-          drawerOpen && 'border-border-focus bg-action-primary-background-disabled/50',
+          'bg-background-subtle hover:bg-background-surface data-[state=open]:bg-background-surface flex h-11 w-full min-w-0 items-center justify-between gap-3 rounded-[10px] px-4 transition-all active:scale-[0.99]',
+          drawerOpen && 'bg-background-surface',
         )}
         aria-haspopup="dialog"
         aria-expanded={drawerOpen}
@@ -52,7 +52,7 @@ export const ClassroomMobileTabSwitcher = ({
         <span className="text-m-base text-text-primary truncate font-semibold">{activeLabel}</span>
         <ChevronSmallBottom
           className={cn(
-            'fill-icon-brand size-5 shrink-0 transition-transform duration-200',
+            'fill-icon-secondary size-5 shrink-0 transition-transform duration-200',
             drawerOpen && 'rotate-180',
           )}
         />
@@ -80,13 +80,13 @@ export const ClassroomMobileTabSwitcher = ({
                     className={cn(
                       menuRowClassName,
                       isActive &&
-                        'border-border-focus bg-action-primary-background-default hover:bg-action-primary-background-default',
+                        'border-border-default bg-background-subtle hover:bg-background-subtle',
                     )}
                   >
                     <span
                       className={cn(
                         'text-m-base font-medium',
-                        isActive ? 'text-text-on-accent' : 'text-text-primary',
+                        isActive ? 'text-text-primary' : 'text-text-secondary',
                       )}
                     >
                       {tab.label}

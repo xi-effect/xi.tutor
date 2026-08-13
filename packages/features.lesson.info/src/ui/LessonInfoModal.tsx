@@ -139,7 +139,7 @@ export const LessonInfoModal = ({
             </div>
           </ModalHeader>
 
-          <ModalBody className="flex flex-col gap-4 px-6 pt-0 pb-4">
+          <ModalBody className="flex flex-col gap-4 px-6 pb-4">
             <div className="border-border-default bg-background-surface flex flex-col gap-2 rounded-2xl border p-5">
               {subjectHeadingLabel ? (
                 <span className="text-text-disabled text-xs">{subjectHeadingLabel}</span>

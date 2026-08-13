@@ -57,8 +57,16 @@ export type SignupFailureReason =
   | 'server_error'
   | 'unknown';
 
+export type SigninFailureReason =
+  'user_not_found' | 'invalid_credentials' | 'network_error' | 'server_error' | 'unknown';
+
+export type SigninAnalyticsSource = 'invite' | 'signin' | 'unknown';
+
 export type SignupValidationFailureReason =
   'required_field' | 'invalid_email' | 'weak_password' | 'terms_not_accepted' | 'multiple_fields';
+
+/** Безопасные enum-имена полей для auth_signup_validation_failed (без PII). */
+export type SignupValidationFailedField = 'username' | 'email' | 'password' | 'terms';
 
 export type ActivationHelpReason = 'need_help' | 'stuck_on_step' | 'contact_support' | 'unknown';
 
@@ -112,7 +120,11 @@ export type ProductAnalyticsDurationBucket = '5-15' | '15-30' | '30-45' | '45+';
 
 export type ProductAnalyticsBoardTrigger = 'duration' | 'objects' | 'collaboration';
 
-export type UmamiEventPayload = Record<string, string | number | boolean | null | undefined>;
+export type UmamiPrimitive = string | number | boolean;
+export type UmamiEventPayload = Record<
+  string,
+  UmamiPrimitive | UmamiPrimitive[] | null | undefined
+>;
 
 export type CommonActivationProperties = {
   event_version?: number;

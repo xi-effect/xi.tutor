@@ -4,7 +4,9 @@ import { Add, ArrowRight, ArrowUpRight } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { SectionEmptyState } from '../SectionEmptyState';
 import { sectionEmptyStateIllustrationClass } from '../sectionEmptyStateIllustrationClass';
-import { ScrollArea } from '@xipkg/scrollarea';
+import { WidgetHeader } from '../WidgetHeader';
+import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
+import { WidgetCardsCarousel, widgetCardSlotClass } from '../WidgetCardsCarousel';
 import {
   useCurrentUser,
   useGetTutorPaymentsList,
@@ -17,11 +19,16 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMediaQuery } from '@xipkg/utils';
 import { useCallStore } from 'modules.calls';
+import { PaymentCardSkeleton } from './PaymentCardSkeleton';
+import { FORCE_MAIN_LISTS_LOADING, MAIN_LIST_SKELETON_COUNT } from '../../forceListsLoading';
 
 const PAYMENTS_PREVIEW_LIMIT = 10;
 
 /** База знаний (как в сайдбаре «Справка») */
 const PAYMENTS_HELP_URL = 'https://support.sovlium.ru/payments';
+
+const galleryInvoiceCardClass =
+  'h-[156px] w-full min-w-0 flex-none bg-background-surface border-0 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)] hover:border-transparent';
 
 export const Payments = () => {
   const { t } = useTranslation('main');
@@ -40,7 +47,7 @@ export const Payments = () => {
   });
 
   const payments = isTutor ? tutorPayments : studentPayments;
-  const isLoading = isTutor ? isLoadingTutor : isLoadingStudent;
+  const isLoading = FORCE_MAIN_LISTS_LOADING || (isTutor ? isLoadingTutor : isLoadingStudent);
   const previewList = (payments ?? []).slice(0, PAYMENTS_PREVIEW_LIMIT);
   const [invoiceModalOpen, setInvoiceModalOpen] = useState(false);
 
@@ -64,59 +71,63 @@ export const Payments = () => {
   };
 
   const emptyActionButtonClass =
-    'bg-background-page hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
+    'bg-background-surface hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
+
+  const headerActions =
+    isTutor && !isMobile ? (
+      <Button
+        variant="primary"
+        className="flex size-10 items-center justify-center rounded-[10px] p-0"
+        onClick={handleAdd}
+        data-umami-event="create-invoice-button"
+        id="create-invoice-button"
+      >
+        <Add className="fill-text-on-accent size-6" />
+      </Button>
+    ) : (
+      <Tooltip delayDuration={1000}>
+        <TooltipTrigger asChild>
+          <Button
+            variant="none"
+            className="hover:bg-background-subtle flex size-8 items-center justify-center rounded-lg p-0"
+            onClick={handleMore}
+            data-umami-event="payments-more"
+          >
+            <ArrowRight className="fill-icon-secondary size-5" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>{t('payments.toPayments')}</TooltipContent>
+      </Tooltip>
+    );
 
   return (
-    <div className="bg-background-surface flex w-full min-w-0 flex-col gap-4 rounded-2xl px-5 pt-4 pb-1 transition-all duration-200 ease-linear">
-      <div className="flex flex-row items-center gap-2">
-        <h2 className="text-l-base text-text-primary font-medium">{t('payments.title')}</h2>
-        <div className="ml-auto">
-          {isTutor && !isMobile ? (
-            <Button
-              variant="none"
-              className="bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
-              onClick={handleAdd}
-              data-umami-event="create-invoice-button"
-              id="create-invoice-button"
-            >
-              <Add className="fill-icon-brand size-6" />
-            </Button>
-          ) : (
-            <Tooltip delayDuration={1000}>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="none"
-                  className="flex size-8 items-center justify-center rounded-[4px] p-0"
-                  onClick={handleMore}
-                  data-umami-event="payments-more"
-                >
-                  <ArrowRight className="fill-icon-secondary size-6" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>{t('payments.toPayments')}</TooltipContent>
-            </Tooltip>
-          )}
-        </div>
+    <div className="flex w-full min-w-0 flex-col gap-4">
+      <div className={galleryShadowHeaderInsetClass}>
+        <WidgetHeader title={t('payments.title')} actions={headerActions} />
       </div>
       <InvoiceModal open={invoiceModalOpen} onOpenChange={setInvoiceModalOpen} />
 
       {isLoading ? (
-        <div className="flex h-[152px] w-full items-center justify-center">
-          <p className="text-m-base text-text-secondary">{t('common.loading')}</p>
-        </div>
+        <WidgetCardsCarousel>
+          {Array.from({ length: MAIN_LIST_SKELETON_COUNT }).map((_, i) => (
+            <div key={i} className={widgetCardSlotClass}>
+              <PaymentCardSkeleton />
+            </div>
+          ))}
+        </WidgetCardsCarousel>
       ) : previewList.length > 0 ? (
-        <ScrollArea className="w-full" scrollBarProps={{ orientation: 'horizontal' }}>
-          <div className="flex flex-row gap-3 pb-3">
-            {previewList.map((payment) => (
+        <WidgetCardsCarousel>
+          {previewList.map((payment) => (
+            <div key={payment.id} className={widgetCardSlotClass}>
               <InvoiceCard
-                key={payment.id}
                 payment={payment}
                 currentUserRole={isTutor ? 'tutor' : 'student'}
                 withoutPaymentType
+                className={galleryInvoiceCardClass}
               />
-            ))}
-          </div>
-        </ScrollArea>
+            </div>
+          ))}
+        </WidgetCardsCarousel>
       ) : isTutor ? (
         <SectionEmptyState
           title={t('payments.emptyTitle')}

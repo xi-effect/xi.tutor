@@ -4,6 +4,14 @@ import { moveBlock } from '../utils/moveBlock';
 import { getCurrentBlock } from '../utils/getCurrentBlock';
 
 const TEXT_BLOCKS = ['paragraph', 'heading'];
+
+const LIST_ITEM_CONTENT = [
+  {
+    type: 'listItem',
+    content: [{ type: 'paragraph' }],
+  },
+];
+
 const NODE_TYPES_MAP = {
   paragraph: {
     type: 'paragraph',
@@ -23,6 +31,30 @@ const NODE_TYPES_MAP = {
   heading3: {
     type: 'heading',
     attrs: { level: 3 },
+  },
+
+  bulletList: {
+    type: 'bulletList',
+    attrs: {},
+    content: LIST_ITEM_CONTENT,
+  },
+
+  orderedList: {
+    type: 'orderedList',
+    attrs: {},
+    content: LIST_ITEM_CONTENT,
+  },
+
+  taskList: {
+    type: 'taskList',
+    attrs: {},
+    content: [
+      {
+        type: 'taskItem',
+        attrs: { checked: false },
+        content: [{ type: 'paragraph' }],
+      },
+    ],
   },
 };
 
@@ -65,13 +97,14 @@ export const useBlockMenuActions = (
 
     const insertPos = currentBlock.pos + currentBlock.node.nodeSize;
 
-    const nodeType = editor.schema.nodes[config.type];
-    if (!nodeType) return;
+    const content =
+      'content' in config && config.content
+        ? { type: config.type, attrs: config.attrs, content: config.content }
+        : editor.schema.nodes[config.type]?.createAndFill(config.attrs)?.toJSON();
 
-    const newNode = nodeType.createAndFill(config.attrs);
-    if (!newNode) return;
+    if (!content) return;
 
-    editor.chain().focus().insertContentAt(insertPos, newNode.toJSON()).run();
+    editor.chain().focus().insertContentAt(insertPos, content).run();
   };
 
   const downloadImage = (src: string) => {

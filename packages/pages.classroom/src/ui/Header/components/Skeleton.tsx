@@ -1,20 +1,14 @@
 export const Skeleton = () => {
   return (
-    <div className="flex flex-row items-center px-5 pt-5 sm:px-10 sm:pt-10">
-      <div className="flex flex-col items-start gap-1">
-        {/* UserProfile скелетон - точно как в реальном компоненте */}
-        <div className="flex items-center gap-3">
-          <div className="bg-background-canvas h-10 w-10 animate-pulse rounded-full" />
-          <div className="bg-background-canvas h-5 w-40 animate-pulse rounded" />
+    <div className="flex w-full shrink-0 flex-col gap-4 px-5 pt-5 sm:px-8 sm:pt-8 md:px-10 md:pt-10">
+      <div className="flex min-w-0 flex-row items-center gap-3 sm:gap-4">
+        <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
+          <div className="bg-background-subtle size-12 shrink-0 animate-pulse rounded-full" />
+          <div className="bg-background-subtle h-8 w-48 animate-pulse rounded-lg sm:h-9 sm:w-72" />
+          <div className="bg-background-subtle h-7 w-20 shrink-0 animate-pulse rounded-lg" />
+          <div className="bg-background-subtle h-7 w-24 shrink-0 animate-pulse rounded-lg" />
         </div>
-        {/* Предмет скелетон - точно как text-m-base */}
-        <div className="bg-background-canvas h-5 w-32 animate-pulse rounded" />
-      </div>
-      <div className="ml-auto flex flex-row items-center gap-2">
-        {/* Badge статуса скелетон - размер m */}
-        <div className="bg-background-canvas h-6 w-20 animate-pulse rounded-full" />
-        {/* Telegram badge скелетон - размер m */}
-        <div className="bg-background-canvas h-6 w-24 animate-pulse rounded-full" />
+        <div className="bg-background-subtle hidden h-12 w-40 shrink-0 animate-pulse rounded-[10px] sm:block" />
       </div>
     </div>
   );
