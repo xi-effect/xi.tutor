@@ -250,9 +250,7 @@ export const MaterialsCard = ({
         </div>
       </div>
 
-      {isTutor && (
-        <div className="flex size-8 items-center justify-center">{menu}</div>
-      )}
+      {isTutor && <div className="flex size-8 items-center justify-center">{menu}</div>}
 
       {editModal}
       {deleteConfirmModal}

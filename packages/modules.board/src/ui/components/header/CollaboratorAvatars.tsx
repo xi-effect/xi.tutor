@@ -17,6 +17,8 @@ import { useYjsContext } from '../../../providers/YjsProvider';
 import { useFollowUserStore } from '../../../store';
 import { boardDropdownZClass, boardMenuSurfaceClass } from '../../boardTheme';
 import { useTranslation } from 'react-i18next';
+import { BoardDrawer, boardDrawerRowClass } from '../shared/BoardDrawer';
+import { useBoardIsMobile } from '../shared/useBoardIsMobile';
 
 const AVATAR_API_BASE = 'https://api.sovlium.ru/files/users';
 const MAX_VISIBLE_AVATARS = 3;
@@ -24,6 +26,7 @@ const MAX_VISIBLE_AVATARS_BROADCASTING = 1;
 
 export const CollaboratorAvatars = () => {
   const { t } = useTranslation('board');
+  const isMobile = useBoardIsMobile();
   const { store, myPresenceId, status, provider } = useYjsContext();
   const {
     followingPresenceId,
@@ -164,8 +167,131 @@ export const CollaboratorAvatars = () => {
   const overflowCount = Math.max(0, sortedPresences.length - maxAvatars);
   const isBroadcastActive = !!broadcasterPresenceId;
 
+  const participantsList = (
+    <div className="flex flex-col gap-3">
+      {isTutor && (
+        <Button
+          variant="ghost"
+          size="s"
+          className={cn(
+            isMobile ? boardDrawerRowClass : 'flex w-full items-center justify-start gap-2',
+            isBroadcasting &&
+              'bg-status-info-background text-text-link hover:bg-status-info-background/80',
+          )}
+          onClick={toggleBroadcast}
+          data-umami-event="board-broadcast-follow"
+          data-umami-event-state={isBroadcasting ? 'stop' : 'start'}
+        >
+          <Podcast
+            className={cn(
+              'size-4 shrink-0',
+              isBroadcasting ? 'text-text-link' : 'text-text-primary',
+            )}
+          />
+          {isBroadcasting
+            ? t('collaborators.turnOffPresentation')
+            : t('collaborators.presentationMode')}
+        </Button>
+      )}
+      {!isMobile && (
+        <p className="text-text-secondary px-2 py-1 text-xs">
+          {t('collaborators.participantsOnBoard')}
+        </p>
+      )}
+      {sortedPresences.map((presence) => {
+        const isMe = presence.id === myPresenceId;
+        const isFollowed = followingPresenceId === presence.id;
+        const name = presence.userName || t('collaborators.participant');
+        const initial = name.charAt(0).toUpperCase();
+        const avatarUrl = isMe ? myAvatarUrl : getAvatarUrlFromPresence(presence);
+
+        return (
+          <div
+            key={presence.id}
+            className={
+              isMobile
+                ? boardDrawerRowClass
+                : 'hover:bg-background-page flex items-center gap-2 rounded-lg px-2 py-1.5'
+            }
+          >
+            <Avatar size="s">
+              {avatarUrl && (
+                <AvatarImage src={avatarUrl} alt={isMe ? t('collaborators.you') : name} size="s" />
+              )}
+              <AvatarFallback size="s">{initial}</AvatarFallback>
+            </Avatar>
+            <span className="text-text-primary flex-1 truncate text-sm">
+              {isMe ? t('collaborators.you') : name}
+            </span>
+            {!isMe && (
+              <button
+                type="button"
+                className={cn(
+                  'group flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors',
+                  isFollowed ? 'bg-status-info-background' : 'hover:bg-background-page',
+                  isBroadcastActive && 'pointer-events-none opacity-40',
+                )}
+                onClick={() => setFollowingPresenceId(isFollowed ? null : presence.id)}
+                title={
+                  isFollowed
+                    ? t('collaborators.stopFollowing')
+                    : t('collaborators.followUser', { name })
+                }
+                disabled={isBroadcastActive}
+                data-umami-event="board-follow-user"
+                data-umami-event-state={isFollowed ? 'stop' : 'start'}
+              >
+                {isFollowed ? (
+                  <Eyeon className="fill-icon-brand size-4 shrink-0" />
+                ) : (
+                  <Eyeon className="fill-icon-disabled group-hover:fill-icon-primary size-4 shrink-0" />
+                )}
+              </button>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+
+  const avatarTrigger = (
+    <button
+      type="button"
+      className="cursor-pointer border-none bg-transparent p-0"
+      onClick={isMobile ? () => setPopoverOpen(true) : undefined}
+    >
+      <AvatarGroup>
+        {visiblePresences.map((presence) => {
+          const isMe = presence.id === myPresenceId;
+          const isFollowed = followingPresenceId === presence.id;
+          const name = presence.userName || t('collaborators.participant');
+          const initial = name.charAt(0).toUpperCase();
+          const avatarUrl = isMe ? myAvatarUrl : getAvatarUrlFromPresence(presence);
+
+          return (
+            <Avatar key={presence.id} size="s">
+              {avatarUrl && (
+                <AvatarImage src={avatarUrl} alt={isMe ? t('collaborators.you') : name} size="s" />
+              )}
+              <AvatarFallback size="s">{initial}</AvatarFallback>
+              {isFollowed && (
+                <AvatarBadge
+                  align="start"
+                  className="bg-action-primary-background-default"
+                  title={t('collaborators.following')}
+                  aria-hidden
+                />
+              )}
+            </Avatar>
+          );
+        })}
+        {overflowCount > 0 && <AvatarGroupCount>+{overflowCount}</AvatarGroupCount>}
+      </AvatarGroup>
+    </button>
+  );
+
   return (
-    <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+    <>
       <div className="flex items-center gap-1">
         {isBroadcasting && (
           <button
@@ -179,132 +305,32 @@ export const CollaboratorAvatars = () => {
             <Podcast className="text-text-link size-4 shrink-0" />
           </button>
         )}
-        <PopoverTrigger asChild>
-          <button type="button" className="cursor-pointer border-none bg-transparent p-0">
-            <AvatarGroup>
-              {visiblePresences.map((presence) => {
-                const isMe = presence.id === myPresenceId;
-                const isFollowed = followingPresenceId === presence.id;
-                const name = presence.userName || t('collaborators.participant');
-                const initial = name.charAt(0).toUpperCase();
-                const avatarUrl = isMe ? myAvatarUrl : getAvatarUrlFromPresence(presence);
-
-                return (
-                  <Avatar key={presence.id} size="s">
-                    {avatarUrl && (
-                      <AvatarImage
-                        src={avatarUrl}
-                        alt={isMe ? t('collaborators.you') : name}
-                        size="s"
-                      />
-                    )}
-                    <AvatarFallback size="s">{initial}</AvatarFallback>
-                    {isFollowed && (
-                      <AvatarBadge
-                        align="start"
-                        className="bg-action-primary-background-default"
-                        title={t('collaborators.following')}
-                        aria-hidden
-                      />
-                    )}
-                  </Avatar>
-                );
-              })}
-              {overflowCount > 0 && <AvatarGroupCount>+{overflowCount}</AvatarGroupCount>}
-            </AvatarGroup>
-          </button>
-        </PopoverTrigger>
-      </div>
-      <PopoverContent
-        align="end"
-        side="bottom"
-        sideOffset={12}
-        className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-64 rounded-xl p-2')}
-      >
-        <div className="flex flex-col gap-1">
-          {isTutor && (
-            <Button
-              variant="ghost"
-              size="s"
-              className={cn(
-                'flex w-full items-center justify-start gap-2',
-                isBroadcasting &&
-                  'bg-status-info-background text-text-link hover:bg-status-info-background/80',
-              )}
-              onClick={toggleBroadcast}
-              data-umami-event="board-broadcast-follow"
-              data-umami-event-state={isBroadcasting ? 'stop' : 'start'}
+        {isMobile ? (
+          avatarTrigger
+        ) : (
+          <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+            <PopoverTrigger asChild>{avatarTrigger}</PopoverTrigger>
+            <PopoverContent
+              align="end"
+              side="bottom"
+              sideOffset={12}
+              className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-64 rounded-xl p-2')}
             >
-              <Podcast
-                className={cn(
-                  'size-4 shrink-0',
-                  isBroadcasting ? 'text-text-link' : 'text-text-primary',
-                )}
-              />
-              {isBroadcasting
-                ? t('collaborators.turnOffPresentation')
-                : t('collaborators.presentationMode')}
-            </Button>
-          )}
-          <p className="text-text-secondary px-2 py-1 text-xs">
-            {t('collaborators.participantsOnBoard')}
-          </p>
-          {sortedPresences.map((presence) => {
-            const isMe = presence.id === myPresenceId;
-            const isFollowed = followingPresenceId === presence.id;
-            const name = presence.userName || t('collaborators.participant');
-            const initial = name.charAt(0).toUpperCase();
-            const avatarUrl = isMe ? myAvatarUrl : getAvatarUrlFromPresence(presence);
-
-            return (
-              <div
-                key={presence.id}
-                className="hover:bg-background-page flex items-center gap-2 rounded-lg px-2 py-1.5"
-              >
-                <Avatar size="s">
-                  {avatarUrl && (
-                    <AvatarImage
-                      src={avatarUrl}
-                      alt={isMe ? t('collaborators.you') : name}
-                      size="s"
-                    />
-                  )}
-                  <AvatarFallback size="s">{initial}</AvatarFallback>
-                </Avatar>
-                <span className="text-text-primary flex-1 truncate text-sm">
-                  {isMe ? t('collaborators.you') : name}
-                </span>
-                {!isMe && (
-                  <button
-                    type="button"
-                    className={cn(
-                      'group flex h-6 w-6 shrink-0 items-center justify-center rounded-md transition-colors',
-                      isFollowed ? 'bg-status-info-background' : 'hover:bg-background-page',
-                      isBroadcastActive && 'pointer-events-none opacity-40',
-                    )}
-                    onClick={() => setFollowingPresenceId(isFollowed ? null : presence.id)}
-                    title={
-                      isFollowed
-                        ? t('collaborators.stopFollowing')
-                        : t('collaborators.followUser', { name })
-                    }
-                    disabled={isBroadcastActive}
-                    data-umami-event="board-follow-user"
-                    data-umami-event-state={isFollowed ? 'stop' : 'start'}
-                  >
-                    {isFollowed ? (
-                      <Eyeon className="fill-icon-brand size-4 shrink-0" />
-                    ) : (
-                      <Eyeon className="fill-icon-disabled group-hover:fill-icon-primary size-4 shrink-0" />
-                    )}
-                  </button>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </PopoverContent>
-    </Popover>
+              {participantsList}
+            </PopoverContent>
+          </Popover>
+        )}
+      </div>
+      {isMobile && (
+        <BoardDrawer
+          open={popoverOpen}
+          onOpenChange={setPopoverOpen}
+          title={t('collaborators.participantsOnBoard')}
+        >
+          {participantsList}
+        </BoardDrawer>
+      )}
+    </>
   );
 };
 

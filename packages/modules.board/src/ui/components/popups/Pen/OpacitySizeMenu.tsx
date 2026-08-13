@@ -53,7 +53,7 @@ const PresetButton = ({ preset, isActive, onClick }: PresetButtonProps) => {
   );
 };
 
-export const OpacitySizeMenu = () => {
+export const OpacitySizeMenu = ({ className }: { className?: string }) => {
   const {
     pencilColor,
     pencilThickness,
@@ -96,7 +96,12 @@ export const OpacitySizeMenu = () => {
   const getSizeIndex = (size: string) => sizes.indexOf(size as (typeof sizes)[number]) + 1;
 
   return (
-    <div className="border-border-default bg-background-surface w-full rounded-xl border shadow-none">
+    <div
+      className={cn(
+        'border-border-default bg-background-surface w-full rounded-xl border shadow-none',
+        className,
+      )}
+    >
       <div className="flex w-full flex-col items-stretch gap-3 p-3 sm:flex-row sm:items-center">
         {/* Пресеты */}
         <div className="flex shrink-0 items-center gap-1.5">

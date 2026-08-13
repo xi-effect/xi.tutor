@@ -29,18 +29,24 @@ import {
   boardPanelClass,
   boardTextClass,
 } from '../../boardTheme';
+import { useBoardIsMobile } from '../shared';
 
 export const Header = () => {
   const [openModal, setOpenModal] = useState(false);
   const [openTimer, setOpenTimer] = useState(false);
+  const isMobile = useBoardIsMobile();
   const { focusMode, setFocusMode, toggleFocusMode } = useFocusModeStore();
 
   const { classroomId, boardId, materialId } = useParams({ strict: false });
 
-  // Сбрасываем режим фокуса при уходе со страницы доски
+  // Сбрасываем режим фокуса при уходе со страницы доски и на мобилке
   useEffect(() => {
     return () => setFocusMode(false);
   }, [setFocusMode]);
+
+  useEffect(() => {
+    if (isMobile && focusMode) setFocusMode(false);
+  }, [isMobile, focusMode, setFocusMode]);
   const { isReadonly } = useYjsContext();
 
   const { updateMaterial } = useUpdateMaterial();
@@ -176,20 +182,22 @@ export const Header = () => {
             >
               <AlarmClock size="s" className={`h-4 w-4 lg:h-6 lg:w-6 ${boardIconClass}`} />
             </Button>
-            <Button
-              variant="none"
-              onClick={toggleFocusMode}
-              type="button"
-              className="hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
-              data-umami-event="board-toggle-focus-mode"
-              data-umami-event-state={focusMode ? 'exit' : 'enter'}
-            >
-              {focusMode ? (
-                <Minimize size="s" className={`h-4 w-4 lg:h-6 lg:w-6 ${boardIconClass}`} />
-              ) : (
-                <Maximize size="s" className={`h-4 w-4 lg:h-6 lg:w-6 ${boardIconClass}`} />
-              )}
-            </Button>
+            {!isMobile && (
+              <Button
+                variant="none"
+                onClick={toggleFocusMode}
+                type="button"
+                className="hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
+                data-umami-event="board-toggle-focus-mode"
+                data-umami-event-state={focusMode ? 'exit' : 'enter'}
+              >
+                {focusMode ? (
+                  <Minimize size="s" className={`h-4 w-4 lg:h-6 lg:w-6 ${boardIconClass}`} />
+                ) : (
+                  <Maximize size="s" className={`h-4 w-4 lg:h-6 lg:w-6 ${boardIconClass}`} />
+                )}
+              </Button>
+            )}
             <SettingsDropdown />
           </div>
         </div>

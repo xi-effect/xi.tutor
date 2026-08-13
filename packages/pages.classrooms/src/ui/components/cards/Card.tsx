@@ -154,11 +154,7 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
           <div className={cardMenuPositionClass}>
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
               <DropdownMenuTrigger asChild>
-                <Button
-                  className={cardMenuButtonClass}
-                  variant="none"
-                  size="icon"
-                >
+                <Button className={cardMenuButtonClass} variant="none" size="icon">
                   <MoreVert className={cardMenuIconClass} />
                 </Button>
               </DropdownMenuTrigger>

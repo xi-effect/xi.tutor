@@ -125,7 +125,10 @@ export const VirtualizedPaymentsTable = ({
 
   if (isMobile) {
     return (
-      <div ref={parentRef} className="h-[calc(100dvh-200px)] min-h-0 flex-1 overflow-auto py-1 pr-5">
+      <div
+        ref={parentRef}
+        className="h-[calc(100dvh-200px)] min-h-0 flex-1 overflow-auto py-1 pr-5"
+      >
         <GridVirtualizer
           parentRef={parentRef}
           items={data}

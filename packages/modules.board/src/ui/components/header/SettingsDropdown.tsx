@@ -59,6 +59,8 @@ import {
   boardMenuSubTriggerClass,
   boardMenuSurfaceClass,
 } from '../../boardTheme';
+import { useBoardIsMobile } from '../shared/useBoardIsMobile';
+import { SettingsMobileDrawer } from './SettingsMobileDrawer';
 
 type ActionPropsT = {
   onClick: () => void;
@@ -130,6 +132,7 @@ const BOARD_ELEMENTS_WARNING_THRESHOLD = 3000;
 
 export const SettingsDropdown = () => {
   const { t } = useTranslation('board');
+  const isMobile = useBoardIsMobile();
   const editor = useEditor();
   const { inputMode, setInputMode } = useDrawStore();
   const {
@@ -226,176 +229,211 @@ export const SettingsDropdown = () => {
     shownLimitToastRef.current = false;
   }, [elementsCount, t]);
 
+  const settingsTrigger = (
+    <Button
+      variant="none"
+      className="hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
+      data-umami-event="board-settings-menu"
+      onClick={isMobile ? () => setDropdownOpen(true) : undefined}
+    >
+      <MoreVert size="s" className={cn('h-4 w-4 lg:h-6 lg:w-6', boardIconClass)} />
+    </Button>
+  );
+
   return (
     <>
-      <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="none"
-            className="hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
-            data-umami-event="board-settings-menu"
+      {isMobile ? (
+        <>
+          {settingsTrigger}
+          <SettingsMobileDrawer
+            open={dropdownOpen}
+            onOpenChange={setDropdownOpen}
+            elementsCount={elementsCount}
+            progressPercent={progressPercent}
+            isWarningZone={isWarningZone}
+            isLimitReached={isLimitReached}
+            commentsVisible={commentsVisible}
+            onToggleComments={() => setCommentsVisible(!commentsVisible)}
+            onOpenHotkeys={() => handleOpenHotkeysHelp(true)}
+            onDownload={saveCanvas}
+            onImport={() => importInputRef.current?.click()}
+            onClear={() => {
+              setDropdownOpen(false);
+              setClearConfirmOpen(true);
+            }}
+            onToggleReadonly={toggleReadonly}
+            isReadonly={isReadonly}
+            isTutor={isTutor}
+            showImportOption={showImportOption}
+            hasEditor={!!editor}
+            inputMode={inputMode}
+            onInputModeChange={(value) => {
+              setInputMode(value);
+              if (!editor) return;
+              if (value === 'pen') editor.updateInstanceState({ isPenMode: true });
+              else if (value === 'mouse') editor.updateInstanceState({ isPenMode: false });
+            }}
+            background={background}
+            onBackgroundTypeChange={setBackgroundType}
+            onBackgroundColorChange={setBackgroundColor}
+            onLock={lockShapes}
+            onUnlock={unlockShapes}
+            eraserSettings={settings}
+            onToggleEraserCategory={toggleCategory}
+            onToggleAllEraser={toggleAll}
+            allEraserChecked={allChecked}
+          />
+        </>
+      ) : (
+        <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+          <DropdownMenuTrigger asChild>{settingsTrigger}</DropdownMenuTrigger>
+          <DropdownMenuContent
+            sideOffset={12}
+            align="end"
+            className={cn(
+              boardMenuSurfaceClass,
+              boardDropdownZClass,
+              'flex w-[286px] flex-col gap-1 px-2 py-1',
+            )}
           >
-            <MoreVert size="s" className={cn('h-4 w-4 lg:h-6 lg:w-6', boardIconClass)} />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          sideOffset={12}
-          align="end"
-          className={cn(
-            boardMenuSurfaceClass,
-            boardDropdownZClass,
-            'flex w-[286px] flex-col gap-1 px-2 py-1',
-          )}
-        >
-          <div className="bg-status-info-background/40 mb-1 rounded-lg px-2 py-2">
-            <div className="mb-1 flex items-center justify-between text-xs">
-              <span className="text-text-primary">{t('settings.boardFill')}</span>
-              <span
-                className={cn(
-                  'text-text-primary font-medium',
-                  isWarningZone && !isLimitReached && 'text-tag-orange-accent',
-                  isLimitReached && 'text-text-danger',
-                )}
+            <div className="bg-status-info-background/40 mb-1 rounded-lg px-2 py-2">
+              <div className="mb-1 flex items-center justify-between text-xs">
+                <span className="text-text-primary">{t('settings.boardFill')}</span>
+                <span
+                  className={cn(
+                    'text-text-primary font-medium',
+                    isWarningZone && !isLimitReached && 'text-tag-orange-accent',
+                    isLimitReached && 'text-text-danger',
+                  )}
+                >
+                  {elementsCount} / {BOARD_ELEMENTS_LIMIT}
+                </span>
+              </div>
+              <div className="bg-background-subtle h-2 w-full overflow-hidden rounded-full">
+                <div
+                  className={cn(
+                    'h-full rounded-full transition-all',
+                    isLimitReached
+                      ? 'bg-status-error-accent'
+                      : isWarningZone
+                        ? 'bg-tag-orange-accent'
+                        : 'bg-action-primary-background-default',
+                  )}
+                  style={{ width: `${progressPercent}%` }}
+                />
+              </div>
+            </div>
+            <DropdownMenuGroup className="space-y-0.5">
+              <DropdownMenuItem
+                className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
+                onClick={() => handleOpenHotkeysHelp(true)}
+                data-umami-event="board-hotkeys-help"
               >
-                {elementsCount} / {BOARD_ELEMENTS_LIMIT}
-              </span>
-            </div>
-            <div className="bg-background-subtle h-2 w-full overflow-hidden rounded-full">
-              <div
-                className={cn(
-                  'h-full rounded-full transition-all',
-                  isLimitReached
-                    ? 'bg-status-error-accent'
-                    : isWarningZone
-                      ? 'bg-tag-orange-accent'
-                      : 'bg-action-primary-background-default',
-                )}
-                style={{ width: `${progressPercent}%` }}
+                <InfoCircle />
+                <span>{t('settings.hotkeys')}</span>
+              </DropdownMenuItem>
+              <ToggleCommentsVisibilityAction
+                visible={commentsVisible}
+                onClick={() => setCommentsVisible(!commentsVisible)}
               />
-            </div>
-          </div>
-          <DropdownMenuGroup className="space-y-0.5">
-            <DropdownMenuItem
-              className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
-              onClick={() => handleOpenHotkeysHelp(true)}
-              data-umami-event="board-hotkeys-help"
-            >
-              <InfoCircle />
-              <span>{t('settings.hotkeys')}</span>
-            </DropdownMenuItem>
-            <ToggleCommentsVisibilityAction
-              visible={commentsVisible}
-              onClick={() => setCommentsVisible(!commentsVisible)}
-            />
-            {editor && (
+              {editor && (
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
+                    <Pen />
+                    <span>{t('settings.inputMode')}</span>
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent
+                    className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[250px]')}
+                  >
+                    {INPUT_MODE_OPTIONS.map(({ value, label, icon }) => (
+                      <DropdownMenuItem
+                        key={value}
+                        className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
+                        onClick={() => {
+                          setInputMode(value);
+                          if (value === 'pen') editor.updateInstanceState({ isPenMode: true });
+                          else if (value === 'mouse')
+                            editor.updateInstanceState({ isPenMode: false });
+                        }}
+                        data-umami-event="board-input-mode"
+                        data-umami-event-mode={value}
+                      >
+                        <span className="flex w-5 items-center justify-center">
+                          {inputMode === value ? <Check /> : icon}
+                        </span>
+                        <span>{label}</span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+              )}
+              <DownloadBoardAction onClick={saveCanvas} />
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
-                  <Pen />
-                  <span>{t('settings.inputMode')}</span>
+                  <Grid className="shrink-0" />
+                  <span className="min-w-0 flex-1 truncate">{t('settings.backgroundType')}</span>
+                  <span className="text-text-secondary max-w-[88px] shrink-0 truncate text-right text-xs">
+                    {getBoardBackgroundTypeLabel(background.type)}
+                  </span>
                 </DropdownMenuSubTrigger>
                 <DropdownMenuSubContent
-                  className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[250px]')}
+                  className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[286px]')}
                 >
-                  {INPUT_MODE_OPTIONS.map(({ value, label, icon }) => (
+                  {BOARD_BACKGROUND_TYPE_OPTIONS.map(({ value, label }) => (
                     <DropdownMenuItem
                       key={value}
-                      className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
-                      onClick={() => {
-                        setInputMode(value);
-                        if (value === 'pen') editor.updateInstanceState({ isPenMode: true });
-                        else if (value === 'mouse')
-                          editor.updateInstanceState({ isPenMode: false });
-                      }}
-                      data-umami-event="board-input-mode"
-                      data-umami-event-mode={value}
+                      className={cn(boardMenuItemClass, 'flex min-w-0 items-center gap-2 p-1')}
+                      onClick={() => setBackgroundType(value)}
+                      data-umami-event="board-background-type"
+                      data-umami-event-type={value}
                     >
-                      <span className="flex w-5 items-center justify-center">
-                        {inputMode === value ? <Check /> : icon}
+                      <span className="flex w-5 shrink-0 items-center justify-center">
+                        {normalizeBoardBackgroundType(background.type) === value ? <Check /> : null}
                       </span>
-                      <span>{label}</span>
+                      <span className="min-w-0 flex-1 leading-snug">{label}</span>
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
-            )}
-            <DownloadBoardAction onClick={saveCanvas} />
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
-                <Grid className="shrink-0" />
-                <span className="min-w-0 flex-1 truncate">{t('settings.backgroundType')}</span>
-                <span className="text-text-secondary max-w-[88px] shrink-0 truncate text-right text-xs">
-                  {getBoardBackgroundTypeLabel(background.type)}
-                </span>
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent
-                className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[286px]')}
-              >
-                {BOARD_BACKGROUND_TYPE_OPTIONS.map(({ value, label }) => (
-                  <DropdownMenuItem
-                    key={value}
-                    className={cn(boardMenuItemClass, 'flex min-w-0 items-center gap-2 p-1')}
-                    onClick={() => setBackgroundType(value)}
-                    data-umami-event="board-background-type"
-                    data-umami-event-type={value}
-                  >
-                    <span className="flex w-5 shrink-0 items-center justify-center">
-                      {normalizeBoardBackgroundType(background.type) === value ? <Check /> : null}
-                    </span>
-                    <span className="min-w-0 flex-1 leading-snug">{label}</span>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-            <DropdownMenuSub>
-              <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
-                <ColorPickerIcon className="shrink-0" />
-                <span className="min-w-0 flex-1 truncate">{t('settings.backgroundColor')}</span>
-                <span className="text-text-secondary max-w-[88px] shrink-0 truncate text-right text-xs">
-                  {getBoardBackgroundColorLabel(background.color)}
-                </span>
-              </DropdownMenuSubTrigger>
-              <DropdownMenuSubContent
-                className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[286px]')}
-              >
-                {BOARD_BACKGROUND_COLOR_OPTIONS.map(({ value, label }) => (
-                  <DropdownMenuItem
-                    key={value}
-                    className={cn(boardMenuItemClass, 'flex min-w-0 items-center gap-2 p-1')}
-                    onClick={() => setBackgroundColor(value)}
-                    data-umami-event="board-background-color"
-                    data-umami-event-color={value}
-                  >
-                    <span className="flex w-5 shrink-0 items-center justify-center">
-                      {background.color === value ? <Check /> : null}
-                    </span>
-                    <span className="min-w-0 flex-1 truncate">{label}</span>
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuSubContent>
-            </DropdownMenuSub>
-            {isTutor && !isReadonly && showImportOption && (
-              <DropdownMenuItem
-                className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
-                onClick={() => importInputRef.current?.click()}
-                data-umami-event="board-import-json"
-              >
-                <File />
-                <span>{t('settings.importJson')}</span>
-              </DropdownMenuItem>
-            )}
-            <input
-              ref={importInputRef}
-              type="file"
-              accept=".json,application/json"
-              className="hidden"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                if (file) importBoardFromJson(file);
-                e.target.value = '';
-              }}
-            />
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
+                  <ColorPickerIcon className="shrink-0" />
+                  <span className="min-w-0 flex-1 truncate">{t('settings.backgroundColor')}</span>
+                  <span className="text-text-secondary max-w-[88px] shrink-0 truncate text-right text-xs">
+                    {getBoardBackgroundColorLabel(background.color)}
+                  </span>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent
+                  className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[286px]')}
+                >
+                  {BOARD_BACKGROUND_COLOR_OPTIONS.map(({ value, label }) => (
+                    <DropdownMenuItem
+                      key={value}
+                      className={cn(boardMenuItemClass, 'flex min-w-0 items-center gap-2 p-1')}
+                      onClick={() => setBackgroundColor(value)}
+                      data-umami-event="board-background-color"
+                      data-umami-event-color={value}
+                    >
+                      <span className="flex w-5 shrink-0 items-center justify-center">
+                        {background.color === value ? <Check /> : null}
+                      </span>
+                      <span className="min-w-0 flex-1 truncate">{label}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+              {isTutor && !isReadonly && showImportOption && (
+                <DropdownMenuItem
+                  className={cn(boardMenuItemClass, 'flex gap-2 p-1')}
+                  onClick={() => importInputRef.current?.click()}
+                  data-umami-event="board-import-json"
+                >
+                  <File />
+                  <span>{t('settings.importJson')}</span>
+                </DropdownMenuItem>
+              )}
 
-            {/* <DropdownMenuItem
+              {/* <DropdownMenuItem
               className={cn('flex h-auto gap-2 p-1', showDebugInfo && 'bg-status-info-background')}
               onClick={() => setShowDebugInfo(!showDebugInfo)}
               data-umami-event="board-toggle-debug-info"
@@ -405,129 +443,143 @@ export const SettingsDropdown = () => {
               {showDebugInfo && <Check className="ml-auto" />}
             </DropdownMenuItem> */}
 
-            {isTutor && !isReadonly && (
-              <ClearBoardAction
-                onClick={() => {
-                  setDropdownOpen(false);
-                  setClearConfirmOpen(true);
-                }}
-              />
-            )}
+              {isTutor && !isReadonly && (
+                <ClearBoardAction
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    setClearConfirmOpen(true);
+                  }}
+                />
+              )}
 
-            {isTutor && !isReadonly && (
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
-                  <Locked />
-                  <span>{t('settings.lockElements')}</span>
-                </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent
-                  className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[250px]')}
-                >
-                  <p className="text-text-secondary px-3 py-2 text-xs">{t('settings.lockHint')}</p>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className={cn(boardMenuItemClass, 'flex gap-2 px-3 py-1.5')}
-                    onClick={() => lockShapes()}
-                    data-umami-event="board-lock-all"
+              {isTutor && !isReadonly && (
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
+                    <Locked />
+                    <span>{t('settings.lockElements')}</span>
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent
+                    className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[250px]')}
                   >
-                    <span>{t('settings.allElements')}</span>
-                  </DropdownMenuItem>
-                  {SHAPE_CATEGORIES.map(({ label, types }) => (
+                    <p className="text-text-secondary px-3 py-2 text-xs">
+                      {t('settings.lockHint')}
+                    </p>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      key={label}
                       className={cn(boardMenuItemClass, 'flex gap-2 px-3 py-1.5')}
-                      onClick={() => lockShapes(types)}
-                      data-umami-event="board-lock-category"
-                      data-umami-event-category={label}
+                      onClick={() => lockShapes()}
+                      data-umami-event="board-lock-all"
                     >
-                      <span>{label}</span>
+                      <span>{t('settings.allElements')}</span>
                     </DropdownMenuItem>
-                  ))}
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-            )}
+                    {SHAPE_CATEGORIES.map(({ label, types }) => (
+                      <DropdownMenuItem
+                        key={label}
+                        className={cn(boardMenuItemClass, 'flex gap-2 px-3 py-1.5')}
+                        onClick={() => lockShapes(types)}
+                        data-umami-event="board-lock-category"
+                        data-umami-event-category={label}
+                      >
+                        <span>{label}</span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+              )}
 
-            {isTutor && !isReadonly && (
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
-                  <Unlocked />
-                  <span>{t('settings.unlockElements')}</span>
-                </DropdownMenuSubTrigger>
-                <DropdownMenuSubContent
-                  className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[250px]')}
-                >
-                  <p className="text-text-secondary px-3 py-2 text-xs">
-                    {t('settings.unlockHint')}
-                  </p>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className={cn(boardMenuItemClass, 'flex gap-2 px-3 py-1.5')}
-                    onClick={() => unlockShapes()}
-                    data-umami-event="board-unlock-all"
+              {isTutor && !isReadonly && (
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
+                    <Unlocked />
+                    <span>{t('settings.unlockElements')}</span>
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent
+                    className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[250px]')}
                   >
-                    <span>{t('settings.allElements')}</span>
-                  </DropdownMenuItem>
-                  {SHAPE_CATEGORIES.map(({ label, types }) => (
+                    <p className="text-text-secondary px-3 py-2 text-xs">
+                      {t('settings.unlockHint')}
+                    </p>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      key={label}
                       className={cn(boardMenuItemClass, 'flex gap-2 px-3 py-1.5')}
-                      onClick={() => unlockShapes(types)}
-                      data-umami-event="board-unlock-category"
-                      data-umami-event-category={label}
+                      onClick={() => unlockShapes()}
+                      data-umami-event="board-unlock-all"
                     >
-                      <span>{label}</span>
+                      <span>{t('settings.allElements')}</span>
                     </DropdownMenuItem>
-                  ))}
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-            )}
+                    {SHAPE_CATEGORIES.map(({ label, types }) => (
+                      <DropdownMenuItem
+                        key={label}
+                        className={cn(boardMenuItemClass, 'flex gap-2 px-3 py-1.5')}
+                        onClick={() => unlockShapes(types)}
+                        data-umami-event="board-unlock-category"
+                        data-umami-event-category={label}
+                      >
+                        <span>{label}</span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+              )}
 
-            {isTutor && !isReadonly && (
-              <DropdownMenuSub>
-                <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
-                  <Eraser />
-                  <span>{t('settings.eraser')}</span>
-                </DropdownMenuSubTrigger>
+              {isTutor && !isReadonly && (
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger className={boardMenuSubTriggerClass}>
+                    <Eraser />
+                    <span>{t('settings.eraser')}</span>
+                  </DropdownMenuSubTrigger>
 
-                <DropdownMenuSubContent
-                  className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[260px]')}
-                >
-                  <p className="text-text-secondary px-3 py-2 text-xs">
-                    {t('settings.eraserHint')}
-                  </p>
-
-                  <DropdownMenuSeparator />
-
-                  <DropdownMenuCheckboxItem
-                    checked={allChecked}
-                    onCheckedChange={() => toggleAll()}
-                    onSelect={(e) => e.preventDefault()}
-                    className={cn(boardMenuCheckboxItemClass, 'py-1.5 pr-3 pl-8')}
+                  <DropdownMenuSubContent
+                    className={cn(boardMenuSurfaceClass, boardDropdownZClass, 'w-[260px]')}
                   >
-                    {t('settings.allElements')}
-                  </DropdownMenuCheckboxItem>
+                    <p className="text-text-secondary px-3 py-2 text-xs">
+                      {t('settings.eraserHint')}
+                    </p>
 
-                  <DropdownMenuSeparator />
+                    <DropdownMenuSeparator />
 
-                  {ERASER_CATEGORIES.map(({ key, label }) => (
                     <DropdownMenuCheckboxItem
-                      key={key}
-                      checked={settings[key]}
-                      onCheckedChange={() => toggleCategory(key)}
+                      checked={allChecked}
+                      onCheckedChange={() => toggleAll()}
                       onSelect={(e) => e.preventDefault()}
                       className={cn(boardMenuCheckboxItemClass, 'py-1.5 pr-3 pl-8')}
                     >
-                      {label}
+                      {t('settings.allElements')}
                     </DropdownMenuCheckboxItem>
-                  ))}
-                </DropdownMenuSubContent>
-              </DropdownMenuSub>
-            )}
 
-            {isTutor && <BlockBoardAction onClick={toggleReadonly} isReadonly={isReadonly} />}
-          </DropdownMenuGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
+                    <DropdownMenuSeparator />
+
+                    {ERASER_CATEGORIES.map(({ key, label }) => (
+                      <DropdownMenuCheckboxItem
+                        key={key}
+                        checked={settings[key]}
+                        onCheckedChange={() => toggleCategory(key)}
+                        onSelect={(e) => e.preventDefault()}
+                        className={cn(boardMenuCheckboxItemClass, 'py-1.5 pr-3 pl-8')}
+                      >
+                        {label}
+                      </DropdownMenuCheckboxItem>
+                    ))}
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+              )}
+
+              {isTutor && <BlockBoardAction onClick={toggleReadonly} isReadonly={isReadonly} />}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      )}
+      <input
+        ref={importInputRef}
+        type="file"
+        accept=".json,application/json"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file) importBoardFromJson(file);
+          e.target.value = '';
+        }}
+      />
       <HotkeysHelpModal open={hotkeysOpen} onOpenChange={handleOpenHotkeysHelp} />
 
       <ConfirmDialog
