@@ -22,6 +22,8 @@ export { Logo } from './src/Logo';
 export { Skeleton } from './src/Skeleton';
 export { LinkTanstack } from './src/LinkTanstack';
 export { ErrorPage } from './src/ErrorPage';
+export { NotFoundPage } from './src/NotFoundPage';
+export { isNotFoundHttpError } from './src/isNotFoundHttpError';
 export { OnboardingPopup } from './src/OnboardingPopup';
 export { VkAllowMessagesWidget } from './src/VkAllowMessagesWidget';
 export { VkConnectButton } from './src/VkConnectButton';

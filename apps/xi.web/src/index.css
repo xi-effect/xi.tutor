@@ -149,6 +149,14 @@ html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  background-color: var(--xi-background-page);
+  color: var(--xi-text-primary);
+}
+
+body,
+#root {
+  background-color: var(--xi-background-page);
+  color: var(--xi-text-primary);
 }
 
 /* Стили для скроллбара */

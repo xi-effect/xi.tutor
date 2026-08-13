@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { createFileRoute } from '@tanstack/react-router';
-import { LoadingScreen } from 'common.ui';
+import { LoadingScreen, NotFoundPage } from 'common.ui';
+import { useCurrentUser, useGetClassroom, useGetClassroomStudent } from 'common.services';
 import { Suspense, lazy } from 'react';
 import { z } from 'zod';
 
@@ -27,14 +28,28 @@ export const Route = createFileRoute('/(app)/_layout/call/$callId')({
   component: CallPage,
   parseParams: (params: Record<string, string>) => paramsSchema.parse(params),
   validateSearch: (search: Record<string, unknown>) => searchSchema.parse(search),
-  // beforeLoad: () => {
-  //   console.log('Call', context, location);
-  // },
 });
 
 function CallPage() {
-  // @ts-ignore
-  // const { callId } = Route.useParams();
+  const { callId } = Route.useParams();
+  const classroomId = Number(callId);
+  const hasValidId = Number.isFinite(classroomId) && classroomId > 0;
+
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
+  const isTutor = user?.default_layout === 'tutor';
+
+  const tutorQuery = useGetClassroom(classroomId, isUserLoading || !isTutor || !hasValidId);
+  const studentQuery = useGetClassroomStudent(classroomId, isUserLoading || isTutor || !hasValidId);
+  const classroomQuery = isTutor ? tutorQuery : studentQuery;
+
+  if (!hasValidId || classroomQuery.isError || (classroomQuery.isFetched && !classroomQuery.data)) {
+    return <NotFoundPage withLogo={false} />;
+  }
+
+  if (isUserLoading || classroomQuery.isLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <Suspense fallback={<LoadingScreen />}>
       <CallModule />

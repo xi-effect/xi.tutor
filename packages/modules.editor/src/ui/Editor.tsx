@@ -1,7 +1,6 @@
 import { YjsProvider } from '../providers/YjsProvider';
 import { TiptapEditor } from './components/TiptapEditor';
 import { useParams } from '@tanstack/react-router';
-import { useTranslation } from 'react-i18next';
 import {
   useCurrentUser,
   useGetClassroomStorageItem,
@@ -9,7 +8,7 @@ import {
   useGetStorageItem,
 } from 'common.services';
 import { StorageItemT } from 'common.types';
-import { LoadingScreen } from 'common.ui';
+import { LoadingScreen, NotFoundPage } from 'common.ui';
 
 type TEditorWithData = {
   storageItem: StorageItemT;
@@ -20,7 +19,6 @@ type TEditor = {
 };
 
 const EditorWithoutData = () => {
-  const { t } = useTranslation('editor');
   const { classroomId, noteId, materialId } = useParams({ strict: false });
 
   const { data: user } = useCurrentUser();
@@ -54,14 +52,9 @@ const EditorWithoutData = () => {
 
   if (isStorageItemLoading) return <LoadingScreen />;
 
-  if (storageItemError)
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-text-danger text-lg">
-          {t('status.loadError', { message: storageItemError.message })}
-        </div>
-      </div>
-    );
+  if (storageItemError || !storageItem?.ydoc_id || !storageItem?.storage_token) {
+    return <NotFoundPage withLogo={false} />;
+  }
 
   return (
     <div className="flex w-full justify-center pt-4 pb-8">

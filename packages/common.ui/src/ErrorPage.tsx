@@ -26,7 +26,7 @@ export const ErrorPage = ({
   return (
     <main
       className={cn(
-        '3xl:px-[360px] flex h-full min-h-dvh w-full flex-col justify-center gap-8 overflow-y-scroll px-8 md:px-[60px] lg:px-[120px]',
+        'bg-background-page text-text-primary 3xl:px-[360px] flex h-full min-h-dvh w-full flex-col justify-center gap-8 overflow-y-scroll px-8 md:px-[60px] lg:px-[120px]',
         withLogo && 'h-dvh justify-between',
       )}
     >
