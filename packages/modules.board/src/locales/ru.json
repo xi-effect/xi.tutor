@@ -309,5 +309,11 @@
   "provider": {
     "ydocLoadFailed": "Не удалось загрузить Y.Doc: {{status}} {{statusText}}",
     "localYdocRequired": "Задайте VITE_BOARD_LOCAL_YDOC_ID или имя файла board-{uuid} в URL дампа"
+  },
+  "header": {
+    "editInputPlaceholder": "Введите название",
+    "editInputAria": "Название доски",
+    "emptyName": "Без названия",
+    "editInputError": "Название не может быть пустым"
   }
 }

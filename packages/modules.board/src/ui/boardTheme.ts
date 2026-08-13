@@ -1,8 +1,7 @@
 import { cn } from '@xipkg/utils';
 
 /** Семантические классы UI доски — следуют data-theme на html через @xipkg/tailwind */
-export const boardPanelClass =
-  'bg-background-surface border-border-default border rounded-xl lg:rounded-2xl';
+export const boardPanelClass = 'bg-background-surface border-border-default border rounded-md';
 
 export const boardMenuSurfaceClass = 'border-border-default bg-background-surface border';
 
