@@ -1,28 +1,19 @@
-import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
-import { ExtendedStoreStatus, useYjsStore } from '../hooks/useYjsStore';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { useYjsStore } from '../hooks/useYjsStore';
+import { YjsContext } from './YjsContext';
 import { StorageItemT } from 'common.types';
 import { LoadingScreen } from 'common.ui';
 import { DEMO_STORAGE_TOKEN, DEMO_YDOC_ID } from '../utils/yjsConstants';
 import { ydocIdFromBoardDumpFilename } from '../utils/parseYjsBoardDoc';
 import i18n from 'i18next';
 
-type YjsContextType = ExtendedStoreStatus | null;
-
-const YjsContext = createContext<YjsContextType>(null);
+export { useYjsContext } from './YjsContext';
 
 type YjsProviderProps = {
   children: ReactNode;
   storageItem?: StorageItemT;
   /** Если true — используются тестовые значения ydocId и storageToken */
   isDemo?: boolean;
-};
-
-export const useYjsContext = () => {
-  const context = useContext(YjsContext);
-  if (!context) {
-    throw new Error('useYjsContext must be used within YjsProvider');
-  }
-  return context;
 };
 
 type LocalYjsPreviewState = {

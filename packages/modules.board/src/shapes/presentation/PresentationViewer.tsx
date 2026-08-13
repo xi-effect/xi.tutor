@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { PPTXViewer } from 'pptxviewjs';
 
-import { useYjsContext } from '../../providers/YjsProvider';
+import { useYjsContext } from '../../providers/YjsContext';
 import { loadPptxViewer } from '../../utils/loadPptxViewer';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
 

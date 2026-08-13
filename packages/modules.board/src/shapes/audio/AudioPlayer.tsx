@@ -1,5 +1,5 @@
 import { useCurrentUser } from 'common.services';
-import { useYjsContext } from '../../providers/YjsProvider';
+import { useYjsContext } from '../../providers/YjsContext';
 import { useAudioLoad } from './hooks/useAudioLoad';
 import { useAudioPlayback } from './hooks/useAudioPlayback';
 import { useAudioTimecodes } from './hooks/useAudioTimecodes';

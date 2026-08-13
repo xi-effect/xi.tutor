@@ -3,7 +3,7 @@ import { useEditor } from '@ibodr/draw';
 import { useCurrentUser } from 'common.services';
 import * as pdfjsLib from 'pdfjs-dist';
 import type { RenderTask } from 'pdfjs-dist';
-import { useYjsContext } from '../../providers/YjsProvider';
+import { useYjsContext } from '../../providers/YjsContext';
 import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
 import { insertImage } from '../../features/pickAndInsertImage';
 import { pdfDocCache } from './pdfDocCache';
