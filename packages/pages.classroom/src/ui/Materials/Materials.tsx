@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { EmptyDataState } from './components/EmptyDataState';
 import { ErrorState } from './components/ErrorState';
 import { LoadingState } from './components/LoadingState';
+import { galleryShadowHeaderInsetClass, galleryShadowPadClass } from '../galleryShadowClass';
 import { sectionTitleClass } from '../sectionTitleClass';
 
 type MaterialTypeTab = 'boards' | 'notes';
@@ -75,48 +76,61 @@ export const Materials = () => {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-4 pt-2">
-      <div className="flex min-w-0 flex-row flex-wrap items-center gap-3 sm:gap-4">
-        <h2 className={sectionTitleClass}>{t('tabs.materials')}</h2>
-        <SwitcherAnimate
-          tabs={typeTabs}
-          activeTab={activeTab}
-          onChange={handleTypeChange}
-          className={cn(pageSwitcherTrackClass, 'w-auto')}
-          tabClassName={pageSwitcherTabClass}
-          indicatorClassName={pageSwitcherIndicatorClass}
-        />
-      </div>
-
-      {isClassroomError || isMaterialsError || (!isClassroomLoading && !classroom) ? (
-        <ErrorState />
-      ) : isClassroomLoading || isMaterialsLoading ? (
-        <LoadingState />
-      ) : !materials?.length ? (
-        <EmptyDataState
-          title={activeTab === 'boards' ? t('materials.noBoards') : t('materials.noNotes')}
-          description={
-            activeTab === 'boards'
-              ? t('materials.noBoardsDescription')
-              : t('materials.noNotesDescription')
-          }
-        />
-      ) : (
+      <div className="shrink-0 pr-5 sm:pr-8 md:pr-10">
         <div
           className={cn(
-            'grid gap-5 pb-4',
-            isMobile ? 'grid-cols-1' : 'grid-cols-[repeat(auto-fill,minmax(300px,1fr))]',
+            'flex min-w-0 flex-row flex-wrap items-center gap-3 sm:gap-4',
+            galleryShadowHeaderInsetClass,
           )}
         >
-          {materials.map((material) => (
-            <MaterialsCard
-              key={material.id}
-              {...material}
-              layout="gallery"
-              className="h-40 w-full"
-            />
-          ))}
+          <h2 className={sectionTitleClass}>{t('tabs.materials')}</h2>
+          <SwitcherAnimate
+            tabs={typeTabs}
+            activeTab={activeTab}
+            onChange={handleTypeChange}
+            className={cn(pageSwitcherTrackClass, 'w-auto')}
+            tabClassName={pageSwitcherTabClass}
+            indicatorClassName={pageSwitcherIndicatorClass}
+          />
         </div>
-      )}
+      </div>
+
+      <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
+        <div className="pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10">
+          <div className={galleryShadowPadClass}>
+            {isClassroomError || isMaterialsError || (!isClassroomLoading && !classroom) ? (
+              <ErrorState />
+            ) : isClassroomLoading || isMaterialsLoading ? (
+              <LoadingState />
+            ) : !materials?.length ? (
+              <EmptyDataState
+                title={activeTab === 'boards' ? t('materials.noBoards') : t('materials.noNotes')}
+                description={
+                  activeTab === 'boards'
+                    ? t('materials.noBoardsDescription')
+                    : t('materials.noNotesDescription')
+                }
+              />
+            ) : (
+              <div
+                className={cn(
+                  'grid gap-5',
+                  isMobile ? 'grid-cols-1' : 'grid-cols-[repeat(auto-fill,minmax(300px,1fr))]',
+                )}
+              >
+                {materials.map((material) => (
+                  <MaterialsCard
+                    key={material.id}
+                    {...material}
+                    layout="gallery"
+                    className="h-40 w-full"
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

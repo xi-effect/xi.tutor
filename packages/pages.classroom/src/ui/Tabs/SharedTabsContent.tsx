@@ -19,7 +19,7 @@ export const SharedTabsContent = ({ extraContent }: SharedTabsContentProps) => (
     </Tabs.Content>
 
     <Tabs.Content
-      className="flex min-h-0 min-w-0 flex-1 flex-col overflow-y-auto overscroll-contain data-[state=inactive]:hidden"
+      className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden data-[state=inactive]:hidden"
       value="materials"
     >
       <Materials />

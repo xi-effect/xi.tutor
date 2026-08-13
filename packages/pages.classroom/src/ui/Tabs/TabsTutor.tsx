@@ -231,7 +231,7 @@ export const TabsTutor = () => {
         <div
           className={cn(
             'xs:min-h-0 mt-4 flex min-h-[calc(100dvh-272px)] min-w-0 flex-1 flex-col overflow-hidden pl-5 sm:mt-6 sm:pl-8 md:pl-10',
-            currentTab === 'overview' || currentTab === 'payments'
+            currentTab === 'overview' || currentTab === 'payments' || currentTab === 'materials'
               ? 'pr-0 pb-0'
               : 'pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10',
           )}
