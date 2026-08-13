@@ -10,6 +10,8 @@
   "license": "MIT",
   "scripts": {
     "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "parse-ydoc": "node scripts/parse-board-ydoc.mjs"
   },
   "dependencies": {
@@ -80,7 +82,8 @@
     "eslint-plugin-react-refresh": "^0.4.18",
     "globals": "^15.14.0",
     "typescript": "^5.4.2",
-    "typescript-eslint": "^8.22.0"
+    "typescript-eslint": "^8.22.0",
+    "vitest": "^3.1.1"
   },
   "peerDependencies": {
     "@hookform/resolvers": "^5.2.2",

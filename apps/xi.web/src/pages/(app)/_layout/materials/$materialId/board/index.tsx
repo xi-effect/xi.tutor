@@ -16,6 +16,7 @@ const searchSchema = z.object({
   shape: z.string().optional(),
   comment: z.string().optional(),
   call: z.string().optional(),
+  demo: z.union([z.string(), z.number()]).optional(),
 });
 
 // @ts-ignore

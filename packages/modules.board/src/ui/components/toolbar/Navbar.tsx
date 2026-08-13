@@ -229,6 +229,7 @@ export const Navbar = track(
                   icon={item.icon}
                   title={item.title}
                   isActive={isActive}
+                  data-board-tool={item.action}
                   onClick={() => handleSelectTool(item.action)}
                 />
               </TooltipTrigger>
@@ -245,6 +246,7 @@ export const Navbar = track(
           icon={item.icon}
           title={item.title}
           isActive={isActive}
+          data-board-tool={item.action}
           onClick={() => handleSelectTool(item.action)}
         />
       );
@@ -266,7 +268,9 @@ export const Navbar = track(
             <DropdownMenuTrigger asChild>
               <NavbarButton
                 icon={<MenuDots className={cn('rotate-90', boardToolbarIconClass)} />}
+                title={t('navbar.more')}
                 isActive={false}
+                data-board-tool="more-menu"
               />
             </DropdownMenuTrigger>
             <DropdownMenuContent

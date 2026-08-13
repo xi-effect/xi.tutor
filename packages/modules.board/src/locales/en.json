@@ -104,7 +104,8 @@
     "sticker": "Sticker",
     "emoji": "Emoji",
     "uploadFile": "Upload file. Photos: up to 1 MB. PDF, audio and other files: up to 5 MB.",
-    "coordinateAxes": "Coordinate axes"
+    "coordinateAxes": "Coordinate axes",
+    "more": "More"
   },
   "timer": {
     "pause": "Pause",

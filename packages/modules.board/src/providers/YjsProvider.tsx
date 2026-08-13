@@ -14,6 +14,10 @@ type YjsProviderProps = {
   storageItem?: StorageItemT;
   /** Если true — используются тестовые значения ydocId и storageToken */
   isDemo?: boolean;
+  cachedYdocId?: string;
+  initialYjsUpdate?: Uint8Array;
+  cacheBoardId?: string;
+  cacheUserId?: string;
 };
 
 type LocalYjsPreviewState = {
@@ -32,7 +36,15 @@ function YjsProviderStore({ children, storeParams }: YjsProviderStoreProps) {
   return <YjsContext.Provider value={yjsStore}>{children}</YjsContext.Provider>;
 }
 
-export const YjsProvider = ({ children, storageItem, isDemo = false }: YjsProviderProps) => {
+export const YjsProvider = ({
+  children,
+  storageItem,
+  isDemo = false,
+  cachedYdocId,
+  initialYjsUpdate,
+  cacheBoardId,
+  cacheUserId,
+}: YjsProviderProps) => {
   const localDumpUrl = import.meta.env.VITE_BOARD_LOCAL_YDOC_URL as string | undefined;
   const localDumpYdocIdEnv = import.meta.env.VITE_BOARD_LOCAL_YDOC_ID as string | undefined;
   const useLocalDump = import.meta.env.DEV && Boolean(localDumpUrl);
@@ -86,7 +98,15 @@ export const YjsProvider = ({ children, storageItem, isDemo = false }: YjsProvid
 
   // Извлекаем примитивные значения для мемоизации
   const storageToken = isDemo ? DEMO_STORAGE_TOKEN : storageItem?.storage_token || '';
-  const ydocId = localDump?.ydocId ?? (isDemo ? DEMO_YDOC_ID : storageItem?.ydoc_id || '');
+  const ydocId =
+    localDump?.ydocId ?? (isDemo ? DEMO_YDOC_ID : storageItem?.ydoc_id || cachedYdocId || '');
+  const cacheUpdate =
+    !localDump &&
+    initialYjsUpdate?.length &&
+    cachedYdocId &&
+    (!storageItem?.ydoc_id || storageItem.ydoc_id === cachedYdocId)
+      ? initialYjsUpdate
+      : undefined;
 
   // Мемоизируем параметры, чтобы избежать пересоздания провайдера
   const storeParams = useMemo(() => {
@@ -115,10 +135,12 @@ export const YjsProvider = ({ children, storageItem, isDemo = false }: YjsProvid
       storageToken,
       ydocId,
       token: storageToken,
-      initialYjsUpdate: localDump?.update,
-      localYjsPreview: Boolean(localDump),
+      initialYjsUpdate: localDump?.update ?? cacheUpdate,
+      localYjsPreview: Boolean(localDump) || isDemo,
+      cacheBoardId,
+      cacheUserId,
     };
-  }, [storageToken, ydocId, isDemo, localDump]);
+  }, [storageToken, ydocId, isDemo, localDump, cacheUpdate, cacheBoardId, cacheUserId]);
 
   if (useLocalDump && !localDump && !localDumpError) {
     return <LoadingScreen />;
@@ -132,5 +154,9 @@ export const YjsProvider = ({ children, storageItem, isDemo = false }: YjsProvid
     );
   }
 
-  return <YjsProviderStore storeParams={storeParams}>{children}</YjsProviderStore>;
+  return (
+    <YjsProviderStore key={ydocId} storeParams={storeParams}>
+      {children}
+    </YjsProviderStore>
+  );
 };
