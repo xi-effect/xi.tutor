@@ -189,7 +189,6 @@ export const MainPage = () => {
               'flex w-full min-w-0 flex-col gap-5 self-stretch',
               !isMobile &&
                 'min-h-0 flex-1 overscroll-contain pr-3 pb-6 sm:overflow-y-auto sm:pb-10',
-              isMobile && 'pr-5',
             )}
           >
             {!isMobile && isTutor && <FirstLessonGuideBanner />}

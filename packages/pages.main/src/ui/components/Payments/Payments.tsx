@@ -103,7 +103,7 @@ export const Payments = () => {
   return (
     <div className="flex w-full min-w-0 flex-col gap-4">
       <div className={galleryShadowHeaderInsetClass}>
-        <WidgetHeader title={t('payments.title')} actions={headerActions} />
+        <WidgetHeader title={t('payments.title')} actions={headerActions} isMobile={isMobile} />
       </div>
       <InvoiceModal open={invoiceModalOpen} onOpenChange={setInvoiceModalOpen} />
 

@@ -37,7 +37,7 @@ const emptyPaymentsHelpLinkClass =
   'bg-background-page hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
 
 /** Высота под новую шапку (Playfair + pt/mt-10) */
-const TABLE_SHELL_HEIGHT = 'h-[calc(100dvh-140px)]';
+const TABLE_SHELL_HEIGHT = 'h-full';
 
 export type VirtualizedPaymentsTableProps<T> = {
   parentRef: RefObject<HTMLDivElement | null>;
@@ -125,26 +125,24 @@ export const VirtualizedPaymentsTable = ({
 
   if (isMobile) {
     return (
-      <div className="h-[calc(100dvh-200px)] min-h-0 flex-1 overflow-auto pr-5">
-        <div ref={parentRef}>
-          <GridVirtualizer
-            parentRef={parentRef}
-            items={data}
-            gap={12}
-            isSingleColumn
-            defaultRowHeight={100}
-            renderItem={(item) => (
-              <InvoiceCard
-                payment={item}
-                variant="table"
-                currentUserRole={currentUserRole}
-                onViewInvoice={onViewInvoice}
-              />
-            )}
-          />
+      <div ref={parentRef} className="h-[calc(100dvh-200px)] min-h-0 flex-1 overflow-auto pr-5">
+        <GridVirtualizer
+          parentRef={parentRef}
+          items={data}
+          gap={12}
+          isSingleColumn
+          defaultRowHeight={100}
+          renderItem={(item) => (
+            <InvoiceCard
+              payment={item}
+              variant="table"
+              currentUserRole={currentUserRole}
+              onViewInvoice={onViewInvoice}
+            />
+          )}
+        />
 
-          <Loader isLoading={isLoading} isFetchingNextPage={isFetchingNextPage} />
-        </div>
+        <Loader isLoading={isLoading} isFetchingNextPage={isFetchingNextPage} />
       </div>
     );
   }
@@ -171,31 +169,28 @@ export const VirtualizedPaymentsTable = ({
         </TableHeader>
       </Table>
 
-      <div className="h-[calc(100dvh-224px)] flex-1 overflow-auto">
-        <div ref={parentRef}>
-          <GridVirtualizer<Row<RolePaymentT<UserRoleT>>>
-            parentRef={parentRef}
-            items={rows}
-            isSingleColumn
-            defaultRowHeight={50}
-            renderItem={(item) => (
-              <Table className="table-fixed pr-5 pl-1">
-                <TableBody>
-                  <TableRow className="group hover:shadow-[0_0_0_1px_var(--xi-gray-30)]">
-                    {item.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id} style={{ width: cell.column.getSize() }}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                </TableBody>
-              </Table>
-            )}
-          />
+      <div ref={parentRef} className="h-[calc(100dvh-224px)] flex-1 overflow-auto">
+        <GridVirtualizer<Row<RolePaymentT<UserRoleT>>>
+          parentRef={parentRef}
+          items={rows}
+          isSingleColumn
+          defaultRowHeight={50}
+          renderItem={(item) => (
+            <Table className="table-fixed pr-5 pl-1">
+              <TableBody>
+                <TableRow className="group hover:shadow-[0_0_0_1px_var(--xi-gray-30)]">
+                  {item.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id} style={{ width: cell.column.getSize() }}>
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableBody>
+            </Table>
+          )}
+        />
 
-          {/* Индикатор загрузки */}
-          <Loader isLoading={isLoading} isFetchingNextPage={isFetchingNextPage} />
-        </div>
+        <Loader isLoading={isLoading} isFetchingNextPage={isFetchingNextPage} />
       </div>
     </>
   );
