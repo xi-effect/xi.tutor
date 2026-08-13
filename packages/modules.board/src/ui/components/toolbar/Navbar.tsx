@@ -28,7 +28,7 @@ import {
 } from '../../boardTheme';
 import { EmojiStickerStyle, EmojiStyle } from '../../../shapes/shapeStyles';
 import { insertAsset } from '../../../utils/uploadAsset';
-import { ALL_ALLOWED_TYPES } from '../../../constants/mimeTypes';
+import { getBoardFileInputAccept } from '../../../constants/mimeTypes';
 import { stickers } from '../../../config';
 import { useTranslation } from 'react-i18next';
 
@@ -157,7 +157,7 @@ export const Navbar = track(
       if (toolName === 'asset') {
         const input = document.createElement('input');
         input.type = 'file';
-        input.accept = ALL_ALLOWED_TYPES.toString();
+        input.accept = getBoardFileInputAccept();
         input.multiple = true;
 
         input.onchange = async (e) => {
@@ -165,7 +165,7 @@ export const Navbar = track(
           if (files) {
             for (const file of files) {
               try {
-                insertAsset(editor, file, token, addToQueue);
+                await insertAsset(editor, file, token, addToQueue);
               } catch (error) {
                 console.error('Ошибка при загрузке файла:', error);
               }
