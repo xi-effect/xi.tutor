@@ -37,7 +37,7 @@ export const MaterialsList = () => {
       <WidgetCardsCarousel>
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className={widgetCardSlotClass}>
-            <MaterialsListSkeleton className="h-40 w-full" />
+            <MaterialsListSkeleton />
           </div>
         ))}
       </WidgetCardsCarousel>

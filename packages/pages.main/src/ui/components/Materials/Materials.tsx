@@ -29,6 +29,8 @@ import { sectionEmptyStateIllustrationClass } from '../sectionEmptyStateIllustra
 import { WidgetHeader } from '../WidgetHeader';
 import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
 import { WidgetCardsCarousel, widgetCardSlotClass } from '../WidgetCardsCarousel';
+import { MaterialCardSkeleton } from './MaterialCardSkeleton';
+import { FORCE_MAIN_LISTS_LOADING, MAIN_LIST_SKELETON_COUNT } from '../../forceListsLoading';
 
 const MaterialsContent = () => {
   const { t } = useTranslation('main');
@@ -60,9 +62,10 @@ const MaterialsContent = () => {
     createMaterial(kind);
   };
 
-  const { data: materials, isLoading } = useGetMaterialsList({
+  const { data: materials, isLoading: isMaterialsLoading } = useGetMaterialsList({
     content_type: selectedFilter === 'all' ? null : selectedFilter === 'note' ? 'note' : 'board',
   });
+  const isLoading = FORCE_MAIN_LISTS_LOADING || isMaterialsLoading;
 
   const filteredMaterials = useMemo(() => materials ?? [], [materials]);
 
@@ -170,9 +173,13 @@ const MaterialsContent = () => {
         </div>
 
         {isLoading ? (
-          <div className="flex h-[160px] w-full flex-row items-center justify-center">
-            <p className="text-m-base text-text-secondary">{t('common.loading')}</p>
-          </div>
+          <WidgetCardsCarousel>
+            {Array.from({ length: MAIN_LIST_SKELETON_COUNT }).map((_, i) => (
+              <div key={i} className={widgetCardSlotClass}>
+                <MaterialCardSkeleton />
+              </div>
+            ))}
+          </WidgetCardsCarousel>
         ) : filteredMaterials.length > 0 ? (
           <WidgetCardsCarousel>
             {filteredMaterials.map((material) => (

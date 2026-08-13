@@ -26,21 +26,21 @@ export const MiroPasteToast = ({
   onDismissForever,
 }: MiroPasteToastProps) => {
   return (
-    <div className="bg-gray-0 border-gray-20 w-[min(380px,calc(100vw-32px))] rounded-2xl border p-4 text-gray-100 shadow-lg">
+    <div className="bg-background-surface border-border-default text-text-primary w-[min(380px,calc(100vw-32px))] rounded-2xl border p-4 shadow-lg">
       <div className="flex items-center gap-2">
         <p className="text-m-base font-semibold">{title}</p>
         <Badge variant="default" className={betaBadgeClassName}>
           {betaLabel}
         </Badge>
       </div>
-      <p className="text-s-base text-gray-80 mt-1.5 leading-snug">{description}</p>
-      <p className="text-s-base text-gray-80 mt-2.5 leading-snug">{imagesNote}</p>
+      <p className="text-s-base text-text-secondary mt-1.5 leading-snug">{description}</p>
+      <p className="text-s-base text-text-secondary mt-2.5 leading-snug">{imagesNote}</p>
       <div className="mt-3 flex justify-end">
         <Button
           type="button"
           variant="ghost"
           size="s"
-          className="text-gray-80 h-8 px-2 text-xs font-medium hover:text-gray-100"
+          className="text-text-secondary hover:text-text-primary h-8 px-2 text-xs font-medium"
           onClick={() => {
             onDismissForever();
             toast.dismiss(toastId);

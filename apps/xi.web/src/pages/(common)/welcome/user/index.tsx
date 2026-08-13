@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { WelcomeUserPage } from 'pages.welcome';
 
-export const User = () => {
+const User = () => {
   return <WelcomeUserPage />;
 };
 

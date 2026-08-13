@@ -19,6 +19,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useMediaQuery } from '@xipkg/utils';
 import { useCallStore } from 'modules.calls';
+import { PaymentCardSkeleton } from './PaymentCardSkeleton';
+import { FORCE_MAIN_LISTS_LOADING, MAIN_LIST_SKELETON_COUNT } from '../../forceListsLoading';
 
 const PAYMENTS_PREVIEW_LIMIT = 10;
 
@@ -26,7 +28,7 @@ const PAYMENTS_PREVIEW_LIMIT = 10;
 const PAYMENTS_HELP_URL = 'https://support.sovlium.ru/payments';
 
 const galleryInvoiceCardClass =
-  'h-full w-full min-w-0 flex-none bg-background-surface border-0 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)] hover:border-transparent';
+  'h-[156px] w-full min-w-0 flex-none bg-background-surface border-0 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)] hover:border-transparent';
 
 export const Payments = () => {
   const { t } = useTranslation('main');
@@ -45,7 +47,7 @@ export const Payments = () => {
   });
 
   const payments = isTutor ? tutorPayments : studentPayments;
-  const isLoading = isTutor ? isLoadingTutor : isLoadingStudent;
+  const isLoading = FORCE_MAIN_LISTS_LOADING || (isTutor ? isLoadingTutor : isLoadingStudent);
   const previewList = (payments ?? []).slice(0, PAYMENTS_PREVIEW_LIMIT);
   const [invoiceModalOpen, setInvoiceModalOpen] = useState(false);
 
@@ -106,9 +108,13 @@ export const Payments = () => {
       <InvoiceModal open={invoiceModalOpen} onOpenChange={setInvoiceModalOpen} />
 
       {isLoading ? (
-        <div className="flex h-[152px] w-full items-center justify-center">
-          <p className="text-m-base text-text-secondary">{t('common.loading')}</p>
-        </div>
+        <WidgetCardsCarousel>
+          {Array.from({ length: MAIN_LIST_SKELETON_COUNT }).map((_, i) => (
+            <div key={i} className={widgetCardSlotClass}>
+              <PaymentCardSkeleton />
+            </div>
+          ))}
+        </WidgetCardsCarousel>
       ) : previewList.length > 0 ? (
         <WidgetCardsCarousel>
           {previewList.map((payment) => (

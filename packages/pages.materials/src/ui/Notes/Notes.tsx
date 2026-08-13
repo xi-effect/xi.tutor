@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useInfiniteQuery } from '../../hooks';
 import { useTranslation } from 'react-i18next';
 import { MaterialsTabEmptyState } from '../MaterialsTabEmptyState';
+import { MaterialsGallerySkeleton } from '../MaterialsGallerySkeleton';
 import { MaterialsCard } from 'features.materials.card';
 import { useMaterialsDuplicate } from '../../provider';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
@@ -19,7 +20,9 @@ export const Notes = () => {
 
   return (
     <div ref={parentRef}>
-      {notFoundItems ? (
+      {isLoading ? (
+        <MaterialsGallerySkeleton />
+      ) : notFoundItems ? (
         <MaterialsTabEmptyState
           title={t('empty.notesTitle')}
           description={t('empty.notesDescription')}

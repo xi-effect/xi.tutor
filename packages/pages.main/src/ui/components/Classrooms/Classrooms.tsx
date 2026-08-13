@@ -16,7 +16,9 @@ import { ModalAddGroup } from 'features.group.add';
 import { ModalInvitation } from 'features.invites';
 import { EmptyClassrooms } from 'common.ui';
 import { Classroom } from './Classroom';
+import { ClassroomCardSkeleton } from './ClassroomCardSkeleton';
 import { SectionEmptyState } from '../SectionEmptyState';
+import { FORCE_MAIN_LISTS_LOADING, MAIN_LIST_SKELETON_COUNT } from '../../forceListsLoading';
 import { sectionEmptyStateIllustrationClass } from '../sectionEmptyStateIllustrationClass';
 import { WidgetHeader } from '../WidgetHeader';
 import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
@@ -41,7 +43,7 @@ export const Classrooms = () => {
   );
 
   const classrooms = isTutor ? tutorClassrooms : studentClassrooms;
-  const isLoading = isTutor ? isTutorLoading : isStudentLoading;
+  const isLoading = FORCE_MAIN_LISTS_LOADING || (isTutor ? isTutorLoading : isStudentLoading);
 
   const [selectedSubject] = useState<string>('all');
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -158,9 +160,13 @@ export const Classrooms = () => {
       </div>
 
       {isLoading ? (
-        <div className="flex h-[200px] w-full flex-row items-center justify-center">
-          <p className="text-m-base text-text-secondary">{t('common.loading')}</p>
-        </div>
+        <WidgetCardsCarousel>
+          {Array.from({ length: MAIN_LIST_SKELETON_COUNT }).map((_, i) => (
+            <div key={i} className={widgetCardSlotClass}>
+              <ClassroomCardSkeleton />
+            </div>
+          ))}
+        </WidgetCardsCarousel>
       ) : filteredClassrooms && filteredClassrooms.length > 0 ? (
         <WidgetCardsCarousel>
           {filteredClassrooms.map((classroom) => (

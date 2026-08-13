@@ -22,6 +22,7 @@ import { movingPropsFromLessonRow, scheduleItemToLessonRow } from './scheduleHel
 import { WidgetHeader, widgetTitleClass } from '../WidgetHeader';
 import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
 import { cn } from '@xipkg/utils';
+import { FORCE_MAIN_LISTS_LOADING } from '../../forceListsLoading';
 
 const getToday = () => {
   const d = new Date();
@@ -167,7 +168,9 @@ export const Lessons = () => {
           <AllLessons
             dayDate={selectedDate}
             lessons={lessonsForSelectedDay}
-            isLoading={scheduleQuery.isLoading || scheduleQuery.isFetching}
+            isLoading={
+              FORCE_MAIN_LISTS_LOADING || scheduleQuery.isLoading || scheduleQuery.isFetching
+            }
             onReschedule={handleReschedule}
             onSaveLesson={isTutor ? handleSaveLesson : undefined}
             onAddLesson={isTutor ? () => setOpen(true) : undefined}

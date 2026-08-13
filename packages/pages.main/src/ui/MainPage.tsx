@@ -12,6 +12,8 @@ import {
   movingPropsFromLessonRow,
   scheduleItemToLessonRow,
 } from './components/Lessons/scheduleHelpers';
+import { NearestLessonCardSkeleton } from './components/Lessons/NearestLessonCardSkeleton';
+import { FORCE_MAIN_LISTS_LOADING } from './forceListsLoading';
 
 const NEAREST_LESSON_DAYS = 7;
 
@@ -44,7 +46,7 @@ export const MainPage = () => {
   });
   const scheduleQuery = isTutor ? tutorScheduleQuery : studentScheduleQuery;
 
-  const isNearestLoading = isUserLoading || scheduleQuery.isLoading;
+  const isNearestLoading = FORCE_MAIN_LISTS_LOADING || isUserLoading || scheduleQuery.isLoading;
 
   const nearestLesson = useMemo(() => {
     const items = scheduleQuery.data ?? [];
@@ -158,6 +160,7 @@ export const MainPage = () => {
               <Lessons />
             </div>
           )}
+          {isMobile && isNearestLoading && <NearestLessonCardSkeleton />}
           {isMobile && !isNearestLoading && nearestLesson == null && (
             <div className="bg-background-surface mr-5 flex w-[calc(100%-1.25rem)] flex-col items-center gap-2 rounded-2xl px-4 py-8 text-center">
               <p className="text-l-base text-text-primary font-semibold">
@@ -168,7 +171,7 @@ export const MainPage = () => {
               </p>
             </div>
           )}
-          {isMobile && nearestLesson != null && (
+          {isMobile && !isNearestLoading && nearestLesson != null && (
             <>
               <NearestLessonCard
                 lesson={nearestLesson}

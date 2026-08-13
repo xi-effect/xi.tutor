@@ -157,7 +157,7 @@ export const ChangeLessonModal = ({
 
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <ModalBody className="flex flex-col gap-4 px-6 pt-0 pb-4">
+            <ModalBody className="flex flex-col gap-4 px-6 pb-4">
               {!hideClassroomAndSubject ? (
                 <div className="flex min-w-0 flex-col gap-2">
                   {subjectName != null ? (

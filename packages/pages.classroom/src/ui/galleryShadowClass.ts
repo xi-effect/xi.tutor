@@ -6,7 +6,7 @@ export const galleryShadowPadClass = 'px-2 pt-2 pb-4';
 export const galleryShadowHeaderInsetClass = 'px-2';
 
 export const galleryInvoiceCardClass =
-  'h-full w-full min-w-0 flex-none bg-background-surface border-0 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)] hover:border-transparent';
+  'h-[156px] w-full min-w-0 flex-none bg-background-surface border-0 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)] hover:border-transparent';
 
 export const startLessonCardButtonClass =
   'bg-status-info-background hover:bg-status-info-background/80 h-8 w-full rounded-lg';

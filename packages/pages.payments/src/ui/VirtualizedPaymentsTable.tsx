@@ -1,6 +1,7 @@
 import {
   Table,
   TableHeader,
+  TableBody,
   TableRow,
   TableHead,
   TableCell,
@@ -23,6 +24,7 @@ import { RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { EmptyPaymentsFull } from 'common.ui';
 import { Loader } from './Loader';
+import { PaymentsTableSkeleton } from './PaymentsTableSkeleton';
 import { UserRoleT } from '../../../common.api/src/types';
 import { RolePaymentT as CommonRolePaymentT } from 'common.types';
 import { GridVirtualizer } from '@xipkg/gridvirtualizer';
@@ -72,6 +74,10 @@ export const VirtualizedPaymentsTable = ({
 
   const notFoundItems = !data.length && !isLoading && !isError && !isFetchingNextPage;
   const isTutor = currentUserRole === 'tutor';
+
+  if (isLoading && !data.length) {
+    return <PaymentsTableSkeleton />;
+  }
 
   if (notFoundItems) {
     return (
@@ -174,13 +180,15 @@ export const VirtualizedPaymentsTable = ({
             defaultRowHeight={50}
             renderItem={(item) => (
               <Table className="table-fixed pr-5 pl-1">
-                <TableRow className="group hover:shadow-[0_0_0_1px_var(--xi-gray-30)]">
-                  {item.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} style={{ width: cell.column.getSize() }}>
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
+                <TableBody>
+                  <TableRow className="group hover:shadow-[0_0_0_1px_var(--xi-gray-30)]">
+                    {item.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id} style={{ width: cell.column.getSize() }}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableBody>
               </Table>
             )}
           />

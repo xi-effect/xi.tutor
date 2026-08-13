@@ -41,7 +41,7 @@ export const PaymentsList = () => {
       <WidgetCardsCarousel>
         {Array.from({ length: 3 }).map((_, i) => (
           <div key={i} className={widgetCardSlotClass}>
-            <PaymentsListSkeleton className="h-40 w-full" />
+            <PaymentsListSkeleton />
           </div>
         ))}
       </WidgetCardsCarousel>
