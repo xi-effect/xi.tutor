@@ -207,7 +207,8 @@
     "loading": "Загрузка..."
   },
   "presentation": {
-    "loading": "Загрузка..."
+    "loading": "Загрузка...",
+    "extractPage": "Извлечь слайд как изображение"
   },
   "audio": {
     "label": "Аудио",
@@ -282,6 +283,12 @@
     "pdfLimitDesc": "На доске может быть не более {{max}} PDF-объектов.",
     "pdfUploadFailed": "Не удалось загрузить PDF",
     "pdfUploadError": "Ошибка загрузки PDF",
+    "presentationFormatDesc": "Выберите файл в формате презентации (PPT, PPTX).",
+    "presentationSizeDesc": "Размер презентации не должен превышать 5 MiB (сейчас {{size}} MiB).",
+    "presentationLimitTitle": "Лимит презентаций",
+    "presentationLimitDesc": "На доске может быть не более {{max}} презентаций.",
+    "presentationUploadFailed": "Не удалось загрузить презентацию",
+    "presentationUploadError": "Ошибка загрузки презентации",
     "audioFormatDesc": "Выберите аудиофайл (MP3, OGG, WAV, AAC, FLAC и др.).",
     "audioInvalidFormat": "Неверный формат файла",
     "audioInvalidFormatDesc": "Содержимое файла не соответствует заявленному типу аудио.",
