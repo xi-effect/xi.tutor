@@ -90,14 +90,9 @@ export const Header = () => {
     }
   };
 
-  useEffect(() => {
-    if (isEditMode) {
-      nameInputRef.current?.focus();
-    }
-  }, [isEditMode]);
-
   const startEditing = () => {
-    if (!isTutor || isUpdating) return;
+    if (isUpdating) return;
+    nameInputRef.current?.focus();
     setNameValue(material?.name || '');
     setIsEditMode(true);
   };
@@ -150,7 +145,8 @@ export const Header = () => {
       >
         <div
           className={cn(
-            `${boardPanelClass} pointer-events-auto flex items-center gap-1`,
+            boardPanelClass,
+            'pointer-events-auto flex items-center gap-1',
             isEditMode ? 'p-0 pl-1' : 'p-1',
           )}
         >
@@ -161,7 +157,7 @@ export const Header = () => {
             className="hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 focus:bg-transparent lg:h-8 lg:w-8 lg:rounded-xl"
             data-umami-event="board-back"
           >
-            <ArrowLeft size="s" className={`h-4 w-4 lg:h-6 lg:w-6 ${boardIconClass}`} />
+            <ArrowLeft size="s" className={cn('h-4 w-4 lg:h-6 lg:w-6', boardIconClass)} />
           </Button>
           {isLoading ? (
             <Skeleton variant="text" className="h-6 w-24 lg:h-8" />
@@ -189,7 +185,7 @@ export const Header = () => {
                   />
                   {isUpdating && (
                     <span className="pointer-events-none absolute top-1/2 right-1 flex h-4 w-4 -translate-y-1/2 items-center justify-center">
-                      <Loader size="s" className={`h-4 w-4 animate-spin ${boardIconClass}`} />
+                      <Loader size="s" className={cn(boardIconClass, 'h-4 w-4 animate-spin')} />
                     </span>
                   )}
                   {!nameValue && (
@@ -205,9 +201,11 @@ export const Header = () => {
                     <TooltipTrigger asChild>
                       <h1
                         onClick={startEditing}
-                        className={`text-l-base xs:max-w-[150px] ${boardTextClass} flex h-6 max-w-[100px] min-w-0 items-center pr-2 select-none md:max-w-[240px] lg:h-8 ${
-                          isTutor ? 'cursor-pointer' : ''
-                        }`}
+                        className={cn(
+                          boardTextClass,
+                          isTutor ? 'cursor-pointer' : '',
+                          'text-l-base xs:max-w-[150px] ${} flex h-6 max-w-[100px] min-w-0 items-center pr-2 select-none md:max-w-[240px] lg:h-8',
+                        )}
                       >
                         <span className="block min-w-0 truncate">
                           {material?.name || t('header.emptyName')}
@@ -230,7 +228,7 @@ export const Header = () => {
                   onClick={startEditing}
                   data-umami-event="board-edit-name"
                 >
-                  <Edit size="s" className={`h-4 w-4 lg:h-6 lg:w-6 ${boardIconClass}`} />
+                  <Edit size="s" className={cn('h-4 w-4 lg:h-6 lg:w-6', boardIconClass)} />
                 </Button>
               )}
             </div>
