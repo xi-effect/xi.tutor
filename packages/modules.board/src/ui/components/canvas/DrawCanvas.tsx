@@ -41,6 +41,7 @@ import { useSearch } from '@tanstack/react-router';
 import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
 import { useTranslation } from 'react-i18next';
 import { FlipCardTool } from '../../../shapes/flipCard';
+import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
 
 export const DrawCanvas = ({
   token,
@@ -76,7 +77,7 @@ export const DrawCanvas = ({
   });
   useMiroPasteNotice({
     editor,
-    enabled: status === 'synced-remote' && !isReadonly,
+    enabled: isBoardStoreReady(status) && !isReadonly,
   });
 
   const drawComponents = useMemo(
@@ -93,7 +94,7 @@ export const DrawCanvas = ({
   useDrawClipboard(editor, token);
   useOverlayRepaintOnSelection(editor);
   useEditOnTypeForLabels(editor);
-  useBoardDeepLinkFocus({ editor, ready: status === 'synced-remote' });
+  useBoardDeepLinkFocus({ editor, ready: isBoardStoreReady(status) });
   useBoardBackgroundSync(editor);
   const { addToQueue } = useRetryFileQueue();
 
@@ -226,7 +227,7 @@ export const DrawCanvas = ({
   // Восстановление камеры пользователя при открытии доски (один раз после синка).
   // При переходе по deep link камера выставляется в useBoardDeepLinkFocus.
   useEffect(() => {
-    if (!editor || status !== 'synced-remote' || appliedInitialCameraRef.current || hasDeepLink)
+    if (!editor || !isBoardStoreReady(status) || appliedInitialCameraRef.current || hasDeepLink)
       return;
     const saved = getUserCamera();
     if (saved) {
@@ -363,7 +364,11 @@ export const DrawCanvas = ({
   if (status === 'loading') return <LoadingScreen />;
 
   return (
-    <div id="whiteboard-container" className="flex h-full w-full flex-col">
+    <div
+      id="whiteboard-container"
+      data-testid="board-canvas"
+      className="flex h-full w-full flex-col"
+    >
       {/* z-0: stacking context — внутренние z-index draw/UI не выше @xipkg/modal (z-50) */}
       <div className="relative z-0 flex-1 overflow-hidden">
         {followingPresenceId && <FollowBanner />}
@@ -400,7 +405,7 @@ export const DrawCanvas = ({
               editor.registerExternalContentHandler('files', async ({ files }) => {
                 for (const file of files) {
                   try {
-                    insertAsset(editor, file, token, addToQueue);
+                    await insertAsset(editor, file, token, addToQueue);
                   } catch (error) {
                     console.error('Ошибка при загрузке файла:', error);
                   }

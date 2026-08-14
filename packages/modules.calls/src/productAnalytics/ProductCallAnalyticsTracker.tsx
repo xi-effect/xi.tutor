@@ -21,7 +21,9 @@ import {
 import {
   beginNewConnectAttempt,
   getCallSessionAnalyticsState,
+  markConnectAttemptFailed,
   resetCallSessionAnalyticsState,
+  wasRecoveredAfterFailure,
 } from './callSessionState';
 
 const resolveLessonType = (kind?: string): ProductAnalyticsLessonType => {
@@ -159,9 +161,9 @@ export const ProductCallAnalyticsTracker = () => {
 
   const trackCallConnectionFailed = (reason: CallFailureReason, retryAvailable = true) => {
     const state = getCallSessionAnalyticsState();
-    state.hadConnectionFailure = true;
-
     const attemptId = state.currentAttemptId ?? createAttemptId();
+    markConnectAttemptFailed(attemptId);
+
     const durationMs =
       state.connectAttemptStartedAt != null
         ? measureDurationMs(state.connectAttemptStartedAt)
@@ -184,6 +186,12 @@ export const ProductCallAnalyticsTracker = () => {
     if (!token || connectionState === 'connected') return;
 
     const state = getCallSessionAnalyticsState();
+
+    // attempt_id нужен до getUserMedia в PreJoin (media_permission_requested).
+    if (!state.currentAttemptId) {
+      beginNewConnectAttempt(createAttemptId());
+    }
+
     if (state.prejoinViewedSent) return;
 
     state.prejoinViewedSent = true;
@@ -227,6 +235,7 @@ export const ProductCallAnalyticsTracker = () => {
     if (connectionState !== 'connected') return;
 
     const state = getCallSessionAnalyticsState();
+    state.inLessonMediaContext = true;
 
     if (!wasConnectedRef.current) {
       wasConnectedRef.current = true;
@@ -234,6 +243,7 @@ export const ProductCallAnalyticsTracker = () => {
 
       if (!state.callConnectedSent) {
         state.callConnectedSent = true;
+        const attemptId = state.currentAttemptId;
         const durationMs =
           state.connectAttemptStartedAt != null
             ? measureDurationMs(state.connectAttemptStartedAt)
@@ -241,12 +251,12 @@ export const ProductCallAnalyticsTracker = () => {
 
         trackProductEvent(PRODUCT_ANALYTICS_EVENTS.CALL_CONNECTED, {
           lesson_id: getLessonId(),
-          attempt_id: state.currentAttemptId ?? undefined,
+          attempt_id: attemptId ?? undefined,
           actor_role: actorRole,
           role,
           attempt_number: state.attemptNumber || 1,
           duration_ms: durationMs,
-          recovered_after_failure: state.hadConnectionFailure,
+          recovered_after_failure: wasRecoveredAfterFailure(attemptId),
           lesson_type: getLessonType(),
         });
       }

@@ -5,8 +5,50 @@ import DragHandle from '@tiptap/extension-drag-handle-react';
 import { Button } from '@xipkg/button';
 import { useTranslation } from 'react-i18next';
 import { BlockMenu } from './BlockMenu';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { ActiveBlockT } from '../../types';
+
+function getEditorContentBox(editorDom: HTMLElement) {
+  const rect = editorDom.getBoundingClientRect();
+  const styles = getComputedStyle(editorDom);
+  const paddingLeft = parseFloat(styles.paddingLeft) || 0;
+  const paddingRight = parseFloat(styles.paddingRight) || 0;
+
+  return {
+    left: rect.left + paddingLeft,
+    right: rect.right - paddingRight,
+  };
+}
+
+function getBlockDom(editor: Editor, pos: number): HTMLElement | null {
+  const nodeDom = editor.view.nodeDOM(pos);
+  if (nodeDom instanceof HTMLElement) return nodeDom;
+  if (nodeDom instanceof Node && nodeDom.parentElement) return nodeDom.parentElement;
+  return null;
+}
+
+/** Сдвигает ручку в общий gutter на величину отступа узла (списки, цитаты). */
+function snapToEditorGutter(editor: Editor) {
+  return {
+    name: 'snapToEditorGutter',
+    fn({
+      x,
+      y,
+      elements,
+    }: {
+      x: number;
+      y: number;
+      elements: { reference: { getBoundingClientRect: () => { left: number } } };
+    }) {
+      const contentLeft = getEditorContentBox(editor.view.dom).left;
+      const indent = elements.reference.getBoundingClientRect().left - contentLeft;
+
+      if (Math.abs(indent) < 1) return {};
+
+      return { x: x - indent, y };
+    },
+  };
+}
 
 type DragHandleWrapperPropsT = {
   editor: Editor;
@@ -71,14 +113,43 @@ export const DragHandleWrapper = ({
     return undefined;
   }, [editor]);
 
+  const computePositionConfig = useMemo(
+    () => ({
+      placement: 'left-start' as const,
+      strategy: 'absolute' as const,
+      middleware: [snapToEditorGutter(editor)],
+    }),
+    [editor],
+  );
+
+  const getReferencedVirtualElement = useCallback(() => {
+    const current = activeBlockRef.current;
+    if (!current || current.pos < 0) return null;
+
+    const blockDom = getBlockDom(editor, current.pos);
+    if (!blockDom) return null;
+
+    const nodeRect = blockDom.getBoundingClientRect();
+    const { left, right } = getEditorContentBox(editor.view.dom);
+
+    return {
+      contextElement: blockDom,
+      getBoundingClientRect: () =>
+        DOMRect.fromRect({
+          x: left,
+          y: nodeRect.top,
+          width: Math.max(0, right - left),
+          height: nodeRect.height,
+        }),
+    };
+  }, [editor]);
+
   return (
     <DragHandle
       editor={editor}
       className="drag-handle"
-      computePositionConfig={{
-        placement: 'left-start',
-        strategy: 'absolute',
-      }}
+      computePositionConfig={computePositionConfig}
+      getReferencedVirtualElement={getReferencedVirtualElement}
       onElementDragStart={onDragStart}
       onElementDragEnd={onDragEnd}
       nested

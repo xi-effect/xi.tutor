@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { WelcomeRolePage } from 'pages.welcome';
 
-export const Role = () => {
+const Role = () => {
   return <WelcomeRolePage />;
 };
 

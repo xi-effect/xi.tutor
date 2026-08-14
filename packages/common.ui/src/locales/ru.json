@@ -13,6 +13,8 @@
     "progress": "{{current}} из {{total}}"
   },
   "errorPage": {
+    "notFoundTitle": "Страница не\u00A0найдена",
+    "notFoundText": "В\u00A0адресе есть\u00A0ошибка или\u00A0страница удалена",
     "ifErrorRepeats": "Если ошибка повторяется — напишите",
     "aboutIt": "нам об этом",
     "in": "в",

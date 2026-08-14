@@ -1,20 +1,15 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Tabs } from '@xipkg/tabs';
-import { SwitcherAnimate } from '@xipkg/switcher-animate';
-import { useNavigate, useParams } from '@tanstack/react-router';
-import { Add, Plus } from '@xipkg/icons';
+import { useNavigate, useParams, useSearch } from '@tanstack/react-router';
+import { Plus } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
 
 import { InformationLayout } from '../Information';
-import { ClassroomScheduleProvider } from '../Calendar/ClassroomScheduleContext';
 import { CalendarScheduleToolbar } from '../Calendar/ClassroomScheduleParts';
-import { AddingLessonModal } from 'features.lesson.add';
-import type { FormData as AddingLessonFormData } from 'features.lesson.add';
 import { MaterialsAdd } from 'features.materials.add';
 import { useGetClassroom, useAddClassroomMaterials, useDeleteClassroom } from 'common.services';
-import { ConfirmDialog, switcherTabClass } from 'common.ui';
+import { ConfirmDialog } from 'common.ui';
 import { cn } from '@xipkg/utils';
-import { useCreateClassroomEvent } from 'modules.calendar';
 import { ModalStudentsGroup } from 'features.group.manage';
 import { ModalGroupInvite } from 'features.group.invite';
 import { InvoiceModal } from 'features.invoice';
@@ -22,20 +17,20 @@ import { useTranslation } from 'react-i18next';
 
 import { SharedTabsContent } from './SharedTabsContent';
 import { useTabNavigation } from './useTabNavigation';
-import { buildCreateClassroomEventRequest } from '../Calendar/schedulerMapping';
 import { ClassroomMobileActionButton } from './ClassroomMobileActionButton';
-import { ClassroomMobileTabSwitcher } from './ClassroomMobileTabSwitcher';
-
-// --- Типы ---
+import { ClassroomTabsBar } from './ClassroomTabsBar';
+import { useClassroomScheduleOptional } from '../Calendar/useClassroomSchedule';
 
 type ContentKind = 'note' | 'board';
 type StudentAccessMode = 'no_access' | 'read_only' | 'read_write';
 
-// --- TutorDesktopToolbar ---
+const primaryActionClass = '!h-8 gap-2 rounded-[10px] px-4 font-medium text-text-on-accent';
+const ghostActionClass = '!h-auto rounded-[10px] px-5 py-3 text-base leading-5 font-medium';
 
 interface TutorDesktopToolbarProps {
   currentTab: string;
   classroomKind: string | undefined;
+  materialKind: 'note' | 'board';
   onAddLessonClick: () => void;
   onOpenInvoiceModal: () => void;
   onDeleteClassroom: () => void;
@@ -45,6 +40,7 @@ interface TutorDesktopToolbarProps {
 const TutorDesktopToolbar = ({
   currentTab,
   classroomKind,
+  materialKind,
   onAddLessonClick,
   onOpenInvoiceModal,
   onDeleteClassroom,
@@ -54,12 +50,11 @@ const TutorDesktopToolbar = ({
 
   if (currentTab === 'overview' && classroomKind === 'group') {
     return (
-      <>
+      <div className="ml-auto hidden shrink-0 items-center gap-2 sm:flex">
         <ModalStudentsGroup>
           <Button
-            size="s"
             variant="ghost"
-            className="ml-auto rounded-lg"
+            className={ghostActionClass}
             data-umami-event="classroom-add-student"
           >
             {t('actions.addStudent')}
@@ -67,22 +62,21 @@ const TutorDesktopToolbar = ({
         </ModalStudentsGroup>
         <ModalGroupInvite>
           <Button
-            size="s"
             variant="ghost"
-            className="ml-1 rounded-lg"
+            className={ghostActionClass}
             data-umami-event="classroom-invite-to-group"
           >
             {t('actions.inviteToGroup')}
           </Button>
         </ModalGroupInvite>
-      </>
+      </div>
     );
   }
 
   if (currentTab === 'materials') {
     return (
-      <div className="ml-auto flex shrink-0 items-center gap-2">
-        <MaterialsAdd />
+      <div className="ml-auto hidden shrink-0 items-center gap-2 sm:flex">
+        <MaterialsAdd kind={materialKind} />
       </div>
     );
   }
@@ -93,13 +87,13 @@ const TutorDesktopToolbar = ({
         <CalendarScheduleToolbar />
         <Button
           type="button"
-          variant="none"
-          className="bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
+          variant="primary"
+          className="text-text-on-accent hidden !size-8 shrink-0 rounded-[10px] p-0 sm:inline-flex"
           onClick={onAddLessonClick}
-          data-umami-event="classroom-add-lesson"
           aria-label={t('actions.addLesson')}
+          data-umami-event="classroom-add-lesson"
         >
-          <Add className="fill-icon-brand size-6" />
+          <Plus className="fill-text-on-accent size-4 shrink-0" />
         </Button>
       </div>
     );
@@ -108,13 +102,13 @@ const TutorDesktopToolbar = ({
   if (currentTab === 'payments') {
     return (
       <Button
-        size="s"
-        className="ml-auto w-8 rounded-lg px-2 py-2 font-medium sm:w-auto sm:px-4"
+        variant="primary"
+        className={cn(primaryActionClass, 'ml-auto hidden sm:inline-flex')}
         onClick={onOpenInvoiceModal}
         data-umami-event="classroom-create-invoice"
       >
-        <span className="hidden sm:flex">{t('actions.createInvoice')}</span>
-        <Plus size="sm" className="fill-action-primary-text flex sm:hidden" />
+        <Plus className="fill-text-on-accent size-4 shrink-0" />
+        {t('actions.createInvoice')}
       </Button>
     );
   }
@@ -122,9 +116,8 @@ const TutorDesktopToolbar = ({
   if (currentTab === 'info') {
     return (
       <Button
-        size="s"
-        variant="text"
-        className="bg-status-error-background/50 text-text-danger hover:bg-status-error-background/80 hover:text-text-danger ml-auto rounded-lg"
+        variant="ghost"
+        className="bg-status-error-background/50 text-text-danger hover:bg-status-error-background/80 hover:text-text-danger ml-auto hidden !h-8 rounded-[10px] px-4 font-medium sm:inline-flex"
         onClick={onDeleteClassroom}
         disabled={isDeletingClassroom}
         data-umami-event="classroom-delete"
@@ -136,8 +129,6 @@ const TutorDesktopToolbar = ({
 
   return null;
 };
-
-// --- TabsTutor ---
 
 export const TabsTutor = () => {
   const { t } = useTranslation('classroom');
@@ -160,20 +151,16 @@ export const TabsTutor = () => {
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
   const [isStudentsModalOpen, setIsStudentsModalOpen] = useState(false);
   const [isGroupInviteModalOpen, setIsGroupInviteModalOpen] = useState(false);
-  const [addLessonOpen, setAddLessonOpen] = useState(false);
-  const [addLessonInitialDate, setAddLessonInitialDate] = useState<Date | null>(null);
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false);
 
-  const handleAddLessonClick = useCallback((date?: Date) => {
-    setAddLessonInitialDate(date ?? null);
-    setAddLessonOpen(true);
-  }, []);
+  const { onAddLessonClick } = useClassroomScheduleOptional() ?? {};
 
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
+  const search = useSearch({ from: '/(app)/_layout/classrooms/$classroomId/' });
+  const materialKind = search.tab === 'notes' ? 'note' : 'board';
   const { data: classroom } = useGetClassroom(Number(classroomId));
   const { addClassroomMaterials } = useAddClassroomMaterials();
   const { deleteClassroom, isDeleting: isDeletingClassroom } = useDeleteClassroom();
-  const createClassroomEvent = useCreateClassroomEvent();
 
   const handleDeleteClassroomClick = () => {
     setDeleteConfirmOpen(true);
@@ -214,115 +201,88 @@ export const TabsTutor = () => {
     );
   };
 
-  const handleAddLessonSubmit = async (data: AddingLessonFormData) => {
-    await createClassroomEvent.mutateAsync({
-      classroomId: Number(classroomId),
-      body: buildCreateClassroomEventRequest(data),
-      analytics: {
-        source: 'classroom',
-        lesson_type:
-          classroom?.kind === 'group'
-            ? 'group'
-            : classroom?.kind === 'individual'
-              ? 'individual'
-              : 'unknown',
-        is_recurring: data.repeatMode !== 'none',
-        has_description: Boolean(data.description?.trim()),
-      },
-    });
-  };
-
   return (
-    <ClassroomScheduleProvider onAddLessonClick={handleAddLessonClick}>
-      <div className="flex h-[calc(100vh-80px)] min-h-0 min-w-0 flex-col">
-        <Tabs.Root
-          className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 pt-2"
-          value={currentTab}
-          onValueChange={handleTabChange}
-        >
-          <div className="bg-background-surface mx-5 flex h-[56px] flex-row items-center gap-4 rounded-2xl px-2 sm:mx-10">
-            {isMobile ? (
-              <ClassroomMobileTabSwitcher
-                tabs={tabs}
-                activeTab={currentTab}
-                onChange={handleTabChange}
+    <div className="flex min-h-0 min-w-0 flex-1 flex-col">
+      <Tabs.Root
+        className="flex min-h-0 min-w-0 flex-1 flex-col"
+        value={currentTab}
+        onValueChange={handleTabChange}
+      >
+        <ClassroomTabsBar
+          tabs={tabs}
+          currentTab={currentTab}
+          onChange={handleTabChange}
+          isMobile={isMobile}
+          extra={
+            isMobile ? undefined : (
+              <TutorDesktopToolbar
+                currentTab={currentTab}
+                classroomKind={classroom?.kind}
+                materialKind={materialKind}
+                onAddLessonClick={() => onAddLessonClick?.()}
+                onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
+                onDeleteClassroom={handleDeleteClassroomClick}
+                isDeletingClassroom={isDeletingClassroom}
               />
-            ) : (
-              <>
-                <SwitcherAnimate
-                  tabs={tabs}
-                  activeTab={currentTab}
-                  onChange={handleTabChange}
-                  className="bg-background-surface flex flex-row gap-0"
-                  tabClassName={cn(switcherTabClass, 'text-m-base font-medium')}
-                />
-                <TutorDesktopToolbar
-                  currentTab={currentTab}
-                  classroomKind={classroom?.kind}
-                  onAddLessonClick={() => handleAddLessonClick()}
-                  onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
-                  onDeleteClassroom={handleDeleteClassroomClick}
-                  isDeletingClassroom={isDeletingClassroom}
-                />
-              </>
-            )}
-          </div>
-
-          <div className="bg-background-surface mb-5 ml-5 flex min-h-0 min-w-0 flex-1 flex-col rounded-l-2xl pt-0 pb-40 pl-5 sm:mb-10 sm:ml-10 sm:pb-10 sm:pl-4">
-            <SharedTabsContent
-              extraContent={
-                <Tabs.Content className="data-[state=inactive]:hidden" value="info">
-                  <InformationLayout />
-                </Tabs.Content>
-              }
-            />
-          </div>
-
-          <AddingLessonModal
-            open={addLessonOpen}
-            onOpenChange={setAddLessonOpen}
-            initialDate={addLessonInitialDate}
-            fixedClassroomId={Number(classroomId)}
-            onSubmit={handleAddLessonSubmit}
-            analyticsSource="classroom"
-          />
-
-          {isInvoiceModalOpen && (
-            <InvoiceModal open={isInvoiceModalOpen} onOpenChange={setIsInvoiceModalOpen} />
-          )}
-
-          {isMobile && (
-            <ClassroomMobileActionButton
-              currentTab={currentTab}
-              classroomKind={classroom?.kind}
-              isPendingAddMaterial={addClassroomMaterials.isPending}
-              isDeletingClassroom={isDeletingClassroom}
-              isStudentsModalOpen={isStudentsModalOpen}
-              isGroupInviteModalOpen={isGroupInviteModalOpen}
-              onAddMaterial={handleAddMaterial}
-              onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
-              onDeleteClassroom={handleDeleteClassroomClick}
-              onStudentsModalChange={setIsStudentsModalOpen}
-              onGroupInviteModalChange={setIsGroupInviteModalOpen}
-            />
-          )}
-        </Tabs.Root>
-
-        <ConfirmDialog
-          open={deleteConfirmOpen}
-          onOpenChange={setDeleteConfirmOpen}
-          title={t('actions.deleteClassroomConfirmTitle')}
-          description={t('actions.deleteClassroomConfirmDescription', {
-            name: classroom?.name ?? '',
-          })}
-          confirmLabel={
-            isDeletingClassroom ? t('actions.deleting') : t('actions.deleteClassroomConfirmAction')
+            )
           }
-          cancelLabel={t('actions.deleteClassroomConfirmCancel')}
-          onConfirm={handleConfirmDeleteClassroom}
-          isPending={isDeletingClassroom}
         />
-      </div>
-    </ClassroomScheduleProvider>
+
+        <div
+          className={cn(
+            'xs:min-h-0 mt-4 flex min-h-[calc(100dvh-272px)] min-w-0 flex-1 flex-col overflow-hidden pl-5 sm:mt-6 sm:pl-8 md:pl-10',
+            currentTab === 'overview' || currentTab === 'payments' || currentTab === 'materials'
+              ? 'pr-0 pb-0'
+              : 'pr-5 pb-5 sm:pr-8 sm:pb-8 md:pr-10',
+          )}
+        >
+          <SharedTabsContent
+            extraContent={
+              <Tabs.Content
+                className="flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain data-[state=inactive]:hidden"
+                value="info"
+              >
+                <InformationLayout />
+              </Tabs.Content>
+            }
+          />
+        </div>
+
+        {isInvoiceModalOpen && (
+          <InvoiceModal open={isInvoiceModalOpen} onOpenChange={setIsInvoiceModalOpen} />
+        )}
+
+        {isMobile && (
+          <ClassroomMobileActionButton
+            currentTab={currentTab}
+            classroomKind={classroom?.kind}
+            isPendingAddMaterial={addClassroomMaterials.isPending}
+            isDeletingClassroom={isDeletingClassroom}
+            isStudentsModalOpen={isStudentsModalOpen}
+            isGroupInviteModalOpen={isGroupInviteModalOpen}
+            onAddMaterial={handleAddMaterial}
+            onOpenInvoiceModal={() => setIsInvoiceModalOpen(true)}
+            onDeleteClassroom={handleDeleteClassroomClick}
+            onStudentsModalChange={setIsStudentsModalOpen}
+            onGroupInviteModalChange={setIsGroupInviteModalOpen}
+          />
+        )}
+      </Tabs.Root>
+
+      <ConfirmDialog
+        open={deleteConfirmOpen}
+        onOpenChange={setDeleteConfirmOpen}
+        title={t('actions.deleteClassroomConfirmTitle')}
+        description={t('actions.deleteClassroomConfirmDescription', {
+          name: classroom?.name ?? '',
+        })}
+        confirmLabel={
+          isDeletingClassroom ? t('actions.deleting') : t('actions.deleteClassroomConfirmAction')
+        }
+        cancelLabel={t('actions.deleteClassroomConfirmCancel')}
+        onConfirm={handleConfirmDeleteClassroom}
+        isPending={isDeletingClassroom}
+      />
+    </div>
   );
 };

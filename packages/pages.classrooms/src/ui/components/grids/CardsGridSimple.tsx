@@ -1,9 +1,14 @@
+import { RefObject } from 'react';
 import { useCurrentUser } from 'common.services';
 import { CardsGridTutor } from './CardsGridTutor';
 import { CardsGridStudent } from './CardsGridStudent';
 import { CardsGridSkeleton } from './CardsGridSkeleton';
 
-export const CardsGridSimple = () => {
+type CardsGridSimpleProps = {
+  parentRef: RefObject<HTMLDivElement | null>;
+};
+
+export const CardsGridSimple = ({ parentRef }: CardsGridSimpleProps) => {
   const { data: user, isLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
@@ -12,8 +17,8 @@ export const CardsGridSimple = () => {
   }
 
   if (isTutor) {
-    return <CardsGridTutor />;
+    return <CardsGridTutor parentRef={parentRef} />;
   }
 
-  return <CardsGridStudent />;
+  return <CardsGridStudent parentRef={parentRef} />;
 };

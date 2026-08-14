@@ -9,7 +9,7 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { MenuDots, Link } from '@xipkg/icons';
+import { MenuDots, Link, ArrowRight } from '@xipkg/icons';
 import { cn } from '@xipkg/utils';
 import { exportAs, useEditor } from '@ibodr/draw';
 import {
@@ -26,6 +26,8 @@ import { isMac } from '../../../utils';
 import { PNG_EXPORT_PIXEL_RATIO } from '../../../utils/shapeSvgExport';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
+import { useState } from 'react';
+import { BoardDrawer, boardDrawerRowClass, useBoardIsMobile } from '../shared';
 
 const altKey = isMac ? '⌥' : 'Alt';
 
@@ -51,6 +53,9 @@ function MenuItemWithShortcut({
 
 export const MoreActionsMenu = () => {
   const { t } = useTranslation('board');
+  const isMobile = useBoardIsMobile();
+  const [open, setOpen] = useState(false);
+  const [view, setView] = useState<'root' | 'download' | 'reorder'>('root');
   const editor = useEditor();
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
@@ -134,6 +139,222 @@ export const MoreActionsMenu = () => {
   const hasTutorItems = isTutor && (!!selectedPdf || !!selectedAudio);
 
   if (selectedIds.length === 0) return null;
+
+  const trigger = (
+    <Button
+      variant="none"
+      size="s"
+      className="hover:bg-status-info-background p-1"
+      onClick={isMobile ? () => setOpen(true) : undefined}
+    >
+      <MenuDots className={`rotate-90 ${boardIconClass}`} />
+    </Button>
+  );
+
+  if (isMobile) {
+    const title =
+      view === 'download'
+        ? t('toolbar.downloadAs')
+        : view === 'reorder'
+          ? t('toolbar.reorder')
+          : t('navbar.more');
+
+    return (
+      <>
+        {trigger}
+        <BoardDrawer
+          open={open}
+          onOpenChange={(next) => {
+            setOpen(next);
+            if (!next) setView('root');
+          }}
+          title={title}
+          onBack={view === 'root' ? undefined : () => setView('root')}
+        >
+          {view === 'root' && (
+            <div className="flex flex-col gap-3">
+              <button
+                type="button"
+                className={boardDrawerRowClass}
+                onClick={() => {
+                  void copyDeepLink();
+                  setOpen(false);
+                }}
+              >
+                <Link className={`size-4 ${boardIconClass}`} />
+                <span className="text-text-primary text-sm font-medium">
+                  {t('toolbar.copyLink')}
+                </span>
+              </button>
+              <button
+                type="button"
+                className={boardDrawerRowClass}
+                onClick={() => setView('download')}
+              >
+                <span className="text-text-primary min-w-0 flex-1 text-sm font-medium">
+                  {t('toolbar.downloadAs')}
+                </span>
+                <ArrowRight className="fill-icon-secondary size-4 shrink-0" />
+              </button>
+              <button
+                type="button"
+                className={boardDrawerRowClass}
+                onClick={() => setView('reorder')}
+              >
+                <span className="text-text-primary min-w-0 flex-1 text-sm font-medium">
+                  {t('toolbar.reorder')}
+                </span>
+                <ArrowRight className="fill-icon-secondary size-4 shrink-0" />
+              </button>
+              {hasTutorItems && isTutor && selectedPdf && (
+                <button
+                  type="button"
+                  className={boardDrawerRowClass}
+                  onClick={handleToggleStudentFlip}
+                >
+                  <span className="text-text-primary text-sm font-medium">
+                    {selectedPdf.props.studentCanFlip
+                      ? t('toolbar.restrictFlip')
+                      : t('toolbar.allowFlip')}
+                  </span>
+                </button>
+              )}
+              {hasTutorItems && isTutor && selectedAudio && (
+                <>
+                  <button
+                    type="button"
+                    className={boardDrawerRowClass}
+                    onClick={handleToggleSyncPlayback}
+                  >
+                    <span className="text-text-primary text-sm font-medium">
+                      {selectedAudio.props.syncPlayback
+                        ? t('toolbar.localPlayback')
+                        : t('toolbar.syncPlayback')}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className={boardDrawerRowClass}
+                    onClick={handleToggleStudentsCanAddTimecodes}
+                  >
+                    <span className="text-text-primary text-sm font-medium">
+                      {selectedAudio.props.studentsCanAddTimecodes
+                        ? t('toolbar.forbidStudentTimecodes')
+                        : t('toolbar.allowStudentTimecodes')}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className={boardDrawerRowClass}
+                    onClick={handleToggleTimecodesVisibleByDefault}
+                  >
+                    <span className="text-text-primary text-sm font-medium">
+                      {selectedAudio.props.timecodesVisibleByDefault
+                        ? t('toolbar.hideNewTimecodes')
+                        : t('toolbar.showNewTimecodes')}
+                    </span>
+                  </button>
+                  {selectedAudio.props.syncPlayback && (
+                    <button
+                      type="button"
+                      className={boardDrawerRowClass}
+                      onClick={handleToggleStudentsCanControlPlayback}
+                    >
+                      <span className="text-text-primary text-sm font-medium">
+                        {selectedAudio.props.studentsCanControlPlayback
+                          ? t('toolbar.forbidControl')
+                          : t('toolbar.allowControl')}
+                      </span>
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
+          )}
+          {view === 'download' && (
+            <div className="flex flex-col gap-3">
+              <button
+                type="button"
+                className={boardDrawerRowClass}
+                onClick={() => {
+                  void handleExportSelection('png');
+                  setOpen(false);
+                }}
+              >
+                <span className="text-text-primary text-sm font-medium">
+                  {t('toolbar.downloadPng')}
+                </span>
+              </button>
+              <button
+                type="button"
+                className={boardDrawerRowClass}
+                onClick={() => {
+                  void handleExportSelection('svg');
+                  setOpen(false);
+                }}
+              >
+                <span className="text-text-primary text-sm font-medium">
+                  {t('toolbar.downloadSvg')}
+                </span>
+              </button>
+            </div>
+          )}
+          {view === 'reorder' && (
+            <div className="flex flex-col gap-3">
+              <button
+                type="button"
+                className={boardDrawerRowClass}
+                onClick={() => {
+                  editor.bringToFront(selectedIds);
+                  setOpen(false);
+                }}
+              >
+                <span className="text-text-primary text-sm font-medium">
+                  {t('toolbar.bringToFront')}
+                </span>
+              </button>
+              <button
+                type="button"
+                className={boardDrawerRowClass}
+                onClick={() => {
+                  editor.bringForward(selectedIds);
+                  setOpen(false);
+                }}
+              >
+                <span className="text-text-primary text-sm font-medium">
+                  {t('toolbar.bringForward')}
+                </span>
+              </button>
+              <button
+                type="button"
+                className={boardDrawerRowClass}
+                onClick={() => {
+                  editor.sendBackward(selectedIds);
+                  setOpen(false);
+                }}
+              >
+                <span className="text-text-primary text-sm font-medium">
+                  {t('toolbar.sendBackward')}
+                </span>
+              </button>
+              <button
+                type="button"
+                className={boardDrawerRowClass}
+                onClick={() => {
+                  editor.sendToBack(selectedIds);
+                  setOpen(false);
+                }}
+              >
+                <span className="text-text-primary text-sm font-medium">
+                  {t('toolbar.sendToBack')}
+                </span>
+              </button>
+            </div>
+          )}
+        </BoardDrawer>
+      </>
+    );
+  }
 
   return (
     <DropdownMenu>

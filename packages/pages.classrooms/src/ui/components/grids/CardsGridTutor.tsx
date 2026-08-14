@@ -1,13 +1,15 @@
-import { useRef } from 'react';
+import { RefObject } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useInfiniteQuery } from '../../../hooks';
 import { CardsGrid } from './CardsGrid';
 
-export const CardsGridTutor = () => {
-  const { t } = useTranslation('classrooms');
-  const parentRef = useRef<HTMLDivElement>(null);
+type CardsGridTutorProps = {
+  parentRef: RefObject<HTMLDivElement | null>;
+};
 
-  // Используем бесконечный запрос с реальным API для репетитора
+export const CardsGridTutor = ({ parentRef }: CardsGridTutorProps) => {
+  const { t } = useTranslation('classrooms');
+
   const { items, isLoading, isError, isFetchingNextPage, hasNextPage, fetchNextPage } =
     useInfiniteQuery();
 

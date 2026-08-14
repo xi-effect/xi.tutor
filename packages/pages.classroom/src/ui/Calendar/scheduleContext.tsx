@@ -1,47 +1,13 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useLayoutEffect,
-  useMemo,
-  useRef,
-  useState,
-  type ReactNode,
-} from 'react';
+import { useCallback, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { startOfDay } from 'date-fns';
 import type { ICalendarEvent } from 'modules.calendar';
 import { useCalendar } from 'modules.calendar';
+import { ClassroomScheduleContext } from './classroomScheduleCtx';
 import {
   parseScheduleAnchorFromSearch,
   useClassroomScheduleDeepLink,
 } from './useClassroomScheduleDeepLink';
 import { useClassroomScheduleSearch } from './useClassroomScheduleSearch';
-
-type ClassroomScheduleContextValue = {
-  weekDays: Date[];
-  weekStart: Date;
-  visibleDays: Date[];
-  visibleDayCount: number;
-  setVisibleCount: (count: number) => void;
-  goToPrev: (count: number) => void;
-  goToNext: (count: number) => void;
-  goToWeekStart: (date: Date) => void;
-  goToVisibleWindowForDate: (date: Date, visibleCount: number) => void;
-  /** Переход к окну, начинающемуся с указанной даты — для диплинков (без округления до пн) */
-  goToDay: (date: Date) => void;
-  onAddLessonClick?: (date?: Date) => void;
-  /** Событие из API — открыть в модалке немедленно */
-  pendingEventToOpen: ICalendarEvent | null;
-  /** Дата занятия — переключить неделю */
-  pendingAnchorDate: Date | null;
-  /** Меняется при каждом диплинке — чтобы goToDay сработал повторно */
-  pendingAnchorToken: number;
-  acknowledgePendingLessonOpen: () => void;
-  acknowledgeAnchorNavigation: () => void;
-  mobileScheduleAnchorTs: number | null;
-};
-
-const ClassroomScheduleContext = createContext<ClassroomScheduleContextValue | null>(null);
 
 function resolveDeepLinkAnchorDate(
   pendingAnchorDate: Date | null,
@@ -57,22 +23,6 @@ function resolveDeepLinkAnchorDate(
   }
   return null;
 }
-
-// eslint-disable-next-line react-refresh/only-export-components -- хук и провайдер в одном модуле
-export const useClassroomSchedule = () => {
-  const ctx = useContext(ClassroomScheduleContext);
-  if (!ctx) {
-    throw new Error('useClassroomSchedule must be used within ClassroomScheduleProvider');
-  }
-  return ctx;
-};
-
-/**
- * Безопасный вариант для компонентов, которые могут рендериться в момент
- * монтирования/размонтирования провайдера (например, вне вкладки Расписания).
- */
-// eslint-disable-next-line react-refresh/only-export-components
-export const useClassroomScheduleOptional = () => useContext(ClassroomScheduleContext);
 
 type ClassroomScheduleProviderProps = {
   children: ReactNode;

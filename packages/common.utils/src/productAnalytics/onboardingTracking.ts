@@ -4,9 +4,11 @@ import { getOnboardingStepMeta } from './onboardingSteps';
 import { getProductAnalyticsRole } from './roles';
 import { trackOnce } from './once';
 import { trackProductEvent } from './umami';
+import { getActivationFlowId, getOrCreateActivationFlowId } from './activationFlowId';
 import type { OnboardingSkipReason, OnboardingStepFailReason, OnboardingStepName } from './types';
 
 const ONBOARDING_STARTED_AT_KEY = 'onboarding_started_at_ms';
+const ONBOARDING_STARTED_FLOW_PREFIX = 'pa_onboarding_started:';
 
 export type OnboardingAnalyticsRole = 'tutor' | 'student' | 'unknown';
 
@@ -24,6 +26,52 @@ export function markOnboardingStartedAt(): void {
   } catch {
     // ignore
   }
+}
+
+function hasOnboardingStartedForFlow(flowId: string): boolean {
+  if (typeof window === 'undefined') return false;
+  try {
+    return Boolean(localStorage.getItem(`${ONBOARDING_STARTED_FLOW_PREFIX}${flowId}`));
+  } catch {
+    return false;
+  }
+}
+
+function markOnboardingStartedForFlow(flowId: string): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(`${ONBOARDING_STARTED_FLOW_PREFIX}${flowId}`, '1');
+  } catch {
+    // ignore
+  }
+}
+
+/**
+ * Один activation_flow_id → максимум один onboarding_started.
+ * Защита от remount / Strict Mode / повторных useEffect и переходов между шагами.
+ */
+export function trackOnboardingStarted(
+  userRole: OnboardingAnalyticsRole,
+  onboardingStage?: string,
+): boolean {
+  const flowId = getActivationFlowId() ?? getOrCreateActivationFlowId();
+  const onceKey = `onboarding_started:${flowId}`;
+
+  if (hasOnboardingStartedForFlow(flowId)) {
+    // Синхронизируем in-memory once, чтобы повторные вызовы в этой вкладке были no-op.
+    trackOnce(onceKey, () => undefined);
+    return false;
+  }
+
+  return trackOnce(onceKey, () => {
+    markOnboardingStartedForFlow(flowId);
+    markOnboardingStartedAt();
+    trackProductEvent(PRODUCT_ANALYTICS_EVENTS.ONBOARDING_STARTED, {
+      activation_flow_id: flowId,
+      user_role: userRole,
+      onboarding_stage: onboardingStage,
+    });
+  });
 }
 
 export function getOnboardingDurationMs(): number | undefined {

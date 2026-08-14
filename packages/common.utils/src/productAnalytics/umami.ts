@@ -33,10 +33,21 @@ function sanitizeUmamiPayload(
   for (const [key, value] of Object.entries(payload)) {
     if (value === null || value === undefined) continue;
     if (FORBIDDEN_ANALYTICS_FIELDS.has(key)) continue;
-    if (typeof value === 'object') continue;
 
     if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') {
       result[key] = value;
+      continue;
+    }
+
+    // Umami принимает только примитивы: enum-массивы сериализуем через запятую.
+    if (Array.isArray(value)) {
+      const items = value.filter(
+        (item): item is string | number | boolean =>
+          typeof item === 'string' || typeof item === 'number' || typeof item === 'boolean',
+      );
+      if (items.length > 0) {
+        result[key] = items.join(',');
+      }
     }
   }
 

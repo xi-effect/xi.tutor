@@ -26,7 +26,7 @@ test.describe('Signup', () => {
     await expect(page.getByText(/Минимум/)).toBeVisible();
   });
 
-  test('кнопка недоступна без consent', async ({ page }) => {
+  test('показывает ошибку, если нет consent', async ({ page }) => {
     await page.goto('/signup');
     await fillSignupForm(page, {
       username: 'valid_user',
@@ -34,10 +34,20 @@ test.describe('Signup', () => {
       password: 'secret1',
     });
 
-    await expect(page.getByRole('button', { name: 'Создать аккаунт' })).toBeDisabled();
+    await submitSignup(page);
+
+    await expect(
+      page
+        .locator('[id$="-form-item-message"]')
+        .filter({ hasText: 'Отметьте, что принимаете условия' }),
+    ).toBeVisible();
 
     await acceptSignupConsent(page);
-    await expect(page.getByRole('button', { name: 'Создать аккаунт' })).toBeEnabled();
+    await expect(
+      page
+        .locator('[id$="-form-item-message"]')
+        .filter({ hasText: 'Отметьте, что принимаете условия' }),
+    ).toBeHidden();
   });
 
   test('показывает ошибку, если username занят', async ({ page }) => {

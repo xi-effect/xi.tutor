@@ -17,7 +17,7 @@ import { ToolbarOptionsPanel } from './ToolbarOptionsPanel';
 import { useCloseToolbarPanel } from './useCloseToolbarPanel';
 import { useDrawStore } from '../../../store';
 import { useDrawStyles, useHotkeys } from '../../../hooks';
-import { NavbarButton } from '../shared';
+import { BoardDrawer, boardDrawerRowClass, NavbarButton, useBoardIsMobile } from '../shared';
 import { initFileDB, useRetryFileQueue } from 'common.services';
 import {
   boardChromeZClass,
@@ -28,7 +28,7 @@ import {
 } from '../../boardTheme';
 import { EmojiStickerStyle, EmojiStyle } from '../../../shapes/shapeStyles';
 import { insertAsset } from '../../../utils/uploadAsset';
-import { ALL_ALLOWED_TYPES } from '../../../constants/mimeTypes';
+import { getBoardFileInputAccept } from '../../../constants/mimeTypes';
 import { stickers } from '../../../config';
 import { useTranslation } from 'react-i18next';
 
@@ -74,6 +74,8 @@ export const Navbar = track(
     token: string;
   }) => {
     const { t } = useTranslation('board');
+    const isMobile = useBoardIsMobile();
+    const [moreMenuOpen, setMoreMenuOpen] = React.useState(false);
     const {
       pencilColor,
       pencilThickness,
@@ -158,7 +160,7 @@ export const Navbar = track(
       if (toolName === 'asset') {
         const input = document.createElement('input');
         input.type = 'file';
-        input.accept = ALL_ALLOWED_TYPES.toString();
+        input.accept = getBoardFileInputAccept();
         input.multiple = true;
 
         input.onchange = async (e) => {
@@ -166,7 +168,7 @@ export const Navbar = track(
           if (files) {
             for (const file of files) {
               try {
-                insertAsset(editor, file, token, addToQueue);
+                await insertAsset(editor, file, token, addToQueue);
               } catch (error) {
                 console.error('Ошибка при загрузке файла:', error);
               }
@@ -209,6 +211,7 @@ export const Navbar = track(
       editor.selectNone();
       editor.setCurrentTool('coordinate-axes');
       setActivePopup(null);
+      setMoreMenuOpen(false);
     };
 
     const handleInsertFlipCard = () => {
@@ -237,6 +240,7 @@ export const Navbar = track(
                   icon={item.icon}
                   title={item.title}
                   isActive={isActive}
+                  data-board-tool={item.action}
                   onClick={() => handleSelectTool(item.action)}
                 />
               </TooltipTrigger>
@@ -253,6 +257,7 @@ export const Navbar = track(
           icon={item.icon}
           title={item.title}
           isActive={isActive}
+          data-board-tool={item.action}
           onClick={() => handleSelectTool(item.action)}
         />
       );
@@ -269,12 +274,39 @@ export const Navbar = track(
       },
       {
         key: MORE_MENU_ACTION,
-        node: (
+        node: isMobile ? (
+          <>
+            <NavbarButton
+              icon={<MenuDots className={cn('rotate-90', boardToolbarIconClass)} />}
+              title={t('navbar.more')}
+              isActive={moreMenuOpen}
+              data-board-tool="more-menu"
+              onClick={() => setMoreMenuOpen(true)}
+            />
+            <BoardDrawer
+              open={moreMenuOpen}
+              onOpenChange={setMoreMenuOpen}
+              title={t('navbar.more')}
+            >
+              <button
+                type="button"
+                className={boardDrawerRowClass}
+                onClick={handleInsertCoordinateAxes}
+              >
+                <span className="text-text-primary text-sm font-medium">
+                  {t('navbar.coordinateAxes')}
+                </span>
+              </button>
+            </BoardDrawer>
+          </>
+        ) : (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <NavbarButton
                 icon={<MenuDots className={cn('rotate-90', boardToolbarIconClass)} />}
+                title={t('navbar.more')}
                 isActive={false}
+                data-board-tool="more-menu"
               />
             </DropdownMenuTrigger>
             <DropdownMenuContent
@@ -350,6 +382,7 @@ export const Navbar = track(
                   editor.setCurrentTool('emoji-sticker');
                   setActivePopup(null);
                 }}
+                onClose={closeToolbarPanel}
               />
               <div className="hidden items-center gap-1 p-1 sm:flex">
                 {toolbarSlides.map(({ key, node }) => (

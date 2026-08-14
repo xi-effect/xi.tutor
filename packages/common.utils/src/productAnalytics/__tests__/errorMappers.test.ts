@@ -6,6 +6,7 @@ import {
   mapInviteError,
   mapLessonCreateError,
   mapPermissionError,
+  mapSigninError,
   mapSignupError,
   mapSignupValidationErrors,
 } from '../errorMappers';
@@ -38,23 +39,46 @@ describe('mapSignupError', () => {
   });
 });
 
+describe('mapSigninError', () => {
+  it('мапит известные backend detail без произвольного error.message', () => {
+    expect(mapSigninError(httpError(401, 'User not found'))).toBe('user_not_found');
+    expect(mapSigninError(httpError(401, 'Wrong password'))).toBe('invalid_credentials');
+    expect(mapSigninError(httpError(401, 'Other'))).toBe('invalid_credentials');
+    expect(mapSigninError(httpError(500))).toBe('server_error');
+    expect(mapSigninError({ code: 'ERR_NETWORK', message: 'Network Error' })).toBe('network_error');
+    expect(mapSigninError({})).toBe('network_error');
+  });
+});
+
 describe('mapSignupValidationErrors', () => {
-  it('мапит одиночные и множественные поля', () => {
+  it('мапит одиночные и множественные поля в failed_fields', () => {
     expect(mapSignupValidationErrors({ email: { type: 'invalid_string' } })).toEqual({
+      failed_fields: ['email'],
       reason: 'invalid_email',
       field: 'email',
     });
     expect(mapSignupValidationErrors({ password: { type: 'too_small' } })).toEqual({
+      failed_fields: ['password'],
       reason: 'weak_password',
       field: 'password',
     });
     expect(mapSignupValidationErrors({ consent: { type: 'required' } })).toEqual({
+      failed_fields: ['terms'],
       reason: 'terms_not_accepted',
       field: 'terms',
     });
+    expect(mapSignupValidationErrors({ username: { type: 'too_small' } })).toEqual({
+      failed_fields: ['username'],
+      reason: 'required_field',
+      field: 'name',
+    });
     expect(
       mapSignupValidationErrors({ email: { type: 'required' }, password: { type: 'required' } }),
-    ).toEqual({ reason: 'multiple_fields', field: 'multiple' });
+    ).toEqual({
+      failed_fields: ['email', 'password'],
+      reason: 'multiple_fields',
+      field: 'multiple',
+    });
   });
 });
 

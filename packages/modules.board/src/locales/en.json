@@ -30,7 +30,11 @@
     "zoomReset": "Reset zoom",
     "zoomFit": "Zoom to fit"
   },
+  "menu": {
+    "back": "Back"
+  },
   "settings": {
+    "menuTitle": "Board settings",
     "resumeBoard": "Resume board editing",
     "pauseBoard": "Pause board editing",
     "hideComments": "Hide comments",
@@ -105,7 +109,8 @@
     "emoji": "Emoji",
     "uploadFile": "Upload file. Photos: up to 1 MB. PDF, audio and other files: up to 5 MB.",
     "coordinateAxes": "Coordinate axes",
-    "flipCard": "Flip card"
+    "flipCard": "Flip card",
+    "more": "More"
   },
   "timer": {
     "pause": "Pause",

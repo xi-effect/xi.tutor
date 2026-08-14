@@ -15,6 +15,7 @@ import { UserRoleT } from 'common.api';
 import { MobileTutorActionButton } from 'features.invites';
 import { ModalTemplate } from './Templates';
 import { cn, useMediaQuery } from '@xipkg/utils';
+import { NotFoundPage, isNotFoundHttpError } from 'common.ui';
 
 export const PaymentsPage = () => {
   const [isInvoiceModalOpen, setIsInvoiceModalOpen] = useState(false);
@@ -68,11 +69,13 @@ export const PaymentsPage = () => {
     data: recipientInvoiceDataByTutor,
     isLoading: isLoadingTutor,
     isError: isErrorTutor,
+    error: errorTutor,
   } = useGetRecipientInvoiceByTutor(recipientInvoiceId || 0, !recipientInvoiceId || !isTutor);
   const {
     data: recipientInvoiceDataByStudent,
     isLoading: isLoadingStudent,
     isError: isErrorStudent,
+    error: errorStudent,
   } = useGetRecipientInvoiceByStudent(recipientInvoiceId || 0, !recipientInvoiceId || isTutor);
 
   const recipientInvoiceData = isTutor
@@ -80,6 +83,7 @@ export const PaymentsPage = () => {
     : recipientInvoiceDataByStudent;
   const isLoading = isTutor ? isLoadingTutor : isLoadingStudent;
   const isError = isTutor ? isErrorTutor : isErrorStudent;
+  const invoiceError = isTutor ? errorTutor : errorStudent;
 
   const removeRecipientInvoiceIdFromUrl = useCallback(() => {
     const newSearch: Record<string, string | undefined> = { ...search };
@@ -178,6 +182,10 @@ export const PaymentsPage = () => {
     },
     [],
   );
+
+  if (recipientInvoiceId && isError && isNotFoundHttpError(invoiceError)) {
+    return <NotFoundPage withLogo={false} />;
+  }
 
   return (
     <div

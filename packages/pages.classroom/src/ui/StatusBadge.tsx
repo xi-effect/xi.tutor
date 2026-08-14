@@ -12,8 +12,7 @@ type StatusBadgePropsT = {
   deleted?: boolean;
 };
 
-const styles =
-  'min-w-0 max-w-full rounded-lg border-none px-2 py-1 font-medium text-s-base sm:shrink-0 max-sm:flex max-sm:w-full max-sm:items-center max-sm:justify-center';
+const styles = 'min-w-0 shrink-0 rounded-lg border-none px-2 py-1 font-medium text-s-base';
 
 export const StatusBadge = ({ status, deleted }: StatusBadgePropsT) => {
   const { data: user } = useCurrentUser();

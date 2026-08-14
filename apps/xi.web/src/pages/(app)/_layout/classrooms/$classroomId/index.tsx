@@ -6,7 +6,7 @@ import { Suspense, lazy } from 'react';
 import { z } from 'zod';
 
 const ClassroomPage = lazy(() =>
-  import('pages.classroom').then((module) => ({ default: module.ClassroomPage })),
+  import('pages.classroom').then((mod) => ({ default: mod.ClassroomPage })),
 );
 
 const paramsSchema = z.object({

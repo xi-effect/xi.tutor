@@ -1,7 +1,19 @@
-export const EmptyDataState = ({ title }: { title: string }) => {
+import { EmptyMaterials } from 'common.ui';
+import { SectionEmptyState } from '../../SectionEmptyState';
+import { sectionEmptyStateIllustrationClass } from '../../sectionEmptyStateIllustrationClass';
+
+type EmptyDataStateProps = {
+  title: string;
+  description?: string;
+};
+
+export const EmptyDataState = ({ title, description }: EmptyDataStateProps) => {
   return (
-    <div className="flex h-[150px] w-full items-center justify-center">
-      <p className="text-text-muted">{title}</p>
-    </div>
+    <SectionEmptyState
+      title={title}
+      description={description}
+      minHeightClass="min-h-[160px]"
+      illustration={<EmptyMaterials className={sectionEmptyStateIllustrationClass} />}
+    />
   );
 };

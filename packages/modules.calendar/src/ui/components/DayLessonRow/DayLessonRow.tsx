@@ -44,6 +44,11 @@ type DayLessonRowProps = {
   showActions?: boolean;
   /** Синяя рамка «предстоящее / текущее» — только у ближайшего к моменту просмотра занятия в списке */
   isNearestLesson?: boolean;
+  /**
+   * `list` — строки с разделителем (панель дня);
+   * `card` — отдельная карточка как на странице расписания
+   */
+  variant?: 'list' | 'card';
   /** Календарный день списка — для расчёта окончания слота, если нет `lesson.startAt` */
   lessonDay?: Date;
   onReschedule?: (lesson: ScheduleLessonRow) => void;
@@ -54,6 +59,7 @@ export const DayLessonRow = ({
   lesson,
   showActions = false,
   isNearestLesson = false,
+  variant = 'list',
   lessonDay,
   onReschedule,
   onSaveLesson,
@@ -93,9 +99,22 @@ export const DayLessonRow = ({
     <div
       ref={rowRef}
       className={cn(
-        'border-border-default relative flex min-h-[136px] shrink-0 flex-row items-stretch gap-4 overflow-hidden p-4 pb-3.5 transition-[padding] duration-200 ease-linear',
-        showTutorIconColumn && 'group/day-lesson pr-14 lg:pr-4 lg:hover:pr-14',
-        isNearestLesson ? 'border-border-focus rounded-2xl border-2' : 'border-b last:border-b-0',
+        'relative flex min-h-[136px] shrink-0 flex-row items-stretch gap-4 overflow-hidden transition-[padding] duration-200 ease-linear',
+        showTutorIconColumn &&
+          (variant === 'card'
+            ? 'group/day-lesson'
+            : 'group/day-lesson pr-14 lg:pr-4 lg:hover:pr-14'),
+        variant === 'card'
+          ? cn(
+              'bg-background-surface rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]',
+              isNearestLesson && 'border-border-focus border-2',
+            )
+          : cn(
+              'border-border-default p-4 pb-3.5',
+              isNearestLesson
+                ? 'border-border-focus rounded-2xl border-2'
+                : 'border-b last:border-b-0',
+            ),
       )}
     >
       <div className="flex shrink-0 flex-col">
@@ -116,7 +135,8 @@ export const DayLessonRow = ({
                 'focus-visible:ring-border-focus focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none',
                 // overflow только для блока с метой+аватаром; иначе ломаем line-clamp и режем по середине строки
                 !showLessonDescription && 'overflow-hidden',
-                showTutorIconColumn && ['pr-4 lg:pr-0', gHover.pr4],
+                showTutorIconColumn &&
+                  (variant === 'card' ? 'pr-10' : ['pr-4 lg:pr-0', gHover.pr4]),
               )}
             >
               {showLessonDescription ? (
@@ -153,7 +173,8 @@ export const DayLessonRow = ({
             {showTutorIconColumn && (
               <div
                 className={cn(
-                  'absolute top-1 right-[-40px] z-10 flex flex-col gap-1 transition-opacity duration-200',
+                  'absolute z-10 flex flex-col gap-1 transition-opacity duration-200',
+                  variant === 'card' ? 'top-0 right-0' : 'top-1 right-[-40px]',
                   'pointer-events-auto opacity-100',
                   'lg:pointer-events-none lg:opacity-0',
                   gHover.pointer,
@@ -216,7 +237,7 @@ export const DayLessonRow = ({
               classroomId={lesson.classroomId}
               scheduledAt={scheduledStartAt}
               scheduledEndsAt={scheduledEndsAt}
-              className="w-full min-w-0 flex-1 px-0 text-[12px]"
+              className="bg-status-info-background hover:bg-status-info-background/80 w-full min-w-0 flex-1 rounded-lg text-[12px]"
             />
           </div>
         )}

@@ -5,6 +5,7 @@ export {
   useBoardBackgroundSync,
 } from './useBoardBackground';
 export { useYjsStore } from './useYjsStore';
+export { useCachedBoardDoc } from './useCachedBoardDoc';
 export { useDrawStyles } from './useDrawStyles';
 export { useHotkeys } from './useHotkeys';
 export { useLockedShapeSelection } from './useLockedShapeSelection';

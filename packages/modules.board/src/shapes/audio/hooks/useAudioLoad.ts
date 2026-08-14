@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useYjsContext } from '../../../providers/YjsProvider';
+import { useYjsContext } from '../../../providers/YjsContext';
 import { resolveAssetUrl } from '../../../utils/resolveAssetUrl';
 import { audioWaveformCache } from '../audioWaveformCache';
 import type { AudioShape } from '../AudioShape';

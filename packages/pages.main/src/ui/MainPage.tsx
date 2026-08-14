@@ -12,6 +12,8 @@ import {
   movingPropsFromLessonRow,
   scheduleItemToLessonRow,
 } from './components/Lessons/scheduleHelpers';
+import { NearestLessonCardSkeleton } from './components/Lessons/NearestLessonCardSkeleton';
+import { FORCE_MAIN_LISTS_LOADING } from './forceListsLoading';
 
 const NEAREST_LESSON_DAYS = 7;
 
@@ -30,7 +32,7 @@ export const MainPage = () => {
   const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
 
-  const isMobile = useMediaQuery('(max-width: 720px)');
+  const isMobile = useMediaQuery('(max-width: 960px)');
   const [moveLessonOpen, setMoveLessonOpen] = useState(false);
 
   const range = useMemo(getNearestLessonRange, []);
@@ -44,7 +46,7 @@ export const MainPage = () => {
   });
   const scheduleQuery = isTutor ? tutorScheduleQuery : studentScheduleQuery;
 
-  const isNearestLoading = isUserLoading || scheduleQuery.isLoading;
+  const isNearestLoading = FORCE_MAIN_LISTS_LOADING || isUserLoading || scheduleQuery.isLoading;
 
   const nearestLesson = useMemo(() => {
     const items = scheduleQuery.data ?? [];
@@ -146,22 +148,22 @@ export const MainPage = () => {
           : 'h-full min-h-0',
       )}
     >
-      {/* На мобильных — одна прокрутка всей страницы; на десктопе — только правая колонка */}
       <div className={cn('flex flex-col', !isMobile && 'min-h-0 flex-1')}>
         <div
           className={cn(
             'flex flex-col items-start gap-4 pt-5 pr-0 pl-5',
-            isMobile ? 'pb-12' : 'min-h-0 flex-1 gap-6 pb-0 sm:flex-row sm:gap-8 sm:pt-10 sm:pl-10',
+            isMobile ? 'pb-24' : 'min-h-0 flex-1 gap-2 pb-0 sm:flex-row sm:gap-4 sm:pt-10 sm:pl-10',
           )}
         >
           {!isMobile && (
-            <div className="lg:bg-background-page flex shrink-0 flex-col lg:sticky lg:top-0 lg:z-10 lg:self-start">
+            <div className="flex shrink-0 flex-col lg:sticky lg:top-0 lg:z-10 lg:self-start">
               <Lessons />
             </div>
           )}
+          {isMobile && isNearestLoading && <NearestLessonCardSkeleton />}
           {isMobile && !isNearestLoading && nearestLesson == null && (
-            <div className="border-border-default bg-background-surface flex w-full flex-col items-center gap-2 rounded-2xl border border-dashed px-4 py-6 text-center">
-              <p className="text-m-base text-text-primary font-semibold">
+            <div className="bg-background-surface mr-5 flex w-[calc(100%-1.25rem)] flex-col items-center gap-2 rounded-2xl px-4 py-8 text-center">
+              <p className="text-l-base text-text-primary font-semibold">
                 {t('nearestLessons.emptyTitle')}
               </p>
               <p className="text-s-base text-text-secondary">
@@ -169,7 +171,7 @@ export const MainPage = () => {
               </p>
             </div>
           )}
-          {isMobile && nearestLesson != null && (
+          {isMobile && !isNearestLoading && nearestLesson != null && (
             <>
               <NearestLessonCard
                 lesson={nearestLesson}
@@ -186,7 +188,7 @@ export const MainPage = () => {
             className={cn(
               'flex w-full min-w-0 flex-col gap-5 self-stretch',
               !isMobile &&
-                'min-h-0 flex-1 overflow-x-hidden overscroll-contain pr-3 pb-6 sm:overflow-y-auto sm:pb-10',
+                'min-h-0 flex-1 overscroll-contain pr-3 pb-6 sm:overflow-y-auto sm:pb-10',
             )}
           >
             {!isMobile && isTutor && <FirstLessonGuideBanner />}

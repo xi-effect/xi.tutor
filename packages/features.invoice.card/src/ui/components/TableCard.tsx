@@ -23,7 +23,7 @@ export const TableCard = ({
   return (
     <div
       className={cn(
-        'border-border-control bg-background-surface relative flex min-h-[112px] cursor-pointer flex-col justify-between gap-2 rounded-2xl border p-4',
+        'bg-background-surface relative flex min-h-35 cursor-pointer flex-col justify-between gap-2 rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] transition-shadow duration-200 ease-linear hover:shadow-[0px_4px_12px_0px_rgba(0,0,0,0.1)]',
         className,
       )}
     >
@@ -38,7 +38,9 @@ export const TableCard = ({
         className="h-auto overflow-hidden"
       />
       <div className="mt-2 flex flex-row items-center gap-4">
-        <h3 className="text-m-base text-text-primary font-medium">{amount} ₽</h3>
+        <h3 className="text-m-base text-text-primary shrink-0 font-medium whitespace-nowrap tabular-nums">
+          {amount}&nbsp;₽
+        </h3>
         <StatusBadge status={payment.status} withBg />
       </div>
       <div className="ml-auto flex items-center gap-2">

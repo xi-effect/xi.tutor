@@ -12,7 +12,7 @@ export function useCloseToolbarPanel(activePopup: string | null, onClose: () => 
 
     const handlePointerDown = (e: PointerEvent) => {
       const target = e.target as Element | null;
-      if (target?.closest('[data-board-toolbar-ui]')) return;
+      if (target?.closest('[data-board-toolbar-ui], [data-board-drawer]')) return;
       if (!closeOnCanvas && target?.closest('.dr-container')) return;
       onClose();
     };
