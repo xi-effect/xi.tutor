@@ -13,7 +13,12 @@ import { useNavigate, useSearch } from '@tanstack/react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useCurrentUser, useDeleteClassroom, useUserByRole } from 'common.services';
-import { ConfirmDialog } from 'common.ui';
+import {
+  ConfirmDialog,
+  cardMenuButtonClass,
+  cardMenuIconClass,
+  cardMenuPositionClass,
+} from 'common.ui';
 import { StatusBadge, SubjectBadge } from 'features.classroom';
 import { ModalEditClassroomName } from 'features.classroom.rename';
 import { useTranslation } from 'react-i18next';
@@ -146,15 +151,11 @@ export const Card: React.FC<ClassroomPropsT & { deleted?: boolean }> = ({
         </div>
 
         {isTutor && (
-          <div className="absolute top-5 right-5 flex h-7 w-7 items-center justify-center">
+          <div className={cardMenuPositionClass}>
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
               <DropdownMenuTrigger asChild>
-                <Button
-                  className="hover:bg-background-subtle h-7 min-h-7 w-7 min-w-7 rounded-lg p-0"
-                  variant="none"
-                  size="icon"
-                >
-                  <MoreVert className="fill-icon-secondary dark:fill-icon-primary h-5 w-5" />
+                <Button className={cardMenuButtonClass} variant="none" size="icon">
+                  <MoreVert className={cardMenuIconClass} />
                 </Button>
               </DropdownMenuTrigger>
 

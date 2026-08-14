@@ -1,4 +1,4 @@
-import { Editor } from 'modules.editor';
+import { YjsProvider, TiptapEditor, useYjsContext } from 'modules.editor';
 import { Header } from './Header';
 import { useParams } from '@tanstack/react-router';
 import {
@@ -8,6 +8,24 @@ import {
   useGetStorageItem,
 } from 'common.services';
 import { LoadingScreen, NotFoundPage } from 'common.ui';
+
+const NoteContent = () => {
+  const { isSynced, hasSyncError } = useYjsContext();
+
+  if (hasSyncError) return <NotFoundPage withLogo={false} />;
+  if (!isSynced) return <LoadingScreen />;
+
+  return (
+    <div className="bg-background-page flex h-full min-h-[calc(100dvh)] flex-col overflow-auto px-5 pt-3.5 pb-5">
+      <Header />
+      <div className="flex w-full justify-center pt-4 pb-8">
+        <div className="w-full max-w-4xl pl-16">
+          <TiptapEditor />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export const Note = () => {
   const { classroomId, noteId, materialId } = useParams({ strict: false });
@@ -40,13 +58,8 @@ export const Note = () => {
   }
 
   return (
-    <div className="bg-background-page flex h-full min-h-[calc(100dvh)] flex-col overflow-auto px-5 pt-3.5 pb-5">
-      <Header />
-      <div className="flex w-full justify-center pt-4 pb-8">
-        <div className="w-full max-w-4xl pl-16">
-          <Editor storageItem={storageItem} />
-        </div>
-      </div>
-    </div>
+    <YjsProvider key={storageItem.ydoc_id} data={storageItem}>
+      <NoteContent />
+    </YjsProvider>
   );
 };

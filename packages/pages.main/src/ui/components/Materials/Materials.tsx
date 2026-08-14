@@ -158,7 +158,7 @@ const MaterialsContent = () => {
     <>
       <div className="flex w-full min-w-0 flex-col gap-4">
         <div className={galleryShadowHeaderInsetClass}>
-          <WidgetHeader title={t('materials.title')} actions={headerActions}>
+          <WidgetHeader title={t('materials.title')} actions={headerActions} isMobile={isMobile}>
             {!isMobile && (
               <SwitcherAnimate
                 tabs={filters}

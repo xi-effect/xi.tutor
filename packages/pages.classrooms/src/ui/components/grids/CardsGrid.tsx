@@ -64,6 +64,7 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
 
   useScrollPagination({
     sentinelRef,
+    rootRef: parentRef,
     hasNextPage,
     isFetchingNextPage,
     fetchNextPage,
@@ -93,7 +94,7 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
   }
 
   return (
-    <div ref={parentRef}>
+    <>
       <GridVirtualizer
         items={items}
         parentRef={parentRef}
@@ -111,6 +112,6 @@ export const CardsGrid: React.FC<TCardsGridProps> = ({
         hasNextPage={hasNextPage}
         itemsCount={items.length}
       />
-    </div>
+    </>
   );
 };

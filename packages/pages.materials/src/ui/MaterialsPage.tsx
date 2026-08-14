@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { Header } from './Header';
 import { MobileTutorActionButton } from 'features.invites';
@@ -23,6 +23,7 @@ const getTabFromUrl = (): 'notes' | 'boards' => {
 
 const MaterialsPageContent = () => {
   const [activeTab, setActiveTab] = useState<'notes' | 'boards'>(() => getTabFromUrl());
+  const parentRef = useRef<HTMLDivElement>(null);
   const isMobile = useMediaQuery('(max-width: 960px)');
 
   const { data: user } = useCurrentUser();
@@ -71,12 +72,13 @@ const MaterialsPageContent = () => {
         </div>
 
         <div
+          ref={parentRef}
           className={cn(
             'h-full overflow-y-auto px-5 pb-5 sm:mt-10 sm:pr-5 sm:pl-8 md:pr-8 md:pl-10',
             !isMobile && 'flex-1',
           )}
         >
-          <TabsComponent activeTab={activeTab} />
+          <TabsComponent activeTab={activeTab} parentRef={parentRef} />
         </div>
       </div>
 

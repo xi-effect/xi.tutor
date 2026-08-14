@@ -4,7 +4,7 @@ import { arrowVariants } from './arrowVariants';
 import { ArrowTypeT } from './types';
 import { cn } from '@xipkg/utils';
 
-export const ArrowSet = () => {
+export const ArrowSet = ({ className }: { className?: string }) => {
   const editor = useEditor();
   const [activeShape, setActiveShape] = useState<string | null>(null);
 
@@ -18,7 +18,12 @@ export const ArrowSet = () => {
   };
 
   return (
-    <div className="border-border-default bg-background-surface flex w-full gap-2 rounded-xl border p-1 shadow-none">
+    <div
+      className={cn(
+        'border-border-default bg-background-surface flex w-full flex-wrap gap-2 rounded-xl border p-1 shadow-none',
+        className,
+      )}
+    >
       {arrowVariants.map((item) => {
         const isActive = item.name === activeShape;
         return (

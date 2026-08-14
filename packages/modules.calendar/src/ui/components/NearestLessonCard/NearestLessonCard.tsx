@@ -48,7 +48,7 @@ export const NearestLessonCard = ({
   };
 
   return (
-    <div className="border-border-focus bg-background-surface relative flex w-full flex-col gap-4 rounded-2xl border-2 p-5">
+    <div className="border-border-focus bg-background-surface xs:w-full relative flex w-[calc(100%-20px)] flex-col gap-4 rounded-2xl border-2 p-5">
       <div className="flex flex-row items-start justify-between gap-2">
         <h3 className="text-l-base text-text-primary font-medium">{t('nearest_lesson')}</h3>
       </div>

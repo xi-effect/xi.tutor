@@ -17,7 +17,7 @@ import { ToolbarOptionsPanel } from './ToolbarOptionsPanel';
 import { useCloseToolbarPanel } from './useCloseToolbarPanel';
 import { useDrawStore } from '../../../store';
 import { useDrawStyles, useHotkeys } from '../../../hooks';
-import { NavbarButton } from '../shared';
+import { BoardDrawer, boardDrawerRowClass, NavbarButton, useBoardIsMobile } from '../shared';
 import { initFileDB, useRetryFileQueue } from 'common.services';
 import {
   boardChromeZClass,
@@ -73,6 +73,8 @@ export const Navbar = track(
     token: string;
   }) => {
     const { t } = useTranslation('board');
+    const isMobile = useBoardIsMobile();
+    const [moreMenuOpen, setMoreMenuOpen] = React.useState(false);
     const {
       pencilColor,
       pencilThickness,
@@ -207,6 +209,7 @@ export const Navbar = track(
       editor.selectNone();
       editor.setCurrentTool('coordinate-axes');
       setActivePopup(null);
+      setMoreMenuOpen(false);
     };
 
     const currentTool = getCurrentTool();
@@ -229,6 +232,7 @@ export const Navbar = track(
                   icon={item.icon}
                   title={item.title}
                   isActive={isActive}
+                  data-board-tool={item.action}
                   onClick={() => handleSelectTool(item.action)}
                 />
               </TooltipTrigger>
@@ -245,6 +249,7 @@ export const Navbar = track(
           icon={item.icon}
           title={item.title}
           isActive={isActive}
+          data-board-tool={item.action}
           onClick={() => handleSelectTool(item.action)}
         />
       );
@@ -261,12 +266,39 @@ export const Navbar = track(
       },
       {
         key: MORE_MENU_ACTION,
-        node: (
+        node: isMobile ? (
+          <>
+            <NavbarButton
+              icon={<MenuDots className={cn('rotate-90', boardToolbarIconClass)} />}
+              title={t('navbar.more')}
+              isActive={moreMenuOpen}
+              data-board-tool="more-menu"
+              onClick={() => setMoreMenuOpen(true)}
+            />
+            <BoardDrawer
+              open={moreMenuOpen}
+              onOpenChange={setMoreMenuOpen}
+              title={t('navbar.more')}
+            >
+              <button
+                type="button"
+                className={boardDrawerRowClass}
+                onClick={handleInsertCoordinateAxes}
+              >
+                <span className="text-text-primary text-sm font-medium">
+                  {t('navbar.coordinateAxes')}
+                </span>
+              </button>
+            </BoardDrawer>
+          </>
+        ) : (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <NavbarButton
                 icon={<MenuDots className={cn('rotate-90', boardToolbarIconClass)} />}
+                title={t('navbar.more')}
                 isActive={false}
+                data-board-tool="more-menu"
               />
             </DropdownMenuTrigger>
             <DropdownMenuContent
@@ -335,6 +367,7 @@ export const Navbar = track(
                   editor.setCurrentTool('emoji-sticker');
                   setActivePopup(null);
                 }}
+                onClose={closeToolbarPanel}
               />
               <div className="hidden items-center gap-1 p-1 sm:flex">
                 {toolbarSlides.map(({ key, node }) => (

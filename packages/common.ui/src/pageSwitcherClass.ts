@@ -6,7 +6,7 @@ export const pageSwitcherTrackClass =
 
 /** Вкладки SwitcherAnimate на новых страницах. */
 export const pageSwitcherTabClass = cn(
-  '!h-auto flex-1 items-start justify-start rounded-lg px-4 py-1.5 text-base leading-5 font-medium sm:flex-none',
+  '!h-auto flex-1 items-center justify-center rounded-lg px-4 py-1.5 text-center text-base leading-5 font-medium sm:flex-none sm:items-start sm:justify-start sm:text-left',
   'data-[state=inactive]:text-text-secondary data-[state=inactive]:hover:text-text-secondary',
   'data-[state=active]:text-text-primary data-[state=active]:hover:text-text-primary',
 );

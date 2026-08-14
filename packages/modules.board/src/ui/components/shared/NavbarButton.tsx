@@ -15,6 +15,7 @@ export const NavbarButton = ({
 }: NavbarButtonPropsT) => (
   <button
     type="button"
+    aria-label={title}
     data-isactive={isActive}
     className={cn(
       'pointer-events-auto flex shrink-0 items-center justify-center rounded-lg transition-colors',

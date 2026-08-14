@@ -9,7 +9,13 @@ import {
 import { Button } from '@xipkg/button';
 import { MoreVert } from '@xipkg/icons';
 import { ModalStudentsGroup, useDeleteStudentFromGroup } from 'features.group.manage';
-import { ConfirmDialog, EmptyClassrooms } from 'common.ui';
+import {
+  ConfirmDialog,
+  EmptyClassrooms,
+  cardMenuButtonClass,
+  cardMenuIconClass,
+  cardMenuPositionClass,
+} from 'common.ui';
 import { ErrorState } from './ErrorState';
 import { GroupStudentsListSchema } from 'common.types';
 import { useGroupStudentsList } from 'common.services';
@@ -105,11 +111,11 @@ export const StudentsList = ({ classroomId }: StudentsListPropsT) => {
                 </h3>
               </div>
               <ContactsBadge userId={user_id} />
-              <div className="absolute top-4 right-4 flex h-8 w-8 rounded-full">
+              <div className={cardMenuPositionClass}>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button className="h-8 w-8 rounded-md" variant="none" size="icon">
-                      <MoreVert className="dark:fill-icon-primary h-4 w-4" />
+                    <Button className={cardMenuButtonClass} variant="none" size="icon">
+                      <MoreVert className={cardMenuIconClass} />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent

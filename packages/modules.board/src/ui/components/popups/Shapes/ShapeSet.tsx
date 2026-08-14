@@ -4,8 +4,9 @@ import { TShapeOption } from './types';
 import { shapes } from './shapeVariants';
 import { useDrawStyles } from '../../../../hooks';
 import { TGeoShape } from '../../../../types';
+import { cn } from '@xipkg/utils';
 
-export const ShapeSet = () => {
+export const ShapeSet = ({ className }: { className?: string }) => {
   const editor = useEditor();
   const [activeShape, setActiveShape] = useState<TGeoShape | null>(null);
   const { applyStoreStylesForShape } = useDrawStyles();
@@ -21,7 +22,12 @@ export const ShapeSet = () => {
   };
 
   return (
-    <div className="border-border-default bg-background-surface flex w-full gap-2 rounded-xl border p-1 shadow-none">
+    <div
+      className={cn(
+        'border-border-default bg-background-surface flex w-full flex-wrap gap-2 rounded-xl border p-1 shadow-none',
+        className,
+      )}
+    >
       {shapes.map((item) => {
         const isActive = item.name === activeShape;
         return (

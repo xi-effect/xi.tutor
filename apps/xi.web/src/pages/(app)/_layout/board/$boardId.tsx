@@ -23,6 +23,7 @@ const searchSchema = z.object({
   /** Deep link: id треда комментария — фокус камеры и открытие попапа. */
   comment: z.string().optional(),
   call: z.string().optional(),
+  demo: z.union([z.string(), z.number()]).optional(),
 });
 
 // @ts-ignore

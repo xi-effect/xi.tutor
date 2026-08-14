@@ -12,7 +12,12 @@ import { MoreVert } from '@xipkg/icons';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { useCurrentUser, useDeleteClassroom, useUserByRole } from 'common.services';
-import { ConfirmDialog } from 'common.ui';
+import {
+  ConfirmDialog,
+  cardMenuButtonClass,
+  cardMenuIconClass,
+  cardMenuPositionClass,
+} from 'common.ui';
 import { StatusBadge, SubjectBadge } from 'features.classroom';
 import { ModalEditClassroomName } from 'pages.classrooms';
 import { StartLessonButton } from 'features.lesson.start';
@@ -164,19 +169,19 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
 
         {isTutor ? (
           <div
-            className="absolute top-5 right-5 flex h-7 w-7 items-center justify-center"
+            className={cardMenuPositionClass}
             onClick={(event) => event.stopPropagation()}
             onKeyDown={(event) => event.stopPropagation()}
           >
             <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
               <DropdownMenuTrigger asChild>
                 <Button
-                  className="hover:bg-background-subtle h-7 min-h-7 w-7 min-w-7 rounded-lg p-0"
+                  className={cardMenuButtonClass}
                   variant="none"
                   size="icon"
                   aria-label={t('classrooms.menuAria')}
                 >
-                  <MoreVert className="fill-icon-secondary dark:fill-icon-primary h-5 w-5" />
+                  <MoreVert className={cardMenuIconClass} />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent

@@ -102,30 +102,29 @@ export const TemplatesGrid = () => {
 
   return (
     <div
+      ref={parentRef}
       className={cn(
         'min-h-0 flex-1 overflow-auto pr-5',
         isMobile && 'h-[calc(100dvh-204px)]',
         !isMobile && 'h-[calc(100dvh-190px)]',
       )}
     >
-      <div ref={parentRef}>
-        <GridVirtualizer
-          parentRef={parentRef}
-          items={templates}
-          defaultRowHeight={160}
-          minItemWidth={300}
-          gap={20}
-          maxColumns={4}
-          isSingleColumn={isMobile}
-          renderItem={(item: TemplateT) => (
-            <TemplateCard
-              {...item}
-              handleDeleteTemplate={handleDeleteTemplate}
-              isDeleting={isDeletingTemplate}
-            />
-          )}
-        />
-      </div>
+      <GridVirtualizer
+        parentRef={parentRef}
+        items={templates}
+        defaultRowHeight={160}
+        minItemWidth={300}
+        gap={20}
+        maxColumns={4}
+        isSingleColumn={isMobile}
+        renderItem={(item: TemplateT) => (
+          <TemplateCard
+            {...item}
+            handleDeleteTemplate={handleDeleteTemplate}
+            isDeleting={isDeletingTemplate}
+          />
+        )}
+      />
     </div>
   );
 };

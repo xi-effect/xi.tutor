@@ -64,12 +64,53 @@ async function postUpload(file: File, token: string) {
  * Asset store для @ibodr/draw: upload возвращает storage file id (не URL).
  * Контракт персиста — utils/storedFileSrc.ts; URL собирается в resolve().
  */
-export const myAssetStore = (token: string) => {
-  registerToken(token);
+export type AssetTokenHolder = {
+  get(): string;
+  set(token: string): void;
+  whenReady(timeoutMs?: number): Promise<string>;
+};
+
+export function createAssetTokenHolder(initial = ''): AssetTokenHolder {
+  let token = initial;
+  const waiters = new Set<(next: string) => void>();
+
+  if (initial) registerToken(initial);
+
+  return {
+    get: () => token,
+    set: (next) => {
+      token = next;
+      if (!next) return;
+      registerToken(next);
+      waiters.forEach((resolve) => resolve(next));
+      waiters.clear();
+    },
+    whenReady: (timeoutMs = 15_000) => {
+      if (token) return Promise.resolve(token);
+
+      return new Promise((resolve) => {
+        const timer = window.setTimeout(() => {
+          waiters.delete(onReady);
+          resolve(token);
+        }, timeoutMs);
+        const onReady = (next: string) => {
+          window.clearTimeout(timer);
+          resolve(next);
+        };
+        waiters.add(onReady);
+      });
+    },
+  };
+}
+
+export const myAssetStore = (tokenOrHolder: string | AssetTokenHolder) => {
+  const holder =
+    typeof tokenOrHolder === 'string' ? createAssetTokenHolder(tokenOrHolder) : tokenOrHolder;
 
   return {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async upload(_asset: DrAsset, file: File, _abortSignal?: AbortSignal) {
+      const token = holder.get() || (await holder.whenReady());
       const assetType = checkAssetType(file) || 'file';
 
       if (!file.type.startsWith('image/')) {
@@ -146,6 +187,9 @@ export const myAssetStore = (token: string) => {
       const src = asset.props.src;
 
       if (!src) return src;
+
+      const token = holder.get() || (await holder.whenReady());
+      if (!token) return src;
 
       try {
         return await resolveAssetUrl(src, token);
