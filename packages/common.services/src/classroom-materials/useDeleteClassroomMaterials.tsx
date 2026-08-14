@@ -2,6 +2,7 @@ import { classroomMaterialsApiConfig, ClassroomMaterialsQueryKey } from 'common.
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError, showSuccess } from 'common.services';
+import i18n from 'i18next';
 
 interface DeleteClassroomMaterialsParams {
   classroomId: string;
@@ -74,7 +75,9 @@ export const useDeleteClassroomMaterials = () => {
         ],
       });
 
-      const message = params.name ? `${params.name} удалена` : 'Материал удален';
+      const message = params.name
+        ? i18n.t('toast.materials.classroomDeleted', { ns: 'commonServices', name: params.name })
+        : i18n.t('toast.materials.deletedFallback', { ns: 'commonServices' });
       showSuccess('materials', message);
     },
   });
