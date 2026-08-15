@@ -392,9 +392,10 @@ export const DrawCanvas = ({
               editor.user.updateUserPreferences({ isDynamicSizeMode: false });
               resetInflatedDrawScale(editor);
               editor.sideEffects.registerBeforeCreateHandler('shape', (shape) => {
-                if (shape.type !== 'draw' && shape.type !== 'highlight') return shape;
-                const scale = (shape.props as { scale?: number }).scale;
-                if (typeof scale === 'number' && scale !== 1) {
+                if (shape.type === 'draw' && shape.props.scale !== 1) {
+                  return { ...shape, props: { ...shape.props, scale: 1 } };
+                }
+                if (shape.type === 'highlight' && shape.props.scale !== 1) {
                   return { ...shape, props: { ...shape.props, scale: 1 } };
                 }
                 return shape;

@@ -1,4 +1,4 @@
-import type { Editor } from '@ibodr/draw';
+import type { DrShapeId, Editor } from '@ibodr/draw';
 
 const DRAW_LIKE_TYPES = new Set(['draw', 'highlight']);
 
@@ -21,14 +21,13 @@ export function isInflatedDrawScale(
 }
 
 export function resetInflatedDrawScale(editor: Editor): number {
-  const updates = editor
-    .getCurrentPageShapes()
-    .filter((shape) => isInflatedDrawScale(shape.type, (shape.props as { scale?: unknown }).scale))
-    .map((shape) => ({
-      id: shape.id,
-      type: shape.type,
-      props: { scale: 1 },
-    }));
+  const updates: Array<{ id: DrShapeId; type: 'draw' | 'highlight'; props: { scale: 1 } }> = [];
+
+  for (const shape of editor.getCurrentPageShapes()) {
+    if (shape.type !== 'draw' && shape.type !== 'highlight') continue;
+    if (!isInflatedDrawScale(shape.type, shape.props.scale)) continue;
+    updates.push({ id: shape.id, type: shape.type, props: { scale: 1 } });
+  }
 
   if (updates.length === 0) return 0;
   editor.updateShapes(updates);
