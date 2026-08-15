@@ -31,7 +31,7 @@ export function AudioTimecodeRow({
   return (
     <div
       className="border-border-default group flex max-h-[96px] min-h-7 items-start gap-0 p-1"
-      style={{ fontSize: 10, pointerEvents: isInteractive ? 'all' : 'none' }}
+      style={{ fontSize: 10, pointerEvents: isInteractive ? 'auto' : 'none' }}
       data-audio-control=""
     >
       <Button
@@ -40,14 +40,14 @@ export function AudioTimecodeRow({
         disabled={!canSeek}
         title={!canSeek ? t('audio.tutorControls') : undefined}
         className="text-text-primary hover:text-text-link disabled:hover:text-text-primary flex h-full w-12 shrink-0 items-start justify-center rounded-md p-2 pt-1 font-medium tabular-nums disabled:cursor-default disabled:opacity-70"
-        style={{ pointerEvents: isInteractive ? 'all' : 'none', fontSize: 10 }}
+        style={{ pointerEvents: isInteractive ? 'auto' : 'none', fontSize: 10 }}
         data-audio-control=""
-        onPointerDown={isInteractive ? stopEvent : undefined}
-        onClick={
+        onPointerDown={
           isInteractive
             ? (e) => {
-                e.stopPropagation();
-                if (canSeek) onSeek(tc.time);
+                stopEvent(e);
+                if (e.button !== 0 || !canSeek) return;
+                onSeek(tc.time);
               }
             : undefined
         }
@@ -64,7 +64,7 @@ export function AudioTimecodeRow({
           hideCounter
           className="text-text-primary placeholder:text-text-disabled flex-1 resize-none border-none bg-transparent p-1 shadow-none outline-none"
           style={{
-            pointerEvents: isInteractive ? 'all' : 'none',
+            pointerEvents: isInteractive ? 'auto' : 'none',
             fontSize: 10,
             lineHeight: 1.35,
           }}
@@ -92,7 +92,7 @@ export function AudioTimecodeRow({
       {(isTutor || tc.createdByStudent) && (
         <div
           className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity duration-150 group-hover:opacity-100"
-          style={{ pointerEvents: isInteractive ? 'all' : 'none' }}
+          style={{ pointerEvents: isInteractive ? 'auto' : 'none' }}
           data-audio-control=""
           onPointerDown={isInteractive ? stopEvent : undefined}
           onClick={isInteractive ? stopEvent : undefined}
@@ -103,8 +103,15 @@ export function AudioTimecodeRow({
               variant="none"
               className="hover:text-text-primary text-text-muted h-5 min-w-5 p-0"
               title={tc.visibleToAll ? t('audio.hideFromStudents') : t('audio.showToStudents')}
-              onPointerDown={isInteractive ? stopEvent : undefined}
-              onClick={isInteractive ? () => onToggleVisibility(tc.id) : undefined}
+              onPointerDown={
+                isInteractive
+                  ? (e) => {
+                      stopEvent(e);
+                      if (e.button !== 0) return;
+                      onToggleVisibility(tc.id);
+                    }
+                  : undefined
+              }
             >
               {tc.visibleToAll ? (
                 <Eyeon className="fill-icon-primary h-3 w-3" />
@@ -118,8 +125,15 @@ export function AudioTimecodeRow({
             variant="none"
             className="group hover:text-text-danger text-text-muted h-5 min-w-5 p-0"
             title={tc.createdByStudent ? t('audio.delete') : undefined}
-            onPointerDown={isInteractive ? stopEvent : undefined}
-            onClick={isInteractive ? () => onRemove(tc.id) : undefined}
+            onPointerDown={
+              isInteractive
+                ? (e) => {
+                    stopEvent(e);
+                    if (e.button !== 0) return;
+                    onRemove(tc.id);
+                  }
+                : undefined
+            }
           >
             <Trash className="fill-icon-primary group-hover:fill-icon-danger h-3 w-3" />
           </Button>

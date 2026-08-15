@@ -165,8 +165,10 @@ export function useAudioPlayback(shape: AudioShape, blobUrl: string | null) {
         }, 'audio-sync');
       }
     } else {
-      audio.play().catch(() => {});
       setLocalIsPlaying(true);
+      audio.play().catch(() => {
+        setLocalIsPlaying(false);
+      });
 
       if (syncPlayback && audioSyncMap) {
         audioSyncMap.doc?.transact(() => {

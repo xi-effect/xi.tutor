@@ -54,11 +54,16 @@ export const FileBadge = ({ shape }: FileBadgeProps) => {
   }
 
   return (
-    <div className={cn(fileBadgeSurfaceClass)} style={{ pointerEvents: 'none' }}>
+    <div
+      className={cn(fileBadgeSurfaceClass)}
+      data-board-interactive-card=""
+      style={{ pointerEvents: 'none' }}
+    >
       <div
         className="flex h-10 w-10 shrink-0 cursor-pointer items-center justify-center"
+        data-board-control=""
         onPointerDown={handleIconClick}
-        style={{ pointerEvents: 'all' }}
+        style={{ pointerEvents: 'auto' }}
       >
         {status === 'uploaded' && <Download className="text-text-secondary h-full w-full" />}
       </div>

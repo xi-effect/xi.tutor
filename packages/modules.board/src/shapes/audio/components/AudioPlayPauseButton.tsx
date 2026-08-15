@@ -22,11 +22,11 @@ export function AudioPlayPauseButton({
       disabled={disabled}
       title={disabled ? t('audio.tutorControls') : undefined}
       className="bg-action-primary-background-default hover:bg-action-primary-background-pressed focus:bg-action-primary-background-pressed active:bg-action-primary-background-pressed disabled:bg-background-subtle flex h-10 w-10 shrink-0 items-center justify-center rounded-full p-0 disabled:cursor-not-allowed"
-      style={{ pointerEvents: 'all' }}
+      style={{ pointerEvents: 'auto' }}
       data-audio-control=""
-      onPointerDown={stopEvent}
-      onClick={(e) => {
-        e.stopPropagation();
+      onPointerDown={(e) => {
+        stopEvent(e);
+        if (e.button !== 0 || disabled) return;
         onPlayPause();
       }}
     >

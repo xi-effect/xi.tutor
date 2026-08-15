@@ -10,6 +10,7 @@ import {
   useDrawClipboard,
   useOverlayRepaintOnSelection,
   useEditOnTypeForLabels,
+  useBoardControlPointer,
   useProductBoardAnalytics,
   useMiroPasteNotice,
   useBoardDeepLinkFocus,
@@ -91,6 +92,7 @@ export const DrawCanvas = ({
   );
 
   useLockedShapeSelection(editor);
+  useBoardControlPointer(editor);
   useDrawClipboard(editor, token);
   useOverlayRepaintOnSelection(editor);
   useEditOnTypeForLabels(editor);

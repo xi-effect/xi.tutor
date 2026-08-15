@@ -8,6 +8,17 @@
   z-index: var(--dr-layer-canvas-shapes);
 }
 
+[data-board-control],
+[data-audio-control] {
+  touch-action: manipulation;
+}
+
+@media (pointer: coarse) {
+  [data-board-interactive-card] {
+    pointer-events: auto !important;
+  }
+}
+
 /*
  * PDF рендерит страницы в <canvas> с pointer-events: auto по умолчанию.
  * Canvas внутри transformed .dr-html-layer может перекрывать overlay выделения (GPU compositing).
