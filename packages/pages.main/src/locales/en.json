@@ -42,7 +42,7 @@
   "classrooms": {
     "title": "Classrooms",
     "addStudent": "Student",
-    "addGroup": "Study group",
+    "addGroup": "Group",
     "toClassrooms": "To classrooms",
     "emptyNotFound": "Nothing found",
     "emptyInvite": "Invite students — individually or to a group",

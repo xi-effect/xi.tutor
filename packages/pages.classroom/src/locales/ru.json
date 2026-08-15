@@ -11,7 +11,7 @@
   "actions": {
     "selectAction": "Выберите действие",
     "addStudent": "Добавить ученика",
-    "addStudentDescription": "Добавьте ученика в учебную группу",
+    "addStudentDescription": "Добавьте ученика в группу",
     "inviteToGroup": "Пригласить в группу",
     "inviteToGroupDescription": "Отправьте ссылку-приглашение в группу",
     "createInvoice": "Создать счёт на оплату",
@@ -67,7 +67,7 @@
     "paymentsEmpty": "Нет платежей",
     "paymentsEmptyDescription": "Счета появятся здесь после выставления",
     "addStudentTitle": "Добавьте ученика в группу",
-    "studentsEmptyDescription": "Добавьте учеников в учебную группу",
+    "studentsEmptyDescription": "Добавьте учеников в группу",
     "studentDeleted": "Студент удален из группы",
     "studentDeleteError": "Не удалось удалить студента",
     "studentsLoadError": "Не удалось загрузить список учеников"

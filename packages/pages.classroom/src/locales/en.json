@@ -11,7 +11,7 @@
   "actions": {
     "selectAction": "Choose an action",
     "addStudent": "Add student",
-    "addStudentDescription": "Add a student to the study group",
+    "addStudentDescription": "Add a student to the group",
     "inviteToGroup": "Invite to group",
     "inviteToGroupDescription": "Send a group invite link",
     "createInvoice": "Create invoice",
@@ -67,7 +67,7 @@
     "paymentsEmpty": "No payments",
     "paymentsEmptyDescription": "Invoices will appear here after they are issued",
     "addStudentTitle": "Add a student to the group",
-    "studentsEmptyDescription": "Add students to the study group",
+    "studentsEmptyDescription": "Add students to the group",
     "studentDeleted": "Student removed from the group",
     "studentDeleteError": "Failed to remove student",
     "studentsLoadError": "Failed to load students list"

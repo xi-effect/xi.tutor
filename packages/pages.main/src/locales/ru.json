@@ -42,7 +42,7 @@
   "classrooms": {
     "title": "Кабинеты",
     "addStudent": "Ученика",
-    "addGroup": "Учебную группу",
+    "addGroup": "Группу",
     "toClassrooms": "К кабинетам",
     "emptyNotFound": "Ничего не найдено",
     "emptyInvite": "Пригласите учеников — индивидуально или в группу",
