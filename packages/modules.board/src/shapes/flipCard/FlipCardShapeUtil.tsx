@@ -1,7 +1,13 @@
 import { BaseBoxShapeUtil, DrResizeInfo, resizeBox } from '@ibodr/draw';
-import { FlipCardShape, flipCardShapeProps } from './FlipCardShape';
+import {
+  BASE_CARD_HEIGHT,
+  BASE_CARD_WIDTH,
+  EMPTY_RICH_TEXT,
+  FLIP_CARD_MIN_SIZE,
+  FlipCardShape,
+  flipCardShapeProps,
+} from './FlipCardShape';
 import { FlipCardComponent } from './FlipCardComponent';
-import { BASE_CARD_HEIGHT, BASE_CARD_MIN_SIZE, BASE_CARD_WIDTH, EMPTY_RICH_TEXT } from './consts';
 
 export class FlipCardShapeUtil extends BaseBoxShapeUtil<FlipCardShape> {
   static override type = 'flip-card' as const;
@@ -12,7 +18,10 @@ export class FlipCardShapeUtil extends BaseBoxShapeUtil<FlipCardShape> {
       w: BASE_CARD_WIDTH,
       h: BASE_CARD_HEIGHT,
       richText: EMPTY_RICH_TEXT,
-      backText: EMPTY_RICH_TEXT,
+      frontRichText: EMPTY_RICH_TEXT,
+      backRichText: EMPTY_RICH_TEXT,
+      frontImageAssetId: null,
+      backImageAssetId: null,
       isFlipped: false,
       color: 'black',
       size: 'm',
@@ -33,8 +42,8 @@ export class FlipCardShapeUtil extends BaseBoxShapeUtil<FlipCardShape> {
 
   override onResize(shape: FlipCardShape, info: DrResizeInfo<FlipCardShape>) {
     return resizeBox(shape, info, {
-      minWidth: BASE_CARD_MIN_SIZE,
-      minHeight: BASE_CARD_MIN_SIZE,
+      minWidth: FLIP_CARD_MIN_SIZE,
+      minHeight: FLIP_CARD_MIN_SIZE,
     });
   }
 
