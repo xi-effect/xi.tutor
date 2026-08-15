@@ -170,7 +170,6 @@ export const ColorPicker = track(() => {
                       min={1}
                       max={5}
                       step={1}
-                      minStepsBetweenThumbs={1}
                     />
                   </div>
                   <span className="text-text-primary w-5 shrink-0 text-xs">

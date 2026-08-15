@@ -38,6 +38,17 @@ export function normalizeStoredFileSrc(src: string): string {
   return legacyId ?? src;
 }
 
+/** URL, который можно безопасно подставить в <img src>. File id — нет. */
+export function isDisplayableAssetUrl(src: string | null | undefined): boolean {
+  if (!src) return false;
+  return (
+    src.startsWith('blob:') ||
+    src.startsWith('data:') ||
+    src.startsWith('http://') ||
+    src.startsWith('https://')
+  );
+}
+
 /** Dev-предупреждение, если в персист случайно попал полный storage URL. */
 export function warnIfPersistingFullStorageUrl(src: string, context: string): void {
   if (!import.meta.env.DEV) return;

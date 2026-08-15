@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { extractFileIdFromUrl } from '../resolveAssetUrl';
-import { normalizeStoredFileSrc } from '../storedFileSrc';
+import { isDisplayableAssetUrl, normalizeStoredFileSrc } from '../storedFileSrc';
 
 describe('normalizeStoredFileSrc', () => {
   it('оставляет пустую строку, data: и blob:', () => {
@@ -18,6 +18,17 @@ describe('normalizeStoredFileSrc', () => {
 
   it('оставляет уже нормализованный UUID', () => {
     expect(normalizeStoredFileSrc('abc-file-id')).toBe('abc-file-id');
+  });
+});
+
+describe('isDisplayableAssetUrl', () => {
+  it('принимает blob/data/http и отвергает file id', () => {
+    expect(isDisplayableAssetUrl('blob:https://app.local/1')).toBe(true);
+    expect(isDisplayableAssetUrl('data:image/png;base64,abc')).toBe(true);
+    expect(isDisplayableAssetUrl('https://cdn.example/img.png')).toBe(true);
+    expect(isDisplayableAssetUrl('11111111-2222-3333-4444-555555555555')).toBe(false);
+    expect(isDisplayableAssetUrl('')).toBe(false);
+    expect(isDisplayableAssetUrl(null)).toBe(false);
   });
 });
 

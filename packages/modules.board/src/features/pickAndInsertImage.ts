@@ -3,11 +3,10 @@ import { Editor, DrAssetId, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { myAssetStore } from './imageStore';
 import { resolveShapeCoordinates } from '../utils';
+import { waitForResolvedAssetUrl } from '../utils/resolveAssetUrl';
 import i18n from 'i18next';
 
 const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024; // 1 MiB
-
-const getDecodeErrorMessage = () => i18n.t('toast.imageReadFailed', { ns: 'board' });
 
 export type InsertImagePlacement = {
   /** Позиция и размер на доске (в координатах страницы). Если не задано — по центру вьюпорта с натуральными размерами. */
@@ -27,6 +26,9 @@ export async function insertImage(
   token: string,
   placement?: InsertImagePlacement,
 ) {
+  // Клон: временный <input> могут убрать из DOM до чтения File (Safari / первый выбор).
+  file = new File([file], file.name, { type: file.type, lastModified: file.lastModified });
+
   if (!file.size) {
     toast.error(i18n.t('toast.fileEmpty', { ns: 'board' }), {
       description: i18n.t('toast.fileEmptyDesc', { ns: 'board' }),
@@ -50,19 +52,11 @@ export async function insertImage(
   try {
     bitmap = await createImageBitmap(file);
   } catch (err) {
-    const isDecodeError =
-      err instanceof Error &&
-      (err.name === 'EncodingError' || err.message.includes('cannot be decoded'));
-    const message = isDecodeError
-      ? getDecodeErrorMessage()
-      : err instanceof Error
-        ? err.message
-        : i18n.t('toast.unknownError', { ns: 'board' });
     toast.error(i18n.t('toast.imageOpenError', { ns: 'board' }), {
-      description: message,
-      duration: 5000,
+      description: i18n.t('toast.imageReadFailed', { ns: 'board' }),
+      duration: 8000,
     });
-    throw err; // по-прежнему пробрасываем для логирования в Bugsink, но пользователь уже видит понятное сообщение
+    throw err;
   }
 
   const { width: w, height: h } = bitmap;
@@ -133,6 +127,7 @@ export async function insertImage(
       };
 
       const { src } = await myAssetStore(token).upload(uploadAsset, file);
+      await waitForResolvedAssetUrl(src, token);
 
       // Контракт персиста: только storage file id — см. utils/storedFileSrc.ts
       editor.updateAssets([
@@ -162,8 +157,8 @@ export async function insertImage(
       editor.deleteShapes([shapeId]);
       editor.deleteAssets([tempAssetId]);
     } finally {
-      // Откладываем revoke: на успехе img должен успеть перейти на новый src
-      setTimeout(() => URL.revokeObjectURL(previewUrl), 0);
+      // Даём <img> перейти с preview на резолвнутый blob, иначе серый «Не удалось загрузить».
+      setTimeout(() => URL.revokeObjectURL(previewUrl), 2_000);
     }
   })();
 }
