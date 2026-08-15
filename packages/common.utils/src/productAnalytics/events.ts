@@ -7,6 +7,11 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   AUTH_SIGNUP_FAILED: 'auth_signup_failed',
   AUTH_FIRST_AUTHENTICATED_SESSION: 'auth_first_authenticated_session',
 
+  // Auth / signin
+  AUTH_SIGNIN_SUBMIT: 'auth_signin_submit',
+  AUTH_SIGNIN_FAILED: 'auth_signin_failed',
+  AUTH_SIGNIN_SUCCEEDED: 'auth_signin_succeeded',
+
   // Email confirmation
   EMAIL_CONFIRMATION_VIEWED: 'email_confirmation_viewed',
   EMAIL_CONFIRMATION_RESEND_SUBMIT: 'email_confirmation_resend_submit',
@@ -79,6 +84,7 @@ export const PRODUCT_ANALYTICS_EVENTS = {
   // Board (existing)
   BOARD_OPENED: 'board_opened',
   BOARD_USED_MEANINGFULLY: 'board_used_meaningfully',
+  BOARD_MIRO_PASTE: 'board_miro_paste',
 
   // Activation help (P1)
   ACTIVATION_HELP_OPENED: 'activation_help_opened',

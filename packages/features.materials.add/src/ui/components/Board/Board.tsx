@@ -69,7 +69,7 @@ export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps)
       <Button
         onClick={handleCreateBoardDraft}
         variant="primary"
-        className="!h-auto gap-2 rounded-[10px] px-5 py-3 text-base leading-5 font-medium max-sm:hidden"
+        className="text-text-on-accent !h-8 gap-2 rounded-[10px] px-4 font-medium max-sm:hidden"
         disabled={addMaterials.isPending}
         data-umami-event="material-create-board-draft"
       >
@@ -82,11 +82,11 @@ export const Board = ({ onlyDrafts = false, onCreate, classroomId }: BoardProps)
   return (
     <DropdownMenu>
       <DropdownMenuTrigger
-        className="bg-background-surface group text-s-base hover:text-text-on-accent hover:bg-action-primary-background-default data-[state=open]:text-text-on-accent data-[state=open]:bg-action-primary-background-default border-border-control text-text-primary hover:border-border-control flex h-8 w-[160px] flex-row items-center justify-between gap-[6px] rounded-lg border px-4 font-medium transition-colors duration-200 max-[550px]:hidden"
+        className="group bg-background-subtle text-text-primary data-[state=open]:bg-background-surface hover:bg-background-surface flex !h-8 w-auto flex-row items-center justify-between gap-2 rounded-[10px] px-4 font-medium transition-colors duration-200 max-sm:hidden"
         data-umami-event="material-create-board-menu-open"
       >
         <span>{t('board.create')}</span>
-        <ChevronSmallBottom className="group-hover:fill-action-primary-text group-data-[state=open]:fill-action-primary-text fill-icon-primary h-[16px] w-[16px] transition-transform duration-200 group-data-[state=open]:rotate-180" />
+        <ChevronSmallBottom className="fill-icon-secondary group-data-[state=open]:fill-icon-primary h-4 w-4 transition-transform duration-200 group-data-[state=open]:rotate-180" />
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="border-border-default text-s-base w-[160px] border p-1 font-normal">

@@ -26,7 +26,10 @@ import type {
   ProductAnalyticsSource,
   SignupEntryPoint,
   SignupFailureReason,
+  SignupValidationFailedField,
   SignupValidationFailureReason,
+  SigninAnalyticsSource,
+  SigninFailureReason,
 } from './types';
 
 type BaseProps = CommonActivationProperties;
@@ -47,18 +50,24 @@ export type ProductAnalyticsEventMap = {
   auth_signup_viewed: BaseProps & {
     entry_point: SignupEntryPoint;
     has_invite?: boolean;
+    invite_tracking_id?: string;
   };
   auth_signup_submit: BaseProps & {
     attempt_id: string;
     entry_point: string;
     attempt_number?: number;
     has_invite?: boolean;
+    invite_tracking_id?: string;
   };
   auth_signup_validation_failed: BaseProps & {
-    reason: SignupValidationFailureReason;
-    field: 'name' | 'email' | 'password' | 'terms' | 'multiple';
+    failed_fields: SignupValidationFailedField[];
+    /** @deprecated используйте failed_fields */
+    reason?: SignupValidationFailureReason;
+    /** @deprecated используйте failed_fields */
+    field?: 'name' | 'email' | 'password' | 'terms' | 'multiple';
     entry_point?: string;
     has_invite?: boolean;
+    invite_tracking_id?: string;
   };
   auth_signup_succeeded: BaseProps & {
     attempt_id: string;
@@ -67,6 +76,7 @@ export type ProductAnalyticsEventMap = {
     confirmation_required: boolean;
     attempt_number?: number;
     has_invite?: boolean;
+    invite_tracking_id?: string;
   };
   auth_signup_failed: BaseProps & {
     attempt_id: string;
@@ -76,6 +86,20 @@ export type ProductAnalyticsEventMap = {
     entry_point?: string;
     attempt_number?: number;
     has_invite?: boolean;
+    invite_tracking_id?: string;
+  };
+  auth_signin_submit: BaseProps & {
+    source: SigninAnalyticsSource;
+    invite_tracking_id?: string;
+  };
+  auth_signin_failed: BaseProps & {
+    reason: SigninFailureReason;
+    source: SigninAnalyticsSource;
+    invite_tracking_id?: string;
+  };
+  auth_signin_succeeded: BaseProps & {
+    source: SigninAnalyticsSource;
+    invite_tracking_id?: string;
   };
   auth_first_authenticated_session: BaseProps & {
     user_role: 'tutor' | 'student';
@@ -258,10 +282,10 @@ export type ProductAnalyticsEventMap = {
   // Новая форма приглашения (страница ученика) — invite_flow_version: 2, см. ТЗ п.11
   student_invite_page_viewed: InviteFlowV2Props;
   student_invite_signup_clicked: InviteFlowV2Props & {
-    source: InviteAnalyticsSource;
+    source: InviteAnalyticsSource | 'invite';
   };
   student_invite_login_clicked: InviteFlowV2Props & {
-    source: InviteAnalyticsSource;
+    source: InviteAnalyticsSource | 'invite';
   };
 
   lesson_create_viewed: BaseProps & {
@@ -328,7 +352,11 @@ export type ProductAnalyticsEventMap = {
     event_version?: number;
     lesson_id?: string;
     attempt_id?: string;
-    media_type: MediaType;
+    audio_requested: boolean;
+    video_requested: boolean;
+    source: 'prejoin' | 'lesson';
+    /** @deprecated используйте audio_requested / video_requested */
+    media_type?: MediaType;
   };
   media_permission_granted: {
     event_version?: number;
@@ -426,6 +454,14 @@ export type ProductAnalyticsEventMap = {
     lesson_id?: string;
     role?: ProductAnalyticsRole;
     trigger?: ProductAnalyticsBoardTrigger;
+  };
+  board_miro_paste: {
+    event_version?: number;
+    role?: ProductAnalyticsRole;
+    source?: string;
+    shape_count?: number;
+    widget_types?: string;
+    miro_host?: string;
   };
 
   activation_help_opened: BaseProps & {

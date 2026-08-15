@@ -8,9 +8,9 @@ import {
   PRODUCT_ANALYTICS_EVENTS,
   getOnboardingStepMeta,
   inferEmailConfirmationSource,
-  markOnboardingStartedAt,
   resolveOnboardingAnalyticsRole,
   trackOnce,
+  trackOnboardingStarted,
   trackProductEvent,
 } from 'common.utils';
 import { useTranslation } from 'react-i18next';
@@ -34,13 +34,8 @@ export const EmailPageConfirm = () => {
       });
     });
 
-    trackOnce('onboarding_started', () => {
-      markOnboardingStartedAt();
-      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.ONBOARDING_STARTED, {
-        user_role: userRole,
-        onboarding_stage: user?.onboarding_stage ?? 'email-confirmation',
-      });
-    });
+    // Фактическое начало onboarding-flow (wait-экран email) — один раз на activation_flow_id.
+    trackOnboardingStarted(userRole, user?.onboarding_stage ?? 'email-confirmation');
 
     trackOnce('onboarding_step_viewed:email_confirmation', () => {
       trackProductEvent(PRODUCT_ANALYTICS_EVENTS.ONBOARDING_STEP_VIEWED, {

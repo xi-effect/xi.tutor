@@ -3,7 +3,7 @@ import { Download } from '@xipkg/icons';
 import { cn, formatBytesSize } from '@xipkg/utils';
 import { downloadFileRequest } from 'common.services';
 import { SyntheticEvent, useState } from 'react';
-import { useYjsContext } from '../../providers/YjsProvider';
+import { useYjsContext } from '../../providers/YjsContext';
 import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 

@@ -1,34 +1,9 @@
-import { useTranslation } from 'react-i18next';
 import { MaterialsListSkeleton } from '../../Overview/MaterialsListSkeleton';
-import { MaterialHeader } from './MaterialHeader';
 
-export const LoadingState = () => {
-  const { t } = useTranslation('classroom');
-
-  return (
-    <div>
-      <div className="flex flex-col gap-4 p-4">
-        <MaterialHeader title={t('materials.boards')} />
-        <div className="flex flex-row gap-8 pb-4">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <MaterialsListSkeleton
-              key={i}
-              className="h-33.5 w-[350px] min-w-[350px] 2xl:w-[430px]"
-            />
-          ))}
-        </div>
-      </div>
-      <div className="flex flex-col gap-4 p-4">
-        <MaterialHeader title={t('materials.notes')} />
-        <div className="flex flex-row gap-8 pb-4">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <MaterialsListSkeleton
-              key={i}
-              className="h-33.5 w-[350px] min-w-[350px] 2xl:w-[430px]"
-            />
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-};
+export const LoadingState = () => (
+  <div className="grid grid-cols-1 gap-5 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
+    {Array.from({ length: 8 }).map((_, i) => (
+      <MaterialsListSkeleton key={i} />
+    ))}
+  </div>
+);

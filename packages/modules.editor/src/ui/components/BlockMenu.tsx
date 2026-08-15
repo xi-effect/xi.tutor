@@ -5,7 +5,21 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
-import { Copy, H1, H2, H3, Text, Trash, Image, ArrowUp, ArrowBottom, Code } from '@xipkg/icons';
+import {
+  Copy,
+  H1,
+  H2,
+  H3,
+  Text,
+  Trash,
+  Image,
+  ArrowUp,
+  ArrowBottom,
+  Code,
+  Ul,
+  Ol,
+  Task,
+} from '@xipkg/icons';
 import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useBlockMenuActions } from '../../hooks';
@@ -85,6 +99,21 @@ export const BlockMenu = ({
         <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('heading3')}>
           <H3 size="sm" className="size-6" />
           <span>{t('blockMenu.heading3')}</span>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('bulletList')}>
+          <Ul size="sm" className="size-6" />
+          <span>{t('blockMenu.bulletList')}</span>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('orderedList')}>
+          <Ol size="sm" className="size-6" />
+          <span>{t('blockMenu.orderedList')}</span>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem className={menuItemClass} onSelect={() => insertBlock('taskList')}>
+          <Task size="sm" className="size-6" />
+          <span>{t('blockMenu.taskList')}</span>
         </DropdownMenuItem>
 
         <DropdownMenuItem className={menuItemClass} onSelect={() => openModal('uploadImage')}>

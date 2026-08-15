@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { MobileTutorActionButton } from 'features.invites';
 import { ButtonsHeader, LinkListStudents, CardsGridSimple } from './components';
 import { useCurrentUser } from 'common.services';
@@ -9,6 +10,7 @@ export const ClassroomsPage = () => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const isMobile = useMediaQuery('(max-width: 960px)');
+  const parentRef = useRef<HTMLDivElement>(null);
 
   return (
     <div
@@ -30,12 +32,13 @@ export const ClassroomsPage = () => {
         )}
       </div>
       <div
+        ref={parentRef}
         className={cn(
           'h-full overflow-y-auto px-5 pb-5 sm:mt-10 sm:pr-5 sm:pl-8 md:pr-8 md:pl-10',
           !isMobile && 'flex-1',
         )}
       >
-        <CardsGridSimple />
+        <CardsGridSimple parentRef={parentRef} />
       </div>
       <MobileTutorActionButton variant="classrooms" />
     </div>

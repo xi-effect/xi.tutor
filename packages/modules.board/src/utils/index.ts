@@ -18,6 +18,13 @@ export {
   updateProfile,
 } from './yjsProfiling';
 export { BOARD_SCHEMA_VERSION } from './yjsConstants';
+export { isBoardStoreReady } from './boardStoreStatus';
+export {
+  getCachedBoardDoc,
+  putCachedBoardDoc,
+  getBoardDocCacheLimits,
+  type CachedBoardDoc,
+} from './boardDocCache';
 export { normalizeStoredFileSrc, warnIfPersistingFullStorageUrl } from './storedFileSrc';
 export { isShapeErasable } from './isShapeErasable';
 export {

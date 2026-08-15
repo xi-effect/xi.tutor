@@ -5,7 +5,16 @@ import { useNavigate, useSearch } from '@tanstack/react-router';
 
 import { useSignin, useCurrentUser } from 'common.services';
 import { useAuth } from 'common.auth';
-import { trackUmamiSession } from 'common.utils';
+import {
+  PRODUCT_ANALYTICS_EVENTS,
+  getActivationFlowId,
+  getInviteTrackingIdFromContext,
+  getOrCreateActivationFlowId,
+  inferSigninSource,
+  mapSigninError,
+  trackProductEvent,
+  trackUmamiSession,
+} from 'common.utils';
 
 import { FormData } from '../model/formSchema';
 import { UseFormSetError } from 'react-hook-form';
@@ -33,15 +42,37 @@ export const useSigninForm = () => {
     }
 
     const { email, password } = data;
+    const source = inferSigninSource(search);
+    const activationFlowId =
+      source === 'invite' ? getOrCreateActivationFlowId() : getActivationFlowId();
+
+    let invite_tracking_id: string | undefined;
+    try {
+      invite_tracking_id = await getInviteTrackingIdFromContext(search);
+    } catch {
+      invite_tracking_id = undefined;
+    }
 
     setIsPending(true);
     try {
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNIN_SUBMIT, {
+        source,
+        invite_tracking_id,
+        activation_flow_id: activationFlowId,
+      });
+
       const response: SignInResponse = await signin(email, password);
 
       // Успешный вход
       if (response.theme) {
         // Здесь можно обработать тему
       }
+
+      trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNIN_SUCCEEDED, {
+        source,
+        invite_tracking_id,
+        activation_flow_id: activationFlowId,
+      });
 
       await completeSigninSuccess({
         login,
@@ -51,6 +82,17 @@ export const useSigninForm = () => {
         redirect: search.redirect,
       });
     } catch (error) {
+      try {
+        trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNIN_FAILED, {
+          reason: mapSigninError(error),
+          source,
+          invite_tracking_id,
+          activation_flow_id: activationFlowId,
+        });
+      } catch {
+        // Аналитика не должна ломать авторизацию
+      }
+
       handleSigninError(error, { t, setError, toast });
     } finally {
       setIsPending(false);

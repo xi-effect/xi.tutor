@@ -13,6 +13,8 @@
     "progress": "{{current}} of {{total}}"
   },
   "errorPage": {
+    "notFoundTitle": "Page not\u00A0found",
+    "notFoundText": "The address is\u00A0incorrect or\u00A0the page has been deleted",
     "ifErrorRepeats": "If the error persists — write",
     "aboutIt": "to us about it",
     "in": "in",

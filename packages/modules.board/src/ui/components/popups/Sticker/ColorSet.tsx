@@ -1,8 +1,15 @@
+import { cn } from '@xipkg/utils';
 import { useDrawStyles } from '../../../../hooks';
 import { useDrawStore } from '../../../../store';
 import { PopupItemT } from '../../../../utils/navBarElements';
 
-export const ColorSet = ({ popupItems }: { popupItems?: PopupItemT[] }) => {
+export const ColorSet = ({
+  popupItems,
+  className,
+}: {
+  popupItems?: PopupItemT[];
+  className?: string;
+}) => {
   const { setStickerColor, stickerColor } = useDrawStore();
 
   const { setColor } = useDrawStyles();
@@ -13,7 +20,12 @@ export const ColorSet = ({ popupItems }: { popupItems?: PopupItemT[] }) => {
   };
 
   return (
-    <div className="border-border-default bg-background-surface flex gap-2 rounded-xl border p-1">
+    <div
+      className={cn(
+        'border-border-default bg-background-surface flex flex-wrap gap-2 rounded-xl border p-1',
+        className,
+      )}
+    >
       {popupItems?.map((item) => {
         const isActive = item.color === stickerColor;
         return (

@@ -7,7 +7,6 @@ import {
   DropdownMenuTrigger,
 } from '@xipkg/dropdown';
 import { Add, ArrowRight, Group, UserPlus } from '@xipkg/icons';
-import { ScrollArea } from '@xipkg/scrollarea';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@xipkg/tooltip';
 import { useNavigate } from '@tanstack/react-router';
 import { useCurrentUser, useFetchClassrooms, useFetchClassroomsByStudent } from 'common.services';
@@ -17,8 +16,13 @@ import { ModalAddGroup } from 'features.group.add';
 import { ModalInvitation } from 'features.invites';
 import { EmptyClassrooms } from 'common.ui';
 import { Classroom } from './Classroom';
+import { ClassroomCardSkeleton } from './ClassroomCardSkeleton';
 import { SectionEmptyState } from '../SectionEmptyState';
+import { FORCE_MAIN_LISTS_LOADING, MAIN_LIST_SKELETON_COUNT } from '../../forceListsLoading';
 import { sectionEmptyStateIllustrationClass } from '../sectionEmptyStateIllustrationClass';
+import { WidgetHeader } from '../WidgetHeader';
+import { galleryShadowHeaderInsetClass } from '../galleryShadowClass';
+import { WidgetCardsCarousel, widgetCardSlotClass } from '../WidgetCardsCarousel';
 import { cn, useMediaQuery } from '@xipkg/utils';
 
 const emptyClassroomsIllustrationClass = cn(sectionEmptyStateIllustrationClass, '-translate-x-8');
@@ -39,7 +43,7 @@ export const Classrooms = () => {
   );
 
   const classrooms = isTutor ? tutorClassrooms : studentClassrooms;
-  const isLoading = isTutor ? isTutorLoading : isStudentLoading;
+  const isLoading = FORCE_MAIN_LISTS_LOADING || (isTutor ? isTutorLoading : isStudentLoading);
 
   const [selectedSubject] = useState<string>('all');
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -73,106 +77,104 @@ export const Classrooms = () => {
   const inviteEmptyButtonClass =
     'bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 text-xs-base flex h-8 items-center gap-2 rounded-lg border-transparent px-4 font-medium text-text-link';
 
+  const headerActions =
+    isTutor && !isMobile ? (
+      <>
+        <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="primary"
+              className="flex size-10 items-center justify-center rounded-[10px] p-0"
+              data-umami-event="invite-student-button"
+              id="invite-student-button"
+            >
+              <Add className="fill-text-on-accent size-6" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
+            side="bottom"
+            className="border-border-default bg-background-surface flex w-[320px] flex-col gap-2.5 rounded-2xl border px-6 py-5 shadow-lg"
+          >
+            <DropdownMenuLabel className="text-m-base text-text-primary p-0 font-medium">
+              {t('common.add')}
+            </DropdownMenuLabel>
+            <div className="flex flex-col gap-3">
+              <DropdownMenuItem
+                className="border-border-default bg-background-surface focus:bg-background-surface data-highlighted:bg-background-page flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
+                onSelect={() => {
+                  setDropdownOpen(false);
+                  setInviteModalOpen(true);
+                }}
+                data-umami-event="classrooms-add-student"
+              >
+                <UserPlus className="fill-icon-primary size-4 shrink-0" />
+                <span className="text-s-base text-text-primary flex-1 text-left font-medium">
+                  {t('classrooms.addStudent')}
+                </span>
+                <Add className="fill-icon-brand size-4 shrink-0" />
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                className="border-border-default bg-background-surface focus:bg-background-surface data-highlighted:bg-background-page flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
+                onSelect={() => {
+                  setDropdownOpen(false);
+                  setAddGroupModalOpen(true);
+                }}
+                data-umami-event="classrooms-add-group"
+              >
+                <Group className="fill-icon-primary size-4 shrink-0" />
+                <span className="text-s-base text-text-primary flex-1 text-left font-medium">
+                  {t('classrooms.addGroup')}
+                </span>
+                <Add className="fill-icon-brand size-4 shrink-0" />
+              </DropdownMenuItem>
+            </div>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <ModalInvitation
+          open={inviteModalOpen}
+          onOpenChange={setInviteModalOpen}
+          analyticsSource="main"
+        />
+        <ModalAddGroup open={addGroupModalOpen} onOpenChange={setAddGroupModalOpen} />
+      </>
+    ) : (
+      <Tooltip delayDuration={1000}>
+        <TooltipTrigger asChild>
+          <Button
+            variant="none"
+            className="hover:bg-background-subtle flex size-8 items-center justify-center rounded-lg p-0"
+            onClick={handleMore}
+          >
+            <ArrowRight className="fill-icon-secondary size-5" />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>{t('classrooms.toClassrooms')}</TooltipContent>
+      </Tooltip>
+    );
+
   return (
-    <div
-      className={cn(
-        'bg-background-surface flex w-full min-w-0 flex-col gap-4 rounded-2xl px-5 pt-4 pb-1 transition-all duration-200 ease-linear',
-      )}
-    >
-      <div className="flex flex-row items-center gap-2">
-        <h2 className="text-l-base text-text-primary font-medium">{t('classrooms.title')}</h2>
-        <div className="ml-auto">
-          {isTutor && !isMobile ? (
-            <>
-              <DropdownMenu open={dropdownOpen} onOpenChange={setDropdownOpen}>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="none"
-                    className="bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
-                    data-umami-event="invite-student-button"
-                    id="invite-student-button"
-                  >
-                    <Add className="fill-icon-brand size-6" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent
-                  align="end"
-                  side="bottom"
-                  className="border-border-default bg-background-surface flex w-[320px] flex-col gap-2.5 rounded-2xl border px-6 py-5 shadow-lg"
-                >
-                  <DropdownMenuLabel className="text-m-base text-text-primary p-0 font-medium">
-                    {t('common.add')}
-                  </DropdownMenuLabel>
-                  <div className="flex flex-col gap-3">
-                    <DropdownMenuItem
-                      className="border-border-default bg-background-surface focus:bg-background-surface data-highlighted:bg-background-page flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
-                      onSelect={() => {
-                        setDropdownOpen(false);
-                        setInviteModalOpen(true);
-                      }}
-                      data-umami-event="classrooms-add-student"
-                    >
-                      <UserPlus className="fill-icon-primary size-4 shrink-0" />
-                      <span className="text-s-base text-text-primary flex-1 text-left font-medium">
-                        {t('classrooms.addStudent')}
-                      </span>
-                      <Add className="fill-icon-brand size-4 shrink-0" />
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      className="border-border-default bg-background-surface focus:bg-background-surface data-highlighted:bg-background-page flex h-9 w-[272px] cursor-pointer flex-row items-center gap-2 rounded-lg border p-2 px-3 focus:outline-none"
-                      onSelect={() => {
-                        setDropdownOpen(false);
-                        setAddGroupModalOpen(true);
-                      }}
-                      data-umami-event="classrooms-add-group"
-                    >
-                      <Group className="fill-icon-primary size-4 shrink-0" />
-                      <span className="text-s-base text-text-primary flex-1 text-left font-medium">
-                        {t('classrooms.addGroup')}
-                      </span>
-                      <Add className="fill-icon-brand size-4 shrink-0" />
-                    </DropdownMenuItem>
-                  </div>
-                </DropdownMenuContent>
-              </DropdownMenu>
-              <ModalInvitation
-                open={inviteModalOpen}
-                onOpenChange={setInviteModalOpen}
-                analyticsSource="main"
-              />
-              <ModalAddGroup open={addGroupModalOpen} onOpenChange={setAddGroupModalOpen} />
-            </>
-          ) : (
-            <Tooltip delayDuration={1000}>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="none"
-                  className="flex size-8 items-center justify-center rounded-[4px] p-0"
-                  onClick={handleMore}
-                >
-                  <ArrowRight className="fill-icon-secondary size-6" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>{t('classrooms.toClassrooms')}</TooltipContent>
-            </Tooltip>
-          )}
-        </div>
+    <div className="flex w-full min-w-0 flex-col gap-4">
+      <div className={galleryShadowHeaderInsetClass}>
+        <WidgetHeader title={t('classrooms.title')} actions={headerActions} isMobile={isMobile} />
       </div>
 
       {isLoading ? (
-        <div className={'flex h-[152px] w-full flex-row items-center justify-center'}>
-          <p className="text-m-base text-text-secondary">{t('common.loading')}</p>
-        </div>
+        <WidgetCardsCarousel>
+          {Array.from({ length: MAIN_LIST_SKELETON_COUNT }).map((_, i) => (
+            <div key={i} className={widgetCardSlotClass}>
+              <ClassroomCardSkeleton />
+            </div>
+          ))}
+        </WidgetCardsCarousel>
       ) : filteredClassrooms && filteredClassrooms.length > 0 ? (
-        <ScrollArea className="w-full" scrollBarProps={{ orientation: 'horizontal' }}>
-          <div className="flex flex-row gap-3 pb-3">
-            {filteredClassrooms.map((classroom) => (
-              <div key={classroom.id} className="w-[240px] shrink-0 xl:w-[280px]">
-                <Classroom classroom={classroom} isLoading={isLoading} />
-              </div>
-            ))}
-          </div>
-        </ScrollArea>
+        <WidgetCardsCarousel>
+          {filteredClassrooms.map((classroom) => (
+            <div key={classroom.id} className={widgetCardSlotClass}>
+              <Classroom classroom={classroom} isLoading={isLoading} />
+            </div>
+          ))}
+        </WidgetCardsCarousel>
       ) : isTutor && selectedSubject === 'all' ? (
         <SectionEmptyState
           title={t('classrooms.emptyTitle')}

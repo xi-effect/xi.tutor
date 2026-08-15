@@ -57,7 +57,7 @@ export const getExtensions = (
         HTMLAttributes: {
           class: 'text-blue-500 hover:text-blue-700 underline cursor-pointer',
         },
-        openOnClick: true,
+        openOnClick: false,
         autolink: true,
       },
       // Отключаем undoRedo — Collaboration приносит свою реализацию,
@@ -87,7 +87,9 @@ export const getExtensions = (
         'paragraph',
         'bulletList',
         'orderedList',
+        'listItem',
         'taskList',
+        'taskItem',
         'heading',
         'blockquote',
         'codeBlock',

@@ -1,28 +1,23 @@
-import { createContext, ReactNode, useContext, useEffect, useMemo, useState } from 'react';
-import { ExtendedStoreStatus, useYjsStore } from '../hooks/useYjsStore';
+import { ReactNode, useEffect, useMemo, useState } from 'react';
+import { useYjsStore } from '../hooks/useYjsStore';
+import { YjsContext } from './YjsContext';
 import { StorageItemT } from 'common.types';
 import { LoadingScreen } from 'common.ui';
 import { DEMO_STORAGE_TOKEN, DEMO_YDOC_ID } from '../utils/yjsConstants';
 import { ydocIdFromBoardDumpFilename } from '../utils/parseYjsBoardDoc';
 import i18n from 'i18next';
 
-type YjsContextType = ExtendedStoreStatus | null;
-
-const YjsContext = createContext<YjsContextType>(null);
+export { useYjsContext } from './YjsContext';
 
 type YjsProviderProps = {
   children: ReactNode;
   storageItem?: StorageItemT;
   /** Если true — используются тестовые значения ydocId и storageToken */
   isDemo?: boolean;
-};
-
-export const useYjsContext = () => {
-  const context = useContext(YjsContext);
-  if (!context) {
-    throw new Error('useYjsContext must be used within YjsProvider');
-  }
-  return context;
+  cachedYdocId?: string;
+  initialYjsUpdate?: Uint8Array;
+  cacheBoardId?: string;
+  cacheUserId?: string;
 };
 
 type LocalYjsPreviewState = {
@@ -41,7 +36,15 @@ function YjsProviderStore({ children, storeParams }: YjsProviderStoreProps) {
   return <YjsContext.Provider value={yjsStore}>{children}</YjsContext.Provider>;
 }
 
-export const YjsProvider = ({ children, storageItem, isDemo = false }: YjsProviderProps) => {
+export const YjsProvider = ({
+  children,
+  storageItem,
+  isDemo = false,
+  cachedYdocId,
+  initialYjsUpdate,
+  cacheBoardId,
+  cacheUserId,
+}: YjsProviderProps) => {
   const localDumpUrl = import.meta.env.VITE_BOARD_LOCAL_YDOC_URL as string | undefined;
   const localDumpYdocIdEnv = import.meta.env.VITE_BOARD_LOCAL_YDOC_ID as string | undefined;
   const useLocalDump = import.meta.env.DEV && Boolean(localDumpUrl);
@@ -95,7 +98,15 @@ export const YjsProvider = ({ children, storageItem, isDemo = false }: YjsProvid
 
   // Извлекаем примитивные значения для мемоизации
   const storageToken = isDemo ? DEMO_STORAGE_TOKEN : storageItem?.storage_token || '';
-  const ydocId = localDump?.ydocId ?? (isDemo ? DEMO_YDOC_ID : storageItem?.ydoc_id || '');
+  const ydocId =
+    localDump?.ydocId ?? (isDemo ? DEMO_YDOC_ID : storageItem?.ydoc_id || cachedYdocId || '');
+  const cacheUpdate =
+    !localDump &&
+    initialYjsUpdate?.length &&
+    cachedYdocId &&
+    (!storageItem?.ydoc_id || storageItem.ydoc_id === cachedYdocId)
+      ? initialYjsUpdate
+      : undefined;
 
   // Мемоизируем параметры, чтобы избежать пересоздания провайдера
   const storeParams = useMemo(() => {
@@ -124,10 +135,12 @@ export const YjsProvider = ({ children, storageItem, isDemo = false }: YjsProvid
       storageToken,
       ydocId,
       token: storageToken,
-      initialYjsUpdate: localDump?.update,
-      localYjsPreview: Boolean(localDump),
+      initialYjsUpdate: localDump?.update ?? cacheUpdate,
+      localYjsPreview: Boolean(localDump) || isDemo,
+      cacheBoardId,
+      cacheUserId,
     };
-  }, [storageToken, ydocId, isDemo, localDump]);
+  }, [storageToken, ydocId, isDemo, localDump, cacheUpdate, cacheBoardId, cacheUserId]);
 
   if (useLocalDump && !localDump && !localDumpError) {
     return <LoadingScreen />;
@@ -141,5 +154,9 @@ export const YjsProvider = ({ children, storageItem, isDemo = false }: YjsProvid
     );
   }
 
-  return <YjsProviderStore storeParams={storeParams}>{children}</YjsProviderStore>;
+  return (
+    <YjsProviderStore key={ydocId} storeParams={storeParams}>
+      {children}
+    </YjsProviderStore>
+  );
 };

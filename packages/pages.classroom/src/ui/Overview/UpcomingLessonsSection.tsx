@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import { useParams } from '@tanstack/react-router';
 import { Add } from '@xipkg/icons';
 import { Button } from '@xipkg/button';
-import { ScrollArea } from '@xipkg/scrollarea';
 import { useCurrentUser } from 'common.services';
 import {
   useTutorClassroomSchedule,
@@ -21,9 +20,18 @@ import {
 } from 'features.lesson.move';
 import { CancelLessonModal, type LessonSchedulerMetaForCancel } from 'features.lesson.cancel';
 import { useTranslation } from 'react-i18next';
-import { useClassroomScheduleOptional } from '../Calendar/ClassroomScheduleContext';
+import { useClassroomScheduleOptional } from '../Calendar/useClassroomSchedule';
 import { UpcomingLessonCard } from './UpcomingLessonCard';
 import { UpcomingLessonCardSkeleton } from './UpcomingLessonCardSkeleton';
+import { SectionHeader } from './SectionHeader';
+import { SectionEmptyState } from '../SectionEmptyState';
+import { sectionEmptyStateIllustrationClass } from '../sectionEmptyStateIllustrationClass';
+import { WidgetCardsCarousel } from '../WidgetCardsCarousel';
+import {
+  emptyInviteButtonClass,
+  galleryShadowHeaderInsetClass,
+  primaryIconButtonClass,
+} from '../galleryShadowClass';
 
 function getUpcomingRange() {
   const now = new Date();
@@ -167,74 +175,72 @@ export const UpcomingLessonsSection = () => {
   return (
     <>
       <div className="flex flex-col gap-4">
-        <div className="flex flex-row items-center justify-between gap-2 pr-0 sm:pr-0">
-          <h2 className="text-xl-base text-text-primary first-letter:uppercase">
-            {t('overview.upcomingLessons')}
-          </h2>
-          <div className="flex items-center gap-1">
-            {isTutor ? (
-              <Button
-                type="button"
-                variant="none"
-                className="bg-status-info-background hover:bg-action-primary-background-disabled/50 active:bg-action-primary-background-disabled/50 flex h-8 w-10 items-center justify-center rounded-lg p-0"
-                onClick={() => onAddLessonClick?.()}
-                aria-label={t('actions.addLesson')}
-              >
-                <Add className="fill-icon-brand size-6" />
-              </Button>
-            ) : null}
-          </div>
+        <div className={galleryShadowHeaderInsetClass}>
+          <SectionHeader
+            title={t('overview.upcomingLessons')}
+            tabLink="schedule"
+            actions={
+              isTutor ? (
+                <Button
+                  type="button"
+                  variant="primary"
+                  className={primaryIconButtonClass}
+                  onClick={() => onAddLessonClick?.()}
+                  aria-label={t('actions.addLesson')}
+                >
+                  <Add className="fill-text-on-accent size-6" />
+                </Button>
+              ) : null
+            }
+          />
         </div>
 
-        <div className="flex flex-row">
-          {isLoading ? (
-            <ScrollArea
-              className="min-h-[220px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
-              scrollBarProps={{ orientation: 'horizontal' }}
-            >
-              <div className="flex min-h-[220px] w-max flex-row items-stretch gap-4 pr-1 pb-4">
-                <UpcomingLessonCardSkeleton />
-                <UpcomingLessonCardSkeleton />
-                <UpcomingLessonCardSkeleton />
+        {isLoading ? (
+          <WidgetCardsCarousel>
+            <UpcomingLessonCardSkeleton />
+            <UpcomingLessonCardSkeleton />
+            <UpcomingLessonCardSkeleton />
+          </WidgetCardsCarousel>
+        ) : lessons.length === 0 ? (
+          <SectionEmptyState
+            title={t('overview.noLessonsTitle')}
+            description={t('overview.noLessonsDescription')}
+            minHeightClass="min-h-[160px] sm:min-h-[180px]"
+            illustration={
+              <EmptySchedule className={sectionEmptyStateIllustrationClass} aria-hidden />
+            }
+            actions={
+              isTutor ? (
+                <Button
+                  type="button"
+                  variant="none"
+                  className={emptyInviteButtonClass}
+                  onClick={() => onAddLessonClick?.()}
+                  data-umami-event="classroom-overview-empty-add-lesson"
+                >
+                  {t('actions.addLesson')}
+                  <Add className="fill-icon-brand size-4 shrink-0" />
+                </Button>
+              ) : undefined
+            }
+          />
+        ) : (
+          <WidgetCardsCarousel>
+            {lessons.map(({ lesson, item }, index) => (
+              <div key={`${lesson.id}`} className="flex w-[300px] shrink-0 flex-col sm:w-[320px]">
+                <UpcomingLessonCard
+                  lesson={lesson}
+                  classroomId={classroomId}
+                  isNearest={index === 0}
+                  showActions={isTutor}
+                  onReschedule={() => setMoveItem(item)}
+                  onEdit={() => setEditItem(item)}
+                  onDelete={() => setDeleteItem(item)}
+                />
               </div>
-            </ScrollArea>
-          ) : lessons.length === 0 ? (
-            <div className="border-border-default bg-background-surface dark:border-border-strong box-border flex min-h-[232px] w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed px-4 py-4">
-              <EmptySchedule
-                className="mb-4 max-h-[68px] w-full max-w-[176px] shrink-0 object-contain"
-                aria-hidden
-              />
-              <div className="flex max-w-[520px] flex-col gap-2 text-center">
-                <p className="text-m-base text-text-primary font-semibold">
-                  {t('overview.noLessonsTitle')}
-                </p>
-                <p className="text-s-base text-text-secondary dark:text-text-muted">
-                  {t('overview.noLessonsDescription')}
-                </p>
-              </div>
-            </div>
-          ) : (
-            <ScrollArea
-              className="min-h-[220px] w-full overflow-x-auto overflow-y-hidden sm:w-[calc(100vw-104px)]"
-              scrollBarProps={{ orientation: 'horizontal' }}
-            >
-              <div className="flex min-h-[220px] w-max flex-row items-stretch gap-4 pr-1 pb-4">
-                {lessons.map(({ lesson, item }, index) => (
-                  <UpcomingLessonCard
-                    key={`${lesson.id}`}
-                    lesson={lesson}
-                    classroomId={classroomId}
-                    isNearest={index === 0}
-                    showActions={isTutor}
-                    onReschedule={() => setMoveItem(item)}
-                    onEdit={() => setEditItem(item)}
-                    onDelete={() => setDeleteItem(item)}
-                  />
-                ))}
-              </div>
-            </ScrollArea>
-          )}
-        </div>
+            ))}
+          </WidgetCardsCarousel>
+        )}
       </div>
       {moveItem != null ? (
         <MovingLessonModal

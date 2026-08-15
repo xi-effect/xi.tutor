@@ -5,7 +5,9 @@ import type {
   LessonCreateFailureReason,
   PermissionFailureReason,
   SignupFailureReason,
+  SignupValidationFailedField,
   SignupValidationFailureReason,
+  SigninFailureReason,
   HttpStatusGroup,
 } from './types';
 
@@ -77,6 +79,31 @@ export function mapSignupError(error: unknown): SignupFailureReason {
   return 'unknown';
 }
 
+/**
+ * Маппинг ошибок входа только по известным backend detail / HTTP-группам.
+ * Не парсим произвольный error.message — только стабильные enum-значения API.
+ */
+export function mapSigninError(error: unknown): SigninFailureReason {
+  const err = asErrorLike(error);
+  const status = err.response?.status;
+  // Точное сравнение с известными backend detail (как в handleSigninError).
+  const detailRaw = asErrorLike(error).response?.data?.detail;
+  const detail = typeof detailRaw === 'string' ? detailRaw : '';
+
+  if (err.code === 'ECONNABORTED') return 'network_error';
+  if (err.code === 'ERR_NETWORK' || err.message === 'Network Error') return 'network_error';
+  if (!status) return 'network_error';
+  if (status >= 500) return 'server_error';
+
+  if (status === 401) {
+    if (detail === 'User not found') return 'user_not_found';
+    // 'Wrong password' и прочие 401 — не угадываем дальше.
+    return 'invalid_credentials';
+  }
+
+  return 'unknown';
+}
+
 type FieldErrorLike = {
   type?: string;
   message?: string;
@@ -87,47 +114,57 @@ function asFieldError(value: unknown): FieldErrorLike | undefined {
   return value as FieldErrorLike;
 }
 
+const SIGNUP_FIELD_TO_ANALYTICS: Record<string, SignupValidationFailedField> = {
+  username: 'username',
+  email: 'email',
+  password: 'password',
+  consent: 'terms',
+};
+
 export function mapSignupValidationErrors(fieldErrors: Partial<Record<string, unknown>>): {
+  failed_fields: SignupValidationFailedField[];
   reason: SignupValidationFailureReason;
   field: 'name' | 'email' | 'password' | 'terms' | 'multiple';
 } {
-  const invalidFields = Object.keys(fieldErrors).filter((key) => fieldErrors[key] != null);
+  const failed_fields = Object.keys(fieldErrors)
+    .filter((key) => fieldErrors[key] != null)
+    .map((key) => SIGNUP_FIELD_TO_ANALYTICS[key])
+    .filter((field): field is SignupValidationFailedField => Boolean(field));
 
-  if (invalidFields.length > 1) {
-    return { reason: 'multiple_fields', field: 'multiple' };
+  const uniqueFailedFields = [...new Set(failed_fields)];
+
+  if (uniqueFailedFields.length > 1) {
+    return { failed_fields: uniqueFailedFields, reason: 'multiple_fields', field: 'multiple' };
   }
 
-  const field = invalidFields[0];
-  const fieldError = asFieldError(fieldErrors[field]);
+  const field = Object.keys(fieldErrors).find((key) => fieldErrors[key] != null);
+  const fieldError = field ? asFieldError(fieldErrors[field]) : undefined;
   const errorType = fieldError?.type ?? '';
 
   if (field === 'username') {
-    return { reason: 'required_field', field: 'name' };
+    return { failed_fields: uniqueFailedFields, reason: 'required_field', field: 'name' };
   }
 
   if (field === 'email') {
     if (errorType === 'too_small' || errorType === 'invalid_type' || errorType === 'required') {
-      return { reason: 'required_field', field: 'email' };
+      return { failed_fields: uniqueFailedFields, reason: 'required_field', field: 'email' };
     }
-    return { reason: 'invalid_email', field: 'email' };
+    return { failed_fields: uniqueFailedFields, reason: 'invalid_email', field: 'email' };
   }
 
   if (field === 'password') {
     if (errorType === 'invalid_type' || errorType === 'required') {
-      return { reason: 'required_field', field: 'password' };
+      return { failed_fields: uniqueFailedFields, reason: 'required_field', field: 'password' };
     }
     // too_small при min(6) = слабый пароль; пустая строка тоже too_small у zod string().min()
-    if (errorType === 'too_small') {
-      return { reason: 'weak_password', field: 'password' };
-    }
-    return { reason: 'weak_password', field: 'password' };
+    return { failed_fields: uniqueFailedFields, reason: 'weak_password', field: 'password' };
   }
 
   if (field === 'consent') {
-    return { reason: 'terms_not_accepted', field: 'terms' };
+    return { failed_fields: uniqueFailedFields, reason: 'terms_not_accepted', field: 'terms' };
   }
 
-  return { reason: 'required_field', field: 'multiple' };
+  return { failed_fields: uniqueFailedFields, reason: 'required_field', field: 'multiple' };
 }
 
 export function mapEmailConfirmationError(error: unknown): EmailConfirmationFailureReason {

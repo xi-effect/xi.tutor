@@ -30,7 +30,11 @@
     "zoomReset": "Сбросить масштаб",
     "zoomFit": "Подогнать по размеру"
   },
+  "menu": {
+    "back": "Назад"
+  },
   "settings": {
+    "menuTitle": "Настройки доски",
     "resumeBoard": "Возобновить работу с доской",
     "pauseBoard": "Приостановить работу с доской",
     "hideComments": "Скрыть комментарии",
@@ -104,7 +108,8 @@
     "sticker": "Стикер",
     "emoji": "Эмодзи",
     "uploadFile": "Загрузить файл. Фото: до 1 МБ. PDF, аудио и прочие файлы: до 5 МБ.",
-    "coordinateAxes": "Оси координат"
+    "coordinateAxes": "Оси координат",
+    "more": "Ещё"
   },
   "timer": {
     "pause": "Пауза",
@@ -202,7 +207,8 @@
     "loading": "Загрузка..."
   },
   "presentation": {
-    "loading": "Загрузка..."
+    "loading": "Загрузка...",
+    "extractPage": "Извлечь слайд как изображение"
   },
   "audio": {
     "label": "Аудио",
@@ -250,6 +256,11 @@
     "importSuccess": "Импортировано записей: {{count}}",
     "importInvalidJson": "Неверный формат JSON",
     "importError": "Ошибка импорта",
+    "miroPasteTitle": "Вставлено из Miro",
+    "miroPasteBeta": "beta",
+    "miroPasteDesc": "Импортировано элементов: {{count}}. Некоторые объекты и стили могут отличаться от оригинала.",
+    "miroPasteImagesNote": "Изображения из Miro нужно копировать отдельно (кнопка Копировать как изображение).",
+    "miroPasteDontShowAgain": "Не показывать больше",
     "unsupportedFormat": "Неподдерживаемый формат",
     "unsupportedFileFormat": "Неподдерживаемый формат файла",
     "fileCannotUpload": "Файл «{{name}}» нельзя загрузить на доску.",
@@ -272,6 +283,12 @@
     "pdfLimitDesc": "На доске может быть не более {{max}} PDF-объектов.",
     "pdfUploadFailed": "Не удалось загрузить PDF",
     "pdfUploadError": "Ошибка загрузки PDF",
+    "presentationFormatDesc": "Выберите файл в формате презентации (PPT, PPTX).",
+    "presentationSizeDesc": "Размер презентации не должен превышать 5 MiB (сейчас {{size}} MiB).",
+    "presentationLimitTitle": "Лимит презентаций",
+    "presentationLimitDesc": "На доске может быть не более {{max}} презентаций.",
+    "presentationUploadFailed": "Не удалось загрузить презентацию",
+    "presentationUploadError": "Ошибка загрузки презентации",
     "audioFormatDesc": "Выберите аудиофайл (MP3, OGG, WAV, AAC, FLAC и др.).",
     "audioInvalidFormat": "Неверный формат файла",
     "audioInvalidFormatDesc": "Содержимое файла не соответствует заявленному типу аудио.",

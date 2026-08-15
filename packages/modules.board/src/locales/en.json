@@ -30,7 +30,11 @@
     "zoomReset": "Reset zoom",
     "zoomFit": "Zoom to fit"
   },
+  "menu": {
+    "back": "Back"
+  },
   "settings": {
+    "menuTitle": "Board settings",
     "resumeBoard": "Resume board editing",
     "pauseBoard": "Pause board editing",
     "hideComments": "Hide comments",
@@ -104,7 +108,8 @@
     "sticker": "Sticker",
     "emoji": "Emoji",
     "uploadFile": "Upload file. Photos: up to 1 MB. PDF, audio and other files: up to 5 MB.",
-    "coordinateAxes": "Coordinate axes"
+    "coordinateAxes": "Coordinate axes",
+    "more": "More"
   },
   "timer": {
     "pause": "Pause",
@@ -202,7 +207,8 @@
     "loading": "Loading..."
   },
   "presentation": {
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "extractPage": "Extract slide as image"
   },
   "audio": {
     "label": "Audio",
@@ -250,6 +256,11 @@
     "importSuccess": "Imported records: {{count}}",
     "importInvalidJson": "Invalid JSON format",
     "importError": "Import error",
+    "miroPasteTitle": "Pasted from Miro",
+    "miroPasteBeta": "beta",
+    "miroPasteDesc": "Imported elements: {{count}}. Some objects and styles may differ from the original.",
+    "miroPasteImagesNote": "Images from Miro need to be copied separately (Copy as image button).",
+    "miroPasteDontShowAgain": "Don't show again",
     "unsupportedFormat": "Unsupported format",
     "unsupportedFileFormat": "Unsupported file format",
     "fileCannotUpload": "File “{{name}}” cannot be uploaded to the board.",
@@ -272,6 +283,12 @@
     "pdfLimitDesc": "The board can have at most {{max}} PDF objects.",
     "pdfUploadFailed": "Failed to upload PDF",
     "pdfUploadError": "PDF upload error",
+    "presentationFormatDesc": "Choose a presentation file (PPT, PPTX).",
+    "presentationSizeDesc": "Presentation size must not exceed 5 MiB (currently {{size}} MiB).",
+    "presentationLimitTitle": "Presentation limit",
+    "presentationLimitDesc": "The board can have at most {{max}} presentations.",
+    "presentationUploadFailed": "Failed to upload presentation",
+    "presentationUploadError": "Presentation upload error",
     "audioFormatDesc": "Choose an audio file (MP3, OGG, WAV, AAC, FLAC, etc.).",
     "audioInvalidFormat": "Invalid file format",
     "audioInvalidFormatDesc": "File contents do not match the declared audio type.",

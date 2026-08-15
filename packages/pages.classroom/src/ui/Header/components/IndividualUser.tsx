@@ -1,15 +1,15 @@
 import { UserProfile } from '@xipkg/userprofile';
 import { useCurrentUser, useUserByRole } from 'common.services';
+import { classroomPageTitleClass } from '../../sectionTitleClass';
 
 export const IndividualUser = ({ userId }: { userId: number }) => {
   const { data: currentUser } = useCurrentUser();
   const isTutor = currentUser?.default_layout === 'tutor';
-  // Используем useUserByRole с userId напрямую
   const userRole = isTutor ? 'student' : 'tutor';
   const { data: user } = useUserByRole(userRole, userId);
 
   return (
-    <div className="flex w-full max-w-[min(100%,300px)] min-w-0 flex-row items-center gap-2 sm:w-fit sm:max-w-[300px]">
+    <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
       <UserProfile
         className="shrink-0"
         text={user?.display_name ?? user?.username}
@@ -17,9 +17,7 @@ export const IndividualUser = ({ userId }: { userId: number }) => {
         size="l"
         withOutText
       />
-      <div className="text-xl-base text-text-primary min-w-0 truncate font-semibold">
-        {user?.display_name ?? user?.username}
-      </div>
+      <h1 className={classroomPageTitleClass}>{user?.display_name ?? user?.username}</h1>
     </div>
   );
 };

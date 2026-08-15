@@ -213,7 +213,7 @@ export const ScheduleDateCarousel = ({
     <div className={cn('flex w-full flex-row items-center justify-center gap-2', className)}>
       <Button
         variant="none"
-        className="text-text-primary hover:bg-background-subtle flex h-[48px] w-[36px] min-w-[36px] items-center justify-center rounded-lg p-0"
+        className="text-text-primary hover:bg-background-subtle flex h-10 w-10 min-w-10 items-center justify-center rounded-lg p-0"
         onClick={goPrev}
         disabled={carouselStartIndex === 0}
         data-umami-event="schedule-date-carousel-prev"
@@ -290,7 +290,7 @@ export const ScheduleDateCarousel = ({
 
       <Button
         variant="none"
-        className="text-text-primary hover:bg-background-subtle flex h-[48px] w-[36px] min-w-[36px] shrink-0 items-center justify-center rounded-lg p-0"
+        className="text-text-primary hover:bg-background-subtle flex h-10 w-10 min-w-10 shrink-0 items-center justify-center rounded-lg p-0"
         onClick={goNext}
         disabled={carouselStartIndex >= maxStartIndex}
         data-umami-event="schedule-date-carousel-next"

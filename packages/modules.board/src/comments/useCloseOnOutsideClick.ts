@@ -16,7 +16,7 @@ export function useCloseOnOutsideClick(active: boolean, onClose: () => void): vo
 
     const handlePointerDown = (e: PointerEvent) => {
       const target = e.target as Element | null;
-      if (target?.closest('[data-comment-ui]')) return;
+      if (target?.closest('[data-comment-ui], [data-board-drawer]')) return;
       onClose();
     };
 
