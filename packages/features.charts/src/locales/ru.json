@@ -1,25 +1,5 @@
 {
-  "income": "Доход",
-  "subject": "Предмет:",
-  "any": "Любой",
-  "subjects": "Предметы",
-  "months": {
-    "april": "Апрель",
-    "may": "Май",
-    "june": "Июнь",
-    "july": "Июль",
-    "august": "Август",
-    "september": "Сентябрь",
-    "october": "Октябрь",
-    "november": "Ноябрь",
-    "december": "Декабрь",
-    "january": "Январь",
-    "february": "Февраль",
-    "march": "Март"
-  },
-  "languages": {
-    "english": "Английский язык",
-    "spanish": "Испанский язык",
-    "italian": "Итальянский язык"
-  }
+  "received": "Получено",
+  "empty": "Нет оплат за период",
+  "approximate": "По дате счёта"
 }

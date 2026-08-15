@@ -2,6 +2,7 @@
   "title": "Контроль оплат",
   "tabs": {
     "invoices": "Журнал оплат",
+    "analytics": "Аналитика",
     "templates": "Типы оплат"
   },
   "actions": {
@@ -25,6 +26,69 @@
   "charts": {
     "title": "Начало работы с аналитикой",
     "description": "На этой странице вы можете просматривать аналитику по оплате и доходам. Прежде чем данные начнут отображаться, должно пройти некоторое время."
+  },
+  "analytics": {
+    "emptyValue": "—",
+    "delta": {
+      "new": "Новый"
+    },
+    "periods": {
+      "month": "Этот месяц",
+      "last_30_days": "30 дней",
+      "year": "Этот год",
+      "custom": "Свой"
+    },
+    "kpi": {
+      "received": "Получено",
+      "awaitingPayment": "Ожидает оплаты",
+      "awaitingConfirmation": "На подтверждении",
+      "openStudents": "С незакрытыми счетами",
+      "openStudentsValue_one": "{{count}} ученик",
+      "openStudentsValue_few": "{{count}} ученика",
+      "openStudentsValue_many": "{{count}} учеников",
+      "openStudentsValue_other": "{{count}} учеников",
+      "invoicesCount_one": "{{count}} счёт",
+      "invoicesCount_few": "{{count}} счёта",
+      "invoicesCount_many": "{{count}} счетов",
+      "invoicesCount_other": "{{count}} счетов"
+    },
+    "hints": {
+      "forPeriod": "За период",
+      "now": "Сейчас"
+    },
+    "secondary": {
+      "title": "Счета, выставленные за период",
+      "paidShare": "{{paid}} из {{total}} оплачено",
+      "averageCheck": "Средний чек"
+    },
+    "chart": {
+      "title": "Получено",
+      "subtitle": "{{current}} · сравнение с {{previous}}",
+      "approximate": "Часть суммы ({{amount}}) отнесена к дате выставления — точной даты оплаты нет"
+    },
+    "attention": {
+      "title": "Требуют внимания",
+      "description": "Сначала счета, которые нужно подтвердить вам. Затем — ожидающие оплаты от учеников.",
+      "empty": "Незакрытых счетов нет"
+    },
+    "empty": {
+      "title": "Пока нет данных для аналитики",
+      "description": "Выставьте первый счёт — здесь появятся доход, задолженность и динамика."
+    },
+    "monthsShort": {
+      "01": "янв",
+      "02": "фев",
+      "03": "мар",
+      "04": "апр",
+      "05": "май",
+      "06": "июн",
+      "07": "июл",
+      "08": "авг",
+      "09": "сен",
+      "10": "окт",
+      "11": "ноя",
+      "12": "дек"
+    }
   },
   "templateCard": {
     "edit": "Редактировать",
