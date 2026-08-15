@@ -175,7 +175,7 @@ export const Header = () => {
           ) : (
             <div
               className={cn(
-                '-m-[1.5px] h-full rounded-xl border-2 py-1 lg:rounded-2xl',
+                'group relative -m-[1.5px] flex h-full min-w-0 items-center gap-0 rounded-xl border-2 py-1 lg:rounded-2xl',
                 isEditMode
                   ? !nameValue
                     ? 'border-border-error caret-red-80'
@@ -183,77 +183,75 @@ export const Header = () => {
                   : 'border-transparent',
               )}
             >
-              <div className={cn('group relative flex h-6 min-w-0 items-center gap-0 lg:h-8')}>
-                {isEditMode ? (
-                  <>
-                    <input
-                      ref={nameInputRef}
-                      value={nameValue}
-                      onChange={handleNameInputChange}
-                      onBlur={handleNameInputBlur}
-                      onKeyDown={handleNameInputKeyDown}
-                      disabled={isUpdating}
-                      autoComplete="off"
-                      placeholder={t('header.editInputPlaceholder')}
-                      aria-label={t('header.editInputAria')}
-                      aria-invalid={!nameValue}
-                      autoFocus
-                      className={cn(
-                        boardTextClass,
-                        `text-l-base xs:max-w-[130px] caret-brand-80 flex h-full max-w-[100px] min-w-0 rounded-xl px-1 disabled:opacity-50 md:max-w-[220px] lg:rounded-2xl`,
-                      )}
-                    />
-                    {isUpdating && (
-                      <span className="bg-background-surface pointer-events-none absolute top-1/2 right-1 flex h-4 w-4 -translate-y-1/2 items-center justify-center">
-                        <Loader size="s" className={cn(boardIconClass, 'h-4 w-4 animate-spin')} />
-                      </span>
+              {isEditMode ? (
+                <>
+                  <input
+                    ref={nameInputRef}
+                    value={nameValue}
+                    onChange={handleNameInputChange}
+                    onBlur={handleNameInputBlur}
+                    onKeyDown={handleNameInputKeyDown}
+                    disabled={isUpdating}
+                    autoComplete="off"
+                    placeholder={t('header.editInputPlaceholder')}
+                    aria-label={t('header.editInputAria')}
+                    aria-invalid={!nameValue}
+                    autoFocus
+                    className={cn(
+                      boardTextClass,
+                      `text-l-base xs:max-w-[130px] caret-brand-80 flex h-6 max-w-[100px] min-w-0 rounded-xl px-1 disabled:opacity-50 md:max-w-[220px] lg:h-8 lg:rounded-2xl`,
                     )}
-                    {!nameValue && (
-                      <div className="text-red-80 xs:w-max xs:max-w-none bg-red-0 absolute top-8 my-1 flex max-w-[100px] min-w-0 items-center gap-1 rounded-sm p-1">
-                        <InfoCircle size="s" className={`border-red-80 text-red-80 h-4 w-4`} />
-                        <p className="flex-1">{t('header.editInputError')}</p>
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <h1
-                            onClick={startEditing}
-                            className={cn(
-                              boardTextClass,
-                              isTutor ? 'cursor-pointer' : '',
-                              'text-l-base xs:max-w-[150px] flex h-full max-w-[100px] min-w-0 items-center px-1 select-none md:max-w-[240px]',
-                            )}
-                          >
-                            <span className="block min-w-0 truncate">
-                              {material?.name || t('header.emptyName')}
-                            </span>
-                          </h1>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="max-w-[360px] wrap-break-word">
+                  />
+                  {isUpdating && (
+                    <span className="bg-background-surface pointer-events-none absolute top-1/2 right-1 flex h-4 w-4 -translate-y-1/2 items-center justify-center">
+                      <Loader size="s" className={cn(boardIconClass, 'h-4 w-4 animate-spin')} />
+                    </span>
+                  )}
+                  {!nameValue && (
+                    <div className="text-red-80 xs:w-max xs:max-w-none bg-red-0 absolute top-8 my-1 flex max-w-[100px] min-w-0 items-center gap-1 rounded-sm p-1">
+                      <InfoCircle size="s" className={`border-red-80 text-red-80 h-4 w-4`} />
+                      <p className="flex-1">{t('header.editInputError')}</p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <h1
+                          onClick={startEditing}
+                          className={cn(
+                            boardTextClass,
+                            isTutor ? 'cursor-pointer' : '',
+                            'text-l-base xs:max-w-[150px] flex h-6 max-w-[100px] min-w-0 items-center px-1 select-none md:max-w-[240px] lg:h-8',
+                          )}
+                        >
+                          <span className="block min-w-0 truncate">
                             {material?.name || t('header.emptyName')}
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                    {isTutor && (
-                      <Button
-                        type="button"
-                        variant="none"
-                        className="hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 opacity-0 transition-opacity group-hover:opacity-100 focus:bg-transparent focus-visible:opacity-100 lg:h-8 lg:w-8 lg:rounded-xl"
-                        onClick={startEditing}
-                        data-umami-event="board-edit-name"
-                      >
-                        <Edit size="s" className={cn('h-4 w-4 lg:h-6 lg:w-6', boardIconClass)} />
-                      </Button>
-                    )}
-                  </>
-                )}
-              </div>
+                          </span>
+                        </h1>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="max-w-[360px] wrap-break-word">
+                          {material?.name || t('header.emptyName')}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  {isTutor && (
+                    <Button
+                      type="button"
+                      variant="none"
+                      className="hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 opacity-0 transition-opacity group-hover:opacity-100 focus:bg-transparent focus-visible:opacity-100 lg:h-8 lg:w-8 lg:rounded-xl"
+                      onClick={startEditing}
+                      data-umami-event="board-edit-name"
+                    >
+                      <Edit size="s" className={cn('h-4 w-4 lg:h-6 lg:w-6', boardIconClass)} />
+                    </Button>
+                  )}
+                </>
+              )}
             </div>
           )}
         </div>
