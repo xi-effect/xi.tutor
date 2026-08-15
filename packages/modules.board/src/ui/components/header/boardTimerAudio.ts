@@ -7,6 +7,8 @@
  */
 
 import { useSoundEffectsStore } from 'common.ui';
+import { getBoardAudioOutputDeviceId } from '../../../audioOutput/boardAudioOutput';
+import { setAudioOutputSink } from '../../../shapes/audio/utils/setAudioOutputSink';
 
 const resolveSoundUrl = (file: string): string => {
   const base = import.meta.env.BASE_URL ?? '/';
@@ -85,6 +87,7 @@ export function playBoardTimerWarnSound(): void {
     audio.pause();
     audio.currentTime = 0;
     audio.volume = Math.max(0, Math.min(1, volume));
+    setAudioOutputSink(audio, getBoardAudioOutputDeviceId());
     void audio.play().catch(() => {});
   } catch {
     /* ignore */
@@ -99,6 +102,7 @@ export function playBoardTimerEndSound(): void {
     audio.pause();
     audio.currentTime = 0;
     audio.volume = Math.max(0.2, Math.min(1, volume));
+    setAudioOutputSink(audio, getBoardAudioOutputDeviceId());
     void audio.play().catch(() => {});
   } catch {
     /* ignore */
