@@ -2,6 +2,7 @@ import { materialsApiConfig, MaterialsQueryKey } from 'common.api';
 import { getAxiosInstance } from 'common.config';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { handleError, showSuccess, findNextAvailableName } from 'common.services';
+import i18n from 'i18next';
 
 interface MaterialsResponseT {
   data: MaterialsDataT & {
@@ -122,7 +123,10 @@ export const useAddMaterials = () => {
         });
       }
 
-      showSuccess('materials', `${response.data.name} создана`);
+      showSuccess(
+        'materials',
+        i18n.t('toast.materials.created', { ns: 'commonServices', name: response.data.name }),
+      );
     },
   });
 
