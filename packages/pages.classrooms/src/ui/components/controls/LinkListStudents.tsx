@@ -27,11 +27,7 @@ export const LinkListStudents = ({ className }: LinkListStudentsT) => {
           {t('studentsList')}
         </Button>
       </ModalStudentsList>
-      <ModalInvitation
-        open={inviteOpen}
-        onOpenChange={setInviteOpen}
-        analyticsSource="students"
-      />
+      <ModalInvitation open={inviteOpen} onOpenChange={setInviteOpen} analyticsSource="students" />
     </>
   );
 };
