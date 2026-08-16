@@ -44,6 +44,7 @@ export const PresentationControls = ({
   return (
     <div
       className="bg-background-surface border-border-default pointer-events-auto flex shrink-0 items-center gap-2 rounded-b-xl border-t px-3 py-1.5 select-none"
+      data-board-control=""
       style={{ height: CONTROLS_HEIGHT }}
       onPointerDown={(e) => e.stopPropagation()}
     >

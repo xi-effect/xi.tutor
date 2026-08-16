@@ -18,7 +18,7 @@ export function AudioWaveform({
   return (
     <svg
       style={{
-        pointerEvents: isInteractive ? 'all' : 'none',
+        pointerEvents: isInteractive ? 'auto' : 'none',
         cursor: isInteractive && canControl ? 'pointer' : 'default',
       }}
       data-audio-control=""

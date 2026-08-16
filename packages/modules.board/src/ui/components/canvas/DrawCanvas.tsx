@@ -10,6 +10,7 @@ import {
   useDrawClipboard,
   useOverlayRepaintOnSelection,
   useEditOnTypeForLabels,
+  useBoardControlPointer,
   useProductBoardAnalytics,
   useMiroPasteNotice,
   useBoardDeepLinkFocus,
@@ -33,7 +34,7 @@ import { XiGeoTool } from '../../../shapes/geo';
 import { EmojiTool } from '../../../shapes/emoji';
 import { EmojiStickerTool } from '../../../shapes/emojiSticker';
 import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
-import { isShapeErasable, isEditableTarget } from '../../../utils';
+import { isShapeErasable, isEditableTarget, resetInflatedDrawScale } from '../../../utils';
 import { TextEditorToolbarWithContext } from '../../../shapes/text/TextEditorToolbarWithContext';
 import { insertAsset } from '../../../utils/uploadAsset';
 import { useRetryFileQueue } from 'common.services';
@@ -66,6 +67,7 @@ export const DrawCanvas = ({
   } = useYjsContext();
   const { followingPresenceId } = useFollowUserStore();
   const appliedInitialCameraRef = useRef(false);
+  const didResetDrawScaleRef = useRef(false);
   const search = useSearch({ strict: false }) as BoardDeepLinkSearch;
   const hasDeepLink = hasBoardDeepLinkSearch(search);
 
@@ -90,6 +92,7 @@ export const DrawCanvas = ({
   );
 
   useLockedShapeSelection(editor);
+  useBoardControlPointer(editor);
   useDrawClipboard(editor, token);
   useOverlayRepaintOnSelection(editor);
   useEditOnTypeForLabels(editor);
@@ -360,6 +363,12 @@ export const DrawCanvas = ({
     editor.user.updateUserPreferences({ colorScheme: theme });
   }, [editor, theme]);
 
+  useEffect(() => {
+    if (!editor || !isBoardStoreReady(status) || didResetDrawScaleRef.current) return;
+    didResetDrawScaleRef.current = true;
+    resetInflatedDrawScale(editor);
+  }, [editor, status]);
+
   if (status === 'loading') return <LoadingScreen />;
 
   return (
@@ -379,6 +388,19 @@ export const DrawCanvas = ({
               editor.updateInstanceState({
                 isGridMode: true,
                 isDebugMode: false,
+              });
+              // Иначе при зуме < 100% карандаш масштабируется как 1/zoom и
+              // даже XS становится очень толстым («невозможно писать»).
+              editor.user.updateUserPreferences({ isDynamicSizeMode: false });
+              resetInflatedDrawScale(editor);
+              editor.sideEffects.registerBeforeCreateHandler('shape', (shape) => {
+                if (shape.type === 'draw' && shape.props.scale !== 1) {
+                  return { ...shape, props: { ...shape.props, scale: 1 } };
+                }
+                if (shape.type === 'highlight' && shape.props.scale !== 1) {
+                  return { ...shape, props: { ...shape.props, scale: 1 } };
+                }
+                return shape;
               });
 
               const inputMode = useDrawStore.getState().inputMode;

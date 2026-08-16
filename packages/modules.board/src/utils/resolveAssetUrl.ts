@@ -74,7 +74,16 @@ export function extractFileIdFromUrl(src: string): string | null {
  * - Limited fallback: at most MAX_FALLBACK_TOKENS alternative tokens are tried
  *   instead of iterating all 20 stored tokens.
  */
-export async function resolveAssetUrl(src: string, token: string): Promise<string> {
+export type ResolveAssetUrlOptions = {
+  /** Повторить запрос, даже если src недавно упал в negative cache. */
+  ignoreNegativeCache?: boolean;
+};
+
+export async function resolveAssetUrl(
+  src: string,
+  token: string,
+  options?: ResolveAssetUrlOptions,
+): Promise<string> {
   if (!src || !token) return src;
 
   if (src.startsWith('data:') || src.startsWith('blob:')) return src;
@@ -84,9 +93,13 @@ export async function resolveAssetUrl(src: string, token: string): Promise<strin
 
   const primaryKey = makeCacheKey(src, token);
 
-  const negExpiry = negativeCache.get(primaryKey);
-  if (negExpiry !== undefined && Date.now() < negExpiry) {
-    throw new Error(`[resolveAssetUrl] asset in negative cache: ${src}`);
+  if (!options?.ignoreNegativeCache) {
+    const negExpiry = negativeCache.get(primaryKey);
+    if (negExpiry !== undefined && Date.now() < negExpiry) {
+      throw new Error(`[resolveAssetUrl] asset in negative cache: ${src}`);
+    }
+  } else {
+    negativeCache.delete(primaryKey);
   }
 
   const existing = inFlightCache.get(primaryKey);
@@ -96,7 +109,9 @@ export async function resolveAssetUrl(src: string, token: string): Promise<strin
 
   const promise = (async () => {
     try {
-      return await fetchAndCacheBlobUrl(url, src, token);
+      const blobUrl = await fetchAndCacheBlobUrl(url, src, token);
+      negativeCache.delete(primaryKey);
+      return blobUrl;
     } catch (primaryError) {
       negativeCache.set(primaryKey, Date.now() + NEGATIVE_CACHE_TTL_MS);
 
@@ -193,4 +208,29 @@ export async function resolveAssetAsDataUrl(src: string, token: string): Promise
 
 export function getCachedDataUrl(src: string): string | undefined {
   return dataUrlCache.get(src);
+}
+
+const ASSET_READY_RETRY_MS = [0, 300, 800, 1600] as const;
+
+/**
+ * Ждёт, пока только что загруженный файл станет доступен в storage.
+ * Сразу после upload первый GET часто 404 — без ретрая картинка «не с первого раза».
+ */
+export async function waitForResolvedAssetUrl(src: string, token: string): Promise<string | null> {
+  if (!src || !token) return null;
+  if (src.startsWith('data:') || src.startsWith('blob:')) return src;
+
+  for (const delay of ASSET_READY_RETRY_MS) {
+    if (delay) await new Promise((resolve) => setTimeout(resolve, delay));
+    try {
+      const url = await resolveAssetUrl(src, token, { ignoreNegativeCache: true });
+      if (url.startsWith('blob:') || url.startsWith('data:') || url.startsWith('http')) {
+        return url;
+      }
+    } catch {
+      // файл ещё не готов или токен не подошёл — пробуем снова
+    }
+  }
+
+  return null;
 }

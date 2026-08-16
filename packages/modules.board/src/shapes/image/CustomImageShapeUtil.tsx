@@ -18,6 +18,8 @@ import {
   getSvgExportRasterScale,
   resolveSrcForSvgExport,
 } from '../../utils/shapeSvgExport';
+import { isDisplayableAssetUrl } from '../../utils/storedFileSrc';
+import { resolveAssetUrl } from '../../utils/resolveAssetUrl';
 
 export class CustomImageShapeUtil extends DrawImageShapeUtil {
   override component(shape: DrImageShape) {
@@ -241,22 +243,69 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
   const [staticFrameSrc, setStaticFrameSrc] = useState('');
   const [loadedUrl, setLoadedUrl] = useState<null | string>(null);
   const [imgError, setImgError] = useState(false);
+  const [retryUrl, setRetryUrl] = useState<string | null>(null);
+  const [retryExhausted, setRetryExhausted] = useState(false);
   const isAnimated = asset && getIsAnimated(editor, asset.id);
+  const assetSrc = typeof asset?.props.src === 'string' ? asset.props.src : '';
+  const hookUrl = isDisplayableAssetUrl(url) ? url : null;
+  const resolvedUrl = hookUrl ?? retryUrl;
 
   useEffect(() => {
     setImgError(false);
-  }, [url]);
+  }, [resolvedUrl]);
 
   useEffect(() => {
-    if (url && isAnimated) {
-      const { promise, cancel } = getFirstFrameOfAnimatedImage(url);
+    const needsRetry =
+      Boolean(assetSrc) && !isDisplayableAssetUrl(assetSrc) && (!hookUrl || imgError);
+    if (!needsRetry) {
+      setRetryExhausted(false);
+      return;
+    }
+
+    let cancelled = false;
+    const delays = [400, 1000, 2000, 4000];
+    let attempt = 0;
+    let timer = 0;
+
+    const run = async () => {
+      const token = getBoardStorageToken();
+      if (!token || cancelled) return;
+      try {
+        const resolved = await resolveAssetUrl(assetSrc, token, { ignoreNegativeCache: true });
+        if (!cancelled && isDisplayableAssetUrl(resolved)) {
+          setRetryUrl(resolved);
+          setImgError(false);
+          setRetryExhausted(false);
+          return;
+        }
+      } catch {
+        // storage ещё не отдал файл или токен не подошёл
+      }
+      if (cancelled) return;
+      if (attempt >= delays.length) {
+        setRetryExhausted(true);
+        return;
+      }
+      timer = window.setTimeout(run, delays[attempt++]);
+    };
+
+    timer = window.setTimeout(run, delays[0]);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [hookUrl, assetSrc, imgError]);
+
+  useEffect(() => {
+    if (resolvedUrl && isAnimated) {
+      const { promise, cancel } = getFirstFrameOfAnimatedImage(resolvedUrl);
       promise.then((dataUrl) => {
         setStaticFrameSrc(dataUrl);
-        setLoadedUrl(url);
+        setLoadedUrl(resolvedUrl);
       });
       return cancel;
     }
-  }, [editor, isAnimated, prefersReducedMotion, url]);
+  }, [editor, isAnimated, prefersReducedMotion, resolvedUrl]);
 
   const showCropPreview = useValue(
     'show crop preview',
@@ -271,12 +320,12 @@ const CustomImageShape = memo(function CustomImageShape({ shape }: { shape: DrIm
     prefersReducedMotion && (asset?.props.mimeType?.includes('video') || isAnimated);
 
   const containerStyle = getCroppedContainerStyle(shape);
-  const nextSrc = url === loadedUrl ? null : url;
+  const nextSrc = resolvedUrl && resolvedUrl !== loadedUrl ? resolvedUrl : null;
   const loadedSrc = reduceMotion ? staticFrameSrc : loadedUrl;
 
-  const isResolving = !url && !!asset?.props.src;
-  const isMissing = !url && !asset?.props.src && !asset;
-  const showError = (imgError || isMissing) && !loadedSrc;
+  const isResolving = !resolvedUrl && !!assetSrc && !retryExhausted;
+  const isMissing = !resolvedUrl && !assetSrc && !asset;
+  const showError = (isMissing || retryExhausted || (imgError && !isResolving)) && !loadedSrc;
 
   const crossOrigin = isAnimated ? ('anonymous' as const) : undefined;
 

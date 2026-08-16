@@ -48,6 +48,7 @@ export const PdfPageControls = ({
   return (
     <div
       className="bg-background-surface border-border-default pointer-events-auto flex shrink-0 items-center gap-2 rounded-b-xl border-t px-3 py-1.5 select-none"
+      data-board-control=""
       onPointerDown={(e) => e.stopPropagation()}
     >
       {fileName && (

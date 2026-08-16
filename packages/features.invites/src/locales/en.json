@@ -9,7 +9,7 @@
     },
     "group": {
       "label": "Create a group",
-      "description": "Create a study group and invite students"
+      "description": "Create a group and invite students"
     },
     "board": {
       "label": "Interactive board",
@@ -44,9 +44,9 @@
   },
   "inviteModalV2": {
     "title": "Invite a student",
-    "description": "Copy the ready-made message or the link and send it to the student.",
+    "description": "Copy the ready-made message or the link and\u00A0send it to the student",
     "message": {
-      "template": "Join sovlium — the platform for online lessons!\n\nTo accept the invitation, follow the link and sign up:\n\n{{url}}"
+      "template": "Join sovlium — the platform for online lessons!\n\nTo accept the invitation, follow the link and\u00A0sign up:\n\n{{url}}"
     },
     "or": "or",
     "actions": {

@@ -302,8 +302,8 @@
     "imageSideDesc": "Image size must not exceed {{max}}×{{max}}px (currently {{width}}×{{height}}px).",
     "imageUnsupportedFormat": "Unsupported image format ({{type}}). Allowed: JPEG, PNG, WebP, GIF, TIFF, BMP, ICO, AVIF, JPX.",
     "imageDecodeFailed": "Failed to decode image: {{name}}",
-    "imageReadFailed": "Failed to read the image. Possible reasons: a corrupted file, an unsupported format in this browser, or a paste from the clipboard (try inserting the image via the “Image” button).",
-    "imageOpenError": "Error opening image",
+    "imageReadFailed": "This device could not read the file. Save the image as JPEG or PNG and upload it again.",
+    "imageOpenError": "Couldn’t open the image",
     "imageUploadError": "Image upload error",
     "unknownError": "Unknown error"
   },

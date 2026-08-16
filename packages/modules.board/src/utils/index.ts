@@ -25,8 +25,13 @@ export {
   getBoardDocCacheLimits,
   type CachedBoardDoc,
 } from './boardDocCache';
-export { normalizeStoredFileSrc, warnIfPersistingFullStorageUrl } from './storedFileSrc';
+export {
+  isDisplayableAssetUrl,
+  normalizeStoredFileSrc,
+  warnIfPersistingFullStorageUrl,
+} from './storedFileSrc';
 export { isShapeErasable } from './isShapeErasable';
+export { resetInflatedDrawScale } from './resetInflatedDrawScale';
 export {
   buildBoardDeepLink,
   copyBoardDeepLink,

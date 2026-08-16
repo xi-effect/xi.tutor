@@ -103,19 +103,19 @@ export async function insertAsset(
   const type = checkAssetType(file) ?? (await sniffAssetType(file));
   switch (type) {
     case 'audio':
-      insertAudio(editor, file, token);
+      await insertAudio(editor, file, token);
       break;
     case 'file':
-      insertFile(editor, file, token, addToQueue);
+      await insertFile(editor, file, token, addToQueue);
       break;
     case 'img':
-      insertImage(editor, file, token);
+      await insertImage(editor, file, token);
       break;
     case 'pdf':
-      insertPdf(editor, file, token);
+      await insertPdf(editor, file, token);
       break;
     case 'presentation':
-      insertPresentation(editor, file, token);
+      await insertPresentation(editor, file, token);
       break;
     default:
       toast.error(i18n.t('toast.unsupportedFileFormat', { ns: 'board' }), {
