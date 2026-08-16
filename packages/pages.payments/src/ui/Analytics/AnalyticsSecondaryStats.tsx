@@ -23,7 +23,7 @@ export const AnalyticsSecondaryStats = ({ summary }: AnalyticsSecondaryStatsProp
         });
 
   return (
-    <div className="bg-background-surface flex flex-col gap-3 rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] sm:flex-row sm:items-center sm:justify-between">
+    <div className="bg-background-surface flex w-full flex-col gap-3 rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)] sm:flex-row sm:items-end sm:justify-between">
       <div className="flex flex-col gap-1">
         <p className="text-s-base text-text-secondary">{t('analytics.secondary.title')}</p>
         <p className="text-text-primary text-lg font-medium tabular-nums">

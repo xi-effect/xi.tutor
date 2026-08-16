@@ -67,22 +67,31 @@ const outstanding = {
   attention,
 };
 
-const monthSeries = [
-  { bucket: '2026-08-01', label: '1', revenue: 0 },
-  { bucket: '2026-08-02', label: '2', revenue: 4500, approximate: 4500 },
-  { bucket: '2026-08-03', label: '3', revenue: 0 },
-  { bucket: '2026-08-04', label: '4', revenue: 6000 },
-  { bucket: '2026-08-05', label: '5', revenue: 3500 },
-  { bucket: '2026-08-06', label: '6', revenue: 0 },
-  { bucket: '2026-08-07', label: '7', revenue: 8000 },
-  { bucket: '2026-08-08', label: '8', revenue: 2500 },
-  { bucket: '2026-08-09', label: '9', revenue: 0 },
-  { bucket: '2026-08-10', label: '10', revenue: 7000 },
-  { bucket: '2026-08-11', label: '11', revenue: 4500 },
-  { bucket: '2026-08-12', label: '12', revenue: 0 },
-  { bucket: '2026-08-13', label: '13', revenue: 9200 },
-  { bucket: '2026-08-14', label: '14', revenue: 3000 },
-];
+const withPrevious = <T extends { revenue: number }>(series: T[], previousValues: number[]) =>
+  series.map((point, index) => ({
+    ...point,
+    previousRevenue: previousValues[index] ?? 0,
+  }));
+
+const monthSeries = withPrevious(
+  [
+    { bucket: '2026-08-01', label: '1', revenue: 0 },
+    { bucket: '2026-08-02', label: '2', revenue: 4500, approximate: 4500 },
+    { bucket: '2026-08-03', label: '3', revenue: 0 },
+    { bucket: '2026-08-04', label: '4', revenue: 6000 },
+    { bucket: '2026-08-05', label: '5', revenue: 3500 },
+    { bucket: '2026-08-06', label: '6', revenue: 0 },
+    { bucket: '2026-08-07', label: '7', revenue: 8000 },
+    { bucket: '2026-08-08', label: '8', revenue: 2500 },
+    { bucket: '2026-08-09', label: '9', revenue: 0 },
+    { bucket: '2026-08-10', label: '10', revenue: 7000 },
+    { bucket: '2026-08-11', label: '11', revenue: 4500 },
+    { bucket: '2026-08-12', label: '12', revenue: 0 },
+    { bucket: '2026-08-13', label: '13', revenue: 9200 },
+    { bucket: '2026-08-14', label: '14', revenue: 3000 },
+  ],
+  [2000, 0, 5000, 3500, 0, 4000, 6000, 0, 4500, 3000, 0, 7000, 4000, 4000],
+);
 
 const julyTailSeries = [
   { bucket: '2026-07-16', label: '16.07', revenue: 0 },
@@ -103,13 +112,21 @@ const julyTailSeries = [
   { bucket: '2026-07-31', label: '31.07', revenue: 0 },
 ];
 
-const last30Series = [
-  ...julyTailSeries,
-  ...monthSeries.map((point) => ({
-    ...point,
-    label: `${point.label}.08`,
-  })),
-];
+const last30Series = withPrevious(
+  [
+    ...julyTailSeries,
+    ...monthSeries.map((point) => ({
+      bucket: point.bucket,
+      label: `${point.label}.08`,
+      revenue: point.revenue,
+      approximate: point.approximate,
+    })),
+  ],
+  [
+    2500, 0, 0, 4000, 0, 3500, 0, 0, 5000, 0, 4500, 0, 3000, 0, 0, 6500, 0, 4000, 0, 2800, 0, 7200,
+    0, 0, 5500, 0, 4200, 0, 4000, 0,
+  ],
+);
 
 const yearSeries = [
   { bucket: '2026-01', label: 'янв', revenue: 28000 },
@@ -121,6 +138,8 @@ const yearSeries = [
   { bucket: '2026-07', label: 'июл', revenue: 43000 },
   { bucket: '2026-08', label: 'авг', revenue: 48200, approximate: 4500 },
 ];
+
+const customSeries = withPrevious(monthSeries.slice(0, 8), [0, 4000, 0, 5000, 3000, 0, 5800, 2000]);
 
 const dashboards: Record<AnalyticsPeriodKind, AnalyticsDashboardT> = {
   month: {
@@ -200,7 +219,7 @@ const dashboards: Record<AnalyticsPeriodKind, AnalyticsDashboardT> = {
     paidRatio: 5 / 7,
     averageCheck: 4420,
     approximateRevenue: 0,
-    series: monthSeries.slice(0, 8),
+    series: customSeries,
     ...outstanding,
   },
 };

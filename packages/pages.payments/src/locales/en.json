@@ -59,7 +59,8 @@
     },
     "chart": {
       "title": "Received",
-      "subtitle": "{{current}} · compared with {{previous}}",
+      "subtitle": "{{current}}",
+      "compare": "Compare",
       "approximate": "{{amount}} is mapped to the invoice date — exact payment date is missing"
     },
     "attention": {

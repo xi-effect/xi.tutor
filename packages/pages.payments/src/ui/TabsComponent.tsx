@@ -57,7 +57,7 @@ export const TabsComponent = React.memo(
     }, [isTutor, activeTab, onTabChange]);
 
     return (
-      <Tabs.Root value={activeTab} onValueChange={onTabChange}>
+      <Tabs.Root className="w-full" value={activeTab} onValueChange={onTabChange}>
         <Tabs.Content value="invoices">
           <VirtualizedPaymentsTable
             data={items}
@@ -72,7 +72,7 @@ export const TabsComponent = React.memo(
         </Tabs.Content>
 
         {isTutor && (
-          <Tabs.Content value="analytics">
+          <Tabs.Content className="w-full" value="analytics">
             <AnalyticsTab />
           </Tabs.Content>
         )}

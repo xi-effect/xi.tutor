@@ -48,5 +48,11 @@ export type AnalyticsSummaryT = {
 };
 
 export type AnalyticsDashboardT = AnalyticsSummaryT & {
-  series: Array<{ bucket: string; label: string; revenue: number; approximate?: number }>;
+  series: Array<{
+    bucket: string;
+    label: string;
+    revenue: number;
+    previousRevenue?: number;
+    approximate?: number;
+  }>;
 };

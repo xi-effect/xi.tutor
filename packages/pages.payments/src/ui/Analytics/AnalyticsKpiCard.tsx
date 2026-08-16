@@ -47,29 +47,26 @@ export const AnalyticsKpiCard = ({
           ? 'text-text-danger'
           : 'text-text-secondary';
 
-  const footer =
-    showDelta && deltaKind === 'change' && deltaAbs != null ? (
-      <p className={cn('text-xs-base font-medium tabular-nums', deltaTone)}>
-        {formatDelta(deltaAbs, locale)}
-        {deltaRatio != null ? ` · ${formatRatio(deltaRatio)}` : ''}
-      </p>
-    ) : showDelta && deltaKind === 'new' ? (
-      <p className="text-xs-base text-status-success-text font-medium">{t('analytics.delta.new')}</p>
-    ) : caption ? (
-      <p className="text-xs-base text-text-secondary">{caption}</p>
-    ) : (
-      <p className="text-xs-base invisible">—</p>
-    );
-
   return (
-    <div className="bg-background-surface flex min-h-[132px] flex-col justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]">
+    <div className="bg-background-surface flex h-full min-h-[132px] w-full min-w-0 flex-col justify-between rounded-2xl p-5 shadow-[0px_2px_8px_0px_rgba(0,0,0,0.08)]">
       <div className="flex flex-col gap-1">
         <p className="text-s-base text-text-primary font-medium">{title}</p>
         <p className="text-xs-base text-text-secondary">{hint}</p>
       </div>
       <div className="flex flex-col gap-1">
         <p className="text-text-primary text-2xl leading-7 font-medium tabular-nums">{value}</p>
-        {footer}
+        {caption && <p className="text-xs-base text-text-secondary">{caption}</p>}
+        {showDelta && deltaKind === 'change' && deltaAbs != null && (
+          <p className={cn('text-xs-base font-medium tabular-nums', deltaTone)}>
+            {formatDelta(deltaAbs, locale)}
+            {deltaRatio != null ? ` · ${formatRatio(deltaRatio)}` : ''}
+          </p>
+        )}
+        {showDelta && deltaKind === 'new' && (
+          <p className="text-xs-base text-status-success-text font-medium">
+            {t('analytics.delta.new')}
+          </p>
+        )}
       </div>
     </div>
   );

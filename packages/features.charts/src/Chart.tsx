@@ -56,7 +56,7 @@ const ChartContainer = React.forwardRef<
         data-chart={chartId}
         ref={ref}
         className={cn(
-          "[&_.recharts-cartesian-axis-tick_text]:fill-text-secondary [&_.recharts-cartesian-axis-tick-value]:fill-text-secondary [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border-default [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border-default [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border-default [&_.recharts-radial-bar-background-sector]:fill-background-subtle [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-background-subtle [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border-default flex aspect-auto h-full w-full justify-center overflow-visible text-xs [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-none [&_.recharts-sector]:outline-none [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-surface]:outline-none",
+          "[&_.recharts-cartesian-axis-tick_text]:fill-text-secondary [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border-default [&_.recharts-curve.recharts-tooltip-cursor]:stroke-border-default [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border-default [&_.recharts-radial-bar-background-sector]:fill-background-subtle [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-background-subtle [&_.recharts-reference-line_[stroke='#ccc']]:stroke-border-default flex aspect-auto w-full justify-stretch text-xs [&_.recharts-dot[stroke='#fff']]:stroke-transparent [&_.recharts-layer]:outline-none [&_.recharts-responsive-container]:w-full [&_.recharts-sector]:outline-none [&_.recharts-sector[stroke='#fff']]:stroke-transparent [&_.recharts-surface]:outline-none",
           className,
         )}
         {...props}

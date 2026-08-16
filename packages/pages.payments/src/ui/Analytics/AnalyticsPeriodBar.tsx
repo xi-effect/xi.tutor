@@ -47,6 +47,7 @@ export const AnalyticsPeriodBar = ({
                 ? 'bg-background-surface text-text-primary shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05)]'
                 : 'text-text-secondary hover:text-text-primary',
             )}
+            aria-pressed={period === item}
           >
             {t(`analytics.periods.${item}`)}
           </button>

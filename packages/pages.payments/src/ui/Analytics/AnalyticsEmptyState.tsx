@@ -17,7 +17,7 @@ export const AnalyticsEmptyState = () => {
           <Button
             type="button"
             variant="none"
-            className="bg-background-page hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary"
+            className="bg-background-page hover:bg-background-subtle text-xs-base text-text-primary h-8 rounded-lg px-4 font-medium"
             onClick={() => window.open(PAYMENTS_HELP_URL, '_blank', 'noopener,noreferrer')}
           >
             {t('empty.helpLink')}

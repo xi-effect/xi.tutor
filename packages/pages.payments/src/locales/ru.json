@@ -63,7 +63,8 @@
     },
     "chart": {
       "title": "Получено",
-      "subtitle": "{{current}} · сравнение с {{previous}}",
+      "subtitle": "{{current}}",
+      "compare": "Сравнение",
       "approximate": "Часть суммы ({{amount}}) отнесена к дате выставления — точной даты оплаты нет"
     },
     "attention": {

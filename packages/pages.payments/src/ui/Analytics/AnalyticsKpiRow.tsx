@@ -14,7 +14,7 @@ export const AnalyticsKpiRow = ({ summary }: AnalyticsKpiRowProps) => {
   const received = summary.received.current ?? 0;
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+    <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
       <AnalyticsKpiCard
         title={t('analytics.kpi.received')}
         hint={t('analytics.hints.forPeriod')}
