@@ -16,6 +16,7 @@ const emptyTemplatesHelpLinkClass =
   'bg-background-page hover:bg-background-subtle text-xs-base h-8 rounded-lg px-4 font-medium text-text-primary';
 
 const SHELL_HEIGHT = 'h-[calc(100dvh-140px)]';
+const GRID_SCROLL_CLASS = 'min-h-0 flex-1 overflow-auto py-1 -ml-2 pl-2 pr-5';
 
 export const TemplatesGrid = () => {
   const parentRef = useRef<HTMLDivElement>(null);
@@ -35,7 +36,7 @@ export const TemplatesGrid = () => {
     return (
       <div
         className={cn(
-          'min-h-0 flex-1 overflow-auto pr-5',
+          GRID_SCROLL_CLASS,
           isMobile && 'h-[calc(100dvh-204px)]',
           !isMobile && 'h-[calc(100dvh-190px)]',
         )}
@@ -104,7 +105,7 @@ export const TemplatesGrid = () => {
     <div
       ref={parentRef}
       className={cn(
-        'min-h-0 flex-1 overflow-auto pr-5',
+        GRID_SCROLL_CLASS,
         isMobile && 'h-[calc(100dvh-204px)]',
         !isMobile && 'h-[calc(100dvh-190px)]',
       )}

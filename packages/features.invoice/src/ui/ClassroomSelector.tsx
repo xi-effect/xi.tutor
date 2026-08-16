@@ -1,5 +1,5 @@
 import { getClassroomDisplayName } from 'common.api';
-import { FormControl, FormField, FormItem, FormLabel } from '@xipkg/form';
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@xipkg/form';
 import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@xipkg/select';
 import { useFetchClassrooms } from 'common.services';
 import { useTranslation } from 'react-i18next';
@@ -54,6 +54,7 @@ export const ClassroomSelector = ({ control }: ClassroomSelectorProps) => {
               </SelectContent>
             </Select>
           </FormControl>
+          <FormMessage />
         </FormItem>
       )}
     />
