@@ -17,9 +17,11 @@ export type UserRoleT = 'tutor' | 'student';
 // Базовые типы для пользователей
 export interface UserProfileSchema {
   id: number;
-  first_name: string;
-  last_name: string;
-  email: string;
+  first_name?: string;
+  last_name?: string;
+  display_name?: string | null;
+  username?: string;
+  email?: string;
   avatar?: string;
 }
 

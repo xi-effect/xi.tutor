@@ -50,13 +50,24 @@ export const Content = ({ classroom }: ContentProps) => {
     }
   }, [startCall, classroom.id]);
 
+  const getStudentName = () => {
+    if (classroom.kind !== 'individual') return '';
+    const displayName = classroom.student?.display_name?.trim();
+    if (displayName) return displayName;
+    const username = classroom.student?.username?.trim();
+    if (username) return username;
+    const firstName = classroom.student?.first_name?.trim() ?? '';
+    const lastName = classroom.student?.last_name?.trim() ?? '';
+    return `${firstName} ${lastName}`.trim();
+  };
+
   const getDisplayName = () => {
     if (classroom.kind === 'individual') {
       const override = classroom.name_override?.trim();
       if (isTutor && override) return override;
-      return `${classroom.student.first_name} ${classroom.student.last_name}`;
+      return classroom.name?.trim() || getStudentName();
     }
-    return classroom.name;
+    return classroom.name ?? '';
   };
 
   const badges: ReactNode = (
@@ -64,7 +75,9 @@ export const Content = ({ classroom }: ContentProps) => {
       {classroom.subject_id ? <SubjectBadge subject_id={classroom.subject_id} /> : null}
       <StatusBadge status={classroom.status} kind={classroom.kind} />
       {classroom.kind === 'individual' ? (
-        <ContactsBadge userId={classroom.student_id ?? classroom.tutor_id ?? 0} />
+        <ContactsBadge
+          userId={classroom.student_id ?? classroom.student?.id ?? classroom.tutor_id ?? 0}
+        />
       ) : null}
       {classroom.kind === 'group' && !isTutor ? (
         <ContactsBadge userId={classroom.tutor_id ?? 0} />
@@ -78,15 +91,17 @@ export const Content = ({ classroom }: ContentProps) => {
         <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
           {classroom.kind === 'individual' ? (
             <IndividualUser
-              userId={classroom.student_id ?? classroom.tutor_id ?? 0}
+              userId={classroom.student_id ?? classroom.student?.id ?? classroom.tutor_id ?? 0}
               classroomId={classroom.id}
               nameOverride={isTutor ? classroom.name_override : undefined}
+              classroomName={classroom.name}
+              studentName={getStudentName()}
               canEdit={isTutor}
             />
           ) : (
             <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
               <div className="bg-action-primary-background-default text-text-on-accent flex size-12 shrink-0 items-center justify-center rounded-full text-lg font-medium">
-                {getDisplayName()?.[0].toUpperCase() ?? ''}
+                {getDisplayName()?.[0]?.toUpperCase() ?? ''}
               </div>
               <EditableClassroomName
                 classroomId={classroom.id}
