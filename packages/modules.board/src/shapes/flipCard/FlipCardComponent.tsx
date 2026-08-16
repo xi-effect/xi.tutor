@@ -1,11 +1,9 @@
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { RichTextLabel, useEditor, useValue, renderPlaintextFromRichText } from '@ibodr/draw';
 import { Button } from '@xipkg/button';
-import { Image as ImageIcon } from '@xipkg/icons';
 import { startLabelEditing } from '../labels/startLabelEditing';
 import { EmptyLabelCaret } from '../labels/EmptyLabelCaret';
 import { FlipCardShape } from './FlipCardShape';
-import { insertFlipCardImage } from './insertFlipCardImage';
 import { useResolvedAssetSrc } from './useResolvedAssetSrc';
 import {
   BASE_CARD_HEIGHT,
@@ -78,30 +76,6 @@ export const FlipCardComponent = ({ shape }: { shape: FlipCardShape }) => {
     }
   };
 
-  const handleImageButtonClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.onchange = async () => {
-      const file = input.files?.[0];
-      if (!file) return;
-
-      const current = editor.getShape<FlipCardShape>(id);
-      const flippedNow = current?.props.isFlipped ?? isFlipped;
-
-      await insertFlipCardImage(editor, file, token, (assetId) => {
-        editor.updateShape<FlipCardShape>({
-          id,
-          type: 'flip-card',
-          props: flippedNow ? { backImageAssetId: assetId } : { frontImageAssetId: assetId },
-        });
-      });
-    };
-    input.click();
-  };
-
-  // --- Авто-уменьшение текста, чтобы влезть в оставшееся место без скролла ---
   const measureRef = useRef<HTMLDivElement>(null);
   const [textFitScale, setTextFitScale] = useState(1);
 
@@ -257,16 +231,6 @@ export const FlipCardComponent = ({ shape }: { shape: FlipCardShape }) => {
           className="absolute bottom-2 left-1/2 z-50 flex -translate-x-1/2 gap-1"
           onPointerDown={(e) => e.stopPropagation()}
         >
-          <Button
-            size="s"
-            variant="ghost"
-            onClick={handleImageButtonClick}
-            className="pointer-events-auto"
-            style={{ height: buttonSize, width: buttonSize, padding: 0 }}
-            aria-label="Добавить картинку"
-          >
-            <ImageIcon style={{ width: buttonSize * 0.5, height: buttonSize * 0.5 }} />
-          </Button>
           <Button
             size="s"
             onClick={handleFlipClick}
