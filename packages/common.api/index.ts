@@ -13,6 +13,8 @@ export {
 export { studentApiConfig, StudentQueryKey } from './src/student';
 export { filesApiConfig, FilesQueryKey, getFileUrl } from './src/files';
 export { onboardingApiConfig } from './src/onboarding';
+export { getClassroomDisplayName } from './src/getClassroomDisplayName';
+export type { ClassroomDisplayNameSource } from './src/getClassroomDisplayName';
 export type {
   MaterialsKindT,
   OnboardingStageT,

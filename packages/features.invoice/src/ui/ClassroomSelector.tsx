@@ -1,3 +1,4 @@
+import { getClassroomDisplayName } from 'common.api';
 import { FormControl, FormField, FormItem, FormLabel } from '@xipkg/form';
 import { Select, SelectValue, SelectTrigger, SelectContent, SelectItem } from '@xipkg/select';
 import { useFetchClassrooms } from 'common.services';
@@ -47,7 +48,7 @@ export const ClassroomSelector = ({ control }: ClassroomSelectorProps) => {
                     value={classroom.id.toString()}
                     className="text-text-primary"
                   >
-                    {classroom.name}
+                    {getClassroomDisplayName(classroom)}
                   </SelectItem>
                 ))}
               </SelectContent>

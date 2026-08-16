@@ -1,6 +1,6 @@
 import { useState, type MouseEvent } from 'react';
 import { useNavigate, useSearch } from '@tanstack/react-router';
-import { ClassroomT, IndividualClassroomT } from 'common.api';
+import { ClassroomT, IndividualClassroomT, getClassroomDisplayName } from 'common.api';
 import { Button } from '@xipkg/button';
 import {
   DropdownMenu,
@@ -66,6 +66,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
   const { data: user } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const { deleteClassroom, isDeleting } = useDeleteClassroom();
+  const displayName = isTutor ? getClassroomDisplayName(classroom) : classroom.name;
 
   const [openEditModal, setOpenEditModal] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -141,7 +142,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
 
           {classroom.kind === 'group' && (
             <div className="bg-action-primary-background-default text-text-on-accent flex size-12 shrink-0 items-center justify-center rounded-full">
-              {classroom.name?.[0].toUpperCase() ?? ''}
+              {displayName?.[0].toUpperCase() ?? ''}
             </div>
           )}
 
@@ -149,11 +150,11 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
             <TooltipTrigger asChild>
               <div className="flex min-w-0 flex-1 flex-row items-center">
                 <h3 className="text-s-base text-text-primary line-clamp-1 text-left font-medium">
-                  {classroom.name}
+                  {displayName}
                 </h3>
               </div>
             </TooltipTrigger>
-            <TooltipContent>{classroom.name}</TooltipContent>
+            <TooltipContent>{displayName}</TooltipContent>
           </Tooltip>
         </div>
 
@@ -189,11 +190,9 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
                 align="end"
                 className="border-border-default bg-background-surface border p-1"
               >
-                {classroom.kind === 'group' ? (
-                  <DropdownMenuItem onClick={handleOpenEditModal} data-umami-event="classroom-edit">
-                    {t('classrooms.rename')}
-                  </DropdownMenuItem>
-                ) : null}
+                <DropdownMenuItem onClick={handleOpenEditModal} data-umami-event="classroom-edit">
+                  {t('classrooms.rename')}
+                </DropdownMenuItem>
                 <DropdownMenuItem onClick={handleDeleteClick}>
                   {t('classrooms.delete')}
                 </DropdownMenuItem>
@@ -204,7 +203,8 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
       </div>
 
       <ModalEditClassroomName
-        name={classroom.name}
+        kind={classroom.kind}
+        name={displayName}
         open={openEditModal}
         classroomId={classroom.id}
         onClose={() => setOpenEditModal(false)}
@@ -214,7 +214,7 @@ export const Classroom = ({ classroom, isLoading }: ClassroomProps) => {
         open={deleteConfirmOpen}
         onOpenChange={setDeleteConfirmOpen}
         title={t('classrooms.deleteConfirm.title')}
-        description={t('classrooms.deleteConfirm.description', { name: classroom.name })}
+        description={t('classrooms.deleteConfirm.description', { name: displayName })}
         confirmLabel={isDeleting ? t('classrooms.deleting') : t('classrooms.deleteConfirm.confirm')}
         cancelLabel={t('classrooms.deleteConfirm.cancel')}
         onConfirm={handleConfirmDelete}

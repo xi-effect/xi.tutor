@@ -28,5 +28,20 @@
     "offline": "No connection",
     "reconnecting": "Checking connection...",
     "connected": "Connected"
+  },
+  "educationStatus": {
+    "tutor": {
+      "active": "Studying",
+      "paused": "On pause",
+      "locked": "Locked",
+      "finished": "Completed"
+    },
+    "student": {
+      "active": "Studying",
+      "paused": "On pause",
+      "locked": "Locked",
+      "finished": "Completed"
+    },
+    "unknown": "Unknown"
   }
 }

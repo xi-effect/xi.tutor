@@ -12,6 +12,7 @@ export type UserData = {
   username: string;
   display_name: string | null;
   theme: string;
+  language: string;
   default_layout: RoleT;
 };
 
@@ -20,6 +21,7 @@ export type ProfileData = {
   username?: string;
   display_name?: string;
   theme?: string;
+  language?: string;
   default_layout?: RoleT;
   onboarding_stage?: string;
   // Другие поля профиля, которые могут быть обновлены

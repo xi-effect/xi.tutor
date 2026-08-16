@@ -26,11 +26,15 @@ type AccessModeT = 'no_access' | 'read_only' | 'read_write';
 type ClassroomT = {
   id: number;
   name: string;
+  name_override?: string | null;
   kind: 'individual' | 'group';
   status: string;
   subject_id: number | null;
   student_id?: number;
 };
+
+const getClassroomTitle = (classroom: ClassroomT) =>
+  classroom.name_override?.trim() || classroom.name;
 
 type MaterialsDuplicateProps = {
   materialId: number;
@@ -132,16 +136,19 @@ const ClassroomCard = ({ classroom, isSelected, onSelect }: ClassroomCardProps) 
             <AvatarFallback size="m" loading />
           ) : (
             <AvatarFallback size="m">
-              {student?.display_name?.[0]?.toUpperCase() || classroom.name[0]?.toUpperCase()}
+              {student?.display_name?.[0]?.toUpperCase() ||
+                getClassroomTitle(classroom)[0]?.toUpperCase()}
             </AvatarFallback>
           )}
         </Avatar>
       ) : (
         <div className="bg-action-primary-background-default text-text-on-accent flex h-10 min-h-10 w-10 min-w-10 items-center justify-center rounded-full text-sm font-medium">
-          {classroom.name[0]?.toUpperCase() || ''}
+          {getClassroomTitle(classroom)[0]?.toUpperCase() || ''}
         </div>
       )}
-      <h3 className="text-m-base text-text-primary line-clamp-2 flex-1">{classroom.name}</h3>
+      <h3 className="text-m-base text-text-primary line-clamp-2 flex-1">
+        {getClassroomTitle(classroom)}
+      </h3>
     </div>
   );
 };

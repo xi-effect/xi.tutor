@@ -21,5 +21,6 @@ type SignUpResponse = {
     username: string;
     display_name: string | null;
     theme: string;
+    language: string;
   };
 };

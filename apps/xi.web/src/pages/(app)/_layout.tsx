@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Outlet, createFileRoute, useNavigate, useRouter, useSearch } from '@tanstack/react-router';
-import { LoadingScreen } from 'common.ui';
+import { applyUserLanguage, LoadingScreen } from 'common.ui';
 import { Suspense, lazy, useEffect, useRef, useCallback } from 'react';
 
 // Импортируем провайдеры синхронно, так как они нужны везде
@@ -88,6 +88,10 @@ const ProtectedLayout = () => {
       removeNotificationIdFromUrl();
     },
   });
+
+  useEffect(() => {
+    void applyUserLanguage(user?.language);
+  }, [user?.language]);
 
   useEffect(() => {
     const stage = user?.onboarding_stage;

@@ -28,5 +28,20 @@
     "offline": "Нет соединения",
     "reconnecting": "Проверка соединения...",
     "connected": "Подключено"
+  },
+  "educationStatus": {
+    "tutor": {
+      "active": "Учится",
+      "paused": "На паузе",
+      "locked": "Заблокировано",
+      "finished": "Обучение завершено"
+    },
+    "student": {
+      "active": "Учусь",
+      "paused": "На паузе",
+      "locked": "Заблокировано",
+      "finished": "Обучение завершено"
+    },
+    "unknown": "Неизвестно"
   }
 }

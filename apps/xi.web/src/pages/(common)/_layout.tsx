@@ -3,7 +3,7 @@ import { Suspense, useEffect } from 'react';
 import { useCurrentUser } from 'common.services';
 import { onboardingStageToPath } from 'pages.welcome';
 import { OnboardingStageT } from 'common.api';
-import { LoadingScreen } from 'common.ui';
+import { applyUserLanguage, LoadingScreen } from 'common.ui';
 
 function LayoutComponent() {
   return (
@@ -16,6 +16,10 @@ function LayoutComponent() {
 const ProtectedLayout = () => {
   const { data: user, isLoading } = useCurrentUser();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    void applyUserLanguage(user?.language);
+  }, [user?.language]);
 
   useEffect(() => {
     const stage = user?.onboarding_stage;

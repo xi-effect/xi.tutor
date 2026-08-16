@@ -45,3 +45,9 @@ export const setAppLanguage = async (lng: AppLanguage) => {
   await i18n.changeLanguage(lng);
   syncLanguageSideEffects(lng);
 };
+
+export const applyUserLanguage = async (language: unknown) => {
+  if (!isAppLanguage(language)) return;
+  if (getAppLanguage() === language && readStoredLanguage() === language) return;
+  await setAppLanguage(language);
+};

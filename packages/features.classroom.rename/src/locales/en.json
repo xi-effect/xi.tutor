@@ -1,7 +1,17 @@
 {
-  "title": "Rename group",
+  "title": {
+    "group": "Rename\ngroup classroom",
+    "individual": "Rename individual classroom"
+  },
+  "hint": {
+    "individual": "Only you can see this name. The student will not see it.",
+    "group": "This name will be visible to all students in the classroom."
+  },
   "fields": {
-    "name": "Name"
+    "name": {
+      "group": "Name",
+      "individual": "Name"
+    }
   },
   "actions": {
     "save": "Save",

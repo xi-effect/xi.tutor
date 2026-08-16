@@ -4,4 +4,4 @@ export const sectionTitleClass =
 
 /** Имя кабинета в шапке: Playfair, компактнее заголовков страниц списка. */
 export const classroomPageTitleClass =
-  'font-playfair text-text-primary min-w-0 truncate text-2xl font-medium sm:text-3xl';
+  'font-playfair text-text-primary min-w-0 truncate text-2xl leading-tight font-medium sm:text-3xl';

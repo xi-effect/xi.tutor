@@ -1,6 +1,7 @@
-import type {
-  ClassroomTutorResponseSchema,
-  IndividualClassroomTutorResponseSchema,
+import {
+  getClassroomDisplayName,
+  type ClassroomTutorResponseSchema,
+  type IndividualClassroomTutorResponseSchema,
 } from 'common.api';
 import { useCurrentUser, useUserByRole } from 'common.services';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
@@ -11,7 +12,8 @@ import { useTranslation } from 'react-i18next';
 const avatarSize = 'm';
 
 function classroomHeadingText(data: ClassroomTutorResponseSchema): string {
-  if (data.name != null && data.name.trim().length > 0) return data.name.trim();
+  const displayName = getClassroomDisplayName(data);
+  if (displayName) return displayName;
   if (data.kind === 'group' && data.title.trim().length > 0) return data.title.trim();
   return '';
 }

@@ -8,7 +8,7 @@ import { StatusBadge } from '../../StatusBadge';
 import { ContactsBadge } from './ContactsBadge';
 import { useCurrentUser } from 'common.services';
 import { StartLessonButton } from 'features.lesson.start';
-import { classroomPageTitleClass } from '../../sectionTitleClass';
+import { EditableClassroomName } from './EditableClassroomName';
 
 interface ContentProps {
   classroom: ClassroomTutorResponseSchema;
@@ -52,6 +52,8 @@ export const Content = ({ classroom }: ContentProps) => {
 
   const getDisplayName = () => {
     if (classroom.kind === 'individual') {
+      const override = classroom.name_override?.trim();
+      if (isTutor && override) return override;
       return `${classroom.student.first_name} ${classroom.student.last_name}`;
     }
     return classroom.name;
@@ -75,13 +77,23 @@ export const Content = ({ classroom }: ContentProps) => {
       <div className="flex min-w-0 flex-row items-center gap-3 sm:gap-4">
         <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
           {classroom.kind === 'individual' ? (
-            <IndividualUser userId={classroom.student_id ?? classroom.tutor_id ?? 0} />
+            <IndividualUser
+              userId={classroom.student_id ?? classroom.tutor_id ?? 0}
+              classroomId={classroom.id}
+              nameOverride={isTutor ? classroom.name_override : undefined}
+              canEdit={isTutor}
+            />
           ) : (
             <div className="flex min-w-0 flex-1 flex-row items-center gap-3">
               <div className="bg-action-primary-background-default text-text-on-accent flex size-12 shrink-0 items-center justify-center rounded-full text-lg font-medium">
                 {getDisplayName()?.[0].toUpperCase() ?? ''}
               </div>
-              <h1 className={classroomPageTitleClass}>{getDisplayName()}</h1>
+              <EditableClassroomName
+                classroomId={classroom.id}
+                kind="group"
+                name={getDisplayName() ?? ''}
+                canEdit={isTutor}
+              />
             </div>
           )}
           {badges}

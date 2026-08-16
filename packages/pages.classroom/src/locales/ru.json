@@ -82,7 +82,10 @@
     "loadFailed": "Ошибка загрузки"
   },
   "header": {
-    "noDescription": "Описание не указано"
+    "noDescription": "Описание не указано",
+    "editNamePlaceholder": "Введите название",
+    "editNameAria": "Название кабинета",
+    "editNameError": "Название не может быть пустым"
   },
   "descriptionModal": {
     "title": "Редактировать описание",

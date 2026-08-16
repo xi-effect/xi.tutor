@@ -59,6 +59,7 @@ export interface IndividualClassroomT extends BaseClassroomT {
   kind: 'individual';
   student_id?: number;
   tutor_id?: number;
+  name_override?: string | null;
 }
 
 export interface GroupClassroomT extends BaseClassroomT {
@@ -83,6 +84,7 @@ export interface IndividualClassroomTutorResponseSchema {
   tutor_id?: number;
   subject_id: number | null;
   name?: string;
+  name_override?: string | null;
 }
 
 export interface GroupClassroomTutorResponseSchema {

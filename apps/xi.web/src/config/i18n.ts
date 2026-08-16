@@ -5,6 +5,7 @@ import { readStoredLanguage, syncLanguageSideEffects, type AppLanguage } from 'c
 // Re-export language helpers for app usage (lightweight entry, no UI)
 export {
   setAppLanguage,
+  applyUserLanguage,
   getAppLanguage,
   getDateLocale,
   type AppLanguage,

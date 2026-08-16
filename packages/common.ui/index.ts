@@ -7,6 +7,7 @@ export {
   getDateLocale,
   syncLanguageSideEffects,
   setAppLanguage,
+  applyUserLanguage,
   type AppLanguage,
 } from './src/i18n/language';
 export { commonUiEn, commonUiRu } from './src/locales';
@@ -35,6 +36,7 @@ export {
   materialAccessBadgeClasses,
   paymentStatusBadgeClasses,
 } from './src/badgeClasses';
+export { getEducationStatusLabel } from './src/getEducationStatusLabel';
 export { ConfirmDialog, type ConfirmDialogProps } from './src/ConfirmDialog';
 export { modalTitleClass } from './src/modalTitleClass';
 export { switcherTabClass } from './src/switcherTabClass';

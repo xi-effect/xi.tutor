@@ -82,7 +82,10 @@
     "loadFailed": "Load error"
   },
   "header": {
-    "noDescription": "No description"
+    "noDescription": "No description",
+    "editNamePlaceholder": "Enter a name",
+    "editNameAria": "Classroom name",
+    "editNameError": "Name cannot be empty"
   },
   "descriptionModal": {
     "title": "Edit description",
