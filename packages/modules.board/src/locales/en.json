@@ -326,5 +326,11 @@
   "provider": {
     "ydocLoadFailed": "Failed to load Y.Doc: {{status}} {{statusText}}",
     "localYdocRequired": "Set VITE_BOARD_LOCAL_YDOC_ID or a board-{uuid} filename in the dump URL"
+  },
+  "header": {
+    "editInputPlaceholder": "Enter board name",
+    "editInputAria": "whiteboard name",
+    "emptyName": "Untitled",
+    "editInputError": "Name cannot be empty"
   }
 }
