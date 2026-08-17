@@ -1,14 +1,18 @@
 import { useCallback, useRef, useState } from 'react';
 import { track, useEditor, type DrAssetId } from '@ibodr/draw';
 import { Button } from '@xipkg/button';
-import { Image as ImageIcon } from '@xipkg/icons'; // TODO: проверить точное имя иконки в @xipkg/icons
+import { Image as ImageIcon } from '@xipkg/icons';
 import { useTranslation } from 'react-i18next';
-import type { FlipCardShape } from './FlipCardShape';
-import { insertFlipCardImage } from './insertFlipCardImage';
+import { insertFlipCardImage } from '../utils/insertFlipCardImage';
+import { useYjsContext } from '../../../providers/YjsContext';
+import type { FlipCardShape } from '../FlipCardShape';
 
 export const FlipCardImageButton = track(function FlipCardImageButton() {
   const { t } = useTranslation('board');
+
   const editor = useEditor();
+  const { token } = useYjsContext();
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -33,14 +37,16 @@ export const FlipCardImageButton = track(function FlipCardImageButton() {
       e.target.value = '';
       if (!file || !shape) return;
 
-      const token = /* TODO: см. вопрос ниже — откуда брать token */ '';
-      const propKey = shape.props.isFlipped ? 'backImageAssetId' : 'frontImageAssetId';
       const shapeId = shape.id;
+      const propKey = shape.props.isFlipped ? 'backImageAssetId' : 'frontImageAssetId';
 
       setIsUploading(true);
       try {
         await insertFlipCardImage(editor, file, token, (assetId: DrAssetId) => {
-          const prevAssetId = shape.props[propKey];
+          const current = editor.getShape<FlipCardShape>(shapeId);
+          if (!current) return;
+
+          const prevAssetId = current.props[propKey];
 
           editor.updateShape<FlipCardShape>({
             id: shapeId,
@@ -48,7 +54,7 @@ export const FlipCardImageButton = track(function FlipCardImageButton() {
             props: { [propKey]: assetId },
           });
 
-          if (prevAssetId) {
+          if (prevAssetId && prevAssetId !== assetId) {
             editor.deleteAssets([prevAssetId]);
           }
         });
@@ -56,7 +62,7 @@ export const FlipCardImageButton = track(function FlipCardImageButton() {
         setIsUploading(false);
       }
     },
-    [editor, shape],
+    [editor, shape, token],
   );
 
   if (!shape) return null;

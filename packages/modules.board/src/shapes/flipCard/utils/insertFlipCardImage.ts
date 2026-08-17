@@ -1,16 +1,11 @@
 import { Editor, DrAssetId } from '@ibodr/draw';
 import { toast } from 'sonner';
 import { nanoid } from 'nanoid';
-import { myAssetStore } from '../../features/imageStore'; // тот же путь, что у insertImage.ts
+import { myAssetStore } from '../../../features/imageStore';
 import i18n from 'i18next';
 
 const MAX_IMAGE_SIZE_BYTES = 1 * 1024 * 1024;
 
-/**
- * Загружает картинку через тот же asset store, что и insertImage,
- * но НЕ создаёт отдельный shape — только asset-запись, id которой
- * кладётся в проп конкретной стороны flip-card карточки.
- */
 export async function insertFlipCardImage(
   editor: Editor,
   file: File,
@@ -63,8 +58,6 @@ export async function insertFlipCardImage(
     },
   ]);
 
-  // Сразу отдаём id preview-ассета — карточка покажет blob-превью немедленно,
-  // так же как это делает insertImage для обычных image-шейпов.
   onAssetIdReady(tempAssetId);
 
   try {

@@ -1,5 +1,5 @@
 import { createShapeId, DefaultColorStyle, DefaultSizeStyle, StateNode } from '@ibodr/draw';
-import { BASE_CARD_HEIGHT, BASE_CARD_WIDTH, EMPTY_RICH_TEXT } from './FlipCardShape';
+import { BASE_CARD_HEIGHT, BASE_CARD_WIDTH, EMPTY_RICH_TEXT } from './consts';
 import { startLabelEditing } from '../labels/startLabelEditing';
 
 export class FlipCardTool extends StateNode {

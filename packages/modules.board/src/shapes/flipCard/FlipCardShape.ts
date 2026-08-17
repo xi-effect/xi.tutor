@@ -9,11 +9,6 @@ import {
   idValidator,
 } from '@ibodr/draw';
 
-export const BASE_CARD_WIDTH = 160;
-export const BASE_CARD_HEIGHT = 260;
-export const FLIP_CARD_MIN_SIZE = 120;
-
-export const EMPTY_RICH_TEXT: DrRichText = { type: 'doc', content: [] };
 const assetIdValidator = idValidator<DrAssetId>('asset');
 
 export type FlipCardShapeProps = {

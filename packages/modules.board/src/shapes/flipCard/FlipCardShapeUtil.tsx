@@ -1,13 +1,8 @@
 import { BaseBoxShapeUtil, DrResizeInfo, resizeBox } from '@ibodr/draw';
-import {
-  BASE_CARD_HEIGHT,
-  BASE_CARD_WIDTH,
-  EMPTY_RICH_TEXT,
-  FLIP_CARD_MIN_SIZE,
-  FlipCardShape,
-  flipCardShapeProps,
-} from './FlipCardShape';
+import { FlipCardShape, flipCardShapeProps } from './FlipCardShape';
 import { FlipCardComponent } from './FlipCardComponent';
+import { BASE_CARD_HEIGHT, BASE_CARD_WIDTH, EMPTY_RICH_TEXT, FLIP_CARD_MIN_SIZE } from './consts';
+import { createElement } from 'react';
 
 export class FlipCardShapeUtil extends BaseBoxShapeUtil<FlipCardShape> {
   static override type = 'flip-card' as const;
@@ -48,7 +43,7 @@ export class FlipCardShapeUtil extends BaseBoxShapeUtil<FlipCardShape> {
   }
 
   override component(shape: FlipCardShape) {
-    return <FlipCardComponent shape={shape} />;
+    return createElement(FlipCardComponent, { shape });
   }
 
   override getIndicatorPath(shape: FlipCardShape) {

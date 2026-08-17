@@ -181,7 +181,8 @@
     "forbidControl": "Forbid control",
     "allowControl": "Allow control",
     "axisColor": "Axis color",
-    "style": "Style"
+    "style": "Style",
+    "flipCardAddImage": "Add image"
   },
   "zoom": {
     "clickHint": "Click — 100%. Double-click — show all elements"

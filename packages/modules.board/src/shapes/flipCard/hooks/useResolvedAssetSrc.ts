@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Editor, DrAssetId } from '@ibodr/draw';
-import { myAssetStore } from '../../features/imageStore';
+import { myAssetStore } from '../../../features/imageStore';
 
 export function useResolvedAssetSrc(editor: Editor, assetId: DrAssetId | null, token: string) {
   const [src, setSrc] = useState<string | null>(null);
@@ -19,8 +19,6 @@ export function useResolvedAssetSrc(editor: Editor, assetId: DrAssetId | null, t
 
     let cancelled = false;
 
-    // resolve — та же функция, что уже используется для встроенных image-шейпов
-    // (см. myAssetStore.resolve в imageStore.ts).
     Promise.resolve(
       myAssetStore(token).resolve?.(asset, {
         screenScale: 1,
