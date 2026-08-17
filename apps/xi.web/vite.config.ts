@@ -10,7 +10,7 @@ import {
   CALLS_RUNTIME_DEPS,
   callsLocalDevConfig,
   readCallsDepsMode,
-} from './vite.calls-local';
+} from './vite.calls-local.ts';
 
 const appDir = path.dirname(fileURLToPath(import.meta.url));
 
@@ -87,19 +87,17 @@ export default defineConfig(({ mode }: ConfigEnv) => {
       minify: mode === 'production',
       outDir: 'build',
       sourcemap: mode === 'debug',
-      terserOptions: {
-        compress: {
-          drop_console: true,
-          drop_debugger: true,
-        },
-      },
     },
     optimizeDeps: {
-      esbuildOptions: {
-        target: 'es2020',
-        conditions: useCallsLink
-          ? ['development', 'import', 'module', 'browser', 'default']
-          : importConditions,
+      rolldownOptions: {
+        transform: {
+          target: 'es2020',
+        },
+        resolve: {
+          conditionNames: useCallsLink
+            ? ['development', 'import', 'module', 'browser', 'default']
+            : importConditions,
+        },
       },
       include: [
         'react',

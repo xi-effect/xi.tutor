@@ -25,7 +25,7 @@
     "i18next": "24.2.2"
   },
   "devDependencies": {
-    "vitest": "^3.1.1",
+    "vitest": "^4.1.10",
     "@tanstack/react-query-devtools": "5.73.3",
     "@eslint/js": "^9.19.0",
     "common.typescript": "workspace:*",
