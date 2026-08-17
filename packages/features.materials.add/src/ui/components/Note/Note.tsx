@@ -69,7 +69,7 @@ export const Note = ({ onlyDrafts = false, onCreate, classroomId }: NoteProps) =
       <Button
         onClick={handleCreateNoteDraft}
         variant="primary"
-        className="text-text-on-accent !h-8 gap-2 rounded-[10px] px-4 font-medium max-sm:hidden"
+        className="text-text-on-accent !h-auto gap-2 rounded-[10px] px-5 py-3 text-base leading-5 font-medium max-sm:hidden"
         disabled={addMaterials.isPending}
         data-umami-event="material-create-note-draft"
       >
