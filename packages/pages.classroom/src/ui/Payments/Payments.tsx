@@ -21,7 +21,7 @@ export const Payments = () => {
 
   const parentRef = useRef<HTMLDivElement>(null);
 
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
   const currentUserRole = isTutor ? 'tutor' : 'student';
 
@@ -29,6 +29,7 @@ export const Payments = () => {
     parentRef,
     currentUserRole,
     classroomId,
+    !isUserLoading && user != null,
   );
 
   const onOpenInvoiceDetailsModal = useCallback((payment: RolePaymentT<UserRoleT>) => {
@@ -47,7 +48,7 @@ export const Payments = () => {
     [screenSize, isTutor, onOpenInvoiceDetailsModal],
   );
 
-  if (isLoading) {
+  if (isUserLoading || !user || isLoading) {
     return <LoadingState />;
   }
 

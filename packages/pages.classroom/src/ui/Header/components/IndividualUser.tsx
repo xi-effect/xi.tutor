@@ -17,10 +17,14 @@ export const IndividualUser = ({
   studentName?: string | null;
   canEdit: boolean;
 }) => {
-  const { data: currentUser } = useCurrentUser();
+  const { data: currentUser, isLoading: isCurrentUserLoading } = useCurrentUser();
   const isTutor = currentUser?.default_layout === 'tutor';
   const userRole = isTutor ? 'student' : 'tutor';
-  const { data: user, isLoading } = useUserByRole(userRole, userId);
+  const { data: user, isLoading } = useUserByRole(
+    userRole,
+    userId,
+    isCurrentUserLoading || !currentUser || !userId,
+  );
   const profileName = user?.display_name ?? user?.username;
   const title =
     (isTutor && nameOverride?.trim()) ||

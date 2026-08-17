@@ -53,6 +53,12 @@ type UpcomingLessonViewModel = {
   item: ScheduleItem;
 };
 
+function upcomingLessonKey(item: ScheduleItem): string {
+  const instance = item.eventInstance;
+  if ('id' in instance) return instance.id;
+  return `${item.eventId}:${item.instanceKind}:${item.instanceIndex ?? 'unknown'}:${item.startsAt}`;
+}
+
 function scheduleItemToLesson(item: ScheduleItem): ScheduleLessonRow {
   const startDate = new Date(item.startsAt);
   const endDate = new Date(item.endsAt);
@@ -227,7 +233,10 @@ export const UpcomingLessonsSection = () => {
         ) : (
           <WidgetCardsCarousel>
             {lessons.map(({ lesson, item }, index) => (
-              <div key={`${lesson.id}`} className="flex w-[300px] shrink-0 flex-col sm:w-[320px]">
+              <div
+                key={upcomingLessonKey(item)}
+                className="flex w-[300px] shrink-0 flex-col sm:w-[320px]"
+              >
                 <UpcomingLessonCard
                   lesson={lesson}
                   classroomId={classroomId}

@@ -1,6 +1,8 @@
 import { classroomNotesApiConfig, ClassroomNotesQueryKey } from 'common.api';
 import { StorageItemT } from 'common.types';
-import { useFetching } from 'common.config';
+import { getAxiosInstance } from 'common.config';
+import { useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 export const useGetNoteStorageItem = ({
   classroomId,
@@ -9,21 +11,33 @@ export const useGetNoteStorageItem = ({
   classroomId: string;
   disabled?: boolean;
 }) => {
-  const { data, isError, isLoading, ...rest } = useFetching({
-    apiConfig: {
-      method: classroomNotesApiConfig[ClassroomNotesQueryKey.GetNoteStorageItem].method,
-      getUrl: () =>
-        classroomNotesApiConfig[ClassroomNotesQueryKey.GetNoteStorageItem].getUrl(classroomId),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    },
-    disabled: disabled,
+  const { data, isError, isLoading, ...rest } = useQuery({
     queryKey: [ClassroomNotesQueryKey.GetNoteStorageItem, classroomId],
+    enabled: !disabled && Boolean(classroomId),
+    queryFn: async () => {
+      try {
+        const axiosInstance = await getAxiosInstance();
+        const response = await axiosInstance({
+          method: classroomNotesApiConfig[ClassroomNotesQueryKey.GetNoteStorageItem].method,
+          url: classroomNotesApiConfig[ClassroomNotesQueryKey.GetNoteStorageItem].getUrl(
+            classroomId,
+          ),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        return response.data as StorageItemT;
+      } catch (error: unknown) {
+        if (error instanceof AxiosError && error.response?.status === 404) {
+          return null;
+        }
+        throw error;
+      }
+    },
   });
 
   return {
-    data: data as StorageItemT,
+    data: data ?? undefined,
     isError,
     isLoading,
     ...rest,

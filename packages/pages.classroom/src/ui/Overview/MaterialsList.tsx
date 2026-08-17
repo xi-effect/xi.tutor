@@ -17,20 +17,23 @@ export const MaterialsList = () => {
   const { t } = useTranslation('classroom');
   const { classroomId } = useParams({ from: '/(app)/_layout/classrooms/$classroomId/' });
 
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading: isUserLoading } = useCurrentUser();
   const isTutor = user?.default_layout === 'tutor';
+  const roleReady = !isUserLoading && user != null;
 
-  const getList = isTutor ? useGetClassroomMaterialsList : useGetClassroomMaterialsListStudent;
-
-  const {
-    data: materials,
-    isLoading,
-    isError,
-  } = getList({
+  const tutorList = useGetClassroomMaterialsList({
     classroomId: classroomId || '',
     content_type: null,
-    disabled: !classroomId,
+    disabled: !classroomId || !roleReady || !isTutor,
   });
+  const studentList = useGetClassroomMaterialsListStudent({
+    classroomId: classroomId || '',
+    content_type: null,
+    disabled: !classroomId || !roleReady || isTutor,
+  });
+
+  const { data: materials, isError } = isTutor ? tutorList : studentList;
+  const isLoading = !roleReady || (isTutor ? tutorList.isLoading : studentList.isLoading);
 
   if (isLoading) {
     return (

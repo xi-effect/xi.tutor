@@ -10,7 +10,7 @@ export const useTutorContactsById = (tutorId: string | number, disabled?: boolea
         'Content-Type': 'application/json',
       },
     },
-    disabled,
+    disabled: disabled || !tutorId,
     queryKey: [ContactsQueryKey.GetTutorContactById, tutorId],
   });
 

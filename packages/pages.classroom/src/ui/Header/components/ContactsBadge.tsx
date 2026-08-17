@@ -46,9 +46,13 @@ const StudentContactsBadge = ({ studentId }: { studentId: number }) => {
 };
 
 export const ContactsBadge = ({ userId }: ContactsBadgePropsT) => {
-  const { data: user } = useCurrentUser();
+  const { data: user, isLoading } = useCurrentUser();
 
   const isTutor = user?.default_layout === 'tutor';
+
+  if (isLoading || !user || !userId) {
+    return null;
+  }
 
   if (isTutor) {
     return <StudentContactsBadge studentId={userId} />;
