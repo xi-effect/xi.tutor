@@ -136,10 +136,13 @@ export const Header = () => {
   };
 
   const handleNameInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    console.log('here');
     if (event.key === 'Enter') {
+      console.log('enter handler');
       event.preventDefault();
       nameInputRef.current?.blur();
     } else if (event.key === 'Escape') {
+      console.log('esc handler');
       event.preventDefault();
       cancelEditing();
       nameInputRef.current?.blur();
@@ -185,6 +188,7 @@ export const Header = () => {
             >
               {isEditMode ? (
                 <>
+                  <div className="fixed inset-0 z-10" onPointerDown={submitName} />
                   <input
                     ref={nameInputRef}
                     value={nameValue}
@@ -243,7 +247,7 @@ export const Header = () => {
                     <Button
                       type="button"
                       variant="none"
-                      className="hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 opacity-0 transition-opacity group-hover:opacity-100 focus:bg-transparent focus-visible:opacity-100 lg:h-8 lg:w-8 lg:rounded-xl"
+                      className="hover:bg-status-info-background flex h-6 w-6 items-center justify-center rounded-lg p-0 transition-opacity group-hover:opacity-100 focus:bg-transparent focus-visible:opacity-100 lg:h-8 lg:w-8 lg:rounded-xl pointer-fine:opacity-0"
                       onClick={startEditing}
                       data-umami-event="board-edit-name"
                     >
