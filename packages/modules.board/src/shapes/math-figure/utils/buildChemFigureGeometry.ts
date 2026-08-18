@@ -55,7 +55,13 @@ function caption(
     case 'above':
       return { x: snap(p.x), y: snap(p.y - gap), text, anchor: 'middle', baseline: 'auto' };
     case 'below':
-      return { x: snap(p.x), y: snap(p.y + gap * 0.35), text, anchor: 'middle', baseline: 'hanging' };
+      return {
+        x: snap(p.x),
+        y: snap(p.y + gap * 0.35),
+        text,
+        anchor: 'middle',
+        baseline: 'hanging',
+      };
     case 'left':
       return { x: snap(p.x - gap), y: snap(p.y), text, anchor: 'end', baseline: 'middle' };
     case 'right':
@@ -67,19 +73,20 @@ function hypot(a: MathFigurePoint, b: MathFigurePoint): number {
   return Math.hypot(b.x - a.x, b.y - a.y) || 1;
 }
 
-function shorten(a: MathFigurePoint, b: MathFigurePoint, inset: number = MATH_FIGURE_VISUAL.atomInset): MathFigureEdge {
+function shorten(
+  a: MathFigurePoint,
+  b: MathFigurePoint,
+  inset: number = MATH_FIGURE_VISUAL.atomInset,
+): MathFigureEdge {
   const len = hypot(a, b);
   const ux = (b.x - a.x) / len;
   const uy = (b.y - a.y) / len;
-  return edge(
-    pt(a.x + ux * inset, a.y + uy * inset),
-    pt(b.x - ux * inset, b.y - uy * inset),
-  );
+  return edge(pt(a.x + ux * inset, a.y + uy * inset), pt(b.x - ux * inset, b.y - uy * inset));
 }
 
 function parallelBonds(a: MathFigurePoint, b: MathFigurePoint, gap = 3.5): MathFigureEdge[] {
   const len = hypot(a, b);
-  const nx = ((-(b.y - a.y)) / len) * gap;
+  const nx = (-(b.y - a.y) / len) * gap;
   const ny = ((b.x - a.x) / len) * gap;
   const a1 = pt(a.x + nx, a.y + ny);
   const b1 = pt(b.x + nx, b.y + ny);
@@ -108,7 +115,12 @@ function atAngle(origin: MathFigurePoint, length: number, deg: number): MathFigu
 }
 
 /** Пара электронов на оболочке (угол — направление от ядра). */
-function electronPair(center: MathFigurePoint, radius: number, deg: number, spread = 4.5): MathFigurePoint[] {
+function electronPair(
+  center: MathFigurePoint,
+  radius: number,
+  deg: number,
+  spread = 4.5,
+): MathFigurePoint[] {
   const rad = (deg * Math.PI) / 180;
   const mx = center.x + radius * Math.cos(rad);
   const my = center.y + radius * Math.sin(rad);
@@ -225,7 +237,10 @@ function buildHydrogenBond(w: number, h: number, showLabels: boolean): MathFigur
   };
 }
 
-function waterMolecule(origin: MathFigurePoint, scale: number): {
+function waterMolecule(
+  origin: MathFigurePoint,
+  scale: number,
+): {
   O: MathFigurePoint;
   H1: MathFigurePoint;
   H2: MathFigurePoint;

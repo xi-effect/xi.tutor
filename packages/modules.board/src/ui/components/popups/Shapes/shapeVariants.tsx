@@ -106,11 +106,23 @@ export const boardTemplateGroups: BoardTemplateGroup[] = [
     subjectKey: 'chemistry',
     items: [
       { id: 'ionic-bond', icon: <IonicBondIcon />, labelKey: 'shapesPopup.kinds.ionicBond' },
-      { id: 'covalent-bond', icon: <CovalentBondIcon />, labelKey: 'shapesPopup.kinds.covalentBond' },
+      {
+        id: 'covalent-bond',
+        icon: <CovalentBondIcon />,
+        labelKey: 'shapesPopup.kinds.covalentBond',
+      },
       { id: 'polar-bond', icon: <PolarBondIcon />, labelKey: 'shapesPopup.kinds.polarBond' },
-      { id: 'hydrogen-bond', icon: <HydrogenBondIcon />, labelKey: 'shapesPopup.kinds.hydrogenBond' },
+      {
+        id: 'hydrogen-bond',
+        icon: <HydrogenBondIcon />,
+        labelKey: 'shapesPopup.kinds.hydrogenBond',
+      },
       { id: 'water', icon: <WaterIcon />, labelKey: 'shapesPopup.kinds.water' },
-      { id: 'carbon-dioxide', icon: <CarbonDioxideIcon />, labelKey: 'shapesPopup.kinds.carbonDioxide' },
+      {
+        id: 'carbon-dioxide',
+        icon: <CarbonDioxideIcon />,
+        labelKey: 'shapesPopup.kinds.carbonDioxide',
+      },
       { id: 'methane', icon: <MethaneIcon />, labelKey: 'shapesPopup.kinds.methane' },
       { id: 'benzene', icon: <BenzeneIcon />, labelKey: 'shapesPopup.kinds.benzene' },
     ],
