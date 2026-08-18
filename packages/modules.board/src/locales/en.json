@@ -109,6 +109,7 @@
     "emoji": "Emoji",
     "uploadFile": "Upload file. Photos: up to 1 MB. PDF, audio and other files: up to 5 MB.",
     "coordinateAxes": "Coordinate axes",
+    "flipCard": "Flip card",
     "more": "More"
   },
   "timer": {
@@ -180,7 +181,8 @@
     "forbidControl": "Forbid control",
     "allowControl": "Allow control",
     "axisColor": "Axis color",
-    "style": "Style"
+    "style": "Style",
+    "flipCardAddImage": "Add image"
   },
   "zoom": {
     "clickHint": "Click — 100%. Double-click — show all elements"

@@ -9,6 +9,7 @@ import { isMac } from '../../../utils';
 import { BorderPicker } from '../../../shapes/geo';
 import { CoordinateAxesSettingsPicker } from '../../../shapes/coordinate-axes';
 import { TextEditorToolbar } from '../../../shapes/text';
+import { FlipCardImageButton } from '../../../shapes/flipCard';
 import { useTranslation } from 'react-i18next';
 
 const modKey = isMac ? '⌘' : 'Ctrl';
@@ -26,6 +27,7 @@ export const SelectionMenu = track(function SelectionMenu() {
   const isRichText = selectedShapes.some((shape) => shapesWithRichTextSet.has(shape.type));
   const isCoordinateAxes =
     selectedShapes.length === 1 && selectedShapes[0].type === 'coordinate-axes';
+  const isFlipCard = selectedShapes.length === 1 && selectedShapes[0].type === 'flip-card';
 
   // --- Данные / вычисления (без ранних return) ---
   const selectedIds = editor.getSelectedShapeIds();
@@ -126,6 +128,8 @@ export const SelectionMenu = track(function SelectionMenu() {
           {isCoordinateAxes && <CoordinateAxesSettingsPicker />}
           <ColorPicker />
           {isRichText && <TextEditorToolbar editor={editor} />}
+          {isFlipCard && <FlipCardImageButton />}
+
           <MoreActionsMenu />
         </>
       )}

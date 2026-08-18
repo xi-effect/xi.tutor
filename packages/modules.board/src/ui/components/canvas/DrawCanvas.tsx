@@ -41,6 +41,7 @@ import { useRetryFileQueue } from 'common.services';
 import { useSearch } from '@tanstack/react-router';
 import { hasBoardDeepLinkSearch, type BoardDeepLinkSearch } from '../../../utils/boardDeepLink';
 import { useTranslation } from 'react-i18next';
+import { FlipCardTool } from '../../../shapes/flipCard';
 import { isBoardStoreReady } from '../../../utils/boardStoreStatus';
 
 export const DrawCanvas = ({
@@ -478,7 +479,7 @@ export const DrawCanvas = ({
               });
             }}
             store={store}
-            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool, EmojiStickerTool]}
+            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool, EmojiStickerTool, FlipCardTool]}
             shapeUtils={boardCustomShapeUtils}
             components={drawComponents}
             collaboratorCursorLayout={{
