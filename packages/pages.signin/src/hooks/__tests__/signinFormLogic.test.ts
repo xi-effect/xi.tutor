@@ -19,9 +19,16 @@ const axiosError = (status: number, detail?: string) => {
 };
 
 describe('resolveSigninRedirect', () => {
-  it('берёт redirect или /', () => {
+  it('берёт внутренний redirect или /', () => {
     expect(resolveSigninRedirect('/calendar')).toBe('/calendar');
     expect(resolveSigninRedirect(undefined)).toBe('/');
+  });
+
+  it('разбирает same-origin URL и отбрасывает внешние', () => {
+    const origin = 'https://app.sovlium.ru';
+    expect(resolveSigninRedirect(`${origin}/classrooms/1`, origin)).toBe('/classrooms/1');
+    expect(resolveSigninRedirect('https://evil.example/phish', origin)).toBe('/');
+    expect(resolveSigninRedirect('//evil.example/phish', origin)).toBe('/');
   });
 });
 

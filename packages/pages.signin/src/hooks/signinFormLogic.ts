@@ -11,8 +11,32 @@ export type SigninErrorUi = {
   toast: (message: string) => void;
 };
 
-export function resolveSigninRedirect(redirect?: string): string {
-  return redirect || '/';
+function isInternalAppPath(path: string): boolean {
+  return path.startsWith('/') && !path.startsWith('//');
+}
+
+/** Куда увести после входа или если сессия уже жива. Внешние URL отбрасываем. */
+export function resolveSigninRedirect(
+  redirect?: string,
+  origin = typeof window !== 'undefined' ? window.location.origin : undefined,
+): string {
+  if (!redirect) return '/';
+
+  if (isInternalAppPath(redirect)) {
+    return redirect;
+  }
+
+  try {
+    const url = new URL(redirect);
+    if (origin && url.origin === origin) {
+      const path = `${url.pathname}${url.search}${url.hash}`;
+      return isInternalAppPath(path) ? path : '/';
+    }
+  } catch {
+    // не URL — на главную
+  }
+
+  return '/';
 }
 
 /** Ветвление ошибок входа: setError на поле + toast. */

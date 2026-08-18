@@ -14,6 +14,11 @@ import {
 import { AuthContext } from './context';
 import { SignupData } from 'common.types';
 
+const getHttpStatus = (error: unknown): number | undefined => {
+  if (!error || typeof error !== 'object' || !('response' in error)) return undefined;
+  return (error as { response?: { status?: number } }).response?.status;
+};
+
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
   const [isAuthenticated, setIsAuthenticated] = React.useState<boolean | null>(null);
@@ -38,26 +43,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       const res = await axiosInst.get(userApiConfig[UserQueryKey.Home].getUrl());
       return res.data;
     },
-    retry: false,
+    retry: (failureCount, queryError) => {
+      if (getHttpStatus(queryError) === 401) return false;
+      return failureCount < 2;
+    },
   });
 
-  // Только 401 считаем «пользователь не залогинен» для блокировки session_init identify (signin/signup делают свой).
-  // Сетевая/5xx не должны навсегда блокировать identify при следующей успешной загрузке.
-  const isUnauthorized =
-    isError &&
-    error &&
-    typeof error === 'object' &&
-    'response' in error &&
-    (error as { response?: { status?: number } }).response?.status === 401;
+  // Только 401 = нет сессии. Сеть/5xx не должны выкидывать на /signin при живых куках.
+  const isUnauthorized = isError && getHttpStatus(error) === 401;
 
   React.useEffect(() => {
     if (isUnauthorized) {
       hasEverBeenUnauthenticated.current = true;
-    }
-    if (isError) {
       setIsAuthenticated(false);
     }
-  }, [isError, isUnauthorized]);
+  }, [isUnauthorized]);
 
   React.useEffect(() => {
     if (!isSuccess || !user || hasTrackedSessionInit) return;
