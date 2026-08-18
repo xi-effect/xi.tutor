@@ -14,7 +14,6 @@ import { Button } from '@xipkg/button';
 import { Copy } from '@xipkg/icons';
 import { Skeleton } from 'common.ui';
 import { toast } from 'sonner';
-import { useDeleteInvitation } from 'common.services';
 import { env } from 'common.env';
 import {
   PRODUCT_ANALYTICS_EVENTS,
@@ -66,17 +65,16 @@ export const ModalInvitationV2 = ({
     refetch,
     isCreating,
     isCreateError,
-    isAtLimit,
-    createInvite,
+    isRefreshing,
     retryCreate,
+    refreshCurrentInvite,
   } = useCurrentInvite(analyticsSource);
 
-  const { mutate: deleteInvitationMutate, isPending: isRefreshing } = useDeleteInvitation();
   const [confirmingRefresh, setConfirmingRefresh] = useState(false);
 
   // Модалка смонтирована постоянно (см. использование через children/trigger),
-  // поэтому явный refetch на переход open:false -> true — единственный способ
-  // без polling подхватить изменения (например, ссылку уже использовали).
+  // поэтому явный refetch на переход open:false -> true подхватывает ссылку,
+  // созданную или обновлённую в другой вкладке.
   const wasOpenRef = useRef(open);
   useEffect(() => {
     if (open && !wasOpenRef.current) {
@@ -152,20 +150,16 @@ export const ModalInvitationV2 = ({
     if (!currentInvite) return;
     const previousInviteId = String(currentInvite.id);
     setConfirmingRefresh(false);
-    deleteInvitationMutate(currentInvite.id, {
-      onSuccess: () => {
-        createInvite({
-          onSuccess: (invite) => {
-            void getInviteTrackingId(invite.code).then((invite_tracking_id) => {
-              trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_NEW_LINK_CREATED, {
-                invite_flow_version: 2,
-                source: analyticsSource,
-                invite_id: String(invite.id),
-                previous_invite_id: previousInviteId,
-                invite_tracking_id,
-              });
-            });
-          },
+    refreshCurrentInvite({
+      onSuccess: (invite) => {
+        void getInviteTrackingId(invite.code).then((invite_tracking_id) => {
+          trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_NEW_LINK_CREATED, {
+            invite_flow_version: 2,
+            source: analyticsSource,
+            invite_id: String(invite.id),
+            previous_invite_id: previousInviteId,
+            invite_tracking_id,
+          });
         });
       },
     });
@@ -174,11 +168,8 @@ export const ModalInvitationV2 = ({
   const hasContent = currentInvite != null;
   const showListError = isListError;
   const showCreateError = !hasContent && isCreateError && !isCreating;
-  const showLimitReached = !showListError && !showCreateError && isAtLimit && !hasContent;
-  const showSkeleton =
-    !showListError && !showCreateError && !showLimitReached && !hasContent && !confirmingRefresh;
-  const isRefreshingLink = isRefreshing || (isCreating && !hasContent);
-  const showMainFooter = !showListError && !showCreateError && !showLimitReached;
+  const showSkeleton = !showListError && !showCreateError && !hasContent && !confirmingRefresh;
+  const showMainFooter = !showListError && !showCreateError;
 
   return (
     <Modal
@@ -221,10 +212,6 @@ export const ModalInvitationV2 = ({
               <Button variant="secondary" onClick={() => retryCreate()}>
                 {t('inviteModalV2.errors.retry')}
               </Button>
-            </div>
-          ) : showLimitReached ? (
-            <div className="flex flex-col items-center gap-3 py-6 text-center">
-              <p className="text-text-primary">{t('inviteModalV2.limit.reached')}</p>
             </div>
           ) : showSkeleton ? (
             <div className="flex flex-col gap-2 py-2">
@@ -292,8 +279,8 @@ export const ModalInvitationV2 = ({
               <Button
                 variant="ghost"
                 onClick={() => setConfirmingRefresh(true)}
-                disabled={!hasContent || isRefreshingLink}
-                loading={isRefreshingLink}
+                disabled={!hasContent || isRefreshing}
+                loading={isRefreshing}
               >
                 {t('inviteModalV2.actions.refreshLink')}
               </Button>

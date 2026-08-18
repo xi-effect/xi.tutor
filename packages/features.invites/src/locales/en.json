@@ -70,9 +70,6 @@
       "listError": "Couldn't load the invitation",
       "createError": "Couldn't create a link. Please try again.",
       "retry": "Retry"
-    },
-    "limit": {
-      "reached": "Invitation limit reached (10). Contact support to get a new link."
     }
   }
 }
