@@ -1,12 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@xipkg/tooltip';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@xipkg/dropdown';
-import { MenuDots } from '@xipkg/icons';
 import { track, useEditor } from '@ibodr/draw';
 import { cn } from '@xipkg/utils';
 import { navBarElements, NavbarElementT } from '../../../utils/navBarElements';
@@ -17,20 +10,13 @@ import { ToolbarOptionsPanel } from './ToolbarOptionsPanel';
 import { useCloseToolbarPanel } from './useCloseToolbarPanel';
 import { useDrawStore } from '../../../store';
 import { useDrawStyles, useHotkeys } from '../../../hooks';
-import { BoardDrawer, boardDrawerRowClass, NavbarButton, useBoardIsMobile } from '../shared';
+import { NavbarButton } from '../shared';
 import { initFileDB, useRetryFileQueue } from 'common.services';
-import {
-  boardChromeZClass,
-  boardDropdownZClass,
-  boardMenuItemClass,
-  boardPanelClass,
-  boardToolbarIconClass,
-} from '../../boardTheme';
+import { boardChromeZClass, boardPanelClass } from '../../boardTheme';
 import { EmojiStickerStyle, EmojiStyle } from '../../../shapes/shapeStyles';
 import { insertAsset } from '../../../utils/uploadAsset';
 import { getBoardFileInputAccept } from '../../../constants/mimeTypes';
 import { stickers } from '../../../config';
-import { useTranslation } from 'react-i18next';
 
 const toolMapping: Record<string, string> = {
   select: 'select',
@@ -47,7 +33,6 @@ const toolMapping: Record<string, string> = {
   'coordinate-axes': 'coordinate-axes',
 };
 
-const MORE_MENU_ACTION = 'more-menu';
 const COMMENT_ACTION = 'comment';
 
 const toolPopupIdByAction: Record<string, string> = {
@@ -72,9 +57,6 @@ export const Navbar = track(
     canRedo: boolean;
     token: string;
   }) => {
-    const { t } = useTranslation('board');
-    const isMobile = useBoardIsMobile();
-    const [moreMenuOpen, setMoreMenuOpen] = React.useState(false);
     const {
       pencilColor,
       pencilThickness,
@@ -204,16 +186,10 @@ export const Navbar = track(
         emoji: 'emoji',
         'emoji-sticker': 'emoji-sticker',
         'coordinate-axes': 'coordinate-axes',
+        'math-figure': 'geo',
       };
 
       return reverseMapping[currentToolId] || 'select';
-    };
-
-    const handleInsertCoordinateAxes = () => {
-      editor.selectNone();
-      editor.setCurrentTool('coordinate-axes');
-      setActivePopup(null);
-      setMoreMenuOpen(false);
     };
 
     const currentTool = getCurrentTool();
@@ -267,62 +243,6 @@ export const Navbar = track(
       {
         key: COMMENT_ACTION,
         node: <CommentPlaceButton />,
-      },
-      {
-        key: MORE_MENU_ACTION,
-        node: isMobile ? (
-          <>
-            <NavbarButton
-              icon={<MenuDots className={cn('rotate-90', boardToolbarIconClass)} />}
-              title={t('navbar.more')}
-              isActive={moreMenuOpen}
-              data-board-tool="more-menu"
-              onClick={() => setMoreMenuOpen(true)}
-            />
-            <BoardDrawer
-              open={moreMenuOpen}
-              onOpenChange={setMoreMenuOpen}
-              title={t('navbar.more')}
-            >
-              <button
-                type="button"
-                className={boardDrawerRowClass}
-                onClick={handleInsertCoordinateAxes}
-              >
-                <span className="text-text-primary text-sm font-medium">
-                  {t('navbar.coordinateAxes')}
-                </span>
-              </button>
-            </BoardDrawer>
-          </>
-        ) : (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <NavbarButton
-                icon={<MenuDots className={cn('rotate-90', boardToolbarIconClass)} />}
-                title={t('navbar.more')}
-                isActive={false}
-                data-board-tool="more-menu"
-              />
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              side="top"
-              align="end"
-              sideOffset={8}
-              className={cn(
-                boardDropdownZClass,
-                'border-border-default bg-background-surface w-[180px] rounded-xl border p-1',
-              )}
-            >
-              <DropdownMenuItem
-                onClick={handleInsertCoordinateAxes}
-                className={cn(boardMenuItemClass, 'flex gap-2 px-3')}
-              >
-                <span>{t('navbar.coordinateAxes')}</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        ),
       },
     ];
 

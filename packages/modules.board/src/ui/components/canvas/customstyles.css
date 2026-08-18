@@ -249,3 +249,20 @@
 [data-has-locked-selection='true'] .dr-handle__fg {
   display: none;
 }
+
+/*
+ * SVG <text> при CSS-transform камеры иначе привязывается к пикселям экрана
+ * и «дрожит» относительно линий фигуры. geometricPrecision держит подписи в
+ * системе координат шейпа.
+ */
+.dr-shape[data-shape-type='math-figure'] text,
+.dr-shape[data-shape-type='coordinate-axes'] text {
+  text-rendering: geometricPrecision;
+}
+
+.dr-shape[data-shape-type='math-figure'] path,
+.dr-shape[data-shape-type='math-figure'] ellipse,
+.dr-shape[data-shape-type='math-figure'] line,
+.dr-shape[data-shape-type='math-figure'] circle {
+  shape-rendering: geometricPrecision;
+}

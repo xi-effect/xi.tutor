@@ -64,7 +64,9 @@ export const ToolbarOptionsPanel = ({
       {activePopup === 'pen' && (
         <OpacitySizeMenu className={isMobile ? drawerPanelClass : undefined} />
       )}
-      {activePopup === 'shapes' && <ShapeSet className={isMobile ? drawerPanelClass : undefined} />}
+      {activePopup === 'shapes' && (
+        <ShapeSet className={isMobile ? drawerPanelClass : undefined} onClose={onClose} />
+      )}
       {activePopup === 'sticker' && (
         <ColorSet
           popupItems={stickerPopupItems}

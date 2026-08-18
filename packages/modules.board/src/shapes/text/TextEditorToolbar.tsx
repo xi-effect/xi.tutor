@@ -39,7 +39,6 @@ export const TextEditorToolbar = ({ editor }: { editor: Editor }) => {
       id: shape.id,
       type: shape.type as ShapeTypesWithRichTextT,
       props: {
-        ...shape.props,
         richText: formattedRichTexts[index],
       },
     }));
@@ -68,7 +67,6 @@ export const TextEditorToolbar = ({ editor }: { editor: Editor }) => {
       id: shape.id,
       type: shape.type as ShapeTypesWithRichTextT,
       props: {
-        ...shape.props,
         richText: formattedRichTexts[index],
       },
     }));

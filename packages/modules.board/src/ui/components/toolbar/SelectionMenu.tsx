@@ -8,6 +8,7 @@ import { useYjsContext } from '../../../providers/YjsProvider';
 import { isMac } from '../../../utils';
 import { BorderPicker } from '../../../shapes/geo';
 import { CoordinateAxesSettingsPicker } from '../../../shapes/coordinate-axes';
+import { MathFigureSettingsPicker } from '../../../shapes/math-figure';
 import { TextEditorToolbar } from '../../../shapes/text';
 import { useTranslation } from 'react-i18next';
 
@@ -26,6 +27,7 @@ export const SelectionMenu = track(function SelectionMenu() {
   const isRichText = selectedShapes.some((shape) => shapesWithRichTextSet.has(shape.type));
   const isCoordinateAxes =
     selectedShapes.length === 1 && selectedShapes[0].type === 'coordinate-axes';
+  const isMathFigure = selectedShapes.length === 1 && selectedShapes[0].type === 'math-figure';
 
   // --- Данные / вычисления (без ранних return) ---
   const selectedIds = editor.getSelectedShapeIds();
@@ -124,6 +126,7 @@ export const SelectionMenu = track(function SelectionMenu() {
           </Button>
           {isGeo && <BorderPicker />}
           {isCoordinateAxes && <CoordinateAxesSettingsPicker />}
+          {isMathFigure && <MathFigureSettingsPicker />}
           <ColorPicker />
           {isRichText && <TextEditorToolbar editor={editor} />}
           <MoreActionsMenu />

@@ -108,7 +108,6 @@
     "sticker": "Стикер",
     "emoji": "Эмодзи",
     "uploadFile": "Загрузить файл. Фото: до 1 МБ. PDF, аудио и прочие файлы: до 5 МБ.",
-    "coordinateAxes": "Оси координат",
     "more": "Ещё"
   },
   "timer": {
@@ -198,6 +197,65 @@
     "divisionsX": "Делений по X",
     "divisionsY": "Делений по Y",
     "labels": "Подписи"
+  },
+  "mathFigure": {
+    "settings": "Настройки фигуры",
+    "hiddenEdges": "Невидимые рёбра",
+    "labels": "Подписи",
+    "height": "Высота",
+    "median": "Медиана",
+    "bisector": "Биссектриса",
+    "chemShort": "Хим"
+  },
+  "shapesPopup": {
+    "tabs": {
+      "flat": "Плоские",
+      "solid": "Объёмные",
+      "templates": "Шаблоны"
+    },
+    "subjects": {
+      "math": "Математика",
+      "physics": "Физика",
+      "chemistry": "Химия"
+    },
+    "kinds": {
+      "cube": "Куб",
+      "pyramid": "Пирамида",
+      "cylinder": "Цилиндр",
+      "cone": "Конус",
+      "numberLine": "Числовая прямая",
+      "triangle": "Треугольник",
+      "rightTriangle": "Прямоугольный треугольник",
+      "isoscelesTriangle": "Равнобедренный треугольник",
+      "rectangle": "Прямоугольник",
+      "circle": "Окружность",
+      "ionicBond": "Ионная связь",
+      "covalentBond": "Ковалентная связь",
+      "polarBond": "Полярная связь",
+      "hydrogenBond": "Водородная связь",
+      "water": "Вода H₂O",
+      "carbonDioxide": "CO₂",
+      "methane": "Метан CH₄",
+      "benzene": "Бензол"
+    },
+    "geo": {
+      "rectangle": "Прямоугольник",
+      "ellipse": "Эллипс",
+      "oval": "Овал",
+      "triangle": "Треугольник",
+      "diamond": "Ромб",
+      "rhombus": "Параллелограмм",
+      "rhombus2": "Параллелограмм 2",
+      "trapezoid": "Трапеция",
+      "pentagon": "Пятиугольник",
+      "hexagon": "Шестиугольник",
+      "octagon": "Восьмиугольник",
+      "star": "Звезда"
+    },
+    "templates": {
+      "axes": "Оси координат",
+      "vector": "Вектор"
+    }
   },
   "pdf": {
     "pagesShort": "{{count}} стр.",

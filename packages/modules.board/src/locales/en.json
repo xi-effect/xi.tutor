@@ -108,7 +108,6 @@
     "sticker": "Sticker",
     "emoji": "Emoji",
     "uploadFile": "Upload file. Photos: up to 1 MB. PDF, audio and other files: up to 5 MB.",
-    "coordinateAxes": "Coordinate axes",
     "more": "More"
   },
   "timer": {
@@ -198,6 +197,65 @@
     "divisionsX": "Divisions on X",
     "divisionsY": "Divisions on Y",
     "labels": "Labels"
+  },
+  "mathFigure": {
+    "settings": "Figure settings",
+    "hiddenEdges": "Hidden edges",
+    "labels": "Labels",
+    "height": "Height",
+    "median": "Median",
+    "bisector": "Bisector",
+    "chemShort": "Chem"
+  },
+  "shapesPopup": {
+    "tabs": {
+      "flat": "Flat",
+      "solid": "Solids",
+      "templates": "Templates"
+    },
+    "subjects": {
+      "math": "Math",
+      "physics": "Physics",
+      "chemistry": "Chemistry"
+    },
+    "kinds": {
+      "cube": "Cube",
+      "pyramid": "Pyramid",
+      "cylinder": "Cylinder",
+      "cone": "Cone",
+      "numberLine": "Number line",
+      "triangle": "Triangle",
+      "rightTriangle": "Right triangle",
+      "isoscelesTriangle": "Isosceles triangle",
+      "rectangle": "Rectangle",
+      "circle": "Circle",
+      "ionicBond": "Ionic bond",
+      "covalentBond": "Covalent bond",
+      "polarBond": "Polar bond",
+      "hydrogenBond": "Hydrogen bond",
+      "water": "Water H₂O",
+      "carbonDioxide": "CO₂",
+      "methane": "Methane CH₄",
+      "benzene": "Benzene"
+    },
+    "geo": {
+      "rectangle": "Rectangle",
+      "ellipse": "Ellipse",
+      "oval": "Oval",
+      "triangle": "Triangle",
+      "diamond": "Diamond",
+      "rhombus": "Parallelogram",
+      "rhombus2": "Parallelogram 2",
+      "trapezoid": "Trapezoid",
+      "pentagon": "Pentagon",
+      "hexagon": "Hexagon",
+      "octagon": "Octagon",
+      "star": "Star"
+    },
+    "templates": {
+      "axes": "Coordinate axes",
+      "vector": "Vector"
+    }
   },
   "pdf": {
     "pagesShort": "{{count}} p.",

@@ -34,6 +34,7 @@ import { XiGeoTool } from '../../../shapes/geo';
 import { EmojiTool } from '../../../shapes/emoji';
 import { EmojiStickerTool } from '../../../shapes/emojiSticker';
 import { CoordinateAxesTool } from '../../../shapes/coordinate-axes';
+import { MathFigureTool } from '../../../shapes/math-figure';
 import { isShapeErasable, isEditableTarget, resetInflatedDrawScale } from '../../../utils';
 import { TextEditorToolbarWithContext } from '../../../shapes/text/TextEditorToolbarWithContext';
 import { insertAsset } from '../../../utils/uploadAsset';
@@ -478,7 +479,7 @@ export const DrawCanvas = ({
               });
             }}
             store={store}
-            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool, EmojiStickerTool]}
+            tools={[XiGeoTool, EmojiTool, CoordinateAxesTool, MathFigureTool, EmojiStickerTool]}
             shapeUtils={boardCustomShapeUtils}
             components={drawComponents}
             collaboratorCursorLayout={{

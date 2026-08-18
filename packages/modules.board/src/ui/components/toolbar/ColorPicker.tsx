@@ -41,6 +41,7 @@ const supportedShapeTypes = new Set([
   'note',
   'frame',
   'coordinate-axes',
+  'math-figure',
 ]);
 const drawShapeTypes = new Set(['draw']);
 

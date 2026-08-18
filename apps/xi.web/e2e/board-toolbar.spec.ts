@@ -61,11 +61,12 @@ test.describe('Доска — инструменты', () => {
     );
   });
 
-  test('открывает оси координат из меню ещё', async ({ page }) => {
+  test('вставляет оси координат из шаблонов фигур', async ({ page }) => {
     await openBoard(page);
 
-    await page.locator('[data-board-tool="more-menu"]').locator('visible=true').click();
-    await page.getByRole('menuitem', { name: 'Оси координат' }).click();
-    await expect(page.getByRole('menuitem', { name: 'Оси координат' })).toBeHidden();
+    await page.locator('[data-board-tool="geo"]').first().click();
+    await page.getByRole('button', { name: 'Шаблоны' }).click();
+    await page.getByRole('button', { name: 'Оси координат' }).first().click();
+    await expect(page.getByRole('button', { name: 'Шаблоны' })).toBeHidden();
   });
 });

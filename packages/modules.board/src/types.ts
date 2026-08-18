@@ -24,6 +24,7 @@ export type ToolType =
   | 'geo'
   | 'frame'
   | 'xi-geo'
+  | 'math-figure'
   | 'emoji'
   | 'file';
 
