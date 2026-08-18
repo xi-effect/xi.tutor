@@ -78,20 +78,17 @@ export function handleSigninError(error: unknown, ui: SigninErrorUi): void {
 type TrackUmamiSession = typeof trackUmamiSession;
 
 export type SigninSuccessDeps = {
-  login: () => Promise<void>;
-  refetchUser: () => Promise<{ data?: Parameters<TrackUmamiSession>[0] }>;
+  login: () => Promise<unknown>;
   trackUmamiSession: TrackUmamiSession;
   navigate: (opts: { to: string }) => void;
   redirect?: string;
 };
 
-/** Успешный путь после signin(): login → umami → navigate. */
+/** Успешный путь после signin(): login (уже refetch home) → umami → navigate. */
 export async function completeSigninSuccess(deps: SigninSuccessDeps): Promise<void> {
-  await deps.login();
-
-  const result = await deps.refetchUser();
-  if (result.data) {
-    await deps.trackUmamiSession(result.data, 'signin');
+  const user = await deps.login();
+  if (user) {
+    await deps.trackUmamiSession(user as Parameters<TrackUmamiSession>[0], 'signin');
   }
 
   deps.navigate({ to: resolveSigninRedirect(deps.redirect) });

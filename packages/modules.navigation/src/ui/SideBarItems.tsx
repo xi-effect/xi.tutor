@@ -138,10 +138,9 @@ export const SideBarItems = () => {
 
   const [logoutConfirmOpen, setLogoutConfirmOpen] = useState(false);
 
-  const handleLogout = () => {
-    logout();
-    // TODO: переделать, сделать редирект только по 200
-    navigate({ to: '/signin' });
+  const handleLogout = async () => {
+    await logout();
+    await navigate({ to: '/signin', replace: true });
   };
 
   return (
@@ -168,14 +167,16 @@ export const SideBarItems = () => {
           </div>
 
           <div className="flex w-full min-w-0 items-center overflow-visible">
-            <DesktopUserMenu
-              withOutText={isCollapsed}
-              userId={user?.id || 0}
-              onOpenProfile={handleOpenProfile}
-              onLogout={() => setLogoutConfirmOpen(true)}
-              profileText={t('profile')}
-              logoutText={t('logout')}
-            />
+            {user?.id ? (
+              <DesktopUserMenu
+                withOutText={isCollapsed}
+                userId={user.id}
+                onOpenProfile={handleOpenProfile}
+                onLogout={() => setLogoutConfirmOpen(true)}
+                profileText={t('profile')}
+                logoutText={t('logout')}
+              />
+            ) : null}
           </div>
         </div>
         {/* Основное меню */}

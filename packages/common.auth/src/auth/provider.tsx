@@ -1,9 +1,7 @@
 import * as React from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getAxiosInstance } from 'common.config';
-import { userApiConfig, UserQueryKey } from 'common.api';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { LoadingScreen } from 'common.ui';
-import { useSignup, useSignout, useNetworkAuthIntegration } from 'common.services';
+import { useSignup, useSignout, useNetworkAuthIntegration, useCurrentUser } from 'common.services';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   getProductAnalyticsRole,
@@ -15,9 +13,14 @@ import { AuthContext } from './context';
 import { SignupData } from 'common.types';
 
 const getHttpStatus = (error: unknown): number | undefined => {
-  if (!error || typeof error !== 'object' || !('response' in error)) return undefined;
-  return (error as { response?: { status?: number } }).response?.status;
+  if (!error || typeof error !== 'object') return undefined;
+  const err = error as { response?: { status?: number }; status?: number };
+  if (typeof err.response?.status === 'number') return err.response.status;
+  if (typeof err.status === 'number') return err.status;
+  return undefined;
 };
+
+const isAuthFailureStatus = (status: number | undefined) => status === 401 || status === 403;
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const queryClient = useQueryClient();
@@ -26,38 +29,39 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const hasEverBeenUnauthenticated = React.useRef(false);
   const { handleAuthError } = useNetworkAuthIntegration();
 
-  if (!queryClient) {
-    throw new Error('No QueryClient set, use QueryClientProvider to set one');
-  }
-
   const {
     data: user,
     isSuccess,
     isError,
     error,
+    isFetching,
     refetch,
-  } = useQuery({
-    queryKey: [UserQueryKey.Home],
-    queryFn: async () => {
-      const axiosInst = await getAxiosInstance();
-      const res = await axiosInst.get(userApiConfig[UserQueryKey.Home].getUrl());
-      return res.data;
-    },
-    retry: (failureCount, queryError) => {
-      if (getHttpStatus(queryError) === 401) return false;
-      return failureCount < 2;
-    },
-  });
+  } = useCurrentUser(isAuthenticated === false);
 
-  // Только 401 = нет сессии. Сеть/5xx не должны выкидывать на /signin при живых куках.
-  const isUnauthorized = isError && getHttpStatus(error) === 401;
+  if (!queryClient) {
+    throw new Error('No QueryClient set, use QueryClientProvider to set one');
+  }
+
+  const httpStatus = getHttpStatus(error);
+  const isUnauthorized = isError && isAuthFailureStatus(httpStatus);
+
+  const resolvedAuth: boolean | null = (() => {
+    if (isAuthenticated === false) return false;
+    if (isSuccess && user) return true;
+    // После login() refetch ещё идёт: isError может быть от прошлого 401 — не откатываем.
+    if (isError && !isFetching) return false;
+    if (isAuthenticated === true) return true;
+    return isAuthenticated;
+  })();
 
   React.useEffect(() => {
     if (isUnauthorized) {
       hasEverBeenUnauthenticated.current = true;
       setIsAuthenticated(false);
+    } else if (isError) {
+      setIsAuthenticated(false);
     }
-  }, [isUnauthorized]);
+  }, [isError, isUnauthorized]);
 
   React.useEffect(() => {
     if (!isSuccess || !user || hasTrackedSessionInit) return;
@@ -80,30 +84,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async () => {
     setIsAuthenticated(true);
-    await refetch();
+    const result = await refetch();
+    return result.data;
   };
 
   const { signout: signoutService } = useSignout();
 
-  const logoutMutation = useMutation({
-    mutationFn: async () => {
-      return await signoutService.mutateAsync();
-    },
+  const logout = async () => {
+    hasEverBeenUnauthenticated.current = true;
+    setIsAuthenticated(false);
 
-    onSuccess: () => {
-      setIsAuthenticated(false);
-      queryClient.clear();
-    },
-
-    onError: (error) => {
+    void signoutService.mutateAsync().catch((error) => {
       console.error('Ошибка при выходе из системы:', error);
       handleAuthError(error);
-      throw error;
-    },
-  });
-
-  const logout = () => {
-    logoutMutation.mutate();
+    });
   };
 
   const { signup: signupService } = useSignup();
@@ -152,12 +146,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const signup = singupMutation;
 
-  if (isAuthenticated === null) {
+  if (resolvedAuth === null) {
     return <LoadingScreen />;
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, signup }}>
+    <AuthContext.Provider value={{ isAuthenticated: resolvedAuth, login, logout, signup }}>
       {children}
     </AuthContext.Provider>
   );

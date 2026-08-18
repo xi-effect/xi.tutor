@@ -79,14 +79,12 @@ describe('handleSigninError', () => {
 
 describe('completeSigninSuccess', () => {
   it('логинит, трекает umami при наличии user и редиректит', async () => {
-    const login = vi.fn().mockResolvedValue(undefined);
-    const refetchUser = vi.fn().mockResolvedValue({ data: { id: 1 } });
+    const login = vi.fn().mockResolvedValue({ id: 1 });
     const trackUmamiSession = vi.fn().mockResolvedValue(undefined);
     const navigate = vi.fn();
 
     await completeSigninSuccess({
       login,
-      refetchUser,
       trackUmamiSession,
       navigate,
       redirect: '/materials',
@@ -103,7 +101,6 @@ describe('completeSigninSuccess', () => {
 
     await completeSigninSuccess({
       login: vi.fn().mockResolvedValue(undefined),
-      refetchUser: vi.fn().mockResolvedValue({ data: undefined }),
       trackUmamiSession,
       navigate,
     });

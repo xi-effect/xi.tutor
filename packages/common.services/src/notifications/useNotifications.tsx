@@ -24,13 +24,12 @@ export const useNotifications = () => {
   const [shouldLoadNotifications, setShouldLoadNotifications] = useState(false);
   const queryClient = useQueryClient();
 
-  // Проверяем, авторизован ли пользователь
-  const { data: currentUser, isError: isUserError } = useCurrentUser();
-  const isAuthenticated = !!currentUser && !isUserError;
-
   // Проверяем, находимся ли мы на страницах внутри (app)
   // Используем window.location.pathname, так как NotificationsProvider находится вне RouterProvider
   const pathname = typeof window !== 'undefined' ? window.location.pathname : '';
+  const isAuthPage = ['/signin', '/signup', '/reset-password'].some((route) =>
+    pathname.startsWith(route),
+  );
   const isInApp = ![
     '/signin',
     '/signup',
@@ -39,6 +38,9 @@ export const useNotifications = () => {
     '/invite',
     '/confirm-email',
   ].some((route) => pathname.startsWith(route));
+
+  const { data: currentUser, isError: isUserError } = useCurrentUser(isAuthPage);
+  const isAuthenticated = !!currentUser && !isUserError;
 
   // API хуки - загружаем список уведомлений только когда shouldLoadNotifications = true
   // Счетчик непрочитанных загружается всегда при авторизации

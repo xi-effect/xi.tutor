@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearch } from '@tanstack/react-router';
 
-import { useSignin, useCurrentUser } from 'common.services';
+import { useSignin } from 'common.services';
 import { useAuth } from 'common.auth';
 import {
   PRODUCT_ANALYTICS_EVENTS,
@@ -32,7 +32,6 @@ export const useSigninForm = () => {
   const { signin } = useSignin();
   const { login } = useAuth();
   const navigate = useNavigate();
-  const { refetch: refetchUser } = useCurrentUser();
 
   const search = useSearch({ strict: false }) as { redirect?: string };
 
@@ -76,7 +75,6 @@ export const useSigninForm = () => {
 
       await completeSigninSuccess({
         login,
-        refetchUser,
         trackUmamiSession,
         navigate,
         redirect: search.redirect,

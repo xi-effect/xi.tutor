@@ -1,11 +1,10 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { authApiConfig, AuthQueryKey } from 'common.api';
 import { env } from 'common.env';
 import { getAxiosInstance } from 'common.config';
 import { useNetworkAuthIntegration } from '../network/useNetworkAuthIntegration';
 
 export const useSignout = () => {
-  const queryClient = useQueryClient();
   const { handleAuthError } = useNetworkAuthIntegration();
 
   const signoutMutation = useMutation({
@@ -27,10 +26,6 @@ export const useSignout = () => {
         handleAuthError(err);
         throw err;
       }
-    },
-    onSuccess: () => {
-      // Очищаем кеш после успешного выхода
-      queryClient.clear();
     },
   });
 
