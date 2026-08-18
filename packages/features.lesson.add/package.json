@@ -14,6 +14,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@radix-ui/react-popover": "^1.1.6",
     "@tanstack/react-query": "^5.73.3",
     "@tanstack/react-router": "^1.166.6",
     "@xipkg/button": "4.3.0",
@@ -23,6 +24,7 @@
     "@xipkg/input": "2.3.0",
     "@xipkg/inputmask": "2.3.0",
     "@xipkg/modal": "4.6.0",
+    "@xipkg/popover": "^4.0.0",
     "@xipkg/select": "2.3.0",
     "@xipkg/switcher": "^4.1.0",
     "@xipkg/textarea": "1.3.0",

@@ -9,15 +9,15 @@ import {
 } from '@xipkg/form';
 import { Input } from '@xipkg/input';
 import { Textarea } from '@xipkg/textarea';
-import { useMaskInput } from '@xipkg/inputmask';
-import { Clock, Account } from '@xipkg/icons';
+import { Account } from '@xipkg/icons';
 import { Toggle } from '@xipkg/toggle';
 import { cn } from '@xipkg/utils';
 import { useTranslation } from 'react-i18next';
 import { useAddingForm } from '../../hooks';
 import { InputDate } from './InputDate';
 import { StudentSelector } from './StudentSelector';
-import { formatDurationBetween } from '../../utils';
+import { formatDurationBetween, resolveSyncedEndTime } from '../../utils';
+import { TimeInput } from './TimeInput';
 
 import { useEffect, useMemo } from 'react';
 import type { FC, PropsWithChildren } from 'react';
@@ -73,9 +73,6 @@ export const AddingForm: FC<AddingFormProps> = ({
       form.setValue('studentId', String(fixedClassroomId));
     }
   }, [fixedClassroomId, form]);
-
-  const maskRefStartTime = useMaskInput('time');
-  const maskRefEndTime = useMaskInput('time');
 
   const startTime = form.watch('startTime');
   const endTime = form.watch('endTime');
@@ -218,13 +215,18 @@ export const AddingForm: FC<AddingFormProps> = ({
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormControl>
-                    <Input
-                      {...field}
-                      ref={maskRefStartTime}
+                    <TimeInput
+                      name={field.name}
+                      value={field.value}
+                      onBlur={field.onBlur}
                       placeholder={t('form.startPlaceholder')}
-                      className="border-border-default rounded-lg border"
-                      after={<Clock className="fill-icon-brand h-4 w-4" />}
-                      variant="s"
+                      onChange={(nextStart) => {
+                        field.onChange(nextStart);
+                        const nextEnd = resolveSyncedEndTime(nextStart, form.getValues('endTime'));
+                        if (nextEnd) {
+                          form.setValue('endTime', nextEnd, { shouldValidate: true });
+                        }
+                      }}
                     />
                   </FormControl>
                   <FormMessage />
@@ -237,13 +239,13 @@ export const AddingForm: FC<AddingFormProps> = ({
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormControl>
-                    <Input
-                      {...field}
-                      ref={maskRefEndTime}
+                    <TimeInput
+                      name={field.name}
+                      value={field.value}
+                      onBlur={field.onBlur}
+                      onChange={field.onChange}
                       placeholder={t('form.endPlaceholder')}
-                      className="border-border-default rounded-lg border"
-                      after={<Clock className="fill-icon-brand h-4 w-4" />}
-                      variant="s"
+                      minTime={startTime}
                     />
                   </FormControl>
                   <FormMessage />
