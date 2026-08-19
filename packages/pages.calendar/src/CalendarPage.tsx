@@ -150,10 +150,10 @@ const CalendarPageContent = () => {
       ) : null}
       <CalendarModule
         onAddLessonClick={isTutor ? handleAddLessonClick : undefined}
-        onLessonReschedule={(event) => setMoveEvent(event)}
+        onLessonReschedule={isTutor ? (event) => setMoveEvent(event) : undefined}
         onSaveLesson={isTutor ? handleSaveLesson : undefined}
       />
-      {moveEvent != null ? (
+      {isTutor && moveEvent != null ? (
         <MovingLessonModal
           key={moveEvent.id}
           open

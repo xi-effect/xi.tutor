@@ -184,13 +184,12 @@ export const LessonInfoModal = ({
 
           <ModalFooter className="xs:gap-2 flex flex-col gap-3 px-6 pb-6 sm:flex-row sm:items-stretch">
             {startLessonSlot != null ? <div className="flex-1">{startLessonSlot}</div> : null}
-            {isTutor && (
+            {isTutor && onReschedule != null && (
               <Button
                 type="button"
                 variant="none"
                 className="bg-background-page text-text-secondary hover:bg-background-subtle hover:text-text-primary h-12 min-h-12 flex-1"
                 onClick={() => {
-                  if (onReschedule == null) return;
                   onReschedule();
                   onOpenChange(false);
                 }}
@@ -212,7 +211,7 @@ export const LessonInfoModal = ({
                 <Trash className="fill-icon-secondary xs:ml-0 ml-2 h-5 w-5" />
               </Button>
             ) : null}
-            {isTutor ? (
+            {isTutor && (changeLesson != null || onEditLesson != null) ? (
               <Button
                 type="button"
                 variant="none"

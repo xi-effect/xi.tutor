@@ -65,8 +65,8 @@ test.describe('Доска — инструменты', () => {
     await openBoard(page);
 
     await page.locator('[data-board-tool="geo"]').first().click();
-    await page.getByRole('button', { name: 'Шаблоны' }).click();
+    await page.getByRole('tab', { name: 'Шаблоны' }).click();
     await page.getByRole('button', { name: 'Оси координат' }).first().click();
-    await expect(page.getByRole('button', { name: 'Шаблоны' })).toBeHidden();
+    await expect(page.getByRole('tab', { name: 'Шаблоны' })).toBeHidden();
   });
 });
