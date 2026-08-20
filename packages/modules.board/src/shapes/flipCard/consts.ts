@@ -2,7 +2,13 @@ import { DrRichText } from '@ibodr/schema';
 
 export const BASE_CARD_WIDTH = 160;
 export const BASE_CARD_HEIGHT = 260;
-export const FLIP_CARD_MIN_SIZE = 120;
+export const FLIP_CARD_MIN_SCALE = 0.5;
+export const FLIP_CARD_MAX_SCALE = 3;
+
+export const FLIP_CARD_MIN_WIDTH = BASE_CARD_WIDTH * FLIP_CARD_MIN_SCALE;
+export const FLIP_CARD_MIN_HEIGHT = BASE_CARD_HEIGHT * FLIP_CARD_MIN_SCALE;
+export const FLIP_CARD_MAX_WIDTH = BASE_CARD_WIDTH * FLIP_CARD_MAX_SCALE;
+export const FLIP_CARD_MAX_HEIGHT = BASE_CARD_HEIGHT * FLIP_CARD_MAX_SCALE;
 
 export const EMPTY_RICH_TEXT: DrRichText = { type: 'doc', content: [] };
 
@@ -18,10 +24,12 @@ export const FONT_FIT_BINARY_SEARCH_STEPS = 10;
 export const ROTATION_DURATION_MS = 500;
 
 // Кнопка "Перевернуть"
-export const FLIP_BUTTON_MIN_SIZE_PX = 22;
-export const FLIP_BUTTON_MAX_SIZE_PX = 36;
 export const FLIP_BUTTON_SIZE_RATIO = 0.14;
 export const FLIP_BUTTON_ZONE_GAP_PX = 16;
+export const FLIP_BUTTON_MIN_SIZE_PX = FLIP_CARD_MIN_WIDTH * FLIP_BUTTON_SIZE_RATIO;
+export const FLIP_BUTTON_MAX_SIZE_PX = FLIP_CARD_MAX_WIDTH * FLIP_BUTTON_SIZE_RATIO;
+export const BUTTON_FONT_SIZE_RATIO = 0.4;
+export const BUTTON_BORDER_RADIUS_RATIO = 0.35;
 
 // Клик vs drag на грани карточки
 export const FACE_CLICK_THRESHOLD_PX = 4;

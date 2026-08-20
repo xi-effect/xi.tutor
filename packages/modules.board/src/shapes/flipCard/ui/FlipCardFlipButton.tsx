@@ -1,4 +1,5 @@
 import { Button } from '@xipkg/button';
+import { BUTTON_BORDER_RADIUS_RATIO, BUTTON_FONT_SIZE_RATIO } from '../consts';
 
 type FlipCardFlipButtonProps = {
   size: number;
@@ -15,7 +16,11 @@ export const FlipCardFlipButton = ({ size, onClick }: FlipCardFlipButtonProps) =
       variant="secondary"
       onClick={onClick}
       className="pointer-events-auto"
-      style={{ height: size, fontSize: size * 0.4 }}
+      style={{
+        height: size,
+        fontSize: size * BUTTON_FONT_SIZE_RATIO,
+        borderRadius: size * BUTTON_BORDER_RADIUS_RATIO,
+      }}
     >
       Перевернуть
     </Button>

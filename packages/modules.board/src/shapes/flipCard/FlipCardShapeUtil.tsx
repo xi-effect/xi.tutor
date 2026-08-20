@@ -1,7 +1,15 @@
 import { BaseBoxShapeUtil, DrResizeInfo, resizeBox } from '@ibodr/draw';
 import { FlipCardShape, flipCardShapeProps } from './FlipCardShape';
 import { FlipCardComponent } from './FlipCardComponent';
-import { BASE_CARD_HEIGHT, BASE_CARD_WIDTH, EMPTY_RICH_TEXT, FLIP_CARD_MIN_SIZE } from './consts';
+import {
+  BASE_CARD_HEIGHT,
+  BASE_CARD_WIDTH,
+  EMPTY_RICH_TEXT,
+  FLIP_CARD_MAX_HEIGHT,
+  FLIP_CARD_MAX_WIDTH,
+  FLIP_CARD_MIN_HEIGHT,
+  FLIP_CARD_MIN_WIDTH,
+} from './consts';
 import { createElement } from 'react';
 
 export class FlipCardShapeUtil extends BaseBoxShapeUtil<FlipCardShape> {
@@ -37,8 +45,10 @@ export class FlipCardShapeUtil extends BaseBoxShapeUtil<FlipCardShape> {
 
   override onResize(shape: FlipCardShape, info: DrResizeInfo<FlipCardShape>) {
     return resizeBox(shape, info, {
-      minWidth: FLIP_CARD_MIN_SIZE,
-      minHeight: FLIP_CARD_MIN_SIZE,
+      minWidth: FLIP_CARD_MIN_WIDTH,
+      minHeight: FLIP_CARD_MIN_HEIGHT,
+      maxWidth: FLIP_CARD_MAX_WIDTH,
+      maxHeight: FLIP_CARD_MAX_HEIGHT,
     });
   }
 
