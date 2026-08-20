@@ -57,7 +57,7 @@ export function warnIfPersistingFullStorageUrl(src: string, context: string): vo
 
   console.warn(
     `[modules.board] ${context}: props.src должен быть id файла, не полный URL. ` +
-      'Используйте id из uploadImageRequest/uploadFileRequest и normalizeStoredFileSrc().',
+      'Используйте id из uploadImageRequest/uploadAudioRequest/uploadDocumentRequest/uploadFileRequest и normalizeStoredFileSrc().',
     src,
   );
 }

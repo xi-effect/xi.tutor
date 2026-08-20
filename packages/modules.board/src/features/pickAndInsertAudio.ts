@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import { Editor, DrShapeId } from '@ibodr/draw';
 import { toast } from 'sonner';
-import { uploadFileRequest } from 'common.services';
+import { uploadAudioRequest } from 'common.services';
 import {
   AUDIO_SHAPE_WIDTH,
   AUDIO_SHAPE_HEIGHT,
@@ -111,7 +111,7 @@ export async function insertAudio(editor: Editor, file: File, token: string) {
 
   (async () => {
     try {
-      const serverUrl = await uploadFileRequest({ file, token });
+      const serverUrl = await uploadAudioRequest({ file, token });
 
       editor.updateShape<AudioShape>({
         id: shapeId,

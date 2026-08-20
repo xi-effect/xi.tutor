@@ -14,6 +14,7 @@ export const ALLOWED_IMAGE_MIME_TYPES = new Set([
 /**
  * Допустимые MIME-типы для аудио (whitelist).
  * Должно совпадать с AUDIO_ACCEPT в pickAndInsertAudio.
+ * Бэкенд: POST .../file-kinds/audio/files/
  */
 export const ALLOWED_AUDIO_MIME_TYPES = new Set([
   'audio/mpeg',
