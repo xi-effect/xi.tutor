@@ -20,6 +20,20 @@ export type MathFigureShapeProps = {
   size: typeof DefaultSizeStyle.defaultValue;
 };
 
+/** Старые доски могли не содержать поле — подставляем default при валидации Yjs-снимка. */
+function booleanWithDefault(defaultValue: boolean) {
+  return {
+    validate(value: unknown): boolean {
+      if (value === undefined || value === null) return defaultValue;
+      return T.boolean.validate(value);
+    },
+    validateUsingKnownGoodVersion(_knownGood: boolean, value: unknown): boolean {
+      if (value === undefined || value === null) return defaultValue;
+      return T.boolean.validate(value);
+    },
+  };
+}
+
 export const mathFigureShapeProps = {
   w: T.number,
   h: T.number,
@@ -27,8 +41,8 @@ export const mathFigureShapeProps = {
   showHiddenEdges: T.boolean,
   showLabels: T.boolean,
   showHeight: T.boolean,
-  showMedian: T.boolean,
-  showBisector: T.boolean,
+  showMedian: booleanWithDefault(false),
+  showBisector: booleanWithDefault(false),
   color: DefaultColorStyle,
   size: DefaultSizeStyle,
 };
