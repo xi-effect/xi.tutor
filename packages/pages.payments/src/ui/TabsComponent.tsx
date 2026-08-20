@@ -5,6 +5,7 @@ import { useScreenSize } from 'common.utils';
 import { createPaymentColumns, useInfiniteQuery } from 'features.table';
 import { UserRoleT } from '../../../common.api/src/types';
 import { TemplatesGrid } from './Templates';
+import { AnalyticsTab } from './Analytics';
 import { useCurrentUser } from 'common.services';
 import { PaymentApprovalFunctionT, RolePaymentT } from 'common.types';
 
@@ -44,7 +45,11 @@ export const TabsComponent = React.memo(
     useEffect(() => {
       const prevIsTutor = prevIsTutorRef.current;
       const currentIsTutor = isTutor;
-      if (prevIsTutor && !currentIsTutor && activeTab === 'templates') {
+      if (
+        prevIsTutor &&
+        !currentIsTutor &&
+        (activeTab === 'templates' || activeTab === 'analytics')
+      ) {
         onTabChange('invoices');
       }
 
@@ -52,7 +57,7 @@ export const TabsComponent = React.memo(
     }, [isTutor, activeTab, onTabChange]);
 
     return (
-      <Tabs.Root value={activeTab} onValueChange={onTabChange}>
+      <Tabs.Root className="w-full" value={activeTab} onValueChange={onTabChange}>
         <Tabs.Content value="invoices">
           <VirtualizedPaymentsTable
             data={items}
@@ -65,6 +70,12 @@ export const TabsComponent = React.memo(
             onViewInvoice={onViewInvoice}
           />
         </Tabs.Content>
+
+        {isTutor && (
+          <Tabs.Content className="w-full" value="analytics">
+            <AnalyticsTab />
+          </Tabs.Content>
+        )}
 
         {isTutor && (
           <Tabs.Content value="templates">

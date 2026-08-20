@@ -203,7 +203,12 @@ export const PaymentsPage = () => {
         />
       </div>
 
-      <div className={cn('h-full pb-5 pl-5 sm:mt-10 sm:pl-8 md:pl-10', !isMobile && 'flex-1')}>
+      <div
+        className={cn(
+          'h-full w-full min-w-0 pb-5 pl-5 sm:mt-10 sm:pl-8 md:pl-10',
+          !isMobile && 'flex-1',
+        )}
+      >
         <TabsComponent
           onApprovePayment={onOpenPaymentApproveModal}
           activeTab={activeTab}

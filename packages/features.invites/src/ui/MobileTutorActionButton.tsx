@@ -98,6 +98,10 @@ export const MobileTutorActionButton = ({
       return materialsActions;
     }
 
+    if (paymentsActiveTab === 'analytics') {
+      return [];
+    }
+
     if (paymentsActiveTab === 'templates') {
       const templateActions: ActionCopy[] = [
         {
@@ -154,7 +158,7 @@ export const MobileTutorActionButton = ({
     }
   };
 
-  if (!mounted || isLoading || !isTutor) {
+  if (!mounted || isLoading || !isTutor || actions.length === 0) {
     return null;
   }
 
