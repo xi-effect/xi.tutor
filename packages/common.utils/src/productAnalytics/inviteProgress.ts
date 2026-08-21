@@ -115,6 +115,9 @@ export function getInviteProgress(input: {
   const step = resolveInviteProgressStep(input.pathname, input.isAuthenticated);
   if (!step) return null;
 
+  // Уже авторизован на экране принятия — остался один клик, полоска не нужна.
+  if (step === 'accept' && input.isAuthenticated) return null;
+
   const path = normalizeInvitePathname(input.pathname);
   const fromSearch = Boolean(getInviteCodeFromSearch(input.search));
   const onInvitePage = path.startsWith('/invite');

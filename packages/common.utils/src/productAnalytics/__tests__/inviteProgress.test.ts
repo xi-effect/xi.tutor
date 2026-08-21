@@ -101,6 +101,28 @@ describe('getInviteProgress', () => {
     expect(getInviteProgress({ pathname: '/signin', search: { redirect: '/' } })).toBeNull();
   });
 
+  it('на /invite без авторизации показывает прогресс', () => {
+    vi.stubGlobal('window', { location: { origin: 'https://app.sovlium.ru' } });
+    vi.stubGlobal('localStorage', { getItem: () => null });
+    vi.stubGlobal('sessionStorage', { getItem: () => null });
+
+    expect(getInviteProgress({ pathname: '/invite/abc', isAuthenticated: false })).toMatchObject({
+      remaining: 7,
+      total: 7,
+      current: 1,
+    });
+  });
+
+  it('на /invite для авторизованного пользователя прогресс скрыт', () => {
+    vi.stubGlobal('window', { location: { origin: 'https://app.sovlium.ru' } });
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => (key === 'invite.pending_code' ? 'abc' : null),
+    });
+    vi.stubGlobal('sessionStorage', { getItem: () => 'signup' });
+
+    expect(getInviteProgress({ pathname: '/invite/abc', isAuthenticated: true })).toBeNull();
+  });
+
   it('на /signin в invite-flow осталось 2 из 3', () => {
     vi.stubGlobal('window', { location: { origin: 'https://app.sovlium.ru' } });
     vi.stubGlobal('localStorage', { getItem: () => null });

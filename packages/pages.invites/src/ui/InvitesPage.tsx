@@ -96,10 +96,9 @@ export const InvitesPage = () => {
   return (
     <SupportPageShell>
       <div className="flex min-w-0 flex-1 flex-col">
-        <InviteProgressCard
-          placement="pageTop"
-          isAuthenticated={authPending ? false : isAuthenticated}
-        />
+        {!authPending && !isAuthenticated ? (
+          <InviteProgressCard placement="pageTop" isAuthenticated={false} />
+        ) : null}
         <section className="flex min-w-0 flex-1 flex-col items-center justify-center gap-6 px-4 py-8 sm:gap-8 sm:py-12">
           <Logo width={AUTH_FLOW_LOGO_SIZE.width} height={AUTH_FLOW_LOGO_SIZE.height} />
           {content}
