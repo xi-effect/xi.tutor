@@ -23,7 +23,7 @@ export const InviteProgressCard = ({ isAuthenticated, className }: InviteProgres
   return (
     <div
       className={cn(
-        'text-text-link bg-status-info-background w-full rounded-2xl p-4 text-center text-sm',
+        'text-text-link bg-status-info-background w-full min-w-0 rounded-2xl px-3 py-3 text-center text-sm text-pretty break-words sm:p-4',
         className,
       )}
     >

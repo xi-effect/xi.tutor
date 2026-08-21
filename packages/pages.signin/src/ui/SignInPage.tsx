@@ -127,7 +127,7 @@ export const SignInPage = () => {
 
   return (
     <div className="flex w-full flex-1 flex-col items-center justify-center p-1 py-4">
-      <div className="xs:border xs:border-border-default xs:rounded-2xl flex min-h-[600px] w-full max-w-[420px] flex-col bg-transparent p-8">
+      <div className="xs:border xs:border-border-default xs:rounded-2xl xs:p-8 flex min-h-[600px] w-full max-w-[420px] min-w-0 flex-col bg-transparent p-4">
         <Form {...form}>
           <form onSubmit={syncAutofillAndSubmit(onSubmit)} className="flex flex-1 flex-col gap-4">
             <div className="self-center">

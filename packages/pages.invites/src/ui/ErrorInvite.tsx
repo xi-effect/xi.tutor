@@ -47,7 +47,7 @@ export const ErrorInvite = ({ error, variant }: ErrorInviteProps) => {
   const hint = resolved === 'self' ? t('error.selfInviteHint') : undefined;
 
   return (
-    <div className="flex w-full flex-col gap-4 p-8 text-center sm:w-[400px]">
+    <div className="flex w-full max-w-[400px] min-w-0 flex-col gap-4 p-4 text-center sm:p-8">
       <h4 className="text-xl-base text-text-primary dark:text-text-primary font-semibold">
         {title}
       </h4>

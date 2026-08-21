@@ -50,7 +50,7 @@ export const InviteLandingUnauth = ({ inviteId }: InviteLandingUnauthProps) => {
   };
 
   return (
-    <div className="flex w-full flex-col gap-8 p-2 sm:w-[500px]">
+    <div className="flex w-full min-w-0 flex-col gap-6 p-2 sm:max-w-[500px] sm:gap-8">
       <InviteProgressCard isAuthenticated={false} />
       <div className="text-center">
         <h3 className="text-xl-base text-text-primary dark:text-text-primary font-semibold">
@@ -60,7 +60,7 @@ export const InviteLandingUnauth = ({ inviteId }: InviteLandingUnauthProps) => {
 
       <div className="flex flex-col justify-center gap-2">
         <Button
-          className="w-full rounded-xl"
+          className="h-auto min-h-12 w-full rounded-xl whitespace-normal"
           onClick={() => goToAuth('/signup')}
           data-umami-event="invite-signup"
         >

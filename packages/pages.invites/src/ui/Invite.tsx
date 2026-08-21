@@ -77,9 +77,9 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
 
   if (showSuccess) {
     return (
-      <div className="flex w-full flex-col gap-8 p-2 sm:w-[500px]">
+      <div className="flex w-full min-w-0 flex-col gap-6 p-2 sm:max-w-[500px] sm:gap-8">
         <div className="text-center">
-          <h3 className="text-xl-base text-text-primary dark:text-text-primary mb-2 font-semibold">
+          <h3 className="text-xl-base text-text-primary dark:text-text-primary mb-2 font-semibold break-words">
             {t('success.title')}
           </h3>
           <p className="text-text-primary dark:text-text-primary">{t('success.description')}</p>
@@ -93,9 +93,9 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
 
   if (showSelfInvite && !isPending) {
     return (
-      <div className="flex w-full flex-col gap-8 p-2 sm:w-[500px]">
+      <div className="flex w-full min-w-0 flex-col gap-6 p-2 sm:max-w-[500px] sm:gap-8">
         <div className="text-center">
-          <h3 className="text-xl-base text-text-primary dark:text-text-primary mb-2 font-semibold">
+          <h3 className="text-xl-base text-text-primary dark:text-text-primary mb-2 font-semibold break-words">
             {t('error.selfInviteTitle')}
           </h3>
           <p className="text-text-primary dark:text-text-primary">{t('error.selfInviteBody')}</p>
@@ -113,9 +113,9 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
 
   if (showAlreadyConnected && !isPending) {
     return (
-      <div className="flex w-full flex-col gap-8 p-2 sm:w-[500px]">
+      <div className="flex w-full min-w-0 flex-col gap-6 p-2 sm:max-w-[500px] sm:gap-8">
         <div className="text-center">
-          <h3 className="text-xl-base text-text-primary dark:text-text-primary mb-2 font-semibold">
+          <h3 className="text-xl-base text-text-primary dark:text-text-primary mb-2 font-semibold break-words">
             {t('alreadyConnected.title')}
           </h3>
           <p className="text-text-primary dark:text-text-primary">
@@ -136,10 +136,10 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
   }
 
   return (
-    <div className="flex w-full flex-col gap-8 p-2 sm:w-[500px]">
+    <div className="flex w-full min-w-0 flex-col gap-6 p-2 sm:max-w-[500px] sm:gap-8">
       <InviteProgressCard isAuthenticated />
       <div className="text-center">
-        <h3 className="text-xl-base text-text-primary dark:text-text-primary mb-2 font-semibold">
+        <h3 className="text-xl-base text-text-primary dark:text-text-primary mb-2 font-semibold break-words">
           {t('title.received')}
         </h3>
         {invite.kind === 'group' ? (
@@ -157,7 +157,9 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
           <AvatarFallback />
         </Avatar>
         <div className="flex flex-col items-center">
-          <p className="text-text-primary dark:text-text-primary">{invite.tutor.display_name}</p>
+          <p className="text-text-primary dark:text-text-primary max-w-full text-center break-words">
+            {invite.tutor.display_name}
+          </p>
           <span className="text-s-base text-text-secondary dark:text-text-secondary">
             {invite.tutor.username}
           </span>
@@ -182,7 +184,7 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
       <div className="flex flex-col justify-center gap-2">
         {errorVariant === 'not_found' ? null : (
           <Button
-            className="w-full rounded-xl"
+            className="h-auto min-h-12 w-full rounded-xl whitespace-normal"
             onClick={
               errorVariant === 'network' || errorVariant === 'generic' ? retryAccept : acceptInvite
             }

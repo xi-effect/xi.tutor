@@ -64,7 +64,7 @@ export const InvitesPage = () => {
   const content = (() => {
     if (authPending) {
       return (
-        <div className="flex w-full flex-col items-center gap-4 p-8 sm:w-[500px]">
+        <div className="flex w-full min-w-0 flex-col items-center gap-4 p-4 sm:max-w-[500px] sm:p-8">
           <InviteProgressCard isAuthenticated={false} />
           <p className="text-text-primary dark:text-text-primary">{t('loading')}</p>
         </div>
@@ -77,7 +77,7 @@ export const InvitesPage = () => {
 
     if (isLoading) {
       return (
-        <div className="flex w-full flex-col items-center gap-4 p-8 sm:w-[500px]">
+        <div className="flex w-full min-w-0 flex-col items-center gap-4 p-4 sm:max-w-[500px] sm:p-8">
           <InviteProgressCard isAuthenticated />
           <p className="text-text-primary dark:text-text-primary">{t('loading')}</p>
         </div>
@@ -97,7 +97,7 @@ export const InvitesPage = () => {
 
   return (
     <SupportPageShell>
-      <section className="flex flex-1 flex-col items-center justify-center gap-8 px-4 py-12">
+      <section className="flex min-w-0 flex-1 flex-col items-center justify-center gap-6 px-4 py-8 sm:gap-8 sm:py-12">
         <Logo />
         {content}
       </section>

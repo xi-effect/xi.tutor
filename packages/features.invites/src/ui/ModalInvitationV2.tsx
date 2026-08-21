@@ -185,7 +185,7 @@ export const ModalInvitationV2 = ({
       }}
     >
       {children != null && <ModalTrigger asChild>{children}</ModalTrigger>}
-      <ModalContent className="max-w-[600px]">
+      <ModalContent className="max-h-[90dvh] w-[calc(100vw-32px)] max-w-[600px] overflow-y-auto">
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
           <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
@@ -235,15 +235,15 @@ export const ModalInvitationV2 = ({
             </div>
           ) : (
             <>
-              <div className="border-border-default flex items-start gap-2 rounded-lg border p-3">
-                <p className="dark:text-text-primary min-w-0 flex-1 text-sm whitespace-pre-line">
+              <div className="border-border-default flex flex-col gap-2 rounded-lg border p-3 sm:flex-row sm:items-start">
+                <p className="dark:text-text-primary min-w-0 flex-1 text-sm break-words whitespace-pre-line">
                   {message}
                 </p>
                 <Button
                   type="button"
                   variant="primary"
                   size="s"
-                  className="shrink-0 gap-1.5"
+                  className="w-full shrink-0 gap-1.5 sm:w-auto"
                   onClick={handleCopyMessage}
                   disabled={!hasContent}
                 >
@@ -260,7 +260,7 @@ export const ModalInvitationV2 = ({
                 <div className="bg-border-default h-px flex-1" />
               </div>
 
-              <div className="border-border-default flex items-center gap-2 rounded-lg border p-3">
+              <div className="border-border-default flex flex-col gap-2 rounded-lg border p-3 sm:flex-row sm:items-center">
                 <span className="dark:text-text-primary min-w-0 flex-1 truncate text-sm">
                   {inviteUrl}
                 </span>
@@ -268,7 +268,7 @@ export const ModalInvitationV2 = ({
                   type="button"
                   variant="ghost"
                   size="s"
-                  className="shrink-0 gap-1.5"
+                  className="w-full shrink-0 gap-1.5 sm:w-auto"
                   onClick={handleCopyLink}
                   disabled={!hasContent}
                 >
@@ -282,11 +282,19 @@ export const ModalInvitationV2 = ({
 
         <ModalFooter className="flex flex-col gap-2">
           {confirmingRefresh ? (
-            <div className="flex w-full justify-end gap-2">
-              <Button variant="none" onClick={() => setConfirmingRefresh(false)}>
+            <div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+              <Button
+                variant="none"
+                className="w-full sm:w-auto"
+                onClick={() => setConfirmingRefresh(false)}
+              >
                 {t('inviteModalV2.confirm.cancel')}
               </Button>
-              <Button variant="primary" onClick={handleConfirmRefreshLink}>
+              <Button
+                variant="primary"
+                className="w-full sm:w-auto"
+                onClick={handleConfirmRefreshLink}
+              >
                 {t('inviteModalV2.confirm.confirm')}
               </Button>
             </div>

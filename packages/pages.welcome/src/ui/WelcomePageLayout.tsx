@@ -16,8 +16,8 @@ export const WelcomePageLayout = ({ step, title, subtitle, children }: WelcomePa
     <ProtectedProvider>
       <SupportPageShell>
         <div className="flex w-full flex-1 flex-row content-center justify-center">
-          <div className="flex w-full flex-1 content-center justify-center p-8">
-            <div className="xs:p-8 flex w-full max-w-[600px] flex-1 flex-col">
+          <div className="flex w-full flex-1 content-center justify-center p-4 sm:p-8">
+            <div className="xs:p-8 flex w-full max-w-[600px] min-w-0 flex-1 flex-col">
               <div className="h-22">
                 <Logo />
               </div>
@@ -25,7 +25,7 @@ export const WelcomePageLayout = ({ step, title, subtitle, children }: WelcomePa
               <InviteProgressCard className="mt-6" />
               <div
                 id="title"
-                className="text-text-primary dark:text-text-primary mt-8 text-2xl leading-[32px] font-semibold"
+                className="text-text-primary dark:text-text-primary mt-8 text-2xl leading-[32px] font-semibold break-words"
               >
                 {title}
               </div>
