@@ -11,7 +11,7 @@ import {
   ModalCloseButton,
 } from '@xipkg/modal';
 import { Button } from '@xipkg/button';
-import { Copy, Check } from '@xipkg/icons';
+import { Copy } from '@xipkg/icons';
 import { Skeleton } from 'common.ui';
 import { toast } from 'sonner';
 import { env } from 'common.env';
@@ -72,7 +72,6 @@ export const ModalInvitationV2 = ({
   } = useCurrentInvite(analyticsSource);
 
   const [confirmingRefresh, setConfirmingRefresh] = useState(false);
-  const [copiedKind, setCopiedKind] = useState<'message' | 'link' | null>(null);
 
   // Модалка смонтирована постоянно (см. использование через children/trigger),
   // поэтому явный refetch на переход open:false -> true подхватывает ссылку,
@@ -89,7 +88,6 @@ export const ModalInvitationV2 = ({
   useEffect(() => {
     if (!open) {
       viewedForOpenRef.current = false;
-      setCopiedKind(null);
       return;
     }
     if (viewedForOpenRef.current) return;
@@ -119,8 +117,9 @@ export const ModalInvitationV2 = ({
       return;
     }
 
-    toast.success(t('inviteModalV2.toast.messageCopied'));
-    setCopiedKind('message');
+    toast.success(t('inviteModalV2.toast.messageCopied'), {
+      description: t('inviteModalV2.toast.sendHint'),
+    });
     const invite_tracking_id = await getInviteTrackingId(currentInvite.code);
     trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_MESSAGE_COPIED, {
       invite_flow_version: 2,
@@ -140,8 +139,9 @@ export const ModalInvitationV2 = ({
       return;
     }
 
-    toast.success(t('inviteModalV2.toast.linkCopied'));
-    setCopiedKind('link');
+    toast.success(t('inviteModalV2.toast.linkCopied'), {
+      description: t('inviteModalV2.toast.sendHint'),
+    });
     const invite_tracking_id = await getInviteTrackingId(currentInvite.code);
     trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_LINK_COPIED, {
       invite_id: String(currentInvite.id),
@@ -235,13 +235,6 @@ export const ModalInvitationV2 = ({
             </div>
           ) : (
             <>
-              {currentInvite?.usage_count === 0 ? (
-                <p className="text-text-secondary px-1 text-sm">{t('inviteModalV2.pendingHint')}</p>
-              ) : currentInvite ? (
-                <p className="text-text-secondary px-1 text-sm">
-                  {t('inviteModalV2.reusableHint')}
-                </p>
-              ) : null}
               <div className="border-border-default flex items-start gap-2 rounded-lg border p-3">
                 <p className="dark:text-text-primary min-w-0 flex-1 text-sm whitespace-pre-line">
                   {message}
@@ -283,20 +276,6 @@ export const ModalInvitationV2 = ({
                   {t('inviteModalV2.actions.copyLink')}
                 </Button>
               </div>
-
-              {copiedKind ? (
-                <div className="flex items-start gap-2 px-1">
-                  <Check className="fill-status-success-text mt-0.5 size-4 shrink-0" />
-                  <div>
-                    <p className="text-text-primary text-sm font-medium">
-                      {copiedKind === 'message'
-                        ? t('inviteModalV2.copied.message')
-                        : t('inviteModalV2.copied.link')}
-                    </p>
-                    <p className="text-text-secondary text-sm">{t('inviteModalV2.copied.hint')}</p>
-                  </div>
-                </div>
-              ) : null}
             </>
           )}
         </ModalBody>

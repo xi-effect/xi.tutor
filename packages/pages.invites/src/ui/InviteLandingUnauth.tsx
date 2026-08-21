@@ -1,3 +1,4 @@
+import { InviteProgressCard } from 'common.ui';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@xipkg/button';
 import {
@@ -5,6 +6,7 @@ import {
   getInviteAuthSearch,
   getInviteTrackingId,
   persistPendingInviteCode,
+  persistInviteProgressTrack,
   shouldTrackInviteLoginClicked,
   shouldTrackInviteSignupClicked,
   trackProductEvent,
@@ -21,6 +23,7 @@ export const InviteLandingUnauth = ({ inviteId }: InviteLandingUnauthProps) => {
 
   const goToAuth = (to: '/signup' | '/signin') => {
     persistPendingInviteCode(inviteId);
+    persistInviteProgressTrack(to === '/signup' ? 'signup' : 'signin');
     const search = getInviteAuthSearch(inviteId);
 
     if (to === '/signup') {
@@ -48,17 +51,11 @@ export const InviteLandingUnauth = ({ inviteId }: InviteLandingUnauthProps) => {
 
   return (
     <div className="flex w-full flex-col gap-8 p-2 sm:w-[500px]">
+      <InviteProgressCard isAuthenticated={false} />
       <div className="text-center">
-        <h3 className="text-xl-base text-text-primary dark:text-text-primary mb-2 font-semibold">
+        <h3 className="text-xl-base text-text-primary dark:text-text-primary font-semibold">
           {t('landing.title')}
         </h3>
-        <p className="text-text-primary dark:text-text-primary">{t('landing.subtitle')}</p>
-        <p className="text-text-secondary dark:text-text-secondary mt-2 text-sm">
-          {t('landing.description')}
-        </p>
-        <p className="text-text-secondary dark:text-text-secondary mt-2 text-sm">
-          {t('subtitle.freeForStudent')}
-        </p>
       </div>
 
       <div className="flex flex-col justify-center gap-2">

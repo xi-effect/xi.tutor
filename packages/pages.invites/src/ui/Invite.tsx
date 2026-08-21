@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { Button } from '@xipkg/button';
+import { InviteProgressCard } from 'common.ui';
 import {
   clearPendingInviteCode,
   mapInviteAcceptError,
@@ -136,18 +137,16 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
 
   return (
     <div className="flex w-full flex-col gap-8 p-2 sm:w-[500px]">
+      <InviteProgressCard isAuthenticated />
       <div className="text-center">
         <h3 className="text-xl-base text-text-primary dark:text-text-primary mb-2 font-semibold">
           {t('title.received')}
         </h3>
-        <span className="text-text-primary dark:text-text-primary">
-          {invite.kind === 'individual'
-            ? t('subtitle.tutorInvites')
-            : t('subtitle.groupFromTutor', { name: invite.classroom.name })}
-        </span>
-        <p className="text-text-secondary dark:text-text-secondary mt-2 text-sm">
-          {t('subtitle.platformDescription')}
-        </p>
+        {invite.kind === 'group' ? (
+          <p className="text-text-secondary dark:text-text-secondary text-sm">
+            {t('subtitle.groupFromTutor', { name: invite.classroom.name })}
+          </p>
+        ) : null}
       </div>
       <div className="flex flex-col items-center gap-2">
         <Avatar size="xl">
@@ -159,13 +158,10 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
         </Avatar>
         <div className="flex flex-col items-center">
           <p className="text-text-primary dark:text-text-primary">{invite.tutor.display_name}</p>
-          <span className="text-s-base text-text-primary dark:text-text-primary">
+          <span className="text-s-base text-text-secondary dark:text-text-secondary">
             {invite.tutor.username}
           </span>
         </div>
-        <p className="text-text-secondary dark:text-text-secondary text-xs">
-          {t('subtitle.freeForStudent')}
-        </p>
       </div>
 
       {errorVariant && errorVariant !== 'already_connected' && errorVariant !== 'self_invite' ? (

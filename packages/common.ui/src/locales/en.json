@@ -1,4 +1,9 @@
 {
+  "inviteProgress": {
+    "remaining_one": "{{count}} step left out of {{total}} to accept the tutor’s invitation",
+    "remaining_other": "{{count}} steps left out of {{total}} to accept the tutor’s invitation",
+    "hint": "It will only take a couple of minutes"
+  },
   "onboarding": {
     "welcome": "Welcome to\u00A0sovlium!",
     "tutorDescription": "In 2 minutes we'll show how to create a classroom, invite a student, and schedule the first lesson",

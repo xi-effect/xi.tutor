@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { useSearch } from '@tanstack/react-router';
 import type { UseFormSetError } from 'react-hook-form';
 
-import { LinkTanstack, Logo } from 'common.ui';
+import { LinkTanstack, Logo, InviteProgressCard } from 'common.ui';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   getInviteAuthSearch,
@@ -24,6 +24,7 @@ import {
   getOrCreateActivationFlowId,
   getPendingInviteCode,
   persistPendingInviteCode,
+  persistInviteProgressTrack,
   shouldTrackInviteLoginClicked,
   shouldTrackInvitePageViewed,
   shouldTrackInviteSignupClicked,
@@ -69,6 +70,7 @@ export const SignInPage = () => {
     if (!inviteCode) return;
 
     persistPendingInviteCode(inviteCode);
+    persistInviteProgressTrack('signin');
     const activationFlowId = getOrCreateActivationFlowId();
 
     void getInviteTrackingId(inviteCode).then((invite_tracking_id) => {
@@ -102,6 +104,7 @@ export const SignInPage = () => {
   const handleSignupLinkClick = () => {
     if (!isInviteRedirect) return;
     persistPendingInviteCode(inviteCode);
+    persistInviteProgressTrack('signup');
 
     if (inviteCode && !shouldTrackInviteSignupClicked(inviteCode)) return;
 
@@ -134,11 +137,7 @@ export const SignInPage = () => {
               {t('sign_in')}
             </h1>
 
-            {isInviteRedirect && (
-              <div className="text-text-link bg-status-info-background rounded-2xl p-4 text-center text-sm whitespace-pre-line">
-                {t('invite_message')}
-              </div>
-            )}
+            <InviteProgressCard isAuthenticated={false} />
 
             {inviteUserNotFound && (
               <div className="border-border-default rounded-2xl border p-4 text-center">

@@ -20,6 +20,7 @@ export { EmptySchedule } from './src/empty/EmptySchedule';
 export { DateTimeDisplay } from './src/DateTimeDisplay';
 export { LoadingScreen } from './src/LoadingScreen';
 export { Logo } from './src/Logo';
+export { InviteProgressCard } from './src/InviteProgressCard';
 export { Skeleton } from './src/Skeleton';
 export { LinkTanstack } from './src/LinkTanstack';
 export { ErrorPage } from './src/ErrorPage';

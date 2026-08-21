@@ -3,10 +3,10 @@
   "notFound": "Invitation not found",
   "title": {
     "accepted": "Invitation accepted",
-    "received": "You've been invited to Sovlium"
+    "received": "You've been invited to sovlium"
   },
   "landing": {
-    "title": "You've been invited to Sovlium",
+    "title": "You've been invited to sovlium",
     "subtitle": "A tutor is inviting you to join classes.",
     "description": "This is where lessons, the shared board and learning materials will live.",
     "signup": "Sign up and accept the invitation",
@@ -25,7 +25,7 @@
     "tutorInvites": "A tutor is inviting you to join classes.",
     "groupFromTutor": "to the group “{{name}}” from the tutor",
     "platformDescription": "This is where lessons, the shared board and learning materials will live.",
-    "freeForStudent": "Using Sovlium is free for students."
+    "freeForStudent": "Using sovlium is free for students."
   },
   "actions": {
     "accept": "Accept invitation",

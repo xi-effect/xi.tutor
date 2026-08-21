@@ -26,6 +26,11 @@ export {
   getInviteTrackingIdFromContext,
 } from './inferSigninSource';
 export {
+  persistInviteProgressTrack,
+  clearInviteProgressTrack,
+  getInviteProgress,
+} from './inviteProgress';
+export {
   getOrCreateActivationFlowId,
   getActivationFlowId,
   resetActivationFlowId,

@@ -8,7 +8,7 @@
   "invite_message": "You have been invited by a tutor. To continue, please sign in or register",
   "invite_user_not_found": {
     "title": "No account was found with these details.",
-    "hint": "You are probably not registered in Sovlium yet.",
+    "hint": "You are probably not registered in sovlium yet.",
     "cta": "Sign up"
   },
   "errors": {

@@ -23,7 +23,7 @@ import { cn } from '@xipkg/utils';
 
 import { useFormSchema, type FormData } from '../model';
 import { useSignupForm } from '../hooks';
-import { LinkTanstack, Logo } from 'common.ui';
+import { LinkTanstack, Logo, InviteProgressCard } from 'common.ui';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   getInviteTrackingIdFromContext,
@@ -32,6 +32,7 @@ import {
   inferSignupEntryPoint,
   mapSignupValidationErrors,
   persistPendingInviteCode,
+  persistInviteProgressTrack,
   trackOnce,
   trackProductEvent,
   useGetUrlWithParams,
@@ -86,7 +87,8 @@ export const SignUpPage = () => {
 
   useEffect(() => {
     persistPendingInviteCode(search.invite || getPendingInviteCode(search));
-  }, [search.invite, search.redirect]);
+    if (hasInvite) persistInviteProgressTrack('signup');
+  }, [search.invite, search.redirect, hasInvite]);
 
   useEffect(() => {
     const activationFlowId = getOrCreateActivationFlowId();
@@ -181,6 +183,7 @@ export const SignUpPage = () => {
             <h1 className="text-text-primary self-center text-2xl font-semibold">
               {t('register')}
             </h1>
+            {hasInvite ? <InviteProgressCard isAuthenticated={false} /> : null}
             <FormField
               control={control}
               name="username"

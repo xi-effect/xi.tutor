@@ -1,4 +1,4 @@
-import { Logo } from 'common.ui';
+import { InviteProgressCard, Logo } from 'common.ui';
 import { useParams } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { SupportPageShell } from 'modules.navigation';
@@ -64,7 +64,8 @@ export const InvitesPage = () => {
   const content = (() => {
     if (authPending) {
       return (
-        <div className="flex w-full flex-col items-center gap-4 p-8 sm:w-[400px]">
+        <div className="flex w-full flex-col items-center gap-4 p-8 sm:w-[500px]">
+          <InviteProgressCard isAuthenticated={false} />
           <p className="text-text-primary dark:text-text-primary">{t('loading')}</p>
         </div>
       );
@@ -76,7 +77,8 @@ export const InvitesPage = () => {
 
     if (isLoading) {
       return (
-        <div className="flex w-full flex-col items-center gap-4 p-8 sm:w-[400px]">
+        <div className="flex w-full flex-col items-center gap-4 p-8 sm:w-[500px]">
+          <InviteProgressCard isAuthenticated />
           <p className="text-text-primary dark:text-text-primary">{t('loading')}</p>
         </div>
       );
@@ -95,10 +97,8 @@ export const InvitesPage = () => {
 
   return (
     <SupportPageShell>
-      <section className="relative flex flex-1 flex-col items-center justify-center py-24">
-        <div className="absolute top-24">
-          <Logo />
-        </div>
+      <section className="flex flex-1 flex-col items-center justify-center gap-8 px-4 py-12">
+        <Logo />
         {content}
       </section>
     </SupportPageShell>

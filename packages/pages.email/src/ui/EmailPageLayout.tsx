@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { Logo } from 'common.ui';
+import { InviteProgressCard, Logo } from 'common.ui';
 import { SupportPageShell } from 'modules.navigation';
 
 export type EmailPageLayoutPropsT = {
@@ -19,6 +19,7 @@ export const EmailPageLayout = ({ title, children }: EmailPageLayoutPropsT) => {
             <div id="title" className="text-l-base text-text-primary mt-4 font-semibold">
               {title}
             </div>
+            <InviteProgressCard className="mt-4" />
             {children}
           </div>
         </div>

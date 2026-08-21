@@ -44,18 +44,11 @@
   },
   "inviteModalV2": {
     "title": "Invite a student",
-    "description": "Copy the ready-made message or the link and\u00A0send it to the student",
+    "description": "Copy the message or the link and send it to the student. The same link can be used more than once.",
     "message": {
-      "template": "Join Sovlium — the platform for online lessons!\n\nThis is where lessons, the shared board and learning materials live. Using it is free for students.\n\nTo accept the invitation, follow the link and sign up:\n\n{{url}}"
+      "template": "Join sovlium — the platform for online lessons!\n\nThis is where lessons, the shared board and learning materials live. Using it is free for students.\n\nTo accept the invitation, follow the link and sign up:\n\n{{url}}"
     },
     "or": "or",
-    "pendingHint": "You can send this link to several students. Copy the message or the link again if you need to.",
-    "reusableHint": "This link can be reused — new students accept it via the same URL.",
-    "copied": {
-      "message": "Message copied",
-      "link": "Link copied",
-      "hint": "Now send it to the student in a messenger of your choice"
-    },
     "actions": {
       "copy": "Copy",
       "copyMessage": "Copy message",
@@ -71,6 +64,7 @@
     "toast": {
       "messageCopied": "Message copied",
       "linkCopied": "Link copied",
+      "sendHint": "Send it to the student in a messenger",
       "copyFailed": "Couldn't copy automatically. Select the text and copy it manually."
     },
     "errors": {

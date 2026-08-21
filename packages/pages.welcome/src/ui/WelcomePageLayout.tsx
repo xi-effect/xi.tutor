@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { WelcomeSteps } from './WelcomeSteps';
 import { ProtectedProvider } from '../providers';
-import { Logo } from 'common.ui';
+import { InviteProgressCard, Logo } from 'common.ui';
 import { SupportPageShell } from 'modules.navigation';
 
 export type WelcomePageLayoutPropsT = {
@@ -22,6 +22,7 @@ export const WelcomePageLayout = ({ step, title, subtitle, children }: WelcomePa
                 <Logo />
               </div>
               <WelcomeSteps step={step} />
+              <InviteProgressCard className="mt-6" />
               <div
                 id="title"
                 className="text-text-primary dark:text-text-primary mt-8 text-2xl leading-[32px] font-semibold"

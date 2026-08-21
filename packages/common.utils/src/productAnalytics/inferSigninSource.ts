@@ -24,6 +24,12 @@ export function clearPendingInviteCode(): void {
   } catch {
     // ignore
   }
+
+  try {
+    sessionStorage.removeItem('invite.progress_track');
+  } catch {
+    // ignore
+  }
 }
 
 /** Search-параметры signup/signin, чтобы не потерять приглашение при refresh. */
