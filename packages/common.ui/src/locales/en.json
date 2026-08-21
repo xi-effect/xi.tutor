@@ -1,7 +1,7 @@
 {
   "inviteProgress": {
-    "remaining_one": "{{count}} step left out of {{total}} to accept the tutor’s invitation",
-    "remaining_other": "{{count}} steps left out of {{total}} to accept the tutor’s invitation",
+    "remaining_one": "{{count}} step left to accept the tutor’s invitation",
+    "remaining_other": "{{count}} steps left to accept the tutor’s invitation",
     "hint": "All steps take just a few minutes"
   },
   "onboarding": {

@@ -97,7 +97,6 @@ export const InviteProgressCard = ({
         aria-valuemax={progress.total}
         aria-label={t('inviteProgress.remaining', {
           count: progress.remaining,
-          total: progress.total,
         })}
       >
         {Array.from({ length: progress.total }, (_, index) => {
@@ -126,7 +125,6 @@ export const InviteProgressCard = ({
       <p className="text-text-secondary text-center text-sm text-pretty">
         {t('inviteProgress.remaining', {
           count: progress.remaining,
-          total: progress.total,
         })}
       </p>
     </div>
