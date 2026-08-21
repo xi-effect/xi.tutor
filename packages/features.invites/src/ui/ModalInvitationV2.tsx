@@ -185,7 +185,7 @@ export const ModalInvitationV2 = ({
       }}
     >
       {children != null && <ModalTrigger asChild>{children}</ModalTrigger>}
-      <ModalContent className="max-h-[90dvh] w-[calc(100vw-32px)] max-w-[600px] overflow-y-auto">
+      <ModalContent className="max-w-[600px]">
         <ModalHeader>
           <ModalCloseButton onClick={handleClose} />
           <ModalTitle className="text-text-primary max-w-[calc(100%-48px)]">
@@ -196,7 +196,7 @@ export const ModalInvitationV2 = ({
           </ModalDescription>
         </ModalHeader>
 
-        <ModalBody className="flex flex-col gap-3 px-4 py-2">
+        <ModalBody className="flex min-w-0 flex-col gap-3">
           {showListError ? (
             <div className="flex flex-col items-center gap-3 py-6 text-center">
               <p className="text-text-primary">{t('inviteModalV2.errors.listError')}</p>
@@ -235,15 +235,15 @@ export const ModalInvitationV2 = ({
             </div>
           ) : (
             <>
-              <div className="border-border-default flex flex-col gap-2 rounded-lg border p-3 sm:flex-row sm:items-start">
-                <p className="dark:text-text-primary min-w-0 flex-1 text-sm break-words whitespace-pre-line">
+              <div className="border-border-default flex min-w-0 flex-col gap-3 rounded-lg border p-3">
+                <p className="text-text-primary min-w-0 text-sm break-words whitespace-pre-line">
                   {message}
                 </p>
                 <Button
                   type="button"
                   variant="primary"
                   size="s"
-                  className="w-full shrink-0 gap-1.5 sm:w-auto"
+                  className="w-full shrink-0 gap-1.5 sm:w-auto sm:self-end"
                   onClick={handleCopyMessage}
                   disabled={!hasContent}
                 >
@@ -252,27 +252,27 @@ export const ModalInvitationV2 = ({
                 </Button>
               </div>
 
-              <div className="flex items-center gap-3 px-1">
-                <div className="bg-border-default h-px flex-1" />
+              <div className="flex min-w-0 items-center gap-3 px-1">
+                <div className="bg-border-default h-px min-w-0 flex-1" />
                 <span className="text-text-secondary shrink-0 text-sm">
                   {t('inviteModalV2.or')}
                 </span>
-                <div className="bg-border-default h-px flex-1" />
+                <div className="bg-border-default h-px min-w-0 flex-1" />
               </div>
 
-              <div className="border-border-default flex flex-col gap-2 rounded-lg border p-3 sm:flex-row sm:items-center">
-                <span className="dark:text-text-primary min-w-0 flex-1 truncate text-sm">
+              <div className="border-border-default flex min-w-0 flex-col gap-3 rounded-lg border p-3 sm:flex-row sm:items-center">
+                <span className="text-text-primary min-w-0 flex-1 text-sm break-all">
                   {inviteUrl}
                 </span>
                 <Button
                   type="button"
-                  variant="ghost"
+                  variant="primary"
                   size="s"
                   className="w-full shrink-0 gap-1.5 sm:w-auto"
                   onClick={handleCopyLink}
                   disabled={!hasContent}
                 >
-                  <Copy size="sm" className="fill-icon-primary size-4" />
+                  <Copy size="sm" className="fill-action-primary-text size-4" />
                   {t('inviteModalV2.actions.copyLink')}
                 </Button>
               </div>
@@ -301,7 +301,7 @@ export const ModalInvitationV2 = ({
           ) : showMainFooter ? (
             <div className="flex w-full">
               <Button
-                variant="ghost"
+                variant="secondary"
                 onClick={() => setConfirmingRefresh(true)}
                 disabled={!hasContent || isRefreshing}
                 loading={isRefreshing}

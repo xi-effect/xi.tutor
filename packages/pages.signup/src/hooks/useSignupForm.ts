@@ -11,7 +11,7 @@ import {
   getHttpStatusGroup,
   getInviteTrackingIdFromContext,
   getOrCreateActivationFlowId,
-  getPendingInviteCode,
+  getInviteCodeFromSearch,
   inferSignupEntryPoint,
   mapSignupError,
   measureDurationMs,
@@ -49,8 +49,7 @@ export const useSignupForm = () => {
 
     const activationFlowId = getOrCreateActivationFlowId();
     const entryPoint = inferSignupEntryPoint(search);
-    const hasInvite =
-      Boolean(search.invite) || entryPoint === 'invite' || Boolean(getPendingInviteCode(search));
+    const hasInvite = Boolean(getInviteCodeFromSearch(search));
     const attemptId = createAttemptId();
     const attemptNumber = nextSignupAttemptNumber();
     const startedAt = nowMs();

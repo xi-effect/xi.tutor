@@ -31,6 +31,7 @@ export {
   createInviteTrackingId,
   getInviteTrackingId,
   getPendingInviteCode,
+  getInviteCodeFromSearch,
   persistPendingInviteCode,
   clearPendingInviteCode,
   getInviteAuthSearch,

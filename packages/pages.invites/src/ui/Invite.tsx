@@ -2,7 +2,6 @@ import { useRef } from 'react';
 import { useNavigate, useParams } from '@tanstack/react-router';
 import { Avatar, AvatarFallback, AvatarImage } from '@xipkg/avatar';
 import { Button } from '@xipkg/button';
-import { InviteProgressCard } from 'common.ui';
 import {
   clearPendingInviteCode,
   mapInviteAcceptError,
@@ -137,7 +136,6 @@ export const Invite = ({ invite }: { invite: InviteT }) => {
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-6 p-2 sm:max-w-[500px] sm:gap-8">
-      <InviteProgressCard isAuthenticated />
       <div className="text-center">
         <h3 className="text-xl-base text-text-primary dark:text-text-primary mb-2 font-semibold break-words">
           {t('title.received')}

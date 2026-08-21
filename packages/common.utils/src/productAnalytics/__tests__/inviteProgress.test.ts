@@ -14,29 +14,39 @@ describe('resolveInviteProgressStep', () => {
     expect(resolveInviteProgressStep('/signup/')).toBe('auth');
     expect(resolveInviteProgressStep('/signin')).toBe('auth');
     expect(resolveInviteProgressStep('/welcome/email')).toBe('email');
-    expect(resolveInviteProgressStep('/welcome/user')).toBe('onboarding');
-    expect(resolveInviteProgressStep('/welcome/role')).toBe('onboarding');
-    expect(resolveInviteProgressStep('/welcome/socials')).toBe('onboarding');
+    expect(resolveInviteProgressStep('/welcome/user')).toBe('welcome_user');
+    expect(resolveInviteProgressStep('/welcome/role')).toBe('welcome_role');
+    expect(resolveInviteProgressStep('/welcome/socials')).toBe('welcome_socials');
     expect(resolveInviteProgressStep('/classrooms')).toBeNull();
   });
 });
 
 describe('computeInviteProgress', () => {
-  it('считает remaining для signup-пути из 5 шагов', () => {
+  it('считает remaining для signup-пути из 7 шагов', () => {
     expect(computeInviteProgress('invite_open', 'signup')).toMatchObject({
-      remaining: 5,
-      total: 5,
+      remaining: 7,
+      total: 7,
       current: 1,
     });
     expect(computeInviteProgress('email', 'signup')).toMatchObject({
-      remaining: 3,
-      total: 5,
+      remaining: 5,
+      total: 7,
       current: 3,
+    });
+    expect(computeInviteProgress('welcome_user', 'signup')).toMatchObject({
+      remaining: 4,
+      total: 7,
+      current: 4,
+    });
+    expect(computeInviteProgress('welcome_socials', 'signup')).toMatchObject({
+      remaining: 2,
+      total: 7,
+      current: 6,
     });
     expect(computeInviteProgress('accept', 'signup')).toMatchObject({
       remaining: 1,
-      total: 5,
-      current: 5,
+      total: 7,
+      current: 7,
     });
   });
 
@@ -68,7 +78,7 @@ describe('getInviteProgress', () => {
     expect(getInviteProgress({ pathname: '/signup' })).toBeNull();
   });
 
-  it('на /welcome/email в invite-flow осталось 3 из 5', () => {
+  it('на /welcome/email в invite-flow осталось 5 из 7', () => {
     vi.stubGlobal('window', { location: { origin: 'https://app.sovlium.ru' } });
     vi.stubGlobal('localStorage', {
       getItem: (key: string) => (key === 'invite.pending_code' ? 'abc' : null),
@@ -76,19 +86,32 @@ describe('getInviteProgress', () => {
     vi.stubGlobal('sessionStorage', { getItem: () => null });
 
     expect(getInviteProgress({ pathname: '/welcome/email' })).toMatchObject({
-      remaining: 3,
-      total: 5,
+      remaining: 5,
+      total: 7,
     });
   });
 
-  it('на /signin в invite-flow осталось 2 из 3', () => {
+  it('не считает обычный /signin invite-flow из-за старого pending_code', () => {
     vi.stubGlobal('window', { location: { origin: 'https://app.sovlium.ru' } });
     vi.stubGlobal('localStorage', {
       getItem: (key: string) => (key === 'invite.pending_code' ? 'abc' : null),
     });
     vi.stubGlobal('sessionStorage', { getItem: () => 'signin', setItem: () => undefined });
 
-    expect(getInviteProgress({ pathname: '/signin' })).toMatchObject({
+    expect(getInviteProgress({ pathname: '/signin', search: { redirect: '/' } })).toBeNull();
+  });
+
+  it('на /signin в invite-flow осталось 2 из 3', () => {
+    vi.stubGlobal('window', { location: { origin: 'https://app.sovlium.ru' } });
+    vi.stubGlobal('localStorage', { getItem: () => null });
+    vi.stubGlobal('sessionStorage', { getItem: () => 'signin', setItem: () => undefined });
+
+    expect(
+      getInviteProgress({
+        pathname: '/signin',
+        search: { invite: 'abc', redirect: '/invite/abc' },
+      }),
+    ).toMatchObject({
       remaining: 2,
       total: 3,
       track: 'signin',

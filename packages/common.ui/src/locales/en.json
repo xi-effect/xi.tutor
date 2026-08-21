@@ -2,7 +2,7 @@
   "inviteProgress": {
     "remaining_one": "{{count}} step left out of {{total}} to accept the tutor’s invitation",
     "remaining_other": "{{count}} steps left out of {{total}} to accept the tutor’s invitation",
-    "hint": "It will only take a couple of minutes"
+    "hint": "All steps take just a few minutes"
   },
   "onboarding": {
     "welcome": "Welcome to\u00A0sovlium!",

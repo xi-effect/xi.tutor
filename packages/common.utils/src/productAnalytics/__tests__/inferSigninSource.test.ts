@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   clearPendingInviteCode,
   getInviteAuthSearch,
+  getInviteCodeFromSearch,
   getPendingInviteCode,
   inferSigninSource,
   persistPendingInviteCode,
@@ -54,6 +55,20 @@ describe('getPendingInviteCode', () => {
     expect(store['invite.pending_code']).toBe('code-1');
     clearPendingInviteCode();
     expect(store['invite.pending_code']).toBeUndefined();
+  });
+});
+
+describe('getInviteCodeFromSearch', () => {
+  it('читает invite из query и redirect, но не из localStorage', () => {
+    vi.stubGlobal('window', { location: { origin: 'https://app.sovlium.ru' } });
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => (key === 'invite.pending_code' ? 'stale' : null),
+    });
+
+    expect(getInviteCodeFromSearch({ invite: ' from-url ' })).toBe('from-url');
+    expect(getInviteCodeFromSearch({ redirect: '/invite/from-redirect' })).toBe('from-redirect');
+    expect(getInviteCodeFromSearch({ redirect: '/' })).toBeUndefined();
+    expect(getInviteCodeFromSearch()).toBeUndefined();
   });
 });
 

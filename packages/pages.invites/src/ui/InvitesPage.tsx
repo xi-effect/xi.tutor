@@ -1,4 +1,4 @@
-import { InviteProgressCard, Logo } from 'common.ui';
+import { AUTH_FLOW_LOGO_SIZE, InviteProgressCard, Logo } from 'common.ui';
 import { useParams } from '@tanstack/react-router';
 import { useEffect } from 'react';
 import { SupportPageShell } from 'modules.navigation';
@@ -65,7 +65,6 @@ export const InvitesPage = () => {
     if (authPending) {
       return (
         <div className="flex w-full min-w-0 flex-col items-center gap-4 p-4 sm:max-w-[500px] sm:p-8">
-          <InviteProgressCard isAuthenticated={false} />
           <p className="text-text-primary dark:text-text-primary">{t('loading')}</p>
         </div>
       );
@@ -78,7 +77,6 @@ export const InvitesPage = () => {
     if (isLoading) {
       return (
         <div className="flex w-full min-w-0 flex-col items-center gap-4 p-4 sm:max-w-[500px] sm:p-8">
-          <InviteProgressCard isAuthenticated />
           <p className="text-text-primary dark:text-text-primary">{t('loading')}</p>
         </div>
       );
@@ -97,10 +95,16 @@ export const InvitesPage = () => {
 
   return (
     <SupportPageShell>
-      <section className="flex min-w-0 flex-1 flex-col items-center justify-center gap-6 px-4 py-8 sm:gap-8 sm:py-12">
-        <Logo />
-        {content}
-      </section>
+      <div className="flex min-w-0 flex-1 flex-col">
+        <InviteProgressCard
+          placement="pageTop"
+          isAuthenticated={authPending ? false : isAuthenticated}
+        />
+        <section className="flex min-w-0 flex-1 flex-col items-center justify-center gap-6 px-4 py-8 sm:gap-8 sm:py-12">
+          <Logo width={AUTH_FLOW_LOGO_SIZE.width} height={AUTH_FLOW_LOGO_SIZE.height} />
+          {content}
+        </section>
+      </div>
     </SupportPageShell>
   );
 };

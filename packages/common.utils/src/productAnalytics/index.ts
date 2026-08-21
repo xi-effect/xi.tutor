@@ -16,6 +16,7 @@ export { inferSignupEntryPoint } from './inferSignupEntryPoint';
 export { inferEmailConfirmationSource } from './inferEmailConfirmationSource';
 export {
   getPendingInviteCode,
+  getInviteCodeFromSearch,
   persistPendingInviteCode,
   clearPendingInviteCode,
   getInviteAuthSearch,

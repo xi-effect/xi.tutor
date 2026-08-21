@@ -15,13 +15,6 @@ export function inferSignupEntryPoint(search?: {
   // invite → login → signup: redirect сохраняется через getUrlWithParams
   if (search?.redirect?.includes('/invite')) return 'invite';
 
-  try {
-    const pending = localStorage.getItem('invite.pending_code');
-    if (pending) return 'invite';
-  } catch {
-    // ignore
-  }
-
   if (search?.from === 'login' || search?.redirect?.includes('signin')) return 'login';
 
   try {

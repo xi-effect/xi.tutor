@@ -1,4 +1,3 @@
-import { InviteProgressCard } from 'common.ui';
 import { useNavigate } from '@tanstack/react-router';
 import { Button } from '@xipkg/button';
 import {
@@ -51,7 +50,6 @@ export const InviteLandingUnauth = ({ inviteId }: InviteLandingUnauthProps) => {
 
   return (
     <div className="flex w-full min-w-0 flex-col gap-6 p-2 sm:max-w-[500px] sm:gap-8">
-      <InviteProgressCard isAuthenticated={false} />
       <div className="text-center">
         <h3 className="text-xl-base text-text-primary dark:text-text-primary font-semibold">
           {t('landing.title')}

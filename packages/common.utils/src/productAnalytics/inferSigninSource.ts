@@ -41,32 +41,22 @@ export function getInviteAuthSearch(inviteId: string): { redirect: string; invit
   };
 }
 
-/**
- * Достаёт код приглашения из уже существующего контекста:
- * `invite.pending_code` (root-guard) или `redirect` с `/invite/{code}`.
- * Сырой токен наружу в Umami не отдаём — только для локального хеширования.
- */
-export function getPendingInviteCode(search?: {
-  redirect?: string;
-  invite?: string;
-}): string | undefined {
+function readStoredPendingInviteCode(): string | undefined {
   if (typeof window === 'undefined') return undefined;
-
-  const fromSearchInvite = search?.invite?.trim();
-  if (fromSearchInvite) return fromSearchInvite;
-
   try {
-    const pending = localStorage.getItem(INVITE_PENDING_CODE_KEY)?.trim();
-    if (pending) return pending;
+    return localStorage.getItem(INVITE_PENDING_CODE_KEY)?.trim() || undefined;
   } catch {
-    // ignore
+    return undefined;
   }
+}
 
-  const redirect = search?.redirect;
+function readInviteCodeFromRedirect(redirect?: string): string | undefined {
   if (!redirect) return undefined;
 
   try {
-    const url = new URL(redirect, window.location.origin);
+    const origin =
+      typeof window !== 'undefined' ? window.location.origin : 'https://app.sovlium.ru';
+    const url = new URL(redirect, origin);
     const match = url.pathname.match(/\/invite\/([^/]+)/);
     if (match?.[1]) return decodeURIComponent(match[1]);
   } catch {
@@ -75,6 +65,36 @@ export function getPendingInviteCode(search?: {
   }
 
   return undefined;
+}
+
+/**
+ * Код приглашения только из текущего URL (`invite` или `redirect` на `/invite/{code}`).
+ * Не читает localStorage — чтобы обычный /signin не подхватывал старый invite-flow.
+ */
+export function getInviteCodeFromSearch(search?: {
+  redirect?: string;
+  invite?: string;
+}): string | undefined {
+  const fromSearchInvite = search?.invite?.trim();
+  if (fromSearchInvite) return fromSearchInvite;
+  return readInviteCodeFromRedirect(search?.redirect);
+}
+
+/**
+ * Достаёт код приглашения из уже существующего контекста:
+ * query, `invite.pending_code` или `redirect` с `/invite/{code}`.
+ * Сырой токен наружу в Umami не отдаём — только для локального хеширования.
+ */
+export function getPendingInviteCode(search?: {
+  redirect?: string;
+  invite?: string;
+}): string | undefined {
+  if (typeof window === 'undefined') return undefined;
+
+  const fromSearch = getInviteCodeFromSearch(search);
+  if (fromSearch) return fromSearch;
+
+  return readStoredPendingInviteCode();
 }
 
 /**
