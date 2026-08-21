@@ -21,6 +21,7 @@ import {
   PRODUCT_ANALYTICS_EVENTS,
   getInviteAuthSearch,
   getInviteCodeFromSearch,
+  getInviteFunnelEventProps,
   getInviteTrackingId,
   getOrCreateActivationFlowId,
   persistPendingInviteCode,
@@ -84,6 +85,8 @@ export const SignInPage = () => {
             invite_flow_version: 2,
             invite_tracking_id,
             activation_flow_id: activationFlowId,
+            student_authenticated: false,
+            ...getInviteFunnelEventProps(false),
           });
         });
       }
@@ -95,6 +98,7 @@ export const SignInPage = () => {
             invite_tracking_id,
             source: 'invite',
             activation_flow_id: activationFlowId,
+            ...getInviteFunnelEventProps(false),
           });
         });
       }
@@ -120,6 +124,7 @@ export const SignInPage = () => {
         invite_tracking_id,
         source: 'invite',
         activation_flow_id: getOrCreateActivationFlowId(),
+        ...getInviteFunnelEventProps(false),
       });
     })();
   };

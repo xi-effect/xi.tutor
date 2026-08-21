@@ -3,6 +3,7 @@ import { Button } from '@xipkg/button';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   getInviteAuthSearch,
+  getInviteFunnelMeta,
   getInviteTrackingId,
   persistPendingInviteCode,
   persistInviteProgressTrack,
@@ -24,6 +25,11 @@ export const InviteLandingUnauth = ({ inviteId }: InviteLandingUnauthProps) => {
     persistPendingInviteCode(inviteId);
     persistInviteProgressTrack(to === '/signup' ? 'signup' : 'signin');
     const search = getInviteAuthSearch(inviteId);
+    const funnel = getInviteFunnelMeta({
+      pathname: to,
+      search,
+      isAuthenticated: false,
+    });
 
     if (to === '/signup') {
       if (shouldTrackInviteSignupClicked(inviteId)) {
@@ -32,6 +38,7 @@ export const InviteLandingUnauth = ({ inviteId }: InviteLandingUnauthProps) => {
             invite_flow_version: 2,
             invite_tracking_id,
             source: 'invite',
+            ...(funnel ?? {}),
           });
         });
       }
@@ -41,6 +48,7 @@ export const InviteLandingUnauth = ({ inviteId }: InviteLandingUnauthProps) => {
           invite_flow_version: 2,
           invite_tracking_id,
           source: 'invite',
+          ...(funnel ?? {}),
         });
       });
     }

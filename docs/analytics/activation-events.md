@@ -306,21 +306,30 @@
 
 #### Новая форма приглашения v2 (ученик) — `invite_flow_version: 2`
 
-| Событие                         | Когда                                                                                                  |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| `student_invite_page_viewed`    | Страница `/invite/$inviteId` отрендерена (в том числе неавторизованный landing)                        |
-| `student_invite_signup_clicked` | Клик primary CTA «Зарегистрироваться…» на `/invite` или ссылки регистрации в invite-flow               |
-| `student_invite_login_clicked`  | Клик secondary «Уже есть аккаунт? Войти» на `/invite` (fallback — открытие `/signin` из invite-ссылки) |
+| Событие                         | Когда                                                                                                    |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `student_invite_page_viewed`    | Страница `/invite/$inviteId` отрендерена; `student_authenticated` отличает unauth landing и already_auth |
+| `student_invite_signup_clicked` | Клик primary CTA «Зарегистрироваться…» на `/invite` или ссылки регистрации в invite-flow                 |
+| `student_invite_login_clicked`  | Клик secondary «Уже есть аккаунт? Войти» на `/invite` (fallback — открытие `/signin` из invite-ссылки)   |
 
 ```json
 {
   "invite_flow_version": 2,
   "invite_tracking_id": "sha256-hex-or-absent",
+  "student_authenticated": false,
+  "has_invite": true,
+  "invite_progress_track": "signup | signin | already_auth",
+  "invite_progress_step": "invite_open | auth | email | welcome_user | welcome_role | welcome_socials | accept | accept_direct",
+  "invite_progress_current": 1,
+  "invite_progress_total": 7,
   "event_version": 1
 }
 ```
 
-`student_invite_signup_clicked` / `student_invite_login_clicked` отправляются по клику на `/invite/$inviteId` (registration-first). Fallback на `SignInPage` остаётся для прямого захода `/signin?redirect=/invite/...` и дедуплицируется через sessionStorage. `invite_tracking_id` считается из `invite.pending_code` / `search.invite` / `redirect`.
+Три трека: **signup** (7 шагов), **signin** (3 шага), **already_auth** (1 шаг, `accept_direct`).
+Формулы drop-off: [`invite-flow-v2.md`](./invite-flow-v2.md#метрики).
+
+`student_invite_signup_clicked` / `student_invite_login_clicked` отправляются по клику на `/invite/$inviteId` (registration-first). Fallback на `SignInPage` остаётся для прямого захода `/signin?redirect=/invite/...` и дедуплицируется через sessionStorage. `invite_tracking_id` считается из `invite.pending_code` / `search.invite` / `redirect`. Обычный `/signin` без invite в URL воронку не помечает.
 
 **Источник:** `packages/pages.invites`, `packages/pages.signin/src/ui/SignInPage.tsx`
 
@@ -481,16 +490,31 @@
 ## Воронка активации
 
 ```
-auth_signup_viewed
-→ auth_signup_submit
+# Репетитор
+student_invite_modal_viewed → message/link copied → …
+
+# Ученик, signup (invite_progress_track: signup)
+student_invite_page_viewed (unauth)
+→ student_invite_signup_clicked
 → auth_signup_succeeded
-→ email_confirmation_succeeded
-→ onboarding_started
-→ onboarding_completed
-→ student_invite_submit / student_invited_success
-→ student_invite_opened
+→ email_confirmation_viewed
+→ onboarding_step_viewed (profile / role_selection / notifications)
+→ student_invite_accept_submit
 → invite_accepted_success
-→ lesson_create_submit / lesson_created_success
+
+# Ученик, signin
+student_invite_page_viewed (unauth)
+→ student_invite_login_clicked
+→ auth_signin_succeeded
+→ student_invite_accept_submit
+→ invite_accepted_success
+
+# Ученик уже в сессии
+student_invite_page_viewed (student_authenticated: true)
+→ invite_accepted_success
+
+# Дальше активация занятия
+lesson_create_submit / lesson_created_success
 → prejoin_viewed
 → media_permission_granted
 → call_connect_attempted

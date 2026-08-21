@@ -72,23 +72,52 @@ Individual invite **многоразовый**: одну ссылку могут
 toast и ведёт к уже существующей ссылке, а не предлагает бессмысленный retry
 создания.
 
-### Ученик (не авторизован)
+### Ученик — три трека
 
-1. Открывает `/invite/{code}` — публичный landing (`student_invite_page_viewed`,
-   `student_invite_opened`).
-2. Primary CTA: регистрация (`student_invite_signup_clicked`).
-3. Secondary CTA: вход (`student_invite_login_clicked`).
-4. Код приглашения сохраняется (`localStorage['invite.pending_code']`,
-   `search.invite` / `search.redirect`) и **не очищается**, пока accept не
-   завершится успехом.
+UI-прогресс и аналитика режутся по `invite_progress_track`. Обычный `/signin` /
+`/signup` без invite в URL **не** входит в воронку (старый `invite.pending_code`
+не считается входом).
+
+#### Signup (7 шагов)
+
+Регистрация с нуля — основной путь registration-first.
+
+| #   | Шаг (`invite_progress_step`) | Экран                   | События                                                                                |
+| --- | ---------------------------- | ----------------------- | -------------------------------------------------------------------------------------- |
+| 1   | `invite_open`                | `/invite/{code}` unauth | `student_invite_page_viewed`, `student_invite_opened` (`student_authenticated: false`) |
+| 2   | `auth`                       | `/signup`               | `student_invite_signup_clicked`, `auth_signup_viewed` / `submit` / `succeeded`         |
+| 3   | `email`                      | `/welcome/email`        | `email_confirmation_viewed`, `onboarding_step_viewed` (`email_confirmation`)           |
+| 4   | `welcome_user`               | `/welcome/user`         | `onboarding_step_viewed` (`profile`)                                                   |
+| 5   | `welcome_role`               | `/welcome/role`         | `onboarding_step_viewed` (`role_selection`)                                            |
+| 6   | `welcome_socials`            | `/welcome/socials`      | `onboarding_step_viewed` (`notifications`)                                             |
+| 7   | `accept`                     | `/invite/{code}` auth   | `student_invite_accept_submit` → `invite_accepted_success`                             |
+
+На шаге 7 полоска в UI **скрыта** (остался один клик), но в событиях accept
+остаются `invite_progress_track: signup`, `invite_progress_step: accept`,
+`invite_progress_current: 7`, `invite_progress_total: 7`.
+
+#### Signin (3 шага)
+
+Ученик уже с аккаунтом, secondary CTA «Войти».
+
+| #   | Шаг           | Экран                   | События                                                            |
+| --- | ------------- | ----------------------- | ------------------------------------------------------------------ |
+| 1   | `invite_open` | `/invite/{code}` unauth | те же open-события                                                 |
+| 2   | `auth`        | `/signin`               | `student_invite_login_clicked`, `auth_signin_submit` / `succeeded` |
+| 3   | `accept`      | `/invite/{code}` auth   | accept-события, `invite_progress_total: 3`                         |
+
+#### Already auth (1 шаг)
+
+Ученик открыл ссылку уже авторизованным — без signup/signin в этой сессии.
+`invite_progress_track: already_auth`, `invite_progress_step: accept_direct`,
+`total: 1`. Полоски нет. Funnel: open (`student_authenticated: true`) → accept.
+
+Код приглашения сохраняется (`localStorage['invite.pending_code']`,
+`search.invite` / `search.redirect`) и **не очищается**, пока accept не
+завершится успехом.
 
 Preview (`GET .../preview/`) — protected; для unauth не вызывается. Имя
 преподавателя на unauth landing недоступно.
-
-### Auth
-
-Signup или signin с сохранённым invite-context. После успешной auth ученик
-возвращается на `/invite/{code}`.
 
 ### Accept
 
@@ -121,13 +150,20 @@ invite успешно принят
 frontend не получает независимого подтверждения кабинета, кроме `id` в ответе
 accept.
 
-Funnel:
+Funnel (три трека ученика):
 
 ```
-copy → open → auth → accept → classroom created
+copy
+→ open (invite_open)
+   ├ signup:  auth → email → welcome_user → welcome_role → welcome_socials → accept
+   ├ signin:  auth → accept
+   └ already_auth: accept_direct
+→ classroom created
 ```
 
-где последняя ступень = `invite_accepted_success` (`classroom_created: true`).
+Последняя ступень всегда = `invite_accepted_success` (`classroom_created: true`).
+Сегментировать по `invite_progress_track`. Не смешивать signup (7) и signin (3)
+в одной воронке без фильтра.
 
 ## Список событий
 
@@ -148,11 +184,14 @@ copy → open → auth → accept → classroom created
 `student_invite_new_link_created` содержит `previous_invite_id` — id удалённого
 приглашения.
 
-Ученик: `student_invite_page_viewed`, `student_invite_signup_clicked`,
-`student_invite_login_clicked`. Неавторизованный пользователь остаётся на
-`/invite/$inviteId` (registration-first): primary CTA ведёт на signup,
-secondary — на signin. `invite-context` (`invite.pending_code`, `search.invite`,
-`search.redirect`) сохраняется до успешного accept.
+Ученик: `student_invite_page_viewed` (`student_authenticated`),
+`student_invite_signup_clicked`, `student_invite_login_clicked`, плюс auth /
+onboarding / accept. На событиях воронки: `invite_progress_track`
+(`signup` | `signin` | `already_auth`), `invite_progress_step`,
+`invite_progress_current`, `invite_progress_total`, `has_invite`.
+Неавторизованный пользователь остаётся на `/invite/$inviteId`
+(registration-first): primary CTA ведёт на signup, secondary — на signin.
+`invite-context` сохраняется до успешного accept.
 
 Подробные таблицы «когда отправляется» — в
 [`activation-events.md`](./activation-events.md#приглашение-ученика-репетитор) (разделы
@@ -211,7 +250,8 @@ async function createInviteTrackingId(token: string): Promise<string> {
 - хешируется именно `code` (тот же токен, что и в пути `/invite/{code}`), без домена и без query-параметров — одинаковая строка на обеих сторонах;
 - сырой токен никогда не передаётся в свойства события и не логируется (`token` также в списке `FORBIDDEN_ANALYTICS_FIELDS`);
 - если токена нет — поле `invite_tracking_id` не включается в payload, а не отправляется как `null`/`undefined`;
-- поле проходит через цепочку: copy (`student_invite_message_copied` / `student_invite_link_copied`) → open (`student_invite_page_viewed`, `student_invite_opened`) → signup/login click → auth submit/success (`auth_signup_*` / `auth_signin_*`) → `student_invite_accept_submit` → `invite_accepted_success` / `student_invite_accept_failed`;
+- поле проходит через цепочку: copy (`student_invite_message_copied` / `student_invite_link_copied`) → open (`student_invite_page_viewed`, `student_invite_opened`) → signup/login click → auth submit/success (`auth_signup_*` / `auth_signin_*`) → onboarding (`email_confirmation_viewed`, `onboarding_step_viewed`) → `student_invite_accept_submit` → `invite_accepted_success` / `student_invite_accept_failed`;
+- события воронки ученика дополнительно несут `invite_progress_track`, `invite_progress_step`, `invite_progress_current`, `invite_progress_total` (и `has_invite: true`, если шаг внутри invite-flow). Вне invite-flow эти поля **не** отправляются;
 - в Umami **нельзя** отправлять: email, пароль, username, имена, raw invite token, classroom ID, user/tutor ID, raw backend error, stack, полный URL приглашения.
 
 ### Ограничение точности связывания
@@ -226,26 +266,79 @@ backend в будущем изменит формат `code`), точное св
 ## Метрики
 
 Все метрики считаются по `invite_flow_version: 2` отдельно от v1 (для сравнения
-до/после релиза — см. дату в таблице выше).
+до/после релиза — см. дату в таблице выше). Студенческие конверсии **резать
+по `invite_progress_track`**, иначе signup (7 шагов) смешается с signin (3) и
+already_auth (1).
 
-| Метрика                                  | Формула                                                                                                                                    | Источник событий                                                       |
-| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------- |
-| **Message Copy Rate**                    | `student_invite_message_copied` / `student_invite_modal_viewed`                                                                            | репетитор                                                              |
-| **Link Copy Rate**                       | `student_invite_link_copied` / `student_invite_modal_viewed`                                                                               | репетитор                                                              |
-| **Send attempt**                         | (`student_invite_message_copied` ∪ `student_invite_link_copied`) / `student_invite_modal_viewed`                                           | репетитор                                                              |
-| **Invite Open Rate D7**                  | `student_invite_page_viewed` (тот же `invite_tracking_id`, ≤7 дней) / send attempt                                                         | связка через `invite_tracking_id`, при отсутствии — репетитор+окно дат |
-| **Invite → Signup started**              | `student_invite_signup_clicked` / `student_invite_page_viewed`                                                                             | ученик                                                                 |
-| **Invite → Login started**               | `student_invite_login_clicked` / `student_invite_page_viewed`                                                                              | ученик                                                                 |
-| **Invite → Classroom Conversion**        | `invite_accepted_success` / `student_invite_page_viewed`                                                                                   | ученик                                                                 |
-| **Copy → Classroom**                     | `invite_accepted_success` / send attempt (тот же `invite_tracking_id`)                                                                     | связка через `invite_tracking_id`                                      |
-| **Invite Acceptance Rate D7**            | `invite_accepted_success` (≤7 дней) / `student_invite_modal_viewed`                                                                        | ученик / репетитор                                                     |
-| **Переход к первому занятию D14** (доп.) | `lesson_created_success` или `lesson_joined` для принявшего ученика (≤14 дней после `invite_accepted_success`) / `invite_accepted_success` | сравнение v1 vs v2                                                     |
+### Репетитор
 
-Медианное время (по timestamps Umami + `invite_tracking_id`): copy → open, open → auth, auth → accept, copy → classroom.
+| Метрика                 | Формула                                                                                          | Источник                                                      |
+| ----------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------------- |
+| **Message Copy Rate**   | `student_invite_message_copied` / `student_invite_modal_viewed`                                  | репетитор                                                     |
+| **Link Copy Rate**      | `student_invite_link_copied` / `student_invite_modal_viewed`                                     | репетитор                                                     |
+| **Send attempt**        | (`student_invite_message_copied` ∪ `student_invite_link_copied`) / `student_invite_modal_viewed` | репетитор                                                     |
+| **Invite Open Rate D7** | `student_invite_page_viewed` (тот же `invite_tracking_id`, ≤7 дней) / send attempt               | связка через `invite_tracking_id`, иначе репетитор + окно дат |
+
+### Выбор пути (unauth open)
+
+Знаменатель: `student_invite_page_viewed` с `student_authenticated: false`.
+
+| Метрика                     | Формула                                                |
+| --------------------------- | ------------------------------------------------------ |
+| **Invite → Signup started** | `student_invite_signup_clicked` / unauth `page_viewed` |
+| **Invite → Login started**  | `student_invite_login_clicked` / unauth `page_viewed`  |
+
+### Signup-трек (`invite_progress_track: signup`)
+
+| Метрика                        | Формула                                                                                     |
+| ------------------------------ | ------------------------------------------------------------------------------------------- |
+| **Signup started → succeeded** | `auth_signup_succeeded` (has_invite) / `student_invite_signup_clicked`                      |
+| **Signup → Email**             | `email_confirmation_viewed` (has_invite) / `auth_signup_succeeded` (has_invite)             |
+| **Email → Profile**            | `onboarding_step_viewed` (`profile`, has_invite) / `email_confirmation_viewed` (has_invite) |
+| **Profile → Role**             | `onboarding_step_viewed` (`role_selection`) / `onboarding_step_viewed` (`profile`)          |
+| **Role → Socials**             | `onboarding_step_viewed` (`notifications`) / `onboarding_step_viewed` (`role_selection`)    |
+| **Socials → Accept submit**    | `student_invite_accept_submit` (track=signup) / `onboarding_step_viewed` (`notifications`)  |
+| **Signup started → Classroom** | `invite_accepted_success` (track=signup) / `student_invite_signup_clicked`                  |
+| **Invite → Signup Classroom**  | `invite_accepted_success` (track=signup) / unauth `page_viewed`                             |
+
+Drop-off по шагу: доля сессий, у которых `invite_progress_step` остановился на N
+и нет следующего события с большим `invite_progress_current`.
+
+### Signin-трек (`invite_progress_track: signin`)
+
+| Метрика                       | Формула                                                                                     |
+| ----------------------------- | ------------------------------------------------------------------------------------------- |
+| **Login started → succeeded** | `auth_signin_succeeded` (source=invite) / `student_invite_login_clicked`                    |
+| **Signin → Accept submit**    | `student_invite_accept_submit` (track=signin) / `auth_signin_succeeded` (source=invite)     |
+| **Login started → Classroom** | `invite_accepted_success` (track=signin) / `student_invite_login_clicked`                   |
+| **Invite → Signin Classroom** | `invite_accepted_success` (track=signin) / unauth `page_viewed`                             |
+| **Invite → user_not_found**   | `auth_signin_failed.reason=user_not_found` (source=invite) / `student_invite_login_clicked` |
+
+### Already auth (`invite_progress_track: already_auth`)
+
+| Метрика                           | Формула                                                                                                       |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| **Already-auth Open → Classroom** | `invite_accepted_success` (track=already_auth) / `student_invite_page_viewed` (`student_authenticated: true`) |
+
+Не включать already_auth в знаменатель signup/signin conversion.
+
+### Сквозные
+
+| Метрика                           | Формула                                                                                           | Источник                                                  |
+| --------------------------------- | ------------------------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| **Invite → Classroom Conversion** | `invite_accepted_success` / `student_invite_page_viewed`                                          | все треки вместе; для сравнения путей — отдельно по track |
+| **Copy → Classroom**              | `invite_accepted_success` / send attempt (тот же `invite_tracking_id`)                            | связка через `invite_tracking_id`                         |
+| **Invite Acceptance Rate D7**     | `invite_accepted_success` (≤7 дней) / `student_invite_modal_viewed`                               | репетиторский знаменатель                                 |
+| **Переход к первому занятию D14** | `lesson_created_success` или `lesson_joined` (≤14 дней после success) / `invite_accepted_success` | сравнение v1 vs v2                                        |
+
+Медианное время (timestamps Umami + `invite_tracking_id`), **внутри одного track**:
+copy → open; open → auth; для signup ещё auth → email → profile → role → socials → accept;
+для signin auth → accept; copy → classroom.
 
 Для гипотезы registration-first сравнивать **до/после 2026-08-21**:
-`student_invite_page_viewed` → успешная auth → `invite_accepted_success`.
-Дополнительно: Invite → auth error, Invite → `user_not_found` (`auth_signin_failed.reason`), Invite → signup, Invite → accept.
+unauth `page_viewed` → `student_invite_signup_clicked` vs `login_clicked` →
+успешная auth → `invite_accepted_success`. После **2026-08-22** смотреть
+drop-off по семи шагам signup и already_auth отдельно.
 
 Message Copy Rate и Invite Acceptance Rate D7 используют знаменатель на стороне
 репетитора (`student_invite_modal_viewed`), поэтому не требуют `invite_tracking_id`.

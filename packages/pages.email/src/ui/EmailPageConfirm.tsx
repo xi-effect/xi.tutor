@@ -7,6 +7,7 @@ import { InfoCircle } from '@xipkg/icons';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   getOnboardingStepMeta,
+  getInviteFunnelEventProps,
   inferEmailConfirmationSource,
   resolveOnboardingAnalyticsRole,
   trackOnce,
@@ -31,6 +32,7 @@ export const EmailPageConfirm = () => {
       trackProductEvent(PRODUCT_ANALYTICS_EVENTS.EMAIL_CONFIRMATION_VIEWED, {
         source,
         onboarding_stage: user?.onboarding_stage ?? 'email-confirmation',
+        ...getInviteFunnelEventProps(true),
       });
     });
 
@@ -42,6 +44,7 @@ export const EmailPageConfirm = () => {
         ...stepMeta,
         user_role: userRole,
         onboarding_stage: user?.onboarding_stage ?? 'email-confirmation',
+        ...getInviteFunnelEventProps(true),
       });
     });
   }, [source, user?.default_layout, user?.onboarding_stage]);

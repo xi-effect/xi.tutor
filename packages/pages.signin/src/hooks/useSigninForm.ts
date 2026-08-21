@@ -10,6 +10,7 @@ import {
   getActivationFlowId,
   getInviteTrackingIdFromContext,
   getOrCreateActivationFlowId,
+  getInviteFunnelEventProps,
   inferSigninSource,
   mapSigninError,
   trackProductEvent,
@@ -54,6 +55,8 @@ export const useSigninForm = () => {
       invite_tracking_id = undefined;
     }
 
+    const funnel = getInviteFunnelEventProps(false);
+
     setInviteUserNotFound(false);
     setIsPending(true);
     try {
@@ -61,6 +64,7 @@ export const useSigninForm = () => {
         source,
         invite_tracking_id,
         activation_flow_id: activationFlowId,
+        ...funnel,
       });
 
       const response: SignInResponse = await signin(email, password);
@@ -74,6 +78,7 @@ export const useSigninForm = () => {
         source,
         invite_tracking_id,
         activation_flow_id: activationFlowId,
+        ...funnel,
       });
 
       await completeSigninSuccess({
@@ -89,6 +94,7 @@ export const useSigninForm = () => {
           source,
           invite_tracking_id,
           activation_flow_id: activationFlowId,
+          ...funnel,
         });
       } catch {
         // Аналитика не должна ломать авторизацию

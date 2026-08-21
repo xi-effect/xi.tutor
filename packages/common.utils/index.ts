@@ -38,6 +38,8 @@ export {
   persistInviteProgressTrack,
   clearInviteProgressTrack,
   getInviteProgress,
+  getInviteFunnelMeta,
+  getInviteFunnelEventProps,
   inferSigninSource,
   shouldTrackInvitePageViewed,
   shouldTrackInviteLoginClicked,

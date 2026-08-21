@@ -62,6 +62,20 @@ export type SigninFailureReason =
 
 export type SigninAnalyticsSource = 'invite' | 'signin' | 'unknown';
 
+/** Трек UI-воронки ученика по individual invite. */
+export type InviteFunnelTrack = 'signup' | 'signin' | 'already_auth';
+
+/** Шаг UI-воронки. `accept_direct` — авторизованный ученик сразу на принятии, без signup/signin. */
+export type InviteFunnelStep =
+  | 'invite_open'
+  | 'auth'
+  | 'email'
+  | 'welcome_user'
+  | 'welcome_role'
+  | 'welcome_socials'
+  | 'accept'
+  | 'accept_direct';
+
 export type SignupValidationFailureReason =
   'required_field' | 'invalid_email' | 'weak_password' | 'terms_not_accepted' | 'multiple_fields';
 

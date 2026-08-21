@@ -30,7 +30,10 @@ export {
   persistInviteProgressTrack,
   clearInviteProgressTrack,
   getInviteProgress,
+  getInviteFunnelMeta,
+  getInviteFunnelEventProps,
 } from './inviteProgress';
+export type { InviteFunnelMeta } from './inviteProgress';
 export {
   getOrCreateActivationFlowId,
   getActivationFlowId,
@@ -87,6 +90,8 @@ export type {
   SignupValidationFailedField,
   SignupValidationFailureReason,
   SigninAnalyticsSource,
+  InviteFunnelTrack,
+  InviteFunnelStep,
   SigninFailureReason,
   EmailConfirmationFailureReason,
   EmailConfirmationSource,

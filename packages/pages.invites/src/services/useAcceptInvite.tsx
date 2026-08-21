@@ -16,6 +16,7 @@ import {
   clearPendingInviteCode,
   createAttemptId,
   getInviteTrackingId,
+  getInviteFunnelEventProps,
   getProductAnalyticsRole,
   mapInviteAcceptError,
   measureDurationMs,
@@ -67,6 +68,7 @@ export const useAcceptInvite = () => {
           student_authenticated: studentAuthenticated,
           invite_flow_version: 2,
           invite_tracking_id,
+          ...getInviteFunnelEventProps(studentAuthenticated),
         });
       });
 
@@ -92,6 +94,7 @@ export const useAcceptInvite = () => {
           invite_flow_version: 2,
           invite_tracking_id,
           classroom_created: true,
+          ...getInviteFunnelEventProps(Boolean(user?.id)),
         });
       });
 
@@ -112,6 +115,7 @@ export const useAcceptInvite = () => {
           duration_ms: measureDurationMs(context.startedAt),
           invite_flow_version: 2,
           invite_tracking_id,
+          ...getInviteFunnelEventProps(Boolean(currentUser?.id)),
         });
       });
     },

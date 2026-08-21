@@ -131,3 +131,96 @@ export function getInviteProgress(input: {
   const track = resolveInviteProgressTrack(input.pathname, getInviteProgressTrack());
   return computeInviteProgress(step, track);
 }
+
+export type InviteFunnelMeta = {
+  invite_progress_track: 'signup' | 'signin' | 'already_auth';
+  invite_progress_step: InviteProgressStep | 'accept_direct';
+  invite_progress_current: number;
+  invite_progress_total: number;
+};
+
+/** Трек из sessionStorage без дефолта на signup — чтобы отличить already_auth. */
+export function getStoredInviteProgressTrack(): InviteProgressTrack | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    const stored = sessionStorage.getItem(INVITE_PROGRESS_TRACK_KEY);
+    if (stored === 'signin' || stored === 'signup') return stored;
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
+/**
+ * Мета воронки для Umami. В отличие от UI-прогресса, для авторизованного
+ * `/invite` не скрывается: либо last step signup/signin, либо `already_auth`.
+ */
+export function getInviteFunnelMeta(input: {
+  pathname: string;
+  search?: { invite?: string; redirect?: string };
+  isAuthenticated?: boolean;
+}): InviteFunnelMeta | null {
+  const path = normalizeInvitePathname(input.pathname);
+  const fromSearch = Boolean(getInviteCodeFromSearch(input.search));
+  const onInvitePage = path.startsWith('/invite');
+
+  if (!onInvitePage && !fromSearch) {
+    if (path === '/signin' || path === '/signup') return null;
+    if (!getPendingInviteCode()) return null;
+  }
+
+  if (onInvitePage && input.isAuthenticated) {
+    const storedTrack = getStoredInviteProgressTrack();
+    if (!storedTrack) {
+      return {
+        invite_progress_track: 'already_auth',
+        invite_progress_step: 'accept_direct',
+        invite_progress_current: 1,
+        invite_progress_total: 1,
+      };
+    }
+
+    const progress = computeInviteProgress('accept', storedTrack);
+    if (!progress) return null;
+
+    return {
+      invite_progress_track: storedTrack,
+      invite_progress_step: 'accept',
+      invite_progress_current: progress.current,
+      invite_progress_total: progress.total,
+    };
+  }
+
+  const step = resolveInviteProgressStep(input.pathname, input.isAuthenticated);
+  if (!step) return null;
+
+  const track = resolveInviteProgressTrack(input.pathname, getInviteProgressTrack());
+  const progress = computeInviteProgress(step, track);
+  if (!progress) return null;
+
+  return {
+    invite_progress_track: track,
+    invite_progress_step: step,
+    invite_progress_current: progress.current,
+    invite_progress_total: progress.total,
+  };
+}
+
+/** Свойства воронки для текущего window.location; пустой объект вне invite-flow. */
+export function getInviteFunnelEventProps(
+  isAuthenticated?: boolean,
+): (InviteFunnelMeta & { has_invite: true }) | Record<string, never> {
+  if (typeof window === 'undefined') return {};
+
+  const params = new URLSearchParams(window.location.search);
+  const meta = getInviteFunnelMeta({
+    pathname: window.location.pathname,
+    search: {
+      invite: params.get('invite') ?? undefined,
+      redirect: params.get('redirect') ?? undefined,
+    },
+    isAuthenticated,
+  });
+
+  return meta ? { has_invite: true, ...meta } : {};
+}

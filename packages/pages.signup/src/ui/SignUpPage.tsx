@@ -27,6 +27,7 @@ import { AuthFlowShell, LinkTanstack } from 'common.ui';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   getInviteCodeFromSearch,
+  getInviteFunnelEventProps,
   getInviteTrackingIdFromContext,
   getOrCreateActivationFlowId,
   inferSignupEntryPoint,
@@ -103,8 +104,9 @@ export const SignUpPage = () => {
         trackProductEvent(PRODUCT_ANALYTICS_EVENTS.AUTH_SIGNUP_VIEWED, {
           activation_flow_id: activationFlowId,
           entry_point: entryPoint,
-          has_invite: hasInvite,
           invite_tracking_id,
+          ...getInviteFunnelEventProps(false),
+          has_invite: hasInvite,
         });
       });
     });
@@ -128,8 +130,9 @@ export const SignUpPage = () => {
         activation_flow_id: getOrCreateActivationFlowId(),
         failed_fields,
         entry_point: entryPoint,
-        has_invite: hasInvite,
         invite_tracking_id,
+        ...getInviteFunnelEventProps(false),
+        has_invite: hasInvite,
       });
     });
 

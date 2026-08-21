@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   computeInviteProgress,
   getInviteProgress,
+  getInviteFunnelMeta,
   persistInviteProgressTrack,
   resolveInviteProgressStep,
   resolveInviteProgressTrack,
@@ -160,5 +161,82 @@ describe('resolveInviteProgressTrack', () => {
 
     persistInviteProgressTrack('signin');
     expect(store['invite.progress_track']).toBe('signin');
+  });
+});
+
+describe('getInviteFunnelMeta', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it('на unauth /invite даёт signup / invite_open / 7 шагов', () => {
+    vi.stubGlobal('window', { location: { origin: 'https://app.sovlium.ru' } });
+    vi.stubGlobal('localStorage', { getItem: () => null });
+    vi.stubGlobal('sessionStorage', { getItem: () => null });
+
+    expect(getInviteFunnelMeta({ pathname: '/invite/abc', isAuthenticated: false })).toEqual({
+      invite_progress_track: 'signup',
+      invite_progress_step: 'invite_open',
+      invite_progress_current: 1,
+      invite_progress_total: 7,
+    });
+  });
+
+  it('для авторизованного /invite без сохранённого трека — already_auth', () => {
+    vi.stubGlobal('window', { location: { origin: 'https://app.sovlium.ru' } });
+    vi.stubGlobal('localStorage', { getItem: () => null });
+    vi.stubGlobal('sessionStorage', { getItem: () => null });
+
+    expect(getInviteFunnelMeta({ pathname: '/invite/abc', isAuthenticated: true })).toEqual({
+      invite_progress_track: 'already_auth',
+      invite_progress_step: 'accept_direct',
+      invite_progress_current: 1,
+      invite_progress_total: 1,
+    });
+  });
+
+  it('для авторизованного /invite после signup-трека — последний шаг из 7', () => {
+    vi.stubGlobal('window', { location: { origin: 'https://app.sovlium.ru' } });
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => (key === 'invite.pending_code' ? 'abc' : null),
+    });
+    vi.stubGlobal('sessionStorage', { getItem: () => 'signup' });
+
+    expect(getInviteFunnelMeta({ pathname: '/invite/abc', isAuthenticated: true })).toEqual({
+      invite_progress_track: 'signup',
+      invite_progress_step: 'accept',
+      invite_progress_current: 7,
+      invite_progress_total: 7,
+    });
+  });
+
+  it('на /signup с invite в URL — шаг auth', () => {
+    vi.stubGlobal('window', { location: { origin: 'https://app.sovlium.ru' } });
+    vi.stubGlobal('localStorage', { getItem: () => null });
+    vi.stubGlobal('sessionStorage', { getItem: () => 'signup' });
+
+    expect(
+      getInviteFunnelMeta({
+        pathname: '/signup',
+        search: { invite: 'abc', redirect: '/invite/abc' },
+        isAuthenticated: false,
+      }),
+    ).toMatchObject({
+      invite_progress_track: 'signup',
+      invite_progress_step: 'auth',
+      invite_progress_current: 2,
+      invite_progress_total: 7,
+    });
+  });
+
+  it('обычный /signin без invite в URL не даёт funnel meta', () => {
+    vi.stubGlobal('window', { location: { origin: 'https://app.sovlium.ru' } });
+    vi.stubGlobal('localStorage', {
+      getItem: (key: string) => (key === 'invite.pending_code' ? 'abc' : null),
+    });
+    vi.stubGlobal('sessionStorage', { getItem: () => 'signin' });
+
+    expect(getInviteFunnelMeta({ pathname: '/signin', search: { redirect: '/' } })).toBeNull();
   });
 });

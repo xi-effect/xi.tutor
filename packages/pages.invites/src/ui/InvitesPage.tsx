@@ -6,6 +6,7 @@ import { useCurrentUser } from 'common.services';
 import {
   PRODUCT_ANALYTICS_EVENTS,
   getInviteTrackingId,
+  getInviteFunnelEventProps,
   persistPendingInviteCode,
   shouldTrackInvitePageViewed,
   trackOnce,
@@ -33,6 +34,7 @@ export const InvitesPage = () => {
 
   useEffect(() => {
     if (!inviteId) return;
+    if (authPending) return;
     if (!shouldTrackInvitePageViewed(inviteId)) return;
 
     trackOnce(`student_invite_page_viewed:${inviteId}`, () => {
@@ -40,10 +42,12 @@ export const InvitesPage = () => {
         trackProductEvent(PRODUCT_ANALYTICS_EVENTS.STUDENT_INVITE_PAGE_VIEWED, {
           invite_flow_version: 2,
           invite_tracking_id,
+          student_authenticated: isAuthenticated,
+          ...getInviteFunnelEventProps(isAuthenticated),
         });
       });
     });
-  }, [inviteId]);
+  }, [authPending, inviteId, isAuthenticated]);
 
   useEffect(() => {
     if (!inviteId) return;
@@ -56,6 +60,7 @@ export const InvitesPage = () => {
           student_authenticated: isAuthenticated,
           invite_flow_version: 2,
           invite_tracking_id,
+          ...getInviteFunnelEventProps(isAuthenticated),
         });
       });
     });
